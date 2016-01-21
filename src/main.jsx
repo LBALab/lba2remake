@@ -8,6 +8,7 @@ class Simple extends React.Component {
         super(props, context);
 
         this.cameraPosition = new THREE.Vector3(0, 0, 5);
+        this.lightPosition = new THREE.Vector3(0, 5, 5);
 
         this.state = {
             cubeRotation: new THREE.Euler()
@@ -39,9 +40,10 @@ class Simple extends React.Component {
                                    near={0.1}
                                    far={1000}
                                    position={this.cameraPosition}/>
+                <pointLight position={this.lightPosition}/>
                 <mesh rotation={this.state.cubeRotation}>
-                    <boxGeometry width={1} height={1} depth={1}/>
-                    <meshBasicMaterial color={0x00ff00}/>
+                    <tetrahedronGeometry radius={1} detail={1}/>
+                    <meshPhongMaterial wireframe={true} color="red"/>
                 </mesh>
             </scene>
         </React3>;
