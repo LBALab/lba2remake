@@ -17,7 +17,7 @@ class Box {
     }
 
     build(vertices, faces) {
-        let offset = vertices.length;
+        const offset = vertices.length;
         this.buildVertices(vertices);
         this.buildFaces(faces, offset);
         each(this.faces_out, extruded_box => {
@@ -50,13 +50,13 @@ class Box {
     }
 
     buildFace(faces, offset, axis, direction) {
-        var key = `${axis}${direction}`;
+        const key = `${axis}${direction}`;
         if (key in this.faces_in || key in this.faces_out) {
             return;
         }
-        var p = Math.pow(2, axis);
-        var p_inv = Math.pow(2, 2 - axis);
-        var idx = [];
+        const p = Math.pow(2, axis);
+        const p_inv = Math.pow(2, 2 - axis);
+        let idx = [];
         for (let i = 0; i < p; ++i) {
             for (let j = 0; j < p_inv; ++j) {
                 idx.push(i * p_inv * 2 + direction * p_inv + j);
