@@ -12,16 +12,16 @@ class Box {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.extrudedFaces = {};
-        this.children = [];
+        this.faces_in = {};
+        this.faces_out = {};
     }
 
     build(vertices, faces) {
         let offset = vertices.length;
         this.buildVertices(vertices);
         this.buildFaces(faces, offset);
-        each(this.children, child => {
-            child.build(vertices, faces);
+        each(this.faces_out, extruded_box => {
+            extruded_box.build(vertices, faces);
         })
     }
 
@@ -50,7 +50,8 @@ class Box {
     }
 
     buildFace(faces, offset, axis, direction) {
-        if (`${axis}${direction}` in this.extrudedFaces) {
+        var key = `${axis}${direction}`;
+        if (key in this.faces_in || key in this.faces_out) {
             return;
         }
         var p = Math.pow(2, axis);
@@ -74,9 +75,8 @@ class Box {
     }
 
     extrude(box, axis, direction) {
-        this.extrudedFaces[`${axis}${direction}`] = box;
-        box.extrudedFaces[`${axis}${1 - direction}`] = this;
-        this.children.push(box);
+        this.faces_out[`${axis}${direction}`] = box;
+        box.faces_in[`${axis}${1 - direction}`] = this;
         return box;
     }
 }
