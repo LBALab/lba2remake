@@ -49,6 +49,8 @@ class Box {
                 dir: parseInt(key[1])
             };
         });
+        this.vert_num_map = {};
+        let num = -1;
         each(range(8), idx => {
             const pos = vertices_pos[idx];
             const face = find(faces_in, face => {
@@ -56,7 +58,9 @@ class Box {
             });
             if (!face) {
                 vertices.push(new Vector3(this.x + pos[0] * 0.5, this.y + pos[1] * 0.5, this.z + pos[2] * 0.5));
+                num++;
             }
+            this.vert_num_map[idx] = num;
         });
     }
 
@@ -90,7 +94,10 @@ class Box {
                     }
                 });
                 if (!in_face) {
-                    indices.push(this.offset + index);
+                    const real_index = this.vert_num_map[index];
+                    if (real_index == -1)
+                        throw new Exception('Invalid vertex index(-1).');
+                    indices.push(this.offset + real_index);
                 } else {
                     let r_pos = pos.slice();
                     r_pos[in_face.axis] *= -1;
