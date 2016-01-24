@@ -18,6 +18,12 @@ var vertices_pos = [
     [1, 1, 1]
 ];
 
+var index_from_pos = {};
+
+each(vertices_pos, (pos, idx) => {
+    index_from_pos[pos.join(',')] = idx;
+});
+
 class Box {
     constructor(x, y, z) {
         this.x = x;
@@ -53,9 +59,7 @@ class Box {
         const face = find(faces_in, face => {
             return direction[face.axis] == face.dir * 2 - 1;
         });
-        if (face) {
-            vertices.push(new Vector3(this.x + x * 0.5, this.y + y * 0.5 + 0.1, this.z + z * 0.5));
-        } else {
+        if (!face) {
             vertices.push(new Vector3(this.x + x * 0.5, this.y + y * 0.5, this.z + z * 0.5));
         }
     }
@@ -80,7 +84,22 @@ class Box {
         for (let i = 0; i < p; ++i) {
             for (let j = 0; j < p_inv; ++j) {
                 const index = i * p_inv * 2 + direction * p_inv + j;
-                indices.push(this.offset + index);
+                const pos = vertices_pos[index];
+                let in_face = null;
+                each(this.faces_in, (obj, key) => {
+                    const axis = parseInt(key[0]);
+                    const dir = parseInt(key[1]);
+                    if (pos[axis] == dir * 2 - 1) {
+                        in_face = {axis: axis, dir: dir, obj: obj};
+                    }
+                });
+                if (!in_face) {
+                    indices.push(this.offset + index);
+                } else {
+                    let r_pos = pos.slice();
+                    r_pos[in_face.axis] *= -1;
+                    indices.push(in_face.obj.offset + index_from_pos[r_pos.join(',')]);
+                }
             }
         }
         if (direction == axis % 2)
@@ -102,12 +121,12 @@ class Box {
     }
 }
 
-var b = new Box(0, 0, 0);
-b.extrude(new Box(-1, 0, 0), 0, 0);
+let b = new Box(0, 0, 0);
+let b2 = b.extrude(new Box(-1, 0.5, 0), 0, 0);
+b2.extrude(new Box(-2, 0, 0), 0, 0);
 b.build(vertices, faces);
 
-console.log('vertices', vertices);
-console.log('faces', faces);
+console.log('vertices', vertices.length, 'faces', faces.length);
 
 class Simple extends React.Component {
     constructor(props, context) {
