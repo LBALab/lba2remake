@@ -76,21 +76,22 @@ class Box {
         }
         const p = Math.pow(2, axis);
         const p_inv = Math.pow(2, 2 - axis);
-        let idx = [];
+        let indices = [];
         for (let i = 0; i < p; ++i) {
             for (let j = 0; j < p_inv; ++j) {
-                idx.push(this.offset + i * p_inv * 2 + direction * p_inv + j);
+                const index = i * p_inv * 2 + direction * p_inv + j;
+                indices.push(this.offset + index);
             }
         }
         if (direction == axis % 2)
             faces.push(
-                new Face3(idx[0], idx[1], idx[2]),
-                new Face3(idx[1], idx[3], idx[2])
+                new Face3(indices[0], indices[1], indices[2]),
+                new Face3(indices[1], indices[3], indices[2])
             );
         else
             faces.push(
-                new Face3(idx[0], idx[2], idx[1]),
-                new Face3(idx[1], idx[2], idx[3])
+                new Face3(indices[0], indices[2], indices[1]),
+                new Face3(indices[1], indices[2], indices[3])
             );
     }
 
