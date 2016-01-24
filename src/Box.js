@@ -69,16 +69,24 @@ export default class Box {
         this.buildFace(faces, 2, 1);
     }
 
-    static findOwner(box, pos) {
-        let owner = null;
-        each(box.faces_in, (obj, key) => {
-            const axis = parseInt(key[0]);
-            const dir = parseInt(key[1]);
-            if (pos[axis] == dir * 2 - 1) {
-                owner = {axis: axis, dir: dir, obj: obj};
+    static findIndexFromOwner(box, pos) {
+        for (let key in box.faces_in) {
+            if (box.faces_in.hasOwnProperty(key)) {
+                const axis = parseInt(key[0]);
+                const dir = parseInt(key[1]);
+                if (pos[axis] == dir * 2 - 1) {
+                    const owner_box = box.faces_in[key];
+                    let r_pos = pos.slice();
+                    r_pos[axis] *= -1;
+                    const index = index_from_pos[r_pos.join(',')];
+                    const real_index = owner_box.vert_num_map[index];
+                    if (real_index == -1)
+                        return Box.findIndexFromOwner(owner_box, r_pos);
+                    else
+                        return owner_box.offset + real_index;
+                }
             }
-        });
-        return owner;
+        }
     }
 
     buildFace(faces, axis, direction) {
@@ -96,11 +104,8 @@ export default class Box {
                 if (real_index != -1) {
                     indices.push(this.offset + real_index);
                 } else {
-                    const pos = vertices_pos[index];
-                    const owner = Box.findOwner(this, vertices_pos[index]);
-                    let r_pos = pos.slice();
-                    r_pos[owner.axis] *= -1;
-                    indices.push(owner.obj.offset + index_from_pos[r_pos.join(',')]);
+                    const owner_index = Box.findIndexFromOwner(this, vertices_pos[index]);
+                    indices.push(owner_index);
                 }
             }
         }
