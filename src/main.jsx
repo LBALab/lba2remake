@@ -4,8 +4,8 @@ import THREE from 'three';
 import ReactDOM from 'react-dom';
 import Box from './Box'
 
-var vertices = [];
-var faces = [];
+let vertices = [];
+let faces = [];
 
 let b = new Box(0, 0, 0);
 let b2 = b.extrude(new Box(-1, 0.5, 0), 0, 0);
