@@ -44,7 +44,7 @@ export default class Box {
             };
         });
         this.vert_num_map = {};
-        let num = -1;
+        let num = 0;
         each(range(8), idx => {
             const pos = vertices_pos[idx];
             const face = find(faces_in, face => {
@@ -52,9 +52,11 @@ export default class Box {
             });
             if (!face) {
                 vertices.push(new Vector3(this.x + pos[0] * 0.5, this.y + pos[1] * 0.5, this.z + pos[2] * 0.5));
+                this.vert_num_map[idx] = num;
                 num++;
+            } else {
+                this.vert_num_map[idx] = -1;
             }
-            this.vert_num_map[idx] = num;
         });
     }
 
@@ -65,6 +67,18 @@ export default class Box {
         this.buildFace(faces, 1, 1);
         this.buildFace(faces, 2, 0);
         this.buildFace(faces, 2, 1);
+    }
+
+    static findOwner(box, pos) {
+        let owner = null;
+        each(box.faces_in, (obj, key) => {
+            const axis = parseInt(key[0]);
+            const dir = parseInt(key[1]);
+            if (pos[axis] == dir * 2 - 1) {
+                owner = {axis: axis, dir: dir, obj: obj};
+            }
+        });
+        return owner;
     }
 
     buildFace(faces, axis, direction) {
@@ -78,24 +92,15 @@ export default class Box {
         for (let i = 0; i < p; ++i) {
             for (let j = 0; j < p_inv; ++j) {
                 const index = i * p_inv * 2 + direction * p_inv + j;
-                const pos = vertices_pos[index];
-                let in_face = null;
-                each(this.faces_in, (obj, key) => {
-                    const axis = parseInt(key[0]);
-                    const dir = parseInt(key[1]);
-                    if (pos[axis] == dir * 2 - 1) {
-                        in_face = {axis: axis, dir: dir, obj: obj};
-                    }
-                });
-                if (!in_face) {
-                    const real_index = this.vert_num_map[index];
-                    if (real_index == -1)
-                        throw new Exception('Invalid vertex index(-1).');
+                const real_index = this.vert_num_map[index];
+                if (real_index != -1) {
                     indices.push(this.offset + real_index);
                 } else {
+                    const pos = vertices_pos[index];
+                    const owner = Box.findOwner(this, vertices_pos[index]);
                     let r_pos = pos.slice();
-                    r_pos[in_face.axis] *= -1;
-                    indices.push(in_face.obj.offset + index_from_pos[r_pos.join(',')]);
+                    r_pos[owner.axis] *= -1;
+                    indices.push(owner.obj.offset + index_from_pos[r_pos.join(',')]);
                 }
             }
         }
