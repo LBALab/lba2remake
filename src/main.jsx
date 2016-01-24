@@ -126,7 +126,8 @@ class Box {
 
 let b = new Box(0, 0, 0);
 let b2 = b.extrude(new Box(-1, 0.5, 0), 0, 0);
-b2.extrude(new Box(-2, 0, 0), 0, 0);
+let b3 = b2.extrude(new Box(-2, 0, 0), 0, 0);
+b.extrude(new Box(1, 0, 0), 0, 1);
 b.build(vertices, faces);
 
 console.log('vertices', vertices.length, 'faces', faces.length);
