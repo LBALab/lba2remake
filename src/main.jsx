@@ -7,6 +7,17 @@ import {each, map, find} from 'lodash';
 var vertices = [];
 var faces = [];
 
+var vertices_pos = [
+    [-1, -1, -1],
+    [-1, -1, 1],
+    [-1, 1, -1],
+    [-1, 1, 1],
+    [1, -1, -1],
+    [1, -1, 1],
+    [1, 1, -1],
+    [1, 1, 1]
+];
+
 class Box {
     constructor(x, y, z) {
         this.x = x;
@@ -32,14 +43,9 @@ class Box {
                 dir: parseInt(key[1])
             };
         });
-        this.buildVertice(vertices, faces_in, -1, -1, -1);
-        this.buildVertice(vertices, faces_in, -1, -1, 1);
-        this.buildVertice(vertices, faces_in, -1, 1, -1);
-        this.buildVertice(vertices, faces_in, -1, 1, 1);
-        this.buildVertice(vertices, faces_in, 1, -1, -1);
-        this.buildVertice(vertices, faces_in, 1, -1, 1);
-        this.buildVertice(vertices, faces_in, 1, 1, -1);
-        this.buildVertice(vertices, faces_in, 1, 1, 1);
+        each(vertices_pos, pos => {
+            this.buildVertice(vertices, faces_in, pos[0], pos[1], pos[2]);
+        });
     }
 
     buildVertice(vertices, faces_in, x, y, z) {
