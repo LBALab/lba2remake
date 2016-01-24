@@ -10,7 +10,10 @@ let faces = [];
 let b = new Box(0, 0, 0);
 let b2 = b.extrude(new Box(-1, 0.5, 0), 0, 0);
 let b3 = b2.extrude(new Box(-2, 0, 0), 0, 0);
+b3.extrude(new Box(-2.5, 1, 0), 1, 1);
 b.extrude(new Box(1, 0, 0), 0, 1);
+b.extrude(new Box(0, 1, 0), 1, 1).extrude(new Box(0, 2, 0.25), 1, 1);
+b.extrude(new Box(0, -2, 0), 1, 0);
 b.build(vertices, faces);
 
 console.log('vertices', vertices.length, 'faces', faces.length);
@@ -19,7 +22,7 @@ class Simple extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.cameraPosition = new THREE.Vector3(0, 0, 3);
+        this.cameraPosition = new THREE.Vector3(0, 0, 4);
 
         this.state = {
             cubeRotation: new THREE.Euler()
