@@ -50,18 +50,14 @@ class Box {
             };
         });
         each(range(8), idx => {
-            this.buildVertice(vertices, faces_in, idx);
+            const pos = vertices_pos[idx];
+            const face = find(faces_in, face => {
+                return pos[face.axis] == face.dir * 2 - 1;
+            });
+            if (!face) {
+                vertices.push(new Vector3(this.x + pos[0] * 0.5, this.y + pos[1] * 0.5, this.z + pos[2] * 0.5));
+            }
         });
-    }
-
-    buildVertice(vertices, faces_in, idx) {
-        const pos = vertices_pos[idx];
-        const face = find(faces_in, face => {
-            return pos[face.axis] == face.dir * 2 - 1;
-        });
-        if (!face) {
-            vertices.push(new Vector3(this.x + pos[0] * 0.5, this.y + pos[1] * 0.5, this.z + pos[2] * 0.5));
-        }
     }
 
     buildFaces(faces) {
