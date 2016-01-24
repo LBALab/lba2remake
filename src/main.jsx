@@ -26,17 +26,17 @@ class Box {
     }
 
     buildVertices(vertices) {
-        this.buildVertice(-1, -1, -1);
-        this.buildVertice(-1, -1, 1);
-        this.buildVertice(-1, 1, -1);
-        this.buildVertice(-1, 1, 1);
-        this.buildVertice(1, -1, -1);
-        this.buildVertice(1, -1, 1);
-        this.buildVertice(1, 1, -1);
-        this.buildVertice(1, 1, 1);
+        this.buildVertice(vertices, -1, -1, -1);
+        this.buildVertice(vertices, -1, -1, 1);
+        this.buildVertice(vertices, -1, 1, -1);
+        this.buildVertice(vertices, -1, 1, 1);
+        this.buildVertice(vertices, 1, -1, -1);
+        this.buildVertice(vertices, 1, -1, 1);
+        this.buildVertice(vertices, 1, 1, -1);
+        this.buildVertice(vertices, 1, 1, 1);
     }
 
-    buildVertice(x, y, z) {
+    buildVertice(vertices, x, y, z) {
         vertices.push(new Vector3(this.x + x * 0.5, this.y + y * 0.5, this.z + z * 0.5))
     }
 
