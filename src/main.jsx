@@ -17,9 +17,9 @@ class Box {
     }
 
     build(vertices, faces) {
-        const offset = vertices.length;
+        this.offset = vertices.length;
         this.buildVertices(vertices);
-        this.buildFaces(faces, offset);
+        this.buildFaces(faces);
         each(this.faces_out, extruded_box => {
             extruded_box.build(vertices, faces);
         })
@@ -54,16 +54,16 @@ class Box {
         }
     }
 
-    buildFaces(faces, offset) {
-        this.buildFace(faces, offset, 0, 0);
-        this.buildFace(faces, offset, 0, 1);
-        this.buildFace(faces, offset, 1, 0);
-        this.buildFace(faces, offset, 1, 1);
-        this.buildFace(faces, offset, 2, 0);
-        this.buildFace(faces, offset, 2, 1);
+    buildFaces(faces) {
+        this.buildFace(faces, 0, 0);
+        this.buildFace(faces, 0, 1);
+        this.buildFace(faces, 1, 0);
+        this.buildFace(faces, 1, 1);
+        this.buildFace(faces, 2, 0);
+        this.buildFace(faces, 2, 1);
     }
 
-    buildFace(faces, offset, axis, direction) {
+    buildFace(faces, axis, direction) {
         const key = `${axis}${direction}`;
         if (key in this.faces_in || key in this.faces_out) {
             return;
@@ -78,13 +78,13 @@ class Box {
         }
         if (direction == axis % 2)
             faces.push(
-                new Face3(idx[0] + offset, idx[1] + offset, idx[2] + offset),
-                new Face3(idx[1] + offset, idx[3] + offset, idx[2] + offset)
+                new Face3(idx[0] + this.offset, idx[1] + this.offset, idx[2] + this.offset),
+                new Face3(idx[1] + this.offset, idx[3] + this.offset, idx[2] + this.offset)
             );
         else
             faces.push(
-                new Face3(idx[0] + offset, idx[2] + offset, idx[1] + offset),
-                new Face3(idx[1] + offset, idx[2] + offset, idx[3] + offset)
+                new Face3(idx[0] + this.offset, idx[2] + this.offset, idx[1] + this.offset),
+                new Face3(idx[1] + this.offset, idx[2] + this.offset, idx[3] + this.offset)
             );
     }
 
