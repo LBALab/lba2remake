@@ -73,18 +73,18 @@ class Box {
         let idx = [];
         for (let i = 0; i < p; ++i) {
             for (let j = 0; j < p_inv; ++j) {
-                idx.push(i * p_inv * 2 + direction * p_inv + j);
+                idx.push(this.offset + i * p_inv * 2 + direction * p_inv + j);
             }
         }
         if (direction == axis % 2)
             faces.push(
-                new Face3(idx[0] + this.offset, idx[1] + this.offset, idx[2] + this.offset),
-                new Face3(idx[1] + this.offset, idx[3] + this.offset, idx[2] + this.offset)
+                new Face3(idx[0], idx[1], idx[2]),
+                new Face3(idx[1], idx[3], idx[2])
             );
         else
             faces.push(
-                new Face3(idx[0] + this.offset, idx[2] + this.offset, idx[1] + this.offset),
-                new Face3(idx[1] + this.offset, idx[2] + this.offset, idx[3] + this.offset)
+                new Face3(idx[0], idx[2], idx[1]),
+                new Face3(idx[1], idx[2], idx[3])
             );
     }
 
