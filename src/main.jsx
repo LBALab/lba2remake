@@ -2,6 +2,7 @@ import React from 'react';
 import React3 from 'react-three-renderer';
 import THREE, {Vector3, Face3} from 'three';
 import ReactDOM from 'react-dom';
+import {each} from 'lodash';
 
 var vertices = [];
 var faces = [];
@@ -11,38 +12,47 @@ class Box {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.extrudedFaces = {};
+        this.children = [];
     }
 
     build(vertices, faces) {
+        let offset = vertices.length;
         this.buildVertices(vertices);
-        this.buildFaces(faces);
+        this.buildFaces(faces, offset);
+        each(this.children, child => {
+            child.build(vertices, faces);
+        })
     }
 
     buildVertices(vertices) {
-        vertices.push(this.buildVertice(-1, -1, -1));
-        vertices.push(this.buildVertice(-1, -1, 1));
-        vertices.push(this.buildVertice(-1, 1, -1));
-        vertices.push(this.buildVertice(-1, 1, 1));
-        vertices.push(this.buildVertice(1, -1, -1));
-        vertices.push(this.buildVertice(1, -1, 1));
-        vertices.push(this.buildVertice(1, 1, -1));
-        vertices.push(this.buildVertice(1, 1, 1));
+        this.buildVertice(-1, -1, -1);
+        this.buildVertice(-1, -1, 1);
+        this.buildVertice(-1, 1, -1);
+        this.buildVertice(-1, 1, 1);
+        this.buildVertice(1, -1, -1);
+        this.buildVertice(1, -1, 1);
+        this.buildVertice(1, 1, -1);
+        this.buildVertice(1, 1, 1);
     }
 
     buildVertice(x, y, z) {
-        return new Vector3(this.x + x, this.y + y, this.z + z);
+        vertices.push(new Vector3(this.x + x * 0.5, this.y + y * 0.5, this.z + z * 0.5))
     }
 
-    buildFaces(faces) {
-        faces.push.apply(faces, this.buildFace(0, 0));
-        faces.push.apply(faces, this.buildFace(0, 1));
-        faces.push.apply(faces, this.buildFace(1, 0));
-        faces.push.apply(faces, this.buildFace(1, 1));
-        faces.push.apply(faces, this.buildFace(2, 0));
-        faces.push.apply(faces, this.buildFace(2, 1));
+    buildFaces(faces, offset) {
+        this.buildFace(faces, offset, 0, 0);
+        this.buildFace(faces, offset, 0, 1);
+        this.buildFace(faces, offset, 1, 0);
+        this.buildFace(faces, offset, 1, 1);
+        this.buildFace(faces, offset, 2, 0);
+        this.buildFace(faces, offset, 2, 1);
     }
 
-    buildFace(axis, direction) {
+    buildFace(faces, offset, axis, direction) {
+        if (`${axis}${direction}` in this.extrudedFaces) {
+            return;
+        }
         var p = Math.pow(2, axis);
         var p_inv = Math.pow(2, 2 - axis);
         var idx = [];
@@ -52,20 +62,37 @@ class Box {
             }
         }
         if (direction == axis % 2)
-            return [new Face3(idx[0], idx[1], idx[2]), new Face3(idx[1], idx[3], idx[2])];
+            faces.push(
+                new Face3(idx[0] + offset, idx[1] + offset, idx[2] + offset),
+                new Face3(idx[1] + offset, idx[3] + offset, idx[2] + offset)
+            );
         else
-            return [new Face3(idx[0], idx[2], idx[1]), new Face3(idx[1], idx[2], idx[3])];
+            faces.push(
+                new Face3(idx[0] + offset, idx[2] + offset, idx[1] + offset),
+                new Face3(idx[1] + offset, idx[2] + offset, idx[3] + offset)
+            );
+    }
+
+    extrude(box, axis, direction) {
+        this.extrudedFaces[`${axis}${direction}`] = box;
+        box.extrudedFaces[`${axis}${1 - direction}`] = this;
+        this.children.push(box);
+        return box;
     }
 }
 
 var b = new Box(0, 0, 0);
+b.extrude(new Box(-1, 0, 0), 0, 0);
 b.build(vertices, faces);
+
+console.log('vertices', vertices);
+console.log('faces', faces);
 
 class Simple extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.cameraPosition = new THREE.Vector3(0, 0, 5);
+        this.cameraPosition = new THREE.Vector3(0, 0, 3);
 
         this.state = {
             cubeRotation: new THREE.Euler()
@@ -74,8 +101,8 @@ class Simple extends React.Component {
         this._onAnimate = () => {
             this.setState({
                 cubeRotation: new THREE.Euler(
-                    this.state.cubeRotation.x + 0.002,
-                    this.state.cubeRotation.y + 0.002,
+                    this.state.cubeRotation.x + 0.005,
+                    this.state.cubeRotation.y + 0.005,
                     0
                 )
             });
@@ -100,7 +127,7 @@ class Simple extends React.Component {
                 <axisHelper rotation={this.state.cubeRotation}/>
                 <mesh rotation={this.state.cubeRotation}>
                     <geometry vertices={vertices} faces={faces}/>
-                    <meshBasicMaterial wireframe={false} color="red" />
+                    <meshBasicMaterial wireframe={true} color="red" />
                 </mesh>
             </scene>
         </React3>;
