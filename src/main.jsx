@@ -2,7 +2,7 @@ import React from 'react';
 import React3 from 'react-three-renderer';
 import THREE, {Vector3, Face3} from 'three';
 import ReactDOM from 'react-dom';
-import {each, map, find} from 'lodash';
+import {each, map, find, range} from 'lodash';
 
 var vertices = [];
 var faces = [];
@@ -49,18 +49,18 @@ class Box {
                 dir: parseInt(key[1])
             };
         });
-        each(vertices_pos, pos => {
-            this.buildVertice(vertices, faces_in, pos[0], pos[1], pos[2]);
+        each(range(8), idx => {
+            this.buildVertice(vertices, faces_in, idx);
         });
     }
 
-    buildVertice(vertices, faces_in, x, y, z) {
-        const direction = [x, y, z];
+    buildVertice(vertices, faces_in, idx) {
+        const pos = vertices_pos[idx];
         const face = find(faces_in, face => {
-            return direction[face.axis] == face.dir * 2 - 1;
+            return pos[face.axis] == face.dir * 2 - 1;
         });
         if (!face) {
-            vertices.push(new Vector3(this.x + x * 0.5, this.y + y * 0.5, this.z + z * 0.5));
+            vertices.push(new Vector3(this.x + pos[0] * 0.5, this.y + pos[1] * 0.5, this.z + pos[2] * 0.5));
         }
     }
 
