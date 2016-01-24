@@ -2,7 +2,7 @@ import React from 'react';
 import React3 from 'react-three-renderer';
 import THREE, {Vector3, Face3} from 'three';
 import ReactDOM from 'react-dom';
-import {each} from 'lodash';
+import {each, map, find} from 'lodash';
 
 var vertices = [];
 var faces = [];
@@ -26,18 +26,32 @@ class Box {
     }
 
     buildVertices(vertices) {
-        this.buildVertice(vertices, -1, -1, -1);
-        this.buildVertice(vertices, -1, -1, 1);
-        this.buildVertice(vertices, -1, 1, -1);
-        this.buildVertice(vertices, -1, 1, 1);
-        this.buildVertice(vertices, 1, -1, -1);
-        this.buildVertice(vertices, 1, -1, 1);
-        this.buildVertice(vertices, 1, 1, -1);
-        this.buildVertice(vertices, 1, 1, 1);
+        const faces_in = map(this.faces_in, (obj, key) => {
+            return {
+                axis: parseInt(key[0]),
+                dir: parseInt(key[1])
+            };
+        });
+        this.buildVertice(vertices, faces_in, -1, -1, -1);
+        this.buildVertice(vertices, faces_in, -1, -1, 1);
+        this.buildVertice(vertices, faces_in, -1, 1, -1);
+        this.buildVertice(vertices, faces_in, -1, 1, 1);
+        this.buildVertice(vertices, faces_in, 1, -1, -1);
+        this.buildVertice(vertices, faces_in, 1, -1, 1);
+        this.buildVertice(vertices, faces_in, 1, 1, -1);
+        this.buildVertice(vertices, faces_in, 1, 1, 1);
     }
 
-    buildVertice(vertices, x, y, z) {
-        vertices.push(new Vector3(this.x + x * 0.5, this.y + y * 0.5, this.z + z * 0.5))
+    buildVertice(vertices, faces_in, x, y, z) {
+        const direction = [x, y, z];
+        const face = find(faces_in, face => {
+            return direction[face.axis] == face.dir * 2 - 1;
+        });
+        if (face) {
+            vertices.push(new Vector3(this.x + x * 0.5, this.y + y * 0.5 + 0.1, this.z + z * 0.5));
+        } else {
+            vertices.push(new Vector3(this.x + x * 0.5, this.y + y * 0.5, this.z + z * 0.5));
+        }
     }
 
     buildFaces(faces, offset) {
