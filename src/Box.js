@@ -35,7 +35,7 @@ export default class Box extends Shape {
         const faces_in = map(this.faces_in, (obj, key) => Shape.key2Face(key));
         this.vert_num_map = {};
         let idx_minus_gaps = 0;
-        for (let idx = 0; idx < vertices_pos.length; ++idx) {
+        for (let idx in vertices_pos) {
             const pos = vertices_pos[idx];
             const in_face = find(faces_in, Shape.isPartOfFace.bind(null, pos));
             if (in_face) {
