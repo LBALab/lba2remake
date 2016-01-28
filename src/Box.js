@@ -37,13 +37,13 @@ export default class Box extends Shape {
         let idx_minus_gaps = 0;
         each(range(8), idx => {
             const pos = vertices_pos[idx];
-            const face = find(faces_in, Shape.isPartOfFace.bind(null, pos));
-            if (!face) {
+            const in_face = find(faces_in, Shape.isPartOfFace.bind(null, pos));
+            if (in_face) {
+                this.vert_num_map[idx] = -1;
+            } else {
                 vertices.push(new Vector3(this.x + pos[0] * 0.5, this.y + pos[1] * 0.5, this.z + pos[2] * 0.5));
                 this.vert_num_map[idx] = idx_minus_gaps;
                 idx_minus_gaps++;
-            } else {
-                this.vert_num_map[idx] = -1;
             }
         });
     }
