@@ -2,7 +2,8 @@ import React from 'react';
 import React3 from 'react-three-renderer';
 import THREE from 'three';
 import ReactDOM from 'react-dom';
-import Box from './Box'
+import Box from './Box';
+import Prism from './Prism';
 
 let vertices = [];
 let faces = [];
@@ -10,6 +11,7 @@ let faces = [];
 let b = new Box(0, 0, 0);
 let b2 = b.extrude(new Box(-1, 0.5, 0), 0, 0);
 let b3 = b2.extrude(new Box(-2, 0, 0), 0, 0);
+b3.extrude(new Prism(-3.5, 0, 0, 0, 1), 0, 0);
 b3.extrude(new Box(-2.5, 1, 0), 1, 1);
 b.extrude(new Box(1, 0, 0), 0, 1);
 b.extrude(new Box(0, 1, 0), 1, 1).extrude(new Box(0, 2, 0.25), 1, 1);

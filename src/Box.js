@@ -1,5 +1,6 @@
 import {Vector3, Face3} from 'three';
 import {each, map, find, range} from 'lodash';
+import Shape from './Shape'
 
 var vertices_pos = [
     [-1, -1, -1],
@@ -18,31 +19,20 @@ each(vertices_pos, (pos, idx) => {
     index_from_pos[pos.join(',')] = idx;
 });
 
-export default class Box {
+export default class Box extends Shape {
     constructor(x, y, z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.faces_in = {};
-        this.faces_out = {};
+        super(x, y, z);
     }
 
     build(vertices, faces) {
         this.offset = vertices.length;
         this.buildVertices(vertices);
         this.buildFaces(faces);
-        each(this.faces_out, extruded_box => {
-            extruded_box.build(vertices, faces);
-        })
+        super.build(vertices, faces);
     }
 
     buildVertices(vertices) {
-        const faces_in = map(this.faces_in, (obj, key) => {
-            return {
-                axis: parseInt(key[0]),
-                dir: parseInt(key[1])
-            };
-        });
+        const faces_in = map(this.faces_in, (obj, key) => Shape.key2Face(key));
         this.vert_num_map = {};
         let num = 0;
         each(range(8), idx => {
@@ -72,8 +62,7 @@ export default class Box {
     static findIndexFromOwner(box, pos) {
         for (let key in box.faces_in) {
             if (box.faces_in.hasOwnProperty(key)) {
-                const axis = parseInt(key[0]);
-                const dir = parseInt(key[1]);
+                const {axis, dir} = Shape.key2Face(key);
                 if (pos[axis] == dir * 2 - 1) {
                     const owner_box = box.faces_in[key];
                     let r_pos = pos.slice();
@@ -90,7 +79,7 @@ export default class Box {
     }
 
     buildFace(faces, axis, direction) {
-        const key = `${axis}${direction}`;
+        const key = Shape.face2Key(axis, direction);
         if (key in this.faces_in || key in this.faces_out) {
             return;
         }
@@ -119,11 +108,5 @@ export default class Box {
                 new Face3(indices[0], indices[2], indices[1]),
                 new Face3(indices[1], indices[2], indices[3])
             );
-    }
-
-    extrude(box, axis, direction) {
-        this.faces_out[`${axis}${direction}`] = box;
-        box.faces_in[`${axis}${1 - direction}`] = this;
-        return box;
     }
 }
