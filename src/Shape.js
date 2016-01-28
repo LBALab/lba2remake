@@ -35,4 +35,8 @@ export default class Shape {
             dir: parseInt(key[1])
         };
     }
+
+    static isPartOfFace(pos, face) {
+        return pos[face.axis] == face.dir * 2 - 1;
+    }
 }

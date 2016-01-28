@@ -34,16 +34,14 @@ export default class Box extends Shape {
     buildVertices(vertices) {
         const faces_in = map(this.faces_in, (obj, key) => Shape.key2Face(key));
         this.vert_num_map = {};
-        let num = 0;
+        let idx_minus_gaps = 0;
         each(range(8), idx => {
             const pos = vertices_pos[idx];
-            const face = find(faces_in, face => {
-                return pos[face.axis] == face.dir * 2 - 1;
-            });
+            const face = find(faces_in, Shape.isPartOfFace.bind(null, pos));
             if (!face) {
                 vertices.push(new Vector3(this.x + pos[0] * 0.5, this.y + pos[1] * 0.5, this.z + pos[2] * 0.5));
-                this.vert_num_map[idx] = num;
-                num++;
+                this.vert_num_map[idx] = idx_minus_gaps;
+                idx_minus_gaps++;
             } else {
                 this.vert_num_map[idx] = -1;
             }
