@@ -1,8 +1,9 @@
-import {Vector3, Face3} from 'three';
-import {each, map, find, range} from 'lodash';
-import Shape from './Shape'
+import {Face3} from 'three';
+import {each, find} from 'lodash';
 
-var vertices_pos = [
+import Shape from './Shape';
+
+const vertices_def = [
     [-1, -1, -1],
     [-1, -1, 1],
     [-1, 1, -1],
@@ -13,39 +14,9 @@ var vertices_pos = [
     [1, 1, 1]
 ];
 
-var index_from_pos = {};
-
-each(vertices_pos, (pos, idx) => {
-    index_from_pos[pos.join(',')] = idx;
-});
-
 export default class Box extends Shape {
     constructor(x, y, z) {
-        super(x, y, z);
-    }
-
-    build(vertices, faces) {
-        this.offset = vertices.length;
-        this.buildVertices(vertices);
-        this.buildFaces(faces);
-        super.build(vertices, faces);
-    }
-
-    buildVertices(vertices) {
-        const faces_in = map(this.faces_in, (obj, key) => Shape.key2Face(key));
-        this.vert_num_map = {};
-        let idx_minus_gaps = 0;
-        for (let idx in vertices_pos) {
-            const pos = vertices_pos[idx];
-            const in_face = find(faces_in, Shape.isPartOfFace.bind(null, pos));
-            if (in_face) {
-                this.vert_num_map[idx] = -1;
-            } else {
-                vertices.push(new Vector3(this.x + pos[0] * 0.5, this.y + pos[1] * 0.5, this.z + pos[2] * 0.5));
-                this.vert_num_map[idx] = idx_minus_gaps;
-                idx_minus_gaps++;
-            }
-        }
+        super(x, y, z, vertices_def);
     }
 
     buildFaces(faces) {
@@ -55,25 +26,6 @@ export default class Box extends Shape {
         this.buildFace(faces, 1, 1);
         this.buildFace(faces, 2, 0);
         this.buildFace(faces, 2, 1);
-    }
-
-    static findIndexFromOwner(box, pos) {
-        for (let key in box.faces_in) {
-            if (box.faces_in.hasOwnProperty(key)) {
-                const {axis, dir} = Shape.key2Face(key);
-                if (pos[axis] == dir * 2 - 1) {
-                    const owner_box = box.faces_in[key];
-                    let r_pos = pos.slice();
-                    r_pos[axis] *= -1;
-                    const index = index_from_pos[r_pos.join(',')];
-                    const real_index = owner_box.vert_num_map[index];
-                    if (real_index == -1)
-                        return Box.findIndexFromOwner(owner_box, r_pos);
-                    else
-                        return owner_box.offset + real_index;
-                }
-            }
-        }
     }
 
     buildFace(faces, axis, direction) {
@@ -87,12 +39,11 @@ export default class Box extends Shape {
         for (let i = 0; i < p; ++i) {
             for (let j = 0; j < p_inv; ++j) {
                 const index = i * p_inv * 2 + direction * p_inv + j;
-                const real_index = this.vert_num_map[index];
+                const real_index = this.shifted_vertex_index[index];
                 if (real_index != -1) {
                     indices.push(this.offset + real_index);
                 } else {
-                    const owner_index = Box.findIndexFromOwner(this, vertices_pos[index]);
-                    indices.push(owner_index);
+                    indices.push(Shape.findIndexFromOwner(this, index));
                 }
             }
         }

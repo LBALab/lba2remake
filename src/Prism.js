@@ -1,18 +1,12 @@
-import Shape from './Shape'
 import invariant from 'fbjs/lib/invariant';
+
+import Shape from './Shape';
 
 export default class Prism extends Shape {
     constructor(x, y, z, axis, direction) {
         super(x, y, z);
         this.axis = axis;
         this.direction = direction;
-    }
-
-    build(vertices, faces) {
-        this.offset = vertices.length;
-        this.buildVertices(vertices);
-        this.buildFaces(faces);
-        super.build(vertices, faces);
     }
 
     buildVertices(vertices) {
