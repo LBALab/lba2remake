@@ -1,61 +1,43 @@
-import {Face3} from 'three';
-import invariant from 'fbjs/lib/invariant';
+import {each, find} from 'lodash';
 
 import Shape from './Shape';
+import RectFace from './RectFace';
+import TriangleFace from './TriangleFace';
 
 const vertices_def = [
     [-1, -1, -1],
     [-1, -1, 1],
     [-1, 1, -1],
     [-1, 1, 1],
-    //[1, -1, -1],
-    //[1, -1, 1],
     [1, 0, -1],
     [1, 0, 1]
 ];
 
+const faces_def = [
+    new RectFace(0, 0),
+    new RectFace(1, 0),
+    new RectFace(1, 1),
+    new TriangleFace(2, 0),
+    new TriangleFace(2, 1)
+];
+
 export default class Prism extends Shape {
-    constructor(x, y, z, axis, direction) {
-        super(x, y, z, vertices_def);
-        this.axis = axis;
-        this.direction = direction;
+    constructor(x, y, z) {
+        super(x, y, z, vertices_def, faces_def);
     }
 
-    buildFace(faces, axis, direction) {
-        const key = Shape.face2Key(axis, direction);
-        if (key in this.intrusions || key in this.extrusions) {
-            return;
-        }
-        const p = Math.pow(2, axis);
-        const p_inv = Math.pow(2, 2 - axis);
+    computeFaceIndices(face_def) {
+        const p = Math.pow(2, face_def.axis);
+        const p_inv = Math.pow(2, 2 - face_def.axis);
         let indices = [];
         for (let i = 0; i < p; ++i) {
             for (let j = 0; j < p_inv; ++j) {
-                const index = i * p_inv * 2 + direction * p_inv + j;
-                const real_index = this.shifted_vertex_index[index];
-                if (real_index != -1) {
-                    indices.push(this.offset + real_index);
-                } else {
-                    indices.push(Shape.findIndexFromOwner(this, index));
-                }
+                let index = i * p_inv * 2 + face_def.direction * p_inv + j;
+                if (index >= 6)
+                    index -= 2;
+                indices.push(index);
             }
         }
-        if (direction == axis % 2)
-            faces.push(
-                new Face3(indices[0], indices[1], indices[2]),
-                new Face3(indices[1], indices[3], indices[2])
-            );
-        else
-            faces.push(
-                new Face3(indices[0], indices[2], indices[1]),
-                new Face3(indices[1], indices[2], indices[3])
-            );
-    }
-
-    intrude(shape, axis, direction) {
-        if (process.env.NODE_ENV !== 'production') {
-            invariant(Shape.face2Key(axis, direction) != Shape.face2Key(this.axis, 1 - this.direction), 'Cannot intrude this face');
-        }
-        super.intrude(shape, axis, direction);
+        return indices;
     }
 }

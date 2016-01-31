@@ -18,7 +18,7 @@ let b4 = b.extrude(new Box(1, 0, 0), new RectFace(0, 1));
 b.extrude(new Box(0, 1, 0), new RectFace(1, 1))
     .extrude(new Box(0, 2, 0.25), new RectFace(1, 1));
 b.extrude(new Box(0, -2, 0), new RectFace(1, 0));
-//let b = new Prism(0, 0, 0, 0, 0);
+b = new Prism(0, 0, 0);
 b.build(vertices, faces);
 
 console.log('vertices', vertices.length, 'faces', faces.length);
