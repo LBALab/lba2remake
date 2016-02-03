@@ -32,16 +32,16 @@ class Simple extends React.Component {
         this.state = {
             cubeRotation: new THREE.Euler()
         };
+    }
 
-        this._onAnimate = () => {
-            this.setState({
-                cubeRotation: new THREE.Euler(
-                    this.state.cubeRotation.x + 0.005,
-                    this.state.cubeRotation.y + 0.005,
-                    0
-                )
-            });
-        };
+    onAnimate() {
+        this.setState({
+            cubeRotation: new THREE.Euler(
+                this.state.cubeRotation.x + 0.005,
+                this.state.cubeRotation.y + 0.005,
+                0
+            )
+        });
     }
 
     render() {
