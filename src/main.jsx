@@ -2,9 +2,9 @@ import React from 'react';
 import React3 from 'react-three-renderer';
 import THREE from 'three';
 import ReactDOM from 'react-dom';
-import Box from './Box';
-import Prism from './Prism';
-import RectFace from './RectFace';
+import Box from './shapes/Box';
+import Prism from './shapes/Prism';
+import RectFace from './faces/RectFace';
 
 let vertices = [];
 let faces = [];
