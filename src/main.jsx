@@ -59,6 +59,7 @@ class Simple extends React.Component {
                        mainCamera="camera"
                        width={width}
                        height={height}
+                       antialias
                        onAnimate={this.onAnimate.bind(this)}>
             <scene>
                 <perspectiveCamera ref="mainCamera"
