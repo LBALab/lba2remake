@@ -2,6 +2,7 @@ import React from 'react';
 import React3 from 'react-three-renderer';
 import THREE from 'three';
 import ReactDOM from 'react-dom';
+import TrackballControls from './utils/trackball';
 import Box from './shapes/Box';
 import Prism from './shapes/Prism';
 import RectFace from './faces/RectFace';
@@ -27,42 +28,50 @@ class Simple extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.cameraPosition = new THREE.Vector3(0, 0, 4);
-
         this.state = {
-            cubeRotation: new THREE.Euler()
+            cameraPosition: new THREE.Vector3(0, 0, 4)
         };
     }
 
-    onAnimate() {
-        this.setState({
-            cubeRotation: new THREE.Euler(
-                this.state.cubeRotation.x + 0.005,
-                this.state.cubeRotation.y + 0.005,
-                0
-            )
+    componentDidMount() {
+        const controls = new TrackballControls(this.refs.mainCamera, ReactDOM.findDOMNode(this.refs.react3));
+
+        controls.rotateSpeed = 4.0;
+
+        controls.addEventListener('change', () => {
+            this.setState({
+                cameraPosition: this.refs.mainCamera.position
+            });
         });
+
+        this.controls = controls;
+    }
+
+    onAnimate() {
+        this.controls.update();
     }
 
     render() {
         const width = window.innerWidth;
         const height = window.innerHeight;
 
-        return <React3 mainCamera="camera"
+        return <React3 ref="react3"
+                       mainCamera="camera"
                        width={width}
                        height={height}
-                       onAnimate={this._onAnimate}>
+                       onAnimate={this.onAnimate.bind(this)}>
             <scene>
-                <perspectiveCamera name="camera"
+                <perspectiveCamera ref="mainCamera"
+                                   name="camera"
                                    fov={75}
                                    aspect={width / height}
                                    near={0.1}
                                    far={1000}
-                                   position={this.cameraPosition}/>
-                <axisHelper rotation={this.state.cubeRotation}/>
-                <mesh rotation={this.state.cubeRotation}>
+                                   position={this.state.cameraPosition}/>
+                <axisHelper/>
+                <mesh>
                     <geometry vertices={vertices} faces={faces}/>
-                    <meshBasicMaterial wireframe={true} color="red" />
+                    <meshBasicMaterial wireframe={true} color="red"/>
                 </mesh>
             </scene>
         </React3>;
