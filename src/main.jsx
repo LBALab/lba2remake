@@ -77,6 +77,10 @@ class Simple extends React.Component {
         </React3>;
     }
 }
+
 window.onload = function() {
-    ReactDOM.render(<Simple/>, document.getElementById('react-main'));
+
+    setTimeout(function() {
+        ReactDOM.render(<Simple/>, document.getElementById('react-main'));
+    }, 100);
 };
