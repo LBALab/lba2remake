@@ -22,6 +22,7 @@ module.exports = {
         ]
     },
     devServer: {
+        inline: true,
         contentBase: "./www"
     },
     plugins: [
