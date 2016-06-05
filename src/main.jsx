@@ -3,26 +3,20 @@ import React3 from 'react-three-renderer';
 import THREE from 'three';
 import ReactDOM from 'react-dom';
 import TrackballControls from './utils/trackball';
-import Box from './shapes/Box';
-import Prism from './shapes/Prism';
-import RectFace from './faces/RectFace';
 
 let vertices = [];
 let faces = [];
 
-let b = new Box(0, 0, 0);
-let b2 = b.extrude(new Box(-1, 0.5, 0), new RectFace(0, 0));
-let b3 = b2.extrude(new Box(-2, 0, 0), new RectFace(0, 0));
-b3.extrude(new Box(-2.5, 1, 0), new RectFace(1, 1));
-let b4 = b.extrude(new Box(1, 0, 0), new RectFace(0, 1));
-//b4.extrude(new Prism(2, 0, 0, 0, 0), 0, 1);
-b.extrude(new Box(0, 1, 0), new RectFace(1, 1))
-    .extrude(new Box(0, 2, 0.25), new RectFace(1, 1));
-b.extrude(new Box(0, -2, 0), new RectFace(1, 0));
-b = new Prism(0, 0, 0);
-b.build(vertices, faces);
-
-console.log('vertices', vertices.length, 'faces', faces.length);
+var loader = new THREE.XHRLoader();
+loader.setResponseType('arraybuffer');
+loader.load('lba2_data/CITABAU.ILE', function ( buffer ) {
+    const uia = new Uint32Array(buffer, 0, 256);
+    const indices = [];
+    for (let i = 0; i < 256; ++i) {
+        indices.push(uia[i]);
+    }
+    console.log('onload', buffer.byteLength, indices);
+});
 
 class Simple extends React.Component {
     constructor(props, context) {
