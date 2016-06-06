@@ -3,21 +3,14 @@ import React3 from 'react-three-renderer';
 import THREE from 'three';
 import ReactDOM from 'react-dom';
 import TrackballControls from './utils/trackball';
+import HQR from './hqr';
 
 let vertices = [];
 let faces = [];
 
-var loader = new THREE.XHRLoader();
-loader.setResponseType('arraybuffer');
-loader.load('lba2_data/CITABAU.ILE', function ( buffer ) {
-    const uia = new Uint32Array(buffer, 0, 256);
-    const indices = [];
-    for (let i = 0; i < 256; ++i) {
-        if (uia[i] == buffer.byteLength)
-            break;
-        indices.push(uia[i]);
-    }
-    console.log('onload', indices.length, indices);
+const citabau = new HQR();
+citabau.load('lba2_data/CITABAU.ILE', function() {
+    console.log('onload', citabau.length, citabau[0]);
 });
 
 class Simple extends React.Component {
