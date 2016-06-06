@@ -49,9 +49,6 @@ export default class Renderer {
                 const ground_texture = new Uint8Array(this.getEntry(1));
                 const image_data = new Uint8Array(256 * 256 * 4);
                 for (let i = 0; i < 65536; ++i) { // 256 * 256
-                    //image_data[i * 4] = palette[ground_texture[i] * 3];
-                    //image_data[i * 4 + 1] = palette[ground_texture[i] * 3 + 1];
-                    //image_data[i * 4 + 2] = palette[ground_texture[i] * 3 + 2];
                     image_data[i * 4] = palette[ground_texture[i] * 3];
                     image_data[i * 4 + 1] = palette[ground_texture[i] * 3 + 1];
                     image_data[i * 4 + 2] = palette[ground_texture[i] * 3 + 2];
