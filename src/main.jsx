@@ -10,7 +10,7 @@ let faces = [];
 
 const citabau = new HQR();
 citabau.load('lba2_data/CITABAU.ILE', function() {
-    console.log('onload', citabau.length, citabau[0]);
+    console.log('onload', citabau.length, citabau._entries);
 });
 
 class Simple extends React.Component {

@@ -14,21 +14,31 @@ export default class HQR {
         };
 
         request.send(null);
+        this._entries = [];
+    }
+
+    get length() {
+        return this._entries.length;
     }
 
     getEntry(index) {
+        const entry = this._entries[index];
         
     }
 
     _readHeader() {
-        this._indices = [];
-        const uia = new Uint32Array(this._buffer, 0, 256);
+        const idx_array = new Uint32Array(this._buffer, 0, 256);
         for (let i = 0; i < 256; ++i) {
-            if (uia[i] >= this._buffer.byteLength)
+            if (idx_array[i] >= this._buffer.byteLength)
                 break;
-            this._indices.push(uia[i]);
+            const header = new DataView(this._buffer, idx_array[i], 10);
+            this._entries.push({
+                offset: idx_array[i],
+                originalSize: header.getUint32(0, true),
+                compressedSize: header.getUint32(4, true),
+                type: header.getInt16(8, true)
+            });
         }
-        this.length = this._indices.length;
     }
 }
 
