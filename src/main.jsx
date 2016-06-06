@@ -13,9 +13,11 @@ loader.load('lba2_data/CITABAU.ILE', function ( buffer ) {
     const uia = new Uint32Array(buffer, 0, 256);
     const indices = [];
     for (let i = 0; i < 256; ++i) {
+        if (uia[i] == buffer.byteLength)
+            break;
         indices.push(uia[i]);
     }
-    console.log('onload', buffer.byteLength, indices);
+    console.log('onload', indices.length, indices);
 });
 
 class Simple extends React.Component {
