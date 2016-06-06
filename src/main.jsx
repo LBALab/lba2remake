@@ -1,15 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-import HQR from './hqr';
 import Renderer from './renderer';
-
-const citabau = new HQR();
-citabau.load('lba2_data/CITABAU.ILE', function() {
-    console.log('onload', citabau.getEntry(0));
-});
-
-window.citabau = citabau;
 
 class ThreeContainer extends React.Component{
 

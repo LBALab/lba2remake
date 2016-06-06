@@ -1,5 +1,6 @@
 import THREE from 'three';
 import FirstPersonControls from './controls/FirstPersonControls'
+import HQR from './hqr';
 
 export default class Renderer {
     constructor(width, height) {
@@ -7,9 +8,9 @@ export default class Renderer {
 
         // Camera init
         this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-        this.camera.position.x = 10;
-        this.camera.position.y = 2;
-        this.camera.position.z = 2;
+        this.camera.position.x = 0;
+        this.camera.position.y = 0;
+        this.camera.position.z = 10;
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         // Scene
@@ -34,9 +35,38 @@ export default class Renderer {
         this.controls = new FirstPersonControls(this.camera);
         this.controls.lookSpeed = 0.1;
         this.controls.movementSpeed = 10;
+        this.controls.enabled = false;
 
         // Render loop
         this.animate();
+
+        const that = this;
+
+        window.ress = new HQR().load('data/RESS.HQR', function() {
+            const palette = new Uint8Array(this.getEntry(0));
+            window.citabau = new HQR().load('data/CITABAU.ILE', function() {
+                const layout = new Uint8Array(this.getEntry(0));
+                const ground_texture = new Uint8Array(this.getEntry(1));
+                const image_data = new Uint8Array(256 * 256 * 4);
+                for (let i = 0; i < 65536; ++i) { // 256 * 256
+                    //image_data[i * 4] = palette[ground_texture[i] * 3];
+                    //image_data[i * 4 + 1] = palette[ground_texture[i] * 3 + 1];
+                    //image_data[i * 4 + 2] = palette[ground_texture[i] * 3 + 2];
+                    image_data[i * 4] = palette[ground_texture[i] * 3];
+                    image_data[i * 4 + 1] = palette[ground_texture[i] * 3 + 1];
+                    image_data[i * 4 + 2] = palette[ground_texture[i] * 3 + 2];
+                    image_data[i * 4 + 3] = 0xFF;
+                }
+                const geometry = new THREE.PlaneGeometry(10, 10);
+                const material = new THREE.MeshBasicMaterial({
+                    side: THREE.DoubleSide,
+                    map: new THREE.DataTexture(image_data, 256, 256)
+                });
+                material.map.needsUpdate = true;
+                var plane = new THREE.Mesh(geometry, material);
+                that.scene.add(plane);
+            });
+        });
     }
 
     onResize(width, height) {

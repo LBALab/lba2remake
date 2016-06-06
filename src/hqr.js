@@ -1,5 +1,6 @@
 export default class HQR {
     load(url, callback) {
+        this._entries = [];
         var that = this;
         var request = new XMLHttpRequest();
         request.responseType = 'arraybuffer';
@@ -9,12 +10,11 @@ export default class HQR {
             if (this.status === 200) {
                 that._buffer = request.response;
                 that._readHeader();
-                callback();
+                callback.call(that);
             }
         };
 
         request.send(null);
-        this._entries = [];
     }
 
     get length() {
@@ -38,14 +38,13 @@ export default class HQR {
                     if ((flag & (1 << i)) != 0) {
                         target[tgt_pos] = source[src_pos];
                         tgt_pos++;
-                    }
-                    else {
+                    } else {
                         let e = source[src_pos] * 256 + source[src_pos + 1];
                         let len = ((e >> 8) & 0x000F) + entry.type + 1;
                         let addr = ((e << 4) & 0x0FF0) + ((e >> 12) & 0x00FF);
 
                         for (let g = 0; g < len; ++g) {
-                            target[tgt_pos] = target[tgt_pos - addr];
+                            target[tgt_pos] = target[tgt_pos - addr - 1];
                             tgt_pos++;
                         }
                         src_pos++;
