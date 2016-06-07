@@ -1,6 +1,6 @@
 import THREE from 'three';
-import FirstPersonControls from './controls/FirstPersonControls'
-import HQR from './hqr';
+import FirstPersonControls from './controls/FirstPersonControls';
+import island from './island';
 
 export default class Renderer {
     constructor(width, height) {
@@ -15,10 +15,6 @@ export default class Renderer {
 
         // Scene
         this.scene = new THREE.Scene();
-        var geometry = new THREE.BoxGeometry(1, 1, 1);
-        var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-        var cube = new THREE.Mesh(geometry, material);
-        this.scene.add(cube);
 
         // Renderer init
         this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: false});
@@ -40,29 +36,8 @@ export default class Renderer {
         // Render loop
         this.animate();
 
-        const that = this;
-
-        window.ress = new HQR().load('data/RESS.HQR', function() {
-            const palette = new Uint8Array(this.getEntry(0));
-            window.citabau = new HQR().load('data/CITABAU.ILE', function() {
-                const layout = new Uint8Array(this.getEntry(0));
-                const ground_texture = new Uint8Array(this.getEntry(1));
-                const image_data = new Uint8Array(256 * 256 * 4);
-                for (let i = 0; i < 65536; ++i) { // 256 * 256
-                    image_data[i * 4] = palette[ground_texture[i] * 3];
-                    image_data[i * 4 + 1] = palette[ground_texture[i] * 3 + 1];
-                    image_data[i * 4 + 2] = palette[ground_texture[i] * 3 + 2];
-                    image_data[i * 4 + 3] = 0xFF;
-                }
-                const geometry = new THREE.PlaneGeometry(10, 10);
-                const material = new THREE.MeshBasicMaterial({
-                    side: THREE.DoubleSide,
-                    map: new THREE.DataTexture(image_data, 256, 256)
-                });
-                material.map.needsUpdate = true;
-                var plane = new THREE.Mesh(geometry, material);
-                that.scene.add(plane);
-            });
+        island('CITABAU', (object) => {
+            this.scene.add(object);
         });
     }
 
