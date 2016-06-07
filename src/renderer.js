@@ -1,5 +1,6 @@
 import THREE from 'three';
 import FirstPersonControls from './controls/FirstPersonControls';
+import OrbitControls from './controls/OrbitControls';
 import island from './island';
 
 export default class Renderer {
@@ -9,9 +10,9 @@ export default class Renderer {
         // Camera init
         this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
         this.camera.position.x = 0;
-        this.camera.position.y = 0;
-        this.camera.position.z = 10;
-        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        this.camera.position.y = 64;
+        this.camera.position.z = 256;
+        this.camera.lookAt(new THREE.Vector3());
 
         // Scene
         this.scene = new THREE.Scene();
@@ -28,10 +29,7 @@ export default class Renderer {
         this.renderer.domElement.style.top = 0;
         this.renderer.domElement.style.opacity = 1.0;
 
-        this.controls = new FirstPersonControls(this.camera);
-        this.controls.lookSpeed = 0.1;
-        this.controls.movementSpeed = 10;
-        this.controls.enabled = false;
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
         // Render loop
         this.animate();
@@ -49,7 +47,7 @@ export default class Renderer {
 
     animate() {
         requestAnimationFrame(this.animate.bind(this));
-        this.controls.update(this.clock.getDelta());
+        //this.controls.update();
         this.render();
     }
 
