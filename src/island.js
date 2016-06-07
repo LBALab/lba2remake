@@ -64,9 +64,24 @@ function load_layout(data, callback) {
     callback(null, layout);
 }
 
+class Heightmap {
+    constructor(buffer) {
+        this._heights = new Uint16Array(buffer)
+    }
+
+    getHeights(x, y) {
+        const ax = x + 32;
+        const ay = y + 32;
+        return [
+            [this._heights[ax * 64 + ay], this._heights[ax * 64 + ay + 1]],
+            [this._heights[(ax + 1) * 64 + ay], this._heights[(ax + 1) * 64 + ay + 1]],
+        ];
+    }
+}
+
 function load_ground(data, callback) {
     _.each(data.layout, section => {
-        section.heightmap = new Uint16Array(data.hqr_island.getEntry(section.id * 6 + 1))
+        section.heightmap = new Heightmap(data.hqr_island.getEntry(section.id * 6 + 1))
     });
     callback();
 }
