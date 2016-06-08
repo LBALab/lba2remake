@@ -112,9 +112,6 @@ function load_ground(layout, palette, ground_texture) {
                 const triangle = (idx) => new Triangle(section.triangles[(x * 64 + y) * 2 + idx]);
                 const t0 = triangle(0);
                 const t1 = triangle(1);
-                if (t0.orientation == t1.orientation) {
-                    console.log(t0, t1);
-                }
                 const r = t0.orientation;
                 const s = 1 - r;
                 const pt = (sx, sy) => s_offset + (x + sx) * 65 + y + sy;
