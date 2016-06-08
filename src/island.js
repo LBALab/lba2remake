@@ -56,10 +56,7 @@ function load_texture(buffer, palette) {
 }
 
 function load_ground(layout, palette) {
-    const material = new THREE.MultiMaterial([
-        new THREE.MeshBasicMaterial({wireframe: false, color: 0xFF0000}),
-        new THREE.MeshBasicMaterial({wireframe: false, color: 0x0000FF})
-    ]);
+    const material = new THREE.MeshBasicMaterial({wireframe: true, color: 0xFF0000});
     const geometry = new THREE.Geometry();
     const {vertices, faces} = geometry;
     geometry.colorsNeedUpdate = true;
@@ -76,41 +73,11 @@ function load_ground(layout, palette) {
             for (let y = 0; y < 64; ++y) {
                 const t0 = get_triangle(section.triangles, (x * 64 + y) * 2);
                 const t1 = get_triangle(section.triangles, (x * 64 + y) * 2 + 1);
-
-                const x0 = x * 65;
-                const x1 = (x + 1) * 65;
-                const y0 = y;
-                const y1 = y + 1;
-
-                if (t0.orientation) {
-                    const m0 = t0.useTexture ? 1 : 0;
-                    faces.push(new THREE.Face3(
-                        s_offset + x0 + y0,
-                        s_offset + x1 + y0,
-                        s_offset + x0 + y1,
-                        null, null, m0
-                    ));
-                    faces.push(new THREE.Face3(
-                        s_offset + x1 + y1,
-                        s_offset + x0 + y1,
-                        s_offset + x1 + y0,
-                        null, null, m0
-                    ));
-                } else {
-                    const m1 = t1.useTexture ? 1 : 0;
-                    faces.push(new THREE.Face3(
-                        s_offset + x0 + y1,
-                        s_offset + x0 + y0,
-                        s_offset + x1 + y1,
-                        null, null, m1
-                    ));
-                    faces.push(new THREE.Face3(
-                        s_offset + x1 + y0,
-                        s_offset + x1 + y1,
-                        s_offset + x0 + y0,
-                        null, null, m1
-                    ));
-                }
+                const r = t0.orientation;
+                const s = 1 - r;
+                const pt = (sx, sy) => s_offset + (x + sx) * 65 + y + sy;
+                faces.push(new THREE.Face3(pt(0, s), pt(r, 0), pt(s, 1)));
+                faces.push(new THREE.Face3(pt(1, r), pt(s, 1), pt(r, 0)));
             }
         }
     });
