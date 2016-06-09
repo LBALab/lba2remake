@@ -1,17 +1,18 @@
 import THREE from 'three';
 import _ from 'lodash';
+import {loadSubTexture} from '../texture';
 
 const push = Array.prototype.push;
 
-export function loadGround(layout, palette, ground_texture) {
+export function loadGround(island) {
     const geometry = new THREE.Geometry();
     const material = new THREE.MeshBasicMaterial({
         wireframe: false,
         vertexColors: THREE.FaceColors,
-        map: ground_texture
+        map: loadSubTexture(island.files.ile.getEntry(1), island.palette, 0, 0, 32, 32)
     });
 
-    loadSections(layout, palette, geometry);
+    loadSections(island, geometry);
 
     geometry.colorsNeedUpdate = true;
     geometry.uvsNeedUpdate = true;
@@ -20,14 +21,14 @@ export function loadGround(layout, palette, ground_texture) {
     return new THREE.Mesh(geometry, material);
 }
 
-function loadSections(layout, palette, geometry) {
-    _.each(layout, section => {
+function loadSections(island, geometry) {
+    _.each(island.layout, section => {
         const vertices = _.map(section.heightmap, heightToVector.bind(null, section));
         push.apply(geometry.vertices, vertices);
 
         for (let x = 0; x < 64; ++x) {
             for (let y = 0; y < 64; ++y) {
-                const quad = loadQuad(section, palette, x, y);
+                const quad = loadQuad(section, island.palette, x, y);
                 push.apply(geometry.faces, quad.faces);
                 push.apply(geometry.faceVertexUvs[0], quad.uvs);
             }

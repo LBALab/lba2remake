@@ -36,7 +36,6 @@ export default class Renderer {
         island('CITABAU', (object) => {
             this.scene.add(object);
         });
-        console.log(this.renderer);
     }
 
     onResize(width, height) {
