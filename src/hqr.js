@@ -79,3 +79,11 @@ export default class HQR {
         }
     }
 }
+
+export function loadHqrAsync(file) {
+    return (callback) => {
+        new HQR().load(`data/${file}`, function() {
+            callback.call(null, null, this);
+        });
+    }
+}

@@ -1,5 +1,4 @@
 import THREE from 'three';
-import FirstPersonControls from './controls/FirstPersonControls';
 import OrbitControls from './controls/OrbitControls';
 import island from './island';
 
