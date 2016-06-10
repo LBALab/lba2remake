@@ -1,6 +1,6 @@
 import THREE from 'three';
 import _ from 'lodash';
-import {loadSubTexture} from '../texture';
+import {loadTexture} from '../texture';
 
 const push = Array.prototype.push;
 
@@ -9,7 +9,7 @@ export function loadGround(island) {
     const material = new THREE.MeshBasicMaterial({
         wireframe: false,
         vertexColors: THREE.FaceColors,
-        map: loadSubTexture(island.files.ile.getEntry(1), island.palette, 0, 0, 32, 32)
+        map: loadTexture(island.files.ile.getEntry(1), island.palette)
     });
 
     loadSections(island, geometry);
@@ -39,7 +39,7 @@ function loadSections(island, geometry) {
 function heightToVector(section, height, index) {
     const x = section.x * 64 + (65 - Math.floor(index / 65));
     const y = section.y * 64 + (index % 65);
-    return new THREE.Vector3(x, height / 256.0 / 1.5, y);
+    return new THREE.Vector3(x / 32, height / 0x4000, y / 32);
 }
 
 function loadQuad(section, palette, x, y) {
@@ -54,16 +54,18 @@ function loadQuad(section, palette, x, y) {
     const r = t0.orientation;
     const s = 1 - r;
 
-    const point = (xi, yi) => section.index * 65 * 65 + (x + xi) * 65 + y + yi;
+    const point = (xi, yi) => (x + xi) * 65 + y + yi;
+    const o = section.index * 65 * 65;
 
-    //textureInfo[tri[t].textureIndex].uv[uvOrder[i]].u
     if (t0.useColor || t0.useTexture) {
-        quad.faces.push(new THREE.Face3(point(0, s), point(r, 0), point(s, 1), null, getColor(t0, palette)));
-        quad.uvs.push([new THREE.Vector2(0, s), new THREE.Vector2(r, 0), new THREE.Vector2(s, 1)]);
+        const p = [point(0, r), point(s, 0), point(1, s)];
+        quad.faces.push(new THREE.Face3(o + p[0], o + p[1], o + p[2], null, getColors(section, t0, palette, p)));
+        quad.uvs.push(getUVs(section.textureInfo, t0, 1));
     }
     if (t1.useColor || t1.useTexture) {
-        quad.faces.push(new THREE.Face3(point(1, r), point(s, 1), point(r, 0), null, getColor(t1, palette)));
-        quad.uvs.push([new THREE.Vector2(1, r), new THREE.Vector2(s, 1), new THREE.Vector2(r, 0)]);
+        const p = [point(1, s), point(r, 1), point(0, r)];
+        quad.faces.push(new THREE.Face3(o + p[0], o + p[1], o + p[2], null, getColors(section, t1, palette, p)));
+        quad.uvs.push(getUVs(section.textureInfo, t1, 1));
     }
 
     return quad;
@@ -71,21 +73,50 @@ function loadQuad(section, palette, x, y) {
 
 function loadTriangle(section, x, y, idx) {
     const t = section.triangles[(x * 64 + y) * 2 + idx];
+    const bits = (bitfield, offset, length) => (bitfield & (((1 << length) - 1)) << offset) >> offset;
     return {
-        textureBank: t & 0xF, // 0 -> 4
-        useTexture: (t & 0x30) >> 4, // 4 -> 6
-        useColor: (t & 0xC0) >> 6, // 6 -> 8
-        orientation: (t & 0x10000) >> 16, // 16 -> 17
-        textureIndex: (t & 0xFFF80000) >> 19 // 19 -> 32
+        textureBank: bits(t, 0, 4),
+        useTexture: bits(t, 4, 2),
+        useColor: bits(t, 6, 2),
+        orientation: bits(t, 16, 1),
+        textureIndex: bits(t, 19, 13)
     };
 }
 
-function getColor(triangle, palette) {
-    if (triangle.useColor) {
-        const idx = triangle.textureBank * 16;
-        const r = palette[idx];
-        const g = palette[idx + 1];
-        const b = palette[idx + 2];
-        return new THREE.Color(r << 24 + g << 16 + b << 8);
+function getUVs(textureInfo, triangle, field) {
+    const div = uv => uv / 255;
+    const index = triangle.textureIndex;
+    if (triangle.useTexture) {
+        return [
+            new THREE.Vector2(div(textureInfo[index * 12 + field]), div(textureInfo[index * 12 + 2 + field])),
+            new THREE.Vector2(div(textureInfo[index * 12 + 4 + field]), div(textureInfo[index * 12 + 6 + field])),
+            new THREE.Vector2(div(textureInfo[index * 12 + 8 + field]), div(textureInfo[index * 12 + 10 + field]))
+        ];
+    } else {
+        return [
+            new THREE.Vector2(1, 1),
+            new THREE.Vector2(1, 1),
+            new THREE.Vector2(1, 1)
+        ];
     }
+}
+
+function getColors(section, triangle, palette, points) {
+    if (triangle.useColor || true) {
+        const intensity = section.intensity;
+        return [
+            getColor(triangle, palette, (intensity[points[0]] & 15) + 5),
+            getColor(triangle, palette, (intensity[points[1]] & 15) + 5),
+            getColor(triangle, palette, (intensity[points[2]] & 15) + 5)
+        ];
+    }
+}
+
+function getColor(triangle, palette, intensity) {
+    const idx = (triangle.textureBank << 4) + 11;
+    const i = intensity * 3;
+    const r = palette[idx + i] / 255;
+    const g = palette[idx + i] / 255;
+    const b = palette[idx + i] / 255;
+    return new THREE.Color(intensity / 15, intensity / 15, intensity / 15);
 }

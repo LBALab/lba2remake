@@ -7,10 +7,10 @@ export default class Renderer {
         this.clock = new THREE.Clock();
 
         // Camera init
-        this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+        this.camera = new THREE.PerspectiveCamera(75, width / height, 0.03, 100);
         this.camera.position.x = 0;
-        this.camera.position.y = 64;
-        this.camera.position.z = 256;
+        this.camera.position.y = 2;
+        this.camera.position.z = 8;
         this.camera.lookAt(new THREE.Vector3());
 
         // Scene
@@ -29,6 +29,7 @@ export default class Renderer {
         this.renderer.domElement.style.opacity = 1.0;
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.zoomSpeed = 2.0;
 
         // Render loop
         this.animate();
