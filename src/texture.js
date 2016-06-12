@@ -4,10 +4,18 @@ export function loadTexture(buffer, palette) {
     const pixel_data = new Uint8Array(buffer);
     const image_data = new Uint8Array(256 * 256 * 4);
     for (let i = 0; i < 65536; ++i) { // 256 * 256
-        image_data[i * 4] = palette[pixel_data[i] * 3];
-        image_data[i * 4 + 1] = palette[pixel_data[i] * 3 + 1];
-        image_data[i * 4 + 2] = palette[pixel_data[i] * 3 + 2];
-        image_data[i * 4 + 3] = 0xFF;
+        const idx = pixel_data[i];
+        if (idx == 0) {
+            image_data[i * 4] = 0;
+            image_data[i * 4 + 1] = 0;
+            image_data[i * 4 + 2] = 0;
+            image_data[i * 4 + 3] = 0;
+        } else {
+            image_data[i * 4] = palette[idx * 3];
+            image_data[i * 4 + 1] = palette[idx * 3 + 1];
+            image_data[i * 4 + 2] = palette[idx * 3 + 2];
+            image_data[i * 4 + 3] = 0xFF;
+        }
     }
     const texture = new THREE.DataTexture(
         image_data,

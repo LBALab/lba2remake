@@ -1,24 +1,27 @@
 import THREE from 'three';
 import _ from 'lodash';
 import {loadTexture} from '../texture';
+import vertexShader from './shaders/ground.vert.glsl';
+import fragmentShader from './shaders/ground.frag.glsl';
 
 const push = Array.prototype.push;
 
 export function loadGround(island) {
     const geometry = new THREE.Geometry();
-    const material = new THREE.MeshBasicMaterial({
-        wireframe: false,
+    const bufferGeometry = new THREE.BufferGeometry();
+    const material = new THREE.ShaderMaterial({
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
         vertexColors: THREE.FaceColors,
-        map: loadTexture(island.files.ile.getEntry(1), island.palette)
+        uniforms: {
+            tiles: {value: loadTexture(island.files.ile.getEntry(1), island.palette)}
+        }
     });
 
     loadSections(island, geometry);
 
-    geometry.colorsNeedUpdate = true;
-    geometry.uvsNeedUpdate = true;
-    geometry.computeBoundingSphere();
-
-    return new THREE.Mesh(geometry, material);
+    bufferGeometry.fromGeometry(geometry);
+    return new THREE.Mesh(bufferGeometry, material);
 }
 
 function loadSections(island, geometry) {
@@ -87,16 +90,26 @@ function getUVs(textureInfo, triangle, field) {
     const div = uv => uv / 255;
     const index = triangle.textureIndex;
     if (triangle.useTexture) {
+        const direction = triangle.useColor ? -1 : 1;
         return [
-            new THREE.Vector2(div(textureInfo[index * 12 + field]), div(textureInfo[index * 12 + 2 + field])),
-            new THREE.Vector2(div(textureInfo[index * 12 + 4 + field]), div(textureInfo[index * 12 + 6 + field])),
-            new THREE.Vector2(div(textureInfo[index * 12 + 8 + field]), div(textureInfo[index * 12 + 10 + field]))
+            new THREE.Vector2(
+                div(textureInfo[index * 12 + field]) * direction,
+                div(textureInfo[index * 12 + 2 + field]) * direction
+            ),
+            new THREE.Vector2(
+                div(textureInfo[index * 12 + 4 + field]) * direction,
+                div(textureInfo[index * 12 + 6 + field]) * direction
+            ),
+            new THREE.Vector2(
+                div(textureInfo[index * 12 + 8 + field]) * direction,
+                div(textureInfo[index * 12 + 10 + field]) * direction
+            )
         ];
     } else {
         return [
-            new THREE.Vector2(1, 1),
-            new THREE.Vector2(1, 1),
-            new THREE.Vector2(1, 1)
+            new THREE.Vector2(-2000, -2000),
+            new THREE.Vector2(-2000, -2000),
+            new THREE.Vector2(-2000, -2000)
         ];
     }
 }
