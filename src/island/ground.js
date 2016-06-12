@@ -102,21 +102,24 @@ function getUVs(textureInfo, triangle, field) {
 }
 
 function getColors(section, triangle, palette, points) {
-    if (triangle.useColor || true) {
-        const intensity = section.intensity;
-        return [
-            getColor(triangle, palette, (intensity[points[0]] & 15) + 5),
-            getColor(triangle, palette, (intensity[points[1]] & 15) + 5),
-            getColor(triangle, palette, (intensity[points[2]] & 15) + 5)
-        ];
-    }
+    const intensity = section.intensity;
+    return [
+        getColor(triangle, palette, intensity[points[0]] & 0xF),
+        getColor(triangle, palette, intensity[points[1]] & 0xF),
+        getColor(triangle, palette, intensity[points[2]] & 0xF)
+    ];
 }
 
 function getColor(triangle, palette, intensity) {
-    const idx = (triangle.textureBank << 4) + 11;
-    const i = intensity * 3;
-    const r = palette[idx + i] / 255;
-    const g = palette[idx + i] / 255;
-    const b = palette[idx + i] / 255;
-    return new THREE.Color(intensity / 15, intensity / 15, intensity / 15);
+    if (triangle.useColor) {
+        const idx = (triangle.textureBank << 4) * 3;
+        const i = intensity * 3;
+        const r = palette[idx + i] / 255;
+        const g = palette[idx + i + 1] / 255;
+        const b = palette[idx + i + 2] / 255;
+        return new THREE.Color(r, g, b);
+    } else {
+        const i = (intensity / 15) * 0.8 + 0.2;
+        return new THREE.Color(i, i, i);
+    }
 }

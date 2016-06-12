@@ -9,8 +9,20 @@ export function loadTexture(buffer, palette) {
         image_data[i * 4 + 2] = palette[pixel_data[i] * 3 + 2];
         image_data[i * 4 + 3] = 0xFF;
     }
-    const texture = new THREE.DataTexture(image_data, 256, 256);
+    const texture = new THREE.DataTexture(
+        image_data,
+        256,
+        256,
+        THREE.RGBAFormat,
+        THREE.UnsignedByteType,
+        THREE.UVMapping,
+        THREE.RepeatWrapping,
+        THREE.RepeatWrapping,
+        THREE.NearestFilter,
+        THREE.LinearMipMapLinearFilter
+    );
     texture.needsUpdate = true;
+    texture.generateMipmaps = true;
     return texture;
 }
 
