@@ -2,6 +2,26 @@ import THREE from 'three';
 import OrbitControls from './controls/OrbitControls';
 import island from './island';
 
+const islands = [
+    'CITADEL',
+    'CITABAU',
+    'DESERT',
+    'OTRINGAL',
+    'KNARTAS',
+    'ASCENCE',
+    'CELEBRA2',
+    'CELEBRAT',
+    'ILOTCX',
+    'MOSQUIBE',
+    'PLATFORM',
+    'SOUSCELB',
+    'MOON',
+    'EMERAUDE'
+];
+
+let index = 0;
+let current;
+
 export default class Renderer {
     constructor(width, height) {
         this.clock = new THREE.Clock();
@@ -34,15 +54,29 @@ export default class Renderer {
         // Render loop
         this.animate();
 
-        island('CITABAU', (object) => {
+        island(islands[index], (object) => {
+            current = object;
             this.scene.add(object);
         });
+        window.addEventListener('keydown', this.onKeyDown.bind(this), false);
     }
 
     onResize(width, height) {
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(width, height);
+    }
+
+    onKeyDown(event) {
+        if (event.keyCode == 78) {
+            index = (index + 1) % islands.length;
+            island(islands[index], (object) => {
+                console.log('Loaded: ', islands[index]);
+                this.scene.remove(current);
+                current = object;
+                this.scene.add(object);
+            });
+        }
     }
 
     animate() {
