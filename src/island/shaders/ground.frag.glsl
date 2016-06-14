@@ -1,7 +1,9 @@
-varying vec3 vColor;
-varying vec2 vUv;
+precision lowp float;
 
 uniform sampler2D tiles;
+
+varying vec3 vColor;
+varying vec2 vUv;
 
 void main() {
     if (vUv.s < -1000.0) {
