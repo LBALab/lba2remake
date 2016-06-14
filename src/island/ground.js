@@ -10,7 +10,7 @@ export function loadGround(island) {
     const material = new THREE.ShaderMaterial({
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
-        vertexColors: THREE.FaceColors,
+        vertexColors: THREE.VertexColors,
         uniforms: {
             tiles: {value: loadTexture(island.files.ile.getEntry(1), island.palette)}
         }
