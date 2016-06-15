@@ -3,6 +3,7 @@ import THREE from 'three';
 export function loadTexture(buffer, palette) {
     const pixel_data = new Uint8Array(buffer);
     const image_data = new Uint8Array(256 * 256 * 4);
+    const offsets = {};
     for (let i = 0; i < 65536; ++i) { // 256 * 256
         const idx = pixel_data[i];
         if (idx == 0) {
@@ -11,12 +12,18 @@ export function loadTexture(buffer, palette) {
             image_data[i * 4 + 2] = 0;
             image_data[i * 4 + 3] = 0;
         } else {
+            if (offsets[idx % 16]) {
+                offsets[idx % 16] += 1;
+            } else {
+                offsets[idx % 16] = 1;
+            }
             image_data[i * 4] = palette[idx * 3];
             image_data[i * 4 + 1] = palette[idx * 3 + 1];
             image_data[i * 4 + 2] = palette[idx * 3 + 2];
             image_data[i * 4 + 3] = 0xFF;
         }
     }
+    console.log(_.values(offsets));
     const texture = new THREE.DataTexture(
         image_data,
         256,
