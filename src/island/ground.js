@@ -18,7 +18,7 @@ export function loadGround(island) {
     const {positions, uvs, colors} = loadSections(island);
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
     bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
-    bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3));
+    bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 3, true));
     return new THREE.Mesh(bufferGeometry, material);
 }
 
@@ -112,12 +112,12 @@ function getColor(triangle, palette, intensity) {
     if (triangle.useColor) {
         const idx = (triangle.textureBank << 4) * 3;
         const i = intensity * 3;
-        const r = palette[idx + i] / 255;
-        const g = palette[idx + i + 1] / 255;
-        const b = palette[idx + i + 2] / 255;
+        const r = palette[idx + i];
+        const g = palette[idx + i + 1];
+        const b = palette[idx + i + 2];
         return [r, g, b];
     } else {
-        const i = (intensity / 15) * 0.8 + 0.2;
+        const i = intensity * 12 + 63;
         return [i, i, i];
     }
 }
