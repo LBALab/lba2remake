@@ -5,9 +5,9 @@ uniform mat4 projectionMatrix;
 
 attribute vec3 position;
 attribute vec2 uv;
-attribute vec3 color;
+attribute vec4 color;
 
-varying vec3 vColor;
+varying vec4 vColor;
 varying vec2 vUv;
 
 void main() {

@@ -17,8 +17,8 @@ export function loadGround(island) {
     const bufferGeometry = new THREE.BufferGeometry();
     const {positions, uvs, colors} = loadSections(island);
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
-    bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 3, true));
+    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
+    bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
     return new THREE.Mesh(bufferGeometry, material);
 }
 
@@ -82,21 +82,15 @@ function getPositions(section, points) {
 }
 
 function getUVs(textureInfo, triangle, field) {
-    const div = uv => uv / 255;
     const index = triangle.textureIndex;
     if (triangle.useTexture) {
-        const dir = triangle.useColor ? -1 : 1;
         return [
-            div(textureInfo[index * 12 + field]) * dir, div(textureInfo[index * 12 + 2 + field]) * dir,
-            div(textureInfo[index * 12 + 4 + field]) * dir, div(textureInfo[index * 12 + 6 + field]) * dir,
-            div(textureInfo[index * 12 + 8 + field]) * dir, div(textureInfo[index * 12 + 10 + field]) * dir
+            textureInfo[index * 12 + field], textureInfo[index * 12 + 2 + field],
+            textureInfo[index * 12 + 4 + field], textureInfo[index * 12 + 6 + field],
+            textureInfo[index * 12 + 8 + field], textureInfo[index * 12 + 10 + field]
         ];
     } else {
-        return [
-            -2000, -2000,
-            -2000, -2000,
-            -2000, -2000
-        ];
+        return [0, 0, 0, 0, 0, 0];
     }
 }
 
@@ -115,9 +109,9 @@ function getColor(triangle, palette, intensity) {
         const r = palette[idx + i];
         const g = palette[idx + i + 1];
         const b = palette[idx + i + 2];
-        return [r, g, b];
+        return [r, g, b, triangle.useTexture ? 0xCC : 0];
     } else {
         const i = intensity * 12 + 63;
-        return [i, i, i];
+        return [i, i, i, 0xFF];
     }
 }
