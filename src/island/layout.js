@@ -12,6 +12,8 @@ export function loadLayout(ile) {
                 index: index++,
                 x: (16 - x) - 8,
                 y: y - 8,
+                info: parseSectionInfo(ile.getEntry(id * 6 - 3)),
+                objects: new DataView(ile.getEntry(id * 6 - 2)),
                 triangles: new Uint32Array(ile.getEntry(id * 6 - 1)),
                 textureInfo: new Uint8Array(ile.getEntry(id * 6)),
                 heightmap: new Uint16Array(ile.getEntry(id * 6 + 1)),
@@ -20,4 +22,11 @@ export function loadLayout(ile) {
         }
     }
     return layout;
+}
+
+function parseSectionInfo(buffer) {
+    const dataView = new DataView(buffer);
+    return {
+        numObjects: dataView.getUint32(8, true)
+    };
 }

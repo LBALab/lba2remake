@@ -1,60 +1,30 @@
-import THREE from 'three';
-import _ from 'lodash';
-import {loadTexture} from '../texture';
-import vertexShader from './shaders/ground.vert.glsl';
-import fragmentShader from './shaders/ground.frag.glsl';
-
 const push = Array.prototype.push;
 
-export function loadGround(island) {
-    const material = new THREE.RawShaderMaterial({
-        vertexShader: vertexShader,
-        fragmentShader: fragmentShader,
-        uniforms: {
-            tiles: {value: loadTexture(island.files.ile.getEntry(1), island.palette)}
-        }
-    });
-    const bufferGeometry = new THREE.BufferGeometry();
-    const {positions, uvs, colors} = loadSections(island);
-    bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
-    bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
-    return new THREE.Mesh(bufferGeometry, material);
-}
+export function loadGround(island, section, geometry) {
+    for (let x = 0; x < 64; ++x) {
+        for (let y = 0; y < 64; ++y) {
+            const t0 = loadTriangle(section, x, y, 0);
+            const t1 = loadTriangle(section, x, y, 1);
 
-function loadSections(island) {
-    const geometry = {
-        positions: [],
-        uvs: [],
-        colors: []
-    };
-    _.each(island.layout, section => {
-        for (let x = 0; x < 64; ++x) {
-            for (let y = 0; y < 64; ++y) {
-                const t0 = loadTriangle(section, x, y, 0);
-                const t1 = loadTriangle(section, x, y, 1);
+            const r = t0.orientation;
+            const s = 1 - r;
 
-                const r = t0.orientation;
-                const s = 1 - r;
+            const point = (xi, yi) => (x + xi) * 65 + y + yi;
 
-                const point = (xi, yi) => (x + xi) * 65 + y + yi;
-
-                if (t0.useColor || t0.useTexture) {
-                    const p = [point(0, r), point(s, 0), point(1, s)];
-                    push.apply(geometry.positions, getPositions(section, p));
-                    push.apply(geometry.uvs, getUVs(section.textureInfo, t0, 1));
-                    push.apply(geometry.colors, getColors(section.intensity, t0, island.palette, p));
-                }
-                if (t1.useColor || t1.useTexture) {
-                    const p = [point(1, s), point(r, 1), point(0, r)];
-                    push.apply(geometry.positions, getPositions(section, p));
-                    push.apply(geometry.uvs, getUVs(section.textureInfo, t1, 1));
-                    push.apply(geometry.colors, getColors(section.intensity, t1, island.palette, p));
-                }
+            if (t0.useColor || t0.useTexture) {
+                const p = [point(0, r), point(s, 0), point(1, s)];
+                push.apply(geometry.positions, getPositions(section, p));
+                push.apply(geometry.uvs, getUVs(section.textureInfo, t0, 1));
+                push.apply(geometry.colors, getColors(section.intensity, t0, island.palette, p));
+            }
+            if (t1.useColor || t1.useTexture) {
+                const p = [point(1, s), point(r, 1), point(0, r)];
+                push.apply(geometry.positions, getPositions(section, p));
+                push.apply(geometry.uvs, getUVs(section.textureInfo, t1, 1));
+                push.apply(geometry.colors, getColors(section.intensity, t1, island.palette, p));
             }
         }
-    });
-    return geometry;
+    }
 }
 
 function loadTriangle(section, x, y, idx) {
