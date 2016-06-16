@@ -8,11 +8,11 @@ varying vec2 vUv;
 void main() {
     vec3 color = vColor.rgb;
     float flag = vColor.a;
-    if (flag == 0.0) {
+    if (flag < 0.1) {
         gl_FragColor = vec4(color, 1.0);
     } else {
         vec4 tex = texture2D(tiles, vUv);
-        if (flag == 1.0) {
+        if (flag > 0.9) {
             gl_FragColor = vec4(tex.rgb * color.r, 1.0);
         } else {
             gl_FragColor = vec4(mix(color, tex.rgb * length(color), tex.a), 1.0);

@@ -109,7 +109,7 @@ function getColor(triangle, palette, intensity) {
         const r = palette[idx + i];
         const g = palette[idx + i + 1];
         const b = palette[idx + i + 2];
-        return [r, g, b, triangle.useTexture ? 0xCC : 0];
+        return [r, g, b, triangle.useTexture ? 0x80 : 0];
     } else {
         const i = intensity * 12 + 63;
         return [i, i, i, 0xFF];
