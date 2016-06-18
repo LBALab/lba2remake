@@ -72,7 +72,7 @@ class Main extends React.Component {
                 that.setState({showPalette: !(that.state.showPalette)});
             }
         });
-        loadHqrAsync('RESS.hqr')(function(err, hqr) {
+        loadHqrAsync('RESS.HQR')(function(err, hqr) {
             const src = new Uint8Array(hqr.getEntry(0));
             const tgt = new Uint8ClampedArray(256 * 4);
             for (let i = 0; i < 256; ++i) {

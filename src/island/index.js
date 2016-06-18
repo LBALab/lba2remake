@@ -14,7 +14,8 @@ import fragmentShader from './shaders/ground.frag.glsl';
 export default function(name, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
-        ile: loadHqrAsync(`${name}.ILE`)
+        ile: loadHqrAsync(`${name}.ILE`),
+        obl: loadHqrAsync(`${name}.OBL`)
     }, function(err, files) {
         callback(loadIsland(files));
     });
@@ -49,9 +50,10 @@ function loadGeometry(island) {
         uvs: [],
         colors: []
     };
+    const objects = [];
     _.each(island.layout, section => {
         loadGround(island, section, geometry);
-        loadObjects(island, section, geometry);
+        loadObjects(island, section, geometry, objects);
     });
     return geometry;
 }
