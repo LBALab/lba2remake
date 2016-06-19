@@ -44,9 +44,9 @@ function getPositions(section, points) {
     for (let i = 0; i < 3; ++i) {
         const idx = points[i];
         const x = section.x * 64 + (65 - Math.floor(idx / 65));
-        const y = section.y * 64 + (idx % 65);
-        const h  = section.heightmap[idx];
-        positions.push(x / 32, h / 0x4000, y / 32);
+        const y  = section.heightmap[idx];
+        const z = section.z * 64 + (idx % 65);
+        positions.push(x / 32, y / 0x4000, z / 32);
     }
     return positions;
 }

@@ -4,15 +4,15 @@ export function loadLayout(ile) {
     let index = 0;
     for (let i = 0; i < 256; ++i) {
         const x = Math.floor(i / 16);
-        const y = i % 16;
+        const z = i % 16;
         if (layout_raw[i]) {
             const id = layout_raw[i];
             layout.push({
                 id: id,
                 index: index++,
                 x: (16 - x) - 8,
-                y: y - 8,
-                info: parseSectionInfo(ile.getEntry(id * 6 - 3)),
+                z: z - 8,
+                objInfo: parseObjectsInfo(ile.getEntry(id * 6 - 3)),
                 objects: new DataView(ile.getEntry(id * 6 - 2)),
                 triangles: new Uint32Array(ile.getEntry(id * 6 - 1)),
                 textureInfo: new Uint8Array(ile.getEntry(id * 6)),
@@ -24,7 +24,7 @@ export function loadLayout(ile) {
     return layout;
 }
 
-function parseSectionInfo(buffer) {
+function parseObjectsInfo(buffer) {
     const dataView = new DataView(buffer);
     return {
         numObjects: dataView.getUint32(8, true)
