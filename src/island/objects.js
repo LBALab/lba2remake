@@ -13,10 +13,10 @@ function loadObjectInfo(objects, section, index) {
     const offset = index * 48;
     return {
         index: objects.getUint32(offset, true),
-        x: (0x8000 - objects.getInt32(offset + 12, true)) / 0x4000 + section.x * 2,
+        x: (0x8000 - objects.getInt32(offset + 12, true) + 512) / 0x4000 + section.x * 2,
         y: objects.getInt32(offset + 8, true) / 0x4000,
         z: objects.getInt32(offset + 4, true) / 0x4000 + section.z * 2,
-        angle: objects.getUint8(offset + 17)
+        angle: objects.getUint8(offset + 21)
     }
 }
 
@@ -70,6 +70,12 @@ function parseSectionHeader(data, object, offset) {
 
 function loadSection(geometry, object, info, section) {
     for (let i = 0; i < section.numFaces; ++i) {
+        const c = {
+            0: [0xFF, 0, 0, 0], // 00
+            4: [0, 0xFF, 0, 0], // 01
+            8: [0, 0, 0xFF, 0], // 10
+            12: [0xFF, 0xFF, 0xFF, 0] // 11
+        };
         const triangle = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
             const x = object.vertices[index * 4] / 0x4000;
@@ -77,7 +83,7 @@ function loadSection(geometry, object, info, section) {
             const z = object.vertices[index * 4 + 2] / 0x4000;
             push.apply(geometry.positions, [x + info.x, y + info.y, z + info.z]);
             push.apply(geometry.uvs, [0, 0]);
-            push.apply(geometry.colors, [0xFF, 0, 0, 0]);
+            push.apply(geometry.colors, c[info.angle]);
         };
         for (let j = 0; j < 3; ++j) {
             triangle(j);
