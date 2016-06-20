@@ -1,12 +1,26 @@
 import THREE from 'three';
 const push = Array.prototype.push;
 
+let min = 0xFF;
+let max = 0;
+let distrib = {};
+
 export function loadObjects(island, section, geometry, objects) {
     const numObjects = section.objInfo.numObjects;
     for (let i = 0; i < numObjects; ++i) {
         const info = loadObjectInfo(section.objects, section, i);
         const object = loadObject(island, objects, info.index);
         loadFaces(geometry, object, info, island.palette);
+        if (info.iv in distrib) {
+            distrib[info.iv] += 1;
+        } else {
+            distrib[info.iv] = 1;
+        }
+        min = Math.min(info.iv, min);
+        max = Math.max(info.iv, max);
+    }
+    if (section.id == island.layout.length) {
+        console.log(min, max, distrib);
     }
 }
 
@@ -17,8 +31,9 @@ function loadObjectInfo(objects, section, index) {
         x: (0x8000 - objects.getInt32(offset + 12, true) + 512) / 0x4000 + section.x * 2,
         y: objects.getInt32(offset + 8, true) / 0x4000,
         z: objects.getInt32(offset + 4, true) / 0x4000 + section.z * 2,
-        angle: ((objects.getUint8(offset + 21) >> 2) + 3) % 4
-    }
+        angle: objects.getUint8(offset + 21) >> 2,
+        iv: 1
+    };
 }
 
 function loadObject(island, objects, index) {
@@ -40,6 +55,7 @@ function loadObject(island, objects, index) {
             buffer: buffer
         };
         obj.vertices = new Int16Array(buffer, 104, obj.numVerticesType1 * 4);
+        obj.intensities = new Uint8Array(buffer, 104 + obj.numVerticesType1 * 8, obj.numVerticesType1 * 8);
         objects[index] = obj;
         return obj;
     }
@@ -79,17 +95,28 @@ function loadSection(geometry, object, info, section, palette) {
                 object.vertices[index * 4 + 2] / 0x4000
             ], info.angle);
             const color = section.data.getUint8(i * section.blockSize + 8);
+            const intensity = (object.intensities[index * 8 + info.iv] >> 5) * 3;
             push.apply(geometry.positions, [
                 pos[0] + info.x,
                 pos[1] + info.y,
                 pos[2] + info.z
             ]);
             push.apply(geometry.uvs, [0, 0]);
-            push.apply(geometry.colors, [
-                palette[color * 3],
-                palette[color * 3 + 1],
-                palette[color * 3 + 2],
-                0]);
+            if (section.id >= 7) {
+                push.apply(geometry.colors, [
+                    0xFF,
+                    0xFF,
+                    0xFF,
+                    0
+                ]);
+            } else {
+                push.apply(geometry.colors, [
+                    palette[color * 3 + intensity],
+                    palette[color * 3 + intensity + 1],
+                    palette[color * 3 + intensity + 2],
+                    0
+                ]);
+            }
         };
         for (let j = 0; j < 3; ++j) {
             triangle(j);
@@ -104,12 +131,13 @@ function loadSection(geometry, object, info, section, palette) {
 
 const angleMatrix = {
     0: new THREE.Matrix4(), // 0 degrees
-    1: new THREE.Matrix4().set(0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 1), // 90 degrees
+    1: new THREE.Matrix4().set(0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 1), // 270 degrees
     2: new THREE.Matrix4().set(-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1), // 180 degrees
-    3: new THREE.Matrix4().set(0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1) // 270 degrees
+    3: new THREE.Matrix4().set(0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1) // 90 degrees
 };
 
 function rotate(vec, angle) {
+    const index = (angle + 3) % 4;
     const v = new THREE.Vector3().fromArray(vec);
-    return v.applyMatrix4(angleMatrix[angle]).toArray();
+    return v.applyMatrix4(angleMatrix[index]).toArray();
 }
