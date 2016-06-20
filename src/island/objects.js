@@ -1,3 +1,4 @@
+import THREE from 'three';
 const push = Array.prototype.push;
 
 export function loadObjects(island, section, geometry, objects) {
@@ -16,7 +17,7 @@ function loadObjectInfo(objects, section, index) {
         x: (0x8000 - objects.getInt32(offset + 12, true) + 512) / 0x4000 + section.x * 2,
         y: objects.getInt32(offset + 8, true) / 0x4000,
         z: objects.getInt32(offset + 4, true) / 0x4000 + section.z * 2,
-        angle: objects.getUint8(offset + 21)
+        angle: ((objects.getUint8(offset + 21) >> 2) + 3) % 4
     }
 }
 
@@ -68,22 +69,29 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
+const angleColor = {
+    0: [0xFF, 0, 0, 0], // 00
+    1: [0, 0xFF, 0, 0], // 01
+    2: [0, 0, 0xFF, 0], // 10
+    3: [0xFF, 0xFF, 0xFF, 0] // 11
+};
+
 function loadSection(geometry, object, info, section) {
     for (let i = 0; i < section.numFaces; ++i) {
-        const c = {
-            0: [0xFF, 0, 0, 0], // 00
-            4: [0, 0xFF, 0, 0], // 01
-            8: [0, 0, 0xFF, 0], // 10
-            12: [0xFF, 0xFF, 0xFF, 0] // 11
-        };
         const triangle = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
-            const x = object.vertices[index * 4] / 0x4000;
-            const y = object.vertices[index * 4 + 1] / 0x4000;
-            const z = object.vertices[index * 4 + 2] / 0x4000;
-            push.apply(geometry.positions, [x + info.x, y + info.y, z + info.z]);
+            const pos = rotate([
+                object.vertices[index * 4] / 0x4000,
+                object.vertices[index * 4 + 1] / 0x4000,
+                object.vertices[index * 4 + 2] / 0x4000
+            ], info.angle);
+            push.apply(geometry.positions, [
+                pos[0] + info.x,
+                pos[1] + info.y,
+                pos[2] + info.z
+            ]);
             push.apply(geometry.uvs, [0, 0]);
-            push.apply(geometry.colors, c[info.angle]);
+            push.apply(geometry.colors, angleColor[info.angle]);
         };
         for (let j = 0; j < 3; ++j) {
             triangle(j);
@@ -94,4 +102,16 @@ function loadSection(geometry, object, info, section) {
             }
         }
     }
+}
+
+const angleMatrix = {
+    0: new THREE.Matrix4(), // 0 degrees
+    1: new THREE.Matrix4().set(0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 1), // 90 degrees
+    2: new THREE.Matrix4().set(-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1), // 180 degrees
+    3: new THREE.Matrix4().set(0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1) // 270 degrees
+};
+
+function rotate(vec, angle) {
+    const v = new THREE.Vector3().fromArray(vec);
+    return v.applyMatrix4(angleMatrix[angle]).toArray();
 }
