@@ -6,7 +6,7 @@ export function loadObjects(island, section, geometry, objects) {
     for (let i = 0; i < numObjects; ++i) {
         const info = loadObjectInfo(section.objects, section, i);
         const object = loadObject(island, objects, info.index);
-        loadFaces(geometry, object, info);
+        loadFaces(geometry, object, info, island.palette);
     }
 }
 
@@ -45,12 +45,12 @@ function loadObject(island, objects, index) {
     }
 }
 
-function loadFaces(geometry, object, info) {
+function loadFaces(geometry, object, info, palette) {
     const data = new DataView(object.buffer, object.faceSectionOffset, object.lineSectionOffset - object.faceSectionOffset);
     let offset = 0;
     while (offset < data.byteLength) {
         const section = parseSectionHeader(data, object, offset);
-        loadSection(geometry, object, info, section);
+        loadSection(geometry, object, info, section, palette);
         offset += section.size + 8;
     }
 }
@@ -69,14 +69,7 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
-const angleColor = {
-    0: [0xFF, 0, 0, 0], // 00
-    1: [0, 0xFF, 0, 0], // 01
-    2: [0, 0, 0xFF, 0], // 10
-    3: [0xFF, 0xFF, 0xFF, 0] // 11
-};
-
-function loadSection(geometry, object, info, section) {
+function loadSection(geometry, object, info, section, palette) {
     for (let i = 0; i < section.numFaces; ++i) {
         const triangle = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
@@ -85,13 +78,18 @@ function loadSection(geometry, object, info, section) {
                 object.vertices[index * 4 + 1] / 0x4000,
                 object.vertices[index * 4 + 2] / 0x4000
             ], info.angle);
+            const color = section.data.getUint8(i * section.blockSize + 8);
             push.apply(geometry.positions, [
                 pos[0] + info.x,
                 pos[1] + info.y,
                 pos[2] + info.z
             ]);
             push.apply(geometry.uvs, [0, 0]);
-            push.apply(geometry.colors, angleColor[info.angle]);
+            push.apply(geometry.colors, [
+                palette[color * 3],
+                palette[color * 3 + 1],
+                palette[color * 3 + 2],
+                0]);
         };
         for (let j = 0; j < 3; ++j) {
             triangle(j);
