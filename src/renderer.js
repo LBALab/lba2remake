@@ -81,7 +81,6 @@ export default class Renderer {
 
     animate() {
         requestAnimationFrame(this.animate.bind(this));
-        //this.controls.update();
         this.render();
     }
 
