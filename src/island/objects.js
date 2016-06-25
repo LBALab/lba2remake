@@ -92,7 +92,7 @@ function loadSection(geometry, object, info, section, palette) {
             const intensity = (object.intensities[index * 8 + info.iv] >> 5) * 3;
             push.apply(geometry.positions, getPosition(object, info, index));
             push.apply(geometry.colors, getColor(section, i, intensity, palette));
-            push.apply(geometry.uvs, [0, 0]);
+            push.apply(geometry.uvs, getUVs());
         };
         for (let j = 0; j < 3; ++j) {
             addVertex(j);
@@ -126,6 +126,10 @@ function getColor(section, face, intensity, palette) {
         const c = color * 3 + intensity;
         return [palette[c], palette[c + 1], palette[c + 2], 0];
     }
+}
+
+function getUVs() {
+    return [0, 0];
 }
 
 const angleMatrix = {
