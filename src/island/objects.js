@@ -87,45 +87,44 @@ function parseSectionHeader(data, object, offset) {
 
 function loadSection(geometry, object, info, section, palette) {
     for (let i = 0; i < section.numFaces; ++i) {
-        const triangle = (j) => {
+        const addVertex = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
-            const pos = rotate([
-                object.vertices[index * 4] / 0x4000,
-                object.vertices[index * 4 + 1] / 0x4000,
-                object.vertices[index * 4 + 2] / 0x4000
-            ], info.angle);
-            const color = section.data.getUint8(i * section.blockSize + 8);
             const intensity = (object.intensities[index * 8 + info.iv] >> 5) * 3;
-            push.apply(geometry.positions, [
-                pos[0] + info.x,
-                pos[1] + info.y,
-                pos[2] + info.z
-            ]);
+            push.apply(geometry.positions, getPosition(object, info, index));
+            push.apply(geometry.colors, getColor(section, i, intensity, palette));
             push.apply(geometry.uvs, [0, 0]);
-            if (section.id >= 7) {
-                push.apply(geometry.colors, [
-                    0xFF,
-                    0xFF,
-                    0xFF,
-                    0
-                ]);
-            } else {
-                push.apply(geometry.colors, [
-                    palette[color * 3 + intensity],
-                    palette[color * 3 + intensity + 1],
-                    palette[color * 3 + intensity + 2],
-                    0
-                ]);
-            }
         };
         for (let j = 0; j < 3; ++j) {
-            triangle(j);
+            addVertex(j);
         }
         if (section.pointsPerFace == 4) {
             for (let j of [0, 2, 3]) {
-                triangle(j);
+                addVertex(j);
             }
         }
+    }
+}
+
+function getPosition(object, info, index) {
+    const pos = rotate([
+        object.vertices[index * 4] / 0x4000,
+        object.vertices[index * 4 + 1] / 0x4000,
+        object.vertices[index * 4 + 2] / 0x4000
+    ], info.angle);
+    return [
+        pos[0] + info.x,
+        pos[1] + info.y,
+        pos[2] + info.z
+    ];
+}
+
+function getColor(section, face, intensity, palette) {
+    const color = section.data.getUint8(face * section.blockSize + 8);
+    if (section.id >= 7) {
+        return [0xFF, 0xFF, 0xFF, 0];
+    } else {
+        const c = color * 3 + intensity;
+        return [palette[c], palette[c + 1], palette[c + 2], 0];
     }
 }
 
