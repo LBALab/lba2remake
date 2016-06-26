@@ -1,4 +1,6 @@
 import THREE from 'three';
+import shaderConstants from './shaders/constants';
+
 const push = Array.prototype.push;
 
 let min = 0xFF;
@@ -121,10 +123,10 @@ function getPosition(object, info, index) {
 function getColor(section, face, intensity, palette) {
     const color = section.data.getUint8(face * section.blockSize + 8);
     if (section.id >= 7) {
-        return [0xFF, 0xFF, 0xFF, 0];
+        return [0xFF, 0xFF, 0xFF, shaderConstants.USE_COLOR];
     } else {
         const c = color * 3 + intensity;
-        return [palette[c], palette[c + 1], palette[c + 2], 0];
+        return [palette[c], palette[c + 1], palette[c + 2], shaderConstants.USE_COLOR];
     }
 }
 

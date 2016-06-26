@@ -1,3 +1,5 @@
+import shaderConstants from './shaders/constants';
+
 const push = Array.prototype.push;
 
 export function loadGround(island, section, geometry) {
@@ -79,9 +81,9 @@ function getColor(triangle, palette, intensity) {
         const r = palette[idx + i];
         const g = palette[idx + i + 1];
         const b = palette[idx + i + 2];
-        return [r, g, b, triangle.useTexture ? 0x80 : 0];
+        return [r, g, b, triangle.useTexture ? shaderConstants.USE_COLOR_AND_TEXTURE : shaderConstants.USE_COLOR];
     } else {
         const i = intensity * 12 + 63;
-        return [i, i, i, 0xFF];
+        return [i, i, i, shaderConstants.USE_TEXTURE];
     }
 }
