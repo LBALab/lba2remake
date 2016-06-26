@@ -32,7 +32,8 @@ function loadIsland(files) {
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
         uniforms: {
-            tiles: {value: loadTexture(island.files.ile.getEntry(1), island.palette)}
+            ground: {value: loadTexture(island.files.ile.getEntry(1), island.palette)},
+            objects: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
         }
     });
     const bufferGeometry = new THREE.BufferGeometry();

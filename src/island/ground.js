@@ -81,9 +81,9 @@ function getColor(triangle, palette, intensity) {
         const r = palette[idx + i];
         const g = palette[idx + i + 1];
         const b = palette[idx + i + 2];
-        return [r, g, b, triangle.useTexture ? shaderConstants.USE_COLOR_AND_TEXTURE : shaderConstants.USE_COLOR];
+        return [r, g, b, triangle.useTexture ? shaderConstants.USE_COLOR_AND_TEXTURE_GROUND : shaderConstants.USE_COLOR];
     } else {
         const i = intensity * 12 + 63;
-        return [i, i, i, shaderConstants.USE_TEXTURE];
+        return [i, i, i, shaderConstants.USE_TEXTURE_GROUND];
     }
 }

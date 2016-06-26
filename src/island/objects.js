@@ -94,7 +94,7 @@ function loadSection(geometry, object, info, section, palette) {
             const intensity = (object.intensities[index * 8 + info.iv] >> 5) * 3;
             push.apply(geometry.positions, getPosition(object, info, index));
             push.apply(geometry.colors, getColor(section, i, intensity, palette));
-            push.apply(geometry.uvs, getUVs());
+            push.apply(geometry.uvs, getUVs(section, i, j));
         };
         for (let j = 0; j < 3; ++j) {
             addVertex(j);
@@ -123,15 +123,22 @@ function getPosition(object, info, index) {
 function getColor(section, face, intensity, palette) {
     const color = section.data.getUint8(face * section.blockSize + 8);
     if (section.id >= 7) {
-        return [0xFF, 0xFF, 0xFF, shaderConstants.USE_COLOR];
+        return [0xFF, 0xFF, 0xFF, shaderConstants.USE_TEXTURE_OBJECTS];
     } else {
         const c = color * 3 + intensity;
         return [palette[c], palette[c + 1], palette[c + 2], shaderConstants.USE_COLOR];
     }
 }
 
-function getUVs() {
-    return [0, 0];
+function getUVs(section, face, ptIndex) {
+    if (section.blockSize >= 28) {
+        const index = face * section.blockSize + 12 + ptIndex * 4;
+        const u = section.data.getUint16(index);
+        const v = section.data.getUint16(index + 2);
+        return [u, v];
+    } else {
+        return [0, 0];
+    }
 }
 
 const angleMatrix = {

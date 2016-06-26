@@ -1,8 +1,10 @@
 var constants = require('./constants');
+var path = require('path');
 
 module.exports = function(content) {
     this.cacheable && this.cacheable();
     this.value = content;
+    this.addDependency(path.resolve('./constants'));
     var constantValues = '';
     for (var key in constants) {
         if (constants.hasOwnProperty(key)) {
