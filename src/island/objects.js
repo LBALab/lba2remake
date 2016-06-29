@@ -58,9 +58,25 @@ function loadObject(island, objects, index) {
         };
         obj.vertices = new Int16Array(buffer, 104, obj.numVerticesType1 * 4);
         obj.intensities = new Uint8Array(buffer, 104 + obj.numVerticesType1 * 8, obj.numVerticesType1 * 8);
+        loadUVGroups(obj);
         objects[index] = obj;
         return obj;
     }
+}
+
+function loadUVGroups(object) {
+    object.uvGroups = [];
+    const rawUVGroups = new Uint8Array(object.buffer, object.uvGroupsSectionOffset, object.uvGroupsSectionSize * 4);
+    for (let i = 0; i < object.uvGroupsSectionSize; ++i) {
+        const index = i * 4;
+        object.uvGroups.push({
+            x: rawUVGroups[index],
+            y: rawUVGroups[index + 1],
+            width: rawUVGroups[index + 2],
+            height: rawUVGroups[index + 3]
+        });
+    }
+    console.log(object.uvGroups);
 }
 
 function loadFaces(geometry, object, info, palette) {
