@@ -76,7 +76,6 @@ function loadUVGroups(object) {
             height: rawUVGroups[index + 3]
         });
     }
-    console.log(object.uvGroups);
 }
 
 function loadFaces(geometry, object, info, palette) {
@@ -110,7 +109,7 @@ function loadSection(geometry, object, info, section, palette) {
             const intensity = (object.intensities[index * 8 + info.iv] >> 5) * 3;
             push.apply(geometry.positions, getPosition(object, info, index));
             push.apply(geometry.colors, getColor(section, i, intensity, palette));
-            push.apply(geometry.uvs, getUVs(section, i, j));
+            push.apply(geometry.uvs, getUVs(object, section, i, j));
         };
         for (let j = 0; j < 3; ++j) {
             addVertex(j);
@@ -146,12 +145,15 @@ function getColor(section, face, intensity, palette) {
     }
 }
 
-function getUVs(section, face, ptIndex) {
+function getUVs(object, section, face, ptIndex) {
     if (section.blockSize >= 28) {
-        const index = face * section.blockSize + 12 + ptIndex * 4;
-        const u = section.data.getUint16(index);
-        const v = section.data.getUint16(index + 2);
-        return [u, v];
+        const baseIndex = face * section.blockSize;
+        const index = baseIndex + 12 + ptIndex * 4;
+        const u = section.data.getUint8(index + 1);
+        const v = section.data.getUint8(index + 3);
+        const uvGroupIndex = section.blockSize == 32 ? section.data.getUint8(baseIndex + 28) : section.data.getUint8(baseIndex + 6);
+        const grp = object.uvGroups[uvGroupIndex];
+        return [(u & grp.width) + grp.x, (v & grp.height) + grp.y];
     } else {
         return [0, 0];
     }
