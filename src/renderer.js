@@ -55,11 +55,11 @@ export default class Renderer {
         // Render loop
         this.animate();
 
-        // island(islands[index], (object) => {
-        //     current = object;
-        //     this.scene.add(object);
-        // });
         model((object) => {
+            //current = object;
+            //this.scene.add(object);
+        });
+        island(islands[index], (object) => {
             current = object;
             this.scene.add(object);
         });
