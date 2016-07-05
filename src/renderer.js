@@ -1,6 +1,7 @@
 import THREE from 'three';
 import OrbitControls from './controls/OrbitControls';
 import island from './island';
+import model from './model';
 
 const islands = [
     'CITADEL',
@@ -54,10 +55,15 @@ export default class Renderer {
         // Render loop
         this.animate();
 
-        island(islands[index], (object) => {
+        // island(islands[index], (object) => {
+        //     current = object;
+        //     this.scene.add(object);
+        // });
+        model((object) => {
             current = object;
             this.scene.add(object);
         });
+
         window.addEventListener('keydown', this.onKeyDown.bind(this), false);
     }
 
