@@ -87,13 +87,13 @@ function loadNormals(object) {
 
 function loadPolygons(object) {
     object.polygons = [];
-    // const rawPolygons = new Uint16Array(object.buffer, object.polygonsOffset, object.polygonsSize * 4);
+    // const rawPolygons = new Uint16Array(object.buffer, object.polygonsOffset, object.polygonsSize * 8);
     // for (let i = 0; i < object.polygonsSize; ++i) {
-    //     const index = i * 4;
-    //     let flag = rawPolygons[index]; // flag to indicate if has texture or transparency
-    //     let size = rawPolygons[index + 1];
-    //     let num = rawPolygons[index + 2]; // total number of polygons
-    //     let unk1 = rawPolygons[index + 3];
+    //     const index = i * 8;
+    //     const flag = rawPolygons[index]; // flag to indicate if has texture or transparency
+    //     const size = rawPolygons[index + 1];
+    //     const num = rawPolygons[index + 2]; // total number of polygons
+    //     const unk1 = rawPolygons[index + 3];
 
     //     for (let i = 0; i < object.polygonsSize; ++i) {
         
