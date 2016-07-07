@@ -45,7 +45,7 @@ export function loadBody2(model, objects, index) {
 
 function loadBones(object) {
     object.bones = [];
-    const rawBones = new Uint16Array(object.buffer, object.bonesOffset, object.bonesSize * 8);
+    const rawBones = new Uint16Array(object.buffer, object.bonesOffset, object.bonesSize * 4);
     for (let i = 0; i < object.bonesSize; ++i) {
         const index = i * 8;
         object.bones.push({
@@ -59,7 +59,7 @@ function loadBones(object) {
 
 function loadVertices(object) {
     object.vertices = [];
-    const rawVertices = new Uint16Array(object.buffer, object.verticesOffset, object.verticesSize * 8);
+    const rawVertices = new Uint16Array(object.buffer, object.verticesOffset, object.verticesSize * 4);
     for (let i = 0; i < object.verticesSize; ++i) {
         const index = i * 8;
         object.vertices.push({
@@ -73,7 +73,7 @@ function loadVertices(object) {
 
 function loadNormals(object) {
     object.normals = [];
-    const rawNormals = new Uint16Array(object.buffer, object.normalsOffset, object.normalsSize * 8);
+    const rawNormals = new Uint16Array(object.buffer, object.normalsOffset, object.normalsSize * 4);
     for (let i = 0; i < object.normalsSize; ++i) {
         const index = i * 8;
         object.normals.push({
@@ -87,7 +87,7 @@ function loadNormals(object) {
 
 function loadPolygons(object) {
     object.polygons = [];
-    // const rawPolygons = new Uint16Array(object.buffer, object.polygonsOffset, object.polygonsSize * 8);
+    const rawPolygons = new Uint16Array(object.buffer, object.polygonsOffset, object.polygonsSize * 4);
     // for (let i = 0; i < object.polygonsSize; ++i) {
     //     const index = i * 8;
     //     const flag = rawPolygons[index]; // flag to indicate if has texture or transparency
@@ -108,7 +108,7 @@ function loadPolygons(object) {
 
 function loadLines(object) {
     object.lines = [];
-    const rawLines = new Uint16Array(object.buffer, object.linesOffset, object.linesSize * 8);
+    const rawLines = new Uint16Array(object.buffer, object.linesOffset, object.linesSize * 4);
     for (let i = 0; i < object.linesSize; ++i) {
         const index = i * 8;
         object.lines.push({
@@ -122,14 +122,14 @@ function loadLines(object) {
 
 function loadSpheres(object) {
     object.spheres = [];
-    const rawSpheres = new Uint16Array(object.buffer, object.spheresOffset, object.spheresSize * 8);
+    const rawSpheres = new Uint16Array(object.buffer, object.spheresOffset, object.spheresSize * 4);
     for (let i = 0; i < object.spheresSize; ++i) {
         const index = i * 8;
         object.spheres.push({
             unk1: rawSpheres[index],
             colour: rawSpheres[index + 1],
             vertex: rawSpheres[index + 2],
-            size: rawSpheres[index + 3]
+            size: rawSpheres[index + 3] // WARN like positions this needs to be divided by 0x4000
         });
     }
 }
