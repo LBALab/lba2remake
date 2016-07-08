@@ -243,8 +243,4 @@ function loadGeometry(geometry, object, palette) {
             }
         }
     });
-    // TODO add geometry
-    // for (let i = 0; i < object.verticesSize; ++i) {
-    //     push.apply(geometry.positions, getPosition(object, i));
-    // }
 }

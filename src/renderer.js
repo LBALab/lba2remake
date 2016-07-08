@@ -59,10 +59,10 @@ export default class Renderer {
             current = object;
             this.scene.add(object);
         });
-        /*island(islands[index], (object) => {
-            current = object;
-            this.scene.add(object);
-        });*/
+        // island(islands[index], (object) => {
+        //     current = object;
+        //     this.scene.add(object);
+        // });
 
         window.addEventListener('keydown', this.onKeyDown.bind(this), false);
     }
