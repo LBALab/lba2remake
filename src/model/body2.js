@@ -16,16 +16,16 @@ export function loadBody2(model, objects, index) {
             verticesOffset: data.getUint32(0x2C, true),
             normalsSize: data.getUint32(0x30, true),
             normalsOffset: data.getUint32(0x34, true),
-            //unk1Size: data.getUint32(0x38, true),
-            //unk1Offset: data.getUint32(0x3C, true),
+            unk1Size: data.getUint32(0x38, true),
+            unk1Offset: data.getUint32(0x3C, true),
             polygonsSize: data.getUint32(0x40, true),
             polygonsOffset: data.getUint32(0x44, true),
             linesSize: data.getUint32(0x48, true),
             linesOffset: data.getUint32(0x4C, true),
             spheresSize: data.getUint32(0x50, true),
             spheresOffset: data.getUint32(0x54, true),
-            texturesSize: data.getUint32(0x58, true),
-            texturesOffset: data.getUint32(0x5C, true),
+            uvGroupsSize: data.getUint32(0x58, true),
+            uvGroupsOffset: data.getUint32(0x5C, true),
             
             buffer: buffer
         };
@@ -36,7 +36,7 @@ export function loadBody2(model, objects, index) {
         loadPolygons(obj);
         loadLines(obj);
         loadSpheres(obj);
-        loadTextures(obj);
+        loadUVGroups(obj);
         
         objects[index] = obj;
         return obj;
@@ -45,9 +45,9 @@ export function loadBody2(model, objects, index) {
 
 function loadBones(object) {
     object.bones = [];
-    const rawBones = new Uint16Array(object.buffer, object.bonesOffset, object.bonesSize * 8);
+    const rawBones = new Uint16Array(object.buffer, object.bonesOffset, object.bonesSize * 4);
     for (let i = 0; i < object.bonesSize; ++i) {
-        const index = i * 8;
+        const index = i * 4;
         object.bones.push({
             parent: rawBones[index],
             vertex: rawBones[index + 1],
@@ -59,9 +59,9 @@ function loadBones(object) {
 
 function loadVertices(object) {
     object.vertices = [];
-    const rawVertices = new Uint16Array(object.buffer, object.verticesOffset, object.verticesSize * 8);
+    const rawVertices = new Uint16Array(object.buffer, object.verticesOffset, object.verticesSize * 4);
     for (let i = 0; i < object.verticesSize; ++i) {
-        const index = i * 8;
+        const index = i * 4;
         object.vertices.push({
             x: rawVertices[index],
             y: rawVertices[index + 1],
@@ -73,9 +73,9 @@ function loadVertices(object) {
 
 function loadNormals(object) {
     object.normals = [];
-    const rawNormals = new Uint16Array(object.buffer, object.normalsOffset, object.normalsSize * 8);
+    const rawNormals = new Uint16Array(object.buffer, object.normalsOffset, object.normalsSize * 4);
     for (let i = 0; i < object.normalsSize; ++i) {
-        const index = i * 8;
+        const index = i * 4;
         object.normals.push({
             x: rawNormals[index],
             y: rawNormals[index + 1],
@@ -87,31 +87,84 @@ function loadNormals(object) {
 
 function loadPolygons(object) {
     object.polygons = [];
-    const polyLength = (object.linesOffset - object.polygonsOffset)/2;
-    const rawPolygons = new Uint16Array(object.buffer, object.polygonsOffset, polyLength);
-    // for (let i = 0; i < object.polygonsSize; ++i) {
-    //     const index = i * 4;
-    //     const flag = rawPolygons[index]; // flag to indicate if has texture or transparency
-    //     const size = rawPolygons[index + 1];
-    //     const num = rawPolygons[index + 2]; // total number of polygons
-    //     const unk1 = rawPolygons[index + 3];
+    const data = new DataView(object.buffer, object.polygonsOffset, object.linesOffset - object.polygonsOffset);
+    let offset = 0;
+    for (let i = 0; i < object.polygonsSize; ++i) {
+        const renderType = data.getUint16(offset, true);
+        const vertexSize = data.getUint16(offset + 2, true);
+        const sectionSize = data.getUint16(offset + 4, true);
+        const shade = data.getUint16(offset + 6, true);
+        offset += 8;
 
-    //     for (let i = 0; i < object.polygonsSize; ++i) {
-        
-    //     object.polygons.push({
-    //         x: rawPolygons[index],
-    //         y: rawPolygons[index + 1],
-    //         z: rawPolygons[index + 2],
-    //         colour: rawPolygons[index + 3]
-    //     });
-    // }
+        if (sectionSize == 0 || offset >= object.unk1Offset)
+            break;
+
+        const blockSize = ((sectionSize - 8) / vertexSize);
+
+        for (let j = 0; j < vertexSize; ++j) {
+            let poly = {
+                num: blockSize/2,
+                colour: 0,
+                hasTex: (renderType & 0x8 && blockSize > 16),
+                hasTransparency: renderType & 0x2,
+                numVertex: 0,
+                tex: 0,
+                texX: [],
+                texY: [],
+                vertex: [],
+                unk1: 0,
+                unkX: 0,
+                unkY: 0,
+            };
+
+            let texIdx = 0;
+            for (let k = 0; k < poly.num; ++k) {
+				if (k == 14 && poly.hasTex) {
+					poly.tex = data.getUint8(offset, true);
+					offset += 4;
+					++k;
+				} else if (k > 5 && poly.hasTex) {
+					poly.unkX = data.getUint8(offset, true);
+					const x = data.getUint8(offset + 1, true);
+					poly.unkY =data.getUint8(offset + 2, true);
+					const y = data.getUint8(offset + 3, true);
+					if (texIdx < 4) {
+						poly.texX[texIdx] = x;
+						poly.texY[texIdx] = y;
+					}
+                    offset += 4;
+					++texIdx;
+					++k;
+				} else {
+					if (poly.hasTex && k == 3 && blockSize != 32) {
+						poly.tex = data.getUint8(offset, true);
+						poly.unk1 = data.getUint8(offset + 1, true);
+                        offset += 2;
+					} else if (k == 4) {
+						const colour = data.getUint16(offset, true);
+						poly.colour = (colour & 0x00FF);
+                        offset += 2;
+					} else {
+						const vertex = data.getUint16(offset, true);
+						if (k < 4 && renderType & 0x8000 || k < 3) {
+							poly.vertex[k] = data;
+							++poly.numVertex;
+						}
+                        offset += 2;
+					}
+				}
+			}
+
+            object.polygons.push(poly);
+        }
+    }
 }
 
 function loadLines(object) {
     object.lines = [];
-    const rawLines = new Uint16Array(object.buffer, object.linesOffset, object.linesSize * 8);
+    const rawLines = new Uint16Array(object.buffer, object.linesOffset, object.linesSize * 4);
     for (let i = 0; i < object.linesSize; ++i) {
-        const index = i * 8;
+        const index = i * 4;
         object.lines.push({
             unk1: rawLines[index],
             colour: rawLines[index + 1],
@@ -123,10 +176,9 @@ function loadLines(object) {
 
 function loadSpheres(object) {
     object.spheres = [];
-    const spheresLength = (object.texturesOffset - object.spheresOffset)/2;
-    const rawSpheres = new Uint16Array(object.buffer, object.spheresOffset, spheresLength);
+    const rawSpheres = new Uint16Array(object.buffer, object.spheresOffset, object.spheresSize * 4);
     for (let i = 0; i < object.spheresSize; ++i) {
-        const index = i * 8;
+        const index = i * 4;
         object.spheres.push({
             unk1: rawSpheres[index],
             colour: rawSpheres[index + 1],
@@ -136,16 +188,16 @@ function loadSpheres(object) {
     }
 }
 
-function loadTextures(object) {
-    object.textures = [];
-    const rawTextures = new Uint8Array(object.buffer, object.texturesOffset, object.texturesSize * 4);
-    for (let i = 0; i < object.texturesSize; ++i) {
+function loadUVGroups(object) {
+    object.uvGroups = [];
+    const rawUVGroups = new Uint8Array(object.buffer, object.uvGroupsOffset, object.uvGroupsSize * 4);
+    for (let i = 0; i < object.uvGroupsSize; ++i) {
         const index = i * 4;
-        object.textures.push({
-            x: rawTextures[index],
-            y: rawTextures[index + 1],
-            w: rawTextures[index + 2],
-            h: rawTextures[index + 3]
+        object.uvGroups.push({
+            x: rawUVGroups[index],
+            y: rawUVGroups[index + 1],
+            width: rawUVGroups[index + 2],
+            height: rawUVGroups[index + 3]
         });
     }
 }
