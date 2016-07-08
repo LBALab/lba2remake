@@ -1,9 +1,10 @@
 import THREE from 'three';
+import _ from 'lodash';
 
 const push = Array.prototype.push;
 
 /** Load LBA2 model body */
-export function loadBody2(model, objects, index) {
+export function loadBody2(model, geometry, objects, index) {
     if (objects[index]) {
         return objects[index];
     } else {
@@ -37,6 +38,8 @@ export function loadBody2(model, objects, index) {
         loadLines(obj);
         loadSpheres(obj);
         loadUVGroups(obj);
+
+        loadGeometry(geometry, obj, model.palette);
         
         objects[index] = obj;
         return obj;
@@ -45,7 +48,7 @@ export function loadBody2(model, objects, index) {
 
 function loadBones(object) {
     object.bones = [];
-    const rawBones = new Uint16Array(object.buffer, object.bonesOffset, object.bonesSize * 4);
+    const rawBones = new Int16Array(object.buffer, object.bonesOffset, object.bonesSize * 4);
     for (let i = 0; i < object.bonesSize; ++i) {
         const index = i * 4;
         object.bones.push({
@@ -59,7 +62,7 @@ function loadBones(object) {
 
 function loadVertices(object) {
     object.vertices = [];
-    const rawVertices = new Uint16Array(object.buffer, object.verticesOffset, object.verticesSize * 4);
+    const rawVertices = new Int16Array(object.buffer, object.verticesOffset, object.verticesSize * 4);
     for (let i = 0; i < object.verticesSize; ++i) {
         const index = i * 4;
         object.vertices.push({
@@ -73,7 +76,7 @@ function loadVertices(object) {
 
 function loadNormals(object) {
     object.normals = [];
-    const rawNormals = new Uint16Array(object.buffer, object.normalsOffset, object.normalsSize * 4);
+    const rawNormals = new Int16Array(object.buffer, object.normalsOffset, object.normalsSize * 4);
     for (let i = 0; i < object.normalsSize; ++i) {
         const index = i * 4;
         object.normals.push({
@@ -147,7 +150,7 @@ function loadPolygons(object) {
 					} else {
 						const vertex = data.getUint16(offset, true);
 						if (k < 4 && renderType & 0x8000 || k < 3) {
-							poly.vertex[k] = data;
+							poly.vertex[k] = vertex;
 							++poly.numVertex;
 						}
                         offset += 2;
@@ -202,15 +205,46 @@ function loadUVGroups(object) {
     }
 }
 
-function getPosition(object, info, index) {
-    const pos = rotate([
-        object.vertices[index * 4].x / 0x4000,
-        object.vertices[index * 4].y / 0x4000,
-        object.vertices[index * 4].z / 0x4000
-    ], info.angle);
+function getPosition(object, /*info,*/ index) {
+    const pos = /*rotate(*/[
+        object.vertices[index].x / 0x4000,
+        object.vertices[index].y / 0x4000,
+        object.vertices[index].z / 0x4000
+    ]/*, info.angle)*/;
     return [
-        pos[0] + info.x,
-        pos[1] + info.y,
-        pos[2] + info.z
+        pos[0]/* + info.x*/,
+        pos[1]/* + info.y*/,
+        pos[2]/* + info.z*/
     ];
+}
+
+function getColour(colour,palette) {
+    return [palette[colour],palette[colour + 1],palette[colour + 2],0];
+}
+
+function getUVs() {
+    return []
+}
+
+function loadGeometry(geometry, object, palette) {
+    _.each(object.polygons, (p) => {
+        const addVertex = (j) => {
+            const vertexIndex = p.vertex[j];
+    	    push.apply(geometry.positions, getPosition(object, vertexIndex));
+            push.apply(geometry.colors, getColour(object, p.colour, palette));
+            //push.apply(geometry.uvs, getPosition(object, p.tex));
+        };    
+        for (let j = 0; j < 3; ++j) {
+            addVertex(j);
+        } 
+        if (p.renderType & 0x8000) { // quad
+            for (let j of [0, 2, 3]) {
+                addVertex(j);
+            }
+        }
+    });
+    // TODO add geometry
+    // for (let i = 0; i < object.verticesSize; ++i) {
+    //     push.apply(geometry.positions, getPosition(object, i));
+    // }
 }

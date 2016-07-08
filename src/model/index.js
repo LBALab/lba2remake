@@ -6,6 +6,10 @@ import {loadHqrAsync} from '../hqr';
 import {loadTexture} from '../texture';
 import {loadBody2} from './body2';
 
+// TODO create model own shaders
+import vertexShader from './shaders/model.vert.glsl';
+import fragmentShader from './shaders/model.frag.glsl';
+
 export default function(callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
@@ -25,8 +29,8 @@ function loadModel(files) {
     };
 
     const material = new THREE.RawShaderMaterial({
-        //vertexShader: vertexShader,
-        //fragmentShader: fragmentShader,
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
         uniforms: {
             body: {value: loadTexture(model.files.ress.getEntry(6), model.palette)}
         }
@@ -36,7 +40,7 @@ function loadModel(files) {
     const bufferGeometry = new THREE.BufferGeometry();
     const {positions, uvs, colors} = loadGeometry(model);
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
+    //bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
     bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
 
     return new THREE.Mesh(bufferGeometry, material);
@@ -51,7 +55,7 @@ function loadGeometry(model) {
     const objects = [];
 
     // TODO for each entity entry
-    loadBody2(model, objects, 0);
+    loadBody2(model, geometry, objects, 0);
 
     // _.each(model.layout, section => {
     //     loadGround(island, section, geometry);

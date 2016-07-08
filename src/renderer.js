@@ -56,13 +56,13 @@ export default class Renderer {
         this.animate();
 
         model((object) => {
-            //current = object;
-            //this.scene.add(object);
-        });
-        island(islands[index], (object) => {
             current = object;
             this.scene.add(object);
         });
+        /*island(islands[index], (object) => {
+            current = object;
+            this.scene.add(object);
+        });*/
 
         window.addEventListener('keydown', this.onKeyDown.bind(this), false);
     }
