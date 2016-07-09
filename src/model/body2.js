@@ -252,6 +252,12 @@ function getUVs() {
 }
 
 function loadGeometry(geometry, object, palette) {
+    loadFaceGeometry(geometry, object, palette);
+    loadSphereGeometry(geometry, object, palette);
+    //loadLineGeometry(geometry, object, palette);
+}
+
+function loadFaceGeometry(geometry, object, palette) {
     _.each(object.polygons, (p) => {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
@@ -267,5 +273,30 @@ function loadGeometry(geometry, object, palette) {
                 addVertex(j);
             }
         }
+    });    
+}
+
+function loadSphereGeometry(geometry, object, palette) {
+    _.each(object.spheres, (s) => {
+        const centerPos = getPosition(object, s.vertex);
+        const addVertex = (j) => {
+    	    push.apply(geometry.positions, [
+                sphereGeometry.vertices[j].x + centerPos[0],
+                sphereGeometry.vertices[j].y + centerPos[1],
+                sphereGeometry.vertices[j].z + centerPos[2]
+            ]);
+            push.apply(geometry.colors, getColour(s.colour, palette));
+        };
+        const sphereGeometry = new THREE.SphereGeometry(s.size / 0x4000, 8, 8);
+
+        _.each(sphereGeometry.faces, (f) => {
+            addVertex(f.a);
+            addVertex(f.b);
+            addVertex(f.c);
+        });
     });
 }
+
+// function loadLineGeometry(geometry, object, palette) {
+
+// }
