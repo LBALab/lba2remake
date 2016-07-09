@@ -33,6 +33,7 @@ export default class Renderer {
         this.camera.position.y = 2;
         this.camera.position.z = 8;
         this.camera.lookAt(new THREE.Vector3());
+        this.camera.zoom = 70; //TODO remove this piece when merged into master branch
 
         // Scene
         this.scene = new THREE.Scene();
