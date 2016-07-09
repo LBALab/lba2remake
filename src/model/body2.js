@@ -11,6 +11,7 @@ export function loadBody2(model, geometry, objects, index) {
         const buffer = model.files.body.getEntry(index);
         const data = new DataView(buffer);
         const obj = {
+            bodyFlag: data.getInt16(0x00, true),
             bonesSize: data.getUint32(0x20, true),
             bonesOffset: data.getUint32(0x24, true),
             verticesSize: data.getUint32(0x28, true),
@@ -30,6 +31,8 @@ export function loadBody2(model, geometry, objects, index) {
             
             buffer: buffer
         };
+
+        obj.hasAnim = obj.bodyFlag & 2;
          
         loadBones(obj);
         loadVertices(obj);
@@ -142,19 +145,17 @@ function loadPolygons(object) {
 					if (poly.hasTex && k == 3 && blockSize != 32) {
 						poly.tex = data.getUint8(offset, true);
 						poly.unk1 = data.getUint8(offset + 1, true);
-                        offset += 2;
 					} else if (k == 4) {
 						const colour = data.getUint16(offset, true);
 						poly.colour = (colour & 0x00FF);
-                        offset += 2;
 					} else {
 						const vertex = data.getUint16(offset, true);
 						if (k < 4 && renderType & 0x8000 || k < 3) {
 							poly.vertex[k] = vertex;
 							++poly.numVertex;
 						}
-                        offset += 2;
 					}
+                    offset += 2;
 				}
 			}
 
