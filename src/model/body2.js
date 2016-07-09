@@ -119,8 +119,8 @@ function loadPolygons(object) {
                 texY: [],
                 vertex: [],
                 unk1: 0,
-                unkX: 0,
-                unkY: 0,
+                unkX: [],
+                unkY: [],
             };
 
             let texIdx = 0;
@@ -130,10 +130,10 @@ function loadPolygons(object) {
 					offset += 4;
 					++k;
 				} else if (k > 5 && poly.hasTex) {
-					poly.unkX = data.getUint8(offset, true);
-					const x = data.getUint8(offset + 1, true);
-					poly.unkY =data.getUint8(offset + 2, true);
-					const y = data.getUint8(offset + 3, true);
+					poly.unkX[texIdx] = data.getInt8(offset, true);
+					const x = data.getInt8(offset + 1, true);
+					poly.unkY[texIdx] = data.getInt8(offset + 2, true);
+					const y = data.getInt8(offset + 3, true);
 					if (texIdx < 4) {
 						poly.texX[texIdx] = x;
 						poly.texY[texIdx] = y;
@@ -238,24 +238,39 @@ function getPosition(object, index) {
     ];
 }
 
-function getColour(colour, palette) {
+function getColour(colour, palette, hasTransparency) {
     return [
         palette[colour * 3], 
         palette[colour * 3 + 1],
         palette[colour * 3 + 2],
-        1
+        hasTransparency ? 255 : 126
     ];
 }
 
-function getUVs() {
-    return []
+function getUVs(object, p, vertex) {
+    if (p.hasTex) {
+        const t = object.uvGroups[p.tex];
+        let x = p.texX[vertex];// + p.unkX[vertex]/256;
+        let y = p.texY[vertex];// + p.unkY[vertex]/256;
+            
+        if (t.width != 0xFF && t.height != 0xFF) {
+            x /= (t.width + 1);
+            y /= (t.height + 1);
+            //x *= 256;
+            //y *= 256;
+            return [x, y];
+        }
+        else {
+            return [(x + t.x), (y + t.y)];
+        }
+    }
+    return [0, 0];
 }
 
 function loadGeometry(geometry, object, palette) {
     loadFaceGeometry(geometry, object, palette);
     loadSphereGeometry(geometry, object, palette);
     loadLineGeometry(geometry, object, palette);
-    
 }
 
 function loadFaceGeometry(geometry, object, palette) {
@@ -263,8 +278,8 @@ function loadFaceGeometry(geometry, object, palette) {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
     	    push.apply(geometry.positions, getPosition(object, vertexIndex));
-            push.apply(geometry.colors, getColour(p.colour, palette));
-            //push.apply(geometry.uvs, getPosition(object, p.tex));
+            push.apply(geometry.colors, getColour(p.colour, palette, p.hasTransparency));
+            push.apply(geometry.uvs, getUVs(object, p, j));
         };    
         for (let j = 0; j < 3; ++j) {
             addVertex(j);
@@ -288,7 +303,8 @@ function loadSphereGeometry(geometry, object, palette) {
                 sphereGeometry.vertices[j].y + centerPos[1],
                 sphereGeometry.vertices[j].z + centerPos[2]
             ]);
-            push.apply(geometry.colors, getColour(s.colour, palette));
+            push.apply(geometry.colors, getColour(s.colour, palette, false));
+            push.apply(geometry.uvs, [0,0]);
         };
 
         _.each(sphereGeometry.faces, (f) => {
@@ -303,7 +319,7 @@ function loadLineGeometry(geometry, object, palette) {
     _.each(object.lines, (l) => {
         const addVertex = (p,c) => {
             push.apply(geometry.linePositions, p);
-            push.apply(geometry.lineColors, getColour(c, palette));
+            push.apply(geometry.lineColors, getColour(c, palette, false));
         };
         let v1 = getPosition(object, l.vertex1);
         let v2 = getPosition(object, l.vertex2);

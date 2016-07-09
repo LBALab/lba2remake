@@ -41,7 +41,7 @@ function loadModel(files) {
     // TODO double check we will required the same geometry
     const bufferGeometry = new THREE.BufferGeometry();
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-    //bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
+    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
     bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
 
     const linebufferGeometry = new THREE.BufferGeometry();
@@ -66,7 +66,7 @@ function loadGeometry(model) {
     const objects = [];
 
     // TODO for each entity entry
-    loadBody2(model, geometry, objects, 2);
+    loadBody2(model, geometry, objects, 7);
 
     // _.each(model.layout, section => {
     //     loadGround(island, section, geometry);
