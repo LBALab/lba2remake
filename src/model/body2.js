@@ -262,7 +262,7 @@ function loadGeometry(geometry, object, palette) {
         for (let j = 0; j < 3; ++j) {
             addVertex(j);
         } 
-        if (p.renderType & 0x8000) { // quad
+        if (p.numVertex == 4) { // quad
             for (let j of [0, 2, 3]) {
                 addVertex(j);
             }
