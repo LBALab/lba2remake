@@ -17,7 +17,7 @@ void main() {
     vec3 color = vColor.rgb;
     float type = vColor.a;
 
-    gl_FragColor = vec4(1,0,0,1);//color, 1.0);
+    gl_FragColor = vec4(color, 1.0);
 /*
     if (equals(type, USE_COLOR)) {
         gl_FragColor = vec4(color, 1.0);

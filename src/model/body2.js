@@ -48,7 +48,7 @@ export function loadBody2(model, geometry, objects, index) {
 
 function loadBones(object) {
     object.bones = [];
-    const rawBones = new Int16Array(object.buffer, object.bonesOffset, object.bonesSize * 4);
+    const rawBones = new Uint16Array(object.buffer, object.bonesOffset, object.bonesSize * 4);
     for (let i = 0; i < object.bonesSize; ++i) {
         const index = i * 4;
         object.bones.push({
@@ -94,7 +94,7 @@ function loadPolygons(object) {
     let offset = 0;
     for (let i = 0; i < object.polygonsSize; ++i) {
         const renderType = data.getUint16(offset, true);
-        const vertexSize = data.getUint16(offset + 2, true);
+        const numPolygons = data.getUint16(offset + 2, true);
         const sectionSize = data.getUint16(offset + 4, true);
         const shade = data.getUint16(offset + 6, true);
         offset += 8;
@@ -102,9 +102,9 @@ function loadPolygons(object) {
         if (sectionSize == 0 || offset >= object.unk1Offset)
             break;
 
-        const blockSize = ((sectionSize - 8) / vertexSize);
+        const blockSize = ((sectionSize - 8) / numPolygons);
 
-        for (let j = 0; j < vertexSize; ++j) {
+        for (let j = 0; j < numPolygons; ++j) {
             let poly = {
                 num: blockSize/2,
                 colour: 0,
@@ -205,21 +205,45 @@ function loadUVGroups(object) {
     }
 }
 
-function getPosition(object, /*info,*/ index) {
-    const pos = /*rotate(*/[
-        object.vertices[index].x / 0x4000,
-        object.vertices[index].y / 0x4000,
-        object.vertices[index].z / 0x4000
-    ]/*, info.angle)*/;
+function getPosition(object, index) {
+    const vertex = object.vertices[index];
+    let boneIdx = vertex.bone;
+
+    let pos = [
+        vertex.x / 0x4000,
+        vertex.y / 0x4000,
+        vertex.z / 0x4000
+    ];
+
+    while(true) {
+        const bone = object.bones[boneIdx];
+        const boneVertex = object.vertices[bone.vertex];
+        
+        pos = [
+            pos[0] + (boneVertex.x / 0x4000),
+            pos[1] + (boneVertex.y / 0x4000),
+            pos[2] + (boneVertex.z / 0x4000)
+        ];
+
+        if(bone.parent == 0xFFFF)
+            break;
+            
+        boneIdx = bone.parent;
+    }
     return [
-        pos[0]/* + info.x*/,
-        pos[1]/* + info.y*/,
-        pos[2]/* + info.z*/
+        pos[0],
+        pos[1],
+        pos[2]
     ];
 }
 
-function getColour(colour,palette) {
-    return [palette[colour],palette[colour + 1],palette[colour + 2],0];
+function getColour(colour, palette) {
+    return [
+        palette[colour * 3], 
+        palette[colour * 3 + 1],
+        palette[colour * 3 + 2],
+        1
+    ];
 }
 
 function getUVs() {
@@ -231,7 +255,7 @@ function loadGeometry(geometry, object, palette) {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
     	    push.apply(geometry.positions, getPosition(object, vertexIndex));
-            push.apply(geometry.colors, getColour(object, p.colour, palette));
+            push.apply(geometry.colors, getColour(p.colour, palette));
             //push.apply(geometry.uvs, getPosition(object, p.tex));
         };    
         for (let j = 0; j < 3; ++j) {
