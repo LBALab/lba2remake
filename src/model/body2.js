@@ -62,14 +62,14 @@ function loadBones(object) {
 
 function loadVertices(object) {
     object.vertices = [];
-    const rawVertices = new Int16Array(object.buffer, object.verticesOffset, object.verticesSize * 4);
+    const data = new DataView(object.buffer, object.verticesOffset, object.normalsOffset - object.verticesOffset);
     for (let i = 0; i < object.verticesSize; ++i) {
-        const index = i * 4;
+        const index = i * 8;
         object.vertices.push({
-            x: rawVertices[index],
-            y: rawVertices[index + 1],
-            z: rawVertices[index + 2],
-            bone: rawVertices[index + 3]
+            x: data.getInt16(index, true),
+            y: data.getInt16(index + 2 , true),
+            z: data.getInt16(index + 4, true),
+            bone: data.getUint16(index + 6, true)
         });
     }
 }
