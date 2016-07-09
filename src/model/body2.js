@@ -254,7 +254,8 @@ function getUVs() {
 function loadGeometry(geometry, object, palette) {
     loadFaceGeometry(geometry, object, palette);
     loadSphereGeometry(geometry, object, palette);
-    //loadLineGeometry(geometry, object, palette);
+    loadLineGeometry(geometry, object, palette);
+    
 }
 
 function loadFaceGeometry(geometry, object, palette) {
@@ -279,6 +280,8 @@ function loadFaceGeometry(geometry, object, palette) {
 function loadSphereGeometry(geometry, object, palette) {
     _.each(object.spheres, (s) => {
         const centerPos = getPosition(object, s.vertex);
+        const sphereGeometry = new THREE.SphereGeometry(s.size / 0x4000, 8, 8);
+        
         const addVertex = (j) => {
     	    push.apply(geometry.positions, [
                 sphereGeometry.vertices[j].x + centerPos[0],
@@ -287,7 +290,6 @@ function loadSphereGeometry(geometry, object, palette) {
             ]);
             push.apply(geometry.colors, getColour(s.colour, palette));
         };
-        const sphereGeometry = new THREE.SphereGeometry(s.size / 0x4000, 8, 8);
 
         _.each(sphereGeometry.faces, (f) => {
             addVertex(f.a);
@@ -297,6 +299,16 @@ function loadSphereGeometry(geometry, object, palette) {
     });
 }
 
-// function loadLineGeometry(geometry, object, palette) {
+function loadLineGeometry(geometry, object, palette) {
+    _.each(object.lines, (l) => {
+        const addVertex = (p,c) => {
+            push.apply(geometry.linePositions, p);
+            push.apply(geometry.lineColors, getColour(c, palette));
+        };
+        let v1 = getPosition(object, l.vertex1);
+        let v2 = getPosition(object, l.vertex2);
 
-// }
+        addVertex(v1,l.colour);
+        addVertex(v2,l.colour);
+    });
+}

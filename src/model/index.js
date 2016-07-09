@@ -36,21 +36,32 @@ function loadModel(files) {
         }
     });
 
+    const {positions, uvs, colors, linePositions, lineColors} = loadGeometry(model);
+
     // TODO double check we will required the same geometry
     const bufferGeometry = new THREE.BufferGeometry();
-    const {positions, uvs, colors} = loadGeometry(model);
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
     //bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
     bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
 
-    return new THREE.Mesh(bufferGeometry, material);
+    const linebufferGeometry = new THREE.BufferGeometry();
+    linebufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(linePositions), 3));
+    linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(lineColors), 4, true));
+
+    const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
+    const modelMesh = new THREE.Mesh(bufferGeometry, material);
+    modelMesh.add(lineSegments);
+
+    return modelMesh;
 }
 
 function loadGeometry(model) {
     const geometry = {
         positions: [],
         uvs: [],
-        colors: []
+        colors: [],
+        linePositions: [],
+        lineColors: []
     };
     const objects = [];
 
