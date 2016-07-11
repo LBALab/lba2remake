@@ -238,16 +238,20 @@ function getPosition(object, index) {
     ];
 }
 
-function getColour(colour, palette, hasTransparency) {
+function getColour(colour, palette, hasTransparency, hasTex) {
     return [
         palette[colour * 3], 
         palette[colour * 3 + 1],
         palette[colour * 3 + 2],
-        hasTransparency ? 255 : 126
+        hasTex ? 0.0 : hasTransparency ? 0.5 : 1.0 
     ];
 }
 
 function getUVs(object, p, vertex) {
+    /*if (p.vertex[0] > object.verticesSize || p.vertex[0] == 0) {
+        return;
+    }*/
+
     if (p.hasTex) {
         const t = object.uvGroups[p.tex];
         let x = p.texX[vertex];// + p.unkX[vertex]/256;
@@ -278,7 +282,7 @@ function loadFaceGeometry(geometry, object, palette) {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
     	    push.apply(geometry.positions, getPosition(object, vertexIndex));
-            push.apply(geometry.colors, getColour(p.colour, palette, p.hasTransparency));
+            push.apply(geometry.colors, getColour(p.colour, palette, p.hasTransparency, p.hasTex));
             push.apply(geometry.uvs, getUVs(object, p, j));
         };    
         for (let j = 0; j < 3; ++j) {
@@ -303,7 +307,7 @@ function loadSphereGeometry(geometry, object, palette) {
                 sphereGeometry.vertices[j].y + centerPos[1],
                 sphereGeometry.vertices[j].z + centerPos[2]
             ]);
-            push.apply(geometry.colors, getColour(s.colour, palette, false));
+            push.apply(geometry.colors, getColour(s.colour, palette, false, false));
             push.apply(geometry.uvs, [0,0]);
         };
 
@@ -319,7 +323,7 @@ function loadLineGeometry(geometry, object, palette) {
     _.each(object.lines, (l) => {
         const addVertex = (p,c) => {
             push.apply(geometry.linePositions, p);
-            push.apply(geometry.lineColors, getColour(c, palette, false));
+            push.apply(geometry.lineColors, getColour(c, palette, false, false));
         };
         let v1 = getPosition(object, l.vertex1);
         let v2 = getPosition(object, l.vertex2);

@@ -66,7 +66,7 @@ function loadGeometry(model) {
     const objects = [];
 
     // TODO for each entity entry
-    loadBody2(model, geometry, objects, 7);
+    loadBody2(model, geometry, objects, 2);
 
     // _.each(model.layout, section => {
     //     loadGround(island, section, geometry);
