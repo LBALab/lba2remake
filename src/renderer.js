@@ -20,7 +20,7 @@ const islands = [
     'EMERAUDE'
 ];
 
-let index = 0;
+let index = 2;
 let current;
 
 export default class Renderer {
@@ -56,7 +56,7 @@ export default class Renderer {
         // Render loop
         this.animate();
 
-        model((object) => {
+        model(index, (object) => {
             current = object;
             this.scene.add(object);
         });
@@ -76,13 +76,19 @@ export default class Renderer {
 
     onKeyDown(event) {
         if (event.keyCode == 78) {
-            index = (index + 1) % islands.length;
-            island(islands[index], (object) => {
-                console.log('Loaded: ', islands[index]);
+            index = (index + 1)
+            model(index, (object) => {
                 this.scene.remove(current);
                 current = object;
                 this.scene.add(object);
             });
+            // index = (index + 1) % islands.length;
+            // island(islands[index], (object) => {
+            //     console.log('Loaded: ', islands[index]);
+            //     this.scene.remove(current);
+            //     current = object;
+            //     this.scene.add(object);
+            // });
         }
     }
 

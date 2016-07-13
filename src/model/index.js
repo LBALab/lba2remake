@@ -10,18 +10,18 @@ import {loadBody2} from './body2';
 import vertexShader from './shaders/model.vert.glsl';
 import fragmentShader from './shaders/model.frag.glsl';
 
-export default function(callback) {
+export default function(index, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         body: loadHqrAsync('BODY.HQR'),
         anim: loadHqrAsync('ANIM.HQR'),
         anim3ds: loadHqrAsync('ANIM3DS.HQR')
     }, function(err, files) {
-        callback(loadModel(files));
+        callback(loadModel(files, index));
     });
 }
 
-function loadModel(files) {
+function loadModel(files, index) {
     const model = {
         files: files,
         palette: new Uint8Array(files.ress.getEntry(0)),
@@ -36,7 +36,7 @@ function loadModel(files) {
         }
     });
 
-    const {positions, uvs, colors, linePositions, lineColors} = loadGeometry(model);
+    const {positions, uvs, colors, linePositions, lineColors} = loadGeometry(model, index);
 
     // TODO double check we will required the same geometry
     const bufferGeometry = new THREE.BufferGeometry();
@@ -55,7 +55,7 @@ function loadModel(files) {
     return modelMesh;
 }
 
-function loadGeometry(model) {
+function loadGeometry(model, index) {
     const geometry = {
         positions: [],
         uvs: [],
@@ -66,7 +66,7 @@ function loadGeometry(model) {
     const objects = [];
 
     // TODO for each entity entry
-    loadBody2(model, geometry, objects, 2);
+    loadBody2(model, geometry, objects, index);
 
     // _.each(model.layout, section => {
     //     loadGround(island, section, geometry);
