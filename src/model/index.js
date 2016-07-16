@@ -5,8 +5,8 @@ import _ from 'lodash';
 import {loadHqrAsync} from '../hqr';
 import {loadTexture} from '../texture';
 import {loadBody2} from './body2';
+import {loadEntity2} from './entity';
 
-// TODO create model own shaders
 import vertexShader from './shaders/model.vert.glsl';
 import fragmentShader from './shaders/model.frag.glsl';
 
@@ -25,7 +25,7 @@ function loadModel(files, index) {
     const model = {
         files: files,
         palette: new Uint8Array(files.ress.getEntry(0)),
-        entity: new Uint8Array(files.ress.getEntry(44))
+        entity: files.ress.getEntry(44)
     };
 
     const material = new THREE.RawShaderMaterial({
@@ -36,9 +36,9 @@ function loadModel(files, index) {
         }
     });
 
+    const entities = loadEntity2(model.entity);
     const {positions, uvs, colors, linePositions, lineColors} = loadGeometry(model, index);
 
-    // TODO double check we will required the same geometry
     const bufferGeometry = new THREE.BufferGeometry();
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
     bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
