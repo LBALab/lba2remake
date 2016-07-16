@@ -138,8 +138,6 @@ function getPolygon(data, offset, renderType, blockSize) {
         hasTransparency: hasTransparency
     };
 
-    // 12 bytes block (always the same)
-    
     // Blocksizes:
     // Quad and Extra = 16
     // Quad and Tex = 32
@@ -154,9 +152,9 @@ function getPolygon(data, offset, renderType, blockSize) {
     }
 
     // special case for trianguled textures
-    // if (hasTex && numVertex == 3) {
-    //     poly.tex = data.getUint8(offset + 6, true);
-    // }
+    if (hasTex && numVertex == 3) {
+        poly.tex = data.getUint8(offset + 6, true);
+    }
 
     // polygon color
     const colour = data.getUint16(offset + 8, true);
@@ -165,8 +163,6 @@ function getPolygon(data, offset, renderType, blockSize) {
     // polygon color intensity
     const intensity = data.getInt16(offset + 10, true);
     poly.intensity = intensity;
-    
-    // offset 12 from now on
 
     if (hasTex) {
         for (let k = 0; k < numVertex; ++k) {
@@ -180,11 +176,11 @@ function getPolygon(data, offset, renderType, blockSize) {
             poly.tex = data.getUint8(offset + 28, true);
         }
     }
-    else if (hasExtra) {
-        poly.texX[0] = data.getInt8(offset + 12, true);
-        poly.texY[0] = data.getInt8(offset + 13, true);
-        poly.tex = data.getUint8(offset + 14, true);
-    }
+    // else if (hasExtra) {
+    //     poly.texX[0] = data.getInt8(offset + 12, true);
+    //     poly.texY[0] = data.getInt8(offset + 13, true);
+    //     poly.tex = data.getUint8(offset + 14, true);
+    // }
 
     return poly;
 }
@@ -212,7 +208,7 @@ function loadSpheres(object) {
             unk1: rawSpheres[index],
             colour: rawSpheres[index + 1],
             vertex: rawSpheres[index + 2],
-            size: rawSpheres[index + 3] // WARN like positions this needs to be divided by 0x4000
+            size: rawSpheres[index + 3]
         });
     }
 }
@@ -273,24 +269,11 @@ function getColour(colour, palette, hasTransparency, hasTex) {
 }
 
 function getUVs(object, p, vertex) {
-    /*if (p.vertex[0] > object.verticesSize || p.vertex[0] == 0) {
-        return;
-    }*/
-
     if (p.hasTex) {
         const t = object.uvGroups[p.tex];
         let x = p.texX[vertex] + p.unkX[vertex]/256;
         let y = p.texY[vertex] + p.unkY[vertex]/256;
-            
-        if (t.width != 0xFF && t.height != 0xFF) {
-            x /= t.width;
-        	y /= t.height;
-            x *= 256;
-            y *= 256;
-            return [x, y];
-        }
-        
-        return [(x + t.x), (y + t.y)];
+        return [(x & t.width) + t.x, (y & t.height) + t.y];
     }
     return [0, 0];
 }
