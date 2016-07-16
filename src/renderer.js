@@ -20,7 +20,7 @@ const islands = [
     'EMERAUDE'
 ];
 
-let index = 2;
+let index = 7;
 let current;
 
 export default class Renderer {

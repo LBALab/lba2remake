@@ -95,7 +95,9 @@ function loadPolygons(object) {
     object.polygons = [];
     const data = new DataView(object.buffer, object.polygonsOffset, object.linesOffset - object.polygonsOffset);
     let offset = 0;
+    let savedOffset = 0;
     for (let i = 0; i < object.polygonsSize; ++i) {
+        savedOffset = offset;
         const renderType = data.getUint16(offset, true);
         const numPolygons = data.getUint16(offset + 2, true);
         const sectionSize = data.getUint16(offset + 4, true);
@@ -108,60 +110,83 @@ function loadPolygons(object) {
         const blockSize = ((sectionSize - 8) / numPolygons);
 
         for (let j = 0; j < numPolygons; ++j) {
-            let poly = {
-                num: blockSize/2,
-                colour: 0,
-                hasTex: (renderType & 0x8 && blockSize > 16),
-                hasTransparency: renderType & 0x2,
-                numVertex: 0,
-                tex: 0,
-                texX: [],
-                texY: [],
-                vertex: [],
-                unk1: 0,
-                unkX: [],
-                unkY: [],
-            };
-
-            let texIdx = 0;
-            for (let k = 0; k < poly.num; ++k) {
-				if (k == 14 && poly.hasTex) {
-					poly.tex = data.getUint8(offset, true);
-					offset += 4;
-					++k;
-				} else if (k > 5 && poly.hasTex) {
-					poly.unkX[texIdx] = data.getInt8(offset, true);
-					const x = data.getInt8(offset + 1, true);
-					poly.unkY[texIdx] = data.getInt8(offset + 2, true);
-					const y = data.getInt8(offset + 3, true);
-					if (texIdx < 4) {
-						poly.texX[texIdx] = x;
-						poly.texY[texIdx] = y;
-					}
-                    offset += 4;
-					++texIdx;
-					++k;
-				} else {
-					if (poly.hasTex && k == 3 && blockSize != 32) {
-						poly.tex = data.getUint8(offset, true);
-						poly.unk1 = data.getUint8(offset + 1, true);
-					} else if (k == 4) {
-						const colour = data.getUint16(offset, true);
-						poly.colour = (colour & 0x00FF);
-					} else {
-						const vertex = data.getUint16(offset, true);
-						if (k < 4 && renderType & 0x8000 || k < 3) {
-							poly.vertex[k] = vertex;
-							++poly.numVertex;
-						}
-					}
-                    offset += 2;
-				}
-			}
-
+            const poly = getPolygon(data, offset, renderType, blockSize);
             object.polygons.push(poly);
+            offset += blockSize;
         }
     }
+}
+
+function getPolygon(data, offset, renderType, blockSize) {
+    const numVertex = (renderType & 0x8000) ? 4 : 3;
+    const hasExtra = (renderType & 0x4000) ? true : false;
+    const hasTex = (renderType & 0x8 && blockSize > 16) ? true : false;
+    const hasTransparency = (renderType == 2) ? true : false;
+
+    let poly = {
+        vertex: [],
+        colour: 0,
+        intensity: 0,
+        unkX: [],
+        texX: [],
+        unkY: [],
+        texY: [],
+        tex: 0,
+        numVertex: numVertex,
+        hasTex: hasTex,
+        hasExtra: hasExtra,
+        hasTransparency: hasTransparency
+    };
+
+    // 12 bytes block (always the same)
+    
+    // Blocksizes:
+    // Quad and Extra = 16
+    // Quad and Tex = 32
+    // Quad and Color = 12 (DONE)
+    // Tri and Extra = 16
+    // Tri and Tex = 24
+    // Tri and Color = 12 (DONE)
+
+    // vertex block
+    for (let k = 0; k < numVertex; ++k) {
+        poly.vertex[k] = data.getUint16(offset + k * 2, true);
+    }
+
+    // special case for trianguled textures
+    // if (hasTex && numVertex == 3) {
+    //     poly.tex = data.getUint8(offset + 6, true);
+    // }
+
+    // polygon color
+    const colour = data.getUint16(offset + 8, true);
+    poly.colour = (colour & 0x00FF);
+
+    // polygon color intensity
+    const intensity = data.getInt16(offset + 10, true);
+    poly.intensity = intensity;
+    
+    // offset 12 from now on
+
+    if (hasTex) {
+        for (let k = 0; k < numVertex; ++k) {
+            poly.unkX[k] = data.getInt8(offset + 12 + k * 4, true);
+            poly.texX[k] = data.getInt8(offset + 13 + k * 4, true);
+            poly.unkY[k] = data.getInt8(offset + 14 + k * 4, true);
+            poly.texY[k] = data.getInt8(offset + 15 + k * 4, true);
+        }
+        // for blocksize 32 with quad texture
+        if (numVertex == 4) {
+            poly.tex = data.getUint8(offset + 28, true);
+        }
+    }
+    else if (hasExtra) {
+        poly.texX[0] = data.getInt8(offset + 12, true);
+        poly.texY[0] = data.getInt8(offset + 13, true);
+        poly.tex = data.getUint8(offset + 14, true);
+    }
+
+    return poly;
 }
 
 function loadLines(object) {
@@ -254,19 +279,18 @@ function getUVs(object, p, vertex) {
 
     if (p.hasTex) {
         const t = object.uvGroups[p.tex];
-        let x = p.texX[vertex];// + p.unkX[vertex]/256;
-        let y = p.texY[vertex];// + p.unkY[vertex]/256;
+        let x = p.texX[vertex] + p.unkX[vertex]/256;
+        let y = p.texY[vertex] + p.unkY[vertex]/256;
             
         if (t.width != 0xFF && t.height != 0xFF) {
-            x /= (t.width + 1);
-            y /= (t.height + 1);
-            //x *= 256;
-            //y *= 256;
+            x /= t.width;
+        	y /= t.height;
+            x *= 256;
+            y *= 256;
             return [x, y];
         }
-        else {
-            return [(x + t.x), (y + t.y)];
-        }
+        
+        return [(x + t.x), (y + t.y)];
     }
     return [0, 0];
 }
