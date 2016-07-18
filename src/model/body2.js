@@ -262,7 +262,7 @@ function getColour(colour, palette, hasTransparency, hasTex) {
         palette[colour * 3], 
         palette[colour * 3 + 1],
         palette[colour * 3 + 2],
-        hasTex ? 0.0 : hasTransparency ? 0.5 : 1.0 
+        hasTex ? 0 : hasTransparency ? 127 : 255 
     ];
 }
 

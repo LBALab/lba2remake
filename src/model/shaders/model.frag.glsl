@@ -12,7 +12,7 @@ bool equals(float value, float refValue) {
 }
 
 void main() {
-    if (vColor.a == 0.0) {
+    if (equals(vColor.a, 0.0)) {
         gl_FragColor = texture2D(body, vUv);
     } else {
         gl_FragColor = vColor;
