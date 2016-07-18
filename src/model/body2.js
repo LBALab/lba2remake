@@ -95,16 +95,14 @@ function loadPolygons(object) {
     object.polygons = [];
     const data = new DataView(object.buffer, object.polygonsOffset, object.linesOffset - object.polygonsOffset);
     let offset = 0;
-    let savedOffset = 0;
-    for (let i = 0; i < object.polygonsSize; ++i) {
-        savedOffset = offset;
+    while (offset < object.linesOffset - object.polygonsOffset) {
         const renderType = data.getUint16(offset, true);
         const numPolygons = data.getUint16(offset + 2, true);
         const sectionSize = data.getUint16(offset + 4, true);
         const shade = data.getUint16(offset + 6, true);
         offset += 8;
 
-        if (sectionSize == 0 || offset >= object.unk1Offset)
+        if (sectionSize == 0)
             break;
 
         const blockSize = ((sectionSize - 8) / numPolygons);
