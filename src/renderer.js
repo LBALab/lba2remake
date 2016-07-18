@@ -20,7 +20,7 @@ const islands = [
     'EMERAUDE'
 ];
 
-let index = 7;
+let index = 0; // 92-Baldino
 let current;
 
 export default class Renderer {
@@ -77,6 +77,8 @@ export default class Renderer {
     onKeyDown(event) {
         if (event.keyCode == 78) {
             index = (index + 1)
+            if (index > 469)
+                index = 0;
             model(index, (object) => {
                 this.scene.remove(current);
                 current = object;
