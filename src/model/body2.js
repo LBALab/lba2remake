@@ -190,7 +190,7 @@ function loadLines(object) {
         const index = i * 4;
         object.lines.push({
             unk1: rawLines[index],
-            colour: rawLines[index + 1],
+            colour: rawLines[index + 1] & 0x00FF,
             vertex1: rawLines[index + 2],
             vertex2: rawLines[index + 3]
         });
@@ -204,7 +204,7 @@ function loadSpheres(object) {
         const index = i * 4;
         object.spheres.push({
             unk1: rawSpheres[index],
-            colour: rawSpheres[index + 1],
+            colour: rawSpheres[index + 1] & 0x00FF,
             vertex: rawSpheres[index + 2],
             size: rawSpheres[index + 3]
         });
@@ -269,8 +269,8 @@ function getColour(colour, palette, hasTransparency, hasTex) {
 function getUVs(object, p, vertex) {
     if (p.hasTex) {
         const t = object.uvGroups[p.tex];
-        let x = p.texX[vertex] + p.unkX[vertex]/256;
-        let y = p.texY[vertex] + p.unkY[vertex]/256;
+        const x = p.texX[vertex] + p.unkX[vertex]/256;
+        const y = p.texY[vertex] + p.unkY[vertex]/256;
         return [(x & t.width) + t.x, (y & t.height) + t.y];
     }
     return [0, 0];
