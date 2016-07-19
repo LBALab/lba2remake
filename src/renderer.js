@@ -77,7 +77,7 @@ export default class Renderer {
     onKeyDown(event) {
         if (event.keyCode == 78) {
             index = (index + 1)
-            if (index > 469)
+            if (index > 468)
                 index = 0;
             model(index, (object) => {
                 this.scene.remove(current);
