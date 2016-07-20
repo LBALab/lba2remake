@@ -37,10 +37,11 @@ function loadIsland(files) {
         }
     });
     const bufferGeometry = new THREE.BufferGeometry();
-    const {positions, uvs, colors} = loadGeometry(island);
+    const {positions, uvs, colors, uvGroups} = loadGeometry(island);
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
     bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
     bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
+    bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, true));
 
     return new THREE.Mesh(bufferGeometry, material);
 }
@@ -49,7 +50,8 @@ function loadGeometry(island) {
     const geometry = {
         positions: [],
         uvs: [],
-        colors: []
+        colors: [],
+        uvGroups: []
     };
     const objects = [];
     _.each(island.layout, section => {

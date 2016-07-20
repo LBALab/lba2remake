@@ -18,12 +18,14 @@ export function loadGround(island, section, geometry) {
                 push.apply(geometry.positions, getPositions(section, p));
                 push.apply(geometry.uvs, getUVs(section.textureInfo, t0, 1));
                 push.apply(geometry.colors, getColors(section.intensity, t0, island.palette, p));
+                push.apply(geometry.uvGroups, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
             }
             if (t1.useColor || t1.useTexture) {
                 const p = [point(1, s), point(r, 1), point(0, r)];
                 push.apply(geometry.positions, getPositions(section, p));
                 push.apply(geometry.uvs, getUVs(section.textureInfo, t1, 1));
                 push.apply(geometry.colors, getColors(section.intensity, t1, island.palette, p));
+                push.apply(geometry.uvGroups, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
             }
         }
     }

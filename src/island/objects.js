@@ -69,12 +69,12 @@ function loadUVGroups(object) {
     const rawUVGroups = new Uint8Array(object.buffer, object.uvGroupsSectionOffset, object.uvGroupsSectionSize * 4);
     for (let i = 0; i < object.uvGroupsSectionSize; ++i) {
         const index = i * 4;
-        object.uvGroups.push({
-            x: rawUVGroups[index],
-            y: rawUVGroups[index + 1],
-            width: rawUVGroups[index + 2],
-            height: rawUVGroups[index + 3]
-        });
+        object.uvGroups.push([
+            rawUVGroups[index],
+            rawUVGroups[index + 1],
+            rawUVGroups[index + 2],
+            rawUVGroups[index + 3]
+        ]);
     }
 }
 
@@ -110,6 +110,7 @@ function loadSection(geometry, object, info, section, palette) {
             push.apply(geometry.positions, getPosition(object, info, index));
             push.apply(geometry.colors, getColor(section, i, intensity, palette));
             push.apply(geometry.uvs, getUVs(object, section, i, j));
+            push.apply(geometry.uvGroups, getUVGroups(object, section, i, j));
         };
         for (let j = 0; j < 3; ++j) {
             addVertex(j);
@@ -151,11 +152,19 @@ function getUVs(object, section, face, ptIndex) {
         const index = baseIndex + 12 + ptIndex * 4;
         const u = section.data.getUint8(index + 1);
         const v = section.data.getUint8(index + 3);
-        const uvGroupIndex = section.blockSize == 32 ? section.data.getUint8(baseIndex + 28) : section.data.getUint8(baseIndex + 6);
-        const grp = object.uvGroups[uvGroupIndex];
-        return [(u & grp.width) + grp.x, (v & grp.height) + grp.y];
+        return [u, v];
     } else {
         return [0, 0];
+    }
+}
+
+function getUVGroups(object, section, face, ptIndex) {
+    if (section.blockSize >= 28) {
+        const baseIndex = face * section.blockSize;
+        const uvGroupIndex = section.blockSize == 32 ? section.data.getUint8(baseIndex + 28) : section.data.getUint8(baseIndex + 6);
+        return object.uvGroups[uvGroupIndex];
+    } else {
+        return [0, 0, 0, 0];
     }
 }
 
