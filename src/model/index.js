@@ -38,13 +38,17 @@ function loadModel(files, index) {
 
     const entities = loadEntity2(model.entity);
     const {positions, uvs, colors, linePositions, lineColors} = loadGeometry(model, index);
+    const object = new THREE.Object3D();
 
-    const bufferGeometry = new THREE.BufferGeometry();
-    bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
-    bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
+    if (positions.length > 0) {
+        const bufferGeometry = new THREE.BufferGeometry();
+        bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+        bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
+        bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
 
-    const modelMesh = new THREE.Mesh(bufferGeometry, material);
+        const modelMesh = new THREE.Mesh(bufferGeometry, material);
+        object.add(modelMesh);
+    }
 
     if (linePositions.length > 0) {
         const linebufferGeometry = new THREE.BufferGeometry();
@@ -52,10 +56,10 @@ function loadModel(files, index) {
         linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(lineColors), 4, true));
 
         const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
-        modelMesh.add(lineSegments);
+        object.add(lineSegments);
     }
 
-    return modelMesh;
+    return object;
 }
 
 function loadGeometry(model, index) {
