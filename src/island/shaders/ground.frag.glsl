@@ -1,4 +1,4 @@
-precision lowp float;
+precision mediump float;
 
 #pragma require("constants");
 
