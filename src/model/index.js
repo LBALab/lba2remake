@@ -44,13 +44,16 @@ function loadModel(files, index) {
     bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
     bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
 
-    const linebufferGeometry = new THREE.BufferGeometry();
-    linebufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(linePositions), 3));
-    linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(lineColors), 4, true));
-
-    const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
     const modelMesh = new THREE.Mesh(bufferGeometry, material);
-    modelMesh.add(lineSegments);
+
+    if (linePositions.length > 0) {
+        const linebufferGeometry = new THREE.BufferGeometry();
+        linebufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(linePositions), 3));
+        linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(lineColors), 4, true));
+
+        const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
+        modelMesh.add(lineSegments);
+    }
 
     return modelMesh;
 }
