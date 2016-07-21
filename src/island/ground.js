@@ -10,11 +10,12 @@ export function loadGround(island, section, geometries) {
             const s = 1 - r;
 
             const point = (xi, yi) => (x + xi) * 65 + y + yi;
+
             const triangle = (t, p) => {
                 if (t.useColor || t.useTexture) {
                     if (t.useTexture) {
                         push.apply(geometries.textured.positions, getPositions(section, p));
-                        push.apply(geometries.textured.uvs, getUVs(section.textureInfo, t, 1));
+                        push.apply(geometries.textured.uvs, getUVs(section.textureInfo, t.textureIndex));
                         push.apply(geometries.textured.colors, getColors(section.intensity, t, island.palette, p));
                     } else {
                         push.apply(geometries.colored.positions, getPositions(section, p));
@@ -53,17 +54,13 @@ function getPositions(section, points) {
     return positions;
 }
 
-function getUVs(textureInfo, triangle, field) {
-    const index = triangle.textureIndex;
-    if (triangle.useTexture) {
-        return [
-            textureInfo[index * 12 + field], textureInfo[index * 12 + 2 + field],
-            textureInfo[index * 12 + 4 + field], textureInfo[index * 12 + 6 + field],
-            textureInfo[index * 12 + 8 + field], textureInfo[index * 12 + 10 + field]
-        ];
-    } else {
-        return [0, 0, 0, 0, 0, 0];
-    }
+function getUVs(textureInfo, index) {
+    const field = 1;
+    return [
+        textureInfo[index * 12 + field], textureInfo[index * 12 + 2 + field],
+        textureInfo[index * 12 + 4 + field], textureInfo[index * 12 + 6 + field],
+        textureInfo[index * 12 + 8 + field], textureInfo[index * 12 + 10 + field]
+    ];
 }
 
 function getColors(intensity, triangle, palette, points) {
