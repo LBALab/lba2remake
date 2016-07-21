@@ -1,8 +1,6 @@
-import shaderConstants from './shaders/constants';
-
 const push = Array.prototype.push;
 
-export function loadGround(island, section, geometry) {
+export function loadGround(island, section, geometries) {
     for (let x = 0; x < 64; ++x) {
         for (let y = 0; y < 64; ++y) {
             const t0 = loadTriangle(section, x, y, 0);
@@ -12,21 +10,21 @@ export function loadGround(island, section, geometry) {
             const s = 1 - r;
 
             const point = (xi, yi) => (x + xi) * 65 + y + yi;
+            const triangle = (t, p) => {
+                if (t.useColor || t.useTexture) {
+                    if (t.useTexture) {
+                        push.apply(geometries.textured.positions, getPositions(section, p));
+                        push.apply(geometries.textured.uvs, getUVs(section.textureInfo, t, 1));
+                        push.apply(geometries.textured.colors, getColors(section.intensity, t, island.palette, p));
+                    } else {
+                        push.apply(geometries.colored.positions, getPositions(section, p));
+                        push.apply(geometries.colored.colors, getColors(section.intensity, t, island.palette, p));
+                    }
+                }
+            };
 
-            if (t0.useColor || t0.useTexture) {
-                const p = [point(0, r), point(s, 0), point(1, s)];
-                push.apply(geometry.positions, getPositions(section, p));
-                push.apply(geometry.uvs, getUVs(section.textureInfo, t0, 1));
-                push.apply(geometry.colors, getColors(section.intensity, t0, island.palette, p));
-                push.apply(geometry.uvGroups, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-            }
-            if (t1.useColor || t1.useTexture) {
-                const p = [point(1, s), point(r, 1), point(0, r)];
-                push.apply(geometry.positions, getPositions(section, p));
-                push.apply(geometry.uvs, getUVs(section.textureInfo, t1, 1));
-                push.apply(geometry.colors, getColors(section.intensity, t1, island.palette, p));
-                push.apply(geometry.uvGroups, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-            }
+            triangle(t0, [point(0, r), point(s, 0), point(1, s)]);
+            triangle(t1, [point(1, s), point(r, 1), point(0, r)]);
         }
     }
 }
@@ -77,15 +75,15 @@ function getColors(intensity, triangle, palette, points) {
 }
 
 function getColor(triangle, palette, intensity) {
+    const i = intensity * 12 + 63;
     if (triangle.useColor) {
         const idx = (triangle.textureBank << 4) * 3;
-        const i = intensity * 3;
-        const r = palette[idx + i];
-        const g = palette[idx + i + 1];
-        const b = palette[idx + i + 2];
-        return [r, g, b, triangle.useTexture ? shaderConstants.USE_COLOR_AND_TEXTURE_GROUND : shaderConstants.USE_COLOR];
+        const offset = intensity * 3;
+        const r = palette[idx + offset];
+        const g = palette[idx + offset + 1];
+        const b = palette[idx + offset + 2];
+        return [r, g, b, i];
     } else {
-        const i = intensity * 12 + 63;
-        return [i, i, i, shaderConstants.USE_TEXTURE_GROUND];
+        return [0xFF, 0xFF, 0xFF, i];
     }
 }
