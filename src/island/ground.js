@@ -55,11 +55,11 @@ function getPositions(section, points) {
 }
 
 function getUVs(textureInfo, index) {
-    const field = 1;
+    const offset = index * 12;
     return [
-        textureInfo[index * 12 + field], textureInfo[index * 12 + 2 + field],
-        textureInfo[index * 12 + 4 + field], textureInfo[index * 12 + 6 + field],
-        textureInfo[index * 12 + 8 + field], textureInfo[index * 12 + 10 + field]
+        textureInfo[offset + 1], textureInfo[offset + 3],
+        textureInfo[offset + 5], textureInfo[offset + 7],
+        textureInfo[offset + 9], textureInfo[offset + 11]
     ];
 }
 
