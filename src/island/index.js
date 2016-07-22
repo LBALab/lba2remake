@@ -3,12 +3,10 @@ import THREE from 'three';
 import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
-import {loadTexture} from '../texture';
+import {prepareGeometries} from './geometries';
 import {loadLayout} from './layout';
 import {loadGround} from './ground';
 import {loadObjects} from './objects';
-
-import shaders from './shaders';
 
 export default function(name, callback) {
     async.auto({
@@ -51,25 +49,7 @@ function loadIsland(files) {
 }
 
 function loadGeometries(island) {
-    const geometries = {
-        colored: {
-            positions: [],
-            colors: []
-        },
-        textured: {
-            positions: [],
-            colors: [],
-            uvs: []
-        },
-        atlas_textured: {
-            positions: [],
-            colors: [],
-            uvs: [],
-            uvGroups: []
-        }
-    };
-
-    loadMaterials(island, geometries);
+    const geometries = prepareGeometries(island);
 
     const objects = [];
     _.each(island.layout, section => {
@@ -77,27 +57,4 @@ function loadGeometries(island) {
         loadObjects(island, section, geometries, objects);
     });
     return geometries;
-}
-
-function loadMaterials(island, geometries) {
-    geometries.colored.material = new THREE.RawShaderMaterial({
-        vertexShader: shaders.colored.vert,
-        fragmentShader: shaders.colored.frag
-    });
-
-    geometries.textured.material = new THREE.RawShaderMaterial({
-        vertexShader: shaders.textured.vert,
-        fragmentShader: shaders.textured.frag,
-        uniforms: {
-            texture: {value: loadTexture(island.files.ile.getEntry(1), island.palette)}
-        }
-    });
-
-    geometries.atlas_textured.material = new THREE.RawShaderMaterial({
-        vertexShader: shaders.atlas_textured.vert,
-        fragmentShader: shaders.atlas_textured.frag,
-        uniforms: {
-            texture: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
-        }
-    });
 }

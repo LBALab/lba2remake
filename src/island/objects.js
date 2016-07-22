@@ -118,10 +118,10 @@ function loadSection(geometries, object, info, section, palette) {
                 push.apply(geometries.colored.positions, getPosition(object, info, index));
                 push.apply(geometries.colored.colors, getColor(section, i, intensity, palette));
             } else {
-                push.apply(geometries.atlas_textured.positions, getPosition(object, info, index));
-                push.apply(geometries.atlas_textured.colors, [0xFF, 0xFF, 0xFF, 0xFF]);
-                push.apply(geometries.atlas_textured.uvs, getUVs(section, i, j));
-                push.apply(geometries.atlas_textured.uvGroups, uvGroup);
+                push.apply(geometries.atlas.positions, getPosition(object, info, index));
+                push.apply(geometries.atlas.colors, [0xFF, 0xFF, 0xFF, 0xFF]);
+                push.apply(geometries.atlas.uvs, getUVs(section, i, j));
+                push.apply(geometries.atlas.uvGroups, uvGroup);
             }
         };
         for (let j = 0; j < 3; ++j) {
