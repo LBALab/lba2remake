@@ -38,6 +38,7 @@ export function prepareGeometries(island) {
             material: new THREE.RawShaderMaterial({
                 vertexShader: atlas_vertex,
                 fragmentShader: atlas_fragment,
+                transparent: true,
                 uniforms: {
                     texture: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
                 }
