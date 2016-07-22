@@ -33,6 +33,7 @@ export default class Renderer {
         this.camera.position.x = 0;
         this.camera.position.y = 0.1;
         this.camera.position.z = 1;
+        this.camera.lookAt(this.camera.position);
 
         // Scene
         this.scene = new THREE.Scene();
@@ -56,9 +57,9 @@ export default class Renderer {
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         //this.controls.rotateUp(Math.PI / 4);
         this.controls.target.set(
-            this.camera.position.x + 0.1,
+            this.camera.position.x,
             this.camera.position.y,
-            this.camera.position.z
+            this.camera.position.z + 0.0000000001
         );
         this.controls.enableZoom = false;
         this.controls.enablePan = false;
