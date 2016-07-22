@@ -2,34 +2,31 @@ import THREE from 'three';
 import DeviceOrientationControls from './controls/DeviceOrientationControls';
 import OrbitControls from './controls/OrbitControls';
 import StereoEffect from './effects/StereoEffect';
-import island from './island';
+import loadIsland from './island';
 
 const islands = [
-    'CITADEL',
-    'CITABAU',
-    'DESERT',
-    'OTRINGAL',
-    'KNARTAS',
-    'ASCENCE',
-    'CELEBRA2',
-    'CELEBRAT',
-    'ILOTCX',
-    'MOSQUIBE',
-    'PLATFORM',
-    'SOUSCELB',
-    'MOON',
-    'EMERAUDE'
+    {name: 'CITADEL', skyColor: [0.0, 0.0, 0.0], skyIndex: 12, fogDistance: 800},
+    {name: 'CITABAU', skyColor: [0.51, 0.71, 0.84], skyIndex: 14, fogDistance: 1600},
+    {name: 'DESERT', skyColor: [0.51, 0.71, 0.84], skyIndex: 14, fogDistance: 1600},
+    {name: 'EMERAUDE', skyColor: [0.0, 0.07, 0.10], skyIndex: 15, fogDistance: 800},
+    {name: 'OTRINGAL', skyColor: [0.45, 0.41, 0.48], skyIndex: 17, fogDistance: 800},
+    {name: 'KNARTAS', skyColor: [0.45, 0.41, 0.48], skyIndex: 17, fogDistance: 800},
+    {name: 'ILOTCX', skyColor: [0.45, 0.41, 0.48], skyIndex: 17, fogDistance: 800},
+    {name: 'CELEBRAT', skyColor: [0.45, 0.41, 0.48], skyIndex: 17, fogDistance: 800},
+    {name: 'ASCENCE', skyColor: [0.45, 0.41, 0.48], skyIndex: 17, fogDistance: 800},
+    {name: 'MOSQUIBE', skyColor: [0.44, 0.0, 0.0], skyIndex: 18, fogDistance: 1000},
+    {name: 'PLATFORM', skyColor: [0.44, 0.0, 0.0], skyIndex: 18, fogDistance: 1000},
+    {name: 'SOUSCELB', skyColor: [0.44, 0.0, 0.0], skyIndex: 18, fogDistance: 1000}
 ];
 
 let index = 0;
-let current;
 
 export default class Renderer {
     constructor(width, height, container) {
         this.clock = new THREE.Clock();
 
         // Camera init
-        this.camera = new THREE.PerspectiveCamera(90, width / height, 0.001, 100);
+        this.camera = new THREE.PerspectiveCamera(90, width / height, 0.001, 100); // 1m = 0.0625 units
         this.camera.position.x = 0;
         this.camera.position.y = 0.1;
         this.camera.position.z = 1;
@@ -46,7 +43,7 @@ export default class Renderer {
         this.renderer.autoClear = false;
 
         this.stereoEffect = new StereoEffect(this.renderer);
-        this.stereoEffect.eyeSeparation = 0.001;
+        this.stereoEffect.eyeSeparation = 0.0019;
         this.stereoEffect.setSize(width, height);
 
         this.renderer.domElement.style.position = 'absolute';
@@ -95,11 +92,12 @@ export default class Renderer {
         // Render loop
         this.animate();
 
-        island(islands[index], (object) => {
-            current = object;
-            this.scene.add(object);
-        });
+        this.islandGroup = new THREE.Object3D();
+        this.islandGroup.add(new THREE.Object3D);
+        this.scene.add(this.islandGroup);
+
         window.addEventListener('keydown', this.onKeyDown.bind(this), false);
+        this.refreshIsland();
     }
 
     onResize(width, height) {
@@ -112,13 +110,15 @@ export default class Renderer {
     onKeyDown(event) {
         if (event.keyCode == 78) {
             index = (index + 1) % islands.length;
-            island(islands[index], (object) => {
-                console.log('Loaded: ', islands[index]);
-                this.scene.remove(current);
-                current = object;
-                this.scene.add(object);
-            });
+            this.refreshIsland();
         }
+    }
+
+    refreshIsland() {
+        loadIsland(islands[index], object => {
+            console.log('Loaded: ', islands[index].name);
+            this.islandGroup.children[0] = object;
+        });
     }
 
     animate() {

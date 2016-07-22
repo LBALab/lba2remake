@@ -8,17 +8,17 @@ import {loadLayout} from './layout';
 import {loadGround} from './ground';
 import {loadObjects} from './objects';
 
-export default function(name, callback) {
+export default function loadIsland({name}, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         ile: loadHqrAsync(`${name}.ILE`),
         obl: loadHqrAsync(`${name}.OBL`)
     }, function(err, files) {
-        callback(loadIsland(files));
+        callback(loadIslandSync(files));
     });
 }
 
-function loadIsland(files) {
+function loadIslandSync(files) {
     const island = {
         files: files,
         palette: new Uint8Array(files.ress.getEntry(0)),
