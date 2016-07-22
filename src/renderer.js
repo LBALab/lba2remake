@@ -1,5 +1,6 @@
 import THREE from 'three';
 import DeviceOrientationControls from './controls/DeviceOrientationControls';
+import OrbitControls from './controls/OrbitControls';
 import StereoEffect from './effects/StereoEffect';
 import island from './island';
 
@@ -24,7 +25,7 @@ let index = 0;
 let current;
 
 export default class Renderer {
-    constructor(width, height) {
+    constructor(width, height, container) {
         this.clock = new THREE.Clock();
 
         // Camera init
@@ -52,9 +53,43 @@ export default class Renderer {
         this.renderer.domElement.style.top = 0;
         this.renderer.domElement.style.opacity = 1.0;
 
-        this.controls = new DeviceOrientationControls(this.camera);
-        this.controls.connect();
-        this.controls.update();
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        //this.controls.rotateUp(Math.PI / 4);
+        this.controls.target.set(
+            this.camera.position.x + 0.1,
+            this.camera.position.y,
+            this.camera.position.z
+        );
+        this.controls.enableZoom = false;
+        this.controls.enablePan = false;
+
+        function fullscreen() {
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.msRequestFullscreen) {
+                container.msRequestFullscreen();
+            } else if (container.mozRequestFullScreen) {
+                container.mozRequestFullScreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            }
+        }
+        
+        const that = this;
+        function setOrientationControls(e) {
+            if (!e.alpha) {
+                return;
+            }
+
+            that.controls = new DeviceOrientationControls(that.camera);
+            that.controls.connect();
+            that.controls.update();
+
+            that.renderer.domElement.addEventListener('click', fullscreen, false);
+
+            window.removeEventListener('deviceorientation', setOrientationControls, true);
+        }
+        window.addEventListener('deviceorientation', setOrientationControls, true);
 
         // Render loop
         this.animate();

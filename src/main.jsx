@@ -11,16 +11,12 @@ class ThreeContainer extends React.Component {
         this.state = this.getComponentSize();
     }
 
-    componentWillMount() {
-        this.renderer = new Renderer(this.state.width, this.state.height);
-        window.addEventListener('resize', this.onWindowResize.bind(this), false);
-    }
-
     componentDidMount() {
         const node = ReactDOM.findDOMNode(this);
+        this.renderer = new Renderer(this.state.width, this.state.height, node);
         node.appendChild(this.renderer.renderer.domElement);
-        window.iosFullScreen = true;
         this.renderer.onResize(this.state.width, this.state.height);
+        window.addEventListener('resize', this.onWindowResize.bind(this), false);
     }
 
     onWindowResize() {
