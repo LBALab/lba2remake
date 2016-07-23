@@ -35,11 +35,10 @@ export default class Renderer {
 
         // Renderer init
         this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: false});
-        this.renderer.setClearColor(0x000000);
+        this.renderer.setClearColor(0x000000, 1);
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(width, height);
-        this.renderer.autoClear = false;
-
+        this.renderer.autoClear = true;
 
         this.renderer.domElement.style.position = 'absolute';
         this.renderer.domElement.style.left = 0;
@@ -77,6 +76,9 @@ export default class Renderer {
         loadIsland(islands[index], object => {
             console.log('Loaded: ', islands[index].name);
             this.islandGroup.children[0] = object;
+            const sc = islands[index].skyColor;
+            const color = new THREE.Color(sc[0], sc[1], sc[2]);
+            this.renderer.setClearColor(color.getHex(), 1);
         });
     }
 

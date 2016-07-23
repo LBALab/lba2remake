@@ -7,8 +7,11 @@ import textured_vertex from './shaders/textured.vert.glsl';
 import textured_fragment from './shaders/textured.frag.glsl';
 import atlas_vertex from './shaders/atlas.vert.glsl';
 import atlas_fragment from './shaders/atlas.frag.glsl';
+import env_vertex from './shaders/env.vert.glsl';
+import env_fragment from './shaders/env.frag.glsl';
 
 export function prepareGeometries(island) {
+    const skyAndSeaTexture = loadTexture(island.files.ress.getEntry(island.skyIndex - 1), island.palette);
     return {
         colored: {
             positions: [],
@@ -41,6 +44,16 @@ export function prepareGeometries(island) {
                 transparent: true,
                 uniforms: {
                     texture: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
+                }
+            })
+        },
+        sea: {
+            material: new THREE.RawShaderMaterial({
+                vertexShader: env_vertex,
+                fragmentShader: env_fragment,
+                transparent: true,
+                uniforms: {
+                    texture: {value: skyAndSeaTexture}
                 }
             })
         }
