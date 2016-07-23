@@ -32,12 +32,14 @@ export default class Renderer {
         this.movement = [0, 0];
         this.angle = 0.0;
 
+        this.cameraDummy = new THREE.Object3D();
+        this.cameraDummy.position.x = 0;
+        this.cameraDummy.position.y = 0.1;
+        this.cameraDummy.position.z = 1;
+        this.cameraDummy.lookAt(this.cameraDummy.position);
+
         // Camera init
         this.camera = new THREE.PerspectiveCamera(90, width / height, 0.001, 100); // 1m = 0.0625 units
-        this.camera.position.x = 0;
-        this.camera.position.y = 0.1;
-        this.camera.position.z = 1;
-        this.camera.lookAt(this.camera.position);
 
         // Scene
         this.scene = new THREE.Scene();
@@ -54,11 +56,11 @@ export default class Renderer {
         this.renderer.domElement.style.top = 0;
         this.renderer.domElement.style.opacity = 1.0;
 
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls = new OrbitControls(this.cameraDummy, this.renderer.domElement);
         this.controls.target.set(
-            this.camera.position.x,
-            this.camera.position.y,
-            this.camera.position.z + 0.0000000001
+            this.cameraDummy.position.x - 0.0000000001,
+            this.cameraDummy.position.y,
+            this.cameraDummy.position.z
         );
         this.controls.enableZoom = false;
         this.controls.enablePan = false;
@@ -71,11 +73,12 @@ export default class Renderer {
                 that.controls = null;
             }
 
-            that.camera.quaternion.set(q[0], q[1], q[2], q[3]);
+            that.cameraDummy.quaternion.set(q[0], q[1], q[2], q[3]);
         });
 
         SyncServer.onMsg('p', function(p) {
-            that.camera.position.set(p[0], p[1], p[2]);
+            that.cameraDummy.position.set(p[0], p[1], p[2]);
+            that.angle = p[3];
         });
 
         SyncServer.onMsg('island', function(idx) {
@@ -89,7 +92,7 @@ export default class Renderer {
             }
 
             that.controls.dispose();
-            that.controls = new DeviceOrientationControls(that.camera);
+            that.controls = new DeviceOrientationControls(that.cameraDummy);
             that.controls.connect();
             that.controls.update();
 
@@ -163,7 +166,7 @@ export default class Renderer {
         if (this.controls && this.controls.update) {
             this.controls.update(dt);
             if (this.controls instanceof DeviceOrientationControls) {
-                const q = this.camera.quaternion;
+                const q = this.cameraDummy.quaternion;
                 if (this.frameCount % 2 == 0) {
                     SyncServer.send('q', [q.x, q.y, q.z, q.w]);
                 }
@@ -173,15 +176,18 @@ export default class Renderer {
             this.angle += dt * this.movement[1] * 2.0;
             const dir = new THREE.Vector3(this.movement[0], 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), this.angle);
             dir.multiplyScalar(dt * 0.2);
-            this.camera.position.add(dir);
+            this.cameraDummy.position.add(dir);
             if (this.controls instanceof OrbitControls) {
                 this.controls.target.add(dir);
             }
             if (this.frameCount % 2 == 0) {
-                const p = this.camera.position;
-                SyncServer.send('p', [p.x, p.y, p.z]);
+                const p = this.cameraDummy.position;
+                SyncServer.send('p', [p.x, p.y, p.z, this.angle]);
             }
         }
+        this.camera.position.copy(this.cameraDummy.position);
+        this.camera.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), this.angle);
+        this.camera.quaternion.multiply(this.cameraDummy.quaternion);
         this.render();
         this.frameCount++;
         requestAnimationFrame(this.animate.bind(this));
