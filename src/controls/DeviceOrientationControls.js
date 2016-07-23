@@ -1,4 +1,5 @@
 import THREE from 'three';
+import SyncServer from './SyncServer';
 
 export default function DeviceOrientationControls( object ) {
 
@@ -19,13 +20,13 @@ export default function DeviceOrientationControls( object ) {
 	var onDeviceOrientationChangeEvent = function( event ) {
 
 		scope.deviceOrientation = event;
-
+		scope.send();
 	};
 
 	var onScreenOrientationChangeEvent = function() {
 
 		scope.screenOrientation = window.orientation || 0;
-
+		scope.send();
 	};
 
 	// The angles alpha, beta and gamma form a set of intrinsic Tait-Bryan angles of type Z-X'-Y''
@@ -86,6 +87,20 @@ export default function DeviceOrientationControls( object ) {
 		setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
 		this.alpha = alpha;
 
+	};
+
+	this.send = function() {
+		if ( scope.enabled === false ) return;
+
+		var alpha = scope.deviceOrientation.alpha ? THREE.Math.degToRad( scope.deviceOrientation.alpha ) + this.alphaOffsetAngle : 0; // Z
+		var beta = scope.deviceOrientation.beta ? THREE.Math.degToRad( scope.deviceOrientation.beta ) : 0; // X'
+		var gamma = scope.deviceOrientation.gamma ? THREE.Math.degToRad( scope.deviceOrientation.gamma ) : 0; // Y''
+		var orient = scope.screenOrientation ? THREE.Math.degToRad( scope.screenOrientation ) : 0; // O
+
+		const q = new THREE.Quaternion();
+
+		setObjectQuaternion( q, alpha, beta, gamma, orient );
+		SyncServer.send('deviceorientation', q);
 	};
 
 	this.updateAlphaOffsetAngle = function( angle ) {

@@ -1,6 +1,7 @@
 import THREE from 'three';
 import DeviceOrientationControls from './controls/DeviceOrientationControls';
 import OrbitControls from './controls/OrbitControls';
+import SyncServer from './controls/SyncServer';
 import StereoEffect from './effects/StereoEffect';
 import loadIsland from './island';
 
@@ -20,6 +21,8 @@ const islands = [
 ];
 
 let index = 0;
+
+SyncServer.init('192.168.0.19:8081');
 
 export default class Renderer {
     constructor(width, height, container) {
@@ -42,17 +45,13 @@ export default class Renderer {
         this.renderer.setSize(width, height);
         this.renderer.autoClear = false;
 
-        this.stereoEffect = new StereoEffect(this.renderer);
-        this.stereoEffect.eyeSeparation = 0.0019;
-        this.stereoEffect.setSize(width, height);
-
         this.renderer.domElement.style.position = 'absolute';
         this.renderer.domElement.style.left = 0;
         this.renderer.domElement.style.top = 0;
         this.renderer.domElement.style.opacity = 1.0;
 
+        /*
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        //this.controls.rotateUp(Math.PI / 4);
         this.controls.target.set(
             this.camera.position.x,
             this.camera.position.y,
@@ -60,20 +59,14 @@ export default class Renderer {
         );
         this.controls.enableZoom = false;
         this.controls.enablePan = false;
+        */
 
-        function fullscreen() {
-            if (container.requestFullscreen) {
-                container.requestFullscreen();
-            } else if (container.msRequestFullscreen) {
-                container.msRequestFullscreen();
-            } else if (container.mozRequestFullScreen) {
-                container.mozRequestFullScreen();
-            } else if (container.webkitRequestFullscreen) {
-                container.webkitRequestFullscreen();
-            }
-        }
-        
         const that = this;
+
+        SyncServer.onMsg('deviceorientation', function(orientation) {
+            that.camera.quaternion.set(orientation._x, orientation._y, orientation._z, orientation._w);
+        });
+
         function setOrientationControls(e) {
             if (!e.alpha) {
                 return;
@@ -83,7 +76,9 @@ export default class Renderer {
             that.controls.connect();
             that.controls.update();
 
-            that.renderer.domElement.addEventListener('click', fullscreen, false);
+            that.stereoEffect = new StereoEffect(that.renderer);
+            that.stereoEffect.eyeSeparation = 0.0019;
+            that.stereoEffect.setSize(width, height);
 
             window.removeEventListener('deviceorientation', setOrientationControls, true);
         }
@@ -104,7 +99,9 @@ export default class Renderer {
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(width, height);
-        this.stereoEffect.setSize(width, height);
+        if (this.stereoEffect) {
+            this.stereoEffect.setSize(width, height);
+        }
     }
 
     onKeyDown(event) {
@@ -123,12 +120,16 @@ export default class Renderer {
 
     animate() {
         requestAnimationFrame(this.animate.bind(this));
-        this.controls.update(this.clock.getDelta());
+        if (this.controls && this.controls.update) {
+            this.controls.update(this.clock.getDelta());
+        }
         this.render();
     }
 
     render() {
-        this.stereoEffect.render(this.scene, this.camera)
-        //this.renderer.render(this.scene, this.camera);
+        if (this.stereoEffect)
+            this.stereoEffect.render(this.scene, this.camera);
+        else
+            this.renderer.render(this.scene, this.camera);
     }
 }
