@@ -29,6 +29,9 @@ export default class Renderer {
         this.clock = new THREE.Clock();
         this.frameCount = 0;
 
+        this.movement = [0, 0];
+        this.angle = 0.0;
+
         // Camera init
         this.camera = new THREE.PerspectiveCamera(90, width / height, 0.001, 100); // 1m = 0.0625 units
         this.camera.position.x = 0;
@@ -71,6 +74,10 @@ export default class Renderer {
             that.camera.quaternion.set(q[0], q[1], q[2], q[3]);
         });
 
+        SyncServer.onMsg('p', function(p) {
+            that.camera.position.set(p[0], p[1], p[2]);
+        });
+
         SyncServer.onMsg('island', function(idx) {
             index = idx;
             that.refreshIsland();
@@ -102,6 +109,7 @@ export default class Renderer {
         this.scene.add(this.islandGroup);
 
         window.addEventListener('keydown', this.onKeyDown.bind(this), false);
+        window.addEventListener('keyup', this.onKeyUp.bind(this), false);
         this.refreshIsland();
     }
 
@@ -120,6 +128,27 @@ export default class Renderer {
             SyncServer.send('island', index);
             this.refreshIsland();
         }
+        if (event.keyCode == 90) { // Z
+            this.movement[0] = 1;
+        }
+        if (event.keyCode == 83) { // S
+            this.movement[0] = -1;
+        }
+        if (event.keyCode == 81) { // Q
+            this.movement[1] = 1;
+        }
+        if (event.keyCode == 68) { // D
+            this.movement[1] = -1;
+        }
+    }
+
+    onKeyUp(event) {
+        if (event.keyCode == 90 || event.keyCode == 83) { // Z | S
+            this.movement[0] = 0;
+        }
+        if (event.keyCode == 81 || event.keyCode == 68) { // Q | D
+            this.movement[1] = 0;
+        }
     }
 
     refreshIsland() {
@@ -130,13 +159,27 @@ export default class Renderer {
     }
 
     animate() {
+        const dt = this.clock.getDelta();
         if (this.controls && this.controls.update) {
-            this.controls.update(this.clock.getDelta());
+            this.controls.update(dt);
             if (this.controls instanceof DeviceOrientationControls) {
                 const q = this.camera.quaternion;
                 if (this.frameCount % 2 == 0) {
                     SyncServer.send('q', [q.x, q.y, q.z, q.w]);
                 }
+            }
+        }
+        if (this.movement[0] != 0 || this.movement[1] != 0) {
+            this.angle += dt * this.movement[1] * 2.0;
+            const dir = new THREE.Vector3(this.movement[0], 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), this.angle);
+            dir.multiplyScalar(dt * 0.2);
+            this.camera.position.add(dir);
+            if (this.controls instanceof OrbitControls) {
+                this.controls.target.add(dir);
+            }
+            if (this.frameCount % 2 == 0) {
+                const p = this.camera.position;
+                SyncServer.send('p', [p.x, p.y, p.z]);
             }
         }
         this.render();
