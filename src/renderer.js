@@ -1,5 +1,4 @@
 import THREE from 'three';
-import TWEEN from 'tween.js';
 import DeviceOrientationControls from './controls/DeviceOrientationControls';
 import OrbitControls from './controls/OrbitControls';
 import SyncServer from './controls/SyncServer';
@@ -131,7 +130,6 @@ export default class Renderer {
     }
 
     animate() {
-        TWEEN.update(new Date().getTime());
         if (this.controls && this.controls.update) {
             this.controls.update(this.clock.getDelta());
             if (this.controls instanceof DeviceOrientationControls) {
