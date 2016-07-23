@@ -2,26 +2,12 @@ import THREE from 'three';
 
 const push = Array.prototype.push;
 
-let min = 0xFF;
-let max = 0;
-let distrib = {};
-
 export function loadObjects(island, section, geometries, objects) {
     const numObjects = section.objInfo.numObjects;
     for (let i = 0; i < numObjects; ++i) {
         const info = loadObjectInfo(section.objects, section, i);
         const object = loadObject(island, objects, info.index);
         loadFaces(geometries, object, info, island.palette);
-        if (info.iv in distrib) {
-            distrib[info.iv] += 1;
-        } else {
-            distrib[info.iv] = 1;
-        }
-        min = Math.min(info.iv, min);
-        max = Math.max(info.iv, max);
-    }
-    if (section.id == island.layout.length) {
-        console.log(min, max, distrib);
     }
 }
 
