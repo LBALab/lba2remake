@@ -50,7 +50,6 @@ export default class Renderer {
         this.renderer.domElement.style.top = 0;
         this.renderer.domElement.style.opacity = 1.0;
 
-        /*
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.target.set(
             this.camera.position.x,
@@ -59,11 +58,14 @@ export default class Renderer {
         );
         this.controls.enableZoom = false;
         this.controls.enablePan = false;
-        */
 
         const that = this;
 
         SyncServer.onMsg('deviceorientation', function(orientation) {
+            if (that.controls) {
+                that.controls.dispose();
+                that.controls = null;
+            }
             that.camera.quaternion.set(orientation._x, orientation._y, orientation._z, orientation._w);
         });
 
@@ -72,6 +74,7 @@ export default class Renderer {
                 return;
             }
 
+            that.controls.dispose();
             that.controls = new DeviceOrientationControls(that.camera);
             that.controls.connect();
             that.controls.update();
