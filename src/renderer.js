@@ -34,7 +34,7 @@ export default class Renderer {
 
         this.cameraDummy = new THREE.Object3D();
         this.cameraDummy.position.x = 0;
-        this.cameraDummy.position.y = 0.1;
+        this.cameraDummy.position.y = 0.08;
         this.cameraDummy.position.z = 1;
         this.cameraDummy.lookAt(this.cameraDummy.position);
 
