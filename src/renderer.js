@@ -131,25 +131,25 @@ export default class Renderer {
             SyncServer.send('island', index);
             this.refreshIsland();
         }
-        if (event.keyCode == 90) { // Z
+        if (event.keyCode == 90 || event.keyCode == 38) { // Z or Up
             this.movement[0] = 1;
         }
-        if (event.keyCode == 83) { // S
+        if (event.keyCode == 83 || event.keyCode == 40) { // S or Down
             this.movement[0] = -1;
         }
-        if (event.keyCode == 81) { // Q
+        if (event.keyCode == 81 || event.keyCode == 37) { // Q or Left
             this.movement[1] = 1;
         }
-        if (event.keyCode == 68) { // D
+        if (event.keyCode == 68 || event.keyCode == 39) { // D or Right
             this.movement[1] = -1;
         }
     }
 
     onKeyUp(event) {
-        if (event.keyCode == 90 || event.keyCode == 83) { // Z | S
+        if (event.keyCode == 90 || event.keyCode == 83 || event.keyCode == 38 || event.keyCode == 40) { // Z | S | Up | Down
             this.movement[0] = 0;
         }
-        if (event.keyCode == 81 || event.keyCode == 68) { // Q | D
+        if (event.keyCode == 81 || event.keyCode == 68 || event.keyCode == 37 || event.keyCode == 39) { // Q | D | Left | Right
             this.movement[1] = 0;
         }
     }
