@@ -33,11 +33,7 @@ wsServer.on('request', function (request) {
     connection.on('message', function (message) {
         if (message.type === 'utf8') {
             const msg = JSON.parse(message.utf8Data);
-            switch (msg.type) {
-                case 'deviceorientation':
-                    forward(connection, msg);
-                    break;
-            }
+            forward(connection, msg);
         }
     });
 

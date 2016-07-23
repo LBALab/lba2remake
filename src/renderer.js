@@ -1,4 +1,5 @@
 import THREE from 'three';
+import TWEEN from 'tween.js';
 import DeviceOrientationControls from './controls/DeviceOrientationControls';
 import OrbitControls from './controls/OrbitControls';
 import SyncServer from './controls/SyncServer';
@@ -27,6 +28,7 @@ SyncServer.init('192.168.0.19:8081');
 export default class Renderer {
     constructor(width, height, container) {
         this.clock = new THREE.Clock();
+        this.frameCount = 0;
 
         // Camera init
         this.camera = new THREE.PerspectiveCamera(90, width / height, 0.001, 100); // 1m = 0.0625 units
@@ -61,12 +63,18 @@ export default class Renderer {
 
         const that = this;
 
-        SyncServer.onMsg('deviceorientation', function(orientation) {
+        SyncServer.onMsg('q', function(q) {
             if (that.controls) {
                 that.controls.dispose();
                 that.controls = null;
             }
-            that.camera.quaternion.set(orientation._x, orientation._y, orientation._z, orientation._w);
+
+            that.camera.quaternion.set(q[0], q[1], q[2], q[3]);
+        });
+
+        SyncServer.onMsg('island', function(idx) {
+            index = idx;
+            that.refreshIsland();
         });
 
         function setOrientationControls(e) {
@@ -110,6 +118,7 @@ export default class Renderer {
     onKeyDown(event) {
         if (event.keyCode == 78) {
             index = (index + 1) % islands.length;
+            SyncServer.send('island', index);
             this.refreshIsland();
         }
     }
@@ -122,11 +131,19 @@ export default class Renderer {
     }
 
     animate() {
-        requestAnimationFrame(this.animate.bind(this));
+        TWEEN.update(new Date().getTime());
         if (this.controls && this.controls.update) {
             this.controls.update(this.clock.getDelta());
+            if (this.controls instanceof DeviceOrientationControls) {
+                const q = this.camera.quaternion;
+                if (this.frameCount % 2 == 0) {
+                    SyncServer.send('q', [q.x, q.y, q.z, q.w]);
+                }
+            }
         }
         this.render();
+        this.frameCount++;
+        requestAnimationFrame(this.animate.bind(this));
     }
 
     render() {
