@@ -6,18 +6,18 @@ import StereoEffect from './effects/StereoEffect';
 import loadIsland from './island';
 
 const islands = [
-    {name: 'CITADEL', skyColor: [0.0, 0.0, 0.0], skyIndex: 12, fogDistance: 800},
-    {name: 'CITABAU', skyColor: [0.51, 0.71, 0.84], skyIndex: 14, fogDistance: 1600},
-    {name: 'DESERT', skyColor: [0.51, 0.71, 0.84], skyIndex: 14, fogDistance: 1600},
-    {name: 'EMERAUDE', skyColor: [0.0, 0.07, 0.10], skyIndex: 15, fogDistance: 800},
-    {name: 'OTRINGAL', skyColor: [0.45, 0.41, 0.48], skyIndex: 17, fogDistance: 800},
-    {name: 'KNARTAS', skyColor: [0.45, 0.41, 0.48], skyIndex: 17, fogDistance: 800},
-    {name: 'ILOTCX', skyColor: [0.45, 0.41, 0.48], skyIndex: 17, fogDistance: 800},
-    {name: 'CELEBRAT', skyColor: [0.45, 0.41, 0.48], skyIndex: 17, fogDistance: 800},
-    {name: 'ASCENCE', skyColor: [0.45, 0.41, 0.48], skyIndex: 17, fogDistance: 800},
-    {name: 'MOSQUIBE', skyColor: [0.44, 0.0, 0.0], skyIndex: 18, fogDistance: 1000},
-    {name: 'PLATFORM', skyColor: [0.44, 0.0, 0.0], skyIndex: 18, fogDistance: 1000},
-    {name: 'SOUSCELB', skyColor: [0.44, 0.0, 0.0], skyIndex: 18, fogDistance: 1000}
+    {name: 'CITADEL', skyColor: [0.0, 0.0, 0.0], skyIndex: 11, fogDistance: 800},
+    {name: 'CITABAU', skyColor: [0.51, 0.71, 0.84], skyIndex: 13, fogDistance: 1600},
+    {name: 'DESERT', skyColor: [0.51, 0.71, 0.84], skyIndex: 13, fogDistance: 1600},
+    {name: 'EMERAUDE', skyColor: [0.0, 0.07, 0.10], skyIndex: 14, fogDistance: 800},
+    {name: 'OTRINGAL', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800},
+    {name: 'KNARTAS', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800},
+    {name: 'ILOTCX', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800},
+    {name: 'CELEBRAT', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800},
+    {name: 'ASCENCE', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800},
+    {name: 'MOSQUIBE', skyColor: [0.44, 0.0, 0.0], skyIndex: 17, fogDistance: 1000},
+    {name: 'PLATFORM', skyColor: [0.44, 0.0, 0.0], skyIndex: 17, fogDistance: 1000},
+    {name: 'SOUSCELB', skyColor: [0.44, 0.0, 0.0], skyIndex: 17, fogDistance: 1000}
 ];
 
 let index = 0;
