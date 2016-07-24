@@ -4,6 +4,7 @@ import OrbitControls from './controls/OrbitControls';
 import SyncServer from './controls/SyncServer';
 import StereoEffect from './effects/StereoEffect';
 import loadIsland from './island';
+import {isMobile} from './utils';
 
 const islands = [
     {name: 'CITADEL', skyColor: [0.0, 0.0, 0.0], skyIndex: 11, fogDistance: 800},
@@ -66,23 +67,24 @@ export default class Renderer {
 
         const that = this;
 
-        SyncServer.onMsg(function(buffer) {
-            const view = new DataView(buffer);
-            const type = view.getUint8(0);
-            if (type == SyncServer.DEVICE_ORIENTATION) {
-                if (that.controls) {
-                    that.controls.dispose();
-                    that.controls = null;
-                }
-                that.cameraDummy.quaternion.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10), view.getFloat32(14));
-            } else if (type == SyncServer.LOCATION) {
-                that.cameraDummy.position.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10));
-                that.angle = view.getFloat32(14);
-                const newIndex = view.getUint8(1);
-                if (newIndex != index) {
-                    index = newIndex;
-                    that.refreshIsland();
-                }
+        SyncServer.onMsg(function(type, data) {
+            switch (type) {
+                case SyncServer.DEVICE_ORIENTATION:
+                    if (that.controls) {
+                        that.controls.dispose();
+                        that.controls = null;
+                    }
+                    that.cameraDummy.quaternion.set(data.getFloat32(0), data.getFloat32(4), data.getFloat32(8), data.getFloat32(12));
+                    break;
+                case SyncServer.LOCATION:
+                    that.cameraDummy.position.set(data.getFloat32(0), data.getFloat32(4), data.getFloat32(8));
+                    that.angle = data.getFloat32(12);
+                    const newIndex = data.getUint8(16);
+                    if (newIndex != index) {
+                        index = newIndex;
+                        that.refreshIsland();
+                    }
+                    break;
             }
         });
 
@@ -102,7 +104,9 @@ export default class Renderer {
 
             window.removeEventListener('deviceorientation', setOrientationControls, true);
         }
-        window.addEventListener('deviceorientation', setOrientationControls, true);
+        if (isMobile()) {
+            window.addEventListener('deviceorientation', setOrientationControls, true);
+        }
 
         // Render loop
         this.animate();
@@ -170,14 +174,14 @@ export default class Renderer {
             if (this.controls instanceof DeviceOrientationControls) {
                 const q = this.cameraDummy.quaternion;
                 if (this.frameCount % 2 == 0) {
-                    const buffer = new ArrayBuffer(18);
+                    const buffer = new ArrayBuffer(17);
                     const view = new DataView(buffer);
                     view.setUint8(0, SyncServer.DEVICE_ORIENTATION);
-                    view.setFloat32(2, q.x);
-                    view.setFloat32(6, q.y);
-                    view.setFloat32(10, q.z);
-                    view.setFloat32(14, q.w);
-                    SyncServer.send(buffer);
+                    view.setFloat32(1, q.x);
+                    view.setFloat32(5, q.y);
+                    view.setFloat32(9, q.z);
+                    view.setFloat32(13, q.w);
+                    //SyncServer.send(buffer);
                 }
             }
         }
@@ -194,12 +198,12 @@ export default class Renderer {
                 const buffer = new ArrayBuffer(18);
                 const view = new DataView(buffer);
                 view.setUint8(0, SyncServer.LOCATION);
-                view.setUint8(1, index);
-                view.setFloat32(2, p.x);
-                view.setFloat32(6, p.y);
-                view.setFloat32(10, p.z);
-                view.setFloat32(14, this.angle);
-                SyncServer.send(buffer);
+                view.setFloat32(1, p.x);
+                view.setFloat32(5, p.y);
+                view.setFloat32(9, p.z);
+                view.setFloat32(13, this.angle);
+                view.setUint8(17, index);
+                //SyncServer.send(buffer);
             }
         }
         this.camera.position.copy(this.cameraDummy.position);

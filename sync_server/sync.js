@@ -14,9 +14,16 @@ var wsServer = new WebSocketServer({
 var clients = {};
 
 function forward(from, msg) {
+    if (msg.type == 'utf8') {
+        console.log('[' + from.remoteAddresses[0] + ']:', msg.utf8Data);
+    }
     _.each(clients, function(client) {
         if (client.remoteAddresses[0] != from.remoteAddresses[0]) {
-            client.sendBytes(msg.binaryData);
+            if (msg.type == 'utf8') {
+                client.sendUTF(msg.utf8Data);
+            } else {
+                client.sendBytes(msg.binaryData);
+            }
         }
     });
 }
