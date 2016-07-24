@@ -1,5 +1,4 @@
 var webpack = require('webpack');
-var path = require('path');
 
 module.exports = {
     entry: "./src/main.jsx",
@@ -9,11 +8,6 @@ module.exports = {
     },
     resolve: {
         extensions: ['', '.js', '.jsx']
-    },
-    resolveLoader: {
-        alias: {
-            'glsl-custom-loader': path.join(__dirname, "./src/island/shaders/glslCustomLoader")
-        }
     },
     module: {
         loaders: [
@@ -27,7 +21,7 @@ module.exports = {
             },
             {
                 test: /\.glsl?$/,
-                loader: 'glsl-custom-loader'
+                loader: 'raw-loader'
             }
         ]
     },

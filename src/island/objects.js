@@ -1,28 +1,13 @@
 import THREE from 'three';
-import shaderConstants from './shaders/constants';
 
 const push = Array.prototype.push;
 
-let min = 0xFF;
-let max = 0;
-let distrib = {};
-
-export function loadObjects(island, section, geometry, objects) {
+export function loadObjects(island, section, geometries, objects) {
     const numObjects = section.objInfo.numObjects;
     for (let i = 0; i < numObjects; ++i) {
         const info = loadObjectInfo(section.objects, section, i);
         const object = loadObject(island, objects, info.index);
-        loadFaces(geometry, object, info, island.palette);
-        if (info.iv in distrib) {
-            distrib[info.iv] += 1;
-        } else {
-            distrib[info.iv] = 1;
-        }
-        min = Math.min(info.iv, min);
-        max = Math.max(info.iv, max);
-    }
-    if (section.id == island.layout.length) {
-        console.log(min, max, distrib);
+        loadFaces(geometries, object, info, island.palette);
     }
 }
 
@@ -69,21 +54,21 @@ function loadUVGroups(object) {
     const rawUVGroups = new Uint8Array(object.buffer, object.uvGroupsSectionOffset, object.uvGroupsSectionSize * 4);
     for (let i = 0; i < object.uvGroupsSectionSize; ++i) {
         const index = i * 4;
-        object.uvGroups.push({
-            x: rawUVGroups[index],
-            y: rawUVGroups[index + 1],
-            width: rawUVGroups[index + 2],
-            height: rawUVGroups[index + 3]
-        });
+        object.uvGroups.push([
+            rawUVGroups[index],
+            rawUVGroups[index + 1],
+            rawUVGroups[index + 2],
+            rawUVGroups[index + 3]
+        ]);
     }
 }
 
-function loadFaces(geometry, object, info, palette) {
+function loadFaces(geometries, object, info, palette) {
     const data = new DataView(object.buffer, object.faceSectionOffset, object.lineSectionOffset - object.faceSectionOffset);
     let offset = 0;
     while (offset < data.byteLength) {
         const section = parseSectionHeader(data, object, offset);
-        loadSection(geometry, object, info, section, palette);
+        loadSection(geometries, object, info, section, palette);
         offset += section.size + 8;
     }
 }
@@ -93,7 +78,7 @@ function parseSectionHeader(data, object, offset) {
     const numFaces = data.getUint16(offset + 2, true);
     const size = data.getUint16(offset + 4, true) - 8;
     return {
-        id: data.getUint8(offset),
+        type: data.getUint8(offset),
         numFaces: numFaces,
         pointsPerFace: (flags & 0x80) ? 4 : 3,
         blockSize: size / numFaces,
@@ -102,14 +87,28 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
-function loadSection(geometry, object, info, section, palette) {
+//const bcolors = {
+//    12: [0xFF, 0x00, 0x00, 0xFF],
+//    16: [0x00, 0xFF, 0x00, 0xFF],
+//    24: [0x00, 0x00, 0xFF, 0xFF],
+//    32: [0xFF, 0xFF, 0xFF, 0xFF]
+//};
+
+function loadSection(geometries, object, info, section, palette) {
     for (let i = 0; i < section.numFaces; ++i) {
+        const uvGroup = getUVGroup(object, section, i);
         const addVertex = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
             const intensity = (object.intensities[index * 8 + info.iv] >> 5) * 3;
-            push.apply(geometry.positions, getPosition(object, info, index));
-            push.apply(geometry.colors, getColor(section, i, intensity, palette));
-            push.apply(geometry.uvs, getUVs(object, section, i, j));
+            if (section.blockSize == 12 || section.blockSize == 16) {
+                push.apply(geometries.colored.positions, getPosition(object, info, index));
+                push.apply(geometries.colored.colors, getColor(section, i, intensity, palette));
+            } else {
+                push.apply(geometries.atlas.positions, getPosition(object, info, index));
+                push.apply(geometries.atlas.colors, [0xFF, 0xFF, 0xFF, 0xFF]);
+                push.apply(geometries.atlas.uvs, getUVs(section, i, j));
+                push.apply(geometries.atlas.uvGroups, uvGroup);
+            }
         };
         for (let j = 0; j < 3; ++j) {
             addVertex(j);
@@ -137,25 +136,23 @@ function getPosition(object, info, index) {
 
 function getColor(section, face, intensity, palette) {
     const color = section.data.getUint8(face * section.blockSize + 8);
-    if (section.id >= 7) {
-        return [0xFF, 0xFF, 0xFF, shaderConstants.USE_TEXTURE_OBJECTS];
-    } else {
-        const c = color * 3 + intensity;
-        return [palette[c], palette[c + 1], palette[c + 2], shaderConstants.USE_COLOR];
-    }
+    const c = color * 3 + intensity;
+    return [palette[c], palette[c + 1], palette[c + 2], 0x0];
 }
 
-function getUVs(object, section, face, ptIndex) {
-    if (section.blockSize >= 28) {
+function getUVs(section, face, ptIndex) {
+    const baseIndex = face * section.blockSize;
+    const index = baseIndex + 12 + ptIndex * 4;
+    const u = section.data.getUint8(index + 1);
+    const v = section.data.getUint8(index + 3);
+    return [u, v];
+}
+
+function getUVGroup(object, section, face) {
+    if (section.blockSize == 24 || section.blockSize == 32) {
         const baseIndex = face * section.blockSize;
-        const index = baseIndex + 12 + ptIndex * 4;
-        const u = section.data.getUint8(index + 1);
-        const v = section.data.getUint8(index + 3);
         const uvGroupIndex = section.blockSize == 32 ? section.data.getUint8(baseIndex + 28) : section.data.getUint8(baseIndex + 6);
-        const grp = object.uvGroups[uvGroupIndex];
-        return [(u & grp.width) + grp.x, (v & grp.height) + grp.y];
-    } else {
-        return [0, 0];
+        return object.uvGroups[uvGroupIndex];
     }
 }
 

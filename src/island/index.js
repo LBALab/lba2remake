@@ -3,58 +3,65 @@ import THREE from 'three';
 import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
-import {loadTexture} from '../texture';
+import {prepareGeometries} from './geometries';
 import {loadLayout} from './layout';
 import {loadGround} from './ground';
 import {loadObjects} from './objects';
+import {loadTexture} from '../texture';
 
-import vertexShader from './shaders/ground.vert.glsl';
-import fragmentShader from './shaders/ground.frag.glsl';
-
-export default function(name, callback) {
+export default function loadIsland({name, skyIndex}, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         ile: loadHqrAsync(`${name}.ILE`),
         obl: loadHqrAsync(`${name}.OBL`)
     }, function(err, files) {
-        callback(loadIsland(files));
+        callback(loadIslandSync(files, skyIndex));
     });
 }
 
-function loadIsland(files) {
+function loadIslandSync(files, skyIndex) {
     const island = {
         files: files,
         palette: new Uint8Array(files.ress.getEntry(0)),
-        layout: loadLayout(files.ile)
+        layout: loadLayout(files.ile),
+        skyIndex: skyIndex
     };
 
-    const material = new THREE.RawShaderMaterial({
-        vertexShader: vertexShader,
-        fragmentShader: fragmentShader,
-        uniforms: {
-            ground: {value: loadTexture(island.files.ile.getEntry(1), island.palette)},
-            objects: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
+    const object = new THREE.Object3D();
+
+    const geometries = loadGeometries(island);
+    _.each(geometries, ({positions, uvs, colors, uvGroups, material}) => {
+        if (positions) {
+            const bufferGeometry = new THREE.BufferGeometry();
+            bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+            if (uvs) {
+                bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
+            }
+            if (colors) {
+                bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
+            }
+            if (uvGroups) {
+                bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, true));
+            }
+            object.add(new THREE.Mesh(bufferGeometry, material));
         }
     });
-    const bufferGeometry = new THREE.BufferGeometry();
-    const {positions, uvs, colors} = loadGeometry(island);
-    bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
-    bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
 
-    return new THREE.Mesh(bufferGeometry, material);
+    const sea = new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 1, 1), geometries.sea.material);
+    sea.rotateX(-Math.PI / 2.0);
+    sea.position.y = -0.001;
+    object.add(sea);
+
+    return object;
 }
 
-function loadGeometry(island) {
-    const geometry = {
-        positions: [],
-        uvs: [],
-        colors: []
-    };
+function loadGeometries(island) {
+    const geometries = prepareGeometries(island);
+
     const objects = [];
     _.each(island.layout, section => {
-        loadGround(island, section, geometry);
-        loadObjects(island, section, geometry, objects);
+        loadGround(island, section, geometries);
+        loadObjects(island, section, geometries, objects);
     });
-    return geometry;
+    return geometries;
 }
