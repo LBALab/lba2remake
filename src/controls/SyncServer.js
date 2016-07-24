@@ -1,32 +1,28 @@
 let ws = null;
-let handlers = {
-
-};
+let handler = () => {};
 
 export default class SyncServer {
     static init(url) {
         ws = new WebSocket(`ws://${url}`);
+        ws.binaryType = "arraybuffer";
         ws.onclose = function() {
             SyncServer.init(url);
         };
-        ws.onmessage = function(rawMsg) {
-            const msg = JSON.parse(rawMsg.data);
-            if (msg.type in handlers) {
-                handlers[msg.type](msg.value);
-            }
+        ws.onmessage = function(msg) {
+            handler(msg.data);
         };
     }
 
-    static send(type, value) {
+    static send(buffer) {
         if (ws && ws.readyState == WebSocket.OPEN) {
-            ws.send(JSON.stringify({
-                type: type,
-                value: value
-            }));
+            ws.send(buffer);
         }
     }
 
-    static onMsg(type, handler) {
-        handlers[type] = handler;
+    static onMsg(h) {
+        handler = h;
     }
 }
+
+SyncServer.DEVICE_ORIENTATION = 0;
+SyncServer.LOCATION = 1;

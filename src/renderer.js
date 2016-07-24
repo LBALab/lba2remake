@@ -40,7 +40,6 @@ export default class Renderer {
         // Camera init
         this.camera = new THREE.PerspectiveCamera(90, width / height, 0.001, 100); // 1m = 0.0625 units
 
-
         // Scene
         this.scene = new THREE.Scene();
 
@@ -67,23 +66,24 @@ export default class Renderer {
 
         const that = this;
 
-        SyncServer.onMsg('q', function(q) {
-            if (that.controls) {
-                that.controls.dispose();
-                that.controls = null;
+        SyncServer.onMsg(function(buffer) {
+            const view = new DataView(buffer);
+            const type = view.getUint8(0);
+            if (type == SyncServer.DEVICE_ORIENTATION) {
+                if (that.controls) {
+                    that.controls.dispose();
+                    that.controls = null;
+                }
+                that.cameraDummy.quaternion.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10), view.getFloat32(14));
+            } else if (type == SyncServer.LOCATION) {
+                that.cameraDummy.position.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10));
+                that.angle = view.getFloat32(14);
+                const newIndex = view.getUint8(1);
+                if (newIndex != index) {
+                    index = newIndex;
+                    that.refreshIsland();
+                }
             }
-
-            that.cameraDummy.quaternion.set(q[0], q[1], q[2], q[3]);
-        });
-
-        SyncServer.onMsg('p', function(p) {
-            that.cameraDummy.position.set(p[0], p[1], p[2]);
-            that.angle = p[3];
-        });
-
-        SyncServer.onMsg('island', function(idx) {
-            index = idx;
-            that.refreshIsland();
         });
 
         function setOrientationControls(e) {
@@ -128,7 +128,6 @@ export default class Renderer {
     onKeyDown(event) {
         if (event.keyCode == 78) {
             index = (index + 1) % islands.length;
-            SyncServer.send('island', index);
             this.refreshIsland();
         }
         if (event.keyCode == 90 || event.keyCode == 38) { // Z or Up
@@ -171,7 +170,14 @@ export default class Renderer {
             if (this.controls instanceof DeviceOrientationControls) {
                 const q = this.cameraDummy.quaternion;
                 if (this.frameCount % 2 == 0) {
-                    SyncServer.send('q', [q.x, q.y, q.z, q.w]);
+                    const buffer = new ArrayBuffer(18);
+                    const view = new DataView(buffer);
+                    view.setUint8(0, SyncServer.DEVICE_ORIENTATION);
+                    view.setFloat32(2, q.x);
+                    view.setFloat32(6, q.y);
+                    view.setFloat32(10, q.z);
+                    view.setFloat32(14, q.w);
+                    SyncServer.send(buffer);
                 }
             }
         }
@@ -185,7 +191,15 @@ export default class Renderer {
             }
             if (this.frameCount % 2 == 0) {
                 const p = this.cameraDummy.position;
-                SyncServer.send('p', [p.x, p.y, p.z, this.angle]);
+                const buffer = new ArrayBuffer(18);
+                const view = new DataView(buffer);
+                view.setUint8(0, SyncServer.LOCATION);
+                view.setUint8(1, index);
+                view.setFloat32(2, p.x);
+                view.setFloat32(6, p.y);
+                view.setFloat32(10, p.z);
+                view.setFloat32(14, this.angle);
+                SyncServer.send(buffer);
             }
         }
         this.camera.position.copy(this.cameraDummy.position);

@@ -16,7 +16,7 @@ var clients = {};
 function forward(from, msg) {
     _.each(clients, function(client) {
         if (client.remoteAddresses[0] != from.remoteAddresses[0]) {
-            client.send(JSON.stringify(msg));
+            client.sendBytes(msg.binaryData);
         }
     });
 }
@@ -31,10 +31,7 @@ wsServer.on('request', function (request) {
     // This is the most important callback for us, we'll handle
     // all messages from users here.
     connection.on('message', function (message) {
-        if (message.type === 'utf8') {
-            const msg = JSON.parse(message.utf8Data);
-            forward(connection, msg);
-        }
+        forward(connection, message);
     });
 
     connection.on('close', function () {
