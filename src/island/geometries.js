@@ -53,7 +53,19 @@ export function prepareGeometries(island) {
                 fragmentShader: env_fragment,
                 transparent: true,
                 uniforms: {
-                    texture: {value: skyAndSeaTexture}
+                    texture: {value: skyAndSeaTexture},
+                    offset: {value: new THREE.Vector2(0.0, 0.0)}
+                }
+            })
+        },
+        sky: {
+            material: new THREE.RawShaderMaterial({
+                vertexShader: env_vertex,
+                fragmentShader: env_fragment,
+                transparent: true,
+                uniforms: {
+                    texture: {value: skyAndSeaTexture},
+                    offset: {value: new THREE.Vector2(0.5, 0.0)}
                 }
             })
         }

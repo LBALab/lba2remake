@@ -52,6 +52,11 @@ function loadIslandSync(files, skyIndex) {
     sea.position.y = -0.001;
     object.add(sea);
 
+    const sky = new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 1, 1), geometries.sky.material);
+    sky.rotateX(Math.PI / 2.0);
+    sky.position.y = 2.0;
+    object.add(sky);
+
     return object;
 }
 
