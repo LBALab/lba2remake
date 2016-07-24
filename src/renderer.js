@@ -23,7 +23,6 @@ const islands = [
 let index = 0;
 
 SyncServer.init('192.168.0.19:8081');
-
 export default class Renderer {
     constructor(width, height, container) {
         this.clock = new THREE.Clock();
@@ -41,6 +40,7 @@ export default class Renderer {
         // Camera init
         this.camera = new THREE.PerspectiveCamera(90, width / height, 0.001, 100); // 1m = 0.0625 units
 
+
         // Scene
         this.scene = new THREE.Scene();
 
@@ -49,7 +49,7 @@ export default class Renderer {
         this.renderer.setClearColor(0x000000);
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(width, height);
-        this.renderer.autoClear = false;
+        this.renderer.autoClear = true;
 
         this.renderer.domElement.style.position = 'absolute';
         this.renderer.domElement.style.left = 0;
@@ -113,7 +113,7 @@ export default class Renderer {
 
         window.addEventListener('keydown', this.onKeyDown.bind(this), false);
         window.addEventListener('keyup', this.onKeyUp.bind(this), false);
-        this.refreshIsland();
+        this.refreshIsland();    
     }
 
     onResize(width, height) {
@@ -158,6 +158,9 @@ export default class Renderer {
         loadIsland(islands[index], object => {
             console.log('Loaded: ', islands[index].name);
             this.islandGroup.children[0] = object;
+            const sc = islands[index].skyColor;
+            const color = new THREE.Color(sc[0], sc[1], sc[2]);
+            this.renderer.setClearColor(color.getHex(), 1);
         });
     }
 
