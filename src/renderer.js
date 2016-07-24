@@ -181,7 +181,7 @@ export default class Renderer {
                     view.setFloat32(5, q.y);
                     view.setFloat32(9, q.z);
                     view.setFloat32(13, q.w);
-                    //SyncServer.send(buffer);
+                    SyncServer.send(buffer);
                 }
             }
         }

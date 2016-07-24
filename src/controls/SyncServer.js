@@ -1,15 +1,24 @@
+import {isMobile} from '../utils';
+
 let ws = null;
+let peerConnection = null;
+let dataChannel = null;
 let handler = () => {};
 
 export default class SyncServer {
     static init(url) {
         initWS(url);
-        initWebRTC();
+    }
+
+    static sendCtrl(content) {
+        if (ws && ws.readyState == WebSocket.OPEN) {
+            ws.send(content);
+        }
     }
 
     static send(content) {
-        if (ws && ws.readyState == WebSocket.OPEN) {
-            ws.send(content);
+        if (dataChannel && dataChannel.readyState == 'open') {
+            dataChannel.send(content);
         }
     }
 
@@ -21,6 +30,11 @@ export default class SyncServer {
 function initWS(url) {
     ws = new WebSocket(`ws://${url}`);
     ws.binaryType = "arraybuffer";
+    ws.onopen = function() {
+        if (isMobile() && window.RTCPeerConnection) {
+            makeOffer();
+        }
+    };
     ws.onclose = function() {
         initWS(url);
     };
@@ -33,14 +47,65 @@ function initWS(url) {
             const data = JSON.parse(msg.data);
             switch (data.type) {
                 case 'offer':
+                    makeAnswer(data);
+                    break;
+                case 'answer':
+                    receiveAnswer(data);
+                    break;
+                case 'candidate':
+                    receiveCandidate(data);
                     break;
             }
         }
     };
 }
 
-function initWebRTC() {
-    const peerConnection = new window.RTCPeerConnection({
+function makeOffer() {
+    initPeerConnection();
+
+    setTimeout(function() {
+        peerConnection.createOffer({
+            mandatory: {
+                OfferToReceiveAudio: false,
+                OfferToReceiveVideo: false
+            }
+        }).then(function(offer) {
+            peerConnection.setLocalDescription(offer);
+            console.log("Sending offer");
+            SyncServer.sendCtrl(JSON.stringify({type: 'offer', sdp: offer.sdp}));
+        }, function(err) {
+            alert("Error creating offer: " + err);
+        });
+    }, 4000);
+}
+
+function makeAnswer(data) {
+    initPeerConnection();
+    peerConnection.setRemoteDescription(new window.RTCSessionDescription(data));
+
+    peerConnection.createAnswer({
+        mandatory: {
+            OfferToReceiveAudio: false,
+            OfferToReceiveVideo: false
+        }
+    }).then(function(answer) {
+        peerConnection.setLocalDescription(answer);
+        console.log("Sending answer");
+        SyncServer.sendCtrl(JSON.stringify({type: 'answer', sdp: answer.sdp}));
+    }, function(err) {
+        console.error("Error creating answer: ", err);
+    });
+}
+
+function receiveAnswer(data) {
+    peerConnection.setRemoteDescription(new window.RTCSessionDescription(data));
+}
+
+function initPeerConnection() {
+    if (peerConnection)
+        peerConnection.close();
+
+    peerConnection = new window.RTCPeerConnection({
         iceServers: [{
             url: 'stun:stun.l.google.com:19302'
         }]
@@ -50,31 +115,38 @@ function initWebRTC() {
         if (!e || !e.candidate)
             return;
         console.log(e.candidate.candidate);
-        //sendNegotiation("candidate", event.candidate);
+        SyncServer.sendCtrl(JSON.stringify({type: 'candidate', candidate: e.candidate.candidate}));
     };
 
-    const dataChannel = peerConnection.createDataChannel("datachannel", {reliable: false});
-    dataChannel.onmessage = function(e){console.log("DC message:" +e.data);};
-    dataChannel.onopen = function(){console.log("------ DATACHANNEL OPENED ------");};
-    dataChannel.onclose = function(){console.log("------- DC closed! -------")};
-    dataChannel.onerror = function(){console.log("DC ERROR!!!")};
+    dataChannel = peerConnection.createDataChannel("datachannel", {reliable: false, ordered: false});
+    dataChannel.binaryType = "arraybuffer";
 
-    peerConnection.createOffer({
-        mandatory: {
-            OfferToReceiveAudio: false,
-            OfferToReceiveVideo: false
-        }
-    }).then(function(offer) {
-        peerConnection.setLocalDescription(offer);
-        console.log("Sending offer");
-        SyncServer.send(JSON.stringify({type: 'offer', sdp: offer.sdp}));
-    }, function(err) {
-        console.log("Error creating offer: ", err);
-    });
+    dataChannel.onmessage = function(e) {
+        console.log("DC message:" + e.data);
+    };
+
+    dataChannel.onopen = function() {
+        console.log("------ DATACHANNEL OPENED ------", dataChannel.readyState);
+    };
+
+    dataChannel.onclose = function() {
+        console.log("------- DC closed! -------")
+    };
+
+    dataChannel.onerror = function() {
+        console.log("DC ERROR!!!")
+    };
 }
 
-window.onerror = function(e){
-    alert(e);
+function receiveCandidate(data) {
+    if (!peerConnection)
+        return;
+    //console.log('Received candidate:', data.candidate);
+    peerConnection.addIceCandidate(new window.RTCIceCandidate({candidate: data.candidate}));
+}
+
+window.onerror = function(e, x, y, z, ex){
+    //alert(ex);
 };
 
 SyncServer.DEVICE_ORIENTATION = 0;
