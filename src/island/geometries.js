@@ -11,7 +11,7 @@ import env_vertex from './shaders/env.vert.glsl';
 import env_fragment from './shaders/env.frag.glsl';
 
 export function prepareGeometries(island) {
-    const skyAndSeaTexture = loadTexture(island.files.ress.getEntry(island.skyIndex - 1), island.palette);
+    const skyAndSeaTexture = loadTexture(island.files.ress.getEntry(island.skyIndex), island.palette);
     return {
         colored: {
             positions: [],
