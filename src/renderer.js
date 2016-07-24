@@ -203,7 +203,7 @@ export default class Renderer {
                 view.setFloat32(9, p.z);
                 view.setFloat32(13, this.angle);
                 view.setUint8(17, index);
-                //SyncServer.send(buffer);
+                SyncServer.send(buffer);
             }
         }
         this.camera.position.copy(this.cameraDummy.position);

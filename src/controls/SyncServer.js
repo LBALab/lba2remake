@@ -18,7 +18,8 @@ export default class SyncServer {
 
     static send(content) {
         if (dataChannel && dataChannel.readyState == 'open') {
-            dataChannel.send(content);
+            console.log('sending!');
+            dataChannel.send('testtest');
         }
     }
 
@@ -90,7 +91,7 @@ function makeAnswer(data) {
         }
     }).then(function(answer) {
         peerConnection.setLocalDescription(answer);
-        console.log("Sending answer");
+        console.log("Sending answer", answer);
         SyncServer.sendCtrl(JSON.stringify({type: 'answer', sdp: answer.sdp}));
     }, function(err) {
         console.error("Error creating answer: ", err);
@@ -122,11 +123,12 @@ function initPeerConnection() {
     dataChannel.binaryType = "arraybuffer";
 
     dataChannel.onmessage = function(e) {
+        alert(e);
         console.log("DC message:" + e.data);
     };
 
     dataChannel.onopen = function() {
-        console.log("------ DATACHANNEL OPENED ------", dataChannel.readyState);
+        console.log("------ DATACHANNEL OPENED ------", peerConnection);
     };
 
     dataChannel.onclose = function() {
