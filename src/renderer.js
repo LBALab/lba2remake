@@ -42,6 +42,7 @@ export default class Renderer {
 
         // Scene
         this.scene = new THREE.Scene();
+        this.scene.fog = new THREE.FogExp2(0xefd1b5, 0.0025);
 
         // Renderer init
         this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: false});

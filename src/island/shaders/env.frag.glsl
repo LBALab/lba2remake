@@ -1,13 +1,18 @@
 precision highp float;
 
 uniform sampler2D texture;
-uniform vec2 offset;
+uniform vec3 fogColor;
 
 varying vec2 vUv;
-varying float depth;
+
+#define saturate(a) clamp( a, 0.0, 1.0 )
+#define whiteComplement(a) ( 1.0 - saturate( a ) )
+#define LOG2 1.442695
 
 void main() {
-    vec2 uv = mod(vUv * 128.0, 0.5) + offset;
-    vec4 tex = texture2D(texture, uv);
-    gl_FragColor = vec4(tex.rgb, 1.0 - depth * 0.1);
+    float depth = gl_FragCoord.z / gl_FragCoord.w;
+    float fogDensity = 0.25;
+    float fogFactor = whiteComplement(exp2(-fogDensity * fogDensity * depth * depth * LOG2));
+    vec4 tex = texture2D(texture, vUv * 128.0);
+    gl_FragColor = vec4(mix(tex.rgb, fogColor, fogFactor), 1.0);
 }

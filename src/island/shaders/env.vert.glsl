@@ -7,10 +7,8 @@ attribute vec3 position;
 attribute vec2 uv;
 
 varying vec2 vUv;
-varying float depth;
 
 void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     vUv = uv;
-    depth = gl_Position.z;
 }
