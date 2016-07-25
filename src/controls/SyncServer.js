@@ -18,7 +18,6 @@ export default class SyncServer {
 
     static send(content) {
         if (dataChannel && dataChannel.readyState == 'open') {
-            console.log('send!', dataChannel);
             dataChannel.send(content);
         }
     }
