@@ -1,6 +1,6 @@
 import THREE from 'three';
 import DeviceOrientationControls from './controls/DeviceOrientationControls';
-import OrbitControls from './controls/OrbitControls';
+import PointerLockControls from './controls/FirstPersonControls';
 import SyncServer from './controls/SyncServer';
 import StereoEffect from './effects/StereoEffect';
 import loadIsland from './island';
@@ -28,17 +28,12 @@ export default class Renderer {
         this.clock = new THREE.Clock();
         this.frameCount = 0;
 
-        this.movement = [0, 0];
-        this.angle = 0.0;
-
-        this.cameraDummy = new THREE.Object3D();
-        this.cameraDummy.position.x = 0;
-        this.cameraDummy.position.y = 0.08;
-        this.cameraDummy.position.z = 1;
-        this.cameraDummy.lookAt(this.cameraDummy.position);
-
         // Camera init
         this.camera = new THREE.PerspectiveCamera(90, width / height, 0.001, 100); // 1m = 0.0625 units
+        this.camera.position.x = 0;
+        this.camera.position.y = 0.08;
+        this.camera.position.z = 1;
+        this.camera.lookAt(this.camera.position);
 
         // Scene
         this.scene = new THREE.Scene();
@@ -56,14 +51,7 @@ export default class Renderer {
         this.renderer.domElement.style.top = 0;
         this.renderer.domElement.style.opacity = 1.0;
 
-        this.controls = new OrbitControls(this.cameraDummy, this.renderer.domElement);
-        this.controls.target.set(
-            this.cameraDummy.position.x - 0.0000000001,
-            this.cameraDummy.position.y,
-            this.cameraDummy.position.z
-        );
-        this.controls.enableZoom = false;
-        this.controls.enablePan = false;
+        this.controls = new PointerLockControls(this.camera);
 
         const that = this;
 
@@ -75,9 +63,9 @@ export default class Renderer {
                     that.controls.dispose();
                     that.controls = null;
                 }
-                that.cameraDummy.quaternion.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10), view.getFloat32(14));
+                that.camera.quaternion.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10), view.getFloat32(14));
             } else if (type == SyncServer.LOCATION) {
-                that.cameraDummy.position.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10));
+                that.camera.position.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10));
                 that.angle = view.getFloat32(14);
                 const newIndex = view.getUint8(1);
                 if (newIndex != index) {
@@ -93,7 +81,7 @@ export default class Renderer {
             }
 
             that.controls.dispose();
-            that.controls = new DeviceOrientationControls(that.cameraDummy);
+            that.controls = new DeviceOrientationControls(that.camera);
             that.controls.connect();
             that.controls.update();
 
@@ -105,6 +93,15 @@ export default class Renderer {
         }
         window.addEventListener('deviceorientation', setOrientationControls, true);
 
+        window.addEventListener('keydown', onKeyDown, false);
+
+        function onKeyDown(event) {
+            if (event.keyCode == 78 || event.keyCode == 13) { // N | Enter
+                index = (index + 1) % islands.length;
+                that.refreshIsland();
+            }
+        }
+
         // Render loop
         this.animate();
 
@@ -112,8 +109,6 @@ export default class Renderer {
         this.islandGroup.add(new THREE.Object3D);
         this.scene.add(this.islandGroup);
 
-        window.addEventListener('keydown', this.onKeyDown.bind(this), false);
-        window.addEventListener('keyup', this.onKeyUp.bind(this), false);
         this.refreshIsland();    
     }
 
@@ -123,34 +118,6 @@ export default class Renderer {
         this.renderer.setSize(width, height);
         if (this.stereoEffect) {
             this.stereoEffect.setSize(width, height);
-        }
-    }
-
-    onKeyDown(event) {
-        if (event.keyCode == 78) {
-            index = (index + 1) % islands.length;
-            this.refreshIsland();
-        }
-        if (event.keyCode == 90 || event.keyCode == 38) { // Z or Up
-            this.movement[0] = 1;
-        }
-        if (event.keyCode == 83 || event.keyCode == 40) { // S or Down
-            this.movement[0] = -1;
-        }
-        if (event.keyCode == 81 || event.keyCode == 37) { // Q or Left
-            this.movement[1] = 1;
-        }
-        if (event.keyCode == 68 || event.keyCode == 39) { // D or Right
-            this.movement[1] = -1;
-        }
-    }
-
-    onKeyUp(event) {
-        if (event.keyCode == 90 || event.keyCode == 83 || event.keyCode == 38 || event.keyCode == 40) { // Z | S | Up | Down
-            this.movement[0] = 0;
-        }
-        if (event.keyCode == 81 || event.keyCode == 68 || event.keyCode == 37 || event.keyCode == 39) { // Q | D | Left | Right
-            this.movement[1] = 0;
         }
     }
 
@@ -168,30 +135,20 @@ export default class Renderer {
         const dt = this.clock.getDelta();
         if (this.controls && this.controls.update) {
             this.controls.update(dt);
-            if (this.controls instanceof DeviceOrientationControls) {
-                const q = this.cameraDummy.quaternion;
-                if (this.frameCount % 2 == 0) {
-                    const buffer = new ArrayBuffer(18);
-                    const view = new DataView(buffer);
-                    view.setUint8(0, SyncServer.DEVICE_ORIENTATION);
-                    view.setFloat32(2, q.x);
-                    view.setFloat32(6, q.y);
-                    view.setFloat32(10, q.z);
-                    view.setFloat32(14, q.w);
-                    SyncServer.send(buffer);
-                }
-            }
         }
-        if (this.movement[0] != 0 || this.movement[1] != 0) {
-            this.angle += dt * this.movement[1] * 2.0;
-            const dir = new THREE.Vector3(this.movement[0], 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), this.angle);
-            dir.multiplyScalar(dt * 0.2);
-            this.cameraDummy.position.add(dir);
-            if (this.controls instanceof OrbitControls) {
-                this.controls.target.add(dir);
-            }
-            if (this.frameCount % 2 == 0) {
-                const p = this.cameraDummy.position;
+        if (this.frameCount % 2 == 0) {
+            if (this.controls instanceof DeviceOrientationControls) {
+                const q = this.camera.quaternion;
+                const buffer = new ArrayBuffer(18);
+                const view = new DataView(buffer);
+                view.setUint8(0, SyncServer.DEVICE_ORIENTATION);
+                view.setFloat32(2, q.x);
+                view.setFloat32(6, q.y);
+                view.setFloat32(10, q.z);
+                view.setFloat32(14, q.w);
+                SyncServer.send(buffer);
+            } else {
+                const p = this.camera.position;
                 const buffer = new ArrayBuffer(18);
                 const view = new DataView(buffer);
                 view.setUint8(0, SyncServer.LOCATION);
@@ -199,13 +156,11 @@ export default class Renderer {
                 view.setFloat32(2, p.x);
                 view.setFloat32(6, p.y);
                 view.setFloat32(10, p.z);
-                view.setFloat32(14, this.angle);
+                view.setFloat32(14, this.controls.y);
                 SyncServer.send(buffer);
             }
+
         }
-        this.camera.position.copy(this.cameraDummy.position);
-        this.camera.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), this.angle);
-        this.camera.quaternion.multiply(this.cameraDummy.quaternion);
         this.render();
         this.frameCount++;
         requestAnimationFrame(this.animate.bind(this));
