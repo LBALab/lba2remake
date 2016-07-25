@@ -1,5 +1,5 @@
 import THREE from 'three';
-import {loadTexture} from '../texture';
+import {loadTexture, loadSubTexture} from '../texture';
 
 import colored_vertex from './shaders/colored.vert.glsl';
 import colored_fragment from './shaders/colored.frag.glsl';
@@ -11,7 +11,7 @@ import env_vertex from './shaders/env.vert.glsl';
 import env_fragment from './shaders/env.frag.glsl';
 
 export function prepareGeometries(island) {
-    const skyAndSeaTexture = loadTexture(island.files.ress.getEntry(island.skyIndex), island.palette);
+    console.log(island);
     return {
         colored: {
             positions: [],
@@ -53,8 +53,8 @@ export function prepareGeometries(island) {
                 fragmentShader: env_fragment,
                 transparent: true,
                 uniforms: {
-                    texture: {value: skyAndSeaTexture},
-                    offset: {value: new THREE.Vector2(0.0, 0.0)}
+                    texture: {value: loadSubTexture(island.files.ress.getEntry(island.skyIndex), island.palette, 0, 0, 128, 128)},
+                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)}
                 }
             })
         },
@@ -64,8 +64,8 @@ export function prepareGeometries(island) {
                 fragmentShader: env_fragment,
                 transparent: true,
                 uniforms: {
-                    texture: {value: skyAndSeaTexture},
-                    offset: {value: new THREE.Vector2(0.5, 0.0)}
+                    texture: {value: loadSubTexture(island.files.ress.getEntry(island.skyIndex), island.palette, 128, 0, 128, 128)},
+                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)}
                 }
             })
         }
