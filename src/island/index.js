@@ -48,7 +48,8 @@ function loadIslandSync(files, skyIndex, skyColor) {
         }
     });
 
-    const sea = new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 1, 1), geometries.sea.material);
+    const sea = new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 256, 256), geometries.sea.material);
+    sea.name = 'sea';
     sea.rotateX(-Math.PI / 2.0);
     sea.position.y = -0.001;
     object.add(sea);
