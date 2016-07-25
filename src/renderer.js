@@ -1,6 +1,6 @@
 import THREE from 'three';
 import DeviceOrientationControls from './controls/DeviceOrientationControls';
-import PointerLockControls from './controls/FirstPersonControls';
+import FirstPersonControls from './controls/FirstPersonControls';
 import SyncServer from './controls/SyncServer';
 import StereoEffect from './effects/StereoEffect';
 import loadIsland from './island';
@@ -56,7 +56,7 @@ export default class Renderer {
         this.renderer.domElement.style.top = 0;
         this.renderer.domElement.style.opacity = 1.0;
 
-        this.controls = new PointerLockControls(this.pcCamera);
+        this.controls = new FirstPersonControls(this.pcCamera);
 
         const that = this;
 
