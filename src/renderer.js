@@ -125,6 +125,7 @@ export default class Renderer {
         loadIsland(islands[index], object => {
             console.log('Loaded: ', islands[index].name);
             this.islandGroup.children[0] = object;
+            this.sea = object.getObjectByName('sea');
             const sc = islands[index].skyColor;
             const color = new THREE.Color(sc[0], sc[1], sc[2]);
             this.renderer.setClearColor(color.getHex(), 1);
@@ -164,6 +165,10 @@ export default class Renderer {
         this.camera.position.copy(this.pcCamera.position);
         this.camera.quaternion.copy(this.pcCamera.quaternion);
         this.camera.quaternion.multiply(this.mobileCamera.quaternion);
+
+        if (this.sea) {
+            this.sea.material.uniforms.time.value = this.clock.getElapsedTime();
+        }
 
         this.render();
         this.frameCount++;
