@@ -23,6 +23,7 @@ const islands = [
 let index = 0;
 
 SyncServer.init('192.168.0.19:8081');
+
 export default class Renderer {
     constructor(width, height, container) {
         this.clock = new THREE.Clock();
@@ -30,10 +31,14 @@ export default class Renderer {
 
         // Camera init
         this.camera = new THREE.PerspectiveCamera(90, width / height, 0.001, 100); // 1m = 0.0625 units
-        this.camera.position.x = 0;
-        this.camera.position.y = 0.08;
-        this.camera.position.z = 1;
-        this.camera.lookAt(this.camera.position);
+
+        this.mobileCamera = new THREE.Object3D();
+
+        this.pcCamera = new THREE.Object3D();
+        this.pcCamera.position.x = 0;
+        this.pcCamera.position.y = 0.08;
+        this.pcCamera.position.z = 1;
+        this.pcCamera.lookAt(this.camera.position);
 
         // Scene
         this.scene = new THREE.Scene();
@@ -51,7 +56,7 @@ export default class Renderer {
         this.renderer.domElement.style.top = 0;
         this.renderer.domElement.style.opacity = 1.0;
 
-        this.controls = new PointerLockControls(this.camera);
+        this.controls = new PointerLockControls(this.pcCamera);
 
         const that = this;
 
@@ -59,14 +64,10 @@ export default class Renderer {
             const view = new DataView(buffer);
             const type = view.getUint8(0);
             if (type == SyncServer.DEVICE_ORIENTATION) {
-                if (that.controls) {
-                    that.controls.dispose();
-                    that.controls = null;
-                }
-                that.camera.quaternion.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10), view.getFloat32(14));
+                that.mobileCamera.quaternion.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10), view.getFloat32(14));
             } else if (type == SyncServer.LOCATION) {
-                that.camera.position.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10));
-                that.angle = view.getFloat32(14);
+                that.pcCamera.position.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10));
+                that.pcCamera.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), view.getFloat32(14));
                 const newIndex = view.getUint8(1);
                 if (newIndex != index) {
                     index = newIndex;
@@ -80,8 +81,7 @@ export default class Renderer {
                 return;
             }
 
-            that.controls.dispose();
-            that.controls = new DeviceOrientationControls(that.camera);
+            that.controls = new DeviceOrientationControls(that.mobileCamera);
             that.controls.connect();
             that.controls.update();
 
@@ -138,7 +138,7 @@ export default class Renderer {
         }
         if (this.frameCount % 2 == 0) {
             if (this.controls instanceof DeviceOrientationControls) {
-                const q = this.camera.quaternion;
+                const q = this.mobileCamera.quaternion;
                 const buffer = new ArrayBuffer(18);
                 const view = new DataView(buffer);
                 view.setUint8(0, SyncServer.DEVICE_ORIENTATION);
@@ -148,7 +148,7 @@ export default class Renderer {
                 view.setFloat32(14, q.w);
                 SyncServer.send(buffer);
             } else {
-                const p = this.camera.position;
+                const p = this.pcCamera.position;
                 const buffer = new ArrayBuffer(18);
                 const view = new DataView(buffer);
                 view.setUint8(0, SyncServer.LOCATION);
@@ -159,8 +159,12 @@ export default class Renderer {
                 view.setFloat32(14, this.controls.y);
                 SyncServer.send(buffer);
             }
-
         }
+
+        this.camera.position.copy(this.pcCamera.position);
+        this.camera.quaternion.copy(this.pcCamera.quaternion);
+        this.camera.quaternion.multiply(this.mobileCamera.quaternion);
+
         this.render();
         this.frameCount++;
         requestAnimationFrame(this.animate.bind(this));
