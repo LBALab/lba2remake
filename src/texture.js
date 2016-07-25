@@ -27,10 +27,10 @@ export function loadTexture(buffer, palette) {
         THREE.RepeatWrapping,
         THREE.RepeatWrapping,
         THREE.NearestFilter,
-        THREE.LinearMipMapLinearFilter
+        THREE.LinearFilter
     );
     texture.needsUpdate = true;
-    texture.generateMipmaps = true;
+    texture.generateMipmaps = false;
     return texture;
 }
 
