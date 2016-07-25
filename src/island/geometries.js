@@ -11,6 +11,7 @@ import env_vertex from './shaders/env.vert.glsl';
 import env_fragment from './shaders/env.frag.glsl';
 
 export function prepareGeometries(island) {
+    console.log(island);
     return {
         colored: {
             positions: [],
@@ -52,7 +53,8 @@ export function prepareGeometries(island) {
                 fragmentShader: env_fragment,
                 transparent: true,
                 uniforms: {
-                    texture: {value: loadSubTexture(island.files.ress.getEntry(island.skyIndex), island.palette, 0, 0, 128, 128)}
+                    texture: {value: loadSubTexture(island.files.ress.getEntry(island.skyIndex), island.palette, 0, 0, 128, 128)},
+                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)}
                 }
             })
         },
@@ -62,7 +64,8 @@ export function prepareGeometries(island) {
                 fragmentShader: env_fragment,
                 transparent: true,
                 uniforms: {
-                    texture: {value: loadSubTexture(island.files.ress.getEntry(island.skyIndex), island.palette, 128, 0, 128, 128)}
+                    texture: {value: loadSubTexture(island.files.ress.getEntry(island.skyIndex), island.palette, 128, 0, 128, 128)},
+                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)}
                 }
             })
         }

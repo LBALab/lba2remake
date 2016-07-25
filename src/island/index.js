@@ -9,22 +9,23 @@ import {loadGround} from './ground';
 import {loadObjects} from './objects';
 import {loadTexture} from '../texture';
 
-export default function loadIsland({name, skyIndex}, callback) {
+export default function loadIsland({name, skyIndex, skyColor}, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         ile: loadHqrAsync(`${name}.ILE`),
         obl: loadHqrAsync(`${name}.OBL`)
     }, function(err, files) {
-        callback(loadIslandSync(files, skyIndex));
+        callback(loadIslandSync(files, skyIndex, skyColor));
     });
 }
 
-function loadIslandSync(files, skyIndex) {
+function loadIslandSync(files, skyIndex, skyColor) {
     const island = {
         files: files,
         palette: new Uint8Array(files.ress.getEntry(0)),
         layout: loadLayout(files.ile),
-        skyIndex: skyIndex
+        skyIndex: skyIndex,
+        skyColor: skyColor
     };
 
     const object = new THREE.Object3D();
