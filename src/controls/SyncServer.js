@@ -18,8 +18,8 @@ export default class SyncServer {
 
     static send(content) {
         if (dataChannel && dataChannel.readyState == 'open') {
-            console.log('sending!');
-            dataChannel.send('testtest');
+            console.log('send!', dataChannel);
+            dataChannel.send(content);
         }
     }
 
@@ -40,23 +40,17 @@ function initWS(url) {
         initWS(url);
     };
     ws.onmessage = function(msg) {
-        if (msg.data instanceof ArrayBuffer) {
-            const data = new DataView(msg.data);
-            const type = data.getUint8(0);
-            handler(type, new DataView(msg.data, 1));
-        } else {
-            const data = JSON.parse(msg.data);
-            switch (data.type) {
-                case 'offer':
-                    makeAnswer(data);
-                    break;
-                case 'answer':
-                    receiveAnswer(data);
-                    break;
-                case 'candidate':
-                    receiveCandidate(data);
-                    break;
-            }
+        const data = JSON.parse(msg.data);
+        switch (data.type) {
+            case 'offer':
+                makeAnswer(data.offer);
+                break;
+            case 'answer':
+                receiveAnswer(data.answer);
+                break;
+            case 'candidate':
+                receiveCandidate(data.candidate);
+                break;
         }
     };
 }
@@ -73,16 +67,26 @@ function makeOffer() {
         }).then(function(offer) {
             peerConnection.setLocalDescription(offer);
             console.log("Sending offer");
-            SyncServer.sendCtrl(JSON.stringify({type: 'offer', sdp: offer.sdp}));
+            SyncServer.sendCtrl(JSON.stringify({type: 'offer', offer: offer}));
         }, function(err) {
             alert("Error creating offer: " + err);
         });
+
+        dataChannel = peerConnection.createDataChannel("datachannel", {reliable: false, ordered: false, maxPacketLifeTime: 10});
+        dataChannel.binaryType = "arraybuffer";
+
+        setupDataChannel();
     }, 4000);
 }
 
-function makeAnswer(data) {
+function makeAnswer(offer) {
     initPeerConnection();
-    peerConnection.setRemoteDescription(new window.RTCSessionDescription(data));
+    peerConnection.setRemoteDescription(new window.RTCSessionDescription(offer));
+
+    peerConnection.ondatachannel = function(e) {
+        dataChannel = e.channel;
+        setupDataChannel();
+    };
 
     peerConnection.createAnswer({
         mandatory: {
@@ -92,14 +96,14 @@ function makeAnswer(data) {
     }).then(function(answer) {
         peerConnection.setLocalDescription(answer);
         console.log("Sending answer", answer);
-        SyncServer.sendCtrl(JSON.stringify({type: 'answer', sdp: answer.sdp}));
+        SyncServer.sendCtrl(JSON.stringify({type: 'answer', answer: answer}));
     }, function(err) {
         console.error("Error creating answer: ", err);
     });
 }
 
-function receiveAnswer(data) {
-    peerConnection.setRemoteDescription(new window.RTCSessionDescription(data));
+function receiveAnswer(answer) {
+    peerConnection.setRemoteDescription(new window.RTCSessionDescription(answer));
 }
 
 function initPeerConnection() {
@@ -108,27 +112,36 @@ function initPeerConnection() {
 
     peerConnection = new window.RTCPeerConnection({
         iceServers: [{
-            url: 'stun:stun.l.google.com:19302'
+            urls: 'stun:stun.l.google.com:19302'
         }]
     });
 
     peerConnection.onicecandidate = function(e){
         if (!e || !e.candidate)
             return;
-        console.log(e.candidate.candidate);
-        SyncServer.sendCtrl(JSON.stringify({type: 'candidate', candidate: e.candidate.candidate}));
+        SyncServer.sendCtrl(JSON.stringify({type: 'candidate', candidate: e.candidate}));
     };
+}
 
-    dataChannel = peerConnection.createDataChannel("datachannel", {reliable: false, ordered: false});
-    dataChannel.binaryType = "arraybuffer";
+function setupDataChannel() {
+    let lastCount = -1;
 
-    dataChannel.onmessage = function(e) {
-        alert(e);
-        console.log("DC message:" + e.data);
+    dataChannel.onmessage = function(msg) {
+        const data = new DataView(msg.data);
+        const type = data.getUint8(0);
+        if (isMobile())
+            alert('onmsg' + JSON.stringify(msg));
+        const count = data.getUint32(1);
+        if (!(count < lastCount)) {
+            lastCount = count;
+            handler(type, new DataView(msg.data, 5));
+        } else {
+            console.log('Dropped msg:', count);
+        }
     };
 
     dataChannel.onopen = function() {
-        console.log("------ DATACHANNEL OPENED ------", peerConnection);
+        console.log("------ DATACHANNEL OPENED ------");
     };
 
     dataChannel.onclose = function() {
@@ -140,11 +153,11 @@ function initPeerConnection() {
     };
 }
 
-function receiveCandidate(data) {
+function receiveCandidate(candidate) {
     if (!peerConnection)
         return;
     //console.log('Received candidate:', data.candidate);
-    peerConnection.addIceCandidate(new window.RTCIceCandidate({candidate: data.candidate}));
+    peerConnection.addIceCandidate(new window.RTCIceCandidate(candidate));
 }
 
 window.onerror = function(e, x, y, z, ex){

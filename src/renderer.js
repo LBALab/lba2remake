@@ -22,6 +22,7 @@ const islands = [
 ];
 
 let index = 0;
+let msgCount = 0;
 
 SyncServer.init('192.168.0.19:8081');
 export default class Renderer {
@@ -173,14 +174,15 @@ export default class Renderer {
             this.controls.update(dt);
             if (this.controls instanceof DeviceOrientationControls) {
                 const q = this.cameraDummy.quaternion;
-                if (this.frameCount % 2 == 0) {
-                    const buffer = new ArrayBuffer(17);
+                if (this.frameCount % 6 == 0) {
+                    const buffer = new ArrayBuffer(21);
                     const view = new DataView(buffer);
                     view.setUint8(0, SyncServer.DEVICE_ORIENTATION);
-                    view.setFloat32(1, q.x);
-                    view.setFloat32(5, q.y);
-                    view.setFloat32(9, q.z);
-                    view.setFloat32(13, q.w);
+                    view.setUint32(1, msgCount++);
+                    view.setFloat32(5, q.x);
+                    view.setFloat32(9, q.y);
+                    view.setFloat32(13, q.z);
+                    view.setFloat32(17, q.w);
                     SyncServer.send(buffer);
                 }
             }
@@ -193,16 +195,17 @@ export default class Renderer {
             if (this.controls instanceof OrbitControls) {
                 this.controls.target.add(dir);
             }
-            if (this.frameCount % 2 == 0) {
+            if (this.frameCount % 6 == 0) {
                 const p = this.cameraDummy.position;
-                const buffer = new ArrayBuffer(18);
+                const buffer = new ArrayBuffer(22);
                 const view = new DataView(buffer);
                 view.setUint8(0, SyncServer.LOCATION);
-                view.setFloat32(1, p.x);
-                view.setFloat32(5, p.y);
-                view.setFloat32(9, p.z);
-                view.setFloat32(13, this.angle);
-                view.setUint8(17, index);
+                view.setUint32(1, msgCount++);
+                view.setFloat32(5, p.x);
+                view.setFloat32(9, p.y);
+                view.setFloat32(13, p.z);
+                view.setFloat32(17, this.angle);
+                view.setUint8(21, index);
                 SyncServer.send(buffer);
             }
         }
