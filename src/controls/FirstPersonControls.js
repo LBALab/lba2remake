@@ -40,10 +40,6 @@ export default function FirstPersonControls( camera ) {
 	window.addEventListener('keyup', onKeyUp, false);
 
 	function onKeyDown(event) {
-		if (event.keyCode == 78) {
-			index = (index + 1) % islands.length;
-			this.refreshIsland();
-		}
 		if (event.keyCode == 90 || event.keyCode == 38) { // Z or Up
 			that.movement[0] = -1;
 		}
