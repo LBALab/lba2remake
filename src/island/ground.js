@@ -26,6 +26,8 @@ export function loadGround(island, section, geometries) {
                         push.apply(geometries.colored.positions, getPositions(section, p));
                         push.apply(geometries.colored.colors, getColors(section.intensity, t, island.palette, p));
                     }
+                } else {
+                    push.apply(geometries.sea.positions, getSeaPositions(section, p, 64, 65, 32));
                 }
             };
 
@@ -33,6 +35,21 @@ export function loadGround(island, section, geometries) {
             triangle(t1, [point(1, s), point(r, 1), point(0, r)]);
         }
     }
+}
+
+export function loadSea(section, geometries) {
+    function loadQuads(n) {
+        const dn = 64 / n;
+        for (let x = 0; x < n; ++x) {
+            for (let y = 0; y < n; ++y) {
+                const point = (xi, yi) => (x * dn + xi) * 65 + y * dn + yi;
+                push.apply(geometries.sea.positions, getSeaPositions(section, [point(0, dn), point(0, 0), point(dn, 0)]));
+                push.apply(geometries.sea.positions, getSeaPositions(section, [point(dn, 0), point(dn, dn), point(0, dn)]));
+            }
+        }
+    }
+
+    loadQuads(Math.pow(2, 3 - section.distanceFromGround) * 8);
 }
 
 function loadTriangle(section, x, y, idx) {
@@ -53,9 +70,20 @@ function getPositions(section, points) {
     for (let i = 0; i < 3; ++i) {
         const idx = points[i];
         const x = section.x * 64 + (65 - Math.floor(idx / 65));
-        const y  = section.heightmap[idx];
+        const y = section.heightmap[idx];
         const z = section.z * 64 + (idx % 65);
         positions.push(x / 32, y / 0x4000, z / 32);
+    }
+    return positions;
+}
+
+function getSeaPositions(section, points, n, np1, nd2) {
+    const positions = [];
+    for (let i = 0; i < 3; ++i) {
+        const idx = points[i];
+        const x = section.x * 64 + (65 - Math.floor(idx / 65));
+        const z = section.z * 64 + (idx % 65);
+        positions.push(x / 32, 0, z / 32);
     }
     return positions;
 }

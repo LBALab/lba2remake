@@ -5,15 +5,12 @@ uniform mat4 projectionMatrix;
 uniform float time;
 
 attribute vec3 position;
-attribute vec2 uv;
 
 varying vec2 vUv;
 
 void main() {
     vec3 pos = position;
-    float sinv = sin(pos.x * pos.y + time * 2.0) * 0.007;
-    pos.z += sinv;
+    pos.y = (sin(pos.x * pos.z * 6.0 + time * 1.5) + 1.0) * 0.01;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    vUv = uv;
+    vUv = pos.xz / 64.0;
 }
-

@@ -5,11 +5,11 @@ import _ from 'lodash';
 import {loadHqrAsync} from '../hqr';
 import {prepareGeometries} from './geometries';
 import {loadLayout} from './layout';
-import {loadGround} from './ground';
+import {loadGround, loadSea} from './ground';
 import {loadObjects} from './objects';
 import {loadTexture} from '../texture';
 
-export default function loadIsland({name, skyIndex, skyColor}, callback) {
+export function loadIsland({name, skyIndex, skyColor}, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         ile: loadHqrAsync(`${name}.ILE`),
@@ -31,7 +31,7 @@ function loadIslandSync(files, skyIndex, skyColor) {
     const object = new THREE.Object3D();
 
     const geometries = loadGeometries(island);
-    _.each(geometries, ({positions, uvs, colors, uvGroups, material}) => {
+    _.each(geometries, ({positions, uvs, colors, uvGroups, material}, name) => {
         if (positions) {
             const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
@@ -44,15 +44,11 @@ function loadIslandSync(files, skyIndex, skyColor) {
             if (uvGroups) {
                 bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, true));
             }
-            object.add(new THREE.Mesh(bufferGeometry, material));
+            const mesh = new THREE.Mesh(bufferGeometry, material);
+            mesh.name = name;
+            object.add(mesh);
         }
     });
-
-    const sea = new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 256, 256), geometries.sea.material);
-    sea.name = 'sea';
-    sea.rotateX(-Math.PI / 2.0);
-    sea.position.y = -0.001;
-    object.add(sea);
 
     const sky = new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 1, 1), geometries.sky.material);
     sky.rotateX(Math.PI / 2.0);
@@ -67,8 +63,12 @@ function loadGeometries(island) {
 
     const objects = [];
     _.each(island.layout, section => {
-        loadGround(island, section, geometries);
-        loadObjects(island, section, geometries, objects);
+        if (section.type == 'ground') {
+            loadGround(island, section, geometries);
+            loadObjects(island, section, geometries, objects);
+        } else {
+            loadSea(section, geometries);
+        }
     });
     return geometries;
 }

@@ -1,6 +1,6 @@
 import THREE from 'three';
 import OrbitControls from './controls/OrbitControls';
-import loadIsland from './island';
+import {loadIsland} from './island';
 
 const islands = [
     {name: 'CITADEL', skyColor: [0.0, 0.0, 0.0], skyIndex: 11, fogDistance: 800},
@@ -86,7 +86,7 @@ export default class Renderer {
 
     animate() {
         if (this.sea) {
-            this.sea.material.uniforms.time.value = this.clock.getElapsedTime();
+            //this.sea.material.uniforms.time.value = this.clock.getElapsedTime();
         }
         this.render();
         requestAnimationFrame(this.animate.bind(this));

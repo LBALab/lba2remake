@@ -57,7 +57,8 @@ export function prepareGeometries(island) {
             })
         },
         sea: {
-            material: new THREE.RawShaderMaterial({
+            positions: [],
+            material2: new THREE.RawShaderMaterial({
                 vertexShader: island.skyIndex != 14 ? sea_vertex : env_vertex,
                 fragmentShader: env_fragment,
                 transparent: true,
@@ -67,7 +68,8 @@ export function prepareGeometries(island) {
                     time: {value: 0.0},
                     scale: {value: 512.0}
                 }
-            })
+            }),
+            material: new THREE.MeshBasicMaterial({wireframe: true})
         },
         sky: {
             material: new THREE.RawShaderMaterial({
