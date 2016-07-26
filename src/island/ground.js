@@ -11,8 +11,13 @@ export function loadGround(island, section, geometries) {
 
             const point = (xi, yi) => (x + xi) * 65 + y + yi;
 
+            const isSeaLevelLiquid = (t, p) => {
+                const seaLevel = section.heightmap[p[0]] == 0 && section.heightmap[p[1]] == 0 && section.heightmap[p[2]] == 0;
+                return seaLevel && t.liquid != 0;
+            };
+
             const triangle = (t, p) => {
-                if (t.useColor || t.useTexture) {
+                if (!isSeaLevelLiquid(t, p) && (t.useColor || t.useTexture)) {
                     if (t.useTexture) {
                         push.apply(geometries.textured.positions, getPositions(section, p));
                         push.apply(geometries.textured.uvs, getUVs(section.textureInfo, t.textureIndex));
@@ -31,14 +36,15 @@ export function loadGround(island, section, geometries) {
 }
 
 function loadTriangle(section, x, y, idx) {
-    const t = section.triangles[(x * 64 + y) * 2 + idx];
+    const flags = section.triangles[(x * 64 + y) * 2 + idx];
     const bits = (bitfield, offset, length) => (bitfield & (((1 << length) - 1)) << offset) >> offset;
     return {
-        textureBank: bits(t, 0, 4),
-        useTexture: bits(t, 4, 2),
-        useColor: bits(t, 6, 2),
-        orientation: bits(t, 16, 1),
-        textureIndex: bits(t, 19, 13)
+        textureBank: bits(flags, 0, 4),
+        useTexture: bits(flags, 4, 2),
+        useColor: bits(flags, 6, 2),
+        orientation: bits(flags, 16, 1),
+        textureIndex: bits(flags, 19, 13),
+        liquid: bits(flags, 12, 4)
     };
 }
 
