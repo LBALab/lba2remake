@@ -1,14 +1,24 @@
+import {each} from 'lodash';
+
 export function loadLayout(ile) {
+    const groundSections = loadGroundSections(ile);
+    const seaSections = loadSeaSections(groundSections);
+    return {
+        groundSections: groundSections,
+        seaSections: seaSections
+    };
+}
+
+function loadGroundSections(ile) {
     const layout_raw = new Uint8Array(ile.getEntry(0));
-    const layout = [];
+    const groundSections = [];
     let index = 0;
     for (let i = 0; i < 256; ++i) {
         const x = Math.floor(i / 16);
         const z = i % 16;
         if (layout_raw[i]) {
             const id = layout_raw[i];
-            layout.push({
-                type: 'ground',
+            groundSections.push({
                 id: id,
                 index: index++,
                 x: (16 - x) - 8,
@@ -20,33 +30,41 @@ export function loadLayout(ile) {
                 heightmap: new Uint16Array(ile.getEntry(id * 6 + 1)),
                 intensity: new Uint8Array(ile.getEntry(id * 6 + 2))
             });
-        } else {
-            const distanceFromGround = computeDistanceFromGround(layout_raw, x, z);
-            if (distanceFromGround) {
-                layout.push({
-                    type: 'sea',
-                    x: (16 - x) - 8,
-                    z: z - 8,
-                    distanceFromGround: distanceFromGround
+        }
+    }
+    return groundSections;
+}
+
+function loadSeaSections(groundSections) {
+    const seaSections = [];
+    for (let x = -14; x <= 16; ++x) {
+        for (let z = -16; z <= 14; ++z) {
+            const distanceFromGround = computeDistanceFromGround(groundSections, x, z);
+            if (distanceFromGround > 0 && distanceFromGround < 12) {
+                seaSections.push({
+                    x: x,
+                    z: z,
+                    lod: Math.min(distanceFromGround, 5)
                 });
             }
         }
     }
-    return layout;
+    return seaSections;
 }
 
-function computeDistanceFromGround(layout_raw, x, z) {
-    for (let d = 1; d < 5; ++d) {
-        for (let dx = x - d; dx <= x + d; ++dx) {
-            for (let dz = z - d; dz <= z + d; ++dz) {
-                if (Math.abs(dx - x) == d || Math.abs(dz - z) == d) {
-                    if (dx >= 0 && dz >= 0 && dx < 16 && dz < 16 && layout_raw[dx * 16 + dz]) {
-                        return d;
-                    }
-                }
-            }
+function computeDistanceFromGround(groundSections, x, z) {
+    let minLength = 32;
+    each(groundSections, section => {
+        const sx = section.x * 2;
+        const sz = section.z * 2;
+        for (let i = 0; i < 4; ++i) {
+            const dx = Math.floor(i / 2);
+            const dz = i % 2;
+            const length = Math.sqrt(Math.pow(sx + dx - x, 2) + Math.pow(sz + dz - z, 2));
+            minLength = Math.min(minLength, Math.floor(length));
         }
-    }
+    });
+    return minLength;
 }
 
 function parseObjectsInfo(buffer) {

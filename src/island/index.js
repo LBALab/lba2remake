@@ -5,7 +5,8 @@ import _ from 'lodash';
 import {loadHqrAsync} from '../hqr';
 import {prepareGeometries} from './geometries';
 import {loadLayout} from './layout';
-import {loadGround, loadSea} from './ground';
+import {loadGround} from './ground';
+import {loadSea} from './sea';
 import {loadObjects} from './objects';
 import {loadTexture} from '../texture';
 
@@ -62,13 +63,12 @@ function loadGeometries(island) {
     const geometries = prepareGeometries(island);
 
     const objects = [];
-    _.each(island.layout, section => {
-        if (section.type == 'ground') {
-            loadGround(island, section, geometries);
-            loadObjects(island, section, geometries, objects);
-        } else {
-            loadSea(section, geometries);
-        }
+    _.each(island.layout.groundSections, section => {
+        loadGround(island, section, geometries);
+        loadObjects(island, section, geometries, objects);
     });
+    _.each(island.layout.seaSections, section => {
+        loadSea(section, geometries);
+    })
     return geometries;
 }

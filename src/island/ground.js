@@ -37,21 +37,6 @@ export function loadGround(island, section, geometries) {
     }
 }
 
-export function loadSea(section, geometries) {
-    function loadQuads(n) {
-        const dn = 64 / n;
-        for (let x = 0; x < n; ++x) {
-            for (let y = 0; y < n; ++y) {
-                const point = (xi, yi) => (x * dn + xi) * 65 + y * dn + yi;
-                push.apply(geometries.sea.positions, getSeaPositions(section, [point(0, dn), point(0, 0), point(dn, 0)]));
-                push.apply(geometries.sea.positions, getSeaPositions(section, [point(dn, 0), point(dn, dn), point(0, dn)]));
-            }
-        }
-    }
-
-    loadQuads(Math.pow(2, 3 - section.distanceFromGround) * 8);
-}
-
 function loadTriangle(section, x, y, idx) {
     const flags = section.triangles[(x * 64 + y) * 2 + idx];
     const bits = (bitfield, offset, length) => (bitfield & (((1 << length) - 1)) << offset) >> offset;
