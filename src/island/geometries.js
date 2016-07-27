@@ -20,7 +20,6 @@ const skyScales = {
 };
 
 export function prepareGeometries(island) {
-    console.log(island);
     return {
         colored: {
             positions: [],
