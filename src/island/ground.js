@@ -1,6 +1,6 @@
 const push = Array.prototype.push;
 
-export function loadGround(island, section, geometries) {
+export function loadGround(island, section, geometries, usedTiles) {
     for (let x = 0; x < 64; ++x) {
         for (let y = 0; y < 64; ++y) {
             const t0 = loadTriangle(section, x, y, 0);
@@ -18,6 +18,7 @@ export function loadGround(island, section, geometries) {
 
             const triangle = (t, p) => {
                 if (!isSeaLevelLiquid(t, p) && (t.useColor || t.useTexture)) {
+                    usedTiles[x * 64 + y] = true;
                     if (t.useTexture) {
                         push.apply(geometries.textured.positions, getPositions(section, p));
                         push.apply(geometries.textured.uvs, getUVs(section.textureInfo, t.textureIndex));
@@ -26,8 +27,6 @@ export function loadGround(island, section, geometries) {
                         push.apply(geometries.colored.positions, getPositions(section, p));
                         push.apply(geometries.colored.colors, getColors(section.intensity, t, island.palette, p));
                     }
-                } else {
-                    push.apply(geometries.sea.positions, getSeaPositions(section, p, 64, 65, 32));
                 }
             };
 

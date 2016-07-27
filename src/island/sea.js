@@ -1,18 +1,19 @@
 const push = Array.prototype.push;
 
-export function loadSea(section, geometries) {
-    function loadQuads(n) {
-        const dn = 32 / n;
-        for (let x = 0; x < n; ++x) {
-            for (let y = 0; y < n; ++y) {
-                const point = (xi, yi) => (x * dn + xi) * 65 + y * dn + yi;
+export function loadSea(section, geometries, usedTile, offsetX, offsetZ) {
+    const n = Math.pow(2, 2 - section.lod) * 8;
+    const dn = 32 / n;
+    for (let x = 0; x < n; ++x) {
+        const tx = x * dn + offsetX * 32;
+        for (let z = 0; z < n; ++z) {
+            const tz = z * dn + offsetZ * 32;
+            if (!usedTile || !usedTile[[tx * 64 + tz]]) {
+                const point = (xi, yi) => (x * dn + xi) * 65 + z * dn + yi;
                 push.apply(geometries.sea.positions, getSeaPositions(section, [point(0, dn), point(0, 0), point(dn, 0)]));
                 push.apply(geometries.sea.positions, getSeaPositions(section, [point(dn, 0), point(dn, dn), point(0, dn)]));
             }
         }
     }
-
-    loadQuads(Math.pow(2, 2 - section.lod) * 8);
 }
 
 function getSeaPositions(section, points) {

@@ -61,14 +61,24 @@ function loadIslandSync(files, skyIndex, skyColor) {
 
 function loadGeometries(island) {
     const geometries = prepareGeometries(island);
-
+    const usedTiles = {};
     const objects = [];
+
     _.each(island.layout.groundSections, section => {
-        loadGround(island, section, geometries);
+        const tilesKey = [section.x, section.z].join(',');
+        usedTiles[tilesKey] = [];
+        loadGround(island, section, geometries, usedTiles[tilesKey]);
         loadObjects(island, section, geometries, objects);
     });
+
     _.each(island.layout.seaSections, section => {
-        loadSea(section, geometries);
-    })
+        const xd = Math.floor(section.x / 2);
+        const zd = Math.floor(section.z / 2);
+        const offsetX = 1 - Math.abs(section.x % 2);
+        const offsetZ = Math.abs(section.z % 2);
+        const tilesKey = [xd, zd].join(',');
+        loadSea(section, geometries, usedTiles[tilesKey], offsetX, offsetZ);
+    });
+
     return geometries;
 }

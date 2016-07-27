@@ -40,7 +40,7 @@ function loadSeaSections(groundSections) {
     for (let x = -14; x <= 16; ++x) {
         for (let z = -16; z <= 14; ++z) {
             const distanceFromGround = computeDistanceFromGround(groundSections, x, z);
-            if (distanceFromGround > 0 && distanceFromGround < 12) {
+            if (distanceFromGround < 12) {
                 seaSections.push({
                     x: x,
                     z: z,
