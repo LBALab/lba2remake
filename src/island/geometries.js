@@ -26,7 +26,8 @@ export function prepareGeometries(island) {
             colors: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: colored_vertex,
-                fragmentShader: colored_fragment
+                fragmentShader: colored_fragment,
+                transparent: true
             })
         },
         textured: {
@@ -36,6 +37,7 @@ export function prepareGeometries(island) {
             material: new THREE.RawShaderMaterial({
                 vertexShader: textured_vertex,
                 fragmentShader: textured_fragment,
+                transparent: true,
                 uniforms: {
                     texture: {value: loadTexture(island.files.ile.getEntry(1), island.palette)}
                 }
