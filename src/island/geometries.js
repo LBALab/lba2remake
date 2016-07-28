@@ -60,7 +60,7 @@ export function prepareGeometries(island) {
             material: new THREE.RawShaderMaterial({
                 vertexShader: island.skyIndex != 14 ? sea_vertex : env_vertex,
                 fragmentShader: island.skyIndex != 14 ? sea_fragment : env_fragment,
-                wireframe: false,
+                wireframe: true,
                 uniforms: {
                     texture: {value: loadSubTexture(island.files.ress.getEntry(island.skyIndex), island.palette, 0, 0, 128, 128)},
                     fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},

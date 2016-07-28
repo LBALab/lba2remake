@@ -1,4 +1,36 @@
+import {each} from 'lodash';
 const push = Array.prototype.push;
+
+const triangles = {
+    regular: [
+        [[0, 1], [0, 0], [1, 0]],
+        [[1, 0], [1, 1], [0, 1]]
+    ],
+    reversed: [
+        [[0, 0], [1, 0], [1, 1]],
+        [[1, 1], [0, 1], [0, 0]]
+    ],
+    '-1,0': [
+        [[0, 0], [1, 0], [0, 0.5]],
+        [[0, 1], [0, 0.5], [1, 1]],
+        [[1, 1], [0, 0.5], [1, 0]]
+    ],
+    '1,0': [
+        [[0, 0], [1, 0], [1, 0.5]],
+        [[0, 1], [1, 0.5], [1, 1]],
+        [[0, 0], [1, 0.5], [0, 1]]
+    ],
+    '0,-1': [
+        [[0, 1], [0, 0], [0.5, 0]],
+        [[0.5, 0], [1, 0], [1, 1]],
+        [[0, 1], [0.5, 0], [1, 1]]
+    ],
+    '0,1': [
+        [[0, 0], [0.5, 1], [0, 1]],
+        [[1, 0], [1, 1], [0.5, 1]],
+        [[0.5, 1], [0, 0], [1, 0]]
+    ]
+};
 
 export function loadSea(section, geometries, usedTile, offsetX, offsetZ) {
     const n = Math.pow(2, 2 - section.lod) * 8;
@@ -9,29 +41,46 @@ export function loadSea(section, geometries, usedTile, offsetX, offsetZ) {
             const tz = z * dn + offsetZ * 32;
             const surrounded = usedTile && isSurrounded(usedTile, tx, tz);
             if (!usedTile || !surrounded) {
-                const point = (xi, zi) => (x * dn + xi * dn) * 65 + z * dn + zi * dn;
+                const point = ([xi, zi]) => (x * dn + xi * dn) * 65 + z * dn + zi * dn;
                 const isShore = usedTile && usedTile[tx * 64 + tz] !== undefined && !surrounded;
-                const isEdge = (xi, zi) => isShore && !isInBetween(usedTile, tx, tz, xi, zi);
-                const r = (isShore && usedTile[tx * 64 + tz]) || 0;
-                const s = 1 - r;
-                push.apply(
-                    geometries.sea.positions,
-                    getSeaPositions(
-                        section,
-                        [point(0, r), point(s, 0), point(1, s)],
-                        [isEdge(0, r), isEdge(s, 0), isEdge(1, s)]
-                    )
-                );
-                push.apply(
-                    geometries.sea.positions,
-                    getSeaPositions(
-                        section,
-                        [point(1, s), point(r, 1), point(0, r)],
-                        [isEdge(1, s), isEdge(r, 1), isEdge(0, r)]
-                    )
-                );
+                const isEdge = ([xi, zi]) => isShore && !isInBetween(usedTile, tx, tz, xi, zi);
+                const type = getTriangleType(section, isShore, usedTile, x, z, tx, tz, n);
+                each(triangles[type], tris => {
+                    push.apply(
+                        geometries.sea.positions,
+                        getSeaPositions(
+                            section,
+                            [point(tris[0]), point(tris[1]), point(tris[2])],
+                            [isEdge(tris[0]), isEdge(tris[1]), isEdge(tris[2])]
+                        )
+                    );
+                });
             }
         }
+    }
+}
+
+function getTriangleType(section, isShore, usedTile, x, z, tx, tz, n) {
+    if (isShore) {
+        return usedTile[tx * 64 + tz] ? 'regular' : 'reversed';
+    } else {
+        const sides = [];
+        if (x == 0 && section.reduceEdges.indexOf('-1,0') != -1) {
+            sides.push('-1,0');
+        }
+        if (x == n - 1 && section.reduceEdges.indexOf('1,0') != -1) {
+            sides.push('1,0');
+        }
+        if (z == 0 && section.reduceEdges.indexOf('0,-1') != -1) {
+            sides.push('0,-1');
+        }
+        if (z == n - 1 && section.reduceEdges.indexOf('0,1') != -1) {
+            sides.push('0,1');
+        }
+        if (sides.length == 1) {
+            return sides[0];
+        }
+        return 'regular';
     }
 }
 
