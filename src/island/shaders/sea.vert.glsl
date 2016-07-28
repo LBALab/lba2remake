@@ -11,8 +11,9 @@ varying float shore;
 
 void main() {
     vec3 pos = position;
-    pos.y = sin(pos.x * pos.z * 6.0 + time * 1.5) * 0.01 * pos.y;
+    float s = sin(pos.x * pos.z * 12.0 + time * 1.8) + 1.0;
+    pos.y = s * 0.006 * pos.y;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    vUv = pos.xz / 32.0;
+    vUv = vec2(pos.x / 32.0 + sin(time * 1.9) * 0.0001, pos.z / 32.0 + cos(time * 1.7) * 0.0001);
     shore = position.y;
 }
