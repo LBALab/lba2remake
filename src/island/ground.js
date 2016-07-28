@@ -18,7 +18,7 @@ export function loadGround(island, section, geometries, usedTiles) {
 
             const triangle = (t, p) => {
                 if (!isSeaLevelLiquid(t, p) && (t.useColor || t.useTexture)) {
-                    usedTiles[x * 64 + y] = true;
+                    usedTiles[x * 64 + y] = t0.orientation;
                     if (t.useTexture) {
                         push.apply(geometries.textured.positions, getPositions(section, p));
                         push.apply(geometries.textured.uvs, getUVs(section.textureInfo, t.textureIndex));
@@ -57,17 +57,6 @@ function getPositions(section, points) {
         const y = section.heightmap[idx];
         const z = section.z * 64 + (idx % 65);
         positions.push(x / 32, y / 0x4000, z / 32);
-    }
-    return positions;
-}
-
-function getSeaPositions(section, points, n, np1, nd2) {
-    const positions = [];
-    for (let i = 0; i < 3; ++i) {
-        const idx = points[i];
-        const x = section.x * 64 + (65 - Math.floor(idx / 65));
-        const z = section.z * 64 + (idx % 65);
-        positions.push(x / 32, 0, z / 32);
     }
     return positions;
 }

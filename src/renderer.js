@@ -86,7 +86,7 @@ export default class Renderer {
 
     animate() {
         if (this.sea) {
-            //this.sea.material.uniforms.time.value = this.clock.getElapsedTime();
+            this.sea.material.uniforms.time.value = this.clock.getElapsedTime();
         }
         this.render();
         requestAnimationFrame(this.animate.bind(this));

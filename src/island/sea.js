@@ -7,41 +7,67 @@ export function loadSea(section, geometries, usedTile, offsetX, offsetZ) {
         const tx = x * dn + offsetX * 32;
         for (let z = 0; z < n; ++z) {
             const tz = z * dn + offsetZ * 32;
-            if (!usedTile || !isSurrounded(usedTile, tx, tz)) {
-                const point = (xi, yi) => (x * dn + xi) * 65 + z * dn + yi;
-                const shore = usedTile && usedTile[tx * 64 + tz] && !isSurrounded(usedTile, tx, tz);
-                push.apply(geometries.sea.positions, getSeaPositions(section, [point(0, dn), point(0, 0), point(dn, 0)], shore));
-                push.apply(geometries.sea.positions, getSeaPositions(section, [point(dn, 0), point(dn, dn), point(0, dn)], shore));
+            const surrounded = usedTile && isSurrounded(usedTile, tx, tz);
+            if (!usedTile || !surrounded) {
+                const point = (xi, zi) => (x * dn + xi * dn) * 65 + z * dn + zi * dn;
+                const isShore = usedTile && usedTile[tx * 64 + tz] !== undefined && !surrounded;
+                const isEdge = (xi, zi) => isShore && !isInBetween(usedTile, tx, tz, xi, zi);
+                const r = (isShore && usedTile[tx * 64 + tz]) || 0;
+                const s = 1 - r;
+                push.apply(
+                    geometries.sea.positions,
+                    getSeaPositions(
+                        section,
+                        [point(0, r), point(s, 0), point(1, s)],
+                        [isEdge(0, r), isEdge(s, 0), isEdge(1, s)]
+                    )
+                );
+                push.apply(
+                    geometries.sea.positions,
+                    getSeaPositions(
+                        section,
+                        [point(1, s), point(r, 1), point(0, r)],
+                        [isEdge(1, s), isEdge(r, 1), isEdge(0, r)]
+                    )
+                );
             }
         }
     }
 }
 
 function isSurrounded(usedTile, x, z) {
-    const used = (x, z) => {
-        return x < 0 || z < 0 || x >= 64 || z >= 64 || usedTile[x * 64 + z];
-    };
-
     return _.every([
-        used(x - 1, z - 1),
-        used(x - 1, z),
-        used(x - 1, z + 1),
-        used(x, z - 1),
-        used(x, z),
-        used(x, z + 1),
-        used(x + 1, z - 1),
-        used(x + 1, z),
-        used(x + 1, z + 1)
+        isUsed(usedTile, x - 1, z - 1),
+        isUsed(usedTile, x - 1, z),
+        isUsed(usedTile, x - 1, z + 1),
+        isUsed(usedTile, x, z - 1),
+        isUsed(usedTile, x, z),
+        isUsed(usedTile, x, z + 1),
+        isUsed(usedTile, x + 1, z - 1),
+        isUsed(usedTile, x + 1, z),
+        isUsed(usedTile, x + 1, z + 1)
     ]);
 }
 
-function getSeaPositions(section, points, shore) {
+function isUsed(usedTile, x, z) {
+    return x < 0 || z < 0 || x >= 64 || z >= 64 || usedTile[x * 64 + z] !== undefined;
+}
+
+function isInBetween(usedTile, x, z, xi, zi) {
+    const tx = xi * 2 - 1;
+    const tz = zi * 2 - 1;
+    return !isUsed(usedTile, x + tx, z + tz)
+        || !isUsed(usedTile, x + tx, z)
+        || !isUsed(usedTile, x, z + tz);
+}
+
+function getSeaPositions(section, points, isEdge) {
     const positions = [];
     for (let i = 0; i < 3; ++i) {
         const idx = points[i];
         const x = section.x * 32 + (65 - Math.floor(idx / 65)) - 32;
         const z = section.z * 32 + (idx % 65);
-        positions.push(x / 32, shore ? 0.01 : 0, z / 32);
+        positions.push(x / 32, isEdge[i] ? 0 : 1, z / 32);
     }
     return positions;
 }
