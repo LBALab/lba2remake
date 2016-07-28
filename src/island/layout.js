@@ -37,18 +37,33 @@ function loadGroundSections(ile) {
 
 function loadSeaSections(groundSections) {
     const seaSections = [];
+    const indexedSections = {};
     for (let x = -14; x <= 16; ++x) {
         for (let z = -16; z <= 14; ++z) {
             const distanceFromGround = computeDistanceFromGround(groundSections, x, z);
             if (distanceFromGround < 12) {
-                seaSections.push({
+                const section = {
                     x: x,
                     z: z,
-                    lod: Math.min(distanceFromGround, 5)
-                });
+                    lod: Math.min(distanceFromGround, 5),
+                    reduceEdges: []
+                };
+                seaSections.push(section);
+                indexedSections[[x, z].join(',')] = section;
             }
         }
     }
+    const nbs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    each(indexedSections, section => {
+        if (section.lod == 0)
+            return;
+        each(nbs, nb => {
+            const nearSection = indexedSections[[section.x + nb[0], section.z + nb[1]]];
+            if (nearSection && nearSection.lod < section.lod) {
+                section.reduceEdges.push(nb.join(','));
+            }
+        });
+    });
     return seaSections;
 }
 
