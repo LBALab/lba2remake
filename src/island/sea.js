@@ -56,7 +56,7 @@ const triangles = {
     ]
 };
 
-export function loadSea(section, geometries, usedTile, offsetX, offsetZ) {
+export function loadSea(section, geometries, usedTile, offsetX, offsetZ, skyIndex) {
     const n = Math.pow(2, 2 - section.lod) * 8;
     const dn = 32 / n;
     for (let x = 0; x < n; ++x) {
@@ -67,7 +67,7 @@ export function loadSea(section, geometries, usedTile, offsetX, offsetZ) {
             if (!usedTile || !surrounded) {
                 const point = ([xi, zi]) => (x * dn + xi * dn) * 65 + z * dn + zi * dn;
                 const isShore = usedTile && usedTile[tx * 64 + tz] !== undefined && !surrounded;
-                const isEdge = ([xi, zi]) => isShore && !isInBetween(usedTile, tx, tz, xi, zi);
+                const isEdge = ([xi, zi]) => skyIndex == 14 || (isShore && !isInBetween(usedTile, tx, tz, xi, zi));
                 const type = getTriangleType(section, isShore, usedTile, x, z, tx, tz, n);
                 each(triangles[type], tris => {
                     push.apply(

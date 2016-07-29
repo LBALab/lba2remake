@@ -11,6 +11,7 @@ import sea_vertex from './shaders/sea.vert.glsl';
 import sea_fragment from './shaders/sea.frag.glsl';
 import env_vertex from './shaders/env.vert.glsl';
 import env_fragment from './shaders/env.frag.glsl';
+import moon_vertex from './shaders/moon.vert.glsl';
 
 const skyScales = {
     11: 1.0,
@@ -58,7 +59,7 @@ export function prepareGeometries(island) {
         sea: {
             positions: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: island.skyIndex != 14 ? sea_vertex : env_vertex,
+                vertexShader: island.skyIndex != 14 ? sea_vertex : moon_vertex,
                 fragmentShader: island.skyIndex != 14 ? sea_fragment : env_fragment,
                 wireframe: false,
                 uniforms: {

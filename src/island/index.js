@@ -77,7 +77,7 @@ function loadGeometries(island) {
         const offsetX = 1 - Math.abs(section.x % 2);
         const offsetZ = Math.abs(section.z % 2);
         const tilesKey = [xd, zd].join(',');
-        loadSea(section, geometries, usedTiles[tilesKey], offsetX, offsetZ);
+        loadSea(section, geometries, usedTiles[tilesKey], offsetX, offsetZ, island.skyIndex);
     });
 
     return geometries;
