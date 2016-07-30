@@ -8,8 +8,10 @@ import textured_fragment from './shaders/textured.frag.glsl';
 import atlas_vertex from './shaders/atlas.vert.glsl';
 import atlas_fragment from './shaders/atlas.frag.glsl';
 import sea_vertex from './shaders/sea.vert.glsl';
+import sea_fragment from './shaders/sea.frag.glsl';
 import env_vertex from './shaders/env.vert.glsl';
 import env_fragment from './shaders/env.frag.glsl';
+import moon_vertex from './shaders/moon.vert.glsl';
 
 const skyScales = {
     11: 1.0,
@@ -20,7 +22,6 @@ const skyScales = {
 };
 
 export function prepareGeometries(island) {
-    console.log(island);
     return {
         colored: {
             positions: [],
@@ -50,30 +51,30 @@ export function prepareGeometries(island) {
             material: new THREE.RawShaderMaterial({
                 vertexShader: atlas_vertex,
                 fragmentShader: atlas_fragment,
-                transparent: true,
                 uniforms: {
                     texture: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
                 }
             })
         },
         sea: {
+            positions: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: island.skyIndex != 14 ? sea_vertex : env_vertex,
-                fragmentShader: env_fragment,
-                transparent: true,
+                vertexShader: island.skyIndex != 14 ? sea_vertex : moon_vertex,
+                fragmentShader: island.skyIndex != 14 ? sea_fragment : env_fragment,
+                wireframe: false,
                 uniforms: {
                     texture: {value: loadSubTexture(island.files.ress.getEntry(island.skyIndex), island.palette, 0, 0, 128, 128)},
                     fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
                     time: {value: 0.0},
                     scale: {value: 512.0}
                 }
-            })
+            }),
+            material2: new THREE.MeshBasicMaterial({wireframe: true})
         },
         sky: {
             material: new THREE.RawShaderMaterial({
                 vertexShader: env_vertex,
                 fragmentShader: env_fragment,
-                transparent: true,
                 uniforms: {
                     texture: {value: loadSubTexture(island.files.ress.getEntry(island.skyIndex), island.palette, 128, 0, 128, 128)},
                     fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},

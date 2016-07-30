@@ -5,14 +5,15 @@ uniform mat4 projectionMatrix;
 uniform float time;
 
 attribute vec3 position;
-attribute vec2 uv;
 
 varying vec2 vUv;
+varying float shore;
 
 void main() {
     vec3 pos = position;
-    float sinv = sin(pos.x * pos.y + time * 2.0) * 0.007;
-    pos.z += sinv;
+    float s = sin(pos.x * pos.z * 12.0 + time * 1.8) + 1.0;
+    pos.y = s * 0.006 * pos.y;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    vUv = uv + vec2(sinv * 0.01, -sinv * 0.01);
+    vUv = vec2(pos.x / 32.0 + sin(time * 1.9) * 0.0001, pos.z / 32.0 + cos(time * 1.7) * 0.0001);
+    shore = position.y;
 }

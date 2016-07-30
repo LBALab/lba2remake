@@ -3,7 +3,7 @@ import DeviceOrientationControls from './controls/DeviceOrientationControls';
 import FirstPersonControls from './controls/FirstPersonControls';
 import SyncServer from './controls/SyncServer';
 import StereoEffect from './effects/StereoEffect';
-import loadIsland from './island';
+import {loadIsland} from './island';
 
 const islands = [
     {name: 'CITADEL', skyColor: [0.0, 0.0, 0.0], skyIndex: 11, fogDistance: 800},
