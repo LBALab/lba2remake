@@ -114,8 +114,9 @@ export default class Renderer {
     }
 
     refreshIsland() {
-        loadIsland(islands[index], object => {
+        loadIsland(islands[index], ({object, getHeight}) => {
             console.log('Loaded: ', islands[index].name);
+            this.getHeight = getHeight;
             this.islandGroup.children[0] = object;
             this.sea = object.getObjectByName('sea');
             const sc = islands[index].skyColor;
@@ -131,6 +132,11 @@ export default class Renderer {
         }
         if (this.pcControls && this.pcControls.update) {
             this.pcControls.update(dt);
+        }
+
+        if (this.getHeight) {
+            const height = this.getHeight(this.pcCamera.position.x, this.pcCamera.position.z);
+            this.pcCamera.position.y = height + 0.08;
         }
 
         this.camera.position.copy(this.pcCamera.position);
