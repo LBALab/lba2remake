@@ -6,6 +6,7 @@ export default function FirstPersonControls( camera ) {
 	this.x = 0.0;
 	this.y = 0.0;
 	this.movement = [0, 0];
+	this.front = 0.0;
 
 	let enabled = false;
 	let dirty = false;
@@ -89,7 +90,7 @@ export default function FirstPersonControls( camera ) {
 				dir = new THREE.Vector3(that.movement[1], 0, that.movement[0]).applyAxisAngle(new THREE.Vector3(0, 1, 0), that.y);
 			} else {
 				that.y -= dt * that.movement[1] * 2.0;
-				dir = new THREE.Vector3(0, 0, that.movement[0]).applyAxisAngle(new THREE.Vector3(0, 1, 0), that.y);
+				dir = new THREE.Vector3(-that.movement[0], 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), that.y + that.front);
 			}
 			dir.multiplyScalar(dt * 0.2);
 			camera.position.add(dir);
@@ -99,8 +100,8 @@ export default function FirstPersonControls( camera ) {
 	};
 
 	this.setFront = function(angle) {
-
-	}
+		that.front = angle;
+	};
 
 	function updateCamera() {
 		camera.quaternion.setFromEuler(new THREE.Euler(that.x, that.y, 0.0, 'YXZ'));
