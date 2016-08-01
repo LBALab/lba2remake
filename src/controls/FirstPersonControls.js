@@ -90,7 +90,7 @@ export default function FirstPersonControls( camera ) {
 				dir = new THREE.Vector3(that.movement[1], 0, that.movement[0]).applyAxisAngle(new THREE.Vector3(0, 1, 0), that.y);
 			} else {
 				that.y -= dt * that.movement[1] * 2.0;
-				dir = new THREE.Vector3(-that.movement[0], 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), that.y + that.front);
+				dir = new THREE.Vector3(that.movement[0], 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), that.y + that.front);
 			}
 			dir.multiplyScalar(dt * 0.2);
 			camera.position.add(dir);
