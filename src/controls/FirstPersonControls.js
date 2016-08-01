@@ -38,6 +38,8 @@ export default function FirstPersonControls( camera ) {
 
 	window.addEventListener('keydown', onKeyDown, false);
 	window.addEventListener('keyup', onKeyUp, false);
+    window.addEventListener('gamepadconnected', onGamepadConnected, false);
+    window.addEventListener('dpadvaluechanged', onDpadValueChanged, false);
 
 	function onKeyDown(event) {
 		if (event.keyCode == 90 || event.keyCode == 38) { // Z or Up
@@ -62,6 +64,15 @@ export default function FirstPersonControls( camera ) {
 			that.movement[1] = 0;
 		}
 	}
+    
+    function onGamepadConnected(event) {
+        enabled = true;
+    }
+    
+    function onDpadValueChanged(event) {
+        that.movement[0] = event.detail.y;
+        that.movement[1] = event.detail.x;
+    }
 
 	this.update = function(dt) {
 		if (that.movement[0] != 0 || that.movement[1] != 0) {

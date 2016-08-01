@@ -22,8 +22,6 @@ const islands = [
 
 let index = 0;
 
-SyncServer.init('192.168.0.19:8081');
-
 export default class Renderer {
     constructor(width, height, container) {
         this.clock = new THREE.Clock();
@@ -31,7 +29,6 @@ export default class Renderer {
 
         // Camera init
         this.camera = new THREE.PerspectiveCamera(90, width / height, 0.001, 100); // 1m = 0.0625 units
-
         this.mobileCamera = new THREE.Object3D();
 
         this.pcCamera = new THREE.Object3D();
@@ -42,7 +39,6 @@ export default class Renderer {
 
         // Scene
         this.scene = new THREE.Scene();
-        this.scene.fog = new THREE.FogExp2(0xefd1b5, 0.0025);
 
         // Renderer init
         this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: false});
@@ -60,27 +56,12 @@ export default class Renderer {
 
         const that = this;
 
-        SyncServer.onMsg(function(buffer) {
-            const view = new DataView(buffer);
-            const type = view.getUint8(0);
-            if (type == SyncServer.DEVICE_ORIENTATION) {
-                that.mobileCamera.quaternion.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10), view.getFloat32(14));
-            } else if (type == SyncServer.LOCATION) {
-                that.pcCamera.position.set(view.getFloat32(2), view.getFloat32(6), view.getFloat32(10));
-                that.pcCamera.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), view.getFloat32(14));
-                const newIndex = view.getUint8(1);
-                if (newIndex != index) {
-                    index = newIndex;
-                    that.refreshIsland();
-                }
-            }
-        });
-
         function setOrientationControls(e) {
             if (!e.alpha) {
                 return;
             }
-
+            
+            that.pcControls = that.controls;
             that.controls = new DeviceOrientationControls(that.mobileCamera);
             that.controls.connect();
             that.controls.update();
@@ -137,29 +118,8 @@ export default class Renderer {
         if (this.controls && this.controls.update) {
             this.controls.update(dt);
         }
-        if (this.frameCount % 2 == 0) {
-            if (this.controls instanceof DeviceOrientationControls) {
-                const q = this.mobileCamera.quaternion;
-                const buffer = new ArrayBuffer(18);
-                const view = new DataView(buffer);
-                view.setUint8(0, SyncServer.DEVICE_ORIENTATION);
-                view.setFloat32(2, q.x);
-                view.setFloat32(6, q.y);
-                view.setFloat32(10, q.z);
-                view.setFloat32(14, q.w);
-                SyncServer.send(buffer);
-            } else {
-                const p = this.pcCamera.position;
-                const buffer = new ArrayBuffer(18);
-                const view = new DataView(buffer);
-                view.setUint8(0, SyncServer.LOCATION);
-                view.setUint8(1, index);
-                view.setFloat32(2, p.x);
-                view.setFloat32(6, p.y);
-                view.setFloat32(10, p.z);
-                view.setFloat32(14, this.controls.y);
-                SyncServer.send(buffer);
-            }
+        if (this.pcControls && this.pcControls.update) {
+            this.pcControls.update(dt);
         }
 
         this.camera.position.copy(this.pcCamera.position);
