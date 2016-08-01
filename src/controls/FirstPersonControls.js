@@ -69,18 +69,18 @@ export default function FirstPersonControls( camera ) {
 
 	function onButtonPressed(event) {
 		if (event.detail.name == 'leftShoulder' && event.detail.isPressed) {
-			that.y += Math.PI / 4.0;
+			that.y += Math.PI / 2.0;
 			dirty = true;
 		}
 		else if (event.detail.name == 'rightShoulder' && event.detail.isPressed) {
-			that.y -= Math.PI / 4.0;
+			that.y -= Math.PI / 2.0;
 			dirty = true;
 		}
 	}
     
     function onDpadValueChanged(event) {
         that.movement[0] = event.detail.y * 0.75;
-        that.movement[1] = event.detail.x * 0.25;
+        that.movement[1] = event.detail.x * 0.5;
     }
 
 	this.update = function(dt) {
