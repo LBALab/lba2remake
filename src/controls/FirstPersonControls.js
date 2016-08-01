@@ -8,6 +8,7 @@ export default function FirstPersonControls( camera ) {
 	this.movement = [0, 0];
 
 	let enabled = false;
+	let dirty = false;
 	const that = this;
 
 	updateCamera();
@@ -38,8 +39,8 @@ export default function FirstPersonControls( camera ) {
 
 	window.addEventListener('keydown', onKeyDown, false);
 	window.addEventListener('keyup', onKeyUp, false);
-    window.addEventListener('gamepadconnected', onGamepadConnected, false);
     window.addEventListener('dpadvaluechanged', onDpadValueChanged, false);
+	window.addEventListener('gamepadbuttonpressed', onButtonPressed, false);
 
 	function onKeyDown(event) {
 		if (event.keyCode == 90 || event.keyCode == 38) { // Z or Up
@@ -64,18 +65,25 @@ export default function FirstPersonControls( camera ) {
 			that.movement[1] = 0;
 		}
 	}
-    
-    function onGamepadConnected(event) {
-        enabled = true;
-    }
+
+	function onButtonPressed(event) {
+		if (event.detail.name == 'leftShoulder' && event.detail.isPressed) {
+			that.y += Math.PI / 4.0;
+			dirty = true;
+		}
+		else if (event.detail.name == 'rightShoulder' && event.detail.isPressed) {
+			that.y -= Math.PI / 4.0;
+			dirty = true;
+		}
+	}
     
     function onDpadValueChanged(event) {
-        that.movement[0] = event.detail.y;
-        that.movement[1] = event.detail.x;
+        that.movement[0] = event.detail.y * 0.75;
+        that.movement[1] = event.detail.x * 0.25;
     }
 
 	this.update = function(dt) {
-		if (that.movement[0] != 0 || that.movement[1] != 0) {
+		if (that.movement[0] != 0 || that.movement[1] != 0 || dirty) {
 			let dir;
 			if (enabled) {
 				dir = new THREE.Vector3(that.movement[1], 0, that.movement[0]).applyAxisAngle(new THREE.Vector3(0, 1, 0), that.y);
@@ -86,8 +94,13 @@ export default function FirstPersonControls( camera ) {
 			dir.multiplyScalar(dt * 0.2);
 			camera.position.add(dir);
 			updateCamera();
+			dirty = false;
 		}
 	};
+
+	this.setFront = function(angle) {
+
+	}
 
 	function updateCamera() {
 		camera.quaternion.setFromEuler(new THREE.Euler(that.x, that.y, 0.0, 'YXZ'));

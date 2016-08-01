@@ -72,14 +72,25 @@ export default class Renderer {
 
             window.removeEventListener('deviceorientation', setOrientationControls, true);
         }
-        window.addEventListener('deviceorientation', setOrientationControls, true);
 
+        window.addEventListener('deviceorientation', setOrientationControls, true);
         window.addEventListener('keydown', onKeyDown, false);
+        window.addEventListener('gamepadbuttonpressed', onButtonPressed, false);
 
         function onKeyDown(event) {
             if (event.keyCode == 78 || event.keyCode == 13) { // N | Enter
                 index = (index + 1) % islands.length;
                 that.refreshIsland();
+            }
+        }
+
+        function onButtonPressed(event) {
+            if (event.detail.name == 'buttonB' && event.detail.isPressed) {
+                index = (index + 1) % islands.length;
+                that.refreshIsland();
+            }
+            else if (event.detail.name == 'buttonY' && event.detail.isPressed) {
+                that.pcControls.setFront(that.controls.alpha);
             }
         }
 
