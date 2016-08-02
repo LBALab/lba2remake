@@ -56,6 +56,20 @@ export function prepareGeometries(island) {
                 }
             })
         },
+        atlas2: {
+            positions: [],
+            colors: [],
+            uvs: [],
+            uvGroups: [],
+            material: new THREE.RawShaderMaterial({
+                transparent: true,
+                vertexShader: atlas_vertex,
+                fragmentShader: atlas_fragment,
+                uniforms: {
+                    texture: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
+                }
+            })
+        },
         sea: {
             positions: [],
             material: new THREE.RawShaderMaterial({
