@@ -6,18 +6,18 @@ import StereoEffect from './effects/StereoEffect';
 import {loadIsland} from './island';
 
 const islands = [
-    {name: 'CITADEL', skyColor: [0.0, 0.0, 0.0], skyIndex: 11, fogDistance: 800},
-    {name: 'CITABAU', skyColor: [0.51, 0.71, 0.84], skyIndex: 13, fogDistance: 1600},
-    {name: 'DESERT', skyColor: [0.51, 0.71, 0.84], skyIndex: 13, fogDistance: 1600},
-    {name: 'EMERAUDE', skyColor: [0.0, 0.07, 0.10], skyIndex: 14, fogDistance: 800},
-    {name: 'OTRINGAL', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800},
-    {name: 'KNARTAS', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800},
-    {name: 'ILOTCX', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800},
-    {name: 'CELEBRAT', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800},
-    {name: 'ASCENCE', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800},
-    {name: 'MOSQUIBE', skyColor: [0.44, 0.0, 0.0], skyIndex: 17, fogDistance: 1000},
-    {name: 'PLATFORM', skyColor: [0.44, 0.0, 0.0], skyIndex: 17, fogDistance: 1000},
-    {name: 'SOUSCELB', skyColor: [0.44, 0.0, 0.0], skyIndex: 17, fogDistance: 1000}
+    {name: 'CITADEL', skyColor: [0.0, 0.0, 0.0], skyIndex: 11, fogDistance: 800, pos: [0, 1]},
+    {name: 'CITABAU', skyColor: [0.51, 0.71, 0.84], skyIndex: 13, fogDistance: 1600, pos: [0, 1]},
+    {name: 'DESERT', skyColor: [0.51, 0.71, 0.84], skyIndex: 13, fogDistance: 1600, pos: [0.8, 1.7]},
+    {name: 'EMERAUDE', skyColor: [0.0, 0.07, 0.10], skyIndex: 14, fogDistance: 800, pos: [1.4, 0.5]},
+    {name: 'OTRINGAL', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800, pos: [0.8, -1.2]},
+    {name: 'KNARTAS', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800, pos: [1, 0.8]},
+    {name: 'ILOTCX', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800, pos: [3.3, -1.2]},
+    {name: 'CELEBRAT', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800, pos: [3.1, -1.4]},
+    {name: 'ASCENCE', skyColor: [0.45, 0.41, 0.48], skyIndex: 16, fogDistance: 800, pos: [2.5, -1.1]},
+    {name: 'MOSQUIBE', skyColor: [0.44, 0.0, 0.0], skyIndex: 17, fogDistance: 1000, pos: [0.75, 1.24]},
+    {name: 'PLATFORM', skyColor: [0.44, 0.0, 0.0], skyIndex: 17, fogDistance: 1000, pos: [1.78, 1.47]},
+    {name: 'SOUSCELB', skyColor: [0.44, 0.0, 0.0], skyIndex: 17, fogDistance: 1000, pos: [1.39, 1.1]}
 ];
 
 let index = 0;
@@ -122,6 +122,8 @@ export default class Renderer {
             const sc = islands[index].skyColor;
             const color = new THREE.Color(sc[0], sc[1], sc[2]);
             this.renderer.setClearColor(color.getHex(), 1);
+            this.pcCamera.position.x = islands[index].pos[0];
+            this.pcCamera.position.z = islands[index].pos[1];
         });
     }
 
