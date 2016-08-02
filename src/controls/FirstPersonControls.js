@@ -6,7 +6,7 @@ export default function FirstPersonControls( camera ) {
 	this.x = 0.0;
 	this.y = 0.0;
 	this.movement = [0, 0];
-	this.front = 0.0;
+	this.front = -Math.PI / 2;
 
 	let enabled = false;
 	let dirty = false;
@@ -87,7 +87,7 @@ export default function FirstPersonControls( camera ) {
 		if (that.movement[0] != 0 || that.movement[1] != 0 || dirty) {
 			let dir;
 			if (enabled) {
-				dir = new THREE.Vector3(that.movement[1], 0, that.movement[0]).applyAxisAngle(new THREE.Vector3(0, 1, 0), that.y);
+				dir = new THREE.Vector3(that.movement[0], 0, -that.movement[1]).applyAxisAngle(new THREE.Vector3(0, 1, 0), that.y + that.front);
 			} else {
 				that.y -= dt * that.movement[1] * 2.0;
 				dir = new THREE.Vector3(that.movement[0], 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), that.y + that.front);
