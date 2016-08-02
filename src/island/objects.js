@@ -89,7 +89,7 @@ function parseSectionHeader(data, object, offset) {
 
 function loadSection(geometries, object, info, section, palette) {
     for (let i = 0; i < section.numFaces; ++i) {
-        const uvGroup = getUVGroup(object, section, i);
+        const uvGroups = getUVGroups(object, section, i);
         const addVertex = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
             const intensity = (object.intensities[index * 8 + info.iv] >> 5) * 3;
@@ -97,10 +97,19 @@ function loadSection(geometries, object, info, section, palette) {
                 push.apply(geometries.colored.positions, getPosition(object, info, index));
                 push.apply(geometries.colored.colors, getColor(section, i, intensity, palette));
             } else {
-                push.apply(geometries.atlas.positions, getPosition(object, info, index));
-                push.apply(geometries.atlas.colors, [0xFF, 0xFF, 0xFF, 0xFF]);
-                push.apply(geometries.atlas.uvs, getUVs(section, i, j));
-                push.apply(geometries.atlas.uvGroups, uvGroup);
+                if (section.blockSize == 32 && section.type == 13) {
+                    push.apply(geometries.atlas_t2.positions, getPosition(object, info, index));
+                    push.apply(geometries.atlas_t2.colors, [0xFF, 0xFF, 0xFF, 0xFF]);
+                    push.apply(geometries.atlas_t2.uvs, getUVs(section, i, j, 1));
+                    push.apply(geometries.atlas_t2.uvs2, getUVs(section, i, j, 0));
+                    push.apply(geometries.atlas_t2.uvGroups, uvGroups[0]);
+                    push.apply(geometries.atlas_t2.uvGroups2, uvGroups[1]);
+                } else {
+                    push.apply(geometries.atlas.positions, getPosition(object, info, index));
+                    push.apply(geometries.atlas.colors, [0xFF, 0xFF, 0xFF, 0xFF]);
+                    push.apply(geometries.atlas.uvs, getUVs(section, i, j, 1));
+                    push.apply(geometries.atlas.uvGroups, uvGroups[0]);
+                }
             }
         };
         for (let j = 0; j < 3; ++j) {
@@ -133,19 +142,20 @@ function getColor(section, face, intensity, palette) {
     return [palette[c], palette[c + 1], palette[c + 2], 0x0];
 }
 
-function getUVs(section, face, ptIndex) {
+function getUVs(section, face, ptIndex, t) {
     const baseIndex = face * section.blockSize;
     const index = baseIndex + 12 + ptIndex * 4;
-    const u = section.data.getUint8(index + 1);
-    const v = section.data.getUint8(index + 3);
+    const u = section.data.getUint8(index + t);
+    const v = section.data.getUint8(index + 2 + t);
     return [u, v];
 }
 
-function getUVGroup(object, section, face) {
+function getUVGroups(object, section, face) {
     if (section.blockSize == 24 || section.blockSize == 32) {
         const baseIndex = face * section.blockSize;
-        const uvGroupIndex = section.blockSize == 32 ? section.data.getUint8(baseIndex + 28) : section.data.getUint8(baseIndex + 6);
-        return object.uvGroups[uvGroupIndex];
+        const uvGroupIndex1 = section.blockSize == 32 ? section.data.getUint8(baseIndex + 28) : section.data.getUint8(baseIndex + 6);
+        const uvGroupIndex2 = section.blockSize == 32 ? section.data.getUint8(baseIndex + 30) : section.data.getUint8(baseIndex + 8);
+        return [object.uvGroups[uvGroupIndex1], object.uvGroups[uvGroupIndex2]];
     }
 }
 

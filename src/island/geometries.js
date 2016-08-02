@@ -7,6 +7,8 @@ import textured_vertex from './shaders/textured.vert.glsl';
 import textured_fragment from './shaders/textured.frag.glsl';
 import atlas_vertex from './shaders/atlas.vert.glsl';
 import atlas_fragment from './shaders/atlas.frag.glsl';
+import atlas_t2_vertex from './shaders/atlas_t2.vert.glsl';
+import atlas_t2_fragment from './shaders/atlas_t2.frag.glsl';
 import sea_vertex from './shaders/sea.vert.glsl';
 import sea_fragment from './shaders/sea.frag.glsl';
 import env_vertex from './shaders/env.vert.glsl';
@@ -51,6 +53,21 @@ export function prepareGeometries(island) {
             material: new THREE.RawShaderMaterial({
                 vertexShader: atlas_vertex,
                 fragmentShader: atlas_fragment,
+                uniforms: {
+                    texture: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
+                }
+            })
+        },
+        atlas_t2: {
+            positions: [],
+            colors: [],
+            uvs: [],
+            uvs2: [],
+            uvGroups: [],
+            uvGroups2: [],
+            material: new THREE.RawShaderMaterial({
+                vertexShader: atlas_t2_vertex,
+                fragmentShader: atlas_t2_fragment,
                 uniforms: {
                     texture: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
                 }

@@ -32,18 +32,24 @@ function loadIslandSync(files, skyIndex, skyColor) {
     const object = new THREE.Object3D();
 
     const geometries = loadGeometries(island);
-    _.each(geometries, ({positions, uvs, colors, uvGroups, material}, name) => {
+    _.each(geometries, ({positions, uvs, uvs2, colors, uvGroups, uvGroups2, material}, name) => {
         if (positions) {
             const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
             if (uvs) {
                 bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
             }
+            if (uvs2) {
+                bufferGeometry.addAttribute('uv2', new THREE.BufferAttribute(new Uint8Array(uvs2), 2, true));
+            }
             if (colors) {
                 bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
             }
             if (uvGroups) {
                 bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, true));
+            }
+            if (uvGroups2) {
+                bufferGeometry.addAttribute('uvGroups2', new THREE.BufferAttribute(new Uint8Array(uvGroups2), 4, true));
             }
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.name = name;
