@@ -33,7 +33,7 @@ function loadIslandSync(files, skyIndex, skyColor) {
 
     const geometries = loadGeometries(island);
     _.each(geometries, ({positions, uvs, colors, uvGroups, material}, name) => {
-        if (positions) {
+        if (positions && positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
             if (uvs) {
