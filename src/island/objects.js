@@ -98,7 +98,7 @@ function loadSection(geometries, object, info, section, palette) {
                 push.apply(geometries.colored.colors, getColor(section, i, intensity, palette));
             } else {
                 let atlas = 'atlas';
-                if (section.type == 13 || section.type == 21) {
+                if (section.type == 12 || section.type == 13 || section.type == 14 || section.type == 21) {
                     atlas += '2';
                 }
                 push.apply(geometries[atlas].positions, getPosition(object, info, index));

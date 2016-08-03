@@ -10,31 +10,32 @@ import {loadSea} from './sea';
 import {loadObjects} from './objects';
 import {loadTexture} from '../texture';
 
-export function loadIsland({name, skyIndex, skyColor}, callback) {
+export function loadIsland({name, skyIndex, skyColor, fogDensity}, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         ile: loadHqrAsync(`${name}.ILE`),
         obl: loadHqrAsync(`${name}.OBL`)
     }, function(err, files) {
-        callback(loadIslandSync(files, skyIndex, skyColor));
+        callback(loadIslandSync(files, skyIndex, skyColor, fogDensity));
     });
 }
 
-function loadIslandSync(files, skyIndex, skyColor) {
+function loadIslandSync(files, skyIndex, skyColor, fogDensity) {
     const layout = loadLayout(files.ile);
     const island = {
         files: files,
         palette: new Uint8Array(files.ress.getEntry(0)),
         layout: layout,
         skyIndex: skyIndex,
-        skyColor: skyColor
+        skyColor: skyColor,
+        fogDensity: fogDensity
     };
 
     const object = new THREE.Object3D();
 
     const geometries = loadGeometries(island);
     _.each(geometries, ({positions, uvs, colors, uvGroups, material}, name) => {
-        if (positions) {
+        if (positions && positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
             if (uvs) {
