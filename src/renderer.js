@@ -28,7 +28,7 @@ export default class Renderer {
         this.frameCount = 0;
 
         // Camera init
-        this.camera = new THREE.PerspectiveCamera(90, width / height, 0.001, 100); // 1m = 0.0625 units
+        this.camera = new THREE.PerspectiveCamera(75, width / height, 0.001, 100); // 1m = 0.0625 units
         this.mobileCamera = new THREE.Object3D();
 
         this.pcCamera = new THREE.Object3D();
@@ -69,7 +69,7 @@ export default class Renderer {
             that.controls.update();
 
             that.stereoEffect = new StereoEffect(that.renderer);
-            that.stereoEffect.eyeSeparation = 0.0019;
+            that.stereoEffect.eyeSeparation = 0.008;
             that.stereoEffect.setSize(width, height);
 
             window.removeEventListener('deviceorientation', setOrientationControls, true);
