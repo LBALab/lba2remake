@@ -1,7 +1,7 @@
 {
-  "name": "darwin",
+  "name": "LBA2 Remake",
   "version": "0.1.0",
-  "description": "Evolutionary 3D species editor",
+  "description": "Little Big Adventure 2, HD version, for the web",
   "dependencies": {
     "async": "^2.0.0-rc.5",
     "fbjs": ">=0.6.0",
@@ -23,7 +23,7 @@
   "scripts": {
     "dev-server": "webpack-dev-server"
   },
-  "repository": "git+ssh://git@bitbucket.org:adri42/darwin.git",
+  "repository": "git+ssh://git@bitbucket.org:adri42/lba2remake.git",
   "author": "Adrien Grandemange",
   "license": "ISC",
   "readme": "README.md"
