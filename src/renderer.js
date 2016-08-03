@@ -40,6 +40,8 @@ export default class Renderer {
         // Scene
         this.scene = new THREE.Scene();
 
+        this.getHeight = function() { return 0.0; }
+
         // Renderer init
         this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: false});
         this.renderer.setClearColor(0x000000);
@@ -52,7 +54,7 @@ export default class Renderer {
         this.renderer.domElement.style.top = 0;
         this.renderer.domElement.style.opacity = 1.0;
 
-        this.controls = new FirstPersonControls(this.pcCamera);
+        this.controls = new FirstPersonControls(this.pcCamera, this);
 
         const that = this;
 
@@ -134,11 +136,6 @@ export default class Renderer {
         }
         if (this.pcControls && this.pcControls.update) {
             this.pcControls.update(dt);
-        }
-
-        if (this.getHeight) {
-            const height = this.getHeight(this.pcCamera.position.x, this.pcCamera.position.z);
-            this.pcCamera.position.y = height + 0.08;
         }
 
         this.camera.position.copy(this.pcCamera.position);

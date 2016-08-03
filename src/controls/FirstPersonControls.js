@@ -1,6 +1,6 @@
 import THREE from 'three';
 
-export default function FirstPersonControls( camera ) {
+export default function FirstPersonControls(camera, renderer) {
 	var PI_2 = Math.PI / 2;
 
 	this.x = 0.0;
@@ -92,8 +92,17 @@ export default function FirstPersonControls( camera ) {
 				that.y -= dt * that.movement[1] * 2.0;
 				dir = new THREE.Vector3(that.movement[0], 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), that.y + that.front);
 			}
-			dir.multiplyScalar(dt * 0.2);
-			camera.position.add(dir);
+			const pos = camera.position.clone();
+			const d2 = dir.clone();
+			d2.multiplyScalar(0.01538);
+			pos.add(d2);
+			const dy = Math.abs(renderer.getHeight(pos.x, pos.z) + 0.08 - pos.y);
+			console.log(dy);
+			if (dy < 0.02) {
+				dir.multiplyScalar(dt * 0.2);
+				camera.position.add(dir);
+				camera.position.y = renderer.getHeight(camera.position.x, camera.position.z) + 0.08;
+			}
 			updateCamera();
 			dirty = false;
 		}
