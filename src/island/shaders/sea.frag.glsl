@@ -17,6 +17,5 @@ void main() {
     float fogFactor = whiteComplement(exp2(-fogDensity * fogDensity * depth * depth * LOG2));
     vec4 tex = texture2D(texture, vUv * scale);
     vec3 color = mix(vec3(1.0), tex.rgb, shore);
-    //gl_FragColor = vec4(1.0);
     gl_FragColor = vec4(mix(color, fogColor, fogFactor), 1.0);
 }

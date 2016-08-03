@@ -28,7 +28,10 @@ export function prepareGeometries(island) {
             colors: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: colored_vertex,
-                fragmentShader: colored_fragment
+                fragmentShader: colored_fragment,
+                uniforms: {
+                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)}
+                }
             })
         },
         textured: {
@@ -39,6 +42,7 @@ export function prepareGeometries(island) {
                 vertexShader: textured_vertex,
                 fragmentShader: textured_fragment,
                 uniforms: {
+                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
                     texture: {value: loadTexture(island.files.ile.getEntry(1), island.palette)}
                 }
             })
@@ -52,6 +56,7 @@ export function prepareGeometries(island) {
                 vertexShader: atlas_vertex,
                 fragmentShader: atlas_fragment,
                 uniforms: {
+                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
                     texture: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
                 }
             })
@@ -66,6 +71,7 @@ export function prepareGeometries(island) {
                 vertexShader: atlas_vertex,
                 fragmentShader: atlas_fragment,
                 uniforms: {
+                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
                     texture: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
                 }
             })
