@@ -91,6 +91,12 @@ export default class Renderer {
                 index = (index + 1) % islands.length;
                 that.refreshIsland();
             }
+            else if (event.detail.name == 'buttonX' && event.detail.isPressed) {
+                index = index - 1;
+                if (index < 0)
+                    index = islands.length - 1;
+                that.refreshIsland();
+            }
             else if (event.detail.name == 'buttonY' && event.detail.isPressed) {
                 that.pcControls.setFront(that.controls.alpha);
             }
@@ -126,6 +132,7 @@ export default class Renderer {
             this.renderer.setClearColor(color.getHex(), 1);
             this.pcCamera.position.x = islands[index].pos[0];
             this.pcCamera.position.z = islands[index].pos[1];
+            this.pcCamera.position.y = this.getHeight(this.pcCamera.position.x, this.pcCamera.position.z) + 0.08;
         });
     }
 
