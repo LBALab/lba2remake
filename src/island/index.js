@@ -8,7 +8,7 @@ import {loadLayout} from './layout';
 import {loadGround} from './ground';
 import {loadSea} from './sea';
 import {loadObjects} from './objects';
-import {loadTexture} from '../texture';
+import {loadTexture, loadTextureWithMipmaps} from '../texture';
 
 export function loadIsland({name, skyIndex, skyColor, fogDensity}, callback) {
     async.auto({
@@ -20,25 +20,44 @@ export function loadIsland({name, skyIndex, skyColor, fogDensity}, callback) {
     });
 }
 
-function loadTextureTest(island, object) {
+function findCutsFromUvs() {
+    const allUvs = [];
     _.each(island.layout.groundSections, section => {
         for (let i = 0; i < section.triangles.length / 2; ++i) {
             const flags = [section.triangles[i * 2], section.triangles[i * 2 + 1]];
             const bits = (bitfield, offset, length) => (bitfield & (((1 << length) - 1)) << offset) >> offset;
             const indexes = _.map(flags, f => bits(f, 19, 13));
-            const uvs = _.map(indexes, index => {
-                const offset = index * 12;
-                return [
-                    section.textureInfo[offset + 1], section.textureInfo[offset + 3],
-                    section.textureInfo[offset + 5], section.textureInfo[offset + 7],
-                    section.textureInfo[offset + 9], section.textureInfo[offset + 11]
-                ];
+            const useTexture = _.map(flags, f => bits(f, 4, 2));
+            const uvs = _.map(indexes, (index, i) => {
+                if (useTexture[i]) {
+                    const offset = index * 12;
+                    return [
+                        [section.textureInfo[offset + 1], section.textureInfo[offset + 3]],
+                        [section.textureInfo[offset + 5], section.textureInfo[offset + 7]],
+                        [section.textureInfo[offset + 9], section.textureInfo[offset + 11]]
+                    ];
+                }
             });
+            if (uvs[0] && uvs[1]) {
+                const pts = uvs[0].concat(uvs[1]);
+                allUvs.push(_.uniqBy(pts, pt => pt.join(',')));
+            }
         }
     });
-    object.add(new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 1, 1), new THREE.MeshBasicMaterial({
+    const uniqUvs = _.uniqBy(allUvs, uvs => _.map(uvs, uv => uv.join(',')).sort().join('|'));
+    console.log(uniqUvs.map(uvs => uvs.join(' | ')));
+}
+
+function loadTextureTest(island, object) {
+    const m1 = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 1, 1), new THREE.MeshBasicMaterial({
         map: loadTexture(island.files.ile.getEntry(1), island.palette)
-    })));
+    }));
+    object.add(m1);
+    const m2 = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 1, 1), new THREE.MeshBasicMaterial({
+        map: loadTextureWithMipmaps(island.files.ile.getEntry(1), island.palette)
+    }));
+    m2.position.x += 1.1;
+    object.add(m2);
 }
 
 function loadIslandSync(files, skyIndex, skyColor, fogDensity) {
@@ -52,8 +71,8 @@ function loadIslandSync(files, skyIndex, skyColor, fogDensity) {
     };
 
     const object = new THREE.Object3D();
-    loadTextureTest(island, object);
-    /*
+    //loadTextureTest(island, object);
+
     const geometries = loadGeometries(island);
     _.each(geometries, ({positions, uvs, colors, uvGroups, material}, name) => {
         if (positions && positions.length > 0) {
@@ -78,7 +97,6 @@ function loadIslandSync(files, skyIndex, skyColor, fogDensity) {
     sky.rotateX(Math.PI / 2.0);
     sky.position.y = 2.0;
     object.add(sky);
-    */
 
     return object;
 }

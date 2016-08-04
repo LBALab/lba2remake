@@ -1,5 +1,9 @@
 import THREE from 'three';
-import {loadTexture, loadSubTexture} from '../texture';
+import {
+    loadTexture,
+    loadSubTexture,
+    loadTextureWithMipmaps
+} from '../texture';
 
 import colored_vertex from './shaders/colored.vert.glsl';
 import colored_fragment from './shaders/colored.frag.glsl';
@@ -45,7 +49,7 @@ export function prepareGeometries(island) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
                     fogDensity: {value: island.fogDensity},
-                    texture: {value: loadTexture(island.files.ile.getEntry(1), island.palette)}
+                    texture: {value: loadTextureWithMipmaps(island.files.ile.getEntry(1), island.palette)}
                 }
             })
         },
@@ -60,7 +64,7 @@ export function prepareGeometries(island) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
                     fogDensity: {value: island.fogDensity},
-                    texture: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
+                    texture: {value: loadTextureWithMipmaps(island.files.ile.getEntry(2), island.palette)}
                 }
             })
         },
@@ -76,7 +80,7 @@ export function prepareGeometries(island) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
                     fogDensity: {value: island.fogDensity},
-                    texture: {value: loadTexture(island.files.ile.getEntry(2), island.palette)}
+                    texture: {value: loadTextureWithMipmaps(island.files.ile.getEntry(2), island.palette)}
                 }
             })
         },
