@@ -20,6 +20,27 @@ export function loadIsland({name, skyIndex, skyColor, fogDensity}, callback) {
     });
 }
 
+function loadTextureTest(island, object) {
+    _.each(island.layout.groundSections, section => {
+        for (let i = 0; i < section.triangles.length / 2; ++i) {
+            const flags = [section.triangles[i * 2], section.triangles[i * 2 + 1]];
+            const bits = (bitfield, offset, length) => (bitfield & (((1 << length) - 1)) << offset) >> offset;
+            const indexes = _.map(flags, f => bits(f, 19, 13));
+            const uvs = _.map(indexes, index => {
+                const offset = index * 12;
+                return [
+                    section.textureInfo[offset + 1], section.textureInfo[offset + 3],
+                    section.textureInfo[offset + 5], section.textureInfo[offset + 7],
+                    section.textureInfo[offset + 9], section.textureInfo[offset + 11]
+                ];
+            });
+        }
+    });
+    object.add(new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 1, 1), new THREE.MeshBasicMaterial({
+        map: loadTexture(island.files.ile.getEntry(1), island.palette)
+    })));
+}
+
 function loadIslandSync(files, skyIndex, skyColor, fogDensity) {
     const island = {
         files: files,
@@ -31,7 +52,8 @@ function loadIslandSync(files, skyIndex, skyColor, fogDensity) {
     };
 
     const object = new THREE.Object3D();
-
+    loadTextureTest(island, object);
+    /*
     const geometries = loadGeometries(island);
     _.each(geometries, ({positions, uvs, colors, uvGroups, material}, name) => {
         if (positions && positions.length > 0) {
@@ -56,6 +78,7 @@ function loadIslandSync(files, skyIndex, skyColor, fogDensity) {
     sky.rotateX(Math.PI / 2.0);
     sky.position.y = 2.0;
     object.add(sky);
+    */
 
     return object;
 }
