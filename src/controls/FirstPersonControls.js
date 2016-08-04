@@ -97,7 +97,6 @@ export default function FirstPersonControls(camera, renderer) {
 			d2.multiplyScalar(0.01538);
 			pos.add(d2);
 			const dy = Math.abs(renderer.getHeight(pos.x, pos.z) + 0.08 - pos.y);
-			console.log(dy);
 			if (dy < 0.02) {
 				dir.multiplyScalar(dt * 0.2);
 				camera.position.add(dir);
