@@ -1,3 +1,5 @@
+#extension GL_EXT_shader_texture_lod : enable
+#extension GL_OES_standard_derivatives : enable
 precision highp float;
 
 uniform sampler2D texture;
@@ -14,11 +16,8 @@ varying vec4 vUvGroup;
 
 void main() {
     vec2 mUv = mod(vUv, vUvGroup.zw);
-    vec2 dist2 = abs(mUv / vUvGroup.zw - vec2(0.5)) * 2.0;
-    float dist = max(dist2.x, dist2.y);
-    dist = (clamp(dist, 0.9, 1.0) - 0.9) * 10.0;
     vec2 uv = mUv * PIXEL_WIDTH + vUvGroup.xy + vec2(HALF_PIXEL);
-    vec4 tex = texture2D(texture, uv, -dist * 50.0);
+    vec4 tex = texture2DGradEXT(texture, uv, dFdx(vUv), dFdy(vUv));
     vec3 color = mix(vColor.rgb, tex.rgb * vColor.a, tex.a);
     gl_FragColor = vec4(fog(color), tex.a);
 }
