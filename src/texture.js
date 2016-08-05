@@ -37,8 +37,8 @@ export function loadTextureWithMipmaps(buffer, palette) {
         THREE.RGBAFormat,
         THREE.UnsignedByteType,
         THREE.UVMapping,
-        THREE.RepeatWrapping,
-        THREE.RepeatWrapping,
+        THREE.ClampToEdgeWrapping,
+        THREE.ClampToEdgeWrapping,
         THREE.NearestFilter,
         THREE.NearestMipMapNearestFilter
     );
@@ -59,7 +59,6 @@ export function loadTextureWithMipmaps(buffer, palette) {
     }
     texture.needsUpdate = true;
     texture.generateMipmaps = false;
-    texture.anisotropy = 2;
     return texture;
 }
 
@@ -69,7 +68,9 @@ function loadMipmapLevel(source_data, level) {
     for (let y = 0; y < dim; ++y) {
         for (let x = 0; x < dim; ++x) {
             const average = (offset) => {
-                //return mipmapColor[level - 1][offset];
+                if (false && dim < 32) {
+                    return mipmapColor[0][offset];
+                }
                 const values = [
                     source_data[((y * 2) * dim * 2 + x * 2) * 4 + offset],
                     source_data[((y * 2) * dim * 2 + x * 2 + 1) * 4 + offset],

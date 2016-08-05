@@ -50,6 +50,10 @@ export default class Renderer {
         this.renderer.setSize(width, height);
         this.renderer.autoClear = true;
 
+        // Enable extensions
+        this.renderer.context.getExtension('EXT_shader_texture_lod');
+        this.renderer.context.getExtension('OES_standard_derivatives');
+
         this.renderer.domElement.style.position = 'absolute';
         this.renderer.domElement.style.left = 0;
         this.renderer.domElement.style.top = 0;
