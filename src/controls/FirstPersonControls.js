@@ -1,6 +1,6 @@
 import THREE from 'three';
 
-export default function FirstPersonControls(camera, renderer) {
+export default function FirstPersonControls(camera, renderer, container) {
 	var PI_2 = Math.PI / 2;
 
 	this.x = 0.0;
@@ -30,7 +30,7 @@ export default function FirstPersonControls(camera, renderer) {
 
 	document.addEventListener('mousemove', onMouseMove, false );
 
-	document.body.addEventListener('click', function() {
+	container.addEventListener('click', function() {
 		document.body.requestPointerLock();
 	});
 

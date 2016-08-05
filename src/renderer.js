@@ -6,14 +6,6 @@ import StereoEffect from './effects/StereoEffect';
 import {loadIsland} from './island';
 import Stats from './utils/Stats';
 
-var stats = new Stats();
-stats.setMode(1); // 0: fps, 1: ms
-
-// Align top-left
-stats.domElement.style.position = 'absolute';
-stats.domElement.style.left = '0px';
-stats.domElement.style.top = '0px';
-
 const islands = [
     {name: 'CITADEL', skyColor: [0.0, 0.0, 0.0], skyIndex: 11, fogDensity: 0.3, pos: [0, 1]},
     {name: 'CITABAU', skyColor: [0.51, 0.71, 0.84], skyIndex: 13, fogDensity: 0.2, pos: [0, 1]},
@@ -35,9 +27,6 @@ export default class Renderer {
     constructor(width, height, container) {
         this.clock = new THREE.Clock();
         this.frameCount = 0;
-
-        document.getElementById('stats1').appendChild(stats.domElement);
-        //document.getElementById('stats2').appendChild(stats.domElement);
 
         // Camera init
         this.camera = new THREE.PerspectiveCamera(75, width / height, 0.001, 100); // 1m = 0.0625 units
@@ -66,7 +55,7 @@ export default class Renderer {
         this.renderer.domElement.style.top = 0;
         this.renderer.domElement.style.opacity = 1.0;
 
-        this.controls = new FirstPersonControls(this.pcCamera, this);
+        this.controls = new FirstPersonControls(this.pcCamera, this, container);
 
         const that = this;
 
@@ -96,6 +85,9 @@ export default class Renderer {
                 index = (index + 1) % islands.length;
                 that.refreshIsland();
             }
+            if (event.keyCode == 73) { // I
+                that.switchStats();
+            }
         }
 
         function onButtonPressed(event) {
@@ -112,6 +104,14 @@ export default class Renderer {
             else if (event.detail.name == 'buttonY' && event.detail.isPressed) {
                 that.pcControls.setFront(that.controls.alpha);
             }
+            else if (event.detail.name == 'leftTrigger' && event.detail.isPressed) {
+                that.switchStats();
+            }
+            else if (event.detail.name == 'rightTrigger' && event.detail.isPressed) {
+                if (that.stats) {
+                    that.stats.setMode(1 - that.stats.mode);
+                }
+            }
         }
 
         // Render loop
@@ -122,6 +122,34 @@ export default class Renderer {
         this.scene.add(this.islandGroup);
 
         this.refreshIsland();    
+    }
+
+    switchStats() {
+        if (this.stats) {
+            document.getElementById('stats1').removeChild(this.stats.widgets[0].domElement);
+            if (this.stats.widgets.length == 2) {
+                document.getElementById('stats2').removeChild(this.stats.widgets[1].domElement);
+            }
+            this.stats = null;
+        }
+        else {
+            if (this.controls instanceof DeviceOrientationControls) {
+                this.stats = new Stats(2);
+                this.stats.setMode(1); // 0: fps, 1: ms
+                this.stats.widgets[0].domElement.style.left = '50%';
+                this.stats.widgets[0].domElement.style.top = '100px';
+                this.stats.widgets[1].domElement.style.left = '50%';
+                this.stats.widgets[1].domElement.style.top = '100px';
+                document.getElementById('stats1').appendChild(this.stats.widgets[0].domElement);
+                document.getElementById('stats2').appendChild(this.stats.widgets[1].domElement);
+            }
+            else {
+                this.stats = new Stats(1);
+                this.stats.setMode(1); // 0: fps, 1: ms
+                this.stats.widgets[0].domElement.style.left = '45px';
+                document.getElementById('stats1').appendChild(this.stats.widgets[0].domElement);
+            }
+        }
     }
 
     onResize(width, height) {
@@ -149,7 +177,9 @@ export default class Renderer {
     }
 
     animate() {
-        stats.begin();
+        if (this.stats) {
+            this.stats.begin();
+        }
         const dt = this.clock.getDelta();
         if (this.controls && this.controls.update) {
             this.controls.update(dt);
@@ -168,7 +198,9 @@ export default class Renderer {
 
         this.render();
         this.frameCount++;
-        stats.end();
+        if (this.stats) {
+            this.stats.end();
+        }
         requestAnimationFrame(this.animate.bind(this));
     }
 
