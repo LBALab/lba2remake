@@ -10,13 +10,8 @@ varying vec4 vUvGroup;
 
 #require "./fog.frag"
 
-#define ONE_PIXEL 0.00390625 // 1 / 256 = one pixel
-#define HALF_PIXEL (ONE_PIXEL * 0.5)
-#define PIXEL_WIDTH (1.0 - ONE_PIXEL)
-
 void main() {
-    vec2 mUv = mod(vUv, vUvGroup.zw);
-    vec2 uv = mUv * PIXEL_WIDTH + vUvGroup.xy + vec2(HALF_PIXEL);
+    vec2 uv = mod(vUv, vUvGroup.zw) + vUvGroup.xy;
     vec4 tex = texture2DGradEXT(texture, uv, dFdx(vUv), dFdy(vUv));
     vec3 color = mix(vColor.rgb, tex.rgb * vColor.a, tex.a);
     gl_FragColor = vec4(fog(color), tex.a);
