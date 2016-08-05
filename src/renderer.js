@@ -4,6 +4,15 @@ import FirstPersonControls from './controls/FirstPersonControls';
 import SyncServer from './controls/SyncServer';
 import StereoEffect from './effects/StereoEffect';
 import {loadIsland} from './island';
+import Stats from './utils/Stats';
+
+var stats = new Stats();
+stats.setMode(1); // 0: fps, 1: ms
+
+// Align top-left
+stats.domElement.style.position = 'absolute';
+stats.domElement.style.left = '0px';
+stats.domElement.style.top = '0px';
 
 const islands = [
     {name: 'CITADEL', skyColor: [0.0, 0.0, 0.0], skyIndex: 11, fogDensity: 0.3, pos: [0, 1]},
@@ -26,6 +35,9 @@ export default class Renderer {
     constructor(width, height, container) {
         this.clock = new THREE.Clock();
         this.frameCount = 0;
+
+        document.getElementById('stats1').appendChild(stats.domElement);
+        //document.getElementById('stats2').appendChild(stats.domElement);
 
         // Camera init
         this.camera = new THREE.PerspectiveCamera(75, width / height, 0.001, 100); // 1m = 0.0625 units
@@ -137,6 +149,7 @@ export default class Renderer {
     }
 
     animate() {
+        stats.begin();
         const dt = this.clock.getDelta();
         if (this.controls && this.controls.update) {
             this.controls.update(dt);
@@ -155,6 +168,7 @@ export default class Renderer {
 
         this.render();
         this.frameCount++;
+        stats.end();
         requestAnimationFrame(this.animate.bind(this));
     }
 
