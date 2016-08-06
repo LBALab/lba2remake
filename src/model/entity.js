@@ -3,7 +3,7 @@ import _ from 'lodash';
 const push = Array.prototype.push;
 
 /** Load models entity data */
-export function loadEntity2(buffer) {
+export function loadEntity(buffer) {
     let entities = [];
     const data = new DataView(buffer);
     let offset = data.getUint32(0, true);

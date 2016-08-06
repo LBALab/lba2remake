@@ -3,8 +3,8 @@ import _ from 'lodash';
 
 const push = Array.prototype.push;
 
-/** Load LBA2 model body */
-export function loadBody2(model, geometry, objects, index) {
+/** Load LBA model body */
+export function loadBody(model, geometry, objects, index) {
     if (objects[index]) {
         return objects[index];
     } else {

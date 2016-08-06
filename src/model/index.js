@@ -4,8 +4,8 @@ import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
 import {loadTexture} from '../texture';
-import {loadBody2} from './body2';
-import {loadEntity2} from './entity';
+import {loadBody} from './body';
+import {loadEntity} from './entity';
 
 import vertexShader from './shaders/model.vert.glsl';
 import fragmentShader from './shaders/model.frag.glsl';
@@ -36,7 +36,7 @@ function loadModel(files, index) {
         }
     });
 
-    const entities = loadEntity2(model.entity);
+    const entities = loadEntity(model.entity);
     const {positions, uvs, colors, linePositions, lineColors} = loadGeometry(model, index);
     const object = new THREE.Object3D();
 
@@ -73,7 +73,7 @@ function loadGeometry(model, index) {
     const objects = [];
 
     // TODO for each entity entry
-    loadBody2(model, geometry, objects, index);
+    loadBody(model, geometry, objects, index);
 
     // _.each(model.layout, section => {
     //     loadGround(island, section, geometry);
