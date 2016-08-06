@@ -87,13 +87,6 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
-//const bcolors = {
-//    12: [0xFF, 0x00, 0x00, 0xFF],
-//    16: [0x00, 0xFF, 0x00, 0xFF],
-//    24: [0x00, 0x00, 0xFF, 0xFF],
-//    32: [0xFF, 0xFF, 0xFF, 0xFF]
-//};
-
 function loadSection(geometries, object, info, section, palette) {
     for (let i = 0; i < section.numFaces; ++i) {
         const uvGroup = getUVGroup(object, section, i);
@@ -104,10 +97,14 @@ function loadSection(geometries, object, info, section, palette) {
                 push.apply(geometries.colored.positions, getPosition(object, info, index));
                 push.apply(geometries.colored.colors, getColor(section, i, intensity, palette));
             } else {
-                push.apply(geometries.atlas.positions, getPosition(object, info, index));
-                push.apply(geometries.atlas.colors, [0xFF, 0xFF, 0xFF, 0xFF]);
-                push.apply(geometries.atlas.uvs, getUVs(section, i, j));
-                push.apply(geometries.atlas.uvGroups, uvGroup);
+                let atlas = 'atlas';
+                if (section.type == 12 || section.type == 13 || section.type == 14 || section.type == 21) {
+                    atlas += '2';
+                }
+                push.apply(geometries[atlas].positions, getPosition(object, info, index));
+                push.apply(geometries[atlas].colors, [0xFF, 0xFF, 0xFF, 0xFF]);
+                push.apply(geometries[atlas].uvs, getUVs(section, i, j));
+                push.apply(geometries[atlas].uvGroups, uvGroup);
             }
         };
         for (let j = 0; j < 3; ++j) {
