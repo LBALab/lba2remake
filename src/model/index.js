@@ -4,8 +4,9 @@ import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
 import {loadTexture} from '../texture';
-import {loadBody} from './body';
 import {loadEntity} from './entity';
+import {loadBody} from './body';
+import {loadAnim} from './anim';
 
 import vertexShader from './shaders/model.vert.glsl';
 import fragmentShader from './shaders/model.frag.glsl';
@@ -70,10 +71,10 @@ function loadGeometry(model, index) {
         linePositions: [],
         lineColors: []
     };
-    const objects = [];
+    const bodies = [];
 
     // TODO for each entity entry
-    loadBody(model, geometry, objects, index);
+    loadBody(model, geometry, bodies, index);
 
     // _.each(model.layout, section => {
     //     loadGround(island, section, geometry);

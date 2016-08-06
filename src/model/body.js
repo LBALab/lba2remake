@@ -4,9 +4,9 @@ import _ from 'lodash';
 const push = Array.prototype.push;
 
 /** Load LBA model body */
-export function loadBody(model, geometry, objects, index) {
-    if (objects[index]) {
-        return objects[index];
+export function loadBody(model, geometry, bodies, index) {
+    if (bodies[index]) {
+        return bodies[index];
     } else {
         const buffer = model.files.body.getEntry(index);
         const data = new DataView(buffer);
@@ -44,7 +44,7 @@ export function loadBody(model, geometry, objects, index) {
 
         loadGeometry(geometry, obj, model.palette);
         
-        objects[index] = obj;
+        bodies[index] = obj;
         return obj;
     }
 }
