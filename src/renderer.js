@@ -85,12 +85,20 @@ export default class Renderer {
         window.addEventListener('gamepadbuttonpressed', onButtonPressed, false);
 
         function onKeyDown(event) {
-            if (event.keyCode == 78 || event.keyCode == 13) { // N | Enter
-                index = (index + 1) % islands.length;
-                that.refreshIsland();
-            }
-            if (event.keyCode == 73) { // I
-                that.switchStats();
+            switch (event.code) {
+                case 'PageDown':
+                    index = (index + 1) % islands.length;
+                    that.refreshIsland();
+                    break;
+                case 'PageUp':
+                    index = index - 1;
+                    if (index < 0)
+                        index = islands.length - 1;
+                    that.refreshIsland();
+                    break;
+                case 'KeyF':
+                    that.switchStats();
+                    break;
             }
         }
 

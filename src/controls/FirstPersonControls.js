@@ -44,26 +44,40 @@ export default function FirstPersonControls(camera, renderer, container) {
 	window.addEventListener('gamepadbuttonpressed', onButtonPressed, false);
 
 	function onKeyDown(event) {
-		if (event.keyCode == 90 || event.keyCode == 38) { // Z or Up
-			that.movement[0] = -1;
-		}
-		if (event.keyCode == 83 || event.keyCode == 40) { // S or Down
-			that.movement[0] = 1;
-		}
-		if (event.keyCode == 81 || event.keyCode == 37) { // Q or Left
-			that.movement[1] = -1;
-		}
-		if (event.keyCode == 68 || event.keyCode == 39) { // D or Right
-			that.movement[1] = 1;
+		switch (event.code) {
+			case 'KeyW':
+			case 'ArrowUp':
+				that.movement[0] = -1;
+				break;
+			case 'KeyS':
+			case 'ArrowDown':
+				that.movement[0] = 1;
+				break;
+			case 'KeyA':
+			case 'ArrowLeft':
+				that.movement[1] = -1;
+				break;
+			case 'KeyD':
+			case 'ArrowRigth':
+				that.movement[1] = 1;
+				break;
 		}
 	}
 
 	function onKeyUp(event) {
-		if (event.keyCode == 90 || event.keyCode == 83 || event.keyCode == 38 || event.keyCode == 40) { // Z | S | Up | Down
-			that.movement[0] = 0;
-		}
-		if (event.keyCode == 81 || event.keyCode == 68 || event.keyCode == 37 || event.keyCode == 39) { // Q | D | Left | Right
-			that.movement[1] = 0;
+		switch (event.code) {
+			case 'KeyW':
+			case 'ArrowUp':
+			case 'KeyS':
+			case 'ArrowDown':
+				that.movement[0] = 0;
+				break;
+			case 'KeyA':
+			case 'ArrowLeft':
+			case 'KeyD':
+			case 'ArrowRigth':
+				that.movement[1] = 0;
+				break;
 		}
 	}
 
