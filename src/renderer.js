@@ -74,7 +74,7 @@ export default class Renderer {
             that.controls.update();
 
             that.stereoEffect = new StereoEffect(that.renderer);
-            that.stereoEffect.eyeSeparation = 0.008;
+            that.stereoEffect.eyeSeparation = 0.006;
             that.stereoEffect.setSize(width, height);
 
             window.removeEventListener('deviceorientation', setOrientationControls, true);
