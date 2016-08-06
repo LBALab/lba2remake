@@ -7,8 +7,6 @@ export default function DeviceOrientationControls( object ) {
 	this.object = object;
 	this.object.rotation.reorder( "YXZ" );
 
-	this.enabled = true;
-
 	this.deviceOrientation = {};
 	this.screenOrientation = 0;
 
@@ -61,16 +59,12 @@ export default function DeviceOrientationControls( object ) {
 		window.addEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
 		window.addEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
 
-		scope.enabled = true;
-
 	};
 
 	this.disconnect = function() {
 
 		window.removeEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
 		window.removeEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
-
-		scope.enabled = false;
 
 	};
 

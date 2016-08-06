@@ -1,6 +1,5 @@
 import THREE from 'three';
 import {
-    loadTexture,
     loadSubTexture,
     loadTextureWithMipmaps
 } from '../texture';
@@ -17,15 +16,7 @@ import env_vertex from './shaders/env.vert.glsl';
 import env_fragment from './shaders/env.frag.glsl';
 import moon_vertex from './shaders/moon.vert.glsl';
 
-const skyScales = {
-    11: 1.0,
-    13: 2.0,
-    14: 128.0,
-    16: 1.0,
-    17: 1.0
-};
-
-export function prepareGeometries(island) {
+export function prepareGeometries({env, files: {ile, ress}, palette}) {
     return {
         colored: {
             positions: [],
@@ -34,8 +25,8 @@ export function prepareGeometries(island) {
                 vertexShader: colored_vertex,
                 fragmentShader: colored_fragment,
                 uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
-                    fogDensity: {value: island.fogDensity}
+                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
+                    fogDensity: {value: env.fogDensity}
                 }
             })
         },
@@ -47,9 +38,9 @@ export function prepareGeometries(island) {
                 vertexShader: textured_vertex,
                 fragmentShader: textured_fragment,
                 uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
-                    fogDensity: {value: island.fogDensity},
-                    texture: {value: loadTextureWithMipmaps(island.files.ile.getEntry(1), island.palette)}
+                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
+                    fogDensity: {value: env.fogDensity},
+                    texture: {value: loadTextureWithMipmaps(ile.getEntry(1), palette)}
                 }
             })
         },
@@ -62,9 +53,9 @@ export function prepareGeometries(island) {
                 vertexShader: atlas_vertex,
                 fragmentShader: atlas_fragment,
                 uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
-                    fogDensity: {value: island.fogDensity},
-                    texture: {value: loadTextureWithMipmaps(island.files.ile.getEntry(2), island.palette)}
+                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
+                    fogDensity: {value: env.fogDensity},
+                    texture: {value: loadTextureWithMipmaps(ile.getEntry(2), palette)}
                 }
             })
         },
@@ -78,37 +69,36 @@ export function prepareGeometries(island) {
                 vertexShader: atlas_vertex,
                 fragmentShader: atlas_fragment,
                 uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
-                    fogDensity: {value: island.fogDensity},
-                    texture: {value: loadTextureWithMipmaps(island.files.ile.getEntry(2), island.palette)}
+                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
+                    fogDensity: {value: env.fogDensity},
+                    texture: {value: loadTextureWithMipmaps(ile.getEntry(2), palette)}
                 }
             })
         },
         sea: {
             positions: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: island.skyIndex != 14 ? sea_vertex : moon_vertex,
-                fragmentShader: island.skyIndex != 14 ? sea_fragment : env_fragment,
+                vertexShader: env.index != 14 ? sea_vertex : moon_vertex,
+                fragmentShader: env.index != 14 ? sea_fragment : env_fragment,
                 wireframe: false,
                 uniforms: {
-                    texture: {value: loadSubTexture(island.files.ress.getEntry(island.skyIndex), island.palette, 0, 0, 128, 128)},
-                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
-                    fogDensity: {value: island.fogDensity},
+                    texture: {value: loadSubTexture(ress.getEntry(env.index), palette, 0, 0, 128, 128)},
+                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
+                    fogDensity: {value: env.fogDensity},
                     time: {value: 0.0},
                     scale: {value: 512.0}
                 }
-            }),
-            material2: new THREE.MeshBasicMaterial({wireframe: true})
+            })
         },
         sky: {
             material: new THREE.RawShaderMaterial({
                 vertexShader: env_vertex,
                 fragmentShader: env_fragment,
                 uniforms: {
-                    texture: {value: loadSubTexture(island.files.ress.getEntry(island.skyIndex), island.palette, 128, 0, 128, 128)},
-                    fogColor: {value: new THREE.Vector3().fromArray(island.skyColor)},
-                    fogDensity: {value: island.fogDensity},
-                    scale: {value: skyScales[island.skyIndex]}
+                    texture: {value: loadSubTexture(ress.getEntry(env.index), palette, 128, 0, 128, 128)},
+                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
+                    fogDensity: {value: env.fogDensity},
+                    scale: {value: env.scale}
                 }
             })
         }

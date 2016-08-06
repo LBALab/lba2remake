@@ -1,39 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Renderer from './renderer';
-
-class ThreeContainer extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = this.getComponentSize();
-    }
-
-    componentDidMount() {
-        const node = ReactDOM.findDOMNode(this);
-        this.renderer = new Renderer(this.state.width, this.state.height, node);
-        node.appendChild(this.renderer.renderer.domElement);
-        this.renderer.onResize(this.state.width, this.state.height);
-        window.addEventListener('resize', this.onWindowResize.bind(this), false);
-    }
-
-    onWindowResize() {
-        const size = this.getComponentSize();
-        this.setState(size);
-        this.renderer.onResize(size.width, size.height);
-    }
-
-    getComponentSize() {
-        return {
-            width: window.innerWidth,
-            height: window.innerHeight
-        };
-    }
-
-    render() {
-        return <div></div>;
-    }
-}
+import {createRenderer} from './renderer';
+import {mainGameLoop} from './game/loop';
+import {createSceneManager} from './game/scenes';
+import {GameEvents} from './game/events';
 
 window.onload = function() {
-    ReactDOM.render(<ThreeContainer/>, document.getElementById('react-main'));
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const renderer = createRenderer(isMobile);
+    const sceneManager = createSceneManager(renderer.camera);
+    document.getElementById('main').appendChild(renderer.domElement);
+
+    GameEvents.Scene.GotoIsland.trigger('CITADEL');
+    processAnimationFrame();
+
+    function processAnimationFrame() {
+        mainGameLoop(renderer, sceneManager.scene);
+        requestAnimationFrame(processAnimationFrame);
+    }
 };
