@@ -1,8 +1,6 @@
 import THREE from 'three';
 import _ from 'lodash';
 
-import {getPosition, getColour, getUVs} from './body';
-
 const push = Array.prototype.push;
 
 /** Load LBA model body */
@@ -66,4 +64,53 @@ function loadLineGeometry(geometry, object, palette) {
         addVertex(v1,l.colour);
         addVertex(v2,l.colour);
     });
+}
+
+function getPosition(object, index) {
+    const vertex = object.vertices[index];
+    let boneIdx = vertex.bone;
+
+    let pos = {
+        x: vertex.x,
+        y: vertex.y,
+        z: vertex.z
+    };
+
+    while(true) {
+        const bone = object.bones[boneIdx];
+        const boneVertex = object.vertices[bone.vertex];
+        
+        pos.x += boneVertex.x;
+        pos.y += boneVertex.y;
+        pos.z += boneVertex.z;
+
+        if(bone.parent == 0xFFFF)
+            break;
+            
+        boneIdx = bone.parent;
+    }
+    return [
+        pos.x,
+        pos.y,
+        pos.z
+    ];
+}
+
+function getColour(colour, palette, hasTransparency, hasTex) {
+    return [
+        palette[colour * 3], 
+        palette[colour * 3 + 1],
+        palette[colour * 3 + 2],
+        hasTex ? 0 : hasTransparency ? 127 : 255 
+    ];
+}
+
+function getUVs(object, p, vertex) {
+    if (p.hasTex) {
+        const t = object.uvGroups[p.tex];
+        const x = p.texX[vertex] + p.unkX[vertex]/256;
+        const y = p.texY[vertex] + p.unkY[vertex]/256;
+        return [(x & t.width) + t.x, (y & t.height) + t.y];
+    }
+    return [0, 0];
 }
