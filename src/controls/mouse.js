@@ -6,8 +6,7 @@ const MAX_X_ANGLE = Math.PI / 3;
 // Move pointerLock mechanics out of this
 export function makeFirstPersonMouseControls(domElement, heroPhysics) {
     const controls = {
-        enabled: false,
-        arrows: {x: 0, y: 0}
+        enabled: false
     };
 
     const onMouseMove = handleMouseEvent.bind(null, controls, heroPhysics);

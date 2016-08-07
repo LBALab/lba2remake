@@ -17,11 +17,11 @@ function keyDownHandler(heroPhysics, event) {
     switch (event.code) {
         case 'KeyW':
         case 'ArrowUp':
-            heroPhysics.speed.y = -1;
+            heroPhysics.speed.z = -1;
             break;
         case 'KeyS':
         case 'ArrowDown':
-            heroPhysics.speed.y = 1;
+            heroPhysics.speed.z = 1;
             break;
         case 'KeyA':
         case 'ArrowLeft':
@@ -49,7 +49,7 @@ function keyUpHandler(config, event) {
         case 'ArrowUp':
         case 'KeyS':
         case 'ArrowDown':
-            config.speed.y = 0;
+            config.speed.z = 0;
             break;
         case 'KeyA':
         case 'ArrowLeft':

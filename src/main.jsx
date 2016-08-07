@@ -1,3 +1,4 @@
+import THREE from 'three';
 import {createRenderer} from './renderer';
 import {mainGameLoop} from './game/loop';
 import {createSceneManager} from './game/scenes';
@@ -12,7 +13,8 @@ window.onload = function() {
     const hero = createHero({
         physics: {
             targets: [Target.CAMERA],
-            movement: Movement.NORMAL
+            movement: Movement.NORMAL,
+            speed: new THREE.Vector3(0.15, 0.0, 0.3)
         },
     });
     const sceneManager = createSceneManager(hero);
@@ -23,10 +25,13 @@ window.onload = function() {
 
     document.getElementById('main').appendChild(renderer.domElement);
     GameEvents.Scene.GotoIsland.trigger('CITADEL');
-    processAnimationFrame();
-
+    
+    const clock = new THREE.Clock();
     function processAnimationFrame() {
-        mainGameLoop(renderer, sceneManager.currentScene(), hero, controls);
+        const dt = clock.getDelta();
+        mainGameLoop(dt, renderer, sceneManager.currentScene(), hero, controls);
         requestAnimationFrame(processAnimationFrame);
     }
+
+    processAnimationFrame();
 };

@@ -17,7 +17,7 @@ export function createHero(config) {
             position: new THREE.Vector3(),
             orientation: new THREE.Quaternion(),
             headOrientation: new THREE.Quaternion(),
-            speed: new THREE.Vector2()
+            speed: new THREE.Vector3()
         }
     };
 
