@@ -4,17 +4,17 @@ import _ from 'lodash';
 const push = Array.prototype.push;
 
 /** Load LBA model body */
-export function loadBodyGeometry(geometry, object, palette) {
-    loadFaceGeometry(geometry, object, palette);
-    loadSphereGeometry(geometry, object, palette);
-    loadLineGeometry(geometry, object, palette);
+export function loadBodyGeometry(geometry, object, skeleton, palette) {
+    loadFaceGeometry(geometry, object, skeleton, palette);
+    loadSphereGeometry(geometry, object, skeleton, palette);
+    loadLineGeometry(geometry, object, skeleton, palette);
 }
 
-function loadFaceGeometry(geometry, object, palette) {
+function loadFaceGeometry(geometry, object, skeleton, palette) {
     _.each(object.polygons, (p) => {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
-    	    push.apply(geometry.positions, getPosition(object, vertexIndex));
+    	    push.apply(geometry.positions, getPosition(object, skeleton, vertexIndex));
             push.apply(geometry.colors, getColour(p.colour, palette, p.hasTransparency, p.hasTex));
             push.apply(geometry.uvs, getUVs(object, p, j));
         };    
@@ -29,9 +29,9 @@ function loadFaceGeometry(geometry, object, palette) {
     });    
 }
 
-function loadSphereGeometry(geometry, object, palette) {
+function loadSphereGeometry(geometry, object, skeleton, palette) {
     _.each(object.spheres, (s) => {
-        const centerPos = getPosition(object, s.vertex);
+        const centerPos = getPosition(object, skeleton, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
         
         const addVertex = (j) => {
@@ -52,21 +52,21 @@ function loadSphereGeometry(geometry, object, palette) {
     });
 }
 
-function loadLineGeometry(geometry, object, palette) {
+function loadLineGeometry(geometry, object, skeleton, palette) {
     _.each(object.lines, (l) => {
         const addVertex = (p,c) => {
             push.apply(geometry.linePositions, p);
             push.apply(geometry.lineColors, getColour(c, palette, false, false));
         };
-        let v1 = getPosition(object, l.vertex1);
-        let v2 = getPosition(object, l.vertex2);
+        let v1 = getPosition(object, skeleton, l.vertex1);
+        let v2 = getPosition(object, skeleton, l.vertex2);
 
         addVertex(v1,l.colour);
         addVertex(v2,l.colour);
     });
 }
 
-function getPosition(object, index) {
+function getPosition(object, skeleton, index) {
     const vertex = object.vertices[index];
     let boneIdx = vertex.bone;
 
@@ -77,12 +77,11 @@ function getPosition(object, index) {
     };
 
     while(true) {
-        const bone = object.bones[boneIdx];
-        const boneVertex = object.vertices[bone.vertex];
-        
-        pos.x += boneVertex.x;
-        pos.y += boneVertex.y;
-        pos.z += boneVertex.z;
+        const bone = skeleton[boneIdx];
+
+        pos.x += bone.x;
+        pos.y += bone.y;
+        pos.z += bone.z;
 
         if(bone.parent == 0xFFFF)
             break;

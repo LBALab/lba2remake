@@ -51,9 +51,9 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
     const anim = loadAnim(model, model.anims, animIdx);
 
     if (!model.object3D[index]) {
-        const mesh = loadMesh(model, body, bodyIdx);
         const obj = {
-            mesh: mesh,
+            verticies: null, // FIXME make sure we actually need to safe this
+            mesh: null,
             skeleton: createSkeleton(body),
             currentFrame: 0,
             startFrame:0,
@@ -61,12 +61,17 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
             currentTime:0,
             elapsedTime:0
         }
+
+        const geometry = loadGeometry(model, body, obj.skeleton);
+        obj.verticies = geometry.positions;
+
+        obj.mesh = loadMesh(model, geometry);
         model.object3D[index] = obj;
     } 
     return model;
 }
 
-function loadMesh(model, body, index) {
+function loadMesh(model, geometry) {
     const material = new THREE.RawShaderMaterial({
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
@@ -75,23 +80,22 @@ function loadMesh(model, body, index) {
         }
     });
 
-    const {positions, uvs, colors, linePositions, lineColors} = loadGeometry(model, body);
     const object = new THREE.Object3D();
 
-    if (positions.length > 0) {
+    if (geometry.positions.length > 0) {
         const bufferGeometry = new THREE.BufferGeometry();
-        bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-        bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
-        bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
+        bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.positions), 3));
+        bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(geometry.uvs), 2, true));
+        bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.colors), 4, true));
 
         const modelMesh = new THREE.Mesh(bufferGeometry, material);
         object.add(modelMesh);
     }
 
-    if (linePositions.length > 0) {
+    if (geometry.linePositions.length > 0) {
         const linebufferGeometry = new THREE.BufferGeometry();
-        linebufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(linePositions), 3));
-        linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(lineColors), 4, true));
+        linebufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.linePositions), 3));
+        linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.lineColors), 4, true));
 
         const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
         object.add(lineSegments);
@@ -100,7 +104,7 @@ function loadMesh(model, body, index) {
     return object;
 }
 
-function loadGeometry(model, body) {
+function loadGeometry(model, body, skeleton) {
     const geometry = {
         positions: [],
         uvs: [],
@@ -109,11 +113,25 @@ function loadGeometry(model, body) {
         lineColors: []
     };
     
-    loadBodyGeometry(geometry, body, model.palette);
+    loadBodyGeometry(geometry, body, skeleton, model.palette);
 
     return geometry;
 }
 
 function createSkeleton(body) {
-    
+    let skeleton = [];
+    for (let i = 0; i < body.bonesSize; ++i) {
+        const bone = body.bones[i];
+        const boneVertex = body.vertices[bone.vertex];
+
+        skeleton.push({
+            boneIndex: i,
+            vertexIndex: bone.vertex,
+            parent: bone.parent,
+            x: boneVertex.x,
+            y: boneVertex.y,
+            z: boneVertex.z,
+        });
+    }
+    return skeleton;
 }
