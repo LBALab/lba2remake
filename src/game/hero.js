@@ -16,6 +16,7 @@ export function createHero(config) {
             config: config.physics,
             position: new THREE.Vector3(),
             orientation: new THREE.Quaternion(),
+            headOffset: new THREE.Quaternion(),
             headOrientation: new THREE.Quaternion(),
             speed: new THREE.Vector3()
         }

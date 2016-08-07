@@ -24,6 +24,7 @@ function processNormalMovement(time, scene, heroPhysics) {
     orientedSpeed.copy(heroPhysics.speed);
     orientedSpeed.multiply(heroPhysics.config.speed);
     orientedSpeed.applyQuaternion(heroPhysics.orientation);
+    orientedSpeed.applyQuaternion(heroPhysics.headOffset);
     orientedSpeed.multiplyScalar(time.delta);
     heroPhysics.position.add(orientedSpeed);
     heroPhysics.position.y = scene.getGroundHeight(heroPhysics.position.x, heroPhysics.position.z) + 0.08;
