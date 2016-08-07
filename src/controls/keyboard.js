@@ -1,38 +1,35 @@
-import THREE from 'three';
 import {GameEvents} from '../game/events';
 
-export function makeKeyboardControls(domElement, heroPhysics) {
-    const config = {
-        arrows: {x: 0, y: 0}
-    };
-
-    window.addEventListener('keydown', onKeyDown.bind(null, config), false);
-    window.addEventListener('keyup', onKeyUp.bind(null, config), false);
-
-    config.update = function() {
-
-    };
-
-    return config;
+export function makeKeyboardControls(heroPhysics) {
+    const onKeyDown = keyDownHandler.bind(null, heroPhysics);
+    const onKeyUp = keyUpHandler.bind(null, heroPhysics);
+    window.addEventListener('keydown', onKeyDown, false);
+    window.addEventListener('keyup', onKeyUp, false);
+    return {
+        dispose: () => {
+            window.removeEventListener('keydown', onKeyDown);
+            window.removeEventListener('keyup', onKeyUp);
+        }
+    }
 }
 
-function onKeyDown(config, event) {
+function keyDownHandler(heroPhysics, event) {
     switch (event.code) {
         case 'KeyW':
         case 'ArrowUp':
-            config.arrows.y = -1;
+            heroPhysics.speed.y = -1;
             break;
         case 'KeyS':
         case 'ArrowDown':
-            config.arrows.y = 1;
+            heroPhysics.speed.y = 1;
             break;
         case 'KeyA':
         case 'ArrowLeft':
-            config.arrows.x = -1;
+            heroPhysics.speed.x = -1;
             break;
         case 'KeyD':
         case 'ArrowRigth':
-            config.arrows.x = 1;
+            heroPhysics.speed.x = 1;
             break;
         case 'PageDown':
             GameEvents.Scene.NextIsland.trigger();
@@ -46,19 +43,19 @@ function onKeyDown(config, event) {
     }
 }
 
-function onKeyUp(config, event) {
+function keyUpHandler(config, event) {
     switch (event.code) {
         case 'KeyW':
         case 'ArrowUp':
         case 'KeyS':
         case 'ArrowDown':
-            config.arrows.y = 0;
+            config.speed.y = 0;
             break;
         case 'KeyA':
         case 'ArrowLeft':
         case 'KeyD':
         case 'ArrowRigth':
-            config.arrows.x = 0;
+            config.speed.x = 0;
             break;
     }
 }

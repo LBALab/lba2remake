@@ -3,7 +3,7 @@ import {mainGameLoop} from './game/loop';
 import {createSceneManager} from './game/scenes';
 import {GameEvents} from './game/events';
 import {Target, Movement, createHero} from './game/hero';
-import {makeMouseFirstPersonControls} from './controls/mouse';
+import {makeFirstPersonMouseControls} from './controls/mouse';
 import {makeKeyboardControls} from './controls/keyboard';
 
 window.onload = function() {
@@ -17,8 +17,8 @@ window.onload = function() {
     });
     const sceneManager = createSceneManager(hero);
     const controls = [
-        makeMouseFirstPersonControls(renderer.domElement, hero.physics),
-        makeKeyboardControls(renderer.domElement, hero.physics)
+        makeFirstPersonMouseControls(renderer.domElement, hero.physics),
+        makeKeyboardControls(hero.physics)
     ];
 
     document.getElementById('main').appendChild(renderer.domElement);

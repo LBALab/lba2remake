@@ -4,7 +4,7 @@ const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
 const MAX_X_ANGLE = Math.PI / 3;
 
 // Move pointerLock mechanics out of this
-export function makeMouseFirstPersonControls(domElement, heroPhysics) {
+export function makeFirstPersonMouseControls(domElement, heroPhysics) {
     const controls = {
         enabled: false,
         arrows: {x: 0, y: 0}
@@ -17,13 +17,13 @@ export function makeMouseFirstPersonControls(domElement, heroPhysics) {
     document.addEventListener('pointerlockchange', onPointerLockChange, false);
     domElement.addEventListener('click', onClick, false);
 
-    controls.dispose = function() {
-        document.removeEventListener('mousemove', onMouseMove, false);
-        document.removeEventListener('pointerlockchange', onPointerLockChange);
-        domElement.removeEventListener('click', onClick);
+    return {
+        dispose: () => {
+            document.removeEventListener('mousemove', onMouseMove, false);
+            document.removeEventListener('pointerlockchange', onPointerLockChange);
+            domElement.removeEventListener('click', onClick);
+        }
     };
-
-    return controls;
 }
 
 function handleMouseEvent(controls, heroPhysics, event) {
