@@ -4,9 +4,8 @@ import StereoEffect from './effects/StereoEffect';
 import {GameEvents} from '../game/events';
 
 export function createRenderer(useVR) {
-    const baseRenderer = getBaseRenderer();
-    const vrRenderer = setupVR(useVR, baseRenderer);
-    const renderer = vrRenderer ? vrRenderer : baseRenderer;
+    const baseRenderer = setupBaseRenderer();
+    const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 100); // 1m = 0.0625 units
     const resizer = setupResizer(renderer, camera);
     const stats = setupStats(useVR);
@@ -24,7 +23,7 @@ export function createRenderer(useVR) {
     };
 }
 
-function getBaseRenderer() {
+function setupBaseRenderer() {
     const renderer = new THREE.WebGLRenderer({antialias: true, alpha: false});
     renderer.setClearColor(0x000000);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -59,11 +58,9 @@ function setupResizer(renderer, camera) {
     return {dispose: () => { window.removeEventListener('resize', resize) }};
 }
 
-function setupVR(useVR, baseRenderer) {
-    if (useVR) {
-        const stereoEffect = new StereoEffect(baseRenderer);
-        stereoEffect.eyeSeparation = 0.006;
-        stereoEffect.setSize(window.width, window.height);
-        return stereoEffect;
-    }
+function setupVR(baseRenderer) {
+    const stereoEffect = new StereoEffect(baseRenderer);
+    stereoEffect.eyeSeparation = 0.006;
+    stereoEffect.setSize(window.innerWidth, window.innerHeight);
+    return stereoEffect;
 }

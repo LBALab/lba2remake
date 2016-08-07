@@ -1,8 +1,5 @@
 import THREE from 'three';
 
-const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
-const MAX_X_ANGLE = Math.PI / 3;
-
 // Move pointerLock mechanics out of this
 export function makeFirstPersonMouseControls(domElement, heroPhysics) {
     const controls = {
@@ -24,6 +21,9 @@ export function makeFirstPersonMouseControls(domElement, heroPhysics) {
         }
     };
 }
+
+const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+const MAX_X_ANGLE = Math.PI / 3;
 
 function handleMouseEvent(controls, heroPhysics, event) {
     if (controls.enabled) {
