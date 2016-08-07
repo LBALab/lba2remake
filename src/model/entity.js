@@ -13,6 +13,7 @@ export function loadEntity(buffer) {
         entities.push(entity);
         offset += innerOffset;
     }
+    return entities;
 }
 
 function loadEntityEntry(buffer, offset, index) {

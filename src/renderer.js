@@ -18,10 +18,14 @@ const islands = [
     {name: 'SOUSCELB', skyColor: [0.44, 0.0, 0.0], skyIndex: 17, fogDensity: 0.4}
 ];
 
-let index = 0; // 92-Baldino
-let current;
+let index = 0;
+let entityIdx = 0;
+let bodyIdx = 0; // 92-Baldino
+let animIdx = 0;
 
-let models = null;
+let current;
+let models;
+let modelMesh;
 
 export default class Renderer {
     constructor(width, height) {
@@ -57,9 +61,10 @@ export default class Renderer {
         // Render loop
         this.animate();
 
-        model(models, index, (object) => {
-            current = object;
-            this.scene.add(object);
+        model(models, index, entityIdx, bodyIdx, animIdx, (object) => {
+            models = object;
+            current = object.object3D[index].mesh;
+            this.scene.add(current);
         });
         //this.islandGroup = new THREE.Object3D();
         //this.islandGroup.add(new THREE.Object3D);
@@ -77,13 +82,15 @@ export default class Renderer {
 
     onKeyDown(event) {
         if (event.keyCode == 78) {
-            index = (index + 1)
-            if (index > 468)
-                index = 0;
-            model(models, index, (object) => {
+            bodyIdx = (bodyIdx + 1)
+            if (bodyIdx > models.bodies.length)
+                bodyIdx = 0;
+            index = bodyIdx; // FIX ME for now will be the same
+            model(models, index, entityIdx, bodyIdx, animIdx, (object) => {
+                models = object;
                 this.scene.remove(current);
-                current = object;
-                this.scene.add(object);
+                current = object.object3D[index].mesh;
+                this.scene.add(current);
             });
             //this.refreshIsland();
         }

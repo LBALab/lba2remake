@@ -12,14 +12,14 @@ import {loadBodyGeometry} from './geometry';
 import vertexShader from './shaders/model.vert.glsl';
 import fragmentShader from './shaders/model.frag.glsl';
 
-export default function(model, index, callback) {
+export default function(models, index, entityIdx, bodyIdx, animIdx, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         body: loadHqrAsync('BODY.HQR'),
         anim: loadHqrAsync('ANIM.HQR'),
         anim3ds: loadHqrAsync('ANIM3DS.HQR')
     }, function(err, files) {
-        callback(loadModel(files, model, index));
+        callback(loadModel(files, models, index, entityIdx, bodyIdx, animIdx));
     });
 }
 
@@ -28,31 +28,42 @@ export default function(model, index, callback) {
  *  This will allow to mantain different states for body animations.
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
-function loadModel(files, model, index) {
+function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
     if (!model) {
         model = {
             files: files,
             palette: new Uint8Array(files.ress.getEntry(0)),
             entity: files.ress.getEntry(44),
-            entities: [],
             bodies: [],
             anims: [],
-            mesh: []
+            object3D: []
         };
     }
  
     if (!model.entities) {
         model.entities = loadEntity(model.entity);
     }
-    
-    const body = loadBody(model, model.bodies, index);
-    const anim = loadAnim(model, model.anims, index);
+    const entity = model.entities[entityIdx];
+    //const realBodyIdx = entity.bodies[bodyIdx].index;
+    //const realAnimIdx = entity.anims[animIdx].index;
 
-    if (!model.mesh[index]) {    
-        const mesh = loadMesh(model, body, index);
-        model.mesh[index] = mesh;
-    }
-    return model.mesh[index];
+    const body = loadBody(model, model.bodies, bodyIdx);
+    const anim = loadAnim(model, model.anims, animIdx);
+
+    if (!model.object3D[index]) {
+        const mesh = loadMesh(model, body, bodyIdx);
+        const obj = {
+            mesh: mesh,
+            skeleton: createSkeleton(body),
+            currentFrame: 0,
+            startFrame:0,
+            lastFrame:0,
+            currentTime:0,
+            elapsedTime:0
+        }
+        model.object3D[index] = obj;
+    } 
+    return model;
 }
 
 function loadMesh(model, body, index) {
@@ -64,7 +75,7 @@ function loadMesh(model, body, index) {
         }
     });
 
-    const {positions, uvs, colors, linePositions, lineColors} = loadGeometry(model, body, index);
+    const {positions, uvs, colors, linePositions, lineColors} = loadGeometry(model, body);
     const object = new THREE.Object3D();
 
     if (positions.length > 0) {
@@ -89,9 +100,8 @@ function loadMesh(model, body, index) {
     return object;
 }
 
-function loadGeometry(model, body, index) {
+function loadGeometry(model, body) {
     const geometry = {
-        verticeIndexes: [],
         positions: [],
         uvs: [],
         colors: [],
@@ -102,4 +112,8 @@ function loadGeometry(model, body, index) {
     loadBodyGeometry(geometry, body, model.palette);
 
     return geometry;
+}
+
+function createSkeleton(body) {
+    
 }
