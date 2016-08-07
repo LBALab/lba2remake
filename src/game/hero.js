@@ -3,7 +3,8 @@ import {GameEvents} from './events';
 import {assign} from 'lodash';
 
 export const Movement = {
-    NORMAL: 0
+    NORMAL: 0,
+    FLY: 1
 };
 
 export const Target = {

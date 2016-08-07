@@ -15,8 +15,8 @@ window.onload = function() {
     const hero = createHero({
         physics: {
             targets: [Target.CAMERA],
-            movement: Movement.NORMAL,
-            speed: new THREE.Vector3(0.15, 0.0, 0.3)
+            movement: Movement.FLY,
+            speed: new THREE.Vector3(0.15, 0.3, 0.3)
         },
     });
     const sceneManager = createSceneManager(hero);

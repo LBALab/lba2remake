@@ -23,7 +23,7 @@ export function makeFirstPersonMouseControls(domElement, heroPhysics) {
 }
 
 const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
-const MAX_X_ANGLE = Math.PI / 3;
+const MAX_X_ANGLE = Math.PI / 2.5;
 
 function handleMouseEvent(controls, heroPhysics, event) {
     if (controls.enabled) {
