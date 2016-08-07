@@ -79,9 +79,9 @@ function loadBoneframe(keyframe, data, offset) {
             break;
         case 1:
         case 2: // translation
-            boneframe.x = x;
-            boneframe.y = y;
-            boneframe.z = z;
+            boneframe.x = x / 0x4000;
+            boneframe.y = y / 0x4000;
+            boneframe.z = z / 0x4000;
             canFall = true;
             break;
     }

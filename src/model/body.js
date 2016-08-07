@@ -69,9 +69,9 @@ function loadVertices(object) {
     for (let i = 0; i < object.verticesSize; ++i) {
         const index = i * 8;
         object.vertices.push({
-            x: data.getInt16(index, true),
-            y: data.getInt16(index + 2 , true),
-            z: data.getInt16(index + 4, true),
+            x: data.getInt16(index, true) / 0x4000,
+            y: data.getInt16(index + 2 , true) / 0x4000,
+            z: data.getInt16(index + 4, true) / 0x4000,
             bone: data.getUint16(index + 6, true)
         });
     }
@@ -206,7 +206,7 @@ function loadSpheres(object) {
             unk1: rawSpheres[index],
             colour: rawSpheres[index + 1] & 0x00FF,
             vertex: rawSpheres[index + 2],
-            size: rawSpheres[index + 3]
+            size: rawSpheres[index + 3] / 0x4000
         });
     }
 }
@@ -229,21 +229,19 @@ function getPosition(object, index) {
     const vertex = object.vertices[index];
     let boneIdx = vertex.bone;
 
-    let pos = [
-        vertex.x / 0x4000,
-        vertex.y / 0x4000,
-        vertex.z / 0x4000
-    ];
+    let pos = {
+        x: vertex.x,
+        y: vertex.y,
+        z: vertex.z
+    };
 
     while(true) {
         const bone = object.bones[boneIdx];
         const boneVertex = object.vertices[bone.vertex];
         
-        pos = [
-            pos[0] + (boneVertex.x / 0x4000),
-            pos[1] + (boneVertex.y / 0x4000),
-            pos[2] + (boneVertex.z / 0x4000)
-        ];
+        pos.x += boneVertex.x;
+        pos.y += boneVertex.y;
+        pos.z += boneVertex.z;
 
         if(bone.parent == 0xFFFF)
             break;
@@ -251,9 +249,9 @@ function getPosition(object, index) {
         boneIdx = bone.parent;
     }
     return [
-        pos[0],
-        pos[1],
-        pos[2]
+        pos.x,
+        pos.y,
+        pos.z
     ];
 }
 
@@ -304,7 +302,7 @@ function loadFaceGeometry(geometry, object, palette) {
 function loadSphereGeometry(geometry, object, palette) {
     _.each(object.spheres, (s) => {
         const centerPos = getPosition(object, s.vertex);
-        const sphereGeometry = new THREE.SphereGeometry(s.size / 0x4000, 8, 8);
+        const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
         
         const addVertex = (j) => {
     	    push.apply(geometry.positions, [
