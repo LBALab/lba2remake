@@ -4,36 +4,19 @@ import {GameEvents} from '../game/events';
 const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
 const MAX_X_ANGLE = Math.PI / 3;
 
-export function makeDesktopControls(domElement, heroPhysics) {
+export function makeKeyboardControls(domElement, heroPhysics) {
     const config = {
-        lockedIn: false,
         arrows: {x: 0, y: 0}
     };
 
-    document.addEventListener('mousemove', onMouseMove.bind(null, config, heroPhysics.location), false );
     window.addEventListener('keydown', onKeyDown.bind(null, config), false);
     window.addEventListener('keyup', onKeyUp.bind(null, config), false);
 
-    setupPointerLock(config, domElement);
-
     config.update = function(dt) {
 
-    }
-}
+    };
 
-function onMouseMove(config, location, event) {
-    if (config.lockedIn) {
-        const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-        const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-
-        euler.setFromQuaternion(location.headOrientation, 'YXZ');
-        let x = euler.x;
-        let y = euler.y;
-        x = Math.min(Math.max(x - movementY * 0.002, -MAX_X_ANGLE), MAX_X_ANGLE);
-        y = y - movementX * 0.002;
-        euler.set(x, y, 0, 'YXZ');
-        location.headOrientation.setFromEuler(euler);
-    }
+    return config;
 }
 
 function onKeyDown(config, event) {
@@ -83,12 +66,3 @@ function onKeyUp(config, event) {
     }
 }
 
-function setupPointerLock(config, domElement) {
-    document.addEventListener('pointerlockchange', () => {
-        config.lockedIn = document.pointerLockElement == document.body;
-    }, false);
-
-    domElement.addEventListener('click', function() {
-        document.body.requestPointerLock();
-    });
-}

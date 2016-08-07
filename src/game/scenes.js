@@ -6,8 +6,7 @@ export function createSceneManager(hero) {
 
     function onIslandLoaded(island) {
         console.log('Loaded: ', island.name);
-        hero.physics.location.position.x = island.startPosition[0];
-        hero.physics.location.position.z = island.startPosition[1];
+        GameEvents.Scene.SceneLoaded.trigger(island);
     }
 
     function nextIsland() { islandManager.loadNext(onIslandLoaded); }

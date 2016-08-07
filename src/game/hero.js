@@ -1,4 +1,5 @@
 import THREE from 'three';
+import {GameEvents} from './events';
 import {assign} from 'lodash';
 
 export const Movement = {
@@ -10,7 +11,7 @@ export const Target = {
 };
 
 export function createHero(config) {
-    return {
+    const hero = {
         physics: assign({
             location: {
                 position: new THREE.Vector3(),
@@ -18,5 +19,12 @@ export function createHero(config) {
                 headOrientation: new THREE.Quaternion()
             }
         }, config.physics)
-    }
+    };
+
+    GameEvents.Scene.SceneLoaded.addListener(scene => {
+        hero.physics.location.position.x = scene.startPosition[0];
+        hero.physics.location.position.z = scene.startPosition[1];
+    });
+
+    return hero;
 }

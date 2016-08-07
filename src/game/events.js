@@ -4,7 +4,8 @@ export const GameEvents = {
     Scene: {
         NextIsland: makeEventTarget(),
         PreviousIsland: makeEventTarget(),
-        GotoIsland: makeEventTarget()
+        GotoIsland: makeEventTarget(),
+        SceneLoaded: makeEventTarget()
     },
     Debug: {
         SwitchStats: makeEventTarget()

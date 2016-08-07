@@ -1,6 +1,7 @@
 import THREE from 'three';
 import setupStats from './stats';
 import StereoEffect from './effects/StereoEffect';
+import {GameEvents} from '../game/events';
 
 export function createRenderer(useVR) {
     const baseRenderer = getBaseRenderer();
@@ -37,6 +38,13 @@ function getBaseRenderer() {
     renderer.domElement.style.left = 0;
     renderer.domElement.style.top = 0;
     renderer.domElement.style.opacity = 1.0;
+
+    GameEvents.Scene.SceneLoaded.addListener(scene => {
+        const sc = scene.envInfo.skyColor;
+        const color = new THREE.Color(sc[0], sc[1], sc[2]);
+        renderer.setClearColor(color.getHex(), 1);
+    });
+
     return renderer;
 }
 

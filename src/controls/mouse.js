@@ -4,33 +4,38 @@ const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
 const MAX_X_ANGLE = Math.PI / 3;
 
 // Move pointerLock mechanics out of this
-export function makeMouseOrientationControls(domElement, heroPhysics) {
-    const config = {
+export function makeMouseControls(domElement, heroPhysics) {
+    const controls = {
         enabled: false,
         arrows: {x: 0, y: 0}
     };
 
-    const ptrLock = setupPointerLock(config, domElement);
-    const onMouseMove = handleMouseEvent.bind(null, config, heroPhysics.location);
-    document.addEventListener('mousemove', onMouseMove, false);
+    const onMouseMove = handleMouseEvent.bind(null, controls, heroPhysics.location);
+    const onPointerLockChange = pointerLockChanged.bind(null, controls);
 
-    config.update = function(dt) {
-        if (config.enabled) {
+    document.addEventListener('mousemove', onMouseMove, false);
+    document.addEventListener('pointerlockchange', onPointerLockChange, false);
+    domElement.addEventListener('click', onClick, false);
+
+    controls.dispose = function() {
+        document.removeEventListener('mousemove', onMouseMove, false);
+        document.removeEventListener('pointerlockchange', onPointerLockChange);
+        domElement.removeEventListener('click', onClick);
+    };
+
+    controls.update = function(dt) {
+        if (controls.enabled) {
             euler.setFromQuaternion(heroPhysics.location.headOrientation, 'YXZ');
             euler.set(0, -euler.y, 0, 'YXZ');
             heroPhysics.direction.setFromEuler(euler);
         }
     };
 
-    config.dispose = function() {
-        document.removeEventListener('mousemove', onMouseMove, false);
-        ptrLock.dispose();
-    };
-    return config;
+    return controls;
 }
 
-function handleMouseEvent(config, location, event) {
-    if (config.enabled) {
+function handleMouseEvent(controls, location, event) {
+    if (controls.enabled) {
         const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
         const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
@@ -44,22 +49,10 @@ function handleMouseEvent(config, location, event) {
     }
 }
 
-function setupPointerLock(config, domElement) {
-    function pointerLockChanged() {
-        config.enabled = document.pointerLockElement == document.body
-    }
+function pointerLockChanged(controls) {
+    controls.enabled = document.pointerLockElement == document.body
+}
 
-    function onClick() {
-        document.body.requestPointerLock()
-    }
-
-    document.addEventListener('pointerlockchange', pointerLockChanged, false);
-    domElement.addEventListener('click', onClick, false);
-
-    return {
-        dispose: function() {
-            document.removeEventListener('pointerlockchange', pointerLockChanged);
-            domElement.removeEventListener('click', onClick);
-        }
-    };
+function onClick() {
+    document.body.requestPointerLock()
 }
