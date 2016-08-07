@@ -2,23 +2,23 @@ import {map, each} from 'lodash';
 import {Movement, Target} from './hero';
 
 export function processPhysicsFrame(scene, camera, heroPhysics) {
-    switch (heroPhysics.movement) {
+    switch (heroPhysics.config.movement) {
         case Movement.NORMAL:
-            processNormalMovement(scene, heroPhysics.location);
+            processNormalMovement(scene, heroPhysics);
             break;
     }
 
-    each(heroPhysics.targets, target => {
+    each(heroPhysics.config.targets, target => {
         switch (target) {
             case Target.CAMERA:
-                updateTarget(camera, heroPhysics.location);
+                updateTarget(camera, heroPhysics);
                 break;
         }
     });
 }
 
-function processNormalMovement(scene, location) {
-    location.position.y = scene.getGroundHeight(location.position.x, location.position.z) + 0.08;
+function processNormalMovement(scene, heroPhysics) {
+    heroPhysics.position.y = scene.getGroundHeight(heroPhysics.position.x, heroPhysics.position.z) + 0.08;
 }
 
 function updateTarget(tgt, src) {

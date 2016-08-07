@@ -12,18 +12,17 @@ export const Target = {
 
 export function createHero(config) {
     const hero = {
-        physics: assign({
-            location: {
-                position: new THREE.Vector3(),
-                orientation: new THREE.Quaternion(),
-                headOrientation: new THREE.Quaternion()
-            }
-        }, config.physics)
+        physics: {
+            config: config.physics,
+            position: new THREE.Vector3(),
+            orientation: new THREE.Quaternion(),
+            headOrientation: new THREE.Quaternion()
+        }
     };
 
     GameEvents.Scene.SceneLoaded.addListener(scene => {
-        hero.physics.location.position.x = scene.startPosition[0];
-        hero.physics.location.position.z = scene.startPosition[1];
+        hero.physics.position.x = scene.startPosition[0];
+        hero.physics.position.z = scene.startPosition[1];
     });
 
     return hero;

@@ -10,7 +10,7 @@ export function makeMouseControls(domElement, heroPhysics) {
         arrows: {x: 0, y: 0}
     };
 
-    const onMouseMove = handleMouseEvent.bind(null, controls, heroPhysics.location);
+    const onMouseMove = handleMouseEvent.bind(null, controls, heroPhysics);
     const onPointerLockChange = pointerLockChanged.bind(null, controls);
 
     document.addEventListener('mousemove', onMouseMove, false);
@@ -23,29 +23,23 @@ export function makeMouseControls(domElement, heroPhysics) {
         domElement.removeEventListener('click', onClick);
     };
 
-    controls.update = function(dt) {
-        if (controls.enabled) {
-            euler.setFromQuaternion(heroPhysics.location.headOrientation, 'YXZ');
-            euler.set(0, -euler.y, 0, 'YXZ');
-            heroPhysics.direction.setFromEuler(euler);
-        }
-    };
-
     return controls;
 }
 
-function handleMouseEvent(controls, location, event) {
+function handleMouseEvent(controls, heroPhysics, event) {
     if (controls.enabled) {
         const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
         const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-        euler.setFromQuaternion(location.headOrientation, 'YXZ');
-        let x = euler.x;
-        let y = euler.y;
-        x = Math.min(Math.max(x - movementY * 0.002, -MAX_X_ANGLE), MAX_X_ANGLE);
-        y = y - movementX * 0.002;
-        euler.set(x, y, 0, 'YXZ');
-        location.headOrientation.setFromEuler(euler);
+        euler.setFromQuaternion(heroPhysics.headOrientation, 'YXZ');
+        euler.y = 0;
+        euler.x = Math.min(Math.max(euler.x - movementY * 0.002, -MAX_X_ANGLE), MAX_X_ANGLE);
+        heroPhysics.headOrientation.setFromEuler(euler);
+
+        euler.setFromQuaternion(heroPhysics.orientation, 'YXZ');
+        euler.x = 0;
+        euler.y = euler.y - movementX * 0.002;
+        heroPhysics.orientation.setFromEuler(euler);
     }
 }
 

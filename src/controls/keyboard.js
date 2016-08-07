@@ -1,9 +1,6 @@
 import THREE from 'three';
 import {GameEvents} from '../game/events';
 
-const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
-const MAX_X_ANGLE = Math.PI / 3;
-
 export function makeKeyboardControls(domElement, heroPhysics) {
     const config = {
         arrows: {x: 0, y: 0}
@@ -12,7 +9,7 @@ export function makeKeyboardControls(domElement, heroPhysics) {
     window.addEventListener('keydown', onKeyDown.bind(null, config), false);
     window.addEventListener('keyup', onKeyUp.bind(null, config), false);
 
-    config.update = function(dt) {
+    config.update = function() {
 
     };
 
