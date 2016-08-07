@@ -10,8 +10,8 @@ import {loadSea} from './sea';
 import {loadObjects} from './objects';
 import {loadIslandPhysics} from './physics';
 
-import islandsInfo from '../data/islands';
-import environments from '../data/environments';
+import islandsInfo from './data/islands';
+import environments from './data/environments';
 
 export function loadIslandManager() {
     const islands = _.map(islandsInfo, island => {
