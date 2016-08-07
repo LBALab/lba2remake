@@ -100,6 +100,9 @@ function loadIslandSync(island, files) {
     island.data.threeScene = scene;
     island.data.physics = loadIslandPhysics(layout);
 
+    const seaTimeUniform = scene.getObjectByName('sea').material.uniforms.time;
+    island.data.update = time => { seaTimeUniform.value = time.elapsed; };
+
     return island;
 }
 

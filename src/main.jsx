@@ -25,11 +25,10 @@ window.onload = function() {
 
     document.getElementById('main').appendChild(renderer.domElement);
     GameEvents.Scene.GotoIsland.trigger('CITADEL');
-    
+
     const clock = new THREE.Clock();
     function processAnimationFrame() {
-        const dt = clock.getDelta();
-        mainGameLoop(dt, renderer, sceneManager.currentScene(), hero, controls);
+        mainGameLoop(clock, renderer, sceneManager.currentScene(), hero, controls);
         requestAnimationFrame(processAnimationFrame);
     }
 

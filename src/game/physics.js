@@ -2,10 +2,10 @@ import THREE from 'three';
 import {map, each} from 'lodash';
 import {Movement, Target} from './hero';
 
-export function processPhysicsFrame(dt, scene, camera, heroPhysics) {
+export function processPhysicsFrame(time, scene, camera, heroPhysics) {
     switch (heroPhysics.config.movement) {
         case Movement.NORMAL:
-            processNormalMovement(dt, scene, heroPhysics);
+            processNormalMovement(time, scene, heroPhysics);
             break;
     }
 
@@ -20,11 +20,11 @@ export function processPhysicsFrame(dt, scene, camera, heroPhysics) {
 
 const orientedSpeed = new THREE.Vector3();
 
-function processNormalMovement(dt, scene, heroPhysics) {
+function processNormalMovement(time, scene, heroPhysics) {
     orientedSpeed.copy(heroPhysics.speed);
     orientedSpeed.multiply(heroPhysics.config.speed);
     orientedSpeed.applyQuaternion(heroPhysics.orientation);
-    orientedSpeed.multiplyScalar(dt);
+    orientedSpeed.multiplyScalar(time.delta);
     heroPhysics.position.add(orientedSpeed);
     heroPhysics.position.y = scene.getGroundHeight(heroPhysics.position.x, heroPhysics.position.z) + 0.08;
 }
