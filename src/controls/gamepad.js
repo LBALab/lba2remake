@@ -1,7 +1,6 @@
 import THREE from 'three';
 import {GameEvents} from '../game/events';
 
-const PI_2 = Math.PI / 2;
 const PI_4 = Math.PI / 4;
 
 export function makeGamepadControls(heroPhysics) {
@@ -18,7 +17,7 @@ export function makeGamepadControls(heroPhysics) {
 }
 
 function dpadValueChangeHandler(heroPhysics, {detail: {y}}) {
-    heroPhysics.speed.z = -y * 0.4;
+    heroPhysics.speed.z = -y * 0.45;
 }
 
 function buttonPressedHandler(heroPhysics, {detail: {name, isPressed}}) {
@@ -41,9 +40,6 @@ function buttonPressedHandler(heroPhysics, {detail: {name, isPressed}}) {
                 break;
             case 'leftTrigger':
                 GameEvents.Debug.SwitchStats.trigger();
-                break;
-            case 'rightTrigger':
-                // change stats mode
                 break;
         }
     }
