@@ -7,6 +7,7 @@ import {loadTexture} from '../texture';
 import {loadEntity} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
+import {loadBodyGeometry} from './geometry';
 
 import vertexShader from './shaders/model.vert.glsl';
 import fragmentShader from './shaders/model.frag.glsl';
@@ -74,7 +75,8 @@ function loadGeometry(model, index) {
     const bodies = [];
 
     // TODO for each entity entry
-    loadBody(model, geometry, bodies, index);
+    const body = loadBody(model, geometry, bodies, index);
+    loadBodyGeometry(geometry, body, model.palette);
 
     // _.each(model.layout, section => {
     //     loadGround(island, section, geometry);

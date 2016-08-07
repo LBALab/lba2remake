@@ -41,8 +41,6 @@ export function loadBody(model, geometry, bodies, index) {
         loadLines(obj);
         loadSpheres(obj);
         loadUVGroups(obj);
-
-        loadGeometry(geometry, obj, model.palette);
         
         bodies[index] = obj;
         return obj;
@@ -108,14 +106,14 @@ function loadPolygons(object) {
         const blockSize = ((sectionSize - 8) / numPolygons);
 
         for (let j = 0; j < numPolygons; ++j) {
-            const poly = getPolygon(data, offset, renderType, blockSize);
+            const poly = loadPolygon(data, offset, renderType, blockSize);
             object.polygons.push(poly);
             offset += blockSize;
         }
     }
 }
 
-function getPolygon(data, offset, renderType, blockSize) {
+function loadPolygon(data, offset, renderType, blockSize) {
     const numVertex = (renderType & 0x8000) ? 4 : 3;
     const hasExtra = (renderType & 0x4000) ? true : false;
     const hasTex = (renderType & 0x8 && blockSize > 16) ? true : false;
@@ -225,7 +223,7 @@ function loadUVGroups(object) {
     }
 }
 
-function getPosition(object, index) {
+export function getPosition(object, index) {
     const vertex = object.vertices[index];
     let boneIdx = vertex.bone;
 
@@ -255,7 +253,7 @@ function getPosition(object, index) {
     ];
 }
 
-function getColour(colour, palette, hasTransparency, hasTex) {
+export function getColour(colour, palette, hasTransparency, hasTex) {
     return [
         palette[colour * 3], 
         palette[colour * 3 + 1],
@@ -264,7 +262,7 @@ function getColour(colour, palette, hasTransparency, hasTex) {
     ];
 }
 
-function getUVs(object, p, vertex) {
+export function getUVs(object, p, vertex) {
     if (p.hasTex) {
         const t = object.uvGroups[p.tex];
         const x = p.texX[vertex] + p.unkX[vertex]/256;
@@ -272,66 +270,4 @@ function getUVs(object, p, vertex) {
         return [(x & t.width) + t.x, (y & t.height) + t.y];
     }
     return [0, 0];
-}
-
-function loadGeometry(geometry, object, palette) {
-    loadFaceGeometry(geometry, object, palette);
-    loadSphereGeometry(geometry, object, palette);
-    loadLineGeometry(geometry, object, palette);
-}
-
-function loadFaceGeometry(geometry, object, palette) {
-    _.each(object.polygons, (p) => {
-        const addVertex = (j) => {
-            const vertexIndex = p.vertex[j];
-    	    push.apply(geometry.positions, getPosition(object, vertexIndex));
-            push.apply(geometry.colors, getColour(p.colour, palette, p.hasTransparency, p.hasTex));
-            push.apply(geometry.uvs, getUVs(object, p, j));
-        };    
-        for (let j = 0; j < 3; ++j) {
-            addVertex(j);
-        } 
-        if (p.numVertex == 4) { // quad
-            for (let j of [0, 2, 3]) {
-                addVertex(j);
-            }
-        }
-    });    
-}
-
-function loadSphereGeometry(geometry, object, palette) {
-    _.each(object.spheres, (s) => {
-        const centerPos = getPosition(object, s.vertex);
-        const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
-        
-        const addVertex = (j) => {
-    	    push.apply(geometry.positions, [
-                sphereGeometry.vertices[j].x + centerPos[0],
-                sphereGeometry.vertices[j].y + centerPos[1],
-                sphereGeometry.vertices[j].z + centerPos[2]
-            ]);
-            push.apply(geometry.colors, getColour(s.colour, palette, false, false));
-            push.apply(geometry.uvs, [0,0]);
-        };
-
-        _.each(sphereGeometry.faces, (f) => {
-            addVertex(f.a);
-            addVertex(f.b);
-            addVertex(f.c);
-        });
-    });
-}
-
-function loadLineGeometry(geometry, object, palette) {
-    _.each(object.lines, (l) => {
-        const addVertex = (p,c) => {
-            push.apply(geometry.linePositions, p);
-            push.apply(geometry.lineColors, getColour(c, palette, false, false));
-        };
-        let v1 = getPosition(object, l.vertex1);
-        let v2 = getPosition(object, l.vertex2);
-
-        addVertex(v1,l.colour);
-        addVertex(v2,l.colour);
-    });
 }
