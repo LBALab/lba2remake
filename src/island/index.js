@@ -8,29 +8,69 @@ import {loadLayout} from './layout';
 import {loadGround} from './ground';
 import {loadSea} from './sea';
 import {loadObjects} from './objects';
+import {loadIslandPhysics} from './physics';
 
 import islandsInfo from '../data/islands';
 import environments from '../data/environments';
 
-export function loadIsland(name, callback) {
-    async.auto({
-        ress: loadHqrAsync('RESS.HQR'),
-        ile: loadHqrAsync(`${name}.ILE`),
-        obl: loadHqrAsync(`${name}.OBL`)
-    }, function(err, files) {
-        callback(loadIslandSync(name, files));
+export function loadIslandManager() {
+    const islands = _.map(islandsInfo, island => {
+        return _.assign({
+            envInfo: environments[island.env]
+        }, island);
     });
+
+    const len = islands.length;
+    let idx = -1;
+
+    const islandManager = {
+        currentIsland: () => idx >= 0 ? islands[idx] : null
+    };
+
+    islandManager.loadNext = function(callback) {
+        idx = (idx + 1) % len;
+        loadIsland(islands[idx], callback);
+        return islands[idx];
+    };
+
+    islandManager.loadPrevious = function(callback) {
+        idx = (idx - 1 >= 0) ? idx - 1 : len - 1;
+        loadIsland(islands[idx], callback);
+        return islands[idx];
+    };
+
+    islandManager.loadIsland = function(name, callback) {
+        const island = _.find(islands, i => i.name == name);
+        idx = islands.indexOf(island);
+        loadIsland(island, callback);
+        return island;
+    };
+
+    return islandManager;
 }
 
-function loadIslandSync(name, files) {
+export function loadIsland(island, callback) {
+    if (island.data) {
+        setTimeout(callback.bind(null, island), 0);
+    }
+    else {
+        async.auto({
+            ress: loadHqrAsync('RESS.HQR'),
+            ile: loadHqrAsync(`${island.name}.ILE`),
+            obl: loadHqrAsync(`${island.name}.OBL`)
+        }, function(err, files) {
+            callback(loadIslandSync(island, files));
+        });
+    }
+
+}
+
+function loadIslandSync(island, files) {
     const layout = loadLayout(files.ile);
-    const info = _.find(islandsInfo, i => i.name == name);
-    const island = {
-        name: name,
+    island.data = {
         files: files,
         palette: new Uint8Array(files.ress.getEntry(0)),
-        layout: layout,
-        env: environments[info.env]
+        layout: layout
     };
 
     const scene = new THREE.Scene();
@@ -55,36 +95,19 @@ function loadIslandSync(name, files) {
         }
     });
 
+    scene.add(loadSky(geometries));
+
+    island.data.threeScene = scene;
+    island.data.physics = loadIslandPhysics(layout);
+
+    return island;
+}
+
+function loadSky(geometries) {
     const sky = new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 1, 1), geometries.sky.material);
     sky.rotateX(Math.PI / 2.0);
     sky.position.y = 2.0;
-    scene.add(sky);
-
-    return {
-        scene: scene,
-        startPosition: info.startPosition,
-        physics: {
-            getHeight: getHeight.bind(null, layout)
-        }
-    };
-}
-
-function getHeight(layout, x, z) {
-    const section = _.find(layout.groundSections, gs => x > gs.x * 2 && x <= gs.x * 2 + 2 && z >= gs.z * 2 && z <= gs.z * 2 + 2);
-    if (section) {
-        const dx = (2.0 - (x - section.x * 2)) * 32;
-        const dz = (z - section.z * 2) * 32;
-        const ix = Math.floor(dx);
-        const iz = Math.floor(dz);
-        const height = (ox, oz) => section.heightmap[(ix + ox) * 65 + iz + oz] / 0x4000;
-        const ax = dx - ix;
-        const az = dz - iz;
-        const r1 = (1.0 - ax) * height(0, 0) + ax * height(1, 0);
-        const r2 = (1.0 - ax) * height(0, 1) + ax * height(1, 1);
-        return (1.0 - az) * r1 + az * r2;
-    } else {
-        return 0.0;
-    }
+    return sky;
 }
 
 function loadGeometries(island) {
@@ -92,20 +115,20 @@ function loadGeometries(island) {
     const usedTiles = {};
     const objects = [];
 
-    _.each(island.layout.groundSections, section => {
+    _.each(island.data.layout.groundSections, section => {
         const tilesKey = [section.x, section.z].join(',');
         usedTiles[tilesKey] = [];
-        loadGround(island, section, geometries, usedTiles[tilesKey]);
-        loadObjects(island, section, geometries, objects);
+        loadGround(island.data, section, geometries, usedTiles[tilesKey]);
+        loadObjects(island.data, section, geometries, objects);
     });
 
-    _.each(island.layout.seaSections, section => {
+    _.each(island.data.layout.seaSections, section => {
         const xd = Math.floor(section.x / 2);
         const zd = Math.floor(section.z / 2);
         const offsetX = 1 - Math.abs(section.x % 2);
         const offsetZ = Math.abs(section.z % 2);
         const tilesKey = [xd, zd].join(',');
-        loadSea(section, geometries, usedTiles[tilesKey], offsetX, offsetZ, island.env.index);
+        loadSea(section, geometries, usedTiles[tilesKey], offsetX, offsetZ, island.envInfo.index);
     });
 
     return geometries;

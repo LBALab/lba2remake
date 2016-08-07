@@ -16,7 +16,7 @@ import env_vertex from './shaders/env.vert.glsl';
 import env_fragment from './shaders/env.frag.glsl';
 import moon_vertex from './shaders/moon.vert.glsl';
 
-export function prepareGeometries({env, files: {ile, ress}, palette}) {
+export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}) {
     return {
         colored: {
             positions: [],
@@ -25,8 +25,8 @@ export function prepareGeometries({env, files: {ile, ress}, palette}) {
                 vertexShader: colored_vertex,
                 fragmentShader: colored_fragment,
                 uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
-                    fogDensity: {value: env.fogDensity}
+                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+                    fogDensity: {value: envInfo.fogDensity}
                 }
             })
         },
@@ -38,8 +38,8 @@ export function prepareGeometries({env, files: {ile, ress}, palette}) {
                 vertexShader: textured_vertex,
                 fragmentShader: textured_fragment,
                 uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
-                    fogDensity: {value: env.fogDensity},
+                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+                    fogDensity: {value: envInfo.fogDensity},
                     texture: {value: loadTextureWithMipmaps(ile.getEntry(1), palette)}
                 }
             })
@@ -53,8 +53,8 @@ export function prepareGeometries({env, files: {ile, ress}, palette}) {
                 vertexShader: atlas_vertex,
                 fragmentShader: atlas_fragment,
                 uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
-                    fogDensity: {value: env.fogDensity},
+                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+                    fogDensity: {value: envInfo.fogDensity},
                     texture: {value: loadTextureWithMipmaps(ile.getEntry(2), palette)}
                 }
             })
@@ -69,8 +69,8 @@ export function prepareGeometries({env, files: {ile, ress}, palette}) {
                 vertexShader: atlas_vertex,
                 fragmentShader: atlas_fragment,
                 uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
-                    fogDensity: {value: env.fogDensity},
+                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+                    fogDensity: {value: envInfo.fogDensity},
                     texture: {value: loadTextureWithMipmaps(ile.getEntry(2), palette)}
                 }
             })
@@ -78,13 +78,13 @@ export function prepareGeometries({env, files: {ile, ress}, palette}) {
         sea: {
             positions: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: env.index != 14 ? sea_vertex : moon_vertex,
-                fragmentShader: env.index != 14 ? sea_fragment : env_fragment,
+                vertexShader: envInfo.index != 14 ? sea_vertex : moon_vertex,
+                fragmentShader: envInfo.index != 14 ? sea_fragment : env_fragment,
                 wireframe: false,
                 uniforms: {
-                    texture: {value: loadSubTexture(ress.getEntry(env.index), palette, 0, 0, 128, 128)},
-                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
-                    fogDensity: {value: env.fogDensity},
+                    texture: {value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)},
+                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+                    fogDensity: {value: envInfo.fogDensity},
                     time: {value: 0.0},
                     scale: {value: 512.0}
                 }
@@ -95,10 +95,10 @@ export function prepareGeometries({env, files: {ile, ress}, palette}) {
                 vertexShader: env_vertex,
                 fragmentShader: env_fragment,
                 uniforms: {
-                    texture: {value: loadSubTexture(ress.getEntry(env.index), palette, 128, 0, 128, 128)},
-                    fogColor: {value: new THREE.Vector3().fromArray(env.skyColor)},
-                    fogDensity: {value: env.fogDensity},
-                    scale: {value: env.scale}
+                    texture: {value: loadSubTexture(ress.getEntry(envInfo.index), palette, 128, 0, 128, 128)},
+                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+                    fogDensity: {value: envInfo.fogDensity},
+                    scale: {value: envInfo.scale}
                 }
             })
         }

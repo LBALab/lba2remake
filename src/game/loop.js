@@ -1,13 +1,10 @@
-import {map} from 'lodash';
-import {loadIsland} from '../island';
-import {RequestIslandChange, IslandChanged} from '../game/events';
-import islandInfo from '../data/islands';
+import {processPhysicsFrame} from './physics';
 
-const islands = map(islandInfo, island => island.name);
-
-export function mainGameLoop(renderer, scene) {
+export function mainGameLoop(renderer, scene, hero) {
     renderer.stats.begin();
-
-    renderer.render(scene.threeScene);
+    if (scene && scene.data) {
+        processPhysicsFrame(scene.data.physics, renderer.camera, hero.physics);
+        renderer.render(scene.data.threeScene);
+    }
     renderer.stats.end();
 }
