@@ -12,24 +12,50 @@ import {loadBodyGeometry} from './geometry';
 import vertexShader from './shaders/model.vert.glsl';
 import fragmentShader from './shaders/model.frag.glsl';
 
-export default function(index, callback) {
+export default function(model, index, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         body: loadHqrAsync('BODY.HQR'),
         anim: loadHqrAsync('ANIM.HQR'),
         anim3ds: loadHqrAsync('ANIM3DS.HQR')
     }, function(err, files) {
-        callback(loadModel(files, index));
+        callback(loadModel(files, model, index));
     });
 }
 
-function loadModel(files, index) {
-    const model = {
-        files: files,
-        palette: new Uint8Array(files.ress.getEntry(0)),
-        entity: files.ress.getEntry(44)
-    };
+/** Load Models Data
+ *  Model will hold data specific to a single model instance.
+ *  This will allow to mantain different states for body animations.
+ *  This module will still kept data reloaded to avoid reload twice for now.
+ */
+function loadModel(files, model, index) {
+    if (!model) {
+        model = {
+            files: files,
+            palette: new Uint8Array(files.ress.getEntry(0)),
+            entity: files.ress.getEntry(44),
+            entities: [],
+            bodies: [],
+            anims: [],
+            mesh: []
+        };
+    }
+ 
+    if (!model.entities) {
+        model.entities = loadEntity(model.entity);
+    }
+    
+    const body = loadBody(model, model.bodies, index);
+    const anim = loadAnim(model, model.anims, index);
 
+    if (!model.mesh[index]) {    
+        const mesh = loadMesh(model, body, index);
+        model.mesh[index] = mesh;
+    }
+    return model.mesh[index];
+}
+
+function loadMesh(model, body, index) {
     const material = new THREE.RawShaderMaterial({
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
@@ -38,8 +64,7 @@ function loadModel(files, index) {
         }
     });
 
-    const entities = loadEntity(model.entity);
-    const {positions, uvs, colors, linePositions, lineColors} = loadGeometry(model, index);
+    const {positions, uvs, colors, linePositions, lineColors} = loadGeometry(model, body, index);
     const object = new THREE.Object3D();
 
     if (positions.length > 0) {
@@ -64,23 +89,17 @@ function loadModel(files, index) {
     return object;
 }
 
-function loadGeometry(model, index) {
+function loadGeometry(model, body, index) {
     const geometry = {
+        verticeIndexes: [],
         positions: [],
         uvs: [],
         colors: [],
         linePositions: [],
         lineColors: []
     };
-    const bodies = [];
-
-    // TODO for each entity entry
-    const body = loadBody(model, geometry, bodies, index);
+    
     loadBodyGeometry(geometry, body, model.palette);
 
-    // _.each(model.layout, section => {
-    //     loadGround(island, section, geometry);
-    //     loadObjects(island, section, geometry, objects);
-    // });
     return geometry;
 }

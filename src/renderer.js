@@ -21,6 +21,8 @@ const islands = [
 let index = 0; // 92-Baldino
 let current;
 
+let models = null;
+
 export default class Renderer {
     constructor(width, height) {
         this.clock = new THREE.Clock();
@@ -55,7 +57,7 @@ export default class Renderer {
         // Render loop
         this.animate();
 
-        model(index, (object) => {
+        model(models, index, (object) => {
             current = object;
             this.scene.add(object);
         });
@@ -78,7 +80,7 @@ export default class Renderer {
             index = (index + 1)
             if (index > 468)
                 index = 0;
-            model(index, (object) => {
+            model(models, index, (object) => {
                 this.scene.remove(current);
                 current = object;
                 this.scene.add(object);

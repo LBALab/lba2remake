@@ -4,7 +4,7 @@ import _ from 'lodash';
 const push = Array.prototype.push;
 
 /** Load LBA2 model animation */
-export function loadAnim(model, body, anims, index) {
+export function loadAnim(model, anims, index) {
     if (anims[index]) {
         return anims[index];
     } else {

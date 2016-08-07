@@ -4,7 +4,7 @@ import _ from 'lodash';
 const push = Array.prototype.push;
 
 /** Load LBA model body */
-export function loadBody(model, geometry, bodies, index) {
+export function loadBody(model, bodies, index) {
     if (bodies[index]) {
         return bodies[index];
     } else {
