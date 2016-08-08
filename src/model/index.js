@@ -61,9 +61,9 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
             elapsedTime:0,
             matrixBones: []
         }
+        obj.matrixBones = createShaderBone(obj);
 
         const geometry = loadGeometry(model, body, obj.skeleton);
-        obj.verticies = geometry.positions;
 
         obj.mesh = loadMesh(model, obj, geometry);
         model.object3D[index] = obj;
@@ -77,7 +77,7 @@ function loadMesh(model, obj, geometry) {
         fragmentShader: fragmentShader,
         uniforms: {
             body: {value: loadTexture(model.files.ress.getEntry(6), model.palette)},
-            bones: {value: obj.matrixBones}
+            bones: {value: obj.matrixBones, type:'m4v'}
         }
     });
 
@@ -200,6 +200,7 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
             const bone = skeleton[boneIdx];
 
             s.pos.add(bone.pos);
+            s.m.setPosition(s.pos);
 
             if(bone.parent == 0xFFFF)
                 break;
@@ -207,6 +208,14 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
             boneIdx = bone.parent;
         }
     }
+}
+
+function createShaderBone(obj) {
+    let bones = [];
+    for (let i = 0; i < obj.skeleton.length; ++i) {
+        bones.push(obj.skeleton[i].m);
+    }
+    return bones;
 }
 
 function updateShaderBone(obj) {
