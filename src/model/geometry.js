@@ -87,9 +87,9 @@ function getPosition(object, skeleton, index) {
     while(true) {
         const bone = skeleton[boneIdx];
 
-        pos.x += bone.v.x;
-        pos.y += bone.v.y;
-        pos.z += bone.v.z;
+        pos.x += bone.pos.x;
+        pos.y += bone.pos.y;
+        pos.z += bone.pos.z;
 
         if(bone.parent == 0xFFFF)
             break;

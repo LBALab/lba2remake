@@ -57,12 +57,14 @@ function loadKeyframes(object) {
 function loadBoneframe(keyframe, data, offset) {
     let boneframe = {
         type: data.getUint16(offset, true), // if > 0 canFall because it has translation in space
-        x: 0,
+        /*x: 0,
         y: 0,
         z: 0,
         angleX: 0,
         angleY: 0,
-        angleZ: 0
+        angleZ: 0,*/
+        euler: null,
+        pos: null
     };
     let canFall = false;
 
@@ -73,16 +75,27 @@ function loadBoneframe(keyframe, data, offset) {
     // assigned based on type of bone animation (rotation or translation)
     switch (boneframe.type) {
         case 0: // rotation
-            boneframe.angleX = x * (360 / 0x1000);
+            /*boneframe.angleX = x * (360 / 0x1000);
             boneframe.angleY = y * (360 / 0x1000);
-            boneframe.angleZ = z * (360 / 0x1000); 
+            boneframe.angleZ = z * (360 / 0x1000);*/
+            boneframe.euler = new THREE.Euler(x * (360 / 0x1000),
+                                              y * (360 / 0x1000),
+                                              z * (360 / 0x1000), 
+                                              'XZY' ); 
+            boneframe.pos = new THREE.Vector3(0, 0, 0); 
             break;
         case 1:
         case 2: // translation
-            boneframe.x = x / 0x4000;
+            /*boneframe.x = x / 0x4000;
             boneframe.y = y / 0x4000;
-            boneframe.z = z / 0x4000;
+            boneframe.z = z / 0x4000;*/
+            boneframe.euler = new THREE.Euler(0,0,0,'XZY');
+            boneframe.pos = new THREE.Vector3(x, y, z);
             canFall = true;
+            break;
+        default:
+            boneframe.euler = new THREE.Euler(0,0,0,'XZY');
+            boneframe.pos = new THREE.Vector3(0, 0, 0);
             break;
     }
     return { boneframe, canFall };

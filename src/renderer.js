@@ -2,6 +2,7 @@ import THREE from 'three';
 import OrbitControls from './controls/OrbitControls';
 import {loadIsland} from './island';
 import model from './model';
+import {updateModel} from './model';
 
 const islands = [
     {name: 'CITADEL', skyColor: [0.0, 0.0, 0.0], skyIndex: 11, fogDensity: 0.3},
@@ -21,11 +22,13 @@ const islands = [
 let index = 0;
 let entityIdx = 0;
 let bodyIdx = 0; // 92-Baldino
-let animIdx = 0;
+let animIdx = 67; // running
 
 let current;
 let models;
 let modelMesh;
+let isLoaded = false;
+let clock = new THREE.Clock();
 
 export default class Renderer {
     constructor(width, height) {
@@ -65,6 +68,7 @@ export default class Renderer {
             models = object;
             current = object.object3D[index].mesh;
             this.scene.add(current);
+            isLoaded = true;
         });
         //this.islandGroup = new THREE.Object3D();
         //this.islandGroup.add(new THREE.Object3D);
@@ -91,6 +95,7 @@ export default class Renderer {
                 this.scene.remove(current);
                 current = object.object3D[index].mesh;
                 this.scene.add(current);
+                isLoaded = true;
             });
             //this.refreshIsland();
         }
@@ -112,6 +117,14 @@ export default class Renderer {
             this.sea.material.uniforms.time.value = this.clock.getElapsedTime();
         }
         this.render();
+        if (isLoaded) {
+            const time = {
+                delta: clock.getDelta(),
+                elapsed: clock.getElapsedTime()
+            }
+
+            updateModel(models, index, animIdx, time);
+        }
         requestAnimationFrame(this.animate.bind(this));
     }
 
