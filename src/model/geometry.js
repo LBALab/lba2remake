@@ -17,6 +17,7 @@ function loadFaceGeometry(geometry, object, skeleton, palette) {
     	    push.apply(geometry.positions, getPosition(object, skeleton, vertexIndex));
             push.apply(geometry.colors, getColour(p.colour, palette, p.hasTransparency, p.hasTex));
             push.apply(geometry.uvs, getUVs(object, p, j));
+            push.apply(geometry.bones, getBone(object, vertexIndex));
         };    
         for (let j = 0; j < 3; ++j) {
             addVertex(j);
@@ -26,7 +27,7 @@ function loadFaceGeometry(geometry, object, skeleton, palette) {
                 addVertex(j);
             }
         }
-    });    
+    });
 }
 
 function loadSphereGeometry(geometry, object, skeleton, palette) {
@@ -42,6 +43,7 @@ function loadSphereGeometry(geometry, object, skeleton, palette) {
             ]);
             push.apply(geometry.colors, getColour(s.colour, palette, false, false));
             push.apply(geometry.uvs, [0,0]);
+            push.apply(geometry.bones, getBone(object, s.vertex));
         };
 
         _.each(sphereGeometry.faces, (f) => {
@@ -54,16 +56,22 @@ function loadSphereGeometry(geometry, object, skeleton, palette) {
 
 function loadLineGeometry(geometry, object, skeleton, palette) {
     _.each(object.lines, (l) => {
-        const addVertex = (p,c) => {
+        const addVertex = (p,c,i) => {
             push.apply(geometry.linePositions, p);
             push.apply(geometry.lineColors, getColour(c, palette, false, false));
+            push.apply(geometry.lineBones, getBone(object, i));
         };
         let v1 = getPosition(object, skeleton, l.vertex1);
         let v2 = getPosition(object, skeleton, l.vertex2);
 
-        addVertex(v1,l.colour);
-        addVertex(v2,l.colour);
+        addVertex(v1,l.colour, l.vertex1);
+        addVertex(v2,l.colour, l.vertex2);
     });
+}
+
+function getBone(object, index) {
+    const vertex = object.vertices[index];
+    return [ vertex.bone ];
 }
 
 function getPosition(object, skeleton, index) {
@@ -79,9 +87,9 @@ function getPosition(object, skeleton, index) {
     while(true) {
         const bone = skeleton[boneIdx];
 
-        pos.x += bone.x;
-        pos.y += bone.y;
-        pos.z += bone.z;
+        pos.x += bone.v.x;
+        pos.y += bone.v.y;
+        pos.z += bone.v.z;
 
         if(bone.parent == 0xFFFF)
             break;

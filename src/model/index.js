@@ -87,6 +87,7 @@ function loadMesh(model, geometry) {
         bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.positions), 3));
         bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(geometry.uvs), 2, true));
         bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.colors), 4, true));
+        bufferGeometry.addAttribute('bone', new THREE.BufferAttribute((geometry.bones), 1, true));
 
         const modelMesh = new THREE.Mesh(bufferGeometry, material);
         object.add(modelMesh);
@@ -109,8 +110,10 @@ function loadGeometry(model, body, skeleton) {
         positions: [],
         uvs: [],
         colors: [],
+        bones: [],
         linePositions: [],
-        lineColors: []
+        lineColors: [],
+        lineBones: []
     };
     
     loadBodyGeometry(geometry, body, skeleton, model.palette);

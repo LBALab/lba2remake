@@ -6,6 +6,7 @@ uniform mat4 projectionMatrix;
 attribute vec3 position;
 attribute vec2 uv;
 attribute vec4 color;
+attribute float bone;
 
 varying vec4 vColor;
 varying vec2 vUv;
