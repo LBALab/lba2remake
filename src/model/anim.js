@@ -82,7 +82,10 @@ function loadBoneframe(keyframe, data, offset) {
                                               y * (360 / 0x1000),
                                               z * (360 / 0x1000), 
                                               'XZY' ); 
-            boneframe.pos = new THREE.Vector3(0, 0, 0); 
+            boneframe.pos = new THREE.Vector3(0, 0, 0);
+            boneframe.veuler = new THREE.Vector3(x * (360 / 0x1000),
+                                                 y * (360 / 0x1000),
+                                                 z * (360 / 0x1000));
             break;
         case 1:
         case 2: // translation
@@ -90,11 +93,13 @@ function loadBoneframe(keyframe, data, offset) {
             boneframe.y = y / 0x4000;
             boneframe.z = z / 0x4000;*/
             boneframe.euler = new THREE.Euler(0,0,0,'XZY');
+            boneframe.veuler = new THREE.Vector3(0, 0, 0);
             boneframe.pos = new THREE.Vector3(x, y, z);
             canFall = true;
             break;
         default:
             boneframe.euler = new THREE.Euler(0,0,0,'XZY');
+            boneframe.veuler = new THREE.Vector3(0, 0, 0);
             boneframe.pos = new THREE.Vector3(0, 0, 0);
             break;
     }

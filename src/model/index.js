@@ -182,12 +182,13 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
 
         switch (bf.type) {
             case 0: // rotation
-                s.m.makeRotationFromEuler(bf.euler);
+                const euler = bf.veuler + (nbf.veuler - bf.veuler) * interpolation;
+                s.m.makeRotationFromEuler(new THREE.Euler(euler.x, euler.y, euler.z, 'XZY'));
                 break;
             case 1:
             case 2: // translation
-                s.pos = bf.pos;
-                s.m.setPosition(bf.pos);
+                s.pos = bf.pos + (nbf.pos - bf.pos) * interpolation;
+                s.m.setPosition(s.pos);
                 break;
         }
     }
