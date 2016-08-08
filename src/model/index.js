@@ -131,10 +131,13 @@ function createSkeleton(body) {
             boneIndex: i,
             vertexIndex: bone.vertex,
             parent: bone.parent,
-            x: boneVertex.x,
-            y: boneVertex.y,
-            z: boneVertex.z,
+            v: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
+            m: new THREE.Matrix4()
         });
     }
     return skeleton;
+}
+
+function updateSkeleton(body, anim, time) {
+
 }
