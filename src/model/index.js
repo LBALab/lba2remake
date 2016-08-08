@@ -186,34 +186,37 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
                 break;
             case 1:
             case 2: // translation
-                s.pos.add(bf.pos);
-                s.m.setPosition(s.pos);
+                s.pos = bf.pos;
+                s.m.setPosition(bf.pos);
                 break;
         }
     }
 
     // apply parent child
-    for (let i = 0; i < skeleton.length; ++i) {
-        const s = skeleton[i];
-        let boneIdx = i;
-        while(true) {
-            const bone = skeleton[boneIdx];
+    // for (let i = 0; i < skeleton.length; ++i) {
+    //     const s = skeleton[i];
+    //     let boneIdx = i;
+    //     while(true) {
+    //         const bone = skeleton[boneIdx];
 
-            s.pos.add(bone.pos);
-            s.m.setPosition(s.pos);
+    //         s.pos.add(bone.pos);
+    //         s.m.setPosition(s.pos);
 
-            if(bone.parent == 0xFFFF)
-                break;
+    //         if(bone.parent == 0xFFFF)
+    //             break;
                 
-            boneIdx = bone.parent;
-        }
-    }
+    //         boneIdx = bone.parent;
+    //     }
+    // }
 }
 
 function createShaderBone(obj) {
     let bones = [];
     for (let i = 0; i < obj.skeleton.length; ++i) {
         bones.push(obj.skeleton[i].m);
+    }
+    for (let i = 0; i < 50 - obj.skeleton.length; ++i) {
+        bones.push(new THREE.Matrix4());
     }
     return bones;
 }
