@@ -3,6 +3,7 @@ import {map, each} from 'lodash';
 import {Movement, Target} from './hero';
 
 export function processPhysicsFrame(time, scene, camera, heroPhysics) {
+    //console.log(heroPhysics.config.movement);
     switch (heroPhysics.config.movement) {
         case Movement.NORMAL:
             processNormalMovement(time, scene, heroPhysics);
@@ -27,7 +28,7 @@ function processNormalMovement(time, scene, heroPhysics) {
     orientedSpeed.copy(heroPhysics.speed);
     orientedSpeed.multiply(heroPhysics.config.speed);
     orientedSpeed.applyQuaternion(heroPhysics.orientation);
-    orientedSpeed.applyQuaternion(heroPhysics.headOffset);
+    orientedSpeed.applyQuaternion(onlyY(heroPhysics.headOrientation));
     orientedSpeed.multiplyScalar(time.delta);
     heroPhysics.position.add(orientedSpeed);
     heroPhysics.position.y = scene.getGroundHeight(heroPhysics.position.x, heroPhysics.position.z) + 0.08;
@@ -36,16 +37,29 @@ function processNormalMovement(time, scene, heroPhysics) {
 const euler = new THREE.Euler();
 
 function processFlyMovement(time, scene, heroPhysics) {
+    const groundHeight = scene.getGroundHeight(heroPhysics.position.x, heroPhysics.position.z);
+    const altitude = Math.max(0.0, Math.min(1.0, (heroPhysics.position.y - groundHeight) * 0.7));
     euler.setFromQuaternion(heroPhysics.headOrientation, 'YXZ');
     heroPhysics.speed.y = -heroPhysics.speed.z * euler.x;
+
     orientedSpeed.copy(heroPhysics.speed);
+    orientedSpeed.multiplyScalar((altitude * altitude) * 3.0 + 1.0);
     orientedSpeed.multiply(heroPhysics.config.speed);
     orientedSpeed.applyQuaternion(heroPhysics.orientation);
-    orientedSpeed.applyQuaternion(heroPhysics.headOffset);
+    orientedSpeed.applyQuaternion(onlyY(heroPhysics.headOrientation));
     orientedSpeed.multiplyScalar(time.delta);
+
     heroPhysics.position.add(orientedSpeed);
-    const groundHeight = scene.getGroundHeight(heroPhysics.position.x, heroPhysics.position.z);
     heroPhysics.position.y = Math.max(groundHeight + 0.08, heroPhysics.position.y);
+}
+
+const q = new THREE.Quaternion();
+
+function onlyY(src) {
+    euler.setFromQuaternion(src, 'YXZ');
+    euler.x = 0;
+    euler.z = 0;
+    return q.setFromEuler(euler);
 }
 
 function updateTarget(tgt, src) {

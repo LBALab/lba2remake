@@ -12,13 +12,15 @@ import {makeGamepadControls} from './controls/gamepad';
 window.onload = function() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const renderer = createRenderer(isMobile);
-    const hero = createHero({
+    const heroConfig = {
         physics: {
+            enabled: true,
             targets: [Target.CAMERA],
-            movement: Movement.FLY,
+            movement: Movement.NORMAL,
             speed: new THREE.Vector3(0.15, 0.3, 0.3)
         },
-    });
+    };
+    const hero = createHero(heroConfig);
     const sceneManager = createSceneManager(hero);
     const controls = isMobile ? [
             makeGyroscopeControls(hero.physics),
@@ -38,4 +40,14 @@ window.onload = function() {
     }
 
     processAnimationFrame();
+
+    GameEvents.Mode.Switch.addListener(() => {
+        if (heroConfig.physics.movement == Movement.NORMAL) {
+            heroConfig.physics.movement = Movement.FLY;
+        }
+        else {
+            heroConfig.physics.movement = Movement.NORMAL;
+        }
+        console.log('Switch mode:', heroConfig.physics.movement);
+    });
 };

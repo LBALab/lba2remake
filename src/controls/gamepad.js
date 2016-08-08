@@ -36,7 +36,7 @@ function buttonPressedHandler(heroPhysics, {detail: {name, isPressed}}) {
                 GameEvents.Scene.PreviousIsland.trigger();
                 break;
             case 'buttonY':
-                setYFrom(heroPhysics.headOffset, heroPhysics.headOrientation);
+                GameEvents.Mode.Switch.trigger();
                 break;
             case 'leftTrigger':
                 GameEvents.Debug.SwitchStats.trigger();
@@ -51,12 +51,4 @@ function rotateArroundY(q, angle) {
     euler.setFromQuaternion(q, 'YXZ');
     euler.y = euler.y + angle;
     q.setFromEuler(euler);
-}
-
-function setYFrom(tgtQ, srcQ) {
-    euler.setFromQuaternion(srcQ, 'YXZ');
-    const y = euler.y;
-    euler.setFromQuaternion(tgtQ, 'YXZ');
-    euler.y = y;
-    tgtQ.setFromEuler(euler);
 }

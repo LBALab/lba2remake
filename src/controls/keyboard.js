@@ -40,6 +40,9 @@ function keyDownHandler(heroPhysics, event) {
         case 'KeyF':
             GameEvents.Debug.SwitchStats.trigger();
             break;
+        case 'KeyM':
+            GameEvents.Mode.Switch.trigger();
+            break;
     }
 }
 

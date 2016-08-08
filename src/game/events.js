@@ -7,6 +7,9 @@ export const GameEvents = {
         GotoIsland: makeEventTarget(),
         SceneLoaded: makeEventTarget()
     },
+    Mode: {
+        Switch: makeEventTarget()
+    },
     Debug: {
         SwitchStats: makeEventTarget()
     }
