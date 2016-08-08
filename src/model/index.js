@@ -151,7 +151,6 @@ export function updateModel(model, index, animIdx, time) {
 
 function updateKeyframe(anim, obj, time) {
     obj.currentTime += time.delta;
-    obj.elapsedTime = time.delta;
     let keyframe = anim.keyframes[obj.currentFrame];
     if (obj.currentTime > keyframe.length) {
         obj.currentTime = 0;
@@ -162,9 +161,9 @@ function updateKeyframe(anim, obj, time) {
         keyframe = anim.keyframes[obj.currentFrame];
     }
 
-    let nextFrame = obj.currentFrame;
-    if (nextFrame + 1 >= anim.numKeyframes) {
-        nextFrame = obj.startFrame;    
+    let nextFrame = obj.currentFrame + 1;
+    if (nextFrame >= anim.numKeyframes) {
+        nextFrame = obj.startFrame;
     }
     const nextkeyframe = anim.keyframes[nextFrame];
 
@@ -180,14 +179,20 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
         const bf = keyframe.boneframes[i];
         const nbf = nextkeyframe.boneframes[i];
 
+        s.m.identity();
+
         switch (bf.type) {
             case 0: // rotation
-                const euler = bf.veuler + (nbf.veuler - bf.veuler) * interpolation;
-                s.m.makeRotationFromEuler(new THREE.Euler(euler.x, euler.y, euler.z, 'XZY'));
+                const eulerX = bf.veuler.x + (nbf.veuler.x - bf.veuler.x) * interpolation;
+                const eulerY = bf.veuler.y + (nbf.veuler.y - bf.veuler.y) * interpolation;
+                const eulerZ = bf.veuler.z + (nbf.veuler.z - bf.veuler.z) * interpolation;
+                s.m.makeRotationFromEuler(new THREE.Euler(eulerX, eulerY, eulerZ, 'XZY'));
                 break;
             case 1:
             case 2: // translation
-                s.pos = bf.pos + (nbf.pos - bf.pos) * interpolation;
+                s.pos.x = bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
+                s.pos.y = bf.pos.y + (nbf.pos.y - bf.pos.y) * interpolation;
+                s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
                 s.m.setPosition(s.pos);
                 break;
         }
