@@ -133,11 +133,10 @@ function createSkeleton(body) {
             boneIndex: i,
             vertexIndex: bone.vertex,
             parent: bone.parent,
-            pos: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
+            vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
+            pos: new THREE.Vector3(0, 0, 0),
             m: new THREE.Matrix4()
         }
-
-        skeletonBone.m.setPosition(skeletonBone.pos);
 
         skeleton.push(skeletonBone);
     }
@@ -180,6 +179,7 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
         const nbf = nextkeyframe.boneframes[i];
 
         s.m.identity();
+        s.pos.copy(s.vertex);
 
         switch (bf.type) {
             case 0: // rotation
@@ -205,8 +205,7 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
     //     while(true) {
     //         const bone = skeleton[boneIdx];
 
-    //         s.pos.add(bone.pos);
-    //         s.m.setPosition(s.pos);
+    //         s.m.multiply(bone.m);
 
     //         if(bone.parent == 0xFFFF)
     //             break;
