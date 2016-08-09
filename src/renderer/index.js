@@ -1,6 +1,9 @@
 import THREE from 'three';
-import setupStats from './stats';
 import StereoEffect from './effects/StereoEffect';
+import EffectComposer from './effects/postprocess/EffectComposer';
+import SMAAPass from './effects/postprocess/SMAAPass';
+import RenderPass from './effects/postprocess/RenderPass';
+import setupStats from './stats';
 import {GameEvents} from '../game/events';
 
 export function createRenderer(useVR) {
@@ -8,11 +11,13 @@ export function createRenderer(useVR) {
     const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 100); // 1m = 0.0625 units
     const resizer = setupResizer(renderer, camera);
+    const smaa = setupSMAA(baseRenderer);
+
     const stats = setupStats(useVR);
     return {
         domElement: baseRenderer.domElement,
         render: scene => {
-            renderer.render(scene, camera);
+            smaa.render(scene, camera);
         },
         dispose: () => {
             resizer.dispose();
@@ -24,7 +29,7 @@ export function createRenderer(useVR) {
 }
 
 function setupBaseRenderer() {
-    const renderer = new THREE.WebGLRenderer({antialias: true, alpha: false});
+    const renderer = new THREE.WebGLRenderer({antialias: false, alpha: false});
     renderer.setClearColor(0x000000);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -45,6 +50,23 @@ function setupBaseRenderer() {
     });
 
     return renderer;
+}
+
+function setupSMAA(renderer) {
+    const composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass();
+    composer.addPass(renderPass);
+
+    const pass = new SMAAPass(window.innerWidth, window.innerHeight);
+    pass.renderToScreen = true;
+    composer.addPass(pass);
+    return {
+        render(scene, camera) {
+            renderPass.scene = scene;
+            renderPass.camera = camera;
+            composer.render();
+        }
+    }
 }
 
 function setupResizer(renderer, camera) {
