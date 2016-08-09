@@ -141,10 +141,10 @@ function createSkeleton(body) {
             vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
             pos: new THREE.Vector3(0, 0, 0),
             m: new THREE.Matrix4(),
+            type: 1, // translation by default
+            euler: null,
             children: []
         }
-
-        skeletonBone.m.setPosition(skeletonBone.vertex);
 
         skeleton.push(skeletonBone);
     }
@@ -188,7 +188,7 @@ function updateKeyframe(anim, obj, time) {
     }
     const nextkeyframe = anim.keyframes[nextFrame];
 
-    updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime);
+    //updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime);
     updateShaderBone(obj);
 }
 
@@ -198,22 +198,21 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
         const s = skeleton[i];
         const bf = keyframe.boneframes[i];
         const nbf = nextkeyframe.boneframes[i];
+        s.type = bf.type;
 
-        s.m.identity();
-
-        s.pos.copy(s.vertex);
-        s.m.setPosition(s.pos);
+        if (s.parent == 0xFFFF) {
+            continue;
+        }
 
         if (bf.type == 0) { // rotation
             const eulerX = bf.veuler.x + (nbf.veuler.x - bf.veuler.x) * interpolation;
             const eulerY = bf.veuler.y + (nbf.veuler.y - bf.veuler.y) * interpolation;
             const eulerZ = bf.veuler.z + (nbf.veuler.z - bf.veuler.z) * interpolation;
-            //s.m.makeRotationFromEuler(new THREE.Euler(eulerX, eulerY, eulerZ, 'XZY'));
+            s.euler = new THREE.Vector3(eulerX, eulerY, eulerZ);
         } else { // translation
             s.pos.x = bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
             s.pos.y = bf.pos.y + (nbf.pos.y - bf.pos.y) * interpolation;
             s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
-            //s.m.setPosition(s.pos);
         }
     }
 
@@ -224,6 +223,18 @@ function updateSkeletonHierarchy(skeleton, index) {
     const s = skeleton[index];
     const p = skeleton[index == 0 ? 0 : s.parent];
     if (s.parent != 0xFFFF) { // skip root
+        s.m.identity();
+        const pos = s.vertex.clone();
+
+        if (s.type == 0) { // rotation
+            s.m.makeRotationFromEuler(new THREE.Euler(s.euler.x, s.euler.y, s.euler.z, 'XZY'));
+        } else { // translation
+            pos.x += s.pos.x;
+            pos.y += s.pos.y;
+            pos.z += s.pos.z; 
+        }
+        s.m.setPosition(pos);
+
         const m = p.m.clone();
         m.multiply(s.m);
         s.m.copy(m);
