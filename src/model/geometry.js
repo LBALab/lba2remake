@@ -110,7 +110,7 @@ function getPosition(object, skeleton, index) {
         z: vertex.z
     };
 
-    while(true) {
+    /*while(true) {
         const bone = skeleton[boneIdx];
 
         pos.x += bone.pos.x;
@@ -121,7 +121,7 @@ function getPosition(object, skeleton, index) {
             break;
             
         boneIdx = bone.parent;
-    }
+    }*/
     return [
         pos.x,
         pos.y,

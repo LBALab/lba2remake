@@ -139,10 +139,12 @@ function createSkeleton(body) {
             vertexIndex: bone.vertex,
             parent: bone.parent,
             vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
-            pos: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
+            pos: new THREE.Vector3(0, 0, 0),
             m: new THREE.Matrix4(),
             children: []
         }
+
+        skeletonBone.m.setPosition(skeletonBone.vertex);
 
         skeleton.push(skeletonBone);
     }
@@ -157,6 +159,9 @@ function createSkeleton(body) {
         const s = skeleton[bone.parent];
         s.children.push(bone);
     }
+
+    updateSkeletonHiearchy(skeleton, 0);
+
     return { skeleton, rootBone };
 }
 
@@ -183,7 +188,7 @@ function updateKeyframe(anim, obj, time) {
     }
     const nextkeyframe = anim.keyframes[nextFrame];
 
-    updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime);
+    //updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime);
 
     updateShaderBone(obj);
 }
@@ -200,18 +205,17 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
         if (s.parent == 0xFFFF) {
             continue;
         }
-        
-        s.pos.copy(s.vertex);
 
         switch (bf.type) {
             case 0: // rotation
                 const eulerX = bf.veuler.x + (nbf.veuler.x - bf.veuler.x) * interpolation;
                 const eulerY = bf.veuler.y + (nbf.veuler.y - bf.veuler.y) * interpolation;
                 const eulerZ = bf.veuler.z + (nbf.veuler.z - bf.veuler.z) * interpolation;
-                s.m.makeRotationFromEuler(new THREE.Euler(eulerX, eulerY, eulerZ, 'XYZ'));
+                s.m.makeRotationFromEuler(new THREE.Euler(eulerX, eulerY, eulerZ, 'XZY'));
                 break;
             case 1:
             case 2: // translation
+                s.pos.copy(s.vertex);
                 s.pos.x += bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
                 s.pos.y += bf.pos.y + (nbf.pos.y - bf.pos.y) * interpolation;
                 s.pos.z += bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
@@ -220,30 +224,16 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
         }
     }
 
-    //updateSkeletonHiearchy(skeleton, 0);
-
-    // apply parent child
-    // for (let i = 0; i < skeleton.length; ++i) {
-    //     const s = skeleton[i];
-    //     let boneIdx = i;
-    //     while(true) {
-    //         const bone = skeleton[boneIdx];
-
-    //         s.m.multiply(bone.m);
-
-    //         if(bone.parent == 0xFFFF)
-    //             break;
-                
-    //         boneIdx = bone.parent;
-    //     }
-    // }
+    updateSkeletonHiearchy(skeleton, 0);
 }
 
 function updateSkeletonHiearchy(skeleton, index) {
     const s = skeleton[index];
     const p = skeleton[index == 0 ? 0 : s.parent];
     if (s.parent != 0xFFFF) { // skip root
-        p.m.multiply(s.m);
+        const m = p.m.clone();
+        m.multiply(s.m);
+        s.m.copy(m);
     }
     for (let i = 0; i < s.children.length; ++i) {
         updateSkeletonHiearchy(skeleton, s.children[i].boneIndex);
