@@ -8,6 +8,8 @@ export function loadBodyGeometry(geometry, object, skeleton, palette) {
     loadFaceGeometry(geometry, object, skeleton, palette);
     loadSphereGeometry(geometry, object, skeleton, palette);
     loadLineGeometry(geometry, object, skeleton, palette);
+
+    debugBoneGeometry(geometry, object, skeleton, palette);
 }
 
 function loadFaceGeometry(geometry, object, skeleton, palette) {
@@ -66,6 +68,30 @@ function loadLineGeometry(geometry, object, skeleton, palette) {
 
         addVertex(v1,l.colour, l.vertex1);
         addVertex(v2,l.colour, l.vertex2);
+    });
+}
+
+function debugBoneGeometry(geometry, object, skeleton, palette) {
+    _.each(object.bones, (s) => {
+        const centerPos = getPosition(object, skeleton, s.vertex);
+        const sphereGeometry = new THREE.SphereGeometry(0.001, 8, 8);
+        
+        const addVertex = (j) => {
+    	    push.apply(geometry.positions, [
+                sphereGeometry.vertices[j].x + centerPos[0],
+                sphereGeometry.vertices[j].y + centerPos[1],
+                sphereGeometry.vertices[j].z + centerPos[2]
+            ]);
+            push.apply(geometry.colors, (s.parent == 0xFFFF) ? [0,0,255,255] : [255,0,0,255]);
+            push.apply(geometry.uvs, [0,0]);
+            push.apply(geometry.bones, getBone(object, s.vertex));
+        };
+
+        _.each(sphereGeometry.faces, (f) => {
+            addVertex(f.a);
+            addVertex(f.b);
+            addVertex(f.c);
+        });
     });
 }
 
