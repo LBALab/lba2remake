@@ -160,7 +160,7 @@ function createSkeleton(body) {
         s.children.push(bone);
     }
 
-    updateSkeletonHiearchy(skeleton, 0);
+    updateSkeletonHierarchy(skeleton, 0);
 
     return { skeleton, rootBone };
 }
@@ -188,13 +188,12 @@ function updateKeyframe(anim, obj, time) {
     }
     const nextkeyframe = anim.keyframes[nextFrame];
 
-    //updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime);
-
+    updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime);
     updateShaderBone(obj);
 }
 
 function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
-    const interpolation = time / skeleton.length; 
+    const interpolation = time / keyframe.length; 
     for (let i = 0; i < skeleton.length; ++i) {
         const s = skeleton[i];
         const bf = keyframe.boneframes[i];
@@ -202,32 +201,26 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
 
         s.m.identity();
 
-        if (s.parent == 0xFFFF) {
-            continue;
-        }
+        s.pos.copy(s.vertex);
+        s.m.setPosition(s.pos);
 
-        switch (bf.type) {
-            case 0: // rotation
-                const eulerX = bf.veuler.x + (nbf.veuler.x - bf.veuler.x) * interpolation;
-                const eulerY = bf.veuler.y + (nbf.veuler.y - bf.veuler.y) * interpolation;
-                const eulerZ = bf.veuler.z + (nbf.veuler.z - bf.veuler.z) * interpolation;
-                s.m.makeRotationFromEuler(new THREE.Euler(eulerX, eulerY, eulerZ, 'XZY'));
-                break;
-            case 1:
-            case 2: // translation
-                s.pos.copy(s.vertex);
-                s.pos.x += bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
-                s.pos.y += bf.pos.y + (nbf.pos.y - bf.pos.y) * interpolation;
-                s.pos.z += bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
-                s.m.setPosition(s.pos);
-                break;
+        if (bf.type == 0) { // rotation
+            const eulerX = bf.veuler.x + (nbf.veuler.x - bf.veuler.x) * interpolation;
+            const eulerY = bf.veuler.y + (nbf.veuler.y - bf.veuler.y) * interpolation;
+            const eulerZ = bf.veuler.z + (nbf.veuler.z - bf.veuler.z) * interpolation;
+            //s.m.makeRotationFromEuler(new THREE.Euler(eulerX, eulerY, eulerZ, 'XZY'));
+        } else { // translation
+            s.pos.x = bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
+            s.pos.y = bf.pos.y + (nbf.pos.y - bf.pos.y) * interpolation;
+            s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
+            //s.m.setPosition(s.pos);
         }
     }
 
-    updateSkeletonHiearchy(skeleton, 0);
+    updateSkeletonHierarchy(skeleton, 0);
 }
 
-function updateSkeletonHiearchy(skeleton, index) {
+function updateSkeletonHierarchy(skeleton, index) {
     const s = skeleton[index];
     const p = skeleton[index == 0 ? 0 : s.parent];
     if (s.parent != 0xFFFF) { // skip root
@@ -236,7 +229,7 @@ function updateSkeletonHiearchy(skeleton, index) {
         s.m.copy(m);
     }
     for (let i = 0; i < s.children.length; ++i) {
-        updateSkeletonHiearchy(skeleton, s.children[i].boneIndex);
+        updateSkeletonHierarchy(skeleton, s.children[i].boneIndex);
     }
 }
 
