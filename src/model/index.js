@@ -227,6 +227,8 @@ function updateSkeletonHierarchy(skeleton, index) {
         const m = p.m.clone();
         m.multiply(s.m);
         s.m.copy(m);
+    } else {
+        p.m.identity();
     }
     for (let i = 0; i < s.children.length; ++i) {
         updateSkeletonHierarchy(skeleton, s.children[i].boneIndex);
