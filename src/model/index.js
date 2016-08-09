@@ -192,6 +192,28 @@ function updateKeyframe(anim, obj, time) {
     updateShaderBone(obj);
 }
 
+function getRotation(nextValue, currentValue, interpolation) {
+    currentValue &= 0xFFF;
+    nextValue &= 0xFFF;
+
+    let angleDif = nextValue - currentValue;
+    let computedAngle = 0;
+
+    if (angleDif) {
+	    if (angleDif < -0x800) {
+		    angleDif += 0x1000;
+		}
+	    else if (angleDif > 0x800) {
+		    angleDif -= 0x1000;
+		}
+        computedAngle = currentValue + (angleDif * interpolation)
+    } else {
+        computedAngle = currentValue;
+    }
+
+    return computedAngle & 0xFFF;
+}
+
 function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
     const interpolation = time / keyframe.length; 
     for (let i = 0; i < skeleton.length; ++i) {
@@ -205,9 +227,9 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
         }
 
         if (bf.type == 0) { // rotation
-            const eulerX = bf.veuler.x + (nbf.veuler.x - bf.veuler.x) * interpolation;
-            const eulerY = bf.veuler.y + (nbf.veuler.y - bf.veuler.y) * interpolation;
-            const eulerZ = bf.veuler.z + (nbf.veuler.z - bf.veuler.z) * interpolation;
+            let eulerX = bf.veuler.x + (nbf.veuler.x - bf.veuler.x) * interpolation;
+            let eulerY = bf.veuler.y + (nbf.veuler.y - bf.veuler.y) * interpolation;
+            let eulerZ = bf.veuler.z + (nbf.veuler.z - bf.veuler.z) * interpolation;
             s.euler = new THREE.Vector3(eulerX, eulerY, eulerZ);
         } else { // translation
             s.pos.x = bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
@@ -227,7 +249,9 @@ function updateSkeletonHierarchy(skeleton, index) {
         const pos = s.vertex.clone();
 
         if (s.type == 0) { // rotation
-            s.m.makeRotationFromEuler(new THREE.Euler(s.euler.x, s.euler.y, s.euler.z, 'XYZ'));
+
+
+            s.m.makeRotationFromEuler(new THREE.Euler((s.euler.x), (s.euler.y), (s.euler.z), 'XYZ')); // THREE.Math.degToRad
         } else { // translation
             pos.x += s.pos.x;
             pos.y += s.pos.y;
