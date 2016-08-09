@@ -62,9 +62,9 @@ function loadBoneframe(keyframe, data, offset) {
     };
     let canFall = false;
 
-    const x = data.getUint16(offset + 2, true);
-    const y = data.getUint16(offset + 4, true);
-    const z = data.getUint16(offset + 6, true);
+    const x = data.getInt16(offset + 2, true);
+    const y = data.getInt16(offset + 4, true);
+    const z = data.getInt16(offset + 6, true);
 
     // assigned based on type of bone animation (rotation or translation)
     if (boneframe.type == 0) { // rotation

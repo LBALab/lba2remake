@@ -188,7 +188,7 @@ function updateKeyframe(anim, obj, time) {
     }
     const nextkeyframe = anim.keyframes[nextFrame];
 
-    //updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime);
+    updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime);
     updateShaderBone(obj);
 }
 
@@ -227,7 +227,7 @@ function updateSkeletonHierarchy(skeleton, index) {
         const pos = s.vertex.clone();
 
         if (s.type == 0) { // rotation
-            s.m.makeRotationFromEuler(new THREE.Euler(s.euler.x, s.euler.y, s.euler.z, 'XZY'));
+            s.m.makeRotationFromEuler(new THREE.Euler(s.euler.x, s.euler.y, s.euler.z, 'XYZ'));
         } else { // translation
             pos.x += s.pos.x;
             pos.y += s.pos.y;
