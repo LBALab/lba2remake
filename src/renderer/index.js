@@ -11,13 +11,26 @@ export function createRenderer(useVR) {
     const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 100); // 1m = 0.0625 units
     const resizer = setupResizer(renderer, camera);
-    const smaa = setupSMAA(baseRenderer);
-
+    const smaa = setupSMAA(renderer);
     const stats = setupStats(useVR);
+    let antialias = true;
+    window.addEventListener('keydown', event => {
+        if (event.code == 'KeyH') {
+            antialias = !antialias;
+            console.log('Antialias: ', antialias);
+            window.dispatchEvent(new CustomEvent('resize'));
+        }
+    });
     return {
         domElement: baseRenderer.domElement,
         render: scene => {
-            smaa.render(scene, camera);
+            renderer.antialias = antialias;
+            if (antialias) {
+                smaa.render(scene, camera);
+            }
+            else {
+                renderer.render(scene, camera);
+            }
         },
         dispose: () => {
             resizer.dispose();

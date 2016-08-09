@@ -74,7 +74,11 @@ function StereoEffect(renderer) {
 
     };
 
-    this.render = function (scene, camera) {
+    this.getSize = function() {
+        return renderer.getSize();
+    };
+
+    this.render = function (scene, camera, readBuffer, clear) {
 
         scene.updateMatrixWorld();
 
@@ -128,20 +132,32 @@ function StereoEffect(renderer) {
         _cameraR.quaternion.copy(_quaternion);
         _cameraR.translateX(this.eyeSeparation / 2.0);
 
-        //
+        if (this.antialias) {
+            if (readBuffer) {
+                renderer.setScissorTest(true);
+                readBuffer.scissor.set(0, 0, _width, _height);
+                readBuffer.viewport.set(0, 0, _width, _height);
+                renderer.render(scene, _cameraL, readBuffer, true);
 
-        renderer.clear();
-        renderer.setScissorTest(true);
+                readBuffer.scissor.set(_width, 0, _width, _height);
+                readBuffer.viewport.set(_width, 0, _width, _height);
+                renderer.render(scene, _cameraR, readBuffer);
+                renderer.setScissorTest(false);
+            } else {
+                renderer.render(scene, camera, readBuffer);
+            }
+        } else {
+            renderer.clear();
+            renderer.setScissorTest(true);
+            renderer.setScissor(0, 0, _width, _height);
+            renderer.setViewport(0, 0, _width, _height);
+            renderer.render(scene, _cameraL);
 
-        renderer.setScissor(0, 0, _width, _height);
-        renderer.setViewport(0, 0, _width, _height);
-        renderer.render(scene, _cameraL);
-
-        renderer.setScissor(_width, 0, _width, _height);
-        renderer.setViewport(_width, 0, _width, _height);
-        renderer.render(scene, _cameraR);
-
-        renderer.setScissorTest(false);
+            renderer.setScissor(_width, 0, _width, _height);
+            renderer.setViewport(_width, 0, _width, _height);
+            renderer.render(scene, _cameraR);
+            renderer.setScissorTest(false);
+        }
 
     };
 

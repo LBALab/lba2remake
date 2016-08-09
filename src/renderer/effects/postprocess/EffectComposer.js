@@ -92,18 +92,6 @@ EffectComposer.prototype = {
 
 			}
 
-			/*
-			if ( pass instanceof MaskPass ) {
-
-				maskActive = true;
-
-			} else if ( pass instanceof ClearMaskPass ) {
-
-				maskActive = false;
-
-			}
-			*/
-
 		}
 
 	},
