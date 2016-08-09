@@ -53,7 +53,8 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
     if (!model.object3D[index]) {
         const obj = {
             mesh: null,
-            skeleton: createSkeleton(body),
+            skeleton: null,
+            rootBone: null,
             currentFrame: 0,
             startFrame:0,
             lastFrame:0,
@@ -61,6 +62,9 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
             elapsedTime:0,
             matrixBones: []
         }
+        const { skeleton,  rootBone} = createSkeleton(body);
+        obj.skeleton = skeleton;
+        obj.rootBone = rootBone;
         obj.matrixBones = createShaderBone(obj);
 
         const geometry = loadGeometry(model, body, obj.skeleton);
@@ -125,6 +129,7 @@ function loadGeometry(model, body, skeleton) {
 
 function createSkeleton(body) {
     let skeleton = [];
+    let rootBone;
     for (let i = 0; i < body.bonesSize; ++i) {
         const bone = body.bones[i];
         const boneVertex = body.vertices[bone.vertex];
@@ -134,13 +139,25 @@ function createSkeleton(body) {
             vertexIndex: bone.vertex,
             parent: bone.parent,
             vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
-            pos: new THREE.Vector3(0, 0, 0),
-            m: new THREE.Matrix4()
+            pos: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
+            m: new THREE.Matrix4(),
+            children: []
         }
 
         skeleton.push(skeletonBone);
     }
-    return skeleton;
+
+    for (let i = 0; i < skeleton.length; ++i) {
+        const bone = skeleton[i];
+        if (bone.parent == 0xFFFF) {
+            rootBone = bone;
+            continue;
+        }
+
+        const s = skeleton[bone.parent];
+        s.children.push(bone);
+    }
+    return { skeleton, rootBone };
 }
 
 export function updateModel(model, index, animIdx, time) {
@@ -179,6 +196,11 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
         const nbf = nextkeyframe.boneframes[i];
 
         s.m.identity();
+
+        if (s.parent == 0xFFFF) {
+            continue;
+        }
+        
         s.pos.copy(s.vertex);
 
         switch (bf.type) {
@@ -186,17 +208,19 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
                 const eulerX = bf.veuler.x + (nbf.veuler.x - bf.veuler.x) * interpolation;
                 const eulerY = bf.veuler.y + (nbf.veuler.y - bf.veuler.y) * interpolation;
                 const eulerZ = bf.veuler.z + (nbf.veuler.z - bf.veuler.z) * interpolation;
-                s.m.makeRotationFromEuler(new THREE.Euler(eulerX, eulerY, eulerZ, 'XZY'));
+                s.m.makeRotationFromEuler(new THREE.Euler(eulerX, eulerY, eulerZ, 'XYZ'));
                 break;
             case 1:
             case 2: // translation
-                s.pos.x = bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
-                s.pos.y = bf.pos.y + (nbf.pos.y - bf.pos.y) * interpolation;
-                s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
+                s.pos.x += bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
+                s.pos.y += bf.pos.y + (nbf.pos.y - bf.pos.y) * interpolation;
+                s.pos.z += bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
                 s.m.setPosition(s.pos);
                 break;
         }
     }
+
+    //updateSkeletonHiearchy(skeleton, 0);
 
     // apply parent child
     // for (let i = 0; i < skeleton.length; ++i) {
@@ -213,6 +237,17 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
     //         boneIdx = bone.parent;
     //     }
     // }
+}
+
+function updateSkeletonHiearchy(skeleton, index) {
+    const s = skeleton[index];
+    const p = skeleton[index == 0 ? 0 : s.parent];
+    if (s.parent != 0xFFFF) { // skip root
+        p.m.multiply(s.m);
+    }
+    for (let i = 0; i < s.children.length; ++i) {
+        updateSkeletonHiearchy(skeleton, s.children[i].boneIndex);
+    }
 }
 
 function createShaderBone(obj) {
