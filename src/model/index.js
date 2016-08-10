@@ -182,14 +182,14 @@ function updateKeyframe(anim, obj, time) {
         obj.currentTime = obj.currentTime - keyframe.length;
         ++obj.currentFrame;
         if (obj.currentFrame >= anim.numKeyframes) {
-            obj.currentFrame = 0;
+            obj.currentFrame = obj.startFrame;
         }
         keyframe = anim.keyframes[obj.currentFrame];
     }
 
     let nextFrame = obj.currentFrame + 1;
     if (nextFrame >= anim.numKeyframes) {
-        nextFrame = 0;
+        nextFrame = obj.startFrame;
     }
     const nextkeyframe = anim.keyframes[nextFrame];
 
@@ -203,9 +203,6 @@ function updateKeyframe(anim, obj, time) {
 }
 
 function getRotation(nextValue, currentValue, interpolation) {
-    currentValue &= 0xFFF;
-    nextValue &= 0xFFF;
-
     let angleDif = nextValue - currentValue;
     let computedAngle = 0;
 
@@ -223,7 +220,7 @@ function getRotation(nextValue, currentValue, interpolation) {
 
     computedAngle = computedAngle * 360 / 0x1000;
 
-    return computedAngle & 0xFFF;
+    return computedAngle;
 }
 
 function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time, numBones) {
