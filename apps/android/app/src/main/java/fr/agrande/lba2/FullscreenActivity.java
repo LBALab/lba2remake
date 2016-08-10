@@ -35,7 +35,7 @@ public class FullscreenActivity extends AppCompatActivity {
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 float x = event.getAxisValue(MotionEvent.AXIS_X);
                 float y = -event.getAxisValue(MotionEvent.AXIS_Y);
-                mWebView.loadUrl(String.format("javascript:window.dispatchEvent(new CustomEvent('dpadvaluechanged', {detail: {x: %s, y: %s}}))", x, y));
+                mWebView.evaluateJavascript(String.format("window.dispatchEvent(new CustomEvent('dpadvaluechanged', {detail: {x: %s, y: %s}}))", x, y), null);
             }
         }
         if(event.isFromSource(InputDevice.SOURCE_CLASS_POINTER)) {
@@ -45,7 +45,7 @@ public class FullscreenActivity extends AppCompatActivity {
                 if (prevX != -1 && prevY != -1) {
                     float x = newX - prevX;
                     float y = newY - prevY;
-                    mWebView.loadUrl(String.format("javascript:window.dispatchEvent(new CustomEvent('dpadvaluechanged', {detail: {x: %s, y: %s}}))", x, y));
+                    mWebView.evaluateJavascript(String.format("window.dispatchEvent(new CustomEvent('dpadvaluechanged', {detail: {x: %s, y: %s}}))", x, y), null);
                 }
                 prevX = newX;
                 prevY = newY;
