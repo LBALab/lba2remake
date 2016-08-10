@@ -85,11 +85,20 @@ export default class Renderer {
     }
 
     onKeyDown(event) {
-        if (event.keyCode == 78) {
-            bodyIdx = (bodyIdx + 1)
-            if (bodyIdx > models.bodies.length)
-                bodyIdx = 0;
-            index = bodyIdx; // FIX ME for now will be the same
+        if (event.keyCode == 78 || event.keyCode == 77) { //N
+            isLoaded = false;
+
+            if (event.keyCode == 78) {
+                bodyIdx = (bodyIdx + 1)
+                if (bodyIdx > models.bodies.length)
+                    bodyIdx = 0;
+                index = bodyIdx; // FIX ME for now will be the same
+            }
+            if (event.keyCode == 77) { //M
+                animIdx = (animIdx + 1)
+                if (animIdx > models.anims.length)
+                    animIdx = 0;
+            }
             model(models, index, entityIdx, bodyIdx, animIdx, (object) => {
                 models = object;
                 this.scene.remove(current);
