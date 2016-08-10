@@ -11,10 +11,10 @@ export function loadAnim(model, anims, index) {
         const buffer = model.files.anim.getEntry(index);
         const data = new DataView(buffer);
         const obj = {
-            numKeyframes: data.getUint16(0x00, true),
-            numBoneframes: data.getUint16(0x02, true),
-            startFrame: data.getUint16(0x04, true),
-            unk1: data.getUint16(0x08, true),
+            numKeyframes: data.getUint16(0, true),
+            numBoneframes: data.getUint16(2, true),
+            startFrame: data.getUint16(4, true),
+            unk1: data.getUint16(6, true),
             
             buffer: buffer
         };
@@ -30,17 +30,18 @@ export function loadAnim(model, anims, index) {
 function loadKeyframes(object) {
     object.keyframes = [];
     const data = new DataView(object.buffer, 0, object.buffer.length);
-    let offset = 0;
+    let offset = 8;
     for (let i = 0; i < object.numKeyframes; ++i) {
         let keyframe = {
             length: data.getUint16(offset, true),
-            x: data.getUint16(offset + 2, true),
-            y: data.getUint16(offset + 4, true),
-            z: data.getUint16(offset + 6, true),
+            x: data.getInt16(offset + 2, true),
+            y: data.getInt16(offset + 4, true),
+            z: data.getInt16(offset + 6, true),
             canFall: false,
             boneframes: []
         };
         offset += 8;
+        //keyframe.length = keyframe.length / 100; 
 
         for (let j = 0; j < object.numBoneframes; ++j) {
             const {boneframe, canFall} = loadBoneframe(keyframe, data, offset);
