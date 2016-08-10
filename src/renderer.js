@@ -22,7 +22,7 @@ const islands = [
 let index = 0;
 let entityIdx = 0;
 let bodyIdx = 0; // 92-Baldino
-let animIdx = 1; // running
+let animIdx = 0; // running
 
 let current;
 let models;

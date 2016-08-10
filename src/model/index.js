@@ -56,7 +56,7 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
             skeleton: null,
             rootBone: null,
             currentFrame: 0,
-            startFrame:0,
+            startFrame: 0, //anim.startFrame, // FIXME
             lastFrame:0,
             currentTime:0,
             elapsedTime:0,
@@ -71,7 +71,12 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
 
         obj.mesh = loadMesh(model, obj, geometry);
         model.object3D[index] = obj;
-    } 
+    } else {
+        const obj = model.object3D[index];
+        obj.currentFrame = 0;
+        obj.startFrame = 0;
+        obj. currentTime = 0;
+    }
     return model;
 }
 
