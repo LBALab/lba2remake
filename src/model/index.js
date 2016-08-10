@@ -55,8 +55,8 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
             mesh: null,
             skeleton: null,
             rootBone: null,
-            currentFrame: 0,
-            startFrame: 0, //anim.startFrame, // FIXME
+            currentFrame: anim.startFrame,
+            startFrame: anim.startFrame,
             lastFrame:0,
             currentTime:0,
             elapsedTime:0,
@@ -73,9 +73,9 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
         model.object3D[index] = obj;
     } else {
         const obj = model.object3D[index];
-        obj.currentFrame = 0;
-        obj.startFrame = 0;
-        obj. currentTime = 0;
+        obj.currentFrame = anim.startFrame;
+        obj.startFrame = anim.startFrame;
+        obj.currentTime = 0;
     }
     return model;
 }
@@ -179,7 +179,7 @@ function updateKeyframe(anim, obj, time) {
     obj.currentTime += time.delta;
     let keyframe = anim.keyframes[obj.currentFrame];
     if (obj.currentTime > keyframe.length) {
-        obj.currentTime = obj.currentTime - keyframe.length;
+        obj.currentTime = 0;
         ++obj.currentFrame;
         if (obj.currentFrame >= anim.numKeyframes) {
             obj.currentFrame = obj.startFrame;
@@ -216,6 +216,8 @@ function getRotation(nextValue, currentValue, interpolation) {
         computedAngle = currentValue;
     }
 
+    computedAngle = computedAngle * 360 / 0x1000;
+
     return computedAngle & 0xFFF;
 }
 
@@ -232,9 +234,9 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
         }
 
         if (bf.type == 0) { // rotation
-            let eulerX = bf.veuler.x + (nbf.veuler.x - bf.veuler.x) * interpolation;
-            let eulerY = bf.veuler.y + (nbf.veuler.y - bf.veuler.y) * interpolation;
-            let eulerZ = bf.veuler.z + (nbf.veuler.z - bf.veuler.z) * interpolation;
+            let eulerX = getRotation(nbf.veuler.x, bf.veuler.x, interpolation);
+            let eulerY = getRotation(nbf.veuler.y, bf.veuler.y, interpolation);
+            let eulerZ = getRotation(nbf.veuler.z, bf.veuler.z, interpolation);
             s.euler = new THREE.Vector3(eulerX, eulerY, eulerZ);
         } else { // translation
             s.pos.x = bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
@@ -254,7 +256,7 @@ function updateSkeletonHierarchy(skeleton, index) {
         const pos = s.vertex.clone();
 
         if (s.type == 0) { // rotation
-            s.m.makeRotationFromEuler(new THREE.Euler((s.euler.x), (s.euler.y), (s.euler.z), 'XZY')); // THREE.Math.degToRad
+            s.m.makeRotationFromEuler(new THREE.Euler(THREE.Math.degToRad(s.euler.x), THREE.Math.degToRad(s.euler.y), THREE.Math.degToRad(s.euler.z), 'XZY')); // THREE.Math.degToRad
         } else { // translation
             pos.x += s.pos.x;
             pos.y += s.pos.y;

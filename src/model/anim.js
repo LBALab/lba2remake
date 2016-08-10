@@ -11,10 +11,10 @@ export function loadAnim(model, anims, index) {
         const buffer = model.files.anim.getEntry(index);
         const data = new DataView(buffer);
         const obj = {
-            numKeyframes: data.getUint16(0, true),
-            numBoneframes: data.getUint16(2, true),
-            startFrame: data.getUint16(4, true),
-            unk1: data.getUint16(6, true),
+            numKeyframes: data.getUint16(0x00, true),
+            numBoneframes: data.getUint16(0x02, true),
+            startFrame: data.getUint16(0x04, true),
+            unk1: data.getUint16(0x08, true),
             
             buffer: buffer
         };
@@ -33,7 +33,7 @@ function loadKeyframes(object) {
     let offset = 8;
     for (let i = 0; i < object.numKeyframes; ++i) {
         let keyframe = {
-            length: data.getUint16(offset, true),
+            length: data.getUint16(offset, true) / 1000,
             x: data.getInt16(offset + 2, true),
             y: data.getInt16(offset + 4, true),
             z: data.getInt16(offset + 6, true),
@@ -41,7 +41,6 @@ function loadKeyframes(object) {
             boneframes: []
         };
         offset += 8;
-        //keyframe.length = keyframe.length / 100; 
 
         for (let j = 0; j < object.numBoneframes; ++j) {
             const {boneframe, canFall} = loadBoneframe(keyframe, data, offset);
@@ -70,7 +69,7 @@ function loadBoneframe(keyframe, data, offset) {
     // assigned based on type of bone animation (rotation or translation)
     if (boneframe.type == 0) { // rotation
         boneframe.pos = new THREE.Vector3(0, 0, 0);
-        boneframe.veuler = new THREE.Vector3((x / 0x1000) , (y / 0x1000), (z / 0x1000));
+        boneframe.veuler = new THREE.Vector3(x, y, z);
     } else { // translation
         boneframe.veuler = new THREE.Vector3(0, 0, 0);
         boneframe.pos = new THREE.Vector3(x / 0x4000, y / 0x4000, z / 0x4000);
