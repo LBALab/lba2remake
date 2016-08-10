@@ -33,7 +33,7 @@ function loadKeyframes(object) {
     let offset = 8;
     for (let i = 0; i < object.numKeyframes; ++i) {
         let keyframe = {
-            length: data.getUint16(offset, true) / 1000,
+            length: data.getUint16(offset, true),
             x: data.getInt16(offset + 2, true),
             y: data.getInt16(offset + 4, true),
             z: data.getInt16(offset + 6, true),

@@ -176,10 +176,10 @@ export function updateModel(model, index, animIdx, time) {
 }
 
 function updateKeyframe(anim, obj, time) {
-    obj.currentTime += time.delta;
+    obj.currentTime += time.delta * 1000;
     let keyframe = anim.keyframes[obj.currentFrame];
     if (obj.currentTime > keyframe.length) {
-        obj.currentTime = 0;
+        obj.currentTime = obj.currentTime - keyframe.length;
         ++obj.currentFrame;
         if (obj.currentFrame >= anim.numKeyframes) {
             obj.currentFrame = 0;
@@ -193,7 +193,12 @@ function updateKeyframe(anim, obj, time) {
     }
     const nextkeyframe = anim.keyframes[nextFrame];
 
-    updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime);
+    let numBones = anim.numBoneframes;
+    if (obj.skeleton.length < numBones) {
+        numBones = obj.skeleton.length;
+    }
+
+    updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime, numBones);
     updateShaderBone(obj);
 }
 
@@ -221,9 +226,9 @@ function getRotation(nextValue, currentValue, interpolation) {
     return computedAngle & 0xFFF;
 }
 
-function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time) {
+function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time, numBones) {
     const interpolation = time / keyframe.length; 
-    for (let i = 0; i < skeleton.length; ++i) {
+    for (let i = 0; i < numBones; ++i) {
         const s = skeleton[i];
         const bf = keyframe.boneframes[i];
         const nbf = nextkeyframe.boneframes[i];
