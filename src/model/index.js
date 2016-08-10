@@ -182,14 +182,14 @@ function updateKeyframe(anim, obj, time) {
         obj.currentTime = 0;
         ++obj.currentFrame;
         if (obj.currentFrame >= anim.numKeyframes) {
-            obj.currentFrame = obj.startFrame;
+            obj.currentFrame = 0;
         }
         keyframe = anim.keyframes[obj.currentFrame];
     }
 
     let nextFrame = obj.currentFrame + 1;
     if (nextFrame >= anim.numKeyframes) {
-        nextFrame = obj.startFrame;
+        nextFrame = 0;
     }
     const nextkeyframe = anim.keyframes[nextFrame];
 
