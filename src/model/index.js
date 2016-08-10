@@ -102,7 +102,7 @@ function loadMesh(model, obj, geometry) {
         const linebufferGeometry = new THREE.BufferGeometry();
         linebufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.linePositions), 3));
         linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.lineColors), 4, true));
-        bufferGeometry.addAttribute('bone', new THREE.BufferAttribute(new Uint8Array(geometry.lineBones), 1));
+        linebufferGeometry.addAttribute('bone', new THREE.BufferAttribute(new Uint8Array(geometry.lineBones), 1));
 
         const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
         object.add(lineSegments);
