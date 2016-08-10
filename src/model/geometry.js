@@ -8,8 +8,7 @@ export function loadBodyGeometry(geometry, object, skeleton, palette) {
     loadFaceGeometry(geometry, object, skeleton, palette);
     loadSphereGeometry(geometry, object, skeleton, palette);
     loadLineGeometry(geometry, object, skeleton, palette);
-
-    debugBoneGeometry(geometry, object, skeleton, palette);
+    //debugBoneGeometry(geometry, object, skeleton, palette);
 }
 
 function loadFaceGeometry(geometry, object, skeleton, palette) {
