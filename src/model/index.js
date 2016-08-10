@@ -254,9 +254,7 @@ function updateSkeletonHierarchy(skeleton, index) {
         const pos = s.vertex.clone();
 
         if (s.type == 0) { // rotation
-
-
-            s.m.makeRotationFromEuler(new THREE.Euler((s.euler.x), (s.euler.y), (s.euler.z), 'XYZ')); // THREE.Math.degToRad
+            s.m.makeRotationFromEuler(new THREE.Euler((s.euler.x), (s.euler.y), (s.euler.z), 'XZY')); // THREE.Math.degToRad
         } else { // translation
             pos.x += s.pos.x;
             pos.y += s.pos.y;
