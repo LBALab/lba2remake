@@ -69,7 +69,7 @@ function loadBoneframe(keyframe, data, offset) {
     // assigned based on type of bone animation (rotation or translation)
     if (boneframe.type == 0) { // rotation
         boneframe.pos = new THREE.Vector3(0, 0, 0);
-        boneframe.veuler = new THREE.Vector3((x * 360 / 0x1000) / (2 * Math.PI), (y * 360 / 0x1000) / (2 * Math.PI), (z * 360 / 0x1000) / (2 * Math.PI));
+        boneframe.veuler = new THREE.Vector3((x / 0x1000) , (y / 0x1000), (z / 0x1000));
     } else { // translation
         boneframe.veuler = new THREE.Vector3(0, 0, 0);
         boneframe.pos = new THREE.Vector3(x / 0x4000, y / 0x4000, z / 0x4000);
