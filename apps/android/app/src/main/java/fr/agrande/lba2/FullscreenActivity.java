@@ -24,8 +24,7 @@ public class FullscreenActivity extends AppCompatActivity {
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         WebView.setWebContentsDebuggingEnabled(true);
-        mWebView.loadUrl("http://192.168.213.75:8080");
-        //mWebView.loadUrl("http://192.168.0.5:8081");
+        mWebView.loadUrl("http://adri42.bitbucket.org/lba2");
     }
 
     @Override
