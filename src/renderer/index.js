@@ -38,7 +38,7 @@ function setupBaseRenderer() {
     renderer.domElement.style.top = 0;
     renderer.domElement.style.opacity = 1.0;
 
-    GameEvents.Scene.SceneLoaded.addListener(scene => {
+    GameEvents.scene.sceneLoaded.addListener(scene => {
         const sc = scene.envInfo.skyColor;
         const color = new THREE.Color(sc[0], sc[1], sc[2]);
         renderer.setClearColor(color.getHex(), 1);
