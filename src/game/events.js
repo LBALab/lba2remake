@@ -15,6 +15,8 @@ export const GameEvents = {
     }
 };
 
+window.GameEvents = GameEvents;
+
 function GameEventTarget() {
     const listeners = [];
     const eventTarget = function() {
