@@ -14,7 +14,7 @@
 			<key>Key</key>
 			<string>url</string>
 			<key>DefaultValue</key>
-			<string>http://192.168.0.19:8080/</string>
+			<string>http://adri42.bitbucket.org/lba2/</string>
 			<key>IsSecure</key>
 			<false/>
 			<key>KeyboardType</key>

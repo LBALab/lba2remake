@@ -33,7 +33,7 @@ class ViewController: UIViewController {
         let defaults = UserDefaults.standard
         var urlStr = defaults.string(forKey: "url")
         if urlStr == nil {
-            urlStr = "http://192.168.0.18:8080/"
+            urlStr = "http://adri42.bitbucket.org/lba2/"
         }
         print(urlStr)
         let url = URL(string: urlStr!)
