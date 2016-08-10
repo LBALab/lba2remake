@@ -36,7 +36,7 @@ export default function setupStats(useVR) {
         }
     }
 
-    GameEvents.Debug.SwitchStats.addListener(switchStats);
+    GameEvents.debug.switchStats.addListener(switchStats);
     return {
         begin: () => {
             stats && stats.begin();
@@ -45,7 +45,7 @@ export default function setupStats(useVR) {
             stats && stats.end();
         },
         dispose: () => {
-            GameEvents.Debug.SwitchStats.removeListener(switchStats);
+            GameEvents.debug.switchStats.removeListener(switchStats);
             if (stats) {
                 switchStats();
             }

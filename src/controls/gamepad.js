@@ -30,16 +30,16 @@ function buttonPressedHandler(heroPhysics, {detail: {name, isPressed}}) {
                 rotateArroundY(heroPhysics.orientation, -PI_4);
                 break;
             case 'buttonB':
-                GameEvents.Scene.NextIsland.trigger();
+                GameEvents.scene.nextIsland();
                 break;
             case 'buttonX':
-                GameEvents.Scene.PreviousIsland.trigger();
+                GameEvents.scene.previousIsland();
                 break;
             case 'buttonY':
-                GameEvents.Mode.Switch.trigger();
+                GameEvents.mode.switchMode();
                 break;
             case 'leftTrigger':
-                GameEvents.Debug.SwitchStats.trigger();
+                GameEvents.debug.switchStats();
                 break;
         }
     }

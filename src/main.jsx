@@ -31,7 +31,7 @@ window.onload = function() {
         ];
 
     document.getElementById('main').appendChild(renderer.domElement);
-    GameEvents.Scene.GotoIsland.trigger('CITADEL');
+    GameEvents.scene.gotoIsland('CITADEL');
 
     const clock = new THREE.Clock();
     function processAnimationFrame() {
@@ -41,13 +41,13 @@ window.onload = function() {
 
     processAnimationFrame();
 
-    GameEvents.Mode.Switch.addListener(() => {
+    GameEvents.mode.switchMode.addListener(() => {
         if (heroConfig.physics.movement == Movement.NORMAL) {
             heroConfig.physics.movement = Movement.FLY;
         }
         else {
             heroConfig.physics.movement = Movement.NORMAL;
         }
-        console.log('Switch mode:', heroConfig.physics.movement);
+        console.log('switchMode mode:', heroConfig.physics.movement);
     });
 };

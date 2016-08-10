@@ -22,7 +22,7 @@ export function createHero(config) {
         }
     };
 
-    GameEvents.Scene.SceneLoaded.addListener(scene => {
+    GameEvents.scene.sceneLoaded.addListener(scene => {
         hero.physics.position.x = scene.startPosition[0];
         hero.physics.position.z = scene.startPosition[1];
     });

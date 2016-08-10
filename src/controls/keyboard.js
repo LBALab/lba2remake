@@ -32,16 +32,16 @@ function keyDownHandler(heroPhysics, event) {
             heroPhysics.speed.x = 1;
             break;
         case 'PageDown':
-            GameEvents.Scene.NextIsland.trigger();
+            GameEvents.scene.nextIsland();
             break;
         case 'PageUp':
-            GameEvents.Scene.PreviousIsland.trigger();
+            GameEvents.scene.previousIsland();
             break;
         case 'KeyF':
-            GameEvents.Debug.SwitchStats.trigger();
+            GameEvents.debug.switchStats();
             break;
         case 'KeyM':
-            GameEvents.Mode.Switch.trigger();
+            GameEvents.mode.switchMode();
             break;
     }
 }

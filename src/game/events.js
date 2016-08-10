@@ -1,37 +1,36 @@
 import {each} from 'lodash';
 
 export const GameEvents = {
-    Scene: {
-        NextIsland: makeEventTarget(),
-        PreviousIsland: makeEventTarget(),
-        GotoIsland: makeEventTarget(),
-        SceneLoaded: makeEventTarget()
+    scene: {
+        nextIsland: new GameEventTarget(),
+        previousIsland: new GameEventTarget(),
+        gotoIsland: new GameEventTarget(),
+        sceneLoaded: new GameEventTarget()
     },
-    Mode: {
-        Switch: makeEventTarget()
+    mode: {
+        switchMode: new GameEventTarget()
     },
-    Debug: {
-        SwitchStats: makeEventTarget()
+    debug: {
+        switchStats: new GameEventTarget()
     }
 };
 
-function makeEventTarget() {
+function GameEventTarget() {
     const listeners = [];
-    return {
-        addListener: (callback) => {
-            listeners.push(callback);
-        },
-        removeListener: (callback) => {
-            const idx = listeners.indexOf(callback);
-            if (idx != -1) {
-                listeners.splice(idx, 1);
-            }
-        },
-        trigger: function() {
-            const args = arguments;
-            each(listeners, callback => {
-                callback.apply(null, args);
-            })
+    const eventTarget = function() {
+        const args = arguments;
+        each(listeners, callback => {
+            callback.apply(null, args);
+        })
+    };
+    eventTarget.addListener = (callback) => {
+        listeners.push(callback);
+    };
+    eventTarget.removeListener = (callback) => {
+        const idx = listeners.indexOf(callback);
+        if (idx != -1) {
+            listeners.splice(idx, 1);
         }
-    }
+    };
+    return eventTarget;
 }
