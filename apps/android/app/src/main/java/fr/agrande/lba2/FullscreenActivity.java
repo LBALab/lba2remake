@@ -95,4 +95,18 @@ public class FullscreenActivity extends AppCompatActivity {
         }
         return false;
     }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    mWebView.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | mWebView.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | mWebView.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | mWebView.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | mWebView.SYSTEM_UI_FLAG_FULLSCREEN
+                            | mWebView.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
 }
