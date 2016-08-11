@@ -183,6 +183,9 @@ function updateKeyframe(anim, obj, time) {
         ++obj.currentFrame;
         if (obj.currentFrame >= anim.numKeyframes) {
             obj.currentFrame = obj.startFrame;
+            if (obj.currentFrame == anim.numKeyframes - 1) {
+                obj.currentFrame = 0;
+            }
         }
         keyframe = anim.keyframes[obj.currentFrame];
     }
@@ -190,6 +193,9 @@ function updateKeyframe(anim, obj, time) {
     let nextFrame = obj.currentFrame + 1;
     if (nextFrame >= anim.numKeyframes) {
         nextFrame = obj.startFrame;
+        if (nextFrame == anim.numKeyframes - 1) {
+            nextFrame = 0;
+        }
     }
     const nextkeyframe = anim.keyframes[nextFrame];
 
@@ -200,27 +206,6 @@ function updateKeyframe(anim, obj, time) {
 
     updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime, numBones);
     updateShaderBone(obj);
-}
-
-function getRotation(nextValue, currentValue, interpolation) {
-    let angleDif = nextValue - currentValue;
-    let computedAngle = 0;
-
-    if (angleDif) {
-	    if (angleDif < -0x800) {
-		    angleDif += 0x1000;
-		}
-	    else if (angleDif > 0x800) {
-		    angleDif -= 0x1000;
-		}
-        computedAngle = currentValue + (angleDif * interpolation)
-    } else {
-        computedAngle = currentValue;
-    }
-
-    computedAngle = computedAngle * 360 / 0x1000;
-
-    return computedAngle;
 }
 
 function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time, numBones) {
@@ -275,6 +260,27 @@ function updateSkeletonHierarchy(skeleton, index) {
     for (let i = 0; i < s.children.length; ++i) {
         updateSkeletonHierarchy(skeleton, s.children[i].boneIndex);
     }
+}
+
+function getRotation(nextValue, currentValue, interpolation) {
+    let angleDif = nextValue - currentValue;
+    let computedAngle = 0;
+
+    if (angleDif) {
+	    if (angleDif < -0x800) {
+		    angleDif += 0x1000;
+		}
+	    else if (angleDif > 0x800) {
+		    angleDif -= 0x1000;
+		}
+        computedAngle = currentValue + (angleDif * interpolation)
+    } else {
+        computedAngle = currentValue;
+    }
+
+    computedAngle = computedAngle * 360 / 0x1000;
+
+    return computedAngle;
 }
 
 function createShaderBone(obj) {
