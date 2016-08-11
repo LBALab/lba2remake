@@ -8,17 +8,17 @@ import fragmentShader from './shaders/model.frag.glsl';
 
 const push = Array.prototype.push;
 
-export function loadMesh(model, body, obj) {
+export function loadMesh(model, body, state) {
     const material = new THREE.RawShaderMaterial({
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
         uniforms: {
             body: {value: loadTexture(model.files.ress.getEntry(6), model.palette)},
-            bones: {value: obj.matrixBones, type:'m4v'}
+            bones: {value: state.matrixBones, type:'m4v'}
         }
     });
 
-    const geometry = loadGeometry(model, body, obj.skeleton);
+    const geometry = loadGeometry(model, body, state.skeleton);
     const object = new THREE.Object3D();
 
     if (geometry.positions.length > 0) {
@@ -61,21 +61,21 @@ function loadGeometry(model, body, skeleton) {
     return geometry;
 }
 
-function loadBodyGeometry(geometry, object, skeleton, palette) {
-    loadFaceGeometry(geometry, object, skeleton, palette);
-    loadSphereGeometry(geometry, object, skeleton, palette);
-    loadLineGeometry(geometry, object, skeleton, palette);
-    //debugBoneGeometry(geometry, object, skeleton, palette);
+function loadBodyGeometry(geometry, body, skeleton, palette) {
+    loadFaceGeometry(geometry, body, skeleton, palette);
+    loadSphereGeometry(geometry, body, skeleton, palette);
+    loadLineGeometry(geometry, body, skeleton, palette);
+    //debugBoneGeometry(geometry, body, skeleton, palette);
 }
 
-function loadFaceGeometry(geometry, object, skeleton, palette) {
-    _.each(object.polygons, (p) => {
+function loadFaceGeometry(geometry, body, skeleton, palette) {
+    _.each(body.polygons, (p) => {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
-    	    push.apply(geometry.positions, getPosition(object, vertexIndex));
+    	    push.apply(geometry.positions, getPosition(body, vertexIndex));
             push.apply(geometry.colors, getColour(p.colour, palette, p.hasTransparency, p.hasTex));
-            push.apply(geometry.uvs, getUVs(object, p, j));
-            push.apply(geometry.bones, getBone(object, vertexIndex));
+            push.apply(geometry.uvs, getUVs(body, p, j));
+            push.apply(geometry.bones, getBone(body, vertexIndex));
         };    
         for (let j = 0; j < 3; ++j) {
             addVertex(j);
@@ -88,9 +88,9 @@ function loadFaceGeometry(geometry, object, skeleton, palette) {
     });
 }
 
-function loadSphereGeometry(geometry, object, skeleton, palette) {
-    _.each(object.spheres, (s) => {
-        const centerPos = getPosition(object, s.vertex);
+function loadSphereGeometry(geometry, body, skeleton, palette) {
+    _.each(body.spheres, (s) => {
+        const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
         
         const addVertex = (j) => {
@@ -101,7 +101,7 @@ function loadSphereGeometry(geometry, object, skeleton, palette) {
             ]);
             push.apply(geometry.colors, getColour(s.colour, palette, false, false));
             push.apply(geometry.uvs, [0,0]);
-            push.apply(geometry.bones, getBone(object, s.vertex));
+            push.apply(geometry.bones, getBone(body, s.vertex));
         };
 
         _.each(sphereGeometry.faces, (f) => {
@@ -112,24 +112,24 @@ function loadSphereGeometry(geometry, object, skeleton, palette) {
     });
 }
 
-function loadLineGeometry(geometry, object, skeleton, palette) {
-    _.each(object.lines, (l) => {
+function loadLineGeometry(geometry, body, skeleton, palette) {
+    _.each(body.lines, (l) => {
         const addVertex = (p,c,i) => {
             push.apply(geometry.linePositions, p);
             push.apply(geometry.lineColors, getColour(c, palette, false, false));
-            push.apply(geometry.lineBones, getBone(object, i));
+            push.apply(geometry.lineBones, getBone(body, i));
         };
-        let v1 = getPosition(object, l.vertex1);
-        let v2 = getPosition(object, l.vertex2);
+        let v1 = getPosition(body, l.vertex1);
+        let v2 = getPosition(body, l.vertex2);
 
         addVertex(v1,l.colour, l.vertex1);
         addVertex(v2,l.colour, l.vertex2);
     });
 }
 
-function debugBoneGeometry(geometry, object, skeleton, palette) {
-    _.each(object.bones, (s) => {
-        const centerPos = getPosition(object, s.vertex);
+function debugBoneGeometry(geometry, body, skeleton, palette) {
+    _.each(body.bones, (s) => {
+        const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(0.001, 8, 8);
         
         const addVertex = (j) => {
@@ -151,13 +151,13 @@ function debugBoneGeometry(geometry, object, skeleton, palette) {
     });
 }
 
-function getBone(object, index) {
-    const vertex = object.vertices[index];
+function getBone(body, index) {
+    const vertex = body.vertices[index];
     return [ vertex.bone ];
 }
 
-function getPosition(object, index) {
-    const vertex = object.vertices[index];
+function getPosition(body, index) {
+    const vertex = body.vertices[index];
     return [
         vertex.x,
         vertex.y,
@@ -174,9 +174,9 @@ function getColour(colour, palette, hasTransparency, hasTex) {
     ];
 }
 
-function getUVs(object, p, vertex) {
+function getUVs(body, p, vertex) {
     if (p.hasTex) {
-        const t = object.uvGroups[p.tex];
+        const t = body.uvGroups[p.tex];
         const x = p.texX[vertex] + p.unkX[vertex]/256;
         const y = p.texY[vertex] + p.unkY[vertex]/256;
         return [(x & t.width) + t.x, (y & t.height) + t.y];

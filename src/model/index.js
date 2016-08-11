@@ -6,6 +6,7 @@ import {loadHqrAsync} from '../hqr';
 import {loadEntity} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
+import {loadAnimState, updateKeyframe} from './animState';
 import {loadMesh} from './geometry';
 
 export default function(models, index, entityIdx, bodyIdx, animIdx, callback) {
@@ -32,7 +33,8 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
             entity: files.ress.getEntry(44),
             bodies: [],
             anims: [],
-            object3D: []
+            meshes: [],
+            states: []
         };
     }
  
@@ -45,192 +47,18 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
 
     const body = loadBody(model, model.bodies, bodyIdx);
     const anim = loadAnim(model, model.anims, animIdx);
-
-    if (!model.object3D[index]) {
-        const obj = {
-            mesh: null,
-            skeleton: null,
-            currentFrame: anim.startFrame,
-            startFrame: anim.startFrame,
-            currentTime:0,
-            matrixBones: []
-        }
-        obj.skeleton = createSkeleton(body);
-        obj.matrixBones = createShaderBone(obj);
-        obj.mesh = loadMesh(model, body, obj);
-
-        model.object3D[index] = obj;
-    } else {
-        const obj = model.object3D[index];
-        obj.currentFrame = anim.startFrame;
-        obj.startFrame = anim.startFrame;
-        obj.currentTime = 0;
+    
+    loadAnimState(model, body, anim, index);
+    const state = model.states[index];
+    
+    if (!model.meshes[index]) {
+        model.meshes[index] = loadMesh(model, body, state);
     }
+
     return model;
-}
-
-function createSkeleton(body) {
-    let skeleton = [];
-    for (let i = 0; i < body.bonesSize; ++i) {
-        const bone = body.bones[i];
-        const boneVertex = body.vertices[bone.vertex];
-
-        let skeletonBone = {
-            boneIndex: i,
-            parent: bone.parent,
-            vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
-            pos: new THREE.Vector3(0, 0, 0),
-            m: new THREE.Matrix4(),
-            type: 1, // translation by default
-            euler: null,
-            children: []
-        }
-
-        skeleton.push(skeletonBone);
-    }
-
-    for (let i = 0; i < skeleton.length; ++i) {
-        const bone = skeleton[i];
-        if (bone.parent == 0xFFFF) {
-            continue;
-        }
-        const s = skeleton[bone.parent];
-        s.children.push(bone);
-    }
-
-    updateSkeletonHierarchy(skeleton, 0);
-
-    return skeleton;
 }
 
 export function updateModel(model, index, animIdx, time) {
     const anim = loadAnim(model, model.anims, animIdx);
-    updateKeyframe(anim, model.object3D[index], time);
-}
-
-function updateKeyframe(anim, obj, time) {
-    obj.currentTime += time.delta * 1000;
-    let keyframe = anim.keyframes[obj.currentFrame];
-    if (obj.currentTime > keyframe.length) {
-        obj.currentTime = 0;
-        ++obj.currentFrame;
-        if (obj.currentFrame >= anim.numKeyframes) {
-            obj.currentFrame = obj.startFrame;
-            if (obj.currentFrame == anim.numKeyframes - 1) {
-                obj.currentFrame = 0;
-            }
-        }
-        keyframe = anim.keyframes[obj.currentFrame];
-    }
-
-    let nextFrame = obj.currentFrame + 1;
-    if (nextFrame >= anim.numKeyframes) {
-        nextFrame = obj.startFrame;
-        if (nextFrame == anim.numKeyframes - 1) {
-            nextFrame = 0;
-        }
-    }
-    const nextkeyframe = anim.keyframes[nextFrame];
-
-    let numBones = anim.numBoneframes;
-    if (obj.skeleton.length < numBones) {
-        numBones = obj.skeleton.length;
-    }
-
-    updateSkeletonAtKeyframe(obj.skeleton, keyframe, nextkeyframe, obj.currentTime, numBones);
-    updateShaderBone(obj);
-}
-
-function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time, numBones) {
-    const interpolation = time / keyframe.length; 
-    for (let i = 0; i < numBones; ++i) {
-        const s = skeleton[i];
-        const bf = keyframe.boneframes[i];
-        const nbf = nextkeyframe.boneframes[i];
-        s.type = bf.type;
-
-        if (s.parent == 0xFFFF) {
-            continue;
-        }
-
-        if (bf.type == 0) { // rotation
-            let eulerX = getRotation(nbf.veuler.x, bf.veuler.x, interpolation);
-            let eulerY = getRotation(nbf.veuler.y, bf.veuler.y, interpolation);
-            let eulerZ = getRotation(nbf.veuler.z, bf.veuler.z, interpolation);
-            s.euler = new THREE.Vector3(eulerX, eulerY, eulerZ);
-        } else { // translation
-            s.pos.x = bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
-            s.pos.y = bf.pos.y + (nbf.pos.y - bf.pos.y) * interpolation;
-            s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
-        }
-    }
-
-    updateSkeletonHierarchy(skeleton, 0);
-}
-
-function updateSkeletonHierarchy(skeleton, index) {
-    const s = skeleton[index];
-    const p = skeleton[index == 0 ? 0 : s.parent];
-    if (s.parent != 0xFFFF) { // skip root
-        s.m.identity();
-        const pos = s.vertex.clone();
-
-        if (s.type == 0) { // rotation
-            s.m.makeRotationFromEuler(new THREE.Euler(THREE.Math.degToRad(s.euler.x), 
-                                                      THREE.Math.degToRad(s.euler.y), 
-                                                      THREE.Math.degToRad(s.euler.z), 'XZY'));
-        } else { // translation
-            pos.x += s.pos.x;
-            pos.y += s.pos.y;
-            pos.z += s.pos.z; 
-        }
-        s.m.setPosition(pos);
-
-        const m = p.m.clone();
-        m.multiply(s.m);
-        s.m.copy(m);
-    } else {
-        p.m.identity();
-    }
-    for (let i = 0; i < s.children.length; ++i) {
-        updateSkeletonHierarchy(skeleton, s.children[i].boneIndex);
-    }
-}
-
-function getRotation(nextValue, currentValue, interpolation) {
-    let angleDif = nextValue - currentValue;
-    let computedAngle = 0;
-
-    if (angleDif) {
-	    if (angleDif < -0x800) {
-		    angleDif += 0x1000;
-		}
-	    else if (angleDif > 0x800) {
-		    angleDif -= 0x1000;
-		}
-        computedAngle = currentValue + (angleDif * interpolation)
-    } else {
-        computedAngle = currentValue;
-    }
-
-    computedAngle = computedAngle * 360 / 0x1000;
-
-    return computedAngle;
-}
-
-function createShaderBone(obj) {
-    let bones = [];
-    for (let i = 0; i < obj.skeleton.length; ++i) {
-        bones.push(obj.skeleton[i].m);
-    }
-    for (let i = 0; i < 50 - obj.skeleton.length; ++i) {
-        bones.push(new THREE.Matrix4());
-    }
-    return bones;
-}
-
-function updateShaderBone(obj) {
-    for (let i = 0; i < obj.skeleton.length; ++i) {
-        obj.matrixBones[i] = obj.skeleton[i].m;
-    }
+    updateKeyframe(anim, model.states[index], time);
 }

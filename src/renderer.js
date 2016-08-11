@@ -66,7 +66,7 @@ export default class Renderer {
 
         model(models, index, entityIdx, bodyIdx, animIdx, (object) => {
             models = object;
-            current = object.object3D[index].mesh;
+            current = object.meshes[index];
             this.scene.add(current);
             isLoaded = true;
         });
@@ -102,7 +102,7 @@ export default class Renderer {
             model(models, index, entityIdx, bodyIdx, animIdx, (object) => {
                 models = object;
                 this.scene.remove(current);
-                current = object.object3D[index].mesh;
+                current = object.meshes[index];
                 this.scene.add(current);
                 isLoaded = true;
             });
