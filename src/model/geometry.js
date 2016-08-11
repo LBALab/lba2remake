@@ -1,10 +1,67 @@
 import THREE from 'three';
 import _ from 'lodash';
 
+import {loadTexture} from '../texture';
+
+import vertexShader from './shaders/model.vert.glsl';
+import fragmentShader from './shaders/model.frag.glsl';
+
 const push = Array.prototype.push;
 
-/** Load LBA model body */
-export function loadBodyGeometry(geometry, object, skeleton, palette) {
+export function loadMesh(model, body, obj) {
+    const material = new THREE.RawShaderMaterial({
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
+        uniforms: {
+            body: {value: loadTexture(model.files.ress.getEntry(6), model.palette)},
+            bones: {value: obj.matrixBones, type:'m4v'}
+        }
+    });
+
+    const geometry = loadGeometry(model, body, obj.skeleton);
+    const object = new THREE.Object3D();
+
+    if (geometry.positions.length > 0) {
+        const bufferGeometry = new THREE.BufferGeometry();
+        bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.positions), 3));
+        bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(geometry.uvs), 2, true));
+        bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.colors), 4, true));
+        bufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(geometry.bones), 1));
+
+        const modelMesh = new THREE.Mesh(bufferGeometry, material);
+        object.add(modelMesh);
+    }
+
+    if (geometry.linePositions.length > 0) {
+        const linebufferGeometry = new THREE.BufferGeometry();
+        linebufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.linePositions), 3));
+        linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.lineColors), 4, true));
+        linebufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(geometry.lineBones), 1));
+
+        const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
+        object.add(lineSegments);
+    }
+
+    return object;
+}
+
+function loadGeometry(model, body, skeleton) {
+    const geometry = {
+        positions: [],
+        uvs: [],
+        colors: [],
+        bones: [],
+        linePositions: [],
+        lineColors: [],
+        lineBones: []
+    };
+    
+    loadBodyGeometry(geometry, body, skeleton, model.palette);
+
+    return geometry;
+}
+
+function loadBodyGeometry(geometry, object, skeleton, palette) {
     loadFaceGeometry(geometry, object, skeleton, palette);
     loadSphereGeometry(geometry, object, skeleton, palette);
     loadLineGeometry(geometry, object, skeleton, palette);

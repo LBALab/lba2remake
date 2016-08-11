@@ -3,14 +3,10 @@ import THREE from 'three';
 import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
-import {loadTexture} from '../texture';
 import {loadEntity} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
-import {loadBodyGeometry} from './geometry';
-
-import vertexShader from './shaders/model.vert.glsl';
-import fragmentShader from './shaders/model.frag.glsl';
+import {loadMesh} from './geometry';
 
 export default function(models, index, entityIdx, bodyIdx, animIdx, callback) {
     async.auto({
@@ -61,10 +57,8 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
         }
         obj.skeleton = createSkeleton(body);
         obj.matrixBones = createShaderBone(obj);
+        obj.mesh = loadMesh(model, body, obj);
 
-        const geometry = loadGeometry(model, body, obj.skeleton);
-
-        obj.mesh = loadMesh(model, obj, geometry);
         model.object3D[index] = obj;
     } else {
         const obj = model.object3D[index];
@@ -73,58 +67,6 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
         obj.currentTime = 0;
     }
     return model;
-}
-
-function loadMesh(model, obj, geometry) {
-    const material = new THREE.RawShaderMaterial({
-        vertexShader: vertexShader,
-        fragmentShader: fragmentShader,
-        uniforms: {
-            body: {value: loadTexture(model.files.ress.getEntry(6), model.palette)},
-            bones: {value: obj.matrixBones, type:'m4v'}
-        }
-    });
-
-    const object = new THREE.Object3D();
-
-    if (geometry.positions.length > 0) {
-        const bufferGeometry = new THREE.BufferGeometry();
-        bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.positions), 3));
-        bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(geometry.uvs), 2, true));
-        bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.colors), 4, true));
-        bufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(geometry.bones), 1));
-
-        const modelMesh = new THREE.Mesh(bufferGeometry, material);
-        object.add(modelMesh);
-    }
-
-    if (geometry.linePositions.length > 0) {
-        const linebufferGeometry = new THREE.BufferGeometry();
-        linebufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.linePositions), 3));
-        linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.lineColors), 4, true));
-        linebufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(geometry.lineBones), 1));
-
-        const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
-        object.add(lineSegments);
-    }
-
-    return object;
-}
-
-function loadGeometry(model, body, skeleton) {
-    const geometry = {
-        positions: [],
-        uvs: [],
-        colors: [],
-        bones: [],
-        linePositions: [],
-        lineColors: [],
-        lineBones: []
-    };
-    
-    loadBodyGeometry(geometry, body, skeleton, model.palette);
-
-    return geometry;
 }
 
 function createSkeleton(body) {
