@@ -15,7 +15,7 @@ function loadFaceGeometry(geometry, object, skeleton, palette) {
     _.each(object.polygons, (p) => {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
-    	    push.apply(geometry.positions, getPosition(object, skeleton, vertexIndex));
+    	    push.apply(geometry.positions, getPosition(object, vertexIndex));
             push.apply(geometry.colors, getColour(p.colour, palette, p.hasTransparency, p.hasTex));
             push.apply(geometry.uvs, getUVs(object, p, j));
             push.apply(geometry.bones, getBone(object, vertexIndex));
@@ -33,7 +33,7 @@ function loadFaceGeometry(geometry, object, skeleton, palette) {
 
 function loadSphereGeometry(geometry, object, skeleton, palette) {
     _.each(object.spheres, (s) => {
-        const centerPos = getPosition(object, skeleton, s.vertex);
+        const centerPos = getPosition(object, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
         
         const addVertex = (j) => {
@@ -62,8 +62,8 @@ function loadLineGeometry(geometry, object, skeleton, palette) {
             push.apply(geometry.lineColors, getColour(c, palette, false, false));
             push.apply(geometry.lineBones, getBone(object, i));
         };
-        let v1 = getPosition(object, skeleton, l.vertex1);
-        let v2 = getPosition(object, skeleton, l.vertex2);
+        let v1 = getPosition(object, l.vertex1);
+        let v2 = getPosition(object, l.vertex2);
 
         addVertex(v1,l.colour, l.vertex1);
         addVertex(v2,l.colour, l.vertex2);
@@ -72,7 +72,7 @@ function loadLineGeometry(geometry, object, skeleton, palette) {
 
 function debugBoneGeometry(geometry, object, skeleton, palette) {
     _.each(object.bones, (s) => {
-        const centerPos = getPosition(object, skeleton, s.vertex);
+        const centerPos = getPosition(object, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(0.001, 8, 8);
         
         const addVertex = (j) => {
@@ -99,32 +99,12 @@ function getBone(object, index) {
     return [ vertex.bone ];
 }
 
-function getPosition(object, skeleton, index) {
+function getPosition(object, index) {
     const vertex = object.vertices[index];
-    let boneIdx = vertex.bone;
-
-    let pos = {
-        x: vertex.x,
-        y: vertex.y,
-        z: vertex.z
-    };
-
-    /*while(true) {
-        const bone = skeleton[boneIdx];
-
-        pos.x += bone.pos.x;
-        pos.y += bone.pos.y;
-        pos.z += bone.pos.z;
-
-        if(bone.parent == 0xFFFF)
-            break;
-            
-        boneIdx = bone.parent;
-    }*/
     return [
-        pos.x,
-        pos.y,
-        pos.z
+        vertex.x,
+        vertex.y,
+        vertex.z
     ];
 }
 

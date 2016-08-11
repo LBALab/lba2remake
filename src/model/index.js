@@ -54,12 +54,9 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
         const obj = {
             mesh: null,
             skeleton: null,
-            rootBone: null,
             currentFrame: anim.startFrame,
             startFrame: anim.startFrame,
-            lastFrame:0,
             currentTime:0,
-            elapsedTime:0,
             matrixBones: []
         }
         const { skeleton,  rootBone} = createSkeleton(body);
@@ -97,7 +94,7 @@ function loadMesh(model, obj, geometry) {
         bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.positions), 3));
         bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(geometry.uvs), 2, true));
         bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.colors), 4, true));
-        bufferGeometry.addAttribute('bone', new THREE.BufferAttribute(new Uint8Array(geometry.bones), 1));
+        bufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(geometry.bones), 1));
 
         const modelMesh = new THREE.Mesh(bufferGeometry, material);
         object.add(modelMesh);
@@ -107,7 +104,7 @@ function loadMesh(model, obj, geometry) {
         const linebufferGeometry = new THREE.BufferGeometry();
         linebufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.linePositions), 3));
         linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.lineColors), 4, true));
-        linebufferGeometry.addAttribute('bone', new THREE.BufferAttribute(new Uint8Array(geometry.lineBones), 1));
+        linebufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(geometry.lineBones), 1));
 
         const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
         object.add(lineSegments);
@@ -141,7 +138,6 @@ function createSkeleton(body) {
 
         let skeletonBone = {
             boneIndex: i,
-            vertexIndex: bone.vertex,
             parent: bone.parent,
             vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
             pos: new THREE.Vector3(0, 0, 0),
