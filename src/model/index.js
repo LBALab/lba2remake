@@ -59,9 +59,7 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
             currentTime:0,
             matrixBones: []
         }
-        const { skeleton,  rootBone} = createSkeleton(body);
-        obj.skeleton = skeleton;
-        obj.rootBone = rootBone;
+        obj.skeleton = createSkeleton(body);
         obj.matrixBones = createShaderBone(obj);
 
         const geometry = loadGeometry(model, body, obj.skeleton);
@@ -131,7 +129,6 @@ function loadGeometry(model, body, skeleton) {
 
 function createSkeleton(body) {
     let skeleton = [];
-    let rootBone;
     for (let i = 0; i < body.bonesSize; ++i) {
         const bone = body.bones[i];
         const boneVertex = body.vertices[bone.vertex];
@@ -153,17 +150,15 @@ function createSkeleton(body) {
     for (let i = 0; i < skeleton.length; ++i) {
         const bone = skeleton[i];
         if (bone.parent == 0xFFFF) {
-            rootBone = bone;
             continue;
         }
-
         const s = skeleton[bone.parent];
         s.children.push(bone);
     }
 
     updateSkeletonHierarchy(skeleton, 0);
 
-    return { skeleton, rootBone };
+    return skeleton;
 }
 
 export function updateModel(model, index, animIdx, time) {
@@ -175,7 +170,7 @@ function updateKeyframe(anim, obj, time) {
     obj.currentTime += time.delta * 1000;
     let keyframe = anim.keyframes[obj.currentFrame];
     if (obj.currentTime > keyframe.length) {
-        obj.currentTime = 0; //obj.currentTime - keyframe.length;
+        obj.currentTime = 0;
         ++obj.currentFrame;
         if (obj.currentFrame >= anim.numKeyframes) {
             obj.currentFrame = obj.startFrame;
@@ -239,7 +234,9 @@ function updateSkeletonHierarchy(skeleton, index) {
         const pos = s.vertex.clone();
 
         if (s.type == 0) { // rotation
-            s.m.makeRotationFromEuler(new THREE.Euler(THREE.Math.degToRad(s.euler.x), THREE.Math.degToRad(s.euler.y), THREE.Math.degToRad(s.euler.z), 'XZY')); // THREE.Math.degToRad
+            s.m.makeRotationFromEuler(new THREE.Euler(THREE.Math.degToRad(s.euler.x), 
+                                                      THREE.Math.degToRad(s.euler.y), 
+                                                      THREE.Math.degToRad(s.euler.z), 'XZY'));
         } else { // translation
             pos.x += s.pos.x;
             pos.y += s.pos.y;
