@@ -1,6 +1,7 @@
 import THREE from 'three';
 import setupStats from './stats';
 import StereoEffect from './effects/StereoEffect';
+import Cardboard from './utils/Cardboard';
 import {GameEvents} from '../game/events';
 
 export function createRenderer(useVR) {
@@ -59,7 +60,9 @@ function setupResizer(renderer, camera) {
 }
 
 function setupVR(baseRenderer) {
-    const stereoEffect = new StereoEffect(baseRenderer);
+    const params = Cardboard.uriToParams('https://vr.google.com/cardboard/download/?p=CgdUd2luc3VuEgRBZHJpHfT91DwlYOVQPSoQAAC0QgAAtEIAALRCAAC0QlgANQIrBz06CClcjz0K1yM8UABgAA');
+    console.log(params);
+    const stereoEffect = new StereoEffect(baseRenderer, params);
     stereoEffect.eyeSeparation = 0.006;
     stereoEffect.setSize(window.innerWidth, window.innerHeight);
     return stereoEffect;

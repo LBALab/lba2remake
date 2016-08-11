@@ -28,6 +28,10 @@ module.exports = {
             {
                 test: /\.glsl?$/,
                 loader: 'glsl-custom-loader'
+            },
+            {
+                test: /\.proto?$/,
+                loader: 'raw-loader'
             }
         ]
     },
