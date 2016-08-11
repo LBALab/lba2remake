@@ -175,7 +175,7 @@ function updateKeyframe(anim, obj, time) {
     obj.currentTime += time.delta * 1000;
     let keyframe = anim.keyframes[obj.currentFrame];
     if (obj.currentTime > keyframe.length) {
-        obj.currentTime = obj.currentTime - keyframe.length;
+        obj.currentTime = 0; //obj.currentTime - keyframe.length;
         ++obj.currentFrame;
         if (obj.currentFrame >= anim.numKeyframes) {
             obj.currentFrame = obj.startFrame;
