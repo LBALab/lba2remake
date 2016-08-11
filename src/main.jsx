@@ -18,7 +18,7 @@ window.onload = function() {
             targets: [Target.CAMERA],
             movement: Movement.NORMAL,
             speed: new THREE.Vector3(0.15, 0.3, 0.3)
-        },
+        }
     };
     const hero = createHero(heroConfig);
     const sceneManager = createSceneManager(hero);
