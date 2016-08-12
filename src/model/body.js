@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 const push = Array.prototype.push;
 
-/** Load LBA model body */
 export function loadBody(model, bodies, index) {
     if (bodies[index]) {
         return bodies[index];
@@ -137,10 +136,10 @@ function loadPolygon(data, offset, renderType, blockSize) {
     // Blocksizes:
     // Quad and Extra = 16
     // Quad and Tex = 32
-    // Quad and Color = 12 (DONE)
+    // Quad and Color = 12
     // Tri and Extra = 16
     // Tri and Tex = 24
-    // Tri and Color = 12 (DONE)
+    // Tri and Color = 12
 
     // vertex block
     for (let k = 0; k < numVertex; ++k) {

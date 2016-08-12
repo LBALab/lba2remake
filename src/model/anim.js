@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 const push = Array.prototype.push;
 
-/** Load LBA2 model animation */
 export function loadAnim(model, anims, index) {
     if (anims[index]) {
         return anims[index];
@@ -26,7 +25,6 @@ export function loadAnim(model, anims, index) {
     }
 }
 
-/** Load anim key frames */
 function loadKeyframes(object) {
     object.keyframes = [];
     const data = new DataView(object.buffer, 0, object.buffer.length);
@@ -53,7 +51,6 @@ function loadKeyframes(object) {
     }
 }
 
-/** Load bone at keyframe */
 function loadBoneframe(keyframe, data, offset) {
     let boneframe = {
         type: data.getUint16(offset, true), // if > 0 canFall because it has translation in space
