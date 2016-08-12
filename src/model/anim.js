@@ -13,7 +13,7 @@ export function loadAnim(model, anims, index) {
         const obj = {
             numKeyframes: data.getUint16(0x00, true),
             numBoneframes: data.getUint16(0x02, true),
-            startFrame: data.getUint16(0x04, true),
+            loopFrame: data.getUint16(0x04, true),
             unk1: data.getUint16(0x08, true),
             
             buffer: buffer

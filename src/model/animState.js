@@ -8,8 +8,8 @@ export function loadAnimState(model, body, anim, index) {
         const state = {
             mesh: null,
             skeleton: null,
-            currentFrame: anim.startFrame,
-            startFrame: anim.startFrame,
+            currentFrame: 0,
+            loopFrame: anim.loopFrame,
             currentTime:0,
             matrixBones: []
         }
@@ -18,8 +18,8 @@ export function loadAnimState(model, body, anim, index) {
         model.states[index] = state;
     } else {
         const state = model.states[index];
-        state.currentFrame = anim.startFrame;
-        state.startFrame = anim.startFrame;
+        state.currentFrame = 0;
+        state.loopFrame = anim.loopFrame;
         state.currentTime = 0;
     }
 }
@@ -82,7 +82,7 @@ export function updateKeyframe(anim, state, time) {
         state.currentTime = 0;
         ++state.currentFrame;
         if (state.currentFrame >= anim.numKeyframes) {
-            state.currentFrame = state.startFrame;
+            state.currentFrame = state.loopFrame;
             if (state.currentFrame == anim.numKeyframes - 1) {
                 state.currentFrame = 0;
             }
@@ -92,7 +92,7 @@ export function updateKeyframe(anim, state, time) {
 
     let nextFrame = state.currentFrame + 1;
     if (nextFrame >= anim.numKeyframes) {
-        nextFrame = state.startFrame;
+        nextFrame = state.loopFrame;
         if (nextFrame == anim.numKeyframes - 1) {
             nextFrame = 0;
         }
