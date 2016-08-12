@@ -11,7 +11,8 @@ export function loadAnimState(model, body, anim, index) {
             currentFrame: 0,
             loopFrame: anim.loopFrame,
             currentTime:0,
-            matrixBones: []
+            matrixBones: [],
+            step: new THREE.Vector3(0, 0, 0)
         }
         state.skeleton = createSkeleton(body);
         state.matrixBones = createShaderBone(state);
@@ -21,6 +22,10 @@ export function loadAnimState(model, body, anim, index) {
         state.currentFrame = 0;
         state.loopFrame = anim.loopFrame;
         state.currentTime = 0;
+        state.matrixBones = [];
+        state.step.x = 0;
+        state.step.y = 0;
+        state.step.z = 0;
     }
 }
 
@@ -104,14 +109,14 @@ export function updateKeyframe(anim, state, time) {
         numBones = state.skeleton.length;
     }
 
-    updateSkeletonAtKeyframe(state.skeleton, keyframe, nextkeyframe, state.currentTime, numBones);
+    updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones);
     updateShaderBone(state);
 }
 
-function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time, numBones) {
-    const interpolation = time / keyframe.length; 
+function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones) {
+    const interpolation = state.currentTime / keyframe.length; 
     for (let i = 0; i < numBones; ++i) {
-        const s = skeleton[i];
+        const s = state.skeleton[i];
         const bf = keyframe.boneframes[i];
         const nbf = nextkeyframe.boneframes[i];
         s.type = bf.type;
@@ -131,8 +136,13 @@ function updateSkeletonAtKeyframe(skeleton, keyframe, nextkeyframe, time, numBon
             s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
         }
     }
+    
+    // step translation
+    state.step.x += getStep(nextkeyframe.x, keyframe.x, interpolation);
+    state.step.y += getStep(nextkeyframe.y, keyframe.y, interpolation);
+    state.step.z += getStep(nextkeyframe.z, keyframe.z, interpolation);
 
-    updateSkeletonHierarchy(skeleton, 0);
+    updateSkeletonHierarchy(state.skeleton, 0);
 }
 
 function updateSkeletonHierarchy(skeleton, index) {
@@ -151,6 +161,7 @@ function updateSkeletonHierarchy(skeleton, index) {
             pos.y += s.pos.y;
             pos.z += s.pos.z; 
         }
+
         s.m.setPosition(pos);
 
         const m = p.m.clone();
@@ -183,4 +194,15 @@ function getRotation(nextValue, currentValue, interpolation) {
     computedAngle = computedAngle * 360 / 0x1000;
 
     return computedAngle;
+}
+
+function getStep(nextValue, currentValue, interpolation) {
+    const stepDif = nextValue - currentValue;
+    let computedStep = 0;
+    if (stepDif) {
+        computedStep = currentValue + (stepDif * interpolation)
+    } else {
+        computedStep = currentValue;
+    }
+    return computedStep;
 }

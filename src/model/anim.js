@@ -32,9 +32,9 @@ function loadKeyframes(object) {
     for (let i = 0; i < object.numKeyframes; ++i) {
         let keyframe = {
             length: data.getUint16(offset, true),
-            x: data.getInt16(offset + 2, true),
-            y: data.getInt16(offset + 4, true),
-            z: data.getInt16(offset + 6, true),
+            x: data.getInt16(offset + 2, true) / 0x4000,
+            y: data.getInt16(offset + 4, true) / 0x4000,
+            z: data.getInt16(offset + 6, true) / 0x4000,
             canFall: false,
             boneframes: []
         };

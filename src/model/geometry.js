@@ -14,7 +14,8 @@ export function loadMesh(model, body, state) {
         fragmentShader: fragmentShader,
         uniforms: {
             body: {value: loadTexture(model.files.ress.getEntry(6), model.palette)},
-            bones: {value: state.matrixBones, type:'m4v'}
+            bones: {value: state.matrixBones, type:'m4v'},
+            step: {value: state.step}
         }
     });
 
