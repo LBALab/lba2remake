@@ -9,9 +9,11 @@ attribute vec2 uv;
 
 varying vec4 vColor;
 varying vec2 vUv;
+varying vec3 vPos;
 
 void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     vColor = color;
     vUv = uv;
+    vPos = position;
 }
