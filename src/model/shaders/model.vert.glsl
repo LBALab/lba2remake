@@ -3,7 +3,6 @@ precision lowp float;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 bones[50];
-uniform vec3 step;
 
 attribute vec3 position;
 attribute vec2 uv;

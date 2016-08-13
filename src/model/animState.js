@@ -138,9 +138,9 @@ function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones) {
     }
     
     // step translation
-    state.step.x += getStep(nextkeyframe.x, keyframe.x, interpolation);
-    state.step.y += getStep(nextkeyframe.y, keyframe.y, interpolation);
-    state.step.z += getStep(nextkeyframe.z, keyframe.z, interpolation);
+    state.step.x = getStep(nextkeyframe.x, keyframe.x, interpolation);
+    state.step.y = getStep(nextkeyframe.y, keyframe.y, interpolation);
+    state.step.z = getStep(nextkeyframe.z, keyframe.z, interpolation);
 
     updateSkeletonHierarchy(state.skeleton, 0);
 }
