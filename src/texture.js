@@ -68,9 +68,7 @@ function loadMipmapLevel(source_data, level) {
     for (let y = 0; y < dim; ++y) {
         for (let x = 0; x < dim; ++x) {
             const average = (offset) => {
-                if (false && dim < 32) {
-                    return mipmapColor[0][offset];
-                }
+                //return mipmapColor[Math.min(level - 1, 7)][offset];
                 const values = [
                     source_data[((y * 2) * dim * 2 + x * 2) * 4 + offset],
                     source_data[((y * 2) * dim * 2 + x * 2 + 1) * 4 + offset],
@@ -83,7 +81,7 @@ function loadMipmapLevel(source_data, level) {
             tgt_data[idx * 4] = average(0);
             tgt_data[idx * 4 + 1] = average(1);
             tgt_data[idx * 4 + 2] = average(2);
-            tgt_data[idx * 4 + 3] = average(3);
+            tgt_data[idx * 4 + 3] = Math.round(average(3) / 255) * 255;
         }
     }
     return tgt_data;

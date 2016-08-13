@@ -90,6 +90,8 @@ function parseSectionHeader(data, object, offset) {
 function loadSection(geometries, object, info, section, palette) {
     for (let i = 0; i < section.numFaces; ++i) {
         const uvGroup = getUVGroup(object, section, i);
+        if (false && uvGroup && (uvGroup[2] != 255 || uvGroup[3] != 255))
+            continue;
         const addVertex = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
             const intensity = (object.intensities[index * 8 + info.iv] >> 5) * 3;
