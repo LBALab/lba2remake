@@ -25,7 +25,7 @@ export function createRenderer(useVR) {
 }
 
 function setupBaseRenderer() {
-    const renderer = new THREE.WebGLRenderer({antialias: true, alpha: false});
+    const renderer = new THREE.WebGLRenderer({antialias: true, alpha: false, logarithmicDepthBuffer: true});
     renderer.setClearColor(0x000000);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
