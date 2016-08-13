@@ -13,20 +13,10 @@ varying vec4 vUvGroup;
 #require "./fog.frag"
 
 void main() {
-#ifdef GL_EXT_shader_texture_lod
-    vec2 dx = dFdx(vUv);
-    vec2 dy = dFdy(vUv);
-    float d = min(floor(max(length(dx), length(dy))), 4.0);
-    vec2 cUv = mod(vUv, vUvGroup.zw + 1.0) + vUvGroup.xy;
-    float dim = pow(2.0, 8.0 - d);
-    float idim = pow(2.0, d);
-    float pix = 1.0 / dim;
-    float hpix = pix * 0.5;
-    float oneMinusPix = 1.0 - pix;
-    vec2 uv = (floor(cUv / idim) / (dim - 1.0)) * oneMinusPix + hpix;
-    vec4 tex = texture2DLodEXT(texture, uv, d);
-#else
     vec2 uv = mod(vUv, vUvGroup.zw) + vUvGroup.xy;
+#ifdef GL_EXT_shader_texture_lod
+    vec4 tex = texture2DGradEXT(texture, uv, dFdx(vUv), dFdy(vUv));
+#else
     vec4 tex = texture2D(texture, uv);
 #endif
     vec3 color = mix(vColor.rgb, tex.rgb * vColor.a, tex.a);

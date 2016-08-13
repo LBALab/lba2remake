@@ -40,7 +40,7 @@ export function loadTextureWithMipmaps(buffer, palette) {
         THREE.ClampToEdgeWrapping,
         THREE.ClampToEdgeWrapping,
         THREE.NearestFilter,
-        THREE.NearestMipMapNearestFilter
+        THREE.NearestMipMapLinearFilter
     );
     let image_data = loadImageData(buffer, palette);
     texture.mipmaps = [{
