@@ -17,10 +17,6 @@ class ViewController: UIViewController {
     
     override func loadView() {
         let config = WKWebViewConfiguration()
-        let scriptPath = Bundle.main.pathForResource("Gamepad", ofType: "js")
-        let scriptContent = try? String(contentsOfFile: scriptPath!, encoding: String.Encoding.utf8)
-        let script = WKUserScript(source: scriptContent!, injectionTime: WKUserScriptInjectionTime.atDocumentStart                                                                                                                                                                                                                                                                   , forMainFrameOnly: true)
-        config.userContentController.addUserScript(script)
         webView = WKWebView(frame: CGRect(), configuration: config)
         view = webView
     }
@@ -35,7 +31,6 @@ class ViewController: UIViewController {
         if urlStr == nil {
             urlStr = "http://adri42.bitbucket.org/lba2/"
         }
-        print(urlStr)
         let url = URL(string: urlStr!)
         let req = URLRequest(url: url!)
         self.webView!.load(req)
@@ -49,16 +44,24 @@ class ViewController: UIViewController {
     func handleButton(button: GCControllerButtonInput?, name: String) {
         button?.pressedChangedHandler = {
             (button: GCControllerButtonInput, value: Float, pressed: Bool) in
-            self.webView?.evaluateJavaScript("__ongamepadbutton({name: '\(name)', isPressed: \(pressed)})")
+            let buttonValue = "{detail: {name: '\(name)', isPressed: \(pressed)}}"
+            let js = "window.dispatchEvent(new CustomEvent('gamepadbuttonpressed', \(buttonValue)))"
+            self.webView?.evaluateJavaScript(js)
+        }
+    }
+    
+    func handleDpad(dpad: GCControllerDirectionPad?) {
+        dpad?.valueChangedHandler = {
+            (dpad: GCControllerDirectionPad, xValue: Float, yValue: Float) in
+            let dpadValue = "{detail: {x: \(xValue), y: \(yValue)}}"
+            let js = "window.dispatchEvent(new CustomEvent('dpadvaluechanged', \(dpadValue)))"
+            self.webView?.evaluateJavaScript(js)
         }
     }
 
     func controllerConnected(notification: Notification) {
         let gamepad = GCController.controllers()[0].extendedGamepad
-        gamepad?.leftThumbstick.valueChangedHandler = {
-            (dpad: GCControllerDirectionPad, xValue: Float, yValue: Float) in
-            self.webView?.evaluateJavaScript("__onvaluechanged({x: \(xValue), y: \(yValue)})")
-        }
+        handleDpad(dpad: gamepad?.leftThumbstick);
         handleButton(button: gamepad?.buttonA, name: "buttonA");
         handleButton(button: gamepad?.buttonB, name: "buttonB");
         handleButton(button: gamepad?.buttonX, name: "buttonX");
@@ -71,7 +74,6 @@ class ViewController: UIViewController {
         handleButton(button: gamepad?.dpad.right, name: "dpadRight");
         handleButton(button: gamepad?.dpad.up, name: "dpadUp");
         handleButton(button: gamepad?.dpad.down, name: "dpadDown");
-        self.webView?.evaluateJavaScript("__ongamepadconnected()")
     }
 
 }

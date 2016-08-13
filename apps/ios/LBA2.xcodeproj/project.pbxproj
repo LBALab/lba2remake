@@ -14,7 +14,6 @@
 		7A0E3FB91D4A0F320017A100 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A0E3FB81D4A0F320017A100 /* Assets.xcassets */; };
 		7A0E3FBC1D4A0F320017A100 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A0E3FBA1D4A0F320017A100 /* LaunchScreen.storyboard */; };
 		7A97484F1D4B78050071EFC2 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A97484E1D4B78050071EFC2 /* GameController.framework */; };
-		7AA24C331D4C023100E88903 /* Gamepad.js in Resources */ = {isa = PBXBuildFile; fileRef = 7AA24C321D4C023100E88903 /* Gamepad.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,7 +46,6 @@
 		7A0E3FCD1D4A0F320017A100 /* LBA2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LBA2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A4857D21D4B71B400A7D684 /* LBA2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LBA2.entitlements; sourceTree = "<group>"; };
 		7A97484E1D4B78050071EFC2 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
-		7AA24C321D4C023100E88903 /* Gamepad.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Gamepad.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,7 +99,6 @@
 				7A4857D21D4B71B400A7D684 /* LBA2.entitlements */,
 				7A0E3FB11D4A0F320017A100 /* AppDelegate.swift */,
 				7A0E3FB31D4A0F320017A100 /* ViewController.swift */,
-				7AA24C321D4C023100E88903 /* Gamepad.js */,
 				7A0E3FB51D4A0F320017A100 /* Main.storyboard */,
 				7A0E3FB81D4A0F320017A100 /* Assets.xcassets */,
 				7A0E3FBA1D4A0F320017A100 /* LaunchScreen.storyboard */,
@@ -238,7 +235,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7A085B031D4A50D200F5A583 /* Settings.bundle in Resources */,
-				7AA24C331D4C023100E88903 /* Gamepad.js in Resources */,
 				7A0E3FBC1D4A0F320017A100 /* LaunchScreen.storyboard in Resources */,
 				7A0E3FB91D4A0F320017A100 /* Assets.xcassets in Resources */,
 				7A0E3FB71D4A0F320017A100 /* Main.storyboard in Resources */,
