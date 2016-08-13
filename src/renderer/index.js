@@ -4,6 +4,7 @@ import EffectComposer from './effects/postprocess/EffectComposer';
 import SMAAPass from './effects/postprocess/SMAAPass';
 import RenderPass from './effects/postprocess/RenderPass';
 import setupStats from './stats';
+import Cardboard from './utils/Cardboard';
 import {GameEvents} from '../game/events';
 
 export function createRenderer(useVR) {
@@ -42,7 +43,7 @@ export function createRenderer(useVR) {
 }
 
 function setupBaseRenderer() {
-    const renderer = new THREE.WebGLRenderer({antialias: false, alpha: false});
+    const renderer = new THREE.WebGLRenderer({antialias: false, alpha: false, logarithmicDepthBuffer: true});
     renderer.setClearColor(0x000000);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -94,7 +95,9 @@ function setupResizer(renderer, camera) {
 }
 
 function setupVR(baseRenderer) {
-    const stereoEffect = new StereoEffect(baseRenderer);
+    const params = Cardboard.uriToParams('https://vr.google.com/cardboard/download/?p=CgdUd2luc3VuEgRBZHJpHfT91DwlYOVQPSoQAAC0QgAAtEIAALRCAAC0QlgANQIrBz06CClcjz0K1yM8UABgAA');
+    console.log(params);
+    const stereoEffect = new StereoEffect(baseRenderer, params);
     stereoEffect.eyeSeparation = 0.006;
     stereoEffect.setSize(window.innerWidth, window.innerHeight);
     return stereoEffect;
