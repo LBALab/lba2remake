@@ -87,16 +87,36 @@ export default class Renderer {
     onKeyDown(event) {
         if (event.keyCode == 78 || event.keyCode == 77) { //N
             isLoaded = false;
-
-            if (event.keyCode == 78) {
+            if (event.keyCode == 66) { // B
                 bodyIdx = (bodyIdx + 1)
-                if (bodyIdx > models.bodies.length)
+                if (bodyIdx >= models.entities[entityIdx].bodies.length)
                     bodyIdx = 0;
-                index = bodyIdx; // FIX ME for now will be the same
             }
-            if (event.keyCode == 77) { //M
+            if (event.keyCode == 71) { // G
+                bodyIdx = (bodyIdx - 1)
+                if (bodyIdx < 0)
+                    bodyIdx = models.entities[entityIdx].bodies.length - 1;
+            }
+            if (event.keyCode == 72) { // H
+                entityIdx = (entityIdx - 1)
+                if (entityIdx < 0)
+                    entityIdx = models.entities.length - 1;
+                index = entityIdx;
+            }
+            if (event.keyCode == 78) { // N
+                entityIdx = (entityIdx + 1)
+                if (entityIdx >= models.entities.length)
+                    entityIdx = 0;
+                index = entityIdx;
+            }
+            if (event.keyCode == 74) { // J
+                animIdx = (animIdx - 1)
+                if (animIdx < 0)
+                    animIdx = models.entities[entityIdx].anims.length - 1;
+            }
+            if (event.keyCode == 77) { // M
                 animIdx = (animIdx + 1)
-                if (animIdx > models.anims.length)
+                if (animIdx >= models.entities[entityIdx].anims.length)
                     animIdx = 0;
             }
             model(models, index, entityIdx, bodyIdx, animIdx, (object) => {

@@ -3,7 +3,7 @@ import THREE from 'three';
 import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
-import {loadEntity} from './entity';
+import {loadEntity, getBodyIndex, getAnimIndex} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
 import {loadAnimState, updateKeyframe} from './animState';
@@ -42,11 +42,11 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
         model.entities = loadEntity(model.entity);
     }
     const entity = model.entities[entityIdx];
-    //const realBodyIdx = entity.bodies[bodyIdx].index;
-    //const realAnimIdx = entity.anims[animIdx].index;
+    const realBodyIdx = getBodyIndex(entity, bodyIdx);
+    const realAnimIdx = getAnimIndex(entity, animIdx);
 
-    const body = loadBody(model, model.bodies, bodyIdx);
-    const anim = loadAnim(model, model.anims, animIdx);
+    const body = loadBody(model, model.bodies, realBodyIdx);
+    const anim = loadAnim(model, model.anims, realAnimIdx);
     
     loadAnimState(model, body, anim, index);
     const state = model.states[index];

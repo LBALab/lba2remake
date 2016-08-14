@@ -28,25 +28,18 @@ export function loadEntity(buffer) {
     const numEntries = (offset / 4) - 1;
     let offsets = [];
     for (let i = 0; i < numEntries; ++i) {
-        const entry = {
-            offset : data.getUint32(i * 4, true),
-            size: data.getUint32((i + 1) * 4, true) - data.getUint32(i * 4, true)
-        }
-        if (i == numEntries - 1) {
-            entry.size = buffer.length - entry.offset;
-        }
-        offsets.push(entry);
+        offsets.push(data.getUint32(i * 4, true));
     }
     for (let i = 0; i < numEntries; ++i) {
-        const entity = loadEntityEntry(buffer, offsets[i].offset, i);
+        const entity = loadEntityEntry(buffer, offsets[i], i);
         entities.push(entity);
     }
     return entities;
 }
 
-function loadEntityEntry(buffer, offset, index) {
-    const data = new DataView(buffer, offset);
-    offset = 0;
+function loadEntityEntry(buffer, dataOffset, index) {
+    const data = new DataView(buffer, dataOffset);
+    let offset = 0;
     let entity = {
         index: index,
         bodies: [],
@@ -84,12 +77,15 @@ function loadEntityBody(data, offset) {
         box: {}
     }
 
-    body.index = data.getUint8(offset++);
-    body.offset = data.getUint8(offset++) + 1; // to add the previous byte
-    body.bodyIndex = data.getUint16(offset);
+    body.index = data.getUint8(offset++, true);
+    body.offset = data.getUint8(offset++, true);
+    if (body.offset > 0) {
+        body.offset += 1; // to add the previous byte
+    }
+    body.bodyIndex = data.getUint16(offset, true);
     offset += 2;
 
-    const hasCollisionBox = data.getUint8(offset++);
+    const hasCollisionBox = data.getUint8(offset++, true);
 
     if (hasCollisionBox == 1) {
         body.hasCollisionBox = true;
@@ -98,7 +94,7 @@ function loadEntityBody(data, offset) {
             tX: 0, tY: 0, tZ: 0
         }
         
-        const innerOffset = data.getUint8(offset++);
+        const innerOffset = data.getUint8(offset++, true);
 
         box.bX = data.getUint16(offset);
         box.bY = data.getUint16(offset + 2);
@@ -108,7 +104,6 @@ function loadEntityBody(data, offset) {
         box.tZ = data.getUint16(offset + 10);
 
         body.box = box;
-        offset += innerOffset;
     }
     return body;
 }
@@ -122,15 +117,24 @@ function loadEntityAnim(data, offset) {
         actions: []
     }
 
-    anim.index = data.getUint8(offset++);
-    anim.offset = data.getUint8(offset++) + 1; // to add the previous byte
-    anim.animIndex = data.getUint16(offset);
+    anim.index = data.getUint8(offset++, true);
+    anim.offset = data.getUint8(offset++, true);
+    if (anim.offset > 0) {
+        anim.offset += 1; // to add the previous byte
+    }
+    if (anim.offset == 0) {
+        anim.offset += 5;
+    }
+    anim.numActions = data.getUint8(offset++, true);
+    if (anim.numActions > 0) {
+        anim.offset += anim.numActions - 3;
+    }
+    anim.animIndex = data.getUint16(offset, true);
     offset += 2;
-    anim.numActions = data.getUint8(offset++);
 
     /*for (let i = 0; i < numActions; ++i) {
         let action = {
-            type: data.getUint8(offset++);
+            type: data.getUint8(offset++, true);
         }
         switch(type - 5) {
             case ACTION_HITTING: 
@@ -169,4 +173,22 @@ function loadEntityAnim(data, offset) {
     }*/
 
     return anim;
+}
+
+export function getBodyIndex(entity, index) {
+    for (let i = 0; i < entity.bodies.length; ++i) {
+        if (entity.bodies[i].index == index) {
+            return entity.bodies[i].bodyIndex;
+        }
+    }
+    return 0;
+}
+
+export function getAnimIndex(entity, index) {
+    for (let i = 0; i < entity.anims.length; ++i) {
+        if (entity.anims[i].index == index) {
+            return entity.anims[i].animIndex;
+        }
+    }
+    return 0;
 }
