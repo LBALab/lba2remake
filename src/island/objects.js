@@ -97,7 +97,7 @@ function loadSection(geometries, object, info, section, palette) {
             const intensity = (object.intensities[index * 8 + info.iv] >> 5) * 3;
             if (section.blockSize == 12 || section.blockSize == 16) {
                 push.apply(geometries.colored.positions, getPosition(object, info, index));
-                push.apply(geometries.colored.colors, getColor(section, i, intensity, palette));
+                push.apply(geometries.colored.colorInfos, getColorInfo(section, i, object.intensities[index * 8 + info.iv], palette));
             } else {
                 let atlas = 'atlas';
                 if (section.type == 12 || section.type == 13 || section.type == 14 || section.type == 21) {
@@ -133,10 +133,10 @@ function getPosition(object, info, index) {
     ];
 }
 
-function getColor(section, face, intensity, palette) {
+function getColorInfo(section, face, intensity) {
     const color = section.data.getUint8(face * section.blockSize + 8);
-    const c = color * 3 + intensity;
-    return [palette[c], palette[c + 1], palette[c + 2], 0x0];
+    window.mc = Math.max(window.mc, intensity);
+    return [Math.floor(intensity / 32), Math.floor(color / 16)];
 }
 
 function getUVs(section, face, ptIndex) {

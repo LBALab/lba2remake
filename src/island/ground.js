@@ -25,7 +25,7 @@ export function loadGround(island, section, geometries, usedTiles) {
                         push.apply(geometries.textured.colors, getColors(section.intensity, t, island.palette, p));
                     } else {
                         push.apply(geometries.colored.positions, getPositions(section, p));
-                        push.apply(geometries.colored.colors, getColors(section.intensity, t, island.palette, p));
+                        push.apply(geometries.colored.colorInfos, getColorInfos(section.intensity, t, p));
                     }
                 }
             };
@@ -89,5 +89,22 @@ function getColor(triangle, palette, intensity) {
         return [r, g, b, i];
     } else {
         return [0xFF, 0xFF, 0xFF, i];
+    }
+}
+
+function getColorInfos(intensity, triangle, points) {
+    const colorsInfo = [];
+    for (let i = 0; i < 3; ++i) {
+        push.apply(colorsInfo, getColorInfo(triangle, intensity[points[i]]));
+    }
+    return colorsInfo;
+}
+
+function getColorInfo(triangle, intensity) {
+    if (triangle.useColor) {
+        const idx = triangle.textureBank;
+        return [intensity, idx];
+    } else {
+        return [i, 0];
     }
 }

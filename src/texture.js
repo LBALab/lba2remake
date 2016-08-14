@@ -29,6 +29,35 @@ const mipmapColor = [
     [0x80, 0x80, 0x80, 0xFF]
 ];
 
+export function loadPaletteTexture(palette) {
+    const image_data = new Uint8Array(256 * 4);
+    image_data[0] = 0;
+    image_data[1] = 0;
+    image_data[2] = 0;
+    image_data[3] = 0;
+    for (let i = 1; i < 256; ++i) {
+        image_data[i * 4] = palette[i * 3];
+        image_data[i * 4 + 1] = palette[i * 3 + 1];
+        image_data[i * 4 + 2] = palette[i * 3 + 2];
+        image_data[i * 4 + 3] = 0xFF;
+    }
+    const texture = new THREE.DataTexture(
+        image_data,
+        16,
+        16,
+        THREE.RGBAFormat,
+        THREE.UnsignedByteType,
+        THREE.UVMapping,
+        THREE.ClampToEdgeWrapping,
+        THREE.ClampToEdgeWrapping,
+        THREE.NearestFilter,
+        THREE.NearestFilter
+    );
+    texture.needsUpdate = true;
+    texture.generateMipmaps = false;
+    return texture;
+}
+
 export function loadTextureWithMipmaps(buffer, palette) {
     const texture = new THREE.DataTexture(
         null,

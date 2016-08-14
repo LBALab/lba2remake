@@ -1,7 +1,8 @@
 import THREE from 'three';
 import {
     loadSubTexture,
-    loadTextureWithMipmaps
+    loadTextureWithMipmaps,
+    loadPaletteTexture
 } from '../texture';
 
 import colored_vertex from './shaders/colored.vert.glsl';
@@ -20,13 +21,14 @@ export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}
     return {
         colored: {
             positions: [],
-            colors: [],
+            colorInfos: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: colored_vertex,
                 fragmentShader: colored_fragment,
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
-                    fogDensity: {value: envInfo.fogDensity}
+                    fogDensity: {value: envInfo.fogDensity},
+                    palette: {value: loadPaletteTexture(palette)}
                 }
             })
         },
