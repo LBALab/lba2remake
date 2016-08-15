@@ -3,22 +3,22 @@ import _ from 'lodash';
 const push = Array.prototype.push;
 
 const ACTIONTYPE = {
-    ACTION_HITTING           : 0,
-	ACTION_SAMPLE            : 1,
-    ACTION_SAMPLE_FREQ       : 2,
-    ACTION_THROW_EXTRA_BONUS : 3,
-	ACTION_THROW_MAGIC_BALL  : 4,
-	ACTION_SAMPLE_REPEAT     : 5,
-	ACTION_UNKNOWN_6         : 6,
-	ACTION_UNKNOWN_7         : 7,
-	ACTION_SAMPLE_STOP       : 8,
-	ACTION_UNKNOWN_9         : 9, // unused
-	ACTION_SAMPLE_BRICK_1    : 10,
-	ACTION_SAMPLE_BRICK_2    : 11,
-	ACTION_HERO_HITTING      : 12,
-	ACTION_UNKNOWN_13        : 13,
-	ACTION_UNKNOWN_14        : 14,
-	ACTION_UNKNOWN_15        : 15,
+    HITTING           : 0,
+	SAMPLE            : 1,
+    SAMPLE_FREQ       : 2,
+    THROW_EXTRA_BONUS : 3,
+	THROW_MAGIC_BALL  : 4,
+	SAMPLE_REPEAT     : 5,
+	EXTRA_AIMING      : 6,
+	EXTRA_THROW       : 7,
+	SAMPLE_STOP       : 8,
+	UNKNOWN_9         : 9, // unused
+	SAMPLE_BRICK_1    : 10,
+	SAMPLE_BRICK_2    : 11,
+	HERO_HITTING      : 12,
+	EXTRA_THROW_2     : 13,
+	EXTRA_THROW_3     : 14,
+	EXTRA_AIMING_2    : 15,
 }
 
 export function loadEntity(buffer) {
@@ -132,45 +132,102 @@ function loadEntityAnim(data, offset) {
     anim.animIndex = data.getUint16(offset, true);
     offset += 2;
 
-    /*for (let i = 0; i < numActions; ++i) {
+    for (let i = 0; i < anim.numActions; ++i) {
         let action = {
-            type: data.getUint8(offset++, true);
+            type: data.getUint8(offset, true),
+            animFrame: data.getUint8(offset + 1, true)
         }
-        switch(type - 5) {
-            case ACTION_HITTING: 
+        switch(action.type - 5) {
+            case ACTIONTYPE.HITTING: 
+                action.strength = data.getUint8(offset + 2, true);
             break;
-            case ACTION_SAMPLE: 
+            case ACTIONTYPE.SAMPLE: 
+                action.sampleId = data.getUint16(offset + 2, true);
             break;
-            case ACTION_SAMPLE_FREQ: 
+            case ACTIONTYPE.SAMPLE_FREQ: 
+                action.sampleId = data.getUint16(offset + 2, true);
+                action.frequency = data.getUint8(offset + 4, true);
             break;
-            case ACTION_THROW_EXTRA_BONUS: 
+            case ACTIONTYPE.THROW_EXTRA_BONUS: 
+                action.yHeight = data.getUint16(offset + 2, true);
+                action.spriteId = data.getUint8(offset + 4, true);
+                action.unk1 = data.getUint16(offset + 5, true);
+                action.unk2 = data.getUint16(offset + 7, true);
+                action.unk3 = data.getUint16(offset + 9, true);
+                action.unk4 = data.getUint8(offset + 11, true);
+                action.unk5 = data.getUint8(offset + 12, true);
             break;
-            case ACTION_THROW_MAGIC_BALL: 
+            case ACTIONTYPE.THROW_MAGIC_BALL: 
+                action.unk1 = data.getUint16(offset + 2, true);
+                action.unk2 = data.getUint16(offset + 4, true);
+                action.unk3 = data.getUint16(offset + 6, true);
+                action.unk4 = data.getUint8(offset + 8, true);
             break;
-            case ACTION_SAMPLE_REPEAT: 
+            case ACTIONTYPE.SAMPLE_REPEAT: 
+                action.sampleId = data.getUint16(offset + 2, true);
+                action.repeat = data.getUint16(offset + 4, true);
             break;
-            case ACTION_UNKNOWN_6: 
+            case ACTIONTYPE.EXTRA_AIMING: 
+                action.yHeight = data.getUint16(offset + 2, true);
+                action.unk1 = data.getUint8(offset + 4, true);
+                action.unk2 = data.getUint8(offset + 5, true);
+                action.unk3 = data.getUint16(offset + 7, true);
+                action.unk4 = data.getUint8(offset + 8, true);
             break;
-            case ACTION_UNKNOWN_7: 
+            case ACTIONTYPE.EXTRA_THROW: 
+                action.yHeight = data.getUint16(offset + 2, true);
+                action.spriteId = data.getUint8(offset + 4, true);
+                action.unk1 = data.getUint16(offset + 5, true);
+                action.unk2 = data.getUint16(offset + 7, true);
+                action.unk3 = data.getUint16(offset + 9, true);
+                action.unk4 = data.getUint8(offset + 11, true);
+                action.unk5 = data.getUint8(offset + 12, true);
             break;
-            case ACTION_SAMPLE_STOP: 
+            case ACTIONTYPE.SAMPLE_STOP: 
+                action.sampleId = data.getUint16(offset + 2, true);
             break;
-            case ACTION_UNKNOWN_9: 
+            //case ACTIONTYPE.UNKNOWN_9: // unused
+            //break;
+            case ACTIONTYPE.SAMPLE_BRICK_1: // only required animFrame
+            case ACTIONTYPE.SAMPLE_BRICK_2: 
             break;
-            case ACTION_SAMPLE_BRICK_1: 
+            case ACTIONTYPE.HERO_HITTING: 
+                action.animFrame -= 1;
             break;
-            case ACTION_SAMPLE_BRICK_2: 
+            case ACTIONTYPE.EXTRA_THROW_2: 
+                action.distanceX = data.getUint16(offset + 2, true);
+                action.distanceY = data.getUint16(offset + 4, true);
+                action.distanceZ = data.getUint16(offset + 6, true);
+                action.spriteId = data.getUint8(offset + 8, true);
+                action.unk1 = data.getUint16(offset + 7, true);
+                action.unk2 = data.getUint16(offset + 9, true);
+                action.unk3 = data.getUint16(offset + 11, true);
+                action.unk4 = data.getUint8(offset + 11, true);
+                action.strength = data.getUint8(offset + 12, true);
             break;
-            case ACTION_HERO_HITTING: 
+            case ACTIONTYPE.EXTRA_THROW_3: 
+                action.distanceX = data.getUint16(offset + 2, true);
+                action.distanceY = data.getUint16(offset + 4, true);
+                action.distanceZ = data.getUint16(offset + 6, true);
+                action.spriteId = data.getUint8(offset + 8, true);
+                action.unk1 = data.getUint16(offset + 9, true);
+                action.unk2 = data.getUint16(offset + 11, true);
+                action.unk3 = data.getUint16(offset + 13, true);
+                action.unk4 = data.getUint8(offset + 14, true);
+                action.strength = data.getUint8(offset + 15, true);
             break;
-            case ACTION_UNKNOWN_13: 
-            break;
-            case ACTION_UNKNOWN_14: 
-            break;
-            case ACTION_UNKNOWN_15: 
+            case ACTIONTYPE.EXTRA_AIMING_2: 
+                action.distanceX = data.getUint16(offset + 2, true);
+                action.distanceY = data.getUint16(offset + 4, true);
+                action.distanceZ = data.getUint16(offset + 6, true);
+                action.spriteId = data.getUint8(offset + 8, true);
+                action.targetActor = data.getUint8(offset + 9, true);
+                action.unk1 = data.getUint16(offset + 10, true);
+                action.unk2 = data.getUint8(offset + 12, true);
             break;
         }
-    }*/
+        anim.actions.push(action);
+    }
 
     return anim;
 }
