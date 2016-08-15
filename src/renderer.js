@@ -85,7 +85,7 @@ export default class Renderer {
     }
 
     onKeyDown(event) {
-        if (event.keyCode == 78 || event.keyCode == 77) { //N
+        if (event.keyCode >= 66 && event.keyCode <= 78) { //N
             isLoaded = false;
             if (event.keyCode == 66) { // B
                 bodyIdx = (bodyIdx + 1)
