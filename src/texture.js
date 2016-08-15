@@ -58,6 +58,36 @@ export function loadPaletteTexture(palette) {
     return texture;
 }
 
+export function loadTextureWithoutPalette(buffer) {
+    const pixel_data = new Uint8Array(buffer);
+    const image_data = new Uint8Array(128 * 128 * 4);
+    for (let x = 0; x < 128; ++x) {
+        for (let y = 0; y < 128; ++y) {
+            for (let i = 0; i < 4; ++i) {
+                const dx = i % 2;
+                const dy = Math.floor(i / 2);
+                const idx = (x * 2 + dx) * 256 + (y * 2 + dy);
+                image_data[(x * 128 + y) * 4 + i] = pixel_data[idx];
+            }
+        }
+    }
+    const texture = new THREE.DataTexture(
+        image_data,
+        128,
+        128,
+        THREE.RGBAFormat,
+        THREE.UnsignedByteType,
+        THREE.UVMapping,
+        THREE.ClampToEdgeWrapping,
+        THREE.ClampToEdgeWrapping,
+        THREE.NearestFilter,
+        THREE.NearestFilter
+    );
+    texture.needsUpdate = true;
+    texture.generateMipmaps = false;
+    return texture;
+}
+
 export function loadTextureWithMipmaps(buffer, palette) {
     const texture = new THREE.DataTexture(
         null,

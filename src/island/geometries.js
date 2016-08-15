@@ -2,7 +2,8 @@ import THREE from 'three';
 import {
     loadSubTexture,
     loadTextureWithMipmaps,
-    loadPaletteTexture
+    loadPaletteTexture,
+    loadTextureWithoutPalette
 } from '../texture';
 
 import colored_vertex from './shaders/colored.vert.glsl';
@@ -18,6 +19,7 @@ import env_fragment from './shaders/env.frag.glsl';
 import moon_vertex from './shaders/moon.vert.glsl';
 
 export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}) {
+    const paletteTexture = loadPaletteTexture(palette);
     return {
         colored: {
             positions: [],
@@ -28,13 +30,13 @@ export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    palette: {value: loadPaletteTexture(palette)}
+                    palette: {value: paletteTexture}
                 }
             })
         },
         textured: {
             positions: [],
-            colors: [],
+            colorInfos: [],
             uvs: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: textured_vertex,
@@ -42,7 +44,8 @@ export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: loadTextureWithMipmaps(ile.getEntry(1), palette)}
+                    texture: {value: loadTextureWithoutPalette(ile.getEntry(1))},
+                    palette: {value: paletteTexture}
                 }
             })
         },

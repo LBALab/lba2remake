@@ -22,7 +22,7 @@ export function loadGround(island, section, geometries, usedTiles) {
                     if (t.useTexture) {
                         push.apply(geometries.textured.positions, getPositions(section, p));
                         push.apply(geometries.textured.uvs, getUVs(section.textureInfo, t.textureIndex));
-                        push.apply(geometries.textured.colors, getColors(section.intensity, t, island.palette, p));
+                        push.apply(geometries.textured.colorInfos, getColorInfos(section.intensity, t, p));
                     } else {
                         push.apply(geometries.colored.positions, getPositions(section, p));
                         push.apply(geometries.colored.colorInfos, getColorInfos(section.intensity, t, p));
@@ -105,6 +105,6 @@ function getColorInfo(triangle, intensity) {
         const idx = triangle.textureBank;
         return [intensity, idx];
     } else {
-        return [i, 0];
+        return [intensity, 0];
     }
 }
