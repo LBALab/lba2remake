@@ -34,5 +34,4 @@ void main() {
     vec4 color = dither(vColorInfo / 16.0);
     vec3 fColor = mix(color.rgb, tex.rgb, tex.a);
     gl_FragColor = vec4(fog(tex.rgb), 1.0);
-    //gl_FragColor = vec4(texInfo.x, texInfo.x, texInfo.x, 1.0);
 }
