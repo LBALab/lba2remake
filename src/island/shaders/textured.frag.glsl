@@ -33,5 +33,5 @@ void main() {
     vec4 tex = colorInterpolation(texInfo);
     vec4 color = dither(vColorInfo / 16.0);
     vec3 fColor = mix(color.rgb, tex.rgb, tex.a);
-    gl_FragColor = vec4(fog(tex.rgb), 1.0);
+    gl_FragColor = vec4(fog(fColor), 1.0);
 }
