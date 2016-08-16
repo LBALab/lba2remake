@@ -78,6 +78,13 @@ function loadMipmapLevelPal(source_data, level) {
     const tgt_data = new Uint8Array(dim * dim * 4);
     for (let y = 0; y < dim; ++y) {
         for (let x = 0; x < dim; ++x) {
+            const idx = y * dim + x;
+            /*
+            if (dim < 32) {
+                tgt_data[idx * 4] = 8 + 16 * 2;
+                continue;
+            }
+            */
             const values = [
                 source_data[((y * 2) * dim * 2 + x * 2) * 4],
                 source_data[((y * 2) * dim * 2 + x * 2 + 1) * 4],
@@ -86,7 +93,6 @@ function loadMipmapLevelPal(source_data, level) {
             ];
             const colors = map(values, v => Math.floor(v / 16));
             const intensities = map(values, v => v % 16);
-            const idx = y * dim + x;
             const intensity = (intensities[0] + intensities[1] + intensities[2] + intensities[3]) / 4;
             const colorMap = {};
             for (let i = 0; i < 4; ++i) {
