@@ -1,7 +1,6 @@
 import THREE from 'three';
 import {
     loadSubTexture,
-    loadTextureWithMipmaps,
     loadPaletteTexture,
     loadTexture
 } from '../texture';
@@ -20,6 +19,7 @@ import moon_vertex from './shaders/moon.vert.glsl';
 
 export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}) {
     const paletteTexture = loadPaletteTexture(palette);
+    const groundTexture = loadTexture(ile.getEntry(1));
     const atlasTexture = loadTexture(ile.getEntry(2));
     return {
         colored: {
@@ -45,7 +45,7 @@ export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: loadTexture(ile.getEntry(1))},
+                    texture: {value: groundTexture},
                     palette: {value: paletteTexture}
                 }
             })
