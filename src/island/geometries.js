@@ -19,8 +19,8 @@ import moon_vertex from './shaders/moon.vert.glsl';
 
 export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}) {
     const paletteTexture = loadPaletteTexture(palette);
-    const groundTexture = loadTexture(ile.getEntry(1));
-    const atlasTexture = loadTexture(ile.getEntry(2));
+    const groundTexture = loadTexture(ile.getEntry(1), palette);
+    const atlasTexture = loadTexture(ile.getEntry(2), palette);
     return {
         colored: {
             positions: [],
