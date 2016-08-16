@@ -64,8 +64,8 @@ export function loadTextureWithoutPalette(buffer) {
     for (let x = 0; x < 128; ++x) {
         for (let y = 0; y < 128; ++y) {
             for (let i = 0; i < 4; ++i) {
-                const dx = i % 2;
-                const dy = Math.floor(i / 2);
+                const dx = Math.floor(i / 2);
+                const dy = i % 2;
                 const idx = (x * 2 + dx) * 256 + (y * 2 + dy);
                 image_data[(x * 128 + y) * 4 + i] = pixel_data[idx];
             }

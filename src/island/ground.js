@@ -70,28 +70,6 @@ function getUVs(textureInfo, index) {
     ];
 }
 
-function getColors(intensity, triangle, palette, points) {
-    const colors = [];
-    for (let i = 0; i < 3; ++i) {
-        push.apply(colors, getColor(triangle, palette, intensity[points[i]] & 0xF));
-    }
-    return colors;
-}
-
-function getColor(triangle, palette, intensity) {
-    const i = intensity * 12 + 63;
-    if (triangle.useColor) {
-        const idx = (triangle.textureBank << 4) * 3;
-        const offset = intensity * 3;
-        const r = palette[idx + offset];
-        const g = palette[idx + offset + 1];
-        const b = palette[idx + offset + 2];
-        return [r, g, b, i];
-    } else {
-        return [0xFF, 0xFF, 0xFF, i];
-    }
-}
-
 function getColorInfos(intensity, triangle, points) {
     const colorsInfo = [];
     for (let i = 0; i < 3; ++i) {

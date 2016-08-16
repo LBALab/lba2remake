@@ -20,6 +20,7 @@ import moon_vertex from './shaders/moon.vert.glsl';
 
 export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}) {
     const paletteTexture = loadPaletteTexture(palette);
+    const atlasTexture = loadTextureWithoutPalette(ile.getEntry(2));
     return {
         colored: {
             positions: [],
@@ -51,7 +52,7 @@ export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}
         },
         atlas: {
             positions: [],
-            colors: [],
+            colorInfos: [],
             uvs: [],
             uvGroups: [],
             material: new THREE.RawShaderMaterial({
@@ -60,13 +61,14 @@ export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: loadTextureWithMipmaps(ile.getEntry(2), palette)}
+                    texture: {value: atlasTexture},
+                    palette: {value: paletteTexture}
                 }
             })
         },
         atlas2: {
             positions: [],
-            colors: [],
+            colorInfos: [],
             uvs: [],
             uvGroups: [],
             material: new THREE.RawShaderMaterial({
@@ -76,7 +78,8 @@ export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: loadTextureWithMipmaps(ile.getEntry(2), palette)}
+                    texture: {value: atlasTexture},
+                    palette: {value: paletteTexture}
                 }
             })
         },

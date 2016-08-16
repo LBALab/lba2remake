@@ -94,17 +94,17 @@ function loadSection(geometries, object, info, section, palette) {
             continue;
         const addVertex = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
-            const intensity = (object.intensities[index * 8 + info.iv] >> 5) * 3;
+            const intensity = object.intensities[index * 8 + info.iv];
             if (section.blockSize == 12 || section.blockSize == 16) {
                 push.apply(geometries.colored.positions, getPosition(object, info, index));
-                push.apply(geometries.colored.colorInfos, getColorInfo(section, i, object.intensities[index * 8 + info.iv], palette));
+                push.apply(geometries.colored.colorInfos, getColorInfo(section, i, intensity));
             } else {
                 let atlas = 'atlas';
                 if (section.type == 12 || section.type == 13 || section.type == 14 || section.type == 21) {
                     atlas += '2';
                 }
                 push.apply(geometries[atlas].positions, getPosition(object, info, index));
-                push.apply(geometries[atlas].colors, [0xFF, 0xFF, 0xFF, 0xFF]);
+                push.apply(geometries[atlas].colorInfos, [object.intensities[index * 8 + 3] / 32 + 8, 0]);
                 push.apply(geometries[atlas].uvs, getUVs(section, i, j));
                 push.apply(geometries[atlas].uvGroups, uvGroup);
             }
@@ -133,9 +133,11 @@ function getPosition(object, info, index) {
     ];
 }
 
+window.mc = {};
+
 function getColorInfo(section, face, intensity) {
     const color = section.data.getUint8(face * section.blockSize + 8);
-    window.mc = Math.max(window.mc, intensity);
+    window.mc[intensity / 32] = true;
     return [Math.floor(intensity / 32), Math.floor(color / 16)];
 }
 
