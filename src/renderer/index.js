@@ -6,22 +6,50 @@ import RenderPass from './effects/postprocess/RenderPass';
 import setupStats from './stats';
 import Cardboard from './utils/Cardboard';
 import {GameEvents} from '../game/events';
+import {map} from 'lodash';
+
+const PixelRatioMode = {
+    DEVICE: () => window.devicePixelRatio,
+    DOUBLE: () => 2.0,
+    NORMAL: () => 1.0,
+    HALF: () => 0.5,
+    QUARTER: () => 0.25
+};
+
+const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'], (name, idx) => ({
+    getValue: PixelRatioMode[name],
+    index: idx,
+    name: name
+}));
 
 export function createRenderer(useVR) {
-    const baseRenderer = setupBaseRenderer();
+    let pixelRatio = PixelRatio[0];
+    let antialias = false;
+    const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
+    const baseRenderer = setupBaseRenderer(pixelRatio);
     const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 100); // 1m = 0.0625 units
     const resizer = setupResizer(renderer, camera);
-    const smaa = setupSMAA(renderer);
+    let smaa = setupSMAA(renderer, pixelRatio);
     const stats = setupStats(useVR);
-    let antialias = true;
+
     window.addEventListener('keydown', event => {
         if (event.code == 'KeyH') {
             antialias = !antialias;
-            console.log('Antialias: ', antialias);
+            displayRenderMode();
+            window.dispatchEvent(new CustomEvent('resize'));
+        }
+        if (event.code == 'KeyR') {
+            pixelRatio = PixelRatio[(pixelRatio.index + 1) % PixelRatio.length];
+            baseRenderer.setPixelRatio(pixelRatio.getValue());
+            smaa = setupSMAA(renderer, pixelRatio);
+            displayRenderMode();
             window.dispatchEvent(new CustomEvent('resize'));
         }
     });
+
+    displayRenderMode();
+
     return {
         domElement: baseRenderer.domElement,
         render: scene => {
@@ -42,10 +70,10 @@ export function createRenderer(useVR) {
     };
 }
 
-function setupBaseRenderer() {
+function setupBaseRenderer(pixelRatio) {
     const renderer = new THREE.WebGLRenderer({antialias: false, alpha: false, logarithmicDepthBuffer: true});
     renderer.setClearColor(0x000000);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(pixelRatio.getValue());
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.autoClear = true;
 
@@ -66,12 +94,12 @@ function setupBaseRenderer() {
     return renderer;
 }
 
-function setupSMAA(renderer) {
+function setupSMAA(renderer, pixelRatio) {
     const composer = new EffectComposer(renderer);
     const renderPass = new RenderPass();
     composer.addPass(renderPass);
 
-    const pass = new SMAAPass(window.innerWidth, window.innerHeight);
+    const pass = new SMAAPass(window.innerWidth * pixelRatio.getValue(), window.innerHeight * pixelRatio.getValue());
     pass.renderToScreen = true;
     composer.addPass(pass);
     return {
