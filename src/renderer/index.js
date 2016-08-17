@@ -9,7 +9,7 @@ import {GameEvents} from '../game/events';
 import {map} from 'lodash';
 
 const PixelRatioMode = {
-    DEVICE: () => window.devicePixelRatio,
+    DEVICE: () => window.devicePixelRatio || 1.0,
     DOUBLE: () => 2.0,
     NORMAL: () => 1.0,
     HALF: () => 0.5,
