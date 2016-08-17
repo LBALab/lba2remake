@@ -22,10 +22,10 @@ export function loadGround(island, section, geometries, usedTiles) {
                     if (t.useTexture) {
                         push.apply(geometries.textured.positions, getPositions(section, p));
                         push.apply(geometries.textured.uvs, getUVs(section.textureInfo, t.textureIndex));
-                        push.apply(geometries.textured.colors, getColors(section.intensity, t, island.palette, p));
+                        push.apply(geometries.textured.colorInfos, getColorInfos(section.intensity, t, p));
                     } else {
                         push.apply(geometries.colored.positions, getPositions(section, p));
-                        push.apply(geometries.colored.colors, getColors(section.intensity, t, island.palette, p));
+                        push.apply(geometries.colored.colorInfos, getColorInfos(section.intensity, t, p));
                     }
                 }
             };
@@ -70,24 +70,19 @@ function getUVs(textureInfo, index) {
     ];
 }
 
-function getColors(intensity, triangle, palette, points) {
-    const colors = [];
+function getColorInfos(intensity, triangle, points) {
+    const colorsInfo = [];
     for (let i = 0; i < 3; ++i) {
-        push.apply(colors, getColor(triangle, palette, intensity[points[i]] & 0xF));
+        push.apply(colorsInfo, getColorInfo(triangle, intensity[points[i]]));
     }
-    return colors;
+    return colorsInfo;
 }
 
-function getColor(triangle, palette, intensity) {
-    const i = intensity * 12 + 63;
+function getColorInfo(triangle, intensity) {
     if (triangle.useColor) {
-        const idx = (triangle.textureBank << 4) * 3;
-        const offset = intensity * 3;
-        const r = palette[idx + offset];
-        const g = palette[idx + offset + 1];
-        const b = palette[idx + offset + 2];
-        return [r, g, b, i];
+        const idx = triangle.textureBank;
+        return [intensity, idx];
     } else {
-        return [0xFF, 0xFF, 0xFF, i];
+        return [intensity, 0];
     }
 }

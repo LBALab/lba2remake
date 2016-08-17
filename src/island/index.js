@@ -76,7 +76,7 @@ function loadIslandSync(island, files) {
     const scene = new THREE.Scene();
 
     const geometries = loadGeometries(island);
-    _.each(geometries, ({positions, uvs, colors, uvGroups, material}, name) => {
+    _.each(geometries, ({positions, uvs, colors, colorInfos, uvGroups, material}, name) => {
         if (positions && positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
@@ -85,6 +85,9 @@ function loadIslandSync(island, files) {
             }
             if (colors) {
                 bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
+            }
+            if (colorInfos) {
+                bufferGeometry.addAttribute('colorInfo', new THREE.BufferAttribute(new Uint8Array(colorInfos), 2, false));
             }
             if (uvGroups) {
                 bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, true));

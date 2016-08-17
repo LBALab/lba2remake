@@ -1,7 +1,8 @@
 import THREE from 'three';
 import {
     loadSubTexture,
-    loadTextureWithMipmaps
+    loadPaletteTexture,
+    loadTexture
 } from '../texture';
 
 import colored_vertex from './shaders/colored.vert.glsl';
@@ -17,22 +18,26 @@ import env_fragment from './shaders/env.frag.glsl';
 import moon_vertex from './shaders/moon.vert.glsl';
 
 export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}) {
+    const paletteTexture = loadPaletteTexture(palette);
+    const groundTexture = loadTexture(ile.getEntry(1), palette);
+    const atlasTexture = loadTexture(ile.getEntry(2), palette);
     return {
         colored: {
             positions: [],
-            colors: [],
+            colorInfos: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: colored_vertex,
                 fragmentShader: colored_fragment,
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
-                    fogDensity: {value: envInfo.fogDensity}
+                    fogDensity: {value: envInfo.fogDensity},
+                    palette: {value: paletteTexture}
                 }
             })
         },
         textured: {
             positions: [],
-            colors: [],
+            colorInfos: [],
             uvs: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: textured_vertex,
@@ -40,13 +45,14 @@ export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: loadTextureWithMipmaps(ile.getEntry(1), palette)}
+                    texture: {value: groundTexture},
+                    palette: {value: paletteTexture}
                 }
             })
         },
         atlas: {
             positions: [],
-            colors: [],
+            colorInfos: [],
             uvs: [],
             uvGroups: [],
             material: new THREE.RawShaderMaterial({
@@ -55,13 +61,14 @@ export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: loadTextureWithMipmaps(ile.getEntry(2), palette)}
+                    texture: {value: atlasTexture},
+                    palette: {value: paletteTexture}
                 }
             })
         },
         atlas2: {
             positions: [],
-            colors: [],
+            colorInfos: [],
             uvs: [],
             uvGroups: [],
             material: new THREE.RawShaderMaterial({
@@ -71,7 +78,8 @@ export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: loadTextureWithMipmaps(ile.getEntry(2), palette)}
+                    texture: {value: atlasTexture},
+                    palette: {value: paletteTexture}
                 }
             })
         },
