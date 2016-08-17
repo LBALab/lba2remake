@@ -11,7 +11,7 @@ import {makeGamepadControls} from './controls/gamepad';
 
 window.onload = function() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const renderer = createRenderer(isMobile || true);
+    const renderer = createRenderer(isMobile);
     const heroConfig = {
         physics: {
             enabled: true,
