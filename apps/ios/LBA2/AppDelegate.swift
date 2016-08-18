@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        UserDefaults.standard.register([String:AnyObject]())
+        UserDefaults.standard.register(defaults: [String:AnyObject]())
         return true
     }
 
