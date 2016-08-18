@@ -91,23 +91,23 @@ export default class Renderer {
                 bodyIdx = (bodyIdx + 1)
                 if (bodyIdx >= models.entities[entityIdx].bodies.length)
                     bodyIdx = 0;
+                index = bodyIdx;
             }
             if (event.keyCode == 71) { // G
                 bodyIdx = (bodyIdx - 1)
                 if (bodyIdx < 0)
                     bodyIdx = models.entities[entityIdx].bodies.length - 1;
+                index = bodyIdx;
             }
             if (event.keyCode == 72) { // H
                 entityIdx = (entityIdx - 1)
                 if (entityIdx < 0)
                     entityIdx = models.entities.length - 1;
-                index = entityIdx;
             }
             if (event.keyCode == 78) { // N
                 entityIdx = (entityIdx + 1)
                 if (entityIdx >= models.entities.length)
                     entityIdx = 0;
-                index = entityIdx;
             }
             if (event.keyCode == 74) { // J
                 animIdx = (animIdx - 1)
@@ -152,7 +152,7 @@ export default class Renderer {
                 elapsed: clock.getElapsedTime()
             }
 
-            updateModel(models, index, animIdx, time);
+            updateModel(models, index, entityIdx, bodyIdx, animIdx, time);
         }
         requestAnimationFrame(this.animate.bind(this));
     }

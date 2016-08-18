@@ -58,7 +58,9 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
     return model;
 }
 
-export function updateModel(model, index, animIdx, time) {
-    const anim = loadAnim(model, model.anims, animIdx);
+export function updateModel(model, index, entityIdx, bodyIdx, animIdx, time) {
+    const entity = model.entities[entityIdx];
+    const realAnimIdx = getAnimIndex(entity, animIdx);
+    const anim = loadAnim(model, model.anims, realAnimIdx);
     updateKeyframe(anim, model.states[index], time);
 }
