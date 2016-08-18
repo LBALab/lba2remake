@@ -1,8 +1,8 @@
 highp vec2 rand(vec2 co) {
     highp vec2 a = vec2(12.9898, 78.233);
     highp float b = 43758.5453;
-    highp float sn1 = mod(dot(floor(co), a), 3.14);
-    highp float sn2 = mod(dot(floor(co * 2.0), a), 3.14);
+    highp float sn1 = mod(dot(floor(co), a), 3.14159);
+    highp float sn2 = mod(dot(floor(co * 2.0), a), 3.14159);
     return fract(sin(vec2(sn1, sn2)) * b) * 2.0 - 1.0;
 }
 
