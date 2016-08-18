@@ -65,10 +65,10 @@ export default class HQR {
     }
 
     _readHeader() {
-        const idx_array = new Uint32Array(this._buffer, 0, 256);
-        for (let i = 0; i < 256; ++i) {
-            if (idx_array[i] >= this._buffer.byteLength)
-                break;
+        const firstOffset = new Int32Array(this._buffer, 0, 1);
+        const numEntries = (firstOffset[0] / 4) - 1;
+        const idx_array = new Uint32Array(this._buffer, 0, numEntries);
+        for (let i = 0; i < idx_array.length; ++i) {
             const header = new DataView(this._buffer, idx_array[i], 10);
             this._entries.push({
                 offset: idx_array[i] + 10,
