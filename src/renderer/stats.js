@@ -20,9 +20,9 @@ export default function setupStats(useVR) {
             if (useVR) {
                 stats = new Stats(2);
                 stats.setMode(1); // 0: fps, 1: ms
-                stats.widgets[0].domElement.style.left = '50%';
+                stats.widgets[0].domElement.style.left = '45%';
                 stats.widgets[0].domElement.style.top = '100px';
-                stats.widgets[1].domElement.style.left = '50%';
+                stats.widgets[1].domElement.style.left = '55%';
                 stats.widgets[1].domElement.style.top = '100px';
                 document.getElementById('stats1').appendChild(stats.widgets[0].domElement);
                 document.getElementById('stats2').appendChild(stats.widgets[1].domElement);

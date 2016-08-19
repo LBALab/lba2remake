@@ -28,7 +28,7 @@ export function createRenderer(useVR) {
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
     const baseRenderer = setupBaseRenderer(pixelRatio);
     const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 100); // 1m = 0.0625 units
+    const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 100); // 1m = 0.0625 units
     const resizer = setupResizer(renderer, camera);
     let smaa = setupSMAA(renderer, pixelRatio);
     const stats = setupStats(useVR);
@@ -127,6 +127,7 @@ function setupVR(baseRenderer) {
     console.log(params);
     const stereoEffect = new StereoEffect(baseRenderer, params);
     stereoEffect.eyeSeparation = 0.006;
+    stereoEffect.focalLength = 0.0122;
     stereoEffect.setSize(window.innerWidth, window.innerHeight);
     return stereoEffect;
 }
