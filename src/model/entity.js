@@ -149,11 +149,9 @@ function loadEntityAnim(data, offset) {
                 type: data.getUint8(innerOffset + offset, true),
                 animFrame: data.getUint8(innerOffset + offset + 1, true)
             }
-            innerOffset += 2;
             switch(action.type) {
-                case ACTIONTYPE.HITTING: 
-                    // FIXME crashes outside the data buffer. It may be caused by an unknown type
-                    //action.strength = data.getUint8(innerOffset + offset + 2, true); 
+                case ACTIONTYPE.HITTING:
+                    action.strength = data.getUint8(innerOffset + offset + 2, true); 
                     ++innerOffset;
                 break;
                 case ACTIONTYPE.SAMPLE: 
@@ -258,6 +256,7 @@ function loadEntityAnim(data, offset) {
                     innerOffset += 7;
                 break;
             }
+            innerOffset += 2;
             anim.actions.push(action);
             prevInnerOffset = innerOffset;
         }
