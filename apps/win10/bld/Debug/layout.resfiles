@@ -1,0 +1,15 @@
+css\default.css
+images\LockScreenLogo.scale-200.png
+images\SplashScreen.scale-200.png
+images\Square150x150Logo.scale-200.png
+images\Square44x44Logo.scale-200.png
+images\Square44x44Logo.targetsize-24_altform-unplated.png
+images\StoreLogo.png
+images\Wide310x150Logo.scale-200.png
+index.html
+js\main.js
+lib\winjs-4.0.1\css\ui-dark.css
+lib\winjs-4.0.1\css\ui-light.css
+lib\winjs-4.0.1\fonts\Symbols.ttf
+lib\winjs-4.0.1\js\base.js
+lib\winjs-4.0.1\js\ui.js
