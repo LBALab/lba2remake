@@ -27,5 +27,13 @@ namespace win10
         {
             this.InitializeComponent();
         }
+
+        private void _webView_PermissionRequested(WebView sender, WebViewPermissionRequestedEventArgs args)
+        {
+            if (args.PermissionRequest.PermissionType == WebViewPermissionType.PointerLock)
+            {
+                args.PermissionRequest.Allow();
+            }
+        }
     }
 }

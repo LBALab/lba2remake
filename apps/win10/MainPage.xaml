@@ -8,6 +8,6 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <WebView Name="_webView" Source="http://adri42.bitbucket.org/lba2/" />
+        <WebView Name="_webView" Source="http://adri42.bitbucket.org/lba2/" PermissionRequested="_webView_PermissionRequested" />
     </Grid>
 </Page>
