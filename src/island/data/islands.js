@@ -64,6 +64,14 @@ export default [
     ]
   },
   {
+    name: 'CELEBRA2',
+    env: 'ZEELISH',
+    startPosition: [
+      3.1,
+      -1.4
+    ]
+  },
+  {
     name: 'ASCENCE',
     env: 'ZEELISH',
     startPosition: [
