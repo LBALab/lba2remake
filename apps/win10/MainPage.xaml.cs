@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Gaming.Input;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,6 +24,9 @@ namespace win10
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        Gamepad _controller;
+        DispatcherTimer _dispatcherTimer;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -33,6 +37,54 @@ namespace win10
             if (args.PermissionRequest.PermissionType == WebViewPermissionType.PointerLock)
             {
                 args.PermissionRequest.Allow();
+            }
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            _dispatcherTimer = new DispatcherTimer();
+            _dispatcherTimer.Tick += _dispatcherTimer_Tick;
+            _dispatcherTimer.Start();
+        }
+
+        private void handlerButton(string name, bool pressed)
+        {
+            var buttonValue = $"{{detail: {{name: '{name}', isPressed: {pressed}}}}}";
+            string [] js = { $"window.dispatchEvent(new CustomEvent('gamepadbuttonpressed', {buttonValue}))" };
+            _webView.InvokeScriptAsync("eval", js);
+        }
+
+        private void handlerDpad(double xValue, double yValue)
+        {
+            var dpadValue = $"{{detail: {{x: {xValue}, y: {yValue}}}}}";
+            string[] js = { $"window.dispatchEvent(new CustomEvent('dpadvaluechanged', {dpadValue}))" };
+            _webView.InvokeScriptAsync("eval", js);
+        }
+
+        private void _dispatcherTimer_Tick(object sender, object e)
+        {
+            if (Gamepad.Gamepads.Count > 0)
+            {
+                _controller = Gamepad.Gamepads.First();
+                var reading = _controller.GetCurrentReading();
+
+                handlerDpad(reading.LeftThumbstickX, reading.LeftThumbstickY);
+
+                handlerButton("buttonA", reading.Buttons.HasFlag(GamepadButtons.A));
+                handlerButton("buttonB", reading.Buttons.HasFlag(GamepadButtons.B));
+                handlerButton("buttonX", reading.Buttons.HasFlag(GamepadButtons.X));
+                handlerButton("buttonY", reading.Buttons.HasFlag(GamepadButtons.Y));
+
+                handlerButton("leftShoulder", reading.Buttons.HasFlag(GamepadButtons.LeftShoulder));
+                handlerButton("rightShoulder", reading.Buttons.HasFlag(GamepadButtons.RightShoulder));
+
+                handlerButton("leftTrigger", reading.LeftTrigger == 1.0);
+                handlerButton("rightTrigger", reading.RightTrigger == 1.0);
+
+                handlerButton("dpadUp", reading.Buttons.HasFlag(GamepadButtons.DPadUp));
+                handlerButton("dpadDown", reading.Buttons.HasFlag(GamepadButtons.DPadDown));
+                handlerButton("dpadLeft", reading.Buttons.HasFlag(GamepadButtons.DPadLeft));
+                handlerButton("dpadRight", reading.Buttons.HasFlag(GamepadButtons.DPadRight));
             }
         }
     }
