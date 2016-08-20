@@ -54,9 +54,9 @@ namespace win10
             _webView.InvokeScriptAsync("eval", js);
         }
 
-        private void handlerDpad(double xValue, double yValue)
+        private void handlerDpad(string name, double xValue, double yValue)
         {
-            var dpadValue = $"{{detail: {{x: {xValue}, y: {yValue}}}}}";
+            var dpadValue = $"{{detail: {{x: {xValue}, y: {yValue}, name: '{name}'}}}}";
             string[] js = { $"window.dispatchEvent(new CustomEvent('dpadvaluechanged', {dpadValue}))" };
             _webView.InvokeScriptAsync("eval", js);
         }
@@ -68,7 +68,8 @@ namespace win10
                 _controller = Gamepad.Gamepads.First();
                 var reading = _controller.GetCurrentReading();
 
-                handlerDpad(reading.LeftThumbstickX, reading.LeftThumbstickY);
+                handlerDpad("leftStick", reading.LeftThumbstickX, reading.LeftThumbstickY);
+                handlerDpad("rightStick", reading.RightThumbstickX, reading.RightThumbstickY);
 
                 handlerButton("buttonA", reading.Buttons.HasFlag(GamepadButtons.A));
                 handlerButton("buttonB", reading.Buttons.HasFlag(GamepadButtons.B));
