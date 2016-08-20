@@ -103,11 +103,15 @@ export default class Renderer {
                 entityIdx = (entityIdx - 1)
                 if (entityIdx < 0)
                     entityIdx = models.entities.length - 1;
+                bodyIdx = 0;
+                animIdx = 0;
             }
             if (event.keyCode == 78) { // N
                 entityIdx = (entityIdx + 1)
                 if (entityIdx >= models.entities.length)
                     entityIdx = 0;
+                bodyIdx = 0;
+                animIdx = 0;
             }
             if (event.keyCode == 74) { // J
                 animIdx = (animIdx - 1)
