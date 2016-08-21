@@ -25,6 +25,7 @@ namespace win10
     public sealed partial class MainPage : Page
     {
         Gamepad _controller;
+        GamepadReading _prevReading;
         DispatcherTimer _dispatcherTimer;
 
         public MainPage()
@@ -49,16 +50,23 @@ namespace win10
 
         private void handlerButton(string name, bool pressed)
         {
-            var buttonValue = $"{{detail: {{name: '{name}', isPressed: {pressed}}}}}";
-            string [] js = { $"window.dispatchEvent(new CustomEvent('gamepadbuttonpressed', {buttonValue}))" };
-            _webView.InvokeScriptAsync("eval", js);
+            if (pressed)
+            {
+                string isPressed = pressed ? "true" : "false";
+                var buttonValue = $"{{detail: {{name: '{name}', isPressed: {isPressed}}}}}";
+                string[] js = { $"window.dispatchEvent(new CustomEvent('gamepadbuttonpressed', {buttonValue}))" };
+                _webView.InvokeScriptAsync("eval", js);
+            }
         }
 
-        private void handlerDpad(string name, double xValue, double yValue)
+        private void handlerDpad(string name, double xValue, double yValue, double prevXValue, double prevYValue)
         {
-            var dpadValue = $"{{detail: {{x: {xValue}, y: {yValue}, name: '{name}'}}}}";
-            string[] js = { $"window.dispatchEvent(new CustomEvent('dpadvaluechanged', {dpadValue}))" };
-            _webView.InvokeScriptAsync("eval", js);
+            if (xValue != prevXValue && yValue != prevYValue)
+            {
+                var dpadValue = $"{{detail: {{x: {xValue}, y: {yValue}, name: '{name}'}}}}";
+                string[] js = { $"window.dispatchEvent(new CustomEvent('dpadvaluechanged', {dpadValue}))" };
+                _webView.InvokeScriptAsync("eval", js);
+            }
         }
 
         private void _dispatcherTimer_Tick(object sender, object e)
@@ -68,8 +76,8 @@ namespace win10
                 _controller = Gamepad.Gamepads.First();
                 var reading = _controller.GetCurrentReading();
 
-                handlerDpad("leftStick", reading.LeftThumbstickX, reading.LeftThumbstickY);
-                handlerDpad("rightStick", reading.RightThumbstickX, reading.RightThumbstickY);
+                handlerDpad("leftStick", reading.LeftThumbstickX, reading.LeftThumbstickY, _prevReading.LeftThumbstickX, _prevReading.LeftThumbstickY);
+                handlerDpad("rightStick", reading.RightThumbstickX, reading.RightThumbstickY * -1, _prevReading.RightThumbstickX, _prevReading.RightThumbstickY * -1); // invert axis
 
                 handlerButton("buttonA", reading.Buttons.HasFlag(GamepadButtons.A));
                 handlerButton("buttonB", reading.Buttons.HasFlag(GamepadButtons.B));
@@ -86,6 +94,8 @@ namespace win10
                 handlerButton("dpadDown", reading.Buttons.HasFlag(GamepadButtons.DPadDown));
                 handlerButton("dpadLeft", reading.Buttons.HasFlag(GamepadButtons.DPadLeft));
                 handlerButton("dpadRight", reading.Buttons.HasFlag(GamepadButtons.DPadRight));
+
+                _prevReading = reading;
             }
         }
     }
