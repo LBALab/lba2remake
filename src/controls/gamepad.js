@@ -1,7 +1,9 @@
 import THREE from 'three';
 import {GameEvents} from '../game/events';
 
+const euler = new THREE.Euler();
 const PI_4 = Math.PI / 4;
+const MAX_X_ANGLE = Math.PI;// / 2.5;
 
 export function makeGamepadControls(heroPhysics) {
     const onDpadValueChanged = dpadValueChangeHandler.bind(null, heroPhysics);
@@ -49,24 +51,20 @@ function buttonPressedHandler(heroPhysics, {detail: {name, isPressed}}) {
     }
 }
 
-const euler = new THREE.Euler();
-
 function rotateArroundY(q, angle) {
     euler.setFromQuaternion(q, 'YXZ');
     euler.y = euler.y + angle;
     q.setFromEuler(euler);
 }
 
-const MAX_X_ANGLE = Math.PI / 2.5;
-
 function heroFPSControl(heroPhysics, movementX, movementY) {
     euler.setFromQuaternion(heroPhysics.headOrientation, 'YXZ');
     euler.y = 0;
-    euler.x = Math.min(Math.max(euler.x - movementY * 0.005, -MAX_X_ANGLE), MAX_X_ANGLE);
+    euler.x = Math.min(Math.max(euler.x - movementY * 0.03, -MAX_X_ANGLE), MAX_X_ANGLE);
     heroPhysics.headOrientation.setFromEuler(euler);
 
     euler.setFromQuaternion(heroPhysics.orientation, 'YXZ');
     euler.x = 0;
-    euler.y = euler.y - movementX * 0.005;
+    euler.y = euler.y - movementX * 0.03;
     heroPhysics.orientation.setFromEuler(euler);
 }
