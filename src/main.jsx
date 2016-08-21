@@ -10,7 +10,7 @@ import {makeGyroscopeControls} from './controls/gyroscope';
 import {makeGamepadControls} from './controls/gamepad';
 
 window.onload = function() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isMobile = /Mobile|webOS|iPhone|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const renderer = createRenderer(isMobile);
     const heroConfig = {
         physics: {
@@ -27,7 +27,8 @@ window.onload = function() {
             makeGamepadControls(hero.physics)
         ] : [
             makeFirstPersonMouseControls(renderer.domElement, hero.physics),
-            makeKeyboardControls(hero.physics)
+            makeKeyboardControls(hero.physics),
+            makeGamepadControls(hero.physics)
         ];
 
     document.getElementById('main').appendChild(renderer.domElement);
