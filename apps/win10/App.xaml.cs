@@ -61,6 +61,10 @@ namespace win10
                     //TODO: Load state from previously suspended application
                 }
 
+                // Disable TV safe area
+                var applicationView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
+                applicationView.SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
