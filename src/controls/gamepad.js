@@ -16,8 +16,12 @@ export function makeGamepadControls(heroPhysics) {
     }
 }
 
-function dpadValueChangeHandler(heroPhysics, {detail: {y}}) {
-    heroPhysics.speed.z = -y * 0.45;
+function dpadValueChangeHandler(heroPhysics, {detail: {x, y, name}}) {
+    if (name == 'rightStick') {
+        heroFPSControl(heroPhysics, x, y);
+    } else {
+        heroPhysics.speed.z = -y * 0.45;
+    }
 }
 
 function buttonPressedHandler(heroPhysics, {detail: {name, isPressed}}) {
@@ -51,4 +55,18 @@ function rotateArroundY(q, angle) {
     euler.setFromQuaternion(q, 'YXZ');
     euler.y = euler.y + angle;
     q.setFromEuler(euler);
+}
+
+const MAX_X_ANGLE = Math.PI / 2.5;
+
+function heroFPSControl(heroPhysics, movementX, movementY) {
+    euler.setFromQuaternion(heroPhysics.headOrientation, 'YXZ');
+    euler.y = 0;
+    euler.x = Math.min(Math.max(euler.x - movementY * 0.005, -MAX_X_ANGLE), MAX_X_ANGLE);
+    heroPhysics.headOrientation.setFromEuler(euler);
+
+    euler.setFromQuaternion(heroPhysics.orientation, 'YXZ');
+    euler.x = 0;
+    euler.y = euler.y - movementX * 0.005;
+    heroPhysics.orientation.setFromEuler(euler);
 }
