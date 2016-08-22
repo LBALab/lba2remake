@@ -11,8 +11,10 @@ varying vec2 vColorInfo;
 varying vec2 vUv;
 varying vec3 vPos;
 
+#require "./distort.vert"
+
 void main() {
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    gl_Position = distort(projectionMatrix * modelViewMatrix * vec4(position, 1.0));
     vColorInfo = colorInfo;
     vUv = uv;
     vPos = position;
