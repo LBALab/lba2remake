@@ -41,7 +41,8 @@ function loadSceneData(files, scenes, index) {
         };
 
         let offset = 6;
-        loadAmbience(scene, offset);
+        offset = loadAmbience(scene, offset);
+        offset = loadHero(scene, offset);
 
         scenes[index] = scene;
         return scene;
@@ -69,4 +70,31 @@ function loadAmbience(scene, offset) {
             random:   rawSamples[index + 2]
         });
     }
+
+    return offset + 33;
+}
+
+
+function loadHero(scene, offset) {
+    const data = new DataView(scene.buffer);
+    scene.hero = {
+        pos: [
+            data.getUint16(offset, true),
+            data.getUint16(offset + 2, true),
+            data.getUint16(offset + 4, true)
+        ]
+    }
+    offset += 6;
+
+    scene.hero.moveScriptSize = data.getUint16(offset, true);
+    offset += 2;
+    scene.hero.moveScript = new DataView(scene.buffer, offset, moveScriptSize);
+    offset += scene.hero.moveScriptSize;
+
+    scene.hero.lifeScriptSize = data.getUint16(offset, true);
+    offset += 2;
+    scene.hero.lifeScript = new DataView(scene.buffer, offset, lifeScriptSize);
+    offset += scene.hero.lifeScriptSize;
+
+    return offset;
 }
