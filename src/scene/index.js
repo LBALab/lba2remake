@@ -50,7 +50,7 @@ function loadSceneData(files, scenes, index) {
 }
 
 function loadAmbience(scene, offset) {
-    const data = new DataView(scene.buffer);
+    const data = new DataView(scene.buffer, offset, offset + 33);
 
     scene.ambience = {
         lightingAlpha: data.getUint16(offset, true),
