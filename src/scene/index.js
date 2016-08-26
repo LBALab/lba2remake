@@ -154,6 +154,10 @@ function loadActors(scene, offset) {
         actor.armour = data.getUint8(offset++, true);
         actor.life = data.getUint8(offset++, true);
 
+        if (actor.unknownFlags & 0x0004) {
+            offset += 6; // skip unknown
+        }
+
         actor.moveScriptSize = data.getUint16(offset, true);
         offset += 2;
         actor.moveScript = new DataView(scene.buffer, offset, actor.moveScriptSize);
