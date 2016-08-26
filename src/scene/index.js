@@ -43,6 +43,7 @@ function loadSceneData(files, scenes, index) {
         let offset = 6;
         offset = loadAmbience(scene, offset);
         offset = loadHero(scene, offset);
+        offset = loadActors(scene, offset);
 
         scenes[index] = scene;
         return scene;
