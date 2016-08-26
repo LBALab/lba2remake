@@ -88,13 +88,83 @@ function loadHero(scene, offset) {
 
     scene.hero.moveScriptSize = data.getUint16(offset, true);
     offset += 2;
-    scene.hero.moveScript = new DataView(scene.buffer, offset, moveScriptSize);
+    scene.hero.moveScript = new DataView(scene.buffer, offset, scene.hero.moveScriptSize);
     offset += scene.hero.moveScriptSize;
 
     scene.hero.lifeScriptSize = data.getUint16(offset, true);
     offset += 2;
-    scene.hero.lifeScript = new DataView(scene.buffer, offset, lifeScriptSize);
+    scene.hero.lifeScript = new DataView(scene.buffer, offset, scene.hero.lifeScriptSize);
     offset += scene.hero.lifeScriptSize;
+
+    return offset;
+}
+
+function loadActors(scene, offset) {
+    const data = new DataView(scene.buffer);
+    scene.actors = [];
+
+    const numActors = data.getUint16(offset, true);
+    offset += 2;
+
+    for (let i = 0; i < numActors; ++i) {
+        let actor = {};
+
+        actor.staticFlags = data.getUint16(offset, true);
+        offset += 2;
+        actor.unknownFlags = data.getUint16(offset, true);
+        offset += 2;
+        
+        actor.entityIndex = data.getUint16(offset, true);
+        offset += 2;
+        actor.bodyIndex = data.getUint8(offset, true);
+        ++offset;
+        ++offset; // unknown byte
+        actor.animIndex = data.getUint8(offset, true);
+        ++offset;
+        actor.spriteIndex = data.getUint16(offset, true);
+        offset += 2;
+        
+        actor.pos = [
+            data.getUint16(offset, true),
+            data.getUint16(offset + 2, true),
+            data.getUint16(offset + 4, true)
+        ];
+        offset += 6;
+
+        actor.hitStrength = data.getUint8(offset++, true);
+        actor.extraType = data.getUint16(offset, true);
+        offset += 2;
+        actor.angle = data.getUint16(offset, true);
+        offset += 2;
+        actor.speed = data.getUint16(offset, true);
+        offset += 2;
+        actor.controlMode = data.getUint16(offset, true);
+        offset += 2;
+        actor.info0 = data.getUint16(offset, true);
+        offset += 2;
+        actor.info1 = data.getUint16(offset, true);
+        offset += 2;
+        actor.info2 = data.getUint16(offset, true);
+        offset += 2;
+        actor.info3 = data.getUint16(offset, true);
+        offset += 2;
+        actor.extraAmout = data.getUint8(offset++, true);
+        actor.textColor = data.getUint8(offset++, true);
+        actor.armour = data.getUint8(offset++, true);
+        actor.life = data.getUint8(offset++, true);
+
+        actor.moveScriptSize = data.getUint16(offset, true);
+        offset += 2;
+        actor.moveScript = new DataView(scene.buffer, offset, actor.moveScriptSize);
+        offset += actor.moveScriptSize;
+
+        actor.lifeScriptSize = data.getUint16(offset, true);
+        offset += 2;
+        actor.lifeScript = new DataView(scene.buffer, offset, actor.lifeScriptSize);
+        offset += actor.lifeScriptSize;
+
+        scene.actors.push(actor);
+    }
 
     return offset;
 }
