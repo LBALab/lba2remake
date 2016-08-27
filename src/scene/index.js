@@ -44,6 +44,7 @@ function loadSceneData(files, scenes, index) {
         offset = loadAmbience(scene, offset);
         offset = loadHero(scene, offset);
         offset = loadActors(scene, offset);
+        offset = loadZones(scene, offset);
 
         scenes[index] = scene;
         return scene;
@@ -169,6 +170,46 @@ function loadActors(scene, offset) {
         offset += actor.lifeScriptSize;
 
         scene.actors.push(actor);
+    }
+
+    return offset;
+}
+
+
+function loadZones(scene, offset) {
+    const data = new DataView(scene.buffer);
+    scene.zones = [];
+
+    const numZones = data.getUint16(offset, true);
+    offset += 2;
+
+    for (let i = 0; i < numZones; ++i) {
+        let zone = {
+            type: 0,
+            box: null
+        };
+
+        zone.box.bX = data.getUint16(offset);
+        zone.box.bY = data.getUint16(offset + 2);
+        zone.box.bZ = data.getUint16(offset + 4);
+        zone.box.tX = data.getUint16(offset + 6);
+        zone.box.tY = data.getUint16(offset + 8);
+        zone.box.tZ = data.getUint16(offset + 10);        
+        offset += 12;
+
+        zone.type = data.getUint16(offset);
+        zone.info0 = data.getUint16(offset + 2);
+        zone.info1 = data.getUint16(offset + 4);
+        zone.info2 = data.getUint16(offset + 6);
+        zone.info3 = data.getUint16(offset + 8);
+        zone.info4 = data.getUint16(offset + 10);
+        zone.info5 = data.getUint16(offset + 12);
+        zone.info6 = data.getUint16(offset + 14);
+        zone.info7 = data.getUint16(offset + 16);
+        zone.snap  = data.getUint16(offset + 18);
+        offset += 20;
+
+        scene.zones.push(zone);
     }
 
     return offset;
