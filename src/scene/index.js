@@ -45,6 +45,7 @@ function loadSceneData(files, scenes, index) {
         offset = loadHero(scene, offset);
         offset = loadActors(scene, offset);
         offset = loadZones(scene, offset);
+        offset = loadPoints(scene, offset);
 
         scenes[index] = scene;
         return scene;
@@ -175,7 +176,6 @@ function loadActors(scene, offset) {
     return offset;
 }
 
-
 function loadZones(scene, offset) {
     const data = new DataView(scene.buffer);
     scene.zones = [];
@@ -210,6 +210,28 @@ function loadZones(scene, offset) {
         offset += 20;
 
         scene.zones.push(zone);
+    }
+
+    return offset;
+}
+
+function loadPoints(scene, offset) {
+    const data = new DataView(scene.buffer);
+    scene.points = [];
+
+    const numPoints = data.getUint16(offset, true);
+    offset += 2;
+
+    for (let i = 0; i < numPoints; ++i) {
+        let point = {
+            pos = [
+                data.getUint16(offset, true),
+                data.getUint16(offset + 2, true),
+                data.getUint16(offset + 4, true)
+            ]
+        };
+        offset += 6;
+        scene.points.push(point);
     }
 
     return offset;
