@@ -3,15 +3,15 @@ import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
 
-export default function(scene, index, callback) {
+export function loadScene(scene, index, callback) {
     async.auto({
-        scenes: loadHqrAsync('SCENE.HQR')
+        scene: loadHqrAsync('SCENE.HQR')
     }, function(err, files) {
-        callback(loadScene(files, scene, index));
+        callback(loadSceneFile(files, scene, index));
     });
 }
 
-function loadScene(files, scene, index) {
+function loadSceneFile(files, scene, index) {
     if (!scene.data) {
         scene.data = {
             files: files,
