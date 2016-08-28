@@ -1,8 +1,11 @@
 import {GameEvents} from './events';
 import {loadIslandManager} from '../island';
+import {loadScene} from '../scene'
 
 export function createSceneManager(hero) {
     const islandManager = loadIslandManager();
+    let sceneData = {};
+    let sceneIndex = 42; // outside tavern scene
 
     function onIslandLoaded(island) {
         console.log('Loaded: ', island.name);
@@ -13,7 +16,16 @@ export function createSceneManager(hero) {
 
     function previousIsland() { islandManager.loadPrevious(onIslandLoaded); }
 
-    function gotoIsland(islandName) { islandManager.loadIsland(islandName, onIslandLoaded); }
+    function gotoIsland(islandName) { 
+        islandManager.loadIsland(islandName, onIslandLoaded);
+        gotoScene(sceneIndex);  
+    }
+
+    function gotoScene(index) { 
+        loadScene(sceneData, index, (obj) => { 
+            sceneData = obj; 
+        });
+    }
 
     GameEvents.scene.nextIsland.addListener(nextIsland);
     GameEvents.scene.previousIsland.addListener(previousIsland);
