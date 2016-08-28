@@ -36,16 +36,20 @@ function loadSceneData(files, scenes, index) {
             textBankId: textBankId,
             textIndex: textBankId * 2 + 6,
             gameOverScene: data.getInt8(1, true),
+            unknown1: data.getUint16(2, true),
+            unknown2: data.getUint16(4, true),
+            isOutsideScene: data.getInt8(6, true) == 1,
 
             buffer: buffer
         };
 
-        let offset = 6;
+        let offset = 7;
         offset = loadAmbience(scene, offset);
         offset = loadHero(scene, offset);
         offset = loadActors(scene, offset);
         offset = loadZones(scene, offset);
         offset = loadPoints(scene, offset);
+        offset = loadUnknown(scene, offset);
 
         scenes[index] = scene;
         return scene;
@@ -59,22 +63,24 @@ function loadAmbience(scene, offset) {
         lightingAlpha: data.getUint16(offset, true),
         lightingBeta: data.getUint16(offset + 2, true), 
         samples: [],
-        sampleMinDelay: data.getUint16(offset + 28, true),
-        sampleMinDelayRnd: data.getUint16(offset + 30, true),
-        musicIndex: data.getInt8(offset + 32, true),
+        sampleMinDelay: data.getUint16(offset + 44, true),
+        sampleMinDelayRnd: data.getUint16(offset + 46, true),
+        musicIndex: data.getInt8(offset + 48, true),
     };
 
-    const rawSamples = new Uint16Array(scene.buffer, offset + 4, 4 * 3 * 2); // 4 entries, 3 types, 2 bytes each
+    const rawSamples = new Uint16Array(scene.buffer, offset + 4, 4 * 5 * 2); // 4 entries, 3 types, 2 bytes each
     for (let i = 0; i < 4; ++i) {
-        const index = i * 3;
+        const index = i * 5;
         scene.ambience.samples.push({
-            ambience: rawSamples[index],
-            repeat:   rawSamples[index + 1],
-            random:   rawSamples[index + 2]
+            ambience:   rawSamples[index],
+            repeat:     rawSamples[index + 1],
+            random:     rawSamples[index + 2],
+            unknown1:   rawSamples[index + 3],
+            unknown2:   rawSamples[index + 4]
         });
     }
 
-    return offset + 33;
+    return offset + 49;
 }
 
 
@@ -180,6 +186,8 @@ function loadZones(scene, offset) {
     const data = new DataView(scene.buffer);
     scene.zones = [];
 
+    offset += 4; // skip unknown bytes
+
     const numZones = data.getUint16(offset, true);
     offset += 2;
 
@@ -189,25 +197,25 @@ function loadZones(scene, offset) {
             box: null
         };
 
-        zone.box.bX = data.getUint16(offset);
-        zone.box.bY = data.getUint16(offset + 2);
-        zone.box.bZ = data.getUint16(offset + 4);
-        zone.box.tX = data.getUint16(offset + 6);
-        zone.box.tY = data.getUint16(offset + 8);
-        zone.box.tZ = data.getUint16(offset + 10);        
-        offset += 12;
+        zone.box.bX = data.getUint32(offset);
+        zone.box.bY = data.getUint32(offset + 4);
+        zone.box.bZ = data.getUint32(offset + 8);
+        zone.box.tX = data.getUint32(offset + 12);
+        zone.box.tY = data.getUint32(offset + 16);
+        zone.box.tZ = data.getUint32(offset + 20);        
+        offset += 24;
 
-        zone.type = data.getUint16(offset);
-        zone.info0 = data.getUint16(offset + 2);
-        zone.info1 = data.getUint16(offset + 4);
-        zone.info2 = data.getUint16(offset + 6);
-        zone.info3 = data.getUint16(offset + 8);
-        zone.info4 = data.getUint16(offset + 10);
-        zone.info5 = data.getUint16(offset + 12);
-        zone.info6 = data.getUint16(offset + 14);
-        zone.info7 = data.getUint16(offset + 16);
-        zone.snap  = data.getUint16(offset + 18);
-        offset += 20;
+        zone.info0 = data.getUint32(offset);
+        zone.info1 = data.getUint32(offset + 4);
+        zone.info2 = data.getUint32(offset + 8);
+        zone.info3 = data.getUint32(offset + 12);
+        zone.info4 = data.getUint32(offset + 16);
+        zone.info5 = data.getUint32(offset + 20);
+        zone.info6 = data.getUint32(offset + 24);
+        zone.info7 = data.getUint32(offset + 28);
+        zone.type  = data.getUint16(offset + 32);
+        zone.snap  = data.getUint16(offset + 34);
+        offset += 36;
 
         scene.zones.push(zone);
     }
@@ -225,13 +233,32 @@ function loadPoints(scene, offset) {
     for (let i = 0; i < numPoints; ++i) {
         let point = {
             pos = [
-                data.getUint16(offset, true),
-                data.getUint16(offset + 2, true),
-                data.getUint16(offset + 4, true)
+                data.getUint32(offset, true),
+                data.getUint32(offset + 4, true),
+                data.getUint32(offset + 8, true)
             ]
         };
-        offset += 6;
+        offset += 12;
         scene.points.push(point);
+    }
+
+    return offset;
+}
+
+function loadUnknown(scene, offset) {
+    const data = new DataView(scene.buffer);
+    scene.unknown = [];
+
+    const numData = data.getUint16(offset, true);
+    offset += 2;
+
+    for (let i = 0; i < numData; ++i) {
+        let unk = {
+            field1: data.getUint16(offset, true),
+            field2: data.getUint16(offset + 2, true)
+        };
+        offset += 4;
+        scene.unknown.push(unk);
     }
 
     return offset;
