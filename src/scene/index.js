@@ -28,7 +28,7 @@ function loadSceneData(files, scenes, index) {
     if (scenes[index]) {
         return scenes[index];
     } else {
-        const buffer = files.scenes.getEntry(index);
+        const buffer = files.scenes.getEntry(index + 1); // first entry is not a scene
         const data = new DataView(buffer);
         const textBankId = data.getInt8(0, true);
 
