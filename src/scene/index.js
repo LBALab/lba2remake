@@ -57,18 +57,19 @@ function loadSceneData(files, scenes, index) {
 }
 
 function loadAmbience(scene, offset) {
-    const data = new DataView(scene.buffer, offset, offset + 33);
+    const data = new DataView(scene.buffer, offset, offset + 49);
+    let innerOffset = 0;
 
     scene.ambience = {
-        lightingAlpha: data.getUint16(offset, true),
-        lightingBeta: data.getUint16(offset + 2, true), 
+        lightingAlpha: data.getUint16(innerOffset, true),
+        lightingBeta: data.getUint16(innerOffset + 2, true), 
         samples: [],
-        sampleMinDelay: data.getUint16(offset + 44, true),
-        sampleMinDelayRnd: data.getUint16(offset + 46, true),
-        musicIndex: data.getInt8(offset + 48, true),
+        sampleMinDelay: data.getUint16(innerOffset + 44, true),
+        sampleMinDelayRnd: data.getUint16(innerOffset + 46, true),
+        musicIndex: data.getInt8(innerOffset + 48, true),
     };
 
-    const rawSamples = new Uint16Array(scene.buffer, offset + 4, 4 * 5 * 2); // 4 entries, 3 types, 2 bytes each
+    const rawSamples = new Uint16Array(scene.buffer, innerOffset + 4, 4 * 5 * 2); // 4 entries, 3 types, 2 bytes each
     for (let i = 0; i < 4; ++i) {
         const index = i * 5;
         scene.ambience.samples.push({
