@@ -148,8 +148,8 @@ function loadActors(scene, offset) {
         offset += 2;
         actor.speed = data.getUint16(offset, true);
         offset += 2;
-        actor.controlMode = data.getUint16(offset, true);
-        offset += 2;
+        actor.controlMode = data.getUint8(offset++, true);
+        actor.controlUnk1 = data.getUint8(offset++, true);
         actor.info0 = data.getUint16(offset, true);
         offset += 2;
         actor.info1 = data.getUint16(offset, true);
