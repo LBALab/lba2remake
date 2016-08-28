@@ -232,7 +232,7 @@ function loadPoints(scene, offset) {
 
     for (let i = 0; i < numPoints; ++i) {
         let point = {
-            pos = [
+            pos: [
                 data.getUint32(offset, true),
                 data.getUint32(offset + 4, true),
                 data.getUint32(offset + 8, true)
