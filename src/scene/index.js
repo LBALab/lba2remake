@@ -158,7 +158,7 @@ function loadActors(scene, offset) {
         offset += 2;
         actor.info3 = data.getUint16(offset, true);
         offset += 2;
-        actor.extraAmout = data.getUint8(offset++, true);
+        actor.extraAmount = data.getUint8(offset++, true);
         actor.textColor = data.getUint8(offset++, true);
         actor.armour = data.getUint8(offset++, true);
         actor.life = data.getUint8(offset++, true);
