@@ -20,6 +20,13 @@ export function createSceneManager(hero, models) {
         models: models
     }
     
+    currentScene.update = function(time) {
+        const numActors = currentScene.actors.length;
+        for (let i = 0; i < numActors; ++i) {
+            currentScene.actors[i].update(time, currentScene.models);
+        }
+    }
+    
     const islandManager = loadIslandManager(currentScene.threeScene);
 
     function onIslandLoaded(island) {
@@ -90,7 +97,8 @@ function createScene(sceneData, currentScene) {
     const numActors = currentScene.sceneData.actors.length;
     for (let i = 0; i < numActors; ++i) {
         const actorProps = currentScene.sceneData.actors[i];
-        const actor = createActor(currentScene.models, i, actorProps, (threeObject) => {
+        const actor = createActor(currentScene.models, i, actorProps, (threeObject, models) => {
+            currentScene.models = models;
             currentScene.threeScene.add(threeObject);
         });
         

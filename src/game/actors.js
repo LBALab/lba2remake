@@ -19,11 +19,13 @@ export function createActor(models, index, actorProps, callback) {
         models = obj; 
         actor.threeObject = models.meshes[index];
         actor.threeObject.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
-        callback(actor.threeObject);
+        callback(actor.threeObject, models);
     });
 
-    function onUpdate(time) {
-        updateModel(models, index, actor.entityIndex, actor.bodyIndex, actor.animIndex, time);
+    actor.update = function (time, models) {
+        if(models && models.entities) {
+            updateModel(models, index, actor.entityIndex, actor.bodyIndex, actor.animIndex, time);
+        }
     }
     
     return actor;

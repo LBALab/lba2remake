@@ -37,7 +37,7 @@ window.onload = function() {
 
     const clock = new THREE.Clock();
     function processAnimationFrame() {
-        mainGameLoop(clock, renderer, sceneManager.currentScene().island, hero, controls);
+        mainGameLoop(clock, renderer, sceneManager.currentScene(), hero, controls);
         requestAnimationFrame(processAnimationFrame);
     }
 
