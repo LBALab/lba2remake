@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
 
-export function loadScene(scene, index, callback) {
+export function loadSceneData(scene, index, callback) {
     async.auto({
         scene: loadHqrAsync('SCENE.HQR'),
         bkg: loadHqrAsync('LBA_BKG.HQR')
@@ -25,12 +25,10 @@ function loadSceneFile(files, scene, index) {
         loadSceneMap(scene.data.files, scene.data.map);
     }
  
-    loadSceneData(scene.data.files, scene.data.scenes, index);
-
-    return scene;
+    return loadScene(scene.data.files, scene.data.scenes, index);
 }
 
-function loadSceneData(files, scenes, index) {
+function loadScene(files, scenes, index) {
     if (scenes[index]) {
         return scenes[index];
     } else {
@@ -141,9 +139,9 @@ function loadActors(scene, offset) {
         offset += 2;
         
         actor.pos = [
-            data.getUint16(offset, true),
-            data.getUint16(offset + 2, true),
-            data.getUint16(offset + 4, true)
+            data.getUint16(offset, true) / 0x4000,
+            data.getUint16(offset + 2, true) / 0x4000,
+            data.getUint16(offset + 4, true) / 0x4000
         ];
         offset += 6;
 

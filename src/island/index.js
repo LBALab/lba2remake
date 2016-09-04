@@ -13,18 +13,23 @@ import {loadIslandPhysics} from './physics';
 import islandsInfo from './data/islands';
 import environments from './data/environments';
 
-export function loadIslandManager(threeScene) {
+export function loadIslandManager(scene) {
     const islands = _.map(islandsInfo, island => {
         return _.assign({
             envInfo: environments[island.env]
         }, island);
     });
 
+    let threeScene = scene;
     const len = islands.length;
     let idx = -1;
 
     const islandManager = {
         currentIsland: () => idx >= 0 ? islands[idx] : null
+    };
+    
+    islandManager.setThreeScene = function(scene) {
+        threeScene = scene;
     };
 
     islandManager.loadNext = function(callback) {
@@ -71,7 +76,7 @@ function loadIslandSync(island, files, threeScene) {
         files: files,
         palette: new Uint8Array(files.ress.getEntry(0)),
         layout: layout
-    };
+    }; 
 
     const geometries = loadGeometries(island);
     _.each(geometries, ({positions, uvs, colors, colorInfos, uvGroups, material}, name) => {
