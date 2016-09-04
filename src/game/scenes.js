@@ -1,9 +1,15 @@
+import async from 'async';
+import THREE from 'three';
+import _ from 'lodash';
+
 import {GameEvents} from './events';
 import {loadIslandManager} from '../island';
 import {loadScene} from '../scene'
 
 export function createSceneManager(hero) {
-    const islandManager = loadIslandManager();
+    const threeScene = new THREE.Scene();
+    const islandManager = loadIslandManager(threeScene);
+    
     let sceneData = {};
     let sceneIndex = 42; // outside tavern scene
 
@@ -37,6 +43,8 @@ export function createSceneManager(hero) {
             GameEvents.scene.previousIsland.removeListener(previousIsland);
             GameEvents.scene.gotoIsland.removeListener(gotoIsland);
         },
-        currentScene: islandManager.currentIsland.bind(islandManager)
+        currentScene: () => {
+             return islandManager.currentIsland();
+        }
     };
 }
