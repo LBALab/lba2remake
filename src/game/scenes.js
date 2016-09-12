@@ -1,8 +1,10 @@
 import {GameEvents} from './events';
-import {loadIslandManager} from '../island';
+import {loadIslandManager} from '../island'
+import {loadIsoSceneManager} from '../iso'
 
 export function createSceneManager(hero) {
     const islandManager = loadIslandManager();
+    const isoSceneManager = loadIsoSceneManager();
 
     function onIslandLoaded(island) {
         console.log('Loaded: ', island.name);
@@ -25,6 +27,6 @@ export function createSceneManager(hero) {
             GameEvents.scene.previousIsland.removeListener(previousIsland);
             GameEvents.scene.gotoIsland.removeListener(gotoIsland);
         },
-        currentScene: islandManager.currentIsland.bind(islandManager)
+        currentScene: isoSceneManager.currentScene.bind(isoSceneManager)
     };
 }
