@@ -5,9 +5,10 @@ import _ from 'lodash';
 import {GameEvents} from './events';
 import {loadIslandManager} from '../island';
 import {loadSceneData} from '../scene'
+import {loadModel} from '../model' 
 import {createActor} from './actors';
 
-export function createSceneManager(hero, models) {
+export function createSceneManager(hero) {
     const currentScene = {
         threeScene: new THREE.Scene(),
         sceneData: {},
@@ -17,15 +18,10 @@ export function createSceneManager(hero, models) {
         actors: [],
         zones: [],
         points: [],
-        models: models
+        models: null
     }
-    
-    currentScene.update = function(time) {
-        const numActors = currentScene.actors.length;
-        for (let i = 0; i < numActors; ++i) {
-            currentScene.actors[i].update(time, currentScene.models);
-        }
-    }
+
+    initScene(currentScene);
     
     const islandManager = loadIslandManager(currentScene.threeScene);
 
@@ -67,6 +63,13 @@ export function createSceneManager(hero, models) {
     //GameEvents.scene.nextScene.addListener(nextScene);
     //GameEvents.scene.previousScene.addListener(previousScene);
     GameEvents.scene.gotoScene.addListener(gotoScene);
+        
+    currentScene.update = function(time) {
+        const numActors = currentScene.actors.length;
+        for (let i = 0; i < numActors; ++i) {
+            currentScene.actors[i].update(time);
+        }
+    }
 
     return {
         dispose: () => {
@@ -97,11 +100,19 @@ function createScene(sceneData, currentScene) {
     const numActors = currentScene.sceneData.actors.length;
     for (let i = 0; i < numActors; ++i) {
         const actorProps = currentScene.sceneData.actors[i];
-        const actor = createActor(currentScene.models, i, actorProps, (threeObject, models) => {
-            currentScene.models = models;
+        const actor = createActor(currentScene.models, i, actorProps);
+        
+        actor.load(i, (threeObject, models) => {
+            //currentScene.models.meshes[i] = models.meshes[i];
             currentScene.threeScene.add(threeObject);
         });
-        
+
         currentScene.actors.push(actor);
     }
+}
+
+function initScene(currentScene) {
+    loadModel(currentScene.models, 0, 0, 0, 0, (obj) => { 
+        currentScene.models = obj;
+    });
 }

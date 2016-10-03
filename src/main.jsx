@@ -20,9 +20,8 @@ window.onload = function() {
             speed: new THREE.Vector3(0.15, 0.3, 0.3)
         }
     };
-    const models = null;
     const hero = createHero(heroConfig);
-    const sceneManager = createSceneManager(hero, models);
+    const sceneManager = createSceneManager(hero);
     const controls = isMobile ? [
             makeGyroscopeControls(hero.physics),
             makeGamepadControls(hero.physics)
