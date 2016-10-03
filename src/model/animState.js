@@ -90,7 +90,7 @@ export function updateKeyframe(anim, state, time) {
         ++state.currentFrame;
         if (state.currentFrame >= anim.numKeyframes) {
             state.currentFrame = state.loopFrame;
-            if (state.currentFrame == anim.numKeyframes - 1) {
+            if (state.currentFrame >= anim.numKeyframes - 1) {
                 state.currentFrame = 0;
             }
         }
@@ -100,7 +100,7 @@ export function updateKeyframe(anim, state, time) {
     let nextFrame = state.currentFrame + 1;
     if (nextFrame >= anim.numKeyframes) {
         nextFrame = state.loopFrame;
-        if (nextFrame == anim.numKeyframes - 1) {
+        if (nextFrame >= anim.numKeyframes - 1) {
             nextFrame = 0;
         }
     }
