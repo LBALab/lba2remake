@@ -102,10 +102,11 @@ function createScene(sceneData, currentScene) {
         const actorProps = currentScene.sceneData.actors[i];
         const actor = createActor(currentScene.models, i, actorProps);
         
-        actor.load(i, (threeObject, models) => {
-            //currentScene.models.meshes[i] = models.meshes[i];
-            currentScene.threeScene.add(threeObject);
-        });
+        if (actor.isVisible()) {
+            actor.load(i, (threeObject, models) => {
+                currentScene.threeScene.add(threeObject);
+            });
+        }
 
         currentScene.actors.push(actor);
     }

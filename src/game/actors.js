@@ -4,6 +4,15 @@ import _ from 'lodash';
 
 import {loadModel, updateModel} from '../model';
 
+const ACTOR_STATIC_FLAG = {
+    NONE             : 0,
+    COLLIDE_WITH_OBJ : 1,
+    // TODO
+    HIDDEN           : 0x200
+    // TODO
+}
+
+
 export function createActor(models, index, actorProps) {
     let actor = actorProps;
     actor.physics = {
@@ -28,6 +37,10 @@ export function createActor(models, index, actorProps) {
             actor.threeObject.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
             callback(actor.threeObject, obj);
         });
+    }
+
+    actor.isVisible = function () {
+        return !(actor.staticFlags & ACTOR_STATIC_FLAG.HIDDEN == ACTOR_STATIC_FLAG.HIDDEN);
     }
     
     return actor;
