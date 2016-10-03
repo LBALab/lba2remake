@@ -28,6 +28,8 @@ export function createSceneManager(hero) {
     function onIslandLoaded(island) {
         console.log('Loaded: ', island.name);
         GameEvents.scene.sceneLoaded(island);
+
+        gotoScene(currentScene, currentScene.sceneIndex); // temporary
     }
 
     function resetThreeScene() {
@@ -53,8 +55,6 @@ export function createSceneManager(hero) {
     function gotoScene(currentScene, index) { 
         loadScene(currentScene, index);
     }
-
-    gotoScene(currentScene, currentScene.sceneIndex); // temporary
 
     GameEvents.scene.nextIsland.addListener(nextIsland);
     GameEvents.scene.previousIsland.addListener(previousIsland);
@@ -90,20 +90,27 @@ export function createSceneManager(hero) {
 
 
 function loadScene(currentScene, index) {
-    loadSceneData(currentScene.sceneData, index, (sceneData) => { 
+    // load all scenes in the island - just testing for now
+
+    /*_.each(currentScene.island.data.layout.groundSections, section => {
+        loadSceneData(currentScene.sceneData, index++, (sceneData) => { 
+            createScene(sceneData, currentScene, section); 
+        });
+    });*/
+    loadSceneData(currentScene.sceneData, index++, (sceneData) => { 
         createScene(sceneData, currentScene); 
     });
 }
 
-function createScene(sceneData, currentScene) {
+function createScene(sceneData, currentScene/*, section*/) {
     currentScene.sceneData = sceneData; 
     const numActors = currentScene.sceneData.actors.length;
     for (let i = 0; i < numActors; ++i) {
         const actorProps = currentScene.sceneData.actors[i];
-        const actor = createActor(currentScene.models, i, actorProps);
+        const actor = createActor(currentScene.models, i, actorProps/*, section.x, section.z*/);
         
         if (actor.isVisible()) {
-            actor.load(i, (threeObject, models) => {
+            actor.load(i + currentScene, (threeObject, models) => {
                 currentScene.threeScene.add(threeObject);
             });
         }

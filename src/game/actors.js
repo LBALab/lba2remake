@@ -13,7 +13,7 @@ const ACTOR_STATIC_FLAG = {
 }
 
 
-export function createActor(models, index, actorProps) {
+export function createActor(models, index, actorProps/*, xOffset, zOffset*/) {
     let actor = actorProps;
     actor.physics = {
         position: new THREE.Vector3(),
@@ -21,9 +21,9 @@ export function createActor(models, index, actorProps) {
     }
     actor.models = models;
 
-    actor.physics.position.x = actor.pos[0];
+    actor.physics.position.x = actor.pos[0]; // + xOffset;
     actor.physics.position.y = actor.pos[1];
-    actor.physics.position.z = actor.pos[2];
+    actor.physics.position.z = actor.pos[2]; // + zOffset;
 
     actor.update = function (time) {
         if(actor.models && actor.models.entities) {
