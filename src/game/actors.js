@@ -21,9 +21,9 @@ export function createActor(models, index, actorProps, xOffset, zOffset) {
     }
     actor.models = models;
 
-    actor.physics.position.x = actor.pos[0]; // + xOffset;
+    actor.physics.position.x = actor.pos[0] + xOffset;
     actor.physics.position.y = actor.pos[1];
-    actor.physics.position.z = actor.pos[2]; // + zOffset;
+    actor.physics.position.z = actor.pos[2] + zOffset;
 
     actor.update = function (time) {
         if(actor.models && actor.models.entities) {
