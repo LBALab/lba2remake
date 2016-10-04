@@ -10,15 +10,14 @@ import {createActor} from './actors';
 
 export function createSceneManager(hero) {
     const currentScene = {
-        threeScene: new THREE.Scene(),
-        sceneData: {},
-        sceneIndex: 42, // outside tavern scene (Island)
-        island: {},
         hero: hero,
+        sceneData: [],
         actors: [],
         zones: [],
         points: [],
-        models: null
+        models: null,
+        island: {},
+        threeScene: new THREE.Scene()
     }
 
     initScene(currentScene);
@@ -29,7 +28,7 @@ export function createSceneManager(hero) {
         console.log('Loaded: ', island.name);
         GameEvents.scene.sceneLoaded(island);
 
-        gotoScene(currentScene, currentScene.sceneIndex); // temporary
+        gotoScene(currentScene, 42); // temporary
     }
 
     function resetThreeScene() {
@@ -92,25 +91,25 @@ export function createSceneManager(hero) {
 function loadScene(currentScene, index) {
     // load all scenes in the island - just testing for now
 
+    let i = 0; // scene data index
     _.each(currentScene.island.data.layout.groundSections, section => {
-        loadSceneData(currentScene.sceneData, index++, (sceneData) => { 
-            createScene(sceneData, currentScene, section); 
+        currentScene.sceneData[i] = {}; // init 
+        loadSceneData(currentScene.sceneData[i], i + index, (sceneData) => { 
+            currentScene.sceneData[i] = sceneData; 
+            createScene(currentScene, section, i, sceneData); 
         });
+        ++i;
     });
-    /*loadSceneData(currentScene.sceneData, index++, (sceneData) => { 
-        createScene(sceneData, currentScene); 
-    });*/
 }
 
-function createScene(sceneData, currentScene, section) {
-    currentScene.sceneData = sceneData; 
-    const numActors = currentScene.sceneData.actors.length;
+function createScene(currentScene, section, index, sceneData) {
+    const numActors = currentScene.sceneData[index].actors.length;
     for (let i = 0; i < numActors; ++i) {
-        const actorProps = currentScene.sceneData.actors[i];
+        const actorProps = currentScene.sceneData[index].actors[i];
         const actor = createActor(currentScene.models, i, actorProps, section.x, section.z);
         
         if (actor.isVisible()) {
-            actor.load(i + currentScene, (threeObject, models) => {
+            actor.load(i + i * 100, (threeObject, models) => {
                 currentScene.threeScene.add(threeObject);
             });
         }
