@@ -102,12 +102,16 @@ function loadHero(scene, offset) {
 
     scene.hero.moveScriptSize = data.getUint16(offset, true);
     offset += 2;
-    scene.hero.moveScript = new DataView(scene.buffer, offset, scene.hero.moveScriptSize);
+    if (scene.hero.moveScriptSize > 0) {
+        scene.hero.moveScript = new DataView(scene.buffer, offset, scene.hero.moveScriptSize);
+    }
     offset += scene.hero.moveScriptSize;
 
     scene.hero.lifeScriptSize = data.getUint16(offset, true);
     offset += 2;
-    scene.hero.lifeScript = new DataView(scene.buffer, offset, scene.hero.lifeScriptSize);
+    if (scene.hero.lifeScriptSize > 0) {
+        scene.hero.lifeScript = new DataView(scene.buffer, offset, scene.hero.lifeScriptSize);
+    }
     offset += scene.hero.lifeScriptSize;
 
     return offset;
@@ -167,18 +171,23 @@ function loadActors(scene, offset) {
         actor.armour = data.getUint8(offset++, true);
         actor.life = data.getUint8(offset++, true);
 
-        if (actor.unknownFlags & 0x0004) {
+        if (actor.unknownFlags & 0x0004 || 
+            actor.unknownFlags & 0x0001) {
             offset += 6; // skip unknown
         }
 
         actor.moveScriptSize = data.getUint16(offset, true);
         offset += 2;
-        actor.moveScript = new DataView(scene.buffer, offset, actor.moveScriptSize);
+        if (actor.moveScriptSize > 0) {
+            actor.moveScript = new DataView(scene.buffer, offset, actor.moveScriptSize);
+        }
         offset += actor.moveScriptSize;
 
         actor.lifeScriptSize = data.getUint16(offset, true);
         offset += 2;
-        actor.lifeScript = new DataView(scene.buffer, offset, actor.lifeScriptSize);
+        if (actor.lifeScriptSize > 0) {
+            actor.lifeScript = new DataView(scene.buffer, offset, actor.lifeScriptSize);
+        }
         offset += actor.lifeScriptSize;
 
         scene.actors.push(actor);
@@ -199,27 +208,27 @@ function loadZones(scene, offset) {
     for (let i = 0; i < numZones; ++i) {
         let zone = {
             type: 0,
-            box: null
+            box: {}
         };
 
-        zone.box.bX = data.getUint32(offset);
-        zone.box.bY = data.getUint32(offset + 4);
-        zone.box.bZ = data.getUint32(offset + 8);
-        zone.box.tX = data.getUint32(offset + 12);
-        zone.box.tY = data.getUint32(offset + 16);
-        zone.box.tZ = data.getUint32(offset + 20);        
+        zone.box.bX = data.getUint32(offset, true);
+        zone.box.bY = data.getUint32(offset + 4, true);
+        zone.box.bZ = data.getUint32(offset + 8, true);
+        zone.box.tX = data.getUint32(offset + 12, true);
+        zone.box.tY = data.getUint32(offset + 16, true);
+        zone.box.tZ = data.getUint32(offset + 20, true);
         offset += 24;
 
-        zone.info0 = data.getUint32(offset);
-        zone.info1 = data.getUint32(offset + 4);
-        zone.info2 = data.getUint32(offset + 8);
-        zone.info3 = data.getUint32(offset + 12);
-        zone.info4 = data.getUint32(offset + 16);
-        zone.info5 = data.getUint32(offset + 20);
-        zone.info6 = data.getUint32(offset + 24);
-        zone.info7 = data.getUint32(offset + 28);
-        zone.type  = data.getUint16(offset + 32);
-        zone.snap  = data.getUint16(offset + 34);
+        zone.info0 = data.getUint32(offset, true);
+        zone.info1 = data.getUint32(offset + 4, true);
+        zone.info2 = data.getUint32(offset + 8, true);
+        zone.info3 = data.getUint32(offset + 12, true);
+        zone.info4 = data.getUint32(offset + 16, true);
+        zone.info5 = data.getUint32(offset + 20, true);
+        zone.info6 = data.getUint32(offset + 24, true);
+        zone.info7 = data.getUint32(offset + 28, true);
+        zone.type  = data.getUint16(offset + 32, true);
+        zone.snap  = data.getUint16(offset + 34, true);
         offset += 36;
 
         scene.zones.push(zone);
