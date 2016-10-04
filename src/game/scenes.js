@@ -92,22 +92,22 @@ export function createSceneManager(hero) {
 function loadScene(currentScene, index) {
     // load all scenes in the island - just testing for now
 
-    /*_.each(currentScene.island.data.layout.groundSections, section => {
+    _.each(currentScene.island.data.layout.groundSections, section => {
         loadSceneData(currentScene.sceneData, index++, (sceneData) => { 
             createScene(sceneData, currentScene, section); 
         });
-    });*/
-    loadSceneData(currentScene.sceneData, index++, (sceneData) => { 
-        createScene(sceneData, currentScene); 
     });
+    /*loadSceneData(currentScene.sceneData, index++, (sceneData) => { 
+        createScene(sceneData, currentScene); 
+    });*/
 }
 
-function createScene(sceneData, currentScene/*, section*/) {
+function createScene(sceneData, currentScene, section) {
     currentScene.sceneData = sceneData; 
     const numActors = currentScene.sceneData.actors.length;
     for (let i = 0; i < numActors; ++i) {
         const actorProps = currentScene.sceneData.actors[i];
-        const actor = createActor(currentScene.models, i, actorProps/*, section.x, section.z*/);
+        const actor = createActor(currentScene.models, i, actorProps, section.x, section.z);
         
         if (actor.isVisible()) {
             actor.load(i + currentScene, (threeObject, models) => {
