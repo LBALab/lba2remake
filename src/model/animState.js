@@ -81,10 +81,13 @@ function updateShaderBone(state) {
 }
 
 export function updateKeyframe(anim, state, time) {
-    if(!state) return;
+    if (!state) return;
 
     state.currentTime += time.delta * 1000;
     let keyframe = anim.keyframes[state.currentFrame];
+
+    if (!keyframe) return;
+
     if (state.currentTime > keyframe.length) {
         state.currentTime = 0;
         ++state.currentFrame;
