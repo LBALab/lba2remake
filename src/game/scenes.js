@@ -105,10 +105,11 @@ function loadScene(currentScene, index) {
 }
 
 function createScene(currentScene, section, index, sceneData) {
+    const prevLength = currentScene.actors.length;
     const numActors = currentScene.sceneData[index].actors.length;
     for (let i = 0; i < numActors; ++i) {
         const actorProps = currentScene.sceneData[index].actors[i];
-        const actor = createActor(currentScene, i, actorProps, section.x, section.z);
+        const actor = createActor(currentScene, i + index * prevLength, actorProps, section.x, section.z);
 
         currentScene.actors.push(actor);
     }
