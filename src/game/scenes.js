@@ -10,6 +10,7 @@ import {createActor} from './actors';
 
 export function createSceneManager(hero) {
     const currentScene = {
+        hasLoaded: false,
         hero: hero,
         sceneData: [],
         actors: [],
@@ -99,6 +100,8 @@ function loadScene(currentScene, index) {
         });
         ++i;
     });
+
+    currentScene.hasLoaded = true;
 }
 
 function createScene(currentScene, section, index, sceneData) {
