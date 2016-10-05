@@ -10,7 +10,9 @@ export function mainGameLoop(clock, renderer, scene, hero, controls) {
     renderer.stats.begin();
 
     if (scene) {
-        scene.update(time);
+        if (scene.hasLoaded) {
+            scene.update(time);
+        }
         if (scene.island && scene.island.data) {
             each(controls, ctrl => { ctrl.update && ctrl.update(); });
             scene.island.data.update(time);
