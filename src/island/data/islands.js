@@ -5,7 +5,8 @@ export default [
     startPosition: [
       0,
       1
-    ]
+    ],
+    sectionScene: [45, 47, 49, 44, 48, 43, 42, 46, 49]
   },
   {
     name: 'CITABAU',
@@ -13,7 +14,8 @@ export default [
     startPosition: [
       0,
       1
-    ]
+    ],
+    sectionScene: [45, 47, 49, 44, 48, 43, 42, 46, 49]
   },
   {
     name: 'DESERT',

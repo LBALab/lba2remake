@@ -94,7 +94,7 @@ function loadScene(currentScene, index) {
     let i = 0; // scene data index
     _.each(currentScene.island.data.layout.groundSections, section => {
         currentScene.sceneData[i] = {}; // init 
-        loadSceneData(currentScene.sceneData[i], i + index, (sceneData) => { 
+        loadSceneData(currentScene.sceneData[i], currentScene.island.sectionScene[section.index], (sceneData) => { 
             currentScene.sceneData[i] = sceneData; 
             createScene(currentScene, section, i, sceneData); 
         });
