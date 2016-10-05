@@ -43,7 +43,7 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
     }
 
     actor.load = function (index, callback) {
-        loadModel(actor.models, index, actor.entityIndex, actor.bodyIndex, actor.animIndex, (obj) => { 
+        loadModel(actor.currentScene.models, index, actor.entityIndex, actor.bodyIndex, actor.animIndex, (obj) => { 
             actor.threeObject = obj.meshes[index];
             actor.threeObject.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
             callback(actor.threeObject, obj);
