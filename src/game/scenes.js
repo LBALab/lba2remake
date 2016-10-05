@@ -64,10 +64,9 @@ export function createSceneManager(hero) {
     GameEvents.scene.gotoScene.addListener(gotoScene);
         
     currentScene.update = function(time) {
-        const numActors = currentScene.actors.length;
-        for (let i = 0; i < numActors; ++i) {
-            currentScene.actors[i].update(time);
-        }
+        _.each(currentScene.actors, actor => {
+            actor.update(time);
+        });
     }
 
     return {
