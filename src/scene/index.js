@@ -143,7 +143,7 @@ function loadActors(scene, offset) {
         offset += 2;
         
         actor.pos = [
-            data.getUint16(offset, true) / 0x4000,
+            (0x8000 - data.getUint16(offset, true) + 512) / 0x4000,
             data.getUint16(offset + 2, true) / 0x4000,
             data.getUint16(offset + 4, true) / 0x4000
         ];
