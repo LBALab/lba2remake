@@ -74,14 +74,14 @@ function loadBricksTexture(library, bricks, palette) {
         ),
         idx => bricks[idx]
     );
-    const image_data = new Uint8Array(1024 * 1024 * 4);
+    const image_data = new Uint8Array(512 * 512 * 4);
     each(usedBricks, (brick, idx) => {
         const offsetX = (idx % 21) * 48;
         const offsetY = Math.round(idx / 21) * 38;
         for (let y = 0; y < 38; ++y) {
             for (let x = 0; x < 48; ++x) {
                 const src_i = y * 48 + x;
-                const tgt_i = (y + offsetY) * 1024 + x + offsetX;
+                const tgt_i = (y + offsetY) * 512 + x + offsetX;
                 image_data[tgt_i * 4] = palette[brick[src_i] * 3];
                 image_data[tgt_i * 4 + 1] = palette[brick[src_i] * 3 + 1];
                 image_data[tgt_i * 4 + 2] = palette[brick[src_i] * 3 + 2];
@@ -91,8 +91,8 @@ function loadBricksTexture(library, bricks, palette) {
     });
     const texture = new THREE.DataTexture(
         image_data,
-        1024,
-        1024,
+        512,
+        512,
         THREE.RGBAFormat,
         THREE.UnsignedByteType,
         THREE.UVMapping,
