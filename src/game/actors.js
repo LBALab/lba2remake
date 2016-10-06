@@ -24,9 +24,9 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
     actor.currentScene = currentScene;
     actor.reloadModel = true;
 
-    actor.physics.position.x = actor.pos[0] + xOffset * 2; // shouldn use those values
+    actor.physics.position.x = actor.pos[2] + zOffset * 2; // shouldn use those values
     actor.physics.position.y = actor.pos[1];
-    actor.physics.position.z = actor.pos[2] + zOffset * 2; // shouldn use those values
+    actor.physics.position.z = actor.pos[0] + xOffset * 2; // shouldn use those values
 
     actor.update = function (time) {
         if (actor.isVisible() && 
