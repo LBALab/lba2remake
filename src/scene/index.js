@@ -241,9 +241,9 @@ function loadPoints(scene, offset) {
     for (let i = 0; i < numPoints; ++i) {
         let point = {
             pos: [
-                data.getUint32(offset, true),
-                data.getUint32(offset + 4, true),
-                data.getUint32(offset + 8, true)
+                (0x8000 - data.getUint32(offset + 8, true) + 512) / 0x4000,
+                data.getUint32(offset + 4, true) / 0x4000,
+                data.getUint32(offset, true) / 0x4000
             ]
         };
         offset += 12;
