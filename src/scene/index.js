@@ -160,11 +160,12 @@ function loadActors(scene, offset) {
         offset += 2;
         actor.info3 = data.getUint16(offset, true);
         offset += 2;
-        actor.extraAmount = data.getUint8(offset++, true);
+        actor.extraAmount = data.getUint16(offset, true);
+        offset += 2;
         actor.textColor = data.getUint8(offset++, true);
         if (actor.unknownFlags & 0x0004 || 
             actor.unknownFlags & 0x0001) {
-            offset += 6; // skip unknown
+            offset += 6; // skip unknown 
         }
         actor.armour = data.getUint8(offset++, true);
         actor.life = data.getUint8(offset++, true);
