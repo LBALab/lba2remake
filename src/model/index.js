@@ -38,11 +38,9 @@ function loadModelData(files, model, index, entityIdx, bodyIdx, animIdx) {
             states: []
         };
         model.texture = loadTexture(files.ress.getEntry(6), model.palette);
-    }
- 
-    if (!model.entities) {
         model.entities = loadEntity(model.entity);
     }
+    
     const entity = model.entities[entityIdx];
     const realBodyIdx = getBodyIndex(entity, bodyIdx);
     const realAnimIdx = getAnimIndex(entity, animIdx);
