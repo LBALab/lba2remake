@@ -17,7 +17,7 @@ export function mainGameLoop(clock, renderer, scene, hero, controls) {
             each(controls, ctrl => { ctrl.update && ctrl.update(); });
             scene.island.data.update(time);
             processPhysicsFrame(time, scene.island.data.physics, renderer.camera, hero.physics);
-            renderer.render(scene.island.data.threeScene);
+            renderer.render(scene.threeScene);
         }
     }
     renderer.stats.end();
