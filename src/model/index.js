@@ -8,7 +8,7 @@ import {loadBody} from './body';
 import {loadAnim} from './anim';
 import {loadAnimState, updateKeyframe} from './animState';
 import {loadMesh} from './geometry';
-import {loadTexture} from '../texture';
+import {loadTexture2} from '../texture';
 
 export function loadModel(models, index, entityIdx, bodyIdx, animIdx, callback) {
     async.auto({
@@ -37,7 +37,7 @@ function loadModelData(files, model, index, entityIdx, bodyIdx, animIdx) {
             meshes: [],
             states: []
         };
-        model.texture = loadTexture(files.ress.getEntry(6), model.palette);
+        model.texture = loadTexture2(files.ress.getEntry(6), model.palette);
         model.entities = loadEntity(model.entity);
     }
     
