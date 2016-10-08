@@ -12,7 +12,7 @@ export function mainGameLoop(clock, renderer, scene, hero, controls) {
     if (scene && scene.data) {
         each(controls, ctrl => { ctrl.update && ctrl.update(); });
         scene.data.update(time);
-        processPhysicsFrame(time, scene.data.physics, renderer.camera, hero.physics);
+        //processPhysicsFrame(time, scene.data.physics, renderer.camera, hero.physics);
         renderer.render(scene.data.threeScene);
     }
     renderer.stats.end();

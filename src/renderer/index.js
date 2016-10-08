@@ -28,7 +28,12 @@ export function createRenderer(useVR) {
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
     const baseRenderer = setupBaseRenderer(pixelRatio);
     const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
-    const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 100); // 1m = 0.0625 units
+    // left, right, top, bottom, near, far
+    const halfWidth = Math.floor(window.innerWidth / 2);
+    const halfHeight = Math.floor(window.innerHeight / 2);
+    const camera = new THREE.OrthographicCamera(-halfWidth, halfWidth, -halfHeight, halfHeight, 0.001, 100); // 1m = 0.0625 units
+    camera.position.z = -1;
+    camera.lookAt(new THREE.Vector3());
     const resizer = setupResizer(renderer, camera);
     let smaa = setupSMAA(renderer, pixelRatio);
     const stats = setupStats(useVR);

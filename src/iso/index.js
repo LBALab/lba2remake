@@ -23,7 +23,7 @@ export function loadIsoSceneManager() {
     };
     loadBricks(texture => {
         const tScene = new THREE.Scene();
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 1, 1), new THREE.MeshBasicMaterial({
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(1024, 1024, 1, 1), new THREE.MeshBasicMaterial({
             map: texture
         }));
         plane.position.z = -0.7;
@@ -45,7 +45,7 @@ export function loadBricks(callback) {
         for (let i = 197; i <= 18099; ++i) {
             bricks.push(loadBrick(files, i));
         }
-        const library = loadLibrary(files, 196);
+        const library = loadLibrary(files, 179);
         const palette = new Uint8Array(files.ress.getEntry(0));
         const texture = loadBricksTexture(library, bricks, palette);
         callback(texture);
