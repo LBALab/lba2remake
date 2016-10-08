@@ -61,7 +61,7 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
     }
 
     actor.isVisible = function () {
-        return !(actor.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) ? true : false;
+        return (!(actor.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && actor.life > 0) ? true : false;
     }
 
     actor.isSprite = function () {
