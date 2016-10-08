@@ -28,7 +28,6 @@ export function createRenderer(useVR) {
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
     const baseRenderer = setupBaseRenderer(pixelRatio);
     const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
-    // left, right, top, bottom, near, far
     const halfWidth = Math.floor(window.innerWidth / 2);
     const halfHeight = Math.floor(window.innerHeight / 2);
     const camera = new THREE.OrthographicCamera(-halfWidth, halfWidth, -halfHeight, halfHeight, 0.001, 100); // 1m = 0.0625 units
@@ -119,7 +118,12 @@ function setupSMAA(renderer, pixelRatio) {
 function setupResizer(renderer, camera) {
     function resize() {
         renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
+        const halfWidth = Math.floor(window.innerWidth / 2);
+        const halfHeight = Math.floor(window.innerHeight / 2);
+        camera.left = -halfWidth;
+        camera.right = halfWidth;
+        camera.top = -halfHeight;
+        camera.bottom = halfHeight;
         camera.updateProjectionMatrix();
     }
 
