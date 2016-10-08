@@ -109,7 +109,7 @@ function loadScene(currentScene, index) {
         currentScene.sceneData[0] = {}; // init 
         loadSceneData(currentScene.sceneData[0], index, (sceneData) => { 
             currentScene.sceneData[0] = sceneData; 
-            createScene(currentScene, { x: 0, y: 0 }, 0, sceneData); 
+            createScene(currentScene, { x: 0, z: 0 }, 0, sceneData); 
             currentScene.hasLoaded = true;
         });
     }
