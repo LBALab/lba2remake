@@ -115,7 +115,7 @@ function loadActors(scene, offset) {
     const data = new DataView(scene.buffer);
     scene.actors = [];
 
-    const numActors = data.getUint16(offset, true);
+    const numActors = data.getUint16(offset, true) - 1; // not couting hero
     offset += 2;
 
     for (let i = 0; i < numActors; ++i) {
@@ -160,9 +160,13 @@ function loadActors(scene, offset) {
         actor.extraAmount = data.getUint16(offset, true);
         offset += 2;
         actor.textColor = data.getUint8(offset++, true);
-        if (actor.unknownFlags & 0x0004 || 
-            actor.unknownFlags & 0x0001) {
-            offset += 6; // skip unknown 
+        if (actor.unknownFlags & 0x0004) { 
+            actor.unknown0 = data.getUint16(offset, true);
+            offset += 2;
+            actor.unknown1 = data.getUint16(offset, true);
+            offset += 2;
+            actor.unknown2 = data.getUint16(offset, true);
+            offset += 2;
         }
         actor.armour = data.getUint8(offset++, true);
         actor.life = data.getUint8(offset++, true);
