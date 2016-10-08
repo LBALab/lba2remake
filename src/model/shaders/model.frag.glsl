@@ -1,6 +1,6 @@
 precision lowp float;
 
-uniform sampler2D body;
+uniform sampler2D texture;
 
 varying vec4 vColor;
 varying vec2 vUv;
@@ -13,7 +13,7 @@ bool equals(float value, float refValue) {
 
 void main() {
     if (equals(vColor.a, 0.0)) {
-        gl_FragColor = texture2D(body, vUv);
+        gl_FragColor = texture2D(texture, vUv);
     } else {
         gl_FragColor = vColor;
     }
