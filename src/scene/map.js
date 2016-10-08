@@ -3,30 +3,19 @@ import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
 
-export function loadSceneMapData(scene, callback) {
+export function loadSceneMapData(callback) {
     async.auto({
         bkg: loadHqrAsync('LBA_BKG.HQR')
     }, function(err, files) {
-        callback(loadSceneMapFile(files, scene));
+        callback(loadSceneMap(files));
     });
 }
 
-function loadSceneMapFile(files, scene) {
-    if (!scene.data) {
-        scene.data = {
-            files: files,
-            map: null
-        };
-    }
- 
-    return loadSceneMap(scene.data.files, scene.data.map);
-}
-
-function loadSceneMap(files, map) {
+function loadSceneMap(files) {
     const buffer = files.bkg.getEntry(18100); // last entry
     const data = new DataView(buffer);
     let offset = 0;
-    map = [];
+    const map = [];
 
     while (true) {
         const opcode = data.getUint8(offset++, true);
@@ -40,4 +29,5 @@ function loadSceneMap(files, map) {
             index: index
         });
     }
+    return map;
 }

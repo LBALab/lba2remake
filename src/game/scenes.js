@@ -14,7 +14,7 @@ export function createSceneManager(hero) {
         hasLoaded: false,
         hero: hero,
         sceneData: [],
-        sceneMap: {},
+        sceneMap: null,
         actors: [],
         zones: [],
         points: [],
@@ -91,21 +91,27 @@ export function createSceneManager(hero) {
 
 
 function loadScene(currentScene, index) {
-    // load all scenes in the island - just testing for now
-
-    currentScene.sceneData
-
-    let i = 0; // scene data index
-    _.each(currentScene.island.data.layout.groundSections, section => {
-        currentScene.sceneData[i] = {}; // init 
-        loadSceneData(currentScene.sceneData[i], currentScene.island.sectionScene[section.id - 1], (sceneData) => { 
-            currentScene.sceneData[i] = sceneData; 
-            createScene(currentScene, section, i, sceneData); 
+    if (!currentScene.sceneMap || 
+        currentScene.sceneMap[index].isIsland) { // island scenes
+        let i = 0; // scene data index
+        _.each(currentScene.island.data.layout.groundSections, section => {
+            currentScene.sceneData[i] = {}; // init 
+            loadSceneData(currentScene.sceneData[i], currentScene.island.sectionScene[section.id - 1], (sceneData) => { 
+                currentScene.sceneData[i] = sceneData; 
+                createScene(currentScene, section, i, sceneData); 
+                currentScene.hasLoaded = true;
+            });
+            ++i;
         });
-        ++i;
-    });
-
-    currentScene.hasLoaded = true;
+    } else { // iso grid
+        const gridIdx = currentScene.sceneMap[index].index;
+        currentScene.sceneData[0] = {}; // init 
+        loadSceneData(currentScene.sceneData[0], index, (sceneData) => { 
+            currentScene.sceneData[0] = sceneData; 
+            createScene(currentScene, { x: 0, y: 0 }, 0, sceneData); 
+            currentScene.hasLoaded = true;
+        });
+    }
 }
 
 function createScene(currentScene, section, index, sceneData) {
@@ -120,8 +126,8 @@ function createScene(currentScene, section, index, sceneData) {
 }
 
 function initScene(currentScene) {
-    loadSceneMapData(currentScene.sceneMap, (sceneMapData) => { 
-        currentScene.sceneMap = sceneMapData; 
+    loadSceneMapData((map) => { 
+        currentScene.sceneMap = map; 
     });
 
     loadModel(currentScene.models, 0, 0, 0, 0, (obj) => { 
