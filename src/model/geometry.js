@@ -1,8 +1,6 @@
 import THREE from 'three';
 import _ from 'lodash';
 
-import {loadTexture} from '../texture';
-
 import vertexShader from './shaders/model.vert.glsl';
 import fragmentShader from './shaders/model.frag.glsl';
 
@@ -13,7 +11,7 @@ export function loadMesh(model, body, state) {
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
         uniforms: {
-            body: {value: loadTexture(model.files.ress.getEntry(6), model.palette)},
+            body: {value: model.texture },
             bones: {value: state.matrixBones, type:'m4v'}
         }
     });
