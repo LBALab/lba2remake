@@ -128,11 +128,9 @@ function loadActors(scene, offset) {
         
         actor.entityIndex = data.getUint16(offset, true);
         offset += 2;
-        actor.bodyIndex = data.getUint8(offset, true);
-        ++offset;
-        ++offset; // unknown byte
-        actor.animIndex = data.getUint8(offset, true);
-        ++offset;
+        actor.bodyIndex = data.getUint8(offset++, true);
+        offset++; // unknown byte
+        actor.animIndex = data.getUint8(offset++, true);
         actor.spriteIndex = data.getUint16(offset, true);
         offset += 2;
         
@@ -151,7 +149,6 @@ function loadActors(scene, offset) {
         actor.speed = data.getUint16(offset, true);
         offset += 2;
         actor.controlMode = data.getUint8(offset++, true);
-        actor.controlUnk1 = data.getUint8(offset++, true);
         actor.info0 = data.getUint16(offset, true);
         offset += 2;
         actor.info1 = data.getUint16(offset, true);
