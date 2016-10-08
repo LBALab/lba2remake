@@ -5,6 +5,7 @@ import _ from 'lodash';
 import {GameEvents} from './events';
 import {loadIslandManager} from '../island';
 import {loadSceneData} from '../scene'
+import {loadSceneMapData} from '../scene/map'
 import {loadModel} from '../model' 
 import {createActor} from './actors';
 
@@ -13,6 +14,7 @@ export function createSceneManager(hero) {
         hasLoaded: false,
         hero: hero,
         sceneData: [],
+        sceneMap: {},
         actors: [],
         zones: [],
         points: [],
@@ -91,6 +93,8 @@ export function createSceneManager(hero) {
 function loadScene(currentScene, index) {
     // load all scenes in the island - just testing for now
 
+    currentScene.sceneData
+
     let i = 0; // scene data index
     _.each(currentScene.island.data.layout.groundSections, section => {
         currentScene.sceneData[i] = {}; // init 
@@ -116,6 +120,10 @@ function createScene(currentScene, section, index, sceneData) {
 }
 
 function initScene(currentScene) {
+    loadSceneMapData(currentScene.sceneMap, (sceneMapData) => { 
+        currentScene.sceneMap = sceneMapData; 
+    });
+
     loadModel(currentScene.models, 0, 0, 0, 0, (obj) => { 
         currentScene.models = obj;
     });

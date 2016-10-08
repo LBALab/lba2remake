@@ -5,8 +5,7 @@ import {loadHqrAsync} from '../hqr';
 
 export function loadSceneData(scene, index, callback) {
     async.auto({
-        scene: loadHqrAsync('SCENE.HQR'),
-        bkg: loadHqrAsync('LBA_BKG.HQR')
+        scene: loadHqrAsync('SCENE.HQR')
     }, function(err, files) {
         callback(loadSceneFile(files, scene, index));
     });
@@ -16,13 +15,8 @@ function loadSceneFile(files, scene, index) {
     if (!scene.data) {
         scene.data = {
             files: files,
-            scenes: [],
-            map: null
+            scenes: []
         };
-    }
-
-    if (!scene.data.map) {
-        loadSceneMap(scene.data.files, scene.data.map);
     }
  
     return loadScene(scene.data.files, scene.data.scenes, index);
@@ -276,24 +270,4 @@ function loadUnknown(scene, offset) {
     }
 
     return offset;
-}
-
-function loadSceneMap(files, map) {
-    const buffer = files.bkg.getEntry(18100); // last entry
-    const data = new DataView(buffer);
-    let offset = 0;
-    map = [];
-
-    while (true) {
-        const opcode = data.getUint8(offset++, true);
-        const index = data.getUint8(offset++, true);
-        if (opcode == 0) {
-            break;
-        }
-
-        map.push({
-            isIsland: (opcode == 2) ? true : false,
-            index: index
-        });
-    }
 }
