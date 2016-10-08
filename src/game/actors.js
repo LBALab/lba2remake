@@ -52,11 +52,11 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
     }
 
     actor.isVisible = function () {
-        return !(actor.staticFlags & ACTOR_STATIC_FLAG.HIDDEN == ACTOR_STATIC_FLAG.HIDDEN);
+        return !(actor.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) ? true : false;
     }
 
     actor.isSprite = function () {
-        return (actor.staticFlags & ACTOR_STATIC_FLAG.SPRITE == ACTOR_STATIC_FLAG.SPRITE);
+        return (actor.staticFlags & ACTOR_STATIC_FLAG.SPRITE) ? true : false;
     }
     
     return actor;
