@@ -265,6 +265,9 @@ function loadEntityAnim(data, offset) {
 }
 
 export function getBodyIndex(entity, index) {
+    if (!entity) {
+        return 0;
+    }
     for (let i = 0; i < entity.bodies.length; ++i) {
         if (entity.bodies[i].index == index) {
             return entity.bodies[i].bodyIndex;
@@ -274,6 +277,9 @@ export function getBodyIndex(entity, index) {
 }
 
 export function getAnimIndex(entity, index) {
+    if (!entity) {
+        return 0;
+    }
     for (let i = 0; i < entity.anims.length; ++i) {
         if (entity.anims[i].index == index) {
             return entity.anims[i].animIndex;
