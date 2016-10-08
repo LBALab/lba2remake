@@ -1,6 +1,7 @@
 import async from 'async';
 import {
     map,
+    filter,
     flatten,
     uniq,
     each
@@ -41,10 +42,10 @@ export function loadBricks(callback) {
         bkg: loadHqrAsync('LBA_BKG.HQR')
     }, function (err, files) {
         const bricks = [];
-        for (let i = 197; i < 18099; ++i) {
+        for (let i = 197; i <= 18099; ++i) {
             bricks.push(loadBrick(files, i));
         }
-        const library = loadLibrary(files, 179);
+        const library = loadLibrary(files, 196);
         const palette = new Uint8Array(files.ress.getEntry(0));
         const texture = loadBricksTexture(library, bricks, palette);
         callback(texture);
@@ -66,22 +67,25 @@ function loadLibrary(files, entry) {
 }
 
 function loadBricksTexture(library, bricks, palette) {
-    const usedBricks = map(
-        uniq(
-            flatten(
-                map(library, layout => map(layout, block => block.brick))
-            )
+    const usedBricks = filter(
+        map(
+            uniq(
+                flatten(
+                    map(library, layout => map(layout, block => block.brick))
+                )
+            ),
+            idx => idx ? bricks[idx - 1] : null
         ),
-        idx => bricks[idx]
+        brick => brick != null
     );
-    const image_data = new Uint8Array(512 * 512 * 4);
+    const image_data = new Uint8Array(1024 * 1024 * 4);
     each(usedBricks, (brick, idx) => {
         const offsetX = (idx % 21) * 48;
         const offsetY = Math.round(idx / 21) * 38;
         for (let y = 0; y < 38; ++y) {
             for (let x = 0; x < 48; ++x) {
                 const src_i = y * 48 + x;
-                const tgt_i = (y + offsetY) * 512 + x + offsetX;
+                const tgt_i = (y + offsetY) * 1024 + x + offsetX;
                 image_data[tgt_i * 4] = palette[brick[src_i] * 3];
                 image_data[tgt_i * 4 + 1] = palette[brick[src_i] * 3 + 1];
                 image_data[tgt_i * 4 + 2] = palette[brick[src_i] * 3 + 2];
@@ -91,8 +95,8 @@ function loadBricksTexture(library, bricks, palette) {
     });
     const texture = new THREE.DataTexture(
         image_data,
-        512,
-        512,
+        1024,
+        1024,
         THREE.RGBAFormat,
         THREE.UnsignedByteType,
         THREE.UVMapping,
@@ -112,13 +116,14 @@ function loadLayout(dataView) {
     const nZ = dataView.getUint8(2);
     const numBricks = nX * nY * nZ;
     const blocks = [];
+    const offset = 3;
     for (let i = 0; i < numBricks; ++i) {
-        const type = dataView.getUint8(i * 4 + 1);
+        const type = dataView.getUint8(offset + i * 4 + 1);
         blocks.push({
-            shape: dataView.getUint8(i * 4),
+            shape: dataView.getUint8(offset + i * 4),
             sound: bits(type, 0, 4),
             groundType: bits(type, 4, 4),
-            brick: dataView.getUint16(i * 4 + 2, true)
+            brick: dataView.getUint16(offset + i * 4 + 2, true)
         });
     }
     return blocks;
