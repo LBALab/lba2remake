@@ -3,6 +3,7 @@ import THREE from 'three';
 import _ from 'lodash';
 
 import {loadModel, updateModel} from '../model';
+import {getRotation} from '../utils/lba';
 
 const ACTOR_STATIC_FLAG = {
     NONE             : 0,
@@ -69,26 +70,4 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
     }
     
     return actor;
-}
-
-// duplicated function to add as utils
-function getRotation(nextValue, currentValue, interpolation) {
-    let angleDif = nextValue - currentValue;
-    let computedAngle = 0;
-
-    if (angleDif) {
-	    if (angleDif < -0x800) {
-		    angleDif += 0x1000;
-		}
-	    else if (angleDif > 0x800) {
-		    angleDif -= 0x1000;
-		}
-        computedAngle = currentValue + (angleDif * interpolation)
-    } else {
-        computedAngle = currentValue;
-    }
-
-    computedAngle = computedAngle * 360 / 0x1000;
-
-    return computedAngle;
 }
