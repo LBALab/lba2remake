@@ -22,10 +22,10 @@ export function createPoint(currentScene, index, pointProps, xOffset, zOffset) {
     point.physics.position.z = point.pos[2] + zOffset * 2;
 
     // For debug purposes
-    const obj = new THREE.Object3D();
-    obj.add(new THREE.Mesh(geometry, material));
-    obj.position.set(point.physics.position.x, point.physics.position.y, point.physics.position.z);
-    point.currentScene.threeScene.add(obj);
+    // const obj = new THREE.Object3D();
+    // obj.add(new THREE.Mesh(geometry, material));
+    // obj.position.set(point.physics.position.x, point.physics.position.y, point.physics.position.z);
+    // point.currentScene.threeScene.add(obj);
 
     return point;
 }
