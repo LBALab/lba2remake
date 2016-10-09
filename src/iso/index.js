@@ -21,7 +21,7 @@ export function loadIsoSceneManager() {
             threeScene: new THREE.Object3D()
         }
     };
-    loadBricks(texture => {
+    loadScene(texture => {
         const tScene = new THREE.Scene();
         const plane = new THREE.Mesh(new THREE.PlaneGeometry(1024, 1024, 1, 1), new THREE.MeshBasicMaterial({
             map: texture
@@ -36,59 +36,59 @@ export function loadIsoSceneManager() {
     }
 }
 
-export function loadBricks(callback) {
+export function loadScene(callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         bkg: loadHqrAsync('LBA_BKG.HQR')
     }, function (err, files) {
-        const bricks = [];
-        for (let i = 197; i <= 18099; ++i) {
-            bricks.push(loadBrick(files, i));
-        }
-        const library = loadLibrary(files, 179);
+        const bricks = loadBricks(files.bkg);
         const palette = new Uint8Array(files.ress.getEntry(0));
-        const texture = loadBricksTexture(library, bricks, palette);
-        callback(texture);
+        const library = loadLibrary(files.bkg, bricks, palette, 179);
+        console.log(library);
+        callback(library.texture);
     });
 }
 
-function loadLibrary(files, entry) {
-    const buffer = files.bkg.getEntry(entry);
+function loadLibrary(bkg, bricks, palette, entry) {
+    const buffer = bkg.getEntry(entry);
     const dataView = new DataView(buffer);
     const numLayouts = dataView.getUint32(0, true) / 4;
-    const library = [];
+    const layouts = [];
     for (let i = 0; i < numLayouts; ++i) {
         const offset = dataView.getUint32(i * 4, true);
         const nextOffset = i == numLayouts - 1 ? dataView.byteLength : dataView.getUint32((i + 1) * 4, true);
         const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
-        library.push(loadLayout(layoutDataView));
+        layouts.push(loadLayout(layoutDataView));
     }
-    return library;
+    return loadBricksMap(layouts, bricks, palette);
 }
 
-function loadBricksTexture(library, bricks, palette) {
+function loadBricksMap(layouts, bricks, palette) {
     const usedBricks = filter(
-        map(
-            uniq(
-                flatten(
-                    map(library, layout => map(layout, block => block.brick))
-                )
-            ),
-            idx => idx ? bricks[idx - 1] : null
+        uniq(
+            flatten(
+                map(layouts, layout => map(layout, block => block.brick))
+            )
         ),
-        brick => brick != null
+        idx => idx != 0
     );
+    const brickMap = {};
     const image_data = new Uint8Array(1024 * 1024 * 4);
     each(usedBricks, (brick, idx) => {
         const offsetX = (idx % 21) * 48;
         const offsetY = Math.round(idx / 21) * 38;
+        brickMap[brick] = {
+            x: offsetX,
+            y: offsetY
+        };
+        const pixels = bricks[brick - 1];
         for (let y = 0; y < 38; ++y) {
             for (let x = 0; x < 48; ++x) {
                 const src_i = y * 48 + x;
                 const tgt_i = (y + offsetY) * 1024 + x + offsetX;
-                image_data[tgt_i * 4] = palette[brick[src_i] * 3];
-                image_data[tgt_i * 4 + 1] = palette[brick[src_i] * 3 + 1];
-                image_data[tgt_i * 4 + 2] = palette[brick[src_i] * 3 + 2];
+                image_data[tgt_i * 4] = palette[pixels[src_i] * 3];
+                image_data[tgt_i * 4 + 1] = palette[pixels[src_i] * 3 + 1];
+                image_data[tgt_i * 4 + 2] = palette[pixels[src_i] * 3 + 2];
                 image_data[tgt_i * 4 + 3] = 0xFF;
             }
         }
@@ -107,7 +107,10 @@ function loadBricksTexture(library, bricks, palette) {
     );
     texture.needsUpdate = true;
     texture.generateMipmaps = false;
-    return texture;
+    return {
+        texture: texture,
+        map: brickMap
+    };
 }
 
 function loadLayout(dataView) {
@@ -129,8 +132,16 @@ function loadLayout(dataView) {
     return blocks;
 }
 
-function loadBrick(files, entry) {
-    const dataView = new DataView(files.bkg.getEntry(entry));
+function loadBricks(bkg) {
+    const bricks = [];
+    for (let i = 197; i <= 18099; ++i) {
+        bricks.push(loadBrick(bkg, i));
+    }
+    return bricks;
+}
+
+function loadBrick(bkg, entry) {
+    const dataView = new DataView(bkg.getEntry(entry));
     const height = dataView.getUint8(1);
     const offsetX = dataView.getUint8(2);
     const offsetY = dataView.getUint8(3);
