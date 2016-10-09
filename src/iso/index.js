@@ -1,5 +1,6 @@
 import async from 'async';
 import THREE from 'three';
+import {map} from 'lodash';
 import {loadHqrAsync} from '../hqr';
 import {bits} from '../utils';
 import {loadBricks} from './bricks';
@@ -55,7 +56,11 @@ function loadLibrary(bkg, bricks, palette, entry) {
         const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
         layouts.push(loadLayout(layoutDataView));
     }
-    return loadBricksMap(layouts, bricks, palette);
+    const bricksMap = loadBricksMap(layouts, bricks, palette);
+    return {
+        texture: bricksMap.texture,
+        layouts: map(layouts, makeLayoutBuilder.bind(null, bricksMap))
+    };
 }
 
 function loadLayout(dataView) {
@@ -74,5 +79,18 @@ function loadLayout(dataView) {
             brick: dataView.getUint16(offset + i * 4 + 2, true)
         });
     }
-    return blocks;
+    return {
+        nX: nX,
+        nY: nY,
+        nZ: nZ,
+        data: blocks
+    };
+}
+
+function makeLayoutBuilder(bricksMap, layout) {
+    return {
+        build: function() {
+
+        }
+    };
 }
