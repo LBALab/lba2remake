@@ -11,7 +11,7 @@ export function loadBricksMap(layouts, bricks, palette) {
     const usedBricks = filter(
         uniq(
             flatten(
-                map(layouts, ({data}) => map(data, block => block.brick))
+                map(layouts, ({blocks}) => map(blocks, block => block.brick))
             )
         ),
         idx => idx != 0

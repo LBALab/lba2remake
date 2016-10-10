@@ -42,11 +42,11 @@ function keyDownHandler(heroPhysics, event) {
             break;
         case 34: // pagedown
         case 'PageDown':
-            GameEvents.scene.nextIsland();
+            //GameEvents.scene.nextIsland();
             break;
         case 33: // pageup
         case 'PageUp':
-            GameEvents.scene.previousIsland();
+            //GameEvents.scene.previousIsland();
             break;
         case 70: // f
         case 'KeyF':

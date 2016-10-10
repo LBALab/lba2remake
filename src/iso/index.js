@@ -17,15 +17,8 @@ export function loadIsoSceneManager() {
             threeScene: new THREE.Object3D()
         }
     };
-    loadScene(texture => {
-        const tScene = new THREE.Scene();
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(1024, 1024, 1, 1), new THREE.MeshBasicMaterial({
-            map: texture
-        }));
-        plane.position.z = -0.7;
-        plane.position.y = 0.5;
-        tScene.add(plane);
-        scene.data.threeScene = tScene;
+    loadScene(threeScene => {
+        scene.data.threeScene = threeScene;
     });
     return {
         currentScene: () => scene
@@ -40,8 +33,39 @@ export function loadScene(callback) {
         const bricks = loadBricks(files.bkg);
         const palette = new Uint8Array(files.ress.getEntry(0));
         const library = loadLibrary(files.bkg, bricks, palette, 179);
-        console.log(library);
-        callback(library.texture);
+        let idx = 53;
+
+        function buildScene() {
+            console.log('Layout: ', idx);
+            const geometries = {
+                positions: [],
+                uvs: []
+            };
+            library.layouts[idx].build(geometries);
+
+            const scene = new THREE.Scene();
+            const bufferGeometry = new THREE.BufferGeometry();
+            bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
+            bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
+            const mesh = new THREE.Mesh(bufferGeometry, new THREE.MeshBasicMaterial({
+                map: library.texture,
+                depthTest: false
+            }));
+            scene.add(mesh);
+            return scene;
+        }
+
+        callback(buildScene());
+
+        window.addEventListener('keydown', function(event) {
+            if (event.code == 'PageUp') {
+                idx = idx - 1 >= 0 ? idx - 1 : library.layouts.length - 1;
+                callback(buildScene());
+            } else if (event.code == 'PageDown') {
+                idx = (idx + 1) % library.layouts.length;
+                callback(buildScene());
+            }
+        });
     });
 }
 
@@ -59,7 +83,7 @@ function loadLibrary(bkg, bricks, palette, entry) {
     const bricksMap = loadBricksMap(layouts, bricks, palette);
     return {
         texture: bricksMap.texture,
-        layouts: map(layouts, makeLayoutBuilder.bind(null, bricksMap))
+        layouts: map(layouts, makeLayoutBuilder.bind(null, bricksMap.map))
     };
 }
 
@@ -83,14 +107,49 @@ function loadLayout(dataView) {
         nX: nX,
         nY: nY,
         nZ: nZ,
-        data: blocks
+        blocks: blocks
     };
 }
 
 function makeLayoutBuilder(bricksMap, layout) {
+    const blocks = layout.blocks;
     return {
-        build: function() {
+        build: function({positions, uvs}) {
+            console.log('Layout blocks:', blocks.length);
+            let i = 0;
+            for (let x = 0; x < layout.nX; ++x) {
+                for (let y = 0; y < layout.nY; ++y) {
+                    for (let z = 0; z < layout.nZ; ++z) {
+                        if (blocks[i].brick) {
+                            const offset = bricksMap[blocks[i].brick];
+                            const u = offset.x;
+                            const v = offset.y;
 
+                            // First triangle
+                            positions.push(x * 48, z * 38, 0);
+                            uvs.push(u / 1024, v / 1024);
+
+                            positions.push((x + 1) * 48, z * 38, 0);
+                            uvs.push((u + 48) / 1024, v / 1024);
+
+                            positions.push((x + 1) * 48, (z + 1) * 38, 0);
+                            uvs.push((u + 48) / 1024, (v + 38) / 1024);
+
+                            // Second triangle
+                            positions.push(x * 48, z * 38, 0);
+                            uvs.push(u / 1024, v / 1024);
+
+                            positions.push((x + 1) * 48, (z + 1) * 38, 0);
+                            uvs.push((u + 48) / 1024, (v + 38) / 1024);
+
+                            positions.push(x * 48, (z + 1) * 38, 0);
+                            uvs.push(u / 1024, (v + 38) / 1024);
+                        }
+                        i++;
+                    }
+                }
+            }
         }
     };
 }
+
