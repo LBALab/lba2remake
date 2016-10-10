@@ -115,41 +115,54 @@ function makeLayoutBuilder(bricksMap, layout) {
     const blocks = layout.blocks;
     return {
         build: function({positions, uvs}) {
-            console.log('Layout blocks:', blocks.length);
             let i = 0;
-            for (let x = 0; x < layout.nX; ++x) {
+            let activeBlocks = 0;
+            for (let z = 0; z < layout.nZ; ++z) {
                 for (let y = 0; y < layout.nY; ++y) {
-                    for (let z = 0; z < layout.nZ; ++z) {
+                    for (let x = 0; x < layout.nX; ++x) {
                         if (blocks[i].brick) {
                             const offset = bricksMap[blocks[i].brick];
                             const u = offset.x;
                             const v = offset.y;
 
+                            const {px, py} = getPosition(x, y, z);
+
                             // First triangle
-                            positions.push(x * 48, z * 38, 0);
+                            positions.push(px, py, 0);
                             uvs.push(u / 1024, v / 1024);
 
-                            positions.push((x + 1) * 48, z * 38, 0);
+                            positions.push(px + 48, py, 0);
                             uvs.push((u + 48) / 1024, v / 1024);
 
-                            positions.push((x + 1) * 48, (z + 1) * 38, 0);
+                            positions.push(px + 48, py + 38, 0);
                             uvs.push((u + 48) / 1024, (v + 38) / 1024);
 
                             // Second triangle
-                            positions.push(x * 48, z * 38, 0);
+                            positions.push(px, py, 0);
                             uvs.push(u / 1024, v / 1024);
 
-                            positions.push((x + 1) * 48, (z + 1) * 38, 0);
+                            positions.push(px + 48, py + 38, 0);
                             uvs.push((u + 48) / 1024, (v + 38) / 1024);
 
-                            positions.push(x * 48, (z + 1) * 38, 0);
+                            positions.push(px, py + 38, 0);
                             uvs.push(u / 1024, (v + 38) / 1024);
+
+                            activeBlocks++;
                         }
                         i++;
                     }
                 }
             }
+            console.log('Blocks:', activeBlocks, '/', blocks.length);
         }
     };
 }
 
+function getPosition(x, y, z) {
+    //screen.x = (map.x - map.y) * TILE_WIDTH_HALF;
+    //screen.y = (map.x + map.y) * TILE_HEIGHT_HALF;
+    return {
+        px: (x - z) * 24,
+        py: (x + z) * 12 - y * 16
+    }
+}

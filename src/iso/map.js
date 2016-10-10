@@ -30,10 +30,19 @@ export function loadBricksMap(layouts, bricks, palette) {
             for (let x = 0; x < 48; ++x) {
                 const src_i = y * 48 + x;
                 const tgt_i = (y + offsetY) * 1024 + x + offsetX;
+
+                if (x == 0 || y == 0 || x == 47 || y == 37) {
+                    image_data[tgt_i * 4] = 0xFF;
+                    image_data[tgt_i * 4 + 1] = 0;
+                    image_data[tgt_i * 4 + 2] = 0;
+                    image_data[tgt_i * 4 + 3] = 0xFF;
+                    continue;
+                }
+
                 image_data[tgt_i * 4] = palette[pixels[src_i] * 3];
                 image_data[tgt_i * 4 + 1] = palette[pixels[src_i] * 3 + 1];
                 image_data[tgt_i * 4 + 2] = palette[pixels[src_i] * 3 + 2];
-                image_data[tgt_i * 4 + 3] = 0xFF;
+                image_data[tgt_i * 4 + 3] = pixels[src_i] ? 0xFF : 0;
             }
         }
     });
