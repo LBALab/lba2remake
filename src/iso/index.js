@@ -49,8 +49,11 @@ export function loadScene(callback) {
             bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
             const mesh = new THREE.Mesh(bufferGeometry, new THREE.MeshBasicMaterial({
                 map: library.texture,
-                depthTest: false
+                depthTest: false,
+                transparent: true
             }));
+            mesh.position.x = 0.5;
+            mesh.position.y = 0.5;
             scene.add(mesh);
             return scene;
         }
@@ -159,10 +162,8 @@ function makeLayoutBuilder(bricksMap, layout) {
 }
 
 function getPosition(x, y, z) {
-    //screen.x = (map.x - map.y) * TILE_WIDTH_HALF;
-    //screen.y = (map.x + map.y) * TILE_HEIGHT_HALF;
     return {
         px: (x - z) * 24,
-        py: (x + z) * 12 - y * 16
+        py: (x + z) * 12 - y * 15
     }
 }
