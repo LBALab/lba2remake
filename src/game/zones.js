@@ -46,10 +46,8 @@ export function createZone(currentScene, index, zoneProps, xOffset, zOffset) {
                                            zone.box.tY - zone.box.bY, 
                                            zone.box.tZ - zone.box.bZ);
     const material = new THREE.MeshBasicMaterial({
-        color: ZONE_TYPE_MATERIAL_COLOR[zone.type], 
-        depthTest: true, 
-        depthWrite: true,
-        wireframe: true 
+        color: ZONE_TYPE_MATERIAL_COLOR[zone.type],
+        wireframe: true
     });
 
     // For debug purposes
