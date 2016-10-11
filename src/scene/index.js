@@ -228,9 +228,9 @@ function loadZones(scene, offset) {
 
         // normalising position
         zone.pos = [
-            zone.box.bX,
-            zone.box.bY,
-            zone.box.bZ
+            zone.box.bX + (zone.box.tX - zone.box.bX)/2,
+            zone.box.bY + (zone.box.tY - zone.box.bY)/2,
+            zone.box.bZ + (zone.box.tZ - zone.box.bZ)/2
         ];
 
         scene.zones.push(zone);
