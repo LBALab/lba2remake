@@ -16,16 +16,16 @@ const ZONE_TYPE = {
 }
 
 const ZONE_TYPE_MATERIAL_COLOR = [
-    0x84ff84, // 132 255 132 green
-    0xff8000, // 255 128 0 orange
-    0x6495ed, // 100 149 237 blue/gray
-    0x000000, // 
-    0xffff6c, // 255 255 108 yeloow 
-    0xff0000, // 255 0 0 red 
-    0x000000, // 
-    0x000000, // 
-    0x000000, // 
-    0x000000, // 
+    0x84ff84, 
+    0xff8000, 
+    0x6495ed, 
+    0xff00ff,  
+    0xffff6c, 
+    0x00ff00,  
+    0x5555ff,  
+    0x96c09f,  
+    0xffc475,  
+    0x008000,  
 ];
 
 export function createZone(currentScene, index, zoneProps, xOffset, zOffset) {
