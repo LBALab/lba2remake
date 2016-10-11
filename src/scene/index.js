@@ -206,12 +206,12 @@ function loadZones(scene, offset) {
             box: {}
         };
 
-        zone.box.bX = data.getUint32(offset, true);
-        zone.box.bY = data.getUint32(offset + 4, true);
-        zone.box.bZ = data.getUint32(offset + 8, true);
-        zone.box.tX = data.getUint32(offset + 12, true);
-        zone.box.tY = data.getUint32(offset + 16, true);
-        zone.box.tZ = data.getUint32(offset + 20, true);
+        zone.box.bX = (0x8000 - data.getUint32(offset + 8, true) + 512) / 0x4000;
+        zone.box.bY = data.getUint32(offset + 4, true) / 0x4000;
+        zone.box.bZ = data.getUint32(offset, true) / 0x4000;
+        zone.box.tX = (0x8000 - data.getUint32(offset + 20, true) + 512) / 0x4000;
+        zone.box.tY = data.getUint32(offset + 16, true) / 0x4000;
+        zone.box.tZ = data.getUint32(offset + 12, true) / 0x4000;
         offset += 24;
 
         zone.info0 = data.getUint32(offset, true);
@@ -225,6 +225,13 @@ function loadZones(scene, offset) {
         zone.type  = data.getUint16(offset + 32, true);
         zone.snap  = data.getUint16(offset + 34, true);
         offset += 36;
+
+        // normalising position
+        zone.pos = [
+            zone.box.bX,
+            zone.box.bY,
+            zone.box.bZ
+        ];
 
         scene.zones.push(zone);
     }

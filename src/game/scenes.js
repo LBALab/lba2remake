@@ -9,6 +9,7 @@ import {loadSceneMapData} from '../scene/map'
 import {loadModel} from '../model' 
 import {createActor} from './actors';
 import {createPoint} from './points';
+import {createZone} from './zones';
 
 export function createSceneManager(hero) {
     const currentScene = {
@@ -118,8 +119,10 @@ function loadScene(currentScene, index) {
 function createScene(currentScene, section, index, sceneData) {
     const numActors = currentScene.sceneData[index].actors.length;
     const numPoints = currentScene.sceneData[index].points.length;
+    const numZones = currentScene.sceneData[index].zones.length;
     const actorsLength = currentScene.actors.length + 1;
-    const pointsLength = currentScene.actors.length + 1;
+    const pointsLength = currentScene.points.length + 1;
+    const zonesLength = currentScene.zones.length + 1;
 
     for (let i = 0; i < numActors; ++i) {
         const actorProps = currentScene.sceneData[index].actors[i];
@@ -132,6 +135,12 @@ function createScene(currentScene, section, index, sceneData) {
         const point = createPoint(currentScene, i + index * pointsLength, pointProps, section.x, section.z);
 
         currentScene.points.push(point);
+    }
+    for (let i = 0; i < numZones; ++i) {
+        const zoneProps = currentScene.sceneData[index].zones[i];
+        const zone = createZone(currentScene, i + index * zonesLength, zoneProps, section.x, section.z);
+
+        currentScene.zones.push(zone);
     }
 }
 
