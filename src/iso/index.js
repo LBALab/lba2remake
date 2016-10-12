@@ -31,42 +31,32 @@ export function loadScene(entry, callback) {
         const palette = new Uint8Array(files.ress.getEntry(0));
         const bricks = loadBricks(files.bkg);
         const grid = loadGrid(files.bkg, bricks, palette, entry);
-        console.log(grid);
-        let idx = 53;
 
-        function buildScene() {
-            console.log('Layout: ', idx);
-            const geometries = {
-                positions: [],
-                uvs: []
-            };
-            grid.library.layouts[idx].build(geometries);
-
-            const scene = new THREE.Scene();
-            const bufferGeometry = new THREE.BufferGeometry();
-            bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
-            bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
-            const mesh = new THREE.Mesh(bufferGeometry, new THREE.MeshBasicMaterial({
-                map: grid.library.texture,
-                depthTest: false,
-                transparent: true
-            }));
-            mesh.position.x = 0.5;
-            mesh.position.y = 0.5;
-            scene.add(mesh);
-            return scene;
+        const geometries = {
+            positions: [],
+            uvs: []
+        };
+        let c = 0;
+        for (let z = 0; z < 64; ++z) {
+            for (let x = 0; x < 64; ++x) {
+                grid.cells[c].build(geometries, x, z);
+                c++;
+            }
         }
 
-        callback(buildScene());
+        const scene = new THREE.Scene();
+        const bufferGeometry = new THREE.BufferGeometry();
+        bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
+        bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
+        const mesh = new THREE.Mesh(bufferGeometry, new THREE.MeshBasicMaterial({
+            map: grid.library.texture,
+            depthTest: false,
+            transparent: true
+        }));
+        mesh.position.x = -150;
+        mesh.position.y = -150;
+        scene.add(mesh);
 
-        window.addEventListener('keydown', function(event) {
-            if (event.code == 'PageUp') {
-                idx = idx - 1 >= 0 ? idx - 1 : grid.library.layouts.length - 1;
-                callback(buildScene());
-            } else if (event.code == 'PageDown') {
-                idx = (idx + 1) % grid.library.layouts.length;
-                callback(buildScene());
-            }
-        });
+        callback(scene);
     });
 }

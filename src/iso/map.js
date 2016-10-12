@@ -7,7 +7,7 @@ import {
 } from 'lodash';
 import THREE from 'three';
 
-export function loadBricksMap(layouts, bricks, palette) {
+export function loadBricksMapping(layouts, bricks, palette) {
     const usedBricks = filter(
         uniq(
             flatten(
@@ -16,14 +16,14 @@ export function loadBricksMap(layouts, bricks, palette) {
         ),
         idx => idx != 0
     );
-    const brickMap = {};
+    const bricksMap = {};
     const image_data = new Uint8Array(1024 * 1024 * 4);
     each(usedBricks, (brick, idx) => {
         const offsetX = (idx % 21) * 48;
         const offsetY = Math.round(idx / 21) * 38;
-        brickMap[brick] = {
-            x: offsetX,
-            y: offsetY
+        bricksMap[brick] = {
+            u: offsetX,
+            v: offsetY
         };
         const pixels = bricks[brick - 1];
         for (let y = 0; y < 38; ++y) {
@@ -54,6 +54,6 @@ export function loadBricksMap(layouts, bricks, palette) {
     texture.generateMipmaps = false;
     return {
         texture: texture,
-        map: brickMap
+        bricksMap: bricksMap
     };
 }

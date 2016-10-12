@@ -1,50 +1,51 @@
 import {map} from 'lodash';
 import {bits} from '../utils';
-import {loadBricksMap} from './map';
+import {loadBricksMapping} from './map';
 
 export function loadGrid(bkg, bricks, palette, entry) {
     const gridData = new DataView(bkg.getEntry(entry));
-    const library = gridData.getUint8(0);
+    const libIndex = gridData.getUint8(0);
     const maxOffset = 34 + 4096 * 2;
     const offsets = [];
     for (let i = 34; i < maxOffset; i += 2) {
         offsets.push(gridData.getUint16(i, true) + 34);
     }
+    const library = loadLibrary(bkg, bricks, palette, 179 + libIndex);
     return {
-        library: loadLibrary(bkg, bricks, palette, 179 + library),
+        library: library,
         cells: map(offsets, offset => {
-            const columns = [];
+            const blocks = [];
             const numColumns = gridData.getUint8(offset++);
             for (let i = 0; i < numColumns; ++i) {
                 const flags = gridData.getUint8(offset++);
-                const column = {
-                    type: bits(flags, 6, 2),
-                    height: bits(flags, 0, 4)
-                };
-                switch (column.type) {
-                    case 1:
-                        const blocks = [];
-                        for (let j = 0; j <= column.height; ++j) {
-                            blocks.push({
-                                layoutIdx: gridData.getUint8(offset++),
-                                blockIdx: gridData.getUint8(offset++)
-                            });
-                        }
-                        break;
-                    case 2:
-                        column.block = {
-                            layoutIdx: gridData.getUint8(offset++),
-                            blockIdx: gridData.getUint8(offset++)
-                        };
-                        break;
-                    case 0:
-                    default:
-                        break;
-                }
+                const type = bits(flags, 6, 2);
+                const height = bits(flags, 0, 4);
+                const block = type == 2 ? {
+                    layout: gridData.getUint8(offset++) - 1,
+                    block: gridData.getUint8(offset++)
+                } : null;
 
-                columns.push(column);
+                for (let j = 0; j <= height; ++j) {
+                    switch (type) {
+                        case 1:
+                            blocks.push({
+                                layout: gridData.getUint8(offset++) - 1,
+                                block: gridData.getUint8(offset++)
+                            });
+                            break;
+                        case 2:
+                            blocks.push(block);
+                            break;
+                        case 0:
+                        default:
+                            blocks.push(null);
+                            break;
+                    }
+                }
             }
-            return columns;
+            return {
+                build: buildCell.bind(null, library, blocks)
+            };
         })
     };
 }
@@ -60,10 +61,11 @@ function loadLibrary(bkg, bricks, palette, entry) {
         const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
         layouts.push(loadLayout(layoutDataView));
     }
-    const bricksMap = loadBricksMap(layouts, bricks, palette);
+    const mapping = loadBricksMapping(layouts, bricks, palette);
     return {
-        texture: bricksMap.texture,
-        layouts: map(layouts, makeLayoutBuilder.bind(null, bricksMap.map))
+        texture: mapping.texture,
+        bricksMap: mapping.bricksMap,
+        layouts: layouts
     };
 }
 
@@ -91,51 +93,40 @@ function loadLayout(dataView) {
     };
 }
 
-function makeLayoutBuilder(bricksMap, layout) {
-    const blocks = layout.blocks;
-    return {
-        build: function({positions, uvs}) {
-            let i = 0;
-            let activeBlocks = 0;
-            for (let z = 0; z < layout.nZ; ++z) {
-                for (let y = 0; y < layout.nY; ++y) {
-                    for (let x = 0; x < layout.nX; ++x) {
-                        if (blocks[i].brick) {
-                            const offset = bricksMap[blocks[i].brick];
-                            const u = offset.x;
-                            const v = offset.y;
+function buildCell(library, blocks, geometries, x, z) {
+    const {positions, uvs} = geometries;
+    for (let y = 0; y < blocks.length; ++y) {
+        if (blocks[y]) {
+            const layout = library.layouts[blocks[y].layout];
+            if (layout) {
+                const block = layout.blocks[blocks[y].block];
+                if (block && block.brick) {
+                    const {u, v} = library.bricksMap[block.brick];
+                    const {px, py} = getPosition(x, y, z);
 
-                            const {px, py} = getPosition(x, y, z);
+                    // First triangle
+                    positions.push(px, py, 0);
+                    uvs.push(u / 1024, v / 1024);
 
-                            // First triangle
-                            positions.push(px, py, 0);
-                            uvs.push(u / 1024, v / 1024);
+                    positions.push(px + 48, py, 0);
+                    uvs.push((u + 48) / 1024, v / 1024);
 
-                            positions.push(px + 48, py, 0);
-                            uvs.push((u + 48) / 1024, v / 1024);
+                    positions.push(px + 48, py + 38, 0);
+                    uvs.push((u + 48) / 1024, (v + 38) / 1024);
 
-                            positions.push(px + 48, py + 38, 0);
-                            uvs.push((u + 48) / 1024, (v + 38) / 1024);
+                    // Second triangle
+                    positions.push(px, py, 0);
+                    uvs.push(u / 1024, v / 1024);
 
-                            // Second triangle
-                            positions.push(px, py, 0);
-                            uvs.push(u / 1024, v / 1024);
+                    positions.push(px + 48, py + 38, 0);
+                    uvs.push((u + 48) / 1024, (v + 38) / 1024);
 
-                            positions.push(px + 48, py + 38, 0);
-                            uvs.push((u + 48) / 1024, (v + 38) / 1024);
-
-                            positions.push(px, py + 38, 0);
-                            uvs.push(u / 1024, (v + 38) / 1024);
-
-                            activeBlocks++;
-                        }
-                        i++;
-                    }
+                    positions.push(px, py + 38, 0);
+                    uvs.push(u / 1024, (v + 38) / 1024);
                 }
             }
-            console.log('Blocks:', activeBlocks, '/', blocks.length);
         }
-    };
+    }
 }
 
 function getPosition(x, y, z) {
