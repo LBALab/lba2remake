@@ -1,6 +1,6 @@
 import {map} from 'lodash';
 import {bits} from '../utils';
-import {loadBricksMapping} from './map';
+import {loadBricksMapping, MAP_SIZE} from './map';
 
 export function loadGrid(bkg, bricks, palette, entry) {
     const gridData = new DataView(bkg.getEntry(entry));
@@ -106,23 +106,23 @@ function buildCell(library, blocks, geometries, x, z) {
 
                     // First triangle
                     positions.push(px, py, 0);
-                    uvs.push(u / 1024, v / 1024);
+                    uvs.push(u / MAP_SIZE, v / MAP_SIZE);
 
                     positions.push(px + 48, py, 0);
-                    uvs.push((u + 48) / 1024, v / 1024);
+                    uvs.push((u + 48) / MAP_SIZE, v / MAP_SIZE);
 
                     positions.push(px + 48, py + 38, 0);
-                    uvs.push((u + 48) / 1024, (v + 38) / 1024);
+                    uvs.push((u + 48) / MAP_SIZE, (v + 38) / MAP_SIZE);
 
                     // Second triangle
                     positions.push(px, py, 0);
-                    uvs.push(u / 1024, v / 1024);
+                    uvs.push(u / MAP_SIZE, v / MAP_SIZE);
 
                     positions.push(px + 48, py + 38, 0);
-                    uvs.push((u + 48) / 1024, (v + 38) / 1024);
+                    uvs.push((u + 48) / MAP_SIZE, (v + 38) / MAP_SIZE);
 
                     positions.push(px, py + 38, 0);
-                    uvs.push(u / 1024, (v + 38) / 1024);
+                    uvs.push(u / MAP_SIZE, (v + 38) / MAP_SIZE);
                 }
             }
         }

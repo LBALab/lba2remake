@@ -7,6 +7,8 @@ import {
 } from 'lodash';
 import THREE from 'three';
 
+export const MAP_SIZE = 2048;
+
 export function loadBricksMapping(layouts, bricks, palette) {
     const usedBricks = filter(
         uniq(
@@ -17,7 +19,7 @@ export function loadBricksMapping(layouts, bricks, palette) {
         idx => idx != 0
     );
     const bricksMap = {};
-    const image_data = new Uint8Array(1024 * 1024 * 4);
+    const image_data = new Uint8Array(MAP_SIZE * MAP_SIZE * 4);
     each(usedBricks, (brick, idx) => {
         const offsetX = (idx % 21) * 48;
         const offsetY = Math.round(idx / 21) * 38;
@@ -29,7 +31,7 @@ export function loadBricksMapping(layouts, bricks, palette) {
         for (let y = 0; y < 38; ++y) {
             for (let x = 0; x < 48; ++x) {
                 const src_i = y * 48 + x;
-                const tgt_i = (y + offsetY) * 1024 + x + offsetX;
+                const tgt_i = (y + offsetY) * MAP_SIZE + x + offsetX;
 
                 image_data[tgt_i * 4] = palette[pixels[src_i] * 3];
                 image_data[tgt_i * 4 + 1] = palette[pixels[src_i] * 3 + 1];
@@ -40,8 +42,8 @@ export function loadBricksMapping(layouts, bricks, palette) {
     });
     const texture = new THREE.DataTexture(
         image_data,
-        1024,
-        1024,
+        MAP_SIZE,
+        MAP_SIZE,
         THREE.RGBAFormat,
         THREE.UnsignedByteType,
         THREE.UVMapping,
