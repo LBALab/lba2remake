@@ -15,9 +15,31 @@ export function loadIsoSceneManager() {
             threeScene: new THREE.Object3D()
         }
     };
-    loadScene(1, threeScene => {
-        scene.data.threeScene = threeScene;
+    let idx = 1;
+
+    function load() {
+        loadScene(idx, threeScene => {
+            scene.data.threeScene = threeScene;
+        });
+    }
+
+    load();
+
+    window.addEventListener('keydown', function(event) {
+        if (event.code == 'PageUp') {
+            idx--;
+            if (idx < 1)
+                idx = 148;
+            load();
+        } else if (event.code == 'PageDown') {
+            idx++;
+            if (idx > 148) {
+                idx = 1;
+            }
+            load();
+        }
     });
+
     return {
         currentScene: () => scene
     }
