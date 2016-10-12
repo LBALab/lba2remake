@@ -53,7 +53,7 @@ export function loadScene(entry, callback) {
             depthTest: false,
             transparent: true
         }));
-        mesh.position.x = -150;
+        mesh.position.x = 120;
         mesh.position.y = -150;
         scene.add(mesh);
 

@@ -131,7 +131,7 @@ function buildCell(library, blocks, geometries, x, z) {
 
 function getPosition(x, y, z) {
     return {
-        px: (x - z) * 24,
+        px: (z - x) * 24,
         py: (x + z) * 12 - y * 15
     }
 }

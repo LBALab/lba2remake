@@ -30,7 +30,7 @@ export function loadBricksMapping(layouts, bricks, palette) {
         const pixels = bricks[brick - 1];
         for (let y = 0; y < 38; ++y) {
             for (let x = 0; x < 48; ++x) {
-                const src_i = y * 48 + x;
+                const src_i = y * 48 + (47 - x);
                 const tgt_i = (y + offsetY) * MAP_SIZE + x + offsetX;
 
                 image_data[tgt_i * 4] = palette[pixels[src_i] * 3];
