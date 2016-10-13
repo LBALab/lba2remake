@@ -19,7 +19,7 @@ export function loadGrid(bkg, bricks, palette, entry) {
             for (let i = 0; i < numColumns; ++i) {
                 const flags = gridData.getUint8(offset++);
                 const type = bits(flags, 6, 2);
-                const height = bits(flags, 0, 4);
+                const height = bits(flags, 0, 5);
                 const block = type == 2 ? {
                     layout: gridData.getUint8(offset++) - 1,
                     block: gridData.getUint8(offset++)
@@ -27,6 +27,9 @@ export function loadGrid(bkg, bricks, palette, entry) {
 
                 for (let j = 0; j <= height; ++j) {
                     switch (type) {
+                        case 0:
+                            blocks.push(null);
+                            break;
                         case 1:
                             blocks.push({
                                 layout: gridData.getUint8(offset++) - 1,
@@ -36,9 +39,8 @@ export function loadGrid(bkg, bricks, palette, entry) {
                         case 2:
                             blocks.push(block);
                             break;
-                        case 0:
-                        default:
-                            blocks.push(null);
+                        case 3:
+                            console.error('Shouldn\'t be here');
                             break;
                     }
                 }
