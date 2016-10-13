@@ -51,10 +51,10 @@ export function createZone(currentScene, index, zoneProps, xOffset, zOffset) {
     });
 
     // For debug purposes
-    const obj = new THREE.Object3D();
-    obj.add(new THREE.Mesh(geometry, material));
-    obj.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
-    zone.currentScene.threeScene.add(obj);
+    // const obj = new THREE.Object3D();
+    // obj.add(new THREE.Mesh(geometry, material));
+    // obj.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
+    // zone.currentScene.threeScene.add(obj);
 
     return zone;
 }
