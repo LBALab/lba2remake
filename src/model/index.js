@@ -8,15 +8,16 @@ import {loadBody} from './body';
 import {loadAnim} from './anim';
 import {loadAnimState, updateKeyframe} from './animState';
 import {loadMesh} from './geometry';
+import {loadTexture2} from '../texture';
 
-export default function(models, index, entityIdx, bodyIdx, animIdx, callback) {
+export function loadModel(models, index, entityIdx, bodyIdx, animIdx, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         body: loadHqrAsync('BODY.HQR'),
         anim: loadHqrAsync('ANIM.HQR'),
         anim3ds: loadHqrAsync('ANIM3DS.HQR')
     }, function(err, files) {
-        callback(loadModel(files, models, index, entityIdx, bodyIdx, animIdx));
+        callback(loadModelData(files, models, index, entityIdx, bodyIdx, animIdx));
     });
 }
 
@@ -25,7 +26,7 @@ export default function(models, index, entityIdx, bodyIdx, animIdx, callback) {
  *  This will allow to mantain different states for body animations.
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
-function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
+function loadModelData(files, model, index, entityIdx, bodyIdx, animIdx) {
     if (!model) {
         model = {
             files: files,
@@ -36,11 +37,10 @@ function loadModel(files, model, index, entityIdx, bodyIdx, animIdx) {
             meshes: [],
             states: []
         };
-    }
- 
-    if (!model.entities) {
+        model.texture = loadTexture2(files.ress.getEntry(6), model.palette);
         model.entities = loadEntity(model.entity);
     }
+    
     const entity = model.entities[entityIdx];
     const realBodyIdx = getBodyIndex(entity, bodyIdx);
     const realAnimIdx = getAnimIndex(entity, animIdx);

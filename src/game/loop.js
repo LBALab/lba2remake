@@ -9,11 +9,16 @@ export function mainGameLoop(clock, renderer, scene, hero, controls) {
 
     renderer.stats.begin();
 
-    if (scene && scene.data) {
-        each(controls, ctrl => { ctrl.update && ctrl.update(); });
-        scene.data.update(time);
-        processPhysicsFrame(time, scene.data.physics, renderer.camera, hero.physics);
-        renderer.render(scene.data.threeScene);
+    if (scene) {
+        if (scene.hasLoaded) {
+            scene.update(time);
+        }
+        if (scene.island && scene.island.data) {
+            each(controls, ctrl => { ctrl.update && ctrl.update(); });
+            scene.island.data.update(time);
+            processPhysicsFrame(time, scene.island.data.physics, renderer.camera, hero.physics);
+            renderer.render(scene.threeScene);
+        }
     }
     renderer.stats.end();
 }

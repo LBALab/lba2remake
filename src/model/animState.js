@@ -1,6 +1,8 @@
 import THREE from 'three';
 import _ from 'lodash';
 
+import {getRotation, getStep} from '../utils/lba';
+
 const push = Array.prototype.push;
 
 export function loadAnimState(model, body, anim, index) {
@@ -81,14 +83,19 @@ function updateShaderBone(state) {
 }
 
 export function updateKeyframe(anim, state, time) {
+    if (!state) return;
+
     state.currentTime += time.delta * 1000;
     let keyframe = anim.keyframes[state.currentFrame];
+
+    if (!keyframe) return;
+
     if (state.currentTime > keyframe.length) {
         state.currentTime = 0;
         ++state.currentFrame;
         if (state.currentFrame >= anim.numKeyframes) {
             state.currentFrame = state.loopFrame;
-            if (state.currentFrame == anim.numKeyframes - 1) {
+            if (state.currentFrame >= anim.numKeyframes - 1) {
                 state.currentFrame = 0;
             }
         }
@@ -98,7 +105,7 @@ export function updateKeyframe(anim, state, time) {
     let nextFrame = state.currentFrame + 1;
     if (nextFrame >= anim.numKeyframes) {
         nextFrame = state.loopFrame;
-        if (nextFrame == anim.numKeyframes - 1) {
+        if (nextFrame >= anim.numKeyframes - 1) {
             nextFrame = 0;
         }
     }
@@ -173,36 +180,4 @@ function updateSkeletonHierarchy(skeleton, index) {
     for (let i = 0; i < s.children.length; ++i) {
         updateSkeletonHierarchy(skeleton, s.children[i].boneIndex);
     }
-}
-
-function getRotation(nextValue, currentValue, interpolation) {
-    let angleDif = nextValue - currentValue;
-    let computedAngle = 0;
-
-    if (angleDif) {
-	    if (angleDif < -0x800) {
-		    angleDif += 0x1000;
-		}
-	    else if (angleDif > 0x800) {
-		    angleDif -= 0x1000;
-		}
-        computedAngle = currentValue + (angleDif * interpolation)
-    } else {
-        computedAngle = currentValue;
-    }
-
-    computedAngle = computedAngle * 360 / 0x1000;
-
-    return computedAngle;
-}
-
-function getStep(nextValue, currentValue, interpolation) {
-    const stepDif = nextValue - currentValue;
-    let computedStep = 0;
-    if (stepDif) {
-        computedStep = currentValue + (stepDif * interpolation)
-    } else {
-        computedStep = currentValue;
-    }
-    return computedStep;
 }
