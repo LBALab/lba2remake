@@ -73,7 +73,7 @@ export function createRenderer(useVR) {
             stats.dispose();
         },
         stats: stats,
-        camera: isoCamera
+        camera: camera3D
     };
 }
 
