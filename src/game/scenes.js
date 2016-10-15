@@ -1,4 +1,3 @@
-import async from 'async';
 import THREE from 'three';
 import _ from 'lodash';
 
@@ -24,7 +23,7 @@ export function createSceneManager(hero) {
         models: null,
         island: {},
         threeScene: new THREE.Scene()
-    }
+    };
 
     initScene(currentScene);
     
@@ -44,17 +43,17 @@ export function createSceneManager(hero) {
     }
 
     function nextIsland() { 
-        resetThreeScene()
+        resetThreeScene();
         islandManager.loadNext(onIslandLoaded); 
     }
 
     function previousIsland() { 
-        resetThreeScene()
+        resetThreeScene();
         islandManager.loadPrevious(onIslandLoaded); 
     }
 
     function gotoIsland(islandName) {
-        resetThreeScene()
+        resetThreeScene();
         islandManager.loadIsland(islandName, onIslandLoaded); 
     }
 
@@ -74,7 +73,7 @@ export function createSceneManager(hero) {
         _.each(currentScene.actors, actor => {
             actor.update(time);
         });
-    }
+    };
 
     return {
         dispose: () => {
