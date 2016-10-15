@@ -66,11 +66,11 @@ function msNOP(script, state, actor) {
 }
 
 function msBODY(script, state, actor) {
-    
+    actor.bodyIndex = script.getUint8(state.offset, true);
 }
 
 function msANIM(script, state, actor) {
-    
+    actor.animIndex = script.getUint8(state.offset, true);
 }
 
 function msGOTO_POINT(script, state, actor) {
@@ -99,6 +99,7 @@ function msGOTO(script, state, actor) {
 
 function msSTOP(script, state, actor) {
     state.continue = false;
+    state.offset = -1;
 }
 
 function msGOTO_SYM_POINT(script, state, actor) {
@@ -130,7 +131,7 @@ function msWAIT_NUM_SECOND(script, state, actor) {
 }
 
 function msNO_BODY(script, state, actor) {
-    
+    actor.visible = false;
 }
 
 function msBETA(script, state, actor) {
