@@ -1,3 +1,5 @@
+import async from 'async';
+import _ from 'lodash';
 
 export const MOVE_OPCODE = [
     { opcode: 0x00, command: "END", callback: msEND, offset: 0 },
@@ -56,7 +58,7 @@ export const MOVE_OPCODE = [
 ];
 
 function msEND(script, state, actor) {
-
+    state.continue = false;
 }
 
 function msNOP(script, state, actor) {
@@ -96,7 +98,7 @@ function msGOTO(script, state, actor) {
 }
 
 function msSTOP(script, state, actor) {
-    
+    state.continue = false;
 }
 
 function msGOTO_SYM_POINT(script, state, actor) {
