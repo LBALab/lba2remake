@@ -31,9 +31,9 @@ export function processLifeScript(actor) {
 export function processMoveScript(actor) {
     const state = actor.scriptState;
     const script = actor.moveScript;
+    state.continue = true;
     do {
         const opcode = script.getUint8(state.move.offset++, true);
-        // RUN OPCODE
-        MOVE_OPCODE[opcode].callback();
+        MOVE_OPCODE[opcode].callback(script, state.move, actor);
     } while(state.move.continue);
 }
