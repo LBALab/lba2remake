@@ -1,4 +1,6 @@
 import {GameEvents} from '../game/events';
+import {switchMovementMode} from '../game/hero';
+import {switchStats} from '../renderer/stats';
 
 export function makeKeyboardControls(heroPhysics) {
     const onKeyDown = keyDownHandler.bind(null, heroPhysics);
@@ -50,11 +52,11 @@ function keyDownHandler(heroPhysics, event) {
             break;
         case 70: // f
         case 'KeyF':
-            GameEvents.debug.switchStats();
+            switchStats();
             break;
         case 77: // m
         case 'KeyM':
-            GameEvents.mode.switchMode();
+            switchMovementMode(heroPhysics);
             break;
     }
 }

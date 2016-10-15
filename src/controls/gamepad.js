@@ -1,5 +1,7 @@
 import THREE from 'three';
 import {GameEvents} from '../game/events';
+import {switchMovementMode} from '../game/hero';
+import {switchStats} from '../renderer/stats';
 
 const euler = new THREE.Euler();
 const PI_4 = Math.PI / 4;
@@ -42,10 +44,10 @@ function buttonPressedHandler(heroPhysics, {detail: {name, isPressed}}) {
                 GameEvents.scene.previousIsland();
                 break;
             case 'buttonY':
-                GameEvents.mode.switchMode();
+                switchMovementMode(heroPhysics);
                 break;
             case 'leftTrigger':
-                GameEvents.debug.switchStats();
+                switchStats();
                 break;
         }
     }

@@ -42,14 +42,4 @@ window.onload = function() {
     }
 
     processAnimationFrame();
-
-    GameEvents.mode.switchMode.addListener(() => {
-        if (heroConfig.physics.movement == Movement.NORMAL) {
-            heroConfig.physics.movement = Movement.FLY;
-        }
-        else {
-            heroConfig.physics.movement = Movement.NORMAL;
-        }
-        console.log('switchMode mode:', heroConfig.physics.movement);
-    });
 };

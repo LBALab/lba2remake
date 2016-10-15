@@ -29,3 +29,13 @@ export function createHero(config) {
 
     return hero;
 }
+
+export function switchMovementMode(heroPhysics) {
+    if (heroPhysics.config.movement == Movement.NORMAL) {
+        heroPhysics.config.movement  = Movement.FLY;
+    }
+    else {
+        heroPhysics.config.movement  = Movement.NORMAL;
+    }
+    console.log('switchMode mode:', heroPhysics.config.movement);
+}

@@ -7,12 +7,6 @@ export const GameEvents = {
         gotoIsland: new GameEventTarget(),
         sceneLoaded: new GameEventTarget(),
         gotoScene: new GameEventTarget()
-    },
-    mode: {
-        switchMode: new GameEventTarget()
-    },
-    debug: {
-        switchStats: new GameEventTarget()
     }
 };
 
