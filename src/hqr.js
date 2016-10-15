@@ -60,8 +60,6 @@ export default class HQR {
         } else {
             return this._buffer.slice(entry.offset, entry.offset + entry.compressedSize);
         }
-        
-        
     }
 
     _readHeader() {
@@ -80,10 +78,17 @@ export default class HQR {
     }
 }
 
+const hqrCache = {};
+
 export function loadHqrAsync(file) {
     return (callback) => {
-        new HQR().load(`data/${file}`, function() {
-            callback.call(null, null, this);
-        });
+        if (file in hqrCache) {
+            callback(null, hqrCache[file]);
+        } else {
+            new HQR().load(`data/${file}`, function() {
+                hqrCache[file] = this;
+                callback.call(null, null, this);
+            });
+        }
     }
 }
