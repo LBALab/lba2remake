@@ -10,7 +10,7 @@ export function loadGrid(bkg, bricks, palette, entry) {
     for (let i = 34; i < maxOffset; i += 2) {
         offsets.push(gridData.getUint16(i, true) + 34);
     }
-    const library = loadLibrary(bkg, bricks, palette, 179 + libIndex);
+    const library = loadLibrary(bkg, bricks, palette, libIndex);
     return {
         library: library,
         cells: map(offsets, offset => {
@@ -52,23 +52,32 @@ export function loadGrid(bkg, bricks, palette, entry) {
     };
 }
 
+const libraries = [];
+
 function loadLibrary(bkg, bricks, palette, entry) {
-    const buffer = bkg.getEntry(entry);
-    const dataView = new DataView(buffer);
-    const numLayouts = dataView.getUint32(0, true) / 4;
-    const layouts = [];
-    for (let i = 0; i < numLayouts; ++i) {
-        const offset = dataView.getUint32(i * 4, true);
-        const nextOffset = i == numLayouts - 1 ? dataView.byteLength : dataView.getUint32((i + 1) * 4, true);
-        const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
-        layouts.push(loadLayout(layoutDataView));
+    if (libraries[entry]) {
+        return libraries[entry];
+    } else {
+        const buffer = bkg.getEntry(179 + entry);
+        const dataView = new DataView(buffer);
+        const numLayouts = dataView.getUint32(0, true) / 4;
+        const layouts = [];
+        for (let i = 0; i < numLayouts; ++i) {
+            const offset = dataView.getUint32(i * 4, true);
+            const nextOffset = i == numLayouts - 1 ? dataView.byteLength : dataView.getUint32((i + 1) * 4, true);
+            const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
+            layouts.push(loadLayout(layoutDataView));
+        }
+        const mapping = loadBricksMapping(layouts, bricks, palette);
+        const library = {
+            texture: mapping.texture,
+            bricksMap: mapping.bricksMap,
+            layouts: layouts
+        };
+        libraries[entry] = library;
+        return library;
     }
-    const mapping = loadBricksMapping(layouts, bricks, palette);
-    return {
-        texture: mapping.texture,
-        bricksMap: mapping.bricksMap,
-        layouts: layouts
-    };
+
 }
 
 function loadLayout(dataView) {
