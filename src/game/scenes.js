@@ -1,7 +1,6 @@
 import THREE from 'three';
 import _ from 'lodash';
 
-import {GameEvents} from './events';
 import {loadIslandManager} from '../island';
 import {loadIsoSceneManager} from '../iso'
 import {loadSceneData} from '../scene'
@@ -11,7 +10,7 @@ import {createActor} from './actors';
 import {createPoint} from './points';
 import {createZone} from './zones';
 
-export function createSceneManager(hero) {
+export function createSceneManager(renderer, hero) {
     const currentScene = {
         hasLoaded: false,
         hero: hero,
@@ -32,8 +31,9 @@ export function createSceneManager(hero) {
 
     function onIslandLoaded(island) {
         console.log('Loaded: ', island.name);
-        GameEvents.scene.sceneLoaded(island);
-
+        renderer.initScene(island);
+        hero.physics.position.x = island.startPosition[0];
+        hero.physics.position.z = island.startPosition[1];
         gotoScene(currentScene, 42); // temporary
     }
 
@@ -42,32 +42,9 @@ export function createSceneManager(hero) {
         islandManager.setThreeScene(currentScene.threeScene);
     }
 
-    function nextIsland() { 
-        resetThreeScene();
-        islandManager.loadNext(onIslandLoaded); 
-    }
-
-    function previousIsland() { 
-        resetThreeScene();
-        islandManager.loadPrevious(onIslandLoaded); 
-    }
-
-    function gotoIsland(islandName) {
-        resetThreeScene();
-        islandManager.loadIsland(islandName, onIslandLoaded); 
-    }
-
     function gotoScene(currentScene, index) { 
         loadScene(currentScene, index);
     }
-
-    GameEvents.scene.nextIsland.addListener(nextIsland);
-    GameEvents.scene.previousIsland.addListener(previousIsland);
-    GameEvents.scene.gotoIsland.addListener(gotoIsland);
-
-    //GameEvents.scene.nextScene.addListener(nextScene);
-    //GameEvents.scene.previousScene.addListener(previousScene);
-    GameEvents.scene.gotoScene.addListener(gotoScene);
         
     currentScene.update = function(time) {
         _.each(currentScene.actors, actor => {
@@ -76,18 +53,13 @@ export function createSceneManager(hero) {
     };
 
     return {
-        dispose: () => {
-            GameEvents.scene.nextIsland.removeListener(nextIsland);
-            GameEvents.scene.previousIsland.removeListener(previousIsland);
-            GameEvents.scene.gotoIsland.removeListener(gotoIsland);
-
-            //GameEvents.scene.nextScene.removeListener(nextScene);
-            //GameEvents.scene.previousScene.removeListener(previousScene);
-            GameEvents.scene.gotoScene.removeListener(gotoScene);
-        },
         currentScene: () => {
              currentScene.island = islandManager.currentIsland();
              return currentScene;
+        },
+        gotoIsland: islandName => {
+            resetThreeScene();
+            islandManager.loadIsland(islandName, onIslandLoaded);
         }
     };
 }

@@ -2,7 +2,6 @@ import THREE from 'three';
 import {createRenderer} from './renderer';
 import {mainGameLoop} from './game/loop';
 import {createSceneManager} from './game/scenes';
-import {GameEvents} from './game/events';
 import {Target, Movement, createHero} from './game/hero';
 import {makeFirstPersonMouseControls} from './controls/mouse';
 import {makeKeyboardControls} from './controls/keyboard';
@@ -21,7 +20,7 @@ window.onload = function() {
         }
     };
     const hero = createHero(heroConfig);
-    const sceneManager = createSceneManager(hero);
+    const sceneManager = createSceneManager(renderer, hero);
     const controls = isMobile ? [
             makeGyroscopeControls(hero.physics),
             makeGamepadControls(hero.physics)
@@ -32,8 +31,7 @@ window.onload = function() {
         ];
 
     document.getElementById('main').appendChild(renderer.domElement);
-    GameEvents.scene.gotoIsland('CITADEL');
-
+    sceneManager.gotoIsland('CITADEL');
 
     const clock = new THREE.Clock();
     function processAnimationFrame() {

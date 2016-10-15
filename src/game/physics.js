@@ -3,7 +3,6 @@ import {map, each} from 'lodash';
 import {Movement, Target} from './hero';
 
 export function processPhysicsFrame(time, scene, cameras, heroPhysics) {
-    //console.log(heroPhysics.config.movement);
     switch (heroPhysics.config.movement) {
         case Movement.NORMAL:
             processNormalMovement(time, scene, heroPhysics);

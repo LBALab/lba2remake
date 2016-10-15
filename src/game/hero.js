@@ -1,5 +1,4 @@
 import THREE from 'three';
-import {GameEvents} from './events';
 import {assign} from 'lodash';
 
 export const Movement = {
@@ -12,7 +11,7 @@ export const Target = {
 };
 
 export function createHero(config) {
-    const hero = {
+    return {
         physics: {
             config: config.physics,
             position: new THREE.Vector3(),
@@ -21,21 +20,15 @@ export function createHero(config) {
             speed: new THREE.Vector3()
         }
     };
-
-    GameEvents.scene.sceneLoaded.addListener(scene => {
-        hero.physics.position.x = scene.startPosition[0];
-        hero.physics.position.z = scene.startPosition[1];
-    });
-
-    return hero;
 }
 
 export function switchMovementMode(heroPhysics) {
     if (heroPhysics.config.movement == Movement.NORMAL) {
-        heroPhysics.config.movement  = Movement.FLY;
+        heroPhysics.config.movement = Movement.FLY;
+        console.log('switchMovementMode: FLY');
     }
     else {
-        heroPhysics.config.movement  = Movement.NORMAL;
+        heroPhysics.config.movement = Movement.NORMAL;
+        console.log('switchMovementMode: NORMAL');
     }
-    console.log('switchMode mode:', heroPhysics.config.movement);
 }

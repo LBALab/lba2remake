@@ -1,4 +1,3 @@
-import {GameEvents} from '../game/events';
 import {switchMovementMode} from '../game/hero';
 import {switchStats} from '../renderer/stats';
 

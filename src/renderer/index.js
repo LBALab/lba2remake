@@ -11,7 +11,6 @@ import {
     resizeIsometricCamera
 } from './cameras';
 import Cardboard from './utils/Cardboard';
-import {GameEvents} from '../game/events';
 import {map} from 'lodash';
 
 const PixelRatioMode = {
@@ -72,6 +71,11 @@ export function createRenderer(useVR) {
             resizer.dispose();
             stats.dispose();
         },
+        initScene: scene => {
+            const sc = scene.envInfo.skyColor;
+            const color = new THREE.Color(sc[0], sc[1], sc[2]);
+            renderer.setClearColor(color.getHex(), 1);
+        },
         stats: stats,
         cameras: {
             camera3D: camera3D,
@@ -94,12 +98,6 @@ function setupBaseRenderer(pixelRatio) {
     renderer.domElement.style.left = 0;
     renderer.domElement.style.top = 0;
     renderer.domElement.style.opacity = 1.0;
-
-    GameEvents.scene.sceneLoaded.addListener(scene => {
-        const sc = scene.envInfo.skyColor;
-        const color = new THREE.Color(sc[0], sc[1], sc[2]);
-        renderer.setClearColor(color.getHex(), 1);
-    });
 
     return renderer;
 }

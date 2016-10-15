@@ -1,5 +1,4 @@
 import Stats from './tools/Stats';
-import {GameEvents} from '../game/events';
 
 let stats = null;
 let useVR = false;

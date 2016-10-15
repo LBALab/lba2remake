@@ -1,5 +1,4 @@
 import THREE from 'three';
-import {GameEvents} from '../game/events';
 import {switchMovementMode} from '../game/hero';
 import {switchStats} from '../renderer/stats';
 
@@ -38,10 +37,10 @@ function buttonPressedHandler(heroPhysics, {detail: {name, isPressed}}) {
                 rotateArroundY(heroPhysics.orientation, -PI_4);
                 break;
             case 'buttonB':
-                GameEvents.scene.nextIsland();
+                //GameEvents.scene.nextIsland();
                 break;
             case 'buttonX':
-                GameEvents.scene.previousIsland();
+                //GameEvents.scene.previousIsland();
                 break;
             case 'buttonY':
                 switchMovementMode(heroPhysics);
