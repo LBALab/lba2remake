@@ -40,17 +40,18 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
     actor.physics.orientation.setFromEuler(euler);
 
     actor.update = function (time) {
-        if (actor.isVisible() && 
-           !actor.isSprite() && 
-            actor.reloadModel) { // only load new model if need reload
-            actor.load(actor.index, (threeObject, models) => {
-                actor.threeObject = threeObject;
-                currentScene.threeScene.add(threeObject);
-            });
-        }
-        Script.processMoveScript(actor);
-        if(actor.currentScene.models && actor.currentScene.models.entities) {
-            updateModel(actor.currentScene.models, index, actor.entityIndex, actor.bodyIndex, actor.animIndex, time);
+        if (actor.isVisible()) {
+            if (!actor.isSprite() && 
+                actor.reloadModel) { // only load new model if need reload
+                actor.load(actor.index, (threeObject, models) => {
+                    actor.threeObject = threeObject;
+                    currentScene.threeScene.add(threeObject);
+                });
+            }
+            Script.processMoveScript(actor);
+            if(actor.currentScene.models && actor.currentScene.models.entities) {
+                updateModel(actor.currentScene.models, index, actor.entityIndex, actor.bodyIndex, actor.animIndex, time);
+            }
         }
     }
 

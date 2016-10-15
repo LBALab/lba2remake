@@ -42,12 +42,12 @@ export function processMoveScript(actor) {
                 break;
             }
             const opcode = script.getUint8(state.move.offset++, true);
+            MOVE_OPCODE[opcode].callback(script, state.move, actor);
+            state.move.offset += MOVE_OPCODE[opcode].offset;
             /*console.debug("opcode: " + opcode);
             console.debug("state: ", state.move);
             console.debug("opcode def: ", MOVE_OPCODE[opcode]);
             console.debug(MOVE_OPCODE[opcode].command);*/
-            MOVE_OPCODE[opcode].callback(script, state.move, actor);
-            state.move.offset += MOVE_OPCODE[opcode].offset;
         }
     }
 }
