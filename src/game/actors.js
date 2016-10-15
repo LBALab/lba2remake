@@ -27,6 +27,8 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
     actor.scriptState = Script.initScriptState();
     actor.currentScene = currentScene;
     actor.reloadModel = true;
+    actor.visible = !(checkStaticFlag(actor, ACTOR_STATIC_FLAG.HIDDEN) && actor.life > 0);
+    actor.isSprite = checkStaticFlag(actor, ACTOR_STATIC_FLAG.SPRITE);
 
     actor.physics.position.x = actor.pos[0] + xOffset * 2;
     actor.physics.position.y = actor.pos[1];
@@ -40,8 +42,8 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
     actor.physics.orientation.setFromEuler(euler);
 
     actor.update = function (time) {
-        if (actor.isVisible()) {
-            if (!actor.isSprite() && 
+        if (actor.visible) {
+            if (!actor.isSprite && 
                 actor.reloadModel) { // only load new model if need reload
                 actor.load(actor.index, (threeObject, models) => {
                     actor.threeObject = threeObject;
@@ -65,13 +67,9 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
         actor.reloadModel = false;
     }
 
-    actor.isVisible = function () {
-        return (!(actor.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && actor.life > 0) ? true : false;
-    }
-
-    actor.isSprite = function () {
-        return (actor.staticFlags & ACTOR_STATIC_FLAG.SPRITE) ? true : false;
-    }
-    
     return actor;
+}
+
+function checkStaticFlag(actor, flag) {
+    return (actor.staticFlags & flag) ? true : false;
 }
