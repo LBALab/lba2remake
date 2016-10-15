@@ -1,6 +1,6 @@
 import {map} from 'lodash';
 import {bits} from '../utils';
-import {loadBricksMapping, MAP_SIZE} from './map';
+import {loadBricksMapping} from './mapping';
 
 export function loadGrid(bkg, bricks, palette, entry) {
     const gridData = new DataView(bkg.getEntry(entry));
@@ -106,6 +106,7 @@ function loadLayout(dataView) {
 
 function buildCell(library, blocks, geometries, x, z) {
     const {positions, uvs} = geometries;
+    const {width, height} = library.texture.image;
     for (let y = 0; y < blocks.length; ++y) {
         if (blocks[y]) {
             const layout = library.layouts[blocks[y].layout];
@@ -117,23 +118,23 @@ function buildCell(library, blocks, geometries, x, z) {
 
                     // First triangle
                     positions.push(px, py, 0);
-                    uvs.push(u / MAP_SIZE, v / MAP_SIZE);
+                    uvs.push(u / width, v / height);
 
                     positions.push(px + 48, py, 0);
-                    uvs.push((u + 48) / MAP_SIZE, v / MAP_SIZE);
+                    uvs.push((u + 48) / width, v / height);
 
                     positions.push(px + 48, py + 38, 0);
-                    uvs.push((u + 48) / MAP_SIZE, (v + 38) / MAP_SIZE);
+                    uvs.push((u + 48) / width, (v + 38) / height);
 
                     // Second triangle
                     positions.push(px, py, 0);
-                    uvs.push(u / MAP_SIZE, v / MAP_SIZE);
+                    uvs.push(u / width, v / height);
 
                     positions.push(px + 48, py + 38, 0);
-                    uvs.push((u + 48) / MAP_SIZE, (v + 38) / MAP_SIZE);
+                    uvs.push((u + 48) / width, (v + 38) / height);
 
                     positions.push(px, py + 38, 0);
-                    uvs.push(u / MAP_SIZE, (v + 38) / MAP_SIZE);
+                    uvs.push(u / width, (v + 38) / height);
                 }
             }
         }

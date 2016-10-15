@@ -7,7 +7,7 @@ import {
 } from 'lodash';
 import THREE from 'three';
 
-export const MAP_SIZE = 2048;
+const MAP_SIZE = 2048;
 
 export function loadBricksMapping(layouts, bricks, palette) {
     const usedBricks = filter(
