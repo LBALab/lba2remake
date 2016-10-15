@@ -32,7 +32,7 @@ window.onload = function() {
         ];
 
     document.getElementById('main').appendChild(renderer.domElement);
-    //GameEvents.scene.gotoIsland('CITADEL');
+    GameEvents.scene.gotoIsland('CITADEL');
 
 
     const clock = new THREE.Clock();

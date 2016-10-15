@@ -5,7 +5,8 @@ export const GameEvents = {
         nextIsland: new GameEventTarget(),
         previousIsland: new GameEventTarget(),
         gotoIsland: new GameEventTarget(),
-        sceneLoaded: new GameEventTarget()
+        sceneLoaded: new GameEventTarget(),
+        gotoScene: new GameEventTarget()
     },
     mode: {
         switchMode: new GameEventTarget()

@@ -4,6 +4,12 @@ import EffectComposer from './effects/postprocess/EffectComposer';
 import SMAAPass from './effects/postprocess/SMAAPass';
 import RenderPass from './effects/postprocess/RenderPass';
 import setupStats from './stats';
+import {
+    getIsometricCamera,
+    get3DCamera,
+    resize3DCamera,
+    resizeIsometricCamera
+} from './cameras';
 import Cardboard from './utils/Cardboard';
 import {GameEvents} from '../game/events';
 import {map} from 'lodash';
@@ -28,12 +34,9 @@ export function createRenderer(useVR) {
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
     const baseRenderer = setupBaseRenderer(pixelRatio);
     const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
-    const halfWidth = Math.floor(window.innerWidth / 2);
-    const halfHeight = Math.floor(window.innerHeight / 2);
-    const camera = new THREE.OrthographicCamera(-halfWidth, halfWidth, -halfHeight, halfHeight, 0.001, 100); // 1m = 0.0625 units
-    camera.position.z = -1;
-    camera.lookAt(new THREE.Vector3());
-    const resizer = setupResizer(renderer, camera);
+    const camera3D = get3DCamera();
+    const isoCamera = getIsometricCamera();
+    const resizer = setupResizer(renderer, camera3D, isoCamera);
     let smaa = setupSMAA(renderer, pixelRatio);
     const stats = setupStats(useVR);
 
@@ -59,10 +62,10 @@ export function createRenderer(useVR) {
         render: scene => {
             renderer.antialias = antialias;
             if (antialias) {
-                smaa.render(scene, camera);
+                smaa.render(scene, camera3D);
             }
             else {
-                renderer.render(scene, camera);
+                renderer.render(scene, camera3D);
             }
         },
         dispose: () => {
@@ -70,7 +73,7 @@ export function createRenderer(useVR) {
             stats.dispose();
         },
         stats: stats,
-        camera: camera
+        camera: isoCamera
     };
 }
 
@@ -115,16 +118,11 @@ function setupSMAA(renderer, pixelRatio) {
     }
 }
 
-function setupResizer(renderer, camera) {
+function setupResizer(renderer, camera3D, isoCamera) {
     function resize() {
         renderer.setSize(window.innerWidth, window.innerHeight);
-        const halfWidth = Math.floor(window.innerWidth / 2);
-        const halfHeight = Math.floor(window.innerHeight / 2);
-        camera.left = -halfWidth;
-        camera.right = halfWidth;
-        camera.top = -halfHeight;
-        camera.bottom = halfHeight;
-        camera.updateProjectionMatrix();
+        resize3DCamera(camera3D);
+        resizeIsometricCamera(isoCamera);
     }
 
     window.addEventListener('resize', resize);

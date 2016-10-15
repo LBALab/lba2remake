@@ -13,43 +13,48 @@ import {loadIslandPhysics} from './physics';
 import islandsInfo from './data/islands';
 import environments from './data/environments';
 
-export function loadIslandManager() {
+export function loadIslandManager(scene) {
     const islands = _.map(islandsInfo, island => {
         return _.assign({
             envInfo: environments[island.env]
         }, island);
     });
 
+    let threeScene = scene;
     const len = islands.length;
     let idx = -1;
 
     const islandManager = {
         currentIsland: () => idx >= 0 ? islands[idx] : null
     };
+    
+    islandManager.setThreeScene = function(scene) {
+        threeScene = scene;
+    };
 
     islandManager.loadNext = function(callback) {
         idx = (idx + 1) % len;
-        loadIsland(islands[idx], callback);
+        loadIsland(islands[idx], threeScene, callback);
         return islands[idx];
     };
 
     islandManager.loadPrevious = function(callback) {
         idx = (idx - 1 >= 0) ? idx - 1 : len - 1;
-        loadIsland(islands[idx], callback);
+        loadIsland(islands[idx], threeScene, callback);
         return islands[idx];
     };
 
     islandManager.loadIsland = function(name, callback) {
         const island = _.find(islands, i => i.name == name);
         idx = islands.indexOf(island);
-        loadIsland(island, callback);
+        loadIsland(island, threeScene, callback);
         return island;
     };
 
     return islandManager;
 }
 
-export function loadIsland(island, callback) {
+export function loadIsland(island, threeScene, callback) {
     if (island.data) {
         setTimeout(callback.bind(null, island), 0);
     }
@@ -59,21 +64,19 @@ export function loadIsland(island, callback) {
             ile: loadHqrAsync(`${island.name}.ILE`),
             obl: loadHqrAsync(`${island.name}.OBL`)
         }, function(err, files) {
-            callback(loadIslandSync(island, files));
+            callback(loadIslandSync(island, files, threeScene));
         });
     }
 
 }
 
-function loadIslandSync(island, files) {
+function loadIslandSync(island, files, threeScene) {
     const layout = loadLayout(files.ile);
     island.data = {
         files: files,
         palette: new Uint8Array(files.ress.getEntry(0)),
         layout: layout
-    };
-
-    const scene = new THREE.Scene();
+    }; 
 
     const geometries = loadGeometries(island);
     _.each(geometries, ({positions, uvs, colors, colorInfos, uvGroups, material}, name) => {
@@ -94,16 +97,16 @@ function loadIslandSync(island, files) {
             }
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.name = name;
-            scene.add(mesh);
+            threeScene.add(mesh);
         }
     });
 
-    scene.add(loadSky(geometries));
+    threeScene.add(loadSky(geometries));
 
-    island.data.threeScene = scene;
+    island.data.threeScene = threeScene;
     island.data.physics = loadIslandPhysics(layout);
 
-    const seaTimeUniform = scene.getObjectByName('sea').material.uniforms.time;
+    const seaTimeUniform = threeScene.getObjectByName('sea').material.uniforms.time;
     island.data.update = time => { seaTimeUniform.value = time.elapsed; };
 
     return island;
