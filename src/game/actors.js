@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 import {loadModel, updateModel} from '../model';
 import {getRotation} from '../utils/lba';
+import {initScriptState} from './scripting';
 
 const ACTOR_STATIC_FLAG = {
     NONE             : 0,
@@ -22,7 +23,8 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
         position: new THREE.Vector3(),
         orientation: new THREE.Quaternion(),
         euler: new THREE.Vector3()
-    }
+    };
+    actor.scriptState = initScriptState();
     actor.currentScene = currentScene;
     actor.reloadModel = true;
 
