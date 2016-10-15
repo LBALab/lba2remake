@@ -27,7 +27,7 @@ export function loadAnim(model, anims, index) {
 
 function loadKeyframes(object) {
     object.keyframes = [];
-    const data = new DataView(object.buffer, 0, object.buffer.length);
+    const data = new DataView(object.buffer, 0, object.buffer.byteLength);
     let offset = 8;
     for (let i = 0; i < object.numKeyframes; ++i) {
         let keyframe = {
