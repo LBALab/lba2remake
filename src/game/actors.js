@@ -24,7 +24,7 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
         orientation: new THREE.Quaternion(),
         euler: new THREE.Vector3()
     };
-    actor.scriptState = initScriptState();
+    actor.scriptState = Script.initScriptState();
     actor.currentScene = currentScene;
     actor.reloadModel = true;
 
