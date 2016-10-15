@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import {loadModel, updateModel} from '../model';
 import {getRotation} from '../utils/lba';
-import {initScriptState} from './scripting';
+import * as Script from './scripting';
 
 const ACTOR_STATIC_FLAG = {
     NONE             : 0,
@@ -48,6 +48,7 @@ export function createActor(currentScene, index, actorProps, xOffset, zOffset) {
                 currentScene.threeScene.add(threeObject);
             });
         }
+        Script.processMoveScript(actor);
         if(actor.currentScene.models && actor.currentScene.models.entities) {
             updateModel(actor.currentScene.models, index, actor.entityIndex, actor.bodyIndex, actor.animIndex, time);
         }
