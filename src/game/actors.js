@@ -32,13 +32,13 @@ export function loadActor(props, callback) {
     actor.physics.orientation.setFromEuler(euler);
 
     actor.update = function (time) {
-        updateModel(actor.model, time);
+        updateModel(actor.model, props.entityIndex, props.bodyIndex, props.animIndex, time);
     };
 
     actor.isVisible = !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && actor.life > 0;
     actor.isSprite = props.staticFlags & ACTOR_STATIC_FLAG.SPRITE;
 
-    loadModel(actor.entityIndex, actor.bodyIndex, actor.animIndex, (model) => {
+    loadModel(props.entityIndex, props.bodyIndex, props.animIndex, (model) => {
         actor.model = model;
         actor.threeObject = model.mesh;
         actor.threeObject.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);

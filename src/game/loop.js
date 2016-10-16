@@ -10,15 +10,13 @@ export function mainGameLoop(clock, renderer, scene, hero, controls) {
     renderer.stats.begin();
 
     if (scene) {
-        if (scene.hasLoaded) {
-            scene.update(time);
-        }
         const scenery = scene.scenery;
         if (scenery) {
             each(controls, ctrl => { ctrl.update && ctrl.update(); });
             scenery.update(time);
             processPhysicsFrame(time, scenery.physics, renderer.cameras, hero.physics);
         }
+        scene.update(time);
         renderer.render(scene);
     }
     renderer.stats.end();
