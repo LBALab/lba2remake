@@ -10,6 +10,11 @@ import {createActor} from './actors';
 import {createPoint} from './points';
 import {createZone} from './zones';
 
+export const SceneryType = {
+    ISLAND: 0,
+    ISOMETRIC: 1
+};
+
 export function createSceneManager(renderer, hero, callback) {
     let scene = null;
 
@@ -64,7 +69,7 @@ function loadScene(sceneMap, index, callback) {
         loadScenery(scenery => {
             threeScene.add(scenery.threeObject);
             callback({
-                type: indexInfo.isIsland ? '3D' : 'iso',
+                type: indexInfo.isIsland ? SceneryType.ISLAND : SceneryType.ISOMETRIC,
                 scenery: scenery,
                 threeScene: threeScene
             });
@@ -112,10 +117,6 @@ function loadScene(sceneMap, index, callback) {
 
         scene.zones.push(zone);
     }
-
-    loadSceneMapData((map) => {
-        scene.sceneMap = map;
-    });
 
     loadModels(scene.models, 0, 0, 0, 0, (obj) => {
         scene.models = obj;

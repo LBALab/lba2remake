@@ -12,6 +12,7 @@ import {
 } from './cameras';
 import Cardboard from './utils/Cardboard';
 import {map} from 'lodash';
+import {SceneryType} from '../game/scenes';
 
 const PixelRatioMode = {
     DEVICE: () => window.devicePixelRatio || 1.0,
@@ -60,7 +61,7 @@ export function createRenderer(useVR) {
         domElement: baseRenderer.domElement,
         render: scene => {
             renderer.antialias = antialias;
-            const camera = scene.type == '3D' ? camera3D : cameraIso;
+            const camera = scene.type == SceneryType.ISLAND ? camera3D : cameraIso;
             if (antialias) {
                 smaa.render(scene.threeScene, camera);
             }
