@@ -1,7 +1,6 @@
 import async from 'async';
-import _ from 'lodash';
 
-export const MOVE_OPCODE = [
+export const MoveOpcode = [
     { opcode: 0x00, command: "END", callback: msEND, offset: 0 },
     { opcode: 0x01, command: "NOP", callback: msNOP, offset: 0 },
     { opcode: 0x02, command: "BODY", callback: msBODY, offset: 1 },
