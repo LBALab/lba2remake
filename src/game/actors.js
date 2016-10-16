@@ -12,19 +12,19 @@ const ACTOR_STATIC_FLAG = {
     // TODO
 };
 
-export function createActor(props, /*xOffset, zOffset*/) {
+// TODO: move scetion offset to container THREE.Object3D
+export function loadActor(props, callback) {
     const pos = props.pos;
     const actor = {
         props: props,
         physics: {
-            position: new THREE.Vector3(pos[0] /* + xOffset * 2 */, pos[1], pos[2] /* + zOffset * 2 */),
+            position: new THREE.Vector3(pos[0], pos[1], pos[2]),
             orientation: new THREE.Quaternion(),
             euler: new THREE.Vector3()
         }
     };
-    actor.reloadModel = true;
 
-    actor.physics.euler.y = getRotation(actor.angle, 0, 1) - 90;
+    actor.physics.euler.y = getRotation(props.angle, 0, 1) - 90;
 
     const euler = new THREE.Euler(THREE.Math.degToRad(actor.physics.euler.x), 
                                   THREE.Math.degToRad(actor.physics.euler.y), 
@@ -32,30 +32,17 @@ export function createActor(props, /*xOffset, zOffset*/) {
     actor.physics.orientation.setFromEuler(euler);
 
     actor.update = function (time) {
-        if (actor.isVisible() && 
-           !actor.isSprite() && 
-            actor.reloadModel) { // only load new model if need reload
-            actor.load(actor.index, (threeObject, models) => {
-                actor.threeObject = threeObject;
-                //currentScene.threeScene.add(threeObject);
-            });
-        }
-        if(actor.currentScene.models && actor.currentScene.models.entities) {
-            updateModel(actor.currentScene.models, index, actor.entityIndex, actor.bodyIndex, actor.animIndex, time);
-        }
-    };
-
-    actor.load = function (index, callback) {
-        loadModel(actor.currentScene.models, index, actor.entityIndex, actor.bodyIndex, actor.animIndex, (obj) => {
-            actor.threeObject = obj.meshes[index];
-            actor.threeObject.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
-            actor.threeObject.quaternion.copy(actor.physics.orientation);
-            callback(actor.threeObject, obj);
-        });
-        actor.reloadModel = false;
+        updateModel(actor.model, time);
     };
 
     actor.isVisible = !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && actor.life > 0;
     actor.isSprite = props.staticFlags & ACTOR_STATIC_FLAG.SPRITE;
-    return actor;
+
+    loadModel(actor.entityIndex, actor.bodyIndex, actor.animIndex, (model) => {
+        actor.model = model;
+        actor.threeObject = model.mesh;
+        actor.threeObject.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
+        actor.threeObject.quaternion.copy(actor.physics.orientation);
+        callback(null, actor);
+    });
 }

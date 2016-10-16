@@ -3,13 +3,12 @@ import THREE from 'three';
 import {map, each, extend} from 'lodash';
 
 import {loadIslandScenery} from '../island';
-import {loadIsometricScenery} from '../iso'
-import {loadSceneData} from '../scene'
-import {loadSceneMapData} from '../scene/map'
-import {loadModel} from '../model'
-import {createActor} from './actors';
-import {createPoint} from './points';
-import {createZone} from './zones';
+import {loadIsometricScenery} from '../iso';
+import {loadSceneData} from '../scene';
+import {loadSceneMapData} from '../scene/map';
+import {loadActor} from './actors';
+import {loadPoint} from './points';
+import {loadZone} from './zones';
 
 export const SceneryType = {
     ISLAND: 0,
@@ -42,14 +41,26 @@ function loadScene(sceneMap, index, callback) {
             loadIslandScenery.bind(null, 'CITABAU') :
             loadIsometricScenery.bind(null, indexInfo.index);
 
+        const loadActors = callback => { async.map(sceneData.actors, loadActor, callback) };
+        const loadPoints = callback => { async.map(sceneData.points, loadPoint, callback) };
+        const loadZones = callback => { async.map(sceneData.zones, loadZone, callback) };
+
         async.auto({
             scenery: loadScenery,
-            actors: loadActors.bind(null, sceneData.actors),
-            points: loadPoints.bind(null, sceneData.points),
-            zones: loadZones.bind(null, sceneData.zones),
-            models: loadModels2.bind(null, sceneData.actors)
+            actors: loadActors,
+            points: loadPoints,
+            zones: loadZones
         }, function (err, data) {
+            const addToScene = obj => {
+                threeScene.add(obj.threeObject);
+            };
             threeScene.add(data.scenery.threeObject);
+            each(data.actors, addToScene);
+            // For debug purposes
+            /*
+            each(data.zones, addToScene);
+            each(data.points, addToScene);
+            */
             callback(extend({
                 index: index,
                 type: indexInfo.isIsland ? SceneryType.ISLAND : SceneryType.ISOMETRIC,
@@ -62,20 +73,4 @@ function loadScene(sceneMap, index, callback) {
             }, data));
         });
     });
-}
-
-function loadActors(actorProps, callback) {
-    callback(null, map(actorProps, createActor));
-}
-
-function loadPoints(pointProps, callback) {
-    callback(null, []);
-}
-
-function loadZones(zoneProps, callback) {
-    callback(null, []);
-}
-
-function loadModels2(modelProps, callback) {
-    callback(null, []);
 }

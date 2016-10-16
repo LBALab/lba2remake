@@ -1,34 +1,17 @@
 import THREE from 'three';
-import _ from 'lodash';
 
 import {getRotation, getStep} from '../utils/lba';
 
-const push = Array.prototype.push;
-
-export function loadAnimState(model, body, anim, index) {
-    if (!model.states[index]) {
-        const state = {
-            mesh: null,
-            skeleton: null,
-            currentFrame: 0,
-            loopFrame: anim.loopFrame,
-            currentTime:0,
-            matrixBones: [],
-            step: new THREE.Vector3(0, 0, 0)
-        }
-        state.skeleton = createSkeleton(body);
-        state.matrixBones = createShaderBone(state);
-        model.states[index] = state;
-    } else {
-        const state = model.states[index];
-        state.currentFrame = 0;
-        state.loopFrame = anim.loopFrame;
-        state.currentTime = 0;
-        state.matrixBones = [];
-        state.step.x = 0;
-        state.step.y = 0;
-        state.step.z = 0;
-    }
+export function loadAnimState(model, body, anim) {
+    const state = {
+        skeleton: createSkeleton(body),
+        currentFrame: 0,
+        loopFrame: anim.loopFrame,
+        currentTime:0,
+        step: new THREE.Vector3(0, 0, 0)
+    };
+    state.matrixBones = createShaderBone(state);
+    return state;
 }
 
 function createSkeleton(body) {
@@ -46,7 +29,7 @@ function createSkeleton(body) {
             type: 1, // translation by default
             euler: null,
             children: []
-        }
+        };
 
         skeleton.push(skeletonBone);
     }

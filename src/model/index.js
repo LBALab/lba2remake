@@ -8,14 +8,14 @@ import {loadAnimState, updateKeyframe} from './animState';
 import {loadMesh} from './geometry';
 import {loadTexture2} from '../texture';
 
-export function loadModel(models, index, entityIdx, bodyIdx, animIdx, callback) {
+export function loadModel(entityIdx, bodyIdx, animIdx, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         body: loadHqrAsync('BODY.HQR'),
         anim: loadHqrAsync('ANIM.HQR'),
         anim3ds: loadHqrAsync('ANIM3DS.HQR')
     }, function(err, files) {
-        callback(loadModelData(files, models, index, entityIdx, bodyIdx, animIdx));
+        callback(loadModelData(files, entityIdx, bodyIdx, animIdx));
     });
 }
 
@@ -24,20 +24,17 @@ export function loadModel(models, index, entityIdx, bodyIdx, animIdx, callback) 
  *  This will allow to mantain different states for body animations.
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
-function loadModelData(files, model, index, entityIdx, bodyIdx, animIdx) {
-    if (!model) {
-        model = {
-            files: files,
-            palette: new Uint8Array(files.ress.getEntry(0)),
-            entity: files.ress.getEntry(44),
-            bodies: [],
-            anims: [],
-            meshes: [],
-            states: []
-        };
-        model.texture = loadTexture2(files.ress.getEntry(6), model.palette);
-        model.entities = loadEntity(model.entity);
-    }
+function loadModelData(files, entityIdx, bodyIdx, animIdx) {
+    const palette = new Uint8Array(files.ress.getEntry(0));
+    const entityInfo = files.ress.getEntry(44);
+    const model = {
+        palette: palette,
+        files: files,
+        bodies: [],
+        anims: [],
+        entities: loadEntity(entityInfo),
+        texture: loadTexture2(files.ress.getEntry(6), palette)
+    };
     
     const entity = model.entities[entityIdx];
     const realBodyIdx = getBodyIndex(entity, bodyIdx);
@@ -46,19 +43,15 @@ function loadModelData(files, model, index, entityIdx, bodyIdx, animIdx) {
     const body = loadBody(model, model.bodies, realBodyIdx);
     const anim = loadAnim(model, model.anims, realAnimIdx);
     
-    loadAnimState(model, body, anim, index);
-    const state = model.states[index];
-    
-    if (!model.meshes[index]) {
-        model.meshes[index] = loadMesh(model, body, state);
-    }
+    model.state = loadAnimState(model, body, anim);
+    model.mesh = loadMesh(model, body, model.state);
 
     return model;
 }
 
-export function updateModel(model, index, entityIdx, bodyIdx, animIdx, time) {
+export function updateModel(model, entityIdx, bodyIdx, animIdx, time) {
     const entity = model.entities[entityIdx];
     const realAnimIdx = getAnimIndex(entity, animIdx);
     const anim = loadAnim(model, model.anims, realAnimIdx);
-    updateKeyframe(anim, model.states[index], time);
+    updateKeyframe(anim, model.state, time);
 }

@@ -1,7 +1,6 @@
-import async from 'async';
 import THREE from 'three';
-import _ from 'lodash';
 
+/*
 const ZONE_TYPE = {
     CUBE:       0,
     CAMERA:     1,
@@ -13,7 +12,8 @@ const ZONE_TYPE = {
     CONVEYOR:   7,
     SPIKE:      8,
     RAIL:       9
-}
+};
+*/
 
 const ZONE_TYPE_MATERIAL_COLOR = [
     0x84ff84, 
@@ -28,33 +28,26 @@ const ZONE_TYPE_MATERIAL_COLOR = [
     0x008000,  
 ];
 
-export function createZone(currentScene, index, zoneProps, xOffset, zOffset) {
-    let zone = zoneProps;
-    zone.index = index;
-    zone.physics = {
-        position: new THREE.Vector3()
-    }
-    zone.reloadModel = true;
+export function loadZone(props, callback) {
+    const pos = props.pos;
+    const zone = {
+        props: props,
+        physics: {
+            position: new THREE.Vector3(pos[0], pos[1], pos[2])
+        }
+    };
 
-    zone.currentScene = currentScene;
-
-    zone.physics.position.x = zone.pos[0] + xOffset * 2;
-    zone.physics.position.y = zone.pos[1];
-    zone.physics.position.z = zone.pos[2] + zOffset * 2;
-
-    const geometry = new THREE.BoxGeometry(zone.box.tX - zone.box.bX, 
-                                           zone.box.tY - zone.box.bY, 
-                                           zone.box.tZ - zone.box.bZ);
+    const geometry = new THREE.BoxGeometry(props.box.tX - props.box.bX,
+                                            props.box.tY - props.box.bY,
+                                            props.box.tZ - props.box.bZ);
     const material = new THREE.MeshBasicMaterial({
-        color: ZONE_TYPE_MATERIAL_COLOR[zone.type],
+        color: ZONE_TYPE_MATERIAL_COLOR[props.type],
         wireframe: true
     });
 
-    // For debug purposes
-    // const obj = new THREE.Object3D();
-    // obj.add(new THREE.Mesh(geometry, material));
-    // obj.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
-    // zone.currentScene.threeScene.add(obj);
+    const obj = new THREE.Mesh(geometry, material);
+    obj.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
+    zone.threeObject = obj;
 
-    return zone;
+    callback(null, zone);
 }
