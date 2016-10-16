@@ -1,6 +1,6 @@
 import THREE from 'three';
 
-import {loadModels, updateModel} from '../model';
+import {loadModel, updateModel} from '../model';
 import {getRotation} from '../utils/lba';
 
 const ACTOR_STATIC_FLAG = {
@@ -46,7 +46,7 @@ export function createActor(props, /*xOffset, zOffset*/) {
     };
 
     actor.load = function (index, callback) {
-        loadModels(actor.currentScene.models, index, actor.entityIndex, actor.bodyIndex, actor.animIndex, (obj) => {
+        loadModel(actor.currentScene.models, index, actor.entityIndex, actor.bodyIndex, actor.animIndex, (obj) => {
             actor.threeObject = obj.meshes[index];
             actor.threeObject.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
             actor.threeObject.quaternion.copy(actor.physics.orientation);
@@ -55,7 +55,7 @@ export function createActor(props, /*xOffset, zOffset*/) {
         actor.reloadModel = false;
     };
 
-    actor.isVisible = () => !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && actor.life > 0;
-    actor.isSprite = () => props.staticFlags & ACTOR_STATIC_FLAG.SPRITE;
+    actor.isVisible = !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && actor.life > 0;
+    actor.isSprite = props.staticFlags & ACTOR_STATIC_FLAG.SPRITE;
     return actor;
 }

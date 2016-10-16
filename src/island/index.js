@@ -24,7 +24,7 @@ const islands = {};
 
 export function loadIslandScenery(name, callback) {
     if (name in islands) {
-        setTimeout(callback.bind(null, islands[name]), 0);
+        callback(null, islands[name]);
     }
     else {
         async.auto({
@@ -34,7 +34,7 @@ export function loadIslandScenery(name, callback) {
         }, function(err, files) {
             const island = loadIslandNode(islandProps[name], files);
             islands[name] = island;
-            callback(island);
+            callback(null, island);
         });
     }
 

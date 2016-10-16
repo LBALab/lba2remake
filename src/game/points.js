@@ -2,7 +2,7 @@ import async from 'async';
 import THREE from 'three';
 import _ from 'lodash';
 
-import {loadModels, updateModel} from '../model';
+import {loadModel, updateModel} from '../model';
 
 const geometry = new THREE.CylinderGeometry( 0, 0.01, 0.012, 8, 1, false );
 const material = new THREE.MeshBasicMaterial( {color: 0xffffff, depthTest: true, depthWrite: true } );

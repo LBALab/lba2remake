@@ -38,7 +38,7 @@ export function loadIsometricScenery(entry, callback) {
         mesh.position.y = -150;
         threeObject.add(mesh);
 
-        callback({
+        callback(null, {
             props: {
                 startPosition: [0, 0],
                 envInfo: {

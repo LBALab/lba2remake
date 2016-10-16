@@ -1,6 +1,4 @@
 import async from 'async';
-import THREE from 'three';
-import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
 import {loadEntity, getBodyIndex, getAnimIndex} from './entity';
@@ -10,7 +8,7 @@ import {loadAnimState, updateKeyframe} from './animState';
 import {loadMesh} from './geometry';
 import {loadTexture2} from '../texture';
 
-export function loadModels(models, index, entityIdx, bodyIdx, animIdx, callback) {
+export function loadModel(models, index, entityIdx, bodyIdx, animIdx, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         body: loadHqrAsync('BODY.HQR'),
