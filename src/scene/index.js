@@ -1,56 +1,45 @@
 import async from 'async';
-import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
 
-export function loadSceneData(scene, index, callback) {
+export function loadSceneData(index, callback) {
     async.auto({
         scene: loadHqrAsync('SCENE.HQR')
     }, function(err, files) {
-        callback(loadSceneFile(files, scene, index));
+        callback(loadSceneDataSync(files, index));
     });
 }
 
-function loadSceneFile(files, scene, index) {
-    if (!scene.data) {
-        scene.data = {
-            files: files,
-            scenes: []
-        };
-    }
- 
-    return loadScene(scene.data.files, scene.data.scenes, index);
-}
+const cachedSceneData = [];
 
-function loadScene(files, scenes, index) {
-    if (scenes[index]) {
-        return scenes[index];
+function loadSceneDataSync(files, index) {
+    if (cachedSceneData[index]) {
+        return cachedSceneData[index];
     } else {
         const buffer = files.scene.getEntry(index + 1); // first entry is not a scene
         const data = new DataView(buffer);
         const textBankId = data.getInt8(0, true);
 
-        const scene = {
+        const sceneData = {
             textBankId: textBankId,
             textIndex: textBankId * 2 + 6,
             gameOverScene: data.getInt8(1, true),
             unknown1: data.getUint16(2, true),
             unknown2: data.getUint16(4, true),
             isOutsideScene: data.getInt8(6, true) == 1,
-
             buffer: buffer
         };
 
         let offset = 7;
-        offset = loadAmbience(scene, offset);
-        offset = loadHero(scene, offset);
-        offset = loadActors(scene, offset);
-        offset = loadZones(scene, offset);
-        offset = loadPoints(scene, offset);
-        offset = loadUnknown(scene, offset);
+        offset = loadAmbience(sceneData, offset);
+        offset = loadHero(sceneData, offset);
+        offset = loadActors(sceneData, offset);
+        offset = loadZones(sceneData, offset);
+        offset = loadPoints(sceneData, offset);
+        offset = loadUnknown(sceneData, offset);
 
-        scenes[index] = scene;
-        return scene;
+        cachedSceneData[index] = sceneData;
+        return sceneData;
     }
 }
 
@@ -91,7 +80,7 @@ function loadHero(scene, offset) {
             data.getUint16(offset + 2, true) / 0x4000,
             data.getUint16(offset, true) / 0x4000
         ]
-    }
+    };
     offset += 6;
 
     scene.hero.moveScriptSize = data.getUint16(offset, true);

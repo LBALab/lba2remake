@@ -1,6 +1,6 @@
 import async from 'async';
 import THREE from 'three';
-import _ from 'lodash';
+import {each, assign} from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
 import {prepareGeometries} from './geometries';
@@ -13,72 +13,43 @@ import {loadIslandPhysics} from './physics';
 import islandsInfo from './data/islands';
 import environments from './data/environments';
 
-export function loadIslandManager(scene) {
-    const islands = _.map(islandsInfo, island => {
-        return _.assign({
-            envInfo: environments[island.env]
-        }, island);
-    });
+const islandProps = {};
+each(islandsInfo, island => {
+    islandProps[island.name] = assign({
+        envInfo: environments[island.env]
+    }, island);
+});
 
-    let threeScene = scene;
-    const len = islands.length;
-    let idx = -1;
+const islands = {};
 
-    const islandManager = {
-        currentIsland: () => idx >= 0 ? islands[idx] : null
-    };
-    
-    islandManager.setThreeScene = function(scene) {
-        threeScene = scene;
-    };
-
-    islandManager.loadNext = function(callback) {
-        idx = (idx + 1) % len;
-        loadIsland(islands[idx], threeScene, callback);
-        return islands[idx];
-    };
-
-    islandManager.loadPrevious = function(callback) {
-        idx = (idx - 1 >= 0) ? idx - 1 : len - 1;
-        loadIsland(islands[idx], threeScene, callback);
-        return islands[idx];
-    };
-
-    islandManager.loadIsland = function(name, callback) {
-        const island = _.find(islands, i => i.name == name);
-        idx = islands.indexOf(island);
-        loadIsland(island, threeScene, callback);
-        return island;
-    };
-
-    return islandManager;
-}
-
-export function loadIsland(island, threeScene, callback) {
-    if (island.data) {
-        setTimeout(callback.bind(null, island), 0);
+export function loadIslandScenery(name, callback) {
+    if (name in islands) {
+        setTimeout(callback.bind(null, islands[name]), 0);
     }
     else {
         async.auto({
             ress: loadHqrAsync('RESS.HQR'),
-            ile: loadHqrAsync(`${island.name}.ILE`),
-            obl: loadHqrAsync(`${island.name}.OBL`)
+            ile: loadHqrAsync(`${name}.ILE`),
+            obl: loadHqrAsync(`${name}.OBL`)
         }, function(err, files) {
-            callback(loadIslandSync(island, files, threeScene));
+            const island = loadIslandNode(islandProps[name], files);
+            islands[name] = island;
+            callback(island);
         });
     }
 
 }
 
-function loadIslandSync(island, files, threeScene) {
+function loadIslandNode(props, files) {
+    const islandObject = new THREE.Object3D();
     const layout = loadLayout(files.ile);
-    island.data = {
+    const data = {
         files: files,
         palette: new Uint8Array(files.ress.getEntry(0)),
         layout: layout
-    }; 
+    };
 
-    const geometries = loadGeometries(island);
+    const geometries = loadGeometries(props, data);
     _.each(geometries, ({positions, uvs, colors, colorInfos, uvGroups, material}, name) => {
         if (positions && positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
@@ -97,19 +68,20 @@ function loadIslandSync(island, files, threeScene) {
             }
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.name = name;
-            threeScene.add(mesh);
+            islandObject.add(mesh);
         }
     });
 
-    threeScene.add(loadSky(geometries));
+    islandObject.add(loadSky(geometries));
 
-    island.data.threeScene = threeScene;
-    island.data.physics = loadIslandPhysics(layout);
+    const seaTimeUniform = islandObject.getObjectByName('sea').material.uniforms.time;
 
-    const seaTimeUniform = threeScene.getObjectByName('sea').material.uniforms.time;
-    island.data.update = time => { seaTimeUniform.value = time.elapsed; };
-
-    return island;
+    return {
+        props: props,
+        threeObject: islandObject,
+        physics: loadIslandPhysics(layout),
+        update: time => { seaTimeUniform.value = time.elapsed; }
+    };
 }
 
 function loadSky(geometries) {
@@ -119,19 +91,19 @@ function loadSky(geometries) {
     return sky;
 }
 
-function loadGeometries(island) {
-    const geometries = prepareGeometries(island);
+function loadGeometries(island, data) {
+    const geometries = prepareGeometries(island, data);
     const usedTiles = {};
     const objects = [];
 
-    _.each(island.data.layout.groundSections, section => {
+    _.each(data.layout.groundSections, section => {
         const tilesKey = [section.x, section.z].join(',');
         usedTiles[tilesKey] = [];
-        loadGround(island.data, section, geometries, usedTiles[tilesKey]);
-        loadObjects(island.data, section, geometries, objects);
+        loadGround(data, section, geometries, usedTiles[tilesKey]);
+        loadObjects(data, section, geometries, objects);
     });
 
-    _.each(island.data.layout.seaSections, section => {
+    _.each(data.layout.seaSections, section => {
         const xd = Math.floor(section.x / 2);
         const zd = Math.floor(section.z / 2);
         const offsetX = 1 - Math.abs(section.x % 2);

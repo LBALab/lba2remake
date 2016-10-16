@@ -71,8 +71,8 @@ export function createRenderer(useVR) {
             resizer.dispose();
             stats.dispose();
         },
-        initScene: scene => {
-            const sc = scene.envInfo.skyColor;
+        applySceneryProps: props => {
+            const sc = props.envInfo.skyColor;
             const color = new THREE.Color(sc[0], sc[1], sc[2]);
             renderer.setClearColor(color.getHex(), 1);
         },

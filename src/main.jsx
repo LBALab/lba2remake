@@ -31,11 +31,11 @@ window.onload = function() {
         ];
 
     document.getElementById('main').appendChild(renderer.domElement);
-    sceneManager.gotoIsland('CITADEL');
+    sceneManager.goto(42);
 
     const clock = new THREE.Clock();
     function processAnimationFrame() {
-        mainGameLoop(clock, renderer, sceneManager.currentScene(), hero, controls);
+        mainGameLoop(clock, renderer, sceneManager.getScene(), hero, controls);
         requestAnimationFrame(processAnimationFrame);
     }
 

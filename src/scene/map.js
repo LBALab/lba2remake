@@ -1,5 +1,4 @@
 import async from 'async';
-import _ from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
 
@@ -25,7 +24,7 @@ function loadSceneMap(files) {
         }
 
         map.push({
-            isIsland: (opcode == 2) ? true : false,
+            isIsland: opcode == 2,
             index: index
         });
     }

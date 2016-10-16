@@ -17,7 +17,9 @@ import env_vertex from './shaders/env.vert.glsl';
 import env_fragment from './shaders/env.frag.glsl';
 import moon_vertex from './shaders/moon.vert.glsl';
 
-export function prepareGeometries({envInfo, data: {files: {ile, ress}, palette}}) {
+export function prepareGeometries(island, data) {
+    const {envInfo} = island;
+    const {files: {ile, ress}, palette} = data;
     const paletteTexture = loadPaletteTexture(palette);
     const groundTexture = loadTexture(ile.getEntry(1), palette);
     const atlasTexture = loadTexture(ile.getEntry(2), palette);

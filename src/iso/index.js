@@ -4,48 +4,7 @@ import {loadHqrAsync} from '../hqr';
 import {loadBricks} from './bricks';
 import {loadGrid} from './grid';
 
-export function loadIsoSceneManager() {
-    const scene = {
-        data: {
-            update: () => {
-            },
-            physics: {
-                getGroundHeight: () => 0
-            },
-            threeScene: new THREE.Object3D()
-        }
-    };
-    let idx = 1;
-
-    function load() {
-        loadScene(idx, threeScene => {
-            scene.data.threeScene = threeScene;
-        });
-    }
-
-    load();
-
-    window.addEventListener('keydown', function(event) {
-        if (event.code == 'PageUp') {
-            idx--;
-            if (idx < 1)
-                idx = 148;
-            load();
-        } else if (event.code == 'PageDown') {
-            idx++;
-            if (idx > 148) {
-                idx = 1;
-            }
-            load();
-        }
-    });
-
-    return {
-        currentScene: () => scene
-    }
-}
-
-export function loadScene(entry, callback) {
+export function loadIsometricGrid(entry, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         bkg: loadHqrAsync('LBA_BKG.HQR')
@@ -66,7 +25,7 @@ export function loadScene(entry, callback) {
             }
         }
 
-        const scene = new THREE.Scene();
+        const threeObject = new THREE.Object3D();
         const bufferGeometry = new THREE.BufferGeometry();
         bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
         bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
@@ -77,8 +36,14 @@ export function loadScene(entry, callback) {
         }));
         mesh.position.x = 120;
         mesh.position.y = -150;
-        scene.add(mesh);
+        threeObject.add(mesh);
 
-        callback(scene);
+        callback({
+            threeObject: threeObject,
+            physics: {
+                getGroundHeight: () => 0
+            },
+            update: () => {}
+        });
     });
 }

@@ -1,75 +1,38 @@
 import THREE from 'three';
-import _ from 'lodash';
+import {map, each} from 'lodash';
 
-import {loadIslandManager} from '../island';
-import {loadIsoSceneManager} from '../iso'
+import {loadIslandScenery} from '../island';
+import {loadIsometricGrid} from '../iso'
 import {loadSceneData} from '../scene'
 import {loadSceneMapData} from '../scene/map'
-import {loadModel} from '../model' 
+import {loadModels} from '../model'
 import {createActor} from './actors';
 import {createPoint} from './points';
 import {createZone} from './zones';
 
 export function createSceneManager(renderer, hero) {
-    const currentScene = {
-        hasLoaded: false,
-        hero: hero,
-        sceneData: [],
-        sceneMap: null,
-        actors: [],
-        zones: [],
-        points: [],
-        models: null,
-        island: {},
-        threeScene: new THREE.Scene()
-    };
-
-    initScene(currentScene);
-    
-    const islandManager = loadIslandManager(currentScene.threeScene);
-    const isoSceneManager = loadIsoSceneManager();
-
-    function onIslandLoaded(island) {
-        console.log('Loaded: ', island.name);
-        renderer.initScene(island);
-        hero.physics.position.x = island.startPosition[0];
-        hero.physics.position.z = island.startPosition[1];
-        gotoScene(currentScene, 42); // temporary
-    }
-
-    function resetThreeScene() {
-        currentScene.threeScene = new THREE.Scene();
-        islandManager.setThreeScene(currentScene.threeScene);
-    }
-
-    function gotoScene(currentScene, index) { 
-        loadScene(currentScene, index);
-    }
-        
-    currentScene.update = function(time) {
-        _.each(currentScene.actors, actor => {
-            actor.update(time);
-        });
-    };
+    let scene = null;
 
     return {
-        currentScene: () => {
-             currentScene.island = islandManager.currentIsland();
-             return currentScene;
-        },
-        gotoIsland: islandName => {
-            resetThreeScene();
-            islandManager.loadIsland(islandName, onIslandLoaded);
+        getScene: () => scene,
+        goto: index => {
+            loadScene(index, (pScene) => {
+                console.log(pScene);
+                hero.physics.position.x = pScene.scenery.props.startPosition[0];
+                hero.physics.position.z = pScene.scenery.props.startPosition[1];
+                renderer.applySceneryProps(pScene.scenery.props);
+                scene = pScene;
+            });
         }
     };
 }
 
 
-function loadScene(currentScene, index) {
+function loadScene2(index) {
     if (!currentScene.sceneMap || 
         currentScene.sceneMap[index].isIsland) { // island scenes
         let i = 0; // scene data index
-        _.each(currentScene.island.data.layout.groundSections, section => {
+        each(currentScene.island.data.layout.groundSections, section => {
             currentScene.sceneData[i] = {}; // init 
             loadSceneData(currentScene.sceneData[i], currentScene.island.sectionScene[section.id - 1], (sceneData) => { 
                 currentScene.sceneData[i] = sceneData; 
@@ -89,40 +52,81 @@ function loadScene(currentScene, index) {
     }
 }
 
-function createScene(currentScene, section, index, sceneData) {
-    const numActors = currentScene.sceneData[index].actors.length;
-    const numPoints = currentScene.sceneData[index].points.length;
-    const numZones = currentScene.sceneData[index].zones.length;
-    const actorsLength = currentScene.actors.length + 1;
-    const pointsLength = currentScene.points.length + 1;
-    const zonesLength = currentScene.zones.length + 1;
+function loadScene(index, callback) {
+    loadSceneData(index, sceneData => {
+        /*
+
+        Use async here to load scenery first, then the subscenes for islands recursively, then actors, etc
+
+         */
+        const threeScene = new THREE.Scene();
+        if (sceneData.isOutsideScene) {
+            loadIslandScenery('CITABAU', scenery => {
+                threeScene.add(scenery.threeObject);
+                callback({
+                    scenery: scenery,
+                    threeScene: threeScene
+                });
+            });
+        }
+        console.log(sceneData);
+        /*
+        callback({
+            actors: map(sceneData.actors, createActor)
+        });
+        */
+    });
+    /*
+    const scene = {
+        sceneMap: null,
+        actors: [],
+        zones: [],
+        points: [],
+        models: null,
+        island: {},
+        threeScene: new THREE.Scene()
+    };
+
+    const numActors = sceneData[index].actors.length;
+    const numPoints = sceneData[index].points.length;
+    const numZones = sceneData[index].zones.length;
+    const actorsLength = scene.actors.length + 1;
+    const pointsLength = scene.points.length + 1;
+    const zonesLength = scene.zones.length + 1;
 
     for (let i = 0; i < numActors; ++i) {
-        const actorProps = currentScene.sceneData[index].actors[i];
-        const actor = createActor(currentScene, i + index * actorsLength, actorProps, section.x, section.z);
+        const actorProps = scene.sceneData[index].actors[i];
+        const actor = createActor(scene, i + index * actorsLength, actorProps, section.x, section.z);
 
-        currentScene.actors.push(actor);
+        scene.actors.push(actor);
     }
     for (let i = 0; i < numPoints; ++i) {
-        const pointProps = currentScene.sceneData[index].points[i];
-        const point = createPoint(currentScene, i + index * pointsLength, pointProps, section.x, section.z);
+        const pointProps = scene.sceneData[index].points[i];
+        const point = createPoint(scene, i + index * pointsLength, pointProps, section.x, section.z);
 
-        currentScene.points.push(point);
+        scene.points.push(point);
     }
     for (let i = 0; i < numZones; ++i) {
-        const zoneProps = currentScene.sceneData[index].zones[i];
-        const zone = createZone(currentScene, i + index * zonesLength, zoneProps, section.x, section.z);
+        const zoneProps = scene.sceneData[index].zones[i];
+        const zone = createZone(scene, i + index * zonesLength, zoneProps, section.x, section.z);
 
-        currentScene.zones.push(zone);
+        scene.zones.push(zone);
     }
-}
 
-function initScene(currentScene) {
-    loadSceneMapData((map) => { 
-        currentScene.sceneMap = map; 
+    loadSceneMapData((map) => {
+        scene.sceneMap = map;
     });
 
-    loadModel(currentScene.models, 0, 0, 0, 0, (obj) => { 
-        currentScene.models = obj;
+    loadModels(scene.models, 0, 0, 0, 0, (obj) => {
+        scene.models = obj;
     });
+
+    callback({
+        update: time => {
+            _.each(scene.actors, actor => {
+                actor.update(time);
+            });
+        }
+    });
+    */
 }

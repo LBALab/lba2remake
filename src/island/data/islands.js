@@ -6,7 +6,7 @@ export default [
       0,
       1
     ],
-    sectionScene: [45, 47, 50, 44, 48, 43, 42, 46, 49]
+    sectionScenes: [45, 47, 50, 44, 48, 43, 42, 46, 49]
   },
   {
     name: 'CITABAU',
@@ -15,7 +15,7 @@ export default [
       0,
       1
     ],
-    sectionScene: [45, 47, 50, 44, 48, 43, 42, 46, 49]
+    sectionScenes: [45, 47, 50, 44, 48, 43, 42, 46, 49]
   },
   {
     name: 'DESERT',
