@@ -3,6 +3,7 @@ import THREE from 'three';
 import {map, each, extend} from 'lodash';
 
 import {loadIslandScenery} from '../island';
+import sceneMapping from '../island/data/sceneMapping';
 import {loadIsometricScenery} from '../iso';
 import {loadSceneData} from '../scene';
 import {loadSceneMapData} from '../scene/map';
@@ -38,7 +39,7 @@ function loadScene(sceneMap, index, callback) {
         const threeScene = new THREE.Scene();
         const indexInfo = sceneMap[index];
         let loadScenery = indexInfo.isIsland ?
-            loadIslandScenery.bind(null, 'CITABAU') :
+            loadIslandScenery.bind(null, sceneMapping[indexInfo.index].island) :
             loadIsometricScenery.bind(null, indexInfo.index);
 
         const loadActors = callback => { async.map(sceneData.actors, loadActor, callback) };
@@ -51,10 +52,18 @@ function loadScene(sceneMap, index, callback) {
             points: loadPoints,
             zones: loadZones
         }, function (err, data) {
+            const threeSection = new THREE.Object3D();
+            if (indexInfo.isIsland) {
+                const sectionIdx = sceneMapping[indexInfo.index].section;
+                const section = data.scenery.sections[sectionIdx];
+                threeSection.position.x = section.x * 2;
+                threeSection.position.z = section.z * 2;
+            }
             const addToScene = obj => {
-                threeScene.add(obj.threeObject);
+                threeSection.add(obj.threeObject);
             };
             threeScene.add(data.scenery.threeObject);
+            threeScene.add(threeSection);
             each(data.actors, addToScene);
             // For debug purposes
             /*

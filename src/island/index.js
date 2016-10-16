@@ -1,6 +1,6 @@
 import async from 'async';
 import THREE from 'three';
-import {each, assign} from 'lodash';
+import {map, each, assign} from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
 import {prepareGeometries} from './geometries';
@@ -50,7 +50,7 @@ function loadIslandNode(props, files) {
     };
 
     const geometries = loadGeometries(props, data);
-    _.each(geometries, ({positions, uvs, colors, colorInfos, uvGroups, material}, name) => {
+    each(geometries, ({positions, uvs, colors, colorInfos, uvGroups, material}, name) => {
         if (positions && positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
@@ -78,6 +78,7 @@ function loadIslandNode(props, files) {
 
     return {
         props: props,
+        sections: map(layout.groundSections, section => ({x: section.x, z: section.z})),
         threeObject: islandObject,
         physics: loadIslandPhysics(layout),
         update: time => { seaTimeUniform.value = time.elapsed; }
@@ -96,14 +97,14 @@ function loadGeometries(island, data) {
     const usedTiles = {};
     const objects = [];
 
-    _.each(data.layout.groundSections, section => {
+    each(data.layout.groundSections, section => {
         const tilesKey = [section.x, section.z].join(',');
         usedTiles[tilesKey] = [];
         loadGround(data, section, geometries, usedTiles[tilesKey]);
         loadObjects(data, section, geometries, objects);
     });
 
-    _.each(data.layout.seaSections, section => {
+    each(data.layout.seaSections, section => {
         const xd = Math.floor(section.x / 2);
         const zd = Math.floor(section.z / 2);
         const offsetX = 1 - Math.abs(section.x % 2);
