@@ -19,7 +19,7 @@ export function mainGameLoop(clock, renderer, scene, hero, controls) {
             scenery.update(time);
             processPhysicsFrame(time, scenery.physics, renderer.cameras, hero.physics);
         }
-        renderer.render(scene.threeScene);
+        renderer.render(scene);
     }
     renderer.stats.end();
 }

@@ -2,7 +2,7 @@ import THREE from 'three';
 import {map, each} from 'lodash';
 
 import {loadIslandScenery} from '../island';
-import {loadIsometricGrid} from '../iso'
+import {loadIsometricScenery} from '../iso'
 import {loadSceneData} from '../scene'
 import {loadSceneMapData} from '../scene/map'
 import {loadModels} from '../model'
@@ -10,21 +10,23 @@ import {createActor} from './actors';
 import {createPoint} from './points';
 import {createZone} from './zones';
 
-export function createSceneManager(renderer, hero) {
+export function createSceneManager(renderer, hero, callback) {
     let scene = null;
 
-    return {
-        getScene: () => scene,
-        goto: index => {
-            loadScene(index, (pScene) => {
-                console.log(pScene);
-                hero.physics.position.x = pScene.scenery.props.startPosition[0];
-                hero.physics.position.z = pScene.scenery.props.startPosition[1];
-                renderer.applySceneryProps(pScene.scenery.props);
-                scene = pScene;
-            });
-        }
-    };
+    loadSceneMapData(sceneMap => {
+        callback({
+            getScene: () => scene,
+            goto: index => {
+                loadScene(sceneMap, index, (pScene) => {
+                    console.log(pScene);
+                    hero.physics.position.x = pScene.scenery.props.startPosition[0];
+                    hero.physics.position.z = pScene.scenery.props.startPosition[1];
+                    renderer.applySceneryProps(pScene.scenery.props);
+                    scene = pScene;
+                });
+            }
+        });
+    });
 }
 
 
@@ -52,23 +54,21 @@ function loadScene2(index) {
     }
 }
 
-function loadScene(index, callback) {
+function loadScene(sceneMap, index, callback) {
     loadSceneData(index, sceneData => {
-        /*
-
-        Use async here to load scenery first, then the subscenes for islands recursively, then actors, etc
-
-         */
         const threeScene = new THREE.Scene();
-        if (sceneData.isOutsideScene) {
-            loadIslandScenery('CITABAU', scenery => {
-                threeScene.add(scenery.threeObject);
-                callback({
-                    scenery: scenery,
-                    threeScene: threeScene
-                });
+        const indexInfo = sceneMap[index];
+        let loadScenery = indexInfo.isIsland ?
+            loadIslandScenery.bind(null, 'CITABAU') :
+            loadIsometricScenery.bind(null, indexInfo.index);
+        loadScenery(scenery => {
+            threeScene.add(scenery.threeObject);
+            callback({
+                type: indexInfo.isIsland ? '3D' : 'iso',
+                scenery: scenery,
+                threeScene: threeScene
             });
-        }
+        });
         console.log(sceneData);
         /*
         callback({

@@ -20,8 +20,8 @@ window.onload = function() {
         }
     };
     const hero = createHero(heroConfig);
-    const sceneManager = createSceneManager(renderer, hero);
-    const controls = isMobile ? [
+    createSceneManager(renderer, hero, sceneManager => {
+        const controls = isMobile ? [
             makeGyroscopeControls(hero.physics),
             makeGamepadControls(hero.physics)
         ] : [
@@ -30,14 +30,15 @@ window.onload = function() {
             makeGamepadControls(hero.physics)
         ];
 
-    document.getElementById('main').appendChild(renderer.domElement);
-    sceneManager.goto(42);
+        document.getElementById('main').appendChild(renderer.domElement);
+        sceneManager.goto(0);
 
-    const clock = new THREE.Clock();
-    function processAnimationFrame() {
-        mainGameLoop(clock, renderer, sceneManager.getScene(), hero, controls);
-        requestAnimationFrame(processAnimationFrame);
-    }
+        const clock = new THREE.Clock();
+        function processAnimationFrame() {
+            mainGameLoop(clock, renderer, sceneManager.getScene(), hero, controls);
+            requestAnimationFrame(processAnimationFrame);
+        }
 
-    processAnimationFrame();
+        processAnimationFrame();
+    });
 };

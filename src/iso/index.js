@@ -4,14 +4,14 @@ import {loadHqrAsync} from '../hqr';
 import {loadBricks} from './bricks';
 import {loadGrid} from './grid';
 
-export function loadIsometricGrid(entry, callback) {
+export function loadIsometricScenery(entry, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         bkg: loadHqrAsync('LBA_BKG.HQR')
     }, function (err, files) {
         const palette = new Uint8Array(files.ress.getEntry(0));
         const bricks = loadBricks(files.bkg);
-        const grid = loadGrid(files.bkg, bricks, palette, entry);
+        const grid = loadGrid(files.bkg, bricks, palette, entry + 1);
 
         const geometries = {
             positions: [],
@@ -39,6 +39,12 @@ export function loadIsometricGrid(entry, callback) {
         threeObject.add(mesh);
 
         callback({
+            props: {
+                startPosition: [0, 0],
+                envInfo: {
+                    skyColor: [0, 0, 0]
+                }
+            },
             threeObject: threeObject,
             physics: {
                 getGroundHeight: () => 0

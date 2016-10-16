@@ -34,8 +34,8 @@ export function createRenderer(useVR) {
     const baseRenderer = setupBaseRenderer(pixelRatio);
     const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
     const camera3D = get3DCamera();
-    const isoCamera = getIsometricCamera();
-    const resizer = setupResizer(renderer, camera3D, isoCamera);
+    const cameraIso = getIsometricCamera();
+    const resizer = setupResizer(renderer, camera3D, cameraIso);
     let smaa = setupSMAA(renderer, pixelRatio);
     const stats = setupStats(useVR);
 
@@ -60,11 +60,12 @@ export function createRenderer(useVR) {
         domElement: baseRenderer.domElement,
         render: scene => {
             renderer.antialias = antialias;
+            const camera = scene.type == '3D' ? camera3D : cameraIso;
             if (antialias) {
-                smaa.render(scene, camera3D);
+                smaa.render(scene.threeScene, camera);
             }
             else {
-                renderer.render(scene, camera3D);
+                renderer.render(scene.threeScene, camera);
             }
         },
         dispose: () => {
@@ -79,7 +80,7 @@ export function createRenderer(useVR) {
         stats: stats,
         cameras: {
             camera3D: camera3D,
-            isoCamera: isoCamera
+            isoCamera: cameraIso
         }
     };
 }
