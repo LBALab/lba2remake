@@ -27,6 +27,9 @@ export function createSceneManager(renderer, hero, callback) {
         callback({
             getScene: () => scene,
             goto: (index, debug = false) => {
+                if (scene && index == scene.index)
+                    return;
+
                 if (scene && scene.sideScenes && index in scene.sideScenes) {
                     const sideScene = scene.sideScenes[index];
                     sideScene.sideScenes = scene.sideScenes;
@@ -118,8 +121,13 @@ function loadSceneNode(index, indexInfo, data, debug) {
 function loadSideScenes(sceneMap, index, parent, debug, callback) {
     const sideIndices = filter(
         map(sceneMap, (indexInfo, sideIndex) => {
-            if (sideIndex != index && indexInfo.isIsland && sideIndex in islandSceneMapping) {
-                if (islandSceneMapping[sideIndex].island == islandSceneMapping[index].island) {
+            if (sideIndex != index
+                && indexInfo.isIsland
+                && sideIndex in islandSceneMapping) {
+                const sideMapping = islandSceneMapping[sideIndex];
+                const mainMapping = islandSceneMapping[index];
+                if (sideMapping.island == mainMapping.island
+                    && sideMapping.variant == mainMapping.variant) {
                     return sideIndex;
                 }
             }
