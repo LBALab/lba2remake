@@ -41,6 +41,7 @@ export function loadActor(props, callback) {
     loadModel(props.entityIndex, props.bodyIndex, props.animIndex, (model) => {
         actor.model = model;
         actor.threeObject = model.mesh;
+        //actor.threeObject.visible = actor.isVisible;
         actor.threeObject.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
         actor.threeObject.quaternion.copy(actor.physics.orientation);
         callback(null, actor);
