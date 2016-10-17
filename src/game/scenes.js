@@ -27,12 +27,21 @@ export function createSceneManager(renderer, hero, callback) {
         callback({
             getScene: () => scene,
             goto: (index, debug = false) => {
-                loadScene(sceneMap, index, null, debug, (err, pScene) => {
-                    hero.physics.position.x = pScene.scenery.props.startPosition[0];
-                    hero.physics.position.z = pScene.scenery.props.startPosition[1];
-                    renderer.applySceneryProps(pScene.scenery.props);
-                    scene = pScene;
-                });
+                if (scene && scene.sideScenes && index in scene.sideScenes) {
+                    const sideScene = scene.sideScenes[index];
+                    sideScene.sideScenes = scene.sideScenes;
+                    delete sideScene.sideScenes[index];
+                    delete scene.sideScenes;
+                    sideScene.sideScenes[scene.index] = scene;
+                    scene = sideScene;
+                } else {
+                    loadScene(sceneMap, index, null, debug, (err, pScene) => {
+                        hero.physics.position.x = pScene.scenery.props.startPosition[0];
+                        hero.physics.position.z = pScene.scenery.props.startPosition[1];
+                        renderer.applySceneryProps(pScene.scenery.props);
+                        scene = pScene;
+                    });
+                }
             }
         });
     });
@@ -75,6 +84,7 @@ function loadScene(sceneMap, index, parent, debug, callback) {
                 type: type,
                 threeScene: data.threeScene,
                 scenery: data.scenery,
+                sideScenes: data.sideScenes,
                 update: time => {
                     each(data.actors, actor => {
                         actor.update(time);
@@ -126,3 +136,4 @@ function loadSideScenes(sceneMap, index, parent, debug, callback) {
         callback(null, sideScenesMap);
     });
 }
+
