@@ -2,8 +2,8 @@ import async from 'async';
 import THREE from 'three';
 import {map, each, extend} from 'lodash';
 
-import {loadIslandScenery} from '../island';
 import sceneMapping from '../island/data/sceneMapping';
+import {loadIslandScenery} from '../island';
 import {loadIsometricScenery} from '../iso';
 import {loadSceneData} from '../scene';
 import {loadSceneMapData} from '../scene/map';
