@@ -47,7 +47,8 @@ module.exports = {
             }
         }),
         new FlowStatusWebpackPlugin({
-            failOnError: true
+            failOnError: true,
+            binaryPath: require('flow-bin')
         })
     ]
 };
