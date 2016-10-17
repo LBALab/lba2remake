@@ -1,3 +1,5 @@
+// @flow
+
 import THREE from 'three';
 import {createRenderer} from './renderer';
 import {mainGameLoop} from './game/loop';

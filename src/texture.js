@@ -1,3 +1,5 @@
+// @flow weak
+
 import THREE from 'three';
 import {map, each} from 'lodash';
 
@@ -160,7 +162,7 @@ function findNearestColor(palette, colors) {
     return minIdx;
 }
 
-export function loadSubTexture(buffer, palette, x_offset, y_offset, width, height) {
+export function loadSubTexture(buffer, palette, x_offset: number, y_offset: number, width: number, height: number) {
     const pixel_data = new Uint8Array(buffer);
     const image_data = new Uint8Array(width * height * 4);
     for (let y = 0; y < height; ++y) {

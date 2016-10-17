@@ -1,3 +1,5 @@
-export function bits(bitfield, offset, length) {
+// @flow
+
+export function bits(bitfield: number, offset: number, length: number) {
     return (bitfield & (((1 << length) - 1)) << offset) >> offset;
 }

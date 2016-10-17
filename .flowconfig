@@ -1,0 +1,9 @@
+[ignore]
+.*/node_modules/fbjs/.*
+.*/node_modules/protobufjs/.*
+
+[include]
+
+[libs]
+
+[options]
