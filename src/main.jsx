@@ -23,6 +23,7 @@ window.onload = function() {
     };
     const hero = createHero(heroConfig);
     createSceneManager(renderer, hero, sceneManager => {
+        window.sceneManager = sceneManager;
         const controls = isMobile ? [
             makeGyroscopeControls(hero.physics),
             makeGamepadControls(hero.physics)
