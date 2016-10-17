@@ -1,7 +1,7 @@
 import async from 'async';
 import _ from 'lodash';
 
-import {MOVE_OPCODE} from './moveScript';
+import {MoveOpcode} from './moveScript';
 
 export function initScriptState() {
     return {
