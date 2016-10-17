@@ -23,7 +23,7 @@ export function createSceneManager(renderer, hero, callback) {
         callback({
             getScene: () => scene,
             goto: (index, debug = false) => {
-                loadScene(sceneMap, index, debug, (pScene) => {
+                loadScene(sceneMap, index, null, debug, (pScene) => {
                     hero.physics.position.x = pScene.scenery.props.startPosition[0];
                     hero.physics.position.z = pScene.scenery.props.startPosition[1];
                     renderer.applySceneryProps(pScene.scenery.props);
@@ -34,24 +34,23 @@ export function createSceneManager(renderer, hero, callback) {
     });
 }
 
-function loadScene(sceneMap, index, debug, callback) {
+function loadScene(sceneMap, index, threeScene, debug, callback) {
     loadSceneData(index, sceneData => {
-        const threeScene = new THREE.Scene();
         const indexInfo = sceneMap[index];
-        let loadScenery = indexInfo.isIsland ?
-            loadIslandScenery.bind(null, sceneMapping[indexInfo.index].island) :
-            loadIsometricScenery.bind(null, indexInfo.index);
+        const loadSteps = {
+            actors: callback => { async.map(sceneData.actors, loadActor, callback) },
+            points: callback => { async.map(sceneData.points, loadPoint, callback) },
+            zones: callback => { async.map(sceneData.zones, loadZone, callback) }
+        };
 
-        const loadActors = callback => { async.map(sceneData.actors, loadActor, callback) };
-        const loadPoints = callback => { async.map(sceneData.points, loadPoint, callback) };
-        const loadZones = callback => { async.map(sceneData.zones, loadZone, callback) };
+        if (!threeScene) {
+            threeScene = new THREE.Scene();
+            loadSteps.scenery = indexInfo.isIsland
+                ? loadIslandScenery.bind(null, sceneMapping[indexInfo.index].island)
+                : loadIsometricScenery.bind(null, indexInfo.index);
+        }
 
-        async.auto({
-            scenery: loadScenery,
-            actors: loadActors,
-            points: loadPoints,
-            zones: loadZones
-        }, function (err, data) {
+        async.auto(loadSteps, function (err, data) {
             const sceneNode = loadSceneNode(indexInfo, data);
             const addToSceneNode = obj => {
                 sceneNode.add(obj.threeObject);
