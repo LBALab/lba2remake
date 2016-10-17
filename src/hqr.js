@@ -1,6 +1,17 @@
+// @flow
+
+type Entry = {
+    type: number,
+    offset: number,
+    originalSize: number,
+    compressedSize: number
+};
+
 export default class HQR {
-    load(url, callback) {
-        this._entries = [];
+    _entries: Entry[] = [];
+    _buffer: ArrayBuffer;
+
+    load(url: string, callback: Function) {
         var that = this;
         var request = new XMLHttpRequest();
         request.responseType = 'arraybuffer';
@@ -17,11 +28,11 @@ export default class HQR {
         request.send(null);
     }
 
-    get length() {
+    get length(): number {
         return this._entries.length;
     }
 
-    getEntry(index) {
+    getEntry(index: number) {
         const entry = this._entries[index];
         if (entry.type) {
             const tgt_buffer = new ArrayBuffer(entry.originalSize);
@@ -80,8 +91,8 @@ export default class HQR {
 
 const hqrCache = {};
 
-export function loadHqrAsync(file) {
-    return (callback) => {
+export function loadHqrAsync(file: string) {
+    return (callback: Function) => {
         if (file in hqrCache) {
             callback(null, hqrCache[file]);
         } else {
