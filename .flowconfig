@@ -1,6 +1,14 @@
 [ignore]
+.*/apps/.*
 .*/node_modules/fbjs/.*
 .*/node_modules/protobufjs/.*
+.*/node_modules/babel.*
+.*/node_modules/flow.*
+.*/node_modules/raw-loader/.*
+.*/node_modules/webpack.*
+.*/sync_server/.*
+.*/webpack/.*
+.*/www/.*
 
 [include]
 
