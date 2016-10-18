@@ -32,33 +32,42 @@ export function getIsometric3DCamera() {
 
     const mv = 0.005;
     window.addEventListener('keydown', event => {
+        let update = false;
         switch (event.code) {
             case 'ArrowUp':
                 camera.position.x += mv;
                 lookAt.x += mv;
+                update = true;
                 break;
             case 'ArrowDown':
                 camera.position.x -= mv;
                 lookAt.x -= mv;
+                update = true;
                 break;
             case 'ArrowLeft':
                 camera.position.z += mv;
                 lookAt.z += mv;
+                update = true;
                 break;
             case 'ArrowRight':
                 camera.position.z -= mv;
                 lookAt.z -= mv;
+                update = true;
                 break;
             case 'NumpadAdd':
                 v += 1;
+                update = true;
                 break;
             case 'NumpadSubtract':
                 v -= 1;
+                update = true;
                 break;
         }
-        camera.lookAt(lookAt);
-        resizeIsometric3DCamera(camera, v);
-        console.log(lookAt, v);
+        if (update) {
+            camera.lookAt(lookAt);
+            resizeIsometric3DCamera(camera, v);
+            console.log(lookAt, v);
+        }
     }, false);
 
     return camera;
