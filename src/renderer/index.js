@@ -6,13 +6,14 @@ import RenderPass from './effects/postprocess/RenderPass';
 import setupStats from './stats';
 import {
     getIsometricCamera,
+    getIsometric3DCamera,
     get3DCamera,
     resize3DCamera,
-    resizeIsometricCamera
+    resizeIsometricCamera,
+    resizeIsometric3DCamera
 } from './cameras';
 import Cardboard from './utils/Cardboard';
 import {map} from 'lodash';
-import {SceneryType} from '../game/scenes';
 
 const PixelRatioMode = {
     DEVICE: () => window.devicePixelRatio || 1.0,
@@ -36,7 +37,8 @@ export function createRenderer(useVR) {
     const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
     const camera3D = get3DCamera();
     const cameraIso = getIsometricCamera();
-    const resizer = setupResizer(renderer, camera3D, cameraIso);
+    const cameraIso3D = getIsometric3DCamera();
+    const resizer = setupResizer(renderer, camera3D, cameraIso, cameraIso3D);
     let smaa = setupSMAA(renderer, pixelRatio);
     const stats = setupStats(useVR);
 
@@ -55,18 +57,28 @@ export function createRenderer(useVR) {
         }
     });
 
+    function render(scene, camera) {
+        if (antialias) {
+            smaa.render(scene, camera);
+        }
+        else {
+            renderer.render(scene, camera);
+        }
+    }
+
     displayRenderMode();
 
     return {
         domElement: baseRenderer.domElement,
         render: scene => {
             renderer.antialias = antialias;
-            const camera = scene.type == SceneryType.ISLAND ? camera3D : cameraIso;
-            if (antialias) {
-                smaa.render(scene.threeScene, camera);
-            }
-            else {
-                renderer.render(scene.threeScene, camera);
+            if (scene.isIsland) {
+                render(scene.threeScene, camera3D);
+            } else {
+                render(scene.threeScene, cameraIso);
+                renderer.autoClear = false;
+                render(scene.sceneNode, cameraIso3D);
+                renderer.autoClear = true;
             }
         },
         dispose: () => {
@@ -121,11 +133,12 @@ function setupSMAA(renderer, pixelRatio) {
     }
 }
 
-function setupResizer(renderer, camera3D, isoCamera) {
+function setupResizer(renderer, camera3D, cameraIso, cameraIso3D) {
     function resize() {
         renderer.setSize(window.innerWidth, window.innerHeight);
         resize3DCamera(camera3D);
-        resizeIsometricCamera(isoCamera);
+        resizeIsometricCamera(cameraIso);
+        resizeIsometric3DCamera(cameraIso3D);
     }
 
     window.addEventListener('resize', resize);

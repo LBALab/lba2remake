@@ -15,11 +15,6 @@ import {loadActor} from './actors';
 import {loadPoint} from './points';
 import {loadZone} from './zones';
 
-export const SceneryType = {
-    ISLAND: 0,
-    ISOMETRIC: 1
-};
-
 export function createSceneManager(renderer, hero, callback) {
     let scene = null;
 
@@ -53,7 +48,6 @@ export function createSceneManager(renderer, hero, callback) {
 function loadScene(sceneMap, index, parent, debug, callback) {
     loadSceneData(index, sceneData => {
         const indexInfo = sceneMap[index];
-        const type = indexInfo.isIsland ? SceneryType.ISLAND : SceneryType.ISOMETRIC;
         const loadSteps = {
             actors: (callback) => { async.map(sceneData.actors, loadActor, callback) },
             points: (callback) => { async.map(sceneData.points, loadPoint, callback) },
@@ -69,7 +63,7 @@ function loadScene(sceneMap, index, parent, debug, callback) {
                 threeScene.add(data.scenery.threeObject);
                 callback(null, threeScene);
             }];
-            if (type == SceneryType.ISLAND) {
+            if (indexInfo.isIsland) {
                 loadSteps.sideScenes = ['scenery', 'threeScene', (data, callback) => {
                     loadSideScenes(sceneMap, index, data, debug, callback);
                 }];
@@ -81,11 +75,14 @@ function loadScene(sceneMap, index, parent, debug, callback) {
 
         async.auto(loadSteps, function (err, data) {
             const sceneNode = loadSceneNode(index, indexInfo, data, debug);
-            data.threeScene.add(sceneNode);
+            if (indexInfo.isIsland) {
+                data.threeScene.add(sceneNode);
+            }
             callback(null, {
                 index: index,
-                type: type,
+                isIsland: indexInfo.isIsland,
                 threeScene: data.threeScene,
+                sceneNode: sceneNode,
                 scenery: data.scenery,
                 sideScenes: data.sideScenes,
                 update: time => {
@@ -99,7 +96,7 @@ function loadScene(sceneMap, index, parent, debug, callback) {
 }
 
 function loadSceneNode(index, indexInfo, data, debug) {
-    const sceneNode = new THREE.Object3D();
+    const sceneNode = indexInfo.isIsland ? new THREE.Object3D() : new THREE.Scene();
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
         const section = data.scenery.sections[sectionIdx];
