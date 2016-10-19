@@ -8,6 +8,10 @@ import {loadAnimState, updateKeyframe} from './animState';
 import {loadMesh} from './geometry';
 import {loadTexture2} from '../texture';
 
+export type Model = {
+
+}
+
 export function loadModel(entityIdx, bodyIdx, animIdx, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
