@@ -52,7 +52,7 @@ export function loadActor(props: ActorProps, callback: Function) {
         update: function(time) {
             updateModel(this.model, props.entityIndex, props.bodyIndex, props.animIndex, time);
         },
-        isVisible: !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && actor.props.life > 0,
+        isVisible: !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && props.life > 0,
         isSprite: (props.staticFlags & ACTOR_STATIC_FLAG.SPRITE) ? true : false,
         model: null,
         threeObject: null
