@@ -1,18 +1,26 @@
+// @flow
+
 import async from 'async';
 
+import THREE from 'three';
 import {loadHqrAsync} from '../hqr';
+import type {Entity} from './entity';
 import {loadEntity, getBodyIndex, getAnimIndex} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
 import {loadAnimState, updateKeyframe} from './animState';
 import {loadMesh} from './geometry';
 import {loadTexture2} from '../texture';
+import type {Time} from '../flowtypes';
 
 export type Model = {
-
+    state: ?any,
+    anims: ?any,
+    entities: Entity[],
+    mesh: THREE.Object3D
 }
 
-export function loadModel(entityIdx, bodyIdx, animIdx, callback) {
+export function loadModel(entityIdx: number, bodyIdx: number, animIdx: number, callback: Function) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         body: loadHqrAsync('BODY.HQR'),
@@ -37,7 +45,9 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx) {
         bodies: [],
         anims: [],
         entities: loadEntity(entityInfo),
-        texture: loadTexture2(files.ress.getEntry(6), palette)
+        texture: loadTexture2(files.ress.getEntry(6), palette),
+        state: null,
+        mesh: null
     };
     
     const entity = model.entities[entityIdx];
@@ -53,7 +63,7 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx) {
     return model;
 }
 
-export function updateModel(model, entityIdx, bodyIdx, animIdx, time) {
+export function updateModel(model: Model, entityIdx: number, bodyIdx: number, animIdx: number, time: Time) {
     const entity = model.entities[entityIdx];
     const realAnimIdx = getAnimIndex(entity, animIdx);
     const anim = loadAnim(model, model.anims, realAnimIdx);
