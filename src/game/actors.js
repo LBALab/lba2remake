@@ -56,7 +56,7 @@ export function loadActor(props: ActorProps, callback: Function) {
             Script.processLifeScript(actor);
             updateModel(this.model, props.entityIndex, props.bodyIndex, props.animIndex, time);
         },
-        isVisible: !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && props.life > 0,
+        isVisible: !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && (props.life > 0 || props.bodyIndex >= 0) ? true : false,
         isSprite: (props.staticFlags & ACTOR_STATIC_FLAG.SPRITE) ? true : false,
         model: null,
         threeObject: null,
@@ -68,6 +68,7 @@ export function loadActor(props: ActorProps, callback: Function) {
                                   THREE.Math.degToRad(0), 'XZY');
     actor.physics.orientation.setFromEuler(euler);
 
+    // only if not sprite actor
     loadModel(props.entityIndex, props.bodyIndex, props.animIndex, (model) => {
         //model.mesh.visible = actor.isVisible;
         model.mesh.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
