@@ -1,7 +1,10 @@
+// @flow
+
 import THREE from 'three';
+import type {HeroPhysics} from '../game/hero';
 
 // Move pointerLock mechanics out of this
-export function makeFirstPersonMouseControls(domElement, heroPhysics) {
+export function makeFirstPersonMouseControls(domElement: HTMLElement, heroPhysics: HeroPhysics) {
     const controls = {
         enabled: false
     };
@@ -25,10 +28,11 @@ export function makeFirstPersonMouseControls(domElement, heroPhysics) {
 const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
 const MAX_X_ANGLE = Math.PI / 2.5;
 
-function handleMouseEvent(controls, heroPhysics, event) {
+function handleMouseEvent(controls, heroPhysics, event: MouseEvent) {
     if (controls.enabled) {
-        const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-        const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+        // Not supported on IE / Safari
+        const movementX = event.movementX || 0;
+        const movementY = event.movementY || 0;
 
         euler.setFromQuaternion(heroPhysics.headOrientation, 'YXZ');
         euler.y = 0;
@@ -43,9 +47,11 @@ function handleMouseEvent(controls, heroPhysics, event) {
 }
 
 function pointerLockChanged(controls) {
-    controls.enabled = document.pointerLockElement == document.body
+    controls.enabled = (document: any).pointerLockElement == document.body;
 }
 
 function onClick() {
-    document.body.requestPointerLock()
+    if (document.body.requestPointerLock) {
+        document.body.requestPointerLock()
+    }
 }

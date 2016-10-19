@@ -1,4 +1,7 @@
+// @flow
+
 import THREE from 'three';
+import type {HeroPhysics} from '../game/hero';
 import {switchMovementMode} from '../game/hero';
 import {switchStats} from '../renderer/stats';
 
@@ -6,7 +9,7 @@ const euler = new THREE.Euler();
 const PI_4 = Math.PI / 4;
 const MAX_X_ANGLE = Math.PI;// / 2.5;
 
-export function makeGamepadControls(heroPhysics) {
+export function makeGamepadControls(heroPhysics: HeroPhysics) {
     const onDpadValueChanged = dpadValueChangeHandler.bind(null, heroPhysics);
     const onButtonPressed = buttonPressedHandler.bind(null, heroPhysics);
     window.addEventListener('dpadvaluechanged', onDpadValueChanged, false);

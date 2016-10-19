@@ -1,7 +1,10 @@
+// @flow
+
+import type {HeroPhysics} from '../game/hero';
 import {switchMovementMode} from '../game/hero';
 import {switchStats} from '../renderer/stats';
 
-export function makeKeyboardControls(heroPhysics) {
+export function makeKeyboardControls(heroPhysics: HeroPhysics) {
     const onKeyDown = keyDownHandler.bind(null, heroPhysics);
     const onKeyUp = keyUpHandler.bind(null, heroPhysics);
     window.addEventListener('keydown', onKeyDown, false);
