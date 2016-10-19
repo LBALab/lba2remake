@@ -158,3 +158,590 @@ export const LifeOpcode = [
     { opcode: 0x9A, command: "PCX_MESS_OBJ", callback: lsPCX_MESS_OBJ, offset: 5 }
 ];
 
+function lsEND(script, state, actor) {
+
+}
+
+function lsNOP(script, state, actor) {
+
+}
+
+function lsSNIF(script, state, actor) {
+
+}
+
+function lsOFFSET(script, state, actor) {
+
+}
+
+function lsNEVERIF(script, state, actor) {
+
+}
+
+function lsPALETTE(script, state, actor) {
+
+}
+
+function lsRETURN(script, state, actor) {
+
+}
+
+function lsIF(script, state, actor) {
+
+}
+
+function lsSWIF(script, state, actor) {
+
+}
+
+function lsONEIF(script, state, actor) {
+
+}
+
+function lsELSE(script, state, actor) {
+
+}
+
+function lsENDIF(script, state, actor) {
+
+}
+
+function lsBODY(script, state, actor) {
+
+}
+
+function lsANIM(script, state, actor) {
+
+}
+
+function lsSET_CAMERA(script, state, actor) {
+
+}
+
+function lsCAMERA_CENTER(script, state, actor) {
+
+}
+
+function lsSET_TRACK(script, state, actor) {
+
+}
+
+function lsSET_TRACK_OBJ(script, state, actor) {
+
+}
+
+function lsMESSAGE(script, state, actor) {
+
+}
+
+function lsCAN_FALL(script, state, actor) {
+
+}
+
+function lsSET_DIRMODE(script, state, actor) {
+
+}
+
+function lsSET_DIRMODE_OBJ(script, state, actor) {
+
+}
+
+function lsCAM_FOLLOW(script, state, actor) {
+
+}
+
+function lsSET_BEHAVIOUR(script, state, actor) {
+
+}
+
+function lsSET_VAR_CUBE(script, state, actor) {
+
+}
+
+function lsCOMPORTEMENT(script, state, actor) {
+
+}
+
+function lsSET_COMPORTEMENT(script, state, actor) {
+
+}
+
+function lsSET_COMPORTEMENT_OBJ(script, state, actor) {
+
+}
+
+function lsEND_COMPORTEMENT(script, state, actor) {
+
+}
+
+function lsSET_VAR_GAME(script, state, actor) {
+
+}
+
+function lsKILL_OBJ(script, state, actor) {
+
+}
+
+function lsSUICIDE(script, state, actor) {
+
+}
+
+function lsUSE_ONE_LITTLE_KEY(script, state, actor) {
+
+}
+
+function lsGIVE_GOLD_PIECES(script, state, actor) {
+
+}
+
+function lsEND_LIFE(script, state, actor) {
+
+}
+
+function lsSTOP_CURRENT_TRACK(script, state, actor) {
+
+}
+
+function lsRESTORE_LAST_TRACK(script, state, actor) {
+
+}
+
+function lsMESSAGE_OBJ(script, state, actor) {
+
+}
+
+function lsINC_CHAPTER(script, state, actor) {
+
+}
+
+function lsFOUND_OBJECT(script, state, actor) {
+
+}
+
+function lsSET_DOOR_LEFT(script, state, actor) {
+
+}
+
+function lsSET_DOOR_RIGHT(script, state, actor) {
+
+}
+
+function lsSET_DOOR_UP(script, state, actor) {
+
+}
+
+function lsSET_DOOR_DOWN(script, state, actor) {
+
+}
+
+function lsGIVE_BONUS(script, state, actor) {
+
+}
+
+function lsCHANGE_CUBE(script, state, actor) {
+
+}
+
+function lsOBJ_COL(script, state, actor) {
+
+}
+
+function lsBRICK_COL(script, state, actor) {
+
+}
+
+function lsOR_IF(script, state, actor) {
+
+}
+
+function lsINVISIBLE(script, state, actor) {
+
+}
+
+function lsSHADOW_OBJ(script, state, actor) {
+
+}
+
+function lsPOS_POINT(script, state, actor) {
+
+}
+
+function lsSET_MAGIC_LEVEL(script, state, actor) {
+
+}
+
+function lsSUB_MAGIC_POINT(script, state, actor) {
+
+}
+
+function lsSET_LIFE_POINT_OBJ(script, state, actor) {
+
+}
+
+function lsSUB_LIFE_POINT_OBJ(script, state, actor) {
+
+}
+
+function lsHIT_OBJ(script, state, actor) {
+
+}
+
+function lsPLAY_ACF(script, state, actor) {
+
+}
+
+function lsECLAIR(script, state, actor) {
+
+}
+
+function lsINC_CLOVER_BOX(script, state, actor) {
+
+}
+
+function lsSET_USED_INVENTORY(script, state, actor) {
+
+}
+
+function lsADD_CHOICE(script, state, actor) {
+
+}
+
+function lsASK_CHOICE(script, state, actor) {
+
+}
+
+function lsINIT_BUGGY(script, state, actor) {
+
+}
+
+function lsMEMO_SLATE(script, state, actor) {
+
+}
+
+function lsSET_HOLO_POS(script, state, actor) {
+
+}
+
+function lsCLR_HOLO_POS(script, state, actor) {
+
+}
+
+function lsADD_FUEL(script, state, actor) {
+
+}
+
+function lsSUB_FUEL(script, state, actor) {
+
+}
+
+function lsSET_GRM(script, state, actor) {
+
+}
+
+function lsSET_CHANGE_CUBE(script, state, actor) {
+
+}
+
+function lsMESSAGE_ZOE(script, state, actor) {
+
+}
+
+function lsFULL_POINT(script, state, actor) {
+
+}
+
+function lslsBETAEND(script, state, actor) {
+
+}
+
+function lsFADE_TO_PAL(script, state, actor) {
+
+}
+
+function lsACTION(script, state, actor) {
+
+}
+
+function lsSET_FRAME(script, state, actor) {
+
+}
+
+function lsSET_SPRITE(script, state, actor) {
+
+}
+
+function lsSET_FRAME_3DS(script, state, actor) {
+
+}
+
+function lsIMPACT_OBJ(script, state, actor) {
+
+}
+
+function lsIMPACT_POINT(script, state, actor) {
+
+}
+
+function lsADD_MESSAGE(script, state, actor) {
+
+}
+
+function lsBALLOON(script, state, actor) {
+
+}
+
+function lsNO_SHOCK(script, state, actor) {
+
+}
+
+function lsASK_CHOICE_OBJ(script, state, actor) {
+
+}
+
+function lsCINEMA_MODE(script, state, actor) {
+
+}
+
+function lsSAVE_HERO(script, state, actor) {
+
+}
+
+function lsRESTORE_HERO(script, state, actor) {
+
+}
+
+function lsANIM_SET(script, state, actor) {
+
+}
+
+function lsRAIN(script, state, actor) {
+
+}
+
+function lsGAME_OVER(script, state, actor) {
+
+}
+
+function lsTHE_END(script, state, actor) {
+
+}
+
+function lsESCALATOR(script, state, actor) {
+
+}
+
+function lsPLAY_MUSIC(script, state, actor) {
+
+}
+
+function lsTRACK_TO_VAR_GAME(script, state, actor) {
+
+}
+
+function lsVAR_GAME_TO_TRACK(script, state, actor) {
+
+}
+
+function lsANIM_TEXTURE(script, state, actor) {
+
+}
+
+function lsADD_MESSAGE_OBJ(script, state, actor) {
+
+}
+
+function lsBRUTAL_EXIT(script, state, actor) {
+
+}
+
+function lsREPLACE(script, state, actor) {
+
+}
+
+function lsSCALE(script, state, actor) {
+
+}
+
+function lsSET_ARMOR(script, state, actor) {
+
+}
+
+function lsSET_ARMOR_OBJ(script, state, actor) {
+
+}
+
+function lsADD_LIFE_POINT_OBJ(script, state, actor) {
+
+}
+
+function lsSTATE_INVENTORY(script, state, actor) {
+
+}
+
+function lsAND_IF(script, state, actor) {
+
+}
+
+function lsSWITCH(script, state, actor) {
+
+}
+
+function lsOR_CASE(script, state, actor) {
+
+}
+
+function lsCASE(script, state, actor) {
+
+}
+
+function lsDEFAULT(script, state, actor) {
+
+}
+
+function lsBREAK(script, state, actor) {
+
+}
+
+function lsEND_SWITCH(script, state, actor) {
+
+}
+
+function lsSET_HIT_ZONE(script, state, actor) {
+
+}
+
+function lsSAVE_COMPORTEMENT(script, state, actor) {
+
+}
+
+function lsRESTORE_COMPORTEMENT(script, state, actor) {
+
+}
+
+function lsSAMPLE(script, state, actor) {
+
+}
+
+function lsSAMPLE_RND(script, state, actor) {
+
+}
+
+function SAMPLE_ALWAYS(script, state, actor) {
+
+}
+
+function lsSAMPLE_STOP(script, state, actor) {
+
+}
+
+function lsREPEAT_SAMPLE(script, state, actor) {
+
+}
+
+function lsBACKGROUND(script, state, actor) {
+
+}
+
+function lsADD_VAR_GAME(script, state, actor) {
+
+}
+
+function lsSUB_VAR_GAME(script, state, actor) {
+
+}
+
+function lsADD_VAR_CUBE(script, state, actor) {
+
+}
+
+function lsSUB_VAR_CUBE(script, state, actor) {
+
+}
+
+function lsSET_RAIL(script, state, actor) {
+
+}
+
+function lsINVERSE_BETA(script, state, actor) {
+
+}
+
+function lsNO_BODY(script, state, actor) {
+
+}
+
+function lsADD_GOLD_PIECES(script, state, actor) {
+
+}
+
+function lsSTOP_CURRENT_TRACK_OBJ(script, state, actor) {
+
+}
+
+function lsRESTORE_LAST_TRACK_OBJ(script, state, actor) {
+
+}
+
+function lsSAVE_COMPORTEMENT_OBJ(script, state, actor) {
+
+}
+
+function lsRESTORE_COMPORTEMENT_OBJ(script, state, actor) {
+
+}
+
+function lsSPY(script, state, actor) {
+
+}
+
+function lsDEBUG(script, state, actor) {
+
+}
+
+function lsDEBUG_OBJ(script, state, actor) {
+
+}
+
+function lsPOPCORN(script, state, actor) {
+
+}
+
+function lsFLOW_POINT(script, state, actor) {
+
+}
+
+function lsFLOW_OBJ(script, state, actor) {
+
+}
+
+function lsSET_ANIM_DIAL(script, state, actor) {
+
+}
+
+function lsPCX(script, state, actor) {
+
+}
+
+function lsEND_MESSAGE(script, state, actor) {
+
+}
+
+function lsEND_MESSAGE_OBJ(script, state, actor) {
+
+}
+
+function lsPARM_SAMPLE(script, state, actor) {
+
+}
+
+function lsNEW_SAMPLE(script, state, actor) {
+
+}
+
+function lsPOS_OBJ_AROUND(script, state, actor) {
+
+}
+
+function lsPCX_MESS_OBJ(script, state, actor) {
+
+}
