@@ -1,6 +1,9 @@
-import THREE from 'three';
+// @flow
 
-export function makeGyroscopeControls(heroPhysics) {
+import THREE from 'three';
+import type {HeroPhysics} from '../game/hero';
+
+export function makeGyroscopeControls(heroPhysics: HeroPhysics) {
     let screenOrientation = window.orientation || 0;
     let deviceOrientation = {alpha: 0, beta: 0, gamma: 0};
 

@@ -1,3 +1,4 @@
+import {bits} from '../utils';
 const push = Array.prototype.push;
 
 export function loadGround(island, section, geometries, usedTiles) {
@@ -38,7 +39,6 @@ export function loadGround(island, section, geometries, usedTiles) {
 
 function loadTriangle(section, x, y, idx) {
     const flags = section.triangles[(x * 64 + y) * 2 + idx];
-    const bits = (bitfield, offset, length) => (bitfield & (((1 << length) - 1)) << offset) >> offset;
     return {
         textureBank: bits(flags, 0, 4),
         useTexture: bits(flags, 4, 2),

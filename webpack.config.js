@@ -1,5 +1,6 @@
 var webpack = require('webpack');
 var path = require('path');
+var FlowStatusWebpackPlugin = require('flow-status-webpack-plugin');
 
 module.exports = {
     entry: "./src/main.jsx",
@@ -20,10 +21,7 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loader: 'babel',
-                query: {
-                    presets: ['react', 'es2015']
-                }
+                loader: 'babel'
             },
             {
                 test: /\.glsl?$/,
@@ -44,6 +42,10 @@ module.exports = {
             'process.env': {
                 'NODE_ENV': '"' + process.env.NODE_ENV + '"'
             }
+        }),
+        new FlowStatusWebpackPlugin({
+            failOnError: true,
+            binaryPath: require('flow-bin')
         })
     ]
 };

@@ -9,11 +9,15 @@ export function mainGameLoop(clock, renderer, scene, hero, controls) {
 
     renderer.stats.begin();
 
-    if (scene && scene.data) {
-        each(controls, ctrl => { ctrl.update && ctrl.update(); });
-        scene.data.update(time);
-        processPhysicsFrame(time, scene.data.physics, renderer.camera, hero.physics);
-        renderer.render(scene.data.threeScene);
+    if (scene) {
+        const scenery = scene.scenery;
+        if (scenery) {
+            each(controls, ctrl => { ctrl.update && ctrl.update(); });
+            scenery.update(time);
+            processPhysicsFrame(time, scenery.physics, renderer.cameras, hero.physics);
+        }
+        scene.update(time);
+        renderer.render(scene);
     }
     renderer.stats.end();
 }

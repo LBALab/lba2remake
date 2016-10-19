@@ -1,6 +1,10 @@
-import {GameEvents} from '../game/events';
+// @flow
 
-export function makeKeyboardControls(heroPhysics) {
+import type {HeroPhysics} from '../game/hero';
+import {switchMovementMode} from '../game/hero';
+import {switchStats} from '../renderer/stats';
+
+export function makeKeyboardControls(heroPhysics: HeroPhysics) {
     const onKeyDown = keyDownHandler.bind(null, heroPhysics);
     const onKeyUp = keyUpHandler.bind(null, heroPhysics);
     window.addEventListener('keydown', onKeyDown, false);
@@ -42,19 +46,19 @@ function keyDownHandler(heroPhysics, event) {
             break;
         case 34: // pagedown
         case 'PageDown':
-            GameEvents.scene.nextIsland();
+            //GameEvents.scene.nextIsland();
             break;
         case 33: // pageup
         case 'PageUp':
-            GameEvents.scene.previousIsland();
+            //GameEvents.scene.previousIsland();
             break;
         case 70: // f
         case 'KeyF':
-            GameEvents.debug.switchStats();
+            switchStats();
             break;
         case 77: // m
         case 'KeyM':
-            GameEvents.mode.switchMode();
+            switchMovementMode(heroPhysics);
             break;
     }
 }

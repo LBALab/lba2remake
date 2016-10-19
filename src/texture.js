@@ -1,7 +1,9 @@
+// @flow
+
 import THREE from 'three';
 import {map, each} from 'lodash';
 
-export function loadPaletteTexture(palette) {
+export function loadPaletteTexture(palette: Uint8Array) {
     const image_data = new Uint8Array(256 * 4);
     image_data[0] = 0;
     image_data[1] = 0;
@@ -30,7 +32,7 @@ export function loadPaletteTexture(palette) {
     return texture;
 }
 
-export function loadTexture(buffer, palette) {
+export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array) {
     const pixel_data = new Uint8Array(buffer);
     let image_data = new Uint8Array(256 * 256 * 4);
     for (let x = 0; x < 256; ++x) {
@@ -73,7 +75,41 @@ export function loadTexture(buffer, palette) {
     return texture;
 }
 
-function loadMipmapLevelPal(source_data, level, palette) {
+export function loadTexture2(buffer: ArrayBuffer, palette: Uint8Array) {
+    const pixel_data = new Uint8Array(buffer);
+    const image_data = new Uint8Array(256 * 256 * 4);
+    for (let i = 0; i < 65536; ++i) { // 256 * 256
+        const idx = pixel_data[i];
+        if (idx == 0) {
+            image_data[i * 4] = 0;
+            image_data[i * 4 + 1] = 0;
+            image_data[i * 4 + 2] = 0;
+            image_data[i * 4 + 3] = 0;
+        } else {
+            image_data[i * 4] = palette[idx * 3];
+            image_data[i * 4 + 1] = palette[idx * 3 + 1];
+            image_data[i * 4 + 2] = palette[idx * 3 + 2];
+            image_data[i * 4 + 3] = 0xFF;
+        }
+    }
+    const texture = new THREE.DataTexture(
+        image_data,
+        256,
+        256,
+        THREE.RGBAFormat,
+        THREE.UnsignedByteType,
+        THREE.UVMapping,
+        THREE.RepeatWrapping,
+        THREE.RepeatWrapping,
+        THREE.NearestFilter,
+        THREE.LinearFilter
+    );
+    texture.needsUpdate = true;
+    texture.generateMipmaps = false;
+    return texture;
+}
+
+function loadMipmapLevelPal(source_data: Uint8Array, level: number, palette: Uint8Array) {
     const dim = Math.pow(2, 8 - level);
     const tgt_data = new Uint8Array(dim * dim * 4);
     for (let y = 0; y < dim; ++y) {
@@ -95,7 +131,7 @@ function loadMipmapLevelPal(source_data, level, palette) {
     return tgt_data;
 }
 
-function findNearestColor(palette, colors) {
+function findNearestColor(palette: Uint8Array, colors: Array< Array<number> >) {
     const sum = [0, 0, 0];
     let count = 0;
     each(colors, ([r, g, b, idx]) => {
@@ -126,7 +162,7 @@ function findNearestColor(palette, colors) {
     return minIdx;
 }
 
-export function loadSubTexture(buffer, palette, x_offset, y_offset, width, height) {
+export function loadSubTexture(buffer: ArrayBuffer, palette: Uint8Array, x_offset: number, y_offset: number, width: number, height: number) {
     const pixel_data = new Uint8Array(buffer);
     const image_data = new Uint8Array(width * height * 4);
     for (let y = 0; y < height; ++y) {

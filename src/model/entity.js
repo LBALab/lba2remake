@@ -1,6 +1,53 @@
-import _ from 'lodash';
+// @flow
 
-const push = Array.prototype.push;
+type Action = {
+    type: number,
+    animFrame: number,
+    sampleId: number,
+    frequency: number,
+    unk1: number,
+    unk2: number,
+    unk3: number,
+    unk4: number,
+    unk5: number,
+    strength: number,
+    distanceX: number,
+    distanceY: number,
+    distanceZ: number,
+    yHeight: number,
+    spriteId: number,
+    repeat: number,
+    targetActor: number
+}
+
+type Anim = {
+    index: number,
+    animIndex: number,
+    actions: Action[],
+    offset: number
+}
+
+type Box = {
+    bX: number,
+    bY: number,
+    bZ: number,
+    tX: number,
+    tY: number,
+    tZ: number
+}
+
+type Body = {
+    bodyIndex: number,
+    index: number,
+    offset: number,
+    hasCollisionBox: boolean,
+    box: Box
+}
+
+export type Entity = {
+    anims: Anim[],
+    bodies: Body[]
+}
 
 const ACTIONTYPE = {
     NONE              : 0,
@@ -25,10 +72,10 @@ const ACTIONTYPE = {
 	EXTRA_THROW_3     : 19,
 	EXTRA_AIMING_2    : 20,
     UNKNOWN_29        : 29,
-    UNKNOWN_39        : 39,
-}
+    UNKNOWN_39        : 39
+};
 
-export function loadEntity(buffer) {
+export function loadEntity(buffer: ArrayBuffer) {
     let entities = [];
     const data = new DataView(buffer);
     const offset = data.getUint32(0, true);
@@ -51,7 +98,7 @@ function loadEntityEntry(buffer, dataOffset, index) {
         index: index,
         bodies: [],
         anims: []
-    }
+    };
     let opcode = 0;
     do {
         opcode = data.getUint8(offset++);
@@ -81,8 +128,8 @@ function loadEntityBody(data, offset) {
         offset: 0,
         bodyIndex: 0,
         hasCollisionBox: false,
-        box: {}
-    }
+        box: makeNewBox()
+    };
 
     body.index = data.getUint8(offset++, true);
     body.offset = data.getUint8(offset++, true);
@@ -99,7 +146,7 @@ function loadEntityBody(data, offset) {
         let box = {
             bX: 0, bY: 0, bZ: 0,
             tX: 0, tY: 0, tZ: 0
-        }
+        };
         
         const innerOffset = data.getUint8(offset++, true);
 
@@ -121,7 +168,7 @@ function loadEntityAnim(data, offset) {
         offset: 0,
         animIndex: 0,
         actions: []
-    }
+    };
 
     anim.index = data.getUint8(offset++, true);
     anim.offset = data.getUint8(offset++, true);
@@ -147,8 +194,23 @@ function loadEntityAnim(data, offset) {
         for (let i = 0; i < numActions; ++i) {
             let action = {
                 type: data.getUint8(innerOffset + offset, true),
-                animFrame: data.getUint8(innerOffset + offset + 1, true)
-            }
+                animFrame: data.getUint8(innerOffset + offset + 1, true),
+                sampleId: -1,
+                frequency: -1,
+                unk1: -1,
+                unk2: -1,
+                unk3: -1,
+                unk4: -1,
+                unk5: -1,
+                strength: -1,
+                distanceX: -1,
+                distanceY: -1,
+                distanceZ: -1,
+                yHeight: -1,
+                spriteId: -1,
+                repeat: -1,
+                targetActor: -1
+            };
             switch(action.type) {
                 case ACTIONTYPE.HITTING:
                     action.strength = data.getUint8(innerOffset + offset + 2, true); 
@@ -264,7 +326,10 @@ function loadEntityAnim(data, offset) {
     return anim;
 }
 
-export function getBodyIndex(entity, index) {
+export function getBodyIndex(entity: Entity, index: number) {
+    if (!entity) {
+        return 0;
+    }
     for (let i = 0; i < entity.bodies.length; ++i) {
         if (entity.bodies[i].index == index) {
             return entity.bodies[i].bodyIndex;
@@ -273,11 +338,25 @@ export function getBodyIndex(entity, index) {
     return 0;
 }
 
-export function getAnimIndex(entity, index) {
+export function getAnimIndex(entity: Entity, index: number) {
+    if (!entity) {
+        return 0;
+    }
     for (let i = 0; i < entity.anims.length; ++i) {
         if (entity.anims[i].index == index) {
             return entity.anims[i].animIndex;
         }
     }
     return 0;
+}
+
+function makeNewBox() {
+    return {
+        bX: -1,
+        bY: -1,
+        bZ: -1,
+        tX: -1,
+        tY: -1,
+        tZ: -1
+    }
 }

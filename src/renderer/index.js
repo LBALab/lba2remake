@@ -4,8 +4,15 @@ import EffectComposer from './effects/postprocess/EffectComposer';
 import SMAAPass from './effects/postprocess/SMAAPass';
 import RenderPass from './effects/postprocess/RenderPass';
 import setupStats from './stats';
+import {
+    getIsometricCamera,
+    getIsometric3DCamera,
+    get3DCamera,
+    resize3DCamera,
+    resizeIsometricCamera,
+    resizeIsometric3DCamera
+} from './cameras';
 import Cardboard from './utils/Cardboard';
-import {GameEvents} from '../game/events';
 import {map} from 'lodash';
 
 const PixelRatioMode = {
@@ -28,8 +35,10 @@ export function createRenderer(useVR) {
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
     const baseRenderer = setupBaseRenderer(pixelRatio);
     const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
-    const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.001, 100); // 1m = 0.0625 units
-    const resizer = setupResizer(renderer, camera);
+    const camera3D = get3DCamera();
+    const cameraIso = getIsometricCamera();
+    const cameraIso3D = getIsometric3DCamera();
+    const resizer = setupResizer(renderer, camera3D, cameraIso, cameraIso3D);
     let smaa = setupSMAA(renderer, pixelRatio);
     const stats = setupStats(useVR);
 
@@ -48,25 +57,44 @@ export function createRenderer(useVR) {
         }
     });
 
+    function render(scene, camera) {
+        if (antialias) {
+            smaa.render(scene, camera);
+        }
+        else {
+            renderer.render(scene, camera);
+        }
+    }
+
     displayRenderMode();
 
     return {
         domElement: baseRenderer.domElement,
         render: scene => {
             renderer.antialias = antialias;
-            if (antialias) {
-                smaa.render(scene, camera);
-            }
-            else {
-                renderer.render(scene, camera);
+            if (scene.isIsland) {
+                render(scene.threeScene, camera3D);
+            } else {
+                render(scene.threeScene, cameraIso);
+                renderer.autoClear = false;
+                render(scene.sceneNode, cameraIso3D);
+                renderer.autoClear = true;
             }
         },
         dispose: () => {
             resizer.dispose();
             stats.dispose();
         },
+        applySceneryProps: props => {
+            const sc = props.envInfo.skyColor;
+            const color = new THREE.Color(sc[0], sc[1], sc[2]);
+            renderer.setClearColor(color.getHex(), 1);
+        },
         stats: stats,
-        camera: camera
+        cameras: {
+            camera3D: camera3D,
+            isoCamera: cameraIso
+        }
     };
 }
 
@@ -84,12 +112,6 @@ function setupBaseRenderer(pixelRatio) {
     renderer.domElement.style.left = 0;
     renderer.domElement.style.top = 0;
     renderer.domElement.style.opacity = 1.0;
-
-    GameEvents.scene.sceneLoaded.addListener(scene => {
-        const sc = scene.envInfo.skyColor;
-        const color = new THREE.Color(sc[0], sc[1], sc[2]);
-        renderer.setClearColor(color.getHex(), 1);
-    });
 
     return renderer;
 }
@@ -111,11 +133,12 @@ function setupSMAA(renderer, pixelRatio) {
     }
 }
 
-function setupResizer(renderer, camera) {
+function setupResizer(renderer, camera3D, cameraIso, cameraIso3D) {
     function resize() {
         renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+        resize3DCamera(camera3D);
+        resizeIsometricCamera(cameraIso);
+        resizeIsometric3DCamera(cameraIso3D);
     }
 
     window.addEventListener('resize', resize);

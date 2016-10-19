@@ -1,32 +1,17 @@
 import THREE from 'three';
-import _ from 'lodash';
 
-const push = Array.prototype.push;
+import {getRotation, getStep} from '../utils/lba';
 
-export function loadAnimState(model, body, anim, index) {
-    if (!model.states[index]) {
-        const state = {
-            mesh: null,
-            skeleton: null,
-            currentFrame: 0,
-            loopFrame: anim.loopFrame,
-            currentTime:0,
-            matrixBones: [],
-            step: new THREE.Vector3(0, 0, 0)
-        }
-        state.skeleton = createSkeleton(body);
-        state.matrixBones = createShaderBone(state);
-        model.states[index] = state;
-    } else {
-        const state = model.states[index];
-        state.currentFrame = 0;
-        state.loopFrame = anim.loopFrame;
-        state.currentTime = 0;
-        state.matrixBones = [];
-        state.step.x = 0;
-        state.step.y = 0;
-        state.step.z = 0;
-    }
+export function loadAnimState(model, body, anim) {
+    const state = {
+        skeleton: createSkeleton(body),
+        currentFrame: 0,
+        loopFrame: anim.loopFrame,
+        currentTime:0,
+        step: new THREE.Vector3(0, 0, 0)
+    };
+    state.matrixBones = createShaderBone(state);
+    return state;
 }
 
 function createSkeleton(body) {
@@ -44,7 +29,7 @@ function createSkeleton(body) {
             type: 1, // translation by default
             euler: null,
             children: []
-        }
+        };
 
         skeleton.push(skeletonBone);
     }
@@ -81,14 +66,19 @@ function updateShaderBone(state) {
 }
 
 export function updateKeyframe(anim, state, time) {
+    if (!state) return;
+
     state.currentTime += time.delta * 1000;
     let keyframe = anim.keyframes[state.currentFrame];
+
+    if (!keyframe) return;
+
     if (state.currentTime > keyframe.length) {
         state.currentTime = 0;
         ++state.currentFrame;
         if (state.currentFrame >= anim.numKeyframes) {
             state.currentFrame = state.loopFrame;
-            if (state.currentFrame == anim.numKeyframes - 1) {
+            if (state.currentFrame >= anim.numKeyframes - 1) {
                 state.currentFrame = 0;
             }
         }
@@ -98,7 +88,7 @@ export function updateKeyframe(anim, state, time) {
     let nextFrame = state.currentFrame + 1;
     if (nextFrame >= anim.numKeyframes) {
         nextFrame = state.loopFrame;
-        if (nextFrame == anim.numKeyframes - 1) {
+        if (nextFrame >= anim.numKeyframes - 1) {
             nextFrame = 0;
         }
     }
@@ -173,36 +163,4 @@ function updateSkeletonHierarchy(skeleton, index) {
     for (let i = 0; i < s.children.length; ++i) {
         updateSkeletonHierarchy(skeleton, s.children[i].boneIndex);
     }
-}
-
-function getRotation(nextValue, currentValue, interpolation) {
-    let angleDif = nextValue - currentValue;
-    let computedAngle = 0;
-
-    if (angleDif) {
-	    if (angleDif < -0x800) {
-		    angleDif += 0x1000;
-		}
-	    else if (angleDif > 0x800) {
-		    angleDif -= 0x1000;
-		}
-        computedAngle = currentValue + (angleDif * interpolation)
-    } else {
-        computedAngle = currentValue;
-    }
-
-    computedAngle = computedAngle * 360 / 0x1000;
-
-    return computedAngle;
-}
-
-function getStep(nextValue, currentValue, interpolation) {
-    const stepDif = nextValue - currentValue;
-    let computedStep = 0;
-    if (stepDif) {
-        computedStep = currentValue + (stepDif * interpolation)
-    } else {
-        computedStep = currentValue;
-    }
-    return computedStep;
 }

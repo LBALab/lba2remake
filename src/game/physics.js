@@ -2,8 +2,7 @@ import THREE from 'three';
 import {map, each} from 'lodash';
 import {Movement, Target} from './hero';
 
-export function processPhysicsFrame(time, scene, camera, heroPhysics) {
-    //console.log(heroPhysics.config.movement);
+export function processPhysicsFrame(time, scene, cameras, heroPhysics) {
     switch (heroPhysics.config.movement) {
         case Movement.NORMAL:
             processNormalMovement(time, scene, heroPhysics);
@@ -16,7 +15,7 @@ export function processPhysicsFrame(time, scene, camera, heroPhysics) {
     each(heroPhysics.config.targets, target => {
         switch (target) {
             case Target.CAMERA:
-                updateTarget(camera, heroPhysics);
+                updateTarget(cameras.camera3D, heroPhysics);
                 break;
         }
     });
