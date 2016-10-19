@@ -6,11 +6,11 @@ export const LifeOpcode = [
     { opcode: 0x02, command: "SNIF", callback: lsSNIF, offset: 0 },
     { opcode: 0x03, command: "OFFSET", callback: lsOFFSET, offset: 2 },
     { opcode: 0x04, command: "NEVERIF", callback: lsNEVERIF, offset: 0 },
-    { opcode: 0x05, command: "", callback: null, offset: 0 },
-    { opcode: 0x06, command: "", callback: null, offset: 0 },
-    { opcode: 0x07, command: "", callback: null, offset: 0 },
-    { opcode: 0x08, command: "", callback: null, offset: 0 },
-    { opcode: 0x09, command: "", callback: null, offset: 0 },
+    { opcode: 0x05, command: "", callback: lsNOP, offset: 0 },
+    { opcode: 0x06, command: "", callback: lsNOP, offset: 0 },
+    { opcode: 0x07, command: "", callback: lsNOP, offset: 0 },
+    { opcode: 0x08, command: "", callback: lsNOP, offset: 0 },
+    { opcode: 0x09, command: "", callback: lsNOP, offset: 0 },
     { opcode: 0x0A, command: "PALETTE", callback: lsPALETTE, offset: 1 },
     { opcode: 0x0B, command: "RETURN", callback: lsRETURN, offset: 0 },
     { opcode: 0x0C, command: "IF", callback: lsIF, offset: 0 },
@@ -133,7 +133,7 @@ export const LifeOpcode = [
     { opcode: 0x81, command: "SUB_VAR_GAME", callback: lsSUB_VAR_GAME, offset: 3 },
     { opcode: 0x82, command: "ADD_VAR_CUBE", callback: lsADD_VAR_CUBE, offset: 2 },
     { opcode: 0x83, command: "SUB_VAR_CUBE", callback: lsSUB_VAR_CUBE, offset: 2 },
-    { opcode: 0x84, command: "", callback: null, offset: 0 },
+    { opcode: 0x84, command: "", callback: lsNOP, offset: 0 },
     { opcode: 0x85, command: "ESET_RAILND", callback: lsSET_RAIL, offset: 2 },
     { opcode: 0x86, command: "INVERSE_BETA", callback: lsINVERSE_BETA, offset: 0 },
     { opcode: 0x87, command: "NO_BODY", callback: lsNO_BODY, offset: 0 },
@@ -270,7 +270,15 @@ function lsBODY(script, state, actor) {
 
 }
 
+function lsBODY_OBJ(script, state, actor) {
+
+}
+
 function lsANIM(script, state, actor) {
+
+}
+
+function lsANIM_OBJ(script, state, actor) {
 
 }
 
@@ -510,7 +518,7 @@ function lsFULL_POINT(script, state, actor) {
 
 }
 
-function lslsBETAEND(script, state, actor) {
+function lsBETA(script, state, actor) {
 
 }
 
