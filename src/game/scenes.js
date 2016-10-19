@@ -14,6 +14,7 @@ import {loadSceneMapData} from '../scene/map';
 import {loadActor} from './actors';
 import {loadPoint} from './points';
 import {loadZone} from './zones';
+import {DISPLAY_ZONES, DISPLAY_POINTS} from '../debugFlags';
 
 export function createSceneManager(renderer, hero, callback) {
     let scene = null;
@@ -21,7 +22,7 @@ export function createSceneManager(renderer, hero, callback) {
     loadSceneMapData(sceneMap => {
         callback({
             getScene: () => scene,
-            goto: (index, debug = false) => {
+            goto: (index) => {
                 if (scene && index == scene.index)
                     return;
 
@@ -33,7 +34,7 @@ export function createSceneManager(renderer, hero, callback) {
                     sideScene.sideScenes[scene.index] = scene;
                     scene = sideScene;
                 } else {
-                    loadScene(sceneMap, index, null, debug, (err, pScene) => {
+                    loadScene(sceneMap, index, null, (err, pScene) => {
                         hero.physics.position.x = pScene.scenery.props.startPosition[0];
                         hero.physics.position.z = pScene.scenery.props.startPosition[1];
                         renderer.applySceneryProps(pScene.scenery.props);
@@ -45,7 +46,7 @@ export function createSceneManager(renderer, hero, callback) {
     });
 }
 
-function loadScene(sceneMap, index, parent, debug, callback) {
+function loadScene(sceneMap, index, parent, callback) {
     loadSceneData(index, sceneData => {
         const indexInfo = sceneMap[index];
         const loadSteps = {
@@ -65,7 +66,7 @@ function loadScene(sceneMap, index, parent, debug, callback) {
             }];
             if (indexInfo.isIsland) {
                 loadSteps.sideScenes = ['scenery', 'threeScene', (data, callback) => {
-                    loadSideScenes(sceneMap, index, data, debug, callback);
+                    loadSideScenes(sceneMap, index, data, callback);
                 }];
             }
         } else {
@@ -74,7 +75,7 @@ function loadScene(sceneMap, index, parent, debug, callback) {
         }
 
         async.auto(loadSteps, function (err, data) {
-            const sceneNode = loadSceneNode(index, indexInfo, data, debug);
+            const sceneNode = loadSceneNode(index, indexInfo, data);
             if (indexInfo.isIsland) {
                 data.threeScene.add(sceneNode);
             }
@@ -95,7 +96,7 @@ function loadScene(sceneMap, index, parent, debug, callback) {
     });
 }
 
-function loadSceneNode(index, indexInfo, data, debug) {
+function loadSceneNode(index, indexInfo, data) {
     const sceneNode = indexInfo.isIsland ? new THREE.Object3D() : new THREE.Scene();
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
@@ -108,14 +109,16 @@ function loadSceneNode(index, indexInfo, data, debug) {
     };
 
     each(data.actors, addToSceneNode);
-    if (debug) {
+    if (DISPLAY_ZONES) {
         each(data.zones, addToSceneNode);
+    }
+    if (DISPLAY_POINTS) {
         each(data.points, addToSceneNode);
     }
     return sceneNode;
 }
 
-function loadSideScenes(sceneMap, index, parent, debug, callback) {
+function loadSideScenes(sceneMap, index, parent, callback) {
     const sideIndices = filter(
         map(sceneMap, (indexInfo, sideIndex) => {
             if (sideIndex != index
@@ -132,7 +135,7 @@ function loadSideScenes(sceneMap, index, parent, debug, callback) {
         id => id != null
     );
     async.map(sideIndices, (sideIndex, callback) => {
-        loadScene(sceneMap, sideIndex, parent, debug, callback);
+        loadScene(sceneMap, sideIndex, parent, callback);
     }, (err, sideScenes) => {
         const sideScenesMap = {};
         each(sideScenes, sideScene => {
