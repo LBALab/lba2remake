@@ -53,6 +53,7 @@ export function loadActor(props: ActorProps, callback: Function) {
         },
         update: function(time) {
             Script.processMoveScript(actor);
+            Script.processLifeScript(actor);
             updateModel(this.model, props.entityIndex, props.bodyIndex, props.animIndex, time);
         },
         isVisible: !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && props.life > 0,

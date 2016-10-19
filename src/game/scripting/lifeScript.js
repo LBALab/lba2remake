@@ -219,7 +219,7 @@ export const ConditionOpcode = [
 
 
 function lsEND(script, state, actor) {
-
+    state.continue = false;
 }
 
 function lsNOP(script, state, actor) {
@@ -611,7 +611,8 @@ function lsADD_MESSAGE_OBJ(script, state, actor) {
 }
 
 function lsBRUTAL_EXIT(script, state, actor) {
-
+    state.continue = false;
+    state.offset = -1;
 }
 
 function lsREPLACE(script, state, actor) {

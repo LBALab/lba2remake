@@ -20,13 +20,24 @@ export function initScriptState() {
 }
 
 export function processLifeScript(actor) {
-    const state = actor.props.scriptState;
+    const state = actor.scriptState;
     const script = actor.props.lifeScript;
+    state.continue = true;
     if (script.byteLength > 0 && state.life.offset >= 0) {
-        do {
+        while (state.life.continue) {
+            if (state.life.offset >= script.byteLength) {
+                console.warn("MoveScript error: offset > length");
+                state.life.offset = -1;
+                break;
+            }
             const opcode = script.getUint8(state.life.offset++, true);
-            // RUN OPCODE
-        } while(state.life.continue);
+            LifeOpcode[opcode].callback(script, state.life, actor);
+            state.life.offset += LifeOpcode[opcode].offset;
+            /*console.debug("opcode: " + opcode);
+            console.debug("state: ", state.life);
+            console.debug("opcode def: ", LifeOpcode[opcode]);
+            console.debug(LifeOpcode[opcode].command);*/
+        }
     }
 }
 
