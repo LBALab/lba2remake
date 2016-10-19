@@ -5,6 +5,7 @@ import THREE from 'three';
 import type {Model} from '../model';
 import {loadModel, updateModel} from '../model';
 import {getRotation} from '../utils/lba';
+import * as Script from './scripting';
 
 type ActorProps = {
     pos: [number, number, number],
@@ -28,6 +29,7 @@ type Actor = {
     physics: ActorPhysics,
     isVisible: boolean,
     isSprite: boolean,
+    scriptState: any,
     update: ?Function
 }
 
@@ -50,12 +52,14 @@ export function loadActor(props: ActorProps, callback: Function) {
             orientation: new THREE.Quaternion()
         },
         update: function(time) {
+            Script.processMoveScript(actor);
             updateModel(this.model, props.entityIndex, props.bodyIndex, props.animIndex, time);
         },
         isVisible: !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && props.life > 0,
         isSprite: (props.staticFlags & ACTOR_STATIC_FLAG.SPRITE) ? true : false,
         model: null,
-        threeObject: null
+        threeObject: null,
+        scriptState: Script.initScriptState()
     };
 
     const euler = new THREE.Euler(THREE.Math.degToRad(0),
