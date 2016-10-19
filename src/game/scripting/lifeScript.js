@@ -158,6 +158,16 @@ export const LifeOpcode = [
     { opcode: 0x9A, command: "PCX_MESS_OBJ", callback: lsPCX_MESS_OBJ, offset: 5 }
 ];
 
+export const OperatorOpcode = [
+    { opcode: 0x00, command: "==" },
+    { opcode: 0x01, command: ">" },
+    { opcode: 0x02, command: "<" },
+    { opcode: 0x03, command: ">=" },
+    { opcode: 0x04, command: "<=" },
+    { opcode: 0x05, command: "!=" }
+];
+
+
 function lsEND(script, state, actor) {
 
 }
