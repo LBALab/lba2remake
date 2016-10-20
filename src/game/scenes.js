@@ -76,16 +76,11 @@ function loadScene(sceneMap, index, parent, callback) {
 
         async.auto(loadSteps, function (err, data) {
             const sceneNode = loadSceneNode(index, indexInfo, data);
-            if (indexInfo.isIsland) {
-                data.threeScene.add(sceneNode);
-            } else {
-                sceneNode.add(data.scenery.threeObject3D);
-            }
+            data.threeScene.add(sceneNode);
             callback(null, {
                 index: index,
                 isIsland: indexInfo.isIsland,
                 threeScene: data.threeScene,
-                sceneNode: sceneNode,
                 scenery: data.scenery,
                 sideScenes: data.sideScenes,
                 update: time => {

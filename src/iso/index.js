@@ -15,29 +15,6 @@ export function loadIsometricScenery(entry, callback) {
         const bricks = loadBricks(files.bkg);
         const grid = loadGrid(files.bkg, bricks, palette, entry + 1);
 
-        const geometries = {
-            positions: [],
-            uvs: []
-        };
-        let c = 0;
-        for (let z = 0; z < 64; ++z) {
-            for (let x = 0; x < 64; ++x) {
-                grid.cells[c].build(geometries, x, z);
-                c++;
-            }
-        }
-
-        const bufferGeometry = new THREE.BufferGeometry();
-        bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
-        bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
-        const mesh = new THREE.Mesh(bufferGeometry, new THREE.MeshBasicMaterial({
-            map: grid.library.texture,
-            depthTest: false,
-            transparent: true
-        }));
-        mesh.position.x = 120;
-        mesh.position.y = -150;
-
         callback(null, {
             props: {
                 startPosition: [0, 0],
@@ -45,8 +22,7 @@ export function loadIsometricScenery(entry, callback) {
                     skyColor: [0, 0, 0]
                 }
             },
-            threeObject: mesh,
-            threeObject3D: load3DMesh(grid),
+            threeObject: loadMesh(grid),
             physics: {
                 getGroundHeight: () => 0
             },
@@ -55,17 +31,16 @@ export function loadIsometricScenery(entry, callback) {
     });
 }
 
-function load3DMesh(grid) {
+function loadMesh(grid) {
     const geometries = {
         positions: [],
         centers: [],
-        uvs: [],
         tiles: []
     };
     let c = 0;
     for (let z = 0; z < 64; ++z) {
         for (let x = 0; x < 64; ++x) {
-            grid.cells[c].build3D(geometries, x, z - 1);
+            grid.cells[c].build(geometries, x, z - 1);
             c++;
         }
     }
@@ -73,7 +48,6 @@ function load3DMesh(grid) {
     const bufferGeometry = new THREE.BufferGeometry();
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
     bufferGeometry.addAttribute('center', new THREE.BufferAttribute(new Float32Array(geometries.centers), 3));
-    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
     bufferGeometry.addAttribute('tile', new THREE.BufferAttribute(new Float32Array(geometries.tiles), 2));
     const {width, height} = grid.library.texture.image;
     const mesh = new THREE.Mesh(bufferGeometry, new THREE.RawShaderMaterial({
@@ -82,50 +56,18 @@ function load3DMesh(grid) {
         transparent: true,
         uniforms: {
             library: {value: grid.library.texture},
-            outline: {value: makeOutlineTexture()},
             tileSize: {value: new THREE.Vector2(48 / width, 38 / height)},
-            vps: {value: new THREE.Vector2(window.innerWidth, window.innerHeight)}
+            window: {value: new THREE.Vector2(window.innerWidth, window.innerHeight)}
         }
     }));
+
+    window.addEventListener('resize', () => {
+        mesh.material.uniforms.window.value.set(window.innerWidth, window.innerHeight);
+    });
     let scale = 1 / 32;
     mesh.scale.set(scale, scale, scale);
     mesh.position.set(2, 0, 0);
     mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
 
     return mesh;
-}
-
-export function makeOutlineTexture() {
-    const image_data = new Uint8Array(32 * 32 * 4);
-    for (let y = 0; y < 32; ++y) {
-        for (let x = 0; x < 32; ++x) {
-            const idx = y * 32 + x;
-            if (y == 0 || x == 0 || y == 31 || x == 31) {
-                image_data[idx * 4] = 0xFF;
-                image_data[idx * 4 + 1] = 0;
-                image_data[idx * 4 + 2] = 0;
-                image_data[idx * 4 + 3] = 0xFF;
-            } else {
-                image_data[idx * 4] = 0;
-                image_data[idx * 4 + 1] = 0;
-                image_data[idx * 4 + 2] = 0;
-                image_data[idx * 4 + 3] = 0x0F;
-            }
-        }
-    }
-    const texture = new THREE.DataTexture(
-        image_data,
-        32,
-        32,
-        THREE.RGBAFormat,
-        THREE.UnsignedByteType,
-        THREE.UVMapping,
-        THREE.ClampToEdgeWrapping,
-        THREE.ClampToEdgeWrapping,
-        THREE.NearestFilter,
-        THREE.NearestFilter
-    );
-    texture.needsUpdate = true;
-    texture.generateMipmaps = false;
-    return texture;
 }

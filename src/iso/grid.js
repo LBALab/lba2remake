@@ -46,8 +46,7 @@ export function loadGrid(bkg, bricks, palette, entry) {
                 }
             }
             return {
-                build: buildCell.bind(null, library, blocks),
-                build3D: buildCell3D.bind(null, library, blocks)
+                build: buildCell.bind(null, library, blocks)
             };
         })
     };
@@ -106,45 +105,8 @@ function loadLayout(dataView) {
 }
 
 function buildCell(library, blocks, geometries, x, z) {
-    const {positions, uvs} = geometries;
-    const {width, height} = library.texture.image;
-    for (let y = 0; y < blocks.length; ++y) {
-        if (blocks[y]) {
-            const layout = library.layouts[blocks[y].layout];
-            if (layout) {
-                const block = layout.blocks[blocks[y].block];
-                if (block && block.brick) {
-                    const {u, v} = library.bricksMap[block.brick];
-                    const {px, py} = getPosition(x, y, z);
-
-                    // First triangle
-                    positions.push(px, py, 0);
-                    uvs.push(u / width, v / height);
-
-                    positions.push(px + 48, py, 0);
-                    uvs.push((u + 48) / width, v / height);
-
-                    positions.push(px + 48, py + 38, 0);
-                    uvs.push((u + 48) / width, (v + 38) / height);
-
-                    // Second triangle
-                    positions.push(px, py, 0);
-                    uvs.push(u / width, v / height);
-
-                    positions.push(px + 48, py + 38, 0);
-                    uvs.push((u + 48) / width, (v + 38) / height);
-
-                    positions.push(px, py + 38, 0);
-                    uvs.push(u / width, (v + 38) / height);
-                }
-            }
-        }
-    }
-}
-
-function buildCell3D(library, blocks, geometries, x, z) {
     const h = 0.5;
-    const {positions, uvs, centers, tiles} = geometries;
+    const {positions, centers, tiles} = geometries;
     const {width, height} = library.texture.image;
     for (let yIdx = 0; yIdx < blocks.length; ++yIdx) {
         const y = yIdx * h + h;
@@ -156,43 +118,25 @@ function buildCell3D(library, blocks, geometries, x, z) {
                     const {u, v} = library.bricksMap[block.brick];
 
                     positions.push(x, y, z);
-                    uvs.push(0, 0);
                     positions.push(x, y, z + 1);
-                    uvs.push(0, 1);
                     positions.push(x + 1, y, z);
-                    uvs.push(1, 0);
                     positions.push(x + 1, y, z);
-                    uvs.push(1, 0);
                     positions.push(x, y, z + 1);
-                    uvs.push(0, 1);
                     positions.push(x + 1, y, z + 1);
-                    uvs.push(1, 1);
 
                     positions.push(x + 1, y, z);
-                    uvs.push(1, 0);
                     positions.push(x + 1, y, z + 1);
-                    uvs.push(0, 0);
                     positions.push(x + 1, y - h, z + 1);
-                    uvs.push(0, 1);
                     positions.push(x + 1, y, z);
-                    uvs.push(1, 0);
                     positions.push(x + 1, y - h, z + 1);
-                    uvs.push(0, 1);
                     positions.push(x + 1, y - h, z);
-                    uvs.push(1, 1);
 
                     positions.push(x, y, z + 1);
-                    uvs.push(0, 0);
                     positions.push(x + 1, y - h, z + 1);
-                    uvs.push(1, 1);
                     positions.push(x + 1, y, z + 1);
-                    uvs.push(1, 0);
                     positions.push(x, y, z + 1);
-                    uvs.push(0, 0);
                     positions.push(x, y - h, z + 1);
-                    uvs.push(0, 1);
                     positions.push(x + 1, y - h, z + 1);
-                    uvs.push(1, 1);
 
                     each(range(18), () => {
                         centers.push(x + 0.5, y - h * 0.5, z + 0.5);
@@ -204,9 +148,3 @@ function buildCell3D(library, blocks, geometries, x, z) {
     }
 }
 
-function getPosition(x, y, z) {
-    return {
-        px: (z - x) * 24,
-        py: (x + z) * 12 - y * 15
-    }
-}
