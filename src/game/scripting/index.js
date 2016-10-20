@@ -7,6 +7,7 @@ import {LifeOpcode} from './lifeScript';
 export function initScriptState() {
     return {
         life: { 
+            opcodeOffset: 0,
             offset: 0,
             continue: true
         },
@@ -31,7 +32,8 @@ export function processLifeScript(actor) {
                 state.life.offset = -1;
                 break;
             }
-            const opcode = script.getUint8(state.life.offset++, true);
+            state.opcodeOffset = state.life.offset++;
+            const opcode = script.getUint8(state.opcodeOffset, true);
             /*console.debug("opcode: " + opcode);
             console.debug("state: ", state.life);
             console.debug("opcode def: ", LifeOpcode[opcode]);

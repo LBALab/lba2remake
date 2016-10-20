@@ -167,59 +167,288 @@ export const OperatorOpcode = [
     { opcode: 0x05, command: "!=" }
 ];
 
-
 export const ConditionOpcode = [
-    { opcode: 0x00, command: "COL", param: 0, value_size: 1 },
-    { opcode: 0x01, command: "COL_OBJ", param: 1, value_size: 1 },
-    { opcode: 0x02, command: "DISTANCE", param: 1, value_size: 2 },
-    { opcode: 0x03, command: "ZONE", param: 0, value_size: 1 },
-    { opcode: 0x04, command: "ZONE_OBJ", param: 1, value_size: 1 },
-    { opcode: 0x05, command: "BODY", param: 0, value_size: 1 },
-    { opcode: 0x06, command: "BODY_OBJ", param: 1, value_size: 1 },
-    { opcode: 0x07, command: "ANIM", param: 0, value_size: 2 },
-    { opcode: 0x08, command: "ANIM_OBJ", param: 1, value_size: 2 },
-    { opcode: 0x09, command: "CURRENT_TRACK", param: 0, value_size: 1 },
-    { opcode: 0x0A, command: "CURRENT_TRACK_OBJ", param: 1, value_size: 1 },
-    { opcode: 0x0B, command: "VAR_CUBE", param: 1, value_size: 1 },
-    { opcode: 0x0C, command: "CONE_VIEW", param: 1, value_size: 2 },
-    { opcode: 0x0D, command: "HIT_BY", param: 0, value_size: 1 },
-    { opcode: 0x0E, command: "ACTION", param: 0, value_size: 1 },
-    { opcode: 0x0F, command: "VAR_GAME", param: 1, value_size: 2 },
-    { opcode: 0x10, command: "LIFE_POINT", param: 0, value_size: 2 },
-    { opcode: 0x11, command: "LIFE_POINT_OBJ", param: 1, value_size: 2 },
-    { opcode: 0x12, command: "NUM_LITTLE_KEYS", param: 0, value_size: 1 },
-    { opcode: 0x13, command: "NUM_GOLD_PIECES", param: 0, value_size: 2 },
-    { opcode: 0x14, command: "BEHAVIOUR", param: 0, value_size: 1 },
-    { opcode: 0x15, command: "CHAPTER", param: 0, value_size: 1 },
-    { opcode: 0x16, command: "DISTANCE_3D", param: 1, value_size: 1 },
-    { opcode: 0x17, command: "MAGIC_LEVEL", param: 0, value_size: 1 },
-    { opcode: 0x18, command: "MAGIC_POINT", param: 0, value_size: 1 },
-    { opcode: 0x19, command: "USE_INVENTORY", param: 1, value_size: 1 },
-    { opcode: 0x1A, command: "CHOICE", param: 0, value_size: 2 },
-    { opcode: 0x1B, command: "FUEL", param: 0, value_size: 1 },
-    { opcode: 0x1C, command: "CARRIED_BY", param: 0, value_size: 1 },
-    { opcode: 0x1D, command: "CDROM", param: 0, value_size: 1 },
-    { opcode: 0x1E, command: "LADDER", param: 0, value_size: 1 },
-    { opcode: 0x1F, command: "RND", param: 1, value_size: 1 },
-    { opcode: 0x20, command: "RAIL", param: 1, value_size: 1 },
-    { opcode: 0x21, command: "BETA", param: 0, value_size: 2 },
-    { opcode: 0x22, command: "BETA_OBJ", param: 1, value_size: 2 },
-    { opcode: 0x23, command: "CARRIED_OBJ_BY", param: 1, value_size: 1 },
-    { opcode: 0x24, command: "ANGLE", param: 1, value_size: 2 },
-    { opcode: 0x25, command: "DISTANCE_MESSAGE", param: 1, value_size: 2 },
-    { opcode: 0x26, command: "HIT_OBJ_BY", param: 1, value_size: 1 },
-    { opcode: 0x27, command: "REAL_ANGLE", param: 0, value_size: 2 },
-    { opcode: 0x28, command: "DEMO", param: 0, value_size: 1 },
-    { opcode: 0x29, command: "COL_DECORS", param: 0, value_size: 1 },
-    { opcode: 0x2A, command: "COL_DECORS_OBJ", param: 1, value_size: 1 },
-    { opcode: 0x2B, command: "PROCESSOR", param: 0, value_size: 1 },
-    { opcode: 0x2C, command: "OBJECT_DISPLAYED", param: 0, value_size: 1 },
-    { opcode: 0x2D, command: "ANGLE_OBJ", param: 0, value_size: 1 }
+    { opcode: 0x00, command: "COL", callback: lcCOL, param: 0, value_size: 1 },
+    { opcode: 0x01, command: "COL_OBJ", callback: lcCOL_OBJ, param: 1, value_size: 1 },
+    { opcode: 0x02, command: "DISTANCE", callback: lcDISTANCE, param: 1, value_size: 2 },
+    { opcode: 0x03, command: "ZONE", callback: lcZONE, param: 0, value_size: 1 },
+    { opcode: 0x04, command: "ZONE_OBJ", callback: lcZONE_OBJ, param: 1, value_size: 1 },
+    { opcode: 0x05, command: "BODY", callback: lcBODY, param: 0, value_size: 1 },
+    { opcode: 0x06, command: "BODY_OBJ", callback: lcBODY_OBJ, param: 1, value_size: 1 },
+    { opcode: 0x07, command: "ANIM", callback: lcANIM, param: 0, value_size: 2 },
+    { opcode: 0x08, command: "ANIM_OBJ", callback: lcANIM_OBJ, param: 1, value_size: 2 },
+    { opcode: 0x09, command: "CURRENT_TRACK", callback: lcCURRENT_TRACK, param: 0, value_size: 1 },
+    { opcode: 0x0A, command: "CURRENT_TRACK_OBJ", callback: lcCURRENT_TRACK_OBJ, param: 1, value_size: 1 },
+    { opcode: 0x0B, command: "VAR_CUBE", callback: lcVAR_CUBE, param: 1, value_size: 1 },
+    { opcode: 0x0C, command: "CONE_VIEW", callback: lcCONE_VIEW, param: 1, value_size: 2 },
+    { opcode: 0x0D, command: "HIT_BY", callback: lcHIT_BY, param: 0, value_size: 1 },
+    { opcode: 0x0E, command: "ACTION", callback: lcACTION, param: 0, value_size: 1 },
+    { opcode: 0x0F, command: "VAR_GAME", callback: lcVAR_GAME, param: 1, value_size: 2 },
+    { opcode: 0x10, command: "LIFE_POINT", callback: lcLIFE_POINT, param: 0, value_size: 2 },
+    { opcode: 0x11, command: "LIFE_POINT_OBJ", callback: lcLIFE_POINT_OBJ, param: 1, value_size: 2 },
+    { opcode: 0x12, command: "NUM_LITTLE_KEYS", callback: lcNUM_LITTLE_KEYS, param: 0, value_size: 1 },
+    { opcode: 0x13, command: "NUM_GOLD_PIECES", callback: lcNUM_GOLD_PIECES, param: 0, value_size: 2 },
+    { opcode: 0x14, command: "BEHAVIOUR", callback: lcBEHAVIOUR, param: 0, value_size: 1 },
+    { opcode: 0x15, command: "CHAPTER", callback: lcCHAPTER, param: 0, value_size: 1 },
+    { opcode: 0x16, command: "DISTANCE_3D", callback: lcDISTANCE_3D, param: 1, value_size: 1 },
+    { opcode: 0x17, command: "MAGIC_LEVEL", callback: lcMAGIC_LEVEL, param: 0, value_size: 1 },
+    { opcode: 0x18, command: "MAGIC_POINT", callback: lcMAGIC_POINT, param: 0, value_size: 1 },
+    { opcode: 0x19, command: "USE_INVENTORY", callback: lcUSE_INVENTORY, param: 1, value_size: 1 },
+    { opcode: 0x1A, command: "CHOICE", callback: lcCHOICE, param: 0, value_size: 2 },
+    { opcode: 0x1B, command: "FUEL", callback: lcFUEL, param: 0, value_size: 1 },
+    { opcode: 0x1C, command: "CARRIED_BY", callback: lcCARRIED_BY, param: 0, value_size: 1 },
+    { opcode: 0x1D, command: "CDROM", callback: lcCDROM, param: 0, value_size: 1 },
+    { opcode: 0x1E, command: "LADDER", callback: lcLADDER, param: 0, value_size: 1 },
+    { opcode: 0x1F, command: "RND", callback: lcRND, param: 1, value_size: 1 },
+    { opcode: 0x20, command: "RAIL", callback: lcRAIL, param: 1, value_size: 1 },
+    { opcode: 0x21, command: "BETA", callback: lcBETA, param: 0, value_size: 2 },
+    { opcode: 0x22, command: "BETA_OBJ", callback: lcBETA_OBJ, param: 1, value_size: 2 },
+    { opcode: 0x23, command: "CARRIED_OBJ_BY", callback: lcCARRIED_OBJ_BY, param: 1, value_size: 1 },
+    { opcode: 0x24, command: "ANGLE", callback: lcANGLE, param: 1, value_size: 2 },
+    { opcode: 0x25, command: "DISTANCE_MESSAGE", callback: lcDISTANCE_MESSAGE, param: 1, value_size: 2 },
+    { opcode: 0x26, command: "HIT_OBJ_BY", callback: lcHIT_OBJ_BY, param: 1, value_size: 1 },
+    { opcode: 0x27, command: "REAL_ANGLE", callback: lcREAL_ANGLE, param: 0, value_size: 2 },
+    { opcode: 0x28, command: "DEMO", callback: lcDEMO, param: 0, value_size: 1 },
+    { opcode: 0x29, command: "COL_DECORS", callback: lcCOL_DECORS, param: 0, value_size: 1 },
+    { opcode: 0x2A, command: "COL_DECORS_OBJ", callback: lcCOL_DECORS_OBJ, param: 1, value_size: 1 },
+    { opcode: 0x2B, command: "PROCESSOR", callback: lcPROCESSOR, param: 0, value_size: 1 },
+    { opcode: 0x2C, command: "OBJECT_DISPLAYED", callback: lcOBJECT_DISPLAYED, param: 0, value_size: 1 },
+    { opcode: 0x2D, command: "ANGLE_OBJ", callback: lcANGLE_OBJ, param: 0, value_size: 1 }
 ];
 
+// Condition Comands
+
+function lcCOL(param) {
+
+}
+
+function lcCOL_OBJ(param) {
+
+}
+
+function lcDISTANCE(param) {
+
+}
+
+function lcZONE(param) {
+
+}
+
+function lcZONE_OBJ(param) {
+
+}
+
+function lcBODY(param) {
+
+}
+
+function lcBODY_OBJ(param) {
+
+}
+
+function lcANIM(param) {
+
+}
+
+function lcANIM_OBJ(param) {
+
+}
+
+function lcCURRENT_TRACK(param) {
+
+}
+
+function lcCURRENT_TRACK_OBJ(param) {
+
+}
+
+function lcVAR_CUBE(param) {
+
+}
+
+function lcCONE_VIEW(param) {
+
+}
+
+function lcHIT_BY(param) {
+
+}
+
+function lcACTION(param) {
+
+}
+
+function lcVAR_GAME(param) {
+
+}
+
+function lcLIFE_POINT(param) {
+
+}
+
+function lcLIFE_POINT_OBJ(param) {
+
+}
+
+function lcNUM_LITTLE_KEYS(param) {
+
+}
+
+function lcNUM_GOLD_PIECES(param) {
+
+}
+
+function lcBEHAVIOUR(param) {
+
+}
+
+function lcCHAPTER(param) {
+
+}
+
+function lcDISTANCE_3D(param) {
+
+}
+
+function lcMAGIC_LEVEL(param) {
+
+}
+
+function lcMAGIC_POINT(param) {
+
+}
+
+function lcUSE_INVENTORY(param) {
+
+}
+
+function lcCHOICE(param) {
+
+}
+
+function lcFUEL(param) {
+
+}
+
+function lcCARRIED_BY(param) {
+
+}
+
+function lcCDROM(param) {
+
+}
+
+function lcLADDER(param) {
+
+}
+
+function lcRND(param) {
+
+}
+
+function lcRAIL(param) {
+
+}
+
+function lcBETA(param) {
+
+}
+
+function lcBETA_OBJ(param) {
+
+}
+
+function lcCARRIED_OBJ_BY(param) {
+
+}
+
+function lcANGLE(param) {
+
+}
+
+function lcDISTANCE_MESSAGE(param) {
+
+}
+
+function lcHIT_OBJ_BY(param) {
+
+}
+
+function lcREAL_ANGLE(param) {
+
+}
+
+function lcDEMO(param) {
+
+}
+
+function lcCOL_DECORS(param) {
+
+}
+
+function lcCOL_DECORS_OBJ(param) {
+
+}
+
+function lcPROCESSOR(param) {
+
+}
+
+function lcOBJECT_DISPLAYED(param) {
+
+}
+
+function lcANGLE_OBJ(param) {
+
+}
+
+// Comands Conditions
+
+function testConditionValue(operator, a, b) {
+	switch (operator) {
+        case 0:
+            return a == b;
+        case 1:
+            return a > b;
+        case 2:
+            return a < b;
+        case 3:
+            return a >= b;
+        case 4:
+            return a <= b;
+        case 5:
+            return a != b;
+        default:
+            console.debug("Unknown operator");
+	}
+	return false;
+}
+
+function testCondition(script, state) {
+    const conditionIndex = script.getUint8(state.offset++, true);
+    const condition = ConditionOpcode[conditionIndex];
+    let param = null; 
+    if (condition.param) {
+        param = script.getUint8(state.offset++, true);
+    }
+    const value1 = condition.callback(param);
+    const operator = script.getUint8(state.offset++, true);
+    let value2 = null;
+    if (condition.value_size == 1) {
+        value2 = script.getInt8(state.offset++, true);
+    } else {
+        value2 = script.getInt16(state.offset, true);
+        state.offset += 2;
+    }
+    console.debug(condition + " " + value1 + " " + OperatorOpcode[operator] + " " + value2);
+    return testConditionValue(operator, value1, value2);
+}
+
+// Life Script Comands
 
 function lsEND(script, state, actor) {
     state.continue = false;
+    state.offset = -1; // double check this later
 }
 
 function lsNOP(script, state, actor) {
@@ -227,15 +456,19 @@ function lsNOP(script, state, actor) {
 }
 
 function lsSNIF(script, state, actor) {
-
+    if (!testCondition(script, state)) {
+        script.offset = script.getUint16(state.opcodeOffset, 0x0D); // override opcode to SWIF
+    }
+    script.offset = script.getUint16(state.offset, true);
 }
 
 function lsOFFSET(script, state, actor) {
-
+    script.offset = script.getUint16(state.offset, true);
 }
 
 function lsNEVERIF(script, state, actor) {
-
+    testCondition(script, state);
+    script.offset = script.getUint16(state.offset, true);
 }
 
 function lsPALETTE(script, state, actor) {
@@ -243,23 +476,34 @@ function lsPALETTE(script, state, actor) {
 }
 
 function lsRETURN(script, state, actor) {
-
+    state.continue = false;
 }
 
 function lsIF(script, state, actor) {
-
+    if (!testCondition(script, state)) {
+        script.offset = script.getUint16(state.offset, true);
+    }
+    script.offset += 2;
 }
 
 function lsSWIF(script, state, actor) {
-
+    if (!testCondition(script, state)) {
+        script.offset = script.getUint16(state.offset, true);
+    }
+    script.offset += 2;
+    script.offset = script.getUint16(state.opcodeOffset, 0x02); // override opcode to SNIF
 }
 
 function lsONEIF(script, state, actor) {
-
+    if (!testCondition(script, state)) {
+        script.offset = script.getUint16(state.offset, true);
+    }
+    script.offset += 2;
+    script.offset = script.getUint16(state.opcodeOffset, 0x04); // override opcode to NEVERIF
 }
 
 function lsELSE(script, state, actor) {
-
+    script.offset = script.getUint16(state.offset, true);
 }
 
 function lsENDIF(script, state, actor) {
