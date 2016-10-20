@@ -29,7 +29,7 @@ window.onload = function() {
             makeGamepadControls(hero.physics)
         ] : [
             makeFirstPersonMouseControls(renderer.domElement, hero.physics),
-            makeKeyboardControls(hero.physics),
+            makeKeyboardControls(hero.physics, sceneManager),
             makeGamepadControls(hero.physics)
         ];
 

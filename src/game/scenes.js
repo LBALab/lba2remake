@@ -16,7 +16,14 @@ import {loadPoint} from './points';
 import {loadZone} from './zones';
 import {DISPLAY_ZONES, DISPLAY_POINTS} from '../debugFlags';
 
-export function createSceneManager(renderer, hero, callback) {
+export type SceneManager = {
+    getScene: Function,
+    goto: Function,
+    next: Function,
+    previous: Function
+}
+
+export function createSceneManager(renderer, hero, callback: Function) {
     let scene = null;
 
     loadSceneMapData(sceneMap => {
@@ -40,6 +47,18 @@ export function createSceneManager(renderer, hero, callback) {
                         renderer.applySceneryProps(pScene.scenery.props);
                         scene = pScene;
                     });
+                }
+            },
+            next: function() {
+                if (scene) {
+                    const next = (scene.index + 1) % sceneMap.length;
+                    this.goto(next);
+                }
+            },
+            previous: function() {
+                if (scene) {
+                    const previous = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
+                    this.goto(previous);
                 }
             }
         });

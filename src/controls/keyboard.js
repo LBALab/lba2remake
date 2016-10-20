@@ -1,11 +1,12 @@
 // @flow
 
 import type {HeroPhysics} from '../game/hero';
+import type {SceneManager} from '../game/scenes';
 import {switchMovementMode} from '../game/hero';
 import {switchStats} from '../renderer/stats';
 
-export function makeKeyboardControls(heroPhysics: HeroPhysics) {
-    const onKeyDown = keyDownHandler.bind(null, heroPhysics);
+export function makeKeyboardControls(heroPhysics: HeroPhysics, sceneManager: SceneManager) {
+    const onKeyDown = keyDownHandler.bind(null, heroPhysics, sceneManager);
     const onKeyUp = keyUpHandler.bind(null, heroPhysics);
     window.addEventListener('keydown', onKeyDown, false);
     window.addEventListener('keyup', onKeyUp, false);
@@ -17,7 +18,7 @@ export function makeKeyboardControls(heroPhysics: HeroPhysics) {
     }
 }
 
-function keyDownHandler(heroPhysics, event) {
+function keyDownHandler(heroPhysics, sceneManager, event) {
     var key = event.code || event.which || event.keyCode;
     switch (key) {
         case 87: // w
@@ -46,11 +47,11 @@ function keyDownHandler(heroPhysics, event) {
             break;
         case 34: // pagedown
         case 'PageDown':
-            //GameEvents.scene.nextIsland();
+            sceneManager.next();
             break;
         case 33: // pageup
         case 'PageUp':
-            //GameEvents.scene.previousIsland();
+            sceneManager.previous();
             break;
         case 70: // f
         case 'KeyF':
