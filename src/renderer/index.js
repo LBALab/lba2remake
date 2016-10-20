@@ -75,8 +75,8 @@ export function createRenderer(useVR) {
             if (scene.isIsland) {
                 render(scene.threeScene, camera3D);
             } else {
-                render(scene.threeScene, cameraIso);
-                renderer.autoClear = false;
+                //render(scene.threeScene, cameraIso);
+                //renderer.autoClear = false;
                 render(scene.sceneNode, cameraIso3D);
                 renderer.autoClear = true;
             }

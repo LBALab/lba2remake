@@ -25,8 +25,6 @@ export function getIsometric3DCamera() {
     const halfHeight = Math.floor(window.innerHeight / 2) / v;
     const camera = new THREE.OrthographicCamera(-halfWidth, halfWidth, halfHeight, -halfHeight, 0.1, 20); // 1m = 0.0625 units
 
-    console.log(camera.projectionMatrix);
-
     const lookAt = new THREE.Vector3(1.94875, 0, 0.27);
     camera.position.copy(lookAt);
     camera.position.add(new THREE.Vector3(-10, 8.1, 10));

@@ -1,4 +1,4 @@
-import {map} from 'lodash';
+import {map, each, range} from 'lodash';
 import {bits} from '../utils';
 import {loadBricksMapping} from './mapping';
 
@@ -144,7 +144,8 @@ function buildCell(library, blocks, geometries, x, z) {
 
 function buildCell3D(library, blocks, geometries, x, z) {
     const h = 0.5;
-    const {positions, uvs} = geometries;
+    const {positions, uvs, centers, tiles} = geometries;
+    const {width, height} = library.texture.image;
     for (let yIdx = 0; yIdx < blocks.length; ++yIdx) {
         const y = yIdx * h + h;
         if (blocks[yIdx]) {
@@ -152,6 +153,8 @@ function buildCell3D(library, blocks, geometries, x, z) {
             if (layout) {
                 const block = layout.blocks[blocks[yIdx].block];
                 if (block && block.brick) {
+                    const {u, v} = library.bricksMap[block.brick];
+
                     positions.push(x, y, z);
                     uvs.push(0, 0);
                     positions.push(x, y, z + 1);
@@ -190,6 +193,11 @@ function buildCell3D(library, blocks, geometries, x, z) {
                     uvs.push(0, 1);
                     positions.push(x + 1, y - h, z + 1);
                     uvs.push(1, 1);
+
+                    each(range(18), () => {
+                        centers.push(x + 0.5, y - h * 0.5, z + 0.5);
+                        tiles.push(u / width, v / height);
+                    });
                 }
             }
         }

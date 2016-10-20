@@ -3,6 +3,8 @@ import THREE from 'three';
 import {loadHqrAsync} from '../hqr';
 import {loadBricks} from './bricks';
 import {loadGrid} from './grid';
+import brick_vertex from './shaders/brick.vert.glsl';
+import brick_fragment from './shaders/brick.frag.glsl';
 
 export function loadIsometricScenery(entry, callback) {
     async.auto({
@@ -56,7 +58,9 @@ export function loadIsometricScenery(entry, callback) {
 function load3DMesh(grid) {
     const geometries = {
         positions: [],
-        uvs: []
+        centers: [],
+        uvs: [],
+        tiles: []
     };
     let c = 0;
     for (let z = 0; z < 64; ++z) {
@@ -68,11 +72,20 @@ function load3DMesh(grid) {
 
     const bufferGeometry = new THREE.BufferGeometry();
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
+    bufferGeometry.addAttribute('center', new THREE.BufferAttribute(new Float32Array(geometries.centers), 3));
     bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
-    const mesh = new THREE.Mesh(bufferGeometry, new THREE.MeshBasicMaterial({
-        map: makeTestTexture(),
-        color: 0xFFFFFFFF,
-        transparent: true
+    bufferGeometry.addAttribute('tile', new THREE.BufferAttribute(new Float32Array(geometries.tiles), 2));
+    const {width, height} = grid.library.texture.image;
+    const mesh = new THREE.Mesh(bufferGeometry, new THREE.RawShaderMaterial({
+        vertexShader: brick_vertex,
+        fragmentShader: brick_fragment,
+        transparent: true,
+        uniforms: {
+            library: {value: grid.library.texture},
+            outline: {value: makeOutlineTexture()},
+            tileSize: {value: new THREE.Vector2(48 / width, 38 / height)},
+            vps: {value: new THREE.Vector2(window.innerWidth, window.innerHeight)}
+        }
     }));
     let scale = 1 / 32;
     mesh.scale.set(scale, scale, scale);
@@ -82,7 +95,7 @@ function load3DMesh(grid) {
     return mesh;
 }
 
-export function makeTestTexture() {
+export function makeOutlineTexture() {
     const image_data = new Uint8Array(32 * 32 * 4);
     for (let y = 0; y < 32; ++y) {
         for (let x = 0; x < 32; ++x) {
