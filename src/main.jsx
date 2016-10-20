@@ -34,7 +34,7 @@ window.onload = function() {
         ];
 
         document.getElementById('main').appendChild(renderer.domElement);
-        sceneManager.goto(48);
+        sceneManager.goto(16);
 
         const clock = new THREE.Clock();
         function processAnimationFrame() {

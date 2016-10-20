@@ -46,7 +46,8 @@ export function loadGrid(bkg, bricks, palette, entry) {
                 }
             }
             return {
-                build: buildCell.bind(null, library, blocks)
+                build: buildCell.bind(null, library, blocks),
+                build3D: buildCell3D.bind(null, library, blocks)
             };
         })
     };
@@ -135,6 +136,60 @@ function buildCell(library, blocks, geometries, x, z) {
 
                     positions.push(px, py + 38, 0);
                     uvs.push(u / width, (v + 38) / height);
+                }
+            }
+        }
+    }
+}
+
+function buildCell3D(library, blocks, geometries, x, z) {
+    const h = 0.5;
+    const {positions, uvs} = geometries;
+    for (let yIdx = 0; yIdx < blocks.length; ++yIdx) {
+        const y = yIdx * h + h;
+        if (blocks[yIdx]) {
+            const layout = library.layouts[blocks[yIdx].layout];
+            if (layout) {
+                const block = layout.blocks[blocks[yIdx].block];
+                if (block && block.brick) {
+                    positions.push(x, y, z);
+                    uvs.push(0, 0);
+                    positions.push(x, y, z + 1);
+                    uvs.push(0, 1);
+                    positions.push(x + 1, y, z);
+                    uvs.push(1, 0);
+                    positions.push(x + 1, y, z);
+                    uvs.push(1, 0);
+                    positions.push(x, y, z + 1);
+                    uvs.push(0, 1);
+                    positions.push(x + 1, y, z + 1);
+                    uvs.push(1, 1);
+
+                    positions.push(x + 1, y, z);
+                    uvs.push(1, 0);
+                    positions.push(x + 1, y, z + 1);
+                    uvs.push(0, 0);
+                    positions.push(x + 1, y - h, z + 1);
+                    uvs.push(0, 1);
+                    positions.push(x + 1, y, z);
+                    uvs.push(1, 0);
+                    positions.push(x + 1, y - h, z + 1);
+                    uvs.push(0, 1);
+                    positions.push(x + 1, y - h, z);
+                    uvs.push(1, 1);
+
+                    positions.push(x, y, z + 1);
+                    uvs.push(0, 0);
+                    positions.push(x + 1, y - h, z + 1);
+                    uvs.push(1, 1);
+                    positions.push(x + 1, y, z + 1);
+                    uvs.push(1, 0);
+                    positions.push(x, y, z + 1);
+                    uvs.push(0, 0);
+                    positions.push(x, y - h, z + 1);
+                    uvs.push(0, 1);
+                    positions.push(x + 1, y - h, z + 1);
+                    uvs.push(1, 1);
                 }
             }
         }

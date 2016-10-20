@@ -78,6 +78,8 @@ function loadScene(sceneMap, index, parent, callback) {
             const sceneNode = loadSceneNode(index, indexInfo, data);
             if (indexInfo.isIsland) {
                 data.threeScene.add(sceneNode);
+            } else {
+                sceneNode.add(data.scenery.threeObject3D);
             }
             callback(null, {
                 index: index,

@@ -20,14 +20,16 @@ export function resizeIsometricCamera(camera) {
 }
 
 export function getIsometric3DCamera() {
-    let v = 1104;
+    let v = 1088;
     const halfWidth = Math.floor(window.innerWidth / 2) / v;
     const halfHeight = Math.floor(window.innerHeight / 2) / v;
     const camera = new THREE.OrthographicCamera(-halfWidth, halfWidth, halfHeight, -halfHeight, 0.1, 20); // 1m = 0.0625 units
 
-    const lookAt = new THREE.Vector3(1.945, 0, 0.27);
+    console.log(camera.projectionMatrix);
+
+    const lookAt = new THREE.Vector3(1.94875, 0, 0.27);
     camera.position.copy(lookAt);
-    camera.position.add(new THREE.Vector3(-10, 8, 10));
+    camera.position.add(new THREE.Vector3(-10, 8.1, 10));
     camera.lookAt(lookAt);
 
     const mv = 0.005;
@@ -74,7 +76,7 @@ export function getIsometric3DCamera() {
 }
 
 export function resizeIsometric3DCamera(camera, v) {
-    v = v || 1104;
+    v = v || 1088;
     const halfWidth = Math.floor(window.innerWidth / 2) / v;
     const halfHeight = Math.floor(window.innerHeight / 2) / v;
     camera.left = -halfWidth;
