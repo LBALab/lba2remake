@@ -75,7 +75,7 @@ export function createRenderer(useVR) {
         applySceneryProps: props => {
             const sc = props.envInfo.skyColor;
             const color = new THREE.Color(sc[0], sc[1], sc[2]);
-            renderer.setClearColor(color.getHex(), 1);
+            baseRenderer.setClearColor(color.getHex(), 1);
         },
         stats: stats,
         cameras: {
