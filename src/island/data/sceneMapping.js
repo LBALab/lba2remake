@@ -87,7 +87,7 @@ export default {
     209: {island: 'OTRINGAL', section: 0, variant: 3},
     211: {island: 'OTRINGAL', section: 0, variant: 3},
 
-    212: {island: 'KNARTA', section: 0, variant: 1},
+    212: {island: 'KNARTAS', section: 0, variant: 1},
 
     213: {island: 'PLATFORM', section: 0, variant: 1},
 
