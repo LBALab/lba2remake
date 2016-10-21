@@ -7,9 +7,11 @@ import {LifeOpcode} from './lifeScript';
 export function initScriptState() {
     return {
         life: { 
-            opcodeOffset: 0,
             offset: 0,
-            continue: true
+            continue: true,
+            opcodeOffset: 0,
+            switchCondition: null,
+            switchValue1: 0
         },
         move: {
             offset: 0,

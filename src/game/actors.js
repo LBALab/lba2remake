@@ -33,7 +33,7 @@ type Actor = {
     update: ?Function
 }
 
-const ACTOR_STATIC_FLAG = {
+const ActorStaticFlag = {
     NONE             : 0,
     COLLIDE_WITH_OBJ : 1,
     // TODO
@@ -56,8 +56,8 @@ export function loadActor(props: ActorProps, callback: Function) {
             Script.processLifeScript(actor);
             updateModel(this.model, props.entityIndex, props.bodyIndex, props.animIndex, time);
         },
-        isVisible: !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && (props.life > 0 || props.bodyIndex >= 0) ? true : false,
-        isSprite: (props.staticFlags & ACTOR_STATIC_FLAG.SPRITE) ? true : false,
+        isVisible: !(props.staticFlags & ActorStaticFlag.HIDDEN) && (props.life > 0 || props.bodyIndex >= 0) ? true : false,
+        isSprite: (props.staticFlags & ActorStaticFlag.SPRITE) ? true : false,
         model: null,
         threeObject: null,
         scriptState: Script.initScriptState()

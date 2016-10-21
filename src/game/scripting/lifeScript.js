@@ -1,5 +1,9 @@
 import async from 'async';
 
+import {ActorStaticFlags} from '../actors';
+import {setStaticFlag} from '../../utils/lba';
+
+
 export const LifeOpcode = [
     { opcode: 0x00, command: "END", callback: lsEND, offset: 0 },
     { opcode: 0x01, command: "NOP", callback: lsNOP, offset: 0 },
@@ -219,187 +223,187 @@ export const ConditionOpcode = [
 // Condition Comands
 
 function lcCOL(param) {
-
+    return 0;
 }
 
 function lcCOL_OBJ(param) {
-
+    return 0;
 }
 
 function lcDISTANCE(param) {
-
+    return 0;
 }
 
 function lcZONE(param) {
-
+    return 0;
 }
 
 function lcZONE_OBJ(param) {
-
+    return 0;
 }
 
 function lcBODY(param) {
-
+    return 0;
 }
 
 function lcBODY_OBJ(param) {
-
+    return 0;
 }
 
 function lcANIM(param) {
-
+    return 0;
 }
 
 function lcANIM_OBJ(param) {
-
+    return 0;
 }
 
 function lcCURRENT_TRACK(param) {
-
+    return 0;
 }
 
 function lcCURRENT_TRACK_OBJ(param) {
-
+    return 0;
 }
 
 function lcVAR_CUBE(param) {
-
+    return 0;
 }
 
 function lcCONE_VIEW(param) {
-
+    return 0;
 }
 
 function lcHIT_BY(param) {
-
+    return 0;
 }
 
 function lcACTION(param) {
-
+    return 0;
 }
 
 function lcVAR_GAME(param) {
-
+    return 0;
 }
 
 function lcLIFE_POINT(param) {
-
+    return 0;
 }
 
 function lcLIFE_POINT_OBJ(param) {
-
+    return 0;
 }
 
 function lcNUM_LITTLE_KEYS(param) {
-
+    return 0;
 }
 
 function lcNUM_GOLD_PIECES(param) {
-
+    return 0;
 }
 
 function lcBEHAVIOUR(param) {
-
+    return 0;
 }
 
 function lcCHAPTER(param) {
-
+    return 0;
 }
 
 function lcDISTANCE_3D(param) {
-
+    return 0;
 }
 
 function lcMAGIC_LEVEL(param) {
-
+    return 0;
 }
 
 function lcMAGIC_POINT(param) {
-
+    return 0;
 }
 
 function lcUSE_INVENTORY(param) {
-
+    return 0;
 }
 
 function lcCHOICE(param) {
-
+    return 0;
 }
 
 function lcFUEL(param) {
-
+    return 0;
 }
 
 function lcCARRIED_BY(param) {
-
+    return 0;
 }
 
 function lcCDROM(param) {
-
+    return 0;
 }
 
 function lcLADDER(param) {
-
+    return 0;
 }
 
 function lcRND(param) {
-
+    return 0;
 }
 
 function lcRAIL(param) {
-
+    return 0;
 }
 
 function lcBETA(param) {
-
+    return 0;
 }
 
 function lcBETA_OBJ(param) {
-
+    return 0;
 }
 
 function lcCARRIED_OBJ_BY(param) {
-
+    return 0;
 }
 
 function lcANGLE(param) {
-
+    return 0;
 }
 
 function lcDISTANCE_MESSAGE(param) {
-
+    return 0;
 }
 
 function lcHIT_OBJ_BY(param) {
-
+    return 0;
 }
 
 function lcREAL_ANGLE(param) {
-
+    return 0;
 }
 
 function lcDEMO(param) {
-
+    return 0;
 }
 
 function lcCOL_DECORS(param) {
-
+    return 0;
 }
 
 function lcCOL_DECORS_OBJ(param) {
-
+    return 0;
 }
 
 function lcPROCESSOR(param) {
-
+    return 0;
 }
 
 function lcOBJECT_DISPLAYED(param) {
-
+    return 0;
 }
 
 function lcANGLE_OBJ(param) {
-
+    return 0;
 }
 
 // Comands Conditions
@@ -424,7 +428,7 @@ function testConditionValue(operator, a, b) {
 	return false;
 }
 
-function testCondition(script, state) {
+function getCondition(script, state) {
     const conditionIndex = script.getUint8(state.offset++, true);
     const condition = ConditionOpcode[conditionIndex];
     let param = null; 
@@ -432,6 +436,14 @@ function testCondition(script, state) {
         param = script.getUint8(state.offset++, true);
     }
     const value1 = condition.callback(param);
+    console.debug(condition.command + " " + value1);
+    return {
+        condition,
+        value1
+    };
+}
+
+function testConditionOperand(script, state, condition, value1) {
     const operator = script.getUint8(state.offset++, true);
     let value2 = null;
     if (condition.value_size == 1) {
@@ -440,8 +452,17 @@ function testCondition(script, state) {
         value2 = script.getInt16(state.offset, true);
         state.offset += 2;
     }
-    console.debug(condition + " " + value1 + " " + OperatorOpcode[operator] + " " + value2);
+    console.debug(OperatorOpcode[operator].command + " " + value2);
     return testConditionValue(operator, value1, value2);
+}
+
+function testCondition(script, state) {
+    const {condition, value1} = getCondition(script, state);
+    return testConditionOperand(script, state, condition, value1);
+}
+
+function testSwitchCondition(script, state, condition, value1) {
+    return testConditionOperand(script, state, condition, value1);
 }
 
 // Life Script Comands
@@ -663,11 +684,15 @@ function lsBRICK_COL(script, state, actor) {
 }
 
 function lsOR_IF(script, state, actor) {
-
+    if (testCondition(script, state)) {
+        script.offset = script.getUint16(state.offset, true);
+    }
+    script.offset += 2;
 }
 
 function lsINVISIBLE(script, state, actor) {
-
+    const isActive = script.getUint8(state.offset, true);
+    actor.props.staticFlags = setStaticFlag(actor.props.staticFlags, ActorStaticFlags.HIDDEN, isActive);
 }
 
 function lsSHADOW_OBJ(script, state, actor) {
@@ -892,19 +917,32 @@ function lsSTATE_INVENTORY(script, state, actor) {
 }
 
 function lsAND_IF(script, state, actor) {
-
+    if (!testCondition(script, state)) {
+        script.offset = script.getUint16(state.offset, true);
+    }
+    script.offset += 2;
 }
 
 function lsSWITCH(script, state, actor) {
-
+    const {condition, value1} = getCondition(script, state);
+    state.switchCondition = condition;
+    state.switchValue1 = value1;
 }
 
 function lsOR_CASE(script, state, actor) {
-
+    const offset = script.getUint16(state.offset, true);
+    script.offset += 2;
+    if (testSwitchCondition(script, state, state.switchCondition, state.switchValue1)) {
+        script.offset = offset;    
+    }
 }
 
 function lsCASE(script, state, actor) {
-
+    const offset = script.getUint16(state.offset, true);
+    script.offset += 2;
+    if (!testSwitchCondition(script, state, state.switchCondition, state.switchValue1)) {
+        script.offset = offset;    
+    }
 }
 
 function lsDEFAULT(script, state, actor) {
@@ -912,11 +950,12 @@ function lsDEFAULT(script, state, actor) {
 }
 
 function lsBREAK(script, state, actor) {
-
+    script.offset = script.getUint16(state.offset, true);
 }
 
 function lsEND_SWITCH(script, state, actor) {
-
+    state.switchCondition = null;
+    state.switchValue1 = 0;
 }
 
 function lsSET_HIT_ZONE(script, state, actor) {
