@@ -1,8 +1,8 @@
 import async from 'async';
 import _ from 'lodash';
 
-import {MoveOpcode} from './moveScript';
-import {LifeOpcode} from './lifeScript';
+import {LifeOpcode} from './data/life';
+import {MoveOpcode} from './data/move';
 
 export function initScriptState() {
     return {
@@ -58,10 +58,10 @@ export function processMoveScript(actor) {
                 break;
             }
             const opcode = script.getUint8(state.move.offset++, true);
-            /*console.debug("opcode: " + opcode);
+            console.debug("opcode: " + opcode);
             console.debug("state: ", state.move);
             console.debug("opcode def: ", MoveOpcode[opcode]);
-            console.debug(MoveOpcode[opcode].command);*/
+            console.debug(MoveOpcode[opcode].command);
             MoveOpcode[opcode].callback(script, state.move, actor);
             state.move.offset += MoveOpcode[opcode].offset;
         }
