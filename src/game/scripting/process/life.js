@@ -64,11 +64,22 @@ export function CAN_FALL(script, state, actor) {
 }
 
 export function SET_DIRMODE(script, state, actor) {
-
+    const dirMode = script.getUint8(state.offset, true);
+    if (dirMode == 2 || dirMode == 4) { // TODO add dirMode enumeration here
+        const actorIndex = script.getUint8(state.offset + 1, true);
+        state.offset++;
+        // TODO implementation
+    }
 }
 
 export function SET_DIRMODE_OBJ(script, state, actor) {
-
+    const dirMode = script.getUint8(state.offset, true);
+    const actorIndex1 = script.getUint8(state.offset + 1, true);
+    if (dirMode == 2 || dirMode == 4) { // TODO add dirMode enumeration here
+        const actorIndex2 = script.getUint8(state.offset + 2, true);
+        state.offset++;
+        // TODO implementation
+    }
 }
 
 export function CAM_FOLLOW(script, state, actor) {
