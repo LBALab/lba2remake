@@ -62,10 +62,23 @@ function testSwitchCondition(script, state, condition, value1) {
 
 
 
+export function END(script, state, actor) {
+    state.continue = false;
+    state.offset = -1; // double check this later
+}
+
+export function RETURN(script, state, actor) {
+    state.continue = false;
+}
+
 export function SNIF(script, state, actor) {
     if (!testCondition(script, state)) {
-        state.offset = script.setUint8(state.opcodeOffset, 0x0D); // override opcode to SWIF
+        script.setUint8(state.opcodeOffset, 0x0D); // override opcode to SWIF
     }
+    state.offset = script.getUint16(state.offset, true);
+}
+
+export function OFFSET(script, state, actor) {
     state.offset = script.getUint16(state.offset, true);
 }
 
@@ -86,7 +99,7 @@ export function SWIF(script, state, actor) {
         state.offset = script.getUint16(state.offset, true);
     }
     state.offset += 2;
-    state.offset = script.setUint8(state.opcodeOffset, 0x02); // override opcode to SNIF
+    script.setUint8(state.opcodeOffset, 0x02); // override opcode to SNIF
 }
 
 export function ONEIF(script, state, actor) {
@@ -94,7 +107,7 @@ export function ONEIF(script, state, actor) {
         state.offset = script.getUint16(state.offset, true);
     }
     state.offset += 2;
-    state.offset = script.setUint8(state.opcodeOffset, 0x04); // override opcode to NEVERIF
+    script.setUint8(state.opcodeOffset, 0x04); // override opcode to NEVERIF
 }
 
 export function ELSE(script, state, actor) {
@@ -107,14 +120,31 @@ export function ENDIF(script, state, actor) {
 
 export function OR_IF(script, state, actor) {
     if (testCondition(script, state)) {
-        script.offset = script.getUint16(state.offset, true);
+        state.offset = script.getUint16(state.offset, true);
     }
     state.offset += 2;
 }
 
+export function COMPORTEMENT(script, state, actor) {
+    
+}
+
+export function SET_COMPORTEMENT(script, state, actor) {
+    state.offset = script.getUint16(state.offset, true);
+}
+
+export function SET_COMPORTEMENT_OBJ(script, state, actor) {
+    const actorIndex = script.getUint8(state.offset, true);
+    const offset = script.getUint16(state.offset, true);
+}
+
+export function END_COMPORTEMENT(script, state, actor) {
+    state.continue = false;
+}
+
 export function AND_IF(script, state, actor) {
     if (!testCondition(script, state)) {
-        script.offset = script.getUint16(state.offset, true);
+        state.offset = script.getUint16(state.offset, true);
     }
     state.offset += 2;
 }

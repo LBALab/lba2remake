@@ -33,7 +33,7 @@ type Actor = {
     update: ?Function
 }
 
-const ActorStaticFlag = {
+export const ActorStaticFlag = {
     NONE             : 0,
     COLLIDE_WITH_OBJ : 1,
     // TODO

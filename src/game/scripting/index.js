@@ -34,12 +34,12 @@ export function processLifeScript(actor) {
     if (script.byteLength > 0 && state.life.offset >= 0) {
         while (state.life.continue) {
             if (state.life.offset >= script.byteLength) {
-                console.warn("MoveScript error: offset > length");
+                console.warn("LifeScript error: offset > length");
                 state.life.offset = -1;
                 break;
             }
-            state.opcodeOffset = state.life.offset++;
-            const opcode = script.getUint8(state.opcodeOffset, true);
+            state.life.opcodeOffset = state.life.offset++;
+            const opcode = script.getUint8(state.life.opcodeOffset, true);
             DEBUG.setLife(state.life.debug, LifeOpcode[opcode].command);
             LifeOpcode[opcode].callback(script, state.life, actor);
             state.life.offset += LifeOpcode[opcode].offset;

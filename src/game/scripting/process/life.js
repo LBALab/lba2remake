@@ -2,25 +2,12 @@ import {ActorStaticFlags} from '../../actors';
 import {setStaticFlag} from '../../../utils/lba';
 
 
-export function END(script, state, actor) {
-    state.continue = false;
-    state.offset = -1; // double check this later
-}
-
 export function NOP(script, state, actor) {
 
 }
 
-export function OFFSET(script, state, actor) {
-    script.offset = script.getUint16(state.offset, true);
-}
-
 export function PALETTE(script, state, actor) {
 
-}
-
-export function RETURN(script, state, actor) {
-    state.continue = false;
 }
 
 export function BODY(script, state, actor) {
@@ -91,22 +78,6 @@ export function SET_BEHAVIOUR(script, state, actor) {
 }
 
 export function SET_VAR_CUBE(script, state, actor) {
-
-}
-
-export function COMPORTEMENT(script, state, actor) {
-
-}
-
-export function SET_COMPORTEMENT(script, state, actor) {
-
-}
-
-export function SET_COMPORTEMENT_OBJ(script, state, actor) {
-
-}
-
-export function END_COMPORTEMENT(script, state, actor) {
 
 }
 
@@ -188,7 +159,7 @@ export function BRICK_COL(script, state, actor) {
 
 export function INVISIBLE(script, state, actor) {
     const isActive = script.getUint8(state.offset, true);
-    actor.props.staticFlags = setStaticFlag(actor.props.staticFlags, ActorStaticFlags.HIDDEN, isActive);
+    //actor.props.staticFlags = setStaticFlag(actor.props.staticFlags, ActorStaticFlags.HIDDEN, isActive);
 }
 
 export function SHADOW_OBJ(script, state, actor) {
