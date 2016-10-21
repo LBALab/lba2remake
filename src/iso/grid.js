@@ -1,4 +1,4 @@
-import {map} from 'lodash';
+import {map, each, range} from 'lodash';
 import {bits} from '../utils';
 import {loadBricksMapping} from './mapping';
 
@@ -105,45 +105,46 @@ function loadLayout(dataView) {
 }
 
 function buildCell(library, blocks, geometries, x, z) {
-    const {positions, uvs} = geometries;
+    const h = 0.5;
+    const {positions, centers, tiles} = geometries;
     const {width, height} = library.texture.image;
-    for (let y = 0; y < blocks.length; ++y) {
-        if (blocks[y]) {
-            const layout = library.layouts[blocks[y].layout];
+    for (let yIdx = 0; yIdx < blocks.length; ++yIdx) {
+        const y = yIdx * h + h;
+        if (blocks[yIdx]) {
+            const layout = library.layouts[blocks[yIdx].layout];
             if (layout) {
-                const block = layout.blocks[blocks[y].block];
+                const block = layout.blocks[blocks[yIdx].block];
                 if (block && block.brick) {
                     const {u, v} = library.bricksMap[block.brick];
-                    const {px, py} = getPosition(x, y, z);
 
-                    // First triangle
-                    positions.push(px, py, 0);
-                    uvs.push(u / width, v / height);
+                    positions.push(x, y, z);
+                    positions.push(x, y, z + 1);
+                    positions.push(x + 1, y, z);
+                    positions.push(x + 1, y, z);
+                    positions.push(x, y, z + 1);
+                    positions.push(x + 1, y, z + 1);
 
-                    positions.push(px + 48, py, 0);
-                    uvs.push((u + 48) / width, v / height);
+                    positions.push(x + 1, y, z);
+                    positions.push(x + 1, y, z + 1);
+                    positions.push(x + 1, y - h, z + 1);
+                    positions.push(x + 1, y, z);
+                    positions.push(x + 1, y - h, z + 1);
+                    positions.push(x + 1, y - h, z);
 
-                    positions.push(px + 48, py + 38, 0);
-                    uvs.push((u + 48) / width, (v + 38) / height);
+                    positions.push(x, y, z + 1);
+                    positions.push(x + 1, y - h, z + 1);
+                    positions.push(x + 1, y, z + 1);
+                    positions.push(x, y, z + 1);
+                    positions.push(x, y - h, z + 1);
+                    positions.push(x + 1, y - h, z + 1);
 
-                    // Second triangle
-                    positions.push(px, py, 0);
-                    uvs.push(u / width, v / height);
-
-                    positions.push(px + 48, py + 38, 0);
-                    uvs.push((u + 48) / width, (v + 38) / height);
-
-                    positions.push(px, py + 38, 0);
-                    uvs.push(u / width, (v + 38) / height);
+                    each(range(18), () => {
+                        centers.push(x + 0.5, y - h * 0.5, z + 0.5);
+                        tiles.push(u / width, v / height);
+                    });
                 }
             }
         }
     }
 }
 
-function getPosition(x, y, z) {
-    return {
-        px: (z - x) * 24,
-        py: (x + z) * 12 - y * 15
-    }
-}

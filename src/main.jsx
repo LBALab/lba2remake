@@ -29,12 +29,12 @@ window.onload = function() {
             makeGamepadControls(hero.physics)
         ] : [
             makeFirstPersonMouseControls(renderer.domElement, hero.physics),
-            makeKeyboardControls(hero.physics),
+            makeKeyboardControls(hero.physics, sceneManager),
             makeGamepadControls(hero.physics)
         ];
 
         document.getElementById('main').appendChild(renderer.domElement);
-        sceneManager.goto(48);
+        sceneManager.goto(16);
 
         const clock = new THREE.Clock();
         function processAnimationFrame() {
