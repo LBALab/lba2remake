@@ -96,7 +96,7 @@ function StereoEffect(renderer) {
 
         _top = _halfFocalHeight * _ndfl;
         _bottom = -_top;
-        _innerFactor = ( _halfFocalWidth + this.eyeSeparation / 2.0 ) / ( _halfFocalWidth * 2.0 );
+        _innerFactor = ( _halfFocalWidth - this.eyeSeparation / 2.0 ) / ( _halfFocalWidth * 2.0 );
         _outerFactor = 1.0 - _innerFactor;
 
         _outer = _halfFocalWidth * 2.0 * _ndfl * _outerFactor;
@@ -115,7 +115,7 @@ function StereoEffect(renderer) {
 
         _cameraL.position.copy(_position);
         _cameraL.quaternion.copy(_quaternion);
-        _cameraL.translateX(-this.eyeSeparation / 2.0);
+        _cameraL.translateX(this.eyeSeparation / 2.0);
 
         // right
 
@@ -130,7 +130,7 @@ function StereoEffect(renderer) {
 
         _cameraR.position.copy(_position);
         _cameraR.quaternion.copy(_quaternion);
-        _cameraR.translateX(this.eyeSeparation / 2.0);
+        _cameraR.translateX(-this.eyeSeparation / 2.0);
 
         if (this.antialias) {
             if (readBuffer) {
