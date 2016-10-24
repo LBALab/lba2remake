@@ -25,7 +25,6 @@ window.onload = function() {
     };
     const hero = createHero(heroConfig);
     createSceneManager(renderer, hero, sceneManager => {
-        window.sceneManager = sceneManager;
         const controls = isMobile ? [
             makeGyroscopeControls(hero.physics),
             makeGamepadControls(hero.physics)
@@ -45,5 +44,14 @@ window.onload = function() {
         }
 
         processAnimationFrame();
+
+        window.addEventListener('hashchange', () => {
+            const newParams = getQueryParams();
+            if (newParams.scene == params.scene) {
+                window.location.reload();
+            } else if ('scene' in newParams) {
+                sceneManager.goto(parseInt(newParams.scene));
+            }
+        }, false);
     });
 };
