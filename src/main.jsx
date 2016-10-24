@@ -1,6 +1,7 @@
 // @flow
 
 import THREE from 'three';
+import {each} from 'lodash';
 import {createRenderer} from './renderer';
 import {mainGameLoop} from './game/loop';
 import {createSceneManager} from './game/scenes';
@@ -10,9 +11,15 @@ import {makeKeyboardControls} from './controls/keyboard';
 import {makeGyroscopeControls} from './controls/gyroscope';
 import {makeGamepadControls} from './controls/gamepad';
 import {getQueryParams} from './utils';
+import * as debugFlags from './debugFlags';
 
 window.onload = function() {
     const params = getQueryParams();
+    each(params, (value, param) => {
+        if (param in debugFlags) {
+            debugFlags[param] = (value == 'true');
+        }
+    });
     const isMobile = /Mobile|webOS|iPhone|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || params.mobile;
     const renderer = createRenderer(isMobile);
     const heroConfig = {
