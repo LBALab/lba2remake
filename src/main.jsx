@@ -9,9 +9,11 @@ import {makeFirstPersonMouseControls} from './controls/mouse';
 import {makeKeyboardControls} from './controls/keyboard';
 import {makeGyroscopeControls} from './controls/gyroscope';
 import {makeGamepadControls} from './controls/gamepad';
+import {getQueryParams} from './utils';
 
 window.onload = function() {
-    const isMobile = /Mobile|webOS|iPhone|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const params = getQueryParams();
+    const isMobile = /Mobile|webOS|iPhone|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || params.mobile;
     const renderer = createRenderer(isMobile);
     const heroConfig = {
         physics: {
@@ -34,7 +36,7 @@ window.onload = function() {
         ];
 
         document.getElementById('main').appendChild(renderer.domElement);
-        sceneManager.goto(16);
+        sceneManager.goto(parseInt(params.scene) || 0);
 
         const clock = new THREE.Clock();
         function processAnimationFrame() {
