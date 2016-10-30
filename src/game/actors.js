@@ -33,7 +33,7 @@ type Actor = {
     update: ?Function
 }
 
-const ACTOR_STATIC_FLAG = {
+export const ActorStaticFlag = {
     NONE             : 0,
     COLLIDE_WITH_OBJ : 1,
     // TODO
@@ -53,10 +53,11 @@ export function loadActor(props: ActorProps, callback: Function) {
         },
         update: function(time) {
             Script.processMoveScript(actor);
+            Script.processLifeScript(actor);
             updateModel(this.model, props.entityIndex, props.bodyIndex, props.animIndex, time);
         },
-        isVisible: !(props.staticFlags & ACTOR_STATIC_FLAG.HIDDEN) && props.life > 0,
-        isSprite: (props.staticFlags & ACTOR_STATIC_FLAG.SPRITE) ? true : false,
+        isVisible: !(props.staticFlags & ActorStaticFlag.HIDDEN) && (props.life > 0 || props.bodyIndex >= 0) ? true : false,
+        isSprite: (props.staticFlags & ActorStaticFlag.SPRITE) ? true : false,
         model: null,
         threeObject: null,
         scriptState: Script.initScriptState()
@@ -67,6 +68,7 @@ export function loadActor(props: ActorProps, callback: Function) {
                                   THREE.Math.degToRad(0), 'XZY');
     actor.physics.orientation.setFromEuler(euler);
 
+    // only if not sprite actor
     loadModel(props.entityIndex, props.bodyIndex, props.animIndex, (model) => {
         //model.mesh.visible = actor.isVisible;
         model.mesh.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);

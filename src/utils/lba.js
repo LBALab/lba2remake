@@ -31,3 +31,11 @@ export function getStep(nextValue, currentValue, interpolation) {
     return computedStep;
 }
 
+export function setStaticFlag(flags, value, isActive) {
+    let f = flags;
+    f |= value;
+    if (!isActive) {
+        f &= ~value;
+    }
+    return f;
+}
