@@ -14,7 +14,11 @@ import {loadSceneMapData} from '../scene/map';
 import {loadActor} from './actors';
 import {loadPoint} from './points';
 import {loadZone} from './zones';
-import {DISPLAY_ZONES, DISPLAY_POINTS} from '../debugFlags';
+import {
+    DISPLAY_ZONES,
+    DISPLAY_POINTS,
+    ONLY_LOAD_SCENERY
+} from '../debugFlags';
 
 export type SceneManager = {
     getScene: Function,
@@ -91,6 +95,12 @@ function loadScene(sceneMap, index, parent, callback) {
         } else {
             loadSteps.scenery = (callback) => { callback(null, parent.scenery); };
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };
+        }
+
+        if (ONLY_LOAD_SCENERY) {
+            delete loadSteps.actors;
+            delete loadSteps.points;
+            delete loadSteps.zones;
         }
 
         async.auto(loadSteps, function (err, data) {

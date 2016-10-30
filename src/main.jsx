@@ -1,6 +1,7 @@
 // @flow
 
 import THREE from 'three';
+import {each} from 'lodash';
 import {createRenderer} from './renderer';
 import {mainGameLoop} from './game/loop';
 import {createSceneManager} from './game/scenes';
@@ -9,9 +10,17 @@ import {makeFirstPersonMouseControls} from './controls/mouse';
 import {makeKeyboardControls} from './controls/keyboard';
 import {makeGyroscopeControls} from './controls/gyroscope';
 import {makeGamepadControls} from './controls/gamepad';
+import {getQueryParams} from './utils';
+import * as debugFlags from './debugFlags';
 
 window.onload = function() {
-    const isMobile = /Mobile|webOS|iPhone|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const params = getQueryParams();
+    each(params, (value, param) => {
+        if (param in debugFlags) {
+            debugFlags[param] = (value == 'true');
+        }
+    });
+    const isMobile = /Mobile|webOS|iPhone|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || params.mobile;
     const renderer = createRenderer(isMobile);
     const heroConfig = {
         physics: {
@@ -23,7 +32,6 @@ window.onload = function() {
     };
     const hero = createHero(heroConfig);
     createSceneManager(renderer, hero, sceneManager => {
-        window.sceneManager = sceneManager;
         const controls = isMobile ? [
             makeGyroscopeControls(hero.physics),
             makeGamepadControls(hero.physics)
@@ -34,7 +42,7 @@ window.onload = function() {
         ];
 
         document.getElementById('main').appendChild(renderer.domElement);
-        sceneManager.goto(16);
+        sceneManager.goto(parseInt(params.scene) || 0);
 
         const clock = new THREE.Clock();
         function processAnimationFrame() {
@@ -43,5 +51,14 @@ window.onload = function() {
         }
 
         processAnimationFrame();
+
+        window.addEventListener('hashchange', () => {
+            const newParams = getQueryParams();
+            if (newParams.scene == params.scene) {
+                window.location.reload();
+            } else if ('scene' in newParams) {
+                sceneManager.goto(parseInt(newParams.scene));
+            }
+        }, false);
     });
 };
