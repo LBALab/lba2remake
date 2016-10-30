@@ -13,6 +13,7 @@ export function initScriptState() {
             opcodeOffset: 0,
             switchCondition: null,
             switchValue1: 0,
+            switchConditionTest: false,
             debug: null
         },
         move: {
@@ -38,8 +39,8 @@ export function processLifeScript(actor) {
                 state.life.offset = -1;
                 break;
             }
-            state.life.opcodeOffset = state.life.offset++;
-            const opcode = script.getUint8(state.life.opcodeOffset, true);
+            state.life.opcodeOffset = state.life.offset;
+            const opcode = script.getUint8(state.life.offset++, true);
             DEBUG.setLife(state.life.debug, LifeOpcode[opcode].command);
             LifeOpcode[opcode].callback(script, state.life, actor);
             state.life.offset += LifeOpcode[opcode].offset;
