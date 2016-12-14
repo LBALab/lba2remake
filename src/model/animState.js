@@ -2,11 +2,11 @@ import THREE from 'three';
 
 import {getRotation, getStep} from '../utils/lba';
 
-export function loadAnimState(model, body, anim) {
+export function loadAnimState(model, body, loopFrame) {
     const state = {
         skeleton: createSkeleton(body),
         currentFrame: 0,
-        loopFrame: anim.loopFrame,
+        loopFrame: loopFrame,
         currentTime:0,
         step: new THREE.Vector3(0, 0, 0)
     };

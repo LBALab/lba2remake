@@ -57,7 +57,7 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx) {
     const body = loadBody(model, model.bodies, realBodyIdx);
     const anim = loadAnim(model, model.anims, realAnimIdx);
     
-    model.state = loadAnimState(model, body, anim);
+    model.state = loadAnimState(model, body, anim.loopFrame);
     model.mesh = loadMesh(model, body, model.state);
 
     return model;
