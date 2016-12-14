@@ -2,9 +2,9 @@ import THREE from 'three';
 
 import {getRotation, getStep} from '../utils/lba';
 
-export function loadAnimState(model, body, loopFrame) {
+export function loadAnimState(skeleton, loopFrame) {
     const state = {
-        skeleton: createSkeleton(body),
+        skeleton: skeleton,
         currentFrame: 0,
         loopFrame: loopFrame,
         currentTime:0,
@@ -14,7 +14,7 @@ export function loadAnimState(model, body, loopFrame) {
     return state;
 }
 
-function createSkeleton(body) {
+export function createSkeleton(body) {
     let skeleton = [];
     for (let i = 0; i < body.bonesSize; ++i) {
         const bone = body.bones[i];

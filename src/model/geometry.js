@@ -6,17 +6,17 @@ import fragmentShader from './shaders/model.frag.glsl';
 
 const push = Array.prototype.push;
 
-export function loadMesh(model, body, state) {
+export function loadMesh(model, body, matrixBones) {
     const material = new THREE.RawShaderMaterial({
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
         uniforms: {
             texture: { value: model.texture },
-            bones: { value: state.matrixBones, type:'m4v' }
+            bones: { value: matrixBones, type:'m4v' }
         }
     });
 
-    const geometry = loadGeometry(model, body, state.skeleton);
+    const geometry = loadGeometry(model, body);
     const object = new THREE.Object3D();
 
     if (geometry.positions.length > 0) {
@@ -43,7 +43,7 @@ export function loadMesh(model, body, state) {
     return object;
 }
 
-function loadGeometry(model, body, skeleton) {
+function loadGeometry(model, body) {
     const geometry = {
         positions: [],
         uvs: [],
@@ -54,19 +54,19 @@ function loadGeometry(model, body, skeleton) {
         lineBones: []
     };
     
-    loadBodyGeometry(geometry, body, skeleton, model.palette);
+    loadBodyGeometry(geometry, body, model.palette);
 
     return geometry;
 }
 
-function loadBodyGeometry(geometry, body, skeleton, palette) {
-    loadFaceGeometry(geometry, body, skeleton, palette);
-    loadSphereGeometry(geometry, body, skeleton, palette);
-    loadLineGeometry(geometry, body, skeleton, palette);
-    //debugBoneGeometry(geometry, body, skeleton, palette);
+function loadBodyGeometry(geometry, body, palette) {
+    loadFaceGeometry(geometry, body, palette);
+    loadSphereGeometry(geometry, body, palette);
+    loadLineGeometry(geometry, body, palette);
+    //debugBoneGeometry(geometry, body);
 }
 
-function loadFaceGeometry(geometry, body, skeleton, palette) {
+function loadFaceGeometry(geometry, body, palette) {
     _.each(body.polygons, (p) => {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
@@ -86,7 +86,7 @@ function loadFaceGeometry(geometry, body, skeleton, palette) {
     });
 }
 
-function loadSphereGeometry(geometry, body, skeleton, palette) {
+function loadSphereGeometry(geometry, body, palette) {
     _.each(body.spheres, (s) => {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
@@ -110,7 +110,7 @@ function loadSphereGeometry(geometry, body, skeleton, palette) {
     });
 }
 
-function loadLineGeometry(geometry, body, skeleton, palette) {
+function loadLineGeometry(geometry, body, palette) {
     _.each(body.lines, (l) => {
         const addVertex = (p,c,i) => {
             push.apply(geometry.linePositions, p);
@@ -125,7 +125,7 @@ function loadLineGeometry(geometry, body, skeleton, palette) {
     });
 }
 
-function debugBoneGeometry(geometry, body, skeleton, palette) {
+function debugBoneGeometry(geometry, body) {
     _.each(body.bones, (s) => {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(0.001, 8, 8);

@@ -8,7 +8,7 @@ import type {Entity} from './entity';
 import {loadEntity, getBodyIndex, getAnimIndex} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
-import {loadAnimState, updateKeyframe} from './animState';
+import { loadAnimState, createSkeleton, updateKeyframe} from './animState';
 import {loadMesh} from './geometry';
 import {loadTexture2} from '../texture';
 import type {Time} from '../flowtypes';
@@ -56,9 +56,10 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx) {
 
     const body = loadBody(model, model.bodies, realBodyIdx);
     const anim = loadAnim(model, model.anims, realAnimIdx);
-    
-    model.state = loadAnimState(model, body, anim.loopFrame);
-    model.mesh = loadMesh(model, body, model.state);
+
+    const skeleton = createSkeleton(body);
+    model.state = loadAnimState(skeleton, anim.loopFrame);
+    model.mesh = loadMesh(model, body, model.state.matrixBones);
 
     return model;
 }
@@ -69,3 +70,9 @@ export function updateModel(model: Model, entityIdx: number, bodyIdx: number, an
     const anim = loadAnim(model, model.anims, realAnimIdx);
     updateKeyframe(anim, model.state, time);
 }
+/*
+export function createAnimState(body, anim) {
+    const skeleton = createSkeleton(body);
+    return loadAnimState(skeleton, anim.loopFrame);
+}
+*/
