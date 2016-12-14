@@ -59,7 +59,7 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx) {
 
     const skeleton = createSkeleton(body);
     model.state = loadAnimState(skeleton, anim.loopFrame);
-    model.mesh = loadMesh(model, body, model.state.matrixBones);
+    model.mesh = loadMesh(body, model.texture, model.state.matrixBones, model.palette);
 
     return model;
 }

@@ -6,17 +6,17 @@ import fragmentShader from './shaders/model.frag.glsl';
 
 const push = Array.prototype.push;
 
-export function loadMesh(model, body, matrixBones) {
+export function loadMesh(body, texture, matrixBones, palette) {
     const material = new THREE.RawShaderMaterial({
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
         uniforms: {
-            texture: { value: model.texture },
+            texture: { value: texture },
             bones: { value: matrixBones, type:'m4v' }
         }
     });
 
-    const geometry = loadGeometry(model, body);
+    const geometry = loadGeometry(body, palette);
     const object = new THREE.Object3D();
 
     if (geometry.positions.length > 0) {
@@ -43,7 +43,7 @@ export function loadMesh(model, body, matrixBones) {
     return object;
 }
 
-function loadGeometry(model, body) {
+function loadGeometry(body, palette) {
     const geometry = {
         positions: [],
         uvs: [],
@@ -54,7 +54,7 @@ function loadGeometry(model, body) {
         lineBones: []
     };
     
-    loadBodyGeometry(geometry, body, model.palette);
+    loadBodyGeometry(geometry, body, palette);
 
     return geometry;
 }
