@@ -2,14 +2,20 @@ import THREE from 'three';
 
 import {getRotation, getStep} from '../utils/lba';
 
-export function loadAnimState(skeleton, loopFrame) {
-    const state = {
-        skeleton: skeleton,
+export function loadAnimState() {
+    return {
+        skeleton: null,
+        matrixBones: null,
         currentFrame: 0,
-        loopFrame: loopFrame,
+        loopFrame: 0,
         currentTime:0,
         step: new THREE.Vector3(0, 0, 0)
     };
+}
+
+export function initSkeleton(state, skeleton, loopFrame) {
+    state.skeleton = skeleton;
+    state.loopFrame = loopFrame;
     state.matrixBones = createShaderBone(state);
     return state;
 }

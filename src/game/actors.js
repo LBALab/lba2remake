@@ -4,6 +4,7 @@ import THREE from 'three';
 
 import type {Model} from '../model';
 import {loadModel, updateModel} from '../model';
+import { loadAnimState } from '../model/animState';
 import {getRotation} from '../utils/lba';
 import * as Script from './scripting';
 
@@ -45,22 +46,24 @@ export const ActorStaticFlag = {
 // TODO: move scetion offset to container THREE.Object3D
 export function loadActor(props: ActorProps, callback: Function) {
     const pos = props.pos;
+    const animState = loadAnimState();
     const actor: Actor = {
         props: props,
         physics: {
             position: new THREE.Vector3(pos[0], pos[1], pos[2]),
             orientation: new THREE.Quaternion()
         },
-        update: function(time) {
-            Script.processMoveScript(actor);
-            Script.processLifeScript(actor);
-            updateModel(this.model, props.entityIndex, props.bodyIndex, props.animIndex, time);
-        },
         isVisible: !(props.staticFlags & ActorStaticFlag.HIDDEN) && (props.life > 0 || props.bodyIndex >= 0) ? true : false,
         isSprite: (props.staticFlags & ActorStaticFlag.SPRITE) ? true : false,
         model: null,
+        animState: animState,
         threeObject: null,
-        scriptState: Script.initScriptState()
+        scriptState: Script.initScriptState(),
+        update: function(time) {
+            Script.processMoveScript(actor);
+            Script.processLifeScript(actor);
+            updateModel(this.model, this.animState, props.entityIndex, props.bodyIndex, props.animIndex, time);
+        }
     };
 
     const euler = new THREE.Euler(THREE.Math.degToRad(0),
@@ -69,7 +72,7 @@ export function loadActor(props: ActorProps, callback: Function) {
     actor.physics.orientation.setFromEuler(euler);
 
     // only if not sprite actor
-    loadModel(props.entityIndex, props.bodyIndex, props.animIndex, (model) => {
+    loadModel(props.entityIndex, props.bodyIndex, props.animIndex, animState, (model) => {
         //model.mesh.visible = actor.isVisible;
         model.mesh.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
         model.mesh.quaternion.copy(actor.physics.orientation);
