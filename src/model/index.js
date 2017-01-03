@@ -70,6 +70,7 @@ export function updateModel(model: Model, animState: any, entityIdx: number, bod
     const entity = model.entities[entityIdx];
     const realAnimIdx = getAnimIndex(entity, animIdx);
     const anim = loadAnim(model, model.anims, realAnimIdx);
+    animState.loopFrame = anim.loopFrame;
     updateKeyframe(anim, animState, time);
 }
 /*
