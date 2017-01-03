@@ -80,8 +80,8 @@ export function loadActor(props: ActorProps, callback: Function) {
             this.model.mesh.position.set(this.physics.position.x, this.physics.position.y, this.physics.position.z);
         },
         update: function(time) {
-            Script.processMoveScript(actor);
-            Script.processLifeScript(actor);
+            Script.processMoveScript(actor, time);
+            Script.processLifeScript(actor, time);
             updateModel(this.model, this.animState, props.entityIndex, props.bodyIndex, props.animIndex, time);
 
             if(!this.isSprite && this.animState.isPlaying) {

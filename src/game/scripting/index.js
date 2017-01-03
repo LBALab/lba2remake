@@ -27,10 +27,10 @@ export function initScriptState() {
     };
 }
 
-export function processLifeScript(actor) {
+export function processLifeScript(actor, time) {
     const state = actor.scriptState;
     const script = actor.props.lifeScript;
-    state.continue = true;
+    state.life.continue = state.life.offset != -1;
     state.life.debug = DEBUG.initDebug();
     if (script.byteLength > 0 && state.life.offset >= 0) {
         while (state.life.continue) {
@@ -43,16 +43,19 @@ export function processLifeScript(actor) {
             const opcode = script.getUint8(state.life.offset++, true);
             DEBUG.setLife(state.life.debug, LifeOpcode[opcode].command);
             LifeOpcode[opcode].callback(script, state.life, actor);
-            state.life.offset += LifeOpcode[opcode].offset;
+            if (state.life.continue) {
+                state.life.offset += LifeOpcode[opcode].offset;
+            }
             DEBUG.displayLife(state.life.debug);
         }
     }
 }
 
-export function processMoveScript(actor) {
+export function processMoveScript(actor, time) {
     const state = actor.scriptState;
     const script = actor.props.moveScript;
-    state.continue = true;
+    state.move.continue = state.move.offset != -1;
+    state.move.elapsedTime += time.delta * 1000;
     state.move.debug = DEBUG.initDebug();
     if (script.byteLength > 0 && state.move.offset >= 0) {
         while (state.move.continue) {
@@ -64,7 +67,9 @@ export function processMoveScript(actor) {
             const opcode = script.getUint8(state.move.offset++, true);
             DEBUG.setMove(state.move.debug, MoveOpcode[opcode].command);
             MoveOpcode[opcode].callback(script, state.move, actor);
-            state.move.offset += MoveOpcode[opcode].offset;
+            if (state.move.continue) {
+                state.move.offset += MoveOpcode[opcode].offset;
+            }
             DEBUG.displayMove(state.move.debug);
         }
     }
