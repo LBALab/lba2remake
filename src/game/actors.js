@@ -74,7 +74,7 @@ export function loadActor(props: ActorProps, callback: Function) {
             newPos.x += Math.sin(angle) * speedX;
             newPos.z += Math.cos(angle) * speedX;
 
-            newPos.y += (this.animState.step.y * delta) / (this.animState.keyframeLength * 2);
+            newPos.y += (this.animState.step.y * delta) / (this.animState.keyframeLength);
 
             this.physics.position.add(newPos);
             this.model.mesh.position.set(this.physics.position.x, this.physics.position.y, this.physics.position.z);

@@ -20,7 +20,13 @@ export function GOTO_POINT(script, state, actor) {
 }
 
 export function WAIT_ANIM(script, state, actor) {
-    
+    if (actor.animState.hasEnded) {
+        // TODO clear angle
+        state.continue = false;
+        return;
+    }
+    state.offset--;
+    state.continue = false;
 }
 
 export function ANGLE(script, state, actor) {

@@ -11,6 +11,7 @@ export function loadAnimState() {
         currentTime:0,
         isPlaying: true,
         isWaiting: false,
+        hasEnded: false,
         step: new THREE.Vector3(0, 0, 0),
         keyframeLength: 0
     };
@@ -85,6 +86,7 @@ export function updateKeyframe(anim, state, time) {
     state.keyframeLength = keyframe.length;
 
     if (state.currentTime > keyframe.length) {
+        state.hasEnded = false;
         state.currentTime = 0;
         ++state.currentFrame;
         if (state.currentFrame >= anim.numKeyframes) {
@@ -92,6 +94,7 @@ export function updateKeyframe(anim, state, time) {
             if (state.currentFrame >= anim.numKeyframes - 1) {
                 state.currentFrame = 0;
             }
+            state.hasEnded = true;
         }
         keyframe = anim.keyframes[state.currentFrame];
     }
