@@ -9,7 +9,10 @@ export function loadAnimState() {
         currentFrame: 0,
         loopFrame: 0,
         currentTime:0,
-        step: new THREE.Vector3(0, 0, 0)
+        isPlaying: true,
+        isWaiting: false,
+        step: new THREE.Vector3(0, 0, 0),
+        keyframeLength: 0
     };
 }
 
@@ -73,11 +76,13 @@ function updateShaderBone(state) {
 
 export function updateKeyframe(anim, state, time) {
     if (!state) return;
+    if (!state.isPlaying) return;
 
     state.currentTime += time.delta * 1000;
     let keyframe = anim.keyframes[state.currentFrame];
 
     if (!keyframe) return;
+    state.keyframeLength = keyframe.length;
 
     if (state.currentTime > keyframe.length) {
         state.currentTime = 0;
@@ -132,7 +137,7 @@ function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones) {
             s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
         }
     }
-    
+
     // step translation
     state.step.x = getStep(nextkeyframe.x, keyframe.x, interpolation);
     state.step.y = getStep(nextkeyframe.y, keyframe.y, interpolation);

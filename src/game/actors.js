@@ -15,7 +15,8 @@ type ActorProps = {
     entityIndex: number,
     bodyIndex: number,
     animIndex: number,
-    angle: number
+    angle: number,
+    speed: number
 }
 
 type ActorPhysics = {
@@ -59,10 +60,33 @@ export function loadActor(props: ActorProps, callback: Function) {
         animState: animState,
         threeObject: null,
         scriptState: Script.initScriptState(),
+        updateAnimStep: function(time) {
+            let newPos = new THREE.Vector3(0,0,0);
+            const angle = THREE.Math.degToRad(getRotation(props.angle, 0, 1));
+
+            const delta = time.delta * 1000;
+            const speedZ = ((this.animState.step.z * delta) / this.animState.keyframeLength);
+            const speedX = ((this.animState.step.x * delta) / this.animState.keyframeLength);
+
+            newPos.x += (Math.cos(angle) * speedZ) * -1; // x is inverted
+            newPos.z += Math.sin(angle) * speedZ;
+
+            newPos.x += Math.sin(angle) * speedX;
+            newPos.z += Math.cos(angle) * speedX;
+
+            newPos.y += (this.animState.step.y * delta) / (this.animState.keyframeLength * 2);
+
+            this.physics.position.add(newPos);
+            this.model.mesh.position.set(this.physics.position.x, this.physics.position.y, this.physics.position.z);
+        },
         update: function(time) {
             Script.processMoveScript(actor);
             Script.processLifeScript(actor);
             updateModel(this.model, this.animState, props.entityIndex, props.bodyIndex, props.animIndex, time);
+
+            if(!this.isSprite && this.animState.isPlaying) {
+                this.updateAnimStep(time);
+            }
         }
     };
 
