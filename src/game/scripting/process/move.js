@@ -22,10 +22,10 @@ export function GOTO_POINT(script, state, actor) {
 export function WAIT_ANIM(script, state, actor) {
     if (actor.animState.hasEnded) {
         // TODO clear angle
-        state.continue = false;
+        //state.continue = false;
         return;
     }
-    state.offset--;
+    --state.offset;
     state.continue = false;
 }
 
@@ -70,7 +70,7 @@ export function WAIT_NUM_ANIM(script, state, actor) {
     }
 
     if (!state.continue) {
-        state.offset--;
+        --state.offset;
     }
 }
 
@@ -91,7 +91,16 @@ export function BACKGROUND(script, state, actor) {
 }
 
 export function WAIT_NUM_SECOND(script, state, actor) {
-    
+    const numSeconds = script.getUint8(state.offset, true);
+    if (state.waitTime == 0) {
+        state.waitTime = state.elapsedTime + (numSeconds * 1000);
+    }
+    if (state.elapsedTime < state.waitTime) {
+        state.continue = false;
+        --state.offset;
+    } else {
+        state.waitTime = 0;
+    }
 }
 
 export function NO_BODY(script, state, actor) {
