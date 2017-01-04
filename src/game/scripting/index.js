@@ -55,7 +55,7 @@ export function processMoveScript(actor, time) {
     const state = actor.scriptState;
     const script = actor.props.moveScript;
     state.move.continue = state.move.offset != -1;
-    state.move.elapsedTime += time.delta * 1000;
+    state.move.elapsedTime = time.elapsed * 1000;
     state.move.debug = DEBUG.initDebug();
     if (script.byteLength > 0 && state.move.offset >= 0) {
         while (state.move.continue) {
