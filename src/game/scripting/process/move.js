@@ -3,7 +3,7 @@ export function END(script, state, actor) {
     state.continue = false;
     state.offset = -1;
 }
- 
+
 export function NOP(script, state, actor) {
     
 }

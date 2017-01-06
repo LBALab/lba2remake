@@ -33,7 +33,7 @@ export function createSceneManager(renderer, hero, callback: Function) {
     loadSceneMapData(sceneMap => {
         callback({
             getScene: () => scene,
-            goto: (index) => {
+            goto: (index, pCallback) => {
                 if (scene && index == scene.index)
                     return;
 
@@ -44,25 +44,27 @@ export function createSceneManager(renderer, hero, callback: Function) {
                     delete scene.sideScenes;
                     sideScene.sideScenes[scene.index] = scene;
                     scene = sideScene;
+                    pCallback();
                 } else {
                     loadScene(sceneMap, index, null, (err, pScene) => {
                         hero.physics.position.x = pScene.scenery.props.startPosition[0];
                         hero.physics.position.z = pScene.scenery.props.startPosition[1];
                         renderer.applySceneryProps(pScene.scenery.props);
                         scene = pScene;
+                        pCallback();
                     });
                 }
             },
-            next: function() {
+            next: (pCallback) => {
                 if (scene) {
                     const next = (scene.index + 1) % sceneMap.length;
-                    this.goto(next);
+                    this.goto(next, pCallback);
                 }
             },
-            previous: function() {
+            previous: (pCallback) => {
                 if (scene) {
                     const previous = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
-                    this.goto(previous);
+                    this.goto(previous, pCallback);
                 }
             }
         });
