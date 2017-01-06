@@ -1,6 +1,7 @@
 
 export function END(script, state, actor) {
     state.continue = false;
+    state.offset = -1;
 }
 
 export function NOP(script, state, actor) {
@@ -20,7 +21,13 @@ export function GOTO_POINT(script, state, actor) {
 }
 
 export function WAIT_ANIM(script, state, actor) {
-    
+    if (actor.animState.hasEnded) {
+        // TODO clear angle
+        //state.continue = false;
+        return;
+    }
+    --state.offset;
+    state.continue = false;
 }
 
 export function ANGLE(script, state, actor) {
@@ -49,7 +56,23 @@ export function GOTO_SYM_POINT(script, state, actor) {
 }
 
 export function WAIT_NUM_ANIM(script, state, actor) {
-    
+    if (actor.animState.hasEnded) {
+        const totalRepeats = script.getUint8(state.offset, true);
+        let numRepeats = script.getUint8(state.offset + 1, true);
+        numRepeats++;
+        if (numRepeats == totalRepeats) {
+            numRepeats = 0;
+        } else {
+            state.continue = false;
+        }
+        script.setUint8(state.offset + 1, numRepeats);
+    } else {
+        state.continue = false;
+    }
+
+    if (!state.continue) {
+        --state.offset;
+    }
 }
 
 export function SAMPLE(script, state, actor) {
@@ -69,7 +92,16 @@ export function BACKGROUND(script, state, actor) {
 }
 
 export function WAIT_NUM_SECOND(script, state, actor) {
-    
+    const numSeconds = script.getUint8(state.offset, true);
+    if (state.waitTime == 0) {
+        state.waitTime = state.elapsedTime + (numSeconds * 1000);
+    }
+    if (state.elapsedTime < state.waitTime) {
+        state.continue = false;
+        --state.offset;
+    } else {
+        state.waitTime = 0;
+    }
 }
 
 export function NO_BODY(script, state, actor) {

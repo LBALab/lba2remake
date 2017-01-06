@@ -1,20 +1,56 @@
+// @flow
+
 import THREE from 'three';
 import _ from 'lodash';
 
 const push = Array.prototype.push;
 
-export function loadAnim(model, anims, index) {
+type BoneframeCanFall = {
+    boneframe: Boneframe,
+    canFall: boolean
+}
+
+type Boneframe = {
+    type: number,
+    veuler: THREE.Object3D,
+    pos: THREE.Object3D
+}
+
+type Keyframe = {
+    length: number,
+    x: number,
+    y: number,
+    z: number,
+    canFall: boolean,
+    boneframes: Boneframe[]
+}
+
+export type Anim = {
+    numKeyframes: number,
+    numBoneframes: number,
+    loopFrame: number,
+    unk1: number,
+    buffer: ArrayBuffer,
+    keyframes: Keyframe[],
+}
+
+// TODO export this from a new Model type file
+type Model = {
+    files: any
+}
+
+export function loadAnim(model: Model, anims: Anim[], index: number) {
     if (anims[index]) {
         return anims[index];
     } else {
         const buffer = model.files.anim.getEntry(index);
         const data = new DataView(buffer);
-        const obj = {
+        const obj : Anim = {
             numKeyframes: data.getUint16(0x00, true),
             numBoneframes: data.getUint16(0x02, true),
             loopFrame: data.getUint16(0x04, true),
             unk1: data.getUint16(0x08, true),
-            
+            keyframes: [],
             buffer: buffer
         };
 
@@ -25,12 +61,11 @@ export function loadAnim(model, anims, index) {
     }
 }
 
-function loadKeyframes(object) {
-    object.keyframes = [];
-    const data = new DataView(object.buffer, 0, object.buffer.byteLength);
+function loadKeyframes(anim) {
+    const data = new DataView(anim.buffer, 0, anim.buffer.byteLength);
     let offset = 8;
-    for (let i = 0; i < object.numKeyframes; ++i) {
-        let keyframe = {
+    for (let i = 0; i < anim.numKeyframes; ++i) {
+        let keyframe : Keyframe = {
             length: data.getUint16(offset, true),
             x: data.getInt16(offset + 2, true) / 0x4000,
             y: data.getInt16(offset + 4, true) / 0x4000,
@@ -40,19 +75,19 @@ function loadKeyframes(object) {
         };
         offset += 8;
 
-        for (let j = 0; j < object.numBoneframes; ++j) {
-            const {boneframe, canFall} = loadBoneframe(keyframe, data, offset);
-            keyframe.canFall |= canFall;
+        for (let j = 0; j < anim.numBoneframes; ++j) {
+            const {boneframe, canFall} : BoneframeCanFall = loadBoneframe(data, offset);
+            keyframe.canFall = keyframe.canFall || canFall;
             offset += 8;
             keyframe.boneframes.push(boneframe);
         }
 
-        object.keyframes.push(keyframe);
+        anim.keyframes.push(keyframe);
     }
 }
 
-function loadBoneframe(keyframe, data, offset) {
-    let boneframe = {
+function loadBoneframe(data, offset) : BoneframeCanFall {
+    let boneframe : Boneframe = {
         type: data.getUint16(offset, true), // if > 0 canFall because it has translation in space
         veuler: null,
         pos: null

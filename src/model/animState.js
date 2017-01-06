@@ -2,19 +2,29 @@ import THREE from 'three';
 
 import {getRotation, getStep} from '../utils/lba';
 
-export function loadAnimState(model, body, anim) {
-    const state = {
-        skeleton: createSkeleton(body),
+export function loadAnimState() {
+    return {
+        skeleton: null,
+        matrixBones: null,
         currentFrame: 0,
-        loopFrame: anim.loopFrame,
+        loopFrame: 0,
         currentTime:0,
-        step: new THREE.Vector3(0, 0, 0)
+        isPlaying: true,
+        isWaiting: false,
+        hasEnded: false,
+        step: new THREE.Vector3(0, 0, 0),
+        keyframeLength: 0
     };
+}
+
+export function initSkeleton(state, skeleton, loopFrame) {
+    state.skeleton = skeleton;
+    state.loopFrame = loopFrame;
     state.matrixBones = createShaderBone(state);
     return state;
 }
 
-function createSkeleton(body) {
+export function createSkeleton(body) {
     let skeleton = [];
     for (let i = 0; i < body.bonesSize; ++i) {
         const bone = body.bones[i];
@@ -67,13 +77,16 @@ function updateShaderBone(state) {
 
 export function updateKeyframe(anim, state, time) {
     if (!state) return;
+    if (!state.isPlaying) return;
 
     state.currentTime += time.delta * 1000;
     let keyframe = anim.keyframes[state.currentFrame];
 
     if (!keyframe) return;
+    state.keyframeLength = keyframe.length;
 
     if (state.currentTime > keyframe.length) {
+        state.hasEnded = false;
         state.currentTime = 0;
         ++state.currentFrame;
         if (state.currentFrame >= anim.numKeyframes) {
@@ -81,6 +94,7 @@ export function updateKeyframe(anim, state, time) {
             if (state.currentFrame >= anim.numKeyframes - 1) {
                 state.currentFrame = 0;
             }
+            state.hasEnded = true;
         }
         keyframe = anim.keyframes[state.currentFrame];
     }
@@ -126,7 +140,7 @@ function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones) {
             s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
         }
     }
-    
+
     // step translation
     state.step.x = getStep(nextkeyframe.x, keyframe.x, interpolation);
     state.step.y = getStep(nextkeyframe.y, keyframe.y, interpolation);
