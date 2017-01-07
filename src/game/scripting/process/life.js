@@ -102,7 +102,8 @@ export function GIVE_GOLD_PIECES(script, state, actor) {
 }
 
 export function END_LIFE(script, state, actor) {
-
+    state.reentryOffset = -1;
+    state.continue = false;
 }
 
 export function STOP_CURRENT_TRACK(script, state, actor) {

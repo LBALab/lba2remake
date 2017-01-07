@@ -64,7 +64,7 @@ function testSwitchCondition(script, state, condition, value1) {
 
 export function END(script, state, actor) {
     state.continue = false;
-    state.offset = -1; // double check this later
+    state.reentryOffset = -1; // double check this later
 }
 
 export function RETURN(script, state, actor) {
@@ -134,12 +134,14 @@ export function COMPORTEMENT(script, state, actor) {
 }
 
 export function SET_COMPORTEMENT(script, state, actor) {
-    state.offset = script.getUint16(state.offset, true);
+    state.reentryOffset = script.getUint16(state.offset, true);
+    state.offset += 2;
 }
 
 export function SET_COMPORTEMENT_OBJ(script, state, actor) {
     const actorIndex = script.getUint8(state.offset++, true);
-    const offset = script.getUint16(state.offset, true);
+    const reentryOffsetActor = script.getUint16(state.offset, true);
+    // TODO set entry offset for actor in actorIndex
     state.offset += 2;
 }
 

@@ -7,8 +7,9 @@ import * as DEBUG from './debug';
 
 export function initScriptState() {
     return {
-        life: { 
+        life: {
             offset: 0,
+            reentryOffset: 0,
             continue: true,
             opcodeOffset: 0,
             switchCondition: null,
@@ -30,6 +31,7 @@ export function initScriptState() {
 export function processLifeScript(actor, time) {
     const state = actor.scriptState;
     const script = actor.props.lifeScript;
+    state.life.offset = state.life.reentryOffset;
     state.life.continue = state.life.offset != -1;
     state.life.debug = DEBUG.initDebug();
     if (script.byteLength > 0 && state.life.offset >= 0) {
