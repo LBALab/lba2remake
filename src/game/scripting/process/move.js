@@ -1,7 +1,7 @@
 
 export function END(script, state, actor) {
     state.continue = false;
-    state.offset = -1;
+    state.reentryOffset = -1;
 }
 
 export function NOP(script, state, actor) {
@@ -26,7 +26,7 @@ export function WAIT_ANIM(script, state, actor) {
         //state.continue = false;
         return;
     }
-    --state.offset;
+    state.reentryOffset = state.offset - 1;
     state.continue = false;
 }
 
@@ -39,16 +39,17 @@ export function POS_POINT(script, state, actor) {
 }
 
 export function LABEL(script, state, actor) {
-    
+    state.labelIndex = script.getUint8(state.offset, true);
+    state.labelOffset = state.offset - 2;
 }
 
 export function GOTO(script, state, actor) {
-    //state.offset = script.getInt16(state.offset, true);
+    state.reentryOffset = script.getInt16(state.offset, true);
 }
 
 export function STOP(script, state, actor) {
     state.continue = false;
-    state.offset = -1;
+    state.reentryOffset = -1;
 }
 
 export function GOTO_SYM_POINT(script, state, actor) {
@@ -71,7 +72,7 @@ export function WAIT_NUM_ANIM(script, state, actor) {
     }
 
     if (!state.continue) {
-        --state.offset;
+        state.reentryOffset = state.offset - 1;
     }
 }
 
@@ -98,7 +99,7 @@ export function WAIT_NUM_SECOND(script, state, actor) {
     }
     if (state.elapsedTime < state.waitTime) {
         state.continue = false;
-        --state.offset;
+        state.reentryOffset = state.offset - 1;
     } else {
         state.waitTime = 0;
     }

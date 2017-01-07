@@ -35,11 +35,15 @@ export function CAMERA_CENTER(script, state, actor) {
 }
 
 export function SET_TRACK(script, state, actor) {
-
+    state.move.reentryOffset = script.getUint16(state.life.offset, true);
+    state.life.offset += 2;
 }
 
 export function SET_TRACK_OBJ(script, state, actor) {
-
+    const actorIndex = script.getUint8(state.life.offset++, true);
+    const reentryOffsetActor = script.getUint16(state.life.offset, true);
+    // TODO set move script reentry offset for Actor in actorIndex
+    state.life.offset += 2;
 }
 
 export function MESSAGE(script, state, actor) {
@@ -51,20 +55,20 @@ export function CAN_FALL(script, state, actor) {
 }
 
 export function SET_DIRMODE(script, state, actor) {
-    const dirMode = script.getUint8(state.offset, true);
+    const dirMode = script.getUint8(state.life.offset, true);
     if (dirMode == 2 || dirMode == 4) { // TODO add dirMode enumeration here
-        const actorIndex = script.getUint8(state.offset + 1, true);
-        state.offset++;
+        const actorIndex = script.getUint8(state.life.offset + 1, true);
+        state.life.offset++;
         // TODO implementation
     }
 }
 
 export function SET_DIRMODE_OBJ(script, state, actor) {
-    const actorIndex1 = script.getUint8(state.offset, true);
-    const dirMode = script.getUint8(state.offset + 1, true);
+    const actorIndex1 = script.getUint8(state.life.offset, true);
+    const dirMode = script.getUint8(state.life.offset + 1, true);
     if (dirMode == 2 || dirMode == 4) { // TODO add dirMode enumeration here
-        const actorIndex2 = script.getUint8(state.offset + 2, true);
-        state.offset++;
+        const actorIndex2 = script.getUint8(state.life.offset + 2, true);
+        state.life.offset++;
         // TODO implementation
     }
 }
@@ -102,16 +106,17 @@ export function GIVE_GOLD_PIECES(script, state, actor) {
 }
 
 export function END_LIFE(script, state, actor) {
-    state.reentryOffset = -1;
-    state.continue = false;
+    state.life.reentryOffset = -1;
+    state.life.continue = false;
 }
 
 export function STOP_CURRENT_TRACK(script, state, actor) {
-
+    state.move.savedOffset = state.move.labelOffset;
+    state.move.reentryOffset = -1;
 }
 
 export function RESTORE_LAST_TRACK(script, state, actor) {
-
+    state.move.reentryOffset = state.move.savedOffset;
 }
 
 export function MESSAGE_OBJ(script, state, actor) {
@@ -159,7 +164,7 @@ export function BRICK_COL(script, state, actor) {
 }
 
 export function INVISIBLE(script, state, actor) {
-    const isActive = script.getUint8(state.offset, true);
+    const isActive = script.getUint8(state.life.offset, true);
     //actor.props.staticFlags = setStaticFlag(actor.props.staticFlags, ActorStaticFlags.HIDDEN, isActive);
 }
 
@@ -356,8 +361,8 @@ export function ADD_MESSAGE_OBJ(script, state, actor) {
 }
 
 export function BRUTAL_EXIT(script, state, actor) {
-    state.continue = false;
-    state.offset = -1;
+    state.life.continue = false;
+    state.life.offset = -1;
 }
 
 export function REPLACE(script, state, actor) {

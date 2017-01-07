@@ -19,6 +19,10 @@ export function initScriptState() {
         },
         move: {
             offset: 0,
+            reentryOffset: 0,
+            savedOffset: 0,
+            labelIndex: 0,
+            labelOffset: 0,
             continue: true,
             elapsedTime: 0,
             waitTime: 0,
@@ -44,7 +48,7 @@ export function processLifeScript(actor, time) {
             state.life.opcodeOffset = state.life.offset;
             const opcode = script.getUint8(state.life.offset++, true);
             DEBUG.setLife(state.life.debug, LifeOpcode[opcode].command);
-            LifeOpcode[opcode].callback(script, state.life, actor);
+            LifeOpcode[opcode].callback(script, state, actor);
             if (state.life.continue) {
                 state.life.offset += LifeOpcode[opcode].offset;
             }
@@ -56,6 +60,7 @@ export function processLifeScript(actor, time) {
 export function processMoveScript(actor, time) {
     const state = actor.scriptState;
     const script = actor.props.moveScript;
+    state.move.offset = state.move.reentryOffset;
     state.move.continue = state.move.offset != -1;
     state.move.elapsedTime = time.elapsed * 1000;
     state.move.debug = DEBUG.initDebug();
