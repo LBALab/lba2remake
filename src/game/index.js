@@ -54,7 +54,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     const _renderer = createRenderer(isMobile);
     const _hero = createHero(_state.config.hero);
 
-    const _createSceneManager = () => createSceneManager(_renderer, _hero, sceneManager => {
+    const _createSceneManager = () => createSceneManager(game, _renderer, _hero, sceneManager => {
         _sceneManager = sceneManager;
         game.loading();
 

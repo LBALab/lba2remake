@@ -27,7 +27,7 @@ export type SceneManager = {
     previous: Function
 }
 
-export function createSceneManager(renderer, hero, callback: Function) {
+export function createSceneManager(game, renderer, hero, callback: Function) {
     let scene = null;
 
     loadSceneMapData(sceneMap => {
@@ -46,7 +46,7 @@ export function createSceneManager(renderer, hero, callback: Function) {
                     scene = sideScene;
                     pCallback();
                 } else {
-                    loadScene(sceneMap, index, null, (err, pScene) => {
+                    loadScene(game, sceneMap, index, null, (err, pScene) => {
                         hero.physics.position.x = pScene.scenery.props.startPosition[0];
                         hero.physics.position.z = pScene.scenery.props.startPosition[1];
                         renderer.applySceneryProps(pScene.scenery.props);
@@ -71,7 +71,7 @@ export function createSceneManager(renderer, hero, callback: Function) {
     });
 }
 
-function loadScene(sceneMap, index, parent, callback) {
+function loadScene(game, sceneMap, index, parent, callback) {
     loadSceneData(index, sceneData => {
         const indexInfo = sceneMap[index];
         const loadSteps = {
@@ -91,7 +91,7 @@ function loadScene(sceneMap, index, parent, callback) {
             }];
             if (indexInfo.isIsland) {
                 loadSteps.sideScenes = ['scenery', 'threeScene', (data, callback) => {
-                    loadSideScenes(sceneMap, index, data, callback);
+                    loadSideScenes(game, sceneMap, index, data, callback);
                 }];
             }
         } else {
@@ -148,7 +148,7 @@ function loadSceneNode(index, indexInfo, data) {
     return sceneNode;
 }
 
-function loadSideScenes(sceneMap, index, parent, callback) {
+function loadSideScenes(game, sceneMap, index, parent, callback) {
     const sideIndices = filter(
         map(sceneMap, (indexInfo, sideIndex) => {
             if (sideIndex != index
@@ -165,7 +165,7 @@ function loadSideScenes(sceneMap, index, parent, callback) {
         id => id != null
     );
     async.map(sideIndices, (sideIndex, callback) => {
-        loadScene(sceneMap, sideIndex, parent, callback);
+        loadScene(game, sceneMap, sideIndex, parent, callback);
     }, (err, sideScenes) => {
         const sideScenesMap = {};
         each(sideScenes, sideScene => {

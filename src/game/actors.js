@@ -44,7 +44,7 @@ export const ActorStaticFlag = {
     // TODO
 };
 
-// TODO: move scetion offset to container THREE.Object3D
+// TODO: move section offset to container THREE.Object3D
 export function loadActor(props: ActorProps, callback: Function) {
     const pos = props.pos;
     const animState = loadAnimState();
@@ -57,8 +57,8 @@ export function loadActor(props: ActorProps, callback: Function) {
         isVisible: !(props.staticFlags & ActorStaticFlag.HIDDEN) && (props.life > 0 || props.bodyIndex >= 0) ? true : false,
         isSprite: (props.staticFlags & ActorStaticFlag.SPRITE) ? true : false,
         model: null,
-        animState: animState,
         threeObject: null,
+        animState: animState,
         scriptState: Script.initScriptState(),
         updateAnimStep: function(time) {
             let newPos = new THREE.Vector3(0,0,0);
