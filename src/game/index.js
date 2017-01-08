@@ -9,7 +9,8 @@ import {makeGamepadControls} from '../controls/gamepad';
 
 import {mainGameLoop} from './loop';
 import {createSceneManager} from './scenes';
-import {Target, Movement, createHero} from './hero';
+import {createHero} from './hero';
+import {createState} from './state'
 
 export function createGame(params: Object, isMobile: boolean, callback : Function) {
     let _sceneManager = null;
@@ -19,14 +20,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     const _clockGame = new THREE.Clock(false);
     _clockGame.start();
 
-    const _heroConfig = {
-        physics: {
-            enabled: true,
-            targets: [Target.CAMERA],
-            movement: Movement.NORMAL,
-            speed: new THREE.Vector3(0.15, 0.3, 0.3)
-        }
-    };
+    const _state = createState();
 
     const game = {
         loading: () => {
@@ -41,12 +35,13 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
         isPause: _isPaused,
 
         getSceneManager: () => _sceneManager,
+        getState: () => _state,
 
         pause: () => {
             _isPaused = !_isPaused;
             if(_isPaused) {
                 _clockGame.stop();
-                console.log("Pause")
+                console.log("Pause");
             } else {
                 _clockGame.start();
             }
@@ -57,7 +52,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     };
 
     const _renderer = createRenderer(isMobile);
-    const _hero = createHero(_heroConfig);
+    const _hero = createHero(_state.config.hero);
 
     const _createSceneManager = () => createSceneManager(_renderer, _hero, sceneManager => {
         _sceneManager = sceneManager;
