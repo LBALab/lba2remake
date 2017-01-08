@@ -133,7 +133,9 @@ function loadSceneNode(index, indexInfo, data) {
         sceneNode.position.z = section.z * 2;
     }
     const addToSceneNode = obj => {
-        sceneNode.add(obj.threeObject);
+        if (obj.threeObject != null) { // because of the sprite actors
+            sceneNode.add(obj.threeObject);
+        }
     };
 
     each(data.actors, addToSceneNode);

@@ -82,10 +82,12 @@ export function loadActor(props: ActorProps, callback: Function) {
         update: function(time) {
             Script.processMoveScript(actor, time);
             Script.processLifeScript(actor, time);
-            updateModel(this.model, this.animState, props.entityIndex, props.bodyIndex, props.animIndex, time);
 
-            if(!this.isSprite && this.animState.isPlaying) {
-                this.updateAnimStep(time);
+            if(!this.isSprite) {
+                updateModel(this.model, this.animState, props.entityIndex, props.bodyIndex, props.animIndex, time);
+                if (this.animState.isPlaying) {
+                    this.updateAnimStep(time);
+                }
             }
         }
     };
@@ -96,12 +98,17 @@ export function loadActor(props: ActorProps, callback: Function) {
     actor.physics.orientation.setFromEuler(euler);
 
     // only if not sprite actor
-    loadModel(props.entityIndex, props.bodyIndex, props.animIndex, animState, (model) => {
-        //model.mesh.visible = actor.isVisible;
-        model.mesh.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
-        model.mesh.quaternion.copy(actor.physics.orientation);
-        actor.model = model;
-        actor.threeObject = model.mesh;
+    if (!actor.isSprite) {
+        loadModel(props.entityIndex, props.bodyIndex, props.animIndex, animState, (model) => {
+            //model.mesh.visible = actor.isVisible;
+            model.mesh.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
+            model.mesh.quaternion.copy(actor.physics.orientation);
+            actor.model = model;
+            actor.threeObject = model.mesh;
+            callback(null, actor);
+        });
+    } else {
+        // TODO load sprite
         callback(null, actor);
-    });
+    }
 }
