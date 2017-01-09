@@ -46,7 +46,7 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     scene = sideScene;
                     pCallback();
                 } else {
-                    loadScene(game, sceneMap, index, null, (err, pScene) => {
+                    loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
                         hero.physics.position.x = pScene.scenery.props.startPosition[0];
                         hero.physics.position.z = pScene.scenery.props.startPosition[1];
                         renderer.applySceneryProps(pScene.scenery.props);
@@ -71,7 +71,7 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
     });
 }
 
-function loadScene(game, sceneMap, index, parent, callback) {
+function loadScene(game, renderer, sceneMap, index, parent, callback) {
     loadSceneData(index, sceneData => {
         const indexInfo = sceneMap[index];
         const loadSteps = {
@@ -83,7 +83,7 @@ function loadScene(game, sceneMap, index, parent, callback) {
         if (!parent) {
             loadSteps.scenery = indexInfo.isIsland
                 ? loadIslandScenery.bind(null, islandSceneMapping[index].island)
-                : loadIsometricScenery.bind(null, indexInfo.index);
+                : loadIsometricScenery.bind(null, renderer, indexInfo.index);
             loadSteps.threeScene = ['scenery', (data, callback) => {
                 const threeScene = new THREE.Scene();
                 threeScene.add(data.scenery.threeObject);

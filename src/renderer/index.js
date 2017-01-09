@@ -81,7 +81,8 @@ export function createRenderer(useVR) {
         cameras: {
             camera3D: camera3D,
             isoCamera: cameraIso
-        }
+        },
+        pixelRatio: () => pixelRatio.getValue()
     };
 }
 

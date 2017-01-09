@@ -6,7 +6,7 @@ import {loadGrid} from './grid';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 
-export function loadIsometricScenery(entry, callback) {
+export function loadIsometricScenery(renderer, entry, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         bkg: loadHqrAsync('LBA_BKG.HQR')
@@ -22,7 +22,7 @@ export function loadIsometricScenery(entry, callback) {
                     skyColor: [0, 0, 0]
                 }
             },
-            threeObject: loadMesh(grid),
+            threeObject: loadMesh(renderer, grid),
             physics: {
                 getGroundHeight: () => 0
             },
@@ -31,7 +31,7 @@ export function loadIsometricScenery(entry, callback) {
     });
 }
 
-function loadMesh(grid) {
+function loadMesh(renderer, grid) {
     const geometries = {
         positions: [],
         centers: [],
@@ -57,12 +57,13 @@ function loadMesh(grid) {
         uniforms: {
             library: {value: grid.library.texture},
             tileSize: {value: new THREE.Vector2(48 / width, 38 / height)},
-            window: {value: new THREE.Vector2(window.innerWidth, window.innerHeight)}
+            window: {value: new THREE.Vector2(window.innerWidth * renderer.pixelRatio(), window.innerHeight * renderer.pixelRatio())},
+            pixelSize: {value: 1.0 / renderer.pixelRatio()}
         }
     }));
 
     window.addEventListener('resize', () => {
-        mesh.material.uniforms.window.value.set(window.innerWidth, window.innerHeight);
+        mesh.material.uniforms.window.value.set(window.innerWidth * renderer.pixelRatio(), window.innerHeight * renderer.pixelRatio());
     });
     let scale = 1 / 32;
     mesh.scale.set(scale, scale, scale);
