@@ -73,9 +73,10 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
 
 function loadScene(game, renderer, sceneMap, index, parent, callback) {
     loadSceneData(index, sceneData => {
+
         const indexInfo = sceneMap[index];
         const loadSteps = {
-            actors: (callback) => { async.map(sceneData.actors, loadActor, callback) },
+            actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, game), callback) },
             points: (callback) => { async.map(sceneData.points, loadPoint, callback) },
             zones: (callback) => { async.map(sceneData.zones, loadZone, callback) }
         };
