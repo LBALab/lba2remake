@@ -55,13 +55,13 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     });
                 }
             },
-            next: (pCallback) => {
+            next: function(pCallback) {
                 if (scene) {
                     const next = (scene.index + 1) % sceneMap.length;
                     this.goto(next, pCallback);
                 }
             },
-            previous: (pCallback) => {
+            previous: function(pCallback) {
                 if (scene) {
                     const previous = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
                     this.goto(previous, pCallback);
