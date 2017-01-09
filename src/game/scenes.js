@@ -91,7 +91,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
             }];
             if (indexInfo.isIsland) {
                 loadSteps.sideScenes = ['scenery', 'threeScene', (data, callback) => {
-                    loadSideScenes(game, sceneMap, index, data, callback);
+                    loadSideScenes(game, renderer, sceneMap, index, data, callback);
                 }];
             }
         } else {
@@ -148,7 +148,7 @@ function loadSceneNode(index, indexInfo, data) {
     return sceneNode;
 }
 
-function loadSideScenes(game, sceneMap, index, parent, callback) {
+function loadSideScenes(game, renderer, sceneMap, index, parent, callback) {
     const sideIndices = filter(
         map(sceneMap, (indexInfo, sideIndex) => {
             if (sideIndex != index
@@ -165,7 +165,7 @@ function loadSideScenes(game, sceneMap, index, parent, callback) {
         id => id != null
     );
     async.map(sideIndices, (sideIndex, callback) => {
-        loadScene(game, sceneMap, sideIndex, parent, callback);
+        loadScene(game, renderer, sceneMap, sideIndex, parent, callback);
     }, (err, sideScenes) => {
         const sideScenesMap = {};
         each(sideScenes, sideScene => {
