@@ -44,7 +44,7 @@ export function getIsometricCamera() {
     return camera;
 }
 
-export function resizeIsometricCamera(camera, v) {
+export function resizeIsometricCamera(camera) {
     const halfWidth = Math.floor(window.innerWidth / 2) / v;
     const halfHeight = Math.floor(window.innerHeight / 2) / v;
     camera.left = -halfWidth;
