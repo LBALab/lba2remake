@@ -32,7 +32,7 @@ export function initScriptState() {
     };
 }
 
-export function processLifeScript(actor, time) {
+export function processLifeScript(game, actor, time) {
     const state = actor.scriptState;
     const script = actor.props.lifeScript;
     state.life.offset = state.life.reentryOffset;
@@ -48,7 +48,7 @@ export function processLifeScript(actor, time) {
             state.life.opcodeOffset = state.life.offset;
             const opcode = script.getUint8(state.life.offset++, true);
             DEBUG.setLife(state.life.debug, LifeOpcode[opcode].command);
-            LifeOpcode[opcode].callback(script, state, actor);
+            LifeOpcode[opcode].callback(game, script, state, actor);
             if (state.life.continue) {
                 state.life.offset += LifeOpcode[opcode].offset;
             }
@@ -57,7 +57,7 @@ export function processLifeScript(actor, time) {
     }
 }
 
-export function processMoveScript(actor, time) {
+export function processMoveScript(game, actor, time) {
     const state = actor.scriptState;
     const script = actor.props.moveScript;
     state.move.offset = state.move.reentryOffset;
@@ -73,7 +73,7 @@ export function processMoveScript(actor, time) {
             }
             const opcode = script.getUint8(state.move.offset++, true);
             DEBUG.setMove(state.move.debug, MoveOpcode[opcode].command);
-            MoveOpcode[opcode].callback(script, state.move, actor);
+            MoveOpcode[opcode].callback(game, script, state.move, actor);
             if (state.move.continue) {
                 state.move.offset += MoveOpcode[opcode].offset;
             }

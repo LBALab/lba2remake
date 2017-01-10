@@ -45,7 +45,7 @@ export const ActorStaticFlag = {
 };
 
 // TODO: move section offset to container THREE.Object3D
-export function loadActor(props: ActorProps, callback: Function) {
+export function loadActor(game: any, props: ActorProps, callback: Function) {
     const pos = props.pos;
     const animState = loadAnimState();
     const actor: Actor = {
@@ -80,8 +80,8 @@ export function loadActor(props: ActorProps, callback: Function) {
             this.model.mesh.position.set(this.physics.position.x, this.physics.position.y, this.physics.position.z);
         },
         update: function(time) {
-            Script.processMoveScript(actor, time);
-            Script.processLifeScript(actor, time);
+            Script.processMoveScript(game, actor, time);
+            Script.processLifeScript(game, actor, time);
 
             if(!this.isSprite) {
                 updateModel(this.model, this.animState, props.entityIndex, props.bodyIndex, props.animIndex, time);
