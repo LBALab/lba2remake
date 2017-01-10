@@ -115,6 +115,9 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 threeScene: data.threeScene,
                 scenery: data.scenery,
                 sideScenes: data.sideScenes,
+                actors: data.actors,
+                points: data.points,
+                zones: data.zones,
                 update: time => {
                     each(data.actors, actor => {
                         actor.update(time);

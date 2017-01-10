@@ -52,33 +52,21 @@ export function loadActor(game: any, props: ActorProps, callback: Function) {
         props: props,
         physics: {
             position: new THREE.Vector3(pos[0], pos[1], pos[2]),
-            orientation: new THREE.Quaternion()
+            orientation: new THREE.Quaternion(),
+            temp: {
+                destination: new THREE.Vector3(0, 0, 0),
+                position: new THREE.Vector3(0, 0, 0),
+                angle: THREE.Math.degToRad(getRotation(props.angle, 0, 1)),
+            }
         },
         isVisible: !(props.staticFlags & ActorStaticFlag.HIDDEN) && (props.life > 0 || props.bodyIndex >= 0) ? true : false,
         isSprite: (props.staticFlags & ActorStaticFlag.SPRITE) ? true : false,
+        isWalking: false,
+        isTurning: false,
         model: null,
         threeObject: null,
         animState: animState,
         scriptState: Script.initScriptState(),
-        updateAnimStep: function(time) {
-            let newPos = new THREE.Vector3(0,0,0);
-            const angle = THREE.Math.degToRad(getRotation(props.angle, 0, 1));
-
-            const delta = time.delta * 1000;
-            const speedZ = ((this.animState.step.z * delta) / this.animState.keyframeLength);
-            const speedX = ((this.animState.step.x * delta) / this.animState.keyframeLength);
-
-            newPos.x += (Math.cos(angle) * speedZ) * -1; // x is inverted
-            newPos.z += Math.sin(angle) * speedZ;
-
-            newPos.x += Math.sin(angle) * speedX;
-            newPos.z += Math.cos(angle) * speedX;
-
-            newPos.y += (this.animState.step.y * delta) / (this.animState.keyframeLength);
-
-            this.physics.position.add(newPos);
-            this.model.mesh.position.set(this.physics.position.x, this.physics.position.y, this.physics.position.z);
-        },
         update: function(time) {
             Script.processMoveScript(game, actor, time);
             Script.processLifeScript(game, actor, time);
@@ -88,6 +76,36 @@ export function loadActor(game: any, props: ActorProps, callback: Function) {
                 if (this.animState.isPlaying) {
                     this.updateAnimStep(time);
                 }
+            }
+        },
+        goto: function(point) {
+            this.isWalking = true;
+            this.isTurning = true;
+            this.physics.temp.destination = point;
+            this.physics.temp.angle = this.physics.position.angleTo(point);
+
+            return this.physics.position.distanceTo(point);
+        },
+        updateAnimStep: function(time) {
+            const delta = time.delta * 1000;
+            if (this.isTurning) {
+                //this.physics.temp.angle = THREE.Math.degToRad(getRotation(props.angle, 0, 1));
+                // DO turning
+            }
+            if (this.isWalking) {
+                const speedZ = ((this.animState.step.z * delta) / this.animState.keyframeLength);
+                const speedX = ((this.animState.step.x * delta) / this.animState.keyframeLength);
+
+                this.physics.temp.position.x += (Math.cos(this.physics.temp.angle) * speedZ) * -1; // x is inverted
+                this.physics.temp.position.z += Math.sin(this.physics.temp.angle) * speedZ;
+
+                this.physics.temp.position.x += Math.sin(this.physics.temp.angle) * speedX;
+                this.physics.temp.position.z += Math.cos(this.physics.temp.angle) * speedX;
+
+                this.physics.temp.position.y += (this.animState.step.y * delta) / (this.animState.keyframeLength);
+
+                this.physics.position.add(this.physics.temp.position);
+                this.model.mesh.position.set(this.physics.position.x, this.physics.position.y, this.physics.position.z);
             }
         }
     };

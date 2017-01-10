@@ -17,7 +17,9 @@ export function ANIM(game, script, state, actor) {
 }
 
 export function GOTO_POINT(game, script, state, actor) {
-    
+    const pointIndex = script.getUint8(state.offset, true);
+    const scene = game.getSceneManager().getScene();
+    actor.goto(scene.points[pointIndex].physics.position);
 }
 
 export function WAIT_ANIM(game, script, state, actor) {
