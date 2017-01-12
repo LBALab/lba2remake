@@ -5,7 +5,7 @@ import THREE from 'three';
 import type {Model} from '../model';
 import {loadModel, updateModel} from '../model';
 import { loadAnimState } from '../model/animState';
-import {getRotation,distance2D,angleTo} from '../utils/lba';
+import {getRotation,distance2D} from '../utils/lba';
 import * as Script from './scripting';
 
 type ActorProps = {
@@ -74,18 +74,21 @@ export function loadActor(game: any, props: ActorProps, callback: Function) {
             Script.processLifeScript(game, actor, time);
 
             if(!this.isSprite) {
-                updateModel(this.model, this.animState, props.entityIndex, props.bodyIndex, props.animIndex, time);
+                updateModel(this.model, this.animState, this.props.entityIndex, this.props.bodyIndex, this.props.animIndex, time);
                 if (this.animState.isPlaying) {
                     this.updateAnimStep(time);
                 }
             }
         },
         goto: function(point) {
+
+            if (!this.isWalking) {
+                this.physics.temp.destination = point;
+                this.physics.temp.angle = this.physics.position.angleTo(point);
+                //this.physics.temp.angle = angleTo(point, this.physics.position);
+            }
             this.isWalking = true;
             this.isTurning = true;
-            this.physics.temp.destination = point;
-            this.physics.temp.angle = this.physics.position.angleTo(point);
-            //this.physics.temp.angle = angleTo(point, this.physics.position);
 
             return distance2D(this.physics.position, point);
         },

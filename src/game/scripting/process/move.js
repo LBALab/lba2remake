@@ -20,11 +20,12 @@ export function GOTO_POINT(game, script, state, actor) {
     const pointIndex = script.getUint8(state.offset, true);
     const point = game.getSceneManager().getScene().getPoint(pointIndex);
     const distance = actor.goto(point.physics.position);
-    if (distance > 500) {
+    if (distance > (500 / 0x800)) {
         state.continue = false;
         state.reentryOffset = state.offset - 1;
+    } /*else {
         actor.stop();
-    }
+    }*/
 }
 
 export function WAIT_ANIM(game, script, state, actor) {

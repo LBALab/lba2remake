@@ -1,3 +1,4 @@
+import {distance2D} from '../../../utils/lba';
 
 export function COL(param) {
     return 0;
@@ -8,6 +9,7 @@ export function COL_OBJ(param) {
 }
 
 export function DISTANCE(param) {
+
     return 0;
 }
 
