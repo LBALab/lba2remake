@@ -31,6 +31,7 @@ const ZONE_TYPE_MATERIAL_COLOR = [
 export function loadZone(props, callback) {
     const pos = props.pos;
     const zone = {
+        index: props.index,
         props: props,
         physics: {
             position: new THREE.Vector3(pos[0], pos[1], pos[2])

@@ -5,10 +5,11 @@ import THREE from 'three';
 import type {Model} from '../model';
 import {loadModel, updateModel} from '../model';
 import { loadAnimState } from '../model/animState';
-import {getRotation} from '../utils/lba';
+import {getRotation,distance2D,angleTo} from '../utils/lba';
 import * as Script from './scripting';
 
 type ActorProps = {
+    index: number,
     pos: [number, number, number],
     life: number,
     staticFlags: number,
@@ -49,6 +50,7 @@ export function loadActor(game: any, props: ActorProps, callback: Function) {
     const pos = props.pos;
     const animState = loadAnimState();
     const actor: Actor = {
+        index: props.index,
         props: props,
         physics: {
             position: new THREE.Vector3(pos[0], pos[1], pos[2]),
@@ -83,16 +85,26 @@ export function loadActor(game: any, props: ActorProps, callback: Function) {
             this.isTurning = true;
             this.physics.temp.destination = point;
             this.physics.temp.angle = this.physics.position.angleTo(point);
+            //this.physics.temp.angle = angleTo(point, this.physics.position);
 
-            return this.physics.position.distanceTo(point);
+            return distance2D(this.physics.position, point);
+        },
+        stop: function() {
+            this.isWalking = false;
+            this.isTurning = false;
         },
         updateAnimStep: function(time) {
             const delta = time.delta * 1000;
             if (this.isTurning) {
-                //this.physics.temp.angle = THREE.Math.degToRad(getRotation(props.angle, 0, 1));
-                // DO turning
+                const euler = new THREE.Euler(THREE.Math.degToRad(0),
+                    this.physics.temp.angle - (Math.PI/2),
+                    THREE.Math.degToRad(0), 'XZY');
+                this.physics.orientation.setFromEuler(euler);
+                this.model.mesh.quaternion.copy(this.physics.orientation);
             }
             if (this.isWalking) {
+                this.physics.temp.position.set(0,0,0);
+
                 const speedZ = ((this.animState.step.z * delta) / this.animState.keyframeLength);
                 const speedX = ((this.animState.step.x * delta) / this.animState.keyframeLength);
 
