@@ -39,3 +39,22 @@ export function setStaticFlag(flags, value, isActive) {
     }
     return f;
 }
+
+export function distance2D (from,to) {
+    const dx = from.x - to.x, dz = from.z - to.z;
+    const distsquared = dx * dx + dz * dz;
+    return Math.sqrt(distsquared);
+}
+
+export function angleTo(v1, v2) {
+    const xdiff = v2.x - v1.x;
+    const ydiff = v2.z - v1.z;
+
+    let rads = Math.atan2(ydiff, xdiff);
+
+    if (ydiff < 0) {
+        rads -= 2 * Math.PI;
+    }
+
+    return rads;
+}

@@ -108,7 +108,9 @@ function loadActors(scene, offset) {
     offset += 2;
 
     for (let i = 0; i < numActors; ++i) {
-        let actor = {};
+        let actor = {
+            index: i
+        };
 
         actor.staticFlags = data.getUint16(offset, true);
         offset += 2;
@@ -191,6 +193,7 @@ function loadZones(scene, offset) {
 
     for (let i = 0; i < numZones; ++i) {
         let zone = {
+            index: i,
             type: 0,
             box: {}
         };
@@ -237,6 +240,7 @@ function loadPoints(scene, offset) {
 
     for (let i = 0; i < numPoints; ++i) {
         let point = {
+            index: i,
             pos: [
                 (0x8000 - data.getUint32(offset + 8, true) + 512) / 0x4000,
                 data.getUint32(offset + 4, true) / 0x4000,

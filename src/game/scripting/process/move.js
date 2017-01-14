@@ -1,3 +1,5 @@
+//import THREE from 'three';
+//import {getRotation} from '../../../utils/lba';
 
 export function END(game, script, state, actor) {
     state.continue = false;
@@ -13,17 +15,32 @@ export function BODY(game, script, state, actor) {
 }
 
 export function ANIM(game, script, state, actor) {
+    //if (actor.index == 22)
+    //    console.log(`22 animIndex: ${actor.props.animIndex}`);
     actor.props.animIndex = script.getUint8(state.offset, true);
+    actor.resetAnimState();
+    //if (actor.index == 22)
+    //    console.log(`22 animIndex: ${actor.props.animIndex}`);
 }
 
 export function GOTO_POINT(game, script, state, actor) {
-    
+    const pointIndex = script.getUint8(state.offset, true);
+    const point = game.getSceneManager().getScene().getPoint(pointIndex);
+    const distance = actor.goto(point.physics.position);
+    //if (actor.index == 22)
+    //  console.log(`${pointIndex}:${point.physics.position.x},${point.physics.position.z}:${actor.physics.position.x},${actor.physics.position.z}:${distance}`);
+
+    if (distance < (500 / 1024)) {
+        state.continue = false;
+        state.reentryOffset = state.offset - 1;
+    }
 }
 
 export function WAIT_ANIM(game, script, state, actor) {
     if (actor.animState.hasEnded) {
-        // TODO clear angle
-        //state.continue = false;
+        actor.props.angle = 0;
+        state.continue = false;
+        state.reentryOffset = state.offset; // this is an exception to move to next comand but still quit the execution now with continue = false
         return;
     }
     state.reentryOffset = state.offset - 1;
@@ -31,7 +48,7 @@ export function WAIT_ANIM(game, script, state, actor) {
 }
 
 export function ANGLE(game, script, state, actor) {
-    
+    actor.setAngle(script.getInt16(state.offset, true));
 }
 
 export function POS_POINT(game, script, state, actor) {
@@ -174,7 +191,16 @@ export function REPLACE(game, script, state, actor) {
 }
 
 export function WAIT_NUM_DECIMAL(game, script, state, actor) {
-    
+    const numSeconds = script.getUint8(state.offset, true);
+    if (state.waitTime == 0) {
+        state.waitTime = state.elapsedTime + (numSeconds * 100);
+    }
+    if (state.elapsedTime < state.waitTime) {
+        state.continue = false;
+        state.reentryOffset = state.offset - 1;
+    } else {
+        state.waitTime = 0;
+    }
 }
 
 export function SPRITE(game, script, state, actor) {
@@ -182,7 +208,17 @@ export function SPRITE(game, script, state, actor) {
 }
 
 export function WAIT_NUM_SECOND_RND(game, script, state, actor) {
-    
+    // TODO random seconds
+    const numSeconds = script.getUint8(state.offset, true);
+    if (state.waitTime == 0) {
+        state.waitTime = state.elapsedTime + (numSeconds * 1000);
+    }
+    if (state.elapsedTime < state.waitTime) {
+        state.continue = false;
+        state.reentryOffset = state.offset - 1;
+    } else {
+        state.waitTime = 0;
+    }
 }
 
 export function SET_FRAME(game, script, state, actor) {
@@ -218,7 +254,17 @@ export function WAIT_FRAME_3DS(game, script, state, actor) {
 }
 
 export function WAIT_NUM_DECIMAL_RND(game, script, state, actor) {
-    
+    // TODO random seconds
+    const numSeconds = script.getUint8(state.offset, true);
+    if (state.waitTime == 0) {
+        state.waitTime = state.elapsedTime + (numSeconds * 100);
+    }
+    if (state.elapsedTime < state.waitTime) {
+        state.continue = false;
+        state.reentryOffset = state.offset - 1;
+    } else {
+        state.waitTime = 0;
+    }
 }
 
 export function INTERVAL(game, script, state, actor) {

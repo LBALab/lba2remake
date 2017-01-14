@@ -3,7 +3,8 @@ import THREE from 'three';
 import {
     map,
     filter,
-    each
+    each,
+    find
 } from 'lodash';
 
 import islandSceneMapping from '../island/data/sceneMapping';
@@ -115,11 +116,23 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 threeScene: data.threeScene,
                 scenery: data.scenery,
                 sideScenes: data.sideScenes,
+                actors: data.actors,
+                points: data.points,
+                zones: data.zones,
                 update: time => {
                     each(data.actors, actor => {
                         actor.update(time);
                     });
-                }
+                },
+                getActor(index) {
+                    return find(this.actors, function(obj) { return obj.index == index; });
+                },
+                getZone(index) {
+                    return find(this.zones, function(obj) { return obj.index == index; });
+                },
+                getPoint(index) {
+                    return find(this.points, function(obj) { return obj.index == index; });
+                },
             });
         });
     });

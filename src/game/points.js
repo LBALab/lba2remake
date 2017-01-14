@@ -7,6 +7,7 @@ const material = new THREE.MeshBasicMaterial( {color: 0xffffff, depthTest: true,
 export function loadPoint(props, callback) {
     const pos = props.pos;
     const point = {
+        index: props.index,
         props: props,
         physics: {
             position: new THREE.Vector3(pos[0], pos[1], pos[2])
