@@ -36,14 +36,15 @@ export function CAMERA_CENTER(game, script, state, actor) {
 
 export function SET_TRACK(game, script, state, actor) {
     state.move.reentryOffset = script.getUint16(state.life.offset, true);
-    state.life.offset += 2;
 }
 
 export function SET_TRACK_OBJ(game, script, state, actor) {
-    const actorIndex = script.getUint8(state.life.offset++, true);
-    const reentryOffsetActor = script.getUint16(state.life.offset, true);
-    // TODO set move script reentry offset for Actor in actorIndex
-    state.life.offset += 2;
+    const actorIndex = script.getUint8(state.life.offset, true);
+    const reentryOffsetActor = script.getUint16(state.life.offset + 1, true);
+    const actorOther = game.getSceneManager().getScene().getActor(actorIndex);
+    if (actorOther) {
+        actorOther.scriptState.move.reentryOffset = reentryOffsetActor;
+    }
 }
 
 export function MESSAGE(game, script, state, actor) {
