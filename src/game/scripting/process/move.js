@@ -48,7 +48,7 @@ export function WAIT_ANIM(game, script, state, actor) {
 }
 
 export function ANGLE(game, script, state, actor) {
-    
+    actor.setAngle(script.getInt16(state.offset, true));
 }
 
 export function POS_POINT(game, script, state, actor) {
