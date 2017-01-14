@@ -17,6 +17,17 @@ export function loadAnimState() {
     };
 }
 
+export function resetAnimState(state) {
+    state.currentFrame = 0;
+    state.loopFrame = 0;
+    state.currentTime = 0;
+    state.isPlaying = true;
+    state.isWaiting = false;
+    state.hasEnded = false;
+    state.step.set(0,0,0);
+    state.keyframeLength = 0;
+}
+
 export function initSkeleton(state, skeleton, loopFrame) {
     state.skeleton = skeleton;
     state.loopFrame = loopFrame;
