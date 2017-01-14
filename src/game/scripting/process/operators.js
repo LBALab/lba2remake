@@ -22,7 +22,7 @@ function testConditionValue(operator, a, b) {
 	return false;
 }
 
-function getCondition(script, state) {
+function getCondition(game, script, state) {
     const conditionIndex = script.getUint8(state.life.offset++, true);
     const condition = ConditionOpcode[conditionIndex];
     let param = null; 
@@ -30,7 +30,7 @@ function getCondition(script, state) {
     if (condition.param) {
         param = script.getUint8(state.life.offset++, true);
     }
-    const value1 = condition.callback(param);
+    const value1 = condition.callback(game, param);
     DEBUG.addLife(state.life.debug, " " + value1);
     return {
         condition,
@@ -51,8 +51,8 @@ function testConditionOperand(script, state, condition, value1) {
     return testConditionValue(operator, value1, value2);
 }
 
-function testCondition(script, state) {
-    const {condition, value1} = getCondition(script, state);
+function testCondition(game,script, state) {
+    const {condition, value1} = getCondition(game, script, state);
     return testConditionOperand(script, state, condition, value1);
 }
 
@@ -72,7 +72,7 @@ export function RETURN(game, script, state, actor) {
 }
 
 export function SNIF(game, script, state, actor) {
-    if (!testCondition(script, state)) {
+    if (!testCondition(game, script, state)) {
         script.setUint8(state.life.opcodeOffset, 0x0D); // override opcode to SWIF
     }
     state.life.offset = script.getUint16(state.life.offset, true);
@@ -83,12 +83,12 @@ export function OFFSET(game, script, state, actor) {
 }
 
 export function NEVERIF(game, script, state, actor) {
-    testCondition(script, state);
+    testCondition(game, script, state);
     state.life.offset = script.getUint16(state.life.offset, true);
 }
 
 export function IF(game, script, state, actor) {
-    if (!testCondition(script, state)) {
+    if (!testCondition(game, script, state)) {
         state.life.offset = script.getUint16(state.life.offset, true);
         return;
     }
@@ -96,7 +96,7 @@ export function IF(game, script, state, actor) {
 }
 
 export function SWIF(game, script, state, actor) {
-    if (!testCondition(script, state)) {
+    if (!testCondition(game, script, state)) {
         state.life.offset = script.getUint16(state.life.offset, true);
         return;
     }
@@ -105,7 +105,7 @@ export function SWIF(game, script, state, actor) {
 }
 
 export function ONEIF(game, script, state, actor) {
-    if (!testCondition(script, state)) {
+    if (!testCondition(game, script, state)) {
         state.life.offset = script.getUint16(state.life.offset, true);
         return;
     }
@@ -122,7 +122,7 @@ export function ENDIF(game, script, state, actor) {
 }
 
 export function OR_IF(game, script, state, actor) {
-    if (testCondition(script, state)) {
+    if (testCondition(game, script, state)) {
         state.life.offset = script.getUint16(state.life.offset, true);
         return;
     }
@@ -150,7 +150,7 @@ export function END_COMPORTEMENT(game, script, state, actor) {
 }
 
 export function AND_IF(game, script, state, actor) {
-    if (!testCondition(script, state)) {
+    if (!testCondition(game, script, state)) {
         state.life.offset = script.getUint16(state.life.offset, true);
         return;
     }
@@ -158,7 +158,7 @@ export function AND_IF(game, script, state, actor) {
 }
 
 export function SWITCH(game, script, state, actor) {
-    const {condition, value1} = getCondition(script, state);
+    const {condition, value1} = getCondition(game, script, state);
     state.life.switchCondition = condition;
     state.life.switchValue1 = value1;
 }

@@ -1,186 +1,186 @@
 import {distance2D} from '../../../utils/lba';
 
-export function COL(param) {
+export function COL(game, param) {
     return 0;
 }
 
-export function COL_OBJ(param) {
+export function COL_OBJ(game, param) {
     return 0;
 }
 
-export function DISTANCE(param) {
+export function DISTANCE(game, param) {
 
     return 0;
 }
 
-export function ZONE(param) {
+export function ZONE(game, param) {
     return 0;
 }
 
-export function ZONE_OBJ(param) {
+export function ZONE_OBJ(game, param) {
     return 0;
 }
 
-export function BODY(param) {
+export function BODY(game, param) {
     return 0;
 }
 
-export function BODY_OBJ(param) {
+export function BODY_OBJ(game, param) {
     return 0;
 }
 
-export function ANIM(param) {
+export function ANIM(game, param) {
     return 0;
 }
 
-export function ANIM_OBJ(param) {
+export function ANIM_OBJ(game, param) {
     return 0;
 }
 
-export function CURRENT_TRACK(param) {
+export function CURRENT_TRACK(game, param) {
     return 0;
 }
 
-export function CURRENT_TRACK_OBJ(param) {
+export function CURRENT_TRACK_OBJ(game, param) {
     return 0;
 }
 
-export function VAR_CUBE(param) {
+export function VAR_CUBE(game, param) {
     return 0;
 }
 
-export function CONE_VIEW(param) {
+export function CONE_VIEW(game, param) {
     return 0;
 }
 
-export function HIT_BY(param) {
+export function HIT_BY(game, param) {
     return 0;
 }
 
-export function ACTION(param) {
+export function ACTION(game, param) {
     return 0;
 }
 
-export function VAR_GAME(param) {
+export function VAR_GAME(game, param) {
     return 0;
 }
 
-export function LIFE_POINT(param) {
+export function LIFE_POINT(game, param) {
     return 0;
 }
 
-export function LIFE_POINT_OBJ(param) {
+export function LIFE_POINT_OBJ(game, param) {
     return 0;
 }
 
-export function NUM_LITTLE_KEYS(param) {
+export function NUM_LITTLE_KEYS(game, param) {
     return 0;
 }
 
-export function NUM_GOLD_PIECES(param) {
+export function NUM_GOLD_PIECES(game, param) {
     return 0;
 }
 
-export function BEHAVIOUR(param) {
+export function BEHAVIOUR(game, param) {
     return 0;
 }
 
-export function CHAPTER(param) {
+export function CHAPTER(game, param) {
+    return game.getState().game.chapter;
+}
+
+export function DISTANCE_3D(game, param) {
     return 0;
 }
 
-export function DISTANCE_3D(param) {
+export function MAGIC_LEVEL(game, param) {
     return 0;
 }
 
-export function MAGIC_LEVEL(param) {
+export function MAGIC_POINT(game, param) {
     return 0;
 }
 
-export function MAGIC_POINT(param) {
+export function USE_INVENTORY(game, param) {
     return 0;
 }
 
-export function USE_INVENTORY(param) {
+export function CHOICE(game, param) {
     return 0;
 }
 
-export function CHOICE(param) {
+export function FUEL(game, param) {
     return 0;
 }
 
-export function FUEL(param) {
+export function CARRIED_BY(game, param) {
     return 0;
 }
 
-export function CARRIED_BY(param) {
+export function CDROM(game, param) {
     return 0;
 }
 
-export function CDROM(param) {
+export function LADDER(game, param) {
     return 0;
 }
 
-export function LADDER(param) {
+export function RND(game, param) {
     return 0;
 }
 
-export function RND(param) {
+export function RAIL(game, param) {
     return 0;
 }
 
-export function RAIL(param) {
+export function BETA(game, param) {
     return 0;
 }
 
-export function BETA(param) {
+export function BETA_OBJ(game, param) {
     return 0;
 }
 
-export function BETA_OBJ(param) {
+export function CARRIED_OBJ_BY(game, param) {
     return 0;
 }
 
-export function CARRIED_OBJ_BY(param) {
+export function ANGLE(game, param) {
     return 0;
 }
 
-export function ANGLE(param) {
+export function DISTANCE_MESSAGE(game, param) {
     return 0;
 }
 
-export function DISTANCE_MESSAGE(param) {
+export function HIT_OBJ_BY(game, param) {
     return 0;
 }
 
-export function HIT_OBJ_BY(param) {
+export function REAL_ANGLE(game, param) {
     return 0;
 }
 
-export function REAL_ANGLE(param) {
+export function DEMO(game, param) {
     return 0;
 }
 
-export function DEMO(param) {
+export function COL_DECORS(game, param) {
     return 0;
 }
 
-export function COL_DECORS(param) {
+export function COL_DECORS_OBJ(game, param) {
     return 0;
 }
 
-export function COL_DECORS_OBJ(param) {
+export function PROCESSOR(game, param) {
     return 0;
 }
 
-export function PROCESSOR(param) {
+export function OBJECT_DISPLAYED(game, param) {
     return 0;
 }
 
-export function OBJECT_DISPLAYED(param) {
-    return 0;
-}
-
-export function ANGLE_OBJ(param) {
+export function ANGLE_OBJ(game, param) {
     return 0;
 }
