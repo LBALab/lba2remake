@@ -54,15 +54,15 @@ export function VAR_CUBE(game, state, param) {
 }
 
 export function CONE_VIEW(game, state, param) {
-    return 0;
+    return 10000;
 }
 
 export function HIT_BY(game, state, param) {
-    return 0;
+    return -1;
 }
 
 export function ACTION(game, state, param) {
-    return 0;
+    return -1;
 }
 
 export function VAR_GAME(game, state, param) {
