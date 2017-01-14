@@ -30,7 +30,7 @@ function getCondition(game, script, state) {
     if (condition.param) {
         param = script.getUint8(state.life.offset++, true);
     }
-    const value1 = condition.callback(game, param);
+    const value1 = condition.callback(game, state, param);
     DEBUG.addLife(state.life.debug, " " + value1);
     return {
         condition,
