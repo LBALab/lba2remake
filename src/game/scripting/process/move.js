@@ -191,7 +191,16 @@ export function REPLACE(game, script, state, actor) {
 }
 
 export function WAIT_NUM_DECIMAL(game, script, state, actor) {
-    
+    const numSeconds = script.getUint8(state.offset, true);
+    if (state.waitTime == 0) {
+        state.waitTime = state.elapsedTime + (numSeconds * 100);
+    }
+    if (state.elapsedTime < state.waitTime) {
+        state.continue = false;
+        state.reentryOffset = state.offset - 1;
+    } else {
+        state.waitTime = 0;
+    }
 }
 
 export function SPRITE(game, script, state, actor) {
@@ -199,7 +208,17 @@ export function SPRITE(game, script, state, actor) {
 }
 
 export function WAIT_NUM_SECOND_RND(game, script, state, actor) {
-    
+    // TODO random seconds
+    const numSeconds = script.getUint8(state.offset, true);
+    if (state.waitTime == 0) {
+        state.waitTime = state.elapsedTime + (numSeconds * 1000);
+    }
+    if (state.elapsedTime < state.waitTime) {
+        state.continue = false;
+        state.reentryOffset = state.offset - 1;
+    } else {
+        state.waitTime = 0;
+    }
 }
 
 export function SET_FRAME(game, script, state, actor) {
@@ -235,7 +254,17 @@ export function WAIT_FRAME_3DS(game, script, state, actor) {
 }
 
 export function WAIT_NUM_DECIMAL_RND(game, script, state, actor) {
-    
+    // TODO random seconds
+    const numSeconds = script.getUint8(state.offset, true);
+    if (state.waitTime == 0) {
+        state.waitTime = state.elapsedTime + (numSeconds * 100);
+    }
+    if (state.elapsedTime < state.waitTime) {
+        state.continue = false;
+        state.reentryOffset = state.offset - 1;
+    } else {
+        state.waitTime = 0;
+    }
 }
 
 export function INTERVAL(game, script, state, actor) {
