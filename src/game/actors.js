@@ -94,6 +94,11 @@ export function loadActor(game: any, props: ActorProps, callback: Function) {
 
             return distance2D(this.physics.position, point);
         },
+        setAngle: function(angle) {
+            this.isTurning = true;
+            this.props.angle = angle;
+            this.physics.temp.angle = THREE.Math.degToRad(getRotation(angle, 0, 1));
+        },
         stop: function() {
             this.isWalking = false;
             this.isTurning = false;
