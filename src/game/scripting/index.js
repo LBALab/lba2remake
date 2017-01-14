@@ -52,6 +52,7 @@ export function processLifeScript(game, actor, time) {
             if (state.life.continue) {
                 state.life.offset += LifeOpcode[opcode].offset;
             }
+            //if (actor.index == 22)
             DEBUG.displayLife(state.life.debug);
         }
     }
@@ -77,6 +78,7 @@ export function processMoveScript(game, actor, time) {
             if (state.move.continue) {
                 state.move.offset += MoveOpcode[opcode].offset;
             }
+            //if (actor.index == 22)
             DEBUG.displayMove(state.move.debug);
         }
     }
