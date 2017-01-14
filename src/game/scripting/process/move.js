@@ -1,3 +1,5 @@
+//import THREE from 'three';
+//import {getRotation} from '../../../utils/lba';
 
 export function END(game, script, state, actor) {
     state.continue = false;
@@ -13,27 +15,32 @@ export function BODY(game, script, state, actor) {
 }
 
 export function ANIM(game, script, state, actor) {
+    //if (actor.index == 22)
+    //    console.log(`22 animIndex: ${actor.props.animIndex}`);
     actor.props.animIndex = script.getUint8(state.offset, true);
+    actor.resetAnimState();
+    //if (actor.index == 22)
+    //    console.log(`22 animIndex: ${actor.props.animIndex}`);
 }
 
 export function GOTO_POINT(game, script, state, actor) {
     const pointIndex = script.getUint8(state.offset, true);
     const point = game.getSceneManager().getScene().getPoint(pointIndex);
     const distance = actor.goto(point.physics.position);
-    console.log(`${pointIndex}:${point.physics.position.x},${point.physics.position.z}:${actor.physics.position.x},${actor.physics.position.z}:${distance}`);
+    //if (actor.index == 22)
+    //  console.log(`${pointIndex}:${point.physics.position.x},${point.physics.position.z}:${actor.physics.position.x},${actor.physics.position.z}:${distance}`);
 
-    if (distance > (500 / 1000)) {
+    if (distance < (500 / 1024)) {
         state.continue = false;
         state.reentryOffset = state.offset - 1;
-    } /*else {
-        actor.stop();
-    }*/
+    }
 }
 
 export function WAIT_ANIM(game, script, state, actor) {
     if (actor.animState.hasEnded) {
-        // TODO clear angle
-        //state.continue = false;
+        actor.props.angle = 0;
+        state.continue = false;
+        state.reentryOffset = state.offset; // this is an exception to move to next comand but still quit the execution now with continue = false
         return;
     }
     state.reentryOffset = state.offset - 1;
