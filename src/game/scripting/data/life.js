@@ -68,7 +68,7 @@ export const LifeOpcode = [
     { opcode: 0x3F, command: "HIT_OBJ", callback: ls.HIT_OBJ, offset: 2 },
     { opcode: 0x40, command: "PLAY_ACF", callback: ls.PLAY_ACF, offset: 2 },
     { opcode: 0x41, command: "ECLAIR", callback: ls.ECLAIR, offset: 1 },
-    { opcode: 0x42, command: "INC_CLOVER_BOX", callback: ls.INC_CLOVER_BOX, offset: 1 },
+    { opcode: 0x42, command: "INC_CLOVER_BOX", callback: ls.INC_CLOVER_BOX, offset: 0 },
     { opcode: 0x43, command: "SET_USED_INVENTORY", callback: ls.SET_USED_INVENTORY, offset: 0 },
     { opcode: 0x44, command: "ADD_CHOICE", callback: ls.ADD_CHOICE, offset: 1 },
     { opcode: 0x45, command: "ASK_CHOICE", callback: ls.ASK_CHOICE, offset: 2 },
