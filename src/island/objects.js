@@ -7,7 +7,7 @@ export function loadObjects(island, section, geometries, objects) {
     for (let i = 0; i < numObjects; ++i) {
         const info = loadObjectInfo(section.objects, section, i);
         const object = loadObject(island, objects, info.index);
-        loadFaces(geometries, object, info, island.palette);
+        loadFaces(geometries, object, info);
     }
 }
 
@@ -63,12 +63,12 @@ function loadUVGroups(object) {
     }
 }
 
-function loadFaces(geometries, object, info, palette) {
+function loadFaces(geometries, object, info) {
     const data = new DataView(object.buffer, object.faceSectionOffset, object.lineSectionOffset - object.faceSectionOffset);
     let offset = 0;
     while (offset < data.byteLength) {
         const section = parseSectionHeader(data, object, offset);
-        loadSection(geometries, object, info, section, palette);
+        loadSection(geometries, object, info, section);
         offset += section.size + 8;
     }
 }
@@ -87,7 +87,7 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
-function loadSection(geometries, object, info, section, palette) {
+function loadSection(geometries, object, info, section) {
     for (let i = 0; i < section.numFaces; ++i) {
         const uvGroup = getUVGroup(object, section, i);
         if (false && uvGroup && (uvGroup[2] != 255 || uvGroup[3] != 255))
