@@ -1,7 +1,7 @@
 import {bits} from '../utils';
 const push = Array.prototype.push;
 
-export function loadGround(island, section, geometries, usedTiles) {
+export function loadGround(section, geometries, usedTiles) {
     for (let x = 0; x < 64; ++x) {
         for (let y = 0; y < 64; ++y) {
             const t0 = loadTriangle(section, x, y, 0);

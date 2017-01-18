@@ -100,7 +100,7 @@ function loadGeometries(island, data) {
     each(data.layout.groundSections, section => {
         const tilesKey = [section.x, section.z].join(',');
         usedTiles[tilesKey] = [];
-        loadGround(data, section, geometries, usedTiles[tilesKey]);
+        loadGround(section, geometries, usedTiles[tilesKey]);
         loadObjects(data, section, geometries, objects);
     });
 
