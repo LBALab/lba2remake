@@ -13,10 +13,10 @@ varying vec2 vColorInfo;
 varying vec2 vUv;
 varying vec3 vPos;
 
-#require "./mipmap"
-#require "./dither"
-#require "./texture2DPal"
-#require "./fog.frag"
+#require "../common/mipmap"
+#require "../common/dither"
+#require "../common/texture2DPal"
+#require "../common/fog.frag"
 
 void main() {
     vec4 texInfo = mipmapLookup(vUv);

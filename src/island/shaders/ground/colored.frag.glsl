@@ -9,8 +9,8 @@ varying vec3 vPos;
 varying vec3 vNormal;
 varying vec2 vColorInfo;
 
-#require "./fog.frag"
-#require "./dither"
+#require "../common/fog.frag"
+#require "../common/dither"
 
 void main() {
     gl_FragColor = vec4(fog(dither(vColorInfo / 16.0).rgb), 1.0);

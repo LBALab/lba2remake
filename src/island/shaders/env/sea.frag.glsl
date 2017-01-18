@@ -6,7 +6,7 @@ uniform float scale;
 varying vec2 vUv;
 varying float shore;
 
-#require "./fog.frag"
+#require "../common/fog.frag"
 
 void main() {
     vec4 tex = texture2D(texture, vUv * scale);

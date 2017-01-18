@@ -5,17 +5,17 @@ import {
     loadTexture
 } from '../texture';
 
-import colored_vertex from './shaders/colored.vert.glsl';
-import colored_fragment from './shaders/colored.frag.glsl';
-import textured_vertex from './shaders/textured.vert.glsl';
-import textured_fragment from './shaders/textured.frag.glsl';
-import atlas_vertex from './shaders/atlas.vert.glsl';
-import atlas_fragment from './shaders/atlas.frag.glsl';
-import sea_vertex from './shaders/sea.vert.glsl';
-import sea_fragment from './shaders/sea.frag.glsl';
-import env_vertex from './shaders/env.vert.glsl';
-import env_fragment from './shaders/env.frag.glsl';
-import moon_vertex from './shaders/moon.vert.glsl';
+import VERT_OBJECTS_COLORED from './shaders/objects/colored.vert.glsl';
+import FRAG_OBJECTS_COLORED from './shaders/objects/colored.frag.glsl';
+import VERT_GROUND_TEXTURED from './shaders/ground/textured.vert.glsl';
+import FRAG_GROUND_TEXTURED from './shaders/ground/textured.frag.glsl';
+import VERT_OBJECTS_TEXTURED from './shaders/objects/textured.vert.glsl';
+import FRAG_OBJECTS_TEXTURED from './shaders/objects/textured.frag.glsl';
+import VERT_SEA from './shaders/env/sea.vert.glsl';
+import FRAG_SEA from './shaders/env/sea.frag.glsl';
+import VERT_ENV from './shaders/env/env.vert.glsl';
+import FRAG_ENV from './shaders/env/env.frag.glsl';
+import VERT_MOON from './shaders/env/moon.vert.glsl';
 
 export function prepareGeometries(island, data) {
     const {envInfo} = island;
@@ -29,8 +29,8 @@ export function prepareGeometries(island, data) {
             colorInfos: [],
             normals: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: colored_vertex,
-                fragmentShader: colored_fragment,
+                vertexShader: VERT_OBJECTS_COLORED,
+                fragmentShader: FRAG_OBJECTS_COLORED,
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -43,8 +43,8 @@ export function prepareGeometries(island, data) {
             colorInfos: [],
             uvs: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: textured_vertex,
-                fragmentShader: textured_fragment,
+                vertexShader: VERT_GROUND_TEXTURED,
+                fragmentShader: FRAG_GROUND_TEXTURED,
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -59,8 +59,8 @@ export function prepareGeometries(island, data) {
             uvs: [],
             uvGroups: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: atlas_vertex,
-                fragmentShader: atlas_fragment,
+                vertexShader: VERT_OBJECTS_TEXTURED,
+                fragmentShader: FRAG_OBJECTS_TEXTURED,
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -76,8 +76,8 @@ export function prepareGeometries(island, data) {
             uvGroups: [],
             material: new THREE.RawShaderMaterial({
                 transparent: true,
-                vertexShader: atlas_vertex,
-                fragmentShader: atlas_fragment,
+                vertexShader: VERT_OBJECTS_TEXTURED,
+                fragmentShader: FRAG_OBJECTS_TEXTURED,
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -89,8 +89,8 @@ export function prepareGeometries(island, data) {
         sea: {
             positions: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: envInfo.index != 14 ? sea_vertex : moon_vertex,
-                fragmentShader: envInfo.index != 14 ? sea_fragment : env_fragment,
+                vertexShader: envInfo.index != 14 ? VERT_SEA : VERT_MOON,
+                fragmentShader: envInfo.index != 14 ? FRAG_SEA : FRAG_ENV,
                 wireframe: false,
                 uniforms: {
                     texture: {value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)},
@@ -103,8 +103,8 @@ export function prepareGeometries(island, data) {
         },
         sky: {
             material: new THREE.RawShaderMaterial({
-                vertexShader: env_vertex,
-                fragmentShader: env_fragment,
+                vertexShader: VERT_ENV,
+                fragmentShader: FRAG_ENV,
                 uniforms: {
                     texture: {value: loadSubTexture(ress.getEntry(envInfo.index), palette, 128, 0, 128, 128)},
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},

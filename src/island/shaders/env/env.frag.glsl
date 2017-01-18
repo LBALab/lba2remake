@@ -5,7 +5,7 @@ uniform float scale;
 
 varying vec2 vUv;
 
-#require "./fog.frag"
+#require "../common/fog.frag"
 
 void main() {
     vec3 color = texture2D(texture, vUv * scale).rgb;

@@ -13,9 +13,9 @@ varying vec2 vColorInfo;
 varying vec2 vUv;
 varying vec4 vUvGroup;
 
-#require "./mipmap"
-#require "./texture2DPal"
-#require "./fog.frag"
+#require "../common/mipmap"
+#require "../common/texture2DPal"
+#require "../common/fog.frag"
 
 void main() {
     vec2 uv = mod(vUv, vUvGroup.zw) + vUvGroup.xy;
