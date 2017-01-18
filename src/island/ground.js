@@ -25,6 +25,7 @@ export function loadGround(island, section, geometries, usedTiles) {
                         push.apply(geometries.textured.uvs, getUVs(section.textureInfo, t.textureIndex));
                         push.apply(geometries.textured.colorInfos, getColorInfos(section.intensity, t, p));
                     } else {
+                        push.apply(geometries.colored.normals, [0, 0, 0, 0, 0, 0, 0, 0, 0]);
                         push.apply(geometries.colored.positions, getPositions(section, p));
                         push.apply(geometries.colored.colorInfos, getColorInfos(section.intensity, t, p));
                     }

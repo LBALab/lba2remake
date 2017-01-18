@@ -50,18 +50,18 @@ function loadIslandNode(props, files) {
     };
 
     const geometries = loadGeometries(props, data);
-    each(geometries, ({positions, uvs, colors, colorInfos, uvGroups, material}, name) => {
+    each(geometries, ({positions, uvs, colorInfos, normals, uvGroups, material}, name) => {
         if (positions && positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
             if (uvs) {
                 bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
             }
-            if (colors) {
-                bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
-            }
             if (colorInfos) {
                 bufferGeometry.addAttribute('colorInfo', new THREE.BufferAttribute(new Uint8Array(colorInfos), 2, false));
+            }
+            if (normals) {
+                bufferGeometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
             }
             if (uvGroups) {
                 bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, true));

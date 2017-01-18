@@ -30,6 +30,8 @@ function loadObject(island, objects, index) {
         const buffer = island.files.obl.getEntry(index);
         const data = new DataView(buffer);
         const obj = {
+            verticesOffset: data.getUint32(44, true),
+            normalsOffset: data.getUint32(52, true),
             faceSectionOffset: data.getUint32(68, true),
             lineSectionSize: data.getUint32(72, true),
             lineSectionOffset: data.getUint32(76, true),
@@ -41,8 +43,9 @@ function loadObject(island, objects, index) {
             numVerticesType2: data.getUint16(102, true),
             buffer: buffer
         };
-        obj.vertices = new Int16Array(buffer, 104, obj.numVerticesType1 * 4);
-        obj.intensities = new Uint8Array(buffer, 104 + obj.numVerticesType1 * 8, obj.numVerticesType1 * 8);
+        //console.log(new Uint32Array(buffer, 0, 17));
+        obj.vertices = new Int16Array(buffer, obj.verticesOffset, obj.numVerticesType1 * 4);
+        obj.normals = new Int16Array(buffer, obj.normalsOffset, obj.numVerticesType1 * 4);
         loadUVGroups(obj);
         objects[index] = obj;
         return obj;
@@ -95,6 +98,7 @@ function loadSection(geometries, object, info, section) {
         const addVertex = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
             if (section.blockSize == 12 || section.blockSize == 16) {
+                push.apply(geometries.colored.normals, getNormal(object, info, index));
                 push.apply(geometries.colored.positions, getPosition(object, info, index));
                 push.apply(geometries.colored.colorInfos, getColorInfo(object, section, i, index));
             } else {
@@ -103,7 +107,7 @@ function loadSection(geometries, object, info, section) {
                     atlas += '2';
                 }
                 push.apply(geometries[atlas].positions, getPosition(object, info, index));
-                push.apply(geometries[atlas].colorInfos, [object.intensities[index * 8 + 3] / 32 + 8, 0]);
+                push.apply(geometries[atlas].colorInfos, [8, 0]);
                 push.apply(geometries[atlas].uvs, getUVs(section, i, j));
                 push.apply(geometries[atlas].uvGroups, uvGroup);
             }
@@ -117,6 +121,19 @@ function loadSection(geometries, object, info, section) {
             }
         }
     }
+}
+
+function getNormal(object, info, index) {
+    const normal = rotate([
+        object.normals[index * 4] / 0x4000,
+        object.normals[index * 4 + 1] / 0x4000,
+        object.normals[index * 4 + 2] / 0x4000
+    ], info.angle);
+    return [
+        normal[0],
+        normal[1],
+        normal[2]
+    ];
 }
 
 function getPosition(object, info, index) {
@@ -134,8 +151,8 @@ function getPosition(object, info, index) {
 
 function getColorInfo(object, section, face, index) {
     const color = section.data.getUint8(face * section.blockSize + 8);
-    const intensity = object.intensities[index * 8 + 1];
-    return [Math.floor(intensity / 32), Math.floor(color / 16)];
+    //const intensity = object.intensities[index * 4 + 3] / 0xFFFF;
+    return [8, Math.floor(color / 16)];
 }
 
 function getUVs(section, face, ptIndex) {

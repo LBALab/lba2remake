@@ -27,6 +27,7 @@ export function prepareGeometries(island, data) {
         colored: {
             positions: [],
             colorInfos: [],
+            normals: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: colored_vertex,
                 fragmentShader: colored_fragment,

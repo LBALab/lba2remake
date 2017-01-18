@@ -5,8 +5,9 @@ precision highp float;
 
 uniform sampler2D palette;
 
-varying vec2 vColorInfo;
 varying vec3 vPos;
+varying vec3 vNormal;
+varying vec2 vColorInfo;
 
 #require "./fog.frag"
 #require "./dither"
