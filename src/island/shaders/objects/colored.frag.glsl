@@ -13,5 +13,7 @@ varying float vColor;
 #require "../common/dither"
 
 void main() {
-    gl_FragColor = vec4(fog(dither(vColor, 8.0).rgb), 1.0);
+    float dp = dot(normalize(vNormal), normalize(vec3(-1.0, 1.0, 1.0)));
+    float intensity = clamp(dp, 0.0, 1.0) * 16.0;
+    gl_FragColor = vec4(fog(dither(vColor, intensity).rgb), 1.0);
 }
