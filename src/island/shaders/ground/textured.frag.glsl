@@ -21,7 +21,7 @@ varying vec3 vPosition;
 
 void main() {
     vec4 texInfo = mipmapLookup(vUv);
-    vec4 tex = texture2DPal(texInfo, vUv);
+    vec4 tex = texture2DPal(texInfo, vUv, vIntensity);
     vec4 color = dither(vColor, vIntensity);
     vec3 fColor = mix(color.rgb, tex.rgb, tex.a);
     gl_FragColor = vec4(fog(fColor), 1.0);
