@@ -5,10 +5,12 @@ import {
     loadTexture
 } from '../texture';
 
-import VERT_OBJECTS_COLORED from './shaders/objects/colored.vert.glsl';
-import FRAG_OBJECTS_COLORED from './shaders/objects/colored.frag.glsl';
+import VERT_GROUND_COLORED from './shaders/ground/colored.vert.glsl';
+import FRAG_GROUND_COLORED from './shaders/ground/colored.frag.glsl';
 import VERT_GROUND_TEXTURED from './shaders/ground/textured.vert.glsl';
 import FRAG_GROUND_TEXTURED from './shaders/ground/textured.frag.glsl';
+import VERT_OBJECTS_COLORED from './shaders/objects/colored.vert.glsl';
+import FRAG_OBJECTS_COLORED from './shaders/objects/colored.frag.glsl';
 import VERT_OBJECTS_TEXTURED from './shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from './shaders/objects/textured.frag.glsl';
 import VERT_SEA from './shaders/env/sea.vert.glsl';
@@ -22,15 +24,16 @@ export function prepareGeometries(island, data) {
     const {files: {ile, ress}, palette} = data;
     const paletteTexture = loadPaletteTexture(palette);
     const groundTexture = loadTexture(ile.getEntry(1), palette);
-    const atlasTexture = loadTexture(ile.getEntry(2), palette);
+    const objectsTexture = loadTexture(ile.getEntry(2), palette);
     return {
-        colored: {
+        ground_colored: {
             positions: [],
-            colorInfos: [],
             normals: [],
+            colors: [],
+            intensities: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: VERT_OBJECTS_COLORED,
-                fragmentShader: FRAG_OBJECTS_COLORED,
+                vertexShader: VERT_GROUND_COLORED,
+                fragmentShader: FRAG_GROUND_COLORED,
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -38,10 +41,11 @@ export function prepareGeometries(island, data) {
                 }
             })
         },
-        textured: {
+        ground_textured: {
             positions: [],
-            colorInfos: [],
             uvs: [],
+            colors: [],
+            intensities: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: VERT_GROUND_TEXTURED,
                 fragmentShader: FRAG_GROUND_TEXTURED,
@@ -53,9 +57,23 @@ export function prepareGeometries(island, data) {
                 }
             })
         },
-        atlas: {
+        objects_colored: {
             positions: [],
-            colorInfos: [],
+            normals: [],
+            colors: [],
+            material: new THREE.RawShaderMaterial({
+                vertexShader: VERT_OBJECTS_COLORED,
+                fragmentShader: FRAG_OBJECTS_COLORED,
+                uniforms: {
+                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+                    fogDensity: {value: envInfo.fogDensity},
+                    palette: {value: paletteTexture}
+                }
+            })
+        },
+        objects_textured: {
+            positions: [],
+            normals: [],
             uvs: [],
             uvGroups: [],
             material: new THREE.RawShaderMaterial({
@@ -64,14 +82,14 @@ export function prepareGeometries(island, data) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: atlasTexture},
+                    texture: {value: objectsTexture},
                     palette: {value: paletteTexture}
                 }
             })
         },
-        atlas2: {
+        objects_textured_transparent: {
             positions: [],
-            colorInfos: [],
+            normals: [],
             uvs: [],
             uvGroups: [],
             material: new THREE.RawShaderMaterial({
@@ -81,7 +99,7 @@ export function prepareGeometries(island, data) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: atlasTexture},
+                    texture: {value: objectsTexture},
                     palette: {value: paletteTexture}
                 }
             })

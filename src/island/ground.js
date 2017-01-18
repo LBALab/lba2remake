@@ -21,13 +21,14 @@ export function loadGround(section, geometries, usedTiles) {
                 if (!isSeaLevelLiquid(t, p) && (t.useColor || t.useTexture)) {
                     usedTiles[x * 64 + y] = t0.orientation;
                     if (t.useTexture) {
-                        push.apply(geometries.textured.positions, getPositions(section, p));
-                        push.apply(geometries.textured.uvs, getUVs(section.textureInfo, t.textureIndex));
-                        push.apply(geometries.textured.colorInfos, getColorInfos(section.intensity, t, p));
+                        push.apply(geometries.ground_textured.positions, getPositions(section, p));
+                        push.apply(geometries.ground_textured.uvs, getUVs(section.textureInfo, t.textureIndex));
+                        push.apply(geometries.ground_textured.colors, getColors(t));
+                        push.apply(geometries.ground_textured.intensities, getIntensities(section.intensity, p));
                     } else {
-                        push.apply(geometries.colored.normals, [0, 0, 0, 0, 0, 0, 0, 0, 0]);
-                        push.apply(geometries.colored.positions, getPositions(section, p));
-                        push.apply(geometries.colored.colorInfos, getColorInfos(section.intensity, t, p));
+                        push.apply(geometries.ground_colored.positions, getPositions(section, p));
+                        push.apply(geometries.ground_colored.colors, getColors(t));
+                        push.apply(geometries.ground_colored.intensities, getIntensities(section.intensity, p));
                     }
                 }
             };
@@ -71,19 +72,22 @@ function getUVs(textureInfo, index) {
     ];
 }
 
-function getColorInfos(intensity, triangle, points) {
-    const colorsInfo = [];
-    for (let i = 0; i < 3; ++i) {
-        push.apply(colorsInfo, getColorInfo(triangle, intensity[points[i]]));
+function getColors(triangle) {
+    if (triangle.useColor) {
+        const colors = [];
+        for (let i = 0; i < 3; ++i) {
+            colors.push(triangle.textureBank);
+        }
+        return colors;
+    } else {
+        return [0, 0, 0];
     }
-    return colorsInfo;
 }
 
-function getColorInfo(triangle, intensity) {
-    if (triangle.useColor) {
-        const idx = triangle.textureBank;
-        return [intensity, idx];
-    } else {
-        return [intensity, 0];
+function getIntensities(intensity, points) {
+    const intensities = [];
+    for (let i = 0; i < 3; ++i) {
+        intensities.push(intensity[points[i]]);
     }
+    return intensities;
 }

@@ -5,13 +5,13 @@ precision highp float;
 
 uniform sampler2D palette;
 
-varying vec3 vPos;
-varying vec3 vNormal;
-varying vec2 vColorInfo;
+varying vec3 vPosition;
+varying float vColor;
+varying float vIntensity;
 
 #require "../common/fog.frag"
 #require "../common/dither"
 
 void main() {
-    gl_FragColor = vec4(fog(dither(vColorInfo / 16.0).rgb), 1.0);
+    gl_FragColor = vec4(fog(dither(vColor, vIntensity).rgb), 1.0);
 }

@@ -98,18 +98,16 @@ function loadSection(geometries, object, info, section) {
         const addVertex = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
             if (section.blockSize == 12 || section.blockSize == 16) {
-                push.apply(geometries.colored.normals, getNormal(object, info, index));
-                push.apply(geometries.colored.positions, getPosition(object, info, index));
-                push.apply(geometries.colored.colorInfos, getColorInfo(object, section, i, index));
+                push.apply(geometries.objects_colored.positions, getPosition(object, info, index));
+                push.apply(geometries.objects_colored.normals, getNormal(object, info, index));
+                geometries.objects_colored.colors.push(getColor(section, i));
             } else {
-                let atlas = 'atlas';
-                if (section.type == 12 || section.type == 13 || section.type == 14 || section.type == 21) {
-                    atlas += '2';
-                }
-                push.apply(geometries[atlas].positions, getPosition(object, info, index));
-                push.apply(geometries[atlas].colorInfos, [8, 0]);
-                push.apply(geometries[atlas].uvs, getUVs(section, i, j));
-                push.apply(geometries[atlas].uvGroups, uvGroup);
+                const isTransparent = section.type == 12 || section.type == 13 || section.type == 14 || section.type == 21;
+                const group = isTransparent ? 'objects_textured_transparent' : 'objects_textured';
+                push.apply(geometries[group].positions, getPosition(object, info, index));
+                push.apply(geometries[group].normals, getNormal(object, info, index));
+                push.apply(geometries[group].uvs, getUVs(section, i, j));
+                push.apply(geometries[group].uvGroups, uvGroup);
             }
         };
         for (let j = 0; j < 3; ++j) {
@@ -149,10 +147,9 @@ function getPosition(object, info, index) {
     ];
 }
 
-function getColorInfo(object, section, face, index) {
+function getColor(section, face) {
     const color = section.data.getUint8(face * section.blockSize + 8);
-    //const intensity = object.intensities[index * 4 + 3] / 0xFFFF;
-    return [8, Math.floor(color / 16)];
+    return Math.floor(color / 16);
 }
 
 function getUVs(section, face, ptIndex) {

@@ -9,7 +9,7 @@ precision highp float;
 uniform sampler2D texture;
 uniform sampler2D palette;
 
-varying vec2 vColorInfo;
+varying float vColor;
 varying vec2 vUv;
 varying vec4 vUvGroup;
 

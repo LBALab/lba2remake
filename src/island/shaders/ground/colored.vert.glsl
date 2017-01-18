@@ -4,16 +4,16 @@ uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
 attribute vec3 position;
-attribute vec3 normal;
-attribute vec2 colorInfo;
+attribute float color;
+attribute float intensity;
 
-varying vec3 vPos;
-varying vec3 vNormal;
-varying vec2 vColorInfo;
+varying vec3 vPosition;
+varying float vColor;
+varying float vIntensity;
 
 void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    vColorInfo = colorInfo;
-    vPos = position;
-    vNormal = normal;
+    vPosition = position;
+    vColor = color;
+    vIntensity = intensity;
 }

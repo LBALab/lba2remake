@@ -9,9 +9,10 @@ precision highp float;
 uniform sampler2D texture;
 uniform sampler2D palette;
 
-varying vec2 vColorInfo;
+varying float vColor;
+varying float vIntensity;
 varying vec2 vUv;
-varying vec3 vPos;
+varying vec3 vPosition;
 
 #require "../common/mipmap"
 #require "../common/dither"
@@ -21,7 +22,7 @@ varying vec3 vPos;
 void main() {
     vec4 texInfo = mipmapLookup(vUv);
     vec4 tex = texture2DPal(texInfo, vUv);
-    vec4 color = dither(vColorInfo / 16.0);
+    vec4 color = dither(vColor, vIntensity);
     vec3 fColor = mix(color.rgb, tex.rgb, tex.a);
     gl_FragColor = vec4(fog(fColor), 1.0);
 }
