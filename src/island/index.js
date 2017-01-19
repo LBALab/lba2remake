@@ -22,7 +22,7 @@ each(islandsInfo, island => {
 
 const islands = {};
 
-export function loadIslandScenery(name, callback) {
+export function loadIslandScenery(name, ambience, callback) {
     if (name in islands) {
         callback(null, islands[name]);
     }
@@ -32,7 +32,7 @@ export function loadIslandScenery(name, callback) {
             ile: loadHqrAsync(`${name}.ILE`),
             obl: loadHqrAsync(`${name}.OBL`)
         }, function(err, files) {
-            const island = loadIslandNode(islandProps[name], files);
+            const island = loadIslandNode(islandProps[name], files, ambience);
             islands[name] = island;
             callback(null, island);
         });
@@ -40,7 +40,7 @@ export function loadIslandScenery(name, callback) {
 
 }
 
-function loadIslandNode(props, files) {
+function loadIslandNode(props, files, ambience) {
     const islandObject = new THREE.Object3D();
     const layout = loadLayout(files.ile);
     const data = {
@@ -49,7 +49,7 @@ function loadIslandNode(props, files) {
         layout: layout
     };
 
-    const geometries = loadGeometries(props, data);
+    const geometries = loadGeometries(props, data, ambience);
     each(geometries, ({positions, uvs, colors, intensities, normals, uvGroups, material}, name) => {
         if (positions && positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
@@ -95,8 +95,8 @@ function loadSky(geometries) {
     return sky;
 }
 
-function loadGeometries(island, data) {
-    const geometries = prepareGeometries(island, data);
+function loadGeometries(island, data, ambience) {
+    const geometries = prepareGeometries(island, data, ambience);
     const usedTiles = {};
     const objects = [];
 

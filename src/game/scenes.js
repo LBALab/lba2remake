@@ -84,7 +84,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
 
         if (!parent) {
             loadSteps.scenery = indexInfo.isIsland
-                ? loadIslandScenery.bind(null, islandSceneMapping[index].island)
+                ? loadIslandScenery.bind(null, islandSceneMapping[index].island, sceneData.ambience)
                 : loadIsometricScenery.bind(null, renderer, indexInfo.index);
             loadSteps.threeScene = ['scenery', (data, callback) => {
                 const threeScene = new THREE.Scene();

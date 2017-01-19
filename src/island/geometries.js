@@ -19,12 +19,13 @@ import VERT_ENV from './shaders/env/env.vert.glsl';
 import FRAG_ENV from './shaders/env/env.frag.glsl';
 import VERT_MOON from './shaders/env/moon.vert.glsl';
 
-export function prepareGeometries(island, data) {
+export function prepareGeometries(island, data, ambience) {
     const {envInfo} = island;
     const {files: {ile, ress}, palette} = data;
     const paletteTexture = loadPaletteTexture(palette);
     const groundTexture = loadTexture(ile.getEntry(1), palette);
     const objectsTexture = loadTexture(ile.getEntry(2), palette);
+    const light = getLightVector(ambience);
     return {
         ground_colored: {
             positions: [],
@@ -67,7 +68,8 @@ export function prepareGeometries(island, data) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    palette: {value: paletteTexture}
+                    palette: {value: paletteTexture},
+                    light: {value: light}
                 }
             })
         },
@@ -83,7 +85,8 @@ export function prepareGeometries(island, data) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     texture: {value: objectsTexture},
-                    palette: {value: paletteTexture}
+                    palette: {value: paletteTexture},
+                    light: {value: light}
                 }
             })
         },
@@ -100,7 +103,8 @@ export function prepareGeometries(island, data) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     texture: {value: objectsTexture},
-                    palette: {value: paletteTexture}
+                    palette: {value: paletteTexture},
+                    light: {value: light}
                 }
             })
         },
@@ -132,4 +136,11 @@ export function prepareGeometries(island, data) {
             })
         }
     };
+}
+
+function getLightVector(ambience) {
+    const lightVector = new THREE.Vector3(-1, 0, 0);
+    lightVector.applyAxisAngle(new THREE.Vector3(0, 0, 1), -ambience.lightingAlpha * 2 * Math.PI / 0x1000);
+    lightVector.applyAxisAngle(new THREE.Vector3(0, 1, 0), -ambience.lightingBeta * 2 * Math.PI / 0x1000);
+    return lightVector;
 }
