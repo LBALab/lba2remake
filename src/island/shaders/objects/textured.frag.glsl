@@ -8,6 +8,7 @@ precision highp float;
 
 uniform sampler2D texture;
 uniform sampler2D palette;
+uniform vec3 light;
 
 varying float vColor;
 varying vec3 vNormal;
@@ -21,6 +22,8 @@ varying vec4 vUvGroup;
 void main() {
     vec2 uv = mod(vUv, vUvGroup.zw) + vUvGroup.xy;
     vec4 texInfo = mipmapLookup(uv);
-    vec4 tex = texture2DPal(texInfo, uv, 8.0);
+    float dp = dot(normalize(vNormal), light);
+    float intensity = clamp(dp, 0.0, 1.0) * 16.0;
+    vec4 tex = texture2DPal(texInfo, uv, intensity);
     gl_FragColor = vec4(fog(tex.rgb), tex.a);
 }
