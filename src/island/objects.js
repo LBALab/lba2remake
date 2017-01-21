@@ -96,18 +96,19 @@ function parseSectionHeader(data, object, offset) {
 function loadSection(geometries, object, info, section) {
     for (let i = 0; i < section.numFaces; ++i) {
         const uvGroup = getUVGroup(object, section, i);
+        const faceNormal = getFaceNormal(object, section, info, i);
         if (false && uvGroup && (uvGroup[2] != 255 || uvGroup[3] != 255))
             continue;
         const addVertex = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
             if (section.blockSize == 12 || section.blockSize == 16) {
                 push.apply(geometries.objects_colored.positions, getPosition(object, info, index));
-                push.apply(geometries.objects_colored.normals, getNormal(object, info, index));
+                push.apply(geometries.objects_colored.normals, section.type == 1 ? faceNormal : getVertexNormal(object, info, index));
                 geometries.objects_colored.colors.push(getColor(section, i));
             } else {
                 const group = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
                 push.apply(geometries[group].positions, getPosition(object, info, index));
-                push.apply(geometries[group].normals, getNormal(object, info, index));
+                push.apply(geometries[group].normals, getVertexNormal(object, info, index));
                 push.apply(geometries[group].uvs, getUVs(section, i, j));
                 push.apply(geometries[group].uvGroups, uvGroup);
             }
@@ -123,17 +124,35 @@ function loadSection(geometries, object, info, section) {
     }
 }
 
-function getNormal(object, info, index) {
-    const normal = rotate([
+function getFaceNormal(object, section, info, i) {
+    const vert = [];
+    for (let j = 0; j < 3; ++j) {
+        const index = section.data.getUint16(i * section.blockSize + j * 2, true);
+        vert.push(getPosition(object, info, index));
+    }
+    const u = [
+        vert[1][0] - vert[0][0],
+        vert[1][1] - vert[0][1],
+        vert[1][2] - vert[0][2]
+    ];
+    const v = [
+        vert[2][0] - vert[0][0],
+        vert[2][1] - vert[0][1],
+        vert[2][2] - vert[0][2]
+    ];
+    return [
+        u[1] * v[2] - u[2] * v[1],
+        u[2] * v[0] - u[0] * v[2],
+        u[0] * v[1] - u[1] * v[0]
+    ];
+}
+
+function getVertexNormal(object, info, index) {
+    return rotate([
         object.normals[index * 4] / 0x4000,
         object.normals[index * 4 + 1] / 0x4000,
         object.normals[index * 4 + 2] / 0x4000
     ], info.angle);
-    return [
-        normal[0],
-        normal[1],
-        normal[2]
-    ];
 }
 
 function getPosition(object, info, index) {
