@@ -108,7 +108,7 @@ function loadSection(geometries, object, info, section) {
             } else {
                 const group = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
                 push.apply(geometries[group].positions, getPosition(object, info, index));
-                push.apply(geometries[group].normals, getVertexNormal(object, info, index));
+                push.apply(geometries[group].normals, section.type != 10 ? faceNormal : getVertexNormal(object, info, index));
                 push.apply(geometries[group].uvs, getUVs(section, i, j));
                 push.apply(geometries[group].uvGroups, uvGroup);
             }
