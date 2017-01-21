@@ -1,3 +1,4 @@
+import {bits} from '../utils';
 import THREE from 'three';
 
 const push = Array.prototype.push;
@@ -77,15 +78,17 @@ function loadFaces(geometries, object, info) {
 }
 
 function parseSectionHeader(data, object, offset) {
+    const type = data.getUint8(offset);
     const flags = data.getUint8(offset + 1);
     const numFaces = data.getUint16(offset + 2, true);
     const size = data.getUint16(offset + 4, true) - 8;
     return {
-        type: data.getUint8(offset),
+        type: type,
         numFaces: numFaces,
         pointsPerFace: (flags & 0x80) ? 4 : 3,
         blockSize: size / numFaces,
         size: size,
+        isTransparent: bits(type, 2, 1) == 1,
         data: new DataView(object.buffer, object.faceSectionOffset + offset + 8, size)
     };
 }
@@ -102,8 +105,7 @@ function loadSection(geometries, object, info, section) {
                 push.apply(geometries.objects_colored.normals, getNormal(object, info, index));
                 geometries.objects_colored.colors.push(getColor(section, i));
             } else {
-                const isTransparent = section.type == 12 || section.type == 13 || section.type == 14 || section.type == 21;
-                const group = isTransparent ? 'objects_textured_transparent' : 'objects_textured';
+                const group = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
                 push.apply(geometries[group].positions, getPosition(object, info, index));
                 push.apply(geometries[group].normals, getNormal(object, info, index));
                 push.apply(geometries[group].uvs, getUVs(section, i, j));
