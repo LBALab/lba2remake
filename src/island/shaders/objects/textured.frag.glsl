@@ -10,7 +10,6 @@ uniform sampler2D texture;
 uniform sampler2D palette;
 uniform vec3 light;
 
-varying float vColor;
 varying vec3 vNormal;
 varying vec2 vUv;
 varying vec4 vUvGroup;
