@@ -11,7 +11,7 @@ varying vec3 vNormal;
 varying float vColor;
 
 #require "../common/fog.frag"
-#require "../common/dither"
+#require "../common/dither.frag"
 #require "../common/intensity.frag"
 
 void main() {

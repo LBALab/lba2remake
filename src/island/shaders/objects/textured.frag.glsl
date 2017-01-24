@@ -14,8 +14,8 @@ varying vec3 vNormal;
 varying vec2 vUv;
 varying vec4 vUvGroup;
 
-#require "../common/mipmap"
-#require "../common/texture2DPal"
+#require "../common/mipmap.frag"
+#require "../common/texture2DPal.frag"
 #require "../common/fog.frag"
 #require "../common/intensity.frag"
 

@@ -10,7 +10,7 @@ varying float vColor;
 varying float vIntensity;
 
 #require "../common/fog.frag"
-#require "../common/dither"
+#require "../common/dither.frag"
 
 void main() {
     gl_FragColor = vec4(fog(dither(vColor, vIntensity).rgb), 1.0);

@@ -14,9 +14,9 @@ varying float vIntensity;
 varying vec2 vUv;
 varying vec3 vPosition;
 
-#require "../common/mipmap"
-#require "../common/dither"
-#require "../common/texture2DPal"
+#require "../common/mipmap.frag"
+#require "../common/dither.frag"
+#require "../common/texture2DPal.frag"
 #require "../common/fog.frag"
 
 void main() {
