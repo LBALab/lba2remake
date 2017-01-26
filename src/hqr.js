@@ -1,5 +1,7 @@
 // @flow
 
+import {each} from 'lodash';
+
 type Entry = {
     type: number,
     offset: number,
@@ -10,6 +12,8 @@ type Entry = {
 export default class HQR {
     _entries: Entry[] = [];
     _buffer: ArrayBuffer;
+    _loaded = false;
+    _loadCallbacks: Function[] = [];
 
     load(url: string, callback: Function) {
         var that = this;
@@ -21,11 +25,24 @@ export default class HQR {
             if (this.status === 200) {
                 that._buffer = request.response;
                 that._readHeader();
+                that._loaded = true;
                 callback.call(that);
+                each(that._loadCallbacks, cb => {
+                    cb.call(that);
+                });
+                that._loadCallbacks = [];
             }
         };
 
         request.send(null);
+    }
+
+    callWhenLoaded(callback: Function) {
+        if (this._loaded) {
+            callback.call(this);
+        } else {
+            this._loadCallbacks.push(callback);
+        }
     }
 
     get length(): number {
@@ -94,11 +111,14 @@ const hqrCache = {};
 export function loadHqrAsync(file: string) {
     return (callback: Function) => {
         if (file in hqrCache) {
-            callback(null, hqrCache[file]);
+            hqrCache[file].callWhenLoaded(function() {
+                callback(null, this);
+            });
         } else {
-            new HQR().load(`data/${file}`, function() {
-                hqrCache[file] = this;
-                callback.call(null, null, this);
+            const hqr = new HQR();
+            hqrCache[file] = hqr;
+            hqr.load(`data/${file}`, function() {
+                callback(null, this);
             });
         }
     }
