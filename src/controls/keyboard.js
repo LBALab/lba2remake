@@ -1,7 +1,6 @@
 // @flow
 
 import type {HeroPhysics} from '../game/hero';
-import type {SceneManager} from '../game/scenes';
 import {switchMovementMode} from '../game/hero';
 import {switchStats} from '../renderer/stats';
 
@@ -67,6 +66,14 @@ function keyDownHandler(heroPhysics, game, event) {
         case 'KeyP':
             game.pause();
             break;
+        case 219:
+        case 'BracketLeft':
+            savePosition(heroPhysics);
+            break;
+        case 221:
+        case 'BracketRight':
+            loadPosition(heroPhysics);
+            break;
     }
 }
 
@@ -94,4 +101,25 @@ function keyUpHandler(config, event) {
             config.speed.x = 0;
             break;
     }
+}
+
+function savePosition(heroPhysics) {
+    localStorage.setItem('hero_position', JSON.stringify({
+        position: heroPhysics.position.toArray(),
+        orientation: heroPhysics.orientation.toArray(),
+        headOrientation: heroPhysics.orientation.toArray()
+    }));
+}
+
+function loadPosition(heroPhysics) {
+    try {
+        const item = localStorage.getItem('hero_position');
+        if (typeof item == 'string') {
+            const info = JSON.parse(item);
+            heroPhysics.position.fromArray(info.position);
+            heroPhysics.orientation.fromArray(info.orientation);
+            heroPhysics.headOrientation.fromArray(info.headOrientation);
+        }
+    }
+    catch (e) {}
 }
