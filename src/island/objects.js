@@ -97,8 +97,6 @@ function loadSection(geometries, object, info, section) {
     for (let i = 0; i < section.numFaces; ++i) {
         const uvGroup = getUVGroup(object, section, i);
         const faceNormal = getFaceNormal(object, section, info, i);
-        if (false && uvGroup && (uvGroup[2] != 255 || uvGroup[3] != 255))
-            continue;
         const addVertex = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
             if (section.blockSize == 12 || section.blockSize == 16) {
