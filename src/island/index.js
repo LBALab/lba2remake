@@ -55,7 +55,7 @@ function loadIslandNode(props, files, ambience) {
             const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
             if (uvs) {
-                bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
+                bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
             }
             if (colors) {
                 bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 1, false));
@@ -67,7 +67,7 @@ function loadIslandNode(props, files, ambience) {
                 bufferGeometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
             }
             if (uvGroups) {
-                bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, true));
+                bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, false));
             }
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.name = name;

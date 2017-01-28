@@ -5,12 +5,11 @@ float mipLevel(vec2 uv) {
     return floor(0.5 * log2(d) + 0.5);
 }
 
-vec4 mipmapLookup(vec2 uv) {
+float mipmapLookup(vec2 uv) {
 #ifdef GL_EXT_shader_texture_lod
-    vec4 texInfo = texture2DLodEXT(texture, uv, min(mipLevel(vUv), 3.0));
+    return texture2DLodEXT(texture, uv, min(mipLevel(uv), 3.0)).r;
 #else
     float diff = min(mipLevel(vUv), 3.0) - (mipLevel(uv));
-    vec4 texInfo = texture2D(texture, uv, diff);
+    return texture2D(texture, uv, diff).r;
 #endif
-    return texInfo;
 }
