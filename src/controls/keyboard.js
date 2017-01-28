@@ -107,7 +107,8 @@ function savePosition(heroPhysics) {
     localStorage.setItem('hero_position', JSON.stringify({
         position: heroPhysics.position.toArray(),
         orientation: heroPhysics.orientation.toArray(),
-        headOrientation: heroPhysics.orientation.toArray()
+        headOrientation: heroPhysics.headOrientation.toArray(),
+        movement: heroPhysics.config.movement
     }));
 }
 
@@ -119,6 +120,7 @@ function loadPosition(heroPhysics) {
             heroPhysics.position.fromArray(info.position);
             heroPhysics.orientation.fromArray(info.orientation);
             heroPhysics.headOrientation.fromArray(info.headOrientation);
+            heroPhysics.config.movement = info.movement;
         }
     }
     catch (e) {}
