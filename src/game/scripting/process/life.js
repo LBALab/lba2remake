@@ -41,7 +41,7 @@ export function SET_TRACK(game, script, state, actor) {
 export function SET_TRACK_OBJ(game, script, state, actor) {
     const actorIndex = script.getUint8(state.life.offset, true);
     const reentryOffsetActor = script.getUint16(state.life.offset + 1, true);
-    const actorOther = game.getSceneManager().getScene().getActor(actorIndex);
+    const actorOther = game.getSceneManager().getScene(state.life.sceneIndex).getActor(actorIndex);
     if (actorOther) {
         actorOther.scriptState.move.reentryOffset = reentryOffsetActor;
     }

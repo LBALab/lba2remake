@@ -34,6 +34,12 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
     loadSceneMapData(sceneMap => {
         callback({
             getScene: () => scene,
+            getScene: (index) => {
+                if (scene && scene.sideScenes && index in scene.sideScenes) {
+                    return scene.sideScenes[index];
+                }
+                return scene;
+            },
             goto: (index, pCallback) => {
                 if (scene && index == scene.index)
                     return;
@@ -116,6 +122,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 threeScene: data.threeScene,
                 scenery: data.scenery,
                 sideScenes: data.sideScenes,
+                parentScene: data,
                 actors: data.actors,
                 points: data.points,
                 zones: data.zones,

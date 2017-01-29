@@ -42,7 +42,7 @@ export function CURRENT_TRACK(game, state, param) {
 }
 
 export function CURRENT_TRACK_OBJ(game, state, actorIndex) {
-    const actorOther = game.getSceneManager().getScene().getActor(actorIndex);
+    const actorOther = game.getSceneManager().getScene(state.move.sceneIndex).getActor(actorIndex);
     if (actorOther) {
         return actorOther.scriptState.move.labelIndex;
     }

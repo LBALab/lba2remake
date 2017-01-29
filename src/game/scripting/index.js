@@ -8,6 +8,7 @@ import * as DEBUG from './debug';
 export function initScriptState() {
     return {
         life: {
+            sceneIndex: 0,
             offset: 0,
             reentryOffset: 0,
             continue: true,
@@ -18,6 +19,7 @@ export function initScriptState() {
             debug: null
         },
         move: {
+            sceneIndex: 0,
             offset: 0,
             reentryOffset: 0,
             savedOffset: 0,
@@ -35,6 +37,7 @@ export function initScriptState() {
 export function processLifeScript(game, actor, time) {
     const state = actor.scriptState;
     const script = actor.props.lifeScript;
+    state.life.sceneIndex = actor.props.sceneIndex;
     state.life.offset = state.life.reentryOffset;
     state.life.continue = state.life.offset != -1;
     state.life.debug = DEBUG.initDebug();
@@ -61,6 +64,7 @@ export function processLifeScript(game, actor, time) {
 export function processMoveScript(game, actor, time) {
     const state = actor.scriptState;
     const script = actor.props.moveScript;
+    state.move.sceneIndex = actor.props.sceneIndex;
     state.move.offset = state.move.reentryOffset;
     state.move.continue = state.move.offset != -1;
     state.move.elapsedTime = time.elapsed * 1000;

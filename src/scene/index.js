@@ -21,6 +21,7 @@ function loadSceneDataSync(files, index) {
         const textBankId = data.getInt8(0, true);
 
         const sceneData = {
+            index: index,
             textBankId: textBankId,
             textIndex: textBankId * 2 + 6,
             gameOverScene: data.getInt8(1, true),
@@ -36,7 +37,7 @@ function loadSceneDataSync(files, index) {
         offset = loadActors(sceneData, offset);
         offset = loadZones(sceneData, offset);
         offset = loadPoints(sceneData, offset);
-        offset = loadUnknown(sceneData, offset);
+                 loadUnknown(sceneData, offset);
 
         cachedSceneData[index] = sceneData;
         return sceneData;
@@ -75,6 +76,7 @@ function loadAmbience(scene, offset) {
 function loadHero(scene, offset) {
     const data = new DataView(scene.buffer);
     scene.hero = {
+        sceneIndex: scene.index,
         pos: [
             (0x8000 - data.getUint16(offset + 4, true) + 512) / 0x4000,
             data.getUint16(offset + 2, true) / 0x4000,
@@ -109,6 +111,7 @@ function loadActors(scene, offset) {
 
     for (let i = 0; i < numActors; ++i) {
         let actor = {
+            sceneIndex: scene.index,
             index: i
         };
 
@@ -193,6 +196,7 @@ function loadZones(scene, offset) {
 
     for (let i = 0; i < numZones; ++i) {
         let zone = {
+            sceneIndex: scene.index,
             index: i,
             type: 0,
             box: {}
@@ -240,6 +244,7 @@ function loadPoints(scene, offset) {
 
     for (let i = 0; i < numPoints; ++i) {
         let point = {
+            sceneIndex: scene.index,
             index: i,
             pos: [
                 (0x8000 - data.getUint32(offset + 8, true) + 512) / 0x4000,
@@ -263,6 +268,7 @@ function loadUnknown(scene, offset) {
 
     for (let i = 0; i < numData; ++i) {
         let unk = {
+            sceneIndex: scene.index,
             field1: data.getUint16(offset, true),
             field2: data.getUint16(offset + 2, true)
         };

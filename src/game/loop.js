@@ -24,6 +24,7 @@ export function mainGameLoop(game, clock, clockGame, renderer, scene, hero, cont
         }
         if (!game.isPause) {
             scene.update(timeGame);
+            each(scene.sideScenes, scene => { scene.update(timeGame); });
             renderer.render(scene);
         }
     }

@@ -25,7 +25,7 @@ export function ANIM(game, script, state, actor) {
 
 export function GOTO_POINT(game, script, state, actor) {
     const pointIndex = script.getUint8(state.offset, true);
-    const point = game.getSceneManager().getScene().getPoint(pointIndex);
+    const point = game.getSceneManager().getScene(state.sceneIndex).getPoint(pointIndex);
     const distance = actor.goto(point.physics.position);
     //if (actor.index == 22)
     //  console.log(`${pointIndex}:${point.physics.position.x},${point.physics.position.z}:${actor.physics.position.x},${actor.physics.position.z}:${distance}`);
