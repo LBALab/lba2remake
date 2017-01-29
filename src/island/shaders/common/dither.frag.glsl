@@ -10,7 +10,7 @@ vec4 dither(float color, float intensity) {
     vec2 uv = vec2(intensity, color) / 16.0;
     float bias = clamp(max(length(dFdx(vPosition)), length(dFdy(vPosition))) * 800.0, 0.0, 1.0);
     float level = pow(2.0, 12.0 - floor(bias * 5.0));
-    vec2 vnoise = rand(vPosition * level);
+    vec2 vnoise = rand(vPosition * level * 1.5);
     float noise = mix(vnoise[0], vnoise[1], 1.0 - fract(bias * 5.0));
     uv.x = uv.x + noise * 0.0375 * (2.0 - bias);
     uv += 0.03125;

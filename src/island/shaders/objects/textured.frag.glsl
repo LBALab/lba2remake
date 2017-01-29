@@ -21,7 +21,7 @@ varying vec4 vUvGroup;
 
 void main() {
     vec2 uv = mod(vUv, vUvGroup.zw) + vUvGroup.xy;
-    vec4 texInfo = mipmapLookup(uv);
-    vec4 tex = texture2DPal(texInfo, intensity());
+    float colorIndex = mipmapLookup(uv / 255.0);
+    vec4 tex = texture2DPal(colorIndex, intensity());
     gl_FragColor = vec4(fog(tex.rgb), tex.a);
 }

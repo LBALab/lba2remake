@@ -20,8 +20,8 @@ varying vec3 vPosition;
 #require "../common/fog.frag"
 
 void main() {
-    vec4 texInfo = mipmapLookup(vUv);
-    vec4 tex = texture2DPal(texInfo, vIntensity);
+    float colorIndex = mipmapLookup(vUv / 255.0);
+    vec4 tex = texture2DPal(colorIndex, vIntensity);
     vec4 color = dither(vColor, vIntensity);
     vec3 fColor = mix(color.rgb, tex.rgb, tex.a);
     gl_FragColor = vec4(fog(fColor), 1.0);

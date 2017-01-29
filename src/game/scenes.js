@@ -15,6 +15,7 @@ import {loadSceneMapData} from '../scene/map';
 import {loadActor} from './actors';
 import {loadPoint} from './points';
 import {loadZone} from './zones';
+import {loadPosition} from './hero';
 import {
     DISPLAY_ZONES,
     DISPLAY_POINTS,
@@ -58,6 +59,7 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                         hero.physics.position.z = pScene.scenery.props.startPosition[1];
                         renderer.applySceneryProps(pScene.scenery.props);
                         scene = pScene;
+                        loadPosition(hero.physics, scene);
                         pCallback();
                     });
                 }
