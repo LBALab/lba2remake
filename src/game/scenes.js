@@ -35,9 +35,8 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
 
     loadSceneMapData(sceneMap => {
         callback({
-            getScene: () => scene,
             getScene: (index) => {
-                if (scene && scene.sideScenes && index in scene.sideScenes) {
+                if (scene && index && scene.sideScenes && index in scene.sideScenes) {
                     return scene.sideScenes[index];
                 }
                 return scene;
