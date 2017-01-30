@@ -52,6 +52,7 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     delete scene.sideScenes;
                     sideScene.sideScenes[scene.index] = scene;
                     scene = sideScene;
+                    loadPosition(hero.physics, scene);
                     pCallback();
                 } else {
                     loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
