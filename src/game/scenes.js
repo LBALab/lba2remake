@@ -4,7 +4,8 @@ import {
     map,
     filter,
     each,
-    find
+    find,
+    noop
 } from 'lodash';
 
 import islandSceneMapping from '../island/data/sceneMapping';
@@ -41,7 +42,7 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                 }
                 return scene;
             },
-            goto: (index, pCallback) => {
+            goto: (index, pCallback = noop) => {
                 if (scene && index == scene.index)
                     return;
 
