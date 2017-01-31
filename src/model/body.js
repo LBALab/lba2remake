@@ -1,8 +1,3 @@
-import THREE from 'three';
-import _ from 'lodash';
-
-const push = Array.prototype.push;
-
 export function loadBody(model, bodies, index) {
     if (bodies[index]) {
         return bodies[index];
