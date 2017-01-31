@@ -76,7 +76,7 @@ export function loadActor(game: any, props: ActorProps, callback: Function) {
             Script.processMoveScript(game, actor, time);
             Script.processLifeScript(game, actor, time);
 
-            if(!this.isSprite) {
+            if(this.model) {
                 updateModel(this.model, this.animState, this.props.entityIndex, this.props.bodyIndex, this.props.animIndex, time);
                 if (this.animState.isPlaying) {
                     this.updateAnimStep(time);
@@ -138,7 +138,7 @@ export function loadActor(game: any, props: ActorProps, callback: Function) {
     actor.physics.orientation.setFromEuler(euler);
 
     // only if not sprite actor
-    if (!actor.isSprite) {
+    if (!actor.isSprite && props.bodyIndex != 0xFF) {
         loadModel(props.entityIndex, props.bodyIndex, props.animIndex, animState, (model) => {
             //model.mesh.visible = actor.isVisible;
             model.mesh.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
