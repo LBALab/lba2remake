@@ -106,10 +106,10 @@ function loadActors(scene, offset) {
     const data = new DataView(scene.buffer);
     scene.actors = [];
 
-    const numActors = data.getUint16(offset, true) - 1; // not couting hero
+    const numActors = data.getUint16(offset, true);
     offset += 2;
 
-    for (let i = 0; i < numActors; ++i) {
+    for (let i = 1; i < numActors; ++i) {
         let actor = {
             sceneIndex: scene.index,
             index: i
