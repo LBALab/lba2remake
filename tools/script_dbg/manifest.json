@@ -1,0 +1,14 @@
+{
+  "manifest_version": 2,
+  "name": "LBA2 Remake Script Debugger",
+  "description": "Allows debugging LBA2 actor life and move scripts",
+  "version": "1.0",
+  "devtools_page": "devtools.html",
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+  "permissions": [
+    "activeTab",
+    "https://ajax.googleapis.com/"
+  ]
+}
