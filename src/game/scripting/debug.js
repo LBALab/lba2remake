@@ -84,7 +84,10 @@ function decompileScript(script, Opcodes) {
             commands.push({name: '&lt;ERROR PARSING SCRIPT&gt;'});
             break;
         }
-        commands.push({name: op.command});
+        commands.push({
+            name: op.command,
+            condition: getCondition(script, offset, op)
+        });
         offset = getNewOffset(script, offset, op);
     }
     return {
@@ -92,6 +95,26 @@ function decompileScript(script, Opcodes) {
         opMap: opMap,
         commands: commands
     };
+}
+
+function getCondition(script, offset, op) {
+    switch (op.command) {
+        case 'IF':
+        case 'SWIF':
+        case 'SNIF':
+        case 'ONEIF':
+        case 'NEVERIF':
+        case 'ORIF':
+        case 'AND_IF':
+        case 'SWITCH':
+            const cond_code = script.getUint8(offset + 1);
+            const cond = ConditionOpcode[cond_code];
+            if (cond) {
+                return {
+                    name: cond.command
+                };
+            }
+    }
 }
 
 function getNewOffset(script, offset, op) {

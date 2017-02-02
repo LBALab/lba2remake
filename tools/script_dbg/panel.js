@@ -43,9 +43,13 @@ document.querySelector('#actor').addEventListener('change', function () {
 function setActorScript(type, script) {
     const elem = document.querySelector('#' + type + 'Script');
     elem.innerHTML = script.commands.map(function(command, idx) {
+        let condition = '';
+        if (command.condition) {
+            condition = '&nbsp;<span class="cond">' + command.condition.name + '</span>';
+        }
         return '<div class="line">'
             + '<div class="num">' + (idx + 1) + '</div>'
-            + '<div class="command">' + command.name + '</div>'
+            + '<div class="command">' + command.name + condition + '</div>'
         + '</div>';
     }).join('\n');
     displayActiveLine(type, script.activeLine);
