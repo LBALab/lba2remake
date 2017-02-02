@@ -45,7 +45,7 @@ export function processLifeScript(game, actor, time) {
                 break;
             }
             state.life.opcodeOffset = state.life.offset;
-            setCursorPosition(game.getSceneManager().getScene(), actor.index, 'life', state.life.offset);
+            setCursorPosition(game.getSceneManager().getScene(), actor, 'life', state.life.offset);
             const opcode = script.getUint8(state.life.offset++, true);
             LifeOpcode[opcode].callback(game, script, state, actor);
             if (state.life.continue) {
@@ -69,7 +69,7 @@ export function processMoveScript(game, actor, time) {
                 state.move.offset = -1;
                 break;
             }
-            setCursorPosition(game.getSceneManager().getScene(), actor.index, 'move', state.move.offset);
+            setCursorPosition(game.getSceneManager().getScene(), actor, 'move', state.move.offset);
             const opcode = script.getUint8(state.move.offset++, true);
             MoveOpcode[opcode].callback(game, script, state.move, actor);
             if (state.move.continue) {

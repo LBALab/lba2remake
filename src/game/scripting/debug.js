@@ -16,7 +16,8 @@ export function initDebugForScene(scene) {
         const message = event.detail;
         if (message.type == 'selectActor') {
             selectedActor = message.index;
-            const scripts = getScripts(scene, message.index);
+            const actor = message.index == 0 ? {index: 0, props: scene.data.hero} : scene.data.actors[message.index - 1];
+            const scripts = getScripts(scene, actor);
             window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
                 detail: {
                     type: 'setActorScripts',
@@ -43,12 +44,12 @@ export function setCursorPosition(scene, actor, scriptType, offset) {
     if (scripts[scriptType].activeLine != line)
         console.log(selectedActor, scriptType, line);
     */
-    if (scripts[scriptType].activeLine != line && selectedActor == actor) {
+    if (scripts[scriptType].activeLine != line && selectedActor == actor.index) {
         window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
             detail: {
                 type: 'setCurrentLine',
                 scene: scene.index,
-                actor: actor,
+                actor: actor.index,
                 scriptType: scriptType,
                 line: line
             }
@@ -57,15 +58,14 @@ export function setCursorPosition(scene, actor, scriptType, offset) {
     scripts[scriptType].activeLine = line;
 }
 
-function getScripts(scene, index) {
-    const key = scene.index + '_' + index;
+function getScripts(scene, actor) {
+    const key = scene.index + '_' + actor.index;
     if (key in scripts_cache) {
         return scripts_cache[key];
     } else {
-        const actor = index == 0 ? scene.data.hero : scene.data.actors[index - 1];
         const scripts = {
-            life: decompileScript('life', actor.lifeScript, LifeOpcode),
-            move: decompileScript('move', actor.moveScript, MoveOpcode)
+            life: decompileScript('life', actor.props.lifeScript, LifeOpcode),
+            move: decompileScript('move', actor.props.moveScript, MoveOpcode)
         };
         scripts_cache[key] = scripts;
         return scripts;
