@@ -1,6 +1,7 @@
 import {DISPLAY_SCRIPT_LINE, DISPLAY_SCRIPT_MOVE} from '../../debugFlags';
 import {LifeOpcode} from './data/life';
 import {MoveOpcode} from './data/move';
+import {ConditionOpcode} from './data/condition';
 
 export function initDebugForScene(scene) {
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
@@ -30,12 +31,33 @@ function decompileScript(script, Opcodes) {
     while (offset < script.byteLength) {
         const opcode = script.getUint8(offset);
         const op = Opcodes[opcode];
-        if (!op)
+        if (!op) {
+            commands.push({name: '&lt;ERROR PARSING SCRIPT&gt;'});
             break;
+        }
         commands.push({name: op.command});
-        offset += op.offset + 1;
+        offset = getNewOffset(script, offset, op);
     }
     return commands;
+}
+
+function getNewOffset(script, offset, op) {
+    let extraOffset = 0;
+    switch (op.command) {
+        case 'IF':
+        case 'SWIF':
+        case 'SNIF':
+        case 'ONEIF':
+        case 'NEVERIF':
+        case 'ORIF':
+        case 'AND_IF':
+        case 'SWITCH':
+            const cond_code = script.getUint8(offset + 1);
+            const cond = ConditionOpcode[cond_code];
+            extraOffset = cond.param + cond.value_size + 4;
+            break;
+    }
+    return offset + extraOffset + op.offset + 1;
 }
 
 export function initDebug() {
