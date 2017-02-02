@@ -22,6 +22,7 @@ import {
     DISPLAY_POINTS,
     ONLY_LOAD_SCENERY
 } from '../debugFlags';
+import {initDebugForScene} from './scripting/debug';
 
 export type SceneManager = {
     getScene: Function,
@@ -56,6 +57,7 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     pCallback();
                 } else {
                     loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
+                        initDebugForScene(pScene);
                         hero.physics.position.x = pScene.scenery.props.startPosition[0];
                         hero.physics.position.z = pScene.scenery.props.startPosition[1];
                         renderer.applySceneryProps(pScene.scenery.props);
@@ -83,7 +85,6 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
 
 function loadScene(game, renderer, sceneMap, index, parent, callback) {
     loadSceneData(index, sceneData => {
-
         const indexInfo = sceneMap[index];
         const loadSteps = {
             actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, game), callback) },

@@ -1,6 +1,3 @@
-import async from 'async';
-import _ from 'lodash';
-
 import {LifeOpcode} from './data/life';
 import {MoveOpcode} from './data/move';
 import * as DEBUG from './debug';
