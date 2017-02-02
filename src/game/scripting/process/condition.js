@@ -1,5 +1,3 @@
-import {distance2D} from '../../../utils/lba';
-
 export function COL(game, state, param) {
     return 0;
 }

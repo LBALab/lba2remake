@@ -1,6 +1,5 @@
 import {ConditionOpcode} from '../data/condition';
 import {OperatorOpcode} from '../data/operator';
-import * as DEBUG from '../debug';
 
 function testConditionValue(operator, a, b) {
 	switch (operator) {
@@ -25,13 +24,11 @@ function testConditionValue(operator, a, b) {
 function getCondition(game, script, state) {
     const conditionIndex = script.getUint8(state.life.offset++, true);
     const condition = ConditionOpcode[conditionIndex];
-    let param = null; 
-    DEBUG.addLife(state.life.debug, " " + condition.command);
+    let param = null;
     if (condition.param) {
         param = script.getUint8(state.life.offset++, true);
     }
     const value1 = condition.callback(game, state, param);
-    DEBUG.addLife(state.life.debug, " " + value1);
     return {
         condition,
         value1
@@ -47,7 +44,6 @@ function testConditionOperand(script, state, condition, value1) {
         value2 = script.getInt16(state.life.offset, true);
         state.life.offset += 2;
     }
-    DEBUG.addLife(state.life.debug, " " + OperatorOpcode[operator].command + " " + value2);
     return testConditionValue(operator, value1, value2);
 }
 

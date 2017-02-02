@@ -1,6 +1,6 @@
 import {LifeOpcode} from './data/life';
 import {MoveOpcode} from './data/move';
-import * as DEBUG from './debug';
+import {setCursorPosition} from './debug';
 
 export function initScriptState() {
     return {
@@ -37,7 +37,6 @@ export function processLifeScript(game, actor, time) {
     state.life.sceneIndex = actor.props.sceneIndex;
     state.life.offset = state.life.reentryOffset;
     state.life.continue = state.life.offset != -1;
-    state.life.debug = DEBUG.initDebug();
     if (script.byteLength > 0 && state.life.offset >= 0) {
         while (state.life.continue) {
             if (state.life.offset >= script.byteLength) {
@@ -47,13 +46,10 @@ export function processLifeScript(game, actor, time) {
             }
             state.life.opcodeOffset = state.life.offset;
             const opcode = script.getUint8(state.life.offset++, true);
-            DEBUG.setLife(state.life.debug, LifeOpcode[opcode].command);
             LifeOpcode[opcode].callback(game, script, state, actor);
             if (state.life.continue) {
                 state.life.offset += LifeOpcode[opcode].offset;
             }
-            //if (actor.index == 22)
-            DEBUG.displayLife(state.life.debug);
         }
     }
 }
@@ -65,7 +61,6 @@ export function processMoveScript(game, actor, time) {
     state.move.offset = state.move.reentryOffset;
     state.move.continue = state.move.offset != -1;
     state.move.elapsedTime = time.elapsed * 1000;
-    state.move.debug = DEBUG.initDebug();
     if (script.byteLength > 0 && state.move.offset >= 0) {
         while (state.move.continue) {
             if (state.move.offset >= script.byteLength) {
@@ -73,14 +68,12 @@ export function processMoveScript(game, actor, time) {
                 state.move.offset = -1;
                 break;
             }
+            setCursorPosition(game.getSceneManager().getScene(), actor.index, 'move', state.move.offset);
             const opcode = script.getUint8(state.move.offset++, true);
-            DEBUG.setMove(state.move.debug, MoveOpcode[opcode].command);
             MoveOpcode[opcode].callback(game, script, state.move, actor);
             if (state.move.continue) {
                 state.move.offset += MoveOpcode[opcode].offset;
             }
-            //if (actor.index == 22)
-            DEBUG.displayMove(state.move.debug);
         }
     }
 }
