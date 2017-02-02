@@ -86,7 +86,8 @@ function decompileScript(script, Opcodes) {
         }
         commands.push({
             name: op.command,
-            condition: getCondition(script, offset, op)
+            condition: getCondition(script, offset, op),
+            args: getArgs(script, offset, op)
         });
         offset = getNewOffset(script, offset, op);
     }
@@ -114,6 +115,27 @@ function getCondition(script, offset, op) {
                     name: cond.command
                 };
             }
+    }
+}
+
+const TypeSize = {
+    'Int8': 1,
+    'Uint8': 1,
+    'Int16': 2,
+    'Uint16': 2,
+    'Int32': 4,
+    'Uint32': 4,
+};
+
+function getArgs(script, offset, op) {
+    if (op.args) {
+        let o = 1;
+        const args = [];
+        for (let i = 0; i < op.args.length; ++i) {
+            args.push(script['get' + op.args[i]](offset + o));
+            o += TypeSize[op.args[i]];
+        }
+        return args;
     }
 }
 

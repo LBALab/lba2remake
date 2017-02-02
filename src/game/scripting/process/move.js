@@ -190,7 +190,7 @@ export function REPLACE(game, script, state, actor) {
     
 }
 
-export function WAIT_NUM_DECIMAL(game, script, state, actor) {
+export function WAIT_NUM_DSEC(game, script, state, actor) {
     const numSeconds = script.getUint8(state.offset, true);
     if (state.waitTime == 0) {
         state.waitTime = state.elapsedTime + (numSeconds * 100);

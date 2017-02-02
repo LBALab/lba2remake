@@ -47,9 +47,15 @@ function setActorScript(type, script) {
         if (command.condition) {
             condition = '&nbsp;<span class="cond">' + command.condition.name + '</span>';
         }
+        let args = '';
+        if (command.args) {
+            args = command.args.map(function(arg) {
+                return '&nbsp;<span class="arg">' + arg + '</span>';
+            }).join('');
+        }
         return '<div class="line">'
             + '<div class="num">' + (idx + 1) + '</div>'
-            + '<div class="command">' + command.name + condition + '</div>'
+            + '<div class="command">' + command.name + condition + args + '</div>'
         + '</div>';
     }).join('\n');
     displayActiveLine(type, script.activeLine);
