@@ -3,6 +3,7 @@ import {MoveOpcode} from './data/move';
 import {ConditionOpcode} from './data/condition';
 
 const scripts_cache = {};
+let selectedActor = -1;
 
 export function initDebugForScene(scene) {
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
@@ -14,29 +15,46 @@ export function initDebugForScene(scene) {
     window.addEventListener('lba_ext_event_in', function(event) {
         const message = event.detail;
         if (message.type == 'selectActor') {
+            selectedActor = message.index;
             const scripts = getScripts(scene, message.index);
             window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
                 detail: {
                     type: 'setActorScripts',
-                    life: scripts.life.commands,
-                    move: scripts.move.commands
+                    life: {
+                        commands: scripts.life.commands,
+                        activeLine: scripts.life.activeLine
+                    },
+                    move: {
+                        commands: scripts.move.commands,
+                        activeLine: scripts.move.activeLine
+                    }
                 }
             }));
         }
     });
 }
 
-export function setCursorPosition(scene, index, scriptType, offset) {
-    const scripts = getScripts(scene, index);
-    window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
-        detail: {
-            type: 'setCurrentLine',
-            scene: scene.index,
-            actor: index,
-            scriptType: scriptType,
-            line: scripts[scriptType].opMap[offset]
-        }
-    }));
+export function setCursorPosition(scene, actor, scriptType, offset) {
+    const scripts = getScripts(scene, actor);
+    const line = scripts[scriptType].opMap[offset];
+    if (line === undefined)
+        return;
+    /*
+    if (scripts[scriptType].activeLine != line)
+        console.log(selectedActor, scriptType, line);
+    */
+    if (scripts[scriptType].activeLine != line && selectedActor == actor) {
+        window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
+            detail: {
+                type: 'setCurrentLine',
+                scene: scene.index,
+                actor: actor,
+                scriptType: scriptType,
+                line: line
+            }
+        }));
+    }
+    scripts[scriptType].activeLine = line;
 }
 
 function getScripts(scene, index) {
@@ -70,6 +88,7 @@ function decompileScript(script, Opcodes) {
         offset = getNewOffset(script, offset, op);
     }
     return {
+        activeLine: -1,
         opMap: opMap,
         commands: commands
     };
@@ -88,7 +107,8 @@ function getNewOffset(script, offset, op) {
         case 'SWITCH':
             const cond_code = script.getUint8(offset + 1);
             const cond = ConditionOpcode[cond_code];
-            extraOffset = cond.param + cond.value_size + 4;
+            if (cond)
+                extraOffset = cond.param + cond.value_size + 4;
             break;
     }
     return offset + extraOffset + op.offset + 1;

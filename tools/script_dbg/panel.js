@@ -23,8 +23,11 @@ backgroundPageConnection.onMessage.addListener(function(message) {
             });
             break;
         case 'setActorScripts':
-            setScript('life', message.life);
-            setScript('move', message.move);
+            setActorScript('life', message.life);
+            setActorScript('move', message.move);
+            break;
+        case 'setCurrentLine':
+            setCurrentLine(message);
             break;
     }
 });
@@ -34,15 +37,32 @@ document.querySelector('#actor').addEventListener('change', function () {
         type: 'selectActor',
         index: parseInt(this.value),
         tabId: chrome.devtools.inspectedWindow.tabId
-    })
+    });
 });
 
-function setScript(type, commands) {
+function setActorScript(type, script) {
     const elem = document.querySelector('#' + type + 'Script');
-    elem.innerHTML = commands.map(function(command, idx) {
+    elem.innerHTML = script.commands.map(function(command, idx) {
         return '<div class="line">'
             + '<div class="num">' + (idx + 1) + '</div>'
             + '<div class="command">' + command.name + '</div>'
         + '</div>';
     }).join('\n');
+    displayActiveLine(type, script.activeLine);
+}
+
+function setCurrentLine(info) {
+    displayActiveLine(info.scriptType, info.line);
+}
+
+function displayActiveLine(type, line) {
+    const oldLineElement = document.querySelector('#' + type + 'Script .command.active');
+    if (oldLineElement) {
+        oldLineElement.classList.remove('active');
+    }
+    const lineElements = document.querySelectorAll('#' + type + 'Script .command');
+    const lineElement = lineElements[line];
+    if (lineElement) {
+        lineElement.classList.add('active');
+    }
 }

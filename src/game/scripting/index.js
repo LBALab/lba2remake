@@ -45,6 +45,7 @@ export function processLifeScript(game, actor, time) {
                 break;
             }
             state.life.opcodeOffset = state.life.offset;
+            setCursorPosition(game.getSceneManager().getScene(), actor.index, 'life', state.life.offset);
             const opcode = script.getUint8(state.life.offset++, true);
             LifeOpcode[opcode].callback(game, script, state, actor);
             if (state.life.continue) {
