@@ -1,5 +1,45 @@
 <html>
+<head>
+    <style>
+        * {
+            font-family: monospace;
+            font-size: 1em;
+        }
+        .line-count {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 4em;
+            background: dimgrey;
+            text-align: right;
+            color: white;
+        }
+        .code {
+            position: absolute;
+            top: 0;
+            left: 4em;
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+</head>
 <body>
-Test
+    <div style="position: absolute; top: 0; left: 0; height: 3em; right: 0; line-height: 3em;">
+		<span id="scene">Scene: ?</span>
+		<select id="actorSelect"></select>
+	</div>
+	<div style="position: absolute; top: 2em; left: 0; bottom: 0; right: 0;">
+		<div style="position: absolute; top: 0; left: 0; bottom: 0; width: 50%;">
+			<div class="line-count"></div>
+			<div class="code"></div>
+		</div>
+		<div style="position: absolute; top: 0; right: 0; bottom: 0; width: 50%;">
+			<div class="line-count"></div>
+			<div class="code"></div>
+		</div>
+	</div>
+	<script src="scripts/messaging.js"></script>
+	<script src="panel.js"></script>
 </body>
 </html>
