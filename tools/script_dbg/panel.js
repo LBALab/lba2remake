@@ -43,6 +43,10 @@ document.querySelector('#actor').addEventListener('change', function () {
 function setActorScript(type, script) {
     const elem = document.querySelector('#' + type + 'Script');
     elem.innerHTML = script.commands.map(function(command, idx) {
+        let indent = '';
+        for (let i = 0; i < command.indent; ++i) {
+            indent += '&nbsp;&nbsp;';
+        }
         let condition = '';
         if (command.condition) {
             condition = '&nbsp;<span class="cond">' + command.condition.name + '</span>';
@@ -55,7 +59,7 @@ function setActorScript(type, script) {
         }
         return '<div class="line">'
             + '<div class="num">' + (idx + 1) + '</div>'
-            + '<div class="command">' + command.name + condition + args + '</div>'
+            + '<div class="command">' + indent + command.name + condition + args + '</div>'
         + '</div>';
     }).join('\n');
     displayActiveLine(type, script.activeLine);

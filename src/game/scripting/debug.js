@@ -64,15 +64,15 @@ function getScripts(scene, index) {
     } else {
         const actor = index == 0 ? scene.data.hero : scene.data.actors[index - 1];
         const scripts = {
-            life: decompileScript(actor.lifeScript, LifeOpcode),
-            move: decompileScript(actor.moveScript, MoveOpcode)
+            life: decompileScript('life', actor.lifeScript, LifeOpcode),
+            move: decompileScript('move', actor.moveScript, MoveOpcode)
         };
         scripts_cache[key] = scripts;
         return scripts;
     }
 }
 
-function decompileScript(script, Opcodes) {
+function decompileScript(type, script, Opcodes) {
     let offset = 0;
     const commands = [];
     const opMap = {};
@@ -87,7 +87,8 @@ function decompileScript(script, Opcodes) {
         commands.push({
             name: op.command,
             condition: getCondition(script, offset, op),
-            args: getArgs(script, offset, op)
+            args: getArgs(script, offset, op),
+            indent: getIndent(type, op)
         });
         offset = getNewOffset(script, offset, op);
     }
@@ -136,6 +137,17 @@ function getArgs(script, offset, op) {
             o += TypeSize[op.args[i]];
         }
         return args;
+    }
+}
+
+function getIndent(type, op) {
+    if (type == 'move' && op.command != 'LABEL' && op.command != 'END') {
+        if (op.command == 'LABEL' || op.command == 'REPLACE' || op.command == 'END')
+            return 0;
+        else
+            return 1;
+    } else {
+        return 0;
     }
 }
 
