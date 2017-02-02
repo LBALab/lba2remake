@@ -122,6 +122,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
             data.threeScene.add(sceneNode);
             callback(null, {
                 index: index,
+                data: sceneData,
                 isIsland: indexInfo.isIsland,
                 threeScene: data.threeScene,
                 scenery: data.scenery,

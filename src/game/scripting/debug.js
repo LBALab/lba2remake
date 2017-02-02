@@ -1,16 +1,41 @@
 import {DISPLAY_SCRIPT_LINE, DISPLAY_SCRIPT_MOVE} from '../../debugFlags';
+import {LifeOpcode} from './data/life';
+import {MoveOpcode} from './data/move';
 
 export function initDebugForScene(scene) {
-    window.dispatchEvent(new CustomEvent('lba_ext_event_out', {detail: {type: 'setScene', index: scene.index, actors: scene.actors.length + 1}}));
+    window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
+        detail: {
+            type: 'setScene',
+            index: scene.index, actors: scene.actors.length + 1
+        }
+    }));
     window.addEventListener('lba_ext_event_in', function(event) {
         const message = event.detail;
-        console.log('msg:', message);
         if (message.type == 'selectActor') {
-            if (message.index > 0) {
-                console.log(scene.actors[message.index - 1]);
-            }
+            const actor = message.index == 0 ? scene.data.hero : scene.data.actors[message.index - 1];
+            window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
+                detail: {
+                    type: 'setActorScripts',
+                    life: decompileScript(actor.lifeScript, LifeOpcode),
+                    move: decompileScript(actor.moveScript, MoveOpcode)
+                }
+            }));
         }
     });
+}
+
+function decompileScript(script, Opcodes) {
+    let offset = 0;
+    const commands = [];
+    while (offset < script.byteLength) {
+        const opcode = script.getUint8(offset);
+        const op = Opcodes[opcode];
+        if (!op)
+            break;
+        commands.push({name: op.command});
+        offset += op.offset + 1;
+    }
+    return commands;
 }
 
 export function initDebug() {

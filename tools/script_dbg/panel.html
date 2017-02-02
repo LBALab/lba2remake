@@ -5,22 +5,22 @@
             font-family: monospace;
             font-size: 14px;
         }
-        .line-count {
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 50px;
+		.line {
+			height: 20px;
+			width: 100%;
+			line-height: 20px;
+		}
+        .num {
+            width: 36px;
             background: dimgrey;
             text-align: right;
             color: white;
+			display: inline-block;
+			padding-right: 4px;
         }
-        .code {
-            position: absolute;
-            top: 0;
-            left: 50px;
-            bottom: 0;
-            right: 0;
+        .command {
+			padding-left: 4px;
+			display: inline-block;
         }
     </style>
 </head>
@@ -31,8 +31,8 @@
 		<select id="actor"></select>
 	</div>
 	<div style="position: absolute; top: 20px; left: 0; bottom: 0; right: 0;">
-		<div id="lifeScript" style="position: absolute; top: 0; left: 0; bottom: 0; width: 50%;"></div>
-		<div id="moveScript" style="position: absolute; top: 0; right: 0; bottom: 0; width: 50%;"></div>
+		<div id="lifeScript" style="position: absolute; top: 0; left: 0; bottom: 0; width: 50%; overflow: auto;"></div>
+		<div id="moveScript" style="position: absolute; top: 0; right: 0; bottom: 0; width: 50%; overflow: auto;"></div>
 	</div>
 	<script src="panel.js"></script>
 </body>
