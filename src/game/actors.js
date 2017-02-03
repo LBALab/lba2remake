@@ -47,11 +47,12 @@ export const ActorStaticFlag = {
 };
 
 // TODO: move section offset to container THREE.Object3D
-export function loadActor(game: any, props: ActorProps, callback: Function) {
+export function loadActor(game: any, sceneIndex: number, isMainScene: boolean, props: ActorProps, callback: Function) {
     const pos = props.pos;
     const animState = loadAnimState();
     const actor: Actor = {
         index: props.index,
+        scene: sceneIndex,
         props: props,
         physics: {
             position: new THREE.Vector3(pos[0], pos[1], pos[2]),
@@ -147,7 +148,7 @@ export function loadActor(game: any, props: ActorProps, callback: Function) {
             model.mesh.quaternion.copy(actor.physics.orientation);
             actor.model = model;
             actor.threeObject = model.mesh;
-            addActorSprite(actor);
+            addActorSprite(actor, isMainScene);
             callback(null, actor);
         });
     } else {

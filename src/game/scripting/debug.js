@@ -54,8 +54,8 @@ export function setCursorPosition(scene, actor, scriptType, offset) {
     scripts[scriptType].activeLine = line;
 }
 
-export function addActorSprite(actor) {
-    if (DISPLAY_ACTOR_LABELS) {
+export function addActorSprite(actor, isMainScene) {
+    if (DISPLAY_ACTOR_LABELS && isMainScene) {
         const main = document.querySelector('#main');
         const sprite = document.createElement('div');
         sprite.id = `actor_sprite_${actor.index}`;
@@ -75,7 +75,7 @@ export function resetDebugger() {
 const spritePos = new THREE.Vector3();
 
 export function updateActorSprite(scene, renderer, actor) {
-    if (!DISPLAY_ACTOR_LABELS)
+    if (!DISPLAY_ACTOR_LABELS || scene.index != actor.scene)
         return;
     const sprite = document.querySelector(`#actor_sprite_${actor.index}`);
     if (sprite) {
