@@ -9,6 +9,7 @@
 			height: 20px;
 			width: 100%;
 			line-height: 20px;
+			white-space: nowrap;
 		}
         .num {
             width: 36px;
@@ -33,6 +34,24 @@
         .arg {
             color: darkred;
         }
+		#lifeScript {
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			width: 50%;
+			overflow: auto;
+			box-shadow:inset 0px 0px 0px 1px black;
+		}
+		#moveScript {
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			width: 50%;
+			overflow: auto;
+			box-shadow:inset 0px 0px 0px 1px black;
+		}
     </style>
 </head>
 <body>
@@ -42,8 +61,8 @@
 		<select id="actor"></select>
 	</div>
 	<div style="position: absolute; top: 20px; left: 0; bottom: 0; right: 0;">
-		<div id="lifeScript" style="position: absolute; top: 0; left: 0; bottom: 0; width: 50%; overflow: auto;"></div>
-		<div id="moveScript" style="position: absolute; top: 0; right: 0; bottom: 0; width: 50%; overflow: auto;"></div>
+		<div id="lifeScript"></div>
+		<div id="moveScript"></div>
 	</div>
 	<script src="panel.js"></script>
 </body>
