@@ -22,6 +22,9 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
 
     const _state = createState();
 
+    const _renderer = createRenderer(isMobile);
+    const _hero = createHero(_state.config.hero);
+
     const game = {
         loading: () => {
             _isPaused = true;
@@ -33,6 +36,8 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
         },
 
         isPause: _isPaused,
+
+        getRenderer: () => _renderer,
 
         getSceneManager: () => _sceneManager,
         getState: () => _state,
@@ -50,9 +55,6 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             _createSceneManager();
         }
     };
-
-    const _renderer = createRenderer(isMobile);
-    const _hero = createHero(_state.config.hero);
 
     const _createSceneManager = () => createSceneManager(game, _renderer, _hero, sceneManager => {
         _sceneManager = sceneManager;

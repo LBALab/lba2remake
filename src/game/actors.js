@@ -7,6 +7,7 @@ import {loadModel, updateModel} from '../model';
 import {loadAnimState,resetAnimState} from '../model/animState';
 import {getRotation,distance2D} from '../utils/lba';
 import * as Script from './scripting';
+import {addActorSprite, updateActorSprite} from './scripting/debug';
 
 type ActorProps = {
     index: number,
@@ -81,6 +82,7 @@ export function loadActor(game: any, props: ActorProps, callback: Function) {
                 if (this.animState.isPlaying) {
                     this.updateAnimStep(time);
                 }
+                updateActorSprite(game.getSceneManager().getScene(), game.getRenderer(), actor);
             }
         },
         goto: function(point) {
@@ -145,6 +147,7 @@ export function loadActor(game: any, props: ActorProps, callback: Function) {
             model.mesh.quaternion.copy(actor.physics.orientation);
             actor.model = model;
             actor.threeObject = model.mesh;
+            addActorSprite(actor);
             callback(null, actor);
         });
     } else {

@@ -82,6 +82,7 @@ export function createRenderer(useVR) {
             camera3D: camera3D,
             isoCamera: cameraIso
         },
+        getMainCamera: scene => scene.isIsland ? camera3D : cameraIso,
         pixelRatio: () => pixelRatio.getValue()
     };
 }

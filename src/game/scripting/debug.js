@@ -1,4 +1,6 @@
+import THREE from 'three';
 import {parseScript} from './parse';
+import {DISPLAY_ACTOR_LABELS} from '../../debugFlags';
 
 const scripts_cache = {};
 let selectedActor = -1;
@@ -52,6 +54,51 @@ export function setCursorPosition(scene, actor, scriptType, offset) {
     scripts[scriptType].activeLine = line;
 }
 
+export function addActorSprite(actor) {
+    if (DISPLAY_ACTOR_LABELS) {
+        const main = document.querySelector('#main');
+        const sprite = document.createElement('div');
+        sprite.id = `actor_sprite_${actor.index}`;
+        sprite.classList.add('actorSprite');
+        sprite.innerText = `${actor.index}`;
+        main.appendChild(sprite);
+    }
+}
+
+export function resetDebugger() {
+    const main = document.querySelector('#main');
+    document.querySelectorAll('.actorSprite').forEach(function(elem) {
+        main.removeChild(elem);
+    });
+}
+
+const spritePos = new THREE.Vector3();
+
+export function updateActorSprite(scene, renderer, actor) {
+    if (!DISPLAY_ACTOR_LABELS)
+        return;
+    const sprite = document.querySelector(`#actor_sprite_${actor.index}`);
+    if (sprite) {
+        const widthHalf = 0.5 * renderer.domElement.width;
+        const heightHalf = 0.5 * renderer.domElement.height;
+
+        actor.threeObject.updateMatrixWorld();
+        spritePos.setFromMatrixPosition(actor.threeObject.matrixWorld);
+        spritePos.project(renderer.getMainCamera(scene));
+
+        spritePos.x = ( spritePos.x * widthHalf ) + widthHalf;
+        spritePos.y = - ( spritePos.y * heightHalf ) + heightHalf;
+
+        if (spritePos.z < 1) {
+            sprite.style.left = spritePos.x + 'px';
+            sprite.style.top = spritePos.y + 'px';
+            sprite.style.display = 'block';
+        } else {
+            sprite.style.display = 'none';
+        }
+    }
+}
+
 function parseActorScripts(scene, actor) {
     const key = scene.index + '_' + actor.index;
     if (key in scripts_cache) {
@@ -65,5 +112,3 @@ function parseActorScripts(scene, actor) {
         return scripts;
     }
 }
-
-

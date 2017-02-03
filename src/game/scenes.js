@@ -22,7 +22,7 @@ import {
     DISPLAY_POINTS,
     ONLY_LOAD_SCENERY
 } from '../debugFlags';
-import {initDebugForScene} from './scripting/debug';
+import {initDebugForScene, resetDebugger} from './scripting/debug';
 
 export type SceneManager = {
     getScene: Function,
@@ -56,6 +56,7 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     loadPosition(hero.physics, scene);
                     pCallback();
                 } else {
+                    resetDebugger();
                     loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
                         initDebugForScene(pScene);
                         hero.physics.position.x = pScene.scenery.props.startPosition[0];
