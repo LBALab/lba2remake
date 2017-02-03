@@ -68,21 +68,23 @@ function parseCondition(cmd, script, offset, op) {
     if (op.condition) {
         const code = script.getUint8(offset + cmd.length);
         const condition = ConditionOpcode[code];
-        cmd.condition = { name: condition.command };
-        cmd.length += 1;
-        if (condition.param) {
-            cmd.condition.param = script.getUint8(offset + cmd.length);
+        if (condition) {
+            cmd.condition = { name: condition.command };
             cmd.length += 1;
+            if (condition.param) {
+                cmd.condition.param = script.getUint8(offset + cmd.length);
+                cmd.length += 1;
+            }
+            if (op.operator) {
+                const code = script.getUint8(offset + cmd.length);
+                const operator = OperatorOpcode[code];
+                cmd.condition.operator = { name: operator ? operator.command : '?[' + code + ']' };
+                cmd.length += 1;
+                cmd.condition.operator.operand = script['get' + condition.operand](offset + cmd.length, true);
+                cmd.length += TypeSize[condition.operand];
+            }
+            cmd.length += 2;
         }
-        if (op.operator) {
-            const code = script.getUint8(offset + cmd.length);
-            const operator = OperatorOpcode[code];
-            cmd.condition.operator = { name: operator ? operator.command : '?[' + code + ']' };
-            cmd.length += 1;
-            cmd.condition.operator.operand = script['get' + condition.operand](offset + cmd.length, true);
-            cmd.length += TypeSize[condition.operand];
-        }
-        cmd.length += 2;
     }
 }
 
