@@ -1,3 +1,6 @@
+const selectedActor = {};
+let currentScene = 1;
+
 const backgroundPageConnection = chrome.runtime.connect({
     name: "panel"
 });
@@ -10,17 +13,7 @@ backgroundPageConnection.postMessage({
 backgroundPageConnection.onMessage.addListener(function(message) {
     switch (message.type) {
         case 'setScene':
-            document.querySelector('#scene').innerText = 'Scene: #' + message.index;
-            const actors = [];
-            for (let i = 0; i < message.actors; ++i) {
-                actors.push('<option>' + i + '</option>');
-            }
-            document.querySelector('#actor').innerHTML = actors.join('');
-            backgroundPageConnection.postMessage({
-                type: 'selectActor',
-                index: 0,
-                tabId: chrome.devtools.inspectedWindow.tabId
-            });
+            setScene(message);
             break;
         case 'setActorScripts':
             setActorScript('life', message.life);
@@ -38,7 +31,23 @@ document.querySelector('#actor').addEventListener('change', function () {
         index: parseInt(this.value),
         tabId: chrome.devtools.inspectedWindow.tabId
     });
+    selectedActor[currentScene] = parseInt(this.value);
 });
+
+function setScene(message) {
+    document.querySelector('#scene').innerText = 'Scene: #' + message.index;
+    const actors = [];
+    for (let i = 0; i < message.actors; ++i) {
+        actors.push('<option ' + (selectedActor[message.index] == i ? ' selected>' : '>') + i + '</option>');
+    }
+    document.querySelector('#actor').innerHTML = actors.join('');
+    backgroundPageConnection.postMessage({
+        type: 'selectActor',
+        index: selectedActor[message.index] || 0,
+        tabId: chrome.devtools.inspectedWindow.tabId
+    });
+    currentScene = message.index;
+}
 
 function setActorScript(type, script) {
     const elem = document.querySelector('#' + type + 'Script');
