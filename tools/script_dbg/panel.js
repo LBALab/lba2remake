@@ -58,7 +58,15 @@ function setActorScript(type, script) {
         }
         let condition = '';
         if (command.condition) {
-            condition = '&nbsp;<span class="cond">' + command.condition.name + '</span>';
+            let param = '';
+            if ('param' in command.condition) {
+                param = '(<span class="arg">' + command.condition.param + '</span>)';
+            }
+            let operatorAndOperand = '';
+            if ('operator' in command.condition) {
+                operatorAndOperand = '&nbsp;' + command.condition.operator.name + '&nbsp;<span class="arg">' + command.condition.operator.operand + '</span>';
+            }
+            condition = '&nbsp;<span class="cond">' + command.condition.name + '</span>' + param + operatorAndOperand;
         }
         let args = '';
         if (command.args) {

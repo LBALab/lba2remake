@@ -1,6 +1,7 @@
 import {LifeOpcode} from './data/life';
 import {MoveOpcode} from './data/move';
 import {ConditionOpcode} from './data/condition';
+import {OperatorOpcode} from './data/operator';
 import Indent from './indent';
 import {last} from 'lodash';
 
@@ -18,7 +19,7 @@ export function parseScript(actor, type, script) {
     const opMap = {};
     let indent = 0;
     let offset = 0;
-    if (type == 'life' && script.getUint8(offset) != 0x20) {
+    if (type == 'life' && script.getUint8(offset) != 0x20 && script.getUint8(offset) != 0x00) {
         commands.push({
             name: LifeOpcode[0x20].command,
             indent: 0,
@@ -65,21 +66,32 @@ function parseCommand(script, offset, op) {
 
 function parseCondition(cmd, script, offset, op) {
     if (op.condition) {
-        const code = script.getUint8(offset + 1);
+        const code = script.getUint8(offset + cmd.length);
         const condition = ConditionOpcode[code];
         cmd.condition = { name: condition.command };
-        cmd.length += condition.param + condition.value_size + 4;
+        cmd.length += 1;
+        if (condition.param) {
+            cmd.condition.param = script.getUint8(offset + cmd.length);
+            cmd.length += 1;
+        }
+        if (op.operator) {
+            const code = script.getUint8(offset + cmd.length);
+            const operator = OperatorOpcode[code];
+            cmd.condition.operator = { name: operator ? operator.command : '?[' + code + ']' };
+            cmd.length += 1;
+            cmd.condition.operator.operand = script['get' + condition.operand](offset + cmd.length, true);
+            cmd.length += TypeSize[condition.operand];
+        }
+        cmd.length += 2;
     }
 }
 
 function parseArguments(cmd, script, offset, op) {
     if (op.args) {
-        let o = 1;
         cmd.args = [];
         for (let i = 0; i < op.args.length; ++i) {
-            cmd.args.push(script['get' + op.args[i]](offset + o));
+            cmd.args.push(script['get' + op.args[i]](offset + cmd.length, true));
             cmd.length += TypeSize[op.args[i]];
-            o += TypeSize[op.args[i]];
         }
     }
 }
