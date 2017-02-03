@@ -18,6 +18,15 @@ export function parseScript(actor, type, script) {
     const opMap = {};
     let indent = 0;
     let offset = 0;
+    if (type == 'life' && script.getUint8(offset) != 0x20) {
+        commands.push({
+            name: LifeOpcode[0x20].command,
+            indent: 0,
+            length: 0,
+            args: [0]
+        });
+        indent++;
+    }
     while (offset < script.byteLength) {
         opMap[offset] = commands.length;
         const code = script.getUint8(offset);
