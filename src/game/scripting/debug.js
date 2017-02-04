@@ -4,6 +4,7 @@ import {parseScript} from './parse';
 
 const scripts_cache = {};
 let selectedActor = -1;
+let selectedZone = null;
 
 let settings = {
     zones: {
@@ -53,7 +54,11 @@ export function resetSceneDebug() {
         window.removeEventListener('lba_ext_event_in', lbaExtListener);
     }
     settings.labels.toggle(null, false);
+    settings.points.toggle(null, false);
+    settings.zones.toggle(null, false);
     settings.labels.enabled = false;
+    settings.points.enabled = false;
+    settings.zones.enabled = false;
 }
 
 export function setCursorPosition(scene, actor, scriptType, offset) {
@@ -77,55 +82,85 @@ export function setCursorPosition(scene, actor, scriptType, offset) {
 
 export function updateDebugger(scene, renderer) {
     if (settings.labels.enabled) {
-        updateLabels(scene, renderer);
+        updateLabels(scene, renderer, 'actor');
+    }
+    if (settings.points.enabled) {
+        updateLabels(scene, renderer, 'point');
+    }
+    if (settings.zones.enabled) {
+        updateLabels(scene, renderer, 'zone');
     }
 }
 
 function toggleZones(scene, enabled) {
-    each(scene.zones, zone => {
-        zone.threeObject.visible = enabled;
-    })
+    if (scene) {
+        each(scene.zones, zone => {
+            zone.threeObject.visible = enabled;
+        });
+    }
+    toggleLabels(scene, enabled, 'zone');
 }
 
 function togglePoints(scene, enabled) {
-    each(scene.points, point => {
-        point.threeObject.visible = enabled;
-    })
+    if (scene) {
+        each(scene.points, point => {
+            point.threeObject.visible = enabled;
+        });
+    }
+    toggleLabels(scene, enabled, 'point');
 }
 
-function toggleLabels(scene, enabled) {
+function toggleLabels(scene, enabled, type = 'actor') {
     const main = document.querySelector('#main');
     if (enabled) {
         const labels = document.createElement('div');
-        labels.id = 'labels';
-        each(scene.actors, actor => {
+        labels.id = `${type}_labels`;
+        each(scene[`${type}s`], obj => {
             const label = document.createElement('div');
-            label.id = `actor_label_${actor.index}`;
+            label.id = `${type}_label_${obj.index}`;
             label.classList.add('label');
-            label.innerHTML = `<span class="text">${actor.index}</span>`;
-            label.addEventListener('click', function() {
-                selectActor(scene, actor.index);
-            });
+            label.classList.add(type);
+            label.innerText = obj.index;
+            if (type == 'actor') {
+                label.addEventListener('click', function() {
+                    selectActor(scene, obj.index);
+                });
+            }
+            if (type == 'zone') {
+                const {r, g, b} = obj.color;
+                label.style.background = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},0.6)`;
+                label.addEventListener('click', function() {
+                    if (selectedZone) {
+                        selectedZone.threeObject.material.color = selectedZone.color;
+                    }
+                    if (selectedZone != obj) {
+                        obj.threeObject.material.color = new THREE.Color(0xFFFFFF);
+                        selectedZone = obj;
+                    } else {
+                        selectedZone = null;
+                    }
+                });
+            }
             labels.appendChild(label);
         });
         main.appendChild(labels);
     } else {
-        const labels = document.querySelector('#labels');
+        const labels = document.querySelector(`#${type}_labels`);
         if (labels) {
             main.removeChild(labels);
         }
     }
 }
 
-function updateLabels(scene, renderer) {
+function updateLabels(scene, renderer, type) {
     const pos = new THREE.Vector3();
-    each(scene.actors, actor => {
-        const label = document.querySelector(`#actor_label_${actor.index}`);
+    each(scene[`${type}s`], obj => {
+        const label = document.querySelector(`#${type}_label_${obj.index}`);
 
         if (!label)
             return;
 
-        if (!actor.threeObject) {
+        if (!obj.threeObject) {
             label.style.display = 'none';
             return;
         }
@@ -133,8 +168,8 @@ function updateLabels(scene, renderer) {
         const widthHalf = 0.5 * renderer.domElement.width;
         const heightHalf = 0.5 * renderer.domElement.height;
 
-        actor.threeObject.updateMatrixWorld();
-        pos.setFromMatrixPosition(actor.threeObject.matrixWorld);
+        obj.threeObject.updateMatrixWorld();
+        pos.setFromMatrixPosition(obj.threeObject.matrixWorld);
         pos.project(renderer.getMainCamera(scene));
 
         pos.x = ( pos.x * widthHalf ) + widthHalf;
@@ -147,10 +182,12 @@ function updateLabels(scene, renderer) {
         } else {
             label.style.display = 'none';
         }
-        if (selectedActor == actor.index) {
-            label.classList.add('selected');
-        } else {
-            label.classList.remove('selected');
+        if (type == 'actor') {
+            if (selectedActor == obj.index) {
+                label.classList.add('selected');
+            } else {
+                label.classList.remove('selected');
+            }
         }
     });
 }

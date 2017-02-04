@@ -24,15 +24,11 @@
             bottom: 0;
         }
         .label {
-            opacity: 0.6;
             position: absolute;
             border: 1px solid black;
-            border-radius: 50%;
-            padding: 4px;
-            background: indianred;
-            width: 14px;
-            height: 14px;
-            line-height: 14px;
+            width: 18px;
+            height: 18px;
+            line-height: 18px;
             text-align: center;
             cursor: pointer;
             margin-left: -10px;
@@ -41,10 +37,29 @@
             font-size: 14px;
             font-weight: bold;
         }
-        .label .text {
-            opacity: 1;
+        .label.actor {
+            border-radius: 50%;
+            background: rgba(205, 92, 92, 0.6);
         }
-        .label.selected {
+        .label.point {
+            background: rgba(135, 206, 235, 0.6);
+            font-size: 12px;
+            width: 16px;
+            height: 16px;
+            line-height: 16px;
+            margin-left: -9px;
+            margin-top: -9px;
+            border-radius: 3px;
+        }
+        .label.zone {
+            font-size: 12px;
+            width: 16px;
+            height: 16px;
+            line-height: 16px;
+            margin-left: -9px;
+            margin-top: -9px;
+        }
+        .label.actor.selected {
             opacity: 1;
             background: red;
             color: white;

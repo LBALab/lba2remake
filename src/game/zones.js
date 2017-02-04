@@ -33,6 +33,7 @@ export function loadZone(props, callback) {
     const zone = {
         index: props.index,
         props: props,
+        color: new THREE.Color(ZONE_TYPE_MATERIAL_COLOR[props.type]),
         physics: {
             position: new THREE.Vector3(pos[0], pos[1], pos[2])
         }
@@ -42,7 +43,7 @@ export function loadZone(props, callback) {
                                             props.box.tY - props.box.bY,
                                             props.box.tZ - props.box.bZ);
     const material = new THREE.MeshBasicMaterial({
-        color: ZONE_TYPE_MATERIAL_COLOR[props.type],
+        color: zone.color,
         wireframe: true
     });
 
