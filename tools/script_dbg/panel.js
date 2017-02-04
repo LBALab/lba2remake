@@ -1,5 +1,12 @@
 const selectedActor = {};
+const tabId = chrome.devtools.inspectedWindow.tabId;
 let currentScene = 1;
+
+const settings = {
+    zones: false,
+    points: false,
+    labels: false
+};
 
 const backgroundPageConnection = chrome.runtime.connect({
     name: "panel"
@@ -7,7 +14,7 @@ const backgroundPageConnection = chrome.runtime.connect({
 
 backgroundPageConnection.postMessage({
     type: 'init',
-    tabId: chrome.devtools.inspectedWindow.tabId
+    tabId: tabId
 });
 
 backgroundPageConnection.onMessage.addListener(function(message) {
@@ -25,11 +32,22 @@ backgroundPageConnection.onMessage.addListener(function(message) {
     }
 });
 
-document.querySelector('#actor').addEventListener('change', function () {
+document.querySelectorAll('input[type=checkbox]').forEach(function(input) {
+    input.addEventListener('change', function() {
+        settings[input.id] = input.checked;
+        backgroundPageConnection.postMessage({
+            type: 'updateSettings',
+            settings: settings,
+            tabId: tabId
+        });
+    });
+});
+
+document.querySelector('#actor').addEventListener('change', function() {
     backgroundPageConnection.postMessage({
         type: 'selectActor',
         index: parseInt(this.value),
-        tabId: chrome.devtools.inspectedWindow.tabId
+        tabId: tabId
     });
     selectedActor[currentScene] = parseInt(this.value);
 });
@@ -44,7 +62,7 @@ function setScene(message) {
     backgroundPageConnection.postMessage({
         type: 'selectActor',
         index: selectedActor[message.index] || 0,
-        tabId: chrome.devtools.inspectedWindow.tabId
+        tabId: tabId
     });
     currentScene = message.index;
 }

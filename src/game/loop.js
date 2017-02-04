@@ -1,5 +1,6 @@
 import {each} from 'lodash';
 import {processPhysicsFrame} from './physics';
+import {updateDebugger} from './scripting/debug';
 
 export function mainGameLoop(game, clock, clockGame, renderer, scene, hero, controls) {
     const time = {
@@ -25,6 +26,7 @@ export function mainGameLoop(game, clock, clockGame, renderer, scene, hero, cont
         if (!game.isPause) {
             scene.update(timeGame);
             each(scene.sideScenes, scene => { scene.update(timeGame); });
+            updateDebugger(scene, renderer);
             renderer.render(scene);
         }
     }

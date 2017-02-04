@@ -1,11 +1,26 @@
 import THREE from 'three';
+import {each} from 'lodash';
 import {parseScript} from './parse';
-import {DISPLAY_ACTOR_LABELS} from '../../debugFlags';
 
 const scripts_cache = {};
 let selectedActor = -1;
 
-export function initDebugForScene(scene) {
+let settings = {
+    zones: {
+        enabled: false,
+        toggle: toggleZones
+    },
+    points: {
+        enabled: false,
+        toggle: togglePoints
+    },
+    labels: {
+        enabled: false,
+        toggle: toggleLabels
+    }
+};
+
+export function initSceneDebug(scene) {
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
         detail: {
             type: 'setScene',
@@ -14,23 +29,33 @@ export function initDebugForScene(scene) {
     }));
     window.addEventListener('lba_ext_event_in', function(event) {
         const message = event.detail;
-        if (message.type == 'selectActor') {
-            selectedActor = message.index;
-            const actor = message.index == 0 ? {index: 0, props: scene.data.hero} : scene.data.actors[message.index - 1];
-            const scripts = parseActorScripts(scene, actor);
-            window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
-                detail: {
-                    type: 'setActorScripts',
-                    life: {
-                        commands: scripts.life.commands,
-                        activeLine: scripts.life.activeLine
-                    },
-                    move: {
-                        commands: scripts.move.commands,
-                        activeLine: scripts.move.activeLine
+        switch (message.type) {
+            case 'selectActor':
+                selectedActor = message.index;
+                const actor = message.index == 0 ? {index: 0, props: scene.data.hero} : scene.data.actors[message.index - 1];
+                const scripts = parseActorScripts(scene, actor);
+                window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
+                    detail: {
+                        type: 'setActorScripts',
+                        life: {
+                            commands: scripts.life.commands,
+                            activeLine: scripts.life.activeLine
+                        },
+                        move: {
+                            commands: scripts.move.commands,
+                            activeLine: scripts.move.activeLine
+                        }
                     }
-                }
-            }));
+                }));
+                break;
+            case 'updateSettings':
+                each(message.settings, (enabled, key) => {
+                    if (settings[key].enabled != enabled) {
+                        settings[key].enabled = enabled;
+                        settings[key].toggle(scene, enabled);
+                    }
+                });
+                break;
         }
     });
 }
@@ -54,31 +79,57 @@ export function setCursorPosition(scene, actor, scriptType, offset) {
     scripts[scriptType].activeLine = line;
 }
 
-export function addActorSprite(actor, isMainScene) {
-    if (DISPLAY_ACTOR_LABELS && isMainScene) {
-        const main = document.querySelector('#main');
-        const sprite = document.createElement('div');
-        sprite.id = `actor_sprite_${actor.index}`;
-        sprite.classList.add('actorSprite');
-        sprite.innerHTML = `<span class="text">${actor.index}</span>`;
-        main.appendChild(sprite);
+export function resetSceneDebug() {
+    settings.labels.toggle(null, false);
+}
+
+export function updateDebugger(scene, renderer) {
+    if (settings.labels.enabled) {
+        updateLabels(scene, renderer);
     }
 }
 
-export function resetDebugger() {
-    const main = document.querySelector('#main');
-    document.querySelectorAll('.actorSprite').forEach(function(elem) {
-        main.removeChild(elem);
-    });
+function toggleZones(scene, enabled) {
+
 }
 
-const spritePos = new THREE.Vector3();
+function togglePoints(scene, enabled) {
 
-export function updateActorSprite(scene, renderer, actor) {
-    if (!DISPLAY_ACTOR_LABELS || scene.index != actor.scene)
-        return;
-    const sprite = document.querySelector(`#actor_sprite_${actor.index}`);
-    if (sprite) {
+}
+
+function toggleLabels(scene, enabled) {
+    const main = document.querySelector('#main');
+    if (enabled) {
+        const sprites = document.createElement('div');
+        sprites.id = 'labels';
+        each(scene.actors, actor => {
+            const sprite = document.createElement('div');
+            sprite.id = `actor_label_${actor.index}`;
+            sprite.classList.add('label');
+            sprite.innerHTML = `<span class="text">${actor.index}</span>`;
+            sprites.appendChild(sprite);
+        });
+        main.appendChild(sprites);
+    } else {
+        const labels = document.querySelector('#labels');
+        if (labels)
+            main.removeChild(labels);
+    }
+}
+
+function updateLabels(scene, renderer) {
+    const spritePos = new THREE.Vector3();
+    each(scene.actors, actor => {
+        const label = document.querySelector(`#actor_label_${actor.index}`);
+
+        if (!label)
+            return;
+
+        if (!actor.threeObject) {
+            label.style.display = 'none';
+            return;
+        }
+
         const widthHalf = 0.5 * renderer.domElement.width;
         const heightHalf = 0.5 * renderer.domElement.height;
 
@@ -90,13 +141,13 @@ export function updateActorSprite(scene, renderer, actor) {
         spritePos.y = - ( spritePos.y * heightHalf ) + heightHalf;
 
         if (spritePos.z < 1) {
-            sprite.style.left = spritePos.x + 'px';
-            sprite.style.top = spritePos.y + 'px';
-            sprite.style.display = 'block';
+            label.style.left = spritePos.x + 'px';
+            label.style.top = spritePos.y + 'px';
+            label.style.display = 'block';
         } else {
-            sprite.style.display = 'none';
+            label.style.display = 'none';
         }
-    }
+    });
 }
 
 function parseActorScripts(scene, actor) {

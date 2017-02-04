@@ -22,14 +22,7 @@ import {
     DISPLAY_POINTS,
     ONLY_LOAD_SCENERY
 } from '../debugFlags';
-import {initDebugForScene, resetDebugger} from './scripting/debug';
-
-export type SceneManager = {
-    getScene: Function,
-    goto: Function,
-    next: Function,
-    previous: Function
-}
+import {initSceneDebug, resetSceneDebug} from './scripting/debug';
 
 export function createSceneManager(game, renderer, hero, callback: Function) {
     let scene = null;
@@ -56,9 +49,9 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     loadPosition(hero.physics, scene);
                     pCallback();
                 } else {
-                    resetDebugger();
+                    resetSceneDebug();
                     loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
-                        initDebugForScene(pScene);
+                        initSceneDebug(pScene);
                         hero.physics.position.x = pScene.scenery.props.startPosition[0];
                         hero.physics.position.z = pScene.scenery.props.startPosition[1];
                         renderer.applySceneryProps(pScene.scenery.props);
@@ -88,7 +81,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
     loadSceneData(index, sceneData => {
         const indexInfo = sceneMap[index];
         const loadSteps = {
-            actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, game, index, !parent), callback) },
+            actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, game), callback) },
             points: (callback) => { async.map(sceneData.points, loadPoint, callback) },
             zones: (callback) => { async.map(sceneData.zones, loadZone, callback) }
         };
