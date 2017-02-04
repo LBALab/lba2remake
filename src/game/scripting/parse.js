@@ -92,8 +92,12 @@ function parseArguments(cmd, script, offset, op) {
     if (op.args) {
         cmd.args = [];
         for (let i = 0; i < op.args.length; ++i) {
-            cmd.args.push(script['get' + op.args[i]](offset + cmd.length, true));
-            cmd.length += TypeSize[op.args[i]];
+            if (op.args[i][0] == '_') {
+                cmd.length += TypeSize[op.args[i].substr(1)];
+            } else {
+                cmd.args.push(script['get' + op.args[i]](offset + cmd.length, true));
+                cmd.length += TypeSize[op.args[i]];
+            }
         }
     }
 }
