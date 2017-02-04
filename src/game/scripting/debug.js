@@ -60,7 +60,7 @@ export function addActorSprite(actor, isMainScene) {
         const sprite = document.createElement('div');
         sprite.id = `actor_sprite_${actor.index}`;
         sprite.classList.add('actorSprite');
-        sprite.innerText = `${actor.index}`;
+        sprite.innerHTML = `<span class="text">${actor.index}</span>`;
         main.appendChild(sprite);
     }
 }
