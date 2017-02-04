@@ -95,8 +95,8 @@ function setActorScript(type, script) {
         }
         let args = '';
         if (command.args) {
-            args = command.args.map(function(arg) {
-                return '&nbsp;<span class="arg">' + arg + '</span>';
+            args = command.args.filter(arg => !arg.hide).map(function(arg) {
+                return '&nbsp;<span class="arg">' + arg.value + '</span>';
             }).join('');
         }
         return '<div class="line">'
