@@ -23,6 +23,7 @@ backgroundPageConnection.onMessage.addListener(function(message) {
             setScene(message);
             break;
         case 'setActorScripts':
+            document.querySelector('#actor').value = message.index;
             setActorScript('life', message.life);
             setActorScript('move', message.move);
             break;
@@ -62,7 +63,7 @@ function setScene(message) {
     document.querySelector('#scene').innerText = 'Scene: #' + message.index;
     const actors = [];
     for (let i = 0; i < message.actors; ++i) {
-        actors.push('<option ' + (selectedActor[message.index] == i ? ' selected>' : '>') + i + '</option>');
+        actors.push('<option value="' + i + '"' + (selectedActor[message.index] == i ? ' selected>' : '>') + i + '</option>');
     }
     document.querySelector('#actor').innerHTML = actors.join('');
     backgroundPageConnection.postMessage({

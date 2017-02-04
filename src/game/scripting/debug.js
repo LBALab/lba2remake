@@ -31,22 +31,7 @@ export function initSceneDebug(scene) {
         const message = event.detail;
         switch (message.type) {
             case 'selectActor':
-                selectedActor = message.index;
-                const actor = message.index == 0 ? {index: 0, props: scene.data.hero} : scene.data.actors[message.index - 1];
-                const scripts = parseActorScripts(scene, actor);
-                window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
-                    detail: {
-                        type: 'setActorScripts',
-                        life: {
-                            commands: scripts.life.commands,
-                            activeLine: scripts.life.activeLine
-                        },
-                        move: {
-                            commands: scripts.move.commands,
-                            activeLine: scripts.move.activeLine
-                        }
-                    }
-                }));
+                selectActor(scene, message.index);
                 break;
             case 'updateSettings':
                 each(message.settings, (enabled, key) => {
@@ -108,6 +93,9 @@ function toggleLabels(scene, enabled) {
             sprite.id = `actor_label_${actor.index}`;
             sprite.classList.add('label');
             sprite.innerHTML = `<span class="text">${actor.index}</span>`;
+            sprite.addEventListener('click', function() {
+                selectActor(scene, actor.index);
+            });
             sprites.appendChild(sprite);
         });
         main.appendChild(sprites);
@@ -149,6 +137,26 @@ function updateLabels(scene, renderer) {
             label.style.display = 'none';
         }
     });
+}
+
+function selectActor(scene, index) {
+    const actor = index == 0 ? {index: 0, props: scene.data.hero} : scene.data.actors[index - 1];
+    selectedActor = index;
+    const scripts = parseActorScripts(scene, actor);
+    window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
+        detail: {
+            type: 'setActorScripts',
+            index: index,
+            life: {
+                commands: scripts.life.commands,
+                activeLine: scripts.life.activeLine
+            },
+            move: {
+                commands: scripts.move.commands,
+                activeLine: scripts.move.activeLine
+            }
+        }
+    }));
 }
 
 function parseActorScripts(scene, actor) {
