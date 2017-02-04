@@ -20,6 +20,8 @@ let settings = {
     }
 };
 
+let lbaExtListener = null;
+
 export function initSceneDebug(scene) {
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
         detail: {
@@ -27,7 +29,7 @@ export function initSceneDebug(scene) {
             index: scene.index, actors: scene.actors.length + 1
         }
     }));
-    window.addEventListener('lba_ext_event_in', function(event) {
+    lbaExtListener = function(event) {
         const message = event.detail;
         switch (message.type) {
             case 'selectActor':
@@ -42,7 +44,16 @@ export function initSceneDebug(scene) {
                 });
                 break;
         }
-    });
+    };
+    window.addEventListener('lba_ext_event_in', lbaExtListener);
+}
+
+export function resetSceneDebug() {
+    if (lbaExtListener) {
+        window.removeEventListener('lba_ext_event_in', lbaExtListener);
+    }
+    settings.labels.toggle(null, false);
+    settings.labels.enabled = false;
 }
 
 export function setCursorPosition(scene, actor, scriptType, offset) {
@@ -64,11 +75,6 @@ export function setCursorPosition(scene, actor, scriptType, offset) {
     scripts[scriptType].activeLine = line;
 }
 
-export function resetSceneDebug() {
-    settings.labels.toggle(null, false);
-    settings.labels.enabled = false;
-}
-
 export function updateDebugger(scene, renderer) {
     if (settings.labels.enabled) {
         updateLabels(scene, renderer);
@@ -86,23 +92,26 @@ function togglePoints(scene, enabled) {
 function toggleLabels(scene, enabled) {
     const main = document.querySelector('#main');
     if (enabled) {
-        const sprites = document.createElement('div');
-        sprites.id = 'labels';
+        const labels = document.createElement('div');
+        labels.id = 'labels';
         each(scene.actors, actor => {
-            const sprite = document.createElement('div');
-            sprite.id = `actor_label_${actor.index}`;
-            sprite.classList.add('label');
-            sprite.innerHTML = `<span class="text">${actor.index}</span>`;
-            sprite.addEventListener('click', function() {
+            console.log('add', actor.index);
+            const label = document.createElement('div');
+            label.id = `actor_label_${actor.index}`;
+            label.classList.add('label');
+            label.innerHTML = `<span class="text">${actor.index}</span>`;
+            label.addEventListener('click', function() {
                 selectActor(scene, actor.index);
             });
-            sprites.appendChild(sprite);
+            labels.appendChild(label);
         });
-        main.appendChild(sprites);
+        main.appendChild(labels);
     } else {
+        console.log('remove');
         const labels = document.querySelector('#labels');
-        if (labels)
+        if (labels) {
             main.removeChild(labels);
+        }
     }
 }
 
