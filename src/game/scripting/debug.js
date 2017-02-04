@@ -82,11 +82,15 @@ export function updateDebugger(scene, renderer) {
 }
 
 function toggleZones(scene, enabled) {
-
+    each(scene.zones, zone => {
+        zone.threeObject.visible = enabled;
+    })
 }
 
 function togglePoints(scene, enabled) {
-
+    each(scene.points, point => {
+        point.threeObject.visible = enabled;
+    })
 }
 
 function toggleLabels(scene, enabled) {

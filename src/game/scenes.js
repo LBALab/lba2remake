@@ -17,11 +17,7 @@ import {loadActor} from './actors';
 import {loadPoint} from './points';
 import {loadZone} from './zones';
 import {loadPosition} from './hero';
-import {
-    DISPLAY_ZONES,
-    DISPLAY_POINTS,
-    ONLY_LOAD_SCENERY
-} from '../debugFlags';
+import {ONLY_LOAD_SCENERY} from '../debugFlags';
 import {initSceneDebug, resetSceneDebug} from './scripting/debug';
 
 export function createSceneManager(game, renderer, hero, callback: Function) {
@@ -161,12 +157,8 @@ function loadSceneNode(index, indexInfo, data) {
     };
 
     each(data.actors, addToSceneNode);
-    if (DISPLAY_ZONES) {
-        each(data.zones, addToSceneNode);
-    }
-    if (DISPLAY_POINTS) {
-        each(data.points, addToSceneNode);
-    }
+    each(data.zones, addToSceneNode);
+    each(data.points, addToSceneNode);
     return sceneNode;
 }
 

@@ -47,6 +47,7 @@ export function loadZone(props, callback) {
     });
 
     const obj = new THREE.Mesh(geometry, material);
+    obj.visible = false;
     obj.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
     zone.threeObject = obj;
 

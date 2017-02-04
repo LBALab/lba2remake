@@ -1,6 +1,6 @@
 import THREE from 'three';
 
-const geometry = new THREE.CylinderGeometry( 0, 0.01, 0.012, 8, 1, false );
+const geometry = new THREE.CylinderGeometry( 0, 0.008, 0.016, 8, 1, false);
 const material = new THREE.MeshBasicMaterial( {color: 0xffffff, depthTest: true, depthWrite: true } );
 
 // TODO: move scetion offset to container THREE.Object3D
@@ -15,7 +15,8 @@ export function loadPoint(props, callback) {
     };
 
     // For debug purposes
-    const obj = new THREE.Mesh(geometry, material)
+    const obj = new THREE.Mesh(geometry, material);
+    obj.visible = false;
     obj.position.set(point.physics.position.x, point.physics.position.y, point.physics.position.z);
     point.threeObject = obj;
 
