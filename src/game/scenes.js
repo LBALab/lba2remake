@@ -40,6 +40,7 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     return;
 
                 if (scene && scene.sideScenes && index in scene.sideScenes) {
+                    resetSceneDebug();
                     const sideScene = scene.sideScenes[index];
                     sideScene.sideScenes = scene.sideScenes;
                     delete sideScene.sideScenes[index];
@@ -48,16 +49,17 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     scene = sideScene;
                     loadPosition(hero.physics, scene);
                     pCallback();
+                    initSceneDebug(scene);
                 } else {
                     resetSceneDebug();
                     loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
-                        initSceneDebug(pScene);
                         hero.physics.position.x = pScene.scenery.props.startPosition[0];
                         hero.physics.position.z = pScene.scenery.props.startPosition[1];
                         renderer.applySceneryProps(pScene.scenery.props);
                         scene = pScene;
                         loadPosition(hero.physics, scene);
                         pCallback();
+                        initSceneDebug(scene);
                     });
                 }
             },

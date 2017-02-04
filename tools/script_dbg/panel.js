@@ -2,7 +2,7 @@ const selectedActor = {};
 const tabId = chrome.devtools.inspectedWindow.tabId;
 let currentScene = 1;
 
-const settings = {
+let settings = {
     zones: false,
     points: false,
     labels: false
@@ -28,6 +28,12 @@ backgroundPageConnection.onMessage.addListener(function(message) {
             break;
         case 'setCurrentLine':
             setCurrentLine(message);
+            break;
+        case 'setSettings':
+            settings = message.settings;
+            document.querySelectorAll('input[type=checkbox]').forEach(function(input) {
+                input.checked = settings[input.id];
+            });
             break;
     }
 });

@@ -81,6 +81,7 @@ export function setCursorPosition(scene, actor, scriptType, offset) {
 
 export function resetSceneDebug() {
     settings.labels.toggle(null, false);
+    settings.labels.enabled = false;
 }
 
 export function updateDebugger(scene, renderer) {

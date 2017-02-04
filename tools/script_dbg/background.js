@@ -1,6 +1,7 @@
 const panelConnections = {};
 const contentConnections = {};
 const scenes = {};
+let settings = null;
 
 chrome.runtime.onConnect.addListener(function(port) {
     const panelListener = function(message) {
@@ -11,6 +12,15 @@ chrome.runtime.onConnect.addListener(function(port) {
                 if (message.tabId in scenes) {
                     port.postMessage(scenes[message.tabId]);
                 }
+                if (settings) {
+                    port.postMessage({
+                        type: 'setSettings',
+                        settings: settings
+                    })
+                }
+                break;
+            case 'updateSettings':
+                settings = message.settings;
                 break;
         }
         if (message.type != 'init' && message.tabId in contentConnections) {
@@ -24,6 +34,13 @@ chrome.runtime.onConnect.addListener(function(port) {
         switch (message.type) {
             case 'setScene':
                 scenes[tabId] = message;
+                if (settings) {
+                    port.postMessage({
+                        type: 'updateSettings',
+                        settings: settings,
+                        tabId: tabId
+                    });
+                }
                 break;
         }
         if (tabId in panelConnections) {
@@ -32,7 +49,8 @@ chrome.runtime.onConnect.addListener(function(port) {
     };
 
     if (port.sender && port.sender.tab) {
-        contentConnections[port.sender.tab.id] = port;
+        const tabId = port.sender.tab.id;
+        contentConnections[tabId] = port;
         port.onMessage.addListener(contentListener);
         port.onDisconnect.addListener(function(port) {
             port.onMessage.removeListener(contentListener);
