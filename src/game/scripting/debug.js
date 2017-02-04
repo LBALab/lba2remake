@@ -95,7 +95,6 @@ function toggleLabels(scene, enabled) {
         const labels = document.createElement('div');
         labels.id = 'labels';
         each(scene.actors, actor => {
-            console.log('add', actor.index);
             const label = document.createElement('div');
             label.id = `actor_label_${actor.index}`;
             label.classList.add('label');
@@ -107,7 +106,6 @@ function toggleLabels(scene, enabled) {
         });
         main.appendChild(labels);
     } else {
-        console.log('remove');
         const labels = document.querySelector('#labels');
         if (labels) {
             main.removeChild(labels);
