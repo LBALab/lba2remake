@@ -114,7 +114,7 @@ function toggleLabels(scene, enabled) {
 }
 
 function updateLabels(scene, renderer) {
-    const spritePos = new THREE.Vector3();
+    const pos = new THREE.Vector3();
     each(scene.actors, actor => {
         const label = document.querySelector(`#actor_label_${actor.index}`);
 
@@ -130,18 +130,23 @@ function updateLabels(scene, renderer) {
         const heightHalf = 0.5 * renderer.domElement.height;
 
         actor.threeObject.updateMatrixWorld();
-        spritePos.setFromMatrixPosition(actor.threeObject.matrixWorld);
-        spritePos.project(renderer.getMainCamera(scene));
+        pos.setFromMatrixPosition(actor.threeObject.matrixWorld);
+        pos.project(renderer.getMainCamera(scene));
 
-        spritePos.x = ( spritePos.x * widthHalf ) + widthHalf;
-        spritePos.y = - ( spritePos.y * heightHalf ) + heightHalf;
+        pos.x = ( pos.x * widthHalf ) + widthHalf;
+        pos.y = - ( pos.y * heightHalf ) + heightHalf;
 
-        if (spritePos.z < 1) {
-            label.style.left = spritePos.x + 'px';
-            label.style.top = spritePos.y + 'px';
+        if (pos.z < 1) {
+            label.style.left = pos.x + 'px';
+            label.style.top = pos.y + 'px';
             label.style.display = 'block';
         } else {
             label.style.display = 'none';
+        }
+        if (selectedActor == actor.index) {
+            label.classList.add('selected');
+        } else {
+            label.classList.remove('selected');
         }
     });
 }
