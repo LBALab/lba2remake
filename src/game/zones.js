@@ -42,15 +42,16 @@ export function loadZone(props, callback) {
     const geometry = new THREE.BoxGeometry(props.box.tX - props.box.bX,
                                             props.box.tY - props.box.bY,
                                             props.box.tZ - props.box.bZ);
-    const material = new THREE.MeshBasicMaterial({
-        color: zone.color,
-        wireframe: true
-    });
 
-    const obj = new THREE.Mesh(geometry, material);
-    obj.visible = false;
-    obj.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
-    zone.threeObject = obj;
+    const edgesGeometry = new THREE.EdgesGeometry(geometry);
+    const material = new THREE.LineBasicMaterial({
+        color: zone.color
+    });
+    const wireframe = new THREE.LineSegments(edgesGeometry, material);
+
+    wireframe.visible = false;
+    wireframe.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
+    zone.threeObject = wireframe;
 
     callback(null, zone);
 }
