@@ -8,9 +8,8 @@ import type {Entity} from './entity';
 import {loadEntity, getBodyIndex, getAnimIndex} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
-import type {Anim} from './anim';
-import { loadAnimState, initSkeleton, createSkeleton, updateKeyframe} from './animState';
-import {loadMesh} from './geometry';
+import { initSkeleton, createSkeleton, updateKeyframe} from './animState';
+import {loadMesh} from './geometries';
 import {loadTexture2} from '../texture';
 import type {Time} from '../flowtypes';
 
