@@ -3,7 +3,7 @@ import * as lo from '../process/operators';
 import Indent from '../indent';
 
 export const LifeOpcode = [
-    { opcode: 0x00, command: "END", callback: lo.END, offset: 0, indent: Indent.ZERO },
+    { opcode: 0x00, command: "END", callback: lo.END, offset: 0, indent: Indent.KEEP },
     { opcode: 0x01, command: "NOP", callback: ls.NOP, offset: 0, indent: Indent.KEEP },
     { opcode: 0x02, command: "SNIF", callback: lo.SNIF, offset: 0, args: ['_Uint16'], condition: true, operator: true, indent: Indent.ADD},
     { opcode: 0x03, command: "OFFSET", callback: lo.OFFSET, offset: 0, indent: Indent.KEEP},
