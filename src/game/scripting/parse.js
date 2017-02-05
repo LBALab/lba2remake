@@ -3,7 +3,7 @@ import {MoveOpcode} from './data/move';
 import {ConditionOpcode} from './data/condition';
 import {OperatorOpcode} from './data/operator';
 import Indent from './indent';
-import {last} from 'lodash';
+import {last, each} from 'lodash';
 
 const TypeSize = {
     'Int8': 1,
@@ -17,18 +17,12 @@ const TypeSize = {
 export function parseScript(actor, type, script) {
     const commands = [];
     const opMap = {};
+    const comportementMap = {};
     const ifStack = [];
     let indent = 0;
     let offset = 0;
-    if (type == 'life' && script.getUint8(offset) != 0x20 && script.getUint8(offset) != 0x00) {
-        commands.push({
-            name: LifeOpcode[0x20].command, // COMPORTEMENT
-            indent: 0,
-            length: 0,
-            args: [{hide: false, value: 0}]
-        });
-        indent++;
-    }
+    let comportement = 0;
+    let newComportement = (type == 'life');
     while (offset < script.byteLength) {
         while (ifStack.length > 0 && offset == last(ifStack)) {
             commands.push({
@@ -40,6 +34,20 @@ export function parseScript(actor, type, script) {
         }
         opMap[offset] = commands.length;
         const code = script.getUint8(offset);
+        if (code != 0 && newComportement) {
+            if (comportement > 0) {
+                commands.push({name: '', indent: 0, length: 0});
+            }
+            comportementMap[offset] = comportement;
+            commands.push({
+                name: LifeOpcode[0x20].command, // COMPORTEMENT
+                indent: 0,
+                length: 0,
+                args: [{hide: false, value: comportement++}]
+            });
+            indent = 1;
+            newComportement = false;
+        }
         const op = type == 'life' ? LifeOpcode[code] : MoveOpcode[code];
         let cmd;
         try {
@@ -49,6 +57,9 @@ export function parseScript(actor, type, script) {
                     ifStack.push(cmd.args[0].value);
                 } else if (op.command == 'ELSE') {
                     ifStack[ifStack.length - 1] = cmd.args[0].value;
+                }
+                if (op.command == "END_COMPORTEMENT") {
+                    newComportement = true;
                 }
                 indent = processIndent(cmd, last(commands), op, indent);
             } else {
@@ -67,11 +78,25 @@ export function parseScript(actor, type, script) {
             break;
         }
     }
+    postProcess(commands, comportementMap);
     return {
         activeLine: -1,
         opMap: opMap,
         commands: commands
     };
+}
+
+function postProcess(commands, comportementMap) {
+    each(commands, cmd => {
+        switch (cmd.name) {
+            case 'SET_COMPORTEMENT':
+                cmd.args[0].value = comportementMap[cmd.args[0].value];
+                break;
+            case 'SET_COMPORTEMENT_OBJ':
+                //cmd.args[1].value = comportementMap[cmd.args[1].value];
+                break;
+        }
+    });
 }
 
 function parseCommand(script, offset, op) {
