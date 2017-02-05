@@ -37,7 +37,7 @@ export const LifeOpcode = [
     { opcode: 0x1F, command: "SET_VAR_CUBE", callback: ls.SET_VAR_CUBE, offset: 2, args: ['Uint8', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x20, command: "COMPORTEMENT", callback: lo.COMPORTEMENT, offset: 1, args: ['Uint8'], indent: Indent.ADD},
     { opcode: 0x21, command: "SET_COMPORTEMENT", callback: lo.SET_COMPORTEMENT, offset: 0, args: ['Uint16'], indent: Indent.KEEP},
-    { opcode: 0x22, command: "SET_COMPORTEMENT_OBJ", callback: lo.SET_COMPORTEMENT_OBJ, offset: 0, indent: Indent.KEEP},
+    { opcode: 0x22, command: "SET_COMPORTEMENT_OBJ", callback: lo.SET_COMPORTEMENT_OBJ, offset: 0, args: ['Uint8', 'Uint16'], indent: Indent.KEEP},
     { opcode: 0x23, command: "END_COMPORTEMENT", callback: lo.END_COMPORTEMENT, offset: 0, indent: Indent.SUB},
     { opcode: 0x24, command: "SET_VAR_GAME", callback: ls.SET_VAR_GAME, offset: 3, args: ['Uint8', 'Uint8', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x25, command: "KILL_OBJ", callback: ls.KILL_OBJ, offset: 1, args: ['Uint8'], indent: Indent.KEEP},

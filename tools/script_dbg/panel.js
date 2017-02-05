@@ -90,6 +90,8 @@ const cmdClasses = {
 
     COMPORTEMENT: 'structural',
     END_COMPORTEMENT: 'structural',
+    SET_COMPORTEMENT: 'structural',
+    SET_COMPORTEMENT_OBJ: 'structural',
     END: 'structural',
     LABEL: 'structural',
 
