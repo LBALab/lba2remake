@@ -1,6 +1,6 @@
 import THREE from 'three';
 import {each} from 'lodash';
-import {parseScript} from './parse';
+import {parseAllScripts} from './parser';
 
 let scripts = {};
 let selectedActor = -1;
@@ -24,17 +24,7 @@ let settings = {
 let lbaExtListener = null;
 
 export function initSceneDebug(scene) {
-    scripts = {};
-    scripts[0] = {
-        life: parseScript(0, 'life', scene.data.hero.lifeScript),
-        move: parseScript(0, 'move', scene.data.hero.moveScript)
-    };
-    each(scene.actors, actor => {
-        scripts[actor.index] = {
-            life: parseScript(actor.index, 'life', actor.props.lifeScript),
-            move: parseScript(actor.index, 'move', actor.props.moveScript)
-        };
-    });
+    scripts = parseAllScripts(scene);
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
         detail: {
             type: 'setScene',
@@ -60,13 +50,13 @@ export function initSceneDebug(scene) {
     window.addEventListener('lba_ext_event_in', lbaExtListener);
 }
 
-export function resetSceneDebug() {
+export function resetSceneDebug(scene) {
     if (lbaExtListener) {
         window.removeEventListener('lba_ext_event_in', lbaExtListener);
     }
-    settings.labels.toggle(null, false);
-    settings.points.toggle(null, false);
-    settings.zones.toggle(null, false);
+    settings.labels.toggle(scene, false);
+    settings.points.toggle(scene, false);
+    settings.zones.toggle(scene, false);
     settings.labels.enabled = false;
     settings.points.enabled = false;
     settings.zones.enabled = false;

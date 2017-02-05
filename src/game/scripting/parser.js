@@ -14,7 +14,22 @@ const TypeSize = {
     'Uint32': 4,
 };
 
-export function parseScript(actor, type, script) {
+export function parseAllScripts(scene) {
+    const scripts = {};
+    scripts[0] = {
+        life: parseScript(0, 'life', scene.data.hero.lifeScript),
+        move: parseScript(0, 'move', scene.data.hero.moveScript)
+    };
+    each(scene.actors, actor => {
+        scripts[actor.index] = {
+            life: parseScript(actor.index, 'life', actor.props.lifeScript),
+            move: parseScript(actor.index, 'move', actor.props.moveScript)
+        };
+    });
+    return scripts;
+}
+
+function parseScript(actor, type, script) {
     const commands = [];
     const opMap = {};
     const comportementMap = {};
