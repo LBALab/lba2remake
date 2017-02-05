@@ -30,7 +30,7 @@ export function parseScript(actor, type, script) {
         indent++;
     }
     while (offset < script.byteLength) {
-        if (ifStack.length > 0 && offset == last(ifStack)) {
+        while (ifStack.length > 0 && offset == last(ifStack)) {
             commands.push({
                 name: LifeOpcode[0x10].command, // ENDIF
                 indent: --indent,
