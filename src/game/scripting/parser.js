@@ -116,6 +116,12 @@ function postProcess(scripts, actor) {
             case 'SET_TRACK':
                 cmd.args[0].value = moveScript.tracksMap[cmd.args[0].value];
                 break;
+            case 'SET_TRACK_OBJ':
+                const tgt2 = scripts[cmd.args[0].value];
+                if (tgt2) {
+                    cmd.args[1].value = tgt2.move.tracksMap[cmd.args[1].value];
+                }
+                break;
         }
     });
 }
