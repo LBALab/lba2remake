@@ -84,8 +84,10 @@ const cmdClasses = {
     OR_IF: 'conditional',
     AND_IF: 'conditional',
     SWITCH: 'conditional',
+    END_SWITCH: 'conditional',
     CASE: 'conditional',
     OR_CASE: 'conditional',
+    BREAK: 'conditional',
     ENDIF: 'conditional',
 
     COMPORTEMENT: 'structural',
@@ -119,11 +121,11 @@ function setActorScript(type, script) {
             if ('param' in command.condition) {
                 param = '(<span class="arg">' + command.condition.param + '</span>)';
             }
-            let operatorAndOperand = '';
-            if ('operator' in command.condition) {
-                operatorAndOperand = '&nbsp;' + command.condition.operator.name + '&nbsp;<span class="arg">' + command.condition.operator.operand + '</span>';
-            }
-            condition = '&nbsp;<span class="cond">' + command.condition.name + '</span>' + param + operatorAndOperand;
+            condition = '&nbsp;<span class="cond">' + command.condition.name + '</span>' + param
+        }
+        let operatorAndOperand = '';
+        if (command.operator) {
+            operatorAndOperand = '&nbsp;' + command.operator.name + '&nbsp;<span class="arg">' + command.operator.operand + '</span>';
         }
         let args = '';
         if (command.args) {
@@ -133,7 +135,7 @@ function setActorScript(type, script) {
         }
         return '<div class="line">'
             + '<div class="num">' + (idx + 1) + '</div>'
-            + '<div class="command">' + indent + cmd + condition + args + '</div>'
+            + '<div class="command">' + indent + cmd + condition + operatorAndOperand + args + '</div>'
         + '</div>';
     }).join('\n');
     displayActiveLine(type, script.activeLine);

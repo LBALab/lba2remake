@@ -137,25 +137,29 @@ function parseCommand(state, script, op) {
 }
 
 function parseCondition(state, script, op, cmd) {
+    let condition;
     if (op.condition) {
         const code = script.getUint8(state.offset + cmd.length);
-        const condition = ConditionOpcode[code];
-        if (condition) {
-            cmd.condition = { name: condition.command };
+        condition = ConditionOpcode[code];
+        cmd.condition = { name: condition.command };
+        cmd.length += 1;
+        if (condition.param) {
+            cmd.condition.param = script.getUint8(state.offset + cmd.length);
             cmd.length += 1;
-            if (condition.param) {
-                cmd.condition.param = script.getUint8(state.offset + cmd.length);
-                cmd.length += 1;
-            }
-            if (op.operator) {
-                const code = script.getUint8(state.offset + cmd.length);
-                const operator = OperatorOpcode[code];
-                cmd.condition.operator = { name: operator ? operator.command : '?[' + code + ']' };
-                cmd.length += 1;
-                cmd.condition.operator.operand = script['get' + condition.operand](state.offset + cmd.length, true);
-                cmd.length += TypeSize[condition.operand];
-            }
         }
+        if (op.command == 'SWITCH') {
+            state.switchCondition = condition;
+        }
+    } else if (op.operator) {
+        condition = state.switchCondition;
+    }
+    if (op.operator) {
+        const code = script.getUint8(state.offset + cmd.length);
+        const operator = OperatorOpcode[code];
+        cmd.operator = { name: operator ? operator.command : '?[' + code + ']' };
+        cmd.length += 1;
+        cmd.operator.operand = script['get' + condition.operand](state.offset + cmd.length, true);
+        cmd.length += TypeSize[condition.operand];
     }
 }
 
@@ -179,7 +183,6 @@ function parseArguments(state, script, op, cmd) {
 }
 
 function processIndent(state, op, cmd) {
-    const prevCmd = last(state.commands);
     switch (op.indent) {
         case Indent.ZERO:
             state.indent = 0;
@@ -199,13 +202,6 @@ function processIndent(state, op, cmd) {
             break;
         case Indent.SUB_ADD:
             state.indent = Math.max(state.indent - 1, 0);
-            cmd.indent = state.indent;
-            state.indent++;
-            break;
-        case Indent.SPECIAL_CASE:
-            if (prevCmd && prevCmd.name != 'CASE' && prevCmd.name != 'SWITCH') {
-                state.indent = Math.max(state.indent - 1, 0);
-            }
             cmd.indent = state.indent;
             state.indent++;
             break;
