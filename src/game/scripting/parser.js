@@ -199,6 +199,16 @@ function parseArguments(state, script, op, cmd) {
             });
             cmd.length += TypeSize[type];
         }
+        if (op.command == 'SET_DIRMODE' || op.command == 'SET_DIRMODE_OBJ') {
+            const mode = last(cmd.args).value;
+            if (mode == 2 || mode == 4) {
+                cmd.args.push({
+                    value: script.getUint8(state.offset + cmd.length, true),
+                    hide: false
+                });
+                cmd.length += 1;
+            }
+        }
     }
 }
 
