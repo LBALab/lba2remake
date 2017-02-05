@@ -88,7 +88,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
         };
         const indexInfo = sceneMap[index];
         const loadSteps = {
-            actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, game, envInfo), callback) },
+            actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, game, envInfo, sceneData.ambience), callback) },
             points: (callback) => { async.map(sceneData.points, loadPoint, callback) },
             zones: (callback) => { async.map(sceneData.zones, loadZone, callback) }
         };

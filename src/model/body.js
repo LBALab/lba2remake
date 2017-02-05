@@ -75,10 +75,10 @@ function loadNormals(object) {
     for (let i = 0; i < object.normalsSize; ++i) {
         const index = i * 4;
         object.normals.push({
-            x: rawNormals[index],
-            y: rawNormals[index + 1],
-            z: rawNormals[index + 2],
-            colour: rawNormals[index + 3]
+            x: rawNormals[index] / 0x4000,
+            y: rawNormals[index + 1] / 0x4000,
+            z: rawNormals[index + 2] / 0x4000,
+            colour: rawNormals[index + 3] & 0x00FF
         });
     }
 }
