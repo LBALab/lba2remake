@@ -42,25 +42,29 @@ export function parseScript(actor, type, script) {
         const code = script.getUint8(offset);
         const op = type == 'life' ? LifeOpcode[code] : MoveOpcode[code];
         let cmd;
-        if (op) {
-            cmd = parseCommand(script, offset, op);
-            if (op.condition && !op.precond && cmd.args) {
-                ifStack.push(cmd.args[0].value);
-            } else if (op.command == 'ELSE') {
-                ifStack[ifStack.length - 1] = cmd.args[0].value;
+        try {
+            if (op) {
+                cmd = parseCommand(script, offset, op);
+                if (op.condition && !op.precond && cmd.args) {
+                    ifStack.push(cmd.args[0].value);
+                } else if (op.command == 'ELSE') {
+                    ifStack[ifStack.length - 1] = cmd.args[0].value;
+                }
+                indent = processIndent(cmd, last(commands), op, indent);
+            } else {
+                console.warn('Invalid command (', type, ') opcode =', code, 'actor =', actor, 'offset =', offset);
+                cmd = {
+                    name: '[INVALID COMMAND]',
+                    length: 1,
+                    indent: indent,
+                    args: [{hide: false, value: code}]
+                };
             }
-            indent = processIndent(cmd, last(commands), op, indent);
-        } else {
-            console.warn('Invalid command (', type, ') opcode =', code, 'actor =', actor, 'offset =', offset);
-            cmd = {
-                name: '[INVALID COMMAND]',
-                length: 1,
-                indent: indent,
-                args: [{hide: false, value: code}]
-            };
+            commands.push(cmd);
+            offset += cmd.length;
+        } catch (e) {
+            break;
         }
-        commands.push(cmd);
-        offset += cmd.length;
     }
     return {
         activeLine: -1,
