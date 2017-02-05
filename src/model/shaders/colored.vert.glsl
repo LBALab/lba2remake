@@ -17,7 +17,7 @@ varying float vColor;
 void main() {
     gl_Position = projectionMatrix * modelViewMatrix * bones[int(boneIndex)] * vec4(position, 1.0);
     vPosition = position;
-    vec4 newNormal = rotationMatrix * vec4(normal, 1.0);
+    vec4 newNormal = rotationMatrix * bones[int(boneIndex)] * vec4(normal, 1.0);
     vNormal = newNormal.xyz;
     vColor = color;
 }
