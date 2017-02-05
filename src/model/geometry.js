@@ -31,7 +31,7 @@ export function loadMesh(body, texture, matrixBones, palette, envInfo, ambience)
         bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.positions), 3));
         bufferGeometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(geometry.normals), 4));
         bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(geometry.uvs), 2, true));
-        bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.colors), 4, true));
+        bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.colors), 1, false));
         bufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(geometry.bones), 1));
 
         const modelMesh = new THREE.Mesh(bufferGeometry, material);
@@ -42,7 +42,7 @@ export function loadMesh(body, texture, matrixBones, palette, envInfo, ambience)
         const linebufferGeometry = new THREE.BufferGeometry();
         linebufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometry.linePositions), 3));
         linebufferGeometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(geometry.lineNormals), 4));
-        linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.lineColors), 4, true));
+        linebufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(geometry.lineColors), 1, false));
         linebufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(geometry.lineBones), 1));
 
         const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
@@ -83,7 +83,7 @@ function loadFaceGeometry(geometry, body, palette) {
             const vertexIndex = p.vertex[j];
     	    push.apply(geometry.positions, getPosition(body, vertexIndex));
     	    push.apply(geometry.normals, getNormal(body, vertexIndex));
-            push.apply(geometry.colors, getColour(p.colour, palette, p.hasTransparency, p.hasTex));
+            geometry.colors.push(p.colour);
             push.apply(geometry.uvs, getUVs(body, p, j));
             push.apply(geometry.bones, getBone(body, vertexIndex));
         };    
@@ -111,7 +111,7 @@ function loadSphereGeometry(geometry, body, palette) {
                 sphereGeometry.vertices[j].z + centerPos[2]
             ]);
     	    push.apply(geometry.normals, normal);
-            push.apply(geometry.colors, getColour(s.colour, palette, false, false));
+            geometry.colors.push(s.colour);
             push.apply(geometry.uvs, [0,0]);
             push.apply(geometry.bones, getBone(body, s.vertex));
         };
@@ -129,7 +129,7 @@ function loadLineGeometry(geometry, body, palette) {
         const addVertex = (c,i) => {
             push.apply(geometry.linePositions, getPosition(body, i));
             push.apply(geometry.lineNormals, getNormal(body, i));
-            push.apply(geometry.lineColors, getColour(c, palette, false, false));
+            geometry.lineColors.push(c);
             push.apply(geometry.lineBones, getBone(body, i));
         };
 
@@ -173,15 +173,6 @@ function getPosition(body, index) {
         vertex.x,
         vertex.y,
         vertex.z
-    ];
-}
-
-function getColour(colour, palette, hasTransparency, hasTex) {
-    return [
-        palette[colour * 3], 
-        palette[colour * 3 + 1],
-        palette[colour * 3 + 2],
-        hasTex ? 0 : hasTransparency ? 127 : 255 
     ];
 }
 

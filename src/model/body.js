@@ -78,7 +78,7 @@ function loadNormals(object) {
             x: rawNormals[index] / 0x4000,
             y: rawNormals[index + 1] / 0x4000,
             z: rawNormals[index + 2] / 0x4000,
-            colour: rawNormals[index + 3] & 0x00FF
+            colour: Math.floor((rawNormals[index + 3] & 0x00FF) / 16)
         });
     }
 }
@@ -149,7 +149,7 @@ function loadPolygon(data, offset, renderType, blockSize) {
 
     // polygon color
     const colour = data.getUint16(offset + 8, true);
-    poly.colour = (colour & 0x00FF);
+    poly.colour = Math.floor((colour & 0x00FF) / 16);
 
     // polygon color intensity
     const intensity = data.getInt16(offset + 10, true);
@@ -183,7 +183,7 @@ function loadLines(object) {
         const index = i * 4;
         object.lines.push({
             unk1: rawLines[index],
-            colour: rawLines[index + 1] & 0x00FF,
+            colour: Math.floor((rawLines[index + 1] & 0x00FF) / 16),
             vertex1: rawLines[index + 2],
             vertex2: rawLines[index + 3]
         });
@@ -197,7 +197,7 @@ function loadSpheres(object) {
         const index = i * 4;
         object.spheres.push({
             unk1: rawSpheres[index],
-            colour: rawSpheres[index + 1] & 0x00FF,
+            colour: Math.floor((rawSpheres[index + 1] & 0x00FF) / 16),
             vertex: rawSpheres[index + 2],
             size: rawSpheres[index + 3] / 0x4000
         });
