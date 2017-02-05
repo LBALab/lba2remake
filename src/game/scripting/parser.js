@@ -34,64 +34,28 @@ export function parseAllScripts(scene) {
 }
 
 function parseScript(actor, type, script) {
-    const commands = [];
-    const opMap = {};
-    const comportementMap = {};
-    const ifStack = [];
-    let indent = 0;
-    let offset = 0;
-    let comportement = 0;
-    let newComportement = (type == 'life');
-    while (offset < script.byteLength) {
-        while (ifStack.length > 0 && offset == last(ifStack)) {
-            commands.push({
-                name: LifeOpcode[0x10].command, // ENDIF
-                indent: --indent,
-                length: 0
-            });
-            ifStack.pop();
-        }
-        opMap[offset] = commands.length;
-        const code = script.getUint8(offset);
-        if (code != 0 && newComportement) {
-            if (comportement > 0) {
-                commands.push({name: '', indent: 0, length: 0});
-            }
-            comportementMap[offset] = comportement;
-            commands.push({
-                name: LifeOpcode[0x20].command, // COMPORTEMENT
-                indent: 0,
-                length: 0,
-                args: [{hide: false, value: comportement++}]
-            });
-            indent = 1;
-            newComportement = false;
-        }
+    const state = {
+        type: type,
+        actor: actor,
+        comportement: 0,
+        newComportement: (type == 'life'),
+        comportementMap: {},
+        opMap: {},
+        ifStack: [],
+        offset: 0,
+        indent: 0,
+        commands: []
+    };
+    while (state.offset < script.byteLength) {
+        checkEndIf(state);
+        state.opMap[state.offset] = state.commands.length;
+        const code = script.getUint8(state.offset);
         const op = type == 'life' ? LifeOpcode[code] : MoveOpcode[code];
-        let cmd;
+        checkNewComportment(state, code);
         try {
-            if (op) {
-                cmd = parseCommand(script, offset, op);
-                if (op.condition && !op.precond && cmd.args) {
-                    ifStack.push(cmd.args[0].value);
-                } else if (op.command == 'ELSE') {
-                    ifStack[ifStack.length - 1] = cmd.args[0].value;
-                }
-                if (op.command == "END_COMPORTEMENT") {
-                    newComportement = true;
-                }
-                indent = processIndent(cmd, last(commands), op, indent);
-            } else {
-                console.warn('Invalid command (', type, ') opcode =', code, 'actor =', actor, 'offset =', offset);
-                cmd = {
-                    name: '[INVALID COMMAND]',
-                    length: 1,
-                    indent: indent,
-                    args: [{hide: false, value: code}]
-                };
-            }
-            commands.push(cmd);
-            offset += cmd.length;
+            const cmd = parseCommand(state, script, op);
+            state.commands.push(cmd);
+            state.offset += cmd.length;
         } catch (e) {
             console.error(`Interrupted parsing actor ${actor}'s ${type} script:\n`, e);
             break;
@@ -99,10 +63,38 @@ function parseScript(actor, type, script) {
     }
     return {
         activeLine: -1,
-        opMap: opMap,
-        comportementMap: comportementMap,
-        commands: commands
+        opMap: state.opMap,
+        comportementMap: state.comportementMap,
+        commands: state.commands
     };
+}
+
+function checkEndIf(state) {
+    while (state.ifStack.length > 0 && state.offset == last(state.ifStack)) {
+        state.commands.push({
+            name: LifeOpcode[0x10].command, // ENDIF
+            indent: --state.indent,
+            length: 0
+        });
+        state.ifStack.pop();
+    }
+}
+
+function checkNewComportment(state, code) {
+    if (code != 0 && state.newComportement) {
+        if (state.comportement > 0) {
+            state.commands.push({name: '', indent: 0, length: 0});
+        }
+        state.comportementMap[state.offset] = state.comportement;
+        state.commands.push({
+            name: LifeOpcode[0x20].command, // COMPORTEMENT
+            indent: 0,
+            length: 0,
+            args: [{hide: false, value: state.comportement++}]
+        });
+        state.indent = 1;
+        state.newComportement = false;
+    }
 }
 
 function postProcess(scripts, actor) {
@@ -122,40 +114,52 @@ function postProcess(scripts, actor) {
     });
 }
 
-function parseCommand(script, offset, op) {
+function parseCommand(state, script, op) {
+    if (!op) {
+        return invalidCommand(state, script);
+    }
     const cmd = {
         name: op.command,
         length: 1
     };
-    parseCondition(cmd, script, offset, op);
-    parseArguments(cmd, script, offset, op);
+    parseCondition(state, script, op, cmd);
+    parseArguments(state, script, op, cmd);
+    if (op.condition && !op.precond && cmd.args) {
+        state.ifStack.push(cmd.args[0].value);
+    } else if (op.command == 'ELSE') {
+        state.ifStack[state.ifStack.length - 1] = cmd.args[0].value;
+    }
+    if (op.command == "END_COMPORTEMENT") {
+        state.newComportement = true;
+    }
+    processIndent(state, op, cmd);
     return cmd;
 }
 
-function parseCondition(cmd, script, offset, op) {
+function parseCondition(state, script, op, cmd) {
     if (op.condition) {
-        const code = script.getUint8(offset + cmd.length);
+        const code = script.getUint8(state.offset + cmd.length);
         const condition = ConditionOpcode[code];
         if (condition) {
             cmd.condition = { name: condition.command };
             cmd.length += 1;
             if (condition.param) {
-                cmd.condition.param = script.getUint8(offset + cmd.length);
+                cmd.condition.param = script.getUint8(state.offset + cmd.length);
                 cmd.length += 1;
             }
             if (op.operator) {
-                const code = script.getUint8(offset + cmd.length);
+                const code = script.getUint8(state.offset + cmd.length);
                 const operator = OperatorOpcode[code];
                 cmd.condition.operator = { name: operator ? operator.command : '?[' + code + ']' };
                 cmd.length += 1;
-                cmd.condition.operator.operand = script['get' + condition.operand](offset + cmd.length, true);
+                cmd.condition.operator.operand = script['get' + condition.operand](state.offset + cmd.length, true);
                 cmd.length += TypeSize[condition.operand];
             }
         }
     }
 }
 
-function parseArguments(cmd, script, offset, op) {
+function parseArguments(state, script, op, cmd) {
     if (op.args) {
         cmd.args = [];
         for (let i = 0; i < op.args.length; ++i) {
@@ -166,7 +170,7 @@ function parseArguments(cmd, script, offset, op) {
                 hide = true;
             }
             cmd.args.push({
-                value: script[`get${type}`](offset + cmd.length, true),
+                value: script[`get${type}`](state.offset + cmd.length, true),
                 hide: hide
             });
             cmd.length += TypeSize[type];
@@ -174,40 +178,51 @@ function parseArguments(cmd, script, offset, op) {
     }
 }
 
-function processIndent(cmd, prevCmd, op, indent) {
+function processIndent(state, op, cmd) {
+    const prevCmd = last(state.commands);
     switch (op.indent) {
         case Indent.ZERO:
-            indent = 0;
+            state.indent = 0;
             cmd.indent = 0;
             break;
         case Indent.ONE:
-            indent = 1;
+            state.indent = 1;
             cmd.indent = 1;
             break;
         case Indent.ADD:
-            cmd.indent = indent;
-            indent++;
+            cmd.indent = state.indent;
+            state.indent++;
             break;
         case Indent.SUB:
-            indent = Math.max(indent - 1, 0);
-            cmd.indent = indent;
+            state.indent = Math.max(state.indent - 1, 0);
+            cmd.indent = state.indent;
             break;
         case Indent.SUB_ADD:
-            indent = Math.max(indent - 1, 0);
-            cmd.indent = indent;
-            indent++;
+            state.indent = Math.max(state.indent - 1, 0);
+            cmd.indent = state.indent;
+            state.indent++;
             break;
         case Indent.SPECIAL_CASE:
             if (prevCmd && prevCmd.name != 'CASE' && prevCmd.name != 'SWITCH') {
-                indent = Math.max(indent - 1, 0);
+                state.indent = Math.max(state.indent - 1, 0);
             }
-            cmd.indent = indent;
-            indent++;
+            cmd.indent = state.indent;
+            state.indent++;
             break;
         case Indent.KEEP:
         default:
-            cmd.indent = indent;
+            cmd.indent = state.indent;
             break;
     }
-    return indent;
+}
+
+function invalidCommand(state, script) {
+    const code = script.getUint8(state.offset);
+    console.warn('Invalid command (', state.type, ') opcode =', code, 'actor =', state.actor, 'offset =', state.offset);
+    return {
+        name: '[INVALID COMMAND]',
+        length: 1,
+        indent: state.indent,
+        args: [{hide: false, value: code}]
+    };
 }
