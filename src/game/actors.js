@@ -46,7 +46,7 @@ export const ActorStaticFlag = {
 };
 
 // TODO: move section offset to container THREE.Object3D
-export function loadActor(game: any, envInfo: any,  props: ActorProps, callback: Function) {
+export function loadActor(game: any, envInfo: any, ambience: any, props: ActorProps, callback: Function) {
     const pos = props.pos;
     const animState = loadAnimState();
     const actor: Actor = {
@@ -77,6 +77,7 @@ export function loadActor(game: any, envInfo: any,  props: ActorProps, callback:
             Script.processLifeScript(game, actor, time);
 
             if(this.model) {
+                this.animState.matrixRotation.makeRotationFromQuaternion(this.physics.orientation);
                 updateModel(this.model, this.animState, this.props.entityIndex, this.props.bodyIndex, this.props.animIndex, time);
                 if (this.animState.isPlaying) {
                     this.updateAnimStep(time);
@@ -139,7 +140,7 @@ export function loadActor(game: any, envInfo: any,  props: ActorProps, callback:
 
     // only if not sprite actor
     if (!actor.isSprite && props.bodyIndex != 0xFF) {
-        loadModel(props.entityIndex, props.bodyIndex, props.animIndex, animState, envInfo, (model) => {
+        loadModel(props.entityIndex, props.bodyIndex, props.animIndex, animState, envInfo, ambience, (model) => {
             //model.mesh.visible = actor.isVisible;
             model.mesh.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
             model.mesh.quaternion.copy(actor.physics.orientation);
