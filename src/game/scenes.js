@@ -44,8 +44,8 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     sideScene.sideScenes[scene.index] = scene;
                     scene = sideScene;
                     loadPosition(hero.physics, scene);
-                    pCallback();
                     initSceneDebug(scene);
+                    pCallback();
                 } else {
                     resetSceneDebug();
                     loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
@@ -54,8 +54,8 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                         renderer.applySceneryProps(pScene.scenery.props);
                         scene = pScene;
                         loadPosition(hero.physics, scene);
-                        pCallback();
                         initSceneDebug(scene);
+                        pCallback();
                     });
                 }
             },
