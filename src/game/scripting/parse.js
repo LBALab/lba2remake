@@ -63,6 +63,7 @@ export function parseScript(actor, type, script) {
             commands.push(cmd);
             offset += cmd.length;
         } catch (e) {
+            console.error(`Interrupted parsing actor ${actor}'s ${type} script:\n`, e);
             break;
         }
     }
