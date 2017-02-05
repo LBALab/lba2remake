@@ -36,13 +36,13 @@ export function ANIM_OBJ(game, state, param) {
 }
 
 export function CURRENT_TRACK(game, state, param) {
-    return state.move.labelIndex;
+    return state.move.trackIndex;
 }
 
 export function CURRENT_TRACK_OBJ(game, state, actorIndex) {
     const actorOther = game.getSceneManager().getScene(state.move.sceneIndex).getActor(actorIndex);
     if (actorOther) {
-        return actorOther.scriptState.move.labelIndex;
+        return actorOther.scriptState.move.trackIndex;
     }
     return -1;
 }

@@ -55,9 +55,9 @@ export function POS_POINT(game, script, state, actor) {
     
 }
 
-export function LABEL(game, script, state, actor) {
-    state.labelIndex = script.getUint8(state.offset, true);
-    state.labelOffset = state.offset - 2;
+export function TRACK(game, script, state, actor) {
+    state.trackIndex = script.getUint8(state.offset, true);
+    state.trackOffset = state.offset - 2;
 }
 
 export function GOTO(game, script, state, actor) {

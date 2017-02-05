@@ -112,7 +112,7 @@ export function END_LIFE(game, script, state, actor) {
 }
 
 export function STOP_CURRENT_TRACK(game, script, state, actor) {
-    state.move.savedOffset = state.move.labelOffset;
+    state.move.savedOffset = state.move.trackOffset;
     state.move.reentryOffset = -1;
 }
 

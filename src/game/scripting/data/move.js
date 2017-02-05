@@ -11,7 +11,7 @@ export const MoveOpcode = [
     { opcode: 0x06, command: "LOOP", callback: ms.NOP, offset: 0, indent: Indent.ONE },
     { opcode: 0x07, command: "ANGLE", callback: ms.ANGLE, offset: 2, args: ['Int16'], indent: Indent.ONE },
     { opcode: 0x08, command: "POS_POINT", callback: ms.POS_POINT, offset: 1, args: ['Uint8'], indent: Indent.ONE },
-    { opcode: 0x09, command: "LABEL", callback: ms.LABEL, offset: 1, args: ['Uint8'], indent: Indent.ZERO },
+    { opcode: 0x09, command: "TRACK", callback: ms.TRACK, offset: 1, args: ['Uint8'], indent: Indent.ZERO },
     { opcode: 0x0A, command: "GOTO", callback: ms.GOTO, offset: 2, args: ['Int16'], indent: Indent.ONE },
     { opcode: 0x0B, command: "STOP", callback: ms.STOP, offset: 0, indent: Indent.ONE },
     { opcode: 0x0C, command: "GOTO_SYM_POINT", callback: ms.GOTO_SYM_POINT, offset: 1, args: ['Uint8'], indent: Indent.ONE },

@@ -95,7 +95,9 @@ const cmdClasses = {
     SET_COMPORTEMENT: 'structural',
     SET_COMPORTEMENT_OBJ: 'structural',
     END: 'structural',
-    LABEL: 'structural',
+    TRACK: 'structural',
+    SET_TRACK: 'structural',
+    SET_TRACK_OBJ: 'structural',
 
     '[INVALID COMMAND]': 'invalid'
 };
