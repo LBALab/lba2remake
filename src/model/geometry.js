@@ -6,11 +6,13 @@ import fragmentShader from './shaders/model.frag.glsl';
 
 const push = Array.prototype.push;
 
-export function loadMesh(body, texture, matrixBones, palette) {
+export function loadMesh(body, texture, matrixBones, palette, envInfo) {
     const material = new THREE.RawShaderMaterial({
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
         uniforms: {
+            fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+            fogDensity: {value: envInfo.fogDensity},
             texture: { value: texture },
             bones: { value: matrixBones, type:'m4v' }
         }

@@ -22,14 +22,14 @@ export type Model = {
     mesh: THREE.Object3D
 }
 
-export function loadModel(entityIdx: number, bodyIdx: number, animIdx: number, animState: any, callback: Function) {
+export function loadModel(entityIdx: number, bodyIdx: number, animIdx: number, animState: any, envInfo: any, callback: Function) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         body: loadHqrAsync('BODY.HQR'),
         anim: loadHqrAsync('ANIM.HQR'),
         anim3ds: loadHqrAsync('ANIM3DS.HQR')
     }, function(err, files) {
-        callback(loadModelData(files, entityIdx, bodyIdx, animIdx, animState));
+        callback(loadModelData(files, entityIdx, bodyIdx, animIdx, animState, envInfo));
     });
 }
 
@@ -38,7 +38,7 @@ export function loadModel(entityIdx: number, bodyIdx: number, animIdx: number, a
  *  This will allow to mantain different states for body animations.
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
-function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any) {
+function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envInfo: any) {
     const palette = new Uint8Array(files.ress.getEntry(0));
     const entityInfo = files.ress.getEntry(44);
     const model = {
@@ -61,7 +61,7 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any) {
 
     const skeleton = createSkeleton(body);
     initSkeleton(animState, skeleton, anim.loopFrame);
-    model.mesh = loadMesh(body, model.texture, animState.matrixBones, model.palette);
+    model.mesh = loadMesh(body, model.texture, animState.matrixBones, model.palette, envInfo);
 
     return model;
 }

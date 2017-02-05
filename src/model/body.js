@@ -114,6 +114,7 @@ function loadPolygon(data, offset, renderType, blockSize) {
     const hasTransparency = (renderType == 2) ? true : false;
 
     let poly = {
+        renderType: renderType,
         vertex: [],
         colour: 0,
         intensity: 0,
