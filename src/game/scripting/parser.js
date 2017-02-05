@@ -26,6 +26,10 @@ export function parseAllScripts(scene) {
             move: parseScript(actor.index, 'move', actor.props.moveScript)
         };
     });
+    postProcess(scripts, 0);
+    each(scene.actors, actor => {
+        postProcess(scripts, actor.index);
+    });
     return scripts;
 }
 
@@ -93,22 +97,26 @@ function parseScript(actor, type, script) {
             break;
         }
     }
-    postProcess(commands, comportementMap);
     return {
         activeLine: -1,
         opMap: opMap,
+        comportementMap: comportementMap,
         commands: commands
     };
 }
 
-function postProcess(commands, comportementMap) {
-    each(commands, cmd => {
+function postProcess(scripts, actor) {
+    const lifeScript = scripts[actor].life;
+    each(lifeScript.commands, cmd => {
         switch (cmd.name) {
             case 'SET_COMPORTEMENT':
-                cmd.args[0].value = comportementMap[cmd.args[0].value];
+                cmd.args[0].value = lifeScript.comportementMap[cmd.args[0].value];
                 break;
             case 'SET_COMPORTEMENT_OBJ':
-                //cmd.args[1].value = comportementMap[cmd.args[1].value];
+                const tgt = scripts[cmd.args[0].value];
+                if (tgt) {
+                    cmd.args[1].value = tgt.life.comportementMap[cmd.args[1].value];
+                }
                 break;
         }
     });
