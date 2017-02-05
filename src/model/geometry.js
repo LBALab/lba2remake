@@ -23,7 +23,7 @@ export function loadMesh(body, texture, matrixBones, palette, envInfo, ambience)
         }
     });
 
-    const geometry = loadGeometry(body, palette);
+    const geometry = loadGeometry(body);
     const object = new THREE.Object3D();
 
     if (geometry.positions.length > 0) {
@@ -52,7 +52,7 @@ export function loadMesh(body, texture, matrixBones, palette, envInfo, ambience)
     return object;
 }
 
-function loadGeometry(body, palette) {
+function loadGeometry(body) {
     const geometry = {
         positions: [],
         normals: [],
@@ -65,19 +65,19 @@ function loadGeometry(body, palette) {
         lineBones: []
     };
     
-    loadBodyGeometry(geometry, body, palette);
+    loadBodyGeometry(geometry, body);
 
     return geometry;
 }
 
-function loadBodyGeometry(geometry, body, palette) {
-    loadFaceGeometry(geometry, body, palette);
-    loadSphereGeometry(geometry, body, palette);
-    loadLineGeometry(geometry, body, palette);
+function loadBodyGeometry(geometry, body) {
+    loadFaceGeometry(geometry, body);
+    loadSphereGeometry(geometry, body);
+    loadLineGeometry(geometry, body);
     //debugBoneGeometry(geometry, body);
 }
 
-function loadFaceGeometry(geometry, body, palette) {
+function loadFaceGeometry(geometry, body) {
     _.each(body.polygons, (p) => {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
@@ -98,7 +98,7 @@ function loadFaceGeometry(geometry, body, palette) {
     });
 }
 
-function loadSphereGeometry(geometry, body, palette) {
+function loadSphereGeometry(geometry, body) {
     _.each(body.spheres, (s) => {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
@@ -124,7 +124,7 @@ function loadSphereGeometry(geometry, body, palette) {
     });
 }
 
-function loadLineGeometry(geometry, body, palette) {
+function loadLineGeometry(geometry, body) {
     _.each(body.lines, (l) => {
         const addVertex = (c,i) => {
             push.apply(geometry.linePositions, getPosition(body, i));
