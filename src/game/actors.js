@@ -77,6 +77,7 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
             Script.processLifeScript(game, actor, time);
 
             if(this.model) {
+                this.animState.matrixRotation.makeRotationFromQuaternion(this.physics.orientation);
                 updateModel(this.model, this.animState, this.props.entityIndex, this.props.bodyIndex, this.props.animIndex, time);
                 if (this.animState.isPlaying) {
                     this.updateAnimStep(time);

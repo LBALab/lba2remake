@@ -8,7 +8,7 @@ import {loadPaletteTexture} from '../texture';
 
 const push = Array.prototype.push;
 
-export function loadMesh(body, texture, matrixBones, palette, envInfo, ambience) {
+export function loadMesh(body, texture, matrixBones, matrixRotation, palette, envInfo, ambience) {
     const light = getLightVector(ambience);
     const material = new THREE.RawShaderMaterial({
         vertexShader: vertexShader,
@@ -19,7 +19,8 @@ export function loadMesh(body, texture, matrixBones, palette, envInfo, ambience)
             texture: { value: texture },
             palette: { value: loadPaletteTexture(palette) },
             light: {value: light},
-            bones: { value: matrixBones, type:'m4v' }
+            bones: { value: matrixBones, type:'m4v' },
+            rotationMatrix: { value: matrixRotation, type:'m4v' }
         }
     });
 

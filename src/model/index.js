@@ -61,7 +61,7 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
 
     const skeleton = createSkeleton(body);
     initSkeleton(animState, skeleton, anim.loopFrame);
-    model.mesh = loadMesh(body, model.texture, animState.matrixBones, model.palette, envInfo, ambience);
+    model.mesh = loadMesh(body, model.texture, animState.matrixBones, animState.matrixRotation, model.palette, envInfo, ambience);
 
     return model;
 }

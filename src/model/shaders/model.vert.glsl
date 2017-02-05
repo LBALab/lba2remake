@@ -3,6 +3,7 @@ precision highp float;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 bones[50];
+uniform mat4 rotationMatrix;
 
 attribute vec3 position;
 attribute vec4 normal;
@@ -19,8 +20,8 @@ varying vec2 vUv;
 void main() {
     gl_Position = projectionMatrix * modelViewMatrix * bones[int(boneIndex)] * vec4(position, 1.0);
     vPosition = position;
-    vNormal4 = normal;
-    vNormal = vec3(normal.xyz);
+    vNormal4 = rotationMatrix * normal;
+    vNormal = vec3(vNormal4.xyz);
     vColor = color;
     vUv = uv;
 }

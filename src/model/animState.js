@@ -6,6 +6,7 @@ export function loadAnimState() {
     return {
         skeleton: null,
         matrixBones: null,
+        matrixRotation: new THREE.Matrix4(),
         currentFrame: 0,
         loopFrame: 0,
         currentTime:0,
