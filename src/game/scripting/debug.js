@@ -181,8 +181,8 @@ function updateLabels(scene, renderer, type) {
         pos.y = - ( pos.y * heightHalf ) + heightHalf;
 
         if (pos.z < 1) {
-            label.style.left = pos.x + 'px';
-            label.style.top = pos.y + 'px';
+            label.style.left = (pos.x / renderer.pixelRatio()) + 'px';
+            label.style.top = (pos.y / renderer.pixelRatio()) + 'px';
             label.style.display = 'block';
         } else {
             label.style.display = 'none';
