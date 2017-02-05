@@ -1,8 +1,8 @@
 import THREE from 'three';
 import {each} from 'lodash';
-import {parseScript} from './parse';
+import {parseAllScripts} from './parser';
 
-const scripts_cache = {};
+let scripts = {};
 let selectedActor = -1;
 let selectedZone = null;
 
@@ -24,6 +24,9 @@ let settings = {
 let lbaExtListener = null;
 
 export function initSceneDebug(scene) {
+    if (!scene.actors)
+        return;
+    scripts = parseAllScripts(scene);
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
         detail: {
             type: 'setScene',
@@ -34,7 +37,7 @@ export function initSceneDebug(scene) {
         const message = event.detail;
         switch (message.type) {
             case 'selectActor':
-                selectActor(scene, message.index);
+                selectActor(message.index);
                 break;
             case 'updateSettings':
                 each(message.settings, (enabled, key) => {
@@ -49,35 +52,37 @@ export function initSceneDebug(scene) {
     window.addEventListener('lba_ext_event_in', lbaExtListener);
 }
 
-export function resetSceneDebug() {
+export function resetSceneDebug(scene) {
     if (lbaExtListener) {
         window.removeEventListener('lba_ext_event_in', lbaExtListener);
     }
-    settings.labels.toggle(null, false);
-    settings.points.toggle(null, false);
-    settings.zones.toggle(null, false);
+    settings.labels.toggle(scene, false);
+    settings.points.toggle(scene, false);
+    settings.zones.toggle(scene, false);
     settings.labels.enabled = false;
     settings.points.enabled = false;
     settings.zones.enabled = false;
 }
 
 export function setCursorPosition(scene, actor, scriptType, offset) {
-    const scripts = parseActorScripts(scene, actor);
-    const line = scripts[scriptType].opMap[offset];
-    if (line === undefined)
-        return;
-    if (scripts[scriptType].activeLine != line && selectedActor == actor.index) {
-        window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
-            detail: {
-                type: 'setCurrentLine',
-                scene: scene.index,
-                actor: actor.index,
-                scriptType: scriptType,
-                line: line
-            }
-        }));
+    if (actor.index in scripts) {
+        const script = scripts[actor.index][scriptType];
+        const line = script.opMap[offset];
+        if (line === undefined)
+            return;
+        if (script.activeLine != line && selectedActor == actor.index) {
+            window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
+                detail: {
+                    type: 'setCurrentLine',
+                    scene: scene.index,
+                    actor: actor.index,
+                    scriptType: scriptType,
+                    line: line
+                }
+            }));
+        }
+        script.activeLine = line;
     }
-    scripts[scriptType].activeLine = line;
 }
 
 export function updateDebugger(scene, renderer) {
@@ -123,7 +128,7 @@ function toggleLabels(scene, enabled, type = 'actor') {
             label.innerText = obj.index;
             if (type == 'actor') {
                 label.addEventListener('click', function() {
-                    selectActor(scene, obj.index);
+                    selectActor(obj.index);
                 });
             }
             if (type == 'zone') {
@@ -192,36 +197,20 @@ function updateLabels(scene, renderer, type) {
     });
 }
 
-function selectActor(scene, index) {
-    const actor = index == 0 ? {index: 0, props: scene.data.hero} : scene.data.actors[index - 1];
+function selectActor(index) {
     selectedActor = index;
-    const scripts = parseActorScripts(scene, actor);
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
         detail: {
             type: 'setActorScripts',
             index: index,
             life: {
-                commands: scripts.life.commands,
-                activeLine: scripts.life.activeLine
+                commands: scripts[index].life.commands,
+                activeLine: scripts[index].life.activeLine
             },
             move: {
-                commands: scripts.move.commands,
-                activeLine: scripts.move.activeLine
+                commands: scripts[index].move.commands,
+                activeLine: scripts[index].move.activeLine
             }
         }
     }));
-}
-
-function parseActorScripts(scene, actor) {
-    const key = scene.index + '_' + actor.index;
-    if (key in scripts_cache) {
-        return scripts_cache[key];
-    } else {
-        const scripts = {
-            life: parseScript(actor.index, 'life', actor.props.lifeScript),
-            move: parseScript(actor.index, 'move', actor.props.moveScript)
-        };
-        scripts_cache[key] = scripts;
-        return scripts;
-    }
 }

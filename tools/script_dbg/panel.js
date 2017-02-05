@@ -74,10 +74,42 @@ function setScene(message) {
     currentScene = message.index;
 }
 
+const cmdClasses = {
+    IF: 'conditional',
+    ELSE: 'conditional',
+    SNIF: 'conditional',
+    NEVERIF: 'conditional',
+    SWIF: 'conditional',
+    ONEIF: 'conditional',
+    OR_IF: 'conditional',
+    AND_IF: 'conditional',
+    SWITCH: 'conditional',
+    CASE: 'conditional',
+    OR_CASE: 'conditional',
+    ENDIF: 'conditional',
+
+    COMPORTEMENT: 'structural',
+    END_COMPORTEMENT: 'structural',
+    SET_COMPORTEMENT: 'structural',
+    SET_COMPORTEMENT_OBJ: 'structural',
+    END: 'structural',
+    LABEL: 'structural',
+
+    '[INVALID COMMAND]': 'invalid'
+};
+
+function getCmdClass(cmd) {
+    if (cmd in cmdClasses) {
+        return ' class="' + cmdClasses[cmd] + '"';
+    }
+    return '';
+}
+
 function setActorScript(type, script) {
     const elem = document.querySelector('#' + type + 'Script');
     elem.innerHTML = script.commands.map(function(command, idx) {
         let indent = '';
+        let cmd = '<span' + getCmdClass(command.name) + '>' + command.name + '</span>';
         for (let i = 0; i < command.indent; ++i) {
             indent += '&nbsp;&nbsp;';
         }
@@ -95,13 +127,13 @@ function setActorScript(type, script) {
         }
         let args = '';
         if (command.args) {
-            args = command.args.map(function(arg) {
-                return '&nbsp;<span class="arg">' + arg + '</span>';
+            args = command.args.filter(arg => !arg.hide).map(function(arg) {
+                return '&nbsp;<span class="arg">' + arg.value + '</span>';
             }).join('');
         }
         return '<div class="line">'
             + '<div class="num">' + (idx + 1) + '</div>'
-            + '<div class="command">' + indent + command.name + condition + args + '</div>'
+            + '<div class="command">' + indent + cmd + condition + args + '</div>'
         + '</div>';
     }).join('\n');
     displayActiveLine(type, script.activeLine);
