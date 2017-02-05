@@ -41,6 +41,7 @@ function parseScript(actor, type, script) {
         newComportement: (type == 'life'),
         comportementMap: {},
         opMap: {},
+        tracksMap: {},
         ifStack: [],
         offset: 0,
         indent: 0,
@@ -65,6 +66,7 @@ function parseScript(actor, type, script) {
         activeLine: -1,
         opMap: state.opMap,
         comportementMap: state.comportementMap,
+        tracksMap: state.tracksMap,
         commands: state.commands
     };
 }
@@ -99,6 +101,7 @@ function checkNewComportment(state, code) {
 
 function postProcess(scripts, actor) {
     const lifeScript = scripts[actor].life;
+    const moveScript = scripts[actor].move;
     each(lifeScript.commands, cmd => {
         switch (cmd.name) {
             case 'SET_COMPORTEMENT':
@@ -109,6 +112,9 @@ function postProcess(scripts, actor) {
                 if (tgt) {
                     cmd.args[1].value = tgt.life.comportementMap[cmd.args[1].value];
                 }
+                break;
+            case 'SET_TRACK':
+                cmd.args[0].value = moveScript.tracksMap[cmd.args[0].value];
                 break;
         }
     });
@@ -136,6 +142,9 @@ function parseCommand(state, script, op) {
     }
     if (op.command == "END_COMPORTEMENT") {
         state.newComportement = true;
+    }
+    if (op.command == "TRACK") {
+        state.tracksMap[state.offset] = cmd.args[0].value;
     }
     processIndent(state, op, cmd);
     return cmd;
