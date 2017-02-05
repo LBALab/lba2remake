@@ -24,6 +24,8 @@ let settings = {
 let lbaExtListener = null;
 
 export function initSceneDebug(scene) {
+    if (!scene.actors)
+        return;
     scripts = parseAllScripts(scene);
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
         detail: {

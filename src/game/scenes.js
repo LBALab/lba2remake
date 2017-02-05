@@ -17,7 +17,7 @@ import {loadActor} from './actors';
 import {loadPoint} from './points';
 import {loadZone} from './zones';
 import {loadPosition} from './hero';
-import {ONLY_LOAD_SCENERY} from '../debugFlags';
+import {getQueryParams} from '../utils';
 import {initSceneDebug, resetSceneDebug} from './scripting/debug';
 
 export function createSceneManager(game, renderer, hero, callback: Function) {
@@ -34,6 +34,11 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
             goto: (index, pCallback = noop) => {
                 if (scene && index == scene.index)
                     return;
+
+                const hash = window.location.hash;
+                if (hash.match(/scene\=\d+/)) {
+                    window.location.hash = hash.replace(/scene\=\d+/, `scene=${index}`);
+                }
 
                 if (scene && scene.sideScenes && index in scene.sideScenes) {
                     resetSceneDebug(scene);
@@ -103,7 +108,8 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };
         }
 
-        if (ONLY_LOAD_SCENERY) {
+        const params = getQueryParams();
+        if (params.NOSCRIPTS == 'true') {
             delete loadSteps.actors;
             delete loadSteps.points;
             delete loadSteps.zones;
