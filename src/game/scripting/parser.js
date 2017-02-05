@@ -122,8 +122,13 @@ function parseCommand(state, script, op) {
         name: op.command,
         length: 1
     };
+    if (op.argsFirst) {
+        parseArguments(state, script, op, cmd);
+    }
     parseCondition(state, script, op, cmd);
-    parseArguments(state, script, op, cmd);
+    if (!op.argsFirst) {
+        parseArguments(state, script, op, cmd);
+    }
     if (op.condition && !op.precond && cmd.args) {
         state.ifStack.push(cmd.args[0].value);
     } else if (op.command == 'ELSE') {
