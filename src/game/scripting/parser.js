@@ -219,7 +219,7 @@ function parseArguments(state, script, op, cmd) {
         }
         if (op.command == 'SET_DIRMODE' || op.command == 'SET_DIRMODE_OBJ') {
             const mode = last(cmd.args).value;
-            if (mode == 2 || mode == 4 || mode == 6) {
+            if (mode == 2 || mode == 4 || mode == 6 || mode == 11) {
                 cmd.args.push({
                     value: script.getUint8(state.offset + cmd.length, true),
                     hide: false
