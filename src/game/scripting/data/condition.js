@@ -46,5 +46,5 @@ export const ConditionOpcode = [
     { opcode: 0x2A, command: "COL_DECORS_OBJ", callback: lc.COL_DECORS_OBJ, param: 1, value_size: 1, operand: 'Uint8' },
     { opcode: 0x2B, command: "PROCESSOR", callback: lc.PROCESSOR, param: 0, value_size: 1, operand: 'Uint8' },
     { opcode: 0x2C, command: "OBJECT_DISPLAYED", callback: lc.OBJECT_DISPLAYED, param: 1, value_size: 1, operand: 'Uint8' },
-    { opcode: 0x2D, command: "ANGLE_OBJ", callback: lc.ANGLE_OBJ, param: 0, value_size: 1, operand: 'Uint8' }
+    { opcode: 0x2D, command: "ANGLE_OBJ", callback: lc.ANGLE_OBJ, param: 1, value_size: 1, operand: 'Uint8' }
 ];
