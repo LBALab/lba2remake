@@ -197,7 +197,7 @@ export function HIT_OBJ(game, script, state, actor) {
 
 }
 
-export function PLAY_ACF(game, script, state, actor) {
+export function PLAY_SMK(game, script, state, actor) {
 
 }
 

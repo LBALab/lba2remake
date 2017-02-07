@@ -32,7 +32,7 @@ export const MoveOpcode = [
     { opcode: 0x1B, command: "SAMPLE_RND", callback: ms.SAMPLE_RND, offset: 2, args: ['Int16'], indent: Indent.ONE },
     { opcode: 0x1C, command: "SAMPLE_ALWAYS", callback: ms.SAMPLE_ALWAYS, offset: 2, args: ['Int16'], indent: Indent.ONE },
     { opcode: 0x1D, command: "SAMPLE_STOP", callback: ms.SAMPLE_STOP, offset: 2, args: ['Int16'], indent: Indent.ONE },
-    { opcode: 0x1E, command: "PLAY_ACF", callback: ms.PLAY_ACF, offset: 0, indent: Indent.ONE },
+    { opcode: 0x1E, command: "PLAY_SMK", callback: ms.PLAY_ACF, offset: 0, indent: Indent.ONE },
     { opcode: 0x1F, command: "REPEAT_SAMPLE", callback: ms.REPEAT_SAMPLE, offset: 2, args: ['Int16'], indent: Indent.ONE },
     { opcode: 0x20, command: "SIMPLE_SAMPLE", callback: ms.SIMPLE_SAMPLE, offset: 2, args: ['Int16'], indent: Indent.ONE },
     { opcode: 0x21, command: "FACE_HERO", callback: ms.FACE_HERO, offset: 2, args: ['Uint16'], indent: Indent.ONE },

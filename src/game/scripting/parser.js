@@ -193,11 +193,29 @@ function parseArguments(state, script, op, cmd) {
                 type = type.substr(1);
                 hide = true;
             }
-            cmd.args.push({
-                value: script[`get${type}`](state.offset + cmd.length, true),
-                hide: hide
-            });
-            cmd.length += TypeSize[type];
+            if (type == 'string') {
+                let arg = '';
+                let o = 0;
+                let c;
+                do {
+                    c = script.getUint8(state.offset + cmd.length + o);
+                    if (c != 0) {
+                        arg += String.fromCharCode(c);
+                    }
+                    o++;
+                } while (c != 0);
+                cmd.args.push({
+                    value: arg,
+                    hide: hide
+                });
+                cmd.length += o;
+            } else {
+                cmd.args.push({
+                    value: script[`get${type}`](state.offset + cmd.length, true),
+                    hide: hide
+                });
+                cmd.length += TypeSize[type];
+            }
         }
         if (op.command == 'SET_DIRMODE' || op.command == 'SET_DIRMODE_OBJ') {
             const mode = last(cmd.args).value;

@@ -67,7 +67,7 @@ export const LifeOpcode = [
     { opcode: 0x3D, command: "SET_LIFE_POINT_OBJ", callback: ls.SET_LIFE_POINT_OBJ, offset: 2, args: ['Uint8', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x3E, command: "SUB_LIFE_POINT_OBJ", callback: ls.SUB_LIFE_POINT_OBJ, offset: 2, args: ['Uint8', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x3F, command: "HIT_OBJ", callback: ls.HIT_OBJ, offset: 2, args: ['Uint8', 'Uint8'], indent: Indent.KEEP},
-    { opcode: 0x40, command: "PLAY_ACF", callback: ls.PLAY_ACF, offset: 2, args: ['Uint8', 'Uint8'], indent: Indent.KEEP},
+    { opcode: 0x40, command: "PLAY_SMK", callback: ls.PLAY_SMK, offset: 1, args: ['string'], indent: Indent.KEEP},
     { opcode: 0x41, command: "ECLAIR", callback: ls.ECLAIR, offset: 1, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x42, command: "INC_CLOVER_BOX", callback: ls.INC_CLOVER_BOX, offset: 0, indent: Indent.KEEP},
     { opcode: 0x43, command: "SET_USED_INVENTORY", callback: ls.SET_USED_INVENTORY, offset: 0, indent: Indent.KEEP},
