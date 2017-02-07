@@ -3,7 +3,13 @@ import {MoveOpcode} from './data/move';
 import {ConditionOpcode} from './data/condition';
 import {OperatorOpcode} from './data/operator';
 import Indent from './indent';
-import {last, each} from 'lodash';
+import {
+    last,
+    each,
+    map,
+    filter,
+    isEmpty
+} from 'lodash';
 
 const TypeSize = {
     'Int8': 1,
@@ -28,6 +34,7 @@ export function parseAllScripts(scene) {
     });
     postProcess(scripts, 0);
     each(scene.actors, actor => {
+        buildRunnableScript(scene, scripts, actor);
         postProcess(scripts, actor.index);
     });
     return scripts;
@@ -131,6 +138,7 @@ function parseCommand(state, script, op) {
         return invalidCommand(state, script);
     }
     const cmd = {
+        opcode: op.opcode,
         name: op.command,
         length: 1
     };
@@ -269,4 +277,83 @@ function invalidCommand(state, script) {
         indent: state.indent,
         args: [{hide: false, value: code}]
     };
+}
+
+function buildRunnableScript(scene, scripts, actor) {
+    const runnableScript = {};
+    runnableScript.life = compileCommands('life', scene, actor, scripts[actor.index].life);
+    runnableScript.move = compileCommands('move', scene, actor, scripts[actor.index].move);
+    actor.runScripts = function(time) {
+        runScript(runnableScript.life, actor.scriptState.life, time);
+        runScript(runnableScript.move, actor.scriptState.move, time);
+    };
+}
+
+function compileCommands(type, scene, actor, script) {
+    const state = initState(type);
+    return filter(
+        map(script.commands, (cmd, idx) => {
+            if (cmd.opcode) {
+                const OpCodes = type == 'life' ? LifeOpcode : MoveOpcode;
+                const callback = OpCodes[cmd.opcode].callback;
+                return {
+                    line: idx,
+                    run: callback.bind.apply(callback, compileArguments(state, scene, cmd))
+                };
+            }
+        }),
+        cmd => cmd != null
+    );
+}
+
+function compileArguments(state, scene, cmd) {
+    const args = [null, state];
+
+    each(cmd.args, arg => {
+        args.push(arg);
+    });
+    return args;
+}
+
+function initState(type) {
+    if (type == 'life') {
+        return {
+            offset: 0,
+            reentryOffset: 0,
+            continue: true
+        };
+    } else {
+        return {
+            offset: 0,
+            reentryOffset: 0,
+            savedOffset: 0,
+            continue: true,
+            elapsedTime: 0,
+            waitTime: 0,
+            isWaiting: false
+        };
+    }
+}
+
+function runScript(script, state, time) {
+    if (isEmpty(script))
+        return;
+
+    state.offset = state.reentryOffset;
+    state.continue = state.offset != -1;
+    state.elapsedTime = time.elapsed * 1000;
+    if (state.move.offset >= 0) {
+        while (state.continue) {
+            if (state.offset >= script.length) {
+                console.warn("Unexpectedly reached end of script");
+                state.offset = -1;
+                break;
+            }
+            const cmd = script[state.offset];
+            cmd.run();
+            if (state.continue) {
+                state.offset++;
+            }
+        }
+    }
 }
