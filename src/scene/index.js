@@ -28,7 +28,8 @@ function loadSceneDataSync(files, index) {
             unknown1: data.getUint16(2, true),
             unknown2: data.getUint16(4, true),
             isOutsideScene: data.getInt8(6, true) == 1,
-            buffer: buffer
+            buffer: buffer,
+            actors: []
         };
 
         let offset = 7;
@@ -75,36 +76,38 @@ function loadAmbience(scene, offset) {
 
 function loadHero(scene, offset) {
     const data = new DataView(scene.buffer);
-    scene.hero = {
+    const hero = {
         sceneIndex: scene.index,
         pos: [
             (0x8000 - data.getUint16(offset + 4, true) + 512) / 0x4000,
             data.getUint16(offset + 2, true) / 0x4000,
             data.getUint16(offset, true) / 0x4000
-        ]
+        ],
+        index: 0
     };
     offset += 6;
 
-    scene.hero.moveScriptSize = data.getUint16(offset, true);
+    hero.moveScriptSize = data.getUint16(offset, true);
     offset += 2;
-    if (scene.hero.moveScriptSize > 0) {
-        scene.hero.moveScript = new DataView(scene.buffer, offset, scene.hero.moveScriptSize);
+    if (hero.moveScriptSize > 0) {
+        hero.moveScript = new DataView(scene.buffer, offset, hero.moveScriptSize);
     }
-    offset += scene.hero.moveScriptSize;
+    offset += hero.moveScriptSize;
 
-    scene.hero.lifeScriptSize = data.getUint16(offset, true);
+    hero.lifeScriptSize = data.getUint16(offset, true);
     offset += 2;
-    if (scene.hero.lifeScriptSize > 0) {
-        scene.hero.lifeScript = new DataView(scene.buffer, offset, scene.hero.lifeScriptSize);
+    if (hero.lifeScriptSize > 0) {
+        hero.lifeScript = new DataView(scene.buffer, offset, hero.lifeScriptSize);
     }
-    offset += scene.hero.lifeScriptSize;
+    offset += hero.lifeScriptSize;
+
+    scene.actors.push(hero);
 
     return offset;
 }
 
 function loadActors(scene, offset) {
     const data = new DataView(scene.buffer);
-    scene.actors = [];
 
     const numActors = data.getUint16(offset, true);
     offset += 2;
