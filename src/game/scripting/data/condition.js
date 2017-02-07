@@ -23,7 +23,7 @@ export const ConditionOpcode = [
     { opcode: 0x13, command: "NUM_GOLD_PIECES", callback: lc.NUM_GOLD_PIECES, param: 0, value_size: 2, operand: 'Uint16' },
     { opcode: 0x14, command: "BEHAVIOUR", callback: lc.BEHAVIOUR, param: 0, value_size: 1, operand: 'Uint8' },
     { opcode: 0x15, command: "CHAPTER", callback: lc.CHAPTER, param: 0, value_size: 1, operand: 'Uint8' },
-    { opcode: 0x16, command: "DISTANCE_3D", callback: lc.DISTANCE_3D, param: 1, value_size: 1, operand: 'Uint8' },
+    { opcode: 0x16, command: "DISTANCE_3D", callback: lc.DISTANCE_3D, param: 1, value_size: 2, operand: 'Uint16' },
     { opcode: 0x17, command: "MAGIC_LEVEL", callback: lc.MAGIC_LEVEL, param: 0, value_size: 1, operand: 'Uint8' },
     { opcode: 0x18, command: "MAGIC_POINT", callback: lc.MAGIC_POINT, param: 0, value_size: 1, operand: 'Uint8' },
     { opcode: 0x19, command: "USE_INVENTORY", callback: lc.USE_INVENTORY, param: 1, value_size: 1, operand: 'Uint8' },
