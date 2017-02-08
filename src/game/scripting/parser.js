@@ -6,8 +6,7 @@ import {
     last,
     each,
     map,
-    filter,
-    isEmpty
+    filter
 } from 'lodash';
 
 const TypeSize = {
@@ -38,7 +37,6 @@ export function parseScript(actor, type, script) {
         const code = script.getUint8(state.offset);
         const op = type == 'life' ? LifeOpcode[code] : MoveOpcode[code];
         checkNewComportment(state, code);
-        state.offset++;
         try {
             state.commands.push(parseCommand(state, script, op));
         } catch (e) {
@@ -74,6 +72,7 @@ function checkNewComportment(state, code) {
 }
 
 function parseCommand(state, script, op) {
+    const baseOffset = state.offset++;
     const cmd = {op: op};
     if (op.argsFirst) {
         parseArguments(state, script, op, cmd);
@@ -91,7 +90,7 @@ function parseCommand(state, script, op) {
         state.newComportement = true;
     }
     if (op.command == "TRACK") {
-        state.tracksMap[state.offset] = cmd.args[0].value;
+        state.tracksMap[baseOffset] = cmd.args[0].value;
     }
     return cmd;
 }
@@ -101,7 +100,7 @@ function parseCondition(state, script, op, cmd) {
     if (op.condition) {
         const code = script.getUint8(state.offset);
         condition = ConditionOpcode[code];
-        cmd.condition = { name: condition.command };
+        cmd.condition = { op: condition };
         state.offset++;
         if (condition.param) {
             cmd.condition.param = script.getUint8(state.offset);
@@ -116,7 +115,7 @@ function parseCondition(state, script, op, cmd) {
     if (op.operator) {
         const code = script.getUint8(state.offset);
         const operator = OperatorOpcode[code];
-        cmd.operator = { name: operator ? operator.command : '?[' + code + ']' };
+        cmd.operator = { op: operator };
         state.offset++;
         cmd.operator.operand = script['get' + condition.operand](state.offset, true);
         state.offset += TypeSize[condition.operand];

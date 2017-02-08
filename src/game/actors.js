@@ -6,7 +6,6 @@ import type {Model} from '../model';
 import {loadModel, updateModel} from '../model';
 import {loadAnimState,resetAnimState} from '../model/animState';
 import {getRotation,distance2D} from '../utils/lba';
-import * as Script from './scripting';
 
 type ActorProps = {
     index: number,
@@ -71,8 +70,7 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
             resetAnimState(this.animState);
         },
         update: function(time) {
-            //Script.processMoveScript(game, actor, time);
-            //Script.processLifeScript(game, actor, time);
+            //this.runScripts(time);
 
             if(this.model) {
                 this.animState.matrixRotation.makeRotationFromQuaternion(this.physics.orientation);

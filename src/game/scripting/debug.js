@@ -1,5 +1,5 @@
 import THREE from 'three';
-import {each, map, clone} from 'lodash';
+import {each, map, cloneDeep} from 'lodash';
 import Indent from './indent';
 
 let selectedActor = -1;
@@ -220,8 +220,8 @@ function mapCommands(scene, actor, commands) {
         const newCmd = {
             name: cmd.op.command,
             args: mapArguments(scene, actor, cmd),
-            condition: cmd.condition,
-            operator: cmd.operator
+            condition: mapCondition(cmd.condition),
+            operator: mapOperator(cmd.operator)
         };
         indent = processIndent(newCmd, cmd.op, indent);
         return newCmd;
@@ -229,8 +229,8 @@ function mapCommands(scene, actor, commands) {
 }
 
 function mapArguments(scene, actor, cmd) {
-    const args = clone(cmd.args);
-    switch (cmd.name) {
+    const args = cloneDeep(cmd.args);
+    switch (cmd.op.command) {
         case 'SET_COMPORTEMENT':
             args[0].value = actor.scripts.life.comportementMap[args[0].value];
             break;
@@ -251,6 +251,24 @@ function mapArguments(scene, actor, cmd) {
             break;
     }
     return args;
+}
+
+function mapCondition(condition) {
+    if (condition) {
+        return {
+            name: condition.op.command,
+            param: condition.param
+        };
+    }
+}
+
+function mapOperator(operator) {
+    if (operator) {
+        return {
+            name: operator.op.command,
+            operand: operator.operand
+        };
+    }
 }
 
 function processIndent(cmd, op, indent) {
