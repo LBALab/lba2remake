@@ -1,5 +1,5 @@
-import {ActorStaticFlags} from '../../actors';
-import {setStaticFlag} from '../../../utils/lba';
+import {ActorStaticFlags} from '../../game/actors';
+import {setStaticFlag} from '../../utils/lba';
 
 export function PALETTE() {
 

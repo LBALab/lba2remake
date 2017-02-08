@@ -1,4 +1,3 @@
-
 export const OperatorOpcode = [
     { opcode: 0x00, command: "==", callback: (b, a) => a == b },
     { opcode: 0x01, command: ">", callback: (b, a) => a > b  },

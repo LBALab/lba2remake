@@ -1,6 +1,6 @@
 import {each} from 'lodash';
 import {processPhysicsFrame} from './physics';
-import {updateDebugger} from './scripting/debug';
+import {updateDebugger} from '../scripting/debug';
 
 export function mainGameLoop(game, clock, clockGame, renderer, scene, hero, controls) {
     const time = {

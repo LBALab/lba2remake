@@ -18,8 +18,8 @@ import {loadPoint} from './points';
 import {loadZone} from './zones';
 import {loadPosition} from './hero';
 import {getQueryParams} from '../utils';
-import {loadScripts} from './scripting';
-import {initSceneDebug, resetSceneDebug} from './scripting/debug';
+import {loadScripts} from '../scripting';
+import {initSceneDebug, resetSceneDebug} from '../scripting/debug';
 
 export function createSceneManager(game, renderer, hero, callback: Function) {
     let scene = null;
