@@ -18,6 +18,7 @@ import {loadPoint} from './points';
 import {loadZone} from './zones';
 import {loadPosition} from './hero';
 import {getQueryParams} from '../utils';
+import {loadScripts} from './scripting';
 import {initSceneDebug, resetSceneDebug} from './scripting/debug';
 
 export function createSceneManager(game, renderer, hero, callback: Function) {
@@ -122,7 +123,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
         async.auto(loadSteps, function (err, data) {
             const sceneNode = loadSceneNode(index, indexInfo, data);
             data.threeScene.add(sceneNode);
-            callback(null, {
+            const scene = {
                 index: index,
                 data: sceneData,
                 isIsland: indexInfo.isIsland,
@@ -147,7 +148,9 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 getPoint(index) {
                     return find(this.points, function(obj) { return obj.index == index; });
                 },
-            });
+            };
+            loadScripts(scene);
+            callback(null, scene);
         });
     });
 }

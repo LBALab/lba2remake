@@ -1,79 +1,100 @@
+import {each, map, filter} from 'lodash';
 import {LifeOpcode} from './data/life';
 import {MoveOpcode} from './data/move';
-import {setCursorPosition} from './debug';
+import {parseScript} from './parser';
 
-export function initScriptState() {
-    return {
-        life: {
-            sceneIndex: 0,
-            offset: 0,
-            reentryOffset: 0,
-            continue: true,
-            opcodeOffset: 0,
-            switchCondition: null,
-            switchValue1: 0,
-            switchConditionTest: false,
-            debug: null
-        },
-        move: {
-            sceneIndex: 0,
-            offset: 0,
-            reentryOffset: 0,
-            savedOffset: 0,
-            trackIndex: 0,
-            trackOffset: 0,
-            continue: true,
-            elapsedTime: 0,
-            waitTime: 0,
-            isWaiting: false,
-            debug: null
-        }
+export function loadScripts(scene) {
+    each(scene.actors, actor => {
+        actor.scripts = {
+            life: parseScript(actor.index, 'life', actor.props.lifeScript),
+            move: parseScript(actor.index, 'move', actor.props.moveScript)
+        };
+    });
+    each(scene.actors, actor => {
+        initScripts(scene, actor);
+    });
+}
+
+function initScripts(scene, actor) {
+    compileScripts(scene, actor);
+    //postProcess(scripts, actor.index);
+}
+
+function compileScripts(scene, actor) {
+    const life = compileScript('life', scene, actor);
+    const move = compileScript('move', scene, actor);
+    actor.runScripts = function(time) {
+        runScript(life, time);
+        runScript(move, time);
     };
 }
 
-export function processLifeScript(game, actor, time) {
-    const state = actor.scriptState;
-    const script = actor.props.lifeScript;
-    state.life.sceneIndex = actor.props.sceneIndex;
-    state.life.offset = state.life.reentryOffset;
-    state.life.continue = state.life.offset != -1;
-    if (script.byteLength > 0 && state.life.offset >= 0) {
-        while (state.life.continue) {
-            if (state.life.offset >= script.byteLength) {
-                console.warn("LifeScript error: offset > length");
-                state.life.offset = -1;
-                break;
+function compileScript(type, scene, actor) {
+    const script = actor.scripts[type];
+    const state = initState(type);
+    const commands = filter(
+        map(script.commands, (cmd, idx) => {
+            if (cmd.opcode) {
+                const OpCodes = type == 'life' ? LifeOpcode : MoveOpcode;
+                const callback = OpCodes[cmd.opcode].callback;
+                return {
+                    line: idx,
+                    run: callback.bind.apply(callback, compileArguments(state, scene, cmd))
+                };
             }
-            state.life.opcodeOffset = state.life.offset;
-            setCursorPosition(game.getSceneManager().getScene(), actor, 'life', state.life.offset);
-            const opcode = script.getUint8(state.life.offset++, true);
-            LifeOpcode[opcode].callback(game, script, state, actor);
-            if (state.life.continue) {
-                state.life.offset += LifeOpcode[opcode].offset;
-            }
-        }
+        }),
+        cmd => cmd != null
+    );
+    return {state, commands};
+}
+
+function compileArguments(state, scene, cmd) {
+    const args = [null, state];
+
+    each(cmd.args, arg => {
+        args.push(arg);
+    });
+    return args;
+}
+
+function initState(type) {
+    if (type == 'life') {
+        return {
+            offset: 0,
+            reentryOffset: 0,
+            continue: true
+        };
+    } else {
+        return {
+            offset: 0,
+            reentryOffset: 0,
+            savedOffset: 0,
+            continue: true,
+            elapsedTime: 0,
+            waitTime: 0,
+            isWaiting: false
+        };
     }
 }
 
-export function processMoveScript(game, actor, time) {
-    const state = actor.scriptState;
-    const script = actor.props.moveScript;
-    state.move.sceneIndex = actor.props.sceneIndex;
-    state.move.offset = state.move.reentryOffset;
-    state.move.continue = state.move.offset != -1;
-    state.move.elapsedTime = time.elapsed * 1000;
-    if (script.byteLength > 0 && state.move.offset >= 0) {
-        while (state.move.continue) {
-            if (state.move.offset >= script.byteLength) {
-                console.warn("MoveScript error: offset > length");
-                state.move.offset = -1;
+function runScript(script, state, time) {
+    if (isEmpty(script))
+        return;
+
+    state.offset = state.reentryOffset;
+    state.continue = state.offset != -1;
+    state.elapsedTime = time.elapsed * 1000;
+    if (state.move.offset >= 0) {
+        while (state.continue) {
+            if (state.offset >= script.length) {
+                console.warn("Unexpectedly reached end of script");
+                state.offset = -1;
                 break;
             }
-            setCursorPosition(game.getSceneManager().getScene(), actor, 'move', state.move.offset);
-            const opcode = script.getUint8(state.move.offset++, true);
-            MoveOpcode[opcode].callback(game, script, state.move, actor);
-            if (state.move.continue) {
-                state.move.offset += MoveOpcode[opcode].offset;
+            const cmd = script[state.offset];
+            cmd.run();
+            if (state.continue) {
+                state.offset++;
             }
         }
     }

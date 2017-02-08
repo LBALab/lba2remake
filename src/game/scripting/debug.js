@@ -1,8 +1,7 @@
 import THREE from 'three';
-import {each} from 'lodash';
-import {parseAllScripts} from './parser';
+import {each, map, clone} from 'lodash';
+import Indent from './indent';
 
-let scripts = {};
 let selectedActor = -1;
 let selectedZone = null;
 
@@ -24,20 +23,17 @@ let settings = {
 let lbaExtListener = null;
 
 export function initSceneDebug(scene) {
-    if (!scene.actors)
-        return;
-    scripts = parseAllScripts(scene);
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
         detail: {
             type: 'setScene',
-            index: scene.index, actors: scene.actors.length + 1
+            index: scene.index, actors: scene.actors.length
         }
     }));
     lbaExtListener = function(event) {
         const message = event.detail;
         switch (message.type) {
             case 'selectActor':
-                selectActor(message.index);
+                selectActor(scene, message.index);
                 break;
             case 'updateSettings':
                 each(message.settings, (enabled, key) => {
@@ -128,7 +124,7 @@ function toggleLabels(scene, enabled, type = 'actor') {
             label.innerText = obj.index;
             if (type == 'actor') {
                 label.addEventListener('click', function() {
-                    selectActor(obj.index);
+                    selectActor(scene, obj.index);
                 });
             }
             if (type == 'zone') {
@@ -197,20 +193,85 @@ function updateLabels(scene, renderer, type) {
     });
 }
 
-function selectActor(index) {
+function selectActor(scene, index) {
     selectedActor = index;
+    const actor = scene.getActor(index);
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
         detail: {
             type: 'setActorScripts',
             index: index,
-            life: {
-                commands: scripts[index].life.commands,
-                activeLine: scripts[index].life.activeLine
-            },
-            move: {
-                commands: scripts[index].move.commands,
-                activeLine: scripts[index].move.activeLine
-            }
+            life: getDebugListing('life', scene, actor),
+            move: getDebugListing('move', scene, actor)
         }
     }));
+}
+
+function getDebugListing(type, scene, actor) {
+    const script = actor.scripts[type];
+    return {
+        commands: mapCommands(scene, actor, script.commands),
+        activeLine: actor.scripts.life.activeLine
+    };
+}
+
+function mapCommands(scene, actor, commands) {
+    let indent = 0;
+    return map(commands, cmd => {
+        const newCmd = {
+            name: cmd.op.command,
+            args: mapArguments(scene, actor, cmd),
+            condition: cmd.condition,
+            operator: cmd.operator
+        };
+        indent = processIndent(newCmd, cmd.op, indent);
+        return newCmd;
+    })
+}
+
+function mapArguments(scene, actor, cmd) {
+    const args = clone(cmd.args);
+    switch (cmd.name) {
+        case 'SET_COMPORTEMENT':
+            args[0].value = actor.scripts.life.comportementMap[args[0].value];
+            break;
+        case 'SET_COMPORTEMENT_OBJ':
+            const tgt = scene.getActor(args[0].value);
+            if (tgt) {
+                args[1].value = tgt.scripts.life.comportementMap[args[1].value];
+            }
+            break;
+        case 'SET_TRACK':
+            args[0].value = actor.scripts.move.tracksMap[args[0].value];
+            break;
+        case 'SET_TRACK_OBJ':
+            const tgt2 = scene.getActor(args[0].value);
+            if (tgt2) {
+                args[1].value = tgt2.scripts.move.tracksMap[args[1].value];
+            }
+            break;
+    }
+    return args;
+}
+
+function processIndent(cmd, op, indent) {
+    switch (op.indent) {
+        case Indent.ZERO:
+            cmd.indent = 0;
+            return 0;
+        case Indent.ONE:
+            cmd.indent = 1;
+            return 1;
+        case Indent.ADD:
+            cmd.indent = indent;
+            return indent + 1;
+        case Indent.SUB:
+            cmd.indent = Math.max(indent - 1, 0);
+            return Math.max(indent - 1, 0);
+        case Indent.SUB_ADD:
+            cmd.indent = Math.max(indent - 1, 0);
+            return indent;
+        case Indent.KEEP:
+            cmd.indent = indent;
+            return indent;
+    }
 }

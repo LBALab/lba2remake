@@ -32,7 +32,6 @@ type Actor = {
     physics: ActorPhysics,
     isVisible: boolean,
     isSprite: boolean,
-    scriptState: any,
     update: ?Function
 }
 
@@ -68,13 +67,12 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
         model: null,
         threeObject: null,
         animState: animState,
-        scriptState: Script.initScriptState(),
         resetAnimState: function() {
             resetAnimState(this.animState);
         },
         update: function(time) {
-            Script.processMoveScript(game, actor, time);
-            Script.processLifeScript(game, actor, time);
+            //Script.processMoveScript(game, actor, time);
+            //Script.processLifeScript(game, actor, time);
 
             if(this.model) {
                 this.animState.matrixRotation.makeRotationFromQuaternion(this.physics.orientation);
