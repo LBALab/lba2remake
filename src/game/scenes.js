@@ -149,7 +149,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                     return find(this.points, function(obj) { return obj.index == index; });
                 },
             };
-            loadScripts(scene);
+            loadScripts(game, scene);
             callback(null, scene);
         });
     });

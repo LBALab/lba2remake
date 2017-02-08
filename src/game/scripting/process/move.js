@@ -1,280 +1,234 @@
-//import THREE from 'three';
-//import {getRotation} from '../../../utils/lba';
-
-export function END(game, script, state, actor) {
-    state.continue = false;
-    state.reentryOffset = -1;
+export function BODY(bodyIndex) {
+    this.actor.props.bodyIndex = bodyIndex;
 }
 
-export function NOP(game, script, state, actor) {
-    
+export function ANIM(animIndex) {
+    this.actor.props.animIndex = animIndex;
+    this.actor.resetAnimState();
 }
 
-export function BODY(game, script, state, actor) {
-    actor.props.bodyIndex = script.getUint8(state.offset, true);
-}
-
-export function ANIM(game, script, state, actor) {
-    //if (actor.index == 22)
-    //    console.log(`22 animIndex: ${actor.props.animIndex}`);
-    actor.props.animIndex = script.getUint8(state.offset, true);
-    actor.resetAnimState();
-    //if (actor.index == 22)
-    //    console.log(`22 animIndex: ${actor.props.animIndex}`);
-}
-
-export function GOTO_POINT(game, script, state, actor) {
-    const pointIndex = script.getUint8(state.offset, true);
-    const point = game.getSceneManager().getScene(state.sceneIndex).getPoint(pointIndex);
-    const distance = actor.goto(point.physics.position);
-    //if (actor.index == 22)
-    //  console.log(`${pointIndex}:${point.physics.position.x},${point.physics.position.z}:${actor.physics.position.x},${actor.physics.position.z}:${distance}`);
+export function GOTO_POINT(pointIndex) {
+    const point = this.scene.getPoint(pointIndex);
+    const distance = this.actor.goto(point.physics.position);
 
     if (distance < (500 / 1024)) {
-        state.continue = false;
-        state.reentryOffset = state.offset - 1;
+        this.state.reentryOffset = this.state.offset - 1;
+        this.state.continue = false;
     }
 }
 
-export function WAIT_ANIM(game, script, state, actor) {
-    if (actor.animState.hasEnded) {
-        actor.props.angle = 0;
-        state.continue = false;
-        state.reentryOffset = state.offset; // this is an exception to move to next comand but still quit the execution now with continue = false
+export function WAIT_ANIM() {
+    if (this.actor.animState.hasEnded) {
+        this.actor.props.angle = 0;
+        this.state.continue = false;
+        this.state.reentryOffset = this.state.offset; // this is an exception to move to next comand but still quit the execution now with continue = false
         return;
     }
-    state.reentryOffset = state.offset - 1;
-    state.continue = false;
+    this.state.reentryOffset = this.state.offset - 1;
+    this.state.continue = false;
 }
 
-export function ANGLE(game, script, state, actor) {
-    actor.setAngle(script.getInt16(state.offset, true));
+export function ANGLE(angle) {
+    this.actor.setAngle(angle);
 }
 
-export function POS_POINT(game, script, state, actor) {
+export function POS_POINT() {
     
 }
 
-export function TRACK(game, script, state, actor) {
-    state.trackIndex = script.getUint8(state.offset, true);
-    state.trackOffset = state.offset - 2;
+export function TRACK(index) {
+    this.state.trackIndex = index;
+    this.state.trackOffset = this.state.offset;
 }
 
-export function GOTO(game, script, state, actor) {
-    state.reentryOffset = script.getInt16(state.offset, true);
+export function GOTO(offset) {
+    this.state.reentryOffset = offset;
+    this.state.continue = false;
 }
 
-export function STOP(game, script, state, actor) {
-    state.continue = false;
-    state.reentryOffset = -1;
+export function STOP() {
+    this.state.continue = false;
+    this.state.reentryOffset = -1;
 }
 
-export function GOTO_SYM_POINT(game, script, state, actor) {
+export function GOTO_SYM_POINT() {
     
 }
 
-export function WAIT_NUM_ANIM(game, script, state, actor) {
-    if (actor.animState.hasEnded) {
-        const totalRepeats = script.getUint8(state.offset, true);
-        let numRepeats = script.getUint8(state.offset + 1, true);
-        numRepeats++;
-        if (numRepeats == totalRepeats) {
-            numRepeats = 0;
+export function WAIT_NUM_ANIM(repeats) {
+    if (!this.state.animCount) {
+        this.state.animCount = 0;
+    }
+    if (this.actor.animState.hasEnded) {
+        this.state.animCount++;
+        if (this.state.animCount == repeats) {
+            this.state.animCount = 0;
         } else {
-            state.continue = false;
+            this.state.continue = false;
         }
-        script.setUint8(state.offset + 1, numRepeats);
     } else {
-        state.continue = false;
+        this.state.continue = false;
     }
 
-    if (!state.continue) {
-        state.reentryOffset = state.offset - 1;
+    if (!this.state.continue) {
+        this.state.reentryOffset = this.state.offset - 1;
     }
 }
 
-export function SAMPLE(game, script, state, actor) {
+export function SAMPLE() {
     
 }
 
-export function GOTO_POINT_3D(game, script, state, actor) {
+export function GOTO_POINT_3D() {
     
 }
 
-export function SPEED(game, script, state, actor) {
+export function SPEED() {
     
 }
 
-export function BACKGROUND(game, script, state, actor) {
+export function BACKGROUND() {
     
 }
 
-export function WAIT_NUM_SECOND(game, script, state, actor) {
-    const numSeconds = script.getUint8(state.offset, true);
-    if (state.waitTime == 0) {
-        state.waitTime = state.elapsedTime + (numSeconds * 1000);
+export function WAIT_NUM_SECOND(numSeconds, time) {
+    if (!this.state.waitUntil) {
+        this.state.waitUntil = time.elapsed + numSeconds;
     }
-    if (state.elapsedTime < state.waitTime) {
-        state.continue = false;
-        state.reentryOffset = state.offset - 1;
+    if (time.elapsed < this.state.waitUntil) {
+        this.state.reentryOffset = this.state.offset - 1;
+        this.state.continue = false;
     } else {
-        state.waitTime = 0;
+        delete this.state.waitUntil;
     }
 }
 
-export function NO_BODY(game, script, state, actor) {
-    actor.visible = false;
+export function WAIT_NUM_DSEC(numDsec, time) {
+    WAIT_NUM_SECOND.call(this, numDsec * 0.1, time);
 }
 
-export function BETA(game, script, state, actor) {
-    
-}
-
-export function OPEN_LEFT(game, script, state, actor) {
-    
-}
-
-export function OPEN_RIGHT(game, script, state, actor) {
-    
-}
-
-export function OPEN_UP(game, script, state, actor) {
-    
-}
-
-export function OPEN_DOWN(game, script, state, actor) {
-    
-}
-
-export function CLOSE(game, script, state, actor) {
-    
-}
-
-export function WAIT_DOOR(game, script, state, actor) {
-    
-}
-
-export function SAMPLE_RND(game, script, state, actor) {
-    
-}
-
-export function SAMPLE_ALWAYS(game, script, state, actor) {
-    
-}
-
-export function SAMPLE_STOP(game, script, state, actor) {
-    
-}
-
-export function PLAY_ACF(game, script, state, actor) {
-    
-}
-
-export function REPEAT_SAMPLE(game, script, state, actor) {
-    
-}
-
-export function SIMPLE_SAMPLE(game, script, state, actor) {
-    
-}
-
-export function FACE_HERO(game, script, state, actor) {
-    
-}
-
-export function ANGLE_RND(game, script, state, actor) {
-    
-}
-
-export function REPLACE(game, script, state, actor) {
-    
-}
-
-export function WAIT_NUM_DSEC(game, script, state, actor) {
-    const numSeconds = script.getUint8(state.offset, true);
-    if (state.waitTime == 0) {
-        state.waitTime = state.elapsedTime + (numSeconds * 100);
-    }
-    if (state.elapsedTime < state.waitTime) {
-        state.continue = false;
-        state.reentryOffset = state.offset - 1;
-    } else {
-        state.waitTime = 0;
-    }
-}
-
-export function SPRITE(game, script, state, actor) {
-    
-}
-
-export function WAIT_NUM_SECOND_RND(game, script, state, actor) {
+export function WAIT_NUM_SECOND_RND(numSeconds, unknown, time) {
     // TODO random seconds
-    const numSeconds = script.getUint8(state.offset, true);
-    if (state.waitTime == 0) {
-        state.waitTime = state.elapsedTime + (numSeconds * 1000);
-    }
-    if (state.elapsedTime < state.waitTime) {
-        state.continue = false;
-        state.reentryOffset = state.offset - 1;
-    } else {
-        state.waitTime = 0;
-    }
+    WAIT_NUM_SECOND.call(this, numSeconds, time);
 }
 
-export function SET_FRAME(game, script, state, actor) {
-    
-}
-
-export function SET_FRAME_3DS(game, script, state, actor) {
-    
-}
-
-export function SET_START_3DS(game, script, state, actor) {
-    
-}
-
-export function SET_END_3DS(game, script, state, actor) {
-    
-}
-
-export function START_ANIM_3DS(game, script, state, actor) {
-    
-}
-
-export function STOP_ANIM_3DS(game, script, state, actor) {
-    
-}
-
-export function WAIT_ANIM_3DS(game, script, state, actor) {
-    
-}
-
-export function WAIT_FRAME_3DS(game, script, state, actor) {
-    
-}
-
-export function WAIT_NUM_DECIMAL_RND(game, script, state, actor) {
+export function WAIT_NUM_DECIMAL_RND(numDsec, unknown, time) {
     // TODO random seconds
-    const numSeconds = script.getUint8(state.offset, true);
-    if (state.waitTime == 0) {
-        state.waitTime = state.elapsedTime + (numSeconds * 100);
-    }
-    if (state.elapsedTime < state.waitTime) {
-        state.continue = false;
-        state.reentryOffset = state.offset - 1;
-    } else {
-        state.waitTime = 0;
-    }
+    WAIT_NUM_SECOND.call(this, numDsec * 0.1, time);
 }
 
-export function INTERVAL(game, script, state, actor) {
+export function NO_BODY() {
+    this.actor.visible = false;
+}
+
+export function BETA() {
     
 }
 
-export function FREQUENCY(game, script, state, actor) {
+export function OPEN_LEFT() {
     
 }
 
-export function VOLUME(game, script, state, actor) {
+export function OPEN_RIGHT() {
+    
+}
+
+export function OPEN_UP() {
+    
+}
+
+export function OPEN_DOWN() {
+    
+}
+
+export function CLOSE() {
+    
+}
+
+export function WAIT_DOOR() {
+    
+}
+
+export function SAMPLE_RND() {
+    
+}
+
+export function SAMPLE_ALWAYS() {
+    
+}
+
+export function SAMPLE_STOP() {
+    
+}
+
+export function PLAY_ACF() {
+    
+}
+
+export function REPEAT_SAMPLE() {
+    
+}
+
+export function SIMPLE_SAMPLE() {
+    
+}
+
+export function FACE_HERO() {
+    
+}
+
+export function ANGLE_RND() {
+    
+}
+
+export function REPLACE() {
+    
+}
+
+export function SPRITE() {
+    
+}
+
+export function SET_FRAME() {
+    
+}
+
+export function SET_FRAME_3DS() {
+    
+}
+
+export function SET_START_3DS() {
+    
+}
+
+export function SET_END_3DS() {
+    
+}
+
+export function START_ANIM_3DS() {
+    
+}
+
+export function STOP_ANIM_3DS() {
+    
+}
+
+export function WAIT_ANIM_3DS() {
+    
+}
+
+export function WAIT_FRAME_3DS() {
+    
+}
+
+export function INTERVAL() {
+    
+}
+
+export function FREQUENCY() {
+    
+}
+
+export function VOLUME() {
     
 }

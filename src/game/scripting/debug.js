@@ -61,7 +61,6 @@ export function resetSceneDebug(scene) {
 }
 
 export function setCursorPosition(scene, actor, type, line) {
-    console.log(selectedActor, actor.index, line);
     if (selectedActor == actor.index) {
         window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
             detail: {

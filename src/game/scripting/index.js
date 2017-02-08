@@ -1,8 +1,8 @@
-import {each, map, filter, isEmpty} from 'lodash';
+import {each, isEmpty} from 'lodash';
 import {parseScript} from './parser';
-import {setCursorPosition} from './debug';
+import {compileScripts} from './compiler';
 
-export function loadScripts(scene) {
+export function loadScripts(game, scene) {
     each(scene.actors, actor => {
         actor.scripts = {
             life: parseScript(actor.index, 'life', actor.props.lifeScript),
@@ -10,88 +10,34 @@ export function loadScripts(scene) {
         };
     });
     each(scene.actors, actor => {
-        actor.runScripts = compileScripts(scene, actor);
+        compileScripts(game, scene, actor);
+        actor.runScripts = (time) => {
+            runScript(actor.scripts.life, time);
+            runScript(actor.scripts.move, time);
+        };
     });
-}
-
-function compileScripts(scene, actor) {
-    const life = compileScript('life', scene, actor);
-    const move = compileScript('move', scene, actor);
-    return time => {
-        runScript(life, time);
-        runScript(move, time);
-    };
-}
-
-function compileScript(type, scene, actor) {
-    const script = actor.scripts[type];
-    const state = {
-        offset: 0,
-        reentryOffset: 0,
-        continue: true
-    };
-    const commands = map(script.commands, (cmd, idx) => compileCommand(script, type, scene, actor, state, cmd, idx));
-    return {state, commands};
-}
-
-function compileCommand(script, type, scene, actor, state, cmd, idx) {
-    const args = [null, state];
-
-    if (cmd.condition) {
-        args.push(compileCondition(state, scene, cmd));
-    }
-
-    if (cmd.operator) {
-        args.push(compileOperator(cmd));
-    }
-
-    each(cmd.args, arg => {
-        args.push(compileArgument(script, arg));
-    });
-
-    const callback = cmd.op.callback;
-    const run = callback.bind.apply(callback, args);
-    return () => {
-        setCursorPosition(scene, actor, type, idx);
-        run();
-    };
-}
-
-function compileCondition(state, scene, cmd) {
-    return cmd.condition.op.callback.bind(null, state, cmd.condition.param);
-}
-
-function compileOperator(cmd) {
-    return cmd.operator.op.callback.bind(null, cmd.operator.operand);
-}
-
-function compileArgument(script, arg) {
-    switch (arg.type) {
-        case 'offset':
-            return script.opMap[arg.value];
-        default:
-            return arg.value;
-    }
 }
 
 function runScript(script, time) {
-    if (isEmpty(script))
+    const instructions = script.instructions;
+    const state = script.context.state;
+
+    if (isEmpty(instructions))
         return;
 
-    script.state.offset = script.state.reentryOffset;
-    script.state.continue = script.state.offset != -1;
-    script.state.time = time;
+    state.offset = state.reentryOffset;
+    state.continue = state.offset != -1;
 
-    if (script.state.offset >= 0) {
-        while (script.state.continue) {
-            if (script.state.offset >= script.length) {
-                console.warn("Unexpectedly reached end of script");
-                script.state.offset = -1;
+    if (state.offset >= 0) {
+        while (state.continue) {
+            if (state.offset >= instructions.length) {
+                console.warn(`Reached end of script ${script.context.actor.index}:${script.context.type}`);
+                state.reentryOffset = -1;
                 break;
             }
-            script.commands[script.state.offset]();
-            if (script.state.continue) {
-                script.state.offset++;
+            instructions[state.offset](time);
+            if (state.continue) {
+                state.offset++;
             }
         }
     }

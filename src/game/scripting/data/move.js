@@ -1,9 +1,10 @@
 import * as ms from '../process/move';
+import * as lo from '../process/operators';
 import Indent from '../indent';
 
 export const MoveOpcode = [
-    { opcode: 0x00, command: "END", callback: ms.END, offset: 0, indent: Indent.ZERO },
-    { opcode: 0x01, command: "NOP", callback: ms.NOP, offset: 0, indent: Indent.ONE },
+    { opcode: 0x00, command: "END", callback: lo.END, offset: 0, indent: Indent.ZERO },
+    { opcode: 0x01, command: "NOP", callback: lo.NOP, offset: 0, indent: Indent.ONE },
     { opcode: 0x02, command: "BODY", callback: ms.BODY, offset: 1, args: ['Int8'], indent: Indent.ONE },
     { opcode: 0x03, command: "ANIM", callback: ms.ANIM, offset: 2, args: ['Int8', 'Uint8'], indent: Indent.ONE },
     { opcode: 0x04, command: "GOTO_POINT", callback: ms.GOTO_POINT, offset: 1, args: ['Uint8'], indent: Indent.ONE },

@@ -1,191 +1,96 @@
-import {ConditionOpcode} from '../data/condition';
-
-function testConditionValue(operator, a, b) {
-	switch (operator) {
-        case 0:
-            return a == b;
-        case 1:
-            return a > b;
-        case 2:
-            return a < b;
-        case 3:
-            return a >= b;
-        case 4:
-            return a <= b;
-        case 5:
-            return a != b;
-        default:
-            console.debug("Unknown operator");
-	}
-	return false;
+export function END() {
+    this.state.reentryOffset = -1;
+    this.state.continue = false;
 }
 
-function getCondition(game, script, state) {
-    const conditionIndex = script.getUint8(state.life.offset++, true);
-    const condition = ConditionOpcode[conditionIndex];
-    let param = null;
-    if (condition.param) {
-        param = script.getUint8(state.life.offset++, true);
-    }
-    const value1 = condition.callback(game, state, param);
-    return {
-        condition,
-        value1
-    };
+export function NOP() {
+
 }
 
-function testConditionOperand(script, state, condition, value1) {
-    const operator = script.getUint8(state.life.offset++, true);
-    let value2 = null;
-    if (condition.value_size == 1) {
-        value2 = script.getInt8(state.life.offset++, true);
-    } else {
-        value2 = script.getInt16(state.life.offset, true);
-        state.life.offset += 2;
-    }
-    return testConditionValue(operator, value1, value2);
+export function RETURN() {
+    this.state.continue = false;
 }
 
-function testCondition(game,script, state) {
-    const {condition, value1} = getCondition(game, script, state);
-    return testConditionOperand(script, state, condition, value1);
+export function OFFSET(offset) {
+    this.state.offset = offset;
 }
 
-function testSwitchCondition(script, state, condition, value1) {
-    return testConditionOperand(script, state, condition, value1);
-}
-
-
-
-export function END(game, script, state, actor) {
-    state.life.continue = false;
-    state.life.reentryOffset = -1; // double check this later
-}
-
-export function RETURN(game, script, state, actor) {
-    state.life.continue = false;
-}
-
-export function SNIF(game, script, state, actor) {
-    if (!testCondition(game, script, state)) {
-        script.setUint8(state.life.opcodeOffset, 0x0D); // override opcode to SWIF
-    }
-    state.life.offset = script.getUint16(state.life.offset, true);
-}
-
-export function OFFSET(game, script, state, actor) {
-    state.life.offset = script.getUint16(state.life.offset, true);
-}
-
-export function NEVERIF(game, script, state, actor) {
-    testCondition(game, script, state);
-    state.life.offset = script.getUint16(state.life.offset, true);
-}
-
-export function IF(state, condition, operator, jumpOffset) {
+export function IF(condition, operator, offset) {
     if (!operator(condition())) {
-        state.offset = jumpOffset;
+        this.state.offset = offset;
     }
 }
 
-export function SWIF(game, script, state, actor) {
-    if (!testCondition(game, script, state)) {
-        state.life.offset = script.getUint16(state.life.offset, true);
-        return;
-    }
-    state.life.offset += 2;
-    script.setUint8(state.life.opcodeOffset, 0x02); // override opcode to SNIF
+export function SNIF(condition, operator, offset) {
+    IF.call(this, condition, operator, offset);
 }
 
-export function ONEIF(game, script, state, actor) {
-    if (!testCondition(game, script, state)) {
-        state.life.offset = script.getUint16(state.life.offset, true);
-        return;
-    }
-    state.life.offset += 2;
-    script.setUint8(state.life.opcodeOffset, 0x04); // override opcode to NEVERIF
+export function NEVERIF(condition, operator, offset) {
+    IF.call(this, condition, operator, offset);
 }
 
-export function ELSE(game, script, state, actor) {
-    state.life.offset = script.getUint16(state.life.offset, true);
+export function SWIF(condition, operator, offset) {
+    IF.call(this, condition, operator, offset);
 }
 
-export function ENDIF(game, script, state, actor) {
+export function ONEIF(condition, operator, offset) {
+    IF.call(this, condition, operator, offset);
+}
+
+export function OR_IF(condition, operator, offset) {
+    IF.call(this, condition, operator, offset);
+}
+
+export function ELSE(offset) {
+    OFFSET.call(this, offset);
+}
+
+export function ENDIF() {
 
 }
 
-export function OR_IF(game, script, state, actor) {
-    if (testCondition(game, script, state)) {
-        state.life.offset = script.getUint16(state.life.offset, true);
-        return;
-    }
-    state.life.offset += 2;
-}
-
-export function COMPORTEMENT(game, script, state, actor) {
+export function COMPORTEMENT() {
     
 }
 
-export function SET_COMPORTEMENT(game, script, state, actor) {
-    state.life.reentryOffset = script.getUint16(state.life.offset, true);
-    state.life.offset += 2;
+export function SET_COMPORTEMENT(offset) {
+    this.state.reentryOffset = offset;
+    this.state.continue = false;
 }
 
-export function SET_COMPORTEMENT_OBJ(game, script, state, actor) {
-    const actorIndex = script.getUint8(state.life.offset++, true);
-    const reentryOffsetActor = script.getUint16(state.life.offset, true);
-    // TODO set entry offset for actor in actorIndex
-    state.life.offset += 2;
+export function SET_COMPORTEMENT_OBJ(actor, offset) {
+    actor.scripts.life.context.state.offset = offset;
 }
 
-export function END_COMPORTEMENT(game, script, state, actor) {
-    state.life.continue = false;
+export function END_COMPORTEMENT(offset) {
+    this.state.reentryOffset = offset;
+    this.state.continue = false;
 }
 
-export function AND_IF(game, script, state, actor) {
-    if (!testCondition(game, script, state)) {
-        state.life.offset = script.getUint16(state.life.offset, true);
-        return;
-    }
-    state.life.offset += 2;
+export function AND_IF(condition, operator, offset) {
+    IF.call(this, condition, operator, offset);
 }
 
-export function SWITCH(game, script, state, actor) {
-    const {condition, value1} = getCondition(game, script, state);
-    state.life.switchCondition = condition;
-    state.life.switchValue1 = value1;
+export function SWITCH(x, y, z) {
+    console.log('SWITCH', x, y, z);
 }
 
-export function OR_CASE(game, script, state, actor) {
-    const offset = script.getUint16(state.life.offset, true);
-    state.life.offset += 2;
-    if (!testSwitchCondition(script, state, state.life.switchCondition, state.life.switchValue1)) {
-        state.life.offset = offset;
-        return;
-    }
-    state.life.switchConditionTest = true;
-}
-
-export function CASE(game, script, state, actor) {
-    const offset = script.getUint16(state.life.offset, true);
-    state.life.offset += 2;
-    if (!state.life.switchConditionTest && !testSwitchCondition(script, state, state.life.switchCondition, state.life.switchValue1)) {
-        state.life.offset = offset;
-        return;
-    }
-    state.life.switchConditionTest = false;
-}
-
-export function DEFAULT(game, script, state, actor) {
+export function OR_CASE() {
 
 }
 
-export function BREAK(game, script, state, actor) {
-    state.life.offset = script.getUint16(state.life.offset, true);
+export function CASE() {
+
 }
 
-export function END_SWITCH(game, script, state, actor) {
-    state.life.switchCondition = null;
-    state.life.switchValue1 = 0;
-    state.life.switchConditionTest = false;
+export function DEFAULT(offset) {
+
+}
+
+export function BREAK(offset) {
+    OFFSET.call(this, offset);
+}
+
+export function END_SWITCH() {
+
 }
