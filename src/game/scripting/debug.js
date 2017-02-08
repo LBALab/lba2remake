@@ -60,24 +60,18 @@ export function resetSceneDebug(scene) {
     settings.zones.enabled = false;
 }
 
-export function setCursorPosition(scene, actor, scriptType, offset) {
-    if (actor.index in scripts) {
-        const script = scripts[actor.index][scriptType];
-        const line = script.opMap[offset];
-        if (line === undefined)
-            return;
-        if (script.activeLine != line && selectedActor == actor.index) {
-            window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
-                detail: {
-                    type: 'setCurrentLine',
-                    scene: scene.index,
-                    actor: actor.index,
-                    scriptType: scriptType,
-                    line: line
-                }
-            }));
-        }
-        script.activeLine = line;
+export function setCursorPosition(scene, actor, type, line) {
+    console.log(selectedActor, actor.index, line);
+    if (selectedActor == actor.index) {
+        window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
+            detail: {
+                type: 'setCurrentLine',
+                scene: scene.index,
+                actor: actor.index,
+                scriptType: type,
+                line: line
+            }
+        }));
     }
 }
 
@@ -208,10 +202,7 @@ function selectActor(scene, index) {
 
 function getDebugListing(type, scene, actor) {
     const script = actor.scripts[type];
-    return {
-        commands: mapCommands(scene, actor, script.commands),
-        activeLine: actor.scripts.life.activeLine
-    };
+    return { commands: mapCommands(scene, actor, script.commands) };
 }
 
 function mapCommands(scene, actor, commands) {

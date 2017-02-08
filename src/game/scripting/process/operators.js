@@ -1,5 +1,4 @@
 import {ConditionOpcode} from '../data/condition';
-import {OperatorOpcode} from '../data/operator';
 
 function testConditionValue(operator, a, b) {
 	switch (operator) {
@@ -83,12 +82,10 @@ export function NEVERIF(game, script, state, actor) {
     state.life.offset = script.getUint16(state.life.offset, true);
 }
 
-export function IF(game, script, state, actor) {
-    if (!testCondition(game, script, state)) {
-        state.life.offset = script.getUint16(state.life.offset, true);
-        return;
+export function IF(state, condition, operator, jumpOffset) {
+    if (!operator(condition())) {
+        state.offset = jumpOffset;
     }
-    state.life.offset += 2;
 }
 
 export function SWIF(game, script, state, actor) {

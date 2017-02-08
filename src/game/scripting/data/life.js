@@ -15,7 +15,7 @@ export const LifeOpcode = [
     { opcode: 0x09, command: "UNKNOWN(0x09)", callback: ls.NOP, offset: 0, indent: Indent.KEEP},
     { opcode: 0x0A, command: "PALETTE", callback: ls.PALETTE, offset: 1, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x0B, command: "RETURN", callback: lo.RETURN, offset: 0, indent: Indent.KEEP},
-    { opcode: 0x0C, command: "IF", callback: lo.IF, offset: 0, args: ['_Uint16'], condition: true, operator: true, indent: Indent.ADD},
+    { opcode: 0x0C, command: "IF", callback: lo.IF, offset: 0, args: ['_Uint16:offset'], condition: true, operator: true, indent: Indent.ADD},
     { opcode: 0x0D, command: "SWIF", callback: lo.SWIF, offset: 0, args: ['_Uint16'], condition: true, operator: true, indent: Indent.ADD},
     { opcode: 0x0E, command: "ONEIF", callback: lo.ONEIF, offset: 0, args: ['_Uint16'], condition: true, operator: true, indent: Indent.ADD},
     { opcode: 0x0F, command: "ELSE", callback: lo.ELSE, offset: 0, args: ['_Uint16'], indent: Indent.SUB_ADD},

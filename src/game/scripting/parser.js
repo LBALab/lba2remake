@@ -126,7 +126,7 @@ function parseArguments(state, script, op, cmd) {
     if (op.args) {
         cmd.args = [];
         for (let i = 0; i < op.args.length; ++i) {
-            let type = op.args[i];
+            let [type, lbaType] = op.args[i].split(':');
             let hide = false;
             if (type[0] == '_') {
                 type = type.substr(1);
@@ -144,12 +144,14 @@ function parseArguments(state, script, op, cmd) {
                     o++;
                 } while (c != 0);
                 cmd.args.push({
+                    type: lbaType,
                     value: arg,
                     hide: hide
                 });
                 state.offset += o;
             } else {
                 cmd.args.push({
+                    type: lbaType,
                     value: script[`get${type}`](state.offset, true),
                     hide: hide
                 });

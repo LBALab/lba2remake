@@ -55,13 +55,8 @@ export function CAN_FALL(game, script, state, actor) {
 
 }
 
-export function SET_DIRMODE(game, script, state, actor) {
-    const dirMode = script.getUint8(state.life.offset, true);
-    if (dirMode == 2 || dirMode == 4 || dirMode == 6 || dirMode == 11) { // TODO add dirMode enumeration here
-        const actorIndex = script.getUint8(state.life.offset + 1, true);
-        state.life.offset++;
-        // TODO implementation
-    }
+export function SET_DIRMODE(state, dirmode) {
+
 }
 
 export function SET_DIRMODE_OBJ(game, script, state, actor) {
