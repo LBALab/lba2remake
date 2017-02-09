@@ -1,11 +1,10 @@
 import {each, map} from 'lodash';
-import {setCursorPosition} from './debug';
 
 export function compileScripts(game, scene, actor) {
     compileScript('life', game, scene, actor);
     compileScript('move', game, scene, actor);
-    actor.scripts.life.moveState = actor.scripts.move.state;
-    actor.scripts.move.lifeState = actor.scripts.life.state;
+    actor.scripts.life.context.moveState = actor.scripts.move.context.state;
+    actor.scripts.move.context.lifeState = actor.scripts.life.context.state;
 }
 
 function compileScript(type, game, scene, actor) {
@@ -16,14 +15,14 @@ function compileScript(type, game, scene, actor) {
         continue: true
     };
     script.context = {game, scene, actor, state, type};
-    script.instructions = map(script.commands, (cmd, idx) => compileInstruction(script.context, script, type, cmd, idx));
+    script.instructions = map(script.commands, cmd => compileInstruction(script, cmd));
 }
 
-function compileInstruction(context, script, type, cmd, idx) {
-    const args = [context];
+function compileInstruction(script, cmd) {
+    const args = [script.context];
 
     if (cmd.condition) {
-        args.push(compileCondition(context, cmd));
+        args.push(compileCondition(script, cmd));
     }
 
     if (cmd.operator) {
@@ -31,30 +30,34 @@ function compileInstruction(context, script, type, cmd, idx) {
     }
 
     each(cmd.args, arg => {
-        args.push(compileArgument(script, arg));
+        args.push(compileValue(script, arg));
     });
 
     const callback = cmd.op.callback;
-    const run = callback.bind.apply(callback, args);
-    return (time) => {
-        setCursorPosition(context.scene, context.actor, type, idx);
-        run(time);
-    };
+    return callback.bind.apply(callback, args);
 }
 
-function compileCondition(context, cmd) {
-    return cmd.condition.op.callback.bind(context, cmd.condition.param);
+function compileCondition(script, cmd) {
+    return cmd.condition.op.callback.bind(script.context, compileValue(script, cmd.condition.param));
 }
 
 function compileOperator(cmd) {
     return cmd.operator.op.callback.bind(null, cmd.operator.operand);
 }
 
-function compileArgument(script, arg) {
-    switch (arg.type) {
+function compileValue(script, value) {
+    if (!value)
+        return undefined;
+
+    switch (value.type) {
         case 'offset':
-            return script.opMap[arg.value];
+            // if (script.opMap[value.value] == undefined) {
+            //     console.log(script.context.scene.index, script.context.actor.index, value.value, script);
+            // }
+            return script.opMap[value.value];
+        case 'actor':
+            return script.context.scene.getActor(value.value);
         default:
-            return arg.value;
+            return value.value;
     }
 }

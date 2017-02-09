@@ -1,6 +1,7 @@
 import {each, isEmpty} from 'lodash';
 import {parseScript} from './parser';
 import {compileScripts} from './compiler';
+import {setCursorPosition} from './debug';
 
 export function loadScripts(game, scene) {
     each(scene.actors, actor => {
@@ -20,7 +21,8 @@ export function loadScripts(game, scene) {
 
 function runScript(script, time) {
     const instructions = script.instructions;
-    const state = script.context.state;
+    const context = script.context;
+    const state = context.state;
 
     if (isEmpty(instructions))
         return;
@@ -35,6 +37,8 @@ function runScript(script, time) {
                 state.reentryOffset = -1;
                 break;
             }
+            setCursorPosition(context.scene, context.actor, context.type, state.offset);
+            state.lastOffset = state.offset;
             instructions[state.offset](time);
             if (state.continue) {
                 state.offset++;

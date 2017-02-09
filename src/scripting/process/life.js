@@ -30,7 +30,7 @@ export function CAMERA_CENTER() {
 }
 
 export function SET_TRACK(offset) {
-    SET_TRACK_OBJ.call(this, this.actor, offset);
+    this.moveState.offset = offset;
 }
 
 export function SET_TRACK_OBJ(actor, offset) {
@@ -145,7 +145,7 @@ export function BRICK_COL() {
 
 export function INVISIBLE(enabled) {
     const actorProps = this.actor.props;
-    actorProps.staticFlags = setStaticFlag(actorProps.staticFlags, ActorStaticFlags.HIDDEN, enabled);
+    //actorProps.staticFlags = setStaticFlag(actorProps.staticFlags, ActorStaticFlags.HIDDEN, enabled);
 }
 
 export function SHADOW_OBJ() {

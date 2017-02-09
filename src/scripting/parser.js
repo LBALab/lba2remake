@@ -45,7 +45,6 @@ export function parseScript(actor, type, script) {
         }
     }
     return {
-        activeLine: -1,
         opMap: state.opMap,
         comportementMap: state.comportementMap,
         tracksMap: state.tracksMap,
@@ -103,8 +102,7 @@ function parseCondition(state, script, op, cmd) {
         cmd.condition = { op: condition };
         state.offset++;
         if (condition.param) {
-            cmd.condition.param = script.getUint8(state.offset);
-            state.offset++;
+            cmd.condition.param = parseValue(state, script, condition.param);
         }
         if (op.command == 'SWITCH') {
             state.switchCondition = condition;
@@ -126,41 +124,11 @@ function parseArguments(state, script, op, cmd) {
     if (op.args) {
         cmd.args = [];
         for (let i = 0; i < op.args.length; ++i) {
-            let [type, lbaType] = op.args[i].split(':');
-            let hide = false;
-            if (type[0] == '_') {
-                type = type.substr(1);
-                hide = true;
-            }
-            if (type == 'string') {
-                let arg = '';
-                let o = 0;
-                let c;
-                do {
-                    c = script.getUint8(state.offset + o);
-                    if (c != 0) {
-                        arg += String.fromCharCode(c);
-                    }
-                    o++;
-                } while (c != 0);
-                cmd.args.push({
-                    type: lbaType,
-                    value: arg,
-                    hide: hide
-                });
-                state.offset += o;
-            } else {
-                cmd.args.push({
-                    type: lbaType,
-                    value: script[`get${type}`](state.offset, true),
-                    hide: hide
-                });
-                state.offset += TypeSize[type];
-            }
+            cmd.args.push(parseValue(state, script, op.args[i]));
         }
         if (op.command == 'SET_DIRMODE' || op.command == 'SET_DIRMODE_OBJ') {
             const mode = last(cmd.args).value;
-            if (mode == 2 || mode == 4 || mode == 6 || mode == 11) {
+            if (mode == 2 || mode == 4 || mode == 6 || mode == 10 || mode == 11) {
                 cmd.args.push({
                     value: script.getUint8(state.offset, true),
                     hide: false
@@ -169,4 +137,33 @@ function parseArguments(state, script, op, cmd) {
             }
         }
     }
+}
+
+function parseValue(state, script, spec) {
+    let [type, lbaType] = spec.split(':');
+    let hide = false;
+    if (type[0] == '_') {
+        type = type.substr(1);
+        hide = true;
+    }
+    let value;
+    if (type == 'string') {
+        value = '';
+        let char;
+        do {
+            char = script.getUint8(state.offset);
+            if (char != 0) {
+                value += String.fromCharCode(char);
+            }
+            state.offset++;
+        } while (char != 0);
+    } else {
+        value = script[`get${type}`](state.offset, true);
+        state.offset += TypeSize[type];
+    }
+    return {
+        type: lbaType,
+        value: value,
+        hide: hide
+    };
 }

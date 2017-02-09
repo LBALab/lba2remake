@@ -12,7 +12,7 @@ export function GOTO_POINT(pointIndex) {
     const distance = this.actor.goto(point.physics.position);
 
     if (distance < (500 / 1024)) {
-        this.state.reentryOffset = this.state.offset - 1;
+        this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     }
 }
@@ -20,12 +20,10 @@ export function GOTO_POINT(pointIndex) {
 export function WAIT_ANIM() {
     if (this.actor.animState.hasEnded) {
         this.actor.props.angle = 0;
+    } else {
+        this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
-        this.state.reentryOffset = this.state.offset; // this is an exception to move to next comand but still quit the execution now with continue = false
-        return;
     }
-    this.state.reentryOffset = this.state.offset - 1;
-    this.state.continue = false;
 }
 
 export function ANGLE(angle) {
@@ -71,7 +69,7 @@ export function WAIT_NUM_ANIM(repeats) {
     }
 
     if (!this.state.continue) {
-        this.state.reentryOffset = this.state.offset - 1;
+        this.state.reentryOffset = this.state.offset;
     }
 }
 
@@ -96,7 +94,7 @@ export function WAIT_NUM_SECOND(numSeconds, time) {
         this.state.waitUntil = time.elapsed + numSeconds;
     }
     if (time.elapsed < this.state.waitUntil) {
-        this.state.reentryOffset = this.state.offset - 1;
+        this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     } else {
         delete this.state.waitUntil;

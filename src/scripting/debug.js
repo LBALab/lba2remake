@@ -201,7 +201,8 @@ function selectActor(scene, index) {
 
 function getDebugListing(type, scene, actor) {
     const script = actor.scripts[type];
-    return { commands: mapCommands(scene, actor, script.commands) };
+    const activeLine = script.context && script.context.state && script.context.state.lastOffset;
+    return { commands: mapCommands(scene, actor, script.commands), activeLine: activeLine };
 }
 
 function mapCommands(scene, actor, commands) {
@@ -247,7 +248,7 @@ function mapCondition(condition) {
     if (condition) {
         return {
             name: condition.op.command,
-            param: condition.param
+            param: condition.param && condition.param.value
         };
     }
 }
