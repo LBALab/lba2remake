@@ -13,7 +13,7 @@ export const MoveOpcode = [
     { opcode: 0x07, command: "ANGLE", callback: ms.ANGLE, args: ['Int16'], indent: Indent.ONE },
     { opcode: 0x08, command: "POS_POINT", callback: ms.POS_POINT, args: ['Uint8'], indent: Indent.ONE },
     { opcode: 0x09, command: "TRACK", callback: ms.TRACK, args: ['Uint8'], indent: Indent.ZERO },
-    { opcode: 0x0A, command: "GOTO", callback: ms.GOTO, args: ['Int16'], indent: Indent.ONE },
+    { opcode: 0x0A, command: "GOTO", callback: ms.GOTO, args: ['Uint16:offset'], indent: Indent.ONE },
     { opcode: 0x0B, command: "STOP", callback: ms.STOP, indent: Indent.ONE },
     { opcode: 0x0C, command: "GOTO_SYM_POINT", callback: ms.GOTO_SYM_POINT, args: ['Uint8'], indent: Indent.ONE },
     { opcode: 0x0D, command: "WAIT_NUM_ANIM", callback: ms.WAIT_NUM_ANIM, args: ['Uint8'], indent: Indent.ONE },
