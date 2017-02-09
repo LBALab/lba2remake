@@ -32,7 +32,7 @@ function runScript(script, time) {
 
     while (state.continue) {
         if (state.offset >= instructions.length || isNaN(state.offset)) {
-            console.warn(`Invalid offset: ${context.scene.index}:${context.actor.index}:${context.type} offset=${state.offset} lastOffset=${state.lastOffset}`);
+            console.warn(`Invalid offset: ${context.scene.index}:${context.actor.index}:${context.type}:${state.lastOffset + 1} offset=${state.offset}`);
             state.reentryOffset = -1;
             state.terminated = true;
             return;
