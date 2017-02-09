@@ -242,6 +242,9 @@ function mapArguments(scene, actor, cmd) {
                 args[1].value = tgt2.scripts.move.tracksMap[args[1].value];
             }
             break;
+        case 'GOTO':
+            args[0].value = actor.scripts.move.tracksMap[args[0].value];
+            break;
     }
     return args;
 }

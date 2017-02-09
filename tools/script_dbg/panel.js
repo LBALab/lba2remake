@@ -98,6 +98,9 @@ const cmdClasses = {
     TRACK: 'structural',
     SET_TRACK: 'structural',
     SET_TRACK_OBJ: 'structural',
+    GOTO: 'structural',
+    STOP: 'structural',
+    REPLACE: 'structural',
 
     '[INVALID COMMAND]': 'invalid'
 };
