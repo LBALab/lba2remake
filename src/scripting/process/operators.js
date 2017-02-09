@@ -17,7 +17,7 @@ export function OFFSET(offset) {
 
 export function IF(condition, operator, offset) {
     if (!operator(condition())) {
-        this.state.offset = offset;
+        this.state.offset = offset - 1;
     }
 }
 
