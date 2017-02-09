@@ -2,6 +2,7 @@ import THREE from 'three';
 import {each, map, cloneDeep} from 'lodash';
 import Indent from './indent';
 
+let selectedScene = null;
 let selectedActor = -1;
 let selectedZone = null;
 
@@ -23,6 +24,7 @@ let settings = {
 let lbaExtListener = null;
 
 export function initSceneDebug(scene) {
+    selectedScene = scene.index;
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
         detail: {
             type: 'setScene',
@@ -61,7 +63,7 @@ export function resetSceneDebug(scene) {
 }
 
 export function setCursorPosition(scene, actor, type, line) {
-    if (selectedActor == actor.index) {
+    if (selectedScene == scene.index && selectedActor == actor.index) {
         window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
             detail: {
                 type: 'setCurrentLine',
