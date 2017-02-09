@@ -28,21 +28,20 @@ function runScript(script, time) {
         return;
 
     state.offset = state.reentryOffset;
-    state.continue = state.offset != -1;
+    state.continue = state.offset != -1 && !state.terminated;
 
-    if (state.offset >= 0) {
-        while (state.continue) {
-            if (state.offset >= instructions.length) {
-                console.warn(`Reached end of script ${script.context.actor.index}:${script.context.type}`);
-                state.reentryOffset = -1;
-                break;
-            }
-            setCursorPosition(context.scene, context.actor, context.type, state.offset);
-            state.lastOffset = state.offset;
-            instructions[state.offset](time);
-            if (state.continue) {
-                state.offset++;
-            }
+    while (state.continue) {
+        if (state.offset >= instructions.length || isNaN(state.offset)) {
+            console.warn(`Invalid offset: ${context.scene.index}:${context.actor.index}:${context.type} offset=${state.offset} lastOffset=${state.lastOffset}`);
+            state.reentryOffset = -1;
+            state.terminated = true;
+            return;
+        }
+        setCursorPosition(context.scene, context.actor, context.type, state.offset);
+        state.lastOffset = state.offset;
+        instructions[state.offset](time);
+        if (state.continue) {
+            state.offset++;
         }
     }
 }

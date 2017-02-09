@@ -15,10 +15,10 @@ function compileScript(type, game, scene, actor) {
         continue: true
     };
     script.context = {game, scene, actor, state, type};
-    script.instructions = map(script.commands, cmd => compileInstruction(script, cmd));
+    script.instructions = map(script.commands, (cmd, idx) => compileInstruction(script, cmd, idx + 1));
 }
 
-function compileInstruction(script, cmd) {
+function compileInstruction(script, cmd, cmdOffset) {
     const args = [script.context];
 
     if (cmd.condition) {
@@ -30,8 +30,10 @@ function compileInstruction(script, cmd) {
     }
 
     each(cmd.args, arg => {
-        args.push(compileValue(script, arg));
+        args.push(compileValue(script, arg, cmdOffset));
     });
+
+    postProcess(cmd, args);
 
     const callback = cmd.op.callback;
     return callback.bind.apply(callback, args);
@@ -45,19 +47,27 @@ function compileOperator(cmd) {
     return cmd.operator.op.callback.bind(null, cmd.operator.operand);
 }
 
-function compileValue(script, value) {
+function compileValue(script, value, cmdOffset) {
     if (!value)
         return undefined;
 
     switch (value.type) {
         case 'offset':
-            // if (script.opMap[value.value] == undefined) {
-            //     console.log(script.context.scene.index, script.context.actor.index, value.value, script);
-            // }
+            if (script.opMap[value.value] == undefined) {
+                console.warn(`Failed to parse offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${value.value}`);
+            }
             return script.opMap[value.value];
         case 'actor':
             return script.context.scene.getActor(value.value);
         default:
             return value.value;
+    }
+}
+
+function postProcess(cmd, args) {
+    switch (cmd.op.command) {
+        case 'SET_COMPORTEMENT_OBJ':
+            args[2] = args[1].scripts.life.opMap[args[2]];
+            break;
     }
 }
