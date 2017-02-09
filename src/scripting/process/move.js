@@ -45,8 +45,8 @@ export function GOTO(offset) {
 }
 
 export function STOP() {
-    this.state.continue = false;
     this.state.reentryOffset = -1;
+    this.state.continue = false;
 }
 
 export function GOTO_SYM_POINT() {

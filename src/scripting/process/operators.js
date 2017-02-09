@@ -8,11 +8,12 @@ export function NOP() {
 }
 
 export function RETURN() {
+    this.state.reentryOffset = this.state.offset;
     this.state.continue = false;
 }
 
 export function OFFSET(offset) {
-    this.state.offset = offset;
+    this.state.offset = offset - 1;
 }
 
 export function IF(condition, operator, offset) {
@@ -59,7 +60,7 @@ export function SET_COMPORTEMENT(offset) {
 }
 
 export function SET_COMPORTEMENT_OBJ(actor, offset) {
-    actor.scripts.life.context.state.offset = offset;
+    actor.scripts.life.context.state.reentryOffset = offset;
 }
 
 export function END_COMPORTEMENT() {
@@ -81,7 +82,7 @@ export function OR_CASE(operator, offset) {
 
 export function CASE(operator, offset) {
     if (!operator(this.state.switchValue)) {
-        this.state.offset = offset;
+        this.state.offset = offset - 1;
     }
 }
 
