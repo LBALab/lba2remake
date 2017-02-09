@@ -6,7 +6,7 @@ export const MoveOpcode = [
     { opcode: 0x00, command: "END", callback: lo.END, indent: Indent.ZERO },
     { opcode: 0x01, command: "NOP", callback: lo.NOP, indent: Indent.ONE },
     { opcode: 0x02, command: "BODY", callback: ms.BODY, args: ['Int8'], indent: Indent.ONE },
-    { opcode: 0x03, command: "ANIM", callback: ms.ANIM, args: ['Int8', 'Uint8'], indent: Indent.ONE },
+    { opcode: 0x03, command: "ANIM", callback: ms.ANIM, args: ['Uint16'], indent: Indent.ONE },
     { opcode: 0x04, command: "GOTO_POINT", callback: ms.GOTO_POINT, args: ['Uint8'], indent: Indent.ONE },
     { opcode: 0x05, command: "WAIT_ANIM", callback: ms.WAIT_ANIM, indent: Indent.ONE },
     { opcode: 0x06, command: "LOOP", callback: lo.NOP, indent: Indent.ONE },
