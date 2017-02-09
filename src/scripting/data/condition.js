@@ -40,11 +40,11 @@ export const ConditionOpcode = [
     { opcode: 0x24, command: "ANGLE", callback: lc.ANGLE, param: 'Uint8', operand: 'Uint16' },
     { opcode: 0x25, command: "DISTANCE_MESSAGE", callback: lc.DISTANCE_MESSAGE, param: 'Uint8', operand: 'Uint16' },
     { opcode: 0x26, command: "HIT_OBJ_BY", callback: lc.HIT_OBJ_BY, param: 'Uint8', operand: 'Uint8' },
-    { opcode: 0x27, command: "REAL_ANGLE", callback: lc.REAL_ANGLE, operand: 'Uint16' },
+    { opcode: 0x27, command: "REAL_ANGLE", callback: lc.REAL_ANGLE, param: 'Uint8', operand: 'Uint16' },
     { opcode: 0x28, command: "DEMO", callback: lc.DEMO, operand: 'Uint8' },
     { opcode: 0x29, command: "COL_DECORS", callback: lc.COL_DECORS, operand: 'Uint8' },
     { opcode: 0x2A, command: "COL_DECORS_OBJ", callback: lc.COL_DECORS_OBJ, param: 'Uint8', operand: 'Uint8' },
     { opcode: 0x2B, command: "PROCESSOR", callback: lc.PROCESSOR, operand: 'Uint8' },
     { opcode: 0x2C, command: "OBJECT_DISPLAYED", callback: lc.OBJECT_DISPLAYED, param: 'Uint8', operand: 'Uint8' },
-    { opcode: 0x2D, command: "ANGLE_OBJ", callback: lc.ANGLE_OBJ, param: 'Uint8', operand: 'Uint8' }
+    { opcode: 0x2D, command: "ANGLE_OBJ", callback: lc.ANGLE_OBJ, param: 'Uint8', operand: 'Uint16' }
 ];

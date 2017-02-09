@@ -156,6 +156,6 @@ export const LifeOpcode = [
     { opcode: 0x96, command: "END_MESSAGE_OBJ", callback: ls.END_MESSAGE_OBJ, args: ['Uint8:actor'], indent: Indent.KEEP},
     { opcode: 0x97, command: "PARM_SAMPLE", callback: ls.PARM_SAMPLE, args: ['Uint16', 'Uint8', 'Uint16'], indent: Indent.KEEP}, // not sure about this one
     { opcode: 0x98, command: "NEW_SAMPLE", callback: ls.NEW_SAMPLE, args: ['Uint16', 'Uint16', 'Uint8', 'Uint16'], indent: Indent.KEEP},
-    { opcode: 0x99, command: "POS_OBJ_AROUND", callback: ls.POS_OBJ_AROUND, args: ['Uint8:actor'], indent: Indent.KEEP},
+    { opcode: 0x99, command: "POS_OBJ_AROUND", callback: ls.POS_OBJ_AROUND, args: ['Uint8:actor', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x9A, command: "PCX_MESS_OBJ", callback: ls.PCX_MESS_OBJ, args: ['Uint8:actor', 'Uint16', 'Uint16'], indent: Indent.KEEP}
 ];
