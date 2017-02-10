@@ -33,7 +33,7 @@ function compileInstruction(script, cmd, cmdOffset) {
         args.push(compileValue(script, arg, cmdOffset));
     });
 
-    postProcess(cmd, args);
+    postProcess(script, cmd, args);
 
     const callback = cmd.op.callback;
     return callback.bind.apply(callback, args);
@@ -64,8 +64,14 @@ function compileValue(script, value, cmdOffset) {
     }
 }
 
-function postProcess(cmd, args) {
+function postProcess(script, cmd, args) {
     switch (cmd.op.command) {
+        case 'SET_TRACK':
+            args[1] = script.context.actor.scripts.move.opMap[args[1]];
+            break;
+        case 'SET_TRACK_OBJ':
+            args[2] = args[1].scripts.move.opMap[args[2]];
+            break;
         case 'SET_COMPORTEMENT_OBJ':
             args[2] = args[1].scripts.life.opMap[args[2]];
             break;
