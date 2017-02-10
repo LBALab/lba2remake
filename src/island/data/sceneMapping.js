@@ -34,13 +34,13 @@ export default {
     76: {island: 'EMERAUDE', section: 1, variant: 0},
     77: {island: 'EMERAUDE', section: 3, variant: 0},
 
-    87: {island: 'OTRINGAL', section: 0, variant: 0},
-    88: {island: 'OTRINGAL', section: 1, variant: 0},
-    89: {island: 'OTRINGAL', section: 2, variant: 0},
-    90: {island: 'OTRINGAL', section: 3, variant: 0},
-    91: {island: 'OTRINGAL', section: 4, variant: 0},
-    92: {island: 'OTRINGAL', section: 5, variant: 0},
-    94: {island: 'OTRINGAL', section: 6, variant: 0},
+    87: {island: 'OTRINGAL', section: 2, variant: 0},
+    88: {island: 'OTRINGAL', section: 0, variant: 0},
+    89: {island: 'OTRINGAL', section: 3, variant: 0},
+    90: {island: 'OTRINGAL', section: 5, variant: 0},
+    91: {island: 'OTRINGAL', section: 1, variant: 0},
+    92: {island: 'OTRINGAL', section: 6, variant: 0},
+    94: {island: 'OTRINGAL', section: 4, variant: 0},
 
     95: {island: 'CELEBRAT', section: 0, variant: 0},
 
