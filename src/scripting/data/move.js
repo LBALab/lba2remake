@@ -16,7 +16,7 @@ export const MoveOpcode = [
     { opcode: 0x0A, command: "GOTO", callback: st.GOTO, args: ['Uint16:offset'], indent: Indent.ONE },
     { opcode: 0x0B, command: "STOP", callback: st.STOP, indent: Indent.ONE },
     { opcode: 0x0C, command: "GOTO_SYM_POINT", callback: mv.GOTO_SYM_POINT, args: ['Uint8'], indent: Indent.ONE },
-    { opcode: 0x0D, command: "WAIT_NUM_ANIM", callback: mv.WAIT_NUM_ANIM, args: ['Uint8'], indent: Indent.ONE },
+    { opcode: 0x0D, command: "WAIT_NUM_ANIM", callback: mv.WAIT_NUM_ANIM, args: ['Uint8', 'Uint8'], indent: Indent.ONE },
     { opcode: 0x0E, command: "SAMPLE", callback: mv.SAMPLE, args: ['Uint16'], indent: Indent.ONE },
     { opcode: 0x0F, command: "GOTO_POINT_3D", callback: mv.GOTO_POINT_3D, args: ['Uint8'], indent: Indent.ONE },
     { opcode: 0x10, command: "SPEED", callback: mv.SPEED, args: ['Uint16'], indent: Indent.ONE },
