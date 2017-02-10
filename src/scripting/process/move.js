@@ -34,21 +34,6 @@ export function POS_POINT() {
     
 }
 
-export function TRACK(index) {
-    this.state.trackIndex = index;
-    this.state.trackOffset = this.state.offset;
-}
-
-export function GOTO(offset) {
-    this.state.reentryOffset = offset;
-    this.state.continue = false;
-}
-
-export function STOP() {
-    this.state.reentryOffset = -1;
-    this.state.continue = false;
-}
-
 export function GOTO_SYM_POINT() {
     
 }

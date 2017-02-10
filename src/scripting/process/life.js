@@ -29,14 +29,6 @@ export function CAMERA_CENTER() {
 
 }
 
-export function SET_TRACK(offset) {
-    this.moveState.offset = offset;
-}
-
-export function SET_TRACK_OBJ(actor, offset) {
-    actor.scripts.move.context.state.offset = offset;
-}
-
 export function MESSAGE() {
 
 }
@@ -87,16 +79,6 @@ export function GIVE_GOLD_PIECES() {
 
 export function END_LIFE() {
     BRUTAL_EXIT.call(this);
-}
-
-export function STOP_CURRENT_TRACK() {
-    this.moveState.savedOffset = this.moveState.trackOffset;
-    this.moveState.reentryOffset = -1;
-    this.moveState.continue = false;
-}
-
-export function RESTORE_LAST_TRACK() {
-    this.moveState.offset = this.moveState.savedOffset;
 }
 
 export function MESSAGE_OBJ() {
@@ -370,14 +352,6 @@ export function STATE_INVENTORY() {
 }
 
 export function SET_HIT_ZONE() {
-
-}
-
-export function SAVE_COMPORTEMENT() {
-
-}
-
-export function RESTORE_COMPORTEMENT() {
 
 }
 
