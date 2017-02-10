@@ -2,7 +2,7 @@
 
 export function IF(condition, operator, offset) {
     if (!operator(condition())) {
-        this.state.offset = offset - 1;
+        OFFSET.call(this, offset);
     }
 }
 
@@ -14,8 +14,12 @@ export function NEVERIF(condition, operator, offset) {
     IF.call(this, condition, operator, offset);
 }
 
-export function SWIF(condition, operator, offset) {
-    IF.call(this, condition, operator, offset);
+export function SWIF(cmdState, condition, operator, offset) {
+    const status = operator(condition());
+    if (!(status && !cmdState.status)) {
+        OFFSET.call(this, offset);
+    }
+    cmdState.status = status;
 }
 
 export function ONEIF(condition, operator, offset) {
@@ -23,7 +27,9 @@ export function ONEIF(condition, operator, offset) {
 }
 
 export function OR_IF(condition, operator, offset) {
-    IF.call(this, condition, operator, offset);
+    if (operator(condition())) {
+        OFFSET.call(this, offset);
+    }
 }
 
 export function AND_IF(condition, operator, offset) {

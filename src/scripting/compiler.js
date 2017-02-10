@@ -21,6 +21,10 @@ function compileScript(type, game, scene, actor) {
 function compileInstruction(script, cmd, cmdOffset) {
     const args = [script.context];
 
+    if (cmd.op.cmdState) {
+        args.push({});
+    }
+
     if (cmd.condition) {
         args.push(compileCondition(script, cmd));
     }
