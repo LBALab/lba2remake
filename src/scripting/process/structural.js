@@ -85,11 +85,12 @@ export function END_COMPORTEMENT() {
 }
 
 export function SAVE_COMPORTEMENT() {
-
+    this.state.savedOffset = this.state.comportementOffset;
 }
 
 export function RESTORE_COMPORTEMENT() {
-
+    this.state.reentryOffset = this.state.savedOffset;
+    this.state.continue = false;
 }
 
 /* Tracks */
@@ -110,11 +111,10 @@ export function SET_TRACK_OBJ(actor, offset) {
 export function STOP_CURRENT_TRACK() {
     this.moveState.savedOffset = this.moveState.trackOffset;
     this.moveState.reentryOffset = -1;
-    this.moveState.continue = false;
 }
 
 export function RESTORE_LAST_TRACK() {
-    this.moveState.offset = this.moveState.savedOffset;
+    this.moveState.reentryOffset = this.moveState.savedOffset;
 }
 
 /* Misc */
