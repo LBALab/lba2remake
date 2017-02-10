@@ -101,8 +101,10 @@ export function SAVE_COMPORTEMENT() {
 }
 
 export function RESTORE_COMPORTEMENT() {
-    this.state.reentryOffset = this.state.savedOffset;
-    this.state.continue = false;
+    if (this.state.savedOffset) {
+        this.state.reentryOffset = this.state.savedOffset;
+        this.state.continue = false;
+    }
 }
 
 /* Tracks */
@@ -126,7 +128,9 @@ export function STOP_CURRENT_TRACK() {
 }
 
 export function RESTORE_LAST_TRACK() {
-    this.moveState.reentryOffset = this.moveState.savedOffset;
+    if (this.moveState.savedOffset) {
+        this.moveState.reentryOffset = this.moveState.savedOffset;
+    }
 }
 
 /* Misc */
