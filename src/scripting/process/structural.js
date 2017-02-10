@@ -7,11 +7,11 @@ export function IF(condition, operator, offset) {
 }
 
 export function SNIF(condition, operator, offset) {
-    IF.call(this, condition, operator, offset);
+    // Should never be called -- original game internal use only
 }
 
 export function NEVERIF(condition, operator, offset) {
-    IF.call(this, condition, operator, offset);
+    // Should never be called -- original game internal use only
 }
 
 export function SWIF(cmdState, condition, operator, offset) {
@@ -22,8 +22,14 @@ export function SWIF(cmdState, condition, operator, offset) {
     cmdState.status = status;
 }
 
-export function ONEIF(condition, operator, offset) {
-    IF.call(this, condition, operator, offset);
+export function ONEIF(cmdState, condition, operator, offset) {
+    const status = operator(condition());
+    if (!(status && !cmdState.used)) {
+        OFFSET.call(this, offset);
+    }
+    if (status) {
+        cmdState.used = true;
+    }
 }
 
 export function OR_IF(condition, operator, offset) {
@@ -41,7 +47,7 @@ export function ELSE(offset) {
 }
 
 export function ENDIF() {
-
+    // Nothing to do here
 }
 
 export function SWITCH(condition) {
