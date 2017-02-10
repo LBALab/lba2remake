@@ -30,8 +30,8 @@ export default {
     73: {island: 'DESERT', section: 18, variant: 0},
 
     74: {island: 'EMERAUDE', section: 0, variant: 0},
-    75: {island: 'EMERAUDE', section: 1, variant: 0},
-    76: {island: 'EMERAUDE', section: 2, variant: 0},
+    75: {island: 'EMERAUDE', section: 2, variant: 0},
+    76: {island: 'EMERAUDE', section: 1, variant: 0},
     77: {island: 'EMERAUDE', section: 3, variant: 0},
 
     87: {island: 'OTRINGAL', section: 0, variant: 0},
