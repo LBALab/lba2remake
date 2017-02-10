@@ -37,7 +37,7 @@ function compileInstruction(script, cmd, cmdOffset) {
         args.push(compileValue(script, arg, cmdOffset));
     });
 
-    postProcess(script, cmd, args);
+    postProcess(script, cmd, cmdOffset, args);
 
     const callback = cmd.op.callback;
     return callback.bind.apply(callback, args);
@@ -68,16 +68,29 @@ function compileValue(script, value, cmdOffset) {
     }
 }
 
-function postProcess(script, cmd, args) {
+function postProcess(script, cmd, cmdOffset, args) {
+    let opMap;
     switch (cmd.op.command) {
         case 'SET_TRACK':
-            args[1] = script.context.actor.scripts.move.opMap[args[1]];
+            opMap = script.context.actor.scripts.move.opMap;
+            if (opMap[args[1]] == undefined) {
+                console.warn(`Failed to parse SET_TRACK offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[1]}`);
+            }
+            args[1] = opMap[args[1]];
             break;
         case 'SET_TRACK_OBJ':
-            args[2] = args[1].scripts.move.opMap[args[2]];
+            opMap = args[1].scripts.move.opMap;
+            if (opMap[args[2]] == undefined) {
+                console.warn(`Failed to parse SET_TRACK_OBJ offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[2]}`);
+            }
+            args[2] = opMap[args[2]];
             break;
         case 'SET_COMPORTEMENT_OBJ':
-            args[2] = args[1].scripts.life.opMap[args[2]];
+            opMap = args[1].scripts.life.opMap;
+            if (opMap[args[2]] == undefined) {
+                console.warn(`Failed to parse SET_COMPORTEMENT_OBJ offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[2]}`);
+            }
+            args[2] = opMap[args[2]];
             break;
     }
 }
