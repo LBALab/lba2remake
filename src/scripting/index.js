@@ -1,7 +1,7 @@
 import {each, isEmpty} from 'lodash';
 import {parseScript} from './parser';
 import {compileScripts} from './compiler';
-import {setCursorPosition} from './debug';
+import {setCursorPosition, isPaused} from './debug';
 
 export function loadScripts(game, scene) {
     each(scene.actors, actor => {
@@ -12,14 +12,14 @@ export function loadScripts(game, scene) {
     });
     each(scene.actors, actor => {
         compileScripts(game, scene, actor);
-        actor.runScripts = (time) => {
-            runScript(actor.scripts.life, time);
-            runScript(actor.scripts.move, time);
+        actor.runScripts = (time, step) => {
+            runScript(actor.scripts.life, time, step);
+            runScript(actor.scripts.move, time, step);
         };
     });
 }
 
-function runScript(script, time) {
+function runScript(script, time, step) {
     const instructions = script.instructions;
     const context = script.context;
     const state = context.state;
@@ -28,20 +28,26 @@ function runScript(script, time) {
         return;
 
     state.offset = state.reentryOffset;
-    state.continue = state.offset != -1 && !state.terminated;
+    state.continue = state.offset != -1 && !state.terminated && !state.stopped;
 
-    while (state.continue) {
+    while (state.continue && (!isPaused() || (isPaused() && step))) {
         if (state.offset >= instructions.length || isNaN(state.offset)) {
             console.warn(`Invalid offset: ${context.scene.index}:${context.actor.index}:${context.type}:${state.lastOffset + 1} offset=${state.offset}`);
-            state.reentryOffset = -1;
             state.terminated = true;
             return;
         }
         setCursorPosition(context.scene, context.actor, context.type, state.offset);
         state.lastOffset = state.offset;
+        state.reentryOffset = -1;
         instructions[state.offset](time);
         if (state.continue) {
             state.offset++;
+        }
+        if (isPaused() && step) {
+            if (state.reentryOffset == -1) {
+                state.reentryOffset = state.offset;
+            }
+            break;
         }
     }
 }

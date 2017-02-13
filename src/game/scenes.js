@@ -19,7 +19,7 @@ import {loadZone} from './zones';
 import {loadPosition} from './hero';
 import {getQueryParams} from '../utils';
 import {loadScripts} from '../scripting';
-import {initSceneDebug, resetSceneDebug} from '../scripting/debug';
+import {initSceneDebug, resetSceneDebug, hasStep, endStep} from '../scripting/debug';
 
 export function createSceneManager(game, renderer, hero, callback: Function) {
     let scene = null;
@@ -135,9 +135,11 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 points: data.points,
                 zones: data.zones,
                 update: time => {
+                    const step = hasStep();
                     each(data.actors, actor => {
-                        actor.update(time);
+                        actor.update(time, step);
                     });
+                    endStep();
                 },
                 getActor(index) {
                     return find(this.actors, function(obj) { return obj.index == index; });

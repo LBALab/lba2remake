@@ -124,19 +124,20 @@ export function SET_TRACK_OBJ(actor, offset) {
 
 export function STOP_CURRENT_TRACK() {
     this.moveState.savedOffset = this.moveState.trackOffset;
-    this.moveState.reentryOffset = -1;
+    this.moveState.stopped = true;
 }
 
 export function RESTORE_LAST_TRACK() {
     if (this.moveState.savedOffset) {
         this.moveState.reentryOffset = this.moveState.savedOffset;
+        this.moveState.stopped = false;
     }
 }
 
 /* Misc */
 
 export function END() {
-    this.state.reentryOffset = -1;
+    this.state.terminated = true;
     this.state.continue = false;
 }
 
@@ -159,6 +160,6 @@ export function GOTO(offset) {
 }
 
 export function STOP() {
-    this.state.reentryOffset = -1;
+    this.state.stopped = true;
     this.state.continue = false;
 }

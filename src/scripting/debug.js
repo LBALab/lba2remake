@@ -22,6 +22,32 @@ let settings = {
 };
 
 let lbaExtListener = null;
+let paused = false;
+let step = false;
+
+window.addEventListener('lba_ext_event_in', function() {
+    const message = event.detail;
+    switch (message.type) {
+        case 'setPaused':
+            paused = message.paused;
+            break;
+        case 'step':
+            step = true;
+            break;
+    }
+});
+
+export function hasStep() {
+    return step;
+}
+
+export function endStep() {
+    step = false;
+}
+
+export function isPaused() {
+    return paused;
+}
 
 export function initSceneDebug(scene) {
     selectedScene = scene.index;

@@ -69,8 +69,8 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
         resetAnimState: function() {
             resetAnimState(this.animState);
         },
-        update: function(time) {
-            this.runScripts(time);
+        update: function(time, step) {
+            this.runScripts(time, step);
 
             if(this.model) {
                 this.animState.matrixRotation.makeRotationFromQuaternion(this.physics.orientation);

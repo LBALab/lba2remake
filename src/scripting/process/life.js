@@ -323,8 +323,8 @@ export function ADD_MESSAGE_OBJ() {
 }
 
 export function BRUTAL_EXIT() {
-    this.state.reentryOffset = -1;
     this.state.continue = false;
+    this.state.terminated = true;
 }
 
 export function REPLACE() {

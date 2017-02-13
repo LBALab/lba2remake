@@ -36,6 +36,10 @@ backgroundPageConnection.onMessage.addListener(function(message) {
                 input.checked = settings[input.id];
             });
             break;
+        case 'setPaused':
+            setPaused(message.paused);
+            break;
+
     }
 });
 
@@ -58,6 +62,31 @@ document.querySelector('#actor').addEventListener('change', function() {
     });
     selectedActor[currentScene] = parseInt(this.value);
 });
+
+const playPause = document.querySelector('#playPause');
+const step = document.querySelector('#step');
+
+step.addEventListener('click', function() {
+    backgroundPageConnection.postMessage({
+        type: 'step',
+        tabId: tabId
+    });
+});
+
+playPause.addEventListener('click', function() {
+    const paused = playPause.src.indexOf('play.png') != -1;
+    backgroundPageConnection.postMessage({
+        type: 'setPaused',
+        paused: !paused,
+        tabId: tabId
+    });
+    setPaused(!paused);
+});
+
+function setPaused(paused) {
+    playPause.src = paused ? 'play.png' : 'pause.png';
+    step.style.display = paused ? 'inline-block' : 'none';
+}
 
 function setScene(message) {
     document.querySelector('#scene').innerHTML = '<b>Scene:</b> #' + message.index;
