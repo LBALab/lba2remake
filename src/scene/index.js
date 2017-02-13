@@ -78,6 +78,7 @@ function loadHero(scene, offset) {
     const data = new DataView(scene.buffer);
     const hero = {
         sceneIndex: scene.index,
+        entityIndex: 0,
         pos: [
             (0x8000 - data.getUint16(offset + 4, true) + 512) / 0x4000,
             data.getUint16(offset + 2, true) / 0x4000,
