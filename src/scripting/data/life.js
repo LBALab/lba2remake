@@ -1,4 +1,5 @@
 import * as lf from '../process/life';
+import * as mv from '../process/move';
 import * as st from '../process/structural';
 import Indent from '../indent';
 
@@ -61,7 +62,7 @@ export const LifeOpcode = [
     { opcode: 0x37, command: "OR_IF", callback: st.OR_IF, args: ['_Uint16:offset'], precond: true, condition: true, operator: true, indent: Indent.KEEP},
     { opcode: 0x38, command: "INVISIBLE", callback: lf.INVISIBLE, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x39, command: "SHADOW_OBJ", callback: lf.SHADOW_OBJ, args: ['Uint8:actor', 'Uint8'], indent: Indent.KEEP},
-    { opcode: 0x3A, command: "POS_POINT", callback: lf.POS_POINT, args: ['Uint8'], indent: Indent.KEEP},
+    { opcode: 0x3A, command: "POS_POINT", callback: mv.POS_POINT, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x3B, command: "SET_MAGIC_LEVEL", callback: lf.SET_MAGIC_LEVEL, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x3C, command: "SUB_MAGIC_POINT", callback: lf.SUB_MAGIC_POINT, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x3D, command: "SET_LIFE_POINT_OBJ", callback: lf.SET_LIFE_POINT_OBJ, args: ['Uint8:actor', 'Uint8'], indent: Indent.KEEP},

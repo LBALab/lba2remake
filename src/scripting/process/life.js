@@ -139,10 +139,6 @@ export function SHADOW_OBJ() {
 
 }
 
-export function POS_POINT() {
-
-}
-
 export function SET_MAGIC_LEVEL() {
 
 }
