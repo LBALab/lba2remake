@@ -60,7 +60,7 @@ document.querySelector('#actor').addEventListener('change', function() {
 });
 
 function setScene(message) {
-    document.querySelector('#scene').innerText = 'Scene: #' + message.index;
+    document.querySelector('#scene').innerHTML = '<b>Scene:</b> #' + message.index;
     const actors = [];
     for (let i = 0; i < message.actors; ++i) {
         actors.push('<option value="' + i + '"' + (selectedActor[message.index] == i ? ' selected>' : '>') + i + '</option>');

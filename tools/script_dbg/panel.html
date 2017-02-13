@@ -62,20 +62,27 @@
 			overflow: auto;
 			box-shadow:inset 0px 0px 0px 1px black;
 		}
+		.icon {
+			vertical-align: middle;
+			cursor: pointer;
+		}
     </style>
 </head>
 <body>
-    <div style="position: absolute; top: 0; left: 0; height: 20px; right: 0; line-height: 20px;">
-		<span id="scene">Scene: ?</span>
-		<span>&nbsp;&nbsp;Actor: </span>
+    <div style="position: absolute; top: 0; left: 0; height: 24px; right: 0; line-height: 24px;">
+		<span id="scene"><b>Scene:</b> ?</span>
+		<b>&nbsp;&nbsp;Actor: </b>
 		<select id="actor"></select>
+		&nbsp;
+		<img class="icon" src="pause.png"/>
+		<img class="icon" src="step.png"/>
 		<span style="float: right">
 			<label><input id="zones" type="checkbox"/>Zones</label>&nbsp;
 			<label><input id="points" type="checkbox"/>Points</label>&nbsp;
 			<label><input id="labels" type="checkbox"/>Labels</label>&nbsp;
 		</span>
 	</div>
-	<div style="position: absolute; top: 20px; left: 0; bottom: 0; right: 0;">
+	<div style="position: absolute; top: 24px; left: 0; bottom: 0; right: 0;">
 		<div id="lifeScript"></div>
 		<div id="moveScript"></div>
 	</div>
