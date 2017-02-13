@@ -182,10 +182,10 @@ function setActorScript(type, script) {
 }
 
 function setCurrentLine(info) {
-    displayActiveLine(info.scriptType, info.line);
+    displayActiveLine(info.scriptType, info.line, info.scrollView);
 }
 
-function displayActiveLine(type, line) {
+function displayActiveLine(type, line, scrollView) {
     const oldLineElement = document.querySelector('#' + type + 'Script .command.active');
     if (oldLineElement) {
         oldLineElement.classList.remove('active');
@@ -194,5 +194,8 @@ function displayActiveLine(type, line) {
     const lineElement = lineElements[line];
     if (lineElement) {
         lineElement.classList.add('active');
+        if (scrollView) {
+            lineElement.scrollIntoViewIfNeeded();
+        }
     }
 }
