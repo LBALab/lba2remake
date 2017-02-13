@@ -32,9 +32,9 @@ export function ANGLE(angle) {
 
 export function POS_POINT(pointIndex) {
     const point = this.scene.getPoint(pointIndex);
-    console.log(pointIndex, point);
     this.actor.physics.position.copy(point.physics.position);
-    this.actor.model.mesh.position.copy(point.physics.position);
+    if (this.actor.model)
+        this.actor.model.mesh.position.copy(point.physics.position);
 }
 
 export function GOTO_SYM_POINT() {
