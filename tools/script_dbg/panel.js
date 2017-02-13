@@ -94,13 +94,18 @@ const cmdClasses = {
     END_COMPORTEMENT: 'structural',
     SET_COMPORTEMENT: 'structural',
     SET_COMPORTEMENT_OBJ: 'structural',
+    SAVE_COMPORTEMENT: 'structural',
+    RESTORE_COMPORTEMENT: 'structural',
     END: 'structural',
     TRACK: 'structural',
     SET_TRACK: 'structural',
     SET_TRACK_OBJ: 'structural',
+    STOP_CURRENT_TRACK: 'structural',
+    RESTORE_LAST_TRACK: 'structural',
     GOTO: 'structural',
     STOP: 'structural',
     REPLACE: 'structural',
+    SUICIDE: 'structural',
 
     '[INVALID COMMAND]': 'invalid'
 };
