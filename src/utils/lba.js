@@ -40,7 +40,7 @@ export function setStaticFlag(flags, value, isActive) {
     return f;
 }
 
-export function distance2D (from,to) {
+export function distance2D(from,to) {
     const dx = from.x - to.x, dz = from.z - to.z;
     const distsquared = dx * dx + dz * dz;
     return Math.sqrt(distsquared);

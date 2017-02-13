@@ -11,7 +11,7 @@ export function GOTO_POINT(pointIndex) {
     const point = this.scene.getPoint(pointIndex);
     const distance = this.actor.goto(point.physics.position);
 
-    if (distance < (500 / 1024)) {
+    if (distance > 0.03) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     }

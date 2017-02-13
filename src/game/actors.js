@@ -4,8 +4,8 @@ import THREE from 'three';
 
 import type {Model} from '../model';
 import {loadModel, updateModel} from '../model';
-import {loadAnimState,resetAnimState} from '../model/animState';
-import {getRotation,distance2D} from '../utils/lba';
+import {loadAnimState, resetAnimState} from '../model/animState';
+import {getRotation, distance2D, angleTo} from '../utils/lba';
 
 type ActorProps = {
     index: number,
@@ -83,8 +83,7 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
         goto: function(point) {
             if (!this.isWalking) {
                 this.physics.temp.destination = point;
-                this.physics.temp.angle = this.physics.position.angleTo(point);
-                //this.physics.temp.angle = angleTo(point, this.physics.position);
+                this.physics.temp.angle = angleTo(this.physics.position, point);
             }
             this.isWalking = true;
             this.isTurning = true;
@@ -103,9 +102,7 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
         updateAnimStep: function(time) {
             const delta = time.delta * 1000;
             if (this.isTurning) {
-                const euler = new THREE.Euler(THREE.Math.degToRad(0),
-                    this.physics.temp.angle - (Math.PI/2),
-                    THREE.Math.degToRad(0), 'XZY');
+                const euler = new THREE.Euler(0, this.physics.temp.angle - (Math.PI/2), 0, 'XZY');
                 this.physics.orientation.setFromEuler(euler);
                 this.model.mesh.quaternion.copy(this.physics.orientation);
             }
