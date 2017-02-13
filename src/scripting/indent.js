@@ -5,6 +5,7 @@ const Indent = {
     ADD: 3,
     SUB: 4,
     SUB_ADD: 5,
+    POST_SUB: 6
 };
 
 export default Indent;

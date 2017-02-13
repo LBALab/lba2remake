@@ -281,6 +281,9 @@ function processIndent(cmd, op, indent) {
         case Indent.SUB:
             cmd.indent = Math.max(indent - 1, 0);
             return Math.max(indent - 1, 0);
+        case Indent.POST_SUB:
+            cmd.indent = indent;
+            return Math.max(indent - 1, 0);
         case Indent.SUB_ADD:
             cmd.indent = Math.max(indent - 1, 0);
             return indent;

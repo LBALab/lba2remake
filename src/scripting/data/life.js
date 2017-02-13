@@ -120,7 +120,7 @@ export const LifeOpcode = [
     { opcode: 0x72, command: "OR_CASE", callback: st.OR_CASE, argsFirst: true, args: ['_Uint16:offset'], operator: true, indent: Indent.KEEP},
     { opcode: 0x73, command: "CASE", callback: st.CASE, argsFirst: true, args: ['_Uint16:offset'], operator: true, indent: Indent.ADD},
     { opcode: 0x74, command: "DEFAULT", callback: st.DEFAULT, indent: Indent.ADD},
-    { opcode: 0x75, command: "BREAK", callback: st.BREAK, args: ['_Uint16:offset'], indent: Indent.SUB},
+    { opcode: 0x75, command: "BREAK", callback: st.BREAK, args: ['_Uint16:offset'], indent: Indent.POST_SUB},
     { opcode: 0x76, command: "END_SWITCH", callback: st.END_SWITCH, indent: Indent.SUB},
     { opcode: 0x77, command: "SET_HIT_ZONE", callback: lf.SET_HIT_ZONE, args: ['Uint8', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x78, command: "SAVE_COMPORTEMENT", callback: st.SAVE_COMPORTEMENT, indent: Indent.KEEP},
