@@ -48,6 +48,7 @@ function runScript(script, time, step) {
             if (state.reentryOffset == -1) {
                 state.reentryOffset = state.offset;
             }
+            setCursorPosition(context.scene, context.actor, context.type, state.reentryOffset, true);
             break;
         }
     }
