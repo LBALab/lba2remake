@@ -87,6 +87,7 @@ const cmdClasses = {
     END_SWITCH: 'conditional',
     CASE: 'conditional',
     OR_CASE: 'conditional',
+    DEFAULT: 'conditional',
     BREAK: 'conditional',
     ENDIF: 'conditional',
 
