@@ -209,6 +209,7 @@ function getDebugListing(type, scene, actor) {
 
 function mapCommands(scene, actor, commands) {
     let indent = 0;
+    let prevCommand = null;
     return map(commands, cmd => {
         const newCmd = {
             name: cmd.op.command,
@@ -216,7 +217,8 @@ function mapCommands(scene, actor, commands) {
             condition: mapCondition(cmd.condition),
             operator: mapOperator(cmd.operator)
         };
-        indent = processIndent(newCmd, cmd.op, indent);
+        indent = processIndent(newCmd, prevCommand, cmd.op, indent);
+        prevCommand = newCmd;
         return newCmd;
     })
 }
@@ -267,7 +269,10 @@ function mapOperator(operator) {
     }
 }
 
-function processIndent(cmd, op, indent) {
+function processIndent(cmd, prevCmd, op, indent) {
+    if (prevCmd && prevCmd.name != 'BREAK' && prevCmd.name != 'SWITCH' && (op.command == 'CASE' || op.command == 'OR_CASE' || op.command == 'DEFAULT')) {
+        indent = Math.max(indent - 1, 0);
+    }
     switch (op.indent) {
         case Indent.ZERO:
             cmd.indent = 0;
