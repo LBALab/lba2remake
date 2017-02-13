@@ -69,6 +69,7 @@ export function SUICIDE() {
     if (this.actor.threeObject) {
         this.actor.movel = null;
         this.actor.threeObject.visible = false;
+        this.actor.threeObject = null;
     }
     BRUTAL_EXIT.call(this);
 }
