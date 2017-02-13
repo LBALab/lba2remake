@@ -23,6 +23,7 @@ function runScript(script, time, step) {
     const instructions = script.instructions;
     const context = script.context;
     const state = context.state;
+    const paused = isPaused();
 
     if (isEmpty(instructions))
         return;
@@ -30,7 +31,7 @@ function runScript(script, time, step) {
     state.offset = state.reentryOffset;
     state.continue = state.offset != -1 && !state.terminated && !state.stopped;
 
-    while (state.continue && (!isPaused() || (isPaused() && step))) {
+    while (state.continue && (!paused || (paused && step))) {
         if (state.offset >= instructions.length || isNaN(state.offset)) {
             console.warn(`Invalid offset: ${context.scene.index}:${context.actor.index}:${context.type}:${state.lastOffset + 1} offset=${state.offset}`);
             state.terminated = true;
@@ -43,7 +44,7 @@ function runScript(script, time, step) {
         if (state.continue) {
             state.offset++;
         }
-        if (isPaused() && step) {
+        if (paused && step) {
             if (state.reentryOffset == -1) {
                 state.reentryOffset = state.offset;
             }
