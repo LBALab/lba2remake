@@ -66,7 +66,11 @@ export function KILL_OBJ() {
 }
 
 export function SUICIDE() {
-
+    if (this.actor.threeObject) {
+        this.actor.movel = null;
+        this.actor.threeObject.visible = false;
+    }
+    BRUTAL_EXIT.call(this);
 }
 
 export function USE_ONE_LITTLE_KEY() {
@@ -325,6 +329,7 @@ export function ADD_MESSAGE_OBJ() {
 export function BRUTAL_EXIT() {
     this.state.continue = false;
     this.state.terminated = true;
+    this.moveState.terminated = true;
 }
 
 export function REPLACE() {
