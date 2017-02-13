@@ -20,13 +20,15 @@ function compileScript(type, game, scene, actor) {
 
 function compileInstruction(script, cmd, cmdOffset) {
     const args = [script.context];
+    let condition = null;
 
     if (cmd.op.cmdState) {
         args.push({});
     }
 
     if (cmd.condition) {
-        args.push(compileCondition(script, cmd));
+        condition = compileCondition(script, cmd);
+        args.push(condition);
     }
 
     if (cmd.operator) {
@@ -40,7 +42,10 @@ function compileInstruction(script, cmd, cmdOffset) {
     postProcess(script, cmd, cmdOffset, args);
 
     const callback = cmd.op.callback;
-    return callback.bind.apply(callback, args);
+    const instruction = callback.bind.apply(callback, args);
+    if (condition)
+        instruction.condition = condition;
+    return instruction;
 }
 
 function compileCondition(script, cmd) {

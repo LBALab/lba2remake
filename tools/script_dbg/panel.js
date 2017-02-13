@@ -161,7 +161,8 @@ function setActorScript(type, script) {
             if ('param' in command.condition) {
                 param = '(<span class="arg">' + command.condition.param + '</span>)';
             }
-            condition = '&nbsp;<span class="cond">' + command.condition.name + '</span>' + param
+            const result = '<span class="result"></span>';
+            condition = '&nbsp;<span class="cond">' + command.condition.name + '</span>' + param + result;
         }
         let operatorAndOperand = '';
         if (command.operator) {
@@ -182,13 +183,16 @@ function setActorScript(type, script) {
 }
 
 function setCurrentLine(info) {
-    displayActiveLine(info.scriptType, info.line, info.scrollView);
+    displayActiveLine(info.scriptType, info.line, info.scrollView, info.value);
 }
 
-function displayActiveLine(type, line, scrollView) {
+function displayActiveLine(type, line, scrollView, value) {
     const oldLineElement = document.querySelector('#' + type + 'Script .command.active');
     if (oldLineElement) {
         oldLineElement.classList.remove('active');
+        const result = oldLineElement.getElementsByClassName('result')[0];
+        if (result)
+            result.innerText = '';
     }
     const lineElements = document.querySelectorAll('#' + type + 'Script .command');
     const lineElement = lineElements[line];
@@ -196,6 +200,9 @@ function displayActiveLine(type, line, scrollView) {
         lineElement.classList.add('active');
         if (scrollView) {
             lineElement.scrollIntoViewIfNeeded();
+        }
+        if (value != null) {
+            lineElement.getElementsByClassName('result')[0].innerText = ': ' + value;
         }
     }
 }

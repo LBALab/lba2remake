@@ -88,7 +88,7 @@ export function resetSceneDebug(scene) {
     settings.zones.enabled = false;
 }
 
-export function setCursorPosition(scene, actor, type, line, scrollView = false) {
+export function setCursorPosition(scene, actor, type, line, scrollView = false, value = null) {
     if (selectedScene == scene.index && selectedActor == actor.index) {
         window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
             detail: {
@@ -97,7 +97,8 @@ export function setCursorPosition(scene, actor, type, line, scrollView = false) 
                 actor: actor.index,
                 scriptType: type,
                 line: line,
-                scrollView: scrollView
+                scrollView: scrollView,
+                value: value
             }
         }));
     }
