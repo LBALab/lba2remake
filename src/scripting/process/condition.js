@@ -1,3 +1,5 @@
+import {convertDistance} from '../../utils/lba';
+
 export function COL() {
     return 0;
 }
@@ -42,8 +44,8 @@ export function CURRENT_TRACK_OBJ(actor) {
     return actor.scripts.move.context.state.trackIndex;
 }
 
-export function VAR_CUBE() {
-    return 0;
+export function VAR_CUBE(index) {
+    return this.game.getState().flags.scene[index];
 }
 
 export function CONE_VIEW() {

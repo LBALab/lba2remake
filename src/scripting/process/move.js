@@ -1,3 +1,5 @@
+import {convertDistance} from '../../utils/lba';
+
 export function BODY(bodyIndex) {
     this.actor.props.bodyIndex = bodyIndex;
 }
@@ -11,7 +13,7 @@ export function GOTO_POINT(pointIndex) {
     const point = this.scene.getPoint(pointIndex);
     const distance = this.actor.goto(point.physics.position);
 
-    if (distance > 0.002) {
+    if (distance > convertDistance(500)) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     } else {

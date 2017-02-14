@@ -46,6 +46,10 @@ export function distance2D(from,to) {
     return Math.sqrt(distsquared);
 }
 
+export function convertDistance(value) {
+    return (value * 0.002) / 500;
+}
+
 export function angleTo(v1, v2) {
     const xdiff = v2.x - v1.x;
     const zdiff = v2.z - v1.z;
