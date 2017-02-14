@@ -56,7 +56,7 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
             temp: {
                 destination: new THREE.Vector3(0, 0, 0),
                 position: new THREE.Vector3(0, 0, 0),
-                angle: THREE.Math.degToRad(getRotation(props.angle, 0, 1)),
+                angle: THREE.Math.degToRad(getRotation(props.angle, 0, 1) - 90),
             }
         },
         isVisible: !(props.staticFlags & ActorStaticFlag.HIDDEN) && (props.life > 0 || props.bodyIndex >= 0) ? true : false,
@@ -90,7 +90,7 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
         setAngle: function(angle) {
             this.isTurning = true;
             this.props.angle = angle;
-            this.physics.temp.angle = THREE.Math.degToRad(getRotation(angle, 0, 1)) - Math.PI / 2;
+            this.physics.temp.angle = THREE.Math.degToRad(getRotation(angle, 0, 1) - 90);
         },
         stop: function() {
             this.isWalking = false;
