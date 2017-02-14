@@ -116,6 +116,7 @@ export function TRACK(index) {
 
 export function SET_TRACK(offset) {
     this.moveState.reentryOffset = offset;
+    this.moveState.stopped = false;
 }
 
 export function SET_TRACK_OBJ(actor, offset) {
