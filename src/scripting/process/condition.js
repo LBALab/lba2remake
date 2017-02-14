@@ -59,11 +59,11 @@ export function ACTION() {
 }
 
 export function VAR_GAME(index) {
-    return this.game.getState().game.vargame[index];
+    return this.game.getState().flags.quest[index];
 }
 
 export function LIFE_POINT() {
-    return 0;
+    return this.game.getState().hero.life;
 }
 
 export function LIFE_POINT_OBJ() {
@@ -71,11 +71,11 @@ export function LIFE_POINT_OBJ() {
 }
 
 export function NUM_LITTLE_KEYS() {
-    return 0;
+    return this.game.getState().hero.keys;
 }
 
 export function NUM_GOLD_PIECES() {
-    return 0;
+    return this.game.getState().hero.money;
 }
 
 export function BEHAVIOUR() {
@@ -83,7 +83,7 @@ export function BEHAVIOUR() {
 }
 
 export function CHAPTER() {
-    return this.game.getState().game.chapter;
+    return this.game.getState().chapter;
 }
 
 export function DISTANCE_3D() {
@@ -91,11 +91,11 @@ export function DISTANCE_3D() {
 }
 
 export function MAGIC_LEVEL() {
-    return 0;
+    return this.game.getState().hero.magic;
 }
 
 export function MAGIC_POINT() {
-    return 0;
+    return this.game.getState().hero.magicball.level;
 }
 
 export function USE_INVENTORY() {
@@ -107,7 +107,7 @@ export function CHOICE() {
 }
 
 export function FUEL() {
-    return 0;
+    return this.game.getState().hero.fuel;
 }
 
 export function CARRIED_BY() {
