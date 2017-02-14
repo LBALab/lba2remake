@@ -95,12 +95,13 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
         };
 
         if (!parent) {
-            let islandName = islandSceneMapping[index].island;
-            //islandName = (game.getState().flags.quest[152] && islandName == 'CITABAU') ? 'CITADEL' : 'CITABAU';
-
-            loadSteps.scenery = indexInfo.isIsland
-                ? loadIslandScenery.bind(null, islandName, sceneData.ambience)
-                : loadIsometricScenery.bind(null, renderer, indexInfo.index);
+            if (indexInfo.isIsland) {
+                let islandName = islandSceneMapping[index].island;
+                //islandName = (game.getState().flags.quest[152] && islandName == 'CITABAU') ? 'CITADEL' : 'CITABAU';
+                loadSteps.scenery = loadIslandScenery.bind(null, islandName, sceneData.ambience);
+            } else {
+                loadSteps.scenery = loadIsometricScenery.bind(null, renderer, indexInfo.index);
+            }
             loadSteps.threeScene = ['scenery', (data, callback) => {
                 const threeScene = new THREE.Scene();
                 threeScene.add(data.scenery.threeObject);
