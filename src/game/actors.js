@@ -5,7 +5,7 @@ import THREE from 'three';
 import type {Model} from '../model';
 import {loadModel, updateModel} from '../model';
 import {loadAnimState, resetAnimState} from '../model/animState';
-import {getRotation, distance2D, angleTo} from '../utils/lba';
+import {getRotation, distance2D, angleTo, getDistanceLba} from '../utils/lba';
 
 type ActorProps = {
     index: number,
@@ -85,12 +85,18 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
             this.physics.temp.angle = angleTo(this.physics.position, point);
             this.isWalking = true;
             this.isTurning = true;
-            return distance2D(this.physics.position, point);
+            return this.getDistance(point);
         },
         setAngle: function(angle) {
             this.isTurning = true;
             this.props.angle = angle;
             this.physics.temp.angle = THREE.Math.degToRad(getRotation(angle, 0, 1) - 90);
+        },
+        getDistance: function(pos) {
+            return distance2D(this.physics.position, pos);
+        },
+        getDistanceLba: function(pos) {
+            return getDistanceLba(this.getDistance(pos));
         },
         stop: function() {
             this.isWalking = false;
