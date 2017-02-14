@@ -1,5 +1,6 @@
 import THREE from 'three';
 import {each, map, cloneDeep} from 'lodash';
+import {getRotation} from '../utils/lba';
 import Indent from './indent';
 
 let selectedScene = null;
@@ -274,6 +275,9 @@ function mapArguments(scene, actor, cmd) {
             break;
         case 'GOTO':
             args[0].value = actor.scripts.move.tracksMap[args[0].value];
+            break;
+        case 'ANGLE':
+            args[0].value = getRotation(args[0].value, 0, 1) - 90;
             break;
     }
     return args;
