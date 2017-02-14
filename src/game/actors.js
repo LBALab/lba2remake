@@ -81,28 +81,26 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
             }
         },
         goto: function(point) {
-            if (!this.isWalking) {
-                this.physics.temp.destination = point;
-                this.physics.temp.angle = angleTo(this.physics.position, point);
-            }
+            this.physics.temp.destination = point;
+            this.physics.temp.angle = angleTo(this.physics.position, point);
             this.isWalking = true;
             this.isTurning = true;
-
             return distance2D(this.physics.position, point);
         },
         setAngle: function(angle) {
             this.isTurning = true;
             this.props.angle = angle;
-            this.physics.temp.angle = THREE.Math.degToRad(getRotation(angle, 0, 1));
+            this.physics.temp.angle = THREE.Math.degToRad(getRotation(angle, 0, 1)) - Math.PI / 2;
         },
         stop: function() {
             this.isWalking = false;
             this.isTurning = false;
+            delete this.physics.temp.destination;
         },
         updateAnimStep: function(time) {
             const delta = time.delta * 1000;
             if (this.isTurning) {
-                const euler = new THREE.Euler(0, this.physics.temp.angle - (Math.PI/2), 0, 'XZY');
+                const euler = new THREE.Euler(0, this.physics.temp.angle, 0, 'XZY');
                 this.physics.orientation.setFromEuler(euler);
                 this.model.mesh.quaternion.copy(this.physics.orientation);
             }
@@ -112,11 +110,11 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
                 const speedZ = ((this.animState.step.z * delta) / this.animState.keyframeLength);
                 const speedX = ((this.animState.step.x * delta) / this.animState.keyframeLength);
 
-                this.physics.temp.position.x += (Math.cos(this.physics.temp.angle) * speedZ) * -1; // x is inverted
-                this.physics.temp.position.z += Math.sin(this.physics.temp.angle) * speedZ;
+                this.physics.temp.position.x += Math.sin(this.physics.temp.angle) * speedZ;
+                this.physics.temp.position.z += Math.cos(this.physics.temp.angle) * speedZ;
 
-                this.physics.temp.position.x += Math.sin(this.physics.temp.angle) * speedX;
-                this.physics.temp.position.z += Math.cos(this.physics.temp.angle) * speedX;
+                this.physics.temp.position.x -= Math.cos(this.physics.temp.angle) * speedX;
+                this.physics.temp.position.z += Math.sin(this.physics.temp.angle) * speedX;
 
                 this.physics.temp.position.y += (this.animState.step.y * delta) / (this.animState.keyframeLength);
 

@@ -48,13 +48,12 @@ export function distance2D(from,to) {
 
 export function angleTo(v1, v2) {
     const xdiff = v2.x - v1.x;
-    const ydiff = v2.z - v1.z;
+    const zdiff = v2.z - v1.z;
 
-    let rads = Math.atan2(ydiff, xdiff);
+    let angle = Math.atan2(xdiff, zdiff);
 
-    if (ydiff < 0) {
-        rads -= 2 * Math.PI;
-    }
+    if (angle < 0)
+        angle += 2 * Math.PI;
 
-    return rads;
+    return angle;
 }
