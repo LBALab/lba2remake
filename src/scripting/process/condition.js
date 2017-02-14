@@ -1,39 +1,39 @@
-import {convertDistance} from '../../utils/lba';
 
 export function COL() {
-    return 0;
+    return -1;
 }
 
 export function COL_OBJ() {
-    return 0;
+    return -1;
 }
 
-export function DISTANCE() {
-    return 0;
+export function DISTANCE(index) {
+    const actor = this.scene.getActor(index);
+    return this.actor.getDistanceLba(actor.physics.position);
 }
 
 export function ZONE() {
-    return 0;
+    return -1;
 }
 
 export function ZONE_OBJ() {
-    return 0;
+    return -1;
 }
 
 export function BODY() {
-    return 0;
+    return -1;
 }
 
 export function BODY_OBJ() {
-    return 0;
+    return -1;
 }
 
 export function ANIM() {
-    return 0;
+    return -1;
 }
 
 export function ANIM_OBJ() {
-    return 0;
+    return -1;
 }
 
 export function CURRENT_TRACK() {
@@ -69,7 +69,7 @@ export function LIFE_POINT() {
 }
 
 export function LIFE_POINT_OBJ() {
-    return 0;
+    return -1;
 }
 
 export function NUM_LITTLE_KEYS() {
@@ -81,7 +81,7 @@ export function NUM_GOLD_PIECES() {
 }
 
 export function BEHAVIOUR() {
-    return 0;
+    return -1;
 }
 
 export function CHAPTER() {
@@ -89,7 +89,7 @@ export function CHAPTER() {
 }
 
 export function DISTANCE_3D() {
-    return 0;
+    return -1;
 }
 
 export function MAGIC_LEVEL() {
@@ -101,11 +101,11 @@ export function MAGIC_POINT() {
 }
 
 export function USE_INVENTORY() {
-    return 0;
+    return -1;
 }
 
 export function CHOICE() {
-    return 0;
+    return -1;
 }
 
 export function FUEL() {
@@ -113,15 +113,15 @@ export function FUEL() {
 }
 
 export function CARRIED_BY() {
-    return 0;
+    return -1;
 }
 
 export function CDROM() {
-    return 0;
+    return -1;
 }
 
 export function LADDER() {
-    return 0;
+    return -1;
 }
 
 export function RND(max) {
