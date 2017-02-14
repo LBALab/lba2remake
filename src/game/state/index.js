@@ -46,6 +46,14 @@ function createQuestFlags() {
     for (let i = 0; i < 256; ++i) {
         quest[i] = 0;
     }
+
+    // set default values
+    quest[63] = 1;
+    quest[135] = 1;
+    quest[150] = 1;
+    quest[152] = 1; // rain
+    quest[159] = 256;
+
     return quest;
 }
 
