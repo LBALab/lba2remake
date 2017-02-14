@@ -298,7 +298,7 @@ function mapOperator(operator) {
 }
 
 function processIndent(cmd, prevCmd, op, indent) {
-    if (prevCmd && prevCmd.name != 'BREAK' && prevCmd.name != 'SWITCH' && (op.command == 'CASE' || op.command == 'OR_CASE' || op.command == 'DEFAULT')) {
+    if (prevCmd && prevCmd.name != 'BREAK' && prevCmd.name != 'SWITCH' && prevCmd.name != 'OR_CASE' && (op.command == 'CASE' || op.command == 'OR_CASE' || op.command == 'DEFAULT')) {
         indent = Math.max(indent - 1, 0);
     }
     switch (op.indent) {
