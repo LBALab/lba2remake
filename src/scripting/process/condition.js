@@ -16,24 +16,26 @@ export function ZONE() {
     return -1;
 }
 
-export function ZONE_OBJ() {
+export function ZONE_OBJ(index) {
     return -1;
 }
 
 export function BODY() {
-    return -1;
+    return this.actor.props.bodyIndex;
 }
 
-export function BODY_OBJ() {
-    return -1;
+export function BODY_OBJ(index) {
+    const actor = this.scene.getActor(index);
+    return actor.props.bodyIndex;
 }
 
 export function ANIM() {
-    return -1;
+    return this.actor.props.animIndex;
 }
 
-export function ANIM_OBJ() {
-    return -1;
+export function ANIM_OBJ(index) {
+    const actor = this.scene.getActor(index);
+    return actor.props.animIndex;
 }
 
 export function CURRENT_TRACK() {
@@ -129,57 +131,57 @@ export function RND(max) {
 }
 
 export function RAIL() {
-    return 0;
+    return -1;
 }
 
 export function BETA() {
-    return 0;
+    return -1;
 }
 
 export function BETA_OBJ() {
-    return 0;
+    return -1;
 }
 
 export function CARRIED_OBJ_BY() {
-    return 0;
+    return -1;
 }
 
 export function ANGLE() {
-    return 0;
+    return -1;
 }
 
 export function DISTANCE_MESSAGE() {
-    return 0;
+    return -1;
 }
 
 export function HIT_OBJ_BY() {
-    return 0;
+    return -1;
 }
 
 export function REAL_ANGLE() {
-    return 0;
+    return -1;
 }
 
 export function DEMO() {
-    return 0;
+    return -1;
 }
 
 export function COL_DECORS() {
-    return 0;
+    return -1;
 }
 
 export function COL_DECORS_OBJ() {
-    return 0;
+    return -1;
 }
 
 export function PROCESSOR() {
-    return 0;
+    return -1;
 }
 
 export function OBJECT_DISPLAYED() {
-    return 0;
+    return -1;
 }
 
 export function ANGLE_OBJ() {
-    return 0;
+    return -1;
 }
