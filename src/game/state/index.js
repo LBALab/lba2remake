@@ -2,6 +2,7 @@
 
 import THREE from 'three';
 import {Target, Movement} from '../hero';
+import { times } from 'lodash';
 
 export function createState() {
     return {
@@ -33,9 +34,18 @@ export function createState() {
                 scene: [],
                 holomap: [],
                 inventory: []
-            }
+            },
+            vargame: createVarGame()
         },
         save: () => {},
         load: () => {}
     };
+}
+
+function createVarGame() {
+    const vargames = [];
+    for (let i = 0; i < 256; ++i) {
+        vargames[i] = 0;
+    }
+    return vargames;
 }

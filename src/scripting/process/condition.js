@@ -58,8 +58,8 @@ export function ACTION() {
     return -1;
 }
 
-export function VAR_GAME() {
-    return 0;
+export function VAR_GAME(index) {
+    return this.game.getState().game.vargame[index];
 }
 
 export function LIFE_POINT() {

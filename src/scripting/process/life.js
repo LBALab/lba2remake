@@ -57,8 +57,8 @@ export function SET_VAR_CUBE() {
 
 }
 
-export function SET_VAR_GAME() {
-
+export function SET_VAR_GAME(index, value) {
+    this.game.getState().game.vargame[index] = value;
 }
 
 export function KILL_OBJ() {
