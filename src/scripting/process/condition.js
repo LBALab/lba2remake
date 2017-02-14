@@ -122,8 +122,8 @@ export function LADDER() {
     return 0;
 }
 
-export function RND() {
-    return 0;
+export function RND(max) {
+    return Math.floor(Math.random() * max);
 }
 
 export function RAIL() {
