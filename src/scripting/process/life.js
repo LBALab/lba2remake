@@ -5,20 +5,20 @@ export function PALETTE() {
 
 }
 
-export function BODY() {
-
+export function BODY(value) {
+    this.actor.props.bodyIndex = value;
 }
 
-export function BODY_OBJ() {
-
+export function BODY_OBJ(actor, value)  {
+    actor.props.bodyIndex = value;
 }
 
-export function ANIM() {
-
+export function ANIM(value) {
+    this.actor.props.animIndex = value;
 }
 
-export function ANIM_OBJ() {
-
+export function ANIM_OBJ(actor, value) {
+    actor.props.animIndex = value;
 }
 
 export function SET_CAMERA() {
