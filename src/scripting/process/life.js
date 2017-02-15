@@ -29,8 +29,31 @@ export function CAMERA_CENTER() {
 
 }
 
-export function MESSAGE() {
+export function MESSAGE(cmdState, id) {
+    MESSAGE_OBJ.call(this, cmdState, this.actor, id);
+}
 
+export function MESSAGE_OBJ(cmdState, actor, id) {
+    if (!cmdState.listener) {
+        const textBox = document.getElementById('smallText');
+        textBox.style.display = 'block';
+        textBox.innerText = this.scene.data.texts[id].value;
+        cmdState.listener = function() {
+            cmdState.ended = true;
+        };
+        window.addEventListener('keydown', cmdState.listener);
+    }
+    if (cmdState.ended) {
+        const textBox = document.getElementById('smallText');
+        textBox.style.display = 'none';
+        textBox.innerText = '';
+        window.removeEventListener('keydown', cmdState.listener);
+        delete cmdState.listener;
+        delete cmdState.ended;
+    } else {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+    }
 }
 
 export function CAN_FALL() {
@@ -84,10 +107,6 @@ export function GIVE_GOLD_PIECES() {
 
 export function END_LIFE() {
     BRUTAL_EXIT.call(this);
-}
-
-export function MESSAGE_OBJ() {
-
 }
 
 export function INC_CHAPTER() {

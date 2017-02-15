@@ -12,7 +12,8 @@ function compileScript(type, game, scene, actor) {
     const state = {
         offset: 0,
         reentryOffset: 0,
-        continue: true
+        continue: true,
+        stopped: type == 'move'
     };
     script.context = {game, scene, actor, state, type};
     script.instructions = map(script.commands, (cmd, idx) => compileInstruction(script, cmd, idx + 1));

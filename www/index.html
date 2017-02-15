@@ -64,11 +64,25 @@
             background: red;
             color: white;
         }
+        #smallText {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border: 2px outset #20a2ff;
+            border-radius: 15px;
+            font-size: 3em;
+            color: white;
+        }
     </style>
     <script type="text/javascript" src="bundle.js"></script>
 </head>
 <body>
     <div id="main"></div>
+    <div id="smallText"></div>
     <div id="stats1" style="position: fixed; top: 0; left: 0; width: 50%;"></div>
     <div id="stats2" style="position: fixed; top: 0; left: 50%; width: 50%;"></div>
 </body>
