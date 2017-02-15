@@ -7,8 +7,7 @@ export function COL_OBJ() {
     return -1;
 }
 
-export function DISTANCE(index) {
-    const actor = this.scene.getActor(index);
+export function DISTANCE(actor) {
     return this.actor.getDistanceLba(actor.physics.position);
 }
 
@@ -90,8 +89,8 @@ export function CHAPTER() {
     return this.game.getState().chapter;
 }
 
-export function DISTANCE_3D() {
-    return -1;
+export function DISTANCE_3D(actor) {
+    return DISTANCE.call(this, actor);
 }
 
 export function MAGIC_LEVEL() {
@@ -150,8 +149,8 @@ export function ANGLE() {
     return -1;
 }
 
-export function DISTANCE_MESSAGE() {
-    return -1;
+export function DISTANCE_MESSAGE(actor) {
+    return DISTANCE.call(this, actor);
 }
 
 export function HIT_OBJ_BY() {
