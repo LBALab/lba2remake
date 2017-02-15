@@ -9,7 +9,7 @@ import {
 } from 'lodash';
 
 import islandSceneMapping from '../island/data/sceneMapping';
-import {loadIslandScenery} from '../island';
+import {loadIslandScenery, getEnvInfo} from '../island';
 import {loadIsometricScenery} from '../iso';
 import {loadSceneData} from '../scene';
 import {loadSceneMapData} from '../scene/map';
@@ -83,11 +83,18 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
 
 function loadScene(game, renderer, sceneMap, index, parent, callback) {
     loadSceneData(index, sceneData => {
-        const envInfo = { // TODO remove this later and use proper scenery environment data
-            skyColor: [0.51, 0.71, 0.84],
-            fogDensity: 0.2,
-        };
         const indexInfo = sceneMap[index];
+        let islandName;
+        if (indexInfo.isIsland) {
+            islandName = islandSceneMapping[index].island;
+            if (game.getState().flags.quest[152] && islandName == 'CITABAU') {
+                islandName = 'CITADEL';
+            }
+        }
+        const envInfo = indexInfo.isIsland ? getEnvInfo(islandName) : {
+            skyColor: [0, 0, 0],
+            fogDensity: 0,
+        };
         const loadSteps = {
             actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, game, envInfo, sceneData.ambience), callback) },
             points: (callback) => { async.map(sceneData.points, loadPoint, callback) },
@@ -96,8 +103,6 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
 
         if (!parent) {
             if (indexInfo.isIsland) {
-                let islandName = islandSceneMapping[index].island;
-                //islandName = (game.getState().flags.quest[152] && islandName == 'CITABAU') ? 'CITADEL' : 'CITABAU';
                 loadSteps.scenery = loadIslandScenery.bind(null, islandName, sceneData.ambience);
             } else {
                 loadSteps.scenery = loadIsometricScenery.bind(null, renderer, indexInfo.index);

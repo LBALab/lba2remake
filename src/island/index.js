@@ -22,6 +22,10 @@ each(islandsInfo, island => {
 
 const islands = {};
 
+export function getEnvInfo(name) {
+    return islandProps[name].envInfo;
+}
+
 export function loadIslandScenery(name, ambience, callback) {
     if (name in islands) {
         callback(null, islands[name]);
