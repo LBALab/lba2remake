@@ -83,8 +83,7 @@ export function COMPORTEMENT() {
 }
 
 export function SET_COMPORTEMENT(offset) {
-    this.state.reentryOffset = offset;
-    this.state.continue = false;
+    this.state.nextComportement = offset;
 }
 
 export function SET_COMPORTEMENT_OBJ(actor, offset) {
@@ -92,7 +91,12 @@ export function SET_COMPORTEMENT_OBJ(actor, offset) {
 }
 
 export function END_COMPORTEMENT() {
-    this.state.reentryOffset = this.state.comportementOffset;
+    if (this.state.nextComportement != null) {
+        this.state.reentryOffset = this.state.nextComportement;
+        delete this.state.nextComportement;
+    } else {
+        this.state.reentryOffset = this.state.comportementOffset;
+    }
     this.state.continue = false;
 }
 
