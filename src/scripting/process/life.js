@@ -37,6 +37,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
     if (!cmdState.listener) {
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'block';
+        textBox.style.color = actor.props.textColor;
         textBox.innerText = this.scene.data.texts[id].value;
         cmdState.listener = function() {
             cmdState.ended = true;

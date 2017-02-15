@@ -1,11 +1,13 @@
 import async from 'async';
+import THREE from 'three';
 
 import {loadHqrAsync} from '../hqr';
 
 export function loadSceneData(index, callback) {
     async.auto({
         scene: loadHqrAsync('SCENE.HQR'),
-        text: loadHqrAsync('TEXT.HQR')
+        text: loadHqrAsync('TEXT.HQR'),
+        ress: loadHqrAsync('RESS.HQR')
     }, function(err, files) {
         callback(loadSceneDataSync(files, index));
     });
@@ -30,6 +32,7 @@ function loadSceneDataSync(files, index) {
             unknown2: data.getUint16(4, true),
             isOutsideScene: data.getInt8(6, true) == 1,
             buffer: buffer,
+            palette: new Uint8Array(files.ress.getEntry(0)),
             actors: []
         };
 
@@ -87,7 +90,8 @@ function loadHero(scene, offset) {
             data.getUint16(offset + 2, true) / 0x4000,
             data.getUint16(offset, true) / 0x4000
         ],
-        index: 0
+        index: 0,
+        textColor: getHtmlColor(scene.palette, 12 * 16 + 12)
     };
     offset += 6;
 
@@ -160,7 +164,8 @@ function loadActors(scene, offset) {
         offset += 2;
         actor.extraAmount = data.getUint16(offset, true);
         offset += 2;
-        actor.textColor = data.getUint8(offset++, true);
+        const textColor = data.getUint8(offset++, true);
+        actor.textColor = getHtmlColor(scene.palette, textColor * 16 + 12);
         if (actor.unknownFlags & 0x0004) { 
             actor.unknown0 = data.getUint16(offset, true);
             offset += 2;
@@ -305,4 +310,12 @@ function loadTexts(sceneData, textFile) {
         idx++;
     } while (end < data.byteLength);
     sceneData.texts = texts;
+}
+
+export function getHtmlColor(palette, index) {
+    return '#' + new THREE.Color(
+        palette[index * 3] / 255,
+        palette[index * 3 + 1] / 255,
+        palette[index * 3 + 2] / 255
+    ).getHexString();
 }
