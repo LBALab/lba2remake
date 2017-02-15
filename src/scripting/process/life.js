@@ -81,8 +81,24 @@ export function SET_VAR_CUBE(index, value) {
     this.scene.variables[index] = value;
 }
 
+export function ADD_VAR_CUBE(index, value) {
+    this.scene.variables[index] += value;
+}
+
+export function SUB_VAR_CUBE(index, value) {
+    this.scene.variables[index] -= value;
+}
+
 export function SET_VAR_GAME(index, value) {
     this.game.getState().flags.quest[index] = value;
+}
+
+export function ADD_VAR_GAME(index, value) {
+    this.game.getState().flags.quest[index] += value;
+}
+
+export function SUB_VAR_GAME(index, value) {
+    this.game.getState().flags.quest[index] -= value;
 }
 
 export function KILL_OBJ() {
@@ -398,22 +414,6 @@ export function REPEAT_SAMPLE() {
 }
 
 export function BACKGROUND() {
-
-}
-
-export function ADD_VAR_GAME() {
-
-}
-
-export function SUB_VAR_GAME() {
-
-}
-
-export function ADD_VAR_CUBE() {
-
-}
-
-export function SUB_VAR_CUBE() {
 
 }
 
