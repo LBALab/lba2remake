@@ -279,6 +279,12 @@ function mapArguments(scene, actor, cmd) {
         case 'ANGLE':
             args[0].value = getRotation(args[0].value, 0, 1) - 90;
             break;
+        case 'MESSAGE':
+            args[0].text = scene.data.texts[args[0].value].value;
+            break;
+        case 'MESSAGE_OBJ':
+            args[1].text = scene.data.texts[args[1].value].value;
+            break;
     }
     return args;
 }
