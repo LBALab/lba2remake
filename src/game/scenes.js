@@ -49,6 +49,7 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     delete scene.sideScenes;
                     sideScene.sideScenes[scene.index] = scene;
                     scene = sideScene;
+                    window.scene = scene;
                     loadPosition(hero.physics, scene);
                     initSceneDebug(scene);
                     pCallback();
@@ -59,6 +60,7 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                         hero.physics.position.z = pScene.scenery.props.startPosition[1];
                         renderer.applySceneryProps(pScene.scenery.props);
                         scene = pScene;
+                        window.scene = scene;
                         loadPosition(hero.physics, scene);
                         initSceneDebug(scene);
                         pCallback();

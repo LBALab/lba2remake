@@ -56,6 +56,8 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
         }
     };
 
+    window.game = game;
+
     const _createSceneManager = () => createSceneManager(game, _renderer, _hero, sceneManager => {
         _sceneManager = sceneManager;
         game.loading();
