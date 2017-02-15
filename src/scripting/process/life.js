@@ -77,8 +77,8 @@ export function SET_BEHAVIOUR() {
 
 }
 
-export function SET_VAR_CUBE() {
-
+export function SET_VAR_CUBE(index, value) {
+    this.scene.variables[index] = value;
 }
 
 export function SET_VAR_GAME(index, value) {

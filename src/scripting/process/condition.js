@@ -46,7 +46,7 @@ export function CURRENT_TRACK_OBJ(actor) {
 }
 
 export function VAR_CUBE(index) {
-    return this.game.getState().flags.scene[index];
+    return this.scene.variables[index];
 }
 
 export function CONE_VIEW() {

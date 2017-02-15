@@ -32,7 +32,6 @@ export function createState() {
         chapter: 0,
         flags: {
             quest: createQuestFlags(),
-            scene: createSceneFlags(),
             holomap: createHolomapFlags(),
             inventory: createInventoryFlags()
         },
@@ -55,14 +54,6 @@ function createQuestFlags() {
     quest[159] = 256;
 
     return quest;
-}
-
-function createSceneFlags() {
-    const scene = [];
-    for (let i = 0; i < 256; ++i) {
-        scene[i] = 0;
-    }
-    return scene;
 }
 
 function createHolomapFlags() {

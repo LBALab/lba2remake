@@ -145,6 +145,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 actors: data.actors,
                 points: data.points,
                 zones: data.zones,
+                variables: createSceneVariables(),
                 update: time => {
                     const step = hasStep();
                     each(data.actors, actor => {
@@ -213,5 +214,13 @@ function loadSideScenes(game, renderer, sceneMap, index, parent, callback) {
         });
         callback(null, sideScenesMap);
     });
+}
+
+function createSceneVariables() {
+    const scene = [];
+    for (let i = 0; i < 256; ++i) {
+        scene[i] = 0;
+    }
+    return scene;
 }
 
