@@ -4,7 +4,8 @@ import {loadHqrAsync} from '../hqr';
 
 export function loadSceneData(index, callback) {
     async.auto({
-        scene: loadHqrAsync('SCENE.HQR')
+        scene: loadHqrAsync('SCENE.HQR'),
+        text: loadHqrAsync('TEXT.HQR')
     }, function(err, files) {
         callback(loadSceneDataSync(files, index));
     });
@@ -38,7 +39,9 @@ function loadSceneDataSync(files, index) {
         offset = loadActors(sceneData, offset);
         offset = loadZones(sceneData, offset);
         offset = loadPoints(sceneData, offset);
-                 loadUnknown(sceneData, offset);
+        loadUnknown(sceneData, offset);
+
+        loadTexts(sceneData, files.text);
 
         cachedSceneData[index] = sceneData;
         return sceneData;
@@ -281,4 +284,25 @@ function loadUnknown(scene, offset) {
     }
 
     return offset;
+}
+
+function loadTexts(sceneData, textFile) {
+    const mapData = new Uint16Array(textFile.getEntry(sceneData.textIndex));
+    const data = new DataView(textFile.getEntry(sceneData.textIndex + 1));
+    const texts = {};
+    let start;
+    let end;
+    let idx = 0;
+    do {
+        start = data.getUint16(idx * 2, true);
+        end = data.getUint16(idx * 2 + 2, true);
+        const flags = data.getUint8(start, true);
+        let value = '';
+        for (let i = start + 1; i < end - 1; ++i) {
+            value += String.fromCharCode(data.getInt8(i));
+        }
+        texts[mapData[idx]] = {flags, value};
+        idx++;
+    } while (end < data.byteLength);
+    sceneData.texts = texts;
 }
