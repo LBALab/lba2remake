@@ -12,8 +12,15 @@ varying vec2 vCenter;
 varying vec2 vTile;
 
 void main() {
-    mat4 pmvMatrix = projectionMatrix * modelViewMatrix;
-    gl_Position = pmvMatrix * vec4(position, 1.0);
-    vCenter = ((pmvMatrix * vec4(center, 1.0)).xy * 0.5 + 0.5) * window;
+    gl_Position = vec4(
+        (position.x - position.z) * 48.0 / window.x,
+        -((position.x + position.z) * 24.0 - position.y * 60.0) / window.y,
+        1.0,
+        1.0
+    );
+    vCenter = vec2(
+        ((center.x - center.z) * 48.0) * 0.5 + floor(window.x * 0.5),
+        -((center.x + center.z) * 24.0 - center.y * 60.0) * 0.5 + floor(window.y * 0.5)
+    );
     vTile = tile;
 }
