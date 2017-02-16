@@ -5,20 +5,13 @@ export function PALETTE() {
 
 }
 
-export function BODY(value) {
-    this.actor.props.bodyIndex = value;
+export function BODY_OBJ(actor, bodyIndex)  {
+    actor.props.bodyIndex = bodyIndex;
 }
 
-export function BODY_OBJ(actor, value)  {
-    actor.props.bodyIndex = value;
-}
-
-export function ANIM(value) {
-    this.actor.props.animIndex = value;
-}
-
-export function ANIM_OBJ(actor, value) {
-    actor.props.animIndex = value;
+export function ANIM_OBJ(actor, animIndex) {
+    actor.props.animIndex = animIndex;
+    actor.resetAnimState();
 }
 
 export function SET_CAMERA() {
@@ -259,10 +252,6 @@ export function FULL_POINT() {
 
 }
 
-export function BETA() {
-
-}
-
 export function FADE_TO_PAL() {
 
 }
@@ -422,10 +411,6 @@ export function SET_RAIL() {
 }
 
 export function INVERSE_BETA() {
-
-}
-
-export function NO_BODY() {
 
 }
 

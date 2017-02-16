@@ -1,5 +1,5 @@
 import * as lf from '../process/life';
-import * as mv from '../process/move';
+import * as cm from '../process/common';
 import * as st from '../process/structural';
 import Indent from '../indent';
 
@@ -21,9 +21,9 @@ export const LifeOpcode = [
     { opcode: 0x0E, command: "ONEIF", callback: st.ONEIF, args: ['_Uint16:offset'], condition: true, operator: true, cmdState: true, indent: Indent.ADD},
     { opcode: 0x0F, command: "ELSE", callback: st.ELSE, args: ['_Uint16:offset'], indent: Indent.SUB_ADD},
     { opcode: 0x10, command: "ENDIF", callback: st.ENDIF, indent: Indent.SUB},
-    { opcode: 0x11, command: "BODY", callback: lf.BODY, args: ['Uint8'], indent: Indent.KEEP},
+    { opcode: 0x11, command: "BODY", callback: cm.BODY, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x12, command: "BODY_OBJ", callback: lf.BODY_OBJ, args: ['Uint8:actor', 'Uint8'], indent: Indent.KEEP},
-    { opcode: 0x13, command: "ANIM", callback: lf.ANIM, args: ['Uint16'], indent: Indent.KEEP},
+    { opcode: 0x13, command: "ANIM", callback: cm.ANIM, args: ['Uint16'], indent: Indent.KEEP},
     { opcode: 0x14, command: "ANIM_OBJ", callback: lf.ANIM_OBJ, args: ['Uint8:actor', 'Uint16'], indent: Indent.KEEP},
     { opcode: 0x15, command: "SET_CAMERA", callback: lf.SET_CAMERA, args: ['Uint16'], indent: Indent.KEEP},
     { opcode: 0x16, command: "CAMERA_CENTER", callback: lf.CAMERA_CENTER, args: ['Uint8'], indent: Indent.KEEP},
@@ -62,7 +62,7 @@ export const LifeOpcode = [
     { opcode: 0x37, command: "OR_IF", callback: st.OR_IF, args: ['_Uint16:offset'], precond: true, condition: true, operator: true, indent: Indent.KEEP},
     { opcode: 0x38, command: "INVISIBLE", callback: lf.INVISIBLE, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x39, command: "SHADOW_OBJ", callback: lf.SHADOW_OBJ, args: ['Uint8:actor', 'Uint8'], indent: Indent.KEEP},
-    { opcode: 0x3A, command: "POS_POINT", callback: mv.POS_POINT, args: ['Uint8'], indent: Indent.KEEP},
+    { opcode: 0x3A, command: "POS_POINT", callback: cm.POS_POINT, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x3B, command: "SET_MAGIC_LEVEL", callback: lf.SET_MAGIC_LEVEL, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x3C, command: "SUB_MAGIC_POINT", callback: lf.SUB_MAGIC_POINT, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x3D, command: "SET_LIFE_POINT_OBJ", callback: lf.SET_LIFE_POINT_OBJ, args: ['Uint8:actor', 'Uint8'], indent: Indent.KEEP},
@@ -84,7 +84,7 @@ export const LifeOpcode = [
     { opcode: 0x4D, command: "SET_CHANGE_CUBE", callback: lf.SET_CHANGE_CUBE, args: ['Uint8', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x4E, command: "MESSAGE_ZOE", callback: lf.MESSAGE_ZOE, args: ['Uint16'], indent: Indent.KEEP},
     { opcode: 0x4F, command: "FULL_POINT", callback: lf.FULL_POINT, indent: Indent.KEEP},
-    { opcode: 0x50, command: "BETA", callback: lf.BETA, args: ['Int16'], indent: Indent.KEEP},
+    { opcode: 0x50, command: "BETA", callback: cm.BETA, args: ['Int16'], indent: Indent.KEEP},
     { opcode: 0x51, command: "FADE_TO_PAL", callback: lf.FADE_TO_PAL, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x52, command: "ACTION", callback: lf.ACTION, indent: Indent.KEEP},
     { opcode: 0x53, command: "SET_FRAME", callback: lf.SET_FRAME, args: ['Uint8'], indent: Indent.KEEP},
@@ -139,7 +139,7 @@ export const LifeOpcode = [
     { opcode: 0x84, command: "UNKNOWN(0x84)", callback: st.NOP, indent: Indent.KEEP},
     { opcode: 0x85, command: "SET_RAIL", callback: lf.SET_RAIL, args: ['Uint8', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x86, command: "INVERSE_BETA", callback: lf.INVERSE_BETA, indent: Indent.KEEP},
-    { opcode: 0x87, command: "NO_BODY", callback: lf.NO_BODY, indent: Indent.KEEP},
+    { opcode: 0x87, command: "NO_BODY", callback: cm.NO_BODY, indent: Indent.KEEP},
     { opcode: 0x88, command: "ADD_GOLD_PIECES", callback: lf.ADD_GOLD_PIECES, args: ['Uint16'], indent: Indent.KEEP},
     { opcode: 0x89, command: "STOP_CURRENT_TRACK_OBJ", callback: lf.STOP_CURRENT_TRACK_OBJ, args: ['Uint8:actor'], indent: Indent.KEEP},
     { opcode: 0x8A, command: "RESTORE_LAST_TRACK_OBJ", callback: lf.RESTORE_LAST_TRACK_OBJ, args: ['Uint8:actor'], indent: Indent.KEEP},

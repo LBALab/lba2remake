@@ -1,17 +1,18 @@
 import * as mv from '../process/move';
+import * as cm from '../process/common';
 import * as st from '../process/structural';
 import Indent from '../indent';
 
 export const MoveOpcode = [
     { opcode: 0x00, command: "END", callback: st.END, indent: Indent.ZERO },
     { opcode: 0x01, command: "NOP", callback: st.NOP, indent: Indent.ONE },
-    { opcode: 0x02, command: "BODY", callback: mv.BODY, args: ['Int8'], indent: Indent.ONE },
-    { opcode: 0x03, command: "ANIM", callback: mv.ANIM, args: ['Uint16'], indent: Indent.ONE },
+    { opcode: 0x02, command: "BODY", callback: cm.BODY, args: ['Int8'], indent: Indent.ONE },
+    { opcode: 0x03, command: "ANIM", callback: cm.ANIM, args: ['Uint16'], indent: Indent.ONE },
     { opcode: 0x04, command: "GOTO_POINT", callback: mv.GOTO_POINT, args: ['Uint8'], indent: Indent.ONE },
     { opcode: 0x05, command: "WAIT_ANIM", callback: mv.WAIT_ANIM, indent: Indent.ONE },
     { opcode: 0x06, command: "LOOP", callback: st.NOP, indent: Indent.ONE },
     { opcode: 0x07, command: "ANGLE", callback: mv.ANGLE, args: ['Int16'], indent: Indent.ONE },
-    { opcode: 0x08, command: "POS_POINT", callback: mv.POS_POINT, args: ['Uint8'], indent: Indent.ONE },
+    { opcode: 0x08, command: "POS_POINT", callback: cm.POS_POINT, args: ['Uint8'], indent: Indent.ONE },
     { opcode: 0x09, command: "TRACK", callback: st.TRACK, args: ['Uint8'], indent: Indent.ZERO },
     { opcode: 0x0A, command: "GOTO", callback: st.GOTO, args: ['Uint16:offset'], indent: Indent.ONE },
     { opcode: 0x0B, command: "STOP", callback: st.STOP, indent: Indent.ONE },
@@ -22,8 +23,8 @@ export const MoveOpcode = [
     { opcode: 0x10, command: "SPEED", callback: mv.SPEED, args: ['Uint16'], indent: Indent.ONE },
     { opcode: 0x11, command: "BACKGROUND", callback: mv.BACKGROUND, args: ['Uint8'], indent: Indent.ONE },
     { opcode: 0x12, command: "WAIT_NUM_SECOND", callback: mv.WAIT_NUM_SECOND, args: ['Uint8', 'Uint32'], indent: Indent.ONE },
-    { opcode: 0x13, command: "NO_BODY", callback: mv.NO_BODY, indent: Indent.ONE },
-    { opcode: 0x14, command: "BETA", callback: mv.BETA, args: ['Int16'], indent: Indent.ONE },
+    { opcode: 0x13, command: "NO_BODY", callback: cm.NO_BODY, indent: Indent.ONE },
+    { opcode: 0x14, command: "BETA", callback: cm.BETA, args: ['Int16'], indent: Indent.ONE },
     { opcode: 0x15, command: "OPEN_LEFT", callback: mv.OPEN_LEFT, args: ['Int16'], indent: Indent.ONE },
     { opcode: 0x16, command: "OPEN_RIGHT", callback: mv.OPEN_RIGHT, args: ['Int16'], indent: Indent.ONE },
     { opcode: 0x17, command: "OPEN_UP", callback: mv.OPEN_UP, args: ['Int16'], indent: Indent.ONE },

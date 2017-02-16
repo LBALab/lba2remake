@@ -1,14 +1,5 @@
 import {getDistance} from '../../utils/lba';
 
-export function BODY(bodyIndex) {
-    this.actor.props.bodyIndex = bodyIndex;
-}
-
-export function ANIM(animIndex) {
-    this.actor.props.animIndex = animIndex;
-    this.actor.resetAnimState();
-}
-
 export function GOTO_POINT(pointIndex) {
     const point = this.scene.getPoint(pointIndex);
     const distance = this.actor.goto(point.physics.position);
@@ -32,13 +23,6 @@ export function WAIT_ANIM() {
 
 export function ANGLE(angle) {
     this.actor.setAngle(angle);
-}
-
-export function POS_POINT(pointIndex) {
-    const point = this.scene.getPoint(pointIndex);
-    this.actor.physics.position.copy(point.physics.position);
-    if (this.actor.model)
-        this.actor.model.mesh.position.copy(point.physics.position);
 }
 
 export function GOTO_SYM_POINT() {
@@ -105,14 +89,6 @@ export function WAIT_NUM_SECOND_RND(numSeconds, unknown, time) {
 export function WAIT_NUM_DECIMAL_RND(numDsec, unknown, time) {
     // TODO random seconds
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, time);
-}
-
-export function NO_BODY() {
-    this.actor.visible = false;
-}
-
-export function BETA() {
-    
 }
 
 export function OPEN_LEFT() {
