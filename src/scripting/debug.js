@@ -277,6 +277,7 @@ function mapArguments(scene, actor, cmd) {
             args[0].value = actor.scripts.move.tracksMap[args[0].value];
             break;
         case 'ANGLE':
+        case 'BETA':
             args[0].value = getRotation(args[0].value, 0, 1) - 90;
             break;
         case 'MESSAGE':
