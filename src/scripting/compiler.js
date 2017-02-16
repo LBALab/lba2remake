@@ -72,6 +72,8 @@ function compileValue(script, value, cmdOffset) {
             return script.opMap[value.value];
         case 'actor':
             return script.context.scene.getActor(value.value);
+        case 'point':
+            return script.context.scene.getPoint(value.value);
         default:
             return value.value;
     }

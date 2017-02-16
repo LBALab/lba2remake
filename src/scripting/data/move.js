@@ -12,7 +12,7 @@ export const MoveOpcode = [
     { opcode: 0x05, command: "WAIT_ANIM", callback: mv.WAIT_ANIM, indent: Indent.ONE },
     { opcode: 0x06, command: "LOOP", callback: st.NOP, indent: Indent.ONE },
     { opcode: 0x07, command: "ANGLE", callback: mv.ANGLE, args: ['Int16'], indent: Indent.ONE },
-    { opcode: 0x08, command: "POS_POINT", callback: cm.POS_POINT, args: ['Uint8'], indent: Indent.ONE },
+    { opcode: 0x08, command: "POS_POINT", callback: cm.POS_POINT, args: ['Uint8:point'], indent: Indent.ONE },
     { opcode: 0x09, command: "TRACK", callback: st.TRACK, args: ['Uint8'], indent: Indent.ZERO },
     { opcode: 0x0A, command: "GOTO", callback: st.GOTO, args: ['Uint16:offset'], indent: Indent.ONE },
     { opcode: 0x0B, command: "STOP", callback: st.STOP, indent: Indent.ONE },

@@ -16,8 +16,7 @@ export function NO_BODY() {
     this.actor.visible = false;
 }
 
-export function POS_POINT(pointIndex) {
-    const point = this.scene.getPoint(pointIndex);
+export function POS_POINT(point) {
     this.actor.physics.position.copy(point.physics.position);
     if (this.actor.model)
         this.actor.model.mesh.position.copy(point.physics.position);
