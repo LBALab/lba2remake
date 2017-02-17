@@ -1,10 +1,10 @@
 import THREE from 'three';
 import {IsometricCamera} from './utils/IsometricCamera';
 
-export function getIsometricCamera() {
+export function getIsometricCamera(pixelRatio) {
     const size = new THREE.Vector2(
-        Math.floor(window.innerWidth * 0.5) * 2,
-        Math.floor(window.innerHeight * 0.5) * 2
+        Math.floor(window.innerWidth * 0.5) * 2 * pixelRatio,
+        Math.floor(window.innerHeight * 0.5) * 2 * pixelRatio
     );
     const offset = new THREE.Vector2(3500, 1000);
     const camera = new IsometricCamera(size, offset);
@@ -20,10 +20,10 @@ export function getIsometricCamera() {
     return camera;
 }
 
-export function resizeIsometricCamera(camera) {
+export function resizeIsometricCamera(camera, pixelRatio) {
     camera.size = new THREE.Vector2(
-        Math.floor(window.innerWidth * 0.5) * 2,
-        Math.floor(window.innerHeight * 0.5) * 2
+        Math.floor(window.innerWidth * 0.5) * 2 * pixelRatio,
+        Math.floor(window.innerHeight * 0.5) * 2 * pixelRatio
     );
     camera.updateProjectionMatrix();
 }

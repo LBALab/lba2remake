@@ -29,13 +29,14 @@ const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'], (name,
 
 export function createRenderer(useVR) {
     let pixelRatio = PixelRatio[0];
+    const getPixelRatio = () => pixelRatio.getValue();
     let antialias = false;
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
     const baseRenderer = setupBaseRenderer(pixelRatio);
     const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
     const camera3D = get3DCamera();
-    const cameraIso = getIsometricCamera();
-    const resizer = setupResizer(renderer, camera3D, cameraIso);
+    const cameraIso = getIsometricCamera(pixelRatio.getValue());
+    const resizer = setupResizer(renderer, camera3D, cameraIso, getPixelRatio);
     let smaa = setupSMAA(renderer, pixelRatio);
     const stats = setupStats(useVR);
 
@@ -83,7 +84,7 @@ export function createRenderer(useVR) {
             isoCamera: cameraIso
         },
         getMainCamera: scene => scene.isIsland ? camera3D : cameraIso,
-        pixelRatio: () => pixelRatio.getValue()
+        pixelRatio: getPixelRatio
     };
 }
 
@@ -125,14 +126,14 @@ function setupSMAA(renderer, pixelRatio) {
     }
 }
 
-function setupResizer(renderer, camera3D, cameraIso) {
+function setupResizer(renderer, camera3D, cameraIso, getPixelRatio) {
     function resize() {
         renderer.setSize(
             Math.floor(window.innerWidth * 0.5) * 2,
             Math.floor(window.innerHeight * 0.5) * 2
         );
         resize3DCamera(camera3D);
-        resizeIsometricCamera(cameraIso);
+        resizeIsometricCamera(cameraIso, getPixelRatio());
     }
 
     window.addEventListener('resize', resize);
