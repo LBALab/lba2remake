@@ -2,14 +2,17 @@ import THREE from 'three';
 import {IsometricCamera} from './utils/IsometricCamera';
 
 export function getIsometricCamera() {
-    const size = new THREE.Vector2(window.innerWidth, window.innerHeight);
+    const size = new THREE.Vector2(
+        Math.floor(window.innerWidth * 0.5) * 2,
+        Math.floor(window.innerHeight * 0.5) * 2
+    );
     const offset = new THREE.Vector2(3500, 1000);
     const camera = new IsometricCamera(size, offset);
 
     document.addEventListener('mousemove', event => {
         if (document.pointerLockElement == document.body) {
-            camera.offset.x += event.movementX;
-            camera.offset.y += event.movementY;
+            camera.offset.x = camera.offset.x + event.movementX;
+            camera.offset.y = camera.offset.y - event.movementY;
             camera.updateProjectionMatrix();
         }
     }, false);
@@ -18,7 +21,10 @@ export function getIsometricCamera() {
 }
 
 export function resizeIsometricCamera(camera) {
-    camera.size = new THREE.Vector2(window.innerWidth, window.innerHeight);
+    camera.size = new THREE.Vector2(
+        Math.floor(window.innerWidth * 0.5) * 2,
+        Math.floor(window.innerHeight * 0.5) * 2
+    );
     camera.updateProjectionMatrix();
 }
 

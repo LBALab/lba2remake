@@ -57,13 +57,20 @@ function loadMesh(renderer, grid) {
         uniforms: {
             library: {value: grid.library.texture},
             tileSize: {value: new THREE.Vector2(48 / width, 38 / height)},
-            window: {value: new THREE.Vector2(window.innerWidth * renderer.pixelRatio(), window.innerHeight * renderer.pixelRatio())},
-            pixelSize: {value: 1.0 / renderer.pixelRatio()}
+            halfWindow: {value: new THREE.Vector2(
+                Math.floor(window.innerWidth * renderer.pixelRatio() * 0.5),
+                Math.floor(window.innerHeight * renderer.pixelRatio() * 0.5)
+            )},
+            pixelSize: {value: 1.0 / renderer.pixelRatio()},
+            isoProjectionMatrix: {value: renderer.cameras.isoCamera.isoProjectionMatrix}
         }
     }));
 
     window.addEventListener('resize', () => {
-        mesh.material.uniforms.window.value.set(window.innerWidth * renderer.pixelRatio(), window.innerHeight * renderer.pixelRatio());
+        mesh.material.uniforms.halfWindow.value.set(
+            Math.floor(window.innerWidth * renderer.pixelRatio() * 0.5),
+            Math.floor(window.innerHeight * renderer.pixelRatio() * 0.5)
+        );
     });
     let scale = 1 / 32;
     mesh.scale.set(scale, scale, scale);
