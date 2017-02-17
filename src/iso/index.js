@@ -69,6 +69,7 @@ function loadMesh(renderer, grid) {
     mesh.scale.set(scale, scale, scale);
     mesh.position.set(2, 0, 0);
     mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
+    mesh.frustumCulled = false;
 
     return mesh;
 }
