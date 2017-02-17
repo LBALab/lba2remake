@@ -1,9 +1,10 @@
 precision highp float;
 
-uniform mat4 modelViewMatrix;
+uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 bones[50];
 uniform mat4 rotationMatrix;
+uniform vec2 window;
 
 attribute vec3 position;
 attribute vec3 normal;
@@ -16,8 +17,19 @@ attribute float boneIndex;
 //varying float vColor;
 varying vec2 vUv;
 
+vec4 isoProjection(vec4 basePosition, vec2 scale) {
+    mat4 rotation = mat4(0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+    vec4 pos = modelMatrix * rotation * (basePosition * vec4(vec3(32.0), 1.0));
+    return vec4(
+        (pos.x - pos.z) * 48.0 / scale.x,
+        -((pos.x + pos.z) * 24.0 - pos.y * 60.0) / scale.y,
+        0.5,
+        1.0
+    );
+}
+
 void main() {
-    gl_Position = projectionMatrix * modelViewMatrix * bones[int(boneIndex)] * vec4(position, 1.0);
+    gl_Position = isoProjection(bones[int(boneIndex)] * vec4(position, 1.0), window);
     //vPosition = position;
     //vec4 newNormal = rotationMatrix * bones[int(boneIndex)] * vec4(normal, 1.0);
     //vNormal = newNormal.xyz;

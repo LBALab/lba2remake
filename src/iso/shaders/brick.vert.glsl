@@ -1,7 +1,6 @@
 precision highp float;
 
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
+uniform mat4 modelMatrix;
 uniform vec2 window;
 
 attribute vec3 position;
@@ -11,16 +10,19 @@ attribute vec2 tile;
 varying vec2 vCenter;
 varying vec2 vTile;
 
-void main() {
-    gl_Position = vec4(
-        (position.x - position.z) * 48.0 / window.x,
-        -((position.x + position.z) * 24.0 - position.y * 60.0) / window.y,
+vec4 isoProjection(vec4 basePosition, vec2 scale) {
+    mat4 rotation = mat4(0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+    vec4 pos = modelMatrix * rotation * (basePosition * vec4(vec3(32.0), 1.0));
+    return vec4(
+        (pos.x - pos.z) * 48.0 / scale.x,
+        -((pos.x + pos.z) * 24.0 - pos.y * 60.0) / scale.y,
         1.0,
         1.0
     );
-    vCenter = vec2(
-        ((center.x - center.z) * 48.0) * 0.5 + floor(window.x * 0.5),
-        -((center.x + center.z) * 24.0 - center.y * 60.0) * 0.5 + floor(window.y * 0.5)
-    );
+}
+
+void main() {
+    gl_Position = isoProjection(vec4(position, 1.0), window);
+    vCenter = isoProjection(vec4(center, 1.0), vec2(2.0)).xy + floor(window * 0.5);
     vTile = tile;
 }

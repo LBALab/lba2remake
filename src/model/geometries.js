@@ -27,6 +27,7 @@ function prepareGeometries(texture, matrixBones, matrixRotation, palette, envInf
                 vertexShader: VERT_COLORED,
                 fragmentShader: FRAG_COLORED,
                 uniforms: {
+                    window: {value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
@@ -50,6 +51,7 @@ function prepareGeometries(texture, matrixBones, matrixRotation, palette, envInf
                 vertexShader: VERT_TEXTURED,
                 fragmentShader: FRAG_TEXTURED,
                 uniforms: {
+                    window: {value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     texture: {value: texture},
