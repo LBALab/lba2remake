@@ -91,7 +91,9 @@ function loadHero(scene, offset) {
             data.getUint16(offset, true) / 0x4000
         ],
         index: 0,
-        textColor: getHtmlColor(scene.palette, 12 * 16 + 12)
+        textColor: getHtmlColor(scene.palette, 12 * 16 + 12),
+        angle: 0,
+        speed: 5
     };
     offset += 6;
 
