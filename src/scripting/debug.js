@@ -185,7 +185,7 @@ function updateLabels(scene, renderer, type) {
         if (!label)
             return;
 
-        if (!obj.threeObject) {
+        if (!obj.threeObject || obj.threeObject.visible == false) {
             label.style.display = 'none';
             return;
         }

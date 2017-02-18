@@ -9,13 +9,9 @@ export function compileScripts(game, scene, actor) {
 
 function compileScript(type, game, scene, actor) {
     const script = actor.scripts[type];
-    const state = {
-        offset: 0,
-        reentryOffset: 0,
-        continue: true
-    };
+    const state = { reentryOffset: 0 };
     if (type == 'move') {
-        state.stopped = -1;
+        state.stopped = true;
         state.trackIndex = -1;
     }
     script.context = {game, scene, actor, state, type};

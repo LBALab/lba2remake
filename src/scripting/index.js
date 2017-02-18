@@ -2,6 +2,7 @@ import {each, isEmpty} from 'lodash';
 import {parseScript} from './parser';
 import {compileScripts} from './compiler';
 import {setCursorPosition, isPaused} from './debug';
+import {SUICIDE} from './process/life';
 
 export function loadScripts(game, scene) {
     each(scene.actors, actor => {
@@ -57,4 +58,20 @@ function runScript(script, time, step) {
             break;
         }
     }
+}
+
+export function killActor(actor) {
+    SUICIDE.call(actor.scripts.life.context);
+}
+
+export function reviveActor(actor) {
+    if (actor.threeObject) {
+        actor.threeObject.visible = true;
+    }
+    actor.scripts.life.context.state.terminated = false;
+    actor.scripts.life.context.state.reentryOffset = 0;
+    actor.scripts.move.context.state.terminated = false;
+    actor.scripts.move.context.state.reentryOffset = 0;
+    actor.scripts.move.context.state.stopped = true;
+    actor.scripts.move.context.state.trackIndex = -1;
 }

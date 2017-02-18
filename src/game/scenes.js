@@ -18,7 +18,7 @@ import {loadPoint} from './points';
 import {loadZone} from './zones';
 import {loadPosition} from './hero';
 import {getQueryParams} from '../utils';
-import {loadScripts} from '../scripting';
+import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initSceneDebug, resetSceneDebug, hasStep, endStep} from '../scripting/debug';
 
 export function createSceneManager(game, renderer, hero, callback: Function) {
@@ -46,6 +46,7 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
 
                 if (scene && scene.sideScenes && index in scene.sideScenes) {
                     resetSceneDebug(scene);
+                    killActor(scene.getActor(0));
                     const sideScene = scene.sideScenes[index];
                     sideScene.sideScenes = scene.sideScenes;
                     delete sideScene.sideScenes[index];
@@ -55,6 +56,8 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     window.scene = scene;
                     loadPosition(hero.physics, scene);
                     initSceneDebug(scene);
+                    // Awake twinsen
+                    reviveActor(scene.getActor(0));
                     pCallback();
                 } else {
                     resetSceneDebug(scene);
@@ -167,6 +170,10 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 },
             };
             loadScripts(game, scene);
+            // Kill twinsen if side scene
+            if (parent) {
+                killActor(scene.getActor(0));
+            }
             callback(null, scene);
         });
     });
