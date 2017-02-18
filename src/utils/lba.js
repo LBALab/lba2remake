@@ -1,3 +1,4 @@
+import THREE from 'three';
 
 export function getRotation(nextValue, currentValue, interpolation) {
     let angleDif = nextValue - currentValue;
@@ -59,10 +60,13 @@ export function angleTo(v1, v2) {
     const xdiff = v2.x - v1.x;
     const zdiff = v2.z - v1.z;
 
-    let angle = Math.atan2(xdiff, zdiff);
+    return Math.atan2(xdiff, zdiff);
+}
 
-    if (angle < 0)
-        angle += 2 * Math.PI;
+export function normalizeAngle(angle) {
+    return Math.atan2(Math.sin(angle), Math.cos(angle));
+}
 
-    return angle;
+export function angleToRad(angle) {
+    return normalizeAngle(THREE.Math.degToRad(getRotation(angle, 0, 1) - 90));
 }
