@@ -6,7 +6,7 @@ export function getIsometricCamera(pixelRatio) {
         Math.floor(window.innerWidth * 0.5) * 2 * pixelRatio,
         Math.floor(window.innerHeight * 0.5) * 2 * pixelRatio
     );
-    const offset = new THREE.Vector2(3500, 1000);
+    const offset = new THREE.Vector2(3500, 1001);
     const camera = new IsometricCamera(size, offset);
 
     document.addEventListener('mousemove', event => {
@@ -21,7 +21,7 @@ export function getIsometricCamera(pixelRatio) {
 }
 
 export function resizeIsometricCamera(camera, pixelRatio) {
-    camera.size = new THREE.Vector2(
+    camera.size.set(
         Math.floor(window.innerWidth * 0.5) * 2 * pixelRatio,
         Math.floor(window.innerHeight * 0.5) * 2 * pixelRatio
     );
