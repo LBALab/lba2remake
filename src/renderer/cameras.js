@@ -1,56 +1,30 @@
 import THREE from 'three';
+import {IsometricCamera} from './utils/IsometricCamera';
 
-const v = 1086;
-
-export function getIsometricCamera() {
-    const halfWidth = Math.floor(window.innerWidth / 2) / v;
-    const halfHeight = Math.floor(window.innerHeight / 2) / v;
-    const camera = new THREE.OrthographicCamera(-halfWidth, halfWidth, halfHeight, -halfHeight, 0.1, 20); // 1m = 0.0625 units
-
-    let y = 8.145;
-
-    const target = new THREE.Vector3(1.94875, 0, 0.27);
-
-    function updatePosition() {
-        camera.position.copy(target);
-        camera.position.add(new THREE.Vector3(-10, y, 10));
-        camera.lookAt(target);
-    }
-
-    updatePosition();
-
-    window.addEventListener('keydown', event => {
-        if (event.code == 'NumpadAdd') {
-            y += 0.001;
-            console.log(y);
-            updatePosition();
-        } else if (event.code == 'NumpadSubtract') {
-            y -= 0.001;
-            console.log(y);
-            updatePosition();
-        }
-    }, false);
+export function getIsometricCamera(pixelRatio) {
+    const size = new THREE.Vector2(
+        Math.floor(window.innerWidth * 0.5) * 2 * pixelRatio,
+        Math.floor(window.innerHeight * 0.5) * 2 * pixelRatio
+    );
+    const offset = new THREE.Vector2(3500, 1001);
+    const camera = new IsometricCamera(size, offset);
 
     document.addEventListener('mousemove', event => {
         if (document.pointerLockElement == document.body) {
-            target.x += event.movementX * 0.0005;
-            target.z += event.movementX * 0.0005;
-            target.x -= event.movementY * 0.0005;
-            target.z += event.movementY * 0.0005;
-            updatePosition();
+            camera.offset.x = camera.offset.x + event.movementX;
+            camera.offset.y = camera.offset.y - event.movementY;
+            camera.updateProjectionMatrix();
         }
     }, false);
 
     return camera;
 }
 
-export function resizeIsometricCamera(camera) {
-    const halfWidth = Math.floor(window.innerWidth / 2) / v;
-    const halfHeight = Math.floor(window.innerHeight / 2) / v;
-    camera.left = -halfWidth;
-    camera.right = halfWidth;
-    camera.top = halfHeight;
-    camera.bottom = -halfHeight;
+export function resizeIsometricCamera(camera, pixelRatio) {
+    camera.size.set(
+        Math.floor(window.innerWidth * 0.5) * 2 * pixelRatio,
+        Math.floor(window.innerHeight * 0.5) * 2 * pixelRatio
+    );
     camera.updateProjectionMatrix();
 }
 

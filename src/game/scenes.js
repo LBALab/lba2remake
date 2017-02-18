@@ -36,6 +36,9 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                 if (scene && index == scene.index)
                     return;
 
+                const textBox = document.getElementById('smallText');
+                textBox.style.display = 'none';
+
                 const hash = window.location.hash;
                 if (hash.match(/scene\=\d+/)) {
                     window.location.hash = hash.replace(/scene\=\d+/, `scene=${index}`);

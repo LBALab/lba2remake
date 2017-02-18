@@ -8,7 +8,9 @@ varying vec2 vCenter;
 varying vec2 vTile;
 
 void main() {
-    vec2 offset = floor(vCenter - gl_FragCoord.xy) * pixelSize;
-    vec2 nOffset = clamp(offset / vec2(48.0, 38.0) + 0.5, vec2(0.0), vec2(1.0));
+    vec2 offset = vCenter - gl_FragCoord.xy;
+    vec2 nOffset = offset / vec2(48.0, 38.0) + 0.5;
     gl_FragColor = vec4(texture2D(library, vTile + nOffset * tileSize));
+    //gl_FragColor.rgb = mix(vec3(1.0), gl_FragColor.rgb, gl_FragColor.a);
+    //gl_FragColor.a = 1.0;
 }
