@@ -12,9 +12,7 @@ window.onload = function() {
     const game = createGame(params, isMobile, (sceneManager) => {
         window.addEventListener('hashchange', () => {
             const newParams = getQueryParams();
-            if (newParams.scene == params.scene) {
-                window.location.reload();
-            } else if ('scene' in newParams) {
+            if ('scene' in newParams) {
                 sceneManager.goto(parseInt(newParams.scene));
             }
         }, false);
