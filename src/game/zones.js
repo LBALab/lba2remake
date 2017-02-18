@@ -44,8 +44,30 @@ export function loadZone(props, callback) {
                                             props.box.tZ - props.box.bZ);
 
     const edgesGeometry = new THREE.EdgesGeometry(geometry);
-    const material = new THREE.LineBasicMaterial({
-        color: zone.color
+    const material = new THREE.RawShaderMaterial({
+        vertexShader: `
+            precision highp float;
+        
+            uniform mat4 projectionMatrix;
+            uniform mat4 modelViewMatrix;
+            
+            attribute vec3 position;
+            
+            void main() {
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                gl_Position.z = 0.0;
+            }`,
+        fragmentShader: `
+            precision highp float;
+            
+            uniform vec3 color;
+            
+            void main() {
+                gl_FragColor = vec4(color, 1.0);
+            }`,
+        uniforms: {
+            color: {value: zone.color}
+        }
     });
     const wireframe = new THREE.LineSegments(edgesGeometry, material);
 
