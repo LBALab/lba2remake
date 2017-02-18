@@ -8,7 +8,7 @@ export function mainGameLoop(game, clock, clockGame, renderer, scene, hero, cont
         elapsed: clock.getElapsedTime()
     };
     const timeGame = {
-        delta: clockGame.getDelta(),
+        delta: Math.min(clockGame.getDelta(), 0.05),
         elapsed: clockGame.getElapsedTime()
     };
 
