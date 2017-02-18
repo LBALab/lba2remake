@@ -101,6 +101,8 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
         },
         stop: function() {
             this.isWalking = false;
+            this.isTurning = false;
+            this.physics.temp.destAngle = this.physics.temp.angle;
             delete this.physics.temp.destination;
         },
         updateAnimStep: function(time) {
