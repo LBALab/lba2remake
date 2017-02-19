@@ -5,7 +5,13 @@ export function processCameraMovement(controlsState, cameras, scene, time) {
         if (scene.isIsland) {
             processFree3DMovement(controlsState, cameras.camera3D, scene, time);
         } else {
-            processFreeIsoMovement(controlsState, cameras.isoCamera, scene, time);
+            processFreeIsoMovement(controlsState, cameras.isoCamera, time);
+        }
+    } else {
+        if (scene.isIsland) {
+            processFollow3DMovement();
+        } else {
+            processFollowIsoMovement();
         }
     }
 }
@@ -13,6 +19,10 @@ export function processCameraMovement(controlsState, cameras, scene, time) {
 const orientedSpeed = new THREE.Vector3();
 const euler = new THREE.Euler();
 const q = new THREE.Quaternion();
+
+function processFollow3DMovement(controlsState, camera, scene, time) {
+
+}
 
 function processFree3DMovement(controlsState, camera, scene, time) {
     const groundHeight = scene.scenery.physics.getGroundHeight(camera.position.x, camera.position.z);
@@ -37,7 +47,11 @@ function processFree3DMovement(controlsState, camera, scene, time) {
     camera.quaternion.multiply(controlsState.cameraHeadOrientation);
 }
 
-function processFreeIsoMovement(controlsState, camera, scene, time) {
+function processFollowIsoMovement(controlsState, camera, scene, time) {
+
+}
+
+function processFreeIsoMovement(controlsState, camera, time) {
     camera.offset.add(new THREE.Vector2(
         controlsState.cameraSpeed.x * time.delta * 500,
         -controlsState.cameraSpeed.z * time.delta * 500
