@@ -16,9 +16,8 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     let _sceneManager = null;
     let _isPaused = false;
 
-    const _clock = new THREE.Clock();
-    const _clockGame = new THREE.Clock(false);
-    _clockGame.start();
+    const _clock = new THREE.Clock(false);
+    _clock.start();
 
     const _state = createState();
 
@@ -26,6 +25,12 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     const _hero = createHero(_state.config.hero);
 
     const game = {
+        controlsState: {
+            heroSpeed: 0,
+            heroRotationSpeed: 0,
+            cameraSpeed: new THREE.Vector3(),
+            freeCamera: false
+        },
         loading: () => {
             _isPaused = true;
             console.log("Loading...");
@@ -37,18 +42,16 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
 
         isPause: _isPaused,
 
-        getRenderer: () => _renderer,
-
         getSceneManager: () => _sceneManager,
         getState: () => _state,
 
         pause: () => {
             _isPaused = !_isPaused;
             if(_isPaused) {
-                _clockGame.stop();
+                _clock.stop();
                 console.log("Pause");
             } else {
-                _clockGame.start();
+                _clock.start();
             }
         },
         run: () => {
@@ -67,7 +70,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             makeGamepadControls(_hero.physics)
         ] : [
             makeFirstPersonMouseControls(_renderer.domElement, _hero.physics),
-            makeKeyboardControls(_hero.physics, game),
+            makeKeyboardControls(game),
             makeGamepadControls(_hero.physics)
         ];
 
@@ -75,7 +78,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
         sceneManager.goto(parseInt(params.scene) || 0, game.loaded);
 
         function processAnimationFrame() {
-            mainGameLoop(game, _clock, _clockGame, _renderer, sceneManager.getScene(), _hero, controls);
+            mainGameLoop(game, _clock, _renderer, sceneManager.getScene(), controls);
             requestAnimationFrame(processAnimationFrame);
         }
 

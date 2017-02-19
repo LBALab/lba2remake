@@ -56,16 +56,19 @@ export function switchMovementMode(heroPhysics: HeroPhysics) {
     }
 }
 
-export function savePosition(heroPhysics: HeroPhysics, scene: any) {
+export function savePosition(game: any) {
+    /*
     localStorage.setItem('hero_position_' + scene.index, JSON.stringify({
         position: heroPhysics.position.toArray(),
         orientation: heroPhysics.orientation.toArray(),
         headOrientation: heroPhysics.headOrientation.toArray(),
         movement: heroPhysics.config.movement
     }));
+    */
 }
 
-export function loadPosition(heroPhysics: HeroPhysics, scene: any) {
+export function loadPosition(game: any) {
+    /*
     try {
         const item = localStorage.getItem('hero_position_' + scene.index);
         if (typeof item == 'string') {
@@ -77,4 +80,5 @@ export function loadPosition(heroPhysics: HeroPhysics, scene: any) {
         }
     }
     catch (e) {}
+    */
 }

@@ -2,7 +2,9 @@ import THREE from 'three';
 import {map, each} from 'lodash';
 import {Movement, Target} from './hero';
 
-export function processPhysicsFrame(time, scene, cameras, heroPhysics) {
+export function processPhysicsFrame(game, renderer, scene, time) {
+    processHeroMovement(game.controlsState, scene, time);
+    /*
     switch (heroPhysics.config.movement) {
         case Movement.NORMAL:
             processNormalMovement(time, scene, heroPhysics);
@@ -19,9 +21,29 @@ export function processPhysicsFrame(time, scene, cameras, heroPhysics) {
                 break;
         }
     });
+    */
 }
 
 const orientedSpeed = new THREE.Vector3();
+const euler = new THREE.Euler();
+const q = new THREE.Quaternion();
+
+function processHeroMovement(controlsState, scene, time) {
+    const actor = scene.getActor(0);
+    if (controlsState.heroRotationSpeed != 0) {
+        euler.setFromQuaternion(actor.physics.orientation, 'YXZ');
+        euler.y += controlsState.heroRotationSpeed * time.delta * 1.2;
+        actor.physics.orientation.setFromEuler(euler);
+    }
+    if (controlsState.heroSpeed != 0) {
+        orientedSpeed.set(0, 0, controlsState.heroSpeed * 0.05);
+        orientedSpeed.applyQuaternion(actor.physics.orientation);
+        orientedSpeed.multiplyScalar(time.delta);
+        actor.physics.position.add(orientedSpeed);
+        if (scene.scenery.getGroundHeight)
+            actor.physics.position.y = scene.scenery.getGroundHeight(actor.physics.position.x, actor.physics.position.z);
+    }
+}
 
 function processNormalMovement(time, scene, heroPhysics) {
     orientedSpeed.copy(heroPhysics.speed);
@@ -33,7 +55,7 @@ function processNormalMovement(time, scene, heroPhysics) {
     heroPhysics.position.y = scene.getGroundHeight(heroPhysics.position.x, heroPhysics.position.z) + 0.08;
 }
 
-const euler = new THREE.Euler();
+
 
 function processFlyMovement(time, scene, heroPhysics) {
     const groundHeight = scene.getGroundHeight(heroPhysics.position.x, heroPhysics.position.z);
@@ -51,8 +73,6 @@ function processFlyMovement(time, scene, heroPhysics) {
     heroPhysics.position.add(orientedSpeed);
     heroPhysics.position.y = Math.max(groundHeight + 0.08, heroPhysics.position.y);
 }
-
-const q = new THREE.Quaternion();
 
 function onlyY(src) {
     euler.setFromQuaternion(src, 'YXZ');
