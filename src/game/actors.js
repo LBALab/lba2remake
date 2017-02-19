@@ -43,6 +43,11 @@ export const ActorStaticFlag = {
     // TODO
 };
 
+export const DirMode = {
+    NO_MOVE: 0,
+    MANUAL: 1
+};
+
 // TODO: move section offset to container THREE.Object3D
 export function loadActor(game: any, envInfo: any, ambience: any, props: ActorProps, callback: Function) {
     const pos = props.pos;

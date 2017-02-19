@@ -1,5 +1,4 @@
-import {ActorStaticFlags} from '../../game/actors';
-import {DirMode} from '../../game/state';
+import {ActorStaticFlags, DirMode} from '../../game/actors';
 import {setStaticFlag} from '../../utils/lba';
 
 export function PALETTE() {
@@ -59,7 +58,7 @@ export function CAN_FALL() {
 }
 
 export function SET_DIRMODE(dirMode) {
-    game.getState().hero.dirMode = dirMode;
+    this.actor.props.dirMode = dirMode;
     if (dirMode == DirMode.MANUAL) {
         this.actor.isTurning = false;
     }

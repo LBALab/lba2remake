@@ -9,25 +9,28 @@ export function processCameraMovement(controlsState, cameras, scene, time) {
         }
     } else {
         if (scene.isIsland) {
-            processFollow3DMovement();
+            processFollow3DMovement(controlsState, cameras.camera3D, scene, time);
         } else {
-            processFollowIsoMovement();
+            processFollowIsoMovement(controlsState, cameras.camera3D, scene, time);
         }
     }
 }
 
-const orientedSpeed = new THREE.Vector3();
-const euler = new THREE.Euler();
-const q = new THREE.Quaternion();
+
+
 
 function processFollow3DMovement(controlsState, camera, scene, time) {
-
+    const hero = scene.getActor(0);
+    camera.position.copy(hero.physics.position);
+    camera.position.add(new THREE.Vector3(0.1, 0.1, 0));
+    camera.lookAt(hero.physics.position);
 }
 
 function processFree3DMovement(controlsState, camera, scene, time) {
     const groundHeight = scene.scenery.physics.getGroundHeight(camera.position.x, camera.position.z);
     const altitude = Math.max(0.0, Math.min(1.0, (camera.position.y - groundHeight) * 0.7));
 
+    const euler = new THREE.Euler();
     euler.setFromQuaternion(controlsState.cameraHeadOrientation, 'YXZ');
     const speed = new THREE.Vector3().set(
         controlsState.cameraSpeed.x * 0.3,
@@ -35,13 +38,12 @@ function processFree3DMovement(controlsState, camera, scene, time) {
         controlsState.cameraSpeed.z * 0.5
     );
 
-    orientedSpeed.copy(speed);
-    orientedSpeed.multiplyScalar((altitude * altitude) * 3.0 + 1.0);
-    orientedSpeed.applyQuaternion(controlsState.cameraOrientation);
-    orientedSpeed.applyQuaternion(onlyY(controlsState.cameraHeadOrientation));
-    orientedSpeed.multiplyScalar(time.delta);
+    speed.multiplyScalar((altitude * altitude) * 3.0 + 1.0);
+    speed.applyQuaternion(controlsState.cameraOrientation);
+    speed.applyQuaternion(onlyY(controlsState.cameraHeadOrientation));
+    speed.multiplyScalar(time.delta);
 
-    camera.position.add(orientedSpeed);
+    camera.position.add(speed);
     camera.position.y = Math.max(groundHeight + 0.08, camera.position.y);
     camera.quaternion.copy(controlsState.cameraOrientation);
     camera.quaternion.multiply(controlsState.cameraHeadOrientation);
@@ -60,8 +62,9 @@ function processFreeIsoMovement(controlsState, camera, time) {
 }
 
 function onlyY(src) {
+    const euler = new THREE.Euler();
     euler.setFromQuaternion(src, 'YXZ');
     euler.x = 0;
     euler.z = 0;
-    return q.setFromEuler(euler);
+    return new THREE.Quaternion().setFromEuler(euler);
 }

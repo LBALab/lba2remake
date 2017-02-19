@@ -1,16 +1,14 @@
 import THREE from 'three';
-import {DirMode} from './state';
+import {DirMode} from './actors';
 
 export function processPhysicsFrame(game, scene, time) {
-    if (game.getState().hero.dirMode == DirMode.MANUAL) {
-        processHeroMovement(game.controlsState, scene, time);
-    }
+    const hero = scene.getActor(0);
+    processActorMovement(hero, game.controlsState, time);
 }
 
-const euler = new THREE.Euler();
-
-function processHeroMovement(controlsState, scene, time) {
-    const actor = scene.getActor(0);
+function processActorMovement(actor, controlsState, time) {
+    if (actor.props.dirMode != DirMode.MANUAL)
+        return;
     let animIndex = actor.props.animIndex;
     if (controlsState.heroSpeed != 0) {
         actor.isWalking = true;
@@ -20,6 +18,7 @@ function processHeroMovement(controlsState, scene, time) {
         animIndex = 0;
     }
     if (controlsState.heroRotationSpeed != 0) {
+        const euler = new THREE.Euler();
         euler.setFromQuaternion(actor.physics.orientation, 'YXZ');
         euler.y += controlsState.heroRotationSpeed * time.delta * 1.2;
         actor.physics.temp.angle = euler.y;

@@ -1,5 +1,6 @@
 import async from 'async';
 import THREE from 'three';
+import {DirMode} from '../game/actors';
 
 import {loadHqrAsync} from '../hqr';
 
@@ -93,7 +94,8 @@ function loadHero(scene, offset) {
         index: 0,
         textColor: getHtmlColor(scene.palette, 12 * 16 + 12),
         angle: 0,
-        speed: 5
+        speed: 5,
+        dirMode: DirMode.MANUAL
     };
     offset += 6;
 
@@ -125,7 +127,8 @@ function loadActors(scene, offset) {
     for (let i = 1; i < numActors; ++i) {
         let actor = {
             sceneIndex: scene.index,
-            index: i
+            index: i,
+            dirMode: DirMode.NO_MOVE
         };
 
         actor.staticFlags = data.getUint16(offset, true);
