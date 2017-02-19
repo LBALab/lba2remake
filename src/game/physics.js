@@ -22,7 +22,7 @@ function processHeroMovement(controlsState, scene, time) {
         orientedSpeed.applyQuaternion(actor.physics.orientation);
         orientedSpeed.multiplyScalar(time.delta);
         actor.physics.position.add(orientedSpeed);
-        actor.physics.position.y = scene.scenery.physics.getGroundHeight(actor.physics.position.x, actor.physics.position.z);
+        //actor.physics.position.y = scene.scenery.physics.getGroundHeight(actor.physics.position.x, actor.physics.position.z);
     }
 }
 
