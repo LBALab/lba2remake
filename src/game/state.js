@@ -1,5 +1,10 @@
 // @flow
 
+export const DirMode = {
+    NO_MOVE: 0,
+    MANUAL: 1
+};
+
 export function createState() {
     return {
         config: {
@@ -8,6 +13,7 @@ export function createState() {
             displayText: true
         },
         hero: {
+            dirMode: DirMode.MANUAL,
             life: 50,
             money: 0,
             magic: 0,

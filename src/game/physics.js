@@ -1,7 +1,10 @@
 import THREE from 'three';
+import {DirMode} from './state';
 
 export function processPhysicsFrame(game, scene, time) {
-    processHeroMovement(game.controlsState, scene, time);
+    if (game.getState().hero.dirMode == DirMode.MANUAL) {
+        processHeroMovement(game.controlsState, scene, time);
+    }
 }
 
 const euler = new THREE.Euler();
@@ -29,7 +32,6 @@ function processHeroMovement(controlsState, scene, time) {
         actor.props.animIndex = animIndex;
         actor.resetAnimState();
     }
-
 }
 
 

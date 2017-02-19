@@ -57,8 +57,8 @@ export function CAN_FALL() {
 
 }
 
-export function SET_DIRMODE(state, dirmode) {
-
+export function SET_DIRMODE(dirMode) {
+    game.getState().hero.dirMode = dirMode;
 }
 
 export function SET_DIRMODE_OBJ() {
