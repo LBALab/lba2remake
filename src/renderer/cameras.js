@@ -7,17 +7,7 @@ export function getIsometricCamera(pixelRatio) {
         Math.floor(window.innerHeight * 0.5) * 2 * pixelRatio
     );
     const offset = new THREE.Vector2(3500, 1001);
-    const camera = new IsometricCamera(size, offset);
-
-    document.addEventListener('mousemove', event => {
-        if (document.pointerLockElement == document.body) {
-            camera.offset.x = camera.offset.x + event.movementX;
-            camera.offset.y = camera.offset.y - event.movementY;
-            camera.updateProjectionMatrix();
-        }
-    }, false);
-
-    return camera;
+    return new IsometricCamera(size, offset);
 }
 
 export function resizeIsometricCamera(camera, pixelRatio) {
