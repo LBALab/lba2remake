@@ -38,13 +38,16 @@ function buttonPressedHandler(game: any, {detail: {name, isPressed}}) {
                 rotateArroundY(game.controlsState.cameraOrientation, -PI_4);
                 break;
             case 'buttonB':
-                //GameEvents.scene.nextIsland();
+                game.loading();
+                game.getSceneManager().next(game.loaded);
                 break;
             case 'buttonX':
-                //GameEvents.scene.previousIsland();
+                game.loading();
+                game.getSceneManager().previous(game.loaded);
                 break;
             case 'buttonY':
-                //switchMovementMode(heroPhysics);
+                game.controlsState.freeCamera = !game.controlsState.freeCamera;
+                console.log('Free camera: ', game.controlsState.freeCamera);
                 break;
             case 'leftTrigger':
                 switchStats();
