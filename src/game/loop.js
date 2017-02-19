@@ -1,5 +1,6 @@
 import {each} from 'lodash';
 import {processPhysicsFrame} from './physics';
+import {processCameraMovement} from '../cameras';
 import {updateDebugger} from '../scripting/debug';
 
 export function mainGameLoop(game, clock, renderer, scene, controls) {
@@ -16,7 +17,8 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
             scene.update(time);
             each(scene.sideScenes, scene => { scene.update(time); });
             if (scene.scenery) {
-                processPhysicsFrame(game, renderer, scene, time);
+                processPhysicsFrame(game, scene, time);
+                processCameraMovement(game.controlsState, renderer.cameras, scene, time);
                 scene.scenery.update(time);
             }
             updateDebugger(scene, renderer);
