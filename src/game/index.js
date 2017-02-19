@@ -9,8 +9,7 @@ import {makeGamepadControls} from '../controls/gamepad';
 
 import {mainGameLoop} from './loop';
 import {createSceneManager} from './scenes';
-import {createHero} from './hero';
-import {createState} from './state'
+import {createState} from './state';
 
 export function createGame(params: Object, isMobile: boolean, callback : Function) {
     let _sceneManager = null;
@@ -22,7 +21,6 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     const _state = createState();
 
     const _renderer = createRenderer(isMobile);
-    const _hero = createHero(_state.config.hero);
 
     const game = {
         controlsState: {
@@ -63,17 +61,17 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
 
     window.game = game;
 
-    const _createSceneManager = () => createSceneManager(game, _renderer, _hero, sceneManager => {
+    const _createSceneManager = () => createSceneManager(game, _renderer, sceneManager => {
         _sceneManager = sceneManager;
         game.loading();
 
         const controls = isMobile ? [
-            makeGyroscopeControls(_hero.physics),
-            makeGamepadControls(_hero.physics)
+            makeGyroscopeControls(game),
+            makeGamepadControls(game)
         ] : [
             makeFirstPersonMouseControls(_renderer.domElement, game),
             makeKeyboardControls(game),
-            makeGamepadControls(_hero.physics)
+            makeGamepadControls(game)
         ];
 
         document.getElementById('main').appendChild(_renderer.domElement);

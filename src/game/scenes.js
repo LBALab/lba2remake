@@ -21,7 +21,7 @@ import {getQueryParams} from '../utils';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initSceneDebug, resetSceneDebug, hasStep, endStep} from '../scripting/debug';
 
-export function createSceneManager(game, renderer, hero, callback: Function) {
+export function createSceneManager(game, renderer, callback: Function) {
     let scene = null;
 
     loadSceneMapData(sceneMap => {
@@ -54,20 +54,15 @@ export function createSceneManager(game, renderer, hero, callback: Function) {
                     sideScene.sideScenes[scene.index] = scene;
                     scene = sideScene;
                     window.scene = scene;
-                    loadPosition(hero.physics, scene);
                     initSceneDebug(scene);
-                    // Awake twinsen
-                    reviveActor(scene.getActor(0));
+                    reviveActor(scene.getActor(0)); // Awake twinsen
                     pCallback();
                 } else {
                     resetSceneDebug(scene);
                     loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
-                        hero.physics.position.x = pScene.scenery.props.startPosition[0];
-                        hero.physics.position.z = pScene.scenery.props.startPosition[1];
                         renderer.applySceneryProps(pScene.scenery.props);
                         scene = pScene;
                         window.scene = scene;
-                        loadPosition(hero.physics, scene);
                         initSceneDebug(scene);
                         pCallback();
                     });

@@ -1,7 +1,6 @@
 // @flow
 
 import THREE from 'three';
-import type {HeroPhysics} from '../game/hero';
 
 // Move pointerLock mechanics out of this
 export function makeFirstPersonMouseControls(domElement: HTMLElement, game: any) {

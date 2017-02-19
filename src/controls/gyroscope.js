@@ -1,9 +1,8 @@
 // @flow
 
 import THREE from 'three';
-import type {HeroPhysics} from '../game/hero';
 
-export function makeGyroscopeControls(heroPhysics: HeroPhysics) {
+export function makeGyroscopeControls(game: any) {
     let screenOrientation = window.orientation || 0;
     let deviceOrientation = {alpha: 0, beta: 0, gamma: 0};
 
@@ -23,7 +22,7 @@ export function makeGyroscopeControls(heroPhysics: HeroPhysics) {
             const gamma = THREE.Math.degToRad(deviceOrientation.gamma);
             const orient = THREE.Math.degToRad(screenOrientation);
 
-            heroPhysics.headOrientation.copy(quaternionFromABGO(alpha, beta, gamma, orient));
+            game.controlsState.cameraHeadOrientation.copy(quaternionFromABGO(alpha, beta, gamma, orient));
         }
     };
 }
