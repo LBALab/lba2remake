@@ -29,6 +29,8 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             heroSpeed: 0,
             heroRotationSpeed: 0,
             cameraSpeed: new THREE.Vector3(),
+            cameraOrientation: new THREE.Quaternion(),
+            cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false
         },
         loading: () => {
@@ -69,7 +71,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             makeGyroscopeControls(_hero.physics),
             makeGamepadControls(_hero.physics)
         ] : [
-            makeFirstPersonMouseControls(_renderer.domElement, _hero.physics),
+            makeFirstPersonMouseControls(_renderer.domElement, game),
             makeKeyboardControls(game),
             makeGamepadControls(_hero.physics)
         ];

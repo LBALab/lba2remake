@@ -2,7 +2,6 @@
 
 import THREE from 'three';
 import type {HeroPhysics} from '../game/hero';
-import {switchMovementMode} from '../game/hero';
 import {switchStats} from '../renderer/stats';
 
 const euler = new THREE.Euler();
@@ -46,7 +45,7 @@ function buttonPressedHandler(heroPhysics, {detail: {name, isPressed}}) {
                 //GameEvents.scene.previousIsland();
                 break;
             case 'buttonY':
-                switchMovementMode(heroPhysics);
+                //switchMovementMode(heroPhysics);
                 break;
             case 'leftTrigger':
                 switchStats();

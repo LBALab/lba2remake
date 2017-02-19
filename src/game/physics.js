@@ -1,27 +1,9 @@
 import THREE from 'three';
 import {map, each} from 'lodash';
-import {Movement, Target} from './hero';
 
 export function processPhysicsFrame(game, renderer, scene, time) {
     processHeroMovement(game.controlsState, scene, time);
-    /*
-    switch (heroPhysics.config.movement) {
-        case Movement.NORMAL:
-            processNormalMovement(time, scene, heroPhysics);
-            break;
-        case Movement.FLY:
-            processFlyMovement(time, scene, heroPhysics);
-            break;
-    }
-
-    each(heroPhysics.config.targets, target => {
-        switch (target) {
-            case Target.CAMERA:
-                updateTarget(cameras.camera3D, heroPhysics);
-                break;
-        }
-    });
-    */
+    processCameraMovement(game.controlsState, renderer, scene, time);
 }
 
 const orientedSpeed = new THREE.Vector3();
@@ -45,33 +27,35 @@ function processHeroMovement(controlsState, scene, time) {
     }
 }
 
-function processNormalMovement(time, scene, heroPhysics) {
-    orientedSpeed.copy(heroPhysics.speed);
-    orientedSpeed.multiply(heroPhysics.config.speed);
-    orientedSpeed.applyQuaternion(heroPhysics.orientation);
-    orientedSpeed.applyQuaternion(onlyY(heroPhysics.headOrientation));
-    orientedSpeed.multiplyScalar(time.delta);
-    heroPhysics.position.add(orientedSpeed);
-    heroPhysics.position.y = scene.getGroundHeight(heroPhysics.position.x, heroPhysics.position.z) + 0.08;
+function processCameraMovement(controlsState, renderer, scene, time) {
+    if (controlsState.freeCamera) {
+        if (scene.isIsland) {
+            processFreeCamera3DMovement(controlsState, renderer.cameras.camera3D, scene, time);
+        }
+    }
 }
 
+function processFreeCamera3DMovement(controlsState, camera, scene, time) {
+    const groundHeight = scene.scenery.physics.getGroundHeight(camera.position.x, camera.position.z);
+    const altitude = Math.max(0.0, Math.min(1.0, (camera.position.y - groundHeight) * 0.7));
 
+    euler.setFromQuaternion(controlsState.cameraHeadOrientation, 'YXZ');
+    const speed = new THREE.Vector3().set(
+        controlsState.cameraSpeed.x * 0.3,
+        -(controlsState.cameraSpeed.z * 0.5) * euler.x,
+        controlsState.cameraSpeed.z * 0.5
+    );
 
-function processFlyMovement(time, scene, heroPhysics) {
-    const groundHeight = scene.getGroundHeight(heroPhysics.position.x, heroPhysics.position.z);
-    const altitude = Math.max(0.0, Math.min(1.0, (heroPhysics.position.y - groundHeight) * 0.7));
-    euler.setFromQuaternion(heroPhysics.headOrientation, 'YXZ');
-    heroPhysics.speed.y = -heroPhysics.speed.z * euler.x;
-
-    orientedSpeed.copy(heroPhysics.speed);
+    orientedSpeed.copy(speed);
     orientedSpeed.multiplyScalar((altitude * altitude) * 3.0 + 1.0);
-    orientedSpeed.multiply(heroPhysics.config.speed);
-    orientedSpeed.applyQuaternion(heroPhysics.orientation);
-    orientedSpeed.applyQuaternion(onlyY(heroPhysics.headOrientation));
+    orientedSpeed.applyQuaternion(controlsState.cameraOrientation);
+    orientedSpeed.applyQuaternion(onlyY(controlsState.cameraHeadOrientation));
     orientedSpeed.multiplyScalar(time.delta);
 
-    heroPhysics.position.add(orientedSpeed);
-    heroPhysics.position.y = Math.max(groundHeight + 0.08, heroPhysics.position.y);
+    camera.position.add(orientedSpeed);
+    camera.position.y = Math.max(groundHeight + 0.08, camera.position.y);
+    camera.quaternion.copy(controlsState.cameraOrientation);
+    camera.quaternion.multiply(controlsState.cameraHeadOrientation);
 }
 
 function onlyY(src) {
@@ -79,12 +63,4 @@ function onlyY(src) {
     euler.x = 0;
     euler.z = 0;
     return q.setFromEuler(euler);
-}
-
-function updateTarget(tgt, src) {
-    tgt.position.copy(src.position);
-    tgt.quaternion.copy(src.orientation);
-    if (src.headOrientation) {
-        tgt.quaternion.multiply(src.headOrientation);
-    }
 }

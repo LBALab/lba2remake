@@ -8,7 +8,7 @@ export function createState() {
     return {
         config: {
             text: 0,
-            languange: 0,
+            language: 0,
             displayText: true,
             hero: {
                 physics: {

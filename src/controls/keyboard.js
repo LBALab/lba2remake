@@ -1,6 +1,6 @@
 // @flow
 
-import {switchMovementMode, savePosition, loadPosition} from '../game/hero';
+import {savePosition, loadPosition} from '../game/hero';
 import {switchStats} from '../renderer/stats';
 
 export function makeKeyboardControls(game: any) {
@@ -77,9 +77,10 @@ function keyDownHandler(game, event) {
         case 'KeyF':
             switchStats();
             break;
-        case 77: // m
-        case 'KeyM':
-            game.controlsState.freeCamera = !game.controls.freeCamera;
+        case 67: // c
+        case 'KeyC':
+            game.controlsState.freeCamera = !game.controlsState.freeCamera;
+            console.log('Free camera: ', game.controlsState.freeCamera);
             break;
         case 80: // p
         case 'KeyP':
@@ -114,15 +115,23 @@ function keyUpHandler(game, event) {
 
         case 87: // w
         case 'KeyW':
+            if (game.controlsState.cameraSpeed.z == -1)
+                game.controlsState.cameraSpeed.z = 0;
             break;
         case 83: // s
         case 'KeyS':
+            if (game.controlsState.cameraSpeed.z == 1)
+                game.controlsState.cameraSpeed.z = 0;
             break;
         case 65: // a
         case 'KeyA':
+            if (game.controlsState.cameraSpeed.x == -1)
+                game.controlsState.cameraSpeed.x = 0;
             break;
         case 68: // d
         case 'KeyD':
+            if (game.controlsState.cameraSpeed.x == 1)
+                game.controlsState.cameraSpeed.x = 0;
             break;
     }
 }

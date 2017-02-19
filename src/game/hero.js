@@ -45,17 +45,6 @@ export function createHero(config: HeroConfig) {
     };
 }
 
-export function switchMovementMode(heroPhysics: HeroPhysics) {
-    if (heroPhysics.config.movement == Movement.NORMAL) {
-        heroPhysics.config.movement = Movement.FLY;
-        console.log('switchMovementMode: FLY');
-    }
-    else {
-        heroPhysics.config.movement = Movement.NORMAL;
-        console.log('switchMovementMode: NORMAL');
-    }
-}
-
 export function savePosition(game: any) {
     /*
     localStorage.setItem('hero_position_' + scene.index, JSON.stringify({
