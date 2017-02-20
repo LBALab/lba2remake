@@ -21,9 +21,15 @@ export function processCameraMovement(controlsState, cameras, scene, time) {
 
 function processFollow3DMovement(controlsState, camera, scene, time) {
     const hero = scene.getActor(0);
-    camera.position.copy(hero.physics.position);
-    camera.position.add(new THREE.Vector3(0.1, 0.1, 0));
-    camera.lookAt(hero.physics.position);
+    const heroPos = new THREE.Vector3(0, 0.04, 0);
+    heroPos.applyMatrix4(hero.threeObject.matrixWorld);
+    camera.position.copy(heroPos);
+    const offset = new THREE.Vector3(0, 0.2, -0.4);
+    offset.applyQuaternion(hero.threeObject.quaternion);
+    camera.position.add(offset);
+    camera.lookAt(heroPos);
+    controlsState.cameraOrientation.copy(hero.threeObject.quaternion);
+    controlsState.cameraOrientation.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
 }
 
 function processFree3DMovement(controlsState, camera, scene, time) {
