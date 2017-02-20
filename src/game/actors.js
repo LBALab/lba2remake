@@ -43,6 +43,11 @@ export const ActorStaticFlag = {
     // TODO
 };
 
+export const DirMode = {
+    NO_MOVE: 0,
+    MANUAL: 1
+};
+
 // TODO: move section offset to container THREE.Object3D
 export function loadActor(game: any, envInfo: any, ambience: any, props: ActorProps, callback: Function) {
     const pos = props.pos;
@@ -113,7 +118,6 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
                 this.physics.temp.angle += angle;
                 const euler = new THREE.Euler(0, this.physics.temp.angle, 0, 'XZY');
                 this.physics.orientation.setFromEuler(euler);
-                this.model.mesh.quaternion.copy(this.physics.orientation);
             }
             if (this.isWalking) {
                 this.physics.temp.position.set(0,0,0);
@@ -130,7 +134,10 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
                 this.physics.temp.position.y += (this.animState.step.y * delta) / (this.animState.keyframeLength);
 
                 this.physics.position.add(this.physics.temp.position);
-                this.model.mesh.position.set(this.physics.position.x, this.physics.position.y, this.physics.position.z);
+            }
+            if (this.model) {
+                this.model.mesh.quaternion.copy(this.physics.orientation);
+                this.model.mesh.position.copy(this.physics.position);
             }
         }
     };

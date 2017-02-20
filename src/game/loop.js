@@ -1,31 +1,28 @@
 import {each} from 'lodash';
+import {processMovements} from './movements';
 import {processPhysicsFrame} from './physics';
+import {processCameraMovement} from '../cameras';
 import {updateDebugger} from '../scripting/debug';
 
-export function mainGameLoop(game, clock, clockGame, renderer, scene, hero, controls) {
+export function mainGameLoop(game, clock, renderer, scene, controls) {
     const time = {
-        delta: clock.getDelta(),
+        delta: Math.min(clock.getDelta(), 0.05),
         elapsed: clock.getElapsedTime()
-    };
-    const timeGame = {
-        delta: Math.min(clockGame.getDelta(), 0.05),
-        elapsed: clockGame.getElapsedTime()
     };
 
     renderer.stats.begin();
 
     if (scene) {
-        const scenery = scene.scenery;
-        if (scenery) {
-            each(controls, ctrl => { ctrl.update && ctrl.update(); });
-            if (!game.isPause) {
-                scenery.update(timeGame);
-            }
-            processPhysicsFrame(time, scenery.physics, renderer.cameras, hero.physics);
-        }
+        each(controls, ctrl => { ctrl.update && ctrl.update(); });
         if (!game.isPause) {
-            scene.update(timeGame);
-            each(scene.sideScenes, scene => { scene.update(timeGame); });
+            processMovements(game, scene, time);
+            scene.update(time);
+            each(scene.sideScenes, scene => { scene.update(time); });
+            if (scene.scenery) {
+                processCameraMovement(game.controlsState, renderer, scene, time);
+                scene.scenery.update(time);
+            }
+            processPhysicsFrame(game, scene, time);
             updateDebugger(scene, renderer);
             renderer.render(scene);
         }

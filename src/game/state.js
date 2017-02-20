@@ -1,23 +1,11 @@
 // @flow
 
-import THREE from 'three';
-import {Target, Movement} from '../hero';
-import { times } from 'lodash';
-
 export function createState() {
     return {
         config: {
             text: 0,
-            languange: 0,
-            displayText: true,
-            hero: {
-                physics: {
-                    enabled: true,
-                    targets: [Target.CAMERA],
-                    movement: Movement.NORMAL,
-                    speed: new THREE.Vector3(0.15, 0.3, 0.3)
-                }
-            }
+            language: 0,
+            displayText: true
         },
         hero: {
             life: 50,

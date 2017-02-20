@@ -1,15 +1,14 @@
 // @flow
 
 import THREE from 'three';
-import type {HeroPhysics} from '../game/hero';
 
 // Move pointerLock mechanics out of this
-export function makeFirstPersonMouseControls(domElement: HTMLElement, heroPhysics: HeroPhysics) {
+export function makeFirstPersonMouseControls(domElement: HTMLElement, game: any) {
     const controls = {
         enabled: false
     };
 
-    const onMouseMove = handleMouseEvent.bind(null, controls, heroPhysics);
+    const onMouseMove = handleMouseEvent.bind(null, controls, game);
     const onPointerLockChange = pointerLockChanged.bind(null, controls);
 
     document.addEventListener('mousemove', onMouseMove, false);
@@ -28,21 +27,21 @@ export function makeFirstPersonMouseControls(domElement: HTMLElement, heroPhysic
 const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
 const MAX_X_ANGLE = Math.PI / 2.5;
 
-function handleMouseEvent(controls, heroPhysics, event: MouseEvent) {
-    if (controls.enabled) {
+function handleMouseEvent(controls, game, event: MouseEvent) {
+    if (controls.enabled && game.controlsState.freeCamera) {
         // Not supported on IE / Safari
         const movementX = event.movementX || 0;
         const movementY = event.movementY || 0;
 
-        euler.setFromQuaternion(heroPhysics.headOrientation, 'YXZ');
+        euler.setFromQuaternion(game.controlsState.cameraHeadOrientation, 'YXZ');
         euler.y = 0;
         euler.x = Math.min(Math.max(euler.x - movementY * 0.002, -MAX_X_ANGLE), MAX_X_ANGLE);
-        heroPhysics.headOrientation.setFromEuler(euler);
+        game.controlsState.cameraHeadOrientation.setFromEuler(euler);
 
-        euler.setFromQuaternion(heroPhysics.orientation, 'YXZ');
+        euler.setFromQuaternion(game.controlsState.cameraOrientation, 'YXZ');
         euler.x = 0;
         euler.y = euler.y - movementX * 0.002;
-        heroPhysics.orientation.setFromEuler(euler);
+        game.controlsState.cameraOrientation.setFromEuler(euler);
     }
 }
 

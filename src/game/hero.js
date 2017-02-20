@@ -1,71 +1,18 @@
 // @flow
 
-import THREE from 'three';
-import {assign} from 'lodash';
-
-type MovementType = 0 | 1;
-export const Movement = {
-    NORMAL: 0,
-    FLY: 1
-};
-
-type TargetType = 0;
-export const Target = {
-    CAMERA: 0
-};
-
-type HeroPhysicsConfig = {
-    enabled: boolean,
-    targets: TargetType[],
-    movement: MovementType,
-    speed: THREE.Vector3
-};
-
-type HeroConfig = {
-    physics: HeroPhysicsConfig
-}
-
-export type HeroPhysics = {
-    config: HeroPhysicsConfig,
-    position: THREE.Vector3,
-    orientation: THREE.Quaternion,
-    headOrientation: THREE.Quaternion,
-    speed: THREE.Vector3
-};
-
-export function createHero(config: HeroConfig) {
-    return {
-        physics: {
-            config: config.physics,
-            position: new THREE.Vector3(),
-            orientation: new THREE.Quaternion(),
-            headOrientation: new THREE.Quaternion(),
-            speed: new THREE.Vector3()
-        }
-    };
-}
-
-export function switchMovementMode(heroPhysics: HeroPhysics) {
-    if (heroPhysics.config.movement == Movement.NORMAL) {
-        heroPhysics.config.movement = Movement.FLY;
-        console.log('switchMovementMode: FLY');
-    }
-    else {
-        heroPhysics.config.movement = Movement.NORMAL;
-        console.log('switchMovementMode: NORMAL');
-    }
-}
-
-export function savePosition(heroPhysics: HeroPhysics, scene: any) {
+export function savePosition(game: any) {
+    /*
     localStorage.setItem('hero_position_' + scene.index, JSON.stringify({
         position: heroPhysics.position.toArray(),
         orientation: heroPhysics.orientation.toArray(),
         headOrientation: heroPhysics.headOrientation.toArray(),
         movement: heroPhysics.config.movement
     }));
+    */
 }
 
-export function loadPosition(heroPhysics: HeroPhysics, scene: any) {
+export function loadPosition(game: any) {
+    /*
     try {
         const item = localStorage.getItem('hero_position_' + scene.index);
         if (typeof item == 'string') {
@@ -77,4 +24,5 @@ export function loadPosition(heroPhysics: HeroPhysics, scene: any) {
         }
     }
     catch (e) {}
+    */
 }

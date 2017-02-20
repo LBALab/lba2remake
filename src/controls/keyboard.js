@@ -1,12 +1,11 @@
 // @flow
 
-import type {HeroPhysics} from '../game/hero';
-import {switchMovementMode, savePosition, loadPosition} from '../game/hero';
+import {savePosition, loadPosition} from '../game/hero';
 import {switchStats} from '../renderer/stats';
 
-export function makeKeyboardControls(heroPhysics: HeroPhysics, game: any) {
-    const onKeyDown = keyDownHandler.bind(null, heroPhysics, game);
-    const onKeyUp = keyUpHandler.bind(null, heroPhysics);
+export function makeKeyboardControls(game: any) {
+    const onKeyDown = keyDownHandler.bind(null, game);
+    const onKeyUp = keyUpHandler.bind(null, game);
     window.addEventListener('keydown', onKeyDown, false);
     window.addEventListener('keyup', onKeyUp, false);
     return {
@@ -17,33 +16,43 @@ export function makeKeyboardControls(heroPhysics: HeroPhysics, game: any) {
     }
 }
 
-function keyDownHandler(heroPhysics, game, event) {
+function keyDownHandler(game, event) {
     var key = event.code || event.which || event.keyCode;
     switch (key) {
-        case 87: // w
         case 38: // up
-        case 'KeyW':
         case 'ArrowUp':
-            heroPhysics.speed.z = -1;
+            game.controlsState.heroSpeed = 1;
+            break;
+        case 40: // down
+        case 'ArrowDown':
+            game.controlsState.heroSpeed = -1;
+            break;
+        case 37: // left
+        case 'ArrowLeft':
+            game.controlsState.heroRotationSpeed = 1;
+            break;
+        case 39: // right
+        case 'ArrowRight':
+            game.controlsState.heroRotationSpeed = -1;
+            break;
+
+        case 87: // w
+        case 'KeyW':
+            game.controlsState.cameraSpeed.z = -1;
             break;
         case 83: // s
-        case 40: // down
         case 'KeyS':
-        case 'ArrowDown':
-            heroPhysics.speed.z = 1;
+            game.controlsState.cameraSpeed.z = 1;
             break;
         case 65: // a
-        case 37: // left
         case 'KeyA':
-        case 'ArrowLeft':
-            heroPhysics.speed.x = -1;
+            game.controlsState.cameraSpeed.x = -1;
             break;
         case 68: // d
-        case 39: // right
         case 'KeyD':
-        case 'ArrowRigth':
-            heroPhysics.speed.x = 1;
+            game.controlsState.cameraSpeed.x = 1;
             break;
+
         case 34: // pagedown
         case 'PageDown':
             game.loading();
@@ -54,51 +63,75 @@ function keyDownHandler(heroPhysics, game, event) {
             game.loading();
             game.getSceneManager().previous(game.loaded);
             break;
+
+        case 219:
+        case 'BracketLeft':
+            savePosition(game);
+            break;
+        case 221:
+        case 'BracketRight':
+            loadPosition(game);
+            break;
+
         case 70: // f
         case 'KeyF':
             switchStats();
             break;
-        case 77: // m
-        case 'KeyM':
-            switchMovementMode(heroPhysics);
+        case 67: // c
+        case 'KeyC':
+            game.controlsState.freeCamera = !game.controlsState.freeCamera;
+            console.log('Free camera: ', game.controlsState.freeCamera);
             break;
         case 80: // p
         case 'KeyP':
             game.pause();
             break;
-        case 219:
-        case 'BracketLeft':
-            savePosition(heroPhysics, game.getSceneManager().getScene());
-            break;
-        case 221:
-        case 'BracketRight':
-            loadPosition(heroPhysics, game.getSceneManager().getScene());
-            break;
     }
 }
 
-function keyUpHandler(config, event) {
+function keyUpHandler(game, event) {
     var key = event.code || event.which || event.keyCode;
     switch (key) {
-        case 87: // w
         case 38: // up
-        case 83: // s
-        case 40: // down
-        case 'KeyW':
         case 'ArrowUp':
-        case 'KeyS':
+            if (game.controlsState.heroSpeed == 1)
+                game.controlsState.heroSpeed = 0;
+            break;
+        case 40: // down
         case 'ArrowDown':
-            config.speed.z = 0;
+            if (game.controlsState.heroSpeed == -1)
+                game.controlsState.heroSpeed = 0;
+            break;
+        case 37: // left
+        case 'ArrowLeft':
+            if (game.controlsState.heroRotationSpeed == 1)
+                game.controlsState.heroRotationSpeed = 0;
+            break;
+        case 39: // right
+        case 'ArrowRight':
+            if (game.controlsState.heroRotationSpeed == -1)
+                game.controlsState.heroRotationSpeed = 0;
+            break;
+
+        case 87: // w
+        case 'KeyW':
+            if (game.controlsState.cameraSpeed.z == -1)
+                game.controlsState.cameraSpeed.z = 0;
+            break;
+        case 83: // s
+        case 'KeyS':
+            if (game.controlsState.cameraSpeed.z == 1)
+                game.controlsState.cameraSpeed.z = 0;
             break;
         case 65: // a
-        case 37: // left
-        case 68: // d
-        case 39: // right
         case 'KeyA':
-        case 'ArrowLeft':
+            if (game.controlsState.cameraSpeed.x == -1)
+                game.controlsState.cameraSpeed.x = 0;
+            break;
+        case 68: // d
         case 'KeyD':
-        case 'ArrowRigth':
-            config.speed.x = 0;
+            if (game.controlsState.cameraSpeed.x == 1)
+                game.controlsState.cameraSpeed.x = 0;
             break;
     }
 }
