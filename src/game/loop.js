@@ -19,7 +19,7 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
             scene.update(time);
             each(scene.sideScenes, scene => { scene.update(time); });
             if (scene.scenery) {
-                processCameraMovement(game.controlsState, renderer.cameras, scene, time);
+                processCameraMovement(game.controlsState, renderer, scene, time);
                 scene.scenery.update(time);
             }
             processPhysicsFrame(game, scene, time);

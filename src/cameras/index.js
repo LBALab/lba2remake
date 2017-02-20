@@ -1,17 +1,17 @@
 import THREE from 'three';
 
-export function processCameraMovement(controlsState, cameras, scene, time) {
+export function processCameraMovement(controlsState, renderer, scene, time) {
     if (controlsState.freeCamera) {
         if (scene.isIsland) {
-            processFree3DMovement(controlsState, cameras.camera3D, scene, time);
+            processFree3DMovement(controlsState, renderer.cameras.camera3D, scene, time);
         } else {
-            processFreeIsoMovement(controlsState, cameras.isoCamera, time);
+            processFreeIsoMovement(controlsState, renderer.cameras.isoCamera, time);
         }
     } else {
         if (scene.isIsland) {
-            processFollow3DMovement(controlsState, cameras.camera3D, scene, time);
+            processFollow3DMovement(controlsState, renderer.cameras.camera3D, scene, time);
         } else {
-            processFollowIsoMovement(controlsState, cameras.camera3D, scene, time);
+            processFollowIsoMovement(renderer, renderer.cameras.isoCamera, scene, time);
         }
     }
 }
@@ -52,8 +52,24 @@ function processFree3DMovement(controlsState, camera, scene, time) {
     camera.quaternion.multiply(controlsState.cameraHeadOrientation);
 }
 
-function processFollowIsoMovement(controlsState, camera, scene, time) {
-
+function processFollowIsoMovement(renderer, camera, scene, time) {
+    const hero = scene.getActor(0);
+    const pos = new THREE.Vector3(0, 0.04, 0);
+    hero.threeObject.updateMatrixWorld();
+    pos.applyMatrix4(hero.threeObject.matrixWorld);
+    pos.project(camera);
+    const widthHalf = 0.5 * renderer.domElement.width;
+    const heightHalf = 0.5 * renderer.domElement.height;
+    pos.x = -(pos.x * widthHalf) / renderer.pixelRatio();
+    pos.y = -(pos.y * heightHalf) / renderer.pixelRatio();
+    const maxDist = Math.min(widthHalf * 0.75 / renderer.pixelRatio(), heightHalf * 0.75 / renderer.pixelRatio());
+    const centerDist = new THREE.Vector2(pos.x, pos.y);
+    if (centerDist.length() > maxDist) {
+        centerDist.multiplyScalar(renderer.pixelRatio());
+        centerDist.multiplyScalar(3);
+        camera.offset.sub(centerDist);
+        camera.updateProjectionMatrix();
+    }
 }
 
 function processFreeIsoMovement(controlsState, camera, time) {
