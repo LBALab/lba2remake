@@ -1,4 +1,5 @@
 import {each} from 'lodash';
+import {processMovements} from './movements';
 import {processPhysicsFrame} from './physics';
 import {processCameraMovement} from '../cameras';
 import {updateDebugger} from '../scripting/debug';
@@ -14,13 +15,14 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
     if (scene) {
         each(controls, ctrl => { ctrl.update && ctrl.update(); });
         if (!game.isPause) {
+            processMovements(game, scene, time);
             scene.update(time);
             each(scene.sideScenes, scene => { scene.update(time); });
             if (scene.scenery) {
-                processPhysicsFrame(game, scene, time);
                 processCameraMovement(game.controlsState, renderer.cameras, scene, time);
                 scene.scenery.update(time);
             }
+            processPhysicsFrame(game, scene, time);
             updateDebugger(scene, renderer);
             renderer.render(scene);
         }

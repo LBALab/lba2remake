@@ -16,9 +16,6 @@ export function processCameraMovement(controlsState, cameras, scene, time) {
     }
 }
 
-
-
-
 function processFollow3DMovement(controlsState, camera, scene, time) {
     const hero = scene.getActor(0);
     const heroPos = new THREE.Vector3(0, 0.04, 0);
