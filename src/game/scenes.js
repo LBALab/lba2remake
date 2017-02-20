@@ -20,6 +20,7 @@ import {loadPosition} from './hero';
 import {getQueryParams} from '../utils';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initSceneDebug, resetSceneDebug, hasStep, endStep} from '../scripting/debug';
+import AudioData from '../audio/data'
 
 export function createSceneManager(game, renderer, callback: Function) {
     let scene = null;
@@ -120,6 +121,9 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                     loadSideScenes(game, renderer, sceneMap, index, data, callback);
                 }];
             }
+            /*game.getAudioManager().getMusicSource().load(AudioData.MUSIC[sceneData.ambience.musicIndex].file, () => {
+                game.getAudioManager().getMusicSource().play();
+            });*/
         } else {
             loadSteps.scenery = (callback) => { callback(null, parent.scenery); };
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };

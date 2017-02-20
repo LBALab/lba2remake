@@ -10,6 +10,7 @@ import {makeGamepadControls} from '../controls/gamepad';
 import {mainGameLoop} from './loop';
 import {createSceneManager} from './scenes';
 import {createState} from './state';
+import {createAudioManager} from '../audio'
 
 export function createGame(params: Object, isMobile: boolean, callback : Function) {
     let _sceneManager = null;
@@ -19,8 +20,8 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     _clock.start();
 
     const _state = createState();
-
     const _renderer = createRenderer(isMobile);
+    const _audio = createAudioManager();
 
     const game = {
         controlsState: {
@@ -44,6 +45,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
 
         getSceneManager: () => _sceneManager,
         getState: () => _state,
+        getAudioManager: () => _audio,
 
         pause: () => {
             _isPaused = !_isPaused;
