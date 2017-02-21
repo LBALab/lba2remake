@@ -16,16 +16,16 @@ const ZONE_TYPE = {
 */
 
 const ZONE_TYPE_MATERIAL_COLOR = [
-    0x84ff84, 
-    0xff8000, 
-    0x6495ed, 
-    0xff00ff,  
-    0xffff6c, 
-    0x00ff00,  
-    0x5555ff,  
-    0x96c09f,  
-    0xffc475,  
-    0x008000,  
+    '#84ff84',
+    '#ff8000',
+    '#6495ed',
+    '#ff00ff',
+    '#ffff6c',
+    '#00ff00',
+    '#5555ff',
+    '#96c09f',
+    '#ffc475',
+    '#008000',
 ];
 
 export function loadZone(props, callback) {
