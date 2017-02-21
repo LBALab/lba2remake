@@ -36,6 +36,8 @@ export function createSceneManager(game, renderer, callback: Function) {
                 if (scene && index == scene.index)
                     return;
 
+                game.loading();
+
                 const textBox = document.getElementById('smallText');
                 textBox.style.display = 'none';
 
@@ -57,6 +59,7 @@ export function createSceneManager(game, renderer, callback: Function) {
                     initSceneDebug(scene);
                     reviveActor(scene.getActor(0)); // Awake twinsen
                     pCallback();
+                    game.loaded();
                 } else {
                     resetSceneDebug(scene);
                     loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
@@ -65,6 +68,7 @@ export function createSceneManager(game, renderer, callback: Function) {
                         window.scene = scene;
                         initSceneDebug(scene);
                         pCallback();
+                        game.loaded();
                     });
                 }
             },

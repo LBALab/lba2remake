@@ -55,13 +55,11 @@ function keyDownHandler(game, event) {
 
         case 34: // pagedown
         case 'PageDown':
-            game.loading();
-            game.getSceneManager().next(game.loaded);
+            game.getSceneManager().next();
             break;
         case 33: // pageup
         case 'PageUp':
-            game.loading();
-            game.getSceneManager().previous(game.loaded);
+            game.getSceneManager().previous();
             break;
 
         case 219:

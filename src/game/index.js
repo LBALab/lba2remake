@@ -63,7 +63,6 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
 
     const _createSceneManager = () => createSceneManager(game, _renderer, sceneManager => {
         _sceneManager = sceneManager;
-        game.loading();
 
         const controls = isMobile ? [
             makeGyroscopeControls(game),
@@ -75,7 +74,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
         ];
 
         document.getElementById('main').appendChild(_renderer.domElement);
-        sceneManager.goto(parseInt(params.scene) || 0, game.loaded);
+        sceneManager.goto(parseInt(params.scene) || 0);
 
         function processAnimationFrame() {
             mainGameLoop(game, _clock, _renderer, sceneManager.getScene(), controls);

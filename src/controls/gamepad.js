@@ -38,12 +38,10 @@ function buttonPressedHandler(game: any, {detail: {name, isPressed}}) {
                 rotateArroundY(game.controlsState.cameraOrientation, -PI_4);
                 break;
             case 'buttonB':
-                game.loading();
-                game.getSceneManager().next(game.loaded);
+                game.getSceneManager().next();
                 break;
             case 'buttonX':
-                game.loading();
-                game.getSceneManager().previous(game.loaded);
+                game.getSceneManager().previous();
                 break;
             case 'buttonY':
                 game.controlsState.freeCamera = !game.controlsState.freeCamera;
