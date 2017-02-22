@@ -1,3 +1,5 @@
+import {find} from 'lodash';
+
 export function loadIslandPhysics(layout) {
     return {
         getGroundHeight: getGroundHeight.bind(null, layout)
@@ -5,9 +7,10 @@ export function loadIslandPhysics(layout) {
 }
 
 function getGroundHeight(layout, x, z) {
-    const section = _.find(layout.groundSections, gs => x > gs.x * 2 && x <= gs.x * 2 + 2 && z >= gs.z * 2 && z <= gs.z * 2 + 2);
+    const e = 1 / 32;
+    const section = find(layout.groundSections, gs => x - e > gs.x * 2 && x - e <= gs.x * 2 + 2 && z >= gs.z * 2 && z <= gs.z * 2 + 2);
     if (section) {
-        const dx = (2.0 - (x - section.x * 2)) * 32;
+        const dx = (2.0 - (x - section.x * 2)) * 32 + 1;
         const dz = (z - section.z * 2) * 32;
         const ix = Math.floor(dx);
         const iz = Math.floor(dz);
