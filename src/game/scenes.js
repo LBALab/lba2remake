@@ -33,7 +33,7 @@ export function createSceneManager(game, renderer, callback: Function) {
                 return scene;
             },
             goto: (index, pCallback = noop) => {
-                if (scene && index == scene.index)
+                if ((scene && index == scene.index) || game.isLoading())
                     return;
 
                 const textBox = document.getElementById('smallText');
@@ -58,7 +58,7 @@ export function createSceneManager(game, renderer, callback: Function) {
                     reviveActor(scene.getActor(0)); // Awake twinsen
                     pCallback(scene);
                 } else {
-                    game.loading();
+                    game.loading(index);
                     resetSceneDebug(scene);
                     loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
                         renderer.applySceneryProps(pScene.scenery.props);

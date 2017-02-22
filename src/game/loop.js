@@ -14,7 +14,7 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
 
     if (scene) {
         each(controls, ctrl => { ctrl.update && ctrl.update(); });
-        if (!game.isPause) {
+        if (!game.isPaused()) {
             processMovements(game, scene, time);
             scene.update(time);
             each(scene.sideScenes, scene => { scene.update(time); });

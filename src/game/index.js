@@ -14,6 +14,7 @@ import {createState} from './state';
 export function createGame(params: Object, isMobile: boolean, callback : Function) {
     let _sceneManager = null;
     let _isPaused = false;
+    let _isLoading = false;
 
     const _clock = new THREE.Clock(false);
     _clock.start();
@@ -31,16 +32,19 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false
         },
-        loading: () => {
+        loading: (index: number) => {
             _isPaused = true;
-            console.log("Loading...");
+            _isLoading = true;
+            console.log(`Loading scene #${index}`);
         },
         loaded: () => {
             _isPaused = false;
-            console.log("       ...complete!");
+            _isLoading = false;
+            console.log("Loaded!");
         },
 
-        isPause: _isPaused,
+        isPaused: () => _isPaused,
+        isLoading: () => _isLoading,
 
         getSceneManager: () => _sceneManager,
         getState: () => _state,
