@@ -17,7 +17,7 @@ export function makeKeyboardControls(game: any) {
 }
 
 function keyDownHandler(game, event) {
-    var key = event.code || event.which || event.keyCode;
+    const key = event.code || event.which || event.keyCode;
     switch (key) {
         case 38: // up
         case 'ArrowUp':
@@ -34,6 +34,11 @@ function keyDownHandler(game, event) {
         case 39: // right
         case 'ArrowRight':
             game.controlsState.heroRotationSpeed = -1;
+            break;
+
+        case 90:
+        case 'KeyZ':
+            game.controlsState.action = 1;
             break;
 
         case 87: // w
@@ -88,7 +93,7 @@ function keyDownHandler(game, event) {
 }
 
 function keyUpHandler(game, event) {
-    var key = event.code || event.which || event.keyCode;
+    const key = event.code || event.which || event.keyCode;
     switch (key) {
         case 38: // up
         case 'ArrowUp':
@@ -109,6 +114,11 @@ function keyUpHandler(game, event) {
         case 'ArrowRight':
             if (game.controlsState.heroRotationSpeed == -1)
                 game.controlsState.heroRotationSpeed = 0;
+            break;
+
+        case 90:
+        case 'KeyZ':
+            game.controlsState.action = 0;
             break;
 
         case 87: // w

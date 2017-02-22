@@ -12,10 +12,24 @@ export function DISTANCE(actor) {
 }
 
 export function ZONE() {
-    return -1;
+    return ZONE_OBJ.call(this, this.actor);
 }
 
-export function ZONE_OBJ(index) {
+export function ZONE_OBJ(actor) {
+    const pos = actor.physics.position.clone();
+    pos.y += 0.005;
+    for (let i = 0; i < scene.zones.length; ++i) {
+        const zone = scene.zones[i];
+        if (zone.props.type != 2)
+            continue;
+
+        const box = zone.props.box;
+        if (pos.x > Math.min(box.bX, box.tX) && pos.x < Math.max(box.bX, box.tX) &&
+            pos.y > Math.min(box.bY, box.tY) && pos.y < Math.max(box.bY, box.tY) &&
+            pos.z > Math.min(box.bZ, box.tZ) && pos.z < Math.max(box.bZ, box.tZ)) {
+            return zone.props.snap;
+        }
+    }
     return -1;
 }
 
@@ -58,7 +72,7 @@ export function HIT_BY() {
 }
 
 export function ACTION() {
-    return -1;
+    return this.game.controlsState.action;
 }
 
 export function VAR_GAME(index) {
