@@ -22,7 +22,7 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
                 processCameraMovement(game.controlsState, renderer, scene, time);
                 scene.scenery.update(time);
             }
-            processPhysicsFrame(game, scene, time);
+            processPhysicsFrame(game, scene);
             updateDebugger(scene, renderer);
             renderer.render(scene);
         }

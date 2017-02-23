@@ -142,12 +142,8 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
                 this.physics.temp.position.z += Math.sin(this.physics.temp.angle) * speedX;
 
                 this.physics.temp.position.y += (this.animState.step.y * delta) / (this.animState.keyframeLength);
-
-                this.physics.position.add(this.physics.temp.position);
-            }
-            if (this.model) {
-                this.model.mesh.quaternion.copy(this.physics.orientation);
-                this.model.mesh.position.copy(this.physics.position);
+            } else {
+                this.physics.temp.position.set(0, 0, 0);
             }
         }
     };
