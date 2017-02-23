@@ -36,6 +36,9 @@ export function createSceneManager(game, renderer, callback: Function) {
                 if ((scene && index == scene.index) || game.isLoading())
                     return;
 
+                ga('set', 'page', `/scene/${index}`);
+                ga('send', 'pageview');
+
                 if (scene)
                     scene.isActive = false;
 
