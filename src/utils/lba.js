@@ -47,7 +47,7 @@ export function distance2D(from,to) {
     return Math.sqrt(distsquared);
 }
 
-const distanceThreeJs = 0.002;
+const distanceThreeJs = 1 / 32;
 
 export function getDistance(value) {
     return (value * distanceThreeJs) / 500;
