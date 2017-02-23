@@ -1,23 +1,30 @@
 import THREE from 'three';
 import {each, find} from 'lodash';
 
-export function processPhysicsFrame(game, scene, time) {
-    const hero = scene.getActor(0);
-    processActorPhysics(hero, scene);
-    processTeleports(game, hero, scene);
+export function processPhysicsFrame(game, scene) {
+    each(scene.actors, actor => {
+        processActorPhysics(actor, scene);
+    });
+    processTeleports(game, scene);
 }
 
 function processActorPhysics(actor, scene) {
-    if (scene.isIsland) {
+    actor.physics.position.add(actor.physics.temp.position);
+    if (scene.isIsland && actor.threeObject) {
         const position = new THREE.Vector3();
         position.applyMatrix4(actor.threeObject.matrixWorld);
         const height = scene.scenery.physics.getGroundHeight(position.x, position.z);
         actor.physics.position.y = height;
         actor.threeObject.position.y = height;
     }
+    if (actor.model) {
+        actor.model.mesh.quaternion.copy(actor.physics.orientation);
+        actor.model.mesh.position.copy(actor.physics.position);
+    }
 }
 
-function processTeleports(game, hero, scene) {
+function processTeleports(game, scene) {
+    const hero = scene.getActor(0);
     const pos = hero.physics.position.clone();
     pos.y += 0.005;
     if (scene.isIsland && (pos.x < 0 || pos.z < 0 || pos.x > 2 || pos.z > 2)) {
@@ -33,11 +40,13 @@ function processTeleports(game, hero, scene) {
         if (sideScene) {
             game.getSceneManager().goto(sideScene.index, (newScene) => {
                 const newHero = newScene.getActor(0);
+                newHero.threeObject.quaternion.copy(hero.threeObject.quaternion);
                 newHero.threeObject.position.copy(globalPos);
                 newHero.threeObject.position.sub(newScene.sceneNode.position);
                 newHero.physics.position.copy(newHero.threeObject.position);
                 newHero.physics.temp.angle = hero.physics.temp.angle;
                 newHero.physics.orientation.copy(hero.physics.orientation);
+                newHero.props.dirMode = hero.props.dirMode;
             });
             return;
         }
