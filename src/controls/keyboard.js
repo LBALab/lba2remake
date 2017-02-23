@@ -36,6 +36,23 @@ function keyDownHandler(game, event) {
             game.controlsState.heroRotationSpeed = -1;
             break;
 
+        case 49:
+        case 'Digit1':
+            game.getState().hero.behaviour = 0;
+            break;
+        case 50:
+        case 'Digit2':
+            game.getState().hero.behaviour = 1;
+            break;
+        case 51:
+        case 'Digit3':
+            game.getState().hero.behaviour = 2;
+            break;
+        case 52:
+        case 'Digit4':
+            game.getState().hero.behaviour = 3;
+            break;
+
         case 90:
         case 'KeyZ':
             game.controlsState.action = 1;
