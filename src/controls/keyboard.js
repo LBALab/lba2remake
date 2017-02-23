@@ -17,7 +17,7 @@ export function makeKeyboardControls(game: any) {
 }
 
 function keyDownHandler(game, event) {
-    var key = event.code || event.which || event.keyCode;
+    const key = event.code || event.which || event.keyCode;
     switch (key) {
         case 38: // up
         case 'ArrowUp':
@@ -34,6 +34,28 @@ function keyDownHandler(game, event) {
         case 39: // right
         case 'ArrowRight':
             game.controlsState.heroRotationSpeed = -1;
+            break;
+
+        case 49:
+        case 'Digit1':
+            game.getState().hero.behaviour = 0;
+            break;
+        case 50:
+        case 'Digit2':
+            game.getState().hero.behaviour = 1;
+            break;
+        case 51:
+        case 'Digit3':
+            game.getState().hero.behaviour = 2;
+            break;
+        case 52:
+        case 'Digit4':
+            game.getState().hero.behaviour = 3;
+            break;
+
+        case 90:
+        case 'KeyZ':
+            game.controlsState.action = 1;
             break;
 
         case 87: // w
@@ -55,13 +77,11 @@ function keyDownHandler(game, event) {
 
         case 34: // pagedown
         case 'PageDown':
-            game.loading();
-            game.getSceneManager().next(game.loaded);
+            game.getSceneManager().next();
             break;
         case 33: // pageup
         case 'PageUp':
-            game.loading();
-            game.getSceneManager().previous(game.loaded);
+            game.getSceneManager().previous();
             break;
 
         case 219:
@@ -90,7 +110,7 @@ function keyDownHandler(game, event) {
 }
 
 function keyUpHandler(game, event) {
-    var key = event.code || event.which || event.keyCode;
+    const key = event.code || event.which || event.keyCode;
     switch (key) {
         case 38: // up
         case 'ArrowUp':
@@ -111,6 +131,11 @@ function keyUpHandler(game, event) {
         case 'ArrowRight':
             if (game.controlsState.heroRotationSpeed == -1)
                 game.controlsState.heroRotationSpeed = 0;
+            break;
+
+        case 90:
+        case 'KeyZ':
+            game.controlsState.action = 0;
             break;
 
         case 87: // w

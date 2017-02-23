@@ -16,6 +16,8 @@ export function loadGrid(bkg, bricks, palette, entry) {
         cells: map(offsets, offset => {
             const blocks = [];
             const numColumns = gridData.getUint8(offset++);
+            let maxHeights = [];
+            let totalHeight = 0;
             for (let i = 0; i < numColumns; ++i) {
                 const flags = gridData.getUint8(offset++);
                 const type = bits(flags, 6, 2);
@@ -43,10 +45,14 @@ export function loadGrid(bkg, bricks, palette, entry) {
                             console.error('Shouldn\'t be here');
                             break;
                     }
+                    totalHeight++;
                 }
+                if (type != 0)
+                    maxHeights.push(totalHeight);
             }
             return {
-                build: buildCell.bind(null, library, blocks)
+                build: buildCell.bind(null, library, blocks),
+                heights: maxHeights
             };
         })
     };

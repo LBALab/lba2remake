@@ -8,6 +8,7 @@ export function createState() {
             displayText: true
         },
         hero: {
+            behaviour: 0,
             life: 50,
             money: 0,
             magic: 0,

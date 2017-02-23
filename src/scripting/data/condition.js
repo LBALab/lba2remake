@@ -5,7 +5,7 @@ export const ConditionOpcode = [
     { opcode: 0x01, command: "COL_OBJ", callback: lc.COL_OBJ, param: 'Uint8', operand: 'Uint8' },
     { opcode: 0x02, command: "DISTANCE", callback: lc.DISTANCE, param: 'Uint8:actor', operand: 'Uint16' },
     { opcode: 0x03, command: "ZONE", callback: lc.ZONE, operand: 'Uint8' },
-    { opcode: 0x04, command: "ZONE_OBJ", callback: lc.ZONE_OBJ, param: 'Uint8', operand: 'Uint8' },
+    { opcode: 0x04, command: "ZONE_OBJ", callback: lc.ZONE_OBJ, param: 'Uint8:actor', operand: 'Uint8' },
     { opcode: 0x05, command: "BODY", callback: lc.BODY, operand: 'Uint8' },
     { opcode: 0x06, command: "BODY_OBJ", callback: lc.BODY_OBJ, param: 'Uint8', operand: 'Uint8' },
     { opcode: 0x07, command: "ANIM", callback: lc.ANIM, operand: 'Uint16' },

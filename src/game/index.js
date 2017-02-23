@@ -15,6 +15,7 @@ import {createAudioManager} from '../audio'
 export function createGame(params: Object, isMobile: boolean, callback : Function) {
     let _sceneManager = null;
     let _isPaused = false;
+    let _isLoading = false;
 
     const _clock = new THREE.Clock(false);
     _clock.start();
@@ -30,18 +31,22 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             cameraSpeed: new THREE.Vector3(),
             cameraOrientation: new THREE.Quaternion(),
             cameraHeadOrientation: new THREE.Quaternion(),
-            freeCamera: false
+            freeCamera: false,
+            action: 0
         },
-        loading: () => {
+        loading: (index: number) => {
             _isPaused = true;
-            console.log("Loading...");
+            _isLoading = true;
+            console.log(`Loading scene #${index}`);
         },
         loaded: () => {
             _isPaused = false;
-            console.log("       ...complete!");
+            _isLoading = false;
+            console.log("Loaded!");
         },
 
-        isPause: _isPaused,
+        isPaused: () => _isPaused,
+        isLoading: () => _isLoading,
 
         getSceneManager: () => _sceneManager,
         getState: () => _state,
@@ -65,7 +70,6 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
 
     const _createSceneManager = () => createSceneManager(game, _renderer, sceneManager => {
         _sceneManager = sceneManager;
-        game.loading();
 
         const controls = isMobile ? [
             makeGyroscopeControls(game),
@@ -77,7 +81,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
         ];
 
         document.getElementById('main').appendChild(_renderer.domElement);
-        sceneManager.goto(parseInt(params.scene) || 0, game.loaded);
+        sceneManager.goto(parseInt(params.scene) || 0);
 
         function processAnimationFrame() {
             mainGameLoop(game, _clock, _renderer, sceneManager.getScene(), controls);

@@ -24,7 +24,16 @@ export function loadIsometricScenery(renderer, entry, callback) {
             },
             threeObject: loadMesh(renderer, grid),
             physics: {
-                getGroundHeight: () => 0
+                getGroundHeight: (x, z) => {
+                    const dx = 64 - Math.floor(x * 32);
+                    const dz = Math.floor(z * 32);
+                    const cell = grid.cells[dx * 64 + dz];
+                    let height = 0;
+                    if (cell) {
+                        height = cell.heights[0];
+                    }
+                    return (height + 1) / 64;
+                }
             },
             update: () => {}
         });

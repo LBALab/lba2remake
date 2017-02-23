@@ -72,8 +72,8 @@ export function CAM_FOLLOW() {
 
 }
 
-export function SET_BEHAVIOUR() {
-
+export function SET_BEHAVIOUR(value) {
+    this.game.getState().hero.behaviour = value;
 }
 
 export function SET_VAR_CUBE(index, value) {

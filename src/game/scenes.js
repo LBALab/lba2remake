@@ -34,8 +34,14 @@ export function createSceneManager(game, renderer, callback: Function) {
                 return scene;
             },
             goto: (index, pCallback = noop) => {
-                if (scene && index == scene.index)
+                if ((scene && index == scene.index) || game.isLoading())
                     return;
+
+                ga('set', 'page', `/scene/${index}`);
+                ga('send', 'pageview');
+
+                if (scene)
+                    scene.isActive = false;
 
                 const textBox = document.getElementById('smallText');
                 textBox.style.display = 'none';
@@ -57,15 +63,19 @@ export function createSceneManager(game, renderer, callback: Function) {
                     window.scene = scene;
                     initSceneDebug(scene);
                     reviveActor(scene.getActor(0)); // Awake twinsen
-                    pCallback();
+                    scene.isActive = true;
+                    pCallback(scene);
                 } else {
+                    game.loading(index);
                     resetSceneDebug(scene);
                     loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
                         renderer.applySceneryProps(pScene.scenery.props);
                         scene = pScene;
                         window.scene = scene;
                         initSceneDebug(scene);
-                        pCallback();
+                        scene.isActive = true;
+                        pCallback(scene);
+                        game.loaded();
                     });
                 }
             },
@@ -144,12 +154,14 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 data: sceneData,
                 isIsland: indexInfo.isIsland,
                 threeScene: data.threeScene,
+                sceneNode: sceneNode,
                 scenery: data.scenery,
                 sideScenes: data.sideScenes,
                 parentScene: data,
                 actors: data.actors,
                 points: data.points,
                 zones: data.zones,
+                isActive: false,
                 variables: createSceneVariables(),
                 update: time => {
                     const step = hasStep();

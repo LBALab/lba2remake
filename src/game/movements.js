@@ -3,12 +3,21 @@ import {DirMode} from './actors';
 
 export function processMovements(game, scene, time) {
     const hero = scene.getActor(0);
+    handleBehaviourChanges(game, hero);
     processActorMovement(hero, game.controlsState, time);
+}
+
+function handleBehaviourChanges(game, hero) {
+    if (hero.props.entityIndex != game.getState().hero.behaviour) {
+        hero.props.entityIndex = game.getState().hero.behaviour;
+        hero.resetAnimState();
+    }
 }
 
 function processActorMovement(actor, controlsState, time) {
     if (actor.props.dirMode != DirMode.MANUAL)
         return;
+
     let animIndex = actor.props.animIndex;
     if (controlsState.heroSpeed != 0) {
         actor.isWalking = true;

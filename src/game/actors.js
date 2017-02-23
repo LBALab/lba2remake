@@ -88,7 +88,17 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
         },
         goto: function(point) {
             this.physics.temp.destination = point;
-            this.physics.temp.destAngle = angleTo(this.physics.position, point);
+            let destAngle = angleTo(this.physics.position, point);
+            const signCurr = this.physics.temp.destAngle > 0 ? 1 : -1;
+            const signTgt = destAngle > 0 ? 1 : -1;
+            if (signCurr != signTgt && Math.abs(destAngle) > Math.PI / 4) {
+                if (signCurr == -1) {
+                    destAngle -= 2 * Math.PI;
+                } else {
+                    destAngle += 2 * Math.PI;
+                }
+            }
+            this.physics.temp.destAngle = destAngle;
             this.isWalking = true;
             this.isTurning = true;
             return this.getDistance(point);
