@@ -36,6 +36,9 @@ export function createSceneManager(game, renderer, callback: Function) {
                 if ((scene && index == scene.index) || game.isLoading())
                     return;
 
+                if (scene)
+                    scene.isActive = false;
+
                 const textBox = document.getElementById('smallText');
                 textBox.style.display = 'none';
 
@@ -56,6 +59,7 @@ export function createSceneManager(game, renderer, callback: Function) {
                     window.scene = scene;
                     initSceneDebug(scene);
                     reviveActor(scene.getActor(0)); // Awake twinsen
+                    scene.isActive = true;
                     pCallback(scene);
                 } else {
                     game.loading(index);
@@ -65,6 +69,7 @@ export function createSceneManager(game, renderer, callback: Function) {
                         scene = pScene;
                         window.scene = scene;
                         initSceneDebug(scene);
+                        scene.isActive = true;
                         pCallback(scene);
                         game.loaded();
                     });
@@ -149,6 +154,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 actors: data.actors,
                 points: data.points,
                 zones: data.zones,
+                isActive: false,
                 variables: createSceneVariables(),
                 update: time => {
                     const step = hasStep();

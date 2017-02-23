@@ -8,6 +8,8 @@ export function COL_OBJ() {
 }
 
 export function DISTANCE(actor) {
+    if (!this.scene.isActive && (actor.index == 0 || this.actor.index == 0))
+        return Infinity;
     return this.actor.getDistanceLba(actor.physics.position);
 }
 
