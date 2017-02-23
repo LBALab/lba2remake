@@ -1,39 +1,69 @@
+import AudioData from './data'
+
+const musicSourceCache = [];
 
 export function createAudioManager() {
+    const context = createAudioContext();
+    const musicSource = getAudioSource(context);
+    //const sfxSource = getAudioSource(context);
     const audio = {
-        context: createAudioContext()
+        context: context,
+        getMusicSource: () => musicSource
+        //getSfxSource: () => sfxSource
     };
-
-    audio.getMusicSource = () => getAudioSource(audio.context);
-    audio.getSfxSource = () => getAudioSource(audio.context);
-
     return audio;
 }
 
 function getAudioSource(context) {
-
-    const bufferSource = context.createBufferSource();
-    const gainNode = context.createGain();
-
     const source = {
-        volume: 1,
-        bufferSource: bufferSource,
-        gainNode: gainNode,
-        play: () => { bufferSource.start(); },
-        stop: () => { bufferSource.stop(); },
-        pause: () => {},
-        load: (file, callback) => {
+        volume: 0.8,
+        isPlaying: false,
+        currentIndex: -1,
+        bufferSource: null,
+        gainNode: context.createGain(),
+        pause: () => {}
+    };
+
+    source.onended = () => {
+        source.isPlaying = false;
+    };
+    source.play = () => {
+        source.isPlaying = true;
+        source.bufferSource.start();
+    };
+    source.stop = () => {
+        source.bufferSource.stop();
+        source.isPlaying = false;
+    };
+    source.load = (index, callback) => {
+        if (index == -1 || source.currentIndex == index) {
+            return;
+        }
+        if (source.isPlaying) {
+            source.stop();
+        }
+        source.currentIndex = index;
+        source.bufferSource = context.createBufferSource();
+        if (musicSourceCache[index]) {
+            source.bufferSource.buffer = musicSourceCache[index];
+            source.connect();
+            callback.call();
+        } else {
+            const file = AudioData.MUSIC[index].file;
             loadAudioAsync(context, file, function (buffer) {
                 source.bufferSource.buffer = buffer;
+                musicSourceCache[index] = source.bufferSource.buffer;
+                source.connect();
                 callback.call();
             });
         }
     };
-
-    source.bufferSource.connect(source.gainNode);
-    source.gainNode.gain.value = source.volume;
-    source.gainNode.connect(context.destination);
-    source.bufferSource.connect(context.destination);
+    source.connect = () => {
+        // source->gain->context
+        source.bufferSource.connect(source.gainNode);
+        source.gainNode.gain.value = source.volume;
+        source.gainNode.connect(context.destination);
+    };
 
     return source;
 }
