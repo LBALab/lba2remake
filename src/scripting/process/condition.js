@@ -98,7 +98,7 @@ export function NUM_GOLD_PIECES() {
 }
 
 export function BEHAVIOUR() {
-    return -1;
+    return this.game.getState().hero.behaviour;
 }
 
 export function CHAPTER() {
