@@ -4,24 +4,25 @@ const musicSourceCache = [];
 
 export function createAudioManager() {
     const context = createAudioContext();
-    const musicSource = getAudioSource(context);
-    //const sfxSource = getAudioSource(context);
+    const musicSource = getAudioSource(context, AudioData.MUSIC);
+    const voxSource = getAudioSource(context);
     const audio = {
         context: context,
-        getMusicSource: () => musicSource
-        //getSfxSource: () => sfxSource
+        getMusicSource: () => musicSource,
+        getVoxSource: () => voxSource
     };
     return audio;
 }
 
-function getAudioSource(context) {
+function getAudioSource(context, data) {
     const source = {
         volume: 0.8,
         isPlaying: false,
         currentIndex: -1,
         bufferSource: null,
         gainNode: context.createGain(),
-        pause: () => {}
+        pause: () => {},
+        data: data
     };
 
     source.onended = () => {
@@ -49,7 +50,7 @@ function getAudioSource(context) {
             source.connect();
             callback.call();
         } else {
-            const file = AudioData.MUSIC[index].file;
+            const file = source.data[index].file;
             loadAudioAsync(context, file, function (buffer) {
                 source.bufferSource.buffer = buffer;
                 musicSourceCache[index] = source.bufferSource.buffer;
