@@ -60,7 +60,15 @@ function processTeleports(game, scene) {
         if (pos.x > Math.min(box.bX, box.tX) && pos.x < Math.max(box.bX, box.tX) &&
             pos.y > Math.min(box.bY, box.tY) && pos.y < Math.max(box.bY, box.tY) &&
             pos.z > Math.min(box.bZ, box.tZ) && pos.z < Math.max(box.bZ, box.tZ)) {
-            game.getSceneManager().goto(zone.props.snap);
+            game.getSceneManager().goto(zone.props.snap, (newScene) => {
+                const newHero = newScene.getActor(0);
+                newHero.physics.position.x = (0x8000 - zone.props.info2 + 512) / 0x4000;
+                newHero.physics.position.y = zone.props.info1 / 0x4000;
+                newHero.physics.position.z = zone.props.info0 / 0x4000;
+                newHero.physics.temp.angle = hero.physics.temp.angle;
+                newHero.physics.orientation.copy(hero.physics.orientation);
+                newHero.threeObject.position.copy(newHero.physics.position);
+            });
             break;
         }
     }
