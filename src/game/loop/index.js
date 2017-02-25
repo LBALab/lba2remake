@@ -15,14 +15,15 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
     if (scene) {
         each(controls, ctrl => { ctrl.update && ctrl.update(); });
         if (!game.isPaused()) {
+            scene.scenery.update(time);
             const step = hasStep();
             updateScene(game, scene, time, step);
             endStep();
+            processPhysicsFrame(game, scene);
             each(scene.sideScenes, sideScene => {
                 updateScene(game, sideScene, time);
+                processPhysicsFrame(game, sideScene);
             });
-            scene.scenery.update(time);
-            processPhysicsFrame(game, scene);
             processCameraMovement(game.controlsState, renderer, scene, time);
             updateDebugger(scene, renderer);
             renderer.render(scene);
@@ -35,7 +36,7 @@ function updateScene(game, scene, time, step) {
     each(scene.actors, actor => {
         updateActor(actor, time, step);
         if (actor.index == 0 && scene.isActive) {
-            updateHero(game, actor, scene, time);
+            updateHero(game, actor, time);
         }
     });
 }

@@ -1,7 +1,7 @@
 import THREE from 'three';
 import {DirMode} from '../actors';
 
-export function updateHero(game, hero, scene, time) {
+export function updateHero(game, hero, time) {
     handleBehaviourChanges(game, hero);
     processActorMovement(game.controlsState, hero, time);
 }
