@@ -12,21 +12,18 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
     };
 
     renderer.stats.begin();
-
     if (scene) {
         each(controls, ctrl => { ctrl.update && ctrl.update(); });
         if (!game.isPaused()) {
             const step = hasStep();
-            updateScene(scene, time, step);
+            updateScene(game, scene, time, step);
             endStep();
             each(scene.sideScenes, sideScene => {
-                updateScene(sideScene, time);
+                updateScene(game, sideScene, time);
             });
-            if (scene.scenery) {
-                processCameraMovement(game.controlsState, renderer, scene, time);
-                scene.scenery.update(time);
-            }
+            scene.scenery.update(time);
             processPhysicsFrame(game, scene);
+            processCameraMovement(game.controlsState, renderer, scene, time);
             updateDebugger(scene, renderer);
             renderer.render(scene);
         }
@@ -34,11 +31,11 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
     renderer.stats.end();
 }
 
-function updateScene(scene, time, step) {
+function updateScene(game, scene, time, step) {
     each(scene.actors, actor => {
         updateActor(actor, time, step);
-        if (actor.index == 0) {
-            updateHero(game, scene, time);
+        if (actor.index == 0 && scene.isActive) {
+            updateHero(game, actor, scene, time);
         }
     });
 }
