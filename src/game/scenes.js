@@ -162,13 +162,6 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 zones: data.zones,
                 isActive: false,
                 variables: createSceneVariables(),
-                update: time => {
-                    const step = hasStep();
-                    each(data.actors, actor => {
-                        actor.update(time, step);
-                    });
-                    endStep();
-                },
                 getActor(index) {
                     return find(this.actors, function(obj) { return obj.index == index; });
                 },

@@ -3,9 +3,9 @@
 import THREE from 'three';
 
 import type {Model} from '../model';
-import {loadModel, updateModel} from '../model';
+import {loadModel} from '../model';
 import {loadAnimState, resetAnimState} from '../model/animState';
-import {getRotation, normalizeAngle, angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
+import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
 
 type ActorProps = {
     index: number,
@@ -21,17 +21,25 @@ type ActorProps = {
 
 type ActorPhysics = {
     position: THREE.Vector3,
-    orientation: THREE.Quaternion
+    orientation: THREE.Quaternion,
+    temp: {
+        position: THREE.Vector3,
+        angle: number,
+        destAngle: number
+    }
 }
 
-type Actor = {
+export type Actor = {
     props: ActorProps,
     threeObject: ?THREE.Object3D,
     model: ?Model,
     physics: ActorPhysics,
+    animState: any,
     isVisible: boolean,
     isSprite: boolean,
-    update: ?Function
+    isTurning: ?boolean,
+    isWalking: ?boolean,
+    runScripts: ?Function
 }
 
 export const ActorStaticFlag = {
@@ -72,19 +80,9 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
         model: null,
         threeObject: null,
         animState: animState,
+        runScripts: null,
         resetAnimState: function() {
             resetAnimState(this.animState);
-        },
-        update: function(time, step) {
-            this.runScripts(time, step);
-
-            if(this.model) {
-                this.animState.matrixRotation.makeRotationFromQuaternion(this.physics.orientation);
-                updateModel(this.model, this.animState, this.props.entityIndex, this.props.bodyIndex, this.props.animIndex, time);
-                if (this.animState.isPlaying) {
-                    this.updateAnimStep(time);
-                }
-            }
         },
         goto: function(point) {
             this.physics.temp.destination = point;
@@ -119,32 +117,6 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
             this.isTurning = false;
             this.physics.temp.destAngle = this.physics.temp.angle;
             delete this.physics.temp.destination;
-        },
-        updateAnimStep: function(time) {
-            const delta = time.delta * 1000;
-            if (this.isTurning) {
-                let angle = ((this.physics.temp.destAngle - this.physics.temp.angle) * delta) / (this.props.speed * 10);
-                angle = Math.atan2(Math.sin(angle), Math.cos(angle));
-                this.physics.temp.angle += angle;
-                const euler = new THREE.Euler(0, this.physics.temp.angle, 0, 'XZY');
-                this.physics.orientation.setFromEuler(euler);
-            }
-            if (this.isWalking) {
-                this.physics.temp.position.set(0,0,0);
-
-                const speedZ = ((this.animState.step.z * delta) / this.animState.keyframeLength);
-                const speedX = ((this.animState.step.x * delta) / this.animState.keyframeLength);
-
-                this.physics.temp.position.x += Math.sin(this.physics.temp.angle) * speedZ;
-                this.physics.temp.position.z += Math.cos(this.physics.temp.angle) * speedZ;
-
-                this.physics.temp.position.x -= Math.cos(this.physics.temp.angle) * speedX;
-                this.physics.temp.position.z += Math.sin(this.physics.temp.angle) * speedX;
-
-                this.physics.temp.position.y += (this.animState.step.y * delta) / (this.animState.keyframeLength);
-            } else {
-                this.physics.temp.position.set(0, 0, 0);
-            }
         }
     };
 

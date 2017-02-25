@@ -1,6 +1,5 @@
 // @flow
 
-import {savePosition, loadPosition} from '../game/hero';
 import {switchStats} from '../renderer/stats';
 
 export function makeKeyboardControls(game: any) {
@@ -82,15 +81,6 @@ function keyDownHandler(game, event) {
         case 33: // pageup
         case 'PageUp':
             game.getSceneManager().previous();
-            break;
-
-        case 219:
-        case 'BracketLeft':
-            savePosition(game);
-            break;
-        case 221:
-        case 'BracketRight':
-            loadPosition(game);
             break;
 
         case 70: // f
