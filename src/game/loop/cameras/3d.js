@@ -2,10 +2,10 @@ import THREE from 'three';
 
 export function processFollow3DMovement(controlsState, camera, scene, time) {
     const hero = scene.getActor(0);
-    const heroPos = new THREE.Vector3(0, 0.04, 0);
+    const heroPos = new THREE.Vector3(0, 0.08, 0);
     heroPos.applyMatrix4(hero.threeObject.matrixWorld);
     camera.position.copy(heroPos);
-    const offset = new THREE.Vector3(0, 0.2, -0.4);
+    const offset = new THREE.Vector3(0, 0.1, -0.3);
     offset.applyQuaternion(hero.threeObject.quaternion);
     camera.position.add(offset);
     camera.lookAt(heroPos);
