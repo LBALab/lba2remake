@@ -5,7 +5,9 @@ export function processPhysicsFrame(game, scene) {
     each(scene.actors, actor => {
         processActorPhysics(actor, scene);
     });
-    processTeleports(game, scene);
+    if (scene.isActive) {
+        processTeleports(game, scene);
+    }
 }
 
 function processActorPhysics(actor, scene) {
