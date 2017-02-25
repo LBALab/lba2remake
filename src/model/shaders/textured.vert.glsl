@@ -2,7 +2,7 @@ precision highp float;
 
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
-uniform mat4 bones[50];
+uniform mat4 bones[30];
 uniform mat4 rotationMatrix;
 
 attribute vec3 position;

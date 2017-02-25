@@ -75,7 +75,7 @@ function createShaderBone(state) {
     for (let i = 0; i < state.skeleton.length; ++i) {
         bones.push(state.skeleton[i].m);
     }
-    for (let i = 0; i < 50 - state.skeleton.length; ++i) {
+    for (let i = 0; i < 30 - state.skeleton.length; ++i) {
         bones.push(new THREE.Matrix4());
     }
     return bones;
