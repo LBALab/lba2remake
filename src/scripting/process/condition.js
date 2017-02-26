@@ -1,3 +1,4 @@
+import THREE from 'three';
 
 export function COL() {
     return -1;
@@ -150,11 +151,12 @@ export function RAIL() {
 }
 
 export function BETA() {
-    return -1;
+    return BETA_OBJ.call(this, this.actor);
 }
 
-export function BETA_OBJ() {
-    return -1;
+export function BETA_OBJ(actor) {
+    const angle = actor.physics.temp.angle + Math.PI / 2;
+    return (Math.floor(THREE.Math.radToDeg(angle) / 360 * 0x1000) + 0x1000) % 0x1000;
 }
 
 export function CARRIED_OBJ_BY() {
