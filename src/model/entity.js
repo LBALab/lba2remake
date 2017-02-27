@@ -75,18 +75,21 @@ const ACTIONTYPE = {
     UNKNOWN_39        : 39
 };
 
+let entities = [];
+
 export function loadEntity(buffer: ArrayBuffer) {
-    let entities = [];
-    const data = new DataView(buffer);
-    const offset = data.getUint32(0, true);
-    const numEntries = (offset / 4) - 1;
-    let offsets = [];
-    for (let i = 0; i < numEntries; ++i) {
-        offsets.push(data.getUint32(i * 4, true));
-    }
-    for (let i = 0; i < numEntries; ++i) {
-        const entity = loadEntityEntry(buffer, offsets[i], i);
-        entities.push(entity);
+    if (entities.length == 0) {
+        const data = new DataView(buffer);
+        const offset = data.getUint32(0, true);
+        const numEntries = (offset / 4) - 1;
+        let offsets = [];
+        for (let i = 0; i < numEntries; ++i) {
+            offsets.push(data.getUint32(i * 4, true));
+        }
+        for (let i = 0; i < numEntries; ++i) {
+            const entity = loadEntityEntry(buffer, offsets[i], i);
+            entities.push(entity);
+        }
     }
     return entities;
 }
