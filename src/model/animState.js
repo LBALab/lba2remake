@@ -161,6 +161,8 @@ function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones) {
     updateSkeletonHierarchy(state.skeleton, 0);
 }
 
+const tmpM = new THREE.Matrix4();
+
 function updateSkeletonHierarchy(skeleton, index) {
     const s = skeleton[index];
     const p = skeleton[index == 0 ? 0 : s.parent];
@@ -180,9 +182,9 @@ function updateSkeletonHierarchy(skeleton, index) {
 
         s.m.setPosition(pos);
 
-        const m = p.m.clone();
-        m.multiply(s.m);
-        s.m.copy(m);
+        tmpM.copy(p.m);
+        tmpM.multiply(s.m);
+        s.m.copy(tmpM);
     } else {
         p.m.identity();
     }
