@@ -24,7 +24,7 @@ export function loadIsometricScenery(renderer, entry, callback) {
             },
             threeObject: loadMesh(renderer, grid),
             physics: {
-                getGroundHeight: (x, z) => {
+                getGroundInfo: (x, z) => {
                     const dx = 64 - Math.floor(x * 32);
                     const dz = Math.floor(z * 32);
                     const cell = grid.cells[dx * 64 + dz];

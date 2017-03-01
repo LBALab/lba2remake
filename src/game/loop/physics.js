@@ -10,14 +10,29 @@ export function processPhysicsFrame(game, scene) {
     }
 }
 
+const el = document.createElement('div');
+el.style.background = 'black';
+el.style.color = 'white';
+el.style.position = 'fixed';
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.appendChild(el);
+});
+
 function processActorPhysics(actor, scene) {
     actor.physics.position.add(actor.physics.temp.position);
     if (scene.isIsland && actor.threeObject) {
         const position = new THREE.Vector3();
         position.applyMatrix4(actor.threeObject.matrixWorld);
-        const height = scene.scenery.physics.getGroundHeight(position.x, position.z);
+        const info = scene.scenery.physics.getGroundInfo(position.x, position.z);
+        const height = info.height;
         actor.physics.position.y = height;
         actor.threeObject.position.y = height;
+        if (actor.model) {
+            actor.model.flag.value = info.collision;
+        }
+        if (actor.index == 0 && scene.isActive) {
+            el.innerText = info.sound;
+        }
     }
     if (actor.model) {
         actor.model.mesh.quaternion.copy(actor.physics.orientation);

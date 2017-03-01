@@ -39,6 +39,18 @@ export function loadGround(section, geometries, usedTiles) {
     }
 }
 
+export function getTriangleFromPos(section, x, z) {
+    const xi = Math.floor(x);
+    const zi = Math.floor(z);
+    const t0 = loadTriangle(section, xi, zi, 0);
+    const t1 = loadTriangle(section, xi, zi, 1);
+    if (t0.orientation) {
+        return (z - zi) > (x - xi) ? t1 : t0;
+    } else {
+        return (z - zi) > (1 - (x - xi)) ? t0 : t1;
+    }
+}
+
 function loadTriangle(section, x, y, idx) {
     const flags = section.triangles[(x * 64 + y) * 2 + idx];
     return {
