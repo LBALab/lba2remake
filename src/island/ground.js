@@ -22,7 +22,7 @@ export function loadGround(section, geometries, usedTiles) {
                     usedTiles[x * 64 + y] = t0.orientation;
                     if (t.useTexture) {
                         push.apply(geometries.ground_textured.positions, getPositions(section, p));
-                        push.apply(geometries.ground_textured.uvs, getUVs(section.textureInfo, t.textureIndex));
+                        push.apply(geometries.ground_textured.uvs, getUVs(section.textureInfo, t.uvIndex));
                         push.apply(geometries.ground_textured.colors, getColors(t));
                         push.apply(geometries.ground_textured.intensities, getIntensities(section.intensity, p));
                     } else {
@@ -42,12 +42,17 @@ export function loadGround(section, geometries, usedTiles) {
 function loadTriangle(section, x, y, idx) {
     const flags = section.triangles[(x * 64 + y) * 2 + idx];
     return {
-        textureBank: bits(flags, 0, 4),
-        useTexture: bits(flags, 4, 2),
-        useColor: bits(flags, 6, 2),
+        color: bits(flags, 0, 4),
+        unk0: bits(flags, 4, 1),
+        useTexture: bits(flags, 5, 1),
+        unk1: bits(flags, 6, 1),
+        useColor: bits(flags, 7, 1),
+        sound: bits(flags, 8, 4),
+        liquid: bits(flags, 12, 4),
         orientation: bits(flags, 16, 1),
-        textureIndex: bits(flags, 19, 13),
-        liquid: bits(flags, 12, 4)
+        collision: bits(flags, 17, 1),
+        unk2: bits(flags, 18, 1),
+        uvIndex: bits(flags, 19, 13)
     };
 }
 
@@ -76,7 +81,7 @@ function getColors(triangle) {
     if (triangle.useColor) {
         const colors = [];
         for (let i = 0; i < 3; ++i) {
-            colors.push(triangle.textureBank);
+            colors.push(triangle.color);
         }
         return colors;
     } else {
