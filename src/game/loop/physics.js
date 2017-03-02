@@ -31,7 +31,7 @@ function processActorPhysics(actor, scene) {
             actor.model.flag.value = info.collision;
         }
         if (actor.index == 0 && scene.isActive) {
-            el.innerText = info.sound;
+            el.innerText = `[${info.x}, ${info.z}] orientation: ${info.orientation}, idx: ${info.index}, sound: ${info.sound}, height: ${Math.round(height * 0x4000)}\npoints: ${info.points}\nexpr: ${info.expr}`;
         }
     }
     if (actor.model) {

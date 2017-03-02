@@ -11,20 +11,22 @@ function getGroundInfo(layout, x, z) {
     const e = 1 / 32;
     const section = find(layout.groundSections, gs => x - e > gs.x * 2 && x - e <= gs.x * 2 + 2 && z >= gs.z * 2 && z <= gs.z * 2 + 2);
     if (section) {
-        const dx = (2.0 - (x - section.x * 2)) * 32 + 1;
-        const dz = (z - section.z * 2) * 32;
-        const ix = Math.floor(dx);
-        const iz = Math.floor(dz);
-        const t = getTriangleFromPos(section, dx, dz);
-        const height = (ox, oz) => section.heightmap[(ix + ox) * 65 + iz + oz] / 0x4000;
-        const ax = dx - ix;
-        const az = dz - iz;
-        const r1 = (1.0 - ax) * height(0, 0) + ax * height(1, 0);
-        const r2 = (1.0 - ax) * height(0, 1) + ax * height(1, 1);
+        const xLocal = (2.0 - (x - section.x * 2)) * 32 + 1;
+        const zLocal = (z - section.z * 2) * 32;
+        const xFloor = Math.floor(xLocal);
+        const zFloor = Math.floor(zLocal);
+        const t = getTriangleFromPos(section, xLocal, zLocal);
+        const h = t.getHeight(xLocal - xFloor, zLocal - zFloor);
         return {
-            height: (1.0 - az) * r1 + az * r2,
+            height: h.h,
             sound: t.sound,
-            collision: t.collision
+            collision: t.collision,
+            orientation: t.orientation,
+            x: xFloor,
+            z: zFloor,
+            index: t.index,
+            points: t.points.map(pt => `\n${pt.x}, ${pt.z} => ${section.heightmap[(xFloor + pt.x) * 65 + zFloor + pt.z]}`),
+            expr: h.expr
         };
     } else {
         return {
