@@ -18,20 +18,40 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(el);
 });
 
+const tgt = new THREE.Vector3();
+const position = new THREE.Vector3();
+
 function processActorPhysics(actor, scene) {
     actor.physics.position.add(actor.physics.temp.position);
     if (scene.isIsland && actor.threeObject) {
-        const position = new THREE.Vector3();
-        position.applyMatrix4(actor.threeObject.matrixWorld);
+        tgt.copy(actor.physics.position);
+        tgt.sub(actor.threeObject.position);
+        tgt.setY(0);
+        let tgtInfo = null;
+        if (tgt.lengthSq() != 0) {
+            tgt.normalize();
+            tgt.multiplyScalar(0.02);
+            tgt.add(actor.threeObject.position);
+            tgt.applyMatrix4(scene.sceneNode.matrixWorld);
+            tgtInfo = scene.scenery.physics.getGroundInfo(tgt.x, tgt.z);
+            if (tgtInfo.collision) {
+                actor.physics.position.copy(actor.threeObject.position);
+            }
+        }
+        position.copy(actor.physics.position);
+        position.applyMatrix4(scene.sceneNode.matrixWorld);
         const info = scene.scenery.physics.getGroundInfo(position.x, position.z);
         const height = info.height;
         actor.physics.position.y = height;
         actor.threeObject.position.y = height;
         if (actor.model) {
-            actor.model.flag.value = info.collision;
+            actor.model.flag.value = tgtInfo && tgtInfo.collision || 0.0;
         }
         if (actor.index == 0 && scene.isActive) {
             el.innerText = info.sound;
+            if (tgtInfo) {
+                el.innerText += ` [${tgt.x.toFixed(2)}, ${tgt.z.toFixed(2)}] [${position.x.toFixed(2)}, ${position.z.toFixed(2)}]`;
+            }
         }
     }
     if (actor.model) {
