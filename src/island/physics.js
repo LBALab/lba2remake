@@ -13,21 +13,7 @@ function getGroundInfo(layout, x, z) {
     if (section) {
         const xLocal = (2.0 - (x - section.x * 2)) * 32 + 1;
         const zLocal = (z - section.z * 2) * 32;
-        const xFloor = Math.floor(xLocal);
-        const zFloor = Math.floor(zLocal);
-        const t = getTriangleFromPos(section, xLocal, zLocal);
-        const h = t.getHeight(xLocal - xFloor, zLocal - zFloor);
-        return {
-            height: h.h,
-            sound: t.sound,
-            collision: t.collision,
-            orientation: t.orientation,
-            x: xFloor,
-            z: zFloor,
-            index: t.index,
-            points: t.points.map(pt => `\n${pt.x}, ${pt.z} => ${section.heightmap[(xFloor + pt.x) * 65 + zFloor + pt.z]}`),
-            expr: h.expr
-        };
+        return getTriangleFromPos(section, xLocal, zLocal);
     } else {
         return {
             height: 0,

@@ -1,5 +1,6 @@
 import {bits} from '../utils';
 import {map} from 'lodash';
+import THREE from 'three';
 const push = Array.prototype.push;
 
 export function loadGround(section, geometries, usedTiles) {
@@ -39,22 +40,25 @@ export function loadGround(section, geometries, usedTiles) {
 export function getTriangleFromPos(section, x, z) {
     const xFloor = Math.floor(x);
     const zFloor = Math.floor(z);
-    const xMod = x - xFloor;
-    const zMod = z - zFloor;
-    const t0 = loadTriangle(section, xFloor, zFloor, 0);
-    const t1 = loadTriangle(section, xFloor, zFloor, 1);
-    if (t0.orientation) {
-        return zMod > (1 - xMod) ? t1 : t0;
-    } else {
-        return zMod > xMod ? t1 : t0;
-    }
+    const t0 = loadTriangleForPhysics(section, xFloor, zFloor, x, z, 0);
+    return (t0.height != null) ? t0 : loadTriangleForPhysics(section, xFloor, zFloor, x, z, 1);
 }
+
+const TRIANGLE_POINTS = [
+    [
+        makeTrianglePoints(0, 0),
+        makeTrianglePoints(0, 1)
+    ],
+    [
+        makeTrianglePoints(1, 0),
+        makeTrianglePoints(1, 1)
+    ]
+];
 
 function loadTriangle(section, x, z, idx) {
     const flags = section.triangles[(x * 64 + z) * 2 + idx];
     const orientation = bits(section.triangles[(x * 64 + z) * 2], 16, 1);
-    const rOrientation = 1 - orientation;
-    const t = {
+    return {
         index: idx,
         color: bits(flags, 0, 4),
         unk0: bits(flags, 4, 1),
@@ -66,9 +70,49 @@ function loadTriangle(section, x, z, idx) {
         orientation: orientation,
         collision: bits(flags, 17, 1),
         unk2: bits(flags, 18, 1),
-        uvIndex: bits(flags, 19, 13)
+        uvIndex: bits(flags, 19, 13),
+        points: TRIANGLE_POINTS[orientation][idx]
     };
-    t.points = [{
+}
+
+const DOWN = new THREE.Vector3(0, -1, 0);
+const RAY = new THREE.Ray(new THREE.Vector3(), DOWN);
+const TGT = new THREE.Vector3();
+const PTS = [
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+    new THREE.Vector3()
+];
+
+function loadTriangleForPhysics(section, x, z, xTgt, zTgt, idx) {
+    const flags = section.triangles[(x * 64 + z) * 2 + idx];
+    const baseFlags = idx ? section.triangles[(x * 64 + z) * 2] : flags;
+    const orientation = bits(baseFlags, 16, 1);
+    const src_pts = TRIANGLE_POINTS[orientation][idx];
+
+    for (let i = 0; i < 3; ++i) {
+        const pt = src_pts[i];
+        const ptIdx = (x + pt.x) * 65 + z + pt.z;
+        PTS[i].set(
+            x + pt.x,
+            section.heightmap[ptIdx] / 0x4000,
+            z + pt.z
+        );
+    }
+
+    RAY.origin.set(xTgt, 5, zTgt);
+    const tgt = RAY.intersectTriangle(PTS[0], PTS[2], PTS[1], true, TGT);
+
+    return {
+        sound: bits(flags, 8, 4),
+        collision: bits(flags, 17, 1),
+        height: tgt && tgt.y
+    };
+}
+
+function makeTrianglePoints(orientation, idx) {
+    const rOrientation = 1 - orientation;
+    return [{
         x: idx,
         z: idx ? rOrientation : orientation
     }, {
@@ -78,30 +122,6 @@ function loadTriangle(section, x, z, idx) {
         x: 1 - idx,
         z: idx ? orientation : rOrientation,
     }];
-    t.getHeight = (dx, dz) => {
-        const ptHeight = pt => section.heightmap[(x + pt.x) * 65 + z + pt.z] / 0x4000;
-        const mix = (a, b, m) => a * (1 - m) + b * m;
-        const mlt = v => Math.round(v * 0x4000);
-        const tf = v => v.toFixed(2);
-        if (orientation) {
-            const hz = mix(ptHeight(t.points[0]), ptHeight(t.points[1]), idx ? dz : 1 - dz);
-            const h = mix(hz, ptHeight(t.points[2]), idx ? 1 - dx : dx);
-            return {
-                h: h,
-                expr: `\nhz = mix(${mlt(ptHeight(t.points[0]))}, ${mlt(ptHeight(t.points[1]))}, ${tf(idx ? dz : 1 - dz)}) => ${mlt(hz)}`
-                    + `\nh = mix(${mlt(hz)}, ${mlt(ptHeight(t.points[2]))}, ${tf(idx ? 1 - dx : dx)}) => ${mlt(h)}`
-            };
-        } else {
-            const hx = mix(ptHeight(t.points[0]), ptHeight(t.points[1]), idx ? 1 - dx : dx);
-            const h = mix(hx, ptHeight(t.points[2]), idx ? 1 - dz : dz);
-            return {
-                h: h,
-                expr: `\nhx = mix(${mlt(ptHeight(t.points[0]))}, ${mlt(ptHeight(t.points[1]))}, ${tf(idx ? 1 - dx : dx)}) => ${mlt(hx)}`
-                    + `\nh = mix(${mlt(hx)}, ${mlt(ptHeight(t.points[2]))}, ${tf(idx ? 1 - dz : dz)}) => ${mlt(h)}`
-            };
-        }
-    };
-    return t;
 }
 
 function getPositions(section, points) {

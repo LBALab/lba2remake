@@ -30,8 +30,8 @@ function updateMovements(actor: Actor, time: any) {
     if (actor.isWalking) {
         actor.physics.temp.position.set(0,0,0);
 
-        const speedZ = ((actor.animState.step.z * delta) / actor.animState.keyframeLength) * 0.15;
-        const speedX = ((actor.animState.step.x * delta) / actor.animState.keyframeLength) * 0.15;
+        const speedZ = ((actor.animState.step.z * delta) / actor.animState.keyframeLength);
+        const speedX = ((actor.animState.step.x * delta) / actor.animState.keyframeLength);
 
         actor.physics.temp.position.x += Math.sin(actor.physics.temp.angle) * speedZ;
         actor.physics.temp.position.z += Math.cos(actor.physics.temp.angle) * speedZ;

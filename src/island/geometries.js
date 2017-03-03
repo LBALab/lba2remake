@@ -35,7 +35,6 @@ export function prepareGeometries(island, data, ambience) {
             material: new THREE.RawShaderMaterial({
                 vertexShader: VERT_GROUND_COLORED,
                 fragmentShader: FRAG_GROUND_COLORED,
-                wireframe: true,
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -51,7 +50,6 @@ export function prepareGeometries(island, data, ambience) {
             material: new THREE.RawShaderMaterial({
                 vertexShader: VERT_GROUND_TEXTURED,
                 fragmentShader: FRAG_GROUND_TEXTURED,
-                wireframe: true,
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
