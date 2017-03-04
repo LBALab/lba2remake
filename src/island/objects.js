@@ -5,13 +5,13 @@ const push = Array.prototype.push;
 
 export function loadObjects(island, section, geometries, objects) {
     const numObjects = section.objInfo.numObjects;
-    section.boundingBoxes = [];
+    const boundingBoxes = [];
     for (let i = 0; i < numObjects; ++i) {
         const info = loadObjectInfo(section.objects, section, i);
         const object = loadObject(island, objects, info.index);
-        loadFaces(geometries, object, info);
-        section.boundingBoxes.push(computeBoundingBox(object, info));
+        loadFaces(geometries, object, info, boundingBoxes);
     }
+    section.boundingBoxes = boundingBoxes;
 }
 
 function loadObjectInfo(objects, section, index) {
@@ -55,31 +55,6 @@ function loadObject(island, objects, index) {
     }
 }
 
-function computeBoundingBox(object, info) {
-    const min = new THREE.Vector3(Infinity, Infinity, Infinity);
-    const max = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
-    const vertices = object.vertices;
-    for (let i = 0; i < object.numVerticesType1; ++i) {
-        const x = vertices[i * 4];
-        const y = vertices[i * 4 + 1];
-        const z = vertices[i * 4 + 2];
-
-        min.x = Math.min(x, min.x);
-        min.y = Math.min(y, min.y);
-        min.z = Math.min(z, min.z);
-
-        max.x = Math.max(x, max.x);
-        max.y = Math.max(y, max.y);
-        max.z = Math.max(z, max.z);
-    }
-    min.divideScalar(0x4000);
-    max.divideScalar(0x4000);
-    const bb = new THREE.Box3(min, max);
-    bb.applyMatrix4(angleMatrix[(info.angle + 3) % 4]);
-    bb.translate(new THREE.Vector3(info.x, info.y, info.z));
-    return bb;
-}
-
 function loadUVGroups(object) {
     object.uvGroups = [];
     const rawUVGroups = new Uint8Array(object.buffer, object.uvGroupsSectionOffset, object.uvGroupsSectionSize * 4);
@@ -94,12 +69,12 @@ function loadUVGroups(object) {
     }
 }
 
-function loadFaces(geometries, object, info) {
+function loadFaces(geometries, object, info, boundingBoxes) {
     const data = new DataView(object.buffer, object.faceSectionOffset, object.lineSectionOffset - object.faceSectionOffset);
     let offset = 0;
     while (offset < data.byteLength) {
         const section = parseSectionHeader(data, object, offset);
-        loadSection(geometries, object, info, section);
+        loadSection(geometries, object, info, section, boundingBoxes);
         offset += section.size + 8;
     }
 }
@@ -120,12 +95,24 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
-function loadSection(geometries, object, info, section) {
+function loadSection(geometries, object, info, section, boundingBoxes) {
+    const bb = new THREE.Box3();
     for (let i = 0; i < section.numFaces; ++i) {
         const uvGroup = getUVGroup(object, section, i);
         const faceNormal = getFaceNormal(object, section, info, i);
         const addVertex = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
+            const x = object.vertices[index * 4];
+            const y = object.vertices[index * 4 + 1];
+            const z = object.vertices[index * 4 + 2];
+
+            bb.min.x = Math.min(x, bb.min.x);
+            bb.min.y = Math.min(y, bb.min.y);
+            bb.min.z = Math.min(z, bb.min.z);
+
+            bb.max.x = Math.max(x, bb.max.x);
+            bb.max.y = Math.max(y, bb.max.y);
+            bb.max.z = Math.max(z, bb.max.z);
             if (section.blockSize == 12 || section.blockSize == 16) {
                 push.apply(geometries.objects_colored.positions, getPosition(object, info, index));
                 push.apply(geometries.objects_colored.normals, section.type == 1 ? faceNormal : getVertexNormal(object, info, index));
@@ -147,6 +134,11 @@ function loadSection(geometries, object, info, section) {
             }
         }
     }
+    bb.min.divideScalar(0x4000);
+    bb.max.divideScalar(0x4000);
+    bb.applyMatrix4(angleMatrix[(info.angle + 3) % 4]);
+    bb.translate(new THREE.Vector3(info.x, info.y, info.z));
+    boundingBoxes.push(bb);
 }
 
 function getFaceNormal(object, section, info, i) {
