@@ -34,7 +34,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'block';
         textBox.style.color = actor.props.textColor;
-        textBox.innerText = this.scene.data.texts[id].value;
+        textBox.innerHTML = this.scene.data.texts[id].value;
         cmdState.listener = function() {
             cmdState.ended = true;
         };
@@ -43,7 +43,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
     if (cmdState.ended) {
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'none';
-        textBox.innerText = '';
+        textBox.innerHTML = '';
         window.removeEventListener('keydown', cmdState.listener);
         delete cmdState.listener;
         delete cmdState.ended;

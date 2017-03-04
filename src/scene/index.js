@@ -3,6 +3,7 @@ import THREE from 'three';
 import {DirMode} from '../game/actors';
 
 import {loadHqrAsync} from '../hqr';
+import Lba2Charmap from './data';
 
 export function loadSceneData(index, callback) {
     async.auto({
@@ -309,8 +310,9 @@ function loadTexts(sceneData, textFile) {
         const flags = data.getUint8(start, true);
         let value = '';
         for (let i = start + 1; i < end - 1; ++i) {
-            value += String.fromCharCode(data.getInt8(i));
+            value += String.fromCharCode(Lba2Charmap[data.getUint8(i)]);
         }
+        value = value.replace(/@/g,'<br/>');
         texts[mapData[idx]] = {flags, value};
         idx++;
     } while (end < data.byteLength);
