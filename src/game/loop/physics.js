@@ -3,61 +3,20 @@ import {each, find} from 'lodash';
 
 export function processPhysicsFrame(game, scene) {
     each(scene.actors, actor => {
-        processActorPhysics(actor, scene);
+        processActorPhysics(scene, actor);
     });
     if (scene.isActive) {
         processTeleports(game, scene);
     }
 }
 
-const el = document.createElement('div');
-el.style.background = 'black';
-el.style.color = 'white';
-el.style.position = 'fixed';
-document.addEventListener('DOMContentLoaded', () => {
-    document.body.appendChild(el);
-});
-
-const tgt = new THREE.Vector3();
-const position = new THREE.Vector3();
-
-function processActorPhysics(actor, scene) {
+function processActorPhysics(scene, actor) {
+    if (!actor.model)
+        return;
     actor.physics.position.add(actor.physics.temp.position);
-    if (scene.isIsland && actor.threeObject) {
-        tgt.copy(actor.physics.position);
-        tgt.sub(actor.threeObject.position);
-        tgt.setY(0);
-        let tgtInfo = null;
-        if (tgt.lengthSq() != 0) {
-            tgt.normalize();
-            tgt.multiplyScalar(0.02);
-            tgt.add(actor.threeObject.position);
-            tgt.applyMatrix4(scene.sceneNode.matrixWorld);
-            tgtInfo = scene.scenery.physics.getGroundInfo(tgt.x, tgt.z);
-            if (tgtInfo.collision) {
-                actor.physics.position.copy(actor.threeObject.position);
-            }
-        }
-        position.copy(actor.physics.position);
-        position.applyMatrix4(scene.sceneNode.matrixWorld);
-        const info = scene.scenery.physics.getGroundInfo(position.x, position.z);
-        const height = info.height;
-        actor.physics.position.y = height;
-        actor.threeObject.position.y = height;
-        if (actor.model) {
-            actor.model.flag.value = tgtInfo && tgtInfo.collision || 0.0;
-        }
-        if (actor.index == 0 && scene.isActive) {
-            el.innerText = info.sound;
-            if (tgtInfo) {
-                el.innerText += ` [${tgt.x.toFixed(2)}, ${tgt.z.toFixed(2)}] [${position.x.toFixed(2)}, ${position.z.toFixed(2)}]`;
-            }
-        }
-    }
-    if (actor.model) {
-        actor.model.mesh.quaternion.copy(actor.physics.orientation);
-        actor.model.mesh.position.copy(actor.physics.position);
-    }
+    scene.scenery.physics.processCollisions(scene, actor);
+    actor.model.mesh.quaternion.copy(actor.physics.orientation);
+    actor.model.mesh.position.copy(actor.physics.position);
 }
 
 function processTeleports(game, scene) {
