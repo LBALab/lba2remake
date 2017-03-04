@@ -48,8 +48,7 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
         entities: loadEntity(entityInfo),
         texture: loadTexture2(files.ress.getEntry(6), palette),
         state: null,
-        mesh: null,
-        flag: {value: 0.0}
+        mesh: null
     };
     
     const entity = model.entities[entityIdx];
@@ -61,7 +60,7 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
 
     const skeleton = createSkeleton(body);
     initSkeleton(animState, skeleton, anim.loopFrame);
-    model.mesh = loadMesh(body, model.texture, animState.matrixBones, animState.matrixRotation, model.palette, envInfo, ambience, model.flag);
+    model.mesh = loadMesh(body, model.texture, animState.matrixBones, animState.matrixRotation, model.palette, envInfo, ambience);
 
     return model;
 }

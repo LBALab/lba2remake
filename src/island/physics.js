@@ -38,16 +38,11 @@ function processCollisions(layout, scene, actor) {
     POSITION.copy(actor.physics.position);
     POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
     const info = getGroundInfo(layout, POSITION.x, POSITION.z);
-    const height = info.height;
-    actor.physics.position.y = height;
-    actor.threeObject.position.y = height;
-    if (actor.model) {
-        actor.model.flag.value = tgtInfo && tgtInfo.collision || 0.0;
-    }
+    actor.physics.position.y = info.height;
     if (actor.index == 0 && scene.isActive) {
         el.innerText = info.sound;
-        if (tgtInfo) {
-            el.innerText += ` [${TGT.x.toFixed(2)}, ${TGT.z.toFixed(2)}] [${POSITION.x.toFixed(2)}, ${POSITION.z.toFixed(2)}]`;
+        if (tgtInfo && tgtInfo.collision) {
+            el.innerText += ' COLLISION!';
         }
     }
 }
