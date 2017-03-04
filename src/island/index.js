@@ -79,6 +79,12 @@ function loadIslandNode(props, files, ambience) {
         }
     });
 
+    each(data.layout.groundSections, section => {
+        each(section.boundingBoxes, bb => {
+            islandObject.add(makeBB(bb));
+        });
+    });
+
     islandObject.add(loadSky(geometries));
 
     const seaTimeUniform = islandObject.getObjectByName('sea').material.uniforms.time;
@@ -90,6 +96,44 @@ function loadIslandNode(props, files, ambience) {
         physics: loadIslandPhysics(layout),
         update: time => { seaTimeUniform.value = time.elapsed; }
     };
+}
+
+function makeBB(bb) {
+    const geometry = new THREE.BoxGeometry(
+        bb.max.x - bb.min.x,
+        bb.max.y - bb.min.y,
+        bb.max.z - bb.min.z
+    );
+
+    const edgesGeometry = new THREE.EdgesGeometry(geometry);
+    const material = new THREE.RawShaderMaterial({
+        vertexShader: `
+            precision highp float;
+        
+            uniform mat4 projectionMatrix;
+            uniform mat4 modelViewMatrix;
+            
+            attribute vec3 position;
+            
+            void main() {
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                gl_Position.z = 0.0;
+            }`,
+        fragmentShader: `
+            precision highp float;
+            
+            uniform vec3 color;
+            
+            void main() {
+                gl_FragColor = vec4(color, 1.0);
+            }`,
+        uniforms: {
+            color: {value: new THREE.Vector3(1, 0, 0)}
+        }
+    });
+    const wireframe = new THREE.LineSegments(edgesGeometry, material);
+    wireframe.position.copy(bb.center());
+    return wireframe;
 }
 
 function loadSky(geometries) {

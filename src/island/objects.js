@@ -56,7 +56,6 @@ function loadObject(island, objects, index) {
 }
 
 function computeBoundingBox(object, info) {
-    const offset = new THREE.Vector3(info.x, info.y, info.z);
     const min = new THREE.Vector3(Infinity, Infinity, Infinity);
     const max = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
     const vertices = object.vertices;
@@ -75,7 +74,10 @@ function computeBoundingBox(object, info) {
     }
     min.divideScalar(0x4000);
     max.divideScalar(0x4000);
-    return new THREE.Box3(min, max).translate(offset);
+    const bb = new THREE.Box3(min, max);
+    bb.applyMatrix4(angleMatrix[(info.angle + 3) % 4]);
+    bb.translate(new THREE.Vector3(info.x, info.y, info.z));
+    return bb;
 }
 
 function loadUVGroups(object) {
