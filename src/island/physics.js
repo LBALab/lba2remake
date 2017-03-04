@@ -1,4 +1,4 @@
-import {find} from 'lodash';
+import {find, each} from 'lodash';
 import THREE from 'three';
 import {getTriangleFromPos} from './ground';
 
@@ -37,19 +37,22 @@ function processCollisions(layout, scene, actor) {
     }
     POSITION.copy(actor.physics.position);
     POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
+    const itrs = getBoxIntersections(layout, POSITION);
+    if (itrs.length > 0) {
+        actor.physics.position.copy(actor.threeObject.position);
+    }
     const info = getGroundInfo(layout, POSITION.x, POSITION.z);
     actor.physics.position.y = info.height;
     if (actor.index == 0 && scene.isActive) {
         el.innerText = info.sound;
-        if (tgtInfo && tgtInfo.collision) {
-            el.innerText += ' COLLISION!';
+        if (tgtInfo && (tgtInfo.collision || itrs.length > 0)) {
+            el.innerText += ' COLLISION ' + itrs.join(',');
         }
     }
 }
 
 function getGroundInfo(layout, x, z) {
-    const e = 1 / 32;
-    const section = find(layout.groundSections, gs => x - e > gs.x * 2 && x - e <= gs.x * 2 + 2 && z >= gs.z * 2 && z <= gs.z * 2 + 2);
+    const section = findSection(layout, x, z);
     if (section) {
         const xLocal = (2.0 - (x - section.x * 2)) * 32 + 1;
         const zLocal = (z - section.z * 2) * 32;
@@ -61,4 +64,24 @@ function getGroundInfo(layout, x, z) {
             collision: 0
         };
     }
+}
+
+function getBoxIntersections(layout, position) {
+    const intersections = [];
+    const section = findSection(layout, position.x, position.z);
+    if (section) {
+        each(section.boundingBoxes, (bb, idx) => {
+           if (bb.containsPoint(position)) {
+               intersections.push(idx);
+           }
+        });
+    }
+    return intersections;
+}
+
+const GRID_UNIT = 1 / 32;
+
+function findSection(layout, x, z) {
+    x = x - GRID_UNIT;
+    return find(layout.groundSections, gs => x > gs.x * 2 && x <= gs.x * 2 + 2 && z >= gs.z * 2 && z <= gs.z * 2 + 2);
 }

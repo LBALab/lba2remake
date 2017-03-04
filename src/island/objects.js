@@ -5,10 +5,12 @@ const push = Array.prototype.push;
 
 export function loadObjects(island, section, geometries, objects) {
     const numObjects = section.objInfo.numObjects;
+    section.boundingBoxes = [];
     for (let i = 0; i < numObjects; ++i) {
         const info = loadObjectInfo(section.objects, section, i);
         const object = loadObject(island, objects, info.index);
         loadFaces(geometries, object, info);
+        section.boundingBoxes.push(computeBoundingBox(object, info));
     }
 }
 
@@ -51,6 +53,29 @@ function loadObject(island, objects, index) {
         objects[index] = obj;
         return obj;
     }
+}
+
+function computeBoundingBox(object, info) {
+    const offset = new THREE.Vector3(info.x, info.y, info.z);
+    const min = new THREE.Vector3(Infinity, Infinity, Infinity);
+    const max = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
+    const vertices = object.vertices;
+    for (let i = 0; i < object.numVerticesType1; ++i) {
+        const x = vertices[i * 4];
+        const y = vertices[i * 4 + 1];
+        const z = vertices[i * 4 + 2];
+
+        min.x = Math.min(x, min.x);
+        min.y = Math.min(y, min.y);
+        min.z = Math.min(z, min.z);
+
+        max.x = Math.max(x, max.x);
+        max.y = Math.max(y, max.y);
+        max.z = Math.max(z, max.z);
+    }
+    min.divideScalar(0x4000);
+    max.divideScalar(0x4000);
+    return new THREE.Box3(min, max).translate(offset);
 }
 
 function loadUVGroups(object) {
