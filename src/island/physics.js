@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function processCollisions(layout, scene, actor) {
+    POSITION.copy(actor.physics.position);
+    POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
+    const boxIntersection = processBoxIntersections(actor, layout, POSITION);
     TGT.copy(actor.physics.position);
     TGT.sub(actor.threeObject.position);
     TGT.setY(0);
@@ -35,18 +38,12 @@ function processCollisions(layout, scene, actor) {
             actor.physics.position.copy(actor.threeObject.position);
         }
     }
-    POSITION.copy(actor.physics.position);
-    POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
-    const itrs = getBoxIntersections(layout, POSITION);
-    if (itrs.length > 0) {
-        actor.physics.position.copy(actor.threeObject.position);
-    }
     const info = getGroundInfo(layout, POSITION.x, POSITION.z);
     actor.physics.position.y = info.height;
     if (actor.index == 0 && scene.isActive) {
         el.innerText = info.sound;
-        if (tgtInfo && (tgtInfo.collision || itrs.length > 0)) {
-            el.innerText += ' COLLISION ' + itrs.join(',');
+        if (tgtInfo && (tgtInfo.collision || boxIntersection)) {
+            el.innerText += ' COLLISION' + (boxIntersection ? ' BOX' : '') + (tgtInfo.collision ? ' HEIGHTMAP' : '');
         }
     }
 }
@@ -66,17 +63,44 @@ function getGroundInfo(layout, x, z) {
     }
 }
 
-function getBoxIntersections(layout, position) {
-    const intersections = [];
+const ACTOR_BOX = new THREE.Box3();
+const INTERSECTION = new THREE.Box3();
+const ITRS_SIZE = new THREE.Vector3();
+const CENTER1 = new THREE.Vector3();
+const CENTER2 = new THREE.Vector3();
+const DIFF = new THREE.Vector3();
+
+function processBoxIntersections(actor, layout, position) {
+    const boundingBox = actor.model.boundingBox;
     const section = findSection(layout, position.x, position.z);
+    let intersected = false;
     if (section) {
-        each(section.boundingBoxes, (bb, idx) => {
-           if (bb.containsPoint(position)) {
-               intersections.push(idx);
-           }
-        });
+        ACTOR_BOX.copy(boundingBox);
+        ACTOR_BOX.translate(position);
+        for (let i = 0; i < section.boundingBoxes.length; ++i) {
+            const bb = section.boundingBoxes[i];
+            if (ACTOR_BOX.intersectsBox(bb)) {
+                intersected = true;
+                INTERSECTION.copy(ACTOR_BOX);
+                INTERSECTION.intersect(bb);
+                INTERSECTION.size(ITRS_SIZE);
+                ACTOR_BOX.center(CENTER1);
+                bb.center(CENTER2);
+                const dir = CENTER1.sub(CENTER2);
+                if (ITRS_SIZE.x < ITRS_SIZE.y && ITRS_SIZE.x < ITRS_SIZE.z) {
+                    DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
+                } else if (ITRS_SIZE.y < ITRS_SIZE.x && ITRS_SIZE.y < ITRS_SIZE.z) {
+                    DIFF.set(0, ITRS_SIZE.y * Math.sign(dir.y), 0);
+                } else {
+                    DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
+                }
+                actor.physics.position.add(DIFF);
+                position.add(DIFF);
+                ACTOR_BOX.translate(DIFF);
+            }
+        }
     }
-    return intersections;
+    return intersected;
 }
 
 const GRID_UNIT = 1 / 32;

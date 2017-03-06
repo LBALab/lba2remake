@@ -17,8 +17,10 @@ function processActorPhysics(scene, actor) {
     scene.scenery.physics.processCollisions(scene, actor);
     actor.model.mesh.quaternion.copy(actor.physics.orientation);
     actor.model.mesh.position.copy(actor.physics.position);
-    actor.model.boundingBox.quaternion.copy(actor.model.mesh.quaternion);
-    actor.model.boundingBox.quaternion.inverse();
+    if (actor.model.boundingBoxDebugMesh) {
+        actor.model.boundingBoxDebugMesh.quaternion.copy(actor.model.mesh.quaternion);
+        actor.model.boundingBoxDebugMesh.quaternion.inverse();
+    }
 }
 
 function processTeleports(game, scene) {
