@@ -36,7 +36,7 @@ type Box = {
     tZ: number
 }
 
-type Body = {
+export type Body = {
     bodyIndex: number,
     index: number,
     offset: number,
@@ -151,14 +151,14 @@ function loadEntityBody(data, offset) {
             tX: 0, tY: 0, tZ: 0
         };
         
-        const innerOffset = data.getUint8(offset++, true);
+        offset++; // ignore offset byte
 
-        box.bX = data.getUint16(offset);
-        box.bY = data.getUint16(offset + 2);
-        box.bZ = data.getUint16(offset + 4);
-        box.tX = data.getUint16(offset + 6);
-        box.tY = data.getUint16(offset + 8);
-        box.tZ = data.getUint16(offset + 10);
+        box.bX = data.getInt16(offset, true);
+        box.bY = data.getInt16(offset + 2, true);
+        box.bZ = data.getInt16(offset + 4, true);
+        box.tX = data.getInt16(offset + 6, true);
+        box.tY = data.getInt16(offset + 8, true);
+        box.tZ = data.getInt16(offset + 10, true);
 
         body.box = box;
     }
