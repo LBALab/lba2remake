@@ -8,7 +8,7 @@ import type {Entity} from './entity';
 import {loadEntity, getBodyIndex, getAnimIndex} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
-import { initSkeleton, createSkeleton, updateKeyframe} from './animState';
+import {initSkeleton, createSkeleton, updateKeyframe} from './animState';
 import {loadMesh} from './geometries';
 import {loadTexture2} from '../texture';
 import {createBoundingBox} from '../utils/rendering';
@@ -55,34 +55,20 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
     };
 
     const entity = entities[entityIdx];
-    const bodyProps = entity.bodies[bodyIdx];
 
     const realBodyIdx = getBodyIndex(entity, bodyIdx);
     const realAnimIdx = getAnimIndex(entity, animIdx);
 
-    const body = loadBody(model, model.bodies, realBodyIdx);
+    const body = loadBody(model, model.bodies, realBodyIdx, entity.bodies[bodyIdx]);
     const anim = loadAnim(model, model.anims, realAnimIdx);
 
     const skeleton = createSkeleton(body);
     initSkeleton(animState, skeleton, anim.loopFrame);
     model.mesh = loadMesh(body, model.texture, animState.matrixBones, animState.matrixRotation, model.palette, envInfo, ambience);
 
-    if (model.mesh && bodyProps && bodyProps.hasCollisionBox) {
-        const {tX, tY, tZ, bX, bY, bZ} = bodyProps.box;
-        const box = new THREE.Box3(
-            new THREE.Vector3(
-                Math.min(tX, bX) / 0x4000,
-                Math.min(tY, bY) / 0x4000,
-                Math.min(tZ, bZ) / 0x4000
-            )
-            ,
-            new THREE.Vector3(
-                Math.max(tX, bX) / 0x4000,
-                Math.max(tY, bY) / 0x4000,
-                Math.max(tZ, bZ) / 0x4000
-            )
-        );
-        model.mesh.add(createBoundingBox(box, new THREE.Vector3(0, 1, 0)));
+    if (model.mesh) {
+        model.boundingBox = createBoundingBox(body.boundingBox, new THREE.Vector3(0, 1, 0));
+        model.mesh.add(model.boundingBox);
     }
 
     return model;
