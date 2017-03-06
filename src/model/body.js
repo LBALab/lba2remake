@@ -225,6 +225,7 @@ function loadUVGroups(object) {
 function computeBoundingBox(object, bodyProps) {
     if (bodyProps && bodyProps.hasCollisionBox) {
         const {tX, tY, tZ, bX, bY, bZ} = bodyProps.box;
+        object.hasBoundingBox = true;
         object.boundingBox = new THREE.Box3(
             new THREE.Vector3(
                 Math.min(tX, bX) / 0x4000,
@@ -262,6 +263,7 @@ function computeBoundingBox(object, bodyProps) {
             boundingBox.max.y = Math.max(boundingBox.max.y, point.y);
             boundingBox.max.z = Math.max(boundingBox.max.z, point.z);
         }
+        object.hasBoundingBox = false;
         object.boundingBox = boundingBox;
     }
 }

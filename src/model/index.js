@@ -67,7 +67,8 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
     model.mesh = loadMesh(body, model.texture, animState.matrixBones, animState.matrixRotation, model.palette, envInfo, ambience);
 
     if (model.mesh) {
-        model.boundingBox = createBoundingBox(body.boundingBox, new THREE.Vector3(0, 1, 0));
+        const color = body.hasBoundingBox ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(0, 1, 0);
+        model.boundingBox = createBoundingBox(body.boundingBox, color);
         model.mesh.add(model.boundingBox);
     }
 

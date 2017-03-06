@@ -87,6 +87,7 @@ function loadHero(scene, offset) {
     const hero = {
         sceneIndex: scene.index,
         entityIndex: 0,
+        bodyIndex: 0,
         pos: [
             (0x8000 - data.getUint16(offset + 4, true) + 512) / 0x4000,
             data.getUint16(offset + 2, true) / 0x4000,
