@@ -16,7 +16,7 @@ import {loadSceneMapData} from '../scene/map';
 import {loadActor} from './actors';
 import {loadPoint} from './points';
 import {loadZone} from './zones';
-import {getQueryParams} from '../utils';
+import {parseQueryParams} from '../utils';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initSceneDebug, resetSceneDebug} from '../scripting/debug';
 
@@ -138,7 +138,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };
         }
 
-        const params = getQueryParams();
+        const params = parseQueryParams();
         if (params.NOSCRIPTS == 'true') {
             delete loadSteps.actors;
             delete loadSteps.points;

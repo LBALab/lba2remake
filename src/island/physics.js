@@ -1,6 +1,7 @@
 import {find, each} from 'lodash';
 import THREE from 'three';
 import {getTriangleFromPos} from './ground';
+import {DebugFlags} from '../utils';
 
 export function loadIslandPhysics(layout) {
     return {
@@ -40,7 +41,7 @@ function processCollisions(layout, scene, actor) {
     }
     const info = getGroundInfo(layout, POSITION.x, POSITION.z);
     actor.physics.position.y = info.height;
-    if (actor.index == 0 && scene.isActive) {
+    if (DebugFlags.DEBUG_COLLISIONS && actor.index == 0 && scene.isActive) {
         el.innerText = info.sound;
         if (tgtInfo && (tgtInfo.collision || boxIntersection)) {
             el.innerText += ' COLLISION' + (boxIntersection ? ' BOX' : '') + (tgtInfo.collision ? ' HEIGHTMAP' : '');

@@ -12,6 +12,7 @@ import {initSkeleton, createSkeleton, updateKeyframe} from './animState';
 import {loadMesh} from './geometries';
 import {loadTexture2} from '../texture';
 import {createBoundingBox} from '../utils/rendering';
+import {DebugFlags} from '../utils';
 import type {Time} from '../flowtypes';
 
 export type Model = {
@@ -68,9 +69,11 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
 
     if (model.mesh) {
         model.boundingBox = body.boundingBox;
-        const color = body.hasBoundingBox ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(0, 1, 0);
-        model.boundingBoxDebugMesh = createBoundingBox(body.boundingBox, color);
-        model.mesh.add(model.boundingBoxDebugMesh);
+        if (DebugFlags.DEBUG_COLLISIONS) {
+            const color = body.hasBoundingBox ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(0, 1, 0);
+            model.boundingBoxDebugMesh = createBoundingBox(body.boundingBox, color);
+            model.mesh.add(model.boundingBoxDebugMesh);
+        }
     }
 
     return model;

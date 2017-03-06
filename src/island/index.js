@@ -9,6 +9,7 @@ import {loadGround} from './ground';
 import {loadSea} from './sea';
 import {loadObjects} from './objects';
 import {loadIslandPhysics} from './physics';
+import {DebugFlags} from '../utils';
 import {createBoundingBox} from '../utils/rendering';
 
 import islandsInfo from './data/islands';
@@ -80,11 +81,13 @@ function loadIslandNode(props, files, ambience) {
         }
     });
 
-    each(data.layout.groundSections, section => {
-        each(section.boundingBoxes, bb => {
-            islandObject.add(createBoundingBox(bb, new THREE.Vector3(1, 0, 0)));
+    if (DebugFlags.DEBUG_COLLISIONS) {
+        each(data.layout.groundSections, section => {
+            each(section.boundingBoxes, bb => {
+                islandObject.add(createBoundingBox(bb, new THREE.Vector3(1, 0, 0)));
+            });
         });
-    });
+    }
 
     islandObject.add(loadSky(geometries));
 
