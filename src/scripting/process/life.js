@@ -1,5 +1,4 @@
-import {ActorStaticFlags, DirMode} from '../../game/actors';
-import {setStaticFlag} from '../../utils/lba';
+import {DirMode} from '../../game/actors';
 
 export function PALETTE() {
 

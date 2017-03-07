@@ -7,11 +7,17 @@ import {loadModel} from '../model';
 import {loadAnimState, resetAnimState} from '../model/animState';
 import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
 
+type ActorFlags = {
+    hasCollisions: boolean,
+    isVisible: boolean,
+    isSprite: boolean
+}
+
 type ActorProps = {
     index: number,
     pos: [number, number, number],
     life: number,
-    staticFlags: number,
+    flags: ActorFlags,
     entityIndex: number,
     bodyIndex: number,
     animIndex: number,
@@ -42,15 +48,6 @@ export type Actor = {
     runScripts: ?Function
 }
 
-export const ActorStaticFlag = {
-    NONE             : 0,
-    COLLIDE_WITH_OBJ : 1,
-    // TODO
-    HIDDEN           : 0x200,
-    SPRITE           : 0x400
-    // TODO
-};
-
 export const DirMode = {
     NO_MOVE: 0,
     MANUAL: 1
@@ -73,8 +70,8 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
                 destAngle: angleToRad(props.angle),
             }
         },
-        isVisible: !(props.staticFlags & ActorStaticFlag.HIDDEN) && (props.life > 0 || props.bodyIndex >= 0) ? true : false,
-        isSprite: (props.staticFlags & ActorStaticFlag.SPRITE) ? true : false,
+        isVisible: props.flags.isVisible && (props.life > 0 || props.bodyIndex >= 0),
+        isSprite: props.flags.isSprite,
         isWalking: false,
         isTurning: false,
         model: null,
