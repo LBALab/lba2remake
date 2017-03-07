@@ -14,7 +14,9 @@ function processActorPhysics(scene, actor) {
     if (!actor.model)
         return;
     actor.physics.position.add(actor.physics.temp.position);
-    scene.scenery.physics.processCollisions(scene, actor);
+    if (actor.props.flags.hasCollisions) {
+        scene.scenery.physics.processCollisions(scene, actor);
+    }
     actor.model.mesh.quaternion.copy(actor.physics.orientation);
     actor.model.mesh.position.copy(actor.physics.position);
     if (actor.model.boundingBoxDebugMesh) {

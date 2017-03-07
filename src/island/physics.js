@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function processCollisions(layout, scene, actor) {
     POSITION.copy(actor.physics.position);
     POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
-    const boxIntersection = processBoxIntersections(actor, layout, POSITION);
     TGT.copy(actor.physics.position);
     TGT.sub(actor.threeObject.position);
     TGT.setY(0);
@@ -41,6 +40,7 @@ function processCollisions(layout, scene, actor) {
     }
     const info = getGroundInfo(layout, POSITION.x, POSITION.z);
     actor.physics.position.y = info.height;
+    const boxIntersection = processBoxIntersections(actor, layout, POSITION);
     if (DebugFlags.DEBUG_COLLISIONS && actor.index == 0 && scene.isActive) {
         el.innerText = info.sound;
         if (tgtInfo && (tgtInfo.collision || boxIntersection)) {
