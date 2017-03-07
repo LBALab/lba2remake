@@ -172,6 +172,9 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                     return find(this.points, function(obj) { return obj.index == index; });
                 },
             };
+            if (scene.isIsland) {
+                scene.section = islandSceneMapping[index].section;
+            }
             loadScripts(game, scene);
             // Kill twinsen if side scene
             if (parent) {
