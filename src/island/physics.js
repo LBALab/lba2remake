@@ -22,8 +22,9 @@ function processCollisions(sections, scene, actor) {
     const section = findSection(sections, POSITION);
 
     let height = 0;
+    FLAGS.hitObject = false;
     if (section) {
-        height = getGroundHeight(section, POSITION, actor);
+        height = getGroundHeight(section, POSITION);
     }
 
     actor.physics.position.y = Math.max(height, actor.physics.position.y);
@@ -53,12 +54,11 @@ function getGroundHeight(section, position) {
         const bb = section.boundingBoxes[i];
         if (position.x >= bb.min.x && position.x <= bb.max.x
             && position.z >= bb.min.z && position.z <= bb.max.z
-            && position.y < bb.max.y && position.y > bb.max.y - 0.015) {
+            && position.y <= bb.max.y && position.y > bb.max.y - 0.015) {
             FLAGS.hitObject = true;
             return bb.max.y;
         }
     }
-    FLAGS.hitObject = false;
     return getGroundInfo(section, position).height;
 }
 
