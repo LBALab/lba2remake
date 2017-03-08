@@ -39,4 +39,9 @@ function updateScene(game, scene, time, step) {
             updateHero(game, actor, time);
         }
     });
+
+    const soundFxSource = game.getAudioManager().getMusicSource();
+    musicSource.load(sceneData.ambience.musicIndex, () => {
+        musicSource.play();
+    });
 }
