@@ -34,6 +34,8 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
 
 function updateScene(game, scene, time, step) {
     each(scene.actors, actor => {
+        if (actor.isKilled)
+            return;
         updateActor(actor, time, step);
         if (actor.index == 0 && scene.isActive) {
             updateHero(game, actor, time);

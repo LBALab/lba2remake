@@ -355,6 +355,7 @@ export function BRUTAL_EXIT() {
     this.state.continue = false;
     this.state.terminated = true;
     this.moveState.terminated = true;
+    this.actor.isKilled = true;
 }
 
 export function REPLACE() {

@@ -11,7 +11,7 @@ export function processPhysicsFrame(game, scene, time) {
 }
 
 function processActorPhysics(scene, actor, time) {
-    if (!actor.model)
+    if (!actor.model || actor.isKilled)
         return;
 
     actor.physics.position.add(actor.physics.temp.position);

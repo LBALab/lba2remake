@@ -1,7 +1,6 @@
 import {find, each} from 'lodash';
 import THREE from 'three';
 import {getTriangleFromPos} from './ground';
-import {DebugFlags} from '../utils';
 
 export function loadIslandPhysics(sections) {
     return {

@@ -108,7 +108,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
             fogDensity: 0,
         };
         const loadSteps = {
-            actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, game, envInfo, sceneData.ambience), callback) },
+            actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, envInfo, sceneData.ambience), callback) },
             points: (callback) => { async.map(sceneData.points, loadPoint, callback) },
             zones: (callback) => { async.map(sceneData.zones, loadZone, callback) }
         };
