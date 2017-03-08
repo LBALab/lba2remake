@@ -4,7 +4,8 @@ import {getTriangleFromPos} from './ground';
 
 export function loadIslandPhysics(sections) {
     return {
-        processCollisions: processCollisions.bind(null, sections)
+        processCollisions: processCollisions.bind(null, sections),
+        getGroundInfo: position => getGroundInfo(findSection(sections, position), position)
     }
 }
 
@@ -20,11 +21,8 @@ function processCollisions(sections, scene, actor) {
 
     const section = findSection(sections, POSITION);
 
-    let height = 0;
     FLAGS.hitObject = false;
-    if (section) {
-        height = getGroundHeight(section, POSITION);
-    }
+    const height = getGroundHeight(section, POSITION);
 
     actor.physics.position.y = Math.max(height, actor.physics.position.y);
 
@@ -49,6 +47,9 @@ function processCollisions(sections, scene, actor) {
 }
 
 function getGroundHeight(section, position) {
+    if (!section)
+        return 0;
+
     for (let i = 0; i < section.boundingBoxes.length; ++i) {
         const bb = section.boundingBoxes[i];
         if (position.x >= bb.min.x && position.x <= bb.max.x
@@ -61,7 +62,14 @@ function getGroundHeight(section, position) {
     return getGroundInfo(section, position).height;
 }
 
+const DEFAULT_GROUND = {
+    height: 0
+};
+
 function getGroundInfo(section, position) {
+    if (!section) {
+        return DEFAULT_GROUND;
+    }
     const xLocal = (2.0 - (position.x - section.x * 2)) * 32 + 1;
     const zLocal = (position.z - section.z * 2) * 32;
     return getTriangleFromPos(section, xLocal, zLocal);

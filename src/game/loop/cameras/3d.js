@@ -14,7 +14,7 @@ export function processFollow3DMovement(controlsState, camera, scene, time) {
 }
 
 export function processFree3DMovement(controlsState, camera, scene, time) {
-    const groundInfo = scene.scenery.physics.getGroundInfo(camera.position.x, camera.position.z);
+    const groundInfo = scene.scenery.physics.getGroundInfo(camera.position);
     const altitude = Math.max(0.0, Math.min(1.0, (camera.position.y - groundInfo.height) * 0.7));
 
     const euler = new THREE.Euler();
