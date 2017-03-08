@@ -129,7 +129,7 @@ function getSoundFxSource(context, data) {
             async.auto({
                 samples: loadHqrAsync('SAMPLES.HQR')
             }, function(err, files) {
-                const buffer = files.scene.getEntry(index);
+                const buffer = files.samples.getEntry(index);
                 source.bufferSource.buffer = buffer;
                 samplesSourceCache[index] = source.bufferSource.buffer;
                 source.connect();
