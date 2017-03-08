@@ -17,42 +17,38 @@ function processCollisions(sections, scene, actor) {
     POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
 
     const section = findSection(sections, POSITION);
-    const ground = {isObject: false};
 
     let height = 0;
     if (section) {
-        height = getGroundHeight(section, POSITION, ground);
+        height = getGroundHeight(section, POSITION);
     }
 
     actor.physics.position.y = Math.max(height, actor.physics.position.y);
 
     if (section) {
         processBoxIntersections(section, actor, POSITION);
-        if (!ground.isObject) {
-            TGT.copy(actor.physics.position);
-            TGT.sub(actor.threeObject.position);
-            TGT.setY(0);
-            if (TGT.lengthSq() != 0) {
-                TGT.normalize();
-                TGT.multiplyScalar(0.02);
-                TGT.add(actor.threeObject.position);
-                TGT.applyMatrix4(scene.sceneNode.matrixWorld);
-                const gInfo = getGroundInfo(section, TGT);
-                if (gInfo && gInfo.collision) {
-                    actor.physics.position.copy(actor.threeObject.position);
-                }
+        TGT.copy(actor.physics.position);
+        TGT.sub(actor.threeObject.position);
+        TGT.setY(0);
+        if (TGT.lengthSq() != 0) {
+            TGT.normalize();
+            TGT.multiplyScalar(0.02);
+            TGT.add(actor.threeObject.position);
+            TGT.applyMatrix4(scene.sceneNode.matrixWorld);
+            const gInfo = getGroundInfo(section, TGT);
+            if (gInfo && gInfo.collision) {
+                actor.physics.position.copy(actor.threeObject.position);
             }
         }
     }
 }
 
-function getGroundHeight(section, position, ground) {
+function getGroundHeight(section, position) {
     for (let i = 0; i < section.boundingBoxes.length; ++i) {
         const bb = section.boundingBoxes[i];
         if (position.x >= bb.min.x && position.x <= bb.max.x
             && position.z >= bb.min.z && position.z <= bb.max.z
             && position.y < bb.max.y && position.y > bb.max.y - 0.015) {
-            ground.isObject = true;
             return bb.max.y;
         }
     }
