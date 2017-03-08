@@ -84,7 +84,7 @@ function loadIslandNode(props, files, ambience) {
     const sections = {};
     each(data.layout.groundSections, section => {
         sections[`${section.x},${section.z}`] = section;
-        if (DebugFlags.DEBUG_COLLISIONS) {
+        if (DebugFlags.boundingBoxes) {
             each(section.boundingBoxes, bb => {
                 islandObject.add(createBoundingBox(bb, new THREE.Vector3(1, 0, 0)));
             });

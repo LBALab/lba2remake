@@ -17,9 +17,7 @@ function processActorPhysics(scene, actor, time) {
 
     actor.physics.position.add(actor.physics.temp.position);
     if (actor.props.flags.hasCollisions) {
-        if (scene.isIsland) {
-            actor.physics.position.y -= 0.4 * time.delta;
-        }
+        actor.physics.position.y -= 0.4 * time.delta;
         scene.scenery.physics.processCollisions(scene, actor);
     }
     actor.model.mesh.quaternion.copy(actor.physics.orientation);

@@ -69,7 +69,7 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
 
     if (model.mesh) {
         model.boundingBox = body.boundingBox;
-        if (DebugFlags.DEBUG_COLLISIONS) {
+        if (DebugFlags.boundingBoxes) {
             const color = body.hasBoundingBox ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(0, 1, 0);
             model.boundingBoxDebugMesh = createBoundingBox(body.boundingBox, color);
             model.mesh.add(model.boundingBoxDebugMesh);

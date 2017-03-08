@@ -24,7 +24,17 @@ export function loadIsometricScenery(renderer, entry, callback) {
             },
             threeObject: loadMesh(renderer, grid),
             physics: {
-                processCollisions: () => {},
+                processCollisions: (scene, actor) => {
+                    const position = actor.physics.position;
+                    const dx = 64 - Math.floor(position.x * 32);
+                    const dz = Math.floor(position.z * 32);
+                    const cell = grid.cells[dx * 64 + dz];
+                    let height = 0;
+                    if (cell && cell.heights.length > 0) {
+                        height = (cell.heights[0] + 1) / 64;
+                    }
+                    position.y = Math.max(height, position.y);
+                },
                 getGroundInfo: (x, z) => {
                     const dx = 64 - Math.floor(x * 32);
                     const dz = Math.floor(z * 32);

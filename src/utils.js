@@ -1,7 +1,7 @@
 // @flow
 
 export const DebugFlags = {
-    DEBUG_COLLISIONS: false
+    boundingBoxes: false
 };
 
 export function bits(bitfield: number, offset: number, length: number) : number {
