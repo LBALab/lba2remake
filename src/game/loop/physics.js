@@ -1,20 +1,24 @@
 import THREE from 'three';
 import {each, find} from 'lodash';
 
-export function processPhysicsFrame(game, scene) {
+export function processPhysicsFrame(game, scene, time) {
     each(scene.actors, actor => {
-        processActorPhysics(scene, actor);
+        processActorPhysics(scene, actor, time);
     });
     if (scene.isActive) {
         processTeleports(game, scene);
     }
 }
 
-function processActorPhysics(scene, actor) {
+function processActorPhysics(scene, actor, time) {
     if (!actor.model)
         return;
+
     actor.physics.position.add(actor.physics.temp.position);
     if (actor.props.flags.hasCollisions) {
+        if (scene.isIsland) {
+            actor.physics.position.y -= 0.4 * time.delta;
+        }
         scene.scenery.physics.processCollisions(scene, actor);
     }
     actor.model.mesh.quaternion.copy(actor.physics.orientation);

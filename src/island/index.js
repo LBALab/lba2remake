@@ -81,13 +81,15 @@ function loadIslandNode(props, files, ambience) {
         }
     });
 
-    if (DebugFlags.DEBUG_COLLISIONS) {
-        each(data.layout.groundSections, section => {
+    const sections = {};
+    each(data.layout.groundSections, section => {
+        sections[`${section.x},${section.z}`] = section;
+        if (DebugFlags.DEBUG_COLLISIONS) {
             each(section.boundingBoxes, bb => {
                 islandObject.add(createBoundingBox(bb, new THREE.Vector3(1, 0, 0)));
             });
-        });
-    }
+        }
+    });
 
     islandObject.add(loadSky(geometries));
 
@@ -97,7 +99,7 @@ function loadIslandNode(props, files, ambience) {
         props: props,
         sections: map(layout.groundSections, section => ({x: section.x, z: section.z})),
         threeObject: islandObject,
-        physics: loadIslandPhysics(layout),
+        physics: loadIslandPhysics(sections),
         update: time => { seaTimeUniform.value = time.elapsed; }
     };
 }

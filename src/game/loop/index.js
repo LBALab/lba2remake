@@ -19,10 +19,10 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
             const step = hasStep();
             updateScene(game, scene, time, step);
             endStep();
-            processPhysicsFrame(game, scene);
+            processPhysicsFrame(game, scene, time);
             each(scene.sideScenes, sideScene => {
                 updateScene(game, sideScene, time);
-                processPhysicsFrame(game, sideScene);
+                processPhysicsFrame(game, sideScene, time);
             });
             processCameraMovement(game.controlsState, renderer, scene, time);
             updateDebugger(scene, renderer);

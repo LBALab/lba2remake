@@ -3,65 +3,66 @@ import THREE from 'three';
 import {getTriangleFromPos} from './ground';
 import {DebugFlags} from '../utils';
 
-export function loadIslandPhysics(layout) {
+export function loadIslandPhysics(sections) {
     return {
-        getGroundInfo: getGroundInfo.bind(null, layout),
-        processCollisions: processCollisions.bind(null, layout)
+        processCollisions: processCollisions.bind(null, sections)
     }
 }
 
 const TGT = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
 
-const el = document.createElement('div');
-el.style.background = 'black';
-el.style.color = 'white';
-el.style.position = 'fixed';
-document.addEventListener('DOMContentLoaded', () => {
-    document.body.appendChild(el);
-});
-
-function processCollisions(layout, scene, actor) {
+function processCollisions(sections, scene, actor) {
     POSITION.copy(actor.physics.position);
     POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
-    TGT.copy(actor.physics.position);
-    TGT.sub(actor.threeObject.position);
-    TGT.setY(0);
-    let tgtInfo = null;
-    if (TGT.lengthSq() != 0) {
-        TGT.normalize();
-        TGT.multiplyScalar(0.02);
-        TGT.add(actor.threeObject.position);
-        TGT.applyMatrix4(scene.sceneNode.matrixWorld);
-        tgtInfo = getGroundInfo(layout, TGT.x, TGT.z);
-        if (tgtInfo.collision) {
-            actor.physics.position.copy(actor.threeObject.position);
-        }
+
+    const section = findSection(sections, POSITION);
+    const ground = {isObject: false};
+
+    let height = 0;
+    if (section) {
+        height = getGroundHeight(section, POSITION, ground);
     }
-    const info = getGroundInfo(layout, POSITION.x, POSITION.z);
-    actor.physics.position.y = info.height;
-    const boxIntersection = processBoxIntersections(actor, layout, POSITION);
-    if (DebugFlags.DEBUG_COLLISIONS && actor.index == 0 && scene.isActive) {
-        el.innerText = info.sound;
-        if (tgtInfo && (tgtInfo.collision || boxIntersection)) {
-            el.innerText += ' COLLISION' + (boxIntersection ? ' BOX' : '') + (tgtInfo.collision ? ' HEIGHTMAP' : '');
+
+    actor.physics.position.y = Math.max(height, actor.physics.position.y);
+
+    if (section) {
+        processBoxIntersections(section, actor, POSITION);
+        if (!ground.isObject) {
+            TGT.copy(actor.physics.position);
+            TGT.sub(actor.threeObject.position);
+            TGT.setY(0);
+            if (TGT.lengthSq() != 0) {
+                TGT.normalize();
+                TGT.multiplyScalar(0.02);
+                TGT.add(actor.threeObject.position);
+                TGT.applyMatrix4(scene.sceneNode.matrixWorld);
+                const gInfo = getGroundInfo(section, TGT);
+                if (gInfo && gInfo.collision) {
+                    actor.physics.position.copy(actor.threeObject.position);
+                }
+            }
         }
     }
 }
 
-function getGroundInfo(layout, x, z) {
-    const section = findSection(layout, x, z);
-    if (section) {
-        const xLocal = (2.0 - (x - section.x * 2)) * 32 + 1;
-        const zLocal = (z - section.z * 2) * 32;
-        return getTriangleFromPos(section, xLocal, zLocal);
-    } else {
-        return {
-            height: 0,
-            sound: 0,
-            collision: 0
-        };
+function getGroundHeight(section, position, ground) {
+    for (let i = 0; i < section.boundingBoxes.length; ++i) {
+        const bb = section.boundingBoxes[i];
+        if (position.x >= bb.min.x && position.x <= bb.max.x
+            && position.z >= bb.min.z && position.z <= bb.max.z
+            && position.y < bb.max.y && position.y > bb.max.y - 0.015) {
+            ground.isObject = true;
+            return bb.max.y;
+        }
     }
+    return getGroundInfo(section, position).height;
+}
+
+function getGroundInfo(section, position) {
+    const xLocal = (2.0 - (position.x - section.x * 2)) * 32 + 1;
+    const zLocal = (position.z - section.z * 2) * 32;
+    return getTriangleFromPos(section, xLocal, zLocal);
 }
 
 const ACTOR_BOX = new THREE.Box3();
@@ -71,42 +72,35 @@ const CENTER1 = new THREE.Vector3();
 const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
 
-function processBoxIntersections(actor, layout, position) {
+function processBoxIntersections(section, actor, position) {
     const boundingBox = actor.model.boundingBox;
-    const section = findSection(layout, position.x, position.z);
-    let intersected = false;
-    if (section) {
-        ACTOR_BOX.copy(boundingBox);
-        ACTOR_BOX.translate(position);
-        for (let i = 0; i < section.boundingBoxes.length; ++i) {
-            const bb = section.boundingBoxes[i];
-            if (ACTOR_BOX.intersectsBox(bb)) {
-                intersected = true;
-                INTERSECTION.copy(ACTOR_BOX);
-                INTERSECTION.intersect(bb);
-                INTERSECTION.size(ITRS_SIZE);
-                ACTOR_BOX.center(CENTER1);
-                bb.center(CENTER2);
-                const dir = CENTER1.sub(CENTER2);
-                if (ITRS_SIZE.x < ITRS_SIZE.y && ITRS_SIZE.x < ITRS_SIZE.z) {
+    ACTOR_BOX.copy(boundingBox);
+    ACTOR_BOX.translate(position);
+    for (let i = 0; i < section.boundingBoxes.length; ++i) {
+        const bb = section.boundingBoxes[i];
+        if (ACTOR_BOX.intersectsBox(bb)) {
+            INTERSECTION.copy(ACTOR_BOX);
+            INTERSECTION.intersect(bb);
+            INTERSECTION.size(ITRS_SIZE);
+            ACTOR_BOX.center(CENTER1);
+            bb.center(CENTER2);
+            const dir = CENTER1.sub(CENTER2);
+            if (position.y < bb.max.y - 0.015) {
+                if (ITRS_SIZE.x < ITRS_SIZE.z) {
                     DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
-                } else if (ITRS_SIZE.y < ITRS_SIZE.x && ITRS_SIZE.y < ITRS_SIZE.z) {
-                    DIFF.set(0, ITRS_SIZE.y * Math.sign(dir.y), 0);
                 } else {
                     DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
                 }
-                actor.physics.position.add(DIFF);
-                position.add(DIFF);
-                ACTOR_BOX.translate(DIFF);
             }
+            actor.physics.position.add(DIFF);
+            position.add(DIFF);
+            ACTOR_BOX.translate(DIFF);
         }
     }
-    return intersected;
 }
 
 const GRID_UNIT = 1 / 32;
 
-function findSection(layout, x, z) {
-    x = x - GRID_UNIT;
-    return find(layout.groundSections, gs => x > gs.x * 2 && x <= gs.x * 2 + 2 && z >= gs.z * 2 && z <= gs.z * 2 + 2);
+function findSection(sections, position) {
+    return sections[`${Math.floor((position.x - GRID_UNIT) * 0.5)},${Math.floor(position.z * 0.5)}`];
 }
