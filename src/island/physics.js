@@ -11,6 +11,9 @@ export function loadIslandPhysics(sections) {
 
 const TGT = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
+const FLAGS = {
+    hitObject: false
+};
 
 function processCollisions(sections, scene, actor) {
     POSITION.copy(actor.physics.position);
@@ -20,24 +23,26 @@ function processCollisions(sections, scene, actor) {
 
     let height = 0;
     if (section) {
-        height = getGroundHeight(section, POSITION);
+        height = getGroundHeight(section, POSITION, actor);
     }
 
     actor.physics.position.y = Math.max(height, actor.physics.position.y);
 
     if (section) {
         processBoxIntersections(section, actor, POSITION);
-        TGT.copy(actor.physics.position);
-        TGT.sub(actor.threeObject.position);
-        TGT.setY(0);
-        if (TGT.lengthSq() != 0) {
-            TGT.normalize();
-            TGT.multiplyScalar(0.02);
-            TGT.add(actor.threeObject.position);
-            TGT.applyMatrix4(scene.sceneNode.matrixWorld);
-            const gInfo = getGroundInfo(section, TGT);
-            if (gInfo && gInfo.collision) {
-                actor.physics.position.copy(actor.threeObject.position);
+        if (!FLAGS.hitObject) {
+            TGT.copy(actor.physics.position);
+            TGT.sub(actor.threeObject.position);
+            TGT.setY(0);
+            if (TGT.lengthSq() != 0) {
+                TGT.normalize();
+                TGT.multiplyScalar(0.005);
+                TGT.add(actor.threeObject.position);
+                TGT.applyMatrix4(scene.sceneNode.matrixWorld);
+                const gInfo = getGroundInfo(section, TGT);
+                if (gInfo && gInfo.collision) {
+                    actor.physics.position.copy(actor.threeObject.position);
+                }
             }
         }
     }
@@ -49,9 +54,11 @@ function getGroundHeight(section, position) {
         if (position.x >= bb.min.x && position.x <= bb.max.x
             && position.z >= bb.min.z && position.z <= bb.max.z
             && position.y < bb.max.y && position.y > bb.max.y - 0.015) {
+            FLAGS.hitObject = true;
             return bb.max.y;
         }
     }
+    FLAGS.hitObject = false;
     return getGroundInfo(section, position).height;
 }
 
