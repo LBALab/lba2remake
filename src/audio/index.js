@@ -47,9 +47,6 @@ function getMusicSource(state, context, data) {
         data: data
     };
 
-    source.onended = () => {
-        source.isPlaying = false;
-    };
     source.play = () => {
         source.isPlaying = true;
         source.bufferSource.start();
@@ -68,6 +65,10 @@ function getMusicSource(state, context, data) {
         source.currentIndex = index;
         source.bufferSource = context.createBufferSource();
         source.bufferSource.loop = source.loop;
+        source.bufferSource.onended = () => {
+            source.isPlaying = false;
+        };
+
         if (musicSourceCache[index]) {
             source.bufferSource.buffer = musicSourceCache[index];
             source.connect();
@@ -106,9 +107,6 @@ function getSoundFxSource(state, context, data) {
     };
     //source.lowPassFilter.type = 'allpass';
 
-    source.onended = () => {
-        source.isPlaying = false;
-    };
     source.play = (frequency) => {
         if (frequency) {
             source.lowPassFilter.frequency.value = frequency / 100;
@@ -129,6 +127,10 @@ function getSoundFxSource(state, context, data) {
         }
         source.currentIndex = index;
         source.bufferSource = context.createBufferSource();
+        source.bufferSource.onended = () => {
+            source.isPlaying = false;
+        };
+
         if (samplesSourceCache[index]) {
             source.bufferSource.buffer = samplesSourceCache[index];
             source.connect();
