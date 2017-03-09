@@ -4,6 +4,7 @@ import {updateActor} from './actors';
 import {processPhysicsFrame} from './physics';
 import {processCameraMovement} from './cameras';
 import {updateDebugger, hasStep, endStep} from '../../scripting/debug';
+import {getRandom} from '../../utils/lba'
 
 export function mainGameLoop(game, clock, renderer, scene, controls) {
     const time = {
@@ -49,10 +50,10 @@ function playAmbience(game, scene, time) {
     let samplePlayed = 0;
 
     if (time.elapsed >= scene.data.ambience.sampleElapsedTime) {
-        let currentAmb = Math.random() * 4 + 1;
+        let currentAmb = getRandom(1, 4);
         currentAmb &= 3;
 
-        for(let s = 2; s < 4; s++) {
+        for(let s = 0; s < 4; s++) {
             if(!(samplePlayed & (1 << currentAmb))) {
                 samplePlayed |= (1 << currentAmb);
 
@@ -61,12 +62,9 @@ function playAmbience(game, scene, time) {
                 }
 
                 const sample = scene.data.ambience.samples[currentAmb];
-                const sampleIdx = sample.index;
 
-                if(sampleIdx != -1) {
-                    //const frequency = (0x1000+(Math.random() * sample.round + 1)-(sample.round/2));
-                    //playSample(sampleIdx, freq, sample.repeat, 110, -1, 110, -1);
-                    soundFxSource.load(sampleIdx, () => {
+                if(sample.index != -1) {
+                    soundFxSource.load(sample.index, () => {
                         soundFxSource.play(sample.frequency);
                     });
 
@@ -78,6 +76,6 @@ function playAmbience(game, scene, time) {
             currentAmb &= 3;
         }
 
-        scene.data.ambience.sampleElapsedTime = time.elapsed + (Math.random() * scene.data.ambience.sampleMinDelayRnd + 1 + scene.data.ambience.sampleMinDelay) * 50;
+        scene.data.ambience.sampleElapsedTime = time.elapsed + getRandom(scene.data.ambience.sampleMinDelay, scene.data.ambience.sampleMinDelayRnd) * 50;
     }
 }
