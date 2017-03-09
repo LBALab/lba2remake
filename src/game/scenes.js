@@ -129,10 +129,10 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                     loadSideScenes(game, renderer, sceneMap, index, data, callback);
                 }];
             }
-            const musicSource = game.getAudioManager().getMusicSource();
+            /*const musicSource = game.getAudioManager().getMusicSource();
             musicSource.load(sceneData.ambience.musicIndex, () => {
                 musicSource.play();
-            });
+            });*/
         } else {
             loadSteps.scenery = (callback) => { callback(null, parent.scenery); };
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };

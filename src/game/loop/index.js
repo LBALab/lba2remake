@@ -50,7 +50,7 @@ function playAmbience(game, scene, time) {
         let currentAmb = Math.random() * 4 + 1;
         currentAmb &= 3;
 
-        for(let s = 0; s < 4; s++) {
+        for(let s = 2; s < 4; s++) {
             if(!(samplePlayed & (1 << currentAmb))) {
                 samplePlayed |= (1 << currentAmb);
 
@@ -59,18 +59,13 @@ function playAmbience(game, scene, time) {
                 }
 
                 const sample = scene.data.ambience.samples[currentAmb];
-                const sampleIdx = sample.ambience;
+                const sampleIdx = sample.index;
 
                 if(sampleIdx != -1) {
-                    const freq = (0x1000+(Math.random() * sample.round + 1)-(sample.round/2));
-                    const x = 110;
-                    const z = 110;
-                    const y = -1;
-
+                    //const frequency = (0x1000+(Math.random() * sample.round + 1)-(sample.round/2));
                     //playSample(sampleIdx, freq, sample.repeat, 110, -1, 110, -1);
-
                     soundFxSource.load(sampleIdx, () => {
-                        soundFxSource.play();
+                        soundFxSource.play(sample.frequency);
                     });
 
                     break;

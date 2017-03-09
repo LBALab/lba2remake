@@ -63,6 +63,7 @@ function loadAmbience(scene, offset) {
         samples: [],
         sampleMinDelay: data.getUint16(innerOffset + 44, true),
         sampleMinDelayRnd: data.getUint16(innerOffset + 46, true),
+        sampleElapsedTime: 0,
         musicIndex: data.getInt8(innerOffset + 48, true),
     };
 
@@ -70,11 +71,11 @@ function loadAmbience(scene, offset) {
     for (let i = 0; i < 4; ++i) {
         const index = i * 5;
         scene.ambience.samples.push({
-            ambience:   rawSamples[index],
+            frequency:   rawSamples[index],
             repeat:     rawSamples[index + 1],
-            random:     rawSamples[index + 2],
+            round:     rawSamples[index + 2],
             unknown1:   rawSamples[index + 3],
-            unknown2:   rawSamples[index + 4]
+            index:   rawSamples[index + 4]
         });
     }
 

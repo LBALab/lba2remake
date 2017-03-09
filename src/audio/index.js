@@ -97,14 +97,19 @@ function getSoundFxSource(context, data) {
         currentIndex: -1,
         bufferSource: null,
         gainNode: context.createGain(),
+        lowPassFilter: context.createBiquadFilter(),
         pause: () => {},
         data: data
     };
+    //source.lowPassFilter.type = 'allpass';
 
     source.onended = () => {
         source.isPlaying = false;
     };
-    source.play = () => {
+    source.play = (frequency) => {
+        if (frequency) {
+            source.lowPassFilter.frequency.value = frequency / 100;
+        }
         source.isPlaying = true;
         source.bufferSource.start();
     };
@@ -129,19 +134,26 @@ function getSoundFxSource(context, data) {
             async.auto({
                 samples: loadHqrAsync('SAMPLES.HQR')
             }, function(err, files) {
-                const buffer = files.samples.getEntry(index);
-                source.bufferSource.buffer = buffer;
-                samplesSourceCache[index] = source.bufferSource.buffer;
-                source.connect();
-                callback.call();
+                const entryBuffer = files.samples.getEntry(index);
+                context.decodeAudioData(entryBuffer,
+                    function(buffer) {
+                        source.bufferSource.buffer = buffer;
+                        samplesSourceCache[index] = source.bufferSource.buffer;
+                        source.connect();
+                        callback.call();
+                    }, function(err) {
+                        throw new Error(err);
+                });
             });
         }
     };
+
     source.connect = () => {
         // source->gain->context
         source.bufferSource.connect(source.gainNode);
         source.gainNode.gain.value = source.volume;
-        source.gainNode.connect(context.destination);
+        source.gainNode.connect(source.lowPassFilter);
+        source.lowPassFilter.connect(context.destination);
     };
 
     return source;
