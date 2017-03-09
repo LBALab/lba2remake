@@ -10,8 +10,28 @@ export function processCollisions(grid, scene, actor) {
     if (cell) {
         for (let i = cell.columns.length - 1; i >= 0; --i) {
             const column = cell.columns[i];
-            if (basePos.y >= column.max.y && position.y < column.max.y) {
-                height = column.max.y;
+            const bb = column.box;
+            let y;
+            switch (column.shape) {
+                case 2:
+                    y = bb.max.y - (1 - ((position.z * 32) % 1)) / 64;
+                    break;
+                case 3:
+                    y = bb.max.y - ((position.x * 32) % 1) / 64;
+                    break;
+                case 4:
+                    y = bb.max.y - (1 - ((position.x * 32) % 1)) / 64;
+                    break;
+                case 5:
+                    y = bb.max.y - ((position.z * 32) % 1) / 64;
+                    break;
+                case 1:
+                default:
+                    y = bb.max.y;
+                    break;
+            }
+            if (basePos.y > y - 1 / 64 && position.y < y) {
+                height = y;
                 break;
             }
         }
@@ -40,12 +60,13 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
                 if (cell) {
                     for (let i = 0; i < cell.columns.length; ++i) {
                         const column = cell.columns[i];
-                        if (ACTOR_BOX.intersectsBox(column)) {
+                        const bb = column.box;
+                        if ((column.shape == 1 || column.shape > 5) && ACTOR_BOX.intersectsBox(bb)) {
                             INTERSECTION.copy(ACTOR_BOX);
-                            INTERSECTION.intersect(column);
+                            INTERSECTION.intersect(bb);
                             INTERSECTION.size(ITRS_SIZE);
                             ACTOR_BOX.center(CENTER1);
-                            column.center(CENTER2);
+                            bb.center(CENTER2);
                             const dir = CENTER1.sub(CENTER2);
                             if (ITRS_SIZE.x < ITRS_SIZE.z) {
                                 DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);

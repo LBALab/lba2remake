@@ -1,5 +1,5 @@
 import THREE from 'three';
-import {map, each, range} from 'lodash';
+import {map, each, range, last} from 'lodash';
 import {bits} from '../utils';
 import {loadBricksMapping} from './mapping';
 
@@ -51,12 +51,14 @@ export function loadGrid(bkg, bricks, palette, entry) {
                     const x = Math.floor(idx / 64) - 1;
                     const z = idx % 64;
 
-                    columns.push(
-                        new THREE.Box3(
+                    const blockData = getBlockData(library, last(blocks));
+                    columns.push({
+                        shape: (blockData && blockData.shape) || 1,
+                        box: new THREE.Box3(
                             new THREE.Vector3((63 - x) / 32, baseHeight / 64, z / 32),
                             new THREE.Vector3((64 - x) / 32, (baseHeight + height) / 64, (z + 1) / 32)
                         )
-                    );
+                    });
                 }
                 baseHeight += height;
             }
@@ -66,6 +68,13 @@ export function loadGrid(bkg, bricks, palette, entry) {
             };
         })
     };
+}
+
+function getBlockData(library, block) {
+    const layout = library.layouts[block.layout];
+    if (layout) {
+        return layout.blocks[block.block];
+    }
 }
 
 const libraries = [];
