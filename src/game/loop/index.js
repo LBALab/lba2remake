@@ -34,7 +34,7 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
 }
 
 function updateScene(game, scene, time, step) {
-    playAmbience(game, scene, time);
+    //playAmbience(game, scene, time);
     each(scene.actors, actor => {
         if (actor.isKilled)
             return;
@@ -52,17 +52,13 @@ function playAmbience(game, scene, time) {
     if (time.elapsed >= scene.data.ambience.sampleElapsedTime) {
         let currentAmb = getRandom(1, 4);
         currentAmb &= 3;
-
         for(let s = 0; s < 4; s++) {
             if(!(samplePlayed & (1 << currentAmb))) {
                 samplePlayed |= (1 << currentAmb);
-
                 if(samplePlayed == 15) {
                     samplePlayed = 0;
                 }
-
                 const sample = scene.data.ambience.samples[currentAmb];
-
                 if(sample.index != -1) {
                     soundFxSource.load(sample.index, () => {
                         soundFxSource.play(sample.frequency);
@@ -71,11 +67,9 @@ function playAmbience(game, scene, time) {
                     break;
                 }
             }
-
             currentAmb++;
             currentAmb &= 3;
         }
-
         scene.data.ambience.sampleElapsedTime = time.elapsed + getRandom(scene.data.ambience.sampleMinDelay, scene.data.ambience.sampleMinDelayRnd) * 50;
     }
 }
