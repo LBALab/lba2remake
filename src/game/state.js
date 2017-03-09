@@ -5,7 +5,10 @@ export function createState() {
         config: {
             text: 0,
             language: 0,
-            displayText: true
+            displayText: true,
+            musicVolume: 0.5,
+            soundFxVolume: 0.7,
+            voiceVolume: 0.8
         },
         hero: {
             behaviour: 0,
