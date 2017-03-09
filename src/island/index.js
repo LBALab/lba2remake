@@ -9,6 +9,8 @@ import {loadGround} from './ground';
 import {loadSea} from './sea';
 import {loadObjects} from './objects';
 import {loadIslandPhysics} from './physics';
+import {DebugFlags} from '../utils';
+import {createBoundingBox} from '../utils/rendering';
 
 import islandsInfo from './data/islands';
 import environments from './data/environments';
@@ -79,6 +81,16 @@ function loadIslandNode(props, files, ambience) {
         }
     });
 
+    const sections = {};
+    each(data.layout.groundSections, section => {
+        sections[`${section.x},${section.z}`] = section;
+        if (DebugFlags.boundingBoxes) {
+            each(section.boundingBoxes, bb => {
+                islandObject.add(createBoundingBox(bb, new THREE.Vector3(1, 0, 0)));
+            });
+        }
+    });
+
     islandObject.add(loadSky(geometries));
 
     const seaTimeUniform = islandObject.getObjectByName('sea').material.uniforms.time;
@@ -87,7 +99,7 @@ function loadIslandNode(props, files, ambience) {
         props: props,
         sections: map(layout.groundSections, section => ({x: section.x, z: section.z})),
         threeObject: islandObject,
-        physics: loadIslandPhysics(layout),
+        physics: loadIslandPhysics(sections),
         update: time => { seaTimeUniform.value = time.elapsed; }
     };
 }

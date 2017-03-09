@@ -1,4 +1,5 @@
-import {map, each, range} from 'lodash';
+import THREE from 'three';
+import {map, each, range, last} from 'lodash';
 import {bits} from '../utils';
 import {loadBricksMapping} from './mapping';
 
@@ -13,21 +14,21 @@ export function loadGrid(bkg, bricks, palette, entry) {
     const library = loadLibrary(bkg, bricks, palette, libIndex);
     return {
         library: library,
-        cells: map(offsets, offset => {
+        cells: map(offsets, (offset, idx) => {
             const blocks = [];
             const numColumns = gridData.getUint8(offset++);
-            let maxHeights = [];
-            let totalHeight = 0;
+            const columns = [];
+            let baseHeight = 0;
             for (let i = 0; i < numColumns; ++i) {
                 const flags = gridData.getUint8(offset++);
                 const type = bits(flags, 6, 2);
-                const height = bits(flags, 0, 5);
+                const height = bits(flags, 0, 5) + 1;
                 const block = type == 2 ? {
                     layout: gridData.getUint8(offset++) - 1,
                     block: gridData.getUint8(offset++)
                 } : null;
 
-                for (let j = 0; j <= height; ++j) {
+                for (let j = 0; j < height; ++j) {
                     switch (type) {
                         case 0:
                             blocks.push(null);
@@ -45,17 +46,35 @@ export function loadGrid(bkg, bricks, palette, entry) {
                             console.error('Shouldn\'t be here');
                             break;
                     }
-                    totalHeight++;
                 }
-                if (type != 0)
-                    maxHeights.push(totalHeight);
+                if (type != 0) {
+                    const x = Math.floor(idx / 64) - 1;
+                    const z = idx % 64;
+
+                    const blockData = getBlockData(library, last(blocks));
+                    columns.push({
+                        shape: (blockData && blockData.shape) || 1,
+                        box: new THREE.Box3(
+                            new THREE.Vector3((63 - x) / 32, baseHeight / 64, z / 32),
+                            new THREE.Vector3((64 - x) / 32, (baseHeight + height) / 64, (z + 1) / 32)
+                        )
+                    });
+                }
+                baseHeight += height;
             }
             return {
                 build: buildCell.bind(null, library, blocks),
-                heights: maxHeights
+                columns: columns
             };
         })
     };
+}
+
+function getBlockData(library, block) {
+    const layout = library.layouts[block.layout];
+    if (layout) {
+        return layout.blocks[block.block];
+    }
 }
 
 const libraries = [];

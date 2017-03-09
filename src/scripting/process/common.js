@@ -18,6 +18,7 @@ export function NO_BODY() {
 
 export function POS_POINT(point) {
     this.actor.physics.position.copy(point.physics.position);
-    if (this.actor.model)
+    if (this.actor.model) {
         this.actor.model.mesh.position.copy(point.physics.position);
+    }
 }

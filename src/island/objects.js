@@ -5,11 +5,13 @@ const push = Array.prototype.push;
 
 export function loadObjects(island, section, geometries, objects) {
     const numObjects = section.objInfo.numObjects;
+    const boundingBoxes = [];
     for (let i = 0; i < numObjects; ++i) {
         const info = loadObjectInfo(section.objects, section, i);
         const object = loadObject(island, objects, info.index);
-        loadFaces(geometries, object, info);
+        loadFaces(geometries, object, info, boundingBoxes);
     }
+    section.boundingBoxes = boundingBoxes;
 }
 
 function loadObjectInfo(objects, section, index) {
@@ -67,12 +69,12 @@ function loadUVGroups(object) {
     }
 }
 
-function loadFaces(geometries, object, info) {
+function loadFaces(geometries, object, info, boundingBoxes) {
     const data = new DataView(object.buffer, object.faceSectionOffset, object.lineSectionOffset - object.faceSectionOffset);
     let offset = 0;
     while (offset < data.byteLength) {
         const section = parseSectionHeader(data, object, offset);
-        loadSection(geometries, object, info, section);
+        loadSection(geometries, object, info, section, boundingBoxes);
         offset += section.size + 8;
     }
 }
@@ -93,12 +95,24 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
-function loadSection(geometries, object, info, section) {
+function loadSection(geometries, object, info, section, boundingBoxes) {
+    const bb = new THREE.Box3();
     for (let i = 0; i < section.numFaces; ++i) {
         const uvGroup = getUVGroup(object, section, i);
         const faceNormal = getFaceNormal(object, section, info, i);
         const addVertex = (j) => {
             const index = section.data.getUint16(i * section.blockSize + j * 2, true);
+            const x = object.vertices[index * 4];
+            const y = object.vertices[index * 4 + 1];
+            const z = object.vertices[index * 4 + 2];
+
+            bb.min.x = Math.min(x, bb.min.x);
+            bb.min.y = Math.min(y, bb.min.y);
+            bb.min.z = Math.min(z, bb.min.z);
+
+            bb.max.x = Math.max(x, bb.max.x);
+            bb.max.y = Math.max(y, bb.max.y);
+            bb.max.z = Math.max(z, bb.max.z);
             if (section.blockSize == 12 || section.blockSize == 16) {
                 push.apply(geometries.objects_colored.positions, getPosition(object, info, index));
                 push.apply(geometries.objects_colored.normals, section.type == 1 ? faceNormal : getVertexNormal(object, info, index));
@@ -120,6 +134,11 @@ function loadSection(geometries, object, info, section) {
             }
         }
     }
+    bb.min.divideScalar(0x4000);
+    bb.max.divideScalar(0x4000);
+    bb.applyMatrix4(angleMatrix[(info.angle + 3) % 4]);
+    bb.translate(new THREE.Vector3(info.x, info.y, info.z));
+    boundingBoxes.push(bb);
 }
 
 function getFaceNormal(object, section, info, i) {

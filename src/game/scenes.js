@@ -16,7 +16,7 @@ import {loadSceneMapData} from '../scene/map';
 import {loadActor} from './actors';
 import {loadPoint} from './points';
 import {loadZone} from './zones';
-import {getQueryParams} from '../utils';
+import {parseQueryParams} from '../utils';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initSceneDebug, resetSceneDebug} from '../scripting/debug';
 
@@ -108,7 +108,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
             fogDensity: 0,
         };
         const loadSteps = {
-            actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, game, envInfo, sceneData.ambience), callback) },
+            actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, envInfo, sceneData.ambience), callback) },
             points: (callback) => { async.map(sceneData.points, loadPoint, callback) },
             zones: (callback) => { async.map(sceneData.zones, loadZone, callback) }
         };
@@ -138,7 +138,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };
         }
 
-        const params = getQueryParams();
+        const params = parseQueryParams();
         if (params.NOSCRIPTS == 'true') {
             delete loadSteps.actors;
             delete loadSteps.points;
@@ -172,6 +172,9 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                     return find(this.points, function(obj) { return obj.index == index; });
                 },
             };
+            if (scene.isIsland) {
+                scene.section = islandSceneMapping[index].section;
+            }
             loadScripts(game, scene);
             // Kill twinsen if side scene
             if (parent) {

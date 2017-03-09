@@ -1,4 +1,7 @@
-export function loadBody(model, bodies, index) {
+import THREE from 'three';
+import {each} from 'lodash';
+
+export function loadBody(model, bodies, index, bodyProps) {
     if (bodies[index]) {
         return bodies[index];
     } else {
@@ -35,7 +38,8 @@ export function loadBody(model, bodies, index) {
         loadLines(obj);
         loadSpheres(obj);
         loadUVGroups(obj);
-        
+        computeBoundingBox(obj, bodyProps);
+
         bodies[index] = obj;
         return obj;
     }
@@ -215,5 +219,51 @@ function loadUVGroups(object) {
             width: rawUVGroups[index + 2],
             height: rawUVGroups[index + 3]
         });
+    }
+}
+
+function computeBoundingBox(object, bodyProps) {
+    if (bodyProps && bodyProps.hasCollisionBox) {
+        const {tX, tY, tZ, bX, bY, bZ} = bodyProps.box;
+        object.hasBoundingBox = true;
+        object.boundingBox = new THREE.Box3(
+            new THREE.Vector3(
+                Math.min(tX, bX) / 0x4000,
+                Math.min(tY, bY) / 0x4000,
+                Math.min(tZ, bZ) / 0x4000
+            )
+            ,
+            new THREE.Vector3(
+                Math.max(tX, bX) / 0x4000,
+                Math.max(tY, bY) / 0x4000,
+                Math.max(tZ, bZ) / 0x4000
+            )
+        );
+    } else {
+        const boundingBox = new THREE.Box3();
+        const points = [];
+        each(object.bones, bone => {
+            let vertex = object.vertices[bone.vertex];
+            const point = new THREE.Vector3(vertex.x, vertex.y, vertex.z);
+            while (bone.parent != 0xFFFF) {
+                bone = object.bones[bone.parent];
+                vertex = object.vertices[bone.vertex];
+                point.add(new THREE.Vector3(vertex.x, vertex.y, vertex.z));
+            }
+            points.push(point);
+        });
+        for (let i = object.bones.length; i < object.vertices.length; ++i) {
+            const vertex = object.vertices[i];
+            const point = new THREE.Vector3(vertex.x, vertex.y, vertex.z);
+            point.add(points[vertex.bone]);
+            boundingBox.min.x = Math.min(boundingBox.min.x, point.x);
+            boundingBox.min.y = Math.min(boundingBox.min.y, point.y);
+            boundingBox.min.z = Math.min(boundingBox.min.z, point.z);
+            boundingBox.max.x = Math.max(boundingBox.max.x, point.x);
+            boundingBox.max.y = Math.max(boundingBox.max.y, point.y);
+            boundingBox.max.z = Math.max(boundingBox.max.z, point.z);
+        }
+        object.hasBoundingBox = false;
+        object.boundingBox = boundingBox;
     }
 }

@@ -8,9 +8,11 @@ import type {Entity} from './entity';
 import {loadEntity, getBodyIndex, getAnimIndex} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
-import { initSkeleton, createSkeleton, updateKeyframe} from './animState';
+import {initSkeleton, createSkeleton, updateKeyframe} from './animState';
 import {loadMesh} from './geometries';
 import {loadTexture2} from '../texture';
+import {createBoundingBox} from '../utils/rendering';
+import {DebugFlags} from '../utils';
 import type {Time} from '../flowtypes';
 
 export type Model = {
@@ -40,27 +42,39 @@ export function loadModel(entityIdx: number, bodyIdx: number, animIdx: number, a
 function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envInfo: any, ambience: any) {
     const palette = new Uint8Array(files.ress.getEntry(0));
     const entityInfo = files.ress.getEntry(44);
+    const entities = loadEntity(entityInfo);
+
     const model = {
         palette: palette,
         files: files,
         bodies: [],
         anims: [],
-        entities: loadEntity(entityInfo),
         texture: loadTexture2(files.ress.getEntry(6), palette),
         state: null,
-        mesh: null
+        mesh: null,
+        entities: entities
     };
-    
-    const entity = model.entities[entityIdx];
+
+    const entity = entities[entityIdx];
+
     const realBodyIdx = getBodyIndex(entity, bodyIdx);
     const realAnimIdx = getAnimIndex(entity, animIdx);
 
-    const body = loadBody(model, model.bodies, realBodyIdx);
+    const body = loadBody(model, model.bodies, realBodyIdx, entity.bodies[bodyIdx]);
     const anim = loadAnim(model, model.anims, realAnimIdx);
 
     const skeleton = createSkeleton(body);
     initSkeleton(animState, skeleton, anim.loopFrame);
     model.mesh = loadMesh(body, model.texture, animState.matrixBones, animState.matrixRotation, model.palette, envInfo, ambience);
+
+    if (model.mesh) {
+        model.boundingBox = body.boundingBox;
+        if (DebugFlags.boundingBoxes) {
+            const color = body.hasBoundingBox ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(0, 1, 0);
+            model.boundingBoxDebugMesh = createBoundingBox(body.boundingBox, color);
+            model.mesh.add(model.boundingBoxDebugMesh);
+        }
+    }
 
     return model;
 }

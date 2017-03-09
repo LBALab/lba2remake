@@ -4,6 +4,7 @@ import {DirMode} from '../game/actors';
 
 import {loadHqrAsync} from '../hqr';
 import Lba2Charmap from './data';
+import {bits} from '../utils';
 
 export function loadSceneData(index, callback) {
     async.auto({
@@ -88,6 +89,7 @@ function loadHero(scene, offset) {
     const hero = {
         sceneIndex: scene.index,
         entityIndex: 0,
+        bodyIndex: 0,
         pos: [
             (0x8000 - data.getUint16(offset + 4, true) + 512) / 0x4000,
             data.getUint16(offset + 2, true) / 0x4000,
@@ -97,7 +99,12 @@ function loadHero(scene, offset) {
         textColor: getHtmlColor(scene.palette, 12 * 16 + 12),
         angle: 0,
         speed: 5,
-        dirMode: DirMode.MANUAL
+        dirMode: DirMode.MANUAL,
+        flags: {
+            hasCollisions: true,
+            isVisible: true,
+            isSprite: false
+        }
     };
     offset += 6;
 
@@ -133,7 +140,8 @@ function loadActors(scene, offset) {
             dirMode: DirMode.NO_MOVE
         };
 
-        actor.staticFlags = data.getUint16(offset, true);
+        const staticFlags = data.getUint16(offset, true);
+        actor.flags = parseStaticFlags(staticFlags);
         offset += 2;
         actor.unknownFlags = data.getUint16(offset, true);
         offset += 2;
@@ -318,6 +326,14 @@ function loadTexts(sceneData, textFile) {
         idx++;
     } while (end < data.byteLength);
     sceneData.texts = texts;
+}
+
+function parseStaticFlags(staticFlags) {
+    return {
+        hasCollisions: bits(staticFlags, 0, 1) == 1,
+        isVisible: bits(staticFlags, 9, 1) == 0,
+        isSprite: bits(staticFlags, 10, 1) == 1
+    };
 }
 
 export function getHtmlColor(palette, index) {

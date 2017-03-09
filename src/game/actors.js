@@ -7,11 +7,17 @@ import {loadModel} from '../model';
 import {loadAnimState, resetAnimState} from '../model/animState';
 import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
 
+type ActorFlags = {
+    hasCollisions: boolean,
+    isVisible: boolean,
+    isSprite: boolean
+}
+
 type ActorProps = {
     index: number,
     pos: [number, number, number],
     life: number,
-    staticFlags: number,
+    flags: ActorFlags,
     entityIndex: number,
     bodyIndex: number,
     animIndex: number,
@@ -37,19 +43,11 @@ export type Actor = {
     animState: any,
     isVisible: boolean,
     isSprite: boolean,
-    isTurning: ?boolean,
-    isWalking: ?boolean,
+    isTurning: boolean,
+    isWalking: boolean,
+    isKilled: boolean,
     runScripts: ?Function
 }
-
-export const ActorStaticFlag = {
-    NONE             : 0,
-    COLLIDE_WITH_OBJ : 1,
-    // TODO
-    HIDDEN           : 0x200,
-    SPRITE           : 0x400
-    // TODO
-};
 
 export const DirMode = {
     NO_MOVE: 0,
@@ -57,7 +55,7 @@ export const DirMode = {
 };
 
 // TODO: move section offset to container THREE.Object3D
-export function loadActor(game: any, envInfo: any, ambience: any, props: ActorProps, callback: Function) {
+export function loadActor(envInfo: any, ambience: any, props: ActorProps, callback: Function) {
     const pos = props.pos;
     const animState = loadAnimState();
     const actor: Actor = {
@@ -73,8 +71,9 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
                 destAngle: angleToRad(props.angle),
             }
         },
-        isVisible: !(props.staticFlags & ActorStaticFlag.HIDDEN) && (props.life > 0 || props.bodyIndex >= 0) ? true : false,
-        isSprite: (props.staticFlags & ActorStaticFlag.SPRITE) ? true : false,
+        isKilled: false,
+        isVisible: props.flags.isVisible && (props.life > 0 || props.bodyIndex >= 0),
+        isSprite: props.flags.isSprite,
         isWalking: false,
         isTurning: false,
         model: null,
@@ -127,7 +126,7 @@ export function loadActor(game: any, envInfo: any, ambience: any, props: ActorPr
     if (!actor.isSprite && props.bodyIndex != 0xFF) {
         loadModel(props.entityIndex, props.bodyIndex, props.animIndex, animState, envInfo, ambience, (model) => {
             //model.mesh.visible = actor.isVisible;
-            model.mesh.position.set(actor.physics.position.x, actor.physics.position.y, actor.physics.position.z);
+            model.mesh.position.copy(actor.physics.position);
             model.mesh.quaternion.copy(actor.physics.orientation);
             actor.model = model;
             actor.threeObject = model.mesh;

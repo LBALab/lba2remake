@@ -14,8 +14,8 @@ export function processFollow3DMovement(controlsState, camera, scene, time) {
 }
 
 export function processFree3DMovement(controlsState, camera, scene, time) {
-    const groundHeight = scene.scenery.physics.getGroundHeight(camera.position.x, camera.position.z);
-    const altitude = Math.max(0.0, Math.min(1.0, (camera.position.y - groundHeight) * 0.7));
+    const groundInfo = scene.scenery.physics.getGroundInfo(camera.position);
+    const altitude = Math.max(0.0, Math.min(1.0, (camera.position.y - groundInfo.height) * 0.7));
 
     const euler = new THREE.Euler();
     euler.setFromQuaternion(controlsState.cameraHeadOrientation, 'YXZ');
@@ -31,7 +31,7 @@ export function processFree3DMovement(controlsState, camera, scene, time) {
     speed.multiplyScalar(time.delta);
 
     camera.position.add(speed);
-    camera.position.y = Math.max(groundHeight + 0.08, camera.position.y);
+    camera.position.y = Math.max(groundInfo.height + 0.08, camera.position.y);
     camera.quaternion.copy(controlsState.cameraOrientation);
     camera.quaternion.multiply(controlsState.cameraHeadOrientation);
 }

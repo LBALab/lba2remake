@@ -1,27 +1,30 @@
 import THREE from 'three';
 import {each, find} from 'lodash';
 
-export function processPhysicsFrame(game, scene) {
+export function processPhysicsFrame(game, scene, time) {
+    scene.sceneNode.updateMatrixWorld();
     each(scene.actors, actor => {
-        processActorPhysics(actor, scene);
+        processActorPhysics(scene, actor, time);
     });
     if (scene.isActive) {
         processTeleports(game, scene);
     }
 }
 
-function processActorPhysics(actor, scene) {
+function processActorPhysics(scene, actor, time) {
+    if (!actor.model || actor.isKilled)
+        return;
+
     actor.physics.position.add(actor.physics.temp.position);
-    if (scene.isIsland && actor.threeObject) {
-        const position = new THREE.Vector3();
-        position.applyMatrix4(actor.threeObject.matrixWorld);
-        const height = scene.scenery.physics.getGroundHeight(position.x, position.z);
-        actor.physics.position.y = height;
-        actor.threeObject.position.y = height;
+    if (actor.props.flags.hasCollisions) {
+        actor.physics.position.y -= 0.4 * time.delta;
+        scene.scenery.physics.processCollisions(scene, actor);
     }
-    if (actor.model) {
-        actor.model.mesh.quaternion.copy(actor.physics.orientation);
-        actor.model.mesh.position.copy(actor.physics.position);
+    actor.model.mesh.quaternion.copy(actor.physics.orientation);
+    actor.model.mesh.position.copy(actor.physics.position);
+    if (actor.model.boundingBoxDebugMesh) {
+        actor.model.boundingBoxDebugMesh.quaternion.copy(actor.model.mesh.quaternion);
+        actor.model.boundingBoxDebugMesh.quaternion.inverse();
     }
 }
 

@@ -1,4 +1,5 @@
 import THREE from 'three';
+import {createBoundingBox} from '../utils/rendering';
 
 /*
 const ZONE_TYPE = {
@@ -39,41 +40,15 @@ export function loadZone(props, callback) {
         }
     };
 
-    const geometry = new THREE.BoxGeometry(props.box.tX - props.box.bX,
-                                            props.box.tY - props.box.bY,
-                                            props.box.tZ - props.box.bZ);
-
-    const edgesGeometry = new THREE.EdgesGeometry(geometry);
-    const material = new THREE.RawShaderMaterial({
-        vertexShader: `
-            precision highp float;
-        
-            uniform mat4 projectionMatrix;
-            uniform mat4 modelViewMatrix;
-            
-            attribute vec3 position;
-            
-            void main() {
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                gl_Position.z = 0.0;
-            }`,
-        fragmentShader: `
-            precision highp float;
-            
-            uniform vec3 color;
-            
-            void main() {
-                gl_FragColor = vec4(color, 1.0);
-            }`,
-        uniforms: {
-            color: {value: zone.color}
-        }
-    });
-    const wireframe = new THREE.LineSegments(edgesGeometry, material);
-
-    wireframe.visible = false;
-    wireframe.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
-    zone.threeObject = wireframe;
+    const {tX, tY, tZ, bX, bY, bZ} = props.box;
+    const bb = new THREE.Box3(
+        new THREE.Vector3(bX, bY, bZ),
+        new THREE.Vector3(tX, tY, tZ)
+    );
+    const bbGeom = createBoundingBox(bb, zone.color);
+    bbGeom.visible = false;
+    bbGeom.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
+    zone.threeObject = bbGeom;
 
     callback(null, zone);
 }

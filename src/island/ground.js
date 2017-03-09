@@ -1,47 +1,65 @@
 import {bits} from '../utils';
+import {map} from 'lodash';
+import THREE from 'three';
 const push = Array.prototype.push;
 
 export function loadGround(section, geometries, usedTiles) {
     for (let x = 0; x < 64; ++x) {
-        for (let y = 0; y < 64; ++y) {
-            const t0 = loadTriangle(section, x, y, 0);
-            const t1 = loadTriangle(section, x, y, 1);
-
-            const r = t0.orientation;
-            const s = 1 - r;
-
-            const point = (xi, yi) => (x + xi) * 65 + y + yi;
+        for (let z = 0; z < 64; ++z) {
+            const t0 = loadTriangle(section, x, z, 0);
+            const t1 = loadTriangle(section, x, z, 1);
 
             const isSeaLevelLiquid = (t, p) => {
                 const seaLevel = section.heightmap[p[0]] == 0 && section.heightmap[p[1]] == 0 && section.heightmap[p[2]] == 0;
                 return seaLevel && t.liquid != 0;
             };
 
-            const triangle = (t, p) => {
-                if (!isSeaLevelLiquid(t, p) && (t.useColor || t.useTexture)) {
-                    usedTiles[x * 64 + y] = t0.orientation;
+            const triangle = t => {
+                const pts = map(t.points, pt => (x + pt.x) * 65 + z + pt.z);
+                if (!isSeaLevelLiquid(t, pts) && (t.useColor || t.useTexture)) {
+                    usedTiles[x * 64 + z] = t0.orientation;
                     if (t.useTexture) {
-                        push.apply(geometries.ground_textured.positions, getPositions(section, p));
+                        push.apply(geometries.ground_textured.positions, getPositions(section, pts));
                         push.apply(geometries.ground_textured.uvs, getUVs(section.textureInfo, t.uvIndex));
                         push.apply(geometries.ground_textured.colors, getColors(t));
-                        push.apply(geometries.ground_textured.intensities, getIntensities(section.intensity, p));
+                        push.apply(geometries.ground_textured.intensities, getIntensities(section.intensity, pts));
                     } else {
-                        push.apply(geometries.ground_colored.positions, getPositions(section, p));
+                        push.apply(geometries.ground_colored.positions, getPositions(section, pts));
                         push.apply(geometries.ground_colored.colors, getColors(t));
-                        push.apply(geometries.ground_colored.intensities, getIntensities(section.intensity, p));
+                        push.apply(geometries.ground_colored.intensities, getIntensities(section.intensity, pts));
                     }
                 }
             };
 
-            triangle(t0, [point(0, r), point(s, 0), point(1, s)]);
-            triangle(t1, [point(1, s), point(r, 1), point(0, r)]);
+            triangle(t0);
+            triangle(t1);
         }
     }
 }
 
-function loadTriangle(section, x, y, idx) {
-    const flags = section.triangles[(x * 64 + y) * 2 + idx];
+export function getTriangleFromPos(section, x, z) {
+    const xFloor = Math.floor(x);
+    const zFloor = Math.floor(z);
+    const t0 = loadTriangleForPhysics(section, xFloor, zFloor, x, z, 0);
+    return (t0.height != null) ? t0 : loadTriangleForPhysics(section, xFloor, zFloor, x, z, 1);
+}
+
+const TRIANGLE_POINTS = [
+    [
+        makeTrianglePoints(0, 0),
+        makeTrianglePoints(0, 1)
+    ],
+    [
+        makeTrianglePoints(1, 0),
+        makeTrianglePoints(1, 1)
+    ]
+];
+
+function loadTriangle(section, x, z, idx) {
+    const flags = section.triangles[(x * 64 + z) * 2 + idx];
+    const orientation = bits(section.triangles[(x * 64 + z) * 2], 16, 1);
     return {
+        index: idx,
         color: bits(flags, 0, 4),
         unk0: bits(flags, 4, 1),
         useTexture: bits(flags, 5, 1),
@@ -49,11 +67,61 @@ function loadTriangle(section, x, y, idx) {
         useColor: bits(flags, 7, 1),
         sound: bits(flags, 8, 4),
         liquid: bits(flags, 12, 4),
-        orientation: bits(flags, 16, 1),
+        orientation: orientation,
         collision: bits(flags, 17, 1),
         unk2: bits(flags, 18, 1),
-        uvIndex: bits(flags, 19, 13)
+        uvIndex: bits(flags, 19, 13),
+        points: TRIANGLE_POINTS[orientation][idx]
     };
+}
+
+const DOWN = new THREE.Vector3(0, -1, 0);
+const RAY = new THREE.Ray(new THREE.Vector3(), DOWN);
+const TGT = new THREE.Vector3();
+const PTS = [
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+    new THREE.Vector3()
+];
+
+function loadTriangleForPhysics(section, x, z, xTgt, zTgt, idx) {
+    const flags = section.triangles[(x * 64 + z) * 2 + idx];
+    const baseFlags = idx ? section.triangles[(x * 64 + z) * 2] : flags;
+    const orientation = bits(baseFlags, 16, 1);
+    const src_pts = TRIANGLE_POINTS[orientation][idx];
+
+    for (let i = 0; i < 3; ++i) {
+        const pt = src_pts[i];
+        const ptIdx = (x + pt.x) * 65 + z + pt.z;
+        PTS[i].set(
+            x + pt.x,
+            section.heightmap[ptIdx] / 0x4000,
+            z + pt.z
+        );
+    }
+
+    RAY.origin.set(xTgt, 5, zTgt);
+    const tgt = RAY.intersectTriangle(PTS[0], PTS[2], PTS[1], true, TGT);
+
+    return {
+        sound: bits(flags, 8, 4),
+        collision: bits(flags, 17, 1),
+        height: tgt && tgt.y
+    };
+}
+
+function makeTrianglePoints(orientation, idx) {
+    const rOrientation = 1 - orientation;
+    return [{
+        x: idx,
+        z: idx ? rOrientation : orientation
+    }, {
+        x: idx ? orientation : rOrientation,
+        z: idx
+    }, {
+        x: 1 - idx,
+        z: idx ? orientation : rOrientation,
+    }];
 }
 
 function getPositions(section, points) {
