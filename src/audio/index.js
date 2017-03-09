@@ -119,26 +119,26 @@ function getSoundFxSource(state, context, data) {
         source.isPlaying = false;
     };
     source.load = (index, callback) => {
-        if (index == -1 || source.currentIndex == index) {
-            return;
-        }
-        if (source.isPlaying) {
-            source.stop();
-        }
-        source.currentIndex = index;
-        source.bufferSource = context.createBufferSource();
-        source.bufferSource.onended = () => {
-            source.isPlaying = false;
-        };
+        async.auto({
+            samples: loadHqrAsync('SAMPLES.HQR')
+        }, function(err, files) {
+            if (index == -1 || source.currentIndex == index) {
+                return;
+            }
+            if (source.isPlaying) {
+                source.stop();
+            }
+            source.currentIndex = index;
+            source.bufferSource = context.createBufferSource();
+            source.bufferSource.onended = () => {
+                source.isPlaying = false;
+            };
 
-        if (samplesSourceCache[index]) {
-            source.bufferSource.buffer = samplesSourceCache[index];
-            source.connect();
-            callback.call();
-        } else {
-            async.auto({
-                samples: loadHqrAsync('SAMPLES.HQR')
-            }, function(err, files) {
+            if (samplesSourceCache[index]) {
+                source.bufferSource.buffer = samplesSourceCache[index];
+                source.connect();
+                callback.call();
+            } else {
                 const entryBuffer = files.samples.getEntry(index);
                 context.decodeAudioData(entryBuffer,
                     function(buffer) {
@@ -149,8 +149,8 @@ function getSoundFxSource(state, context, data) {
                     }, function(err) {
                         throw new Error(err);
                 });
-            });
-        }
+            }
+        });
     };
 
     source.connect = () => {
