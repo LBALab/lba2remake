@@ -322,7 +322,7 @@ function loadTexts(sceneData, textFile) {
             value += String.fromCharCode(Lba2Charmap[data.getUint8(i)]);
         }
         value = value.replace(/@/g,'<br/>');
-        texts[mapData[idx]] = {flags, value};
+        texts[mapData[idx]] = {flags, index: idx, value};
         idx++;
     } while (end < data.byteLength);
     sceneData.texts = texts;

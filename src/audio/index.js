@@ -27,10 +27,12 @@ export function createAudioManager(state) {
     const context = createAudioContext();
     const musicSource = getMusicSource(state, context, AudioData.MUSIC);
     const sfxSource = getSoundFxSource(state, context);
+    const voiceSource = getVoiceSource(state, context);
     const audio = {
         context: context,
         getMusicSource: () => musicSource,
-        getSoundFxSource: () => sfxSource
+        getSoundFxSource: () => sfxSource,
+        getVoiceSource: () => voiceSource
     };
     return audio;
 }
@@ -159,6 +161,68 @@ function getSoundFxSource(state, context, data) {
         source.gainNode.gain.value = source.volume;
         source.gainNode.connect(source.lowPassFilter);
         source.lowPassFilter.connect(context.destination);
+    };
+
+    return source;
+}
+
+function getVoiceSource(state, context, data) {
+    const source = {
+        volume: state.config.voiceVolume,
+        isPlaying: false,
+        loop: false,
+        currentIndex: -1,
+        bufferSource: null,
+        gainNode: context.createGain(),
+        pause: () => {},
+        data: data
+    };
+    //source.lowPassFilter.type = 'allpass';
+
+    source.play = () => {
+        source.isPlaying = true;
+        source.bufferSource.start();
+    };
+    source.stop = () => {
+        source.bufferSource.stop();
+        source.isPlaying = false;
+    };
+    source.load = (index, textBankId, callback) => {
+        const textBank = "" + textBankId;
+        async.auto({
+            voices: loadHqrAsync(`VOX/${state.config.languageCode}_${("000"+textBank).substring(0, 3 - textBank.length)+textBank}_mp3.VOX`),
+            //game: loadHqrAsync(`VOX/${state.config.languageCode}_GAM.VOX`)
+        }, function(err, files) {
+            if (index == -1 || source.currentIndex == index) {
+                return;
+            }
+            if (source.isPlaying) {
+                source.stop();
+            }
+            source.currentIndex = index;
+            source.bufferSource = context.createBufferSource();
+            source.bufferSource.onended = () => {
+                source.isPlaying = false;
+            };
+
+            let entryBuffer = files.voices.getEntry(index);
+            context.decodeAudioData(entryBuffer,
+                function(buffer) {
+                    source.bufferSource.buffer = buffer;
+                    samplesSourceCache[index] = source.bufferSource.buffer;
+                    source.connect();
+                    callback.call();
+                }, function(err) {
+                    throw new Error(err);
+                });
+        });
+    };
+
+    source.connect = () => {
+        // source->gain->context
+        source.bufferSource.connect(source.gainNode);
+        source.gainNode.gain.value = source.volume;
+        source.gainNode.connect(context.destination);
     };
 
     return source;

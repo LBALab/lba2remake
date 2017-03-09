@@ -5,6 +5,7 @@ export function createState() {
         config: {
             text: 0,
             language: 0,
+            languageCode: 'EN',
             displayText: true,
             musicVolume: 0.5,
             soundFxVolume: 0.7,

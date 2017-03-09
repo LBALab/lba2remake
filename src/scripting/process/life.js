@@ -29,6 +29,7 @@ export function MESSAGE(cmdState, id) {
 }
 
 export function MESSAGE_OBJ(cmdState, actor, id) {
+    const voiceSource = this.game.getAudioManager().getVoiceSource();
     if (!cmdState.listener) {
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'block';
@@ -38,8 +39,12 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             cmdState.ended = true;
         };
         window.addEventListener('keydown', cmdState.listener);
+        voiceSource.load(this.scene.data.texts[id].index, this.scene.data.textBankId, () => {
+            voiceSource.play();
+        });
     }
     if (cmdState.ended) {
+        //voiceSource.stop();
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'none';
         textBox.innerHTML = '';
