@@ -23,10 +23,10 @@ function loadAudioAsync(context, url, callback) {
     request.send();
 }
 
-export function createAudioManager() {
+export function createAudioManager(state) {
     const context = createAudioContext();
-    const musicSource = getMusicSource(context, AudioData.MUSIC);
-    const sfxSource = getSoundFxSource(context);
+    const musicSource = getMusicSource(state, context, AudioData.MUSIC);
+    const sfxSource = getSoundFxSource(state, context);
     const audio = {
         context: context,
         getMusicSource: () => musicSource,
@@ -35,10 +35,11 @@ export function createAudioManager() {
     return audio;
 }
 
-function getMusicSource(context, data) {
+function getMusicSource(state, context, data) {
     const source = {
-        volume: 0.8,
+        volume: state.config.musicVolume,
         isPlaying: false,
+        loop: false,
         currentIndex: -1,
         bufferSource: null,
         gainNode: context.createGain(),
@@ -66,6 +67,7 @@ function getMusicSource(context, data) {
         }
         source.currentIndex = index;
         source.bufferSource = context.createBufferSource();
+        source.bufferSource.loop = source.loop;
         if (musicSourceCache[index]) {
             source.bufferSource.buffer = musicSourceCache[index];
             source.connect();
@@ -90,10 +92,11 @@ function getMusicSource(context, data) {
     return source;
 }
 
-function getSoundFxSource(context, data) {
+function getSoundFxSource(state, context, data) {
     const source = {
-        volume: 0.8,
+        volume: state.config.soundFxVolume,
         isPlaying: false,
+        loop: false,
         currentIndex: -1,
         bufferSource: null,
         gainNode: context.createGain(),

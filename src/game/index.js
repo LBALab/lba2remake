@@ -22,7 +22,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
 
     const _state = createState();
     const _renderer = createRenderer(isMobile);
-    const _audio = createAudioManager();
+    const _audio = createAudioManager(_state);
 
     const game = {
         controlsState: {
