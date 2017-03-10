@@ -49,6 +49,7 @@ export function createSceneManager(game, renderer, callback: Function) {
                     window.location.hash = hash.replace(/scene\=\d+/, `scene=${index}`);
                 }
 
+                const musicSource = game.getAudioManager().getMusicSource();
                 if (scene && scene.sideScenes && index in scene.sideScenes) {
                     resetSceneDebug(scene);
                     killActor(scene.getActor(0));
@@ -62,6 +63,11 @@ export function createSceneManager(game, renderer, callback: Function) {
                     initSceneDebug(scene);
                     reviveActor(scene.getActor(0)); // Awake twinsen
                     scene.isActive = true;
+                    if (!musicSource.isPlaying) {
+                        musicSource.load(scene.data.ambience.musicIndex, () => {
+                            musicSource.play();
+                        });
+                    }
                     pCallback(scene);
                 } else {
                     game.loading(index);
@@ -72,6 +78,9 @@ export function createSceneManager(game, renderer, callback: Function) {
                         window.scene = scene;
                         initSceneDebug(scene);
                         scene.isActive = true;
+                        musicSource.load(scene.data.ambience.musicIndex, () => {
+                            musicSource.play();
+                        });
                         pCallback(scene);
                         game.loaded();
                     });
@@ -129,10 +138,6 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                     loadSideScenes(game, renderer, sceneMap, index, data, callback);
                 }];
             }
-            const musicSource = game.getAudioManager().getMusicSource();
-            musicSource.load(sceneData.ambience.musicIndex, () => {
-                musicSource.play();
-            });
         } else {
             loadSteps.scenery = (callback) => { callback(null, parent.scenery); };
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };

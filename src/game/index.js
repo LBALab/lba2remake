@@ -22,7 +22,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
 
     const _state = createState();
     const _renderer = createRenderer(isMobile);
-    const _audio = createAudioManager();
+    const _audio = createAudioManager(_state);
 
     const game = {
         controlsState: {
@@ -32,7 +32,8 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             cameraOrientation: new THREE.Quaternion(),
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
-            action: 0
+            action: 0,
+            jump: false
         },
         loading: (index: number) => {
             _isPaused = true;
