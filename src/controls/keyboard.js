@@ -51,6 +51,12 @@ function keyDownHandler(game, event) {
         case 'Digit4':
             game.getState().hero.behaviour = 3;
             break;
+        case 32:
+        case 'Space':
+            if (game.getState().hero.behaviour == 1) {
+                game.controlsState.jump = true;
+            }
+            break;
 
         case 90:
         case 'KeyZ':

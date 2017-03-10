@@ -32,7 +32,8 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             cameraOrientation: new THREE.Quaternion(),
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
-            action: 0
+            action: 0,
+            jump: false
         },
         loading: (index: number) => {
             _isPaused = true;

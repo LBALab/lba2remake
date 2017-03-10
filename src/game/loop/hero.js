@@ -13,19 +13,33 @@ function handleBehaviourChanges(game, hero) {
     }
 }
 
+function toggleJump(controlsState, hero, value) {
+    controlsState.jump = value;
+    hero.props.flags.hasCollisions = !value; // temporary to allow jump on Y axis
+}
+
 function processActorMovement(controlsState, hero, time) {
     if (hero.props.dirMode != DirMode.MANUAL)
         return;
 
     let animIndex = hero.props.animIndex;
-    if (controlsState.heroSpeed != 0) {
-        hero.isWalking = true;
-        animIndex = controlsState.heroSpeed == 1 ? 1 : 2;
+    if (controlsState.jump && hero.animState.hasEnded){
+        toggleJump(controlsState, hero, false);
     } else {
         hero.isWalking = false;
         animIndex = 0;
     }
+    if (controlsState.heroSpeed != 0) {
+        hero.isWalking = true;
+        animIndex = controlsState.heroSpeed == 1 ? 1 : 2;
+    }
+    if (controlsState.jump) {
+        toggleJump(controlsState, hero, true);
+        hero.isWalking = true;
+        animIndex = 14;
+    }
     if (controlsState.heroRotationSpeed != 0) {
+        toggleJump(controlsState, hero, false);
         const euler = new THREE.Euler();
         euler.setFromQuaternion(hero.physics.orientation, 'YXZ');
         euler.y += controlsState.heroRotationSpeed * time.delta * 1.2;
@@ -40,4 +54,3 @@ function processActorMovement(controlsState, hero, time) {
         hero.resetAnimState();
     }
 }
-
