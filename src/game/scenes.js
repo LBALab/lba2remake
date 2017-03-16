@@ -78,9 +78,11 @@ export function createSceneManager(game, renderer, callback: Function) {
                         window.scene = scene;
                         initSceneDebug(scene);
                         scene.isActive = true;
-                        musicSource.load(scene.data.ambience.musicIndex, () => {
-                            musicSource.play();
-                        });
+                        if (!musicSource.isPlaying) {
+                            musicSource.load(scene.data.ambience.musicIndex, () => {
+                                musicSource.play();
+                            });
+                        }
                         pCallback(scene);
                         game.loaded();
                     });
