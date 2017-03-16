@@ -190,7 +190,7 @@ function getVoiceSource(state, context, data) {
     source.load = (index, textBankId, callback) => {
         const textBank = "" + textBankId;
         async.auto({
-            voices: loadHqrAsync(`VOX/${state.config.languageCode}_${("000"+textBank).substring(0, 3 - textBank.length)+textBank}_mp3.VOX`),
+            voices: loadHqrAsync(`VOX/${state.config.languageCode}_${("000"+textBank).substring(0, 3 - textBank.length)+textBank}_AAC.VOX`),
             //game: loadHqrAsync(`VOX/${state.config.languageCode}_GAM.VOX`)
         }, function(err, files) {
             if (index == -1 || source.currentIndex == index) {
