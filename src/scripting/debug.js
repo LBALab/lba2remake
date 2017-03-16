@@ -165,6 +165,9 @@ function toggleLabels(scene, enabled, type = 'actor') {
                         selectedZone = null;
                     }
                 });
+                if (obj.props.type == 2) {
+                    label.innerText = '(' + obj.props.snap + ')';
+                }
             }
             labels.appendChild(label);
         });
