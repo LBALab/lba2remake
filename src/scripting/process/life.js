@@ -120,11 +120,11 @@ export function SUICIDE() {
 }
 
 export function USE_ONE_LITTLE_KEY() {
-
+    this.game.getState().hero.keys++;
 }
 
-export function GIVE_GOLD_PIECES() {
-
+export function GIVE_GOLD_PIECES(amount) {
+    this.game.getState().hero.money += amount;
 }
 
 export function END_LIFE() {
@@ -132,7 +132,7 @@ export function END_LIFE() {
 }
 
 export function INC_CHAPTER() {
-
+    this.game.getState().chapter++;
 }
 
 export function FOUND_OBJECT() {
