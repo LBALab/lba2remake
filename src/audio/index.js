@@ -122,7 +122,7 @@ function getSoundFxSource(state, context, data) {
     };
     source.load = (index, callback) => {
         async.auto({
-            samples: loadHqrAsync('SAMPLES.HQR')
+            samples: loadHqrAsync('SAMPLES_AAC.HQR')
         }, function(err, files) {
             if (index == -1 || source.currentIndex == index) {
                 return;
