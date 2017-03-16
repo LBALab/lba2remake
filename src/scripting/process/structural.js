@@ -55,12 +55,14 @@ export function SWITCH(condition) {
 }
 
 export function OR_CASE(operator, offset) {
-    CASE.call(this, operator, offset);
+    if (operator(this.state.switchValue)) {
+        OFFSET.call(this, offset);
+    }
 }
 
 export function CASE(operator, offset) {
     if (!operator(this.state.switchValue)) {
-        this.state.offset = offset - 1;
+        OFFSET.call(this, offset);
     }
 }
 
