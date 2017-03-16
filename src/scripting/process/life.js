@@ -171,9 +171,8 @@ export function BRICK_COL() {
 
 }
 
-export function INVISIBLE(enabled) {
-    const actorProps = this.actor.props;
-    //actorProps.staticFlags = setStaticFlag(actorProps.staticFlags, ActorStaticFlags.HIDDEN, enabled);
+export function INVISIBLE(hidden) {
+    this.actor.isVisible = !hidden;
 }
 
 export function SHADOW_OBJ() {
