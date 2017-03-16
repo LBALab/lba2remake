@@ -123,7 +123,7 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
     actor.physics.orientation.setFromEuler(euler);
 
     // only if not sprite actor
-    if (!actor.isSprite && props.bodyIndex != 0xFF) {
+    if (actor.isVisible && !actor.isSprite && props.bodyIndex != 0xFF) {
         loadModel(props.entityIndex, props.bodyIndex, props.animIndex, animState, envInfo, ambience, (model) => {
             //model.mesh.visible = actor.isVisible;
             model.mesh.position.copy(actor.physics.position);
