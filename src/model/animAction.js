@@ -1,6 +1,6 @@
 import {each} from 'lodash';
 
-import {AnimActionOpcode} from './data/index'
+import {AnimActionOpcode} from './data/index';
 
 export function processAnimAction(entityAnim, animState) {
     const actions = entityAnim.actions;
