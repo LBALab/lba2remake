@@ -20,11 +20,17 @@ export function HITTING(action) {
 }
 
 export function SAMPLE(action) {
-
+    const soundFxSource = game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(action.sampleIndex, () => {
+        soundFxSource.play();
+    });
 }
 
 export function SAMPLE_FREQ(action) {
-
+    const soundFxSource = game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(action.sampleIndex, () => {
+        soundFxSource.play(action.frequency);
+    });
 }
 
 export function THROW_EXTRA_BONUS(action) {
@@ -52,7 +58,6 @@ export function SAMPLE_STOP(action) {
 }
 
 export function UNKNOWN_14(action) {
-
 }
 
 export function SAMPLE_BRICK_1(action) {
@@ -80,11 +85,9 @@ export function EXTRA_AIMING_2(action) {
 }
 
 export function UNKNOWN_29(action) {
-
 }
 
 export function UNKNOWN_39(action) {
-
 }
 
 export function NOP() {
