@@ -7,7 +7,10 @@ export function processAnimAction(entityAnim, animState) {
     const animFrame = animState.currentFrame;
     each(actions, action => {
        if (action.animFrame == animFrame) {
-           AnimActionOpcode[action.type].callback(action);
+           const actionType = AnimActionOpcode[action.type]
+           if (actionType != null && actionType.callback != null) {
+               actionType.callback(action);
+           }
        }
     });
 }
@@ -81,5 +84,9 @@ export function UNKNOWN_29(action) {
 }
 
 export function UNKNOWN_39(action) {
+
+}
+
+export function NOP() {
 
 }

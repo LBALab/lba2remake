@@ -2,10 +2,10 @@ import * as aa from '../animAction';
 
 export const AnimActionOpcode = [
     { opcode: 0, command: "", callback: null },
-    { opcode: 1, command: "UNKNOWN_1", callback: null },
-    { opcode: 2, command: "UNKNOWN_2", callback: null },
-    { opcode: 3, command: "UNKNOWN_3", callback: null },
-    { opcode: 4, command: "UNKNOWN_4", callback: null },
+    { opcode: 1, command: "UNKNOWN_1", callback: aa.NOP },
+    { opcode: 2, command: "UNKNOWN_2", callback: aa.NOP },
+    { opcode: 3, command: "UNKNOWN_3", callback: aa.NOP },
+    { opcode: 4, command: "UNKNOWN_4", callback: aa.NOP },
     { opcode: 5, command: "HITTING", callback: aa.HITTING },
     { opcode: 6, command: "SAMPLE", callback: aa.SAMPLE },
     { opcode: 7, command: "SAMPLE_FREQ", callback: aa.SAMPLE_FREQ },
