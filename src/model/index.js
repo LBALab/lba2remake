@@ -5,10 +5,11 @@ import async from 'async';
 import THREE from 'three';
 import {loadHqrAsync} from '../hqr';
 import type {Entity} from './entity';
-import {loadEntity, getBodyIndex, getAnimIndex} from './entity';
+import {loadEntity, getBodyIndex, getAnimIndex, getAnim} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
 import {initSkeleton, createSkeleton, updateKeyframe} from './animState';
+import {processAnimAction} from './animAction';
 import {loadMesh} from './geometries';
 import {loadTexture2} from '../texture';
 import {createBoundingBox} from '../utils/rendering';
@@ -81,11 +82,16 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
 
 export function updateModel(model: Model, animState: any, entityIdx: number, bodyIdx: number, animIdx: number, time: Time) {
     const entity = model.entities[entityIdx];
-    const realAnimIdx = getAnimIndex(entity, animIdx);
-    const anim = loadAnim(model, model.anims, realAnimIdx);
-    animState.loopFrame = anim.loopFrame;
-    updateKeyframe(anim, animState, time);
+    const entityAnim = getAnim(entity, animIdx);
+    if (entityAnim != null) {
+        const realAnimIdx = entityAnim.animIndex;
+        const anim = loadAnim(model, model.anims, realAnimIdx);
+        animState.loopFrame = anim.loopFrame;
+        updateKeyframe(anim, animState, time);
+        processAnimAction(entityAnim, animState);
+    }
 }
+
 /*
 export function createAnimState(body, anim) {
     const skeleton = createSkeleton(body);

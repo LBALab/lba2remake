@@ -353,6 +353,18 @@ export function getAnimIndex(entity: Entity, index: number) {
     return 0;
 }
 
+export function getAnim(entity: Entity, index: number) {
+    if (!entity) {
+        return null;
+    }
+    for (let i = 0; i < entity.anims.length; ++i) {
+        if (entity.anims[i].index == index) {
+            return entity.anims[i];
+        }
+    }
+    return null;
+}
+
 function makeNewBox() {
     return {
         bX: -1,
