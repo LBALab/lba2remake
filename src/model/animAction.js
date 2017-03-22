@@ -7,7 +7,7 @@ export function processAnimAction(entityAnim, animState) {
     const animFrame = animState.currentFrame;
     each(actions, action => {
        if (action.animFrame == animFrame) {
-           const actionType = AnimActionOpcode[action.type]
+           const actionType = AnimActionOpcode[action.type];
            if (actionType != null && actionType.callback != null) {
                actionType.callback(action);
            }
@@ -88,6 +88,10 @@ export function UNKNOWN_29(action) {
 }
 
 export function UNKNOWN_39(action) {
+    const soundFxSource = game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(action.sampleIndex, () => {
+        soundFxSource.play();
+    });
 }
 
 export function NOP() {

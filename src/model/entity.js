@@ -72,7 +72,7 @@ const ACTIONTYPE = {
 	EXTRA_THROW_3     : 19,
 	EXTRA_AIMING_2    : 20,
     UNKNOWN_29        : 29,
-    UNKNOWN_39        : 39
+    SAMPLE_2          : 39
 };
 
 let entities = [];
@@ -197,7 +197,7 @@ function loadEntityAnim(data, offset) {
         for (let i = 0; i < numActions; ++i) {
             let action = {
                 type: data.getUint8(innerOffset + offset, true),
-                animFrame: data.getUint8(innerOffset + offset + 1, true),
+                animFrame: -1,
                 sampleIndex: -1,
                 frequency: -1,
                 unk1: -1,
@@ -216,19 +216,23 @@ function loadEntityAnim(data, offset) {
             };
             switch(action.type) {
                 case ACTIONTYPE.HITTING:
-                    action.strength = data.getUint8(innerOffset + offset + 2, true); 
-                    ++innerOffset;
-                break;
-                case ACTIONTYPE.SAMPLE: 
-                    action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
+                    action.strength = data.getUint8(innerOffset + offset + 2, true);
                     innerOffset += 2;
                 break;
-                case ACTIONTYPE.SAMPLE_FREQ: 
+                case ACTIONTYPE.SAMPLE:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
+                    action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
+                    innerOffset += 3;
+                break;
+                case ACTIONTYPE.SAMPLE_FREQ:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.frequency = data.getUint16(innerOffset + offset + 4, true);
-                    innerOffset += 4;
+                    innerOffset += 5;
                 break;
-                case ACTIONTYPE.THROW_EXTRA_BONUS: 
+                case ACTIONTYPE.THROW_EXTRA_BONUS:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getUint16(innerOffset + offset + 2, true);
                     action.spriteIndex = data.getUint8(innerOffset + offset + 4, true);
                     action.unk1 = data.getUint16(innerOffset + offset + 5, true);
@@ -236,29 +240,33 @@ function loadEntityAnim(data, offset) {
                     action.unk3 = data.getUint16(innerOffset + offset + 9, true);
                     action.unk4 = data.getUint8(innerOffset + offset + 11, true);
                     action.unk5 = data.getUint8(innerOffset + offset + 12, true);
-                    innerOffset += 11;
+                    innerOffset += 12;
                 break;
-                case ACTIONTYPE.THROW_MAGIC_BALL: 
+                case ACTIONTYPE.THROW_MAGIC_BALL:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.unk1 = data.getUint16(innerOffset + offset + 2, true);
                     action.unk2 = data.getUint16(innerOffset + offset + 4, true);
                     action.unk3 = data.getUint16(innerOffset + offset + 6, true);
                     action.unk4 = data.getUint8(innerOffset + offset + 8, true);
-                    innerOffset += 7;
+                    innerOffset += 8;
                 break;
-                case ACTIONTYPE.SAMPLE_REPEAT: 
+                case ACTIONTYPE.SAMPLE_REPEAT:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.repeat = data.getUint16(innerOffset + offset + 4, true);
-                    innerOffset += 4;
+                    innerOffset += 5;
                 break;
-                case ACTIONTYPE.EXTRA_AIMING: 
+                case ACTIONTYPE.EXTRA_AIMING:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getUint16(innerOffset + offset + 2, true);
                     action.unk1 = data.getUint8(innerOffset + offset + 4, true);
                     action.unk2 = data.getUint8(innerOffset + offset + 5, true);
                     action.unk3 = data.getUint16(innerOffset + offset + 7, true);
                     action.unk4 = data.getUint8(innerOffset + offset + 8, true);
-                    innerOffset += 5;
+                    innerOffset += 6;
                 break;
-                case ACTIONTYPE.EXTRA_THROW: 
+                case ACTIONTYPE.EXTRA_THROW:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getUint16(innerOffset + offset + 2, true);
                     action.spriteIndex = data.getUint8(innerOffset + offset + 4, true);
                     action.unk1 = data.getUint16(innerOffset + offset + 5, true);
@@ -266,21 +274,28 @@ function loadEntityAnim(data, offset) {
                     action.unk3 = data.getUint16(innerOffset + offset + 9, true);
                     action.unk4 = data.getUint8(innerOffset + offset + 11, true);
                     action.unk5 = data.getUint8(innerOffset + offset + 12, true);
-                    innerOffset += 11;
+                    innerOffset += 12;
                 break;
-                case ACTIONTYPE.SAMPLE_STOP: 
+                case ACTIONTYPE.SAMPLE_STOP:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
-                    innerOffset += 2;
+                    innerOffset += 3;
                 break;
                 case ACTIONTYPE.UNKNOWN_14:
                     break;
                 case ACTIONTYPE.SAMPLE_BRICK_1: // only required animFrame
-                case ACTIONTYPE.SAMPLE_BRICK_2: 
+                case ACTIONTYPE.SAMPLE_BRICK_2:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
+                    innerOffset++;
                 break;
-                case ACTIONTYPE.HERO_HITTING: 
+                case ACTIONTYPE.HERO_HITTING:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.animFrame -= 1;
+                    innerOffset++;
                 break;
-                case ACTIONTYPE.EXTRA_THROW_2: 
+                case ACTIONTYPE.EXTRA_THROW_2:
+                case ACTIONTYPE.EXTRA_THROW_3:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.distanceX = data.getUint16(innerOffset + offset + 2, true);
                     action.distanceY = data.getUint16(innerOffset + offset + 4, true);
                     action.distanceZ = data.getUint16(innerOffset + offset + 6, true);
@@ -290,21 +305,10 @@ function loadEntityAnim(data, offset) {
                     action.unk3 = data.getUint16(innerOffset + offset + 11, true);
                     action.unk4 = data.getUint8(innerOffset + offset + 11, true);
                     action.strength = data.getUint8(innerOffset + offset + 12, true);
-                    innerOffset += 15;
+                    innerOffset += 16;
                 break;
-                case ACTIONTYPE.EXTRA_THROW_3: 
-                    action.distanceX = data.getUint16(innerOffset + offset + 2, true);
-                    action.distanceY = data.getUint16(innerOffset + offset + 4, true);
-                    action.distanceZ = data.getUint16(innerOffset + offset + 6, true);
-                    action.spriteIndex = data.getUint8(innerOffset + offset + 8, true);
-                    action.unk1 = data.getUint16(innerOffset + offset + 9, true);
-                    action.unk2 = data.getUint16(innerOffset + offset + 11, true);
-                    action.unk3 = data.getUint16(innerOffset + offset + 13, true);
-                    action.unk4 = data.getUint8(innerOffset + offset + 14, true);
-                    action.strength = data.getUint8(innerOffset + offset + 15, true);
-                    innerOffset += 15;
-                break;
-                case ACTIONTYPE.EXTRA_AIMING_2: 
+                case ACTIONTYPE.EXTRA_AIMING_2:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.distanceX = data.getUint16(innerOffset + offset + 2, true);
                     action.distanceY = data.getUint16(innerOffset + offset + 4, true);
                     action.distanceZ = data.getUint16(innerOffset + offset + 6, true);
@@ -312,18 +316,20 @@ function loadEntityAnim(data, offset) {
                     action.targetActor = data.getUint8(innerOffset + offset + 9, true);
                     action.unk1 = data.getUint16(innerOffset + offset + 10, true);
                     action.unk2 = data.getUint8(innerOffset + offset + 12, true);
-                    innerOffset += 11;
+                    innerOffset += 12;
                 break;
                 case ACTIONTYPE.UNKNOWN_29: // sound perhaps
-                    innerOffset += 3;
+                    innerOffset += 4;
                 break;
-                case ACTIONTYPE.UNKNOWN_39: // sound perhaps
-                    innerOffset += 7;
+                case ACTIONTYPE.SAMPLE_2:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
+                    action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
+                    action.frequency = data.getUint16(innerOffset + offset + 4, true);
+                    innerOffset += 8;
                 break;
             }
-            innerOffset += 2;
+            prevInnerOffset = ++innerOffset;
             anim.actions.push(action);
-            prevInnerOffset = innerOffset;
         }
     }
     return anim;

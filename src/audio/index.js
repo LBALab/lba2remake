@@ -79,7 +79,7 @@ function getMusicSource(state, context, data) {
             const file = source.data[index].file;
             loadAudioAsync(context, file, function (buffer) {
                 source.bufferSource.buffer = buffer;
-                musicSourceCache[index] = source.bufferSource.buffer;
+                musicSourceCache[index] = buffer;
                 source.connect();
                 callback.call();
             });
@@ -107,11 +107,11 @@ function getSoundFxSource(state, context, data) {
         pause: () => {},
         data: data
     };
-    //source.lowPassFilter.type = 'allpass';
+    //source.lowPassFilter.type = 'lowpass';
 
     source.play = (frequency) => {
         if (frequency) {
-            source.lowPassFilter.frequency.value = frequency / 100;
+            source.lowPassFilter.frequency.value = frequency;
         }
         source.isPlaying = true;
         source.bufferSource.start();
@@ -124,7 +124,7 @@ function getSoundFxSource(state, context, data) {
         async.auto({
             samples: loadHqrAsync('SAMPLES_AAC.HQR')
         }, function(err, files) {
-            if (index == -1 || source.currentIndex == index) {
+            if (index == -1 || source.currentIndex == index && source.isPlaying) {
                 return;
             }
             if (source.isPlaying) {
@@ -145,7 +145,7 @@ function getSoundFxSource(state, context, data) {
                 context.decodeAudioData(entryBuffer,
                     function(buffer) {
                         source.bufferSource.buffer = buffer;
-                        samplesSourceCache[index] = source.bufferSource.buffer;
+                        samplesSourceCache[index] = buffer;
                         source.connect();
                         callback.call();
                     }, function(err) {
@@ -159,8 +159,8 @@ function getSoundFxSource(state, context, data) {
         // source->gain->context
         source.bufferSource.connect(source.gainNode);
         source.gainNode.gain.value = source.volume;
-        source.gainNode.connect(source.lowPassFilter);
-        source.lowPassFilter.connect(context.destination);
+        source.gainNode.connect(context.destination); //source.lowPassFilter);
+        //source.lowPassFilter.connect(context.destination);
     };
 
     return source;
@@ -193,7 +193,7 @@ function getVoiceSource(state, context, data) {
             voices: loadHqrAsync(`VOX/${state.config.languageCode}_${("000"+textBank).substring(0, 3 - textBank.length)+textBank}_AAC.VOX`),
             //game: loadHqrAsync(`VOX/${state.config.languageCode}_GAM.VOX`)
         }, function(err, files) {
-            if (index == -1 || source.currentIndex == index) {
+            if (index == -1 || source.currentIndex == index && source.isPlaying) {
                 return;
             }
             if (source.isPlaying) {
@@ -209,7 +209,6 @@ function getVoiceSource(state, context, data) {
             context.decodeAudioData(entryBuffer,
                 function(buffer) {
                     source.bufferSource.buffer = buffer;
-                    samplesSourceCache[index] = source.bufferSource.buffer;
                     source.connect();
                     callback.call();
                 }, function(err) {
