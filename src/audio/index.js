@@ -78,10 +78,12 @@ function getMusicSource(state, context, data) {
         } else {
             const file = source.data[index].file;
             loadAudioAsync(context, file, function (buffer) {
-                source.bufferSource.buffer = buffer;
-                musicSourceCache[index] = buffer;
-                source.connect();
-                callback.call();
+                if (!musicSourceCache[index]) { // this bypasses a browser issue while loading same sample in short period of time
+                    source.bufferSource.buffer = buffer;
+                    musicSourceCache[index] = buffer;
+                    source.connect();
+                    callback.call();
+                }
             });
         }
     };
@@ -144,12 +146,12 @@ function getSoundFxSource(state, context, data) {
                 const entryBuffer = files.samples.getEntry(index);
                 context.decodeAudioData(entryBuffer,
                     function(buffer) {
-                        source.bufferSource.buffer = buffer;
+                    if (!samplesSourceCache[index]) { // this bypasses a browser issue while loading same sample in short period of time
                         samplesSourceCache[index] = buffer;
+                        source.bufferSource.buffer = buffer;
                         source.connect();
                         callback.call();
-                    }, function(err) {
-                        throw new Error(err);
+                    }
                 });
             }
         });
