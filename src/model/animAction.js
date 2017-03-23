@@ -1,6 +1,7 @@
 import {each} from 'lodash';
 
 import {AnimActionOpcode} from './data/index';
+import {getRandom} from '../utils/lba'
 
 export function processAnimAction(entityAnim, animState) {
     const actions = entityAnim.actions;
@@ -27,9 +28,13 @@ export function SAMPLE(action) {
 }
 
 export function SAMPLE_FREQ(action) {
+    let frequency = getRandom(0, action.frequency) + 0x1000 - (action.frequency >> 1);
+    if (frequency < 0 || frequency > 24000) {
+        frequency = 0;
+    }
     const soundFxSource = game.getAudioManager().getSoundFxSource();
     soundFxSource.load(action.sampleIndex, () => {
-        soundFxSource.play(action.frequency);
+        soundFxSource.play(frequency);
     });
 }
 
