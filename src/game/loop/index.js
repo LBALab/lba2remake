@@ -60,9 +60,9 @@ function playAmbience(game, scene, time) {
                 }
                 const sample = scene.data.ambience.samples[currentAmb];
                 if(sample.index != -1) {
-                    const frequency = 0x1000 + getRandom(sample.round) - (sample.round/2);
+                    //const frequency = 0x1000 + getRandom(sample.round) - (sample.round/2);
                     soundFxSource.load(sample.index, () => {
-                        soundFxSource.play(frequency);
+                        soundFxSource.play(sample.frequency);
                     });
 
                     break;
