@@ -3,7 +3,7 @@ import THREE from 'three';
 import {updateModel} from '../../model';
 import type {Actor} from '../actors';
 
-export function updateActor(actor: Actor, time: any, step: any) {
+export function updateActor(scene: any, actor: Actor, time: any, step: any) {
     if (actor.runScripts) {
         actor.runScripts(time, step);
     }
@@ -11,7 +11,7 @@ export function updateActor(actor: Actor, time: any, step: any) {
     if (actor.model != null && actor.threeObject && actor.threeObject.visible) {
         const model = actor.model;
         actor.animState.matrixRotation.makeRotationFromQuaternion(actor.physics.orientation);
-        updateModel(model, actor.animState, actor.props.entityIndex, actor.props.bodyIndex, actor.props.animIndex, time);
+        updateModel(scene.isActive, model, actor.animState, actor.props.entityIndex, actor.props.bodyIndex, actor.props.animIndex, time);
         if (actor.animState.isPlaying) {
             updateMovements(actor, time);
         }

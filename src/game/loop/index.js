@@ -38,7 +38,7 @@ function updateScene(game, scene, time, step) {
     each(scene.actors, actor => {
         if (actor.isKilled)
             return;
-        updateActor(actor, time, step);
+        updateActor(scene, actor, time, step);
         if (actor.index == 0 && scene.isActive) {
             updateHero(game, actor, time);
         }

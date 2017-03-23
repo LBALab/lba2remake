@@ -80,7 +80,7 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
     return model;
 }
 
-export function updateModel(model: Model, animState: any, entityIdx: number, bodyIdx: number, animIdx: number, time: Time) {
+export function updateModel(sceneIsActive: any, model: Model, animState: any, entityIdx: number, bodyIdx: number, animIdx: number, time: Time) {
     const entity = model.entities[entityIdx];
     const entityAnim = getAnim(entity, animIdx);
     if (entityAnim != null) {
@@ -88,7 +88,9 @@ export function updateModel(model: Model, animState: any, entityIdx: number, bod
         const anim = loadAnim(model, model.anims, realAnimIdx);
         animState.loopFrame = anim.loopFrame;
         updateKeyframe(anim, animState, time);
-        processAnimAction(entityAnim, animState);
+        if (sceneIsActive) {
+            processAnimAction(entityAnim, animState);
+        }
     }
 }
 
