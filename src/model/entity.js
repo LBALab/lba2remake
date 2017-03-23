@@ -71,6 +71,7 @@ const ACTIONTYPE = {
 	EXTRA_THROW_2     : 18,
 	EXTRA_THROW_3     : 19,
 	EXTRA_AIMING_2    : 20,
+    UNKNOWN_26        : 26,
     UNKNOWN_29        : 29,
     SAMPLE_2          : 39
 };
@@ -223,6 +224,7 @@ function loadEntityAnim(data, offset) {
                 case ACTIONTYPE.SAMPLE:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
+                    action.frequency = data.getUint16(innerOffset + offset + 4, true);
                     innerOffset += 3;
                 break;
                 case ACTIONTYPE.SAMPLE_FREQ:
@@ -254,7 +256,7 @@ function loadEntityAnim(data, offset) {
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.repeat = data.getUint16(innerOffset + offset + 4, true);
-                    innerOffset += 5;
+                    innerOffset += 9;
                 break;
                 case ACTIONTYPE.EXTRA_AIMING:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
@@ -318,6 +320,9 @@ function loadEntityAnim(data, offset) {
                     action.unk2 = data.getUint8(innerOffset + offset + 12, true);
                     innerOffset += 12;
                 break;
+                case ACTIONTYPE.UNKNOWN_26: // sound perhaps
+                    innerOffset += 17;
+                    break;
                 case ACTIONTYPE.UNKNOWN_29: // sound perhaps
                     innerOffset += 4;
                 break;
