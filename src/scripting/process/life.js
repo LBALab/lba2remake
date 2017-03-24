@@ -136,7 +136,10 @@ export function INC_CHAPTER() {
 }
 
 export function FOUND_OBJECT() {
-
+    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(6, () => {
+        soundFxSource.play();
+    });
 }
 
 export function SET_DOOR_LEFT() {
