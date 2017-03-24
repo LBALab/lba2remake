@@ -49,8 +49,11 @@ export function WAIT_NUM_ANIM(repeats) {
     }
 }
 
-export function SAMPLE() {
-    
+export function SAMPLE(index) {
+    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(index, () => {
+        soundFxSource.play();
+    });
 }
 
 export function GOTO_POINT_3D() {
@@ -115,12 +118,18 @@ export function WAIT_DOOR() {
     
 }
 
-export function SAMPLE_RND() {
-    
+export function SAMPLE_RND(index) {
+    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(index, () => {
+        soundFxSource.play();
+    });
 }
 
-export function SAMPLE_ALWAYS() {
-    
+export function SAMPLE_ALWAYS(index) {
+    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(index, () => {
+        soundFxSource.play();
+    });
 }
 
 export function SAMPLE_STOP() {
@@ -135,8 +144,11 @@ export function REPEAT_SAMPLE() {
     
 }
 
-export function SIMPLE_SAMPLE() {
-    
+export function SIMPLE_SAMPLE(index) {
+    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(index, () => {
+        soundFxSource.play();
+    });
 }
 
 export function FACE_HERO() {

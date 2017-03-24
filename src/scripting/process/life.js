@@ -397,16 +397,25 @@ export function SET_HIT_ZONE() {
 
 }
 
-export function SAMPLE() {
-
+export function SAMPLE(index) {
+    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(index, () => {
+        soundFxSource.play();
+    });
 }
 
-export function SAMPLE_RND() {
-
+export function SAMPLE_RND(index) {
+    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(index, () => {
+        soundFxSource.play();
+    });
 }
 
-export function SAMPLE_ALWAYS() {
-
+export function SAMPLE_ALWAYS(index) {
+    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(index, () => {
+        soundFxSource.play();
+    });
 }
 
 export function SAMPLE_STOP() {
