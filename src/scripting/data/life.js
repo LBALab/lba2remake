@@ -50,7 +50,7 @@ export const LifeOpcode = [
     { opcode: 0x2B, command: "RESTORE_LAST_TRACK", callback: st.RESTORE_LAST_TRACK, indent: Indent.KEEP},
     { opcode: 0x2C, command: "MESSAGE_OBJ", callback: lf.MESSAGE_OBJ, args: ['Uint8:actor', 'Uint16'], cmdState: true, indent: Indent.KEEP},
     { opcode: 0x2D, command: "INC_CHAPTER", callback: lf.INC_CHAPTER, indent: Indent.KEEP},
-    { opcode: 0x2E, command: "FOUND_OBJECT", callback: lf.FOUND_OBJECT, args: ['Uint8'], indent: Indent.KEEP},
+    { opcode: 0x2E, command: "FOUND_OBJECT", callback: lf.FOUND_OBJECT, args: ['Uint8'], cmdState: true, indent: Indent.KEEP},
     { opcode: 0x2F, command: "SET_DOOR_LEFT", callback: lf.SET_DOOR_LEFT, args: ['Int16'], indent: Indent.KEEP},
     { opcode: 0x30, command: "SET_DOOR_RIGHT", callback: lf.SET_DOOR_RIGHT, args: ['Int16'], indent: Indent.KEEP},
     { opcode: 0x31, command: "SET_DOOR_UP", callback: lf.SET_DOOR_UP, args: ['Int16'], indent: Indent.KEEP},

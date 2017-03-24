@@ -1,6 +1,9 @@
 // @flow
 
 import THREE from 'three';
+import async from 'async';
+
+import {loadHqrAsync} from '../hqr';
 import {createRenderer} from '../renderer';
 import {makeFirstPersonMouseControls} from '../controls/mouse';
 import {makeKeyboardControls} from '../controls/keyboard';
@@ -11,6 +14,8 @@ import {mainGameLoop} from './loop';
 import {createSceneManager} from './scenes';
 import {createState} from './state';
 import {createAudioManager} from '../audio'
+
+import {loadTexts} from '../scene';
 
 export function createGame(params: Object, isMobile: boolean, callback : Function) {
     let _sceneManager = null;
@@ -33,7 +38,9 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
             action: 0,
-            jump: false
+            jump: false,
+            texts: null,
+            textIndex: 4 // game text
         },
         loading: (index: number) => {
             _isPaused = true;
@@ -68,6 +75,12 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     };
 
     window.game = game;
+
+    async.auto({
+        text: loadHqrAsync('TEXT.HQR')
+    }, function(err, files) {
+        loadTexts(game.controlsState, files.text);
+    });
 
     const _createSceneManager = () => createSceneManager(game, _renderer, sceneManager => {
         _sceneManager = sceneManager;

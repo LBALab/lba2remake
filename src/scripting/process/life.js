@@ -135,11 +135,40 @@ export function INC_CHAPTER() {
     this.game.getState().chapter++;
 }
 
-export function FOUND_OBJECT() {
-    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(6, () => {
-        soundFxSource.play();
-    });
+export function FOUND_OBJECT(cmdState, id) {
+    const voiceSource = this.game.getAudioManager().getVoiceSource();
+    if (!cmdState.listener) {
+        this.game.getState().flags.inventory[id] = 1;
+
+        const soundFxSource = this.game.getAudioManager().getSoundFxSource();
+        soundFxSource.load(6, () => {
+            soundFxSource.play();
+        });
+
+        const textBox = document.getElementById('smallText');
+        textBox.style.display = 'block';
+        textBox.style.color = this.actor.props.textColor;
+        textBox.innerHTML = this.game.controlsState.texts[id].value;
+        cmdState.listener = function() {
+            cmdState.ended = true;
+        };
+        window.addEventListener('keydown', cmdState.listener);
+        voiceSource.load(this.game.controlsState.texts[id].index, -1, () => {
+            voiceSource.play();
+        });
+    }
+    if (cmdState.ended) {
+        //voiceSource.stop();
+        const textBox = document.getElementById('smallText');
+        textBox.style.display = 'none';
+        textBox.innerHTML = '';
+        window.removeEventListener('keydown', cmdState.listener);
+        delete cmdState.listener;
+        delete cmdState.ended;
+    } else {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+    }
 }
 
 export function SET_DOOR_LEFT() {
