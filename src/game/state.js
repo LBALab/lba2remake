@@ -8,8 +8,8 @@ export function createState() {
             languageCode: 'EN',
             displayText: true,
             musicVolume: 0.5,
-            soundFxVolume: 0.7,
-            voiceVolume: 0.8
+            soundFxVolume: 0.8,
+            voiceVolume: 1.0
         },
         hero: {
             behaviour: 0,
