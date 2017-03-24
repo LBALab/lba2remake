@@ -19,6 +19,7 @@ function processActorPhysics(scene, actor, time) {
     if (actor.props.flags.hasCollisions) {
         actor.physics.position.y -= 0.4 * time.delta;
         scene.scenery.physics.processCollisions(scene, actor);
+        processCollisionsWithActors(scene, actor);
     }
     actor.model.mesh.quaternion.copy(actor.physics.orientation);
     actor.model.mesh.position.copy(actor.physics.position);
@@ -75,6 +76,34 @@ function processTeleports(game, scene) {
                 newHero.threeObject.position.copy(newHero.physics.position);
             });
             break;
+        }
+    }
+}
+
+const ACTOR_BOX = new THREE.Box3();
+const INTERSECTION = new THREE.Box3();
+const DIFF = new THREE.Vector3();
+
+function processCollisionsWithActors(scene, actor) {
+    actor.hasCollidedWithActor = -1;
+    if (actor.model == null) {
+        return;
+    }
+    ACTOR_BOX.copy(actor.model.boundingBox);
+    ACTOR_BOX.translate(actor.physics.position);
+    DIFF.set(0, 1 / 128, 0);
+    ACTOR_BOX.translate(DIFF);
+    for (let i = 0; i < scene.actors.length; ++i) {
+        const a = scene.actors[i];
+        if (a.model == null || a.index == actor.index) {
+            continue;
+        }
+        INTERSECTION.copy(a.model.boundingBox);
+        INTERSECTION.translate(a.physics.position);
+        DIFF.set(0, 1 / 128, 0);
+        INTERSECTION.translate(DIFF);
+        if (INTERSECTION.intersectsBox(ACTOR_BOX)) {
+            actor.hasCollidedWithActor = a.index;
         }
     }
 }

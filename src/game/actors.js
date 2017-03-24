@@ -76,6 +76,7 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
         isSprite: props.flags.isSprite,
         isWalking: false,
         isTurning: false,
+        hasCollidedWithActor: -1,
         model: null,
         threeObject: null,
         animState: animState,

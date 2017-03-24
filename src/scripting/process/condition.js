@@ -1,11 +1,18 @@
 import THREE from 'three';
 
 export function COL() {
-    return -1;
+    if (this.actor.life <= 0) {
+        return -1;
+    }
+    return this.actor.hasCollidedWithActor;
 }
 
-export function COL_OBJ() {
-    return -1;
+export function COL_OBJ(index) {
+    const actor = this.scene.getActor(index);
+    if (actor.life <= 0) {
+        return -1;
+    }
+    return actor.hasCollidedWithActor;
 }
 
 export function DISTANCE(actor) {
