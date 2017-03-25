@@ -14,7 +14,8 @@ export function loadAnimState() {
         isWaiting: false,
         hasEnded: false,
         step: new THREE.Vector3(0, 0, 0),
-        keyframeLength: 0
+        keyframeLength: 0,
+        floorSound:-1
     };
 }
 
@@ -27,6 +28,7 @@ export function resetAnimState(state) {
     state.hasEnded = false;
     state.step.set(0,0,0);
     state.keyframeLength = 0;
+    state.floorSound=-1;
 }
 
 export function initSkeleton(state, skeleton, loopFrame) {

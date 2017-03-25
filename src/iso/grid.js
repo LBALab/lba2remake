@@ -57,7 +57,8 @@ export function loadGrid(bkg, bricks, palette, entry) {
                         box: new THREE.Box3(
                             new THREE.Vector3((63 - x) / 32, baseHeight / 64, z / 32),
                             new THREE.Vector3((64 - x) / 32, (baseHeight + height) / 64, (z + 1) / 32)
-                        )
+                        ),
+                        sound: (blockData && blockData.sound) || -1
                     });
                 }
                 baseHeight += height;

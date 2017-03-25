@@ -22,11 +22,15 @@ function processCollisions(sections, scene, actor) {
     const section = findSection(sections, POSITION);
 
     FLAGS.hitObject = false;
-    const height = getGroundHeight(section, POSITION);
+    const ground = getGround(section, POSITION);
+    const height = ground.height;
 
     actor.physics.position.y = Math.max(height, actor.physics.position.y);
+    actor.animState.floorSound = -1;
 
     if (section) {
+        actor.animState.floorSound = ground.sound;
+
         processBoxIntersections(section, actor, POSITION);
         if (!FLAGS.hitObject) {
             TGT.copy(actor.physics.position);
@@ -46,7 +50,7 @@ function processCollisions(sections, scene, actor) {
     }
 }
 
-function getGroundHeight(section, position) {
+function getGround(section, position) {
     if (!section)
         return 0;
 
@@ -59,7 +63,7 @@ function getGroundHeight(section, position) {
             return bb.max.y;
         }
     }
-    return getGroundInfo(section, position).height;
+    return getGroundInfo(section, position);
 }
 
 const DEFAULT_GROUND = {

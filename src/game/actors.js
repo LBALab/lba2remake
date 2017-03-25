@@ -77,6 +77,7 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
         isWalking: false,
         isTurning: false,
         hasCollidedWithActor: -1,
+        floorSound: -1,
         model: null,
         threeObject: null,
         animState: animState,

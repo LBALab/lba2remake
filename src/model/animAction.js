@@ -10,7 +10,7 @@ export function processAnimAction(entityAnim, animState) {
        if (action.animFrame == animFrame) {
            const actionType = AnimActionOpcode[action.type];
            if (actionType != null && actionType.callback != null) {
-               actionType.callback(action);
+               actionType.callback(action, animState);
            }
        }
     });
@@ -65,12 +65,26 @@ export function SAMPLE_STOP(action) {
 export function UNKNOWN_14(action) {
 }
 
-export function SAMPLE_BRICK_1(action) {
-
+export function SAMPLE_BRICK_1(action, animState) {
+    let sampleIndex = animState.floorSound;
+    if (sampleIndex != -1) {
+        sampleIndex += 30;
+        const soundFxSource = game.getAudioManager().getSoundFxSource();
+        soundFxSource.load(sampleIndex, () => {
+            soundFxSource.play();
+        });
+    }
 }
 
-export function SAMPLE_BRICK_2(action) {
-
+export function SAMPLE_BRICK_2(action, animState) {
+    let sampleIndex = animState.floorSound;
+    if (sampleIndex != -1) {
+        sampleIndex += 30;
+        const soundFxSource = game.getAudioManager().getSoundFxSource();
+        soundFxSource.load(sampleIndex, () => {
+            soundFxSource.play();
+        });
+    }
 }
 
 export function HERO_HITTING(action) {

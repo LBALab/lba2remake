@@ -7,11 +7,13 @@ export function processCollisions(grid, scene, actor) {
     const dz = Math.floor(position.z * 32);
     const cell = grid.cells[dx * 64 + dz];
     let height = 0;
+    actor.floorSound = -1;
     if (cell) {
         for (let i = cell.columns.length - 1; i >= 0; --i) {
             const column = cell.columns[i];
             const bb = column.box;
             let y;
+            actor.animState.floorSound = column.sound;
             switch (column.shape) {
                 case 2:
                     y = bb.max.y - (1 - ((position.z * 32) % 1)) / 64;
