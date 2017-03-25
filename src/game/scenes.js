@@ -169,6 +169,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 zones: data.zones,
                 isActive: false,
                 variables: createSceneVariables(),
+                zoneState: { listener: null, ended: false },
                 getActor(index) {
                     return find(this.actors, function(obj) { return obj.index == index; });
                 },
