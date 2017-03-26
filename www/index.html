@@ -102,12 +102,29 @@
             font-size: 3em;
             color: white;
         }
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.5);
+            font-family: LBA;
+            text-shadow: black 4px 4px;
+            padding: 20px;
+            border: 2px outset #20a2ff;
+            border-radius: 15px;
+            font-size: 3em;
+            color: white;
+        }
     </style>
     <script type="text/javascript" src="bundle.js"></script>
 </head>
 <body>
     <div id="main"></div>
     <div id="smallText"></div>
+    <div id="overlay"></div>
     <div id="stats1" style="position: fixed; top: 0; left: 0; width: 50%;"></div>
     <div id="stats2" style="position: fixed; top: 0; left: 50%; width: 50%;"></div>
 </body>

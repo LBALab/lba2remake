@@ -161,6 +161,9 @@ export function FOUND_OBJECT(cmdState, id) {
         voiceSource.load(this.game.controlsState.texts[id].index, -1, () => {
             voiceSource.play();
         });
+
+        const overlayBox = document.getElementById('overlay');
+        overlayBox.style.display = 'block';
     }
     if (cmdState.ended) {
         this.actor.props.entityIndex = this.actor.props.prevEntityIndex;
@@ -169,6 +172,8 @@ export function FOUND_OBJECT(cmdState, id) {
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'none';
         textBox.innerHTML = '';
+        const overlayBox = document.getElementById('overlay');
+        overlayBox.style.display = 'none';
         window.removeEventListener('keydown', cmdState.listener);
         delete cmdState.listener;
         delete cmdState.ended;
