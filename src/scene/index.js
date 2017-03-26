@@ -137,7 +137,10 @@ function loadActors(scene, offset) {
         let actor = {
             sceneIndex: scene.index,
             index: i,
-            dirMode: DirMode.NO_MOVE
+            dirMode: DirMode.NO_MOVE,
+            prevEntityIndex: -1,
+            prevBodyIndex: -1,
+            prevAnimIndex: -1
         };
 
         const staticFlags = data.getUint16(offset, true);

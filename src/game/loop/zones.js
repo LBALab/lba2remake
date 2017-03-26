@@ -49,10 +49,14 @@ function CUBE(game, scene, zone, hero) {
     }
 }
 
-function TEXT(game, scene, zone) {
+function TEXT(game, scene, zone, hero) {
     if (game.controlsState.action == 1) {
         const voiceSource = game.getAudioManager().getVoiceSource();
         if (!scene.zoneState.listener) {
+            hero.props.prevEntityIndex = hero.props.entityIndex;
+            hero.props.prevAnimIndex = hero.props.animIndex;
+            hero.props.entityIndex = 0;
+            hero.props.animIndex = 41;
             const textBox = document.getElementById('smallText');
             textBox.style.display = 'block';
             textBox.style.color = getHtmlColor(scene.data.palette, zone.props.info0 * 16 + 12);
@@ -67,6 +71,8 @@ function TEXT(game, scene, zone) {
         }
     }
     if (scene.zoneState.ended) {
+        hero.props.entityIndex = hero.props.prevEntityIndex;
+        hero.props.animIndex = hero.props.prevAnimIndex;
         //voiceSource.stop();
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'none';
