@@ -139,11 +139,7 @@ export function FOUND_OBJECT(cmdState, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
     if (!cmdState.listener) {
         this.game.getState().flags.inventory[id] = 1;
-
-        this.actor.props.prevEntityIndex = this.actor.props.entityIndex;
-        this.actor.props.prevAnimIndex = this.actor.props.animIndex;
-        this.actor.props.entityIndex = 0;
-        this.actor.props.animIndex = 23;
+        this.actor.isVisible = false;
 
         const soundFxSource = this.game.getAudioManager().getSoundFxSource();
         soundFxSource.load(6, () => {
@@ -166,8 +162,7 @@ export function FOUND_OBJECT(cmdState, id) {
         overlayBox.style.display = 'block';
     }
     if (cmdState.ended) {
-        this.actor.props.entityIndex = this.actor.props.prevEntityIndex;
-        this.actor.props.animIndex = this.actor.props.prevAnimIndex;
+        this.actor.isVisible = true;
         //voiceSource.stop();
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'none';

@@ -7,13 +7,15 @@ export function updateActor(scene: any, actor: Actor, time: any, step: any) {
     if (actor.runScripts) {
         actor.runScripts(time, step);
     }
-
-    if (actor.model != null && actor.threeObject && actor.threeObject.visible) {
-        const model = actor.model;
-        actor.animState.matrixRotation.makeRotationFromQuaternion(actor.physics.orientation);
-        updateModel(scene.isActive, model, actor.animState, actor.props.entityIndex, actor.props.bodyIndex, actor.props.animIndex, time);
-        if (actor.animState.isPlaying) {
-            updateMovements(actor, time);
+    if (actor.threeObject != null) {
+        actor.threeObject.visible = actor.isVisible;
+        if (actor.model != null && actor.threeObject.visible) {
+            const model = actor.model;
+            actor.animState.matrixRotation.makeRotationFromQuaternion(actor.physics.orientation);
+            updateModel(scene.isActive, model, actor.animState, actor.props.entityIndex, actor.props.bodyIndex, actor.props.animIndex, time);
+            if (actor.animState.isPlaying) {
+                updateMovements(actor, time);
+            }
         }
     }
 }
