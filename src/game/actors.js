@@ -6,6 +6,7 @@ import type {Model} from '../model';
 import {loadModel} from '../model';
 import {loadAnimState, resetAnimState} from '../model/animState';
 import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
+import {loadSprite} from '../iso/sprites';
 
 type ActorFlags = {
     hasCollisions: boolean,
@@ -22,7 +23,8 @@ type ActorProps = {
     bodyIndex: number,
     animIndex: number,
     angle: number,
-    speed: number
+    speed: number,
+    spriteIndex: number
 }
 
 type ActorPhysics = {
@@ -135,7 +137,12 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
             callback(null, actor);
         });
     } else {
-        // TODO load sprite
+        loadSprite(props.spriteIndex, window.game.getRenderer(), (sprite) => {
+            sprite.threeObject.position.copy(actor.physics.position);
+            sprite.threeObject.quaternion.copy(actor.physics.orientation);
+            actor.threeObject = sprite.threeObject;
+            callback(null, actor);
+        });
         callback(null, actor);
     }
 }
