@@ -107,15 +107,11 @@ export function SUB_VAR_GAME(index, value) {
 export function KILL_OBJ(index) {
     const actor = this.scene.getActor(index);
     actor.isKilled = true;
-    if (actor.threeObject) {
-        actor.threeObject.visible = false;
-    }
+    actor.isVisible = false;
 }
 
 export function SUICIDE() {
-    if (this.actor.threeObject) {
-        this.actor.threeObject.visible = false;
-    }
+    this.actor.isVisible = false;
     BRUTAL_EXIT.call(this);
 }
 
@@ -139,7 +135,7 @@ export function FOUND_OBJECT(cmdState, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
     if (!cmdState.listener) {
         this.game.getState().flags.inventory[id] = 1;
-        this.actor.isVisible = false;
+        //this.actor.isVisible = false;
 
         const soundFxSource = this.game.getAudioManager().getSoundFxSource();
         soundFxSource.load(6, () => {
@@ -162,7 +158,7 @@ export function FOUND_OBJECT(cmdState, id) {
         overlayBox.style.display = 'block';
     }
     if (cmdState.ended) {
-        this.actor.isVisible = true;
+        //this.actor.isVisible = true;
         //voiceSource.stop();
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'none';
@@ -403,6 +399,7 @@ export function BRUTAL_EXIT() {
     this.state.terminated = true;
     this.moveState.terminated = true;
     this.actor.isKilled = true;
+    this.actor.isVisible = false;
 }
 
 export function REPLACE() {
