@@ -65,6 +65,7 @@ export function killActor(actor) {
 }
 
 export function reviveActor(actor) {
+    actor.isVisible = true;
     if (actor.threeObject) {
         actor.threeObject.visible = true;
     }

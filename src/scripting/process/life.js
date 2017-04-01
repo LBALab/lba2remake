@@ -108,10 +108,16 @@ export function KILL_OBJ(index) {
     const actor = this.scene.getActor(index);
     actor.isKilled = true;
     actor.isVisible = false;
+    if (actor.threeObject) {
+        actor.threeObject.visible = false;
+    }
 }
 
 export function SUICIDE() {
     this.actor.isVisible = false;
+    if (this.actor.threeObject) {
+        this.actor.threeObject.visible = false;
+    }
     BRUTAL_EXIT.call(this);
 }
 
