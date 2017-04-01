@@ -59,6 +59,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
         getSceneManager: () => _sceneManager,
         getState: () => _state,
         getAudioManager: () => _audio,
+        getRenderer: () => _renderer,
 
         pause: () => {
             _isPaused = !_isPaused;
