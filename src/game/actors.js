@@ -143,6 +143,5 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
             actor.threeObject = sprite.threeObject;
             callback(null, actor);
         });
-        callback(null, actor);
     }
 }
