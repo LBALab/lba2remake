@@ -41,9 +41,9 @@ function loadMesh(index, sprite, renderer) {
     ];
     const uvs = [
         [0,   0],
-        [1,   0],
-        [1,   1],
-        [0,   1]
+        [s.u / sprite.width,   0],
+        [s.u / sprite.width,   s.v / sprite.height],
+        [0,   s.v / sprite.height]
     ];
 
     const geometries = {
