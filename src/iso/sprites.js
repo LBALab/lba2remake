@@ -30,14 +30,15 @@ export function loadSprite(index, renderer, callback) {
 function loadMesh(index, sprite, renderer) {
     /*const geometry = new THREE.PlaneGeometry(sprite.spritesMap[index].w, sprite.spritesMap[index].h, 1, 1);
     const material = new THREE.MeshBasicMaterial( { map : sprite.texture });
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new THREE.Mesh(geometry, material) ;
     return mesh;*/
+
     const s = sprite.spritesMap[index];
     const vertices = [
-        [-0.5, -0.5, 0],
-        [0.5,  -0.5, 0],
-        [0.5,   0.5, 0],
-        [-0.5,  0.5, 0]
+        [-0.5*s.w, -0.5*s.h, 0],
+        [0.5*s.w,  -0.5*s.h, 0],
+        [0.5*s.w,   0.5*s.h, 0],
+        [-0.5*s.w,  0.5*s.h, 0]
     ];
     const uvs = [
         [0,   0],
@@ -83,8 +84,8 @@ function loadMesh(index, sprite, renderer) {
 
     let scale = 1 / 32;
     mesh.scale.set(scale, scale, scale);
-    mesh.position.set(2, 0, 0);
-    mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
+    //mesh.position.set(2, 0, 0);
+    //mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
     mesh.frustumCulled = false;
 
     return mesh;
