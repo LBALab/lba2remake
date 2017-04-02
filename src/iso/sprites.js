@@ -154,8 +154,8 @@ export function loadSpritesMapping(sprites, palette) {
         const offsetX = (idx % 21) * (sprite.width + sprite.offsetX);
         const offsetY = Math.round(idx / 21) * (sprite.height + sprite.offsetY);
         spritesMap[idx] = {
-            w: width,
-            h: height,
+            w: sprite.width,
+            h: sprite.height,
             u: offsetX,
             v: offsetY
         };
