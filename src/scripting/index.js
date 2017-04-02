@@ -61,6 +61,7 @@ function runScript(script, time, step) {
 }
 
 export function killActor(actor) {
+    actor.isVisible = false;
     SUICIDE.call(actor.scripts.life.context);
 }
 
