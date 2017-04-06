@@ -2,6 +2,7 @@ import async from 'async';
 
 import AudioData from './data'
 import {loadHqrAsync} from '../hqr'
+import {getFrequency} from '../utils/lba'
 
 const musicSourceCache = [];
 const samplesSourceCache = [];
@@ -109,11 +110,11 @@ function getSoundFxSource(state, context, data) {
         pause: () => {},
         data: data
     };
-    //source.lowPassFilter.type = 'lowpass';
+    source.lowPassFilter.type = 'allpass';
 
     source.play = (frequency) => {
         if (frequency) {
-            source.lowPassFilter.frequency.value = frequency;
+            source.lowPassFilter.frequency.value = getFrequency(frequency);
         }
         source.isPlaying = true;
         source.bufferSource.start();
@@ -161,8 +162,8 @@ function getSoundFxSource(state, context, data) {
         // source->gain->context
         source.bufferSource.connect(source.gainNode);
         source.gainNode.gain.value = source.volume;
-        source.gainNode.connect(context.destination); //source.lowPassFilter);
-        //source.lowPassFilter.connect(context.destination);
+        source.gainNode.connect(source.lowPassFilter);
+        source.lowPassFilter.connect(context.destination);
     };
 
     return source;
