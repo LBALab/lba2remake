@@ -69,9 +69,10 @@ export function SAMPLE_BRICK_1(action, animState) {
     let sampleIndex = animState.floorSound;
     if (sampleIndex != -1) {
         sampleIndex += 30;
+        //const frequency = getRandom(0, 0x1000) + 3596;
         const soundFxSource = game.getAudioManager().getSoundFxSource();
         soundFxSource.load(sampleIndex, () => {
-            soundFxSource.play();
+            soundFxSource.play(/*frequency*/);
         });
     }
 }
@@ -80,9 +81,10 @@ export function SAMPLE_BRICK_2(action, animState) {
     let sampleIndex = animState.floorSound;
     if (sampleIndex != -1) {
         sampleIndex += 30;
+        //const frequency = getRandom(0, 0x1000) + 3596;
         const soundFxSource = game.getAudioManager().getSoundFxSource();
         soundFxSource.load(sampleIndex, () => {
-            soundFxSource.play();
+            soundFxSource.play(/*frequency*/);
         });
     }
 }
