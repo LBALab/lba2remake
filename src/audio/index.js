@@ -69,7 +69,7 @@ function getMusicSource(state, context, data) {
         source.bufferSource = context.createBufferSource();
         source.bufferSource.loop = source.loop;
         source.bufferSource.onended = () => {
-            source.isPlaying = false;
+            setTimeout(function () { source.isPlaying = false; }, 200) ;
         };
 
         if (musicSourceCache[index]) {
@@ -136,7 +136,7 @@ function getSoundFxSource(state, context, data) {
             source.currentIndex = index;
             source.bufferSource = context.createBufferSource();
             source.bufferSource.onended = () => {
-                source.isPlaying = false;
+                setTimeout(function () { source.isPlaying = false; }, 200) ;
             };
 
             if (samplesSourceCache[index]) {
@@ -208,7 +208,7 @@ function getVoiceSource(state, context, data) {
             source.currentIndex = index;
             source.bufferSource = context.createBufferSource();
             source.bufferSource.onended = () => {
-                source.isPlaying = false;
+                setTimeout(function () { source.isPlaying = false; }, 200) ;
             };
 
             let entryBuffer = files.voices.getEntry(index);
