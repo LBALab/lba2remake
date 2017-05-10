@@ -15,7 +15,10 @@ export function loadAnimState() {
         hasEnded: false,
         step: new THREE.Vector3(0, 0, 0),
         keyframeLength: 0,
-        floorSound:-1
+        floorSound: -1,
+        realAnimIdx: -1,
+        prevRealAnimIdx: -1,
+        currentKeyframe: null
     };
 }
 
@@ -89,11 +92,15 @@ function updateShaderBone(state) {
     }
 }
 
-export function updateKeyframe(anim, state, time) {
+export function updateKeyframe(anim, state, time, realAnimIdx) {
     if (!state) return;
     if (!state.isPlaying) return;
 
+    state.prevRealAnimIdx = realAnimIdx;
+    state.realAnimIdx = realAnimIdx;
+
     state.currentTime += time.delta * 1000;
+
     let keyframe = anim.keyframes[state.currentFrame];
 
     if (!keyframe) return;
@@ -128,6 +135,37 @@ export function updateKeyframe(anim, state, time) {
     }
 
     updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones);
+    updateShaderBone(state);
+
+    state.currentKeyframe = nextkeyframe;
+}
+
+export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
+    if (!state) return;
+    if (!state.isPlaying) return;
+
+    state.prevRealAnimIdx = state.realAnimIdx;
+
+    state.currentTime += time.delta * 1000;
+
+    let nextkeyframe = anim.keyframes[0];
+    if (!nextkeyframe) return;
+    state.keyframeLength = nextkeyframe.length;
+
+    if (state.currentTime > state.currentKeyframe.length) {
+        state.realAnimIdx = realAnimIdx;
+        state.prevRealAnimIdx = realAnimIdx;
+        state.currentTime = 0;
+        state.hasEnded = false;
+        state.currentFrame = 0;
+    }
+
+    let numBones = anim.numBoneframes;
+    if (state.skeleton.length < numBones) {
+        numBones = state.skeleton.length;
+    }
+
+    updateSkeletonAtKeyframe(state, state.currentKeyframe, nextkeyframe, numBones);
     updateShaderBone(state);
 }
 
