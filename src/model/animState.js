@@ -148,7 +148,7 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
 
     state.currentTime += time.delta * 1000;
 
-    let nextkeyframe = anim.keyframes[0];
+    let nextkeyframe = anim.keyframes[state.loopFrame];
     if (!nextkeyframe) return;
     state.keyframeLength = nextkeyframe.length;
 
@@ -157,7 +157,7 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
         state.prevRealAnimIdx = realAnimIdx;
         state.currentTime = 0;
         state.hasEnded = false;
-        state.currentFrame = 0;
+        state.currentFrame = state.loopFrame;
     }
 
     let numBones = anim.numBoneframes;
