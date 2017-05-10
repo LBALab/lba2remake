@@ -37,6 +37,9 @@ function processActorMovement(controlsState, hero, time) {
         toggleJump(controlsState, hero, true);
         hero.isWalking = true;
         animIndex = 14;
+        if (controlsState.heroSpeed != 0) {
+            animIndex = 25
+        }
     }
     if (controlsState.heroRotationSpeed != 0) {
         toggleJump(controlsState, hero, false);
