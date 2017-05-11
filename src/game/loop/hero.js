@@ -9,6 +9,7 @@ export function updateHero(game, hero, time) {
 function handleBehaviourChanges(game, hero) {
     if (hero.props.entityIndex != game.getState().hero.behaviour) {
         hero.props.entityIndex = game.getState().hero.behaviour;
+        toggleJump(game.controlsState, hero, false);
         hero.resetAnimState();
     }
 }
