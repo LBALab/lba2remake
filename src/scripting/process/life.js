@@ -44,7 +44,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         });
     }
     if (cmdState.ended) {
-        //voiceSource.stop();
+        voiceSource.stop();
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'none';
         textBox.innerHTML = '';
@@ -165,7 +165,7 @@ export function FOUND_OBJECT(cmdState, id) {
     }
     if (cmdState.ended) {
         //this.actor.isVisible = true;
-        //voiceSource.stop();
+        voiceSource.stop();
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'none';
         textBox.innerHTML = '';

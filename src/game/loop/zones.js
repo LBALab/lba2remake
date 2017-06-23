@@ -50,8 +50,8 @@ function CUBE(game, scene, zone, hero) {
 }
 
 function TEXT(game, scene, zone, hero) {
+    const voiceSource = game.getAudioManager().getVoiceSource();
     if (game.controlsState.action == 1) {
-        const voiceSource = game.getAudioManager().getVoiceSource();
         if (!scene.zoneState.listener) {
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
@@ -73,7 +73,7 @@ function TEXT(game, scene, zone, hero) {
     if (scene.zoneState.ended) {
         hero.props.entityIndex = hero.props.prevEntityIndex;
         hero.props.animIndex = hero.props.prevAnimIndex;
-        //voiceSource.stop();
+        voiceSource.stop();
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'none';
         textBox.innerHTML = '';
