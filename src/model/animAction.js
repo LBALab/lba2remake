@@ -7,7 +7,7 @@ export function processAnimAction(entityAnim, animState) {
     const actions = entityAnim.actions;
     const animFrame = animState.currentFrame;
     each(actions, action => {
-       if (action.animFrame == animFrame) {
+       if (action.animFrame == animFrame && animState.keyframeChanged) {
            const actionType = AnimActionOpcode[action.type];
            if (actionType != null && actionType.callback != null) {
                actionType.callback(action, animState);

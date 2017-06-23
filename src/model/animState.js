@@ -18,7 +18,8 @@ export function loadAnimState() {
         floorSound: -1,
         realAnimIdx: -1,
         prevRealAnimIdx: -1,
-        currentKeyframe: null
+        currentKeyframe: null,
+        keyframeChanged: false
     };
 }
 
@@ -29,6 +30,7 @@ export function resetAnimState(state) {
     state.isPlaying = true;
     state.isWaiting = false;
     state.hasEnded = false;
+    state.keyframeChanged = false;
     state.step.set(0,0,0);
     state.keyframeLength = 0;
     state.floorSound=-1;
@@ -106,10 +108,14 @@ export function updateKeyframe(anim, state, time, realAnimIdx) {
     if (!keyframe) return;
     state.keyframeLength = keyframe.length;
 
+    state.keyframeChanged = false;
     if (state.currentTime > keyframe.length) {
         state.hasEnded = false;
         state.currentTime = 0;
         ++state.currentFrame;
+        if (!state.keyframeChanged) {
+            state.keyframeChanged = true;
+        }
         if (state.currentFrame >= anim.numKeyframes) {
             state.currentFrame = state.loopFrame;
             if (state.currentFrame >= anim.numKeyframes - 1) {
