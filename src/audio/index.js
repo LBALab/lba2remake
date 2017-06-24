@@ -69,7 +69,7 @@ function getMusicSource(state, context, data) {
         source.bufferSource = context.createBufferSource();
         source.bufferSource.loop = source.loop;
         source.bufferSource.onended = () => {
-            setTimeout(function () { source.isPlaying = false; }, 200) ;
+            source.isPlaying = false;
         };
 
         if (musicSourceCache[index]) {
@@ -80,10 +80,12 @@ function getMusicSource(state, context, data) {
             const file = source.data[index].file;
             loadAudioAsync(context, file, function (buffer) {
                 if (!musicSourceCache[index]) { // this bypasses a browser issue while loading same sample in short period of time
-                    source.bufferSource.buffer = buffer;
-                    musicSourceCache[index] = buffer;
-                    source.connect();
-                    callback.call();
+                    if (!source.bufferSource.buffer) {
+                        source.bufferSource.buffer = buffer;
+                        musicSourceCache[index] = buffer;
+                        source.connect();
+                        callback.call();
+                    }
                 }
             });
         }
@@ -136,7 +138,7 @@ function getSoundFxSource(state, context, data) {
             source.currentIndex = index;
             source.bufferSource = context.createBufferSource();
             source.bufferSource.onended = () => {
-                setTimeout(function () { source.isPlaying = false; }, 200) ;
+                source.isPlaying = false;
             };
 
             if (samplesSourceCache[index]) {
@@ -145,13 +147,14 @@ function getSoundFxSource(state, context, data) {
                 callback.call();
             } else {
                 const entryBuffer = files.samples.getEntry(index);
-                context.decodeAudioData(entryBuffer,
-                    function(buffer) {
+                context.decodeAudioData(entryBuffer, function(buffer) {
                     if (!samplesSourceCache[index]) { // this bypasses a browser issue while loading same sample in short period of time
-                        samplesSourceCache[index] = buffer;
-                        source.bufferSource.buffer = buffer;
-                        source.connect();
-                        callback.call();
+                        if (!source.bufferSource.buffer) {
+                            source.bufferSource.buffer = buffer;
+                            samplesSourceCache[index] = buffer;
+                            source.connect();
+                            callback.call();
+                        }
                     }
                 });
             }
@@ -208,15 +211,16 @@ function getVoiceSource(state, context, data) {
             source.currentIndex = index;
             source.bufferSource = context.createBufferSource();
             source.bufferSource.onended = () => {
-                setTimeout(function () { source.isPlaying = false; }, 200) ;
+                source.isPlaying = false;
             };
 
             let entryBuffer = files.voices.getEntry(index);
-            context.decodeAudioData(entryBuffer,
-                function(buffer) {
-                    source.bufferSource.buffer = buffer;
-                    source.connect();
-                    callback.call();
+            context.decodeAudioData(entryBuffer, function(buffer) {
+                    if (!source.bufferSource.buffer) {
+                        source.bufferSource.buffer = buffer;
+                        source.connect();
+                        callback.call();
+                    }
                 }, function(err) {
                     throw new Error(err);
                 });

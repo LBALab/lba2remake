@@ -30,22 +30,37 @@ export function MESSAGE(cmdState, id) {
 
 export function MESSAGE_OBJ(cmdState, actor, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const textBox = document.getElementById('smallText');
     if (!cmdState.listener) {
-        const textBox = document.getElementById('smallText');
-        textBox.style.display = 'block';
+        cmdState.currentChar = 0;
+        textBox.innerHTML = '';
         textBox.style.color = actor.props.textColor;
-        textBox.innerHTML = this.scene.data.texts[id].value;
-        cmdState.listener = function() {
+        let textInterval = setInterval(function () {
+            textBox.style.display = 'block';
+            const char = this.scene.data.texts[id].value.charAt(cmdState.currentChar);
+            if (char == '@') {
+                const br = document.createElement('br');
+                textBox.appendChild(br);
+            } else {
+                textBox.innerHTML += char;
+            }
+            cmdState.currentChar++;
+            if (cmdState.currentChar > this.scene.data.texts[id].value.length) {
+                clearInterval(textInterval);
+            }
+        }, 45);
+        cmdState.listener = function () {
             cmdState.ended = true;
+            clearInterval(textInterval);
         };
         window.addEventListener('keydown', cmdState.listener);
         voiceSource.load(this.scene.data.texts[id].index, this.scene.data.textBankId, () => {
             voiceSource.play();
         });
+
     }
     if (cmdState.ended) {
-        //voiceSource.stop();
-        const textBox = document.getElementById('smallText');
+        voiceSource.stop();
         textBox.style.display = 'none';
         textBox.innerHTML = '';
         window.removeEventListener('keydown', cmdState.listener);
@@ -139,21 +154,34 @@ export function INC_CHAPTER() {
 
 export function FOUND_OBJECT(cmdState, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const textBox = document.getElementById('smallText');
     if (!cmdState.listener) {
         this.game.getState().flags.inventory[id] = 1;
         //this.actor.isVisible = false;
-
         const soundFxSource = this.game.getAudioManager().getSoundFxSource();
         soundFxSource.load(6, () => {
             soundFxSource.play();
         });
-
-        const textBox = document.getElementById('smallText');
-        textBox.style.display = 'block';
+        cmdState.currentChar = 0;
+        textBox.innerHTML = '';
         textBox.style.color = this.actor.props.textColor;
-        textBox.innerHTML = this.game.controlsState.texts[id].value;
-        cmdState.listener = function() {
+        let textInterval = setInterval(function () {
+            textBox.style.display = 'block';
+            const char = this.game.controlsState.texts[id].value.charAt(cmdState.currentChar);
+            if (char == '@') {
+                const br = document.createElement('br');
+                textBox.appendChild(br);
+            } else {
+                textBox.innerHTML += char;
+            }
+            cmdState.currentChar++;
+            if (cmdState.currentChar > this.game.controlsState.texts[id].value.length) {
+                clearInterval(textInterval);
+            }
+        }, 45);
+        cmdState.listener = function () {
             cmdState.ended = true;
+            clearInterval(textInterval);
         };
         window.addEventListener('keydown', cmdState.listener);
         voiceSource.load(this.game.controlsState.texts[id].index, -1, () => {
@@ -165,7 +193,7 @@ export function FOUND_OBJECT(cmdState, id) {
     }
     if (cmdState.ended) {
         //this.actor.isVisible = true;
-        //voiceSource.stop();
+        voiceSource.stop();
         const textBox = document.getElementById('smallText');
         textBox.style.display = 'none';
         textBox.innerHTML = '';
