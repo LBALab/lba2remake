@@ -7,5 +7,5 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" Loaded="Page_Loaded">
 
-    <WebView Name="_webView" Source="http://adri42.bitbucket.org/lba2/" ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.VerticalScrollMode="Disabled" PermissionRequested="_webView_PermissionRequested" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden"  />
+    <WebView Name="_webView" Source="http://lba2remake.xesf.net/" ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.VerticalScrollMode="Disabled" PermissionRequested="_webView_PermissionRequested" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden"  />
 </Page>
