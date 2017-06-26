@@ -75,7 +75,7 @@ function TEXT(game, scene, zone, hero) {
                 if (scene.zoneState.currentChar > scene.data.texts[zone.props.snap].value.length) {
                     clearInterval(textInterval);
                 }
-            }, 45);
+            }, 35);
             scene.zoneState.listener = function() {
                 scene.zoneState.ended = true;
                 clearInterval(textInterval);

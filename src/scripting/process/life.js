@@ -48,7 +48,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             if (cmdState.currentChar > this.scene.data.texts[id].value.length) {
                 clearInterval(textInterval);
             }
-        }, 45);
+        }, 35);
         cmdState.listener = function () {
             cmdState.ended = true;
             clearInterval(textInterval);
@@ -178,7 +178,7 @@ export function FOUND_OBJECT(cmdState, id) {
             if (cmdState.currentChar > this.game.controlsState.texts[id].value.length) {
                 clearInterval(textInterval);
             }
-        }, 45);
+        }, 35);
         cmdState.listener = function () {
             cmdState.ended = true;
             clearInterval(textInterval);
