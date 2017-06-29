@@ -4,13 +4,14 @@
   "description": "Little Big Adventure 2, HD version, for the web",
   "dependencies": {
     "async": "^2.0.0-rc.5",
+    "electron": "^1.6.11",
+    "es6-tween": "^2.0.1",
     "fbjs": ">=0.6.0",
     "lodash": "^4.1.0",
     "protobufjs": "^5.0.1",
     "react": "^15.0.2",
     "react-dom": "^15.0.2",
-    "three": "^0.76.1",
-    "es6-tween": "^2.0.1"
+    "three": "^0.76.1"
   },
   "devDependencies": {
     "babel-core": "^6.7.6",
@@ -29,6 +30,7 @@
   "scripts": {
     "dev-server": "webpack-dev-server"
   },
+  "main": "apps/electron/main.js",
   "repository": "git+ssh://git@bitbucket.org:adri42/lba2remake.git",
   "author": "Adrien Grandemange",
   "license": "ISC",
