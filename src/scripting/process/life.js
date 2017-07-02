@@ -83,8 +83,12 @@ export function SET_DIRMODE(dirMode) {
     }
 }
 
-export function SET_DIRMODE_OBJ() {
-
+export function SET_DIRMODE_OBJ(index, dirMode) {
+    const actor = this.scene.getActor(index);
+    actor.props.dirMode = dirMode;
+    if (dirMode == DirMode.MANUAL) {
+        actor.isTurning = false;
+    }
 }
 
 export function CAM_FOLLOW() {
