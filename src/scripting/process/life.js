@@ -290,7 +290,9 @@ export function ECLAIR() {
 }
 
 export function INC_CLOVER_BOX() {
-
+    if (this.game.getState().hero.clover.boxes < 10) {
+        this.game.getState().hero.clover.boxes++;
+    }
 }
 
 export function SET_USED_INVENTORY() {
