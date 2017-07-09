@@ -260,7 +260,8 @@ export function SET_MAGIC_LEVEL(index) {
     this.game.getState().hero.magic = magicball.level * 20;
 }
 
-export function SUB_MAGIC_POINT() {
+export function SUB_MAGIC_POINT(points) {
+    this.game.getState().hero.magic = (points > 0) ? points : 0;
 }
 
 export function SET_LIFE_POINT_OBJ() {
