@@ -65,12 +65,12 @@ function createInventoryFlags() {
     return inventory;
 }
 
-export function setMagicBallLevel(index) {
+export function setMagicBallLevel(index: number) {
     let magicball = { level: 0, strength: 0, bounce: 0 }
 
     magicball.level = index;
     magicball.strength = 4;
-    magicball.bounce = ((level - 1) / 20) + 1;
+    magicball.bounce = ((index - 1) / 20) + 1;
 
     switch(index) {
         default:
