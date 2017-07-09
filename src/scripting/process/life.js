@@ -264,12 +264,13 @@ export function SUB_MAGIC_POINT(points) {
     this.game.getState().hero.magic = (points > 0) ? points : 0;
 }
 
-export function SET_LIFE_POINT_OBJ() {
-
+export function SET_LIFE_POINT_OBJ(index, value) {
+    const actor = this.scene.getActor(index);
+    actor.props.life = value;
 }
 
 export function SUB_LIFE_POINT_OBJ() {
-
+    
 }
 
 export function HIT_OBJ() {
