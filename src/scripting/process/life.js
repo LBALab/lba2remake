@@ -236,12 +236,13 @@ export function CHANGE_CUBE(index) {
     this.game.getSceneManager().goto(index);
 }
 
-export function OBJ_COL() {
-
+export function OBJ_COL(flag) {
+    this.actor.props.flags.hasCollisions = (flag === 1);
 }
 
-export function BRICK_COL() {
-
+export function BRICK_COL(flag) {
+    this.actor.props.flags.hasCollisionBricks = (flag >= 1);
+    this.actor.props.flags.hasCollisionBricksLow = (flag === 2);
 }
 
 export function INVISIBLE(hidden) {
