@@ -295,8 +295,8 @@ export function INC_CLOVER_BOX() {
     }
 }
 
-export function SET_USED_INVENTORY() {
-
+export function SET_USED_INVENTORY(item) {
+    this.game.getState().flags.inventory[item] = 1;
 }
 
 export function ADD_CHOICE() {
