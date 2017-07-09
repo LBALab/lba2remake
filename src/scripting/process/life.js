@@ -323,12 +323,18 @@ export function CLR_HOLO_POS() {
 
 }
 
-export function ADD_FUEL() {
-
+export function ADD_FUEL(fuel) {
+    this.game.getState().hero.fuel += fuel;
+    if (this.game.getState().hero.fuel > 100) {
+        this.game.getState().hero.fuel = 100;
+    }
 }
 
-export function SUB_FUEL() {
-
+export function SUB_FUEL(fuel) {
+    this.game.getState().hero.fuel -= fuel;
+    if (this.game.getState().hero.fuel < 0) {
+        this.game.getState().hero.fuel = 0;
+    }
 }
 
 export function SET_GRM() {
