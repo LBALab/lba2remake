@@ -270,7 +270,11 @@ export function SET_LIFE_POINT_OBJ(index, value) {
 }
 
 export function SUB_LIFE_POINT_OBJ() {
-    
+    const actor = this.scene.getActor(index);
+    actor.props.life -= value;
+    if (actor.props.life < 0) {
+        actor.props.life = 0;
+    }
 }
 
 export function HIT_OBJ() {
