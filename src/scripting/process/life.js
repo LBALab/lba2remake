@@ -1,4 +1,5 @@
 import {DirMode} from '../../game/actors';
+import {setMagicBallLevel} from '../../game/state';
 
 export function PALETTE() {
 
@@ -253,12 +254,13 @@ export function SHADOW_OBJ() {
 
 }
 
-export function SET_MAGIC_LEVEL() {
-
+export function SET_MAGIC_LEVEL(index) {
+    const magicball = setMagicBallLevel(index);
+    this.game.getState().hero.magicball = magicball;
+    this.game.getState().hero.magic = magicball.level * 20;
 }
 
 export function SUB_MAGIC_POINT() {
-
 }
 
 export function SET_LIFE_POINT_OBJ() {
