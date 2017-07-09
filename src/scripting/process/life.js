@@ -72,8 +72,8 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
     }
 }
 
-export function CAN_FALL() {
-
+export function CAN_FALL(flag) {
+    this.actor.props.flags.canFall = (flag & 1) === 1;
 }
 
 export function SET_DIRMODE(dirMode) {

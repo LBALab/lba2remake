@@ -331,7 +331,8 @@ function parseStaticFlags(staticFlags) {
     return {
         hasCollisions: bits(staticFlags, 0, 1) == 1,
         isVisible: bits(staticFlags, 9, 1) == 0,
-        isSprite: bits(staticFlags, 10, 1) == 1
+        isSprite: bits(staticFlags, 10, 1) == 1,
+        canFall: bits(staticFlags, 11, 1) == 1
     };
 }
 
