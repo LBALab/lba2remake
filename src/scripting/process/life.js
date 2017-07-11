@@ -423,11 +423,14 @@ export function RAIN() {
 }
 
 export function GAME_OVER() {
-
+    this.game.getState().hero.life = 0;
+    this.game.getState().hero.clover.leafs = 0;
 }
 
 export function THE_END() {
-
+    this.game.getState().hero.life = 50;
+    this.game.getState().hero.clover.leafs = 0;
+    this.game.getState().hero.magic = 80;
 }
 
 export function ESCALATOR() {
