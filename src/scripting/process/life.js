@@ -149,6 +149,9 @@ export function USE_ONE_LITTLE_KEY() {
 
 export function GIVE_GOLD_PIECES(amount) {
     this.game.getState().hero.money += amount;
+    if (this.game.getState().hero.money > 999) {
+        this.game.getState().hero.money = 999;
+    }
 }
 
 export function END_LIFE() {
@@ -542,8 +545,11 @@ export function INVERSE_BETA() {
 
 }
 
-export function ADD_GOLD_PIECES() {
-
+export function ADD_GOLD_PIECES(value) {
+    this.game.getState().hero.money += value;
+    if (this.game.getState().hero.money > 999) {
+        this.game.getState().hero.money = 999;
+    }
 }
 
 export function STOP_CURRENT_TRACK_OBJ() {
