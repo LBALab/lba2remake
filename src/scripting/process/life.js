@@ -486,8 +486,11 @@ export function SET_ARMOR_OBJ() {
 
 }
 
-export function ADD_LIFE_POINT_OBJ() {
-
+export function ADD_LIFE_POINT_OBJ(index, points) {
+    const actor = this.scene.getActor(index);
+    if (actor) {
+        actor.props.life += points;
+    }
 }
 
 export function STATE_INVENTORY() {
