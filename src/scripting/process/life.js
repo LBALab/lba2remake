@@ -352,7 +352,8 @@ export function MESSAGE_ZOE() {
 }
 
 export function FULL_POINT() {
-
+    this.game.getState().hero.life = 50;
+    this.game.getState().hero.magic = this.game.getState().hero.magicball.level * 20;
 }
 
 export function FADE_TO_PAL() {
