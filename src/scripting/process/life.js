@@ -552,22 +552,6 @@ export function ADD_GOLD_PIECES(value) {
     }
 }
 
-export function STOP_CURRENT_TRACK_OBJ() {
-
-}
-
-export function RESTORE_LAST_TRACK_OBJ() {
-
-}
-
-export function SAVE_COMPORTEMENT_OBJ() {
-
-}
-
-export function RESTORE_COMPORTEMENT_OBJ() {
-
-}
-
 export function SPY() {
 
 }
