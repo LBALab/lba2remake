@@ -60,8 +60,8 @@ export function GOTO_POINT_3D() {
     
 }
 
-export function SPEED() {
-    
+export function SPEED(speed) {
+    this.actor.props.speed = speed;
 }
 
 export function BACKGROUND() {
