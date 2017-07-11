@@ -263,7 +263,9 @@ export function SET_MAGIC_LEVEL(index) {
 }
 
 export function SUB_MAGIC_POINT(points) {
-    this.game.getState().hero.magic = (points > 0) ? points : 0;
+    let magic = this.game.getState().hero.magic;
+    magic -= points;
+    this.game.getState().hero.magic = (magic > 0) ? magic : 0;
 }
 
 export function SET_LIFE_POINT_OBJ(index, value) {
