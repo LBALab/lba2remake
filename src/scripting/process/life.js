@@ -31,14 +31,20 @@ export function MESSAGE(cmdState, id) {
 
 export function MESSAGE_OBJ(cmdState, actor, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
-    const textBox = document.getElementById('smallText');
+    const textBox = document.getElementById('frameText');
     if (!cmdState.listener) {
+        const text = this.scene.data.texts[id];
+        if (text.type === 3) {
+            textBox.className = "bigText";
+        } else {
+            textBox.className = "smallText";
+        }
         cmdState.currentChar = 0;
         textBox.innerHTML = '';
         textBox.style.color = actor.props.textColor;
         let textInterval = setInterval(function () {
             textBox.style.display = 'block';
-            const char = this.scene.data.texts[id].value.charAt(cmdState.currentChar);
+            const char = text.value.charAt(cmdState.currentChar);
             if (char == '@') {
                 const br = document.createElement('br');
                 textBox.appendChild(br);
@@ -46,7 +52,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 textBox.innerHTML += char;
             }
             cmdState.currentChar++;
-            if (cmdState.currentChar > this.scene.data.texts[id].value.length) {
+            if (cmdState.currentChar > text.value.length) {
                 clearInterval(textInterval);
             }
         }, 35);
@@ -55,7 +61,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             clearInterval(textInterval);
         };
         window.addEventListener('keydown', cmdState.listener);
-        voiceSource.load(this.scene.data.texts[id].index, this.scene.data.textBankId, () => {
+        voiceSource.load(text.index, this.scene.data.textBankId, () => {
             voiceSource.play();
         });
 
@@ -164,7 +170,7 @@ export function INC_CHAPTER() {
 
 export function FOUND_OBJECT(cmdState, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
-    const textBox = document.getElementById('smallText');
+    const textBox = document.getElementById('frameText');
     if (!cmdState.listener) {
         this.game.getState().flags.inventory[id] = 1;
         //this.actor.isVisible = false;
@@ -173,11 +179,17 @@ export function FOUND_OBJECT(cmdState, id) {
             soundFxSource.play();
         });
         cmdState.currentChar = 0;
+        const text = this.game.controlsState.texts[id];
+        if (text.type === 3) {
+            textBox.className = "bigText";
+        } else {
+            textBox.className = "smallText";
+        }
         textBox.innerHTML = '';
         textBox.style.color = this.actor.props.textColor;
         let textInterval = setInterval(function () {
             textBox.style.display = 'block';
-            const char = this.game.controlsState.texts[id].value.charAt(cmdState.currentChar);
+            const char = text.value.charAt(cmdState.currentChar);
             if (char == '@') {
                 const br = document.createElement('br');
                 textBox.appendChild(br);
@@ -185,7 +197,7 @@ export function FOUND_OBJECT(cmdState, id) {
                 textBox.innerHTML += char;
             }
             cmdState.currentChar++;
-            if (cmdState.currentChar > this.game.controlsState.texts[id].value.length) {
+            if (cmdState.currentChar > text.value.length) {
                 clearInterval(textInterval);
             }
         }, 35);
@@ -194,7 +206,7 @@ export function FOUND_OBJECT(cmdState, id) {
             clearInterval(textInterval);
         };
         window.addEventListener('keydown', cmdState.listener);
-        voiceSource.load(this.game.controlsState.texts[id].index, -1, () => {
+        voiceSource.load(text.index, -1, () => {
             voiceSource.play();
         });
 
@@ -204,7 +216,7 @@ export function FOUND_OBJECT(cmdState, id) {
     if (cmdState.ended) {
         //this.actor.isVisible = true;
         voiceSource.stop();
-        const textBox = document.getElementById('smallText');
+        const textBox = document.getElementById('frameText');
         textBox.style.display = 'none';
         textBox.innerHTML = '';
         const overlayBox = document.getElementById('overlay');
