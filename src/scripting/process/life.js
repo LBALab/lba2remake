@@ -1,4 +1,5 @@
 import {DirMode} from '../../game/actors';
+import {setMagicBallLevel} from '../../game/state';
 
 export function PALETTE() {
 
@@ -48,7 +49,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             if (cmdState.currentChar > this.scene.data.texts[id].value.length) {
                 clearInterval(textInterval);
             }
-        }, 45);
+        }, 35);
         cmdState.listener = function () {
             cmdState.ended = true;
             clearInterval(textInterval);
@@ -72,8 +73,8 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
     }
 }
 
-export function CAN_FALL() {
-
+export function CAN_FALL(flag) {
+    this.actor.props.flags.canFall = (flag & 1) === 1;
 }
 
 export function SET_DIRMODE(dirMode) {
@@ -83,8 +84,14 @@ export function SET_DIRMODE(dirMode) {
     }
 }
 
-export function SET_DIRMODE_OBJ() {
-
+export function SET_DIRMODE_OBJ(index, dirMode) {
+    const actor = this.scene.getActor(index);
+    if (actor) {
+        actor.props.dirMode = dirMode;
+        if (dirMode == DirMode.MANUAL) {
+            actor.isTurning = false;
+        }
+    }
 }
 
 export function CAM_FOLLOW() {
@@ -142,6 +149,9 @@ export function USE_ONE_LITTLE_KEY() {
 
 export function GIVE_GOLD_PIECES(amount) {
     this.game.getState().hero.money += amount;
+    if (this.game.getState().hero.money > 999) {
+        this.game.getState().hero.money = 999;
+    }
 }
 
 export function END_LIFE() {
@@ -178,7 +188,7 @@ export function FOUND_OBJECT(cmdState, id) {
             if (cmdState.currentChar > this.game.controlsState.texts[id].value.length) {
                 clearInterval(textInterval);
             }
-        }, 45);
+        }, 35);
         cmdState.listener = function () {
             cmdState.ended = true;
             clearInterval(textInterval);
@@ -232,12 +242,13 @@ export function CHANGE_CUBE(index) {
     this.game.getSceneManager().goto(index);
 }
 
-export function OBJ_COL() {
-
+export function OBJ_COL(flag) {
+    this.actor.props.flags.hasCollisions = (flag === 1);
 }
 
-export function BRICK_COL() {
-
+export function BRICK_COL(flag) {
+    this.actor.props.flags.hasCollisionBricks = (flag >= 1);
+    this.actor.props.flags.hasCollisionBricksLow = (flag === 2);
 }
 
 export function INVISIBLE(hidden) {
@@ -248,20 +259,29 @@ export function SHADOW_OBJ() {
 
 }
 
-export function SET_MAGIC_LEVEL() {
-
+export function SET_MAGIC_LEVEL(index) {
+    const magicball = setMagicBallLevel(index);
+    this.game.getState().hero.magicball = magicball;
+    this.game.getState().hero.magic = magicball.level * 20;
 }
 
-export function SUB_MAGIC_POINT() {
-
+export function SUB_MAGIC_POINT(points) {
+    let magic = this.game.getState().hero.magic;
+    magic -= points;
+    this.game.getState().hero.magic = (magic > 0) ? magic : 0;
 }
 
-export function SET_LIFE_POINT_OBJ() {
-
+export function SET_LIFE_POINT_OBJ(index, value) {
+    const actor = this.scene.getActor(index);
+    actor.props.life = value;
 }
 
 export function SUB_LIFE_POINT_OBJ() {
-
+    const actor = this.scene.getActor(index);
+    actor.props.life -= value;
+    if (actor.props.life < 0) {
+        actor.props.life = 0;
+    }
 }
 
 export function HIT_OBJ() {
@@ -277,11 +297,13 @@ export function ECLAIR() {
 }
 
 export function INC_CLOVER_BOX() {
-
+    if (this.game.getState().hero.clover.boxes < 10) {
+        this.game.getState().hero.clover.boxes++;
+    }
 }
 
-export function SET_USED_INVENTORY() {
-
+export function SET_USED_INVENTORY(item) {
+    this.game.getState().flags.inventory[item] = 1;
 }
 
 export function ADD_CHOICE() {
@@ -308,12 +330,18 @@ export function CLR_HOLO_POS() {
 
 }
 
-export function ADD_FUEL() {
-
+export function ADD_FUEL(fuel) {
+    this.game.getState().hero.fuel += fuel;
+    if (this.game.getState().hero.fuel > 100) {
+        this.game.getState().hero.fuel = 100;
+    }
 }
 
-export function SUB_FUEL() {
-
+export function SUB_FUEL(fuel) {
+    this.game.getState().hero.fuel -= fuel;
+    if (this.game.getState().hero.fuel < 0) {
+        this.game.getState().hero.fuel = 0;
+    }
 }
 
 export function SET_GRM() {
@@ -329,7 +357,8 @@ export function MESSAGE_ZOE() {
 }
 
 export function FULL_POINT() {
-
+    this.game.getState().hero.life = 50;
+    this.game.getState().hero.magic = this.game.getState().hero.magicball.level * 20;
 }
 
 export function FADE_TO_PAL() {
@@ -376,8 +405,15 @@ export function ASK_CHOICE_OBJ() {
 
 }
 
-export function CINEMA_MODE() {
-
+export function CINEMA_MODE(mode) {
+    const cinemaModeDiv = document.getElementById('cinemaMode');
+    if (mode === 1) {
+        this.actor.props.dirMode = DirMode.NO_MOVE;
+        cinemaModeDiv.className = "cinemaModeIn";
+    } else {
+        this.actor.props.dirMode = DirMode.MANUAL;
+        cinemaModeDiv.className = "cinemaModeOut";
+    }
 }
 
 export function SAVE_HERO() {
@@ -397,19 +433,27 @@ export function RAIN() {
 }
 
 export function GAME_OVER() {
-
+    this.game.getState().hero.life = 0;
+    this.game.getState().hero.clover.leafs = 0;
 }
 
 export function THE_END() {
-
+    this.game.getState().hero.life = 50;
+    this.game.getState().hero.clover.leafs = 0;
+    this.game.getState().hero.magic = 80;
 }
 
 export function ESCALATOR() {
 
 }
 
-export function PLAY_MUSIC() {
-
+export function PLAY_MUSIC(index) {
+    const musicSource = game.getAudioManager().getMusicSource();
+    if (!musicSource.isPlaying) {
+        musicSource.load(index, () => {
+            musicSource.play();
+        });
+    }
 }
 
 export function TRACK_TO_VAR_GAME() {
@@ -452,8 +496,11 @@ export function SET_ARMOR_OBJ() {
 
 }
 
-export function ADD_LIFE_POINT_OBJ() {
-
+export function ADD_LIFE_POINT_OBJ(index, points) {
+    const actor = this.scene.getActor(index);
+    if (actor) {
+        actor.props.life += points;
+    }
 }
 
 export function STATE_INVENTORY() {
@@ -505,24 +552,11 @@ export function INVERSE_BETA() {
 
 }
 
-export function ADD_GOLD_PIECES() {
-
-}
-
-export function STOP_CURRENT_TRACK_OBJ() {
-
-}
-
-export function RESTORE_LAST_TRACK_OBJ() {
-
-}
-
-export function SAVE_COMPORTEMENT_OBJ() {
-
-}
-
-export function RESTORE_COMPORTEMENT_OBJ() {
-
+export function ADD_GOLD_PIECES(value) {
+    this.game.getState().hero.money += value;
+    if (this.game.getState().hero.money > 999) {
+        this.game.getState().hero.money = 999;
+    }
 }
 
 export function SPY() {

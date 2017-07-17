@@ -2,6 +2,8 @@ import THREE from 'three';
 import {DirMode} from '../actors';
 
 export function updateHero(game, hero, time) {
+    if (hero.props.dirMode != DirMode.MANUAL)
+        return;
     handleBehaviourChanges(game, hero);
     processActorMovement(game.controlsState, hero, time);
 }
@@ -20,9 +22,6 @@ function toggleJump(controlsState, hero, value) {
 }
 
 function processActorMovement(controlsState, hero, time) {
-    if (hero.props.dirMode != DirMode.MANUAL)
-        return;
-
     let animIndex = hero.props.animIndex;
     if (controlsState.jump && hero.animState.hasEnded){
         toggleJump(controlsState, hero, false);

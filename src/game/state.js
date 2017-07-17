@@ -20,7 +20,7 @@ export function createState() {
             fuel: 0,
             pinguin: 0,
             clover: { boxes: 2, leafs: 0 },
-            magicball: { index: 0, strength: 0, level: 0, bounce: 0 }
+            magicball: { level: 0, strength: 0, bounce: 0 }
         },
         chapter: 0,
         flags: {
@@ -63,4 +63,31 @@ function createInventoryFlags() {
         inventory[i] = 0;
     }
     return inventory;
+}
+
+export function setMagicBallLevel(index: number) {
+    let magicball = { level: 0, strength: 0, bounce: 0 }
+
+    magicball.level = index;
+    magicball.strength = 4;
+    magicball.bounce = ((index - 1) / 20) + 1;
+
+    switch(index) {
+        default:
+        case 0:
+        case 1:
+            magicball.strength = 4;
+            break;
+        case 2:
+            magicball.strength = 6;
+            break;
+        case 3:
+            magicball.strength = 8;
+            break;
+        case 4:
+            magicball.strength = 10;
+            break;
+    }
+
+    return magicball;
 }

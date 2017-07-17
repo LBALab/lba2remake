@@ -329,9 +329,11 @@ export function loadTexts(sceneData, textFile) {
 
 function parseStaticFlags(staticFlags) {
     return {
-        hasCollisions: bits(staticFlags, 0, 1) == 1,
-        isVisible: bits(staticFlags, 9, 1) == 0,
-        isSprite: bits(staticFlags, 10, 1) == 1
+        hasCollisions: bits(staticFlags, 0, 1) === 1,
+        hasCollisionBricks: bits(staticFlags, 1, 1) === 1,
+        isVisible: bits(staticFlags, 9, 1) === 0,
+        isSprite: bits(staticFlags, 10, 1) === 1,
+        canFall: bits(staticFlags, 11, 1) === 1
     };
 }
 

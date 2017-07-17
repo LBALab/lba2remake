@@ -8,10 +8,6 @@ export function updateActor(scene: any, actor: Actor, time: any, step: any) {
         actor.runScripts(time, step);
     }
 
-    // debug only
-    //if(actor.props.index != 0)
-    //    return;
-
     if (actor.model != null && actor.threeObject && actor.threeObject.visible) {
         const model = actor.model;
         actor.animState.matrixRotation.makeRotationFromQuaternion(actor.physics.orientation);
