@@ -405,8 +405,15 @@ export function ASK_CHOICE_OBJ() {
 
 }
 
-export function CINEMA_MODE() {
-
+export function CINEMA_MODE(mode) {
+    const cinemaModeDiv = document.getElementById('cinemaMode');
+    if (mode === 1) {
+        this.actor.props.dirMode = DirMode.NO_MOVE;
+        cinemaModeDiv.className = "cinemaModeIn";
+    } else {
+        this.actor.props.dirMode = DirMode.MANUAL;
+        cinemaModeDiv.className = "cinemaModeOut";
+    }
 }
 
 export function SAVE_HERO() {
