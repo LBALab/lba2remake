@@ -18,5 +18,5 @@ window.onload = function() {
         }, false);
     });
 
-    game.run();
+    game.preload(game.run);
 };
