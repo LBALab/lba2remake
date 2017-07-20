@@ -113,6 +113,19 @@ export function RESTORE_COMPORTEMENT() {
     }
 }
 
+export function SAVE_COMPORTEMENT_OBJ(actor) {
+    const state = actor.scripts.life.context.state;
+    state.savedOffset = state.comportementOffset;
+}
+
+export function RESTORE_COMPORTEMENT_OBJ(actor) {
+    const state = actor.scripts.life.context.state;
+    if (state.savedOffset) {
+        state.reentryOffset = state.savedOffset;
+        state.continue = false;
+    }
+}
+
 /* Tracks */
 
 export function TRACK(index) {
@@ -138,6 +151,20 @@ export function RESTORE_LAST_TRACK() {
     if (this.moveState.savedOffset) {
         this.moveState.reentryOffset = this.moveState.savedOffset;
         this.moveState.stopped = false;
+    }
+}
+
+export function STOP_CURRENT_TRACK_OBJ(actor) {
+    const state = actor.scripts.move.context.state;
+    state.savedOffset = state.trackOffset;
+    state.stopped = true;
+}
+
+export function RESTORE_LAST_TRACK_OBJ(actor) {
+    const state = actor.scripts.move.context.state;
+    if (state.savedOffset) {
+        state.reentryOffset = state.savedOffset;
+        state.stopped = false;
     }
 }
 

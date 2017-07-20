@@ -316,13 +316,12 @@ export function loadTexts(sceneData, textFile) {
     do {
         start = data.getUint16(idx * 2, true);
         end = data.getUint16(idx * 2 + 2, true);
-        const flags = data.getUint8(start, true);
+        const type = data.getUint8(start, true);
         let value = '';
         for (let i = start + 1; i < end - 1; ++i) {
             value += String.fromCharCode(Lba2Charmap[data.getUint8(i)]);
         }
-        value = value.replace(/@/g,'<br/>');
-        texts[mapData[idx]] = {flags, index: idx, value};
+        texts[mapData[idx]] = {type, index: idx, value};
         idx++;
     } while (end < data.byteLength);
     sceneData.texts = texts;
@@ -330,9 +329,11 @@ export function loadTexts(sceneData, textFile) {
 
 function parseStaticFlags(staticFlags) {
     return {
-        hasCollisions: bits(staticFlags, 0, 1) == 1,
-        isVisible: bits(staticFlags, 9, 1) == 0,
-        isSprite: bits(staticFlags, 10, 1) == 1
+        hasCollisions: bits(staticFlags, 0, 1) === 1,
+        hasCollisionBricks: bits(staticFlags, 1, 1) === 1,
+        isVisible: bits(staticFlags, 9, 1) === 0,
+        isSprite: bits(staticFlags, 10, 1) === 1,
+        canFall: bits(staticFlags, 11, 1) === 1
     };
 }
 

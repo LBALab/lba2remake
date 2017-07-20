@@ -2,6 +2,7 @@ import async from 'async';
 
 import AudioData from './data'
 import {loadHqrAsync} from '../hqr'
+import {getFrequency} from '../utils/lba'
 
 const musicSourceCache = [];
 const samplesSourceCache = [];
@@ -79,10 +80,12 @@ function getMusicSource(state, context, data) {
             const file = source.data[index].file;
             loadAudioAsync(context, file, function (buffer) {
                 if (!musicSourceCache[index]) { // this bypasses a browser issue while loading same sample in short period of time
-                    source.bufferSource.buffer = buffer;
-                    musicSourceCache[index] = buffer;
-                    source.connect();
-                    callback.call();
+                    if (!source.bufferSource.buffer) {
+                        source.bufferSource.buffer = buffer;
+                        musicSourceCache[index] = buffer;
+                        source.connect();
+                        callback.call();
+                    }
                 }
             });
         }
@@ -109,11 +112,11 @@ function getSoundFxSource(state, context, data) {
         pause: () => {},
         data: data
     };
-    //source.lowPassFilter.type = 'lowpass';
+    source.lowPassFilter.type = 'allpass';
 
     source.play = (frequency) => {
         if (frequency) {
-            source.lowPassFilter.frequency.value = frequency;
+            source.lowPassFilter.frequency.value = getFrequency(frequency);
         }
         source.isPlaying = true;
         source.bufferSource.start();
@@ -144,13 +147,14 @@ function getSoundFxSource(state, context, data) {
                 callback.call();
             } else {
                 const entryBuffer = files.samples.getEntry(index);
-                context.decodeAudioData(entryBuffer,
-                    function(buffer) {
+                context.decodeAudioData(entryBuffer, function(buffer) {
                     if (!samplesSourceCache[index]) { // this bypasses a browser issue while loading same sample in short period of time
-                        samplesSourceCache[index] = buffer;
-                        source.bufferSource.buffer = buffer;
-                        source.connect();
-                        callback.call();
+                        if (!source.bufferSource.buffer) {
+                            source.bufferSource.buffer = buffer;
+                            samplesSourceCache[index] = buffer;
+                            source.connect();
+                            callback.call();
+                        }
                     }
                 });
             }
@@ -161,8 +165,8 @@ function getSoundFxSource(state, context, data) {
         // source->gain->context
         source.bufferSource.connect(source.gainNode);
         source.gainNode.gain.value = source.volume;
-        source.gainNode.connect(context.destination); //source.lowPassFilter);
-        //source.lowPassFilter.connect(context.destination);
+        source.gainNode.connect(source.lowPassFilter);
+        source.lowPassFilter.connect(context.destination);
     };
 
     return source;
@@ -211,11 +215,12 @@ function getVoiceSource(state, context, data) {
             };
 
             let entryBuffer = files.voices.getEntry(index);
-            context.decodeAudioData(entryBuffer,
-                function(buffer) {
-                    source.bufferSource.buffer = buffer;
-                    source.connect();
-                    callback.call();
+            context.decodeAudioData(entryBuffer, function(buffer) {
+                    if (!source.bufferSource.buffer) {
+                        source.bufferSource.buffer = buffer;
+                        source.connect();
+                        callback.call();
+                    }
                 }, function(err) {
                     throw new Error(err);
                 });

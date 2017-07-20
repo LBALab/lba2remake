@@ -15,7 +15,11 @@ export function loadAnimState() {
         hasEnded: false,
         step: new THREE.Vector3(0, 0, 0),
         keyframeLength: 0,
-        floorSound:-1
+        floorSound: -1,
+        realAnimIdx: -1,
+        prevRealAnimIdx: -1,
+        currentKeyframe: null,
+        keyframeChanged: false
     };
 }
 
@@ -26,6 +30,7 @@ export function resetAnimState(state) {
     state.isPlaying = true;
     state.isWaiting = false;
     state.hasEnded = false;
+    state.keyframeChanged = false;
     state.step.set(0,0,0);
     state.keyframeLength = 0;
     state.floorSound=-1;
@@ -89,20 +94,28 @@ function updateShaderBone(state) {
     }
 }
 
-export function updateKeyframe(anim, state, time) {
+export function updateKeyframe(anim, state, time, realAnimIdx) {
     if (!state) return;
     if (!state.isPlaying) return;
 
+    state.prevRealAnimIdx = realAnimIdx;
+    state.realAnimIdx = realAnimIdx;
+
     state.currentTime += time.delta * 1000;
+
     let keyframe = anim.keyframes[state.currentFrame];
 
     if (!keyframe) return;
     state.keyframeLength = keyframe.length;
 
+    state.keyframeChanged = false;
     if (state.currentTime > keyframe.length) {
         state.hasEnded = false;
         state.currentTime = 0;
         ++state.currentFrame;
+        if (!state.keyframeChanged) {
+            state.keyframeChanged = true;
+        }
         if (state.currentFrame >= anim.numKeyframes) {
             state.currentFrame = state.loopFrame;
             if (state.currentFrame >= anim.numKeyframes - 1) {
@@ -128,6 +141,37 @@ export function updateKeyframe(anim, state, time) {
     }
 
     updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones);
+    updateShaderBone(state);
+
+    state.currentKeyframe = nextkeyframe;
+}
+
+export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
+    if (!state) return;
+    if (!state.isPlaying) return;
+
+    state.prevRealAnimIdx = state.realAnimIdx;
+
+    state.currentTime += time.delta * 1000;
+
+    let nextkeyframe = anim.keyframes[state.loopFrame];
+    if (!nextkeyframe) return;
+    state.keyframeLength = nextkeyframe.length;
+
+    if (state.currentTime > state.currentKeyframe.length) {
+        state.realAnimIdx = realAnimIdx;
+        state.prevRealAnimIdx = realAnimIdx;
+        state.currentTime = 0;
+        state.hasEnded = false;
+        state.currentFrame = state.loopFrame;
+    }
+
+    let numBones = anim.numBoneframes;
+    if (state.skeleton.length < numBones) {
+        numBones = state.skeleton.length;
+    }
+
+    updateSkeletonAtKeyframe(state, state.currentKeyframe, nextkeyframe, numBones);
     updateShaderBone(state);
 }
 

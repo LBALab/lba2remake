@@ -87,18 +87,39 @@
             background: red;
             color: white;
         }
-        #smallText {
+        #frameText {
             display: none;
             position: fixed;
-            bottom: 30px;
-            left: 30px;
-            right: 30px;
             background: rgba(0, 0, 0, 0.5);
             font-family: LBA;
             text-shadow: black 4px 4px;
             padding: 20px;
             border: 2px outset #20a2ff;
             border-radius: 15px;
+            font-size: 3em;
+            color: white;
+        }
+        .smallText {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            min-height: 117px;
+        }
+        .bigText {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            top: 30px;
+        }
+        .noframeText {
+            display: none;
+            position: absolute;
+            font-family: LBA;
+            text-shadow: black 4px 4px;
             font-size: 3em;
             color: white;
         }
@@ -118,12 +139,69 @@
             font-size: 3em;
             color: white;
         }
+        #cinemaMode {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .cinemaModeIn {
+            -webkit-animation: cinemaModeAnimIn 3s forwards;
+            animation: cinemaModeAnimIn 3s forwards;
+        }
+        .cinemaModeOut {
+            -webkit-animation: cinemaModeAnimOut 3s forwards;
+            animation: cinemaModeAnimOut 3s forwards;
+        }
+        @-webkit-keyframes cinemaModeAnimIn {
+            0% {
+                border-top: 0px solid black;
+                border-bottom: 0px solid black;
+            }
+            100% {
+                border-top: 75px solid black;
+                border-bottom: 75px solid black;
+            }
+        }
+        @keyframes cinemaModeAnimIn {
+            0% {
+                border-top: 0px solid black;
+                border-bottom: 0px solid black;
+            }
+            100% {
+                border-top: 75px solid black;
+                border-bottom: 75px solid black;
+            }
+        }
+        @-webkit-keyframes cinemaModeAnimOut {
+            100% {
+                border-top: 0px solid black;
+                border-bottom: 0px solid black;
+            }
+            0% {
+                border-top: 75px solid black;
+                border-bottom: 75px solid black;
+            }
+        }
+        @keyframes cinemaModeAnimOut {
+            100% {
+                border-top: 0px solid black;
+                border-bottom: 0px solid black;
+            }
+            0% {
+                border-top: 75px solid black;
+                border-bottom: 75px solid black;
+            }
+        }
     </style>
     <script type="text/javascript" src="bundle.js"></script>
 </head>
 <body>
     <div id="main"></div>
-    <div id="smallText"></div>
+    <div id="cinemaMode"></div>
+    <div id="frameText"></div>
     <div id="overlay"></div>
     <div id="stats1" style="position: fixed; top: 0; left: 0; width: 50%;"></div>
     <div id="stats2" style="position: fixed; top: 0; left: 50%; width: 50%;"></div>

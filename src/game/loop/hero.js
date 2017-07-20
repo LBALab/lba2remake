@@ -2,6 +2,8 @@ import THREE from 'three';
 import {DirMode} from '../actors';
 
 export function updateHero(game, hero, time) {
+    if (hero.props.dirMode != DirMode.MANUAL)
+        return;
     handleBehaviourChanges(game, hero);
     processActorMovement(game.controlsState, hero, time);
 }
@@ -9,6 +11,7 @@ export function updateHero(game, hero, time) {
 function handleBehaviourChanges(game, hero) {
     if (hero.props.entityIndex != game.getState().hero.behaviour) {
         hero.props.entityIndex = game.getState().hero.behaviour;
+        toggleJump(game.controlsState, hero, false);
         hero.resetAnimState();
     }
 }
@@ -19,9 +22,6 @@ function toggleJump(controlsState, hero, value) {
 }
 
 function processActorMovement(controlsState, hero, time) {
-    if (hero.props.dirMode != DirMode.MANUAL)
-        return;
-
     let animIndex = hero.props.animIndex;
     if (controlsState.jump && hero.animState.hasEnded){
         toggleJump(controlsState, hero, false);
@@ -36,7 +36,10 @@ function processActorMovement(controlsState, hero, time) {
     if (controlsState.jump) {
         toggleJump(controlsState, hero, true);
         hero.isWalking = true;
-        animIndex = 14;
+        animIndex = 14; // jump
+        if (controlsState.heroSpeed != 0) {
+            animIndex = 25; // jump while running
+        }
     }
     if (controlsState.heroRotationSpeed != 0) {
         toggleJump(controlsState, hero, false);

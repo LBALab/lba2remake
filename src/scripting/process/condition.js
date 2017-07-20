@@ -93,8 +93,9 @@ export function LIFE_POINT() {
     return this.game.getState().hero.life;
 }
 
-export function LIFE_POINT_OBJ() {
-    return -1;
+export function LIFE_POINT_OBJ(index) {
+    const actor = this.scene.getActor(index);
+    return actor.props.life;
 }
 
 export function NUM_LITTLE_KEYS() {

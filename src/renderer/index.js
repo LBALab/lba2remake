@@ -21,14 +21,14 @@ const PixelRatioMode = {
     QUARTER: () => 0.25
 };
 
-const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'], (name, idx) => ({
+export const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'], (name, idx) => ({
     getValue: PixelRatioMode[name],
     index: idx,
     name: name
 }));
 
 export function createRenderer(useVR) {
-    let pixelRatio = PixelRatio[0];
+    let pixelRatio = PixelRatio[2]; // SET NORMAL AS DEFAULT
     const getPixelRatio = () => pixelRatio.getValue();
     let antialias = false;
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
@@ -84,7 +84,9 @@ export function createRenderer(useVR) {
             isoCamera: cameraIso
         },
         getMainCamera: scene => scene.isIsland ? camera3D : cameraIso,
-        pixelRatio: getPixelRatio
+        pixelRatio: getPixelRatio,
+        setPixelRatio: function(value) { baseRenderer.setPixelRatio(value); },
+        setupSMAA: function(pr) { setupSMAA(renderer, pr) }
     };
 }
 

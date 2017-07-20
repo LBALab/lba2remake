@@ -50,22 +50,45 @@ function CUBE(game, scene, zone, hero) {
 }
 
 function TEXT(game, scene, zone, hero) {
+    const voiceSource = game.getAudioManager().getVoiceSource();
     if (game.controlsState.action == 1) {
-        const voiceSource = game.getAudioManager().getVoiceSource();
         if (!scene.zoneState.listener) {
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
             hero.props.animIndex = 41;
-            const textBox = document.getElementById('smallText');
-            textBox.style.display = 'block';
+            scene.zoneState.currentChar = 0;
+
+            const textBox = document.getElementById('frameText');
             textBox.style.color = getHtmlColor(scene.data.palette, zone.props.info0 * 16 + 12);
-            textBox.innerHTML = scene.data.texts[zone.props.snap].value;
+            const text = scene.data.texts[zone.props.snap];
+            if (text.type === 3) {
+                textBox.className = "bigText";
+            } else {
+                textBox.className = "smallText";
+            }
+            textBox.innerHTML = '';
+            let textInterval = setInterval(function () {
+                textBox.style.display = 'block';
+                const char = text.value.charAt(scene.zoneState.currentChar);
+                if (char == '@') {
+                    const br = document.createElement('br');
+                    textBox.appendChild(br);
+                } else {
+                    textBox.innerHTML += char;
+                }
+                scene.zoneState.currentChar++;
+                if (scene.zoneState.currentChar > text.value.length) {
+                    clearInterval(textInterval);
+                }
+            }, 35);
             scene.zoneState.listener = function() {
                 scene.zoneState.ended = true;
+                clearInterval(textInterval);
             };
+
             window.addEventListener('keydown', scene.zoneState.listener);
-            voiceSource.load(scene.data.texts[zone.props.snap].index, scene.data.textBankId, () => {
+            voiceSource.load(text.index, scene.data.textBankId, () => {
                 voiceSource.play();
             });
         }
@@ -73,8 +96,8 @@ function TEXT(game, scene, zone, hero) {
     if (scene.zoneState.ended) {
         hero.props.entityIndex = hero.props.prevEntityIndex;
         hero.props.animIndex = hero.props.prevAnimIndex;
-        //voiceSource.stop();
-        const textBox = document.getElementById('smallText');
+        voiceSource.stop();
+        const textBox = document.getElementById('frameText');
         textBox.style.display = 'none';
         textBox.innerHTML = '';
         window.removeEventListener('keydown', scene.zoneState.listener);

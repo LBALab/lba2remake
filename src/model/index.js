@@ -8,7 +8,7 @@ import type {Entity} from './entity';
 import {loadEntity, getBodyIndex, getAnimIndex, getAnim} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
-import {initSkeleton, createSkeleton, updateKeyframe} from './animState';
+import {initSkeleton, createSkeleton, updateKeyframe, updateKeyframeInterpolation} from './animState';
 import {processAnimAction} from './animAction';
 import {loadMesh} from './geometries';
 import {loadTexture2} from '../texture';
@@ -87,16 +87,14 @@ export function updateModel(sceneIsActive: any, model: Model, animState: any, en
         const realAnimIdx = entityAnim.animIndex;
         const anim = loadAnim(model, model.anims, realAnimIdx);
         animState.loopFrame = anim.loopFrame;
-        updateKeyframe(anim, animState, time);
+        if (animState.prevRealAnimIdx != -1 && realAnimIdx != animState.prevRealAnimIdx) {
+            updateKeyframeInterpolation(anim, animState, time, realAnimIdx);
+        }
+        if (realAnimIdx == animState.realAnimIdx || animState.realAnimIdx == -1) {
+            updateKeyframe(anim, animState, time, realAnimIdx);
+        }
         if (sceneIsActive) {
             processAnimAction(entityAnim, animState);
         }
     }
 }
-
-/*
-export function createAnimState(body, anim) {
-    const skeleton = createSkeleton(body);
-    return loadAnimState(skeleton, anim.loopFrame);
-}
-*/
