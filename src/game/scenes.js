@@ -41,7 +41,7 @@ export function createSceneManager(game, renderer, callback: Function) {
                 if (scene)
                     scene.isActive = false;
 
-                const textBox = document.getElementById('smallText');
+                const textBox = document.getElementById('frameText');
                 textBox.style.display = 'none';
 
                 const hash = window.location.hash;

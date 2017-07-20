@@ -57,14 +57,20 @@ function TEXT(game, scene, zone, hero) {
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
             hero.props.animIndex = 41;
-
-            const textBox = document.getElementById('smallText');
-            textBox.style.color = getHtmlColor(scene.data.palette, zone.props.info0 * 16 + 12);
             scene.zoneState.currentChar = 0;
+
+            const textBox = document.getElementById('frameText');
+            textBox.style.color = getHtmlColor(scene.data.palette, zone.props.info0 * 16 + 12);
+            const text = scene.data.texts[zone.props.snap];
+            if (text.type === 3) {
+                textBox.className = "bigText";
+            } else {
+                textBox.className = "smallText";
+            }
             textBox.innerHTML = '';
             let textInterval = setInterval(function () {
                 textBox.style.display = 'block';
-                const char = scene.data.texts[zone.props.snap].value.charAt(scene.zoneState.currentChar);
+                const char = text.value.charAt(scene.zoneState.currentChar);
                 if (char == '@') {
                     const br = document.createElement('br');
                     textBox.appendChild(br);
@@ -72,7 +78,7 @@ function TEXT(game, scene, zone, hero) {
                     textBox.innerHTML += char;
                 }
                 scene.zoneState.currentChar++;
-                if (scene.zoneState.currentChar > scene.data.texts[zone.props.snap].value.length) {
+                if (scene.zoneState.currentChar > text.value.length) {
                     clearInterval(textInterval);
                 }
             }, 35);
@@ -82,7 +88,7 @@ function TEXT(game, scene, zone, hero) {
             };
 
             window.addEventListener('keydown', scene.zoneState.listener);
-            voiceSource.load(scene.data.texts[zone.props.snap].index, scene.data.textBankId, () => {
+            voiceSource.load(text.index, scene.data.textBankId, () => {
                 voiceSource.play();
             });
         }
@@ -91,7 +97,7 @@ function TEXT(game, scene, zone, hero) {
         hero.props.entityIndex = hero.props.prevEntityIndex;
         hero.props.animIndex = hero.props.prevAnimIndex;
         voiceSource.stop();
-        const textBox = document.getElementById('smallText');
+        const textBox = document.getElementById('frameText');
         textBox.style.display = 'none';
         textBox.innerHTML = '';
         window.removeEventListener('keydown', scene.zoneState.listener);

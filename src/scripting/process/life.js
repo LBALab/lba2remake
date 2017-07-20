@@ -1,3 +1,5 @@
+import THREE from 'three';
+
 import {DirMode} from '../../game/actors';
 import {setMagicBallLevel} from '../../game/state';
 
@@ -31,14 +33,46 @@ export function MESSAGE(cmdState, id) {
 
 export function MESSAGE_OBJ(cmdState, actor, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
-    const textBox = document.getElementById('smallText');
     if (!cmdState.listener) {
+        let textBox = document.getElementById('frameText');
+        const text = this.scene.data.texts[id];
+        if (text.type === 3) {
+            textBox.className = "bigText";
+        } else if (text.type === 9) {
+            if (!actor.threeObject || actor.threeObject.visible == false) {
+                return;
+            }
+            const main = document.querySelector('#main');
+            textBox = document.createElement('div');
+            textBox.className = "noframeText";
+            textBox.id = `noframeText_${actor.index}_${id}`;
+            main.appendChild(textBox);
+
+            const renderer = window.game.getRenderer();
+            const widthHalf = 0.5 * renderer.domElement.width;
+            const heightHalf = 0.5 * renderer.domElement.height;
+
+            const pos = new THREE.Vector3();
+            actor.threeObject.updateMatrixWorld();
+            pos.setFromMatrixPosition(actor.threeObject.matrixWorld);
+            pos.project(renderer.getMainCamera(scene));
+            pos.x = (pos.x * widthHalf) + widthHalf;
+            pos.y = - (pos.y * heightHalf) + heightHalf;
+            // re-align above character (should be calculated based on font height and text width)
+            pos.x -= 50;
+            pos.y -= 125;
+
+            textBox.style.left = (pos.x / renderer.pixelRatio()) + 'px';
+            textBox.style.top = (pos.y / renderer.pixelRatio()) + 'px';
+        } else {
+            textBox.className = "smallText";
+        }
         cmdState.currentChar = 0;
         textBox.innerHTML = '';
         textBox.style.color = actor.props.textColor;
         let textInterval = setInterval(function () {
             textBox.style.display = 'block';
-            const char = this.scene.data.texts[id].value.charAt(cmdState.currentChar);
+            const char = text.value.charAt(cmdState.currentChar);
             if (char == '@') {
                 const br = document.createElement('br');
                 textBox.appendChild(br);
@@ -46,24 +80,39 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 textBox.innerHTML += char;
             }
             cmdState.currentChar++;
-            if (cmdState.currentChar > this.scene.data.texts[id].value.length) {
+            if (cmdState.currentChar > text.value.length) {
                 clearInterval(textInterval);
             }
         }, 35);
         cmdState.listener = function () {
             cmdState.ended = true;
             clearInterval(textInterval);
+            if (text.type === 9) {
+                const main = document.querySelector('#main');
+                textBox = document.getElementById(`noframeText_${actor.index}_${id}`);
+                main.removeChild(textBox);
+            }
         };
         window.addEventListener('keydown', cmdState.listener);
-        voiceSource.load(this.scene.data.texts[id].index, this.scene.data.textBankId, () => {
+        if (text.type === 9) {
+            setTimeout(function () {
+                cmdState.listener();
+            }, 3000);
+        }
+        voiceSource.load(text.index, this.scene.data.textBankId, () => {
             voiceSource.play();
         });
 
     }
     if (cmdState.ended) {
         voiceSource.stop();
-        textBox.style.display = 'none';
-        textBox.innerHTML = '';
+        let textBox = null;
+        const text = this.scene.data.texts[id];
+        if (text.type !== 9) {
+            textBox = document.getElementById('frameText');
+            textBox.style.display = 'none';
+            textBox.innerHTML = '';
+        }
         window.removeEventListener('keydown', cmdState.listener);
         delete cmdState.listener;
         delete cmdState.ended;
@@ -164,7 +213,7 @@ export function INC_CHAPTER() {
 
 export function FOUND_OBJECT(cmdState, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
-    const textBox = document.getElementById('smallText');
+    const textBox = document.getElementById('frameText');
     if (!cmdState.listener) {
         this.game.getState().flags.inventory[id] = 1;
         //this.actor.isVisible = false;
@@ -173,11 +222,17 @@ export function FOUND_OBJECT(cmdState, id) {
             soundFxSource.play();
         });
         cmdState.currentChar = 0;
+        const text = this.game.controlsState.texts[id];
+        if (text.type === 3) {
+            textBox.className = "bigText";
+        } else {
+            textBox.className = "smallText";
+        }
         textBox.innerHTML = '';
         textBox.style.color = this.actor.props.textColor;
         let textInterval = setInterval(function () {
             textBox.style.display = 'block';
-            const char = this.game.controlsState.texts[id].value.charAt(cmdState.currentChar);
+            const char = text.value.charAt(cmdState.currentChar);
             if (char == '@') {
                 const br = document.createElement('br');
                 textBox.appendChild(br);
@@ -185,7 +240,7 @@ export function FOUND_OBJECT(cmdState, id) {
                 textBox.innerHTML += char;
             }
             cmdState.currentChar++;
-            if (cmdState.currentChar > this.game.controlsState.texts[id].value.length) {
+            if (cmdState.currentChar > text.value.length) {
                 clearInterval(textInterval);
             }
         }, 35);
@@ -194,7 +249,7 @@ export function FOUND_OBJECT(cmdState, id) {
             clearInterval(textInterval);
         };
         window.addEventListener('keydown', cmdState.listener);
-        voiceSource.load(this.game.controlsState.texts[id].index, -1, () => {
+        voiceSource.load(text.index, -1, () => {
             voiceSource.play();
         });
 
@@ -204,7 +259,7 @@ export function FOUND_OBJECT(cmdState, id) {
     if (cmdState.ended) {
         //this.actor.isVisible = true;
         voiceSource.stop();
-        const textBox = document.getElementById('smallText');
+        const textBox = document.getElementById('frameText');
         textBox.style.display = 'none';
         textBox.innerHTML = '';
         const overlayBox = document.getElementById('overlay');
@@ -409,10 +464,12 @@ export function CINEMA_MODE(mode) {
     const cinemaModeDiv = document.getElementById('cinemaMode');
     if (mode === 1) {
         this.actor.props.dirMode = DirMode.NO_MOVE;
+        cinemaModeDiv.style.display = 'block';
         cinemaModeDiv.className = "cinemaModeIn";
     } else {
         this.actor.props.dirMode = DirMode.MANUAL;
         cinemaModeDiv.className = "cinemaModeOut";
+        setTimeout(function() { cinemaModeDiv.style.display = 'none'; }, 3000); // animation is in 3s
     }
 }
 

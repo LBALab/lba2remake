@@ -59,6 +59,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
         getSceneManager: () => _sceneManager,
         getState: () => _state,
         getAudioManager: () => _audio,
+        getRenderer: () => _renderer,
 
         pause: () => {
             _isPaused = !_isPaused;
@@ -68,6 +69,19 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             } else {
                 _clock.start();
             }
+        },
+        preload: (callback: any) => {
+            async.auto({
+                ress: preloadFileAsync('data/RESS.HQR'),
+                text: preloadFileAsync('data/TEXT.HQR'),
+                voxgame: preloadFileAsync(`data/VOX/${_state.config.languageCode}_GAM_AAC.VOX`),
+                vox000: preloadFileAsync(`data/VOX/${_state.config.languageCode}_000_AAC.VOX`),
+                muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4'),
+                mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4'),
+                mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4')
+            }, function(err, files) {
+                callback();
+            });
         },
         run: () => {
             _createSceneManager();
@@ -108,4 +122,16 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     });
 
     return game;
+}
+
+function preloadFileAsync(url) {
+    return (callback: Function) => {
+        const request = new XMLHttpRequest();
+        request.open('GET', url, true);
+        request.responseType = 'arraybuffer';
+        request.onload = function() {
+            callback();
+        };
+        request.send();
+    }
 }

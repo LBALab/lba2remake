@@ -316,12 +316,12 @@ export function loadTexts(sceneData, textFile) {
     do {
         start = data.getUint16(idx * 2, true);
         end = data.getUint16(idx * 2 + 2, true);
-        const flags = data.getUint8(start, true);
+        const type = data.getUint8(start, true);
         let value = '';
         for (let i = start + 1; i < end - 1; ++i) {
             value += String.fromCharCode(Lba2Charmap[data.getUint8(i)]);
         }
-        texts[mapData[idx]] = {flags, index: idx, value};
+        texts[mapData[idx]] = {type, index: idx, value};
         idx++;
     } while (end < data.byteLength);
     sceneData.texts = texts;
