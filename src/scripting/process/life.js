@@ -464,10 +464,12 @@ export function CINEMA_MODE(mode) {
     const cinemaModeDiv = document.getElementById('cinemaMode');
     if (mode === 1) {
         this.actor.props.dirMode = DirMode.NO_MOVE;
+        cinemaModeDiv.style.display = 'block';
         cinemaModeDiv.className = "cinemaModeIn";
     } else {
         this.actor.props.dirMode = DirMode.MANUAL;
         cinemaModeDiv.className = "cinemaModeOut";
+        setTimeout(function() { cinemaModeDiv.style.display = 'none'; }, 3000); // animation is in 3s
     }
 }
 
