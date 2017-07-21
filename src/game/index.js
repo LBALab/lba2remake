@@ -80,6 +80,8 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
                 mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4'),
                 mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4')
             }, function(err, files) {
+                const loading = document.getElementById('loading');
+                loading.style.display = 'none';
                 callback();
             });
         },

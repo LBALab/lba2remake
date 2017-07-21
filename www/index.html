@@ -195,6 +195,36 @@
                 border-bottom: 75px solid black;
             }
         }
+        #loading {
+            width: 100%;
+            height: 100%;
+            display: block;
+            position: fixed;
+            background-color: black;
+        }
+        #loadingImage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-top: -240px;
+            margin-left: -320px;
+        }
+        #loadingText {
+            display: block;
+            position: fixed;
+            background: rgba(0, 0, 0, 0.5);
+            font-family: LBA;
+            padding: 5px;
+            border: 2px outset #20a2ff;
+            border-radius: 15px;
+            font-size: 3em;
+            color: #20a2ff;
+            width: 300px;
+            text-align: center;
+            bottom: 20%;
+            left: 50%;
+            margin-left: -150px;
+        }
     </style>
     <script type="text/javascript" src="bundle.js"></script>
 </head>
@@ -205,5 +235,9 @@
     <div id="overlay"></div>
     <div id="stats1" style="position: fixed; top: 0; left: 0; width: 50%;"></div>
     <div id="stats2" style="position: fixed; top: 0; left: 50%; width: 50%;"></div>
+    <div id="loading">
+        <img id="loadingImage" src="30_loading_screen.png" />
+        <div id="loadingText">  Loading...  </div>
+    </div>
 </body>
 </html>
