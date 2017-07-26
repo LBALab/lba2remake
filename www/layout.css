@@ -1,0 +1,271 @@
+@font-face {
+    font-family: LBA;
+    src: url(PatuaOne-Regular.ttf);
+    font-weight: bold;
+}
+@font-face {
+    font-family: LBAClassic;
+    src: url(SerifaB.ttf);
+    font-weight: bold;
+}
+body {
+    margin: 0;
+    overflow: hidden;
+    height: 100%;
+    position: fixed;
+    background: black;
+}
+#main {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.label {
+    position: absolute;
+    border: 1px solid black;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    cursor: pointer;
+    margin-left: -10px;
+    margin-top: -10px;
+    color: black;
+    font-size: 14px;
+    font-weight: bold;
+}
+.label.actor {
+    border-radius: 50%;
+    background: rgba(205, 92, 92, 0.6);
+}
+.label.point {
+    background: rgba(135, 206, 235, 0.6);
+    font-size: 12px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    margin-left: -9px;
+    margin-top: -9px;
+    border-radius: 3px;
+}
+.label.zone {
+    font-size: 12px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    margin-left: -9px;
+    margin-top: -9px;
+}
+.label.actor.selected {
+    opacity: 1;
+    background: red;
+    color: white;
+}
+#frameText {
+    display: none;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    font-family: LBA;
+    text-shadow: black 4px 4px;
+    padding: 20px;
+    border: 2px outset #20a2ff;
+    border-radius: 15px;
+    font-size: 3em;
+    color: white;
+}
+.smallText {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    min-height: 117px;
+}
+.bigText {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    top: 30px;
+}
+.noframeText {
+    display: none;
+    position: absolute;
+    font-family: LBA;
+    text-shadow: black 4px 4px;
+    font-size: 3em;
+    color: white;
+    white-space:nowrap;
+}
+#overlay {
+    display: none;
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    width: 100px;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.5);
+    font-family: LBA;
+    text-shadow: black 4px 4px;
+    padding: 20px;
+    border: 2px outset #20a2ff;
+    border-radius: 15px;
+    font-size: 3em;
+    color: white;
+}
+#cinemaMode {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.cinemaModeIn {
+    -webkit-animation: cinemaModeAnimIn 3s forwards;
+    animation: cinemaModeAnimIn 3s forwards;
+}
+.cinemaModeOut {
+    -webkit-animation: cinemaModeAnimOut 3s forwards;
+    animation: cinemaModeAnimOut 3s forwards;
+}
+@-webkit-keyframes cinemaModeAnimIn {
+    0% {
+        border-top: 0px solid black;
+        border-bottom: 0px solid black;
+    }
+    100% {
+        border-top: 75px solid black;
+        border-bottom: 75px solid black;
+    }
+}
+@keyframes cinemaModeAnimIn {
+    0% {
+        border-top: 0px solid black;
+        border-bottom: 0px solid black;
+    }
+    100% {
+        border-top: 75px solid black;
+        border-bottom: 75px solid black;
+    }
+}
+@-webkit-keyframes cinemaModeAnimOut {
+    100% {
+        border-top: 0px solid black;
+        border-bottom: 0px solid black;
+    }
+    0% {
+        border-top: 75px solid black;
+        border-bottom: 75px solid black;
+    }
+}
+@keyframes cinemaModeAnimOut {
+    100% {
+        border-top: 0px solid black;
+        border-bottom: 0px solid black;
+    }
+    0% {
+        border-top: 75px solid black;
+        border-bottom: 75px solid black;
+    }
+}
+#loading {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: fixed;
+    background-color: black;
+}
+#loadingImage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -240px;
+    margin-left: -320px;
+}
+#loadingText {
+    display: block;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    font-family: LBA;
+    padding: 5px;
+    border: 2px outset #20a2ff;
+    border-radius: 15px;
+    font-size: 3em;
+    color: #20a2ff;
+    width: 300px;
+    text-align: center;
+    bottom: 20%;
+    left: 50%;
+    margin-left: -150px;
+}
+#video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: fixed;
+    background-color: black;
+}
+@media only screen and (max-width: 1024px) {
+    #frameText {
+        font-size: 2.5em;
+        padding: 20px;
+    }
+    .smallText {
+        min-height: 60px;
+    }
+    #noframeText {
+        font-size: 2.5em;
+        padding: 20px;
+    }
+    #overlay {
+        font-size: 2.5em;
+        padding: 20px;
+    }
+    #loadingText {
+        font-size: 2.5em;
+        padding: 20px;
+    }
+    #loadingText {
+        font-size: 2.5em;
+        padding: 15px;
+        width: 200px;
+        margin-left: -100px;
+        bottom: 15%;
+        padding: 3px;
+    }
+}
+@media only screen and (max-width: 768px) {
+    #frameText {
+        font-size: 1.5em;
+        padding: 15px;
+    }
+    .smallText {
+        min-height: 60px;
+    }
+    #noframeText {
+        font-size: 1.5em;
+        padding: 15px;
+    }
+    #overlay {
+        font-size: 1.5em;
+        padding: 15px;
+    }
+    #loadingText {
+        font-size: 1.5em;
+        padding: 15px;
+        width: 150px;
+        margin-left: -90px;
+        bottom: 10%;
+        padding: 3px;
+    }
+    #loadingImage {
+        width: 320px;
+        height: 240px;
+        margin-top: -120px;
+        margin-left: -160px;
+    }
+}
