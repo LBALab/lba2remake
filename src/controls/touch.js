@@ -9,15 +9,17 @@ export function makeFirstPersonTouchControls(game: any) {
         pageX: 0,
         pageY: 0
     };
-    game.controlsState.freeCamera = true;
 
     const onTouchMove = handleTouchEvent.bind(null, controls, game);
+    //const onTouchEnd = handleTouchEndEvent.bind(null, controls, game);
 
     document.addEventListener('touchmove', onTouchMove, false);
+    //document.addEventListener('touchend', onTouchEnd, false);
 
     return {
         dispose: () => {
             document.removeEventListener('touchmove', onTouchMove, false);
+            //document.removeEventListener('touchend', onTouchEnd, false);
         }
     } ;
 }
@@ -26,7 +28,9 @@ const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
 const MAX_X_ANGLE = Math.PI / 2.5;
 
 function handleTouchEvent(controls, game, event: TouchEvent) {
-    if (controls.enabled && game.controlsState.freeCamera) {
+    if (controls.enabled) {
+        game.controlsState.freeCamera = true;
+
         // Not supported on IE / Safari
         controls.prevPageX = controls.pageX;
         controls.prevPageY = controls.pageY;
@@ -49,3 +53,10 @@ function handleTouchEvent(controls, game, event: TouchEvent) {
         game.controlsState.cameraOrientation.setFromEuler(euler);
     }
 }
+
+/*function handleTouchEndEvent(controls, game, event: TouchEvent) {
+    if (controls.enabled) {
+        game.controlsState.freeCamera = false;
+    }
+}*/
+
