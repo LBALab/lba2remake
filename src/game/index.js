@@ -109,7 +109,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             ];
         }
         else if (isMobile) {
-            controls = [ 
+            controls = [
                 makeGamepadControls(game)
             ];
         } else {
