@@ -68,7 +68,7 @@ export const LifeOpcode = [
     { opcode: 0x3D, command: "SET_LIFE_POINT_OBJ", callback: lf.SET_LIFE_POINT_OBJ, args: ['Uint8:actor', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x3E, command: "SUB_LIFE_POINT_OBJ", callback: lf.SUB_LIFE_POINT_OBJ, args: ['Uint8:actor', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x3F, command: "HIT_OBJ", callback: lf.HIT_OBJ, args: ['Uint8:actor', 'Uint8'], indent: Indent.KEEP},
-    { opcode: 0x40, command: "PLAY_SMK", callback: lf.PLAY_SMK, args: ['string'], indent: Indent.KEEP},
+    { opcode: 0x40, command: "PLAY_SMK", callback: lf.PLAY_SMK, args: ['string'], cmdState: true, indent: Indent.KEEP},
     { opcode: 0x41, command: "ECLAIR", callback: lf.ECLAIR, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x42, command: "INC_CLOVER_BOX", callback: lf.INC_CLOVER_BOX, indent: Indent.KEEP},
     { opcode: 0x43, command: "SET_USED_INVENTORY", callback: lf.SET_USED_INVENTORY, args: ['Uint8'], indent: Indent.KEEP},
