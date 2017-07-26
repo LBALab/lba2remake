@@ -26,7 +26,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     _clock.start();
 
     const _state = createState();
-    const _renderer = createRenderer(isMobile);
+    const _renderer = createRenderer(params.useVR);
     const _audio = createAudioManager(_state);
     const game = {
         controlsState: {
@@ -101,14 +101,24 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     const _createSceneManager = () => createSceneManager(game, _renderer, sceneManager => {
         _sceneManager = sceneManager;
 
-        const controls = isMobile ? [
-            makeGyroscopeControls(game),
-            makeGamepadControls(game)
-        ] : [
-            makeFirstPersonMouseControls(_renderer.domElement, game),
-            makeKeyboardControls(game),
-            makeGamepadControls(game)
-        ];
+        let controls = null;
+        if (params.useVR) {
+            controls = [
+                makeGyroscopeControls(game),
+                makeGamepadControls(game)
+            ];
+        }
+        else if (isMobile) {
+            controls = [ 
+                makeGamepadControls(game)
+            ];
+        } else {
+            controls = [
+                makeFirstPersonMouseControls(_renderer.domElement, game),
+                makeKeyboardControls(game),
+                makeGamepadControls(game)
+            ];
+        }
 
         document.getElementById('main').appendChild(_renderer.domElement);
         sceneManager.goto(parseInt(params.scene) || 0);
