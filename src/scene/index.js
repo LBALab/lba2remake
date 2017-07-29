@@ -286,21 +286,21 @@ function loadPoints(scene, offset) {
     return offset;
 }
 
-function loadUnknown(scene, offset) {
+function loadPatches(scene, offset) {
     const data = new DataView(scene.buffer);
-    scene.unknown = [];
+    scene.patches = [];
 
-    const numData = data.getUint16(offset, true);
+    const numData = data.getInt16(offset, true);
     offset += 2;
 
     for (let i = 0; i < numData; ++i) {
         let unk = {
             sceneIndex: scene.index,
-            field1: data.getUint16(offset, true),
-            field2: data.getUint16(offset + 2, true)
+            size: data.getInt16(offset, true),
+            offset: data.getInt16(offset + 2, true)
         };
         offset += 4;
-        scene.unknown.push(unk);
+        scene.patches.push(unk);
     }
 
     return offset;
