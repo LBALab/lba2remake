@@ -68,16 +68,16 @@ function loadAmbience(scene, offset) {
         musicIndex: data.getInt8(innerOffset + 48, true),
     };
 
-    const rawSamples = new Uint16Array(scene.buffer, innerOffset + 4, 4 * 5 * 2); // 4 entries, 3 types, 2 bytes each
+    innerOffset = 4;
     for (let i = 0; i < 4; ++i) {
-        const index = i * 5;
         scene.ambience.samples.push({
-            frequency:   rawSamples[index],
-            repeat:     rawSamples[index + 1],
-            round:     rawSamples[index + 2],
-            unknown1:   rawSamples[index + 3],
-            index:   rawSamples[index + 4]
+            ambience:   data.getInt16(innerOffset    , true),
+            repeat:     data.getInt16(innerOffset + 2, true),
+            round:      data.getInt16(innerOffset + 4, true),
+            frequency:  data.getInt16(innerOffset + 6, true),
+            volume:     data.getInt16(innerOffset + 8, true),
         });
+        innerOffset += 10;
     }
 
     return offset + 49;

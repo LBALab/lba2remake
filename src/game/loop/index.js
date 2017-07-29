@@ -59,9 +59,8 @@ function playAmbience(game, scene, time) {
                     samplePlayed = 0;
                 }
                 const sample = scene.data.ambience.samples[currentAmb];
-                if(sample.index != -1) {
-                    //const frequency = 0x1000 + getRandom(sample.round) - (sample.round/2);
-                    soundFxSource.load(sample.index, () => {
+                if(sample.ambience != -1 && sample.repeat != 0) {
+                    soundFxSource.load(sample.ambience, () => {
                         soundFxSource.play(sample.frequency);
                     });
 
@@ -71,6 +70,9 @@ function playAmbience(game, scene, time) {
             currentAmb++;
             currentAmb &= 3;
         }
-        scene.data.ambience.sampleElapsedTime = time.elapsed + getRandom(scene.data.ambience.sampleMinDelay, scene.data.ambience.sampleMinDelayRnd) * 50;
+        scene.data.ambience.sampleElapsedTime = time.elapsed + getRandom(scene.data.ambience.sampleMinDelay, scene.data.ambience.sampleMinDelayRnd) * 1000;
+    }
+    if (scene.data.ambience.sampleMinDelay < 0) {
+        scene.data.ambience.sampleElapsedTime = time.elapsed + 200000;
     }
 }

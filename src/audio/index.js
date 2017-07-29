@@ -129,11 +129,14 @@ function getSoundFxSource(state, context, data) {
         async.auto({
             samples: loadHqrAsync('SAMPLES_AAC.HQR')
         }, function(err, files) {
-            if (index == -1 || source.currentIndex == index && source.isPlaying) {
+            if (index <= -1 || source.currentIndex == index && source.isPlaying) {
                 return;
             }
             if (source.isPlaying) {
                 source.stop();
+            }
+            if (index & 0xFF000000) {
+                index = (index >> 8) & 0xFFFF;
             }
             source.currentIndex = index;
             source.bufferSource = context.createBufferSource();
