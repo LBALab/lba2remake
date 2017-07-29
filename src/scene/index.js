@@ -45,7 +45,7 @@ function loadSceneDataSync(files, index) {
         offset = loadActors(sceneData, offset);
         offset = loadZones(sceneData, offset);
         offset = loadPoints(sceneData, offset);
-        loadUnknown(sceneData, offset);
+        loadPatches(sceneData, offset);
 
         loadTexts(sceneData, files.text);
 
@@ -286,21 +286,21 @@ function loadPoints(scene, offset) {
     return offset;
 }
 
-function loadPatches(scene, offset) {
+function loadUnknown(scene, offset) {
     const data = new DataView(scene.buffer);
-    scene.patches = [];
+    scene.unknown = [];
 
-    const numData = data.getInt16(offset, true);
+    const numData = data.getUint16(offset, true);
     offset += 2;
 
     for (let i = 0; i < numData; ++i) {
         let unk = {
             sceneIndex: scene.index,
-            size: data.getInt16(offset, true),
-            offset: data.getInt16(offset + 2, true)
+            field1: data.getUint16(offset, true),
+            field2: data.getUint16(offset + 2, true)
         };
         offset += 4;
-        scene.patches.push(unk);
+        scene.unknown.push(unk);
     }
 
     return offset;
