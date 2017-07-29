@@ -59,11 +59,11 @@ function loadAmbience(scene, offset) {
     let innerOffset = 0;
 
     scene.ambience = {
-        lightingAlpha: data.getUint16(innerOffset, true),
-        lightingBeta: data.getUint16(innerOffset + 2, true), 
+        lightingAlpha: data.getInt16(innerOffset, true),
+        lightingBeta: data.getInt16(innerOffset + 2, true),
         samples: [],
-        sampleMinDelay: data.getUint16(innerOffset + 44, true),
-        sampleMinDelayRnd: data.getUint16(innerOffset + 46, true),
+        sampleMinDelay: data.getInt16(innerOffset + 44, true),
+        sampleMinDelayRnd: data.getInt16(innerOffset + 46, true),
         sampleElapsedTime: 0,
         musicIndex: data.getInt8(innerOffset + 48, true),
     };
@@ -91,9 +91,9 @@ function loadHero(scene, offset) {
         entityIndex: 0,
         bodyIndex: 0,
         pos: [
-            (0x8000 - data.getUint16(offset + 4, true) + 512) / 0x4000,
-            data.getUint16(offset + 2, true) / 0x4000,
-            data.getUint16(offset, true) / 0x4000
+            (0x8000 - data.getInt16(offset + 4, true) + 512) / 0x4000,
+            data.getInt16(offset + 2, true) / 0x4000,
+            data.getInt16(offset, true) / 0x4000
         ],
         index: 0,
         textColor: getHtmlColor(scene.palette, 12 * 16 + 12),
@@ -108,14 +108,14 @@ function loadHero(scene, offset) {
     };
     offset += 6;
 
-    hero.moveScriptSize = data.getUint16(offset, true);
+    hero.moveScriptSize = data.getInt16(offset, true);
     offset += 2;
     if (hero.moveScriptSize > 0) {
         hero.moveScript = new DataView(scene.buffer, offset, hero.moveScriptSize);
     }
     offset += hero.moveScriptSize;
 
-    hero.lifeScriptSize = data.getUint16(offset, true);
+    hero.lifeScriptSize = data.getInt16(offset, true);
     offset += 2;
     if (hero.lifeScriptSize > 0) {
         hero.lifeScript = new DataView(scene.buffer, offset, hero.lifeScriptSize);
@@ -130,7 +130,7 @@ function loadHero(scene, offset) {
 function loadActors(scene, offset) {
     const data = new DataView(scene.buffer);
 
-    const numActors = data.getUint16(offset, true);
+    const numActors = data.getInt16(offset, true);
     offset += 2;
 
     for (let i = 1; i < numActors; ++i) {
@@ -140,66 +140,66 @@ function loadActors(scene, offset) {
             dirMode: DirMode.NO_MOVE
         };
 
-        const staticFlags = data.getUint16(offset, true);
+        const staticFlags = data.getUint32(offset, true);
         actor.flags = parseStaticFlags(staticFlags);
-        offset += 2;
-        actor.unknownFlags = data.getUint16(offset, true);
-        offset += 2;
+        offset += 4;
         
-        actor.entityIndex = data.getUint16(offset, true);
+        actor.entityIndex = data.getInt16(offset, true);
         offset += 2;
-        actor.bodyIndex = data.getUint8(offset++, true);
-        offset++; // unknown byte
-        actor.animIndex = data.getUint8(offset++, true);
-        actor.spriteIndex = data.getUint16(offset, true);
+        actor.bodyIndex = data.getInt8(offset++, true);
+        actor.animIndex = data.getInt16(offset, true);
+        offset += 2;
+        actor.spriteIndex = data.getInt16(offset, true);
         offset += 2;
         
         actor.pos = [
-            (0x8000 - data.getUint16(offset + 4, true) + 512) / 0x4000,
-            data.getUint16(offset + 2, true) / 0x4000,
-            data.getUint16(offset, true) / 0x4000
+            (0x8000 - data.getInt16(offset + 4, true) + 512) / 0x4000,
+            data.getInt16(offset + 2, true) / 0x4000,
+            data.getInt16(offset, true) / 0x4000
         ];
         offset += 6;
 
-        actor.hitStrength = data.getUint8(offset++, true);
-        actor.extraType = data.getUint16(offset, true);
+        actor.hitStrength = data.getInt8(offset++, true);
+        actor.extraType = data.getInt16(offset, true);
         offset += 2;
-        actor.angle = data.getUint16(offset, true);
+        actor.angle = data.getInt16(offset, true);
         offset += 2;
-        actor.speed = data.getUint16(offset, true);
+        actor.speed = data.getInt16(offset, true);
         offset += 2;
-        actor.controlMode = data.getUint8(offset++, true);
-        actor.info0 = data.getUint16(offset, true);
+        actor.controlMode = data.getInt8(offset++, true);
+
+        actor.info0 = data.getInt16(offset, true);
         offset += 2;
-        actor.info1 = data.getUint16(offset, true);
+        actor.info1 = data.getInt16(offset, true);
         offset += 2;
-        actor.info2 = data.getUint16(offset, true);
+        actor.info2 = data.getInt16(offset, true);
         offset += 2;
-        actor.info3 = data.getUint16(offset, true);
+        actor.info3 = data.getInt16(offset, true);
         offset += 2;
-        actor.extraAmount = data.getUint16(offset, true);
+
+        actor.extraAmount = data.getInt16(offset, true);
         offset += 2;
-        const textColor = data.getUint8(offset++, true);
+        const textColor = data.getInt8(offset++, true);
         actor.textColor = getHtmlColor(scene.palette, textColor * 16 + 12);
-        if (actor.unknownFlags & 0x0004) { 
-            actor.unknown0 = data.getUint16(offset, true);
-            offset += 2;
-            actor.unknown1 = data.getUint16(offset, true);
-            offset += 2;
-            actor.unknown2 = data.getUint16(offset, true);
+
+        if (actor.flags & 0x00040000) { // Anim 3DS
+            actor.spriteAnim3DNumber = data.getUint32(offset, true);
+            offset += 4;
+            actor.spriteSizeHit = data.getInt16(offset, true);
+            actor.info3 = actor.spriteSizeHit;
             offset += 2;
         }
-        actor.armour = data.getUint8(offset++, true);
-        actor.life = data.getUint8(offset++, true);
+        actor.armour = data.getInt8(offset++, true);
+        actor.life = data.getInt8(offset++, true);
 
-        actor.moveScriptSize = data.getUint16(offset, true);
+        actor.moveScriptSize = data.getInt16(offset, true);
         offset += 2;
         if (actor.moveScriptSize > 0) {
             actor.moveScript = new DataView(scene.buffer, offset, actor.moveScriptSize);
         }
         offset += actor.moveScriptSize;
 
-        actor.lifeScriptSize = data.getUint16(offset, true);
+        actor.lifeScriptSize = data.getInt16(offset, true);
         offset += 2;
         if (actor.lifeScriptSize > 0) {
             actor.lifeScript = new DataView(scene.buffer, offset, actor.lifeScriptSize);
