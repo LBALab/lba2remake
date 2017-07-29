@@ -229,24 +229,24 @@ function loadZones(scene, offset) {
             box: {}
         };
 
-        zone.box.bX = (0x8000 - data.getUint32(offset + 8, true) + 512) / 0x4000;
-        zone.box.bY = data.getUint32(offset + 4, true) / 0x4000;
-        zone.box.bZ = data.getUint32(offset, true) / 0x4000;
-        zone.box.tX = (0x8000 - data.getUint32(offset + 20, true) + 512) / 0x4000;
-        zone.box.tY = data.getUint32(offset + 16, true) / 0x4000;
-        zone.box.tZ = data.getUint32(offset + 12, true) / 0x4000;
+        zone.box.bX = (0x8000 - data.getInt32(offset + 8, true) + 512) / 0x4000;
+        zone.box.bY = data.getInt32(offset + 4, true) / 0x4000;
+        zone.box.bZ = data.getInt32(offset, true) / 0x4000;
+        zone.box.tX = (0x8000 - data.getInt32(offset + 20, true) + 512) / 0x4000;
+        zone.box.tY = data.getInt32(offset + 16, true) / 0x4000;
+        zone.box.tZ = data.getInt32(offset + 12, true) / 0x4000;
         offset += 24;
 
-        zone.info0 = data.getUint32(offset, true);
-        zone.info1 = data.getUint32(offset + 4, true);
-        zone.info2 = data.getUint32(offset + 8, true);
-        zone.info3 = data.getUint32(offset + 12, true);
-        zone.info4 = data.getUint32(offset + 16, true);
-        zone.info5 = data.getUint32(offset + 20, true);
-        zone.info6 = data.getUint32(offset + 24, true);
-        zone.info7 = data.getUint32(offset + 28, true);
-        zone.type  = data.getUint16(offset + 32, true);
-        zone.snap  = data.getUint16(offset + 34, true);
+        zone.info0 = data.getInt32(offset, true);
+        zone.info1 = data.getInt32(offset + 4, true);
+        zone.info2 = data.getInt32(offset + 8, true);
+        zone.info3 = data.getInt32(offset + 12, true);
+        zone.info4 = data.getInt32(offset + 16, true);
+        zone.info5 = data.getInt32(offset + 20, true);
+        zone.info6 = data.getInt32(offset + 24, true);
+        zone.info7 = data.getInt32(offset + 28, true);
+        zone.type  = data.getInt16(offset + 32, true);
+        zone.snap  = data.getInt16(offset + 34, true);
         offset += 36;
 
         // normalising position
@@ -266,7 +266,7 @@ function loadPoints(scene, offset) {
     const data = new DataView(scene.buffer);
     scene.points = [];
 
-    const numPoints = data.getUint16(offset, true);
+    const numPoints = data.getInt16(offset, true);
     offset += 2;
 
     for (let i = 0; i < numPoints; ++i) {
@@ -274,9 +274,9 @@ function loadPoints(scene, offset) {
             sceneIndex: scene.index,
             index: i,
             pos: [
-                (0x8000 - data.getUint32(offset + 8, true) + 512) / 0x4000,
-                data.getUint32(offset + 4, true) / 0x4000,
-                data.getUint32(offset, true) / 0x4000
+                (0x8000 - data.getInt32(offset + 8, true) + 512) / 0x4000,
+                data.getInt32(offset + 4, true) / 0x4000,
+                data.getInt32(offset, true) / 0x4000
             ]
         };
         offset += 12;
@@ -286,21 +286,21 @@ function loadPoints(scene, offset) {
     return offset;
 }
 
-function loadUnknown(scene, offset) {
+function loadPatches(scene, offset) {
     const data = new DataView(scene.buffer);
-    scene.unknown = [];
+    scene.patches = [];
 
-    const numData = data.getUint16(offset, true);
+    const numData = data.getInt16(offset, true);
     offset += 2;
 
     for (let i = 0; i < numData; ++i) {
         let unk = {
             sceneIndex: scene.index,
-            field1: data.getUint16(offset, true),
-            field2: data.getUint16(offset + 2, true)
+            size: data.getInt16(offset, true),
+            offset: data.getInt16(offset + 2, true)
         };
         offset += 4;
-        scene.unknown.push(unk);
+        scene.patches.push(unk);
     }
 
     return offset;
