@@ -218,7 +218,7 @@ function loadZones(scene, offset) {
 
     offset += 4; // skip unknown bytes
 
-    const numZones = data.getUint16(offset, true);
+    const numZones = data.getInt16(offset, true);
     offset += 2;
 
     for (let i = 0; i < numZones; ++i) {
