@@ -137,7 +137,8 @@ function loadActors(scene, offset) {
         let actor = {
             sceneIndex: scene.index,
             index: i,
-            dirMode: DirMode.NO_MOVE
+            dirMode: DirMode.NO_MOVE,
+            runtimeFlags: createRuntimeFlags(),
         };
 
         const staticFlags = data.getUint32(offset, true);
@@ -353,6 +354,35 @@ function parseStaticFlags(staticFlags) {
         noShadow: bits(staticFlags, 12, 1) === 1,
         noElectricShock: bits(staticFlags, 17, 1) === 1,
         noPreClipping: bits(staticFlags, 19, 1) === 1,
+    };
+}
+
+function createRuntimeFlags() {
+    return {
+        waitHitFrame: false,
+        isHitting: false,
+        hasAnimEnded: false,
+        hasNewFrame: false,
+        wasDrawn: false,
+        isDead: false,
+        isSpriteMoving: false,
+        hasRotationByAnim: false,
+        isFalling: false,
+        isSuperHitting: false,
+        hasFrameShield: false,
+        canDrawShadow: false,
+        hasGravityByAnim: false,
+        isSkating: false,
+        canThrowProjectile: false,
+        canLeftJump: false,
+        canRightJump: false,
+        waitSuperHit: false,
+        hasRotationByTrack: false,
+        canFlyJetPack: false,
+        unknown20: false,
+        hasManualFrame: false,
+        waitPosition: false,
+        forceFalling: false
     };
 }
 
