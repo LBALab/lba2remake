@@ -331,9 +331,25 @@ function parseStaticFlags(staticFlags) {
     return {
         hasCollisions: bits(staticFlags, 0, 1) === 1,
         hasCollisionBricks: bits(staticFlags, 1, 1) === 1,
+        hasCollisionZone: bits(staticFlags, 2, 1) === 1,
+        hasSpriteClipping: bits(staticFlags, 3, 1) === 1,
+        canBePushed: bits(staticFlags, 4, 1) === 1,
+        hasCollisionLow: bits(staticFlags, 5, 1) === 1,
+        canDrown: bits(staticFlags, 6, 1) === 1,
+        hasCollisionFloor: bits(staticFlags, 7, 1) === 1,
         isVisible: bits(staticFlags, 9, 1) === 0,
         isSprite: bits(staticFlags, 10, 1) === 1,
         canFall: bits(staticFlags, 11, 1) === 1
+        noShadow: bits(staticFlags, 12, 1) === 1,
+        isBackgrounded: bits(staticFlags, 13, 1) === 1,
+        canCarrierActor: bits(staticFlags, 14, 1) === 1,
+        hasMiniZV: bits(staticFlags, 15, 1) === 1,
+        hasInvalidPosition: bits(staticFlags, 16, 1) === 1,
+        noElectricShock: bits(staticFlags, 17, 1) === 1,
+        hasSpriteAnim3D: bits(staticFlags, 18, 1) === 1,
+        noPreClipping: bits(staticFlags, 19, 1) === 1,
+        hasZBuffer: bits(staticFlags, 20, 1) === 1,
+        hasZBufferInWater: bits(staticFlags, 21, 1) === 1,
     };
 }
 
