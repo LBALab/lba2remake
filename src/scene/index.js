@@ -100,10 +100,32 @@ function loadHero(scene, offset) {
         angle: 0,
         speed: 5,
         dirMode: DirMode.MANUAL,
+        runtimeFlags: createRuntimeFlags(),
         flags: {
             hasCollisions: true,
+            hasCollisionBricks: true,
+            hasCollisionZone: true,
+            hasSpriteClipping: false,
+            hasCollisionLow: false,
+            hasCollisionFloor: true,
+            hasMiniZV: false,
+            hasInvalidPosition: false,
+            hasSpriteAnim3D: false,
+            hasZBuffer: false,
+            hasZBufferInWater: false,
+
+            canBePunched: true,
+            canDrown: true,
+            canFall: true,
+            canCarrierActor: false,
+
             isVisible: true,
-            isSprite: false
+            isSprite: false,
+            isBackgrounded: false,
+
+            noShadow: false,
+            noElectricShock: false,
+            noPreClipping: false,
         }
     };
     offset += 6;
@@ -344,7 +366,7 @@ function parseStaticFlags(staticFlags) {
 
         canBePunched: bits(staticFlags, 4, 1) === 1,
         canDrown: bits(staticFlags, 6, 1) === 1,
-        canFall: bits(staticFlags, 11, 1) === 1
+        canFall: bits(staticFlags, 11, 1) === 1,
         canCarrierActor: bits(staticFlags, 14, 1) === 1,
 
         isVisible: bits(staticFlags, 9, 1) === 0,
