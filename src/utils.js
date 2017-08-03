@@ -1,7 +1,8 @@
 // @flow
 
 export const DebugFlags = {
-    boundingBoxes: false
+    boundingBoxes: false,
+    useVR: false,
 };
 
 export function bits(bitfield: number, offset: number, length: number) : number {

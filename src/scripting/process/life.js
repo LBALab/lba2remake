@@ -2,6 +2,7 @@ import THREE from 'three';
 
 import {DirMode} from '../../game/actors';
 import {setMagicBallLevel} from '../../game/state';
+import VideoData from '../../video/data';
 
 export function PALETTE() {
 
@@ -343,8 +344,38 @@ export function HIT_OBJ() {
 
 }
 
-export function PLAY_SMK() {
+export function PLAY_SMK(cmdState, video) {
+    if (!cmdState.listener) {
+        this.game.pause();
+        const main = document.querySelector('#main');
+        const videoTag = document.createElement('video');
+        const source = document.createElement('source');
+        source.type = 'video/mp4';
+        source.src = VideoData.VIDEO.find((v) => { return v.name === video; }).file;
+        videoTag.id = 'video';
+        videoTag.autoplay = true;
+        videoTag.className = 'video';
+        videoTag.appendChild(source);
+        main.appendChild(videoTag);
 
+        cmdState.listener = function () {
+            cmdState.ended = true;
+            videoTag.removeEventListener('ended', cmdState.listener);
+            main.removeChild(videoTag);
+            window.game.pause();
+        };
+        window.addEventListener('keydown', cmdState.listener);
+        videoTag.addEventListener('ended', cmdState.listener);
+    }
+
+    if (cmdState.ended) {
+        window.removeEventListener('keydown', cmdState.listener);
+        delete cmdState.listener;
+        delete cmdState.ended;
+    } else {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+    }
 }
 
 export function ECLAIR() {
@@ -464,10 +495,12 @@ export function CINEMA_MODE(mode) {
     const cinemaModeDiv = document.getElementById('cinemaMode');
     if (mode === 1) {
         this.actor.props.dirMode = DirMode.NO_MOVE;
+        cinemaModeDiv.style.display = 'block';
         cinemaModeDiv.className = "cinemaModeIn";
     } else {
         this.actor.props.dirMode = DirMode.MANUAL;
         cinemaModeDiv.className = "cinemaModeOut";
+        setTimeout(function() { cinemaModeDiv.style.display = 'none'; }, 3000); // animation is in 3s
     }
 }
 

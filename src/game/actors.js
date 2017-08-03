@@ -53,7 +53,19 @@ export type Actor = {
 
 export const DirMode = {
     NO_MOVE: 0,
-    MANUAL: 1
+    MANUAL: 1,
+    FOLLOW: 2,
+    TRACK: 3,
+    FOLLOW2: 4,
+    TRACK_ATTACK: 5,
+    SAME_XZ: 6,
+    PINGUIN: 7,
+    WAGON: 8,
+    MOVE_CIRCLE: 9,
+    MOVE_CIRCLE2: 10,
+    SAME_XZ_BETA: 11,
+    MOVE_BUGGY: 12,
+    MOVE_BUGGY_MANUAL: 13
 };
 
 // TODO: move section offset to container THREE.Object3D
