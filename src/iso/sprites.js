@@ -1,6 +1,6 @@
 import async from 'async';
 import THREE from 'three';
-import {map, each, range} from 'lodash';
+import {each, orderBy} from 'lodash';
 
 const push = Array.prototype.push;
 
@@ -22,31 +22,25 @@ export function loadSprite(index, renderer, callback) {
             spriteCache = loadSpritesMapping(sprites, palette);
         }
         callback({
-            threeObject: loadMesh(index, spriteCache, renderer)
+            threeObject: loadMesh(index, spriteCache)
         });
     });
 }
 
-function loadMesh(index, sprite, renderer) {
-    /*const geometry = new THREE.PlaneGeometry(sprite.spritesMap[index].w, sprite.spritesMap[index].h, 1, 1);
-    const material = new THREE.MeshBasicMaterial( { map : sprite.texture });
-    const mesh = new THREE.Mesh(geometry, material) ;
-    return mesh;*/
-
+function loadMesh(index, sprite) {
     const s = sprite.spritesMap[index];
     const vertices = [
-        [-0.5*s.w, -0.5*s.h, 0],
-        [0.5*s.w,  -0.5*s.h, 0],
-        [0.5*s.w,   0.5*s.h, 0],
-        [-0.5*s.w,  0.5*s.h, 0]
+        [0, -s.h*0.5, 0],
+        [s.w,  -s.h*0.5, 0],
+        [s.w,   s.h*0.5, 0],
+        [0,  s.h*0.5, 0]
     ];
     const uvs = [
-        [0,   0],
-        [s.u / sprite.width,   0],
-        [s.u / sprite.width,   s.v / sprite.height],
-        [0,   s.v / sprite.height]
+        [s.u/sprite.width,   s.v/sprite.height],
+        [(s.u/sprite.width) + (s.w/sprite.width),   s.v/sprite.height],
+        [(s.u/sprite.width) + (s.w/sprite.width),   (s.v/sprite.height) + (s.h/sprite.height)],
+        [s.u/sprite.width,   (s.v/sprite.height) + (s.h/sprite.height)]
     ];
-
     const geometries = {
         positions: [],
         uvs: []
@@ -68,30 +62,22 @@ function loadMesh(index, sprite, renderer) {
     const bufferGeometry = new THREE.BufferGeometry();
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
     bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
-    const {width, height} = sprite.texture.image;
     const mesh = new THREE.Mesh(bufferGeometry, new THREE.RawShaderMaterial({
         vertexShader: sprite_vertex,
         fragmentShader: sprite_fragment,
         transparent: true,
         uniforms: {
             texture: {value: sprite.texture},
-            //spriteSize: {value: new THREE.Vector2(s.w / width, s.h / height)},
-            //pixelSize: {value: 1.0 / renderer.pixelRatio()},
-            //offset: {value: renderer.cameras.isoCamera.offset},
-            //size: {value: renderer.cameras.isoCamera.size},
-        }
+        },
+        side: THREE.DoubleSide
     }));
 
-    let scale = 1 / 32;
-    mesh.scale.set(scale, scale, scale);
-    //mesh.position.set(2, 0, 0);
-    //mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
+    let scale = 1 / 1024;
+    mesh.scale.set(-scale, -scale, -scale);
+    mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 4.0);
     mesh.frustumCulled = false;
 
     return mesh;
-
-    /*const spriteMaterial = new THREE.SpriteMaterial( { map: sprite.texture, color: 0xffffff } );
-    return new THREE.Sprite( spriteMaterial );*/
 }
 
 export function loadAllSprites(spriteFile) {
@@ -142,7 +128,8 @@ function loadSpriteData(sprites, entry) {
         height: height,
         offsetX: offsetX,
         offsetY: offsetY,
-        pixels: pixels
+        pixels: pixels,
+        index: entry
     };
 }
 
@@ -151,10 +138,22 @@ export function loadSpritesMapping(sprites, palette) {
     const width = 2048;
     const height = 2048;
     const image_data = new Uint8Array(width * height * 4);
+    let h = 0;
+    let w = 0;
+    let maxH = 0;
+    sprites = orderBy(sprites, ['height'],['desc']);
     each(sprites, (sprite, idx) => {
-        const offsetX = (idx % 21) * (sprite.width + sprite.offsetX);
-        const offsetY = Math.round(idx / 21) * (sprite.height + sprite.offsetY);
-        spritesMap[idx] = {
+        if (maxH < sprite.height) {
+            maxH = sprite.height;
+        }
+        if(w + sprite.width > width) {
+            w = 0;
+            h += maxH;
+        }
+        const offsetX = w + sprite.offsetX;
+        const offsetY = h + sprite.offsetY;
+        w += sprite.width;
+        spritesMap[sprite.index] = {
             w: sprite.width,
             h: sprite.height,
             u: offsetX,

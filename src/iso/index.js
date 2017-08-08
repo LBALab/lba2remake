@@ -29,7 +29,7 @@ export function loadIsometricScenery(renderer, entry, callback) {
             },
             update: () => {}
         });
-    });
+    }) ;
 }
 
 function loadMesh(renderer, grid) {
