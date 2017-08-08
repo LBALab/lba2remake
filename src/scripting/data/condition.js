@@ -35,7 +35,7 @@ export const ConditionOpcode = [
     { opcode: 0x1F, command: "RND", callback: lc.RND, param: 'Uint8', operand: 'Uint8' },
     { opcode: 0x20, command: "RAIL", callback: lc.RAIL, param: 'Uint8', operand: 'Uint8' },
     { opcode: 0x21, command: "BETA", callback: lc.BETA, operand: 'Uint16' },
-    { opcode: 0x22, command: "BETA_OBJ", callback: lc.BETA_OBJ, param: 'Uint8', operand: 'Uint16' },
+    { opcode: 0x22, command: "BETA_OBJ", callback: lc.BETA_OBJ, param: 'Uint8:actor', operand: 'Uint16' },
     { opcode: 0x23, command: "CARRIED_OBJ_BY", callback: lc.CARRIED_OBJ_BY, param: 'Uint8', operand: 'Uint8' },
     { opcode: 0x24, command: "ANGLE", callback: lc.ANGLE, param: 'Uint8', operand: 'Uint16' },
     { opcode: 0x25, command: "DISTANCE_MESSAGE", callback: lc.DISTANCE_MESSAGE, param: 'Uint8:actor', operand: 'Uint16' },
