@@ -132,6 +132,20 @@ body {
     -webkit-animation: cinemaModeAnimOut 3s forwards;
     animation: cinemaModeAnimOut 3s forwards;
 }
+#debugBox {
+    display: none;
+    color: white;
+    position: fixed;
+    background: black;
+    opacity: 0.7;
+    border: 3px solid gray;
+    border-radius: 10px;
+    right: 0;
+    padding: 10px;
+    font-family: 'Courier', monospace;
+    font-size: 16px;
+    font-weight: bold;
+}
 @-webkit-keyframes cinemaModeAnimIn {
     0% {
         border-top: 0px solid black;

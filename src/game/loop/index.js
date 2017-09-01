@@ -5,8 +5,14 @@ import {processPhysicsFrame} from './physics';
 import {processCameraMovement} from './cameras';
 import {updateDebugger, hasStep, endStep} from '../../scripting/debug';
 import {getRandom} from '../../utils/lba'
+import {
+    startDebugHUDFrame,
+    endDebugHUDFrame,
+    debugVector,
+} from "../debugHUD";
 
 export function mainGameLoop(game, clock, renderer, scene, controls) {
+    startDebugHUDFrame();
     const time = {
         delta: Math.min(clock.getDelta(), 0.05),
         elapsed: clock.getElapsedTime()
@@ -31,7 +37,10 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
         }
     }
     renderer.stats.end();
+    endDebugHUDFrame();
 }
+
+
 
 function updateScene(game, scene, time, step) {
     //playAmbience(game, scene, time);
@@ -41,6 +50,7 @@ function updateScene(game, scene, time, step) {
         updateActor(scene, actor, time, step);
         if (actor.index == 0 && scene.isActive) {
             updateHero(game, actor, time);
+            debugVector('twinsen.physics.position', actor.physics.position);
         }
     });
 }

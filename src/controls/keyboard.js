@@ -1,6 +1,7 @@
 // @flow
 
 import {switchStats} from '../renderer/stats';
+import {switchHUD} from "../game/debugHUD";
 
 export function makeKeyboardControls(game: any) {
     const onKeyDown = keyDownHandler.bind(null, game);
@@ -101,6 +102,10 @@ function keyDownHandler(game, event) {
         case 80: // p
         case 'KeyP':
             game.pause();
+            break;
+        case 71: // g
+        case 'KeyG':
+            switchHUD();
             break;
     }
 }
