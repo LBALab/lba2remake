@@ -193,7 +193,9 @@ function getVoiceSource(state, context, data) {
         source.bufferSource.start();
     };
     source.stop = () => {
-        source.bufferSource.stop();
+        if (source.isPlaying) {
+            source.bufferSource.stop();
+        }
         source.isPlaying = false;
     };
     source.load = (index, textBankId, callback) => {
