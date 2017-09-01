@@ -43,6 +43,7 @@ function compileInstruction(script, cmd, cmdOffset) {
 
     const callback = cmd.op.callback;
     const instruction = callback.bind.apply(callback, args);
+    instruction.dbgLabel = cmdOffset + ' ' + cmd.op.command;
     if (condition)
         instruction.condition = condition;
     return instruction;
