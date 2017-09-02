@@ -35,6 +35,7 @@ export function MESSAGE(cmdState, id) {
 export function MESSAGE_OBJ(cmdState, actor, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
     if (!cmdState.listener) {
+        this.scene.getActor(0).props.dirMode = DirMode.NO_MOVE;
         let textBox = document.getElementById('frameText');
         const text = this.scene.data.texts[id];
         if (text.type === 3) {
@@ -85,6 +86,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 clearInterval(textInterval);
             }
         }, 35);
+        const that = this;
         cmdState.listener = function(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
@@ -95,6 +97,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                     textBox = document.getElementById(`noframeText_${actor.index}_${id}`);
                     main.removeChild(textBox);
                 }
+                that.scene.getActor(0).props.dirMode = DirMode.MANUAL;
             }
         };
         window.addEventListener('keydown', cmdState.listener);
