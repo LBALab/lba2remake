@@ -1,6 +1,3 @@
-import THREE from 'three';
-import {each, find} from 'lodash';
-
 import {getHtmlColor} from '../../scene'
 import {DirMode} from '../../game/actors';
 
