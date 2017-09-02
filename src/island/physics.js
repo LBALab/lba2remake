@@ -64,7 +64,9 @@ function getGround(section, position) {
             && position.z >= bb.min.z && position.z <= bb.max.z
             && position.y <= bb.max.y && position.y > bb.max.y - 0.015) {
             FLAGS.hitObject = true;
-            return bb.max.y;
+            return {
+                height: bb.max.y
+            };
         }
     }
     return getGroundInfo(section, position);
