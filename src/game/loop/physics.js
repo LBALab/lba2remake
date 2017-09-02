@@ -57,7 +57,6 @@ function processTeleports(game, scene) {
                 newHero.physics.orientation.copy(hero.physics.orientation);
                 newHero.props.dirMode = hero.props.dirMode;
             });
-            return;
         }
     }
 }
@@ -68,7 +67,7 @@ const DIFF = new THREE.Vector3();
 
 function processCollisionsWithActors(scene, actor) {
     actor.hasCollidedWithActor = -1;
-    if (actor.model == null) {
+    if (actor.model === null) {
         return;
     }
     ACTOR_BOX.copy(actor.model.boundingBox);
@@ -77,7 +76,7 @@ function processCollisionsWithActors(scene, actor) {
     ACTOR_BOX.translate(DIFF);
     for (let i = 0; i < scene.actors.length; ++i) {
         const a = scene.actors[i];
-        if (a.model == null || a.index == actor.index) {
+        if (a.model === null || a.index === actor.index) {
             continue;
         }
         INTERSECTION.copy(a.model.boundingBox);

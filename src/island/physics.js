@@ -36,7 +36,7 @@ function processCollisions(sections, scene, actor) {
             TGT.copy(actor.physics.position);
             TGT.sub(actor.threeObject.position);
             TGT.setY(0);
-            if (TGT.lengthSq() != 0) {
+            if (TGT.lengthSq() !== 0) {
                 TGT.normalize();
                 TGT.multiplyScalar(0.005);
                 TGT.add(actor.threeObject.position);
