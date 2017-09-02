@@ -67,7 +67,7 @@ export function UNKNOWN_14(action) {
 
 export function SAMPLE_BRICK_1(action, animState) {
     let sampleIndex = animState.floorSound;
-    if (sampleIndex != -1) {
+    if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
         //const frequency = getRandom(0, 0x1000) + 3596;
         const soundFxSource = game.getAudioManager().getSoundFxSource();
@@ -79,7 +79,7 @@ export function SAMPLE_BRICK_1(action, animState) {
 
 export function SAMPLE_BRICK_2(action, animState) {
     let sampleIndex = animState.floorSound;
-    if (sampleIndex != -1) {
+    if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
         //const frequency = getRandom(0, 0x1000) + 3596;
         const soundFxSource = game.getAudioManager().getSoundFxSource();
