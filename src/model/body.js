@@ -8,7 +8,7 @@ export function loadBody(model, bodies, index, bodyProps) {
         const buffer = model.files.body.getEntry(index);
         const data = new DataView(buffer);
         const obj = {
-            bodyFlag: data.getInt16(0x00, true),
+            bodyFlag: data.getInt32(0x00, true),
             bonesSize: data.getUint32(0x20, true),
             bonesOffset: data.getUint32(0x24, true),
             verticesSize: data.getUint32(0x28, true),
@@ -29,7 +29,10 @@ export function loadBody(model, bodies, index, bodyProps) {
             buffer: buffer
         };
 
-        obj.hasAnim = obj.bodyFlag & 2;
+        obj.version = obj.bodyFlag & 0xff;
+        obj.hasAnimation = obj.bodyFlag & (1 << 8);
+        obj.noSort = obj.bodyFlag & (1 << 9);
+        obj.hasTransparency = obj.bodyFlag & (1 << 10);
          
         loadBones(obj);
         loadVertices(obj);
