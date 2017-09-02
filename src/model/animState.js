@@ -158,7 +158,7 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
     if (!nextkeyframe) return;
     state.keyframeLength = nextkeyframe.length;
 
-    if (state.currentTime > state.currentKeyframe.length) {
+    if (state.currentTime > nextkeyframe.length) {
         state.realAnimIdx = realAnimIdx;
         state.prevRealAnimIdx = realAnimIdx;
         state.currentTime = 0;
@@ -171,12 +171,12 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
         numBones = state.skeleton.length;
     }
 
-    updateSkeletonAtKeyframe(state, state.currentKeyframe, nextkeyframe, numBones);
+    updateSkeletonAtKeyframe(state, state.currentKeyframe, nextkeyframe, numBones, nextkeyframe.length);
     updateShaderBone(state);
 }
 
-function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones) {
-    const interpolation = state.currentTime / keyframe.length; 
+function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones, length = keyframe.length) {
+    const interpolation = state.currentTime / length;
     for (let i = 0; i < numBones; ++i) {
         const s = state.skeleton[i];
         const bf = keyframe.boneframes[i];
