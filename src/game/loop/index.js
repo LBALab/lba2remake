@@ -6,16 +6,20 @@ import {processCameraMovement} from './cameras';
 import {updateDebugger, hasStep, endStep} from '../../scripting/debug';
 import {getRandom} from '../../utils/lba'
 import {
-    startDebugHUDFrame,
-    endDebugHUDFrame,
-    debugVector,
+    debugHUDFrame,
 } from "../debugHUD";
 
 export function mainGameLoop(game, clock, renderer, scene, controls) {
-    startDebugHUDFrame();
     const time = {
         delta: Math.min(clock.getDelta(), 0.05),
         elapsed: clock.getElapsedTime()
+    };
+
+    const debugScope = {
+        game,
+        clock,
+        renderer,
+        scene
     };
 
     renderer.stats.begin();
@@ -35,9 +39,14 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
             updateDebugger(scene, renderer);
             renderer.render(scene);
         }
+        if (scene.actors && scene.actors.length > 0) {
+            debugScope.hero = scene.actors[0];
+        }
+        debugScope.camera = renderer.getMainCamera(scene);
     }
     renderer.stats.end();
-    endDebugHUDFrame();
+
+    debugHUDFrame(debugScope);
 }
 
 
@@ -51,9 +60,6 @@ function updateScene(game, scene, time, step) {
         if (scene.isActive) {
             if (actor.index === 0) {
                 updateHero(game, actor, time);
-                debugVector('twinsen.physics.position', actor.physics.position);
-            } else {
-                debugVector(`actors[${actor.index}].physics.position`, actor.physics.position);
             }
         }
     });

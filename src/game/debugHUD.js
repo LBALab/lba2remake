@@ -1,13 +1,13 @@
-import {map, each, filter, find} from 'lodash';
+import {map, mapValues, each, filter, find, isFunction, isArray} from 'lodash';
+import THREE from 'three';
 
 let debugBox = null;
 let debugContent = null;
 let debugInput = null;
 let debugDataList = null;
 let debugSlots = [];
-let debugValues = {};
+let needSelectorRefresh = true;
 let enabled = false;
-let availableLabels = new Set();
 
 export function initDebugHUD() {
     debugBox = document.getElementById('debugBox');
@@ -21,29 +21,46 @@ export function initDebugHUD() {
             validateInput();
         }
         event.stopPropagation();
+        needSelectorRefresh = true;
     };
     debugInput.onkeyup = event => {
         event.stopPropagation();
     };
-    refreshSelector();
 }
 
-export function startDebugHUDFrame() {
-    debugValues = {};
-}
-
-export function endDebugHUDFrame() {
+export function debugHUDFrame(scope) {
     if (enabled) {
+        if (needSelectorRefresh) {
+            refreshSelector(scope);
+            needSelectorRefresh = false;
+        }
         each(debugSlots, slot => {
-            if (slot.label in debugValues) {
+            const tgt = getValueFromLabel(scope, slot.label);
+            if (tgt !== undefined) {
                 slot.title.style.color = 'white';
-                slot.content.innerHTML = debugValues[slot.label];
+                slot.content.innerHTML = debugValue(tgt);
             } else {
                 slot.title.style.color = 'darkgrey';
                 slot.content.innerHTML = '<span style="color:darkgrey;font-style:italic;">N/A</span>';
             }
         });
     }
+}
+
+function getValueFromLabel(scope, label) {
+    const path = label.split('.');
+
+    let obj = scope;
+    let i = 0;
+    while (obj !== undefined && i < path.length) {
+        const arrayExpr = path[i].match(/(\w+)\[(\d+)\]/);
+        if (arrayExpr)
+            obj = obj[arrayExpr[1]][arrayExpr[2]];
+        else
+            obj = obj[path[i]];
+        ++i;
+    }
+    return obj;
 }
 
 export function switchHUD() {
@@ -79,13 +96,33 @@ export function refreshSlots() {
         }
         debugContent.appendChild(slot.element);
     });
-    refreshSelector();
 }
 
-export function refreshSelector() {
-    debugDataList.innerHTML = map(
-        filter([...availableLabels], label => !find(debugSlots, slot => slot.label === label)),
-        label => `<option>${label}</option>`).join('');
+export function refreshSelector(scope) {
+    const label = debugInput.value;
+    const path = label.split('.');
+
+    let obj = scope;
+    let i = 0;
+    let prefix = '';
+    while (i < path.length) {
+        const arrayExpr = path[i].match(/(\w+)\[(\d+)\]/);
+        const prevObj = obj;
+
+        if (arrayExpr)
+            obj = obj[arrayExpr[1]][arrayExpr[2]];
+        else
+            obj = obj[path[i]];
+
+        if (obj === undefined || obj === null) {
+            obj = prevObj;
+            break;
+        } else {
+            prefix += path[i] + '.';
+        }
+        ++i;
+    }
+    debugDataList.innerHTML = map(obj, (value, label) => `<option>${prefix}${label}</option>`).join('');
 }
 
 function validateInput() {
@@ -98,19 +135,42 @@ function validateInput() {
     }
 }
 
-function debugValue(label, value) {
-    if (enabled) {
-        if (!availableLabels.has(label)) {
-            availableLabels.add(label);
-            refreshSelector();
-        }
-        debugValues[label] = value();
+function debugValue(value) {
+    if (value instanceof THREE.Vector3) {
+        return formatVector(value);
+    } else {
+        return formatObject(value);
     }
 }
 
-export function debugVector(label, vec) {
-    debugValue(label, () => {
-        const components = map(vec.toArray(), (n, i) => `<span style="color:${['red', 'lime', 'lightskyblue'][i]};">${n.toFixed(3)}</span>`);
-        return components.join(', ');
-    });
+function formatVector(vec) {
+    const components = map(vec.toArray(), (n, i) => `<span style="color:${['red', 'lime', 'lightskyblue'][i]};">${n.toFixed(3)}</span>`);
+    return components.join(', ');
+}
+
+function formatObject(obj) {
+    const valueMapper = v => {
+        if (isFunction(v))
+            return undefined;
+        if (isArray(v))
+            return `type::::[${v.length}]`;
+        if (v instanceof Object)
+            return 'type::::{}';
+        return v;
+    };
+    let objFmt = JSON.stringify(obj, function(key, value) {
+        if (value === obj) {
+            return mapValues(value, valueMapper);
+        }
+        return valueMapper(value);
+    }, 2);
+
+    if (objFmt === undefined)
+        objFmt = valueMapper(obj);
+
+    objFmt = objFmt.replace(/\n/g, '<br/>');
+    objFmt = objFmt.replace(/ /g, '&nbsp;');
+    objFmt = objFmt.replace(/"type::::([\w\[\]\{\}]+)"/g, '$1');
+
+    return objFmt;
 }
