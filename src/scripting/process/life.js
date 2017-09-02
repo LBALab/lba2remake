@@ -222,6 +222,7 @@ export function FOUND_OBJECT(cmdState, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
     const textBox = document.getElementById('frameText');
     if (!cmdState.listener) {
+        this.scene.getActor(0).props.dirMode = DirMode.NO_MOVE;
         this.game.getState().flags.inventory[id] = 1;
         //this.actor.isVisible = false;
         const soundFxSource = this.game.getAudioManager().getSoundFxSource();
@@ -251,9 +252,14 @@ export function FOUND_OBJECT(cmdState, id) {
                 clearInterval(textInterval);
             }
         }, 35);
-        cmdState.listener = function () {
-            cmdState.ended = true;
-            clearInterval(textInterval);
+        const that = this;
+        cmdState.listener = function(event) {
+            const key = event.code || event.which || event.keyCode;
+            if (key === 'Enter' || key === 13) {
+                cmdState.ended = true;
+                clearInterval(textInterval);
+                that.scene.getActor(0).props.dirMode = DirMode.MANUAL;
+            }
         };
         window.addEventListener('keydown', cmdState.listener);
         voiceSource.load(text.index, -1, () => {
@@ -364,11 +370,14 @@ export function PLAY_SMK(cmdState, video) {
         videoTag.appendChild(source);
         main.appendChild(videoTag);
 
-        cmdState.listener = function () {
-            cmdState.ended = true;
-            videoTag.removeEventListener('ended', cmdState.listener);
-            main.removeChild(videoTag);
-            window.game.pause();
+        cmdState.listener = function(event) {
+            const key = event.code || event.which || event.keyCode;
+            if (key === 'Enter' || key === 13) {
+                cmdState.ended = true;
+                videoTag.removeEventListener('ended', cmdState.listener);
+                main.removeChild(videoTag);
+                window.game.pause();
+            }
         };
         window.addEventListener('keydown', cmdState.listener);
         videoTag.addEventListener('ended', cmdState.listener);
