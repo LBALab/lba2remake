@@ -5,11 +5,21 @@ import {processPhysicsFrame} from './physics';
 import {processCameraMovement} from './cameras';
 import {updateDebugger, hasStep, endStep} from '../../scripting/debug';
 import {getRandom} from '../../utils/lba'
+import {
+    debugHUDFrame,
+} from "../debugHUD";
 
 export function mainGameLoop(game, clock, renderer, scene, controls) {
     const time = {
         delta: Math.min(clock.getDelta(), 0.05),
         elapsed: clock.getElapsedTime()
+    };
+
+    const debugScope = {
+        game,
+        clock,
+        renderer,
+        scene
     };
 
     renderer.stats.begin();
@@ -29,9 +39,17 @@ export function mainGameLoop(game, clock, renderer, scene, controls) {
             updateDebugger(scene, renderer);
             renderer.render(scene);
         }
+        if (scene.actors && scene.actors.length > 0) {
+            debugScope.hero = scene.actors[0];
+        }
+        debugScope.camera = renderer.getMainCamera(scene);
     }
     renderer.stats.end();
+
+    debugHUDFrame(debugScope);
 }
+
+
 
 function updateScene(game, scene, time, step) {
     //playAmbience(game, scene, time);
@@ -39,8 +57,10 @@ function updateScene(game, scene, time, step) {
         if (actor.isKilled)
             return;
         updateActor(scene, actor, time, step);
-        if (actor.index == 0 && scene.isActive) {
-            updateHero(game, actor, time);
+        if (scene.isActive) {
+            if (actor.index === 0) {
+                updateHero(game, actor, time);
+            }
         }
     });
 }

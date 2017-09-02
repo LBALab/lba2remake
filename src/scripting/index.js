@@ -41,7 +41,12 @@ function runScript(script, time, step) {
         setCursorPosition(context.scene, context.actor, context.type, state.offset);
         state.lastOffset = state.offset;
         state.reentryOffset = -1;
-        instructions[state.offset](time);
+        try {
+            instructions[state.offset](time);
+        }
+        catch (e) {
+            console.error('Error on instruction: actor(' + context.actor.index + '):' + context.type + ':' + instructions[state.offset].dbgLabel + '"\n', e);
+        }
         if (state.continue) {
             state.offset++;
         }

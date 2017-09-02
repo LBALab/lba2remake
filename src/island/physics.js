@@ -36,7 +36,7 @@ function processCollisions(sections, scene, actor) {
             TGT.copy(actor.physics.position);
             TGT.sub(actor.threeObject.position);
             TGT.setY(0);
-            if (TGT.lengthSq() != 0) {
+            if (TGT.lengthSq() !== 0) {
                 TGT.normalize();
                 TGT.multiplyScalar(0.005);
                 TGT.add(actor.threeObject.position);
@@ -50,9 +50,13 @@ function processCollisions(sections, scene, actor) {
     }
 }
 
+const DEFAULT_GROUND = {
+    height: 0
+};
+
 function getGround(section, position) {
     if (!section)
-        return 0;
+        return DEFAULT_GROUND;
 
     for (let i = 0; i < section.boundingBoxes.length; ++i) {
         const bb = section.boundingBoxes[i];
@@ -60,15 +64,13 @@ function getGround(section, position) {
             && position.z >= bb.min.z && position.z <= bb.max.z
             && position.y <= bb.max.y && position.y > bb.max.y - 0.015) {
             FLAGS.hitObject = true;
-            return bb.max.y;
+            return {
+                height: bb.max.y
+            };
         }
     }
     return getGroundInfo(section, position);
 }
-
-const DEFAULT_GROUND = {
-    height: 0
-};
 
 function getGroundInfo(section, position) {
     if (!section) {
