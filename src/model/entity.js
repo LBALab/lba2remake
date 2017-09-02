@@ -50,30 +50,49 @@ export type Entity = {
 }
 
 const ACTIONTYPE = {
-    NONE              : 0,
-    UNKNOWN_1         : 1,
-    UNKNOWN_2         : 2,
-    UNKNOWN_3         : 3,
-    UNKNOWN_4         : 4,
-    HITTING           : 5,
-	SAMPLE            : 6,
-    SAMPLE_FREQ       : 7,
-    THROW_EXTRA_BONUS : 8,
-	THROW_MAGIC_BALL  : 9,
-	SAMPLE_REPEAT     : 10,
-	EXTRA_AIMING      : 11,
-	EXTRA_THROW       : 12,
-	SAMPLE_STOP       : 13,
-	UNKNOWN_14        : 14, // unused
-	SAMPLE_BRICK_1    : 15,
-	SAMPLE_BRICK_2    : 16,
-	HERO_HITTING      : 17,
-	EXTRA_THROW_2     : 18,
-	EXTRA_THROW_3     : 19,
-	EXTRA_AIMING_2    : 20,
-    UNKNOWN_26        : 26,
-    UNKNOWN_29        : 29,
-    SAMPLE_2          : 39
+    NOP                 : 0,
+    BODY                : 1,
+    BODP                : 2,
+    ANIM                : 3,
+    ANIP                : 4,
+    HIT                 : 5,
+	SAMPLE              : 6,
+    SAMPLE_RND          : 7,
+    THROW               : 8,
+    THROW_MAGIC         : 9,
+	SAMPLE_REPEAT       : 10,
+    THROW_SEARCH        : 11,
+    THROW_ALPHA         : 12,
+	SAMPLE_STOP         : 13,
+    ZV                  : 14,
+    LEFT_STEP           : 15,
+    RIGHT_STEP          : 16,
+    HIT_HERO            : 17,
+    THROW_3D            : 18,
+    THROW_3D_ALPHA      : 19,
+    THROW_3D_SEARCH     : 20,
+    THROW_3D_MAGIC      : 21,
+    SUPER_HIT           : 22,
+    THROW_OBJ_3D        : 23,
+    PATH                : 24,
+    FLOW                : 25,
+    FLOW_3D             : 26,
+    THROW_DART          : 27,
+    SHIELD              : 28,
+    SAMPLE_MAGIC        : 29,
+    THROW_3D_CONQUE     : 30,
+    ZV_ANIMIT           : 31,
+    IMPACT              : 32,
+    RENVOIE             : 33,
+    RENVOYABLE          : 34,
+    TRANSPARENT         : 35,
+    SCALE               : 36,
+    LEFT_JUMP           : 37,
+    RIGHT_JUMP          : 38,
+    NEW_SAMPLE          : 39,
+    IMPACT_3D           : 40,
+    THROW_MAGIC_EXTRA   : 41,
+    THROW_FOUDRE        : 42,
 };
 
 let entities = [];
@@ -216,7 +235,7 @@ function loadEntityAnim(data, offset) {
                 targetActor: -1
             };
             switch(action.type) {
-                case ACTIONTYPE.HITTING:
+                case ACTIONTYPE.HIT:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.strength = data.getUint8(innerOffset + offset + 2, true);
                     innerOffset += 2;
@@ -227,13 +246,13 @@ function loadEntityAnim(data, offset) {
                     action.frequency = data.getUint16(innerOffset + offset + 4, true);
                     innerOffset += 3;
                 break;
-                case ACTIONTYPE.SAMPLE_FREQ:
+                case ACTIONTYPE.SAMPLE_RND:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.frequency = data.getUint16(innerOffset + offset + 4, true);
                     innerOffset += 5;
                 break;
-                case ACTIONTYPE.THROW_EXTRA_BONUS:
+                case ACTIONTYPE.THROW:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getUint16(innerOffset + offset + 2, true);
                     action.spriteIndex = data.getUint8(innerOffset + offset + 4, true);
@@ -244,7 +263,7 @@ function loadEntityAnim(data, offset) {
                     action.unk5 = data.getUint8(innerOffset + offset + 12, true);
                     innerOffset += 12;
                 break;
-                case ACTIONTYPE.THROW_MAGIC_BALL:
+                case ACTIONTYPE.THROW_MAGIC:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.unk1 = data.getUint16(innerOffset + offset + 2, true);
                     action.unk2 = data.getUint16(innerOffset + offset + 4, true);
@@ -258,7 +277,7 @@ function loadEntityAnim(data, offset) {
                     action.repeat = data.getUint16(innerOffset + offset + 4, true);
                     innerOffset += 9;
                 break;
-                case ACTIONTYPE.EXTRA_AIMING:
+                case ACTIONTYPE.THROW_SEARCH:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getUint16(innerOffset + offset + 2, true);
                     action.unk1 = data.getUint8(innerOffset + offset + 4, true);
@@ -267,7 +286,7 @@ function loadEntityAnim(data, offset) {
                     action.unk4 = data.getUint8(innerOffset + offset + 8, true);
                     innerOffset += 6;
                 break;
-                case ACTIONTYPE.EXTRA_THROW:
+                case ACTIONTYPE.THROW_ALPHA:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getUint16(innerOffset + offset + 2, true);
                     action.spriteIndex = data.getUint8(innerOffset + offset + 4, true);
@@ -283,20 +302,20 @@ function loadEntityAnim(data, offset) {
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     innerOffset += 3;
                 break;
-                case ACTIONTYPE.UNKNOWN_14:
+                case ACTIONTYPE.ZV:
                     break;
-                case ACTIONTYPE.SAMPLE_BRICK_1: // only required animFrame
-                case ACTIONTYPE.SAMPLE_BRICK_2:
+                case ACTIONTYPE.LEFT_STEP: // only required animFrame
+                case ACTIONTYPE.RIGHT_STEP:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     innerOffset++;
                 break;
-                case ACTIONTYPE.HERO_HITTING:
+                case ACTIONTYPE.HIT_HERO:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.animFrame -= 1;
                     innerOffset++;
                 break;
-                case ACTIONTYPE.EXTRA_THROW_2:
-                case ACTIONTYPE.EXTRA_THROW_3:
+                case ACTIONTYPE.THROW_3D:
+                case ACTIONTYPE.THROW_3D_ALPHA:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.distanceX = data.getUint16(innerOffset + offset + 2, true);
                     action.distanceY = data.getUint16(innerOffset + offset + 4, true);
@@ -309,7 +328,7 @@ function loadEntityAnim(data, offset) {
                     action.strength = data.getUint8(innerOffset + offset + 12, true);
                     innerOffset += 16;
                 break;
-                case ACTIONTYPE.EXTRA_AIMING_2:
+                case ACTIONTYPE.THROW_3D_SEARCH:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.distanceX = data.getUint16(innerOffset + offset + 2, true);
                     action.distanceY = data.getUint16(innerOffset + offset + 4, true);
@@ -320,13 +339,13 @@ function loadEntityAnim(data, offset) {
                     action.unk2 = data.getUint8(innerOffset + offset + 12, true);
                     innerOffset += 12;
                 break;
-                case ACTIONTYPE.UNKNOWN_26: // sound perhaps
+                case ACTIONTYPE.FLOW_3D:
                     innerOffset += 17;
                     break;
-                case ACTIONTYPE.UNKNOWN_29: // sound perhaps
+                case ACTIONTYPE.SAMPLE_MAGIC:
                     innerOffset += 4;
                 break;
-                case ACTIONTYPE.SAMPLE_2:
+                case ACTIONTYPE.NEW_SAMPLE:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.frequency = data.getUint16(innerOffset + offset + 4, true);
