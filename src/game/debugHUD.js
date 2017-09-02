@@ -2,7 +2,8 @@ import {map, each, filter, find} from 'lodash';
 
 let debugBox = null;
 let debugContent = null;
-let debugSelector = null;
+let debugInput = null;
+let debugDataList = null;
 let debugSlots = [];
 let debugValues = {};
 let enabled = false;
@@ -11,12 +12,18 @@ let availableLabels = new Set();
 export function initDebugHUD() {
     debugBox = document.getElementById('debugBox');
     debugContent = document.querySelector('#debugBox .content');
-    debugSelector = document.querySelector('#debugBox .selector select');
-    document.querySelector('#debugBox .selector button').onclick = () => {
-        if (debugSelector.value) {
-            debugSlots.push({label: debugSelector.value});
-            refreshSlots();
+    debugInput = document.querySelector('#debugBox .selector input');
+    debugDataList = document.querySelector('#debugBox .selector datalist');
+    document.querySelector('#debugBox .selector button').onclick = validateInput;
+    debugInput.onkeydown = event => {
+        const key = event.code || event.which || event.keyCode;
+        if (key === 'Enter' || key === 13) {
+            validateInput();
         }
+        event.stopPropagation();
+    };
+    debugInput.onkeyup = event => {
+        event.stopPropagation();
     };
     refreshSelector();
 }
@@ -76,9 +83,19 @@ export function refreshSlots() {
 }
 
 export function refreshSelector() {
-    debugSelector.innerHTML = map(
+    debugDataList.innerHTML = map(
         filter([...availableLabels], label => !find(debugSlots, slot => slot.label === label)),
         label => `<option>${label}</option>`).join('');
+}
+
+function validateInput() {
+    if (debugInput.value) {
+        if (!find(debugSlots, slot => slot.label === debugInput.value)) {
+            debugSlots.push({label: debugInput.value});
+            debugInput.value = '';
+            refreshSlots();
+        }
+    }
 }
 
 function debugValue(label, value) {

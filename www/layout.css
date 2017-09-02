@@ -151,10 +151,11 @@ body {
     text-align: right;
 }
 
-#debugBox .selector select {
+#debugBox .selector input {
     font-family: 'Courier', monospace;
     font-size: 14px;
     font-weight: bold;
+    width: 250px;
 }
 
 @-webkit-keyframes cinemaModeAnimIn {

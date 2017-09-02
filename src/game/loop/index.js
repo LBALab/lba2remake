@@ -53,7 +53,7 @@ function updateScene(game, scene, time, step) {
                 updateHero(game, actor, time);
                 debugVector('twinsen.physics.position', actor.physics.position);
             } else {
-                debugVector(`actor.${actor.index}.physics.position`, actor.physics.position);
+                debugVector(`actors[${actor.index}].physics.position`, actor.physics.position);
             }
         }
     });
