@@ -50,9 +50,13 @@ function processCollisions(sections, scene, actor) {
     }
 }
 
+const DEFAULT_GROUND = {
+    height: 0
+};
+
 function getGround(section, position) {
     if (!section)
-        return 0;
+        return DEFAULT_GROUND;
 
     for (let i = 0; i < section.boundingBoxes.length; ++i) {
         const bb = section.boundingBoxes[i];
@@ -65,10 +69,6 @@ function getGround(section, position) {
     }
     return getGroundInfo(section, position);
 }
-
-const DEFAULT_GROUND = {
-    height: 0
-};
 
 function getGroundInfo(section, position) {
     if (!section) {
