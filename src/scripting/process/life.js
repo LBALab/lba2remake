@@ -40,7 +40,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         if (text.type === 3) {
             textBox.className = "bigText";
         } else if (text.type === 9) {
-            if (!actor.threeObject || actor.threeObject.visible == false) {
+            if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
             }
             const main = document.querySelector('#main');
@@ -74,7 +74,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         let textInterval = setInterval(function () {
             textBox.style.display = 'block';
             const char = text.value.charAt(cmdState.currentChar);
-            if (char == '@') {
+            if (char === '@') {
                 const br = document.createElement('br');
                 textBox.appendChild(br);
             } else {
@@ -85,13 +85,16 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 clearInterval(textInterval);
             }
         }, 35);
-        cmdState.listener = function () {
-            cmdState.ended = true;
-            clearInterval(textInterval);
-            if (text.type === 9) {
-                const main = document.querySelector('#main');
-                textBox = document.getElementById(`noframeText_${actor.index}_${id}`);
-                main.removeChild(textBox);
+        cmdState.listener = function(event) {
+            const key = event.code || event.which || event.keyCode;
+            if (key === 'Enter' || key === 13) {
+                cmdState.ended = true;
+                clearInterval(textInterval);
+                if (text.type === 9) {
+                    const main = document.querySelector('#main');
+                    textBox = document.getElementById(`noframeText_${actor.index}_${id}`);
+                    main.removeChild(textBox);
+                }
             }
         };
         window.addEventListener('keydown', cmdState.listener);
