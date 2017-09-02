@@ -9,8 +9,8 @@ export function processPhysicsFrame(game, scene, time) {
         processActorPhysics(scene, actor, time);
     });
     if (scene.isActive) {
-        processTeleports(game, scene);
         processZones(game, scene);
+        processTeleports(game, scene);
     }
 }
 
