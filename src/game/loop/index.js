@@ -48,9 +48,13 @@ function updateScene(game, scene, time, step) {
         if (actor.isKilled)
             return;
         updateActor(scene, actor, time, step);
-        if (actor.index == 0 && scene.isActive) {
-            updateHero(game, actor, time);
-            debugVector('twinsen.physics.position', actor.physics.position);
+        if (scene.isActive) {
+            if (actor.index === 0) {
+                updateHero(game, actor, time);
+                debugVector('twinsen.physics.position', actor.physics.position);
+            } else {
+                debugVector(`actor.${actor.index}.physics.position`, actor.physics.position);
+            }
         }
     });
 }
