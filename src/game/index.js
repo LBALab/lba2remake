@@ -35,6 +35,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             heroRotationSpeed: 0,
             cameraSpeed: new THREE.Vector3(),
             cameraLerp: new THREE.Vector3(),
+            cameraLookAtLerp: new THREE.Vector3(),
             cameraOrientation: new THREE.Quaternion(),
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
