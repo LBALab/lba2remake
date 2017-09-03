@@ -38,7 +38,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             cameraLookAtLerp: new THREE.Vector3(),
             cameraOrientation: new THREE.Quaternion(),
             cameraHeadOrientation: new THREE.Quaternion(),
-            freeCamera: false,
+            freeCamera: params.useVR,
             action: 0,
             jump: false,
             texts: null,
