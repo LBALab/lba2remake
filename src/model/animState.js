@@ -88,12 +88,6 @@ function createShaderBone(state) {
     return bones;
 }
 
-function updateShaderBone(state) {
-    for (let i = 0; i < state.skeleton.length; ++i) {
-        state.matrixBones[i] = state.skeleton[i].m;
-    }
-}
-
 export function updateKeyframe(anim, state, time, realAnimIdx) {
     if (!state) return;
     if (!state.isPlaying) return;
@@ -141,7 +135,6 @@ export function updateKeyframe(anim, state, time, realAnimIdx) {
     }
 
     updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones);
-    updateShaderBone(state);
 
     state.currentKeyframe = nextkeyframe;
 }
@@ -172,7 +165,6 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
     }
 
     updateSkeletonAtKeyframe(state, state.currentKeyframe, nextkeyframe, numBones, nextkeyframe.length);
-    updateShaderBone(state);
 }
 
 function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones, length = keyframe.length) {
