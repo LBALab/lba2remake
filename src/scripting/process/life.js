@@ -35,7 +35,15 @@ export function MESSAGE(cmdState, id) {
 export function MESSAGE_OBJ(cmdState, actor, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
     if (!cmdState.listener) {
-        this.scene.getActor(0).props.dirMode = DirMode.NO_MOVE;
+        const hero = this.scene.getActor(0);
+        hero.props.dirMode = DirMode.NO_MOVE;
+        hero.props.prevEntityIndex = hero.props.entityIndex;
+        hero.props.prevAnimIndex = hero.props.animIndex;
+        hero.props.entityIndex = 0;
+        if (actor.index === 0)
+            hero.props.animIndex = 28; // talking / reading
+        else
+            hero.props.animIndex = 0;
         let textBox = document.getElementById('frameText');
         const text = this.scene.data.texts[id];
         if (text.type === 3) {
