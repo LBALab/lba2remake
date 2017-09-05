@@ -38,7 +38,8 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             cameraLookAtLerp: new THREE.Vector3(),
             cameraOrientation: new THREE.Quaternion(),
             cameraHeadOrientation: new THREE.Quaternion(),
-            freeCamera: params.useVR,
+            freeCamera: false,
+            vr: params.useVR,
             action: 0,
             jump: false,
             texts: null,
@@ -109,6 +110,9 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
                 makeGyroscopeControls(game),
                 makeGamepadControls(game)
             ];
+            if (!isMobile) {
+                controls.push(makeKeyboardControls(game));
+            }
         }
         else if (isMobile) {
             controls = [

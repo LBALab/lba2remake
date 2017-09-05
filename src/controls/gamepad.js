@@ -21,10 +21,15 @@ export function makeGamepadControls(game: any) {
 }
 
 function dpadValueChangeHandler(game, {detail: {x, y, name}}) {
-    if (name == 'rightStick') {
-        heroFPSControl(game, x, y);
+    if (game.controlsState.freeCamera) {
+        if (name === 'rightStick') {
+            heroFPSControl(game, x, y);
+        } else {
+            game.controlsState.cameraSpeed.z = -y * 0.45;
+        }
     } else {
-        game.controlsState.cameraSpeed.z = -y * 0.45;
+        game.controlsState.heroSpeed = y >= 0.5 ? 1 : (y <= -0.5 ? -1 : 0);
+        game.controlsState.heroRotationSpeed = -x;
     }
 }
 

@@ -5,17 +5,35 @@ export function processFollow3DMovement(controlsState, camera, scene, time) {
     const heroPos = new THREE.Vector3(0, 0.08, 0);
     heroPos.applyMatrix4(hero.threeObject.matrixWorld);
 
-    const cameraPos = new THREE.Vector3(0, 0.15, -0.2);
-    cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+    if (controlsState.vr) {
+        const cameraPos = new THREE.Vector3(0, 0.15, -0.2);
+        cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
 
-    controlsState.cameraLerp.lerpVectors(camera.position, cameraPos, 0.025);
-    camera.position.set(controlsState.cameraLerp.x, controlsState.cameraLerp.y, controlsState.cameraLerp.z);
-    if (camera.position.distanceTo(cameraPos) > 1) {
-        camera.position.copy(cameraPos);
+        if (camera.position.distanceTo(cameraPos) > 0.3) {
+            const orientation = [cameraPos.x - heroPos.x, cameraPos.z - heroPos.z];
+            camera.position.copy(cameraPos);
+            const euler = new THREE.Euler();
+            const q = controlsState.cameraOrientation;
+            euler.setFromQuaternion(q, 'YXZ');
+            euler.y = Math.atan2(-orientation[1], orientation[0]) + Math.PI / 2;
+            q.setFromEuler(euler);
+        }
+
+        camera.quaternion.copy(controlsState.cameraOrientation);
+        camera.quaternion.multiply(controlsState.cameraHeadOrientation);
+    } else {
+        const cameraPos = new THREE.Vector3(0, 0.15, -0.2);
+        cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+
+        controlsState.cameraLerp.lerpVectors(camera.position, cameraPos, 0.025);
+        camera.position.set(controlsState.cameraLerp.x, controlsState.cameraLerp.y, controlsState.cameraLerp.z);
+        if (camera.position.distanceTo(cameraPos) > 1) {
+            camera.position.copy(cameraPos);
+        }
+
+        controlsState.cameraLookAtLerp.lerpVectors(controlsState.cameraLookAtLerp.clone(), heroPos, 0.1);
+        camera.lookAt(controlsState.cameraLookAtLerp);
     }
-
-    controlsState.cameraLookAtLerp.lerpVectors(controlsState.cameraLookAtLerp.clone(), heroPos, 0.1);
-    camera.lookAt(controlsState.cameraLookAtLerp);
 }
 
 export function processFree3DMovement(controlsState, camera, scene, time) {
