@@ -9,8 +9,8 @@ export function processPhysicsFrame(game, scene, time) {
         processActorPhysics(scene, actor, time);
     });
     if (scene.isActive) {
-        processTeleports(game, scene);
         processZones(game, scene);
+        processTeleports(game, scene);
     }
 }
 
@@ -36,15 +36,15 @@ function processTeleports(game, scene) {
     const hero = scene.getActor(0);
     const pos = hero.physics.position.clone();
     pos.y += 0.005;
-    if (scene.isIsland && (pos.x < 0 || pos.z < 0 || pos.x > 2 || pos.z > 2)) {
+    if (scene.isIsland && (pos.x < 0.01 || pos.z < 0.01 || pos.x > 1.99 || pos.z > 1.99)) {
         const globalPos = new THREE.Vector3();
         globalPos.applyMatrix4(hero.threeObject.matrixWorld);
         const sideScene = find(scene.sideScenes, sideScene => {
             const nodePos = sideScene.sceneNode.position;
-            return globalPos.x > nodePos.x
-                && globalPos.x < nodePos.x + 2
-                && globalPos.z > nodePos.z
-                && globalPos.z < nodePos.z + 2;
+            return globalPos.x > nodePos.x + 0.01
+                && globalPos.x < nodePos.x + 1.99
+                && globalPos.z > nodePos.z + 0.01
+                && globalPos.z < nodePos.z + 1.99;
         });
         if (sideScene) {
             game.getSceneManager().goto(sideScene.index, (newScene) => {

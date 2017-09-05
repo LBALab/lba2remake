@@ -35,12 +35,21 @@ export function MESSAGE(cmdState, id) {
 export function MESSAGE_OBJ(cmdState, actor, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
     if (!cmdState.listener) {
+        const hero = this.scene.getActor(0);
+        hero.props.dirMode = DirMode.NO_MOVE;
+        hero.props.prevEntityIndex = hero.props.entityIndex;
+        hero.props.prevAnimIndex = hero.props.animIndex;
+        hero.props.entityIndex = 0;
+        if (actor.index === 0)
+            hero.props.animIndex = 28; // talking / reading
+        else
+            hero.props.animIndex = 0;
         let textBox = document.getElementById('frameText');
         const text = this.scene.data.texts[id];
         if (text.type === 3) {
             textBox.className = "bigText";
         } else if (text.type === 9) {
-            if (!actor.threeObject || actor.threeObject.visible == false) {
+            if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
             }
             const main = document.querySelector('#main');
@@ -74,7 +83,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         let textInterval = setInterval(function () {
             textBox.style.display = 'block';
             const char = text.value.charAt(cmdState.currentChar);
-            if (char == '@') {
+            if (char === '@') {
                 const br = document.createElement('br');
                 textBox.appendChild(br);
             } else {
@@ -85,13 +94,18 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 clearInterval(textInterval);
             }
         }, 35);
-        cmdState.listener = function () {
-            cmdState.ended = true;
-            clearInterval(textInterval);
-            if (text.type === 9) {
-                const main = document.querySelector('#main');
-                textBox = document.getElementById(`noframeText_${actor.index}_${id}`);
-                main.removeChild(textBox);
+        const that = this;
+        cmdState.listener = function(event) {
+            const key = event.code || event.which || event.keyCode;
+            if (key === 'Enter' || key === 13) {
+                cmdState.ended = true;
+                clearInterval(textInterval);
+                if (text.type === 9) {
+                    const main = document.querySelector('#main');
+                    textBox = document.getElementById(`noframeText_${actor.index}_${id}`);
+                    main.removeChild(textBox);
+                }
+                that.scene.getActor(0).props.dirMode = DirMode.MANUAL;
             }
         };
         window.addEventListener('keydown', cmdState.listener);
@@ -216,6 +230,7 @@ export function FOUND_OBJECT(cmdState, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
     const textBox = document.getElementById('frameText');
     if (!cmdState.listener) {
+        this.scene.getActor(0).props.dirMode = DirMode.NO_MOVE;
         this.game.getState().flags.inventory[id] = 1;
         //this.actor.isVisible = false;
         const soundFxSource = this.game.getAudioManager().getSoundFxSource();
@@ -245,9 +260,14 @@ export function FOUND_OBJECT(cmdState, id) {
                 clearInterval(textInterval);
             }
         }, 35);
-        cmdState.listener = function () {
-            cmdState.ended = true;
-            clearInterval(textInterval);
+        const that = this;
+        cmdState.listener = function(event) {
+            const key = event.code || event.which || event.keyCode;
+            if (key === 'Enter' || key === 13) {
+                cmdState.ended = true;
+                clearInterval(textInterval);
+                that.scene.getActor(0).props.dirMode = DirMode.MANUAL;
+            }
         };
         window.addEventListener('keydown', cmdState.listener);
         voiceSource.load(text.index, -1, () => {
@@ -358,11 +378,14 @@ export function PLAY_SMK(cmdState, video) {
         videoTag.appendChild(source);
         main.appendChild(videoTag);
 
-        cmdState.listener = function () {
-            cmdState.ended = true;
-            videoTag.removeEventListener('ended', cmdState.listener);
-            main.removeChild(videoTag);
-            window.game.pause();
+        cmdState.listener = function(event) {
+            const key = event.code || event.which || event.keyCode;
+            if (key === 'Enter' || key === 13) {
+                cmdState.ended = true;
+                videoTag.removeEventListener('ended', cmdState.listener);
+                main.removeChild(videoTag);
+                window.game.pause();
+            }
         };
         window.addEventListener('keydown', cmdState.listener);
         videoTag.addEventListener('ended', cmdState.listener);

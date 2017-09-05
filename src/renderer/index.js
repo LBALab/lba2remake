@@ -146,7 +146,7 @@ function setupVR(baseRenderer) {
     const params = Cardboard.uriToParams('https://vr.google.com/cardboard/download/?p=CgdUd2luc3VuEgRBZHJpHfT91DwlYOVQPSoQAAC0QgAAtEIAALRCAAC0QlgANQIrBz06CClcjz0K1yM8UABgAA');
     console.log(params);
     const stereoEffect = new StereoEffect(baseRenderer, params);
-    stereoEffect.eyeSeparation = 0.006;
+    stereoEffect.eyeSeparation = -0.0012;
     stereoEffect.focalLength = 0.0122;
     stereoEffect.setSize(window.innerWidth, window.innerHeight);
     return stereoEffect;

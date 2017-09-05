@@ -10,7 +10,7 @@ import {loadPaletteTexture} from '../texture';
 
 const push = Array.prototype.push;
 
-function prepareGeometries(texture, matrixBones, matrixRotation, palette, envInfo, ambience) {
+function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, ambience) {
     const paletteTexture = loadPaletteTexture(palette);
     const light = getLightVector(ambience);
     return {
@@ -31,7 +31,8 @@ function prepareGeometries(texture, matrixBones, matrixRotation, palette, envInf
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
                     light: {value: light},
-                    bones: { value: matrixBones, type:'m4v' },
+                    bonePos: { value: bones.position, type:'v3v' },
+                    boneRot: { value: bones.rotation, type:'v4v' },
                     rotationMatrix: { value: matrixRotation, type:'m4v' }
                 }
             })
@@ -55,7 +56,8 @@ function prepareGeometries(texture, matrixBones, matrixRotation, palette, envInf
                     texture: {value: texture},
                     palette: {value: paletteTexture},
                     light: {value: light},
-                    bones: { value: matrixBones, type:'m4v' },
+                    bonePos: { value: bones.position, type:'v3v' },
+                    boneRot: { value: bones.rotation, type:'v4v' },
                     rotationMatrix: { value: matrixRotation, type:'m4v' }
                 }
             })
@@ -80,7 +82,8 @@ function prepareGeometries(texture, matrixBones, matrixRotation, palette, envInf
                     texture: {value: texture},
                     palette: {value: paletteTexture},
                     light: {value: light},
-                    bones: { value: matrixBones, type:'m4v' },
+                    bonePos: { value: bones.position, type:'v3v' },
+                    boneRot: { value: bones.rotation, type:'v4v' },
                     rotationMatrix: { value: matrixRotation, type:'m4v' }
                 }
             })
@@ -88,8 +91,8 @@ function prepareGeometries(texture, matrixBones, matrixRotation, palette, envInf
     };
 }
 
-export function loadMesh(body, texture, matrixBones, matrixRotation, palette, envInfo, ambience) {
-    const geometries = loadGeometry(body, texture, matrixBones, matrixRotation, palette, envInfo, ambience);
+export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo, ambience) {
+    const geometries = loadGeometry(body, texture, bones, matrixRotation, palette, envInfo, ambience);
     const object = new THREE.Object3D();
 
     _.each(geometries, ({positions, uvs, colors, normals, bones, linePositions, lineNormals, lineColors, lineBones, material}, name) => {
@@ -122,8 +125,8 @@ export function loadMesh(body, texture, matrixBones, matrixRotation, palette, en
     return object;
 }
 
-function loadGeometry(body, texture, matrixBones, matrixRotation, palette, envInfo, ambience) {
-    const geometries = prepareGeometries(texture, matrixBones, matrixRotation, palette, envInfo, ambience)
+function loadGeometry(body, texture, bones, matrixRotation, palette, envInfo, ambience) {
+    const geometries = prepareGeometries(texture, bones, matrixRotation, palette, envInfo, ambience)
 
     loadFaceGeometry(geometries, body);
     loadSphereGeometry(geometries, body);

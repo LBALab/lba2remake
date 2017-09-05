@@ -5,7 +5,11 @@ import {getRotation, getStep} from '../utils/lba';
 export function loadAnimState() {
     return {
         skeleton: null,
-        matrixBones: null,
+        bones: {
+            rotation: null,
+            position: null,
+            matrix: null
+        },
         matrixRotation: new THREE.Matrix4(),
         currentFrame: 0,
         loopFrame: 0,
@@ -39,7 +43,7 @@ export function resetAnimState(state) {
 export function initSkeleton(state, skeleton, loopFrame) {
     state.skeleton = skeleton;
     state.loopFrame = loopFrame;
-    state.matrixBones = createShaderBone(state);
+    state.bones = createShaderBone(state);
     return state;
 }
 
@@ -54,6 +58,8 @@ export function createSkeleton(body) {
             parent: bone.parent,
             vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
             pos: new THREE.Vector3(0, 0, 0),
+            p: new THREE.Vector3(0, 0, 0),
+            r: new THREE.Vector4(0, 0, 0, 0),
             m: new THREE.Matrix4(),
             type: 1, // translation by default
             euler: null,
@@ -78,20 +84,22 @@ export function createSkeleton(body) {
 }
 
 function createShaderBone(state) {
-    let bones = [];
+    let bones = {
+        position: [],
+        rotation: [],
+        matrix: []
+    };
     for (let i = 0; i < state.skeleton.length; ++i) {
-        bones.push(state.skeleton[i].m);
+        bones.position.push(state.skeleton[i].p);
+        bones.rotation.push(state.skeleton[i].r);
+        bones.matrix.push(state.skeleton[i].m);
     }
     for (let i = 0; i < 30 - state.skeleton.length; ++i) {
-        bones.push(new THREE.Matrix4());
+        bones.position.push(new THREE.Vector3(0, 0, 0));
+        bones.rotation.push(new THREE.Vector4(0, 0, 0, 0));
+        bones.matrix.push(new THREE.Matrix4());
     }
     return bones;
-}
-
-function updateShaderBone(state) {
-    for (let i = 0; i < state.skeleton.length; ++i) {
-        state.matrixBones[i] = state.skeleton[i].m;
-    }
 }
 
 export function updateKeyframe(anim, state, time, realAnimIdx) {
@@ -141,7 +149,6 @@ export function updateKeyframe(anim, state, time, realAnimIdx) {
     }
 
     updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones);
-    updateShaderBone(state);
 
     state.currentKeyframe = nextkeyframe;
 }
@@ -158,7 +165,7 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
     if (!nextkeyframe) return;
     state.keyframeLength = nextkeyframe.length;
 
-    if (state.currentTime > state.currentKeyframe.length) {
+    if (state.currentTime > nextkeyframe.length) {
         state.realAnimIdx = realAnimIdx;
         state.prevRealAnimIdx = realAnimIdx;
         state.currentTime = 0;
@@ -171,12 +178,11 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
         numBones = state.skeleton.length;
     }
 
-    updateSkeletonAtKeyframe(state, state.currentKeyframe, nextkeyframe, numBones);
-    updateShaderBone(state);
+    updateSkeletonAtKeyframe(state, state.currentKeyframe, nextkeyframe, numBones, nextkeyframe.length);
 }
 
-function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones) {
-    const interpolation = state.currentTime / keyframe.length; 
+function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones, length = keyframe.length) {
+    const interpolation = state.currentTime / length;
     for (let i = 0; i < numBones; ++i) {
         const s = state.skeleton[i];
         const bf = keyframe.boneframes[i];
@@ -208,6 +214,7 @@ function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones) {
 }
 
 const tmpM = new THREE.Matrix4();
+const tmpQ = new THREE.Quaternion();
 
 function updateSkeletonHierarchy(skeleton, index) {
     const s = skeleton[index];
@@ -231,6 +238,10 @@ function updateSkeletonHierarchy(skeleton, index) {
         tmpM.copy(p.m);
         tmpM.multiply(s.m);
         s.m.copy(tmpM);
+        tmpQ.setFromRotationMatrix(s.m);
+        tmpQ.normalize();
+        s.p.setFromMatrixPosition(s.m);
+        s.r.set(tmpQ.x, tmpQ.y, tmpQ.z, tmpQ.w);
     } else {
         p.m.identity();
     }

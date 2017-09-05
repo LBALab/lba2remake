@@ -28,7 +28,7 @@ class ViewController: UIViewController {
         let defaults = UserDefaults.standard
         var urlStr = defaults.string(forKey: "url")
         if urlStr == nil {
-            urlStr = "http://adri42.bitbucket.org/lba2/"
+            urlStr = "http://192.168.0.12:8080/#scene=42&useVR=true"
         }
         let url = URL(string: urlStr!)
         let req = URLRequest(url: url!)

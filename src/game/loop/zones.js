@@ -1,7 +1,5 @@
-import THREE from 'three';
-import {each, find} from 'lodash';
-
 import {getHtmlColor} from '../../scene'
+import {DirMode} from '../../game/actors';
 
 export const ZoneOpcode = [
     { opcode: 0, command: "CUBE", callback: CUBE },
@@ -53,10 +51,12 @@ function TEXT(game, scene, zone, hero) {
     const voiceSource = game.getAudioManager().getVoiceSource();
     if (game.controlsState.action == 1) {
         if (!scene.zoneState.listener) {
+            scene.getActor(0).props.dirMode = DirMode.NO_MOVE;
+
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
-            hero.props.animIndex = 41;
+            hero.props.animIndex = 28; // talking / reading
             scene.zoneState.currentChar = 0;
 
             const textBox = document.getElementById('frameText');
@@ -82,9 +82,13 @@ function TEXT(game, scene, zone, hero) {
                     clearInterval(textInterval);
                 }
             }, 35);
-            scene.zoneState.listener = function() {
-                scene.zoneState.ended = true;
-                clearInterval(textInterval);
+            scene.zoneState.listener = function(event) {
+                const key = event.code || event.which || event.keyCode;
+                if (key === 'Enter' || key === 13) {
+                    scene.zoneState.ended = true;
+                    clearInterval(textInterval);
+                    scene.getActor(0).props.dirMode = DirMode.MANUAL;
+                }
             };
 
             window.addEventListener('keydown', scene.zoneState.listener);

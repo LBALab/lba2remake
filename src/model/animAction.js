@@ -16,7 +16,27 @@ export function processAnimAction(entityAnim, animState) {
     });
 }
 
-export function HITTING(action) {
+export function NOP() {
+
+}
+
+export function BODY(action) {
+
+}
+
+export function BODP(action) {
+
+}
+
+export function ANIM(action) {
+
+}
+
+export function ANIP(action) {
+
+}
+
+export function HIT(action) {
 
 }
 
@@ -27,7 +47,7 @@ export function SAMPLE(action) {
     });
 }
 
-export function SAMPLE_FREQ(action) {
+export function SAMPLE_RND(action) {
     let frequency = getRandom(0, action.frequency) + 0x1000 - (action.frequency >> 1);
     if (frequency < 0 || frequency > 24000) {
         frequency = 0;
@@ -38,11 +58,11 @@ export function SAMPLE_FREQ(action) {
     });
 }
 
-export function THROW_EXTRA_BONUS(action) {
+export function THROW(action) {
 
 }
 
-export function THROW_MAGIC_BALL(action) {
+export function THROW_MAGIC(action) {
 
 }
 
@@ -50,11 +70,11 @@ export function SAMPLE_REPEAT(action) {
 
 }
 
-export function EXTRA_AIMING(action) {
+export function THROW_SEARCH(action) {
 
 }
 
-export function EXTRA_THROW(action) {
+export function THROW_ALPHA(action) {
 
 }
 
@@ -62,10 +82,11 @@ export function SAMPLE_STOP(action) {
 
 }
 
-export function UNKNOWN_14(action) {
+export function ZV(action) {
+
 }
 
-export function SAMPLE_BRICK_1(action, animState) {
+export function LEFT_STEP(action, animState) {
     let sampleIndex = animState.floorSound;
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
@@ -77,7 +98,7 @@ export function SAMPLE_BRICK_1(action, animState) {
     }
 }
 
-export function SAMPLE_BRICK_2(action, animState) {
+export function RIGHT_STEP(action, animState) {
     let sampleIndex = animState.floorSound;
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
@@ -89,32 +110,108 @@ export function SAMPLE_BRICK_2(action, animState) {
     }
 }
 
-export function HERO_HITTING(action) {
+export function HIT_HERO(action) {
 
 }
 
-export function EXTRA_THROW_2(action) {
+export function THROW_3D(action) {
 
 }
 
-export function EXTRA_THROW_3(action) {
+export function THROW_3D_ALPHA(action) {
 
 }
 
-export function EXTRA_AIMING_2(action) {
+export function THROW_3D_SEARCH(action) {
 
 }
 
-export function UNKNOWN_29(action) {
+export function THROW_3D_MAGIC(action) {
+
 }
 
-export function UNKNOWN_39(action) {
+export function SUPER_HIT(action) {
+
+}
+
+export function THROW_OBJ_3D(action) {
+
+}
+
+export function PATH(action) {
+
+}
+
+export function FLOW(action) {
+
+}
+
+export function FLOW_3D(action) {
+
+}
+
+export function THROW_DART(action) {
+
+}
+
+export function SHIELD(action) {
+
+}
+
+export function SAMPLE_MAGIC(action) {
+}
+
+export function THROW_3D_CONQUE(action) {
+
+}
+
+export function ZV_ANIMIT(action) {
+
+}
+
+export function IMPACT(action) {
+
+}
+
+export function RENVOIE(action) {
+
+}
+
+export function RENVOYABLE(action) {
+
+}
+
+export function TRANSPARENT(action) {
+
+}
+
+export function SCALE(action) {
+
+}
+
+export function LEFT_JUMP(action) {
+
+}
+
+export function RIGHT_JUMP(action) {
+
+}
+
+export function NEW_SAMPLE(action) {
     const soundFxSource = game.getAudioManager().getSoundFxSource();
     soundFxSource.load(action.sampleIndex, () => {
         soundFxSource.play();
     });
 }
 
-export function NOP() {
+export function IMPACT_3D(action) {
+
+}
+
+export function THROW_MAGIC_EXTRA(action) {
+
+}
+
+export function THROW_FOUDRE(action) {
 
 }
