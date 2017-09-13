@@ -22,43 +22,41 @@ export function updateHero(game, hero, time) {
     if (hero.props.dirMode !== DirMode.MANUAL)
         return;
     const behaviour = game.getState().hero.behaviour;
-    handleBehaviourChanges(game, hero, behaviour);
+    handleBehaviourChanges(hero, behaviour);
     processActorMovement(game.controlsState, hero, time, behaviour);
 }
 
-function handleBehaviourChanges(game, hero, behaviour) {
+function handleBehaviourChanges(hero, behaviour) {
     if (hero.props.entityIndex !== behaviour) {
         hero.props.entityIndex = behaviour;
-        toggleJump(game.controlsState, hero, false);
+        toggleJump(hero, false);
         hero.resetAnimState();
     }
 }
 
-function toggleJump(controlsState, hero, value) {
-    controlsState.isJumping = value;
-    hero.props.runtimeFlags.hasGravityByAnim = value;
+function toggleJump(hero, value) {
+    hero.props.runtimeFlags.isJumping = value;
+    hero.props.runtimeFlags.isWalking = value;
+    hero.props.runtimeFlags.hasGravityByAnim = value; // check in the original game how this is actually set
 }
 
 function processActorMovement(controlsState, hero, time, behaviour) {
     let animIndex = hero.props.animIndex;
-    if (controlsState.isJumping && hero.animState.hasEnded){
-        toggleJump(controlsState, hero, false);
+    if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded){
+        toggleJump(hero, false);
     }
-    if (!controlsState.isJumping) {
-        hero.isWalking = false;
-        hero.props.runtimeFlags.hasGravityByAnim = false;
+    if (!hero.props.runtimeFlags.isJumping) {
+        toggleJump(hero, false);
         animIndex = 0;
         if (controlsState.heroSpeed !== 0) {
-            hero.isWalking = true;
+            hero.props.runtimeFlags.isWalking = true;
             animIndex = controlsState.heroSpeed === 1 ? 1 : 2;
             if (controlsState.sideStep === 1) {
                 animIndex = controlsState.heroSpeed === 1 ? 42 : 43;
             }
         }
         if (controlsState.jump === 1) {
-            toggleJump(controlsState, hero, true);
-            hero.isWalking = true;
-            hero.props.runtimeFlags.hasGravityByAnim = true; // check in the original game how this is actually set
+            toggleJump(hero, true);
             animIndex = 14; // jump
             if (controlsState.heroSpeed === 1) {
                 animIndex = 25; // jump while running
@@ -66,7 +64,8 @@ function processActorMovement(controlsState, hero, time, behaviour) {
         }
     }
     if (controlsState.heroRotationSpeed !== 0) {
-        toggleJump(controlsState, hero, false);
+        toggleJump(hero, false);
+        hero.props.runtimeFlags.isWalking = true;
         if (!controlsState.sideStep) {
             const euler = new THREE.Euler();
             euler.setFromQuaternion(hero.physics.orientation, 'YXZ');
@@ -77,7 +76,6 @@ function processActorMovement(controlsState, hero, time, behaviour) {
             }
             hero.physics.orientation.setFromEuler(euler);
         } else {
-            hero.isWalking = true;
             animIndex = controlsState.heroRotationSpeed === 1 ? 40 : 41;
             if (behaviour === BehaviourMode.ATHLETIC) {
                 // for some reason Sportif mode as the animations step inversed

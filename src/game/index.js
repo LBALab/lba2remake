@@ -42,7 +42,6 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             vr: params.useVR,
             action: 0,
             jump: 0,
-            isJumping: false,
             texts: null,
             textIndex: 4 // game text
         },

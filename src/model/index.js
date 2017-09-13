@@ -80,17 +80,17 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
     return model;
 }
 
-export function updateModel(sceneIsActive: any, model: Model, animState: any, entityIdx: number, bodyIdx: number, animIdx: number, time: Time) {
+export function updateModel(sceneIsActive: any, model: any, animState: any, entityIdx: number, bodyIdx: number, animIdx: number, time: Time) {
     const entity = model.entities[entityIdx];
     const entityAnim = getAnim(entity, animIdx);
-    if (entityAnim != null) {
+    if (entityAnim !== null) {
         const realAnimIdx = entityAnim.animIndex;
         const anim = loadAnim(model, model.anims, realAnimIdx);
         animState.loopFrame = anim.loopFrame;
-        if (animState.prevRealAnimIdx != -1 && realAnimIdx != animState.prevRealAnimIdx) {
+        if (animState.prevRealAnimIdx !== -1 && realAnimIdx !== animState.prevRealAnimIdx) {
             updateKeyframeInterpolation(anim, animState, time, realAnimIdx);
         }
-        if (realAnimIdx == animState.realAnimIdx || animState.realAnimIdx == -1) {
+        if (realAnimIdx === animState.realAnimIdx || animState.realAnimIdx === -1) {
             updateKeyframe(anim, animState, time, realAnimIdx);
         }
         if (sceneIsActive) {
