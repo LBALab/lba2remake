@@ -35,31 +35,34 @@ function handleBehaviourChanges(game, hero, behaviour) {
 }
 
 function toggleJump(controlsState, hero, value) {
-    controlsState.jump = value;
-    hero.props.flags.hasCollisions = !value; // temporary to allow jump on Y axis
+    controlsState.isJumping = value;
+    hero.props.runtimeFlags.hasGravityByAnim = value;
 }
 
 function processActorMovement(controlsState, hero, time, behaviour) {
     let animIndex = hero.props.animIndex;
-    if (controlsState.jump && hero.animState.hasEnded){
+    if (controlsState.isJumping && hero.animState.hasEnded){
         toggleJump(controlsState, hero, false);
-    } else {
+    }
+    if (!controlsState.isJumping) {
         hero.isWalking = false;
+        hero.props.runtimeFlags.hasGravityByAnim = false;
         animIndex = 0;
-    }
-    if (controlsState.heroSpeed !== 0) {
-        hero.isWalking = true;
-        animIndex = controlsState.heroSpeed === 1 ? 1 : 2;
-        if (controlsState.sideStep === 1) {
-            animIndex = controlsState.heroSpeed === 1 ? 42 : 43;
-        }
-    }
-    if (controlsState.jump) {
-        toggleJump(controlsState, hero, true);
-        hero.isWalking = true;
-        animIndex = 14; // jump
         if (controlsState.heroSpeed !== 0) {
-            animIndex = 25; // jump while running
+            hero.isWalking = true;
+            animIndex = controlsState.heroSpeed === 1 ? 1 : 2;
+            if (controlsState.sideStep === 1) {
+                animIndex = controlsState.heroSpeed === 1 ? 42 : 43;
+            }
+        }
+        if (controlsState.jump === 1) {
+            toggleJump(controlsState, hero, true);
+            hero.isWalking = true;
+            hero.props.runtimeFlags.hasGravityByAnim = true; // check in the original game how this is actually set
+            animIndex = 14; // jump
+            if (controlsState.heroSpeed === 1) {
+                animIndex = 25; // jump while running
+            }
         }
     }
     if (controlsState.heroRotationSpeed !== 0) {

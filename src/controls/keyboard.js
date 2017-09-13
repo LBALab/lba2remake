@@ -56,7 +56,7 @@ function keyDownHandler(game, event) {
         case 32:
         case 'Space':
             if (game.getState().hero.behaviour === 1) {
-                game.controlsState.jump = true;
+                game.controlsState.jump = 1;
             }
             break;
 
@@ -137,6 +137,10 @@ function keyUpHandler(game, event) {
         case 'ArrowRight':
             if (game.controlsState.heroRotationSpeed === -1)
                 game.controlsState.heroRotationSpeed = 0;
+            break;
+        case 32:
+        case 'Space':
+            game.controlsState.jump = 0;
             break;
 
         case 90:
