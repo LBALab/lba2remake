@@ -8,7 +8,7 @@ export function updateActor(scene: any, actor: Actor, time: any, step: any) {
         actor.runScripts(time, step);
     }
 
-    if (actor.model != null && actor.threeObject && actor.threeObject.visible) {
+    if (actor.model !== null && actor.threeObject && actor.threeObject.visible) {
         const model = actor.model;
         actor.animState.matrixRotation.makeRotationFromQuaternion(actor.physics.orientation);
         updateModel(scene.isActive, model, actor.animState, actor.props.entityIndex, actor.props.bodyIndex, actor.props.animIndex, time);
@@ -20,14 +20,14 @@ export function updateActor(scene: any, actor: Actor, time: any, step: any) {
 
 function updateMovements(actor: Actor, time: any) {
     const delta = time.delta * 1000;
-    if (actor.isTurning) {
+    if (actor.props.runtimeFlags.isTurning) {
         let angle = ((actor.physics.temp.destAngle - actor.physics.temp.angle) * delta) / (actor.props.speed * 10);
         angle = Math.atan2(Math.sin(angle), Math.cos(angle));
         actor.physics.temp.angle += angle;
         const euler = new THREE.Euler(0, actor.physics.temp.angle, 0, 'XZY');
         actor.physics.orientation.setFromEuler(euler);
     }
-    if (actor.isWalking) {
+    if (actor.props.runtimeFlags.isWalking) {
         actor.physics.temp.position.set(0,0,0);
 
         const speedZ = ((actor.animState.step.z * delta) / actor.animState.keyframeLength);

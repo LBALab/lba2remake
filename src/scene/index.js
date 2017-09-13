@@ -404,7 +404,11 @@ function createRuntimeFlags() {
         unknown20: false,
         hasManualFrame: false,
         waitPosition: false,
-        forceFalling: false
+        forceFalling: false,
+        // not from original from this point
+        isJumping: false,
+        isWalking: false,
+        isTurning: false
     };
 }
 

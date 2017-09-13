@@ -19,6 +19,7 @@ type ActorProps = {
     pos: [number, number, number],
     life: number,
     flags: ActorFlags,
+    runtimeFlags: any,
     entityIndex: number,
     bodyIndex: number,
     animIndex: number,
@@ -45,8 +46,6 @@ export type Actor = {
     animState: any,
     isVisible: boolean,
     isSprite: boolean,
-    isTurning: boolean,
-    isWalking: boolean,
     isKilled: boolean,
     runScripts: ?Function
 }
@@ -88,8 +87,6 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
         isKilled: false,
         isVisible: props.flags.isVisible && (props.life > 0 || props.bodyIndex >= 0),
         isSprite: props.flags.isSprite,
-        isWalking: false,
-        isTurning: false,
         hasCollidedWithActor: -1,
         floorSound: -1,
         model: null,
@@ -104,20 +101,20 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
             let destAngle = angleTo(this.physics.position, point);
             const signCurr = this.physics.temp.destAngle > 0 ? 1 : -1;
             const signTgt = destAngle > 0 ? 1 : -1;
-            if (signCurr != signTgt && Math.abs(destAngle) > Math.PI / 4) {
-                if (signCurr == -1) {
+            if (signCurr !== signTgt && Math.abs(destAngle) > Math.PI / 4) {
+                if (signCurr === -1) {
                     destAngle -= 2 * Math.PI;
                 } else {
                     destAngle += 2 * Math.PI;
                 }
             }
             this.physics.temp.destAngle = destAngle;
-            this.isWalking = true;
-            this.isTurning = true;
+            this.props.runtimeFlags.isWalking = true;
+            this.props.runtimeFlags.isTurning = true;
             return this.getDistance(point);
         },
         setAngle: function(angle) {
-            this.isTurning = true;
+            this.props.runtimeFlags.isTurning = true;
             this.props.angle = angle;
             this.physics.temp.destAngle = angleToRad(angle);
         },
@@ -128,8 +125,8 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
             return getDistanceLba(this.getDistance(pos));
         },
         stop: function() {
-            this.isWalking = false;
-            this.isTurning = false;
+            this.props.runtimeFlags.isWalking = false;
+            this.props.runtimeFlags.isTurning = false;
             this.physics.temp.destAngle = this.physics.temp.angle;
             delete this.physics.temp.destination;
         }
@@ -139,7 +136,7 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
     actor.physics.orientation.setFromEuler(euler);
 
     // only if not sprite actor
-    if (actor.isVisible && !actor.isSprite && props.bodyIndex != 0xFF) {
+    if (actor.isVisible && !actor.isSprite && props.bodyIndex !== 0xFF) {
         loadModel(props.entityIndex, props.bodyIndex, props.animIndex, animState, envInfo, ambience, (model) => {
             //model.mesh.visible = actor.isVisible;
             model.mesh.position.copy(actor.physics.position);
