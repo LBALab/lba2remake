@@ -143,17 +143,17 @@ export function CAN_FALL(flag) {
 
 export function SET_DIRMODE(dirMode) {
     this.actor.props.dirMode = dirMode;
-    if (dirMode == DirMode.MANUAL) {
-        this.actor.isTurning = false;
+    if (dirMode === DirMode.MANUAL) {
+        this.actor.props.runtimeFlags.isTurning = false;
     }
 }
 
 export function SET_DIRMODE_OBJ(index, dirMode) {
     const actor = this.scene.getActor(index);
     if (actor) {
-        actor.props.dirMode = dirMode;
-        if (dirMode == DirMode.MANUAL) {
-            actor.isTurning = false;
+        actor.props.runtimeFlags.dirMode = dirMode;
+        if (dirMode === DirMode.MANUAL) {
+            actor.props.runtimeFlags.isTurning = false;
         }
     }
 }

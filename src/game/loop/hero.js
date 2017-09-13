@@ -75,6 +75,7 @@ function processActorMovement(controlsState, hero, time, behaviour) {
                 animIndex = controlsState.heroRotationSpeed === 1 ? 3 : 4;
             }
             hero.physics.orientation.setFromEuler(euler);
+            //hero.props.runtimeFlags.isTurning = true;
         } else {
             animIndex = controlsState.heroRotationSpeed === 1 ? 40 : 41;
             if (behaviour === BehaviourMode.ATHLETIC) {
