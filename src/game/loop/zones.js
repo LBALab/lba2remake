@@ -42,6 +42,7 @@ function CUBE(game, scene, zone, hero) {
             newHero.physics.position.z = zone.props.info0 / 0x4000;
             newHero.physics.temp.angle = hero.physics.temp.angle;
             newHero.physics.orientation.copy(hero.physics.orientation);
+            newHero.threeObject.quaternion.copy(newHero.physics.orientation);
             newHero.threeObject.position.copy(newHero.physics.position);
         });
     }

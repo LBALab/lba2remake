@@ -19,6 +19,7 @@ import {loadZone} from './zones';
 import {parseQueryParams} from '../utils';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initSceneDebug, resetSceneDebug} from '../scripting/debug';
+import {initCameraMovement} from './loop/cameras';
 
 export function createSceneManager(game, renderer, callback: Function) {
     let scene = null;
@@ -84,6 +85,8 @@ export function createSceneManager(game, renderer, callback: Function) {
                             });
                         }
                         pCallback(scene);
+                        scene.sceneNode.updateMatrixWorld();
+                        initCameraMovement(game.controlsState, renderer, scene);
                         game.loaded();
                     });
                 }
