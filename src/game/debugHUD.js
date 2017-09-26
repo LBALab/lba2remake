@@ -1,4 +1,4 @@
-import {map, mapValues, each, filter, find, isFunction, isArray} from 'lodash';
+import {map, mapValues, each, find, isFunction, isArray} from 'lodash';
 import THREE from 'three';
 
 let debugBox = null;
@@ -26,6 +26,7 @@ export function initDebugHUD() {
     debugInput.onkeyup = event => {
         event.stopPropagation();
     };
+    loadHUDSetup();
 }
 
 export function debugHUDFrame(scope) {
@@ -67,9 +68,10 @@ export function switchHUD() {
     enabled = !enabled;
     console.log('Switching debug HUD: ', enabled ? 'ON' : 'OFF');
     debugBox.style.display = enabled ? 'block' : 'none';
+    saveHUDSetup();
 }
 
-export function refreshSlots() {
+export function refreshSlots(save = true) {
     while (debugContent.hasChildNodes()) {
         debugContent.removeChild(debugContent.lastChild);
     }
@@ -96,6 +98,9 @@ export function refreshSlots() {
         }
         debugContent.appendChild(slot.element);
     });
+    if (save) {
+        saveHUDSetup();
+    }
 }
 
 export function refreshSelector(scope) {
@@ -123,6 +128,28 @@ export function refreshSelector(scope) {
         ++i;
     }
     debugDataList.innerHTML = map(obj, (value, label) => `<option>${prefix}${label}</option>`).join('');
+}
+
+function loadHUDSetup() {
+    if ('localStorage' in window) {
+        const debug_hud_str = window.localStorage.getItem('debug_hud');
+        if (debug_hud_str) {
+            const debug_hud = JSON.parse(debug_hud_str);
+            enabled = debug_hud.enabled;
+            debugSlots = map(debug_hud.slots, slot => ({ label: slot }));
+            debugBox.style.display = enabled ? 'block' : 'none';
+            refreshSlots(false);
+        }
+    }
+}
+
+function saveHUDSetup() {
+    if ('localStorage' in window) {
+        window.localStorage.setItem('debug_hud', JSON.stringify({
+            enabled: enabled,
+            slots: map(debugSlots, slot => slot.label)
+        }));
+    }
 }
 
 function validateInput() {
