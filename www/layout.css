@@ -133,6 +133,9 @@ body {
     animation: cinemaModeAnimOut 3s forwards;
 }
 #debugBox {
+    max-width: 50%;
+    max-height: 90%;
+    overflow: auto;
     display: none;
     color: white;
     position: fixed;

@@ -1,4 +1,13 @@
-import {map, mapValues, each, find, isFunction, isArray} from 'lodash';
+import {
+    map,
+    take,
+    each,
+    find,
+    isFunction,
+    isArray,
+    times,
+    constant
+} from 'lodash';
 import THREE from 'three';
 
 let debugBox = null;
@@ -37,13 +46,13 @@ export function debugHUDFrame(scope) {
         }
         each(debugSlots, slot => {
             const tgt = getValueFromLabel(scope, slot.label);
-            if (tgt !== undefined) {
+            if (tgt !== undefined && tgt !== null) {
                 slot.title.style.color = 'white';
-                slot.content.innerHTML = debugValue(tgt);
             } else {
                 slot.title.style.color = 'darkgrey';
-                slot.content.innerHTML = '<span style="color:darkgrey;font-style:italic;">N/A</span>';
+                //slot.content.innerHTML = '<span style="color:darkgrey;font-style:italic;"></span>';
             }
+            slot.content.innerHTML = mapValue(tgt);
         });
     }
 }
@@ -53,7 +62,7 @@ function getValueFromLabel(scope, label) {
 
     let obj = scope;
     let i = 0;
-    while (obj !== undefined && i < path.length) {
+    while (obj !== undefined && obj !== null && i < path.length) {
         const arrayExpr = path[i].match(/(\w+)\[(\d+)\]/);
         if (arrayExpr)
             obj = obj[arrayExpr[1]][arrayExpr[2]];
@@ -162,42 +171,52 @@ function validateInput() {
     }
 }
 
-function debugValue(value) {
-    if (value instanceof THREE.Vector3) {
-        return formatVector(value);
-    } else {
-        return formatObject(value);
-    }
-}
-
-function formatVector(vec) {
-    const components = map(vec.toArray(), (n, i) => `<span style="color:${['red', 'lime', 'lightskyblue'][i]};">${n.toFixed(3)}</span>`);
-    return components.join(', ');
-}
-
-function formatObject(obj) {
-    const valueMapper = v => {
-        if (isFunction(v))
-            return undefined;
-        if (isArray(v))
-            return `type::::[${v.length}]`;
-        if (v instanceof Object)
-            return 'type::::{}';
-        return v;
-    };
-    let objFmt = JSON.stringify(obj, function(key, value) {
-        if (value === obj) {
-            return mapValues(value, valueMapper);
+function mapValue(value, root = true) {
+    if (value === undefined || value === null)
+        return `<span style="color:darkgrey;font-style:italic;">${value}</span>`;
+    if (typeof(value) === 'string')
+        return `<span style="color:orange;">"${value}"</span>`;
+    if (isFunction(value))
+        return `function(${times(value.length, constant('_')).join(', ')})`;
+    if (isArray(value))
+        return `[${value.length}]`;
+    if (value instanceof Object) {
+        if (value instanceof THREE.Vector2
+            || value instanceof THREE.Vector3
+            || value instanceof THREE.Vector4) {
+            return mapVector(value);
+        } else if (value instanceof THREE.Quaternion) {
+          return mapQuat(value);
+        } else if (root) {
+            const marker = isArray(value) ? '[]' : '{}';
+            const type = !isArray(value) && value.type ? `${value.type} ` : '';
+            const subValues =
+                isArray(value)
+                    ? map(value, (v, key) => `&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(v, false)}`)
+                    : map(value, (v, key) => `&nbsp;&nbsp;<span style="color:mediumpurple;">${key}</span>: ${mapValue(v, false)}`);
+            return`${type}${marker[0]}<br/>${subValues.join(',<br/>')}<br/>${marker[1]}`;
+        } else if (value.type) {
+            return `${value.type} {...}`;
+        } else {
+            return '{...}';
         }
-        return valueMapper(value);
-    }, 2);
+    }
+    if (typeof(value) === 'boolean')
+        return `<span style="color:${value ? 'lime' : 'red'};font-style:italic;">${value}</span>`;
+    return value;
+}
 
-    if (objFmt === undefined)
-        objFmt = valueMapper(obj);
+const ARRAY_COLOR = ['red', 'lime', 'lightskyblue', 'yellow'];
 
-    objFmt = objFmt.replace(/\n/g, '<br/>');
-    objFmt = objFmt.replace(/ /g, '&nbsp;');
-    objFmt = objFmt.replace(/"type::::([\w\[\]\{\}]+)"/g, '$1');
+function mapVector(vec) {
+    const mapComp = (n, i) => `<span style="color:${ARRAY_COLOR[i]};">${n.toFixed(3)}</span>`;
+    const va = vec.toArray();
+    const components = map(va, mapComp);
+    return `Vector${va.length}(${components.join(', ')})`;
+}
 
-    return objFmt;
+function mapQuat(quat) {
+    const mapComp = (n, i) => `<span style="color:${ARRAY_COLOR[i]};">${n.toFixed(3)}</span>`;
+    const components = map(quat.toArray(), mapComp);
+    return `Quaternion(${components.join(', ')})`;
 }
