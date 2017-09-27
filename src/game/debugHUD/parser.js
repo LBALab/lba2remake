@@ -39,7 +39,7 @@ const MATCH = () => {
 
 function parseExpression(e, end) {
     IN('EXPR');
-    const res = parseFunctionCall(e) || parseDotExpr(e) || parseArrayExpr(e) || parseIdentifier(e) || parseIndex(e);
+    const res = parseDotExpr(e) || parseFunctionCall(e) || parseArrayExpr(e) || parseIdentifier(e) || parseIndex(e);
     if (res && e[res.offset] === end) {
         MATCH();
         return res;
@@ -80,7 +80,7 @@ function parseIndex(e) {
 
 function parseDotExpr(e) {
     IN('DOT');
-    const left = parseArrayExpr(e) || parseIdentifier(e);
+    const left = parseFunctionCall(e) || parseArrayExpr(e) || parseIdentifier(e);
     if (left && e[left.offset] === '.') {
         const e_right = e.substr(left.offset + 1);
         const right = parseExpression(e_right);
