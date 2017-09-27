@@ -1,3 +1,5 @@
+import {identity} from 'lodash';
+
 export const T = {
     IDENTIFIER: 'IDENTIFIER',
     INDEX: 'INDEX',
@@ -6,42 +8,76 @@ export const T = {
     FUNC_CALL: 'FUNC_CALL'
 };
 
+export const Trim = {
+    NONE: 0,
+    LEFT: 1,
+    RIGHT: 2,
+    BOTH: 3
+};
+
 const OK = (node, offset) => ({node, offset});
 
-function parseExpression(e, end) {
-    const res = parseDotExpr(e) || parseFunctionCall(e) || parseArrayExpr(e) || parseIdentifier(e) || parseIndex(e);
-    if (res && e[res.offset] === end) {
-        return res;
+function parseExpression(e, end, trim = Trim.BOTH) {
+    const res =
+        parseDotExpr(e, trim) ||
+        parseFunctionCall(e, trim) ||
+        parseArrayExpr(e, trim) ||
+        parseIdentifier(e, trim) ||
+        parseIndex(e, trim);
+
+    if (res) {
+        let offset = res.offset;
+        const rTrim = trim & Trim.RIGHT;
+        if (rTrim === Trim.RIGHT) {
+            while (e[offset] === ' ')
+                offset++;
+        }
+
+        if (e[offset] === end)
+            return res;
     }
 }
 
 window.parse = parseExpression;
 
-function parseIdentifier(e) {
-    const m = e.match(/^[A-Za-z_]\w*/);
+const ID_RE = [];
+ID_RE[Trim.NONE] = /^([A-Za-z_]\w*)/;
+ID_RE[Trim.LEFT] = /^ *([A-Za-z_]\w*)/;
+ID_RE[Trim.RIGHT] = /^([A-Za-z_]\w*) */;
+ID_RE[Trim.BOTH] = /^ *([A-Za-z_]\w*) */;
+
+function parseIdentifier(e, trim) {
+    const m = e.match(ID_RE[trim]);
     if (m) {
         return OK({
             type: T.IDENTIFIER,
-            value: m[0]
+            value: m[1]
         }, m[0].length);
     }
 }
 
-function parseIndex(e) {
-    const m = e.match(/^\d+/);
+const INDEX_RE = [];
+INDEX_RE[Trim.NONE] = /^(\d+)/;
+INDEX_RE[Trim.LEFT] = /^ *(\d+)/;
+INDEX_RE[Trim.RIGHT] = /^(\d+) */;
+INDEX_RE[Trim.BOTH] = /^ *(\d+) */;
+
+function parseIndex(e, trim) {
+    const m = e.match(INDEX_RE[trim]);
     if (m) {
         return OK({
             type: T.INDEX,
-            value: parseInt(m[0])
+            value: parseInt(m[1])
         }, m[0].length);
     }
 }
 
-function parseDotExpr(e) {
-    const left = parseFunctionCall(e) || parseArrayExpr(e) || parseIdentifier(e);
+function parseDotExpr(e, trim) {
+    const lTrim = trim & Trim.LEFT;
+    const left = parseFunctionCall(e, lTrim) || parseArrayExpr(e, lTrim) || parseIdentifier(e, lTrim);
     if (left && e[left.offset] === '.') {
         const e_right = e.substr(left.offset + 1);
-        const right = parseExpression(e_right);
+        const right = parseExpression(e_right, undefined, trim & Trim.RIGHT);
         if (right && right.node.type !== T.INDEX) {
             return OK({
                 type: T.DOT_EXPR,
@@ -52,11 +88,11 @@ function parseDotExpr(e) {
     }
 }
 
-function parseArrayExpr(e) {
-    const left = parseIdentifier(e);
+function parseArrayExpr(e, trim) {
+    const left = parseIdentifier(e, trim | Trim.RIGHT);
     if (left && e[left.offset] === '[') {
         const e_right = e.substr(left.offset + 1);
-        const right = parseExpression(e_right, ']');
+        const right = parseExpression(e_right, ']', trim.BOTH);
         if (right) {
             return OK({
                 type: T.ARRAY_EXPR,
@@ -67,14 +103,14 @@ function parseArrayExpr(e) {
     }
 }
 
-function parseFunctionCall(e) {
-    const left = parseIdentifier(e);
+function parseFunctionCall(e, trim) {
+    const left = parseIdentifier(e, trim | Trim.RIGHT);
     if (left && e[left.offset] === '(') {
         let offset = left.offset + 1;
         let args = [];
         while (true) {
             const e_arg = e.substr(offset);
-            const arg = parseExpression(e_arg, ',');
+            const arg = parseExpression(e_arg, ',', Trim.BOTH);
             if (arg) {
                 args.push(arg.node);
                 offset += arg.offset + 1;
@@ -83,7 +119,7 @@ function parseFunctionCall(e) {
             }
         }
         const e_last = e.substr(offset);
-        const last = parseExpression(e_last, ')');
+        const last = parseExpression(e_last, ')', Trim.BOTH);
         if (last || e_last[0] === ')') {
             if (last)
                 args.push(last.node);
