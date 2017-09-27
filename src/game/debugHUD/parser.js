@@ -2,7 +2,8 @@ export const T = {
     IDENTIFIER: 'IDENTIFIER',
     INDEX: 'INDEX',
     DOT_EXPR: 'DOT_EXPR',
-    ARRAY_EXPR: 'ARRAY_EXPR'
+    ARRAY_EXPR: 'ARRAY_EXPR',
+    FUNC_CALL: 'FUNC_CALL'
 };
 
 const OK = (node, offset) => ({node, offset});
@@ -38,7 +39,7 @@ const MATCH = () => {
 
 function parseExpression(e, end) {
     IN('EXPR');
-    const res = parseDotExpr(e) || parseArrayExpr(e) || parseIdentifier(e) || parseIndex(e);
+    const res = parseFunctionCall(e) || parseDotExpr(e) || parseArrayExpr(e) || parseIdentifier(e) || parseIndex(e);
     if (res && e[res.offset] === end) {
         MATCH();
         return res;
@@ -111,4 +112,36 @@ function parseArrayExpr(e) {
         }
     }
     OUT('ARR');
+}
+
+function parseFunctionCall(e) {
+    IN('FUNC');
+    const left = parseIdentifier(e);
+    if (left && e[left.offset] === '(') {
+        let offset = left.offset + 1;
+        let args = [];
+        while (true) {
+            const e_arg = e.substr(offset);
+            const arg = parseExpression(e_arg, ',');
+            if (arg) {
+                args.push(arg.node);
+                offset += arg.offset + 1;
+            } else {
+                break;
+            }
+        }
+        const e_last = e.substr(offset);
+        const last = parseExpression(e_last, ')');
+        if (last || e_last[0] === ')') {
+            if (last)
+                args.push(last.node);
+            MATCH();
+            return OK({
+                type: T.FUNC_CALL,
+                left: left.node,
+                args: args
+            }, offset + (last ? last.offset : 0) + 1);
+        }
+    }
+    OUT('FUNC');
 }
