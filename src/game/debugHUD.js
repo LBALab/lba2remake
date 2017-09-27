@@ -1,6 +1,5 @@
 import {
     map,
-    take,
     each,
     find,
     isFunction,
@@ -50,7 +49,6 @@ export function debugHUDFrame(scope) {
                 slot.title.style.color = 'white';
             } else {
                 slot.title.style.color = 'darkgrey';
-                //slot.content.innerHTML = '<span style="color:darkgrey;font-style:italic;"></span>';
             }
             slot.content.innerHTML = mapValue(tgt);
         });
@@ -58,6 +56,14 @@ export function debugHUDFrame(scope) {
 }
 
 function getValueFromLabel(scope, label) {
+    if (label[0] === '=') {
+        try {
+            return eval(label.substr(1));
+        }
+        catch (e) {
+            return e.toString();
+        }
+    }
     const path = label.split('.');
 
     let obj = scope;
@@ -89,7 +95,10 @@ export function refreshSlots(save = true) {
             const button = document.createElement('button');
             const content = document.createElement('span');
             const title = document.createElement('span');
-            title.innerText = ` ${slot.label}: `;
+            if (slot.label[0] === '=')
+                title.innerHTML = ` <i>${slot.label.substr(1)}</i>: `;
+            else
+                title.innerText = ` ${slot.label}: `;
             button.style.color = 'black';
             button.style.background = 'white';
             button.innerText = '-';
@@ -178,7 +187,7 @@ function mapValue(value, root = true) {
         return `<span style="color:orange;">"${value}"</span>`;
     if (isFunction(value))
         return `function(${times(value.length, constant('_')).join(', ')})`;
-    if (isArray(value))
+    if (isArray(value) && !root)
         return `[${value.length}]`;
     if (value instanceof Object) {
         if (value instanceof THREE.Vector2
