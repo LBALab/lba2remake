@@ -8,6 +8,7 @@ import {
     constant
 } from 'lodash';
 import THREE from 'three';
+import {parseExpression, T} from './parser';
 
 let debugBox = null;
 let debugContent = null;
@@ -56,14 +57,6 @@ export function debugHUDFrame(scope) {
 }
 
 function getValueFromLabel(scope, label) {
-    if (label[0] === '=') {
-        try {
-            return eval(label.substr(1));
-        }
-        catch (e) {
-            return e.toString();
-        }
-    }
     const path = label.split('.');
 
     let obj = scope;
@@ -95,10 +88,7 @@ export function refreshSlots(save = true) {
             const button = document.createElement('button');
             const content = document.createElement('span');
             const title = document.createElement('span');
-            if (slot.label[0] === '=')
-                title.innerHTML = ` <i>${slot.label.substr(1)}</i>: `;
-            else
-                title.innerText = ` ${slot.label}: `;
+            title.innerText = ` ${slot.label}: `;
             button.style.color = 'black';
             button.style.background = 'white';
             button.innerText = '-';
@@ -108,6 +98,8 @@ export function refreshSlots(save = true) {
             slot.element.appendChild(content);
             slot.content = content;
             slot.title = title;
+            //slot.program = parseExpression('');
+            console.log(T);
             button.onclick = () => {
                 const idx = debugSlots.indexOf(slot);
                 debugSlots.splice(idx, 1);
