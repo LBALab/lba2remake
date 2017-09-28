@@ -1,5 +1,3 @@
-import {identity} from 'lodash';
-
 export const T = {
     IDENTIFIER: 'IDENTIFIER',
     INDEX: 'INDEX',
@@ -19,7 +17,7 @@ const OK = (node, offset) => ({node, offset});
 
 function parseExpression(e, end, trim = Trim.BOTH) {
     const res =
-        parseDotExpr(e, trim) ||
+        parseDotExpr(e, end, trim) ||
         parseFunctionCall(e, trim) ||
         parseArrayExpr(e, trim) ||
         parseIdentifier(e, trim) ||
@@ -72,12 +70,12 @@ function parseIndex(e, trim) {
     }
 }
 
-function parseDotExpr(e, trim) {
+function parseDotExpr(e, end, trim) {
     const lTrim = trim & Trim.LEFT;
     const left = parseFunctionCall(e, lTrim) || parseArrayExpr(e, lTrim) || parseIdentifier(e, lTrim);
     if (left && e[left.offset] === '.') {
         const e_right = e.substr(left.offset + 1);
-        const right = parseExpression(e_right, undefined, trim & Trim.RIGHT);
+        const right = parseExpression(e_right, end, trim & Trim.RIGHT);
         if (right && right.node.type !== T.INDEX) {
             return OK({
                 type: T.DOT_EXPR,
