@@ -89,11 +89,13 @@ function parseCall(e, trim) {
             target = brackets || args;
             if (target) {
                 offset += target.offset;
-                const rTrim = trim & Trim.RIGHT;
-                if (rTrim === Trim.RIGHT) {
-                    while (e[offset] === ' ') {
-                        offset++;
-                    }
+                let tCount = 0;
+                while (e[offset] === ' ') {
+                    offset++;
+                    tCount++;
+                }
+                if (tCount > 0 && e[offset] === '.') {
+                    return;
                 }
                 if (brackets) {
                     res = {

@@ -102,6 +102,11 @@ const tests = [
     buildTest('a[0].x', 'a[0].x'),
     buildTest('x.a[0]', 'x.a[0]'),
 
+    buildTest('a.b() () [0].c', 'a.b()()[0].c'),
+    buildTest('a.b() [1] [0].c', 'a.b()[1][0].c'),
+    buildTest('a.b() () [0] .c', undefined),
+    buildTest('a. b() () [0].c', undefined),
+    buildTest('a. b() () [0] .c', undefined),
     buildTest('a.b().c()[0][5454]', 'a.b().c()[0][5454]'),
     buildTest(' a.b ( ).c ( ) [0] [5454] ', 'a.b().c()[0][5454]'),
     buildTest('a(0,x2,5,c(r[0].nn5)).y', 'a(0,x2,5,c(r[0].nn5)).y'),
