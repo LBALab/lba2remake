@@ -120,14 +120,32 @@ function parseFunctionCall(e, trim) {
         }
         const e_last = e.substr(offset);
         const last = parseExpression(e_last, ')', Trim.BOTH);
-        if (last || e_last[0] === ')') {
-            if (last)
-                args.push(last.node);
+        let ok = false;
+        if (last) {
+            args.push(last.node);
+            offset += last.offset + 1;
+            ok = true;
+        } else {
+            while (e[offset] === ' ') {
+                offset++;
+            }
+            if (e[offset] === ')') {
+                offset++;
+                ok = true;
+            }
+        }
+        if (ok) {
+            const rTrim = trim & Trim.RIGHT;
+            if (rTrim === Trim.RIGHT) {
+                while (e[offset] === ' ') {
+                    offset++;
+                }
+            }
             return OK({
                 type: T.FUNC_CALL,
                 left: left.node,
                 args: args
-            }, offset + (last ? last.offset : 0) + 1);
+            }, offset);
         }
     }
 }
