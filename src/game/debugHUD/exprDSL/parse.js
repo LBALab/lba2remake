@@ -12,8 +12,7 @@ const OK = (node, offset) => ({node, offset});
 export function parseExpression(e, end, trim = Trim.BOTH) {
     const res =
         parseDotExpr(e, end, trim) ||
-        parseFunctionCall(e, trim) ||
-        parseArrayExpr(e, trim) ||
+        parseCall(e, trim) ||
         parseIdentifier(e, trim) ||
         parseIndex(e, trim);
 
@@ -64,7 +63,7 @@ function parseIndex(e, trim) {
 
 function parseDotExpr(e, end, trim) {
     const lTrim = trim & Trim.LEFT;
-    const left = parseFunctionCall(e, lTrim) || parseArrayExpr(e, lTrim) || parseIdentifier(e, lTrim);
+    const left = parseCall(e, lTrim) || parseIdentifier(e, lTrim);
     if (left && e[left.offset] === '.') {
         const e_right = e.substr(left.offset + 1);
         const right = parseExpression(e_right, end, trim & Trim.RIGHT);
@@ -78,25 +77,59 @@ function parseDotExpr(e, end, trim) {
     }
 }
 
-function parseArrayExpr(e, trim) {
+function parseCall(e, trim) {
     const left = parseIdentifier(e, trim | Trim.RIGHT);
-    if (left && e[left.offset] === '[') {
-        const e_right = e.substr(left.offset + 1);
-        const right = parseExpression(e_right, ']', trim.BOTH);
-        if (right) {
-            return OK({
-                type: T.ARRAY_EXPR,
-                left: left.node,
-                right: right.node
-            }, left.offset + right.offset + 2);
+    if (left) {
+        let res, target;
+        let offset = left.offset;
+        do {
+            const e_s = e.substr(offset);
+            const brackets = parseBrackets(e_s);
+            const args = !brackets && parseArgumentList(e_s);
+            target = brackets || args;
+            if (target) {
+                offset += target.offset;
+                const rTrim = trim & Trim.RIGHT;
+                if (rTrim === Trim.RIGHT) {
+                    while (e[offset] === ' ') {
+                        offset++;
+                    }
+                }
+                if (brackets) {
+                    res = {
+                        type: T.ARRAY_EXPR,
+                        left: res ? res : left.node,
+                        right: brackets.node
+                    };
+                } else {
+                    res = {
+                        type: T.FUNC_CALL,
+                        left: res ? res : left.node,
+                        args: args.node
+                    };
+                }
+            }
+        } while (target);
+
+        if (res) {
+            return OK(res, offset);
         }
     }
 }
 
-function parseFunctionCall(e, trim) {
-    const left = parseIdentifier(e, trim | Trim.RIGHT);
-    if (left && e[left.offset] === '(') {
-        let offset = left.offset + 1;
+function parseBrackets(e) {
+    if (e[0] === '[') {
+        const e_content = e.substr(1);
+        const content = parseExpression(e_content, ']', Trim.BOTH);
+        if (content) {
+            return OK(content.node, content.offset + 2);
+        }
+    }
+}
+
+function parseArgumentList(e) {
+    if (e[0] === '(') {
+        let offset = 1;
         let args = [];
         while (true) {
             const e_arg = e.substr(offset);
@@ -110,32 +143,18 @@ function parseFunctionCall(e, trim) {
         }
         const e_last = e.substr(offset);
         const last = parseExpression(e_last, ')', Trim.BOTH);
-        let ok = false;
         if (last) {
             args.push(last.node);
             offset += last.offset + 1;
-            ok = true;
-        } else {
+            return OK(args, offset);
+        } else if (args.length === 0) {
             while (e[offset] === ' ') {
                 offset++;
             }
             if (e[offset] === ')') {
                 offset++;
-                ok = true;
+                return OK(args, offset);
             }
-        }
-        if (ok) {
-            const rTrim = trim & Trim.RIGHT;
-            if (rTrim === Trim.RIGHT) {
-                while (e[offset] === ' ') {
-                    offset++;
-                }
-            }
-            return OK({
-                type: T.FUNC_CALL,
-                left: left.node,
-                args: args
-            }, offset);
         }
     }
 }

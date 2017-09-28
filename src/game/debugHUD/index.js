@@ -8,10 +8,12 @@ import {
     constant
 } from 'lodash';
 import THREE from 'three';
-import {parse, generate} from './exprDSL';
+import {parse, generate, test} from './exprDSL';
 
 window.parse = parse;
 window.generate = generate;
+
+test();
 
 let debugBox = null;
 let debugContent = null;
