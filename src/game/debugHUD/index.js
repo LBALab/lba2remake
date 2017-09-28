@@ -8,7 +8,10 @@ import {
     constant
 } from 'lodash';
 import THREE from 'three';
-import {parseExpression, T} from './parser';
+import {parse, generate} from './exprDSL';
+
+window.parse = parse;
+window.generate = generate;
 
 let debugBox = null;
 let debugContent = null;
@@ -99,7 +102,6 @@ export function refreshSlots(save = true) {
             slot.content = content;
             slot.title = title;
             //slot.program = parseExpression('');
-            console.log(T);
             button.onclick = () => {
                 const idx = debugSlots.indexOf(slot);
                 debugSlots.splice(idx, 1);

@@ -1,10 +1,4 @@
-export const T = {
-    IDENTIFIER: 'IDENTIFIER',
-    INDEX: 'INDEX',
-    DOT_EXPR: 'DOT_EXPR',
-    ARRAY_EXPR: 'ARRAY_EXPR',
-    FUNC_CALL: 'FUNC_CALL'
-};
+import T from './types';
 
 export const Trim = {
     NONE: 0,
@@ -15,7 +9,7 @@ export const Trim = {
 
 const OK = (node, offset) => ({node, offset});
 
-function parseExpression(e, end, trim = Trim.BOTH) {
+export function parseExpression(e, end, trim = Trim.BOTH) {
     const res =
         parseDotExpr(e, end, trim) ||
         parseFunctionCall(e, trim) ||
@@ -35,8 +29,6 @@ function parseExpression(e, end, trim = Trim.BOTH) {
             return res;
     }
 }
-
-window.parse = parseExpression;
 
 const ID_RE = [];
 ID_RE[Trim.NONE] = /^([A-Za-z_]\w*)/;
