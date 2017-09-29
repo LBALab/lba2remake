@@ -25,6 +25,31 @@ export function generate(node) {
     }
 }
 
+export function execute(node, scope) {
+    if (node) {
+        switch (node.type) {
+            case T.IDENTIFIER:
+                return scope[node.value];
+            case T.INDEX:
+                return node.value;
+            case T.FUNC_CALL:
+                const func = execute(node.left, scope);
+                const args = map(node.args, arg => execute(arg, scope));
+                return func.apply(scope, args);
+            case T.ARRAY_EXPR:
+                const left = execute(node.left, scope);
+                const right = execute(node.right, scope);
+                return left[right];
+            case T.DOT_EXPR:
+                if (node.right.type === T.IDENTIFIER) {
+                    return execute(node.left, scope)[node.right.value];
+                } else {
+                    return execute(node.left, scope)[execute(node.right, scope)];
+                }
+        }
+    }
+}
+
 export function test() {
     console.log('Running exprDSL tests');
 
