@@ -44,7 +44,8 @@ export function execute(node, scope) {
                 if (node.right.type === T.IDENTIFIER) {
                     return execute(node.left, scope)[node.right.value];
                 } else {
-                    return execute(node.left, scope)[execute(node.right, scope)];
+                    const left = execute(node.left, scope);
+                    return execute(node.right, left);
                 }
         }
     }

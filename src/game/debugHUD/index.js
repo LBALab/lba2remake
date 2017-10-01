@@ -49,31 +49,21 @@ export function debugHUDFrame(scope) {
             needSelectorRefresh = false;
         }
         each(debugSlots, slot => {
-            const tgt = getValueFromLabel(scope, slot.label);
-            if (tgt !== undefined && tgt !== null) {
-                slot.title.style.color = 'white';
-            } else {
-                slot.title.style.color = 'darkgrey';
+            try {
+                let tgt = execute(slot.program, scope);
+                if (tgt !== undefined && tgt !== null) {
+                    slot.title.style.color = 'white';
+                } else {
+                    slot.title.style.color = 'darkgrey';
+                }
+                slot.content.innerHTML = mapValue(tgt);
             }
-            slot.content.innerHTML = mapValue(tgt);
+            catch (e) {
+                slot.title.style.color = 'darkgrey';
+                slot.content.innerHTML = `<i style="color:darkred;">${e.toString()}</i>`;
+            }
         });
     }
-}
-
-function getValueFromLabel(scope, label) {
-    const path = label.split('.');
-
-    let obj = scope;
-    let i = 0;
-    while (obj !== undefined && obj !== null && i < path.length) {
-        const arrayExpr = path[i].match(/(\w+)\[(\d+)\]/);
-        if (arrayExpr)
-            obj = obj[arrayExpr[1]][arrayExpr[2]];
-        else
-            obj = obj[path[i]];
-        ++i;
-    }
-    return obj;
 }
 
 export function switchHUD() {
@@ -102,7 +92,7 @@ export function refreshSlots(save = true) {
             slot.element.appendChild(content);
             slot.content = content;
             slot.title = title;
-            //slot.program = parseExpression('');
+            slot.program = parse(slot.label);
             button.onclick = () => {
                 const idx = debugSlots.indexOf(slot);
                 debugSlots.splice(idx, 1);
