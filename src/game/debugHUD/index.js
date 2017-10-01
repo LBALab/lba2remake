@@ -99,7 +99,6 @@ export function refreshSlots(save = true) {
             slot.element.appendChild(content);
             slot.content = content;
             slot.title = title;
-            slot.program = parse(slot.label);
             button.onclick = () => {
                 const idx = debugSlots.indexOf(slot);
                 debugSlots.splice(idx, 1);
@@ -125,7 +124,7 @@ function loadHUDSetup() {
         if (debug_hud_str) {
             const debug_hud = JSON.parse(debug_hud_str);
             enabled = debug_hud.enabled;
-            debugSlots = map(debug_hud.slots, slot => ({ label: slot }));
+            debugSlots = map(debug_hud.slots, slot => ({ label: slot, program: parse(slot) }));
             debugBox.style.display = enabled ? 'block' : 'none';
             refreshSlots(false);
         }
@@ -144,9 +143,12 @@ function saveHUDSetup() {
 function validateInput() {
     if (debugInput.value) {
         if (!find(debugSlots, slot => slot.label === debugInput.value)) {
-            debugSlots.push({label: debugInput.value});
-            debugInput.value = '';
-            refreshSlots();
+            const program = parse(debugInput.value);
+            if (program) {
+                debugSlots.push({label: debugInput.value, program});
+                debugInput.value = '';
+                refreshSlots();
+            }
         }
     }
 }
