@@ -10,6 +10,8 @@ import {
 import THREE from 'three';
 import {parse, generate, execute} from './exprDSL';
 
+import autoComplete from './autocomplete';
+
 window.parse = parse;
 window.generate = generate;
 window.execute = execute;
@@ -32,6 +34,11 @@ export function initDebugHUD() {
         const key = event.code || event.which || event.keyCode;
         if (key === 'Enter' || key === 13) {
             validateInput();
+        } else if (key === 'Tab' || key === 9) {
+            if (debugDataList.children.length > 0) {
+                debugInput.value = debugDataList.children[0].value;
+            }
+            event.preventDefault();
         }
         event.stopPropagation();
         needSelectorRefresh = true;
@@ -107,30 +114,9 @@ export function refreshSlots(save = true) {
 }
 
 export function refreshSelector(scope) {
-    const label = debugInput.value;
-    const path = label.split('.');
-
-    let obj = scope;
-    let i = 0;
-    let prefix = '';
-    while (i < path.length) {
-        const arrayExpr = path[i].match(/(\w+)\[(\d+)\]/);
-        const prevObj = obj;
-
-        if (arrayExpr)
-            obj = obj[arrayExpr[1]][arrayExpr[2]];
-        else
-            obj = obj[path[i]];
-
-        if (obj === undefined || obj === null) {
-            obj = prevObj;
-            break;
-        } else {
-            prefix += path[i] + '.';
-        }
-        ++i;
-    }
-    debugDataList.innerHTML = map(obj, (value, label) => `<option>${prefix}${label}</option>`).join('');
+    const data = autoComplete(debugInput.value, scope);
+    debugDataList.innerHTML = data.html;
+    debugInput.style.backgroundColor = data.color;
 }
 
 function loadHUDSetup() {
@@ -197,6 +183,9 @@ function mapValue(value, root = true) {
     }
     if (typeof(value) === 'boolean')
         return `<span style="color:${value ? 'lime' : 'red'};font-style:italic;">${value}</span>`;
+    if (typeof(value) === 'number' && !Number.isInteger(value)) {
+        return value.toFixed(3);
+    }
     return value;
 }
 
