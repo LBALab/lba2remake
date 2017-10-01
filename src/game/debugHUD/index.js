@@ -206,11 +206,11 @@ function mapVector(vec) {
     const mapComp = (n, i) => `<span style="color:${ARRAY_COLOR[i]};">${n.toFixed(3)}</span>`;
     const va = vec.toArray();
     const components = map(va, mapComp);
-    return `Vector${va.length}(${components.join(', ')})`;
+    return `Vec${va.length}(${components.join(', ')})`;
 }
 
 function mapQuat(quat) {
     const mapComp = (n, i) => `<span style="color:${ARRAY_COLOR[i]};">${n.toFixed(3)}</span>`;
     const components = map(quat.toArray(), mapComp);
-    return `Quaternion(${components.join(', ')})`;
+    return `Quat(${components.join(', ')})`;
 }
