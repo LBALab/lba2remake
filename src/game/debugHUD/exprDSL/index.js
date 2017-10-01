@@ -25,7 +25,31 @@ export function generate(node) {
     }
 }
 
-export function execute(node, scope) {
+const MACROS = {
+    map: (args, scope) => {
+        const left = execute(args[0], scope);
+        const tgt = map(left, (s) => {
+            return s !== undefined ? execute(args[1], s) : undefined;
+        });
+        if (left.__filtered__) {
+            tgt.__filtered__ = true;
+        }
+        return tgt;
+    },
+    filter: (args, scope) => {
+        const left = execute(args[0], scope);
+        const tgt = map(left, (s) => {
+            const v = execute(args[1], s);
+            if (v) {
+                return s;
+            }
+        });
+        tgt.__filtered__ = true;
+        return tgt;
+    }
+};
+
+export function execute(node, scope, root = scope) {
     if (node) {
         switch (node.type) {
             case T.IDENTIFIER:
@@ -33,6 +57,11 @@ export function execute(node, scope) {
             case T.INDEX:
                 return node.value;
             case T.FUNC_CALL:
+                if (scope === root && node.left.type === T.IDENTIFIER) {
+                    if (node.left.value in MACROS) {
+                        return MACROS[node.left.value](node.args, scope);
+                    }
+                }
                 const func = execute(node.left, scope);
                 const args = map(node.args, arg => execute(arg, scope));
                 return func.apply(scope, args);
@@ -45,7 +74,7 @@ export function execute(node, scope) {
                     return execute(node.left, scope)[node.right.value];
                 } else {
                     const left = execute(node.left, scope);
-                    return execute(node.right, left);
+                    return execute(node.right, left, root);
                 }
         }
     }

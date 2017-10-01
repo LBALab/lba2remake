@@ -172,10 +172,21 @@ function mapValue(value, root = true) {
         } else if (root) {
             const marker = isArray(value) ? '[]' : '{}';
             const type = !isArray(value) && value.type ? `${value.type} ` : '';
-            const subValues =
-                isArray(value)
-                    ? map(value, (v, key) => `&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(v, false)}`)
-                    : map(value, (v, key) => `&nbsp;&nbsp;<span style="color:mediumpurple;">${key}</span>: ${mapValue(v, false)}`);
+            let subValues;
+            if (isArray(value)) {
+                if (value.__filtered__) {
+                    subValues = [];
+                    each(value, (v, key) => {
+                        if (v !== undefined) {
+                            subValues.push(`&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(v, false)}`);
+                        }
+                    });
+                } else {
+                    subValues = map(value, (v, key) => `&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(v, false)}`);
+                }
+            } else {
+                subValues = map(value, (v, key) => `&nbsp;&nbsp;<span style="color:mediumpurple;">${key}</span>: ${mapValue(v, false)}`);
+            }
             return`${type}${marker[0]}<br/>${subValues.join(',<br/>')}<br/>${marker[1]}`;
         } else if (value.type) {
             return `${value.type} {...}`;
