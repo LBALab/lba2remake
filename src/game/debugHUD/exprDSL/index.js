@@ -75,6 +75,9 @@ export function execute(node, scope, userMacros, root = scope) {
                 return func.apply(scope, args);
             case T.ARRAY_EXPR:
                 const left = execute(node.left, scope, userMacros);
+                if (node.right.type === T.IDENTIFIER && node.right.value in userMacros) {
+                    return execute(node.right, left, userMacros, root);
+                }
                 const right = execute(node.right, scope, userMacros);
                 return left[right];
             case T.DOT_EXPR:
