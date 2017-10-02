@@ -1,16 +1,8 @@
-import {
-    map,
-    each,
-    find,
-    isFunction,
-    isArray,
-    times,
-    constant
-} from 'lodash';
-import THREE from 'three';
+import {map, each, find, concat} from 'lodash';
 import {parse, generate, execute} from './exprDSL';
-
+import NodeType from './exprDSL/types';
 import autoComplete from './autocomplete';
+import {mapValue} from './formatter';
 
 window.parse = parse;
 window.generate = generate;
@@ -20,9 +12,15 @@ let debugBox = null;
 let debugContent = null;
 let debugInput = null;
 let debugDataList = null;
-let debugSlots = [];
+let exprSlots = [];
+let macroSlots = {};
 let needSelectorRefresh = true;
 let enabled = false;
+
+const Type = {
+    MACRO: 0,
+    EXPR: 1
+};
 
 export function initDebugHUD() {
     debugBox = document.getElementById('debugBox');
@@ -55,7 +53,7 @@ export function debugHUDFrame(scope) {
             refreshSelector(scope);
             needSelectorRefresh = false;
         }
-        each(debugSlots, slot => {
+        each(exprSlots, slot => {
             try {
                 let tgt = execute(slot.program, scope);
                 if (tgt !== undefined && tgt !== null) {
@@ -84,27 +82,12 @@ export function refreshSlots(save = true) {
     while (debugContent.hasChildNodes()) {
         debugContent.removeChild(debugContent.lastChild);
     }
-    each(debugSlots, slot => {
-        if (!slot.element) {
-            const button = document.createElement('button');
-            const content = document.createElement('span');
-            const title = document.createElement('span');
-            title.innerText = ` ${slot.label}: `;
-            button.style.color = 'black';
-            button.style.background = 'white';
-            button.innerText = '-';
-            slot.element = document.createElement('div');
-            slot.element.appendChild(button);
-            slot.element.appendChild(title);
-            slot.element.appendChild(content);
-            slot.content = content;
-            slot.title = title;
-            button.onclick = () => {
-                const idx = debugSlots.indexOf(slot);
-                debugSlots.splice(idx, 1);
-                refreshSlots();
-            }
-        }
+    each(macroSlots, slot => {
+        createMacroSlotElement(slot);
+        debugContent.appendChild(slot.element);
+    });
+    each(exprSlots, slot => {
+        createExprSlotElement(slot);
         debugContent.appendChild(slot.element);
     });
     if (save) {
@@ -118,13 +101,61 @@ export function refreshSelector(scope) {
     debugInput.style.backgroundColor = data.color;
 }
 
+function createMacroSlotElement(slot) {
+    if (!slot.element) {
+        const button = document.createElement('button');
+        const content = document.createElement('span');
+        button.style.color = 'black';
+        button.style.background = 'white';
+        button.innerText = '-';
+        content.innerText = ` ${slot.expr}`;
+        content.style.color = 'aqua';
+        slot.element = document.createElement('div');
+        slot.element.style.background = 'darkslategrey';
+        slot.element.appendChild(button);
+        slot.element.appendChild(content);
+        button.onclick = () => {
+            const idx = exprSlots.indexOf(slot);
+            exprSlots.splice(idx, 1);
+            refreshSlots();
+        }
+    }
+}
+
+function createExprSlotElement(slot) {
+    if (!slot.element) {
+        const button = document.createElement('button');
+        const content = document.createElement('span');
+        const title = document.createElement('span');
+        title.innerText = ` ${slot.expr}: `;
+        button.style.color = 'black';
+        button.style.background = 'white';
+        button.innerText = '-';
+        slot.element = document.createElement('div');
+        slot.element.appendChild(button);
+        slot.element.appendChild(title);
+        slot.element.appendChild(content);
+        slot.content = content;
+        slot.title = title;
+        button.onclick = () => {
+            const idx = exprSlots.indexOf(slot);
+            exprSlots.splice(idx, 1);
+            refreshSlots();
+        }
+    }
+}
+
 function loadHUDSetup() {
     if ('localStorage' in window) {
         const debug_hud_str = window.localStorage.getItem('debug_hud');
         if (debug_hud_str) {
             const debug_hud = JSON.parse(debug_hud_str);
             enabled = debug_hud.enabled;
-            debugSlots = map(debug_hud.slots, slot => ({ label: slot, program: parse(slot) }));
+            exprSlots = [];
+            macroSlots = {};
+            each(debug_hud.slots, slot => {
+                addSlot(slot);
+            });
             debugBox.style.display = enabled ? 'block' : 'none';
             refreshSlots(false);
         }
@@ -135,84 +166,41 @@ function saveHUDSetup() {
     if ('localStorage' in window) {
         window.localStorage.setItem('debug_hud', JSON.stringify({
             enabled: enabled,
-            slots: map(debugSlots, slot => slot.label)
+            slots: concat(map(macroSlots, 'expr'), map(exprSlots, 'expr'))
         }));
     }
 }
 
 function validateInput() {
-    if (debugInput.value) {
-        if (!find(debugSlots, slot => slot.label === debugInput.value)) {
-            const program = parse(debugInput.value);
-            if (program) {
-                debugSlots.push({label: debugInput.value, program});
-                debugInput.value = '';
-                refreshSlots();
-            }
-        }
+    if (debugInput.value && addSlot(debugInput.value)) {
+        debugInput.value = '';
+        refreshSlots();
     }
 }
 
-function mapValue(value, root = true) {
-    if (value === undefined || value === null)
-        return `<span style="color:darkgrey;font-style:italic;">${value}</span>`;
-    if (typeof(value) === 'string')
-        return `<span style="color:orange;">"${value}"</span>`;
-    if (isFunction(value))
-        return `function(${times(value.length, constant('_')).join(', ')})`;
-    if (isArray(value) && !root)
-        return `[${value.length}]`;
-    if (value instanceof Object) {
-        if (value instanceof THREE.Vector2
-            || value instanceof THREE.Vector3
-            || value instanceof THREE.Vector4) {
-            return mapVector(value);
-        } else if (value instanceof THREE.Quaternion) {
-          return mapQuat(value);
-        } else if (root) {
-            const marker = isArray(value) ? '[]' : '{}';
-            const type = !isArray(value) && value.type ? `${value.type} ` : '';
-            let subValues;
-            if (isArray(value)) {
-                if (value.__filtered__) {
-                    subValues = [];
-                    each(value, (v, key) => {
-                        if (v !== undefined) {
-                            subValues.push(`&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(v, false)}`);
-                        }
-                    });
-                } else {
-                    subValues = map(value, (v, key) => `&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(v, false)}`);
-                }
-            } else {
-                subValues = map(value, (v, key) => `&nbsp;&nbsp;<span style="color:mediumpurple;">${key}</span>: ${mapValue(v, false)}`);
+function addSlot(input) {
+    const slot = compileSlot(input);
+    if (slot) {
+        if (slot.type === Type.EXPR) {
+            if (!find(exprSlots, s => slot.value.normalized === s.normalized)) {
+                exprSlots.push(slot.value);
+                return true;
             }
-            return`${type}${marker[0]}<br/>${subValues.join(',<br/>')}<br/>${marker[1]}`;
-        } else if (value.type) {
-            return `${value.type} {...}`;
         } else {
-            return '{...}';
+            macroSlots[slot.value.name] = slot.value;
+            return true;
         }
     }
-    if (typeof(value) === 'boolean')
-        return `<span style="color:${value ? 'lime' : 'red'};font-style:italic;">${value}</span>`;
-    if (typeof(value) === 'number' && !Number.isInteger(value)) {
-        return value.toFixed(3);
+    return false;
+}
+
+function compileSlot(expr) {
+    const program = parse(expr);
+    if (program && program.type === NodeType.ASSIGNMENT) {
+        const name = program.left.value;
+        return {type: Type.MACRO, value: { name, expr, program} };
     }
-    return value;
-}
-
-const ARRAY_COLOR = ['red', 'lime', 'lightskyblue', 'yellow'];
-
-function mapVector(vec) {
-    const mapComp = (n, i) => `<span style="color:${ARRAY_COLOR[i]};">${n.toFixed(3)}</span>`;
-    const va = vec.toArray();
-    const components = map(va, mapComp);
-    return `Vec${va.length}(${components.join(', ')})`;
-}
-
-function mapQuat(quat) {
-    const mapComp = (n, i) => `<span style="color:${ARRAY_COLOR[i]};">${n.toFixed(3)}</span>`;
-    const components = map(quat.toArray(), mapComp);
-    return `Quat(${components.join(', ')})`;
+    if (program) {
+        return {type: Type.EXPR, value: { expr, normalized: generate(program), program} };
+    }
 }
