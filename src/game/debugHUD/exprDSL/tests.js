@@ -17,6 +17,9 @@ const tests = [
     [' [] ', undefined],
     ['[]()', undefined],
     ['', undefined],
+    ['=', undefined],
+    ['A=', undefined],
+    ['=A', undefined],
 
     ['func()', 'func()'],
     ['func( )', 'func()'],

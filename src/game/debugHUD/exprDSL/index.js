@@ -92,7 +92,9 @@ export function test() {
         t => [` ${t[0]}`, t[1]],
         t => [`${t[0]} `, t[1]],
         t => [` ${t[0]} `, t[1]],
-        t => [`x=${t[0]}`, t[1] !== undefined ? `x=${t[1]}` : undefined]
+        t => [`x=${t[0]}`, t[1] !== undefined ? `x=${t[1]}` : undefined],
+        t => [`sjska556fj_ = ${t[0]}`, t[1] !== undefined ? `sjska556fj_=${t[1]}` : undefined],
+        t => [` AA = ${t[0]} `, t[1] !== undefined ? `AA=${t[1]}` : undefined]
     ];
 
     const start = new Date().getTime();
