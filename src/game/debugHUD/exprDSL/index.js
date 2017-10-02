@@ -86,22 +86,28 @@ export function test() {
     console.log('Running exprDSL tests');
 
     let count = 0;
-    each(TESTS, t => {
-        const declinations = [
-            t,
-            [` ${t[0]}`, t[1]],
-            [`${t[0]} `, t[1]],
-            [` ${t[0]} `, t[1]]
-        ];
 
-        each(declinations, test => {
-            if (buildTest(test)())
+    const declinations = [
+        t => t,
+        t => [` ${t[0]}`, t[1]],
+        t => [`${t[0]} `, t[1]],
+        t => [` ${t[0]} `, t[1]],
+        t => [`x=${t[0]}`, t[1] !== undefined ? `x=${t[1]}` : undefined]
+    ];
+
+    const start = new Date().getTime();
+
+    each(TESTS, test => {
+        each(declinations, decl => {
+            if (buildTest(decl(test))())
                 count++;
         });
     });
 
-    const label = `Passed ${count}/${TESTS.length * 4} exprDSL test`;
-    if (count < TESTS.length * 4)
+    const duration = ((new Date().getTime() - start) * 0.001).toFixed(3);
+
+    const label = `Passed ${count}/${TESTS.length * declinations.length} exprDSL test in ${duration} seconds`;
+    if (count < TESTS.length * declinations.length)
         console.error(label);
     else
         console.log(label);
