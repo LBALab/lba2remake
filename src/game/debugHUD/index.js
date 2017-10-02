@@ -55,7 +55,7 @@ export function debugHUDFrame(scope) {
         }
         each(exprSlots, slot => {
             try {
-                let tgt = execute(slot.program, scope);
+                let tgt = execute(slot.program, scope, macroSlots);
                 if (tgt !== undefined && tgt !== null) {
                     slot.title.style.color = 'white';
                 } else {
@@ -115,8 +115,7 @@ function createMacroSlotElement(slot) {
         slot.element.appendChild(button);
         slot.element.appendChild(content);
         button.onclick = () => {
-            const idx = exprSlots.indexOf(slot);
-            exprSlots.splice(idx, 1);
+            delete macroSlots[slot.name];
             refreshSlots();
         }
     }

@@ -28,20 +28,20 @@ export function generate(node) {
 }
 
 const MACROS = {
-    map: (args, scope) => {
-        const left = execute(args[0], scope);
+    map: (args, scope, userMacros) => {
+        const left = execute(args[0], scope, userMacros);
         const tgt = map(left, (s) => {
-            return s !== undefined ? execute(args[1], s) : undefined;
+            return s !== undefined ? execute(args[1], s, userMacros) : undefined;
         });
         if (left.__filtered__) {
             tgt.__filtered__ = true;
         }
         return tgt;
     },
-    filter: (args, scope) => {
-        const left = execute(args[0], scope);
+    filter: (args, scope, userMacros) => {
+        const left = execute(args[0], scope, userMacros);
         const tgt = map(left, (s) => {
-            const v = execute(args[1], s);
+            const v = execute(args[1], s, userMacros);
             if (v) {
                 return s;
             }
@@ -51,32 +51,38 @@ const MACROS = {
     }
 };
 
-export function execute(node, scope, root = scope) {
+export function execute(node, scope, userMacros, root = scope) {
     if (node) {
         switch (node.type) {
             case T.IDENTIFIER:
-                return scope[node.value];
+                if (node.value in scope) {
+                    return scope[node.value];
+                } else if (node.value in userMacros) {
+                    return execute(userMacros[node.value].program.right, scope, userMacros);
+                } else {
+                    return undefined;
+                }
             case T.INDEX:
                 return node.value;
             case T.FUNC_CALL:
                 if (scope === root && node.left.type === T.IDENTIFIER) {
                     if (node.left.value in MACROS) {
-                        return MACROS[node.left.value](node.args, scope);
+                        return MACROS[node.left.value](node.args, scope, userMacros);
                     }
                 }
-                const func = execute(node.left, scope);
-                const args = map(node.args, arg => execute(arg, scope));
+                const func = execute(node.left, scope, userMacros);
+                const args = map(node.args, arg => execute(arg, scope, userMacros));
                 return func.apply(scope, args);
             case T.ARRAY_EXPR:
-                const left = execute(node.left, scope);
-                const right = execute(node.right, scope);
+                const left = execute(node.left, scope, userMacros);
+                const right = execute(node.right, scope, userMacros);
                 return left[right];
             case T.DOT_EXPR:
                 if (node.right.type === T.IDENTIFIER) {
-                    return execute(node.left, scope)[node.right.value];
+                    return execute(node.left, scope, userMacros)[node.right.value];
                 } else {
                     const left = execute(node.left, scope);
-                    return execute(node.right, left, root);
+                    return execute(node.right, left, userMacros, root);
                 }
         }
     }
