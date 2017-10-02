@@ -1,10 +1,10 @@
-import {parseExpression} from './parse';
+import {parseProgram} from './parse';
 import T from './types';
 import TESTS from './tests';
 import {map, each} from 'lodash';
 
 export function parse(expr) {
-    const res = parseExpression(expr);
+    const res = parseProgram(expr);
     return res && res.node;
 }
 
@@ -21,6 +21,8 @@ export function generate(node) {
                 return `${generate(node.left)}[${generate(node.right)}]`;
             case T.DOT_EXPR:
                 return `${generate(node.left)}.${generate(node.right)}`;
+            case T.ASSIGNMENT:
+                return `${generate(node.left)}=${generate(node.right)}`;
         }
     }
 }

@@ -1,4 +1,5 @@
 const Types = {
+    ASSIGNMENT: 'ASSIGNMENT',
     IDENTIFIER: 'IDENTIFIER',
     INDEX: 'INDEX',
     DOT_EXPR: 'DOT_EXPR',

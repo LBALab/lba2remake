@@ -9,7 +9,26 @@ export const Trim = {
 
 const OK = (node, offset) => ({node, offset});
 
-export function parseExpression(e, end, trim = Trim.BOTH) {
+export function parseProgram(e) {
+    return parseAssignment(e) || parseExpression(e);
+}
+
+function parseAssignment(e) {
+    const left = parseIdentifier(e, Trim.BOTH);
+    if (left && e[left.offset] === '=') {
+        const e_right = e.substr(left.offset + 1);
+        const right = parseExpression(e_right);
+        if (right) {
+            return OK({
+                type: T.ASSIGNMENT,
+                left: left.node,
+                right: right.node
+            }, left.offset + right.offset + 1);
+        }
+    }
+}
+
+function parseExpression(e, end, trim = Trim.BOTH) {
     const res =
         parseDotExpr(e, end, trim) ||
         parseCall(e, trim) ||
