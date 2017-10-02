@@ -84,16 +84,37 @@ export function test() {
     console.log('Running exprDSL tests');
 
     let count = 0;
-    each(TESTS, test => {
-        if (test())
-            count++;
+    each(TESTS, t => {
+        const declinations = [
+            t,
+            [` ${t[0]}`, t[1]],
+            [`${t[0]} `, t[1]],
+            [` ${t[0]} `, t[1]]
+        ];
+
+        each(declinations, test => {
+            if (buildTest(test)())
+                count++;
+        });
     });
 
-    const label = `Passed ${count}/${TESTS.length} exprDSL test`;
-    if (count < TESTS.length)
+    const label = `Passed ${count}/${TESTS.length * 4} exprDSL test`;
+    if (count < TESTS.length * 4)
         console.error(label);
     else
         console.log(label);
 }
 
-
+function buildTest([original, target]) {
+    return () => {
+        const tgt = target === undefined ? 'undefined': `'${target}'`;
+        const label = `generate(parse('${original}')) === ${tgt}`;
+        if (generate(parse(original)) === target) {
+            console.log(`OK: ${label}`);
+            return true;
+        } else {
+            console.warn(`FAILED: ${label}`);
+            return false;
+        }
+    };
+}
