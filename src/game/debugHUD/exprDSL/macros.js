@@ -52,6 +52,40 @@ export function euler(args, scope, userMacros) {
     }
 }
 
+export function deg(args, scope, userMacros) {
+    checkNumArgs('deg', args, 1);
+    const arg = execute(args[0], scope, userMacros);
+    checkArgType('deg', arg, 0, ['number', THREE.Euler]);
+
+    if (arg instanceof THREE.Euler) {
+        const euler = new THREE.Euler();
+        euler.copy(arg);
+        euler.x = THREE.Math.radToDeg(euler.x);
+        euler.y = THREE.Math.radToDeg(euler.y);
+        euler.z = THREE.Math.radToDeg(euler.z);
+        return euler;
+    } else {
+        return THREE.Math.radToDeg(arg);
+    }
+}
+
+export function rad(args, scope, userMacros) {
+    checkNumArgs('rad', args, 1);
+    const arg = execute(args[0], scope, userMacros);
+    checkArgType('rad', arg, 0, ['number', THREE.Euler]);
+
+    if (arg instanceof THREE.Euler) {
+        const euler = new THREE.Euler();
+        euler.copy(arg);
+        euler.x = THREE.Math.degToRad(euler.x);
+        euler.y = THREE.Math.degToRad(euler.y);
+        euler.z = THREE.Math.degToRad(euler.z);
+        return euler;
+    } else {
+        return THREE.Math.degToRad(arg);
+    }
+}
+
 function checkNumArgs(func, args, n) {
     if (_.isArray(n)) {
         if (args.length < n[0] || args.length > n[1]) {
@@ -77,6 +111,8 @@ function checkArgType(func, arg, pos, types) {
         switch (t) {
             case 'array':
                 return _.isArray(arg);
+            case 'number':
+                return _.isNumber(arg);
             default:
                 return arg instanceof t;
         }
