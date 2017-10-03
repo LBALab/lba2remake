@@ -4,7 +4,8 @@ import {
     isFunction,
     isArray,
     times,
-    constant
+    constant,
+    take
 } from 'lodash';
 import THREE from 'three';
 
@@ -24,6 +25,8 @@ export function mapValue(value, root = true) {
             return mapVector(value);
         } else if (value instanceof THREE.Quaternion) {
             return mapQuat(value);
+        } else if (value instanceof THREE.Euler) {
+            return mapEuler(value);
         } else if (root) {
             const marker = isArray(value) ? '[]' : '{}';
             const type = !isArray(value) && value.type ? `${value.type} ` : '';
@@ -70,4 +73,11 @@ function mapQuat(quat) {
     const mapComp = (n, i) => `<span style="color:${ARRAY_COLOR[i]};">${n.toFixed(3)}</span>`;
     const components = map(quat.toArray(), mapComp);
     return `Quat(${components.join(', ')})`;
+}
+
+function mapEuler(euler) {
+    const mapComp = (n, i) => `<span style="color:${ARRAY_COLOR[i]};">${n.toFixed(3)}</span>`;
+    const components = map(take(euler.toArray(), 3), mapComp);
+    const order = `<span style="color:orange;">"${euler.order}"</span>`;
+    return `Euler(${components.join(', ')}, ${order})`;
 }
