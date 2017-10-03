@@ -64,6 +64,21 @@ export function euler(args, scopes, userMacros) {
     }
 }
 
+export function norm(args, scopes, userMacros) {
+    checkNumArgs('norm', args, 1);
+    const arg = execute(args[0], scopes, userMacros);
+    checkArgType('norm', arg, 0, [
+        THREE.Quaternion,
+        THREE.Vector2,
+        THREE.Vector3,
+        THREE.Vector4
+    ]);
+
+    const copy = arg.clone();
+    copy.normalize();
+    return copy;
+}
+
 export function deg(args, scopes, userMacros) {
     checkNumArgs('deg', args, 1);
     const arg = execute(args[0], scopes, userMacros);
