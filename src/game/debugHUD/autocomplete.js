@@ -27,7 +27,7 @@ export default function autoComplete(cmd, scope) {
         }
         let ast = cmd.length > 0 ? parse(cmd) : scope;
         if (ast) {
-            const tgtScope = safeExecute(ast, scope);
+            const tgtScope = safeExecute(ast, [scope]);
             let values;
             if (tgtScope) {
                 values = completeScope(cmd, tgtScope);
@@ -78,14 +78,14 @@ function findLastValidScopeAndId(ast, scope) {
     if (ast.type === Types.IDENTIFIER) {
         return [ast.value, scope];
     } else if (ast.right) {
-        return findLastValidScopeAndId(ast.right, safeExecute(ast.left, scope) || {});
+        return findLastValidScopeAndId(ast.right, safeExecute(ast.left, [scope]) || {});
     } else {
         return [ast, {}];
     }
 }
 
-function safeExecute(ast, scope) {
+function safeExecute(ast, scopes) {
     try {
-        return execute(ast, scope);
+        return execute(ast, scopes);
     } catch (e) {}
 }

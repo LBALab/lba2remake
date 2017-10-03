@@ -3,12 +3,12 @@ import T from './types';
 import _ from 'lodash';
 import THREE from 'three';
 
-export function map(args, scope, userMacros) {
+export function map(args, scopes, userMacros) {
     checkNumArgs('map', args, 2);
-    const left = execute(args[0], scope, userMacros);
+    const left = execute(args[0], scopes, userMacros);
     checkArgType('map', left, 0, ['array']);
     const tgt = _.map(left, (s) => {
-        return s !== undefined ? execute(args[1], s, userMacros) : undefined;
+        return s !== undefined ? execute(args[1], _.concat(scopes, s), userMacros) : undefined;
     });
     if (left.__filtered__) {
         tgt.__filtered__ = true;
@@ -16,12 +16,12 @@ export function map(args, scope, userMacros) {
     return tgt;
 }
 
-export function filter(args, scope, userMacros) {
+export function filter(args, scopes, userMacros) {
     checkNumArgs('filter', args, 2);
-    const left = execute(args[0], scope, userMacros);
+    const left = execute(args[0], scopes, userMacros);
     checkArgType('filter', left, 0, ['array']);
     const tgt = _.map(left, (s) => {
-        const v = execute(args[1], s, userMacros);
+        const v = execute(args[1], _.concat(scopes, s), userMacros);
         if (v) {
             return s;
         }
@@ -30,9 +30,9 @@ export function filter(args, scope, userMacros) {
     return tgt;
 }
 
-export function euler(args, scope, userMacros) {
+export function euler(args, scopes, userMacros) {
     checkNumArgs('euler', args, [1, 2]);
-    const arg = execute(args[0], scope, userMacros);
+    const arg = execute(args[0], scopes, userMacros);
     checkArgType('euler', arg, 0, [THREE.Quaternion, THREE.Matrix4, THREE.Vector3]);
     if (args.length === 2)
         checkArgTypeAst('euler', args[1], 1, T.IDENTIFIER, THREE.Euler.RotationOrders);
@@ -52,9 +52,9 @@ export function euler(args, scope, userMacros) {
     }
 }
 
-export function deg(args, scope, userMacros) {
+export function deg(args, scopes, userMacros) {
     checkNumArgs('deg', args, 1);
-    const arg = execute(args[0], scope, userMacros);
+    const arg = execute(args[0], scopes, userMacros);
     checkArgType('deg', arg, 0, ['number', THREE.Euler]);
 
     if (arg instanceof THREE.Euler) {
@@ -69,9 +69,9 @@ export function deg(args, scope, userMacros) {
     }
 }
 
-export function rad(args, scope, userMacros) {
+export function rad(args, scopes, userMacros) {
     checkNumArgs('rad', args, 1);
-    const arg = execute(args[0], scope, userMacros);
+    const arg = execute(args[0], scopes, userMacros);
     checkArgType('rad', arg, 0, ['number', THREE.Euler]);
 
     if (arg instanceof THREE.Euler) {
@@ -86,9 +86,9 @@ export function rad(args, scope, userMacros) {
     }
 }
 
-export function len(args, scope, userMacros) {
+export function len(args, scopes, userMacros) {
     checkNumArgs('len', args, 1);
-    const arg = execute(args[0], scope, userMacros);
+    const arg = execute(args[0], scopes, userMacros);
     checkArgType('len', arg, 0, ['array', THREE.Vector2, THREE.Vector3, THREE.Vector4]);
     if (arg instanceof THREE.Vector2
         || arg instanceof THREE.Vector3
@@ -96,6 +96,21 @@ export function len(args, scope, userMacros) {
         return arg.length();
     } else {
         return arg.length;
+    }
+}
+
+export function dist(args, scopes, userMacros) {
+    checkNumArgs('dist', args, 2);
+    const arg0 = execute(args[0], scopes, userMacros);
+    const arg1 = execute(args[1], scopes, userMacros);
+    checkArgType('dist', arg0, 0, [THREE.Vector2, THREE.Vector3, THREE.Vector4]);
+    checkArgType('dist', arg1, 1, [THREE.Vector2, THREE.Vector3, THREE.Vector4]);
+    if (arg0.constructor === arg1.constructor) {
+        const diff = arg0.clone();
+        diff.sub(arg1);
+        return diff.length();
+    } else {
+        throw TypeError(`Arguments to dist() must be of the same type.`);
     }
 }
 

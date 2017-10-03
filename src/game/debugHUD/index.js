@@ -55,7 +55,7 @@ export function debugHUDFrame(scope) {
         }
         each(exprSlots, slot => {
             try {
-                let tgt = execute(slot.program, scope, macroSlots);
+                let tgt = execute(slot.program, [scope], macroSlots);
                 if (tgt !== undefined && tgt !== null) {
                     slot.title.style.color = 'white';
                 } else {

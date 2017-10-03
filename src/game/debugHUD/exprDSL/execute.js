@@ -1,43 +1,51 @@
 import T from './types';
 import * as MACROS from './macros';
-import {map} from 'lodash';
+import {map, concat} from 'lodash';
 
-export function execute(node, scope, userMacros, root = scope) {
+export function execute(node, scopes, userMacros) {
     if (node) {
         switch (node.type) {
             case T.IDENTIFIER:
-                if (node.value in scope) {
-                    return scope[node.value];
+                const idx = findScope(node.value, scopes);
+                if (idx !== -1) {
+                    return scopes[idx][node.value];
                 } else if (node.value in userMacros) {
-                    return execute(userMacros[node.value].program.right, scope, userMacros);
+                    return execute(userMacros[node.value].program.right, scopes, userMacros);
                 } else {
                     return undefined;
                 }
             case T.INDEX:
                 return node.value;
             case T.FUNC_CALL:
-                if (scope === root && node.left.type === T.IDENTIFIER) {
-                    if (node.left.value in MACROS) {
-                        return MACROS[node.left.value](node.args, scope, userMacros);
-                    }
+                const func = execute(node.left, scopes, userMacros);
+                if (!func && node.left.type === T.IDENTIFIER && node.left.value in MACROS) {
+                    return MACROS[node.left.value](node.args, scopes, userMacros);
                 }
-                const func = execute(node.left, scope, userMacros);
-                const args = map(node.args, arg => execute(arg, scope, userMacros));
-                return func.apply(scope, args);
+                const args = map(node.args, arg => execute(arg, scopes, userMacros));
+                return func.apply(null, args);
             case T.ARRAY_EXPR:
-                const left = execute(node.left, scope, userMacros);
+                const left = execute(node.left, scopes, userMacros);
                 if (node.right.type === T.IDENTIFIER && node.right.value in userMacros) {
-                    return execute(node.right, left, userMacros, root);
+                    return execute(node.right, concat(scopes, left), userMacros);
                 }
-                const right = execute(node.right, scope, userMacros);
+                const right = execute(node.right, scopes, userMacros);
                 return left[right];
             case T.DOT_EXPR:
                 if (node.right.type === T.IDENTIFIER) {
-                    return execute(node.left, scope, userMacros)[node.right.value];
+                    return execute(node.left, scopes, userMacros)[node.right.value];
                 } else {
-                    const left = execute(node.left, scope);
-                    return execute(node.right, left, userMacros, root);
+                    const left = execute(node.left, scopes, userMacros);
+                    return execute(node.right, concat(scopes, left), userMacros);
                 }
         }
     }
+}
+
+function findScope(key, scopes) {
+    for (let i = scopes.length - 1; i >= 0; --i) {
+        if (key in scopes[i]) {
+            return i;
+        }
+    }
+    return -1;
 }
