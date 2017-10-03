@@ -30,6 +30,18 @@ export function filter(args, scopes, userMacros) {
     return tgt;
 }
 
+export function sort(args, scopes, userMacros) {
+    checkNumArgs('sort', args, 1);
+    const left = execute(args[0], scopes, userMacros);
+    checkArgType('sort', left, 0, ['array']);
+    const tgt = _.filter(_.map(left, (value, idx) => ({idx, value})), v => v.value !== undefined);
+    tgt.sort((a, b) => {
+        return a.value - b.value;
+    });
+    tgt.__sorted__ = true;
+    return tgt;
+}
+
 export function euler(args, scopes, userMacros) {
     checkNumArgs('euler', args, [1, 2]);
     const arg = execute(args[0], scopes, userMacros);

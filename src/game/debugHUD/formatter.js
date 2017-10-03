@@ -32,16 +32,7 @@ export function mapValue(value, root = true) {
             const type = !isArray(value) && value.type ? `${value.type} ` : '';
             let subValues;
             if (isArray(value)) {
-                if (value.__filtered__) {
-                    subValues = [];
-                    each(value, (v, key) => {
-                        if (v !== undefined) {
-                            subValues.push(`&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(v, false)}`);
-                        }
-                    });
-                } else {
-                    subValues = map(value, (v, key) => `&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(v, false)}`);
-                }
+                subValues = mapArray(value);
             } else {
                 subValues = map(value, (v, key) => `&nbsp;&nbsp;<span style="color:mediumpurple;">${key}</span>: ${mapValue(v, false)}`);
             }
@@ -58,6 +49,27 @@ export function mapValue(value, root = true) {
         return value.toFixed(3);
     }
     return value;
+}
+
+function mapArray(array) {
+    let tgt;
+    const filtered = array.__filtered__;
+    const sorted = array.__sorted__;
+    if (filtered || sorted) {
+        tgt = [];
+        each(array, (value, key) => {
+            if (sorted) {
+                key = value.idx;
+                value = value.value;
+            }
+            if (value !== undefined) {
+                tgt.push(`&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(value, false)}`);
+            }
+        });
+    } else {
+        tgt = map(array, (value, key) => `&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(value, false)}`);
+    }
+    return tgt;
 }
 
 const ARRAY_COLOR = ['red', 'lime', 'lightskyblue', 'yellow'];
