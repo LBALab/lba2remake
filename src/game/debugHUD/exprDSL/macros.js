@@ -86,6 +86,19 @@ export function rad(args, scope, userMacros) {
     }
 }
 
+export function len(args, scope, userMacros) {
+    checkNumArgs('len', args, 1);
+    const arg = execute(args[0], scope, userMacros);
+    checkArgType('len', arg, 0, ['array', THREE.Vector2, THREE.Vector3, THREE.Vector4]);
+    if (arg instanceof THREE.Vector2
+        || arg instanceof THREE.Vector3
+        || arg instanceof THREE.Vector4) {
+        return arg.length();
+    } else {
+        return arg.length;
+    }
+}
+
 function checkNumArgs(func, args, n) {
     if (_.isArray(n)) {
         if (args.length < n[0] || args.length > n[1]) {
