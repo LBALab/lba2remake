@@ -22,7 +22,7 @@ export function execute(node, scopes, userMacros) {
                     return MACROS[node.left.value](node.args, scopes, userMacros);
                 }
                 const args = map(node.args, arg => execute(arg, scopes, userMacros));
-                return func.apply(null, args);
+                return func.apply(scopes[scopes.length - 1], args);
             case T.ARRAY_EXPR:
                 const left = execute(node.left, scopes, userMacros);
                 if (node.right.type === T.IDENTIFIER && node.right.value in userMacros) {
