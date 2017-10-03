@@ -5,7 +5,8 @@ import {
     isArray,
     times,
     constant,
-    take
+    take,
+    slice
 } from 'lodash';
 import THREE from 'three';
 
@@ -27,6 +28,10 @@ export function mapValue(value, root = true) {
             return mapQuat(value);
         } else if (value instanceof THREE.Euler) {
             return mapEuler(value);
+        } else if (value instanceof THREE.Matrix3) {
+            return mapMat(value, 3);
+        } else if (value instanceof THREE.Matrix4) {
+            return mapMat(value, 4);
         } else if (root) {
             const marker = isArray(value) ? '[]' : '{}';
             const type = !isArray(value) && value.type ? `${value.type} ` : '';
@@ -92,4 +97,13 @@ function mapEuler(euler) {
     const components = map(take(euler.toArray(), 3), mapComp);
     const order = `<span style="color:orange;">"${euler.order}"</span>`;
     return `Euler(${components.join(', ')}, ${order})`;
+}
+
+function mapMat(mat, n) {
+    const mapComp = (n, i) => `<span style="color:${ARRAY_COLOR[i]};">${n.toFixed(3)}</span>`;
+    const rows = times(n, r => {
+        const components = map(slice(mat.elements, r * n, r * n + n), mapComp);
+        return `&nbsp;&nbsp;${components.join(', ')}`;
+    });
+    return `Mat${n}[<br/>${rows.join('<br/>')}<br/>]`;
 }
