@@ -10,7 +10,7 @@ import {
 } from 'lodash';
 import THREE from 'three';
 
-export function mapValue(value, root = true) {
+export function mapValue(expr, value, root = true) {
     if (value === undefined || value === null)
         return `<span style="color:darkgrey;font-style:italic;">${value}</span>`;
     if (typeof(value) === 'string')
@@ -29,17 +29,17 @@ export function mapValue(value, root = true) {
         } else if (value instanceof THREE.Euler) {
             return mapEuler(value);
         } else if (value instanceof THREE.Matrix3) {
-            return mapMat(value, 3);
+            return mapMat(value, 3, root);
         } else if (value instanceof THREE.Matrix4) {
-            return mapMat(value, 4);
+            return mapMat(value, 4, root);
         } else if (root) {
             const marker = isArray(value) ? '[]' : '{}';
             const type = !isArray(value) && value.type ? `${value.type} ` : '';
             let subValues;
             if (isArray(value)) {
-                subValues = mapArray(value);
+                subValues = mapArray(expr, value);
             } else {
-                subValues = map(value, (v, key) => `&nbsp;&nbsp;<span style="color:mediumpurple;">${key}</span>: ${mapValue(v, false)}`);
+                subValues = map(value, (v, key) => `&nbsp;&nbsp;<span class="link" title="${expr}.${key}" style="color:mediumpurple;cursor:pointer;">${key}</span>: ${mapValue(expr, v, false)}`);
             }
             return`${type}${marker[0]}<br/>${subValues.join(',<br/>')}<br/>${marker[1]}`;
         } else if (value.type) {
@@ -56,10 +56,14 @@ export function mapValue(value, root = true) {
     return value;
 }
 
-function mapArray(array) {
+function mapArray(expr, array) {
     let tgt;
     const filtered = array.__filtered__;
     const sorted = array.__sorted__;
+    const arrayEntry = (value, key) =>
+        `&nbsp;&nbsp;<span class="link" title="${expr}[${key}]" style="cursor:pointer;">`
+        + `[<span style="color:mediumpurple;">${key}</span>]`
+        + `</span>: ${mapValue(expr, value, false)}`;
     if (filtered || sorted) {
         tgt = [];
         each(array, (value, key) => {
@@ -68,11 +72,11 @@ function mapArray(array) {
                 value = value.value;
             }
             if (value !== undefined) {
-                tgt.push(`&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(value, false)}`);
+                tgt.push(arrayEntry(value, key));
             }
         });
     } else {
-        tgt = map(array, (value, key) => `&nbsp;&nbsp;[<span style="color:mediumpurple;">${key}</span>]: ${mapValue(value, false)}`);
+        tgt = map(array, arrayEntry);
     }
     return tgt;
 }
@@ -99,11 +103,15 @@ function mapEuler(euler) {
     return `Euler(${components.join(', ')}, ${order})`;
 }
 
-function mapMat(mat, n) {
-    const mapComp = (n, i) => `<span style="color:${ARRAY_COLOR[i]};">${n.toFixed(3)}</span>`;
-    const rows = times(n, r => {
-        const components = map(slice(mat.elements, r * n, r * n + n), mapComp);
-        return `&nbsp;&nbsp;${components.join(', ')}`;
-    });
-    return `Mat${n}[<br/>${rows.join('<br/>')}<br/>]`;
+function mapMat(mat, n, root) {
+    if (root) {
+        const mapComp = (n, i) => `<span style="color:${ARRAY_COLOR[i]};">${n.toFixed(3)}</span>`;
+        const rows = times(n, r => {
+            const components = map(slice(mat.elements, r * n, r * n + n), mapComp);
+            return `&nbsp;&nbsp;${components.join(', ')}`;
+        });
+        return `Mat${n}[<br/>${rows.join('<br/>')}<br/>]`;
+    } else {
+        return `Mat${n}[...]`;
+    }
 }

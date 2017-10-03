@@ -44,6 +44,20 @@ export function initDebugHUD() {
     debugInput.onkeyup = event => {
         event.stopPropagation();
     };
+    debugContent.addEventListener('mouseup', e => {
+        for (let i = 0; i < e.path.length; ++i) {
+            if (e.path[i].classList && e.path[i].classList.contains('link')) {
+                let expr = e.path[i].title;
+                const m = expr.match(/^ *sort *\((.*)\) *(\[\d+\]) *$/);
+                if (m) {
+                    expr = m[1] + m[2];
+                }
+                addSlot(expr);
+                refreshSlots();
+                break;
+            }
+        }
+    });
     loadHUDSetup();
 }
 
@@ -61,7 +75,7 @@ export function debugHUDFrame(scope) {
                 } else {
                     slot.title.style.color = 'darkgrey';
                 }
-                slot.content.innerHTML = mapValue(tgt);
+                slot.content.innerHTML = mapValue(slot.expr, tgt);
             }
             catch (e) {
                 slot.title.style.color = 'darkgrey';
