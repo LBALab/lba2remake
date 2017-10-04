@@ -132,7 +132,8 @@ body {
     -webkit-animation: cinemaModeAnimOut 3s forwards;
     animation: cinemaModeAnimOut 3s forwards;
 }
-#debugBox {
+
+#dbgHUD {
     max-width: 50%;
     max-height: 90%;
     overflow: auto;
@@ -150,15 +151,30 @@ body {
     font-weight: bold;
 }
 
-#debugBox .selector {
+#dbgHUD .section {
+    padding-bottom: 10px;
+}
+
+#dbgHUD .toolbar {
     text-align: right;
 }
 
-#debugBox .selector input {
+#dbgHUD_input {
     font-family: 'Courier', monospace;
     font-size: 14px;
     font-weight: bold;
     width: 80%;
+}
+
+#dbgHUD button {
+    color: black;
+    background: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#dbgHUD button:disabled {
+    color: grey;
 }
 
 @-webkit-keyframes cinemaModeAnimIn {
