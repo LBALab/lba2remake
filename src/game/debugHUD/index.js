@@ -14,6 +14,11 @@ import {
 export function initDebugHUD() {
     initHUDElements();
     document.getElementById('dbgHUD_popup_cancel').onclick = closePopup;
+    document.getElementById('dbgHUD_new').onclick = () => {
+        state.macroSlots = {};
+        state.exprSlots = [];
+        refreshSlots();
+    };
     document.getElementById('dbgHUD_load').onclick = loadProfile;
     document.getElementById('dbgHUD_save').onclick = saveProfile;
     document.getElementById('dbgHUD_add').onclick = validateInput;
