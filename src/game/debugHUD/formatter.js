@@ -39,7 +39,11 @@ export function mapValue(expr, value, root = true) {
             if (isArray(value)) {
                 subValues = mapArray(expr, value);
             } else {
-                subValues = map(value, (v, key) => `&nbsp;&nbsp;<span class="link" title="${expr}.${key}" style="color:mediumpurple;cursor:pointer;">${key}</span>: ${mapValue(expr, v, false)}`);
+                subValues = map(value, (v, key) =>
+                    `&nbsp;&nbsp;<span class="link" title="${expr}.${key}" style="cursor:pointer;">`
+                    + `<span style="color:mediumpurple;">${key}</span>`
+                    + `: ${mapValue(expr, v, false)}</span>`
+                );
             }
             return`${type}${marker[0]}<br/>${subValues.join(',<br/>')}<br/>${marker[1]}`;
         } else if (value.type) {
@@ -63,7 +67,7 @@ function mapArray(expr, array) {
     const arrayEntry = (value, key) =>
         `&nbsp;&nbsp;<span class="link" title="${expr}[${key}]" style="cursor:pointer;">`
         + `[<span style="color:mediumpurple;">${key}</span>]`
-        + `</span>: ${mapValue(expr, value, false)}`;
+        + `: ${mapValue(expr, value, false)}</span>`;
     if (filtered || sorted) {
         tgt = [];
         each(array, (value, key) => {
