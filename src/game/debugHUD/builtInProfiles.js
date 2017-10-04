@@ -14,3 +14,16 @@ export const camera = [
     'pixelRatio = renderer.pixelRatio()',
     'camera'
 ];
+
+export const gameState = [
+    'state = game.getState()',
+    'game.isLoading()',
+    'game.isPaused()',
+    'game.controlsState',
+    'state.chapter',
+    'state.hero',
+    'state.hero.clover',
+    'state.hero.magicball',
+    'state.config',
+    'state.flags',
+];
