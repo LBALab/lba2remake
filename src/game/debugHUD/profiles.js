@@ -4,7 +4,7 @@ import {state} from './state';
 import {addSlot, refreshSlots} from './slots';
 import {clearContent} from './utils';
 
-export function loadListing() {
+export function loadDefaultProfile() {
     const debug_hud_str = window.localStorage.getItem('debug_hud');
     if (debug_hud_str) {
         const debug_hud = JSON.parse(debug_hud_str);
@@ -19,7 +19,7 @@ export function loadListing() {
     }
 }
 
-export function saveListing() {
+export function saveDefaultProfile() {
     window.localStorage.setItem('debug_hud', JSON.stringify({
         enabled: state.enabled,
         slots: concat(

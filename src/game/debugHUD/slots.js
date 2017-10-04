@@ -4,7 +4,7 @@ import {dbgHUD} from './elements';
 import {parse, generate} from './exprDSL';
 import NodeType from './exprDSL/types';
 import {clearContent} from './utils';
-import {saveListing} from './save';
+import {saveDefaultProfile} from './profiles';
 
 const Type = {
     MACRO: 0,
@@ -50,7 +50,7 @@ export function refreshSlots(save = true) {
         dbgHUD.expressions.appendChild(slot.element);
     });
     if (save) {
-        saveListing();
+        saveDefaultProfile();
     }
 }
 

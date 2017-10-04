@@ -6,10 +6,10 @@ import {dbgHUD, initHUDElements} from './elements';
 import {state} from './state';
 import {refreshSlots, addSlot} from './slots';
 import {
-    loadListing, saveListing,
+    loadDefaultProfile, saveDefaultProfile,
     loadProfile, saveProfile,
     closePopup
-} from './save';
+} from './profiles';
 
 export function initDebugHUD() {
     initHUDElements();
@@ -52,7 +52,7 @@ export function initDebugHUD() {
             }
         }
     });
-    loadListing();
+    loadDefaultProfile();
 }
 
 export function debugHUDFrame(scope) {
@@ -83,7 +83,7 @@ export function switchHUD() {
     state.enabled = !state.enabled;
     console.log('Switching debug HUD: ', state.enabled ? 'ON' : 'OFF');
     dbgHUD.root.style.display = state.enabled ? 'block' : 'none';
-    saveListing();
+    saveDefaultProfile();
 }
 
 export function refreshSelector(scope) {
