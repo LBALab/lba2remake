@@ -3,6 +3,7 @@ import {dbgHUD} from './elements';
 import {state} from './state';
 import {addSlot, refreshSlots} from './slots';
 import {clearContent} from './utils';
+import * as builtInProfiles from './builtInProfiles';
 
 export function loadDefaultProfile() {
     const debug_hud_str = window.localStorage.getItem('debug_hud');
@@ -37,7 +38,7 @@ export function loadProfile() {
     const profiles_str = window.localStorage.getItem('debug_hud_profiles');
     if (profiles_str) {
         const profiles = JSON.parse(profiles_str);
-        listProfiles(profiles, (profile, name) => {
+        listProfiles(profiles, true, (profile, name) => {
             state.exprSlots = [];
             state.macroSlots = {};
             each(profile, slot => {
@@ -92,13 +93,24 @@ export function saveProfile() {
         dbgHUD.popup_save.disabled = dbgHUD.popup_input.value.length === 0;
     };
 
-    listProfiles(profiles, (profile, name) => {
+    listProfiles(profiles, false, (profile, name) => {
         save(name);
     });
 }
 
-export function listProfiles(profiles, onClick) {
+export function listProfiles(profiles, showBuiltins, onClick) {
     clearContent(dbgHUD.popup_content);
+    if (showBuiltins) {
+        each(builtInProfiles, (profile, name) => {
+            const elem = document.createElement('div');
+            elem.innerHTML = `&nbsp;&nbsp;&nbsp;${name}`;
+            elem.style.fontStyle = 'italic';
+            elem.style.cursor = 'pointer';
+            elem.style.lineHeight = '22px';
+            elem.onclick = () => onClick(profile, name);
+            dbgHUD.popup_content.appendChild(elem);
+        });
+    }
     each(profiles, (profile, name) => {
         const elem = document.createElement('div');
         const button = document.createElement('button');
