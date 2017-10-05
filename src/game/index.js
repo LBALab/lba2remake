@@ -17,8 +17,12 @@ import {createState} from './state';
 import {createAudioManager} from '../audio'
 
 import {loadTexts} from '../scene';
+import {loadParams, watchParams} from './params';
+import {initDebugHUD} from './debugHUD';
 
-export function createGame(params: Object, isMobile: boolean, callback : Function) {
+export function createGame() {
+    const params = loadParams();
+
     let _sceneManager = null;
     let _isPaused = false;
     let _isLoading = false;
@@ -26,10 +30,13 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
     const _clock = new THREE.Clock(false);
     _clock.start();
 
+    initDebugHUD();
+
     const _state = createState();
-    const _renderer = createRenderer(params.useVR);
+    const _renderer = createRenderer(params.vr);
     const _audio = createAudioManager(_state);
     const game = {
+        params: params,
         controlsState: {
             heroSpeed: 0,
             heroRotationSpeed: 0,
@@ -39,7 +46,6 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
             cameraOrientation: new THREE.Quaternion(),
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
-            vr: params.useVR,
             action: 0,
             jump: 0,
             texts: null,
@@ -82,7 +88,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
                 muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4'),
                 mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4'),
                 mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4')
-            }, function(err, files) {
+            }, function() {
                 const loading = document.getElementById('loading');
                 loading.style.display = 'none';
                 callback();
@@ -105,16 +111,16 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
         _sceneManager = sceneManager;
 
         let controls = null;
-        if (params.useVR) {
+        if (params.vr) {
             controls = [
                 makeGyroscopeControls(game),
                 makeGamepadControls(game)
             ];
-            if (!isMobile) {
+            if (!params.mobile) {
                 controls.push(makeKeyboardControls(game));
             }
         }
-        else if (isMobile) {
+        else if (params.mobile) {
             controls = [
                 makeFirstPersonTouchControls(game),
                 makeGamepadControls(game)
@@ -137,7 +143,7 @@ export function createGame(params: Object, isMobile: boolean, callback : Functio
 
         processAnimationFrame();
 
-        callback(sceneManager);
+        watchParams(game);
     });
 
     return game;

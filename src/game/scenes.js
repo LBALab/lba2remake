@@ -148,8 +148,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };
         }
 
-        const params = parseQueryParams();
-        if (params.NOSCRIPTS == 'true') {
+        if (game.params.noscripts === true) {
             delete loadSteps.actors;
             delete loadSteps.points;
             delete loadSteps.zones;
