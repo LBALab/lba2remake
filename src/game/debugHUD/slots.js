@@ -41,14 +41,20 @@ export function compileSlot(expr) {
 export function refreshSlots(save = true) {
     clearContent(dbgHUD.macros);
     clearContent(dbgHUD.expressions);
+    let found = false;
     each(state.macroSlots, slot => {
         createMacroSlotElement(slot);
         dbgHUD.macros.appendChild(slot.element);
+        found = true;
     });
+    dbgHUD.macros.style.display = found ? 'block' : 'none';
+    found = false;
     each(state.exprSlots, slot => {
         createExprSlotElement(slot);
         dbgHUD.expressions.appendChild(slot.element);
+        found = true;
     });
+    dbgHUD.expressions.style.display = found ? 'block' : 'none';
     if (save) {
         saveDefaultProfile();
     }
