@@ -13,7 +13,6 @@ export function createGame(clock: Object) {
     const _audio = createAudioManager(_state);
 
     const game = {
-        texts: null,
         controlsState: {
             heroSpeed: 0,
             heroRotationSpeed: 0,
