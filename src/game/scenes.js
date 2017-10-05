@@ -33,7 +33,7 @@ export function createSceneManager(game, renderer, callback: Function) {
                 return scene;
             },
             goto: (index, pCallback = noop) => {
-                if ((scene && index == scene.index) || game.isLoading())
+                if ((scene && index === scene.index) || game.isLoading())
                     return;
 
                 ga('set', 'page', `/scene/${index}`);
@@ -113,7 +113,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
         let islandName;
         if (indexInfo.isIsland) {
             islandName = islandSceneMapping[index].island;
-            if (game.getState().flags.quest[152] && islandName == 'CITABAU') {
+            if (game.getState().flags.quest[152] && islandName === 'CITABAU') {
                 islandName = 'CITADEL';
             }
         }
@@ -204,7 +204,7 @@ function loadSceneNode(index, indexInfo, data) {
         sceneNode.position.z = section.z * 2;
     }
     const addToSceneNode = obj => {
-        if (obj.threeObject != null) { // because of the sprite actors
+        if (obj.threeObject !== null) { // because of the sprite actors
             sceneNode.add(obj.threeObject);
         }
     };
@@ -218,18 +218,18 @@ function loadSceneNode(index, indexInfo, data) {
 function loadSideScenes(game, renderer, sceneMap, index, parent, callback) {
     const sideIndices = filter(
         map(sceneMap, (indexInfo, sideIndex) => {
-            if (sideIndex != index
+            if (sideIndex !== index
                 && indexInfo.isIsland
                 && sideIndex in islandSceneMapping) {
                 const sideMapping = islandSceneMapping[sideIndex];
                 const mainMapping = islandSceneMapping[index];
-                if (sideMapping.island == mainMapping.island
-                    && sideMapping.variant == mainMapping.variant) {
+                if (sideMapping.island === mainMapping.island
+                    && sideMapping.variant === mainMapping.variant) {
                     return sideIndex;
                 }
             }
         }),
-        id => id != null
+        id => id !== undefined
     );
     async.map(sideIndices, (sideIndex, callback) => {
         loadScene(game, renderer, sceneMap, sideIndex, parent, callback);
