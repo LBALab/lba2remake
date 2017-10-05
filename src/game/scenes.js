@@ -61,7 +61,6 @@ export function createSceneManager(params, game, renderer, callback: Function) {
                 delete scene.sideScenes;
                 sideScene.sideScenes[scene.index] = scene;
                 scene = sideScene;
-                window.scene = scene;
                 initSceneDebug(scene);
                 reviveActor(scene.getActor(0)); // Awake twinsen
                 scene.isActive = true;
@@ -77,7 +76,6 @@ export function createSceneManager(params, game, renderer, callback: Function) {
                 loadScene(this, params, game, renderer, sceneMap, index, null, (err, pScene) => {
                     renderer.applySceneryProps(pScene.scenery.props);
                     scene = pScene;
-                    window.scene = scene;
                     initSceneDebug(scene);
                     scene.isActive = true;
                     if (!musicSource.isPlaying) {

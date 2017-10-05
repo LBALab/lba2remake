@@ -80,7 +80,7 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
     return model;
 }
 
-export function updateModel(sceneIsActive: any, model: any, animState: any, entityIdx: number, bodyIdx: number, animIdx: number, time: Time) {
+export function updateModel(game: Object, sceneIsActive: Object, model: any, animState: Object, entityIdx: number, animIdx: number, time: Time) {
     const entity = model.entities[entityIdx];
     const entityAnim = getAnim(entity, animIdx);
     if (entityAnim !== null) {
@@ -94,7 +94,7 @@ export function updateModel(sceneIsActive: any, model: any, animState: any, enti
             updateKeyframe(anim, animState, time, realAnimIdx);
         }
         if (sceneIsActive) {
-            processAnimAction(entityAnim, animState);
+            processAnimAction(game, entityAnim, animState);
         }
     }
 }

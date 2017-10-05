@@ -28,9 +28,9 @@ export function ZONE() {
 export function ZONE_OBJ(actor) {
     const pos = actor.physics.position.clone();
     pos.y += 0.005;
-    for (let i = 0; i < scene.zones.length; ++i) {
-        const zone = scene.zones[i];
-        if (zone.props.type != 2)
+    for (let i = 0; i < this.scene.zones.length; ++i) {
+        const zone = this.scene.zones[i];
+        if (zone.props.type !== 2)
             continue;
 
         const box = zone.props.box;

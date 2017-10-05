@@ -33,7 +33,7 @@ function loadSceneDataSync(files, index) {
             gameOverScene: data.getInt8(1, true),
             unknown1: data.getUint16(2, true),
             unknown2: data.getUint16(4, true),
-            isOutsideScene: data.getInt8(6, true) == 1,
+            isOutsideScene: data.getInt8(6, true) === 1,
             buffer: buffer,
             palette: new Uint8Array(files.ress.getEntry(0)),
             actors: []

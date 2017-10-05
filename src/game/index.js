@@ -69,8 +69,6 @@ export function createGame(clock: Object) {
         }
     };
 
-    window.game = game;
-
     return game;
 }
 
