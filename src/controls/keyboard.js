@@ -4,8 +4,8 @@ import {switchStats} from '../renderer/stats';
 import {switchHUD} from "../game/debugHUD";
 import {BehaviourMode} from '../game/loop/hero';
 
-export function makeKeyboardControls(game: any) {
-    const onKeyDown = keyDownHandler.bind(null, game);
+export function makeKeyboardControls(sceneManager: Object, game: Object) {
+    const onKeyDown = keyDownHandler.bind(null, game, sceneManager);
     const onKeyUp = keyUpHandler.bind(null, game);
     window.addEventListener('keydown', onKeyDown, false);
     window.addEventListener('keyup', onKeyUp, false);
@@ -17,7 +17,7 @@ export function makeKeyboardControls(game: any) {
     }
 }
 
-function keyDownHandler(game, event) {
+function keyDownHandler(game, sceneManager, event) {
     const key = event.code || event.which || event.keyCode;
     switch (key) {
         case 38: // up
@@ -88,11 +88,11 @@ function keyDownHandler(game, event) {
 
         case 34: // pagedown
         case 'PageDown':
-            game.getSceneManager().next();
+            sceneManager.next();
             break;
         case 33: // pageup
         case 'PageUp':
-            game.getSceneManager().previous();
+            sceneManager.previous();
             break;
 
         case 70: // f

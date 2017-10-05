@@ -315,7 +315,7 @@ export function GIVE_BONUS() {
 }
 
 export function CHANGE_CUBE(index) {
-    this.game.getSceneManager().goto(index);
+    this.scene.goto(index);
 }
 
 export function OBJ_COL(flag) {

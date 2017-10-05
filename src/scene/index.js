@@ -329,7 +329,7 @@ function loadPatches(scene, offset) {
     return offset;
 }
 
-export function loadTexts(sceneData, textFile) {
+function loadTexts(sceneData, textFile) {
     const mapData = new Uint16Array(textFile.getEntry(sceneData.textIndex));
     const data = new DataView(textFile.getEntry(sceneData.textIndex + 1));
     const texts = {};

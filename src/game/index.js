@@ -1,42 +1,19 @@
 // @flow
-
 import THREE from 'three';
 import async from 'async';
 
-import {loadHqrAsync} from '../hqr';
-import {createRenderer} from '../renderer';
-import {makeFirstPersonMouseControls} from '../controls/mouse';
-import {makeKeyboardControls} from '../controls/keyboard';
-import {makeGyroscopeControls} from '../controls/gyroscope';
-import {makeGamepadControls} from '../controls/gamepad';
-import {makeFirstPersonTouchControls} from '../controls/touch';
-
-import {mainGameLoop} from './loop';
-import {createSceneManager} from './scenes';
 import {createState} from './state';
 import {createAudioManager} from '../audio'
 
-import {loadTexts} from '../scene';
-import {loadParams, watchParams} from './params';
-import {initDebugHUD} from './debugHUD';
-
-export function createGame() {
-    const params = loadParams();
-
-    let _sceneManager = null;
+export function createGame(clock: Object) {
     let _isPaused = false;
     let _isLoading = false;
 
-    const _clock = new THREE.Clock(false);
-    _clock.start();
-
-    initDebugHUD();
-
     const _state = createState();
-    const _renderer = createRenderer(params.vr);
     const _audio = createAudioManager(_state);
+
     const game = {
-        params: params,
+        texts: null,
         controlsState: {
             heroSpeed: 0,
             heroRotationSpeed: 0,
@@ -65,21 +42,19 @@ export function createGame() {
         isPaused: () => _isPaused,
         isLoading: () => _isLoading,
 
-        getSceneManager: () => _sceneManager,
         getState: () => _state,
         getAudioManager: () => _audio,
-        getRenderer: () => _renderer,
 
         pause: () => {
             _isPaused = !_isPaused;
             if(_isPaused) {
-                _clock.stop();
+                clock.stop();
                 console.log("Pause");
             } else {
-                _clock.start();
+                clock.start();
             }
         },
-        preload: (callback: any) => {
+        preload: () => {
             async.auto({
                 ress: preloadFileAsync('data/RESS.HQR'),
                 text: preloadFileAsync('data/TEXT.HQR'),
@@ -88,63 +63,14 @@ export function createGame() {
                 muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4'),
                 mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4'),
                 mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4')
-            }, function() {
+            }, () => {
                 const loading = document.getElementById('loading');
                 loading.style.display = 'none';
-                callback();
             });
-        },
-        run: () => {
-            _createSceneManager();
         }
     };
 
     window.game = game;
-
-    async.auto({
-        text: loadHqrAsync('TEXT.HQR')
-    }, function(err, files) {
-        loadTexts(game.controlsState, files.text);
-    });
-
-    const _createSceneManager = () => createSceneManager(game, _renderer, sceneManager => {
-        _sceneManager = sceneManager;
-
-        let controls = null;
-        if (params.vr) {
-            controls = [
-                makeGyroscopeControls(game),
-                makeGamepadControls(game)
-            ];
-            if (!params.mobile) {
-                controls.push(makeKeyboardControls(game));
-            }
-        }
-        else if (params.mobile) {
-            controls = [
-                makeFirstPersonTouchControls(game),
-                makeGamepadControls(game)
-            ];
-        } else {
-            controls = [
-                makeFirstPersonMouseControls(_renderer.domElement, game),
-                makeKeyboardControls(game),
-                makeGamepadControls(game)
-            ];
-        }
-
-        document.getElementById('main').appendChild(_renderer.domElement);
-        sceneManager.goto(parseInt(params.scene) || 0);
-
-        function processAnimationFrame() {
-            mainGameLoop(game, _clock, _renderer, sceneManager.getScene(), controls);
-            requestAnimationFrame(processAnimationFrame);
-        }
-
-        processAnimationFrame();
-
-        watchParams(game);
-    });
 
     return game;
 }

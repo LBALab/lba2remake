@@ -1,7 +1,11 @@
 // @flow
-import {createGame} from './game';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Root from './ui/Root';
 
 window.onload = function() {
-    const game = createGame();
-    game.preload(game.run);
+    ReactDOM.render(
+        <Root/>,
+        document.getElementById('root')
+    );
 };

@@ -9,13 +9,14 @@ import {
     debugHUDFrame,
 } from "../debugHUD";
 
-export function mainGameLoop(game, clock, renderer, scene, controls) {
+export function mainGameLoop(params, game, clock, renderer, scene, controls) {
     const time = {
         delta: Math.min(clock.getDelta(), 0.05),
         elapsed: clock.getElapsedTime()
     };
 
     const debugScope = {
+        params,
         game,
         clock,
         renderer,
