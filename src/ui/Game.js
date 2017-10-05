@@ -51,6 +51,12 @@ export default class Game extends React.Component {
         if (newProps.scene !== this.props.scene) {
             this.state.sceneManager.goto(newProps.scene);
         }
+        if (newProps.vr !== this.props.vr) {
+            this.content.removeChild(this.state.renderer.domElement);
+            const renderer = createRenderer(newProps.vr);
+            this.content.appendChild(renderer.domElement);
+            this.setState({ renderer });
+        }
     }
 
     frame() {
