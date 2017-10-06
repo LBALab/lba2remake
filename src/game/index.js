@@ -5,14 +5,15 @@ import async from 'async';
 import {createState} from './state';
 import {createAudioManager} from '../audio'
 
-export function createGame(clock: Object) {
+export function createGame(clock: Object, ui: Object) {
     let _isPaused = false;
     let _isLoading = false;
 
     const _state = createState();
     const _audio = createAudioManager(_state);
 
-    const game = {
+    return {
+        ui,
         controlsState: {
             heroSpeed: 0,
             heroRotationSpeed: 0,
@@ -68,8 +69,6 @@ export function createGame(clock: Object) {
             });
         }
     };
-
-    return game;
 }
 
 function preloadFileAsync(url) {

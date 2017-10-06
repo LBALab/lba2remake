@@ -15,8 +15,8 @@ body {
     position: fixed;
     background: black;
 }
-#main {
-    position: absolute;
+#root {
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -116,22 +116,6 @@ body {
     font-size: 3em;
     color: white;
 }
-#cinemaMode {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-.cinemaModeIn {
-    -webkit-animation: cinemaModeAnimIn 3s forwards;
-    animation: cinemaModeAnimIn 3s forwards;
-}
-.cinemaModeOut {
-    -webkit-animation: cinemaModeAnimOut 3s forwards;
-    animation: cinemaModeAnimOut 3s forwards;
-}
 
 #dbgHUD {
     max-width: 50%;
@@ -177,46 +161,6 @@ body {
     color: grey;
 }
 
-@-webkit-keyframes cinemaModeAnimIn {
-    0% {
-        border-top: 0px solid black;
-        border-bottom: 0px solid black;
-    }
-    100% {
-        border-top: 75px solid black;
-        border-bottom: 75px solid black;
-    }
-}
-@keyframes cinemaModeAnimIn {
-    0% {
-        border-top: 0px solid black;
-        border-bottom: 0px solid black;
-    }
-    100% {
-        border-top: 75px solid black;
-        border-bottom: 75px solid black;
-    }
-}
-@-webkit-keyframes cinemaModeAnimOut {
-    100% {
-        border-top: 0px solid black;
-        border-bottom: 0px solid black;
-    }
-    0% {
-        border-top: 75px solid black;
-        border-bottom: 75px solid black;
-    }
-}
-@keyframes cinemaModeAnimOut {
-    100% {
-        border-top: 0px solid black;
-        border-bottom: 0px solid black;
-    }
-    0% {
-        border-top: 75px solid black;
-        border-bottom: 75px solid black;
-    }
-}
 #loading {
     width: 100%;
     height: 100%;

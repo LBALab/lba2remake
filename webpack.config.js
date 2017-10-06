@@ -30,6 +30,10 @@ module.exports = {
             {
                 test: /\.proto?$/,
                 loader: 'raw-loader'
+            },
+            {
+                test: /\.css?$/,
+                loader: 'raw-loader'
             }
         ]
     },

@@ -6,40 +6,46 @@ import {createGame} from '../game';
 import {mainGameLoop} from '../game/loop';
 import {createSceneManager} from '../game/scenes';
 import {initDebugHUD} from '../game/debugHUD';
+import {createControls} from '../controls/index';
 
-import {makeFirstPersonMouseControls} from '../controls/mouse';
-import {makeKeyboardControls} from '../controls/keyboard';
-import {makeGyroscopeControls} from '../controls/gyroscope';
-import {makeGamepadControls} from '../controls/gamepad';
-import {makeFirstPersonTouchControls} from '../controls/touch';
+import {fullscreen} from './styles/index';
+import CinemaEffect from './game/CinemaEffect';
 
 export default class Game extends React.Component {
     constructor(props) {
         super(props);
+        this.onLoad = this.onLoad.bind(this);
+        this.onLoadCanvas = this.onLoadCanvas.bind(this);
+        this.frame = this.frame.bind(this);
 
         initDebugHUD();
 
-        this.onLoad = this.onLoad.bind(this);
-        this.frame = this.frame.bind(this);
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
 
         const clock = new THREE.Clock(false);
-        const game = createGame(clock);
-        const renderer = createRenderer(props.vr);
-        const sceneManager = createSceneManager(props, game, renderer, this.onSceneManagerReady);
-        const controls = createControls(props, game, renderer, sceneManager);
+        const game = createGame(clock, this);
 
-        this.state = { clock, renderer, game, controls, sceneManager };
+        this.state = { clock, game, cinema: false };
 
         clock.start();
         game.preload();
     }
 
-    onLoad(content) {
-        if (!this.content) {
-            this.content = content;
-            this.content.appendChild(this.state.renderer.domElement);
+    onLoad(root) {
+        if (!this.root) {
+            this.root = root;
+        }
+    }
+
+    onLoadCanvas(canvas) {
+        if (!this.canvas) {
+            const game = this.state.game;
+            const renderer = createRenderer(this.props, canvas);
+            const sceneManager = createSceneManager(this.props, game, renderer, this.onSceneManagerReady);
+            const controls = createControls(this.props, game, canvas, sceneManager);
+            this.setState({ renderer, sceneManager, controls });
             this.frame();
+            this.canvas = canvas;
         }
     }
 
@@ -51,54 +57,47 @@ export default class Game extends React.Component {
         if (newProps.scene !== this.props.scene) {
             this.state.sceneManager.goto(newProps.scene);
         }
-        if (newProps.vr !== this.props.vr) {
-            this.content.removeChild(this.state.renderer.domElement);
-            const renderer = createRenderer(newProps.vr);
-            this.content.appendChild(renderer.domElement);
-            this.setState({ renderer });
+        if (newProps.vr !== this.props.vr && this.canvas) {
+            this.state.renderer.dispose();
+            this.setState({ renderer: createRenderer(newProps, this.canvas) });
         }
     }
 
     frame() {
-        const sceneManager = this.state.sceneManager;
-        mainGameLoop(
-            this.props,
-            this.state.game,
-            this.state.clock,
-            this.state.renderer,
-            sceneManager.getScene(),
-            this.state.controls
-        );
+        this.checkResize();
+        const {game, clock, renderer, sceneManager, controls} = this.state;
+        if (renderer && sceneManager) {
+            mainGameLoop(
+                this.props,
+                game,
+                clock,
+                renderer,
+                sceneManager.getScene(),
+                controls
+            );
+        }
         requestAnimationFrame(this.frame);
     }
 
+    checkResize() {
+        if (this.root && this.canvas && this.state.renderer) {
+            const roundedWidth = Math.floor(this.root.clientWidth * 0.5) * 2;
+            const roundedHeight = Math.floor(this.root.clientHeight * 0.5) * 2;
+            const rWidth = `${roundedWidth}px`;
+            const rHeight = `${roundedHeight}px`;
+            const cvWidth = this.canvas.style.width;
+            const cvHeight = this.canvas.style.height;
+            if (rWidth !== cvWidth || rHeight !== cvHeight) {
+                this.state.renderer.resize(roundedWidth, roundedHeight);
+            }
+        }
+    }
+
     render() {
-        return <div ref={this.onLoad} />;
+        return <div ref={this.onLoad} style={fullscreen}>
+            <canvas ref={this.onLoadCanvas} />
+            <CinemaEffect enabled={this.state.cinema} />
+        </div>;
     }
 }
 
-function createControls(params, game, renderer, sceneManager) {
-    let controls;
-    if (params.vr) {
-        controls = [
-            makeGyroscopeControls(game),
-            makeGamepadControls(sceneManager, game)
-        ];
-        if (!params.mobile) {
-            controls.push(makeKeyboardControls(sceneManager, game));
-        }
-    }
-    else if (params.mobile) {
-        controls = [
-            makeFirstPersonTouchControls(game),
-            makeGamepadControls(sceneManager, game)
-        ];
-    } else {
-        controls = [
-            makeFirstPersonMouseControls(renderer.domElement, game),
-            makeKeyboardControls(sceneManager, game),
-            makeGamepadControls(sceneManager, game)
-        ];
-    }
-    return controls;
-}
