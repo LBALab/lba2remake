@@ -16,7 +16,6 @@ import {loadSceneMapData} from '../scene/map';
 import {loadActor} from './actors';
 import {loadPoint} from './points';
 import {loadZone} from './zones';
-import {parseQueryParams} from '../utils';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initSceneDebug, resetSceneDebug} from '../scripting/debug';
 import {initCameraMovement} from './loop/cameras';
@@ -52,7 +51,7 @@ export function createSceneManager(params, game, renderer, callback: Function) {
 
             const musicSource = game.getAudioManager().getMusicSource();
             if (scene && scene.sideScenes && index in scene.sideScenes) {
-                resetSceneDebug(scene);
+                resetSceneDebug(game, scene);
                 killActor(scene.getActor(0));
                 const sideScene = scene.sideScenes[index];
                 sideScene.sideScenes = scene.sideScenes;
@@ -60,7 +59,7 @@ export function createSceneManager(params, game, renderer, callback: Function) {
                 delete scene.sideScenes;
                 sideScene.sideScenes[scene.index] = scene;
                 scene = sideScene;
-                initSceneDebug(scene);
+                initSceneDebug(game, scene);
                 reviveActor(scene.getActor(0)); // Awake twinsen
                 scene.isActive = true;
                 if (!musicSource.isPlaying) {
@@ -71,11 +70,11 @@ export function createSceneManager(params, game, renderer, callback: Function) {
                 pCallback(scene);
             } else {
                 game.loading(index);
-                resetSceneDebug(scene);
+                resetSceneDebug(game, scene);
                 loadScene(this, params, game, renderer, sceneMap, index, null, (err, pScene) => {
                     renderer.applySceneryProps(pScene.scenery.props);
                     scene = pScene;
-                    initSceneDebug(scene);
+                    initSceneDebug(game, scene);
                     scene.isActive = true;
                     if (!musicSource.isPlaying) {
                         musicSource.load(scene.data.ambience.musicIndex, () => {

@@ -3,7 +3,7 @@ import {updateHero} from './hero';
 import {updateActor} from './actors';
 import {processPhysicsFrame} from './physics';
 import {processCameraMovement} from './cameras';
-import {updateDebugger, hasStep, endStep} from '../../scripting/debug';
+import {hasStep, endStep} from '../../scripting/debug';
 import {getRandom} from '../../utils/lba'
 import {
     debugHUDFrame,
@@ -37,7 +37,6 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
                 processPhysicsFrame(game, sideScene, time);
             });
             processCameraMovement(game.controlsState, renderer, scene, time);
-            updateDebugger(scene, renderer);
             renderer.render(scene);
         }
         if (scene.actors && scene.actors.length > 0) {

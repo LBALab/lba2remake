@@ -18,7 +18,7 @@ let settings = {
     },
     labels: {
         enabled: false,
-        toggle: toggleLabels
+        toggle: toggleActors
     }
 };
 
@@ -50,7 +50,26 @@ export function isPaused() {
     return paused;
 }
 
-export function initSceneDebug(scene) {
+export function selectLabel(scene, type, index) {
+    if (type === 'actor') {
+        selectActor(scene, index);
+    } else if (type === 'zone') {
+        selectZone(scene, index);
+    }
+}
+
+export function isSelected(scene, type, index) {
+    if (type === 'actor') {
+        return index === selectedActor;
+    } else if (type === 'zone') {
+        const zone = scene.zones[index];
+        return zone === selectedZone;
+    } else {
+        return false;
+    }
+}
+
+export function initSceneDebug(game, scene) {
     selectedScene = scene.index;
     window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
         detail: {
@@ -66,9 +85,9 @@ export function initSceneDebug(scene) {
                 break;
             case 'updateSettings':
                 each(message.settings, (enabled, key) => {
-                    if (settings[key].enabled != enabled) {
+                    if (settings[key].enabled !== enabled) {
                         settings[key].enabled = enabled;
-                        settings[key].toggle(scene, enabled);
+                        settings[key].toggle(game, scene, enabled);
                     }
                 });
                 break;
@@ -77,20 +96,20 @@ export function initSceneDebug(scene) {
     window.addEventListener('lba_ext_event_in', lbaExtListener);
 }
 
-export function resetSceneDebug(scene) {
+export function resetSceneDebug(game, scene) {
     if (lbaExtListener) {
         window.removeEventListener('lba_ext_event_in', lbaExtListener);
     }
-    settings.labels.toggle(scene, false);
-    settings.points.toggle(scene, false);
-    settings.zones.toggle(scene, false);
+    settings.labels.toggle(game, scene, false);
+    settings.points.toggle(game, scene, false);
+    settings.zones.toggle(game, scene, false);
     settings.labels.enabled = false;
     settings.points.enabled = false;
     settings.zones.enabled = false;
 }
 
 export function setCursorPosition(scene, actor, type, line, scrollView = false, value = null) {
-    if (selectedScene == scene.index && selectedActor == actor.index) {
+    if (selectedScene === scene.index && selectedActor === actor.index) {
         window.dispatchEvent(new CustomEvent('lba_ext_event_out', {
             detail: {
                 type: 'setCurrentLine',
@@ -105,121 +124,38 @@ export function setCursorPosition(scene, actor, type, line, scrollView = false, 
     }
 }
 
-export function updateDebugger(scene, renderer) {
-    if (settings.labels.enabled) {
-        updateLabels(scene, renderer, 'actor');
-    }
-    if (settings.points.enabled) {
-        updateLabels(scene, renderer, 'point');
-    }
-    if (settings.zones.enabled) {
-        updateLabels(scene, renderer, 'zone');
-    }
-}
-
-function toggleZones(scene, enabled) {
+function toggleZones(game, scene, enabled) {
     if (scene) {
         each(scene.zones, zone => {
             zone.threeObject.visible = enabled;
+            if (enabled) {
+                zone.threeObject.updateMatrix();
+            }
         });
     }
-    toggleLabels(scene, enabled, 'zone');
+    toggleLabels(game, enabled, 'zone');
 }
 
-function togglePoints(scene, enabled) {
+function togglePoints(game, scene, enabled) {
     if (scene) {
         each(scene.points, point => {
             point.threeObject.visible = enabled;
+            if (enabled) {
+                point.threeObject.updateMatrix();
+            }
         });
     }
-    toggleLabels(scene, enabled, 'point');
+    toggleLabels(game, enabled, 'point');
 }
 
-function toggleLabels(scene, enabled, type = 'actor') {
-    const main = document.querySelector('#labels');
-    if (enabled) {
-        const labels = document.createElement('div');
-        labels.id = `${type}_labels`;
-        each(scene[`${type}s`], obj => {
-            const label = document.createElement('div');
-            if (obj.threeObject)
-                obj.threeObject.updateMatrix();
-            label.id = `${type}_label_${obj.index}`;
-            label.classList.add('label');
-            label.classList.add(type);
-            label.innerText = obj.index;
-            if (type === 'actor') {
-                label.addEventListener('click', function() {
-                    selectActor(scene, obj.index);
-                });
-            }
-            if (type === 'zone') {
-                const {r, g, b} = obj.color;
-                label.style.background = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},0.6)`;
-                label.addEventListener('click', function() {
-                    if (selectedZone) {
-                        selectedZone.threeObject.material.color = selectedZone.color;
-                    }
-                    if (selectedZone !== obj) {
-                        obj.threeObject.material.color = new THREE.Color(0xFFFFFF);
-                        selectedZone = obj;
-                    } else {
-                        selectedZone = null;
-                    }
-                });
-                if (obj.props.type === 2) {
-                    label.innerText = '(' + obj.props.snap + ')';
-                }
-            }
-            labels.appendChild(label);
-        });
-        main.appendChild(labels);
-    } else {
-        const labels = document.querySelector(`#${type}_labels`);
-        if (labels) {
-            main.removeChild(labels);
-        }
-    }
+function toggleActors(game, scene, enabled) {
+    toggleLabels(game, enabled, 'actor');
 }
 
-function updateLabels(scene, renderer, type) {
-    const pos = new THREE.Vector3();
-    each(scene[`${type}s`], obj => {
-        const label = document.querySelector(`#${type}_label_${obj.index}`);
-
-        if (!label)
-            return;
-
-        if (!obj.threeObject || obj.threeObject.visible == false) {
-            label.style.display = 'none';
-            return;
-        }
-
-        const widthHalf = 0.5 * renderer.canvas.width;
-        const heightHalf = 0.5 * renderer.canvas.height;
-
-        obj.threeObject.updateMatrixWorld();
-        pos.setFromMatrixPosition(obj.threeObject.matrixWorld);
-        pos.project(renderer.getMainCamera(scene));
-
-        pos.x = ( pos.x * widthHalf ) + widthHalf;
-        pos.y = - ( pos.y * heightHalf ) + heightHalf;
-
-        if (pos.z < 1) {
-            label.style.left = (pos.x / renderer.pixelRatio()) + 'px';
-            label.style.top = (pos.y / renderer.pixelRatio()) + 'px';
-            label.style.display = 'block';
-        } else {
-            label.style.display = 'none';
-        }
-        if (type == 'actor') {
-            if (selectedActor == obj.index) {
-                label.classList.add('selected');
-            } else {
-                label.classList.remove('selected');
-            }
-        }
-    });
+function toggleLabels(game, enabled, type) {
+    const labels = game.ui.state.labels;
+    labels[type] = enabled;
+    game.ui.setState({ labels: labels })
 }
 
 function selectActor(scene, index) {
@@ -233,6 +169,19 @@ function selectActor(scene, index) {
             move: getDebugListing('move', scene, actor)
         }
     }));
+}
+
+function selectZone(scene, index) {
+    const zone = scene.getZone(index);
+    if (selectedZone) {
+        selectedZone.threeObject.material.color = selectedZone.color;
+    }
+    if (selectedZone !== zone) {
+        zone.threeObject.material.color = new THREE.Color(0xFFFFFF);
+        selectedZone = zone;
+    } else {
+        selectedZone = null;
+    }
 }
 
 function getDebugListing(type, scene, actor) {
@@ -314,7 +263,7 @@ function mapOperator(operator) {
 }
 
 function processIndent(cmd, prevCmd, op, indent) {
-    if (prevCmd && prevCmd.name != 'BREAK' && prevCmd.name != 'SWITCH' && prevCmd.name != 'OR_CASE' && (op.command == 'CASE' || op.command == 'OR_CASE' || op.command == 'DEFAULT')) {
+    if (prevCmd && prevCmd.name !== 'BREAK' && prevCmd.name !== 'SWITCH' && prevCmd.name !== 'OR_CASE' && (op.command === 'CASE' || op.command === 'OR_CASE' || op.command === 'DEFAULT')) {
         indent = Math.max(indent - 1, 0);
     }
     switch (op.indent) {

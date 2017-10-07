@@ -9,11 +9,14 @@ import {initDebugHUD} from '../game/debugHUD';
 import {createControls} from '../controls/index';
 
 import {fullscreen} from './styles/index';
+
+import FrameListener from './utils/FrameListener';
 import CinemaEffect from './game/CinemaEffect';
 import TextBox from './game/TextBox';
 import TextInterjections from './game/TextInterjections';
+import DebugLabels from './editor/DebugLabels';
 
-export default class Game extends React.Component {
+export default class Game extends FrameListener {
     constructor(props) {
         super(props);
         this.onLoad = this.onLoad.bind(this);
@@ -33,6 +36,11 @@ export default class Game extends React.Component {
             cinema: false,
             text: null,
             interjections: {},
+            labels: {
+                actor: false,
+                zone: false,
+                point: false
+            }
         };
 
         clock.start();
@@ -48,9 +56,9 @@ export default class Game extends React.Component {
     onLoadCanvas(canvas) {
         if (!this.canvas) {
             const game = this.state.game;
-            const renderer = createRenderer(this.props, canvas);
-            const sceneManager = createSceneManager(this.props, game, renderer, this.onSceneManagerReady);
-            const controls = createControls(this.props, game, canvas, sceneManager);
+            const renderer = createRenderer(this.props.params, canvas);
+            const sceneManager = createSceneManager(this.props.params, game, renderer, this.onSceneManagerReady);
+            const controls = createControls(this.props.params, game, canvas, sceneManager);
             this.setState({ renderer, sceneManager, controls });
             this.frame();
             this.canvas = canvas;
@@ -58,16 +66,16 @@ export default class Game extends React.Component {
     }
 
     onSceneManagerReady() {
-        this.state.sceneManager.goto(this.props.scene);
+        this.state.sceneManager.goto(this.props.params.scene);
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.scene !== this.props.scene) {
-            this.state.sceneManager.goto(newProps.scene);
+        if (newProps.params.scene !== this.props.params.scene) {
+            this.state.sceneManager.goto(newProps.params.scene);
         }
-        if (newProps.vr !== this.props.vr && this.canvas) {
+        if (newProps.params.vr !== this.props.params.vr && this.canvas) {
             this.state.renderer.dispose();
-            this.setState({ renderer: createRenderer(newProps, this.canvas) });
+            this.setState({ renderer: createRenderer(newProps.params, this.canvas) });
         }
     }
 
@@ -75,8 +83,11 @@ export default class Game extends React.Component {
         this.checkResize();
         const {game, clock, renderer, sceneManager, controls} = this.state;
         if (renderer && sceneManager) {
+            if (this.state.scene !== sceneManager.getScene()) {
+                this.setState({scene: sceneManager.getScene()});
+            }
             mainGameLoop(
-                this.props,
+                this.props.params,
                 game,
                 clock,
                 renderer,
@@ -84,7 +95,6 @@ export default class Game extends React.Component {
                 controls
             );
         }
-        requestAnimationFrame(this.frame);
     }
 
     checkResize() {
@@ -105,6 +115,11 @@ export default class Game extends React.Component {
         const pixelRatio = this.state.renderer ? this.state.renderer.pixelRatio() : 1;
         return <div ref={this.onLoad} style={fullscreen}>
             <canvas ref={this.onLoadCanvas} />
+            <DebugLabels params={this.props.params}
+                         labels={this.state.labels}
+                         scene={this.state.scene}
+                         renderer={this.state.renderer}
+                         ticker={this.props.ticker} />
             <CinemaEffect enabled={this.state.cinema} />
             <TextBox text={this.state.text} />
             <TextInterjections interjections={this.state.interjections} pixelRatio={pixelRatio} />

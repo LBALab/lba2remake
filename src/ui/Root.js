@@ -22,6 +22,6 @@ export default class Root extends React.Component {
     }
 
     render() {
-        return <Game {...this.state.params} />;
+        return <Game params={this.state.params} ticker={this.props.ticker} />;
     }
 }
