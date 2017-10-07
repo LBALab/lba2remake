@@ -41,27 +41,13 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
             }
-            const renderer = this.game.ui.state.renderer;
-            const widthHalf = 0.5 * renderer.canvas.width;
-            const heightHalf = 0.5 * renderer.canvas.height;
-
-            const pos = new THREE.Vector3();
-            actor.threeObject.updateMatrixWorld();
-            pos.setFromMatrixPosition(actor.threeObject.matrixWorld);
-            pos.project(renderer.getMainCamera(this.scene));
-            pos.x = (pos.x * widthHalf) + widthHalf;
-            pos.y = - (pos.y * heightHalf) + heightHalf;
-            // re-align above character (should be calculated based on font height and text width)
-            pos.x -= 50;
-            pos.y -= 125;
-
             const itrjId = `${actor.index}_${id}`;
             const interjections = clone(this.game.ui.state.interjections);
             interjections[itrjId] = {
+                scene: this.scene.index,
+                actor: actor.index,
                 color: actor.props.textColor,
-                value: text.value,
-                x: pos.x,
-                y: pos.y
+                value: text.value
             };
             this.game.ui.setState({interjections});
             setTimeout(() => {

@@ -112,7 +112,6 @@ export default class Game extends FrameListener {
     }
 
     render() {
-        const pixelRatio = this.state.renderer ? this.state.renderer.pixelRatio() : 1;
         return <div ref={this.onLoad} style={fullscreen}>
             <canvas ref={this.onLoadCanvas} />
             <DebugLabels params={this.props.params}
@@ -122,7 +121,9 @@ export default class Game extends FrameListener {
                          ticker={this.props.ticker} />
             <CinemaEffect enabled={this.state.cinema} />
             <TextBox text={this.state.text} />
-            <TextInterjections interjections={this.state.interjections} pixelRatio={pixelRatio} />
+            <TextInterjections scene={this.state.scene}
+                               renderer={this.state.renderer}
+                               interjections={this.state.interjections} />
         </div>;
     }
 }
