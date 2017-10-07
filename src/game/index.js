@@ -31,11 +31,13 @@ export function createGame(clock: Object, ui: Object) {
         loading: (index: number) => {
             _isPaused = true;
             _isLoading = true;
+            ui.setState({loading: true});
             console.log(`Loading scene #${index}`);
         },
         loaded: () => {
             _isPaused = false;
             _isLoading = false;
+            ui.setState({loading: false});
             console.log("Loaded!");
         },
 
@@ -68,8 +70,6 @@ export function createGame(clock: Object, ui: Object) {
                 const gameTexts = {textIndex: 4, texts: null};
                 loadTexts(gameTexts, files.text);
                 that.texts = gameTexts.texts;
-                const loading = document.getElementById('loading');
-                loading.style.display = 'none';
             });
         }
     };

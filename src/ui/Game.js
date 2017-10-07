@@ -16,6 +16,7 @@ import TextBox from './game/TextBox';
 import TextInterjections from './game/TextInterjections';
 import DebugLabels from './editor/DebugLabels';
 import FoundObject from './game/FoundObject';
+import Loader from './game/Loader';
 
 export default class Game extends FrameListener {
     constructor(props) {
@@ -42,7 +43,8 @@ export default class Game extends FrameListener {
                 zone: false,
                 point: false
             },
-            foundObject: null
+            foundObject: null,
+            loading: true
         };
 
         clock.start();
@@ -127,6 +129,7 @@ export default class Game extends FrameListener {
                                renderer={this.state.renderer}
                                interjections={this.state.interjections} />
             <FoundObject foundObject={this.state.foundObject} />
+            {this.state.loading ? <Loader/> : null}
         </div>;
     }
 }
