@@ -88,8 +88,10 @@ export default class DebugLabels extends FrameListener {
             if (obj.isVisible === false || !obj.threeObject)
                 return;
 
-            const widthHalf = 0.5 * renderer.canvas.clientWidth;
-            const heightHalf = 0.5 * renderer.canvas.clientHeight;
+            const width = renderer.canvas.clientWidth;
+            const height = renderer.canvas.clientHeight;
+            const widthHalf = 0.5 * width;
+            const heightHalf = 0.5 * height;
 
             obj.threeObject.updateMatrixWorld();
             POS.setFromMatrixPosition(obj.threeObject.matrixWorld);
@@ -98,7 +100,11 @@ export default class DebugLabels extends FrameListener {
             POS.x = ( POS.x * widthHalf ) + widthHalf;
             POS.y = - ( POS.y * heightHalf ) + heightHalf;
 
-            if (POS.z < 1) {
+            if (POS.z < 1
+                && POS.x > -offset[type]
+                && POS.x < width + offset[type]
+                && POS.y > -offset[type]
+                && POS.y < height + offset[type]) {
                 const item = {
                     id: `${scene.index}_${type}_${obj.index}`,
                     index: obj.index,
