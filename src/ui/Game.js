@@ -10,6 +10,8 @@ import {createControls} from '../controls/index';
 
 import {fullscreen} from './styles/index';
 import CinemaEffect from './game/CinemaEffect';
+import TextBox from './game/TextBox';
+import TextInterjections from './game/TextInterjections';
 
 export default class Game extends React.Component {
     constructor(props) {
@@ -25,7 +27,13 @@ export default class Game extends React.Component {
         const clock = new THREE.Clock(false);
         const game = createGame(clock, this);
 
-        this.state = { clock, game, cinema: false };
+        this.state = {
+            clock,
+            game,
+            cinema: false,
+            text: null,
+            interjections: {},
+        };
 
         clock.start();
         game.preload();
@@ -94,10 +102,12 @@ export default class Game extends React.Component {
     }
 
     render() {
+        const pixelRatio = this.state.renderer ? this.state.renderer.pixelRatio() : 1;
         return <div ref={this.onLoad} style={fullscreen}>
             <canvas ref={this.onLoadCanvas} />
             <CinemaEffect enabled={this.state.cinema} />
+            <TextBox text={this.state.text} />
+            <TextInterjections interjections={this.state.interjections} pixelRatio={pixelRatio} />
         </div>;
     }
 }
-

@@ -9,9 +9,9 @@ const bannerBase = {
     background: 'black',
 };
 
-export default function CinemaEffect(props) {
+export default function CinemaEffect({enabled}) {
     const banner = extend({
-        animation: `cinemaModeAnim${props.enabled ? 'In' : 'Out'} 3s forwards`
+        animation: `cinemaModeAnim${enabled ? 'In' : 'Out'} 3s forwards`
     }, bannerBase);
     const bannerTop = extend({top: 0}, banner);
     const bannerBottom = extend({bottom: 0}, banner);

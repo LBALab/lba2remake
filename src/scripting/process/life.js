@@ -1,5 +1,5 @@
 import THREE from 'three';
-
+import {clone} from 'lodash';
 import {DirMode} from '../../game/actors';
 import {setMagicBallLevel} from '../../game/state';
 import VideoData from '../../video/data';
@@ -34,101 +34,84 @@ export function MESSAGE(cmdState, id) {
 
 export function MESSAGE_OBJ(cmdState, actor, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const hero = this.scene.getActor(0);
     if (!cmdState.listener) {
-        const hero = this.scene.getActor(0);
-        hero.props.dirMode = DirMode.NO_MOVE;
-        hero.props.prevEntityIndex = hero.props.entityIndex;
-        hero.props.prevAnimIndex = hero.props.animIndex;
-        hero.props.entityIndex = 0;
-        if (actor.index === 0)
-            hero.props.animIndex = 28; // talking / reading
-        else
-            hero.props.animIndex = 0;
-        let textBox = document.getElementById('frameText');
         const text = this.scene.data.texts[id];
-        if (text.type === 3) {
-            textBox.className = "bigText";
-        } else if (text.type === 9) {
+        if (text.type === 9) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
             }
-            const main = document.querySelector('#main');
-            textBox = document.createElement('div');
-            textBox.className = "noframeText";
-            textBox.id = `noframeText_${actor.index}_${id}`;
-            main.appendChild(textBox);
-
-            const renderer = window.game.getRenderer();
-            const widthHalf = 0.5 * renderer.domElement.width;
-            const heightHalf = 0.5 * renderer.domElement.height;
+            const renderer = this.game.ui.state.renderer;
+            const widthHalf = 0.5 * renderer.canvas.width;
+            const heightHalf = 0.5 * renderer.canvas.height;
 
             const pos = new THREE.Vector3();
             actor.threeObject.updateMatrixWorld();
             pos.setFromMatrixPosition(actor.threeObject.matrixWorld);
-            pos.project(renderer.getMainCamera(scene));
+            pos.project(renderer.getMainCamera(this.scene));
             pos.x = (pos.x * widthHalf) + widthHalf;
             pos.y = - (pos.y * heightHalf) + heightHalf;
             // re-align above character (should be calculated based on font height and text width)
             pos.x -= 50;
             pos.y -= 125;
 
-            textBox.style.left = (pos.x / renderer.pixelRatio()) + 'px';
-            textBox.style.top = (pos.y / renderer.pixelRatio()) + 'px';
-        } else {
-            textBox.className = "smallText";
-        }
-        cmdState.currentChar = 0;
-        textBox.innerHTML = '';
-        textBox.style.color = actor.props.textColor;
-        let textInterval = setInterval(function () {
-            textBox.style.display = 'block';
-            const char = text.value.charAt(cmdState.currentChar);
-            if (char === '@') {
-                const br = document.createElement('br');
-                textBox.appendChild(br);
-            } else {
-                textBox.innerHTML += char;
-            }
-            cmdState.currentChar++;
-            if (cmdState.currentChar > text.value.length) {
-                clearInterval(textInterval);
-            }
-        }, 35);
-        const that = this;
-        cmdState.listener = function(event) {
-            const key = event.code || event.which || event.keyCode;
-            if (key === 'Enter' || key === 13) {
+            const itrjId = `${actor.index}_${id}`;
+            const interjections = clone(this.game.ui.state.interjections);
+            interjections[itrjId] = {
+                color: actor.props.textColor,
+                value: text.value,
+                x: pos.x,
+                y: pos.y
+            };
+            this.game.ui.setState({interjections});
+            setTimeout(() => {
+                const interjections = clone(this.game.ui.state.interjections);
+                delete interjections[itrjId];
+                this.game.ui.setState({interjections});
                 cmdState.ended = true;
-                clearInterval(textInterval);
-                if (text.type === 9) {
-                    const main = document.querySelector('#main');
-                    textBox = document.getElementById(`noframeText_${actor.index}_${id}`);
-                    main.removeChild(textBox);
+            }, 2000);
+        } else {
+            hero.props.dirMode = DirMode.NO_MOVE;
+            hero.props.prevEntityIndex = hero.props.entityIndex;
+            hero.props.prevAnimIndex = hero.props.animIndex;
+            hero.props.entityIndex = 0;
+            if (actor.index === 0)
+                hero.props.animIndex = 28; // talking / reading
+            else
+                hero.props.animIndex = 0;
+            this.game.ui.setState({
+                text: {
+                    type: text.type === 3 ? 'big' : 'small',
+                    value: text.value,
+                    color: actor.props.textColor
                 }
-                that.scene.getActor(0).props.dirMode = DirMode.MANUAL;
+            });
+            cmdState.listener = function(event) {
+                const key = event.code || event.which || event.keyCode;
+                if (key === 'Enter' || key === 13) {
+                    cmdState.ended = true;
+                }
+            };
+            window.addEventListener('keydown', cmdState.listener);
+            if (text.type === 9) {
+                setTimeout(function () {
+                    cmdState.listener();
+                }, 3000);
             }
-        };
-        window.addEventListener('keydown', cmdState.listener);
-        if (text.type === 9) {
-            setTimeout(function () {
-                cmdState.listener();
-            }, 3000);
         }
+
         voiceSource.load(text.index, this.scene.data.textBankId, () => {
             voiceSource.play();
         });
-
     }
     if (cmdState.ended) {
         voiceSource.stop();
-        let textBox = null;
         const text = this.scene.data.texts[id];
         if (text.type !== 9) {
-            textBox = document.getElementById('frameText');
-            textBox.style.display = 'none';
-            textBox.innerHTML = '';
+            this.game.ui.setState({ text: null });
+            window.removeEventListener('keydown', cmdState.listener);
+            hero.props.dirMode = DirMode.MANUAL;
         }
-        window.removeEventListener('keydown', cmdState.listener);
         delete cmdState.listener;
         delete cmdState.ended;
     } else {

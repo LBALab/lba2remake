@@ -50,7 +50,7 @@ function CUBE(game, scene, zone, hero) {
 
 function TEXT(game, scene, zone, hero) {
     const voiceSource = game.getAudioManager().getVoiceSource();
-    if (game.controlsState.action == 1) {
+    if (game.controlsState.action === 1) {
         if (!scene.zoneState.listener) {
             scene.getActor(0).props.dirMode = DirMode.NO_MOVE;
 
@@ -60,34 +60,20 @@ function TEXT(game, scene, zone, hero) {
             hero.props.animIndex = 28; // talking / reading
             scene.zoneState.currentChar = 0;
 
-            const textBox = document.getElementById('frameText');
-            textBox.style.color = getHtmlColor(scene.data.palette, zone.props.info0 * 16 + 12);
             const text = scene.data.texts[zone.props.snap];
-            if (text.type === 3) {
-                textBox.className = "bigText";
-            } else {
-                textBox.className = "smallText";
-            }
-            textBox.innerHTML = '';
-            let textInterval = setInterval(function () {
-                textBox.style.display = 'block';
-                const char = text.value.charAt(scene.zoneState.currentChar);
-                if (char == '@') {
-                    const br = document.createElement('br');
-                    textBox.appendChild(br);
-                } else {
-                    textBox.innerHTML += char;
+            game.ui.setState({
+                text: {
+                    type: text.type === 3 ? 'big' : 'small',
+                    value: text.value,
+                    color: getHtmlColor(scene.data.palette, zone.props.info0 * 16 + 12)
                 }
-                scene.zoneState.currentChar++;
-                if (scene.zoneState.currentChar > text.value.length) {
-                    clearInterval(textInterval);
-                }
-            }, 35);
+            });
+
             scene.zoneState.listener = function(event) {
                 const key = event.code || event.which || event.keyCode;
                 if (key === 'Enter' || key === 13) {
                     scene.zoneState.ended = true;
-                    clearInterval(textInterval);
+                    game.ui.setState({text: null});
                     scene.getActor(0).props.dirMode = DirMode.MANUAL;
                 }
             };
@@ -102,9 +88,7 @@ function TEXT(game, scene, zone, hero) {
         hero.props.entityIndex = hero.props.prevEntityIndex;
         hero.props.animIndex = hero.props.prevAnimIndex;
         voiceSource.stop();
-        const textBox = document.getElementById('frameText');
-        textBox.style.display = 'none';
-        textBox.innerHTML = '';
+        game.ui.setState({text: null});
         window.removeEventListener('keydown', scene.zoneState.listener);
         delete scene.zoneState.listener;
         delete scene.zoneState.ended;

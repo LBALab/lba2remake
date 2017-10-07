@@ -63,43 +63,7 @@ body {
     background: red;
     color: white;
 }
-#frameText {
-    display: none;
-    position: fixed;
-    background: rgba(0, 0, 0, 0.5);
-    font-family: LBA;
-    text-shadow: black 4px 4px;
-    padding: 20px;
-    border: 2px outset #20a2ff;
-    border-radius: 15px;
-    font-size: 3em;
-    color: white;
-}
-.smallText {
-    display: none;
-    position: fixed;
-    bottom: 30px;
-    left: 30px;
-    right: 30px;
-    min-height: 117px;
-}
-.bigText {
-    display: none;
-    position: fixed;
-    bottom: 30px;
-    left: 30px;
-    right: 30px;
-    top: 30px;
-}
-.noframeText {
-    display: none;
-    position: absolute;
-    font-family: LBA;
-    text-shadow: black 4px 4px;
-    font-size: 3em;
-    color: white;
-    white-space:nowrap;
-}
+
 #overlay {
     display: none;
     position: fixed;
@@ -199,17 +163,6 @@ body {
     background-color: black;
 }
 @media only screen and (max-width: 1024px) {
-    #frameText {
-        font-size: 2.5em;
-        padding: 20px;
-    }
-    .smallText {
-        min-height: 60px;
-    }
-    #noframeText {
-        font-size: 2.5em;
-        padding: 20px;
-    }
     #overlay {
         font-size: 2.5em;
         padding: 20px;
@@ -228,17 +181,6 @@ body {
     }
 }
 @media only screen and (max-width: 768px) {
-    #frameText {
-        font-size: 1.5em;
-        padding: 15px;
-    }
-    .smallText {
-        min-height: 60px;
-    }
-    #noframeText {
-        font-size: 1.5em;
-        padding: 15px;
-    }
     #overlay {
         font-size: 1.5em;
         padding: 15px;
@@ -256,45 +198,5 @@ body {
         height: 240px;
         margin-top: -120px;
         margin-left: -160px;
-    }
-    @-webkit-keyframes cinemaModeAnimIn {
-        0% {
-            border-top: 0px solid black;
-            border-bottom: 0px solid black;
-        }
-        100% {
-            border-top: 35px solid black;
-            border-bottom: 35px solid black;
-        }
-    }
-    @keyframes cinemaModeAnimIn {
-        0% {
-            border-top: 0px solid black;
-            border-bottom: 0px solid black;
-        }
-        100% {
-            border-top: 35px solid black;
-            border-bottom: 35px solid black;
-        }
-    }
-    @-webkit-keyframes cinemaModeAnimOut {
-        100% {
-            border-top: 0px solid black;
-            border-bottom: 0px solid black;
-        }
-        0% {
-            border-top: 35px solid black;
-            border-bottom: 35px solid black;
-        }
-    }
-    @keyframes cinemaModeAnimOut {
-        100% {
-            border-top: 0px solid black;
-            border-bottom: 0px solid black;
-        }
-        0% {
-            border-top: 35px solid black;
-            border-bottom: 35px solid black;
-        }
     }
 }

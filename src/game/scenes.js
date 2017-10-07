@@ -43,8 +43,7 @@ export function createSceneManager(params, game, renderer, callback: Function) {
             if (scene)
                 scene.isActive = false;
 
-            const textBox = document.getElementById('frameText');
-            textBox.style.display = 'none';
+            game.ui.setState({ text: null, cinema: false });
 
             const hash = window.location.hash;
             if (hash.match(/scene\=\d+/)) {
