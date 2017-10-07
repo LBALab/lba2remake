@@ -176,13 +176,13 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                 variables: createSceneVariables(),
                 zoneState: { listener: null, ended: false },
                 getActor(index) {
-                    return find(this.actors, function(obj) { return obj.index == index; });
+                    return find(this.actors, function(obj) { return obj.index === index; });
                 },
                 getZone(index) {
-                    return find(this.zones, function(obj) { return obj.index == index; });
+                    return find(this.zones, function(obj) { return obj.index === index; });
                 },
                 getPoint(index) {
-                    return find(this.points, function(obj) { return obj.index == index; });
+                    return find(this.points, function(obj) { return obj.index === index; });
                 },
                 goto: sceneManager.goto.bind(sceneManager)
             };

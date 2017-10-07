@@ -18,6 +18,7 @@ export function loadPoint(props, callback) {
     const obj = new THREE.Mesh(geometry, material);
     obj.visible = false;
     obj.position.set(point.physics.position.x, point.physics.position.y, point.physics.position.z);
+    obj.matrixAutoUpdate = false;
     point.threeObject = obj;
 
     callback(null, point);

@@ -48,6 +48,7 @@ export function loadIslandScenery(name, ambience, callback) {
 
 function loadIslandNode(props, files, ambience) {
     const islandObject = new THREE.Object3D();
+    islandObject.matrixAutoUpdate = false;
     const layout = loadLayout(files.ile);
     const data = {
         files: files,
@@ -76,6 +77,7 @@ function loadIslandNode(props, files, ambience) {
                 bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, false));
             }
             const mesh = new THREE.Mesh(bufferGeometry, material);
+            mesh.matrixAutoUpdate = false;
             mesh.name = name;
             islandObject.add(mesh);
         }
