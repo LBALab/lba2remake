@@ -4,6 +4,8 @@ import async from 'async';
 
 import {createState} from './state';
 import {createAudioManager} from '../audio'
+import {loadHqrAsync} from '../hqr';
+import {loadTexts} from '../scene';
 
 export function createGame(clock: Object, ui: Object) {
     let _isPaused = false;
@@ -24,9 +26,7 @@ export function createGame(clock: Object, ui: Object) {
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
             action: 0,
-            jump: 0,
-            texts: null,
-            textIndex: 4 // game text
+            jump: 0
         },
         loading: (index: number) => {
             _isPaused = true;
@@ -54,16 +54,20 @@ export function createGame(clock: Object, ui: Object) {
                 clock.start();
             }
         },
-        preload: () => {
+        preload: function() {
+            const that = this;
             async.auto({
                 ress: preloadFileAsync('data/RESS.HQR'),
-                text: preloadFileAsync('data/TEXT.HQR'),
+                text: loadHqrAsync('TEXT.HQR'),
                 voxgame: preloadFileAsync(`data/VOX/${_state.config.languageCode}_GAM_AAC.VOX`),
                 vox000: preloadFileAsync(`data/VOX/${_state.config.languageCode}_000_AAC.VOX`),
                 muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4'),
                 mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4'),
                 mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4')
-            }, () => {
+            }, (error, files) => {
+                const gameTexts = {textIndex: 4, texts: null};
+                loadTexts(gameTexts, files.text);
+                that.texts = gameTexts.texts;
                 const loading = document.getElementById('loading');
                 loading.style.display = 'none';
             });

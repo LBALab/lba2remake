@@ -197,48 +197,38 @@ export function INC_CHAPTER() {
 
 export function FOUND_OBJECT(cmdState, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
-    const textBox = document.getElementById('frameText');
+    const hero = this.scene.actors[0];
     if (!cmdState.listener) {
-        this.scene.getActor(0).props.dirMode = DirMode.NO_MOVE;
+        hero.props.dirMode = DirMode.NO_MOVE;
+        hero.props.prevEntityIndex = hero.props.entityIndex;
+        hero.props.prevAnimIndex = hero.props.animIndex;
+        hero.props.entityIndex = 0;
+        hero.props.animIndex = 0;
         this.game.getState().flags.inventory[id] = 1;
-        //this.actor.isVisible = false;
         const soundFxSource = this.game.getAudioManager().getSoundFxSource();
         soundFxSource.load(6, () => {
             soundFxSource.play();
         });
-        cmdState.currentChar = 0;
-        const text = this.game.controlsState.texts[id];
-        if (text.type === 3) {
-            textBox.className = "bigText";
-        } else {
-            textBox.className = "smallText";
-        }
-        textBox.innerHTML = '';
-        textBox.style.color = this.actor.props.textColor;
-        let textInterval = setInterval(function () {
-            textBox.style.display = 'block';
-            const char = text.value.charAt(cmdState.currentChar);
-            if (char == '@') {
-                const br = document.createElement('br');
-                textBox.appendChild(br);
-            } else {
-                textBox.innerHTML += char;
+        const text = this.game.texts[id];
+        this.game.ui.setState({
+            text: {
+                type: text.type === 3 ? 'big' : 'small',
+                value: text.value,
+                color: hero.props.textColor
             }
-            cmdState.currentChar++;
-            if (cmdState.currentChar > text.value.length) {
-                clearInterval(textInterval);
-            }
-        }, 35);
-        const that = this;
+        });
         cmdState.listener = function(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
                 cmdState.ended = true;
-                clearInterval(textInterval);
-                that.scene.getActor(0).props.dirMode = DirMode.MANUAL;
             }
         };
         window.addEventListener('keydown', cmdState.listener);
+        if (text.type === 9) {
+            setTimeout(function () {
+                cmdState.listener();
+            }, 3000);
+        }
         voiceSource.load(text.index, -1, () => {
             voiceSource.play();
         });
@@ -247,14 +237,16 @@ export function FOUND_OBJECT(cmdState, id) {
         overlayBox.style.display = 'block';
     }
     if (cmdState.ended) {
-        //this.actor.isVisible = true;
         voiceSource.stop();
-        const textBox = document.getElementById('frameText');
-        textBox.style.display = 'none';
-        textBox.innerHTML = '';
+        const text = this.scene.data.texts[id];
+        if (text.type !== 9) {
+            this.game.ui.setState({ text: null });
+            window.removeEventListener('keydown', cmdState.listener);
+            hero.props.dirMode = DirMode.MANUAL;
+        }
         const overlayBox = document.getElementById('overlay');
         overlayBox.style.display = 'none';
-        window.removeEventListener('keydown', cmdState.listener);
+
         delete cmdState.listener;
         delete cmdState.ended;
     } else {
