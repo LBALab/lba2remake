@@ -15,6 +15,7 @@ import CinemaEffect from './game/CinemaEffect';
 import TextBox from './game/TextBox';
 import TextInterjections from './game/TextInterjections';
 import DebugLabels from './editor/DebugLabels';
+import FoundObject from './game/FoundObject';
 
 export default class Game extends FrameListener {
     constructor(props) {
@@ -40,7 +41,8 @@ export default class Game extends FrameListener {
                 actor: false,
                 zone: false,
                 point: false
-            }
+            },
+            foundObject: null
         };
 
         clock.start();
@@ -124,6 +126,7 @@ export default class Game extends FrameListener {
             <TextInterjections scene={this.state.scene}
                                renderer={this.state.renderer}
                                interjections={this.state.interjections} />
+            <FoundObject foundObject={this.state.foundObject} />
         </div>;
     }
 }

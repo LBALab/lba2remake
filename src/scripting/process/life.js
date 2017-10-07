@@ -215,7 +215,8 @@ export function FOUND_OBJECT(cmdState, id) {
                 type: text.type === 3 ? 'big' : 'small',
                 value: text.value,
                 color: hero.props.textColor
-            }
+            },
+            foundObject: id
         });
         cmdState.listener = function(event) {
             const key = event.code || event.which || event.keyCode;
@@ -233,19 +234,13 @@ export function FOUND_OBJECT(cmdState, id) {
             voiceSource.play();
         });
 
-        const overlayBox = document.getElementById('overlay');
-        overlayBox.style.display = 'block';
+        this.game.ui.setState({foundObject: id});
     }
     if (cmdState.ended) {
         voiceSource.stop();
-        const text = this.scene.data.texts[id];
-        if (text.type !== 9) {
-            this.game.ui.setState({ text: null });
-            window.removeEventListener('keydown', cmdState.listener);
-            hero.props.dirMode = DirMode.MANUAL;
-        }
-        const overlayBox = document.getElementById('overlay');
-        overlayBox.style.display = 'none';
+        this.game.ui.setState({ text: null, foundObject: null });
+        window.removeEventListener('keydown', cmdState.listener);
+        hero.props.dirMode = DirMode.MANUAL;
 
         delete cmdState.listener;
         delete cmdState.ended;

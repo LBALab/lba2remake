@@ -23,23 +23,6 @@ body {
     bottom: 0;
 }
 
-#overlay {
-    display: none;
-    position: fixed;
-    top: 30px;
-    left: 30px;
-    width: 100px;
-    height: 100px;
-    background: rgba(0, 0, 0, 0.5);
-    font-family: LBA;
-    text-shadow: black 4px 4px;
-    padding: 20px;
-    border: 2px outset #20a2ff;
-    border-radius: 15px;
-    font-size: 3em;
-    color: white;
-}
-
 #dbgHUD {
     max-width: 50%;
     max-height: 90%;
@@ -122,10 +105,6 @@ body {
     background-color: black;
 }
 @media only screen and (max-width: 1024px) {
-    #overlay {
-        font-size: 2.5em;
-        padding: 20px;
-    }
     #loadingText {
         font-size: 2.5em;
         padding: 20px;
@@ -140,10 +119,6 @@ body {
     }
 }
 @media only screen and (max-width: 768px) {
-    #overlay {
-        font-size: 1.5em;
-        padding: 15px;
-    }
     #loadingText {
         font-size: 1.5em;
         padding: 15px;
