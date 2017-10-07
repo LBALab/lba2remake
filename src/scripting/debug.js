@@ -136,36 +136,38 @@ function togglePoints(scene, enabled) {
 }
 
 function toggleLabels(scene, enabled, type = 'actor') {
-    const main = document.querySelector('#main');
+    const main = document.querySelector('#labels');
     if (enabled) {
         const labels = document.createElement('div');
         labels.id = `${type}_labels`;
         each(scene[`${type}s`], obj => {
             const label = document.createElement('div');
+            if (obj.threeObject)
+                obj.threeObject.updateMatrix();
             label.id = `${type}_label_${obj.index}`;
             label.classList.add('label');
             label.classList.add(type);
             label.innerText = obj.index;
-            if (type == 'actor') {
+            if (type === 'actor') {
                 label.addEventListener('click', function() {
                     selectActor(scene, obj.index);
                 });
             }
-            if (type == 'zone') {
+            if (type === 'zone') {
                 const {r, g, b} = obj.color;
                 label.style.background = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},0.6)`;
                 label.addEventListener('click', function() {
                     if (selectedZone) {
                         selectedZone.threeObject.material.color = selectedZone.color;
                     }
-                    if (selectedZone != obj) {
+                    if (selectedZone !== obj) {
                         obj.threeObject.material.color = new THREE.Color(0xFFFFFF);
                         selectedZone = obj;
                     } else {
                         selectedZone = null;
                     }
                 });
-                if (obj.props.type == 2) {
+                if (obj.props.type === 2) {
                     label.innerText = '(' + obj.props.snap + ')';
                 }
             }
@@ -193,8 +195,8 @@ function updateLabels(scene, renderer, type) {
             return;
         }
 
-        const widthHalf = 0.5 * renderer.domElement.width;
-        const heightHalf = 0.5 * renderer.domElement.height;
+        const widthHalf = 0.5 * renderer.canvas.width;
+        const heightHalf = 0.5 * renderer.canvas.height;
 
         obj.threeObject.updateMatrixWorld();
         pos.setFromMatrixPosition(obj.threeObject.matrixWorld);

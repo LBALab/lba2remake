@@ -15,7 +15,7 @@ body {
     position: fixed;
     background: black;
 }
-#root {
+#root, #labels {
     position: fixed;
     top: 0;
     left: 0;
