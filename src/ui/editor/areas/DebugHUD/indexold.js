@@ -1,6 +1,6 @@
 import {each} from 'lodash';
 import {execute} from './exprDSL/index';
-import autoComplete from './autocomplete';
+import autoComplete from './exprDSL/autocomplete';
 import {mapValue} from './formatter';
 import {refreshSlots, addSlot} from './slots';
 import {

@@ -6,5 +6,5 @@ export function intersperse(arr, inter) {
 }
 
 export function intersperseBR(arr) {
-    return flatMap(arr, (a, i) => i ? [<br key={i}/>, a] : [a]);
+    return flatMap(arr, (a, i) => i ? [<br key={`br${i}`}/>, a] : [a]);
 }

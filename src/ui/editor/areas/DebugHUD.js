@@ -5,6 +5,7 @@ import {loadDefaultProfile, saveDefaultProfile} from './DebugHUD/profiles';
 import {execute} from './DebugHUD/exprDSL/execute';
 import {addSlot} from './DebugHUD/slots';
 import Expression from './DebugHUD/Expression';
+import autoComplete from "./DebugHUD/exprDSL/autocomplete";
 
 const Status = {
     NORMAL: 0,
@@ -21,6 +22,8 @@ const sectionStyle = {
 };
 
 export default class DebugHUD extends ToolShelf {
+    static scope = {};
+
     constructor(props) {
         super(props);
 
@@ -33,7 +36,8 @@ export default class DebugHUD extends ToolShelf {
 
         this.state = {
             status: Status.NORMAL,
-            slots: loadDefaultProfile()
+            slots: loadDefaultProfile(),
+            completion: autoComplete('', DebugHUD.scope)
         };
     }
 
@@ -85,7 +89,7 @@ export default class DebugHUD extends ToolShelf {
         const expressions = map(this.state.slots.expressions, (expr, idx) => {
             return <div key={expr.expr}>
                 <button style={tsStyle.button} onClick={this.removeExpression.bind(this, idx)}>-</button>
-                <Expression expr={expr}/>
+                <Expression expr={expr} addExpression={this.addExpression}/>
             </div>;
         });
         return <div>
@@ -108,7 +112,8 @@ export default class DebugHUD extends ToolShelf {
                    onKeyDown={this.inputKeyDown}
                    onKeyUp={e => e.stopPropagation()}
             />
-            <datalist ref={ref => this.completion = ref} id="dbgHUD_completion">
+            <datalist id="dbgHUD_completion">
+                {map(this.state.completion, (value, idx) => <option key={idx} value={value}/>)}
             </datalist>
             <button style={tsStyle.button} onClick={this.addExpression}>+</button>
         </div>;
@@ -119,7 +124,7 @@ export default class DebugHUD extends ToolShelf {
         const {macros, expressions} = slots;
         each(expressions, expr => {
             try {
-                expr.value = execute(expr.program, [this.props.data], macros);
+                expr.value = execute(expr.program, [DebugHUD.scope], macros);
                 delete expr.error;
             }
             catch (e) {
@@ -131,23 +136,28 @@ export default class DebugHUD extends ToolShelf {
     }
 
     inputKeyDown(event) {
+        event.stopPropagation();
         const key = event.code || event.which || event.keyCode;
+        const completion = autoComplete(this.input.value, DebugHUD.scope);
+        this.setState({completion});
         if (key === 'Enter' || key === 13) {
             this.addExpression();
+            event.preventDefault();
         } else if (key === 'Tab' || key === 9) {
-            if (this.completion.children.length > 0) {
-                this.input.value = this.completion.children[0].value;
+            if (completion.length > 0) {
+                this.input.value = completion[0];
             }
             event.preventDefault();
         }
-        event.stopPropagation();
     }
 
-    addExpression() {
+    addExpression(expr = this.input.value) {
         const slots = this.state.slots;
-        if (this.input.value && addSlot(slots, this.input.value)) {
-            this.input.value = '';
-            this.setState({slots});
+        if (expr && addSlot(slots, expr)) {
+            if (expr === this.input.value) {
+                this.input.value = '';
+                this.setState({slots, completion: autoComplete('', DebugHUD.scope)});
+            }
             saveDefaultProfile(slots);
         }
     }
@@ -167,7 +177,12 @@ export default class DebugHUD extends ToolShelf {
     }
 
     newProfile() {
-
+        const slots = {
+            macros: {},
+            expressions: []
+        };
+        this.setState({slots});
+        saveDefaultProfile(slots);
     }
 
     loadProfile() {

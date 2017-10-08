@@ -5,6 +5,7 @@ import {
     each,
     isFunction,
     isArray,
+    isEmpty,
     times,
     constant,
     take,
@@ -12,34 +13,38 @@ import {
 } from 'lodash';
 import {intersperse, intersperseBR} from './utils';
 
-export default function Expression({expr}) {
-    if (expr.value) {
-        return <span key={expr.expr}> {expr.expr} = <Value expr={expr} value={expr.value} /></span>;
-    } else if (expr.error) {
+export default function Expression({expr, addExpression}) {
+    if ('value' in expr) {
+        return <span key={expr.expr}> {expr.expr} = <Value expr={expr} value={expr.value} addExpression={addExpression} /></span>;
+    } else if ('error' in expr) {
         return <span key={expr.expr}> {expr.expr} = Error: {expr.error.toString()}</span>;
     } else {
         return <span key={expr.expr}> {expr.expr} = N/A</span>;
     }
 }
 
-function Value({expr, value, root = true}) {
-    if (value === undefined || value === null) {
-        return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>{value}</span>;
+function Value({expr, value, root = true, addExpression}) {
+    if (value === undefined) {
+        return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>undefined</span>;
+    }
+    if (value === null) {
+        return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>null</span>;
     }
     if (typeof(value) === 'string') {
-        return <span style={{color: 'orange'}}>"{value}"</span>;
+        return <span style={{color: 'orange'}}>'{value}'</span>;
     }
     if (typeof(value) === 'boolean') {
-        return <span style={{color: value ? 'lime' : 'red', fontStyle: 'italic'}}>{value}</span>;
+        return <span style={{color: value ? 'lime' : 'red', fontStyle: 'italic'}}>{value ? 'true' : 'false'}</span>;
     }
     if (typeof(value) === 'number' && !Number.isInteger(value)) {
-        return <span>value.toFixed(3)</span>;
+        return <span>{value.toFixed(3)}</span>;
     }
     if (isFunction(value)) {
         return <span>function({times(value.length, constant('_')).join(', ')})</span>;
     }
-    if (isArray(value) && !root)
-        return <span>[${value.length}]</span>;
+    if (isArray(value) && !root) {
+        return <span>[{value.length}]</span>;
+    }
     if (value instanceof Object) {
         if (value instanceof THREE.Vector2
             || value instanceof THREE.Vector3
@@ -56,15 +61,18 @@ function Value({expr, value, root = true}) {
         } else if (root) {
             const marker = isArray(value) ? '[]' : '{}';
             const type = !isArray(value) && value.type ? `${value.type} ` : '';
+            if (isEmpty(value)) {
+                return <span>{type}{marker[0]}{marker[1]}</span>;
+            }
             let subValues;
             if (isArray(value)) {
-                subValues = <ArrayValue expr={expr} array={value}/>;
+                subValues = mapArray(expr, value, addExpression);
             } else {
                 subValues = map(value, (v, key) =>
-                    <span key={key}>
+                    <span key={key} style={{cursor: 'pointer'}} onClick={addExpression.bind(null, `${expr.expr}.${key}`)}>
                         &nbsp;
                         &nbsp;
-                        <span title="${expr}.${key}" style={{cursor: 'pointer'}}>
+                        <span style={{cursor: 'pointer'}}>
                             <span style={{color: 'mediumpurple'}}>{key}</span>
                             : <Value expr={expr} value={v} root={false}/>
                         </span>
@@ -75,21 +83,25 @@ function Value({expr, value, root = true}) {
         } else if (value.type) {
             return <span>{value.type} {'{...}'}</span>;
         } else {
-            return <span>{'{...}'}</span>;
+            if (isEmpty(value)) {
+                return <span>{'{}'}</span>;
+            } else {
+                return <span>{'{...}'}</span>;
+            }
         }
     }
     return <span>{value}</span>;
 }
 
-function ArrayValue({expr, array}) {
+function mapArray(expr, array, addExpression) {
     let tgt;
     const filtered = array.__filtered__;
     const sorted = array.__sorted__;
     const arrayEntry = (value, key) =>
-        <span key={key}>
+        <span key={key} style={{cursor: 'pointer'}} onClick={addExpression.bind(null, `${expr.expr}[${key}]`)}>
             &nbsp;
             &nbsp;
-            <span title="${expr}[${key}]" style={{cursor: 'pointer'}}>
+            <span title="${expr}[${key}]">
                 [<span style={{color: 'mediumpurple'}}>{key}</span>]
             </span>
             : <Value expr={expr} value={value} root={false} />

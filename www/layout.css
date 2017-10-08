@@ -23,6 +23,10 @@ body {
     bottom: 0;
 }
 
+button:focus {
+    outline:0;
+}
+
 #dbgHUD {
     max-width: 50%;
     max-height: 90%;

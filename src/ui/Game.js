@@ -1,6 +1,6 @@
 import React from 'react';
 import THREE from 'three';
-import {clone} from 'lodash';
+import {clone, omit} from 'lodash';
 
 import {createRenderer} from '../renderer';
 import {createGame} from '../game';
@@ -18,6 +18,7 @@ import DebugLabels from './editor/DebugLabels';
 import FoundObject from './game/FoundObject';
 import Loader from './game/Loader';
 import Video from './game/Video';
+import DebugHUD from './editor/areas/DebugHUD';
 
 export default class Game extends FrameListener {
     constructor(props) {
@@ -102,6 +103,15 @@ export default class Game extends FrameListener {
                 sceneManager.getScene(),
                 controls
             );
+            DebugHUD.scope = {
+                params: this.props.params,
+                game,
+                clock,
+                renderer,
+                scene: sceneManager.getScene(),
+                controls,
+                ui: omit(this.state, 'clock', 'game')
+            };
         }
     }
 

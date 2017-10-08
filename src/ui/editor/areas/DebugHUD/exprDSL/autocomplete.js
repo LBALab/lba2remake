@@ -5,12 +5,15 @@ import {
     isFunction,
     isArray
 } from 'lodash';
-import {parse, execute} from './exprDSL/index';
-import Types from './exprDSL/types';
+import {parse, execute} from './index';
+import Types from './types';
 
 const CACHE = {};
 
 export default function autoComplete(cmd, scope) {
+    if (cmd.match(/^ *$/)) {
+        return map(scope, (value, key) => key);
+    }
     if (cmd in CACHE) {
         return CACHE[cmd];
     } else {
@@ -20,10 +23,7 @@ export default function autoComplete(cmd, scope) {
         }
         if (!cmd) {
             const values = map(scope, (value, key) => key);
-            return CACHE[baseCmd] = {
-                html: map(values, (value, label) => `<option>${value}</option>`).join(''),
-                color: 'white'
-            };
+            return CACHE[baseCmd] = values;
         }
         let ast = cmd.length > 0 ? parse(cmd) : scope;
         if (ast) {
@@ -42,15 +42,9 @@ export default function autoComplete(cmd, scope) {
                 }
                 values = completeScope(cmd, filteredScope);
             }
-            return CACHE[baseCmd] = {
-                html: map(values, (value, label) => `<option>${value}</option>`).join(''),
-                color: 'white'
-            };
+            return CACHE[baseCmd] = values;
         } else {
-            return CACHE[baseCmd] = {
-                html: '',
-                color: 'lightcoral'
-            };
+            return CACHE[baseCmd] = [];
         }
     }
 }
