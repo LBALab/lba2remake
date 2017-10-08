@@ -1,57 +1,45 @@
 import {map, each, concat} from 'lodash';
-import {dbgHUD} from './elements';
-import {state} from './state';
-import {addSlot, refreshSlots} from './slots';
-import {clearContent} from './utils';
+import {addSlot} from './slots';
 import * as builtInProfiles from './builtInProfiles';
 
 export function loadDefaultProfile() {
+    const slots = {
+        macros: {},
+        expressions: []
+    };
     const debug_hud_str = window.localStorage.getItem('debug_hud');
     if (debug_hud_str) {
         const debug_hud = JSON.parse(debug_hud_str);
-        state.enabled = debug_hud.enabled;
-        state.exprSlots = [];
-        state.macroSlots = {};
-        each(debug_hud.slots, slot => {
-            addSlot(slot);
-        });
-        dbgHUD.root.style.display = state.enabled ? 'block' : 'none';
-        refreshSlots(false);
+        each(debug_hud.slots, addSlot.bind(null, slots));
     }
+    return slots;
 }
 
-export function saveDefaultProfile() {
+export function saveDefaultProfile(slots) {
     window.localStorage.setItem('debug_hud', JSON.stringify({
-        enabled: state.enabled,
         slots: concat(
-            map(state.macroSlots, 'expr'),
-            map(state.exprSlots, 'expr')
+            map(slots.macros, 'expr'),
+            map(slots.expressions, 'expr')
         )
     }));
 }
 
-export function loadProfile() {
-    dbgHUD.content.style.display = 'none';
-    dbgHUD.popup.style.display = 'block';
-    dbgHUD.popup_save.style.display = 'none';
-    dbgHUD.popup_input.style.display = 'none';
+export function loadProfile(state) {
     const profiles_str = window.localStorage.getItem('debug_hud_profiles');
     if (profiles_str) {
         const profiles = JSON.parse(profiles_str);
         listProfiles(profiles, true, (profile, name) => {
-            state.exprSlots = [];
-            state.macroSlots = {};
+            state.macros = {};
+            state.expressions = [];
             each(profile, slot => {
                 addSlot(slot);
             });
             refreshSlots();
-            closePopup();
-            dbgHUD.popup_input.value = name;
         });
     }
 }
 
-export function saveProfile() {
+export function saveProfile(state) {
     dbgHUD.content.style.display = 'none';
     dbgHUD.popup.style.display = 'block';
     dbgHUD.popup_save.style.display = 'inline-block';
@@ -99,7 +87,6 @@ export function saveProfile() {
 }
 
 export function listProfiles(profiles, showBuiltins, onClick) {
-    clearContent(dbgHUD.popup_content);
     if (showBuiltins) {
         each(builtInProfiles, (profile, name) => {
             const elem = document.createElement('div');
@@ -128,27 +115,4 @@ export function listProfiles(profiles, showBuiltins, onClick) {
         elem.appendChild(content);
         dbgHUD.popup_content.appendChild(elem);
     });
-}
-
-export function closePopup() {
-    dbgHUD.popup.style.display = 'none';
-    dbgHUD.content.style.display = 'block';
-}
-
-function confirm(msg, callback) {
-    dbgHUD.popup.style.display = 'none';
-    dbgHUD.confirm.style.display = 'block';
-
-    dbgHUD.confirm_content.innerText = msg;
-
-    dbgHUD.confirm_OK.onclick = () => {
-        dbgHUD.popup.style.display = 'block';
-        dbgHUD.confirm.style.display = 'none';
-        callback();
-    };
-
-    dbgHUD.confirm_cancel.onclick = () => {
-        dbgHUD.popup.style.display = 'block';
-        dbgHUD.confirm.style.display = 'none';
-    };
 }

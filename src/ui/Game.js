@@ -6,7 +6,6 @@ import {createRenderer} from '../renderer';
 import {createGame} from '../game';
 import {mainGameLoop} from '../game/loop';
 import {createSceneManager} from '../game/scenes';
-import {initDebugHUD} from '../game/debugHUD';
 import {createControls} from '../controls/index';
 
 import {fullscreen} from './styles/index';
@@ -23,12 +22,10 @@ import Video from './game/Video';
 export default class Game extends FrameListener {
     constructor(props) {
         super(props);
+
         this.onLoad = this.onLoad.bind(this);
         this.onLoadCanvas = this.onLoadCanvas.bind(this);
         this.frame = this.frame.bind(this);
-
-        initDebugHUD();
-
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
 
         const clock = new THREE.Clock(false);
@@ -49,6 +46,10 @@ export default class Game extends FrameListener {
             loading: true,
             video: null
         };
+
+        if (this.props.watch) {
+            this.props.watch(this.state)
+        }
 
         clock.start();
         game.preload();

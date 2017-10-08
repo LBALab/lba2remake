@@ -1,6 +1,6 @@
 import React from 'react';
 import {extend} from 'lodash';
-import FrameListener from '../../utils/FrameListener';
+import FrameListener from '../utils/FrameListener';
 
 export const style = {
     base: {
@@ -48,6 +48,7 @@ const frameStyle = extend({
 }, style.base);
 
 const closeButton = {
+    float: 'right',
     width: 12,
     textAlign: 'center',
     cursor: 'pointer'

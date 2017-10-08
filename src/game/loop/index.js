@@ -5,9 +5,6 @@ import {processPhysicsFrame} from './physics';
 import {processCameraMovement} from './cameras';
 import {hasStep, endStep} from '../../scripting/debug';
 import {getRandom} from '../../utils/lba'
-import {
-    debugHUDFrame,
-} from "../debugHUD";
 
 export function mainGameLoop(params, game, clock, renderer, scene, controls) {
     const time = {
@@ -45,8 +42,6 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
         debugScope.camera = renderer.getMainCamera(scene);
     }
     renderer.stats.end();
-
-    debugHUDFrame(debugScope);
 }
 
 

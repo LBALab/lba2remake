@@ -1,9 +1,7 @@
 import {each} from 'lodash';
-import {execute} from './exprDSL';
+import {execute} from './exprDSL/index';
 import autoComplete from './autocomplete';
 import {mapValue} from './formatter';
-import {dbgHUD, initHUDElements} from './elements';
-import {state} from './state';
 import {refreshSlots, addSlot} from './slots';
 import {
     loadDefaultProfile, saveDefaultProfile,

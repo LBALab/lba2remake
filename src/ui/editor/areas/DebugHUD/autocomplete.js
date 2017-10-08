@@ -5,7 +5,7 @@ import {
     isFunction,
     isArray
 } from 'lodash';
-import {parse, execute} from './exprDSL';
+import {parse, execute} from './exprDSL/index';
 import Types from './exprDSL/types';
 
 const CACHE = {};

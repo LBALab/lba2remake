@@ -1,7 +1,6 @@
 // @flow
 
 import {switchStats} from '../renderer/stats';
-import {switchHUD} from "../game/debugHUD";
 import {BehaviourMode} from '../game/loop/hero';
 
 export function makeKeyboardControls(sceneManager: Object, game: Object) {
@@ -110,7 +109,7 @@ function keyDownHandler(game, sceneManager, event) {
             break;
         case 71: // g
         case 'KeyG':
-            switchHUD();
+            //switchHUD();
             break;
     }
 }

@@ -1,26 +1,22 @@
 import {find, each} from 'lodash';
-import {state} from './state';
-import {dbgHUD} from './elements';
-import {parse, generate} from './exprDSL';
+import {parse, generate} from './exprDSL/index';
 import NodeType from './exprDSL/types';
-import {clearContent} from './utils';
-import {saveDefaultProfile} from './profiles';
 
 const Type = {
     MACRO: 0,
     EXPR: 1
 };
 
-export function addSlot(input) {
+export function addSlot(slots, input) {
     const slot = compileSlot(input);
     if (slot) {
         if (slot.type === Type.EXPR) {
-            if (!find(state.exprSlots, s => slot.value.normalized === s.normalized)) {
-                state.exprSlots.push(slot.value);
+            if (!find(slots.expressions, s => slot.value.normalized === s.normalized)) {
+                slots.expressions.push(slot.value);
                 return true;
             }
         } else {
-            state.macroSlots[slot.value.name] = slot.value;
+            slots.macros[slot.value.name] = slot.value;
             return true;
         }
     }
@@ -35,28 +31,6 @@ export function compileSlot(expr) {
     }
     if (program) {
         return {type: Type.EXPR, value: { expr, normalized: generate(program), program} };
-    }
-}
-
-export function refreshSlots(save = true) {
-    clearContent(dbgHUD.macros);
-    clearContent(dbgHUD.expressions);
-    let found = false;
-    each(state.macroSlots, slot => {
-        createMacroSlotElement(slot);
-        dbgHUD.macros.appendChild(slot.element);
-        found = true;
-    });
-    dbgHUD.macros.style.display = found ? 'block' : 'none';
-    found = false;
-    each(state.exprSlots, slot => {
-        createExprSlotElement(slot);
-        dbgHUD.expressions.appendChild(slot.element);
-        found = true;
-    });
-    dbgHUD.expressions.style.display = found ? 'block' : 'none';
-    if (save) {
-        saveDefaultProfile();
     }
 }
 
