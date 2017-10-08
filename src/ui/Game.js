@@ -1,5 +1,6 @@
 import React from 'react';
 import THREE from 'three';
+import {clone} from 'lodash';
 
 import {createRenderer} from '../renderer';
 import {createGame} from '../game';
@@ -113,6 +114,9 @@ export default class Game extends FrameListener {
             const cvHeight = this.canvas.style.height;
             if (rWidth !== cvWidth || rHeight !== cvHeight) {
                 this.state.renderer.resize(roundedWidth, roundedHeight);
+                if (this.state.video) {
+                    this.setState({video: clone(this.state.video)}); // Force video rerender
+                }
             }
         }
     }

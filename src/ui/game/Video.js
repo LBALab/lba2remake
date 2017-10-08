@@ -8,7 +8,7 @@ const baseStyle = extend({background: 'black'}, fullscreen);
  * @return {null}
  */
 export default function Video(props) {
-    if (props.video !== null && props.renderer) {
+    if (props.video && props.renderer) {
         const width = props.renderer.canvas.clientWidth;
         const height = props.renderer.canvas.clientHeight;
         return <video style={baseStyle} autoPlay={true} width={width} height={height} onEnded={props.video.callback}>
