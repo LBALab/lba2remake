@@ -1,5 +1,6 @@
 import React from 'react';
 import Game from './Game';
+import GameArea from './editor/areas/GameArea';
 import {loadParams} from '../params';
 
 export default class Root extends React.Component {
@@ -22,6 +23,10 @@ export default class Root extends React.Component {
     }
 
     render() {
-        return <Game params={this.state.params} ticker={this.props.ticker} />;
+        if (this.state.params.editor) {
+            return <GameArea params={this.state.params} ticker={this.props.ticker} />;
+        } else {
+            return <Game params={this.state.params} ticker={this.props.ticker} />;
+        }
     }
 }

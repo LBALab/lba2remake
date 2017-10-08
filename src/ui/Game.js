@@ -72,8 +72,8 @@ export default class Game extends FrameListener {
         }
     }
 
-    onSceneManagerReady() {
-        this.state.sceneManager.goto(this.props.params.scene);
+    onSceneManagerReady(sceneManager) {
+        sceneManager.goto(this.props.params.scene);
     }
 
     componentWillReceiveProps(newProps) {

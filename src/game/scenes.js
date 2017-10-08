@@ -103,7 +103,7 @@ export function createSceneManager(params, game, renderer, callback: Function) {
             }
         };
 
-        callback();
+        callback(sceneManager);
     });
 
     return sceneManager;
