@@ -17,6 +17,7 @@ import TextInterjections from './game/TextInterjections';
 import DebugLabels from './editor/DebugLabels';
 import FoundObject from './game/FoundObject';
 import Loader from './game/Loader';
+import Video from './game/Video';
 
 export default class Game extends FrameListener {
     constructor(props) {
@@ -44,7 +45,8 @@ export default class Game extends FrameListener {
                 point: false
             },
             foundObject: null,
-            loading: true
+            loading: true,
+            video: null
         };
 
         clock.start();
@@ -129,6 +131,7 @@ export default class Game extends FrameListener {
                                renderer={this.state.renderer}
                                interjections={this.state.interjections} />
             <FoundObject foundObject={this.state.foundObject} />
+            <Video video={this.state.video} renderer={this.state.renderer} />
             {this.state.loading ? <Loader/> : null}
         </div>;
     }

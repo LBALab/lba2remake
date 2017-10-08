@@ -322,29 +322,26 @@ export function HIT_OBJ() {
 
 export function PLAY_SMK(cmdState, video) {
     if (!cmdState.listener) {
+        const that = this;
         this.game.pause();
-        const main = document.querySelector('#main');
-        const videoTag = document.createElement('video');
-        const source = document.createElement('source');
-        source.type = 'video/mp4';
-        source.src = VideoData.VIDEO.find((v) => { return v.name === video; }).file;
-        videoTag.id = 'video';
-        videoTag.autoplay = true;
-        videoTag.className = 'video';
-        videoTag.appendChild(source);
-        main.appendChild(videoTag);
-
+        const src = VideoData.VIDEO.find((v) => { return v.name === video; }).file;
+        this.game.ui.setState({video: {
+            src,
+            callback: () => {
+                that.game.ui.setState({video: null});
+                cmdState.ended = true;
+                that.game.pause();
+            }
+        }});
         cmdState.listener = function(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
+                that.game.ui.setState({video: null});
                 cmdState.ended = true;
-                videoTag.removeEventListener('ended', cmdState.listener);
-                main.removeChild(videoTag);
-                window.game.pause();
+                that.game.pause();
             }
         };
         window.addEventListener('keydown', cmdState.listener);
-        videoTag.addEventListener('ended', cmdState.listener);
     }
 
     if (cmdState.ended) {
