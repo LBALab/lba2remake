@@ -51,7 +51,7 @@ export function createSceneManager(params, game, renderer, callback: Function) {
 
             const musicSource = game.getAudioManager().getMusicSource();
             if (scene && scene.sideScenes && index in scene.sideScenes) {
-                resetSceneDebug(game, scene);
+                resetSceneDebug(scene);
                 killActor(scene.getActor(0));
                 const sideScene = scene.sideScenes[index];
                 sideScene.sideScenes = scene.sideScenes;
@@ -70,7 +70,7 @@ export function createSceneManager(params, game, renderer, callback: Function) {
                 pCallback(scene);
             } else {
                 game.loading(index);
-                resetSceneDebug(game, scene);
+                resetSceneDebug(scene);
                 loadScene(this, params, game, renderer, sceneMap, index, null, (err, pScene) => {
                     renderer.applySceneryProps(pScene.scenery.props);
                     scene = pScene;

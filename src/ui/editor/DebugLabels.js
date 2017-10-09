@@ -65,6 +65,8 @@ export default class DebugLabels extends FrameListener {
     constructor(props) {
         super(props);
         this.state = {};
+        toggleZones(this.props.scene, this.props.labels.zone);
+        togglePoints(this.props.scene, this.props.labels.point);
     }
 
     frame() {
@@ -79,6 +81,22 @@ export default class DebugLabels extends FrameListener {
             this.setState({items});
         } else {
             this.setState({items: null});
+        }
+    }
+
+    componentWillReceiveProps(newProps) {
+        if (newProps.scene !== this.props.scene) {
+            toggleZones(this.props.scene, false);
+            togglePoints(this.props.scene, false);
+            toggleZones(newProps.scene, newProps.labels.zone);
+            togglePoints(newProps.scene, newProps.labels.point);
+        } else {
+            if (newProps.labels.zone !== this.props.labels.zone) {
+                toggleZones(newProps.scene, newProps.labels.zone);
+            }
+            if (newProps.labels.point !== this.props.labels.point) {
+                togglePoints(newProps.scene, newProps.labels.point);
+            }
         }
     }
 
@@ -178,5 +196,27 @@ export default class DebugLabels extends FrameListener {
         } else {
             return null;
         }
+    }
+}
+
+function toggleZones(scene, enabled) {
+    if (scene) {
+        each(scene.zones, zone => {
+            zone.threeObject.visible = enabled;
+            if (enabled) {
+                zone.threeObject.updateMatrix();
+            }
+        });
+    }
+}
+
+function togglePoints(scene, enabled) {
+    if (scene) {
+        each(scene.points, point => {
+            point.threeObject.visible = enabled;
+            if (enabled) {
+                point.threeObject.updateMatrix();
+            }
+        });
     }
 }

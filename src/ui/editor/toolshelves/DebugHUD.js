@@ -1,6 +1,6 @@
 import React from 'react';
 import {extend, each, map, isEmpty, concat} from 'lodash';
-import ToolShelf, {style as tsStyle} from '../ToolShelf';
+import ToolShelf from '../ToolShelf';
 import {
     loadDefaultProfile,
     saveDefaultProfile,
@@ -12,6 +12,7 @@ import {execute} from './DebugHUD/exprDSL/execute';
 import {addSlot} from './DebugHUD/slots';
 import Expression from './DebugHUD/Expression';
 import autoComplete from './DebugHUD/exprDSL/autocomplete';
+import {editor as editorStyle} from '../../styles/index';
 
 const Status = {
     NORMAL: 0,
@@ -21,7 +22,7 @@ const Status = {
 
 const exprInputStyle = extend({
     width: '80%'
-}, tsStyle.input);
+}, editorStyle.input);
 
 const sectionStyle = {
     paddingBottom: 10
@@ -40,6 +41,7 @@ export default class DebugHUD extends ToolShelf {
         this.cancel = this.cancel.bind(this);
         this.addExpression = this.addExpression.bind(this);
         this.inputKeyDown = this.inputKeyDown.bind(this);
+        this.loadProfile = this.loadProfile.bind(this);
         this.saveProfile = this.saveProfile.bind(this);
 
         this.state = {
@@ -61,13 +63,13 @@ export default class DebugHUD extends ToolShelf {
         switch (this.state.status) {
             case Status.NORMAL:
                 return [
-                    <button key="new" style={tsStyle.button} onClick={this.newProfile}>New</button>,
-                    <button key="load" style={tsStyle.button} onClick={this.loadProfileScreen}>Load</button>,
-                    <button key="save" style={tsStyle.button} onClick={this.saveProfileScreen}>Save</button>
+                    <button key="new" style={editorStyle.button} onClick={this.newProfile}>New</button>,
+                    <button key="load" style={editorStyle.button} onClick={this.loadProfileScreen}>Load</button>,
+                    <button key="save" style={editorStyle.button} onClick={this.saveProfileScreen}>Save</button>
                 ];
             case Status.LOAD:
                 return [
-                    <button key="load" style={tsStyle.button} onClick={this.cancel}>Cancel</button>
+                    <button key="load" style={editorStyle.button} onClick={this.cancel}>Cancel</button>
                 ];
             case Status.SAVE:
                 const onLoad = (ref) => {
@@ -77,9 +79,9 @@ export default class DebugHUD extends ToolShelf {
                     }
                 };
                 return [
-                    <input key="input" ref={ref => onLoad(ref)} style={tsStyle.input} spellCheck={false}/>,
-                    <button key="cancel" style={tsStyle.button} onClick={this.cancel}>Cancel</button>,
-                    <button key="save" style={tsStyle.button} onClick={() => this.saveProfile()}>Save</button>
+                    <input key="input" ref={ref => onLoad(ref)} style={editorStyle.input} spellCheck={false}/>,
+                    <button key="cancel" style={editorStyle.button} onClick={this.cancel}>Cancel</button>,
+                    <button key="save" style={editorStyle.button} onClick={() => this.saveProfile()}>Save</button>
                 ];
         }
     }
@@ -99,13 +101,13 @@ export default class DebugHUD extends ToolShelf {
         const macros = map(this.state.slots.macros, (macro, key) => {
             const content = macro.expr.split('=');
             return <div key={key} style={{background: '#222222'}}>
-                <button style={tsStyle.button} onClick={this.removeMacro.bind(this, key)}>-</button>
+                <button style={editorStyle.button} onClick={this.removeMacro.bind(this, key)}>-</button>
                 <b> {content[0]}</b>=<i style={{color: 'darkgrey'}}>{content[1]}</i>
             </div>;
         });
         const expressions = map(this.state.slots.expressions, (expr, idx) => {
             return <div key={expr.expr}>
-                <button style={tsStyle.button} onClick={this.removeExpression.bind(this, idx)}>-</button>
+                <button style={editorStyle.button} onClick={this.removeExpression.bind(this, idx)}>-</button>
                 <Expression expr={expr} addExpression={this.addExpression}/>
             </div>;
         });
@@ -121,14 +123,6 @@ export default class DebugHUD extends ToolShelf {
     }
 
     renderLoadScreen() {
-        const load = (profile, name) => {
-            const slots = {
-                macros: {},
-                expressions: []
-            };
-            each(profile, addSlot.bind(null, slots));
-            this.setState({slots, status: Status.NORMAL, profileName: name});
-        };
         const hasProfiles = !isEmpty(this.state.profiles);
         return [
             map(builtInProfiles, (profile, name) => {
@@ -138,13 +132,13 @@ export default class DebugHUD extends ToolShelf {
                     lineHeight: '22px',
                     paddingLeft: hasProfiles ? '3ch' : 0
                 };
-                return <div key={`builtin:${name}`} style={style} onClick={() => load(profile, name)}>{name}</div>;
+                return <div key={`builtin:${name}`} style={style} onClick={() => this.loadProfile(profile, name)}>{name}</div>;
             }),
             map(this.state.profiles, (profile, name) => {
                 return <div key={name} style={{cursor: 'pointer'}}>
-                    <button onClick={() => this.removeProfile(name)}>-</button>
+                    <button style={editorStyle.button} onClick={() => this.removeProfile(name)}>-</button>
                     &nbsp;
-                    <span onClick={() => load(profile, name)}>{name}</span>
+                    <span onClick={() => this.loadProfile(profile, name)}>{name}</span>
                 </div>;
             })
         ];
@@ -153,7 +147,7 @@ export default class DebugHUD extends ToolShelf {
     renderSaveScreen() {
         return map(this.state.profiles, (profile, name) => {
             return <div key={name} style={{cursor: 'pointer'}}>
-                <button onClick={() => this.removeProfile(name)}>-</button>
+                <button style={editorStyle.button} onClick={() => this.removeProfile(name)}>-</button>
                 &nbsp;
                 <span onClick={() => this.saveProfile(name)}>{name}</span>
             </div>;
@@ -172,7 +166,7 @@ export default class DebugHUD extends ToolShelf {
             <datalist id="dbgHUD_completion">
                 {map(this.state.completion, (value, idx) => <option key={idx} value={value}/>)}
             </datalist>
-            <button style={tsStyle.button} onClick={() => this.addExpression}>+</button>
+            <button style={editorStyle.button} onClick={() => this.addExpression}>+</button>
         </div>;
     }
 
@@ -248,6 +242,16 @@ export default class DebugHUD extends ToolShelf {
         this.setState({profiles});
         saveProfiles(profiles);
     }
+
+    loadProfile(profile, name) {
+        const slots = {
+            macros: {},
+            expressions: []
+        };
+        each(profile, addSlot.bind(null, slots));
+        this.setState({slots, status: Status.NORMAL, profileName: name});
+        saveDefaultProfile(slots);
+    };
 
     saveProfile(name = this.saveInput.value) {
         if (name && name.length > 0) {

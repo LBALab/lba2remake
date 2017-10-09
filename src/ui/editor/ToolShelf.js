@@ -1,34 +1,18 @@
 import React from 'react';
 import {extend} from 'lodash';
 import FrameListener from '../utils/FrameListener';
+import {editor} from '../styles';
 
 export const style = {
-    base: {
+    base: extend({
         position: 'absolute',
         top: 0,
         right: 0,
-        background: 'black',
         opacity: 0.7,
         border: '3px solid gray',
+        borderTop: '2px solid gray',
         borderRadius: 10,
-        color: 'white',
-        fontFamily: `'Courier', monospace`,
-        fontSize: 16,
-        fontWeight: 'bold'
-    },
-    button: {
-        color: 'black',
-        background: 'white',
-        borderRadius: 5,
-        cursor: 'pointer',
-        padding: '1px 4px',
-        margin: '0px 2px'
-    },
-    input: {
-        borderRadius: 5,
-        padding: '1px 4px',
-        margin: '0px 2px'
-    }
+    }, editor.base)
 };
 
 style.openButton = extend({

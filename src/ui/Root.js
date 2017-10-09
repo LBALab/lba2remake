@@ -1,31 +1,30 @@
 import React from 'react';
 import Game from './Game';
-import Area from './editor/Area';
-import GameArea from './editor/areas/GameArea';
+import Editor from './Editor';
 import {loadParams} from '../params';
 
 export default class Root extends React.Component {
     constructor(props) {
         super(props);
         this.state = { params: loadParams() };
-        this.watchParams = this.watchParams.bind(this);
+        this.onHashChange = this.onHashChange.bind(this);
     }
 
     componentWillMount() {
-        window.addEventListener('hashchange', this.watchParams);
+        window.addEventListener('hashchange', this.onHashChange);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('hashchange', this.watchParams);
+        window.removeEventListener('hashchange', this.onHashChange);
     }
 
-    watchParams() {
+    onHashChange() {
         this.setState({ params: loadParams() });
     }
 
     render() {
         if (this.state.params.editor) {
-            return <Area type={GameArea} params={this.state.params} ticker={this.props.ticker} />;
+            return <Editor params={this.state.params} ticker={this.props.ticker} />;
         } else {
             return <Game params={this.state.params} ticker={this.props.ticker} />;
         }

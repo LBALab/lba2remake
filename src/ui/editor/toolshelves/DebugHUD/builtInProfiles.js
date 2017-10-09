@@ -12,7 +12,6 @@ export const actors = [
 export const ui = [
     'ui',
     'ui.interjections',
-    'ui.labels',
     'ui.text',
     'ui.foundObject',
     'ui.video'

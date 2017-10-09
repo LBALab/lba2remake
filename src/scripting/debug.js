@@ -10,15 +10,12 @@ let selectedZone = null;
 let settings = {
     zones: {
         enabled: false,
-        toggle: toggleZones
     },
     points: {
         enabled: false,
-        toggle: togglePoints
     },
     labels: {
         enabled: false,
-        toggle: toggleActors
     }
 };
 
@@ -96,13 +93,10 @@ export function initSceneDebug(game, scene) {
     window.addEventListener('lba_ext_event_in', lbaExtListener);
 }
 
-export function resetSceneDebug(game, scene) {
+export function resetSceneDebug(scene) {
     if (lbaExtListener) {
         window.removeEventListener('lba_ext_event_in', lbaExtListener);
     }
-    settings.labels.toggle(game, scene, false);
-    settings.points.toggle(game, scene, false);
-    settings.zones.toggle(game, scene, false);
     settings.labels.enabled = false;
     settings.points.enabled = false;
     settings.zones.enabled = false;
@@ -122,40 +116,6 @@ export function setCursorPosition(scene, actor, type, line, scrollView = false, 
             }
         }));
     }
-}
-
-function toggleZones(game, scene, enabled) {
-    if (scene) {
-        each(scene.zones, zone => {
-            zone.threeObject.visible = enabled;
-            if (enabled) {
-                zone.threeObject.updateMatrix();
-            }
-        });
-    }
-    toggleLabels(game, enabled, 'zone');
-}
-
-function togglePoints(game, scene, enabled) {
-    if (scene) {
-        each(scene.points, point => {
-            point.threeObject.visible = enabled;
-            if (enabled) {
-                point.threeObject.updateMatrix();
-            }
-        });
-    }
-    toggleLabels(game, enabled, 'point');
-}
-
-function toggleActors(game, scene, enabled) {
-    toggleLabels(game, enabled, 'actor');
-}
-
-function toggleLabels(game, enabled, type) {
-    const labels = game.ui.state.labels;
-    labels[type] = enabled;
-    game.ui.setState({ labels: labels })
 }
 
 function selectActor(scene, index) {

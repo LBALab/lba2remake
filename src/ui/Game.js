@@ -18,7 +18,7 @@ import DebugLabels from './editor/DebugLabels';
 import FoundObject from './game/FoundObject';
 import Loader from './game/Loader';
 import Video from './game/Video';
-import DebugHUD from './editor/areas/DebugHUD';
+import DebugHUD from './editor/toolshelves/DebugHUD';
 
 export default class Game extends FrameListener {
     constructor(props) {
@@ -38,11 +38,6 @@ export default class Game extends FrameListener {
             cinema: false,
             text: null,
             interjections: {},
-            labels: {
-                actor: false,
-                zone: false,
-                point: false
-            },
             foundObject: null,
             loading: true,
             video: null
@@ -93,6 +88,9 @@ export default class Game extends FrameListener {
         const {game, clock, renderer, sceneManager, controls} = this.state;
         if (renderer && sceneManager) {
             const scene = sceneManager.getScene();
+            if (this.state.scene !== scene) {
+                this.setState({scene});
+            }
             mainGameLoop(
                 this.props.params,
                 game,
@@ -134,11 +132,12 @@ export default class Game extends FrameListener {
     render() {
         return <div ref={this.onLoad} style={fullscreen}>
             <canvas ref={this.onLoadCanvas} />
-            <DebugLabels params={this.props.params}
-                         labels={this.state.labels}
-                         scene={this.state.scene}
-                         renderer={this.state.renderer}
-                         ticker={this.props.ticker} />
+            {this.props.params.editor ?
+                <DebugLabels params={this.props.params}
+                             labels={this.props.sharedState.labels}
+                             scene={this.state.scene}
+                             renderer={this.state.renderer}
+                             ticker={this.props.ticker}/> : null}
             <CinemaEffect enabled={this.state.cinema} />
             <TextBox text={this.state.text} />
             <TextInterjections scene={this.state.scene}
