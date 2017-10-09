@@ -92,15 +92,13 @@ export default class Game extends FrameListener {
         this.checkResize();
         const {game, clock, renderer, sceneManager, controls} = this.state;
         if (renderer && sceneManager) {
-            if (this.state.scene !== sceneManager.getScene()) {
-                this.setState({scene: sceneManager.getScene()});
-            }
+            const scene = sceneManager.getScene();
             mainGameLoop(
                 this.props.params,
                 game,
                 clock,
                 renderer,
-                sceneManager.getScene(),
+                scene,
                 controls
             );
             DebugHUD.scope = {
@@ -108,9 +106,10 @@ export default class Game extends FrameListener {
                 game,
                 clock,
                 renderer,
-                scene: sceneManager.getScene(),
+                scene: scene,
+                hero: scene && scene.actors[0],
                 controls,
-                ui: omit(this.state, 'clock', 'game')
+                ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls')
             };
         }
     }

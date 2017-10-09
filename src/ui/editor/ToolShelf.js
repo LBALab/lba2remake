@@ -66,12 +66,12 @@ export default class ToolShelf extends FrameListener {
     render() {
         const content = this.renderContent();
         const headerStyle = {
-            borderBottom: content ? '2px solid gray' : 0,
+            borderBottom: content.length !== 0 ? '2px solid gray' : 0,
             padding: 8
         };
         return <div style={frameStyle}>
             <div style={headerStyle}>{this.renderTitle()} {this.renderMenu()} {this.renderCloseButton()}</div>
-            {content ? <div style={contentStyle}>{content}</div> : null}
+            {content.length !== 0 ? <div style={contentStyle}>{content}</div> : null}
         </div>;
     }
 

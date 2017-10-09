@@ -9,6 +9,15 @@ export const actors = [
     'actorsOrientation'
 ];
 
+export const ui = [
+    'ui',
+    'ui.interjections',
+    'ui.labels',
+    'ui.text',
+    'ui.foundObject',
+    'ui.video'
+];
+
 export const camera = [
     'camera = renderer.getMainCamera(scene)',
     'pixelRatio = renderer.pixelRatio()',

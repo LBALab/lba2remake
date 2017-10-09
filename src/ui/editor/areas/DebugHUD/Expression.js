@@ -17,7 +17,7 @@ export default function Expression({expr, addExpression}) {
     if ('value' in expr) {
         return <span key={expr.expr}> {expr.expr} = <Value expr={expr} value={expr.value} addExpression={addExpression} /></span>;
     } else if ('error' in expr) {
-        return <span key={expr.expr}> {expr.expr} = Error: {expr.error.toString()}</span>;
+        return <span key={expr.expr}> {expr.expr} = <span style={{color: 'red'}}>Error: {expr.error.toString()}</span></span>;
     } else {
         return <span key={expr.expr}> {expr.expr} = N/A</span>;
     }
