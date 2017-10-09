@@ -3,11 +3,13 @@
     src: url(PatuaOne-Regular.ttf);
     font-weight: bold;
 }
+
 @font-face {
     font-family: LBAClassic;
     src: url(SerifaB.ttf);
     font-weight: bold;
 }
+
 body {
     margin: 0;
     overflow: hidden;
@@ -15,6 +17,7 @@ body {
     position: fixed;
     background: black;
 }
+
 #root {
     position: fixed;
     top: 0;
@@ -25,48 +28,4 @@ body {
 
 button:focus {
     outline:0;
-}
-
-#dbgHUD {
-    max-width: 50%;
-    max-height: 90%;
-    overflow: auto;
-    display: none;
-    color: white;
-    position: fixed;
-    background: black;
-    opacity: 0.7;
-    border: 3px solid gray;
-    border-radius: 10px;
-    right: 0;
-    padding: 10px;
-    font-family: 'Courier', monospace;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-#dbgHUD .section {
-    padding-bottom: 10px;
-}
-
-#dbgHUD .toolbar {
-    text-align: right;
-}
-
-#dbgHUD_input {
-    font-family: 'Courier', monospace;
-    font-size: 14px;
-    font-weight: bold;
-    width: 80%;
-}
-
-#dbgHUD button {
-    color: black;
-    background: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#dbgHUD button:disabled {
-    color: grey;
 }
