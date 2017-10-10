@@ -49,7 +49,7 @@ export const Orientation = {
 //     ]
 // };
 
-const defaultLayout = {type: Type.AREA, content: GameArea, toolShelfEnabled: false};
+const defaultLayout = {type: Type.AREA, content: GameArea, toolShelfEnabled: false, root: true};
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
 
@@ -73,8 +73,6 @@ export default class Editor extends React.Component {
         this.updateSeparator = this.updateSeparator.bind(this);
         this.enableSeparator = this.enableSeparator.bind(this);
         this.disableSeparator = this.disableSeparator.bind(this);
-        this.split = this.split.bind(this);
-        this.split = this.split.bind(this);
 
         this.state = {
             layout: defaultLayout,
@@ -207,8 +205,8 @@ export default class Editor extends React.Component {
                          params={this.props.params}
                          ticker={this.props.ticker}
                          toolShelfEnabled={node.toolShelfEnabled}
-                         split={this.split.bind(null, path)}
-                         close={path.length > 0 ? this.close.bind(null, path) : null}
+                         split={this.split.bind(this, path)}
+                         close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}
                          setToolShelf={setToolShelf}/>;
         }
     }
@@ -230,13 +228,13 @@ export default class Editor extends React.Component {
             const parentPath = path.slice(0, path.length - 1);
             const idx = path[path.length - 1];
             const layout = cloneDeep(this.state.layout);
-            const node = this.findNodeFromPath(layout, parentPath);
-            node.children[idx] = {
+            const pNode = this.findNodeFromPath(layout, parentPath);
+            pNode.children[idx] = {
                 type: Type.LAYOUT,
                 orientation: orientation,
                 splitAt: 50,
                 children: [
-                    node.children[idx],
+                    pNode.children[idx],
                     {type: Type.AREA, content: ScriptEditorArea}
                 ]
             };
@@ -245,6 +243,18 @@ export default class Editor extends React.Component {
     }
 
     close(path) {
-
+        if (path.length === 1) {
+            this.setState({
+                layout: this.state.layout.children[1 - path[0]]
+            })
+        } else {
+            const grandParentPath = path.slice(0, path.length - 2);
+            const idx = path[path.length - 2];
+            const layout = cloneDeep(this.state.layout);
+            const gpNode = this.findNodeFromPath(layout, grandParentPath);
+            const tgtIdx = 1 - path[path.length - 1];
+            gpNode.children[idx] = gpNode.children[idx].children[tgtIdx];
+            this.setState({layout});
+        }
     }
 }
