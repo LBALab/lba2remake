@@ -1,13 +1,12 @@
 import React from 'react';
 import Game from '../../Game';
-import DebugHUD from '../toolshelves/DebugHUD';
 import {clone} from 'lodash';
 
 const GameArea = {
     name: 'Game',
     menu: GameMenu,
     content: Game,
-    toolShelf: DebugHUD,
+    mainArea: true,
     sharedState: {
         labels: {
             actor: false,

@@ -1,18 +1,18 @@
 import React from 'react';
 import {extend, each, map, isEmpty, concat} from 'lodash';
-import ToolShelf from '../ToolShelf';
 import {
     loadDefaultProfile,
     saveDefaultProfile,
     loadProfiles,
     saveProfiles
-} from './DebugHUD/profiles';
-import * as builtInProfiles from './DebugHUD/builtInProfiles';
-import {execute} from './DebugHUD/exprDSL/execute';
-import {addSlot} from './DebugHUD/slots';
-import Expression from './DebugHUD/Expression';
-import autoComplete from './DebugHUD/exprDSL/autocomplete';
-import {editor as editorStyle} from '../../styles/index';
+} from './profiles';
+import * as builtInProfiles from './builtInProfiles';
+import {execute} from './exprDSL/execute';
+import {addSlot} from './slots';
+import Expression from './Expression';
+import autoComplete from './exprDSL/autocomplete';
+import {editor as editorStyle} from '../../../styles/index';
+import FrameListener from "../../../utils/FrameListener";
 
 const Status = {
     NORMAL: 0,
@@ -28,7 +28,7 @@ const sectionStyle = {
     paddingBottom: 10
 };
 
-export default class DebugHUD extends ToolShelf {
+export default class DebugHUD extends FrameListener {
     static scope = {};
 
     constructor(props) {
@@ -84,6 +84,10 @@ export default class DebugHUD extends ToolShelf {
                     <button key="save" style={editorStyle.button} onClick={() => this.saveProfile()}>Save</button>
                 ];
         }
+    }
+
+    render() {
+        return this.renderContent();
     }
 
     renderContent() {

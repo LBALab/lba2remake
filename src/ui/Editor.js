@@ -1,9 +1,10 @@
 import React from 'react';
 import Area from './editor/Area';
-import GameArea from './editor/areas/GameArea';
-import ScriptEditorArea from './editor/areas/ScriptEditorArea';
 import {fullscreen} from './styles';
 import {extend, clone, cloneDeep, each, concat} from 'lodash';
+import GameArea from './editor/areas/GameArea';
+import NewArea from "./editor/areas/NewArea";
+import {MainAreas, SubAreas} from './editor/areas/all';
 
 const Type = {
     LAYOUT: 0,
@@ -15,41 +16,12 @@ export const Orientation = {
     VERTICAL: 1
 };
 
-// const baseLayout = {
-//     type: Type.LAYOUT,
-//     orientation: Orientation.VERTICAL,
-//     splitAt: 65,
-//     children: [
-//         {
-//             type: Type.LAYOUT,
-//             orientation: Orientation.HORIZONTAL,
-//             splitAt: 50,
-//             children: [
-//                 {type: Type.AREA, content: GameArea, toolShelfEnabled: false},
-//                 {type: Type.AREA, content: ScriptEditorArea}
-//             ]
-//         },
-//         {
-//             type: Type.LAYOUT,
-//             orientation: Orientation.HORIZONTAL,
-//             splitAt: 50,
-//             children: [
-//                 {type: Type.AREA, content: ScriptEditorArea},
-//                 {
-//                     type: Type.LAYOUT,
-//                     orientation: Orientation.HORIZONTAL,
-//                     splitAt: 50,
-//                     children: [
-//                         {type: Type.AREA, content: ScriptEditorArea},
-//                         {type: Type.AREA, content: ScriptEditorArea}
-//                     ]
-//                 }
-//             ]
-//         }
-//     ]
-// };
-
-const defaultLayout = {type: Type.AREA, content: GameArea, toolShelfEnabled: false, root: true};
+const defaultLayout = {
+    type: Type.AREA,
+    content: GameArea,
+    toolShelfEnabled: false,
+    root: true
+};
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
 
@@ -196,18 +168,15 @@ export default class Editor extends React.Component {
                 </div>
             </div>;
         } else {
-            const setToolShelf = (value) => {
-                node.toolShelfEnabled = value;
-                this.setState({layout: this.state.layout});
-            };
+            const availableAreas = node.content.mainArea ? MainAreas : SubAreas;
             return <Area area={node.content}
+                         availableAreas={availableAreas}
+                         selectAreaContent={this.selectAreaContent.bind(this, path)}
                          style={style}
                          params={this.props.params}
                          ticker={this.props.ticker}
-                         toolShelfEnabled={node.toolShelfEnabled}
                          split={this.split.bind(this, path)}
-                         close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}
-                         setToolShelf={setToolShelf}/>;
+                         close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}/>;
         }
     }
 
@@ -220,7 +189,7 @@ export default class Editor extends React.Component {
                     splitAt: 50,
                     children: [
                         clone(this.state.layout),
-                        {type: Type.AREA, content: ScriptEditorArea}
+                        {type: Type.AREA, content: NewArea}
                     ]
                 }
             })
@@ -235,7 +204,7 @@ export default class Editor extends React.Component {
                 splitAt: 50,
                 children: [
                     pNode.children[idx],
-                    {type: Type.AREA, content: ScriptEditorArea}
+                    {type: Type.AREA, content: NewArea}
                 ]
             };
             this.setState({layout});
@@ -256,5 +225,12 @@ export default class Editor extends React.Component {
             gpNode.children[idx] = gpNode.children[idx].children[tgtIdx];
             this.setState({layout});
         }
+    }
+
+    selectAreaContent(path, area) {
+        const layout = cloneDeep(this.state.layout);
+        const node = this.findNodeFromPath(layout, path);
+        node.content = area;
+        this.setState({layout});
     }
 }
