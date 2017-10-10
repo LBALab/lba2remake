@@ -17,10 +17,8 @@ const moveScript = extend({right: 0, background: 'darkblue'}, scriptStyle);
 
 export function ScriptMenu() {
     return <span>
-        <b>Scene: </b>
-        <select style={editor.select}/>&nbsp;&nbsp;
-        <b>Actor: </b>
-        <select style={editor.select}/>&nbsp;&nbsp;
+        <b>Scene</b><select style={editor.select}/>&nbsp;
+        <b>Actor</b><select style={editor.select}/>&nbsp;
         <img style={editor.icon} src="editor/icons/pause.png"/>
         {/*<img src="editor/icons/step.png" />*/}
     </span>;

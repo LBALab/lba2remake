@@ -3,51 +3,53 @@ import Area from './editor/Area';
 import GameArea from './editor/areas/GameArea';
 import ScriptEditorArea from './editor/areas/ScriptEditorArea';
 import {fullscreen} from './styles';
-import {extend, cloneDeep, each, concat} from 'lodash';
+import {extend, clone, cloneDeep, each, concat} from 'lodash';
 
 const Type = {
     LAYOUT: 0,
     AREA: 1
 };
 
-const Orientation = {
+export const Orientation = {
     HORIZONTAL: 0,
     VERTICAL: 1
 };
 
-const baseLayout = {
-    type: Type.LAYOUT,
-    orientation: Orientation.VERTICAL,
-    splitAt: 65,
-    children: [
-        {
-            type: Type.LAYOUT,
-            orientation: Orientation.HORIZONTAL,
-            splitAt: 50,
-            children: [
-                {type: Type.AREA, content: GameArea, toolShelfEnabled: false},
-                {type: Type.AREA, content: ScriptEditorArea}
-            ]
-        },
-        {
-            type: Type.LAYOUT,
-            orientation: Orientation.HORIZONTAL,
-            splitAt: 50,
-            children: [
-                {type: Type.AREA, content: ScriptEditorArea},
-                {
-                    type: Type.LAYOUT,
-                    orientation: Orientation.HORIZONTAL,
-                    splitAt: 50,
-                    children: [
-                        {type: Type.AREA, content: ScriptEditorArea},
-                        {type: Type.AREA, content: ScriptEditorArea}
-                    ]
-                }
-            ]
-        }
-    ]
-};
+// const baseLayout = {
+//     type: Type.LAYOUT,
+//     orientation: Orientation.VERTICAL,
+//     splitAt: 65,
+//     children: [
+//         {
+//             type: Type.LAYOUT,
+//             orientation: Orientation.HORIZONTAL,
+//             splitAt: 50,
+//             children: [
+//                 {type: Type.AREA, content: GameArea, toolShelfEnabled: false},
+//                 {type: Type.AREA, content: ScriptEditorArea}
+//             ]
+//         },
+//         {
+//             type: Type.LAYOUT,
+//             orientation: Orientation.HORIZONTAL,
+//             splitAt: 50,
+//             children: [
+//                 {type: Type.AREA, content: ScriptEditorArea},
+//                 {
+//                     type: Type.LAYOUT,
+//                     orientation: Orientation.HORIZONTAL,
+//                     splitAt: 50,
+//                     children: [
+//                         {type: Type.AREA, content: ScriptEditorArea},
+//                         {type: Type.AREA, content: ScriptEditorArea}
+//                     ]
+//                 }
+//             ]
+//         }
+//     ]
+// };
+
+const baseLayout = {type: Type.AREA, content: GameArea, toolShelfEnabled: false};
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
 
@@ -71,6 +73,8 @@ export default class Editor extends React.Component {
         this.updateSeparator = this.updateSeparator.bind(this);
         this.enableSeparator = this.enableSeparator.bind(this);
         this.disableSeparator = this.disableSeparator.bind(this);
+        this.split = this.split.bind(this);
+        this.split = this.split.bind(this);
 
         this.state = {
             layout: baseLayout,
@@ -147,10 +151,10 @@ export default class Editor extends React.Component {
     }
 
     render() {
-        return this.renderLayout(this.state.layout, baseStyle);
+        return this.renderLayout(this.state.layout, baseStyle, []);
     }
 
-    renderLayout(node, style) {
+    renderLayout(node, style, path) {
         if (node.type === Type.LAYOUT) {
             const p = node.orientation === Orientation.HORIZONTAL
                 ? ['right', 'left', 'width', 'col-resize']
@@ -187,8 +191,8 @@ export default class Editor extends React.Component {
             };
 
             return <div ref={setRootRef} style={style}>
-                {this.renderLayout(node.children[0], styles[0])}
-                {this.renderLayout(node.children[1], styles[1])}
+                {this.renderLayout(node.children[0], styles[0], concat(path, 0))}
+                {this.renderLayout(node.children[1], styles[1], concat(path, 1))}
                 <div ref={setSeparatorRef} style={separator}>
                     <div style={sepInnerLine}/>
                 </div>
@@ -203,7 +207,44 @@ export default class Editor extends React.Component {
                          params={this.props.params}
                          ticker={this.props.ticker}
                          toolShelfEnabled={node.toolShelfEnabled}
+                         split={this.split.bind(null, path)}
+                         close={path.length > 0 ? this.close.bind(null, path) : null}
                          setToolShelf={setToolShelf}/>;
         }
+    }
+
+    split(path, orientation) {
+        if (path.length === 0) {
+            this.setState({
+                layout: {
+                    type: Type.LAYOUT,
+                    orientation: orientation,
+                    splitAt: 50,
+                    children: [
+                        clone(this.state.layout),
+                        {type: Type.AREA, content: ScriptEditorArea}
+                    ]
+                }
+            })
+        } else {
+            const parentPath = path.slice(0, path.length - 1);
+            const idx = path[path.length - 1];
+            const layout = cloneDeep(this.state.layout);
+            const node = this.findNodeFromPath(layout, parentPath);
+            node.children[idx] = {
+                type: Type.LAYOUT,
+                orientation: orientation,
+                splitAt: 50,
+                children: [
+                    node.children[idx],
+                    {type: Type.AREA, content: ScriptEditorArea}
+                ]
+            };
+            this.setState({layout});
+        }
+    }
+
+    close(path) {
+
     }
 }

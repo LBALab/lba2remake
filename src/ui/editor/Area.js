@@ -2,17 +2,18 @@ import React from 'react';
 import {extend, mapValues} from 'lodash';
 import {style as tsStyle} from './ToolShelf';
 import {editor} from '../styles/index';
+import {Orientation} from '../Editor';
 
 const menuHeight = 26;
 
-const menuStyle = extend({
+const menuStyle = (numIcons) => extend({
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     height: menuHeight - 1,
     borderBottom: '1px solid gray',
-    paddingRight: menuHeight - 1,
+    paddingRight: 24 * numIcons + 2,
     lineHeight: `${menuHeight - 1}px`
 }, editor.base);
 
@@ -34,11 +35,12 @@ const titleStyle = {
     borderRight: '1px solid gray',
 };
 
-const resizerStyle = {
+const iconStyle = (right) => ({
     position: 'absolute',
-    top: 0,
-    right: 0
-};
+    top: 1,
+    right: right,
+    cursor: 'pointer'
+});
 
 export default class Area extends React.Component {
     constructor(props) {
@@ -63,10 +65,13 @@ export default class Area extends React.Component {
             stateHandler: this.stateHandler,
             sharedState: this.state
         });
-        return <div style={menuStyle}>
+        const numIcons = this.props.close ? 3 : 2;
+        return <div style={menuStyle(numIcons)}>
             <span style={titleStyle}>{this.props.area.name}</span>
             <span style={menuContentStyle}>{menu}</span>
-            <img style={resizerStyle} src="editor/icons/resize.png"/>
+            <img style={iconStyle((numIcons - 1) * 24)} onClick={this.props.split.bind(null, Orientation.HORIZONTAL)} src="editor/icons/split_horizontal.png"/>
+            <img style={iconStyle((numIcons - 2) * 24)} onClick={this.props.split.bind(null, Orientation.VERTICAL)} src="editor/icons/split_vertical.png"/>
+            {this.props.close ? <img style={iconStyle(0)} onClick={this.props.close} src="editor/icons/close.png"/> : null}
         </div>;
     }
 
