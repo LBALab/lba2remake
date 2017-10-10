@@ -49,7 +49,7 @@ export const Orientation = {
 //     ]
 // };
 
-const baseLayout = {type: Type.AREA, content: GameArea, toolShelfEnabled: false};
+const defaultLayout = {type: Type.AREA, content: GameArea, toolShelfEnabled: false};
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
 
@@ -77,7 +77,7 @@ export default class Editor extends React.Component {
         this.split = this.split.bind(this);
 
         this.state = {
-            layout: baseLayout,
+            layout: defaultLayout,
             separator: null
         }
     }
