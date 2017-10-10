@@ -34,10 +34,10 @@ function GameMenu(props) {
     return <span>
         Labels:
         &nbsp;
-        <label><input type="checkbox" onChange={changeLabel.bind(null, 'actor')}/>Actors</label>
+        <label style={{color: 'red'}}><input type="checkbox" onChange={changeLabel.bind(null, 'actor')}/>Actors</label>
         &nbsp;
-        <label><input type="checkbox" onChange={changeLabel.bind(null, 'zone')}/>Zones</label>
+        <label style={{color: 'lime'}}><input type="checkbox" onChange={changeLabel.bind(null, 'zone')}/>Zones</label>
         &nbsp;
-        <label><input type="checkbox" onChange={changeLabel.bind(null, 'point')}/>Points</label>
+        <label style={{color: 'lightskyblue'}}><input type="checkbox" onChange={changeLabel.bind(null, 'point')}/>Points</label>
     </span>;
 }
