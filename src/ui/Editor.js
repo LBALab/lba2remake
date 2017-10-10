@@ -3,7 +3,7 @@ import Area from './editor/Area';
 import GameArea from './editor/areas/GameArea';
 import ScriptEditorArea from './editor/areas/ScriptEditorArea';
 import {fullscreen} from './styles';
-import {extend} from 'lodash';
+import {extend, cloneDeep, each, concat} from 'lodash';
 
 const Type = {
     LAYOUT: 0,
@@ -18,37 +18,180 @@ const Orientation = {
 const baseLayout = {
     type: Type.LAYOUT,
     orientation: Orientation.VERTICAL,
-    split: 65,
+    splitAt: 65,
     children: [
-        {type: Type.AREA, content: GameArea, toolShelfEnabled: true},
-        {type: Type.AREA, content: ScriptEditorArea}
+        {
+            type: Type.LAYOUT,
+            orientation: Orientation.HORIZONTAL,
+            splitAt: 50,
+            children: [
+                {type: Type.AREA, content: GameArea, toolShelfEnabled: false},
+                {type: Type.AREA, content: ScriptEditorArea}
+            ]
+        },
+        {
+            type: Type.LAYOUT,
+            orientation: Orientation.HORIZONTAL,
+            splitAt: 50,
+            children: [
+                {type: Type.AREA, content: ScriptEditorArea},
+                {
+                    type: Type.LAYOUT,
+                    orientation: Orientation.HORIZONTAL,
+                    splitAt: 50,
+                    children: [
+                        {type: Type.AREA, content: ScriptEditorArea},
+                        {type: Type.AREA, content: ScriptEditorArea}
+                    ]
+                }
+            ]
+        }
     ]
+};
+
+const baseStyle = extend({overflow: 'hidden'}, fullscreen);
+
+const separatorStyle = {
+    [Orientation.HORIZONTAL]: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0
+    },
+    [Orientation.VERTICAL]: {
+        position: 'absolute',
+        left: 0,
+        right: 0
+    }
 };
 
 export default class Editor extends React.Component {
     constructor(props) {
         super(props);
+
+        this.updateSeparator = this.updateSeparator.bind(this);
+        this.enableSeparator = this.enableSeparator.bind(this);
+        this.disableSeparator = this.disableSeparator.bind(this);
+
         this.state = {
-            layout: baseLayout
+            layout: baseLayout,
+            separator: null
         }
     }
 
+    componentWillMount() {
+        document.addEventListener('mousedown', this.enableSeparator);
+        document.addEventListener('mousemove', this.updateSeparator);
+        document.addEventListener('mouseup', this.disableSeparator);
+        document.addEventListener('mouseleave', this.disableSeparator);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.enableSeparator);
+        document.removeEventListener('mousemove', this.updateSeparator);
+        document.removeEventListener('mouseup', this.disableSeparator);
+        document.removeEventListener('mouseleave', this.disableSeparator);
+    }
+
+    enableSeparator(e) {
+        const separator = this.findSeparator(e.path, this.state.layout, []);
+        if (separator) {
+            this.setState({separator});
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
+
+    findSeparator(path, node, sepPath) {
+        if (node.type === Type.LAYOUT) {
+            if (node.rootRef && node.separatorRef && path.indexOf(node.separatorRef) !== -1) {
+                const horizontal = node.orientation === Orientation.HORIZONTAL;
+                const bb = node.rootRef.getBoundingClientRect();
+                return {
+                    prop: horizontal ? 'clientX' : 'clientY',
+                    min: bb[horizontal ? 'left' : 'top'],
+                    max: node.rootRef[horizontal ? 'clientWidth' : 'clientHeight'],
+                    path: sepPath
+                };
+            } else {
+                return this.findSeparator(path, node.children[0], concat(sepPath, 0))
+                    || this.findSeparator(path, node.children[1], concat(sepPath, 1));
+            }
+        } else {
+            return null;
+        }
+    }
+
+    disableSeparator() {
+        this.setState({separator: null});
+    }
+
+    updateSeparator(e) {
+        const separator = this.state.separator;
+        if (separator) {
+            const splitAt = 100 * ((e[separator.prop] - separator.min) / separator.max);
+            const layout = cloneDeep(this.state.layout);
+            const node = this.findNodeFromPath(layout, separator.path);
+            node.splitAt = Math.min(Math.max(splitAt, 5), 95);
+            this.setState({layout});
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
+
+    findNodeFromPath(layout, path) {
+        let node = layout;
+        each(path, elem => {
+            node = node.children[elem];
+        });
+        return node;
+    }
+
     render() {
-        return this.renderLayout(this.state.layout, fullscreen);
+        return this.renderLayout(this.state.layout, baseStyle);
     }
 
     renderLayout(node, style) {
         if (node.type === Type.LAYOUT) {
-            const pos = node.orientation === Orientation.HORIZONTAL
-                ? ['right', 'left']
-                : ['bottom', 'top'];
+            const p = node.orientation === Orientation.HORIZONTAL
+                ? ['right', 'left', 'width', 'col-resize']
+                : ['bottom', 'top', 'height', 'row-resize'];
+
             const styles = [
-                extend({}, fullscreen, {[pos[0]]: `${100 - node.split}%`}),
-                extend({}, fullscreen, {[pos[1]]: `${node.split}%`})
+                extend({}, baseStyle, {[p[0]]: `${100 - node.splitAt}%`}),
+                extend({}, baseStyle, {[p[1]]: `${node.splitAt}%`})
             ];
-            return <div style={style}>
+
+            const separator = extend({
+                [p[1]]: `${node.splitAt}%`,
+                [p[2]]: 12,
+                transform: node.orientation === Orientation.HORIZONTAL
+                    ? 'translate(-6px, 0)'
+                    : 'translate(0, -6px)',
+                background: 'rgba(0,0,0,0)',
+                cursor: p[3]
+            }, separatorStyle[node.orientation]);
+
+            const sepInnerLine = extend({
+                [p[1]]: 5,
+                [p[2]]: 2,
+                background: 'gray',
+                opacity: 1,
+            }, separatorStyle[node.orientation]);
+
+            const setSeparatorRef = (ref) => {
+                node.separatorRef = ref;
+            };
+
+            const setRootRef = (ref) => {
+                node.rootRef = ref;
+            };
+
+            return <div ref={setRootRef} style={style}>
                 {this.renderLayout(node.children[0], styles[0])}
                 {this.renderLayout(node.children[1], styles[1])}
+                <div ref={setSeparatorRef} style={separator}>
+                    <div style={sepInnerLine}/>
+                </div>
             </div>;
         } else {
             const setToolShelf = (value) => {
