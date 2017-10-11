@@ -29,16 +29,16 @@ export function createGame(clock: Object, setUiState: Function, getUiState: Func
             action: 0,
             jump: 0
         },
-        loading: (index: number) => {
+        loading: function(index: number) {
             _isPaused = true;
             _isLoading = true;
-            setUiState({loading: true});
+            this.setUiState({loading: true});
             console.log(`Loading scene #${index}`);
         },
-        loaded: () => {
+        loaded: function() {
             _isPaused = false;
             _isLoading = false;
-            setUiState({loading: false});
+            this.setUiState({loading: false});
             console.log("Loaded!");
         },
 
