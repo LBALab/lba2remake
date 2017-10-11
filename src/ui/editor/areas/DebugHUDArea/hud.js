@@ -34,7 +34,7 @@ const mainStyle = {
     overflow: 'auto'
 };
 
-const exprInputStyle = extend({
+const inputStyle = extend({
     width: '80%'
 }, editorStyle.input);
 
@@ -95,6 +95,24 @@ export default class DebugHUD extends FrameListener {
         </div>;
     }
 
+    renderHeader() {
+        return <div style={headerStyle}>
+            <input key="exprInput"
+                   ref={ref => this.input = ref}
+                   style={inputStyle}
+                   list="dbgHUD_completion"
+                   spellCheck={false}
+                   onKeyDown={this.inputKeyDown}
+                   onKeyUp={e => e.stopPropagation()}
+                   placeholder="<type expression>"
+            />
+            <datalist id="dbgHUD_completion">
+                {map(this.state.completion, (value, idx) => <option key={idx} value={value}/>)}
+            </datalist>
+            <button style={editorStyle.button} onClick={() => this.addExpression}>+</button>
+        </div>;
+    }
+
     renderLoadScreen() {
         const profiles = this.props.sharedState.profiles;
         const hasProfiles = !isEmpty(profiles);
@@ -123,29 +141,28 @@ export default class DebugHUD extends FrameListener {
         const profiles = this.props.sharedState.profiles;
         const {saveProfile, removeProfile} = this.props.stateHandler;
         return <div style={{padding: 16}}>
-            {map(profiles, (profile, name) => {
-                return <div key={name} style={{cursor: 'pointer'}}>
-                    <button style={editorStyle.button} onClick={() => removeProfile(name)}>-</button>
-                    &nbsp;
-                    <span onClick={() => saveProfile(name)}>{name}</span>
-                </div>;
-            })}
-        </div>;
-    }
-
-    renderHeader() {
-        return <div style={headerStyle}>
-            <input ref={ref => this.input = ref}
-                   style={exprInputStyle}
-                   list="dbgHUD_completion"
-                   spellCheck={false}
-                   onKeyDown={this.inputKeyDown}
-                   onKeyUp={e => e.stopPropagation()}
-            />
-            <datalist id="dbgHUD_completion">
-                {map(this.state.completion, (value, idx) => <option key={idx} value={value}/>)}
-            </datalist>
-            <button style={editorStyle.button} onClick={() => this.addExpression}>+</button>
+            <div style={headerStyle}>
+                <input key="saveInput"
+                       ref={ref => {
+                           this.saveInput = ref;
+                           if (ref)
+                               ref.value = this.props.sharedState.profileName
+                       }}
+                       style={inputStyle}
+                       spellCheck={false}
+                       placeholder="<type profile name>"
+                />
+                <button style={editorStyle.button} onClick={() => saveProfile(this.saveInput.value)}>Save</button>
+            </div>
+            <div style={mainStyle}>
+                {map(profiles, (profile, name) => {
+                    return <div key={name} style={{cursor: 'pointer'}}>
+                        <button style={editorStyle.button} onClick={() => removeProfile(name)}>-</button>
+                        &nbsp;
+                        <span onClick={() => saveProfile(name)}>{name}</span>
+                    </div>;
+                })}
+            </div>
         </div>;
     }
 
