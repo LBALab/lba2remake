@@ -3,7 +3,8 @@ import {map} from 'lodash';
 
 const NewArea = {
     name: 'New area',
-    content: NewAreaContent
+    content: NewAreaContent,
+    sharedState: () => ({})
 };
 
 export default NewArea;

@@ -2,7 +2,7 @@ import React from 'react';
 import {extend, mapValues} from 'lodash';
 import {editor} from '../styles/index';
 import {Orientation} from '../Editor';
-import {map, findIndex} from 'lodash';
+import {map, findIndex, isFunction} from 'lodash';
 import NewArea from './areas/NewArea';
 
 const menuHeight = 26;
@@ -43,8 +43,8 @@ export default class Area extends React.Component {
     constructor(props) {
         super(props);
         this.setSharedState = this.setSharedState.bind(this);
-        this.state = this.props.area.sharedState;
-        this.stateHandler = mapValues(this.props.area.stateHandler, f => f.bind(this));
+        this.state = props.area.sharedState();
+        this.stateHandler = mapValues(props.area.stateHandler, f => f.bind(this));
     }
 
     render() {

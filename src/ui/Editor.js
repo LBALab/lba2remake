@@ -5,6 +5,7 @@ import {extend, clone, cloneDeep, each, concat} from 'lodash';
 import GameArea from './editor/areas/GameArea';
 import NewArea from "./editor/areas/NewArea";
 import {MainAreas, SubAreas} from './editor/areas/all';
+import DebugHUDArea from "./editor/areas/DebugHUDArea";
 
 const Type = {
     LAYOUT: 0,
@@ -17,10 +18,32 @@ export const Orientation = {
 };
 
 const defaultLayout = {
-    type: Type.AREA,
-    content: GameArea,
-    toolShelfEnabled: false,
-    root: true
+    type: Type.LAYOUT,
+    orientation: Orientation.HORIZONTAL,
+    splitAt: 60,
+    children: [
+        {
+            type: Type.AREA,
+            content: GameArea,
+            root: true
+        },
+        {
+            type: Type.LAYOUT,
+            orientation: Orientation.VERTICAL,
+            splitAt: 60,
+            children: [
+                {
+                    type: Type.AREA,
+                    content: DebugHUDArea,
+                },
+                {
+                    type: Type.AREA,
+                    content: NewArea
+                }
+            ]
+        }
+    ],
+
 };
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
@@ -169,7 +192,8 @@ export default class Editor extends React.Component {
             </div>;
         } else {
             const availableAreas = node.content.mainArea ? MainAreas : SubAreas;
-            return <Area area={node.content}
+            return <Area key={`${path.join('/')}/${node.content.name}`}
+                         area={node.content}
                          availableAreas={availableAreas}
                          selectAreaContent={this.selectAreaContent.bind(this, path)}
                          style={style}
@@ -189,7 +213,7 @@ export default class Editor extends React.Component {
                     splitAt: 50,
                     children: [
                         clone(this.state.layout),
-                        {type: Type.AREA, content: NewArea}
+                        {type: Type.AREA, content: DebugHUDArea}
                     ]
                 }
             })

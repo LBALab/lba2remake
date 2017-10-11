@@ -18,7 +18,7 @@ import DebugLabels from './editor/DebugLabels';
 import FoundObject from './game/FoundObject';
 import Loader from './game/Loader';
 import Video from './game/Video';
-import DebugHUD from './editor/areas/DebugHUDArea/DebugHUD';
+import DebugHUD from './editor/areas/DebugHUDArea/hud';
 
 export default class Game extends FrameListener {
     constructor(props) {

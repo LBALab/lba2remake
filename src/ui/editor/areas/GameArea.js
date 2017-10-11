@@ -7,13 +7,13 @@ const GameArea = {
     menu: GameMenu,
     content: Game,
     mainArea: true,
-    sharedState: {
+    sharedState: () => ({
         labels: {
             actor: false,
             zone: false,
             point: false
         }
-    },
+    }),
     stateHandler: {
         setLabel: function(type, value) {
             const labels = clone(this.state.labels);
