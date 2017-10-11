@@ -59,10 +59,12 @@ export default class Game extends FrameListener {
     }
 
     saveData() {
-        this.props.saveMainData({
-            state: this.state,
-            canvas: this.canvas
-        });
+        if (this.props.saveMainData) {
+            this.props.saveMainData({
+                state: this.state,
+                canvas: this.canvas
+            });
+        }
     }
 
     onLoad(root) {
