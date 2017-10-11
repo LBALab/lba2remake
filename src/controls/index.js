@@ -12,7 +12,7 @@ export function createControls(params, game, canvas, sceneManager) {
             makeGamepadControls(sceneManager, game)
         ];
         if (!params.mobile) {
-            controls.push(makeKeyboardControls(sceneManager, game));
+            controls.push(makeKeyboardControls(params, sceneManager, game));
         }
     }
     else if (params.mobile) {
@@ -22,8 +22,8 @@ export function createControls(params, game, canvas, sceneManager) {
         ];
     } else {
         controls = [
-            makeFirstPersonMouseControls(canvas, game),
-            makeKeyboardControls(sceneManager, game),
+            makeFirstPersonMouseControls(params, canvas, game),
+            makeKeyboardControls(params, sceneManager, game),
             makeGamepadControls(sceneManager, game)
         ];
     }

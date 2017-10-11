@@ -3,8 +3,8 @@
 import {switchStats} from '../renderer/stats';
 import {BehaviourMode} from '../game/loop/hero';
 
-export function makeKeyboardControls(sceneManager: Object, game: Object) {
-    const onKeyDown = keyDownHandler.bind(null, game, sceneManager);
+export function makeKeyboardControls(params: Object, sceneManager: Object, game: Object) {
+    const onKeyDown = keyDownHandler.bind(null, params, game, sceneManager);
     const onKeyUp = keyUpHandler.bind(null, game);
     window.addEventListener('keydown', onKeyDown, false);
     window.addEventListener('keyup', onKeyUp, false);
@@ -16,7 +16,7 @@ export function makeKeyboardControls(sceneManager: Object, game: Object) {
     }
 }
 
-function keyDownHandler(game, sceneManager, event) {
+function keyDownHandler(params, game, sceneManager, event) {
     const key = event.code || event.which || event.keyCode;
     switch (key) {
         case 38: // up
@@ -100,8 +100,10 @@ function keyDownHandler(game, sceneManager, event) {
             break;
         case 67: // c
         case 'KeyC':
-            game.controlsState.freeCamera = !game.controlsState.freeCamera;
-            console.log('Free camera: ', game.controlsState.freeCamera);
+            if (params.editor) {
+                game.controlsState.freeCamera = !game.controlsState.freeCamera;
+                console.log('Free camera: ', game.controlsState.freeCamera);
+            }
             break;
         case 80: // p
         case 'KeyP':
