@@ -136,7 +136,7 @@ export default class Game extends FrameListener {
     }
 
     render() {
-        return <div>
+        return <div style={fullscreen}>
             <div ref={this.onLoad} style={fullscreen}/>
             {this.props.params.editor ?
                 <DebugLabels params={this.props.params}
