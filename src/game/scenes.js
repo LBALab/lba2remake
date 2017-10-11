@@ -42,7 +42,7 @@ export function createSceneManager(params, game, renderer, callback: Function) {
             if (scene)
                 scene.isActive = false;
 
-            game.ui.setState({ text: null, cinema: false });
+            game.setUiState({ text: null, cinema: false });
 
             const hash = window.location.hash;
             if (hash.match(/scene\=\d+/)) {

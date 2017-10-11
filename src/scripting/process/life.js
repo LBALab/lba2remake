@@ -42,18 +42,18 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 return;
             }
             const itrjId = `${actor.index}_${id}`;
-            const interjections = clone(this.game.ui.state.interjections);
+            const interjections = clone(this.game.getUiState().interjections);
             interjections[itrjId] = {
                 scene: this.scene.index,
                 actor: actor.index,
                 color: actor.props.textColor,
                 value: text.value
             };
-            this.game.ui.setState({interjections});
+            this.game.setUiState({interjections});
             setTimeout(() => {
-                const interjections = clone(this.game.ui.state.interjections);
+                const interjections = clone(this.game.getUiState().interjections);
                 delete interjections[itrjId];
-                this.game.ui.setState({interjections});
+                this.game.setUiState({interjections});
                 cmdState.ended = true;
             }, 2000);
         } else {
@@ -65,7 +65,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 hero.props.animIndex = 28; // talking / reading
             else
                 hero.props.animIndex = 0;
-            this.game.ui.setState({
+            this.game.setUiState({
                 text: {
                     type: text.type === 3 ? 'big' : 'small',
                     value: text.value,
@@ -94,7 +94,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         voiceSource.stop();
         const text = this.scene.data.texts[id];
         if (text.type !== 9) {
-            this.game.ui.setState({ text: null });
+            this.game.setUiState({ text: null });
             window.removeEventListener('keydown', cmdState.listener);
             hero.props.dirMode = DirMode.MANUAL;
         }
@@ -210,7 +210,7 @@ export function FOUND_OBJECT(cmdState, id) {
             soundFxSource.play();
         });
         const text = this.game.texts[id];
-        this.game.ui.setState({
+        this.game.setUiState({
             text: {
                 type: text.type === 3 ? 'big' : 'small',
                 value: text.value,
@@ -234,11 +234,11 @@ export function FOUND_OBJECT(cmdState, id) {
             voiceSource.play();
         });
 
-        this.game.ui.setState({foundObject: id});
+        this.game.setUiState({foundObject: id});
     }
     if (cmdState.ended) {
         voiceSource.stop();
-        this.game.ui.setState({ text: null, foundObject: null });
+        this.game.setUiState({ text: null, foundObject: null });
         window.removeEventListener('keydown', cmdState.listener);
         hero.props.dirMode = DirMode.MANUAL;
 
@@ -325,10 +325,10 @@ export function PLAY_SMK(cmdState, video) {
         const that = this;
         this.game.pause();
         const src = VideoData.VIDEO.find((v) => { return v.name === video; }).file;
-        this.game.ui.setState({video: {
+        this.game.setUiState({video: {
             src,
             callback: () => {
-                that.game.ui.setState({video: null});
+                that.game.setUiState({video: null});
                 cmdState.ended = true;
                 that.game.pause();
             }
@@ -336,7 +336,7 @@ export function PLAY_SMK(cmdState, video) {
         cmdState.listener = function(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
-                that.game.ui.setState({video: null});
+                that.game.setUiState({video: null});
                 cmdState.ended = true;
                 that.game.pause();
             }
@@ -470,10 +470,10 @@ export function ASK_CHOICE_OBJ() {
 export function CINEMA_MODE(mode) {
     if (mode === 1) {
         this.actor.props.dirMode = DirMode.NO_MOVE;
-        this.game.ui.setState({ cinema: true });
+        this.game.setUiState({ cinema: true });
     } else {
         this.actor.props.dirMode = DirMode.MANUAL;
-        this.game.ui.setState({ cinema: false });
+        this.game.setUiState({ cinema: false });
         //setTimeout(function() { cinemaModeDiv.style.display = 'none'; }, 3000); // animation is in 3s
     }
 }
@@ -510,7 +510,7 @@ export function ESCALATOR() {
 }
 
 export function PLAY_MUSIC(index) {
-    const musicSource = game.getAudioManager().getMusicSource();
+    const musicSource = this.game.getAudioManager().getMusicSource();
     if (!musicSource.isPlaying) {
         musicSource.load(index, () => {
             musicSource.play();

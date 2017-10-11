@@ -30,10 +30,13 @@ export default class Game extends FrameListener {
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
 
         if (props.mainData) {
-            this.state = props.mainData.state;
+            const state = props.mainData.state;
+            state.game.setUiState = this.setUiState.bind(this);
+            state.game.getUiState = () => this.state;
+            this.state = state;
         } else {
             const clock = new THREE.Clock(false);
-            const game = createGame(clock, this);
+            const game = createGame(clock, this.setUiState.bind(this), () => this.state);
 
             this.state = {
                 clock,
@@ -49,6 +52,10 @@ export default class Game extends FrameListener {
             clock.start();
             game.preload();
         }
+    }
+
+    setUiState(state) {
+        this.setState(state, this.saveData);
     }
 
     saveData() {

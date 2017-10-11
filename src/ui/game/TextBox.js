@@ -35,6 +35,12 @@ export default class TextBox extends React.Component {
         this.interval = null;
     }
 
+    componentWillMount() {
+        if (this.props.text) {
+            this.interval = setInterval(this.update, 35);
+        }
+    }
+
     componentWillReceiveProps(newProps) {
         if (newProps.text) {
             this.setState({ content: '', offset: 0 });
@@ -45,6 +51,10 @@ export default class TextBox extends React.Component {
             clearInterval(this.interval);
             this.interval = null;
         }
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
 
     update() {

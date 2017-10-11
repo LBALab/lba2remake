@@ -7,7 +7,7 @@ import {createAudioManager} from '../audio'
 import {loadHqrAsync} from '../hqr';
 import {loadTexts} from '../scene';
 
-export function createGame(clock: Object, ui: Object) {
+export function createGame(clock: Object, setUiState: Function, getUiState: Function) {
     let _isPaused = false;
     let _isLoading = false;
 
@@ -15,7 +15,8 @@ export function createGame(clock: Object, ui: Object) {
     const _audio = createAudioManager(_state);
 
     return {
-        ui,
+        setUiState,
+        getUiState,
         controlsState: {
             heroSpeed: 0,
             heroRotationSpeed: 0,
@@ -31,13 +32,13 @@ export function createGame(clock: Object, ui: Object) {
         loading: (index: number) => {
             _isPaused = true;
             _isLoading = true;
-            ui.setState({loading: true});
+            setUiState({loading: true});
             console.log(`Loading scene #${index}`);
         },
         loaded: () => {
             _isPaused = false;
             _isLoading = false;
-            ui.setState({loading: false});
+            setUiState({loading: false});
             console.log("Loaded!");
         },
 

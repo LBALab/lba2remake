@@ -61,7 +61,7 @@ function TEXT(game, scene, zone, hero) {
             scene.zoneState.currentChar = 0;
 
             const text = scene.data.texts[zone.props.snap];
-            game.ui.setState({
+            game.setUiState({
                 text: {
                     type: text.type === 3 ? 'big' : 'small',
                     value: text.value,
@@ -73,7 +73,7 @@ function TEXT(game, scene, zone, hero) {
                 const key = event.code || event.which || event.keyCode;
                 if (key === 'Enter' || key === 13) {
                     scene.zoneState.ended = true;
-                    game.ui.setState({text: null});
+                    game.setUiState({text: null});
                     scene.getActor(0).props.dirMode = DirMode.MANUAL;
                 }
             };
@@ -88,7 +88,7 @@ function TEXT(game, scene, zone, hero) {
         hero.props.entityIndex = hero.props.prevEntityIndex;
         hero.props.animIndex = hero.props.prevAnimIndex;
         voiceSource.stop();
-        game.ui.setState({text: null});
+        game.setUiState({text: null});
         window.removeEventListener('keydown', scene.zoneState.listener);
         delete scene.zoneState.listener;
         delete scene.zoneState.ended;
