@@ -1,8 +1,8 @@
 import React from 'react';
 import {extend, mapValues} from 'lodash';
-import {editor} from '../styles/index';
+import {editor, fullscreen} from '../styles/index';
 import {Orientation} from '../Editor';
-import {map, findIndex, isFunction} from 'lodash';
+import {map, findIndex} from 'lodash';
 import NewArea from './areas/NewArea';
 
 const menuHeight = 26;
@@ -42,7 +42,7 @@ const iconStyle = (right) => ({
 export default class Area extends React.Component {
     constructor(props) {
         super(props);
-        this.setSharedState = this.setSharedState.bind(this);
+        this.confirmPopup = this.confirmPopup.bind(this);
         this.state = props.area.sharedState();
         this.stateHandler = mapValues(props.area.stateHandler, f => f.bind(this));
     }
@@ -55,7 +55,7 @@ export default class Area extends React.Component {
     }
 
     renderMenu() {
-        const menu = this.props.area.menu
+        const menu = this.props.area.menu && !this.state.confirmPopup
             ? React.createElement(this.props.area.menu, {
                 params: this.props.params,
                 ticker: this.props.ticker,
@@ -106,10 +106,48 @@ export default class Area extends React.Component {
         }
         return <div style={contentStyle}>
             {React.createElement(this.props.area.content, props)}
+            {this.renderPopup()}
         </div>;
     }
 
-    setSharedState(value) {
-        this.setState({sharedState: value});
+    renderPopup() {
+        const confirmPopup = this.state.confirmPopup;
+        const ok = () => {
+            confirmPopup.callback();
+            this.setState({confirmPopup: null});
+        };
+        const cancel = () => {
+            this.setState({confirmPopup: null});
+        };
+        if (confirmPopup) {
+            const style = extend({
+                background: 'black',
+                padding: 15
+            }, fullscreen, editor.base);
+            const buttonStyle = extend({}, editor.button, {
+                fontSize: 16,
+                margin: '0px 4px'
+            });
+            return <div style={style}>
+                <div>{confirmPopup.msg}</div>
+                <div style={{float: 'right'}}>
+                    <button style={buttonStyle} onClick={ok}>{confirmPopup.ok}</button>
+                    <button style={buttonStyle} onClick={cancel}>{confirmPopup.cancel}</button>
+                </div>
+            </div>;
+        } else {
+            return null;
+        }
+    }
+
+    confirmPopup(msg, ok, cancel, callback) {
+        this.setState({
+            confirmPopup: {
+                msg,
+                ok,
+                cancel,
+                callback
+            }
+        });
     }
 }
