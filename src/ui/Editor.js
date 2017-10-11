@@ -68,6 +68,7 @@ export default class Editor extends React.Component {
         this.updateSeparator = this.updateSeparator.bind(this);
         this.enableSeparator = this.enableSeparator.bind(this);
         this.disableSeparator = this.disableSeparator.bind(this);
+        this.saveMainData = this.saveMainData.bind(this);
 
         this.state = {
             layout: defaultLayout,
@@ -194,13 +195,16 @@ export default class Editor extends React.Component {
             const availableAreas = node.content.mainArea ? MainAreas : SubAreas;
             return <Area key={`${path.join('/')}/${node.content.name}`}
                          area={node.content}
+                         mainArea={node.content.mainArea}
                          availableAreas={availableAreas}
                          selectAreaContent={this.selectAreaContent.bind(this, path)}
                          style={style}
                          params={this.props.params}
                          ticker={this.props.ticker}
                          split={this.split.bind(this, path)}
-                         close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}/>;
+                         close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}
+                         saveMainData={this.saveMainData}
+                         mainData={this.state.mainData}/>;
         }
     }
 
@@ -245,8 +249,9 @@ export default class Editor extends React.Component {
             const idx = path[path.length - 2];
             const layout = cloneDeep(this.state.layout);
             const gpNode = this.findNodeFromPath(layout, grandParentPath);
+            const pNode = gpNode.children[idx];
             const tgtIdx = 1 - path[path.length - 1];
-            gpNode.children[idx] = gpNode.children[idx].children[tgtIdx];
+            gpNode.children[idx] = pNode.children[tgtIdx];
             this.setState({layout});
         }
     }
@@ -256,5 +261,9 @@ export default class Editor extends React.Component {
         const node = this.findNodeFromPath(layout, path);
         node.content = area;
         this.setState({layout});
+    }
+
+    saveMainData(data) {
+        this.setState({mainData: data});
     }
 }

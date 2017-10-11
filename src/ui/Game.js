@@ -1,6 +1,6 @@
 import React from 'react';
 import THREE from 'three';
-import {clone, omit} from 'lodash';
+import {clone, omit, extend} from 'lodash';
 
 import {createRenderer} from '../renderer';
 import {createGame} from '../game';
@@ -25,47 +25,53 @@ export default class Game extends FrameListener {
         super(props);
 
         this.onLoad = this.onLoad.bind(this);
-        this.onLoadCanvas = this.onLoadCanvas.bind(this);
         this.frame = this.frame.bind(this);
+        this.saveData = this.saveData.bind(this);
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
 
-        const clock = new THREE.Clock(false);
-        const game = createGame(clock, this);
+        if (props.mainData) {
+            this.state = props.mainData.state;
+        } else {
+            const clock = new THREE.Clock(false);
+            const game = createGame(clock, this);
 
-        this.state = {
-            clock,
-            game,
-            cinema: false,
-            text: null,
-            interjections: {},
-            foundObject: null,
-            loading: true,
-            video: null
-        };
+            this.state = {
+                clock,
+                game,
+                cinema: false,
+                text: null,
+                interjections: {},
+                foundObject: null,
+                loading: true,
+                video: null
+            };
 
-        if (this.props.watch) {
-            this.props.watch(this.state)
+            clock.start();
+            game.preload();
         }
+    }
 
-        clock.start();
-        game.preload();
+    saveData() {
+        this.props.saveMainData({
+            state: this.state,
+            canvas: this.canvas
+        });
     }
 
     onLoad(root) {
         if (!this.root) {
+            if (this.props.mainData) {
+                this.canvas = this.props.mainData.canvas;
+            } else {
+                this.canvas = document.createElement('canvas');
+                const game = this.state.game;
+                const renderer = createRenderer(this.props.params, this.canvas);
+                const sceneManager = createSceneManager(this.props.params, game, renderer, this.onSceneManagerReady);
+                const controls = createControls(this.props.params, game, this.canvas, sceneManager);
+                this.setState({ renderer, sceneManager, controls }, this.saveData);
+            }
             this.root = root;
-        }
-    }
-
-    onLoadCanvas(canvas) {
-        if (!this.canvas) {
-            const game = this.state.game;
-            const renderer = createRenderer(this.props.params, canvas);
-            const sceneManager = createSceneManager(this.props.params, game, renderer, this.onSceneManagerReady);
-            const controls = createControls(this.props.params, game, canvas, sceneManager);
-            this.setState({ renderer, sceneManager, controls });
-            this.frame();
-            this.canvas = canvas;
+            this.root.appendChild(this.canvas);
         }
     }
 
@@ -79,7 +85,7 @@ export default class Game extends FrameListener {
         }
         if (newProps.params.vr !== this.props.params.vr && this.canvas) {
             this.state.renderer.dispose();
-            this.setState({ renderer: createRenderer(newProps.params, this.canvas) });
+            this.setState({ renderer: createRenderer(newProps.params, this.canvas) }, this.saveData);
         }
     }
 
@@ -89,7 +95,7 @@ export default class Game extends FrameListener {
         if (renderer && sceneManager) {
             const scene = sceneManager.getScene();
             if (this.state.scene !== scene) {
-                this.setState({scene});
+                this.setState({scene}, this.saveData);
             }
             mainGameLoop(
                 this.props.params,
@@ -123,15 +129,15 @@ export default class Game extends FrameListener {
             if (rWidth !== cvWidth || rHeight !== cvHeight) {
                 this.state.renderer.resize(roundedWidth, roundedHeight);
                 if (this.state.video) {
-                    this.setState({video: clone(this.state.video)}); // Force video rerender
+                    this.setState({video: clone(this.state.video)}, this.saveData); // Force video rerender
                 }
             }
         }
     }
 
     render() {
-        return <div ref={this.onLoad} style={fullscreen}>
-            <canvas ref={this.onLoadCanvas} />
+        return <div>
+            <div ref={this.onLoad} style={fullscreen}/>
             {this.props.params.editor ?
                 <DebugLabels params={this.props.params}
                              labels={this.props.sharedState.labels}

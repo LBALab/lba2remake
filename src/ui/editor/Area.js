@@ -90,16 +90,22 @@ export default class Area extends React.Component {
     }
 
     renderContent() {
-        const content = React.createElement(this.props.area.content, {
+        const props = {
             params: this.props.params,
             ticker: this.props.ticker,
             stateHandler: this.stateHandler,
             sharedState: this.state,
             availableAreas: this.props.availableAreas,
             selectAreaContent: this.props.selectAreaContent
-        });
+        };
+        if (this.props.mainArea) {
+            extend(props, {
+                saveMainData: this.props.saveMainData,
+                mainData: this.props.mainData
+            });
+        }
         return <div style={contentStyle}>
-            {content}
+            {React.createElement(this.props.area.content, props)}
         </div>;
     }
 
