@@ -13,11 +13,11 @@ import {
 } from 'lodash';
 import {intersperse, intersperseBR} from './utils';
 
-export default function Expression({expr, addExpression}) {
-    if ('value' in expr) {
-        return <span key={expr.expr}> {expr.expr} = <Value expr={expr} value={expr.value} addExpression={addExpression} /></span>;
-    } else if ('error' in expr) {
-        return <span key={expr.expr}> {expr.expr} = <span style={{color: 'red'}}>Error: {expr.error.toString()}</span></span>;
+export default function Expression({expr, value, addExpression}) {
+    if (value && 'value' in value) {
+        return <span key={expr.expr}> {expr.expr} = <Value expr={expr} value={value.value} addExpression={addExpression} /></span>;
+    } else if (value && 'error' in value) {
+        return <span key={expr.expr}> {expr.expr} = <span style={{color: 'red'}}>Error: {value.error.toString()}</span></span>;
     } else {
         return <span key={expr.expr}> {expr.expr} = N/A</span>;
     }

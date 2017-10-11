@@ -7,7 +7,7 @@ const GameArea = {
     menu: GameMenu,
     content: Game,
     mainArea: true,
-    sharedState: () => ({
+    getInitialState: () => ({
         labels: {
             actor: false,
             zone: false,
@@ -30,11 +30,13 @@ function GameMenu(props) {
         props.stateHandler.setLabel(type, e.target.checked);
     };
 
+    const l = props.sharedState.labels;
+
     return <span>
-        <label style={{color: 'red'}}><input type="checkbox" onChange={changeLabel.bind(null, 'actor')}/>Actors</label>
+        <label style={{color: 'red'}}><input type="checkbox" onChange={changeLabel.bind(null, 'actor')} checked={l.actor}/>Actors</label>
         &nbsp;
-        <label style={{color: 'lime'}}><input type="checkbox" onChange={changeLabel.bind(null, 'zone')}/>Zones</label>
+        <label style={{color: 'lime'}}><input type="checkbox" onChange={changeLabel.bind(null, 'zone')} checked={l.zone}/>Zones</label>
         &nbsp;
-        <label style={{color: 'lightskyblue'}}><input type="checkbox" onChange={changeLabel.bind(null, 'point')}/>Points</label>
+        <label style={{color: 'lightskyblue'}}><input type="checkbox" onChange={changeLabel.bind(null, 'point')} checked={l.point}/>Points</label>
     </span>;
 }

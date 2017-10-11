@@ -1,6 +1,7 @@
 import React from 'react';
 import {extend, each, map, isEmpty, concat} from 'lodash';
 import {
+    loadProfiles,
     saveDefaultProfile
 } from './profiles';
 import * as builtInProfiles from './builtInProfiles';
@@ -52,7 +53,8 @@ export default class DebugHUD extends FrameListener {
         this.inputKeyDown = this.inputKeyDown.bind(this);
 
         this.state = {
-            completion: autoComplete('', DebugHUD.scope)
+            completion: autoComplete('', DebugHUD.scope),
+            values: []
         };
     }
 
@@ -79,7 +81,7 @@ export default class DebugHUD extends FrameListener {
         const expressions = map(slots.expressions, (expr, idx) => {
             return <div key={expr.expr}>
                 <button style={editorStyle.button} onClick={this.removeExpression.bind(this, idx)}>-</button>
-                <Expression expr={expr} addExpression={this.addExpression}/>
+                <Expression expr={expr} value={this.state.values[idx]} addExpression={this.addExpression}/>
             </div>;
         });
         return <div>
@@ -114,7 +116,7 @@ export default class DebugHUD extends FrameListener {
     }
 
     renderLoadScreen() {
-        const profiles = this.props.sharedState.profiles;
+        const profiles = loadProfiles();
         const hasProfiles = !isEmpty(profiles);
         const {loadProfile, removeProfile} = this.props.stateHandler;
         return <div style={{padding: 16}}>
@@ -138,28 +140,49 @@ export default class DebugHUD extends FrameListener {
     }
 
     renderSaveScreen() {
-        const profiles = this.props.sharedState.profiles;
+        const profiles = loadProfiles();
         const {saveProfile, removeProfile} = this.props.stateHandler;
+
+        const saveConfirm = (name) => {
+            const confirm = this.props.confirmPopup.bind(
+                null,
+                <span>Are you sure you want to overwrite profile "<i>{name}</i>"?</span>,
+                'Yes',
+                'No'
+            );
+            saveProfile(confirm, name);
+        };
+
+        const onKeyDown = (event) => {
+            event.stopPropagation();
+            const key = event.code || event.which || event.keyCode;
+            if (key === 'Enter' || key === 13) {
+                event.preventDefault();
+                saveConfirm(this.saveInput.value);
+            }
+        };
+
         return <div style={{padding: 16}}>
             <div style={headerStyle}>
                 <input key="saveInput"
                        ref={ref => {
                            this.saveInput = ref;
-                           if (ref)
+                           if (ref && !ref.value)
                                ref.value = this.props.sharedState.profileName
                        }}
                        style={inputStyle}
                        spellCheck={false}
+                       onKeyDown={onKeyDown}
                        placeholder="<type profile name>"
                 />
-                <button style={editorStyle.button} onClick={() => saveProfile(this.saveInput.value)}>Save</button>
+                <button style={editorStyle.button} onClick={() => saveConfirm(this.saveInput.value)}>Save</button>
             </div>
             <div style={mainStyle}>
                 {map(profiles, (profile, name) => {
                     return <div key={name} style={{cursor: 'pointer'}}>
                         <button style={editorStyle.button} onClick={() => removeProfile(name)}>-</button>
                         &nbsp;
-                        <span onClick={() => saveProfile(name)}>{name}</span>
+                        <span onClick={() => saveConfirm(name)}>{name}</span>
                     </div>;
                 })}
             </div>
@@ -167,19 +190,19 @@ export default class DebugHUD extends FrameListener {
     }
 
     frame() {
-        const slots = this.props.sharedState.slots;
-        const {macros, expressions} = slots;
-        each(expressions, expr => {
-            try {
-                expr.value = execute(expr.program, [DebugHUD.scope], macros);
-                delete expr.error;
-            }
-            catch (e) {
-                expr.error = e;
-                delete expr.value;
-            }
-        });
-        this.props.stateHandler.setSlots(slots);
+        if (this.props.sharedState.status === Status.NORMAL) {
+            const slots = this.props.sharedState.slots;
+            const {macros, expressions} = slots;
+            const values = map(expressions, expr => {
+                try {
+                    return {value: execute(expr.program, [DebugHUD.scope], macros)};
+                }
+                catch (error) {
+                    return {error};
+                }
+            });
+            this.setState({values});
+        }
     }
 
     inputKeyDown(event) {

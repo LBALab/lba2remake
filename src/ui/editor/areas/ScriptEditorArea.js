@@ -5,7 +5,7 @@ const ScriptEditorArea = {
     name: 'Scripts',
     menu: ScriptMenu,
     content: ScriptContent,
-    sharedState: () => ({})
+    getInitialState: () => ({})
 };
 
 export default ScriptEditorArea;

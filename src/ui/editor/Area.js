@@ -1,5 +1,5 @@
 import React from 'react';
-import {extend, mapValues} from 'lodash';
+import {extend} from 'lodash';
 import {editor, fullscreen} from '../styles/index';
 import {Orientation} from '../Editor';
 import {map, findIndex} from 'lodash';
@@ -43,9 +43,18 @@ export default class Area extends React.Component {
     constructor(props) {
         super(props);
         this.confirmPopup = this.confirmPopup.bind(this);
-        this.state = props.area.sharedState();
-        this.stateHandler = mapValues(props.area.stateHandler, f => f.bind(this));
+        this.state = { confirmPopup: null };
     }
+
+    /*
+    shouldComponentUpdate() {
+        if (this.props.node.changed) {
+            this.props.node.changed = false;
+            return true;
+        }
+        return false;
+    }
+    */
 
     render() {
         return <div style={this.props.style}>
@@ -59,8 +68,9 @@ export default class Area extends React.Component {
             ? React.createElement(this.props.area.menu, {
                 params: this.props.params,
                 ticker: this.props.ticker,
-                stateHandler: this.stateHandler,
-                sharedState: this.state
+                stateHandler: this.props.stateHandler,
+                sharedState: this.props.stateHandler.state,
+                confirmPopup: this.confirmPopup
             })
             : null;
         const numIcons = this.props.close ? 3 : 2;
@@ -93,10 +103,11 @@ export default class Area extends React.Component {
         const props = {
             params: this.props.params,
             ticker: this.props.ticker,
-            stateHandler: this.stateHandler,
-            sharedState: this.state,
+            stateHandler: this.props.stateHandler,
+            sharedState: this.props.stateHandler.state,
             availableAreas: this.props.availableAreas,
-            selectAreaContent: this.props.selectAreaContent
+            selectAreaContent: this.props.selectAreaContent,
+            confirmPopup: this.confirmPopup
         };
         if (this.props.mainArea) {
             extend(props, {

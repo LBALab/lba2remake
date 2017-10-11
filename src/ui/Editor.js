@@ -1,7 +1,7 @@
 import React from 'react';
 import Area from './editor/Area';
 import {fullscreen} from './styles';
-import {extend, clone, cloneDeep, each, concat} from 'lodash';
+import {extend, each, concat, mapValues} from 'lodash';
 import GameArea from './editor/areas/GameArea';
 import NewArea from "./editor/areas/NewArea";
 import {MainAreas, SubAreas} from './editor/areas/all';
@@ -71,7 +71,7 @@ export default class Editor extends React.Component {
         this.saveMainData = this.saveMainData.bind(this);
 
         this.state = {
-            layout: defaultLayout,
+            layout: this.initLayout(defaultLayout),
             separator: null
         }
     }
@@ -127,7 +127,7 @@ export default class Editor extends React.Component {
         const separator = this.state.separator;
         if (separator) {
             const splitAt = 100 * ((e[separator.prop] - separator.min) / separator.max);
-            const layout = cloneDeep(this.state.layout);
+            const layout = this.state.layout;
             const node = this.findNodeFromPath(layout, separator.path);
             node.splitAt = Math.min(Math.max(splitAt, 5), 95);
             this.setState({layout});
@@ -194,7 +194,9 @@ export default class Editor extends React.Component {
         } else {
             const availableAreas = node.content.mainArea ? MainAreas : SubAreas;
             return <Area key={`${path.join('/')}/${node.content.name}`}
+                         node={node}
                          area={node.content}
+                         stateHandler={node.stateHandler}
                          mainArea={node.content.mainArea}
                          availableAreas={availableAreas}
                          selectAreaContent={this.selectAreaContent.bind(this, path)}
@@ -216,15 +218,15 @@ export default class Editor extends React.Component {
                     orientation: orientation,
                     splitAt: 50,
                     children: [
-                        clone(this.state.layout),
-                        {type: Type.AREA, content: DebugHUDArea}
+                        this.state.layout,
+                        this.initLayout({type: Type.AREA, content: DebugHUDArea})
                     ]
                 }
             })
         } else {
             const parentPath = path.slice(0, path.length - 1);
             const idx = path[path.length - 1];
-            const layout = cloneDeep(this.state.layout);
+            const layout = this.state.layout;
             const pNode = this.findNodeFromPath(layout, parentPath);
             pNode.children[idx] = {
                 type: Type.LAYOUT,
@@ -232,7 +234,7 @@ export default class Editor extends React.Component {
                 splitAt: 50,
                 children: [
                     pNode.children[idx],
-                    {type: Type.AREA, content: NewArea}
+                    this.initLayout({type: Type.AREA, content: NewArea})
                 ]
             };
             this.setState({layout});
@@ -247,7 +249,7 @@ export default class Editor extends React.Component {
         } else {
             const grandParentPath = path.slice(0, path.length - 2);
             const idx = path[path.length - 2];
-            const layout = cloneDeep(this.state.layout);
+            const layout = this.state.layout;
             const gpNode = this.findNodeFromPath(layout, grandParentPath);
             const pNode = gpNode.children[idx];
             const tgtIdx = 1 - path[path.length - 1];
@@ -257,13 +259,35 @@ export default class Editor extends React.Component {
     }
 
     selectAreaContent(path, area) {
-        const layout = cloneDeep(this.state.layout);
+        const layout = this.state.layout;
         const node = this.findNodeFromPath(layout, path);
         node.content = area;
+        this.initLayout(node);
         this.setState({layout});
     }
 
     saveMainData(data) {
         this.setState({mainData: data});
     }
+
+    initLayout(node, root = node) {
+        if (node.type === Type.LAYOUT) {
+            this.initLayout(node.children[0], root);
+            this.initLayout(node.children[1], root);
+        } else {
+            node.stateHandler = {
+                state: node.content.getInitialState(),
+                setState: (state) => {
+                    extend(node.stateHandler.state, state);
+                    this.setState({layout: this.state.layout});
+                }
+            };
+            extend(
+                node.stateHandler,
+                mapValues(node.content.stateHandler, f => f.bind(node.stateHandler))
+            );
+        }
+        return root;
+    }
 }
+

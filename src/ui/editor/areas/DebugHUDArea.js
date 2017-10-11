@@ -5,8 +5,8 @@ import {editor as editorStyle} from '../../styles';
 import {
     loadDefaultProfile,
     saveDefaultProfile,
-    loadProfiles,
-    saveProfiles
+    saveProfiles,
+    loadProfiles
 } from './DebugHUDArea/profiles';
 import {addSlot} from './DebugHUDArea/slots';
 import {each, map, concat, isEmpty} from 'lodash';
@@ -15,10 +15,9 @@ const DebugHUDArea = {
     name: 'Debug HUD',
     menu: DebugHUDMenu,
     content: DebugHUD,
-    sharedState: () => ({
+    getInitialState: () => ({
         status: Status.NORMAL,
         slots: loadDefaultProfile(),
-        profiles: loadProfiles(),
         profileName: ''
     }),
     stateHandler: {
@@ -29,26 +28,12 @@ const DebugHUDArea = {
             this.setState({slots});
         },
         newProfile: function() {
-            const doNew = () => {
-                const slots = {
-                    macros: {},
-                    expressions: []
-                };
-                this.setState({slots, profileName: 'new_profile'});
-                saveDefaultProfile(slots);
+            const slots = {
+                macros: {},
+                expressions: []
             };
-            const slots = this.state.slots;
-            if (slots.expressions.length > 0 || !isEmpty(slots.macros)) {
-                const msg = <span>
-                    Creating a new profile will clear the current window.
-                    <br/><br/>
-                    All expressions will be removed.
-                    <br/><br/>
-                </span>;
-                this.confirmPopup(msg, 'Create new profile!', 'Cancel', doNew);
-            } else {
-                doNew();
-            }
+            this.setState({slots, profileName: 'new_profile'});
+            saveDefaultProfile(slots);
         },
         loadProfile: function(profile, name) {
             const slots = {
@@ -59,28 +44,29 @@ const DebugHUDArea = {
             this.setState({slots, status: Status.NORMAL, profileName: name});
             saveDefaultProfile(slots);
         },
-        saveProfile: function(name) {
+        saveProfile: function(confirm, name) {
+            const {slots} = this.state;
+            const profiles = loadProfiles();
+
             if (name && name.length > 0) {
-                const {slots, profiles} = this.state;
                 const doSave = () => {
                     profiles[name] = concat(
                         map(slots.macros, 'expr'),
                         map(slots.expressions, 'expr')
                     );
-                    this.setState({profiles, status: Status.NORMAL, profileName: name});
+                    this.setState({status: Status.NORMAL, profileName: name});
                     saveProfiles(profiles);
                 };
                 if (name in profiles) {
-                    this.confirmPopup(<span>Are you sure you want to overwrite profile "<i>{name}</i>"?</span>, 'Yes', 'No', doSave);
+                    confirm(doSave);
                 } else {
                     doSave();
                 }
             }
         },
         removeProfile: function(name) {
-            const profiles = this.state.profiles;
+            const profiles = loadProfiles();
             delete profiles[name];
-            this.setState({profiles});
             saveProfiles(profiles);
         }
     }
@@ -90,9 +76,20 @@ export default DebugHUDArea;
 
 function DebugHUDMenu(props) {
     const {setStatus, newProfile} = props.stateHandler;
+    const slots = props.sharedState.slots;
+    let newProfileConfirm = newProfile;
+    if (slots.expressions.length > 0 || !isEmpty(slots.macros)) {
+        const msg = <span>
+                    Creating a new profile will clear the current window.
+                    <br/><br/>
+                    All expressions will be removed.
+                    <br/><br/>
+                </span>;
+        newProfileConfirm = props.confirmPopup.bind(null, msg, 'Create new profile!', 'Cancel', newProfile);
+    }
     if (props.sharedState.status === Status.NORMAL) {
         return <span>
-            <button style={editorStyle.button} onClick={newProfile}>New</button>
+            <button style={editorStyle.button} onClick={newProfileConfirm}>New</button>
             <button style={editorStyle.button} onClick={setStatus.bind(null, Status.LOAD)}>Load</button>
             <button style={editorStyle.button} onClick={setStatus.bind(null, Status.SAVE)}>Save</button>
         </span>;

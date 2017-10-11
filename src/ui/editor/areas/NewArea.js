@@ -4,7 +4,7 @@ import {map} from 'lodash';
 const NewArea = {
     name: 'New area',
     content: NewAreaContent,
-    sharedState: () => ({})
+    getInitialState: () => ({})
 };
 
 export default NewArea;
