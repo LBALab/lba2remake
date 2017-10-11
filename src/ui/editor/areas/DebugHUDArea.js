@@ -9,7 +9,7 @@ import {
     saveProfiles
 } from './DebugHUDArea/profiles';
 import {addSlot} from './DebugHUDArea/slots';
-import {each, map, concat} from 'lodash';
+import {each, map, concat, isEmpty} from 'lodash';
 
 const DebugHUDArea = {
     name: 'Debug HUD',
@@ -29,20 +29,26 @@ const DebugHUDArea = {
             this.setState({slots});
         },
         newProfile: function() {
-            const msg = <span>
-                Creating a new profile will clear the current window.
-                <br/><br/>
-                All expressions will be removed.
-                <br/><br/>
-            </span>;
-            this.confirmPopup(msg, 'Create new profile!', 'Cancel', () => {
+            const doNew = () => {
                 const slots = {
                     macros: {},
                     expressions: []
                 };
                 this.setState({slots, profileName: 'new_profile'});
                 saveDefaultProfile(slots);
-            });
+            };
+            const slots = this.state.slots;
+            if (slots.expressions.length > 0 || !isEmpty(slots.macros)) {
+                const msg = <span>
+                    Creating a new profile will clear the current window.
+                    <br/><br/>
+                    All expressions will be removed.
+                    <br/><br/>
+                </span>;
+                this.confirmPopup(msg, 'Create new profile!', 'Cancel', doNew);
+            } else {
+                doNew();
+            }
         },
         loadProfile: function(profile, name) {
             const slots = {
