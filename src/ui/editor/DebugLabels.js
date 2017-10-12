@@ -2,7 +2,6 @@ import React from 'react';
 import THREE from 'three';
 import {map, extend, each} from 'lodash';
 import FrameListener from "../utils/FrameListener";
-import {selectLabel, isSelected} from '../../scripting/debug';
 
 const POS = new THREE.Vector3();
 
@@ -129,7 +128,7 @@ export default class DebugLabels extends FrameListener {
                     x: POS.x - offset[type],
                     y: POS.y - offset[type],
                     label: obj.index,
-                    selected: isSelected(scene, type, obj.index),
+                    selected: false,
                     type: type
                 };
                 if (type === 'zone') {
@@ -174,7 +173,7 @@ export default class DebugLabels extends FrameListener {
     }
 
     select(type, index) {
-        selectLabel(this.props.scene, type, index);
+
     }
 
     render() {

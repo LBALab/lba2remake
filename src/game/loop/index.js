@@ -3,7 +3,6 @@ import {updateHero} from './hero';
 import {updateActor} from './actors';
 import {processPhysicsFrame} from './physics';
 import {processCameraMovement} from './cameras';
-import {hasStep, endStep} from '../../scripting/debug';
 import {getRandom} from '../../utils/lba'
 
 export function mainGameLoop(params, game, clock, renderer, scene, controls) {
@@ -25,9 +24,9 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
         each(controls, ctrl => { ctrl.update && ctrl.update(); });
         if (!game.isPaused()) {
             scene.scenery.update(time);
-            const step = hasStep();
+            const step = false; //hasStep();
             updateScene(game, scene, time, step);
-            endStep();
+            //endStep();
             processPhysicsFrame(game, scene, time);
             each(scene.sideScenes, sideScene => {
                 updateScene(game, sideScene, time);

@@ -1,4 +1,3 @@
-import THREE from 'three';
 import {clone} from 'lodash';
 import {DirMode} from '../../game/actors';
 import {setMagicBallLevel} from '../../game/state';

@@ -1,7 +1,6 @@
 import {each, isEmpty} from 'lodash';
 import {parseScript} from './parser';
 import {compileScripts} from './compiler';
-import {setCursorPosition, isPaused} from './debug';
 import {SUICIDE} from './process/life';
 
 export function loadScripts(game, scene) {
@@ -24,13 +23,13 @@ function runScript(script, time, step) {
     const instructions = script.instructions;
     const context = script.context;
     const state = context.state;
-    const paused = isPaused();
+    const paused = false;//isPaused();
 
     if (isEmpty(instructions))
         return;
 
     state.offset = state.reentryOffset;
-    state.continue = state.offset != -1 && !state.terminated && !state.stopped;
+    state.continue = state.offset !== -1 && !state.terminated && !state.stopped;
 
     while (state.continue && (!paused || (paused && step))) {
         if (state.offset >= instructions.length || isNaN(state.offset)) {
@@ -38,7 +37,7 @@ function runScript(script, time, step) {
             state.terminated = true;
             return;
         }
-        setCursorPosition(context.scene, context.actor, context.type, state.offset);
+        //setCursorPosition(context.scene, context.actor, context.type, state.offset);
         state.lastOffset = state.offset;
         state.reentryOffset = -1;
         try {
@@ -51,7 +50,7 @@ function runScript(script, time, step) {
             state.offset++;
         }
         if (paused && step) {
-            if (state.reentryOffset == -1) {
+            if (state.reentryOffset === -1) {
                 state.reentryOffset = state.offset;
             }
             const next = instructions[state.reentryOffset];
@@ -59,7 +58,7 @@ function runScript(script, time, step) {
             if (next && next.condition) {
                 condValue = next.condition();
             }
-            setCursorPosition(context.scene, context.actor, context.type, state.reentryOffset, true, condValue);
+            //setCursorPosition(context.scene, context.actor, context.type, state.reentryOffset, true, condValue);
             break;
         }
     }

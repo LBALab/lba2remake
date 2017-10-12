@@ -6,6 +6,7 @@ import GameArea from './editor/areas/GameArea';
 import NewArea from "./editor/areas/NewArea";
 import {MainAreas, SubAreas} from './editor/areas/all';
 import DebugHUDArea from "./editor/areas/DebugHUDArea";
+import ScriptEditorArea from "./editor/areas/ScriptEditorArea";
 
 const Type = {
     LAYOUT: 0,
@@ -20,7 +21,7 @@ export const Orientation = {
 const defaultLayout = {
     type: Type.LAYOUT,
     orientation: Orientation.HORIZONTAL,
-    splitAt: 60,
+    splitAt: 50,
     children: [
         {
             type: Type.AREA,
@@ -28,19 +29,8 @@ const defaultLayout = {
             root: true
         },
         {
-            type: Type.LAYOUT,
-            orientation: Orientation.VERTICAL,
-            splitAt: 60,
-            children: [
-                {
-                    type: Type.AREA,
-                    content: DebugHUDArea,
-                },
-                {
-                    type: Type.AREA,
-                    content: NewArea
-                }
-            ]
+            type: Type.AREA,
+            content: ScriptEditorArea
         }
     ],
 
