@@ -1,5 +1,5 @@
 import React from 'react';
-import {extend, each, map, isEmpty, concat} from 'lodash';
+import {extend, map, isEmpty} from 'lodash';
 import {
     loadProfiles,
     saveDefaultProfile
@@ -12,6 +12,7 @@ import autoComplete from './exprDSL/autocomplete';
 import {editor as editorStyle} from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
 import {Status} from './status';
+import DebugData from '../../DebugData';
 
 const headerStyle = {
     position: 'absolute',
@@ -44,8 +45,6 @@ const sectionStyle = {
 };
 
 export default class DebugHUD extends FrameListener {
-    static scope = {};
-
     constructor(props) {
         super(props);
 
@@ -53,7 +52,7 @@ export default class DebugHUD extends FrameListener {
         this.inputKeyDown = this.inputKeyDown.bind(this);
 
         this.state = {
-            completion: autoComplete('', DebugHUD.scope),
+            completion: autoComplete('', DebugData.scope),
             values: []
         };
     }
@@ -195,7 +194,7 @@ export default class DebugHUD extends FrameListener {
             const {macros, expressions} = slots;
             const values = map(expressions, expr => {
                 try {
-                    return {value: execute(expr.program, [DebugHUD.scope], macros)};
+                    return {value: execute(expr.program, [DebugData.scope], macros)};
                 }
                 catch (error) {
                     return {error};
@@ -208,7 +207,7 @@ export default class DebugHUD extends FrameListener {
     inputKeyDown(event) {
         event.stopPropagation();
         const key = event.code || event.which || event.keyCode;
-        const completion = autoComplete(this.input.value, DebugHUD.scope);
+        const completion = autoComplete(this.input.value, DebugData.scope);
         this.setState({completion});
         if (key === 'Enter' || key === 13) {
             this.addExpression();
@@ -227,7 +226,7 @@ export default class DebugHUD extends FrameListener {
             if (expr === this.input.value) {
                 this.input.value = '';
                 this.props.stateHandler.setSlots(slots);
-                this.setState({completion: autoComplete('', DebugHUD.scope)});
+                this.setState({completion: autoComplete('', DebugData.scope)});
             }
             saveDefaultProfile(slots);
         }

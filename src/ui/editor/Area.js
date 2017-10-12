@@ -46,16 +46,6 @@ export default class Area extends React.Component {
         this.state = { confirmPopup: null };
     }
 
-    /*
-    shouldComponentUpdate() {
-        if (this.props.node.changed) {
-            this.props.node.changed = false;
-            return true;
-        }
-        return false;
-    }
-    */
-
     render() {
         return <div style={this.props.style}>
             {this.renderMenu()}

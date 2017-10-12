@@ -3,7 +3,7 @@ import {extend, map, filter} from 'lodash';
 import {fullscreen} from '../../../styles';
 import FrameListener from '../../../utils/FrameListener';
 import {getDebugListing} from './listing';
-import DebugHUD from '../DebugHUDArea/hud';
+import DebugData from '../../DebugData';
 
 const sepDistance = 60;
 
@@ -29,8 +29,8 @@ export default class ScriptEditor extends FrameListener {
     }
 
     frame() {
-        const scene = DebugHUD.scope.scene;
-        const actor = scene ? scene.actors[0] : null;
+        const scene = DebugData.scope.scene;
+        const actor = scene ? scene.actors[DebugData.selection.actor] : null;
         if (this.scene !== scene || this.actor !== actor) {
             this.setState({
                 listing: {
@@ -189,9 +189,6 @@ function Condition({condition}) {
         return null;
     }
 }
-
-
-//
 
 /**
  * @return {null}

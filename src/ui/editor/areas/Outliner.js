@@ -1,7 +1,7 @@
 import React from 'react';
 import {map} from 'lodash';
 import FrameListener from '../../utils/FrameListener';
-import DebugHUD from './DebugHUDArea/hud';
+import DebugData from '../DebugData';
 
 class OutlinerContent extends FrameListener {
     constructor(props) {
@@ -20,7 +20,7 @@ class OutlinerContent extends FrameListener {
     }
 
     frame() {
-        const scene = DebugHUD.scope.scene;
+        const scene = DebugData.scope.scene;
         if (scene) {
             this.setState({actors: scene.actors});
         }
