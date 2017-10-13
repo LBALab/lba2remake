@@ -8,11 +8,11 @@ import DebugData from '../DebugData';
 export class ScriptMenu extends FrameListener {
     constructor(props) {
         super(props);
-        this.state = { actors: [], selectedActor: 0 }
+        this.state = { actors: [], selectedActor: 0, isPaused: false }
     }
 
     frame() {
-        const scene = DebugData.scope.scene;
+        const {scene, game} = DebugData.scope;
         const selectedActor = DebugData.selection.actor;
         if (this.scene !== scene) {
             this.setState({actors: map(scene && scene.actors, actor => actor.index)});
@@ -22,6 +22,9 @@ export class ScriptMenu extends FrameListener {
             this.setState({selectedActor: selectedActor});
             this.selectedActor = selectedActor;
         }
+        if (game && game.isPaused() !== this.state.paused) {
+            this.setState({paused: game.isPaused()});
+        }
     }
 
     render() {
@@ -29,7 +32,15 @@ export class ScriptMenu extends FrameListener {
             DebugData.selection.actor = parseInt(e.target.value);
         };
 
+        const togglePause = () => {
+            DebugData.scope.game.pause();
+        };
+
+        const paused = this.state.paused;
+
         return <span>
+            {paused ? <img style={editor.icon} src="editor/icons/step.png"/> : null}&nbsp;
+            <img style={editor.icon} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.png`}/>&nbsp;
             <b>Actor</b>
             <select style={editor.select} value={this.state.selectedActor} onChange={onChange}>
                 {map(this.state.actors, actor => <option key={actor} value={actor}>{actor}</option>)}
