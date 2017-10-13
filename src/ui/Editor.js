@@ -209,7 +209,7 @@ export default class Editor extends React.Component {
                     splitAt: 50,
                     children: [
                         this.state.layout,
-                        this.initLayout({type: Type.AREA, content: DebugHUDArea})
+                        this.initLayout({type: Type.AREA, content: NewArea})
                     ]
                 }
             })
