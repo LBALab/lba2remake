@@ -50,15 +50,17 @@ export default class ScriptEditor extends FrameListener {
             this.scene = scene;
             this.actor = actor;
         }
-        this.updateActiveLines('life');
-        this.updateActiveLines('move');
+        if (this.actor) {
+            this.updateActiveLines('life');
+            this.updateActiveLines('move');
+        }
     }
 
     updateActiveLines(type) {
         if (this.lineNumbers[type] && this.lineCmds[type]) {
             const ln = this.lineNumbers[type].children;
             const lc = this.lineCmds[type].children;
-            const activeCommands = DebugData.script[type].activeCommands;
+            const activeCommands = DebugData.script[type][this.actor.index] || {};
             for (let i = 0; i < ln.length; ++i) {
                 const lineNum = ln[i];
                 const lineCmd = lc[i];

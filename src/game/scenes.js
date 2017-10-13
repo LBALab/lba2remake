@@ -18,7 +18,7 @@ import {loadPoint} from './points';
 import {loadZone} from './zones';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initCameraMovement} from './loop/cameras';
-import DebugData from '../ui/editor/DebugData';
+import {resetScene} from '../ui/editor/DebugData';
 
 export function createSceneManager(params, game, renderer, callback: Function) {
     let scene = null;
@@ -65,11 +65,7 @@ export function createSceneManager(params, game, renderer, callback: Function) {
                         musicSource.play();
                     });
                 }
-                DebugData.selection = {
-                    actor: 0,
-                    zone: -1,
-                    point: -1
-                };
+                resetScene();
                 pCallback(scene);
             } else {
                 game.loading(index);
@@ -82,11 +78,7 @@ export function createSceneManager(params, game, renderer, callback: Function) {
                             musicSource.play();
                         });
                     }
-                    DebugData.selection = {
-                        actor: 0,
-                        zone: -1,
-                        point: -1
-                    };
+                    resetScene();
                     pCallback(scene);
                     scene.sceneNode.updateMatrixWorld();
                     initCameraMovement(game.controlsState, renderer, scene);
@@ -194,7 +186,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             if (scene.isIsland) {
                 scene.section = islandSceneMapping[index].section;
             }
-            loadScripts(game, scene);
+            loadScripts(params, game, scene);
             // Kill twinsen if side scene
             if (parent) {
                 killActor(scene.getActor(0));

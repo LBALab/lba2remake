@@ -4,7 +4,7 @@ import {compileScripts} from './compiler';
 import {SUICIDE} from './process/life';
 import DebugData from '../ui/editor/DebugData';
 
-export function loadScripts(game, scene) {
+export function loadScripts(params, game, scene) {
     each(scene.actors, actor => {
         actor.scripts = {
             life: parseScript(actor.index, 'life', actor.props.lifeScript),
@@ -14,13 +14,13 @@ export function loadScripts(game, scene) {
     each(scene.actors, actor => {
         compileScripts(game, scene, actor);
         actor.runScripts = (time) => {
-            runScript(actor.scripts.life, time);
-            runScript(actor.scripts.move, time);
+            runScript(params, actor.scripts.life, time);
+            runScript(params, actor.scripts.move, time);
         };
     });
 }
 
-function runScript(script, time) {
+function runScript(params, script, time) {
     const instructions = script.instructions;
     const context = script.context;
     const state = context.state;
@@ -28,10 +28,8 @@ function runScript(script, time) {
     if (isEmpty(instructions))
         return;
 
-    const activeDebug = DebugData.selection.actor === context.actor.index && context.scene.isActive;
-    if (activeDebug) {
-        DebugData.script[context.type].activeCommands = {};
-    }
+    const activeDebug = params.editor && context.scene.isActive;
+    const activeCommands = {};
 
     state.offset = state.reentryOffset;
     state.continue = state.offset !== -1 && !state.terminated && !state.stopped;
@@ -52,7 +50,7 @@ function runScript(script, time) {
                 if (next.condition) {
                     activeCommand.condValue = next.condition();
                 }
-                DebugData.script[context.type].activeCommands[offset] = activeCommand;
+                activeCommands[offset] = activeCommand;
             }
             next(time);
         }
@@ -62,6 +60,9 @@ function runScript(script, time) {
         if (state.continue) {
             state.offset++;
         }
+    }
+    if (activeDebug) {
+        DebugData.script[context.type][context.actor.index] = activeCommands;
     }
 }
 
