@@ -36,7 +36,7 @@ export default class Game extends FrameListener {
             this.state = state;
         } else {
             const clock = new THREE.Clock(false);
-            const game = createGame(clock, this.setUiState.bind(this), () => this.state);
+            const game = createGame(props.params, clock, this.setUiState.bind(this), () => this.state);
 
             this.state = {
                 clock,

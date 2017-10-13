@@ -7,7 +7,7 @@ import {createAudioManager} from '../audio'
 import {loadHqrAsync} from '../hqr';
 import {loadTexts} from '../scene';
 
-export function createGame(clock: Object, setUiState: Function, getUiState: Function) {
+export function createGame(params: Object, clock: Object, setUiState: Function, getUiState: Function) {
     let _isPaused = false;
     let _isLoading = false;
 
@@ -36,7 +36,7 @@ export function createGame(clock: Object, setUiState: Function, getUiState: Func
             console.log(`Loading scene #${index}`);
         },
         loaded: function() {
-            _isPaused = false;
+            _isPaused = params.pauseOnLoad;
             _isLoading = false;
             this.setUiState({loading: false});
             console.log("Loaded!");

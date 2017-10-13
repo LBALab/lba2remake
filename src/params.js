@@ -21,6 +21,10 @@ const paramsDefinitions = {
     editor: {
         type: 'boolean',
         default: false
+    },
+    pauseOnLoad: {
+        type: 'boolean',
+        default: false
     }
 };
 
