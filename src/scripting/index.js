@@ -56,8 +56,10 @@ function runScript(params, script, time) {
                 }
                 activeCommands[offset] = activeCommand;
                 if (offset in breakpoints) {
-                    DebugData.selection.actor = context.actor.index;
-                    context.game.pause();
+                    if (!context.game.isPaused()) {
+                        DebugData.selection.actor = context.actor.index;
+                        context.game.pause();
+                    }
                 }
             }
             next(time);
