@@ -15,7 +15,8 @@ const menuStyle = (numIcons) => extend({
     height: menuHeight - 1,
     borderBottom: '1px solid gray',
     paddingRight: 24 * numIcons + 2,
-    lineHeight: `${menuHeight - 1}px`
+    lineHeight: `${menuHeight - 1}px`,
+    userSelect: 'none'
 }, editor.base);
 
 const menuContentStyle = {
