@@ -23,7 +23,7 @@ export function parseScript(actor, type, script) {
         type: type,
         actor: actor,
         comportement: 0,
-        newComportement: (type == 'life'),
+        newComportement: (type === 'life'),
         comportementMap: {},
         opMap: {},
         tracksMap: {},
@@ -35,7 +35,7 @@ export function parseScript(actor, type, script) {
         checkEndIf(state);
         state.opMap[state.offset] = state.commands.length;
         const code = script.getUint8(state.offset);
-        const op = type == 'life' ? LifeOpcode[code] : MoveOpcode[code];
+        const op = type === 'life' ? LifeOpcode[code] : MoveOpcode[code];
         checkNewComportment(state, code);
         try {
             state.commands.push(parseCommand(state, script, op));
@@ -53,14 +53,14 @@ export function parseScript(actor, type, script) {
 }
 
 function checkEndIf(state) {
-    while (state.ifStack.length > 0 && state.offset == last(state.ifStack)) {
+    while (state.ifStack.length > 0 && state.offset === last(state.ifStack)) {
         state.commands.push({op: LifeOpcode[0x10]});
         state.ifStack.pop();
     }
 }
 
 function checkNewComportment(state, code) {
-    if (code != 0 && state.newComportement) {
+    if (code !== 0 && state.newComportement) {
         state.comportementMap[state.offset] = state.comportement;
         state.commands.push({
             op: LifeOpcode[0x20], // COMPORTEMENT
@@ -82,13 +82,13 @@ function parseCommand(state, script, op) {
     }
     if (op.condition && !op.precond && cmd.args) {
         state.ifStack.push(cmd.args[0].value);
-    } else if (op.command == 'ELSE') {
+    } else if (op.command === 'ELSE') {
         state.ifStack[state.ifStack.length - 1] = cmd.args[0].value;
     }
-    if (op.command == "END_COMPORTEMENT") {
+    if (op.command === "END_COMPORTEMENT") {
         state.newComportement = true;
     }
-    if (op.command == "TRACK") {
+    if (op.command === "TRACK") {
         state.tracksMap[baseOffset] = cmd.args[0].value;
     }
     return cmd;
@@ -104,7 +104,7 @@ function parseCondition(state, script, op, cmd) {
         if (condition.param) {
             cmd.condition.param = parseValue(state, script, condition.param);
         }
-        if (op.command == 'SWITCH') {
+        if (op.command === 'SWITCH') {
             state.switchCondition = condition;
         }
     } else if (op.operator) {
@@ -126,9 +126,9 @@ function parseArguments(state, script, op, cmd) {
         for (let i = 0; i < op.args.length; ++i) {
             cmd.args.push(parseValue(state, script, op.args[i]));
         }
-        if (op.command == 'SET_DIRMODE' || op.command == 'SET_DIRMODE_OBJ') {
+        if (op.command === 'SET_DIRMODE' || op.command === 'SET_DIRMODE_OBJ') {
             const mode = last(cmd.args).value;
-            if (mode == 2 || mode == 4 || mode == 6 || mode == 10 || mode == 11) {
+            if (mode === 2 || mode === 4 || mode === 6 || mode === 10 || mode === 11) {
                 cmd.args.push({
                     value: script.getUint8(state.offset, true),
                     hide: false
@@ -142,21 +142,21 @@ function parseArguments(state, script, op, cmd) {
 function parseValue(state, script, spec) {
     let [type, lbaType] = spec.split(':');
     let hide = false;
-    if (type[0] == '_') {
+    if (type[0] === '_') {
         type = type.substr(1);
         hide = true;
     }
     let value;
-    if (type == 'string') {
+    if (type === 'string') {
         value = '';
         let char;
         do {
             char = script.getUint8(state.offset);
-            if (char != 0) {
+            if (char !== 0) {
                 value += String.fromCharCode(char);
             }
             state.offset++;
-        } while (char != 0);
+        } while (char !== 0);
     } else {
         value = script[`get${type}`](state.offset, true);
         state.offset += TypeSize[type];
