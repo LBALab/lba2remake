@@ -3,15 +3,15 @@
 import {switchStats} from '../renderer/stats';
 import {BehaviourMode} from '../game/loop/hero';
 
-export function makeKeyboardControls(params: Object, sceneManager: Object, game: Object) {
+export function makeKeyboardControls(params: Object, canvas: Object, sceneManager: Object, game: Object) {
     const onKeyDown = keyDownHandler.bind(null, params, game, sceneManager);
     const onKeyUp = keyUpHandler.bind(null, game);
-    window.addEventListener('keydown', onKeyDown, false);
-    window.addEventListener('keyup', onKeyUp, false);
+    canvas.addEventListener('keydown', onKeyDown, true);
+    canvas.addEventListener('keyup', onKeyUp, true);
     return {
         dispose: () => {
-            window.removeEventListener('keydown', onKeyDown);
-            window.removeEventListener('keyup', onKeyUp);
+            canvas.removeEventListener('keydown', onKeyDown);
+            canvas.removeEventListener('keyup', onKeyUp);
         }
     }
 }
