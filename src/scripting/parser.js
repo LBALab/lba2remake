@@ -102,6 +102,9 @@ function parseCommand(state, script, op, type) {
         state.track = cmd.args[0].value;
         cmd.section = cmd.args[0].value;
     }
+    if (op.command === "END") {
+        cmd.section = 'end';
+    }
     return cmd;
 }
 
