@@ -4,6 +4,7 @@ import {updateActor} from './actors';
 import {processPhysicsFrame} from './physics';
 import {processCameraMovement} from './cameras';
 import {getRandom} from '../../utils/lba'
+import DebugData from "../../ui/editor/DebugData";
 
 export function mainGameLoop(params, game, clock, renderer, scene, controls) {
     const time = {
@@ -22,7 +23,13 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
     renderer.stats.begin();
     if (scene) {
         each(controls, ctrl => { ctrl.update && ctrl.update(); });
-        if (!game.isPaused()) {
+        const step = game.isPaused() && DebugData.step;
+        if (!game.isPaused() || step) {
+            if (step) {
+                time.delta = 0.05;
+                time.elapsed += 0.05;
+                clock.elapsedTime += 0.05;
+            }
             scene.scenery.update(time);
             updateScene(game, scene, time);
             processPhysicsFrame(game, scene, time);
@@ -32,6 +39,7 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
             });
             processCameraMovement(game.controlsState, renderer, scene, time);
             renderer.render(scene);
+            DebugData.step = false;
         }
         if (scene.actors && scene.actors.length > 0) {
             debugScope.hero = scene.actors[0];

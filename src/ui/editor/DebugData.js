@@ -12,7 +12,8 @@ const DebugData = {
     breakpoints: {
         life: {},
         move: {}
-    }
+    },
+    step: false
 };
 
 export default DebugData;

@@ -33,13 +33,23 @@ export class ScriptMenu extends FrameListener {
         };
 
         const togglePause = () => {
-            DebugData.scope.game.pause();
+            const game = DebugData.scope.game;
+            if (game) {
+                game.pause();
+            }
+        };
+
+        const step = () => {
+            const game = DebugData.scope.game;
+            if (game) {
+                DebugData.step = true;
+            }
         };
 
         const paused = this.state.paused;
 
         return <span>
-            {paused ? <img style={editor.icon} src="editor/icons/step.png"/> : null}&nbsp;
+            {paused ? <img style={editor.icon} onClick={step} src="editor/icons/step.png"/> : null}&nbsp;
             <img style={editor.icon} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.png`}/>&nbsp;
             <b>Actor</b>
             <select style={editor.select} value={this.state.selectedActor} onChange={onChange}>
