@@ -2,6 +2,7 @@ import {each, isEmpty} from 'lodash';
 import {parseScript} from './parser';
 import {compileScripts} from './compiler';
 import {SUICIDE} from './process/life';
+import DebugData from '../ui/editor/DebugData';
 
 export function loadScripts(game, scene) {
     each(scene.actors, actor => {
@@ -12,54 +13,54 @@ export function loadScripts(game, scene) {
     });
     each(scene.actors, actor => {
         compileScripts(game, scene, actor);
-        actor.runScripts = (time, step) => {
-            runScript(actor.scripts.life, time, step);
-            runScript(actor.scripts.move, time, step);
+        actor.runScripts = (time) => {
+            runScript(actor.scripts.life, time);
+            runScript(actor.scripts.move, time);
         };
     });
 }
 
-function runScript(script, time, step) {
+function runScript(script, time) {
     const instructions = script.instructions;
     const context = script.context;
     const state = context.state;
-    const paused = false;//isPaused();
 
     if (isEmpty(instructions))
         return;
 
+    const activeDebug = DebugData.selection.actor === context.actor.index && context.scene.isActive;
+    if (activeDebug) {
+        DebugData.script[context.type].activeCommands = {};
+    }
+
     state.offset = state.reentryOffset;
     state.continue = state.offset !== -1 && !state.terminated && !state.stopped;
 
-    while (state.continue && (!paused || (paused && step))) {
+    while (state.continue) {
         if (state.offset >= instructions.length || isNaN(state.offset)) {
             console.warn(`Invalid offset: ${context.scene.index}:${context.actor.index}:${context.type}:${state.lastOffset + 1} offset=${state.offset}`);
             state.terminated = true;
             return;
         }
-        //setCursorPosition(context.scene, context.actor, context.type, state.offset);
         state.lastOffset = state.offset;
         state.reentryOffset = -1;
         try {
-            instructions[state.offset](time);
+            const offset = state.offset;
+            const next = instructions[offset];
+            if (activeDebug) {
+                const activeCommand = {};
+                if (next.condition) {
+                    activeCommand.condValue = next.condition();
+                }
+                DebugData.script[context.type].activeCommands[offset] = activeCommand;
+            }
+            next(time);
         }
         catch (e) {
             console.error('Error on instruction: actor(' + context.actor.index + '):' + context.type + ':' + instructions[state.offset].dbgLabel + '"\n', e);
         }
         if (state.continue) {
             state.offset++;
-        }
-        if (paused && step) {
-            if (state.reentryOffset === -1) {
-                state.reentryOffset = state.offset;
-            }
-            const next = instructions[state.reentryOffset];
-            let condValue = null;
-            if (next && next.condition) {
-                condValue = next.condition();
-            }
-            //setCursorPosition(context.scene, context.actor, context.type, state.reentryOffset, true, condValue);
-            break;
         }
     }
 }

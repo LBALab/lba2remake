@@ -1,5 +1,5 @@
 import React from 'react';
-import {extend, map, filter} from 'lodash';
+import {extend, each, map, filter} from 'lodash';
 import {fullscreen} from '../../../styles';
 import FrameListener from '../../../utils/FrameListener';
 import {getDebugListing} from './listing';
@@ -26,6 +26,14 @@ export default class ScriptEditor extends FrameListener {
     constructor(props) {
         super(props);
         this.state = {};
+        this.lineNumbers = {
+            life: null,
+            move: null
+        };
+        this.lineCmds = {
+            life: null,
+            move: null
+        };
     }
 
     frame() {
@@ -40,6 +48,32 @@ export default class ScriptEditor extends FrameListener {
             });
             this.scene = scene;
             this.actor = actor;
+        }
+        this.updateActiveLines('life');
+        this.updateActiveLines('move');
+    }
+
+    updateActiveLines(type) {
+        if (this.lineNumbers[type] && this.lineCmds[type]) {
+            const ln = this.lineNumbers[type].children;
+            const lc = this.lineCmds[type].children;
+            const activeCommands = DebugData.script[type].activeCommands;
+            for (let i = 0; i < ln.length; ++i) {
+                const lineNum = ln[i];
+                const lineCmd = lc[i];
+                const result = lineCmd.querySelector('.result');
+                const active = (i in activeCommands);
+                lineNum.style.background = active ? '#009700' : 'transparent';
+                lineCmd.style.background = active ? '#555555' : 'transparent';
+                if (result) {
+                    result.style.display = active ? 'inline-block' : 'none';
+                    if (active && 'condValue' in activeCommands[i]) {
+                        result.innerText = `: ${activeCommands[i].condValue}`;
+                    } else {
+                        result.innerText = '?';
+                    }
+                }
+            }
         }
     }
 
@@ -69,21 +103,19 @@ export default class ScriptEditor extends FrameListener {
         const lineNumberStyle = {
             position: 'sticky',
             left: 0,
-            width: `${nDigits + 1}ch`,
+            width: `${nDigits}ch`,
             top: 0,
             background: 'lightgray',
-            color: 'black',
-            borderRight: '8px solid black'
+            color: 'black'
         };
         const commandsStyle = {
             position: 'absolute',
-            marginLeft: '8px',
-            left: `${nDigits + 1}ch`,
+            left: `${nDigits}ch`,
             top: 0
         };
         return <div style={scriptStyle[type]}>
-            <div style={commandsStyle}>{commands}</div>
-            <div style={lineNumberStyle}>{lineNumbers}</div>
+            <div ref={ref => this.lineCmds[type] = ref} style={commandsStyle}>{commands}</div>
+            <div ref={ref => this.lineNumbers[type] = ref} style={lineNumberStyle}>{lineNumbers}</div>
         </div>;
     }
 }
@@ -139,24 +171,18 @@ const lineNumBaseStyle = {
 };
 
 function LineNumber({line, command, nDigits}) {
-    const arrowStyle = extend({}, lineNumBaseStyle, {
-        color: '#001dff',
-        opacity: 0,
-    });
-
     const lineNumStyle = extend({
         width: `${nDigits}ch`
     }, lineNumBaseStyle);
 
     return <div style={getLineStyle(line, command, false)}>
-        <span style={arrowStyle}>&#9679;</span>
         <span style={lineNumStyle}>{line + 1}</span>
     </div>;
 }
 
 function Command({line, command}) {
     const cmdStyle = extend({
-        paddingLeft: `${command.indent * 2}ch`
+        paddingLeft: `${command.indent * 2 + 1}ch`
     }, cmdStyles[command.name]);
 
     return <div style={getLineStyle(line, command, true)}>
@@ -181,9 +207,14 @@ function Condition({condition}) {
                 {'('}<span style={argStyle}>{condition.param}</span>{')'}
             </span>;
         }
+        const rStyle = extend({
+            display: 'none',
+            boxShadow: 'inset 0px 0px 0px 1px white',
+        }, argStyle);
         return <span>
             &nbsp;<span style={condStyle}>{condition.name}</span>
             {param}
+            <span className="result" style={rStyle}/>
         </span>;
     } else {
         return null;

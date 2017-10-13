@@ -24,9 +24,7 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
         each(controls, ctrl => { ctrl.update && ctrl.update(); });
         if (!game.isPaused()) {
             scene.scenery.update(time);
-            const step = false; //hasStep();
-            updateScene(game, scene, time, step);
-            //endStep();
+            updateScene(game, scene, time);
             processPhysicsFrame(game, scene, time);
             each(scene.sideScenes, sideScene => {
                 updateScene(game, sideScene, time);
