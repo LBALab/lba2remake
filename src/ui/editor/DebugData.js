@@ -15,8 +15,6 @@ const DebugData = {
     }
 };
 
-window.DebugData = DebugData;
-
 export default DebugData;
 
 export function initSceneDebugData() {
