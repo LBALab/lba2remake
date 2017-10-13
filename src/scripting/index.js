@@ -30,6 +30,10 @@ function runScript(params, script, time) {
 
     const activeDebug = params.editor && context.scene.isActive;
     const activeCommands = {};
+    let breakpoints = {};
+    if (activeDebug) {
+        breakpoints = DebugData.breakpoints[context.type][context.actor.index] || {};
+    }
 
     state.offset = state.reentryOffset;
     state.continue = state.offset !== -1 && !state.terminated && !state.stopped;
@@ -51,6 +55,10 @@ function runScript(params, script, time) {
                     activeCommand.condValue = next.condition();
                 }
                 activeCommands[offset] = activeCommand;
+                if (offset in breakpoints) {
+                    DebugData.selection.actor = context.actor.index;
+                    context.game.pause();
+                }
             }
             next(time);
         }

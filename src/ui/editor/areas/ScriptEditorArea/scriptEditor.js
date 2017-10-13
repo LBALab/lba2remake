@@ -50,24 +50,47 @@ export default class ScriptEditor extends FrameListener {
             this.scene = scene;
             this.actor = actor;
         }
-        if (this.actor) {
+        if (this.scene && this.actor) {
             this.updateActiveLines('life');
             this.updateActiveLines('move');
         }
     }
 
     updateActiveLines(type) {
+        let firstBreakpoint = true;
         if (this.lineNumbers[type] && this.lineCmds[type]) {
             const ln = this.lineNumbers[type].children;
             const lc = this.lineCmds[type].children;
             const activeCommands = DebugData.script[type][this.actor.index] || {};
+            const breakpoints = DebugData.breakpoints[type][this.actor.index] || {};
             for (let i = 0; i < ln.length; ++i) {
                 const lineNum = ln[i];
                 const lineCmd = lc[i];
                 const result = lineCmd.querySelector('.result');
                 const active = (i in activeCommands);
-                lineNum.style.background = active ? '#009700' : 'transparent';
-                lineCmd.style.background = active ? '#555555' : 'transparent';
+                if (breakpoints[i]) {
+                    if (active) {
+                        if (firstBreakpoint) {
+                            if (this.scrollElem !== lineNum) {
+                                lineNum.scrollIntoView();
+                                this.scrollElem = lineNum;
+                            }
+                            firstBreakpoint = false;
+                        }
+                        lineNum.style.background = '#580000';
+                        lineNum.style.color = '#ffffff';
+                        lineCmd.style.background = '#200000';
+                    } else {
+                        lineNum.style.background = '#ff0000';
+                        lineNum.style.color = 'inherit';
+                        lineCmd.style.background = 'transparent';
+                    }
+                } else {
+                    lineNum.style.background = active ? '#009700' : 'transparent';
+                    lineNum.style.color = 'inherit';
+                    lineCmd.style.background = active ? '#555555' : 'transparent';
+                }
+
                 if (result) {
                     result.style.display = active ? 'inline-block' : 'none';
                     if (active && 'condValue' in activeCommands[i]) {
@@ -77,6 +100,22 @@ export default class ScriptEditor extends FrameListener {
                     }
                 }
             }
+        }
+    }
+
+    toggleBreakpoint(type, line) {
+        const sceneActiveCommands = DebugData.script[type];
+        const sceneBreakpoints = DebugData.breakpoints[type];
+        if (!(this.actor.index in sceneBreakpoints)) {
+            sceneBreakpoints[this.actor.index] = {};
+        }
+        if (sceneBreakpoints[this.actor.index][line]) {
+            delete sceneBreakpoints[this.actor.index][line];
+            if (this.actor.index in sceneActiveCommands && DebugData.scope.game.isPaused()) {
+                DebugData.scope.game.pause();
+            }
+        } else {
+            sceneBreakpoints[this.actor.index][line] = true;
         }
     }
 
@@ -96,7 +135,11 @@ export default class ScriptEditor extends FrameListener {
             nDigits = listing.commands.length.toString().length;
             lineNumbers = map(
                 listing.commands,
-                (cmd, line) => <LineNumber key={line} nDigits={nDigits} line={line} command={cmd}/>
+                (cmd, line) => <LineNumber key={line}
+                                           toggleBreakpoint={this.toggleBreakpoint.bind(this, type, line)}
+                                           nDigits={nDigits}
+                                           line={line}
+                                           command={cmd}/>
             );
             commands = map(
                 listing.commands,
@@ -109,7 +152,9 @@ export default class ScriptEditor extends FrameListener {
             width: `${nDigits}ch`,
             top: 0,
             background: 'lightgray',
-            color: 'black'
+            color: 'black',
+            cursor: 'pointer',
+            userSelect: 'none'
         };
         const commandsStyle = {
             position: 'absolute',
@@ -173,12 +218,12 @@ const lineNumBaseStyle = {
     fontWeight: 'bold',
 };
 
-function LineNumber({line, command, nDigits}) {
+function LineNumber({line, command, nDigits, toggleBreakpoint}) {
     const lineNumStyle = extend({
         width: `${nDigits}ch`
     }, lineNumBaseStyle);
 
-    return <div style={getLineStyle(line, command, false)}>
+    return <div onClick={toggleBreakpoint} style={getLineStyle(line, command, false)}>
         <span style={lineNumStyle}>{line + 1}</span>
     </div>;
 }

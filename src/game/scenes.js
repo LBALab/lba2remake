@@ -18,7 +18,7 @@ import {loadPoint} from './points';
 import {loadZone} from './zones';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initCameraMovement} from './loop/cameras';
-import {resetScene} from '../ui/editor/DebugData';
+import {initSceneDebugData} from '../ui/editor/DebugData';
 
 export function createSceneManager(params, game, renderer, callback: Function) {
     let scene = null;
@@ -65,7 +65,7 @@ export function createSceneManager(params, game, renderer, callback: Function) {
                         musicSource.play();
                     });
                 }
-                resetScene();
+                initSceneDebugData();
                 pCallback(scene);
             } else {
                 game.loading(index);
@@ -78,7 +78,7 @@ export function createSceneManager(params, game, renderer, callback: Function) {
                             musicSource.play();
                         });
                     }
-                    resetScene();
+                    initSceneDebugData();
                     pCallback(scene);
                     scene.sceneNode.updateMatrixWorld();
                     initCameraMovement(game.controlsState, renderer, scene);
