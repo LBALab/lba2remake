@@ -20,12 +20,13 @@ class OutlinerContent extends FrameListener {
                         DebugData.selection.actor = idx;
                     };
                     const name = idx === 0 ? 'hero' : `actor_${idx}`;
+                    const selected = this.state.selection === idx;
                     const aProps = [];
                     if (actor.isVisible)
                         aProps.push('visible');
                     if (actor.isSprite)
                         aProps.push('sprite');
-                    return <li key={idx} onClick={selectActor} style={{fontSize: 16, cursor: 'pointer'}}>
+                    return <li key={idx} onClick={selectActor} style={{fontSize: 16, cursor: 'pointer', color: selected ? 'red' : 'white'}}>
                         {name} [{aProps.join(' ')}]
                     </li>;
                 })
@@ -38,6 +39,9 @@ class OutlinerContent extends FrameListener {
         const scene = DebugData.scope.scene;
         if (scene && scene.actors !== this.state.actors) {
             this.setState({actors: scene.actors});
+        }
+        if (DebugData.selection.actor !== this.state.selection) {
+            this.setState({selection: DebugData.selection.actor});
         }
     }
 }
