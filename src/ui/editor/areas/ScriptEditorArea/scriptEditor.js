@@ -1,5 +1,5 @@
 import React from 'react';
-import {extend, each, map, filter} from 'lodash';
+import {extend, map, filter} from 'lodash';
 import {fullscreen} from '../../../styles';
 import FrameListener from '../../../utils/FrameListener';
 import {getDebugListing} from './listing';
@@ -14,7 +14,8 @@ const scriptBaseStyle = {
     overflow: 'auto',
     boxShadow: 'inset 0px 0px 0px 1px gray',
     background: 'black',
-    fontWeight: 'normal'
+    fontWeight: 'normal',
+    fontSize: 16
 };
 
 const scriptStyle = {
@@ -258,7 +259,8 @@ function Args({args}) {
 
 const lineBaseStyle = {
     whiteSpace: 'nowrap',
-    lineHeight: '18px',
+    lineHeight: '16px',
+    fontWeight: 'normal',
     fontSize: 16
 };
 
