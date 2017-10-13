@@ -50,6 +50,9 @@ function runScript(params, script, time) {
             const offset = state.offset;
             const next = instructions[offset];
             if (activeDebug) {
+                if (!('section' in activeCommands)) {
+                    activeCommands.section = next.section;
+                }
                 const activeCommand = {};
                 if (next.condition) {
                     activeCommand.condValue = next.condition();

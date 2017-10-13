@@ -23,6 +23,7 @@ export function parseScript(actor, type, script) {
         type: type,
         actor: actor,
         comportement: 0,
+        track: -1,
         newComportement: (type === 'life'),
         comportementMap: {},
         opMap: {},
@@ -38,7 +39,7 @@ export function parseScript(actor, type, script) {
         const op = type === 'life' ? LifeOpcode[code] : MoveOpcode[code];
         checkNewComportment(state, code);
         try {
-            state.commands.push(parseCommand(state, script, op));
+            state.commands.push(parseCommand(state, script, op, type));
         } catch (e) {
             console.error(`Interrupted parsing actor ${actor}'s ${type} script:\n`, e);
             break;
@@ -54,7 +55,10 @@ export function parseScript(actor, type, script) {
 
 function checkEndIf(state) {
     while (state.ifStack.length > 0 && state.offset === last(state.ifStack)) {
-        state.commands.push({op: LifeOpcode[0x10]});
+        state.commands.push({
+            op: LifeOpcode[0x10],
+            section: state.comportement
+        });
         state.ifStack.pop();
     }
 }
@@ -62,17 +66,22 @@ function checkEndIf(state) {
 function checkNewComportment(state, code) {
     if (code !== 0 && state.newComportement) {
         state.comportementMap[state.offset] = state.comportement;
+        state.comportement++;
         state.commands.push({
             op: LifeOpcode[0x20], // COMPORTEMENT
-            args: [{hide: false, value: state.comportement++}]
+            args: [{hide: false, value: state.comportement}],
+            section: state.comportement
         });
         state.newComportement = false;
     }
 }
 
-function parseCommand(state, script, op) {
+function parseCommand(state, script, op, type) {
     const baseOffset = state.offset++;
-    const cmd = {op: op};
+    const cmd = {
+        op,
+        section: type === 'life' ? state.comportement : state.track
+    };
     if (op.argsFirst) {
         parseArguments(state, script, op, cmd);
     }
@@ -90,6 +99,8 @@ function parseCommand(state, script, op) {
     }
     if (op.command === "TRACK") {
         state.tracksMap[baseOffset] = cmd.args[0].value;
+        state.track = cmd.args[0].value;
+        cmd.section = cmd.args[0].value;
     }
     return cmd;
 }

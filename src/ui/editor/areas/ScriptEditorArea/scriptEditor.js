@@ -61,6 +61,7 @@ export default class ScriptEditor extends FrameListener {
         if (this.lineNumbers[type] && this.lineCmds[type]) {
             const ln = this.lineNumbers[type].children;
             const lc = this.lineCmds[type].children;
+            const commands = this.state.listing[type].commands;
             const activeCommands = DebugData.script[type][this.actor.index] || {};
             const breakpoints = DebugData.breakpoints[type][this.actor.index] || {};
             for (let i = 0; i < ln.length; ++i) {
@@ -86,9 +87,15 @@ export default class ScriptEditor extends FrameListener {
                         lineCmd.style.background = 'transparent';
                     }
                 } else {
-                    lineNum.style.background = active ? '#009700' : 'transparent';
                     lineNum.style.color = 'inherit';
-                    lineCmd.style.background = active ? '#555555' : 'transparent';
+                    if (active) {
+                        lineNum.style.background = '#009700';
+                        lineCmd.style.background = '#555555';
+                    } else {
+                        const activeSection = commands[i].section === activeCommands.section;
+                        lineNum.style.background = 'transparent';
+                        lineCmd.style.background = activeSection ? '#222222' : 'transparent';
+                    }
                 }
 
                 if (result) {
