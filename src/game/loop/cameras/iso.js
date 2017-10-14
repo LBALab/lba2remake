@@ -1,13 +1,13 @@
 import THREE from 'three';
 
-export function processFollowIsoMovement(renderer, camera, scene, time) {
+export function processFollowIsoMovement(renderer, camera, scene) {
     const hero = scene.getActor(0);
     const pos = new THREE.Vector3(0, 0.04, 0);
     hero.threeObject.updateMatrixWorld();
     pos.applyMatrix4(hero.threeObject.matrixWorld);
     pos.project(camera);
-    const widthHalf = 0.5 * renderer.domElement.width;
-    const heightHalf = 0.5 * renderer.domElement.height;
+    const widthHalf = 0.5 * renderer.canvas.width;
+    const heightHalf = 0.5 * renderer.canvas.height;
     pos.x = -(pos.x * widthHalf) / renderer.pixelRatio();
     pos.y = -(pos.y * heightHalf) / renderer.pixelRatio();
     const maxDist = Math.min(widthHalf * 0.75 / renderer.pixelRatio(), heightHalf * 0.75 / renderer.pixelRatio());

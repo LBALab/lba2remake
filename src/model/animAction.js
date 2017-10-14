@@ -3,14 +3,14 @@ import {each} from 'lodash';
 import {AnimActionOpcode} from './data/index';
 import {getRandom} from '../utils/lba'
 
-export function processAnimAction(entityAnim, animState) {
+export function processAnimAction(game, entityAnim, animState) {
     const actions = entityAnim.actions;
     const animFrame = animState.currentFrame;
     each(actions, action => {
-       if (action.animFrame == animFrame && animState.keyframeChanged) {
+       if (action.animFrame === animFrame && animState.keyframeChanged) {
            const actionType = AnimActionOpcode[action.type];
-           if (actionType != null && actionType.callback != null) {
-               actionType.callback(action, animState);
+           if (actionType !== undefined && actionType.callback !== undefined) {
+               actionType.callback(game, action, animState);
            }
        }
     });
@@ -20,34 +20,34 @@ export function NOP() {
 
 }
 
-export function BODY(action) {
+export function BODY(game, action) {
 
 }
 
-export function BODP(action) {
+export function BODP(game, action) {
 
 }
 
-export function ANIM(action) {
+export function ANIM(game, action) {
 
 }
 
-export function ANIP(action) {
+export function ANIP(game, action) {
 
 }
 
-export function HIT(action) {
+export function HIT(game, action) {
 
 }
 
-export function SAMPLE(action) {
+export function SAMPLE(game, action) {
     const soundFxSource = game.getAudioManager().getSoundFxSource();
     soundFxSource.load(action.sampleIndex, () => {
         soundFxSource.play();
     });
 }
 
-export function SAMPLE_RND(action) {
+export function SAMPLE_RND(game, action) {
     let frequency = getRandom(0, action.frequency) + 0x1000 - (action.frequency >> 1);
     if (frequency < 0 || frequency > 24000) {
         frequency = 0;
@@ -58,35 +58,35 @@ export function SAMPLE_RND(action) {
     });
 }
 
-export function THROW(action) {
+export function THROW(game, action) {
 
 }
 
-export function THROW_MAGIC(action) {
+export function THROW_MAGIC(game, action) {
 
 }
 
-export function SAMPLE_REPEAT(action) {
+export function SAMPLE_REPEAT(game, action) {
 
 }
 
-export function THROW_SEARCH(action) {
+export function THROW_SEARCH(game, action) {
 
 }
 
-export function THROW_ALPHA(action) {
+export function THROW_ALPHA(game, action) {
 
 }
 
-export function SAMPLE_STOP(action) {
+export function SAMPLE_STOP(game, action) {
 
 }
 
-export function ZV(action) {
+export function ZV(game, action) {
 
 }
 
-export function LEFT_STEP(action, animState) {
+export function LEFT_STEP(game, action, animState) {
     let sampleIndex = animState.floorSound;
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
@@ -98,7 +98,7 @@ export function LEFT_STEP(action, animState) {
     }
 }
 
-export function RIGHT_STEP(action, animState) {
+export function RIGHT_STEP(game, action, animState) {
     let sampleIndex = animState.floorSound;
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
@@ -110,86 +110,86 @@ export function RIGHT_STEP(action, animState) {
     }
 }
 
-export function HIT_HERO(action) {
+export function HIT_HERO(game, action) {
 
 }
 
-export function THROW_3D(action) {
+export function THROW_3D(game, action) {
 
 }
 
-export function THROW_3D_ALPHA(action) {
+export function THROW_3D_ALPHA(game, action) {
 
 }
 
-export function THROW_3D_SEARCH(action) {
+export function THROW_3D_SEARCH(game, action) {
 
 }
 
-export function THROW_3D_MAGIC(action) {
+export function THROW_3D_MAGIC(game, action) {
 
 }
 
-export function SUPER_HIT(action) {
+export function SUPER_HIT(game, action) {
 
 }
 
-export function THROW_OBJ_3D(action) {
+export function THROW_OBJ_3D(game, action) {
 
 }
 
-export function PATH(action) {
+export function PATH(game, action) {
 
 }
 
-export function FLOW(action) {
+export function FLOW(game, action) {
 
 }
 
-export function FLOW_3D(action) {
+export function FLOW_3D(game, action) {
 
 }
 
-export function THROW_DART(action) {
+export function THROW_DART(game, action) {
 
 }
 
-export function SHIELD(action) {
+export function SHIELD(game, action) {
 
 }
 
-export function SAMPLE_MAGIC(action) {
+export function SAMPLE_MAGIC(game, action) {
 }
 
-export function THROW_3D_CONQUE(action) {
-
-}
-
-export function ZV_ANIMIT(action) {
+export function THROW_3D_CONQUE(game, action) {
 
 }
 
-export function IMPACT(action) {
+export function ZV_ANIMIT(game, action) {
 
 }
 
-export function RENVOIE(action) {
+export function IMPACT(game, action) {
 
 }
 
-export function RENVOYABLE(action) {
+export function RENVOIE(game, action) {
 
 }
 
-export function TRANSPARENT(action) {
+export function RENVOYABLE(game, action) {
 
 }
 
-export function SCALE(action) {
+export function TRANSPARENT(game, action) {
 
 }
 
-export function LEFT_JUMP(action) {
+export function SCALE(game, action) {
+
+}
+
+export function LEFT_JUMP(game, action) {
 
 }
 
@@ -197,21 +197,21 @@ export function RIGHT_JUMP(action) {
 
 }
 
-export function NEW_SAMPLE(action) {
+export function NEW_SAMPLE(game, action) {
     const soundFxSource = game.getAudioManager().getSoundFxSource();
     soundFxSource.load(action.sampleIndex, () => {
         soundFxSource.play();
     });
 }
 
-export function IMPACT_3D(action) {
+export function IMPACT_3D(game, action) {
 
 }
 
-export function THROW_MAGIC_EXTRA(action) {
+export function THROW_MAGIC_EXTRA(game, action) {
 
 }
 
-export function THROW_FOUDRE(action) {
+export function THROW_FOUDRE(game, action) {
 
 }

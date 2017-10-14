@@ -10,7 +10,7 @@ export function processPhysicsFrame(game, scene, time) {
     });
     if (scene.isActive) {
         processZones(game, scene);
-        processTeleports(game, scene);
+        processTeleports(scene);
     }
 }
 
@@ -34,7 +34,7 @@ function processActorPhysics(scene, actor, time) {
     }
 }
 
-function processTeleports(game, scene) {
+function processTeleports(scene) {
     const hero = scene.getActor(0);
     const pos = hero.physics.position.clone();
     pos.y += 0.005;
@@ -49,7 +49,7 @@ function processTeleports(game, scene) {
                 && globalPos.z < nodePos.z + 1.99;
         });
         if (sideScene) {
-            game.getSceneManager().goto(sideScene.index, (newScene) => {
+            scene.goto(sideScene.index, (newScene) => {
                 const newHero = newScene.getActor(0);
                 newHero.threeObject.quaternion.copy(hero.threeObject.quaternion);
                 newHero.threeObject.position.copy(globalPos);

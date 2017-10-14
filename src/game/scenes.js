@@ -16,101 +16,104 @@ import {loadSceneMapData} from '../scene/map';
 import {loadActor} from './actors';
 import {loadPoint} from './points';
 import {loadZone} from './zones';
-import {parseQueryParams} from '../utils';
 import {loadScripts, killActor, reviveActor} from '../scripting';
-import {initSceneDebug, resetSceneDebug} from '../scripting/debug';
+import {initCameraMovement} from './loop/cameras';
+import {initSceneDebugData} from '../ui/editor/DebugData';
 
-export function createSceneManager(game, renderer, callback: Function) {
+export function createSceneManager(params, game, renderer, callback: Function) {
     let scene = null;
+    let sceneManager = {
+        getScene: (index) => {
+            if (scene && index && scene.sideScenes && index in scene.sideScenes) {
+                return scene.sideScenes[index];
+            }
+            return scene;
+        }
+    };
 
     loadSceneMapData(sceneMap => {
-        callback({
-            getScene: (index) => {
-                if (scene && index && scene.sideScenes && index in scene.sideScenes) {
-                    return scene.sideScenes[index];
+        sceneManager.goto = function(index, pCallback = noop) {
+            if ((scene && index === scene.index) || game.isLoading())
+                return;
+
+            ga('set', 'page', `/scene/${index}`);
+            ga('send', 'pageview');
+
+            if (scene)
+                scene.isActive = false;
+
+            game.setUiState({ text: null, cinema: false });
+
+            const hash = window.location.hash;
+            if (hash.match(/scene\=\d+/)) {
+                window.location.hash = hash.replace(/scene\=\d+/, `scene=${index}`);
+            }
+
+            const musicSource = game.getAudioManager().getMusicSource();
+            if (scene && scene.sideScenes && index in scene.sideScenes) {
+                killActor(scene.getActor(0));
+                const sideScene = scene.sideScenes[index];
+                sideScene.sideScenes = scene.sideScenes;
+                delete sideScene.sideScenes[index];
+                delete scene.sideScenes;
+                sideScene.sideScenes[scene.index] = scene;
+                scene = sideScene;
+                reviveActor(scene.getActor(0)); // Awake twinsen
+                scene.isActive = true;
+                if (!musicSource.isPlaying) {
+                    musicSource.load(scene.data.ambience.musicIndex, () => {
+                        musicSource.play();
+                    });
                 }
-                return scene;
-            },
-            goto: (index, pCallback = noop) => {
-                if ((scene && index == scene.index) || game.isLoading())
-                    return;
-
-                ga('set', 'page', `/scene/${index}`);
-                ga('send', 'pageview');
-
-                if (scene)
-                    scene.isActive = false;
-
-                const textBox = document.getElementById('frameText');
-                textBox.style.display = 'none';
-
-                const hash = window.location.hash;
-                if (hash.match(/scene\=\d+/)) {
-                    window.location.hash = hash.replace(/scene\=\d+/, `scene=${index}`);
-                }
-
-                const musicSource = game.getAudioManager().getMusicSource();
-                if (scene && scene.sideScenes && index in scene.sideScenes) {
-                    resetSceneDebug(scene);
-                    killActor(scene.getActor(0));
-                    const sideScene = scene.sideScenes[index];
-                    sideScene.sideScenes = scene.sideScenes;
-                    delete sideScene.sideScenes[index];
-                    delete scene.sideScenes;
-                    sideScene.sideScenes[scene.index] = scene;
-                    scene = sideScene;
-                    window.scene = scene;
-                    initSceneDebug(scene);
-                    reviveActor(scene.getActor(0)); // Awake twinsen
+                initSceneDebugData();
+                pCallback(scene);
+            } else {
+                game.loading(index);
+                loadScene(this, params, game, renderer, sceneMap, index, null, (err, pScene) => {
+                    renderer.applySceneryProps(pScene.scenery.props);
+                    scene = pScene;
                     scene.isActive = true;
                     if (!musicSource.isPlaying) {
                         musicSource.load(scene.data.ambience.musicIndex, () => {
                             musicSource.play();
                         });
                     }
+                    initSceneDebugData();
                     pCallback(scene);
-                } else {
-                    game.loading(index);
-                    resetSceneDebug(scene);
-                    loadScene(game, renderer, sceneMap, index, null, (err, pScene) => {
-                        renderer.applySceneryProps(pScene.scenery.props);
-                        scene = pScene;
-                        window.scene = scene;
-                        initSceneDebug(scene);
-                        scene.isActive = true;
-                        if (!musicSource.isPlaying) {
-                            musicSource.load(scene.data.ambience.musicIndex, () => {
-                                musicSource.play();
-                            });
-                        }
-                        pCallback(scene);
-                        game.loaded();
-                    });
-                }
-            },
-            next: function(pCallback) {
-                if (scene) {
-                    const next = (scene.index + 1) % sceneMap.length;
-                    this.goto(next, pCallback);
-                }
-            },
-            previous: function(pCallback) {
-                if (scene) {
-                    const previous = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
-                    this.goto(previous, pCallback);
-                }
+                    scene.sceneNode.updateMatrixWorld();
+                    initCameraMovement(game.controlsState, renderer, scene);
+                    game.loaded();
+                });
             }
-        });
+        };
+
+        sceneManager.next = function(pCallback) {
+            if (scene) {
+                const next = (scene.index + 1) % sceneMap.length;
+                this.goto(next, pCallback);
+            }
+        };
+
+        sceneManager.previous = function(pCallback) {
+            if (scene) {
+                const previous = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
+                this.goto(previous, pCallback);
+            }
+        };
+
+        callback(sceneManager);
     });
+
+    return sceneManager;
 }
 
-function loadScene(game, renderer, sceneMap, index, parent, callback) {
+function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent, callback) {
     loadSceneData(index, sceneData => {
         const indexInfo = sceneMap[index];
         let islandName;
         if (indexInfo.isIsland) {
             islandName = islandSceneMapping[index].island;
-            if (game.getState().flags.quest[152] && islandName == 'CITABAU') {
+            if (game.getState().flags.quest[152] && islandName === 'CITABAU') {
                 islandName = 'CITADEL';
             }
         }
@@ -137,7 +140,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
             }];
             if (indexInfo.isIsland) {
                 loadSteps.sideScenes = ['scenery', 'threeScene', (data, callback) => {
-                    loadSideScenes(game, renderer, sceneMap, index, data, callback);
+                    loadSideScenes(sceneManager, params, game, renderer, sceneMap, index, data, callback);
                 }];
             }
         } else {
@@ -145,8 +148,7 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };
         }
 
-        const params = parseQueryParams();
-        if (params.NOSCRIPTS == 'true') {
+        if (params.noscripts === true) {
             delete loadSteps.actors;
             delete loadSteps.points;
             delete loadSteps.zones;
@@ -171,19 +173,20 @@ function loadScene(game, renderer, sceneMap, index, parent, callback) {
                 variables: createSceneVariables(),
                 zoneState: { listener: null, ended: false },
                 getActor(index) {
-                    return find(this.actors, function(obj) { return obj.index == index; });
+                    return find(this.actors, function(obj) { return obj.index === index; });
                 },
                 getZone(index) {
-                    return find(this.zones, function(obj) { return obj.index == index; });
+                    return find(this.zones, function(obj) { return obj.index === index; });
                 },
                 getPoint(index) {
-                    return find(this.points, function(obj) { return obj.index == index; });
+                    return find(this.points, function(obj) { return obj.index === index; });
                 },
+                goto: sceneManager.goto.bind(sceneManager)
             };
             if (scene.isIsland) {
                 scene.section = islandSceneMapping[index].section;
             }
-            loadScripts(game, scene);
+            loadScripts(params, game, scene);
             // Kill twinsen if side scene
             if (parent) {
                 killActor(scene.getActor(0));
@@ -202,7 +205,7 @@ function loadSceneNode(index, indexInfo, data) {
         sceneNode.position.z = section.z * 2;
     }
     const addToSceneNode = obj => {
-        if (obj.threeObject != null) { // because of the sprite actors
+        if (obj.threeObject !== null) { // because of the sprite actors
             sceneNode.add(obj.threeObject);
         }
     };
@@ -213,24 +216,24 @@ function loadSceneNode(index, indexInfo, data) {
     return sceneNode;
 }
 
-function loadSideScenes(game, renderer, sceneMap, index, parent, callback) {
+function loadSideScenes(sceneManager, params, game, renderer, sceneMap, index, parent, callback) {
     const sideIndices = filter(
         map(sceneMap, (indexInfo, sideIndex) => {
-            if (sideIndex != index
+            if (sideIndex !== index
                 && indexInfo.isIsland
                 && sideIndex in islandSceneMapping) {
                 const sideMapping = islandSceneMapping[sideIndex];
                 const mainMapping = islandSceneMapping[index];
-                if (sideMapping.island == mainMapping.island
-                    && sideMapping.variant == mainMapping.variant) {
+                if (sideMapping.island === mainMapping.island
+                    && sideMapping.variant === mainMapping.variant) {
                     return sideIndex;
                 }
             }
         }),
-        id => id != null
+        id => id !== undefined
     );
     async.map(sideIndices, (sideIndex, callback) => {
-        loadScene(game, renderer, sceneMap, sideIndex, parent, callback);
+        loadScene(sceneManager, params, game, renderer, sceneMap, sideIndex, parent, callback);
     }, (err, sideScenes) => {
         const sideScenesMap = {};
         each(sideScenes, sideScene => {

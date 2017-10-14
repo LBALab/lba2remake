@@ -1,14 +1,31 @@
 import THREE from 'three';
 
-export function processFollow3DMovement(controlsState, camera, scene, time) {
+const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
+const HERO_TARGET_POS = new THREE.Vector3(0, 0.08, 0);
+
+export function initFollow3DMovement(controlsState, camera, scene) {
     const hero = scene.getActor(0);
-    const heroPos = new THREE.Vector3(0, 0.08, 0);
+    const heroPos = HERO_TARGET_POS.clone();
     heroPos.applyMatrix4(hero.threeObject.matrixWorld);
 
-    if (controlsState.vr) {
-        const cameraPos = new THREE.Vector3(0, 0.15, -0.2);
+    if (!controlsState.vr) {
+        const cameraPos = CAMERA_HERO_OFFSET.clone();
         cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+        controlsState.cameraLerp.copy(cameraPos);
+        controlsState.cameraLookAtLerp.copy(heroPos);
+        camera.position.copy(cameraPos);
+        camera.lookAt(controlsState.cameraLookAtLerp);
+    }
+}
 
+export function processFollow3DMovement(controlsState, camera, scene, time) {
+    const hero = scene.getActor(0);
+    const heroPos = HERO_TARGET_POS.clone();
+    const cameraPos = CAMERA_HERO_OFFSET.clone();
+    heroPos.applyMatrix4(hero.threeObject.matrixWorld);
+    cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+
+    if (controlsState.vr) {
         if (camera.position.distanceTo(cameraPos) > 0.3) {
             const orientation = [cameraPos.x - heroPos.x, cameraPos.z - heroPos.z];
             camera.position.copy(cameraPos);
@@ -22,16 +39,9 @@ export function processFollow3DMovement(controlsState, camera, scene, time) {
         camera.quaternion.copy(controlsState.cameraOrientation);
         camera.quaternion.multiply(controlsState.cameraHeadOrientation);
     } else {
-        const cameraPos = new THREE.Vector3(0, 0.15, -0.2);
-        cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
-
         controlsState.cameraLerp.lerpVectors(camera.position, cameraPos, 0.025);
-        camera.position.set(controlsState.cameraLerp.x, controlsState.cameraLerp.y, controlsState.cameraLerp.z);
-        if (camera.position.distanceTo(cameraPos) > 1) {
-            camera.position.copy(cameraPos);
-        }
-
         controlsState.cameraLookAtLerp.lerpVectors(controlsState.cameraLookAtLerp.clone(), heroPos, 0.1);
+        camera.position.set(controlsState.cameraLerp.x, controlsState.cameraLerp.y, controlsState.cameraLerp.z);
         camera.lookAt(controlsState.cameraLookAtLerp);
     }
 }

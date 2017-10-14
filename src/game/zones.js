@@ -48,6 +48,7 @@ export function loadZone(props, callback) {
     const bbGeom = createBoundingBox(bb, zone.color);
     bbGeom.visible = false;
     bbGeom.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
+    bbGeom.matrixAutoUpdate = false;
     zone.threeObject = bbGeom;
 
     callback(null, zone);
