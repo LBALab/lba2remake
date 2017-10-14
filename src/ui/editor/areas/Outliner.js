@@ -47,6 +47,7 @@ class OutlinerContent extends FrameListener {
 }
 
 const Outliner = {
+    id: 'outliner',
     name: 'Outliner',
     content: OutlinerContent,
     getInitialState: () => ({})

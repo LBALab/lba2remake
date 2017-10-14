@@ -60,6 +60,7 @@ export class ScriptMenu extends FrameListener {
 }
 
 const ScriptEditorArea = {
+    id: 'script_editor',
     name: 'Scripts',
     menu: ScriptMenu,
     content: ScriptEditor,

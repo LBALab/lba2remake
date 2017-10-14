@@ -1,0 +1,72 @@
+{
+  "type": 0,
+  "orientation": 0,
+  "splitAt": 60.20334059549746,
+  "children": [{
+    "type": 0,
+    "orientation": 1,
+    "splitAt": 70.17225747960109,
+    "children": [{
+      "type": 1,
+      "content_id": "game",
+      "state": {"labels": {"actor": false, "zone": false, "point": false}},
+      "root": true
+    }, {
+      "type": 1,
+      "content_id": "dbg_hud",
+      "state": {
+        "status": 0,
+        "slots": {
+          "macros": {},
+          "expressions": [{
+            "expr": "ui",
+            "normalized": "ui",
+            "program": {"type": "IDENTIFIER", "value": "ui"}
+          }, {
+            "expr": "ui.interjections",
+            "normalized": "ui.interjections",
+            "program": {
+              "type": "DOT_EXPR",
+              "left": {"type": "IDENTIFIER", "value": "ui"},
+              "right": {"type": "IDENTIFIER", "value": "interjections"}
+            }
+          }, {
+            "expr": "ui.text",
+            "normalized": "ui.text",
+            "program": {
+              "type": "DOT_EXPR",
+              "left": {"type": "IDENTIFIER", "value": "ui"},
+              "right": {"type": "IDENTIFIER", "value": "text"}
+            }
+          }, {
+            "expr": "ui.foundObject",
+            "normalized": "ui.foundObject",
+            "program": {
+              "type": "DOT_EXPR",
+              "left": {"type": "IDENTIFIER", "value": "ui"},
+              "right": {"type": "IDENTIFIER", "value": "foundObject"}
+            }
+          }, {
+            "expr": "ui.video",
+            "normalized": "ui.video",
+            "program": {
+              "type": "DOT_EXPR",
+              "left": {"type": "IDENTIFIER", "value": "ui"},
+              "right": {"type": "IDENTIFIER", "value": "video"}
+            }
+          }]
+        },
+        "profileName": "ui"
+      }
+    }]
+  }, {
+    "type": 0,
+    "orientation": 1,
+    "splitAt": 50,
+    "children": [{"type": 1, "content_id": "script_editor", "state": {}}, {
+      "type": 1,
+      "content_id": "outliner",
+      "state": {}
+    }]
+  }]
+}

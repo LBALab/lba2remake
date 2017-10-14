@@ -3,8 +3,6 @@ import DebugHUD from './DebugHUDArea/hud';
 import {Status} from './DebugHUDArea/status';
 import {editor as editorStyle} from '../../styles';
 import {
-    loadDefaultProfile,
-    saveDefaultProfile,
     saveProfiles,
     loadProfiles
 } from './DebugHUDArea/profiles';
@@ -12,12 +10,13 @@ import {addSlot} from './DebugHUDArea/slots';
 import {each, map, concat, isEmpty} from 'lodash';
 
 const DebugHUDArea = {
+    id: 'dbg_hud',
     name: 'Debug HUD',
     menu: DebugHUDMenu,
     content: DebugHUD,
     getInitialState: () => ({
         status: Status.NORMAL,
-        slots: loadDefaultProfile(),
+        slots: {macros: {}, expressions: []},
         profileName: ''
     }),
     stateHandler: {
@@ -33,7 +32,6 @@ const DebugHUDArea = {
                 expressions: []
             };
             this.setState({slots, profileName: 'new_profile'});
-            saveDefaultProfile(slots);
         },
         loadProfile: function(profile, name) {
             const slots = {
@@ -42,7 +40,6 @@ const DebugHUDArea = {
             };
             each(profile, addSlot.bind(null, slots));
             this.setState({slots, status: Status.NORMAL, profileName: name});
-            saveDefaultProfile(slots);
         },
         saveProfile: function(confirm, name) {
             const {slots} = this.state;
