@@ -92,6 +92,17 @@ export default class DebugHUD extends FrameListener {
                 {expressions.length > 0
                     ? <div style={sectionStyle}>{expressions}</div>
                     : null}
+                {macros.length === 0 && expressions.length === 0
+                    ? <div style={{padding: '2em', color: '#AAAAAA'}}>To use the debug HUD, you can type in expressions in the input above.<br/>
+                        Examples of valid expressions:<br/>
+                        <br/>
+                        <i style={{color: '#CCCCCC'}}>game</i><br/>
+                        <i style={{color: '#CCCCCC'}}>scene.index</i><br/>
+                        <i style={{color: '#CCCCCC'}}>actors = scene.actors</i><br/>
+                        <i style={{color: '#CCCCCC'}}>map(actors, isVisible)</i><br/>
+                        <br/>
+                        You can also <u onClick={() => this.props.stateHandler.setStatus(Status.LOAD)}>load a preset or a saved profile.</u></div>
+                    : null}
             </div>
         </div>;
     }

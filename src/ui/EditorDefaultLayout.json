@@ -18,43 +18,7 @@
         "status": 0,
         "slots": {
           "macros": {},
-          "expressions": [{
-            "expr": "ui",
-            "normalized": "ui",
-            "program": {"type": "IDENTIFIER", "value": "ui"}
-          }, {
-            "expr": "ui.interjections",
-            "normalized": "ui.interjections",
-            "program": {
-              "type": "DOT_EXPR",
-              "left": {"type": "IDENTIFIER", "value": "ui"},
-              "right": {"type": "IDENTIFIER", "value": "interjections"}
-            }
-          }, {
-            "expr": "ui.text",
-            "normalized": "ui.text",
-            "program": {
-              "type": "DOT_EXPR",
-              "left": {"type": "IDENTIFIER", "value": "ui"},
-              "right": {"type": "IDENTIFIER", "value": "text"}
-            }
-          }, {
-            "expr": "ui.foundObject",
-            "normalized": "ui.foundObject",
-            "program": {
-              "type": "DOT_EXPR",
-              "left": {"type": "IDENTIFIER", "value": "ui"},
-              "right": {"type": "IDENTIFIER", "value": "foundObject"}
-            }
-          }, {
-            "expr": "ui.video",
-            "normalized": "ui.video",
-            "program": {
-              "type": "DOT_EXPR",
-              "left": {"type": "IDENTIFIER", "value": "ui"},
-              "right": {"type": "IDENTIFIER", "value": "video"}
-            }
-          }]
+          "expressions": []
         },
         "profileName": "ui"
       }
