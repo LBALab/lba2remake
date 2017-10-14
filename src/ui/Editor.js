@@ -78,7 +78,7 @@ export default class Editor extends React.Component {
                     prop: horizontal ? 'clientX' : 'clientY',
                     min: bb[horizontal ? 'left' : 'top'],
                     max: node.rootRef[horizontal ? 'clientWidth' : 'clientHeight'],
-                    path: sepPath
+                    node: node
                 };
             } else {
                 return this.findSeparator(path, node.children[0], concat(sepPath, 0))
@@ -101,8 +101,7 @@ export default class Editor extends React.Component {
         if (separator) {
             const splitAt = 100 * ((e[separator.prop] - separator.min) / separator.max);
             const layout = this.state.layout;
-            const node = this.findNodeFromPath(layout, separator.path);
-            node.splitAt = Math.min(Math.max(splitAt, 5), 95);
+            separator.node.splitAt = Math.min(Math.max(splitAt, 5), 95);
             this.setState({layout});
             e.preventDefault();
             e.stopPropagation();
