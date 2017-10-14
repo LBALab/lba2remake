@@ -4,8 +4,7 @@ import {fullscreen} from './styles';
 import {extend, each, concat, mapValues} from 'lodash';
 import GameArea from './editor/areas/GameArea';
 import NewArea from "./editor/areas/NewArea";
-import {MainAreas, SubAreas} from './editor/areas/all';
-import DebugHUDArea from "./editor/areas/DebugHUDArea";
+import {MainAreas, SubAreas, findAreaContentByName} from './editor/areas/all';
 import ScriptEditorArea from "./editor/areas/ScriptEditorArea";
 
 const Type = {
@@ -61,7 +60,7 @@ export default class Editor extends React.Component {
         this.saveMainData = this.saveMainData.bind(this);
 
         this.state = {
-            layout: this.initLayout(defaultLayout),
+            layout: this.initLayout(loadLayout()),
             separator: null
         }
     }
@@ -110,7 +109,10 @@ export default class Editor extends React.Component {
     }
 
     disableSeparator() {
-        this.setState({separator: null});
+        if (this.state.separator) {
+            this.setState({separator: null});
+            saveLayout(this.state.layout);
+        }
     }
 
     updateSeparator(e) {
@@ -202,17 +204,17 @@ export default class Editor extends React.Component {
 
     split(path, orientation) {
         if (path.length === 0) {
-            this.setState({
-                layout: {
-                    type: Type.LAYOUT,
-                    orientation: orientation,
-                    splitAt: 50,
-                    children: [
-                        this.state.layout,
-                        this.initLayout({type: Type.AREA, content: NewArea})
-                    ]
-                }
-            })
+            const layout = {
+                type: Type.LAYOUT,
+                orientation: orientation,
+                splitAt: 50,
+                children: [
+                    this.state.layout,
+                    this.initLayout({type: Type.AREA, content: NewArea})
+                ]
+            };
+            this.setState({layout});
+            saveLayout(layout);
         } else {
             const parentPath = path.slice(0, path.length - 1);
             const idx = path[path.length - 1];
@@ -228,14 +230,15 @@ export default class Editor extends React.Component {
                 ]
             };
             this.setState({layout});
+            saveLayout(layout);
         }
     }
 
     close(path) {
         if (path.length === 1) {
-            this.setState({
-                layout: this.state.layout.children[1 - path[0]]
-            })
+            const layout = this.state.layout.children[1 - path[0]];
+            this.setState({layout});
+            saveLayout(layout);
         } else {
             const grandParentPath = path.slice(0, path.length - 2);
             const idx = path[path.length - 2];
@@ -245,6 +248,7 @@ export default class Editor extends React.Component {
             const tgtIdx = 1 - path[path.length - 1];
             gpNode.children[idx] = pNode.children[tgtIdx];
             this.setState({layout});
+            saveLayout(layout);
         }
     }
 
@@ -254,6 +258,7 @@ export default class Editor extends React.Component {
         node.content = area;
         this.initLayout(node);
         this.setState({layout});
+        saveLayout(layout);
     }
 
     saveMainData(data) {
@@ -270,6 +275,7 @@ export default class Editor extends React.Component {
                 setState: (state) => {
                     extend(node.stateHandler.state, state);
                     this.setState({layout: this.state.layout});
+                    saveLayout(this.state.layout);
                 }
             };
             extend(
@@ -279,5 +285,61 @@ export default class Editor extends React.Component {
         }
         return root;
     }
+
+
 }
 
+function saveLayout(layout) {
+    const saveData = JSON.stringify(saveNode(layout));
+    localStorage.setItem('editor_layout', saveData);
+}
+
+function saveNode(node) {
+    if (node.type === Type.LAYOUT) {
+        return {
+            type: Type.LAYOUT,
+            orientation: node.orientation,
+            splitAt: node.splitAt,
+            children: [
+                saveNode(node.children[0]),
+                saveNode(node.children[1])
+            ]
+        };
+    } else {
+        return {
+            type: Type.AREA,
+            content: node.content.name,
+            root: node.root
+        };
+    }
+}
+
+function loadLayout() {
+    const data = localStorage.getItem('editor_layout');
+    if (data) {
+        try {
+            return loadNode(JSON.parse(data));
+        } catch(e) {}
+    }
+    return defaultLayout;
+}
+
+function loadNode(node) {
+    if (node.type === Type.LAYOUT) {
+        return {
+            type: Type.LAYOUT,
+            orientation: node.orientation,
+            splitAt: node.splitAt,
+            children: [
+                loadNode(node.children[0]),
+                loadNode(node.children[1])
+            ]
+        };
+    } else {
+        return {
+            type: Type.AREA,
+            content: findAreaContentByName(node.content),
+            root: node.root
+        };
+    }
+}
