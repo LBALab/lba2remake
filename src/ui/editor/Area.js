@@ -49,8 +49,8 @@ export default class Area extends React.Component {
 
     render() {
         return <div style={this.props.style}>
-            {this.renderMenu()}
             {this.renderContent()}
+            {this.renderMenu()}
         </div>;
     }
 
