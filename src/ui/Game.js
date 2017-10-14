@@ -73,9 +73,7 @@ export default class Game extends FrameListener {
                 this.canvas = this.props.mainData.canvas;
             } else {
                 this.canvas = document.createElement('canvas');
-                if (this.props.params.editor) {
-                    this.canvas.tabIndex = 0;
-                }
+                this.canvas.tabIndex = 0;
                 const game = this.state.game;
                 const renderer = createRenderer(this.props.params, this.canvas);
                 const sceneManager = createSceneManager(this.props.params, game, renderer, this.onSceneManagerReady);
