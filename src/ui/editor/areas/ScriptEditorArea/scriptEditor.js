@@ -317,7 +317,7 @@ const lineBaseStyle = {
     whiteSpace: 'nowrap',
     lineHeight: '16px',
     fontWeight: 'normal',
-    fontSize: 12
+    fontSize: 14
 };
 
 function getLineStyle(line, command, dash) {
