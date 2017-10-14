@@ -5,7 +5,6 @@ import {extend, each, concat, mapValues} from 'lodash';
 import GameArea from './editor/areas/GameArea';
 import NewArea from "./editor/areas/NewArea";
 import {MainAreas, SubAreas} from './editor/areas/all';
-import DebugHUDArea from "./editor/areas/DebugHUDArea";
 import ScriptEditorArea from "./editor/areas/ScriptEditorArea";
 
 const Type = {
@@ -161,8 +160,8 @@ export default class Editor extends React.Component {
 
             const sepInnerLine = extend({
                 [p[1]]: 5,
-                [p[2]]: 2,
-                background: 'gray',
+                [p[2]]: 1,
+                background: 'rgb(0,122,204)',
                 opacity: 1,
             }, separatorStyle[node.orientation]);
 
