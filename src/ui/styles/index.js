@@ -8,10 +8,10 @@ export const fullscreen = {
 
 export const editor = {
     base: {
-        background: 'black',
+        background: 'rgb(45,45,48)',
         color: 'white',
         fontFamily: `'Courier', monospace`,
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold'
     },
     button: {

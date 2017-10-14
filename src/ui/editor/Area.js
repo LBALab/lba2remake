@@ -13,7 +13,7 @@ const menuStyle = (numIcons) => extend({
     left: 0,
     right: 0,
     height: menuHeight - 1,
-    borderBottom: '1px solid gray',
+    borderBottom: '1px solid rgb(0,122,204)',
     paddingRight: 24 * numIcons + 2,
     lineHeight: `${menuHeight - 1}px`,
     userSelect: 'none'

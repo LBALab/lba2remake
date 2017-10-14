@@ -163,8 +163,8 @@ export default class Editor extends React.Component {
 
             const sepInnerLine = extend({
                 [p[1]]: 5,
-                [p[2]]: 2,
-                background: 'gray',
+                [p[2]]: 1,
+                background: 'rgb(0,122,204)',
                 opacity: 1,
             }, separatorStyle[node.orientation]);
 

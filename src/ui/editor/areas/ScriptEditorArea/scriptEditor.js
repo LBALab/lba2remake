@@ -12,8 +12,8 @@ const scriptBaseStyle = {
     top: 0,
     bottom: 0,
     overflow: 'auto',
-    boxShadow: 'inset 0px 0px 0px 1px gray',
-    background: 'black',
+    //boxShadow: 'inset 0px 0px 0px 1px rgb(0,122,204)',
+    background: 'rgb(25,25,25)',
     fontWeight: 'normal',
     fontSize: 16
 };
@@ -90,7 +90,7 @@ export default class ScriptEditor extends FrameListener {
                     lineNum.style.color = 'inherit';
                     if (active) {
                         lineNum.style.background = '#009700';
-                        lineCmd.style.background = '#555555';
+                        lineCmd.style.background = 'rgb(51,51,52)';
                     } else {
                         const activeSection = commands[i].section === activeCommands.section;
                         lineNum.style.background = 'transparent';
@@ -158,14 +158,16 @@ export default class ScriptEditor extends FrameListener {
             left: 0,
             width: `${nDigits}ch`,
             top: 0,
-            background: 'lightgray',
-            color: 'black',
+            background: 'rbg(51,51,51)',
+            color: 'rbg(37,37,38)',
             cursor: 'pointer',
-            userSelect: 'none'
+            userSelect: 'none',
+            fontSize: 16
         };
         const commandsStyle = {
             position: 'absolute',
             left: `${nDigits}ch`,
+            right: 0,
             top: 0
         };
         return <div style={scriptStyle[type]}>
@@ -315,7 +317,7 @@ const lineBaseStyle = {
     whiteSpace: 'nowrap',
     lineHeight: '16px',
     fontWeight: 'normal',
-    fontSize: 16
+    fontSize: 14
 };
 
 function getLineStyle(line, command, dash) {
@@ -324,10 +326,11 @@ function getLineStyle(line, command, dash) {
             || command.name === 'TRACK'
             || command.name === 'END');
 
-    const dashLine = dash ? '1px dashed gray' : '1px solid transparent';
+    const dashLine = dash ? '1px dashed rgb(51,51,51)' : '1px solid transparent';
 
     return extend({
-        marginTop: isFirst ? '1em' : 0,
+        marginTop: isFirst ? '0.5em' : 0,
+        paddingTop: isFirst ? '0.5em' : 0,
         borderTop: isFirst ? dashLine : 0
     }, lineBaseStyle);
 }
