@@ -1,9 +1,6 @@
 import React from 'react';
 import {extend, map, isEmpty} from 'lodash';
-import {
-    loadProfiles,
-    saveDefaultProfile
-} from './profiles';
+import {loadProfiles} from './profiles';
 import * as builtInProfiles from './builtInProfiles';
 import {execute} from './exprDSL/execute';
 import {addSlot} from './slots';
@@ -239,7 +236,6 @@ export default class DebugHUD extends FrameListener {
                 this.props.stateHandler.setSlots(slots);
                 this.setState({completion: autoComplete('', DebugData.scope)});
             }
-            saveDefaultProfile(slots);
         }
     }
 
@@ -247,13 +243,11 @@ export default class DebugHUD extends FrameListener {
         const slots = this.props.sharedState.slots;
         delete slots.macros[macro];
         this.props.stateHandler.setSlots(slots);
-        saveDefaultProfile(slots);
     }
 
     removeExpression(index) {
         const slots = this.props.sharedState.slots;
         delete slots.expressions.splice(index, 1);
         this.props.stateHandler.setSlots(slots);
-        saveDefaultProfile(slots);
     }
 }
