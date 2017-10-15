@@ -1,7 +1,7 @@
 import ScriptEditorArea from './ScriptEditorArea';
 import GameArea from './GameArea';
 import DebugHUDArea from './DebugHUDArea';
-import Outliner from './Outliner';
+import OutlinerArea from './OutlinerArea';
 import {find, concat} from 'lodash';
 import NewArea from './NewArea';
 
@@ -12,7 +12,7 @@ export const MainAreas = [
 export const SubAreas = [
     ScriptEditorArea,
     DebugHUDArea,
-    Outliner
+    OutlinerArea
 ];
 
 const all = concat(MainAreas, SubAreas, [NewArea]);

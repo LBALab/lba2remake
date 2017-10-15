@@ -1,13 +1,10 @@
 import React from 'react';
-import DebugHUD from './DebugHUDArea/hud';
+import DebugHUD from './DebugHUDArea/content';
+import DebugHUDMenu from './DebugHUDArea/menu';
 import {Status} from './DebugHUDArea/status';
-import {editor as editorStyle} from '../../styles';
-import {
-    saveProfiles,
-    loadProfiles
-} from './DebugHUDArea/profiles';
+import {saveProfiles, loadProfiles} from './DebugHUDArea/profiles';
 import {addSlot} from './DebugHUDArea/slots';
-import {each, map, concat, isEmpty} from 'lodash';
+import {each, map, concat} from 'lodash';
 
 const DebugHUDArea = {
     id: 'dbg_hud',
@@ -70,27 +67,3 @@ const DebugHUDArea = {
 };
 
 export default DebugHUDArea;
-
-function DebugHUDMenu(props) {
-    const {setStatus, newProfile} = props.stateHandler;
-    const slots = props.sharedState.slots;
-    let newProfileConfirm = newProfile;
-    if (slots.expressions.length > 0 || !isEmpty(slots.macros)) {
-        const msg = <span>
-                    Creating a new profile will clear the current window.
-                    <br/><br/>
-                    All expressions will be removed.
-                    <br/><br/>
-                </span>;
-        newProfileConfirm = props.confirmPopup.bind(null, msg, 'Create new profile!', 'Cancel', newProfile);
-    }
-    if (props.sharedState.status === Status.NORMAL) {
-        return <span>
-            <button style={editorStyle.button} onClick={newProfileConfirm}>New</button>
-            <button style={editorStyle.button} onClick={setStatus.bind(null, Status.LOAD)}>Load</button>
-            <button style={editorStyle.button} onClick={setStatus.bind(null, Status.SAVE)}>Save</button>
-        </span>;
-    } else {
-        return <button style={editorStyle.button} onClick={setStatus.bind(null, Status.NORMAL)}>Cancel</button>;
-    }
-}
