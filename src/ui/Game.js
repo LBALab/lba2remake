@@ -161,6 +161,8 @@ export default class Game extends FrameListener {
                                interjections={this.state.interjections} />
             <FoundObject foundObject={this.state.foundObject} />
             <Video video={this.state.video} renderer={this.state.renderer} />
+            <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
+            <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
             {this.state.loading ? <Loader/> : null}
         </div>;
     }
