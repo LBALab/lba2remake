@@ -5,7 +5,7 @@ import FrameListener from '../../../utils/FrameListener';
 import {getDebugListing} from './listing';
 import DebugData from '../../DebugData';
 
-const sepDistance = 60;
+const defaultSplitDistance = 60;
 
 const scriptBaseStyle = {
     position: 'absolute',
@@ -19,14 +19,22 @@ const scriptBaseStyle = {
 };
 
 const scriptStyle = {
-    life: extend({left: 0, width: `${sepDistance}%`}, scriptBaseStyle),
-    move: extend({left: `${sepDistance}%`, right: 0}, scriptBaseStyle)
+    life: (splitAt) => extend({left: 0, width: `${splitAt}%`}, scriptBaseStyle),
+    move: (splitAt) => extend({left: `${splitAt}%`, right: 0}, scriptBaseStyle)
 };
 
 export default class ScriptEditor extends FrameListener {
     constructor(props) {
         super(props);
-        this.state = {};
+
+        this.state = {
+            separator: null
+        };
+
+        this.updateSeparator = this.updateSeparator.bind(this);
+        this.enableSeparator = this.enableSeparator.bind(this);
+        this.disableSeparator = this.disableSeparator.bind(this);
+
         this.lineNumbers = {
             life: null,
             move: null
@@ -35,6 +43,57 @@ export default class ScriptEditor extends FrameListener {
             life: null,
             move: null
         };
+    }
+
+    componentWillMount() {
+        super.componentWillMount();
+        document.addEventListener('mousedown', this.enableSeparator);
+        document.addEventListener('mousemove', this.updateSeparator);
+        document.addEventListener('mouseup', this.disableSeparator);
+        document.addEventListener('mouseleave', this.disableSeparator);
+    }
+
+    componentWillUnmount() {
+        super.componentWillUnmount();
+        document.removeEventListener('mousedown', this.enableSeparator);
+        document.removeEventListener('mousemove', this.updateSeparator);
+        document.removeEventListener('mouseup', this.disableSeparator);
+        document.removeEventListener('mouseleave', this.disableSeparator);
+    }
+
+    enableSeparator(e) {
+        if (e.path.indexOf(this.separatorRef) !== -1) {
+            const bb = this.rootRef.getBoundingClientRect();
+            const separator = {
+                min: bb.left,
+                max: this.rootRef.clientWidth
+            };
+            if (this.props.sharedState.splitAt) {
+                this.props.stateHandler.splitAt(undefined);
+            }
+            this.setState({separator});
+            this.updateSeparator(e, separator);
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
+
+    updateSeparator(e, separator = this.state.separator) {
+        if (separator) {
+            const splitAt = 100 * ((e.clientX - separator.min) / separator.max);
+            this.setState({splitAt});
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
+
+    disableSeparator() {
+        if (this.state.separator) {
+            if (this.state.splitAt) {
+                this.props.stateHandler.splitAt(this.state.splitAt);
+            }
+            this.setState({separator: null, splitAt: undefined});
+        }
     }
 
     frame() {
@@ -127,13 +186,39 @@ export default class ScriptEditor extends FrameListener {
     }
 
     render() {
-        return <div style={{fullscreen}}>
-            {this.renderListing('life')}
-            {this.renderListing('move')}
+        const splitAt = this.props.sharedState.splitAt || this.state.splitAt || defaultSplitDistance;
+
+        const separator = {
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: `${splitAt}%`,
+            width: 6,
+            transform: 'translate(-3px, 0)',
+            background: 'rgba(0,0,0,0)',
+            cursor: 'col-resize',
+        };
+
+        const sepInnerLine = {
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 2,
+            width: 1,
+            background: 'rgb(0,122,204)',
+            opacity: 1,
+        };
+
+        return <div ref={ref => this.rootRef = ref} style={{fullscreen}}>
+            {this.renderListing('life', splitAt)}
+            {this.renderListing('move', splitAt)}
+            <div ref={ref => this.separatorRef = ref} style={separator}>
+                <div style={sepInnerLine}/>
+            </div>
         </div>;
     }
 
-    renderListing(type) {
+    renderListing(type, splitAt) {
         let lineNumbers = null;
         let commands = null;
         let nDigits = 0;
@@ -170,7 +255,7 @@ export default class ScriptEditor extends FrameListener {
             right: 0,
             top: 0
         };
-        return <div style={scriptStyle[type]}>
+        return <div style={scriptStyle[type](splitAt)}>
             <div ref={ref => this.lineCmds[type] = ref} style={commandsStyle}>{commands}</div>
             <div ref={ref => this.lineNumbers[type] = ref} style={lineNumberStyle}>{lineNumbers}</div>
         </div>;

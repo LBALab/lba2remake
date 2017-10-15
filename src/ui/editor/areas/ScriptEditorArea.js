@@ -64,7 +64,12 @@ const ScriptEditorArea = {
     name: 'Scripts',
     menu: ScriptMenu,
     content: ScriptEditor,
-    getInitialState: () => ({})
+    getInitialState: () => ({}),
+    stateHandler: {
+        splitAt(splitAt) {
+            this.setState({splitAt});
+        }
+    }
 };
 
 export default ScriptEditorArea;
