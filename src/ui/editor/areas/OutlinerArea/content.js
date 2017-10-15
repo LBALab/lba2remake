@@ -22,11 +22,13 @@ export default class OutlinerContent extends React.Component {
         const path = this.props.sharedState.path;
         return <div style={style}>
             {this.renderPath()}
-            {root ? <Node node={root}
-                  setRoot={this.setRoot.bind(this)}
-                  path={this.props.sharedState.path}
-                  ticker={this.props.ticker}
-            /> : `${path[path.length - 1]} node is not available.`}
+            {root
+                ? <Node node={root}
+                        setRoot={this.setRoot.bind(this)}
+                        path={this.props.sharedState.path}
+                        ticker={this.props.ticker}
+                        level={0} />
+                : `${path[path.length - 1]} node is not available.`}
         </div>;
     }
 

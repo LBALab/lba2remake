@@ -6,7 +6,7 @@ class StaticNode extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            collapsed: props.node.collapsed
+            collapsed: props.level > 1
         };
     }
 
@@ -49,7 +49,8 @@ class StaticNode extends React.Component {
                                  fontSize={childFontSize}
                                  setRoot={this.props.setRoot}
                                  path={concat(this.props.path, child.name)}
-                                 ticker={this.props.ticker}/>
+                                 ticker={this.props.ticker}
+                                 level={this.props.level + 1} />
                 }
             );
         } else {

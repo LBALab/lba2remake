@@ -36,7 +36,6 @@ const LocationsNode = {
     children: [
         {
             name: 'Twinsun',
-            collapsed: true,
             children: [
                 {
                     name: 'Citadel island',
@@ -50,14 +49,12 @@ const LocationsNode = {
         },
         {
             name: 'Emerald moon',
-            collapsed: true,
             children: [
 
             ]
         },
         {
             name: 'Zeelish',
-            collapsed: true,
             children: [
                 {
                     name: 'Surface',
