@@ -1,36 +1,29 @@
 {
   "type": 0,
   "orientation": 0,
-  "splitAt": 60.20334059549746,
+  "splitAt": 60.2,
   "children": [{
     "type": 0,
     "orientation": 1,
-    "splitAt": 70.17225747960109,
+    "splitAt": 70.2,
     "children": [{
       "type": 1,
       "content_id": "game",
-      "state": {"labels": {"actor": false, "zone": false, "point": false}},
       "root": true
     }, {
       "type": 1,
-      "content_id": "dbg_hud",
-      "state": {
-        "status": 0,
-        "slots": {
-          "macros": {},
-          "expressions": []
-        },
-        "profileName": "ui"
-      }
+      "content_id": "dbg_hud"
     }]
   }, {
     "type": 0,
     "orientation": 1,
     "splitAt": 50,
-    "children": [{"type": 1, "content_id": "script_editor", "state": {}}, {
+    "children": [{
       "type": 1,
-      "content_id": "outliner",
-      "state": {}
+      "content_id": "script_editor"
+    }, {
+      "type": 1,
+      "content_id": "outliner"
     }]
   }]
 }

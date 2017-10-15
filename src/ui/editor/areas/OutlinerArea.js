@@ -5,7 +5,14 @@ const OutlinerArea = {
     id: 'outliner',
     name: 'Outliner',
     content: OutlinerContent,
-    getInitialState: () => ({})
+    getInitialState: () => ({
+        path: []
+    }),
+    stateHandler: {
+        setPath: function(path) {
+            this.setState({path: path});
+        }
+    }
 };
 
 export default OutlinerArea;

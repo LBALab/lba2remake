@@ -1,47 +1,68 @@
 import React from 'react';
-import {map, extend} from 'lodash';
-import FrameListener from '../../../utils/FrameListener';
-import DebugData from '../../DebugData';
+import {extend, map, each, find, isFunction} from 'lodash';
+import OutlinerTree from './tree';
+import Node from './node';
 import {fullscreen} from '../../../styles';
 
-export default class OutlinerContent extends FrameListener {
+const style = extend({
+    overflow: 'auto',
+    padding: 8,
+    userSelect: 'none',
+    cursor: 'default',
+    whiteSpace: 'nowrap'
+}, fullscreen);
+
+export default class OutlinerContent extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
     }
 
     render() {
-        return <div style={extend({overflow: 'auto', padding: 8}, fullscreen)}>
-            Actors:
-            <ul>
-                {
-                    map(this.state.actors, (actor, idx) => {
-                        const selectActor = () => {
-                            DebugData.selection.actor = idx;
-                        };
-                        const name = idx === 0 ? 'hero' : `actor_${idx}`;
-                        const selected = this.state.selection === idx;
-                        const aProps = [];
-                        if (actor.isVisible)
-                            aProps.push('visible');
-                        if (actor.isSprite)
-                            aProps.push('sprite');
-                        return <li key={idx} onClick={selectActor} style={{fontSize: 16, cursor: 'pointer', color: selected ? 'red' : 'white'}}>
-                            {name} [{aProps.join(' ')}]
-                        </li>;
-                    })
-                }
-            </ul>
+        const root = this.findRoot();
+        const path = this.props.sharedState.path;
+        return <div style={style}>
+            {this.renderPath()}
+            {root ? <Node node={root}
+                  setRoot={this.setRoot.bind(this)}
+                  path={this.props.sharedState.path}
+                  ticker={this.props.ticker}
+            /> : `${path[path.length - 1]} node is not available.`}
         </div>;
     }
 
-    frame() {
-        const scene = DebugData.scope.scene;
-        if (scene && scene.actors !== this.state.actors) {
-            this.setState({actors: scene.actors});
+    renderPath() {
+        const path = this.props.sharedState.path;
+        const renderElement =
+            (subpath, elem) => <span style={{cursor: 'pointer'}} onClick={this.setRoot.bind(this, subpath)}>
+                {elem}
+            </span>;
+        if (path.length > 0) {
+            return <div style={{paddingBottom: 8}}>
+                {renderElement([], OutlinerTree.name)}
+                {map(path, (elem, idx) => {
+                    const subpath = path.slice(0, idx + 1);
+                    return <span key={idx}>
+                        &nbsp;<span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
+                        {renderElement(subpath, elem)}
+                    </span>;
+                })}
+            </div>
+        } else {
+            return null;
         }
-        if (DebugData.selection.actor !== this.state.selection) {
-            this.setState({selection: DebugData.selection.actor});
-        }
+    }
+
+    setRoot(path) {
+        this.props.stateHandler.setPath(path);
+    }
+
+    findRoot() {
+        const path = this.props.sharedState.path;
+        let node = OutlinerTree;
+        each(path, name => {
+            const children = isFunction(node.children) ? node.children() : node.children;
+            node = find(children, child => child.name === name);
+        });
+        return node;
     }
 }
