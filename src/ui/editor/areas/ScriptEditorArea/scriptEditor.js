@@ -152,8 +152,8 @@ export default class ScriptEditor extends FrameListener {
                         lineCmd.style.background = 'rgb(51,51,52)';
                     } else {
                         const activeSection = commands[i].section === activeCommands.section;
-                        lineNum.style.background = 'transparent';
-                        lineCmd.style.background = activeSection ? '#222222' : 'transparent';
+                        lineNum.style.background = activeSection ? '#232323' : 'transparent';
+                        lineCmd.style.background = activeSection ? '#232323' : 'transparent';
                     }
                 }
 
