@@ -19,14 +19,56 @@ const ActorsNode = {
     }
 };
 
+const ZONE_TYPE = [
+    'CUBE',
+    'CAMERA',
+    'SCENERIC',
+    'FRAGMENT',
+    'BONUS',
+    'TEXT',
+    'LADDER',
+    'CONVEYOR',
+    'SPIKE',
+    'RAIL'
+];
+
+const ZonesNode = {
+    name: 'Zones',
+    children: () => {
+        const scene = DebugData.scope.scene;
+        return map(scene && scene.zones, (zone, idx) => {
+            const name = `zone_${idx}`;
+            const type = ZONE_TYPE[zone.props.type];
+            return {
+                name: `${name} [${type}]`,
+                children: []
+            }
+        });
+    }
+};
+
+const PointsNode = {
+    name: 'Points',
+    children: () => {
+        const scene = DebugData.scope.scene;
+        return map(scene && scene.points, (point, idx) => {
+            const name = `point_${idx}`;
+            return {
+                name: `${name}`,
+                children: []
+            }
+        });
+    }
+};
+
 const SceneNode = {
     name: 'Scene',
     children: () => {
         const scene = DebugData.scope.scene;
         return scene ? [
             ActorsNode,
-            { name: 'Zones', children: [] },
-            { name: 'Points', children: [] }
+            ZonesNode,
+            PointsNode
         ] : [];
     }
 };
