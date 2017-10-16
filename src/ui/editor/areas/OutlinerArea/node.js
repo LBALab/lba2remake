@@ -16,11 +16,19 @@ function toggleCollapse() {
 }
 
 function renderProps() {
-    const nodeProps = this.props.node.props;
+    const node = this.props.node;
+    const nodeProps = node.props;
+    const propStyle = {
+        padding: '0 3px',
+        verticalAlign: 'middle'
+    };
     if (nodeProps) {
         return <span style={{color: '#858585'}}>
             {
-                map(nodeProps, (value, name) => `${name}=${value}`).join(', ')
+                map(nodeProps, prop => {
+                    const elem = node.renderProp && node.renderProp(prop.id, prop.value);
+                    return <span key={prop.id} style={propStyle}>{elem ? elem : `${prop.id}=${prop.value}`}</span>;
+                })
             }
         </span>;
     } else {
@@ -30,7 +38,7 @@ function renderProps() {
 
 function renderNode(numChildren) {
     const fontSize = this.props.fontSize || 18;
-    const childFontSize = Math.max(fontSize - 2, 12);
+    const childFontSize = Math.max(fontSize - 2, 14);
     const node = this.props.node;
     const onClick = node.onClick ? node.onClick : this.props.setRoot.bind(null, this.props.path);
     const nameStyle = {

@@ -1,3 +1,4 @@
+import React from 'react';
 import DebugData from '../../../DebugData';
 
 const actorName = (idx) => idx === 0 ? 'hero' : `actor_${idx}`;
@@ -14,8 +15,8 @@ export const ActorsNode = {
         if (scene) {
             const actor = scene.actors[idx];
             return value.name !== actorName(idx)
-                || value.props.isSprite !== actor.isSprite
-                || value.props.isVisible !== actor.isVisible
+                || value.props[0].value !== actor.isVisible
+                || value.props[1].value !== actor.isSprite
                 || value.selected !== (DebugData.selection.actor === idx);
         }
         return true;
@@ -26,9 +27,15 @@ export const ActorsNode = {
             const actor = scene.actors[idx];
             return {
                 name: actorName(idx),
-                props: {
-                    isSprite: actor.isSprite,
-                    isVisible: actor.isVisible
+                props: [
+                    {id: 'visible', value: actor.isVisible},
+                    {id: 'sprite', value: actor.isSprite}
+                ],
+                renderProp: (id, value) => {
+                    if (id === 'visible')
+                        return <img src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}/>;
+                    else
+                        return <img title={value ? 'SPRITE' : 'MODEL'} src={`editor/icons/${value ? 'sprite' : 'model'}.png`}/>;
                 },
                 selected: DebugData.selection.actor === idx,
                 onClick: () => {DebugData.selection.actor = idx},

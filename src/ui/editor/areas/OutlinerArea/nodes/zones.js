@@ -29,9 +29,10 @@ export const ZonesNode = {
             const zone = scene.zones[idx];
             return {
                 name: `zone_${idx}`,
-                props: {
-                    type: ZONE_TYPE[zone.props.type],
-                },
+                props: [
+                    {id: 'type', value: ZONE_TYPE[zone.props.type]},
+                ],
+                renderProp: (id, value) => value,
                 selected: DebugData.selection.zone === idx,
                 onClick: () => {DebugData.selection.zone = idx},
                 children: []
