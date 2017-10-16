@@ -27,7 +27,7 @@ function renderProps() {
             {
                 map(nodeProps, prop => {
                     const elem = node.renderProp && node.renderProp(prop.id, prop.value);
-                    return <span key={prop.id} style={propStyle}>{elem ? elem : `${prop.id}=${prop.value}`}</span>;
+                    return <span key={prop.id} style={propStyle}>{elem !== undefined ? elem : `${prop.id}=${prop.value}`}</span>;
                 })
             }
         </span>;
