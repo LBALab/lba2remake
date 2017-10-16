@@ -19,10 +19,15 @@ const baseStyle = {
 
 const typeStyle = {
     actor: {
-        borderRadius: '50%',
+        borderRadius: 6,
         background: 'rgba(205, 92, 92, 0.6)',
-        width: 18,
-        height: 18
+        fontSize: 16,
+        minWidth: 18,
+        minHeight: 18,
+        paddingLeft: 4,
+        paddingRight: 4,
+        lineHeight: '18px',
+        transform: 'translate(-50%, -50%)'
     },
     point: {
         background: 'rgba(135, 206, 235, 0.6)',
@@ -30,7 +35,8 @@ const typeStyle = {
         width: 16,
         height: 16,
         lineHeight: '16px',
-        borderRadius: 3
+        borderRadius: 3,
+        transform: 'translate(-50%, -50%)'
     },
     zone: {
         fontSize: 12,
@@ -38,7 +44,8 @@ const typeStyle = {
         minHeight: 16,
         paddingLeft: 2,
         paddingRight: 2,
-        lineHeight: '16px'
+        lineHeight: '16px',
+        transform: 'translate(-50%, -50%)'
     }
 };
 
@@ -53,12 +60,6 @@ const selectedStyle = {
         background: 'white',
         color: 'black'
     }
-};
-
-const offset = {
-    actor: 10,
-    point: 9,
-    zone: 9
 };
 
 export default class DebugLabels extends FrameListener {
@@ -119,19 +120,22 @@ export default class DebugLabels extends FrameListener {
             POS.y = - ( POS.y * heightHalf ) + heightHalf;
 
             if (POS.z < 1
-                && POS.x > -offset[type]
-                && POS.x < width + offset[type]
-                && POS.y > -offset[type]
-                && POS.y < height + offset[type]) {
+                && POS.x > 0
+                && POS.x < width
+                && POS.y > 0
+                && POS.y < height) {
                 const item = {
                     id: `${scene.index}_${type}_${obj.index}`,
                     index: obj.index,
-                    x: POS.x - offset[type],
-                    y: POS.y - offset[type],
+                    x: POS.x,
+                    y: POS.y,
                     label: obj.index,
                     selected: DebugData.selection[type] === obj.index,
                     type: type
                 };
+                if (type === 'actor' && obj.index === 0) {
+                    item.label = 'hero';
+                }
                 if (type === 'zone') {
                     const {r, g, b} = obj.color;
                     item.color = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},0.6)`;
