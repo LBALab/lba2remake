@@ -1,5 +1,5 @@
 import React from 'react';
-import {extend, map, each, find, isFunction} from 'lodash';
+import {extend, map, each, find} from 'lodash';
 import OutlinerTree from './tree';
 import Node from './node';
 import {fullscreen} from '../../../styles';
@@ -19,7 +19,6 @@ export default class OutlinerContent extends React.Component {
 
     render() {
         const root = this.findRoot();
-        const path = this.props.sharedState.path;
         return <div style={style}>
             {this.renderPath()}
             {root
@@ -28,7 +27,7 @@ export default class OutlinerContent extends React.Component {
                         path={this.props.sharedState.path}
                         ticker={this.props.ticker}
                         level={0} />
-                : `${path[path.length - 1]} node is not available.`}
+                : 'Node is not available.'}
         </div>;
     }
 
@@ -43,9 +42,10 @@ export default class OutlinerContent extends React.Component {
                 {renderElement([], OutlinerTree.name)}
                 {map(path, (elem, idx) => {
                     const subpath = path.slice(0, idx + 1);
+                    const e = elem.split(':');
                     return <span key={idx}>
                         &nbsp;<span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
-                        {renderElement(subpath, elem)}
+                        {renderElement(subpath, e[e.length - 1])}
                     </span>;
                 })}
             </div>
@@ -62,8 +62,21 @@ export default class OutlinerContent extends React.Component {
         const path = this.props.sharedState.path;
         let node = OutlinerTree;
         each(path, name => {
-            const children = isFunction(node.children) ? node.children() : node.children;
-            node = find(children, child => child.name === name);
+            if (!node)
+                return;
+            if (node.dynamic) {
+                let childNode = null;
+                for (let i = 0; i < node.getNumChildren(); ++i) {
+                    const child = node.getChild(i);
+                    if (child && child.name === name) {
+                        childNode = child;
+                        break;
+                    }
+                }
+                node = childNode;
+            } else {
+                node = find(node.children, child => child.name === name);
+            }
         });
         return node;
     }
