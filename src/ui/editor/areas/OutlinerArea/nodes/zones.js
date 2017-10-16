@@ -1,3 +1,4 @@
+import React from 'react';
 import DebugData from '../../../DebugData';
 
 const ZONE_TYPE = [
@@ -21,7 +22,14 @@ export const ZonesNode = {
         return scene ? scene.zones.length : 0;
     },
     childNeedsUpdate: (idx, value) => {
-        return value.selected !== (DebugData.selection.zone === idx);
+        const scene = DebugData.scope.scene;
+        if (scene) {
+            const zone = scene.zones[idx];
+            return value.props[0].value !== ZONE_TYPE[zone.props.type]
+                || value.selected !== (DebugData.selection.zone === idx)
+                || value.snap !== zone.props.snap;
+        }
+        return true;
     },
     getChild: (idx) => {
         const scene = DebugData.scope.scene;
@@ -32,7 +40,16 @@ export const ZonesNode = {
                 props: [
                     {id: 'type', value: ZONE_TYPE[zone.props.type]},
                 ],
-                renderProp: (id, value) => value,
+                renderProp: (id, value) => {
+                    const {r, g, b} = zone.color;
+                    const color = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},1)`;
+                    let extra;
+                    if (value === 'CUBE') {
+                        extra = ` => ${zone.props.snap}`;
+                    }
+                    return <span style={{color}}>{value}{extra}</span>;
+                },
+                snap: zone.props.snap,
                 selected: DebugData.selection.zone === idx,
                 onClick: () => {DebugData.selection.zone = idx},
                 children: []
