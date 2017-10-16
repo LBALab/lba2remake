@@ -32,11 +32,18 @@ function renderNode(numChildren) {
     const fontSize = this.props.fontSize || 18;
     const childFontSize = Math.max(fontSize - 2, 12);
     const node = this.props.node;
+    const onClick = node.onClick ? node.onClick : this.props.setRoot.bind(null, this.props.path);
+    const nameStyle = {
+        cursor: 'pointer',
+        background: node.selected ? 'white' : 'transparent',
+        color: node.selected ? 'black' : 'inherit',
+        padding: node.selected ? '0 2px' : 0
+    };
     return <div>
         <div style={{fontSize, padding: `${fontSize / 8}px 0`}}>
             {renderCollapseButton.call(this, numChildren)}
             &nbsp;
-            <span style={{cursor: 'pointer'}} onClick={this.props.setRoot.bind(null, this.props.path)}>{node.name}</span>
+            <span style={nameStyle} onClick={onClick}>{node.name}</span>
             &nbsp;
             {renderProps.call(this)}
         </div>

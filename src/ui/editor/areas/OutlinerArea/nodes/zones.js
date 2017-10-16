@@ -20,8 +20,8 @@ export const ZonesNode = {
         const scene = DebugData.scope.scene;
         return scene ? scene.zones.length : 0;
     },
-    childNeedsUpdate: () => {
-        return false;
+    childNeedsUpdate: (idx, value) => {
+        return value.selected !== (DebugData.selection.zone === idx);
     },
     getChild: (idx) => {
         const scene = DebugData.scope.scene;
@@ -32,6 +32,8 @@ export const ZonesNode = {
                 props: {
                     type: ZONE_TYPE[zone.props.type],
                 },
+                selected: DebugData.selection.zone === idx,
+                onClick: () => {DebugData.selection.zone = idx},
                 children: []
             };
         }

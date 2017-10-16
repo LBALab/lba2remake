@@ -7,14 +7,16 @@ export const PointsNode = {
         const scene = DebugData.scope.scene;
         return scene ? scene.points.length : 0;
     },
-    childNeedsUpdate: () => {
-        return false;
+    childNeedsUpdate: (idx, value) => {
+        return value.selected !== (DebugData.selection.point === idx);
     },
     getChild: (idx) => {
         const scene = DebugData.scope.scene;
         if (scene) {
             return {
                 name: `point_${idx}`,
+                selected: DebugData.selection.point === idx,
+                onClick: () => {DebugData.selection.point = idx},
                 children: []
             };
         }

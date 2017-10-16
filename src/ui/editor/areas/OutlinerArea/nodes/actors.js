@@ -15,7 +15,8 @@ export const ActorsNode = {
             const actor = scene.actors[idx];
             return value.name !== actorName(idx)
                 || value.props.isSprite !== actor.isSprite
-                || value.props.isVisible !== actor.isVisible;
+                || value.props.isVisible !== actor.isVisible
+                || value.selected !== (DebugData.selection.actor === idx);
         }
         return true;
     },
@@ -29,6 +30,8 @@ export const ActorsNode = {
                     isSprite: actor.isSprite,
                     isVisible: actor.isVisible
                 },
+                selected: DebugData.selection.actor === idx,
+                onClick: () => {DebugData.selection.actor = idx},
                 children: []
             };
         }
