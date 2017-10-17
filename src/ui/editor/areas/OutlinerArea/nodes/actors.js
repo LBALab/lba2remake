@@ -1,5 +1,6 @@
 import React from 'react';
 import DebugData from '../../../DebugData';
+import {map} from 'lodash';
 
 const actorName = (idx) => idx === 0 ? 'hero' : `actor_${idx}`;
 
@@ -14,14 +15,38 @@ function getComportement(actor) {
     }
 }
 
-function getTarget(actor) {
+function getMoveAction(actor) {
     const moveScript = actor.scripts.move;
     const offset = moveScript.context.state.lastOffset;
     if (offset) {
         const cmd = moveScript.commands[offset];
-        if (cmd.op.command === 'GOTO_POINT') {
-            return cmd.args[0].value;
+        switch (cmd.op.command) {
+            case 'STOP':
+                return;
+            case 'WAIT_NUM_SECONDS':
+            case 'WAIT_NUM_DSEC':
+            case 'WAIT_NUM_SECOND_RND':
+            case 'WAIT_NUM_DECIMAL_RND':
+                const timeLeft = Math.ceil(moveScript.context.state.waitUntil - DebugData.scope.clock.elapsedTime);
+                return {
+                    cmd: cmd.op.command,
+                    args: map(cmd.args, arg => arg.value).join(', '),
+                    extra: `[${timeLeft}″ left]`
+                };
+            default:
+                return {
+                    cmd: cmd.op.command,
+                    args: map(cmd.args, arg => arg.value).join(', ')
+                };
         }
+    }
+}
+
+function moveActionAreEqual(a1, a2) {
+    if (a1 !== undefined && a2 !== undefined) {
+        return a1.cmd === a2.cmd && a1.args === a2.args && a1.extra === a2.extra;
+    } else {
+        return a1 === a2;
     }
 }
 
@@ -40,7 +65,7 @@ export const ActorsNode = {
                 || value.props[0].value !== actor.isVisible
                 || value.props[1].value !== actor.isSprite
                 || value.props[2].value !== getComportement(actor)
-                || value.props[3].value !== getTarget(actor)
+                || !moveActionAreEqual(value.props[3].value, getMoveAction(actor))
                 || value.selected !== (DebugData.selection.actor === idx);
         }
         return true;
@@ -55,7 +80,7 @@ export const ActorsNode = {
                     {id: 'visible', value: actor.isVisible},
                     {id: 'sprite', value: actor.isSprite},
                     {id: 'comportement', value: getComportement(actor)},
-                    {id: 'target', value: getTarget(actor)}
+                    {id: 'moveAction', value: getMoveAction(actor)}
                 ],
                 renderProp: (id, value) => {
                     if (id === 'visible') {
@@ -79,8 +104,13 @@ export const ActorsNode = {
                             return <span style={style}>{value}</span>;
                         }
                     }
-                    else if (id === 'target') {
-                        return value ? <span>=&gt; point_{value}</span> : '';
+                    else if (id === 'moveAction') {
+                        return value
+                            ? <span>&nbsp;{value.cmd}
+                                {value.args ? <span>(<i style={{color: '#ca0000'}}>{value.args}</i>)</span> : ''}
+                                {value.extra ? <span style={{color: '#1a78c0'}}>&nbsp;{value.extra}</span> : null}
+                            </span>
+                            : '';
                     }
                 },
                 selected: DebugData.selection.actor === idx,
