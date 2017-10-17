@@ -43,11 +43,16 @@ export const ZonesNode = {
                 renderProp: (id, value) => {
                     const {r, g, b} = zone.color;
                     const color = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},1)`;
-                    let extra;
-                    if (value === 'CUBE') {
-                        extra = ` => ${zone.props.snap}`;
+                    let label = value;
+                    switch (value) {
+                        case 'CUBE':
+                            label = `GOTO -> ${zone.props.snap}`;
+                            break;
+                        case 'TEXT':
+                            label = scene.data.texts[zone.props.snap].value;
+                            break;
                     }
-                    return <span style={{color}}>{value}{extra}</span>;
+                    return <span style={{color}}>{label}</span>;
                 },
                 snap: zone.props.snap,
                 selected: DebugData.selection.zone === idx,
