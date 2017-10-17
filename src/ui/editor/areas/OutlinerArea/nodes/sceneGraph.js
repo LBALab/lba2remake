@@ -1,6 +1,12 @@
-import DebugData from '../../../DebugData';
+import React from 'react';
 
+/**
+ * @return {null}
+ */
 export function SceneGraphNode(threeNode, idx) {
+    if (!threeNode)
+        return null;
+
     return {
         name: `THREE.${threeNode.type}${idx ? '[' + (threeNode.name ? threeNode.name : idx) + ']' : ''}`,
         dynamic: true,
@@ -8,13 +14,18 @@ export function SceneGraphNode(threeNode, idx) {
             return threeNode ? threeNode.children.length : 0;
         },
         childNeedsUpdate: (idx, value) => {
-            return value.type !== threeNode.type
-                || value.name !== threeNode.name;
+            return value.type !== threeNode.children[idx].type
+                || value.name !== threeNode.children[idx].name;
         },
         getChild: (idx) => {
-            const scene = DebugData.scope.scene;
-            if (scene) {
-                return SceneGraphNode(threeNode.children[idx], idx);
+            return SceneGraphNode(threeNode.children[idx], idx);
+        },
+        props: [
+            {id: 'visible', value: threeNode.visible}
+        ],
+        renderProp: (id, value) => {
+            if (id === 'visible') {
+                return <img src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}/>;
             }
         }
     }
