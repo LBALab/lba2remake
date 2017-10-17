@@ -107,7 +107,7 @@ export const ActorsNode = {
                     else if (id === 'moveAction') {
                         return value
                             ? <span>&nbsp;{value.cmd}
-                                {value.args ? <span>(<i style={{color: '#ca0000'}}>{value.args}</i>)</span> : ''}
+                                {value.args ? <span>{'('}<i style={{color: '#ca0000'}}>{value.args}</i>{')'}</span> : ''}
                                 {value.extra ? <span style={{color: '#1a78c0'}}>&nbsp;{value.extra}</span> : null}
                             </span>
                             : '';
