@@ -124,7 +124,7 @@ class DynamicNode extends FrameListener {
     constructor(props) {
         super(props);
         this.state = {
-            collapsed: this.props.level > 1,
+            collapsed: this.props.level > 0,
             numChildren: props.node.getNumChildren()
         };
     }
