@@ -3,6 +3,7 @@ import {extend, map, each, find} from 'lodash';
 import OutlinerTree from './tree';
 import Node from './node';
 import {fullscreen} from '../../../styles';
+import FrameListener from '../../../utils/FrameListener';
 
 const style = extend({
     overflow: 'auto',
@@ -12,13 +13,29 @@ const style = extend({
     whiteSpace: 'nowrap'
 }, fullscreen);
 
-export default class OutlinerContent extends React.Component {
+export default class OutlinerContent extends FrameListener {
     constructor(props) {
         super(props);
+        this.state = {
+            root: this.findRoot(this.props.sharedState.path)
+        };
+    }
+
+    frame() {
+        if (!this.state.root) {
+            const root = this.findRoot(this.props.sharedState.path);
+            if (root) {
+                this.setState({root});
+            }
+        }
+    }
+
+    componentWillReceiveProps(newProps) {
+        this.setState({ root: this.findRoot(newProps.sharedState.path) });
     }
 
     render() {
-        const root = this.findRoot();
+        const root = this.state.root;
         return <div style={style}>
             {this.renderPath()}
             {root
@@ -58,8 +75,7 @@ export default class OutlinerContent extends React.Component {
         this.props.stateHandler.setPath(path);
     }
 
-    findRoot() {
-        const path = this.props.sharedState.path;
+    findRoot(path) {
         let node = OutlinerTree;
         each(path, name => {
             if (!node)
