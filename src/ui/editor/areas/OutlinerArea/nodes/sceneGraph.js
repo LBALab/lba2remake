@@ -13,5 +13,6 @@ export const SceneGraphNode = {
             value: obj.visible,
             render: (value) => <img src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}/>
         }
-    ]
+    ],
+    onClick: () => {}
 };
