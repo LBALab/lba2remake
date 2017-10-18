@@ -5,7 +5,7 @@ var FlowStatusWebpackPlugin = require('flow-status-webpack-plugin');
 module.exports = {
     entry: "./src/main.jsx",
     output: {
-        path: './www',
+        path: path.join(__dirname, './www'),
         filename: "bundle.js"
     },
     resolve: {
