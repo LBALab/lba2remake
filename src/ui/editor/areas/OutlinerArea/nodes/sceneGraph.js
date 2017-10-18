@@ -1,6 +1,7 @@
 import React from 'react';
 
 export const SceneGraphNode = {
+    type: 'SceneGraphNode',
     dynamic: true,
     needsData: true,
     name: (obj) => {

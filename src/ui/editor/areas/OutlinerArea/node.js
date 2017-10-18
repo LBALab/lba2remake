@@ -85,7 +85,8 @@ export default class Node extends React.Component {
     renderName() {
         const node = this.props.node;
         const selected = this.state.selected;
-        const onClick = node.onClick ? node.onClick.bind(null, this.props.data) : this.props.setRoot.bind(null, this.props.path);
+        const setRoot = this.props.setRoot.bind(null, this.props.path);
+        const onClick = node.onClick ? node.onClick.bind(null, this.props.data, setRoot) : setRoot;
         const nameStyle = {
             cursor: 'pointer',
             background: selected ? 'white' : 'transparent',

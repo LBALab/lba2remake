@@ -53,5 +53,10 @@ export const ZonesNode = {
     numChildren: (scene) => scene.zones.length,
     child: () => Zone,
     childData: (scene, idx) => scene.zones[idx],
-    hasChanged: (scene) => scene.index !== DebugData.scope.scene.index
+    hasChanged: (scene) => scene.index !== DebugData.scope.scene.index,
+    onClick: (scene, setRoot) => {
+        if (scene.isActive) {
+            setRoot();
+        }
+    }
 };

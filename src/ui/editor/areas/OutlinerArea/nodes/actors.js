@@ -62,7 +62,12 @@ export const ActorsNode = {
     numChildren: (scene) => scene.actors.length,
     child: () => Actor,
     childData: (scene, idx) => scene.actors[idx],
-    hasChanged: (scene) => scene.index !== DebugData.scope.scene
+    hasChanged: (scene) => scene.index !== DebugData.scope.scene,
+    onClick: (scene, setRoot) => {
+        if (scene.isActive) {
+            setRoot();
+        }
+    }
 };
 
 function getComportement(actor) {

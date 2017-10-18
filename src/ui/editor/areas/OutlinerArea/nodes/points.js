@@ -19,5 +19,10 @@ export const PointsNode = {
     numChildren: (scene) => scene.points.length,
     child: () => Point,
     childData: (scene, idx) => scene.points[idx],
-    hasChanged: (scene) => scene.index !== DebugData.scope.scene.index
+    hasChanged: (scene) => scene.index !== DebugData.scope.scene.index,
+    onClick: (scene, setRoot) => {
+        if (scene.isActive) {
+            setRoot();
+        }
+    }
 };
