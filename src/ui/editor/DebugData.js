@@ -13,6 +13,9 @@ const DebugData = {
         life: {},
         move: {}
     },
+    metadata: {
+        scenes: {}
+    },
     step: false
 };
 
@@ -32,4 +35,28 @@ export function initSceneDebugData() {
         life: {},
         move: {}
     };
+}
+
+export function renameActor(sceneIndex, actor, name) {
+    const scenes = DebugData.metadata.scenes;
+    if (!(sceneIndex in scenes)) {
+        scenes[sceneIndex] = {};
+    }
+    if (!('actorNames' in scenes[sceneIndex])) {
+        scenes[sceneIndex].actorNames = [];
+    }
+    scenes[sceneIndex].actorNames[actor] = name;
+}
+
+export function getActorName(sceneIndex, actor) {
+    if (actor === 0) {
+        return 'Twinsen';
+    }
+    if (sceneIndex in DebugData.metadata.scenes) {
+        const sceneMetaData = DebugData.metadata.scenes[sceneIndex];
+        if (sceneMetaData.actorNames && sceneMetaData.actorNames[actor]) {
+            return sceneMetaData.actorNames[actor];
+        }
+    }
+    return `Actor${actor}`;
 }

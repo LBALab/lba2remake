@@ -1,5 +1,8 @@
 import React from 'react';
-import DebugData from '../../../DebugData';
+import DebugData, {
+    renameActor,
+    getActorName
+} from '../../../DebugData';
 import {map} from 'lodash';
 import {SceneGraphNode} from './sceneGraph';
 
@@ -10,9 +13,9 @@ const Actor = {
         return actor.index > 0;
     },
     rename: (actor, newName) => {
-        console.log('rename actor', actor.index, newName);
+        renameActor(actor.props.sceneIndex, actor.index, newName);
     },
-    name: (actor) => actor.index === 0 ? 'hero' : `actor_${actor.index}`,
+    name: (actor) => getActorName(actor.props.sceneIndex, actor.index),
     props: (actor) => [
         {
             id: 'visible',

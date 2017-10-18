@@ -1,8 +1,8 @@
 import React from 'react';
 import THREE from 'three';
 import {map, extend, each} from 'lodash';
-import FrameListener from "../utils/FrameListener";
-import DebugData from './DebugData';
+import FrameListener from '../utils/FrameListener';
+import DebugData, {getActorName} from './DebugData';
 
 const POS = new THREE.Vector3();
 
@@ -21,13 +21,13 @@ const typeStyle = {
     actor: {
         borderRadius: 6,
         background: 'rgba(205, 92, 92, 0.6)',
-        fontSize: 16,
-        minWidth: 18,
-        minHeight: 18,
+        fontSize: 14,
+        minWidth: 16,
+        minHeight: 16,
         paddingLeft: 4,
         paddingRight: 4,
         lineHeight: '18px',
-        transform: 'translate(-50%, -50%)'
+        transform: 'translate(-50%, 0)'
     },
     point: {
         background: 'rgba(135, 206, 235, 0.6)',
@@ -36,7 +36,7 @@ const typeStyle = {
         height: 16,
         lineHeight: '16px',
         borderRadius: 3,
-        transform: 'translate(-50%, -50%)'
+        transform: 'translate(-50%, 0)'
     },
     zone: {
         fontSize: 12,
@@ -133,8 +133,8 @@ export default class DebugLabels extends FrameListener {
                     selected: DebugData.selection[type] === obj.index,
                     type: type
                 };
-                if (type === 'actor' && obj.index === 0) {
-                    item.label = 'hero';
+                if (type === 'actor') {
+                    item.label = getActorName(scene.index, obj.index);
                 }
                 if (type === 'zone') {
                     const {r, g, b} = obj.color;

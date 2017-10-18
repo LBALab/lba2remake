@@ -132,8 +132,10 @@ export default class Node extends React.Component {
 
         const onKeyDown = (e) => {
             const key = e.code || e.which || e.keyCode;
-            if (key === 'Enter' || key === 13) {
+            if (key === 'Enter' || key === 13 && e.target.value) {
                 node.rename(this.props.data, e.target.value);
+                this.setState({renaming: false});
+            } else if (key === 'Esc' || key === 27) {
                 this.setState({renaming: false});
             }
         };
@@ -146,7 +148,7 @@ export default class Node extends React.Component {
 
         return <span style={nameStyle} onClick={onClick} onContextMenu={renaming ? null : onContextMenu}>
             {renaming
-                ? <input defaultValue={this.state.name} onBlur={onBlur} onKeyDown={onKeyDown}/>
+                ? <input onBlur={onBlur} onKeyDown={onKeyDown}/>
                 : this.state.name}
         </span>;
     }
