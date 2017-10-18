@@ -10,7 +10,9 @@ export default class Node extends React.Component {
             name: this.name(),
             numChildren: this.numChildren(),
             nodeProps: this.nodeProps(),
-            selected: call('selected', node, this.props.data)
+            selected: call('selected', node, this.props.data),
+            menu: null,
+            renaming: false,
         };
     }
 
@@ -70,6 +72,7 @@ export default class Node extends React.Component {
     render() {
         const fontSize = this.props.fontSize || 18;
         const childFontSize = Math.max(fontSize - 2, 14);
+
         return <div>
             <div style={{fontSize, padding: `${fontSize / 8}px 0`}}>
                 {this.renderCollapseButton()}
@@ -79,7 +82,32 @@ export default class Node extends React.Component {
                 {this.renderProps()}
             </div>
             <div style={{paddingLeft: '2ch'}}>{this.renderChildren(childFontSize)}</div>
+            {this.renderContextMenu()}
         </div>;
+    }
+
+    renderContextMenu() {
+        const menu = this.state.menu;
+        if (menu) {
+            const menuStyle = {
+                position: 'fixed',
+                left: menu.x - 4,
+                top: menu.y - 4,
+                padding: 4,
+                background: '#cccccc',
+                color: '#000000',
+                border: '2px solid black',
+                borderRadius: 4,
+                cursor: 'pointer',
+                boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.5)'
+            };
+
+            const onClick = () => {
+                this.setState({menu: null, renaming: true});
+            };
+
+            return <div style={menuStyle} onClick={onClick} onMouseLeave={() => this.setState({menu: null})}>Rename</div>;
+        }
     }
 
     renderName() {
@@ -87,13 +115,40 @@ export default class Node extends React.Component {
         const selected = this.state.selected;
         const setRoot = this.props.setRoot.bind(null, this.props.path);
         const onClick = node.onClick ? node.onClick.bind(null, this.props.data, setRoot) : setRoot;
+
         const nameStyle = {
             cursor: 'pointer',
             background: selected ? 'white' : 'transparent',
             color: selected ? 'black' : 'inherit',
             padding: selected ? '0 2px' : 0
         };
-        return <span style={nameStyle} onClick={onClick}>{this.state.name}</span>;
+
+        const onContextMenu = (e) => {
+            e.preventDefault();
+            if (node.allowRenaming && node.allowRenaming(this.props.data)) {
+                this.setState({menu: {x: e.clientX, y: e.clientY}});
+            }
+        };
+
+        const onKeyDown = (e) => {
+            const key = e.code || e.which || e.keyCode;
+            if (key === 'Enter' || key === 13) {
+                node.rename(this.props.data, e.target.value);
+                this.setState({renaming: false});
+            }
+        };
+
+        const onBlur = () => {
+            this.setState({renaming: false});
+        };
+
+        const renaming = this.state.renaming;
+
+        return <span style={nameStyle} onClick={onClick} onContextMenu={renaming ? null : onContextMenu}>
+            {renaming
+                ? <input defaultValue={this.state.name} onBlur={onBlur} onKeyDown={onKeyDown}/>
+                : this.state.name}
+        </span>;
     }
 
     renderCollapseButton() {

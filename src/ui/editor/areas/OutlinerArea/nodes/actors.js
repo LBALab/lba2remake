@@ -6,6 +6,12 @@ import {SceneGraphNode} from './sceneGraph';
 const Actor = {
     dynamic: true,
     needsData: true,
+    allowRenaming: (actor) => {
+        return actor.index > 0;
+    },
+    rename: (actor, newName) => {
+        console.log('rename actor', actor.index, newName);
+    },
     name: (actor) => actor.index === 0 ? 'hero' : `actor_${actor.index}`,
     props: (actor) => [
         {
