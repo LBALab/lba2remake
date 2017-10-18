@@ -1,24 +1,19 @@
 import DebugData from '../../../DebugData';
 
-export const PointsNode = {
-    name: 'Points',
+const Point = {
     dynamic: true,
-    getNumChildren: () => {
-        const scene = DebugData.scope.scene;
-        return scene ? scene.points.length : 0;
-    },
-    childNeedsUpdate: (idx, value) => {
-        return value.selected !== (DebugData.selection.point === idx);
-    },
-    getChild: (idx) => {
-        const scene = DebugData.scope.scene;
-        if (scene) {
-            return {
-                name: `point_${idx}`,
-                selected: DebugData.selection.point === idx,
-                onClick: () => {DebugData.selection.point = idx},
-                children: []
-            };
-        }
-    }
+    needsData: true,
+    name: (point) => `point_${point.index}`,
+    selected: (point) => DebugData.selection.point === point.index,
+    onClick: (point) => {DebugData.selection.point = point.index},
+};
+
+export const PointsNode = {
+    dynamic: true,
+    needsData: true,
+    name: () => 'Points',
+    numChildren: (scene) => scene.points.length,
+    child: () => Point,
+    childData: (scene, idx) => scene.points[idx],
+    hasChanged: (scene) => scene.index !== DebugData.scope.scene.index
 };

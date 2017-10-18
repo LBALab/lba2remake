@@ -6,9 +6,9 @@ import {PointsNode} from './points';
 import {SceneGraphNode} from './sceneGraph';
 
 const sceneChildren = [
-    ActorsNode/*,
+    ActorsNode,
     ZonesNode,
-    PointsNode,
+    PointsNode/*,
     SceneGraphNode*/
 ];
 

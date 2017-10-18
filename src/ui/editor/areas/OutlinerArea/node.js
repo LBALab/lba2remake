@@ -9,7 +9,8 @@ export default class Node extends React.Component {
             collapsed: this.props.level > (node.dynamic ? 0 : 1),
             name: this.name(),
             numChildren: this.numChildren(),
-            nodeProps: this.nodeProps()
+            nodeProps: this.nodeProps(),
+            selected: call('selected', node, this.props.data)
         };
     }
 
@@ -60,6 +61,10 @@ export default class Node extends React.Component {
                 }
             }
         }
+        const selected = call('selected', this.props.node, this.props.data);
+        if (selected !== this.state.selected) {
+            this.setState({selected});
+        }
     }
 
     render() {
@@ -79,7 +84,7 @@ export default class Node extends React.Component {
 
     renderName() {
         const node = this.props.node;
-        const selected = call('selected', node, this.props.data);
+        const selected = this.state.selected;
         const onClick = node.onClick ? node.onClick.bind(null, this.props.data) : this.props.setRoot.bind(null, this.props.path);
         const nameStyle = {
             cursor: 'pointer',
