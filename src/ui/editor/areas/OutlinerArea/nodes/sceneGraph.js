@@ -14,7 +14,12 @@ export const SceneGraphNode = {
         {
             id: 'visible',
             value: obj.visible,
-            render: (value) => <img src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}/>
+            render: (value) => {
+                const toggleVisible = () => {
+                    obj.visible = !obj.visible;
+                };
+                return <img style={{cursor: 'pointer'}} onClick={toggleVisible} src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}/>;
+            }
         }
     ],
     onClick: () => {}
