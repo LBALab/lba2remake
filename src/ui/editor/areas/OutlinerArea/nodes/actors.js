@@ -1,6 +1,7 @@
 import React from 'react';
 import DebugData from '../../../DebugData';
 import {map} from 'lodash';
+import {SceneGraphNode} from './sceneGraph';
 
 const Actor = {
     dynamic: true,
@@ -47,6 +48,9 @@ const Actor = {
                 : ''
         }
     ],
+    numChildren: (actor) => actor.threeObject ? 1 : 0,
+    child: () => SceneGraphNode,
+    childData: (actor) => actor.threeObject,
     selected: (actor) => DebugData.selection.actor === actor.index,
     onClick: (actor) => {DebugData.selection.actor = actor.index},
 };
