@@ -5,8 +5,8 @@ import {GameNode} from './nodes/game';
 const OutlinerTree = {
     name: 'Data',
     children: [
-        GameNode,
         SceneNode,
+        GameNode,
         LocationsNode
     ]
 };
