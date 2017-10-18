@@ -135,6 +135,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             }
             loadSteps.threeScene = ['scenery', (data, callback) => {
                 const threeScene = new THREE.Scene();
+                threeScene.name = `${indexInfo.isIsland ? '3D' : 'iso'}_scene`;
                 threeScene.add(data.scenery.threeObject);
                 callback(null, threeScene);
             }];
@@ -198,6 +199,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
 
 function loadSceneNode(index, indexInfo, data) {
     const sceneNode = indexInfo.isIsland ? new THREE.Object3D() : new THREE.Scene();
+    sceneNode.name = `scene_${index}`;
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
         const section = data.scenery.sections[sectionIdx];

@@ -141,6 +141,7 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
             model.mesh.quaternion.copy(actor.physics.orientation);
             actor.model = model;
             actor.threeObject = model.mesh;
+            actor.threeObject.name = `actor_${props.index}`;
             callback(null, actor);
         });
     } else {

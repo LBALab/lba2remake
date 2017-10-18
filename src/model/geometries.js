@@ -108,6 +108,7 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
 
             const modelMesh = new THREE.Mesh(bufferGeometry, material);
             modelMesh.frustumCulled = false;
+            modelMesh.name = name;
             object.add(modelMesh);
         }
 
@@ -119,6 +120,7 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
             linebufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(lineBones), 1));
 
             const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
+            lineSegments.name = 'lines';
             object.add(lineSegments);
         }
     });

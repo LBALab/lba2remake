@@ -23,7 +23,7 @@ export function loadIsometricScenery(renderer, entry, callback) {
                     skyColor: [0, 0, 0]
                 }
             },
-            threeObject: loadMesh(renderer, grid),
+            threeObject: loadMesh(renderer, grid, entry),
             physics: {
                 processCollisions: processCollisions.bind(null, grid)
             },
@@ -32,7 +32,7 @@ export function loadIsometricScenery(renderer, entry, callback) {
     });
 }
 
-function loadMesh(renderer, grid) {
+function loadMesh(renderer, grid, entry) {
     const geometries = {
         positions: [],
         centers: [],
@@ -69,6 +69,7 @@ function loadMesh(renderer, grid) {
     mesh.position.set(2, 0, 0);
     mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
     mesh.frustumCulled = false;
+    mesh.name = `scenery_iso_${entry}`;
 
     return mesh;
 }

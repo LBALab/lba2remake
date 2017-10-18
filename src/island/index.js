@@ -48,6 +48,7 @@ export function loadIslandScenery(name, ambience, callback) {
 
 function loadIslandNode(props, files, ambience) {
     const islandObject = new THREE.Object3D();
+    islandObject.name = `scenery_${props.name}`;
     islandObject.matrixAutoUpdate = false;
     const layout = loadLayout(files.ile);
     const data = {
@@ -108,6 +109,7 @@ function loadIslandNode(props, files, ambience) {
 
 function loadSky(geometries) {
     const sky = new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 1, 1), geometries.sky.material);
+    sky.name = 'sky';
     sky.rotateX(Math.PI / 2.0);
     sky.position.y = 2.0;
     return sky;
