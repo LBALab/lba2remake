@@ -34,7 +34,7 @@ const Siblings = {
     onClick: () => {}
 };
 
-const VarCube = makeVariables('cube', 'Variables', () => {
+const VarCube = makeVariables('varcube', 'Variables', () => {
     const scene = DebugData.scope.scene;
     if (scene) {
         return scene.variables;

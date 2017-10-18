@@ -1,6 +1,6 @@
 const Var = {
     dynamic: true,
-    name: ({type, value, idx}) => `var${type}_${idx}`,
+    name: ({type, value, idx}) => `${type}_${idx}`,
     props: ({value}) => [
         {
             id: 'value',
