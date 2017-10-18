@@ -5,6 +5,7 @@ import {ZonesNode} from './zones';
 import {PointsNode} from './points';
 import {SceneGraphNode} from './sceneGraph';
 import {size, sortBy, map} from 'lodash';
+import {makeVariables} from "./variables";
 
 const baseChildren = [
     ActorsNode,
@@ -33,6 +34,14 @@ const Siblings = {
     onClick: () => {}
 };
 
+const VarCube = makeVariables('cube', 'Variables', () => {
+    const scene = DebugData.scope.scene;
+    if (scene) {
+        return scene.variables;
+    }
+    return [];
+});
+
 const getChildren = () => {
     const scene = DebugData.scope.scene;
     if (scene) {
@@ -40,6 +49,7 @@ const getChildren = () => {
         if (scene.sideScenes) {
             children.push(Siblings);
         }
+        children.push(VarCube);
         if (scene.threeScene) {
             children.push(SceneGraphNode);
         }
