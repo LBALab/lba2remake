@@ -58,7 +58,7 @@ export const ActorsNode = {
     numChildren: (scene) => scene.actors.length,
     child: () => Actor,
     childData: (scene, idx) => scene.actors[idx],
-    hasChanged: (scene) => scene.index !== DebugData.scope.scene.index
+    hasChanged: (scene) => scene.index !== DebugData.scope.scene
 };
 
 function getComportement(actor) {

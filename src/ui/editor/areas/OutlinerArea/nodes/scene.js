@@ -8,8 +8,8 @@ import {SceneGraphNode} from './sceneGraph';
 const sceneChildren = [
     ActorsNode,
     ZonesNode,
-    PointsNode/*,
-    SceneGraphNode*/
+    PointsNode,
+    SceneGraphNode
 ];
 
 export const SceneNode = {
@@ -20,7 +20,14 @@ export const SceneNode = {
         return scene ? sceneChildren.length : 0;
     },
     child: (data, idx) => sceneChildren[idx],
-    childData: () => DebugData.scope.scene,
+    childData: (data, idx) => {
+        const scene = DebugData.scope.scene;
+        if (idx === sceneChildren.length - 1) {
+            return scene && scene.threeScene;
+        } else {
+            return scene;
+        }
+    },
     props: () => {
         const scene = DebugData.scope.scene;
         return scene ? [

@@ -88,27 +88,25 @@ export default class OutlinerContent extends FrameListener {
         let node = OutlinerTree;
         let data = null;
 
-        const getName = (n, d, i) => n.dynamic ? n.name(d, i) : n.name;
         each(path, name => {
             if (!node)
                 return;
-            if (node.dynamic) {
-                let childNode = null;
-                for (let i = 0; i < node.numChildren(); ++i) {
-                    const child = node.child(data, i);
-                    if (child) {
-                        const childName = getName(child, data, i);
-                        if (childName === name) {
-                            childNode = child;
-                            data = node.childData(data, i);
-                            break;
-                        }
+
+            let childNode = null;
+            const numChildren = node.dynamic ? node.numChildren(data) : node.children.length;
+            for (let i = 0; i < numChildren; ++i) {
+                const child = node.dynamic ? node.child(data, i) : node.children[i];
+                if (child) {
+                    const childData = node.dynamic ? node.childData(data, i) : null;
+                    const childName = child.dynamic ? child.name(childData, i) : child.name;
+                    if (childName === name) {
+                        childNode = child;
+                        data = childData;
+                        break;
                     }
                 }
-                node = childNode;
-            } else {
-                node = find(node.children, (child, i) => getName(child, data, i) === name);
             }
+            node = childNode;
         });
         return {node, data};
     }
