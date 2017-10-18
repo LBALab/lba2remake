@@ -22,9 +22,10 @@ export default class OutlinerContent extends FrameListener {
     }
 
     frame() {
-        if (!this.state.root) {
-            const root = this.findRoot(this.props.sharedState.path);
-            if (root) {
+        let root = this.state.root;
+        if (!root.node || (root.node.hasChanged && root.node.hasChanged(root.data))) {
+            root = this.findRoot(this.props.sharedState.path);
+            if (root.node) {
                 this.setState({root});
             }
         }
@@ -35,17 +36,26 @@ export default class OutlinerContent extends FrameListener {
     }
 
     render() {
-        const root = this.state.root;
         return <div style={style}>
             {this.renderPath()}
-            {root
-                ? <Node node={root}
-                        setRoot={this.setRoot.bind(this)}
-                        path={this.props.sharedState.path}
-                        ticker={this.props.ticker}
-                        level={0} />
-                : 'Node is not available.'}
+            {this.renderContent()}
         </div>;
+    }
+
+    renderContent() {
+        const root = this.state.root;
+        const path = this.props.sharedState.path;
+        if (root.node) {
+            return <Node key={path.join('/')}
+                         node={root.node}
+                         data={root.data}
+                         setRoot={this.setRoot.bind(this)}
+                         path={this.props.sharedState.path}
+                         ticker={this.props.ticker}
+                         level={0} />;
+        } else {
+            return 'Node is not available.';
+        }
     }
 
     renderPath() {
@@ -57,12 +67,11 @@ export default class OutlinerContent extends FrameListener {
         if (path.length > 0) {
             return <div style={{paddingBottom: 8}}>
                 {renderElement([], OutlinerTree.name)}
-                {map(path, (elem, idx) => {
+                {map(path, (name, idx) => {
                     const subpath = path.slice(0, idx + 1);
-                    const e = elem.split(':');
                     return <span key={idx}>
                         &nbsp;<span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
-                        {renderElement(subpath, e[e.length - 1])}
+                        {renderElement(subpath, name)}
                     </span>;
                 })}
             </div>
@@ -77,23 +86,30 @@ export default class OutlinerContent extends FrameListener {
 
     findRoot(path) {
         let node = OutlinerTree;
+        let data = null;
+
+        const getName = (n, d, i) => n.dynamic ? n.name(d, i) : n.name;
         each(path, name => {
             if (!node)
                 return;
             if (node.dynamic) {
                 let childNode = null;
-                for (let i = 0; i < node.getNumChildren(); ++i) {
-                    const child = node.getChild(i);
-                    if (child && child.name === name) {
-                        childNode = child;
-                        break;
+                for (let i = 0; i < node.numChildren(); ++i) {
+                    const child = node.child(data, i);
+                    if (child) {
+                        const childName = getName(child, data, i);
+                        if (childName === name) {
+                            childNode = child;
+                            data = node.childData(data, i);
+                            break;
+                        }
                     }
                 }
                 node = childNode;
             } else {
-                node = find(node.children, child => child.name === name);
+                node = find(node.children, (child, i) => getName(child, data, i) === name);
             }
         });
-        return node;
+        return {node, data};
     }
 }
