@@ -30,7 +30,7 @@ const Zone = {
             render: (value) => {
                 const {r, g, b} = zone.color;
                 const color = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},1)`;
-                let label = value;
+                let label = `${value} (${zone.props.snap})`;
                 switch (value) {
                     case 'CUBE':
                         label = `GOTO -> ${zone.props.snap}`;
