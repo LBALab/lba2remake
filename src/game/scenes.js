@@ -172,7 +172,6 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                 points: data.points,
                 zones: data.zones,
                 isActive: false,
-                variables: createSceneVariables(),
                 zoneState: { listener: null, ended: false },
                 getActor(index) {
                     return find(this.actors, function(obj) { return obj.index === index; });
@@ -189,6 +188,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                 scene.section = islandSceneMapping[index].section;
             }
             loadScripts(params, game, scene);
+            scene.variables = createSceneVariables(scene);
             // Kill twinsen if side scene
             if (parent) {
                 killActor(scene.getActor(0));
@@ -246,11 +246,23 @@ function loadSideScenes(sceneManager, params, game, renderer, sceneMap, index, p
     });
 }
 
-function createSceneVariables() {
-    const scene = [];
-    for (let i = 0; i < 256; ++i) {
-        scene[i] = 0;
+function createSceneVariables(scene) {
+    let maxVarCubeIndex = -1;
+    each(scene.actors, actor => {
+        const commands = actor.scripts.life.commands;
+        each(commands, cmd => {
+            if (cmd.op.command === 'SET_VAR_CUBE') {
+                maxVarCubeIndex = Math.max(cmd.args[0].value, maxVarCubeIndex);
+            }
+            if (cmd.condition && cmd.condition.op.command === 'VAR_CUBE') {
+                maxVarCubeIndex = Math.max(cmd.condition.param.value, maxVarCubeIndex);
+            }
+        });
+    });
+    const variables = [];
+    for (let i = 0; i <= maxVarCubeIndex; ++i) {
+        variables.push(0);
     }
-    return scene;
+    return variables;
 }
 
