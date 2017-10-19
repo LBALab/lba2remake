@@ -1,10 +1,14 @@
-import DebugData from '../../../DebugData';
+import DebugData, {getObjectName, renameObject} from '../../../DebugData';
 import {SceneGraphNode} from './sceneGraph';
 
 const Point = {
     dynamic: true,
     needsData: true,
-    name: (point) => `point_${point.index}`,
+    allowRenaming: () => true,
+    rename: (point, newName) => {
+        renameObject('point', point.props.sceneIndex, point.index, newName);
+    },
+    name: (point) => getObjectName('point', point.props.sceneIndex, point.index),
     numChildren: (point) => point.threeObject ? 1 : 0,
     child: () => SceneGraphNode,
     childData: (point) => point.threeObject,

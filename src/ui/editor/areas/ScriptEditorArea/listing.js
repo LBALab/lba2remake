@@ -1,7 +1,7 @@
 import Indent from '../../../../scripting/indent';
 import {cloneDeep, map, each} from 'lodash';
 import {getRotation} from '../../../../utils/lba';
-import {getActorName} from '../../DebugData';
+import {getObjectName} from '../../DebugData';
 
 export function getDebugListing(type, scene, actor) {
     if (scene && actor) {
@@ -66,8 +66,10 @@ function mapArguments(scene, actor, cmd) {
             break;
     }
     each(args, arg => {
-        if (arg.type === 'actor') {
-            arg.value = getActorName(scene.index, arg.value);
+        if (arg.type === 'actor'
+            || arg.type === 'zone'
+            || arg.type === 'point') {
+            arg.value = getObjectName(arg.type, scene.index, arg.value);
         }
     });
     return args;

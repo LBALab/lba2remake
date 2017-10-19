@@ -2,7 +2,7 @@ import React from 'react';
 import THREE from 'three';
 import {map, extend, each} from 'lodash';
 import FrameListener from '../utils/FrameListener';
-import DebugData, {getActorName} from './DebugData';
+import DebugData, {getObjectName} from './DebugData';
 
 const POS = new THREE.Vector3();
 
@@ -32,8 +32,8 @@ const typeStyle = {
     point: {
         background: 'rgba(135, 206, 235, 0.6)',
         fontSize: 12,
-        width: 16,
-        height: 16,
+        minWidth: 16,
+        minHeight: 16,
         lineHeight: '16px',
         borderRadius: 3,
         transform: 'translate(-50%, 0)'
@@ -54,6 +54,11 @@ const selectedStyle = {
         opacity: 1,
         background: 'red',
         color: 'white'
+    },
+    point: {
+        opacity: 1,
+        background: 'white',
+        color: 'black'
     },
     zone: {
         opacity: 1,
@@ -129,48 +134,13 @@ export default class DebugLabels extends FrameListener {
                     index: obj.index,
                     x: POS.x,
                     y: POS.y,
-                    label: obj.index,
+                    label: type === 'point' ? obj.index : getObjectName(type, scene.index, obj.index),
                     selected: DebugData.selection[type] === obj.index,
                     type: type
                 };
-                if (type === 'actor') {
-                    item.label = getActorName(scene.index, obj.index);
-                }
                 if (type === 'zone') {
                     const {r, g, b} = obj.color;
                     item.color = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},0.6)`;
-                    switch (obj.props.type) {
-                        case 0:
-                            item.label += ` [goto=${obj.props.snap}]`;
-                            break;
-                        case 1:
-                            item.label += ` [camera]`;
-                            break;
-                        case 2:
-                            item.label += ` [sceneric]`;
-                            break;
-                        case 3:
-                            item.label += ` [fragment]`;
-                            break;
-                        case 4:
-                            item.label += ` [bonus]`;
-                            break;
-                        case 5:
-                            item.label += ` [text=${obj.props.snap}]`;
-                            break;
-                        case 6:
-                            item.label += ` [ladder]`;
-                            break;
-                        case 7:
-                            item.label += ` [conveyor]`;
-                            break;
-                        case 8:
-                            item.label += ` [spike]`;
-                            break;
-                        case 9:
-                            item.label += ` [rail]`;
-                            break;
-                    }
                 }
                 items.push(item);
             }

@@ -1,5 +1,5 @@
 import React from 'react';
-import DebugData from '../../../DebugData';
+import DebugData, {getObjectName, renameObject} from '../../../DebugData';
 import {SceneGraphNode} from './sceneGraph';
 
 const ZONE_TYPE = [
@@ -18,7 +18,11 @@ const ZONE_TYPE = [
 const Zone = {
     dynamic: true,
     needsData: true,
-    name: (zone) => `zone_${zone.index}`,
+    allowRenaming: () => true,
+    rename: (zone, newName) => {
+        renameObject('zone', zone.props.sceneIndex, zone.index, newName);
+    },
+    name: (zone) => getObjectName('zone', zone.props.sceneIndex, zone.index),
     props: (zone) => [
         {
             id: 'type',

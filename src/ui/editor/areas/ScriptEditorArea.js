@@ -3,7 +3,7 @@ import ScriptEditor from './ScriptEditorArea/scriptEditor';
 import {editor} from '../../styles';
 import FrameListener from '../../utils/FrameListener';
 import {map} from 'lodash';
-import DebugData from '../DebugData';
+import DebugData, {getObjectName} from '../DebugData';
 
 export class ScriptMenu extends FrameListener {
     constructor(props) {
@@ -15,7 +15,7 @@ export class ScriptMenu extends FrameListener {
         const {scene, game} = DebugData.scope;
         const selectedActor = DebugData.selection.actor;
         if (this.scene !== scene) {
-            this.setState({actors: map(scene && scene.actors, actor => actor.index)});
+            this.setState({actors: map(scene && scene.actors, actor => getObjectName('actor', scene.index, actor.index))});
             this.scene = scene;
         }
         if (this.selectedActor !== selectedActor) {
@@ -51,9 +51,8 @@ export class ScriptMenu extends FrameListener {
         return <span>
             {paused ? <img style={editor.icon} onClick={step} src="editor/icons/step.png"/> : null}&nbsp;
             <img style={editor.icon} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.png`}/>&nbsp;
-            <b>Actor</b>
             <select style={editor.select} value={this.state.selectedActor} onChange={onChange}>
-                {map(this.state.actors, actor => <option key={actor} value={actor}>{actor}</option>)}
+                {map(this.state.actors, (actor, idx) => <option key={idx} value={idx}>{actor}</option>)}
             </select>
         </span>;
     }

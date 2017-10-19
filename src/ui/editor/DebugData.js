@@ -37,30 +37,35 @@ export function initSceneDebugData() {
     };
 }
 
-export function renameActor(sceneIndex, actor, name) {
+export function renameObject(type, sceneIndex, objIndex, name) {
     const scenes = DebugData.metadata.scenes;
     if (!(sceneIndex in scenes)) {
         scenes[sceneIndex] = {};
     }
-    if (!('actorNames' in scenes[sceneIndex])) {
-        scenes[sceneIndex].actorNames = [];
+    const key = `${type}Names`;
+    if (!(key in scenes[sceneIndex])) {
+        scenes[sceneIndex][key] = [];
     }
-    scenes[sceneIndex].actorNames[actor] = name;
+    scenes[sceneIndex][key][objIndex] = name;
     saveSceneMetaData(sceneIndex);
 }
 
-export function getActorName(sceneIndex, actor) {
-    if (actor === 0) {
-        return 'Twinsen';
-    } else if (actor === 1) {
-        return 'MecaPinguin';
-    } else if (sceneIndex in DebugData.metadata.scenes) {
-        const sceneMetaData = DebugData.metadata.scenes[sceneIndex];
-        if (sceneMetaData.actorNames && sceneMetaData.actorNames[actor]) {
-            return sceneMetaData.actorNames[actor];
+export function getObjectName(type, sceneIndex, objIndex) {
+    if (type === 'actor') {
+        if (objIndex === 0) {
+            return 'Twinsen';
+        } else if (objIndex === 1) {
+            return 'MecaPinguin';
         }
     }
-    return `Actor${actor}`;
+    const key = `${type}Names`;
+    if (sceneIndex in DebugData.metadata.scenes) {
+        const sceneMetaData = DebugData.metadata.scenes[sceneIndex];
+        if (sceneMetaData[key] && sceneMetaData[key][objIndex]) {
+            return sceneMetaData[key][objIndex];
+        }
+    }
+    return `${type}${objIndex}`;
 }
 
 export function loadSceneMetaData(sceneIndex, callback) {
