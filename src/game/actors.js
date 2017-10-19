@@ -6,6 +6,7 @@ import type {Model} from '../model';
 import {loadModel} from '../model';
 import {loadAnimState, resetAnimState} from '../model/animState';
 import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
+import {getObjectName} from "../ui/editor/DebugData";
 
 type ActorFlags = {
     hasCollisions: boolean,
@@ -15,6 +16,7 @@ type ActorFlags = {
 
 type ActorProps = {
     index: number,
+    sceneIndex: number,
     pos: [number, number, number],
     life: number,
     flags: ActorFlags,
@@ -141,7 +143,9 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
             model.mesh.quaternion.copy(actor.physics.orientation);
             actor.model = model;
             actor.threeObject = model.mesh;
-            actor.threeObject.name = `actor_${props.index}`;
+            if (actor.threeObject) {
+                actor.threeObject.name = `actor:${getObjectName('actor', props.sceneIndex, props.index)}`;
+            }
             callback(null, actor);
         });
     } else {
