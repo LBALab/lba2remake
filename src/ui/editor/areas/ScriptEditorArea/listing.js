@@ -1,5 +1,5 @@
 import Indent from '../../../../scripting/indent';
-import {cloneDeep, map, each} from 'lodash';
+import {cloneDeep, map, each, find} from 'lodash';
 import {getRotation} from '../../../../utils/lba';
 import {getObjectName} from '../../DebugData';
 
@@ -20,8 +20,8 @@ function mapCommands(scene, actor, commands) {
         const newCmd = {
             name: cmd.op.command,
             args: mapArguments(scene, actor, cmd),
-            condition: mapCondition(cmd.condition),
-            operator: mapOperator(cmd.operator),
+            condition: mapCondition(scene, cmd.condition),
+            operator: mapOperator(scene, cmd.operator),
             section: cmd.section
         };
         indent = processIndent(newCmd, prevCommand, cmd.op, indent);
@@ -58,6 +58,7 @@ function mapArguments(scene, actor, cmd) {
         case 'BETA':
             args[0].value = getRotation(args[0].value, 0, 1) - 90;
             break;
+        case 'MESSAGE_ZOE':
         case 'MESSAGE':
             args[0].text = scene.data.texts[args[0].value].value;
             break;
@@ -66,29 +67,25 @@ function mapArguments(scene, actor, cmd) {
             break;
     }
     each(args, arg => {
-        if (arg.type === 'actor'
-            || arg.type === 'zone'
-            || arg.type === 'point') {
-            arg.value = getObjectName(arg.type, scene.index, arg.value);
-        }
+        arg.value = mapDataName(scene, arg);
     });
     return args;
 }
 
-function mapCondition(condition) {
+function mapCondition(scene, condition) {
     if (condition) {
         return {
             name: condition.op.command,
-            param: condition.param && condition.param.value
+            param: mapDataName(scene, condition.param)
         };
     }
 }
 
-function mapOperator(operator) {
+function mapOperator(scene, operator) {
     if (operator) {
         return {
             name: operator.op.command,
-            operand: operator.operand
+            operand: mapDataName(scene, operator.operand)
         };
     }
 }
@@ -119,5 +116,26 @@ function processIndent(cmd, prevCmd, op, indent) {
         case Indent.KEEP:
             cmd.indent = indent;
             return indent;
+    }
+}
+
+export function mapDataName(scene, data) {
+    if (!data) {
+        return null;
+    } else if (data.type === 'actor' || data.type === 'point') {
+        if (data.value === -1)
+            return `<no-${data.type}>`;
+        return getObjectName(data.type, scene.index, data.value);
+    } else if (data.type === 'zone') {
+        if (data.value === -1)
+            return '<no-zone>';
+        const zone = find(scene.zones, zone => zone.props.type === 2 && zone.props.snap === data.value);
+        if (zone) {
+            return getObjectName('zone', scene.index, zone.index);
+        } else {
+            return '<no-zone>';
+        }
+    } else {
+        return data.value;
     }
 }

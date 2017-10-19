@@ -7,8 +7,7 @@ export function COL() {
     return this.actor.hasCollidedWithActor;
 }
 
-export function COL_OBJ(index) {
-    const actor = this.scene.getActor(index);
+export function COL_OBJ(actor) {
     if (actor.life <= 0) {
         return -1;
     }

@@ -82,7 +82,7 @@ export const LifeOpcode = [
     { opcode: 0x4B, command: "SUB_FUEL", callback: lf.SUB_FUEL, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x4C, command: "SET_GRM", callback: lf.SET_GRM, args: ['Uint8', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x4D, command: "SET_CHANGE_CUBE", callback: lf.SET_CHANGE_CUBE, args: ['Uint8', 'Uint8'], indent: Indent.KEEP},
-    { opcode: 0x4E, command: "MESSAGE_ZOE", callback: lf.MESSAGE_ZOE, args: ['Uint16'], indent: Indent.KEEP},
+    { opcode: 0x4E, command: "MESSAGE_ZOE", callback: lf.MESSAGE_ZOE, args: ['Uint16'], cmdState: true, indent: Indent.KEEP},
     { opcode: 0x4F, command: "FULL_POINT", callback: lf.FULL_POINT, indent: Indent.KEEP},
     { opcode: 0x50, command: "BETA", callback: cm.BETA, args: ['Int16'], indent: Indent.KEEP},
     { opcode: 0x51, command: "FADE_TO_PAL", callback: lf.FADE_TO_PAL, args: ['Uint8'], indent: Indent.KEEP},
