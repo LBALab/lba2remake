@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const express = require('express');
 const createWebpackMiddleware = require('webpack-express-middleware');
 const app = express();
@@ -11,6 +12,8 @@ app.set('host', process.env.HOST || '0.0.0.0');
 
 app.post('/metadata/scene/:sceneId', function (req, res) {
     console.log('saving scene metadata, scene=', req.params.sceneId);
+    const ws = fs.createWriteStream(`./www/metadata/scene_${req.params.sceneId}.json`);
+    req.pipe(ws);
     res.end();
 });
 

@@ -10,7 +10,7 @@ const Actor = {
     dynamic: true,
     needsData: true,
     allowRenaming: (actor) => {
-        return actor.index > 0;
+        return actor.index > 1;
     },
     rename: (actor, newName) => {
         renameActor(actor.props.sceneIndex, actor.index, newName);

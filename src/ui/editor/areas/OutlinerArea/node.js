@@ -138,6 +138,7 @@ export default class Node extends React.Component {
             } else if (key === 'Esc' || key === 27) {
                 this.setState({renaming: false});
             }
+            e.stopPropagation();
         };
 
         const onBlur = () => {

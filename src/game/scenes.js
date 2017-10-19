@@ -18,7 +18,7 @@ import {loadPoint} from './points';
 import {loadZone} from './zones';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initCameraMovement} from './loop/cameras';
-import {initSceneDebugData} from '../ui/editor/DebugData';
+import {initSceneDebugData, loadSceneMetaData} from '../ui/editor/DebugData';
 
 export function createSceneManager(params, game, renderer, callback: Function) {
     let scene = null;
@@ -124,7 +124,8 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
         const loadSteps = {
             actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, envInfo, sceneData.ambience), callback) },
             points: (callback) => { async.map(sceneData.points, loadPoint, callback) },
-            zones: (callback) => { async.map(sceneData.zones, loadZone, callback) }
+            zones: (callback) => { async.map(sceneData.zones, loadZone, callback) },
+            metadatae: loadSceneMetaData.bind(null, index)
         };
 
         if (!parent) {

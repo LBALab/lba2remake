@@ -39,7 +39,7 @@ module.exports = {
     },
     devServer: {
         inline: true,
-        contentBase: "./www"
+        contentBase: path.join(__dirname, './www')
     },
     plugins: [
         new webpack.DefinePlugin({
