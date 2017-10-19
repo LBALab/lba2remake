@@ -123,9 +123,9 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
         };
         const loadSteps = {
             metadata: (callback) => params.editor ? loadSceneMetaData(index, callback) : callback(),
-            actors: ['metadata', (md, callback) => { async.map(sceneData.actors, loadActor.bind(null, envInfo, sceneData.ambience), callback) }],
-            points: ['metadata', (md, callback) => { async.map(sceneData.points, loadPoint, callback) }],
-            zones: ['metadata', (md, callback) => { async.map(sceneData.zones, loadZone, callback) }],
+            actors: ['metadata', (data, callback) => { async.map(sceneData.actors, loadActor.bind(null, envInfo, sceneData.ambience), callback) }],
+            points: ['metadata', (data, callback) => { async.map(sceneData.points, loadPoint, callback) }],
+            zones: ['metadata', (data, callback) => { async.map(sceneData.zones, loadZone, callback) }],
         };
 
         if (!parent) {
