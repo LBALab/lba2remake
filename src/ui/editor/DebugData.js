@@ -133,7 +133,7 @@ function saveSceneMetaData(sceneIndex) {
     request.onload = function() {
         console.log(`Saved scene ${sceneIndex} metadata`);
     };
-    request.send(JSON.stringify(DebugData.metadata.scenes[sceneIndex]));
+    request.send(JSON.stringify(DebugData.metadata.scenes[sceneIndex], null, 2));
 }
 
 export function loadGameMetaData() {
@@ -157,5 +157,5 @@ function saveGameMetaData() {
     request.onload = function() {
         console.log(`Saved game metadata`);
     };
-    request.send(JSON.stringify(DebugData.metadata.game));
+    request.send(JSON.stringify(DebugData.metadata.game, null, 2));
 }
