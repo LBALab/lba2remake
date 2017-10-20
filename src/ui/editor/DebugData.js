@@ -59,17 +59,20 @@ export function renameVar(varDef, name) {
             if (!('varcubes' in scenes[scene.index])) {
                 scenes[scene.index].varcubes = [];
             }
-            scenes[scene.index].varcubes[varDef.idx] = name;
+            if (!scenes[scene.index].varcubes[varDef.idx]) {
+                scenes[scene.index].varcubes[varDef.idx] = {};
+            }
+            scenes[scene.index].varcubes[varDef.idx].name = name;
             saveSceneMetaData(scene.index);
         }
     }
 }
 
-export function getVarName(varDef) {
+export function getVarInfo(varDef) {
     if (varDef.type === 'vargame') {
         const game = DebugData.metadata.game;
         if (game.vargames && game.vargames[varDef.idx]) {
-            return game.vargames[varDef.idx].name;
+            return game.vargames[varDef.idx];
         }
     } else if (varDef.type === 'varcube') {
         const scene = DebugData.scope.scene;
@@ -79,6 +82,13 @@ export function getVarName(varDef) {
                 return sceneMD.varcubes[varDef.idx];
             }
         }
+    }
+}
+
+export function getVarName(varDef) {
+    const info = getVarInfo(varDef);
+    if (info) {
+        return info.name;
     }
     return `${varDef.type}${varDef.idx}`;
 }

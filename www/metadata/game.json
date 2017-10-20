@@ -48,6 +48,18 @@
     null,
     null,
     null,
-    "zoe_status?"
+    {
+      "name": "zoe_exit_state",
+      "type": "enum",
+      "enumValues": {
+        "0": "present",
+        "1": "exiting",
+        "2": "outside",
+        "3": "outside_for_a_while",
+        "4": "busy_outside",
+        "5": "reprimand_twinsen",
+        "6": "end_of_quarrel"
+      }
+    }
   ]
 }

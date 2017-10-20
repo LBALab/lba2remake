@@ -1,4 +1,5 @@
-import {getVarName, renameVar} from '../../../DebugData';
+import React from 'react';
+import {getVarInfo, getVarName, renameVar} from '../../../DebugData';
 
 const Var = {
     dynamic: true,
@@ -10,8 +11,18 @@ const Var = {
     props: (varDef) => [
         {
             id: 'value',
-            value: varDef.value,
-            render: (value) => value
+            value: varDef.value(),
+            render: (value) => {
+                const info = getVarInfo(varDef);
+                if (info) {
+                    if (info.type === 'boolean') {
+                        return <i style={{color: value === 1 ? '#00ff00' : '#ff0000'}}>{value === 1 ? 'true' : 'false'}</i>;
+                    } else if (info.type === 'enum') {
+                        return info.enumValues[value];
+                    }
+                }
+                return value;
+            }
         }
     ],
     onClick: () => {}
@@ -24,10 +35,9 @@ export function makeVariables(type, name, getVars) {
         numChildren: () => getVars().length,
         child: () => Var,
         childData: (data, idx) => {
-            const variables = getVars();
             return {
                 type: type,
-                value: variables[idx],
+                value: () => getVars()[idx],
                 idx
             };
         }

@@ -28,6 +28,8 @@
     null,
     null,
     null,
-    "said_hello"
+    {
+      "name": "said_hello"
+    }
   ]
 }
