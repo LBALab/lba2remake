@@ -30,7 +30,7 @@
     "webpack-express-middleware": "^1.2.1"
   },
   "scripts": {
-    "dev-server": "node devserver.js"
+    "dev-server": "NODE_ENV=development node devserver.js"
   },
   "repository": "git+ssh://git@bitbucket.org:adri42/lba2remake.git",
   "author": "Adrien Grandemange",
