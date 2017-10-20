@@ -1,5 +1,6 @@
 import React from 'react';
-import {extend, map, filter} from 'lodash';
+import ReactDOM from 'react-dom';
+import {extend, map, filter, isObject} from 'lodash';
 import {fullscreen} from '../../../styles';
 import FrameListener from '../../../utils/FrameListener';
 import {getDebugListing} from './listing';
@@ -160,7 +161,12 @@ export default class ScriptEditor extends FrameListener {
                 if (result) {
                     result.style.display = active ? 'inline-block' : 'none';
                     if (active && 'condValue' in activeCommands[i]) {
-                        result.innerText = `: ${activeCommands[i].condValue}`;
+                        let condValue = activeCommands[i].condValue;
+                        if (isObject(condValue)) {
+                            ReactDOM.render(<span>: {condValue}</span>, result);
+                        } else {
+                            result.innerText = `: ${condValue}`;
+                        }
                     } else {
                         result.innerText = '?';
                     }

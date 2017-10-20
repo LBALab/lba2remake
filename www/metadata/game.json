@@ -60,6 +60,26 @@
         "5": "reprimand_twinsen",
         "6": "end_of_quarrel"
       }
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    {
+      "name": "lighthouse_keeper",
+      "type": "enum",
+      "enumValues": {
+        "0": "nothing",
+        "1": "heard_of_him",
+        "2": "saw_him",
+        "3": "saved_him"
+      }
     }
   ]
 }

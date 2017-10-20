@@ -1,5 +1,6 @@
 import React from 'react';
 import {getVarInfo, getVarName, renameVar} from '../../../DebugData';
+import {identity} from 'lodash';
 
 export function formatVar(varDef, value) {
     const info = getVarInfo(varDef);
@@ -13,7 +14,7 @@ export function formatVar(varDef, value) {
     return value;
 }
 
-const Var = {
+export const Var = {
     dynamic: true,
     allowRenaming: () => true,
     rename: (varDef, newName) => {

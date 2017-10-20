@@ -189,6 +189,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             }
             loadScripts(params, game, scene);
             scene.variables = createSceneVariables(scene);
+            scene.usedVarGames = findUsedVarGames(scene);
             // Kill twinsen if side scene
             if (parent) {
                 killActor(scene.getActor(0));
@@ -266,3 +267,22 @@ function createSceneVariables(scene) {
     return variables;
 }
 
+function findUsedVarGames(scene) {
+    const usedVars = [];
+    each(scene.actors, actor => {
+        const commands = actor.scripts.life.commands;
+        each(commands, cmd => {
+            let value = null;
+            if (cmd.op.command === 'SET_VAR_GAME') {
+                value = cmd.args[0].value;
+            } else if (cmd.condition && cmd.condition.op.command === 'VAR_GAME') {
+                value = cmd.condition.param.value;
+            }
+            if (value !== null && usedVars.indexOf(value) === -1) {
+                usedVars.push(value);
+            }
+        });
+    });
+    usedVars.sort((a, b) => a - b);
+    return usedVars;
+}

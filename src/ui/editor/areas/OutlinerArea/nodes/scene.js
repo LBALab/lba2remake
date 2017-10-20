@@ -4,8 +4,8 @@ import {ActorsNode} from './actors';
 import {ZonesNode} from './zones';
 import {PointsNode} from './points';
 import {SceneGraphNode} from './sceneGraph';
-import {size, sortBy, map} from 'lodash';
-import {makeVariables} from "./variables";
+import {size, sortBy, map, filter} from 'lodash';
+import {makeVariables, Var} from "./variables";
 
 const baseChildren = [
     ActorsNode,
@@ -34,13 +34,37 @@ const Siblings = {
     onClick: () => {}
 };
 
-const VarCube = makeVariables('varcube', 'Variables', () => {
+const VarCube = makeVariables('varcube', 'Variables (cube)', () => {
     const scene = DebugData.scope.scene;
     if (scene) {
         return scene.variables;
     }
     return [];
 });
+
+const VarGame = {
+    dynamic: true,
+    name: () => 'Variables (game)',
+    numChildren: () => {
+        const scene = DebugData.scope.scene;
+        if (scene) {
+            return scene.usedVarGames.length;
+        }
+    },
+    child: () => Var,
+    childData: (data, idx) => {
+        const {scene, game} = DebugData.scope;
+        if (scene && game) {
+            const varGame = scene.usedVarGames[idx];
+            const state = game.getState();
+            return {
+                type: 'vargame',
+                value: () => state.flags.quest[varGame],
+                idx: varGame
+            };
+        }
+    }
+};
 
 const getChildren = () => {
     const scene = DebugData.scope.scene;
@@ -50,6 +74,7 @@ const getChildren = () => {
             children.push(Siblings);
         }
         children.push(VarCube);
+        children.push(VarGame);
         if (scene.threeScene) {
             children.push(SceneGraphNode);
         }
