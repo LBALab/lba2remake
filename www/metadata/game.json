@@ -1,1 +1,53 @@
-{"vargames":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"zoe_status?"]}
+{
+  "vargames": [
+    {
+      "name": "holomap",
+      "type": "boolean"
+    },
+    {
+      "name": "magicball",
+      "type": "boolean"
+    },
+    {
+      "name": "darts"
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "zoe_status?"
+  ]
+}

@@ -44,7 +44,10 @@ export function renameVar(varDef, name) {
         if (!game.vargames) {
             game.vargames = [];
         }
-        game.vargames[varDef.idx] = name;
+        if (!game.vargames[varDef.idx]) {
+            game.vargames[varDef.idx] = {};
+        }
+        game.vargames[varDef.idx].name = name;
         saveGameMetaData();
     } else if (varDef.type === 'varcube') {
         const scenes = DebugData.metadata.scenes;
@@ -66,7 +69,7 @@ export function getVarName(varDef) {
     if (varDef.type === 'vargame') {
         const game = DebugData.metadata.game;
         if (game.vargames && game.vargames[varDef.idx]) {
-            return game.vargames[varDef.idx];
+            return game.vargames[varDef.idx].name;
         }
     } else if (varDef.type === 'varcube') {
         const scene = DebugData.scope.scene;
