@@ -1,6 +1,18 @@
 import React from 'react';
 import {getVarInfo, getVarName, renameVar} from '../../../DebugData';
 
+export function formatVar(varDef, value) {
+    const info = getVarInfo(varDef);
+    if (info) {
+        if (info.type === 'boolean') {
+            return <i style={{color: value === 1 ? '#00ff00' : '#ff0000'}}>{value === 1 ? 'true' : 'false'}</i>;
+        } else if (info.type === 'enum') {
+            return info.enumValues[value];
+        }
+    }
+    return value;
+}
+
 const Var = {
     dynamic: true,
     allowRenaming: () => true,
@@ -12,17 +24,7 @@ const Var = {
         {
             id: 'value',
             value: varDef.value(),
-            render: (value) => {
-                const info = getVarInfo(varDef);
-                if (info) {
-                    if (info.type === 'boolean') {
-                        return <i style={{color: value === 1 ? '#00ff00' : '#ff0000'}}>{value === 1 ? 'true' : 'false'}</i>;
-                    } else if (info.type === 'enum') {
-                        return info.enumValues[value];
-                    }
-                }
-                return value;
-            }
+            render: (value) => formatVar(varDef, value)
         }
     ],
     onClick: () => {}
