@@ -17,6 +17,13 @@ app.post('/metadata/scene/:sceneId', function (req, res) {
     res.end();
 });
 
+app.post('/metadata/game', function (req, res) {
+    console.log('saving game metadata');
+    const ws = fs.createWriteStream('./www/metadata/game.json');
+    req.pipe(ws);
+    res.end();
+});
+
 const webpackMiddleware = createWebpackMiddleware(compiler, config);
 webpackMiddleware(app);
 

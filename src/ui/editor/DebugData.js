@@ -14,6 +14,7 @@ const DebugData = {
         move: {}
     },
     metadata: {
+        game: {},
         scenes: {}
     },
     step: false
@@ -35,6 +36,48 @@ export function initSceneDebugData() {
         life: {},
         move: {}
     };
+}
+
+export function renameVar(varDef, name) {
+    if (varDef.type === 'vargame') {
+        const game = DebugData.metadata.game;
+        if (!game.vargames) {
+            game.vargames = [];
+        }
+        game.vargames[varDef.idx] = name;
+        saveGameMetaData();
+    } else if (varDef.type === 'varcube') {
+        const scenes = DebugData.metadata.scenes;
+        const scene = DebugData.scope.scene;
+        if (scene) {
+            if (!(scene.index in scenes)) {
+                scenes[scene.index] = {};
+            }
+            if (!('varcubes' in scenes[scene.index])) {
+                scenes[scene.index].varcubes = [];
+            }
+            scenes[scene.index].varcubes[varDef.idx] = name;
+            saveSceneMetaData(scene.index);
+        }
+    }
+}
+
+export function getVarName(varDef) {
+    if (varDef.type === 'vargame') {
+        const game = DebugData.metadata.game;
+        if (game.vargames && game.vargames[varDef.idx]) {
+            return game.vargames[varDef.idx];
+        }
+    } else if (varDef.type === 'varcube') {
+        const scene = DebugData.scope.scene;
+        if (scene) {
+            const sceneMD = DebugData.metadata.scenes[scene.index];
+            if (sceneMD && sceneMD.varcubes && sceneMD.varcubes[varDef.idx]) {
+                return sceneMD.varcubes[varDef.idx];
+            }
+        }
+    }
+    return `${varDef.type}${varDef.idx}`;
 }
 
 export function renameObject(type, sceneIndex, objIndex, name) {
@@ -91,4 +134,28 @@ function saveSceneMetaData(sceneIndex) {
         console.log(`Saved scene ${sceneIndex} metadata`);
     };
     request.send(JSON.stringify(DebugData.metadata.scenes[sceneIndex]));
+}
+
+export function loadGameMetaData() {
+    const request = new XMLHttpRequest();
+    request.open('GET', 'metadata/game.json', true);
+
+    request.onload = function() {
+        if (this.status === 200) {
+            try {
+                DebugData.metadata.game = JSON.parse(request.response);
+            } catch(e) {}
+        }
+    };
+
+    request.send(null);
+}
+
+function saveGameMetaData() {
+    const request = new XMLHttpRequest();
+    request.open('POST', `metadata/game`, true);
+    request.onload = function() {
+        console.log(`Saved game metadata`);
+    };
+    request.send(JSON.stringify(DebugData.metadata.game));
 }

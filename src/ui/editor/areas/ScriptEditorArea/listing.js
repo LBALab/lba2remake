@@ -1,7 +1,7 @@
 import Indent from '../../../../scripting/indent';
 import {cloneDeep, map, each, find} from 'lodash';
 import {getRotation} from '../../../../utils/lba';
-import {getObjectName} from '../../DebugData';
+import {getObjectName, getVarName} from '../../DebugData';
 
 export function getDebugListing(type, scene, actor) {
     if (scene && actor) {
@@ -135,6 +135,11 @@ export function mapDataName(scene, data) {
         } else {
             return '<no-zone>';
         }
+    } else if (data.type === 'vargame' || data.type === 'varcube') {
+        return getVarName({
+            type: data.type,
+            idx: data.value
+        });
     } else {
         return data.value;
     }
