@@ -1,5 +1,5 @@
 import Indent from '../../../../scripting/indent';
-import {cloneDeep, map, each, find} from 'lodash';
+import {cloneDeep, map, each, find, isFinite, isInteger} from 'lodash';
 import {getRotation} from '../../../../utils/lba';
 import {getObjectName, getVarName} from '../../DebugData';
 
@@ -141,6 +141,10 @@ export function mapDataName(scene, data) {
             idx: data.value
         });
     } else {
-        return data.value;
+        if (isFinite(data.value) && !isInteger(data.value)) {
+            return data.value.toFixed(2);
+        } else {
+            return data.value;
+        }
     }
 }
