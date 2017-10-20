@@ -136,7 +136,7 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
     actor.physics.orientation.setFromEuler(euler);
 
     // only if not sprite actor
-    if (actor.isVisible && !actor.isSprite && props.bodyIndex !== 0xFF) {
+    if (!actor.isSprite && props.bodyIndex !== 0xFF) {
         loadModel(props.entityIndex, props.bodyIndex, props.animIndex, animState, envInfo, ambience, (model) => {
             //model.mesh.visible = actor.isVisible;
             model.mesh.position.copy(actor.physics.position);
@@ -145,6 +145,7 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
             actor.threeObject = model.mesh;
             if (actor.threeObject) {
                 actor.threeObject.name = `actor:${getObjectName('actor', props.sceneIndex, props.index)}`;
+                actor.threeObject.visible = actor.isVisible;
             }
             callback(null, actor);
         });
