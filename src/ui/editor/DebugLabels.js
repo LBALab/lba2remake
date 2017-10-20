@@ -71,6 +71,7 @@ export default class DebugLabels extends FrameListener {
     constructor(props) {
         super(props);
         this.state = {};
+        toggleActors(this.props.scene, this.props.labels.actor);
         toggleZones(this.props.scene, this.props.labels.zone);
         togglePoints(this.props.scene, this.props.labels.point);
     }
@@ -92,11 +93,22 @@ export default class DebugLabels extends FrameListener {
 
     componentWillReceiveProps(newProps) {
         if (newProps.scene !== this.props.scene) {
-            toggleZones(this.props.scene, false);
-            togglePoints(this.props.scene, false);
+            if (this.props.labels.actor) {
+                toggleActors(this.props.scene, false);
+            }
+            if (this.props.labels.zone) {
+                toggleZones(this.props.scene, false);
+            }
+            if (this.props.labels.point) {
+                togglePoints(this.props.scene, false);
+            }
+            toggleActors(newProps.scene, newProps.labels.actor);
             toggleZones(newProps.scene, newProps.labels.zone);
             togglePoints(newProps.scene, newProps.labels.point);
         } else {
+            if (newProps.labels.actor !== this.props.labels.actor) {
+                toggleActors(newProps.scene, newProps.labels.actor);
+            }
             if (newProps.labels.zone !== this.props.labels.zone) {
                 toggleZones(newProps.scene, newProps.labels.zone);
             }
@@ -178,6 +190,16 @@ export default class DebugLabels extends FrameListener {
         } else {
             return null;
         }
+    }
+}
+
+function toggleActors(scene, enabled) {
+    if (scene) {
+        each(scene.actors, actor => {
+            if (actor.model && actor.model.boundingBoxDebugMesh) {
+                actor.model.boundingBoxDebugMesh.visible = enabled;
+            }
+        });
     }
 }
 

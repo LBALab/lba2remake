@@ -13,7 +13,6 @@ import {processAnimAction} from './animAction';
 import {loadMesh} from './geometries';
 import {loadTexture2} from '../texture';
 import {createBoundingBox} from '../utils/rendering';
-import {DebugFlags} from '../utils';
 import type {Time} from '../flowtypes';
 
 export type Model = {
@@ -24,14 +23,14 @@ export type Model = {
     mesh: THREE.Object3D
 }
 
-export function loadModel(entityIdx: number, bodyIdx: number, animIdx: number, animState: any, envInfo: any, ambience: any, callback: Function) {
+export function loadModel(params: Object, entityIdx: number, bodyIdx: number, animIdx: number, animState: any, envInfo: any, ambience: any, callback: Function) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         body: loadHqrAsync('BODY.HQR'),
         anim: loadHqrAsync('ANIM.HQR'),
         anim3ds: loadHqrAsync('ANIM3DS.HQR')
     }, function(err, files) {
-        callback(loadModelData(files, entityIdx, bodyIdx, animIdx, animState, envInfo, ambience));
+        callback(loadModelData(params, files, entityIdx, bodyIdx, animIdx, animState, envInfo, ambience));
     });
 }
 
@@ -40,7 +39,7 @@ export function loadModel(entityIdx: number, bodyIdx: number, animIdx: number, a
  *  This will allow to mantain different states for body animations.
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
-function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envInfo: any, ambience: any) {
+function loadModelData(params: Object, files, entityIdx, bodyIdx, animIdx, animState: any, envInfo: any, ambience: any) {
     const palette = new Uint8Array(files.ress.getEntry(0));
     const entityInfo = files.ress.getEntry(44);
     const entities = loadEntity(entityInfo);
@@ -70,9 +69,10 @@ function loadModelData(files, entityIdx, bodyIdx, animIdx, animState: any, envIn
 
     if (model.mesh) {
         model.boundingBox = body.boundingBox;
-        if (DebugFlags.boundingBoxes) {
-            const color = body.hasBoundingBox ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(0, 1, 0);
-            model.boundingBoxDebugMesh = createBoundingBox(body.boundingBox, color);
+        if (params.editor) {
+            model.boundingBoxDebugMesh = createBoundingBox(body.boundingBox, new THREE.Vector3(1, 0, 0));
+            model.boundingBoxDebugMesh.name = 'BoundingBox';
+            model.boundingBoxDebugMesh.visible = false;
             model.mesh.add(model.boundingBoxDebugMesh);
         }
     }
