@@ -118,6 +118,8 @@ export default class ScriptEditor extends FrameListener {
 
     updateActiveLines(type) {
         let firstBreakpoint = true;
+        let firstActive = true;
+        const autoScroll = this.props.sharedState.autoScroll;
         if (this.lineNumbers[type] && this.lineCmds[type]) {
             const ln = this.lineNumbers[type].children;
             const lc = this.lineCmds[type].children;
@@ -149,6 +151,13 @@ export default class ScriptEditor extends FrameListener {
                 } else {
                     lineNum.style.color = 'inherit';
                     if (active) {
+                        if (autoScroll && firstActive && firstBreakpoint) {
+                            if (this.scrollElem !== lineNum) {
+                                lineNum.scrollIntoView();
+                                this.scrollElem = lineNum;
+                            }
+                            firstActive = false;
+                        }
                         lineNum.style.background = '#009700';
                         lineCmd.style.background = 'rgb(51,51,52)';
                     } else {

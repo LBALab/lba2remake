@@ -5,6 +5,11 @@ import FrameListener from '../../utils/FrameListener';
 import {map} from 'lodash';
 import DebugData, {getObjectName} from '../DebugData';
 
+const inputStyle = {
+    textAlign: 'center',
+    verticalAlign: 'middle'
+};
+
 export class ScriptMenu extends FrameListener {
     constructor(props) {
         super(props);
@@ -48,7 +53,15 @@ export class ScriptMenu extends FrameListener {
 
         const paused = this.state.paused;
 
+        const toggleAutoScroll = (e) => {
+            this.props.stateHandler.setAutoScroll(e.target.checked);
+        };
+
+        const autoScroll = this.props.sharedState.autoScroll;
+
         return <span>
+            <label><input key="autoScroll" type="checkbox" onChange={toggleAutoScroll} checked={autoScroll} style={inputStyle}/>Autoscroll</label>
+            &nbsp;
             {paused ? <img style={editor.icon} onClick={step} src="editor/icons/step.png"/> : null}&nbsp;
             <img style={editor.icon} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.png`}/>&nbsp;
             <select style={editor.select} value={this.state.selectedActor} onChange={onChange}>
@@ -63,10 +76,15 @@ const ScriptEditorArea = {
     name: 'Scripts',
     menu: ScriptMenu,
     content: ScriptEditor,
-    getInitialState: () => ({}),
+    getInitialState: () => ({
+        autoScroll: true
+    }),
     stateHandler: {
         splitAt(splitAt) {
             this.setState({splitAt});
+        },
+        setAutoScroll(autoScroll) {
+            this.setState({autoScroll});
         }
     }
 };

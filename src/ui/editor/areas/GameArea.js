@@ -29,7 +29,6 @@ const inputStyle = {
     verticalAlign: 'middle'
 };
 
-
 export default GameArea;
 
 function GameMenu(props) {
