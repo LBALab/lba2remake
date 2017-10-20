@@ -284,6 +284,9 @@ export function BRICK_COL(flag) {
 
 export function INVISIBLE(hidden) {
     this.actor.isVisible = !hidden;
+    if (this.actor.threeObject) {
+        this.actor.threeObject.visible = !hidden;
+    }
 }
 
 export function SHADOW_OBJ() {
