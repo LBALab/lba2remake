@@ -80,7 +80,10 @@ function mapArguments(scene, actor, cmd) {
 
 function mapCondition(scene, condition, state) {
     if (condition) {
-        state.condition = condition;
+        if (condition.param) {
+            if (condition.param.type === 'vargame' || condition.param.type === 'varcube')
+                state.condition = condition;
+        }
         return {
             name: condition.op.command,
             param: mapDataName(scene, condition.param)

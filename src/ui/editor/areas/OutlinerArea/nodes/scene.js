@@ -57,11 +57,13 @@ const VarGame = {
         if (scene && game) {
             const varGame = scene.usedVarGames[idx];
             const state = game.getState();
-            return {
-                type: 'vargame',
-                value: () => state.flags.quest[varGame],
-                idx: varGame
-            };
+            if (varGame !== undefined) {
+                return {
+                    type: 'vargame',
+                    value: () => state.flags.quest[varGame],
+                    idx: varGame
+                };
+            }
         }
     }
 };

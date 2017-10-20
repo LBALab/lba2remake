@@ -16,6 +16,7 @@ export function formatVar(varDef, value) {
 
 export const Var = {
     dynamic: true,
+    needsData: true,
     allowRenaming: () => true,
     rename: (varDef, newName) => {
         renameVar(varDef, newName);
