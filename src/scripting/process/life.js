@@ -186,10 +186,6 @@ export function GIVE_GOLD_PIECES(amount) {
     }
 }
 
-export function END_LIFE() {
-    BRUTAL_EXIT.call(this);
-}
-
 export function INC_CHAPTER() {
     this.game.getState().chapter++;
 }

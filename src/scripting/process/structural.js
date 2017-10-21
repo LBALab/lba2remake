@@ -175,6 +175,10 @@ export function END() {
     this.state.continue = false;
 }
 
+export function END_LIFE() {
+    END.call(this);
+}
+
 export function NOP() {
 
 }

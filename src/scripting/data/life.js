@@ -45,7 +45,7 @@ export const LifeOpcode = [
     { opcode: 0x26, command: "SUICIDE", callback: lf.SUICIDE, indent: Indent.KEEP},
     { opcode: 0x27, command: "USE_ONE_LITTLE_KEY", callback: lf.USE_ONE_LITTLE_KEY, indent: Indent.KEEP},
     { opcode: 0x28, command: "GIVE_GOLD_PIECES", callback: lf.GIVE_GOLD_PIECES, args: ['Int16'], indent: Indent.KEEP},
-    { opcode: 0x29, command: "END_LIFE", callback: lf.END_LIFE, indent: Indent.KEEP},
+    { opcode: 0x29, command: "END_LIFE", callback: st.END_LIFE, indent: Indent.KEEP},
     { opcode: 0x2A, command: "STOP_CURRENT_TRACK", callback: st.STOP_CURRENT_TRACK, indent: Indent.KEEP},
     { opcode: 0x2B, command: "RESTORE_LAST_TRACK", callback: st.RESTORE_LAST_TRACK, indent: Indent.KEEP},
     { opcode: 0x2C, command: "MESSAGE_OBJ", callback: lf.MESSAGE_OBJ, args: ['Uint8:actor', 'Uint16'], cmdState: true, indent: Indent.KEEP},
