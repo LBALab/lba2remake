@@ -158,8 +158,7 @@ export function SUB_VAR_GAME(index, value) {
     this.game.getState().flags.quest[index] -= value;
 }
 
-export function KILL_OBJ(index) {
-    const actor = this.scene.getActor(index);
+export function KILL_OBJ(actor) {
     actor.isKilled = true;
     actor.isVisible = false;
     if (actor.threeObject) {
