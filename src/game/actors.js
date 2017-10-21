@@ -6,6 +6,8 @@ import type {Model} from '../model';
 import {loadModel} from '../model';
 import {loadAnimState, resetAnimState} from '../model/animState';
 import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
+import {loadSprite} from '../iso/sprites';
+
 import {getObjectName} from "../ui/editor/DebugData";
 
 type ActorFlags = {
@@ -25,7 +27,8 @@ type ActorProps = {
     bodyIndex: number,
     animIndex: number,
     angle: number,
-    speed: number
+    speed: number,
+    spriteIndex: number
 }
 
 type ActorPhysics = {
@@ -152,7 +155,11 @@ export function loadActor(params: Object, envInfo: any, ambience: any, props: Ac
             callback(null, actor);
         });
     } else {
-        // TODO load sprite
-        callback(null, actor);
+        loadSprite(props.spriteIndex, (sprite) => {
+            sprite.threeObject.position.copy(actor.physics.position);
+            //sprite.threeObject.quaternion.copy(actor.physics.orientation);
+            actor.threeObject = sprite.threeObject;
+            callback(null, actor);
+        });
     }
 }
