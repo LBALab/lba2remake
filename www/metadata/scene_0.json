@@ -3,8 +3,9 @@
     null,
     null,
     "CellarDoor",
-    null,
-    "Zoe"
+    "SendellPortrait",
+    "Zoe",
+    "Zoe2"
   ],
   "zoneNames": [
     "table",

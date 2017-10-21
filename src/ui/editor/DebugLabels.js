@@ -184,7 +184,7 @@ export default class DebugLabels extends FrameListener {
                     } else if (item.color) {
                         style.background = item.color;
                     }
-                    return <div onClick={this.select.bind(this, item.type, item.index)} key={item.id} style={style}>{item.label}</div>;
+                    return <div onClick={this.select.bind(this, item.type, item.index)} key={item.id} style={style}>{item.label} #{item.index}</div>;
                 })}
             </div>;
         } else {
