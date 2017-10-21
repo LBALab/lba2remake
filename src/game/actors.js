@@ -85,7 +85,7 @@ export function loadActor(params: Object, envInfo: any, ambience: any, props: Ac
             }
         },
         isKilled: false,
-        isVisible: props.flags.isVisible && (props.life > 0 || props.bodyIndex >= 0),
+        isVisible: props.flags.isVisible && (props.life > 0 || props.bodyIndex >= 0) && props.index !== 1,
         isSprite: props.flags.isSprite,
         hasCollidedWithActor: -1,
         floorSound: -1,
