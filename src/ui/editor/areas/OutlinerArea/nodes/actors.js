@@ -18,6 +18,11 @@ const Actor = {
     name: (actor) => getObjectName('actor', actor.props.sceneIndex, actor.index),
     props: (actor) => [
         {
+            id: 'index',
+            value: actor.index,
+            render: (value) => <span>#{value}</span>
+        },
+        {
             id: 'visible',
             value: actor.isVisible,
             render: (value) => <img src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}/>
