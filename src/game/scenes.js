@@ -130,7 +130,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
 
         if (!parent) {
             if (indexInfo.isIsland) {
-                loadSteps.scenery = loadIslandScenery.bind(null, islandName, sceneData.ambience);
+                loadSteps.scenery = loadIslandScenery.bind(null, params, islandName, sceneData.ambience);
             } else {
                 loadSteps.scenery = loadIsometricScenery.bind(null, renderer, indexInfo.index);
             }
