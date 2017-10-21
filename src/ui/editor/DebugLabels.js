@@ -1,8 +1,8 @@
 import React from 'react';
 import THREE from 'three';
 import {map, extend, each} from 'lodash';
-import FrameListener from "../utils/FrameListener";
-import DebugData from './DebugData';
+import FrameListener from '../utils/FrameListener';
+import DebugData, {getObjectName} from './DebugData';
 
 const POS = new THREE.Vector3();
 
@@ -19,18 +19,24 @@ const baseStyle = {
 
 const typeStyle = {
     actor: {
-        borderRadius: '50%',
+        borderRadius: 6,
         background: 'rgba(205, 92, 92, 0.6)',
-        width: 18,
-        height: 18
+        fontSize: 14,
+        minWidth: 16,
+        minHeight: 16,
+        paddingLeft: 4,
+        paddingRight: 4,
+        lineHeight: '18px',
+        transform: 'translate(-50%, 0)'
     },
     point: {
         background: 'rgba(135, 206, 235, 0.6)',
         fontSize: 12,
-        width: 16,
-        height: 16,
+        minWidth: 16,
+        minHeight: 16,
         lineHeight: '16px',
-        borderRadius: 3
+        borderRadius: 3,
+        transform: 'translate(-50%, 0)'
     },
     zone: {
         fontSize: 12,
@@ -38,7 +44,8 @@ const typeStyle = {
         minHeight: 16,
         paddingLeft: 2,
         paddingRight: 2,
-        lineHeight: '16px'
+        lineHeight: '16px',
+        transform: 'translate(-50%, -50%)'
     }
 };
 
@@ -48,6 +55,11 @@ const selectedStyle = {
         background: 'red',
         color: 'white'
     },
+    point: {
+        opacity: 1,
+        background: 'white',
+        color: 'black'
+    },
     zone: {
         opacity: 1,
         background: 'white',
@@ -55,16 +67,11 @@ const selectedStyle = {
     }
 };
 
-const offset = {
-    actor: 10,
-    point: 9,
-    zone: 9
-};
-
 export default class DebugLabels extends FrameListener {
     constructor(props) {
         super(props);
         this.state = {};
+        toggleActors(this.props.scene, this.props.labels.actor);
         toggleZones(this.props.scene, this.props.labels.zone);
         togglePoints(this.props.scene, this.props.labels.point);
     }
@@ -86,11 +93,22 @@ export default class DebugLabels extends FrameListener {
 
     componentWillReceiveProps(newProps) {
         if (newProps.scene !== this.props.scene) {
-            toggleZones(this.props.scene, false);
-            togglePoints(this.props.scene, false);
+            if (this.props.labels.actor) {
+                toggleActors(this.props.scene, false);
+            }
+            if (this.props.labels.zone) {
+                toggleZones(this.props.scene, false);
+            }
+            if (this.props.labels.point) {
+                togglePoints(this.props.scene, false);
+            }
+            toggleActors(newProps.scene, newProps.labels.actor);
             toggleZones(newProps.scene, newProps.labels.zone);
             togglePoints(newProps.scene, newProps.labels.point);
         } else {
+            if (newProps.labels.actor !== this.props.labels.actor) {
+                toggleActors(newProps.scene, newProps.labels.actor);
+            }
             if (newProps.labels.zone !== this.props.labels.zone) {
                 toggleZones(newProps.scene, newProps.labels.zone);
             }
@@ -119,54 +137,22 @@ export default class DebugLabels extends FrameListener {
             POS.y = - ( POS.y * heightHalf ) + heightHalf;
 
             if (POS.z < 1
-                && POS.x > -offset[type]
-                && POS.x < width + offset[type]
-                && POS.y > -offset[type]
-                && POS.y < height + offset[type]) {
+                && POS.x > 0
+                && POS.x < width
+                && POS.y > 0
+                && POS.y < height) {
                 const item = {
                     id: `${scene.index}_${type}_${obj.index}`,
                     index: obj.index,
-                    x: POS.x - offset[type],
-                    y: POS.y - offset[type],
-                    label: obj.index,
+                    x: POS.x,
+                    y: POS.y,
+                    label: type === 'point' ? obj.index : getObjectName(type, scene.index, obj.index),
                     selected: DebugData.selection[type] === obj.index,
                     type: type
                 };
                 if (type === 'zone') {
                     const {r, g, b} = obj.color;
                     item.color = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},0.6)`;
-                    switch (obj.props.type) {
-                        case 0:
-                            item.label += ` [goto=${obj.props.snap}]`;
-                            break;
-                        case 1:
-                            item.label += ` [camera]`;
-                            break;
-                        case 2:
-                            item.label += ` [sceneric]`;
-                            break;
-                        case 3:
-                            item.label += ` [fragment]`;
-                            break;
-                        case 4:
-                            item.label += ` [bonus]`;
-                            break;
-                        case 5:
-                            item.label += ` [text=${obj.props.snap}]`;
-                            break;
-                        case 6:
-                            item.label += ` [ladder]`;
-                            break;
-                        case 7:
-                            item.label += ` [conveyor]`;
-                            break;
-                        case 8:
-                            item.label += ` [spike]`;
-                            break;
-                        case 9:
-                            item.label += ` [rail]`;
-                            break;
-                    }
                 }
                 items.push(item);
             }
@@ -204,6 +190,16 @@ export default class DebugLabels extends FrameListener {
         } else {
             return null;
         }
+    }
+}
+
+function toggleActors(scene, enabled) {
+    if (scene) {
+        each(scene.actors, actor => {
+            if (actor.model && actor.model.boundingBoxDebugMesh) {
+                actor.model.boundingBoxDebugMesh.visible = enabled;
+            }
+        });
     }
 }
 

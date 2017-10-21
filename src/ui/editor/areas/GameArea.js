@@ -3,6 +3,7 @@ import Game from '../../Game';
 import {clone} from 'lodash';
 
 const GameArea = {
+    id: 'game',
     name: 'Game',
     menu: GameMenu,
     content: Game,
@@ -27,7 +28,6 @@ const inputStyle = {
     textAlign: 'center',
     verticalAlign: 'middle'
 };
-
 
 export default GameArea;
 

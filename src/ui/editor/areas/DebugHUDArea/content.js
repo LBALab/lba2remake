@@ -1,9 +1,6 @@
 import React from 'react';
 import {extend, map, isEmpty} from 'lodash';
-import {
-    loadProfiles,
-    saveDefaultProfile
-} from './profiles';
+import {loadProfiles} from './profiles';
 import * as builtInProfiles from './builtInProfiles';
 import {execute} from './exprDSL/execute';
 import {addSlot} from './slots';
@@ -91,6 +88,17 @@ export default class DebugHUD extends FrameListener {
                     : null}
                 {expressions.length > 0
                     ? <div style={sectionStyle}>{expressions}</div>
+                    : null}
+                {macros.length === 0 && expressions.length === 0
+                    ? <div style={{padding: '2em', color: '#AAAAAA'}}>To use the debug HUD, you can type in expressions in the input above.<br/>
+                        Examples of valid expressions:<br/>
+                        <br/>
+                        <i style={{color: '#CCCCCC'}}>game</i><br/>
+                        <i style={{color: '#CCCCCC'}}>scene.index</i><br/>
+                        <i style={{color: '#CCCCCC'}}>actors = scene.actors</i><br/>
+                        <i style={{color: '#CCCCCC'}}>map(actors, isVisible)</i><br/>
+                        <br/>
+                        You can also <u onClick={() => this.props.stateHandler.setStatus(Status.LOAD)}>load a preset or a saved profile.</u></div>
                     : null}
             </div>
         </div>;
@@ -228,7 +236,6 @@ export default class DebugHUD extends FrameListener {
                 this.props.stateHandler.setSlots(slots);
                 this.setState({completion: autoComplete('', DebugData.scope)});
             }
-            saveDefaultProfile(slots);
         }
     }
 
@@ -236,13 +243,11 @@ export default class DebugHUD extends FrameListener {
         const slots = this.props.sharedState.slots;
         delete slots.macros[macro];
         this.props.stateHandler.setSlots(slots);
-        saveDefaultProfile(slots);
     }
 
     removeExpression(index) {
         const slots = this.props.sharedState.slots;
         delete slots.expressions.splice(index, 1);
         this.props.stateHandler.setSlots(slots);
-        saveDefaultProfile(slots);
     }
 }

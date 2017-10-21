@@ -1,6 +1,8 @@
 import Indent from '../../../../scripting/indent';
-import {cloneDeep, map} from 'lodash';
+import {cloneDeep, map, each, find, isFinite, isInteger, extend} from 'lodash';
 import {getRotation} from '../../../../utils/lba';
+import {getObjectName, getVarName} from '../../DebugData';
+import {formatVar} from "../OutlinerArea/nodes/variables";
 
 export function getDebugListing(type, scene, actor) {
     if (scene && actor) {
@@ -15,12 +17,13 @@ export function getDebugListing(type, scene, actor) {
 function mapCommands(scene, actor, commands) {
     let indent = 0;
     let prevCommand = null;
+    let state = {};
     return map(commands, cmd => {
         const newCmd = {
             name: cmd.op.command,
             args: mapArguments(scene, actor, cmd),
-            condition: mapCondition(cmd.condition),
-            operator: mapOperator(cmd.operator),
+            condition: mapCondition(scene, cmd.condition, state),
+            operator: mapOperator(scene, cmd.operator, state),
             section: cmd.section
         };
         indent = processIndent(newCmd, prevCommand, cmd.op, indent);
@@ -57,31 +60,50 @@ function mapArguments(scene, actor, cmd) {
         case 'BETA':
             args[0].value = getRotation(args[0].value, 0, 1) - 90;
             break;
+        case 'MESSAGE_ZOE':
         case 'MESSAGE':
             args[0].text = scene.data.texts[args[0].value].value;
             break;
         case 'MESSAGE_OBJ':
             args[1].text = scene.data.texts[args[1].value].value;
             break;
+        case 'SET_VAR_CUBE':
+        case 'SET_VAR_GAME':
+            args[1].idx = args[0].value;
+            break;
     }
+    each(args, arg => {
+        arg.value = mapDataName(scene, arg);
+    });
     return args;
 }
 
-function mapCondition(condition) {
+function mapCondition(scene, condition, state) {
     if (condition) {
+        if (condition.param) {
+            if (condition.param.type === 'vargame' || condition.param.type === 'varcube')
+                state.condition = condition;
+        }
         return {
             name: condition.op.command,
-            param: condition.param && condition.param.value
+            param: mapDataName(scene, condition.param)
         };
     }
 }
 
-function mapOperator(operator) {
+function mapOperator(scene, operator, state) {
     if (operator) {
-        return {
-            name: operator.op.command,
-            operand: operator.operand
-        };
+        if (operator.operand.type === 'vargame_value' || operator.operand.type === 'varcube_value') {
+            return {
+                name: operator.op.command,
+                operand: mapDataName(scene, extend({idx: state.condition.param.value}, operator.operand))
+            };
+        } else {
+            return {
+                name: operator.op.command,
+                operand: mapDataName(scene, operator.operand)
+            };
+        }
     }
 }
 
@@ -111,5 +133,40 @@ function processIndent(cmd, prevCmd, op, indent) {
         case Indent.KEEP:
             cmd.indent = indent;
             return indent;
+    }
+}
+
+export function mapDataName(scene, data) {
+    if (!data) {
+        return null;
+    } else if (data.type === 'actor' || data.type === 'point') {
+        if (data.value === -1)
+            return `<no-${data.type}>`;
+        return getObjectName(data.type, scene.index, data.value);
+    } else if (data.type === 'zone') {
+        if (data.value === -1)
+            return '<no-zone>';
+        const zone = find(scene.zones, zone => zone.props.type === 2 && zone.props.snap === data.value);
+        if (zone) {
+            return getObjectName('zone', scene.index, zone.index);
+        } else {
+            return '<no-zone>';
+        }
+    } else if (data.type === 'vargame' || data.type === 'varcube') {
+        return getVarName({
+            type: data.type,
+            idx: data.value
+        });
+    } else if (data.type === 'vargame_value' || data.type === 'varcube_value') {
+        return formatVar({
+            type: data.type.substr(0, 7),
+            idx: data.idx
+        }, data.value);
+    } else {
+        if (isFinite(data.value) && !isInteger(data.value)) {
+            return data.value.toFixed(2);
+        } else {
+            return data.value;
+        }
     }
 }

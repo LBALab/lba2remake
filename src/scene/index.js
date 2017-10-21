@@ -212,8 +212,8 @@ function loadActors(scene, offset) {
             actor.info3 = actor.spriteSizeHit;
             offset += 2;
         }
-        actor.armour = data.getInt8(offset++, true);
-        actor.life = data.getInt8(offset++, true);
+        actor.armour = data.getUint8(offset++, true);
+        actor.life = data.getUint8(offset++, true);
 
         actor.moveScriptSize = data.getInt16(offset, true);
         offset += 2;

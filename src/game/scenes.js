@@ -18,7 +18,7 @@ import {loadPoint} from './points';
 import {loadZone} from './zones';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initCameraMovement} from './loop/cameras';
-import {initSceneDebugData} from '../ui/editor/DebugData';
+import {initSceneDebugData, loadSceneMetaData} from '../ui/editor/DebugData';
 
 export function createSceneManager(params, game, renderer, callback: Function) {
     let scene = null;
@@ -122,19 +122,21 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             fogDensity: 0,
         };
         const loadSteps = {
-            actors: (callback) => { async.map(sceneData.actors, loadActor.bind(null, envInfo, sceneData.ambience), callback) },
-            points: (callback) => { async.map(sceneData.points, loadPoint, callback) },
-            zones: (callback) => { async.map(sceneData.zones, loadZone, callback) }
+            metadata: (callback) => params.editor ? loadSceneMetaData(index, callback) : callback(),
+            actors: ['metadata', (data, callback) => { async.map(sceneData.actors, loadActor.bind(null, params, envInfo, sceneData.ambience), callback) }],
+            points: ['metadata', (data, callback) => { async.map(sceneData.points, loadPoint, callback) }],
+            zones: ['metadata', (data, callback) => { async.map(sceneData.zones, loadZone, callback) }],
         };
 
         if (!parent) {
             if (indexInfo.isIsland) {
-                loadSteps.scenery = loadIslandScenery.bind(null, islandName, sceneData.ambience);
+                loadSteps.scenery = loadIslandScenery.bind(null, params, islandName, sceneData.ambience);
             } else {
                 loadSteps.scenery = loadIsometricScenery.bind(null, renderer, indexInfo.index);
             }
             loadSteps.threeScene = ['scenery', (data, callback) => {
                 const threeScene = new THREE.Scene();
+                threeScene.name = `${indexInfo.isIsland ? '3D' : 'iso'}_scene`;
                 threeScene.add(data.scenery.threeObject);
                 callback(null, threeScene);
             }];
@@ -170,7 +172,6 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                 points: data.points,
                 zones: data.zones,
                 isActive: false,
-                variables: createSceneVariables(),
                 zoneState: { listener: null, ended: false },
                 getActor(index) {
                     return find(this.actors, function(obj) { return obj.index === index; });
@@ -187,6 +188,8 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                 scene.section = islandSceneMapping[index].section;
             }
             loadScripts(params, game, scene);
+            scene.variables = createSceneVariables(scene);
+            scene.usedVarGames = findUsedVarGames(scene);
             // Kill twinsen if side scene
             if (parent) {
                 killActor(scene.getActor(0));
@@ -198,6 +201,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
 
 function loadSceneNode(index, indexInfo, data) {
     const sceneNode = indexInfo.isIsland ? new THREE.Object3D() : new THREE.Scene();
+    sceneNode.name = `scene_${index}`;
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
         const section = data.scenery.sections[sectionIdx];
@@ -243,11 +247,42 @@ function loadSideScenes(sceneManager, params, game, renderer, sceneMap, index, p
     });
 }
 
-function createSceneVariables() {
-    const scene = [];
-    for (let i = 0; i < 256; ++i) {
-        scene[i] = 0;
+function createSceneVariables(scene) {
+    let maxVarCubeIndex = -1;
+    each(scene.actors, actor => {
+        const commands = actor.scripts.life.commands;
+        each(commands, cmd => {
+            if (cmd.op.command === 'SET_VAR_CUBE') {
+                maxVarCubeIndex = Math.max(cmd.args[0].value, maxVarCubeIndex);
+            }
+            if (cmd.condition && cmd.condition.op.command === 'VAR_CUBE') {
+                maxVarCubeIndex = Math.max(cmd.condition.param.value, maxVarCubeIndex);
+            }
+        });
+    });
+    const variables = [];
+    for (let i = 0; i <= maxVarCubeIndex; ++i) {
+        variables.push(0);
     }
-    return scene;
+    return variables;
 }
 
+function findUsedVarGames(scene) {
+    const usedVars = [];
+    each(scene.actors, actor => {
+        const commands = actor.scripts.life.commands;
+        each(commands, cmd => {
+            let value = null;
+            if (cmd.op.command === 'SET_VAR_GAME') {
+                value = cmd.args[0].value;
+            } else if (cmd.condition && cmd.condition.op.command === 'VAR_GAME') {
+                value = cmd.condition.param.value;
+            }
+            if (value !== null && usedVars.indexOf(value) === -1) {
+                usedVars.push(value);
+            }
+        });
+    });
+    usedVars.sort((a, b) => a - b);
+    return usedVars;
+}

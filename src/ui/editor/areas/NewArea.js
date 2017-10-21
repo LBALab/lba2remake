@@ -2,6 +2,7 @@ import React from 'react';
 import {map} from 'lodash';
 
 const NewArea = {
+    id: 'new_area',
     name: 'New area',
     content: NewAreaContent,
     getInitialState: () => ({})

@@ -1,0 +1,29 @@
+{
+  "type": 0,
+  "orientation": 0,
+  "splitAt": 60.2,
+  "children": [{
+    "type": 0,
+    "orientation": 1,
+    "splitAt": 70.2,
+    "children": [{
+      "type": 1,
+      "content_id": "game",
+      "root": true
+    }, {
+      "type": 1,
+      "content_id": "dbg_hud"
+    }]
+  }, {
+    "type": 0,
+    "orientation": 1,
+    "splitAt": 50,
+    "children": [{
+      "type": 1,
+      "content_id": "script_editor"
+    }, {
+      "type": 1,
+      "content_id": "outliner"
+    }]
+  }]
+}

@@ -5,7 +5,7 @@ var FlowStatusWebpackPlugin = require('flow-status-webpack-plugin');
 module.exports = {
     entry: "./src/main.jsx",
     output: {
-        path: './www',
+        path: path.join(__dirname, './www'),
         filename: "bundle.js"
     },
     resolve: {
@@ -30,12 +30,16 @@ module.exports = {
             {
                 test: /\.proto?$/,
                 loader: 'raw-loader'
+            },
+            {
+                test: /\.json?$/,
+                loader: 'json-loader'
             }
         ]
     },
     devServer: {
         inline: true,
-        contentBase: "./www"
+        contentBase: path.join(__dirname, './www')
     },
     plugins: [
         new webpack.DefinePlugin({

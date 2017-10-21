@@ -10,7 +10,7 @@ export function createBoundingBox(bb, color) {
     const edgesGeometry = new THREE.EdgesGeometry(geometry);
     const material = new THREE.RawShaderMaterial({
         vertexShader: `
-            precision highp float;
+            precision lowp float;
         
             uniform mat4 projectionMatrix;
             uniform mat4 modelViewMatrix;
@@ -18,11 +18,10 @@ export function createBoundingBox(bb, color) {
             attribute vec3 position;
             
             void main() {
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                gl_Position.z = 0.0;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position.x, position.y + 0.001, position.z, 1.0);
             }`,
         fragmentShader: `
-            precision highp float;
+            precision lowp float;
             
             uniform vec3 color;
             

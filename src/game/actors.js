@@ -8,6 +8,8 @@ import {loadAnimState, resetAnimState} from '../model/animState';
 import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
 import {loadSprite} from '../iso/sprites';
 
+import {getObjectName} from "../ui/editor/DebugData";
+
 type ActorFlags = {
     hasCollisions: boolean,
     isVisible: boolean,
@@ -16,6 +18,7 @@ type ActorFlags = {
 
 type ActorProps = {
     index: number,
+    sceneIndex: number,
     pos: [number, number, number],
     life: number,
     flags: ActorFlags,
@@ -68,7 +71,7 @@ export const DirMode = {
 };
 
 // TODO: move section offset to container THREE.Object3D
-export function loadActor(envInfo: any, ambience: any, props: ActorProps, callback: Function) {
+export function loadActor(params: Object, envInfo: any, ambience: any, props: ActorProps, callback: Function) {
     const pos = props.pos;
     const animState = loadAnimState();
     const actor: Actor = {
@@ -85,7 +88,7 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
             }
         },
         isKilled: false,
-        isVisible: props.flags.isVisible && (props.life > 0 || props.bodyIndex >= 0),
+        isVisible: props.flags.isVisible && (props.life > 0 || props.bodyIndex >= 0) && props.index !== 1,
         isSprite: props.flags.isSprite,
         hasCollidedWithActor: -1,
         floorSound: -1,
@@ -137,12 +140,18 @@ export function loadActor(envInfo: any, ambience: any, props: ActorProps, callba
 
     // only if not sprite actor
     if (actor.isVisible && !actor.isSprite && props.bodyIndex !== 0xFF) {
-        loadModel(props.entityIndex, props.bodyIndex, props.animIndex, animState, envInfo, ambience, (model) => {
-            //model.mesh.visible = actor.isVisible;
-            model.mesh.position.copy(actor.physics.position);
-            model.mesh.quaternion.copy(actor.physics.orientation);
-            actor.model = model;
-            actor.threeObject = model.mesh;
+        loadModel(params, props.entityIndex, props.bodyIndex, props.animIndex, animState, envInfo, ambience, (model) => {
+            if (model !== null) {
+                //model.mesh.visible = actor.isVisible;
+                model.mesh.position.copy(actor.physics.position);
+                model.mesh.quaternion.copy(actor.physics.orientation);
+                actor.model = model;
+                actor.threeObject = model.mesh;
+                if (actor.threeObject) {
+                    actor.threeObject.name = `actor:${getObjectName('actor', props.sceneIndex, props.index)}`;
+                    actor.threeObject.visible = actor.isVisible;
+                }
+            }
             callback(null, actor);
         });
     } else {

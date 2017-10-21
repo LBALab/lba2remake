@@ -2,12 +2,7 @@ import {LifeOpcode} from './data/life';
 import {MoveOpcode} from './data/move';
 import {ConditionOpcode} from './data/condition';
 import {OperatorOpcode} from './data/operator';
-import {
-    last,
-    each,
-    map,
-    filter
-} from 'lodash';
+import {last} from 'lodash';
 
 const TypeSize = {
     'Int8': 1,
@@ -113,7 +108,10 @@ function parseCondition(state, script, op, cmd) {
     if (op.condition) {
         const code = script.getUint8(state.offset);
         condition = ConditionOpcode[code];
-        cmd.condition = { op: condition };
+        cmd.condition = {
+            op: condition,
+            operandType: getLbaType(condition.operand)
+        };
         state.offset++;
         if (condition.param) {
             cmd.condition.param = parseValue(state, script, condition.param);
@@ -129,8 +127,7 @@ function parseCondition(state, script, op, cmd) {
         const operator = OperatorOpcode[code];
         cmd.operator = { op: operator };
         state.offset++;
-        cmd.operator.operand = script['get' + condition.operand](state.offset, true);
-        state.offset += TypeSize[condition.operand];
+        cmd.operator.operand = parseValue(state, script, condition.operand);
     }
 }
 
@@ -180,4 +177,9 @@ function parseValue(state, script, spec) {
         value: value,
         hide: hide
     };
+}
+
+function getLbaType(spec) {
+    let value = spec.split(':');
+    return value[1];
 }

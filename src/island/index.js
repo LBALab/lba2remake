@@ -9,7 +9,6 @@ import {loadGround} from './ground';
 import {loadSea} from './sea';
 import {loadObjects} from './objects';
 import {loadIslandPhysics} from './physics';
-import {DebugFlags} from '../utils';
 import {createBoundingBox} from '../utils/rendering';
 
 import islandsInfo from './data/islands';
@@ -28,7 +27,7 @@ export function getEnvInfo(name) {
     return islandProps[name].envInfo;
 }
 
-export function loadIslandScenery(name, ambience, callback) {
+export function loadIslandScenery(params, name, ambience, callback) {
     if (name in islands) {
         callback(null, islands[name]);
     }
@@ -38,7 +37,7 @@ export function loadIslandScenery(name, ambience, callback) {
             ile: loadHqrAsync(`${name}.ILE`),
             obl: loadHqrAsync(`${name}.OBL`)
         }, function(err, files) {
-            const island = loadIslandNode(islandProps[name], files, ambience);
+            const island = loadIslandNode(params, islandProps[name], files, ambience);
             islands[name] = island;
             callback(null, island);
         });
@@ -46,8 +45,9 @@ export function loadIslandScenery(name, ambience, callback) {
 
 }
 
-function loadIslandNode(props, files, ambience) {
+function loadIslandNode(params, props, files, ambience) {
     const islandObject = new THREE.Object3D();
+    islandObject.name = `scenery_${props.name}`;
     islandObject.matrixAutoUpdate = false;
     const layout = loadLayout(files.ile);
     const data = {
@@ -83,17 +83,29 @@ function loadIslandNode(props, files, ambience) {
         }
     });
 
+    islandObject.add(loadSky(geometries));
+
     const sections = {};
+    let boundingBoxes = null;
+    if (params.editor) {
+        boundingBoxes = new THREE.Object3D();
+        boundingBoxes.name = 'BoundingBoxes';
+        boundingBoxes.visible = false;
+        boundingBoxes.matrixAutoUpdate = false;
+        islandObject.add(boundingBoxes);
+    }
     each(data.layout.groundSections, section => {
         sections[`${section.x},${section.z}`] = section;
-        if (DebugFlags.boundingBoxes) {
-            each(section.boundingBoxes, bb => {
-                islandObject.add(createBoundingBox(bb, new THREE.Vector3(1, 0, 0)));
+        if (params.editor) {
+            each(section.boundingBoxes, (bb, idx) => {
+                const box = createBoundingBox(bb, new THREE.Vector3(0.9, 0.9, 0.9));
+                box.name = `[${section.x},${section.z}]:${idx}`;
+                boundingBoxes.add(box);
             });
         }
     });
 
-    islandObject.add(loadSky(geometries));
+
 
     const seaTimeUniform = islandObject.getObjectByName('sea').material.uniforms.time;
 
@@ -108,6 +120,7 @@ function loadIslandNode(props, files, ambience) {
 
 function loadSky(geometries) {
     const sky = new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 1, 1), geometries.sky.material);
+    sky.name = 'sky';
     sky.rotateX(Math.PI / 2.0);
     sky.position.y = 2.0;
     return sky;

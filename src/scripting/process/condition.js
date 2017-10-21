@@ -7,8 +7,7 @@ export function COL() {
     return this.actor.hasCollidedWithActor;
 }
 
-export function COL_OBJ(index) {
-    const actor = this.scene.getActor(index);
+export function COL_OBJ(actor) {
     if (actor.life <= 0) {
         return -1;
     }
@@ -47,8 +46,7 @@ export function BODY() {
     return this.actor.props.bodyIndex;
 }
 
-export function BODY_OBJ(index) {
-    const actor = this.scene.getActor(index);
+export function BODY_OBJ(actor) {
     return actor.props.bodyIndex;
 }
 
@@ -56,8 +54,7 @@ export function ANIM() {
     return this.actor.props.animIndex;
 }
 
-export function ANIM_OBJ(index) {
-    const actor = this.scene.getActor(index);
+export function ANIM_OBJ(actor) {
     return actor.props.animIndex;
 }
 
@@ -93,8 +90,7 @@ export function LIFE_POINT() {
     return this.game.getState().hero.life;
 }
 
-export function LIFE_POINT_OBJ(index) {
-    const actor = this.scene.getActor(index);
+export function LIFE_POINT_OBJ(actor) {
     return actor.props.life;
 }
 

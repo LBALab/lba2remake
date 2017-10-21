@@ -186,10 +186,6 @@ export function GIVE_GOLD_PIECES(amount) {
     }
 }
 
-export function END_LIFE() {
-    BRUTAL_EXIT.call(this);
-}
-
 export function INC_CHAPTER() {
     this.game.getState().chapter++;
 }
@@ -284,6 +280,9 @@ export function BRICK_COL(flag) {
 
 export function INVISIBLE(hidden) {
     this.actor.isVisible = !hidden;
+    if (this.actor.threeObject) {
+        this.actor.threeObject.visible = !hidden;
+    }
 }
 
 export function SHADOW_OBJ() {

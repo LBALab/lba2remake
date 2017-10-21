@@ -3,6 +3,7 @@ import {parseScript} from './parser';
 import {compileScripts} from './compiler';
 import {SUICIDE} from './process/life';
 import DebugData from '../ui/editor/DebugData';
+import {mapDataName} from '../ui/editor/areas/ScriptEditorArea/listing';
 
 export function loadScripts(params, game, scene) {
     each(scene.actors, actor => {
@@ -22,6 +23,7 @@ export function loadScripts(params, game, scene) {
 
 function runScript(params, script, time) {
     const instructions = script.instructions;
+    const commands = script.commands;
     const context = script.context;
     const state = context.state;
 
@@ -55,7 +57,11 @@ function runScript(params, script, time) {
                 }
                 const activeCommand = {};
                 if (next.condition) {
-                    activeCommand.condValue = next.condition();
+                    const condValue = next.condition();
+                    const cmdCond = commands[offset].condition;
+                    const operandType = cmdCond.operandType;
+                    const idx = cmdCond.param ? cmdCond.param.value : undefined;
+                    activeCommand.condValue = mapDataName(context.scene, {type: operandType, value: condValue, idx: idx});
                 }
                 activeCommands[offset] = activeCommand;
                 if (offset in breakpoints) {

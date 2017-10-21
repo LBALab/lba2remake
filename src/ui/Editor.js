@@ -1,11 +1,10 @@
 import React from 'react';
 import Area from './editor/Area';
 import {fullscreen} from './styles';
-import {extend, each, concat, mapValues} from 'lodash';
-import GameArea from './editor/areas/GameArea';
+import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
 import NewArea from "./editor/areas/NewArea";
-import {MainAreas, SubAreas, findAreaContentByName} from './editor/areas/all';
-import ScriptEditorArea from "./editor/areas/ScriptEditorArea";
+import {MainAreas, SubAreas, findAreaContentById} from './editor/areas/all';
+import EditorDefaultLayout from './EditorDefaultLayout.json';
 
 const Type = {
     LAYOUT: 0,
@@ -15,24 +14,6 @@ const Type = {
 export const Orientation = {
     HORIZONTAL: 0,
     VERTICAL: 1
-};
-
-const defaultLayout = {
-    type: Type.LAYOUT,
-    orientation: Orientation.HORIZONTAL,
-    splitAt: 50,
-    children: [
-        {
-            type: Type.AREA,
-            content: GameArea,
-            root: true
-        },
-        {
-            type: Type.AREA,
-            content: ScriptEditorArea
-        }
-    ],
-
 };
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
@@ -60,7 +41,7 @@ export default class Editor extends React.Component {
         this.saveMainData = this.saveMainData.bind(this);
 
         this.state = {
-            layout: this.initLayout(loadLayout()),
+            layout: loadLayout(this),
             separator: null
         }
     }
@@ -97,7 +78,7 @@ export default class Editor extends React.Component {
                     prop: horizontal ? 'clientX' : 'clientY',
                     min: bb[horizontal ? 'left' : 'top'],
                     max: node.rootRef[horizontal ? 'clientWidth' : 'clientHeight'],
-                    path: sepPath
+                    node: node
                 };
             } else {
                 return this.findSeparator(path, node.children[0], concat(sepPath, 0))
@@ -120,8 +101,7 @@ export default class Editor extends React.Component {
         if (separator) {
             const splitAt = 100 * ((e[separator.prop] - separator.min) / separator.max);
             const layout = this.state.layout;
-            const node = this.findNodeFromPath(layout, separator.path);
-            node.splitAt = Math.min(Math.max(splitAt, 5), 95);
+            separator.node.splitAt = Math.min(Math.max(splitAt, 5), 95);
             this.setState({layout});
             e.preventDefault();
             e.stopPropagation();
@@ -210,7 +190,7 @@ export default class Editor extends React.Component {
                 splitAt: 50,
                 children: [
                     this.state.layout,
-                    this.initLayout({type: Type.AREA, content: NewArea})
+                    this.createNewArea({type: Type.AREA, content: NewArea})
                 ]
             };
             this.setState({layout});
@@ -226,7 +206,7 @@ export default class Editor extends React.Component {
                 splitAt: 50,
                 children: [
                     pNode.children[idx],
-                    this.initLayout({type: Type.AREA, content: NewArea})
+                    this.createNewArea({type: Type.AREA, content: NewArea})
                 ]
             };
             this.setState({layout});
@@ -256,7 +236,7 @@ export default class Editor extends React.Component {
         const layout = this.state.layout;
         const node = this.findNodeFromPath(layout, path);
         node.content = area;
-        this.initLayout(node);
+        initStateHandler(this, node);
         this.setState({layout});
         saveLayout(layout);
     }
@@ -265,28 +245,29 @@ export default class Editor extends React.Component {
         this.setState({mainData: data});
     }
 
-    initLayout(node, root = node) {
-        if (node.type === Type.LAYOUT) {
-            this.initLayout(node.children[0], root);
-            this.initLayout(node.children[1], root);
-        } else {
-            node.stateHandler = {
-                state: node.content.getInitialState(),
-                setState: (state) => {
-                    extend(node.stateHandler.state, state);
-                    this.setState({layout: this.state.layout});
-                    saveLayout(this.state.layout);
-                }
-            };
-            extend(
-                node.stateHandler,
-                mapValues(node.content.stateHandler, f => f.bind(node.stateHandler))
-            );
-        }
-        return root;
+    createNewArea() {
+        const node = {
+            type: Type.AREA,
+            content: NewArea
+        };
+        initStateHandler(this, node);
+        return node;
     }
+}
 
-
+function initStateHandler(editor, node, state) {
+    node.stateHandler = {
+        state: state ? cloneDeep(state) : node.content.getInitialState(),
+        setState: (state) => {
+            extend(node.stateHandler.state, state);
+            editor.setState({layout: editor.state.layout});
+            saveLayout(editor.state.layout);
+        }
+    };
+    extend(
+        node.stateHandler,
+        mapValues(node.content.stateHandler, f => f.bind(node.stateHandler))
+    );
 }
 
 function saveLayout(layout) {
@@ -308,38 +289,43 @@ function saveNode(node) {
     } else {
         return {
             type: Type.AREA,
-            content: node.content.name,
+            content_id: node.content.id,
+            state: node.stateHandler.state,
             root: node.root
         };
     }
 }
 
-function loadLayout() {
+function loadLayout(editor) {
     const data = localStorage.getItem('editor_layout');
+    let layout = EditorDefaultLayout;
     if (data) {
         try {
-            return loadNode(JSON.parse(data));
+            layout = JSON.parse(data);
         } catch(e) {}
     }
-    return defaultLayout;
+    return loadNode(editor, layout);
 }
 
-function loadNode(node) {
+function loadNode(editor, node) {
     if (node.type === Type.LAYOUT) {
         return {
             type: Type.LAYOUT,
             orientation: node.orientation,
             splitAt: node.splitAt,
             children: [
-                loadNode(node.children[0]),
-                loadNode(node.children[1])
+                loadNode(editor, node.children[0]),
+                loadNode(editor, node.children[1])
             ]
         };
     } else {
-        return {
+        const content = findAreaContentById(node.content_id);
+        const tgtNode = {
             type: Type.AREA,
-            content: findAreaContentByName(node.content),
+            content: content,
             root: node.root
         };
+        initStateHandler(editor, tgtNode, node.state);
+        return tgtNode;
     }
 }

@@ -55,7 +55,7 @@ function compileCondition(script, cmd) {
 }
 
 function compileOperator(cmd) {
-    return cmd.operator.op.callback.bind(null, cmd.operator.operand);
+    return cmd.operator.op.callback.bind(null, cmd.operator.operand.value);
 }
 
 function compileValue(script, value, cmdOffset) {

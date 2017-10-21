@@ -2,12 +2,17 @@ import React from 'react';
 import Game from './Game';
 import Editor from './Editor';
 import {loadParams} from '../params';
+import {loadGameMetaData} from './editor/DebugData';
 
 export default class Root extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { params: loadParams() };
+        const params = loadParams();
+        this.state = { params };
         this.onHashChange = this.onHashChange.bind(this);
+        if (params.editor) {
+            loadGameMetaData();
+        }
     }
 
     componentWillMount() {

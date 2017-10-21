@@ -84,13 +84,13 @@ export function WAIT_NUM_DSEC(numDsec, time) {
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, time);
 }
 
-export function WAIT_NUM_SECOND_RND(numSeconds, unknown, time) {
-    // TODO random seconds
+export function WAIT_NUM_SECOND_RND(maxNumSeconds, unknown, time) {
+    const numSeconds = Math.floor(Math.random() * maxNumSeconds);
     WAIT_NUM_SECOND.call(this, numSeconds, time);
 }
 
-export function WAIT_NUM_DECIMAL_RND(numDsec, unknown, time) {
-    // TODO random seconds
+export function WAIT_NUM_DECIMAL_RND(maxNumDsec, unknown, time) {
+    const numDsec = Math.floor(Math.random() * maxNumDsec);
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, time);
 }
 
