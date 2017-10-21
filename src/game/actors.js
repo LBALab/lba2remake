@@ -159,6 +159,10 @@ export function loadActor(params: Object, envInfo: any, ambience: any, props: Ac
             sprite.threeObject.position.copy(actor.physics.position);
             //sprite.threeObject.quaternion.copy(actor.physics.orientation);
             actor.threeObject = sprite.threeObject;
+            if (actor.threeObject) {
+                actor.threeObject.name = `actor:${getObjectName('actor', props.sceneIndex, props.index)}`;
+                actor.threeObject.visible = actor.isVisible;
+            }
             callback(null, actor);
         });
     }
