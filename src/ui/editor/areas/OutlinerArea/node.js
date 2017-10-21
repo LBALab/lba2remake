@@ -17,49 +17,51 @@ export default class Node extends React.Component {
     }
 
     componentWillMount() {
-        if (this.props.node.dynamic) {
+        if (this.props.node.dynamic || this.props.node.selected) {
             this.props.ticker.register(this);
         }
     }
 
     componentWillUnmount() {
-        if (this.props.node.dynamic) {
+        if (this.props.node.dynamic || this.props.node.selected) {
             this.props.ticker.unregister(this);
         }
     }
 
     frame() {
-        const name = this.name();
-        if (name !== this.state.name) {
-            this.setState({name});
-        }
-        const numChildren = this.numChildren();
-        if (numChildren !== this.state.numChildren) {
-            this.setState({numChildren});
-        }
-        const nodeProps = this.nodeProps();
-        const oldProps = this.state.nodeProps;
-        if (nodeProps.length !== oldProps.length) {
-            this.setState({nodeProps});
-        } else {
-            for (let i = 0; i < nodeProps.length; ++i) {
-                let foundDiff = false;
-                const p = nodeProps[i];
-                const op = oldProps[i];
-                if (p.id !== op.id) {
-                    foundDiff = true;
-                } else if (typeof(p.value) !== typeof(op.value)) {
-                    foundDiff = true;
-                } else if (isObject(p.value) && isObject(op.value)) {
-                    if (p.value.key !== op.value.key) {
+        if (this.props.node.dynamic) {
+            const name = this.name();
+            if (name !== this.state.name) {
+                this.setState({name});
+            }
+            const numChildren = this.numChildren();
+            if (numChildren !== this.state.numChildren) {
+                this.setState({numChildren});
+            }
+            const nodeProps = this.nodeProps();
+            const oldProps = this.state.nodeProps;
+            if (nodeProps.length !== oldProps.length) {
+                this.setState({nodeProps});
+            } else {
+                for (let i = 0; i < nodeProps.length; ++i) {
+                    let foundDiff = false;
+                    const p = nodeProps[i];
+                    const op = oldProps[i];
+                    if (p.id !== op.id) {
+                        foundDiff = true;
+                    } else if (typeof(p.value) !== typeof(op.value)) {
+                        foundDiff = true;
+                    } else if (isObject(p.value) && isObject(op.value)) {
+                        if (p.value.key !== op.value.key) {
+                            foundDiff = true;
+                        }
+                    } else if (p.value !== op.value) {
                         foundDiff = true;
                     }
-                } else if (p.value !== op.value) {
-                    foundDiff = true;
-                }
-                if (foundDiff) {
-                    this.setState({nodeProps});
-                    break;
+                    if (foundDiff) {
+                        this.setState({nodeProps});
+                        break;
+                    }
                 }
             }
         }

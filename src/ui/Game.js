@@ -125,6 +125,7 @@ export default class Game extends FrameListener {
                 controls,
                 ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls')
             };
+            DebugData.sceneManager = sceneManager;
         }
     }
 
