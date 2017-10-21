@@ -139,6 +139,10 @@ function loadEntityEntry(buffer, dataOffset, index) {
                 offset += anim.offset;
             }
             break;
+            /*default:
+                offset++;
+                offset += data.getUint8(offset);
+            break;*/
         }
     } while(opcode != 0xFF);
 
@@ -159,7 +163,7 @@ function loadEntityBody(data, offset) {
     if (body.offset > 0) {
         body.offset += 1; // to add the previous byte
     }
-    body.bodyIndex = data.getUint16(offset, true);
+    body.bodyIndex = data.getInt16(offset, true);
     offset += 2;
 
     const hasCollisionBox = data.getUint8(offset++, true);
@@ -171,15 +175,15 @@ function loadEntityBody(data, offset) {
             tX: 0, tY: 0, tZ: 0
         };
         
-        offset++; // ignore offset byte
-
-        box.bX = data.getInt16(offset, true);
-        box.bY = data.getInt16(offset + 2, true);
-        box.bZ = data.getInt16(offset + 4, true);
-        box.tX = data.getInt16(offset + 6, true);
-        box.tY = data.getInt16(offset + 8, true);
-        box.tZ = data.getInt16(offset + 10, true);
-
+        const actionType = data.getUint8(offset++, true);
+        if (actionType == ACTIONTYPE.ZV) {
+            box.bX = data.getInt16(offset, true);
+            box.bY = data.getInt16(offset + 2, true);
+            box.bZ = data.getInt16(offset + 4, true);
+            box.tX = data.getInt16(offset + 6, true);
+            box.tY = data.getInt16(offset + 8, true);
+            box.tZ = data.getInt16(offset + 10, true);
+        }
         body.box = box;
     }
     return body;
@@ -193,7 +197,8 @@ function loadEntityAnim(data, offset) {
         actions: []
     };
 
-    anim.index = data.getUint8(offset++, true);
+    anim.index = data.getUint16(offset, true);
+    offset += 2;
     anim.offset = data.getUint8(offset++, true);
     if (anim.offset > 0) {
         anim.offset += 1; // to add the previous byte
@@ -201,12 +206,14 @@ function loadEntityAnim(data, offset) {
     if (anim.offset == 0) {
         anim.offset += 5;
     }
-    const actionBytes = data.getUint8(offset++, true);
-    anim.animIndex = data.getUint16(offset, true);
+    //const actionBytes = data.getUint8(offset++, true);
+    anim.animIndex = data.getInt16(offset, true);
     offset += 2;
 
-    if (actionBytes > 0) {
-        anim.offset += actionBytes - 3;
+    const hasAction = data.getUint8(offset, true);
+
+    if (hasAction > 0) {
+        //anim.offset += actionBytes - 3;
 
         let innerOffset = 0;
         let prevInnerOffset = 0;
@@ -279,6 +286,7 @@ function loadEntityAnim(data, offset) {
                     innerOffset += 12;
                 break;
                 case ACTIONTYPE.THROW_MAGIC:
+                    // check for magic ball 7 not 8
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.unk1 = data.getUint16(innerOffset + offset + 2, true);
                     action.unk2 = data.getUint16(innerOffset + offset + 4, true);
@@ -290,7 +298,7 @@ function loadEntityAnim(data, offset) {
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.repeat = data.getUint16(innerOffset + offset + 4, true);
-                    innerOffset += 9;
+                    innerOffset += 10;
                 break;
                 case ACTIONTYPE.THROW_SEARCH:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
@@ -324,12 +332,8 @@ function loadEntityAnim(data, offset) {
                 break;
                 case ACTIONTYPE.HIT_HERO:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
-                    action.animFrame -= 1;
                     innerOffset++;
                 break;
-                case ACTIONTYPE.HIT_HERO:
-                    innerOffset += 1;
-                    break;
                 case ACTIONTYPE.THROW_3D:
                 case ACTIONTYPE.THROW_3D_ALPHA:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
@@ -356,6 +360,7 @@ function loadEntityAnim(data, offset) {
                     innerOffset += 12;
                 break;
                 case ACTIONTYPE.THROW_3D_MAGIC:
+                    // check for magic ball 11 not 12
                     innerOffset += 11 + 1;
                     break;
                 case ACTIONTYPE.THROW_OBJ_3D:
