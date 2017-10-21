@@ -139,7 +139,7 @@ export function loadActor(params: Object, envInfo: any, ambience: any, props: Ac
     actor.physics.orientation.setFromEuler(euler);
 
     // only if not sprite actor
-    if (actor.isVisible && !actor.isSprite && props.bodyIndex !== 0xFF) {
+    if (!actor.isSprite && props.bodyIndex !== 0xFF) {
         loadModel(params, props.entityIndex, props.bodyIndex, props.animIndex, animState, envInfo, ambience, (model) => {
             if (model !== null) {
                 //model.mesh.visible = actor.isVisible;
