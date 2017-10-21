@@ -201,7 +201,7 @@ function loadEntityAnim(data, offset) {
     offset += 2;
     anim.offset = data.getUint8(offset++, true);
     if (anim.offset > 0) {
-        anim.offset += 1; // to add the previous byte
+        anim.offset += 2; // to add the previous byte
     }
     if (anim.offset == 0) {
         anim.offset += 5;
