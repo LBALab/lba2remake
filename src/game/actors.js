@@ -155,7 +155,7 @@ export function loadActor(params: Object, envInfo: any, ambience: any, props: Ac
             callback(null, actor);
         });
     } else {
-        loadSprite(props.spriteIndex, window.game.getRenderer(), (sprite) => {
+        loadSprite(props.spriteIndex, (sprite) => {
             sprite.threeObject.position.copy(actor.physics.position);
             //sprite.threeObject.quaternion.copy(actor.physics.orientation);
             actor.threeObject = sprite.threeObject;

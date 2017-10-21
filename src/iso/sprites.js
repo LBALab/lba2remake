@@ -11,7 +11,7 @@ import sprite_fragment from './shaders/sprite.frag.glsl';
 
 let spriteCache = null;
 
-export function loadSprite(index, renderer, callback) {
+export function loadSprite(index, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         sprites: loadHqrAsync('SPRITES.HQR')
