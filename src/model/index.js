@@ -40,6 +40,9 @@ export function loadModel(params: Object, entityIdx: number, bodyIdx: number, an
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
 function loadModelData(params: Object, files, entityIdx, bodyIdx, animIdx, animState: any, envInfo: any, ambience: any) {
+    if (entityIdx === -1 || bodyIdx === -1 || animIdx === -1)
+        return null;
+
     const palette = new Uint8Array(files.ress.getEntry(0));
     const entityInfo = files.ress.getEntry(44);
     const entities = loadEntity(entityInfo);

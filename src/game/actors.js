@@ -138,14 +138,16 @@ export function loadActor(params: Object, envInfo: any, ambience: any, props: Ac
     // only if not sprite actor
     if (!actor.isSprite && props.bodyIndex !== 0xFF) {
         loadModel(params, props.entityIndex, props.bodyIndex, props.animIndex, animState, envInfo, ambience, (model) => {
-            //model.mesh.visible = actor.isVisible;
-            model.mesh.position.copy(actor.physics.position);
-            model.mesh.quaternion.copy(actor.physics.orientation);
-            actor.model = model;
-            actor.threeObject = model.mesh;
-            if (actor.threeObject) {
-                actor.threeObject.name = `actor:${getObjectName('actor', props.sceneIndex, props.index)}`;
-                actor.threeObject.visible = actor.isVisible;
+            if (model !== null) {
+                //model.mesh.visible = actor.isVisible;
+                model.mesh.position.copy(actor.physics.position);
+                model.mesh.quaternion.copy(actor.physics.orientation);
+                actor.model = model;
+                actor.threeObject = model.mesh;
+                if (actor.threeObject) {
+                    actor.threeObject.name = `actor:${getObjectName('actor', props.sceneIndex, props.index)}`;
+                    actor.threeObject.visible = actor.isVisible;
+                }
             }
             callback(null, actor);
         });
