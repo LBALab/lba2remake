@@ -41,7 +41,7 @@ export const LifeOpcode = [
     { opcode: 0x22, command: "SET_COMPORTEMENT_OBJ", callback: st.SET_COMPORTEMENT_OBJ, args: ['Uint8:actor', 'Uint16'], indent: Indent.KEEP},
     { opcode: 0x23, command: "END_COMPORTEMENT", callback: st.END_COMPORTEMENT, indent: Indent.SUB},
     { opcode: 0x24, command: "SET_VAR_GAME", callback: lf.SET_VAR_GAME, args: ['Uint8:vargame', 'Uint16:vargame_value'], indent: Indent.KEEP},
-    { opcode: 0x25, command: "KILL_OBJ", callback: lf.KILL_OBJ, args: ['Uint8'], indent: Indent.KEEP},
+    { opcode: 0x25, command: "KILL_OBJ", callback: lf.KILL_OBJ, args: ['Uint8:actor'], indent: Indent.KEEP},
     { opcode: 0x26, command: "SUICIDE", callback: lf.SUICIDE, indent: Indent.KEEP},
     { opcode: 0x27, command: "USE_ONE_LITTLE_KEY", callback: lf.USE_ONE_LITTLE_KEY, indent: Indent.KEEP},
     { opcode: 0x28, command: "GIVE_GOLD_PIECES", callback: lf.GIVE_GOLD_PIECES, args: ['Int16'], indent: Indent.KEEP},
