@@ -14,11 +14,11 @@ function isSelected(index) {
     return false;
 }
 
-function makeScene(index, name) {
+function makeScene(index, name, children) {
     return {
         name,
         onClick: goto.bind(null, index),
-        children: [],
+        children: children ? children : [],
         props: [
             {
                 id: 'index',
@@ -39,11 +39,17 @@ export const LocationsNode = {
                 {
                     name: 'Citadel island',
                     children: [
-                        makeScene(49, 'Near Twinsen\'s house'),
-                        makeScene(46, 'Near Lighthouse'),
+                        makeScene(49, 'Near Twinsen\'s house', [
+                            makeScene(195, 'Demo variant')
+                        ]),
+                        makeScene(46, 'Near Lighthouse', [
+                            makeScene(196, 'Demo variant')
+                        ]),
                         makeScene(42, 'Lupin-Bourg (landing zone)'),
                         makeScene(48, 'Lupin-Bourg (statue)'),
-                        makeScene(43, 'Harbour'),
+                        makeScene(43, 'Harbour', [
+                            makeScene(197, 'Demo variant')
+                        ]),
                         makeScene(44, 'Dome'),
                         makeScene(47, 'Flower\'s Circle'),
                         makeScene(45, 'Near the Wizard\'s tent'),
@@ -53,24 +59,38 @@ export const LocationsNode = {
                 {
                     name: 'Desert island',
                     children: [
-                        makeScene(55, 'Oasis (Moya)'),
+                        makeScene(55, 'Oasis (Moya)', [
+                            makeScene(203, 'Demo variant')
+                        ]),
                         makeScene(56, 'Between Oasis and Racetrack'),
                         makeScene(57, 'Racetrack'),
                         makeScene(58, 'Behind Racetrack'),
-                        makeScene(60, 'Town Square'),
-                        makeScene(59, 'Headland (harbour)'),
+                        makeScene(60, 'Town Square', [
+                            makeScene(200, 'Demo variant')
+                        ]),
+                        makeScene(59, 'Headland (harbour)', [
+                            makeScene(198, 'Demo variant')
+                        ]),
                         makeScene(64, 'Perl Cave (Moya)'),
                         makeScene(69, 'Behind Perl Cave'),
-                        makeScene(61, 'Graveyard'),
+                        makeScene(61, 'Graveyard', [
+                            makeScene(201, 'Demo variant')
+                        ]),
                         makeScene(66, 'Center Dunes'),
-                        makeScene(67, 'Temple of Bu'),
+                        makeScene(67, 'Temple of Bu', [
+                            makeScene(206, 'Demo variant')
+                        ]),
                         makeScene(68, 'Behind Temple of Bu'),
                         makeScene(62, 'Springboard'),
                         makeScene(63, 'Behind Temple of Bu 2?'),
-                        makeScene(65, 'Esmer Landing Zone'),
+                        makeScene(65, 'Esmer Landing Zone', [
+                            makeScene(199, 'Demo variant')
+                        ]),
                         makeScene(70, 'Behind Landing Zone'),
                         makeScene(71, 'Between Hacienda and Landing Zone'),
-                        makeScene(72, 'Hacienda'),
+                        makeScene(72, 'Hacienda', [
+                            makeScene(204, 'Demo variant')
+                        ]),
                         makeScene(73, 'Small island (facing Hacienda)')
                     ]
                 }
