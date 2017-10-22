@@ -300,8 +300,7 @@ export function SUB_MAGIC_POINT(points) {
     this.game.getState().hero.magic = (magic > 0) ? magic : 0;
 }
 
-export function SET_LIFE_POINT_OBJ(index, value) {
-    const actor = this.scene.getActor(index);
+export function SET_LIFE_POINT_OBJ(actor, value) {
     actor.props.life = value;
 }
 
