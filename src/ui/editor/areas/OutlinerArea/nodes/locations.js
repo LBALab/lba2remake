@@ -39,10 +39,10 @@ export const LocationsNode = {
                 {
                     name: 'Citadel island',
                     children: [
-                        makeScene(49, 'Near Twinsen\'s house', [
+                        makeScene(49, 'Twinsen\'s House Area', [
                             makeScene(195, 'Demo variant')
                         ]),
-                        makeScene(46, 'Near Lighthouse', [
+                        makeScene(46, 'Lighthouse Area', [
                             makeScene(196, 'Demo variant')
                         ]),
                         makeScene(42, 'Lupin-Bourg (landing zone)'),
@@ -52,7 +52,7 @@ export const LocationsNode = {
                         ]),
                         makeScene(44, 'Dome'),
                         makeScene(47, 'Flower\'s Circle'),
-                        makeScene(45, 'Near the Wizard\'s tent'),
+                        makeScene(45, 'Wizard\'s Tent Area'),
                         makeScene(50, 'Woodbridge')
                     ]
                 },
@@ -98,18 +98,92 @@ export const LocationsNode = {
         },
         {
             name: 'Emerald moon',
-            children: []
+            children: [
+                makeScene(75, 'Landing zone', [
+                    makeScene(208, 'Demo variant')
+                ]),
+                makeScene(77, 'Switches Building Area'),
+                makeScene(76, 'Baldino\'s Spaceship Area'),
+                makeScene(74, 'Antena Area')
+            ]
         },
         {
             name: 'Zeelish',
             children: [
                 {
                     name: 'Surface',
-                    children: []
+                    children: [
+                        {
+                            name: 'Otringal',
+                            children: [
+                                makeScene(92, 'Spaceport', [
+                                    makeScene(205, 'Demo variant')
+                                ]),
+                                makeScene(90, 'Dog Training Center and Jail'),
+                                makeScene(87, 'Harbour', [
+                                    makeScene(209, 'Demo variant')
+                                ]),
+                                makeScene(94, 'Baldino\'s Landing Zone', [
+                                    makeScene(138, 'Demo variant')
+                                ]),
+                                makeScene(89, 'Town Square', [
+                                    makeScene(211, 'Demo variant')
+                                ]),
+                                makeScene(88, 'Upper Level (hotel & palace)'),
+                                makeScene(91, 'Emperor Palace')
+
+                            ]
+                        },
+                        makeScene(95, 'Celebration Island'),
+                        {
+                            name: 'Franco Island',
+                            children: [
+                                makeScene(109, 'Village', [
+                                    makeScene(212, 'Demo variant')
+                                ]),
+                                makeScene(108, 'Refinery Area'),
+                                makeScene(107, 'Zeppelin Port')
+                            ]
+                        },
+                        makeScene(120, 'Elevator'),
+                        makeScene(110, 'Island CX')
+                    ]
                 },
                 {
                     name: 'Undergas',
-                    children: []
+                    children: [
+                        {
+                            name: 'Elevator Island',
+                            children: [
+                                makeScene(98, 'Elvator Area', [
+                                    makeScene(213, 'Demo variant')
+                                ]),
+                                makeScene(99, 'Mine Area'),
+                                makeScene(96, 'Church Area'),
+                                makeScene(97, 'Ferryman Area')
+                            ]
+                        },
+                        {
+                            name: 'Mosquibee Island',
+                            children: [
+                                makeScene(105, 'Ferryman Area', [
+                                    makeScene(216, 'Demo variant')
+                                ]),
+                                makeScene(103, 'Monster Area'),
+                                makeScene(102, 'Mountain Top')
+                            ]
+                        },
+                        {
+                            name: 'Volcano Island',
+                            children: [
+                                makeScene(132, 'Ferryman Area'),
+                                makeScene(131, 'Cave Area', [
+                                    makeScene(219, 'Demo variant')
+                                ]),
+                                makeScene(130, 'Mountain Top')
+                            ]
+                        }
+                    ]
                 }
             ]
         }
