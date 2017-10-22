@@ -32,6 +32,19 @@ function makeScene(index, name, children) {
     }
 }
 
+function makeIslandScene(index, name, children) {
+    const node = makeScene(index, name);
+    node.props.splice(0, 0, makeIcon('island'));
+    node.children = [
+        {
+            name: 'Buildings',
+            children: children,
+            props: [makeIcon('building')]
+        }
+    ];
+    return node;
+}
+
 function makeIcon(name) {
     return {
         id: 'icon',
@@ -49,6 +62,11 @@ export const LocationsNode = {
                 {
                     name: 'Citadel island',
                     children: [
+                        {
+                            name: 'Buildings',
+                            children: [],
+                            props: [makeIcon('building')]
+                        },
                         makeScene(49, 'Twinsen\'s House Area', [
                             makeScene(195, 'Demo variant')
                         ]),
@@ -70,6 +88,11 @@ export const LocationsNode = {
                 {
                     name: 'Desert island',
                     children: [
+                        {
+                            name: 'Buildings',
+                            children: [],
+                            props: [makeIcon('building')]
+                        },
                         makeScene(55, 'Oasis (Moya)', [
                             makeScene(203, 'Demo variant')
                         ]),
@@ -112,6 +135,11 @@ export const LocationsNode = {
         {
             name: 'Emerald moon',
             children: [
+                {
+                    name: 'Buildings',
+                    children: [],
+                    props: [makeIcon('building')]
+                },
                 makeScene(75, 'Landing zone', [
                     makeScene(208, 'Demo variant')
                 ]),
@@ -130,6 +158,11 @@ export const LocationsNode = {
                         {
                             name: 'Otringal',
                             children: [
+                                {
+                                    name: 'Buildings',
+                                    children: [],
+                                    props: [makeIcon('building')]
+                                },
                                 makeScene(92, 'Spaceport', [
                                     makeScene(205, 'Demo variant')
                                 ]),
@@ -149,13 +182,15 @@ export const LocationsNode = {
                             ],
                             props: [makeIcon('island')]
                         },
-                        extend(
-                            makeScene(95, 'Celebration Island'),
-                            {props: [makeIcon('island')]}
-                        ),
+                        makeIslandScene(95, 'Celebration Island', []),
                         {
                             name: 'Franco Island',
                             children: [
+                                {
+                                    name: 'Buildings',
+                                    children: [],
+                                    props: [makeIcon('building')]
+                                },
                                 makeScene(109, 'Village', [
                                     makeScene(212, 'Demo variant')
                                 ]),
@@ -164,14 +199,8 @@ export const LocationsNode = {
                             ],
                             props: [makeIcon('island')]
                         },
-                        extend(
-                            makeScene(120, 'Elevator'),
-                            {props: [makeIcon('island')]}
-                        ),
-                        extend(
-                            makeScene(110, 'Island CX'),
-                            {props: [makeIcon('island')]}
-                        )
+                        makeIslandScene(120, 'Elevator', []),
+                        makeIslandScene(110, 'Island CX', [])
                     ],
                     props: [makeIcon('surface')]
                 },
@@ -181,6 +210,11 @@ export const LocationsNode = {
                         {
                             name: 'Elevator Island',
                             children: [
+                                {
+                                    name: 'Buildings',
+                                    children: [],
+                                    props: [makeIcon('building')]
+                                },
                                 makeScene(98, 'Elvator Area', [
                                     makeScene(213, 'Demo variant')
                                 ]),
@@ -193,6 +227,11 @@ export const LocationsNode = {
                         {
                             name: 'Mosquibee Island',
                             children: [
+                                {
+                                    name: 'Buildings',
+                                    children: [],
+                                    props: [makeIcon('building')]
+                                },
                                 makeScene(105, 'Ferryman Area', [
                                     makeScene(216, 'Demo variant')
                                 ]),
@@ -204,6 +243,11 @@ export const LocationsNode = {
                         {
                             name: 'Volcano Island',
                             children: [
+                                {
+                                    name: 'Buildings',
+                                    children: [],
+                                    props: [makeIcon('building')]
+                                },
                                 makeScene(132, 'Ferryman Area'),
                                 makeScene(131, 'Cave Area', [
                                     makeScene(219, 'Demo variant')
