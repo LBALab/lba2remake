@@ -64,7 +64,30 @@ export const LocationsNode = {
                     children: [
                         {
                             name: 'Buildings',
-                            children: [],
+                            children: [
+                                makeScene(0, 'Twinsen\'s House'),
+                                makeScene(1, 'Twinsen\'s House (cellar)'),
+                                makeScene(9, 'Neighbour\'s House'),
+                                makeScene(14, 'Mr. Bazoo\'s shop'),
+                                makeScene(7, 'Paul\'s House'),
+                                makeScene(8, 'Tickets Office'),
+                                makeScene(3, 'Chez Luc'),
+                                makeScene(4, 'Chez Luc (cellar)'),
+                                makeScene(15, 'Museum'),
+                                makeScene(5, 'Baggage Claim'),
+                                makeScene(6, 'Baggage Claim (downstairs)'),
+                                makeScene(16, 'Baggage Claim (labyrinth room)'),
+                                makeScene(22, 'Pharmacy'),
+                                makeScene(37, 'School'),
+                                makeScene(17, 'Sewers'),
+                                makeScene(18, 'Sewers (treasure)'),
+                                makeScene(21, 'Wizard\'s Tent'),
+                                makeScene(51, 'Spider Cave'),
+                                makeScene(2, 'Tralü\'s Cave'),
+                                makeScene(20, 'Tralü\'s Cave (Joe the Elf)'),
+                                makeScene(19, 'Tralü\'s Cave (small tralüs)'),
+                                makeScene(26, 'Inside the Dome')
+                            ],
                             props: [makeIcon('building')]
                         },
                         makeScene(49, 'Twinsen\'s House Area', [
@@ -90,7 +113,24 @@ export const LocationsNode = {
                     children: [
                         {
                             name: 'Buildings',
-                            children: [],
+                            children: [
+                                makeScene(35, 'Leone\'s House'),
+                                makeScene(36, 'Shop'),
+                                makeScene(38, 'Baldino\'s House'),
+                                makeScene(39, 'Bar near the Beach'),
+                                makeScene(40, 'Tickets Office'),
+                                makeScene(10, 'Temple of Bu'),
+                                makeScene(11, 'Temple of Bu (downstairs)'),
+                                makeScene(12, 'Temple of Bu (shuttle area)'),
+                                makeScene(24, 'Hacienda'),
+                                makeScene(29, 'Hacienda (central area)'),
+                                makeScene(25, 'Hacienda (women\'s bath)'),
+                                makeScene(30, 'Hacienda (men\'s bath)'),
+                                makeScene(32, 'Hacienda (secret room)'),
+                                makeScene(28, 'School of Magic (lobby)'),
+                                makeScene(27, 'School of Magic (classroom)'),
+                                makeScene(33, 'School of Magic (blowgun test)')
+                            ],
                             props: [makeIcon('building')]
                         },
                         makeScene(55, 'Oasis (Moya)', [
@@ -178,7 +218,6 @@ export const LocationsNode = {
                                 ]),
                                 makeScene(88, 'Upper Level (hotel & palace)'),
                                 makeScene(91, 'Emperor Palace')
-
                             ],
                             props: [makeIcon('island')]
                         },
@@ -261,6 +300,23 @@ export const LocationsNode = {
                 }
             ],
             props: [makeIcon('zeelish')]
+        },
+        {
+            name: 'Broken Scenes',
+            children: [
+                makeScene(13, 'Broken13'),
+                makeScene(23, 'Broken23'),
+                makeScene(31, 'Broken31'),
+                makeScene(34, 'Broken34'),
+                makeScene(52, 'Broken52'),
+                makeScene(53, 'Broken53'),
+                makeScene(54, 'Broken54'),
+                makeScene(100, 'Broken100'),
+                makeScene(101, 'Broken101'),
+                makeScene(104, 'Broken104'),
+                makeScene(112, 'Broken112'),
+                makeScene(113, 'Broken113')
+            ]
         }
     ]
 };
