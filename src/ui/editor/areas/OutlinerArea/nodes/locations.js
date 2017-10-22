@@ -1,4 +1,6 @@
+import React from 'react';
 import DebugData from '../../../DebugData';
+import {extend} from 'lodash';
 
 function goto(index) {
     if (DebugData.sceneManager) {
@@ -30,6 +32,14 @@ function makeScene(index, name, children) {
     }
 }
 
+function makeIcon(name) {
+    return {
+        id: 'icon',
+        value: name,
+        render: () => <img src={`editor/icons/locations/${name}.png`}/>
+    }
+}
+
 export const LocationsNode = {
     name: 'Locations',
     children: [
@@ -54,7 +64,8 @@ export const LocationsNode = {
                         makeScene(47, 'Flower\'s Circle'),
                         makeScene(45, 'Wizard\'s Tent Area'),
                         makeScene(50, 'Woodbridge')
-                    ]
+                    ],
+                    props: [makeIcon('island')]
                 },
                 {
                     name: 'Desert island',
@@ -92,9 +103,11 @@ export const LocationsNode = {
                             makeScene(204, 'Demo variant')
                         ]),
                         makeScene(73, 'Small island (facing Hacienda)')
-                    ]
+                    ],
+                    props: [makeIcon('island')]
                 }
             ],
+            props: [makeIcon('twinsun')]
         },
         {
             name: 'Emerald moon',
@@ -105,7 +118,8 @@ export const LocationsNode = {
                 makeScene(77, 'Switches Building Area'),
                 makeScene(76, 'Baldino\'s Spaceship Area'),
                 makeScene(74, 'Antena Area')
-            ]
+            ],
+            props: [makeIcon('moon')]
         },
         {
             name: 'Zeelish',
@@ -132,9 +146,13 @@ export const LocationsNode = {
                                 makeScene(88, 'Upper Level (hotel & palace)'),
                                 makeScene(91, 'Emperor Palace')
 
-                            ]
+                            ],
+                            props: [makeIcon('island')]
                         },
-                        makeScene(95, 'Celebration Island'),
+                        extend(
+                            makeScene(95, 'Celebration Island'),
+                            {props: [makeIcon('island')]}
+                        ),
                         {
                             name: 'Franco Island',
                             children: [
@@ -143,11 +161,19 @@ export const LocationsNode = {
                                 ]),
                                 makeScene(108, 'Refinery Area'),
                                 makeScene(107, 'Zeppelin Port')
-                            ]
+                            ],
+                            props: [makeIcon('island')]
                         },
-                        makeScene(120, 'Elevator'),
-                        makeScene(110, 'Island CX')
-                    ]
+                        extend(
+                            makeScene(120, 'Elevator'),
+                            {props: [makeIcon('island')]}
+                        ),
+                        extend(
+                            makeScene(110, 'Island CX'),
+                            {props: [makeIcon('island')]}
+                        )
+                    ],
+                    props: [makeIcon('surface')]
                 },
                 {
                     name: 'Undergas',
@@ -161,7 +187,8 @@ export const LocationsNode = {
                                 makeScene(99, 'Mine Area'),
                                 makeScene(96, 'Church Area'),
                                 makeScene(97, 'Ferryman Area')
-                            ]
+                            ],
+                            props: [makeIcon('island')]
                         },
                         {
                             name: 'Mosquibee Island',
@@ -171,7 +198,8 @@ export const LocationsNode = {
                                 ]),
                                 makeScene(103, 'Monster Area'),
                                 makeScene(102, 'Mountain Top')
-                            ]
+                            ],
+                            props: [makeIcon('island')]
                         },
                         {
                             name: 'Volcano Island',
@@ -181,11 +209,14 @@ export const LocationsNode = {
                                     makeScene(219, 'Demo variant')
                                 ]),
                                 makeScene(130, 'Mountain Top')
-                            ]
+                            ],
+                            props: [makeIcon('island')]
                         }
-                    ]
+                    ],
+                    props: [makeIcon('undergas')]
                 }
-            ]
+            ],
+            props: [makeIcon('zeelish')]
         }
     ]
 };
