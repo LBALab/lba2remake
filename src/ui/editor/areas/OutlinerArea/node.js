@@ -35,6 +35,10 @@ export default class Node extends React.Component {
             if (name !== this.state.name) {
                 this.setState({name});
             }
+            const icon = this.icon();
+            if (icon !== this.state.icon) {
+                this.setState({icon});
+            }
             const numChildren = this.numChildren();
             if (numChildren !== this.state.numChildren) {
                 this.setState({numChildren});

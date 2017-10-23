@@ -16,6 +16,7 @@ const Actor = {
         renameObject('actor', actor.props.sceneIndex, actor.index, newName);
     },
     name: (actor) => getObjectName('actor', actor.props.sceneIndex, actor.index),
+    icon: (actor) => `editor/icons/${actor.isSprite ? 'sprite' : 'model'}.png`,
     props: (actor) => [
         {
             id: 'index',
@@ -26,12 +27,6 @@ const Actor = {
             id: 'visible',
             value: actor.isVisible,
             render: (value) => <img src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}/>
-        },
-        {
-            id: 'sprite',
-            value: actor.isSprite,
-            render: (value) => <img title={value ? 'SPRITE' : 'MODEL'}
-                                    src={`editor/icons/${value ? 'sprite' : 'model'}.png`}/>
         },
         {
             id: 'comportement',
