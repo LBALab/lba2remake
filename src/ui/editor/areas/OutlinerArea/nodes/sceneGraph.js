@@ -5,9 +5,9 @@ export const SceneGraphNode = {
     dynamic: true,
     needsData: true,
     name: (obj) => {
-        const type = `THREE.${obj.type}`;
-        return obj.name ? `${type} "${obj.name}"` : `${type} [${obj.uuid.substr(0, 8)}]`;
+        return obj.name ? `${obj.type} "${obj.name}"` : `${obj.type} [${obj.uuid.substr(0, 8)}]`;
     },
+    icon: () => 'editor/icons/three.png',
     numChildren: (obj) => obj.children.length,
     child: () => SceneGraphNode,
     childData: (obj, idx) => obj.children[idx],

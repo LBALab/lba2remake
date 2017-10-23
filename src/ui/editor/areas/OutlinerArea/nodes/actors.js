@@ -68,6 +68,7 @@ export const ActorsNode = {
     dynamic: true,
     needsData: true,
     name: () => 'Actors',
+    icon: () => 'editor/icons/actor.png',
     numChildren: (scene) => scene.actors.length,
     child: () => Actor,
     childData: (scene, idx) => scene.actors[idx],

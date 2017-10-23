@@ -36,6 +36,7 @@ export function makeVariables(type, name, getVars) {
     return {
         dynamic: true,
         name: () => name,
+        icon: () => 'editor/icons/var.png',
         numChildren: () => getVars().length,
         child: () => Var,
         childData: (data, idx) => {

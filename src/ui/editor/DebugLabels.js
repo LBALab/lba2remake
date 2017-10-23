@@ -146,7 +146,7 @@ export default class DebugLabels extends FrameListener {
                     index: obj.index,
                     x: POS.x,
                     y: POS.y,
-                    label: type === 'point' ? obj.index : getObjectName(type, scene.index, obj.index),
+                    label: type === 'point' ? '' : getObjectName(type, scene.index, obj.index),
                     selected: DebugData.selection[type] === obj.index,
                     type: type
                 };

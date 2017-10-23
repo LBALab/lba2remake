@@ -23,6 +23,7 @@ const Zone = {
         renameObject('zone', zone.props.sceneIndex, zone.index, newName);
     },
     name: (zone) => getObjectName('zone', zone.props.sceneIndex, zone.index),
+    icon: () => 'editor/icons/zone2.png',
     props: (zone) => [
         {
             id: 'type',
@@ -54,6 +55,7 @@ export const ZonesNode = {
     dynamic: true,
     needsData: true,
     name: () => 'Zones',
+    icon: () => 'editor/icons/zone.png',
     numChildren: (scene) => scene.zones.length,
     child: () => Zone,
     childData: (scene, idx) => scene.zones[idx],

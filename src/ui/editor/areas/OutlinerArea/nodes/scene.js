@@ -45,6 +45,7 @@ const VarCube = makeVariables('varcube', 'Variables (cube)', () => {
 const VarGame = {
     dynamic: true,
     name: () => 'Variables (game)',
+    icon: () => 'editor/icons/var.png',
     numChildren: () => {
         const scene = DebugData.scope.scene;
         if (scene) {
