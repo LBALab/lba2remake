@@ -10,7 +10,8 @@ const style = extend({
     padding: 8,
     userSelect: 'none',
     cursor: 'default',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
+    fontWeight: 'normal'
 }, fullscreen);
 
 export default class OutlinerContent extends FrameListener {
