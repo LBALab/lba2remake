@@ -13,6 +13,7 @@ export default class Node extends React.Component {
             selected: call('selected', node, this.props.data),
             menu: null,
             renaming: false,
+            icon: this.icon()
         };
     }
 
@@ -72,15 +73,13 @@ export default class Node extends React.Component {
     }
 
     render() {
-        const node = this.props.node;
         const fontSize = this.props.fontSize || 18;
         const childFontSize = Math.max(fontSize - 2, 14);
 
         return <div>
             <div style={{fontSize, padding: `${fontSize / 8}px 0`}}>
                 {this.renderCollapseButton()}
-                &nbsp;
-                {node.icon ? [<img key="icon" src={node.icon}/>, ' '] : null}
+                {this.renderIcon()}
                 {this.renderName()}
                 &nbsp;
                 {this.renderProps()}
@@ -112,6 +111,10 @@ export default class Node extends React.Component {
 
             return <div style={menuStyle} onClick={onClick} onMouseLeave={() => this.setState({menu: null})}>Rename</div>;
         }
+    }
+
+    renderIcon() {
+        return <img key="icon" style={{verticalAlign: 'middle', padding: '0 5px'}} src={this.state.icon}/>;
     }
 
     renderName() {
@@ -168,7 +171,7 @@ export default class Node extends React.Component {
         if (numChildren > 0) {
             return <span onClick={toggleCollapse} style={{cursor: 'pointer'}}>{collapsed ? '+' : '-'}</span>;
         } else {
-            return <span>&bull;</span>;
+            return <span>&nbsp;</span>;
         }
     }
 
@@ -237,6 +240,12 @@ export default class Node extends React.Component {
     numChildren() {
         const node = this.props.node;
         return node.dynamic ? this.call('numChildren') : node.children.length;
+    }
+
+    icon() {
+        const node = this.props.node;
+        const icon = node.dynamic ? this.call('icon') : node.icon;
+        return icon || 'editor/icons/node.png';
     }
 
     name() {
