@@ -72,6 +72,7 @@ export default class Node extends React.Component {
     }
 
     render() {
+        const node = this.props.node;
         const fontSize = this.props.fontSize || 18;
         const childFontSize = Math.max(fontSize - 2, 14);
 
@@ -79,6 +80,7 @@ export default class Node extends React.Component {
             <div style={{fontSize, padding: `${fontSize / 8}px 0`}}>
                 {this.renderCollapseButton()}
                 &nbsp;
+                {node.icon ? [<img key="icon" src={node.icon}/>, ' '] : null}
                 {this.renderName()}
                 &nbsp;
                 {this.renderProps()}
