@@ -28,7 +28,7 @@ function NewAreaContent(props) {
                     style={style}
                     onClick={props.selectAreaContent.bind(null, area)}>
             <div style={{padding: 5, background: '#191919'}}>{area.name}</div>
-            <img style={{borderTop: '1px solid white'}} src={`editor/areas/${area.id}.png`}/>
+            <img style={{borderTop: '1px solid white', width: 150, height: 110}} src={`editor/areas/${area.id}.png`}/>
         </div>;
     })}</div>;
 }

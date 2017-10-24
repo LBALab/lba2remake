@@ -3,16 +3,17 @@ import NewArea from './areas/NewArea';
 import GameArea from './areas/GameArea';
 import DebugHUDArea from './areas/DebugHUDArea';
 import ScriptEditorArea from './areas/ScriptEditorArea';
-import OutlinerArea from './areas/OutlinerArea';
+import {GameOutliner, IslandOutliner} from './areas/OutlinerArea';
 import IslandArea from './areas/IslandArea';
 
 const AllAreas = [
     NewArea,
     GameArea,
+    GameOutliner,
     DebugHUDArea,
     ScriptEditorArea,
-    OutlinerArea,
-    IslandArea
+    IslandArea,
+    IslandOutliner
 ];
 
 export function findAreaContentById(id) {

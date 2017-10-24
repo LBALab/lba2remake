@@ -3,7 +3,7 @@ import Game from '../../Game';
 import {clone} from 'lodash';
 import ScriptEditorArea from './ScriptEditorArea';
 import DebugHUDArea from './DebugHUDArea';
-import OutlinerArea from './OutlinerArea';
+import {GameOutliner} from './OutlinerArea';
 import {GameMenu} from "./GameArea/menu";
 import {Orientation, Type} from '../layout';
 
@@ -30,7 +30,7 @@ const GameArea = {
     toolAreas: [
         ScriptEditorArea,
         DebugHUDArea,
-        OutlinerArea
+        GameOutliner
     ],
     defaultLayout: {
         type: Type.LAYOUT,
@@ -52,7 +52,7 @@ const GameArea = {
                 splitAt: 50,
                 children: [
                     { type: Type.AREA, content_id: 'script_editor' },
-                    { type: Type.AREA, content_id: 'outliner' }
+                    { type: Type.AREA, content_id: 'outliner_game' }
                 ]
             }
         ]

@@ -329,7 +329,7 @@ function loadNode(editor, node) {
             ]
         };
     } else {
-        const content = findAreaContentById(node.content_id);
+        const content = findAreaContentById(node.content_id) || NewArea;
         const tgtNode = {
             type: Type.AREA,
             content: content,
