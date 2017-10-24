@@ -19,7 +19,7 @@ const IslandArea = {
         splitAt: 70,
         children: [
             { type: Type.AREA, content_id: 'island', root: true },
-            { type: Type.AREA, content_id: 'outliner_island' }
+            { type: Type.AREA, content_id: 'islands_list' }
         ]
     }
 };

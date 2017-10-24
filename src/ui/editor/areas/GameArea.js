@@ -3,7 +3,7 @@ import Game from '../../Game';
 import {clone} from 'lodash';
 import ScriptEditorArea from './ScriptEditorArea';
 import DebugHUDArea from './DebugHUDArea';
-import {GameOutliner} from './OutlinerArea';
+import {SceneOutliner, Locator} from './OutlinerArea';
 import {GameMenu} from "./GameArea/menu";
 import {Orientation, Type} from '../layout';
 
@@ -30,7 +30,8 @@ const GameArea = {
     toolAreas: [
         ScriptEditorArea,
         DebugHUDArea,
-        GameOutliner
+        SceneOutliner,
+        Locator
     ],
     defaultLayout: {
         type: Type.LAYOUT,
@@ -51,7 +52,15 @@ const GameArea = {
                 orientation: Orientation.VERTICAL,
                 splitAt: 70,
                 children: [
-                    { type: Type.AREA, content_id: 'outliner_game' },
+                    {
+                        type: Type.LAYOUT,
+                        orientation: Orientation.VERTICAL,
+                        splitAt: 50,
+                        children: [
+                            { type: Type.AREA, content_id: 'scene_outliner' },
+                            { type: Type.AREA, content_id: 'locator' }
+                        ]
+                    },
                     { type: Type.AREA, content_id: 'dbg_hud' }
                 ]
             }

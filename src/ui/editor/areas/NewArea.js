@@ -11,7 +11,7 @@ const NewArea = {
 export default NewArea;
 
 const style = {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'normal',
     cursor: 'pointer',
     padding: 0,
