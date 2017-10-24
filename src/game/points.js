@@ -43,8 +43,11 @@ function makeFlag() {
     const obj = new THREE.Object3D();
     const stick = new THREE.Mesh(stickGeom, stickMaterial);
     stick.position.set(0, 0.02, 0);
+    stick.name = 'stick';
     obj.add(stick);
-    obj.add(new THREE.Mesh(clothGeom, clothMaterial));
+    const cloth = new THREE.Mesh(clothGeom, clothMaterial);
+    cloth.name = 'cloth';
+    obj.add(cloth);
     return obj;
 }
 
