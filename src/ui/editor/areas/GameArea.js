@@ -43,16 +43,16 @@ const GameArea = {
                 splitAt: 70,
                 children: [
                     { type: Type.AREA, content_id: 'game', root: true },
-                    { type: Type.AREA, content_id: 'dbg_hud' }
+                    { type: Type.AREA, content_id: 'script_editor' }
                 ]
             },
             {
                 type: Type.LAYOUT,
                 orientation: Orientation.VERTICAL,
-                splitAt: 50,
+                splitAt: 70,
                 children: [
-                    { type: Type.AREA, content_id: 'script_editor' },
-                    { type: Type.AREA, content_id: 'outliner_game' }
+                    { type: Type.AREA, content_id: 'outliner_game' },
+                    { type: Type.AREA, content_id: 'dbg_hud' }
                 ]
             }
         ]
