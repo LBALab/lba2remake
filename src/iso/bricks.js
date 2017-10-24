@@ -27,14 +27,14 @@ function loadBrick(bkg, entry) {
             const runSpec = dataView.getUint8(ptr++);
             const runLength = bits(runSpec, 0, 6) + 1;
             const type = bits(runSpec, 6, 2);
-            if (type == 2) {
+            if (type === 2) {
                 const color = dataView.getUint8(ptr++);
                 for (let i = 0; i < runLength; ++i) {
                     pixels[offset()] = color;
                     x++;
                 }
             }
-            else if (type == 1 || type == 3) {
+            else if (type === 1 || type === 3) {
                 for (let i = 0; i < runLength; ++i) {
                     pixels[offset()] = dataView.getUint8(ptr++);
                     x++;
