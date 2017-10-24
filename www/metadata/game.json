@@ -11,43 +11,117 @@
     {
       "name": "darts"
     },
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
+    {
+      "name": "sendells_ball"
+    },
+    {
+      "name": "tunic_and_sendells_medallion"
+    },
+    {
+      "name": "incandescent_pearl"
+    },
+    {
+      "name": "pyramid_shaped_key"
+    },
+    {
+      "name": "part_for_the_car"
+    },
+    {
+      "name": "kashes"
+    },
+    {
+      "name": "pisto-laser"
+    },
+    {
+      "name": "emperors_sword"
+    },
+    {
+      "name": "wannies_glove"
+    },
+    {
+      "name": "proto-pack"
+    },
+    {
+      "name": "ferry_ticket"
+    },
+    {
+      "name": "nitro-meca-penguin"
+    },
+    {
+      "name": "can_of_gazogem"
+    },
+    {
+      "name": "dissidents_ring"
+    },
+    {
+      "name": "gallic_acid"
+    },
+    {
+      "name": "ferrymans_song"
+    },
+    {
+      "name": "ring_of_lightning"
+    },
+    {
+      "name": "customers_umbrella"
+    },
+    {
+      "name": "gems"
+    },
+    {
+      "name": "horn_of_the_blue_triton"
+    },
+    {
+      "name": "blowgun"
+    },
+    {
+      "name": "itinerary_token"
+    },
+    {
+      "name": "slice_of_tart"
+    },
+    {
+      "name": "portable_radio"
+    },
+    {
+      "name": "garden_balsam"
+    },
+    {
+      "name": "magic_slate"
+    },
+    {
+      "name": "translator"
+    },
+    {
+      "name": "wizards_diploma"
+    },
+    {
+      "name": "fragment_of_the_francos"
+    },
+    {
+      "name": "fragment_of_the_sups"
+    },
+    {
+      "name": "fragment_of_the_mosquibees"
+    },
+    {
+      "name": "fragment_of_the_wannies"
+    },
+    {
+      "name": "key_for_the_passage_to_cx"
+    },
+    {
+      "name": "pick-ax"
+    },
+    {
+      "name": "franco_burgermasters_key"
+    },
+    {
+      "name": "franco_burgermasters_notes"
+    },
+    {
+      "name": "protective_spell"
+    },
     {
       "name": "zoe_exit_state",
       "type": "enum",

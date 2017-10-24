@@ -198,7 +198,7 @@ export function FOUND_OBJECT(cmdState, id) {
         hero.props.prevAnimIndex = hero.props.animIndex;
         hero.props.entityIndex = 0;
         hero.props.animIndex = 0;
-        this.game.getState().flags.inventory[id] = 1;
+        this.game.getState().flags.quest[id] = 1;
         const soundFxSource = this.game.getAudioManager().getSoundFxSource();
         soundFxSource.load(6, () => {
             soundFxSource.play();
@@ -361,7 +361,9 @@ export function INC_CLOVER_BOX() {
 }
 
 export function SET_USED_INVENTORY(item) {
-    this.game.getState().flags.inventory[item] = 1;
+    if (item < 40) {
+        this.game.getState().flags.quest[item] = 1;
+    }
 }
 
 export function ADD_CHOICE() {

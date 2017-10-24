@@ -25,8 +25,7 @@ export function createState() {
         chapter: 0,
         flags: {
             quest: createQuestFlags(),
-            holomap: createHolomapFlags(),
-            inventory: createInventoryFlags()
+            holomap: createHolomapFlags()
         },
         save: () => {},
         load: () => {}
@@ -59,14 +58,6 @@ function createHolomapFlags() {
         holomap[i] = 0;
     }
     return holomap;
-}
-
-function createInventoryFlags() {
-    const inventory = [];
-    for (let i = 0; i < 128; ++i) {
-        inventory[i] = 0;
-    }
-    return inventory;
 }
 
 export function setMagicBallLevel(index: number) {
