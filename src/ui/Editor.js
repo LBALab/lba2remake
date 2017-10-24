@@ -2,19 +2,9 @@ import React from 'react';
 import Area from './editor/Area';
 import {fullscreen} from './styles';
 import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
-import NewArea from "./editor/areas/NewArea";
-import {MainAreas, SubAreas, findAreaContentById} from './editor/areas/all';
-import EditorDefaultLayout from './EditorDefaultLayout.json';
-
-const Type = {
-    LAYOUT: 0,
-    AREA: 1
-};
-
-export const Orientation = {
-    HORIZONTAL: 0,
-    VERTICAL: 1
-};
+import NewArea from './editor/areas/NewArea';
+import {Type, Orientation} from './editor/layout';
+import {findAreaContentById, findMainAreas} from './editor/utils';
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
 
@@ -40,8 +30,11 @@ export default class Editor extends React.Component {
         this.disableSeparator = this.disableSeparator.bind(this);
         this.saveMainData = this.saveMainData.bind(this);
 
+        const layout = loadLayout(this);
+
         this.state = {
-            layout: loadLayout(this),
+            layout,
+            root: findRootArea(layout),
             separator: null
         }
     }
@@ -164,7 +157,7 @@ export default class Editor extends React.Component {
                 </div>
             </div>;
         } else {
-            const availableAreas = node.content.mainArea ? MainAreas : SubAreas;
+            const availableAreas = node.content.mainArea ? findMainAreas() : this.state.root.toolAreas;
             return <Area key={`${path.join('/')}/${node.content.name}`}
                          node={node}
                          area={node.content}
@@ -235,10 +228,19 @@ export default class Editor extends React.Component {
     selectAreaContent(path, area) {
         const layout = this.state.layout;
         const node = this.findNodeFromPath(layout, path);
-        node.content = area;
-        initStateHandler(this, node);
-        this.setState({layout});
-        saveLayout(layout);
+        if (node.root) {
+            this.setState({
+                mainData: undefined,
+                layout: loadLayout(this, area.id),
+                root: area
+            });
+            localStorage.setItem(`editor_mode`, area.id);
+        } else {
+            node.content = area;
+            initStateHandler(this, node);
+            this.setState({layout});
+            saveLayout(layout);
+        }
     }
 
     saveMainData(data) {
@@ -272,7 +274,8 @@ function initStateHandler(editor, node, state) {
 
 function saveLayout(layout) {
     const saveData = JSON.stringify(saveNode(layout));
-    localStorage.setItem('editor_layout', saveData);
+    const root = findRootArea(layout);
+    localStorage.setItem(`editor_layout_${root.id}`, saveData);
 }
 
 function saveNode(node) {
@@ -296,13 +299,20 @@ function saveNode(node) {
     }
 }
 
-function loadLayout(editor) {
-    const data = localStorage.getItem('editor_layout');
-    let layout = EditorDefaultLayout;
+function loadLayout(editor, mode) {
+    if (!mode) {
+        mode = localStorage.getItem('editor_mode') || 'game';
+    }
+    const data = localStorage.getItem(`editor_layout_${mode}`);
+    let layout = null;
     if (data) {
         try {
             layout = JSON.parse(data);
         } catch(e) {}
+    }
+    if (!layout) {
+        const mainArea = findAreaContentById(mode);
+        layout = mainArea.defaultLayout;
     }
     return loadNode(editor, layout);
 }
@@ -327,5 +337,13 @@ function loadNode(editor, node) {
         };
         initStateHandler(editor, tgtNode, node.state);
         return tgtNode;
+    }
+}
+
+function findRootArea(node) {
+    if (node.type === Type.LAYOUT) {
+        return findRootArea(node.children[0]) || findRootArea(node.children[1]);
+    } else {
+        return node.root ? node.content : null;
     }
 }

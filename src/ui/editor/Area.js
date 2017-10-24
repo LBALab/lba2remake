@@ -1,7 +1,7 @@
 import React from 'react';
 import {extend} from 'lodash';
 import {editor, fullscreen} from '../styles/index';
-import {Orientation} from '../Editor';
+import {Orientation} from './layout';
 import {map, findIndex} from 'lodash';
 import NewArea from './areas/NewArea';
 

@@ -1,10 +1,15 @@
 import React from 'react';
 import Game from '../../Game';
 import {clone} from 'lodash';
+import ScriptEditorArea from './ScriptEditorArea';
+import DebugHUDArea from './DebugHUDArea';
+import OutlinerArea from './OutlinerArea';
+import {GameMenu} from "./GameArea/menu";
+import {Orientation, Type} from '../layout';
 
 const GameArea = {
     id: 'game',
-    name: 'Game',
+    name: 'Gameplay Editor',
     menu: GameMenu,
     content: Game,
     mainArea: true,
@@ -16,33 +21,42 @@ const GameArea = {
         }
     }),
     stateHandler: {
-        setLabel: function(type, value) {
+        setLabel: function (type, value) {
             const labels = clone(this.state.labels);
             labels[type] = value;
             this.setState({labels});
         }
+    },
+    toolAreas: [
+        ScriptEditorArea,
+        DebugHUDArea,
+        OutlinerArea
+    ],
+    defaultLayout: {
+        type: Type.LAYOUT,
+        orientation: Orientation.HORIZONTAL,
+        splitAt: 60,
+        children: [
+            {
+                type: Type.LAYOUT,
+                orientation: Orientation.VERTICAL,
+                splitAt: 70,
+                children: [
+                    { type: Type.AREA, content_id: 'game', root: true },
+                    { type: Type.AREA, content_id: 'dbg_hud' }
+                ]
+            },
+            {
+                type: Type.LAYOUT,
+                orientation: Orientation.VERTICAL,
+                splitAt: 50,
+                children: [
+                    { type: Type.AREA, content_id: 'script_editor' },
+                    { type: Type.AREA, content_id: 'outliner' }
+                ]
+            }
+        ]
     }
 };
 
-const inputStyle = {
-    textAlign: 'center',
-    verticalAlign: 'middle'
-};
-
 export default GameArea;
-
-function GameMenu(props) {
-    const changeLabel = (type, e) => {
-        props.stateHandler.setLabel(type, e.target.checked);
-    };
-
-    const l = props.sharedState.labels;
-
-    return <span>
-        <label style={{color: 'red'}}><input type="checkbox" onChange={changeLabel.bind(null, 'actor')} checked={l.actor} style={inputStyle}/>Actors</label>
-        &nbsp;
-        <label style={{color: 'lime'}}><input type="checkbox" onChange={changeLabel.bind(null, 'zone')} checked={l.zone} style={inputStyle}/>Zones</label>
-        &nbsp;
-        <label style={{color: 'lightskyblue'}}><input type="checkbox" onChange={changeLabel.bind(null, 'point')} checked={l.point} style={inputStyle}/>Points</label>
-    </span>;
-}
