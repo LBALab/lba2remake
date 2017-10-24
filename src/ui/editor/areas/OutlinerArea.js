@@ -1,13 +1,12 @@
 import React from 'react';
 import {makeContentComponent} from './OutlinerArea/content';
 import {SceneNode} from './OutlinerArea/nodes/scene';
-import {GameNode} from './OutlinerArea/nodes/game';
 import {LocationsNode} from './OutlinerArea/nodes/locations/index';
 
-function makeOutlinerArea(id, content) {
+function makeOutlinerArea(id, name, content) {
     return {
-        id: `outliner_${id}`,
-        name: 'Outliner',
+        id: id,
+        name: name,
         content: makeContentComponent(content),
         getInitialState: () => ({
             path: []
@@ -20,16 +19,10 @@ function makeOutlinerArea(id, content) {
     };
 }
 
-export const GameOutliner = makeOutlinerArea('game', {
-    name: 'LBA2',
-    children: [
-        SceneNode,
-        GameNode,
-        LocationsNode
-    ]
-});
+export const SceneOutliner = makeOutlinerArea('scene_outliner', 'Scene Outliner', SceneNode);
+export const Locator = makeOutlinerArea('locator', 'Locator', LocationsNode);
 
-export const IslandOutliner = makeOutlinerArea('island', {
+export const IslandOutliner = makeOutlinerArea('islands_list', 'Islands', {
     name: 'Islands',
     children: []
 });

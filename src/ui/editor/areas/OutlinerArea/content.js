@@ -1,5 +1,5 @@
 import React from 'react';
-import {extend, map, each} from 'lodash';
+import {extend, map, each, isFunction} from 'lodash';
 import Node from './node';
 import {fullscreen} from '../../../styles';
 import FrameListener from '../../../utils/FrameListener';
@@ -67,7 +67,7 @@ export function makeContentComponent(tree) {
             </span>;
             if (path.length > 0) {
                 return <div style={{paddingBottom: 8}}>
-                    {renderElement([], tree.name)}
+                    {renderElement([], isFunction(tree.name) ? tree.name() : tree.name)}
                     {map(path, (name, idx) => {
                         const subpath = path.slice(0, idx + 1);
                         return <span key={idx}>
