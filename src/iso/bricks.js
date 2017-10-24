@@ -1,9 +1,12 @@
 import {bits} from '../utils';
 
+const bricks = [];
+
 export function loadBricks(bkg) {
-    const bricks = [];
-    for (let i = 197; i <= 18099; ++i) {
-        bricks.push(loadBrick(bkg, i));
+    if (bricks.length === 0) {
+        for (let i = 197; i <= 18099; ++i) {
+            bricks.push(loadBrick(bkg, i));
+        }
     }
     return bricks;
 }
