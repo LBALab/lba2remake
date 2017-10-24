@@ -27,15 +27,16 @@ export function ZONE() {
 export function ZONE_OBJ(actor) {
     const pos = actor.physics.position.clone();
     pos.y += 0.005;
+    pos.x -= 0.005;
     for (let i = 0; i < this.scene.zones.length; ++i) {
         const zone = this.scene.zones[i];
         if (zone.props.type !== 2)
             continue;
 
         const box = zone.props.box;
-        if (pos.x > Math.min(box.bX, box.tX) && pos.x < Math.max(box.bX, box.tX) &&
-            pos.y > Math.min(box.bY, box.tY) && pos.y < Math.max(box.bY, box.tY) &&
-            pos.z > Math.min(box.bZ, box.tZ) && pos.z < Math.max(box.bZ, box.tZ)) {
+        if (pos.x >= Math.min(box.bX, box.tX) && pos.x < Math.max(box.bX, box.tX) &&
+            pos.y >= Math.min(box.bY, box.tY) && pos.y <= Math.max(box.bY, box.tY) &&
+            pos.z >= Math.min(box.bZ, box.tZ) && pos.z < Math.max(box.bZ, box.tZ)) {
             return zone.props.snap;
         }
     }
