@@ -20,6 +20,9 @@ export function processZones(game, scene) {
     pos.y += 0.005;
     for (let i = 0; i < scene.zones.length; ++i) {
         const zone = scene.zones[i];
+        if (zone.props.type === 2)
+            continue;
+
         const box = zone.props.box;
         if (pos.x > Math.min(box.bX, box.tX) && pos.x < Math.max(box.bX, box.tX) &&
             pos.y > Math.min(box.bY, box.tY) && pos.y < Math.max(box.bY, box.tY) &&
