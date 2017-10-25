@@ -33,8 +33,9 @@ export function LocatorMenu(props) {
             if (path) {
                 const index = findIndex(path, node => node.type === type);
                 if (index !== -1) {
-                    const tgtPath = drop(take(path, index + 1));
-                    props.stateHandler.setPath(map(tgtPath, n => n.name));
+                    const activePath = map(drop(path), node => node.name);
+                    const tgtPath = take(activePath, index);
+                    props.stateHandler.setActivePath(activePath, tgtPath);
                 }
             }
         }

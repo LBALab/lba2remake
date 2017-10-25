@@ -52,6 +52,7 @@ export function makeContentComponent(tree) {
                              data={root.data}
                              setRoot={this.setRoot.bind(this)}
                              path={this.props.sharedState.path}
+                             activePath={this.props.sharedState.activePath}
                              ticker={this.props.ticker}
                              level={0} />;
             } else {
