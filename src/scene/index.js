@@ -205,7 +205,7 @@ function loadActors(scene, offset) {
         const textColor = data.getInt8(offset++, true);
         actor.textColor = getHtmlColor(scene.palette, textColor * 16 + 12);
 
-        if (actor.flags & 0x00040000) { // Anim 3DS
+        if (actor.flags.hasSpriteAnim3D) {
             actor.spriteAnim3DNumber = data.getUint32(offset, true);
             offset += 4;
             actor.spriteSizeHit = data.getInt16(offset, true);
