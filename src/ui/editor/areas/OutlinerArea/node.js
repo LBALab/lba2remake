@@ -6,7 +6,7 @@ export default class Node extends React.Component {
         super(props);
         const node = props.node;
         this.state = {
-            collapsed: this.props.level > (node.dynamic ? 0 : 1),
+            collapsed: this.props.level > 0,
             name: this.name(),
             numChildren: this.numChildren(),
             nodeProps: this.nodeProps(),

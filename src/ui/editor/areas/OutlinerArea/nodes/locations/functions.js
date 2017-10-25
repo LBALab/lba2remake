@@ -18,10 +18,11 @@ function isSelected(index) {
 function scene(type, index, name, children) {
     const icon = `editor/icons/locations/${type}.png`;
     if (index === -1) {
-        return {name, children, icon};
+        return {name, type, children, icon};
     } else {
         return {
             name,
+            type,
             onClick: goto.bind(null, index),
             children: children ? children : [],
             props: [
@@ -40,10 +41,10 @@ function scene(type, index, name, children) {
 export const island = scene.bind(null, 'island');
 export const section = scene.bind(null, 'section');
 export const iso = scene.bind(null, 'building');
-export const broken = scene.bind(null, 'broken');
 
 export function planet(name, icon, children) {
     return {
+        type: 'planet',
         name,
         children,
         icon: `editor/icons/locations/${icon}.png`
