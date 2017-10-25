@@ -8,7 +8,8 @@ export const ZeelishUndergas = planet('Zeelish (undergas)', 'undergas', [
         section(99, 'Mine Area', [
             iso(100, 'Mine', [
                 iso(111, 'Gem corridor'),
-                iso(112, 'Church Access room'),
+                iso(112, 'Access to Fragment room'),
+                iso(117, 'Fragment room'),
                 iso(122, 'Passage to Bank'),
             ]),
             iso(125, 'Bank', [
@@ -17,13 +18,11 @@ export const ZeelishUndergas = planet('Zeelish (undergas)', 'undergas', [
             ])
         ]),
         section(96, 'Church Area', [
-            iso(118, 'Church', [
+            iso(118, 'Church Building', [
                 iso(116, 'Monk Home'),
                 iso(119, 'Stairs (with lava)'),
                 iso(101, 'Firefly Tart house'),
-                iso(117, 'Fragment room', [
-                    iso(121, 'Fragment room (with Monk)')
-                ])
+                iso(121, 'Church')
             ])
         ]),
         section(97, 'Ferryman Area')
