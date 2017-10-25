@@ -62,10 +62,14 @@ function mapArguments(scene, actor, cmd) {
             break;
         case 'MESSAGE_ZOE':
         case 'MESSAGE':
-            args[0].text = scene.data.texts[args[0].value].value;
+            if (scene.data.texts[args[0].value]) {
+                args[0].text = scene.data.texts[args[0].value].value;
+            }
             break;
         case 'MESSAGE_OBJ':
-            args[1].text = scene.data.texts[args[1].value].value;
+            if (scene.data.texts[args[1].value]) {
+                args[1].text = scene.data.texts[args[1].value].value;
+            }
             break;
         case 'SET_VAR_CUBE':
         case 'SET_VAR_GAME':
