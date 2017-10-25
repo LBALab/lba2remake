@@ -16,6 +16,7 @@ import DebugData from '../../../../DebugData';
 
 export const LocationsNode = {
     name: 'Locations',
+    type: 'all',
     children: [
         Twinsun,
         Moon,
@@ -29,18 +30,18 @@ export function LocatorMenu(props) {
         const scene = DebugData.scope.scene;
         if (scene) {
             const path = findScenePath(LocationsNode, scene.index);
-            if (path && path.length > 1) {
-                const mPath = drop(path);
-                const index = findIndex(mPath, node => node.type === type);
+            if (path) {
+                const index = findIndex(path, node => node.type === type);
                 if (index !== -1) {
-                    const tPath = take(mPath, index + 1);
-                    props.stateHandler.setPath(map(tPath, n => n.name));
+                    const tgtPath = drop(take(path, index + 1));
+                    props.stateHandler.setPath(map(tgtPath, n => n.name));
                 }
             }
         }
     };
     return <span>
-        Locate:&nbsp;
+        Locate in:&nbsp;
+        <button style={editorStyle.button} onClick={locate.bind(null, 'all')}>All</button>
         <button style={editorStyle.button} onClick={locate.bind(null, 'planet')}>Planet</button>
         <button style={editorStyle.button} onClick={locate.bind(null, 'island')}>Island</button>
         <button style={editorStyle.button} onClick={locate.bind(null, 'section')}>Section</button>
