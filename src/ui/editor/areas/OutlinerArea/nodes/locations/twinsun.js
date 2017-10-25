@@ -15,7 +15,8 @@ export const Twinsun = planet('Twinsun', 'twinsun', [
                 iso(4, 'Cellar'),
             ]),
             iso(17, 'Sewers', [
-                iso(18, 'Treasure room')
+                iso(18, 'Treasure room'),
+                iso(34, 'Sendell\'s ball room'),
             ]),
             iso(191, 'Esmer Spacecraft (Spying)')
         ]),
@@ -60,7 +61,9 @@ export const Twinsun = planet('Twinsun', 'twinsun', [
             iso(39, 'Bar near the Beach'),
         ]),
         section(59, 'Headland'),
-        section(64, 'Perl Cave (Moya)'),
+        section(64, 'Pearl Cave (Moya)', [
+            iso(113, 'Pearl of Incandescence Cave'),
+        ]),
         section(69, 'Behind Perl Cave'),
         section(61, 'Graveyard', [
             iso(28, 'School of Magic', [

@@ -1,14 +1,14 @@
 import {Twinsun} from './twinsun';
 import {Moon} from './moon';
-import {Zeelish} from './zeelish';
-import {Broken} from './broken';
+import {ZeelishSurface} from './zeelish_surface';
+import {ZeelishUndergas} from './zeelish_undergas';
 
 export const LocationsNode = {
     name: 'Locations',
     children: [
         Twinsun,
         Moon,
-        Zeelish,
-        Broken
+        ZeelishSurface,
+        ZeelishUndergas
     ]
 };
