@@ -35,7 +35,8 @@ export function LocatorMenu(props) {
                 if (index !== -1) {
                     const activePath = map(drop(path), node => node.name);
                     const tgtPath = take(activePath, index);
-                    props.stateHandler.setActivePath(activePath, tgtPath);
+                    props.stateHandler.setPath(tgtPath);
+                    props.stateHandler.setActivePath(activePath);
                 }
             }
         }
@@ -50,7 +51,7 @@ export function LocatorMenu(props) {
     </span>
 }
 
-function findScenePath(node, index, path = []) {
+export function findScenePath(node, index, path = []) {
     if (node.props) {
         const indexProp = find(node.props, p => p.id === 'index');
         if (indexProp && indexProp.value === index) {

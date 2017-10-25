@@ -6,7 +6,7 @@ export default class Node extends React.Component {
         super(props);
         const node = props.node;
         this.state = {
-            collapsed: !(this.props.level < 1 || this.isInActivePath()),
+            collapsed: !(this.props.level < 1 || this.isInActivePath(props)),
             name: this.name(),
             numChildren: this.numChildren(),
             nodeProps: this.nodeProps(),
@@ -17,9 +17,9 @@ export default class Node extends React.Component {
         };
     }
 
-    isInActivePath() {
-        const activePath = this.props.activePath;
-        const path = this.props.path;
+    isInActivePath(props) {
+        const activePath = props.activePath;
+        const path = props.path;
         if (!activePath)
             return false;
         for (let i = 0; i < path.length; ++i) {
@@ -27,6 +27,16 @@ export default class Node extends React.Component {
                 return false;
         }
         return true;
+    }
+
+    componentWillReceiveProps(newProps) {
+        if (newProps.activePath !== this.props.activePath
+            || newProps.path !== this.props.path) {
+            const collapsed = !(newProps.level < 1 || this.isInActivePath(newProps));
+            if (collapsed !== this.state.collapsed) {
+                this.setState({collapsed});
+            }
+        }
     }
 
     componentWillMount() {

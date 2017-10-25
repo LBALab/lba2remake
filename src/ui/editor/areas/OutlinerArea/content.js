@@ -13,13 +13,16 @@ const style = extend({
     fontWeight: 'normal'
 }, fullscreen);
 
-export function makeContentComponent(tree) {
+export function makeContentComponent(tree, frame) {
     return class OutlinerContent extends FrameListener {
         constructor(props) {
             super(props);
             this.state = {
                 root: this.findRoot(this.props.sharedState.path)
             };
+            if (frame) {
+                this.extraFrameHandler = frame.bind(this);
+            }
         }
 
         frame() {
@@ -29,6 +32,9 @@ export function makeContentComponent(tree) {
                 if (root.node) {
                     this.setState({root});
                 }
+            }
+            if (this.extraFrameHandler) {
+                this.extraFrameHandler();
             }
         }
 
