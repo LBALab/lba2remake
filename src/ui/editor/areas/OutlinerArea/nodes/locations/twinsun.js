@@ -37,14 +37,14 @@ export const Twinsun = planet('Twinsun', 'twinsun', [
             iso(26, 'In the Dome'),
         ]),
         section(47, 'Flower\'s Circle', [
-            iso(51, 'Spider Cave'),
+            iso(51, 'Spider Cave')
+        ]),
+        section(45, 'Wizard\'s Tent Area', [
+            iso(21, 'Wizard\'s Tent'),
             iso(2, 'Tralü\'s Cave', [
                 iso(20, 'Meet Joe the Elf'),
                 iso(19, 'Small tralüs'),
             ])
-        ]),
-        section(45, 'Wizard\'s Tent Area', [
-            iso(21, 'Wizard\'s Tent'),
         ]),
         section(50, 'Woodbridge')
     ]),
