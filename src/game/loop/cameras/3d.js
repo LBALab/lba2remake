@@ -24,6 +24,7 @@ export function processFollow3DMovement(controlsState, camera, scene, time) {
     const cameraPos = CAMERA_HERO_OFFSET.clone();
     heroPos.applyMatrix4(hero.threeObject.matrixWorld);
     cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+    scene.scenery.physics.processCameraCollisions(cameraPos);
 
     if (controlsState.vr) {
         if (camera.position.distanceTo(cameraPos) > 0.3) {

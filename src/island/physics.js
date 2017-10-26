@@ -1,10 +1,10 @@
-import {find, each} from 'lodash';
 import THREE from 'three';
 import {getTriangleFromPos} from './ground';
 
 export function loadIslandPhysics(sections) {
     return {
         processCollisions: processCollisions.bind(null, sections),
+        processCameraCollisions: processCameraCollisions.bind(null, sections),
         getGroundInfo: position => getGroundInfo(findSection(sections, position), position)
     }
 }
@@ -14,6 +14,20 @@ const POSITION = new THREE.Vector3();
 const FLAGS = {
     hitObject: false
 };
+
+function processCameraCollisions(sections, camPosition) {
+    const section = findSection(sections, camPosition);
+    const ground = getGround(section, camPosition);
+    camPosition.y = Math.max(ground.height + 0.15, camPosition.y);
+    if (section) {
+        for (let i = 0; i < section.boundingBoxes.length; ++i) {
+            const bb = section.boundingBoxes[i];
+            if (bb.containsPoint(camPosition)) {
+                camPosition.y = bb.max.y + 0.2;
+            }
+        }
+    }
+}
 
 function processCollisions(sections, scene, actor) {
     POSITION.copy(actor.physics.position);
