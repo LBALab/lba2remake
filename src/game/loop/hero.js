@@ -62,9 +62,49 @@ function processActorMovement(controlsState, hero, time, behaviour) {
                 animIndex = 25; // jump while running
             }
         }
+        if (controlsState.fight === 1) {
+            hero.props.runtimeFlags.isWalking = true;
+            if (!hero.props.runtimeFlags.isFighting) {
+                animIndex = 17 + Math.floor(Math.random() * 3);
+                hero.props.runtimeFlags.repeatHit = Math.floor(Math.random() * 2);
+                hero.props.runtimeFlags.isFighting = true;
+            } else {
+                if (hero.animState.hasEnded) {
+                    if (!hero.props.runtimeFlags.isSwitchingHit) {
+                        if (hero.props.runtimeFlags.repeatHit <= 0) {
+                            animIndex = 17 + Math.floor(Math.random() * 3);
+                            while (animIndex === hero.props.animIndex) {
+                                animIndex = 17 + Math.floor(Math.random() * 3);
+                            }
+                            hero.props.runtimeFlags.repeatHit = Math.floor(Math.random() * 2);
+                        } else {
+                            hero.props.runtimeFlags.repeatHit--;
+                            animIndex = hero.props.animIndex;
+                        }
+                        hero.props.runtimeFlags.isSwitchingHit = true;
+                    } else {
+                        animIndex = hero.props.animIndex;
+                    }
+                } else {
+                    animIndex = hero.props.animIndex;
+                    hero.props.runtimeFlags.isSwitchingHit = false;
+                }
+            }
+        } else {
+            hero.props.runtimeFlags.isFighting = false;
+        }
+        if (controlsState.crouch === 1) {
+            hero.props.runtimeFlags.isCrouching = true;
+        } else if (controlsState.heroSpeed !== 0 || controlsState.heroRotationSpeed !== 0) {
+            hero.props.runtimeFlags.isCrouching = false;
+        }
+        if (hero.props.runtimeFlags.isCrouching) {
+            animIndex = 16;
+        }
     }
-    if (controlsState.heroRotationSpeed !== 0) {
+    if (controlsState.heroRotationSpeed !== 0 && !controlsState.crouch) {
         toggleJump(hero, false);
+        hero.props.runtimeFlags.isCrouching = false;
         hero.props.runtimeFlags.isWalking = true;
         if (!controlsState.sideStep) {
             const euler = new THREE.Euler();

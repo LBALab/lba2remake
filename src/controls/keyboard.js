@@ -54,11 +54,21 @@ function keyDownHandler(params, game, sceneManager, event) {
             break;
         case 32:
         case 'Space':
-            if (game.getState().hero.behaviour === 1) {
-                game.controlsState.jump = 1;
+            switch (game.getState().hero.behaviour) {
+                case 0:
+                    game.controlsState.action = 1;
+                    break;
+                case 1:
+                    game.controlsState.jump = 1;
+                    break;
+                case 2:
+                    game.controlsState.fight = 1;
+                    break;
+                case 3:
+                    game.controlsState.crouch = 1;
+                    break;
             }
             break;
-
         case 90:
         case 'KeyZ':
             game.controlsState.action = 1;
@@ -67,7 +77,6 @@ function keyDownHandler(params, game, sceneManager, event) {
         case 'KeyX':
             game.controlsState.sideStep = 1;
             break;
-
         case 87: // w
         case 'KeyW':
             game.controlsState.cameraSpeed.z = -1;
@@ -141,7 +150,10 @@ function keyUpHandler(game, event) {
             break;
         case 32:
         case 'Space':
+            game.controlsState.action = 0;
             game.controlsState.jump = 0;
+            game.controlsState.fight = 0;
+            game.controlsState.crouch = 0;
             break;
 
         case 90:

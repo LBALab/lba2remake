@@ -408,7 +408,11 @@ function createRuntimeFlags() {
         // not from original from this point
         isJumping: false,
         isWalking: false,
-        isTurning: false
+        isTurning: false,
+        isFighting: false,
+        repeatHit: 0,
+        isSwitchingHit: false,
+        isCrouching: false
     };
 }
 
