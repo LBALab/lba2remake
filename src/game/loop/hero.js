@@ -101,6 +101,9 @@ function processActorMovement(controlsState, hero, time, behaviour) {
         if (hero.props.runtimeFlags.isCrouching) {
             animIndex = 16;
         }
+        if (controlsState.weapon === 1) {
+            animIndex = 15;
+        }
     }
     if (controlsState.heroRotationSpeed !== 0 && !controlsState.crouch) {
         toggleJump(hero, false);

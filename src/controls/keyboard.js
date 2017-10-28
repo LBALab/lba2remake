@@ -18,6 +18,7 @@ export function makeKeyboardControls(params: Object, canvas: Object, sceneManage
 
 function keyDownHandler(params, game, sceneManager, event) {
     const key = event.code || event.which || event.keyCode;
+    //console.log(event.code, event.which, event.keyCode);
     switch (key) {
         case 38: // up
         case 'ArrowUp':
@@ -72,6 +73,10 @@ function keyDownHandler(params, game, sceneManager, event) {
         case 90:
         case 'KeyZ':
             game.controlsState.action = 1;
+            break;
+        case 18:
+        case 'AltLeft':
+            game.controlsState.weapon = 1;
             break;
         case 88:
         case 'KeyX':
@@ -160,6 +165,12 @@ function keyUpHandler(game, event) {
         case 'KeyZ':
             game.controlsState.action = 0;
             break;
+
+        case 18:
+        case 'AltLeft':
+            game.controlsState.weapon = 0;
+            break;
+
         case 88:
         case 'KeyX':
             game.controlsState.sideStep = 0;
