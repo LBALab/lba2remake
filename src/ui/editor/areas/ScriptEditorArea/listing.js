@@ -60,6 +60,7 @@ function mapArguments(scene, actor, cmd) {
         case 'BETA':
             args[0].value = getRotation(args[0].value, 0, 1) - 90;
             break;
+        case 'ADD_CHOICE':
         case 'ASK_CHOICE':
         case 'MESSAGE_ZOE':
         case 'MESSAGE':
