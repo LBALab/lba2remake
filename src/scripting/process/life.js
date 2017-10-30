@@ -12,7 +12,7 @@ export function BODY_OBJ(actor, bodyIndex)  {
 }
 
 export function ANIM_OBJ(actor, animIndex) {
-    if (actor.props.animIndex == animIndex) {
+    if (actor.props.animIndex === animIndex) {
         return;
     }
     actor.props.animIndex = animIndex;
