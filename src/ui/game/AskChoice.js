@@ -3,6 +3,20 @@ import {extend, map} from 'lodash';
 
 import TextBox from './TextBox';
 
+const styleChoices = {
+    position: 'absolute',
+    top: 30,
+    left: 100,
+    right: 100,
+    listStyle: 'none'
+};
+
+const styleChoiceList = {
+    listStyle: 'none',
+    padding: 0,
+    margin: 0
+};
+
 export default class AskChoice extends React.Component {
     constructor(props) {
         super(props);
@@ -30,14 +44,16 @@ export default class AskChoice extends React.Component {
     }
 
     render() {
-        const color = this.props.color;
         if (this.props.text) {
+            const color = this.props.text.color;
             return <div>
-                <ul>
-                    {map(this.state.choices, (c, idx) => {
-                        return <li><Choice key={idx} text={c} color={color}/></li>
-                    })}
-                </ul>
+                <div style={styleChoices}>
+                    <ul style={styleChoiceList}>
+                        {map(this.state.choices, (c, idx) => {
+                            return <li style={{padding:5}}><Choice key={idx} text={c} color={color}/></li>
+                        })}
+                    </ul>
+                </div>
                 <TextBox text={this.props.text}/>
             </div>;
         }
@@ -45,27 +61,22 @@ export default class AskChoice extends React.Component {
     }
 }
 
-const baseStyleChoice = {
-    position: 'absolute',
+const styleChoice = {
+    position: 'relative',
     background: 'rgba(0, 0, 0, 0.5)',
     fontFamily: 'LBA',
     textShadow: 'black 4px 4px',
-    padding: 20,
+    paddingBottom: 5,
     border: '2px outset #20a2ff',
     borderRadius: 15,
     fontSize: '3em',
-};
-
-const styleTypeChoice = {
-    top: 30,
-    left: 100,
-    right: 100,
-    minHeight: 117
+    textAlign: 'center',
+    width: '100%'
 };
 
 function Choice(props) {
     if (props.text) {
-        const style = extend({color: props.color}, baseStyleChoice, styleTypeChoice);
+        const style = extend({color: props.color}, styleChoice);
         return <div style={style}>{props.text}</div>
     } else {
         return null;
