@@ -99,17 +99,22 @@ function mapCondition(scene, condition, state) {
 
 function mapOperator(scene, operator, state) {
     if (operator) {
+        let text = null;
         if (operator.operand.type === 'vargame_value' || operator.operand.type === 'varcube_value') {
             return {
                 name: operator.op.command,
                 operand: mapDataName(scene, extend({idx: state.condition.param.value}, operator.operand))
             };
-        } else {
-            return {
-                name: operator.op.command,
-                operand: mapDataName(scene, operator.operand)
-            };
+        } else if (operator.operand.type === 'choice_value') {
+            if (scene.data.texts[operator.operand.value]) {
+                text = scene.data.texts[operator.operand.value].value;
+            }
         }
+        return {
+            name: operator.op.command,
+            operand: mapDataName(scene, operator.operand),
+            value: text
+        };
     }
 }
 
