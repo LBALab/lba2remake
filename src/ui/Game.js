@@ -13,6 +13,7 @@ import {fullscreen} from './styles/index';
 import FrameListener from './utils/FrameListener';
 import CinemaEffect from './game/CinemaEffect';
 import TextBox from './game/TextBox';
+import AskChoice from './game/AskChoice';
 import TextInterjections from './game/TextInterjections';
 import DebugLabels from './editor/DebugLabels';
 import FoundObject from './game/FoundObject';
@@ -43,6 +44,7 @@ export default class Game extends FrameListener {
                 game,
                 cinema: false,
                 text: null,
+                ask: null,
                 interjections: {},
                 foundObject: null,
                 loading: true,
@@ -157,6 +159,7 @@ export default class Game extends FrameListener {
                              ticker={this.props.ticker}/> : null}
             <CinemaEffect enabled={this.state.cinema} />
             <TextBox text={this.state.text} />
+            <AskChoice text={this.state.ask} />
             <TextInterjections scene={this.state.scene}
                                renderer={this.state.renderer}
                                interjections={this.state.interjections} />
