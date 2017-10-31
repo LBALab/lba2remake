@@ -14,7 +14,7 @@ export function createState() {
         hero: {
             behaviour: 0,
             life: 50,
-            money: 0,
+            money: 100,
             magic: 0,
             keys: 0,
             fuel: 0,
