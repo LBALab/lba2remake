@@ -128,7 +128,7 @@ export function USE_INVENTORY() {
 }
 
 export function CHOICE() {
-    return -1;
+    return this.state.choice;
 }
 
 export function FUEL() {

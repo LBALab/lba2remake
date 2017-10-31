@@ -367,6 +367,7 @@ export function SET_USED_INVENTORY(item) {
 }
 
 export function ADD_CHOICE(index) {
+    this.state.choice = null;
     const text = this.scene.data.texts[index];
     const uiState = this.game.getUiState();
     uiState.ask.choices.push({ text: text, value: index, color: '#ffffff' });
@@ -411,7 +412,9 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
     }
     if (cmdState.ended) {
         voiceSource.stop();
-        this.game.setUiState({ ask: {choices: []} });
+        const uiState = this.game.getUiState();
+        this.state.choice = uiState.choice;
+        this.game.setUiState({ ask: {choices: []}, choice: null });
         window.removeEventListener('keydown', cmdState.listener);
         hero.props.dirMode = DirMode.MANUAL;
         delete cmdState.listener;

@@ -29,6 +29,7 @@ export default class Game extends FrameListener {
         this.frame = this.frame.bind(this);
         this.saveData = this.saveData.bind(this);
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
+        this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
 
         if (props.mainData) {
             const state = props.mainData.state;
@@ -48,7 +49,8 @@ export default class Game extends FrameListener {
                 interjections: {},
                 foundObject: null,
                 loading: true,
-                video: null
+                video: null,
+                choice: null
             };
 
             clock.start();
@@ -148,6 +150,10 @@ export default class Game extends FrameListener {
         }
     }
 
+    onAskChoiceChanged(choice) {
+        this.setState({choice: choice});
+    }
+
     render() {
         return <div style={fullscreen}>
             <div ref={this.onLoad} style={fullscreen}/>
@@ -159,7 +165,7 @@ export default class Game extends FrameListener {
                              ticker={this.props.ticker}/> : null}
             <CinemaEffect enabled={this.state.cinema} />
             <TextBox text={this.state.text} />
-            <AskChoice ask={this.state.ask} />
+            <AskChoice ask={this.state.ask} onChoiceChanged={this.onAskChoiceChanged} />
             <TextInterjections scene={this.state.scene}
                                renderer={this.state.renderer}
                                interjections={this.state.interjections} />

@@ -25,7 +25,8 @@ export function parseScript(actor, type, script) {
         tracksMap: {},
         ifStack: [],
         offset: 0,
-        commands: []
+        commands: [],
+        choice: null
     };
     while (state.offset < script.byteLength) {
         checkEndIf(state);

@@ -46,6 +46,7 @@ export default class AskChoice extends React.Component {
             if (selectedIndex < 0) {
                 selectedIndex = this.props.ask.choices.length - 1;
             }
+            this.choiceChanged(selectedIndex);
             this.setState({ selectedIndex: selectedIndex });
         }
         if (key === 'ArrowDown' || key === 40) {
@@ -53,8 +54,14 @@ export default class AskChoice extends React.Component {
             if (selectedIndex > this.props.ask.choices.length - 1) {
                 selectedIndex = 0;
             }
+            this.choiceChanged(selectedIndex);
             this.setState({ selectedIndex: selectedIndex });
         }
+    }
+
+    choiceChanged(selectedIndex) {
+        if (this.props.ask.choices.length > 0)
+            this.props.onChoiceChanged(this.props.ask.choices[selectedIndex].value);
     }
 
     update() { }
