@@ -383,9 +383,10 @@ function Condition({condition}) {
  */
 function Operator({operator}) {
     if (operator) {
+        const text = operator.value ? <span>&nbsp;&lt;<i>{operator.value}</i>&gt;</span> : null;
         return <span>
             &nbsp;{operator.name}
-            &nbsp;<span style={argStyle}>{operator.operand}</span>
+            &nbsp;<span style={argStyle}>{operator.operand}{text}</span>
         </span>;
     } else {
         return null;

@@ -12,7 +12,7 @@ export function BODY_OBJ(actor, bodyIndex)  {
 }
 
 export function ANIM_OBJ(actor, animIndex) {
-    if (actor.props.animIndex == animIndex) {
+    if (actor.props.animIndex === animIndex) {
         return;
     }
     actor.props.animIndex = animIndex;
@@ -366,12 +366,60 @@ export function SET_USED_INVENTORY(item) {
     }
 }
 
-export function ADD_CHOICE() {
-
+export function ADD_CHOICE(index) {
+    const text = this.scene.data.texts[index];
+    const uiState = this.game.getUiState();
+    uiState.ask.choices.push({ text: text, value: index, color: '#ffffff' });
+    this.game.setUiState({ ask: uiState.ask });
 }
 
-export function ASK_CHOICE() {
+export function ASK_CHOICE(cmdState, index) {
+    ASK_CHOICE_OBJ.call(this, cmdState, this.actor, index);
+}
 
+export function ASK_CHOICE_OBJ(cmdState, actor, index) {
+    const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const hero = this.scene.getActor(0);
+    if (!cmdState.listener) {
+        const text = this.scene.data.texts[index];
+        hero.props.dirMode = DirMode.NO_MOVE;
+        hero.props.prevEntityIndex = hero.props.entityIndex;
+        hero.props.prevAnimIndex = hero.props.animIndex;
+        hero.props.entityIndex = 0;
+        if (actor.index === 0)
+            hero.props.animIndex = 28; // talking / reading
+        else
+            hero.props.animIndex = 0;
+        const uiState = this.game.getUiState();
+        uiState.ask.text = {
+            type: 'small',
+            value: text.value,
+            color: actor.props.textColor
+        };
+        this.game.setUiState({ ask: uiState.ask });
+        cmdState.listener = function(event) {
+            const key = event.code || event.which || event.keyCode;
+            if (key === 'Enter' || key === 13) {
+                cmdState.ended = true;
+            }
+        };
+        window.addEventListener('keydown', cmdState.listener);
+
+        voiceSource.load(text.index, this.scene.data.textBankId, () => {
+            voiceSource.play();
+        });
+    }
+    if (cmdState.ended) {
+        voiceSource.stop();
+        this.game.setUiState({ ask: {choices: []} });
+        window.removeEventListener('keydown', cmdState.listener);
+        hero.props.dirMode = DirMode.MANUAL;
+        delete cmdState.listener;
+        delete cmdState.ended;
+    } else {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+    }
 }
 
 export function INIT_BUGGY() {
@@ -458,10 +506,6 @@ export function BALLOON() {
 }
 
 export function NO_SHOCK() {
-
-}
-
-export function ASK_CHOICE_OBJ() {
 
 }
 

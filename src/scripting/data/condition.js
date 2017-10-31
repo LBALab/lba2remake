@@ -27,7 +27,7 @@ export const ConditionOpcode = [
     { opcode: 0x17, command: "MAGIC_LEVEL", callback: lc.MAGIC_LEVEL, operand: 'Uint8' },
     { opcode: 0x18, command: "MAGIC_POINT", callback: lc.MAGIC_POINT, operand: 'Uint8' },
     { opcode: 0x19, command: "USE_INVENTORY", callback: lc.USE_INVENTORY, param: 'Uint8', operand: 'Uint8' },
-    { opcode: 0x1A, command: "CHOICE", callback: lc.CHOICE, operand: 'Uint16' },
+    { opcode: 0x1A, command: "CHOICE", callback: lc.CHOICE, operand: 'Uint16:choice_value' },
     { opcode: 0x1B, command: "FUEL", callback: lc.FUEL, operand: 'Uint8' },
     { opcode: 0x1C, command: "CARRIED_BY", callback: lc.CARRIED_BY, operand: 'Uint8' },
     { opcode: 0x1D, command: "CDROM", callback: lc.CDROM, operand: 'Uint8' },

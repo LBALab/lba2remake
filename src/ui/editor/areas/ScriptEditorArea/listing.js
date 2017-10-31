@@ -60,12 +60,15 @@ function mapArguments(scene, actor, cmd) {
         case 'BETA':
             args[0].value = getRotation(args[0].value, 0, 1) - 90;
             break;
+        case 'ADD_CHOICE':
+        case 'ASK_CHOICE':
         case 'MESSAGE_ZOE':
         case 'MESSAGE':
             if (scene.data.texts[args[0].value]) {
                 args[0].text = scene.data.texts[args[0].value].value;
             }
             break;
+        case 'ASK_CHOICE_OBJ':
         case 'MESSAGE_OBJ':
             if (scene.data.texts[args[1].value]) {
                 args[1].text = scene.data.texts[args[1].value].value;
@@ -97,17 +100,22 @@ function mapCondition(scene, condition, state) {
 
 function mapOperator(scene, operator, state) {
     if (operator) {
+        let text = null;
         if (operator.operand.type === 'vargame_value' || operator.operand.type === 'varcube_value') {
             return {
                 name: operator.op.command,
                 operand: mapDataName(scene, extend({idx: state.condition.param.value}, operator.operand))
             };
-        } else {
-            return {
-                name: operator.op.command,
-                operand: mapDataName(scene, operator.operand)
-            };
+        } else if (operator.operand.type === 'choice_value') {
+            if (scene.data.texts[operator.operand.value]) {
+                text = scene.data.texts[operator.operand.value].value;
+            }
         }
+        return {
+            name: operator.op.command,
+            operand: mapDataName(scene, operator.operand),
+            value: text
+        };
     }
 }
 
