@@ -21,40 +21,31 @@ export default class AskChoice extends React.Component {
     constructor(props) {
         super(props);
         this.update = this.update.bind(this);
-        this.state = { content: '', offset: 0, numChoices: 0, choices: [] };
+        this.state = { choices: [] };
         this.interval = null;
     }
 
-    componentWillMount() {
-        this.state.choices.push('choice 1');
-        this.state.choices.push('choice 2');
-        this.state.choices.push('choice 3');
-    }
+    componentWillMount() { }
 
-    componentWillReceiveProps(newProps) {
+    componentWillReceiveProps(newProps) { }
 
-    }
+    componentWillUnmount() { }
 
-    componentWillUnmount() {
-
-    }
-
-    update() {
-
-    }
+    update() { }
 
     render() {
-        if (this.props.text) {
-            const color = this.props.text.color;
+        if (this.props.ask.text) {
             return <div>
                 <div style={styleChoices}>
                     <ul style={styleChoiceList}>
-                        {map(this.state.choices, (c, idx) => {
-                            return <li style={{padding:5}}><Choice key={idx} text={c} color={color}/></li>
+                        {map(this.props.ask.choices, (c, idx) => {
+                            return <li  style={{padding:5}}>
+                                <Choice key={idx} choice={c}/>
+                            </li>
                         })}
                     </ul>
                 </div>
-                <TextBox text={this.props.text}/>
+                <TextBox text={this.props.ask.text}/>
             </div>;
         }
         return null;
@@ -75,10 +66,9 @@ const styleChoice = {
 };
 
 function Choice(props) {
-    if (props.text) {
-        const style = extend({color: props.color}, styleChoice);
-        return <div style={style}>{props.text}</div>
-    } else {
-        return null;
+    if (props.choice.text) {
+        const style = extend({color: props.choice.color}, styleChoice);
+        return <div style={style}>{props.choice.text.value}</div>
     }
+    return null;
 }

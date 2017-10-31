@@ -367,7 +367,10 @@ export function SET_USED_INVENTORY(item) {
 }
 
 export function ADD_CHOICE(index) {
-
+    const text = this.scene.data.texts[index];
+    const uiState = this.game.getUiState();
+    uiState.ask.choices.push({ text: text, value: index, color: '#ffffff' });
+    this.game.setUiState({ ask: uiState.ask });
 }
 
 export function ASK_CHOICE(cmdState, index) {
@@ -387,13 +390,13 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
             hero.props.animIndex = 28; // talking / reading
         else
             hero.props.animIndex = 0;
-        this.game.setUiState({
-            ask: {
-                type: 'small',
-                value: text.value,
-                color: actor.props.textColor
-            }
-        });
+        const uiState = this.game.getUiState();
+        uiState.ask.text = {
+            type: 'small',
+            value: text.value,
+            color: actor.props.textColor
+        };
+        this.game.setUiState({ ask: uiState.ask });
         cmdState.listener = function(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
@@ -408,7 +411,7 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
     }
     if (cmdState.ended) {
         voiceSource.stop();
-        this.game.setUiState({ ask: null });
+        this.game.setUiState({ ask: {choices: []} });
         window.removeEventListener('keydown', cmdState.listener);
         hero.props.dirMode = DirMode.MANUAL;
         delete cmdState.listener;

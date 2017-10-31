@@ -44,7 +44,7 @@ export default class Game extends FrameListener {
                 game,
                 cinema: false,
                 text: null,
-                ask: null,
+                ask: {choices: []},
                 interjections: {},
                 foundObject: null,
                 loading: true,
@@ -159,7 +159,7 @@ export default class Game extends FrameListener {
                              ticker={this.props.ticker}/> : null}
             <CinemaEffect enabled={this.state.cinema} />
             <TextBox text={this.state.text} />
-            <AskChoice text={this.state.ask} />
+            <AskChoice ask={this.state.ask} />
             <TextInterjections scene={this.state.scene}
                                renderer={this.state.renderer}
                                interjections={this.state.interjections} />
