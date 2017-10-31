@@ -21,15 +21,41 @@ export default class AskChoice extends React.Component {
     constructor(props) {
         super(props);
         this.update = this.update.bind(this);
-        this.state = { choices: [] };
-        this.interval = null;
+        this.listener = this.listener.bind(this);
+        this.state = { selectedIndex: 0 };
     }
 
-    componentWillMount() { }
+    componentWillMount() {
+        window.addEventListener('keydown', this.listener);
+    }
 
-    componentWillReceiveProps(newProps) { }
+    componentWillReceiveProps(newProps) {
+        if (newProps.ask)
+            this.setState({ selectedIndex: 0 });
+    }
 
-    componentWillUnmount() { }
+    componentWillUnmount() {
+        window.removeEventListener('keydown', this.listener);
+    }
+
+    listener(event) {
+        const key = event.code || event.which || event.keyCode;
+        let selectedIndex = this.state.selectedIndex;
+        if (key === 'ArrowUp' || key === 38) {
+            selectedIndex--;
+            if (selectedIndex < 0) {
+                selectedIndex = this.props.ask.choices.length - 1;
+            }
+            this.setState({ selectedIndex: selectedIndex });
+        }
+        if (key === 'ArrowDown' || key === 40) {
+            selectedIndex++;
+            if (selectedIndex > this.props.ask.choices.length - 1) {
+                selectedIndex = 0;
+            }
+            this.setState({ selectedIndex: selectedIndex });
+        }
+    }
 
     update() { }
 
@@ -40,7 +66,7 @@ export default class AskChoice extends React.Component {
                     <ul style={styleChoiceList}>
                         {map(this.props.ask.choices, (c, idx) => {
                             return <li  style={{padding:5}}>
-                                <Choice key={idx} choice={c}/>
+                                <Choice key={idx} choice={c} selected={idx === this.state.selectedIndex}/>
                             </li>
                         })}
                     </ul>
@@ -54,7 +80,6 @@ export default class AskChoice extends React.Component {
 
 const styleChoice = {
     position: 'relative',
-    background: 'rgba(0, 0, 0, 0.5)',
     fontFamily: 'LBA',
     textShadow: 'black 4px 4px',
     paddingBottom: 5,
@@ -67,7 +92,11 @@ const styleChoice = {
 
 function Choice(props) {
     if (props.choice.text) {
-        const style = extend({color: props.choice.color}, styleChoice);
+        const extendedStyle = {
+            color: props.choice.color,
+            background: props.selected ? 'rgba(32, 162, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'
+        };
+        const style = extend(extendedStyle, styleChoice);
         return <div style={style}>{props.choice.text.value}</div>
     }
     return null;
