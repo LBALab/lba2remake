@@ -42,14 +42,16 @@ export default class TextBox extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.text) {
-            this.setState({ content: '', offset: 0 });
-            clearInterval(this.interval);
-            this.interval = setInterval(this.update, 35);
-        } else {
-            this.setState({ content: '', offset: 0 });
-            clearInterval(this.interval);
-            this.interval = null;
+        if (newProps.text !== this.props.text) {
+            if (newProps.text) {
+                this.setState({ content: '', offset: 0 });
+                clearInterval(this.interval);
+                this.interval = setInterval(this.update, 35);
+            } else {
+                this.setState({ content: '', offset: 0 });
+                clearInterval(this.interval);
+                this.interval = null;
+            }
         }
     }
 
