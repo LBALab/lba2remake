@@ -300,7 +300,9 @@
     null,
     null,
     null,
-    null,
+    {
+      "name": "read_temple_of_bu_ad"
+    },
     null,
     null,
     null,
