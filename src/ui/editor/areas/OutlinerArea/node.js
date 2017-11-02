@@ -1,5 +1,5 @@
 import React from 'react';
-import {map, concat, times, isObject} from 'lodash';
+import {map, concat, times, isObject, isEqual} from 'lodash';
 
 export default class Node extends React.Component {
     constructor(props) {
@@ -30,8 +30,8 @@ export default class Node extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.activePath !== this.props.activePath
-            || newProps.path !== this.props.path) {
+        if (!isEqual(newProps.activePath, this.props.activePath)
+            || !isEqual(newProps.path, this.props.path)) {
             const collapsed = !(newProps.level < 1 || this.isInActivePath(newProps));
             if (collapsed !== this.state.collapsed) {
                 this.setState({collapsed});
