@@ -12,37 +12,46 @@
       "name": "darts"
     },
     {
-      "name": "sendells_ball"
+      "name": "sendells_ball",
+      "type": "boolean"
     },
     {
-      "name": "tunic_and_sendells_medallion"
+      "name": "tunic_and_sendells_medallion",
+      "type": "boolean"
     },
     {
-      "name": "incandescent_pearl"
+      "name": "incandescent_pearl",
+      "type": "boolean"
     },
     {
-      "name": "pyramid_shaped_key"
+      "name": "pyramid_shaped_key",
+      "type": "boolean"
     },
     {
-      "name": "part_for_the_car"
+      "name": "part_for_the_car",
+      "type": "boolean"
     },
     {
       "name": "kashes"
     },
     {
-      "name": "pisto-laser"
+      "name": "pisto-laser",
+      "type": "boolean"
     },
     {
-      "name": "emperors_sword"
+      "name": "emperors_sword",
+      "type": "boolean"
     },
     {
-      "name": "wannies_glove"
+      "name": "wannies_glove",
+      "type": "boolean"
     },
     {
       "name": "proto-pack"
     },
     {
-      "name": "ferry_ticket"
+      "name": "ferry_ticket",
+      "type": "boolean"
     },
     {
       "name": "nitro-meca-penguin"
@@ -51,25 +60,31 @@
       "name": "can_of_gazogem"
     },
     {
-      "name": "dissidents_ring"
+      "name": "dissidents_ring",
+      "type": "boolean"
     },
     {
-      "name": "gallic_acid"
+      "name": "gallic_acid",
+      "type": "boolean"
     },
     {
-      "name": "ferrymans_song"
+      "name": "ferrymans_song",
+      "type": "boolean"
     },
     {
-      "name": "ring_of_lightning"
+      "name": "ring_of_lightning",
+      "type": "boolean"
     },
     {
-      "name": "customers_umbrella"
+      "name": "customers_umbrella",
+      "type": "boolean"
     },
     {
       "name": "gems"
     },
     {
-      "name": "horn_of_the_blue_triton"
+      "name": "horn_of_the_blue_triton",
+      "type": "boolean"
     },
     {
       "name": "blowgun"
@@ -78,49 +93,64 @@
       "name": "itinerary_token"
     },
     {
-      "name": "slice_of_tart"
+      "name": "slice_of_tart",
+      "type": "boolean"
     },
     {
-      "name": "portable_radio"
+      "name": "portable_radio",
+      "type": "boolean"
     },
     {
-      "name": "garden_balsam"
+      "name": "garden_balsam",
+      "type": "boolean"
     },
     {
-      "name": "magic_slate"
+      "name": "magic_slate",
+      "type": "boolean"
     },
     {
-      "name": "translator"
+      "name": "translator",
+      "type": "boolean"
     },
     {
-      "name": "wizards_diploma"
+      "name": "wizards_diploma",
+      "type": "boolean"
     },
     {
-      "name": "fragment_of_the_francos"
+      "name": "fragment_of_the_francos",
+      "type": "boolean"
     },
     {
-      "name": "fragment_of_the_sups"
+      "name": "fragment_of_the_sups",
+      "type": "boolean"
     },
     {
-      "name": "fragment_of_the_mosquibees"
+      "name": "fragment_of_the_mosquibees",
+      "type": "boolean"
     },
     {
-      "name": "fragment_of_the_wannies"
+      "name": "fragment_of_the_wannies",
+      "type": "boolean"
     },
     {
-      "name": "key_for_the_passage_to_cx"
+      "name": "key_for_the_passage_to_cx",
+      "type": "boolean"
     },
     {
-      "name": "pick-ax"
+      "name": "pick-ax",
+      "type": "boolean"
     },
     {
-      "name": "franco_burgermasters_key"
+      "name": "franco_burgermasters_key",
+      "type": "boolean"
     },
     {
-      "name": "franco_burgermasters_notes"
+      "name": "franco_burgermasters_notes",
+      "type": "boolean"
     },
     {
-      "name": "protective_spell"
+      "name": "protective_spell",
+      "type": "boolean"
     },
     {
       "name": "zoe_exit_state",
