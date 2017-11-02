@@ -1,6 +1,5 @@
 import React from 'react';
 import {getVarInfo, getVarName, renameVar} from '../../../DebugData';
-import {identity} from 'lodash';
 
 export function formatVar(varDef, value) {
     const info = getVarInfo(varDef);
