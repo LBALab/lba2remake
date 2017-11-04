@@ -140,7 +140,7 @@ export function CARRIED_BY() {
 }
 
 export function CDROM() {
-    return -1;
+    return 1;
 }
 
 export function LADDER() {
