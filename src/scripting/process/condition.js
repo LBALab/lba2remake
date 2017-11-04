@@ -197,7 +197,7 @@ export function COL_DECORS_OBJ() {
 }
 
 export function PROCESSOR() {
-    return -1;
+    return 1; // default cpu 486
 }
 
 export function OBJECT_DISPLAYED() {
