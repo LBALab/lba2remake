@@ -161,7 +161,7 @@ export function BETA() {
 
 export function BETA_OBJ(actor) {
     const angle = actor.physics.temp.angle + Math.PI / 2;
-    return (Math.floor(THREE.Math.radToDeg(angle) / 360 * 0x1000) + 0x1000) % 0x1000;
+    return ((THREE.Math.radToDeg(angle) / 360) * 0x1000) % 0x1000;
 }
 
 export function CARRIED_OBJ_BY() {
