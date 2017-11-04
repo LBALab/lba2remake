@@ -559,11 +559,9 @@ export function ESCALATOR() {
 
 export function PLAY_MUSIC(index) {
     const musicSource = this.game.getAudioManager().getMusicSource();
-    if (!musicSource.isPlaying) {
-        musicSource.load(index, () => {
-            musicSource.play();
-        });
-    }
+    musicSource.load(index, () => {
+        musicSource.play();
+    });
 }
 
 export function TRACK_TO_VAR_GAME() {
