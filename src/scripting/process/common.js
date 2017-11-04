@@ -13,7 +13,11 @@ export function BETA(angle) {
 }
 
 export function NO_BODY() {
-    this.actor.visible = false;
+    this.actor.props.bodyIndex = -1;
+    this.actor.props.flags.isVisible = false;
+    if (this.actor.threeObject) {
+        this.actor.threeObject.visible = false;
+    }
 }
 
 export function POS_POINT(point) {
