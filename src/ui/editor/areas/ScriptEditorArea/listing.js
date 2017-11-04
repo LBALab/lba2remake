@@ -64,6 +64,7 @@ function mapArguments(scene, actor, cmd) {
         case 'ASK_CHOICE':
         case 'MESSAGE_ZOE':
         case 'MESSAGE':
+        case 'ADD_MESSAGE':
             if (scene.data.texts[args[0].value]) {
                 args[0].text = scene.data.texts[args[0].value].value;
             }

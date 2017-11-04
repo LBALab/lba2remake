@@ -92,7 +92,7 @@ export const LifeOpcode = [
     { opcode: 0x55, command: "SET_FRAME_3DS", callback: lf.SET_FRAME_3DS, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x56, command: "IMPACT_OBJ", callback: lf.IMPACT_OBJ, args: ['Uint8:actor', 'Uint16', 'Uint16'], indent: Indent.KEEP},
     { opcode: 0x57, command: "IMPACT_POINT", callback: lf.IMPACT_POINT, args: ['Uint8', 'Uint16'], indent: Indent.KEEP},
-    { opcode: 0x58, command: "ADD_MESSAGE", callback: lf.ADD_MESSAGE, args: ['Uint16'], indent: Indent.KEEP},
+    { opcode: 0x58, command: "ADD_MESSAGE", callback: lf.ADD_MESSAGE, args: ['Uint16'], cmdState: true, indent: Indent.KEEP},
     { opcode: 0x59, command: "BALLOON", callback: lf.BALLOON, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x5A, command: "NO_SHOCK", callback: lf.NO_SHOCK, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x5B, command: "ASK_CHOICE_OBJ", callback: lf.ASK_CHOICE_OBJ, args: ['Uint8:actor', 'Uint16'], cmdState: true, indent: Indent.KEEP},

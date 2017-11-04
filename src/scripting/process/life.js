@@ -503,8 +503,8 @@ export function IMPACT_POINT() {
 
 }
 
-export function ADD_MESSAGE() {
-
+export function ADD_MESSAGE(cmdState) {
+    MESSAGE_OBJ.call(this, cmdState, this.actor, id);
 }
 
 export function BALLOON() {
