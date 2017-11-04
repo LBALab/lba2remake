@@ -463,8 +463,11 @@ export function SET_CHANGE_CUBE() {
 
 }
 
-export function MESSAGE_ZOE() {
-
+export function MESSAGE_ZOE(cmdState, id) {
+    const colorHero = this.actor.props.textColor;
+    this.actor.props.textColor = '#d76763'; // zoe text color
+    MESSAGE_OBJ.call(this, cmdState, this.actor, id);
+    this.actor.props.textColor = colorHero;
 }
 
 export function FULL_POINT() {
