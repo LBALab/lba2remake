@@ -1,5 +1,10 @@
 import React from 'react';
+import async from 'async';
+import {times, map, each, filter} from 'lodash';
 import {getVarInfo, getVarName, renameVar} from '../../../DebugData';
+import {loadSceneData} from "../../../../../scene";
+import {parseScript} from "../../../../../scripting/parser";
+import DebugData from "../../../DebugData";
 
 export function formatVar(varDef, value) {
     const info = getVarInfo(varDef);
@@ -27,9 +32,7 @@ export const Var = {
     ctxMenu: [
         {
             name: 'Find all references',
-            onClick: (varDef) => {
-                console.log('Find all refs', varDef);
-            }
+            onClick: findAllReferences
         }
     ],
     name: (varDef) => getVarName(varDef),
@@ -58,4 +61,67 @@ export function makeVariables(type, name, getVars) {
             };
         }
     }
+}
+
+function findAllReferences(varDef) {
+    let sceneList;
+    if (varDef.type === 'vargame') {
+        sceneList = times(222);
+    } else {
+        const scene = DebugData.scope.scene;
+        sceneList = [scene.index];
+    }
+    findAllRefsInSceneList(varDef, sceneList, (results) => {
+
+    });
+}
+
+function findAllRefsInSceneList(varDef, sceneList, callback) {
+    async.map(
+        sceneList,
+        (idx, callback) => {
+            loadSceneData(idx, (scene) => {
+                const foundResults = findAllRefsInScene(varDef, scene);
+                if (foundResults.length > 0) {
+                    callback(null, {
+                        scene: idx,
+                        actors: foundResults
+                    });
+                } else {
+                    callback();
+                }
+            });
+        },
+        (err, results) => {
+            callback(filter(results));
+        }
+    );
+}
+
+function findAllRefsInScene(varDef, scene) {
+    let foundResults = [];
+    map(scene.actors, (actor, idx) => {
+        const script = parseScript(idx, 'life', actor.lifeScript);
+        const actorResults = [];
+        each(script.commands, (cmd, cmdIdx) => {
+            each(cmd.args, arg => {
+                if (arg.type === varDef.type && arg.value === varDef.idx) {
+                    actorResults.push(cmdIdx);
+                }
+            });
+            if (cmd.condition
+                && cmd.condition.param
+                && cmd.condition.param.type === varDef.type
+                && cmd.condition.param.value === varDef.idx) {
+                actorResults.push(cmdIdx);
+            }
+        });
+        if (actorResults.length > 0) {
+            foundResults.push({
+                actor: idx,
+                lines: actorResults
+            });
+        }
+    });
+    return foundResults;
 }
