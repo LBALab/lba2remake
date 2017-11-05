@@ -503,7 +503,7 @@ export function IMPACT_POINT() {
 
 }
 
-export function ADD_MESSAGE(cmdState) {
+export function ADD_MESSAGE(cmdState, id) {
     MESSAGE_OBJ.call(this, cmdState, this.actor, id);
 }
 
