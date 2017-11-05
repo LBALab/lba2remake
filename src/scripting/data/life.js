@@ -104,7 +104,7 @@ export const LifeOpcode = [
     { opcode: 0x61, command: "GAME_OVER", callback: lf.GAME_OVER, indent: Indent.KEEP},
     { opcode: 0x62, command: "THE_END", callback: lf.THE_END, indent: Indent.KEEP},
     { opcode: 0x63, command: "ESCALATOR", callback: lf.ESCALATOR, indent: Indent.KEEP},
-    { opcode: 0x64, command: "PLAY_MUSIC", callback: lf.PLAY_MUSIC, args: ['Uint8'], indent: Indent.KEEP},
+    { opcode: 0x64, command: "PLAY_MUSIC", callback: lf.PLAY_MUSIC, args: ['Uint8'], skipSideScenes: true, indent: Indent.KEEP},
     { opcode: 0x65, command: "TRACK_TO_VAR_GAME", callback: lf.TRACK_TO_VAR_GAME, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x66, command: "VAR_GAME_TO_TRACK", callback: lf.VAR_GAME_TO_TRACK, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x67, command: "ANIM_TEXTURE", callback: lf.ANIM_TEXTURE, args: ['Uint8'], indent: Indent.KEEP},
@@ -126,11 +126,11 @@ export const LifeOpcode = [
     { opcode: 0x77, command: "SET_HIT_ZONE", callback: lf.SET_HIT_ZONE, args: ['Uint8', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x78, command: "SAVE_COMPORTEMENT", callback: st.SAVE_COMPORTEMENT, indent: Indent.KEEP},
     { opcode: 0x79, command: "RESTORE_COMPORTEMENT", callback: st.RESTORE_COMPORTEMENT, indent: Indent.KEEP},
-    { opcode: 0x7A, command: "SAMPLE", callback: lf.SAMPLE, args: ['Uint16'], indent: Indent.KEEP},
-    { opcode: 0x7B, command: "SAMPLE_RND", callback: lf.SAMPLE_RND, args: ['Uint16'], indent: Indent.KEEP},
-    { opcode: 0x7C, command: "SAMPLE_ALWAYS", callback: lf.SAMPLE_ALWAYS, args: ['Uint16'], indent: Indent.KEEP},
-    { opcode: 0x7D, command: "SAMPLE_STOP", callback: lf.SAMPLE_STOP, args: ['Uint16'], indent: Indent.KEEP},
-    { opcode: 0x7E, command: "REPEAT_SAMPLE", callback: lf.REPEAT_SAMPLE, args: ['Uint16', 'Uint8'], indent: Indent.KEEP},
+    { opcode: 0x7A, command: "SAMPLE", callback: lf.SAMPLE, args: ['Uint16'], skipSideScenes: true, indent: Indent.KEEP},
+    { opcode: 0x7B, command: "SAMPLE_RND", callback: lf.SAMPLE_RND, args: ['Uint16'], skipSideScenes: true, indent: Indent.KEEP},
+    { opcode: 0x7C, command: "SAMPLE_ALWAYS", callback: lf.SAMPLE_ALWAYS, args: ['Uint16'], skipSideScenes: true, indent: Indent.KEEP},
+    { opcode: 0x7D, command: "SAMPLE_STOP", callback: lf.SAMPLE_STOP, args: ['Uint16'], skipSideScenes: true, indent: Indent.KEEP},
+    { opcode: 0x7E, command: "REPEAT_SAMPLE", callback: lf.REPEAT_SAMPLE, args: ['Uint16', 'Uint8'], skipSideScenes: true, indent: Indent.KEEP},
     { opcode: 0x7F, command: "BACKGROUND", callback: lf.BACKGROUND, args: ['Uint8'], indent: Indent.KEEP},
     { opcode: 0x80, command: "ADD_VAR_GAME", callback: lf.ADD_VAR_GAME, args: ['Uint8', 'Uint16'], indent: Indent.KEEP},
     { opcode: 0x81, command: "SUB_VAR_GAME", callback: lf.SUB_VAR_GAME, args: ['Uint8', 'Uint16'], indent: Indent.KEEP},
@@ -155,8 +155,8 @@ export const LifeOpcode = [
     { opcode: 0x94, command: "PCX", callback: lf.PCX, args: ['Uint16'], indent: Indent.KEEP},
     { opcode: 0x95, command: "END_MESSAGE", callback: lf.END_MESSAGE, indent: Indent.KEEP},
     { opcode: 0x96, command: "END_MESSAGE_OBJ", callback: lf.END_MESSAGE_OBJ, args: ['Uint8:actor'], indent: Indent.KEEP},
-    { opcode: 0x97, command: "PARM_SAMPLE", callback: lf.PARM_SAMPLE, args: ['Uint16', 'Uint8', 'Uint16'], indent: Indent.KEEP}, // not sure about this one
-    { opcode: 0x98, command: "NEW_SAMPLE", callback: lf.NEW_SAMPLE, args: ['Uint16', 'Uint16', 'Uint8', 'Uint16'], indent: Indent.KEEP},
+    { opcode: 0x97, command: "PARM_SAMPLE", callback: lf.PARM_SAMPLE, args: ['Uint16', 'Uint8', 'Uint16'], skipSideScenes: true, indent: Indent.KEEP}, // not sure about this one
+    { opcode: 0x98, command: "NEW_SAMPLE", callback: lf.NEW_SAMPLE, args: ['Uint16', 'Uint16', 'Uint8', 'Uint16'], skipSideScenes: true, indent: Indent.KEEP},
     { opcode: 0x99, command: "POS_OBJ_AROUND", callback: lf.POS_OBJ_AROUND, args: ['Uint8:actor', 'Uint8'], indent: Indent.KEEP},
     { opcode: 0x9A, command: "PCX_MESS_OBJ", callback: lf.PCX_MESS_OBJ, args: ['Uint8:actor', 'Uint16', 'Uint16'], indent: Indent.KEEP}
 ];

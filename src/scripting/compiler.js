@@ -47,6 +47,9 @@ function compileInstruction(script, cmd, cmdOffset) {
     instruction.section = cmd.section;
     if (condition)
         instruction.condition = condition;
+    if (cmd.op.skipSideScenes) {
+        instruction.skipSideScenes = true;
+    }
     return instruction;
 }
 
