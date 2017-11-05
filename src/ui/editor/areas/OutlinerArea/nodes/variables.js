@@ -24,6 +24,14 @@ export const Var = {
     rename: (varDef, newName) => {
         renameVar(varDef, newName);
     },
+    ctxMenu: [
+        {
+            name: 'Find all references',
+            onClick: (varDef) => {
+                console.log('Find all refs', varDef);
+            }
+        }
+    ],
     name: (varDef) => getVarName(varDef),
     props: (varDef) => [
         {
