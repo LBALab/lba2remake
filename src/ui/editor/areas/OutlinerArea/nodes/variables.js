@@ -49,7 +49,11 @@ export const Var = {
     ctxMenu: [
         {
             name: 'Find all references',
-            onClick: findAllReferences
+            onClick: (component, varDef) => {
+                findAllReferences(varDef).then(area => {
+                    component.props.split(Orientation.VERTICAL, area);
+                });
+            }
         }
     ],
     name: (varDef) => getVarName(varDef),
@@ -63,7 +67,7 @@ export const Var = {
     onClick: () => {}
 };
 
-export function makeVariables(type, name, getVars) {
+export function makeVariables(type, name, getVars, getCtx) {
     return {
         dynamic: true,
         name: () => name,
@@ -73,6 +77,7 @@ export function makeVariables(type, name, getVars) {
         childData: (data, idx) => {
             return {
                 type: type,
+                ctx: getCtx && getCtx(),
                 value: () => getVars()[idx],
                 idx
             };
@@ -80,28 +85,31 @@ export function makeVariables(type, name, getVars) {
     }
 }
 
-function findAllReferences(component, varDef) {
-    let sceneList;
-    const isVarGames = varDef.type === 'vargame';
-    if (isVarGames) {
-        sceneList = times(222);
-    } else {
-        const scene = DebugData.scope.scene;
-        sceneList = [scene.index];
-    }
-    findAllRefsInSceneList(varDef, sceneList, (refs) => {
-        const varname = getVarName(varDef);
-        component.props.split(
-            Orientation.VERTICAL,
-            makeOutlinerArea(
+export function findAllReferences(varDef) {
+    return new Promise(resolve => {
+        let sceneList;
+        const isVarGames = varDef.type === 'vargame';
+        if (isVarGames) {
+            sceneList = times(222);
+        } else {
+            sceneList = [varDef.ctx.scene];
+        }
+        findAllRefsInSceneList(varDef, sceneList, (refs) => {
+            const varname = getVarName(varDef);
+            const area = makeOutlinerArea(
                 `references_to_${varname}`,
                 `References to ${varname}`,
                 {
-                    name: `References to ${varname}`,
+                    name: `References to ${varname}${!isVarGames ? ` (Scene #${varDef.ctx.scene})` : ''}`,
                     children: isVarGames ? mapLocations(refs) : mapActors(refs[0])
                 }
-            )
-        );
+            );
+            area.generator = {
+                func: 'findAllReferences',
+                data: varDef
+            };
+            resolve(area);
+        });
     });
 }
 
@@ -137,6 +145,8 @@ function mapLocations(refs, locations = LocationsNode.children) {
 }
 
 function mapActors(ref) {
+    if (!ref)
+        return [];
     return map(ref.actors, actor => ({
         name: getObjectName('actor', ref.scene, actor.actor),
         icon: 'editor/icons/model.png',

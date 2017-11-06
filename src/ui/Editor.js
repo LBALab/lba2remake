@@ -4,7 +4,8 @@ import {fullscreen} from './styles';
 import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
 import NewArea from './editor/areas/NewArea';
 import {Type, Orientation} from './editor/layout';
-import {findAreaContentById, findMainAreas} from './editor/utils';
+import {findAreaContentById, findMainAreas, generateContent} from './editor/utils';
+import AreaLoader from './editor/areas/AreaLoader';
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
 
@@ -295,6 +296,7 @@ function saveNode(node) {
         return {
             type: Type.AREA,
             content_id: node.content.id,
+            generator: node.content.generator,
             state: node.stateHandler.state,
             root: node.root
         };
@@ -331,12 +333,20 @@ function loadNode(editor, node) {
             ]
         };
     } else {
-        const content = findAreaContentById(node.content_id) || NewArea;
         const tgtNode = {
             type: Type.AREA,
-            content: content,
             root: node.root
         };
+        if (node.generator) {
+            generateContent(node.generator).then(area => {
+                tgtNode.content = area;
+                editor.setState({layout: editor.state.layout});
+            });
+            tgtNode.content = AreaLoader;
+        } else {
+            tgtNode.content = findAreaContentById(node.content_id) || NewArea;
+        }
+
         initStateHandler(editor, tgtNode, node.state);
         return tgtNode;
     }

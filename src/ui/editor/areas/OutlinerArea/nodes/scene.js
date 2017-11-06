@@ -40,6 +40,13 @@ const VarCube = makeVariables('varcube', 'Local Variables', () => {
         return scene.variables;
     }
     return [];
+}, () => {
+    const scene = DebugData.scope.scene;
+    if (scene) {
+        return {
+            scene: scene.index
+        };
+    }
 });
 
 const VarGameConfig = {

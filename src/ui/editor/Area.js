@@ -4,6 +4,7 @@ import {editor, fullscreen} from '../styles/index';
 import {Orientation} from './layout';
 import {map, findIndex} from 'lodash';
 import NewArea from './areas/NewArea';
+import AreaLoader from "./areas/AreaLoader";
 
 const menuHeight = 26;
 
@@ -77,6 +78,9 @@ export default class Area extends React.Component {
     }
 
     renderTitle() {
+        if (this.props.area === AreaLoader) {
+            return null;
+        }
         const isNew = (this.props.area === NewArea);
         const availableAreas = map(this.props.availableAreas);
         const onChange = (e) => {
