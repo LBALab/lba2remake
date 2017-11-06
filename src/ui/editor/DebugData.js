@@ -125,6 +125,10 @@ export function getObjectName(type, sceneIndex, objIndex) {
 }
 
 export function loadSceneMetaData(sceneIndex, callback) {
+    if (sceneIndex in DebugData.metadata.scenes) {
+        callback();
+        return;
+    }
     const request = new XMLHttpRequest();
     request.open('GET', `metadata/scene_${sceneIndex}.json`, true);
 

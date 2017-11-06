@@ -1,7 +1,13 @@
 import React from 'react';
 import async from 'async';
 import {times, map, each, filter, find, clone} from 'lodash';
-import {getObjectName, getVarInfo, getVarName, renameVar} from '../../../DebugData';
+import {
+    getObjectName,
+    getVarInfo,
+    getVarName,
+    loadSceneMetaData,
+    renameVar
+} from '../../../DebugData';
 import {loadSceneData} from "../../../../../scene";
 import {parseScript} from "../../../../../scripting/parser";
 import DebugData from "../../../DebugData";
@@ -156,7 +162,10 @@ function findAllRefsInSceneList(varDef, sceneList, callback) {
     async.map(
         sceneList,
         (idx, callback) => {
-            loadSceneData(idx, (scene) => {
+            async.parallel([
+                (callback) => loadSceneData(idx, (scene) => callback(null, scene)),
+                (callback) => loadSceneMetaData(idx, callback)
+            ], (err, [scene]) => {
                 const foundResults = findAllRefsInScene(varDef, scene);
                 if (foundResults.length > 0) {
                     callback(null, {
