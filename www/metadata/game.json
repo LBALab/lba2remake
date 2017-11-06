@@ -301,7 +301,8 @@
     null,
     null,
     {
-      "name": "read_temple_of_bu_ad"
+      "name": "read_temple_of_bu_ad",
+      "type": "boolean"
     },
     null,
     null,
@@ -309,7 +310,10 @@
     null,
     null,
     null,
-    null,
+    {
+      "name": "petanque_sphero_cured",
+      "type": "boolean"
+    },
     null,
     null,
     null,
