@@ -141,7 +141,7 @@ export default class Node extends React.Component {
             };
 
             const onClickOther = (entry) => {
-                entry.onClick(this.props.data);
+                entry.onClick(this, this.props.data);
                 this.setState({menu: null});
             };
 
@@ -277,7 +277,8 @@ export default class Node extends React.Component {
                      path={path}
                      activePath={this.props.activePath}
                      ticker={this.props.ticker}
-                     level={this.props.level + 1}/>
+                     level={this.props.level + 1}
+                     split={this.props.split} />
     }
 
     numChildren() {

@@ -1,10 +1,13 @@
 import React from 'react';
 import async from 'async';
-import {times, map, each, filter} from 'lodash';
-import {getVarInfo, getVarName, renameVar} from '../../../DebugData';
+import {times, map, each, filter, find, clone} from 'lodash';
+import {getObjectName, getVarInfo, getVarName, renameVar} from '../../../DebugData';
 import {loadSceneData} from "../../../../../scene";
 import {parseScript} from "../../../../../scripting/parser";
 import DebugData from "../../../DebugData";
+import {Orientation} from '../../../layout';
+import {makeOutlinerArea} from '../factory';
+import {LocationsNode} from './locations';
 
 export function formatVar(varDef, value) {
     const info = getVarInfo(varDef);
@@ -63,17 +66,90 @@ export function makeVariables(type, name, getVars) {
     }
 }
 
-function findAllReferences(varDef) {
+function findAllReferences(component, varDef) {
     let sceneList;
-    if (varDef.type === 'vargame') {
+    const isVarGames = varDef.type === 'vargame';
+    if (isVarGames) {
         sceneList = times(222);
     } else {
         const scene = DebugData.scope.scene;
         sceneList = [scene.index];
     }
-    findAllRefsInSceneList(varDef, sceneList, (results) => {
-
+    findAllRefsInSceneList(varDef, sceneList, (refs) => {
+        const varname = getVarName(varDef);
+        component.props.split(
+            Orientation.VERTICAL,
+            makeOutlinerArea(
+                `references_to_${varname}`,
+                `References to ${varname}`,
+                {
+                    name: `References to ${varname}`,
+                    children: isVarGames ? mapLocations(refs) : mapActors(refs[0])
+                }
+            )
+        );
     });
+}
+
+function mapLocations(refs, locations = LocationsNode.children) {
+    return filter(
+        map(locations, loc => {
+            if (loc.props) {
+                const indexProp = find(loc.props, p => p.id === 'index');
+                if (indexProp) {
+                    const ref = find(refs, ref => ref.scene === indexProp.value);
+                    if (ref) {
+                        const node = clone(loc);
+                        node.children = mapActors(ref);
+                        node.onClick = () => {};
+                        return node;
+                    }
+                }
+            }
+            const children = mapLocations(refs, loc.children);
+            if (children.length > 0) {
+                const node = clone(loc);
+                node.children = children;
+                node.onClick = () => {};
+                return node;
+            }
+        })
+    )
+}
+
+function mapActors(ref) {
+    return map(ref.actors, actor => ({
+        name: getObjectName('actor', ref.scene, actor.actor),
+        icon: 'editor/icons/model.png',
+        onClick: () => {
+            if (DebugData.scope.scene) {
+                if (DebugData.scope.scene.index !== ref.scene) {
+                    DebugData.sceneManager.goto(ref.scene, () => {
+                        DebugData.selection.actor = actor.actor;
+                    });
+                } else {
+                    DebugData.selection.actor = actor.actor;
+                }
+            }
+        },
+        children: map(actor.lines, line => ({
+            name: `Line ${line}`,
+            onClick: () => {
+                if (DebugData.scope.scene) {
+                    if (DebugData.scope.scene.index !== ref.scene) {
+                        DebugData.sceneManager.goto(ref.scene, () => {
+                            DebugData.selection.actor = actor.actor;
+                            DebugData.selection.lifeLine = line;
+                        });
+                    } else {
+                        DebugData.selection.actor = actor.actor;
+                        DebugData.selection.lifeLine = line;
+                    }
+                }
+            },
+            children: []
+        }))
+    }));
 }
 
 function findAllRefsInSceneList(varDef, sceneList, callback) {
@@ -106,14 +182,14 @@ function findAllRefsInScene(varDef, scene) {
         each(script.commands, (cmd, cmdIdx) => {
             each(cmd.args, arg => {
                 if (arg.type === varDef.type && arg.value === varDef.idx) {
-                    actorResults.push(cmdIdx);
+                    actorResults.push(cmdIdx + 1);
                 }
             });
             if (cmd.condition
                 && cmd.condition.param
                 && cmd.condition.param.type === varDef.type
                 && cmd.condition.param.value === varDef.idx) {
-                actorResults.push(cmdIdx);
+                actorResults.push(cmdIdx + 1);
             }
         });
         if (actorResults.length > 0) {

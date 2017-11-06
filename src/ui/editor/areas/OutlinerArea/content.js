@@ -60,7 +60,8 @@ export function makeContentComponent(tree, frame) {
                              path={this.props.sharedState.path}
                              activePath={this.props.sharedState.activePath}
                              ticker={this.props.ticker}
-                             level={0} />;
+                             level={0}
+                             split={this.props.split} />;
             } else {
                 return 'Node is not available.';
             }

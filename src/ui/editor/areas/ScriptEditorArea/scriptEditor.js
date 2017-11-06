@@ -100,12 +100,16 @@ export default class ScriptEditor extends FrameListener {
     frame() {
         const scene = DebugData.scope.scene;
         const actor = scene ? scene.actors[DebugData.selection.actor] : null;
+        if (DebugData.selection.lifeLine) {
+            this.props.stateHandler.setAutoScroll(false);
+        }
         if (this.scene !== scene || this.actor !== actor) {
             this.setState({
                 listing: {
                     life: getDebugListing('life', scene, actor),
                     move: getDebugListing('move', scene, actor)
-                }
+                },
+                lifeLine: undefined
             });
             this.scene = scene;
             this.actor = actor;
@@ -164,6 +168,18 @@ export default class ScriptEditor extends FrameListener {
                         const activeSection = commands[i].section === activeCommands.section;
                         lineNum.style.background = activeSection ? '#232323' : 'transparent';
                         lineCmd.style.background = activeSection ? '#232323' : 'transparent';
+                    }
+                    if (type === 'life' && DebugData.selection.lifeLine === i + 1) {
+                        const tgt = i + 1;
+                        const ll = Math.max(i - 1, 0);
+                        ln[ll].scrollIntoView();
+                        this.scrollElem = ln[ll];
+                        lineCmd.style.background = '#7d6b37';
+                        setTimeout(() => {
+                            if (tgt === DebugData.selection.lifeLine) {
+                                delete DebugData.selection.lifeLine;
+                            }
+                        }, 500);
                     }
                 }
 

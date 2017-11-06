@@ -78,14 +78,24 @@ export default class Area extends React.Component {
 
     renderTitle() {
         const isNew = (this.props.area === NewArea);
+        const availableAreas = map(this.props.availableAreas);
         const onChange = (e) => {
-            const area = this.props.availableAreas[e.target.value];
+            const area = availableAreas[e.target.value];
             this.props.selectAreaContent(area);
         };
-        const value = isNew ? 'new' : findIndex(this.props.availableAreas, area => area.name === this.props.area.name);
+        let value = 'new';
+        if (!isNew) {
+            const idx = findIndex(availableAreas, area => area.name === this.props.area.name);
+            if (idx === -1) {
+                availableAreas.push(this.props.area);
+                value = availableAreas.length - 1;
+            } else {
+                value = idx;
+            }
+        }
         return <select onChange={onChange} style={editor.select} value={value}>
             {<option disabled value="new">Select content</option>}
-            {map(this.props.availableAreas, (area, idx) => {
+            {map(availableAreas, (area, idx) => {
                 return <option key={idx} value={idx}>{area.name}</option>;
             })}
         </select>;
@@ -99,7 +109,8 @@ export default class Area extends React.Component {
             sharedState: this.props.stateHandler.state,
             availableAreas: this.props.availableAreas,
             selectAreaContent: this.props.selectAreaContent,
-            confirmPopup: this.confirmPopup
+            confirmPopup: this.confirmPopup,
+            split: this.props.split
         };
         if (this.props.mainArea) {
             extend(props, {

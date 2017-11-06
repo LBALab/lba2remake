@@ -175,7 +175,7 @@ export default class Editor extends React.Component {
         }
     }
 
-    split(path, orientation) {
+    split(path, orientation, content) {
         if (path.length === 0) {
             const layout = {
                 type: Type.LAYOUT,
@@ -183,7 +183,7 @@ export default class Editor extends React.Component {
                 splitAt: 50,
                 children: [
                     this.state.layout,
-                    this.createNewArea({type: Type.AREA, content: NewArea})
+                    this.createNewArea(content)
                 ]
             };
             this.setState({layout});
@@ -199,7 +199,7 @@ export default class Editor extends React.Component {
                 splitAt: 50,
                 children: [
                     pNode.children[idx],
-                    this.createNewArea({type: Type.AREA, content: NewArea})
+                    this.createNewArea(content)
                 ]
             };
             this.setState({layout});
@@ -247,10 +247,10 @@ export default class Editor extends React.Component {
         this.setState({mainData: data});
     }
 
-    createNewArea() {
+    createNewArea(content = NewArea) {
         const node = {
             type: Type.AREA,
-            content: NewArea
+            content
         };
         initStateHandler(this, node);
         return node;
