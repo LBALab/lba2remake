@@ -1,6 +1,14 @@
 import React from 'react';
 import async from 'async';
-import {times, map, each, filter, find, clone} from 'lodash';
+import {
+    times,
+    map,
+    each,
+    filter,
+    find,
+    clone,
+    concat
+} from 'lodash';
 import {
     getObjectName,
     getVarInfo,
@@ -100,25 +108,30 @@ function findAllReferences(component, varDef) {
 function mapLocations(refs, locations = LocationsNode.children) {
     return filter(
         map(locations, loc => {
+            let node = null;
             if (loc.props) {
                 const indexProp = find(loc.props, p => p.id === 'index');
                 if (indexProp) {
                     const ref = find(refs, ref => ref.scene === indexProp.value);
                     if (ref) {
-                        const node = clone(loc);
+                        node = clone(loc);
                         node.children = mapActors(ref);
-                        node.onClick = () => {};
-                        return node;
                     }
                 }
             }
             const children = mapLocations(refs, loc.children);
             if (children.length > 0) {
-                const node = clone(loc);
-                node.children = children;
-                node.onClick = () => {};
-                return node;
+                if (node) {
+                    node.children = concat(node.children, children);
+                } else {
+                    node = clone(loc);
+                    node.children = children;
+                }
             }
+            if (node) {
+                node.onClick = () => {};
+            }
+            return node;
         })
     )
 }
