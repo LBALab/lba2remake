@@ -176,6 +176,8 @@ export default class Editor extends React.Component {
     }
 
     split(path, orientation, content) {
+        if (!content)
+            content = NewArea;
         if (path.length === 0) {
             const layout = {
                 type: Type.LAYOUT,
@@ -247,7 +249,7 @@ export default class Editor extends React.Component {
         this.setState({mainData: data});
     }
 
-    createNewArea(content = NewArea) {
+    createNewArea(content) {
         const node = {
             type: Type.AREA,
             content
