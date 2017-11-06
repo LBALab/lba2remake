@@ -88,7 +88,7 @@ export function VAR_GAME(index) {
 }
 
 export function LIFE_POINT() {
-    return this.game.getState().hero.life;
+    return LIFE_POINT_OBJ(this.actor);
 }
 
 export function LIFE_POINT_OBJ(actor) {
