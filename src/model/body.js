@@ -9,6 +9,12 @@ export function loadBody(model, bodies, index, bodyProps) {
         const data = new DataView(buffer);
         const obj = {
             bodyFlag: data.getInt32(0x00, true),
+            xMin: data.getInt32(0x08, true),
+            xMax: data.getInt32(0x0C, true),
+            yMin: data.getInt32(0x10, true),
+            yMax: data.getInt32(0x14, true),
+            zMin: data.getInt32(0x18, true),
+            zMax: data.getInt32(0x1C, true),
             bonesSize: data.getUint32(0x20, true),
             bonesOffset: data.getUint32(0x24, true),
             verticesSize: data.getUint32(0x28, true),
