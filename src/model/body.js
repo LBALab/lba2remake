@@ -227,19 +227,19 @@ function loadUVGroups(object) {
 
 function computeBoundingBox(object, bodyProps) {
     if (bodyProps && bodyProps.hasCollisionBox) {
-        const {tX, tY, tZ, bX, bY, bZ} = bodyProps.box;
+        const {xMin, yMin, zMin, xMax, yMax, zMax} = bodyProps.box;
         object.hasBoundingBox = true;
         object.boundingBox = new THREE.Box3(
             new THREE.Vector3(
-                Math.min(tX, bX) / 0x4000,
-                Math.min(tY, bY) / 0x4000,
-                Math.min(tZ, bZ) / 0x4000
+                xMin / 0x4000,
+                yMin / 0x4000,
+                zMin / 0x4000
             )
             ,
             new THREE.Vector3(
-                Math.max(tX, bX) / 0x4000,
-                Math.max(tY, bY) / 0x4000,
-                Math.max(tZ, bZ) / 0x4000
+                xMax / 0x4000,
+                yMax / 0x4000,
+                zMax / 0x4000
             )
         );
     } else {
@@ -259,12 +259,12 @@ function computeBoundingBox(object, bodyProps) {
             const vertex = object.vertices[i];
             const point = new THREE.Vector3(vertex.x, vertex.y, vertex.z);
             point.add(points[vertex.bone]);
-            boundingBox.min.x = Math.min(boundingBox.min.x, point.x);
-            boundingBox.min.y = Math.min(boundingBox.min.y, point.y);
-            boundingBox.min.z = Math.min(boundingBox.min.z, point.z);
-            boundingBox.max.x = Math.max(boundingBox.max.x, point.x);
-            boundingBox.max.y = Math.max(boundingBox.max.y, point.y);
-            boundingBox.max.z = Math.max(boundingBox.max.z, point.z);
+            boundingBox.min.x = 0;//Math.min(boundingBox.min.x, point.x);
+            boundingBox.min.y = 0;//Math.min(boundingBox.min.y, point.y);
+            boundingBox.min.z = 0;//Math.min(boundingBox.min.z, point.z);
+            boundingBox.max.x = 0;//Math.max(boundingBox.max.x, point.x);
+            boundingBox.max.y = 0;//Math.max(boundingBox.max.y, point.y);
+            boundingBox.max.z = 0;//Math.max(boundingBox.max.z, point.z);
         }
         object.hasBoundingBox = false;
         object.boundingBox = boundingBox;

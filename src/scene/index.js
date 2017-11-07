@@ -252,12 +252,18 @@ function loadZones(scene, offset) {
             box: {}
         };
 
-        zone.box.bX = (0x8000 - data.getInt32(offset + 8, true) + 512) / 0x4000;
-        zone.box.bY = data.getInt32(offset + 4, true) / 0x4000;
-        zone.box.bZ = data.getInt32(offset, true) / 0x4000;
-        zone.box.tX = (0x8000 - data.getInt32(offset + 20, true) + 512) / 0x4000;
-        zone.box.tY = data.getInt32(offset + 16, true) / 0x4000;
-        zone.box.tZ = data.getInt32(offset + 12, true) / 0x4000;
+        const xMin = (0x8000 - data.getInt32(offset + 8, true) + 512) / 0x4000;
+        const yMin = data.getInt32(offset + 4, true) / 0x4000;
+        const zMin = data.getInt32(offset, true) / 0x4000;
+        const xMax = (0x8000 - data.getInt32(offset + 20, true) + 512) / 0x4000;
+        const yMax = data.getInt32(offset + 16, true) / 0x4000;
+        const zMax = data.getInt32(offset + 12, true) / 0x4000;
+        zone.box.xMin = Math.min(xMin, xMax);
+        zone.box.yMin = Math.min(yMin, yMax);
+        zone.box.zMin = Math.min(zMin, zMax);
+        zone.box.xMax = Math.max(xMin, xMax);
+        zone.box.yMax = Math.max(yMin, yMax);
+        zone.box.zMax = Math.max(zMin, zMax);
         offset += 24;
 
         zone.info0 = data.getInt32(offset, true);
@@ -274,9 +280,9 @@ function loadZones(scene, offset) {
 
         // normalising position
         zone.pos = [
-            zone.box.bX + (zone.box.tX - zone.box.bX)/2,
-            zone.box.bY + (zone.box.tY - zone.box.bY)/2,
-            zone.box.bZ + (zone.box.tZ - zone.box.bZ)/2
+            zone.box.xMin + (zone.box.xMax - zone.box.xMin)/2,
+            zone.box.yMin + (zone.box.yMax - zone.box.yMin)/2,
+            zone.box.zMin + (zone.box.zMax - zone.box.zMin)/2
         ];
 
         scene.zones.push(zone);

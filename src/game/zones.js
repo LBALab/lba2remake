@@ -41,10 +41,10 @@ export function loadZone(props, callback) {
         }
     };
 
-    const {tX, tY, tZ, bX, bY, bZ} = props.box;
+    const {xMin, yMin, zMin, xMax, yMax, zMax} = props.box;
     const bb = new THREE.Box3(
-        new THREE.Vector3(bX, bY, bZ),
-        new THREE.Vector3(tX, tY, tZ)
+        new THREE.Vector3(xMin, yMin, zMin),
+        new THREE.Vector3(xMax, yMax, zMax)
     );
     const bbGeom = createBoundingBox(bb, zone.color);
     bbGeom.name = `zone:${getObjectName('zone', props.sceneIndex, props.index)}`;

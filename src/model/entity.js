@@ -28,12 +28,12 @@ type Anim = {
 }
 
 type Box = {
-    bX: number,
-    bY: number,
-    bZ: number,
-    tX: number,
-    tY: number,
-    tZ: number
+    xMin: number,
+    yMin: number,
+    zMin: number,
+    xMax: number,
+    yMax: number,
+    zMax: number
 }
 
 export type Body = {
@@ -168,21 +168,21 @@ function loadEntityBody(data, offset) {
 
     const hasCollisionBox = data.getUint8(offset++, true);
 
-    if (hasCollisionBox == 1) {
+    if (hasCollisionBox === 1) {
         body.hasCollisionBox = true;
         let box = {
-            bX: 0, bY: 0, bZ: 0,
-            tX: 0, tY: 0, tZ: 0
+            xMin: 0, yMin: 0, zMin: 0,
+            xMax: 0, yMax: 0, zMax: 0
         };
         
         const actionType = data.getUint8(offset++, true);
-        if (actionType == ACTIONTYPE.ZV) {
-            box.bX = data.getInt16(offset, true);
-            box.bY = data.getInt16(offset + 2, true);
-            box.bZ = data.getInt16(offset + 4, true);
-            box.tX = data.getInt16(offset + 6, true);
-            box.tY = data.getInt16(offset + 8, true);
-            box.tZ = data.getInt16(offset + 10, true);
+        if (actionType === ACTIONTYPE.ZV) {
+            box.xMin = data.getInt16(offset, true);
+            box.yMin = data.getInt16(offset + 2, true);
+            box.zMin = data.getInt16(offset + 4, true);
+            box.xMax = data.getInt16(offset + 6, true);
+            box.yMax = data.getInt16(offset + 8, true);
+            box.zMax = data.getInt16(offset + 10, true);
         }
         body.box = box;
     }
@@ -456,11 +456,11 @@ export function getAnim(entity: Entity, index: number) {
 
 function makeNewBox() {
     return {
-        bX: -1,
-        bY: -1,
-        bZ: -1,
-        tX: -1,
-        tY: -1,
-        tZ: -1
+        xMin: -1,
+        yMin: -1,
+        zMin: -1,
+        xMax: -1,
+        yMax: -1,
+        zMax: -1
     }
 }

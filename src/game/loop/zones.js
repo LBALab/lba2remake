@@ -24,9 +24,9 @@ export function processZones(game, scene) {
             continue;
 
         const box = zone.props.box;
-        if (pos.x > Math.min(box.bX, box.tX) && pos.x < Math.max(box.bX, box.tX) &&
-            pos.y > Math.min(box.bY, box.tY) && pos.y < Math.max(box.bY, box.tY) &&
-            pos.z > Math.min(box.bZ, box.tZ) && pos.z < Math.max(box.bZ, box.tZ)) {
+        if (pos.x > box.xMin && pos.x < box.xMax &&
+            pos.y > box.yMin && pos.y < box.yMax &&
+            pos.z > box.zMin && pos.z < box.zMax) {
             const zoneType = ZoneOpcode[zone.props.type];
             if (zoneType != null && zoneType.callback != null) {
                 zoneType.callback(game, scene, zone, hero);
