@@ -1,5 +1,4 @@
 import THREE from 'three';
-import {each} from 'lodash';
 
 export function loadBody(model, bodies, index, bodyProps) {
     if (bodies[index]) {
@@ -234,7 +233,6 @@ function loadUVGroups(object) {
 function computeBoundingBox(object, bodyProps) {
     if (bodyProps && bodyProps.hasCollisionBox) {
         const {xMin, yMin, zMin, xMax, yMax, zMax} = bodyProps.box;
-        object.hasBoundingBox = true;
         object.boundingBox = new THREE.Box3(
             new THREE.Vector3(
                 xMin / 0x4000,
@@ -249,30 +247,19 @@ function computeBoundingBox(object, bodyProps) {
             )
         );
     } else {
-        const boundingBox = new THREE.Box3();
-        const points = [];
-        each(object.bones, bone => {
-            let vertex = object.vertices[bone.vertex];
-            const point = new THREE.Vector3(vertex.x, vertex.y, vertex.z);
-            while (bone.parent != 0xFFFF) {
-                bone = object.bones[bone.parent];
-                vertex = object.vertices[bone.vertex];
-                point.add(new THREE.Vector3(vertex.x, vertex.y, vertex.z));
-            }
-            points.push(point);
-        });
-        for (let i = object.bones.length; i < object.vertices.length; ++i) {
-            const vertex = object.vertices[i];
-            const point = new THREE.Vector3(vertex.x, vertex.y, vertex.z);
-            point.add(points[vertex.bone]);
-            boundingBox.min.x = 0;//Math.min(boundingBox.min.x, point.x);
-            boundingBox.min.y = 0;//Math.min(boundingBox.min.y, point.y);
-            boundingBox.min.z = 0;//Math.min(boundingBox.min.z, point.z);
-            boundingBox.max.x = 0;//Math.max(boundingBox.max.x, point.x);
-            boundingBox.max.y = 0;//Math.max(boundingBox.max.y, point.y);
-            boundingBox.max.z = 0;//Math.max(boundingBox.max.z, point.z);
-        }
-        object.hasBoundingBox = false;
-        object.boundingBox = boundingBox;
+        const {xMin, yMin, zMin, xMax, yMax, zMax} = object;
+        object.boundingBox = new THREE.Box3(
+            new THREE.Vector3(
+                xMin / 0x4000,
+                yMin / 0x4000,
+                zMin / 0x4000
+            )
+            ,
+            new THREE.Vector3(
+                xMax / 0x4000,
+                yMax / 0x4000,
+                zMax / 0x4000
+            )
+        );
     }
 }
