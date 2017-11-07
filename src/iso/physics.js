@@ -8,7 +8,7 @@ export function processCollisions(grid, scene, actor) {
     const cell = grid.cells[dx * 64 + dz];
     let height = 0;
     actor.floorSound = -1;
-    if (cell) {
+    if (cell && actor.props.flags.hasCollisionFloor) {
         for (let i = cell.columns.length - 1; i >= 0; --i) {
             const column = cell.columns[i];
             const bb = column.box;
@@ -39,7 +39,9 @@ export function processCollisions(grid, scene, actor) {
         }
     }
     position.y = Math.max(height, position.y);
-    processBoxIntersections(grid, actor, position, dx, dz);
+    if (actor.props.flags.hasCollisionBricks) {
+        processBoxIntersections(grid, actor, position, dx, dz);
+    }
 }
 
 const ACTOR_BOX = new THREE.Box3();
