@@ -97,7 +97,12 @@ export function updateModel(game: Object, sceneIsActive: Object, model: any, ani
             updateKeyframe(anim, animState, time, realAnimIdx);
         }
         if (sceneIsActive) {
-            processAnimAction(game, entityAnim, animState);
+            processAnimAction({
+                game,
+                model,
+                entityAnim,
+                animState
+            });
         }
     }
 }
