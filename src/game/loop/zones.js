@@ -28,9 +28,9 @@ export function processZones(game, scene) {
             pos.y > box.yMin && pos.y < box.yMax &&
             pos.z > box.zMin && pos.z < box.zMax) {
             const zoneType = ZoneOpcode[zone.props.type];
-            if (zoneType != null && zoneType.callback != null) {
-                zoneType.callback(game, scene, zone, hero);
-                break;
+            if (zoneType !== null && zoneType.callback !== null) {
+                if (zoneType.callback(game, scene, zone, hero))
+                    break;
             }
         }
     }
@@ -48,7 +48,9 @@ function CUBE(game, scene, zone, hero) {
             newHero.threeObject.quaternion.copy(newHero.physics.orientation);
             newHero.threeObject.position.copy(newHero.physics.position);
         });
+        return true;
     }
+    return false;
 }
 
 function TEXT(game, scene, zone, hero) {
