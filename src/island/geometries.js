@@ -38,7 +38,8 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    palette: {value: paletteTexture}
+                    palette: {value: paletteTexture},
+                    actorPos: {value: new THREE.Vector2()}
                 }
             })
         },
@@ -54,7 +55,8 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     texture: {value: groundTexture},
-                    palette: {value: paletteTexture}
+                    palette: {value: paletteTexture},
+                    actorPos: {value: new THREE.Vector2()}
                 }
             })
         },

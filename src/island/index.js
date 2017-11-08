@@ -45,6 +45,8 @@ export function loadIslandScenery(params, name, ambience, callback) {
 
 }
 
+const POSITION = new THREE.Vector3();
+
 function loadIslandNode(params, props, files, ambience) {
     const islandObject = new THREE.Object3D();
     islandObject.name = `scenery_${props.name}`;
@@ -57,6 +59,7 @@ function loadIslandNode(params, props, files, ambience) {
     };
 
     const geometries = loadGeometries(props, data, ambience);
+    const matByName = {};
     each(geometries, ({positions, uvs, colors, intensities, normals, uvGroups, material}, name) => {
         if (positions && positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
@@ -79,6 +82,7 @@ function loadIslandNode(params, props, files, ambience) {
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.matrixAutoUpdate = false;
             mesh.name = name;
+            matByName[name] = material;
             islandObject.add(mesh);
         }
     });
@@ -105,8 +109,6 @@ function loadIslandNode(params, props, files, ambience) {
         }
     });
 
-
-
     const seaTimeUniform = islandObject.getObjectByName('sea').material.uniforms.time;
 
     return {
@@ -114,7 +116,14 @@ function loadIslandNode(params, props, files, ambience) {
         sections: map(layout.groundSections, section => ({x: section.x, z: section.z})),
         threeObject: islandObject,
         physics: loadIslandPhysics(sections),
-        update: time => { seaTimeUniform.value = time.elapsed; }
+        update: (game, scene, time) => {
+            const actor = scene.actors[0];
+            POSITION.copy(actor.physics.position);
+            POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
+            matByName.ground_colored.uniforms.actorPos.value.set(POSITION.x, POSITION.z);
+            matByName.ground_textured.uniforms.actorPos.value.set(POSITION.x, POSITION.z);
+            seaTimeUniform.value = time.elapsed;
+        }
     };
 }
 

@@ -30,7 +30,7 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
                 time.elapsed += 0.05;
                 clock.elapsedTime += 0.05;
             }
-            scene.scenery.update(time);
+            scene.scenery.update(game, scene, time);
             updateScene(game, scene, time);
             processPhysicsFrame(game, scene, time);
             each(scene.sideScenes, sideScene => {
