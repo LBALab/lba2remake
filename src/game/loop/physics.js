@@ -20,7 +20,9 @@ function processActorPhysics(scene, actor, time) {
 
     actor.physics.position.add(actor.physics.temp.position);
     if (actor.props.flags.hasCollisions) {
-        if (!actor.props.runtimeFlags.hasGravityByAnim && actor.props.flags.canFall && actor.props.flags.hasCollisionFloor) {
+        if (!actor.props.runtimeFlags.hasGravityByAnim
+            && actor.props.flags.canFall
+            && (actor.props.flags.hasCollisionFloor || scene.isIsland)) {
             actor.physics.position.y -= 0.25 * time.delta;
         }
         scene.scenery.physics.processCollisions(scene, actor);
