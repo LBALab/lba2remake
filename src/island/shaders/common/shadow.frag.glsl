@@ -1,6 +1,9 @@
 float shadow(float intensity, float factor) {
-    float dist = 1.0 - clamp(length(vGridPos - actorPos) * 90.0, 0.0, 1.0);
-    dist = dist - 1.0;
-    dist = (dist * dist * dist * dist * dist + 1.0);
-    return intensity - dist * (intensity + 6.0) * factor * 0.5;
+    float iOffset = 0.0;
+    for (int i = 0; i < 10; ++i) {
+        float dist = 1.0 - clamp(length(vGridPos - actorPos[i].xy) * actorPos[i].z, 0.0, 1.0);
+        dist = --dist * dist * dist + 1.0;
+        iOffset = max(iOffset, dist * (intensity + 6.0) * factor * 0.5 * actorPos[i].w);
+    }
+    return intensity - iOffset;
 }

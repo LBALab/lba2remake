@@ -4,7 +4,7 @@
 precision highp float;
 
 uniform sampler2D palette;
-uniform vec2 actorPos;
+uniform vec4 actorPos[10];
 
 varying vec3 vPosition;
 varying float vColor;

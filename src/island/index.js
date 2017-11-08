@@ -1,6 +1,6 @@
 import async from 'async';
 import THREE from 'three';
-import {map, each, assign} from 'lodash';
+import {map, each, assign, tail} from 'lodash';
 
 import {loadHqrAsync} from '../hqr';
 import {prepareGeometries} from './geometries';
@@ -44,8 +44,6 @@ export function loadIslandScenery(params, name, ambience, callback) {
     }
 
 }
-
-const POSITION = new THREE.Vector3();
 
 function loadIslandNode(params, props, files, ambience) {
     const islandObject = new THREE.Object3D();
@@ -117,11 +115,7 @@ function loadIslandNode(params, props, files, ambience) {
         threeObject: islandObject,
         physics: loadIslandPhysics(sections),
         update: (game, scene, time) => {
-            const actor = scene.actors[0];
-            POSITION.copy(actor.physics.position);
-            POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
-            matByName.ground_colored.uniforms.actorPos.value.set(POSITION.x, POSITION.z);
-            matByName.ground_textured.uniforms.actorPos.value.set(POSITION.x, POSITION.z);
+            updateShadows(scene, matByName);
             seaTimeUniform.value = time.elapsed;
         }
     };
@@ -157,4 +151,48 @@ function loadGeometries(island, data, ambience) {
     });
 
     return geometries;
+}
+
+const DIFF = new THREE.Vector3();
+const POSITION = new THREE.Vector3();
+
+function updateShadows(scene, matByName) {
+    let shadows = [];
+    let heroPos = null;
+
+    function computeShadow(scene, actor) {
+        if (!actor.props.flags.isSprite
+            && !actor.props.flags.noShadow
+            && actor.model
+            && actor.isVisible) {
+            const sz = actor.model.boundingBox.max.x - actor.model.boundingBox.min.x;
+            POSITION.copy(actor.physics.position);
+            POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
+            const distToHero = heroPos ? DIFF.subVectors(POSITION, heroPos).lengthSq() : 0;
+            if (distToHero < 2.5) {
+                shadows.push({
+                    data: [POSITION.x, POSITION.z, 2.8 / sz, 1],
+                    distToHero
+                });
+            }
+        }
+    }
+
+    computeShadow(scene, scene.actors[0]);
+    heroPos = POSITION.clone();
+    each(tail(scene.actors), computeShadow.bind(null, scene));
+    each(scene.sideScenes, sideScene => {
+        each(sideScene.actors, computeShadow.bind(null, sideScene));
+    });
+    shadows.sort((a, b) => a.distToHero - b.distToHero);
+    for (let i = 0; i < 10; ++i) {
+        const shadow = shadows[i];
+        if (shadow) {
+            matByName.ground_colored.uniforms.actorPos.value[i].fromArray(shadow.data);
+            matByName.ground_textured.uniforms.actorPos.value[i].fromArray(shadow.data);
+        } else {
+            matByName.ground_colored.uniforms.actorPos.value[i].w = 0;
+            matByName.ground_textured.uniforms.actorPos.value[i].w = 0;
+        }
+    }
 }

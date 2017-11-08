@@ -4,6 +4,7 @@ import {
     loadPaletteTexture,
     loadTexture
 } from '../texture';
+import {times} from 'lodash';
 
 import VERT_GROUND_COLORED from './shaders/ground/colored.vert.glsl';
 import FRAG_GROUND_COLORED from './shaders/ground/colored.frag.glsl';
@@ -36,10 +37,10 @@ export function prepareGeometries(island, data, ambience) {
                 vertexShader: VERT_GROUND_COLORED,
                 fragmentShader: FRAG_GROUND_COLORED,
                 uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+                    fogColor: {value: new THREE.Vector4().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
-                    actorPos: {value: new THREE.Vector2()}
+                    actorPos: {value: times(10, () => new THREE.Vector4()), type:'v4v'}
                 }
             })
         },
@@ -52,11 +53,11 @@ export function prepareGeometries(island, data, ambience) {
                 vertexShader: VERT_GROUND_TEXTURED,
                 fragmentShader: FRAG_GROUND_TEXTURED,
                 uniforms: {
-                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+                    fogColor: {value: new THREE.Vector4().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     texture: {value: groundTexture},
                     palette: {value: paletteTexture},
-                    actorPos: {value: new THREE.Vector2()}
+                    actorPos: {value: times(10, () => new THREE.Vector4()), type:'v4v'}
                 }
             })
         },
