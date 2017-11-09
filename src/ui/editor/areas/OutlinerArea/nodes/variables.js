@@ -22,6 +22,7 @@ import DebugData from "../../../DebugData";
 import {Orientation} from '../../../layout';
 import {makeOutlinerArea} from '../factory';
 import {LocationsNode} from './locations';
+import {editor as editorStyle} from '../../../../styles';
 
 export function formatVar(varDef, value) {
     const info = getVarInfo(varDef);
@@ -43,6 +44,8 @@ export function formatVar(varDef, value) {
     return value;
 }
 
+const varEdits = {};
+
 export const Var = {
     dynamic: true,
     needsData: true,
@@ -61,13 +64,77 @@ export const Var = {
         }
     ],
     name: (varDef) => getVarName(varDef),
-    props: (varDef) => [
-        {
-            id: 'value',
-            value: varDef.value(),
-            render: (value) => <i style={{color: '#98ee92'}}>{formatVar(varDef, value)}</i>
-        }
-    ],
+    props: (varDef) => {
+        return [
+            {
+                id: 'value',
+                value: varDef.key in varEdits ? 'editing' : varDef.value(),
+                render: (value) => {
+                    if (varDef.key in varEdits) {
+                        const info = getVarInfo(varDef);
+                        const value = varDef.value();
+                        if (info && info.type === 'enum') {
+                            function onChange(e) {
+                                delete varEdits[varDef.key];
+                                varDef.edit(parseInt(e.target.value));
+                            }
+                            function close() {
+                                delete varEdits[varDef.key];
+                            }
+                            return <select autoFocus={true}
+                                           value={varDef.value()}
+                                           onChange={onChange}
+                                           style={editorStyle.select}
+                                           onBlur={close}>
+                                {!(value in info.enumValues) ? <option value={value}>{value}:&lt;?&gt;</option> : null}
+                                {map(info.enumValues, (v, k) =>
+                                    <option key={k} value={k}>
+                                        {k}:{v}
+                                    </option>)}
+                            </select>;
+                        } else {
+                            function onKeyDown(event) {
+                                event.stopPropagation();
+                                const key = event.code || event.which || event.keyCode;
+                                if (key === 'Enter' || key === 13) {
+                                    event.preventDefault();
+                                    delete varEdits[varDef.key];
+                                    const v = parseInt(event.target.value);
+                                    if (!Number.isNaN(v))
+                                        varDef.edit(v);
+                                }
+                            }
+                            function close() {
+                                delete varEdits[varDef.key];
+                            }
+                            return <input type="number"
+                                          ref={(ref) => ref ? ref.value = varDef.value() : null}
+                                          min={0}
+                                          max={255}
+                                          step={1}
+                                          onKeyDown={onKeyDown}
+                                          onBlur={close}/>;
+                        }
+                    } else {
+                        function onClick() {
+                            const info = getVarInfo(varDef);
+                            if (info && info.type === 'boolean') {
+                                if (varDef.value() > 0)
+                                    varDef.edit(0);
+                                else
+                                    varDef.edit(1);
+                            } else {
+                                varEdits[varDef.key] = true;
+                            }
+                        }
+                        return <i onClick={onClick} style={{color: '#98ee92', cursor: 'pointer'}}>
+                            {formatVar(varDef, value)}
+                        </i>;
+                    }
+                }
+            }
+        ];
+    },
     onClick: () => {}
 };
 
@@ -78,15 +145,21 @@ export function makeVariables(type, name, getVars, getCtx) {
         icon: () => 'editor/icons/var.png',
         numChildren: () => getVars().length,
         child: () => Var,
-        childData: (data, idx) => {
-            return {
-                type: type,
-                ctx: getCtx && getCtx(),
-                value: () => getVars()[idx],
-                idx
-            };
-        }
+        childData: (data, idx) => makeVarDef(type, idx, getVars, getCtx)
     }
+}
+
+export function makeVarDef(type, idx, getVars, getCtx) {
+    return {
+        type: type,
+        key: `${type}_${idx}`,
+        ctx: getCtx && getCtx(),
+        value: () => getVars()[idx],
+        edit: (value) => {
+            getVars()[idx] = value;
+        },
+        idx
+    };
 }
 
 export function findAllReferences(varDef) {
