@@ -13,19 +13,18 @@ const inputStyle = {
 export class ScriptMenu extends FrameListener {
     constructor(props) {
         super(props);
-        this.state = { actors: [], selectedActor: 0, isPaused: false }
+        this.state = { actors: [], selectedActor: props.sharedState.actor, isPaused: false }
     }
 
     frame() {
         const {scene, game} = DebugData.scope;
-        const selectedActor = DebugData.selection.actor;
+        const selectedActor = this.props.sharedState.actor;
         if (this.scene !== scene) {
             this.setState({actors: map(scene && scene.actors, actor => getObjectName('actor', scene.index, actor.index))});
             this.scene = scene;
         }
-        if (this.selectedActor !== selectedActor) {
-            this.setState({selectedActor: selectedActor});
-            this.selectedActor = selectedActor;
+        if (this.state.selectedActor !== selectedActor) {
+            this.setState({selectedActor});
         }
         if (game && game.isPaused() !== this.state.paused) {
             this.setState({paused: game.isPaused()});
@@ -34,7 +33,7 @@ export class ScriptMenu extends FrameListener {
 
     render() {
         const onChange = (e) => {
-            DebugData.selection.actor = parseInt(e.target.value);
+            this.props.stateHandler.setActor(parseInt(e.target.value));
         };
 
         const togglePause = () => {
@@ -77,7 +76,8 @@ const ScriptEditorArea = {
     menu: ScriptMenu,
     content: ScriptEditor,
     getInitialState: () => ({
-        autoScroll: true
+        autoScroll: true,
+        actorIndex: 0,
     }),
     stateHandler: {
         splitAt(splitAt) {
@@ -85,6 +85,9 @@ const ScriptEditorArea = {
         },
         setAutoScroll(autoScroll) {
             this.setState({autoScroll});
+        },
+        setActor(actor) {
+            this.setState({actor});
         }
     }
 };

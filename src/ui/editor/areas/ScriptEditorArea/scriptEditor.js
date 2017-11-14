@@ -24,6 +24,8 @@ const scriptStyle = {
     move: (splitAt) => extend({left: `${splitAt}%`, right: 0}, scriptBaseStyle)
 };
 
+let selection = null;
+
 export default class ScriptEditor extends FrameListener {
     constructor(props) {
         super(props);
@@ -97,9 +99,19 @@ export default class ScriptEditor extends FrameListener {
         }
     }
 
+    componentWillReceiveProps(newProps) {
+        if (newProps.sharedState.actor !== this.state.actorIndex) {
+            this.setState({ actorIndex: newProps.sharedState.actor });
+        }
+    }
+
     frame() {
         const scene = DebugData.scope.scene;
-        const actor = scene ? scene.actors[DebugData.selection.actor] : null;
+        if (selection !== DebugData.selection.actor) {
+            selection = DebugData.selection.actor;
+            this.props.stateHandler.setActor(selection);
+        }
+        const actor = scene ? scene.actors[this.state.actorIndex] : null;
         if (DebugData.selection.lifeLine) {
             this.props.stateHandler.setAutoScroll(false);
         }
