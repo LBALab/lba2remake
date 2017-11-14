@@ -116,6 +116,20 @@ export function loadActor(params: Object, envInfo: any, ambience: any, props: Ac
             this.props.runtimeFlags.isTurning = true;
             return this.getDistance(point);
         },
+        facePoint: function(point) {
+            let destAngle = angleTo(this.physics.position, point);
+            const signCurr = this.physics.temp.destAngle > 0 ? 1 : -1;
+            const signTgt = destAngle > 0 ? 1 : -1;
+            if (signCurr !== signTgt && Math.abs(destAngle) > Math.PI / 4) {
+                if (signCurr === -1) {
+                    destAngle -= 2 * Math.PI;
+                } else {
+                    destAngle += 2 * Math.PI;
+                }
+            }
+            this.physics.temp.destAngle = destAngle;
+            this.props.runtimeFlags.isTurning = true;
+        },
         setAngle: function(angle) {
             this.props.runtimeFlags.isTurning = true;
             this.props.angle = angle;
