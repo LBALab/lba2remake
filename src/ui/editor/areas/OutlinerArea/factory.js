@@ -6,7 +6,7 @@ export function makeOutlinerArea(id, name, content, extensions = {}) {
         id: id,
         name: name,
         menu: extensions.menu,
-        content: makeContentComponent(content, extensions.frame),
+        content: makeContentComponent(content, extensions.frame, extensions.style),
         getInitialState: () => ({
             path: []
         }),

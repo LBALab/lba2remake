@@ -26,6 +26,9 @@ export const Locator = makeOutlinerArea('locator', 'Locator', LocationsNode, {
         setActivePath: function(activePath) {
             this.setState({activePath});
         }
+    },
+    style: {
+        background: '#111111'
     }
 });
 
