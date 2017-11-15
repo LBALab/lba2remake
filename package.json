@@ -30,7 +30,12 @@
     "webpack-express-middleware": "^1.2.1"
   },
   "scripts": {
-    "dev-server": "NODE_ENV=development node devserver.js"
+    "dev-server": "NODE_ENV=development node devserver.js",
+    "dev-server-editor": "LBA_MODE=editor NODE_ENV=development node devserver.js",
+    "dev-server-game": "LBA_MODE=game NODE_ENV=development node devserver.js",
+    "build": "NODE_ENV=production webpack -p",
+    "build-editor": "LBA_MODE=editor NODE_ENV=production webpack -p",
+    "build-game": "LBA_MODE=game NODE_ENV=production webpack -p"
   },
   "repository": "git+ssh://git@bitbucket.org:adri42/lba2remake.git",
   "author": "Adrien Grandemange",

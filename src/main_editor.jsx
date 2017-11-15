@@ -2,20 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Ticker from './ui/utils/Ticker';
-import Game from './ui/Game';
 import Editor from './ui/Editor';
 import {loadParams} from './params';
 import {loadGameMetaData} from './ui/editor/DebugData';
 
+function loadEditorParams() {
+    const params = loadParams();
+    params.editor = true;
+    return params;
+}
+
 class Root extends React.Component {
     constructor(props) {
         super(props);
-        const params = loadParams();
+        const params = loadEditorParams();
         this.state = { params };
         this.onHashChange = this.onHashChange.bind(this);
-        if (params.editor) {
-            loadGameMetaData();
-        }
+        loadGameMetaData();
     }
 
     componentWillMount() {
@@ -27,15 +30,11 @@ class Root extends React.Component {
     }
 
     onHashChange() {
-        this.setState({ params: loadParams() });
+        this.setState({ params: loadEditorParams() });
     }
 
     render() {
-        if (this.state.params.editor) {
-            return <Editor params={this.state.params} ticker={this.props.ticker} />;
-        } else {
-            return <Game params={this.state.params} ticker={this.props.ticker} />;
-        }
+        return <Editor params={this.state.params} ticker={this.props.ticker} />;
     }
 }
 
