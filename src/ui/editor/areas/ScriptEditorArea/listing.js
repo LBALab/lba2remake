@@ -32,16 +32,34 @@ function mapCommands(scene, actor, commands) {
     })
 }
 
+export function mapComportementArg(comportement) {
+    switch (comportement) {
+        case 1: return 'INIT';
+        case 2: return 'NORMAL';
+        default: return `CMP_${comportement}`;
+    }
+}
+
 function mapArguments(scene, actor, cmd) {
     const args = cloneDeep(cmd.args);
+
+    const mapComportementSetterArg = (obj, index) => {
+        return mapComportementArg(obj.scripts.life.comportementMap[index] + 1);
+    };
+
     switch (cmd.op.command) {
+        case 'COMPORTEMENT':
+            args[0].value = mapComportementArg(args[0].value);
+            break;
         case 'SET_COMPORTEMENT':
-            args[0].value = actor.scripts.life.comportementMap[args[0].value];
+            args[0].value = mapComportementSetterArg(actor, args[0].value);
             break;
         case 'SET_COMPORTEMENT_OBJ':
-            const tgt = scene.getActor(args[0].value);
-            if (tgt) {
-                args[1].value = tgt.scripts.life.comportementMap[args[1].value];
+            const obj = scene ? scene.actors[args[0].value] : null;
+            if (obj) {
+                args[1].value = mapComportementSetterArg(obj, args[1].value);
+            } else {
+                args[1].value = '<?>';
             }
             break;
         case 'SET_TRACK':

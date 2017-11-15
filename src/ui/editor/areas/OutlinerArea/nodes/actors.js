@@ -5,6 +5,7 @@ import DebugData, {
 } from '../../../DebugData';
 import {map} from 'lodash';
 import {SceneGraphNode} from './sceneGraph';
+import {mapComportementArg} from '../../ScriptEditorArea/listing';
 
 const Actor = {
     dynamic: true,
@@ -42,7 +43,7 @@ const Actor = {
                     style.background = '#680000';
                     return <span style={style}>&nbsp;</span>;
                 } else {
-                    return <span style={style}>{value}</span>;
+                    return <span style={style}>{mapComportementArg(value)}</span>;
                 }
             }
         },
