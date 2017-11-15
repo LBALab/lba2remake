@@ -164,10 +164,12 @@ export default class Node extends React.Component {
         const setRoot = this.props.setRoot.bind(null, this.props.path);
         const onClick = node.onClick ? node.onClick.bind(null, this.props.data, setRoot) : setRoot;
 
+        const color = node.color || 'inherit';
+
         const nameStyle = {
             cursor: 'pointer',
             background: selected ? 'white' : 'transparent',
-            color: selected ? 'black' : 'inherit',
+            color: selected ? 'black' : color,
             padding: selected ? '0 2px' : 0
         };
 
