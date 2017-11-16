@@ -52,14 +52,14 @@ export function createSceneManager(params, game, renderer, callback: Function) {
 
             const musicSource = game.getAudioManager().getMusicSource();
             if (scene && scene.sideScenes && index in scene.sideScenes) {
-                killActor(scene.getActor(0));
+                killActor(scene.actors[0]);
                 const sideScene = scene.sideScenes[index];
                 sideScene.sideScenes = scene.sideScenes;
                 delete sideScene.sideScenes[index];
                 delete scene.sideScenes;
                 sideScene.sideScenes[scene.index] = scene;
                 scene = sideScene;
-                reviveActor(scene.getActor(0)); // Awake twinsen
+                reviveActor(scene.actors[0]); // Awake twinsen
                 scene.isActive = true;
                 if (!musicSource.isPlaying) {
                     musicSource.load(scene.data.ambience.musicIndex, () => {
@@ -174,15 +174,6 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                 zones: data.zones,
                 isActive: false,
                 zoneState: { listener: null, ended: false },
-                getActor(index) {
-                    return find(this.actors, function(obj) { return obj.index === index; });
-                },
-                getZone(index) {
-                    return find(this.zones, function(obj) { return obj.index === index; });
-                },
-                getPoint(index) {
-                    return find(this.points, function(obj) { return obj.index === index; });
-                },
                 goto: sceneManager.goto.bind(sceneManager),
                 refresh() {
                     each(this.actors, actor => {
@@ -204,7 +195,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             scene.usedVarGames = findUsedVarGames(scene);
             // Kill twinsen if side scene
             if (parent) {
-                killActor(scene.getActor(0));
+                killActor(scene.actors[0]);
             }
             callback(null, scene);
         });

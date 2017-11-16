@@ -33,7 +33,7 @@ export function MESSAGE(cmdState, id) {
 
 export function MESSAGE_OBJ(cmdState, actor, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
-    const hero = this.scene.getActor(0);
+    const hero = this.scene.actors[0];
     if (!cmdState.listener) {
         const text = this.scene.data.texts[id];
         if (text.type === 9) {
@@ -117,7 +117,7 @@ export function SET_DIRMODE(dirMode) {
 }
 
 export function SET_DIRMODE_OBJ(index, dirMode) {
-    const actor = this.scene.getActor(index);
+    const actor = this.scene.actors[index];
     if (actor) {
         actor.props.runtimeFlags.dirMode = dirMode;
         if (dirMode === DirMode.MANUAL) {
@@ -305,7 +305,7 @@ export function SET_LIFE_POINT_OBJ(actor, value) {
 }
 
 export function SUB_LIFE_POINT_OBJ() {
-    const actor = this.scene.getActor(index);
+    const actor = this.scene.actors[index];
     actor.props.life -= value;
     if (actor.props.life < 0) {
         actor.props.life = 0;
@@ -380,7 +380,7 @@ export function ASK_CHOICE(cmdState, index) {
 
 export function ASK_CHOICE_OBJ(cmdState, actor, index) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
-    const hero = this.scene.getActor(0);
+    const hero = this.scene.actors[0];
     if (!cmdState.listener) {
         const text = this.scene.data.texts[index];
         hero.props.dirMode = DirMode.NO_MOVE;
@@ -605,7 +605,7 @@ export function SET_ARMOR_OBJ() {
 }
 
 export function ADD_LIFE_POINT_OBJ(index, points) {
-    const actor = this.scene.getActor(index);
+    const actor = this.scene.actors[index];
     if (actor) {
         actor.props.life += points;
     }

@@ -1,7 +1,7 @@
 import {getDistance} from '../../utils/lba';
 
 export function GOTO_POINT(pointIndex) {
-    const point = this.scene.getPoint(pointIndex);
+    const point = this.scene.points[pointIndex];
     const distance = this.actor.goto(point.physics.position);
 
     if (distance > getDistance(500)) {

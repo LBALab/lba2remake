@@ -4,7 +4,7 @@ const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
 const HERO_TARGET_POS = new THREE.Vector3(0, 0.08, 0);
 
 export function initFollow3DMovement(controlsState, camera, scene) {
-    const hero = scene.getActor(0);
+    const hero = scene.actors[0];
     const heroPos = HERO_TARGET_POS.clone();
     heroPos.applyMatrix4(hero.threeObject.matrixWorld);
 
@@ -19,7 +19,7 @@ export function initFollow3DMovement(controlsState, camera, scene) {
 }
 
 export function processFollow3DMovement(controlsState, camera, scene, time) {
-    const hero = scene.getActor(0);
+    const hero = scene.actors[0];
     const heroPos = HERO_TARGET_POS.clone();
     const cameraPos = CAMERA_HERO_OFFSET.clone();
     heroPos.applyMatrix4(hero.threeObject.matrixWorld);

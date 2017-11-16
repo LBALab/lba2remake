@@ -66,7 +66,7 @@ function mapArguments(scene, actor, cmd) {
             args[0].value = actor.scripts.move.tracksMap[args[0].value];
             break;
         case 'SET_TRACK_OBJ':
-            const tgt2 = scene.getActor(args[0].value);
+            const tgt2 = scene.actors[args[0].value];
             if (tgt2) {
                 args[1].value = tgt2.scripts.move.tracksMap[args[1].value];
             }

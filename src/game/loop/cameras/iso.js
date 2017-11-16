@@ -1,7 +1,7 @@
 import THREE from 'three';
 
 export function processFollowIsoMovement(renderer, camera, scene) {
-    const hero = scene.getActor(0);
+    const hero = scene.actors[0];
     const pos = new THREE.Vector3(0, 0.04, 0);
     hero.threeObject.updateMatrixWorld();
     pos.applyMatrix4(hero.threeObject.matrixWorld);
