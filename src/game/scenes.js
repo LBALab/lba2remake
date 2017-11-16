@@ -193,6 +193,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                     if (game.isPaused()) {
                         DebugData.step = true;
                     }
+                    scene.variables = createSceneVariables(scene);
                 }
             };
             if (scene.isIsland) {
