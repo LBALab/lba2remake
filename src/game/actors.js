@@ -72,21 +72,11 @@ export const DirMode = {
 
 // TODO: move section offset to container THREE.Object3D
 export function loadActor(params: Object, envInfo: any, ambience: any, props: ActorProps, callback: Function) {
-    const pos = props.pos;
     const animState = loadAnimState();
     const actor: Actor = {
         index: props.index,
         props: props,
-        physics: {
-            position: new THREE.Vector3(pos[0], pos[1], pos[2]),
-            orientation: new THREE.Quaternion(),
-            temp: {
-                destination: new THREE.Vector3(0, 0, 0),
-                position: new THREE.Vector3(0, 0, 0),
-                angle: angleToRad(props.angle),
-                destAngle: angleToRad(props.angle),
-            }
-        },
+        physics: initPhysics(props),
         isKilled: false,
         isVisible: props.flags.isVisible && (props.life > 0 || props.bodyIndex >= 0) && props.index !== 1,
         isSprite: props.flags.isSprite,
@@ -96,8 +86,17 @@ export function loadActor(params: Object, envInfo: any, ambience: any, props: Ac
         threeObject: null,
         animState: animState,
         runScripts: null,
+        reset: function() {
+            this.resetAnimState();
+            this.resetPhysics();
+            this.isKilled = false;
+            this.floorSound = -1;
+        },
         resetAnimState: function() {
             resetAnimState(this.animState);
+        },
+        resetPhysics: function() {
+            this.physics = initPhysics(props);
         },
         goto: function(point) {
             this.physics.temp.destination = point;
@@ -180,4 +179,17 @@ export function loadActor(params: Object, envInfo: any, ambience: any, props: Ac
             callback(null, actor);
         });
     }
+}
+
+function initPhysics({pos, angle}) {
+    return {
+        position: new THREE.Vector3(pos[0], pos[1], pos[2]),
+        orientation: new THREE.Quaternion(),
+        temp: {
+            destination: new THREE.Vector3(0, 0, 0),
+            position: new THREE.Vector3(0, 0, 0),
+            angle: angleToRad(angle),
+            destAngle: angleToRad(angle),
+        }
+    };
 }

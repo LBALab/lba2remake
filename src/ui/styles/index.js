@@ -37,6 +37,7 @@ export const editor = {
     },
     icon: {
         verticalAlign: 'middle',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        padding: '1px 2px'
     }
 };

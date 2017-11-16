@@ -19,6 +19,7 @@ import {loadZone} from './zones';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initCameraMovement} from './loop/cameras';
 import {initSceneDebugData, loadSceneMetaData} from '../ui/editor/DebugData';
+import DebugData from '../ui/editor/DebugData';
 
 export function createSceneManager(params, game, renderer, callback: Function) {
     let scene = null;
@@ -182,7 +183,17 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                 getPoint(index) {
                     return find(this.points, function(obj) { return obj.index === index; });
                 },
-                goto: sceneManager.goto.bind(sceneManager)
+                goto: sceneManager.goto.bind(sceneManager),
+                refresh() {
+                    each(this.actors, actor => {
+                        actor.reset();
+                    });
+                    loadScripts(params, game, scene);
+                    initCameraMovement(game.controlsState, renderer, scene);
+                    if (game.isPaused()) {
+                        DebugData.step = true;
+                    }
+                }
             };
             if (scene.isIsland) {
                 scene.section = islandSceneMapping[index].section;

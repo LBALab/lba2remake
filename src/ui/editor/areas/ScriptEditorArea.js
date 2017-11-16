@@ -50,6 +50,13 @@ export class ScriptMenu extends FrameListener {
             }
         };
 
+        const refresh = () => {
+            const scene = DebugData.scope.scene;
+            if (scene) {
+                scene.refresh();
+            }
+        };
+
         const paused = this.state.paused;
 
         const toggleAutoScroll = (e) => {
@@ -61,8 +68,9 @@ export class ScriptMenu extends FrameListener {
         return <span>
             <label><input key="autoScroll" type="checkbox" onChange={toggleAutoScroll} checked={autoScroll} style={inputStyle}/>Autoscroll</label>
             &nbsp;
-            {paused ? <img style={editor.icon} onClick={step} src="editor/icons/step.png"/> : null}&nbsp;
-            <img style={editor.icon} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.png`}/>&nbsp;
+            <img style={editor.icon} onClick={refresh} src="editor/icons/refresh.png"/>
+            {paused ? <img style={editor.icon} onClick={step} src="editor/icons/step.png"/> : null}
+            <img style={editor.icon} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.png`}/>
             <select style={editor.select} value={this.state.selectedActor} onChange={onChange}>
                 {map(this.state.actors, (actor, idx) => <option key={idx} value={idx}>{actor}</option>)}
             </select>
