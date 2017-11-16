@@ -175,7 +175,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                 isActive: false,
                 zoneState: { listener: null, ended: false },
                 goto: sceneManager.goto.bind(sceneManager),
-                refresh() {
+                reset() {
                     each(this.actors, actor => {
                         actor.reset();
                     });
