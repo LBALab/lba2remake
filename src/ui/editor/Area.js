@@ -45,7 +45,7 @@ export default class Area extends React.Component {
     constructor(props) {
         super(props);
         this.confirmPopup = this.confirmPopup.bind(this);
-        this.state = { confirmPopup: null };
+        this.state = { popup: null };
     }
 
     render() {
@@ -56,7 +56,7 @@ export default class Area extends React.Component {
     }
 
     renderMenu() {
-        const menu = this.props.area.menu && !this.state.confirmPopup
+        const menu = this.props.area.menu && !this.state.popup
             ? React.createElement(this.props.area.menu, {
                 params: this.props.params,
                 ticker: this.props.ticker,
@@ -69,10 +69,10 @@ export default class Area extends React.Component {
         const numIcons = this.props.close ? 3 : 2;
 
         const onClickIcon = () => {
-            if (this.state.confirmPopup) {
-                this.setState({confirmPopup: null});
+            if (this.state.popup) {
+                this.setState({popup: null});
             } else {
-                this.setState({confirmPopup: {
+                this.setState({popup: {
                     msg: this.renderAreaSelectionPopup()
                 }});
             }
@@ -105,7 +105,7 @@ export default class Area extends React.Component {
             if (area.id !== this.props.area.id) {
                 this.props.selectAreaContent(area);
             } else {
-                this.setState({confirmPopup: null});
+                this.setState({popup: null});
             }
         };
 
@@ -136,25 +136,25 @@ export default class Area extends React.Component {
     }
 
     renderPopup() {
-        const confirmPopup = this.state.confirmPopup;
+        const popup = this.state.popup;
         const ok = () => {
-            confirmPopup.callback();
-            this.setState({confirmPopup: null});
+            popup.callback();
+            this.setState({popup: null});
         };
         const cancel = () => {
-            this.setState({confirmPopup: null});
+            this.setState({popup: null});
         };
-        if (confirmPopup) {
-            const style = extend({}, fullscreen, editor.base, confirmPopup.style);
+        if (popup) {
+            const style = extend({}, fullscreen, editor.base, popup.style);
             const buttonStyle = extend({}, editor.button, {
                 fontSize: 16,
                 margin: '0px 4px'
             });
             return <div style={style}>
-                <div>{confirmPopup.msg}</div>
+                <div>{popup.msg}</div>
                 <div style={{float: 'right'}}>
-                    {confirmPopup.ok ? <button style={buttonStyle} onClick={ok}>{confirmPopup.ok}</button> : null}
-                    {confirmPopup.cancel ? <button style={buttonStyle} onClick={cancel}>{confirmPopup.cancel}</button> : null}
+                    {popup.ok ? <button style={buttonStyle} onClick={ok}>{popup.ok}</button> : null}
+                    {popup.cancel ? <button style={buttonStyle} onClick={cancel}>{popup.cancel}</button> : null}
                 </div>
             </div>;
         } else {
@@ -164,7 +164,7 @@ export default class Area extends React.Component {
 
     confirmPopup(msg, ok, cancel, callback) {
         this.setState({
-            confirmPopup: {
+            popup: {
                 msg,
                 ok,
                 cancel,
