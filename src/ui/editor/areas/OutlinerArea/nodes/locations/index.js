@@ -42,7 +42,6 @@ export function LocatorMenu(props) {
         }
     };
     return <span>
-        Locate in:&nbsp;
         <button style={editorStyle.button} onClick={locate.bind(null, 'all')}>All</button>
         <button style={editorStyle.button} onClick={locate.bind(null, 'planet')}>Planet</button>
         <button style={editorStyle.button} onClick={locate.bind(null, 'island')}>Island</button>

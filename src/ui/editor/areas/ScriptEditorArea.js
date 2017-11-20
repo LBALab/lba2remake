@@ -82,6 +82,7 @@ const ScriptEditorArea = {
     id: 'script_editor',
     name: 'Scripts',
     menu: ScriptMenu,
+    icon: 'script.png',
     content: ScriptEditor,
     getInitialState: () => ({
         autoScroll: true,

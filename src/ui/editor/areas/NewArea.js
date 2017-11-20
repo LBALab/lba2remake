@@ -11,24 +11,27 @@ const NewArea = {
 export default NewArea;
 
 const style = {
+    position: 'relative',
     fontSize: 16,
     fontWeight: 'normal',
+    lineHeight: '20px',
     cursor: 'pointer',
-    padding: 0,
-    marginLeft: 14,
+    padding: '5px 15px',
+    marginLeft: 8,
     marginTop: 14,
-    display: 'inline-block',
-    border: '1px solid white',
+    marginRight: 8,
+    border: '1px solid #bbbbbb',
     boxShadow: '0 3px 2px rgba(0, 0, 0, 0.5)'
 };
 
-function NewAreaContent(props) {
+export function NewAreaContent(props) {
     return <div>{map(props.availableAreas, (area, idx) => {
+        const icon = area.icon || 'default.png';
         return <div key={idx}
-                    style={style}
-                    onClick={props.selectAreaContent.bind(null, area)}>
-            <div style={{padding: 5, background: '#191919'}}>{area.name}</div>
-            <img style={{borderTop: '1px solid white', width: 150, height: 110}} src={`editor/areas/${area.id}.png`}/>
-        </div>;
+                 onClick={props.selectAreaContent.bind(null, area)}
+                 style={style}>
+                <img style={{position: 'absolute', left: 10, top: 5, width: 20, height: 20}} src={`editor/icons/areas/${icon}`}/>
+                <span style={{paddingLeft: 25}}>{area.name}</span>
+        </div>
     })}</div>;
 }

@@ -12,6 +12,7 @@ const GameArea = {
     name: 'Gameplay Editor',
     menu: GameMenu,
     content: Game,
+    icon: 'game.png',
     mainArea: true,
     getInitialState: () => ({
         labels: {

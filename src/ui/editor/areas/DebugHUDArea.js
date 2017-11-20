@@ -9,6 +9,7 @@ import {each, map, concat} from 'lodash';
 const DebugHUDArea = {
     id: 'dbg_hud',
     name: 'Debug HUD',
+    icon: 'terminal.png',
     menu: DebugHUDMenu,
     content: DebugHUD,
     getInitialState: () => ({

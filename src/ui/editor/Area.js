@@ -3,7 +3,7 @@ import {extend} from 'lodash';
 import {editor, fullscreen} from '../styles/index';
 import {Orientation} from './layout';
 import {map, findIndex} from 'lodash';
-import NewArea from './areas/NewArea';
+import NewArea, {NewAreaContent} from './areas/NewArea';
 import AreaLoader from "./areas/AreaLoader";
 
 const menuHeight = 26;
@@ -35,12 +35,11 @@ const contentStyle = extend({
     color: 'white'
 }, editor.base);
 
-const iconStyle = (right) => ({
+const iconStyle = (base) => (extend({
     position: 'absolute',
     top: 1,
-    right: right,
     cursor: 'pointer'
-});
+}, base));
 
 export default class Area extends React.Component {
     constructor(props) {
@@ -66,43 +65,51 @@ export default class Area extends React.Component {
                 confirmPopup: this.confirmPopup
             })
             : null;
+        const icon = this.props.area.icon || 'default.png';
         const numIcons = this.props.close ? 3 : 2;
+
+        const onClickIcon = () => {
+            if (this.state.confirmPopup) {
+                this.setState({confirmPopup: null});
+            } else {
+                this.setState({confirmPopup: {
+                    msg: this.renderAreaSelectionPopup()
+                }});
+            }
+        };
+
         return <div style={menuStyle(numIcons)}>
-            {this.renderTitle()}
+            <img onClick={onClickIcon} style={iconStyle({left: 3, top: 3})} src={`editor/icons/areas/${icon}`}/>
 
             <span style={menuContentStyle}>{menu}</span>
-            <img style={iconStyle((numIcons - 1) * 24)} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>
-            <img style={iconStyle((numIcons - 2) * 24)} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>
-            {this.props.close ? <img style={iconStyle(0)} onClick={this.props.close} src="editor/icons/close.png"/> : null}
+            <img style={iconStyle({right: (numIcons - 1) * 24})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>
+            <img style={iconStyle({right: (numIcons - 2) * 24})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>
+            {this.props.close ? <img style={iconStyle({right: 0})} onClick={this.props.close} src="editor/icons/close.png"/> : null}
         </div>;
     }
 
-    renderTitle() {
+    renderAreaSelectionPopup() {
         if (this.props.area === AreaLoader) {
             return null;
         }
         const isNew = (this.props.area === NewArea);
         const availableAreas = map(this.props.availableAreas);
-        const onChange = (e) => {
-            const area = availableAreas[e.target.value];
-            this.props.selectAreaContent(area);
-        };
-        let value = 'new';
         if (!isNew) {
             const idx = findIndex(availableAreas, area => area.name === this.props.area.name);
             if (idx === -1) {
                 availableAreas.push(this.props.area);
-                value = availableAreas.length - 1;
-            } else {
-                value = idx;
             }
         }
-        return <select onChange={onChange} style={editor.select} value={value}>
-            {<option disabled value="new">Select content</option>}
-            {map(availableAreas, (area, idx) => {
-                return <option key={idx} value={idx}>{area.name}</option>;
-            })}
-        </select>;
+
+        const selectAreaContent = (area) => {
+            if (area.id !== this.props.area.id) {
+                this.props.selectAreaContent(area);
+            } else {
+                this.setState({confirmPopup: null});
+            }
+        };
+
+        return <NewAreaContent availableAreas={availableAreas} selectAreaContent={selectAreaContent}/>;
     }
 
     renderContent() {
@@ -138,10 +145,7 @@ export default class Area extends React.Component {
             this.setState({confirmPopup: null});
         };
         if (confirmPopup) {
-            const style = extend({
-                background: 'black',
-                padding: 15
-            }, fullscreen, editor.base);
+            const style = extend({}, fullscreen, editor.base, confirmPopup.style);
             const buttonStyle = extend({}, editor.button, {
                 fontSize: 16,
                 margin: '0px 4px'
@@ -149,8 +153,8 @@ export default class Area extends React.Component {
             return <div style={style}>
                 <div>{confirmPopup.msg}</div>
                 <div style={{float: 'right'}}>
-                    <button style={buttonStyle} onClick={ok}>{confirmPopup.ok}</button>
-                    <button style={buttonStyle} onClick={cancel}>{confirmPopup.cancel}</button>
+                    {confirmPopup.ok ? <button style={buttonStyle} onClick={ok}>{confirmPopup.ok}</button> : null}
+                    {confirmPopup.cancel ? <button style={buttonStyle} onClick={cancel}>{confirmPopup.cancel}</button> : null}
                 </div>
             </div>;
         } else {
@@ -164,7 +168,11 @@ export default class Area extends React.Component {
                 msg,
                 ok,
                 cancel,
-                callback
+                callback,
+                style: {
+                    background: 'black',
+                    padding: 15
+                }
             }
         });
     }

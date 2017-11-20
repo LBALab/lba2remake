@@ -5,10 +5,13 @@ import {makeOutlinerArea} from "./OutlinerArea/factory";
 import {findScenePath, LocationsNode, LocatorMenu} from './OutlinerArea/nodes/locations/index';
 import DebugData from "../DebugData";
 
-export const SceneOutliner = makeOutlinerArea('scene_outliner', 'Scene Outliner', SceneNode);
+export const SceneOutliner = makeOutlinerArea('scene_outliner', 'Scene', SceneNode, {
+    icon: 'scene.png'
+});
 
 export const Locator = makeOutlinerArea('locator', 'Locator', LocationsNode, {
     menu: LocatorMenu,
+    icon: 'twinsun.png',
     frame: function() {
         const scene = DebugData.scope.scene;
         if (scene !== this.scene) {
