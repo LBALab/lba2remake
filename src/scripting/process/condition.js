@@ -76,7 +76,7 @@ export function CONE_VIEW() {
 }
 
 export function HIT_BY() {
-    return -1;
+    return this.actor.hasCollidedWithActor;
 }
 
 export function ACTION() {
@@ -176,8 +176,8 @@ export function DISTANCE_MESSAGE(actor) {
     return DISTANCE.call(this, actor);
 }
 
-export function HIT_OBJ_BY() {
-    return -1;
+export function HIT_OBJ_BY(actor) {
+    return actor.hasCollidedWithActor;
 }
 
 export function REAL_ANGLE() {
