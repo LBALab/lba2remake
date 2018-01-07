@@ -185,6 +185,12 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                         DebugData.step = true;
                     }
                     scene.variables = createSceneVariables(scene);
+                },
+                removeMesh(threeObject) {
+                    this.threeScene.remove(threeObject);
+                },
+                addMesh(threeObject) {
+                    this.threeScene.add(threeObject);
                 }
             };
             if (scene.isIsland) {

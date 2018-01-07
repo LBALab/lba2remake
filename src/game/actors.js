@@ -50,7 +50,9 @@ export type Actor = {
     isVisible: boolean,
     isSprite: boolean,
     isKilled: boolean,
-    runScripts: ?Function
+    runScripts: ?Function,
+    loadMesh: Function,
+    reload: Function
 }
 
 export const DirMode = {
@@ -145,40 +147,60 @@ export function loadActor(params: Object, envInfo: any, ambience: any, props: Ac
             this.props.runtimeFlags.isTurning = false;
             this.physics.temp.destAngle = this.physics.temp.angle;
             delete this.physics.temp.destination;
+        },
+        loadMesh: function(callback: Function) {
+            const that = this;
+            // only if not sprite actor
+            if (!that.isSprite && that.props.bodyIndex !== 0xFF) {
+                loadModel(params, that.props.entityIndex, that.props.bodyIndex, that.props.animIndex, animState, envInfo, ambience, (model) => {
+                    if (model !== null) {
+                        //model.mesh.visible = actor.isVisible;
+                        model.mesh.position.copy(that.physics.position);
+                        model.mesh.quaternion.copy(that.physics.orientation);
+                        that.model = model;
+                        that.threeObject = model.mesh;
+                        if (that.threeObject) {
+                            that.threeObject.name = `actor:${getObjectName('actor', that.props.sceneIndex, that.props.index)}`;
+                            that.threeObject.visible = that.isVisible;
+                        }
+                    }
+                    if (callback) {
+                        callback(null, that);
+                    }
+                });
+            } else {
+                loadSprite(that.props.spriteIndex, (sprite) => {
+                    sprite.threeObject.position.copy(that.physics.position);
+                    //sprite.threeObject.quaternion.copy(actor.physics.orientation);
+                    that.threeObject = sprite.threeObject;
+                    if (that.threeObject) {
+                        that.threeObject.name = `actor:${getObjectName('actor', that.props.sceneIndex, that.props.index)}`;
+                        that.threeObject.visible = that.isVisible;
+                    }
+                    if (callback) {
+                        callback(null, that);
+                    }
+                });
+            }
+        },
+        reload: function(scene) {
+            this.threeObject.visible = false;
+            scene.removeMesh(this.threeObject);
+            if (this.model) {
+                delete this.model;
+            }
+            if (this.threeObject) {
+                delete this.threeObject;
+            }
+            this.loadMesh();
+            scene.addMesh(this.threeObject);
         }
     };
 
     const euler = new THREE.Euler(0, angleToRad(props.angle), 0, 'XZY');
     actor.physics.orientation.setFromEuler(euler);
 
-    // only if not sprite actor
-    if (!actor.isSprite && props.bodyIndex !== 0xFF) {
-        loadModel(params, props.entityIndex, props.bodyIndex, props.animIndex, animState, envInfo, ambience, (model) => {
-            if (model !== null) {
-                //model.mesh.visible = actor.isVisible;
-                model.mesh.position.copy(actor.physics.position);
-                model.mesh.quaternion.copy(actor.physics.orientation);
-                actor.model = model;
-                actor.threeObject = model.mesh;
-                if (actor.threeObject) {
-                    actor.threeObject.name = `actor:${getObjectName('actor', props.sceneIndex, props.index)}`;
-                    actor.threeObject.visible = actor.isVisible;
-                }
-            }
-            callback(null, actor);
-        });
-    } else {
-        loadSprite(props.spriteIndex, (sprite) => {
-            sprite.threeObject.position.copy(actor.physics.position);
-            //sprite.threeObject.quaternion.copy(actor.physics.orientation);
-            actor.threeObject = sprite.threeObject;
-            if (actor.threeObject) {
-                actor.threeObject.name = `actor:${getObjectName('actor', props.sceneIndex, props.index)}`;
-                actor.threeObject.visible = actor.isVisible;
-            }
-            callback(null, actor);
-        });
-    }
+    actor.loadMesh(callback);
 }
 
 function initPhysics({pos, angle}) {

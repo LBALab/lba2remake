@@ -8,7 +8,10 @@ export function PALETTE() {
 }
 
 export function BODY_OBJ(actor, bodyIndex)  {
-    actor.props.bodyIndex = bodyIndex;
+    if (actor.props.bodyIndex !== bodyIndex) {
+        actor.props.bodyIndex = bodyIndex;
+        actor.reload(this.scene);
+    }
 }
 
 export function ANIM_OBJ(actor, animIndex) {
