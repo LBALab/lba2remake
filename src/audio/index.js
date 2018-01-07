@@ -93,7 +93,7 @@ function getMusicSource(state, context, data) {
     source.connect = () => {
         // source->gain->context
         source.bufferSource.connect(source.gainNode);
-        source.gainNode.gain.value = source.volume;
+        source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
         source.gainNode.connect(context.destination);
     };
 
@@ -167,7 +167,7 @@ function getSoundFxSource(state, context, data) {
     source.connect = () => {
         // source->gain->context
         source.bufferSource.connect(source.gainNode);
-        source.gainNode.gain.value = source.volume;
+        source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
         source.gainNode.connect(source.lowPassFilter);
         source.lowPassFilter.connect(context.destination);
     };
@@ -235,7 +235,7 @@ function getVoiceSource(state, context, data) {
     source.connect = () => {
         // source->gain->context
         source.bufferSource.connect(source.gainNode);
-        source.gainNode.gain.value = source.volume;
+        source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
         source.gainNode.connect(context.destination);
     };
 
