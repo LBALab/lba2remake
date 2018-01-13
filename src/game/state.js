@@ -7,14 +7,14 @@ export function createState() {
             language: 0,
             languageCode: 'EN',
             displayText: true,
-            musicVolume: 0.5,
-            soundFxVolume: 0.8,
+            musicVolume: 0.8,
+            soundFxVolume: 0.5,
             voiceVolume: 1.0
         },
         hero: {
             behaviour: 0,
             life: 50,
-            money: 0,
+            money: 100,
             magic: 0,
             keys: 0,
             fuel: 0,
@@ -25,8 +25,7 @@ export function createState() {
         chapter: 0,
         flags: {
             quest: createQuestFlags(),
-            holomap: createHolomapFlags(),
-            inventory: createInventoryFlags()
+            holomap: createHolomapFlags()
         },
         save: () => {},
         load: () => {}
@@ -59,14 +58,6 @@ function createHolomapFlags() {
         holomap[i] = 0;
     }
     return holomap;
-}
-
-function createInventoryFlags() {
-    const inventory = [];
-    for (let i = 0; i < 128; ++i) {
-        inventory[i] = 0;
-    }
-    return inventory;
 }
 
 export function setMagicBallLevel(index: number) {

@@ -93,7 +93,7 @@ function getMusicSource(state, context, data) {
     source.connect = () => {
         // source->gain->context
         source.bufferSource.connect(source.gainNode);
-        source.gainNode.gain.value = source.volume;
+        source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
         source.gainNode.connect(context.destination);
     };
 
@@ -129,11 +129,14 @@ function getSoundFxSource(state, context, data) {
         async.auto({
             samples: loadHqrAsync('SAMPLES_AAC.HQR')
         }, function(err, files) {
-            if (index == -1 || source.currentIndex == index && source.isPlaying) {
+            if (index <= -1 || source.currentIndex == index && source.isPlaying) {
                 return;
             }
             if (source.isPlaying) {
                 source.stop();
+            }
+            if (index & 0xFF000000) {
+                index = (index >> 8) & 0xFFFF;
             }
             source.currentIndex = index;
             source.bufferSource = context.createBufferSource();
@@ -164,7 +167,7 @@ function getSoundFxSource(state, context, data) {
     source.connect = () => {
         // source->gain->context
         source.bufferSource.connect(source.gainNode);
-        source.gainNode.gain.value = source.volume;
+        source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
         source.gainNode.connect(source.lowPassFilter);
         source.lowPassFilter.connect(context.destination);
     };
@@ -190,7 +193,9 @@ function getVoiceSource(state, context, data) {
         source.bufferSource.start();
     };
     source.stop = () => {
-        source.bufferSource.stop();
+        if (source.isPlaying) {
+            source.bufferSource.stop();
+        }
         source.isPlaying = false;
     };
     source.load = (index, textBankId, callback) => {
@@ -230,7 +235,7 @@ function getVoiceSource(state, context, data) {
     source.connect = () => {
         // source->gain->context
         source.bufferSource.connect(source.gainNode);
-        source.gainNode.gain.value = source.volume;
+        source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
         source.gainNode.connect(context.destination);
     };
 

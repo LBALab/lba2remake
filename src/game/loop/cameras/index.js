@@ -1,5 +1,19 @@
-import {processFree3DMovement, processFollow3DMovement} from './3d';
-import {processFreeIsoMovement, processFollowIsoMovement} from './iso';
+import {
+    initFollow3DMovement,
+    processFree3DMovement,
+    processFollow3DMovement
+} from './3d';
+
+import {
+    processFreeIsoMovement,
+    processFollowIsoMovement
+} from './iso';
+
+export function initCameraMovement(controlsState, renderer, scene) {
+    if (scene.isIsland && !controlsState.freeCamera) {
+        initFollow3DMovement(controlsState, renderer.cameras.camera3D, scene);
+    }
+}
 
 export function processCameraMovement(controlsState, renderer, scene, time) {
     if (scene.isIsland) {
@@ -16,9 +30,3 @@ export function processCameraMovement(controlsState, renderer, scene, time) {
         }
     }
 }
-
-
-
-
-
-

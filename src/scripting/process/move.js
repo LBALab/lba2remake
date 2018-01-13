@@ -1,7 +1,7 @@
 import {getDistance} from '../../utils/lba';
 
 export function GOTO_POINT(pointIndex) {
-    const point = this.scene.getPoint(pointIndex);
+    const point = this.scene.points[pointIndex];
     const distance = this.actor.goto(point.physics.position);
 
     if (distance > getDistance(500)) {
@@ -84,13 +84,13 @@ export function WAIT_NUM_DSEC(numDsec, time) {
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, time);
 }
 
-export function WAIT_NUM_SECOND_RND(numSeconds, unknown, time) {
-    // TODO random seconds
+export function WAIT_NUM_SECOND_RND(maxNumSeconds, unknown, time) {
+    const numSeconds = Math.floor(Math.random() * maxNumSeconds);
     WAIT_NUM_SECOND.call(this, numSeconds, time);
 }
 
-export function WAIT_NUM_DECIMAL_RND(numDsec, unknown, time) {
-    // TODO random seconds
+export function WAIT_NUM_DECIMAL_RND(maxNumDsec, unknown, time) {
+    const numDsec = Math.floor(Math.random() * maxNumDsec);
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, time);
 }
 
@@ -152,7 +152,17 @@ export function SIMPLE_SAMPLE(index) {
 }
 
 export function FACE_HERO() {
-    
+    const hero = this.scene.actors[0];
+    this.actor.facePoint(hero.physics.position);
+
+    const distAngle = Math.abs(this.actor.physics.temp.destAngle - this.actor.physics.temp.angle);
+
+    if (distAngle > Math.PI / 8) {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+    } else {
+        this.actor.stop();
+    }
 }
 
 export function ANGLE_RND() {

@@ -1,10 +1,10 @@
-import {find, each} from 'lodash';
 import THREE from 'three';
 import {getTriangleFromPos} from './ground';
 
 export function loadIslandPhysics(sections) {
     return {
         processCollisions: processCollisions.bind(null, sections),
+        processCameraCollisions: processCameraCollisions.bind(null, sections),
         getGroundInfo: position => getGroundInfo(findSection(sections, position), position)
     }
 }
@@ -14,6 +14,20 @@ const POSITION = new THREE.Vector3();
 const FLAGS = {
     hitObject: false
 };
+
+function processCameraCollisions(sections, camPosition) {
+    const section = findSection(sections, camPosition);
+    const ground = getGround(section, camPosition);
+    camPosition.y = Math.max(ground.height + 0.15, camPosition.y);
+    if (section) {
+        for (let i = 0; i < section.boundingBoxes.length; ++i) {
+            const bb = section.boundingBoxes[i];
+            if (bb.containsPoint(camPosition)) {
+                camPosition.y = bb.max.y + 0.2;
+            }
+        }
+    }
+}
 
 function processCollisions(sections, scene, actor) {
     POSITION.copy(actor.physics.position);
@@ -36,7 +50,7 @@ function processCollisions(sections, scene, actor) {
             TGT.copy(actor.physics.position);
             TGT.sub(actor.threeObject.position);
             TGT.setY(0);
-            if (TGT.lengthSq() != 0) {
+            if (TGT.lengthSq() !== 0) {
                 TGT.normalize();
                 TGT.multiplyScalar(0.005);
                 TGT.add(actor.threeObject.position);
@@ -50,9 +64,13 @@ function processCollisions(sections, scene, actor) {
     }
 }
 
+const DEFAULT_GROUND = {
+    height: 0
+};
+
 function getGround(section, position) {
     if (!section)
-        return 0;
+        return DEFAULT_GROUND;
 
     for (let i = 0; i < section.boundingBoxes.length; ++i) {
         const bb = section.boundingBoxes[i];
@@ -60,15 +78,13 @@ function getGround(section, position) {
             && position.z >= bb.min.z && position.z <= bb.max.z
             && position.y <= bb.max.y && position.y > bb.max.y - 0.015) {
             FLAGS.hitObject = true;
-            return bb.max.y;
+            return {
+                height: bb.max.y
+            };
         }
     }
     return getGroundInfo(section, position);
 }
-
-const DEFAULT_GROUND = {
-    height: 0
-};
 
 function getGroundInfo(section, position) {
     if (!section) {

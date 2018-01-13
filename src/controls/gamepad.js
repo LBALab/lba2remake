@@ -7,9 +7,9 @@ const euler = new THREE.Euler();
 const PI_4 = Math.PI / 4;
 const MAX_X_ANGLE = Math.PI;// / 2.5;
 
-export function makeGamepadControls(game: any) {
+export function makeGamepadControls(sceneManager: Object, game: Object) {
     const onDpadValueChanged = dpadValueChangeHandler.bind(null, game);
-    const onButtonPressed = buttonPressedHandler.bind(null, game);
+    const onButtonPressed = buttonPressedHandler.bind(null, game, sceneManager);
     window.addEventListener('dpadvaluechanged', onDpadValueChanged, false);
     window.addEventListener('gamepadbuttonpressed', onButtonPressed, false);
     return {
@@ -21,14 +21,19 @@ export function makeGamepadControls(game: any) {
 }
 
 function dpadValueChangeHandler(game, {detail: {x, y, name}}) {
-    if (name == 'rightStick') {
-        heroFPSControl(game, x, y);
+    if (game.controlsState.freeCamera) {
+        if (name === 'rightStick') {
+            heroFPSControl(game, x, y);
+        } else {
+            game.controlsState.cameraSpeed.z = -y * 0.45;
+        }
     } else {
-        game.controlsState.cameraSpeed.z = -y * 0.45;
+        game.controlsState.heroSpeed = y >= 0.5 ? 1 : (y <= -0.5 ? -1 : 0);
+        game.controlsState.heroRotationSpeed = -x;
     }
 }
 
-function buttonPressedHandler(game: any, {detail: {name, isPressed}}) {
+function buttonPressedHandler(game: Object, sceneManager: Object, {detail: {name, isPressed}}) {
     if (isPressed) {
         switch (name) {
             case 'leftShoulder':
@@ -38,10 +43,10 @@ function buttonPressedHandler(game: any, {detail: {name, isPressed}}) {
                 rotateArroundY(game.controlsState.cameraOrientation, -PI_4);
                 break;
             case 'buttonB':
-                game.getSceneManager().next();
+                sceneManager.next();
                 break;
             case 'buttonX':
-                game.getSceneManager().previous();
+                sceneManager.previous();
                 break;
             case 'buttonY':
                 game.controlsState.freeCamera = !game.controlsState.freeCamera;

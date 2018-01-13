@@ -10,7 +10,7 @@ export function compileScripts(game, scene, actor) {
 function compileScript(type, game, scene, actor) {
     const script = actor.scripts[type];
     const state = { reentryOffset: 0 };
-    if (type == 'move') {
+    if (type === 'move') {
         state.stopped = true;
         state.trackIndex = -1;
     }
@@ -43,8 +43,13 @@ function compileInstruction(script, cmd, cmdOffset) {
 
     const callback = cmd.op.callback;
     const instruction = callback.bind.apply(callback, args);
+    instruction.dbgLabel = cmdOffset + ' ' + cmd.op.command;
+    instruction.section = cmd.section;
     if (condition)
         instruction.condition = condition;
+    if (cmd.op.skipSideScenes) {
+        instruction.skipSideScenes = true;
+    }
     return instruction;
 }
 
@@ -53,7 +58,7 @@ function compileCondition(script, cmd) {
 }
 
 function compileOperator(cmd) {
-    return cmd.operator.op.callback.bind(null, cmd.operator.operand);
+    return cmd.operator.op.callback.bind(null, cmd.operator.operand.value);
 }
 
 function compileValue(script, value, cmdOffset) {
@@ -62,14 +67,14 @@ function compileValue(script, value, cmdOffset) {
 
     switch (value.type) {
         case 'offset':
-            if (script.opMap[value.value] == undefined) {
+            if (script.opMap[value.value] === undefined) {
                 console.warn(`Failed to parse offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${value.value}`);
             }
             return script.opMap[value.value];
         case 'actor':
-            return script.context.scene.getActor(value.value);
+            return script.context.scene.actors[value.value];
         case 'point':
-            return script.context.scene.getPoint(value.value);
+            return script.context.scene.points[value.value];
         default:
             return value.value;
     }
@@ -80,21 +85,21 @@ function postProcess(script, cmd, cmdOffset, args) {
     switch (cmd.op.command) {
         case 'SET_TRACK':
             opMap = script.context.actor.scripts.move.opMap;
-            if (opMap[args[1]] == undefined) {
+            if (opMap[args[1]] === undefined) {
                 console.warn(`Failed to parse SET_TRACK offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[1]}`);
             }
             args[1] = opMap[args[1]];
             break;
         case 'SET_TRACK_OBJ':
             opMap = args[1].scripts.move.opMap;
-            if (opMap[args[2]] == undefined) {
+            if (opMap[args[2]] === undefined) {
                 console.warn(`Failed to parse SET_TRACK_OBJ offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[2]}`);
             }
             args[2] = opMap[args[2]];
             break;
         case 'SET_COMPORTEMENT_OBJ':
             opMap = args[1].scripts.life.opMap;
-            if (opMap[args[2]] == undefined) {
+            if (opMap[args[2]] === undefined) {
                 console.warn(`Failed to parse SET_COMPORTEMENT_OBJ offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[2]}`);
             }
             args[2] = opMap[args[2]];

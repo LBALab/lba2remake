@@ -1,9 +1,12 @@
 import {bits} from '../utils';
 
+const bricks = [];
+
 export function loadBricks(bkg) {
-    const bricks = [];
-    for (let i = 197; i <= 18099; ++i) {
-        bricks.push(loadBrick(bkg, i));
+    if (bricks.length === 0) {
+        for (let i = 197; i <= 18099; ++i) {
+            bricks.push(loadBrick(bkg, i));
+        }
     }
     return bricks;
 }
@@ -24,14 +27,14 @@ function loadBrick(bkg, entry) {
             const runSpec = dataView.getUint8(ptr++);
             const runLength = bits(runSpec, 0, 6) + 1;
             const type = bits(runSpec, 6, 2);
-            if (type == 2) {
+            if (type === 2) {
                 const color = dataView.getUint8(ptr++);
                 for (let i = 0; i < runLength; ++i) {
                     pixels[offset()] = color;
                     x++;
                 }
             }
-            else if (type == 1 || type == 3) {
+            else if (type === 1 || type === 3) {
                 for (let i = 0; i < runLength; ++i) {
                     pixels[offset()] = dataView.getUint8(ptr++);
                     x++;

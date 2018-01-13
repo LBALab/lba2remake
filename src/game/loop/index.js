@@ -3,44 +3,64 @@ import {updateHero} from './hero';
 import {updateActor} from './actors';
 import {processPhysicsFrame} from './physics';
 import {processCameraMovement} from './cameras';
-import {updateDebugger, hasStep, endStep} from '../../scripting/debug';
 import {getRandom} from '../../utils/lba'
+import DebugData from "../../ui/editor/DebugData";
 
-export function mainGameLoop(game, clock, renderer, scene, controls) {
+export function mainGameLoop(params, game, clock, renderer, scene, controls) {
     const time = {
         delta: Math.min(clock.getDelta(), 0.05),
         elapsed: clock.getElapsedTime()
     };
 
+    const debugScope = {
+        params,
+        game,
+        clock,
+        renderer,
+        scene
+    };
+
     renderer.stats.begin();
     if (scene) {
         each(controls, ctrl => { ctrl.update && ctrl.update(); });
-        if (!game.isPaused()) {
-            scene.scenery.update(time);
-            const step = hasStep();
-            updateScene(game, scene, time, step);
-            endStep();
+        const step = game.isPaused() && DebugData.step;
+        if (!game.isPaused() || step) {
+            if (step) {
+                time.delta = 0.05;
+                time.elapsed += 0.05;
+                clock.elapsedTime += 0.05;
+            }
+            scene.scenery.update(game, scene, time);
+            updateScene(game, scene, time);
             processPhysicsFrame(game, scene, time);
             each(scene.sideScenes, sideScene => {
                 updateScene(game, sideScene, time);
                 processPhysicsFrame(game, sideScene, time);
             });
             processCameraMovement(game.controlsState, renderer, scene, time);
-            updateDebugger(scene, renderer);
             renderer.render(scene);
+            DebugData.step = false;
         }
+        if (scene.actors && scene.actors.length > 0) {
+            debugScope.hero = scene.actors[0];
+        }
+        debugScope.camera = renderer.getMainCamera(scene);
     }
     renderer.stats.end();
 }
+
+
 
 function updateScene(game, scene, time, step) {
     //playAmbience(game, scene, time);
     each(scene.actors, actor => {
         if (actor.isKilled)
             return;
-        updateActor(scene, actor, time, step);
-        if (actor.index == 0 && scene.isActive) {
-            updateHero(game, actor, time);
+        updateActor(game, scene, actor, time, step);
+        if (scene.isActive) {
+            if (actor.index === 0) {
+                updateHero(game, actor, time);
+            }
         }
     });
 }
@@ -59,9 +79,8 @@ function playAmbience(game, scene, time) {
                     samplePlayed = 0;
                 }
                 const sample = scene.data.ambience.samples[currentAmb];
-                if(sample.index != -1) {
-                    //const frequency = 0x1000 + getRandom(sample.round) - (sample.round/2);
-                    soundFxSource.load(sample.index, () => {
+                if(sample.ambience != -1 && sample.repeat != 0) {
+                    soundFxSource.load(sample.ambience, () => {
                         soundFxSource.play(sample.frequency);
                     });
 
@@ -71,6 +90,9 @@ function playAmbience(game, scene, time) {
             currentAmb++;
             currentAmb &= 3;
         }
-        scene.data.ambience.sampleElapsedTime = time.elapsed + getRandom(scene.data.ambience.sampleMinDelay, scene.data.ambience.sampleMinDelayRnd) * 50;
+        scene.data.ambience.sampleElapsedTime = time.elapsed + getRandom(scene.data.ambience.sampleMinDelay, scene.data.ambience.sampleMinDelayRnd) * 1000;
+    }
+    if (scene.data.ambience.sampleMinDelay < 0) {
+        scene.data.ambience.sampleElapsedTime = time.elapsed + 200000;
     }
 }

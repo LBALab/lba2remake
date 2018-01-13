@@ -1,0 +1,32 @@
+{
+  "actorNames": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    "Luc",
+    "Tim"
+  ],
+  "varcubes": [
+    null,
+    null,
+    null,
+    {
+      "name": "correct_music_option",
+      "type": "boolean"
+    },
+    null,
+    null,
+    {
+      "name": "juckbox_music",
+      "type": "enum",
+      "enumValues": {
+        "0": "nothing",
+        "1": "honey_bee",
+        "2": "lba_theme",
+        "3": "the_empire"
+      }
+    }
+  ]
+}

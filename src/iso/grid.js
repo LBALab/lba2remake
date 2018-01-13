@@ -23,7 +23,7 @@ export function loadGrid(bkg, bricks, palette, entry) {
                 const flags = gridData.getUint8(offset++);
                 const type = bits(flags, 6, 2);
                 const height = bits(flags, 0, 5) + 1;
-                const block = type == 2 ? {
+                const block = type === 2 ? {
                     layout: gridData.getUint8(offset++) - 1,
                     block: gridData.getUint8(offset++)
                 } : null;
@@ -47,7 +47,7 @@ export function loadGrid(bkg, bricks, palette, entry) {
                             break;
                     }
                 }
-                if (type != 0) {
+                if (type !== 0) {
                     const x = Math.floor(idx / 64) - 1;
                     const z = idx % 64;
 

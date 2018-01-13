@@ -9,8 +9,8 @@ export function processPhysicsFrame(game, scene, time) {
         processActorPhysics(scene, actor, time);
     });
     if (scene.isActive) {
-        processTeleports(game, scene);
         processZones(game, scene);
+        processTeleports(scene);
     }
 }
 
@@ -20,7 +20,10 @@ function processActorPhysics(scene, actor, time) {
 
     actor.physics.position.add(actor.physics.temp.position);
     if (actor.props.flags.hasCollisions) {
-        actor.physics.position.y -= 0.4 * time.delta;
+        if (!actor.props.runtimeFlags.hasGravityByAnim
+            && actor.props.flags.canFall) {
+            actor.physics.position.y -= 0.25 * time.delta;
+        }
         scene.scenery.physics.processCollisions(scene, actor);
         processCollisionsWithActors(scene, actor);
     }
@@ -32,23 +35,23 @@ function processActorPhysics(scene, actor, time) {
     }
 }
 
-function processTeleports(game, scene) {
-    const hero = scene.getActor(0);
+function processTeleports(scene) {
+    const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
     pos.y += 0.005;
-    if (scene.isIsland && (pos.x < 0 || pos.z < 0 || pos.x > 2 || pos.z > 2)) {
+    if (scene.isIsland && (pos.x < 0.01 || pos.z < 0.01 || pos.x > 1.99 || pos.z > 1.99)) {
         const globalPos = new THREE.Vector3();
         globalPos.applyMatrix4(hero.threeObject.matrixWorld);
         const sideScene = find(scene.sideScenes, sideScene => {
             const nodePos = sideScene.sceneNode.position;
-            return globalPos.x > nodePos.x
-                && globalPos.x < nodePos.x + 2
-                && globalPos.z > nodePos.z
-                && globalPos.z < nodePos.z + 2;
+            return globalPos.x > nodePos.x + 0.01
+                && globalPos.x < nodePos.x + 1.99
+                && globalPos.z > nodePos.z + 0.01
+                && globalPos.z < nodePos.z + 1.99;
         });
         if (sideScene) {
-            game.getSceneManager().goto(sideScene.index, (newScene) => {
-                const newHero = newScene.getActor(0);
+            scene.goto(sideScene.index, (newScene) => {
+                const newHero = newScene.actors[0];
                 newHero.threeObject.quaternion.copy(hero.threeObject.quaternion);
                 newHero.threeObject.position.copy(globalPos);
                 newHero.threeObject.position.sub(newScene.sceneNode.position);
@@ -57,7 +60,6 @@ function processTeleports(game, scene) {
                 newHero.physics.orientation.copy(hero.physics.orientation);
                 newHero.props.dirMode = hero.props.dirMode;
             });
-            return;
         }
     }
 }
@@ -68,7 +70,7 @@ const DIFF = new THREE.Vector3();
 
 function processCollisionsWithActors(scene, actor) {
     actor.hasCollidedWithActor = -1;
-    if (actor.model == null) {
+    if (actor.model === null) {
         return;
     }
     ACTOR_BOX.copy(actor.model.boundingBox);
@@ -77,7 +79,7 @@ function processCollisionsWithActors(scene, actor) {
     ACTOR_BOX.translate(DIFF);
     for (let i = 0; i < scene.actors.length; ++i) {
         const a = scene.actors[i];
-        if (a.model == null || a.index == actor.index) {
+        if (a.model === null || a.index === actor.index) {
             continue;
         }
         INTERSECTION.copy(a.model.boundingBox);

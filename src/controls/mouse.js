@@ -3,13 +3,14 @@
 import THREE from 'three';
 
 // Move pointerLock mechanics out of this
-export function makeFirstPersonMouseControls(domElement: HTMLElement, game: any) {
+export function makeFirstPersonMouseControls(params: Object, domElement: HTMLElement, game: any) {
     const controls = {
         enabled: false
     };
 
     const onMouseMove = handleMouseEvent.bind(null, controls, game);
     const onPointerLockChange = pointerLockChanged.bind(null, controls);
+    const onClick = handleClick.bind(null, params, game);
 
     document.addEventListener('mousemove', onMouseMove, false);
     document.addEventListener('pointerlockchange', onPointerLockChange, false);
@@ -49,8 +50,8 @@ function pointerLockChanged(controls) {
     controls.enabled = (document: any).pointerLockElement == document.body;
 }
 
-function onClick() {
-    if (document.body.requestPointerLock) {
+function handleClick(params, game) {
+    if (document.body.requestPointerLock && (!params.editor || game.controlsState.freeCamera)) {
         document.body.requestPointerLock()
     }
 }

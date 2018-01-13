@@ -1,5 +1,4 @@
 import THREE from 'three';
-import {each} from 'lodash';
 
 export function loadBody(model, bodies, index, bodyProps) {
     if (bodies[index]) {
@@ -8,7 +7,13 @@ export function loadBody(model, bodies, index, bodyProps) {
         const buffer = model.files.body.getEntry(index);
         const data = new DataView(buffer);
         const obj = {
-            bodyFlag: data.getInt16(0x00, true),
+            bodyFlag: data.getInt32(0x00, true),
+            xMin: data.getInt32(0x08, true),
+            xMax: data.getInt32(0x0C, true),
+            yMin: data.getInt32(0x10, true),
+            yMax: data.getInt32(0x14, true),
+            zMin: data.getInt32(0x18, true),
+            zMax: data.getInt32(0x1C, true),
             bonesSize: data.getUint32(0x20, true),
             bonesOffset: data.getUint32(0x24, true),
             verticesSize: data.getUint32(0x28, true),
@@ -29,7 +34,10 @@ export function loadBody(model, bodies, index, bodyProps) {
             buffer: buffer
         };
 
-        obj.hasAnim = obj.bodyFlag & 2;
+        obj.version = obj.bodyFlag & 0xff;
+        obj.hasAnimation = obj.bodyFlag & (1 << 8);
+        obj.noSort = obj.bodyFlag & (1 << 9);
+        obj.hasTransparency = obj.bodyFlag & (1 << 10);
          
         loadBones(obj);
         loadVertices(obj);
@@ -224,46 +232,34 @@ function loadUVGroups(object) {
 
 function computeBoundingBox(object, bodyProps) {
     if (bodyProps && bodyProps.hasCollisionBox) {
-        const {tX, tY, tZ, bX, bY, bZ} = bodyProps.box;
-        object.hasBoundingBox = true;
+        const {xMin, yMin, zMin, xMax, yMax, zMax} = bodyProps.box;
         object.boundingBox = new THREE.Box3(
             new THREE.Vector3(
-                Math.min(tX, bX) / 0x4000,
-                Math.min(tY, bY) / 0x4000,
-                Math.min(tZ, bZ) / 0x4000
+                xMin / 0x4000,
+                yMin / 0x4000,
+                zMin / 0x4000
             )
             ,
             new THREE.Vector3(
-                Math.max(tX, bX) / 0x4000,
-                Math.max(tY, bY) / 0x4000,
-                Math.max(tZ, bZ) / 0x4000
+                xMax / 0x4000,
+                yMax / 0x4000,
+                zMax / 0x4000
             )
         );
     } else {
-        const boundingBox = new THREE.Box3();
-        const points = [];
-        each(object.bones, bone => {
-            let vertex = object.vertices[bone.vertex];
-            const point = new THREE.Vector3(vertex.x, vertex.y, vertex.z);
-            while (bone.parent != 0xFFFF) {
-                bone = object.bones[bone.parent];
-                vertex = object.vertices[bone.vertex];
-                point.add(new THREE.Vector3(vertex.x, vertex.y, vertex.z));
-            }
-            points.push(point);
-        });
-        for (let i = object.bones.length; i < object.vertices.length; ++i) {
-            const vertex = object.vertices[i];
-            const point = new THREE.Vector3(vertex.x, vertex.y, vertex.z);
-            point.add(points[vertex.bone]);
-            boundingBox.min.x = Math.min(boundingBox.min.x, point.x);
-            boundingBox.min.y = Math.min(boundingBox.min.y, point.y);
-            boundingBox.min.z = Math.min(boundingBox.min.z, point.z);
-            boundingBox.max.x = Math.max(boundingBox.max.x, point.x);
-            boundingBox.max.y = Math.max(boundingBox.max.y, point.y);
-            boundingBox.max.z = Math.max(boundingBox.max.z, point.z);
-        }
-        object.hasBoundingBox = false;
-        object.boundingBox = boundingBox;
+        const {xMin, yMin, zMin, xMax, yMax, zMax} = object;
+        object.boundingBox = new THREE.Box3(
+            new THREE.Vector3(
+                xMin / 0x4000,
+                yMin / 0x4000,
+                zMin / 0x4000
+            )
+            ,
+            new THREE.Vector3(
+                xMax / 0x4000,
+                yMax / 0x4000,
+                zMax / 0x4000
+            )
+        );
     }
 }

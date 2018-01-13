@@ -27,51 +27,31 @@ export const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'],
     name: name
 }));
 
-export function createRenderer(useVR) {
+export function createRenderer(params, canvas) {
     let pixelRatio = PixelRatio[2]; // SET NORMAL AS DEFAULT
     const getPixelRatio = () => pixelRatio.getValue();
     let antialias = false;
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
-    const baseRenderer = setupBaseRenderer(pixelRatio);
-    const renderer = useVR ? setupVR(baseRenderer) : baseRenderer;
+    const baseRenderer = setupBaseRenderer(pixelRatio, canvas);
+    const tgtRenderer = params.vr ? setupVR(baseRenderer) : baseRenderer;
     const camera3D = get3DCamera();
     const cameraIso = getIsometricCamera(pixelRatio.getValue());
-    const resizer = setupResizer(renderer, camera3D, cameraIso, getPixelRatio);
-    let smaa = setupSMAA(renderer, pixelRatio);
-    const stats = setupStats(useVR);
-
-    window.addEventListener('keydown', event => {
-        if (event.code == 'KeyH') {
-            antialias = !antialias;
-            displayRenderMode();
-            window.dispatchEvent(new CustomEvent('resize'));
-        }
-        if (event.code == 'KeyR') {
-            pixelRatio = PixelRatio[(pixelRatio.index + 1) % PixelRatio.length];
-            baseRenderer.setPixelRatio(pixelRatio.getValue());
-            smaa = setupSMAA(renderer, pixelRatio);
-            displayRenderMode();
-            window.dispatchEvent(new CustomEvent('resize'));
-        }
-    });
+    let smaa = setupSMAA(tgtRenderer, pixelRatio);
+    const stats = setupStats(params.vr);
 
     displayRenderMode();
 
-    return {
-        domElement: baseRenderer.domElement,
+    const renderer = {
+        canvas: canvas,
         render: scene => {
-            renderer.antialias = antialias;
+            tgtRenderer.antialias = antialias;
             const camera = scene.isIsland ? camera3D : cameraIso;
             if (antialias) {
                 smaa.render(scene.threeScene, camera);
             }
             else {
-                renderer.render(scene.threeScene, camera);
+                tgtRenderer.render(scene.threeScene, camera);
             }
-        },
-        dispose: () => {
-            resizer.dispose();
-            stats.dispose();
         },
         applySceneryProps: props => {
             const sc = props.envInfo.skyColor;
@@ -83,30 +63,49 @@ export function createRenderer(useVR) {
             camera3D: camera3D,
             isoCamera: cameraIso
         },
+        resize: (width = tgtRenderer.getSize().width, height = tgtRenderer.getSize().height) => {
+            tgtRenderer.setSize(width, height);
+            resize3DCamera(camera3D, width, height);
+            resizeIsometricCamera(cameraIso, getPixelRatio(), width, height);
+        },
         getMainCamera: scene => scene.isIsland ? camera3D : cameraIso,
         pixelRatio: getPixelRatio,
-        setPixelRatio: function(value) { baseRenderer.setPixelRatio(value); },
-        setupSMAA: function(pr) { setupSMAA(renderer, pr) }
+        setPixelRatio: function(value) { baseRenderer.setPixelRatio(value); }
     };
+
+    function keyListener(event) {
+        if (event.code === 'KeyH') {
+            antialias = !antialias;
+            displayRenderMode();
+            renderer.resize();
+        }
+        if (event.code === 'KeyR') {
+            pixelRatio = PixelRatio[(pixelRatio.index + 1) % PixelRatio.length];
+            baseRenderer.setPixelRatio(pixelRatio.getValue());
+            smaa = setupSMAA(tgtRenderer, pixelRatio);
+            displayRenderMode();
+            renderer.resize();
+        }
+    }
+
+    window.addEventListener('keydown', keyListener);
+
+    renderer.dispose = () => {
+        window.removeEventListener('keydown', keyListener);
+    };
+
+    return renderer;
 }
 
-function setupBaseRenderer(pixelRatio) {
-    const renderer = new THREE.WebGLRenderer({antialias: false, alpha: false, logarithmicDepthBuffer: true});
+function setupBaseRenderer(pixelRatio, canvas) {
+    const renderer = new THREE.WebGLRenderer({antialias: false, alpha: false, logarithmicDepthBuffer: true, canvas});
     renderer.setClearColor(0x000000);
     renderer.setPixelRatio(pixelRatio.getValue());
-    renderer.setSize(
-        Math.floor(window.innerWidth * 0.5) * 2,
-        Math.floor(window.innerHeight * 0.5) * 2
-    );
+    renderer.setSize(0, 0);
     renderer.autoClear = true;
 
     renderer.context.getExtension('EXT_shader_texture_lod');
     renderer.context.getExtension('OES_standard_derivatives');
-
-    renderer.domElement.style.position = 'absolute';
-    renderer.domElement.style.left = 0;
-    renderer.domElement.style.top = 0;
-    renderer.domElement.style.opacity = 1.0;
 
     return renderer;
 }
@@ -128,26 +127,12 @@ function setupSMAA(renderer, pixelRatio) {
     }
 }
 
-function setupResizer(renderer, camera3D, cameraIso, getPixelRatio) {
-    function resize() {
-        renderer.setSize(
-            Math.floor(window.innerWidth * 0.5) * 2,
-            Math.floor(window.innerHeight * 0.5) * 2
-        );
-        resize3DCamera(camera3D);
-        resizeIsometricCamera(cameraIso, getPixelRatio());
-    }
-
-    window.addEventListener('resize', resize);
-    return {dispose: () => { window.removeEventListener('resize', resize) }};
-}
-
 function setupVR(baseRenderer) {
     const params = Cardboard.uriToParams('https://vr.google.com/cardboard/download/?p=CgdUd2luc3VuEgRBZHJpHfT91DwlYOVQPSoQAAC0QgAAtEIAALRCAAC0QlgANQIrBz06CClcjz0K1yM8UABgAA');
     console.log(params);
     const stereoEffect = new StereoEffect(baseRenderer, params);
-    stereoEffect.eyeSeparation = 0.006;
+    stereoEffect.eyeSeparation = -0.0012;
     stereoEffect.focalLength = 0.0122;
-    stereoEffect.setSize(window.innerWidth, window.innerHeight);
+    stereoEffect.setSize(0, 0);
     return stereoEffect;
 }

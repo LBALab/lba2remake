@@ -1,19 +1,50 @@
 import THREE from 'three';
 
-export function processFollow3DMovement(controlsState, camera, scene, time) {
-    const hero = scene.getActor(0);
-    const heroPos = new THREE.Vector3(0, 0.08, 0);
+const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
+const HERO_TARGET_POS = new THREE.Vector3(0, 0.08, 0);
+
+export function initFollow3DMovement(controlsState, camera, scene) {
+    const hero = scene.actors[0];
+    const heroPos = HERO_TARGET_POS.clone();
     heroPos.applyMatrix4(hero.threeObject.matrixWorld);
 
-    const cameraPos = new THREE.Vector3(0, 0.15, -0.2) ;
-    cameraPos.applyMatrix4(hero.threeObject.matrixWorld) ;
-
-    controlsState.cameraLerp.lerpVectors(camera.position, cameraPos, 0.025);
-    camera.position.set(controlsState.cameraLerp.x, controlsState.cameraLerp.y, controlsState.cameraLerp.z);
-    if (camera.position.distanceTo(cameraPos) > 1) {
+    if (!controlsState.vr) {
+        const cameraPos = CAMERA_HERO_OFFSET.clone();
+        cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+        controlsState.cameraLerp.copy(cameraPos);
+        controlsState.cameraLookAtLerp.copy(heroPos);
         camera.position.copy(cameraPos);
+        camera.lookAt(controlsState.cameraLookAtLerp);
     }
-    camera.lookAt(heroPos);
+}
+
+export function processFollow3DMovement(controlsState, camera, scene, time) {
+    const hero = scene.actors[0];
+    const heroPos = HERO_TARGET_POS.clone();
+    const cameraPos = CAMERA_HERO_OFFSET.clone();
+    heroPos.applyMatrix4(hero.threeObject.matrixWorld);
+    cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+    scene.scenery.physics.processCameraCollisions(cameraPos);
+
+    if (controlsState.vr) {
+        if (camera.position.distanceTo(cameraPos) > 0.3) {
+            const orientation = [cameraPos.x - heroPos.x, cameraPos.z - heroPos.z];
+            camera.position.copy(cameraPos);
+            const euler = new THREE.Euler();
+            const q = controlsState.cameraOrientation;
+            euler.setFromQuaternion(q, 'YXZ');
+            euler.y = Math.atan2(-orientation[1], orientation[0]) + Math.PI / 2;
+            q.setFromEuler(euler);
+        }
+
+        camera.quaternion.copy(controlsState.cameraOrientation);
+        camera.quaternion.multiply(controlsState.cameraHeadOrientation);
+    } else {
+        controlsState.cameraLerp.lerpVectors(camera.position, cameraPos, 0.025);
+        controlsState.cameraLookAtLerp.lerpVectors(controlsState.cameraLookAtLerp.clone(), heroPos, 0.1);
+        camera.position.set(controlsState.cameraLerp.x, controlsState.cameraLerp.y, controlsState.cameraLerp.z);
+        camera.lookAt(controlsState.cameraLookAtLerp);
+    }
 }
 
 export function processFree3DMovement(controlsState, camera, scene, time) {

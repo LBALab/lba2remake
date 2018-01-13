@@ -175,12 +175,16 @@ export function END() {
     this.state.continue = false;
 }
 
+export function END_LIFE() {
+    END.call(this);
+}
+
 export function NOP() {
 
 }
 
 export function RETURN() {
-    this.state.reentryOffset = this.state.offset;
+    this.state.reentryOffset = this.state.comportementOffset;
     this.state.continue = false;
 }
 

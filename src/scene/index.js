@@ -33,7 +33,7 @@ function loadSceneDataSync(files, index) {
             gameOverScene: data.getInt8(1, true),
             unknown1: data.getUint16(2, true),
             unknown2: data.getUint16(4, true),
-            isOutsideScene: data.getInt8(6, true) == 1,
+            isOutsideScene: data.getInt8(6, true) === 1,
             buffer: buffer,
             palette: new Uint8Array(files.ress.getEntry(0)),
             actors: []
@@ -45,7 +45,7 @@ function loadSceneDataSync(files, index) {
         offset = loadActors(sceneData, offset);
         offset = loadZones(sceneData, offset);
         offset = loadPoints(sceneData, offset);
-        loadUnknown(sceneData, offset);
+        loadPatches(sceneData, offset);
 
         loadTexts(sceneData, files.text);
 
@@ -59,25 +59,25 @@ function loadAmbience(scene, offset) {
     let innerOffset = 0;
 
     scene.ambience = {
-        lightingAlpha: data.getUint16(innerOffset, true),
-        lightingBeta: data.getUint16(innerOffset + 2, true), 
+        lightingAlpha: data.getInt16(innerOffset, true),
+        lightingBeta: data.getInt16(innerOffset + 2, true),
         samples: [],
-        sampleMinDelay: data.getUint16(innerOffset + 44, true),
-        sampleMinDelayRnd: data.getUint16(innerOffset + 46, true),
+        sampleMinDelay: data.getInt16(innerOffset + 44, true),
+        sampleMinDelayRnd: data.getInt16(innerOffset + 46, true),
         sampleElapsedTime: 0,
         musicIndex: data.getInt8(innerOffset + 48, true),
     };
 
-    const rawSamples = new Uint16Array(scene.buffer, innerOffset + 4, 4 * 5 * 2); // 4 entries, 3 types, 2 bytes each
+    innerOffset = 4;
     for (let i = 0; i < 4; ++i) {
-        const index = i * 5;
         scene.ambience.samples.push({
-            frequency:   rawSamples[index],
-            repeat:     rawSamples[index + 1],
-            round:     rawSamples[index + 2],
-            unknown1:   rawSamples[index + 3],
-            index:   rawSamples[index + 4]
+            ambience:   data.getInt16(innerOffset    , true),
+            repeat:     data.getInt16(innerOffset + 2, true),
+            round:      data.getInt16(innerOffset + 4, true),
+            frequency:  data.getInt16(innerOffset + 6, true),
+            volume:     data.getInt16(innerOffset + 8, true),
         });
+        innerOffset += 10;
     }
 
     return offset + 49;
@@ -91,31 +91,53 @@ function loadHero(scene, offset) {
         entityIndex: 0,
         bodyIndex: 0,
         pos: [
-            (0x8000 - data.getUint16(offset + 4, true) + 512) / 0x4000,
-            data.getUint16(offset + 2, true) / 0x4000,
-            data.getUint16(offset, true) / 0x4000
+            (0x8000 - data.getInt16(offset + 4, true) + 512) / 0x4000,
+            data.getInt16(offset + 2, true) / 0x4000,
+            data.getInt16(offset, true) / 0x4000
         ],
         index: 0,
         textColor: getHtmlColor(scene.palette, 12 * 16 + 12),
         angle: 0,
         speed: 5,
         dirMode: DirMode.MANUAL,
+        runtimeFlags: createRuntimeFlags(),
         flags: {
             hasCollisions: true,
+            hasCollisionBricks: true,
+            hasCollisionZone: true,
+            hasSpriteClipping: false,
+            hasCollisionLow: false,
+            hasCollisionFloor: true,
+            hasMiniZV: false,
+            hasInvalidPosition: false,
+            hasSpriteAnim3D: false,
+            hasZBuffer: false,
+            hasZBufferInWater: false,
+
+            canBePunched: true,
+            canDrown: true,
+            canFall: true,
+            canCarrierActor: false,
+
             isVisible: true,
-            isSprite: false
+            isSprite: false,
+            isBackgrounded: false,
+
+            noShadow: false,
+            noElectricShock: false,
+            noPreClipping: false,
         }
     };
     offset += 6;
 
-    hero.moveScriptSize = data.getUint16(offset, true);
+    hero.moveScriptSize = data.getInt16(offset, true);
     offset += 2;
     if (hero.moveScriptSize > 0) {
         hero.moveScript = new DataView(scene.buffer, offset, hero.moveScriptSize);
     }
     offset += hero.moveScriptSize;
 
-    hero.lifeScriptSize = data.getUint16(offset, true);
+    hero.lifeScriptSize = data.getInt16(offset, true);
     offset += 2;
     if (hero.lifeScriptSize > 0) {
         hero.lifeScript = new DataView(scene.buffer, offset, hero.lifeScriptSize);
@@ -130,76 +152,77 @@ function loadHero(scene, offset) {
 function loadActors(scene, offset) {
     const data = new DataView(scene.buffer);
 
-    const numActors = data.getUint16(offset, true);
+    const numActors = data.getInt16(offset, true);
     offset += 2;
 
     for (let i = 1; i < numActors; ++i) {
         let actor = {
             sceneIndex: scene.index,
             index: i,
-            dirMode: DirMode.NO_MOVE
+            dirMode: DirMode.NO_MOVE,
+            runtimeFlags: createRuntimeFlags(),
         };
 
-        const staticFlags = data.getUint16(offset, true);
+        const staticFlags = data.getUint32(offset, true);
         actor.flags = parseStaticFlags(staticFlags);
-        offset += 2;
-        actor.unknownFlags = data.getUint16(offset, true);
-        offset += 2;
+        offset += 4;
         
-        actor.entityIndex = data.getUint16(offset, true);
+        actor.entityIndex = data.getInt16(offset, true);
         offset += 2;
-        actor.bodyIndex = data.getUint8(offset++, true);
-        offset++; // unknown byte
-        actor.animIndex = data.getUint8(offset++, true);
-        actor.spriteIndex = data.getUint16(offset, true);
+        actor.bodyIndex = data.getInt8(offset++, true);
+        actor.animIndex = data.getInt16(offset, true);
+        offset += 2;
+        actor.spriteIndex = data.getInt16(offset, true);
         offset += 2;
         
         actor.pos = [
-            (0x8000 - data.getUint16(offset + 4, true) + 512) / 0x4000,
-            data.getUint16(offset + 2, true) / 0x4000,
-            data.getUint16(offset, true) / 0x4000
+            (0x8000 - data.getInt16(offset + 4, true) + 512) / 0x4000,
+            data.getInt16(offset + 2, true) / 0x4000,
+            data.getInt16(offset, true) / 0x4000
         ];
         offset += 6;
 
-        actor.hitStrength = data.getUint8(offset++, true);
-        actor.extraType = data.getUint16(offset, true);
+        actor.hitStrength = data.getInt8(offset++, true);
+        actor.extraType = data.getInt16(offset, true);
         offset += 2;
-        actor.angle = data.getUint16(offset, true);
+        actor.angle = data.getInt16(offset, true);
         offset += 2;
-        actor.speed = data.getUint16(offset, true);
+        actor.speed = data.getInt16(offset, true);
         offset += 2;
-        actor.controlMode = data.getUint8(offset++, true);
-        actor.info0 = data.getUint16(offset, true);
+        actor.controlMode = data.getInt8(offset++, true);
+
+        actor.info0 = data.getInt16(offset, true);
         offset += 2;
-        actor.info1 = data.getUint16(offset, true);
+        actor.info1 = data.getInt16(offset, true);
         offset += 2;
-        actor.info2 = data.getUint16(offset, true);
+        actor.info2 = data.getInt16(offset, true);
         offset += 2;
-        actor.info3 = data.getUint16(offset, true);
+        actor.info3 = data.getInt16(offset, true);
         offset += 2;
-        actor.extraAmount = data.getUint16(offset, true);
+
+        actor.extraAmount = data.getInt16(offset, true);
         offset += 2;
-        const textColor = data.getUint8(offset++, true);
+        const textColor = data.getInt8(offset++, true);
         actor.textColor = getHtmlColor(scene.palette, textColor * 16 + 12);
-        if (actor.unknownFlags & 0x0004) { 
-            actor.unknown0 = data.getUint16(offset, true);
-            offset += 2;
-            actor.unknown1 = data.getUint16(offset, true);
-            offset += 2;
-            actor.unknown2 = data.getUint16(offset, true);
+
+        if (actor.flags.hasSpriteAnim3D) {
+            actor.spriteAnim3DNumber = data.getUint32(offset, true);
+            offset += 4;
+            actor.spriteSizeHit = data.getInt16(offset, true);
+            actor.info3 = actor.spriteSizeHit;
             offset += 2;
         }
         actor.armour = data.getUint8(offset++, true);
         actor.life = data.getUint8(offset++, true);
 
-        actor.moveScriptSize = data.getUint16(offset, true);
+        actor.moveScriptSize = data.getInt16(offset, true);
         offset += 2;
         if (actor.moveScriptSize > 0) {
             actor.moveScript = new DataView(scene.buffer, offset, actor.moveScriptSize);
         }
         offset += actor.moveScriptSize;
 
-        actor.lifeScriptSize = data.getUint16(offset, true);
+        actor.lifeScriptSize = data.getInt16(offset, true);
         offset += 2;
         if (actor.lifeScriptSize > 0) {
             actor.lifeScript = new DataView(scene.buffer, offset, actor.lifeScriptSize);
@@ -218,7 +241,7 @@ function loadZones(scene, offset) {
 
     offset += 4; // skip unknown bytes
 
-    const numZones = data.getUint16(offset, true);
+    const numZones = data.getInt16(offset, true);
     offset += 2;
 
     for (let i = 0; i < numZones; ++i) {
@@ -229,31 +252,37 @@ function loadZones(scene, offset) {
             box: {}
         };
 
-        zone.box.bX = (0x8000 - data.getUint32(offset + 8, true) + 512) / 0x4000;
-        zone.box.bY = data.getUint32(offset + 4, true) / 0x4000;
-        zone.box.bZ = data.getUint32(offset, true) / 0x4000;
-        zone.box.tX = (0x8000 - data.getUint32(offset + 20, true) + 512) / 0x4000;
-        zone.box.tY = data.getUint32(offset + 16, true) / 0x4000;
-        zone.box.tZ = data.getUint32(offset + 12, true) / 0x4000;
+        const xMin = (0x8000 - data.getInt32(offset + 8, true) + 512) / 0x4000;
+        const yMin = data.getInt32(offset + 4, true) / 0x4000;
+        const zMin = data.getInt32(offset, true) / 0x4000;
+        const xMax = (0x8000 - data.getInt32(offset + 20, true) + 512) / 0x4000;
+        const yMax = data.getInt32(offset + 16, true) / 0x4000;
+        const zMax = data.getInt32(offset + 12, true) / 0x4000;
+        zone.box.xMin = Math.min(xMin, xMax);
+        zone.box.yMin = Math.min(yMin, yMax);
+        zone.box.zMin = Math.min(zMin, zMax);
+        zone.box.xMax = Math.max(xMin, xMax);
+        zone.box.yMax = Math.max(yMin, yMax);
+        zone.box.zMax = Math.max(zMin, zMax);
         offset += 24;
 
-        zone.info0 = data.getUint32(offset, true);
-        zone.info1 = data.getUint32(offset + 4, true);
-        zone.info2 = data.getUint32(offset + 8, true);
-        zone.info3 = data.getUint32(offset + 12, true);
-        zone.info4 = data.getUint32(offset + 16, true);
-        zone.info5 = data.getUint32(offset + 20, true);
-        zone.info6 = data.getUint32(offset + 24, true);
-        zone.info7 = data.getUint32(offset + 28, true);
-        zone.type  = data.getUint16(offset + 32, true);
-        zone.snap  = data.getUint16(offset + 34, true);
+        zone.info0 = data.getInt32(offset, true);
+        zone.info1 = data.getInt32(offset + 4, true);
+        zone.info2 = data.getInt32(offset + 8, true);
+        zone.info3 = data.getInt32(offset + 12, true);
+        zone.info4 = data.getInt32(offset + 16, true);
+        zone.info5 = data.getInt32(offset + 20, true);
+        zone.info6 = data.getInt32(offset + 24, true);
+        zone.info7 = data.getInt32(offset + 28, true);
+        zone.type  = data.getInt16(offset + 32, true);
+        zone.snap  = data.getInt16(offset + 34, true);
         offset += 36;
 
         // normalising position
         zone.pos = [
-            zone.box.bX + (zone.box.tX - zone.box.bX)/2,
-            zone.box.bY + (zone.box.tY - zone.box.bY)/2,
-            zone.box.bZ + (zone.box.tZ - zone.box.bZ)/2
+            zone.box.xMin + (zone.box.xMax - zone.box.xMin)/2,
+            zone.box.yMin + (zone.box.yMax - zone.box.yMin)/2,
+            zone.box.zMin + (zone.box.zMax - zone.box.zMin)/2
         ];
 
         scene.zones.push(zone);
@@ -266,7 +295,7 @@ function loadPoints(scene, offset) {
     const data = new DataView(scene.buffer);
     scene.points = [];
 
-    const numPoints = data.getUint16(offset, true);
+    const numPoints = data.getInt16(offset, true);
     offset += 2;
 
     for (let i = 0; i < numPoints; ++i) {
@@ -274,9 +303,9 @@ function loadPoints(scene, offset) {
             sceneIndex: scene.index,
             index: i,
             pos: [
-                (0x8000 - data.getUint32(offset + 8, true) + 512) / 0x4000,
-                data.getUint32(offset + 4, true) / 0x4000,
-                data.getUint32(offset, true) / 0x4000
+                (0x8000 - data.getInt32(offset + 8, true) + 512) / 0x4000,
+                data.getInt32(offset + 4, true) / 0x4000,
+                data.getInt32(offset, true) / 0x4000
             ]
         };
         offset += 12;
@@ -286,21 +315,21 @@ function loadPoints(scene, offset) {
     return offset;
 }
 
-function loadUnknown(scene, offset) {
+function loadPatches(scene, offset) {
     const data = new DataView(scene.buffer);
-    scene.unknown = [];
+    scene.patches = [];
 
-    const numData = data.getUint16(offset, true);
+    const numData = data.getInt16(offset, true);
     offset += 2;
 
     for (let i = 0; i < numData; ++i) {
         let unk = {
             sceneIndex: scene.index,
-            field1: data.getUint16(offset, true),
-            field2: data.getUint16(offset + 2, true)
+            size: data.getInt16(offset, true),
+            offset: data.getInt16(offset + 2, true)
         };
         offset += 4;
-        scene.unknown.push(unk);
+        scene.patches.push(unk);
     }
 
     return offset;
@@ -331,9 +360,65 @@ function parseStaticFlags(staticFlags) {
     return {
         hasCollisions: bits(staticFlags, 0, 1) === 1,
         hasCollisionBricks: bits(staticFlags, 1, 1) === 1,
+        hasCollisionZone: bits(staticFlags, 2, 1) === 1,
+        hasSpriteClipping: bits(staticFlags, 3, 1) === 1,
+        hasCollisionLow: bits(staticFlags, 5, 1) === 1,
+        hasCollisionFloor: bits(staticFlags, 7, 1) === 1,
+        hasMiniZV: bits(staticFlags, 15, 1) === 1,
+        hasInvalidPosition: bits(staticFlags, 16, 1) === 1,
+        hasSpriteAnim3D: bits(staticFlags, 18, 1) === 1,
+        hasZBuffer: bits(staticFlags, 20, 1) === 1,
+        hasZBufferInWater: bits(staticFlags, 21, 1) === 1,
+
+        canBePunched: bits(staticFlags, 4, 1) === 1,
+        canDrown: bits(staticFlags, 6, 1) === 1,
+        canFall: bits(staticFlags, 11, 1) === 1,
+        canCarrierActor: bits(staticFlags, 14, 1) === 1,
+
         isVisible: bits(staticFlags, 9, 1) === 0,
         isSprite: bits(staticFlags, 10, 1) === 1,
-        canFall: bits(staticFlags, 11, 1) === 1
+        isBackgrounded: bits(staticFlags, 13, 1) === 1,
+
+        noShadow: bits(staticFlags, 12, 1) === 1,
+        noElectricShock: bits(staticFlags, 17, 1) === 1,
+        noPreClipping: bits(staticFlags, 19, 1) === 1,
+    };
+}
+
+function createRuntimeFlags() {
+    return {
+        waitHitFrame: false,
+        isHitting: false,
+        hasAnimEnded: false,
+        hasNewFrame: false,
+        wasDrawn: false,
+        isDead: false,
+        isSpriteMoving: false,
+        hasRotationByAnim: false,
+        isFalling: false,
+        isSuperHitting: false,
+        hasFrameShield: false,
+        canDrawShadow: false,
+        hasGravityByAnim: false,
+        isSkating: false,
+        canThrowProjectile: false,
+        canLeftJump: false,
+        canRightJump: false,
+        waitSuperHit: false,
+        hasRotationByTrack: false,
+        canFlyJetPack: false,
+        unknown20: false,
+        hasManualFrame: false,
+        waitPosition: false,
+        forceFalling: false,
+        // not from original from this point
+        isJumping: false,
+        isWalking: false,
+        isTurning: false,
+        isFighting: false,
+        repeatHit: 0,
+        isSwitchingHit: false,
+        isCrouching: false
     };
 }
 

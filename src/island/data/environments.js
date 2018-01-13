@@ -2,7 +2,7 @@ export default {
   TWINSUN_RAIN: {
     index: 11,
     skyColor: [0.0, 0.0, 0.0],
-    fogDensity: 0.3,
+    fogDensity: 0.6,
     scale: 1.0
   },
   TWINSUN_SUNNY: {

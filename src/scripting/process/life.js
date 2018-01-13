@@ -1,5 +1,4 @@
-import THREE from 'three';
-
+import {clone} from 'lodash';
 import {DirMode} from '../../game/actors';
 import {setMagicBallLevel} from '../../game/state';
 import VideoData from '../../video/data';
@@ -9,11 +8,14 @@ export function PALETTE() {
 }
 
 export function BODY_OBJ(actor, bodyIndex)  {
-    actor.props.bodyIndex = bodyIndex;
+    if (actor.props.bodyIndex !== bodyIndex) {
+        actor.props.bodyIndex = bodyIndex;
+        actor.reload(this.scene);
+    }
 }
 
 export function ANIM_OBJ(actor, animIndex) {
-    if (actor.props.animIndex == animIndex) {
+    if (actor.props.animIndex === animIndex) {
         return;
     }
     actor.props.animIndex = animIndex;
@@ -34,87 +36,70 @@ export function MESSAGE(cmdState, id) {
 
 export function MESSAGE_OBJ(cmdState, actor, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const hero = this.scene.actors[0];
     if (!cmdState.listener) {
-        let textBox = document.getElementById('frameText');
         const text = this.scene.data.texts[id];
-        if (text.type === 3) {
-            textBox.className = "bigText";
-        } else if (text.type === 9) {
-            if (!actor.threeObject || actor.threeObject.visible == false) {
+        if (text.type === 9) {
+            if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
             }
-            const main = document.querySelector('#main');
-            textBox = document.createElement('div');
-            textBox.className = "noframeText";
-            textBox.id = `noframeText_${actor.index}_${id}`;
-            main.appendChild(textBox);
-
-            const renderer = window.game.getRenderer();
-            const widthHalf = 0.5 * renderer.domElement.width;
-            const heightHalf = 0.5 * renderer.domElement.height;
-
-            const pos = new THREE.Vector3();
-            actor.threeObject.updateMatrixWorld();
-            pos.setFromMatrixPosition(actor.threeObject.matrixWorld);
-            pos.project(renderer.getMainCamera(scene));
-            pos.x = (pos.x * widthHalf) + widthHalf;
-            pos.y = - (pos.y * heightHalf) + heightHalf;
-            // re-align above character (should be calculated based on font height and text width)
-            pos.x -= 50;
-            pos.y -= 125;
-
-            textBox.style.left = (pos.x / renderer.pixelRatio()) + 'px';
-            textBox.style.top = (pos.y / renderer.pixelRatio()) + 'px';
+            const itrjId = `${actor.index}_${id}`;
+            const interjections = clone(this.game.getUiState().interjections);
+            interjections[itrjId] = {
+                scene: this.scene.index,
+                actor: actor.index,
+                color: actor.props.textColor,
+                value: text.value
+            };
+            this.game.setUiState({interjections});
+            setTimeout(() => {
+                const interjections = clone(this.game.getUiState().interjections);
+                delete interjections[itrjId];
+                this.game.setUiState({interjections});
+                cmdState.ended = true;
+            }, 2000);
         } else {
-            textBox.className = "smallText";
-        }
-        cmdState.currentChar = 0;
-        textBox.innerHTML = '';
-        textBox.style.color = actor.props.textColor;
-        let textInterval = setInterval(function () {
-            textBox.style.display = 'block';
-            const char = text.value.charAt(cmdState.currentChar);
-            if (char == '@') {
-                const br = document.createElement('br');
-                textBox.appendChild(br);
-            } else {
-                textBox.innerHTML += char;
-            }
-            cmdState.currentChar++;
-            if (cmdState.currentChar > text.value.length) {
-                clearInterval(textInterval);
-            }
-        }, 35);
-        cmdState.listener = function () {
-            cmdState.ended = true;
-            clearInterval(textInterval);
+            hero.props.dirMode = DirMode.NO_MOVE;
+            hero.props.prevEntityIndex = hero.props.entityIndex;
+            hero.props.prevAnimIndex = hero.props.animIndex;
+            hero.props.entityIndex = 0;
+            if (actor.index === 0)
+                hero.props.animIndex = 28; // talking / reading
+            else
+                hero.props.animIndex = 0;
+            this.game.setUiState({
+                text: {
+                    type: text.type === 3 ? 'big' : 'small',
+                    value: text.value,
+                    color: actor.props.textColor
+                }
+            });
+            cmdState.listener = function(event) {
+                const key = event.code || event.which || event.keyCode;
+                if (key === 'Enter' || key === 13) {
+                    cmdState.ended = true;
+                }
+            };
+            window.addEventListener('keydown', cmdState.listener);
             if (text.type === 9) {
-                const main = document.querySelector('#main');
-                textBox = document.getElementById(`noframeText_${actor.index}_${id}`);
-                main.removeChild(textBox);
+                setTimeout(function () {
+                    cmdState.listener();
+                }, 3000);
             }
-        };
-        window.addEventListener('keydown', cmdState.listener);
-        if (text.type === 9) {
-            setTimeout(function () {
-                cmdState.listener();
-            }, 3000);
         }
+
         voiceSource.load(text.index, this.scene.data.textBankId, () => {
             voiceSource.play();
         });
-
     }
     if (cmdState.ended) {
         voiceSource.stop();
-        let textBox = null;
         const text = this.scene.data.texts[id];
         if (text.type !== 9) {
-            textBox = document.getElementById('frameText');
-            textBox.style.display = 'none';
-            textBox.innerHTML = '';
+            this.game.setUiState({ text: null });
+            window.removeEventListener('keydown', cmdState.listener);
+            hero.props.dirMode = DirMode.MANUAL;
         }
-        window.removeEventListener('keydown', cmdState.listener);
         delete cmdState.listener;
         delete cmdState.ended;
     } else {
@@ -129,17 +114,17 @@ export function CAN_FALL(flag) {
 
 export function SET_DIRMODE(dirMode) {
     this.actor.props.dirMode = dirMode;
-    if (dirMode == DirMode.MANUAL) {
-        this.actor.isTurning = false;
+    if (dirMode === DirMode.MANUAL) {
+        this.actor.props.runtimeFlags.isTurning = false;
     }
 }
 
 export function SET_DIRMODE_OBJ(index, dirMode) {
-    const actor = this.scene.getActor(index);
+    const actor = this.scene.actors[index];
     if (actor) {
-        actor.props.dirMode = dirMode;
-        if (dirMode == DirMode.MANUAL) {
-            actor.isTurning = false;
+        actor.props.runtimeFlags.dirMode = dirMode;
+        if (dirMode === DirMode.MANUAL) {
+            actor.props.runtimeFlags.isTurning = false;
         }
     }
 }
@@ -176,8 +161,7 @@ export function SUB_VAR_GAME(index, value) {
     this.game.getState().flags.quest[index] -= value;
 }
 
-export function KILL_OBJ(index) {
-    const actor = this.scene.getActor(index);
+export function KILL_OBJ(actor) {
     actor.isKilled = true;
     actor.isVisible = false;
     if (actor.threeObject) {
@@ -204,68 +188,57 @@ export function GIVE_GOLD_PIECES(amount) {
     }
 }
 
-export function END_LIFE() {
-    BRUTAL_EXIT.call(this);
-}
-
 export function INC_CHAPTER() {
     this.game.getState().chapter++;
 }
 
 export function FOUND_OBJECT(cmdState, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
-    const textBox = document.getElementById('frameText');
+    const hero = this.scene.actors[0];
     if (!cmdState.listener) {
-        this.game.getState().flags.inventory[id] = 1;
-        //this.actor.isVisible = false;
+        hero.props.dirMode = DirMode.NO_MOVE;
+        hero.props.prevEntityIndex = hero.props.entityIndex;
+        hero.props.prevAnimIndex = hero.props.animIndex;
+        hero.props.entityIndex = 0;
+        hero.props.animIndex = 0;
+        this.game.getState().flags.quest[id] = 1;
         const soundFxSource = this.game.getAudioManager().getSoundFxSource();
         soundFxSource.load(6, () => {
             soundFxSource.play();
         });
-        cmdState.currentChar = 0;
-        const text = this.game.controlsState.texts[id];
-        if (text.type === 3) {
-            textBox.className = "bigText";
-        } else {
-            textBox.className = "smallText";
-        }
-        textBox.innerHTML = '';
-        textBox.style.color = this.actor.props.textColor;
-        let textInterval = setInterval(function () {
-            textBox.style.display = 'block';
-            const char = text.value.charAt(cmdState.currentChar);
-            if (char == '@') {
-                const br = document.createElement('br');
-                textBox.appendChild(br);
-            } else {
-                textBox.innerHTML += char;
+        const text = this.game.texts[id];
+        this.game.setUiState({
+            text: {
+                type: text.type === 3 ? 'big' : 'small',
+                value: text.value,
+                color: hero.props.textColor
+            },
+            foundObject: id
+        });
+        cmdState.listener = function(event) {
+            const key = event.code || event.which || event.keyCode;
+            if (key === 'Enter' || key === 13) {
+                cmdState.ended = true;
             }
-            cmdState.currentChar++;
-            if (cmdState.currentChar > text.value.length) {
-                clearInterval(textInterval);
-            }
-        }, 35);
-        cmdState.listener = function () {
-            cmdState.ended = true;
-            clearInterval(textInterval);
         };
         window.addEventListener('keydown', cmdState.listener);
+        if (text.type === 9) {
+            setTimeout(function () {
+                cmdState.listener();
+            }, 3000);
+        }
         voiceSource.load(text.index, -1, () => {
             voiceSource.play();
         });
 
-        const overlayBox = document.getElementById('overlay');
-        overlayBox.style.display = 'block';
+        this.game.setUiState({foundObject: id});
     }
     if (cmdState.ended) {
-        //this.actor.isVisible = true;
         voiceSource.stop();
-        const textBox = document.getElementById('frameText');
-        textBox.style.display = 'none';
-        textBox.innerHTML = '';
-        const overlayBox = document.getElementById('overlay');
-        overlayBox.style.display = 'none';
+        this.game.setUiState({ text: null, foundObject: null });
         window.removeEventListener('keydown', cmdState.listener);
+        hero.props.dirMode = DirMode.MANUAL;
+
         delete cmdState.listener;
         delete cmdState.ended;
     } else {
@@ -295,7 +268,7 @@ export function GIVE_BONUS() {
 }
 
 export function CHANGE_CUBE(index) {
-    this.game.getSceneManager().goto(index);
+    this.scene.goto(index);
 }
 
 export function OBJ_COL(flag) {
@@ -309,6 +282,9 @@ export function BRICK_COL(flag) {
 
 export function INVISIBLE(hidden) {
     this.actor.isVisible = !hidden;
+    if (this.actor.threeObject) {
+        this.actor.threeObject.visible = !hidden;
+    }
 }
 
 export function SHADOW_OBJ() {
@@ -327,45 +303,46 @@ export function SUB_MAGIC_POINT(points) {
     this.game.getState().hero.magic = (magic > 0) ? magic : 0;
 }
 
-export function SET_LIFE_POINT_OBJ(index, value) {
-    const actor = this.scene.getActor(index);
+export function SET_LIFE_POINT_OBJ(actor, value) {
     actor.props.life = value;
 }
 
 export function SUB_LIFE_POINT_OBJ() {
-    const actor = this.scene.getActor(index);
+    const actor = this.scene.actors[index];
     actor.props.life -= value;
     if (actor.props.life < 0) {
         actor.props.life = 0;
     }
 }
 
-export function HIT_OBJ() {
-
+export function HIT_OBJ(actor, strength) {
+    // quick and dirty hit object
+    actor.hasCollidedWithActor = this.index;
+    actor.props.life -= strength;
 }
 
 export function PLAY_SMK(cmdState, video) {
     if (!cmdState.listener) {
+        const that = this;
         this.game.pause();
-        const main = document.querySelector('#main');
-        const videoTag = document.createElement('video');
-        const source = document.createElement('source');
-        source.type = 'video/mp4';
-        source.src = VideoData.VIDEO.find((v) => { return v.name === video; }).file;
-        videoTag.id = 'video';
-        videoTag.autoplay = true;
-        videoTag.className = 'video';
-        videoTag.appendChild(source);
-        main.appendChild(videoTag);
-
-        cmdState.listener = function () {
-            cmdState.ended = true;
-            videoTag.removeEventListener('ended', cmdState.listener);
-            main.removeChild(videoTag);
-            window.game.pause();
+        const src = VideoData.VIDEO.find((v) => { return v.name === video; }).file;
+        this.game.setUiState({video: {
+            src,
+            callback: () => {
+                that.game.setUiState({video: null});
+                cmdState.ended = true;
+                that.game.pause();
+            }
+        }});
+        cmdState.listener = function(event) {
+            const key = event.code || event.which || event.keyCode;
+            if (key === 'Enter' || key === 13) {
+                that.game.setUiState({video: null});
+                cmdState.ended = true;
+                that.game.pause();
+            }
         };
         window.addEventListener('keydown', cmdState.listener);
-        videoTag.addEventListener('ended', cmdState.listener);
     }
 
     if (cmdState.ended) {
@@ -389,15 +366,68 @@ export function INC_CLOVER_BOX() {
 }
 
 export function SET_USED_INVENTORY(item) {
-    this.game.getState().flags.inventory[item] = 1;
+    if (item < 40) {
+        this.game.getState().flags.quest[item] = 1;
+    }
 }
 
-export function ADD_CHOICE() {
-
+export function ADD_CHOICE(index) {
+    this.state.choice = null;
+    const text = this.scene.data.texts[index];
+    const uiState = this.game.getUiState();
+    uiState.ask.choices.push({ text: text, value: index, color: '#ffffff' });
+    this.game.setUiState({ ask: uiState.ask });
 }
 
-export function ASK_CHOICE() {
+export function ASK_CHOICE(cmdState, index) {
+    ASK_CHOICE_OBJ.call(this, cmdState, this.actor, index);
+}
 
+export function ASK_CHOICE_OBJ(cmdState, actor, index) {
+    const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const hero = this.scene.actors[0];
+    if (!cmdState.listener) {
+        const text = this.scene.data.texts[index];
+        hero.props.dirMode = DirMode.NO_MOVE;
+        hero.props.prevEntityIndex = hero.props.entityIndex;
+        hero.props.prevAnimIndex = hero.props.animIndex;
+        hero.props.entityIndex = 0;
+        if (actor.index === 0)
+            hero.props.animIndex = 28; // talking / reading
+        else
+            hero.props.animIndex = 0;
+        const uiState = this.game.getUiState();
+        uiState.ask.text = {
+            type: 'small',
+            value: text.value,
+            color: actor.props.textColor
+        };
+        this.game.setUiState({ ask: uiState.ask });
+        cmdState.listener = function(event) {
+            const key = event.code || event.which || event.keyCode;
+            if (key === 'Enter' || key === 13) {
+                cmdState.ended = true;
+            }
+        };
+        window.addEventListener('keydown', cmdState.listener);
+
+        voiceSource.load(text.index, this.scene.data.textBankId, () => {
+            voiceSource.play();
+        });
+    }
+    if (cmdState.ended) {
+        voiceSource.stop();
+        const uiState = this.game.getUiState();
+        this.state.choice = uiState.choice;
+        this.game.setUiState({ ask: {choices: []}, choice: null });
+        window.removeEventListener('keydown', cmdState.listener);
+        hero.props.dirMode = DirMode.MANUAL;
+        delete cmdState.listener;
+        delete cmdState.ended;
+    } else {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+    }
 }
 
 export function INIT_BUGGY() {
@@ -438,8 +468,11 @@ export function SET_CHANGE_CUBE() {
 
 }
 
-export function MESSAGE_ZOE() {
-
+export function MESSAGE_ZOE(cmdState, id) {
+    const colorHero = this.actor.props.textColor;
+    this.actor.props.textColor = '#d76763'; // zoe text color
+    MESSAGE_OBJ.call(this, cmdState, this.actor, id);
+    this.actor.props.textColor = colorHero;
 }
 
 export function FULL_POINT() {
@@ -475,8 +508,8 @@ export function IMPACT_POINT() {
 
 }
 
-export function ADD_MESSAGE() {
-
+export function ADD_MESSAGE(cmdState, id) {
+    MESSAGE_OBJ.call(this, cmdState, this.actor, id);
 }
 
 export function BALLOON() {
@@ -487,20 +520,14 @@ export function NO_SHOCK() {
 
 }
 
-export function ASK_CHOICE_OBJ() {
-
-}
-
 export function CINEMA_MODE(mode) {
-    const cinemaModeDiv = document.getElementById('cinemaMode');
     if (mode === 1) {
         this.actor.props.dirMode = DirMode.NO_MOVE;
-        cinemaModeDiv.style.display = 'block';
-        cinemaModeDiv.className = "cinemaModeIn";
+        this.game.setUiState({ cinema: true });
     } else {
         this.actor.props.dirMode = DirMode.MANUAL;
-        cinemaModeDiv.className = "cinemaModeOut";
-        setTimeout(function() { cinemaModeDiv.style.display = 'none'; }, 3000); // animation is in 3s
+        this.game.setUiState({ cinema: false });
+        //setTimeout(function() { cinemaModeDiv.style.display = 'none'; }, 3000); // animation is in 3s
     }
 }
 
@@ -536,12 +563,10 @@ export function ESCALATOR() {
 }
 
 export function PLAY_MUSIC(index) {
-    const musicSource = game.getAudioManager().getMusicSource();
-    if (!musicSource.isPlaying) {
-        musicSource.load(index, () => {
-            musicSource.play();
-        });
-    }
+    const musicSource = this.game.getAudioManager().getMusicSource();
+    musicSource.load(index, () => {
+        musicSource.play();
+    });
 }
 
 export function TRACK_TO_VAR_GAME() {
@@ -585,7 +610,7 @@ export function SET_ARMOR_OBJ() {
 }
 
 export function ADD_LIFE_POINT_OBJ(index, points) {
-    const actor = this.scene.getActor(index);
+    const actor = this.scene.actors[index];
     if (actor) {
         actor.props.life += points;
     }

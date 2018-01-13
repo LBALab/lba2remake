@@ -1,0 +1,36 @@
+{
+  "actorNames": [
+    null,
+    null,
+    "CellarDoor",
+    "SendellPortrait",
+    "Zoe",
+    "Zoe2"
+  ],
+  "zoneNames": [
+    "table",
+    "to_cellar",
+    "cellar_door",
+    "bed_table",
+    "exit",
+    "library_2",
+    "secret_msg",
+    "main_door",
+    "library_1",
+    "window",
+    "zoe_portrait",
+    "cam_bedroom",
+    "flowers",
+    "pencil_pot",
+    "paint_bucket",
+    "cam_baby_room"
+  ],
+  "varcubes": [
+    null,
+    null,
+    null,
+    {
+      "name": "said_hello"
+    }
+  ]
+}

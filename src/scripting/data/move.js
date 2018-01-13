@@ -18,7 +18,7 @@ export const MoveOpcode = [
     { opcode: 0x0B, command: "STOP", callback: st.STOP, indent: Indent.ONE },
     { opcode: 0x0C, command: "GOTO_SYM_POINT", callback: mv.GOTO_SYM_POINT, args: ['Uint8'], indent: Indent.ONE },
     { opcode: 0x0D, command: "WAIT_NUM_ANIM", callback: mv.WAIT_NUM_ANIM, args: ['Uint8', 'Uint8'], indent: Indent.ONE },
-    { opcode: 0x0E, command: "SAMPLE", callback: mv.SAMPLE, args: ['Uint16'], indent: Indent.ONE },
+    { opcode: 0x0E, command: "SAMPLE", callback: mv.SAMPLE, args: ['Uint16'], skipSideScenes: true, indent: Indent.ONE },
     { opcode: 0x0F, command: "GOTO_POINT_3D", callback: mv.GOTO_POINT_3D, args: ['Uint8'], indent: Indent.ONE },
     { opcode: 0x10, command: "SPEED", callback: mv.SPEED, args: ['Uint16'], indent: Indent.ONE },
     { opcode: 0x11, command: "BACKGROUND", callback: mv.BACKGROUND, args: ['Uint8'], indent: Indent.ONE },
@@ -31,12 +31,12 @@ export const MoveOpcode = [
     { opcode: 0x18, command: "OPEN_DOWN", callback: mv.OPEN_DOWN, args: ['Int16'], indent: Indent.ONE },
     { opcode: 0x19, command: "CLOSE", callback: mv.CLOSE, indent: Indent.ONE },
     { opcode: 0x1A, command: "WAIT_DOOR", callback: mv.WAIT_DOOR, indent: Indent.ONE },
-    { opcode: 0x1B, command: "SAMPLE_RND", callback: mv.SAMPLE_RND, args: ['Int16'], indent: Indent.ONE },
-    { opcode: 0x1C, command: "SAMPLE_ALWAYS", callback: mv.SAMPLE_ALWAYS, args: ['Int16'], indent: Indent.ONE },
-    { opcode: 0x1D, command: "SAMPLE_STOP", callback: mv.SAMPLE_STOP, args: ['Int16'], indent: Indent.ONE },
+    { opcode: 0x1B, command: "SAMPLE_RND", callback: mv.SAMPLE_RND, args: ['Int16'], skipSideScenes: true, indent: Indent.ONE },
+    { opcode: 0x1C, command: "SAMPLE_ALWAYS", callback: mv.SAMPLE_ALWAYS, args: ['Int16'], skipSideScenes: true, indent: Indent.ONE },
+    { opcode: 0x1D, command: "SAMPLE_STOP", callback: mv.SAMPLE_STOP, args: ['Int16'], skipSideScenes: true, indent: Indent.ONE },
     { opcode: 0x1E, command: "PLAY_SMK", callback: mv.PLAY_ACF, indent: Indent.ONE },
-    { opcode: 0x1F, command: "REPEAT_SAMPLE", callback: mv.REPEAT_SAMPLE, args: ['Int16'], indent: Indent.ONE },
-    { opcode: 0x20, command: "SIMPLE_SAMPLE", callback: mv.SIMPLE_SAMPLE, args: ['Int16'], indent: Indent.ONE },
+    { opcode: 0x1F, command: "REPEAT_SAMPLE", callback: mv.REPEAT_SAMPLE, args: ['Int16'], skipSideScenes: true, indent: Indent.ONE },
+    { opcode: 0x20, command: "SIMPLE_SAMPLE", callback: mv.SIMPLE_SAMPLE, args: ['Int16'], skipSideScenes: true, indent: Indent.ONE },
     { opcode: 0x21, command: "FACE_HERO", callback: mv.FACE_HERO, args: ['Uint16'], indent: Indent.ONE },
     { opcode: 0x22, command: "ANGLE_RND", callback: mv.ANGLE_RND, args: ['Int16', 'Uint16'], indent: Indent.ONE },
     { opcode: 0x23, command: "REPLACE", callback: mv.REPLACE, indent: Indent.ZERO },
@@ -55,7 +55,7 @@ export const MoveOpcode = [
     { opcode: 0x30, command: "WAIT_FRAME_3DS", callback: mv.WAIT_FRAME_3DS, indent: Indent.ONE },
     { opcode: 0x31, command: "WAIT_NUM_DECIMAL_RND", callback: mv.WAIT_NUM_DECIMAL_RND, args: ['Uint8', 'Uint32'], indent: Indent.ONE },
     { opcode: 0x32, command: "INTERVAL", callback: mv.INTERVAL, args: ['Uint16'], indent: Indent.ONE },
-    { opcode: 0x33, command: "FREQUENCY", callback: mv.FREQUENCY, args: ['Uint16'], indent: Indent.ONE },
-    { opcode: 0x34, command: "VOLUME", callback: mv.VOLUME, args: ['Uint8'], indent: Indent.ONE }
+    { opcode: 0x33, command: "FREQUENCY", callback: mv.FREQUENCY, args: ['Uint16'], skipSideScenes: true, indent: Indent.ONE },
+    { opcode: 0x34, command: "VOLUME", callback: mv.VOLUME, args: ['Uint8'], skipSideScenes: true, indent: Indent.ONE }
 ];
 

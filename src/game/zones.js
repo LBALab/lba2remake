@@ -1,5 +1,6 @@
 import THREE from 'three';
 import {createBoundingBox} from '../utils/rendering';
+import {getObjectName} from '../ui/editor/DebugData';
 
 /*
 const ZONE_TYPE = {
@@ -40,14 +41,16 @@ export function loadZone(props, callback) {
         }
     };
 
-    const {tX, tY, tZ, bX, bY, bZ} = props.box;
+    const {xMin, yMin, zMin, xMax, yMax, zMax} = props.box;
     const bb = new THREE.Box3(
-        new THREE.Vector3(bX, bY, bZ),
-        new THREE.Vector3(tX, tY, tZ)
+        new THREE.Vector3(xMin, yMin, zMin),
+        new THREE.Vector3(xMax, yMax, zMax)
     );
     const bbGeom = createBoundingBox(bb, zone.color);
+    bbGeom.name = `zone:${getObjectName('zone', props.sceneIndex, props.index)}`;
     bbGeom.visible = false;
     bbGeom.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
+    bbGeom.matrixAutoUpdate = false;
     zone.threeObject = bbGeom;
 
     callback(null, zone);
