@@ -1,7 +1,6 @@
 node_modules
 /.idea
 /.vscode
-/www/bundle.js
 /apps/win10/bin
 /apps/win10/obj
 www/.git-ftp.log
