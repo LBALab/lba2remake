@@ -10,7 +10,7 @@ const config = {
     localRoot: "www",
     remoteRoot: "",
     continueOnError: true,
-    /*exclude: ['data/*','metadata/*']*/
+    exclude: ['data/*'/*,'metadata/*'*/]
 };
 
 console.log("Start deploying...");
