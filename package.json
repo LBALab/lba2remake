@@ -10,7 +10,7 @@
     "react": "^15.0.2",
     "react-dom": "^15.0.2",
     "three": "^0.76.1",
-    "es6-tween": "^2.0.1"
+    "ftp-deploy": "^1.2.2"
   },
   "devDependencies": {
     "babel-core": "^6.7.6",
@@ -35,7 +35,8 @@
     "dev-server-game": "LBA_MODE=game NODE_ENV=development node devserver.js",
     "build": "NODE_ENV=production webpack -p",
     "build-editor": "LBA_MODE=editor NODE_ENV=production webpack -p",
-    "build-game": "LBA_MODE=game NODE_ENV=production webpack -p"
+    "build-game": "LBA_MODE=game NODE_ENV=production webpack -p",
+    "deploy": "node pipelines/deploy"
   },
   "repository": "git+ssh://git@bitbucket.org:adri42/lba2remake.git",
   "author": "Adrien Grandemange",
