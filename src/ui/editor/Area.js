@@ -41,6 +41,13 @@ const iconStyle = (base) => (extend({
     cursor: 'pointer'
 }, base));
 
+const mainIconStyle = (base) => (extend({
+    float: 'left',
+    cursor: 'pointer',
+    paddingLeft: '2px',
+    paddingRight: '5px'
+}, base));
+
 export default class Area extends React.Component {
     constructor(props) {
         super(props);
@@ -79,12 +86,13 @@ export default class Area extends React.Component {
         };
 
         return <div style={menuStyle(numIcons)}>
-            <img onClick={onClickIcon} style={iconStyle({left: 3, top: 3})} src={`editor/icons/areas/${icon}`}/>
+            <img onClick={onClickIcon} style={mainIconStyle()} src={`editor/icons/areas/${icon}`}/>
+            <span onClick={onClickIcon} style={mainIconStyle()}>{this.props.area.name}</span>
 
             <span style={menuContentStyle}>{menu}</span>
-            <img style={iconStyle({right: (numIcons - 1) * 24})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>
-            <img style={iconStyle({right: (numIcons - 2) * 24})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>
-            {this.props.close ? <img style={iconStyle({right: 0})} onClick={this.props.close} src="editor/icons/close.png"/> : null}
+            <img style={iconStyle({right: (numIcons - 1) * 26})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>
+            <img style={iconStyle({right: (numIcons - 2) * 26})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>
+            {this.props.close ? <img style={iconStyle({right: 2})} onClick={this.props.close} src="editor/icons/close.png"/> : null}
         </div>;
     }
 

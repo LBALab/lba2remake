@@ -64,6 +64,9 @@ export default class Editor extends React.Component {
     }
 
     findSeparator(path, node, sepPath) {
+        if (!node) {
+            return null;
+        }
         if (node.type === Type.LAYOUT) {
             if (node.rootRef && node.separatorRef && path.indexOf(node.separatorRef) !== -1) {
                 const horizontal = node.orientation === Orientation.HORIZONTAL;
@@ -115,6 +118,9 @@ export default class Editor extends React.Component {
     }
 
     renderLayout(node, style, path) {
+        if (!node) {
+            return null;
+        }
         if (node.type === Type.LAYOUT) {
             const p = node.orientation === Orientation.HORIZONTAL
                 ? ['right', 'left', 'width', 'col-resize']
@@ -150,6 +156,11 @@ export default class Editor extends React.Component {
                 node.rootRef = ref;
             };
 
+            if (!node.children[1]) {
+                return <div ref={setRootRef} style={style}>
+                    {this.renderLayout(node.children[0], styles[0], concat(path, 0))}
+                </div>;
+            }
             return <div ref={setRootRef} style={style}>
                 {this.renderLayout(node.children[0], styles[0], concat(path, 0))}
                 {this.renderLayout(node.children[1], styles[1], concat(path, 1))}
@@ -322,6 +333,9 @@ function loadLayout(editor, mode) {
 }
 
 function loadNode(editor, node) {
+    if (!node) {
+        return null;
+    }
     if (node.type === Type.LAYOUT) {
         return {
             type: Type.LAYOUT,
