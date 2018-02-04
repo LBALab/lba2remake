@@ -10,6 +10,7 @@ A Little Big Adventure 2 engine remake change log file
 
 ### Fixed
 * (Game) Key events cancelled on focus lose (eg. Windows Alt+Tab)
+* (Game) Collision system to allow jump on cliffs
 * (Editor) Allow single area in editor, with no child areas
 
 ## 0.0.1 - 01.02.2018
