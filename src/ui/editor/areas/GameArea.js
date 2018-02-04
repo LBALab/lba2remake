@@ -45,7 +45,8 @@ const GameArea = {
                 splitAt: 70,
                 children: [
                     { type: Type.AREA, content_id: 'game', root: true },
-                    { type: Type.AREA, content_id: 'script_editor' }
+                    { type: Type.AREA, content_id: 'script_editor' },
+                    { type: Type.AREA, content_id: 'changelog' }
                 ]
             },
             {
