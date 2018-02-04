@@ -6,12 +6,15 @@ import {BehaviourMode} from '../game/loop/hero';
 export function makeKeyboardControls(params: Object, canvas: Object, sceneManager: Object, game: Object) {
     const onKeyDown = keyDownHandler.bind(null, params, game, sceneManager);
     const onKeyUp = keyUpHandler.bind(null, game);
+    const onFocusOut = focusOutHandler.bind(null, game);
     canvas.addEventListener('keydown', onKeyDown, true);
     canvas.addEventListener('keyup', onKeyUp, true);
+    canvas.addEventListener('focusout', onFocusOut, true);
     return {
         dispose: () => {
             canvas.removeEventListener('keydown', onKeyDown);
             canvas.removeEventListener('keyup', onKeyUp);
+            canvas.removeEventListener('focusout', onFocusOut);
         }
     }
 }
@@ -197,4 +200,8 @@ function keyUpHandler(game, event) {
                 game.controlsState.cameraSpeed.x = 0;
             break;
     }
+}
+
+function focusOutHandler(game) {
+    game.resetControlsState();
 }

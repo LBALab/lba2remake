@@ -32,6 +32,15 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
             crunch: 0,
             weapon: 0
         },
+        resetControlsState: function() {
+            this.controlsState.heroSpeed = 0;
+            this.controlsState.heroRotationSpeed = 0;
+            this.controlsState.action = 0;
+            this.controlsState.jump = 0;
+            this.controlsState.fight = 0;
+            this.controlsState.crunch = 0;
+            this.controlsState.weapon = 0;
+        },
         loading: function(index: number) {
             _isPaused = true;
             _isLoading = true;
