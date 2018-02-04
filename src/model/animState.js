@@ -183,26 +183,30 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
 
 function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones, length = keyframe.length) {
     const interpolation = state.currentTime / length;
-    for (let i = 0; i < numBones; ++i) {
-        const s = state.skeleton[i];
-        const bf = keyframe.boneframes[i];
-        const nbf = nextkeyframe.boneframes[i];
-        s.type = bf.type;
-
-        if (s.parent == 0xFFFF) {
-            continue;
+    try
+    {
+        for (let i = 0; i < numBones; ++i) {
+            const s = state.skeleton[i];
+            const bf = keyframe.boneframes[i];
+            const nbf = nextkeyframe.boneframes[i];
+            s.type = bf.type;
+            if (s.parent === 0xFFFF) {
+                continue;
+            }
+            if (bf.type === 0) { // rotation
+                let eulerX = getRotation(nbf.veuler.x, bf.veuler.x, interpolation);
+                let eulerY = getRotation(nbf.veuler.y, bf.veuler.y, interpolation);
+                let eulerZ = getRotation(nbf.veuler.z, bf.veuler.z, interpolation);
+                s.euler = new THREE.Vector3(eulerX, eulerY, eulerZ);
+            } else { // translation
+                s.pos.x = bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
+                s.pos.y = bf.pos.y + (nbf.pos.y - bf.pos.y) * interpolation;
+                s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
+            }
         }
-
-        if (bf.type == 0) { // rotation
-            let eulerX = getRotation(nbf.veuler.x, bf.veuler.x, interpolation);
-            let eulerY = getRotation(nbf.veuler.y, bf.veuler.y, interpolation);
-            let eulerZ = getRotation(nbf.veuler.z, bf.veuler.z, interpolation);
-            s.euler = new THREE.Vector3(eulerX, eulerY, eulerZ);
-        } else { // translation
-            s.pos.x = bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
-            s.pos.y = bf.pos.y + (nbf.pos.y - bf.pos.y) * interpolation;
-            s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
-        }
+    }
+    catch (e) {
+        console.debug("ANIM: exception on updateSkeletonAtKeyframe", e);
     }
 
     // step translation
