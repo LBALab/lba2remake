@@ -3,7 +3,7 @@ A Little Big Adventure 2 engine remake change log file
 
 ---
 
-## Unreleased
+## 0.0.2 - 07.02.2018
 ### Added
 * (Editor) Change log file.
 * (Editor) Change log area in the editor (allow you to view this file)
