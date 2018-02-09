@@ -10,19 +10,26 @@ import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
 
 let spriteCache = null;
+let spriteRawCache = null;
 
 export function loadSprite(index, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
-        sprites: loadHqrAsync('SPRITES.HQR')
+        sprites: loadHqrAsync('SPRITES.HQR'),
+        spritesRaw: loadHqrAsync('SPRIRAW.HQR')
     }, function (err, files) {
+        const palette = new Uint8Array(files.ress.getEntry(0));
+        // lets keep it with two separate textures for now
         if (!spriteCache) {
-            const palette = new Uint8Array(files.ress.getEntry(0));
             const sprites = loadAllSprites(files.sprites);
             spriteCache = loadSpritesMapping(sprites, palette);
         }
+        if (!spriteRawCache) {
+            const sprites = loadAllSpritesRaw(files.spritesRaw);
+            spriteRawCache = loadSpritesMapping(sprites, palette);
+        }
         callback({
-            threeObject: loadMesh(index, spriteCache)
+            threeObject: loadMesh(index, (index < 100) ? spriteRawCache : spriteCache)
         });
     });
 }
@@ -69,7 +76,8 @@ function loadMesh(index, sprite) {
         uniforms: {
             texture: {value: sprite.texture},
         },
-        side: THREE.DoubleSide
+        side: THREE.DoubleSide,
+        depthTest: false
     }));
 
     let scale = 1 / 1024;
@@ -84,6 +92,14 @@ export function loadAllSprites(spriteFile) {
     const sprites = [];
     for (let i = 0; i < 425; ++i) {
         sprites.push(loadSpriteData(spriteFile, i));
+    }
+    return sprites;
+}
+
+export function loadAllSpritesRaw(spriteFile) {
+    const sprites = [];
+    for (let i = 0; i < 111; ++i) {
+        sprites.push(loadSpriteRawData(spriteFile, i));
     }
     return sprites;
 }
@@ -128,6 +144,32 @@ function loadSpriteData(sprites, entry) {
         height: height,
         offsetX: offsetX,
         offsetY: offsetY,
+        pixels: pixels,
+        index: entry
+    };
+}
+
+
+function loadSpriteRawData(sprites, entry) {
+    const dataView = new DataView(sprites.getEntry(entry));
+    const width = dataView.getUint8(8);
+    const height = dataView.getUint8(9);
+    const buffer = new ArrayBuffer(width * height);
+    const pixels = new Uint8Array(buffer);
+    let ptr = 12;
+    for (let y = 0; y < height; ++y) {
+        let x = 0;
+        const offset = () => (y) * width + x;
+        for (let run = 0; run < width; ++run) {
+            pixels[offset()] = dataView.getUint8(ptr++);
+            x++;
+        }
+    }
+    return {
+        width: width,
+        height: height,
+        offsetX: 0,
+        offsetY: 0,
         pixels: pixels,
         index: entry
     };

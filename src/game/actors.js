@@ -13,7 +13,8 @@ import {getObjectName} from "../ui/editor/DebugData";
 type ActorFlags = {
     hasCollisions: boolean,
     isVisible: boolean,
-    isSprite: boolean
+    isSprite: boolean,
+    spriteAnim3DNumber: boolean
 }
 
 type ActorProps = {
@@ -28,7 +29,8 @@ type ActorProps = {
     animIndex: number,
     angle: number,
     speed: number,
-    spriteIndex: number
+    spriteIndex: number,
+    hasSpriteAnim3D: number
 }
 
 type ActorPhysics = {
