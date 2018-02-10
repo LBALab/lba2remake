@@ -10,6 +10,7 @@ A Little Big Adventure 2 engine remake change log file
 
 ### Fixed
 * (Game) Color pallete of the dialogues frame (thanks Jesiek)
+* (Game) Delay dialogue character appearance to sync better with voices (thanks Knappen)
 
 ## 0.0.2 - 07.02.2018
 ### Added
