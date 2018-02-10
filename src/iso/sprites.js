@@ -37,16 +37,22 @@ export function loadSprite(index, callback) {
 function loadMesh(index, sprite) {
     const s = sprite.spritesMap[index];
     const vertices = [
-        [0, -s.h*0.5, 0],
-        [s.w,  -s.h*0.5, 0],
-        [s.w,   s.h*0.5, 0],
-        [0,  s.h*0.5, 0]
-    ];
+        [0, 0, 0],
+        [s.w,  0, 0],
+        [s.w,   s.h, 0],
+        [0,  s.h, 0]
+        /*
+        [-s.w/2, -s.h/2, 0],
+        [s.w/2,  -s.h/2, 0],
+        [s.w/2,   s.h/2, 0],
+        [-s.w/2,  s.h/2, 0]
+         */
+    ] ;
     const uvs = [
-        [s.u/sprite.width,   s.v/sprite.height],
-        [(s.u/sprite.width) + (s.w/sprite.width),   s.v/sprite.height],
+        [s.u/sprite.width,   (s.v/sprite.height) + (s.h/sprite.height)],
         [(s.u/sprite.width) + (s.w/sprite.width),   (s.v/sprite.height) + (s.h/sprite.height)],
-        [s.u/sprite.width,   (s.v/sprite.height) + (s.h/sprite.height)]
+        [(s.u/sprite.width) + (s.w/sprite.width),   s.v/sprite.height],
+        [s.u/sprite.width,   s.v/sprite.height]
     ];
     const geometries = {
         positions: [],
@@ -77,17 +83,20 @@ function loadMesh(index, sprite) {
             texture: {value: sprite.texture},
         },
         side: THREE.DoubleSide,
-        depthTest: false
+        depthTest: true,
+        wireframe: false
     }));
 
     let scale = 1 / 1024;
-    mesh.scale.set(-scale, -scale, -scale);
-    mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 4.0);
-    mesh.frustumCulled = false;
+    mesh.scale.set(scale, scale, scale);
+    mesh.frustumCulled = true;
 
-    return mesh;
+    const object = new THREE.Object3D();
+    object.add(mesh);
+
+    object.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 3 * (Math.PI / 4.0));
+    return object;
 }
-
 export function loadAllSprites(spriteFile) {
     const sprites = [];
     for (let i = 0; i < 425; ++i) {
