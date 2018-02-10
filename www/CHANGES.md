@@ -9,7 +9,7 @@ A Little Big Adventure 2 engine remake change log file
 * (Game) Updated font to match original game (thanks Jesiek)
 
 ### Fixed
-* 
+* (Game) Color pallete of the dialogues frame (thanks Jesiek)
 
 ## 0.0.2 - 07.02.2018
 ### Added

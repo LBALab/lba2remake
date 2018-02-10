@@ -11,16 +11,13 @@ const image = {
 };
 const text = {
     position: 'absolute',
-    background: 'rgba(0, 0, 0, 0.5)',
     fontFamily: 'LBA',
     padding: '0.5em 1em',
-    border: '2px outset #20a2ff',
-    borderRadius: 15,
-    fontSize: '3em',
-    color: '#20a2ff',
+    fontSize: '2.5em',
+    color: '#61cece',
     bottom:'20%',
-    left: '50%',
-    transform: 'translate(-50%, 0)'
+    left: '52%',
+    transform: 'translate(-52%, 0)'
 };
 
 export default function Loader() {

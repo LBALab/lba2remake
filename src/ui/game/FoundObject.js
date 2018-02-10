@@ -7,7 +7,7 @@ const baseStyle = {
     width: 100,
     height: 100,
     background: 'rgba(0, 0, 0, 0.5)',
-    border: '2px outset #20a2ff',
+    border: '2px outset #61cece',
     borderRadius: 15
 };
 
