@@ -5,7 +5,8 @@ A Little Big Adventure 2 engine remake change log file
 
 ## Unreleased
 ### Added
-* Raw sprites from SPRIRAW.HQR file (eg. Magicball Twinsen's Secret Room)
+* (Game) Raw sprites from SPRIRAW.HQR file (eg. Magicball Twinsen's Secret Room)
+* (Game) Updated font to match original game (thanks Jesiek)
 
 ### Fixed
 * 
