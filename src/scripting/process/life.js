@@ -84,7 +84,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             if (text.type === 9) {
                 setTimeout(function () {
                     cmdState.listener();
-                }, 3000);
+                }, 4500);
             }
         }
 
