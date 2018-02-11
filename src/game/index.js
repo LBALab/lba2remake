@@ -72,7 +72,7 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
                 clock.start();
             }
         },
-        preload: function() {
+        preload: function(callback: Function) {
             const that = this;
             async.auto({
                 ress: preloadFileAsync('data/RESS.HQR'),
@@ -86,6 +86,10 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
                 const gameTexts = {textIndex: 4, texts: null};
                 loadTexts(gameTexts, files.text);
                 that.texts = gameTexts.texts;
+                const menuTexts = {textIndex: 0, texts: null};
+                loadTexts(menuTexts, files.text);
+                that.menuTexts = menuTexts.texts;
+                callback();
             });
         }
     };

@@ -20,6 +20,7 @@ import FoundObject from './game/FoundObject';
 import Loader from './game/Loader';
 import Video from './game/Video';
 import DebugData from './editor/DebugData';
+import Menu from './game/Menu';
 
 export default class Game extends FrameListener {
     constructor(props) {
@@ -29,7 +30,9 @@ export default class Game extends FrameListener {
         this.frame = this.frame.bind(this);
         this.saveData = this.saveData.bind(this);
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
+        this.onGameReady = this.onGameReady.bind(this);
         this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
+        this.onMenuItemChanged = this.onMenuItemChanged.bind(this);
 
         if (props.mainData) {
             const state = props.mainData.state;
@@ -50,11 +53,13 @@ export default class Game extends FrameListener {
                 foundObject: null,
                 loading: true,
                 video: null,
-                choice: null
+                choice: null,
+                showMenu: false,
+                inGameMenu: false,
             };
 
             clock.start();
-            game.preload();
+            game.preload(this.onGameReady);
         }
     }
 
@@ -90,7 +95,13 @@ export default class Game extends FrameListener {
     }
 
     onSceneManagerReady(sceneManager) {
-        sceneManager.goto(this.props.params.scene);
+        //sceneManager.goto(this.props.params.scene);
+    }
+
+    onGameReady() {
+        this.setState({showMenu: true});
+        this.setState({inGameMenu: false});
+        this.state.game.loaded();
     }
 
     componentWillReceiveProps(newProps) {
@@ -154,9 +165,14 @@ export default class Game extends FrameListener {
         this.setState({choice: choice});
     }
 
+    onMenuItemChanged(item) {
+        this.setState({menuItem: item});
+    }
+
     render() {
         return <div style={fullscreen}>
-            <div ref={this.onLoad} style={fullscreen}/>
+            {!this.state.showMenu ?
+            <div ref={this.onLoad} style={fullscreen}/> : null }
             {this.props.params.editor ?
                 <DebugLabels params={this.props.params}
                              labels={this.props.sharedState.labels}
@@ -170,6 +186,10 @@ export default class Game extends FrameListener {
                                renderer={this.state.renderer}
                                interjections={this.state.interjections} />
             <FoundObject foundObject={this.state.foundObject} />
+            {this.state.showMenu ?
+                <Menu texts={this.state.game.menuTexts}
+                      inGameMenu={this.state.inGameMenu}
+                      onItemChanged={this.onMenuItemChanged} /> : null}
             <Video video={this.state.video} renderer={this.state.renderer} />
             <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>

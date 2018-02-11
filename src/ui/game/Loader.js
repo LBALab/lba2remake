@@ -16,8 +16,8 @@ const text = {
     fontSize: '2.5em',
     color: '#61cece',
     bottom:'20%',
-    left: '52%',
-    transform: 'translate(-52%, 0)'
+    left: '51%',
+    transform: 'translate(-51%, 0)'
 };
 
 export default function Loader() {
