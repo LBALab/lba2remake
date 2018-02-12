@@ -33,6 +33,7 @@ export default class Game extends FrameListener {
         this.onGameReady = this.onGameReady.bind(this);
         this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
         this.onMenuItemChanged = this.onMenuItemChanged.bind(this);
+        this.listener = this.listener.bind(this);
 
         if (props.mainData) {
             const state = props.mainData.state;
@@ -54,6 +55,7 @@ export default class Game extends FrameListener {
                 loading: true,
                 video: null,
                 choice: null,
+                menuTexts: null,
                 showMenu: false,
                 inGameMenu: false,
             };
@@ -96,16 +98,26 @@ export default class Game extends FrameListener {
 
     onSceneManagerReady(sceneManager) {
         if (this.props.params.scene >= 0) {
-            this.setState({showMenu: false, inGameMenu: false});
+            this.setState({showMenu: false, inGameMenu: false, menuTexts: null});
             sceneManager.goto(this.props.params.scene);
         }
     }
 
     onGameReady() {
         if (this.props.params.scene === -1) {
-            this.setState({showMenu: true, inGameMenu: false});
-            this.state.game.loaded(); 
+            this.setState({showMenu: true, inGameMenu: false, menuTexts: clone(this.state.game.menuTexts)});
+            this.state.game.loaded();
         }
+    }
+
+    componentWillMount() {
+        super.componentWillMount();
+        window.addEventListener('keydown', this.listener);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('keydown', this.listener);
+        super.componentWillUnmount();
     }
 
     componentWillReceiveProps(newProps) {
@@ -116,6 +128,31 @@ export default class Game extends FrameListener {
         if (newProps.params.vr !== this.props.params.vr && this.canvas) {
             this.state.renderer.dispose();
             this.setState({ renderer: createRenderer(newProps.params, this.canvas) }, this.saveData);
+        }
+    }
+
+    listener(event) {
+        const key = event.code || event.which || event.keyCode;
+        if (key === 'Escape' || key === 27) {
+            if (!this.state.game.isPaused()) {
+                this.setState({showMenu: true, inGameMenu: true, menuTexts: clone(this.state.game.menuTexts)});
+            } else {
+                this.setState({showMenu: false, inGameMenu: false, menuTexts: null});
+            }
+            this.state.game.pause();
+        }
+    }
+
+    onMenuItemChanged(item) {
+        switch(item) {
+            case 70: // Resume
+                this.state.game.pause();
+                this.setState({showMenu: false, inGameMenu: false, menuTexts: null});
+                break;
+            case 71: // New Game
+                this.setState({showMenu: false, inGameMenu: false, menuTexts: null});
+                this.state.sceneManager.goto(0);
+                break;
         }
     }
 
@@ -170,19 +207,6 @@ export default class Game extends FrameListener {
         this.setState({choice: choice});
     }
 
-    onMenuItemChanged(item) {
-        switch(item) {
-            case 70: // Resume
-                this.setState({showMenu: false, inGameMenu: false});
-                this.state.sceneManager.goto(this.props.params.scene);
-                break;
-            case 71: // New Game
-                this.setState({showMenu: false, inGameMenu: false});
-                this.state.sceneManager.goto(0);
-                break;
-        }
-    }
-
     render() {
         return <div style={fullscreen}>
             <div ref={this.onLoad} style={fullscreen}/>
@@ -200,7 +224,7 @@ export default class Game extends FrameListener {
                                interjections={this.state.interjections} />
             <FoundObject foundObject={this.state.foundObject} />
             {this.state.showMenu ?
-                <Menu texts={this.state.game.menuTexts}
+                <Menu texts={this.state.menuTexts}
                       inGameMenu={this.state.inGameMenu}
                       onItemChanged={this.onMenuItemChanged} /> : null}
             <Video video={this.state.video} renderer={this.state.renderer} />

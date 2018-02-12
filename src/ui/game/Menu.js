@@ -11,6 +11,11 @@ const styleBgMenu = {
     backgroundSize: 'cover'
 };
 
+const styleBgInGameMenu = {
+    background: 'rgba(0,0,0,0.8)',
+    height: '100%'
+};
+
 const styleMenu = {
     position: 'absolute',
     bottom: '10%',
@@ -53,7 +58,9 @@ export default class Menu extends React.Component {
 
     componentWillReceiveProps(newProps) {
         if (newProps.texts) {
-            let items = _.filter(menuItems, 'isVisible');
+            let menu = menuItems;
+            menu[0].isVisible = newProps.inGameMenu;
+            let items = _.filter(menu, 'isVisible');
             each(items, (i) => {
                 i.text = newProps.texts[i.index].value;
             });
@@ -95,20 +102,20 @@ export default class Menu extends React.Component {
     update() { }
 
     render() {
-        if (this.props.texts) {
-            return <div style={extend(styleBgMenu,fullscreen)}>
-                <div style={styleMenu}>
-                    <ul style={styleMenuList}>
-                        {map(this.state.items, (i, idx) => {
-                            return (i.isVisible) ? <li key={idx} style={styleMenuItemList}>
-                                <MenuItem item={i} selected={idx === this.state.selectedIndex}/>
-                            </li> : null
-                        })}
-                    </ul>
-                </div>
-            </div>;
-       }
-        return null;
+        const styleFull = this.props.inGameMenu ?
+                        extend(styleBgInGameMenu,fullscreen)
+                      : extend(styleBgMenu,fullscreen);
+        return <div style={styleFull}>
+            <div style={styleMenu}>
+                <ul style={styleMenuList}>
+                    {map(this.state.items, (i, idx) => {
+                        return (i.isVisible) ? <li key={idx} style={styleMenuItemList}>
+                            <MenuItem item={i} selected={idx === this.state.selectedIndex}/>
+                        </li> : null
+                    })}
+                </ul>
+            </div>
+        </div>;
     }
 }
 
