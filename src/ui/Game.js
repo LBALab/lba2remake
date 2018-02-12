@@ -95,17 +95,22 @@ export default class Game extends FrameListener {
     }
 
     onSceneManagerReady(sceneManager) {
-        //sceneManager.goto(this.props.params.scene);
+        if (this.props.params.scene >= 0) {
+            this.setState({showMenu: false, inGameMenu: false});
+            sceneManager.goto(this.props.params.scene);
+        }
     }
 
     onGameReady() {
-        this.setState({showMenu: true});
-        this.setState({inGameMenu: false});
-        this.state.game.loaded();
+        if (this.props.params.scene === -1) {
+            this.setState({showMenu: true, inGameMenu: false});
+            this.state.game.loaded(); 
+        }
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.params.scene !== this.props.params.scene) {
+        if (newProps.params.scene !== -1 && newProps.params.scene !== this.props.params.scene) {
+            this.setState({showMenu: false, inGameMenu: false});
             this.state.sceneManager.goto(newProps.params.scene);
         }
         if (newProps.params.vr !== this.props.params.vr && this.canvas) {
@@ -166,13 +171,21 @@ export default class Game extends FrameListener {
     }
 
     onMenuItemChanged(item) {
-        this.setState({menuItem: item});
+        switch(item) {
+            case 70: // Resume
+                this.setState({showMenu: false, inGameMenu: false});
+                this.state.sceneManager.goto(this.props.params.scene);
+                break;
+            case 71: // New Game
+                this.setState({showMenu: false, inGameMenu: false});
+                this.state.sceneManager.goto(0);
+                break;
+        }
     }
 
     render() {
         return <div style={fullscreen}>
-            {!this.state.showMenu ?
-            <div ref={this.onLoad} style={fullscreen}/> : null }
+            <div ref={this.onLoad} style={fullscreen}/>
             {this.props.params.editor ?
                 <DebugLabels params={this.props.params}
                              labels={this.props.sharedState.labels}

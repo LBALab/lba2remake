@@ -1,6 +1,8 @@
 import React from 'react';
 import {extend, map, each} from 'lodash';
 
+import {fullscreen} from '../styles/index';
+
 const styleBgMenu = {
     backgroundImage: 'url(menubg_extended.png)',
     backgroundRepeat: 'repeat-x',
@@ -71,7 +73,6 @@ export default class Menu extends React.Component {
             if (selectedIndex < 0) {
                 selectedIndex = this.state.items.length - 1;
             }
-            this.itemChanged(selectedIndex);
             this.setState({ selectedIndex: selectedIndex });
         }
         if (key === 'ArrowDown' || key === 40) {
@@ -79,21 +80,23 @@ export default class Menu extends React.Component {
             if (selectedIndex > this.state.items.length - 1) {
                 selectedIndex = 0;
             }
-            this.itemChanged(selectedIndex);
             this.setState({ selectedIndex: selectedIndex });
+        }
+        if (key === 'Enter' || key === 13) {
+            this.itemChanged(selectedIndex);
         }
     }
 
     itemChanged(selectedIndex) {
         if (this.state.items.length > 0)
-            this.props.onItemChanged(this.state.items[selectedIndex].value);
+            this.props.onItemChanged(this.state.items[selectedIndex].index);
     }
 
     update() { }
 
     render() {
         if (this.props.texts) {
-            return <div style={styleBgMenu}>
+            return <div style={extend(styleBgMenu,fullscreen)}>
                 <div style={styleMenu}>
                     <ul style={styleMenuList}>
                         {map(this.state.items, (i, idx) => {
