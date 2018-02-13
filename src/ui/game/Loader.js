@@ -22,7 +22,7 @@ const text = {
 
 export default function Loader() {
     return <div style={overlay}>
-        <img style={image} src="30_loading_screen.png" />
+        <img style={image} src="images/30_screen_loading.png" />
         <div style={text}>Loading...</div>
     </div>;
 }

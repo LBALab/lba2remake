@@ -79,8 +79,9 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
         preload: function(callback: Function) {
             const that = this;
             async.auto({
-                loading: preloadFileAsync('30_loading_screen.png'),
-                menu: preloadFileAsync('menubg_extended.png'),
+                loading: preloadFileAsync('images/30_screen_loading.png'),
+                menu: preloadFileAsync('images/2_screen_menubg_extended.png'),
+                ribbon: preloadFileAsync('images/11_sprite_lba2.png'),
                 ress: preloadFileAsync('data/RESS.HQR'),
                 text: loadHqrAsync('TEXT.HQR'),
                 voxgame: preloadFileAsync(`data/VOX/${_state.config.languageCode}_GAM_AAC.VOX`),

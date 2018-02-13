@@ -4,7 +4,7 @@ import {extend, map, each} from 'lodash';
 import {fullscreen} from '../styles/index';
 
 const styleBgMenu = {
-    backgroundImage: 'url(menubg_extended.png)',
+    backgroundImage: 'url(images/2_screen_menubg_extended.png)',
     backgroundRepeat: 'repeat-x',
     height: '100%',
     backgroundPosition: 'center',
