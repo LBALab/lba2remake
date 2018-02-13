@@ -21,6 +21,7 @@ import Loader from './game/Loader';
 import Video from './game/Video';
 import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
+import VideoData from "../video/data";
 
 export default class Game extends FrameListener {
     constructor(props) {
@@ -36,6 +37,7 @@ export default class Game extends FrameListener {
         this.listener = this.listener.bind(this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
+        this.startNewGameScene = this.startNewGameScene.bind(this);
 
         if (props.mainData) {
             const state = props.mainData.state;
@@ -154,13 +156,26 @@ export default class Game extends FrameListener {
 
     listener(event) {
         const key = event.code || event.which || event.keyCode;
-        if (key === 'Escape' || key === 27) {
-            if (!this.state.game.isPaused()) {
-                this.showMenu(true);
-            } else {
-                this.hideMenu();
+        if (this.state.video) {
+            if (key === 'Enter' || key === 13 ||
+                key === 'Escape' || key === 27) {
+                this.setState({video: null});
+                this.startNewGameScene();
+            }
+        } else {
+            if (key === 'Escape' || key === 27) {
+                if (!this.state.game.isPaused()) {
+                    this.showMenu(true);
+                } else {
+                    this.hideMenu();
+                }
             }
         }
+    }
+
+    startNewGameScene() {
+        this.state.game.pause();
+        this.state.sceneManager.goto(0);
     }
 
     onMenuItemChanged(item) {
@@ -170,7 +185,16 @@ export default class Game extends FrameListener {
                 break;
             case 71: // New Game
                 this.hideMenu();
-                this.state.sceneManager.goto(0);
+                const that = this;
+                const src = VideoData.VIDEO.find((v) => { return v.name === 'INTRO'; }).file;
+                this.state.game.pause();
+                this.setState({video: {
+                        src,
+                        callback: () => {
+                            that.setState({video: null});
+                            that.startNewGameScene();
+                        }
+                    }});
                 break;
         }
     }
