@@ -7,10 +7,14 @@ A Little Big Adventure 2 engine remake change log file
 ### Added
 * (Game) Raw sprites from SPRIRAW.HQR file (eg. Magicball Twinsen's Secret Room)
 * (Game) Updated font to match original game (thanks Jesiek)
+* (Game) Main Menu - resume and new game
+* (Game) In-Game Menu - Pause and resume game with in-game menu (Esc key)
+* (Game) LBA2 Intro sequence on New Game
 
 ### Fixed
 * (Game) Color pallete of the dialogues frame (thanks Jesiek)
 * (Game) Delay dialogue character appearance to sync better with voices (thanks Knappen)
+* (Game) Multiple Music playing simultaneous
 
 ## 0.0.2 - 07.02.2018
 ### Added
