@@ -34,6 +34,8 @@ export default class Game extends FrameListener {
         this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
         this.onMenuItemChanged = this.onMenuItemChanged.bind(this);
         this.listener = this.listener.bind(this);
+        this.showMenu = this.showMenu.bind(this);
+        this.hideMenu = this.hideMenu.bind(this);
 
         if (props.mainData) {
             const state = props.mainData.state;
@@ -98,15 +100,8 @@ export default class Game extends FrameListener {
 
     onSceneManagerReady(sceneManager) {
         if (this.props.params.scene >= 0) {
-            this.setState({showMenu: false, inGameMenu: false});
+            this.hideMenu();
             sceneManager.goto(this.props.params.scene);
-        }
-    }
-
-    onGameReady() {
-        if (this.props.params.scene === -1) {
-            this.setState({showMenu: true, inGameMenu: false});
-            this.state.game.loaded();
         }
     }
 
@@ -122,7 +117,7 @@ export default class Game extends FrameListener {
 
     componentWillReceiveProps(newProps) {
         if (newProps.params.scene !== -1 && newProps.params.scene !== this.props.params.scene) {
-            this.setState({showMenu: false, inGameMenu: false});
+            this.hideMenu();
             this.state.sceneManager.goto(newProps.params.scene);
         }
         if (newProps.params.vr !== this.props.params.vr && this.canvas) {
@@ -131,28 +126,50 @@ export default class Game extends FrameListener {
         }
     }
 
+    onGameReady() {
+        this.state.game.loaded();
+        if (this.props.params.scene === -1) {
+            this.showMenu();
+        }
+    }
+
+    showMenu(inGameMenu = false) {
+        this.state.game.pause();
+        const musicSource = this.state.game.getAudioManager().getMusicSource();
+        musicSource.stop();
+        musicSource.load(6, () => {
+            musicSource.play();
+        });
+        this.setState({showMenu: true, inGameMenu: inGameMenu});
+    }
+
+    hideMenu() {
+        const musicSource = this.state.game.getAudioManager().getMusicSource();
+        musicSource.stop();
+        this.state.game.pause();
+        this.setState({showMenu: false, inGameMenu: false});
+        this.canvas.focus();
+    }
+
+
     listener(event) {
         const key = event.code || event.which || event.keyCode;
         if (key === 'Escape' || key === 27) {
             if (!this.state.game.isPaused()) {
-                this.setState({showMenu: true, inGameMenu: true});
+                this.showMenu(true);
             } else {
-                this.setState({showMenu: false, inGameMenu: false});
+                this.hideMenu();
             }
-            this.state.game.pause();
         }
     }
 
     onMenuItemChanged(item) {
         switch(item) {
             case 70: // Resume
-                this.state.game.pause();
-                this.setState({showMenu: false, inGameMenu: false});
-                this.canvas.focus();
+                this.hideMenu();
                 break;
             case 71: // New Game
-                this.setState({showMenu: false, inGameMenu: false});
-                this.canvas.focus();
+                this.hideMenu();
                 this.state.sceneManager.goto(0);
                 break;
         }
