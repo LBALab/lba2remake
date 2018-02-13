@@ -175,6 +175,7 @@ export default class Game extends FrameListener {
 
     startNewGameScene() {
         this.state.game.pause();
+        this.state.game.resetState();
         this.state.sceneManager.goto(0);
     }
 

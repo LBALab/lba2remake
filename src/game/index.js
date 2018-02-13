@@ -11,7 +11,7 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
     let _isPaused = false;
     let _isLoading = false;
 
-    const _state = createState();
+    let _state = createState();
     const _audio = createAudioManager(_state);
 
     return {
@@ -31,6 +31,10 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
             fight: 0,
             crunch: 0,
             weapon: 0
+        },
+        resetState: function() {
+            _state = createState();
+            this.resetControlsState();
         },
         resetControlsState: function() {
             this.controlsState.heroSpeed = 0;
