@@ -6,7 +6,7 @@ const baseStyle = {
     position: 'absolute',
     fontFamily: 'LBA',
     textShadow: 'black 4px 4px',
-    fontSize: '3em',
+    fontSize: '2.5em',
     transform: 'translate(-50%, -50%)'
 };
 

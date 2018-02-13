@@ -90,9 +90,9 @@ const styleChoice = {
     fontFamily: 'LBA',
     textShadow: 'black 4px 4px',
     paddingBottom: 5,
-    border: '2px outset #20a2ff',
+    border: '2px outset #61cece',
     borderRadius: 15,
-    fontSize: '3em',
+    fontSize: '2.5em',
     textAlign: 'center',
     width: '100%'
 };

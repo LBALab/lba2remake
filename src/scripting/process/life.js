@@ -57,7 +57,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 delete interjections[itrjId];
                 this.game.setUiState({interjections});
                 cmdState.ended = true;
-            }, 2000);
+            }, 4500);
         } else {
             hero.props.dirMode = DirMode.NO_MOVE;
             hero.props.prevEntityIndex = hero.props.entityIndex;
@@ -84,7 +84,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             if (text.type === 9) {
                 setTimeout(function () {
                     cmdState.listener();
-                }, 3000);
+                }, 4500);
             }
         }
 
@@ -225,7 +225,7 @@ export function FOUND_OBJECT(cmdState, id) {
         if (text.type === 9) {
             setTimeout(function () {
                 cmdState.listener();
-            }, 3000);
+            }, 6500);
         }
         voiceSource.load(text.index, -1, () => {
             voiceSource.play();

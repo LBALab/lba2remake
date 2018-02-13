@@ -7,9 +7,9 @@ const baseStyle = {
     fontFamily: 'LBA',
     textShadow: 'black 4px 4px',
     padding: 20,
-    border: '2px outset #20a2ff',
+    border: '2px outset #61cece',
     borderRadius: 15,
-    fontSize: '3em'
+    fontSize: '2.5em'
 };
 
 const styleType = {

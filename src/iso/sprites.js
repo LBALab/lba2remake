@@ -10,19 +10,26 @@ import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
 
 let spriteCache = null;
+let spriteRawCache = null;
 
 export function loadSprite(index, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
-        sprites: loadHqrAsync('SPRITES.HQR')
+        sprites: loadHqrAsync('SPRITES.HQR'),
+        spritesRaw: loadHqrAsync('SPRIRAW.HQR')
     }, function (err, files) {
+        const palette = new Uint8Array(files.ress.getEntry(0));
+        // lets keep it with two separate textures for now
         if (!spriteCache) {
-            const palette = new Uint8Array(files.ress.getEntry(0));
             const sprites = loadAllSprites(files.sprites);
             spriteCache = loadSpritesMapping(sprites, palette);
         }
+        if (!spriteRawCache) {
+            const sprites = loadAllSpritesRaw(files.spritesRaw);
+            spriteRawCache = loadSpritesMapping(sprites, palette);
+        }
         callback({
-            threeObject: loadMesh(index, spriteCache)
+            threeObject: loadMesh(index, (index < 100) ? spriteRawCache : spriteCache)
         });
     });
 }
@@ -30,16 +37,22 @@ export function loadSprite(index, callback) {
 function loadMesh(index, sprite) {
     const s = sprite.spritesMap[index];
     const vertices = [
-        [0, -s.h*0.5, 0],
-        [s.w,  -s.h*0.5, 0],
-        [s.w,   s.h*0.5, 0],
-        [0,  s.h*0.5, 0]
-    ];
+        [0, 0, 0],
+        [s.w,  0, 0],
+        [s.w,   s.h, 0],
+        [0,  s.h, 0]
+        /*
+        [-s.w/2, -s.h/2, 0],
+        [s.w/2,  -s.h/2, 0],
+        [s.w/2,   s.h/2, 0],
+        [-s.w/2,  s.h/2, 0]
+         */
+    ] ;
     const uvs = [
-        [s.u/sprite.width,   s.v/sprite.height],
-        [(s.u/sprite.width) + (s.w/sprite.width),   s.v/sprite.height],
+        [s.u/sprite.width,   (s.v/sprite.height) + (s.h/sprite.height)],
         [(s.u/sprite.width) + (s.w/sprite.width),   (s.v/sprite.height) + (s.h/sprite.height)],
-        [s.u/sprite.width,   (s.v/sprite.height) + (s.h/sprite.height)]
+        [(s.u/sprite.width) + (s.w/sprite.width),   s.v/sprite.height],
+        [s.u/sprite.width,   s.v/sprite.height]
     ];
     const geometries = {
         positions: [],
@@ -69,21 +82,33 @@ function loadMesh(index, sprite) {
         uniforms: {
             texture: {value: sprite.texture},
         },
-        side: THREE.DoubleSide
+        side: THREE.DoubleSide,
+        depthTest: true,
+        wireframe: false
     }));
 
     let scale = 1 / 1024;
-    mesh.scale.set(-scale, -scale, -scale);
-    mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 4.0);
-    mesh.frustumCulled = false;
+    mesh.scale.set(scale, scale, scale);
+    mesh.frustumCulled = true;
 
-    return mesh;
+    const object = new THREE.Object3D();
+    object.add(mesh);
+
+    object.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 3 * (Math.PI / 4.0));
+    return object;
 }
-
 export function loadAllSprites(spriteFile) {
     const sprites = [];
     for (let i = 0; i < 425; ++i) {
         sprites.push(loadSpriteData(spriteFile, i));
+    }
+    return sprites;
+}
+
+export function loadAllSpritesRaw(spriteFile) {
+    const sprites = [];
+    for (let i = 0; i < 111; ++i) {
+        sprites.push(loadSpriteRawData(spriteFile, i));
     }
     return sprites;
 }
@@ -128,6 +153,32 @@ function loadSpriteData(sprites, entry) {
         height: height,
         offsetX: offsetX,
         offsetY: offsetY,
+        pixels: pixels,
+        index: entry
+    };
+}
+
+
+function loadSpriteRawData(sprites, entry) {
+    const dataView = new DataView(sprites.getEntry(entry));
+    const width = dataView.getUint8(8);
+    const height = dataView.getUint8(9);
+    const buffer = new ArrayBuffer(width * height);
+    const pixels = new Uint8Array(buffer);
+    let ptr = 12;
+    for (let y = 0; y < height; ++y) {
+        let x = 0;
+        const offset = () => (y) * width + x;
+        for (let run = 0; run < width; ++run) {
+            pixels[offset()] = dataView.getUint8(ptr++);
+            x++;
+        }
+    }
+    return {
+        width: width,
+        height: height,
+        offsetX: 0,
+        offsetY: 0,
         pixels: pixels,
         index: entry
     };
