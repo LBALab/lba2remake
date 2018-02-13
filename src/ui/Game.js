@@ -1,6 +1,6 @@
 import React from 'react';
 import THREE from 'three';
-import {clone, omit} from 'lodash';
+import {clone, omit, noop} from 'lodash';
 
 import {createRenderer} from '../renderer';
 import {createGame} from '../game';
@@ -22,6 +22,7 @@ import Video from './game/Video';
 import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
 import VideoData from "../video/data";
+import Version from './game/Version';
 
 export default class Game extends FrameListener {
     constructor(props) {
@@ -62,6 +63,7 @@ export default class Game extends FrameListener {
                 menuTexts: null,
                 showMenu: false,
                 inGameMenu: false,
+                showVersion: false
             };
 
             clock.start();
@@ -171,6 +173,9 @@ export default class Game extends FrameListener {
                 }
             }
         }
+        if (key === 'KeyV' || key === 86) {
+            this.setState({showVersion:!this.state.showVersion});
+        }
     }
 
     startNewGameScene() {
@@ -274,6 +279,7 @@ export default class Game extends FrameListener {
             <Video video={this.state.video} renderer={this.state.renderer} />
             <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
+            {!this.props.params.editor && this.state.showVersion ? <Version/> : null}
             {this.state.loading ? <Loader/> : null}
         </div>;
     }
