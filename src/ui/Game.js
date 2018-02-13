@@ -98,14 +98,14 @@ export default class Game extends FrameListener {
 
     onSceneManagerReady(sceneManager) {
         if (this.props.params.scene >= 0) {
-            this.setState({showMenu: false, inGameMenu: false, menuTexts: null});
+            this.setState({showMenu: false, inGameMenu: false});
             sceneManager.goto(this.props.params.scene);
         }
     }
 
     onGameReady() {
         if (this.props.params.scene === -1) {
-            this.setState({showMenu: true, inGameMenu: false, menuTexts: clone(this.state.game.menuTexts)});
+            this.setState({showMenu: true, inGameMenu: false});
             this.state.game.loaded();
         }
     }
@@ -135,9 +135,9 @@ export default class Game extends FrameListener {
         const key = event.code || event.which || event.keyCode;
         if (key === 'Escape' || key === 27) {
             if (!this.state.game.isPaused()) {
-                this.setState({showMenu: true, inGameMenu: true, menuTexts: clone(this.state.game.menuTexts)});
+                this.setState({showMenu: true, inGameMenu: true});
             } else {
-                this.setState({showMenu: false, inGameMenu: false, menuTexts: null});
+                this.setState({showMenu: false, inGameMenu: false});
             }
             this.state.game.pause();
         }
@@ -147,10 +147,12 @@ export default class Game extends FrameListener {
         switch(item) {
             case 70: // Resume
                 this.state.game.pause();
-                this.setState({showMenu: false, inGameMenu: false, menuTexts: null});
+                this.setState({showMenu: false, inGameMenu: false});
+                this.canvas.focus();
                 break;
             case 71: // New Game
-                this.setState({showMenu: false, inGameMenu: false, menuTexts: null});
+                this.setState({showMenu: false, inGameMenu: false});
+                this.canvas.focus();
                 this.state.sceneManager.goto(0);
                 break;
         }
@@ -223,10 +225,10 @@ export default class Game extends FrameListener {
                                renderer={this.state.renderer}
                                interjections={this.state.interjections} />
             <FoundObject foundObject={this.state.foundObject} />
-            {this.state.showMenu ?
-                <Menu texts={this.state.menuTexts}
-                      inGameMenu={this.state.inGameMenu}
-                      onItemChanged={this.onMenuItemChanged} /> : null}
+            <Menu showMenu={this.state.showMenu}
+                  texts={this.state.game.menuTexts}
+                  inGameMenu={this.state.inGameMenu}
+                  onItemChanged={this.onMenuItemChanged} />
             <Video video={this.state.video} renderer={this.state.renderer} />
             <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>

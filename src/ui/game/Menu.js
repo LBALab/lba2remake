@@ -12,7 +12,7 @@ const styleBgMenu = {
 };
 
 const styleBgInGameMenu = {
-    background: 'rgba(0,0,0,0.8)',
+    background: 'rgba(0,0,0,0.5)',
     height: '100%'
 };
 
@@ -102,20 +102,23 @@ export default class Menu extends React.Component {
     update() { }
 
     render() {
-        const styleFull = this.props.inGameMenu ?
-                        extend(styleBgInGameMenu,fullscreen)
-                      : extend(styleBgMenu,fullscreen);
-        return <div style={styleFull}>
-            <div style={styleMenu}>
-                <ul style={styleMenuList}>
-                    {map(this.state.items, (i, idx) => {
-                        return (i.isVisible) ? <li key={idx} style={styleMenuItemList}>
-                            <MenuItem item={i} selected={idx === this.state.selectedIndex}/>
-                        </li> : null
-                    })}
-                </ul>
-            </div>
-        </div>;
+        if (this.props.showMenu) {
+            const styleFull = this.props.inGameMenu ?
+                            extend(styleBgInGameMenu,fullscreen)
+                          : extend(styleBgMenu,fullscreen);
+            return <div style={styleFull}>
+                <div style={styleMenu}>
+                    <ul style={styleMenuList}>
+                        {map(this.state.items, (i, idx) => {
+                            return (i.isVisible) ? <li key={idx} style={styleMenuItemList}>
+                                <MenuItem item={i} selected={idx === this.state.selectedIndex}/>
+                            </li> : null
+                        })}
+                    </ul>
+                </div>
+            </div>;
+        }
+        return null;
     }
 }
 
