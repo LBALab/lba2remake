@@ -23,6 +23,7 @@ import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
 import VideoData from "../video/data";
 import Version from './game/Version';
+import Ribbon from './game/Ribbon'
 
 export default class Game extends FrameListener {
     constructor(props) {
@@ -272,6 +273,7 @@ export default class Game extends FrameListener {
                                renderer={this.state.renderer}
                                interjections={this.state.interjections} />
             <FoundObject foundObject={this.state.foundObject} />
+            {!this.props.params.editor ? <Ribbon/> : null}
             <Menu showMenu={this.state.showMenu}
                   texts={this.state.game.menuTexts}
                   inGameMenu={this.state.inGameMenu}
