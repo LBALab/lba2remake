@@ -73,24 +73,26 @@ export default class Menu extends React.Component {
     }
 
     listener(event) {
-        const key = event.code || event.which || event.keyCode;
-        let selectedIndex = this.state.selectedIndex;
-        if (key === 'ArrowUp' || key === 38) {
-            selectedIndex--;
-            if (selectedIndex < 0) {
-                selectedIndex = this.state.items.length - 1;
+        if (this.props.showMenu) {
+            const key = event.code || event.which || event.keyCode;
+            let selectedIndex = this.state.selectedIndex;
+            if (key === 'ArrowUp' || key === 38) {
+                selectedIndex--;
+                if (selectedIndex < 0) {
+                    selectedIndex = this.state.items.length - 1;
+                }
+                this.setState({ selectedIndex: selectedIndex });
             }
-            this.setState({ selectedIndex: selectedIndex });
-        }
-        if (key === 'ArrowDown' || key === 40) {
-            selectedIndex++;
-            if (selectedIndex > this.state.items.length - 1) {
-                selectedIndex = 0;
+            if (key === 'ArrowDown' || key === 40) {
+                selectedIndex++;
+                if (selectedIndex > this.state.items.length - 1) {
+                    selectedIndex = 0;
+                }
+                this.setState({ selectedIndex: selectedIndex });
             }
-            this.setState({ selectedIndex: selectedIndex });
-        }
-        if (key === 'Enter' || key === 13) {
-            this.itemChanged(selectedIndex);
+            if (key === 'Enter' || key === 13) {
+                this.itemChanged(selectedIndex);
+            }
         }
     }
 
