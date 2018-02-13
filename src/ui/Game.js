@@ -20,6 +20,8 @@ import FoundObject from './game/FoundObject';
 import Loader from './game/Loader';
 import Video from './game/Video';
 import DebugData from './editor/DebugData';
+import Menu from './game/Menu';
+import VideoData from "../video/data";
 
 export default class Game extends FrameListener {
     constructor(props) {
@@ -29,7 +31,13 @@ export default class Game extends FrameListener {
         this.frame = this.frame.bind(this);
         this.saveData = this.saveData.bind(this);
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
+        this.onGameReady = this.onGameReady.bind(this);
         this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
+        this.onMenuItemChanged = this.onMenuItemChanged.bind(this);
+        this.listener = this.listener.bind(this);
+        this.showMenu = this.showMenu.bind(this);
+        this.hideMenu = this.hideMenu.bind(this);
+        this.startNewGameScene = this.startNewGameScene.bind(this);
 
         if (props.mainData) {
             const state = props.mainData.state;
@@ -50,11 +58,14 @@ export default class Game extends FrameListener {
                 foundObject: null,
                 loading: true,
                 video: null,
-                choice: null
+                choice: null,
+                menuTexts: null,
+                showMenu: false,
+                inGameMenu: false,
             };
 
             clock.start();
-            game.preload();
+            game.preload(this.onGameReady);
         }
     }
 
@@ -90,16 +101,102 @@ export default class Game extends FrameListener {
     }
 
     onSceneManagerReady(sceneManager) {
-        sceneManager.goto(this.props.params.scene);
+        if (this.props.params.scene >= 0) {
+            this.hideMenu();
+            sceneManager.goto(this.props.params.scene);
+        }
+    }
+
+    componentWillMount() {
+        super.componentWillMount();
+        window.addEventListener('keydown', this.listener);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('keydown', this.listener);
+        super.componentWillUnmount();
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.params.scene !== this.props.params.scene) {
+        if (newProps.params.scene !== -1 && newProps.params.scene !== this.props.params.scene) {
+            this.hideMenu();
             this.state.sceneManager.goto(newProps.params.scene);
         }
         if (newProps.params.vr !== this.props.params.vr && this.canvas) {
             this.state.renderer.dispose();
             this.setState({ renderer: createRenderer(newProps.params, this.canvas) }, this.saveData);
+        }
+    }
+
+    onGameReady() {
+        this.state.game.loaded();
+        if (this.props.params.scene === -1) {
+            this.showMenu();
+        }
+    }
+
+    showMenu(inGameMenu = false) {
+        this.state.game.pause();
+        const musicSource = this.state.game.getAudioManager().getMusicSource();
+        musicSource.stop();
+        musicSource.load(6, () => {
+            musicSource.play();
+        });
+        this.setState({showMenu: true, inGameMenu: inGameMenu});
+    }
+
+    hideMenu() {
+        const musicSource = this.state.game.getAudioManager().getMusicSource();
+        musicSource.stop();
+        this.state.game.pause();
+        this.setState({showMenu: false, inGameMenu: false});
+        this.canvas.focus();
+    }
+
+
+    listener(event) {
+        const key = event.code || event.which || event.keyCode;
+        if (this.state.video) {
+            if (key === 'Enter' || key === 13 ||
+                key === 'Escape' || key === 27) {
+                this.setState({video: null});
+                this.startNewGameScene();
+            }
+        } else {
+            if (key === 'Escape' || key === 27) {
+                if (!this.state.game.isPaused()) {
+                    this.showMenu(true);
+                } else {
+                    this.hideMenu();
+                }
+            }
+        }
+    }
+
+    startNewGameScene() {
+        this.state.game.pause();
+        this.state.game.resetState();
+        this.state.sceneManager.goto(0, true);
+    }
+
+    onMenuItemChanged(item) {
+        switch(item) {
+            case 70: // Resume
+                this.hideMenu();
+                break;
+            case 71: // New Game
+                this.hideMenu();
+                const that = this;
+                const src = VideoData.VIDEO.find((v) => { return v.name === 'INTRO'; }).file;
+                this.state.game.pause();
+                this.setState({video: {
+                        src,
+                        callback: () => {
+                            that.setState({video: null});
+                            that.startNewGameScene();
+                        }
+                    }});
+                break;
         }
     }
 
@@ -170,6 +267,10 @@ export default class Game extends FrameListener {
                                renderer={this.state.renderer}
                                interjections={this.state.interjections} />
             <FoundObject foundObject={this.state.foundObject} />
+            <Menu showMenu={this.state.showMenu}
+                  texts={this.state.game.menuTexts}
+                  inGameMenu={this.state.inGameMenu}
+                  onItemChanged={this.onMenuItemChanged} />
             <Video video={this.state.video} renderer={this.state.renderer} />
             <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>

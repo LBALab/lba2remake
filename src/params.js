@@ -12,7 +12,7 @@ const paramsDefinitions = {
     },
     scene: {
         type: 'int',
-        default: 0
+        default: -1
     },
     noscripts: {
         type: 'boolean',

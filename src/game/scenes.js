@@ -33,8 +33,8 @@ export function createSceneManager(params, game, renderer, callback: Function) {
     };
 
     loadSceneMapData(sceneMap => {
-        sceneManager.goto = function(index, pCallback = noop) {
-            if ((scene && index === scene.index) || game.isLoading())
+        sceneManager.goto = function(index, force = false, pCallback = noop) {
+            if ((!force && scene && index === scene.index) || game.isLoading())
                 return;
 
             ga('set', 'page', `/scene/${index}`);
