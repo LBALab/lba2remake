@@ -75,13 +75,16 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
         preload: function(callback: Function) {
             const that = this;
             async.auto({
+                loading: preloadFileAsync('30_loading_screen.png'),
+                menu: preloadFileAsync('menubg_extended.png'),
                 ress: preloadFileAsync('data/RESS.HQR'),
                 text: loadHqrAsync('TEXT.HQR'),
                 voxgame: preloadFileAsync(`data/VOX/${_state.config.languageCode}_GAM_AAC.VOX`),
                 vox000: preloadFileAsync(`data/VOX/${_state.config.languageCode}_000_AAC.VOX`),
                 muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4'),
                 mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4'),
-                mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4')
+                mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4'),
+                musmenu: preloadFileAsync('data/MUSIC/Track6.mp4')
             }, (error, files) => {
                 const gameTexts = {textIndex: 4, texts: null};
                 loadTexts(gameTexts, files.text);
