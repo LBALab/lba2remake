@@ -3,6 +3,13 @@ A Little Big Adventure 2 engine remake change log file
 
 ---
 
+## Unreleased
+### Added
+
+### Fixed
+* (Game) Voice samples playing while displaying in-game menu
+* (Game) Hide text dialog while displaying in-game menu
+
 ## 0.0.3 - 13.02.2018
 ### Added
 * (Game) Raw sprites from SPRIRAW.HQR file (eg. Magicball Twinsen's Secret Room)
