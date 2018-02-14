@@ -2,7 +2,7 @@
  * @author alteredq / http://alteredqualia.com/
  */
 
-import THREE from 'three';
+import * as THREE from 'three';
 import ShaderPass from './ShaderPass';
 import CopyShader from './CopyShader';
 

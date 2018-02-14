@@ -1,5 +1,5 @@
 import React from 'react';
-import THREE from 'three';
+import * as THREE from 'three';
 import {clone, omit, noop} from 'lodash';
 
 import {createRenderer} from '../renderer';

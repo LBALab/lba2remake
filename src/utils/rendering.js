@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 export function createBoundingBox(bb, color) {
     const geometry = new THREE.BoxGeometry(
@@ -33,6 +33,6 @@ export function createBoundingBox(bb, color) {
         }
     });
     const wireframe = new THREE.LineSegments(edgesGeometry, material);
-    wireframe.position.copy(bb.center());
+    wireframe.position.copy(bb.getCenter());
     return wireframe;
 }

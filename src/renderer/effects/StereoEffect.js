@@ -8,7 +8,7 @@
  * Off-axis stereoscopic effect based on http://paulbourke.net/stereographics/stereorender/
  */
 
-import THREE from 'three';
+import * as THREE from 'three';
 
 function StereoEffect(renderer) {
     var scope = this;
@@ -104,7 +104,7 @@ function StereoEffect(renderer) {
 
         // left
 
-        _cameraL.projectionMatrix.makeFrustum(
+        _cameraL.projectionMatrix.makePerspective(
             -_outer,
             _inner,
             _bottom,
@@ -119,7 +119,7 @@ function StereoEffect(renderer) {
 
         // right
 
-        _cameraR.projectionMatrix.makeFrustum(
+        _cameraR.projectionMatrix.makePerspective(
             -_inner,
             _outer,
             _bottom,

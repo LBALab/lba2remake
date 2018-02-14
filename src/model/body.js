@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 export function loadBody(model, bodies, index, bodyProps) {
     if (bodies[index]) {
