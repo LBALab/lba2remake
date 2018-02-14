@@ -1,6 +1,6 @@
 // @flow
 
-import THREE from 'three';
+import * as THREE from 'three';
 
 export function makeGyroscopeControls(game: any) {
     let screenOrientation = window.orientation || 0;

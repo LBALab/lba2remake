@@ -1,5 +1,5 @@
 import React from 'react';
-import THREE from 'three';
+import * as THREE from 'three';
 import {map, extend, each} from 'lodash';
 import FrameListener from '../utils/FrameListener';
 import DebugData, {getObjectName} from './DebugData';

@@ -1,5 +1,5 @@
 import async from 'async';
-import THREE from 'three';
+import * as THREE from 'three';
 import {each, orderBy} from 'lodash';
 
 const push = Array.prototype.push;

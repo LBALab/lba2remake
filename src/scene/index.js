@@ -1,5 +1,5 @@
 import async from 'async';
-import THREE from 'three';
+import * as THREE from 'three';
 import {DirMode} from '../game/actors';
 
 import {loadHqrAsync} from '../hqr';

@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 export function processCollisions(grid, scene, actor) {
     const basePos = actor.threeObject.position;

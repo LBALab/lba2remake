@@ -1,5 +1,5 @@
 // @flow
-import THREE from 'three';
+import * as THREE from 'three';
 import async from 'async';
 
 import {createState} from './state';

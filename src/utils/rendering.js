@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 export function createBoundingBox(bb, color) {
     const geometry = new THREE.BoxGeometry(

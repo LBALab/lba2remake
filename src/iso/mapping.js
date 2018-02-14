@@ -5,7 +5,7 @@ import {
     uniq,
     each
 } from 'lodash';
-import THREE from 'three';
+import * as THREE from 'three';
 
 export function loadBricksMapping(layouts, bricks, palette) {
     const usedBricks = filter(

@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import {map, each, range, last} from 'lodash';
 import {bits} from '../utils';
 import {loadBricksMapping} from './mapping';

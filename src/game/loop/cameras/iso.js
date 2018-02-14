@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 export function processFollowIsoMovement(renderer, camera, scene) {
     const hero = scene.actors[0];

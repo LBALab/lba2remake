@@ -1,5 +1,5 @@
 // @flow
-import THREE from 'three';
+import * as THREE from 'three';
 import {updateModel} from '../../model';
 import type {Actor} from '../actors';
 

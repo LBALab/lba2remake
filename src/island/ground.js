@@ -1,6 +1,6 @@
 import {bits} from '../utils';
 import {map} from 'lodash';
-import THREE from 'three';
+import * as THREE from 'three';
 const push = Array.prototype.push;
 
 export function loadGround(section, geometries, usedTiles) {

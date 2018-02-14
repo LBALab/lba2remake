@@ -8,7 +8,7 @@
  * Off-axis stereoscopic effect based on http://paulbourke.net/stereographics/stereorender/
  */
 
-import THREE from 'three';
+import * as THREE from 'three';
 
 function StereoEffect(renderer) {
     var scope = this;

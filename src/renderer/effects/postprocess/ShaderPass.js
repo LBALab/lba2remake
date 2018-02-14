@@ -2,7 +2,7 @@
  * @author alteredq / http://alteredqualia.com/
  */
 
-import THREE from 'three';
+import * as THREE from 'three';
 import Pass from './Pass';
 
 export default function ShaderPass( shader, textureID ) {

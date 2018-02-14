@@ -1,6 +1,6 @@
 // @flow
 
-import THREE from 'three';
+import * as THREE from 'three';
 
 import type {Model} from '../model';
 import {loadModel} from '../model';

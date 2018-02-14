@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import {getObjectName} from '../ui/editor/DebugData';
 
 export function loadPoint(props, callback) {
