@@ -104,7 +104,7 @@ function StereoEffect(renderer) {
 
         // left
 
-        _cameraL.projectionMatrix.makeFrustum(
+        _cameraL.projectionMatrix.makePerspective(
             -_outer,
             _inner,
             _bottom,
@@ -119,7 +119,7 @@ function StereoEffect(renderer) {
 
         // right
 
-        _cameraR.projectionMatrix.makeFrustum(
+        _cameraR.projectionMatrix.makePerspective(
             -_inner,
             _outer,
             _bottom,

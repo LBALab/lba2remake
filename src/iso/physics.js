@@ -70,9 +70,9 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
                         if ((column.shape == 1 || column.shape > 5) && ACTOR_BOX.intersectsBox(bb)) {
                             INTERSECTION.copy(ACTOR_BOX);
                             INTERSECTION.intersect(bb);
-                            INTERSECTION.size(ITRS_SIZE);
-                            ACTOR_BOX.center(CENTER1);
-                            bb.center(CENTER2);
+                            INTERSECTION.getSize(ITRS_SIZE);
+                            ACTOR_BOX.getCenter(CENTER1);
+                            bb.getCenter(CENTER2);
                             const dir = CENTER1.sub(CENTER2);
                             if (ITRS_SIZE.x < ITRS_SIZE.z) {
                                 DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);

@@ -115,9 +115,9 @@ function processBoxIntersections(section, actor, position) {
         if (ACTOR_BOX.intersectsBox(bb)) {
             INTERSECTION.copy(ACTOR_BOX);
             INTERSECTION.intersect(bb);
-            INTERSECTION.size(ITRS_SIZE);
-            ACTOR_BOX.center(CENTER1);
-            bb.center(CENTER2);
+            INTERSECTION.getSize(ITRS_SIZE);
+            ACTOR_BOX.getCenter(CENTER1);
+            bb.getCenter(CENTER2);
             const dir = CENTER1.sub(CENTER2);
             if (position.y < bb.max.y - 0.015) {
                 if (ITRS_SIZE.x < ITRS_SIZE.z) {
