@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import {IsometricCamera} from './utils/IsometricCamera';
 
 export function getIsometricCamera(pixelRatio) {

@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 export function getRotation(nextValue, currentValue, interpolation) {
     let angleDif = nextValue - currentValue;

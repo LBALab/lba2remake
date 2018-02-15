@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import StereoEffect from './effects/StereoEffect';
 import EffectComposer from './effects/postprocess/EffectComposer';
 import SMAAPass from './effects/postprocess/SMAAPass';

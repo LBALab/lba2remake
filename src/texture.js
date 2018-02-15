@@ -1,6 +1,6 @@
 // @flow
 
-import THREE from 'three';
+import * as THREE from 'three';
 import {map, each} from 'lodash';
 
 export function loadPaletteTexture(palette: Uint8Array) {

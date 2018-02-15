@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 export const IsometricCamera = function(windowSize, offset = new THREE.Vector2()) {
     THREE.Camera.call( this );

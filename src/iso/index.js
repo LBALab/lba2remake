@@ -1,5 +1,5 @@
 import async from 'async';
-import THREE from 'three';
+import * as THREE from 'three';
 import {loadHqrAsync} from '../hqr';
 import {loadBricks} from './bricks';
 import {loadGrid} from './grid';

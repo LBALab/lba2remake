@@ -2,7 +2,7 @@
 
 import async from 'async';
 
-import THREE from 'three';
+import * as THREE from 'three';
 import {loadHqrAsync} from '../hqr';
 import type {Entity} from './entity';
 import {loadEntity, getBodyIndex, getAnimIndex, getAnim} from './entity';

@@ -6,7 +6,7 @@
  * https://github.com/iryoku/smaa/releases/tag/v2.8
  */
 
-import THREE from 'three';
+import * as THREE from 'three';
 
 const SMAAShader = [ {
 

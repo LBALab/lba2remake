@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import {createBoundingBox} from '../utils/rendering';
 import {getObjectName} from '../ui/editor/DebugData';
 

@@ -124,7 +124,9 @@ function getSoundFxSource(state, context, data) {
         source.bufferSource.start();
     };
     source.stop = () => {
-        source.bufferSource.stop();
+        if (source.bufferSource) {
+            source.bufferSource.stop();
+        }
         source.isPlaying = false;
     };
     source.load = (index, callback) => {
@@ -195,7 +197,7 @@ function getVoiceSource(state, context, data) {
         source.bufferSource.start();
     };
     source.stop = () => {
-        if (source.isPlaying) {
+        if (source.bufferSource) {
             source.bufferSource.stop();
         }
         source.isPlaying = false;
