@@ -55,7 +55,7 @@ function getMusicSource(state, context, data) {
         source.bufferSource.start();
     };
     source.stop = () => {
-        if (source.bufferSource) {
+        if (source.bufferSource && source.isPlaying) {
             source.bufferSource.stop();
             source.isPlaying = false;
         }
