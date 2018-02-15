@@ -4,3 +4,4 @@ node_modules
 /apps/win10/bin
 /apps/win10/obj
 www/.git-ftp.log
+/www/data
