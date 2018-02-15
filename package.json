@@ -37,7 +37,7 @@
     "build": "NODE_ENV=production webpack -p",
     "build-editor": "LBA_MODE=editor NODE_ENV=production webpack -p",
     "build-game": "LBA_MODE=game NODE_ENV=production webpack -p",
-    "deploy": "node pipelines/deploy"
+    "deploy": "node deploy/deploy.js"
   },
   "repository": "git+ssh://git@bitbucket.org:adri42/lba2remake.git",
   "author": "Adrien Grandemange",
