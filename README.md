@@ -13,3 +13,8 @@ A LBA2 / Twinsen's Odyssey reimplementation in JavaScript / Three.js / React
 * Run _npm run dev-server_
 * Fire up your browser at page http://localhost:8080
 * Enjoy!
+
+## Community
+
+* [Discord](https://discordapp.com/channels/152581994621042688/411620979719143425)
+* [MBN forum](https://forum.magicball.net/showthread.php?t=18208)
