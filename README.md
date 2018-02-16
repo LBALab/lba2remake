@@ -1,7 +1,7 @@
 # LBA2 Remake
 A LBA2 / Twinsen's Odyssey reimplementation in JavaScript / Three.js / React
 
-### [Live demo here](http://lba2remake.xesf.net)
+#### [Live demo](http://lba2remake.xesf.net) or [Editor mode demo](http://lba2remake.xesf.net/#editor=true)
 
 ## Setup
 
