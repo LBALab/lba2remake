@@ -20,6 +20,7 @@
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "6.5.0",
+    "cross-env": "^5.1.3",
     "express": "^4.16.2",
     "flow-bin": "^0.33.0",
     "flow-status-webpack-plugin": "^0.1.7",
@@ -31,12 +32,12 @@
     "webpack-express-middleware": "^1.2.1"
   },
   "scripts": {
-    "dev-server": "NODE_ENV=development node devserver.js",
-    "dev-server-editor": "LBA_MODE=editor NODE_ENV=development node devserver.js",
-    "dev-server-game": "LBA_MODE=game NODE_ENV=development node devserver.js",
-    "build": "NODE_ENV=production webpack -p",
-    "build-editor": "LBA_MODE=editor NODE_ENV=production webpack -p",
-    "build-game": "LBA_MODE=game NODE_ENV=production webpack -p",
+    "dev-server": "cross-env NODE_ENV=development node devserver.js",
+    "dev-server-editor": "cross-env LBA_MODE=editor NODE_ENV=development node devserver.js",
+    "dev-server-game": "cross-env LBA_MODE=game NODE_ENV=development node devserver.js",
+    "build": "cross-env NODE_ENV=production webpack -p",
+    "build-editor": "cross-env LBA_MODE=editor NODE_ENV=production webpack -p",
+    "build-game": "cross-env LBA_MODE=game NODE_ENV=production webpack -p",
     "deploy": "node deploy/deploy.js"
   },
   "repository": "git+ssh://git@bitbucket.org:adri42/lba2remake.git",
