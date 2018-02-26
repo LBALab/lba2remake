@@ -97,8 +97,9 @@ export default class Menu extends React.Component {
     }
 
     itemChanged(selectedIndex) {
-        if (this.state.items.length > 0)
+        if (this.state.items.length > 0) {
             this.props.onItemChanged(this.state.items[selectedIndex].index);
+        }
     }
 
     update() { }
@@ -113,7 +114,7 @@ export default class Menu extends React.Component {
                     <ul style={styleMenuList}>
                         {map(this.state.items, (i, idx) => {
                             return (i.isVisible) ? <li key={idx} style={styleMenuItemList}>
-                                <MenuItem item={i} selected={idx === this.state.selectedIndex}/>
+                                <MenuItem item={i} selected={idx === this.state.selectedIndex} onClick={this.itemChanged.bind(this, idx)}/>
                             </li> : null
                         })}
                     </ul>
@@ -145,10 +146,12 @@ function MenuItem(props) {
     if (props.item.text) {
         const extendedStyle = {
             color: props.item.isEnabled ? 'white' : '#828282',
-            background: props.selected ? 'rgba(32, 162, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'
+            background: props.selected ? 'rgba(32, 162, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+            userSelect: 'none',
+            cursor: 'pointer'
         };
         const style = extend(extendedStyle, styleMenuItem);
-        return <div style={style}>{props.item.text}</div>
+        return <div style={style} onClick={props.onClick}>{props.item.text}</div>
     }
     return null;
 }
