@@ -3,12 +3,12 @@ A Little Big Adventure 2 engine remake change log file
 
 ---
 
-## Unreleased
-### Added
-
+## 0.0.4 - 26.02.2018
 ### Fixed
 * (Game) Voice samples playing while displaying in-game menu
 * (Game) Hide text dialog while displaying in-game menu
+* (Game) Make menu clickable
+* (Game) Fix warning in params parsing
 
 ## 0.0.3 - 13.02.2018
 ### Added
