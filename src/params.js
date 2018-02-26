@@ -34,9 +34,9 @@ export function loadParams() : Object {
     const tgt = {};
     map(query.split("&"), part => {
         const [name, value] = part.split("=");
-        if (name in paramsDefinitions) {
+        if (name && name in paramsDefinitions) {
             src[name] = decodeURIComponent(value);
-        } else {
+        } else if (name) {
             console.warn(`Unknown parameter: ${part}.`);
         }
     });
