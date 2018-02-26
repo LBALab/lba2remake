@@ -3,6 +3,11 @@ A Little Big Adventure 2 engine remake change log file
 
 ---
 
+## Unreleased
+### Added
+
+### Fixed
+
 ## 0.0.4 - 26.02.2018
 ### Fixed
 * (Game) Voice samples playing while displaying in-game menu
