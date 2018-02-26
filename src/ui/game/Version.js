@@ -1,4 +1,5 @@
 import React from 'react';
+import Package from '../../../package.json';
 
 const text = {
     position: 'absolute',
@@ -8,5 +9,5 @@ const text = {
 };
 
 export default function Version() {
-    return <div style={text}>v0.0.3</div>;
+    return <div style={text}>v{Package.version}</div>;
 }
