@@ -5,17 +5,23 @@ A LBA2 / Twinsen's Odyssey reimplementation in JavaScript / Three.js / React
 
 ## Vision / goals
 
-* Reimplement the LBA2 game engine
+### Phase 1: Reimplement the LBA2 game engine
   * Should look and play like the original
   * Full re-engineering instead of dissassembly-based approach
   * Focus on code quality, make it easy to read and modify
-* Build a remastered version of the game
+  * __Milestones: [Gameplay 1](https://github.com/agrande/lba2remake/milestone/3), [Gameplay 2](https://github.com/agrande/lba2remake/milestone/5), [Gameplay 3](https://github.com/agrande/lba2remake/milestone/1), [Gameplay 4](https://github.com/agrande/lba2remake/milestone/4)__
+
+### Phase 2: Make a HD version of the game
   * Improve graphics and gameplay in a way that preserves the original look & feel
-  * More of a HD-version than a remake
-* Become a platform for modding (editor-mode)
+  * More of a remastered version than a remake
+  * Support more platforms and ways of playing
+  * __Milestone: [HD Version](https://github.com/agrande/lba2remake/milestone/9), [Social gaming](https://github.com/agrande/lba2remake/milestone/12), [Virtual Reality](https://github.com/agrande/lba2remake/milestone/7), [Alternative versions](https://github.com/agrande/lba2remake/milestone/8)__
+
+### Phase 3: Become a platform for modding and action/adventure game development
   * Progressively add tools to the editor to support mods
   * Have all tools grouped in a single integrated platform
-  * Leverage web technologies to enable fast and flexible multi-platform development
+  * __Milestones: [Modding 1](https://github.com/agrande/lba2remake/milestone/6), [Modding 2](https://github.com/agrande/lba2remake/milestone/11), [Modding 3](https://github.com/agrande/lba2remake/milestone/10)__
+
 
 ## Setup
 
