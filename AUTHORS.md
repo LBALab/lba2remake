@@ -1,6 +1,6 @@
 # Project Authors
 ## Team members
-### Lead Developer
+### Lead Developers
 * Adrien Grandemange (agrande)
 * Alexandre Fontoura (xesf)
 
@@ -9,7 +9,7 @@
 * chucksellick
 
 ## Special Thanks
-* Frédérick Raynal for supporting this project from it's early stages
+* Frédérick Raynal for supporting this project from its early stages
 * All team from Adeline Software International for doing this amazing game series
 * Kasia Jaworska for getting us voiced to Fred
 
