@@ -1,5 +1,5 @@
 # LBA2 Remake
-A LBA2 / Twinsen's Odyssey reimplementation in JavaScript / Three.js / React
+A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in JavaScript / Three.js / React
 
 #### [Live demo](http://lba2remake.xesf.net) (or [Editor mode](http://lba2remake.xesf.net/#editor=true))
 
@@ -38,3 +38,5 @@ A LBA2 / Twinsen's Odyssey reimplementation in JavaScript / Three.js / React
 
 * [Discord](https://discordapp.com/channels/152581994621042688/411620979719143425)
 * [MBN forum](https://forum.magicball.net/showthread.php?t=18208)
+* Reddit: [r/linux_gaming](https://www.reddit.com/r/linux_gaming/comments/8049mn/a_little_big_adventure_2_twinsens_odyssey/) or [r/gamedev](https://www.reddit.com/r/gamedev/comments/80cn9u/open_source_reimplementation_of_little_big/)
+* [Facebook](https://www.facebook.com/groups/twinsen/permalink/1565479966839300/)
