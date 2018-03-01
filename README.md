@@ -30,9 +30,12 @@ Currently you can walk around every island and buildings of the original game.
 Most of the graphic elements are implemented and part of the gameplay. It is not however completable at this point.
 Check out the *gameplay* [milestones](https://github.com/agrande/lba2remake/milestones) to see what needs to be done before the game becomes playable from start to end.
 
+![Game screenshot](doc/images/screenshot_game.jpeg)
+
 The editor mode allows navigating around the game scenes, inspecting scene content and variables, inspecting the game engine internal variables and debugging scripts (you can set breakpoints on actor scripts).
 Progress on the editor is tracked by the *modding* [milestones](https://github.com/agrande/lba2remake/milestones).
 
+![Editor screenshot](doc/images/screenshot_editor.jpeg)
 
 ## Setup
 
