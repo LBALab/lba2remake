@@ -3,6 +3,7 @@ A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in JavaScript / Th
 
 #### [Live demo](http://lba2remake.xesf.net) (or [Editor mode](http://lba2remake.xesf.net/#editor=true))
 
+
 ## Vision / goals
 
 #### Phase 1: Reimplement the LBA2 game engine
@@ -23,6 +24,16 @@ A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in JavaScript / Th
   * __Milestones: [Modding 1](https://github.com/agrande/lba2remake/milestone/6), [Modding 2](https://github.com/agrande/lba2remake/milestone/11), [Modding 3](https://github.com/agrande/lba2remake/milestone/10)__
 
 
+## Status
+
+Currently you can walk around every island and buildings of the original game.
+Most of the graphic elements are implemented and part of the gameplay. It is not however completable at this point.
+Check out the *gameplay* [milestones](https://github.com/agrande/lba2remake/milestones) to see what needs to be done before the game becomes playable from start to end.
+
+The editor mode allows navigating around the game scenes, inspecting scene content and variables, inspecting the game engine internal variables and debugging scripts (you can set breakpoints on actor scripts).
+Progress on the editor is tracked by the *modding* [milestones](https://github.com/agrande/lba2remake/milestones).
+
+
 ## Setup
 
 * Make sure you own a copy of the original game: [GOG](https://www.gog.com/game/little_big_adventure_2) or [Steam](http://store.steampowered.com/app/398000/Little_Big_Adventure_2/)
@@ -34,6 +45,7 @@ A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in JavaScript / Th
 * Fire up your browser at page http://localhost:8080
 * Enjoy!
 
+
 ## Community
 
 * [Discord](https://discordapp.com/channels/152581994621042688/411620979719143425)
@@ -41,8 +53,8 @@ A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in JavaScript / Th
 * Reddit: [r/linux_gaming](https://www.reddit.com/r/linux_gaming/comments/8049mn/a_little_big_adventure_2_twinsens_odyssey/) or [r/gamedev](https://www.reddit.com/r/gamedev/comments/80cn9u/open_source_reimplementation_of_little_big/)
 * [Facebook](https://www.facebook.com/groups/twinsen/permalink/1565479966839300/)
 
+
 ## License
 
-While the original Little Big Adventure 2 game executable, assets and intellectual property belong to Didier Chanfray SARL, the code within this project is released under the [MIT
-License](LICENSE). That being said, if you do anything interesting with
-this code, please let us know, we'd love to see it!
+While the original Little Big Adventure 2 game executable, assets and intellectual property belong to Didier Chanfray SARL, the code within this project is released under the [MIT License](LICENSE).
+That being said, if you do anything interesting with this code, please let us know, we'd love to see it!
