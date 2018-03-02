@@ -39,9 +39,8 @@ Progress on the editor is tracked by the *modding* [milestones](https://github.c
 
 ## Contributing
 
-Any help is be very much appreciated!
+Any help is very much appreciated!
 Check the [How to Contribute](CONTRIBUTING.md) guide to know how to do that.
-
 A list of current and past contributors can be found [here](AUTHORS.md).
 
 ## Getting started
