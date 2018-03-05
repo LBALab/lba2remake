@@ -37,6 +37,8 @@ Progress on the editor is tracked by the *modding* [milestones](https://github.c
 
 ![Editor screenshot](doc/images/screenshot_editor.jpeg)
 
+For more information, check the [FAQ](doc/FAQ.md).
+
 ## Contributing
 
 Any help is very much appreciated!
