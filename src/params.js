@@ -14,15 +14,7 @@ const paramsDefinitions = {
         type: 'int',
         default: -1
     },
-    noscripts: {
-        type: 'boolean',
-        default: false
-    },
     editor: {
-        type: 'boolean',
-        default: false
-    },
-    pauseOnLoad: {
         type: 'boolean',
         default: false
     }

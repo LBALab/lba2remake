@@ -10,8 +10,6 @@ window.onload = function() {
     const ticker = new Ticker();
     const params = loadParams();
     params.editor = false;
-    params.noscripts = false;
-    params.pauseOnLoad = false;
     ReactDOM.render(<div>
         <Game params={params} ticker={ticker} />
         <Popup/>
