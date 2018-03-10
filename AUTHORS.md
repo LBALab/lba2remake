@@ -13,6 +13,7 @@
 * All team from Adeline Software International for doing this amazing game series
 * Kasia Jaworska for getting us voiced to Fred
 
-## Bug Reports
+## Bug Reports & Feature Suggestions
+* Felipe Corrêa da Silva Sanches
 * Michel Sterenberg (via Facebook)
 * João Paulo Tiz (via Facebook)

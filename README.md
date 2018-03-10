@@ -37,20 +37,31 @@ Progress on the editor is tracked by the *modding* [milestones](https://github.c
 
 ![Editor screenshot](doc/images/screenshot_editor.jpeg)
 
-## Setup
+For more information, check the [FAQ](doc/FAQ.md).
+
+## Contributing
+
+Any help is very much appreciated!
+Check the [How to Contribute](CONTRIBUTING.md) guide to know how to do that.
+A list of current and past contributors can be found [here](AUTHORS.md).
+
+## Getting started
+
+(**[more details here](doc/getting_started.md)**)
 
 * Make sure you own a copy of the original game: [GOG](https://www.gog.com/game/little_big_adventure_2) or [Steam](http://store.steampowered.com/app/398000/Little_Big_Adventure_2/)
 * Copy the _*.HQR_, _*.OBL_, _*.ILE_ files and the _VOX_ folder from the original game install folder to _www/data_
 * (TODO) Import the musics and videos as mp4 (no script available for that at this time)
-* Download [Node.js](https://nodejs.org)
-* Run _npm install_
-* Run _npm run dev-server_
+* Download [Node.js](https://nodejs.org) (if you already have node.js installed, make sure it is a recent version: ~> 6.x.x)
+* Run `npm install`
+* Run `npm run dev-server`
 * Fire up your browser at page http://localhost:8080
 * Enjoy!
 
 
 ## Community
 
+* [Slack](https://join.slack.com/t/lba2remake/shared_invite/enQtMzIyNzIwNDMzNTIxLTc5OGVkNjI3NGE4YjM5ZTE5YmRkODBjMzNjOTk5NGM1NGIyMTI2N2FlOTYzYjBlZjE4NzIzYWI3ZWI0YmViMmI) - For development related discussions
 * [Discord](https://discordapp.com/channels/152581994621042688/411620979719143425)
 * [MBN forum](https://forum.magicball.net/showthread.php?t=18208)
 * Reddit: [r/linux_gaming](https://www.reddit.com/r/linux_gaming/comments/8049mn/a_little_big_adventure_2_twinsens_odyssey/) or [r/gamedev](https://www.reddit.com/r/gamedev/comments/80cn9u/open_source_reimplementation_of_little_big/)

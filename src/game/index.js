@@ -53,7 +53,7 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
             console.log(`Loading scene #${index}`);
         },
         loaded: function() {
-            _isPaused = params.pauseOnLoad;
+            _isPaused = false;
             if (!_isPaused)
                 clock.start();
             _isLoading = false;

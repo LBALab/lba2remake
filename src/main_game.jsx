@@ -3,14 +3,16 @@ import ReactDOM from 'react-dom';
 
 import Ticker from './ui/utils/Ticker';
 import Game from './ui/Game';
+import Popup from './ui/Popup';
 import {loadParams} from './params';
 
 window.onload = function() {
     const ticker = new Ticker();
     const params = loadParams();
     params.editor = false;
-    params.noscripts = false;
-    params.pauseOnLoad = false;
-    ReactDOM.render(<Game params={params} ticker={ticker} />, document.getElementById('root'));
+    ReactDOM.render(<div>
+        <Game params={params} ticker={ticker} />
+        <Popup/>
+    </div>, document.getElementById('root'));
     ticker.run();
 };

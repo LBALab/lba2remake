@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import Ticker from './ui/utils/Ticker';
 import Game from './ui/Game';
 import Editor from './ui/Editor';
+import Popup from './ui/Popup';
 import {loadParams} from './params';
 import {loadGameMetaData} from './ui/editor/DebugData';
 
@@ -31,11 +32,16 @@ class Root extends React.Component {
     }
 
     render() {
+        let content;
         if (this.state.params.editor) {
-            return <Editor params={this.state.params} ticker={this.props.ticker} />;
+            content = <Editor params={this.state.params} ticker={this.props.ticker} />;
         } else {
-            return <Game params={this.state.params} ticker={this.props.ticker} />;
+            content = <Game params={this.state.params} ticker={this.props.ticker} />;
         }
+        return <div>
+            {content}
+            <Popup/>
+        </div>
     }
 }
 
