@@ -68,7 +68,7 @@ export function BACKGROUND() {
     
 }
 
-export function WAIT_NUM_SECOND(numSeconds, time) {
+export function WAIT_NUM_SECOND(numSeconds, unknown, time) {
     if (!this.state.waitUntil) {
         this.state.waitUntil = time.elapsed + numSeconds;
     }
@@ -80,7 +80,7 @@ export function WAIT_NUM_SECOND(numSeconds, time) {
     }
 }
 
-export function WAIT_NUM_DSEC(numDsec, time) {
+export function WAIT_NUM_DSEC(numDsec, unknown, time) {
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, time);
 }
 
