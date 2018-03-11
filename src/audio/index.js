@@ -61,7 +61,7 @@ function getMusicSource(state, context, data) {
         }
     };
     source.load = (index, callback) => {
-        if (index == -1 || source.currentIndex == index && source.isPlaying) {
+        if (index === -1 || source.currentIndex === index && source.isPlaying) {
             return;
         }
         if (source.isPlaying) {
@@ -133,7 +133,7 @@ function getSoundFxSource(state, context, data) {
         async.auto({
             samples: loadHqrAsync('SAMPLES_AAC.HQR')
         }, function(err, files) {
-            if (index <= -1 || source.currentIndex == index && source.isPlaying) {
+            if (index <= -1 || source.currentIndex === index && source.isPlaying) {
                 return;
             }
             if (source.isPlaying) {

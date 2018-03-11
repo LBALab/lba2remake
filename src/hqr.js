@@ -63,7 +63,7 @@ export default class HQR {
                 for (let i = 0; i < 8; ++i) {
                     src_pos++;
 
-                    if ((flag & (1 << i)) != 0) {
+                    if ((flag & (1 << i)) !== 0) {
                         target[tgt_pos] = source[src_pos];
                         tgt_pos++;
                     } else {
