@@ -5,13 +5,14 @@ import async from 'async';
 import {createState} from './state';
 import {createAudioManager} from '../audio'
 import {loadHqrAsync} from '../hqr';
-import {loadTexts} from '../scene';
+import {loadTextsAsync} from '../text';
 
 export function createGame(params: Object, clock: Object, setUiState: Function, getUiState: Function) {
     let _isPaused = false;
     let _isLoading = false;
 
     let _state = createState();
+
     const _audio = createAudioManager(_state);
 
     return {
@@ -84,19 +85,17 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
                 ribbon: preloadFileAsync('images/11_sprite_lba2.png'),
                 ress: preloadFileAsync('data/RESS.HQR'),
                 text: loadHqrAsync('TEXT.HQR'),
-                voxgame: preloadFileAsync(`data/VOX/${_state.config.languageCode}_GAM_AAC.VOX`),
-                vox000: preloadFileAsync(`data/VOX/${_state.config.languageCode}_000_AAC.VOX`),
+                voxgame: preloadFileAsync(`data/VOX/${_state.config.languageVoice.code}_GAM_AAC.VOX`),
+                vox000: preloadFileAsync(`data/VOX/${_state.config.languageVoice.code}_000_AAC.VOX`),
                 muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4'),
                 mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4'),
                 mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4'),
-                musmenu: preloadFileAsync('data/MUSIC/Track6.mp4')
-            }, (error, files) => {
-                const gameTexts = {textIndex: 4, texts: null};
-                loadTexts(gameTexts, files.text);
-                that.texts = gameTexts.texts;
-                const menuTexts = {textIndex: 0, texts: null};
-                loadTexts(menuTexts, files.text);
-                that.menuTexts = menuTexts.texts;
+                musmenu: preloadFileAsync('data/MUSIC/Track6.mp4'),
+                loadMenuText: loadTextsAsync(_state.config.language, 0),
+                loadGameText: loadTextsAsync(_state.config.language, 4)
+            }, function(err, files) {
+                that.menuTexts = files.loadMenuText;
+                that.texts = files.loadGameText;
                 callback();
             });
         }

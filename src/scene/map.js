@@ -19,12 +19,12 @@ function loadSceneMap(files) {
     while (true) {
         const opcode = data.getUint8(offset++, true);
         const index = data.getUint8(offset++, true);
-        if (opcode == 0) {
+        if (opcode === 0) {
             break;
         }
 
         map.push({
-            isIsland: opcode == 2,
+            isIsland: opcode === 2,
             index: index
         });
     }

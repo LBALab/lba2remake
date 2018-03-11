@@ -61,7 +61,7 @@ function getMusicSource(state, context, data) {
         }
     };
     source.load = (index, callback) => {
-        if (index == -1 || source.currentIndex == index && source.isPlaying) {
+        if (index === -1 || source.currentIndex === index && source.isPlaying) {
             return;
         }
         if (source.isPlaying) {
@@ -133,7 +133,7 @@ function getSoundFxSource(state, context, data) {
         async.auto({
             samples: loadHqrAsync('SAMPLES_AAC.HQR')
         }, function(err, files) {
-            if (index <= -1 || source.currentIndex == index && source.isPlaying) {
+            if (index <= -1 || source.currentIndex === index && source.isPlaying) {
                 return;
             }
             if (source.isPlaying) {
@@ -204,14 +204,14 @@ function getVoiceSource(state, context, data) {
     };
     source.load = (index, textBankId, callback) => {
         const textBank = "" + textBankId;
-        let filename = `VOX/${state.config.languageCode}_${("000"+textBank).substring(0, 3 - textBank.length)+textBank}_AAC.VOX`;
-        if (textBankId == -1) {
-            filename = `VOX/${state.config.languageCode}_GAM_AAC.VOX`;
+        let filename = `VOX/${state.config.languageVoice.code}_${("000"+textBank).substring(0, 3 - textBank.length)+textBank}_AAC.VOX`;
+        if (textBankId === -1) {
+            filename = `VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`;
         }
         async.auto({
             voices: loadHqrAsync(filename)
         }, function(err, files) {
-            if (index == -1 || source.currentIndex == index && source.isPlaying) {
+            if (index === -1 || source.currentIndex === index && source.isPlaying) {
                 return;
             }
             if (source.isPlaying) {
