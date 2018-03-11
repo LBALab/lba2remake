@@ -3,22 +3,22 @@ import * as THREE from 'three';
 import {DirMode} from '../game/actors';
 
 import {loadHqrAsync} from '../hqr';
-import Lba2Charmap from './data';
 import {bits} from '../utils';
+import {loadTextData} from '../text'
 
-export function loadSceneData(index, callback) {
+export function loadSceneData(language, index, callback) {
     async.auto({
         scene: loadHqrAsync('SCENE.HQR'),
         text: loadHqrAsync('TEXT.HQR'),
         ress: loadHqrAsync('RESS.HQR')
     }, function(err, files) {
-        callback(loadSceneDataSync(files, index));
+        callback(loadSceneDataSync(files, language, index));
     });
 }
 
 const cachedSceneData = [];
 
-function loadSceneDataSync(files, index) {
+function loadSceneDataSync(files, language, index) {
     if (cachedSceneData[index]) {
         return cachedSceneData[index];
     } else {
@@ -47,7 +47,7 @@ function loadSceneDataSync(files, index) {
         offset = loadPoints(sceneData, offset);
         loadPatches(sceneData, offset);
 
-        loadTexts(sceneData, files.text);
+        sceneData.texts = loadTextData(files.text, {data: language, index: sceneData.textIndex});
 
         cachedSceneData[index] = sceneData;
         return sceneData;
@@ -333,27 +333,6 @@ function loadPatches(scene, offset) {
     }
 
     return offset;
-}
-
-export function loadTexts(sceneData, textFile) {
-    const mapData = new Uint16Array(textFile.getEntry(sceneData.textIndex));
-    const data = new DataView(textFile.getEntry(sceneData.textIndex + 1));
-    const texts = {};
-    let start;
-    let end;
-    let idx = 0;
-    do {
-        start = data.getUint16(idx * 2, true);
-        end = data.getUint16(idx * 2 + 2, true);
-        const type = data.getUint8(start, true);
-        let value = '';
-        for (let i = start + 1; i < end - 1; ++i) {
-            value += String.fromCharCode(Lba2Charmap[data.getUint8(i)]);
-        }
-        texts[mapData[idx]] = {type, index: idx, value};
-        idx++;
-    } while (end < data.byteLength);
-    sceneData.texts = texts;
 }
 
 function parseStaticFlags(staticFlags) {

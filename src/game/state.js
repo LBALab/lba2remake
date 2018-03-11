@@ -1,11 +1,12 @@
 // @flow
 
+import TextData from '../text/data'
+
 export function createState() {
     return {
         config: {
             text: 0,
-            language: 0,
-            languageCode: 'EN',
+            language: TextData.LANGUAGE[1],
             displayText: true,
             musicVolume: 0.8,
             soundFxVolume: 0.5,

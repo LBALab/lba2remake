@@ -1,4 +1,4 @@
-export default [
+const DEFAULT_CHARMAP = [
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
     16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
     32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
@@ -16,3 +16,14 @@ export default [
     224, 223, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
     240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255
 ];
+
+export default {
+    LANGUAGE: [
+        { index: 0, name:'English',   acronym: 'EN', culture: 'en-GB', charmap: DEFAULT_CHARMAP },
+        { index: 1, name:'Français',  acronym: 'FR', culture: 'fr-FR', charmap: DEFAULT_CHARMAP },
+        { index: 2, name:'Deutsch',   acronym: 'DE', culture: 'de-DE', charmap: DEFAULT_CHARMAP },
+        { index: 3, name:'Español',   acronym: 'ES', culture: 'es-ES', charmap: DEFAULT_CHARMAP },
+        { index: 4, name:'Italiano',  acronym: 'IT', culture: 'it-IT', charmap: DEFAULT_CHARMAP },
+        { index: 5, name:'Português', acronym: 'PT', culture: 'pt-PT', charmap: DEFAULT_CHARMAP }
+    ]
+};
