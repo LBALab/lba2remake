@@ -19,11 +19,11 @@ const DEFAULT_CHARMAP = [
 
 export default {
     LANGUAGE: [
-        { index: 0, name:'English',   code: 'EN', culture: 'en-GB', charmap: DEFAULT_CHARMAP },
-        { index: 1, name:'Français',  code: 'FR', culture: 'fr-FR', charmap: DEFAULT_CHARMAP },
-        { index: 2, name:'Deutsch',   code: 'DE', culture: 'de-DE', charmap: DEFAULT_CHARMAP },
-        { index: 3, name:'Español',   code: 'SP', culture: 'es-ES', charmap: DEFAULT_CHARMAP },
-        { index: 4, name:'Italiano',  code: 'IT', culture: 'it-IT', charmap: DEFAULT_CHARMAP },
-        { index: 5, name:'Português', code: 'PO', culture: 'pt-PT', charmap: DEFAULT_CHARMAP }
+        { index: 0, name:'English',   code: 'EN', culture: 'en-GB', charmap: DEFAULT_CHARMAP, hasVoice: true },
+        { index: 1, name:'Français',  code: 'FR', culture: 'fr-FR', charmap: DEFAULT_CHARMAP, hasVoice: true },
+        { index: 2, name:'Deutsch',   code: 'DE', culture: 'de-DE', charmap: DEFAULT_CHARMAP, hasVoice: true },
+        { index: 3, name:'Español',   code: 'SP', culture: 'es-ES', charmap: DEFAULT_CHARMAP, hasVoice: false },
+        { index: 4, name:'Italiano',  code: 'IT', culture: 'it-IT', charmap: DEFAULT_CHARMAP, hasVoice: false },
+        { index: 5, name:'Português', code: 'PO', culture: 'pt-PT', charmap: DEFAULT_CHARMAP, hasVoice: false }
     ]
 };
