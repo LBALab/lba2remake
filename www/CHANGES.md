@@ -3,10 +3,12 @@ A Little Big Adventure 2 engine remake change log file
 
 ---
 
-## Unreleased
+## 0.0.5 - 11.03.2018
 ### Added
-
+* (Game) #60 Multi-language support
+* (Editor) #150 Allow editing metadata from the editor and save it server side.
 ### Fixed
+* (Game) #147 Fixed incorrect move wait command being parsed. (Tim stuck at the Tavern)
 
 ## 0.0.4 - 26.02.2018
 ### Fixed
