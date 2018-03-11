@@ -8,7 +8,7 @@ $requestBody = file_get_contents('php://input');
 file_put_contents("scene_" . $sceneId . ".json", $requestBody);
 
 
-$slackhook = 'https://hooks.slack.com/services/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';
+$slackhook = '';
 
 $message = json_encode(array(
         'channel' => '#metadata',
