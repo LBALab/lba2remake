@@ -29,7 +29,7 @@ function loadSceneDataSync(files, language, index) {
         const sceneData = {
             index: index,
             textBankId: textBankId,
-            textIndex: textBankId * 2 + 6,
+            textIndex: textBankId * 2 + 6 + language.index * 30,
             gameOverScene: data.getInt8(1, true),
             unknown1: data.getUint16(2, true),
             unknown2: data.getUint16(4, true),
