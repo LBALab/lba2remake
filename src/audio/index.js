@@ -204,14 +204,14 @@ function getVoiceSource(state, context, data) {
     };
     source.load = (index, textBankId, callback) => {
         const textBank = "" + textBankId;
-        let filename = `VOX/${state.config.language.acronym}_${("000"+textBank).substring(0, 3 - textBank.length)+textBank}_AAC.VOX`;
-        if (textBankId == -1) {
-            filename = `VOX/${state.config.language.acronym}_GAM_AAC.VOX`;
+        let filename = `VOX/${state.config.language.code}_${("000"+textBank).substring(0, 3 - textBank.length)+textBank}_AAC.VOX`;
+        if (textBankId === -1) {
+            filename = `VOX/${state.config.language.code}_GAM_AAC.VOX`;
         }
         async.auto({
             voices: loadHqrAsync(filename)
         }, function(err, files) {
-            if (index == -1 || source.currentIndex == index && source.isPlaying) {
+            if (index === -1 || source.currentIndex === index && source.isPlaying) {
                 return;
             }
             if (source.isPlaying) {
