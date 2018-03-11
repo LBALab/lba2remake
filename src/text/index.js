@@ -23,7 +23,7 @@ export function loadTexts(language, index, callback) {
 }
 
 function getLanguageTextIndex(language, index) {
-    const languageIndex = index + 31 * language.index;
+    const languageIndex = index + 30 * language.index;
     return { data: language, index: languageIndex };
 }
 
