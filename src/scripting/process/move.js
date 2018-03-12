@@ -81,17 +81,17 @@ export function WAIT_NUM_SECOND(numSeconds, unknown, time) {
 }
 
 export function WAIT_NUM_DSEC(numDsec, unknown, time) {
-    WAIT_NUM_SECOND.call(this, numDsec * 0.1, time);
+    WAIT_NUM_SECOND.call(this, numDsec * 0.1, null, time);
 }
 
 export function WAIT_NUM_SECOND_RND(maxNumSeconds, unknown, time) {
     const numSeconds = Math.floor(Math.random() * maxNumSeconds);
-    WAIT_NUM_SECOND.call(this, numSeconds, time);
+    WAIT_NUM_SECOND.call(this, numSeconds, null, time);
 }
 
 export function WAIT_NUM_DECIMAL_RND(maxNumDsec, unknown, time) {
     const numDsec = Math.floor(Math.random() * maxNumDsec);
-    WAIT_NUM_SECOND.call(this, numDsec * 0.1, time);
+    WAIT_NUM_SECOND.call(this, numDsec * 0.1, null, time);
 }
 
 export function OPEN_LEFT() {
