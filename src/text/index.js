@@ -9,9 +9,15 @@ export function loadTextsAsync(language, index) {
         });
     };
 }
+
+export function getTextFile(language) {
+    const fanSuffix = language.isFan ? `_${language.code}` : '';
+    return `TEXT${fanSuffix}.HQR`;
+}
+
 export function loadTexts(language, index, callback) {
     async.auto({
-        text: loadHqrAsync('TEXT.HQR')
+        text: loadHqrAsync(getTextFile(language)),
     }, function(err, files) {
         const text = loadTextData(files.text, getLanguageTextIndex(language, index));
         if (callback) {
@@ -41,7 +47,7 @@ export function loadTextData(textFile, language) {
         const type = data.getUint8(start, true);
         let value = '';
         for (let i = start + 1; i < end - 1; ++i) {
-            value += String.fromCharCode(language.data.charmap[data.getUint8(i)]);
+            value += String.fromCharCode((language.data.charmap) ? language.data.charmap[data.getUint8(i)] : data.getUint8(i));
         }
         texts[mapData[idx]] = {type, index: idx, value};
         idx++;

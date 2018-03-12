@@ -5,7 +5,7 @@ import TextData from '../text/data'
 export function createState() {
     return {
         config: {
-            language: TextData.LANGUAGE[1],
+            language: TextData.LANGUAGE[0],
             languageVoice: TextData.LANGUAGE[0],
             displayText: true,
             musicVolume: 0.8,
