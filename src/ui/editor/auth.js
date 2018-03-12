@@ -78,7 +78,6 @@ function makeAuthPopup(callback) {
             <br/>
             <div style={{float: 'right'}}>
                 <button style={button_style} onClick={cancel}>Cancel</button>
-                <nbsp/>
                 <button style={button_style} onClick={send}>Send</button>
             </div>
             <div style={{clear: 'both'}}/>
