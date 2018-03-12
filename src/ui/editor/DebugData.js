@@ -148,12 +148,14 @@ export function loadSceneMetaData(sceneIndex, callback) {
 
 function saveSceneMetaData(sceneIndex) {
     checkAuth((authData) => {
-        const request = new XMLHttpRequest();
-        request.open('POST', `metadata/scene/${sceneIndex}`, true);
-        request.onload = function() {
-            console.log(`Saved scene ${sceneIndex} metadata`);
-        };
-        request.send(JSON.stringify(DebugData.metadata.scenes[sceneIndex], null, 2));
+        if (authData) {
+            const request = new XMLHttpRequest();
+            request.open('POST', `metadata/scene/${sceneIndex}`, true);
+            request.onload = function() {
+                console.log(`Saved scene ${sceneIndex} metadata`);
+            };
+            request.send(JSON.stringify(DebugData.metadata.scenes[sceneIndex], null, 2));
+        }
     });
 }
 
