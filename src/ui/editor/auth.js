@@ -46,7 +46,14 @@ class AuthPopup extends React.Component {
         super(props);
         this.cancel = this.cancel.bind(this);
         this.send = this.send.bind(this);
-        this.state = {};
+        this.state = {
+            authData: {
+                name: '',
+                email: '',
+                nocredit: false
+            },
+            warning: false
+        };
     }
 
     cancel() {
@@ -55,12 +62,27 @@ class AuthPopup extends React.Component {
     }
 
     send() {
-        this.props.close();
-        // TODO: Save auth data
-        this.props.callback({});
+        if (this.state.authData.name || this.state.authData.nocredit) {
+            this.props.close();
+            this.props.callback(this.state.authData);
+        } else {
+            this.setState({warning: true});
+        }
+    }
+
+    onChange(field, event) {
+        const authData = this.state.authData;
+        authData[field] = event.target.value;
+        this.setState({authData});
     }
 
     render() {
+        const auth = this.state.authData;
+        const warning = this.state.warning
+            ? <p style={{color: 'red'}}>
+                You should either choose not to be credited or fill in your name.
+            </p>
+            : null;
         return <div style={popup_style}>
             <h1 style={header_style}>Contributor information</h1>
             <p>
@@ -71,18 +93,19 @@ class AuthPopup extends React.Component {
             </p>
             <div style={form_line}>
                 <label style={{paddingRight: 20}}>Name:</label>
-                <input type="text" />
+                <input type="text" value={auth.name} onChange={this.onChange.bind(this, 'name')}/>
             </div>
             <div style={form_line}>
                 <label style={{paddingRight: 20}}>Email:</label>
-                <input type="text" />
+                <input type="text" value={auth.email} onChange={this.onChange.bind(this, 'email')}/>
             </div>
             <div style={form_line}>
-                <input type="checkbox"/>
+                <input type="checkbox" value={auth.nocredit} onChange={this.onChange.bind(this, 'nocredit')}/>
                 <label style={{paddingLeft: 10}}>I DO NOT want to be credited for my contributions<br/>
                     (only check this if you don't want your name to appear in our contributor list)</label>
             </div>
             <br/>
+            {warning}
             <div style={{float: 'right'}}>
                 <button style={button_style} onClick={this.cancel}>Cancel</button>
                 <button style={button_style} onClick={this.send}>Send</button>
