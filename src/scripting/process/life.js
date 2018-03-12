@@ -52,6 +52,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 value: text.value
             };
             this.game.setUiState({interjections});
+            cmdState.listener = function() { };
             setTimeout(() => {
                 const interjections = clone(this.game.getUiState().interjections);
                 delete interjections[itrjId];

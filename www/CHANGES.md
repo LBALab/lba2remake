@@ -7,7 +7,8 @@ A Little Big Adventure 2 engine remake change log file
 ### Added
 * (Game) #65 Basic support for fan translations
 ### Fixed
-* (Fixed) #147 Issue introduced on move wait commands.
+* (Game) #147 Issue introduced on move wait commands.
+* (Game) #153 Interjection messages running the command multiple times.
 
 ## 0.0.5 - 11.03.2018
 ### Added
