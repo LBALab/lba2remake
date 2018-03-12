@@ -37,23 +37,30 @@ export function checkAuth(callback) {
     if (auth) {
         callback(auth);
     } else {
-        Popup.display(makeAuthPopup(callback));
+        Popup.display((props) => <AuthPopup callback={callback} {...props}/>);
     }
 }
 
-function makeAuthPopup(callback) {
-    return function AuthPopup(props) {
-        const cancel = () => {
-            props.close();
-            callback();
-        };
+class AuthPopup extends React.Component {
+    constructor(props) {
+        super(props);
+        this.cancel = this.cancel.bind(this);
+        this.send = this.send.bind(this);
+        this.state = {};
+    }
 
-        const send = () => {
-            props.close();
-            // TODO: Save auth data
-            callback({});
-        };
+    cancel() {
+        this.props.close();
+        this.props.callback();
+    }
 
+    send() {
+        this.props.close();
+        // TODO: Save auth data
+        this.props.callback({});
+    }
+
+    render() {
         return <div style={popup_style}>
             <h1 style={header_style}>Contributor information</h1>
             <p>
@@ -64,11 +71,11 @@ function makeAuthPopup(callback) {
             </p>
             <div style={form_line}>
                 <label style={{paddingRight: 20}}>Name:</label>
-                <input/>
+                <input type="text" />
             </div>
             <div style={form_line}>
                 <label style={{paddingRight: 20}}>Email:</label>
-                <input/>
+                <input type="text" />
             </div>
             <div style={form_line}>
                 <input type="checkbox"/>
@@ -77,10 +84,10 @@ function makeAuthPopup(callback) {
             </div>
             <br/>
             <div style={{float: 'right'}}>
-                <button style={button_style} onClick={cancel}>Cancel</button>
-                <button style={button_style} onClick={send}>Send</button>
+                <button style={button_style} onClick={this.cancel}>Cancel</button>
+                <button style={button_style} onClick={this.send}>Send</button>
             </div>
             <div style={{clear: 'both'}}/>
         </div>;
-    };
+    }
 }
