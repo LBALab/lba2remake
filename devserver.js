@@ -5,6 +5,7 @@ const express = require('express');
 const createWebpackMiddleware = require('webpack-express-middleware');
 const app = express();
 const config = require('./webpack.config.js');
+config.devtool = process.env.SRCMAP === 'true' ? 'source-map' : undefined;
 const compiler = require('webpack')(config);
 
 app.set('port', process.env.PORT || 8080);
