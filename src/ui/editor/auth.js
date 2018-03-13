@@ -42,7 +42,9 @@ export function checkAuth(callback) {
 }
 
 function saveAuth(callback, auth) {
-    localStorage.setItem('editor_auth', JSON.stringify(auth));
+    if (auth) {
+        localStorage.setItem('editor_auth', JSON.stringify(auth));
+    }
     callback(auth);
 }
 
