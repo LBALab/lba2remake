@@ -25,6 +25,13 @@ app.post('/metadata/game', function (req, res) {
     res.end();
 });
 
+app.post('/diagnostic', function (req, res) {
+    console.log('saving diagnostic');
+    const ws = fs.createWriteStream('./diagnostic.json');
+    req.pipe(ws);
+    res.end();
+});
+
 const webpackMiddleware = createWebpackMiddleware(compiler, config);
 webpackMiddleware(app);
 

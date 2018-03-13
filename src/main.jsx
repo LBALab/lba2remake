@@ -8,7 +8,9 @@ import Popup from './ui/Popup';
 import {loadParams} from './params';
 import {loadGameMetaData} from './ui/editor/DebugData';
 import {editor as editor_style, fullscreen, center, bigButton} from './ui/styles';
-import {extend} from 'lodash';
+import {extend, omit} from 'lodash';
+import DebugData from "./ui/editor/DebugData";
+import {version} from '../package.json';
 
 class Root extends React.Component {
     constructor(props) {
@@ -51,8 +53,9 @@ window.onload = function() {
     init();
 };
 
-window.onerror = function(error) {
-    init(error);
+window.onerror = function(message, file, line, column, data) {
+    const stack = data && data.stack || undefined;
+    init({message, file, line, column, stack});
 };
 
 const bsod_style = extend({}, fullscreen, editor_style.base);
@@ -71,7 +74,7 @@ function init(error) {
             <div style={centerVert}>
                 <h1>Ooops! Something went wrong...</h1>
                 <b>Error: </b>
-                <i style={{color: 'red'}}>{error}</i>
+                <i style={{color: 'red'}}>{error.message}</i>
                 <hr style={{margin: '3em 6em'}}/>
                 <button style={bigButton} onClick={diagnose.bind(null, error)}>Send diagnosis.</button>
                 <button style={bigButton} onClick={reload}>Reload app!</button>
@@ -82,7 +85,23 @@ function init(error) {
     ticker.run();
 }
 
-function diagnose(error) {
-    
-}
+let sentDiagnostic = false;
 
+function diagnose(error) {
+    if (sentDiagnostic)
+        return;
+
+    const request = new XMLHttpRequest();
+    request.open('POST', `diagnostic`, true);
+    request.onload = function() {
+        console.log(`Sent diagnostic.`);
+        sentDiagnostic = true;
+    };
+    request.send(JSON.stringify({
+            error,
+            version,
+            debugData: omit(DebugData, 'metadata', 'script', 'breakpoints', 'sceneManager')
+        },
+        null,
+        2));
+}
