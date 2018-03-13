@@ -52,7 +52,7 @@ class AuthPopup extends React.Component {
                 email: '',
                 nocredit: false
             },
-            warning: false
+            clickedSend: false
         };
     }
 
@@ -62,27 +62,24 @@ class AuthPopup extends React.Component {
     }
 
     send() {
-        if (this.state.authData.name || this.state.authData.nocredit) {
+        const auth = this.state.authData;
+        if ((auth.name || auth.nocredit) && validateEmail(auth.email)) {
             this.props.close();
-            this.props.callback(this.state.authData);
+            this.props.callback(auth);
         } else {
-            this.setState({warning: true});
+            this.setState({clickedSend: true});
         }
     }
 
     onChange(field, event) {
         const authData = this.state.authData;
-        authData[field] = event.target.value;
+        const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+        authData[field] = value;
         this.setState({authData});
     }
 
     render() {
         const auth = this.state.authData;
-        const warning = this.state.warning
-            ? <p style={{color: 'red'}}>
-                You should either choose not to be credited or fill in your name.
-            </p>
-            : null;
         return <div style={popup_style}>
             <h1 style={header_style}>Contributor information</h1>
             <p>
@@ -100,12 +97,12 @@ class AuthPopup extends React.Component {
                 <input type="text" value={auth.email} onChange={this.onChange.bind(this, 'email')}/>
             </div>
             <div style={form_line}>
-                <input type="checkbox" value={auth.nocredit} onChange={this.onChange.bind(this, 'nocredit')}/>
+                <input type="checkbox" onChange={this.onChange.bind(this, 'nocredit')} checked={auth.nocredit}/>
                 <label style={{paddingLeft: 10}}>I DO NOT want to be credited for my contributions<br/>
                     (only check this if you don't want your name to appear in our contributor list)</label>
             </div>
             <br/>
-            {warning}
+            {this.renderWarnings(auth)}
             <div style={{float: 'right'}}>
                 <button style={button_style} onClick={this.cancel}>Cancel</button>
                 <button style={button_style} onClick={this.send}>Send</button>
@@ -113,4 +110,24 @@ class AuthPopup extends React.Component {
             <div style={{clear: 'both'}}/>
         </div>;
     }
+
+    renderWarnings(auth) {
+        if (this.state.clickedSend) {
+            if (!(auth.name || auth.nocredit)) {
+                return <p style={{color: 'red'}}>
+                    You should either choose not to be credited or fill in your name.
+                </p>;
+            } else if (!validateEmail(auth.email)) {
+                return <p style={{color: 'orange'}}>
+                    Invalid email address.
+                </p>;
+            }
+        }
+        return null;
+    }
+}
+
+function validateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return !email || re.test(email.toLowerCase());
 }
