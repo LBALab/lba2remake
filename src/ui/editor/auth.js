@@ -37,8 +37,13 @@ export function checkAuth(callback) {
     if (auth) {
         callback(auth);
     } else {
-        Popup.display((props) => <AuthPopup callback={callback} {...props}/>);
+        Popup.display((props) => <AuthPopup callback={saveAuth.bind(null, callback)} {...props}/>);
     }
+}
+
+function saveAuth(callback, auth) {
+    localStorage.setItem('editor_auth', JSON.stringify(auth));
+    callback(auth);
 }
 
 class AuthPopup extends React.Component {
