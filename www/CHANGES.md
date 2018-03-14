@@ -3,6 +3,10 @@ A Little Big Adventure 2 engine remake change log file
 
 ---
 
+## Unreleased
+### Added
+### Fixed
+
 ## 0.0.6
 ### Added
 * (Game) #65 Basic support for fan translations
