@@ -20,6 +20,8 @@ export function sendCrashReport(error) {
     const content = {
         error,
         version,
+        url: location.href,
+        browser: navigator.userAgent,
         data: getCrashReportData()
     };
 
