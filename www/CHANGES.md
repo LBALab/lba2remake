@@ -3,9 +3,10 @@ A Little Big Adventure 2 engine remake change log file
 
 ---
 
-## Unreleased
+## 0.0.6
 ### Added
 * (Game) #65 Basic support for fan translations
+* (Misc) Add crash reporting system
 ### Fixed
 * (Game) #147 Issue introduced on move wait commands.
 * (Game) #153 Interjection messages running the command multiple times.
