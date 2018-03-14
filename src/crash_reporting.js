@@ -68,6 +68,7 @@ const reload = () => location.reload();
 export function CrashHandler(props) {
     return <div style={bsod_style}>
         <div style={center_vert}>
+            <img src="images/broken.png"/>
             <h1>Ooops! Something went wrong...</h1>
             <b>Error: </b>
             <i style={{color: 'red'}}>{props.error.message}</i>
