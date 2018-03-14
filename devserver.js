@@ -25,9 +25,9 @@ app.post('/metadata/game', function (req, res) {
     res.end();
 });
 
-app.post('/diagnostic', function (req, res) {
-    console.log('saving diagnostic');
-    const ws = fs.createWriteStream('./diagnostic.json');
+app.post('/crash/report', function (req, res) {
+    console.log('saving crash report');
+    const ws = fs.createWriteStream('./crash_report.json');
     req.pipe(ws);
     res.end();
 });
