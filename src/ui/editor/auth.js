@@ -48,6 +48,10 @@ function saveAuth(callback, auth) {
     callback(auth);
 }
 
+function stopPropagation(e) {
+    e.stopPropagation();
+}
+
 class AuthPopup extends React.Component {
     constructor(props) {
         super(props);
@@ -97,11 +101,16 @@ class AuthPopup extends React.Component {
             </p>
             <div style={form_line}>
                 <label style={{paddingRight: 20}}>Name:</label>
-                <input type="text" value={auth.name} onChange={this.onChange.bind(this, 'name')}/>
+                <input type="text"
+                       value={auth.name}
+                       onChange={this.onChange.bind(this, 'name')}
+                       onKeyDown={stopPropagation}/>
             </div>
             <div style={form_line}>
                 <label style={{paddingRight: 20}}>Email:</label>
-                <input type="text" value={auth.email} onChange={this.onChange.bind(this, 'email')}/>
+                <input type="text" value={auth.email}
+                       onChange={this.onChange.bind(this, 'email')}
+                       onKeyDown={stopPropagation}/>
             </div>
             <div style={form_line}>
                 <input type="checkbox" onChange={this.onChange.bind(this, 'nocredit')} checked={auth.nocredit}/>
