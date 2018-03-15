@@ -200,7 +200,7 @@ export default class Node extends React.Component {
 
         return <span style={nameStyle} onClick={onClick} onContextMenu={renaming ? null : onContextMenu}>
             {renaming
-                ? <input onBlur={onBlur} onKeyDown={onKeyDown}/>
+                ? <input ref={r => r && r.focus()} onBlur={onBlur} onKeyDown={onKeyDown}/>
                 : this.state.name}
         </span>;
     }
