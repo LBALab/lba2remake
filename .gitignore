@@ -6,3 +6,4 @@ node_modules
 www/.git-ftp.log
 /www/data
 /www/bundle.js
+/crash_report.json

@@ -5,6 +5,7 @@ const express = require('express');
 const createWebpackMiddleware = require('webpack-express-middleware');
 const app = express();
 const config = require('./webpack.config.js');
+config.devtool = process.env.SRCMAP === 'true' ? 'source-map' : undefined;
 const compiler = require('webpack')(config);
 
 app.set('port', process.env.PORT || 8080);
@@ -20,6 +21,13 @@ app.post('/metadata/scene/:sceneId', function (req, res) {
 app.post('/metadata/game', function (req, res) {
     console.log('saving game metadata');
     const ws = fs.createWriteStream('./www/metadata/game.json');
+    req.pipe(ws);
+    res.end();
+});
+
+app.post('/crash/report', function (req, res) {
+    console.log('saving crash report');
+    const ws = fs.createWriteStream('./crash_report.json');
     req.pipe(ws);
     res.end();
 });
