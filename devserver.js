@@ -11,21 +11,21 @@ const compiler = require('webpack')(config);
 app.set('port', process.env.PORT || 8080);
 app.set('host', process.env.HOST || '0.0.0.0');
 
-app.post('/metadata/scene/:sceneId', function (req, res) {
-    console.log('saving scene metadata, scene=', req.params.sceneId);
+app.post('/ws/metadata/scene/:sceneId', function (req, res) {
+    console.log(`saving scene metadata, scene=${req.params.sceneId}, author=${req.query.author}`);
     const ws = fs.createWriteStream(`./www/metadata/scene_${req.params.sceneId}.json`);
     req.pipe(ws);
     res.end();
 });
 
-app.post('/metadata/game', function (req, res) {
-    console.log('saving game metadata');
+app.post('/ws/metadata/game', function (req, res) {
+    console.log(`saving game metadata, author=${req.query.author}`);
     const ws = fs.createWriteStream('./www/metadata/game.json');
     req.pipe(ws);
     res.end();
 });
 
-app.post('/crash/report', function (req, res) {
+app.post('/ws/crash/report', function (req, res) {
     console.log('saving crash report');
     const ws = fs.createWriteStream('./crash_report.json');
     req.pipe(ws);

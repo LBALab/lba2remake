@@ -150,7 +150,12 @@ function saveSceneMetaData(sceneIndex) {
     checkAuth((authData) => {
         if (authData) {
             const request = new XMLHttpRequest();
-            request.open('POST', `metadata/scene/${sceneIndex}`, true);
+            const query = [
+                `author=${encodeURIComponent(authData.name)}`,
+                `email=${encodeURIComponent(authData.email)}`,
+                `nocredit=${authData.nocredit}`
+            ].join('&');
+            request.open('POST', `ws/metadata/scene/${sceneIndex}?${query}`, true);
             request.onload = function() {
                 console.log(`Saved scene ${sceneIndex} metadata`);
             };
@@ -175,10 +180,19 @@ export function loadGameMetaData() {
 }
 
 function saveGameMetaData() {
-    const request = new XMLHttpRequest();
-    request.open('POST', `metadata/game`, true);
-    request.onload = function() {
-        console.log(`Saved game metadata`);
-    };
-    request.send(JSON.stringify(DebugData.metadata.game, null, 2));
+    checkAuth((authData) => {
+        if (authData) {
+            const request = new XMLHttpRequest();
+            const query = [
+                `author=${encodeURIComponent(authData.name)}`,
+                `email=${encodeURIComponent(authData.email)}`,
+                `nocredit=${authData.nocredit}`
+            ].join('&');
+            request.open('POST', `ws/metadata/game?${query}`, true);
+            request.onload = function () {
+                console.log(`Saved game metadata`);
+            };
+            request.send(JSON.stringify(DebugData.metadata.game, null, 2));
+        }
+    });
 }

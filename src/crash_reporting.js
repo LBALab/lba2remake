@@ -11,7 +11,7 @@ export function sendCrashReport(error) {
         return;
 
     const request = new XMLHttpRequest();
-    request.open('POST', 'crash/report', true);
+    request.open('POST', 'ws/crash/report', true);
     request.onload = function() {
         console.log(`Sent crash report.`);
         sent_report = true;
