@@ -3,6 +3,10 @@ A Little Big Adventure 2 engine remake change log file
 
 ---
 
+## Unreleased
+### Added
+### Fixed
+
 ## 0.0.7 - 15.03.2018
 ### Added
 * (Misc) #150 Improved metadata saving system
