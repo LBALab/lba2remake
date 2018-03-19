@@ -23,8 +23,8 @@ export const Twinsun = planet('Twinsun', 'twinsun', [
         section(48, 'Lupin-Bourg (statue)', [
             iso(15, 'Museum'),
             iso(5, 'Baggage Claim', [
-                iso(6, 'Downstairs)'),
-                iso(16, 'Labyrinth room)'),
+                iso(6, 'Downstairs'),
+                iso(16, 'Labyrinth room'),
             ]),
             iso(22, 'Pharmacy'),
             iso(37, 'School'),
