@@ -32,7 +32,7 @@ For more details, check [issue #3](https://github.com/agrande/lba2remake/issues/
 
 ## Contributing as a developer
 
-The best way to start contributing as a developer is to get in touch with us over [Slack](https://join.slack.com/t/lba2remake/shared_invite/enQtMzIyNzIwNDMzNTIxLTc5OGVkNjI3NGE4YjM5ZTE5YmRkODBjMzNjOTk5NGM1NGIyMTI2N2FlOTYzYjBlZjE4NzIzYWI3ZWI0YmViMmI) and tell us what you'd like to work on so we can point you in the right direction.
+The best way to start contributing as a developer is to get in touch with us over [Slack](https://join.slack.com/t/lba2remake/shared_invite/enQtMzIyNzIwNDMzNTIxLTc5OGVkNjI3NGE4YjM5ZTE5YmRkODBjMzNjOTk5NGM1NGIyMTI2N2FlOTYzYjBlZjE4NzIzYWI3ZWI0YmViMmI) and tell us what you'd like to do with the project so we can point you in the right direction.
 
 ### Check the tasks and issues
 
@@ -41,6 +41,8 @@ You can find a list of milestones and where those stand in our strategy in the [
 
 Our current focus is on [Open source ready](https://github.com/agrande/lba2remake/milestone/2), [Gameplay 1](https://github.com/agrande/lba2remake/milestone/3) and [Modding 1](https://github.com/agrande/lba2remake/milestone/6). But you can work on issues that are further away too if you prefer.
 
+Or you can fork the project and work on whatever you want!
+
 ### Architecture
 
-We're working to document our architecture, design choices and engineering principles, as well as giving pointers on how to get started hacking the code.
+[TODO] We're working to document our architecture, design choices and engineering principles, as well as giving pointers on how to get started hacking the code.
