@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const http = require('http');
 const express = require('express');
 const createWebpackMiddleware = require('webpack-express-middleware');
 const app = express();
@@ -30,6 +31,29 @@ app.post('/ws/crash/report', function (req, res) {
     const ws = fs.createWriteStream('./crash_report.json');
     req.pipe(ws);
     res.end();
+    if (process.env.SRCMAP) {
+        let body = '';
+        req.on('data', function(chunk) {
+            body += chunk;
+        });
+
+        req.on('end', function() {
+            const report = JSON.parse(body);
+            report.version += ' (modified)';
+            const content = JSON.stringify(report, null, 2);
+            const tgtReq = http.request({
+                host: 'lba2remake.xesf.net',
+                path: '/ws/crash/report',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': content.length
+                }
+            });
+            tgtReq.write(content);
+            tgtReq.end();
+        });
+    }
 });
 
 const webpackMiddleware = createWebpackMiddleware(compiler, config);
