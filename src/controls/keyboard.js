@@ -104,11 +104,15 @@ function keyDownHandler(params, game, sceneManager, event) {
 
         case 34: // pagedown
         case 'PageDown':
-            sceneManager.next();
+            if (params.editor) {
+                sceneManager.next();
+            }
             break;
         case 33: // pageup
         case 'PageUp':
-            sceneManager.previous();
+            if (params.editor) {
+                sceneManager.previous();
+            }
             break;
 
         case 70: // f
