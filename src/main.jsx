@@ -53,7 +53,7 @@ window.onload = function() {
 
 window.onerror = function(message, file, line, column, data) {
     const stack = data && data.stack || undefined;
-    init({message, file, line, column, stack});
+    init({message, file, line, column, stack, data});
 };
 
 function init(error) {

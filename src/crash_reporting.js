@@ -6,6 +6,14 @@ import {bigButton, center, editor as editor_style, fullscreen} from "./ui/styles
 
 let sent_report = false;
 
+export class EngineError extends Error {
+    constructor(type) {
+        super();
+        this.name = 'EngineError';
+        this.type = type;
+    }
+}
+
 export function sendCrashReport(error) {
     if (sent_report)
         return;
@@ -68,15 +76,31 @@ const center_vert = extend({}, center, {
 const reload = () => location.reload();
 
 export function CrashHandler(props) {
+    let report_on = true;
+    let reload_on = true;
+    let message = <div>
+            <b>Error: </b>
+            <i style={{color: 'red'}}>{props.error.message}</i>
+        </div>;
+    if (props.error.data && props.error.data.name === 'EngineError') {
+        if (props.error.data.type === 'webgl') {
+            report_on = false;
+            reload_on = false;
+            message = <div>
+                It seems like your browser does not support WebGL.<br/>
+                Check out why <a href='https://get.webgl.org/'>here.</a><br/>
+                WebGL is required to run this game.
+            </div>;
+        }
+    }
     return <div style={bsod_style}>
         <div style={center_vert}>
             <img src="images/broken.png"/>
             <h1>Ooops! Something went wrong...</h1>
-            <b>Error: </b>
-            <i style={{color: 'red'}}>{props.error.message}</i>
-            <hr style={{margin: '3em 6em'}}/>
-            <button style={bigButton} onClick={sendCrashReport.bind(null, props.error)}>Send crash report</button>
-            <button style={bigButton} onClick={reload}>Reload app!</button>
+            {message}
+            {(report_on || reload_on) ? <hr style={{margin: '3em 6em'}}/> : null}
+            {report_on ? <button style={bigButton} onClick={sendCrashReport.bind(null, props.error)}>Send crash report</button> : null}
+            {reload_on ? <button style={bigButton} onClick={reload}>Reload app!</button> : null}
         </div>
     </div>;
 }

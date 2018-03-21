@@ -12,6 +12,7 @@ import {
 } from './cameras';
 import Cardboard from './utils/Cardboard';
 import {map} from 'lodash';
+import {EngineError} from '../crash_reporting';
 
 const PixelRatioMode = {
     DEVICE: () => window.devicePixelRatio || 1.0,
@@ -98,16 +99,20 @@ export function createRenderer(params, canvas) {
 }
 
 function setupBaseRenderer(pixelRatio, canvas) {
-    const renderer = new THREE.WebGLRenderer({antialias: false, alpha: false, logarithmicDepthBuffer: true, canvas});
-    renderer.setClearColor(0x000000);
-    renderer.setPixelRatio(pixelRatio.getValue());
-    renderer.setSize(0, 0);
-    renderer.autoClear = true;
+    try {
+        const renderer = new THREE.WebGLRenderer({antialias: false, alpha: false, logarithmicDepthBuffer: true, canvas});
 
-    renderer.context.getExtension('EXT_shader_texture_lod');
-    renderer.context.getExtension('OES_standard_derivatives');
+        renderer.setClearColor(0x000000);
+        renderer.setPixelRatio(pixelRatio.getValue());
+        renderer.setSize(0, 0);
+        renderer.autoClear = true;
 
-    return renderer;
+        renderer.context.getExtension('EXT_shader_texture_lod');
+        renderer.context.getExtension('OES_standard_derivatives');
+        return renderer;
+    } catch (err) {
+        throw new EngineError('webgl');
+    }
 }
 
 function setupSMAA(renderer, pixelRatio) {
