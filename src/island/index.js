@@ -187,12 +187,13 @@ function updateShadows(scene, matByName) {
     shadows.sort((a, b) => a.distToHero - b.distToHero);
     for (let i = 0; i < 10; ++i) {
         const shadow = shadows[i];
+        const {ground_colored, ground_textured} = matByName;
         if (shadow) {
-            matByName.ground_colored.uniforms.actorPos.value[i].fromArray(shadow.data);
-            matByName.ground_textured.uniforms.actorPos.value[i].fromArray(shadow.data);
+            ground_colored && ground_colored.uniforms.actorPos.value[i].fromArray(shadow.data);
+            ground_textured && ground_textured.uniforms.actorPos.value[i].fromArray(shadow.data);
         } else {
-            matByName.ground_colored.uniforms.actorPos.value[i].w = 0;
-            matByName.ground_textured.uniforms.actorPos.value[i].w = 0;
+            ground_colored && (ground_colored.uniforms.actorPos.value[i].w = 0);
+            ground_textured && (ground_textured.uniforms.actorPos.value[i].w = 0);
         }
     }
 }
