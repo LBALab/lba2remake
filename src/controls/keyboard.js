@@ -130,10 +130,6 @@ function keyDownHandler(params, game, sceneManager, event) {
         case 'KeyP':
             game.pause();
             break;
-        case 71: // g
-        case 'KeyG':
-            //switchHUD();
-            break;
     }
 }
 
