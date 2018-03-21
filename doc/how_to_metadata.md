@@ -1,4 +1,4 @@
-#How to Contribute : Metadata
+# How to Contribute : Metadata
 
 Metadata are additional names given to different elements of the game, that are not present in the original game's data files.
 
