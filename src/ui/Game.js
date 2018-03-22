@@ -161,7 +161,9 @@ export default class Game extends FrameListener {
     hideMenu() {
         const musicSource = this.state.game.getAudioManager().getMusicSource();
         musicSource.stop();
-        this.state.game.pause();
+        if (this.state.game.isPaused()) {
+            this.state.game.pause();
+        }
         this.setState({showMenu: false, inGameMenu: false});
         this.canvas.focus();
     }
