@@ -5,7 +5,10 @@ A Little Big Adventure 2 engine remake change log file
 
 ## Unreleased
 ### Added
+* (Game) Voice playing hidden entries when normal entry ends.
 ### Fixed
+* (Game) #162 Parsing HQR hidden entries.
+* (Game) Scene 55 throwing exception with unavailable threejs object.
 
 ## 0.0.7 - 15.03.2018
 ### Added
