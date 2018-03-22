@@ -399,20 +399,10 @@ function Condition({condition}) {
             display: 'none',
             boxShadow: 'inset 0px 0px 0px 1px white',
         }, argStyle);
-
-        let oldRef = null;
-
-        function updateRef(ref) {
-            if (oldRef && !ref) {
-                ReactDOM.unmountComponentAtNode(oldRef);
-            }
-            oldRef = ref;
-        }
-
         return <span>
             &nbsp;<span style={condStyle}>{condition.name}</span>
             {param}
-            <span ref={updateRef} className="result" style={rStyle}/>
+            <span className="result" style={rStyle}/>
         </span>;
     } else {
         return null;
