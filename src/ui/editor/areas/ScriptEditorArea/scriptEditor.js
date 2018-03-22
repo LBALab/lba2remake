@@ -65,6 +65,9 @@ export default class ScriptEditor extends FrameListener {
     }
 
     enableSeparator(e) {
+        if (!e || !e.path) {
+            return;
+        }
         if (e.path.indexOf(this.separatorRef) !== -1) {
             const bb = this.rootRef.getBoundingClientRect();
             const separator = {

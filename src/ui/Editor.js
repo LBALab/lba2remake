@@ -55,6 +55,9 @@ export default class Editor extends React.Component {
     }
 
     enableSeparator(e) {
+        if (!e || !e.path) {
+            return;
+        }
         const separator = this.findSeparator(e.path, this.state.layout, []);
         if (separator) {
             this.setState({separator});
@@ -64,7 +67,7 @@ export default class Editor extends React.Component {
     }
 
     findSeparator(path, node, sepPath) {
-        if (!node) {
+        if (!node || !path) {
             return null;
         }
         if (node.type === Type.LAYOUT) {
