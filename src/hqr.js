@@ -6,7 +6,8 @@ type Entry = {
     type: number,
     offset: number,
     originalSize: number,
-    compressedSize: number
+    compressedSize: number,
+    hasHiddenEntry: boolean
 };
 
 export default class HQR {
@@ -16,15 +17,16 @@ export default class HQR {
     _loadCallbacks: Function[] = [];
 
     load(url: string, callback: Function) {
-        var that = this;
-        var request = new XMLHttpRequest();
+        const that = this;
+        const request = new XMLHttpRequest();
         request.responseType = 'arraybuffer';
         request.open('GET', url, true);
+        const isVoxHQR = url.toLowerCase().includes('vox');
 
         request.onload = function(event) {
             if (this.status === 200) {
                 that._buffer = request.response;
-                that._readHeader();
+                that._readHeader(isVoxHQR);
                 that._loaded = true;
                 callback.call(that);
                 each(that._loadCallbacks, cb => {
@@ -86,11 +88,19 @@ export default class HQR {
             }
             return tgt_buffer;
         } else {
+            if (entry.hasHiddenEntry) {
+                const tgt_buffer = new ArrayBuffer(entry.originalSize);
+                const source = new Uint8Array(this._buffer, entry.offset, entry.compressedSize);
+                const target = new Uint8Array(tgt_buffer);
+                source[0] = 0; // entries that have hidden entries are marked with 1 at the start, making the file to be faulty
+                target.set(source);
+                return tgt_buffer;
+            }
             return this._buffer.slice(entry.offset, entry.offset + entry.compressedSize);
         }
     }
 
-    _readHeader() {
+    _readHeader(isVoxHQR: boolean) {
         const firstOffset = new Int32Array(this._buffer, 0, 1);
         const numEntries = (firstOffset[0] / 4) - 1;
         const idx_array = new Uint32Array(this._buffer, 0, numEntries);
@@ -100,9 +110,35 @@ export default class HQR {
                 offset: idx_array[i] + 10,
                 originalSize: header.getUint32(0, true),
                 compressedSize: header.getUint32(4, true),
-                type: header.getInt16(8, true)
+                type: header.getInt16(8, true),
+                hasHiddenEntry: false
             });
         }
+        // check if hidden entries exist and add them
+        if (isVoxHQR) {
+            for (let i = 0; i < idx_array.length; ++i) {
+                const entry = this._entries[i];
+                const entryEndOffset = entry.offset + entry.compressedSize + 10;
+                let nextEntryOffset = this._buffer.byteLength; // end of file
+                if (i + 1 < idx_array.length) {
+                    nextEntryOffset = this._entries[i+1].offset;
+                }
+                if (entryEndOffset < nextEntryOffset) { // hidden entry found
+                    entry.hasHiddenEntry = true;
+                    this._entries.splice(i+1, 0, {
+                        offset: entryEndOffset,
+                        originalSize: nextEntryOffset - entryEndOffset,
+                        compressedSize: nextEntryOffset - entryEndOffset,
+                        type: 0,
+                        hasHiddenEntry: false
+                    });
+                }
+            }
+        }
+    }
+
+    hasHiddenEntries(index: number) {
+        return this._entries[index].hasHiddenEntry;
     }
 }
 
