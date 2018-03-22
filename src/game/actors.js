@@ -186,13 +186,13 @@ export function loadActor(params: Object, envInfo: any, ambience: any, props: Ac
             }
         },
         reload: function(scene) {
-            this.threeObject.visible = false;
-            scene.removeMesh(this.threeObject);
+            if (this.threeObject) {
+                this.threeObject.visible = false;
+                scene.removeMesh(this.threeObject);
+                delete this.threeObject;
+            }
             if (this.model) {
                 delete this.model;
-            }
-            if (this.threeObject) {
-                delete this.threeObject;
             }
             this.loadMesh();
             scene.addMesh(this.threeObject);
