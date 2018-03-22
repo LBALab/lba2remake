@@ -214,12 +214,15 @@ function getVoiceSource(state, context, data) {
             if (index === -1 || source.currentIndex === index && source.isPlaying) {
                 return;
             }
-            if (source.isPlaying) {
+            if (source.isPlaying) { 
                 source.stop();
             }
             source.currentIndex = index;
             source.bufferSource = context.createBufferSource();
             source.bufferSource.onended = () => {
+                if (source.isPlaying && files.voices.hasHiddenEntries(index)) {
+                    source.load(index+1, textBankId, callback);
+                }
                 source.isPlaying = false;
             };
 
