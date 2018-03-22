@@ -128,7 +128,7 @@ function keyDownHandler(params, game, sceneManager, event) {
             break;
         case 80: // p
         case 'KeyP':
-            game.pause();
+            game.togglePause();
             break;
     }
 }

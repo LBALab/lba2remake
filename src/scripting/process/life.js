@@ -332,7 +332,7 @@ export function PLAY_SMK(cmdState, video) {
             callback: () => {
                 that.game.setUiState({video: null});
                 cmdState.ended = true;
-                that.game.pause();
+                that.game.resume();
             }
         }});
         cmdState.listener = function(event) {
@@ -340,7 +340,7 @@ export function PLAY_SMK(cmdState, video) {
             if (key === 'Enter' || key === 13) {
                 that.game.setUiState({video: null});
                 cmdState.ended = true;
-                that.game.pause();
+                that.game.resume();
             }
         };
         window.addEventListener('keydown', cmdState.listener);

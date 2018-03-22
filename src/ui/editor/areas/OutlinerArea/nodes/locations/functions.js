@@ -3,7 +3,7 @@ import DebugData from '../../../../DebugData';
 
 function goto(index) {
     if (DebugData.sceneManager) {
-        DebugData.sceneManager.goto(index);
+        DebugData.sceneManager.hideMenuAndGoto(index);
     }
 }
 
