@@ -94,7 +94,12 @@ export default class Game extends FrameListener {
                 this.canvas.tabIndex = 0;
                 const game = this.state.game;
                 const renderer = createRenderer(this.props.params, this.canvas);
-                const sceneManager = createSceneManager(this.props.params, game, renderer, this.onSceneManagerReady);
+                const sceneManager = createSceneManager(
+                    this.props.params,
+                    game,
+                    renderer,
+                    this.onSceneManagerReady,
+                    this.hideMenu.bind(this));
                 const controls = createControls(this.props.params, game, this.canvas, sceneManager);
                 this.setState({ renderer, sceneManager, controls }, this.saveData);
             }

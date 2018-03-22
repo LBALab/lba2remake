@@ -21,7 +21,7 @@ import {initCameraMovement} from './loop/cameras';
 import {initSceneDebugData, loadSceneMetaData} from '../ui/editor/DebugData';
 import DebugData from '../ui/editor/DebugData';
 
-export function createSceneManager(params, game, renderer, callback: Function) {
+export function createSceneManager(params, game, renderer, callback: Function, hideMenu: Function) {
     let scene = null;
     let sceneManager = {
         getScene: (index) => {
@@ -33,6 +33,11 @@ export function createSceneManager(params, game, renderer, callback: Function) {
     };
 
     loadSceneMapData(sceneMap => {
+        sceneManager.hideMenuAndGoto = function(index) {
+            hideMenu();
+            this.goto(index);
+        };
+
         sceneManager.goto = function(index, pCallback = noop, force = false) {
             if ((!force && scene && index === scene.index) || game.isLoading())
                 return;
