@@ -68,14 +68,22 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
         getState: () => _state,
         getAudioManager: () => _audio,
 
-        pause: () => {
-            _isPaused = !_isPaused;
-            if(_isPaused) {
-                clock.stop();
-                console.log("Pause");
+        togglePause: function() {
+            if (_isPaused) {
+                this.resume();
             } else {
-                clock.start();
+                this.pause();
             }
+        },
+        pause: () => {
+            _isPaused = true;
+            clock.stop();
+            console.log("Pause");
+        },
+        resume: () => {
+            _isPaused = false;
+            clock.start();
+            console.log('Resume');
         },
         preload: function(callback: Function) {
             const that = this;

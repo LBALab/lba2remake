@@ -39,7 +39,7 @@ export class ScriptMenu extends FrameListener {
         const togglePause = () => {
             const game = DebugData.scope.game;
             if (game) {
-                game.pause();
+                game.togglePause();
             }
         };
 
