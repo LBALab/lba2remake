@@ -3,12 +3,19 @@ A Little Big Adventure 2 engine remake change log file
 
 ---
 
-## Unreleased
+## 0.0.8 - 23.03.2018
 ### Added
 * (Game) Voice playing hidden entries when normal entry ends.
+* (Game) #94 Disable scene switching in normal game mode (keep it in the editor).
+* (Editor) #3 New metadata (thanks Jeffrey Veenhuis)
 ### Fixed
 * (Game) #162 Parsing HQR hidden entries.
 * (Game) Scene 55 throwing exception with unavailable threejs object.
+* (Game) #160 Fix game sometimes being paused when swithcing scenes.
+* (Game) #159 Display custom error message when WebGL is not supported.
+* (Game) #158 Crash when loading scene 120.
+* (Editor) #163 Directly navigating to another scene while in the menu now works.
+* (Editor) Trailing parentheses in some locator nodes.
 
 ## 0.0.7 - 15.03.2018
 ### Added
