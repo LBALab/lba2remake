@@ -34,7 +34,17 @@ const Actor = {
         {
             id: 'visible',
             value: actor.isVisible,
-            render: (value) => <img src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}/>
+            render: (value) => {
+                const onClick = () => {
+                    actor.isVisible = !actor.isVisible;
+                    if (actor.threeObject) {
+                        actor.threeObject.visible = actor.isVisible;
+                    }
+                };
+                return <img src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}
+                            onClick={onClick}
+                            style={{cursor: 'pointer'}}/>;
+            }
         },
         {
             id: 'comportement',
