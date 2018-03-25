@@ -15,6 +15,7 @@ export default class Node extends React.Component {
             renaming: false,
             icon: this.icon()
         };
+        this.renameShortcut = this.renameShortcut.bind(this);
     }
 
     isInActivePath(props) {
@@ -43,11 +44,23 @@ export default class Node extends React.Component {
         if (this.props.node.dynamic || this.props.node.selected) {
             this.props.ticker.register(this);
         }
+        window.addEventListener('editor_rename', this.renameShortcut);
     }
 
     componentWillUnmount() {
         if (this.props.node.dynamic || this.props.node.selected) {
             this.props.ticker.unregister(this);
+        }
+        window.removeEventListener('editor_rename', this.renameShortcut);
+    }
+
+    renameShortcut() {
+        if (this.state.selected) {
+            const node = this.props.node;
+            const allow = node.allowRenaming && node.allowRenaming(this.props.data);
+            if (allow) {
+                this.setState({renaming: true});
+            }
         }
     }
 
