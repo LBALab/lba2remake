@@ -65,9 +65,16 @@ export default class Editor extends React.Component {
     }
 
     enableSeparator(e) {
-        if (!e || !e.path) {
+        if (!e) {
             return;
+        } else if (!e.path) {
+            return this.enableSeparator({
+                path: [e.target],
+                preventDefault: () => e.preventDefault(),
+                stopPropagation: () => e.stopPropagation()
+            });
         }
+
         const separator = this.findSeparator(e.path, this.state.layout, []);
         if (separator) {
             this.setState({separator});
