@@ -1,1 +1,24 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "Monster",
+    "Skeleton1",
+    "Skeleton2",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "ProtectiveSpell",
+    "Bat1",
+    "Bat2"
+  ]
+}

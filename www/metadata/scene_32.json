@@ -1,1 +1,9 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "Elevator",
+    "Guard",
+    "Boat"
+  ]
+}

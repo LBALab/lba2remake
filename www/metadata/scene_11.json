@@ -1,1 +1,31 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    null,
+    "ArrowSwitch1",
+    "ArrowSwitch2",
+    "ArrowSwitch3",
+    null,
+    null,
+    null,
+    null,
+    "Snake1",
+    "Snake2",
+    "Snake3",
+    "Snake4",
+    "Snake5",
+    null,
+    null,
+    null,
+    null,
+    null,
+    "Box",
+    null,
+    "actor22",
+    "Mushrooms1",
+    "Mushrooms2",
+    "Mushrooms3",
+    "MecaPengiunAltar"
+  ]
+}
