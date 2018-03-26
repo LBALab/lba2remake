@@ -8,7 +8,7 @@ import AreaLoader from "./areas/AreaLoader";
 
 const menuHeight = 26;
 
-const menuStyle = (numIcons) => extend({
+const menuStyle = (numIcons, main) => extend({
     position: 'absolute',
     top: 0,
     left: 0,
@@ -19,7 +19,7 @@ const menuStyle = (numIcons) => extend({
     lineHeight: `${menuHeight - 1}px`,
     userSelect: 'none',
     overflow: 'hidden'
-}, editor.base);
+}, editor.base, { background: main ? 'black' : 'rgb(45,45,48)' });
 
 const menuContentStyle = {
     padding: '0 1ch',
@@ -85,13 +85,19 @@ export default class Area extends React.Component {
             }
         };
 
-        return <div style={menuStyle(numIcons)}>
+        const isMain = this.props.area.mainArea;
+
+        const titleStyle = extend({
+            fontSize: isMain ? 20 : 18
+        }, mainIconStyle());
+
+        return <div style={menuStyle(numIcons, isMain)}>
             <img onClick={onClickIcon} style={mainIconStyle()} src={`editor/icons/areas/${icon}`}/>
-            <span onClick={onClickIcon} style={mainIconStyle()}>{this.props.area.name}</span>
+            <span onClick={onClickIcon} style={titleStyle}>{this.props.area.name}</span>
 
             <span style={menuContentStyle}>{menu}</span>
-            <img style={iconStyle({right: (numIcons - 1) * 26})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>
-            <img style={iconStyle({right: (numIcons - 2) * 26})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>
+            <img style={iconStyle({right: (numIcons - 1) * 26 + 2})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>
+            <img style={iconStyle({right: (numIcons - 2) * 26 + 2})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>
             {this.props.close ? <img style={iconStyle({right: 2})} onClick={this.props.close} src="editor/icons/close.png"/> : null}
         </div>;
     }
