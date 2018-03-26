@@ -259,11 +259,15 @@ function mapActors(ref) {
 }
 
 function findAllRefsInSceneList(varDef, sceneList, callback) {
+    const game = DebugData.scope.game;
+    if (!game)
+        return;
+    const language = game.getState().config.language;
     async.map(
         sceneList,
         (idx, callback) => {
             async.parallel([
-                (callback) => loadSceneData(idx, (scene) => callback(null, scene)),
+                (callback) => loadSceneData(language, idx, (scene) => callback(null, scene)),
                 (callback) => loadSceneMetaData(idx, callback)
             ], (err, [scene]) => {
                 const foundResults = findAllRefsInScene(varDef, scene);
