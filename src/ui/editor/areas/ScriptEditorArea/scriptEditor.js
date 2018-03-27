@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOMServer from 'react-dom/server';
 import {extend, map, filter, isObject} from 'lodash';
 import {fullscreen} from '../../../styles';
 import FrameListener from '../../../utils/FrameListener';
@@ -203,7 +203,7 @@ export default class ScriptEditor extends FrameListener {
                     if (active && 'condValue' in activeCommands[i]) {
                         let condValue = activeCommands[i].condValue;
                         if (isObject(condValue)) {
-                            ReactDOM.render(<span>: {condValue}</span>, result);
+                            result.innerHTML = ReactDOMServer.renderToString(<span>: {condValue}</span>, result);
                         } else {
                             result.innerText = `: ${condValue}`;
                         }
