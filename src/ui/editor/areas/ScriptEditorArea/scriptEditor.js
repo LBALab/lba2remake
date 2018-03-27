@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOMServer from 'react-dom/server';
 import {extend, map, filter, isObject} from 'lodash';
 import {fullscreen} from '../../../styles';
 import FrameListener from '../../../utils/FrameListener';
@@ -203,7 +203,8 @@ export default class ScriptEditor extends FrameListener {
                     if (active && 'condValue' in activeCommands[i]) {
                         let condValue = activeCommands[i].condValue;
                         if (isObject(condValue)) {
-                            ReactDOM.render(<span>: {condValue}</span>, result);
+                            const elem = <span>: {condValue}</span>;
+                            result.innerHTML = ReactDOMServer.renderToStaticMarkup(elem, result);
                         } else {
                             result.innerText = `: ${condValue}`;
                         }
@@ -285,7 +286,7 @@ export default class ScriptEditor extends FrameListener {
             );
         }
         const lineNumberStyle = {
-            position: 'sticky',
+            position: 'absolute',
             left: 0,
             width: `${nDigits}ch`,
             top: 0,
@@ -297,6 +298,7 @@ export default class ScriptEditor extends FrameListener {
         };
         const commandsStyle = {
             position: 'absolute',
+            overflowY: 'hidden',
             left: `${nDigits}ch`,
             right: 0,
             top: 0
@@ -399,20 +401,10 @@ function Condition({condition}) {
             display: 'none',
             boxShadow: 'inset 0px 0px 0px 1px white',
         }, argStyle);
-
-        let oldRef = null;
-
-        function updateRef(ref) {
-            if (oldRef && !ref) {
-                ReactDOM.unmountComponentAtNode(oldRef);
-            }
-            oldRef = ref;
-        }
-
         return <span>
             &nbsp;<span style={condStyle}>{condition.name}</span>
             {param}
-            <span ref={updateRef} className="result" style={rStyle}/>
+            <span className="result" style={rStyle}/>
         </span>;
     } else {
         return null;
