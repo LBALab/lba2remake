@@ -286,7 +286,7 @@ export default class ScriptEditor extends FrameListener {
             );
         }
         const lineNumberStyle = {
-            position: 'sticky',
+            position: 'absolute',
             left: 0,
             width: `${nDigits}ch`,
             top: 0,
@@ -298,6 +298,7 @@ export default class ScriptEditor extends FrameListener {
         };
         const commandsStyle = {
             position: 'absolute',
+            overflowY: 'hidden',
             left: `${nDigits}ch`,
             right: 0,
             top: 0
