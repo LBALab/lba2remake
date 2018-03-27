@@ -15,7 +15,7 @@ export function initCameraMovement(controlsState, renderer, scene) {
         initFollow3DMovement(controlsState, renderer.cameras.camera3D, scene);
     }
 
-    if(controlsState.freeCamera){
+    if (!scene.isIsland && controlsState.freeCamera){
         centerIsoCamera(renderer, renderer.cameras.isoCamera, scene);
     }
 }
