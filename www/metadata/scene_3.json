@@ -2,11 +2,13 @@
   "actorNames": [
     null,
     null,
-    null,
+    "CellarDoor",
     null,
     null,
     "Luc",
-    "Tim"
+    "Tim",
+    "Customer1",
+    "Customer2"
   ],
   "varcubes": [
     null,

@@ -1,1 +1,14 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    null,
+    "ElevatorSwitch1",
+    "ElevatorSwitch2",
+    "ElevatorSwitch3",
+    "ElevatorSwitch4",
+    "ElevatorPlatform1",
+    "ElevatorPlatform2",
+    "GroboEmployee"
+  ]
+}

@@ -1,1 +1,33 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "SwitchNW",
+    "SwitchNE",
+    "SwitchSE",
+    "SwitchSW",
+    "Package",
+    "PackageCarrier",
+    "ElevatorPlatform1",
+    "ElevatorSwitch1",
+    "ElevatorPlatform2",
+    "ElevatorPlatform3",
+    "ElevatorSwitch2",
+    "ElevatorPlatform4",
+    "ElevatorPlatform5",
+    "ElevatorSwitch3",
+    "ElevatorSwitch4",
+    "PackageCarrierAnimation",
+    "Door1",
+    "Employee",
+    "Pusher1",
+    "Pusher2",
+    "Pusher3",
+    "Pusher4",
+    "LazyEmployee",
+    "ElevatorSwitch5",
+    "ElevatorSwitch6",
+    "Door2",
+    "BoxKey"
+  ]
+}
