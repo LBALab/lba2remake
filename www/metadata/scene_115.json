@@ -1,1 +1,12 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "TokenSlot",
+    "InformationDevice",
+    "Door",
+    "Spacesuit",
+    null,
+    "Translator"
+  ]
+}

@@ -1,1 +1,13 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "TokenSlot",
+    null,
+    null,
+    "EsmerManager",
+    "EsmerGarbageCan",
+    "EsmerCactus",
+    "EsmerNewspaperReader"
+  ]
+}

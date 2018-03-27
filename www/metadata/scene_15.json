@@ -1,1 +1,15 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "GroboCashier",
+    null,
+    "Visitor",
+    null,
+    "Button",
+    "SuitSwitch",
+    "Safe",
+    "MissBloop",
+    "SuitHolder"
+  ]
+}
