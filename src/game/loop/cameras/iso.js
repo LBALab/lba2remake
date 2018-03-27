@@ -20,6 +20,37 @@ export function processFollowIsoMovement(renderer, camera, scene) {
     }
 }
 
+export function centerIsoCamera(renderer, camera, scene) {
+    console.log(camera.offset);
+    camera.offset.x = 0;
+    camera.offset.y = 0;
+    camera.updateProjectionMatrix();
+
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    processFollowIsoMovement(renderer, camera, scene);
+    
+    
+    console.log(camera.offset);
+}
+
 export function processFreeIsoMovement(controlsState, camera, time) {
     camera.offset.add(new THREE.Vector2(
         controlsState.cameraSpeed.x * time.delta * 500,
