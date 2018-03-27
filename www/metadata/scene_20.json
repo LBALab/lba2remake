@@ -6,12 +6,14 @@
     "Switch",
     null,
     "Snake",
-    null,
-    null,
-    null,
+    "FireballSpitter1",
+    "FireballSpitter2",
+    "FireballSpitter3",
     "Bat1",
     "Bat2",
     "Bat3",
-    "Bat4"
+    "Bat4",
+    null,
+    "Joe"
   ]
 }
