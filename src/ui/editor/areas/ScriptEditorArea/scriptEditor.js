@@ -203,7 +203,8 @@ export default class ScriptEditor extends FrameListener {
                     if (active && 'condValue' in activeCommands[i]) {
                         let condValue = activeCommands[i].condValue;
                         if (isObject(condValue)) {
-                            result.innerHTML = ReactDOMServer.renderToString(<span>: {condValue}</span>, result);
+                            const elem = <span>: {condValue}</span>;
+                            result.innerHTML = ReactDOMServer.renderToStaticMarkup(elem, result);
                         } else {
                             result.innerText = `: ${condValue}`;
                         }
