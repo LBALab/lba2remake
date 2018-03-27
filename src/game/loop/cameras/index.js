@@ -6,12 +6,17 @@ import {
 
 import {
     processFreeIsoMovement,
-    processFollowIsoMovement
+    processFollowIsoMovement,
+    centerIsoCamera
 } from './iso';
 
 export function initCameraMovement(controlsState, renderer, scene) {
     if (scene.isIsland && !controlsState.freeCamera) {
         initFollow3DMovement(controlsState, renderer.cameras.camera3D, scene);
+    }
+
+    if (!scene.isIsland && controlsState.freeCamera){
+        centerIsoCamera(renderer, renderer.cameras.isoCamera, scene);
     }
 }
 
