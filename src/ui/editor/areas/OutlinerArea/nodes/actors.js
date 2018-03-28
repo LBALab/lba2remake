@@ -27,12 +27,7 @@ const Actor = {
     ctxMenu: [
         {
             name: 'Locate',
-            onClick: (component, varDef) => {
-                if (!varDef.threeObject)
-                    return;
-                DebugData.selection.actor = varDef.index;
-                locateObject(varDef);
-            }
+            onClick: (component, actor) => locateObject(actor)
         }
     ],
     name: (actor) => getObjectName('actor', actor.props.sceneIndex, actor.index),

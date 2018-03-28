@@ -25,12 +25,7 @@ const Zone = {
     ctxMenu: [
         {
             name: 'Locate',
-            onClick: (component, varDef) => {
-                if (!varDef.threeObject)
-                    return;
-                DebugData.selection.zone = varDef.index;
-                locateObject(varDef);
-            }
+            onClick: (component, zone) => locateObject(zone)
         }
     ],
     name: (zone) => getObjectName('zone', zone.props.sceneIndex, zone.index),

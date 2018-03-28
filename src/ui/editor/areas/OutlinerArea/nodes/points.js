@@ -11,12 +11,7 @@ const Point = {
     ctxMenu: [
         {
             name: 'Locate',
-            onClick: (component, varDef) => {
-                if (!varDef.threeObject)
-                    return;
-                DebugData.selection.point = varDef.index;
-                locateObject(varDef);
-            }
+            onClick: (component, point) => locateObject(point)
         }
     ],
     name: (point) => getObjectName('point', point.props.sceneIndex, point.index),

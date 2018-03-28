@@ -127,14 +127,23 @@ export function getObjectName(type, sceneIndex, objIndex) {
     return `${type}${objIndex}`;
 }
 
-export function locateObject(object){
-    if (DebugData.scope.scene.isIsland || !object.threeObject)
+export function locateObject(object) {
+    const scene = DebugData.scope.scene;
+    if (!object.threeObject || !scene || scene.isIsland)
         return;
 
-    if (!DebugData.scope.game.controlsState.freeCamera) {
-        DebugData.scope.game.controlsState.freeCamera = true;
+    DebugData.selection[object.type] = object.index;
+
+    const isHero = object.type === 'actor' && object.index === 0;
+    const controlsState = DebugData.scope.game.controlsState;
+    if (!controlsState.freeCamera) {
+        controlsState.freeCamera = true;
+    } else if (isHero && controlsState.freeCamera) {
+        controlsState.freeCamera = false;
     }
-    centerIsoCamera(DebugData.scope.renderer, DebugData.scope.renderer.cameras.isoCamera, DebugData.scope.scene, object)
+
+    const renderer = DebugData.scope.renderer;
+    centerIsoCamera(renderer, renderer.cameras.isoCamera, scene, object);
 }
 
 export function loadSceneMetaData(sceneIndex, callback) {
