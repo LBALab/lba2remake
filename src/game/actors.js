@@ -44,6 +44,7 @@ type ActorPhysics = {
 }
 
 export type Actor = {
+    type: 'actor',
     props: ActorProps,
     threeObject: ?THREE.Object3D,
     model: ?Model,
@@ -78,6 +79,7 @@ export const DirMode = {
 export function loadActor(params: Object, envInfo: any, ambience: any, props: ActorProps, callback: Function) {
     const animState = loadAnimState();
     const actor: Actor = {
+        type: 'actor',
         index: props.index,
         props: props,
         physics: initPhysics(props),

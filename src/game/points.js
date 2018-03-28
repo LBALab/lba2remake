@@ -4,6 +4,7 @@ import {getObjectName} from '../ui/editor/DebugData';
 export function loadPoint(props, callback) {
     const pos = props.pos;
     const point = {
+        type: 'point',
         index: props.index,
         props: props,
         physics: {
