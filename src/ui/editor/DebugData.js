@@ -128,7 +128,6 @@ export function getObjectName(type, sceneIndex, objIndex) {
 }
 
 export function locateObject(varDef){
-    console.log(varDef);
     if(!DebugData.scope.game.controlsState.freeCamera){
         DebugData.scope.game.controlsState.freeCamera = true;
     }

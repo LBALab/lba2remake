@@ -27,12 +27,11 @@ export function processFreeIsoMovement(controlsState, camera, time) {
 }
 
 function getObjectIsoPos(renderer, camera, object) {
-    const objectHeight = 0.04;
+    const objectHeight = 0;
     if(object.model){
         const bb = object.model.boundingBox;
-        const objectHeight = bb.max.y - bb.min.y;
+        objectHeight = bb.max.y - bb.min.y;
     }
-
     const pos = new THREE.Vector3(0, objectHeight * 0.5, 0);
     object.threeObject.updateMatrixWorld();
     pos.applyMatrix4(object.threeObject.matrixWorld);
