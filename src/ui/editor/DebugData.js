@@ -127,13 +127,14 @@ export function getObjectName(type, sceneIndex, objIndex) {
     return `${type}${objIndex}`;
 }
 
-export function locateObject(varDef){
-    if(!DebugData.scope.game.controlsState.freeCamera){
+export function locateObject(object){
+    if (DebugData.scope.scene.isIsland || !object.model)
+        return
+
+    if (!DebugData.scope.game.controlsState.freeCamera){
         DebugData.scope.game.controlsState.freeCamera = true;
     }
-    if(DebugData.scope.scene.isIsland)
-        return
-    centerIsoCamera(DebugData.scope.renderer, DebugData.scope.renderer.cameras.isoCamera, DebugData.scope.scene, varDef)
+    centerIsoCamera(DebugData.scope.renderer, DebugData.scope.renderer.cameras.isoCamera, DebugData.scope.scene, object)
 }
 
 export function loadSceneMetaData(sceneIndex, callback) {
