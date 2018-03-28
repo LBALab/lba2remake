@@ -32,6 +32,7 @@ function getObjectIsoPos(renderer, camera, object) {
         objectHeight = bb.max.y - bb.min.y;
     }
     const pos = new THREE.Vector3(0, objectHeight * 0.5, 0);
+    object.threeObject.updateMatrix();
     object.threeObject.updateMatrixWorld();
     pos.applyMatrix4(object.threeObject.matrixWorld);
     pos.project(camera);

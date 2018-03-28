@@ -26,6 +26,8 @@ const Zone = {
         {
             name: 'Locate',
             onClick: (component, varDef) => {
+                if (!varDef.threeObject)
+                    return;
                 DebugData.selection.zone = varDef.index;
                 locateObject(varDef);
             }

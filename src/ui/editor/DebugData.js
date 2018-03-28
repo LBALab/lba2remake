@@ -128,8 +128,8 @@ export function getObjectName(type, sceneIndex, objIndex) {
 }
 
 export function locateObject(object){
-    if (DebugData.scope.scene.isIsland || !object.model)
-        return
+    if (DebugData.scope.scene.isIsland || !object.threeObject)
+        return;
 
     if (!DebugData.scope.game.controlsState.freeCamera){
         DebugData.scope.game.controlsState.freeCamera = true;

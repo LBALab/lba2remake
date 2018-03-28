@@ -28,6 +28,8 @@ const Actor = {
         {
             name: 'Locate',
             onClick: (component, varDef) => {
+                if (!varDef.threeObject)
+                    return;
                 DebugData.selection.actor = varDef.index;
                 locateObject(varDef);
             }
