@@ -1,5 +1,5 @@
 import React from 'react';
-import {map, concat, times, isObject, isEqual} from 'lodash';
+import {map, concat, times, isObject, isEqual, noop} from 'lodash';
 
 export default class Node extends React.Component {
     constructor(props) {
@@ -176,6 +176,8 @@ export default class Node extends React.Component {
         const selected = this.state.selected;
         const setRoot = this.props.setRoot.bind(null, this.props.path);
         const onClick = node.onClick ? node.onClick.bind(null, this.props.data, setRoot) : setRoot;
+        const onDoubleClick = node.onDoubleClick ?
+            node.onDoubleClick.bind(null, this.props.data) : noop;
 
         const color = node.color || 'inherit';
 
@@ -211,7 +213,10 @@ export default class Node extends React.Component {
 
         const renaming = this.state.renaming;
 
-        return <span style={nameStyle} onClick={onClick} onContextMenu={renaming ? null : onContextMenu}>
+        return <span style={nameStyle}
+                     onClick={onClick}
+                     onDoubleClick={onDoubleClick}
+                     onContextMenu={renaming ? null : onContextMenu}>
             {renaming
                 ? <input ref={r => r && r.focus()} onBlur={onBlur} onKeyDown={onKeyDown}/>
                 : this.state.name}
