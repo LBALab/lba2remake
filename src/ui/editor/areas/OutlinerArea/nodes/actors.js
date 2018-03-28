@@ -28,6 +28,7 @@ const Actor = {
         {
             name: 'Locate',
             onClick: (component, varDef) => {
+                DebugData.selection.actor = varDef.index;
                 locateObject(varDef);
             }
         }

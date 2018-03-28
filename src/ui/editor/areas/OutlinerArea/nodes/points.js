@@ -12,6 +12,7 @@ const Point = {
         {
             name: 'Locate',
             onClick: (component, varDef) => {
+                DebugData.selection.point = varDef.index;
                 locateObject(varDef);
             }
         }
