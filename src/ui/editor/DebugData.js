@@ -135,8 +135,6 @@ export function locateObject(varDef){
     if(DebugData.scope.scene.isIsland)
         return
     centerIsoCamera(DebugData.scope.renderer, DebugData.scope.renderer.cameras.isoCamera, DebugData.scope.scene, varDef)
-    if(!varDef.isVisible)
-        varDef.isVisible = true;
 }
 
 export function loadSceneMetaData(sceneIndex, callback) {
