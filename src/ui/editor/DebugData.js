@@ -1,4 +1,5 @@
 import {checkAuth} from "./auth";
+import {centerIsoCamera} from '../../game/loop/cameras/iso';
 
 const DebugData = {
     scope: {},
@@ -124,6 +125,18 @@ export function getObjectName(type, sceneIndex, objIndex) {
         }
     }
     return `${type}${objIndex}`;
+}
+
+export function locateObject(varDef){
+    console.log(varDef);
+    if(!DebugData.scope.game.controlsState.freeCamera){
+        DebugData.scope.game.controlsState.freeCamera = true;
+    }
+    if(DebugData.scope.scene.isIsland)
+        return
+    centerIsoCamera(DebugData.scope.renderer, DebugData.scope.renderer.cameras.isoCamera, DebugData.scope.scene, varDef)
+    if(!varDef.isVisible)
+        varDef.isVisible = true;
 }
 
 export function loadSceneMetaData(sceneIndex, callback) {

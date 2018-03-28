@@ -1,5 +1,5 @@
 import React from 'react';
-import DebugData, {getObjectName, renameObject} from '../../../DebugData';
+import DebugData, {getObjectName, renameObject, locateObject} from '../../../DebugData';
 import {SceneGraphNode} from './sceneGraph';
 
 const ZONE_TYPE = [
@@ -22,6 +22,14 @@ const Zone = {
     rename: (zone, newName) => {
         renameObject('zone', zone.props.sceneIndex, zone.index, newName);
     },
+    ctxMenu: [
+        {
+            name: 'Locate',
+            onClick: (component, varDef) => {
+                locateObject(varDef);
+            }
+        }
+    ],
     name: (zone) => getObjectName('zone', zone.props.sceneIndex, zone.index),
     icon: () => 'editor/icons/zone2.png',
     props: (zone) => [

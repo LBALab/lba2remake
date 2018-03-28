@@ -1,4 +1,4 @@
-import DebugData, {getObjectName, renameObject} from '../../../DebugData';
+import DebugData, {getObjectName, renameObject, locateObject} from '../../../DebugData';
 import {SceneGraphNode} from './sceneGraph';
 
 const Point = {
@@ -8,6 +8,14 @@ const Point = {
     rename: (point, newName) => {
         renameObject('point', point.props.sceneIndex, point.index, newName);
     },
+    ctxMenu: [
+        {
+            name: 'Locate',
+            onClick: (component, varDef) => {
+                locateObject(varDef);
+            }
+        }
+    ],
     name: (point) => getObjectName('point', point.props.sceneIndex, point.index),
     icon: () => 'editor/icons/point2.png',
     numChildren: (point) => point.threeObject ? 1 : 0,

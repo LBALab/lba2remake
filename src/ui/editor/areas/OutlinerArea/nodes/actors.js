@@ -1,7 +1,8 @@
 import React from 'react';
 import DebugData, {
     renameObject,
-    getObjectName
+    getObjectName,
+    locateObject
 } from '../../../DebugData';
 import {map} from 'lodash';
 import {SceneGraphNode} from './sceneGraph';
@@ -23,6 +24,14 @@ const Actor = {
     rename: (actor, newName) => {
         renameObject('actor', actor.props.sceneIndex, actor.index, newName);
     },
+    ctxMenu: [
+        {
+            name: 'Locate',
+            onClick: (component, varDef) => {
+                locateObject(varDef);
+            }
+        }
+    ],
     name: (actor) => getObjectName('actor', actor.props.sceneIndex, actor.index),
     icon: (actor) => `editor/icons/${actor.isSprite ? 'sprite' : 'model'}.png`,
     props: (actor) => [
@@ -90,6 +99,9 @@ export const ActorsNode = {
         }
     }
 };
+
+
+
 
 function getComportement(actor) {
     const lifeScript = actor.scripts.life;

@@ -4,11 +4,13 @@ export function processFollowIsoMovement(renderer, camera, scene) {
     centerIsoCamera(renderer, camera, scene);
 }
 
-export function centerIsoCamera(renderer, camera, scene) {
-    const hero = scene.actors[0];
-    if (!hero.model)
-        return;
-    const pos = getActorIsoPos(renderer, camera, hero);
+export function centerIsoCamera(renderer, camera, scene, object) {
+    if(!object){
+        object = scene.actors[0];
+        if(!object.model)
+            return;
+    }
+    const pos = getObjectIsoPos(renderer, camera, object);
     const {width, height} = renderer.canvas;
     const sz = new THREE.Vector2(width, height);
     pos.multiply(sz);
@@ -24,12 +26,16 @@ export function processFreeIsoMovement(controlsState, camera, time) {
     camera.updateProjectionMatrix();
 }
 
-function getActorIsoPos(renderer, camera, actor) {
-    const bb = actor.model.boundingBox;
-    const actorHeight = bb.max.y - bb.min.y;
-    const pos = new THREE.Vector3(0, actorHeight * 0.5, 0);
-    actor.threeObject.updateMatrixWorld();
-    pos.applyMatrix4(actor.threeObject.matrixWorld);
+function getObjectIsoPos(renderer, camera, object) {
+    const objectHeight = 0.04;
+    if(object.model){
+        const bb = object.model.boundingBox;
+        const objectHeight = bb.max.y - bb.min.y;
+    }
+
+    const pos = new THREE.Vector3(0, objectHeight * 0.5, 0);
+    object.threeObject.updateMatrixWorld();
+    pos.applyMatrix4(object.threeObject.matrixWorld);
     pos.project(camera);
     return new THREE.Vector2(pos.x, pos.y);
 }
