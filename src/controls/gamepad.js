@@ -17,7 +17,7 @@ export function makeGamepadControls(sceneManager: Object, game: Object) {
             window.removeEventListener('dpadvaluechanged', onDpadValueChanged);
             window.removeEventListener('gamepadbuttonpressed', onButtonPressed);
         }
-    }
+    };
 }
 
 function dpadValueChangeHandler(game, {detail: {x, y, name}}) {
@@ -37,10 +37,10 @@ function buttonPressedHandler(game: Object, sceneManager: Object, {detail: {name
     if (isPressed) {
         switch (name) {
             case 'leftShoulder':
-                rotateArroundY(game.controlsState.cameraOrientation, PI_4);
+                rotateAroundY(game.controlsState.cameraOrientation, PI_4);
                 break;
             case 'rightShoulder':
-                rotateArroundY(game.controlsState.cameraOrientation, -PI_4);
+                rotateAroundY(game.controlsState.cameraOrientation, -PI_4);
                 break;
             case 'buttonB':
                 sceneManager.next();
@@ -50,6 +50,7 @@ function buttonPressedHandler(game: Object, sceneManager: Object, {detail: {name
                 break;
             case 'buttonY':
                 game.controlsState.freeCamera = !game.controlsState.freeCamera;
+                // eslint-disable-next-line no-console
                 console.log('Free camera: ', game.controlsState.freeCamera);
                 break;
             case 'leftTrigger':
@@ -59,20 +60,20 @@ function buttonPressedHandler(game: Object, sceneManager: Object, {detail: {name
     }
 }
 
-function rotateArroundY(q, angle) {
+function rotateAroundY(q, angle) {
     euler.setFromQuaternion(q, 'YXZ');
-    euler.y = euler.y + angle;
+    euler.y += angle;
     q.setFromEuler(euler);
 }
 
 function heroFPSControl(game, movementX, movementY) {
     euler.setFromQuaternion(game.controlsState.cameraHeadOrientation, 'YXZ');
     euler.y = 0;
-    euler.x = Math.min(Math.max(euler.x - movementY * 0.03, -MAX_X_ANGLE), MAX_X_ANGLE);
+    euler.x = Math.min(Math.max(euler.x - (movementY * 0.03), -MAX_X_ANGLE), MAX_X_ANGLE);
     game.controlsState.cameraHeadOrientation.setFromEuler(euler);
 
     euler.setFromQuaternion(game.controlsState.cameraOrientation, 'YXZ');
     euler.x = 0;
-    euler.y = euler.y - movementX * 0.03;
+    euler.y -= movementX * 0.03;
     game.controlsState.cameraOrientation.setFromEuler(euler);
 }

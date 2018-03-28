@@ -3,7 +3,10 @@
 import {switchStats} from '../renderer/stats';
 import {BehaviourMode} from '../game/loop/hero';
 
-export function makeKeyboardControls(params: Object, canvas: Object, sceneManager: Object, game: Object) {
+export function makeKeyboardControls(params: Object,
+                                     canvas: Object,
+                                     sceneManager: Object,
+                                     game: Object) {
     const onKeyDown = keyDownHandler.bind(null, params, game, sceneManager);
     const onKeyUp = keyUpHandler.bind(null, game);
     const onFocusOut = focusOutHandler.bind(null, game);
@@ -16,12 +19,12 @@ export function makeKeyboardControls(params: Object, canvas: Object, sceneManage
             canvas.removeEventListener('keyup', onKeyUp);
             canvas.removeEventListener('focusout', onFocusOut);
         }
-    }
+    };
 }
 
 function keyDownHandler(params, game, sceneManager, event) {
     const key = event.code || event.which || event.keyCode;
-    //console.log(event.code, event.which, event.keyCode);
+    // console.log(event.code, event.which, event.keyCode);
     switch (key) {
         case 38: // up
         case 'ArrowUp':
@@ -123,6 +126,7 @@ function keyDownHandler(params, game, sceneManager, event) {
         case 'KeyC':
             if (params.editor) {
                 game.controlsState.freeCamera = !game.controlsState.freeCamera;
+                // eslint-disable-next-line no-console
                 console.log('Free camera: ', game.controlsState.freeCamera);
             }
             break;

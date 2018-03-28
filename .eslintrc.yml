@@ -6,13 +6,20 @@ rules:
   indent:
     - error
     - 4
+    - SwitchCase: 1
+      FunctionDeclaration:
+        parameters: first
+  curly: off
   comma-dangle: off
   prefer-destructuring: off
+  default-case: off
+  function-paren-newline: off
 
   no-bitwise: off
   no-param-reassign: off
   no-use-before-define: off
   no-shadow: warn
+  no-nested-ternary: off
 
   react/jsx-indent:
     - error

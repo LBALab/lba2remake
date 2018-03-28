@@ -14,8 +14,7 @@ export function createControls(params, game, canvas, sceneManager) {
         if (!params.mobile) {
             controls.push(makeKeyboardControls(params, canvas, sceneManager, game));
         }
-    }
-    else if (params.mobile) {
+    } else if (params.mobile) {
         controls = [
             makeFirstPersonTouchControls(game),
             makeGamepadControls(sceneManager, game)
