@@ -55,6 +55,7 @@ const Zone = {
     childData: (zone) => zone.threeObject,
     selected: (zone) => DebugData.selection.zone === zone.index,
     onClick: (zone) => {DebugData.selection.zone = zone.index},
+    onDoubleClick: locateObject
 };
 
 export const ZonesNode = {

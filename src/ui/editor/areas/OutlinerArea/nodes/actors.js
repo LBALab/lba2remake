@@ -80,6 +80,7 @@ const Actor = {
     childData: (actor) => actor.threeObject,
     selected: (actor) => DebugData.selection.actor === actor.index,
     onClick: (actor) => {DebugData.selection.actor = actor.index},
+    onDoubleClick: locateObject
 };
 
 export const ActorsNode = {
