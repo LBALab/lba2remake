@@ -2,6 +2,8 @@ extends: airbnb
 parser: babel-eslint
 env:
   browser: true
+globals:
+  ga: false
 rules:
   indent:
     - error
@@ -15,6 +17,8 @@ rules:
   default-case: off
   function-paren-newline: off
 
+  no-lonely-if: off
+  no-continue: off
   no-bitwise: off
   no-param-reassign: off
   no-use-before-define: off

@@ -3,17 +3,20 @@ import * as THREE from 'three';
 import async from 'async';
 
 import {createState} from './state';
-import {createAudioManager} from '../audio'
+import {createAudioManager} from '../audio';
 import {loadHqrAsync} from '../hqr';
 import {loadTextsAsync} from '../text';
 
-export function createGame(params: Object, clock: Object, setUiState: Function, getUiState: Function) {
-    let _isPaused = false;
-    let _isLoading = false;
+export function createGame(params: Object,
+                           clock: Object,
+                           setUiState: Function,
+                           getUiState: Function) {
+    let isPaused = false;
+    let isLoading = false;
 
-    let _state = createState();
+    let state = createState();
 
-    const _audio = createAudioManager(_state);
+    const audio = createAudioManager(state);
 
     return {
         setUiState,
@@ -33,11 +36,11 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
             crunch: 0,
             weapon: 0
         },
-        resetState: function() {
-            _state = createState();
+        resetState() {
+            state = createState();
             this.resetControlsState();
         },
-        resetControlsState: function() {
+        resetControlsState() {
             this.controlsState.heroSpeed = 0;
             this.controlsState.heroRotationSpeed = 0;
             this.controlsState.action = 0;
@@ -46,46 +49,50 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
             this.controlsState.crunch = 0;
             this.controlsState.weapon = 0;
         },
-        loading: function(index: number) {
-            _isPaused = true;
-            _isLoading = true;
+        loading(index: number) {
+            isPaused = true;
+            isLoading = true;
             clock.stop();
             this.setUiState({loading: true});
+            // eslint-disable-next-line no-console
             console.log(`Loading scene #${index}`);
         },
-        loaded: function() {
-            _isPaused = false;
-            if (!_isPaused)
+        loaded() {
+            isPaused = false;
+            if (!isPaused)
                 clock.start();
-            _isLoading = false;
+            isLoading = false;
             this.setUiState({loading: false});
-            console.log("Loaded!");
+            // eslint-disable-next-line no-console
+            console.log('Loaded!');
         },
 
-        isPaused: () => _isPaused,
-        isLoading: () => _isLoading,
+        isPaused: () => isPaused,
+        isLoading: () => isLoading,
 
-        getState: () => _state,
-        getAudioManager: () => _audio,
+        getState: () => state,
+        getAudioManager: () => audio,
 
-        togglePause: function() {
-            if (_isPaused) {
+        togglePause() {
+            if (isPaused) {
                 this.resume();
             } else {
                 this.pause();
             }
         },
         pause: () => {
-            _isPaused = true;
+            isPaused = true;
             clock.stop();
-            console.log("Pause");
+            // eslint-disable-next-line no-console
+            console.log('Pause');
         },
         resume: () => {
-            _isPaused = false;
+            isPaused = false;
             clock.start();
+            // eslint-disable-next-line no-console
             console.log('Resume');
         },
-        preload: function(callback: Function) {
+        preload(callback: Function) {
             const that = this;
             async.auto({
                 loading: preloadFileAsync('images/30_screen_loading.png'),
@@ -93,15 +100,15 @@ export function createGame(params: Object, clock: Object, setUiState: Function, 
                 ribbon: preloadFileAsync('images/11_sprite_lba2.png'),
                 ress: preloadFileAsync('data/RESS.HQR'),
                 text: loadHqrAsync('TEXT.HQR'),
-                voxgame: preloadFileAsync(`data/VOX/${_state.config.languageVoice.code}_GAM_AAC.VOX`),
-                vox000: preloadFileAsync(`data/VOX/${_state.config.languageVoice.code}_000_AAC.VOX`),
+                voxgame: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`),
+                vox000: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_000_AAC.VOX`),
                 muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4'),
                 mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4'),
                 mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4'),
                 musmenu: preloadFileAsync('data/MUSIC/Track6.mp4'),
-                loadMenuText: loadTextsAsync(_state.config.language, 0),
-                loadGameText: loadTextsAsync(_state.config.language, 4)
-            }, function(err, files) {
+                loadMenuText: loadTextsAsync(state.config.language, 0),
+                loadGameText: loadTextsAsync(state.config.language, 4)
+            }, (err, files) => {
                 that.menuTexts = files.loadMenuText;
                 that.texts = files.loadGameText;
                 callback();
@@ -115,9 +122,9 @@ function preloadFileAsync(url) {
         const request = new XMLHttpRequest();
         request.open('GET', url, true);
         request.responseType = 'arraybuffer';
-        request.onload = function() {
+        request.onload = () => {
             callback();
         };
         request.send();
-    }
+    };
 }

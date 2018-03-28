@@ -4,7 +4,6 @@ import {
     map,
     filter,
     each,
-    find,
     noop
 } from 'lodash';
 
@@ -18,12 +17,13 @@ import {loadPoint} from './points';
 import {loadZone} from './zones';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initCameraMovement} from './loop/cameras';
-import {initSceneDebugData, loadSceneMetaData} from '../ui/editor/DebugData';
-import DebugData from '../ui/editor/DebugData';
+import DebugData, * as DBG from '../ui/editor/DebugData';
+
+const {initSceneDebugData, loadSceneMetaData} = DBG;
 
 export function createSceneManager(params, game, renderer, callback: Function, hideMenu: Function) {
     let scene = null;
-    let sceneManager = {
+    const sceneManager = {
         getScene: (index) => {
             if (scene && index && scene.sideScenes && index in scene.sideScenes) {
                 return scene.sideScenes[index];
@@ -32,13 +32,13 @@ export function createSceneManager(params, game, renderer, callback: Function, h
         }
     };
 
-    loadSceneMapData(sceneMap => {
-        sceneManager.hideMenuAndGoto = function(index) {
+    loadSceneMapData((sceneMap) => {
+        sceneManager.hideMenuAndGoto = function hideMenuAndGoto(index) {
             hideMenu();
             this.goto(index);
         };
 
-        sceneManager.goto = function(index, pCallback = noop, force = false) {
+        sceneManager.goto = function goto(index, pCallback = noop, force = false) {
             if ((!force && scene && index === scene.index) || game.isLoading())
                 return;
 
@@ -51,8 +51,8 @@ export function createSceneManager(params, game, renderer, callback: Function, h
             game.setUiState({ text: null, cinema: false });
 
             const hash = window.location.hash;
-            if (hash.match(/scene\=\d+/)) {
-                window.location.hash = hash.replace(/scene\=\d+/, `scene=${index}`);
+            if (hash.match(/scene=\d+/)) {
+                window.location.hash = hash.replace(/scene=\d+/, `scene=${index}`);
             }
 
             const musicSource = game.getAudioManager().getMusicSource();
@@ -93,17 +93,17 @@ export function createSceneManager(params, game, renderer, callback: Function, h
             }
         };
 
-        sceneManager.next = function(pCallback) {
+        sceneManager.next = function next(pCallback) {
             if (scene) {
-                const next = (scene.index + 1) % sceneMap.length;
-                this.goto(next, pCallback);
+                const nextIdx = (scene.index + 1) % sceneMap.length;
+                this.goto(nextIdx, pCallback);
             }
         };
 
-        sceneManager.previous = function(pCallback) {
+        sceneManager.previous = function previous(pCallback) {
             if (scene) {
-                const previous = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
-                this.goto(previous, pCallback);
+                const previousIdx = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
+                this.goto(previousIdx, pCallback);
             }
         };
 
@@ -114,7 +114,7 @@ export function createSceneManager(params, game, renderer, callback: Function, h
 }
 
 function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent, callback) {
-    loadSceneData(game.getState().config.language, index, sceneData => {
+    loadSceneData(game.getState().config.language, index, (sceneData) => {
         const indexInfo = sceneMap[index];
         let islandName;
         if (indexInfo.isIsland) {
@@ -128,17 +128,19 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             fogDensity: 0,
         };
         const loadSteps = {
-            metadata: (callback) => params.editor ? loadSceneMetaData(index, callback) : callback(),
-            actors: ['metadata', (data, callback) => { async.map(sceneData.actors, loadActor.bind(null, params, envInfo, sceneData.ambience), callback) }],
-            points: ['metadata', (data, callback) => { async.map(sceneData.points, loadPoint, callback) }],
-            zones: ['metadata', (data, callback) => { async.map(sceneData.zones, loadZone, callback) }],
+            metadata: callback => (params.editor ? loadSceneMetaData(index, callback) : callback()),
+            actors: ['metadata', (data, callback) => { async.map(sceneData.actors, loadActor.bind(null, params, envInfo, sceneData.ambience), callback); }],
+            points: ['metadata', (data, callback) => { async.map(sceneData.points, loadPoint, callback); }],
+            zones: ['metadata', (data, callback) => { async.map(sceneData.zones, loadZone, callback); }],
         };
 
         if (!parent) {
             if (indexInfo.isIsland) {
-                loadSteps.scenery = loadIslandScenery.bind(null, params, islandName, sceneData.ambience);
+                loadSteps.scenery =
+                    loadIslandScenery.bind(null, params, islandName, sceneData.ambience);
             } else {
-                loadSteps.scenery = loadIsometricScenery.bind(null, renderer, indexInfo.index);
+                loadSteps.scenery =
+                    loadIsometricScenery.bind(null, renderer, indexInfo.index);
             }
             loadSteps.threeScene = ['scenery', (data, callback) => {
                 const threeScene = new THREE.Scene();
@@ -148,7 +150,15 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             }];
             if (indexInfo.isIsland) {
                 loadSteps.sideScenes = ['scenery', 'threeScene', (data, callback) => {
-                    loadSideScenes(sceneManager, params, game, renderer, sceneMap, index, data, callback);
+                    loadSideScenes(
+                        sceneManager,
+                        params,
+                        game,
+                        renderer,
+                        sceneMap,
+                        index,
+                        data,
+                        callback);
                 }];
             }
         } else {
@@ -156,15 +166,15 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };
         }
 
-        async.auto(loadSteps, function (err, data) {
+        async.auto(loadSteps, (err, data) => {
             const sceneNode = loadSceneNode(index, indexInfo, data);
             data.threeScene.add(sceneNode);
             const scene = {
-                index: index,
+                index,
                 data: sceneData,
                 isIsland: indexInfo.isIsland,
                 threeScene: data.threeScene,
-                sceneNode: sceneNode,
+                sceneNode,
                 scenery: data.scenery,
                 sideScenes: data.sideScenes,
                 parentScene: data,
@@ -175,7 +185,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                 zoneState: { listener: null, ended: false },
                 goto: sceneManager.goto.bind(sceneManager),
                 reset() {
-                    each(this.actors, actor => {
+                    each(this.actors, (actor) => {
                         actor.reset();
                     });
                     loadScripts(params, game, scene);
@@ -216,7 +226,7 @@ function loadSceneNode(index, indexInfo, data) {
         sceneNode.position.x = section.x * 2;
         sceneNode.position.z = section.z * 2;
     }
-    const addToSceneNode = obj => {
+    const addToSceneNode = (obj) => {
         if (obj.threeObject !== null) { // because of the sprite actors
             sceneNode.add(obj.threeObject);
         }
@@ -241,14 +251,15 @@ function loadSideScenes(sceneManager, params, game, renderer, sceneMap, index, p
                     return sideIndex;
                 }
             }
+            return null;
         }),
-        id => id !== undefined
+        id => id !== null
     );
     async.map(sideIndices, (sideIndex, callback) => {
         loadScene(sceneManager, params, game, renderer, sceneMap, sideIndex, parent, callback);
     }, (err, sideScenes) => {
         const sideScenesMap = {};
-        each(sideScenes, sideScene => {
+        each(sideScenes, (sideScene) => {
             sideScenesMap[sideScene.index] = sideScene;
         });
         callback(null, sideScenesMap);
@@ -257,9 +268,9 @@ function loadSideScenes(sceneManager, params, game, renderer, sceneMap, index, p
 
 function createSceneVariables(scene) {
     let maxVarCubeIndex = -1;
-    each(scene.actors, actor => {
+    each(scene.actors, (actor) => {
         const commands = actor.scripts.life.commands;
-        each(commands, cmd => {
+        each(commands, (cmd) => {
             if (cmd.op.command === 'SET_VAR_CUBE') {
                 maxVarCubeIndex = Math.max(cmd.args[0].value, maxVarCubeIndex);
             }
@@ -269,7 +280,7 @@ function createSceneVariables(scene) {
         });
     });
     const variables = [];
-    for (let i = 0; i <= maxVarCubeIndex; ++i) {
+    for (let i = 0; i <= maxVarCubeIndex; i += 1) {
         variables.push(0);
     }
     return variables;
@@ -277,9 +288,9 @@ function createSceneVariables(scene) {
 
 function findUsedVarGames(scene) {
     const usedVars = [];
-    each(scene.actors, actor => {
+    each(scene.actors, (actor) => {
         const commands = actor.scripts.life.commands;
-        each(commands, cmd => {
+        each(commands, (cmd) => {
             let value = null;
             if (cmd.op.command === 'SET_VAR_GAME') {
                 value = cmd.args[0].value;

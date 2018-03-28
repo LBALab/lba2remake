@@ -18,7 +18,7 @@ export function initFollow3DMovement(controlsState, camera, scene) {
     }
 }
 
-export function processFollow3DMovement(controlsState, camera, scene, time) {
+export function processFollow3DMovement(controlsState, camera, scene) {
     const hero = scene.actors[0];
     const heroPos = HERO_TARGET_POS.clone();
     const cameraPos = CAMERA_HERO_OFFSET.clone();
@@ -33,7 +33,7 @@ export function processFollow3DMovement(controlsState, camera, scene, time) {
             const euler = new THREE.Euler();
             const q = controlsState.cameraOrientation;
             euler.setFromQuaternion(q, 'YXZ');
-            euler.y = Math.atan2(-orientation[1], orientation[0]) + Math.PI / 2;
+            euler.y = Math.atan2(-orientation[1], orientation[0]) + (Math.PI / 2);
             q.setFromEuler(euler);
         }
 
@@ -41,8 +41,14 @@ export function processFollow3DMovement(controlsState, camera, scene, time) {
         camera.quaternion.multiply(controlsState.cameraHeadOrientation);
     } else {
         controlsState.cameraLerp.lerpVectors(camera.position, cameraPos, 0.025);
-        controlsState.cameraLookAtLerp.lerpVectors(controlsState.cameraLookAtLerp.clone(), heroPos, 0.1);
-        camera.position.set(controlsState.cameraLerp.x, controlsState.cameraLerp.y, controlsState.cameraLerp.z);
+        controlsState.cameraLookAtLerp.lerpVectors(
+            controlsState.cameraLookAtLerp.clone(),
+            heroPos,
+            0.1);
+        camera.position.set(
+            controlsState.cameraLerp.x,
+            controlsState.cameraLerp.y,
+            controlsState.cameraLerp.z);
         camera.lookAt(controlsState.cameraLookAtLerp);
     }
 }
@@ -59,7 +65,7 @@ export function processFree3DMovement(controlsState, camera, scene, time) {
         controlsState.cameraSpeed.z * 0.5
     );
 
-    speed.multiplyScalar((altitude * altitude) * 3.0 + 1.0);
+    speed.multiplyScalar((altitude * altitude * 3) + 1);
     speed.applyQuaternion(controlsState.cameraOrientation);
     speed.applyQuaternion(onlyY(controlsState.cameraHeadOrientation));
     speed.multiplyScalar(time.delta);

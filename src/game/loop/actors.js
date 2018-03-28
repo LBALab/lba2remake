@@ -11,7 +11,14 @@ export function updateActor(game: Object, scene: Object, actor: Actor, time: Obj
     if (actor.model !== null && actor.threeObject && actor.threeObject.visible) {
         const model = actor.model;
         actor.animState.matrixRotation.makeRotationFromQuaternion(actor.physics.orientation);
-        updateModel(game, scene.isActive, model, actor.animState, actor.props.entityIndex, actor.props.animIndex, time);
+        updateModel(
+            game,
+            scene.isActive,
+            model,
+            actor.animState,
+            actor.props.entityIndex,
+            actor.props.animIndex,
+            time);
         if (actor.animState.isPlaying) {
             updateMovements(actor, time);
         }
@@ -21,14 +28,15 @@ export function updateActor(game: Object, scene: Object, actor: Actor, time: Obj
 function updateMovements(actor: Actor, time: Object) {
     const delta = time.delta * 1000;
     if (actor.props.runtimeFlags.isTurning) {
-        let angle = ((actor.physics.temp.destAngle - actor.physics.temp.angle) * delta) / (actor.props.speed * 10);
+        const baseAngle = ((actor.physics.temp.destAngle - actor.physics.temp.angle) * delta);
+        let angle = baseAngle / (actor.props.speed * 10);
         angle = Math.atan2(Math.sin(angle), Math.cos(angle));
         actor.physics.temp.angle += angle;
         const euler = new THREE.Euler(0, actor.physics.temp.angle, 0, 'XZY');
         actor.physics.orientation.setFromEuler(euler);
     }
     if (actor.props.runtimeFlags.isWalking) {
-        actor.physics.temp.position.set(0,0,0);
+        actor.physics.temp.position.set(0, 0, 0);
 
         const speedZ = ((actor.animState.step.z * delta) / actor.animState.keyframeLength);
         const speedX = ((actor.animState.step.x * delta) / actor.animState.keyframeLength);
@@ -39,7 +47,8 @@ function updateMovements(actor: Actor, time: Object) {
         actor.physics.temp.position.x -= Math.cos(actor.physics.temp.angle) * speedX;
         actor.physics.temp.position.z += Math.sin(actor.physics.temp.angle) * speedX;
 
-        actor.physics.temp.position.y += (actor.animState.step.y * delta) / (actor.animState.keyframeLength);
+        actor.physics.temp.position.y +=
+            (actor.animState.step.y * delta) / (actor.animState.keyframeLength);
     } else {
         actor.physics.temp.position.set(0, 0, 0);
     }
