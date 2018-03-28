@@ -131,7 +131,7 @@ export function locateObject(object){
     if (DebugData.scope.scene.isIsland || !object.threeObject)
         return;
 
-    if (!DebugData.scope.game.controlsState.freeCamera){
+    if (!DebugData.scope.game.controlsState.freeCamera) {
         DebugData.scope.game.controlsState.freeCamera = true;
     }
     centerIsoCamera(DebugData.scope.renderer, DebugData.scope.renderer.cameras.isoCamera, DebugData.scope.scene, object)

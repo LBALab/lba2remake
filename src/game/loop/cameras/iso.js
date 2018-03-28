@@ -5,7 +5,7 @@ export function processFollowIsoMovement(renderer, camera, scene) {
 }
 
 export function centerIsoCamera(renderer, camera, scene, object) {
-    if (!object){
+    if (!object) {
         object = scene.actors[0];
     }
 
@@ -27,7 +27,7 @@ export function processFreeIsoMovement(controlsState, camera, time) {
 
 function getObjectIsoPos(renderer, camera, object) {
     let objectHeight = 0;
-    if (object.model){
+    if (object.model) {
         const bb = object.model.boundingBox;
         objectHeight = bb.max.y - bb.min.y;
     }
