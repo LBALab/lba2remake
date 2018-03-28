@@ -1,0 +1,29 @@
+extends: airbnb
+parser: babel-eslint
+env:
+  browser: true
+rules:
+  indent:
+    - error
+    - 4
+  comma-dangle: off
+  prefer-destructuring: off
+
+  no-bitwise: off
+  no-param-reassign: off
+  no-use-before-define: off
+  no-shadow: warn
+
+  react/jsx-indent:
+    - error
+    - 4
+  react/jsx-closing-tag-location: off
+  react/prop-types: off
+  react/jsx-wrap-multilines: off
+  react/jsx-tag-spacing: off
+
+  import/no-named-as-default-member: off
+  import/prefer-default-export: off
+
+  object-curly-spacing: off
+  object-curly-newline: off
