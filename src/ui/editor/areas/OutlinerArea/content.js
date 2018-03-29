@@ -79,8 +79,8 @@ export function makeContentComponent(tree, frame, ownStyle) {
                     {renderElement([], isFunction(tree.name) ? tree.name() : tree.name)}
                     {map(path, (name, idx) => {
                         const subpath = path.slice(0, idx + 1);
-                        return <span key={idx}>
-                        &nbsp;<span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
+                        return <span key={idx}>&nbsp;
+                            <span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
                             {renderElement(subpath, name)}
                         </span>;
                     })}
