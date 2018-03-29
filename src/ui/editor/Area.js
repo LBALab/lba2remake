@@ -171,9 +171,8 @@ export default class Area extends React.Component {
                     {popup.cancel ? <button style={buttonStyle} onClick={cancel}>{popup.cancel}</button> : null}
                 </div>
             </div>;
-        } else {
-            return null;
         }
+        return null;
     }
 
     confirmPopup(msg, ok, cancel, callback) {

@@ -42,8 +42,8 @@ function compileInstruction(script, cmd, cmdOffset) {
     postProcess(script, cmd, cmdOffset, args);
 
     const callback = cmd.op.callback;
-    const instruction = callback.bind.apply(callback, args);
-    instruction.dbgLabel = cmdOffset + ' ' + cmd.op.command;
+    const instruction = callback.bind(...args);
+    instruction.dbgLabel = `${cmdOffset} ${cmd.op.command}`;
     instruction.section = cmd.section;
     if (condition)
         instruction.condition = condition;

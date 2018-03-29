@@ -154,11 +154,11 @@ export function loadSceneMetaData(sceneIndex, callback) {
     const request = new XMLHttpRequest();
     request.open('GET', `metadata/scene_${sceneIndex}.json`, true);
 
-    request.onload = function() {
+    request.onload = function () {
         if (this.status === 200) {
             try {
                 DebugData.metadata.scenes[sceneIndex] = JSON.parse(request.response);
-            } catch(e) {}
+            } catch (e) {}
         }
         callback();
     };
@@ -176,7 +176,7 @@ function saveSceneMetaData(sceneIndex) {
                 `nocredit=${authData.nocredit}`
             ].join('&');
             request.open('POST', `ws/metadata/scene/${sceneIndex}?${query}`, true);
-            request.onload = function() {
+            request.onload = function () {
                 console.log(`Saved scene ${sceneIndex} metadata`);
             };
             request.send(JSON.stringify(DebugData.metadata.scenes[sceneIndex], null, 2));
@@ -188,11 +188,11 @@ export function loadGameMetaData() {
     const request = new XMLHttpRequest();
     request.open('GET', 'metadata/game.json', true);
 
-    request.onload = function() {
+    request.onload = function () {
         if (this.status === 200) {
             try {
                 DebugData.metadata.game = JSON.parse(request.response);
-            } catch(e) {}
+            } catch (e) {}
         }
     };
 

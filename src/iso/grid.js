@@ -90,27 +90,25 @@ const libraries = [];
 function loadLibrary(bkg, bricks, palette, entry) {
     if (libraries[entry]) {
         return libraries[entry];
-    } else {
-        const buffer = bkg.getEntry(179 + entry);
-        const dataView = new DataView(buffer);
-        const numLayouts = dataView.getUint32(0, true) / 4;
-        const layouts = [];
-        for (let i = 0; i < numLayouts; i += 1) {
-            const offset = dataView.getUint32(i * 4, true);
-            const nextOffset = i == numLayouts - 1 ? dataView.byteLength : dataView.getUint32((i + 1) * 4, true);
-            const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
-            layouts.push(loadLayout(layoutDataView));
-        }
-        const mapping = loadBricksMapping(layouts, bricks, palette);
-        const library = {
-            texture: mapping.texture,
-            bricksMap: mapping.bricksMap,
-            layouts
-        };
-        libraries[entry] = library;
-        return library;
     }
-
+    const buffer = bkg.getEntry(179 + entry);
+    const dataView = new DataView(buffer);
+    const numLayouts = dataView.getUint32(0, true) / 4;
+    const layouts = [];
+    for (let i = 0; i < numLayouts; i += 1) {
+        const offset = dataView.getUint32(i * 4, true);
+        const nextOffset = i == numLayouts - 1 ? dataView.byteLength : dataView.getUint32((i + 1) * 4, true);
+        const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
+        layouts.push(loadLayout(layoutDataView));
+    }
+    const mapping = loadBricksMapping(layouts, bricks, palette);
+    const library = {
+        texture: mapping.texture,
+        bricksMap: mapping.bricksMap,
+        layouts
+    };
+    libraries[entry] = library;
+    return library;
 }
 
 function loadLayout(dataView) {

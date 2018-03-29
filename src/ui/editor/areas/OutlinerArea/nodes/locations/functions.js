@@ -20,23 +20,22 @@ function scene(type, index, name, children) {
     const icon = `editor/icons/locations/${type}.png`;
     if (index === -1) {
         return {name, type, children, icon, color: indirectSceneColor};
-    } else {
-        return {
-            name,
-            type,
-            onClick: goto.bind(null, index),
-            children: children ? children : [],
-            props: [
-                {
-                    id: 'index',
-                    value: index,
-                    render: value => `#${value}`
-                }
-            ],
-            selected: isSelected.bind(null, index),
-            icon
-        };
     }
+    return {
+        name,
+        type,
+        onClick: goto.bind(null, index),
+        children: children || [],
+        props: [
+            {
+                id: 'index',
+                value: index,
+                render: value => `#${value}`
+            }
+        ],
+        selected: isSelected.bind(null, index),
+        icon
+    };
 }
 
 export const island = scene.bind(null, 'island');

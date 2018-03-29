@@ -36,15 +36,13 @@ function loadBrick(bkg, entry) {
                     pixels[offset()] = color;
                     x += 1;
                 }
-            }
-            else if (type === 1 || type === 3) {
+            } else if (type === 1 || type === 3) {
                 for (let i = 0; i < runLength; i += 1) {
                     pixels[offset()] = dataView.getUint8(ptr);
                     ptr += 1;
                     x += 1;
                 }
-            }
-            else {
+            } else {
                 x += runLength;
             }
         }

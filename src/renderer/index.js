@@ -49,8 +49,7 @@ export function createRenderer(params, canvas) {
             const camera = scene.isIsland ? camera3D : cameraIso;
             if (antialias) {
                 smaa.render(scene.threeScene, camera);
-            }
-            else {
+            } else {
                 tgtRenderer.render(scene.threeScene, camera);
             }
         },
@@ -69,7 +68,7 @@ export function createRenderer(params, canvas) {
             resize3DCamera(camera3D, width, height);
             resizeIsometricCamera(cameraIso, getPixelRatio(), width, height);
         },
-        getMainCamera: scene => scene.isIsland ? camera3D : cameraIso,
+        getMainCamera: scene => (scene.isIsland ? camera3D : cameraIso),
         pixelRatio: getPixelRatio,
         setPixelRatio(value) { baseRenderer.setPixelRatio(value); }
     };

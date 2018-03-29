@@ -13,7 +13,7 @@ export function loadAnimState() {
         matrixRotation: new THREE.Matrix4(),
         currentFrame: 0,
         loopFrame: 0,
-        currentTime:0,
+        currentTime: 0,
         isPlaying: true,
         isWaiting: false,
         hasEnded: false,
@@ -35,9 +35,9 @@ export function resetAnimState(state) {
     state.isWaiting = false;
     state.hasEnded = false;
     state.keyframeChanged = false;
-    state.step.set(0,0,0);
+    state.step.set(0, 0, 0);
     state.keyframeLength = 0;
-    state.floorSound=-1;
+    state.floorSound = -1;
 }
 
 export function initSkeleton(state, skeleton, loopFrame) {
@@ -48,12 +48,12 @@ export function initSkeleton(state, skeleton, loopFrame) {
 }
 
 export function createSkeleton(body) {
-    let skeleton = [];
+    const skeleton = [];
     for (let i = 0; i < body.bonesSize; i += 1) {
         const bone = body.bones[i];
         const boneVertex = body.vertices[bone.vertex];
 
-        let skeletonBone = {
+        const skeletonBone = {
             boneIndex: i,
             parent: bone.parent,
             vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
@@ -84,7 +84,7 @@ export function createSkeleton(body) {
 }
 
 function createShaderBone(state) {
-    let bones = {
+    const bones = {
         position: [],
         rotation: [],
         matrix: []
@@ -161,7 +161,7 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
 
     state.currentTime += time.delta * 1000;
 
-    let nextkeyframe = anim.keyframes[state.loopFrame];
+    const nextkeyframe = anim.keyframes[state.loopFrame];
     if (!nextkeyframe) return;
     state.keyframeLength = nextkeyframe.length;
 
@@ -183,8 +183,7 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
 
 function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones, length = keyframe.length) {
     const interpolation = state.currentTime / length;
-    try
-    {
+    try {
         for (let i = 0; i < numBones; i += 1) {
             const s = state.skeleton[i];
             const bf = keyframe.boneframes[i];
@@ -194,9 +193,9 @@ function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones, lengt
                 continue;
             }
             if (bf.type === 0) { // rotation
-                let eulerX = getRotation(nbf.veuler.x, bf.veuler.x, interpolation);
-                let eulerY = getRotation(nbf.veuler.y, bf.veuler.y, interpolation);
-                let eulerZ = getRotation(nbf.veuler.z, bf.veuler.z, interpolation);
+                const eulerX = getRotation(nbf.veuler.x, bf.veuler.x, interpolation);
+                const eulerY = getRotation(nbf.veuler.y, bf.veuler.y, interpolation);
+                const eulerZ = getRotation(nbf.veuler.z, bf.veuler.z, interpolation);
                 s.euler = new THREE.Vector3(eulerX, eulerY, eulerZ);
             } else { // translation
                 s.pos.x = bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
@@ -204,8 +203,7 @@ function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones, lengt
                 s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
             }
         }
-    }
-    catch (e) {
+    } catch (e) {
         console.debug('ANIM: exception on updateSkeletonAtKeyframe', e);
     }
 
@@ -228,13 +226,13 @@ function updateSkeletonHierarchy(skeleton, index) {
         const pos = s.vertex.clone();
 
         if (s.type == 0) { // rotation
-            s.m.makeRotationFromEuler(new THREE.Euler(THREE.Math.degToRad(s.euler.x), 
-                THREE.Math.degToRad(s.euler.y), 
+            s.m.makeRotationFromEuler(new THREE.Euler(THREE.Math.degToRad(s.euler.x),
+                THREE.Math.degToRad(s.euler.y),
                 THREE.Math.degToRad(s.euler.z), 'XZY'));
         } else { // translation
             pos.x += s.pos.x;
             pos.y += s.pos.y;
-            pos.z += s.pos.z; 
+            pos.z += s.pos.z;
         }
 
         s.m.setPosition(pos);

@@ -5,12 +5,12 @@ import {OperatorOpcode} from './data/operator';
 import {last} from 'lodash';
 
 const TypeSize = {
-    'Int8': 1,
-    'Uint8': 1,
-    'Int16': 2,
-    'Uint16': 2,
-    'Int32': 4,
-    'Uint32': 4,
+    Int8: 1,
+    Uint8: 1,
+    Int16: 2,
+    Uint16: 2,
+    Int32: 4,
+    Uint32: 4,
 };
 
 export function parseScript(actor, type, script) {
@@ -182,6 +182,6 @@ function parseValue(state, script, spec) {
 }
 
 function getLbaType(spec) {
-    let value = spec.split(':');
+    const value = spec.split(':');
     return value[1];
 }

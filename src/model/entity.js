@@ -97,14 +97,14 @@ const ACTIONTYPE = {
 };
 /* eslint-enable key-spacing */
 
-let entities = [];
+const entities = [];
 
 export function loadEntity(buffer: ArrayBuffer) {
     if (entities.length == 0) {
         const data = new DataView(buffer);
         const offset = data.getUint32(0, true);
         const numEntries = (offset / 4) - 1;
-        let offsets = [];
+        const offsets = [];
         for (let i = 0; i < numEntries; i += 1) {
             offsets.push(data.getUint32(i * 4, true));
         }
@@ -119,7 +119,7 @@ export function loadEntity(buffer: ArrayBuffer) {
 function loadEntityEntry(buffer, dataOffset, index) {
     const data = new DataView(buffer, dataOffset);
     let offset = 0;
-    let entity = {
+    const entity = {
         index,
         bodies: [],
         anims: []
@@ -129,31 +129,31 @@ function loadEntityEntry(buffer, dataOffset, index) {
         opcode = data.getUint8(offset);
         offset += 1;
 
-        switch(opcode) {
+        switch (opcode) {
             case 1: { // body
-                let body = loadEntityBody(data, offset);
+                const body = loadEntityBody(data, offset);
                 entity.bodies.push(body);
                 offset += body.offset;
             }
                 break;
             case 3: { // anim
-                let anim = loadEntityAnim(data, offset);
+                const anim = loadEntityAnim(data, offset);
                 entity.anims.push(anim);
                 offset += anim.offset;
             }
                 break;
-            /*default:
+            /* default:
                 offset += 1;
                 offset += data.getUint8(offset);
-            break;*/
+            break; */
         }
-    } while(opcode != 0xFF);
+    } while (opcode != 0xFF);
 
     return entity;
 }
 
 function loadEntityBody(data, offset) {
-    let body = {
+    const body = {
         index: 0,
         offset: 0,
         bodyIndex: 0,
@@ -175,11 +175,15 @@ function loadEntityBody(data, offset) {
 
     if (hasCollisionBox === 1) {
         body.hasCollisionBox = true;
-        let box = {
-            xMin: 0, yMin: 0, zMin: 0,
-            xMax: 0, yMax: 0, zMax: 0
+        const box = {
+            xMin: 0,
+            yMin: 0,
+            zMin: 0,
+            xMax: 0,
+            yMax: 0,
+            zMax: 0
         };
-        
+
         const actionType = data.getUint8(offset, true);
         offset += 1;
         if (actionType === ACTIONTYPE.ZV) {
@@ -196,7 +200,7 @@ function loadEntityBody(data, offset) {
 }
 
 function loadEntityAnim(data, offset) {
-    let anim = {
+    const anim = {
         index: 0,
         offset: 0,
         animIndex: 0,
@@ -213,14 +217,14 @@ function loadEntityAnim(data, offset) {
     if (anim.offset == 0) {
         anim.offset += 5;
     }
-    //const actionBytes = data.getUint8(offset++, true);
+    // const actionBytes = data.getUint8(offset++, true);
     anim.animIndex = data.getInt16(offset, true);
     offset += 2;
 
     const hasAction = data.getUint8(offset, true);
 
     if (hasAction > 0) {
-        //anim.offset += actionBytes - 3;
+        // anim.offset += actionBytes - 3;
 
         let innerOffset = 0;
 
@@ -228,7 +232,7 @@ function loadEntityAnim(data, offset) {
         innerOffset += 1;
 
         for (let i = 0; i < numActions; i += 1) {
-            let action = {
+            const action = {
                 type: data.getUint8(innerOffset + offset, true),
                 animFrame: -1,
                 sampleIndex: -1,
@@ -247,7 +251,7 @@ function loadEntityAnim(data, offset) {
                 repeat: -1,
                 targetActor: -1
             };
-            switch(action.type) {
+            switch (action.type) {
                 case ACTIONTYPE.ZV:
                     innerOffset += 12 + 1;
                     break;

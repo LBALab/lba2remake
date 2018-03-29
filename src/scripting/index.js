@@ -74,9 +74,8 @@ function runScript(params, script, time) {
             if (!(next.skipSideScenes && !script.context.scene.isActive)) {
                 next(time);
             }
-        }
-        catch (e) {
-            console.error('Error on instruction: actor(' + context.actor.index + '):' + context.type + ':' + instructions[state.offset].dbgLabel + '"\n', e);
+        } catch (e) {
+            console.error(`Error on instruction: actor(${context.actor.index}):${context.type}:${instructions[state.offset].dbgLabel}"\n`, e);
         }
         if (state.continue) {
             state.offset += 1;

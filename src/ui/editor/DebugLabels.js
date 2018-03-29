@@ -133,8 +133,8 @@ export default class DebugLabels extends FrameListener {
             POS.setFromMatrixPosition(obj.threeObject.matrixWorld);
             POS.project(renderer.getMainCamera(scene));
 
-            POS.x = ( POS.x * widthHalf ) + widthHalf;
-            POS.y = - ( POS.y * heightHalf ) + heightHalf;
+            POS.x = (POS.x * widthHalf) + widthHalf;
+            POS.y = -(POS.y * heightHalf) + heightHalf;
 
             if (POS.z < 1
                 && POS.x > 0
@@ -187,9 +187,8 @@ export default class DebugLabels extends FrameListener {
                     return <div onClick={this.select.bind(this, item.type, item.index)} key={item.id} style={style}>{item.label} #{item.index}</div>;
                 })}
             </div>;
-        } else {
-            return null;
         }
+        return null;
     }
 }
 

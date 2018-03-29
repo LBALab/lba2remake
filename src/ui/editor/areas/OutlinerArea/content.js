@@ -54,7 +54,8 @@ export function makeContentComponent(tree, frame, ownStyle) {
             const root = this.state.root;
             const path = this.props.sharedState.path;
             if (root.node) {
-                return <Node key={path.join('/')}
+                return <Node
+                    key={path.join('/')}
                     node={root.node}
                     data={root.data}
                     setRoot={this.setRoot.bind(this)}
@@ -62,10 +63,10 @@ export function makeContentComponent(tree, frame, ownStyle) {
                     activePath={this.props.sharedState.activePath}
                     ticker={this.props.ticker}
                     level={0}
-                    split={this.props.split} />;
-            } else {
-                return 'Node is not available.';
+                    split={this.props.split}
+                />;
             }
+            return 'Node is not available.';
         }
 
         renderPath() {
@@ -85,9 +86,8 @@ export function makeContentComponent(tree, frame, ownStyle) {
                         </span>;
                     })}
                 </div>;
-            } else {
-                return null;
             }
+            return null;
         }
 
         setRoot(path) {

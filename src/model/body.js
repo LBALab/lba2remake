@@ -3,54 +3,53 @@ import * as THREE from 'three';
 export function loadBody(model, bodies, index, bodyProps) {
     if (bodies[index]) {
         return bodies[index];
-    } else {
-        const buffer = model.files.body.getEntry(index);
-        const data = new DataView(buffer);
-        const obj = {
-            bodyFlag: data.getInt32(0x00, true),
-            xMin: data.getInt32(0x08, true),
-            xMax: data.getInt32(0x0C, true),
-            yMin: data.getInt32(0x10, true),
-            yMax: data.getInt32(0x14, true),
-            zMin: data.getInt32(0x18, true),
-            zMax: data.getInt32(0x1C, true),
-            bonesSize: data.getUint32(0x20, true),
-            bonesOffset: data.getUint32(0x24, true),
-            verticesSize: data.getUint32(0x28, true),
-            verticesOffset: data.getUint32(0x2C, true),
-            normalsSize: data.getUint32(0x30, true),
-            normalsOffset: data.getUint32(0x34, true),
-            unk1Size: data.getUint32(0x38, true),
-            unk1Offset: data.getUint32(0x3C, true),
-            polygonsSize: data.getUint32(0x40, true),
-            polygonsOffset: data.getUint32(0x44, true),
-            linesSize: data.getUint32(0x48, true),
-            linesOffset: data.getUint32(0x4C, true),
-            spheresSize: data.getUint32(0x50, true),
-            spheresOffset: data.getUint32(0x54, true),
-            uvGroupsSize: data.getUint32(0x58, true),
-            uvGroupsOffset: data.getUint32(0x5C, true),
-            
-            buffer
-        };
-
-        obj.version = obj.bodyFlag & 0xff;
-        obj.hasAnimation = obj.bodyFlag & (1 << 8);
-        obj.noSort = obj.bodyFlag & (1 << 9);
-        obj.hasTransparency = obj.bodyFlag & (1 << 10);
-         
-        loadBones(obj);
-        loadVertices(obj);
-        loadNormals(obj);
-        loadPolygons(obj);
-        loadLines(obj);
-        loadSpheres(obj);
-        loadUVGroups(obj);
-        computeBoundingBox(obj, bodyProps);
-
-        bodies[index] = obj;
-        return obj;
     }
+    const buffer = model.files.body.getEntry(index);
+    const data = new DataView(buffer);
+    const obj = {
+        bodyFlag: data.getInt32(0x00, true),
+        xMin: data.getInt32(0x08, true),
+        xMax: data.getInt32(0x0C, true),
+        yMin: data.getInt32(0x10, true),
+        yMax: data.getInt32(0x14, true),
+        zMin: data.getInt32(0x18, true),
+        zMax: data.getInt32(0x1C, true),
+        bonesSize: data.getUint32(0x20, true),
+        bonesOffset: data.getUint32(0x24, true),
+        verticesSize: data.getUint32(0x28, true),
+        verticesOffset: data.getUint32(0x2C, true),
+        normalsSize: data.getUint32(0x30, true),
+        normalsOffset: data.getUint32(0x34, true),
+        unk1Size: data.getUint32(0x38, true),
+        unk1Offset: data.getUint32(0x3C, true),
+        polygonsSize: data.getUint32(0x40, true),
+        polygonsOffset: data.getUint32(0x44, true),
+        linesSize: data.getUint32(0x48, true),
+        linesOffset: data.getUint32(0x4C, true),
+        spheresSize: data.getUint32(0x50, true),
+        spheresOffset: data.getUint32(0x54, true),
+        uvGroupsSize: data.getUint32(0x58, true),
+        uvGroupsOffset: data.getUint32(0x5C, true),
+
+        buffer
+    };
+
+    obj.version = obj.bodyFlag & 0xff;
+    obj.hasAnimation = obj.bodyFlag & (1 << 8);
+    obj.noSort = obj.bodyFlag & (1 << 9);
+    obj.hasTransparency = obj.bodyFlag & (1 << 10);
+
+    loadBones(obj);
+    loadVertices(obj);
+    loadNormals(obj);
+    loadPolygons(obj);
+    loadLines(obj);
+    loadSpheres(obj);
+    loadUVGroups(obj);
+    computeBoundingBox(obj, bodyProps);
+
+    bodies[index] = obj;
+    return obj;
 }
 
 function loadBones(object) {
@@ -74,7 +73,7 @@ function loadVertices(object) {
         const index = i * 8;
         object.vertices.push({
             x: data.getInt16(index, true) / 0x4000,
-            y: data.getInt16(index + 2 , true) / 0x4000,
+            y: data.getInt16(index + 2, true) / 0x4000,
             z: data.getInt16(index + 4, true) / 0x4000,
             bone: data.getUint16(index + 6, true)
         });
@@ -121,11 +120,11 @@ function loadPolygons(object) {
 
 function loadPolygon(data, offset, renderType, blockSize) {
     const numVertex = (renderType & 0x8000) ? 4 : 3;
-    const hasExtra = (renderType & 0x4000) ? true : false;
-    const hasTex = (renderType & 0x8 && blockSize > 16) ? true : false;
-    const hasTransparency = (renderType == 2) ? true : false;
+    const hasExtra = !!((renderType & 0x4000));
+    const hasTex = !!((renderType & 0x8 && blockSize > 16));
+    const hasTransparency = (renderType == 2);
 
-    let poly = {
+    const poly = {
         renderType,
         vertex: [],
         colour: 0,

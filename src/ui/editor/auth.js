@@ -27,12 +27,10 @@ export function checkAuth(callback) {
     let auth = null;
     const raw_auth = localStorage.getItem('editor_auth');
     try {
-        if (raw_auth)
-        {
+        if (raw_auth) {
             auth = JSON.parse(raw_auth);
         }
-    }
-    catch (e) {}
+    } catch (e) {}
 
     if (auth) {
         callback(auth);
@@ -101,16 +99,21 @@ class AuthPopup extends React.Component {
             </p>
             <div style={form_line}>
                 <label style={{paddingRight: 20}}>Name:</label>
-                <input type="text"
+                <input
+                    type="text"
                     value={auth.name}
                     onChange={this.onChange.bind(this, 'name')}
-                    onKeyDown={stopPropagation}/>
+                    onKeyDown={stopPropagation}
+                />
             </div>
             <div style={form_line}>
                 <label style={{paddingRight: 20}}>Email:</label>
-                <input type="text" value={auth.email}
+                <input
+                    type="text"
+                    value={auth.email}
                     onChange={this.onChange.bind(this, 'email')}
-                    onKeyDown={stopPropagation}/>
+                    onKeyDown={stopPropagation}
+                />
             </div>
             <div style={form_line}>
                 <input type="checkbox" onChange={this.onChange.bind(this, 'nocredit')} checked={auth.nocredit}/>

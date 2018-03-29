@@ -44,8 +44,7 @@ export default class Popup extends React.Component {
                     })}
                 </div>
             </div>;
-        } else {
-            return null;
         }
+        return null;
     }
 }

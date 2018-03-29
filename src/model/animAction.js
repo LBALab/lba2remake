@@ -91,10 +91,10 @@ export function LEFT_STEP(action, {game, animState}) {
     let sampleIndex = animState.floorSound;
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
-        //const frequency = getRandom(0, 0x1000) + 3596;
+        // const frequency = getRandom(0, 0x1000) + 3596;
         const soundFxSource = game.getAudioManager().getSoundFxSource();
         soundFxSource.load(sampleIndex, () => {
-            soundFxSource.play(/*frequency*/);
+            soundFxSource.play(/* frequency */);
         });
     }
 }
@@ -103,10 +103,10 @@ export function RIGHT_STEP(action, {game, animState}) {
     let sampleIndex = animState.floorSound;
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
-        //const frequency = getRandom(0, 0x1000) + 3596;
+        // const frequency = getRandom(0, 0x1000) + 3596;
         const soundFxSource = game.getAudioManager().getSoundFxSource();
         soundFxSource.load(sampleIndex, () => {
-            soundFxSource.play(/*frequency*/);
+            soundFxSource.play(/* frequency */);
         });
     }
 }

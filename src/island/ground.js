@@ -1,6 +1,7 @@
 import {bits} from '../utils';
 import {map} from 'lodash';
 import * as THREE from 'three';
+
 const push = Array.prototype.push;
 
 export function loadGround(section, geometries, usedTiles) {
@@ -152,9 +153,8 @@ function getColors(triangle) {
             colors.push(triangle.color);
         }
         return colors;
-    } else {
-        return [0, 0, 0];
     }
+    return [0, 0, 0];
 }
 
 function getIntensities(intensity, points) {

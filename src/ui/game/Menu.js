@@ -32,11 +32,11 @@ const styleMenuList = {
 
 const menuItems = [
     { item: 'ResumeGame', index: 70, isVisible: false, isEnabled: true, text: null },
-    { item: 'NewGame',    index: 71, isVisible: true,  isEnabled: true, text: null },
-    { item: 'LoadGame',   index: 72, isVisible: true,  isEnabled: false, text: null },
-    { item: 'SaveGame',   index: 73, isVisible: true,  isEnabled: false, text: null },
-    { item: 'Options',    index: 74, isVisible: true,  isEnabled: false, text: null },
-    { item: 'Quit',       index: 75, isVisible: false, isEnabled: false, text: null }
+    { item: 'NewGame', index: 71, isVisible: true, isEnabled: true, text: null },
+    { item: 'LoadGame', index: 72, isVisible: true, isEnabled: false, text: null },
+    { item: 'SaveGame', index: 73, isVisible: true, isEnabled: false, text: null },
+    { item: 'Options', index: 74, isVisible: true, isEnabled: false, text: null },
+    { item: 'Quit', index: 75, isVisible: false, isEnabled: false, text: null }
 ];
 
 
@@ -58,9 +58,9 @@ export default class Menu extends React.Component {
 
     componentWillReceiveProps(newProps) {
         if (newProps.texts) {
-            let menu = menuItems;
+            const menu = menuItems;
             menu[0].isVisible = newProps.inGameMenu;
-            let items = _.filter(menu, 'isVisible');
+            const items = _.filter(menu, 'isVisible');
             each(items, (i) => {
                 i.text = newProps.texts[i.index].value;
             });
@@ -107,16 +107,14 @@ export default class Menu extends React.Component {
     render() {
         if (this.props.showMenu) {
             const styleFull = this.props.inGameMenu ?
-                extend(styleBgInGameMenu,fullscreen)
-                : extend(styleBgMenu,fullscreen);
+                extend(styleBgInGameMenu, fullscreen)
+                : extend(styleBgMenu, fullscreen);
             return <div style={styleFull}>
                 <div style={styleMenu}>
                     <ul style={styleMenuList}>
-                        {map(this.state.items, (i, idx) => {
-                            return (i.isVisible) ? <li key={idx} style={styleMenuItemList}>
-                                <MenuItem item={i} selected={idx === this.state.selectedIndex} onClick={this.itemChanged.bind(this, idx)}/>
-                            </li> : null;
-                        })}
+                        {map(this.state.items, (i, idx) => ((i.isVisible) ? <li key={idx} style={styleMenuItemList}>
+                            <MenuItem item={i} selected={idx === this.state.selectedIndex} onClick={this.itemChanged.bind(this, idx)}/>
+                        </li> : null))}
                     </ul>
                 </div>
             </div>;

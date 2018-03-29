@@ -29,7 +29,7 @@ export function loadModel(params: Object, entityIdx: number, bodyIdx: number, an
         body: loadHqrAsync('BODY.HQR'),
         anim: loadHqrAsync('ANIM.HQR'),
         anim3ds: loadHqrAsync('ANIM3DS.HQR')
-    }, function(err, files) {
+    }, (err, files) => {
         callback(loadModelData(params, files, entityIdx, bodyIdx, animIdx, animState, envInfo, ambience));
     });
 }

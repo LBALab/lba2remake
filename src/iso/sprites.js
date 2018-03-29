@@ -17,7 +17,7 @@ export function loadSprite(index, callback) {
         ress: loadHqrAsync('RESS.HQR'),
         sprites: loadHqrAsync('SPRITES.HQR'),
         spritesRaw: loadHqrAsync('SPRIRAW.HQR')
-    }, function (err, files) {
+    }, (err, files) => {
         const palette = new Uint8Array(files.ress.getEntry(0));
         // lets keep it with two separate textures for now
         if (!spriteCache) {
@@ -38,21 +38,21 @@ function loadMesh(index, sprite) {
     const s = sprite.spritesMap[index];
     const vertices = [
         [0, 0, 0],
-        [s.w,  0, 0],
-        [s.w,   s.h, 0],
-        [0,  s.h, 0]
+        [s.w, 0, 0],
+        [s.w, s.h, 0],
+        [0, s.h, 0]
         /*
         [-s.w/2, -s.h/2, 0],
         [s.w/2,  -s.h/2, 0],
         [s.w/2,   s.h/2, 0],
         [-s.w/2,  s.h/2, 0]
          */
-    ] ;
+    ];
     const uvs = [
-        [s.u/sprite.width,   (s.v/sprite.height) + (s.h/sprite.height)],
-        [(s.u/sprite.width) + (s.w/sprite.width),   (s.v/sprite.height) + (s.h/sprite.height)],
-        [(s.u/sprite.width) + (s.w/sprite.width),   s.v/sprite.height],
-        [s.u/sprite.width,   s.v/sprite.height]
+        [s.u / sprite.width, (s.v / sprite.height) + (s.h / sprite.height)],
+        [(s.u / sprite.width) + (s.w / sprite.width), (s.v / sprite.height) + (s.h / sprite.height)],
+        [(s.u / sprite.width) + (s.w / sprite.width), s.v / sprite.height],
+        [s.u / sprite.width, s.v / sprite.height]
     ];
     const geometries = {
         positions: [],
@@ -65,10 +65,10 @@ function loadMesh(index, sprite) {
     };
 
     // faces
-    for (let j of [0, 1, 2]) {
+    for (const j of [0, 1, 2]) {
         addVertex(j);
     }
-    for (let j of [0, 2, 3]) {
+    for (const j of [0, 2, 3]) {
         addVertex(j);
     }
 
@@ -87,7 +87,7 @@ function loadMesh(index, sprite) {
         wireframe: false
     }));
 
-    let scale = 1 / 1024;
+    const scale = 1 / 1024;
     mesh.scale.set(scale, scale, scale);
     mesh.frustumCulled = true;
 
@@ -139,15 +139,13 @@ function loadSpriteData(sprites, entry) {
                     pixels[offset()] = color;
                     x += 1;
                 }
-            }
-            else if (type == 1 || type == 3) {
+            } else if (type == 1 || type == 3) {
                 for (let i = 0; i < runLength; i += 1) {
                     pixels[offset()] = dataView.getUint8(ptr);
                     ptr += 1;
                     x += 1;
                 }
-            }
-            else {
+            } else {
                 x += runLength;
             }
         }
@@ -197,12 +195,12 @@ export function loadSpritesMapping(sprites, palette) {
     let h = 0;
     let w = 0;
     let maxH = 0;
-    sprites = orderBy(sprites, ['height'],['desc']);
+    sprites = orderBy(sprites, ['height'], ['desc']);
     each(sprites, (sprite, idx) => {
         if (maxH < sprite.height) {
             maxH = sprite.height;
         }
-        if(w + sprite.width > width) {
+        if (w + sprite.width > width) {
             w = 0;
             h += maxH;
         }

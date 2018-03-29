@@ -30,19 +30,17 @@ export function getEnvInfo(name) {
 export function loadIslandScenery(params, name, ambience, callback) {
     if (name in islands) {
         callback(null, islands[name]);
-    }
-    else {
+    } else {
         async.auto({
             ress: loadHqrAsync('RESS.HQR'),
             ile: loadHqrAsync(`${name}.ILE`),
             obl: loadHqrAsync(`${name}.OBL`)
-        }, function(err, files) {
+        }, (err, files) => {
             const island = loadIslandNode(params, islandProps[name], files, ambience);
             islands[name] = island;
             callback(null, island);
         });
     }
-
 }
 
 function loadIslandNode(params, props, files, ambience) {
@@ -157,7 +155,7 @@ const DIFF = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
 
 function updateShadows(scene, matByName) {
-    let shadows = [];
+    const shadows = [];
     let heroPos = null;
 
     function computeShadow(scene, actor) {

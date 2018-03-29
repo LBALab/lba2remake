@@ -64,14 +64,13 @@ export function test() {
 
 function buildTest([original, target]) {
     return () => {
-        const tgt = target === undefined ? 'undefined': `'${target}'`;
+        const tgt = target === undefined ? 'undefined' : `'${target}'`;
         const label = `generate(parse('${original}')) === ${tgt}`;
         if (generate(parse(original)) === target) {
             console.log(`OK: ${label}`);
             return true;
-        } else {
-            console.warn(`FAILED: ${label}`);
-            return false;
         }
+        console.warn(`FAILED: ${label}`);
+        return false;
     };
 }

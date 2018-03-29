@@ -99,7 +99,8 @@ function parseDotExpr(e, end, trim) {
 function parseCall(e, trim) {
     const left = parseIdentifier(e, trim | Trim.RIGHT);
     if (left) {
-        let res, target;
+        let res,
+            target;
         let offset = left.offset;
         do {
             const e_s = e.substr(offset);
@@ -119,13 +120,13 @@ function parseCall(e, trim) {
                 if (brackets) {
                     res = {
                         type: T.ARRAY_EXPR,
-                        left: res ? res : left.node,
+                        left: res || left.node,
                         right: brackets.node
                     };
                 } else {
                     res = {
                         type: T.FUNC_CALL,
-                        left: res ? res : left.node,
+                        left: res || left.node,
                         args: args.node
                     };
                 }
@@ -151,7 +152,7 @@ function parseBrackets(e) {
 function parseArgumentList(e) {
     if (e[0] === '(') {
         let offset = 1;
-        let args = [];
+        const args = [];
         while (true) {
             const e_arg = e.substr(offset);
             const arg = parseExpression(e_arg, ',', Trim.BOTH);

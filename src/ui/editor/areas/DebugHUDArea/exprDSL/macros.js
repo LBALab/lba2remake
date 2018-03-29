@@ -7,9 +7,7 @@ export function map(args, scopes, userMacros) {
     checkNumArgs('map', args, 2);
     const left = execute(args[0], scopes, userMacros);
     checkArgType('map', left, 0, ['array']);
-    const tgt = _.map(left, (s) => {
-        return s !== undefined ? execute(args[1], _.concat(scopes, s), userMacros) : undefined;
-    });
+    const tgt = _.map(left, s => (s !== undefined ? execute(args[1], _.concat(scopes, s), userMacros) : undefined));
     if (left.__filtered__) {
         tgt.__filtered__ = true;
     }
@@ -35,9 +33,7 @@ export function sort(args, scopes, userMacros) {
     const left = execute(args[0], scopes, userMacros);
     checkArgType('sort', left, 0, ['array']);
     const tgt = _.filter(_.map(left, (value, idx) => ({idx, value})), v => v.value !== undefined);
-    tgt.sort((a, b) => {
-        return a.value - b.value;
-    });
+    tgt.sort((a, b) => a.value - b.value);
     tgt.__sorted__ = true;
     return tgt;
 }
@@ -57,11 +53,10 @@ export function euler(args, scopes, userMacros) {
         const euler = new THREE.Euler();
         euler.setFromRotationMatrix(arg, 'XYZ');
         return euler;
-    } else {
-        const euler = new THREE.Euler();
-        euler.setFromVector3(arg, 'XYZ');
-        return euler;
     }
+    const euler = new THREE.Euler();
+    euler.setFromVector3(arg, 'XYZ');
+    return euler;
 }
 
 export function norm(args, scopes, userMacros) {
@@ -91,9 +86,8 @@ export function deg(args, scopes, userMacros) {
         euler.y = THREE.Math.radToDeg(euler.y);
         euler.z = THREE.Math.radToDeg(euler.z);
         return euler;
-    } else {
-        return THREE.Math.radToDeg(arg);
     }
+    return THREE.Math.radToDeg(arg);
 }
 
 export function rad(args, scopes, userMacros) {
@@ -108,9 +102,8 @@ export function rad(args, scopes, userMacros) {
         euler.y = THREE.Math.degToRad(euler.y);
         euler.z = THREE.Math.degToRad(euler.z);
         return euler;
-    } else {
-        return THREE.Math.degToRad(arg);
     }
+    return THREE.Math.degToRad(arg);
 }
 
 export function len(args, scopes, userMacros) {
@@ -121,9 +114,8 @@ export function len(args, scopes, userMacros) {
         || arg instanceof THREE.Vector3
         || arg instanceof THREE.Vector4) {
         return arg.length();
-    } else {
-        return arg.length;
     }
+    return arg.length;
 }
 
 export function dist(args, scopes, userMacros) {
@@ -136,9 +128,8 @@ export function dist(args, scopes, userMacros) {
         const diff = arg0.clone();
         diff.sub(arg1);
         return diff.length();
-    } else {
-        throw TypeError('Arguments to dist() must be of the same type.');
     }
+    throw TypeError('Arguments to dist() must be of the same type.');
 }
 
 function checkNumArgs(func, args, n) {
@@ -162,7 +153,7 @@ function checkArgTypeAst(func, arg, pos, type, values) {
 }
 
 function checkArgType(func, arg, pos, types) {
-    let found = _.find(types, (t) => {
+    const found = _.find(types, (t) => {
         switch (t) {
             case 'array':
                 return _.isArray(arg);
@@ -174,12 +165,12 @@ function checkArgType(func, arg, pos, types) {
     });
     if (!found) {
         const typeTxt = _.map(types, mapTypeName);
-        throw TypeError(`Argument $${pos} to ${func}() is of type: ${typeof(arg)}. Expected ${typeTxt.join(' or ')}.`);
+        throw TypeError(`Argument $${pos} to ${func}() is of type: ${typeof (arg)}. Expected ${typeTxt.join(' or ')}.`);
     }
 }
 
 function mapTypeName(t) {
-    if (typeof(t) === 'string')
+    if (typeof (t) === 'string')
         return t;
     else if (t === THREE.Vector2)
         return 'THREE.Vector2';

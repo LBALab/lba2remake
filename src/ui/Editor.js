@@ -97,13 +97,11 @@ export default class Editor extends React.Component {
                     max: node.rootRef[horizontal ? 'clientWidth' : 'clientHeight'],
                     node
                 };
-            } else {
-                return this.findSeparator(path, node.children[0], concat(sepPath, 0))
-                    || this.findSeparator(path, node.children[1], concat(sepPath, 1));
             }
-        } else {
-            return null;
+            return this.findSeparator(path, node.children[0], concat(sepPath, 0))
+                    || this.findSeparator(path, node.children[1], concat(sepPath, 1));
         }
+        return null;
     }
 
     disableSeparator() {
@@ -188,23 +186,24 @@ export default class Editor extends React.Component {
                     <div style={sepInnerLine}/>
                 </div>
             </div>;
-        } else {
-            const availableAreas = node.content.mainArea ? findMainAreas() : this.state.root.toolAreas;
-            return <Area key={`${path.join('/')}/${node.content.name}`}
-                node={node}
-                area={node.content}
-                stateHandler={node.stateHandler}
-                mainArea={node.content.mainArea}
-                availableAreas={availableAreas}
-                selectAreaContent={this.selectAreaContent.bind(this, path)}
-                style={style}
-                params={this.props.params}
-                ticker={this.props.ticker}
-                split={this.split.bind(this, path)}
-                close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}
-                saveMainData={this.saveMainData}
-                mainData={this.state.mainData}/>;
         }
+        const availableAreas = node.content.mainArea ? findMainAreas() : this.state.root.toolAreas;
+        return <Area
+            key={`${path.join('/')}/${node.content.name}`}
+            node={node}
+            area={node.content}
+            stateHandler={node.stateHandler}
+            mainArea={node.content.mainArea}
+            availableAreas={availableAreas}
+            selectAreaContent={this.selectAreaContent.bind(this, path)}
+            style={style}
+            params={this.props.params}
+            ticker={this.props.ticker}
+            split={this.split.bind(this, path)}
+            close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}
+            saveMainData={this.saveMainData}
+            mainData={this.state.mainData}
+        />;
     }
 
     split(path, orientation, content) {
@@ -323,15 +322,14 @@ function saveNode(node) {
                 saveNode(node.children[1])
             ]
         };
-    } else {
-        return {
-            type: Type.AREA,
-            content_id: node.content.id,
-            generator: node.content.generator,
-            state: node.stateHandler.state,
-            root: node.root
-        };
     }
+    return {
+        type: Type.AREA,
+        content_id: node.content.id,
+        generator: node.content.generator,
+        state: node.stateHandler.state,
+        root: node.root
+    };
 }
 
 function loadLayout(editor, mode) {
@@ -343,7 +341,7 @@ function loadLayout(editor, mode) {
     if (data) {
         try {
             layout = JSON.parse(data);
-        } catch(e) {}
+        } catch (e) {}
     }
     if (!layout) {
         const mainArea = findAreaContentById(mode);
@@ -366,30 +364,28 @@ function loadNode(editor, node) {
                 loadNode(editor, node.children[1])
             ]
         };
-    } else {
-        const tgtNode = {
-            type: Type.AREA,
-            root: node.root
-        };
-        if (node.generator) {
-            generateContent(node.generator).then((area) => {
-                tgtNode.content = area;
-                editor.setState({layout: editor.state.layout});
-            });
-            tgtNode.content = AreaLoader;
-        } else {
-            tgtNode.content = findAreaContentById(node.content_id) || NewArea;
-        }
-
-        initStateHandler(editor, tgtNode, node.state);
-        return tgtNode;
     }
+    const tgtNode = {
+        type: Type.AREA,
+        root: node.root
+    };
+    if (node.generator) {
+        generateContent(node.generator).then((area) => {
+            tgtNode.content = area;
+            editor.setState({layout: editor.state.layout});
+        });
+        tgtNode.content = AreaLoader;
+    } else {
+        tgtNode.content = findAreaContentById(node.content_id) || NewArea;
+    }
+
+    initStateHandler(editor, tgtNode, node.state);
+    return tgtNode;
 }
 
 function findRootArea(node) {
     if (node.type === Type.LAYOUT) {
         return findRootArea(node.children[0]) || findRootArea(node.children[1]);
-    } else {
-        return node.root ? node.content : null;
     }
+    return node.root ? node.content : null;
 }

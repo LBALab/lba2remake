@@ -5,7 +5,7 @@ import {loadHqrAsync} from '../hqr';
 export function loadSceneMapData(callback) {
     async.auto({
         bkg: loadHqrAsync('LBA_BKG.HQR')
-    }, function(err, files) {
+    }, (err, files) => {
         callback(loadSceneMap(files));
     });
 }

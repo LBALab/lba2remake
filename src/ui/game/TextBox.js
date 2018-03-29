@@ -80,9 +80,8 @@ export default class TextBox extends React.Component {
         if (text) {
             const style = extend({color: text.color}, baseStyle, styleType[text.type]);
             return <div style={style}>{this.state.content}</div>;
-        } else {
-            return null;
         }
+        return null;
     }
 }
 

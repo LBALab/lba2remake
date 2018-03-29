@@ -11,9 +11,9 @@ export function execute(node, scopes, userMacros) {
                     return scopes[idx][node.value];
                 } else if (node.value in userMacros) {
                     return execute(userMacros[node.value].program.right, scopes, userMacros);
-                } else {
-                    return undefined;
                 }
+                return undefined;
+
             case T.INDEX:
                 return node.value;
             case T.FUNC_CALL:
@@ -24,19 +24,18 @@ export function execute(node, scopes, userMacros) {
                 const args = map(node.args, arg => execute(arg, scopes, userMacros));
                 return func.apply(scopes[scopes.length - 1], args);
             case T.ARRAY_EXPR:
-                const left = execute(node.left, scopes, userMacros);
+                const arrLeft = execute(node.left, scopes, userMacros);
                 if (node.right.type === T.IDENTIFIER && node.right.value in userMacros) {
-                    return execute(node.right, concat(scopes, left), userMacros);
+                    return execute(node.right, concat(scopes, arrLeft), userMacros);
                 }
                 const right = execute(node.right, scopes, userMacros);
-                return left[right];
+                return arrLeft[right];
             case T.DOT_EXPR:
                 if (node.right.type === T.IDENTIFIER) {
                     return execute(node.left, scopes, userMacros)[node.right.value];
-                } else {
-                    const left = execute(node.left, scopes, userMacros);
-                    return execute(node.right, concat(scopes, left), userMacros);
                 }
+                const dotLeft = execute(node.left, scopes, userMacros);
+                return execute(node.right, concat(scopes, dotLeft), userMacros);
         }
     }
 }

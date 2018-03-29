@@ -28,7 +28,7 @@ export default function TextInterjections(props) {
             POS.y += 0.1;
             POS.project(renderer.getMainCamera(props.scene));
             POS.x = (POS.x * widthHalf) + widthHalf;
-            POS.y = - (POS.y * heightHalf) + heightHalf;
+            POS.y = -(POS.y * heightHalf) + heightHalf;
             if (POS.z < 1) {
                 const style = extend({
                     color: itrj.color,

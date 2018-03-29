@@ -4,7 +4,7 @@ class StatsWidget {
     constructor(owner) {
         const container = document.createElement('div');
         container.id = 'stats';
-        container.addEventListener('mousedown', function (event) {
+        container.addEventListener('mousedown', (event) => {
             event.preventDefault();
             event.stopPropagation();
             owner.mode += 1;
@@ -61,12 +61,11 @@ class StatsWidget {
 
     updateGraph(dom, value) {
         const child = dom.appendChild(dom.firstChild);
-        child.style.height = value + 'px';
+        child.style.height = `${value}px`;
     }
 }
 
 export default class Stats {
-
     constructor(numWidgets) {
         numWidgets = numWidgets || 1;
         this.startTime = Date.now();
@@ -97,26 +96,24 @@ export default class Stats {
         this.msMax = Math.max(this.msMax, this.ms);
 
         each(this.widgets, (widget) => {
-            widget.msText.textContent = this.ms + ' MS (' + this.msMin + '-' + this.msMax + ')';
+            widget.msText.textContent = `${this.ms} MS (${this.msMin}-${this.msMax})`;
             widget.updateGraph(widget.msGraph, Math.min(30, 30 - (this.ms / 200) * 30));
         });
 
         this.frames += 1;
 
         if (time > this.prevTime + 1000) {
-
             this.fps = Math.round((this.frames * 1000) / (time - this.prevTime));
             this.fpsMin = Math.min(this.fpsMin, this.fps);
             this.fpsMax = Math.max(this.fpsMax, this.fps);
 
             each(this.widgets, (widget) => {
-                widget.fpsText.textContent = this.fps + ' FPS (' + this.fpsMin + '-' + this.fpsMax + ')';
+                widget.fpsText.textContent = `${this.fps} FPS (${this.fpsMin}-${this.fpsMax})`;
                 widget.updateGraph(widget.fpsGraph, Math.min(30, 30 - (this.fps / 100) * 30));
             });
 
             this.prevTime = time;
             this.frames = 0;
-
         }
         return time;
     }

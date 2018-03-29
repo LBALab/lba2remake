@@ -1,4 +1,5 @@
 import {each} from 'lodash';
+
 const push = Array.prototype.push;
 
 const triangles = {
@@ -87,25 +88,24 @@ export function loadSea(section, geometries, usedTile, offsetX, offsetZ, skyInde
 function getTriangleType(section, isShore, usedTile, x, z, tx, tz, n) {
     if (isShore) {
         return usedTile[tx * 64 + tz] ? 'regular' : 'reversed';
-    } else {
-        const sides = [];
-        if (x == 0 && section.reduceEdges.indexOf('-1,0') != -1) {
-            sides.push('-1,0');
-        }
-        if (x == n - 1 && section.reduceEdges.indexOf('1,0') != -1) {
-            sides.push('1,0');
-        }
-        if (z == 0 && section.reduceEdges.indexOf('0,-1') != -1) {
-            sides.push('0,-1');
-        }
-        if (z == n - 1 && section.reduceEdges.indexOf('0,1') != -1) {
-            sides.push('0,1');
-        }
-        if (sides.length > 0) {
-            return sides.join('|');
-        }
-        return 'regular';
     }
+    const sides = [];
+    if (x == 0 && section.reduceEdges.indexOf('-1,0') != -1) {
+        sides.push('-1,0');
+    }
+    if (x == n - 1 && section.reduceEdges.indexOf('1,0') != -1) {
+        sides.push('1,0');
+    }
+    if (z == 0 && section.reduceEdges.indexOf('0,-1') != -1) {
+        sides.push('0,-1');
+    }
+    if (z == n - 1 && section.reduceEdges.indexOf('0,1') != -1) {
+        sides.push('0,1');
+    }
+    if (sides.length > 0) {
+        return sides.join('|');
+    }
+    return 'regular';
 }
 
 function isSurrounded(usedTile, x, z) {

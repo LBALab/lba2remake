@@ -9,15 +9,14 @@ export function getDebugListing(type, scene, actor) {
         const script = actor.scripts[type];
         const activeLine = script.context && script.context.state && script.context.state.lastOffset;
         return {commands: mapCommands(scene, actor, script.commands), activeLine};
-    } else {
-        return null;
     }
+    return null;
 }
 
 function mapCommands(scene, actor, commands) {
     let indent = 0;
     let prevCommand = null;
-    let state = {};
+    const state = {};
     return map(commands, (cmd) => {
         const newCmd = {
             name: cmd.op.command,
@@ -43,9 +42,7 @@ export function mapComportementArg(comportement) {
 function mapArguments(scene, actor, cmd) {
     const args = cloneDeep(cmd.args);
 
-    const mapComportementSetterArg = (obj, index) => {
-        return mapComportementArg(obj.scripts.life.comportementMap[index] + 1);
-    };
+    const mapComportementSetterArg = (obj, index) => mapComportementArg(obj.scripts.life.comportementMap[index] + 1);
 
     switch (cmd.op.command) {
         case 'COMPORTEMENT':
@@ -180,9 +177,8 @@ export function mapDataName(scene, data) {
         const zone = find(scene.zones, zone => zone.props.type === 2 && zone.props.snap === data.value);
         if (zone) {
             return getObjectName('zone', scene.index, zone.index);
-        } else {
-            return '<no-zone>';
         }
+        return '<no-zone>';
     } else if (data.type === 'vargame' || data.type === 'varcube') {
         return getVarName({
             type: data.type,
@@ -193,11 +189,9 @@ export function mapDataName(scene, data) {
             type: data.type.substr(0, 7),
             idx: data.idx
         }, data.value);
-    } else {
-        if (isFinite(data.value) && !isInteger(data.value)) {
-            return data.value.toFixed(2);
-        } else {
-            return data.value;
-        }
     }
+    if (isFinite(data.value) && !isInteger(data.value)) {
+        return data.value.toFixed(2);
+    }
+    return data.value;
 }

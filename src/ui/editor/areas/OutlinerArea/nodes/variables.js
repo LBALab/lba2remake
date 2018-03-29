@@ -36,9 +36,8 @@ export function formatVar(varDef, value) {
                     {value}:
                     <u title={allValues}>{info.enumValues[value].toUpperCase()}</u>
                 </span>;
-            } else {
-                return <span style={{color: '#b9a0b3'}}>{value}:&lt;?&gt;</span>;
             }
+            return <span style={{color: '#b9a0b3'}}>{value}:&lt;?&gt;</span>;
         }
     }
     return value;
@@ -64,77 +63,77 @@ export const Var = {
         }
     ],
     name: varDef => getVarName(varDef),
-    props: (varDef) => {
-        return [
-            {
-                id: 'value',
-                value: varDef.key in varEdits ? 'editing' : varDef.value(),
-                render: (value) => {
-                    if (varDef.key in varEdits) {
-                        const info = getVarInfo(varDef);
-                        const value = varDef.value();
-                        if (info && info.type === 'enum') {
-                            function onChange(e) {
-                                delete varEdits[varDef.key];
-                                varDef.edit(parseInt(e.target.value));
-                            }
-                            function close() {
-                                delete varEdits[varDef.key];
-                            }
-                            return <select autoFocus={true}
-                                value={varDef.value()}
-                                onChange={onChange}
-                                style={editorStyle.select}
-                                onBlur={close}>
-                                {!(value in info.enumValues) ? <option value={value}>{value}:&lt;?&gt;</option> : null}
-                                {map(info.enumValues, (v, k) =>
-                                    <option key={k} value={k}>
-                                        {k}:{v}
-                                    </option>)}
-                            </select>;
-                        } else {
-                            function onKeyDown(event) {
-                                event.stopPropagation();
-                                const key = event.code || event.which || event.keyCode;
-                                if (key === 'Enter' || key === 13) {
-                                    event.preventDefault();
-                                    delete varEdits[varDef.key];
-                                    const v = parseInt(event.target.value);
-                                    if (!Number.isNaN(v))
-                                        varDef.edit(v);
-                                }
-                            }
-                            function close() {
-                                delete varEdits[varDef.key];
-                            }
-                            return <input type="number"
-                                ref={ref => ref ? ref.value = varDef.value() : null}
-                                min={0}
-                                max={255}
-                                step={1}
-                                onKeyDown={onKeyDown}
-                                onBlur={close}/>;
+    props: varDef => [
+        {
+            id: 'value',
+            value: varDef.key in varEdits ? 'editing' : varDef.value(),
+            render: (value) => {
+                if (varDef.key in varEdits) {
+                    const info = getVarInfo(varDef);
+                    const value = varDef.value();
+                    if (info && info.type === 'enum') {
+                        function onChange(e) {
+                            delete varEdits[varDef.key];
+                            varDef.edit(parseInt(e.target.value));
                         }
+                        function close() {
+                            delete varEdits[varDef.key];
+                        }
+                        return <select
+                            autoFocus
+                            value={varDef.value()}
+                            onChange={onChange}
+                            style={editorStyle.select}
+                            onBlur={close}
+                        >
+                            {!(value in info.enumValues) ? <option value={value}>{value}:&lt;?&gt;</option> : null}
+                            {map(info.enumValues, (v, k) =>
+                                <option key={k} value={k}>
+                                    {k}:{v}
+                                </option>)}
+                        </select>;
+                    }
+                    function onKeyDown(event) {
+                        event.stopPropagation();
+                        const key = event.code || event.which || event.keyCode;
+                        if (key === 'Enter' || key === 13) {
+                            event.preventDefault();
+                            delete varEdits[varDef.key];
+                            const v = parseInt(event.target.value);
+                            if (!Number.isNaN(v))
+                                varDef.edit(v);
+                        }
+                    }
+                    function close() {
+                        delete varEdits[varDef.key];
+                    }
+                    return <input
+                        type="number"
+                        ref={ref => (ref ? ref.value = varDef.value() : null)}
+                        min={0}
+                        max={255}
+                        step={1}
+                        onKeyDown={onKeyDown}
+                        onBlur={close}
+                    />;
+                }
+                function onClick() {
+                    const info = getVarInfo(varDef);
+                    if (info && info.type === 'boolean') {
+                        if (varDef.value() > 0)
+                            varDef.edit(0);
+                        else
+                            varDef.edit(1);
                     } else {
-                        function onClick() {
-                            const info = getVarInfo(varDef);
-                            if (info && info.type === 'boolean') {
-                                if (varDef.value() > 0)
-                                    varDef.edit(0);
-                                else
-                                    varDef.edit(1);
-                            } else {
-                                varEdits[varDef.key] = true;
-                            }
-                        }
-                        return <i onClick={onClick} style={{color: '#98ee92', cursor: 'pointer'}}>
-                            {formatVar(varDef, value)}
-                        </i>;
+                        varEdits[varDef.key] = true;
                     }
                 }
+                return <i onClick={onClick} style={{color: '#98ee92', cursor: 'pointer'}}>
+                    {formatVar(varDef, value)}
+                </i>;
             }
-        ];
-    },
+        }
+    ],
     onClick: () => {}
 };
 
@@ -288,7 +287,7 @@ function findAllRefsInSceneList(varDef, sceneList, callback) {
 }
 
 function findAllRefsInScene(varDef, scene) {
-    let foundResults = [];
+    const foundResults = [];
     map(scene.actors, (actor, idx) => {
         const script = parseScript(idx, 'life', actor.lifeScript);
         const actorResults = [];

@@ -29,30 +29,29 @@ function loadObjectInfo(objects, section, index) {
 function loadObject(island, objects, index) {
     if (objects[index]) {
         return objects[index];
-    } else {
-        const buffer = island.files.obl.getEntry(index);
-        const data = new DataView(buffer);
-        const obj = {
-            verticesOffset: data.getUint32(44, true),
-            normalsOffset: data.getUint32(52, true),
-            faceSectionOffset: data.getUint32(68, true),
-            lineSectionSize: data.getUint32(72, true),
-            lineSectionOffset: data.getUint32(76, true),
-            sphereSectionSize: data.getUint32(80, true),
-            sphereSectionOffset: data.getUint32(84, true),
-            uvGroupsSectionSize: data.getUint32(88, true),
-            uvGroupsSectionOffset: data.getUint32(92, true),
-            numVerticesType1: data.getUint16(100, true),
-            numVerticesType2: data.getUint16(102, true),
-            buffer
-        };
-        //console.log(new Uint32Array(buffer, 0, 17));
-        obj.vertices = new Int16Array(buffer, obj.verticesOffset, obj.numVerticesType1 * 4);
-        obj.normals = new Int16Array(buffer, obj.normalsOffset, obj.numVerticesType1 * 4);
-        loadUVGroups(obj);
-        objects[index] = obj;
-        return obj;
     }
+    const buffer = island.files.obl.getEntry(index);
+    const data = new DataView(buffer);
+    const obj = {
+        verticesOffset: data.getUint32(44, true),
+        normalsOffset: data.getUint32(52, true),
+        faceSectionOffset: data.getUint32(68, true),
+        lineSectionSize: data.getUint32(72, true),
+        lineSectionOffset: data.getUint32(76, true),
+        sphereSectionSize: data.getUint32(80, true),
+        sphereSectionOffset: data.getUint32(84, true),
+        uvGroupsSectionSize: data.getUint32(88, true),
+        uvGroupsSectionOffset: data.getUint32(92, true),
+        numVerticesType1: data.getUint16(100, true),
+        numVerticesType2: data.getUint16(102, true),
+        buffer
+    };
+        // console.log(new Uint32Array(buffer, 0, 17));
+    obj.vertices = new Int16Array(buffer, obj.verticesOffset, obj.numVerticesType1 * 4);
+    obj.normals = new Int16Array(buffer, obj.normalsOffset, obj.numVerticesType1 * 4);
+    loadUVGroups(obj);
+    objects[index] = obj;
+    return obj;
 }
 
 function loadUVGroups(object) {
@@ -129,7 +128,7 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
             addVertex(j);
         }
         if (section.pointsPerFace == 4) {
-            for (let j of [0, 2, 3]) {
+            for (const j of [0, 2, 3]) {
                 addVertex(j);
             }
         }

@@ -3,11 +3,9 @@ import async from 'async';
 import {loadHqrAsync} from '../hqr';
 
 export function loadTextsAsync(language, index) {
-    return (callback) => {
-        return loadTexts(language, index, (texts) => {
-            callback(null, texts);
-        });
-    };
+    return callback => loadTexts(language, index, (texts) => {
+        callback(null, texts);
+    });
 }
 
 export function getTextFile(language) {
@@ -18,7 +16,7 @@ export function getTextFile(language) {
 export function loadTexts(language, index, callback) {
     async.auto({
         text: loadHqrAsync(getTextFile(language)),
-    }, function(err, files) {
+    }, (err, files) => {
         const text = loadTextData(files.text, getLanguageTextIndex(language, index));
         if (callback) {
             callback(text);

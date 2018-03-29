@@ -39,30 +39,29 @@ type Model = {
 export function loadAnim(model: Model, anims: Anim[], index: number) {
     if (anims[index]) {
         return anims[index];
-    } else {
-        const buffer = model.files.anim.getEntry(index);
-        const data = new DataView(buffer);
-        const obj : Anim = {
-            numKeyframes: data.getUint16(0x00, true),
-            numBoneframes: data.getUint16(0x02, true),
-            loopFrame: data.getUint16(0x04, true),
-            unk1: data.getUint16(0x08, true),
-            keyframes: [],
-            buffer
-        };
-
-        loadKeyframes(obj);
-        
-        anims[index] = obj;
-        return obj;
     }
+    const buffer = model.files.anim.getEntry(index);
+    const data = new DataView(buffer);
+    const obj : Anim = {
+        numKeyframes: data.getUint16(0x00, true),
+        numBoneframes: data.getUint16(0x02, true),
+        loopFrame: data.getUint16(0x04, true),
+        unk1: data.getUint16(0x08, true),
+        keyframes: [],
+        buffer
+    };
+
+    loadKeyframes(obj);
+
+    anims[index] = obj;
+    return obj;
 }
 
 function loadKeyframes(anim) {
     const data = new DataView(anim.buffer, 0, anim.buffer.byteLength);
     let offset = 8;
     for (let i = 0; i < anim.numKeyframes; i += 1) {
-        let keyframe : Keyframe = {
+        const keyframe : Keyframe = {
             length: data.getUint16(offset, true),
             x: data.getInt16(offset + 2, true) / 0x4000,
             y: data.getInt16(offset + 4, true) / 0x4000,
@@ -84,7 +83,7 @@ function loadKeyframes(anim) {
 }
 
 function loadBoneframe(data, offset) : BoneframeCanFall {
-    let boneframe : Boneframe = {
+    const boneframe : Boneframe = {
         type: data.getUint16(offset, true), // if > 0 canFall because it has translation in space
         veuler: null,
         pos: null

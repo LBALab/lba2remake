@@ -7,7 +7,7 @@ export function PALETTE() {
 
 }
 
-export function BODY_OBJ(actor, bodyIndex)  {
+export function BODY_OBJ(actor, bodyIndex) {
     if (actor.props.bodyIndex !== bodyIndex) {
         actor.props.bodyIndex = bodyIndex;
         actor.reload(this.scene);
@@ -52,7 +52,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 value: text.value
             };
             this.game.setUiState({interjections});
-            cmdState.listener = function() { };
+            cmdState.listener = function () { };
             setTimeout(() => {
                 const interjections = clone(this.game.getUiState().interjections);
                 delete interjections[itrjId];
@@ -75,7 +75,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                     color: actor.props.textColor
                 }
             });
-            cmdState.listener = function(event) {
+            cmdState.listener = function (event) {
                 const key = event.code || event.which || event.keyCode;
                 if (key === 'Enter' || key === 13) {
                     cmdState.ended = true;
@@ -83,7 +83,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             };
             window.addEventListener('keydown', cmdState.listener);
             if (text.type === 9) {
-                setTimeout(function () {
+                setTimeout(() => {
                     cmdState.listener();
                 }, 4500);
             }
@@ -216,7 +216,7 @@ export function FOUND_OBJECT(cmdState, id) {
             },
             foundObject: id
         });
-        cmdState.listener = function(event) {
+        cmdState.listener = function (event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
                 cmdState.ended = true;
@@ -224,7 +224,7 @@ export function FOUND_OBJECT(cmdState, id) {
         };
         window.addEventListener('keydown', cmdState.listener);
         if (text.type === 9) {
-            setTimeout(function () {
+            setTimeout(() => {
                 cmdState.listener();
             }, 6500);
         }
@@ -326,7 +326,7 @@ export function PLAY_SMK(cmdState, video) {
     if (!cmdState.listener) {
         const that = this;
         this.game.pause();
-        const src = VideoData.VIDEO.find((v) => { return v.name === video; }).file;
+        const src = VideoData.VIDEO.find(v => v.name === video).file;
         this.game.setUiState({video: {
             src,
             callback: () => {
@@ -335,7 +335,7 @@ export function PLAY_SMK(cmdState, video) {
                 that.game.resume();
             }
         }});
-        cmdState.listener = function(event) {
+        cmdState.listener = function (event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
                 that.game.setUiState({video: null});
@@ -404,7 +404,7 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
             color: actor.props.textColor
         };
         this.game.setUiState({ ask: uiState.ask });
-        cmdState.listener = function(event) {
+        cmdState.listener = function (event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
                 cmdState.ended = true;
@@ -528,7 +528,7 @@ export function CINEMA_MODE(mode) {
     } else {
         this.actor.props.dirMode = DirMode.MANUAL;
         this.game.setUiState({ cinema: false });
-        //setTimeout(function() { cinemaModeDiv.style.display = 'none'; }, 3000); // animation is in 3s
+        // setTimeout(function() { cinemaModeDiv.style.display = 'none'; }, 3000); // animation is in 3s
     }
 }
 

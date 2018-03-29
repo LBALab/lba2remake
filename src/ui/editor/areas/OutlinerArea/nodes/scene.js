@@ -73,12 +73,10 @@ const VarGame = {
                             count += 1;
                     });
                     return count;
-                } else {
-                    return scene.usedVarGames.length;
                 }
-            } else {
-                return VarGameConfig.filterInventory ? 40 : game.getState().flags.quest.length;
+                return scene.usedVarGames.length;
             }
+            return VarGameConfig.filterInventory ? 40 : game.getState().flags.quest.length;
         }
         return 0;
     },
@@ -108,7 +106,7 @@ const VarGame = {
                 const onChange = (e) => {
                     data.filterScene = e.target.checked;
                 };
-                return <label style={labelStyle} key='used'><input type="checkbox" checked={value} onChange={onChange}/>Only in scene&nbsp;</label>;
+                return <label style={labelStyle} key="used"><input type="checkbox" checked={value} onChange={onChange}/>Only in scene&nbsp;</label>;
             }
         },
         {
@@ -118,7 +116,7 @@ const VarGame = {
                 const onChange = (e) => {
                     data.filterInventory = e.target.checked;
                 };
-                return <label style={labelStyle} key='inventory'><input type="checkbox" checked={value} onChange={onChange}/>Only inventory</label>;
+                return <label style={labelStyle} key="inventory"><input type="checkbox" checked={value} onChange={onChange}/>Only inventory</label>;
             }
         }
     ]
@@ -127,7 +125,7 @@ const VarGame = {
 const getChildren = () => {
     const scene = DebugData.scope.scene;
     if (scene) {
-        let children = map(baseChildren);
+        const children = map(baseChildren);
         children.push(VarCube);
         children.push(VarGame);
         if (scene.sideScenes) {
@@ -137,9 +135,8 @@ const getChildren = () => {
             children.push(SceneGraphNode);
         }
         return children;
-    } else {
-        return [];
     }
+    return [];
 };
 
 export const SceneNode = {
@@ -156,9 +153,8 @@ export const SceneNode = {
             return scene && scene.threeScene;
         } else if (child === VarGame) {
             return VarGameConfig;
-        } else {
-            return scene;
         }
+        return scene;
     },
     props: () => {
         const scene = DebugData.scope.scene;

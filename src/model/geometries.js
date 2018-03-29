@@ -31,9 +31,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
                     light: {value: light},
-                    bonePos: { value: bones.position, type:'v3v' },
-                    boneRot: { value: bones.rotation, type:'v4v' },
-                    rotationMatrix: { value: matrixRotation, type:'m4v' }
+                    bonePos: { value: bones.position, type: 'v3v' },
+                    boneRot: { value: bones.rotation, type: 'v4v' },
+                    rotationMatrix: { value: matrixRotation, type: 'm4v' }
                 }
             })
         },
@@ -56,9 +56,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
                     texture: {value: texture},
                     palette: {value: paletteTexture},
                     light: {value: light},
-                    bonePos: { value: bones.position, type:'v3v' },
-                    boneRot: { value: bones.rotation, type:'v4v' },
-                    rotationMatrix: { value: matrixRotation, type:'m4v' }
+                    bonePos: { value: bones.position, type: 'v3v' },
+                    boneRot: { value: bones.rotation, type: 'v4v' },
+                    rotationMatrix: { value: matrixRotation, type: 'm4v' }
                 }
             })
         },
@@ -82,9 +82,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
                     texture: {value: texture},
                     palette: {value: paletteTexture},
                     light: {value: light},
-                    bonePos: { value: bones.position, type:'v3v' },
-                    boneRot: { value: bones.rotation, type:'v4v' },
-                    rotationMatrix: { value: matrixRotation, type:'m4v' }
+                    bonePos: { value: bones.position, type: 'v3v' },
+                    boneRot: { value: bones.rotation, type: 'v4v' },
+                    rotationMatrix: { value: matrixRotation, type: 'm4v' }
                 }
             })
         }
@@ -133,7 +133,7 @@ function loadGeometry(body, texture, bones, matrixRotation, palette, envInfo, am
     loadFaceGeometry(geometries, body);
     loadSphereGeometry(geometries, body);
     loadLineGeometry(geometries, body);
-    //debugBoneGeometry(geometries, body);
+    // debugBoneGeometry(geometries, body);
 
     return geometries;
 }
@@ -160,12 +160,12 @@ function loadFaceGeometry(geometries, body) {
                 push.apply(geometries.colored.bones, getBone(body, vertexIndex));
                 geometries.colored.colors.push(p.colour);
             }
-        };    
+        };
         for (let j = 0; j < 3; j += 1) {
             addVertex(j);
-        } 
+        }
         if (p.numVertex == 4) { // quad
-            for (let j of [0, 2, 3]) {
+            for (const j of [0, 2, 3]) {
                 addVertex(j);
             }
         }
@@ -177,7 +177,7 @@ function loadSphereGeometry(geometries, body) {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
         const normal = getNormal(body, s.vertex);
-        
+
         const addVertex = (j) => {
             push.apply(geometries.colored.positions, [
                 sphereGeometry.vertices[j].x + centerPos[0],
@@ -199,7 +199,7 @@ function loadSphereGeometry(geometries, body) {
 
 function loadLineGeometry(geometries, body) {
     _.each(body.lines, (l) => {
-        const addVertex = (c,i) => {
+        const addVertex = (c, i) => {
             push.apply(geometries.colored.linePositions, getPosition(body, i));
             push.apply(geometries.colored.lineNormals, getNormal(body, i));
             push.apply(geometries.colored.lineBones, getBone(body, i));
@@ -237,7 +237,7 @@ function debugBoneGeometry(geometries, body) {
 
 function getBone(body, index) {
     const vertex = body.vertices[index];
-    return [ vertex.bone ];
+    return [vertex.bone];
 }
 
 function getPosition(body, index) {
@@ -254,16 +254,16 @@ function getNormal(body, index) {
     return [
         normal.x,
         normal.y,
-        normal.z/*,
-        normal.colour*/
+        normal.z/* ,
+        normal.colour */
     ];
 }
 
 function getUVs(body, p, vertex) {
     if (p.hasTex) {
         const t = body.uvGroups[p.tex];
-        const x = p.texX[vertex] + p.unkX[vertex]/256;
-        const y = p.texY[vertex] + p.unkY[vertex]/256;
+        const x = p.texX[vertex] + p.unkX[vertex] / 256;
+        const y = p.texY[vertex] + p.unkY[vertex] / 256;
         return [(x & t.width) + t.x, (y & t.height) + t.y];
     }
     return [0, 0];

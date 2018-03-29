@@ -85,7 +85,6 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
                         }
                     }
                 }
-
             }
         }
     }

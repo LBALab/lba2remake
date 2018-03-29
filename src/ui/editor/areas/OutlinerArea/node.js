@@ -89,7 +89,7 @@ export default class Node extends React.Component {
                     const op = oldProps[i];
                     if (p.id !== op.id) {
                         foundDiff = true;
-                    } else if (typeof(p.value) !== typeof(op.value)) {
+                    } else if (typeof (p.value) !== typeof (op.value)) {
                         foundDiff = true;
                     } else if (isObject(p.value) && isObject(op.value)) {
                         if (p.value.key !== op.value.key) {
@@ -160,9 +160,7 @@ export default class Node extends React.Component {
 
             return <div style={menuStyle} onMouseLeave={() => this.setState({menu: null})}>
                 {menu.renaming ? <div style={menuEntry} onClick={onClickRename}>Rename</div> : null}
-                {map(menu.entries, (entry, idx) => {
-                    return <div key={idx} style={menuEntry} onClick={onClickOther.bind(null, entry)}>{entry.name}</div>;
-                })}
+                {map(menu.entries, (entry, idx) => <div key={idx} style={menuEntry} onClick={onClickOther.bind(null, entry)}>{entry.name}</div>)}
             </div>;
         }
     }
@@ -213,10 +211,12 @@ export default class Node extends React.Component {
 
         const renaming = this.state.renaming;
 
-        return <span style={nameStyle}
+        return <span
+            style={nameStyle}
             onClick={onClick}
             onDoubleClick={onDoubleClick}
-            onContextMenu={renaming ? null : onContextMenu}>
+            onContextMenu={renaming ? null : onContextMenu}
+        >
             {renaming
                 ? <input ref={r => r && r.focus()} onBlur={onBlur} onKeyDown={onKeyDown}/>
                 : this.state.name}
@@ -232,9 +232,8 @@ export default class Node extends React.Component {
         const collapsed = this.state.collapsed;
         if (numChildren > 0) {
             return <span onClick={toggleCollapse} style={{cursor: 'pointer'}}>{collapsed ? '+' : '-'}</span>;
-        } else {
-            return <span>&nbsp;</span>;
         }
+        return <span>&nbsp;</span>;
     }
 
     renderProps() {
@@ -246,14 +245,11 @@ export default class Node extends React.Component {
         if (nodeProps) {
             return <span style={{color: '#858585'}}>
                 {
-                    map(nodeProps, (prop) => {
-                        return prop.render ? <span key={prop.id} style={propStyle}>{prop.render(prop.value)}</span> : null;
-                    })
+                    map(nodeProps, prop => (prop.render ? <span key={prop.id} style={propStyle}>{prop.render(prop.value)}</span> : null))
                 }
             </span>;
-        } else {
-            return null;
         }
+        return null;
     }
 
     renderChildren(childFontSize) {
@@ -289,7 +285,8 @@ export default class Node extends React.Component {
 
         const childName = child.dynamic ? call('name', child, childData, idx) : child.name;
         const path = concat(this.props.path, childName || idx);
-        return <Node key={path.join('/')}
+        return <Node
+            key={path.join('/')}
             node={child}
             data={childData}
             fontSize={childFontSize}
@@ -298,7 +295,8 @@ export default class Node extends React.Component {
             activePath={this.props.activePath}
             ticker={this.props.ticker}
             level={this.props.level + 1}
-            split={this.props.split} />;
+            split={this.props.split}
+        />;
     }
 
     numChildren() {

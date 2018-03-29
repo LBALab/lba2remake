@@ -16,11 +16,11 @@ const Point = {
     ],
     name: point => getObjectName('point', point.props.sceneIndex, point.index),
     icon: () => 'editor/icons/point2.png',
-    numChildren: point => point.threeObject ? 1 : 0,
+    numChildren: point => (point.threeObject ? 1 : 0),
     child: () => SceneGraphNode,
     childData: point => point.threeObject,
     selected: point => DebugData.selection.point === point.index,
-    onClick: (point) => {DebugData.selection.point = point.index;},
+    onClick: (point) => { DebugData.selection.point = point.index; },
     onDoubleClick: locateObject
 };
 
