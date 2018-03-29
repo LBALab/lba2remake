@@ -71,7 +71,7 @@ export function createSkeleton(body) {
 
     for (let i = 0; i < skeleton.length; i += 1) {
         const bone = skeleton[i];
-        if (bone.parent == 0xFFFF) {
+        if (bone.parent === 0xFFFF) {
             continue;
         }
         const s = skeleton[bone.parent];
@@ -230,12 +230,12 @@ const tmpQ = new THREE.Quaternion();
 
 function updateSkeletonHierarchy(skeleton, index) {
     const s = skeleton[index];
-    const p = skeleton[index == 0 ? 0 : s.parent];
-    if (s.parent != 0xFFFF) { // skip root
+    const p = skeleton[index === 0 ? 0 : s.parent];
+    if (s.parent !== 0xFFFF) { // skip root
         s.m.identity();
         const pos = s.vertex.clone();
 
-        if (s.type == 0) { // rotation
+        if (s.type === 0) { // rotation
             s.m.makeRotationFromEuler(new THREE.Euler(THREE.Math.degToRad(s.euler.x),
                 THREE.Math.degToRad(s.euler.y),
                 THREE.Math.degToRad(s.euler.z), 'XZY'));

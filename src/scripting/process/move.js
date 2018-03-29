@@ -35,7 +35,7 @@ export function WAIT_NUM_ANIM(repeats) {
     }
     if (this.actor.animState.hasEnded) {
         this.state.animCount += 1;
-        if (this.state.animCount == repeats) {
+        if (this.state.animCount === repeats) {
             this.state.animCount = 0;
         } else {
             this.state.continue = false;

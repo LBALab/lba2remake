@@ -114,8 +114,8 @@ export function prepareGeometries(island, data, ambience) {
         sea: {
             positions: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: envInfo.index != 14 ? VERT_SEA : VERT_MOON,
-                fragmentShader: envInfo.index != 14 ? FRAG_SEA : FRAG_ENV,
+                vertexShader: envInfo.index !== 14 ? VERT_SEA : VERT_MOON,
+                fragmentShader: envInfo.index !== 14 ? FRAG_SEA : FRAG_ENV,
                 uniforms: {
                     texture: {
                         value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)

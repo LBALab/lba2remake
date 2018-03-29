@@ -69,7 +69,7 @@ export function loadSea(section, geometries, usedTile, offsetX, offsetZ, skyInde
                 const point = ([xi, zi]) => (x * dn + xi * dn) * 65 + z * dn + zi * dn;
                 const isShore = usedTile && usedTile[tx * 64 + tz] !== undefined && !surrounded;
                 const isEdge = ([xi, zi]) =>
-                    skyIndex == 14 || (isShore && !isInBetween(usedTile, tx, tz, xi, zi));
+                    skyIndex === 14 || (isShore && !isInBetween(usedTile, tx, tz, xi, zi));
                 const type = getTriangleType(section, isShore, usedTile, x, z, tx, tz, n);
                 each(triangles[type], (tris) => {
                     push.apply(
@@ -91,16 +91,16 @@ function getTriangleType(section, isShore, usedTile, x, z, tx, tz, n) {
         return usedTile[tx * 64 + tz] ? 'regular' : 'reversed';
     }
     const sides = [];
-    if (x == 0 && section.reduceEdges.indexOf('-1,0') != -1) {
+    if (x === 0 && section.reduceEdges.indexOf('-1,0') !== -1) {
         sides.push('-1,0');
     }
-    if (x == n - 1 && section.reduceEdges.indexOf('1,0') != -1) {
+    if (x === n - 1 && section.reduceEdges.indexOf('1,0') !== -1) {
         sides.push('1,0');
     }
-    if (z == 0 && section.reduceEdges.indexOf('0,-1') != -1) {
+    if (z === 0 && section.reduceEdges.indexOf('0,-1') !== -1) {
         sides.push('0,-1');
     }
-    if (z == n - 1 && section.reduceEdges.indexOf('0,1') != -1) {
+    if (z === n - 1 && section.reduceEdges.indexOf('0,1') !== -1) {
         sides.push('0,1');
     }
     if (sides.length > 0) {

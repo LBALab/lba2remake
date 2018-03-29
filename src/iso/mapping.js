@@ -14,7 +14,7 @@ export function loadBricksMapping(layouts, bricks, palette) {
                 map(layouts, ({blocks}) => map(blocks, block => block.brick))
             )
         ),
-        idx => idx != 0
+        idx => idx !== 0
     );
     const bricksMap = {};
     const {width, height} = computeTextureSize(usedBricks.length);

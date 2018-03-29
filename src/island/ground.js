@@ -11,10 +11,10 @@ export function loadGround(section, geometries, usedTiles) {
             const t1 = loadTriangle(section, x, z, 1);
 
             const isSeaLevelLiquid = (t, p) => {
-                const seaLevel = section.heightmap[p[0]] == 0
-                    && section.heightmap[p[1]] == 0
-                    && section.heightmap[p[2]] == 0;
-                return seaLevel && t.liquid != 0;
+                const seaLevel = section.heightmap[p[0]] === 0
+                    && section.heightmap[p[1]] === 0
+                    && section.heightmap[p[2]] === 0;
+                return seaLevel && t.liquid !== 0;
             };
 
             const triangle = (t) => {

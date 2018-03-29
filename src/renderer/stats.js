@@ -17,11 +17,11 @@ export default function setupStats(pUseVR) {
 
 export function switchStats() {
     if (stats) {
-        if (stats.mode == 1) {
+        if (stats.mode === 1) {
             stats.setMode(0);
         } else {
             document.getElementById('stats1').removeChild(stats.widgets[0].domElement);
-            if (stats.widgets.length == 2) {
+            if (stats.widgets.length === 2) {
                 document.getElementById('stats2').removeChild(stats.widgets[1].domElement);
             }
             stats = null;

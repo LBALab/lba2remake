@@ -15,7 +15,7 @@ export function COL_OBJ(actor) {
 }
 
 export function DISTANCE(actor) {
-    if (!this.scene.isActive && (actor.index == 0 || this.actor.index == 0))
+    if (!this.scene.isActive && (actor.index === 0 || this.actor.index === 0))
         return Infinity;
     return this.actor.getDistanceLba(actor.physics.position);
 }

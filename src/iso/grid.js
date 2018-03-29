@@ -105,7 +105,7 @@ function loadLibrary(bkg, bricks, palette, entry) {
     const layouts = [];
     for (let i = 0; i < numLayouts; i += 1) {
         const offset = dataView.getUint32(i * 4, true);
-        const nextOffset = i == numLayouts - 1 ?
+        const nextOffset = i === numLayouts - 1 ?
             dataView.byteLength
             : dataView.getUint32((i + 1) * 4, true);
         const layoutDataView = new DataView(buffer, offset, nextOffset - offset);

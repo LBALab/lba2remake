@@ -97,7 +97,7 @@ function parseSectionHeader(data, object, offset) {
         pointsPerFace: (flags & 0x80) ? 4 : 3,
         blockSize: size / numFaces,
         size,
-        isTransparent: bits(type, 2, 1) == 1,
+        isTransparent: bits(type, 2, 1) === 1,
         data: new DataView(object.buffer, object.faceSectionOffset + offset + 8, size)
     };
 }
@@ -120,11 +120,11 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
             bb.max.x = Math.max(x, bb.max.x);
             bb.max.y = Math.max(y, bb.max.y);
             bb.max.z = Math.max(z, bb.max.z);
-            if (section.blockSize == 12 || section.blockSize == 16) {
+            if (section.blockSize === 12 || section.blockSize === 16) {
                 push.apply(geometries.objects_colored.positions, getPosition(object, info, index));
                 push.apply(
                     geometries.objects_colored.normals,
-                    section.type == 1 ? faceNormal : getVertexNormal(object, info, index)
+                    section.type === 1 ? faceNormal : getVertexNormal(object, info, index)
                 );
                 geometries.objects_colored.colors.push(getColor(section, i));
             } else {
@@ -132,7 +132,7 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
                 push.apply(geometries[group].positions, getPosition(object, info, index));
                 push.apply(
                     geometries[group].normals,
-                    section.type != 10 ? faceNormal : getVertexNormal(object, info, index)
+                    section.type !== 10 ? faceNormal : getVertexNormal(object, info, index)
                 );
                 push.apply(geometries[group].uvs, getUVs(section, i, j));
                 push.apply(geometries[group].uvGroups, uvGroup);
@@ -141,7 +141,7 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
         for (let j = 0; j < 3; j += 1) {
             addVertex(j);
         }
-        if (section.pointsPerFace == 4) {
+        if (section.pointsPerFace === 4) {
             for (const j of [0, 2, 3]) {
                 addVertex(j);
             }
@@ -212,9 +212,9 @@ function getUVs(section, face, ptIndex) {
 }
 
 function getUVGroup(object, section, face) {
-    if (section.blockSize == 24 || section.blockSize == 32) {
+    if (section.blockSize === 24 || section.blockSize === 32) {
         const baseIndex = face * section.blockSize;
-        const uvGroupIndex = section.blockSize == 32 ?
+        const uvGroupIndex = section.blockSize === 32 ?
             section.data.getUint8(baseIndex + 28)
             : section.data.getUint8(baseIndex + 6);
         return object.uvGroups[uvGroupIndex];

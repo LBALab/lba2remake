@@ -95,7 +95,7 @@ function loadBoneframe(data, offset) : BoneframeCanFall {
     const z = data.getInt16(offset + 6, true);
 
     // assigned based on type of bone animation (rotation or translation)
-    if (boneframe.type == 0) { // rotation
+    if (boneframe.type === 0) { // rotation
         boneframe.pos = new THREE.Vector3(0, 0, 0);
         boneframe.veuler = new THREE.Vector3(x, y, z);
     } else { // translation

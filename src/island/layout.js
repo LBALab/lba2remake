@@ -56,7 +56,7 @@ function loadSeaSections(groundSections) {
     }
     const nbs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
     each(indexedSections, (section) => {
-        if (section.lod == 0)
+        if (section.lod === 0)
             return;
         each(nbs, (nb) => {
             const nearSection = indexedSections[[section.x - nb[0], section.z + nb[1]]];

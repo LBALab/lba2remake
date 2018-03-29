@@ -100,7 +100,7 @@ const ACTIONTYPE = {
 const entities = [];
 
 export function loadEntity(buffer: ArrayBuffer) {
-    if (entities.length == 0) {
+    if (entities.length === 0) {
         const data = new DataView(buffer);
         const offset = data.getUint32(0, true);
         const numEntries = (offset / 4) - 1;
@@ -147,7 +147,7 @@ function loadEntityEntry(buffer, dataOffset, index) {
                 offset += data.getUint8(offset);
             break; */
         }
-    } while (opcode != 0xFF);
+    } while (opcode !== 0xFF);
 
     return entity;
 }
@@ -214,7 +214,7 @@ function loadEntityAnim(data, offset) {
     if (anim.offset > 0) {
         anim.offset += 2; // to add the previous byte
     }
-    if (anim.offset == 0) {
+    if (anim.offset === 0) {
         anim.offset += 5;
     }
     // const actionBytes = data.getUint8(offset++, true);
@@ -433,7 +433,7 @@ export function getBodyIndex(entity: Entity, index: number) {
         return 0;
     }
     for (let i = 0; i < entity.bodies.length; i += 1) {
-        if (entity.bodies[i].index == index) {
+        if (entity.bodies[i].index === index) {
             return entity.bodies[i].bodyIndex;
         }
     }
@@ -445,7 +445,7 @@ export function getAnimIndex(entity: Entity, index: number) {
         return 0;
     }
     for (let i = 0; i < entity.anims.length; i += 1) {
-        if (entity.anims[i].index == index) {
+        if (entity.anims[i].index === index) {
             return entity.anims[i].animIndex;
         }
     }
@@ -457,7 +457,7 @@ export function getAnim(entity: Entity, index: number) {
         return null;
     }
     for (let i = 0; i < entity.anims.length; i += 1) {
-        if (entity.anims[i].index == index) {
+        if (entity.anims[i].index === index) {
             return entity.anims[i];
         }
     }

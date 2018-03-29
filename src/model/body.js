@@ -113,7 +113,7 @@ function loadPolygons(object) {
         // const shade = data.getUint16(offset + 6, true);
         offset += 8;
 
-        if (sectionSize == 0)
+        if (sectionSize === 0)
             break;
 
         const blockSize = ((sectionSize - 8) / numPolygons);
@@ -130,7 +130,7 @@ function loadPolygon(data, offset, renderType, blockSize) {
     const numVertex = (renderType & 0x8000) ? 4 : 3;
     const hasExtra = !!((renderType & 0x4000));
     const hasTex = !!((renderType & 0x8 && blockSize > 16));
-    const hasTransparency = (renderType == 2);
+    const hasTransparency = (renderType === 2);
 
     const poly = {
         renderType,
@@ -162,7 +162,7 @@ function loadPolygon(data, offset, renderType, blockSize) {
     }
 
     // special case for trianguled textures
-    if (hasTex && numVertex == 3) {
+    if (hasTex && numVertex === 3) {
         poly.tex = data.getUint8(offset + 6, true);
     }
 
@@ -182,7 +182,7 @@ function loadPolygon(data, offset, renderType, blockSize) {
             poly.texY[k] = data.getInt8(offset + 15 + k * 4, true);
         }
         // for blocksize 32 with quad texture
-        if (numVertex == 4) {
+        if (numVertex === 4) {
             poly.tex = data.getUint8(offset + 28, true);
         }
     }

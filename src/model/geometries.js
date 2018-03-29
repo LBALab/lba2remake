@@ -194,7 +194,7 @@ function loadFaceGeometry(geometries, body) {
         for (let j = 0; j < 3; j += 1) {
             addVertex(j);
         }
-        if (p.numVertex == 4) { // quad
+        if (p.numVertex === 4) { // quad
             for (const j of [0, 2, 3]) {
                 addVertex(j);
             }
@@ -254,7 +254,7 @@ function debugBoneGeometry(geometries, body) {
                 sphereGeometry.vertices[j].z + centerPos[2]
             ]);
             push.apply(geometries.colored.bones, getBone(object, s.vertex));
-            geometries.colored.colors.push((s.parent == 0xFFFF) ? 0 : 255);
+            geometries.colored.colors.push((s.parent === 0xFFFF) ? 0 : 255);
         };
 
         _.each(sphereGeometry.faces, (f) => {
