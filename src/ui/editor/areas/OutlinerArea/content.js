@@ -98,7 +98,7 @@ export function makeContentComponent(tree, frame, ownStyle) {
             let node = tree;
             let data = null;
 
-            each(path, name => {
+            each(path, (name) => {
                 if (!node)
                     return;
 

@@ -246,7 +246,7 @@ export default class Node extends React.Component {
         if (nodeProps) {
             return <span style={{color: '#858585'}}>
                 {
-                    map(nodeProps, prop => {
+                    map(nodeProps, (prop) => {
                         return prop.render ? <span key={prop.id} style={propStyle}>{prop.render(prop.value)}</span> : null;
                     })
                 }

@@ -15,7 +15,7 @@ const baseChildren = [
 
 const SubScene = {
     dynamic: true,
-    name: (scene) => `Scene_${scene.index}`,
+    name: scene => `Scene_${scene.index}`,
     numChildren: () => {
         const scene = DebugData.scope.scene;
         return scene ? baseChildren.length : 0;
@@ -28,7 +28,7 @@ const SubScene = {
 const Siblings = {
     dynamic: true,
     name: () => 'Siblings',
-    numChildren: (scene) => size(scene.sideScenes),
+    numChildren: scene => size(scene.sideScenes),
     child: () => SubScene,
     childData: (scene, idx) => sortBy(scene.sideScenes)[idx],
     onClick: () => {}
@@ -68,7 +68,7 @@ const VarGame = {
             if (VarGameConfig.filterScene) {
                 if (VarGameConfig.filterInventory) {
                     let count = 0;
-                    each(scene.usedVarGames, varGame => {
+                    each(scene.usedVarGames, (varGame) => {
                         if (varGame < 40)
                             count += 1;
                     });
@@ -100,7 +100,7 @@ const VarGame = {
             }
         }
     },
-    props: (data) => [
+    props: data => [
         {
             id: 'filter_scene',
             value: data.filterScene,
@@ -166,7 +166,7 @@ export const SceneNode = {
             {
                 id: 'index',
                 value: scene.index,
-                render: (value) => <span>#{value}</span>
+                render: value => <span>#{value}</span>
             }
         ] : [];
     }

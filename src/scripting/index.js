@@ -6,13 +6,13 @@ import DebugData from '../ui/editor/DebugData';
 import {mapDataName} from '../ui/editor/areas/ScriptEditorArea/listing';
 
 export function loadScripts(params, game, scene) {
-    each(scene.actors, actor => {
+    each(scene.actors, (actor) => {
         actor.scripts = {
             life: parseScript(actor.index, 'life', actor.props.lifeScript),
             move: parseScript(actor.index, 'move', actor.props.moveScript)
         };
     });
-    each(scene.actors, actor => {
+    each(scene.actors, (actor) => {
         compileScripts(game, scene, actor);
         actor.runScripts = (time) => {
             runScript(params, actor.scripts.life, time);

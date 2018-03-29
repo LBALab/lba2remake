@@ -44,7 +44,7 @@ export function createRenderer(params, canvas) {
 
     const renderer = {
         canvas,
-        render: scene => {
+        render: (scene) => {
             tgtRenderer.antialias = antialias;
             const camera = scene.isIsland ? camera3D : cameraIso;
             if (antialias) {
@@ -54,7 +54,7 @@ export function createRenderer(params, canvas) {
                 tgtRenderer.render(scene.threeScene, camera);
             }
         },
-        applySceneryProps: props => {
+        applySceneryProps: (props) => {
             const sc = props.envInfo.skyColor;
             const color = new THREE.Color(sc[0], sc[1], sc[2]);
             baseRenderer.setClearColor(color.getHex(), 1);

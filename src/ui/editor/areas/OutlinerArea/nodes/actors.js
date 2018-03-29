@@ -30,13 +30,13 @@ const Actor = {
             onClick: (component, actor) => locateObject(actor)
         }
     ],
-    name: (actor) => getObjectName('actor', actor.props.sceneIndex, actor.index),
-    icon: (actor) => `editor/icons/${actor.isSprite ? 'sprite' : 'model'}.png`,
-    props: (actor) => [
+    name: actor => getObjectName('actor', actor.props.sceneIndex, actor.index),
+    icon: actor => `editor/icons/${actor.isSprite ? 'sprite' : 'model'}.png`,
+    props: actor => [
         {
             id: 'index',
             value: actor.index,
-            render: (value) => <span>#{value}</span>
+            render: value => <span>#{value}</span>
         },
         {
             id: 'visible',
@@ -67,7 +67,7 @@ const Actor = {
         {
             id: 'moveAction',
             value: getMoveAction(actor),
-            render: (value) => value
+            render: value => value
                 ? <span>&nbsp;{value.cmdName}
                     {value.args ? <span>{'('}<i style={{color: '#ca0000'}}>{value.args}</i>{')'}</span> : ''}
                     {value.extra ? <span style={{color: '#1a78c0'}}>&nbsp;{value.extra}</span> : null}
@@ -75,10 +75,10 @@ const Actor = {
                 : ''
         }
     ],
-    numChildren: (actor) => actor.threeObject ? 1 : 0,
+    numChildren: actor => actor.threeObject ? 1 : 0,
     child: () => SceneGraphNode,
-    childData: (actor) => actor.threeObject,
-    selected: (actor) => DebugData.selection.actor === actor.index,
+    childData: actor => actor.threeObject,
+    selected: actor => DebugData.selection.actor === actor.index,
     onClick: (actor) => {DebugData.selection.actor = actor.index;},
     onDoubleClick: locateObject
 };
@@ -88,10 +88,10 @@ export const ActorsNode = {
     needsData: true,
     name: () => 'Actors',
     icon: () => 'editor/icons/actor.png',
-    numChildren: (scene) => scene.actors.length,
+    numChildren: scene => scene.actors.length,
     child: () => Actor,
     childData: (scene, idx) => scene.actors[idx],
-    hasChanged: (scene) => scene.index !== DebugData.scope.scene,
+    hasChanged: scene => scene.index !== DebugData.scope.scene,
     onClick: (scene, setRoot) => {
         if (scene.isActive) {
             setRoot();

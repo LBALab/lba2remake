@@ -37,7 +37,7 @@ export function checkAuth(callback) {
     if (auth) {
         callback(auth);
     } else {
-        Popup.display((props) => <AuthPopup callback={saveAuth.bind(null, callback)} {...props}/>);
+        Popup.display(props => <AuthPopup callback={saveAuth.bind(null, callback)} {...props}/>);
     }
 }
 

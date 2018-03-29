@@ -15,7 +15,7 @@ import islandsInfo from './data/islands';
 import environments from './data/environments';
 
 const islandProps = {};
-each(islandsInfo, island => {
+each(islandsInfo, (island) => {
     islandProps[island.name] = assign({
         envInfo: environments[island.env]
     }, island);
@@ -96,7 +96,7 @@ function loadIslandNode(params, props, files, ambience) {
         boundingBoxes.matrixAutoUpdate = false;
         islandObject.add(boundingBoxes);
     }
-    each(data.layout.groundSections, section => {
+    each(data.layout.groundSections, (section) => {
         sections[`${section.x},${section.z}`] = section;
         if (params.editor) {
             each(section.boundingBoxes, (bb, idx) => {
@@ -134,14 +134,14 @@ function loadGeometries(island, data, ambience) {
     const usedTiles = {};
     const objects = [];
 
-    each(data.layout.groundSections, section => {
+    each(data.layout.groundSections, (section) => {
         const tilesKey = [section.x, section.z].join(',');
         usedTiles[tilesKey] = [];
         loadGround(section, geometries, usedTiles[tilesKey]);
         loadObjects(data, section, geometries, objects);
     });
 
-    each(data.layout.seaSections, section => {
+    each(data.layout.seaSections, (section) => {
         const xd = Math.floor(section.x / 2);
         const zd = Math.floor(section.z / 2);
         const offsetX = 1 - Math.abs(section.x % 2);
@@ -181,7 +181,7 @@ function updateShadows(scene, matByName) {
     computeShadow(scene, scene.actors[0]);
     heroPos = POSITION.clone();
     each(tail(scene.actors), computeShadow.bind(null, scene));
-    each(scene.sideScenes, sideScene => {
+    each(scene.sideScenes, (sideScene) => {
         each(sideScene.actors, computeShadow.bind(null, sideScene));
     });
     shadows.sort((a, b) => a.distToHero - b.distToHero);

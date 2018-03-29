@@ -35,7 +35,7 @@ function compileInstruction(script, cmd, cmdOffset) {
         args.push(compileOperator(cmd));
     }
 
-    each(cmd.args, arg => {
+    each(cmd.args, (arg) => {
         args.push(compileValue(script, arg, cmdOffset));
     });
 

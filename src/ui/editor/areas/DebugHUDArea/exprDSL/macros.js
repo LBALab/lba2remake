@@ -162,7 +162,7 @@ function checkArgTypeAst(func, arg, pos, type, values) {
 }
 
 function checkArgType(func, arg, pos, types) {
-    let found = _.find(types, t => {
+    let found = _.find(types, (t) => {
         switch (t) {
             case 'array':
                 return _.isArray(arg);

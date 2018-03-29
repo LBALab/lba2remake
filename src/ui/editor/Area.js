@@ -35,13 +35,13 @@ const contentStyle = extend({
     color: 'white'
 }, editor.base);
 
-const iconStyle = (base) => (extend({
+const iconStyle = base => (extend({
     position: 'absolute',
     top: 1,
     cursor: 'pointer'
 }, base));
 
-const mainIconStyle = (base) => (extend({
+const mainIconStyle = base => (extend({
     float: 'left',
     cursor: 'pointer',
     paddingLeft: '2px',

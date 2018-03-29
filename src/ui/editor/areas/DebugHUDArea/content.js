@@ -172,7 +172,7 @@ export default class DebugHUD extends FrameListener {
         return <div style={{padding: 16}}>
             <div style={headerStyle}>
                 <input key="saveInput"
-                    ref={ref => {
+                    ref={(ref) => {
                         this.saveInput = ref;
                         if (ref && !ref.value)
                             ref.value = this.props.sharedState.profileName;
@@ -200,7 +200,7 @@ export default class DebugHUD extends FrameListener {
         if (this.props.sharedState.status === Status.NORMAL) {
             const slots = this.props.sharedState.slots;
             const {macros, expressions} = slots;
-            const values = map(expressions, expr => {
+            const values = map(expressions, (expr) => {
                 try {
                     return {value: execute(expr.program, [DebugData.scope], macros)};
                 }

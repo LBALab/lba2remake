@@ -18,7 +18,7 @@ function mapCommands(scene, actor, commands) {
     let indent = 0;
     let prevCommand = null;
     let state = {};
-    return map(commands, cmd => {
+    return map(commands, (cmd) => {
         const newCmd = {
             name: cmd.op.command,
             args: mapArguments(scene, actor, cmd),
@@ -98,7 +98,7 @@ function mapArguments(scene, actor, cmd) {
             args[1].idx = args[0].value;
             break;
     }
-    each(args, arg => {
+    each(args, (arg) => {
         arg.value = mapDataName(scene, arg);
     });
     return args;

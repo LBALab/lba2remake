@@ -55,10 +55,10 @@ function loadSeaSections(groundSections) {
         }
     }
     const nbs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-    each(indexedSections, section => {
+    each(indexedSections, (section) => {
         if (section.lod == 0)
             return;
-        each(nbs, nb => {
+        each(nbs, (nb) => {
             const nearSection = indexedSections[[section.x - nb[0], section.z + nb[1]]];
             if (nearSection && nearSection.lod < section.lod) {
                 section.reduceEdges.push(nb.join(','));
@@ -70,7 +70,7 @@ function loadSeaSections(groundSections) {
 
 function computeDistanceFromGround(groundSections, x, z) {
     let minLength = 32;
-    each(groundSections, section => {
+    each(groundSections, (section) => {
         const sx = section.x * 2;
         const sz = section.z * 2;
         for (let i = 0; i < 4; i += 1) {

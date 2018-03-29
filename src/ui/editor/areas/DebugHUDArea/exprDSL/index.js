@@ -46,8 +46,8 @@ export function test() {
 
     const start = new Date().getTime();
 
-    each(TESTS, test => {
-        each(declinations, decl => {
+    each(TESTS, (test) => {
+        each(declinations, (decl) => {
             if (buildTest(decl(test))())
                 count += 1;
         });

@@ -69,7 +69,7 @@ export function loadSea(section, geometries, usedTile, offsetX, offsetZ, skyInde
                 const isShore = usedTile && usedTile[tx * 64 + tz] !== undefined && !surrounded;
                 const isEdge = ([xi, zi]) => skyIndex == 14 || (isShore && !isInBetween(usedTile, tx, tz, xi, zi));
                 const type = getTriangleType(section, isShore, usedTile, x, z, tx, tz, n);
-                each(triangles[type], tris => {
+                each(triangles[type], (tris) => {
                     push.apply(
                         geometries.sea.positions,
                         getSeaPositions(

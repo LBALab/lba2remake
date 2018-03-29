@@ -96,7 +96,7 @@ export default class Stats {
         this.msMin = Math.min(this.msMin, this.ms);
         this.msMax = Math.max(this.msMax, this.ms);
 
-        each(this.widgets, widget => {
+        each(this.widgets, (widget) => {
             widget.msText.textContent = this.ms + ' MS (' + this.msMin + '-' + this.msMax + ')';
             widget.updateGraph(widget.msGraph, Math.min(30, 30 - (this.ms / 200) * 30));
         });
@@ -109,7 +109,7 @@ export default class Stats {
             this.fpsMin = Math.min(this.fpsMin, this.fps);
             this.fpsMax = Math.max(this.fpsMax, this.fps);
 
-            each(this.widgets, widget => {
+            each(this.widgets, (widget) => {
                 widget.fpsText.textContent = this.fps + ' FPS (' + this.fpsMin + '-' + this.fpsMax + ')';
                 widget.updateGraph(widget.fpsGraph, Math.min(30, 30 - (this.fps / 100) * 30));
             });
@@ -125,13 +125,13 @@ export default class Stats {
         this.mode = value;
         switch (this.mode) {
             case 0:
-                each(this.widgets, widget => {
+                each(this.widgets, (widget) => {
                     widget.fpsDiv.style.display = 'block';
                     widget.msDiv.style.display = 'none';
                 });
                 break;
             case 1:
-                each(this.widgets, widget => {
+                each(this.widgets, (widget) => {
                     widget.fpsDiv.style.display = 'none';
                     widget.msDiv.style.display = 'block';
                 });

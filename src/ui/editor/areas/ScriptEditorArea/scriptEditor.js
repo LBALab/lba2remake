@@ -20,8 +20,8 @@ const scriptBaseStyle = {
 };
 
 const scriptStyle = {
-    life: (splitAt) => extend({left: 0, width: `${splitAt}%`}, scriptBaseStyle),
-    move: (splitAt) => extend({left: `${splitAt}%`, right: 0}, scriptBaseStyle)
+    life: splitAt => extend({left: 0, width: `${splitAt}%`}, scriptBaseStyle),
+    move: splitAt => extend({left: `${splitAt}%`, right: 0}, scriptBaseStyle)
 };
 
 let selection = null;

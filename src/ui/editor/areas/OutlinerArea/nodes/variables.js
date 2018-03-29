@@ -57,13 +57,13 @@ export const Var = {
         {
             name: 'Find all references',
             onClick: (component, varDef) => {
-                findAllReferences(varDef).then(area => {
+                findAllReferences(varDef).then((area) => {
                     component.props.split(Orientation.VERTICAL, area);
                 });
             }
         }
     ],
-    name: (varDef) => getVarName(varDef),
+    name: varDef => getVarName(varDef),
     props: (varDef) => {
         return [
             {
@@ -108,7 +108,7 @@ export const Var = {
                                 delete varEdits[varDef.key];
                             }
                             return <input type="number"
-                                ref={(ref) => ref ? ref.value = varDef.value() : null}
+                                ref={ref => ref ? ref.value = varDef.value() : null}
                                 min={0}
                                 max={255}
                                 step={1}
@@ -163,7 +163,7 @@ export function makeVarDef(type, idx, getVars, getCtx) {
 }
 
 export function findAllReferences(varDef) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         let sceneList;
         const isVarGames = varDef.type === 'vargame';
         if (isVarGames) {
@@ -192,7 +192,7 @@ export function findAllReferences(varDef) {
 
 function mapLocations(refs, locations = LocationsNode.children) {
     return filter(
-        map(locations, loc => {
+        map(locations, (loc) => {
             let node = null;
             if (loc.props) {
                 const indexProp = find(loc.props, p => p.id === 'index');
@@ -267,8 +267,8 @@ function findAllRefsInSceneList(varDef, sceneList, callback) {
         sceneList,
         (idx, callback) => {
             async.parallel([
-                (callback) => loadSceneData(language, idx, (scene) => callback(null, scene)),
-                (callback) => loadSceneMetaData(idx, callback)
+                callback => loadSceneData(language, idx, scene => callback(null, scene)),
+                callback => loadSceneMetaData(idx, callback)
             ], (err, [scene]) => {
                 const foundResults = findAllRefsInScene(varDef, scene);
                 if (foundResults.length > 0) {
@@ -293,7 +293,7 @@ function findAllRefsInScene(varDef, scene) {
         const script = parseScript(idx, 'life', actor.lifeScript);
         const actorResults = [];
         each(script.commands, (cmd, cmdIdx) => {
-            each(cmd.args, arg => {
+            each(cmd.args, (arg) => {
                 if (arg.type === varDef.type && arg.value === varDef.idx) {
                     actorResults.push(cmdIdx + 1);
                 }

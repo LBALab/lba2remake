@@ -31,7 +31,7 @@ function scene(type, index, name, children) {
                 {
                     id: 'index',
                     value: index,
-                    render: (value) => `#${value}`
+                    render: value => `#${value}`
                 }
             ],
             selected: isSelected.bind(null, index),

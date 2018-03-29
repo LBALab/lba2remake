@@ -127,7 +127,7 @@ export default class Editor extends React.Component {
 
     findNodeFromPath(layout, path) {
         let node = layout;
-        each(path, elem => {
+        each(path, (elem) => {
             node = node.children[elem];
         });
         return node;
@@ -372,7 +372,7 @@ function loadNode(editor, node) {
             root: node.root
         };
         if (node.generator) {
-            generateContent(node.generator).then(area => {
+            generateContent(node.generator).then((area) => {
                 tgtNode.content = area;
                 editor.setState({layout: editor.state.layout});
             });
