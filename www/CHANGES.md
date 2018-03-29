@@ -2,6 +2,10 @@
 A Little Big Adventure 2 engine remake change log file
 
 ---
+## Unreleased
+### Added
+### Fixed
+
 ## 0.0.9 - 29.03.2018
 ### Added
 * (Game) Isometric camera now follows Twinsen
