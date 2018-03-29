@@ -79,7 +79,7 @@ export default class TextBox extends React.Component {
         const text = this.props.text;
         if (text) {
             const style = extend({color: text.color}, baseStyle, styleType[text.type]);
-            return <div style={style}>{this.state.content}</div>
+            return <div style={style}>{this.state.content}</div>;
         } else {
             return null;
         }

@@ -20,7 +20,7 @@ const Point = {
     child: () => SceneGraphNode,
     childData: (point) => point.threeObject,
     selected: (point) => DebugData.selection.point === point.index,
-    onClick: (point) => {DebugData.selection.point = point.index},
+    onClick: (point) => {DebugData.selection.point = point.index;},
     onDoubleClick: locateObject
 };
 

@@ -6,7 +6,7 @@ export function loadIslandPhysics(sections) {
         processCollisions: processCollisions.bind(null, sections),
         processCameraCollisions: processCameraCollisions.bind(null, sections),
         getGroundInfo: position => getGroundInfo(findSection(sections, position), position)
-    }
+    };
 }
 
 const TGT = new THREE.Vector3();

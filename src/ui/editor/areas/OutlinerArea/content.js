@@ -84,7 +84,7 @@ export function makeContentComponent(tree, frame, ownStyle) {
                             {renderElement(subpath, name)}
                         </span>;
                     })}
-                </div>
+                </div>;
             } else {
                 return null;
             }

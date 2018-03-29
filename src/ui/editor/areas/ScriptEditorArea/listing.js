@@ -29,7 +29,7 @@ function mapCommands(scene, actor, commands) {
         indent = processIndent(newCmd, prevCommand, cmd.op, indent);
         prevCommand = newCmd;
         return newCmd;
-    })
+    });
 }
 
 export function mapComportementArg(comportement) {

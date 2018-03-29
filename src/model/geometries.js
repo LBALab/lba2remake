@@ -128,7 +128,7 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
 }
 
 function loadGeometry(body, texture, bones, matrixRotation, palette, envInfo, ambience) {
-    const geometries = prepareGeometries(texture, bones, matrixRotation, palette, envInfo, ambience)
+    const geometries = prepareGeometries(texture, bones, matrixRotation, palette, envInfo, ambience);
 
     loadFaceGeometry(geometries, body);
     loadSphereGeometry(geometries, body);

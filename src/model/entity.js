@@ -464,5 +464,5 @@ function makeNewBox() {
         xMax: -1,
         yMax: -1,
         zMax: -1
-    }
+    };
 }

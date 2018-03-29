@@ -146,7 +146,7 @@ export function makeVariables(type, name, getVars, getCtx) {
         numChildren: () => getVars().length,
         child: () => Var,
         childData: (data, idx) => makeVarDef(type, idx, getVars, getCtx)
-    }
+    };
 }
 
 export function makeVarDef(type, idx, getVars, getCtx) {
@@ -218,7 +218,7 @@ function mapLocations(refs, locations = LocationsNode.children) {
             }
             return node;
         })
-    )
+    );
 }
 
 function mapActors(ref) {

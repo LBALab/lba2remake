@@ -175,7 +175,7 @@ export default class DebugHUD extends FrameListener {
                     ref={ref => {
                         this.saveInput = ref;
                         if (ref && !ref.value)
-                            ref.value = this.props.sharedState.profileName
+                            ref.value = this.props.sharedState.profileName;
                     }}
                     style={inputStyle}
                     spellCheck={false}

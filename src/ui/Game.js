@@ -23,7 +23,7 @@ import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
 import VideoData from '../video/data';
 import Version from './game/Version';
-import Ribbon from './game/Ribbon'
+import Ribbon from './game/Ribbon';
 
 export default class Game extends FrameListener {
     constructor(props) {

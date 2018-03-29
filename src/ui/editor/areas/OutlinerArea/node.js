@@ -298,7 +298,7 @@ export default class Node extends React.Component {
             activePath={this.props.activePath}
             ticker={this.props.ticker}
             level={this.props.level + 1}
-            split={this.props.split} />
+            split={this.props.split} />;
     }
 
     numChildren() {

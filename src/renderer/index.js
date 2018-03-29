@@ -129,7 +129,7 @@ function setupSMAA(renderer, pixelRatio) {
             renderPass.camera = camera;
             composer.render();
         }
-    }
+    };
 }
 
 function setupVR(baseRenderer) {

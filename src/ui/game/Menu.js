@@ -115,7 +115,7 @@ export default class Menu extends React.Component {
                         {map(this.state.items, (i, idx) => {
                             return (i.isVisible) ? <li key={idx} style={styleMenuItemList}>
                                 <MenuItem item={i} selected={idx === this.state.selectedIndex} onClick={this.itemChanged.bind(this, idx)}/>
-                            </li> : null
+                            </li> : null;
                         })}
                     </ul>
                 </div>
@@ -151,7 +151,7 @@ function MenuItem(props) {
             cursor: 'pointer'
         };
         const style = extend(extendedStyle, styleMenuItem);
-        return <div style={style} onClick={props.onClick}>{props.item.text}</div>
+        return <div style={style} onClick={props.onClick}>{props.item.text}</div>;
     }
     return null;
 }

@@ -4,7 +4,7 @@ import {DirMode} from '../game/actors';
 
 import {loadHqrAsync} from '../hqr';
 import {bits} from '../utils';
-import {loadTextData, getTextFile} from '../text'
+import {loadTextData, getTextFile} from '../text';
 
 export function loadSceneData(language, index, callback) {
     async.auto({

@@ -38,7 +38,7 @@ export default class Editor extends React.Component {
             layout,
             root: findRootArea(layout),
             separator: null
-        }
+        };
     }
 
     componentWillMount() {

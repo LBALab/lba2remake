@@ -13,7 +13,7 @@ const inputStyle = {
 export class ScriptMenu extends FrameListener {
     constructor(props) {
         super(props);
-        this.state = { actors: [], selectedActor: props.sharedState.actor, isPaused: false }
+        this.state = { actors: [], selectedActor: props.sharedState.actor, isPaused: false };
     }
 
     frame() {

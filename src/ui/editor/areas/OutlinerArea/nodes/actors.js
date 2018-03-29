@@ -79,7 +79,7 @@ const Actor = {
     child: () => SceneGraphNode,
     childData: (actor) => actor.threeObject,
     selected: (actor) => DebugData.selection.actor === actor.index,
-    onClick: (actor) => {DebugData.selection.actor = actor.index},
+    onClick: (actor) => {DebugData.selection.actor = actor.index;},
     onDoubleClick: locateObject
 };
 

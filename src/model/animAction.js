@@ -1,7 +1,7 @@
 import {each} from 'lodash';
 
 import {AnimActionOpcode} from './data/index';
-import {getRandom} from '../utils/lba'
+import {getRandom} from '../utils/lba';
 
 export function processAnimAction(ctx) {
     const {entityAnim, animState} = ctx;

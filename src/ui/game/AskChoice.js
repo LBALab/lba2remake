@@ -74,7 +74,7 @@ export default class AskChoice extends React.Component {
                         {map(this.props.ask.choices, (c, idx) => {
                             return <li key={idx} style={{padding:5}}>
                                 <Choice key={c.value} choice={c} selected={idx === this.state.selectedIndex}/>
-                            </li>
+                            </li>;
                         })}
                     </ul>
                 </div>
@@ -104,7 +104,7 @@ function Choice(props) {
             background: props.selected ? 'rgba(32, 162, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'
         };
         const style = extend(extendedStyle, styleChoice);
-        return <div style={style}>{props.choice.text.value}</div>
+        return <div style={style}>{props.choice.text.value}</div>;
     }
     return null;
 }

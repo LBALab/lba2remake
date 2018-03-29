@@ -47,7 +47,7 @@ export function LocatorMenu(props) {
         <button style={editorStyle.button} onClick={locate.bind(null, 'island')}>Island</button>
         <button style={editorStyle.button} onClick={locate.bind(null, 'section')}>Section</button>
         <button style={editorStyle.button} onClick={locate.bind(null, 'building')}>Building</button>
-    </span>
+    </span>;
 }
 
 export function findScenePath(node, index, path = []) {

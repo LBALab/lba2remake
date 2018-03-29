@@ -93,10 +93,10 @@ const VarGame = {
                     : scene.usedVarGames;
                 const varGame = usedVarGames[idx];
                 if (varGame !== undefined) {
-                    return makeVarDef('vargame', varGame, () => state.flags.quest, () => null)
+                    return makeVarDef('vargame', varGame, () => state.flags.quest, () => null);
                 }
             } else {
-                return makeVarDef('vargame', idx, () => state.flags.quest, () => null)
+                return makeVarDef('vargame', idx, () => state.flags.quest, () => null);
             }
         }
     },
