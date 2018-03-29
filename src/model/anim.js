@@ -51,7 +51,7 @@ export function loadAnim(model: Model, anims: Anim[], index: number) {
             loopFrame: data.getUint16(0x04, true),
             unk1: data.getUint16(0x08, true),
             keyframes: [],
-            buffer: buffer
+            buffer
         };
 
         loadKeyframes(obj);

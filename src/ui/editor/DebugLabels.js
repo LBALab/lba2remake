@@ -148,7 +148,7 @@ export default class DebugLabels extends FrameListener {
                     y: POS.y,
                     label: type === 'point' ? '' : getObjectName(type, scene.index, obj.index),
                     selected: DebugData.selection[type] === obj.index,
-                    type: type
+                    type
                 };
                 if (type === 'zone') {
                     const {r, g, b} = obj.color;

@@ -26,7 +26,7 @@ function loadSceneMap(files) {
 
         map.push({
             isIsland: opcode === 2,
-            index: index
+            index
         });
     }
     return map;

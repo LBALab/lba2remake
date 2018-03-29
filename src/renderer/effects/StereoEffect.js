@@ -18,12 +18,12 @@ function StereoEffect(renderer) {
 
     Object.defineProperties(this, {
         separation: {
-            get: function () {
+            get () {
 
                 return scope.eyeSeparation;
 
             },
-            set: function (value) {
+            set (value) {
 
                 console.warn('THREE.StereoEffect: .separation is now .eyeSeparation.');
                 scope.eyeSeparation = value;
@@ -31,12 +31,12 @@ function StereoEffect(renderer) {
             }
         },
         targetDistance: {
-            get: function () {
+            get () {
 
                 return scope.focalLength;
 
             },
-            set: function (value) {
+            set (value) {
 
                 console.warn('THREE.StereoEffect: .targetDistance is now .focalLength.');
                 scope.focalLength = value;

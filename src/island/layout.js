@@ -4,8 +4,8 @@ export function loadLayout(ile) {
     const groundSections = loadGroundSections(ile);
     const seaSections = loadSeaSections(groundSections);
     return {
-        groundSections: groundSections,
-        seaSections: seaSections
+        groundSections,
+        seaSections
     };
 }
 
@@ -44,8 +44,8 @@ function loadSeaSections(groundSections) {
             const distanceFromGround = computeDistanceFromGround(groundSections, x, z);
             if (distanceFromGround < 12) {
                 const section = {
-                    x: x,
-                    z: z,
+                    x,
+                    z,
                     lod: Math.min(distanceFromGround, 5),
                     reduceEdges: []
                 };

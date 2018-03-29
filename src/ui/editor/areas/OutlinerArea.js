@@ -12,7 +12,7 @@ export const SceneOutliner = makeOutlinerArea('scene_outliner', 'Scene', SceneNo
 export const Locator = makeOutlinerArea('locator', 'Locator', LocationsNode, {
     menu: LocatorMenu,
     icon: 'holomap.png',
-    frame: function() {
+    frame() {
         const scene = DebugData.scope.scene;
         if (scene !== this.scene) {
             this.scene = scene;
@@ -26,7 +26,7 @@ export const Locator = makeOutlinerArea('locator', 'Locator', LocationsNode, {
         }
     },
     stateHandler: {
-        setActivePath: function(activePath) {
+        setActivePath(activePath) {
             this.setState({activePath});
         }
     },

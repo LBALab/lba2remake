@@ -22,7 +22,7 @@ const GameArea = {
         }
     }),
     stateHandler: {
-        setLabel: function (type, value) {
+        setLabel (type, value) {
             const labels = clone(this.state.labels);
             labels[type] = value;
             this.setState({labels});

@@ -44,7 +44,7 @@ function loadObject(island, objects, index) {
             uvGroupsSectionOffset: data.getUint32(92, true),
             numVerticesType1: data.getUint16(100, true),
             numVerticesType2: data.getUint16(102, true),
-            buffer: buffer
+            buffer
         };
         //console.log(new Uint32Array(buffer, 0, 17));
         obj.vertices = new Int16Array(buffer, obj.verticesOffset, obj.numVerticesType1 * 4);
@@ -85,11 +85,11 @@ function parseSectionHeader(data, object, offset) {
     const numFaces = data.getUint16(offset + 2, true);
     const size = data.getUint16(offset + 4, true) - 8;
     return {
-        type: type,
-        numFaces: numFaces,
+        type,
+        numFaces,
         pointsPerFace: (flags & 0x80) ? 4 : 3,
         blockSize: size / numFaces,
-        size: size,
+        size,
         isTransparent: bits(type, 2, 1) == 1,
         data: new DataView(object.buffer, object.faceSectionOffset + offset + 8, size)
     };

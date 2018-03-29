@@ -59,8 +59,8 @@ function uriToParams(uri) {
 }
 
 export default {
-    DeviceParams: DeviceParams,
-    paramsToUri: paramsToUri,
-    uriToParams: uriToParams,
-    uriToParamsProto: uriToParamsProto
+    DeviceParams,
+    paramsToUri,
+    uriToParams,
+    uriToParamsProto
 };

@@ -54,8 +54,8 @@ export function loadBricksMapping(layouts, bricks, palette) {
     texture.needsUpdate = true;
     texture.generateMipmaps = false;
     return {
-        texture: texture,
-        bricksMap: bricksMap
+        texture,
+        bricksMap
     };
 }
 

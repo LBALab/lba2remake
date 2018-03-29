@@ -47,7 +47,7 @@ export const iso = scene.bind(null, 'building');
 export function planet(name, icon, children) {
     return {
         type: 'planet',
-        name: name,
+        name,
         color: indirectSceneColor,
         children,
         icon: `editor/icons/locations/${icon}.png`

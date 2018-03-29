@@ -95,7 +95,7 @@ export default class Editor extends React.Component {
                     prop: horizontal ? 'clientX' : 'clientY',
                     min: bb[horizontal ? 'left' : 'top'],
                     max: node.rootRef[horizontal ? 'clientWidth' : 'clientHeight'],
-                    node: node
+                    node
                 };
             } else {
                 return this.findSeparator(path, node.children[0], concat(sepPath, 0))
@@ -213,7 +213,7 @@ export default class Editor extends React.Component {
         if (path.length === 0) {
             const layout = {
                 type: Type.LAYOUT,
-                orientation: orientation,
+                orientation,
                 splitAt: 50,
                 children: [
                     this.state.layout,
@@ -229,7 +229,7 @@ export default class Editor extends React.Component {
             const pNode = this.findNodeFromPath(layout, parentPath);
             pNode.children[idx] = {
                 type: Type.LAYOUT,
-                orientation: orientation,
+                orientation,
                 splitAt: 50,
                 children: [
                     pNode.children[idx],

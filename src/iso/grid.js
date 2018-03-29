@@ -13,7 +13,7 @@ export function loadGrid(bkg, bricks, palette, entry) {
     }
     const library = loadLibrary(bkg, bricks, palette, libIndex);
     return {
-        library: library,
+        library,
         cells: map(offsets, (offset, idx) => {
             const blocks = [];
             const numColumns = gridData.getUint8(offset);
@@ -72,7 +72,7 @@ export function loadGrid(bkg, bricks, palette, entry) {
             }
             return {
                 build: buildCell.bind(null, library, blocks),
-                columns: columns
+                columns
             };
         })
     };
@@ -105,7 +105,7 @@ function loadLibrary(bkg, bricks, palette, entry) {
         const library = {
             texture: mapping.texture,
             bricksMap: mapping.bricksMap,
-            layouts: layouts
+            layouts
         };
         libraries[entry] = library;
         return library;
@@ -130,10 +130,10 @@ function loadLayout(dataView) {
         });
     }
     return {
-        nX: nX,
-        nY: nY,
-        nZ: nZ,
-        blocks: blocks
+        nX,
+        nY,
+        nZ,
+        blocks
     };
 }
 

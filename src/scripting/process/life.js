@@ -376,7 +376,7 @@ export function ADD_CHOICE(index) {
     this.state.choice = null;
     const text = this.scene.data.texts[index];
     const uiState = this.game.getUiState();
-    uiState.ask.choices.push({ text: text, value: index, color: '#ffffff' });
+    uiState.ask.choices.push({ text, value: index, color: '#ffffff' });
     this.game.setUiState({ ask: uiState.ask });
 }
 

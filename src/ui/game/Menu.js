@@ -64,7 +64,7 @@ export default class Menu extends React.Component {
             each(items, (i) => {
                 i.text = newProps.texts[i.index].value;
             });
-            this.setState({items: items, selectedIndex: 0, inGameMenu: newProps.inGameMenu});
+            this.setState({items, selectedIndex: 0, inGameMenu: newProps.inGameMenu});
         }
     }
 
@@ -81,14 +81,14 @@ export default class Menu extends React.Component {
                 if (selectedIndex < 0) {
                     selectedIndex = this.state.items.length - 1;
                 }
-                this.setState({ selectedIndex: selectedIndex });
+                this.setState({ selectedIndex });
             }
             if (key === 'ArrowDown' || key === 40) {
                 selectedIndex += 1;
                 if (selectedIndex > this.state.items.length - 1) {
                     selectedIndex = 0;
                 }
-                this.setState({ selectedIndex: selectedIndex });
+                this.setState({ selectedIndex });
             }
             if (key === 'Enter' || key === 13) {
                 this.itemChanged(selectedIndex);

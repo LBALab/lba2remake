@@ -153,11 +153,11 @@ function loadSpriteData(sprites, entry) {
         }
     }
     return {
-        width: width,
-        height: height,
-        offsetX: offsetX,
-        offsetY: offsetY,
-        pixels: pixels,
+        width,
+        height,
+        offsetX,
+        offsetY,
+        pixels,
         index: entry
     };
 }
@@ -180,11 +180,11 @@ function loadSpriteRawData(sprites, entry) {
         }
     }
     return {
-        width: width,
-        height: height,
+        width,
+        height,
         offsetX: 0,
         offsetY: 0,
-        pixels: pixels,
+        pixels,
         index: entry
     };
 }
@@ -243,9 +243,9 @@ export function loadSpritesMapping(sprites, palette) {
     texture.needsUpdate = true;
     texture.generateMipmaps = false;
     return {
-        width: width,
-        height: height,
-        texture: texture,
-        spritesMap: spritesMap
+        width,
+        height,
+        texture,
+        spritesMap
     };
 }

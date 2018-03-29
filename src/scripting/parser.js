@@ -15,8 +15,8 @@ const TypeSize = {
 
 export function parseScript(actor, type, script) {
     const state = {
-        type: type,
-        actor: actor,
+        type,
+        actor,
         comportement: 0,
         track: -1,
         newComportement: (type === 'life'),
@@ -176,8 +176,8 @@ function parseValue(state, script, spec) {
     }
     return {
         type: lbaType,
-        value: value,
-        hide: hide
+        value,
+        hide
     };
 }
 

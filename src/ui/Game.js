@@ -155,7 +155,7 @@ export default class Game extends FrameListener {
         musicSource.load(6, () => {
             musicSource.play();
         });
-        this.setState({showMenu: true, inGameMenu: inGameMenu});
+        this.setState({showMenu: true, inGameMenu});
     }
 
     hideMenu() {
@@ -236,7 +236,7 @@ export default class Game extends FrameListener {
                 game,
                 clock,
                 renderer,
-                scene: scene,
+                scene,
                 hero: scene && scene.actors[0],
                 controls,
                 ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls')
@@ -263,7 +263,7 @@ export default class Game extends FrameListener {
     }
 
     onAskChoiceChanged(choice) {
-        this.setState({choice: choice});
+        this.setState({choice});
     }
 
     render() {

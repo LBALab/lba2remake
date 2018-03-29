@@ -31,7 +31,7 @@ export function loadBody(model, bodies, index, bodyProps) {
             uvGroupsSize: data.getUint32(0x58, true),
             uvGroupsOffset: data.getUint32(0x5C, true),
             
-            buffer: buffer
+            buffer
         };
 
         obj.version = obj.bodyFlag & 0xff;
@@ -126,7 +126,7 @@ function loadPolygon(data, offset, renderType, blockSize) {
     const hasTransparency = (renderType == 2) ? true : false;
 
     let poly = {
-        renderType: renderType,
+        renderType,
         vertex: [],
         colour: 0,
         intensity: 0,
@@ -135,10 +135,10 @@ function loadPolygon(data, offset, renderType, blockSize) {
         unkY: [],
         texY: [],
         tex: 0,
-        numVertex: numVertex,
-        hasTex: hasTex,
-        hasExtra: hasExtra,
-        hasTransparency: hasTransparency
+        numVertex,
+        hasTex,
+        hasExtra,
+        hasTransparency
     };
 
     // Blocksizes:

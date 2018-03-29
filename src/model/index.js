@@ -48,14 +48,14 @@ function loadModelData(params: Object, files, entityIdx, bodyIdx, animIdx, animS
     const entities = loadEntity(entityInfo);
 
     const model = {
-        palette: palette,
-        files: files,
+        palette,
+        files,
         bodies: [],
         anims: [],
         texture: loadTexture2(files.ress.getEntry(6), palette),
         state: null,
         mesh: null,
-        entities: entities
+        entities
     };
 
     const entity = entities[entityIdx];

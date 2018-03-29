@@ -120,7 +120,7 @@ function loadEntityEntry(buffer, dataOffset, index) {
     const data = new DataView(buffer, dataOffset);
     let offset = 0;
     let entity = {
-        index: index,
+        index,
         bodies: [],
         anims: []
     };

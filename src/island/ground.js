@@ -67,7 +67,7 @@ function loadTriangle(section, x, z, idx) {
         useColor: bits(flags, 7, 1),
         sound: bits(flags, 8, 4),
         liquid: bits(flags, 12, 4),
-        orientation: orientation,
+        orientation,
         collision: bits(flags, 17, 1),
         unk2: bits(flags, 18, 1),
         uvIndex: bits(flags, 19, 13),

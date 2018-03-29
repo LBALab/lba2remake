@@ -151,7 +151,7 @@ export function makeVariables(type, name, getVars, getCtx) {
 
 export function makeVarDef(type, idx, getVars, getCtx) {
     return {
-        type: type,
+        type,
         key: `${type}_${idx}`,
         ctx: getCtx && getCtx(),
         value: () => getVars()[idx],

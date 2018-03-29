@@ -25,7 +25,7 @@ const PixelRatioMode = {
 export const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'], (name, idx) => ({
     getValue: PixelRatioMode[name],
     index: idx,
-    name: name
+    name
 }));
 
 export function createRenderer(params, canvas) {
@@ -43,7 +43,7 @@ export function createRenderer(params, canvas) {
     displayRenderMode();
 
     const renderer = {
-        canvas: canvas,
+        canvas,
         render: scene => {
             tgtRenderer.antialias = antialias;
             const camera = scene.isIsland ? camera3D : cameraIso;
@@ -59,9 +59,9 @@ export function createRenderer(params, canvas) {
             const color = new THREE.Color(sc[0], sc[1], sc[2]);
             baseRenderer.setClearColor(color.getHex(), 1);
         },
-        stats: stats,
+        stats,
         cameras: {
-            camera3D: camera3D,
+            camera3D,
             isoCamera: cameraIso
         },
         resize: (width = tgtRenderer.getSize().width, height = tgtRenderer.getSize().height) => {
@@ -71,7 +71,7 @@ export function createRenderer(params, canvas) {
         },
         getMainCamera: scene => scene.isIsland ? camera3D : cameraIso,
         pixelRatio: getPixelRatio,
-        setPixelRatio: function(value) { baseRenderer.setPixelRatio(value); }
+        setPixelRatio(value) { baseRenderer.setPixelRatio(value); }
     };
 
     function keyListener(event) {

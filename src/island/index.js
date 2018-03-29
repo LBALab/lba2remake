@@ -51,9 +51,9 @@ function loadIslandNode(params, props, files, ambience) {
     islandObject.matrixAutoUpdate = false;
     const layout = loadLayout(files.ile);
     const data = {
-        files: files,
+        files,
         palette: new Uint8Array(files.ress.getEntry(0)),
-        layout: layout
+        layout
     };
 
     const geometries = loadGeometries(props, data, ambience);
@@ -110,7 +110,7 @@ function loadIslandNode(params, props, files, ambience) {
     const seaTimeUniform = islandObject.getObjectByName('sea').material.uniforms.time;
 
     return {
-        props: props,
+        props,
         sections: map(layout.groundSections, section => ({x: section.x, z: section.z})),
         threeObject: islandObject,
         physics: loadIslandPhysics(sections),
