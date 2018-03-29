@@ -72,6 +72,9 @@ export function renameVar(varDef, name) {
 }
 
 export function getVarInfo(varDef) {
+    if (!varDef)
+        return null;
+    
     if (varDef.type === 'vargame') {
         const game = DebugData.metadata.game;
         if (game.vargames && game.vargames[varDef.idx]) {
