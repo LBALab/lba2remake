@@ -20,7 +20,7 @@ function processCameraCollisions(sections, camPosition) {
     const ground = getGround(section, camPosition);
     camPosition.y = Math.max(ground.height + 0.15, camPosition.y);
     if (section) {
-        for (let i = 0; i < section.boundingBoxes.length; ++i) {
+        for (let i = 0; i < section.boundingBoxes.length; i += 1) {
             const bb = section.boundingBoxes[i];
             if (bb.containsPoint(camPosition)) {
                 camPosition.y = bb.max.y + 0.2;
@@ -76,7 +76,7 @@ function getGround(section, position) {
     if (!section)
         return DEFAULT_GROUND;
 
-    for (let i = 0; i < section.boundingBoxes.length; ++i) {
+    for (let i = 0; i < section.boundingBoxes.length; i += 1) {
         const bb = section.boundingBoxes[i];
         if (position.x >= bb.min.x && position.x <= bb.max.x
             && position.z >= bb.min.z && position.z <= bb.max.z
@@ -110,7 +110,7 @@ function processBoxIntersections(section, actor, position) {
     const boundingBox = actor.model.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.translate(position);
-    for (let i = 0; i < section.boundingBoxes.length; ++i) {
+    for (let i = 0; i < section.boundingBoxes.length; i += 1) {
         const bb = section.boundingBoxes[i];
         if (ACTOR_BOX.intersectsBox(bb)) {
             INTERSECTION.copy(ACTOR_BOX);

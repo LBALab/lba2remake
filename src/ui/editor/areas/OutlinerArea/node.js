@@ -23,7 +23,7 @@ export default class Node extends React.Component {
         const path = props.path;
         if (!activePath)
             return false;
-        for (let i = 0; i < path.length; ++i) {
+        for (let i = 0; i < path.length; i += 1) {
             if (path[i] !== activePath[i])
                 return false;
         }
@@ -83,7 +83,7 @@ export default class Node extends React.Component {
             if (nodeProps.length !== oldProps.length) {
                 this.setState({nodeProps});
             } else {
-                for (let i = 0; i < nodeProps.length; ++i) {
+                for (let i = 0; i < nodeProps.length; i += 1) {
                     let foundDiff = false;
                     const p = nodeProps[i];
                     const op = oldProps[i];

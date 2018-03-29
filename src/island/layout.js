@@ -13,14 +13,14 @@ function loadGroundSections(ile) {
     const layout_raw = new Uint8Array(ile.getEntry(0));
     const groundSections = [];
     let index = 0;
-    for (let i = 0; i < 256; ++i) {
+    for (let i = 0; i < 256; i += 1) {
         const x = Math.floor(i / 16);
         const z = i % 16;
         if (layout_raw[i]) {
             const id = layout_raw[i];
             groundSections.push({
-                id: id,
-                index: index++,
+                id,
+                index,
                 x: (16 - x) - 8,
                 z: z - 8,
                 objInfo: parseObjectsInfo(ile.getEntry(id * 6 - 3)),
@@ -30,6 +30,7 @@ function loadGroundSections(ile) {
                 heightmap: new Uint16Array(ile.getEntry(id * 6 + 1)),
                 intensity: new Uint8Array(ile.getEntry(id * 6 + 2))
             });
+            index += 1;
         }
     }
     return groundSections;
@@ -38,8 +39,8 @@ function loadGroundSections(ile) {
 function loadSeaSections(groundSections) {
     const seaSections = [];
     const indexedSections = {};
-    for (let x = -14; x <= 16; ++x) {
-        for (let z = -16; z <= 14; ++z) {
+    for (let x = -14; x <= 16; x += 1) {
+        for (let z = -16; z <= 14; z += 1) {
             const distanceFromGround = computeDistanceFromGround(groundSections, x, z);
             if (distanceFromGround < 12) {
                 const section = {
@@ -72,7 +73,7 @@ function computeDistanceFromGround(groundSections, x, z) {
     each(groundSections, section => {
         const sx = section.x * 2;
         const sz = section.z * 2;
-        for (let i = 0; i < 4; ++i) {
+        for (let i = 0; i < 4; i += 1) {
             const dx = Math.floor(i / 2);
             const dz = i % 2;
             const length = Math.sqrt(Math.pow(sx + dx - x, 2) + Math.pow(sz + dz - z, 2));

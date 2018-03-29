@@ -57,7 +57,7 @@ export function findScenePath(node, index, path = []) {
             return concat(path, node);
         }
     }
-    for (let i = 0; i < node.children.length; ++i) {
+    for (let i = 0; i < node.children.length; i += 1) {
         const foundPath = findScenePath(node.children[i], index, concat(path, node));
         if (foundPath) {
             return foundPath;

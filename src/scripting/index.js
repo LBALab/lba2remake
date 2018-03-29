@@ -79,7 +79,7 @@ function runScript(params, script, time) {
             console.error('Error on instruction: actor(' + context.actor.index + '):' + context.type + ':' + instructions[state.offset].dbgLabel + '"\n', e);
         }
         if (state.continue) {
-            state.offset++;
+            state.offset += 1;
         }
     }
     if (activeDebug) {

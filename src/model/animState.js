@@ -49,7 +49,7 @@ export function initSkeleton(state, skeleton, loopFrame) {
 
 export function createSkeleton(body) {
     let skeleton = [];
-    for (let i = 0; i < body.bonesSize; ++i) {
+    for (let i = 0; i < body.bonesSize; i += 1) {
         const bone = body.bones[i];
         const boneVertex = body.vertices[bone.vertex];
 
@@ -69,7 +69,7 @@ export function createSkeleton(body) {
         skeleton.push(skeletonBone);
     }
 
-    for (let i = 0; i < skeleton.length; ++i) {
+    for (let i = 0; i < skeleton.length; i += 1) {
         const bone = skeleton[i];
         if (bone.parent == 0xFFFF) {
             continue;
@@ -89,12 +89,12 @@ function createShaderBone(state) {
         rotation: [],
         matrix: []
     };
-    for (let i = 0; i < state.skeleton.length; ++i) {
+    for (let i = 0; i < state.skeleton.length; i += 1) {
         bones.position.push(state.skeleton[i].p);
         bones.rotation.push(state.skeleton[i].r);
         bones.matrix.push(state.skeleton[i].m);
     }
-    for (let i = 0; i < 30 - state.skeleton.length; ++i) {
+    for (let i = 0; i < 30 - state.skeleton.length; i += 1) {
         bones.position.push(new THREE.Vector3(0, 0, 0));
         bones.rotation.push(new THREE.Vector4(0, 0, 0, 0));
         bones.matrix.push(new THREE.Matrix4());
@@ -120,7 +120,7 @@ export function updateKeyframe(anim, state, time, realAnimIdx) {
     if (state.currentTime > keyframe.length) {
         state.hasEnded = false;
         state.currentTime = 0;
-        ++state.currentFrame;
+        state.currentFrame += 1;
         if (!state.keyframeChanged) {
             state.keyframeChanged = true;
         }
@@ -185,7 +185,7 @@ function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones, lengt
     const interpolation = state.currentTime / length;
     try
     {
-        for (let i = 0; i < numBones; ++i) {
+        for (let i = 0; i < numBones; i += 1) {
             const s = state.skeleton[i];
             const bf = keyframe.boneframes[i];
             const nbf = nextkeyframe.boneframes[i];
@@ -249,7 +249,7 @@ function updateSkeletonHierarchy(skeleton, index) {
     } else {
         p.m.identity();
     }
-    for (let i = 0; i < s.children.length; ++i) {
+    for (let i = 0; i < s.children.length; i += 1) {
         updateSkeletonHierarchy(skeleton, s.children[i].boneIndex);
     }
 }

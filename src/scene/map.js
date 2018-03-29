@@ -17,8 +17,9 @@ function loadSceneMap(files) {
     const map = [];
 
     while (true) {
-        const opcode = data.getUint8(offset++, true);
-        const index = data.getUint8(offset++, true);
+        const opcode = data.getUint8(offset, true);
+        const index = data.getUint8(offset + 1, true);
+        offset += 2;
         if (opcode === 0) {
             break;
         }

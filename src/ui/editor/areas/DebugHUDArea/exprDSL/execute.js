@@ -42,7 +42,7 @@ export function execute(node, scopes, userMacros) {
 }
 
 function findScope(key, scopes) {
-    for (let i = scopes.length - 1; i >= 0; --i) {
+    for (let i = scopes.length - 1; i >= 0; i -= 1) {
         if (key in scopes[i]) {
             return i;
         }

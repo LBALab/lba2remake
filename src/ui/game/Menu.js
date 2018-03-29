@@ -77,14 +77,14 @@ export default class Menu extends React.Component {
             const key = event.code || event.which || event.keyCode;
             let selectedIndex = this.state.selectedIndex;
             if (key === 'ArrowUp' || key === 38) {
-                selectedIndex--;
+                selectedIndex -= 1;
                 if (selectedIndex < 0) {
                     selectedIndex = this.state.items.length - 1;
                 }
                 this.setState({ selectedIndex: selectedIndex });
             }
             if (key === 'ArrowDown' || key === 40) {
-                selectedIndex++;
+                selectedIndex += 1;
                 if (selectedIndex > this.state.items.length - 1) {
                     selectedIndex = 0;
                 }

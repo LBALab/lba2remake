@@ -39,10 +39,10 @@ function loadMesh(renderer, grid, entry) {
         tiles: []
     };
     let c = 0;
-    for (let z = 0; z < 64; ++z) {
-        for (let x = 0; x < 64; ++x) {
+    for (let z = 0; z < 64; z += 1) {
+        for (let x = 0; x < 64; x += 1) {
             grid.cells[c].build(geometries, x, z - 1);
-            c++;
+            c += 1;
         }
     }
 

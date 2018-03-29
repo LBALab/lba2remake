@@ -145,7 +145,7 @@ export default class ScriptEditor extends FrameListener {
             const commands = this.state.listing[type].commands;
             const activeCommands = DebugData.script[type][this.actor.index] || {};
             const breakpoints = DebugData.breakpoints[type][this.actor.index] || {};
-            for (let i = 0; i < ln.length; ++i) {
+            for (let i = 0; i < ln.length; i += 1) {
                 const lineNum = ln[i];
                 const lineCmd = lc[i];
                 const result = lineCmd.querySelector('.result');

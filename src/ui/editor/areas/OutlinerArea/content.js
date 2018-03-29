@@ -104,7 +104,7 @@ export function makeContentComponent(tree, frame, ownStyle) {
 
                 let childNode = null;
                 const numChildren = node.dynamic ? node.numChildren(data) : node.children.length;
-                for (let i = 0; i < numChildren; ++i) {
+                for (let i = 0; i < numChildren; i += 1) {
                     const child = node.dynamic ? node.child(data, i) : node.children[i];
                     if (child) {
                         const childData = node.dynamic ? node.childData(data, i) : null;

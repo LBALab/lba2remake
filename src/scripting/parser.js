@@ -62,7 +62,7 @@ function checkEndIf(state) {
 function checkNewComportment(state, code) {
     if (code !== 0 && state.newComportement) {
         state.comportementMap[state.offset] = state.comportement;
-        state.comportement++;
+        state.comportement += 1;
         state.commands.push({
             op: LifeOpcode[0x20], // COMPORTEMENT
             args: [{hide: false, value: state.comportement}],
@@ -73,7 +73,8 @@ function checkNewComportment(state, code) {
 }
 
 function parseCommand(state, script, op, type) {
-    const baseOffset = state.offset++;
+    const baseOffset = state.offset;
+    state.offset += 1;
     const cmd = {
         op,
         section: type === 'life' ? state.comportement : state.track
@@ -113,7 +114,7 @@ function parseCondition(state, script, op, cmd) {
             op: condition,
             operandType: getLbaType(condition.operand)
         };
-        state.offset++;
+        state.offset += 1;
         if (condition.param) {
             cmd.condition.param = parseValue(state, script, condition.param);
         }
@@ -127,7 +128,7 @@ function parseCondition(state, script, op, cmd) {
         const code = script.getUint8(state.offset);
         const operator = OperatorOpcode[code];
         cmd.operator = { op: operator };
-        state.offset++;
+        state.offset += 1;
         cmd.operator.operand = parseValue(state, script, condition.operand);
     }
 }
@@ -135,7 +136,7 @@ function parseCondition(state, script, op, cmd) {
 function parseArguments(state, script, op, cmd) {
     if (op.args) {
         cmd.args = [];
-        for (let i = 0; i < op.args.length; ++i) {
+        for (let i = 0; i < op.args.length; i += 1) {
             cmd.args.push(parseValue(state, script, op.args[i]));
         }
         if (op.command === 'SET_DIRMODE' || op.command === 'SET_DIRMODE_OBJ') {
@@ -145,7 +146,7 @@ function parseArguments(state, script, op, cmd) {
                     value: script.getUint8(state.offset, true),
                     hide: false
                 });
-                state.offset++;
+                state.offset += 1;
             }
         }
     }
@@ -167,7 +168,7 @@ function parseValue(state, script, spec) {
             if (char !== 0) {
                 value += String.fromCharCode(char);
             }
-            state.offset++;
+            state.offset += 1;
         } while (char !== 0);
     } else {
         value = script[`get${type}`](state.offset, true);

@@ -70,7 +70,7 @@ const VarGame = {
                     let count = 0;
                     each(scene.usedVarGames, varGame => {
                         if (varGame < 40)
-                            count++;
+                            count += 1;
                     });
                     return count;
                 } else {

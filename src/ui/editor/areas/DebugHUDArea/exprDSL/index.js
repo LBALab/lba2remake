@@ -49,7 +49,7 @@ export function test() {
     each(TESTS, test => {
         each(declinations, decl => {
             if (buildTest(decl(test))())
-                count++;
+                count += 1;
         });
     });
 

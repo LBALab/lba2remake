@@ -68,7 +68,7 @@ export default class TextBox extends React.Component {
         } else {
             content += char;
         }
-        offset++;
+        offset += 1;
         if (offset >= text.length) {
             clearInterval(this.interval);
         }

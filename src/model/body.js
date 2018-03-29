@@ -56,7 +56,7 @@ export function loadBody(model, bodies, index, bodyProps) {
 function loadBones(object) {
     object.bones = [];
     const rawBones = new Uint16Array(object.buffer, object.bonesOffset, object.bonesSize * 4);
-    for (let i = 0; i < object.bonesSize; ++i) {
+    for (let i = 0; i < object.bonesSize; i += 1) {
         const index = i * 4;
         object.bones.push({
             parent: rawBones[index],
@@ -70,7 +70,7 @@ function loadBones(object) {
 function loadVertices(object) {
     object.vertices = [];
     const data = new DataView(object.buffer, object.verticesOffset, object.normalsOffset - object.verticesOffset);
-    for (let i = 0; i < object.verticesSize; ++i) {
+    for (let i = 0; i < object.verticesSize; i += 1) {
         const index = i * 8;
         object.vertices.push({
             x: data.getInt16(index, true) / 0x4000,
@@ -84,7 +84,7 @@ function loadVertices(object) {
 function loadNormals(object) {
     object.normals = [];
     const rawNormals = new Int16Array(object.buffer, object.normalsOffset, object.normalsSize * 4);
-    for (let i = 0; i < object.normalsSize; ++i) {
+    for (let i = 0; i < object.normalsSize; i += 1) {
         const index = i * 4;
         object.normals.push({
             x: rawNormals[index] / 0x4000,
@@ -111,7 +111,7 @@ function loadPolygons(object) {
 
         const blockSize = ((sectionSize - 8) / numPolygons);
 
-        for (let j = 0; j < numPolygons; ++j) {
+        for (let j = 0; j < numPolygons; j += 1) {
             const poly = loadPolygon(data, offset, renderType, blockSize);
             object.polygons.push(poly);
             offset += blockSize;
@@ -150,7 +150,7 @@ function loadPolygon(data, offset, renderType, blockSize) {
     // Tri and Color = 12
 
     // vertex block
-    for (let k = 0; k < numVertex; ++k) {
+    for (let k = 0; k < numVertex; k += 1) {
         poly.vertex[k] = data.getUint16(offset + k * 2, true);
     }
 
@@ -168,7 +168,7 @@ function loadPolygon(data, offset, renderType, blockSize) {
     poly.intensity = intensity;
 
     if (hasTex) {
-        for (let k = 0; k < numVertex; ++k) {
+        for (let k = 0; k < numVertex; k += 1) {
             poly.unkX[k] = data.getInt8(offset + 12 + k * 4, true);
             poly.texX[k] = data.getInt8(offset + 13 + k * 4, true);
             poly.unkY[k] = data.getInt8(offset + 14 + k * 4, true);
@@ -191,7 +191,7 @@ function loadPolygon(data, offset, renderType, blockSize) {
 function loadLines(object) {
     object.lines = [];
     const rawLines = new Uint16Array(object.buffer, object.linesOffset, object.linesSize * 4);
-    for (let i = 0; i < object.linesSize; ++i) {
+    for (let i = 0; i < object.linesSize; i += 1) {
         const index = i * 4;
         object.lines.push({
             unk1: rawLines[index],
@@ -205,7 +205,7 @@ function loadLines(object) {
 function loadSpheres(object) {
     object.spheres = [];
     const rawSpheres = new Uint16Array(object.buffer, object.spheresOffset, object.spheresSize * 4);
-    for (let i = 0; i < object.spheresSize; ++i) {
+    for (let i = 0; i < object.spheresSize; i += 1) {
         const index = i * 4;
         object.spheres.push({
             unk1: rawSpheres[index],
@@ -219,7 +219,7 @@ function loadSpheres(object) {
 function loadUVGroups(object) {
     object.uvGroups = [];
     const rawUVGroups = new Uint8Array(object.buffer, object.uvGroupsOffset, object.uvGroupsSize * 4);
-    for (let i = 0; i < object.uvGroupsSize; ++i) {
+    for (let i = 0; i < object.uvGroupsSize; i += 1) {
         const index = i * 4;
         object.uvGroups.push({
             x: rawUVGroups[index],

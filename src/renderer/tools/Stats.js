@@ -7,7 +7,8 @@ class StatsWidget {
         container.addEventListener('mousedown', function (event) {
             event.preventDefault();
             event.stopPropagation();
-            owner.setMode(++owner.mode % 2);
+            owner.mode += 1;
+            owner.setMode(owner.mode % 2);
         }, false);
         container.style.cssText = 'width:80px;opacity:0.9;cursor:pointer;position:absolute;left:50%;top:5px;margin-left:-40px;';
 
@@ -79,7 +80,7 @@ export default class Stats {
         this.frames = 0;
         this.mode = 0;
         this.widgets = [];
-        for (let i = 0; i < numWidgets; ++i) {
+        for (let i = 0; i < numWidgets; i += 1) {
             this.widgets.push(new StatsWidget(this));
         }
     }
@@ -100,7 +101,7 @@ export default class Stats {
             widget.updateGraph(widget.msGraph, Math.min(30, 30 - (this.ms / 200) * 30));
         });
 
-        this.frames++;
+        this.frames += 1;
 
         if (time > this.prevTime + 1000) {
 

@@ -179,7 +179,7 @@ export function SUICIDE() {
 }
 
 export function USE_ONE_LITTLE_KEY() {
-    this.game.getState().hero.keys++;
+    this.game.getState().hero.keys += 1;
 }
 
 export function GIVE_GOLD_PIECES(amount) {
@@ -190,7 +190,7 @@ export function GIVE_GOLD_PIECES(amount) {
 }
 
 export function INC_CHAPTER() {
-    this.game.getState().chapter++;
+    this.game.getState().chapter += 1;
 }
 
 export function FOUND_OBJECT(cmdState, id) {
@@ -362,7 +362,7 @@ export function ECLAIR() {
 
 export function INC_CLOVER_BOX() {
     if (this.game.getState().hero.clover.boxes < 10) {
-        this.game.getState().hero.clover.boxes++;
+        this.game.getState().hero.clover.boxes += 1;
     }
 }
 

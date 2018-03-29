@@ -59,9 +59,9 @@ const triangles = {
 export function loadSea(section, geometries, usedTile, offsetX, offsetZ, skyIndex) {
     const n = Math.pow(2, 2 - section.lod) * 8;
     const dn = 32 / n;
-    for (let x = 0; x < n; ++x) {
+    for (let x = 0; x < n; x += 1) {
         const tx = x * dn + offsetX * 32;
-        for (let z = 0; z < n; ++z) {
+        for (let z = 0; z < n; z += 1) {
             const tz = z * dn + offsetZ * 32;
             const surrounded = usedTile && isSurrounded(usedTile, tx, tz);
             if (!usedTile || !surrounded) {
@@ -136,7 +136,7 @@ function isInBetween(usedTile, x, z, xi, zi) {
 
 function getSeaPositions(section, points, isEdge) {
     const positions = [];
-    for (let i = 0; i < 3; ++i) {
+    for (let i = 0; i < 3; i += 1) {
         const idx = points[i];
         const x = section.x * 32 + (65 - Math.floor(idx / 65)) - 32;
         const z = section.z * 32 + (idx % 65);

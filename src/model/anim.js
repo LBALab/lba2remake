@@ -64,7 +64,7 @@ export function loadAnim(model: Model, anims: Anim[], index: number) {
 function loadKeyframes(anim) {
     const data = new DataView(anim.buffer, 0, anim.buffer.byteLength);
     let offset = 8;
-    for (let i = 0; i < anim.numKeyframes; ++i) {
+    for (let i = 0; i < anim.numKeyframes; i += 1) {
         let keyframe : Keyframe = {
             length: data.getUint16(offset, true),
             x: data.getInt16(offset + 2, true) / 0x4000,
@@ -75,7 +75,7 @@ function loadKeyframes(anim) {
         };
         offset += 8;
 
-        for (let j = 0; j < anim.numBoneframes; ++j) {
+        for (let j = 0; j < anim.numBoneframes; j += 1) {
             const {boneframe, canFall} : BoneframeCanFall = loadBoneframe(data, offset);
             keyframe.canFall = keyframe.canFall || canFall;
             offset += 8;

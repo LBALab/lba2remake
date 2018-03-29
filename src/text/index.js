@@ -46,11 +46,11 @@ export function loadTextData(textFile, language) {
         end = data.getUint16(idx * 2 + 2, true);
         const type = data.getUint8(start, true);
         let value = '';
-        for (let i = start + 1; i < end - 1; ++i) {
+        for (let i = start + 1; i < end - 1; i += 1) {
             value += String.fromCharCode((language.data.charmap) ? language.data.charmap[data.getUint8(i)] : data.getUint8(i));
         }
         texts[mapData[idx]] = {type, index: idx, value};
-        idx++;
+        idx += 1;
     } while (end < data.byteLength);
 
     return texts;

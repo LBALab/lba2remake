@@ -161,7 +161,7 @@ function loadFaceGeometry(geometries, body) {
                 geometries.colored.colors.push(p.colour);
             }
         };    
-        for (let j = 0; j < 3; ++j) {
+        for (let j = 0; j < 3; j += 1) {
             addVertex(j);
         } 
         if (p.numVertex == 4) { // quad

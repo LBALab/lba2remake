@@ -6,7 +6,7 @@ const push = Array.prototype.push;
 export function loadObjects(island, section, geometries, objects) {
     const numObjects = section.objInfo.numObjects;
     const boundingBoxes = [];
-    for (let i = 0; i < numObjects; ++i) {
+    for (let i = 0; i < numObjects; i += 1) {
         const info = loadObjectInfo(section.objects, section, i);
         const object = loadObject(island, objects, info.index);
         loadFaces(geometries, object, info, boundingBoxes);
@@ -58,7 +58,7 @@ function loadObject(island, objects, index) {
 function loadUVGroups(object) {
     object.uvGroups = [];
     const rawUVGroups = new Uint8Array(object.buffer, object.uvGroupsSectionOffset, object.uvGroupsSectionSize * 4);
-    for (let i = 0; i < object.uvGroupsSectionSize; ++i) {
+    for (let i = 0; i < object.uvGroupsSectionSize; i += 1) {
         const index = i * 4;
         object.uvGroups.push([
             rawUVGroups[index],
@@ -97,7 +97,7 @@ function parseSectionHeader(data, object, offset) {
 
 function loadSection(geometries, object, info, section, boundingBoxes) {
     const bb = new THREE.Box3();
-    for (let i = 0; i < section.numFaces; ++i) {
+    for (let i = 0; i < section.numFaces; i += 1) {
         const uvGroup = getUVGroup(object, section, i);
         const faceNormal = getFaceNormal(object, section, info, i);
         const addVertex = (j) => {
@@ -125,7 +125,7 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
                 push.apply(geometries[group].uvGroups, uvGroup);
             }
         };
-        for (let j = 0; j < 3; ++j) {
+        for (let j = 0; j < 3; j += 1) {
             addVertex(j);
         }
         if (section.pointsPerFace == 4) {
@@ -143,7 +143,7 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
 
 function getFaceNormal(object, section, info, i) {
     const vert = [];
-    for (let j = 0; j < 3; ++j) {
+    for (let j = 0; j < 3; j += 1) {
         const index = section.data.getUint16(i * section.blockSize + j * 2, true);
         vert.push(getPosition(object, info, index));
     }

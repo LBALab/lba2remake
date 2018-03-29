@@ -99,7 +99,7 @@ function loadMesh(index, sprite) {
 }
 export function loadAllSprites(spriteFile) {
     const sprites = [];
-    for (let i = 0; i < 425; ++i) {
+    for (let i = 0; i < 425; i += 1) {
         sprites.push(loadSpriteData(spriteFile, i));
     }
     return sprites;
@@ -107,7 +107,7 @@ export function loadAllSprites(spriteFile) {
 
 export function loadAllSpritesRaw(spriteFile) {
     const sprites = [];
-    for (let i = 0; i < 111; ++i) {
+    for (let i = 0; i < 111; i += 1) {
         sprites.push(loadSpriteRawData(spriteFile, i));
     }
     return sprites;
@@ -122,25 +122,29 @@ function loadSpriteData(sprites, entry) {
     const buffer = new ArrayBuffer(width * height);
     const pixels = new Uint8Array(buffer);
     let ptr = 12;
-    for (let y = 0; y < height; ++y) {
-        const numRuns = dataView.getUint8(ptr++);
+    for (let y = 0; y < height; y += 1) {
+        const numRuns = dataView.getUint8(ptr);
+        ptr += 1;
         let x = 0;
         const offset = () => (y + offsetY) * width + x + offsetX;
-        for (let run = 0; run < numRuns; ++run) {
-            const runSpec = dataView.getUint8(ptr++);
+        for (let run = 0; run < numRuns; run += 1) {
+            const runSpec = dataView.getUint8(ptr);
+            ptr += 1;
             const runLength = bits(runSpec, 0, 6) + 1;
             const type = bits(runSpec, 6, 2);
             if (type == 2) {
-                const color = dataView.getUint8(ptr++);
-                for (let i = 0; i < runLength; ++i) {
+                const color = dataView.getUint8(ptr);
+                ptr += 1;
+                for (let i = 0; i < runLength; i += 1) {
                     pixels[offset()] = color;
-                    x++;
+                    x += 1;
                 }
             }
             else if (type == 1 || type == 3) {
-                for (let i = 0; i < runLength; ++i) {
-                    pixels[offset()] = dataView.getUint8(ptr++);
-                    x++;
+                for (let i = 0; i < runLength; i += 1) {
+                    pixels[offset()] = dataView.getUint8(ptr);
+                    ptr += 1;
+                    x += 1;
                 }
             }
             else {
@@ -166,12 +170,13 @@ function loadSpriteRawData(sprites, entry) {
     const buffer = new ArrayBuffer(width * height);
     const pixels = new Uint8Array(buffer);
     let ptr = 12;
-    for (let y = 0; y < height; ++y) {
+    for (let y = 0; y < height; y += 1) {
         let x = 0;
         const offset = () => (y) * width + x;
-        for (let run = 0; run < width; ++run) {
-            pixels[offset()] = dataView.getUint8(ptr++);
-            x++;
+        for (let run = 0; run < width; run += 1) {
+            pixels[offset()] = dataView.getUint8(ptr);
+            ptr += 1;
+            x += 1;
         }
     }
     return {
@@ -211,8 +216,8 @@ export function loadSpritesMapping(sprites, palette) {
             v: offsetY
         };
         const pixels = sprites[idx].pixels;
-        for (let y = 0; y < sprite.height; ++y) {
-            for (let x = 0; x < sprite.width; ++x) {
+        for (let y = 0; y < sprite.height; y += 1) {
+            for (let x = 0; x < sprite.width; x += 1) {
                 const src_i = y * sprite.width + (sprite.width - 1 - x);
                 const tgt_i = (y + offsetY) * width + x + offsetX;
 

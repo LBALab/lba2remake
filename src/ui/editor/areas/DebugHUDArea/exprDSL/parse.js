@@ -40,7 +40,7 @@ function parseExpression(e, end, trim = Trim.BOTH) {
         const rTrim = trim & Trim.RIGHT;
         if (rTrim === Trim.RIGHT) {
             while (e[offset] === ' ')
-                offset++;
+                offset += 1;
         }
 
         if (e[offset] === end)
@@ -110,8 +110,8 @@ function parseCall(e, trim) {
                 offset += target.offset;
                 let tCount = 0;
                 while (e[offset] === ' ') {
-                    offset++;
-                    tCount++;
+                    offset += 1;
+                    tCount += 1;
                 }
                 if (tCount > 0 && e[offset] === '.') {
                     return;
@@ -170,10 +170,10 @@ function parseArgumentList(e) {
             return OK(args, offset);
         } else if (args.length === 0) {
             while (e[offset] === ' ') {
-                offset++;
+                offset += 1;
             }
             if (e[offset] === ')') {
-                offset++;
+                offset += 1;
                 return OK(args, offset);
             }
         }

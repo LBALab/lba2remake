@@ -185,7 +185,7 @@ function updateShadows(scene, matByName) {
         each(sideScene.actors, computeShadow.bind(null, sideScene));
     });
     shadows.sort((a, b) => a.distToHero - b.distToHero);
-    for (let i = 0; i < 10; ++i) {
+    for (let i = 0; i < 10; i += 1) {
         const shadow = shadows[i];
         const {ground_colored, ground_textured} = matByName;
         if (shadow) {

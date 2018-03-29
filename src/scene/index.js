@@ -69,7 +69,7 @@ function loadAmbience(scene, offset) {
     };
 
     innerOffset = 4;
-    for (let i = 0; i < 4; ++i) {
+    for (let i = 0; i < 4; i += 1) {
         scene.ambience.samples.push({
             ambience:   data.getInt16(innerOffset    , true),
             repeat:     data.getInt16(innerOffset + 2, true),
@@ -155,7 +155,7 @@ function loadActors(scene, offset) {
     const numActors = data.getInt16(offset, true);
     offset += 2;
 
-    for (let i = 1; i < numActors; ++i) {
+    for (let i = 1; i < numActors; i += 1) {
         let actor = {
             sceneIndex: scene.index,
             index: i,
@@ -169,7 +169,8 @@ function loadActors(scene, offset) {
         
         actor.entityIndex = data.getInt16(offset, true);
         offset += 2;
-        actor.bodyIndex = data.getInt8(offset++, true);
+        actor.bodyIndex = data.getInt8(offset, true);
+        offset += 1;
         actor.animIndex = data.getInt16(offset, true);
         offset += 2;
         actor.spriteIndex = data.getInt16(offset, true);
@@ -182,14 +183,16 @@ function loadActors(scene, offset) {
         ];
         offset += 6;
 
-        actor.hitStrength = data.getInt8(offset++, true);
+        actor.hitStrength = data.getInt8(offset, true);
+        offset += 1;
         actor.extraType = data.getInt16(offset, true);
         offset += 2;
         actor.angle = data.getInt16(offset, true);
         offset += 2;
         actor.speed = data.getInt16(offset, true);
         offset += 2;
-        actor.controlMode = data.getInt8(offset++, true);
+        actor.controlMode = data.getInt8(offset, true);
+        offset += 1;
 
         actor.info0 = data.getInt16(offset, true);
         offset += 2;
@@ -202,7 +205,8 @@ function loadActors(scene, offset) {
 
         actor.extraAmount = data.getInt16(offset, true);
         offset += 2;
-        const textColor = data.getInt8(offset++, true);
+        const textColor = data.getInt8(offset, true);
+        offset += 1;
         actor.textColor = getHtmlColor(scene.palette, textColor * 16 + 12);
 
         if (actor.flags.hasSpriteAnim3D) {
@@ -212,8 +216,10 @@ function loadActors(scene, offset) {
             actor.info3 = actor.spriteSizeHit;
             offset += 2;
         }
-        actor.armour = data.getUint8(offset++, true);
-        actor.life = data.getUint8(offset++, true);
+        actor.armour = data.getUint8(offset, true);
+        offset += 1;
+        actor.life = data.getUint8(offset, true);
+        offset += 1;
 
         actor.moveScriptSize = data.getInt16(offset, true);
         offset += 2;
@@ -244,7 +250,7 @@ function loadZones(scene, offset) {
     const numZones = data.getInt16(offset, true);
     offset += 2;
 
-    for (let i = 0; i < numZones; ++i) {
+    for (let i = 0; i < numZones; i += 1) {
         let zone = {
             sceneIndex: scene.index,
             index: i,
@@ -298,7 +304,7 @@ function loadPoints(scene, offset) {
     const numPoints = data.getInt16(offset, true);
     offset += 2;
 
-    for (let i = 0; i < numPoints; ++i) {
+    for (let i = 0; i < numPoints; i += 1) {
         let point = {
             sceneIndex: scene.index,
             index: i,
@@ -322,7 +328,7 @@ function loadPatches(scene, offset) {
     const numData = data.getInt16(offset, true);
     offset += 2;
 
-    for (let i = 0; i < numData; ++i) {
+    for (let i = 0; i < numData; i += 1) {
         let unk = {
             sceneIndex: scene.index,
             size: data.getInt16(offset, true),

@@ -57,7 +57,7 @@ EffectComposer.prototype = {
             i,
             il = this.passes.length;
 
-        for (i = 0; i < il; i++) {
+        for (i = 0; i < il; i += 1) {
             pass = this.passes[i];
 
             if (!pass.enabled) continue;

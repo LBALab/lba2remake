@@ -105,10 +105,10 @@ export function loadEntity(buffer: ArrayBuffer) {
         const offset = data.getUint32(0, true);
         const numEntries = (offset / 4) - 1;
         let offsets = [];
-        for (let i = 0; i < numEntries; ++i) {
+        for (let i = 0; i < numEntries; i += 1) {
             offsets.push(data.getUint32(i * 4, true));
         }
-        for (let i = 0; i < numEntries; ++i) {
+        for (let i = 0; i < numEntries; i += 1) {
             const entity = loadEntityEntry(buffer, offsets[i], i);
             entities.push(entity);
         }
@@ -126,7 +126,8 @@ function loadEntityEntry(buffer, dataOffset, index) {
     };
     let opcode = 0;
     do {
-        opcode = data.getUint8(offset++);
+        opcode = data.getUint8(offset);
+        offset += 1;
 
         switch(opcode) {
             case 1: { // body
@@ -142,7 +143,7 @@ function loadEntityEntry(buffer, dataOffset, index) {
             }
                 break;
             /*default:
-                offset++;
+                offset += 1;
                 offset += data.getUint8(offset);
             break;*/
         }
@@ -160,15 +161,17 @@ function loadEntityBody(data, offset) {
         box: makeNewBox()
     };
 
-    body.index = data.getUint8(offset++, true);
-    body.offset = data.getUint8(offset++, true);
+    body.index = data.getUint8(offset, true);
+    body.offset = data.getUint8(offset + 1, true);
+    offset += 2;
     if (body.offset > 0) {
         body.offset += 1; // to add the previous byte
     }
     body.bodyIndex = data.getInt16(offset, true);
     offset += 2;
 
-    const hasCollisionBox = data.getUint8(offset++, true);
+    const hasCollisionBox = data.getUint8(offset, true);
+    offset += 1;
 
     if (hasCollisionBox === 1) {
         body.hasCollisionBox = true;
@@ -177,7 +180,8 @@ function loadEntityBody(data, offset) {
             xMax: 0, yMax: 0, zMax: 0
         };
         
-        const actionType = data.getUint8(offset++, true);
+        const actionType = data.getUint8(offset, true);
+        offset += 1;
         if (actionType === ACTIONTYPE.ZV) {
             box.xMin = data.getInt16(offset, true);
             box.yMin = data.getInt16(offset + 2, true);
@@ -201,7 +205,8 @@ function loadEntityAnim(data, offset) {
 
     anim.index = data.getUint16(offset, true);
     offset += 2;
-    anim.offset = data.getUint8(offset++, true);
+    anim.offset = data.getUint8(offset, true);
+    offset += 1;
     if (anim.offset > 0) {
         anim.offset += 2; // to add the previous byte
     }
@@ -221,9 +226,9 @@ function loadEntityAnim(data, offset) {
         let prevInnerOffset = 0;
 
         const numActions = data.getUint8(innerOffset + offset, true);
-        ++innerOffset;
+        innerOffset += 1;
 
-        for (let i = 0; i < numActions; ++i) {
+        for (let i = 0; i < numActions; i += 1) {
             let action = {
                 type: data.getUint8(innerOffset + offset, true),
                 animFrame: -1,
@@ -330,11 +335,11 @@ function loadEntityAnim(data, offset) {
                 case ACTIONTYPE.LEFT_STEP: // only required animFrame
                 case ACTIONTYPE.RIGHT_STEP:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
-                    innerOffset++;
+                    innerOffset += 1;
                     break;
                 case ACTIONTYPE.HIT_HERO:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
-                    innerOffset++;
+                    innerOffset += 1;
                     break;
                 case ACTIONTYPE.THROW_3D:
                 case ACTIONTYPE.THROW_3D_ALPHA:
@@ -413,7 +418,8 @@ function loadEntityAnim(data, offset) {
                     innerOffset += 1;
                     break;
             }
-            prevInnerOffset = ++innerOffset;
+            innerOffset += 1;
+            prevInnerOffset = innerOffset;
             anim.actions.push(action);
         }
     }
@@ -424,7 +430,7 @@ export function getBodyIndex(entity: Entity, index: number) {
     if (!entity) {
         return 0;
     }
-    for (let i = 0; i < entity.bodies.length; ++i) {
+    for (let i = 0; i < entity.bodies.length; i += 1) {
         if (entity.bodies[i].index == index) {
             return entity.bodies[i].bodyIndex;
         }
@@ -436,7 +442,7 @@ export function getAnimIndex(entity: Entity, index: number) {
     if (!entity) {
         return 0;
     }
-    for (let i = 0; i < entity.anims.length; ++i) {
+    for (let i = 0; i < entity.anims.length; i += 1) {
         if (entity.anims[i].index == index) {
             return entity.anims[i].animIndex;
         }
@@ -448,7 +454,7 @@ export function getAnim(entity: Entity, index: number) {
     if (!entity) {
         return null;
     }
-    for (let i = 0; i < entity.anims.length; ++i) {
+    for (let i = 0; i < entity.anims.length; i += 1) {
         if (entity.anims[i].index == index) {
             return entity.anims[i];
         }
