@@ -82,10 +82,10 @@ export const Var = {
                                 delete varEdits[varDef.key];
                             }
                             return <select autoFocus={true}
-                                           value={varDef.value()}
-                                           onChange={onChange}
-                                           style={editorStyle.select}
-                                           onBlur={close}>
+                                value={varDef.value()}
+                                onChange={onChange}
+                                style={editorStyle.select}
+                                onBlur={close}>
                                 {!(value in info.enumValues) ? <option value={value}>{value}:&lt;?&gt;</option> : null}
                                 {map(info.enumValues, (v, k) =>
                                     <option key={k} value={k}>
@@ -108,12 +108,12 @@ export const Var = {
                                 delete varEdits[varDef.key];
                             }
                             return <input type="number"
-                                          ref={(ref) => ref ? ref.value = varDef.value() : null}
-                                          min={0}
-                                          max={255}
-                                          step={1}
-                                          onKeyDown={onKeyDown}
-                                          onBlur={close}/>;
+                                ref={(ref) => ref ? ref.value = varDef.value() : null}
+                                min={0}
+                                max={255}
+                                step={1}
+                                onKeyDown={onKeyDown}
+                                onBlur={close}/>;
                         }
                     } else {
                         function onClick() {

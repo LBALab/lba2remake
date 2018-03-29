@@ -275,10 +275,10 @@ export default class ScriptEditor extends FrameListener {
             lineNumbers = map(
                 listing.commands,
                 (cmd, line) => <LineNumber key={line}
-                                           toggleBreakpoint={this.toggleBreakpoint.bind(this, type, line)}
-                                           nDigits={nDigits}
-                                           line={line}
-                                           command={cmd}/>
+                    toggleBreakpoint={this.toggleBreakpoint.bind(this, type, line)}
+                    nDigits={nDigits}
+                    line={line}
+                    command={cmd}/>
             );
             commands = map(
                 listing.commands,

@@ -8,12 +8,12 @@ export function processAnimAction(ctx) {
     const actions = entityAnim.actions;
     const animFrame = animState.currentFrame;
     each(actions, action => {
-       if (action.animFrame === animFrame && animState.keyframeChanged) {
-           const actionType = AnimActionOpcode[action.type];
-           if (actionType !== undefined && actionType.callback !== undefined) {
-               actionType.callback(action, ctx);
-           }
-       }
+        if (action.animFrame === animFrame && animState.keyframeChanged) {
+            const actionType = AnimActionOpcode[action.type];
+            if (actionType !== undefined && actionType.callback !== undefined) {
+                actionType.callback(action, ctx);
+            }
+        }
     });
 }
 

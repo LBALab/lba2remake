@@ -134,13 +134,13 @@ function loadEntityEntry(buffer, dataOffset, index) {
                 entity.bodies.push(body);
                 offset += body.offset;
             }
-            break;
+                break;
             case 3: { // anim
                 let anim = loadEntityAnim(data, offset);
                 entity.anims.push(anim);
                 offset += anim.offset;
             }
-            break;
+                break;
             /*default:
                 offset++;
                 offset += data.getUint8(offset);
@@ -257,13 +257,13 @@ function loadEntityAnim(data, offset) {
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.strength = data.getUint8(innerOffset + offset + 2, true);
                     innerOffset += 2;
-                break;
+                    break;
                 case ACTIONTYPE.SAMPLE:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.frequency = data.getUint16(innerOffset + offset + 4, true);
                     innerOffset += 3;
-                break;
+                    break;
                 case ACTIONTYPE.NEW_SAMPLE:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
@@ -275,7 +275,7 @@ function loadEntityAnim(data, offset) {
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.frequency = data.getUint16(innerOffset + offset + 4, true);
                     innerOffset += 5;
-                break;
+                    break;
                 case ACTIONTYPE.THROW:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getUint16(innerOffset + offset + 2, true);
@@ -286,7 +286,7 @@ function loadEntityAnim(data, offset) {
                     action.unk4 = data.getUint8(innerOffset + offset + 11, true);
                     action.unk5 = data.getUint8(innerOffset + offset + 12, true);
                     innerOffset += 12;
-                break;
+                    break;
                 case ACTIONTYPE.THROW_MAGIC:
                     // check for magic ball 7 not 8
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
@@ -295,13 +295,13 @@ function loadEntityAnim(data, offset) {
                     action.unk3 = data.getUint16(innerOffset + offset + 6, true);
                     action.unk4 = data.getUint8(innerOffset + offset + 8, true);
                     innerOffset += 8;
-                break;
+                    break;
                 case ACTIONTYPE.SAMPLE_REPEAT:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.repeat = data.getUint16(innerOffset + offset + 4, true);
                     innerOffset += 10;
-                break;
+                    break;
                 case ACTIONTYPE.THROW_SEARCH:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getUint16(innerOffset + offset + 2, true);
@@ -310,7 +310,7 @@ function loadEntityAnim(data, offset) {
                     action.unk3 = data.getUint16(innerOffset + offset + 7, true);
                     action.unk4 = data.getUint8(innerOffset + offset + 8, true);
                     innerOffset += 8;
-                break;
+                    break;
                 case ACTIONTYPE.THROW_ALPHA:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getUint16(innerOffset + offset + 2, true);
@@ -321,21 +321,21 @@ function loadEntityAnim(data, offset) {
                     action.unk4 = data.getUint8(innerOffset + offset + 11, true);
                     action.unk5 = data.getUint8(innerOffset + offset + 12, true);
                     innerOffset += 12;
-                break;
+                    break;
                 case ACTIONTYPE.SAMPLE_STOP:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     innerOffset += 3;
-                break;
+                    break;
                 case ACTIONTYPE.LEFT_STEP: // only required animFrame
                 case ACTIONTYPE.RIGHT_STEP:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     innerOffset++;
-                break;
+                    break;
                 case ACTIONTYPE.HIT_HERO:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     innerOffset++;
-                break;
+                    break;
                 case ACTIONTYPE.THROW_3D:
                 case ACTIONTYPE.THROW_3D_ALPHA:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
@@ -349,7 +349,7 @@ function loadEntityAnim(data, offset) {
                     action.unk4 = data.getUint8(innerOffset + offset + 11, true);
                     action.strength = data.getUint8(innerOffset + offset + 12, true);
                     innerOffset += 16;
-                break;
+                    break;
                 case ACTIONTYPE.THROW_3D_SEARCH:
                     action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.distanceX = data.getUint16(innerOffset + offset + 2, true);
@@ -360,7 +360,7 @@ function loadEntityAnim(data, offset) {
                     action.unk1 = data.getUint16(innerOffset + offset + 10, true);
                     action.unk2 = data.getUint8(innerOffset + offset + 12, true);
                     innerOffset += 12;
-                break;
+                    break;
                 case ACTIONTYPE.THROW_3D_MAGIC:
                     // check for magic ball 11 not 12
                     innerOffset += 11 + 1;
@@ -379,7 +379,7 @@ function loadEntityAnim(data, offset) {
                     break;
                 case ACTIONTYPE.SAMPLE_MAGIC:
                     innerOffset += 1;
-                break;
+                    break;
                 case ACTIONTYPE.THROW_3D_CONQUE:
                     innerOffset += 7 + 1;
                     break;

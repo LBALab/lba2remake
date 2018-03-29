@@ -191,19 +191,19 @@ export default class Editor extends React.Component {
         } else {
             const availableAreas = node.content.mainArea ? findMainAreas() : this.state.root.toolAreas;
             return <Area key={`${path.join('/')}/${node.content.name}`}
-                         node={node}
-                         area={node.content}
-                         stateHandler={node.stateHandler}
-                         mainArea={node.content.mainArea}
-                         availableAreas={availableAreas}
-                         selectAreaContent={this.selectAreaContent.bind(this, path)}
-                         style={style}
-                         params={this.props.params}
-                         ticker={this.props.ticker}
-                         split={this.split.bind(this, path)}
-                         close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}
-                         saveMainData={this.saveMainData}
-                         mainData={this.state.mainData}/>;
+                node={node}
+                area={node.content}
+                stateHandler={node.stateHandler}
+                mainArea={node.content.mainArea}
+                availableAreas={availableAreas}
+                selectAreaContent={this.selectAreaContent.bind(this, path)}
+                style={style}
+                params={this.props.params}
+                ticker={this.props.ticker}
+                split={this.split.bind(this, path)}
+                close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}
+                saveMainData={this.saveMainData}
+                mainData={this.state.mainData}/>;
         }
     }
 

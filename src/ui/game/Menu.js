@@ -107,8 +107,8 @@ export default class Menu extends React.Component {
     render() {
         if (this.props.showMenu) {
             const styleFull = this.props.inGameMenu ?
-                            extend(styleBgInGameMenu,fullscreen)
-                          : extend(styleBgMenu,fullscreen);
+                extend(styleBgInGameMenu,fullscreen)
+                : extend(styleBgMenu,fullscreen);
             return <div style={styleFull}>
                 <div style={styleMenu}>
                     <ul style={styleMenuList}>

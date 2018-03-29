@@ -229,8 +229,8 @@ function updateSkeletonHierarchy(skeleton, index) {
 
         if (s.type == 0) { // rotation
             s.m.makeRotationFromEuler(new THREE.Euler(THREE.Math.degToRad(s.euler.x), 
-                                                      THREE.Math.degToRad(s.euler.y), 
-                                                      THREE.Math.degToRad(s.euler.z), 'XZY'));
+                THREE.Math.degToRad(s.euler.y), 
+                THREE.Math.degToRad(s.euler.z), 'XZY'));
         } else { // translation
             pos.x += s.pos.x;
             pos.y += s.pos.y;

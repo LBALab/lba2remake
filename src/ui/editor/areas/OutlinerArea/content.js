@@ -55,14 +55,14 @@ export function makeContentComponent(tree, frame, ownStyle) {
             const path = this.props.sharedState.path;
             if (root.node) {
                 return <Node key={path.join('/')}
-                             node={root.node}
-                             data={root.data}
-                             setRoot={this.setRoot.bind(this)}
-                             path={this.props.sharedState.path}
-                             activePath={this.props.sharedState.activePath}
-                             ticker={this.props.ticker}
-                             level={0}
-                             split={this.props.split} />;
+                    node={root.node}
+                    data={root.data}
+                    setRoot={this.setRoot.bind(this)}
+                    path={this.props.sharedState.path}
+                    activePath={this.props.sharedState.activePath}
+                    ticker={this.props.ticker}
+                    level={0}
+                    split={this.props.split} />;
             } else {
                 return 'Node is not available.';
             }
@@ -72,8 +72,8 @@ export function makeContentComponent(tree, frame, ownStyle) {
             const path = this.props.sharedState.path;
             const renderElement =
                 (subpath, elem) => <span style={{cursor: 'pointer'}} onClick={this.setRoot.bind(this, subpath)}>
-                {elem}
-            </span>;
+                    {elem}
+                </span>;
             if (path.length > 0) {
                 return <div style={{paddingBottom: 8}}>
                     {renderElement([], isFunction(tree.name) ? tree.name() : tree.name)}
@@ -82,7 +82,7 @@ export function makeContentComponent(tree, frame, ownStyle) {
                         return <span key={idx}>
                         &nbsp;<span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
                             {renderElement(subpath, name)}
-                    </span>;
+                        </span>;
                     })}
                 </div>
             } else {

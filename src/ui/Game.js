@@ -205,12 +205,12 @@ export default class Game extends FrameListener {
                 const src = VideoData.VIDEO.find((v) => { return v.name === 'INTRO'; }).file;
                 this.state.game.pause();
                 this.setState({video: {
-                        src,
-                        callback: () => {
-                            that.setState({video: null});
-                            that.startNewGameScene();
-                        }
-                    }});
+                    src,
+                    callback: () => {
+                        that.setState({video: null});
+                        that.startNewGameScene();
+                    }
+                }});
                 break;
         }
     }
@@ -271,23 +271,23 @@ export default class Game extends FrameListener {
             <div ref={this.onLoad} style={fullscreen}/>
             {this.props.params.editor ?
                 <DebugLabels params={this.props.params}
-                             labels={this.props.sharedState.labels}
-                             scene={this.state.scene}
-                             renderer={this.state.renderer}
-                             ticker={this.props.ticker}/> : null}
+                    labels={this.props.sharedState.labels}
+                    scene={this.state.scene}
+                    renderer={this.state.renderer}
+                    ticker={this.props.ticker}/> : null}
             <CinemaEffect enabled={this.state.cinema} />
             {!this.state.showMenu ? <TextBox text={this.state.text} /> : null}
             {!this.state.showMenu ? <AskChoice ask={this.state.ask} onChoiceChanged={this.onAskChoiceChanged} /> : null}
             {!this.state.showMenu ? <FoundObject foundObject={this.state.foundObject} /> : null}
             <TextInterjections scene={this.state.scene}
-                               renderer={this.state.renderer}
-                               interjections={this.state.interjections} />
+                renderer={this.state.renderer}
+                interjections={this.state.interjections} />
             {!this.props.params.editor ? <Ribbon/> : null}
             <Video video={this.state.video} renderer={this.state.renderer} />
             <Menu showMenu={this.state.showMenu}
-                  texts={this.state.game.menuTexts}
-                  inGameMenu={this.state.inGameMenu}
-                  onItemChanged={this.onMenuItemChanged} />
+                texts={this.state.game.menuTexts}
+                inGameMenu={this.state.inGameMenu}
+                onItemChanged={this.onMenuItemChanged} />
             <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
             {!this.props.params.editor && this.state.showVersion ? <Version/> : null}

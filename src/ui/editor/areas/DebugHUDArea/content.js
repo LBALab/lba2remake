@@ -107,13 +107,13 @@ export default class DebugHUD extends FrameListener {
     renderHeader() {
         return <div style={headerStyle}>
             <input key="exprInput"
-                   ref={ref => this.input = ref}
-                   style={inputStyle}
-                   list="dbgHUD_completion"
-                   spellCheck={false}
-                   onKeyDown={this.inputKeyDown}
-                   onKeyUp={e => e.stopPropagation()}
-                   placeholder="<type expression>"
+                ref={ref => this.input = ref}
+                style={inputStyle}
+                list="dbgHUD_completion"
+                spellCheck={false}
+                onKeyDown={this.inputKeyDown}
+                onKeyUp={e => e.stopPropagation()}
+                placeholder="<type expression>"
             />
             <datalist id="dbgHUD_completion">
                 {map(this.state.completion, (value, idx) => <option key={idx} value={value}/>)}
@@ -172,15 +172,15 @@ export default class DebugHUD extends FrameListener {
         return <div style={{padding: 16}}>
             <div style={headerStyle}>
                 <input key="saveInput"
-                       ref={ref => {
-                           this.saveInput = ref;
-                           if (ref && !ref.value)
-                               ref.value = this.props.sharedState.profileName
-                       }}
-                       style={inputStyle}
-                       spellCheck={false}
-                       onKeyDown={onKeyDown}
-                       placeholder="<type profile name>"
+                    ref={ref => {
+                        this.saveInput = ref;
+                        if (ref && !ref.value)
+                            ref.value = this.props.sharedState.profileName
+                    }}
+                    style={inputStyle}
+                    spellCheck={false}
+                    onKeyDown={onKeyDown}
+                    placeholder="<type profile name>"
                 />
                 <button style={editorStyle.button} onClick={() => saveConfirm(this.saveInput.value)}>Save</button>
             </div>

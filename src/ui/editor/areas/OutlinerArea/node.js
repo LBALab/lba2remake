@@ -214,9 +214,9 @@ export default class Node extends React.Component {
         const renaming = this.state.renaming;
 
         return <span style={nameStyle}
-                     onClick={onClick}
-                     onDoubleClick={onDoubleClick}
-                     onContextMenu={renaming ? null : onContextMenu}>
+            onClick={onClick}
+            onDoubleClick={onDoubleClick}
+            onContextMenu={renaming ? null : onContextMenu}>
             {renaming
                 ? <input ref={r => r && r.focus()} onBlur={onBlur} onKeyDown={onKeyDown}/>
                 : this.state.name}
@@ -245,12 +245,12 @@ export default class Node extends React.Component {
         };
         if (nodeProps) {
             return <span style={{color: '#858585'}}>
-            {
-                map(nodeProps, prop => {
-                    return prop.render ? <span key={prop.id} style={propStyle}>{prop.render(prop.value)}</span> : null;
-                })
-            }
-        </span>;
+                {
+                    map(nodeProps, prop => {
+                        return prop.render ? <span key={prop.id} style={propStyle}>{prop.render(prop.value)}</span> : null;
+                    })
+                }
+            </span>;
         } else {
             return null;
         }
@@ -290,15 +290,15 @@ export default class Node extends React.Component {
         const childName = child.dynamic ? call('name', child, childData, idx) : child.name;
         const path = concat(this.props.path, childName || idx);
         return <Node key={path.join('/')}
-                     node={child}
-                     data={childData}
-                     fontSize={childFontSize}
-                     setRoot={this.props.setRoot}
-                     path={path}
-                     activePath={this.props.activePath}
-                     ticker={this.props.ticker}
-                     level={this.props.level + 1}
-                     split={this.props.split} />
+            node={child}
+            data={childData}
+            fontSize={childFontSize}
+            setRoot={this.props.setRoot}
+            path={path}
+            activePath={this.props.activePath}
+            ticker={this.props.ticker}
+            level={this.props.level + 1}
+            split={this.props.split} />
     }
 
     numChildren() {

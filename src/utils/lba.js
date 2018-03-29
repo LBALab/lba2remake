@@ -7,10 +7,10 @@ export function getRotation(nextValue, currentValue, interpolation) {
     if (angleDif) {
 	    if (angleDif < -0x800) {
 		    angleDif += 0x1000;
-		}
+        }
 	    else if (angleDif > 0x800) {
 		    angleDif -= 0x1000;
-		}
+        }
         computedAngle = currentValue + (angleDif * interpolation)
     } else {
         computedAngle = currentValue;
