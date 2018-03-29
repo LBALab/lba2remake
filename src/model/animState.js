@@ -206,7 +206,7 @@ function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones, lengt
         }
     }
     catch (e) {
-        console.debug("ANIM: exception on updateSkeletonAtKeyframe", e);
+        console.debug('ANIM: exception on updateSkeletonAtKeyframe', e);
     }
 
     // step translation

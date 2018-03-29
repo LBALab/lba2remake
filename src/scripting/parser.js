@@ -90,15 +90,15 @@ function parseCommand(state, script, op, type) {
     } else if (op.command === 'ELSE') {
         state.ifStack[state.ifStack.length - 1] = cmd.args[0].value;
     }
-    if (op.command === "END_COMPORTEMENT") {
+    if (op.command === 'END_COMPORTEMENT') {
         state.newComportement = true;
     }
-    if (op.command === "TRACK") {
+    if (op.command === 'TRACK') {
         state.tracksMap[baseOffset] = cmd.args[0].value;
         state.track = cmd.args[0].value;
         cmd.section = cmd.args[0].value;
     }
-    if (op.command === "END") {
+    if (op.command === 'END') {
         cmd.section = 'end';
     }
     return cmd;

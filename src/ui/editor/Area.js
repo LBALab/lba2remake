@@ -4,7 +4,7 @@ import {editor, fullscreen} from '../styles/index';
 import {Orientation} from './layout';
 import {map, findIndex} from 'lodash';
 import NewArea, {NewAreaContent} from './areas/NewArea';
-import AreaLoader from "./areas/AreaLoader";
+import AreaLoader from './areas/AreaLoader';
 
 const menuHeight = 26;
 

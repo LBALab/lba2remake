@@ -1,4 +1,4 @@
-import {checkAuth} from "./auth";
+import {checkAuth} from './auth';
 import {centerIsoCamera} from '../../game/loop/cameras/iso';
 
 const DebugData = {
@@ -210,7 +210,7 @@ function saveGameMetaData() {
             ].join('&');
             request.open('POST', `ws/metadata/game?${query}`, true);
             request.onload = function () {
-                console.log(`Saved game metadata`);
+                console.log('Saved game metadata');
             };
             request.send(JSON.stringify(DebugData.metadata.game, null, 2));
         }

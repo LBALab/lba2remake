@@ -5,7 +5,7 @@ import {ZonesNode} from './zones';
 import {PointsNode} from './points';
 import {SceneGraphNode} from './sceneGraph';
 import {size, sortBy, map, each, filter} from 'lodash';
-import {makeVarDef, makeVariables, Var} from "./variables";
+import {makeVarDef, makeVariables, Var} from './variables';
 
 const baseChildren = [
     ActorsNode,

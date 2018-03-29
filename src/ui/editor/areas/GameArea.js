@@ -4,7 +4,7 @@ import {clone} from 'lodash';
 import ScriptEditorArea from './ScriptEditorArea';
 import DebugHUDArea from './DebugHUDArea';
 import {SceneOutliner, Locator} from './OutlinerArea';
-import {GameMenu} from "./GameArea/menu";
+import {GameMenu} from './GameArea/menu';
 import {Orientation, Type} from '../layout';
 
 const GameArea = {

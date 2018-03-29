@@ -1,6 +1,6 @@
-import async from "async";
+import async from 'async';
 
-import {loadHqrAsync} from "../hqr";
+import {loadHqrAsync} from '../hqr';
 
 export function loadTextsAsync(language, index) {
     return (callback) => {

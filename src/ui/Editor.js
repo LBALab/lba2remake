@@ -268,7 +268,7 @@ export default class Editor extends React.Component {
                 layout: loadLayout(this, area.id),
                 root: area
             });
-            localStorage.setItem(`editor_mode`, area.id);
+            localStorage.setItem('editor_mode', area.id);
         } else {
             node.content = area;
             initStateHandler(this, node);

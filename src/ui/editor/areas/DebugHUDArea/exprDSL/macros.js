@@ -137,7 +137,7 @@ export function dist(args, scopes, userMacros) {
         diff.sub(arg1);
         return diff.length();
     } else {
-        throw TypeError(`Arguments to dist() must be of the same type.`);
+        throw TypeError('Arguments to dist() must be of the same type.');
     }
 }
 

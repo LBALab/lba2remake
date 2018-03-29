@@ -21,7 +21,7 @@ import Loader from './game/Loader';
 import Video from './game/Video';
 import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
-import VideoData from "../video/data";
+import VideoData from '../video/data';
 import Version from './game/Version';
 import Ribbon from './game/Ribbon'
 

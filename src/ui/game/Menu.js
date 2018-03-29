@@ -31,12 +31,12 @@ const styleMenuList = {
 };
 
 const menuItems = [
-    { item: "ResumeGame", index: 70, isVisible: false, isEnabled: true, text: null },
-    { item: "NewGame",    index: 71, isVisible: true,  isEnabled: true, text: null },
-    { item: "LoadGame",   index: 72, isVisible: true,  isEnabled: false, text: null },
-    { item: "SaveGame",   index: 73, isVisible: true,  isEnabled: false, text: null },
-    { item: "Options",    index: 74, isVisible: true,  isEnabled: false, text: null },
-    { item: "Quit",       index: 75, isVisible: false, isEnabled: false, text: null }
+    { item: 'ResumeGame', index: 70, isVisible: false, isEnabled: true, text: null },
+    { item: 'NewGame',    index: 71, isVisible: true,  isEnabled: true, text: null },
+    { item: 'LoadGame',   index: 72, isVisible: true,  isEnabled: false, text: null },
+    { item: 'SaveGame',   index: 73, isVisible: true,  isEnabled: false, text: null },
+    { item: 'Options',    index: 74, isVisible: true,  isEnabled: false, text: null },
+    { item: 'Quit',       index: 75, isVisible: false, isEnabled: false, text: null }
 ];
 
 

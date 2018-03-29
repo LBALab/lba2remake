@@ -16,9 +16,9 @@ import {
     loadSceneMetaData,
     renameVar
 } from '../../../DebugData';
-import {loadSceneData} from "../../../../../scene";
-import {parseScript} from "../../../../../scripting/parser";
-import DebugData from "../../../DebugData";
+import {loadSceneData} from '../../../../../scene';
+import {parseScript} from '../../../../../scripting/parser';
+import DebugData from '../../../DebugData';
 import {Orientation} from '../../../layout';
 import {makeOutlinerArea} from '../factory';
 import {LocationsNode} from './locations';

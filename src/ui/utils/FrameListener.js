@@ -4,7 +4,7 @@ export default class FrameListener extends React.Component {
     constructor(props) {
         super(props);
         if (!props.ticker) {
-            throw new Error(`FrameListener subclass should contain a ticker prop`);
+            throw new Error('FrameListener subclass should contain a ticker prop');
         }
     }
 
