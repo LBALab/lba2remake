@@ -179,12 +179,12 @@ function loadSphereGeometry(geometries, body) {
         const normal = getNormal(body, s.vertex);
         
         const addVertex = (j) => {
-    	    push.apply(geometries.colored.positions, [
+            push.apply(geometries.colored.positions, [
                 sphereGeometry.vertices[j].x + centerPos[0],
                 sphereGeometry.vertices[j].y + centerPos[1],
                 sphereGeometry.vertices[j].z + centerPos[2]
             ]);
-    	    push.apply(geometries.colored.normals, normal);
+            push.apply(geometries.colored.normals, normal);
             push.apply(geometries.colored.bones, getBone(body, s.vertex));
             geometries.colored.colors.push(s.colour);
         };
@@ -215,9 +215,9 @@ function debugBoneGeometry(geometries, body) {
     _.each(body.bones, (s) => {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(0.001, 8, 8);
-        
+
         const addVertex = (j) => {
-    	    push.apply(geometries.colored.positions, [
+            push.apply(geometries.colored.positions, [
                 sphereGeometry.vertices[j].x + centerPos[0],
                 sphereGeometry.vertices[j].y + centerPos[1],
                 sphereGeometry.vertices[j].z + centerPos[2]

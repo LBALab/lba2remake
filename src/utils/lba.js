@@ -5,11 +5,10 @@ export function getRotation(nextValue, currentValue, interpolation) {
     let computedAngle = 0;
 
     if (angleDif) {
-	    if (angleDif < -0x800) {
-		    angleDif += 0x1000;
-        }
-	    else if (angleDif > 0x800) {
-		    angleDif -= 0x1000;
+        if (angleDif < -0x800) {
+            angleDif += 0x1000;
+        } else if (angleDif > 0x800) {
+            angleDif -= 0x1000;
         }
         computedAngle = currentValue + (angleDif * interpolation)
     } else {

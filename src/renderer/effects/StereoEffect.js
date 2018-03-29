@@ -14,7 +14,7 @@ function StereoEffect(renderer) {
     var scope = this;
 
     this.eyeSeparation = 3;
-    this.focalLength = 15; 	// Distance to the non-parallax or projection plane
+    this.focalLength = 15; // Distance to the non-parallax or projection plane
 
     Object.defineProperties(this, {
         separation: {
