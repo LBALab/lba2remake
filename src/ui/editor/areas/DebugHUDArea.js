@@ -1,4 +1,3 @@
-import React from 'react';
 import DebugHUD from './DebugHUDArea/content';
 import DebugHUDMenu from './DebugHUDArea/menu';
 import {Status} from './DebugHUDArea/status';

@@ -6,11 +6,11 @@ export function IF(condition, operator, offset) {
     }
 }
 
-export function SNIF(condition, operator, offset) {
+export function SNIF() {
     // Should never be called -- original game internal use only
 }
 
-export function NEVERIF(condition, operator, offset) {
+export function NEVERIF() {
     // Should never be called -- original game internal use only
 }
 
@@ -66,7 +66,7 @@ export function CASE(operator, offset) {
     }
 }
 
-export function DEFAULT(offset) {
+export function DEFAULT() {
 
 }
 

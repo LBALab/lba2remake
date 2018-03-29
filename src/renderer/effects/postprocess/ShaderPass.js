@@ -40,7 +40,7 @@ ShaderPass.prototype = {
 
     constructor: ShaderPass,
 
-    render(renderer, writeBuffer, readBuffer, delta, maskActive) {
+    render(renderer, writeBuffer, readBuffer) {
         if (this.uniforms[this.textureID]) {
             this.uniforms[this.textureID].value = readBuffer;
         }

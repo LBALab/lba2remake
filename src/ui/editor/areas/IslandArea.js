@@ -1,4 +1,3 @@
-import React from 'react';
 import Island from './IslandArea/content';
 import {Orientation, Type} from '../layout';
 import {IslandOutliner} from './OutlinerArea';

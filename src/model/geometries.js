@@ -211,6 +211,7 @@ function loadLineGeometry(geometries, body) {
     });
 }
 
+// eslint-disable-next-line no-unused-vars
 function debugBoneGeometry(geometries, body) {
     _.each(body.bones, (s) => {
         const centerPos = getPosition(body, s.vertex);

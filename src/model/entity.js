@@ -223,7 +223,6 @@ function loadEntityAnim(data, offset) {
         //anim.offset += actionBytes - 3;
 
         let innerOffset = 0;
-        let prevInnerOffset = 0;
 
         const numActions = data.getUint8(innerOffset + offset, true);
         innerOffset += 1;
@@ -419,7 +418,6 @@ function loadEntityAnim(data, offset) {
                     break;
             }
             innerOffset += 1;
-            prevInnerOffset = innerOffset;
             anim.actions.push(action);
         }
     }

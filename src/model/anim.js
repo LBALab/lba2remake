@@ -1,9 +1,6 @@
 // @flow
 
 import * as THREE from 'three';
-import _ from 'lodash';
-
-const push = Array.prototype.push;
 
 type BoneframeCanFall = {
     boneframe: Boneframe,

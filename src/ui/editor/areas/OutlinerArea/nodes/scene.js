@@ -21,7 +21,7 @@ const SubScene = {
         return scene ? baseChildren.length : 0;
     },
     child: (scene, idx) => baseChildren[idx],
-    childData: (scene, idx) => scene,
+    childData: scene => scene,
     onClick: () => {}
 };
 

@@ -104,7 +104,7 @@ SMAAPass.prototype = {
 
     constructor: SMAAPass,
 
-    render(renderer, writeBuffer, readBuffer, delta, maskActive) {
+    render(renderer, writeBuffer, readBuffer) {
         // pass 1
 
         this.uniformsEdges.tDiffuse.value = readBuffer;

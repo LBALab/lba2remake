@@ -1,4 +1,3 @@
-import React from 'react';
 import Game from '../../Game';
 import {clone} from 'lodash';
 import ScriptEditorArea from './ScriptEditorArea';

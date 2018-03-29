@@ -16,7 +16,7 @@ Pass.prototype = {
 
     constructor: Pass,
 
-    render(renderer, writeBuffer, readBuffer, delta, maskActive) {
+    render() {
         console.error('THREE.Pass: .render() must be implemented in derived pass.');
     }
 

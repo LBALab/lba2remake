@@ -103,7 +103,7 @@ function loadPolygons(object) {
         const renderType = data.getUint16(offset, true);
         const numPolygons = data.getUint16(offset + 2, true);
         const sectionSize = data.getUint16(offset + 4, true);
-        const shade = data.getUint16(offset + 6, true);
+        // const shade = data.getUint16(offset + 6, true);
         offset += 8;
 
         if (sectionSize == 0)

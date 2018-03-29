@@ -78,7 +78,7 @@ function StereoEffect(renderer) {
         return renderer.getSize();
     };
 
-    this.render = function (scene, camera, readBuffer, clear) {
+    this.render = function (scene, camera, readBuffer) {
 
         scene.updateMatrixWorld();
 

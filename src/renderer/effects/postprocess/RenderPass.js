@@ -29,7 +29,7 @@ RenderPass.prototype = {
 
     constructor: RenderPass,
 
-    render(renderer, writeBuffer, readBuffer, delta, maskActive) {
+    render(renderer, writeBuffer, readBuffer) {
         this.scene.overrideMaterial = this.overrideMaterial;
 
         if (this.clearColor) {

@@ -1,4 +1,3 @@
-import React from 'react';
 import DebugData from '../../../../DebugData';
 
 function goto(index) {

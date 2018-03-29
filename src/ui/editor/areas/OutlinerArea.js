@@ -1,4 +1,3 @@
-import React from 'react';
 import {map, drop} from 'lodash';
 import {SceneNode} from './OutlinerArea/nodes/scene';
 import {makeOutlinerArea} from './OutlinerArea/factory';
