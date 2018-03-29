@@ -16,6 +16,7 @@ rules:
   prefer-destructuring: off
   default-case: off
   function-paren-newline: off
+  camelcase: off
 
   no-lonely-if: off
   no-continue: off
@@ -24,6 +25,8 @@ rules:
   no-use-before-define: off
   no-shadow: warn
   no-nested-ternary: off
+  no-restricted-globals: off
+  no-restricted-properties: off
 
   react/jsx-indent:
     - error
@@ -32,9 +35,13 @@ rules:
   react/prop-types: off
   react/jsx-wrap-multilines: off
   react/jsx-tag-spacing: off
+  react/jsx-filename-extension: off
+  react/jsx-no-bind: off
 
   import/no-named-as-default-member: off
   import/prefer-default-export: off
 
   object-curly-spacing: off
   object-curly-newline: off
+
+  jsx-a11y/alt-text: off
