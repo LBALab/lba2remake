@@ -63,6 +63,7 @@ export default class DebugHUD extends FrameListener {
             case Status.SAVE:
                 return this.renderSaveScreen();
         }
+        return null;
     }
 
     renderNormal() {

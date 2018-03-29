@@ -63,4 +63,5 @@ export function findScenePath(node, index, path = []) {
             return foundPath;
         }
     }
+    return null;
 }

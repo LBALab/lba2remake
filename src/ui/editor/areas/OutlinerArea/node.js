@@ -166,6 +166,7 @@ export default class Node extends React.Component {
                     </div>)}
             </div>;
         }
+        return null;
     }
 
     renderIcon() {
@@ -272,6 +273,7 @@ export default class Node extends React.Component {
                 ? this.renderDynamicChildren(childFontSize)
                 : this.renderStaticChildren(childFontSize);
         }
+        return null;
     }
 
     renderStaticChildren(childFontSize) {
@@ -348,4 +350,5 @@ function call(method, node, data, arg) {
     } else if (method === 'props') {
         return [];
     }
+    return null;
 }

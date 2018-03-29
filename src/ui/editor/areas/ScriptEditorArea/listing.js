@@ -115,6 +115,7 @@ function mapCondition(scene, condition, state) {
             param: mapDataName(scene, condition.param)
         };
     }
+    return null;
 }
 
 function mapOperator(scene, operator, state) {
@@ -139,6 +140,7 @@ function mapOperator(scene, operator, state) {
             value: text
         };
     }
+    return null;
 }
 
 function processIndent(cmd, prevCmd, op, indent) {
@@ -168,6 +170,7 @@ function processIndent(cmd, prevCmd, op, indent) {
             cmd.indent = indent;
             return indent;
     }
+    throw new Error('Missing indent op');
 }
 
 export function mapDataName(scene, data) {

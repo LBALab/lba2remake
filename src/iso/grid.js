@@ -91,6 +91,7 @@ function getBlockData(library, block) {
     if (layout) {
         return layout.blocks[block.block];
     }
+    return null;
 }
 
 const libraries = [];

@@ -20,8 +20,6 @@ export function loadTexts(language, index, callback) {
         const text = loadTextData(files.text, getLanguageTextIndex(language, index));
         if (callback) {
             callback(text);
-        } else {
-            return text;
         }
     });
 }

@@ -26,6 +26,7 @@ function parseAssignment(e) {
             }, left.offset + right.offset + 1);
         }
     }
+    return null;
 }
 
 function parseExpression(e, end, trim = Trim.BOTH) {
@@ -46,6 +47,7 @@ function parseExpression(e, end, trim = Trim.BOTH) {
         if (e[offset] === end)
             return res;
     }
+    return null
 }
 
 const ID_RE = [];
@@ -62,6 +64,7 @@ function parseIdentifier(e, trim) {
             value: m[1]
         }, m[0].length);
     }
+    return null;
 }
 
 const INDEX_RE = [];
@@ -78,6 +81,7 @@ function parseIndex(e, trim) {
             value: parseInt(m[1])
         }, m[0].length);
     }
+    return null;
 }
 
 function parseDotExpr(e, end, trim) {
@@ -94,6 +98,7 @@ function parseDotExpr(e, end, trim) {
             }, left.offset + 1 + right.offset);
         }
     }
+    return null;
 }
 
 function parseCall(e, trim) {
@@ -115,7 +120,7 @@ function parseCall(e, trim) {
                     tCount += 1;
                 }
                 if (tCount > 0 && e[offset] === '.') {
-                    return;
+                    return null;
                 }
                 if (brackets) {
                     res = {
@@ -137,6 +142,7 @@ function parseCall(e, trim) {
             return OK(res, offset);
         }
     }
+    return null;
 }
 
 function parseBrackets(e) {
@@ -147,6 +153,7 @@ function parseBrackets(e) {
             return OK(content.node, content.offset + 2);
         }
     }
+    return null
 }
 
 function parseArgumentList(e) {
@@ -179,4 +186,5 @@ function parseArgumentList(e) {
             }
         }
     }
+    return null;
 }

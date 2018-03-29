@@ -24,6 +24,7 @@ export function filter(args, scopes, userMacros) {
         if (v) {
             return s;
         }
+        return null;
     });
     tgt.__filtered__ = true;
     return tgt;
@@ -187,4 +188,5 @@ function mapTypeName(t) {
         return 'THREE.Matrix3';
     else if (t === THREE.Matrix4)
         return 'THREE.Matrix4';
+    return null;
 }

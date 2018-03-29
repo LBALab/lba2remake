@@ -40,7 +40,7 @@ function paramsToUri(params) {
 function uriToParamsProto(uri) {
     uri = uri.replace('https://vr.google.com/cardboard/download/?p=', 'http://google.com/cardboard/cfg?p=');
     if (uri.substring(0, PARAMS_URI_PREFIX.length) !== PARAMS_URI_PREFIX) {
-        return;
+        return null;
     }
     const base64_msg = base64FromUrl(uri.substring(PARAMS_URI_PREFIX.length));
     // TODO: round numeric values

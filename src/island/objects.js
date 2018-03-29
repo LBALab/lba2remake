@@ -219,6 +219,7 @@ function getUVGroup(object, section, face) {
             : section.data.getUint8(baseIndex + 6);
         return object.uvGroups[uvGroupIndex];
     }
+    return null;
 }
 
 const angleMatrix = {

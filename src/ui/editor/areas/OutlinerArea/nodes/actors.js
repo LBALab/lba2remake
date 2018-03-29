@@ -108,6 +108,7 @@ function getComportement(actor) {
         const cmd = lifeScript.commands[offset];
         return cmd.section;
     }
+    return null;
 }
 
 function getMoveAction(actor) {
@@ -137,4 +138,5 @@ function getMoveAction(actor) {
             return {key, cmdName, args, extra};
         }
     }
+    return null
 }

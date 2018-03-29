@@ -38,6 +38,7 @@ export function execute(node, scopes, userMacros) {
                 return execute(node.right, concat(scopes, dotLeft), userMacros);
         }
     }
+    return null;
 }
 
 function findScope(key, scopes) {

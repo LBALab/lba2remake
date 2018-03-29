@@ -47,6 +47,7 @@ const VarCube = makeVariables('varcube', 'Local Variables', () => {
             scene: scene.index
         };
     }
+    return null;
 });
 
 const VarGameConfig = {
@@ -97,6 +98,7 @@ const VarGame = {
                 return makeVarDef('vargame', idx, () => state.flags.quest, () => null);
             }
         }
+        return null;
     },
     props: data => [
         {

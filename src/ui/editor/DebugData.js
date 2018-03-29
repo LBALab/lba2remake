@@ -86,6 +86,7 @@ export function getVarInfo(varDef) {
             }
         }
     }
+    return null;
 }
 
 export function getVarName(varDef) {

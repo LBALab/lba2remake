@@ -76,4 +76,5 @@ function safeExecute(ast, scopes) {
     try {
         return execute(ast, scopes);
     } catch (e) {}
+    return null;
 }

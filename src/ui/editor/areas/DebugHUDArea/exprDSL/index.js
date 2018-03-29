@@ -27,6 +27,7 @@ export function generate(node) {
                 return `${generate(node.left)}=${generate(node.right)}`;
         }
     }
+    return null;
 }
 
 export function test() {
