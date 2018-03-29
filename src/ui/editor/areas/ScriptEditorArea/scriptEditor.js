@@ -233,7 +233,9 @@ export default class ScriptEditor extends FrameListener {
     }
 
     render() {
-        const splitAt = this.props.sharedState.splitAt || this.state.splitAt || defaultSplitDistance;
+        const splitAt = this.props.sharedState.splitAt
+            || this.state.splitAt
+            || defaultSplitDistance;
 
         const separator = {
             position: 'absolute',
@@ -306,8 +308,12 @@ export default class ScriptEditor extends FrameListener {
             top: 0
         };
         return <div style={scriptStyle[type](splitAt)}>
-            <div ref={ref => this.lineCmds[type] = ref} style={commandsStyle}>{commands}</div>
-            <div ref={ref => this.lineNumbers[type] = ref} style={lineNumberStyle}>{lineNumbers}</div>
+            <div ref={ref => this.lineCmds[type] = ref} style={commandsStyle}>
+                {commands}
+            </div>
+            <div ref={ref => this.lineNumbers[type] = ref} style={lineNumberStyle}>
+                {lineNumbers}
+            </div>
         </div>;
     }
 }

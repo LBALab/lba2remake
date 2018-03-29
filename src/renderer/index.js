@@ -99,7 +99,12 @@ export function createRenderer(params, canvas) {
 
 function setupBaseRenderer(pixelRatio, canvas) {
     try {
-        const renderer = new THREE.WebGLRenderer({antialias: false, alpha: false, logarithmicDepthBuffer: true, canvas});
+        const renderer = new THREE.WebGLRenderer({
+            antialias: false,
+            alpha: false,
+            logarithmicDepthBuffer: true,
+            canvas
+        });
 
         renderer.setClearColor(0x000000);
         renderer.setPixelRatio(pixelRatio.getValue());
@@ -119,7 +124,10 @@ function setupSMAA(renderer, pixelRatio) {
     const renderPass = new RenderPass();
     composer.addPass(renderPass);
 
-    const pass = new SMAAPass(window.innerWidth * pixelRatio.getValue(), window.innerHeight * pixelRatio.getValue());
+    const pass = new SMAAPass(
+        window.innerWidth * pixelRatio.getValue(),
+        window.innerHeight * pixelRatio.getValue()
+    );
     pass.renderToScreen = true;
     composer.addPass(pass);
     return {

@@ -15,9 +15,13 @@ import {intersperse, intersperseBR} from './utils';
 
 export default function Expression({expr, value, addExpression}) {
     if (value && 'value' in value) {
-        return <span key={expr.expr}> {expr.expr} = <Value expr={expr} value={value.value} addExpression={addExpression} /></span>;
+        return <span key={expr.expr}>
+            {expr.expr} = <Value expr={expr} value={value.value} addExpression={addExpression} />
+        </span>;
     } else if (value && 'error' in value) {
-        return <span key={expr.expr}> {expr.expr} = <span style={{color: 'red'}}>Error: {value.error.toString()}</span></span>;
+        return <span key={expr.expr}>
+            {expr.expr} = <span style={{color: 'red'}}>Error: {value.error.toString()}</span>
+        </span>;
     }
     return <span key={expr.expr}> {expr.expr} = N/A</span>;
 }
@@ -145,7 +149,8 @@ function Euler({euler}) {
 
 function Matrix({mat, n, root}) {
     if (root) {
-        const mapComp = (n, i) => <span key={i} style={{color: ARRAY_COLOR[i]}}>{n.toFixed(3)}</span>;
+        const mapComp = (n, i) =>
+            <span key={i} style={{color: ARRAY_COLOR[i]}}>{n.toFixed(3)}</span>;
         const rows = times(n, (r) => {
             const components = map(slice(mat.elements, r * n, r * n + n), mapComp);
             return <span key={r} >

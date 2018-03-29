@@ -123,7 +123,10 @@ export default class Area extends React.Component {
             }
         };
 
-        return <NewAreaContent availableAreas={availableAreas} selectAreaContent={selectAreaContent}/>;
+        return <NewAreaContent
+            availableAreas={availableAreas}
+            selectAreaContent={selectAreaContent}
+        />;
     }
 
     renderContent() {
@@ -168,7 +171,10 @@ export default class Area extends React.Component {
                 <div>{popup.msg}</div>
                 <div style={{float: 'right'}}>
                     {popup.ok ? <button style={buttonStyle} onClick={ok}>{popup.ok}</button> : null}
-                    {popup.cancel ? <button style={buttonStyle} onClick={cancel}>{popup.cancel}</button> : null}
+                    {popup.cancel ? <button
+                        style={buttonStyle}
+                        onClick={cancel}
+                    >{popup.cancel}</button> : null}
                 </div>
             </div>;
         }

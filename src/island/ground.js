@@ -11,7 +11,9 @@ export function loadGround(section, geometries, usedTiles) {
             const t1 = loadTriangle(section, x, z, 1);
 
             const isSeaLevelLiquid = (t, p) => {
-                const seaLevel = section.heightmap[p[0]] == 0 && section.heightmap[p[1]] == 0 && section.heightmap[p[2]] == 0;
+                const seaLevel = section.heightmap[p[0]] == 0
+                    && section.heightmap[p[1]] == 0
+                    && section.heightmap[p[2]] == 0;
                 return seaLevel && t.liquid != 0;
             };
 
@@ -20,14 +22,35 @@ export function loadGround(section, geometries, usedTiles) {
                 if (!isSeaLevelLiquid(t, pts) && (t.useColor || t.useTexture)) {
                     usedTiles[x * 64 + z] = t0.orientation;
                     if (t.useTexture) {
-                        push.apply(geometries.ground_textured.positions, getPositions(section, pts));
-                        push.apply(geometries.ground_textured.uvs, getUVs(section.textureInfo, t.uvIndex));
-                        push.apply(geometries.ground_textured.colors, getColors(t));
-                        push.apply(geometries.ground_textured.intensities, getIntensities(section.intensity, pts));
+                        push.apply(
+                            geometries.ground_textured.positions,
+                            getPositions(section, pts)
+                        );
+                        push.apply(
+                            geometries.ground_textured.uvs,
+                            getUVs(section.textureInfo, t.uvIndex)
+                        );
+                        push.apply(
+                            geometries.ground_textured.colors,
+                            getColors(t)
+                        );
+                        push.apply(
+                            geometries.ground_textured.intensities,
+                            getIntensities(section.intensity, pts)
+                        );
                     } else {
-                        push.apply(geometries.ground_colored.positions, getPositions(section, pts));
-                        push.apply(geometries.ground_colored.colors, getColors(t));
-                        push.apply(geometries.ground_colored.intensities, getIntensities(section.intensity, pts));
+                        push.apply(
+                            geometries.ground_colored.positions,
+                            getPositions(section, pts)
+                        );
+                        push.apply(
+                            geometries.ground_colored.colors,
+                            getColors(t)
+                        );
+                        push.apply(
+                            geometries.ground_colored.intensities,
+                            getIntensities(section.intensity, pts)
+                        );
                     }
                 }
             };

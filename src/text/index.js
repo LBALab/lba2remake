@@ -45,7 +45,10 @@ export function loadTextData(textFile, language) {
         const type = data.getUint8(start, true);
         let value = '';
         for (let i = start + 1; i < end - 1; i += 1) {
-            value += String.fromCharCode((language.data.charmap) ? language.data.charmap[data.getUint8(i)] : data.getUint8(i));
+            value += String.fromCharCode((language.data.charmap) ?
+                language.data.charmap[data.getUint8(i)]
+                : data.getUint8(i)
+            );
         }
         texts[mapData[idx]] = {type, index: idx, value};
         idx += 1;

@@ -528,7 +528,6 @@ export function CINEMA_MODE(mode) {
     } else {
         this.actor.props.dirMode = DirMode.MANUAL;
         this.game.setUiState({ cinema: false });
-        // setTimeout(function() { cinemaModeDiv.style.display = 'none'; }, 3000); // animation is in 3s
     }
 }
 

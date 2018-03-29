@@ -72,7 +72,11 @@ export default class AskChoice extends React.Component {
                 <div style={styleChoices}>
                     <ul style={styleChoiceList}>
                         {map(this.props.ask.choices, (c, idx) => <li key={idx} style={{padding: 5}}>
-                            <Choice key={c.value} choice={c} selected={idx === this.state.selectedIndex}/>
+                            <Choice
+                                key={c.value}
+                                choice={c}
+                                selected={idx === this.state.selectedIndex}
+                            />
                         </li>)}
                     </ul>
                 </div>

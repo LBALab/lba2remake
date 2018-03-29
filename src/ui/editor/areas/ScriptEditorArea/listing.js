@@ -7,7 +7,9 @@ import {formatVar} from '../OutlinerArea/nodes/variables';
 export function getDebugListing(type, scene, actor) {
     if (scene && actor) {
         const script = actor.scripts[type];
-        const activeLine = script.context && script.context.state && script.context.state.lastOffset;
+        const activeLine = script.context
+            && script.context.state
+            && script.context.state.lastOffset;
         return {commands: mapCommands(scene, actor, script.commands), activeLine};
     }
     return null;
@@ -42,7 +44,8 @@ export function mapComportementArg(comportement) {
 function mapArguments(scene, actor, cmd) {
     const args = cloneDeep(cmd.args);
 
-    const mapComportementSetterArg = (obj, index) => mapComportementArg(obj.scripts.life.comportementMap[index] + 1);
+    const mapComportementSetterArg =
+        (obj, index) => mapComportementArg(obj.scripts.life.comportementMap[index] + 1);
 
     switch (cmd.op.command) {
         case 'COMPORTEMENT':
@@ -120,7 +123,10 @@ function mapOperator(scene, operator, state) {
         if (operator.operand.type === 'vargame_value' || operator.operand.type === 'varcube_value') {
             return {
                 name: operator.op.command,
-                operand: mapDataName(scene, extend({idx: state.condition.param.value}, operator.operand))
+                operand: mapDataName(
+                    scene,
+                    extend({idx: state.condition.param.value}, operator.operand)
+                )
             };
         } else if (operator.operand.type === 'choice_value') {
             if (scene.data.texts[operator.operand.value]) {
@@ -174,7 +180,8 @@ export function mapDataName(scene, data) {
     } else if (data.type === 'zone') {
         if (data.value === -1)
             return '<no-zone>';
-        const zone = find(scene.zones, zone => zone.props.type === 2 && zone.props.snap === data.value);
+        const zone = find(scene.zones, zone =>
+            zone.props.type === 2 && zone.props.snap === data.value);
         if (zone) {
             return getObjectName('zone', scene.index, zone.index);
         }

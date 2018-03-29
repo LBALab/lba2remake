@@ -117,7 +117,9 @@ export function prepareGeometries(island, data, ambience) {
                 vertexShader: envInfo.index != 14 ? VERT_SEA : VERT_MOON,
                 fragmentShader: envInfo.index != 14 ? FRAG_SEA : FRAG_ENV,
                 uniforms: {
-                    texture: {value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)},
+                    texture: {
+                        value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)
+                    },
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     time: {value: 0.0},
@@ -130,7 +132,16 @@ export function prepareGeometries(island, data, ambience) {
                 vertexShader: VERT_ENV,
                 fragmentShader: FRAG_ENV,
                 uniforms: {
-                    texture: {value: loadSubTexture(ress.getEntry(envInfo.index), palette, 128, 0, 128, 128)},
+                    texture: {
+                        value: loadSubTexture(
+                            ress.getEntry(envInfo.index),
+                            palette,
+                            128,
+                            0,
+                            128,
+                            128
+                        )
+                    },
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     scale: {value: envInfo.scale}
@@ -142,7 +153,13 @@ export function prepareGeometries(island, data, ambience) {
 
 function getLightVector(ambience) {
     const lightVector = new THREE.Vector3(-1, 0, 0);
-    lightVector.applyAxisAngle(new THREE.Vector3(0, 0, 1), -ambience.lightingAlpha * 2 * Math.PI / 0x1000);
-    lightVector.applyAxisAngle(new THREE.Vector3(0, 1, 0), -ambience.lightingBeta * 2 * Math.PI / 0x1000);
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 0, 1),
+        -ambience.lightingAlpha * 2 * Math.PI / 0x1000
+    );
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        -ambience.lightingBeta * 2 * Math.PI / 0x1000
+    );
     return lightVector;
 }

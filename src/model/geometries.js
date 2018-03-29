@@ -92,10 +92,30 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
 }
 
 export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo, ambience) {
-    const geometries = loadGeometry(body, texture, bones, matrixRotation, palette, envInfo, ambience);
+    const geometries = loadGeometry(
+        body,
+        texture,
+        bones,
+        matrixRotation,
+        palette,
+        envInfo,
+        ambience
+    );
     const object = new THREE.Object3D();
 
-    _.each(geometries, ({positions, uvs, colors, normals, bones, linePositions, lineNormals, lineColors, lineBones, material}, name) => {
+    _.each(geometries, (geom, name) => {
+        const {
+            positions,
+            uvs,
+            colors,
+            normals,
+            bones,
+            linePositions,
+            lineNormals,
+            lineColors,
+            lineBones,
+            material
+        } = geom;
         if (positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
@@ -128,7 +148,14 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
 }
 
 function loadGeometry(body, texture, bones, matrixRotation, palette, envInfo, ambience) {
-    const geometries = prepareGeometries(texture, bones, matrixRotation, palette, envInfo, ambience);
+    const geometries = prepareGeometries(
+        texture,
+        bones,
+        matrixRotation,
+        palette,
+        envInfo,
+        ambience
+    );
 
     loadFaceGeometry(geometries, body);
     loadSphereGeometry(geometries, body);
@@ -143,7 +170,10 @@ function loadFaceGeometry(geometries, body) {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
             if (p.hasTransparency) {
-                push.apply(geometries.textured_transparent.positions, getPosition(body, vertexIndex));
+                push.apply(
+                    geometries.textured_transparent.positions,
+                    getPosition(body, vertexIndex)
+                );
                 push.apply(geometries.textured_transparent.normals, getNormal(body, vertexIndex));
                 push.apply(geometries.textured_transparent.uvs, getUVs(body, p, j));
                 push.apply(geometries.textured_transparent.bones, getBone(body, vertexIndex));
@@ -271,7 +301,13 @@ function getUVs(body, p, vertex) {
 
 function getLightVector(ambience) {
     const lightVector = new THREE.Vector3(-1, 0, 0);
-    lightVector.applyAxisAngle(new THREE.Vector3(0, 0, 1), -ambience.lightingAlpha * 2 * Math.PI / 0x1000);
-    lightVector.applyAxisAngle(new THREE.Vector3(0, 1, 0), -ambience.lightingBeta * 2 * Math.PI / 0x1000);
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 0, 1),
+        -ambience.lightingAlpha * 2 * Math.PI / 0x1000
+    );
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        -ambience.lightingBeta * 2 * Math.PI / 0x1000
+    );
     return lightVector;
 }

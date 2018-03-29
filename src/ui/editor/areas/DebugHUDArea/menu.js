@@ -18,10 +18,18 @@ export default function DebugHUDMenu(props) {
     }
     if (props.sharedState.status === Status.NORMAL) {
         return <span>
-            <button style={editorStyle.button} onClick={newProfileConfirm}>New</button>
-            <button style={editorStyle.button} onClick={setStatus.bind(null, Status.LOAD)}>Load</button>
-            <button style={editorStyle.button} onClick={setStatus.bind(null, Status.SAVE)}>Save</button>
+            <button style={editorStyle.button} onClick={newProfileConfirm}>
+                New
+            </button>
+            <button style={editorStyle.button} onClick={setStatus.bind(null, Status.LOAD)}>
+                Load
+            </button>
+            <button style={editorStyle.button} onClick={setStatus.bind(null, Status.SAVE)}>
+                Save
+            </button>
         </span>;
     }
-    return <button style={editorStyle.button} onClick={setStatus.bind(null, Status.NORMAL)}>Cancel</button>;
+    return <button style={editorStyle.button} onClick={setStatus.bind(null, Status.NORMAL)}>
+        Cancel
+    </button>;
 }

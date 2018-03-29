@@ -56,7 +56,11 @@ function loadObject(island, objects, index) {
 
 function loadUVGroups(object) {
     object.uvGroups = [];
-    const rawUVGroups = new Uint8Array(object.buffer, object.uvGroupsSectionOffset, object.uvGroupsSectionSize * 4);
+    const rawUVGroups = new Uint8Array(
+        object.buffer,
+        object.uvGroupsSectionOffset,
+        object.uvGroupsSectionSize * 4
+    );
     for (let i = 0; i < object.uvGroupsSectionSize; i += 1) {
         const index = i * 4;
         object.uvGroups.push([
@@ -69,7 +73,11 @@ function loadUVGroups(object) {
 }
 
 function loadFaces(geometries, object, info, boundingBoxes) {
-    const data = new DataView(object.buffer, object.faceSectionOffset, object.lineSectionOffset - object.faceSectionOffset);
+    const data = new DataView(
+        object.buffer,
+        object.faceSectionOffset,
+        object.lineSectionOffset - object.faceSectionOffset
+    );
     let offset = 0;
     while (offset < data.byteLength) {
         const section = parseSectionHeader(data, object, offset);
@@ -114,12 +122,18 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
             bb.max.z = Math.max(z, bb.max.z);
             if (section.blockSize == 12 || section.blockSize == 16) {
                 push.apply(geometries.objects_colored.positions, getPosition(object, info, index));
-                push.apply(geometries.objects_colored.normals, section.type == 1 ? faceNormal : getVertexNormal(object, info, index));
+                push.apply(
+                    geometries.objects_colored.normals,
+                    section.type == 1 ? faceNormal : getVertexNormal(object, info, index)
+                );
                 geometries.objects_colored.colors.push(getColor(section, i));
             } else {
                 const group = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
                 push.apply(geometries[group].positions, getPosition(object, info, index));
-                push.apply(geometries[group].normals, section.type != 10 ? faceNormal : getVertexNormal(object, info, index));
+                push.apply(
+                    geometries[group].normals,
+                    section.type != 10 ? faceNormal : getVertexNormal(object, info, index)
+                );
                 push.apply(geometries[group].uvs, getUVs(section, i, j));
                 push.apply(geometries[group].uvGroups, uvGroup);
             }
@@ -200,7 +214,9 @@ function getUVs(section, face, ptIndex) {
 function getUVGroup(object, section, face) {
     if (section.blockSize == 24 || section.blockSize == 32) {
         const baseIndex = face * section.blockSize;
-        const uvGroupIndex = section.blockSize == 32 ? section.data.getUint8(baseIndex + 28) : section.data.getUint8(baseIndex + 6);
+        const uvGroupIndex = section.blockSize == 32 ?
+            section.data.getUint8(baseIndex + 28)
+            : section.data.getUint8(baseIndex + 6);
         return object.uvGroups[uvGroupIndex];
     }
 }

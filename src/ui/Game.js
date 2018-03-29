@@ -48,7 +48,8 @@ export default class Game extends FrameListener {
             this.state = state;
         } else {
             const clock = new THREE.Clock(false);
-            const game = createGame(props.params, clock, this.setUiState.bind(this), () => this.state);
+            const game =
+                createGame(props.params, clock, this.setUiState.bind(this), () => this.state);
 
             this.state = {
                 clock,
@@ -132,7 +133,9 @@ export default class Game extends FrameListener {
         }
         if (newProps.params.vr !== this.props.params.vr && this.canvas) {
             this.state.renderer.dispose();
-            this.setState({ renderer: createRenderer(newProps.params, this.canvas) }, this.saveData);
+            this.setState({
+                renderer: createRenderer(newProps.params, this.canvas)
+            }, this.saveData);
         }
     }
 
@@ -256,7 +259,9 @@ export default class Game extends FrameListener {
             if (rWidth !== cvWidth || rHeight !== cvHeight) {
                 this.state.renderer.resize(roundedWidth, roundedHeight);
                 if (this.state.video) {
-                    this.setState({video: clone(this.state.video)}, this.saveData); // Force video rerender
+                    this.setState({
+                        video: clone(this.state.video)
+                    }, this.saveData); // Force video rerender
                 }
             }
         }
@@ -279,7 +284,10 @@ export default class Game extends FrameListener {
                 /> : null}
             <CinemaEffect enabled={this.state.cinema} />
             {!this.state.showMenu ? <TextBox text={this.state.text} /> : null}
-            {!this.state.showMenu ? <AskChoice ask={this.state.ask} onChoiceChanged={this.onAskChoiceChanged} /> : null}
+            {!this.state.showMenu ? <AskChoice
+                ask={this.state.ask}
+                onChoiceChanged={this.onAskChoiceChanged}
+            /> : null}
             {!this.state.showMenu ? <FoundObject foundObject={this.state.foundObject} /> : null}
             <TextInterjections
                 scene={this.state.scene}

@@ -86,7 +86,9 @@ export const Var = {
                             style={editorStyle.select}
                             onBlur={close}
                         >
-                            {!(value in info.enumValues) ? <option value={value}>{value}:&lt;?&gt;</option> : null}
+                            {!(value in info.enumValues) ?
+                                <option value={value}>{value}:&lt;?&gt;</option>
+                                : null}
                             {map(info.enumValues, (v, k) =>
                                 <option key={k} value={k}>
                                     {k}:{v}

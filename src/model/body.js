@@ -68,7 +68,11 @@ function loadBones(object) {
 
 function loadVertices(object) {
     object.vertices = [];
-    const data = new DataView(object.buffer, object.verticesOffset, object.normalsOffset - object.verticesOffset);
+    const data = new DataView(
+        object.buffer,
+        object.verticesOffset,
+        object.normalsOffset - object.verticesOffset
+    );
     for (let i = 0; i < object.verticesSize; i += 1) {
         const index = i * 8;
         object.vertices.push({
@@ -96,7 +100,11 @@ function loadNormals(object) {
 
 function loadPolygons(object) {
     object.polygons = [];
-    const data = new DataView(object.buffer, object.polygonsOffset, object.linesOffset - object.polygonsOffset);
+    const data = new DataView(
+        object.buffer,
+        object.polygonsOffset,
+        object.linesOffset - object.polygonsOffset
+    );
     let offset = 0;
     while (offset < object.linesOffset - object.polygonsOffset) {
         const renderType = data.getUint16(offset, true);
@@ -217,7 +225,11 @@ function loadSpheres(object) {
 
 function loadUVGroups(object) {
     object.uvGroups = [];
-    const rawUVGroups = new Uint8Array(object.buffer, object.uvGroupsOffset, object.uvGroupsSize * 4);
+    const rawUVGroups = new Uint8Array(
+        object.buffer,
+        object.uvGroupsOffset,
+        object.uvGroupsSize * 4
+    );
     for (let i = 0; i < object.uvGroupsSize; i += 1) {
         const index = i * 4;
         object.uvGroups.push({

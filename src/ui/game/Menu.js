@@ -112,9 +112,14 @@ export default class Menu extends React.Component {
             return <div style={styleFull}>
                 <div style={styleMenu}>
                     <ul style={styleMenuList}>
-                        {map(this.state.items, (i, idx) => ((i.isVisible) ? <li key={idx} style={styleMenuItemList}>
-                            <MenuItem item={i} selected={idx === this.state.selectedIndex} onClick={this.itemChanged.bind(this, idx)}/>
-                        </li> : null))}
+                        {map(this.state.items, (i, idx) =>
+                            ((i.isVisible) ? <li key={idx} style={styleMenuItemList}>
+                                <MenuItem
+                                    item={i}
+                                    selected={idx === this.state.selectedIndex}
+                                    onClick={this.itemChanged.bind(this, idx)}
+                                />
+                            </li> : null))}
                     </ul>
                 </div>
             </div>;

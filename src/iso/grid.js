@@ -62,8 +62,16 @@ export function loadGrid(bkg, bricks, palette, entry) {
                     columns.push({
                         shape: (blockData && blockData.shape) || 1,
                         box: new THREE.Box3(
-                            new THREE.Vector3((63 - x) / 32, baseHeight / 64, z / 32),
-                            new THREE.Vector3((64 - x) / 32, (baseHeight + height) / 64, (z + 1) / 32)
+                            new THREE.Vector3(
+                                (63 - x) / 32,
+                                baseHeight / 64,
+                                z / 32
+                            ),
+                            new THREE.Vector3(
+                                (64 - x) / 32,
+                                (baseHeight + height) / 64,
+                                (z + 1) / 32
+                            )
                         ),
                         sound: (blockData && blockData.sound) || -1
                     });
@@ -97,7 +105,9 @@ function loadLibrary(bkg, bricks, palette, entry) {
     const layouts = [];
     for (let i = 0; i < numLayouts; i += 1) {
         const offset = dataView.getUint32(i * 4, true);
-        const nextOffset = i == numLayouts - 1 ? dataView.byteLength : dataView.getUint32((i + 1) * 4, true);
+        const nextOffset = i == numLayouts - 1 ?
+            dataView.byteLength
+            : dataView.getUint32((i + 1) * 4, true);
         const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
         layouts.push(loadLayout(layoutDataView));
     }

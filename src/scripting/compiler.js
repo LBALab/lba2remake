@@ -15,7 +15,8 @@ function compileScript(type, game, scene, actor) {
         state.trackIndex = -1;
     }
     script.context = {game, scene, actor, state, type};
-    script.instructions = map(script.commands, (cmd, idx) => compileInstruction(script, cmd, idx + 1));
+    script.instructions = map(script.commands, (cmd, idx) =>
+        compileInstruction(script, cmd, idx + 1));
 }
 
 function compileInstruction(script, cmd, cmdOffset) {
@@ -54,7 +55,8 @@ function compileInstruction(script, cmd, cmdOffset) {
 }
 
 function compileCondition(script, cmd) {
-    return cmd.condition.op.callback.bind(script.context, compileValue(script, cmd.condition.param));
+    return cmd.condition.op.callback.bind(script.context,
+        compileValue(script, cmd.condition.param));
 }
 
 function compileOperator(cmd) {

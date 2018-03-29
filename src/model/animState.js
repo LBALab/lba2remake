@@ -178,10 +178,20 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
         numBones = state.skeleton.length;
     }
 
-    updateSkeletonAtKeyframe(state, state.currentKeyframe, nextkeyframe, numBones, nextkeyframe.length);
+    updateSkeletonAtKeyframe(
+        state,
+        state.currentKeyframe,
+        nextkeyframe,
+        numBones,
+        nextkeyframe.length
+    );
 }
 
-function updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones, length = keyframe.length) {
+function updateSkeletonAtKeyframe(state,
+                                  keyframe,
+                                  nextkeyframe,
+                                  numBones,
+                                  length = keyframe.length) {
     const interpolation = state.currentTime / length;
     try {
         for (let i = 0; i < numBones; i += 1) {

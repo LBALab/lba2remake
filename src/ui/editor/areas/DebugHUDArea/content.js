@@ -70,13 +70,21 @@ export default class DebugHUD extends FrameListener {
         const macros = map(slots.macros, (macro, key) => {
             const content = macro.expr.split('=');
             return <div key={key} style={{background: '#222222'}}>
-                <button style={editorStyle.button} onClick={this.removeMacro.bind(this, key)}>-</button>
+                <button style={editorStyle.button} onClick={this.removeMacro.bind(this, key)}>
+                    -
+                </button>
                 <b> {content[0]}</b>=<i style={{color: 'darkgrey'}}>{content[1]}</i>
             </div>;
         });
         const expressions = map(slots.expressions, (expr, idx) => <div key={expr.expr}>
-            <button style={editorStyle.button} onClick={this.removeExpression.bind(this, idx)}>-</button>
-            <Expression expr={expr} value={this.state.values[idx]} addExpression={this.addExpression}/>
+            <button style={editorStyle.button} onClick={this.removeExpression.bind(this, idx)}>
+                -
+            </button>
+            <Expression
+                expr={expr}
+                value={this.state.values[idx]}
+                addExpression={this.addExpression}
+            />
         </div>);
         return <div>
             {this.renderHeader()}
@@ -96,7 +104,11 @@ export default class DebugHUD extends FrameListener {
                         <i style={{color: '#CCCCCC'}}>actors = scene.actors</i><br/>
                         <i style={{color: '#CCCCCC'}}>map(actors, isVisible)</i><br/>
                         <br/>
-                        You can also <u onClick={() => this.props.stateHandler.setStatus(Status.LOAD)}>load a preset or a saved profile.</u></div>
+                        You can also
+                        <u onClick={() => this.props.stateHandler.setStatus(Status.LOAD)}>
+                            load a preset or a saved profile.
+                        </u>
+                    </div>
                     : null}
             </div>
         </div>;
@@ -180,12 +192,18 @@ export default class DebugHUD extends FrameListener {
                     onKeyDown={onKeyDown}
                     placeholder="<type profile name>"
                 />
-                <button style={editorStyle.button} onClick={() => saveConfirm(this.saveInput.value)}>Save</button>
+                <button
+                    style={editorStyle.button}
+                    onClick={() => saveConfirm(this.saveInput.value)}
+                >
+                    Save
+                </button>
             </div>
             <div style={mainStyle}>
                 {map(profiles, (profile, name) => <div key={name} style={{cursor: 'pointer'}}>
-                    <button style={editorStyle.button} onClick={() => removeProfile(name)}>-</button>
-                        &nbsp;
+                    <button style={editorStyle.button} onClick={() => removeProfile(name)}>
+                        -
+                    </button>&nbsp;
                     <span onClick={() => saveConfirm(name)}>{name}</span>
                 </div>)}
             </div>

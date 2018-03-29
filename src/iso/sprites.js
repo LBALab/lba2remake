@@ -49,10 +49,22 @@ function loadMesh(index, sprite) {
          */
     ];
     const uvs = [
-        [s.u / sprite.width, (s.v / sprite.height) + (s.h / sprite.height)],
-        [(s.u / sprite.width) + (s.w / sprite.width), (s.v / sprite.height) + (s.h / sprite.height)],
-        [(s.u / sprite.width) + (s.w / sprite.width), s.v / sprite.height],
-        [s.u / sprite.width, s.v / sprite.height]
+        [
+            s.u / sprite.width,
+            (s.v / sprite.height) + (s.h / sprite.height)
+        ],
+        [
+            (s.u / sprite.width) + (s.w / sprite.width),
+            (s.v / sprite.height) + (s.h / sprite.height)
+        ],
+        [
+            (s.u / sprite.width) + (s.w / sprite.width),
+            s.v / sprite.height
+        ],
+        [
+            s.u / sprite.width,
+            s.v / sprite.height
+        ]
     ];
     const geometries = {
         positions: [],

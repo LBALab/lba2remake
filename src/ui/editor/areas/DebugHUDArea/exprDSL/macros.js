@@ -7,7 +7,8 @@ export function map(args, scopes, userMacros) {
     checkNumArgs('map', args, 2);
     const left = execute(args[0], scopes, userMacros);
     checkArgType('map', left, 0, ['array']);
-    const tgt = _.map(left, s => (s !== undefined ? execute(args[1], _.concat(scopes, s), userMacros) : undefined));
+    const tgt = _.map(left, s =>
+        (s !== undefined ? execute(args[1], _.concat(scopes, s), userMacros) : undefined));
     if (left.__filtered__) {
         tgt.__filtered__ = true;
     }

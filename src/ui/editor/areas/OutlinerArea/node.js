@@ -160,7 +160,10 @@ export default class Node extends React.Component {
 
             return <div style={menuStyle} onMouseLeave={() => this.setState({menu: null})}>
                 {menu.renaming ? <div style={menuEntry} onClick={onClickRename}>Rename</div> : null}
-                {map(menu.entries, (entry, idx) => <div key={idx} style={menuEntry} onClick={onClickOther.bind(null, entry)}>{entry.name}</div>)}
+                {map(menu.entries, (entry, idx) =>
+                    <div key={idx} style={menuEntry} onClick={onClickOther.bind(null, entry)}>
+                        {entry.name}
+                    </div>)}
             </div>;
         }
     }
@@ -190,7 +193,14 @@ export default class Node extends React.Component {
             e.preventDefault();
             const renaming = node.allowRenaming && node.allowRenaming(this.props.data);
             if (node.ctxMenu || renaming) {
-                this.setState({menu: {x: e.clientX, y: e.clientY, entries: node.ctxMenu, renaming}});
+                this.setState({
+                    menu: {
+                        x: e.clientX,
+                        y: e.clientY,
+                        entries: node.ctxMenu,
+                        renaming
+                    }
+                });
             }
         };
 
@@ -245,7 +255,10 @@ export default class Node extends React.Component {
         if (nodeProps) {
             return <span style={{color: '#858585'}}>
                 {
-                    map(nodeProps, prop => (prop.render ? <span key={prop.id} style={propStyle}>{prop.render(prop.value)}</span> : null))
+                    map(nodeProps, prop =>
+                        (prop.render ? <span key={prop.id} style={propStyle}>
+                            {prop.render(prop.value)}
+                        </span> : null))
                 }
             </span>;
         }

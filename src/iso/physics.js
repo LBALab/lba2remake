@@ -67,7 +67,9 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
                     for (let i = 0; i < cell.columns.length; i += 1) {
                         const column = cell.columns[i];
                         const bb = column.box;
-                        if ((column.shape == 1 || column.shape > 5) && ACTOR_BOX.intersectsBox(bb)) {
+                        if ((column.shape == 1 || column.shape > 5)
+                            && ACTOR_BOX.intersectsBox(bb)
+                        ) {
                             INTERSECTION.copy(ACTOR_BOX);
                             INTERSECTION.intersect(bb);
                             INTERSECTION.getSize(ITRS_SIZE);

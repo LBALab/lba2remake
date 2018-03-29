@@ -84,7 +84,9 @@ function StereoEffect(renderer) {
 
         // Effective fov of the camera
 
-        _fov = THREE.Math.radToDeg(2 * Math.atan(Math.tan(THREE.Math.degToRad(camera.fov) * 0.5) / camera.zoom));
+        _fov = THREE.Math.radToDeg(
+            2 * Math.atan(Math.tan(THREE.Math.degToRad(camera.fov) * 0.5) / camera.zoom)
+        );
 
         _ndfl = camera.near / this.focalLength;
         _halfFocalHeight = Math.tan(THREE.Math.degToRad(_fov) * 0.5) * this.focalLength;

@@ -61,7 +61,12 @@ function runScript(params, script, time) {
                     const cmdCond = commands[offset].condition;
                     const operandType = cmdCond.operandType;
                     const idx = cmdCond.param ? cmdCond.param.value : undefined;
-                    activeCommand.condValue = mapDataName(context.scene, {type: operandType, value: condValue, idx});
+                    activeCommand.condValue = mapDataName(
+                        context.scene, {
+                            type: operandType,
+                            value: condValue,
+                            idx
+                        });
                 }
                 activeCommands[offset] = activeCommand;
                 if (offset in breakpoints) {

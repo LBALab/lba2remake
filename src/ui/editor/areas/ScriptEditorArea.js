@@ -72,7 +72,8 @@ export class ScriptMenu extends FrameListener {
             {paused ? <img style={editor.icon} onClick={step} src="editor/icons/step.png"/> : null}
             <img style={editor.icon} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.png`}/>
             <select style={editor.select} value={this.state.selectedActor} onChange={onChange}>
-                {map(this.state.actors, (actor, idx) => <option key={idx} value={idx}>{actor}</option>)}
+                {map(this.state.actors, (actor, idx) =>
+                    <option key={idx} value={idx}>{actor}</option>)}
             </select>
         </span>;
     }

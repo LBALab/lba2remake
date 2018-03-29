@@ -117,8 +117,10 @@ class AuthPopup extends React.Component {
             </div>
             <div style={form_line}>
                 <input type="checkbox" onChange={this.onChange.bind(this, 'nocredit')} checked={auth.nocredit}/>
-                <label style={{paddingLeft: 10}}>I DO NOT want to be credited for my contributions<br/>
-                    (only check this if you don't want your name to appear in our contributor list)</label>
+                <label style={{paddingLeft: 10}}>
+                    I DO NOT want to be credited for my contributions<br/>
+                    (only check this if you don't want your name to appear in our contributor list)
+                </label>
             </div>
             <br/>
             {this.renderWarnings(auth)}
