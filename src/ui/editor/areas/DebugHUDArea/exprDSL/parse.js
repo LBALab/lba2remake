@@ -47,7 +47,7 @@ function parseExpression(e, end, trim = Trim.BOTH) {
         if (e[offset] === end)
             return res;
     }
-    return null
+    return null;
 }
 
 const ID_RE = [];
@@ -153,7 +153,7 @@ function parseBrackets(e) {
             return OK(content.node, content.offset + 2);
         }
     }
-    return null
+    return null;
 }
 
 function parseArgumentList(e) {

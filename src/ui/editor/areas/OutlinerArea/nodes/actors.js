@@ -138,5 +138,5 @@ function getMoveAction(actor) {
             return {key, cmdName, args, extra};
         }
     }
-    return null
+    return null;
 }
