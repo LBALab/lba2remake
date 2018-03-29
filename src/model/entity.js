@@ -49,6 +49,7 @@ export type Entity = {
     bodies: Body[]
 }
 
+/* eslint-disable key-spacing */
 const ACTIONTYPE = {
     NOP                 : 0,
     BODY                : 1,
@@ -94,6 +95,7 @@ const ACTIONTYPE = {
     THROW_MAGIC_EXTRA   : 41,
     THROW_FOUDRE        : 42,
 };
+/* eslint-enable key-spacing */
 
 let entities = [];
 

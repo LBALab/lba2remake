@@ -17,6 +17,7 @@ const DEFAULT_CHARMAP = [
     240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255
 ];
 
+/* eslint-disable key-spacing,no-multi-spaces */
 export default {
     LANGUAGE: [
         { index: 0, name:'English',   code: 'EN',  culture: 'en-GB', charmap: DEFAULT_CHARMAP, hasVoice: true },
