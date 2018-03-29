@@ -2,9 +2,22 @@
 A Little Big Adventure 2 engine remake change log file
 
 ---
-## Unreleased
+## 0.0.9 - 29.03.2018
 ### Added
+* (Game) Isometric camera now follows Twinsen
+#### Editor ergonomics
+* (Editor) #168 Keyboard shortcut for renaming (F2)
+* (Editor) #170 Toggle actor visibility directly from actor eye icon in scene outliner
+* (Editor) #156 Locating objects with right click menu or double click (only in isometric scenes for now)
+* (Editor) Visually distinguish main area from dependent areas
+#### Other
+* (Editor) #3 New metadata (thanks Jeffrey Veenhuis)
 ### Fixed
+* (Editor) #177 Reset free camera position when switching scenes
+* (Editor) #175 Broken "Find all references" button
+* (Editor) #166 Broken scripting are on Firefox
+* (Editor) #167 Broken area resizing on Firefox
+* (Editor) Fix for crash in scripting area (React) when switching scenes
 
 ## 0.0.8 - 23.03.2018
 ### Added
