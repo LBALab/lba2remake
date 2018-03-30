@@ -160,6 +160,7 @@ function parseArgumentList(e) {
     if (e[0] === '(') {
         let offset = 1;
         const args = [];
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             const e_arg = e.substr(offset);
             const arg = parseExpression(e_arg, ',', Trim.BOTH);

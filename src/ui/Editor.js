@@ -293,8 +293,8 @@ export default class Editor extends React.Component {
 function initStateHandler(editor, node, state) {
     node.stateHandler = {
         state: state ? cloneDeep(state) : node.content.getInitialState(),
-        setState: (state) => {
-            extend(node.stateHandler.state, state);
+        setState: (newState) => {
+            extend(node.stateHandler.state, newState);
             editor.setState({layout: editor.state.layout});
             saveLayout(editor.state.layout);
         }

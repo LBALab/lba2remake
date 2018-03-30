@@ -66,18 +66,18 @@ function StereoEffect(renderer) {
 
     renderer.autoClear = false;
 
-    this.setSize = function (width, height) {
+    this.setSize = function setSize(width, height) {
         _width = width / 2;
         _height = height;
 
         renderer.setSize(width, height);
     };
 
-    this.getSize = function () {
+    this.getSize = function getSize() {
         return renderer.getSize();
     };
 
-    this.render = function (scene, camera, readBuffer) {
+    this.render = function render(scene, camera, readBuffer) {
         scene.updateMatrixWorld();
 
         if (camera.parent === null) camera.updateMatrixWorld();

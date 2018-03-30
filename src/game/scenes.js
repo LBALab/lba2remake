@@ -113,7 +113,7 @@ export function createSceneManager(params, game, renderer, callback: Function, h
     return sceneManager;
 }
 
-function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent, callback) {
+function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent, mainCallback) {
     loadSceneData(game.getState().config.language, index, (sceneData) => {
         const indexInfo = sceneMap[index];
         let islandName;
@@ -212,7 +212,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             if (parent) {
                 killActor(scene.actors[0]);
             }
-            callback(null, scene);
+            mainCallback(null, scene);
         });
     });
 }
@@ -238,7 +238,14 @@ function loadSceneNode(index, indexInfo, data) {
     return sceneNode;
 }
 
-function loadSideScenes(sceneManager, params, game, renderer, sceneMap, index, parent, callback) {
+function loadSideScenes(sceneManager,
+                        params,
+                        game,
+                        renderer,
+                        sceneMap,
+                        index,
+                        parent,
+                        mainCallback) {
     const sideIndices = filter(
         map(sceneMap, (indexInfo, sideIndex) => {
             if (sideIndex !== index
@@ -262,7 +269,7 @@ function loadSideScenes(sceneManager, params, game, renderer, sceneMap, index, p
         each(sideScenes, (sideScene) => {
             sideScenesMap[sideScene.index] = sideScene;
         });
-        callback(null, sideScenesMap);
+        mainCallback(null, sideScenesMap);
     });
 }
 

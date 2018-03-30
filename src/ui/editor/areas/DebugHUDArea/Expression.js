@@ -149,8 +149,8 @@ function Euler({euler}) {
 
 function Matrix({mat, n, root}) {
     if (root) {
-        const mapComp = (n, i) =>
-            <span key={i} style={{color: ARRAY_COLOR[i]}}>{n.toFixed(3)}</span>;
+        const mapComp = (num, i) =>
+            <span key={i} style={{color: ARRAY_COLOR[i]}}>{num.toFixed(3)}</span>;
         const rows = times(n, (r) => {
             const components = map(slice(mat.elements, r * n, r * n + n), mapComp);
             return <span key={r} >

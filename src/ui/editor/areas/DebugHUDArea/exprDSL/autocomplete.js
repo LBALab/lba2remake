@@ -32,8 +32,8 @@ export default function autoComplete(cmd, scope) {
         if (tgtScope) {
             values = completeScope(cmd, tgtScope);
         } else {
-            const [id, tgtScope] = findLastValidScopeAndId(ast, scope);
-            const filteredScope = pickBy(tgtScope, (value, key) => startsWith(key, id));
+            const [id, innerTgtScope] = findLastValidScopeAndId(ast, scope);
+            const filteredScope = pickBy(innerTgtScope, (value, key) => startsWith(key, id));
             const idx = cmd.lastIndexOf(id);
             cmd = cmd.substr(0, idx);
             cmd.substr(0, idx);

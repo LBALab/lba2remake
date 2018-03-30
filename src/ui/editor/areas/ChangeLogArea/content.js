@@ -34,7 +34,7 @@ function loadChangeLog(callback) {
     const request = new XMLHttpRequest();
     request.open('GET', 'CHANGES.md', true);
 
-    request.onload = function () {
+    request.onload = function onload() {
         if (this.status === 200) {
             try {
                 callback(request.response);

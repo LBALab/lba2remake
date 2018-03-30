@@ -16,6 +16,7 @@ function loadSceneMap(files) {
     let offset = 0;
     const map = [];
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
         const opcode = data.getUint8(offset, true);
         const index = data.getUint8(offset + 1, true);

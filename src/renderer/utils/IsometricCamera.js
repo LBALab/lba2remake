@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const IsometricCamera = function (windowSize, offset = new THREE.Vector2()) {
+export const IsometricCamera = function IsometricCamera(windowSize, offset = new THREE.Vector2()) {
     THREE.Camera.call(this);
 
     this.type = 'IsometricCamera';
@@ -19,7 +19,7 @@ export const IsometricCamera = function (windowSize, offset = new THREE.Vector2(
 IsometricCamera.prototype = Object.create(THREE.Camera.prototype);
 IsometricCamera.prototype.constructor = IsometricCamera;
 
-IsometricCamera.prototype.updateProjectionMatrix = function () {
+IsometricCamera.prototype.updateProjectionMatrix = function updateProjectionMatrix() {
     this.projectionMatrix.set(
         48 / this.size.x, 0, -48 / this.size.x, -this.offset.x / this.size.x,
         -24 / this.size.y, 60 / this.size.y, -24 / this.size.y, -this.offset.y / this.size.y,
@@ -28,7 +28,7 @@ IsometricCamera.prototype.updateProjectionMatrix = function () {
     );
 };
 
-IsometricCamera.prototype.copy = function (source) {
+IsometricCamera.prototype.copy = function copy(source) {
     THREE.Camera.prototype.copy.call(this, source);
     this.size = source.size;
     this.offset = source.offset;

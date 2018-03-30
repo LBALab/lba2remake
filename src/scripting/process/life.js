@@ -52,11 +52,11 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 value: text.value
             };
             this.game.setUiState({interjections});
-            cmdState.listener = function () { };
+            cmdState.listener = function listener() { };
             setTimeout(() => {
-                const interjections = clone(this.game.getUiState().interjections);
-                delete interjections[itrjId];
-                this.game.setUiState({interjections});
+                const interjectionsCopy = clone(this.game.getUiState().interjections);
+                delete interjectionsCopy[itrjId];
+                this.game.setUiState({interjections: interjectionsCopy});
                 cmdState.ended = true;
             }, 4500);
         } else {
@@ -75,7 +75,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                     color: actor.props.textColor
                 }
             });
-            cmdState.listener = function (event) {
+            cmdState.listener = function listener(event) {
                 const key = event.code || event.which || event.keyCode;
                 if (key === 'Enter' || key === 13) {
                     cmdState.ended = true;
@@ -216,7 +216,7 @@ export function FOUND_OBJECT(cmdState, id) {
             },
             foundObject: id
         });
-        cmdState.listener = function (event) {
+        cmdState.listener = function listener(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
                 cmdState.ended = true;
@@ -335,7 +335,7 @@ export function PLAY_SMK(cmdState, video) {
                 that.game.resume();
             }
         }});
-        cmdState.listener = function (event) {
+        cmdState.listener = function listener(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
                 that.game.setUiState({video: null});
@@ -404,7 +404,7 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
             color: actor.props.textColor
         };
         this.game.setUiState({ ask: uiState.ask });
-        cmdState.listener = function (event) {
+        cmdState.listener = function listener(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
                 cmdState.ended = true;

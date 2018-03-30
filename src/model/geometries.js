@@ -109,7 +109,7 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
             uvs,
             colors,
             normals,
-            bones,
+            bones: boneIndices,
             linePositions,
             lineNormals,
             lineColors,
@@ -124,7 +124,7 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
                 bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
             }
             bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 1, false));
-            bufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(bones), 1));
+            bufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(boneIndices), 1));
 
             const modelMesh = new THREE.Mesh(bufferGeometry, material);
             modelMesh.frustumCulled = false;

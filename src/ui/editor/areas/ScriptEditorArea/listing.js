@@ -183,10 +183,10 @@ export function mapDataName(scene, data) {
     } else if (data.type === 'zone') {
         if (data.value === -1)
             return '<no-zone>';
-        const zone = find(scene.zones, zone =>
+        const foundZone = find(scene.zones, zone =>
             zone.props.type === 2 && zone.props.snap === data.value);
-        if (zone) {
-            return getObjectName('zone', scene.index, zone.index);
+        if (foundZone) {
+            return getObjectName('zone', scene.index, foundZone.index);
         }
         return '<no-zone>';
     } else if (data.type === 'vargame' || data.type === 'varcube') {

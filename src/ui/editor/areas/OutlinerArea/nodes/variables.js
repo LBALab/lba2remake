@@ -70,14 +70,11 @@ export const Var = {
             render: (value) => {
                 if (varDef.key in varEdits) {
                     const info = getVarInfo(varDef);
-                    const value = varDef.value();
+                    const actualValue = varDef.value();
                     if (info && info.type === 'enum') {
                         function onChange(e) {
                             delete varEdits[varDef.key];
                             varDef.edit(parseInt(e.target.value));
-                        }
-                        function close() {
-                            delete varEdits[varDef.key];
                         }
                         return <select
                             autoFocus
@@ -86,8 +83,8 @@ export const Var = {
                             style={editorStyle.select}
                             onBlur={close}
                         >
-                            {!(value in info.enumValues) ?
-                                <option value={value}>{value}:&lt;?&gt;</option>
+                            {!(actualValue in info.enumValues) ?
+                                <option value={actualValue}>{actualValue}:&lt;?&gt;</option>
                                 : null}
                             {map(info.enumValues, (v, k) =>
                                 <option key={k} value={k}>
@@ -198,10 +195,10 @@ function mapLocations(refs, locations = LocationsNode.children) {
             if (loc.props) {
                 const indexProp = find(loc.props, p => p.id === 'index');
                 if (indexProp) {
-                    const ref = find(refs, ref => ref.scene === indexProp.value);
-                    if (ref) {
+                    const foundRef = find(refs, ref => ref.scene === indexProp.value);
+                    if (foundRef) {
                         node = clone(loc);
-                        node.children = mapActors(ref);
+                        node.children = mapActors(foundRef);
                     }
                 }
             }
@@ -259,7 +256,7 @@ function mapActors(ref) {
     }));
 }
 
-function findAllRefsInSceneList(varDef, sceneList, callback) {
+function findAllRefsInSceneList(varDef, sceneList, mainCallback) {
     const game = DebugData.scope.game;
     if (!game)
         return;
@@ -268,8 +265,8 @@ function findAllRefsInSceneList(varDef, sceneList, callback) {
         sceneList,
         (idx, callback) => {
             async.parallel([
-                callback => loadSceneData(language, idx, scene => callback(null, scene)),
-                callback => loadSceneMetaData(idx, callback)
+                innerCallback => loadSceneData(language, idx, scene => innerCallback(null, scene)),
+                innerCallback => loadSceneMetaData(idx, innerCallback)
             ], (err, [scene]) => {
                 const foundResults = findAllRefsInScene(varDef, scene);
                 if (foundResults.length > 0) {
@@ -283,7 +280,7 @@ function findAllRefsInSceneList(varDef, sceneList, callback) {
             });
         },
         (err, results) => {
-            callback(filter(results));
+            mainCallback(filter(results));
         }
     );
 }

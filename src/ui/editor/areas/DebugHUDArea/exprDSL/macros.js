@@ -47,18 +47,15 @@ export function euler(args, scopes, userMacros) {
     if (args.length === 2)
         checkArgTypeAst('euler', args[1], 1, T.IDENTIFIER, THREE.Euler.RotationOrders);
 
+    const eu = new THREE.Euler();
     if (arg instanceof THREE.Quaternion) {
-        const euler = new THREE.Euler();
-        euler.setFromQuaternion(arg, 'XYZ');
-        return euler;
+        eu.setFromQuaternion(arg, 'XYZ');
     } else if (arg instanceof THREE.Matrix4) {
-        const euler = new THREE.Euler();
-        euler.setFromRotationMatrix(arg, 'XYZ');
-        return euler;
+        eu.setFromRotationMatrix(arg, 'XYZ');
+    } else {
+        eu.setFromVector3(arg, 'XYZ');
     }
-    const euler = new THREE.Euler();
-    euler.setFromVector3(arg, 'XYZ');
-    return euler;
+    return eu;
 }
 
 export function norm(args, scopes, userMacros) {
@@ -82,12 +79,12 @@ export function deg(args, scopes, userMacros) {
     checkArgType('deg', arg, 0, ['number', THREE.Euler]);
 
     if (arg instanceof THREE.Euler) {
-        const euler = new THREE.Euler();
-        euler.copy(arg);
-        euler.x = THREE.Math.radToDeg(euler.x);
-        euler.y = THREE.Math.radToDeg(euler.y);
-        euler.z = THREE.Math.radToDeg(euler.z);
-        return euler;
+        const eu = new THREE.Euler();
+        eu.copy(arg);
+        eu.x = THREE.Math.radToDeg(eu.x);
+        eu.y = THREE.Math.radToDeg(eu.y);
+        eu.z = THREE.Math.radToDeg(eu.z);
+        return eu;
     }
     return THREE.Math.radToDeg(arg);
 }
@@ -98,12 +95,12 @@ export function rad(args, scopes, userMacros) {
     checkArgType('rad', arg, 0, ['number', THREE.Euler]);
 
     if (arg instanceof THREE.Euler) {
-        const euler = new THREE.Euler();
-        euler.copy(arg);
-        euler.x = THREE.Math.degToRad(euler.x);
-        euler.y = THREE.Math.degToRad(euler.y);
-        euler.z = THREE.Math.degToRad(euler.z);
-        return euler;
+        const eu = new THREE.Euler();
+        eu.copy(arg);
+        eu.x = THREE.Math.degToRad(eu.x);
+        eu.y = THREE.Math.degToRad(eu.y);
+        eu.z = THREE.Math.degToRad(eu.z);
+        return eu;
     }
     return THREE.Math.degToRad(arg);
 }

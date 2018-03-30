@@ -42,15 +42,15 @@ function processTeleports(scene) {
     if (scene.isIsland && (pos.x < 0.01 || pos.z < 0.01 || pos.x > 1.99 || pos.z > 1.99)) {
         const globalPos = new THREE.Vector3();
         globalPos.applyMatrix4(hero.threeObject.matrixWorld);
-        const sideScene = find(scene.sideScenes, (sideScene) => {
+        const foundSideScene = find(scene.sideScenes, (sideScene) => {
             const nodePos = sideScene.sceneNode.position;
             return globalPos.x > nodePos.x + 0.01
                 && globalPos.x < nodePos.x + 1.99
                 && globalPos.z > nodePos.z + 0.01
                 && globalPos.z < nodePos.z + 1.99;
         });
-        if (sideScene) {
-            scene.goto(sideScene.index, (newScene) => {
+        if (foundSideScene) {
+            scene.goto(foundSideScene.index, (newScene) => {
                 const newHero = newScene.actors[0];
                 newHero.threeObject.quaternion.copy(hero.threeObject.quaternion);
                 newHero.threeObject.position.copy(globalPos);

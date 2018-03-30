@@ -16,7 +16,7 @@ function isSelected(index) {
 
 const indirectSceneColor = '#AAAAAA';
 
-function scene(type, index, name, children) {
+function baseScene(type, index, name, children) {
     const icon = `editor/icons/locations/${type}.png`;
     if (index === -1) {
         return {name, type, children, icon, color: indirectSceneColor};
@@ -38,9 +38,9 @@ function scene(type, index, name, children) {
     };
 }
 
-export const island = scene.bind(null, 'island');
-export const section = scene.bind(null, 'section');
-export const iso = scene.bind(null, 'building');
+export const island = baseScene.bind(null, 'island');
+export const section = baseScene.bind(null, 'section');
+export const iso = baseScene.bind(null, 'building');
 
 export function planet(name, icon, children) {
     return {

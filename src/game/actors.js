@@ -80,7 +80,7 @@ export function loadActor(params: Object,
                           envInfo: any,
                           ambience: any,
                           props: ActorProps,
-                          callback: Function) {
+                          mainCallback: Function) {
     const animState = loadAnimState();
     const actor: Actor = {
         type: 'actor',
@@ -219,7 +219,7 @@ export function loadActor(params: Object,
     const euler = new THREE.Euler(0, angleToRad(props.angle), 0, 'XZY');
     actor.physics.orientation.setFromEuler(euler);
 
-    actor.loadMesh(callback);
+    actor.loadMesh(mainCallback);
 }
 
 function initPhysics({pos, angle}) {

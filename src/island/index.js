@@ -154,7 +154,7 @@ function loadGeometries(island, data, ambience) {
 const DIFF = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
 
-function updateShadows(scene, matByName) {
+function updateShadows(baseScene, matByName) {
     const shadows = [];
     let heroPos = null;
 
@@ -176,10 +176,10 @@ function updateShadows(scene, matByName) {
         }
     }
 
-    computeShadow(scene, scene.actors[0]);
+    computeShadow(baseScene, baseScene.actors[0]);
     heroPos = POSITION.clone();
-    each(tail(scene.actors), computeShadow.bind(null, scene));
-    each(scene.sideScenes, (sideScene) => {
+    each(tail(baseScene.actors), computeShadow.bind(null, baseScene));
+    each(baseScene.sideScenes, (sideScene) => {
         each(sideScene.actors, computeShadow.bind(null, sideScene));
     });
     shadows.sort((a, b) => a.distToHero - b.distToHero);
