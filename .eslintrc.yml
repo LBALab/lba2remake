@@ -19,6 +19,7 @@ rules:
   default-case: off
   function-paren-newline: off
   camelcase: off
+  linebreak-style: off
 
   no-lonely-if: off
   no-continue: off
