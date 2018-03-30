@@ -36,7 +36,7 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loaders: ['eslint', 'babel']
+                loaders: ['babel', 'eslint']
             },
             {
                 test: /\.glsl?$/,
