@@ -1,5 +1,5 @@
-import Popup from '../Popup';
 import React from 'react';
+import Popup from '../Popup';
 
 const popup_style = {
     background: 'rgb(45, 45, 48)',

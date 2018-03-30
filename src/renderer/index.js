@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {map} from 'lodash';
 import StereoEffect from './effects/StereoEffect';
 import EffectComposer from './effects/postprocess/EffectComposer';
 import SMAAPass from './effects/postprocess/SMAAPass';
@@ -11,7 +12,6 @@ import {
     resizeIsometricCamera
 } from './cameras';
 import Cardboard from './utils/Cardboard';
-import {map} from 'lodash';
 import {EngineError} from '../crash_reporting';
 
 const PixelRatioMode = {

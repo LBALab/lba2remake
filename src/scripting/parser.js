@@ -1,8 +1,8 @@
+import {last} from 'lodash';
 import {LifeOpcode} from './data/life';
 import {MoveOpcode} from './data/move';
 import {ConditionOpcode} from './data/condition';
 import {OperatorOpcode} from './data/operator';
-import {last} from 'lodash';
 
 const TypeSize = {
     Int8: 1,

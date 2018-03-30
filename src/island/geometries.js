@@ -1,10 +1,10 @@
+import {times} from 'lodash';
 import * as THREE from 'three';
 import {
     loadSubTexture,
     loadPaletteTexture,
     loadTexture
 } from '../texture';
-import {times} from 'lodash';
 
 import VERT_GROUND_COLORED from './shaders/ground/colored.vert.glsl';
 import FRAG_GROUND_COLORED from './shaders/ground/colored.frag.glsl';
