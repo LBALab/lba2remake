@@ -66,7 +66,6 @@ rules:
   #
   class-methods-use-this: off
   import/no-duplicates: off
-  no-case-declarations: off
   no-empty: off
   no-inner-declarations: off
   no-mixed-operators: off

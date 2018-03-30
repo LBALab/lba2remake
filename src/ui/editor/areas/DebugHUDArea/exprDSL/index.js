@@ -16,9 +16,10 @@ export function generate(node) {
             case T.IDENTIFIER:
             case T.INDEX:
                 return node.value.toString();
-            case T.FUNC_CALL:
+            case T.FUNC_CALL: {
                 const args = map(node.args, generate);
                 return `${generate(node.left)}(${args.join(',')})`;
+            }
             case T.ARRAY_EXPR:
                 return `${generate(node.left)}[${generate(node.right)}]`;
             case T.DOT_EXPR:

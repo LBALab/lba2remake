@@ -54,7 +54,7 @@ function mapArguments(scene, actor, cmd) {
         case 'SET_COMPORTEMENT':
             args[0].value = mapComportementSetterArg(actor, args[0].value);
             break;
-        case 'SET_COMPORTEMENT_OBJ':
+        case 'SET_COMPORTEMENT_OBJ': {
             const obj = scene ? scene.actors[args[0].value] : null;
             if (obj) {
                 args[1].value = mapComportementSetterArg(obj, args[1].value);
@@ -62,15 +62,17 @@ function mapArguments(scene, actor, cmd) {
                 args[1].value = '<?>';
             }
             break;
+        }
         case 'SET_TRACK':
             args[0].value = actor.scripts.move.tracksMap[args[0].value];
             break;
-        case 'SET_TRACK_OBJ':
+        case 'SET_TRACK_OBJ': {
             const tgt2 = scene.actors[args[0].value];
             if (tgt2) {
                 args[1].value = tgt2.scripts.move.tracksMap[args[1].value];
             }
             break;
+        }
         case 'GOTO':
             args[0].value = actor.scripts.move.tracksMap[args[0].value];
             break;

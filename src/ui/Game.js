@@ -199,22 +199,26 @@ export default class Game extends FrameListener {
 
     onMenuItemChanged(item) {
         switch (item) {
-            case 70: // Resume
+            case 70: { // Resume
                 this.hideMenu();
                 break;
-            case 71: // New Game
+            }
+            case 71: { // New Game
                 this.hideMenu();
                 const that = this;
                 const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
                 this.state.game.pause();
-                this.setState({video: {
-                    src,
-                    callback: () => {
-                        that.setState({video: null});
-                        that.startNewGameScene();
+                this.setState({
+                    video: {
+                        src,
+                        callback: () => {
+                            that.setState({video: null});
+                            that.startNewGameScene();
+                        }
                     }
-                }});
+                });
                 break;
+            }
         }
     }
 
