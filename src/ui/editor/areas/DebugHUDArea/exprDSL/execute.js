@@ -1,6 +1,6 @@
+import {map, concat} from 'lodash';
 import T from './types';
 import * as MACROS from './macros';
-import {map, concat} from 'lodash';
 
 export function execute(node, scopes, userMacros) {
     if (node) {

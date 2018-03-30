@@ -1,8 +1,8 @@
 import React from 'react';
+import {map} from 'lodash';
 import ScriptEditor from './ScriptEditorArea/scriptEditor';
 import {editor} from '../../styles';
 import FrameListener from '../../utils/FrameListener';
-import {map} from 'lodash';
 import DebugData, {getObjectName} from '../DebugData';
 
 const inputStyle = {

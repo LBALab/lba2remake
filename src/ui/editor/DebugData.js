@@ -181,6 +181,7 @@ function saveSceneMetaData(sceneIndex) {
             ].join('&');
             request.open('POST', `ws/metadata/scene/${sceneIndex}?${query}`, true);
             request.onload = function () {
+                // eslint-disable-next-line no-console
                 console.log(`Saved scene ${sceneIndex} metadata`);
             };
             request.send(JSON.stringify(DebugData.metadata.scenes[sceneIndex], null, 2));
@@ -214,6 +215,7 @@ function saveGameMetaData() {
             ].join('&');
             request.open('POST', `ws/metadata/game?${query}`, true);
             request.onload = function () {
+                // eslint-disable-next-line no-console
                 console.log('Saved game metadata');
             };
             request.send(JSON.stringify(DebugData.metadata.game, null, 2));

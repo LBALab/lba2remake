@@ -22,6 +22,7 @@ function StereoEffect(renderer) {
                 return scope.eyeSeparation;
             },
             set(value) {
+                // eslint-disable-next-line no-console
                 console.warn('THREE.StereoEffect: .separation is now .eyeSeparation.');
                 scope.eyeSeparation = value;
             }
@@ -31,6 +32,7 @@ function StereoEffect(renderer) {
                 return scope.focalLength;
             },
             set(value) {
+                // eslint-disable-next-line no-console
                 console.warn('THREE.StereoEffect: .targetDistance is now .focalLength.');
                 scope.focalLength = value;
             }

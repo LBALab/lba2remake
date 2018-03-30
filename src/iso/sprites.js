@@ -1,13 +1,12 @@
 import async from 'async';
 import * as THREE from 'three';
 import {each, orderBy} from 'lodash';
-
-const push = Array.prototype.push;
-
 import {bits} from '../utils';
 import {loadHqrAsync} from '../hqr';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
+
+const push = Array.prototype.push;
 
 let spriteCache = null;
 let spriteRawCache = null;

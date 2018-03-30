@@ -1,10 +1,10 @@
 import React from 'react';
+import {size, sortBy, map, each, filter} from 'lodash';
 import DebugData from '../../../DebugData';
 import {ActorsNode} from './actors';
 import {ZonesNode} from './zones';
 import {PointsNode} from './points';
 import {SceneGraphNode} from './sceneGraph';
-import {size, sortBy, map, each, filter} from 'lodash';
 import {makeVarDef, makeVariables, Var} from './variables';
 
 const baseChildren = [

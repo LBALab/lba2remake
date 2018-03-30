@@ -1,7 +1,7 @@
 import React from 'react';
+import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
 import Area from './editor/Area';
 import {fullscreen} from './styles';
-import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
 import NewArea from './editor/areas/NewArea';
 import {Type, Orientation} from './editor/layout';
 import {findAreaContentById, findMainAreas, generateContent} from './editor/utils';

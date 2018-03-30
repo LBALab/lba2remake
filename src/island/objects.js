@@ -1,5 +1,5 @@
-import {bits} from '../utils';
 import * as THREE from 'three';
+import {bits} from '../utils';
 
 const push = Array.prototype.push;
 

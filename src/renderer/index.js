@@ -32,6 +32,7 @@ export function createRenderer(params, canvas) {
     let pixelRatio = PixelRatio[2]; // SET NORMAL AS DEFAULT
     const getPixelRatio = () => pixelRatio.getValue();
     let antialias = false;
+    // eslint-disable-next-line no-console
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
     const baseRenderer = setupBaseRenderer(pixelRatio, canvas);
     const tgtRenderer = params.vr ? setupVR(baseRenderer) : baseRenderer;
@@ -141,7 +142,8 @@ function setupSMAA(renderer, pixelRatio) {
 
 function setupVR(baseRenderer) {
     const params = Cardboard.uriToParams('https://vr.google.com/cardboard/download/?p=CgdUd2luc3VuEgRBZHJpHfT91DwlYOVQPSoQAAC0QgAAtEIAALRCAAC0QlgANQIrBz06CClcjz0K1yM8UABgAA');
-    console.log(params);
+    // eslint-disable-next-line no-console
+    console.log('Cardboard params:', params);
     const stereoEffect = new StereoEffect(baseRenderer, params);
     stereoEffect.eyeSeparation = -0.0012;
     stereoEffect.focalLength = 0.0122;

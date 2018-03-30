@@ -70,6 +70,7 @@ function compileValue(script, value, cmdOffset) {
     switch (value.type) {
         case 'offset':
             if (script.opMap[value.value] === undefined) {
+                // eslint-disable-next-line no-console
                 console.warn(`Failed to parse offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${value.value}`);
             }
             return script.opMap[value.value];
@@ -88,6 +89,7 @@ function postProcess(script, cmd, cmdOffset, args) {
         case 'SET_TRACK':
             opMap = script.context.actor.scripts.move.opMap;
             if (opMap[args[1]] === undefined) {
+                // eslint-disable-next-line no-console
                 console.warn(`Failed to parse SET_TRACK offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[1]}`);
             }
             args[1] = opMap[args[1]];
@@ -95,6 +97,7 @@ function postProcess(script, cmd, cmdOffset, args) {
         case 'SET_TRACK_OBJ':
             opMap = args[1].scripts.move.opMap;
             if (opMap[args[2]] === undefined) {
+                // eslint-disable-next-line no-console
                 console.warn(`Failed to parse SET_TRACK_OBJ offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[2]}`);
             }
             args[2] = opMap[args[2]];
@@ -102,6 +105,7 @@ function postProcess(script, cmd, cmdOffset, args) {
         case 'SET_COMPORTEMENT_OBJ':
             opMap = args[1].scripts.life.opMap;
             if (opMap[args[2]] === undefined) {
+                // eslint-disable-next-line no-console
                 console.warn(`Failed to parse SET_COMPORTEMENT_OBJ offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[2]}`);
             }
             args[2] = opMap[args[2]];

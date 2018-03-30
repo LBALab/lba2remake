@@ -1,7 +1,7 @@
-import {execute} from './execute';
-import T from './types';
 import _ from 'lodash';
 import * as THREE from 'three';
+import {execute} from './execute';
+import T from './types';
 
 export function map(args, scopes, userMacros) {
     checkNumArgs('map', args, 2);

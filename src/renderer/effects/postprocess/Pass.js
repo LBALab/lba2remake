@@ -17,6 +17,7 @@ Pass.prototype = {
     constructor: Pass,
 
     render() {
+        // eslint-disable-next-line no-console
         console.error('THREE.Pass: .render() must be implemented in derived pass.');
     }
 

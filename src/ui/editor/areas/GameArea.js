@@ -1,5 +1,5 @@
-import Game from '../../Game';
 import {clone} from 'lodash';
+import Game from '../../Game';
 import ScriptEditorArea from './ScriptEditorArea';
 import DebugHUDArea from './DebugHUDArea';
 import {SceneOutliner, Locator} from './OutlinerArea';

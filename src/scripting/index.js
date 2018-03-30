@@ -42,6 +42,7 @@ function runScript(params, script, time) {
 
     while (state.continue) {
         if (state.offset >= instructions.length || isNaN(state.offset)) {
+            // eslint-disable-next-line no-console
             console.warn(`Invalid offset: ${context.scene.index}:${context.actor.index}:${context.type}:${state.lastOffset + 1} offset=${state.offset}`);
             state.terminated = true;
             return;
@@ -80,6 +81,7 @@ function runScript(params, script, time) {
                 next(time);
             }
         } catch (e) {
+            // eslint-disable-next-line no-console
             console.error(`Error on instruction: actor(${context.actor.index}):${context.type}:${instructions[state.offset].dbgLabel}"\n`, e);
         }
         if (state.continue) {

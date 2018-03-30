@@ -1,10 +1,10 @@
 import React from 'react';
+import {map} from 'lodash';
 import DebugData, {
     renameObject,
     getObjectName,
     locateObject
 } from '../../../DebugData';
-import {map} from 'lodash';
 import {SceneGraphNode} from './sceneGraph';
 import {mapComportementArg} from '../../ScriptEditorArea/listing';
 

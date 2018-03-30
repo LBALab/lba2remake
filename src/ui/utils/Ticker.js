@@ -1,6 +1,6 @@
 // @flow
-import FrameListerner from './FrameListener';
 import {each} from 'lodash';
+import FrameListerner from './FrameListener';
 
 export default class Ticker {
     listeners: [];

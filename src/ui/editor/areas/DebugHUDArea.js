@@ -1,9 +1,9 @@
+import {each, map, concat} from 'lodash';
 import DebugHUD from './DebugHUDArea/content';
 import DebugHUDMenu from './DebugHUDArea/menu';
 import {Status} from './DebugHUDArea/status';
 import {saveProfiles, loadProfiles} from './DebugHUDArea/profiles';
 import {addSlot} from './DebugHUDArea/slots';
-import {each, map, concat} from 'lodash';
 
 const DebugHUDArea = {
     id: 'dbg_hud',

@@ -50,8 +50,7 @@ export function loadGrid(bkg, bricks, palette, entry) {
                             blocks.push(block);
                             break;
                         case 3:
-                            console.error('Shouldn\'t be here');
-                            break;
+                            throw new Error('Unsupported block type');
                     }
                 }
                 if (type !== 0) {

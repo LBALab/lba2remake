@@ -1,7 +1,7 @@
+import {map, each} from 'lodash';
 import {parseProgram} from './parse';
 import T from './types';
 import TESTS from './tests';
-import {map, each} from 'lodash';
 
 export {execute} from './execute';
 
@@ -27,10 +27,10 @@ export function generate(node) {
                 return `${generate(node.left)}=${generate(node.right)}`;
         }
     }
-    return null;
 }
 
 export function test() {
+    // eslint-disable-next-line no-console
     console.log('Running exprDSL tests');
 
     let count = 0;
@@ -57,9 +57,9 @@ export function test() {
     const duration = ((new Date().getTime() - start) * 0.001).toFixed(3);
 
     const label = `Passed ${count}/${TESTS.length * declinations.length} exprDSL test in ${duration} seconds`;
-    if (count < TESTS.length * declinations.length)
+    if (count < TESTS.length * declinations.length) // eslint-disable-next-line no-console
         console.error(label);
-    else
+    else // eslint-disable-next-line no-console
         console.log(label);
 }
 
@@ -68,9 +68,11 @@ function buildTest([original, target]) {
         const tgt = target === undefined ? 'undefined' : `'${target}'`;
         const label = `generate(parse('${original}')) === ${tgt}`;
         if (generate(parse(original)) === target) {
+            // eslint-disable-next-line no-console
             console.log(`OK: ${label}`);
             return true;
         }
+        // eslint-disable-next-line no-console
         console.warn(`FAILED: ${label}`);
         return false;
     };
