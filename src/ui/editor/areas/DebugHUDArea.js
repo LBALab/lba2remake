@@ -1,10 +1,9 @@
-import React from 'react';
+import {each, map, concat} from 'lodash';
 import DebugHUD from './DebugHUDArea/content';
 import DebugHUDMenu from './DebugHUDArea/menu';
 import {Status} from './DebugHUDArea/status';
 import {saveProfiles, loadProfiles} from './DebugHUDArea/profiles';
 import {addSlot} from './DebugHUDArea/slots';
-import {each, map, concat} from 'lodash';
 
 const DebugHUDArea = {
     id: 'dbg_hud',
@@ -18,20 +17,20 @@ const DebugHUDArea = {
         profileName: ''
     }),
     stateHandler: {
-        setStatus: function(status) {
+        setStatus(status) {
             this.setState({status});
         },
-        setSlots: function(slots) {
+        setSlots(slots) {
             this.setState({slots});
         },
-        newProfile: function() {
+        newProfile() {
             const slots = {
                 macros: {},
                 expressions: []
             };
             this.setState({slots, profileName: 'new_profile'});
         },
-        loadProfile: function(profile, name) {
+        loadProfile(profile, name) {
             const slots = {
                 macros: {},
                 expressions: []
@@ -39,7 +38,7 @@ const DebugHUDArea = {
             each(profile, addSlot.bind(null, slots));
             this.setState({slots, status: Status.NORMAL, profileName: name});
         },
-        saveProfile: function(confirm, name) {
+        saveProfile(confirm, name) {
             const {slots} = this.state;
             const profiles = loadProfiles();
 
@@ -59,7 +58,7 @@ const DebugHUDArea = {
                 }
             }
         },
-        removeProfile: function(name) {
+        removeProfile(name) {
             const profiles = loadProfiles();
             delete profiles[name];
             saveProfiles(profiles);

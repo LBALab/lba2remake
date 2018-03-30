@@ -1,13 +1,11 @@
-import async from "async";
+import async from 'async';
 
-import {loadHqrAsync} from "../hqr";
+import {loadHqrAsync} from '../hqr';
 
 export function loadTextsAsync(language, index) {
-    return (callback) => {
-        return loadTexts(language, index, (texts) => {
-            callback(null, texts);
-        });
-    };
+    return callback => loadTexts(language, index, (texts) => {
+        callback(null, texts);
+    });
 }
 
 export function getTextFile(language) {
@@ -18,12 +16,10 @@ export function getTextFile(language) {
 export function loadTexts(language, index, callback) {
     async.auto({
         text: loadHqrAsync(getTextFile(language)),
-    }, function(err, files) {
+    }, (err, files) => {
         const text = loadTextData(files.text, getLanguageTextIndex(language, index));
         if (callback) {
             callback(text);
-        } else {
-            return text;
         }
     });
 }
@@ -46,11 +42,14 @@ export function loadTextData(textFile, language) {
         end = data.getUint16(idx * 2 + 2, true);
         const type = data.getUint8(start, true);
         let value = '';
-        for (let i = start + 1; i < end - 1; ++i) {
-            value += String.fromCharCode((language.data.charmap) ? language.data.charmap[data.getUint8(i)] : data.getUint8(i));
+        for (let i = start + 1; i < end - 1; i += 1) {
+            value += String.fromCharCode((language.data.charmap) ?
+                language.data.charmap[data.getUint8(i)]
+                : data.getUint8(i)
+            );
         }
         texts[mapData[idx]] = {type, index: idx, value};
-        idx++;
+        idx += 1;
     } while (end < data.byteLength);
 
     return texts;

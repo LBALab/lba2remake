@@ -7,7 +7,7 @@ export function PALETTE() {
 
 }
 
-export function BODY_OBJ(actor, bodyIndex)  {
+export function BODY_OBJ(actor, bodyIndex) {
     if (actor.props.bodyIndex !== bodyIndex) {
         actor.props.bodyIndex = bodyIndex;
         actor.reload(this.scene);
@@ -52,11 +52,11 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 value: text.value
             };
             this.game.setUiState({interjections});
-            cmdState.listener = function() { };
+            cmdState.listener = function listener() { };
             setTimeout(() => {
-                const interjections = clone(this.game.getUiState().interjections);
-                delete interjections[itrjId];
-                this.game.setUiState({interjections});
+                const interjectionsCopy = clone(this.game.getUiState().interjections);
+                delete interjectionsCopy[itrjId];
+                this.game.setUiState({interjections: interjectionsCopy});
                 cmdState.ended = true;
             }, 4500);
         } else {
@@ -75,7 +75,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                     color: actor.props.textColor
                 }
             });
-            cmdState.listener = function(event) {
+            cmdState.listener = function listener(event) {
                 const key = event.code || event.which || event.keyCode;
                 if (key === 'Enter' || key === 13) {
                     cmdState.ended = true;
@@ -83,7 +83,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             };
             window.addEventListener('keydown', cmdState.listener);
             if (text.type === 9) {
-                setTimeout(function () {
+                setTimeout(() => {
                     cmdState.listener();
                 }, 4500);
             }
@@ -179,7 +179,7 @@ export function SUICIDE() {
 }
 
 export function USE_ONE_LITTLE_KEY() {
-    this.game.getState().hero.keys++;
+    this.game.getState().hero.keys += 1;
 }
 
 export function GIVE_GOLD_PIECES(amount) {
@@ -190,7 +190,7 @@ export function GIVE_GOLD_PIECES(amount) {
 }
 
 export function INC_CHAPTER() {
-    this.game.getState().chapter++;
+    this.game.getState().chapter += 1;
 }
 
 export function FOUND_OBJECT(cmdState, id) {
@@ -216,7 +216,7 @@ export function FOUND_OBJECT(cmdState, id) {
             },
             foundObject: id
         });
-        cmdState.listener = function(event) {
+        cmdState.listener = function listener(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
                 cmdState.ended = true;
@@ -224,7 +224,7 @@ export function FOUND_OBJECT(cmdState, id) {
         };
         window.addEventListener('keydown', cmdState.listener);
         if (text.type === 9) {
-            setTimeout(function () {
+            setTimeout(() => {
                 cmdState.listener();
             }, 6500);
         }
@@ -326,7 +326,7 @@ export function PLAY_SMK(cmdState, video) {
     if (!cmdState.listener) {
         const that = this;
         this.game.pause();
-        const src = VideoData.VIDEO.find((v) => { return v.name === video; }).file;
+        const src = VideoData.VIDEO.find(v => v.name === video).file;
         this.game.setUiState({video: {
             src,
             callback: () => {
@@ -335,7 +335,7 @@ export function PLAY_SMK(cmdState, video) {
                 that.game.resume();
             }
         }});
-        cmdState.listener = function(event) {
+        cmdState.listener = function listener(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
                 that.game.setUiState({video: null});
@@ -362,7 +362,7 @@ export function ECLAIR() {
 
 export function INC_CLOVER_BOX() {
     if (this.game.getState().hero.clover.boxes < 10) {
-        this.game.getState().hero.clover.boxes++;
+        this.game.getState().hero.clover.boxes += 1;
     }
 }
 
@@ -376,7 +376,7 @@ export function ADD_CHOICE(index) {
     this.state.choice = null;
     const text = this.scene.data.texts[index];
     const uiState = this.game.getUiState();
-    uiState.ask.choices.push({ text: text, value: index, color: '#ffffff' });
+    uiState.ask.choices.push({ text, value: index, color: '#ffffff' });
     this.game.setUiState({ ask: uiState.ask });
 }
 
@@ -404,7 +404,7 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
             color: actor.props.textColor
         };
         this.game.setUiState({ ask: uiState.ask });
-        cmdState.listener = function(event) {
+        cmdState.listener = function listener(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
                 cmdState.ended = true;
@@ -528,7 +528,6 @@ export function CINEMA_MODE(mode) {
     } else {
         this.actor.props.dirMode = DirMode.MANUAL;
         this.game.setUiState({ cinema: false });
-        //setTimeout(function() { cinemaModeDiv.style.display = 'none'; }, 3000); // animation is in 3s
     }
 }
 

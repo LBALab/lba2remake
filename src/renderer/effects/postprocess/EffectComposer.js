@@ -6,123 +6,101 @@ import * as THREE from 'three';
 import ShaderPass from './ShaderPass';
 import CopyShader from './CopyShader';
 
-export default function EffectComposer( renderer, renderTarget ) {
+export default function EffectComposer(renderer, renderTarget) {
+    this.renderer = renderer;
 
-	this.renderer = renderer;
+    if (renderTarget === undefined) {
+        const parameters = {
+            minFilter: THREE.LinearFilter,
+            magFilter: THREE.LinearFilter,
+            format: THREE.RGBAFormat,
+            stencilBuffer: false
+        };
+        const size = renderer.getSize();
+        renderTarget = new THREE.WebGLRenderTarget(size.width, size.height, parameters);
+    }
 
-	if ( renderTarget === undefined ) {
+    this.renderTarget1 = renderTarget;
+    this.renderTarget2 = renderTarget.clone();
 
-		var parameters = {
-			minFilter: THREE.LinearFilter,
-			magFilter: THREE.LinearFilter,
-			format: THREE.RGBAFormat,
-			stencilBuffer: false
-		};
-		var size = renderer.getSize();
-		renderTarget = new THREE.WebGLRenderTarget( size.width, size.height, parameters );
+    this.writeBuffer = this.renderTarget1;
+    this.readBuffer = this.renderTarget2;
 
-	}
+    this.passes = [];
 
-	this.renderTarget1 = renderTarget;
-	this.renderTarget2 = renderTarget.clone();
-
-	this.writeBuffer = this.renderTarget1;
-	this.readBuffer = this.renderTarget2;
-
-	this.passes = [];
-
-	this.copyPass = new ShaderPass( CopyShader );
-
-};
+    this.copyPass = new ShaderPass(CopyShader);
+}
 
 EffectComposer.prototype = {
 
-	swapBuffers: function() {
+    swapBuffers() {
+        const tmp = this.readBuffer;
+        this.readBuffer = this.writeBuffer;
+        this.writeBuffer = tmp;
+    },
 
-		var tmp = this.readBuffer;
-		this.readBuffer = this.writeBuffer;
-		this.writeBuffer = tmp;
+    addPass(pass) {
+        this.passes.push(pass);
+    },
 
-	},
+    insertPass(pass, index) {
+        this.passes.splice(index, 0, pass);
+    },
 
-	addPass: function ( pass ) {
+    render(delta) {
+        this.writeBuffer = this.renderTarget1;
+        this.readBuffer = this.renderTarget2;
 
-		this.passes.push( pass );
+        const maskActive = false;
 
-	},
+        let pass,
+            i,
+            il = this.passes.length;
 
-	insertPass: function ( pass, index ) {
+        for (i = 0; i < il; i += 1) {
+            pass = this.passes[i];
 
-		this.passes.splice( index, 0, pass );
+            if (!pass.enabled) continue;
 
-	},
+            pass.render(this.renderer, this.writeBuffer, this.readBuffer, delta, maskActive);
 
-	render: function ( delta ) {
+            if (pass.needsSwap) {
+                if (maskActive) {
+                    const context = this.renderer.context;
 
-		this.writeBuffer = this.renderTarget1;
-		this.readBuffer = this.renderTarget2;
+                    context.stencilFunc(context.NOTEQUAL, 1, 0xffffffff);
 
-		var maskActive = false;
+                    this.copyPass.render(this.renderer, this.writeBuffer, this.readBuffer, delta);
 
-		var pass, i, il = this.passes.length;
+                    context.stencilFunc(context.EQUAL, 1, 0xffffffff);
+                }
 
-		for ( i = 0; i < il; i ++ ) {
+                this.swapBuffers();
+            }
+        }
+    },
 
-			pass = this.passes[ i ];
+    reset(renderTarget) {
+        if (renderTarget === undefined) {
+            const size = this.renderer.getSize();
 
-			if ( ! pass.enabled ) continue;
+            renderTarget = this.renderTarget1.clone();
+            renderTarget.setSize(size.width, size.height);
+        }
 
-			pass.render( this.renderer, this.writeBuffer, this.readBuffer, delta, maskActive );
+        this.renderTarget1.dispose();
+        this.renderTarget2.dispose();
+        this.renderTarget1 = renderTarget;
+        this.renderTarget2 = renderTarget.clone();
 
-			if ( pass.needsSwap ) {
+        this.writeBuffer = this.renderTarget1;
+        this.readBuffer = this.renderTarget2;
+    },
 
-				if ( maskActive ) {
-
-					var context = this.renderer.context;
-
-					context.stencilFunc( context.NOTEQUAL, 1, 0xffffffff );
-
-					this.copyPass.render( this.renderer, this.writeBuffer, this.readBuffer, delta );
-
-					context.stencilFunc( context.EQUAL, 1, 0xffffffff );
-
-				}
-
-				this.swapBuffers();
-
-			}
-
-		}
-
-	},
-
-	reset: function ( renderTarget ) {
-
-		if ( renderTarget === undefined ) {
-
-			var size = this.renderer.getSize();
-
-			renderTarget = this.renderTarget1.clone();
-			renderTarget.setSize( size.width, size.height );
-
-		}
-
-		this.renderTarget1.dispose();
-		this.renderTarget2.dispose();
-		this.renderTarget1 = renderTarget;
-		this.renderTarget2 = renderTarget.clone();
-
-		this.writeBuffer = this.renderTarget1;
-		this.readBuffer = this.renderTarget2;
-
-	},
-
-	setSize: function ( width, height ) {
-
-		this.renderTarget1.setSize( width, height );
-		this.renderTarget2.setSize( width, height );
-
-	}
+    setSize(width, height) {
+        this.renderTarget1.setSize(width, height);
+        this.renderTarget2.setSize(width, height);
+    }
 
 };
 

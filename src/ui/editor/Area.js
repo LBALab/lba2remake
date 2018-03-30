@@ -1,10 +1,9 @@
 import React from 'react';
-import {extend} from 'lodash';
+import {map, findIndex, extend} from 'lodash';
 import {editor, fullscreen} from '../styles/index';
 import {Orientation} from './layout';
-import {map, findIndex} from 'lodash';
 import NewArea, {NewAreaContent} from './areas/NewArea';
-import AreaLoader from "./areas/AreaLoader";
+import AreaLoader from './areas/AreaLoader';
 
 const menuHeight = 26;
 
@@ -35,13 +34,13 @@ const contentStyle = extend({
     color: 'white'
 }, editor.base);
 
-const iconStyle = (base) => (extend({
+const iconStyle = base => (extend({
     position: 'absolute',
     top: 1,
     cursor: 'pointer'
 }, base));
 
-const mainIconStyle = (base) => (extend({
+const mainIconStyle = base => (extend({
     float: 'left',
     cursor: 'pointer',
     paddingLeft: '2px',
@@ -123,7 +122,10 @@ export default class Area extends React.Component {
             }
         };
 
-        return <NewAreaContent availableAreas={availableAreas} selectAreaContent={selectAreaContent}/>;
+        return <NewAreaContent
+            availableAreas={availableAreas}
+            selectAreaContent={selectAreaContent}
+        />;
     }
 
     renderContent() {
@@ -168,12 +170,14 @@ export default class Area extends React.Component {
                 <div>{popup.msg}</div>
                 <div style={{float: 'right'}}>
                     {popup.ok ? <button style={buttonStyle} onClick={ok}>{popup.ok}</button> : null}
-                    {popup.cancel ? <button style={buttonStyle} onClick={cancel}>{popup.cancel}</button> : null}
+                    {popup.cancel ? <button
+                        style={buttonStyle}
+                        onClick={cancel}
+                    >{popup.cancel}</button> : null}
                 </div>
             </div>;
-        } else {
-            return null;
         }
+        return null;
     }
 
     confirmPopup(msg, ok, cancel, callback) {

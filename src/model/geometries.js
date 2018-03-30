@@ -31,9 +31,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
                     light: {value: light},
-                    bonePos: { value: bones.position, type:'v3v' },
-                    boneRot: { value: bones.rotation, type:'v4v' },
-                    rotationMatrix: { value: matrixRotation, type:'m4v' }
+                    bonePos: { value: bones.position, type: 'v3v' },
+                    boneRot: { value: bones.rotation, type: 'v4v' },
+                    rotationMatrix: { value: matrixRotation, type: 'm4v' }
                 }
             })
         },
@@ -56,9 +56,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
                     texture: {value: texture},
                     palette: {value: paletteTexture},
                     light: {value: light},
-                    bonePos: { value: bones.position, type:'v3v' },
-                    boneRot: { value: bones.rotation, type:'v4v' },
-                    rotationMatrix: { value: matrixRotation, type:'m4v' }
+                    bonePos: { value: bones.position, type: 'v3v' },
+                    boneRot: { value: bones.rotation, type: 'v4v' },
+                    rotationMatrix: { value: matrixRotation, type: 'm4v' }
                 }
             })
         },
@@ -82,9 +82,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
                     texture: {value: texture},
                     palette: {value: paletteTexture},
                     light: {value: light},
-                    bonePos: { value: bones.position, type:'v3v' },
-                    boneRot: { value: bones.rotation, type:'v4v' },
-                    rotationMatrix: { value: matrixRotation, type:'m4v' }
+                    bonePos: { value: bones.position, type: 'v3v' },
+                    boneRot: { value: bones.rotation, type: 'v4v' },
+                    rotationMatrix: { value: matrixRotation, type: 'm4v' }
                 }
             })
         }
@@ -92,10 +92,30 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
 }
 
 export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo, ambience) {
-    const geometries = loadGeometry(body, texture, bones, matrixRotation, palette, envInfo, ambience);
+    const geometries = loadGeometry(
+        body,
+        texture,
+        bones,
+        matrixRotation,
+        palette,
+        envInfo,
+        ambience
+    );
     const object = new THREE.Object3D();
 
-    _.each(geometries, ({positions, uvs, colors, normals, bones, linePositions, lineNormals, lineColors, lineBones, material}, name) => {
+    _.each(geometries, (geom, name) => {
+        const {
+            positions,
+            uvs,
+            colors,
+            normals,
+            bones: boneIndices,
+            linePositions,
+            lineNormals,
+            lineColors,
+            lineBones,
+            material
+        } = geom;
         if (positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
@@ -104,7 +124,7 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
                 bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
             }
             bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 1, false));
-            bufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(bones), 1));
+            bufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(boneIndices), 1));
 
             const modelMesh = new THREE.Mesh(bufferGeometry, material);
             modelMesh.frustumCulled = false;
@@ -128,12 +148,19 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
 }
 
 function loadGeometry(body, texture, bones, matrixRotation, palette, envInfo, ambience) {
-    const geometries = prepareGeometries(texture, bones, matrixRotation, palette, envInfo, ambience)
+    const geometries = prepareGeometries(
+        texture,
+        bones,
+        matrixRotation,
+        palette,
+        envInfo,
+        ambience
+    );
 
     loadFaceGeometry(geometries, body);
     loadSphereGeometry(geometries, body);
     loadLineGeometry(geometries, body);
-    //debugBoneGeometry(geometries, body);
+    // debugBoneGeometry(geometries, body);
 
     return geometries;
 }
@@ -143,7 +170,10 @@ function loadFaceGeometry(geometries, body) {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
             if (p.hasTransparency) {
-                push.apply(geometries.textured_transparent.positions, getPosition(body, vertexIndex));
+                push.apply(
+                    geometries.textured_transparent.positions,
+                    getPosition(body, vertexIndex)
+                );
                 push.apply(geometries.textured_transparent.normals, getNormal(body, vertexIndex));
                 push.apply(geometries.textured_transparent.uvs, getUVs(body, p, j));
                 push.apply(geometries.textured_transparent.bones, getBone(body, vertexIndex));
@@ -160,12 +190,12 @@ function loadFaceGeometry(geometries, body) {
                 push.apply(geometries.colored.bones, getBone(body, vertexIndex));
                 geometries.colored.colors.push(p.colour);
             }
-        };    
-        for (let j = 0; j < 3; ++j) {
+        };
+        for (let j = 0; j < 3; j += 1) {
             addVertex(j);
-        } 
-        if (p.numVertex == 4) { // quad
-            for (let j of [0, 2, 3]) {
+        }
+        if (p.numVertex === 4) { // quad
+            for (const j of [0, 2, 3]) {
                 addVertex(j);
             }
         }
@@ -177,14 +207,14 @@ function loadSphereGeometry(geometries, body) {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
         const normal = getNormal(body, s.vertex);
-        
+
         const addVertex = (j) => {
-    	    push.apply(geometries.colored.positions, [
+            push.apply(geometries.colored.positions, [
                 sphereGeometry.vertices[j].x + centerPos[0],
                 sphereGeometry.vertices[j].y + centerPos[1],
                 sphereGeometry.vertices[j].z + centerPos[2]
             ]);
-    	    push.apply(geometries.colored.normals, normal);
+            push.apply(geometries.colored.normals, normal);
             push.apply(geometries.colored.bones, getBone(body, s.vertex));
             geometries.colored.colors.push(s.colour);
         };
@@ -199,7 +229,7 @@ function loadSphereGeometry(geometries, body) {
 
 function loadLineGeometry(geometries, body) {
     _.each(body.lines, (l) => {
-        const addVertex = (c,i) => {
+        const addVertex = (c, i) => {
             push.apply(geometries.colored.linePositions, getPosition(body, i));
             push.apply(geometries.colored.lineNormals, getNormal(body, i));
             push.apply(geometries.colored.lineBones, getBone(body, i));
@@ -211,19 +241,20 @@ function loadLineGeometry(geometries, body) {
     });
 }
 
+// eslint-disable-next-line no-unused-vars
 function debugBoneGeometry(geometries, body) {
     _.each(body.bones, (s) => {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(0.001, 8, 8);
-        
+
         const addVertex = (j) => {
-    	    push.apply(geometries.colored.positions, [
+            push.apply(geometries.colored.positions, [
                 sphereGeometry.vertices[j].x + centerPos[0],
                 sphereGeometry.vertices[j].y + centerPos[1],
                 sphereGeometry.vertices[j].z + centerPos[2]
             ]);
             push.apply(geometries.colored.bones, getBone(object, s.vertex));
-            geometries.colored.colors.push((s.parent == 0xFFFF) ? 0 : 255);
+            geometries.colored.colors.push((s.parent === 0xFFFF) ? 0 : 255);
         };
 
         _.each(sphereGeometry.faces, (f) => {
@@ -236,7 +267,7 @@ function debugBoneGeometry(geometries, body) {
 
 function getBone(body, index) {
     const vertex = body.vertices[index];
-    return [ vertex.bone ];
+    return [vertex.bone];
 }
 
 function getPosition(body, index) {
@@ -253,16 +284,16 @@ function getNormal(body, index) {
     return [
         normal.x,
         normal.y,
-        normal.z/*,
-        normal.colour*/
+        normal.z/* ,
+        normal.colour */
     ];
 }
 
 function getUVs(body, p, vertex) {
     if (p.hasTex) {
         const t = body.uvGroups[p.tex];
-        const x = p.texX[vertex] + p.unkX[vertex]/256;
-        const y = p.texY[vertex] + p.unkY[vertex]/256;
+        const x = p.texX[vertex] + p.unkX[vertex] / 256;
+        const y = p.texY[vertex] + p.unkY[vertex] / 256;
         return [(x & t.width) + t.x, (y & t.height) + t.y];
     }
     return [0, 0];
@@ -270,7 +301,13 @@ function getUVs(body, p, vertex) {
 
 function getLightVector(ambience) {
     const lightVector = new THREE.Vector3(-1, 0, 0);
-    lightVector.applyAxisAngle(new THREE.Vector3(0, 0, 1), -ambience.lightingAlpha * 2 * Math.PI / 0x1000);
-    lightVector.applyAxisAngle(new THREE.Vector3(0, 1, 0), -ambience.lightingBeta * 2 * Math.PI / 0x1000);
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 0, 1),
+        -ambience.lightingAlpha * 2 * Math.PI / 0x1000
+    );
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        -ambience.lightingBeta * 2 * Math.PI / 0x1000
+    );
     return lightVector;
 }

@@ -11,7 +11,7 @@ export function loadIsometricScenery(renderer, entry, callback) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         bkg: loadHqrAsync('LBA_BKG.HQR')
-    }, function (err, files) {
+    }, (err, files) => {
         const palette = new Uint8Array(files.ress.getEntry(0));
         const bricks = loadBricks(files.bkg);
         const grid = loadGrid(files.bkg, bricks, palette, entry + 1);
@@ -29,7 +29,7 @@ export function loadIsometricScenery(renderer, entry, callback) {
             },
             update: () => {}
         });
-    }) ;
+    });
 }
 
 function loadMesh(renderer, grid, entry) {
@@ -39,10 +39,10 @@ function loadMesh(renderer, grid, entry) {
         tiles: []
     };
     let c = 0;
-    for (let z = 0; z < 64; ++z) {
-        for (let x = 0; x < 64; ++x) {
+    for (let z = 0; z < 64; z += 1) {
+        for (let x = 0; x < 64; x += 1) {
             grid.cells[c].build(geometries, x, z - 1);
-            c++;
+            c += 1;
         }
     }
 
@@ -64,7 +64,7 @@ function loadMesh(renderer, grid, entry) {
         }
     }));
 
-    let scale = 1 / 32;
+    const scale = 1 / 32;
     mesh.scale.set(scale, scale, scale);
     mesh.position.set(2, 0, 0);
     mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);

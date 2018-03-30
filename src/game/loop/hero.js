@@ -37,12 +37,13 @@ function handleBehaviourChanges(hero, behaviour) {
 function toggleJump(hero, value) {
     hero.props.runtimeFlags.isJumping = value;
     hero.props.runtimeFlags.isWalking = value;
-    hero.props.runtimeFlags.hasGravityByAnim = value; // check in the original game how this is actually set
+    // check in the original game how this is actually set
+    hero.props.runtimeFlags.hasGravityByAnim = value;
 }
 
 function processActorMovement(controlsState, hero, time, behaviour) {
     let animIndex = hero.props.animIndex;
-    if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded){
+    if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
         toggleJump(hero, false);
     }
     if (!hero.props.runtimeFlags.isJumping) {
@@ -78,7 +79,7 @@ function processActorMovement(controlsState, hero, time, behaviour) {
                             }
                             hero.props.runtimeFlags.repeatHit = Math.floor(Math.random() * 2);
                         } else {
-                            hero.props.runtimeFlags.repeatHit--;
+                            hero.props.runtimeFlags.repeatHit -= 1;
                             animIndex = hero.props.animIndex;
                         }
                         hero.props.runtimeFlags.isSwitchingHit = true;
@@ -118,7 +119,7 @@ function processActorMovement(controlsState, hero, time, behaviour) {
                 animIndex = controlsState.heroRotationSpeed === 1 ? 3 : 4;
             }
             hero.physics.orientation.setFromEuler(euler);
-            //hero.props.runtimeFlags.isTurning = true;
+            // hero.props.runtimeFlags.isTurning = true;
         } else {
             animIndex = controlsState.heroRotationSpeed === 1 ? 40 : 41;
             if (behaviour === BehaviourMode.ATHLETIC) {

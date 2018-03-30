@@ -1,8 +1,8 @@
 import async from 'async';
 
-import AudioData from './data'
-import {loadHqrAsync} from '../hqr'
-import {getFrequency} from '../utils/lba'
+import AudioData from './data';
+import {loadHqrAsync} from '../hqr';
+import {getFrequency} from '../utils/lba';
 
 const musicSourceCache = [];
 const samplesSourceCache = [];
@@ -16,8 +16,8 @@ function loadAudioAsync(context, url, callback) {
     const request = new XMLHttpRequest();
     request.open('GET', url, true);
     request.responseType = 'arraybuffer';
-    request.onload = function() {
-        context.decodeAudioData(request.response, callback, function(err) {
+    request.onload = () => {
+        context.decodeAudioData(request.response, callback, (err) => {
             throw new Error(err);
         });
     };
@@ -29,13 +29,12 @@ export function createAudioManager(state) {
     const musicSource = getMusicSource(state, context, AudioData.MUSIC);
     const sfxSource = getSoundFxSource(state, context);
     const voiceSource = getVoiceSource(state, context);
-    const audio = {
-        context: context,
+    return {
+        context,
         getMusicSource: () => musicSource,
         getSoundFxSource: () => sfxSource,
         getVoiceSource: () => voiceSource
     };
-    return audio;
 }
 
 function getMusicSource(state, context, data) {
@@ -47,7 +46,7 @@ function getMusicSource(state, context, data) {
         bufferSource: null,
         gainNode: context.createGain(),
         pause: () => {},
-        data: data
+        data
     };
 
     source.play = () => {
@@ -61,7 +60,7 @@ function getMusicSource(state, context, data) {
         }
     };
     source.load = (index, callback) => {
-        if (index === -1 || source.currentIndex === index && source.isPlaying) {
+        if (index === -1 || (source.currentIndex === index && source.isPlaying)) {
             return;
         }
         if (source.isPlaying) {
@@ -80,8 +79,9 @@ function getMusicSource(state, context, data) {
             callback.call();
         } else {
             const file = source.data[index].file;
-            loadAudioAsync(context, file, function (buffer) {
-                if (!musicSourceCache[index]) { // this bypasses a browser issue while loading same sample in short period of time
+            loadAudioAsync(context, file, (buffer) => {
+                // this bypasses a browser issue while loading same sample in short period of time
+                if (!musicSourceCache[index]) {
                     if (!source.bufferSource.buffer) {
                         source.bufferSource.buffer = buffer;
                         musicSourceCache[index] = buffer;
@@ -112,7 +112,7 @@ function getSoundFxSource(state, context, data) {
         gainNode: context.createGain(),
         lowPassFilter: context.createBiquadFilter(),
         pause: () => {},
-        data: data
+        data
     };
     source.lowPassFilter.type = 'allpass';
 
@@ -132,8 +132,8 @@ function getSoundFxSource(state, context, data) {
     source.load = (index, callback) => {
         async.auto({
             samples: loadHqrAsync('SAMPLES_AAC.HQR')
-        }, function(err, files) {
-            if (index <= -1 || source.currentIndex === index && source.isPlaying) {
+        }, (err, files) => {
+            if (index <= -1 || (source.currentIndex === index && source.isPlaying)) {
                 return;
             }
             if (source.isPlaying) {
@@ -154,8 +154,10 @@ function getSoundFxSource(state, context, data) {
                 callback.call();
             } else {
                 const entryBuffer = files.samples.getEntry(index);
-                context.decodeAudioData(entryBuffer, function(buffer) {
-                    if (!samplesSourceCache[index]) { // this bypasses a browser issue while loading same sample in short period of time
+                context.decodeAudioData(entryBuffer, (buffer) => {
+                    // this bypasses a browser issue while loading same sample
+                    // in short period of time.
+                    if (!samplesSourceCache[index]) {
                         if (!source.bufferSource.buffer) {
                             source.bufferSource.buffer = buffer;
                             samplesSourceCache[index] = buffer;
@@ -188,9 +190,9 @@ function getVoiceSource(state, context, data) {
         bufferSource: null,
         gainNode: context.createGain(),
         pause: () => {},
-        data: data
+        data
     };
-    //source.lowPassFilter.type = 'allpass';
+    // source.lowPassFilter.type = 'allpass';
 
     source.play = () => {
         source.isPlaying = true;
@@ -203,39 +205,39 @@ function getVoiceSource(state, context, data) {
         source.isPlaying = false;
     };
     source.load = (index, textBankId, callback) => {
-        const textBank = "" + textBankId;
-        let filename = `VOX/${state.config.languageVoice.code}_${("000"+textBank).substring(0, 3 - textBank.length)+textBank}_AAC.VOX`;
+        const textBank = `${textBankId}`;
+        let filename = `VOX/${state.config.languageVoice.code}_${(`000${textBank}`).substring(0, 3 - textBank.length) + textBank}_AAC.VOX`;
         if (textBankId === -1) {
             filename = `VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`;
         }
         async.auto({
             voices: loadHqrAsync(filename)
-        }, function(err, files) {
-            if (index === -1 || source.currentIndex === index && source.isPlaying) {
+        }, (err, files) => {
+            if (index === -1 || (source.currentIndex === index && source.isPlaying)) {
                 return;
             }
-            if (source.isPlaying) { 
+            if (source.isPlaying) {
                 source.stop();
             }
             source.currentIndex = index;
             source.bufferSource = context.createBufferSource();
             source.bufferSource.onended = () => {
                 if (source.isPlaying && files.voices.hasHiddenEntries(index)) {
-                    source.load(index+1, textBankId, callback);
+                    source.load(index + 1, textBankId, callback);
                 }
                 source.isPlaying = false;
             };
 
-            let entryBuffer = files.voices.getEntry(index);
-            context.decodeAudioData(entryBuffer, function(buffer) {
-                    if (!source.bufferSource.buffer) {
-                        source.bufferSource.buffer = buffer;
-                        source.connect();
-                        callback.call();
-                    }
-                }, function(err) {
-                    throw new Error(err);
-                });
+            const entryBuffer = files.voices.getEntry(index);
+            context.decodeAudioData(entryBuffer, (buffer) => {
+                if (!source.bufferSource.buffer) {
+                    source.bufferSource.buffer = buffer;
+                    source.connect();
+                    callback.call();
+                }
+            }, (decodeErr) => {
+                throw new Error(decodeErr);
+            });
         });
     };
 

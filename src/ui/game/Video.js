@@ -11,10 +11,15 @@ export default function Video(props) {
     if (props.video && props.renderer) {
         const width = props.renderer.canvas.clientWidth;
         const height = props.renderer.canvas.clientHeight;
-        return <video style={baseStyle} autoPlay={true} width={width} height={height} onEnded={props.video.callback}>
+        return <video
+            style={baseStyle}
+            autoPlay
+            width={width}
+            height={height}
+            onEnded={props.video.callback}
+        >
             <source type="video/mp4" src={props.video.src} />
         </video>;
-    } else {
-        return null;
     }
+    return null;
 }

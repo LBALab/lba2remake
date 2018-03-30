@@ -1,15 +1,14 @@
-import {execute} from './execute';
-import T from './types';
 import _ from 'lodash';
 import * as THREE from 'three';
+import {execute} from './execute';
+import T from './types';
 
 export function map(args, scopes, userMacros) {
     checkNumArgs('map', args, 2);
     const left = execute(args[0], scopes, userMacros);
     checkArgType('map', left, 0, ['array']);
-    const tgt = _.map(left, (s) => {
-        return s !== undefined ? execute(args[1], _.concat(scopes, s), userMacros) : undefined;
-    });
+    const tgt = _.map(left, s =>
+        (s !== undefined ? execute(args[1], _.concat(scopes, s), userMacros) : undefined));
     if (left.__filtered__) {
         tgt.__filtered__ = true;
     }
@@ -25,6 +24,7 @@ export function filter(args, scopes, userMacros) {
         if (v) {
             return s;
         }
+        return null;
     });
     tgt.__filtered__ = true;
     return tgt;
@@ -35,9 +35,7 @@ export function sort(args, scopes, userMacros) {
     const left = execute(args[0], scopes, userMacros);
     checkArgType('sort', left, 0, ['array']);
     const tgt = _.filter(_.map(left, (value, idx) => ({idx, value})), v => v.value !== undefined);
-    tgt.sort((a, b) => {
-        return a.value - b.value;
-    });
+    tgt.sort((a, b) => a.value - b.value);
     tgt.__sorted__ = true;
     return tgt;
 }
@@ -49,19 +47,15 @@ export function euler(args, scopes, userMacros) {
     if (args.length === 2)
         checkArgTypeAst('euler', args[1], 1, T.IDENTIFIER, THREE.Euler.RotationOrders);
 
+    const eu = new THREE.Euler();
     if (arg instanceof THREE.Quaternion) {
-        const euler = new THREE.Euler();
-        euler.setFromQuaternion(arg, 'XYZ');
-        return euler;
+        eu.setFromQuaternion(arg, 'XYZ');
     } else if (arg instanceof THREE.Matrix4) {
-        const euler = new THREE.Euler();
-        euler.setFromRotationMatrix(arg, 'XYZ');
-        return euler;
+        eu.setFromRotationMatrix(arg, 'XYZ');
     } else {
-        const euler = new THREE.Euler();
-        euler.setFromVector3(arg, 'XYZ');
-        return euler;
+        eu.setFromVector3(arg, 'XYZ');
     }
+    return eu;
 }
 
 export function norm(args, scopes, userMacros) {
@@ -85,15 +79,14 @@ export function deg(args, scopes, userMacros) {
     checkArgType('deg', arg, 0, ['number', THREE.Euler]);
 
     if (arg instanceof THREE.Euler) {
-        const euler = new THREE.Euler();
-        euler.copy(arg);
-        euler.x = THREE.Math.radToDeg(euler.x);
-        euler.y = THREE.Math.radToDeg(euler.y);
-        euler.z = THREE.Math.radToDeg(euler.z);
-        return euler;
-    } else {
-        return THREE.Math.radToDeg(arg);
+        const eu = new THREE.Euler();
+        eu.copy(arg);
+        eu.x = THREE.Math.radToDeg(eu.x);
+        eu.y = THREE.Math.radToDeg(eu.y);
+        eu.z = THREE.Math.radToDeg(eu.z);
+        return eu;
     }
+    return THREE.Math.radToDeg(arg);
 }
 
 export function rad(args, scopes, userMacros) {
@@ -102,15 +95,14 @@ export function rad(args, scopes, userMacros) {
     checkArgType('rad', arg, 0, ['number', THREE.Euler]);
 
     if (arg instanceof THREE.Euler) {
-        const euler = new THREE.Euler();
-        euler.copy(arg);
-        euler.x = THREE.Math.degToRad(euler.x);
-        euler.y = THREE.Math.degToRad(euler.y);
-        euler.z = THREE.Math.degToRad(euler.z);
-        return euler;
-    } else {
-        return THREE.Math.degToRad(arg);
+        const eu = new THREE.Euler();
+        eu.copy(arg);
+        eu.x = THREE.Math.degToRad(eu.x);
+        eu.y = THREE.Math.degToRad(eu.y);
+        eu.z = THREE.Math.degToRad(eu.z);
+        return eu;
     }
+    return THREE.Math.degToRad(arg);
 }
 
 export function len(args, scopes, userMacros) {
@@ -121,9 +113,8 @@ export function len(args, scopes, userMacros) {
         || arg instanceof THREE.Vector3
         || arg instanceof THREE.Vector4) {
         return arg.length();
-    } else {
-        return arg.length;
     }
+    return arg.length;
 }
 
 export function dist(args, scopes, userMacros) {
@@ -136,9 +127,8 @@ export function dist(args, scopes, userMacros) {
         const diff = arg0.clone();
         diff.sub(arg1);
         return diff.length();
-    } else {
-        throw TypeError(`Arguments to dist() must be of the same type.`);
     }
+    throw TypeError('Arguments to dist() must be of the same type.');
 }
 
 function checkNumArgs(func, args, n) {
@@ -162,7 +152,7 @@ function checkArgTypeAst(func, arg, pos, type, values) {
 }
 
 function checkArgType(func, arg, pos, types) {
-    let found = _.find(types, t => {
+    const found = _.find(types, (t) => {
         switch (t) {
             case 'array':
                 return _.isArray(arg);
@@ -174,12 +164,12 @@ function checkArgType(func, arg, pos, types) {
     });
     if (!found) {
         const typeTxt = _.map(types, mapTypeName);
-        throw TypeError(`Argument $${pos} to ${func}() is of type: ${typeof(arg)}. Expected ${typeTxt.join(' or ')}.`);
+        throw TypeError(`Argument $${pos} to ${func}() is of type: ${typeof (arg)}. Expected ${typeTxt.join(' or ')}.`);
     }
 }
 
 function mapTypeName(t) {
-    if (typeof(t) === 'string')
+    if (typeof (t) === 'string')
         return t;
     else if (t === THREE.Vector2)
         return 'THREE.Vector2';
@@ -195,4 +185,5 @@ function mapTypeName(t) {
         return 'THREE.Matrix3';
     else if (t === THREE.Matrix4)
         return 'THREE.Matrix4';
+    return null;
 }

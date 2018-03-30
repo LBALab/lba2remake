@@ -3,8 +3,8 @@ import {makeContentComponent} from './content';
 
 export function makeOutlinerArea(id, name, content, extensions = {}) {
     return {
-        id: id,
-        name: name,
+        id,
+        name,
         menu: extensions.menu,
         icon: extensions.icon,
         content: makeContentComponent(content, extensions.frame, extensions.style),
@@ -12,8 +12,8 @@ export function makeOutlinerArea(id, name, content, extensions = {}) {
             path: []
         }),
         stateHandler: extend({
-            setPath: function(path) {
-                this.setState({path: path});
+            setPath(path) {
+                this.setState({path});
             }
         }, extensions.stateHandler)
     };

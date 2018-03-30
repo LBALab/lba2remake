@@ -1,3 +1,4 @@
+/* eslint-disable key-spacing,no-multi-spaces */
 export default {
     VIDEO: [
         { index: 0,  name: 'ASCENSEU',  file:'data/VIDEO/VIDEO01.mp4' },
@@ -35,4 +36,4 @@ export default {
         { index: 32, name: 'ZEELP',     file:'data/VIDEO/VIDEO33.mp4' },
         { index: 33, name: 'BABY',      file:'data/VIDEO/VIDEO34.mp4' },
     ]
-}
+};

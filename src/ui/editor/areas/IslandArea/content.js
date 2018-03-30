@@ -45,7 +45,9 @@ export default class Island extends FrameListener {
     componentWillReceiveProps(newProps) {
         if (newProps.params.vr !== this.props.params.vr && this.canvas) {
             this.state.renderer.dispose();
-            this.setState({ renderer: createRenderer(newProps.params, this.canvas) }, this.saveData);
+            this.setState({
+                renderer: createRenderer(newProps.params, this.canvas)
+            }, this.saveData);
         }
     }
 

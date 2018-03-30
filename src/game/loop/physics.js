@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import {each, find} from 'lodash';
 
-import {processZones} from './zones'
+import {processZones} from './zones';
 
 export function processPhysicsFrame(game, scene, time) {
     scene.sceneNode.updateMatrixWorld();
-    each(scene.actors, actor => {
+    each(scene.actors, (actor) => {
         processActorPhysics(scene, actor, time);
     });
     if (scene.isActive) {
@@ -42,15 +42,15 @@ function processTeleports(scene) {
     if (scene.isIsland && (pos.x < 0.01 || pos.z < 0.01 || pos.x > 1.99 || pos.z > 1.99)) {
         const globalPos = new THREE.Vector3();
         globalPos.applyMatrix4(hero.threeObject.matrixWorld);
-        const sideScene = find(scene.sideScenes, sideScene => {
+        const foundSideScene = find(scene.sideScenes, (sideScene) => {
             const nodePos = sideScene.sceneNode.position;
             return globalPos.x > nodePos.x + 0.01
                 && globalPos.x < nodePos.x + 1.99
                 && globalPos.z > nodePos.z + 0.01
                 && globalPos.z < nodePos.z + 1.99;
         });
-        if (sideScene) {
-            scene.goto(sideScene.index, (newScene) => {
+        if (foundSideScene) {
+            scene.goto(foundSideScene.index, (newScene) => {
                 const newHero = newScene.actors[0];
                 newHero.threeObject.quaternion.copy(hero.threeObject.quaternion);
                 newHero.threeObject.position.copy(globalPos);
@@ -77,7 +77,7 @@ function processCollisionsWithActors(scene, actor) {
     ACTOR_BOX.translate(actor.physics.position);
     DIFF.set(0, 1 / 128, 0);
     ACTOR_BOX.translate(DIFF);
-    for (let i = 0; i < scene.actors.length; ++i) {
+    for (let i = 0; i < scene.actors.length; i += 1) {
         const a = scene.actors[i];
         if (a.model === null || a.index === actor.index) {
             continue;

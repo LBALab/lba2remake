@@ -1,7 +1,7 @@
 import React from 'react';
+import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
 import Area from './editor/Area';
 import {fullscreen} from './styles';
-import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
 import NewArea from './editor/areas/NewArea';
 import {Type, Orientation} from './editor/layout';
 import {findAreaContentById, findMainAreas, generateContent} from './editor/utils';
@@ -38,7 +38,7 @@ export default class Editor extends React.Component {
             layout,
             root: findRootArea(layout),
             separator: null
-        }
+        };
     }
 
     componentWillMount() {
@@ -68,7 +68,7 @@ export default class Editor extends React.Component {
         if (!e) {
             return;
         } else if (!e.path) {
-            return this.enableSeparator({
+            this.enableSeparator({
                 path: [e.target],
                 preventDefault: () => e.preventDefault(),
                 stopPropagation: () => e.stopPropagation()
@@ -95,15 +95,13 @@ export default class Editor extends React.Component {
                     prop: horizontal ? 'clientX' : 'clientY',
                     min: bb[horizontal ? 'left' : 'top'],
                     max: node.rootRef[horizontal ? 'clientWidth' : 'clientHeight'],
-                    node: node
+                    node
                 };
-            } else {
-                return this.findSeparator(path, node.children[0], concat(sepPath, 0))
-                    || this.findSeparator(path, node.children[1], concat(sepPath, 1));
             }
-        } else {
-            return null;
+            return this.findSeparator(path, node.children[0], concat(sepPath, 0))
+                    || this.findSeparator(path, node.children[1], concat(sepPath, 1));
         }
+        return null;
     }
 
     disableSeparator() {
@@ -127,7 +125,7 @@ export default class Editor extends React.Component {
 
     findNodeFromPath(layout, path) {
         let node = layout;
-        each(path, elem => {
+        each(path, (elem) => {
             node = node.children[elem];
         });
         return node;
@@ -188,23 +186,24 @@ export default class Editor extends React.Component {
                     <div style={sepInnerLine}/>
                 </div>
             </div>;
-        } else {
-            const availableAreas = node.content.mainArea ? findMainAreas() : this.state.root.toolAreas;
-            return <Area key={`${path.join('/')}/${node.content.name}`}
-                         node={node}
-                         area={node.content}
-                         stateHandler={node.stateHandler}
-                         mainArea={node.content.mainArea}
-                         availableAreas={availableAreas}
-                         selectAreaContent={this.selectAreaContent.bind(this, path)}
-                         style={style}
-                         params={this.props.params}
-                         ticker={this.props.ticker}
-                         split={this.split.bind(this, path)}
-                         close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}
-                         saveMainData={this.saveMainData}
-                         mainData={this.state.mainData}/>;
         }
+        const availableAreas = node.content.mainArea ? findMainAreas() : this.state.root.toolAreas;
+        return <Area
+            key={`${path.join('/')}/${node.content.name}`}
+            node={node}
+            area={node.content}
+            stateHandler={node.stateHandler}
+            mainArea={node.content.mainArea}
+            availableAreas={availableAreas}
+            selectAreaContent={this.selectAreaContent.bind(this, path)}
+            style={style}
+            params={this.props.params}
+            ticker={this.props.ticker}
+            split={this.split.bind(this, path)}
+            close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}
+            saveMainData={this.saveMainData}
+            mainData={this.state.mainData}
+        />;
     }
 
     split(path, orientation, content) {
@@ -213,7 +212,7 @@ export default class Editor extends React.Component {
         if (path.length === 0) {
             const layout = {
                 type: Type.LAYOUT,
-                orientation: orientation,
+                orientation,
                 splitAt: 50,
                 children: [
                     this.state.layout,
@@ -229,7 +228,7 @@ export default class Editor extends React.Component {
             const pNode = this.findNodeFromPath(layout, parentPath);
             pNode.children[idx] = {
                 type: Type.LAYOUT,
-                orientation: orientation,
+                orientation,
                 splitAt: 50,
                 children: [
                     pNode.children[idx],
@@ -268,7 +267,7 @@ export default class Editor extends React.Component {
                 layout: loadLayout(this, area.id),
                 root: area
             });
-            localStorage.setItem(`editor_mode`, area.id);
+            localStorage.setItem('editor_mode', area.id);
         } else {
             node.content = area;
             initStateHandler(this, node);
@@ -294,8 +293,8 @@ export default class Editor extends React.Component {
 function initStateHandler(editor, node, state) {
     node.stateHandler = {
         state: state ? cloneDeep(state) : node.content.getInitialState(),
-        setState: (state) => {
-            extend(node.stateHandler.state, state);
+        setState: (newState) => {
+            extend(node.stateHandler.state, newState);
             editor.setState({layout: editor.state.layout});
             saveLayout(editor.state.layout);
         }
@@ -323,15 +322,14 @@ function saveNode(node) {
                 saveNode(node.children[1])
             ]
         };
-    } else {
-        return {
-            type: Type.AREA,
-            content_id: node.content.id,
-            generator: node.content.generator,
-            state: node.stateHandler.state,
-            root: node.root
-        };
     }
+    return {
+        type: Type.AREA,
+        content_id: node.content.id,
+        generator: node.content.generator,
+        state: node.stateHandler.state,
+        root: node.root
+    };
 }
 
 function loadLayout(editor, mode) {
@@ -343,7 +341,7 @@ function loadLayout(editor, mode) {
     if (data) {
         try {
             layout = JSON.parse(data);
-        } catch(e) {}
+        } catch (e) {}
     }
     if (!layout) {
         const mainArea = findAreaContentById(mode);
@@ -366,30 +364,28 @@ function loadNode(editor, node) {
                 loadNode(editor, node.children[1])
             ]
         };
-    } else {
-        const tgtNode = {
-            type: Type.AREA,
-            root: node.root
-        };
-        if (node.generator) {
-            generateContent(node.generator).then(area => {
-                tgtNode.content = area;
-                editor.setState({layout: editor.state.layout});
-            });
-            tgtNode.content = AreaLoader;
-        } else {
-            tgtNode.content = findAreaContentById(node.content_id) || NewArea;
-        }
-
-        initStateHandler(editor, tgtNode, node.state);
-        return tgtNode;
     }
+    const tgtNode = {
+        type: Type.AREA,
+        root: node.root
+    };
+    if (node.generator) {
+        generateContent(node.generator).then((area) => {
+            tgtNode.content = area;
+            editor.setState({layout: editor.state.layout});
+        });
+        tgtNode.content = AreaLoader;
+    } else {
+        tgtNode.content = findAreaContentById(node.content_id) || NewArea;
+    }
+
+    initStateHandler(editor, tgtNode, node.state);
+    return tgtNode;
 }
 
 function findRootArea(node) {
     if (node.type === Type.LAYOUT) {
         return findRootArea(node.children[0]) || findRootArea(node.children[1]);
-    } else {
-        return node.root ? node.content : null;
     }
+    return node.root ? node.content : null;
 }

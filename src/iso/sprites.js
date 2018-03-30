@@ -1,13 +1,12 @@
 import async from 'async';
 import * as THREE from 'three';
 import {each, orderBy} from 'lodash';
-
-const push = Array.prototype.push;
-
 import {bits} from '../utils';
 import {loadHqrAsync} from '../hqr';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
+
+const push = Array.prototype.push;
 
 let spriteCache = null;
 let spriteRawCache = null;
@@ -17,7 +16,7 @@ export function loadSprite(index, callback) {
         ress: loadHqrAsync('RESS.HQR'),
         sprites: loadHqrAsync('SPRITES.HQR'),
         spritesRaw: loadHqrAsync('SPRIRAW.HQR')
-    }, function (err, files) {
+    }, (err, files) => {
         const palette = new Uint8Array(files.ress.getEntry(0));
         // lets keep it with two separate textures for now
         if (!spriteCache) {
@@ -38,21 +37,33 @@ function loadMesh(index, sprite) {
     const s = sprite.spritesMap[index];
     const vertices = [
         [0, 0, 0],
-        [s.w,  0, 0],
-        [s.w,   s.h, 0],
-        [0,  s.h, 0]
+        [s.w, 0, 0],
+        [s.w, s.h, 0],
+        [0, s.h, 0]
         /*
         [-s.w/2, -s.h/2, 0],
         [s.w/2,  -s.h/2, 0],
         [s.w/2,   s.h/2, 0],
         [-s.w/2,  s.h/2, 0]
          */
-    ] ;
+    ];
     const uvs = [
-        [s.u/sprite.width,   (s.v/sprite.height) + (s.h/sprite.height)],
-        [(s.u/sprite.width) + (s.w/sprite.width),   (s.v/sprite.height) + (s.h/sprite.height)],
-        [(s.u/sprite.width) + (s.w/sprite.width),   s.v/sprite.height],
-        [s.u/sprite.width,   s.v/sprite.height]
+        [
+            s.u / sprite.width,
+            (s.v / sprite.height) + (s.h / sprite.height)
+        ],
+        [
+            (s.u / sprite.width) + (s.w / sprite.width),
+            (s.v / sprite.height) + (s.h / sprite.height)
+        ],
+        [
+            (s.u / sprite.width) + (s.w / sprite.width),
+            s.v / sprite.height
+        ],
+        [
+            s.u / sprite.width,
+            s.v / sprite.height
+        ]
     ];
     const geometries = {
         positions: [],
@@ -65,10 +76,10 @@ function loadMesh(index, sprite) {
     };
 
     // faces
-    for (let j of [0, 1, 2]) {
+    for (const j of [0, 1, 2]) {
         addVertex(j);
     }
-    for (let j of [0, 2, 3]) {
+    for (const j of [0, 2, 3]) {
         addVertex(j);
     }
 
@@ -87,7 +98,7 @@ function loadMesh(index, sprite) {
         wireframe: false
     }));
 
-    let scale = 1 / 1024;
+    const scale = 1 / 1024;
     mesh.scale.set(scale, scale, scale);
     mesh.frustumCulled = true;
 
@@ -99,7 +110,7 @@ function loadMesh(index, sprite) {
 }
 export function loadAllSprites(spriteFile) {
     const sprites = [];
-    for (let i = 0; i < 425; ++i) {
+    for (let i = 0; i < 425; i += 1) {
         sprites.push(loadSpriteData(spriteFile, i));
     }
     return sprites;
@@ -107,7 +118,7 @@ export function loadAllSprites(spriteFile) {
 
 export function loadAllSpritesRaw(spriteFile) {
     const sprites = [];
-    for (let i = 0; i < 111; ++i) {
+    for (let i = 0; i < 111; i += 1) {
         sprites.push(loadSpriteRawData(spriteFile, i));
     }
     return sprites;
@@ -122,38 +133,40 @@ function loadSpriteData(sprites, entry) {
     const buffer = new ArrayBuffer(width * height);
     const pixels = new Uint8Array(buffer);
     let ptr = 12;
-    for (let y = 0; y < height; ++y) {
-        const numRuns = dataView.getUint8(ptr++);
+    for (let y = 0; y < height; y += 1) {
+        const numRuns = dataView.getUint8(ptr);
+        ptr += 1;
         let x = 0;
         const offset = () => (y + offsetY) * width + x + offsetX;
-        for (let run = 0; run < numRuns; ++run) {
-            const runSpec = dataView.getUint8(ptr++);
+        for (let run = 0; run < numRuns; run += 1) {
+            const runSpec = dataView.getUint8(ptr);
+            ptr += 1;
             const runLength = bits(runSpec, 0, 6) + 1;
             const type = bits(runSpec, 6, 2);
-            if (type == 2) {
-                const color = dataView.getUint8(ptr++);
-                for (let i = 0; i < runLength; ++i) {
+            if (type === 2) {
+                const color = dataView.getUint8(ptr);
+                ptr += 1;
+                for (let i = 0; i < runLength; i += 1) {
                     pixels[offset()] = color;
-                    x++;
+                    x += 1;
                 }
-            }
-            else if (type == 1 || type == 3) {
-                for (let i = 0; i < runLength; ++i) {
-                    pixels[offset()] = dataView.getUint8(ptr++);
-                    x++;
+            } else if (type === 1 || type === 3) {
+                for (let i = 0; i < runLength; i += 1) {
+                    pixels[offset()] = dataView.getUint8(ptr);
+                    ptr += 1;
+                    x += 1;
                 }
-            }
-            else {
+            } else {
                 x += runLength;
             }
         }
     }
     return {
-        width: width,
-        height: height,
-        offsetX: offsetX,
-        offsetY: offsetY,
-        pixels: pixels,
+        width,
+        height,
+        offsetX,
+        offsetY,
+        pixels,
         index: entry
     };
 }
@@ -166,20 +179,21 @@ function loadSpriteRawData(sprites, entry) {
     const buffer = new ArrayBuffer(width * height);
     const pixels = new Uint8Array(buffer);
     let ptr = 12;
-    for (let y = 0; y < height; ++y) {
+    for (let y = 0; y < height; y += 1) {
         let x = 0;
         const offset = () => (y) * width + x;
-        for (let run = 0; run < width; ++run) {
-            pixels[offset()] = dataView.getUint8(ptr++);
-            x++;
+        for (let run = 0; run < width; run += 1) {
+            pixels[offset()] = dataView.getUint8(ptr);
+            ptr += 1;
+            x += 1;
         }
     }
     return {
-        width: width,
-        height: height,
+        width,
+        height,
         offsetX: 0,
         offsetY: 0,
-        pixels: pixels,
+        pixels,
         index: entry
     };
 }
@@ -192,12 +206,12 @@ export function loadSpritesMapping(sprites, palette) {
     let h = 0;
     let w = 0;
     let maxH = 0;
-    sprites = orderBy(sprites, ['height'],['desc']);
+    sprites = orderBy(sprites, ['height'], ['desc']);
     each(sprites, (sprite, idx) => {
         if (maxH < sprite.height) {
             maxH = sprite.height;
         }
-        if(w + sprite.width > width) {
+        if (w + sprite.width > width) {
             w = 0;
             h += maxH;
         }
@@ -211,8 +225,8 @@ export function loadSpritesMapping(sprites, palette) {
             v: offsetY
         };
         const pixels = sprites[idx].pixels;
-        for (let y = 0; y < sprite.height; ++y) {
-            for (let x = 0; x < sprite.width; ++x) {
+        for (let y = 0; y < sprite.height; y += 1) {
+            for (let x = 0; x < sprite.width; x += 1) {
                 const src_i = y * sprite.width + (sprite.width - 1 - x);
                 const tgt_i = (y + offsetY) * width + x + offsetX;
 
@@ -238,9 +252,9 @@ export function loadSpritesMapping(sprites, palette) {
     texture.needsUpdate = true;
     texture.generateMipmaps = false;
     return {
-        width: width,
-        height: height,
-        texture: texture,
-        spritesMap: spritesMap
+        width,
+        height,
+        texture,
+        spritesMap
     };
 }

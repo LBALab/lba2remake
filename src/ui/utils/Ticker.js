@@ -1,6 +1,6 @@
 // @flow
-import FrameListerner from './FrameListener';
 import {each} from 'lodash';
+import FrameListerner from './FrameListener';
 
 export default class Ticker {
     listeners: [];
@@ -23,7 +23,7 @@ export default class Ticker {
     run() {
         const that = this;
         function frame() {
-            each(that.listeners, component => {
+            each(that.listeners, (component) => {
                 component && component.frame();
             });
             requestAnimationFrame(frame);

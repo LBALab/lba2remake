@@ -15,7 +15,7 @@ export function COL_OBJ(actor) {
 }
 
 export function DISTANCE(actor) {
-    if (!this.scene.isActive && (actor.index == 0 || this.actor.index == 0))
+    if (!this.scene.isActive && (actor.index === 0 || this.actor.index === 0))
         return Infinity;
     return this.actor.getDistanceLba(actor.physics.position);
 }
@@ -28,7 +28,7 @@ export function ZONE_OBJ(actor) {
     const pos = actor.physics.position.clone();
     pos.y += 0.005;
     pos.x -= 0.005;
-    for (let i = 0; i < this.scene.zones.length; ++i) {
+    for (let i = 0; i < this.scene.zones.length; i += 1) {
         const zone = this.scene.zones[i];
         if (zone.props.type !== 2)
             continue;

@@ -1,12 +1,12 @@
-import {bits} from '../utils';
 import * as THREE from 'three';
+import {bits} from '../utils';
 
 const push = Array.prototype.push;
 
 export function loadObjects(island, section, geometries, objects) {
     const numObjects = section.objInfo.numObjects;
     const boundingBoxes = [];
-    for (let i = 0; i < numObjects; ++i) {
+    for (let i = 0; i < numObjects; i += 1) {
         const info = loadObjectInfo(section.objects, section, i);
         const object = loadObject(island, objects, info.index);
         loadFaces(geometries, object, info, boundingBoxes);
@@ -29,36 +29,39 @@ function loadObjectInfo(objects, section, index) {
 function loadObject(island, objects, index) {
     if (objects[index]) {
         return objects[index];
-    } else {
-        const buffer = island.files.obl.getEntry(index);
-        const data = new DataView(buffer);
-        const obj = {
-            verticesOffset: data.getUint32(44, true),
-            normalsOffset: data.getUint32(52, true),
-            faceSectionOffset: data.getUint32(68, true),
-            lineSectionSize: data.getUint32(72, true),
-            lineSectionOffset: data.getUint32(76, true),
-            sphereSectionSize: data.getUint32(80, true),
-            sphereSectionOffset: data.getUint32(84, true),
-            uvGroupsSectionSize: data.getUint32(88, true),
-            uvGroupsSectionOffset: data.getUint32(92, true),
-            numVerticesType1: data.getUint16(100, true),
-            numVerticesType2: data.getUint16(102, true),
-            buffer: buffer
-        };
-        //console.log(new Uint32Array(buffer, 0, 17));
-        obj.vertices = new Int16Array(buffer, obj.verticesOffset, obj.numVerticesType1 * 4);
-        obj.normals = new Int16Array(buffer, obj.normalsOffset, obj.numVerticesType1 * 4);
-        loadUVGroups(obj);
-        objects[index] = obj;
-        return obj;
     }
+    const buffer = island.files.obl.getEntry(index);
+    const data = new DataView(buffer);
+    const obj = {
+        verticesOffset: data.getUint32(44, true),
+        normalsOffset: data.getUint32(52, true),
+        faceSectionOffset: data.getUint32(68, true),
+        lineSectionSize: data.getUint32(72, true),
+        lineSectionOffset: data.getUint32(76, true),
+        sphereSectionSize: data.getUint32(80, true),
+        sphereSectionOffset: data.getUint32(84, true),
+        uvGroupsSectionSize: data.getUint32(88, true),
+        uvGroupsSectionOffset: data.getUint32(92, true),
+        numVerticesType1: data.getUint16(100, true),
+        numVerticesType2: data.getUint16(102, true),
+        buffer
+    };
+        // console.log(new Uint32Array(buffer, 0, 17));
+    obj.vertices = new Int16Array(buffer, obj.verticesOffset, obj.numVerticesType1 * 4);
+    obj.normals = new Int16Array(buffer, obj.normalsOffset, obj.numVerticesType1 * 4);
+    loadUVGroups(obj);
+    objects[index] = obj;
+    return obj;
 }
 
 function loadUVGroups(object) {
     object.uvGroups = [];
-    const rawUVGroups = new Uint8Array(object.buffer, object.uvGroupsSectionOffset, object.uvGroupsSectionSize * 4);
-    for (let i = 0; i < object.uvGroupsSectionSize; ++i) {
+    const rawUVGroups = new Uint8Array(
+        object.buffer,
+        object.uvGroupsSectionOffset,
+        object.uvGroupsSectionSize * 4
+    );
+    for (let i = 0; i < object.uvGroupsSectionSize; i += 1) {
         const index = i * 4;
         object.uvGroups.push([
             rawUVGroups[index],
@@ -70,7 +73,11 @@ function loadUVGroups(object) {
 }
 
 function loadFaces(geometries, object, info, boundingBoxes) {
-    const data = new DataView(object.buffer, object.faceSectionOffset, object.lineSectionOffset - object.faceSectionOffset);
+    const data = new DataView(
+        object.buffer,
+        object.faceSectionOffset,
+        object.lineSectionOffset - object.faceSectionOffset
+    );
     let offset = 0;
     while (offset < data.byteLength) {
         const section = parseSectionHeader(data, object, offset);
@@ -85,19 +92,19 @@ function parseSectionHeader(data, object, offset) {
     const numFaces = data.getUint16(offset + 2, true);
     const size = data.getUint16(offset + 4, true) - 8;
     return {
-        type: type,
-        numFaces: numFaces,
+        type,
+        numFaces,
         pointsPerFace: (flags & 0x80) ? 4 : 3,
         blockSize: size / numFaces,
-        size: size,
-        isTransparent: bits(type, 2, 1) == 1,
+        size,
+        isTransparent: bits(type, 2, 1) === 1,
         data: new DataView(object.buffer, object.faceSectionOffset + offset + 8, size)
     };
 }
 
 function loadSection(geometries, object, info, section, boundingBoxes) {
     const bb = new THREE.Box3();
-    for (let i = 0; i < section.numFaces; ++i) {
+    for (let i = 0; i < section.numFaces; i += 1) {
         const uvGroup = getUVGroup(object, section, i);
         const faceNormal = getFaceNormal(object, section, info, i);
         const addVertex = (j) => {
@@ -113,23 +120,29 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
             bb.max.x = Math.max(x, bb.max.x);
             bb.max.y = Math.max(y, bb.max.y);
             bb.max.z = Math.max(z, bb.max.z);
-            if (section.blockSize == 12 || section.blockSize == 16) {
+            if (section.blockSize === 12 || section.blockSize === 16) {
                 push.apply(geometries.objects_colored.positions, getPosition(object, info, index));
-                push.apply(geometries.objects_colored.normals, section.type == 1 ? faceNormal : getVertexNormal(object, info, index));
+                push.apply(
+                    geometries.objects_colored.normals,
+                    section.type === 1 ? faceNormal : getVertexNormal(object, info, index)
+                );
                 geometries.objects_colored.colors.push(getColor(section, i));
             } else {
                 const group = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
                 push.apply(geometries[group].positions, getPosition(object, info, index));
-                push.apply(geometries[group].normals, section.type != 10 ? faceNormal : getVertexNormal(object, info, index));
+                push.apply(
+                    geometries[group].normals,
+                    section.type !== 10 ? faceNormal : getVertexNormal(object, info, index)
+                );
                 push.apply(geometries[group].uvs, getUVs(section, i, j));
                 push.apply(geometries[group].uvGroups, uvGroup);
             }
         };
-        for (let j = 0; j < 3; ++j) {
+        for (let j = 0; j < 3; j += 1) {
             addVertex(j);
         }
-        if (section.pointsPerFace == 4) {
-            for (let j of [0, 2, 3]) {
+        if (section.pointsPerFace === 4) {
+            for (const j of [0, 2, 3]) {
                 addVertex(j);
             }
         }
@@ -143,7 +156,7 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
 
 function getFaceNormal(object, section, info, i) {
     const vert = [];
-    for (let j = 0; j < 3; ++j) {
+    for (let j = 0; j < 3; j += 1) {
         const index = section.data.getUint16(i * section.blockSize + j * 2, true);
         vert.push(getPosition(object, info, index));
     }
@@ -199,11 +212,14 @@ function getUVs(section, face, ptIndex) {
 }
 
 function getUVGroup(object, section, face) {
-    if (section.blockSize == 24 || section.blockSize == 32) {
+    if (section.blockSize === 24 || section.blockSize === 32) {
         const baseIndex = face * section.blockSize;
-        const uvGroupIndex = section.blockSize == 32 ? section.data.getUint8(baseIndex + 28) : section.data.getUint8(baseIndex + 6);
+        const uvGroupIndex = section.blockSize === 32 ?
+            section.data.getUint8(baseIndex + 28)
+            : section.data.getUint8(baseIndex + 6);
         return object.uvGroups[uvGroupIndex];
     }
+    return null;
 }
 
 const angleMatrix = {

@@ -16,7 +16,7 @@ export default function TextInterjections(props) {
     return <div>
         {map(props.interjections, (itrj, id) => {
             if (props.scene.index !== itrj.scene) {
-                return;
+                return null;
             }
             const renderer = props.renderer;
             const actor = props.scene.actors[itrj.actor];
@@ -28,7 +28,7 @@ export default function TextInterjections(props) {
             POS.y += 0.1;
             POS.project(renderer.getMainCamera(props.scene));
             POS.x = (POS.x * widthHalf) + widthHalf;
-            POS.y = - (POS.y * heightHalf) + heightHalf;
+            POS.y = -(POS.y * heightHalf) + heightHalf;
             if (POS.z < 1) {
                 const style = extend({
                     color: itrj.color,
@@ -37,6 +37,7 @@ export default function TextInterjections(props) {
                 }, baseStyle);
                 return <div key={id} style={style}>{itrj.value}</div>;
             }
+            return null;
         })}
     </div>;
 }

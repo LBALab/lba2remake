@@ -42,7 +42,7 @@ class Root extends React.Component {
     }
 }
 
-window.onload = function() {
+window.onload = () => {
     const ticker = new Ticker();
     ReactDOM.render(<Root ticker={ticker}/>, document.getElementById('root'));
     ticker.run();

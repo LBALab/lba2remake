@@ -7,8 +7,7 @@ import Editor from './ui/Editor';
 import Popup from './ui/Popup';
 import {loadParams} from './params';
 import {loadGameMetaData} from './ui/editor/DebugData';
-import {extend, omit} from 'lodash';
-import {CrashHandler} from "./crash_reporting";
+import {CrashHandler} from './crash_reporting';
 
 class Root extends React.Component {
     constructor(props) {
@@ -43,24 +42,24 @@ class Root extends React.Component {
         return <div>
             {content}
             <Popup/>
-        </div>
+        </div>;
     }
 }
 
-window.onload = function() {
+window.onload = () => {
     init();
 };
 
-window.onerror = function(message, file, line, column, data) {
-    const stack = data && data.stack || undefined;
+window.onerror = (message, file, line, column, data) => {
+    const stack = (data && data.stack) || undefined;
     init({message, file, line, column, stack, data});
 };
 
 function init(error) {
     const ticker = new Ticker();
-    const Renderer = () => error
+    const Renderer = () => (error
         ? <CrashHandler error={error}/>
-        : <Root ticker={ticker}/>;
+        : <Root ticker={ticker}/>);
     ReactDOM.render(<Renderer/>, document.getElementById('root'));
     ticker.run();
 }

@@ -27,11 +27,13 @@ const style = {
 export function NewAreaContent(props) {
     return <div>{map(props.availableAreas, (area, idx) => {
         const icon = area.icon || 'default.png';
-        return <div key={idx}
-                 onClick={props.selectAreaContent.bind(null, area)}
-                 style={style}>
-                <img style={{position: 'absolute', left: 10, top: 5, width: 20, height: 20}} src={`editor/icons/areas/${icon}`}/>
-                <span style={{paddingLeft: 25}}>{area.name}</span>
-        </div>
+        return <div
+            key={idx}
+            onClick={props.selectAreaContent.bind(null, area)}
+            style={style}
+        >
+            <img style={{position: 'absolute', left: 10, top: 5, width: 20, height: 20}} src={`editor/icons/areas/${icon}`}/>
+            <span style={{paddingLeft: 25}}>{area.name}</span>
+        </div>;
     })}</div>;
 }

@@ -120,7 +120,7 @@ export default class DebugLabels extends FrameListener {
 
     getLabels(items, renderer, scene, type) {
         const objects = scene[`${type}s`];
-        each(objects, obj => {
+        each(objects, (obj) => {
             if (obj.isVisible === false || !obj.threeObject)
                 return;
 
@@ -133,8 +133,8 @@ export default class DebugLabels extends FrameListener {
             POS.setFromMatrixPosition(obj.threeObject.matrixWorld);
             POS.project(renderer.getMainCamera(scene));
 
-            POS.x = ( POS.x * widthHalf ) + widthHalf;
-            POS.y = - ( POS.y * heightHalf ) + heightHalf;
+            POS.x = (POS.x * widthHalf) + widthHalf;
+            POS.y = -(POS.y * heightHalf) + heightHalf;
 
             if (POS.z < 1
                 && POS.x > 0
@@ -148,7 +148,7 @@ export default class DebugLabels extends FrameListener {
                     y: POS.y,
                     label: type === 'point' ? '' : getObjectName(type, scene.index, obj.index),
                     selected: DebugData.selection[type] === obj.index,
-                    type: type
+                    type
                 };
                 if (type === 'zone') {
                     const {r, g, b} = obj.color;
@@ -174,7 +174,7 @@ export default class DebugLabels extends FrameListener {
     render() {
         if (this.state.items) {
             return <div>
-                {map(this.state.items, item => {
+                {map(this.state.items, (item) => {
                     const style = extend({
                         left: `${item.x}px`,
                         top: `${item.y}px`
@@ -184,18 +184,23 @@ export default class DebugLabels extends FrameListener {
                     } else if (item.color) {
                         style.background = item.color;
                     }
-                    return <div onClick={this.select.bind(this, item.type, item.index)} key={item.id} style={style}>{item.label} #{item.index}</div>;
+                    return <div
+                        onClick={this.select.bind(this, item.type, item.index)}
+                        key={item.id}
+                        style={style}
+                    >
+                        {item.label} #{item.index}
+                    </div>;
                 })}
             </div>;
-        } else {
-            return null;
         }
+        return null;
     }
 }
 
 function toggleActors(scene, enabled) {
     if (scene) {
-        each(scene.actors, actor => {
+        each(scene.actors, (actor) => {
             if (actor.model && actor.model.boundingBoxDebugMesh) {
                 actor.model.boundingBoxDebugMesh.visible = enabled;
             }
@@ -205,7 +210,7 @@ function toggleActors(scene, enabled) {
 
 function toggleZones(scene, enabled) {
     if (scene) {
-        each(scene.zones, zone => {
+        each(scene.zones, (zone) => {
             zone.threeObject.visible = enabled;
             if (enabled) {
                 zone.threeObject.updateMatrix();
@@ -216,7 +221,7 @@ function toggleZones(scene, enabled) {
 
 function togglePoints(scene, enabled) {
     if (scene) {
-        each(scene.points, point => {
+        each(scene.points, (point) => {
             point.threeObject.visible = enabled;
             if (enabled) {
                 point.threeObject.updateMatrix();

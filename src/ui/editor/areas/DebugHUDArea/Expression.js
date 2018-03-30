@@ -15,12 +15,15 @@ import {intersperse, intersperseBR} from './utils';
 
 export default function Expression({expr, value, addExpression}) {
     if (value && 'value' in value) {
-        return <span key={expr.expr}> {expr.expr} = <Value expr={expr} value={value.value} addExpression={addExpression} /></span>;
+        return <span key={expr.expr}>
+            {expr.expr} = <Value expr={expr} value={value.value} addExpression={addExpression} />
+        </span>;
     } else if (value && 'error' in value) {
-        return <span key={expr.expr}> {expr.expr} = <span style={{color: 'red'}}>Error: {value.error.toString()}</span></span>;
-    } else {
-        return <span key={expr.expr}> {expr.expr} = N/A</span>;
+        return <span key={expr.expr}>
+            {expr.expr} = <span style={{color: 'red'}}>Error: {value.error.toString()}</span>
+        </span>;
     }
+    return <span key={expr.expr}> {expr.expr} = N/A</span>;
 }
 
 function Value({expr, value, root = true, addExpression}) {
@@ -30,13 +33,13 @@ function Value({expr, value, root = true, addExpression}) {
     if (value === null) {
         return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>null</span>;
     }
-    if (typeof(value) === 'string') {
+    if (typeof (value) === 'string') {
         return <span style={{color: 'orange'}}>'{value}'</span>;
     }
-    if (typeof(value) === 'boolean') {
+    if (typeof (value) === 'boolean') {
         return <span style={{color: value ? 'lime' : 'red', fontStyle: 'italic'}}>{value ? 'true' : 'false'}</span>;
     }
-    if (typeof(value) === 'number' && !Number.isInteger(value)) {
+    if (typeof (value) === 'number' && !Number.isInteger(value)) {
         return <span>{value.toFixed(3)}</span>;
     }
     if (isFunction(value)) {
@@ -82,13 +85,11 @@ function Value({expr, value, root = true, addExpression}) {
             return <span>{type}{marker[0]}<br/>{intersperseBR(subValues)}<br/>{marker[1]}</span>;
         } else if (value.type) {
             return <span>{value.type} {'{...}'}</span>;
-        } else {
-            if (isEmpty(value)) {
-                return <span>{'{}'}</span>;
-            } else {
-                return <span>{'{...}'}</span>;
-            }
         }
+        if (isEmpty(value)) {
+            return <span>{'{}'}</span>;
+        }
+        return <span>{'{...}'}</span>;
     }
     return <span>{value}</span>;
 }
@@ -148,8 +149,9 @@ function Euler({euler}) {
 
 function Matrix({mat, n, root}) {
     if (root) {
-        const mapComp = (n, i) => <span key={i} style={{color: ARRAY_COLOR[i]}}>{n.toFixed(3)}</span>;
-        const rows = times(n, r => {
+        const mapComp = (num, i) =>
+            <span key={i} style={{color: ARRAY_COLOR[i]}}>{num.toFixed(3)}</span>;
+        const rows = times(n, (r) => {
             const components = map(slice(mat.elements, r * n, r * n + n), mapComp);
             return <span key={r} >
                 &nbsp;
@@ -157,7 +159,6 @@ function Matrix({mat, n, root}) {
                 {intersperse(components, ', ')}</span>;
         });
         return <span>Mat{n}[<br/>{intersperseBR(rows)}<br/>]</span>;
-    } else {
-        return <span>Mat{n}[...]</span>;
     }
+    return <span>Mat{n}[...]</span>;
 }

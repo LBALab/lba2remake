@@ -4,14 +4,12 @@ export const SceneGraphNode = {
     type: 'SceneGraphNode',
     dynamic: true,
     needsData: true,
-    name: (obj) => {
-        return obj.name ? `${obj.type} "${obj.name}"` : `${obj.type} [${obj.uuid.substr(0, 8)}]`;
-    },
+    name: obj => (obj.name ? `${obj.type} "${obj.name}"` : `${obj.type} [${obj.uuid.substr(0, 8)}]`),
     icon: () => 'editor/icons/three.png',
-    numChildren: (obj) => obj.children.length,
+    numChildren: obj => obj.children.length,
     child: () => SceneGraphNode,
     childData: (obj, idx) => obj.children[idx],
-    props: (obj) => [
+    props: obj => [
         {
             id: 'visible',
             value: obj.visible,

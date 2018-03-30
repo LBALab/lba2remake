@@ -1,8 +1,8 @@
 import React from 'react';
+import {map} from 'lodash';
 import ScriptEditor from './ScriptEditorArea/scriptEditor';
 import {editor} from '../../styles';
 import FrameListener from '../../utils/FrameListener';
-import {map} from 'lodash';
 import DebugData, {getObjectName} from '../DebugData';
 
 const inputStyle = {
@@ -13,7 +13,7 @@ const inputStyle = {
 export class ScriptMenu extends FrameListener {
     constructor(props) {
         super(props);
-        this.state = { actors: [], selectedActor: props.sharedState.actor, isPaused: false }
+        this.state = { actors: [], selectedActor: props.sharedState.actor, isPaused: false };
     }
 
     frame() {
@@ -72,7 +72,8 @@ export class ScriptMenu extends FrameListener {
             {paused ? <img style={editor.icon} onClick={step} src="editor/icons/step.png"/> : null}
             <img style={editor.icon} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.png`}/>
             <select style={editor.select} value={this.state.selectedActor} onChange={onChange}>
-                {map(this.state.actors, (actor, idx) => <option key={idx} value={idx}>{actor}</option>)}
+                {map(this.state.actors, (actor, idx) =>
+                    <option key={idx} value={idx}>{actor}</option>)}
             </select>
         </span>;
     }

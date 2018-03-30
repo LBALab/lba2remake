@@ -6,7 +6,7 @@ export default {
         { index: 3, file: 'data/MUSIC/TADPCM4.mp4' },
         { index: 4, file: 'data/MUSIC/TADPCM5.mp4' },
         { index: 5, file: 'data/MUSIC/JADPCM01.mp4' },
-        { index: 6, file:'data/MUSIC/Track6.mp4' },
+        { index: 6, file: 'data/MUSIC/Track6.mp4' },
         { index: 7, file: 'data/MUSIC/JADPCM02.mp4' },
         { index: 8, file: 'data/MUSIC/JADPCM03.mp4' },
         { index: 9, file: 'data/MUSIC/JADPCM04.mp4' },
@@ -24,6 +24,6 @@ export default {
         { index: 21, file: 'data/MUSIC/JADPCM16.mp4' },
         { index: 22, file: 'data/MUSIC/JADPCM17.mp4' },
         { index: 23, file: 'data/MUSIC/JADPCM18.mp4' },
-        { index: 24, file:'data/MUSIC/LOGADPCM.mp4' },
+        { index: 24, file: 'data/MUSIC/LOGADPCM.mp4' },
     ]
-}
+};

@@ -47,7 +47,7 @@ export function LocatorMenu(props) {
         <button style={editorStyle.button} onClick={locate.bind(null, 'island')}>Island</button>
         <button style={editorStyle.button} onClick={locate.bind(null, 'section')}>Section</button>
         <button style={editorStyle.button} onClick={locate.bind(null, 'building')}>Building</button>
-    </span>
+    </span>;
 }
 
 export function findScenePath(node, index, path = []) {
@@ -57,10 +57,11 @@ export function findScenePath(node, index, path = []) {
             return concat(path, node);
         }
     }
-    for (let i = 0; i < node.children.length; ++i) {
+    for (let i = 0; i < node.children.length; i += 1) {
         const foundPath = findScenePath(node.children[i], index, concat(path, node));
         if (foundPath) {
             return foundPath;
         }
     }
+    return null;
 }

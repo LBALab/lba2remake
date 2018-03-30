@@ -1,24 +1,25 @@
-import Indent from '../../../../scripting/indent';
 import {cloneDeep, map, each, find, isFinite, isInteger, extend} from 'lodash';
+import Indent from '../../../../scripting/indent';
 import {getRotation} from '../../../../utils/lba';
 import {getObjectName, getVarName} from '../../DebugData';
-import {formatVar} from "../OutlinerArea/nodes/variables";
+import {formatVar} from '../OutlinerArea/nodes/variables';
 
 export function getDebugListing(type, scene, actor) {
     if (scene && actor) {
         const script = actor.scripts[type];
-        const activeLine = script.context && script.context.state && script.context.state.lastOffset;
+        const activeLine = script.context
+            && script.context.state
+            && script.context.state.lastOffset;
         return {commands: mapCommands(scene, actor, script.commands), activeLine};
-    } else {
-        return null;
     }
+    return null;
 }
 
 function mapCommands(scene, actor, commands) {
     let indent = 0;
     let prevCommand = null;
-    let state = {};
-    return map(commands, cmd => {
+    const state = {};
+    return map(commands, (cmd) => {
         const newCmd = {
             name: cmd.op.command,
             args: mapArguments(scene, actor, cmd),
@@ -29,7 +30,7 @@ function mapCommands(scene, actor, commands) {
         indent = processIndent(newCmd, prevCommand, cmd.op, indent);
         prevCommand = newCmd;
         return newCmd;
-    })
+    });
 }
 
 export function mapComportementArg(comportement) {
@@ -43,9 +44,8 @@ export function mapComportementArg(comportement) {
 function mapArguments(scene, actor, cmd) {
     const args = cloneDeep(cmd.args);
 
-    const mapComportementSetterArg = (obj, index) => {
-        return mapComportementArg(obj.scripts.life.comportementMap[index] + 1);
-    };
+    const mapComportementSetterArg =
+        (obj, index) => mapComportementArg(obj.scripts.life.comportementMap[index] + 1);
 
     switch (cmd.op.command) {
         case 'COMPORTEMENT':
@@ -98,7 +98,7 @@ function mapArguments(scene, actor, cmd) {
             args[1].idx = args[0].value;
             break;
     }
-    each(args, arg => {
+    each(args, (arg) => {
         arg.value = mapDataName(scene, arg);
     });
     return args;
@@ -115,6 +115,7 @@ function mapCondition(scene, condition, state) {
             param: mapDataName(scene, condition.param)
         };
     }
+    return null;
 }
 
 function mapOperator(scene, operator, state) {
@@ -123,7 +124,10 @@ function mapOperator(scene, operator, state) {
         if (operator.operand.type === 'vargame_value' || operator.operand.type === 'varcube_value') {
             return {
                 name: operator.op.command,
-                operand: mapDataName(scene, extend({idx: state.condition.param.value}, operator.operand))
+                operand: mapDataName(
+                    scene,
+                    extend({idx: state.condition.param.value}, operator.operand)
+                )
             };
         } else if (operator.operand.type === 'choice_value') {
             if (scene.data.texts[operator.operand.value]) {
@@ -136,6 +140,7 @@ function mapOperator(scene, operator, state) {
             value: text
         };
     }
+    return null;
 }
 
 function processIndent(cmd, prevCmd, op, indent) {
@@ -165,6 +170,7 @@ function processIndent(cmd, prevCmd, op, indent) {
             cmd.indent = indent;
             return indent;
     }
+    throw new Error('Missing indent op');
 }
 
 export function mapDataName(scene, data) {
@@ -177,12 +183,12 @@ export function mapDataName(scene, data) {
     } else if (data.type === 'zone') {
         if (data.value === -1)
             return '<no-zone>';
-        const zone = find(scene.zones, zone => zone.props.type === 2 && zone.props.snap === data.value);
-        if (zone) {
-            return getObjectName('zone', scene.index, zone.index);
-        } else {
-            return '<no-zone>';
+        const foundZone = find(scene.zones, zone =>
+            zone.props.type === 2 && zone.props.snap === data.value);
+        if (foundZone) {
+            return getObjectName('zone', scene.index, foundZone.index);
         }
+        return '<no-zone>';
     } else if (data.type === 'vargame' || data.type === 'varcube') {
         return getVarName({
             type: data.type,
@@ -193,11 +199,9 @@ export function mapDataName(scene, data) {
             type: data.type.substr(0, 7),
             idx: data.idx
         }, data.value);
-    } else {
-        if (isFinite(data.value) && !isInteger(data.value)) {
-            return data.value.toFixed(2);
-        } else {
-            return data.value;
-        }
     }
+    if (isFinite(data.value) && !isInteger(data.value)) {
+        return data.value.toFixed(2);
+    }
+    return data.value;
 }

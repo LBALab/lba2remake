@@ -1,5 +1,5 @@
-import Popup from "../Popup";
-import React from "react";
+import React from 'react';
+import Popup from '../Popup';
 
 const popup_style = {
     background: 'rgb(45, 45, 48)',
@@ -27,17 +27,15 @@ export function checkAuth(callback) {
     let auth = null;
     const raw_auth = localStorage.getItem('editor_auth');
     try {
-        if (raw_auth)
-        {
+        if (raw_auth) {
             auth = JSON.parse(raw_auth);
         }
-    }
-    catch (e) {}
+    } catch (e) {}
 
     if (auth) {
         callback(auth);
     } else {
-        Popup.display((props) => <AuthPopup callback={saveAuth.bind(null, callback)} {...props}/>);
+        Popup.display(props => <AuthPopup callback={saveAuth.bind(null, callback)} {...props}/>);
     }
 }
 
@@ -101,21 +99,28 @@ class AuthPopup extends React.Component {
             </p>
             <div style={form_line}>
                 <label style={{paddingRight: 20}}>Name:</label>
-                <input type="text"
-                       value={auth.name}
-                       onChange={this.onChange.bind(this, 'name')}
-                       onKeyDown={stopPropagation}/>
+                <input
+                    type="text"
+                    value={auth.name}
+                    onChange={this.onChange.bind(this, 'name')}
+                    onKeyDown={stopPropagation}
+                />
             </div>
             <div style={form_line}>
                 <label style={{paddingRight: 20}}>Email:</label>
-                <input type="text" value={auth.email}
-                       onChange={this.onChange.bind(this, 'email')}
-                       onKeyDown={stopPropagation}/>
+                <input
+                    type="text"
+                    value={auth.email}
+                    onChange={this.onChange.bind(this, 'email')}
+                    onKeyDown={stopPropagation}
+                />
             </div>
             <div style={form_line}>
                 <input type="checkbox" onChange={this.onChange.bind(this, 'nocredit')} checked={auth.nocredit}/>
-                <label style={{paddingLeft: 10}}>I DO NOT want to be credited for my contributions<br/>
-                    (only check this if you don't want your name to appear in our contributor list)</label>
+                <label style={{paddingLeft: 10}}>
+                    I DO NOT want to be credited for my contributions<br/>
+                    (only check this if you don't want your name to appear in our contributor list)
+                </label>
             </div>
             <br/>
             {this.renderWarnings(auth)}

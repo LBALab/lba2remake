@@ -24,11 +24,12 @@ export function loadParams() : Object {
     const query = window.location.hash.replace(/^#/, '');
     const src = {};
     const tgt = {};
-    map(query.split("&"), part => {
-        const [name, value] = part.split("=");
+    map(query.split('&'), (part) => {
+        const [name, value] = part.split('=');
         if (name && name in paramsDefinitions) {
             src[name] = decodeURIComponent(value);
         } else if (name) {
+            // eslint-disable-next-line no-console
             console.warn(`Unknown parameter: ${part}.`);
         }
     });
@@ -49,20 +50,22 @@ function parseParam(param, name, src) {
                 return true;
             } else if (src === 'false') {
                 return false;
-            } else {
-                console.warn(`Invalid value for param ${name}, value: ${src}, type=boolean`);
-                return param.default;
             }
+            // eslint-disable-next-line no-console
+            console.warn(`Invalid value for param ${name}, value: ${src}, type=boolean`);
+            return param.default;
+
         case 'int':
             try {
-                const i = parseInt(src);
+                const i = Number(src);
                 if (Number.isNaN(i)) {
+                    // eslint-disable-next-line no-console
                     console.warn(`Invalid value for param ${name}, value: ${src}, type=int`);
                     return param.default;
-                } else {
-                    return i;
                 }
+                return i;
             } catch (e) {
+                // eslint-disable-next-line no-console
                 console.warn(`Invalid value for param ${name}, value: ${src}, type=int`);
                 return param.default;
             }

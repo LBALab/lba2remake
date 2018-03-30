@@ -23,14 +23,32 @@ export type Model = {
     mesh: THREE.Object3D
 }
 
-export function loadModel(params: Object, entityIdx: number, bodyIdx: number, animIdx: number, animState: any, envInfo: any, ambience: any, callback: Function) {
+export function loadModel(params: Object,
+                          entityIdx: number,
+                          bodyIdx: number,
+                          animIdx: number,
+                          animState: any,
+                          envInfo: any,
+                          ambience: any,
+                          callback: Function) {
     async.auto({
         ress: loadHqrAsync('RESS.HQR'),
         body: loadHqrAsync('BODY.HQR'),
         anim: loadHqrAsync('ANIM.HQR'),
         anim3ds: loadHqrAsync('ANIM3DS.HQR')
-    }, function(err, files) {
-        callback(loadModelData(params, files, entityIdx, bodyIdx, animIdx, animState, envInfo, ambience));
+    }, (err, files) => {
+        callback(
+            loadModelData(
+                params,
+                files,
+                entityIdx,
+                bodyIdx,
+                animIdx,
+                animState,
+                envInfo,
+                ambience
+            )
+        );
     });
 }
 
@@ -39,7 +57,14 @@ export function loadModel(params: Object, entityIdx: number, bodyIdx: number, an
  *  This will allow to mantain different states for body animations.
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
-function loadModelData(params: Object, files, entityIdx, bodyIdx, animIdx, animState: any, envInfo: any, ambience: any) {
+function loadModelData(params: Object,
+                       files,
+                       entityIdx,
+                       bodyIdx,
+                       animIdx,
+                       animState: any,
+                       envInfo: any,
+                       ambience: any) {
     if (entityIdx === -1 || bodyIdx === -1 || animIdx === -1)
         return null;
 
@@ -48,14 +73,14 @@ function loadModelData(params: Object, files, entityIdx, bodyIdx, animIdx, animS
     const entities = loadEntity(entityInfo);
 
     const model = {
-        palette: palette,
-        files: files,
+        palette,
+        files,
         bodies: [],
         anims: [],
         texture: loadTexture2(files.ress.getEntry(6), palette),
         state: null,
         mesh: null,
-        entities: entities
+        entities
     };
 
     const entity = entities[entityIdx];
@@ -68,12 +93,23 @@ function loadModelData(params: Object, files, entityIdx, bodyIdx, animIdx, animS
 
     const skeleton = createSkeleton(body);
     initSkeleton(animState, skeleton, anim.loopFrame);
-    model.mesh = loadMesh(body, model.texture, animState.bones, animState.matrixRotation, model.palette, envInfo, ambience);
+    model.mesh = loadMesh(
+        body,
+        model.texture,
+        animState.bones,
+        animState.matrixRotation,
+        model.palette,
+        envInfo,
+        ambience
+    );
 
     if (model.mesh) {
         model.boundingBox = body.boundingBox;
         if (params.editor) {
-            model.boundingBoxDebugMesh = createBoundingBox(body.boundingBox, new THREE.Vector3(1, 0, 0));
+            model.boundingBoxDebugMesh = createBoundingBox(
+                body.boundingBox,
+                new THREE.Vector3(1, 0, 0)
+            );
             model.boundingBoxDebugMesh.name = 'BoundingBox';
             model.boundingBoxDebugMesh.visible = false;
             model.mesh.add(model.boundingBoxDebugMesh);
@@ -83,7 +119,13 @@ function loadModelData(params: Object, files, entityIdx, bodyIdx, animIdx, animS
     return model;
 }
 
-export function updateModel(game: Object, sceneIsActive: Object, model: any, animState: Object, entityIdx: number, animIdx: number, time: Time) {
+export function updateModel(game: Object,
+                            sceneIsActive: Object,
+                            model: any,
+                            animState: Object,
+                            entityIdx: number,
+                            animIdx: number,
+                            time: Time) {
     const entity = model.entities[entityIdx];
     const entityAnim = getAnim(entity, animIdx);
     if (entityAnim !== null) {

@@ -6,7 +6,7 @@ export function loadPoint(props, callback) {
     const point = {
         type: 'point',
         index: props.index,
-        props: props,
+        props,
         physics: {
             position: new THREE.Vector3(pos[0], pos[1], pos[2])
         }
@@ -14,7 +14,7 @@ export function loadPoint(props, callback) {
 
     // For debug purposes
     const obj = makeFlag();
-    obj.name = `point:${getObjectName('point', props.sceneIndex, props.index)}`;;
+    obj.name = `point:${getObjectName('point', props.sceneIndex, props.index)}`;
     obj.visible = false;
     obj.position.set(point.physics.position.x, point.physics.position.y, point.physics.position.z);
     obj.matrixAutoUpdate = false;
@@ -36,8 +36,8 @@ clothGeom.vertices.push(v1);
 clothGeom.vertices.push(v2);
 clothGeom.vertices.push(v3);
 
-clothGeom.faces.push( new THREE.Face3( 0, 1, 2 ) );
-clothGeom.faces.push( new THREE.Face3( 0, 2, 1 ) );
+clothGeom.faces.push(new THREE.Face3(0, 1, 2));
+clothGeom.faces.push(new THREE.Face3(0, 2, 1));
 clothGeom.computeFaceNormals();
 
 function makeFlag() {

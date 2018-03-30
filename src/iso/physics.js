@@ -11,7 +11,7 @@ export function processCollisions(grid, scene, actor) {
     if (cell
         && (actor.props.flags.hasCollisionFloor
             || actor.props.flags.canFall)) {
-        for (let i = cell.columns.length - 1; i >= 0; --i) {
+        for (let i = cell.columns.length - 1; i >= 0; i -= 1) {
             const column = cell.columns[i];
             const bb = column.box;
             let y;
@@ -59,15 +59,17 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
     ACTOR_BOX.translate(position);
     DIFF.set(0, 1 / 128, 0);
     ACTOR_BOX.translate(DIFF);
-    for (let ox = -1; ox < 2; ++ox) {
-        for (let oz = -1; oz < 2; ++oz) {
-            if (!(ox == 0 && oz == 0)) {
+    for (let ox = -1; ox < 2; ox += 1) {
+        for (let oz = -1; oz < 2; oz += 1) {
+            if (!(ox === 0 && oz === 0)) {
                 const cell = grid.cells[(dx + ox) * 64 + (dz + oz)];
                 if (cell) {
-                    for (let i = 0; i < cell.columns.length; ++i) {
+                    for (let i = 0; i < cell.columns.length; i += 1) {
                         const column = cell.columns[i];
                         const bb = column.box;
-                        if ((column.shape == 1 || column.shape > 5) && ACTOR_BOX.intersectsBox(bb)) {
+                        if ((column.shape === 1 || column.shape > 5)
+                            && ACTOR_BOX.intersectsBox(bb)
+                        ) {
                             INTERSECTION.copy(ACTOR_BOX);
                             INTERSECTION.intersect(bb);
                             INTERSECTION.getSize(ITRS_SIZE);
@@ -85,7 +87,6 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
                         }
                     }
                 }
-
             }
         }
     }

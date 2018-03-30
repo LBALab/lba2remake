@@ -1,4 +1,3 @@
-import React from 'react';
 import ChangeLog from './ChangeLogArea/content';
 import {Orientation, Type} from '../layout';
 

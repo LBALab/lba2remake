@@ -22,7 +22,7 @@ export const editor = {
     base: {
         background: 'rgb(45,45,48)',
         color: 'white',
-        fontFamily: `'Courier', monospace`,
+        fontFamily: '\'Courier\', monospace',
         fontSize: 14,
         fontWeight: 'bold'
     },

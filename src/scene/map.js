@@ -5,7 +5,7 @@ import {loadHqrAsync} from '../hqr';
 export function loadSceneMapData(callback) {
     async.auto({
         bkg: loadHqrAsync('LBA_BKG.HQR')
-    }, function(err, files) {
+    }, (err, files) => {
         callback(loadSceneMap(files));
     });
 }
@@ -16,16 +16,18 @@ function loadSceneMap(files) {
     let offset = 0;
     const map = [];
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
-        const opcode = data.getUint8(offset++, true);
-        const index = data.getUint8(offset++, true);
+        const opcode = data.getUint8(offset, true);
+        const index = data.getUint8(offset + 1, true);
+        offset += 2;
         if (opcode === 0) {
             break;
         }
 
         map.push({
             isIsland: opcode === 2,
-            index: index
+            index
         });
     }
     return map;

@@ -1,32 +1,56 @@
-import {bits} from '../utils';
 import {map} from 'lodash';
 import * as THREE from 'three';
+import {bits} from '../utils';
+
 const push = Array.prototype.push;
 
 export function loadGround(section, geometries, usedTiles) {
-    for (let x = 0; x < 64; ++x) {
-        for (let z = 0; z < 64; ++z) {
+    for (let x = 0; x < 64; x += 1) {
+        for (let z = 0; z < 64; z += 1) {
             const t0 = loadTriangle(section, x, z, 0);
             const t1 = loadTriangle(section, x, z, 1);
 
             const isSeaLevelLiquid = (t, p) => {
-                const seaLevel = section.heightmap[p[0]] == 0 && section.heightmap[p[1]] == 0 && section.heightmap[p[2]] == 0;
-                return seaLevel && t.liquid != 0;
+                const seaLevel = section.heightmap[p[0]] === 0
+                    && section.heightmap[p[1]] === 0
+                    && section.heightmap[p[2]] === 0;
+                return seaLevel && t.liquid !== 0;
             };
 
-            const triangle = t => {
+            const triangle = (t) => {
                 const pts = map(t.points, pt => (x + pt.x) * 65 + z + pt.z);
                 if (!isSeaLevelLiquid(t, pts) && (t.useColor || t.useTexture)) {
                     usedTiles[x * 64 + z] = t0.orientation;
                     if (t.useTexture) {
-                        push.apply(geometries.ground_textured.positions, getPositions(section, pts));
-                        push.apply(geometries.ground_textured.uvs, getUVs(section.textureInfo, t.uvIndex));
-                        push.apply(geometries.ground_textured.colors, getColors(t));
-                        push.apply(geometries.ground_textured.intensities, getIntensities(section.intensity, pts));
+                        push.apply(
+                            geometries.ground_textured.positions,
+                            getPositions(section, pts)
+                        );
+                        push.apply(
+                            geometries.ground_textured.uvs,
+                            getUVs(section.textureInfo, t.uvIndex)
+                        );
+                        push.apply(
+                            geometries.ground_textured.colors,
+                            getColors(t)
+                        );
+                        push.apply(
+                            geometries.ground_textured.intensities,
+                            getIntensities(section.intensity, pts)
+                        );
                     } else {
-                        push.apply(geometries.ground_colored.positions, getPositions(section, pts));
-                        push.apply(geometries.ground_colored.colors, getColors(t));
-                        push.apply(geometries.ground_colored.intensities, getIntensities(section.intensity, pts));
+                        push.apply(
+                            geometries.ground_colored.positions,
+                            getPositions(section, pts)
+                        );
+                        push.apply(
+                            geometries.ground_colored.colors,
+                            getColors(t)
+                        );
+                        push.apply(
+                            geometries.ground_colored.intensities,
+                            getIntensities(section.intensity, pts)
+                        );
                     }
                 }
             };
@@ -67,7 +91,7 @@ function loadTriangle(section, x, z, idx) {
         useColor: bits(flags, 7, 1),
         sound: bits(flags, 8, 4),
         liquid: bits(flags, 12, 4),
-        orientation: orientation,
+        orientation,
         collision: bits(flags, 17, 1),
         unk2: bits(flags, 18, 1),
         uvIndex: bits(flags, 19, 13),
@@ -90,7 +114,7 @@ function loadTriangleForPhysics(section, x, z, xTgt, zTgt, idx) {
     const orientation = bits(baseFlags, 16, 1);
     const src_pts = TRIANGLE_POINTS[orientation][idx];
 
-    for (let i = 0; i < 3; ++i) {
+    for (let i = 0; i < 3; i += 1) {
         const pt = src_pts[i];
         const ptIdx = (x + pt.x) * 65 + z + pt.z;
         PTS[i].set(
@@ -126,7 +150,7 @@ function makeTrianglePoints(orientation, idx) {
 
 function getPositions(section, points) {
     const positions = [];
-    for (let i = 0; i < 3; ++i) {
+    for (let i = 0; i < 3; i += 1) {
         const idx = points[i];
         const x = section.x * 64 + (65 - Math.floor(idx / 65));
         const y = section.heightmap[idx];
@@ -148,18 +172,17 @@ function getUVs(textureInfo, index) {
 function getColors(triangle) {
     if (triangle.useColor) {
         const colors = [];
-        for (let i = 0; i < 3; ++i) {
+        for (let i = 0; i < 3; i += 1) {
             colors.push(triangle.color);
         }
         return colors;
-    } else {
-        return [0, 0, 0];
     }
+    return [0, 0, 0];
 }
 
 function getIntensities(intensity, points) {
     const intensities = [];
-    for (let i = 0; i < 3; ++i) {
+    for (let i = 0; i < 3; i += 1) {
         intensities.push(intensity[points[i]]);
     }
     return intensities;

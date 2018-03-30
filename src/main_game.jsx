@@ -6,7 +6,7 @@ import Game from './ui/Game';
 import Popup from './ui/Popup';
 import {loadParams} from './params';
 
-window.onload = function() {
+window.onload = () => {
     const ticker = new Ticker();
     const params = loadParams();
     params.editor = false;

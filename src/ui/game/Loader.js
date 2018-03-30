@@ -15,7 +15,7 @@ const text = {
     padding: '0.5em 1em',
     fontSize: '2.5em',
     color: '#61cece',
-    bottom:'20%',
+    bottom: '20%',
     left: '51%',
     transform: 'translate(-51%, 0)'
 };

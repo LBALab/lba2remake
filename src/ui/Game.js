@@ -21,9 +21,9 @@ import Loader from './game/Loader';
 import Video from './game/Video';
 import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
-import VideoData from "../video/data";
+import VideoData from '../video/data';
 import Version from './game/Version';
-import Ribbon from './game/Ribbon'
+import Ribbon from './game/Ribbon';
 
 export default class Game extends FrameListener {
     constructor(props) {
@@ -48,7 +48,8 @@ export default class Game extends FrameListener {
             this.state = state;
         } else {
             const clock = new THREE.Clock(false);
-            const game = createGame(props.params, clock, this.setUiState.bind(this), () => this.state);
+            const game =
+                createGame(props.params, clock, this.setUiState.bind(this), () => this.state);
 
             this.state = {
                 clock,
@@ -132,7 +133,9 @@ export default class Game extends FrameListener {
         }
         if (newProps.params.vr !== this.props.params.vr && this.canvas) {
             this.state.renderer.dispose();
-            this.setState({ renderer: createRenderer(newProps.params, this.canvas) }, this.saveData);
+            this.setState({
+                renderer: createRenderer(newProps.params, this.canvas)
+            }, this.saveData);
         }
     }
 
@@ -155,7 +158,7 @@ export default class Game extends FrameListener {
         musicSource.load(6, () => {
             musicSource.play();
         });
-        this.setState({showMenu: true, inGameMenu: inGameMenu});
+        this.setState({showMenu: true, inGameMenu});
     }
 
     hideMenu() {
@@ -184,7 +187,7 @@ export default class Game extends FrameListener {
             }
         }
         if (key === 'KeyV' || key === 86) {
-            this.setState({showVersion:!this.state.showVersion});
+            this.setState({showVersion: !this.state.showVersion});
         }
     }
 
@@ -195,22 +198,22 @@ export default class Game extends FrameListener {
     }
 
     onMenuItemChanged(item) {
-        switch(item) {
+        switch (item) {
             case 70: // Resume
                 this.hideMenu();
                 break;
             case 71: // New Game
                 this.hideMenu();
                 const that = this;
-                const src = VideoData.VIDEO.find((v) => { return v.name === 'INTRO'; }).file;
+                const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
                 this.state.game.pause();
                 this.setState({video: {
-                        src,
-                        callback: () => {
-                            that.setState({video: null});
-                            that.startNewGameScene();
-                        }
-                    }});
+                    src,
+                    callback: () => {
+                        that.setState({video: null});
+                        that.startNewGameScene();
+                    }
+                }});
                 break;
         }
     }
@@ -236,7 +239,7 @@ export default class Game extends FrameListener {
                 game,
                 clock,
                 renderer,
-                scene: scene,
+                scene,
                 hero: scene && scene.actors[0],
                 controls,
                 ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls')
@@ -256,38 +259,49 @@ export default class Game extends FrameListener {
             if (rWidth !== cvWidth || rHeight !== cvHeight) {
                 this.state.renderer.resize(roundedWidth, roundedHeight);
                 if (this.state.video) {
-                    this.setState({video: clone(this.state.video)}, this.saveData); // Force video rerender
+                    this.setState({
+                        video: clone(this.state.video)
+                    }, this.saveData); // Force video rerender
                 }
             }
         }
     }
 
     onAskChoiceChanged(choice) {
-        this.setState({choice: choice});
+        this.setState({choice});
     }
 
     render() {
         return <div style={fullscreen}>
             <div ref={this.onLoad} style={fullscreen}/>
             {this.props.params.editor ?
-                <DebugLabels params={this.props.params}
-                             labels={this.props.sharedState.labels}
-                             scene={this.state.scene}
-                             renderer={this.state.renderer}
-                             ticker={this.props.ticker}/> : null}
+                <DebugLabels
+                    params={this.props.params}
+                    labels={this.props.sharedState.labels}
+                    scene={this.state.scene}
+                    renderer={this.state.renderer}
+                    ticker={this.props.ticker}
+                /> : null}
             <CinemaEffect enabled={this.state.cinema} />
             {!this.state.showMenu ? <TextBox text={this.state.text} /> : null}
-            {!this.state.showMenu ? <AskChoice ask={this.state.ask} onChoiceChanged={this.onAskChoiceChanged} /> : null}
+            {!this.state.showMenu ? <AskChoice
+                ask={this.state.ask}
+                onChoiceChanged={this.onAskChoiceChanged}
+            /> : null}
             {!this.state.showMenu ? <FoundObject foundObject={this.state.foundObject} /> : null}
-            <TextInterjections scene={this.state.scene}
-                               renderer={this.state.renderer}
-                               interjections={this.state.interjections} />
+            <TextInterjections
+                scene={this.state.scene}
+                renderer={this.state.renderer}
+                interjections={this.state.interjections}
+            />
             {!this.props.params.editor ? <Ribbon/> : null}
             <Video video={this.state.video} renderer={this.state.renderer} />
-            <Menu showMenu={this.state.showMenu}
-                  texts={this.state.game.menuTexts}
-                  inGameMenu={this.state.inGameMenu}
-                  onItemChanged={this.onMenuItemChanged} />
+            <Menu
+                showMenu={this.state.showMenu}
+                texts={this.state.game.menuTexts}
+                inGameMenu={this.state.inGameMenu}
+                onItemChanged={this.onMenuItemChanged}
+            />
             <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
             {!this.props.params.editor && this.state.showVersion ? <Version/> : null}

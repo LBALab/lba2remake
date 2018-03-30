@@ -32,4 +32,5 @@ export function compileSlot(expr) {
     if (program) {
         return {type: Type.EXPR, value: { expr, normalized: generate(program), program} };
     }
+    return null;
 }

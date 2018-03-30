@@ -14,8 +14,7 @@ export function loadProfiles() {
     if (profiles_str) {
         try {
             return JSON.parse(profiles_str);
-        }
-        catch (e) {}
+        } catch (e) {}
     }
     return {};
 }

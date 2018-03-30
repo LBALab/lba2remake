@@ -26,7 +26,7 @@ export function ANGLE(angle) {
 }
 
 export function GOTO_SYM_POINT() {
-    
+
 }
 
 export function WAIT_NUM_ANIM(repeats) {
@@ -34,8 +34,8 @@ export function WAIT_NUM_ANIM(repeats) {
         this.state.animCount = 0;
     }
     if (this.actor.animState.hasEnded) {
-        this.state.animCount++;
-        if (this.state.animCount == repeats) {
+        this.state.animCount += 1;
+        if (this.state.animCount === repeats) {
             this.state.animCount = 0;
         } else {
             this.state.continue = false;
@@ -57,7 +57,7 @@ export function SAMPLE(index) {
 }
 
 export function GOTO_POINT_3D() {
-    
+
 }
 
 export function SPEED(speed) {
@@ -65,7 +65,7 @@ export function SPEED(speed) {
 }
 
 export function BACKGROUND() {
-    
+
 }
 
 export function WAIT_NUM_SECOND(numSeconds, unknown, time) {
@@ -95,27 +95,27 @@ export function WAIT_NUM_DECIMAL_RND(maxNumDsec, unknown, time) {
 }
 
 export function OPEN_LEFT() {
-    
+
 }
 
 export function OPEN_RIGHT() {
-    
+
 }
 
 export function OPEN_UP() {
-    
+
 }
 
 export function OPEN_DOWN() {
-    
+
 }
 
 export function CLOSE() {
-    
+
 }
 
 export function WAIT_DOOR() {
-    
+
 }
 
 export function SAMPLE_RND(index) {
@@ -133,15 +133,15 @@ export function SAMPLE_ALWAYS(index) {
 }
 
 export function SAMPLE_STOP() {
-    
+
 }
 
 export function PLAY_ACF() {
-    
+
 }
 
 export function REPEAT_SAMPLE() {
-    
+
 }
 
 export function SIMPLE_SAMPLE(index) {
@@ -166,57 +166,57 @@ export function FACE_HERO() {
 }
 
 export function ANGLE_RND() {
-    
+
 }
 
 export function REPLACE() {
-    
+
 }
 
 export function SPRITE() {
-    
+
 }
 
 export function SET_FRAME() {
-    
+
 }
 
 export function SET_FRAME_3DS() {
-    
+
 }
 
 export function SET_START_3DS() {
-    
+
 }
 
 export function SET_END_3DS() {
-    
+
 }
 
 export function START_ANIM_3DS() {
-    
+
 }
 
 export function STOP_ANIM_3DS() {
-    
+
 }
 
 export function WAIT_ANIM_3DS() {
-    
+
 }
 
 export function WAIT_FRAME_3DS() {
-    
+
 }
 
 export function INTERVAL() {
-    
+
 }
 
 export function FREQUENCY() {
-    
+
 }
 
 export function VOLUME() {
-    
+
 }

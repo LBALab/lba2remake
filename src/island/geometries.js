@@ -1,10 +1,10 @@
+import {times} from 'lodash';
 import * as THREE from 'three';
 import {
     loadSubTexture,
     loadPaletteTexture,
     loadTexture
 } from '../texture';
-import {times} from 'lodash';
 
 import VERT_GROUND_COLORED from './shaders/ground/colored.vert.glsl';
 import FRAG_GROUND_COLORED from './shaders/ground/colored.frag.glsl';
@@ -40,7 +40,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector4().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
-                    actorPos: {value: times(10, () => new THREE.Vector4()), type:'v4v'}
+                    actorPos: {value: times(10, () => new THREE.Vector4()), type: 'v4v'}
                 }
             })
         },
@@ -57,7 +57,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogDensity: {value: envInfo.fogDensity},
                     texture: {value: groundTexture},
                     palette: {value: paletteTexture},
-                    actorPos: {value: times(10, () => new THREE.Vector4()), type:'v4v'}
+                    actorPos: {value: times(10, () => new THREE.Vector4()), type: 'v4v'}
                 }
             })
         },
@@ -114,10 +114,12 @@ export function prepareGeometries(island, data, ambience) {
         sea: {
             positions: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: envInfo.index != 14 ? VERT_SEA : VERT_MOON,
-                fragmentShader: envInfo.index != 14 ? FRAG_SEA : FRAG_ENV,
+                vertexShader: envInfo.index !== 14 ? VERT_SEA : VERT_MOON,
+                fragmentShader: envInfo.index !== 14 ? FRAG_SEA : FRAG_ENV,
                 uniforms: {
-                    texture: {value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)},
+                    texture: {
+                        value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)
+                    },
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     time: {value: 0.0},
@@ -130,7 +132,16 @@ export function prepareGeometries(island, data, ambience) {
                 vertexShader: VERT_ENV,
                 fragmentShader: FRAG_ENV,
                 uniforms: {
-                    texture: {value: loadSubTexture(ress.getEntry(envInfo.index), palette, 128, 0, 128, 128)},
+                    texture: {
+                        value: loadSubTexture(
+                            ress.getEntry(envInfo.index),
+                            palette,
+                            128,
+                            0,
+                            128,
+                            128
+                        )
+                    },
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     scale: {value: envInfo.scale}
@@ -142,7 +153,13 @@ export function prepareGeometries(island, data, ambience) {
 
 function getLightVector(ambience) {
     const lightVector = new THREE.Vector3(-1, 0, 0);
-    lightVector.applyAxisAngle(new THREE.Vector3(0, 0, 1), -ambience.lightingAlpha * 2 * Math.PI / 0x1000);
-    lightVector.applyAxisAngle(new THREE.Vector3(0, 1, 0), -ambience.lightingBeta * 2 * Math.PI / 0x1000);
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 0, 1),
+        -ambience.lightingAlpha * 2 * Math.PI / 0x1000
+    );
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        -ambience.lightingBeta * 2 * Math.PI / 0x1000
+    );
     return lightVector;
 }

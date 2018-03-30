@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {map} from 'lodash';
 import StereoEffect from './effects/StereoEffect';
 import EffectComposer from './effects/postprocess/EffectComposer';
 import SMAAPass from './effects/postprocess/SMAAPass';
@@ -11,7 +12,6 @@ import {
     resizeIsometricCamera
 } from './cameras';
 import Cardboard from './utils/Cardboard';
-import {map} from 'lodash';
 import {EngineError} from '../crash_reporting';
 
 const PixelRatioMode = {
@@ -25,13 +25,14 @@ const PixelRatioMode = {
 export const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'], (name, idx) => ({
     getValue: PixelRatioMode[name],
     index: idx,
-    name: name
+    name
 }));
 
 export function createRenderer(params, canvas) {
     let pixelRatio = PixelRatio[2]; // SET NORMAL AS DEFAULT
     const getPixelRatio = () => pixelRatio.getValue();
     let antialias = false;
+    // eslint-disable-next-line no-console
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
     const baseRenderer = setupBaseRenderer(pixelRatio, canvas);
     const tgtRenderer = params.vr ? setupVR(baseRenderer) : baseRenderer;
@@ -43,25 +44,24 @@ export function createRenderer(params, canvas) {
     displayRenderMode();
 
     const renderer = {
-        canvas: canvas,
-        render: scene => {
+        canvas,
+        render: (scene) => {
             tgtRenderer.antialias = antialias;
             const camera = scene.isIsland ? camera3D : cameraIso;
             if (antialias) {
                 smaa.render(scene.threeScene, camera);
-            }
-            else {
+            } else {
                 tgtRenderer.render(scene.threeScene, camera);
             }
         },
-        applySceneryProps: props => {
+        applySceneryProps: (props) => {
             const sc = props.envInfo.skyColor;
             const color = new THREE.Color(sc[0], sc[1], sc[2]);
             baseRenderer.setClearColor(color.getHex(), 1);
         },
-        stats: stats,
+        stats,
         cameras: {
-            camera3D: camera3D,
+            camera3D,
             isoCamera: cameraIso
         },
         resize: (width = tgtRenderer.getSize().width, height = tgtRenderer.getSize().height) => {
@@ -69,9 +69,9 @@ export function createRenderer(params, canvas) {
             resize3DCamera(camera3D, width, height);
             resizeIsometricCamera(cameraIso, getPixelRatio(), width, height);
         },
-        getMainCamera: scene => scene.isIsland ? camera3D : cameraIso,
+        getMainCamera: scene => (scene.isIsland ? camera3D : cameraIso),
         pixelRatio: getPixelRatio,
-        setPixelRatio: function(value) { baseRenderer.setPixelRatio(value); }
+        setPixelRatio(value) { baseRenderer.setPixelRatio(value); }
     };
 
     function keyListener(event) {
@@ -100,7 +100,12 @@ export function createRenderer(params, canvas) {
 
 function setupBaseRenderer(pixelRatio, canvas) {
     try {
-        const renderer = new THREE.WebGLRenderer({antialias: false, alpha: false, logarithmicDepthBuffer: true, canvas});
+        const renderer = new THREE.WebGLRenderer({
+            antialias: false,
+            alpha: false,
+            logarithmicDepthBuffer: true,
+            canvas
+        });
 
         renderer.setClearColor(0x000000);
         renderer.setPixelRatio(pixelRatio.getValue());
@@ -120,7 +125,10 @@ function setupSMAA(renderer, pixelRatio) {
     const renderPass = new RenderPass();
     composer.addPass(renderPass);
 
-    const pass = new SMAAPass(window.innerWidth * pixelRatio.getValue(), window.innerHeight * pixelRatio.getValue());
+    const pass = new SMAAPass(
+        window.innerWidth * pixelRatio.getValue(),
+        window.innerHeight * pixelRatio.getValue()
+    );
     pass.renderToScreen = true;
     composer.addPass(pass);
     return {
@@ -129,12 +137,13 @@ function setupSMAA(renderer, pixelRatio) {
             renderPass.camera = camera;
             composer.render();
         }
-    }
+    };
 }
 
 function setupVR(baseRenderer) {
     const params = Cardboard.uriToParams('https://vr.google.com/cardboard/download/?p=CgdUd2luc3VuEgRBZHJpHfT91DwlYOVQPSoQAAC0QgAAtEIAALRCAAC0QlgANQIrBz06CClcjz0K1yM8UABgAA');
-    console.log(params);
+    // eslint-disable-next-line no-console
+    console.log('Cardboard params:', params);
     const stereoEffect = new StereoEffect(baseRenderer, params);
     stereoEffect.eyeSeparation = -0.0012;
     stereoEffect.focalLength = 0.0122;

@@ -6,13 +6,13 @@ import DebugData from '../ui/editor/DebugData';
 import {mapDataName} from '../ui/editor/areas/ScriptEditorArea/listing';
 
 export function loadScripts(params, game, scene) {
-    each(scene.actors, actor => {
+    each(scene.actors, (actor) => {
         actor.scripts = {
             life: parseScript(actor.index, 'life', actor.props.lifeScript),
             move: parseScript(actor.index, 'move', actor.props.moveScript)
         };
     });
-    each(scene.actors, actor => {
+    each(scene.actors, (actor) => {
         compileScripts(game, scene, actor);
         actor.runScripts = (time) => {
             runScript(params, actor.scripts.life, time);
@@ -42,6 +42,7 @@ function runScript(params, script, time) {
 
     while (state.continue) {
         if (state.offset >= instructions.length || isNaN(state.offset)) {
+            // eslint-disable-next-line no-console
             console.warn(`Invalid offset: ${context.scene.index}:${context.actor.index}:${context.type}:${state.lastOffset + 1} offset=${state.offset}`);
             state.terminated = true;
             return;
@@ -61,7 +62,12 @@ function runScript(params, script, time) {
                     const cmdCond = commands[offset].condition;
                     const operandType = cmdCond.operandType;
                     const idx = cmdCond.param ? cmdCond.param.value : undefined;
-                    activeCommand.condValue = mapDataName(context.scene, {type: operandType, value: condValue, idx: idx});
+                    activeCommand.condValue = mapDataName(
+                        context.scene, {
+                            type: operandType,
+                            value: condValue,
+                            idx
+                        });
                 }
                 activeCommands[offset] = activeCommand;
                 if (offset in breakpoints) {
@@ -74,12 +80,12 @@ function runScript(params, script, time) {
             if (!(next.skipSideScenes && !script.context.scene.isActive)) {
                 next(time);
             }
-        }
-        catch (e) {
-            console.error('Error on instruction: actor(' + context.actor.index + '):' + context.type + ':' + instructions[state.offset].dbgLabel + '"\n', e);
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error(`Error on instruction: actor(${context.actor.index}):${context.type}:${instructions[state.offset].dbgLabel}"\n`, e);
         }
         if (state.continue) {
-            state.offset++;
+            state.offset += 1;
         }
     }
     if (activeDebug) {

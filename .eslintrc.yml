@@ -1,0 +1,86 @@
+extends: airbnb
+parser: babel-eslint
+plugins:
+  - flowtype
+env:
+  browser: true
+globals:
+  ga: false
+rules:
+  indent:
+    - error
+    - 4
+    - SwitchCase: 1
+      FunctionDeclaration:
+        parameters: first
+  curly: off
+  comma-dangle: off
+  prefer-destructuring: off
+  default-case: off
+  function-paren-newline: off
+  camelcase: off
+
+  no-lonely-if: off
+  no-continue: off
+  no-bitwise: off
+  no-param-reassign: off
+  no-use-before-define: off
+  no-shadow: warn
+  no-nested-ternary: off
+  no-restricted-globals: off
+  no-restricted-properties: off
+
+  react/jsx-indent:
+    - error
+    - 4
+  react/jsx-indent-props:
+    - error
+    - 4
+  react/jsx-closing-tag-location: off
+  react/prop-types: off
+  react/jsx-wrap-multilines: off
+  react/jsx-tag-spacing: off
+  react/jsx-filename-extension: off
+  react/jsx-no-bind: off
+
+  import/no-named-as-default-member: off
+  import/prefer-default-export: off
+
+  object-curly-spacing: off
+  object-curly-newline: off
+
+  # Accessibility - disabled for now
+  jsx-a11y/alt-text: off
+  jsx-a11y/click-events-have-key-events: off
+  jsx-a11y/label-has-for: off
+  jsx-a11y/media-has-caption: off
+  jsx-a11y/no-autofocus: off
+  jsx-a11y/no-noninteractive-element-interactions: off
+  jsx-a11y/no-static-element-interactions: off
+
+  #
+  # Bellow are rule from the AirBnB
+  # template we probably want to keep enabled.
+  # We just need to check and fix them one by one.
+  #
+  class-methods-use-this: off
+  import/no-duplicates: off
+  no-case-declarations: off
+  no-empty: off
+  no-inner-declarations: off
+  no-mixed-operators: off
+  no-prototype-builtins: off
+  no-restricted-syntax: off
+  no-return-assign: off
+  no-template-curly-in-string: off
+  no-undef: off
+  no-underscore-dangle: off
+  no-unused-expressions: off
+  no-useless-escape: off
+  one-var: off
+  prefer-const: off
+  radix: off
+  react/no-unescaped-entities: off
+  react/no-unused-state: off
+  react/sort-comp: off
+

@@ -26,6 +26,7 @@ function parseAssignment(e) {
             }, left.offset + right.offset + 1);
         }
     }
+    return null;
 }
 
 function parseExpression(e, end, trim = Trim.BOTH) {
@@ -40,12 +41,13 @@ function parseExpression(e, end, trim = Trim.BOTH) {
         const rTrim = trim & Trim.RIGHT;
         if (rTrim === Trim.RIGHT) {
             while (e[offset] === ' ')
-                offset++;
+                offset += 1;
         }
 
         if (e[offset] === end)
             return res;
     }
+    return null;
 }
 
 const ID_RE = [];
@@ -62,6 +64,7 @@ function parseIdentifier(e, trim) {
             value: m[1]
         }, m[0].length);
     }
+    return null;
 }
 
 const INDEX_RE = [];
@@ -78,6 +81,7 @@ function parseIndex(e, trim) {
             value: parseInt(m[1])
         }, m[0].length);
     }
+    return null;
 }
 
 function parseDotExpr(e, end, trim) {
@@ -94,12 +98,14 @@ function parseDotExpr(e, end, trim) {
             }, left.offset + 1 + right.offset);
         }
     }
+    return null;
 }
 
 function parseCall(e, trim) {
     const left = parseIdentifier(e, trim | Trim.RIGHT);
     if (left) {
-        let res, target;
+        let res,
+            target;
         let offset = left.offset;
         do {
             const e_s = e.substr(offset);
@@ -110,22 +116,22 @@ function parseCall(e, trim) {
                 offset += target.offset;
                 let tCount = 0;
                 while (e[offset] === ' ') {
-                    offset++;
-                    tCount++;
+                    offset += 1;
+                    tCount += 1;
                 }
                 if (tCount > 0 && e[offset] === '.') {
-                    return;
+                    return null;
                 }
                 if (brackets) {
                     res = {
                         type: T.ARRAY_EXPR,
-                        left: res ? res : left.node,
+                        left: res || left.node,
                         right: brackets.node
                     };
                 } else {
                     res = {
                         type: T.FUNC_CALL,
-                        left: res ? res : left.node,
+                        left: res || left.node,
                         args: args.node
                     };
                 }
@@ -136,6 +142,7 @@ function parseCall(e, trim) {
             return OK(res, offset);
         }
     }
+    return null;
 }
 
 function parseBrackets(e) {
@@ -146,12 +153,14 @@ function parseBrackets(e) {
             return OK(content.node, content.offset + 2);
         }
     }
+    return null;
 }
 
 function parseArgumentList(e) {
     if (e[0] === '(') {
         let offset = 1;
-        let args = [];
+        const args = [];
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             const e_arg = e.substr(offset);
             const arg = parseExpression(e_arg, ',', Trim.BOTH);
@@ -170,12 +179,13 @@ function parseArgumentList(e) {
             return OK(args, offset);
         } else if (args.length === 0) {
             while (e[offset] === ' ') {
-                offset++;
+                offset += 1;
             }
             if (e[offset] === ')') {
-                offset++;
+                offset += 1;
                 return OK(args, offset);
             }
         }
     }
+    return null;
 }

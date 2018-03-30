@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const bg_style = {
     position: 'absolute',
@@ -44,8 +44,7 @@ export default class Popup extends React.Component {
                     })}
                 </div>
             </div>;
-        } else {
-            return null;
         }
+        return null;
     }
 }

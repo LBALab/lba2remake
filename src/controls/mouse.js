@@ -36,22 +36,22 @@ function handleMouseEvent(controls, game, event: MouseEvent) {
 
         euler.setFromQuaternion(game.controlsState.cameraHeadOrientation, 'YXZ');
         euler.y = 0;
-        euler.x = Math.min(Math.max(euler.x - movementY * 0.002, -MAX_X_ANGLE), MAX_X_ANGLE);
+        euler.x = Math.min(Math.max(euler.x - (movementY * 0.002), -MAX_X_ANGLE), MAX_X_ANGLE);
         game.controlsState.cameraHeadOrientation.setFromEuler(euler);
 
         euler.setFromQuaternion(game.controlsState.cameraOrientation, 'YXZ');
         euler.x = 0;
-        euler.y = euler.y - movementX * 0.002;
+        euler.y -= movementX * 0.002;
         game.controlsState.cameraOrientation.setFromEuler(euler);
     }
 }
 
 function pointerLockChanged(controls) {
-    controls.enabled = (document: any).pointerLockElement == document.body;
+    controls.enabled = (document: any).pointerLockElement === document.body;
 }
 
 function handleClick(params, game) {
     if (document.body.requestPointerLock && (!params.editor || game.controlsState.freeCamera)) {
-        document.body.requestPointerLock()
+        document.body.requestPointerLock();
     }
 }

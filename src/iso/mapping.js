@@ -14,7 +14,7 @@ export function loadBricksMapping(layouts, bricks, palette) {
                 map(layouts, ({blocks}) => map(blocks, block => block.brick))
             )
         ),
-        idx => idx != 0
+        idx => idx !== 0
     );
     const bricksMap = {};
     const {width, height} = computeTextureSize(usedBricks.length);
@@ -27,8 +27,8 @@ export function loadBricksMapping(layouts, bricks, palette) {
             v: offsetY
         };
         const pixels = bricks[brick - 1];
-        for (let y = 0; y < 38; ++y) {
-            for (let x = 0; x < 48; ++x) {
+        for (let y = 0; y < 38; y += 1) {
+            for (let x = 0; x < 48; x += 1) {
                 const src_i = y * 48 + (47 - x);
                 const tgt_i = (y + offsetY) * width + x + offsetX;
 
@@ -54,8 +54,8 @@ export function loadBricksMapping(layouts, bricks, palette) {
     texture.needsUpdate = true;
     texture.generateMipmaps = false;
     return {
-        texture: texture,
-        bricksMap: bricksMap
+        texture,
+        bricksMap
     };
 }
 

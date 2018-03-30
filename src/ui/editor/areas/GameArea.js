@@ -1,10 +1,9 @@
-import React from 'react';
-import Game from '../../Game';
 import {clone} from 'lodash';
+import Game from '../../Game';
 import ScriptEditorArea from './ScriptEditorArea';
 import DebugHUDArea from './DebugHUDArea';
 import {SceneOutliner, Locator} from './OutlinerArea';
-import {GameMenu} from "./GameArea/menu";
+import {GameMenu} from './GameArea/menu';
 import {Orientation, Type} from '../layout';
 
 const GameArea = {
@@ -22,7 +21,7 @@ const GameArea = {
         }
     }),
     stateHandler: {
-        setLabel: function (type, value) {
+        setLabel(type, value) {
             const labels = clone(this.state.labels);
             labels[type] = value;
             this.setState({labels});

@@ -17,7 +17,6 @@ const baseStyle = {
 export default function FoundObject(props) {
     if (props.foundObject !== null) {
         return <div style={baseStyle}/>;
-    } else {
-        return null;
     }
+    return null;
 }

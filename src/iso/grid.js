@@ -13,38 +13,44 @@ export function loadGrid(bkg, bricks, palette, entry) {
     }
     const library = loadLibrary(bkg, bricks, palette, libIndex);
     return {
-        library: library,
+        library,
         cells: map(offsets, (offset, idx) => {
             const blocks = [];
-            const numColumns = gridData.getUint8(offset++);
+            const numColumns = gridData.getUint8(offset);
+            offset += 1;
             const columns = [];
             let baseHeight = 0;
-            for (let i = 0; i < numColumns; ++i) {
-                const flags = gridData.getUint8(offset++);
+            for (let i = 0; i < numColumns; i += 1) {
+                const flags = gridData.getUint8(offset);
+                offset += 1;
                 const type = bits(flags, 6, 2);
                 const height = bits(flags, 0, 5) + 1;
+
                 const block = type === 2 ? {
-                    layout: gridData.getUint8(offset++) - 1,
-                    block: gridData.getUint8(offset++)
+                    layout: gridData.getUint8(offset) - 1,
+                    block: gridData.getUint8(offset + 1)
                 } : null;
 
-                for (let j = 0; j < height; ++j) {
+                if (block)
+                    offset += 2;
+
+                for (let j = 0; j < height; j += 1) {
                     switch (type) {
                         case 0:
                             blocks.push(null);
                             break;
                         case 1:
                             blocks.push({
-                                layout: gridData.getUint8(offset++) - 1,
-                                block: gridData.getUint8(offset++)
+                                layout: gridData.getUint8(offset) - 1,
+                                block: gridData.getUint8(offset + 1)
                             });
+                            offset += 2;
                             break;
                         case 2:
                             blocks.push(block);
                             break;
                         case 3:
-                            console.error('Shouldn\'t be here');
-                            break;
+                            throw new Error('Unsupported block type');
                     }
                 }
                 if (type !== 0) {
@@ -55,8 +61,16 @@ export function loadGrid(bkg, bricks, palette, entry) {
                     columns.push({
                         shape: (blockData && blockData.shape) || 1,
                         box: new THREE.Box3(
-                            new THREE.Vector3((63 - x) / 32, baseHeight / 64, z / 32),
-                            new THREE.Vector3((64 - x) / 32, (baseHeight + height) / 64, (z + 1) / 32)
+                            new THREE.Vector3(
+                                (63 - x) / 32,
+                                baseHeight / 64,
+                                z / 32
+                            ),
+                            new THREE.Vector3(
+                                (64 - x) / 32,
+                                (baseHeight + height) / 64,
+                                (z + 1) / 32
+                            )
                         ),
                         sound: (blockData && blockData.sound) || -1
                     });
@@ -65,7 +79,7 @@ export function loadGrid(bkg, bricks, palette, entry) {
             }
             return {
                 build: buildCell.bind(null, library, blocks),
-                columns: columns
+                columns
             };
         })
     };
@@ -76,6 +90,7 @@ function getBlockData(library, block) {
     if (layout) {
         return layout.blocks[block.block];
     }
+    return null;
 }
 
 const libraries = [];
@@ -83,27 +98,27 @@ const libraries = [];
 function loadLibrary(bkg, bricks, palette, entry) {
     if (libraries[entry]) {
         return libraries[entry];
-    } else {
-        const buffer = bkg.getEntry(179 + entry);
-        const dataView = new DataView(buffer);
-        const numLayouts = dataView.getUint32(0, true) / 4;
-        const layouts = [];
-        for (let i = 0; i < numLayouts; ++i) {
-            const offset = dataView.getUint32(i * 4, true);
-            const nextOffset = i == numLayouts - 1 ? dataView.byteLength : dataView.getUint32((i + 1) * 4, true);
-            const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
-            layouts.push(loadLayout(layoutDataView));
-        }
-        const mapping = loadBricksMapping(layouts, bricks, palette);
-        const library = {
-            texture: mapping.texture,
-            bricksMap: mapping.bricksMap,
-            layouts: layouts
-        };
-        libraries[entry] = library;
-        return library;
     }
-
+    const buffer = bkg.getEntry(179 + entry);
+    const dataView = new DataView(buffer);
+    const numLayouts = dataView.getUint32(0, true) / 4;
+    const layouts = [];
+    for (let i = 0; i < numLayouts; i += 1) {
+        const offset = dataView.getUint32(i * 4, true);
+        const nextOffset = i === numLayouts - 1 ?
+            dataView.byteLength
+            : dataView.getUint32((i + 1) * 4, true);
+        const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
+        layouts.push(loadLayout(layoutDataView));
+    }
+    const mapping = loadBricksMapping(layouts, bricks, palette);
+    const library = {
+        texture: mapping.texture,
+        bricksMap: mapping.bricksMap,
+        layouts
+    };
+    libraries[entry] = library;
+    return library;
 }
 
 function loadLayout(dataView) {
@@ -113,7 +128,7 @@ function loadLayout(dataView) {
     const numBricks = nX * nY * nZ;
     const blocks = [];
     const offset = 3;
-    for (let i = 0; i < numBricks; ++i) {
+    for (let i = 0; i < numBricks; i += 1) {
         const type = dataView.getUint8(offset + i * 4 + 1);
         blocks.push({
             shape: dataView.getUint8(offset + i * 4),
@@ -123,10 +138,10 @@ function loadLayout(dataView) {
         });
     }
     return {
-        nX: nX,
-        nY: nY,
-        nZ: nZ,
-        blocks: blocks
+        nX,
+        nY,
+        nZ,
+        blocks
     };
 }
 
@@ -134,7 +149,7 @@ function buildCell(library, blocks, geometries, x, z) {
     const h = 0.5;
     const {positions, centers, tiles} = geometries;
     const {width, height} = library.texture.image;
-    for (let yIdx = 0; yIdx < blocks.length; ++yIdx) {
+    for (let yIdx = 0; yIdx < blocks.length; yIdx += 1) {
         const y = yIdx * h + h;
         if (blocks[yIdx]) {
             const layout = library.layouts[blocks[yIdx].layout];
