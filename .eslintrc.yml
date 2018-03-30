@@ -57,3 +57,30 @@ rules:
   jsx-a11y/no-autofocus: off
   jsx-a11y/no-noninteractive-element-interactions: off
   jsx-a11y/no-static-element-interactions: off
+
+  #
+  # Bellow are rule from the AirBnB
+  # template we probably want to keep enabled.
+  # We just need to check and fix them one by one.
+  #
+  class-methods-use-this: off
+  import/no-duplicates: off
+  no-case-declarations: off
+  no-empty: off
+  no-inner-declarations: off
+  no-mixed-operators: off
+  no-prototype-builtins: off
+  no-restricted-syntax: off
+  no-return-assign: off
+  no-template-curly-in-string: off
+  no-undef: off
+  no-underscore-dangle: off
+  no-unused-expressions: off
+  no-useless-escape: off
+  one-var: off
+  prefer-const: off
+  radix: off
+  react/no-unescaped-entities: off
+  react/no-unused-state: off
+  react/sort-comp: off
+
