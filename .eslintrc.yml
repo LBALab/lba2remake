@@ -77,8 +77,6 @@ rules:
   no-underscore-dangle: off
   no-unused-expressions: off
   no-useless-escape: off
-  one-var: off
-  prefer-const: off
   radix: off
   react/no-unescaped-entities: off
   react/no-unused-state: off

@@ -154,7 +154,8 @@ function parseArguments(state, script, op, cmd) {
 }
 
 function parseValue(state, script, spec) {
-    let [type, lbaType] = spec.split(':');
+    const [t, lbaType] = spec.split(':');
+    let type = t;
     let hide = false;
     if (type[0] === '_') {
         type = type.substr(1);

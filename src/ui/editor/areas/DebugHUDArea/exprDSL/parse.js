@@ -104,8 +104,8 @@ function parseDotExpr(e, end, trim) {
 function parseCall(e, trim) {
     const left = parseIdentifier(e, trim | Trim.RIGHT);
     if (left) {
-        let res,
-            target;
+        let res;
+        let target;
         let offset = left.offset;
         do {
             const e_s = e.substr(offset);

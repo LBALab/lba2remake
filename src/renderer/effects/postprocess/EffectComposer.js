@@ -53,9 +53,9 @@ EffectComposer.prototype = {
 
         const maskActive = false;
 
-        let pass,
-            i,
-            il = this.passes.length;
+        let pass;
+        let i;
+        const il = this.passes.length;
 
         for (i = 0; i < il; i += 1) {
             pass = this.passes[i];

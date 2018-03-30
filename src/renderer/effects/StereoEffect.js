@@ -41,8 +41,8 @@ function StereoEffect(renderer) {
 
     // internals
 
-    let _width,
-        _height;
+    let _width;
+    let _height;
 
     const _position = new THREE.Vector3();
     const _quaternion = new THREE.Quaternion();
@@ -52,15 +52,15 @@ function StereoEffect(renderer) {
     const _cameraR = new THREE.PerspectiveCamera();
 
     let _fov;
-    let _outer,
-        _inner,
-        _top,
-        _bottom;
-    let _ndfl,
-        _halfFocalWidth,
-        _halfFocalHeight;
-    let _innerFactor,
-        _outerFactor;
+    let _outer;
+    let _inner;
+    let _top;
+    let _bottom;
+    let _ndfl;
+    let _halfFocalWidth;
+    let _halfFocalHeight;
+    let _innerFactor;
+    let _outerFactor;
 
     // initialization
 

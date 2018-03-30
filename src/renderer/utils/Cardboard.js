@@ -49,9 +49,9 @@ function uriToParamsProto(uri) {
 
 // Returns plain object having only properties of interest.
 function uriToParams(uri) {
-    let source = uriToParamsProto(uri),
-        dest = {},
-        k;
+    const source = uriToParamsProto(uri);
+    const dest = {};
+    let k;
     for (k in source) {
         if (source.hasOwnProperty(k)) {
             dest[k] = source[k];
