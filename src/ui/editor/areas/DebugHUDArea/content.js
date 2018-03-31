@@ -119,7 +119,9 @@ export default class DebugHUD extends FrameListener {
         return <div style={headerStyle}>
             <input
                 key="exprInput"
-                ref={ref => this.input = ref}
+                ref={(ref) => {
+                    this.input = ref;
+                }}
                 style={inputStyle}
                 list="dbgHUD_completion"
                 spellCheck={false}
@@ -163,7 +165,7 @@ export default class DebugHUD extends FrameListener {
         const saveConfirm = (name) => {
             const confirm = this.props.confirmPopup.bind(
                 null,
-                <span>Are you sure you want to overwrite profile "<i>{name}</i>"?</span>,
+                <span>Are you sure you want to overwrite profile &quot;<i>{name}</i>&quot;?</span>,
                 'Yes',
                 'No'
             );

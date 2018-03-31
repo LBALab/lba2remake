@@ -341,7 +341,9 @@ function loadLayout(editor, mode) {
     if (data) {
         try {
             layout = JSON.parse(data);
-        } catch (e) {}
+        } catch (e) {
+            // continue regardless of error
+        }
     }
     if (!layout) {
         const mainArea = findAreaContentById(mode);

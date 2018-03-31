@@ -30,7 +30,9 @@ export function checkAuth(callback) {
         if (raw_auth) {
             auth = JSON.parse(raw_auth);
         }
-    } catch (e) {}
+    } catch (e) {
+        // continue regardless of error
+    }
 
     if (auth) {
         callback(auth);
@@ -119,7 +121,8 @@ class AuthPopup extends React.Component {
                 <input type="checkbox" onChange={this.onChange.bind(this, 'nocredit')} checked={auth.nocredit}/>
                 <label style={{paddingLeft: 10}}>
                     I DO NOT want to be credited for my contributions<br/>
-                    (only check this if you don't want your name to appear in our contributor list)
+                    (only check this if you don&apos;t want your name
+                    to appear in our contributor list)
                 </label>
             </div>
             <br/>

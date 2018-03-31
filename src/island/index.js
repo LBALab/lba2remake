@@ -187,11 +187,15 @@ function updateShadows(baseScene, matByName) {
         const shadow = shadows[i];
         const {ground_colored, ground_textured} = matByName;
         if (shadow) {
-            ground_colored && ground_colored.uniforms.actorPos.value[i].fromArray(shadow.data);
-            ground_textured && ground_textured.uniforms.actorPos.value[i].fromArray(shadow.data);
+            if (ground_colored)
+                ground_colored.uniforms.actorPos.value[i].fromArray(shadow.data);
+            if (ground_textured)
+                ground_textured.uniforms.actorPos.value[i].fromArray(shadow.data);
         } else {
-            ground_colored && (ground_colored.uniforms.actorPos.value[i].w = 0);
-            ground_textured && (ground_textured.uniforms.actorPos.value[i].w = 0);
+            if (ground_colored)
+                (ground_colored.uniforms.actorPos.value[i].w = 0);
+            if (ground_textured)
+                (ground_textured.uniforms.actorPos.value[i].w = 0);
         }
     }
 }

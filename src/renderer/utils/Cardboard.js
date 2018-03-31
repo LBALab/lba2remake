@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import {clone} from 'lodash';
 import ProtoBuf from 'protobufjs';
 import CardboardDeviceProto from './CardboardDevice.proto';
 
@@ -50,14 +50,7 @@ function uriToParamsProto(uri) {
 // Returns plain object having only properties of interest.
 function uriToParams(uri) {
     const source = uriToParamsProto(uri);
-    const dest = {};
-    let k;
-    for (k in source) {
-        if (source.hasOwnProperty(k)) {
-            dest[k] = source[k];
-        }
-    }
-    return dest;
+    return clone(source);
 }
 
 export default {

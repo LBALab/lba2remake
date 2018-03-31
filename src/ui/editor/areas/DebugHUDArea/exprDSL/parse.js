@@ -78,7 +78,7 @@ function parseIndex(e, trim) {
     if (m) {
         return OK({
             type: T.INDEX,
-            value: parseInt(m[1])
+            value: Number(m[1])
         }, m[0].length);
     }
     return null;
@@ -104,7 +104,7 @@ function parseDotExpr(e, end, trim) {
 function parseCall(e, trim) {
     const left = parseIdentifier(e, trim | Trim.RIGHT);
     if (left) {
-        let res;
+        let res = null;
         let target;
         let offset = left.offset;
         do {

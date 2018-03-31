@@ -162,7 +162,9 @@ export function loadSceneMetaData(sceneIndex, callback) {
         if (this.status === 200) {
             try {
                 DebugData.metadata.scenes[sceneIndex] = JSON.parse(request.response);
-            } catch (e) {}
+            } catch (e) {
+                // continue regardless of error
+            }
         }
         callback();
     };
@@ -197,7 +199,9 @@ export function loadGameMetaData() {
         if (this.status === 200) {
             try {
                 DebugData.metadata.game = JSON.parse(request.response);
-            } catch (e) {}
+            } catch (e) {
+                // continue regardless of error
+            }
         }
     };
 

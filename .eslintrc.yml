@@ -13,13 +13,19 @@ rules:
     - SwitchCase: 1
       FunctionDeclaration:
         parameters: first
+
+  linebreak-style: off
   curly: off
   comma-dangle: off
   prefer-destructuring: off
   default-case: off
   function-paren-newline: off
   camelcase: off
-  linebreak-style: off
+
+  class-methods-use-this: off
+
+  object-curly-spacing: off
+  object-curly-newline: off
 
   no-lonely-if: off
   no-continue: off
@@ -30,6 +36,7 @@ rules:
   no-nested-ternary: off
   no-restricted-globals: off
   no-restricted-properties: off
+  no-useless-escape: off
 
   react/jsx-indent:
     - error
@@ -38,17 +45,15 @@ rules:
     - error
     - 4
   react/jsx-closing-tag-location: off
-  react/prop-types: off
   react/jsx-wrap-multilines: off
   react/jsx-tag-spacing: off
   react/jsx-filename-extension: off
   react/jsx-no-bind: off
+  react/prop-types: off
+  react/sort-comp: off
 
   import/no-named-as-default-member: off
   import/prefer-default-export: off
-
-  object-curly-spacing: off
-  object-curly-newline: off
 
   # Accessibility - disabled for now
   jsx-a11y/alt-text: off
@@ -59,26 +64,6 @@ rules:
   jsx-a11y/no-noninteractive-element-interactions: off
   jsx-a11y/no-static-element-interactions: off
 
-  #
-  # Bellow are rule from the AirBnB
-  # template we probably want to keep enabled.
-  # We just need to check and fix them one by one.
-  #
-  class-methods-use-this: off
-  import/no-duplicates: off
-  no-empty: off
-  no-inner-declarations: off
+  # Ideally we want to have this enabled.
+  # It causes many errors to fix, though
   no-mixed-operators: off
-  no-prototype-builtins: off
-  no-restricted-syntax: off
-  no-return-assign: off
-  no-template-curly-in-string: off
-  no-undef: off
-  no-underscore-dangle: off
-  no-unused-expressions: off
-  no-useless-escape: off
-  radix: off
-  react/no-unescaped-entities: off
-  react/no-unused-state: off
-  react/sort-comp: off
-

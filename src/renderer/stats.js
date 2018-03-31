@@ -7,10 +7,14 @@ export default function setupStats(pUseVR) {
     useVR = pUseVR;
     return {
         begin: () => {
-            stats && stats.begin();
+            if (stats) {
+                stats.begin();
+            }
         },
         end: () => {
-            stats && stats.end();
+            if (stats) {
+                stats.end();
+            }
         }
     };
 }

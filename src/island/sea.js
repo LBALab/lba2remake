@@ -1,4 +1,4 @@
-import {each} from 'lodash';
+import {each, every} from 'lodash';
 
 const push = Array.prototype.push;
 
@@ -110,7 +110,7 @@ function getTriangleType(section, isShore, usedTile, x, z, tx, tz, n) {
 }
 
 function isSurrounded(usedTile, x, z) {
-    return _.every([
+    return every([
         isUsed(usedTile, x - 1, z - 1),
         isUsed(usedTile, x - 1, z),
         isUsed(usedTile, x - 1, z + 1),

@@ -258,10 +258,10 @@ export default class ScriptEditor extends FrameListener {
             opacity: 1,
         };
 
-        return <div ref={ref => this.rootRef = ref} style={{fullscreen}}>
+        return <div ref={(ref) => { this.rootRef = ref; }} style={{fullscreen}}>
             {this.renderListing('life', splitAt)}
             {this.renderListing('move', splitAt)}
-            <div ref={ref => this.separatorRef = ref} style={separator}>
+            <div ref={(ref) => { this.separatorRef = ref; }} style={separator}>
                 <div style={sepInnerLine}/>
             </div>
         </div>;
@@ -308,10 +308,10 @@ export default class ScriptEditor extends FrameListener {
             top: 0
         };
         return <div style={scriptStyle[type](splitAt)}>
-            <div ref={ref => this.lineCmds[type] = ref} style={commandsStyle}>
+            <div ref={(ref) => { this.lineCmds[type] = ref; }} style={commandsStyle}>
                 {commands}
             </div>
-            <div ref={ref => this.lineNumbers[type] = ref} style={lineNumberStyle}>
+            <div ref={(ref) => { this.lineNumbers[type] = ref; }} style={lineNumberStyle}>
                 {lineNumbers}
             </div>
         </div>;

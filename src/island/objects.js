@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {each} from 'lodash';
 import {bits} from '../utils';
 
 const push = Array.prototype.push;
@@ -142,9 +143,9 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
             addVertex(j);
         }
         if (section.pointsPerFace === 4) {
-            for (const j of [0, 2, 3]) {
+            each([0, 2, 3], (j) => {
                 addVertex(j);
-            }
+            });
         }
     }
     bb.min.divideScalar(0x4000);

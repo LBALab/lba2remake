@@ -76,12 +76,12 @@ function loadMesh(index, sprite) {
     };
 
     // faces
-    for (const j of [0, 1, 2]) {
+    each([0, 1, 2], (j) => {
         addVertex(j);
-    }
-    for (const j of [0, 2, 3]) {
+    });
+    each([0, 2, 3], (j) => {
         addVertex(j);
-    }
+    });
 
     const bufferGeometry = new THREE.BufferGeometry();
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));

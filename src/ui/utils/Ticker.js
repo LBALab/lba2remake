@@ -24,7 +24,9 @@ export default class Ticker {
         const that = this;
         function frame() {
             each(that.listeners, (component) => {
-                component && component.frame();
+                if (component) {
+                    component.frame();
+                }
             });
             requestAnimationFrame(frame);
         }

@@ -33,7 +33,7 @@ export class ScriptMenu extends FrameListener {
 
     render() {
         const onChange = (e) => {
-            this.props.stateHandler.setActor(parseInt(e.target.value));
+            this.props.stateHandler.setActor(Number(e.target.value));
         };
 
         const togglePause = () => {

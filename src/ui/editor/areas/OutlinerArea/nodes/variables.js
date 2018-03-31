@@ -9,20 +9,21 @@ import {
     clone,
     concat
 } from 'lodash';
-import {
+import DebugData, * as DBG from '../../../DebugData';
+import {loadSceneData} from '../../../../../scene';
+import {parseScript} from '../../../../../scripting/parser';
+import {Orientation} from '../../../layout';
+import {makeOutlinerArea} from '../factory';
+import {LocationsNode} from './locations';
+import {editor as editorStyle} from '../../../../styles';
+
+const {
     getObjectName,
     getVarInfo,
     getVarName,
     loadSceneMetaData,
     renameVar
-} from '../../../DebugData';
-import {loadSceneData} from '../../../../../scene';
-import {parseScript} from '../../../../../scripting/parser';
-import DebugData from '../../../DebugData';
-import {Orientation} from '../../../layout';
-import {makeOutlinerArea} from '../factory';
-import {LocationsNode} from './locations';
-import {editor as editorStyle} from '../../../../styles';
+} = DBG;
 
 export function formatVar(varDef, value) {
     const info = getVarInfo(varDef);
@@ -72,10 +73,10 @@ export const Var = {
                     const info = getVarInfo(varDef);
                     const actualValue = varDef.value();
                     if (info && info.type === 'enum') {
-                        function onChange(e) {
+                        const onChange = (e) => {
                             delete varEdits[varDef.key];
-                            varDef.edit(parseInt(e.target.value));
-                        }
+                            varDef.edit(Number(e.target.value));
+                        };
                         return <select
                             autoFocus
                             value={varDef.value()}
@@ -92,23 +93,27 @@ export const Var = {
                                 </option>)}
                         </select>;
                     }
-                    function onKeyDown(event) {
+                    const onKeyDown = (event) => {
                         event.stopPropagation();
                         const key = event.code || event.which || event.keyCode;
                         if (key === 'Enter' || key === 13) {
                             event.preventDefault();
                             delete varEdits[varDef.key];
-                            const v = parseInt(event.target.value);
+                            const v = Number(event.target.value);
                             if (!Number.isNaN(v))
                                 varDef.edit(v);
                         }
-                    }
-                    function close() {
+                    };
+                    const close = () => {
                         delete varEdits[varDef.key];
-                    }
+                    };
                     return <input
                         type="number"
-                        ref={ref => (ref ? ref.value = varDef.value() : null)}
+                        ref={(ref) => {
+                            if (ref) {
+                                ref.value = varDef.value();
+                            }
+                        }}
                         min={0}
                         max={255}
                         step={1}

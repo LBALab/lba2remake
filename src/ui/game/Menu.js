@@ -1,5 +1,5 @@
 import React from 'react';
-import {extend, map, each} from 'lodash';
+import {extend, map, each, filter} from 'lodash';
 
 import {fullscreen} from '../styles/index';
 
@@ -47,8 +47,7 @@ export default class Menu extends React.Component {
         this.listener = this.listener.bind(this);
         this.state = {
             selectedIndex: 0,
-            items: null,
-            inGameMenu: false
+            items: null
         };
     }
 
@@ -60,11 +59,11 @@ export default class Menu extends React.Component {
         if (newProps.texts) {
             const menu = menuItems;
             menu[0].isVisible = newProps.inGameMenu;
-            const items = _.filter(menu, 'isVisible');
+            const items = filter(menu, 'isVisible');
             each(items, (i) => {
                 i.text = newProps.texts[i.index].value;
             });
-            this.setState({items, selectedIndex: 0, inGameMenu: newProps.inGameMenu});
+            this.setState({items, selectedIndex: 0});
         }
     }
 

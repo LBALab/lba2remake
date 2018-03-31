@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import _ from 'lodash';
+import {each} from 'lodash';
 
 import VERT_COLORED from './shaders/colored.vert.glsl';
 import FRAG_COLORED from './shaders/colored.frag.glsl';
@@ -103,7 +103,7 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
     );
     const object = new THREE.Object3D();
 
-    _.each(geometries, (geom, name) => {
+    each(geometries, (geom, name) => {
         const {
             positions,
             uvs,
@@ -166,7 +166,7 @@ function loadGeometry(body, texture, bones, matrixRotation, palette, envInfo, am
 }
 
 function loadFaceGeometry(geometries, body) {
-    _.each(body.polygons, (p) => {
+    each(body.polygons, (p) => {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
             if (p.hasTransparency) {
@@ -195,15 +195,15 @@ function loadFaceGeometry(geometries, body) {
             addVertex(j);
         }
         if (p.numVertex === 4) { // quad
-            for (const j of [0, 2, 3]) {
+            each([0, 2, 3], (j) => {
                 addVertex(j);
-            }
+            });
         }
     });
 }
 
 function loadSphereGeometry(geometries, body) {
-    _.each(body.spheres, (s) => {
+    each(body.spheres, (s) => {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
         const normal = getNormal(body, s.vertex);
@@ -219,7 +219,7 @@ function loadSphereGeometry(geometries, body) {
             geometries.colored.colors.push(s.colour);
         };
 
-        _.each(sphereGeometry.faces, (f) => {
+        each(sphereGeometry.faces, (f) => {
             addVertex(f.a);
             addVertex(f.b);
             addVertex(f.c);
@@ -228,7 +228,7 @@ function loadSphereGeometry(geometries, body) {
 }
 
 function loadLineGeometry(geometries, body) {
-    _.each(body.lines, (l) => {
+    each(body.lines, (l) => {
         const addVertex = (c, i) => {
             push.apply(geometries.colored.linePositions, getPosition(body, i));
             push.apply(geometries.colored.lineNormals, getNormal(body, i));
@@ -243,7 +243,7 @@ function loadLineGeometry(geometries, body) {
 
 // eslint-disable-next-line no-unused-vars
 function debugBoneGeometry(geometries, body) {
-    _.each(body.bones, (s) => {
+    each(body.bones, (s) => {
         const centerPos = getPosition(body, s.vertex);
         const sphereGeometry = new THREE.SphereGeometry(0.001, 8, 8);
 
@@ -253,11 +253,11 @@ function debugBoneGeometry(geometries, body) {
                 sphereGeometry.vertices[j].y + centerPos[1],
                 sphereGeometry.vertices[j].z + centerPos[2]
             ]);
-            push.apply(geometries.colored.bones, getBone(object, s.vertex));
+            push.apply(geometries.colored.bones, getBone(body, s.vertex));
             geometries.colored.colors.push((s.parent === 0xFFFF) ? 0 : 255);
         };
 
-        _.each(sphereGeometry.faces, (f) => {
+        each(sphereGeometry.faces, (f) => {
             addVertex(f.a);
             addVertex(f.b);
             addVertex(f.c);

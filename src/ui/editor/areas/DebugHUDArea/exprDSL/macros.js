@@ -9,9 +9,11 @@ export function map(args, scopes, userMacros) {
     checkArgType('map', left, 0, ['array']);
     const tgt = _.map(left, s =>
         (s !== undefined ? execute(args[1], _.concat(scopes, s), userMacros) : undefined));
+    /* eslint-disable no-underscore-dangle */
     if (left.__filtered__) {
         tgt.__filtered__ = true;
     }
+    /* eslint-enable no-underscore-dangle */
     return tgt;
 }
 
@@ -26,6 +28,7 @@ export function filter(args, scopes, userMacros) {
         }
         return null;
     });
+    // eslint-disable-next-line no-underscore-dangle
     tgt.__filtered__ = true;
     return tgt;
 }
@@ -36,6 +39,7 @@ export function sort(args, scopes, userMacros) {
     checkArgType('sort', left, 0, ['array']);
     const tgt = _.filter(_.map(left, (value, idx) => ({idx, value})), v => v.value !== undefined);
     tgt.sort((a, b) => a.value - b.value);
+    // eslint-disable-next-line no-underscore-dangle
     tgt.__sorted__ = true;
     return tgt;
 }

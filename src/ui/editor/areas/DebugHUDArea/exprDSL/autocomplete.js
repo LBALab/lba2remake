@@ -23,7 +23,8 @@ export default function autoComplete(cmd, scope) {
     }
     if (!cmd) {
         const values = map(scope, (value, key) => key);
-        return CACHE[baseCmd] = values;
+        CACHE[baseCmd] = values;
+        return values;
     }
     const ast = cmd.length > 0 ? parse(cmd) : scope;
     if (ast) {
@@ -42,9 +43,11 @@ export default function autoComplete(cmd, scope) {
             }
             values = completeScope(cmd, filteredScope);
         }
-        return CACHE[baseCmd] = values;
+        CACHE[baseCmd] = values;
+        return values;
     }
-    return CACHE[baseCmd] = [];
+    CACHE[baseCmd] = [];
+    return CACHE[baseCmd];
 }
 
 function completeScope(cmd, scope) {
@@ -75,6 +78,8 @@ function findLastValidScopeAndId(ast, scope) {
 function safeExecute(ast, scopes) {
     try {
         return execute(ast, scopes);
-    } catch (e) {}
+    } catch (e) {
+        // continue regardless of error
+    }
     return null;
 }

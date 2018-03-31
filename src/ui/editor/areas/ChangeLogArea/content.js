@@ -38,7 +38,9 @@ function loadChangeLog(callback) {
         if (this.status === 200) {
             try {
                 callback(request.response);
-            } catch (e) {}
+            } catch (e) {
+                // continue regardless of error
+            }
         }
     };
 

@@ -34,7 +34,7 @@ function Value({expr, value, root = true, addExpression}) {
         return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>null</span>;
     }
     if (typeof (value) === 'string') {
-        return <span style={{color: 'orange'}}>'{value}'</span>;
+        return <span style={{color: 'orange'}}>&apos;{value}&apos;</span>;
     }
     if (typeof (value) === 'boolean') {
         return <span style={{color: value ? 'lime' : 'red', fontStyle: 'italic'}}>{value ? 'true' : 'false'}</span>;
@@ -96,13 +96,15 @@ function Value({expr, value, root = true, addExpression}) {
 
 function mapArray(expr, array, addExpression) {
     let tgt;
+    /* eslint-disable no-underscore-dangle */
     const filtered = array.__filtered__;
     const sorted = array.__sorted__;
+    /* eslint-enable no-underscore-dangle */
     const arrayEntry = (value, key) =>
         <span key={key} style={{cursor: 'pointer'}} onClick={addExpression.bind(null, `${expr.expr}[${key}]`)}>
             &nbsp;
             &nbsp;
-            <span title="${expr}[${key}]">
+            <span>
                 [<span style={{color: 'mediumpurple'}}>{key}</span>]
             </span>
             : <Value expr={expr} value={value} root={false} />
@@ -143,7 +145,7 @@ function Quat({quat}) {
 function Euler({euler}) {
     const mapComp = (n, i) => <span key={i} style={{color: ARRAY_COLOR[i]}}>{n.toFixed(3)}</span>;
     const components = intersperse(map(take(euler.toArray(), 3), mapComp), ', ');
-    const order = <span style={{color: 'orange'}}>"{euler.order}"</span>;
+    const order = <span style={{color: 'orange'}}>&quot;{euler.order}&quot;</span>;
     return <span>Euler({components}, {order})</span>;
 }
 
