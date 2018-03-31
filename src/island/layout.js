@@ -23,12 +23,12 @@ function loadGroundSections(ile) {
                 index,
                 x: (16 - x) - 8,
                 z: z - 8,
-                objInfo: parseObjectsInfo(ile.getEntry(id * 6 - 3)),
-                objects: new DataView(ile.getEntry(id * 6 - 2)),
-                triangles: new Uint32Array(ile.getEntry(id * 6 - 1)),
+                objInfo: parseObjectsInfo(ile.getEntry((id * 6) - 3)),
+                objects: new DataView(ile.getEntry((id * 6) - 2)),
+                triangles: new Uint32Array(ile.getEntry((id * 6) - 1)),
                 textureInfo: new Uint8Array(ile.getEntry(id * 6)),
-                heightmap: new Uint16Array(ile.getEntry(id * 6 + 1)),
-                intensity: new Uint8Array(ile.getEntry(id * 6 + 2))
+                heightmap: new Uint16Array(ile.getEntry((id * 6) + 1)),
+                intensity: new Uint8Array(ile.getEntry((id * 6) + 2))
             });
             index += 1;
         }
@@ -76,7 +76,7 @@ function computeDistanceFromGround(groundSections, x, z) {
         for (let i = 0; i < 4; i += 1) {
             const dx = Math.floor(i / 2);
             const dz = i % 2;
-            const length = Math.sqrt(Math.pow(sx + dx - x, 2) + Math.pow(sz + dz - z, 2));
+            const length = Math.sqrt(Math.pow((sx + dx) - x, 2) + Math.pow((sz + dz) - z, 2));
             minLength = Math.min(minLength, Math.floor(length));
         }
     });

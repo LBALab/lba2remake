@@ -96,7 +96,7 @@ function StereoEffect(renderer) {
 
         top = halfFocalHeight * ndfl;
         bottom = -top;
-        innerFactor = (halfFocalWidth + this.eyeSeparation / 2.0) / (halfFocalWidth * 2.0);
+        innerFactor = (halfFocalWidth + (this.eyeSeparation / 2.0)) / (halfFocalWidth * 2.0);
         outerFactor = 1.0 - innerFactor;
 
         outer = halfFocalWidth * 2.0 * ndfl * outerFactor;

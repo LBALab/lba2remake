@@ -25,7 +25,7 @@ export function loadTexts(language, index, callback) {
 }
 
 function getLanguageTextIndex(language, index) {
-    const languageIndex = index + 30 * language.index;
+    const languageIndex = index + (30 * language.index);
     return { data: language, index: languageIndex };
 }
 
@@ -39,7 +39,7 @@ export function loadTextData(textFile, language) {
 
     do {
         start = data.getUint16(idx * 2, true);
-        end = data.getUint16(idx * 2 + 2, true);
+        end = data.getUint16((idx * 2) + 2, true);
         const type = data.getUint8(start, true);
         let value = '';
         for (let i = start + 1; i < end - 1; i += 1) {

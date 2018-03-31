@@ -208,9 +208,9 @@ function updateSkeletonAtKeyframe(state,
                 const eulerZ = getRotation(nbf.veuler.z, bf.veuler.z, interpolation);
                 s.euler = new THREE.Vector3(eulerX, eulerY, eulerZ);
             } else { // translation
-                s.pos.x = bf.pos.x + (nbf.pos.x - bf.pos.x) * interpolation;
-                s.pos.y = bf.pos.y + (nbf.pos.y - bf.pos.y) * interpolation;
-                s.pos.z = bf.pos.z + (nbf.pos.z - bf.pos.z) * interpolation;
+                s.pos.x = bf.pos.x + ((nbf.pos.x - bf.pos.x) * interpolation);
+                s.pos.y = bf.pos.y + ((nbf.pos.y - bf.pos.y) * interpolation);
+                s.pos.z = bf.pos.z + ((nbf.pos.z - bf.pos.z) * interpolation);
             }
         }
     } catch (e) {

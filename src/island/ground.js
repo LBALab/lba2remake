@@ -18,9 +18,9 @@ export function loadGround(section, geometries, usedTiles) {
             };
 
             const triangle = (t) => {
-                const pts = map(t.points, pt => (x + pt.x) * 65 + z + pt.z);
+                const pts = map(t.points, pt => ((x + pt.x) * 65) + z + pt.z);
                 if (!isSeaLevelLiquid(t, pts) && (t.useColor || t.useTexture)) {
-                    usedTiles[x * 64 + z] = t0.orientation;
+                    usedTiles[(x * 64) + z] = t0.orientation;
                     if (t.useTexture) {
                         push.apply(
                             geometries.ground_textured.positions,
@@ -80,8 +80,8 @@ const TRIANGLE_POINTS = [
 ];
 
 function loadTriangle(section, x, z, idx) {
-    const flags = section.triangles[(x * 64 + z) * 2 + idx];
-    const orientation = bits(section.triangles[(x * 64 + z) * 2], 16, 1);
+    const flags = section.triangles[(((x * 64) + z) * 2) + idx];
+    const orientation = bits(section.triangles[((x * 64) + z) * 2], 16, 1);
     return {
         index: idx,
         color: bits(flags, 0, 4),
@@ -109,14 +109,14 @@ const PTS = [
 ];
 
 function loadTriangleForPhysics(section, x, z, xTgt, zTgt, idx) {
-    const flags = section.triangles[(x * 64 + z) * 2 + idx];
-    const baseFlags = idx ? section.triangles[(x * 64 + z) * 2] : flags;
+    const flags = section.triangles[(((x * 64) + z) * 2) + idx];
+    const baseFlags = idx ? section.triangles[((x * 64) + z) * 2] : flags;
     const orientation = bits(baseFlags, 16, 1);
     const src_pts = TRIANGLE_POINTS[orientation][idx];
 
     for (let i = 0; i < 3; i += 1) {
         const pt = src_pts[i];
-        const ptIdx = (x + pt.x) * 65 + z + pt.z;
+        const ptIdx = ((x + pt.x) * 65) + z + pt.z;
         PTS[i].set(
             x + pt.x,
             section.heightmap[ptIdx] / 0x4000,
@@ -152,9 +152,9 @@ function getPositions(section, points) {
     const positions = [];
     for (let i = 0; i < 3; i += 1) {
         const idx = points[i];
-        const x = section.x * 64 + (65 - Math.floor(idx / 65));
+        const x = (section.x * 64) + (65 - Math.floor(idx / 65));
         const y = section.heightmap[idx];
-        const z = section.z * 64 + (idx % 65);
+        const z = (section.z * 64) + (idx % 65);
         positions.push(x / 32, y / 0x4000, z / 32);
     }
     return positions;

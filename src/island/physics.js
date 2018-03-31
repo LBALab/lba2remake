@@ -94,8 +94,8 @@ function getGroundInfo(section, position) {
     if (!section) {
         return DEFAULT_GROUND;
     }
-    const xLocal = (2.0 - (position.x - section.x * 2)) * 32 + 1;
-    const zLocal = (position.z - section.z * 2) * 32;
+    const xLocal = ((2.0 - (position.x - (section.x * 2))) * 32) + 1;
+    const zLocal = (position.z - (section.z * 2)) * 32;
     return getTriangleFromPos(section, xLocal, zLocal);
 }
 

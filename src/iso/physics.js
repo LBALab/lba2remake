@@ -5,7 +5,7 @@ export function processCollisions(grid, scene, actor) {
     const position = actor.physics.position;
     const dx = 64 - Math.floor(position.x * 32);
     const dz = Math.floor(position.z * 32);
-    const cell = grid.cells[dx * 64 + dz];
+    const cell = grid.cells[(dx * 64) + dz];
     let height = 0;
     actor.floorSound = -1;
     if (cell
@@ -18,23 +18,23 @@ export function processCollisions(grid, scene, actor) {
             actor.animState.floorSound = column.sound;
             switch (column.shape) {
                 case 2:
-                    y = bb.max.y - (1 - ((position.z * 32) % 1)) / 64;
+                    y = bb.max.y - ((1 - ((position.z * 32) % 1)) / 64);
                     break;
                 case 3:
-                    y = bb.max.y - ((position.x * 32) % 1) / 64;
+                    y = bb.max.y - (((position.x * 32) % 1) / 64);
                     break;
                 case 4:
-                    y = bb.max.y - (1 - ((position.x * 32) % 1)) / 64;
+                    y = bb.max.y - ((1 - ((position.x * 32) % 1)) / 64);
                     break;
                 case 5:
-                    y = bb.max.y - ((position.z * 32) % 1) / 64;
+                    y = bb.max.y - (((position.z * 32) % 1) / 64);
                     break;
                 case 1:
                 default:
                     y = bb.max.y;
                     break;
             }
-            if (basePos.y > y - 1 / 64 && position.y < y) {
+            if (basePos.y > y - (1 / 64) && position.y < y) {
                 height = y;
                 break;
             }
@@ -62,7 +62,7 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
     for (let ox = -1; ox < 2; ox += 1) {
         for (let oz = -1; oz < 2; oz += 1) {
             if (!(ox === 0 && oz === 0)) {
-                const cell = grid.cells[(dx + ox) * 64 + (dz + oz)];
+                const cell = grid.cells[((dx + ox) * 64) + (dz + oz)];
                 if (cell) {
                     for (let i = 0; i < cell.columns.length; i += 1) {
                         const column = cell.columns[i];

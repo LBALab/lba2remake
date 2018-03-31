@@ -29,13 +29,13 @@ export function loadBricksMapping(layouts, bricks, palette) {
         const pixels = bricks[brick - 1];
         for (let y = 0; y < 38; y += 1) {
             for (let x = 0; x < 48; x += 1) {
-                const src_i = y * 48 + (47 - x);
-                const tgt_i = (y + offsetY) * width + x + offsetX;
+                const src_i = (y * 48) + (47 - x);
+                const tgt_i = ((y + offsetY) * width) + x + offsetX;
 
                 image_data[tgt_i * 4] = palette[pixels[src_i] * 3];
-                image_data[tgt_i * 4 + 1] = palette[pixels[src_i] * 3 + 1];
-                image_data[tgt_i * 4 + 2] = palette[pixels[src_i] * 3 + 2];
-                image_data[tgt_i * 4 + 3] = pixels[src_i] ? 0xFF : 0;
+                image_data[(tgt_i * 4) + 1] = palette[(pixels[src_i] * 3) + 1];
+                image_data[(tgt_i * 4) + 2] = palette[(pixels[src_i] * 3) + 2];
+                image_data[(tgt_i * 4) + 3] = pixels[src_i] ? 0xFF : 0;
             }
         }
     });

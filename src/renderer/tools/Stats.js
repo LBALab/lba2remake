@@ -97,7 +97,7 @@ export default class Stats {
 
         each(this.widgets, (widget) => {
             widget.msText.textContent = `${this.ms} MS (${this.msMin}-${this.msMax})`;
-            widget.updateGraph(widget.msGraph, Math.min(30, 30 - (this.ms / 200) * 30));
+            widget.updateGraph(widget.msGraph, Math.min(30, 30 - ((this.ms / 200) * 30)));
         });
 
         this.frames += 1;
@@ -109,7 +109,7 @@ export default class Stats {
 
             each(this.widgets, (widget) => {
                 widget.fpsText.textContent = `${this.fps} FPS (${this.fpsMin}-${this.fpsMax})`;
-                widget.updateGraph(widget.fpsGraph, Math.min(30, 30 - (this.fps / 100) * 30));
+                widget.updateGraph(widget.fpsGraph, Math.min(30, 30 - ((this.fps / 100) * 30)));
             });
 
             this.prevTime = time;

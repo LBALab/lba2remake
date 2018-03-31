@@ -6,7 +6,7 @@ import {loadBricksMapping} from './mapping';
 export function loadGrid(bkg, bricks, palette, entry) {
     const gridData = new DataView(bkg.getEntry(entry));
     const libIndex = gridData.getUint8(0);
-    const maxOffset = 34 + 4096 * 2;
+    const maxOffset = 34 + (4096 * 2);
     const offsets = [];
     for (let i = 34; i < maxOffset; i += 2) {
         offsets.push(gridData.getUint16(i, true) + 34);
@@ -129,12 +129,12 @@ function loadLayout(dataView) {
     const blocks = [];
     const offset = 3;
     for (let i = 0; i < numBricks; i += 1) {
-        const type = dataView.getUint8(offset + i * 4 + 1);
+        const type = dataView.getUint8(offset + (i * 4) + 1);
         blocks.push({
-            shape: dataView.getUint8(offset + i * 4),
+            shape: dataView.getUint8(offset + (i * 4)),
             sound: bits(type, 0, 4),
             groundType: bits(type, 4, 4),
-            brick: dataView.getUint16(offset + i * 4 + 2, true)
+            brick: dataView.getUint16(offset + (i * 4) + 2, true)
         });
     }
     return {
@@ -150,7 +150,7 @@ function buildCell(library, blocks, geometries, x, z) {
     const {positions, centers, tiles} = geometries;
     const {width, height} = library.texture.image;
     for (let yIdx = 0; yIdx < blocks.length; yIdx += 1) {
-        const y = yIdx * h + h;
+        const y = (yIdx * h) + h;
         if (blocks[yIdx]) {
             const layout = library.layouts[blocks[yIdx].layout];
             if (layout) {
@@ -180,7 +180,7 @@ function buildCell(library, blocks, geometries, x, z) {
                     positions.push(x + 1, y - h, z + 1);
 
                     each(range(18), () => {
-                        centers.push(x + 0.5, y - h * 0.5, z + 0.5);
+                        centers.push(x + 0.5, y - (h * 0.5), z + 0.5);
                         tiles.push(u / width, v / height);
                     });
                 }

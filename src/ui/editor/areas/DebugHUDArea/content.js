@@ -26,7 +26,7 @@ const headerStyle = {
 const mainStyle = {
     position: 'absolute',
     bottom: 0,
-    top: headerStyle.height + headerStyle.padding * 2 + 1,
+    top: headerStyle.height + (headerStyle.padding * 2) + 1,
     left: 0,
     right: 0,
     padding: 4,

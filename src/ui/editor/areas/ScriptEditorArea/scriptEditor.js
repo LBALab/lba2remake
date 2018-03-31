@@ -380,7 +380,7 @@ function LineNumber({line, command, nDigits, toggleBreakpoint}) {
 
 function Command({line, command}) {
     const cmdStyle = extend({
-        paddingLeft: `${command.indent * 2 + 1}ch`
+        paddingLeft: `${(command.indent * 2) + 1}ch`
     }, cmdStyles[command.name]);
 
     return <div style={getLineStyle(line, command, true)}>

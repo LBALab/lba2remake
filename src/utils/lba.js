@@ -15,7 +15,7 @@ export function getRotation(nextValue, currentValue, interpolation) {
         computedAngle = currentValue;
     }
 
-    computedAngle = computedAngle * 360 / 0x1000;
+    computedAngle = (computedAngle * 360) / 0x1000;
 
     return computedAngle;
 }
@@ -43,7 +43,7 @@ export function setStaticFlag(flags, value, isActive) {
 export function distance2D(from, to) {
     const dx = from.x - to.x;
     const dz = from.z - to.z;
-    const distsquared = dx * dx + dz * dz;
+    const distsquared = (dx * dx) + (dz * dz);
     return Math.sqrt(distsquared);
 }
 
@@ -74,7 +74,7 @@ export function angleToRad(angle) {
 export function getRandom(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * ((max - min) + 1)) + min;
 }
 
 export function getFrequency(frequency) {

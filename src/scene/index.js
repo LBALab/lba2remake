@@ -29,7 +29,7 @@ function loadSceneDataSync(files, language, index) {
     const sceneData = {
         index,
         textBankId,
-        textIndex: textBankId * 2 + 6 + language.index * 30,
+        textIndex: (textBankId * 2) + 6 + (language.index * 30),
         gameOverScene: data.getInt8(1, true),
         unknown1: data.getUint16(2, true),
         unknown2: data.getUint16(4, true),
@@ -90,12 +90,12 @@ function loadHero(scene, offset) {
         entityIndex: 0,
         bodyIndex: 0,
         pos: [
-            (0x8000 - data.getInt16(offset + 4, true) + 512) / 0x4000,
+            ((0x8000 - data.getInt16(offset + 4, true)) + 512) / 0x4000,
             data.getInt16(offset + 2, true) / 0x4000,
             data.getInt16(offset, true) / 0x4000
         ],
         index: 0,
-        textColor: getHtmlColor(scene.palette, 12 * 16 + 12),
+        textColor: getHtmlColor(scene.palette, (12 * 16) + 12),
         angle: 0,
         speed: 5,
         dirMode: DirMode.MANUAL,
@@ -176,7 +176,7 @@ function loadActors(scene, offset) {
         offset += 2;
 
         actor.pos = [
-            (0x8000 - data.getInt16(offset + 4, true) + 512) / 0x4000,
+            ((0x8000 - data.getInt16(offset + 4, true)) + 512) / 0x4000,
             data.getInt16(offset + 2, true) / 0x4000,
             data.getInt16(offset, true) / 0x4000
         ];
@@ -206,7 +206,7 @@ function loadActors(scene, offset) {
         offset += 2;
         const textColor = data.getInt8(offset, true);
         offset += 1;
-        actor.textColor = getHtmlColor(scene.palette, textColor * 16 + 12);
+        actor.textColor = getHtmlColor(scene.palette, (textColor * 16) + 12);
 
         if (actor.flags.hasSpriteAnim3D) {
             actor.spriteAnim3DNumber = data.getUint32(offset, true);
@@ -257,10 +257,10 @@ function loadZones(scene, offset) {
             box: {}
         };
 
-        const xMin = (0x8000 - data.getInt32(offset + 8, true) + 512) / 0x4000;
+        const xMin = ((0x8000 - data.getInt32(offset + 8, true)) + 512) / 0x4000;
         const yMin = data.getInt32(offset + 4, true) / 0x4000;
         const zMin = data.getInt32(offset, true) / 0x4000;
-        const xMax = (0x8000 - data.getInt32(offset + 20, true) + 512) / 0x4000;
+        const xMax = ((0x8000 - data.getInt32(offset + 20, true)) + 512) / 0x4000;
         const yMax = data.getInt32(offset + 16, true) / 0x4000;
         const zMax = data.getInt32(offset + 12, true) / 0x4000;
         zone.box.xMin = Math.min(xMin, xMax);
@@ -285,9 +285,9 @@ function loadZones(scene, offset) {
 
         // normalising position
         zone.pos = [
-            zone.box.xMin + (zone.box.xMax - zone.box.xMin) / 2,
-            zone.box.yMin + (zone.box.yMax - zone.box.yMin) / 2,
-            zone.box.zMin + (zone.box.zMax - zone.box.zMin) / 2
+            zone.box.xMin + ((zone.box.xMax - zone.box.xMin) / 2),
+            zone.box.yMin + ((zone.box.yMax - zone.box.yMin) / 2),
+            zone.box.zMin + ((zone.box.zMax - zone.box.zMin) / 2)
         ];
 
         scene.zones.push(zone);
@@ -308,7 +308,7 @@ function loadPoints(scene, offset) {
             sceneIndex: scene.index,
             index: i,
             pos: [
-                (0x8000 - data.getInt32(offset + 8, true) + 512) / 0x4000,
+                ((0x8000 - data.getInt32(offset + 8, true)) + 512) / 0x4000,
                 data.getInt32(offset + 4, true) / 0x4000,
                 data.getInt32(offset, true) / 0x4000
             ]
@@ -409,7 +409,7 @@ function createRuntimeFlags() {
 export function getHtmlColor(palette, index) {
     return `#${new THREE.Color(
         palette[index * 3] / 255,
-        palette[index * 3 + 1] / 255,
-        palette[index * 3 + 2] / 255
+        palette[(index * 3) + 1] / 255,
+        palette[(index * 3) + 2] / 255
     ).getHexString()}`;
 }

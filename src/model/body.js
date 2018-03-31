@@ -158,7 +158,7 @@ function loadPolygon(data, offset, renderType, blockSize) {
 
     // vertex block
     for (let k = 0; k < numVertex; k += 1) {
-        poly.vertex[k] = data.getUint16(offset + k * 2, true);
+        poly.vertex[k] = data.getUint16(offset + (k * 2), true);
     }
 
     // special case for trianguled textures
@@ -176,10 +176,10 @@ function loadPolygon(data, offset, renderType, blockSize) {
 
     if (hasTex) {
         for (let k = 0; k < numVertex; k += 1) {
-            poly.unkX[k] = data.getInt8(offset + 12 + k * 4, true);
-            poly.texX[k] = data.getInt8(offset + 13 + k * 4, true);
-            poly.unkY[k] = data.getInt8(offset + 14 + k * 4, true);
-            poly.texY[k] = data.getInt8(offset + 15 + k * 4, true);
+            poly.unkX[k] = data.getInt8(offset + 12 + (k * 4), true);
+            poly.texX[k] = data.getInt8(offset + 13 + (k * 4), true);
+            poly.unkY[k] = data.getInt8(offset + 14 + (k * 4), true);
+            poly.texY[k] = data.getInt8(offset + 15 + (k * 4), true);
         }
         // for blocksize 32 with quad texture
         if (numVertex === 4) {

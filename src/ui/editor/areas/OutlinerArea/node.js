@@ -207,7 +207,7 @@ export default class Node extends React.Component {
 
         const onKeyDown = (e) => {
             const key = e.code || e.which || e.keyCode;
-            if (key === 'Enter' || key === 13 && e.target.value) {
+            if ((key === 'Enter' || key === 13) && e.target.value) {
                 node.rename(this.props.data, e.target.value);
                 this.setState({renaming: false});
             } else if (key === 'Esc' || key === 27) {

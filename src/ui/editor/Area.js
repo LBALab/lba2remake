@@ -14,7 +14,7 @@ const menuStyle = (numIcons, main) => extend({
     right: 0,
     height: menuHeight - 1,
     borderBottom: '1px solid rgb(0,122,204)',
-    paddingRight: 24 * numIcons + 2,
+    paddingRight: (24 * numIcons) + 2,
     lineHeight: `${menuHeight - 1}px`,
     userSelect: 'none',
     overflow: 'hidden'
@@ -95,8 +95,8 @@ export default class Area extends React.Component {
             <span onClick={onClickIcon} style={titleStyle}>{this.props.area.name}</span>
 
             <span style={menuContentStyle}>{menu}</span>
-            <img style={iconStyle({right: (numIcons - 1) * 26 + 2})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>
-            <img style={iconStyle({right: (numIcons - 2) * 26 + 2})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>
+            <img style={iconStyle({right: ((numIcons - 1) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>
+            <img style={iconStyle({right: ((numIcons - 2) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>
             {this.props.close ? <img style={iconStyle({right: 2})} onClick={this.props.close} src="editor/icons/close.png"/> : null}
         </div>;
     }

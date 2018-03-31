@@ -49,7 +49,7 @@ export function SAMPLE(action, {game}) {
 }
 
 export function SAMPLE_RND(action, {game}) {
-    let frequency = getRandom(0, action.frequency) + 0x1000 - (action.frequency >> 1);
+    let frequency = (getRandom(0, action.frequency) + 0x1000) - (action.frequency >> 1);
     if (frequency < 0 || frequency > 24000) {
         frequency = 0;
     }

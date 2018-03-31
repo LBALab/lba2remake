@@ -154,7 +154,7 @@ function Matrix({mat, n, root}) {
         const mapComp = (num, i) =>
             <span key={i} style={{color: ARRAY_COLOR[i]}}>{num.toFixed(3)}</span>;
         const rows = times(n, (r) => {
-            const components = map(slice(mat.elements, r * n, r * n + n), mapComp);
+            const components = map(slice(mat.elements, r * n, (r * n) + n), mapComp);
             return <span key={r} >
                 &nbsp;
                 &nbsp;

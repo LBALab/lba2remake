@@ -19,9 +19,9 @@ function loadObjectInfo(objects, section, index) {
     const offset = index * 48;
     return {
         index: objects.getUint32(offset, true),
-        x: (0x8000 - objects.getInt32(offset + 12, true) + 512) / 0x4000 + section.x * 2,
+        x: (((0x8000 - objects.getInt32(offset + 12, true)) + 512) / 0x4000) + (section.x * 2),
         y: objects.getInt32(offset + 8, true) / 0x4000,
-        z: objects.getInt32(offset + 4, true) / 0x4000 + section.z * 2,
+        z: (objects.getInt32(offset + 4, true) / 0x4000) + (section.z * 2),
         angle: objects.getUint8(offset + 21) >> 2,
         iv: 1
     };
@@ -109,10 +109,10 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
         const uvGroup = getUVGroup(object, section, i);
         const faceNormal = getFaceNormal(object, section, info, i);
         const addVertex = (j) => {
-            const index = section.data.getUint16(i * section.blockSize + j * 2, true);
+            const index = section.data.getUint16((i * section.blockSize) + (j * 2), true);
             const x = object.vertices[index * 4];
-            const y = object.vertices[index * 4 + 1];
-            const z = object.vertices[index * 4 + 2];
+            const y = object.vertices[(index * 4) + 1];
+            const z = object.vertices[(index * 4) + 2];
 
             bb.min.x = Math.min(x, bb.min.x);
             bb.min.y = Math.min(y, bb.min.y);
@@ -158,7 +158,7 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
 function getFaceNormal(object, section, info, i) {
     const vert = [];
     for (let j = 0; j < 3; j += 1) {
-        const index = section.data.getUint16(i * section.blockSize + j * 2, true);
+        const index = section.data.getUint16((i * section.blockSize) + (j * 2), true);
         vert.push(getPosition(object, info, index));
     }
     const u = [
@@ -172,25 +172,25 @@ function getFaceNormal(object, section, info, i) {
         vert[2][2] - vert[0][2]
     ];
     return [
-        u[1] * v[2] - u[2] * v[1],
-        u[2] * v[0] - u[0] * v[2],
-        u[0] * v[1] - u[1] * v[0]
+        (u[1] * v[2]) - (u[2] * v[1]),
+        (u[2] * v[0]) - (u[0] * v[2]),
+        (u[0] * v[1]) - (u[1] * v[0])
     ];
 }
 
 function getVertexNormal(object, info, index) {
     return rotate([
         object.normals[index * 4] / 0x4000,
-        object.normals[index * 4 + 1] / 0x4000,
-        object.normals[index * 4 + 2] / 0x4000
+        object.normals[(index * 4) + 1] / 0x4000,
+        object.normals[(index * 4) + 2] / 0x4000
     ], info.angle);
 }
 
 function getPosition(object, info, index) {
     const pos = rotate([
         object.vertices[index * 4] / 0x4000,
-        object.vertices[index * 4 + 1] / 0x4000,
-        object.vertices[index * 4 + 2] / 0x4000
+        object.vertices[(index * 4) + 1] / 0x4000,
+        object.vertices[(index * 4) + 2] / 0x4000
     ], info.angle);
     return [
         pos[0] + info.x,
@@ -200,13 +200,13 @@ function getPosition(object, info, index) {
 }
 
 function getColor(section, face) {
-    const color = section.data.getUint8(face * section.blockSize + 8);
+    const color = section.data.getUint8((face * section.blockSize) + 8);
     return Math.floor(color / 16);
 }
 
 function getUVs(section, face, ptIndex) {
     const baseIndex = face * section.blockSize;
-    const index = baseIndex + 12 + ptIndex * 4;
+    const index = baseIndex + 12 + (ptIndex * 4);
     const u = section.data.getUint8(index + 1);
     const v = section.data.getUint8(index + 3);
     return [u, v];

@@ -23,7 +23,7 @@ function loadBrick(bkg, entry) {
         const numRuns = dataView.getUint8(ptr);
         ptr += 1;
         let x = 0;
-        const offset = () => (y + offsetY) * 48 + x + offsetX;
+        const offset = () => ((y + offsetY) * 48) + x + offsetX;
         for (let run = 0; run < numRuns; run += 1) {
             const runSpec = dataView.getUint8(ptr);
             ptr += 1;

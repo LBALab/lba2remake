@@ -292,8 +292,8 @@ function getNormal(body, index) {
 function getUVs(body, p, vertex) {
     if (p.hasTex) {
         const t = body.uvGroups[p.tex];
-        const x = p.texX[vertex] + p.unkX[vertex] / 256;
-        const y = p.texY[vertex] + p.unkY[vertex] / 256;
+        const x = p.texX[vertex] + (p.unkX[vertex] / 256);
+        const y = p.texY[vertex] + (p.unkY[vertex] / 256);
         return [(x & t.width) + t.x, (y & t.height) + t.y];
     }
     return [0, 0];
@@ -303,11 +303,11 @@ function getLightVector(ambience) {
     const lightVector = new THREE.Vector3(-1, 0, 0);
     lightVector.applyAxisAngle(
         new THREE.Vector3(0, 0, 1),
-        -ambience.lightingAlpha * 2 * Math.PI / 0x1000
+        -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
     );
     lightVector.applyAxisAngle(
         new THREE.Vector3(0, 1, 0),
-        -ambience.lightingBeta * 2 * Math.PI / 0x1000
+        -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
     );
     return lightVector;
 }

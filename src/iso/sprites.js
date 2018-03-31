@@ -137,7 +137,7 @@ function loadSpriteData(sprites, entry) {
         const numRuns = dataView.getUint8(ptr);
         ptr += 1;
         let x = 0;
-        const offset = () => (y + offsetY) * width + x + offsetX;
+        const offset = () => ((y + offsetY) * width) + x + offsetX;
         for (let run = 0; run < numRuns; run += 1) {
             const runSpec = dataView.getUint8(ptr);
             ptr += 1;
@@ -181,7 +181,7 @@ function loadSpriteRawData(sprites, entry) {
     let ptr = 12;
     for (let y = 0; y < height; y += 1) {
         let x = 0;
-        const offset = () => (y) * width + x;
+        const offset = () => (y * width) + x;
         for (let run = 0; run < width; run += 1) {
             pixels[offset()] = dataView.getUint8(ptr);
             ptr += 1;
@@ -227,13 +227,13 @@ export function loadSpritesMapping(sprites, palette) {
         const pixels = sprites[idx].pixels;
         for (let y = 0; y < sprite.height; y += 1) {
             for (let x = 0; x < sprite.width; x += 1) {
-                const src_i = y * sprite.width + (sprite.width - 1 - x);
-                const tgt_i = (y + offsetY) * width + x + offsetX;
+                const src_i = (y * sprite.width) + (sprite.width - 1 - x);
+                const tgt_i = ((y + offsetY) * width) + x + offsetX;
 
                 image_data[tgt_i * 4] = palette[pixels[src_i] * 3];
-                image_data[tgt_i * 4 + 1] = palette[pixels[src_i] * 3 + 1];
-                image_data[tgt_i * 4 + 2] = palette[pixels[src_i] * 3 + 2];
-                image_data[tgt_i * 4 + 3] = pixels[src_i] ? 0xFF : 0;
+                image_data[(tgt_i * 4) + 1] = palette[(pixels[src_i] * 3) + 1];
+                image_data[(tgt_i * 4) + 2] = palette[(pixels[src_i] * 3) + 2];
+                image_data[(tgt_i * 4) + 3] = pixels[src_i] ? 0xFF : 0;
             }
         }
     });
