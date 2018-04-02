@@ -148,22 +148,32 @@ export default class Game extends FrameListener {
 
     showMenu(inGameMenu = false) {
         this.state.game.pause();
-        const audioManager = this.state.game.getAudioManager();
-        const sfxSource = audioManager.getSoundFxSource();
-        sfxSource.stop();
-        const voiceSource = audioManager.getVoiceSource();
-        voiceSource.stop();
-        const musicSource = audioManager.getMusicSource();
-        musicSource.stop();
-        musicSource.load(6, () => {
-            musicSource.play();
+        if (inGameMenu) {
+            const audioManager = this.state.game.getAudioManager();
+            const sfxSource = audioManager.getSoundFxSource();
+            sfxSource.suspend();
+            const voiceSource = audioManager.getVoiceSource();
+            voiceSource.suspend();
+            const musicSource = audioManager.getMusicSource();
+            musicSource.suspend();
+        }
+        const audioMenuManager = this.state.game.getAudioMenuManager();
+        audioMenuManager.getMusicSource().load(6, () => {
+            audioMenuManager.getMusicSource().play();
         });
         this.setState({showMenu: true, inGameMenu});
     }
 
     hideMenu() {
-        const musicSource = this.state.game.getAudioManager().getMusicSource();
-        musicSource.stop();
+        const audioMenuManager = this.state.game.getAudioMenuManager();
+        audioMenuManager.getMusicSource().stop();
+        const audioManager = this.state.game.getAudioManager();
+        const musicSource = audioManager.getMusicSource();
+        musicSource.resume();
+        const voiceSource = audioManager.getVoiceSource();
+        voiceSource.resume();
+        const sfxSource = audioManager.getSoundFxSource();
+        sfxSource.resume();
         this.state.game.resume();
         this.setState({showMenu: false, inGameMenu: false});
         this.canvas.focus();
