@@ -37,6 +37,15 @@ export function createAudioManager(state) {
     };
 }
 
+export function createMusicManager(state) {
+    const context = createAudioContext();
+    const musicSource = getMusicSource(state, context, AudioData.MUSIC);
+    return {
+        context,
+        getMusicSource: () => musicSource
+    };
+}
+
 function getMusicSource(state, context, data) {
     const source = {
         volume: state.config.musicVolume,
@@ -58,6 +67,12 @@ function getMusicSource(state, context, data) {
         if (source.bufferSource) {
             source.bufferSource.stop();
         }
+    };
+    source.suspend = () => {
+        context.suspend();
+    };
+    source.resume = () => {
+        context.resume();
     };
     source.load = (index, callback) => {
         if (index === -1 || (source.currentIndex === index && source.isPlaying)) {
@@ -126,6 +141,12 @@ function getSoundFxSource(state, context, data) {
             source.bufferSource.stop();
         }
         source.isPlaying = false;
+    };
+    source.suspend = () => {
+        context.suspend();
+    };
+    source.resume = () => {
+        context.resume();
     };
     source.load = (index, callback) => {
         async.auto({
@@ -201,6 +222,12 @@ function getVoiceSource(state, context, data) {
             source.bufferSource.stop();
         }
         source.isPlaying = false;
+    };
+    source.suspend = () => {
+        context.suspend();
+    };
+    source.resume = () => {
+        context.resume();
     };
     source.load = (index, textBankId, callback) => {
         const textBank = `${textBankId}`;
