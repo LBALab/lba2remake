@@ -113,29 +113,38 @@ export default class HQR {
                 compressedSize: header.getUint32(4, true),
                 type: header.getInt16(8, true),
                 hasHiddenEntry: false,
-                nextHiddenEntry: null
+                nextHiddenEntry: -1
             });
         }
         // check if hidden entries exist and add them
         if (isVoxHQR) {
             for (let i = 0; i < idx_array.length; i += 1) {
                 const entry = this.entries[i];
-                const entryEndOffset = entry.offset + entry.compressedSize + 10;
+                let entryEndOffset = entry.offset + entry.compressedSize + 10;
                 let nextEntryOffset = this.buffer.byteLength; // end of file
                 if (i + 1 < idx_array.length) {
                     nextEntryOffset = this.entries[i + 1].offset;
                 }
-                if (entryEndOffset < nextEntryOffset) { // hidden entry found
+                if (entryEndOffset < nextEntryOffset) {
                     entry.hasHiddenEntry = true;
                     entry.nextHiddenEntry = this.entries.length;
-                    this.entries.push({
+                }
+                while (entryEndOffset < nextEntryOffset) { // hidden entry found
+                    const header = new DataView(this.buffer, entryEndOffset - 10, 10);
+                    const e = {
                         offset: entryEndOffset,
-                        originalSize: nextEntryOffset - entryEndOffset,
-                        compressedSize: nextEntryOffset - entryEndOffset,
-                        type: 0,
+                        originalSize: header.getUint32(0, true),
+                        compressedSize: header.getUint32(4, true),
+                        type: header.getInt16(8, true),
                         hasHiddenEntry: false,
-                        nextHiddenEntry: null
-                    });
+                        nextHiddenEntry: -1
+                    };
+                    entryEndOffset = e.offset + e.compressedSize + 10;
+                    if (entryEndOffset < nextEntryOffset) {
+                        e.hasHiddenEntry = true;
+                        e.nextHiddenEntry = this.entries.length + 1;
+                    }
+                    this.entries.push(e);
                 }
             }
         }
