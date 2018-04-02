@@ -54,18 +54,16 @@ function getMusicSource(state, context, data) {
         source.bufferSource.start();
     };
     source.stop = () => {
-        if (source.bufferSource && source.isPlaying) {
+        source.isPlaying = false;
+        if (source.bufferSource) {
             source.bufferSource.stop();
-            source.isPlaying = false;
         }
     };
     source.load = (index, callback) => {
         if (index === -1 || (source.currentIndex === index && source.isPlaying)) {
             return;
         }
-        if (source.isPlaying) {
-            source.stop();
-        }
+        source.stop();
         source.currentIndex = index;
         source.bufferSource = context.createBufferSource();
         source.bufferSource.loop = source.loop;
