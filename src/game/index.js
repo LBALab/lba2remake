@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import async from 'async';
 
 import {createState} from './state';
-import {createAudioManager} from '../audio';
+import {createAudioManager, createMusicManager} from '../audio';
 import {loadHqrAsync} from '../hqr';
 import {loadTextsAsync} from '../text';
 
@@ -17,6 +17,7 @@ export function createGame(params: Object,
     let state = createState();
 
     const audio = createAudioManager(state);
+    const audioMenu = createMusicManager(state);
 
     return {
         setUiState,
@@ -72,6 +73,7 @@ export function createGame(params: Object,
 
         getState: () => state,
         getAudioManager: () => audio,
+        getAudioMenuManager: () => audioMenu,
 
         togglePause() {
             if (isPaused) {
