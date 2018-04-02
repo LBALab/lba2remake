@@ -248,7 +248,7 @@ function getVoiceSource(state, context, data) {
             source.bufferSource = context.createBufferSource();
             source.bufferSource.onended = () => {
                 if (source.isPlaying && files.voices.hasHiddenEntries(index)) {
-                    source.load(index + 1, textBankId, callback);
+                    source.load(files.voices.getNextHiddenEntry(index), textBankId, callback);
                 }
                 source.isPlaying = false;
             };

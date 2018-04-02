@@ -7,7 +7,8 @@ type Entry = {
     offset: number,
     originalSize: number,
     compressedSize: number,
-    hasHiddenEntry: boolean
+    hasHiddenEntry: boolean,
+    nextHiddenEntry: ?number
 };
 
 export default class HQR {
@@ -111,7 +112,8 @@ export default class HQR {
                 originalSize: header.getUint32(0, true),
                 compressedSize: header.getUint32(4, true),
                 type: header.getInt16(8, true),
-                hasHiddenEntry: false
+                hasHiddenEntry: false,
+                nextHiddenEntry: null
             });
         }
         // check if hidden entries exist and add them
@@ -125,12 +127,14 @@ export default class HQR {
                 }
                 if (entryEndOffset < nextEntryOffset) { // hidden entry found
                     entry.hasHiddenEntry = true;
-                    this.entries.splice(i + 1, 0, {
+                    entry.nextHiddenEntry = this.entries.length;
+                    this.entries.push({
                         offset: entryEndOffset,
                         originalSize: nextEntryOffset - entryEndOffset,
                         compressedSize: nextEntryOffset - entryEndOffset,
                         type: 0,
-                        hasHiddenEntry: false
+                        hasHiddenEntry: false,
+                        nextHiddenEntry: null
                     });
                 }
             }
@@ -139,6 +143,10 @@ export default class HQR {
 
     hasHiddenEntries(index: number) {
         return this.entries[index].hasHiddenEntry;
+    }
+
+    getNextHiddenEntry(index: number) {
+        return this.entries[index].nextHiddenEntry;
     }
 }
 

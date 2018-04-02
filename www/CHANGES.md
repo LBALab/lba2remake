@@ -7,6 +7,7 @@ A Little Big Adventure 2 engine remake change log file
 * (Game) Allow game to suspend and resume all audio playing during pause or menus.
 ### Fixed
 * (Game) #172 Music duplicate issue while playing. Multiple songs would be playing at same time
+* (Game) Voice playing wrong entry. Issue introduced in #162 while adding the hidden entries
 
 ## 0.0.9 - 29.03.2018
 ### Added
