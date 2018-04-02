@@ -148,15 +148,6 @@ export default class Game extends FrameListener {
 
     showMenu(inGameMenu = false) {
         this.state.game.pause();
-        if (inGameMenu) {
-            const audioManager = this.state.game.getAudioManager();
-            const sfxSource = audioManager.getSoundFxSource();
-            sfxSource.suspend();
-            const voiceSource = audioManager.getVoiceSource();
-            voiceSource.suspend();
-            const musicSource = audioManager.getMusicSource();
-            musicSource.suspend();
-        }
         const audioMenuManager = this.state.game.getAudioMenuManager();
         audioMenuManager.getMusicSource().load(6, () => {
             audioMenuManager.getMusicSource().play();
@@ -167,13 +158,6 @@ export default class Game extends FrameListener {
     hideMenu() {
         const audioMenuManager = this.state.game.getAudioMenuManager();
         audioMenuManager.getMusicSource().stop();
-        const audioManager = this.state.game.getAudioManager();
-        const musicSource = audioManager.getMusicSource();
-        musicSource.resume();
-        const voiceSource = audioManager.getVoiceSource();
-        voiceSource.resume();
-        const sfxSource = audioManager.getSoundFxSource();
-        sfxSource.resume();
         this.state.game.resume();
         this.setState({showMenu: false, inGameMenu: false});
         this.canvas.focus();
@@ -202,7 +186,7 @@ export default class Game extends FrameListener {
     }
 
     startNewGameScene() {
-        this.state.game.pause();
+        this.state.game.resume();
         this.state.game.resetState();
         this.state.sceneManager.goto(0, noop, true);
     }

@@ -85,10 +85,22 @@ export function createGame(params: Object,
         pause: () => {
             isPaused = true;
             clock.stop();
+            const sfxSource = audio.getSoundFxSource();
+            sfxSource.suspend();
+            const voiceSource = audio.getVoiceSource();
+            voiceSource.suspend();
+            const musicSource = audio.getMusicSource();
+            musicSource.suspend();
             // eslint-disable-next-line no-console
             console.log('Pause');
         },
         resume: () => {
+            const musicSource = audio.getMusicSource();
+            musicSource.resume();
+            const voiceSource = audio.getVoiceSource();
+            voiceSource.resume();
+            const sfxSource = audio.getSoundFxSource();
+            sfxSource.resume();
             isPaused = false;
             clock.start();
             // eslint-disable-next-line no-console
