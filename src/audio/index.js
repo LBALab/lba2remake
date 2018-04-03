@@ -59,14 +59,19 @@ function getMusicSource(state, context, data) {
     };
 
     source.play = () => {
-        source.isPlaying = true;
         source.bufferSource.start();
+        source.isPlaying = true;
     };
     source.stop = () => {
-        source.isPlaying = false;
-        if (source.bufferSource) {
-            source.bufferSource.stop();
+        try {
+            if (source.bufferSource) {
+                source.bufferSource.stop();
+            }
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.debug(error);
         }
+        source.isPlaying = false;
     };
     source.suspend = () => {
         context.suspend();
@@ -78,7 +83,9 @@ function getMusicSource(state, context, data) {
         if (index === -1 || (source.currentIndex === index && source.isPlaying)) {
             return;
         }
-        source.stop();
+        if (source.isPlaying) {
+            source.stop();
+        }
         source.currentIndex = index;
         source.bufferSource = context.createBufferSource();
         source.bufferSource.loop = source.loop;
@@ -137,8 +144,13 @@ function getSoundFxSource(state, context, data) {
         source.bufferSource.start();
     };
     source.stop = () => {
-        if (source.bufferSource) {
-            source.bufferSource.stop();
+        try {
+            if (source.bufferSource) {
+                source.bufferSource.stop();
+            }
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.debug(error);
         }
         source.isPlaying = false;
     };
@@ -218,8 +230,13 @@ function getVoiceSource(state, context, data) {
         source.bufferSource.start();
     };
     source.stop = () => {
-        if (source.bufferSource) {
-            source.bufferSource.stop();
+        try {
+            if (source.bufferSource) {
+                source.bufferSource.stop();
+            }
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.debug(error);
         }
         source.isPlaying = false;
     };
