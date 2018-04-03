@@ -1,7 +1,7 @@
 import DebugData from '../../../../DebugData';
 
 function goto(index) {
-    if (DebugData.sceneManager) {
+    if (DebugData.sceneManager && DebugData.sceneManager.hideMenuAndGoto) {
         DebugData.sceneManager.hideMenuAndGoto(index);
     }
 }
