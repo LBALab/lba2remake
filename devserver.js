@@ -56,6 +56,15 @@ app.post('/ws/crash/report', function (req, res) {
     }
 });
 
+app.use('/data', express.static('./www/data', {
+    fallthrough: true
+}));
+
+app.use('/data', (req, res) => {
+    console.log(`404 ${req.method} ./www/data${req.url}`);
+    res.status(404).send();
+});
+
 const webpackMiddleware = createWebpackMiddleware(compiler, config);
 webpackMiddleware(app);
 
