@@ -56,6 +56,7 @@ export function createSceneManager(params, game, renderer, callback: Function, h
             }
 
             const musicSource = game.getAudioManager().getMusicSource();
+            const menuMusicSource = game.getAudioMenuManager().getMusicSource();
             if (scene && scene.sideScenes && index in scene.sideScenes) {
                 killActor(scene.actors[0]);
                 const sideScene = scene.sideScenes[index];
@@ -68,6 +69,7 @@ export function createSceneManager(params, game, renderer, callback: Function, h
                 scene.isActive = true;
                 if (!musicSource.isPlaying) {
                     musicSource.load(scene.data.ambience.musicIndex, () => {
+                        menuMusicSource.stop(); // if menu music is start playing during load
                         musicSource.play();
                     });
                 }
@@ -81,6 +83,7 @@ export function createSceneManager(params, game, renderer, callback: Function, h
                     scene.isActive = true;
                     if (!musicSource.isPlaying) {
                         musicSource.load(scene.data.ambience.musicIndex, () => {
+                            menuMusicSource.stop(); // if menu music is start playing during load
                             musicSource.play();
                         });
                     }
