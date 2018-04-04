@@ -22,7 +22,6 @@ import Video from './game/Video';
 import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
 import VideoData from '../video/data';
-import Version from './game/Version';
 import Ribbon from './game/Ribbon';
 
 export default class Game extends FrameListener {
@@ -64,8 +63,7 @@ export default class Game extends FrameListener {
                 choice: null,
                 menuTexts: null,
                 showMenu: false,
-                inGameMenu: false,
-                showVersion: false
+                inGameMenu: false
             };
 
             clock.start();
@@ -179,9 +177,6 @@ export default class Game extends FrameListener {
                     this.hideMenu();
                 }
             }
-        }
-        if (key === 'KeyV' || key === 86) {
-            this.setState({showVersion: !this.state.showVersion});
         }
     }
 
@@ -302,7 +297,6 @@ export default class Game extends FrameListener {
             />
             <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
-            {!this.props.params.editor && this.state.showVersion ? <Version/> : null}
             {this.state.loading ? <Loader/> : null}
         </div>;
     }
