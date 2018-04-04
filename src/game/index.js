@@ -111,7 +111,7 @@ export function createGame(params: Object,
             async.auto({
                 loading: preloadFileAsync('images/30_screen_loading.png'),
                 menu: preloadFileAsync('images/2_screen_menubg_extended.png'),
-                ribbon: preloadFileAsync('images/11_sprite_lba2.png'),
+                ribbon: preloadFileAsync('images/remake_logo.png'),
                 ress: preloadFileAsync('data/RESS.HQR'),
                 text: loadHqrAsync('TEXT.HQR'),
                 voxgame: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`),

@@ -292,7 +292,7 @@ export default class Game extends FrameListener {
                 renderer={this.state.renderer}
                 interjections={this.state.interjections}
             />
-            {!this.props.params.editor ? <Ribbon/> : null}
+            <Ribbon editor={this.props.params.editor}/>
             <Video video={this.state.video} renderer={this.state.renderer} />
             <Menu
                 showMenu={this.state.showMenu}
