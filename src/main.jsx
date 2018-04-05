@@ -48,6 +48,7 @@ class Root extends React.Component {
 
 window.onload = () => {
     init();
+    document.body.removeChild(document.getElementById('preload'));
 };
 
 window.onerror = (message, file, line, column, data) => {

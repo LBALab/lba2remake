@@ -3,26 +3,29 @@ import {extend} from 'lodash';
 import {fullscreen} from '../styles/index';
 
 const overlay = extend({background: 'black'}, fullscreen);
-const image = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)'
-};
-const text = {
-    position: 'absolute',
-    fontFamily: 'LBA',
-    padding: '0.5em 1em',
-    fontSize: '2.5em',
-    color: '#61cece',
-    bottom: '20%',
-    left: '51%',
-    transform: 'translate(-51%, 0)'
-};
 
-export default function Loader() {
+export default function Loader(props) {
+    const text = props.text || 'Game Data';
     return <div style={overlay}>
-        <img style={image} src="images/30_screen_loading.png" />
-        <div style={text}>Loading...</div>
+        <div className="loader">
+            <div className="lds-roller">
+                <div className="n1"/>
+                <div className="n2"/>
+                <div className="n3"/>
+                <div className="n4"/>
+                <div className="n5"/>
+            </div>
+            <div className="lds-roller inv">
+                <div className="n1"/>
+                <div className="n2"/>
+                <div className="n3"/>
+                <div className="n4"/>
+                <div className="n5"/>
+            </div>
+            <div className="lds-roller-text">
+                Loading<br/>
+                <span className="lds-subtext">{text}</span>
+            </div>
+        </div>
     </div>;
 }

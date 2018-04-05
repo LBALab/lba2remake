@@ -109,7 +109,6 @@ export function createGame(params: Object,
         preload(callback: Function) {
             const that = this;
             async.auto({
-                loading: preloadFileAsync('images/30_screen_loading.png'),
                 menu: preloadFileAsync('images/2_screen_menubg_extended.png'),
                 ribbon: preloadFileAsync('images/remake_logo.png'),
                 ress: preloadFileAsync('data/RESS.HQR'),

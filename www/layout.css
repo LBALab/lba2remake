@@ -1,3 +1,200 @@
+.loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    text-align: center;
+}
+.lds-roller {
+    display: inline-block;
+    position: relative;
+    width: 128px;
+    height: 128px;
+}
+.lds-roller.inv {
+    display: inline-block;
+    position: relative;
+    width: 128px;
+    height: 128px;
+    margin-left: -128px;
+}
+.lds-roller div {
+    animation: lds-roller 2.4s linear infinite;
+    transform-origin: 64px 64px;
+}
+.lds-roller.inv div {
+    animation: lds-roller-inv 2.4s linear infinite;
+    transform-origin: 64px 64px;
+}
+.lds-roller div:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #3159ff;
+    margin: -6px 0 0 -6px;
+}
+.lds-roller.inv div:after {
+    background: #3159ff;
+}
+.lds-roller .n6, .lds-roller.inv .n6 {
+    animation-delay: -0.036s;
+    background: #3159ff;
+}
+.lds-roller .n6:after, .lds-roller.inv .n6:after {
+    top: 100px;
+    left: 100px;
+    width: 4px;
+    height: 4px;
+    margin: -2px 0 0 -2px;
+    background: rgba(49, 89, 255, 0.25);
+}
+.lds-roller .n5, .lds-roller.inv .n5 {
+    animation-delay: -0.072s;
+}
+.lds-roller .n5:after, .lds-roller.inv .n5:after {
+    top: 108px;
+    left: 90px;
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    background: rgba(49, 89, 255, 0.4);
+}
+.lds-roller .n4, .lds-roller.inv .n4  {
+    animation-delay: -0.108s;
+}
+.lds-roller .n4:after, .lds-roller.inv .n4:after  {
+    top: 114px;
+    left: 78px;
+    width: 12px;
+    height: 12px;
+    margin: -6px 0 0 -6px;
+    background: rgba(49, 89, 255, 0.55);
+}
+.lds-roller .n3, .lds-roller.inv .n3 {
+    animation-delay: -0.144s;
+}
+.lds-roller .n3:after, .lds-roller.inv .n3:after {
+    top: 116px;
+    left: 64px;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    background: rgba(49, 89, 255, 0.7);
+}
+.lds-roller .n2, .lds-roller.inv .n2 {
+    animation-delay: -0.18s;
+}
+.lds-roller .n2:after, .lds-roller.inv .n2:after {
+    top: 114px;
+    left: 50px;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    background: rgba(49, 89, 255, 0.85);
+}
+.lds-roller .n1, .lds-roller.inv .n1 {
+    animation-delay: -0.216s;
+}
+.lds-roller .n1:after, .lds-roller.inv .n1:after {
+    top: 108px;
+    left: 38px;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    background: rgba(49, 89, 255, 1);
+}
+.lds-roller-text {
+    padding: 0;
+    margin: 0;
+    font-family: LBA;
+    font-size: 26px;
+    line-height: 26px;
+    color: rgba(49, 89, 255, 1);
+    animation: lds-roller-color 4.8s linear infinite;
+    text-align: center;
+}
+.lds-subtext {
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    line-height: 14px;
+    font-style: italic;
+}
+@keyframes lds-roller {
+    0% {
+        transform: rotate(0deg);
+        opacity: 0.0;
+    }
+    22% {
+        transform: rotate(79.2deg);
+        opacity: 0.0;
+    }
+    28% {
+        transform: rotate(100.8deg);
+        opacity: 1.0;
+    }
+    72% {
+        transform: rotate(259.2deg);
+        opacity: 1.0;
+    }
+    78% {
+        transform: rotate(280.8deg);
+        opacity: 0.0;
+    }
+    100% {
+        transform: rotate(360deg);
+        opacity: 0.0;
+    }
+}
+@keyframes lds-roller-inv {
+    0% {
+        transform: rotate(180deg);
+        opacity: 1.0;
+    }
+    22% {
+        transform: rotate(259.2deg);
+        opacity: 1.0;
+    }
+    28% {
+        transform: rotate(280.8deg);
+        opacity: 0.0;
+    }
+    72% {
+        transform: rotate(439.2deg);
+        opacity: 0.0;
+    }
+    78% {
+        transform: rotate(460.8deg);
+        opacity: 1.0;
+    }
+    100% {
+        transform: rotate(540deg);
+        opacity: 1.0;
+    }
+}
+@keyframes lds-roller-color {
+    0% {
+        color: rgba(49, 89, 255, 1);
+    }
+    25% {
+        color: rgba(49, 89, 255, 0.5);
+    }
+    50% {
+        color: rgba(49, 89, 255, 1);
+    }
+    75% {
+        color: rgba(49, 89, 255, 0.5);
+    }
+    100% {
+        color: rgba(49, 89, 255, 1);
+    }
+}
+
 @font-face {
     font-family: LBA;
     src: url(LubalinDemi.otf);
@@ -12,8 +209,10 @@
 
 body {
     margin: 0;
+    padding: 0;
     overflow: hidden;
     height: 100%;
+    width: 100%;
     position: fixed;
     background: black;
 }
