@@ -297,7 +297,7 @@ export default class Game extends FrameListener {
             />
             <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
-            {this.state.loading ? <Loader text={this.state.loaderText}/> : null}
+            {this.state.loading ? <Loader/> : null}
         </div>;
     }
 }

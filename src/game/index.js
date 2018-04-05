@@ -109,16 +109,16 @@ export function createGame(params: Object,
         preload(callback: Function) {
             const that = this;
             async.auto({
-                menu: preloadFileAsync('images/2_screen_menubg_extended.png'),
-                ribbon: preloadFileAsync('images/remake_logo.png'),
-                ress: preloadFileAsync('data/RESS.HQR'),
-                text: loadHqrAsync('TEXT.HQR'),
-                voxgame: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`),
-                vox000: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_000_AAC.VOX`),
-                muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4'),
-                mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4'),
-                mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4'),
-                musmenu: preloadFileAsync('data/MUSIC/Track6.mp4'),
+                menu: preloadFileAsync('images/2_screen_menubg_extended.png', 'Menu'),
+                ribbon: preloadFileAsync('images/remake_logo.png', 'Logo'),
+                ress: preloadFileAsync('data/RESS.HQR', 'Resources'),
+                text: loadHqrAsync('TEXT.HQR', 'Texts'),
+                voxgame: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`, 'Voices (1)'),
+                vox000: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_000_AAC.VOX`, 'Voices (2)'),
+                muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4', 'Jingle'),
+                mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4', 'Music (1)'),
+                mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4', 'Music (2)'),
+                musmenu: preloadFileAsync('data/MUSIC/Track6.mp4', 'Music (Menu)'),
                 loadMenuText: loadTextsAsync(state.config.language, 0),
                 loadGameText: loadTextsAsync(state.config.language, 4)
             }, (err, files) => {
@@ -130,12 +130,23 @@ export function createGame(params: Object,
     };
 }
 
-function preloadFileAsync(url) {
+function preloadFileAsync(url, name) {
+    const send = (eventName, progress) => {
+        if (name) {
+            document.dispatchEvent(new CustomEvent(eventName, {detail: {name, progress}}));
+        }
+    };
     return (callback: Function) => {
+        send('loaderprogress', '0%');
         const request = new XMLHttpRequest();
         request.open('GET', url, true);
         request.responseType = 'arraybuffer';
+        request.onprogress = (event) => {
+            const progress = `${Math.round((event.loaded / event.total) * 100)}%`;
+            send('loaderprogress', progress);
+        };
         request.onload = () => {
+            send('loaderend');
             callback();
         };
         request.send();

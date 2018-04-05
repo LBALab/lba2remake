@@ -2,9 +2,9 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    -ms-transform: translateX(-50%) translateY(-50%);
-    -webkit-transform: translate(-50%,-50%);
-    transform: translate(-50%,-50%);
+    -ms-transform: translateX(-50%) translateY(-64px);
+    -webkit-transform: translate(-50%,-64px);
+    transform: translate(-50%,-64px);
     text-align: center;
 }
 .lds-roller {
@@ -114,9 +114,11 @@
     font-family: LBA;
     font-size: 26px;
     line-height: 26px;
+    text-align: center;
+}
+.lds-title {
     color: rgba(49, 89, 255, 1);
     animation: lds-roller-color 4.8s linear infinite;
-    text-align: center;
 }
 .lds-subtext {
     padding: 0;
@@ -124,6 +126,9 @@
     font-size: 14px;
     line-height: 14px;
     font-style: italic;
+    animation: none;
+    color: rgba(49, 89, 255, 0.75);
+    text-align: right;
 }
 @keyframes lds-roller {
     0% {
