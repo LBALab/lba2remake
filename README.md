@@ -54,7 +54,7 @@ A list of current and past contributors can be found [here](AUTHORS.md).
 * (TODO) Import the musics and videos as mp4 (no script available for that at this time)
 * Download [Node.js](https://nodejs.org) (if you already have node.js installed, make sure it is a recent version: ~> 6.x.x)
 * Run `npm install`
-* Run `npm run dev-server`
+* Run `npm run dev`
 * Fire up your browser at page http://localhost:8080
 * Enjoy!
 

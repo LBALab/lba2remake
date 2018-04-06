@@ -41,13 +41,9 @@
     "webpack-express-middleware": "^1.2.1"
   },
   "scripts": {
-    "dev-server": "cross-env NODE_ENV=development node devserver.js",
-    "dev-server:debug": "cross-env SRCMAP=true NODE_ENV=development node devserver.js",
-    "dev-server-editor": "cross-env LBA_MODE=editor NODE_ENV=development node devserver.js",
-    "dev-server-game": "cross-env LBA_MODE=game NODE_ENV=development node devserver.js",
+    "dev": "cross-env NODE_ENV=development node devserver.js",
+    "dev:debug": "cross-env SRCMAP=true NODE_ENV=development node devserver.js",
     "build": "cross-env NODE_ENV=production webpack -p",
-    "build-editor": "cross-env LBA_MODE=editor NODE_ENV=production webpack -p",
-    "build-game": "cross-env LBA_MODE=game NODE_ENV=production webpack -p",
     "deploy": "node deploy/deploy.js",
     "lint": "eslint -f codeframe ./src"
   },

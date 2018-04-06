@@ -2,23 +2,8 @@ const webpack = require('webpack');
 const path = require('path');
 const FlowStatusWebpackPlugin = require('flow-status-webpack-plugin');
 
-const lba_mode = process.env.LBA_MODE || 'both';
-let main_file;
-switch(lba_mode) {
-    case 'game':
-        main_file = './src/main_game.jsx';
-        break;
-    case 'editor':
-        main_file = './src/main_editor.jsx';
-        break;
-    case 'both':
-    default:
-        main_file = './src/main.jsx';
-        break;
-}
-
 module.exports = {
-    entry: main_file,
+    entry: './src/main.jsx',
     output: {
         path: path.join(__dirname, './www'),
         filename: "bundle.js"

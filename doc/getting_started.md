@@ -44,7 +44,7 @@ Run `npm install` in your local copy's root folder.
 The development server is responsible for monitoring the source file and compiling them as they change.
 It acts as a webserver which you point to from your browser to play the remake.
 
-`npm run dev-server`
+`npm run dev`
 
 
 ## Running the game
