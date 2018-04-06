@@ -1,6 +1,7 @@
 import React from 'react';
 import {extend, isEmpty, map} from 'lodash';
 import {fullscreen} from '../styles/index';
+import Ribbon from './Ribbon';
 
 const overlay = extend({background: 'black'}, fullscreen);
 
@@ -65,6 +66,7 @@ export default class Loader extends React.Component {
                     {content}
                 </div>
             </div>
+            <Ribbon loader/>
         </div>;
     }
 }

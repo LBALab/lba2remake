@@ -109,16 +109,16 @@ export function createGame(params: Object,
         preload(callback: Function) {
             const that = this;
             async.auto({
-                menu: preloadFileAsync('images/2_screen_menubg_extended.png', 'Menu'),
-                ribbon: preloadFileAsync('images/remake_logo.png', 'Logo'),
+                menu: preloadFileAsync('images/2_screen_menubg_extended.png', 'Menu Background'),
+                ribbon: preloadFileAsync('images/remake_logo.png'),
                 ress: preloadFileAsync('data/RESS.HQR', 'Resources'),
                 text: loadHqrAsync('TEXT.HQR', 'Texts'),
-                voxgame: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`, 'Voices (1)'),
-                vox000: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_000_AAC.VOX`, 'Voices (2)'),
-                muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4', 'Jingle'),
-                mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4', 'Music (1)'),
-                mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4', 'Music (2)'),
-                musmenu: preloadFileAsync('data/MUSIC/Track6.mp4', 'Music (Menu)'),
+                voxgame: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`, 'Main Voices'),
+                vox000: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_000_AAC.VOX`, 'Voices'),
+                muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4'),
+                mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4', 'Main Theme'),
+                mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4', 'First Song'),
+                musmenu: preloadFileAsync('data/MUSIC/Track6.mp4', 'Menu Music'),
                 loadMenuText: loadTextsAsync(state.config.language, 0),
                 loadGameText: loadTextsAsync(state.config.language, 4)
             }, (err, files) => {
