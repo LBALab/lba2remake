@@ -1,6 +1,6 @@
 {
   "name": "lba2remake",
-  "version": "0.0.9",
+  "version": "0.0.10-dev",
   "description": "Little Big Adventure 2, HD version, for the web",
   "dependencies": {
     "async": ">=2.6.0",
@@ -38,7 +38,8 @@
     "raw-loader": "^0.5.1",
     "webpack": "^1.15.0",
     "webpack-dev-server": "^1.16.5",
-    "webpack-express-middleware": "^1.2.1"
+    "webpack-express-middleware": "^1.2.1",
+    "yml-loader": "^2.1.0"
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development node devserver.js",

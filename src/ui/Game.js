@@ -287,7 +287,6 @@ export default class Game extends FrameListener {
                 renderer={this.state.renderer}
                 interjections={this.state.interjections}
             />
-            <Ribbon editor={this.props.params.editor}/>
             <Video video={this.state.video} renderer={this.state.renderer} />
             <Menu
                 showMenu={this.state.showMenu}
@@ -297,6 +296,7 @@ export default class Game extends FrameListener {
             />
             <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
+            <Ribbon editor={this.props.params.editor} loader={this.state.showMenu}/>
             {this.state.loading ? <Loader/> : null}
         </div>;
     }

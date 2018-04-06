@@ -1,0 +1,125 @@
+versions:
+  - tag: 0.0.10-dev
+    changes:
+      - name: Audio issues
+        issues:
+          - (Game) Allow game to suspend and resume all audio playing during pause or menus
+          - (Game) Voice playing wrong entry. Issue introduced in (162) while adding the hidden entries
+          - (172)
+
+  - tag: 0.0.9
+    date: 29.03.2018
+    changes:
+      - name: Editor UX
+        description: Improved editor ergonomics for easier metadata editing
+        issues:
+          - (168)
+          - (170)
+          - (156)
+          - (177)
+          - (Editor) Visually distinguish main area from dependent areas
+      - name: Firefox support
+        issues:
+          - (166)
+          - (167)
+      - name: Features
+        issues:
+          - (Game) Isometric camera now follows Twinsen
+          - (3) New metadata (thanks Jeffrey Veenhuis)
+      - name: Bugfixes
+        issues:
+          - (175)
+          - (Editor) Fix for crash in scripting area (React) when switching scenes
+
+  - tag: 0.0.8
+    date: 23.03.2018
+    changes:
+      - name: Features
+        issues:
+          - (Game) Voice playing hidden entries when normal entry ends
+          - (94)
+          - (3) New metadata (thanks Jeffrey Veenhuis)
+      - name: Bugfixes
+        issues:
+          - (Game) Scene 55 throwing exception with unavailable threejs object
+          - (Game) Trailing parentheses in some locator nodes.
+          - (162)
+          - (160)
+          - (159)
+          - (158)
+          - (163)
+
+  - tag: 0.0.7
+    date: 15.03.2018
+    changes:
+      - name: Misc
+        issues:
+          - (150)
+
+  - tag: 0.0.6
+    date: 15.03.2018
+    changes:
+      - name: Features
+        issues:
+          - (65) Basic support for fan translations
+          - Crash reporting system
+      - name: Bugfixes
+        issues:
+          - (147) Issue introduced on move wait commands
+          - (153)
+
+  - tag: 0.0.5
+    date: 11.03.2018
+    changes:
+      - name: Features
+        issues:
+          - (60)
+          - (150)
+      - name: Bugfixes
+        issues:
+          - (147) Fixed incorrect move wait command being parsed (Tim stuck at the Tavern)
+
+  - tag: 0.0.4
+    date: 26.02.2018
+    changes:
+      - name: Bugfixes
+        issues:
+          - (Game) Voice samples playing while displaying in-game menu
+          - (Game) Hide text dialog while displaying in-game menu
+          - (Game) Make menu clickable
+          - (Game) Fix warning in params parsing
+
+  - tag: 0.0.3
+    date: 13.02.2018
+    changes:
+      - name: Features
+        issues:
+          - (Game) Raw sprites from SPRIRAW.HQR file (eg. Magicball Twinsen's Secret Room)
+          - (Game) Updated font to match original game (thanks Jesiek)
+          - (Game) Main Menu - resume and new game
+          - (Game) In-Game Menu - Pause and resume game with in-game menu (Esc key)
+          - (Game) LBA2 Intro sequence on New Game
+          - (Game) Version code (toggle using V key)
+      - name: Bugfixes
+        issues:
+          - (Game) Color pallete of the dialogues frame (thanks Jesiek)
+          - (Game) Delay dialogue character appearance to sync better with voices (thanks Knappen)
+          - (Game) Multiple Music playing simultaneous
+
+  - tag: 0.0.2
+    date: 07.02.2018
+    changes:
+      - name: Features
+        issues:
+          - (Editor) Change log file.
+          - (Editor) Change log area in the editor (allow you to view this file)
+      - name: Bugfixes
+        issues:
+          - (Game) Key events cancelled on focus lose (eg. Windows Alt+Tab)
+          - (Game) Collision system to allow jump on cliffs
+          - (Game) Fixed Spider animation exception in Citadel Caves
+          - (Editor) Allow single area in editor, with no child areas
+
+  - tag: 0.0.1
+    title: First public release
+    date: 01.02.2018

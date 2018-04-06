@@ -8,13 +8,19 @@ import Popup from './ui/Popup';
 import {loadParams} from './params';
 import {loadGameMetaData} from './ui/editor/DebugData';
 import {CrashHandler} from './crash_reporting';
+import ChangeLog from './ui/ChangeLog';
 
 class Root extends React.Component {
     constructor(props) {
         super(props);
         const params = loadParams();
-        this.state = { params };
+        this.state = {
+            params,
+            changelog: false
+        };
         this.onHashChange = this.onHashChange.bind(this);
+        this.closeChangeLog = this.closeChangeLog.bind(this);
+        this.openChangeLog = this.openChangeLog.bind(this);
         if (params.editor) {
             loadGameMetaData();
         }
@@ -22,14 +28,24 @@ class Root extends React.Component {
 
     componentWillMount() {
         window.addEventListener('hashchange', this.onHashChange);
+        document.addEventListener('displaychangelog', this.openChangeLog);
     }
 
     componentWillUnmount() {
         window.removeEventListener('hashchange', this.onHashChange);
+        document.removeEventListener('displaychangelog', this.openChangeLog);
     }
 
     onHashChange() {
         this.setState({ params: loadParams() });
+    }
+
+    openChangeLog() {
+        this.setState({ changelog: true });
+    }
+
+    closeChangeLog() {
+        this.setState({ changelog: false });
     }
 
     render() {
@@ -42,6 +58,7 @@ class Root extends React.Component {
         return <div>
             {content}
             <Popup/>
+            {this.state.changelog ? <ChangeLog close={this.closeChangeLog}/> : null}
         </div>;
     }
 }
