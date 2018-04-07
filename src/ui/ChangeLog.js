@@ -28,20 +28,6 @@ const inner_style = {
     borderRadius: 15
 };
 
-const content_style = {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    margin: 15,
-    color: 'white',
-    overflowY: 'auto',
-    overflowX: 'hidden',
-    fontSize: '20px',
-    fontFamily: 'LBA'
-};
-
 function TagIcon() {
     return <img src="./images/label.png" style={{width: 16, height: 16, paddingRight: 4}}/>;
 }
@@ -93,18 +79,38 @@ export default class ChangeLog extends React.Component {
             height: 24,
             cursor: 'pointer'
         };
-        return <div style={bg_style} onClick={this.props.close}>
-            <div style={inner_style} onClick={e => e.stopPropagation()}>
-                <div style={content_style}>
-                    <img style={closeStyle} src="./editor/icons/close.png" onClick={this.props.close}/>
-                    <div style={{fontSize: 26, textDecoration: 'underline'}}>LBA2 Remake</div>
-                    <div style={{paddingBottom: 20}}>Changelog</div>
-                    <div>
-                        {map(versions, this.renderVersion)}
-                    </div>
-                </div>
+
+        const content_style = {
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            margin: 15,
+            color: 'white',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            fontSize: '20px',
+            fontFamily: 'LBA'
+        };
+
+        const content = <div style={content_style}>
+            {this.props.close && <img style={closeStyle} src="./editor/icons/close.png" onClick={this.props.close}/>}
+            {this.props.title && <div style={{fontSize: 26, textDecoration: 'underline'}}>LBA2 Remake</div>}
+            {this.props.title && <div style={{paddingBottom: 20}}>Versions history</div>}
+            <div>
+                {map(versions, this.renderVersion)}
             </div>
         </div>;
+
+        if (this.props.fullscreen) {
+            return <div style={bg_style} onClick={this.props.close}>
+                <div style={inner_style} onClick={e => e.stopPropagation()}>
+                    {content}
+                </div>
+            </div>;
+        }
+        return content;
     }
 
     toggleExpand(tag) {

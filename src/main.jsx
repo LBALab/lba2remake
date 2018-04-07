@@ -58,7 +58,8 @@ class Root extends React.Component {
         return <div>
             {content}
             <Popup/>
-            {this.state.changelog ? <ChangeLog close={this.closeChangeLog}/> : null}
+            {this.state.changelog ?
+                <ChangeLog fullscreen title close={this.closeChangeLog}/> : null}
         </div>;
     }
 }

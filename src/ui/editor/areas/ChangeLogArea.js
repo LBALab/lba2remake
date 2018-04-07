@@ -1,10 +1,10 @@
-import ChangeLog from './ChangeLogArea/content';
+import ChangeLogContent from './ChangeLogArea/content';
 import {Orientation, Type} from '../layout';
 
 const ChangeLogArea = {
     id: 'changelog',
     name: 'Change Log',
-    content: ChangeLog,
+    content: ChangeLogContent,
     mainArea: true,
     icon: 'changelog.png',
     getInitialState: () => ({}),
