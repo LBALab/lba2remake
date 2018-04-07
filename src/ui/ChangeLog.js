@@ -196,6 +196,25 @@ const issueStyle = {
     color: 'rgb(210, 210, 210)'
 };
 
+function GitHub({id, closed, small}) {
+    const linkStyle = {
+        color: 'white',
+        textDecoration: 'none',
+        paddingRight: small ? 0 : 8
+    };
+    const iconStyle = {
+        width: 16,
+        height: 16,
+        paddingRight: 4
+    };
+    const imgUrl = `./images/${closed ? 'github_closed' : 'github'}.png`;
+
+    return <a href={`${BASE_URL}/issues/${id}`} style={linkStyle} target="_blank">
+        <img src={imgUrl} style={iconStyle}/>
+        <span style={{fontSize: 12, lineHeight: '14px', border: '1px solid white', padding: '0 5px'}}>{id}</span>
+    </a>;
+}
+
 const issueCache = {};
 
 class Issue extends React.Component {
@@ -247,9 +266,31 @@ class Issue extends React.Component {
                 isBug = true;
                 text = mBug[1];
             }
+            text = this.replaceGitHubRefs(text);
         }
 
         return {type, id, isBug, tag, text, state};
+    }
+
+    replaceGitHubRefs(text) {
+        const content = [];
+        let i = 0;
+        let m;
+        let sub = text;
+        do {
+            m = sub.match(/gh\((\d+)\)/);
+            if (m) {
+                content.push(sub.substr(0, m.index));
+                content.push(<GitHub key={i} id={m[1]} small/>);
+                sub = sub.substr(m.index + m[0].length);
+                i += 1;
+            }
+        } while (m);
+        if (content.length > 0) {
+            content.push(sub);
+            return content;
+        }
+        return text;
     }
 
     fetchGithubIssue(id, text) {
@@ -290,14 +331,6 @@ class Issue extends React.Component {
             width: 16,
             height: 16
         };
-        const linkStyle = {
-            color: 'white',
-            textDecoration: 'none'
-        };
-        let imgUrl = './images/issue.png';
-        if (type === 'github') {
-            imgUrl = `./images/${closed ? 'github_closed' : 'github'}.png`;
-        }
         const tagStyle = {
             background: '#bfd4f2',
             color: 'black',
@@ -314,16 +347,9 @@ class Issue extends React.Component {
             padding: '0 3px'
         };
         return <div style={issueStyle}>
-            {type === 'github' ? <a
-                href={`${BASE_URL}/issues/${id}`}
-                style={linkStyle}
-                target="_blank"
-            >
-                <img src={imgUrl} style={iconStyle}/>
-                &nbsp;
-                <span style={{fontSize: 12, border: '1px solid white', padding: '0 5px'}}>{id}</span>
-                &nbsp;
-            </a> : <span><img src={imgUrl} style={iconStyle}/>&nbsp;</span>}
+            {type === 'github' ?
+                <GitHub id={id} closed={closed}/>
+                : <span><img src="./images/issue.png" style={iconStyle}/>&nbsp;</span>}
             {isBug && <span style={bugStyle}>BUG</span>}
             {tag && <span style={tagStyle}>{tag}</span>}
             {text}

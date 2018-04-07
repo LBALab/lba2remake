@@ -25,7 +25,7 @@ versions:
           - name: Audio issues
             issues:
               - (AUDIO) BUG Allow game to suspend and resume all audio playing during pause or menus
-              - (AUDIO) BUG Voice playing wrong entry. Issue introduced in (162) while adding the hidden entries
+              - (AUDIO) BUG Voice playing wrong entry. Issue introduced in gh(162) while adding the hidden entries
               - (172)
               - (185)
 
