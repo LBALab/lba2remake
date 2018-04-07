@@ -5,6 +5,11 @@ versions:
     changes:
       - name: Features
         issues:
+        groups:
+          - name: ChangeLog component
+            issues:
+              - Support github projects links
+              - "Github issue links in text. Example: gh(7)"
       - name: Bugfixes
         issues:
   - tag: 0.0.10
