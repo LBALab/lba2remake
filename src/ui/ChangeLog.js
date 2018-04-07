@@ -230,7 +230,7 @@ class Issue extends React.Component {
         let state;
         let isBug;
         let text = this.props.issue;
-        const mTags = this.props.issue.match(/\(([a-zA-Z0-9]+)\)(.*)/);
+        const mTags = this.props.issue.match(/^\(([a-zA-Z0-9]+)\)(.*)/);
         if (mTags) {
             const num = Number(mTags[1]);
             let baseText = mTags[2].match(/ *(.*)/)[1];
