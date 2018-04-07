@@ -44,7 +44,6 @@
     "dev": "cross-env NODE_ENV=development node devserver.js",
     "dev:debug": "cross-env SRCMAP=true NODE_ENV=development node devserver.js",
     "build": "cross-env NODE_ENV=production webpack -p",
-    "deploy": "node deploy/deploy.js",
     "lint": "eslint -f codeframe ./src"
   },
   "repository": "https://github.com/agrande/lba2remake.git",
