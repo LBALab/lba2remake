@@ -1,55 +1,63 @@
 versions:
   - tag: 0.0.10-dev
+    title: Pending patch release
     changes:
       - name: Audio issues
         issues:
-          - (Game) Allow game to suspend and resume all audio playing during pause or menus
-          - (Game) Voice playing wrong entry. Issue introduced in (162) while adding the hidden entries
+          - (GAME) Allow game to suspend and resume all audio playing during pause or menus
+          - (GAME) BUG Voice playing wrong entry. Issue introduced in (162) while adding the hidden entries
           - (172)
 
   - tag: 0.0.9
+    title: Patch release
     date: 29.03.2018
     changes:
-      - name: Editor UX
-        description: Improved editor ergonomics for easier metadata editing
-        issues:
-          - (168)
-          - (170)
-          - (156)
-          - (177)
-          - (Editor) Visually distinguish main area from dependent areas
-      - name: Firefox support
-        issues:
-          - (166)
-          - (167)
       - name: Features
+        groups:
+          - name: Editor UX for metadata entry
+            issues:
+              - (168)
+              - (170)
+              - (156)
+              - (177)
+              - (EDITOR) Visually distinguish main area from dependent areas
         issues:
-          - (Game) Isometric camera now follows Twinsen
+          - (GAME) Isometric camera now follows Twinsen
           - (3) New metadata (thanks Jeffrey Veenhuis)
       - name: Bugfixes
+        groups:
+          - name: Firefox support
+            issues:
+              - (166)
+              - (167)
         issues:
           - (175)
-          - (Editor) Fix for crash in scripting area (React) when switching scenes
+          - (EDITOR) BUG Fix for crash in scripting area (React) when switching scenes
 
   - tag: 0.0.8
+    title: Patch release
     date: 23.03.2018
     changes:
       - name: Features
         issues:
-          - (Game) Voice playing hidden entries when normal entry ends
+          - (GAME) Voice playing hidden entries when normal entry ends
           - (94)
           - (3) New metadata (thanks Jeffrey Veenhuis)
       - name: Bugfixes
+        groups:
+          - name: Crashes
+            issues:
+              - (GAME) BUG Scene 55 throwing exception with unavailable threejs object
+              - (162)
+              - (159)
+              - (158)
         issues:
-          - (Game) Scene 55 throwing exception with unavailable threejs object
-          - (Game) Trailing parentheses in some locator nodes.
-          - (162)
           - (160)
-          - (159)
-          - (158)
           - (163)
+          - (GAME) BUG Trailing parentheses in some locator nodes.
 
   - tag: 0.0.7
+    title: Patch release
     date: 15.03.2018
     changes:
       - name: Misc
@@ -57,6 +65,7 @@ versions:
           - (150)
 
   - tag: 0.0.6
+    title: Patch release
     date: 15.03.2018
     changes:
       - name: Features
@@ -65,10 +74,11 @@ versions:
           - Crash reporting system
       - name: Bugfixes
         issues:
-          - (147) Issue introduced on move wait commands
+          - (147) BUG Issue introduced on move wait commands
           - (153)
 
   - tag: 0.0.5
+    title: Patch release
     date: 11.03.2018
     changes:
       - name: Features
@@ -77,48 +87,51 @@ versions:
           - (150)
       - name: Bugfixes
         issues:
-          - (147) Fixed incorrect move wait command being parsed (Tim stuck at the Tavern)
+          - (147) BUG Fixed incorrect move wait command being parsed (Tim stuck at the Tavern)
 
   - tag: 0.0.4
+    title: Patch release
     date: 26.02.2018
     changes:
       - name: Bugfixes
         issues:
-          - (Game) Voice samples playing while displaying in-game menu
-          - (Game) Hide text dialog while displaying in-game menu
-          - (Game) Make menu clickable
-          - (Game) Fix warning in params parsing
+          - (GAME) BUG Voice samples playing while displaying in-game menu
+          - (GAME) BUG Hide text dialog while displaying in-game menu
+          - (GAME) BUG Make menu clickable
+          - (GAME) BUG Fix warning in params parsing
 
   - tag: 0.0.3
+    title: Patch release
     date: 13.02.2018
     changes:
       - name: Features
         issues:
-          - (Game) Raw sprites from SPRIRAW.HQR file (eg. Magicball Twinsen's Secret Room)
-          - (Game) Updated font to match original game (thanks Jesiek)
-          - (Game) Main Menu - resume and new game
-          - (Game) In-Game Menu - Pause and resume game with in-game menu (Esc key)
-          - (Game) LBA2 Intro sequence on New Game
-          - (Game) Version code (toggle using V key)
+          - (GAME) Raw sprites from SPRIRAW.HQR file (eg. Magicball Twinsen's Secret Room)
+          - (GAME) Updated font to match original game (thanks Jasiek)
+          - (GAME) Main Menu - resume and new game
+          - (GAME) In-Game Menu - Pause and resume game with in-game menu (Esc key)
+          - (GAME) LBA2 Intro sequence on New Game
+          - (GAME) Version code (toggle using V key)
       - name: Bugfixes
         issues:
-          - (Game) Color pallete of the dialogues frame (thanks Jesiek)
-          - (Game) Delay dialogue character appearance to sync better with voices (thanks Knappen)
-          - (Game) Multiple Music playing simultaneous
+          - (GAME) BUG Color pallete of the dialogues frame (thanks Jasiek)
+          - (GAME) BUG Delay dialogue character appearance to sync better with voices (thanks Knappen)
+          - (GAME) BUG Multiple Music playing simultaneous
 
   - tag: 0.0.2
+    title: Patch release
     date: 07.02.2018
     changes:
       - name: Features
         issues:
-          - (Editor) Change log file.
-          - (Editor) Change log area in the editor (allow you to view this file)
+          - (EDITOR) Change log file.
+          - (EDITOR) Change log area in the editor (allow you to view this file)
       - name: Bugfixes
         issues:
-          - (Game) Key events cancelled on focus lose (eg. Windows Alt+Tab)
-          - (Game) Collision system to allow jump on cliffs
-          - (Game) Fixed Spider animation exception in Citadel Caves
-          - (Editor) Allow single area in editor, with no child areas
+          - (GAME) BUG Key events cancelled on focus lose (eg. Windows Alt+Tab)
+          - (GAME) BUG Collision system to allow jump on cliffs
+          - (GAME) BUG Fixed Spider animation exception in Citadel Caves
+          - (EDITOR) BUG Allow single area in editor, with no child areas
 
   - tag: 0.0.1
     title: First public release
