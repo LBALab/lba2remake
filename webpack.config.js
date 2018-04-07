@@ -13,7 +13,7 @@ module.exports = {
     },
     resolveLoader: {
         alias: {
-            'glsl-custom-loader': path.join(__dirname, "./webpack/loaders/glsl_loader.js")
+            'glsl-custom-loader': path.join(__dirname, "./utils/webpack-loaders/glsl_loader.js")
         }
     },
     module: {
