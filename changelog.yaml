@@ -1,4 +1,11 @@
 versions:
+  - tag: 0.0.11-dev
+    title: Pending patch release
+    changes:
+      - name: Features
+        issues:
+      - name: Bugfixes
+        issues:
   - tag: 0.0.10
     title: Patch release
     date: 07.04.2018
