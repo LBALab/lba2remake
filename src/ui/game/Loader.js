@@ -1,5 +1,5 @@
 import React from 'react';
-import {extend, isEmpty, map} from 'lodash';
+import {extend, isEmpty, map, entries, sortBy} from 'lodash';
 import {fullscreen} from '../styles/index';
 import Ribbon from './Ribbon';
 
@@ -19,6 +19,7 @@ export default class Loader extends React.Component {
     constructor() {
         super();
         this.onLoadEvent = this.onLoadEvent.bind(this);
+        this.renderComponent = this.renderComponent.bind(this);
         this.state = {components: loadingComponents};
     }
 
@@ -37,13 +38,17 @@ export default class Loader extends React.Component {
     }
 
     render() {
-        const content = isEmpty(this.state.components)
-            ? null
-            : <span className="lds-subtext" style={{clear: 'both'}}><br/>
-                {map(this.state.components, (progress, name) => <span key={name} style={{fontSize: '12px'}}>
-                    <span style={{float: 'left', fontStyle: 'normal'}}>{name}</span>&nbsp;
-                    <span style={{float: 'right'}}>{progress}</span><br/>
-                </span>)}
+        const compStyle = {
+            display: 'block',
+            margin: 0,
+            padding: 0,
+            width: 128,
+            height: 14 * 6,
+            overflow: 'hidden',
+        };
+        const content = !isEmpty(this.state.components)
+            && <span className="lds-subtext" style={compStyle}><br/>
+                {map(sortBy(entries(this.state.components), e => 1 - e[1]), this.renderComponent)}
             </span>;
         return <div style={overlay}>
             <div className="loader">
@@ -67,6 +72,38 @@ export default class Loader extends React.Component {
                 </div>
             </div>
             <Ribbon mode="loader" editor={this.props.editor}/>
+        </div>;
+    }
+
+    renderComponent([name, progress]) {
+        const style = {
+            position: 'relative',
+            fontSize: '12px',
+            height: 13,
+            lineHeight: '13px',
+            width: 128,
+            borderBottom: '1px solid rgba(49, 89, 255, 0.2)',
+            textAlign: 'center'
+        };
+        const nameStyle = {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            fontStyle: 'normal',
+            lineHeight: '13px',
+        };
+        const progStyle = {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: progress * 128,
+            background: 'rgba(49, 89, 255, 0.5)'
+        };
+        return <div key={name} style={style}>
+            <div style={progStyle}/>
+            <div style={nameStyle}>{name}</div>
         </div>;
     }
 }

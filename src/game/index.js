@@ -137,12 +137,12 @@ function preloadFileAsync(url, name) {
         }
     };
     return (callback: Function) => {
-        send('loaderprogress', '0%');
+        send('loaderprogress', 0);
         const request = new XMLHttpRequest();
         request.open('GET', url, true);
         request.responseType = 'arraybuffer';
         request.onprogress = (event) => {
-            const progress = `${Math.round((event.loaded / event.total) * 100)}%`;
+            const progress = event.loaded / event.total;
             send('loaderprogress', progress);
         };
         request.onload = () => {
