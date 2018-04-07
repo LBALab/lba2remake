@@ -1,12 +1,25 @@
 versions:
-  - tag: 0.0.10-dev
-    title: Pending patch release
+  - tag: 0.0.10
+    title: Patch release
+    date: 07.04.2018
     changes:
-      - name: Audio issues
+      - name: Features
         issues:
-          - (GAME) Allow game to suspend and resume all audio playing during pause or menus
-          - (GAME) BUG Voice playing wrong entry. Issue introduced in (162) while adding the hidden entries
-          - (172)
+          - New changelog
+          - (149) New loader
+          - (149) New ribbon logo
+          - (179)
+          - (124)
+      - name: Bugfixes
+        issues:
+          - (165)
+        groups:
+          - name: Audio issues
+            issues:
+              - (AUDIO) BUG Allow game to suspend and resume all audio playing during pause or menus
+              - (AUDIO) BUG Voice playing wrong entry. Issue introduced in (162) while adding the hidden entries
+              - (172)
+              - (185)
 
   - tag: 0.0.9
     title: Patch release
