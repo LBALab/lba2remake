@@ -144,7 +144,8 @@ export default class ChangeLog extends React.Component {
         const projectStyle = {
             textDecoration: 'none',
             float: 'right',
-            color: 'white'
+            color: 'white',
+            fontSize: 14
         };
         if (isExpanded) {
             return <div key={version.tag} style={{marginBottom: 14}}>
