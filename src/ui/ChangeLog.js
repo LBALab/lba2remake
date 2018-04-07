@@ -141,6 +141,11 @@ export default class ChangeLog extends React.Component {
             color: isExpanded ? 'rgb(150, 150, 255)' : 'rgb(200, 200, 255)',
             marginBottom: isExpanded ? 0 : 10
         };
+        const projectStyle = {
+            textDecoration: 'none',
+            float: 'right',
+            color: 'white'
+        };
         if (isExpanded) {
             return <div key={version.tag} style={{marginBottom: 14}}>
                 <div onClick={toggle} style={titleStyle}>
@@ -149,6 +154,10 @@ export default class ChangeLog extends React.Component {
                     <VersionDate date={version.date}/>
                 </div>
                 <div style={{paddingLeft: 24, paddingTop: 8, fontSize: '18px'}}>
+                    {version.project && <a href={version.project} target="_blank" style={projectStyle}>
+                        <img src="./images/github.png" style={{width: 16, height: 16, paddingRight: 8}}/>
+                        Github Project
+                    </a>}
                     {map(version.changes, group => this.renderChangeGroup(group))}
                 </div>
             </div>;
