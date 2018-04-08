@@ -50,9 +50,18 @@ ESLint errors and warnings don't prevent the code from compiling and there are n
 
 This is all meant to be a gradual code quality process.
 
-### WebGL / three.js
+### WebGL & three.js
 
-(...)
+A game engine requires a graphics library to perform its rendering. LBA2 Remake's main graphics library is [three.js](https://threejs.org/), which is the most widely used, battle-tested 3D library on the web platform.
+
+Three.js uses [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) under the hood to talk directly to your computer or phone's GPU.
+
+We are actually not using _three.js_ extensively, in particular, we are implementing our own custom shaders, bypassing _three.js_' built-in shaders entirely.
+Also, we are not taking much advantage of its [scene graph](https://en.wikipedia.org/wiki/Scene_graph).
+
+This means we could - at this point - relatively easily get rid of it, and replace it by our own custom 3D engine. This could make portability to devices like the _Nintendo Switch_ (which doesn't support WebGL) more feasible.
+
+There are some advantages to keep using it though, like readily available **vector** and **matrix** operations, easier support for Virtual Reality, common 3D formats, well-known shading techniques, post-processing effects, (etc).
 
 ### React
 
