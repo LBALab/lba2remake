@@ -5,7 +5,7 @@ This document describes the technologies used, design principles and code archit
 
 ## Technologies
 
-The project runs in a browser and relies on modern web technologies, in particular [JavaScript](https://developer.mozilla.org/bm/docs/Web/JavaScript), [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) (through [three.js](https://threejs.org/)) and [React](https://reactjs.org/).
+The project runs in a browser and relies on modern web technologies, in particular the [JavaScript](https://developer.mozilla.org/bm/docs/Web/JavaScript) language ecosystem, [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) (through [three.js](https://threejs.org/)) for 3D rendering, and [React](https://reactjs.org/) for user interfaces.
 
 Using JavaScript does not limit us to run the game in a traditional web browser. We have plans to make standalone versions for the desktop, mobile and console platforms.
 
