@@ -65,7 +65,7 @@ There are some advantages to keep using it though, like readily available **vect
 
 ### React
 
-(...)
+[React](https://reactjs.org/) is a great library for building user interfaces. It relies on a declarative paradigm which makes our code more predictable and easier to debug. This is particularly useful when building the **editor**.
 
 
 ## Design Principles
