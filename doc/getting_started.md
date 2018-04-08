@@ -53,4 +53,9 @@ Just point your browser to the following url: _http://localhost:8080_
 
 The first launch might take some time, but subsequent page refresh will be fast.
 
-You can now start editing the code and refresh the page to see the result (the dev server compiles your changes almost instantaneously).
+You can now start editing the code and refresh the page to see the result (the dev server compiles your changes almost instantly).
+
+
+## What next?
+
+Once your development environment is up and running, you can check the [architecture](architecture.md) guide to learn more about how the project is organized.

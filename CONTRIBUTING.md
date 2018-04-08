@@ -35,9 +35,9 @@ The best way to start contributing as a developer is to get in touch with us ove
 
 Or you can fork the project and work on whatever you want!
 
-### Architecture
+### How to get started?
 
-`[TODO]` We're working to document our architecture, design choices and engineering principles, as well as giving pointers on how to get started hacking the code.
+[Here](doc/getting_started.md) is a guide to help you setup your local development environment, and this [document](doc/architecture.md) describes the project architecture.
 
 ### Find an issue to work on
 
