@@ -1,6 +1,6 @@
 # Architecture
 
-This document describes the technologies used, design principles and code architecture of the LBA2 remake project.
+This document describes the [technologies](#Technologies) used, [design principles](#design-principles) and [code architecture](#code-architecture) of the LBA2 remake project.
 
 
 ## Technologies
