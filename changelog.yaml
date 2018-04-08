@@ -5,6 +5,7 @@ versions:
     changes:
       - name: Features
         issues:
+          - (3) New metadata (thanks Hinatangel)
         groups:
           - name: ChangeLog component
             issues:

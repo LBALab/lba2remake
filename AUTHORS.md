@@ -13,6 +13,7 @@
 
 ### Metadata
 * Jeffrey Veenhuis (@Jeffroiscool)
+* Hinatangel
 
 ### Bug Reports & Feature Suggestions
 * Felipe Corrêa da Silva Sanches
