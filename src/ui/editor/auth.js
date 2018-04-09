@@ -75,6 +75,9 @@ class AuthPopup extends React.Component {
     send() {
         const auth = this.state.authData;
         if ((auth.name || auth.nocredit) && validateEmail(auth.email)) {
+            if (!auth.name) {
+                auth.name = `anonymous_${new Date().getTime()}`;
+            }
             this.props.close();
             this.props.callback(auth);
         } else {
