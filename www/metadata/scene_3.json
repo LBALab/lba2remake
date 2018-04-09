@@ -2,16 +2,31 @@
   "actorNames": [
     null,
     null,
-    "CellarDoor",
     null,
     null,
+    "DrinkingSound",
     "Luc",
     "Tim",
-    "Customer1",
-    "Customer2"
+    "Fab",
+    "Pat",
+    null,
+    "LifePointsVending",
+    "MagicPointsVending",
+    "Dispenser",
+    "Jukebox",
+    "Jukebox",
+    null,
+    "SupAgent",
+    "SupAgent",
+    "DrunkFrancoSkate",
+    "FishBull",
+    "SupAgent",
+    "SupAgent"
   ],
   "varcubes": [
-    null,
+    {
+      "name": "serve_customer"
+    },
     null,
     null,
     {
@@ -29,6 +44,11 @@
         "2": "lba_theme",
         "3": "the_empire"
       }
+    },
+    null,
+    null,
+    {
+      "name": "tim_busy"
     }
   ]
 }

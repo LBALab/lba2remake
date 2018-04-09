@@ -3,11 +3,11 @@
     null,
     null,
     "GroboClerk",
-    null,
-    null,
+    "LifePointsVending",
+    "CashRegister",
     "MecaPinguinOnDisplay",
     "Darts",
-    null,
+    "MacigPointsVending",
     "Holomap"
   ]
 }
