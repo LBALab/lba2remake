@@ -4,8 +4,6 @@
   "description": "Little Big Adventure 2, HD version, for the web",
   "dependencies": {
     "async": ">=2.6.0",
-    "fbjs": ">=0.8.16",
-    "ftp-deploy": ">=1.2.2",
     "lodash": ">=4.17.5",
     "protobufjs": "^5.0.2",
     "react": "^16.2.0",
