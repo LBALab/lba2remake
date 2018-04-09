@@ -45,7 +45,7 @@ app.post('/metadata', function (req, res) {
 });
 
 app.post('/ws/crash/report', function (req, res) {
-    console.log('saving crash report');
+    console.log('Saving crash report');
     const ws = fs.createWriteStream('./crash_report.json');
     req.pipe(ws);
     res.end();
