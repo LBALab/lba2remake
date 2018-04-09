@@ -197,8 +197,13 @@ function saveMetaData(metadata) {
             const request = new XMLHttpRequest();
             request.open('POST', 'metadata', true);
             request.onload = function onload() {
-                // eslint-disable-next-line no-console
-                console.log('Saved metadata:', content);
+                if (this.status === 200) {
+                    // eslint-disable-next-line no-console
+                    console.log('Saved metadata:', content);
+                } else {
+                    // eslint-disable-next-line no-console
+                    console.error('Failed to save metadata');
+                }
             };
             request.setRequestHeader('Content-Type', 'application/json');
             request.send(JSON.stringify(content));
