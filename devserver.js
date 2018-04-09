@@ -3,6 +3,7 @@
 const fs = require('fs');
 const http = require('http');
 const express = require('express');
+const bodyParser = require('body-parser');
 const createWebpackMiddleware = require('webpack-express-middleware');
 const app = express();
 const config = require('./webpack.config.js');
@@ -12,17 +13,34 @@ const compiler = require('webpack')(config);
 app.set('port', process.env.PORT || 8080);
 app.set('host', process.env.HOST || '0.0.0.0');
 
-app.post('/ws/metadata/scene/:sceneId', function (req, res) {
-    console.log(`saving scene metadata, scene=${req.params.sceneId}, author=${req.query.author}`);
-    const ws = fs.createWriteStream(`./www/metadata/scene_${req.params.sceneId}.json`);
-    req.pipe(ws);
-    res.end();
-});
+app.use(bodyParser.json());
 
-app.post('/ws/metadata/game', function (req, res) {
-    console.log(`saving game metadata, author=${req.query.author}`);
-    const ws = fs.createWriteStream('./www/metadata/game.json');
-    req.pipe(ws);
+app.post('/metadata', function (req, res) {
+    const body = req.body;
+    console.log(`Saving metadata, content=${JSON.stringify(body, null, 2)}`);
+    let fileName;
+    switch (body.type) {
+        case 'scene':
+            fileName = `./www/metadata/scene_${body.index}.json`;
+            break;
+        case 'game':
+            fileName = './www/metadata/game.json';
+            break;
+    }
+    if (fileName) {
+        fs.readFile(fileName, 'utf8', (err, file) => {
+            if (err) {
+                console.error(err);
+            } else {
+                const content = JSON.parse(file);
+                if (!(body.subType in content)) {
+                    content[body.subType] = [];
+                }
+                content[body.subType][body.subIndex] = body.value;
+                fs.writeFile(fileName, JSON.stringify(content, null, 2), () => {});
+            }
+        });
+    }
     res.end();
 });
 
