@@ -2,7 +2,7 @@
   "actorNames": [
     null,
     null,
-    "Elevator",
+    "Elevator1",
     "Mushroom1",
     "WoodenPlatform1",
     "WoodenPlatform2",
@@ -11,7 +11,7 @@
     "Mushroom2",
     "Mushrooms1",
     "CloverBox",
-    "Elevator",
+    "Elevator2",
     "Rabibunny",
     "StoneWall",
     "PyramidKey",
@@ -23,11 +23,11 @@
     "Switch",
     "Gate",
     "CardboardBox",
-    "Bat",
-    "Bat",
+    "Bat1",
+    "Bat2",
     "Pointer",
     "SendellOrnament",
     "FrancoSkateGuard",
-    "Mushrooms"
+    "Mushrooms3"
   ]
 }

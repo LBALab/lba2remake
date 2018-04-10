@@ -2,12 +2,12 @@
   "actorNames": [
     null,
     null,
-    "TokenSlot",
-    null,
-    null,
-    "EsmerManager",
-    "EsmerGarbageCan",
-    "EsmerCactus",
-    "EsmerNewspaperReader"
+    "ControlPanel",
+    "TouristTerminal",
+    "Door",
+    "SupAgent",
+    "TrashCanSupAgent",
+    "CactusSupAgent",
+    "NewspaperSupAgent"
   ]
 }
