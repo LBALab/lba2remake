@@ -13,15 +13,15 @@
     "LifePointsVending",
     "MagicPointsVending",
     "Dispenser",
-    "Jukebox",
-    "Jukebox",
+    "Jukebox1",
+    "Jukebox2",
     "Chains",
-    "SupAgent",
-    "SupAgent",
+    "SupAgent1",
+    "SupAgent2",
     "DrunkFrancoSkate",
     "FishBull",
-    "SupAgent",
-    "SupAgent"
+    "SupAgent3",
+    "SupAgent4"
   ],
   "varcubes": [
     {
