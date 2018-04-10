@@ -1,5 +1,5 @@
 import {extend} from 'lodash';
-import {checkAuth} from './auth';
+import {checkAuth, getAuthQueryString} from './auth';
 import {centerIsoCamera} from '../../game/loop/cameras/iso';
 
 const DebugData = {
@@ -174,7 +174,7 @@ export function loadSceneMetaData(sceneIndex, callback) {
         return;
     }
     const request = new XMLHttpRequest();
-    request.open('GET', `metadata/scene_${sceneIndex}.json`, true);
+    request.open('GET', `metadata/scene_${sceneIndex}.json${getAuthQueryString()}`, true);
 
     request.onload = function onload() {
         if (this.status === 200) {
@@ -213,7 +213,7 @@ function saveMetaData(metadata) {
 
 export function loadGameMetaData() {
     const request = new XMLHttpRequest();
-    request.open('GET', 'metadata/game.json', true);
+    request.open('GET', `metadata/game.json${getAuthQueryString()}`, true);
 
     request.onload = function onload() {
         if (this.status === 200) {
