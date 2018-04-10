@@ -4,8 +4,9 @@
     null,
     "Umbrella",
     "PharmacyClerk",
-    "Magic",
-    "Life",
-    "MissAmiradoo"
+    "MagicPointsVending",
+    "LifePointsVending",
+    "MissAmiradoo",
+    "UmbrellaThief"
   ]
 }

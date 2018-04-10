@@ -2,10 +2,14 @@
   "actorNames": [
     null,
     null,
-    null,
-    null,
-    "Switch3",
+    "CardboardBox1",
+    "Elevator1",
+    "Switch1",
     "Switch2",
-    "Switch1"
+    "Switch3",
+    "Elevator2",
+    "Elevator3",
+    "CardboardBox2",
+    "CardboardBox3"
   ]
 }

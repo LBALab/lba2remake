@@ -2,11 +2,11 @@
   "actorNames": [
     null,
     null,
-    null,
-    null,
+    "ThunderSound",
+    "ScooterRabibunnyAndTwinsen",
     "Zed",
     "ShyGuy",
-    null,
+    "SupAgent",
     "Mushroom"
   ]
 }
