@@ -34,7 +34,8 @@ export function sendCrashReport(error) {
         data: getCrashReportData()
     };
 
-    request.send(JSON.stringify(content, null, 2));
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.send(JSON.stringify(content));
 }
 
 function getCrashReportData() {

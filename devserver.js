@@ -46,32 +46,21 @@ app.post('/metadata', function (req, res) {
 
 app.post('/ws/crash/report', function (req, res) {
     console.log('Saving crash report');
-    const ws = fs.createWriteStream('./crash_report.json');
-    req.pipe(ws);
+    const report = req.body;
+    fs.writeFile('./crash_report.json', JSON.stringify(report, null, 2), () => {});
+    const content = JSON.stringify(report);
+    const tgtReq = http.request({
+        host: 'lba2remake.xesf.net',
+        path: '/ws/crash/report',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': content.length
+        }
+    });
+    tgtReq.write(content);
+    tgtReq.end();
     res.end();
-    if (process.env.SRCMAP) {
-        let body = '';
-        req.on('data', function(chunk) {
-            body += chunk;
-        });
-
-        req.on('end', function() {
-            const report = JSON.parse(body);
-            report.version += ' (modified)';
-            const content = JSON.stringify(report, null, 2);
-            const tgtReq = http.request({
-                host: 'lba2remake.xesf.net',
-                path: '/ws/crash/report',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Content-Length': content.length
-                }
-            });
-            tgtReq.write(content);
-            tgtReq.end();
-        });
-    }
 });
 
 app.use('/data', express.static('./www/data', {
