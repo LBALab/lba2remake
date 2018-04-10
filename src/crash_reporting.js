@@ -19,7 +19,7 @@ export function sendCrashReport(error) {
         return;
 
     const request = new XMLHttpRequest();
-    request.open('POST', 'ws/crash/report', true);
+    request.open('POST', 'crash', true);
     request.onload = () => {
         // eslint-disable-next-line no-console
         console.log('Sent crash report.');
