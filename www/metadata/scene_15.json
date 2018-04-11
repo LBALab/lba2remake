@@ -2,14 +2,21 @@
   "actorNames": [
     null,
     null,
-    "GroboCashier",
-    null,
-    "Visitor",
-    null,
-    "Button",
-    "SuitSwitch",
-    "Safe",
+    "GroboClerk",
+    "Door1",
+    "QuetchVisitor",
+    "Door2",
+    "Switch1",
+    "Switch2",
+    "Strongbox",
     "MissBloop",
-    "SuitHolder"
+    "TunicAndMedallion",
+    "Twinsen'sPortrait1",
+    "Twinsen'sPortrait2",
+    "BookOfBu",
+    "FrancoSkateGuard1",
+    "SupAgent1",
+    "SupAgent2",
+    "FrancoSkateGuard2"
   ]
 }

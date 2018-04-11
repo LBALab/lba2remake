@@ -4,16 +4,14 @@
     null,
     "Gate",
     "Switch",
-    null,
+    "Crow",
     "Snake",
-    "FireballSpitter1",
-    "FireballSpitter2",
-    "FireballSpitter3",
+    "Trap1",
+    "Trap2",
+    "Trap3",
     "Bat1",
     "Bat2",
     "Bat3",
-    "Bat4",
-    null,
-    "Joe"
+    "Bat4"
   ]
 }

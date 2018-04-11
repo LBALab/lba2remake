@@ -1,1 +1,15 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "ControlPanel",
+    "TouristTerminal",
+    "Spacesuit",
+    "CrystalDoor",
+    "Translator",
+    "SupAgent",
+    "TrashCanAgent",
+    "CactusAgent",
+    "NewspaperAgent"
+  ]
+}

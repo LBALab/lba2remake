@@ -2,13 +2,14 @@
   "actorNames": [
     null,
     null,
-    null,
-    "ElevatorSwitch1",
-    "ElevatorSwitch2",
-    "ElevatorSwitch3",
-    "ElevatorSwitch4",
-    "ElevatorPlatform1",
-    "ElevatorPlatform2",
-    "GroboEmployee"
+    "Door",
+    "Switch1",
+    "Switch2",
+    "Switch3",
+    "Switch4",
+    "Elevator1",
+    "Elevator2",
+    "BaggageGrobo",
+    "ProtopackBox"
   ]
 }

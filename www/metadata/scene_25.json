@@ -2,8 +2,12 @@
   "actorNames": [
     null,
     null,
-    null,
+    "WaterAnimation",
     "NakedRabbibunny",
-    "NakedGrobo"
+    "NakedGrobo",
+    "FishBull1",
+    "FishBull2",
+    "FishBull3",
+    "FishBull4"
   ]
 }
