@@ -2,11 +2,11 @@
   "actorNames": [
     null,
     null,
-    null,
+    "Fountain",
     "Esmer",
     null,
     "Customer",
-    "HostileFrancos",
+    "FrancoSkateGuard",
     "AngryClerk"
   ]
 }

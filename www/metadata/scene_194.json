@@ -1,1 +1,13 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "Target",
+    "MagicBall",
+    "FunFrockStatue",
+    "Radio",
+    "Candle",
+    "Holomap",
+    "Darts"
+  ]
+}
