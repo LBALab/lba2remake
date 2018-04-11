@@ -1,1 +1,37 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "Pointer1",
+    "Trap1",
+    "Trap2",
+    "Elevator",
+    "Spacecraft",
+    "ElectricityPointer",
+    "Pointer2",
+    "EsmerTransport",
+    "FrancoSpearGuard1",
+    "FrancoSkateGuard1",
+    "CardboardBox",
+    "FrancoSpearGuard2",
+    "Esmer",
+    "FrancoSkateGuard2",
+    "HiddenMecaPenguin",
+    "Mushroom",
+    "Safe",
+    "ElectricitySwitch",
+    "FrancoLaserGuard",
+    "Door1",
+    "Door2",
+    "Door3",
+    "Door4",
+    "FrancoSkateGuard3",
+    null,
+    "SteelDoor1",
+    "SteelDoor2",
+    "SleepingShortFranco",
+    "SleepingTallFranco",
+    "KeyHideout",
+    "TableItem"
+  ]
+}

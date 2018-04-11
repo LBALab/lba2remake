@@ -1,1 +1,36 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "Fountain",
+    "Anatole",
+    "Carlo",
+    "PetanquePointer",
+    "PetanqueBall1",
+    "PetanqueBall2",
+    "PetanqueBall3",
+    null,
+    null,
+    null,
+    "PetanqueBallSmall",
+    "Ferry",
+    null,
+    "ShoreQuetch",
+    "FrancoSkateGuard1",
+    "FrancoSkateGuard2",
+    "SupAgent",
+    "FrancoSkateGuard3",
+    "FishBull1",
+    "TrashCanAgent1",
+    "TrashCanAgent2",
+    "Esmer",
+    "SupAgent",
+    "Twinsen'sCar",
+    "Pointer",
+    "PetanqueFranco",
+    "PetanqueSup",
+    "SupCustomer",
+    "QuetchCustomer",
+    "ShoreSup"
+  ]
+}
