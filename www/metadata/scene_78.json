@@ -1,1 +1,18 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "Elevator1",
+    "Elevator2",
+    "Ernestine",
+    "Adelaide",
+    "Pointer",
+    "AlarmPointer",
+    null,
+    "SupReceptionist",
+    "SensorLight1",
+    "SensorLight2",
+    "Door1",
+    "Door2"
+  ]
+}

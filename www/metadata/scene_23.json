@@ -1,1 +1,26 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "Lever",
+    "WheelLock",
+    "EsmerRadar",
+    "RedLights1",
+    "RedLights2",
+    "ArmoredDoor",
+    "Door1",
+    "Door2",
+    "FrancoSpearGuard1",
+    "FrancoSpearGuard2",
+    "FrancoTechnician1",
+    "FrancoTechnician2",
+    "FrancoTechnician3",
+    "FrancoTechnician4",
+    null,
+    "Fan1",
+    "Fan2",
+    "FrancoTechnician5",
+    "FrancoTechnician6",
+    "Baldino"
+  ]
+}

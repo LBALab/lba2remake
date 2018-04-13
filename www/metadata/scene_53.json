@@ -1,1 +1,15 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "MetallicDoor1",
+    "MetallicDoor2",
+    "MetallicDoor3",
+    "Door",
+    "Spacesuit",
+    "Baldino",
+    null,
+    null,
+    "Fan"
+  ]
+}

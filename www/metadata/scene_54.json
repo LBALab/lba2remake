@@ -2,11 +2,16 @@
   "actorNames": [
     null,
     null,
-    null,
-    null,
-    null,
-    null,
+    "Lock",
+    "ArmoredDoor",
+    "JailDoor",
+    "FrancoSpearGuard",
     "Baldino",
-    "Dissident"
+    "RebelFranco",
+    null,
+    "HiddenMecaPenguin",
+    null,
+    "Fan1",
+    "Fan2"
   ]
 }

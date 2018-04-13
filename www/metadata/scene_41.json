@@ -1,1 +1,18 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "ControlPanel",
+    "ControlLevers",
+    "ControlMachine",
+    "SupInformer",
+    "SupFlightAttendant",
+    "Esmer",
+    "Pointer1",
+    "TouristTerminal",
+    "HoleDoor",
+    "Pointer2",
+    "Translator",
+    "Pointer3"
+  ]
+}

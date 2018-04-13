@@ -1,1 +1,21 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "SphereSwitch1",
+    "SphereSwitch2",
+    "SphereSwitch3",
+    "Light1",
+    "Light2",
+    "Light3",
+    "MetallicDoor1",
+    "MetallicDoor2",
+    "MetallicDoor3",
+    "Door",
+    "Spacesuit",
+    "FrancoSpearGuard1",
+    "FrancoSpearGuard2",
+    "Fan1",
+    "Fan2"
+  ]
+}

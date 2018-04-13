@@ -1,1 +1,19 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "FrancoSpearGuard1",
+    "FrancoSpearGuard2",
+    "ControlSlot1",
+    "ControlSlot2",
+    "ControlLevers",
+    "Door",
+    "DoorUnlocker",
+    "FrancoSpearGuard3",
+    "AlarmPointer",
+    "FrancoTechnician1",
+    "FrancoTechnician2",
+    "SupInformer",
+    "Translator"
+  ]
+}
