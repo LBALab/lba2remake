@@ -1,1 +1,21 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "ArmoredDoor",
+    "Door1",
+    "Door2",
+    "FrancoSpearGuard1",
+    "FrancoSpearGuard2",
+    "Baldino",
+    "RebelFranco",
+    "FrancoLaserGuard",
+    "FrancoSpearGuard3",
+    null,
+    "Fan",
+    null,
+    null,
+    "FrancoTechnician",
+    "CloverBox"
+  ]
+}
