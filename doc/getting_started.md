@@ -6,9 +6,9 @@ We assume you have a working knowledge of git, github and running commands from 
 
 ## Prerequisites
 
-You'll need a recent version of [Node.js](https://nodejs.org) installed, which includes the `npm` command for managing dependencies.
+You'll need to install [Node.js](https://nodejs.org), which includes the `npm` command for managing dependencies.
  
-If you already have node.js installed, make sure it is a fairly recent version (approx. released less than a year ago).
+If you already have `node.js` installed, make sure it is a recent version (`>= 8.x.x`). LTS versions are preferred.
 
 
 ## Copying assets
