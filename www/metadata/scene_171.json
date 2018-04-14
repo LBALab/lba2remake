@@ -1,1 +1,11 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "FrancoShopAttendant",
+    "PickAx",
+    "LifePointsVending",
+    "MagicPointsVending",
+    "FryingPanPointer"
+  ]
+}

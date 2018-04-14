@@ -1,1 +1,36 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "JailBottom",
+    "JailBars1",
+    "JailBars2",
+    "JailTop",
+    "GroundChains",
+    "FunFrock",
+    "JailChains",
+    "Elevator",
+    null,
+    null,
+    "RocketShooterRoboGrobo1",
+    "LockedGate",
+    "RocketShooterRoboGrobo2",
+    "MaceRoboGrobo",
+    "Mushrooms1",
+    "Mushrooms2",
+    "Mushrooms3",
+    null,
+    null,
+    "Mushrooms4",
+    "Mushrooms5",
+    "Kid1",
+    "Kid2",
+    "Kid3",
+    "Kid4",
+    "GunRoboRabibunny1",
+    "GunRoboRabibunny2",
+    "TeleporterPointer1",
+    "TeleporterPointer2",
+    "Pointer"
+  ]
+}

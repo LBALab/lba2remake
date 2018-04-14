@@ -1,1 +1,31 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "HoseBibb1",
+    "HoseBibb2",
+    null,
+    "HoseBibb3",
+    "MetallicLockedDoor1",
+    "MetallicLockedDoor2",
+    "MetallicLockedDoor3",
+    "MetallicLockedDoor4",
+    "FishBull1",
+    "FishBull2",
+    "FrancoTechnician",
+    "FrancoSpearGuard",
+    null,
+    "Door1",
+    "Door2",
+    "Gazogem",
+    "KeyBox",
+    "Door3",
+    "Door4",
+    "Pointer",
+    null,
+    "FishBullPoop1",
+    "FishBullPoop2",
+    "FishBullPoop3",
+    "FishBullPoop4"
+  ]
+}

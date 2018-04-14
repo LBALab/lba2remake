@@ -1,1 +1,22 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "Elevator",
+    "JailFallingButton",
+    "FunFrock",
+    "TeleportationAnimation",
+    null,
+    null,
+    "JailBottom",
+    "JailBars1",
+    "JailBars2",
+    "JailTop",
+    "Kid1",
+    "JailChain",
+    "Kid2",
+    "Kid3",
+    "Kid3",
+    "TeleporterPointer"
+  ]
+}

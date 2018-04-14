@@ -1,1 +1,28 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "Elevator1",
+    "Elevator2",
+    "ImperialElevator",
+    "ReactorsController",
+    "TimerLever",
+    "MetallicDoor1",
+    "MetallicDoor2",
+    null,
+    null,
+    null,
+    "Pointer1",
+    "ZeelichEmperor",
+    "FrancoTechnician",
+    null,
+    "Pointer2",
+    null,
+    null,
+    null,
+    null,
+    "HiddenMecaPenguin",
+    "MonitorDisplay",
+    "Pointer3"
+  ]
+}

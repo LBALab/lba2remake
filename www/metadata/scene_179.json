@@ -1,1 +1,20 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "ImperialElevator",
+    "WheelLock",
+    "MachineGun",
+    "FrancoSoldier1",
+    "FrancoSoldier2",
+    "FrancoSoldier3",
+    "ArmoredDoor1",
+    "CloverBox",
+    "ImperialLockedDoor",
+    "KeyBox",
+    "FrancoSoldier4",
+    "FrancoSoldier5",
+    "FrancoSoldier6",
+    "ArmoredDoor2"
+  ]
+}

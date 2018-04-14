@@ -1,1 +1,18 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "TowerCannon1",
+    "TowerCannon2",
+    "TowerCannon3",
+    "TowerCannon4",
+    "FrancoSoldier5",
+    "FrancoSoldier6",
+    "FrancoSoldier7",
+    "FrancoSoldier1",
+    "FrancoSoldier2",
+    "FrancoSoldier3",
+    "FrancoSoldier4",
+    "ImperialSpacecraft"
+  ]
+}
