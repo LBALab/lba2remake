@@ -32,6 +32,7 @@
     "flow-bin": "^0.33.0",
     "flow-status-webpack-plugin": "^0.1.7",
     "json-loader": "^0.5.7",
+    "node-jsx": "^0.13.3",
     "node-libs-browser": "^1.1.1",
     "raw-loader": "^0.5.1",
     "webpack": "^1.15.0",

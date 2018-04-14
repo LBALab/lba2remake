@@ -2,6 +2,10 @@
 
 const fs = require('fs');
 const http = require('http');
+const React = require('react');
+const jsx = require('node-jsx');
+jsx.install();
+const {renderToStaticMarkup} = require('react-dom/server');
 const express = require('express');
 const bodyParser = require('body-parser');
 const createWebpackMiddleware = require('webpack-express-middleware');
@@ -9,6 +13,7 @@ const app = express();
 const config = require('./webpack.config.js');
 config.devtool = process.env.SRCMAP === 'true' ? 'source-map' : undefined;
 const compiler = require('webpack')(config);
+const Main = require('./main.jsx');
 
 app.set('port', process.env.PORT || 8080);
 app.set('host', process.env.HOST || '0.0.0.0');
@@ -70,6 +75,12 @@ app.use('/data', express.static('./www/data', {
 app.use('/data', (req, res) => {
     console.log(`404 ${req.method} ./www/data${req.url}`);
     res.status(404).send();
+});
+
+const indexBody = renderToStaticMarkup(React.createElement(Main));
+
+app.get('/', (req, res) => {
+    res.end(indexBody);
 });
 
 const webpackMiddleware = createWebpackMiddleware(compiler, config);
