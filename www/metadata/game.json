@@ -153,7 +153,7 @@
       "type": "boolean"
     },
     {
-      "name": "zoe_exit_state",
+      "name": "state",
       "type": "enum",
       "enumValues": {
         "0": "present",
