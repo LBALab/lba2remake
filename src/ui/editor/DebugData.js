@@ -1,4 +1,5 @@
-import {checkAuth} from './auth';
+import {extend} from 'lodash';
+import {checkAuth, getAuthQueryString} from './auth';
 import {centerIsoCamera} from '../../game/loop/cameras/iso';
 
 const DebugData = {
@@ -51,7 +52,12 @@ export function renameVar(varDef, name) {
             game.vargames[varDef.idx] = {};
         }
         game.vargames[varDef.idx].name = name;
-        saveGameMetaData();
+        saveMetaData({
+            type: 'game',
+            subType: 'vargames',
+            subIndex: varDef.idx,
+            value: game.vargames[varDef.idx]
+        });
     } else if (varDef.type === 'varcube') {
         const scenes = DebugData.metadata.scenes;
         const scene = DebugData.scope.scene;
@@ -66,7 +72,13 @@ export function renameVar(varDef, name) {
                 scenes[scene.index].varcubes[varDef.idx] = {};
             }
             scenes[scene.index].varcubes[varDef.idx].name = name;
-            saveSceneMetaData(scene.index);
+            saveMetaData({
+                type: 'scene',
+                index: scene.index,
+                subType: 'varcubes',
+                subIndex: varDef.idx,
+                value: scenes[scene.index].varcubes[varDef.idx]
+            });
         }
     }
 }
@@ -110,7 +122,13 @@ export function renameObject(type, sceneIndex, objIndex, name) {
         scenes[sceneIndex][key] = [];
     }
     scenes[sceneIndex][key][objIndex] = name;
-    saveSceneMetaData(sceneIndex);
+    saveMetaData({
+        type: 'scene',
+        index: sceneIndex,
+        subType: key,
+        subIndex: objIndex,
+        value: name
+    });
 }
 
 export function getObjectName(type, sceneIndex, objIndex) {
@@ -156,7 +174,7 @@ export function loadSceneMetaData(sceneIndex, callback) {
         return;
     }
     const request = new XMLHttpRequest();
-    request.open('GET', `metadata/scene_${sceneIndex}.json`, true);
+    request.open('GET', `metadata/scene_${sceneIndex}.json${getAuthQueryString()}`, true);
 
     request.onload = function onload() {
         if (this.status === 200) {
@@ -172,28 +190,30 @@ export function loadSceneMetaData(sceneIndex, callback) {
     request.send(null);
 }
 
-function saveSceneMetaData(sceneIndex) {
+function saveMetaData(metadata) {
     checkAuth((authData) => {
         if (authData) {
+            const content = extend({}, metadata, {auth: authData});
             const request = new XMLHttpRequest();
-            const query = [
-                `author=${encodeURIComponent(authData.name)}`,
-                `email=${encodeURIComponent(authData.email)}`,
-                `nocredit=${authData.nocredit}`
-            ].join('&');
-            request.open('POST', `ws/metadata/scene/${sceneIndex}?${query}`, true);
+            request.open('POST', 'metadata', true);
             request.onload = function onload() {
-                // eslint-disable-next-line no-console
-                console.log(`Saved scene ${sceneIndex} metadata`);
+                if (this.status === 200) {
+                    // eslint-disable-next-line no-console
+                    console.log('Saved metadata:', content);
+                } else {
+                    // eslint-disable-next-line no-console
+                    console.error('Failed to save metadata');
+                }
             };
-            request.send(JSON.stringify(DebugData.metadata.scenes[sceneIndex], null, 2));
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.send(JSON.stringify(content));
         }
     });
 }
 
 export function loadGameMetaData() {
     const request = new XMLHttpRequest();
-    request.open('GET', 'metadata/game.json', true);
+    request.open('GET', `metadata/game.json${getAuthQueryString()}`, true);
 
     request.onload = function onload() {
         if (this.status === 200) {
@@ -206,23 +226,4 @@ export function loadGameMetaData() {
     };
 
     request.send(null);
-}
-
-function saveGameMetaData() {
-    checkAuth((authData) => {
-        if (authData) {
-            const request = new XMLHttpRequest();
-            const query = [
-                `author=${encodeURIComponent(authData.name)}`,
-                `email=${encodeURIComponent(authData.email)}`,
-                `nocredit=${authData.nocredit}`
-            ].join('&');
-            request.open('POST', `ws/metadata/game?${query}`, true);
-            request.onload = function onload() {
-                // eslint-disable-next-line no-console
-                console.log('Saved game metadata');
-            };
-            request.send(JSON.stringify(DebugData.metadata.game, null, 2));
-        }
-    });
 }

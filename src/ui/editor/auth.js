@@ -41,6 +41,23 @@ export function checkAuth(callback) {
     }
 }
 
+export function getAuthQueryString() {
+    const raw_auth = localStorage.getItem('editor_auth');
+    try {
+        if (raw_auth) {
+            const auth = JSON.parse(raw_auth);
+            const query = [
+                `name=${encodeURIComponent(auth.name)}`,
+                `email=${encodeURIComponent(auth.email)}`
+            ];
+            return `?${query.join('&')}`;
+        }
+    } catch (e) {
+        // continue regardless of error
+    }
+    return '';
+}
+
 function saveAuth(callback, auth) {
     if (auth) {
         localStorage.setItem('editor_auth', JSON.stringify(auth));
@@ -75,6 +92,9 @@ class AuthPopup extends React.Component {
     send() {
         const auth = this.state.authData;
         if ((auth.name || auth.nocredit) && validateEmail(auth.email)) {
+            if (!auth.name) {
+                auth.name = `anonymous_${new Date().getTime()}`;
+            }
             this.props.close();
             this.props.callback(auth);
         } else {

@@ -19,7 +19,7 @@ export function sendCrashReport(error) {
         return;
 
     const request = new XMLHttpRequest();
-    request.open('POST', 'ws/crash/report', true);
+    request.open('POST', 'crash', true);
     request.onload = () => {
         // eslint-disable-next-line no-console
         console.log('Sent crash report.');
@@ -34,7 +34,8 @@ export function sendCrashReport(error) {
         data: getCrashReportData()
     };
 
-    request.send(JSON.stringify(content, null, 2));
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.send(JSON.stringify(content));
 }
 
 function getCrashReportData() {
