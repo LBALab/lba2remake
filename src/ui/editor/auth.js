@@ -23,12 +23,20 @@ const button_style = {
     fontSize: '1.1em'
 };
 
+function validateId(auth) {
+    if (!auth.id) {
+        localStorage.removeItem('editor_auth');
+        return null;
+    }
+    return auth;
+}
+
 export function checkAuth(callback) {
     let auth = null;
     const raw_auth = localStorage.getItem('editor_auth');
     try {
         if (raw_auth) {
-            auth = JSON.parse(raw_auth);
+            auth = validateId(JSON.parse(raw_auth));
         }
     } catch (e) {
         // continue regardless of error
@@ -39,6 +47,21 @@ export function checkAuth(callback) {
     } else {
         Popup.display(props => <AuthPopup callback={saveAuth.bind(null, callback)} {...props}/>);
     }
+}
+
+export function getAuthQueryString() {
+    const raw_auth = localStorage.getItem('editor_auth');
+    try {
+        if (raw_auth) {
+            const auth = validateId(JSON.parse(raw_auth));
+            if (auth) {
+                return `?userId=${auth.id}`;
+            }
+        }
+    } catch (e) {
+        // continue regardless of error
+    }
+    return '';
 }
 
 function saveAuth(callback, auth) {
@@ -75,6 +98,13 @@ class AuthPopup extends React.Component {
     send() {
         const auth = this.state.authData;
         if ((auth.name || auth.nocredit) && validateEmail(auth.email)) {
+            auth.id = new Date().getTime();
+            if (!auth.name) {
+                auth.name = `anonymous_${auth.id}`;
+            }
+            if (!auth.email) {
+                auth.email = `${auth.id}@lba2remake.net`;
+            }
             this.props.close();
             this.props.callback(auth);
         } else {
