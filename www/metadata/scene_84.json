@@ -1,1 +1,34 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "FrancoPolice1",
+    "JoanLoumin",
+    "Joe",
+    "IronBars1",
+    "IronBars2",
+    "IronBars3",
+    "IronBars4",
+    "IronBars5",
+    "JailOpener1",
+    "JailOpener2",
+    "JailOpener3",
+    "FrancoPolice2",
+    "FrancoPolice3",
+    "JailOpener4",
+    "JailOpener5",
+    "VentilationHoles",
+    "LaserBarrierSwitch1",
+    "LaserBarrierSwitch2",
+    "Pointer",
+    "FrancoPolice4",
+    "AlarmPointer1",
+    "AlarmPointer2",
+    "AlarmPointer3",
+    "Translator",
+    "LaserBarrier1",
+    "LaserBarrier2",
+    "Clover",
+    "LifePoints"
+  ]
+}

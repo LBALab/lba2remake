@@ -1,1 +1,15 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "SpeakerPointer",
+    "DoorUnlocker",
+    null,
+    null,
+    "FrancoPolice1",
+    "Pointer",
+    "AlarmPointer",
+    "FrancoPolice2",
+    "FrancoPolice3"
+  ]
+}

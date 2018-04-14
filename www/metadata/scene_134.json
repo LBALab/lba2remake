@@ -1,1 +1,17 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "MovablePillarTall",
+    "MovablePillarShort",
+    "SecretPassageLid",
+    "SecretPassageOpener1",
+    "SecretPassageOpener2",
+    "SecretPassageOpener3",
+    "FrancoDancer",
+    "SleepyFranco",
+    "TheDemon",
+    null,
+    "HiddenMecaPenguin"
+  ]
+}

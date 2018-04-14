@@ -1,1 +1,18 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "FrancoNewspaperSeller",
+    "Elevator1",
+    "Elevator2",
+    "Elevator3",
+    "Elevator4",
+    "Adelaide",
+    "Ernestine",
+    "FrancoPolice",
+    null,
+    "FrancoLaserGuard1",
+    "FrancoLaserGuard2",
+    "DarkMonkAnnouncement"
+  ]
+}
