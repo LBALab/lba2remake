@@ -1,1 +1,17 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "LeontineAirship",
+    "Captain",
+    "TaxiDriver1",
+    "TaxiDriver2",
+    "Pointer",
+    "FlyingTaxi1",
+    "FlyingTaxi2",
+    "FrancoPolice",
+    "FrancoLaserGuard1",
+    "FrancoLaserGuard2",
+    "NutsItem"
+  ]
+}

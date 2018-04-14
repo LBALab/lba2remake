@@ -1,1 +1,28 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "TankWheels",
+    "TankCannons",
+    "FishBull1",
+    "ObstaclePointer",
+    "FrancoSpearGuard1",
+    "FrancoSpearGuard2",
+    "EsmerRobot",
+    "FishBull2",
+    "BarrierPointer1",
+    "BarrierPointer2",
+    "BarrierPointer3",
+    "BarrierPointer4",
+    "BarrierPointer5",
+    "BarrierPointer6",
+    null,
+    "FrancoPolice",
+    "FrancoLaserGuard1",
+    "FrancoLaserGuard2",
+    null,
+    null,
+    null,
+    "FrancoLaserGuard3"
+  ]
+}

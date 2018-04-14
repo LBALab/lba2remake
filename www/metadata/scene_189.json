@@ -1,1 +1,10 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "ControlPanel",
+    "HiddenSpotPointer",
+    "Empress",
+    "Poodle"
+  ]
+}

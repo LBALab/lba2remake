@@ -1,1 +1,34 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "MonocleGloum",
+    "SlotMachineLight1",
+    "SlotMachineLight2",
+    "SlotMachineLight3",
+    "SlotMachineLight4",
+    "SlotMachineLight5",
+    "SlotMachineLight6",
+    "SlotMachineRoller1",
+    "SlotMachineRoller2",
+    "SlotMachineRoller3",
+    "SlotMachineLever1",
+    "SlotMachineRoller4",
+    "SlotMachineRoller5",
+    "SlotMachineRoller6",
+    "SlotMachineLever2",
+    "WannieWaiter",
+    "Drink",
+    "Bodyguard1",
+    "Bodyguard2",
+    "Bodyguard3",
+    "ShallNotPassPointer",
+    "OfficeDoor",
+    "TheDemon",
+    "DrunkSup",
+    "LoneWannie",
+    "UnsettledFranco",
+    "FrancoDancer",
+    "NoisyFranco"
+  ]
+}

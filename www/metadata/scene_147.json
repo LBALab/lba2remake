@@ -1,1 +1,16 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "FakeBookshelf",
+    "ShopAttendant",
+    "MecaPenguinOnDisplay",
+    "LifePointsVending",
+    "MagicPointsVending",
+    "WizardDiploma",
+    "FerryTicket",
+    "Umbrella",
+    "MemoryViewer",
+    "FakeShopAttendant"
+  ]
+}
