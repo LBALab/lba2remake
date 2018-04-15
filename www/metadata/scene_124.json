@@ -1,1 +1,21 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "LeverResponsibleWannie",
+    "BoxDoor1",
+    "BoxDoor2",
+    "BoxDoor3",
+    "BoxDoor4",
+    "Box",
+    "Lever1",
+    "Lever2",
+    "ConveyorBeltWheel",
+    "EntranceLightAnimation",
+    "ExitLightAnimation",
+    "MovingBox",
+    "Gemstones",
+    "Pointer",
+    "LidPlacingMachine"
+  ]
+}
