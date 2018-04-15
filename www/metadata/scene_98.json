@@ -1,1 +1,13 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "TankWheels",
+    "TankCannons",
+    "FrancoLaserGuard1",
+    "FrancoLaserGuard2",
+    null,
+    "EelGasMonster",
+    "MorayEelGasMonster"
+  ]
+}
