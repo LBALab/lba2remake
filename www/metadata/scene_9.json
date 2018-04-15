@@ -5,5 +5,12 @@
     "Neighbour",
     null,
     "Map"
+  ],
+  "zoneNames": [
+    "room_cam",
+    "door",
+    "desk",
+    "paper_rolls",
+    "library"
   ]
 }

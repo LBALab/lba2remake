@@ -1,1 +1,30 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "QueenAstrid",
+    "JoanLoumin",
+    "ConsultantMosquibee",
+    "JailOpener",
+    "Door1",
+    "DarkMonkStatue",
+    "JailBars",
+    "FrancoLaserGuard1",
+    "FrancoSpearGuard1",
+    "WannieAttendant",
+    "FrancoSpearGuard2",
+    "FrancoSoldier",
+    "Pointer1",
+    "Pointer2",
+    "Door2",
+    "Door3",
+    "SphericalSafe",
+    "SensorLight",
+    "FrancoSpearGuard3",
+    "FrancoSpearGuard4",
+    "FrancoLaserGuard2",
+    "FrancoLaserGuard3",
+    "SupBankManager",
+    "SupCrazyGlasses"
+  ]
+}

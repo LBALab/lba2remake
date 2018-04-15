@@ -1,1 +1,26 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "FragmentRoomDoor1",
+    "FragmentRoomDoor2",
+    "ToughWannieGuardian",
+    "FragmentRoomTrapPointer",
+    "LavaBallPointer1",
+    "LavaBallPointer2",
+    "LavaBallPointer3",
+    "Firefly1",
+    "Firefly2",
+    null,
+    "Mushrooms1",
+    "Gem1",
+    "Gem2",
+    "Mushrooms2",
+    "Wannie'sGlove",
+    null,
+    "ExplodingLava",
+    null,
+    null,
+    "Gem3"
+  ]
+}
