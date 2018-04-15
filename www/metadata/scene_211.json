@@ -1,1 +1,22 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "ProphecyOracle",
+    "GazogemStationWorker",
+    "WannieProphecyListener",
+    "Ernestine",
+    "GloumCasinoGuard",
+    "GloumThrowingOutTwinsen",
+    null,
+    "EscapeeAnouncer",
+    "FrancoPolice",
+    "FrancoLaserGuard1",
+    "FrancoLaserGuard2",
+    "FrancoLaserGuard3",
+    "FrancoLaserOnACar",
+    "FrancoLaserGuard4",
+    "BrokenCar",
+    "FrancoLaserGuard5"
+  ]
+}
