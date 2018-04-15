@@ -4,12 +4,13 @@ versions:
     project: https://github.com/agrande/lba2remake/projects/9
     changes:
       - name: Features
-        issues:
-          - Allow using "Enter" key to rename objects (in addition to "F2")
-          - Object renaming field now has the current value pre-set
-          - (3) New metadata (thanks Hinatangel)
-      - name: Bugfixes
-        issues:
+        groups:
+          - name: Metadata
+            issues:
+              - (EDITOR) Prevent sending update if name didn't change
+              - (EDITOR) Allow using "Enter" key to rename objects (in addition to "F2")
+              - (EDITOR) Object renaming field now has the current value pre-set
+              - (3) New metadata (thanks Hinatangel)
 
   - tag: 0.0.11
     title: Patch release

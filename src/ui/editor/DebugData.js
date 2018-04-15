@@ -51,13 +51,15 @@ export function renameVar(varDef, name) {
         if (!game.vargames[varDef.idx]) {
             game.vargames[varDef.idx] = {};
         }
-        game.vargames[varDef.idx].name = name;
-        saveMetaData({
-            type: 'game',
-            subType: 'vargames',
-            subIndex: varDef.idx,
-            value: game.vargames[varDef.idx]
-        });
+        if (game.vargames[varDef.idx].name !== name) {
+            game.vargames[varDef.idx].name = name;
+            saveMetaData({
+                type: 'game',
+                subType: 'vargames',
+                subIndex: varDef.idx,
+                value: game.vargames[varDef.idx]
+            });
+        }
     } else if (varDef.type === 'varcube') {
         const scenes = DebugData.metadata.scenes;
         const scene = DebugData.scope.scene;
@@ -71,14 +73,16 @@ export function renameVar(varDef, name) {
             if (!scenes[scene.index].varcubes[varDef.idx]) {
                 scenes[scene.index].varcubes[varDef.idx] = {};
             }
-            scenes[scene.index].varcubes[varDef.idx].name = name;
-            saveMetaData({
-                type: 'scene',
-                index: scene.index,
-                subType: 'varcubes',
-                subIndex: varDef.idx,
-                value: scenes[scene.index].varcubes[varDef.idx]
-            });
+            if (scenes[scene.index].varcubes[varDef.idx].name !== name) {
+                scenes[scene.index].varcubes[varDef.idx].name = name;
+                saveMetaData({
+                    type: 'scene',
+                    index: scene.index,
+                    subType: 'varcubes',
+                    subIndex: varDef.idx,
+                    value: scenes[scene.index].varcubes[varDef.idx]
+                });
+            }
         }
     }
 }
@@ -121,14 +125,16 @@ export function renameObject(type, sceneIndex, objIndex, name) {
     if (!(key in scenes[sceneIndex])) {
         scenes[sceneIndex][key] = [];
     }
-    scenes[sceneIndex][key][objIndex] = name;
-    saveMetaData({
-        type: 'scene',
-        index: sceneIndex,
-        subType: key,
-        subIndex: objIndex,
-        value: name
-    });
+    if (scenes[sceneIndex][key][objIndex] !== name) {
+        scenes[sceneIndex][key][objIndex] = name;
+        saveMetaData({
+            type: 'scene',
+            index: sceneIndex,
+            subType: key,
+            subIndex: objIndex,
+            value: name
+        });
+    }
 }
 
 export function getObjectName(type, sceneIndex, objIndex) {
