@@ -1,1 +1,20 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "LaserBarrier1",
+    "LaserBarrier2",
+    "LaserBarrier3",
+    "LaserBarrier4",
+    "FrancoTechnician",
+    null,
+    "Switch1",
+    "Switch2",
+    "ElectrocutedTwinsenAnimation1",
+    "ElectrocutedTwinsenAnimation2",
+    "ElectrocutedTwinsenAnimation3",
+    "ElectrocutedTwinsenAnimation4",
+    "ElevatorLever1",
+    "ElevatorLever2"
+  ]
+}
