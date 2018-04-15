@@ -1,7 +1,7 @@
 versions:
-  - tag: 0.0.12-dev
-    title: Pending patch release
-    project: https://github.com/agrande/lba2remake/projects/9
+  - tag: 0.0.12
+    title: Patch release
+    date: 15.04.2018
     changes:
       - name: Features
         groups:
