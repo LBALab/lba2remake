@@ -55,7 +55,7 @@ export default class Node extends React.Component {
     }
 
     renameShortcut() {
-        if (this.state.selected) {
+        if (this.state.selected && !this.state.renaming) {
             const node = this.props.node;
             const allow = node.allowRenaming && node.allowRenaming(this.props.data);
             if (allow) {

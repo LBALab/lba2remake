@@ -5,6 +5,7 @@ versions:
     changes:
       - name: Features
         issues:
+          - Allow using "Enter" key to rename objects (in addition to "F2")
       - name: Bugfixes
         issues:
 

@@ -59,7 +59,8 @@ export default class Editor extends React.Component {
 
     keyDown(event) {
         const key = event.code || event.which || event.keyCode;
-        if (key === 113 || key === 'F2') {
+        if (key === 113 || key === 'F2'
+            || key === 13 || key === 'Enter') {
             window.dispatchEvent(new CustomEvent('editor_rename'));
         }
     }
