@@ -26,7 +26,6 @@ export default class Editor extends React.Component {
     constructor(props) {
         super(props);
 
-        this.keyDown = this.keyDown.bind(this);
         this.updateSeparator = this.updateSeparator.bind(this);
         this.enableSeparator = this.enableSeparator.bind(this);
         this.disableSeparator = this.disableSeparator.bind(this);
@@ -46,7 +45,6 @@ export default class Editor extends React.Component {
         document.addEventListener('mousemove', this.updateSeparator);
         document.addEventListener('mouseup', this.disableSeparator);
         document.addEventListener('mouseleave', this.disableSeparator);
-        document.addEventListener('keydown', this.keyDown);
     }
 
     componentWillUnmount() {
@@ -54,15 +52,6 @@ export default class Editor extends React.Component {
         document.removeEventListener('mousemove', this.updateSeparator);
         document.removeEventListener('mouseup', this.disableSeparator);
         document.removeEventListener('mouseleave', this.disableSeparator);
-        document.removeEventListener('keydown', this.keyDown);
-    }
-
-    keyDown(event) {
-        const key = event.code || event.which || event.keyCode;
-        if (key === 113 || key === 'F2'
-            || key === 13 || key === 'Enter') {
-            window.dispatchEvent(new CustomEvent('editor_rename'));
-        }
     }
 
     enableSeparator(e) {

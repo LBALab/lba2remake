@@ -15,7 +15,7 @@ export default class Node extends React.Component {
             renaming: false,
             icon: this.icon()
         };
-        this.renameShortcut = this.renameShortcut.bind(this);
+        this.areaAction = this.areaAction.bind(this);
     }
 
     isInActivePath(props) {
@@ -44,18 +44,21 @@ export default class Node extends React.Component {
         if (this.props.node.dynamic || this.props.node.selected) {
             this.props.ticker.register(this);
         }
-        window.addEventListener('editor_rename', this.renameShortcut);
+        window.addEventListener('area_action', this.areaAction);
     }
 
     componentWillUnmount() {
         if (this.props.node.dynamic || this.props.node.selected) {
             this.props.ticker.unregister(this);
         }
-        window.removeEventListener('editor_rename', this.renameShortcut);
+        window.removeEventListener('area_action', this.areaAction);
     }
 
-    renameShortcut() {
-        if (this.state.selected && !this.state.renaming) {
+    areaAction(action) {
+        if (action.detail.areaId === 'scene_outliner'
+            && action.detail.type === 'rename'
+            && this.state.selected
+            && !this.state.renaming) {
             const node = this.props.node;
             const allow = node.allowRenaming && node.allowRenaming(this.props.data);
             if (allow) {
@@ -205,13 +208,21 @@ export default class Node extends React.Component {
             }
         };
 
+        const restoreFocus = () => {
+            if (this.savedFocus) {
+                this.savedFocus.focus();
+            }
+        };
+
         const onKeyDown = (e) => {
             const key = e.code || e.which || e.keyCode;
             if ((key === 'Enter' || key === 13) && e.target.value) {
                 node.rename(this.props.data, e.target.value);
                 this.setState({renaming: false});
+                restoreFocus();
             } else if (key === 'Esc' || key === 27) {
                 this.setState({renaming: false});
+                restoreFocus();
             }
             e.stopPropagation();
         };
@@ -223,8 +234,9 @@ export default class Node extends React.Component {
         const renaming = this.state.renaming;
 
         const onInputRef = (ref) => {
-            if (ref) {
+            if (ref && ref !== document.activeElement) {
                 ref.value = this.state.name;
+                this.savedFocus = document.activeElement;
                 ref.focus();
             }
         };

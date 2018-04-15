@@ -51,11 +51,38 @@ export default class Area extends React.Component {
     constructor(props) {
         super(props);
         this.confirmPopup = this.confirmPopup.bind(this);
+        this.keyDown = this.keyDown.bind(this);
         this.state = { popup: null };
     }
 
+    keyDown(event) {
+        const key = event.code || event.which || event.keyCode;
+        let type;
+        switch (key) {
+            case 113:
+            case 'F2':
+            case 13:
+            case 'Enter':
+                type = 'rename';
+                break;
+        }
+        if (type) {
+            window.dispatchEvent(new CustomEvent('area_action', {
+                detail: {
+                    type,
+                    areaId: this.props.area.id,
+                }
+            }));
+        }
+    }
+
     render() {
-        return <div style={this.props.style}>
+        return <div
+            style={this.props.style}
+            onKeyDown={this.keyDown}
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+            tabIndex={0}
+        >
             {this.renderContent()}
             {this.renderMenu()}
         </div>;
