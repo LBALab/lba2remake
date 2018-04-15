@@ -1,1 +1,19 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "LiftingConveyorBeltWheel1",
+    "LiftingConveyorBeltWheel2",
+    "ConveyorBeltWheel1",
+    "LiftingPlatform1",
+    "ConveyorBeltWheel2",
+    "CartWannieMiner",
+    null,
+    null,
+    "LiftingPlatform2",
+    "LiftingPlatform3",
+    "Gemstones",
+    "AnimatedFan",
+    "FishBull"
+  ]
+}
