@@ -4,6 +4,23 @@
     null,
     "Neighbour",
     null,
-    "Map"
+    "Map",
+    null,
+    null,
+    "ZedGrobo",
+    null,
+    null,
+    null,
+    "BersimonWizard",
+    "SupAgent",
+    "FrancoSkateGuard1",
+    "FrancoSkateGuard2"
+  ],
+  "zoneNames": [
+    "room_cam",
+    "door",
+    "desk",
+    "paper_rolls",
+    "library"
   ]
 }
