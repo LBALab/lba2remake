@@ -6,6 +6,7 @@ versions:
       - name: Features
         issues:
           - Allow using "Enter" key to rename objects (in addition to "F2")
+          - Object renaming field now has the current value pre-set
       - name: Bugfixes
         issues:
 

@@ -222,6 +222,13 @@ export default class Node extends React.Component {
 
         const renaming = this.state.renaming;
 
+        const onInputRef = (ref) => {
+            if (ref) {
+                ref.value = this.state.name;
+                ref.focus();
+            }
+        };
+
         return <span
             style={nameStyle}
             onClick={onClick}
@@ -229,7 +236,7 @@ export default class Node extends React.Component {
             onContextMenu={renaming ? null : onContextMenu}
         >
             {renaming
-                ? <input ref={r => r && r.focus()} onBlur={onBlur} onKeyDown={onKeyDown}/>
+                ? <input ref={onInputRef} onBlur={onBlur} onKeyDown={onKeyDown}/>
                 : this.state.name}
         </span>;
     }
