@@ -164,10 +164,14 @@ export default class Game extends FrameListener {
     listener(event) {
         const key = event.code || event.which || event.keyCode;
         if (this.state.video) {
+            const videoSrc = this.state.video.src;
             if (key === 'Enter' || key === 13 ||
                 key === 'Escape' || key === 27) {
                 this.setState({video: null});
-                this.startNewGameScene();
+                const introSrc = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
+                if (videoSrc === introSrc) {
+                    this.startNewGameScene();
+                }
             }
         } else {
             if (key === 'Escape' || key === 27) {
