@@ -15,7 +15,7 @@ export default class Node extends React.Component {
             renaming: false,
             icon: this.icon()
         };
-        this.areaAction = this.areaAction.bind(this);
+        this.renameShortcut = this.renameShortcut.bind(this);
     }
 
     isInActivePath(props) {
@@ -44,21 +44,18 @@ export default class Node extends React.Component {
         if (this.props.node.dynamic || this.props.node.selected) {
             this.props.ticker.register(this);
         }
-        window.addEventListener('area_action', this.areaAction);
+        this.props.shortcuts.register('rename', this.renameShortcut);
     }
 
     componentWillUnmount() {
         if (this.props.node.dynamic || this.props.node.selected) {
             this.props.ticker.unregister(this);
         }
-        window.removeEventListener('area_action', this.areaAction);
+        this.props.shortcuts.unregister('rename', this.renameShortcut);
     }
 
-    areaAction(action) {
-        if (action.detail.areaId === 'scene_outliner'
-            && action.detail.type === 'rename'
-            && this.state.selected
-            && !this.state.renaming) {
+    renameShortcut() {
+        if (this.state.selected && !this.state.renaming) {
             const node = this.props.node;
             const allow = node.allowRenaming && node.allowRenaming(this.props.data);
             if (allow) {
@@ -331,6 +328,7 @@ export default class Node extends React.Component {
             ticker={this.props.ticker}
             level={this.props.level + 1}
             split={this.props.split}
+            shortcuts={this.props.shortcuts}
         />;
     }
 

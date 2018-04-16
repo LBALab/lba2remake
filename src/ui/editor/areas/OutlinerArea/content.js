@@ -3,6 +3,7 @@ import {extend, map, each, isFunction} from 'lodash';
 import Node from './node';
 import {fullscreen} from '../../../styles';
 import FrameListener from '../../../utils/FrameListener';
+import {WithShortcuts} from '../../Area';
 
 const style = extend({
     overflow: 'auto',
@@ -54,17 +55,20 @@ export function makeContentComponent(tree, frame, ownStyle) {
             const root = this.state.root;
             const path = this.props.sharedState.path;
             if (root.node) {
-                return <Node
-                    key={path.join('/')}
-                    node={root.node}
-                    data={root.data}
-                    setRoot={this.setRoot.bind(this)}
-                    path={this.props.sharedState.path}
-                    activePath={this.props.sharedState.activePath}
-                    ticker={this.props.ticker}
-                    level={0}
-                    split={this.props.split}
-                />;
+                return <WithShortcuts>
+                    {shortcuts => <Node
+                        key={path.join('/')}
+                        node={root.node}
+                        data={root.data}
+                        setRoot={this.setRoot.bind(this)}
+                        path={this.props.sharedState.path}
+                        activePath={this.props.sharedState.activePath}
+                        ticker={this.props.ticker}
+                        level={0}
+                        split={this.props.split}
+                        shortcuts={shortcuts}
+                    />}
+                </WithShortcuts>;
             }
             return 'Node is not available.';
         }

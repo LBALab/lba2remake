@@ -47,32 +47,54 @@ const mainIconStyle = base => (extend({
     paddingRight: '5px'
 }, base));
 
+const {Provider, Consumer} = React.createContext();
+
+export const WithShortcuts = Consumer;
+
 export default class Area extends React.Component {
     constructor(props) {
         super(props);
         this.confirmPopup = this.confirmPopup.bind(this);
         this.keyDown = this.keyDown.bind(this);
         this.state = { popup: null };
+        const listeners = {};
+        this.listeners = listeners;
+        this.shortcuts = {
+            register(name, callback) {
+                if (!(name in listeners)) {
+                    listeners[name] = new Set();
+                }
+                listeners[name].add(callback);
+            },
+            unregister(name, callback) {
+                listeners[name].remove(callback);
+            }
+        };
     }
 
     keyDown(event) {
+        const call = (shortcut) => {
+            if (shortcut in this.listeners) {
+                this.listeners[shortcut].forEach(callback => callback());
+            }
+        };
+
         const key = event.code || event.which || event.keyCode;
-        let type;
         switch (key) {
             case 113:
             case 'F2':
             case 13:
             case 'Enter':
-                type = 'rename';
+                call('rename');
                 break;
-        }
-        if (type) {
-            window.dispatchEvent(new CustomEvent('area_action', {
-                detail: {
-                    type,
-                    areaId: this.props.area.id,
-                }
-            }));
+            case 38: // up
+            case 'ArrowUp':
+                call('up');
+                break;
+            case 40: // down
+            case 'ArrowDown':
+                call('down');
+                break;
         }
     }
 
@@ -83,8 +105,10 @@ export default class Area extends React.Component {
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
             tabIndex={0}
         >
-            {this.renderContent()}
-            {this.renderMenu()}
+            <Provider value={this.shortcuts}>
+                {this.renderContent()}
+                {this.renderMenu()}
+            </Provider>
         </div>;
     }
 
