@@ -57,43 +57,43 @@ export default class Area extends React.Component {
         this.confirmPopup = this.confirmPopup.bind(this);
         this.keyDown = this.keyDown.bind(this);
         this.state = { popup: null };
-        const listeners = {};
-        this.listeners = listeners;
         this.shortcuts = {
-            register(name, callback) {
-                if (!(name in listeners)) {
-                    listeners[name] = new Set();
+            listeners: {},
+            register: function register(name, callback) {
+                if (!(name in this.listeners)) {
+                    this.listeners[name] = new Set();
                 }
-                listeners[name].add(callback);
+                this.listeners[name].add(callback);
             },
-            unregister(name, callback) {
-                listeners[name].remove(callback);
+            unregister: function unregister(name, callback) {
+                if (name in this.listeners) {
+                    this.listeners[name].delete(callback);
+                }
+            },
+            call: function call(shortcut) {
+                if (shortcut in this.listeners) {
+                    this.listeners[shortcut].forEach(callback => callback());
+                }
             }
         };
     }
 
     keyDown(event) {
-        const call = (shortcut) => {
-            if (shortcut in this.listeners) {
-                this.listeners[shortcut].forEach(callback => callback());
-            }
-        };
-
         const key = event.code || event.which || event.keyCode;
         switch (key) {
             case 113:
             case 'F2':
             case 13:
             case 'Enter':
-                call('rename');
+                this.shortcuts.call('rename');
                 break;
             case 38: // up
             case 'ArrowUp':
-                call('up');
+                this.shortcuts.call('up');
                 break;
             case 40: // down
             case 'ArrowDown':
-                call('down');
+                this.shortcuts.call('down');
                 break;
         }
     }
