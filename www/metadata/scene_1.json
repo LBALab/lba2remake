@@ -11,15 +11,15 @@
     "Darts"
   ],
   "zoneNames": [
-    "Door",
-    "Radio",
-    "Boxes",
-    "Darts",
-    "Holomap",
-    "Magicball",
-    "DinoPortrait",
-    "Prophecy",
-    "FunfrockStatue",
-    "Lamp"
+    "door",
+    "radio",
+    "boxes",
+    "darts",
+    "holomap",
+    "magicball",
+    "dino_portrait",
+    "prophecy",
+    "funfrock_statue",
+    "lamp"
   ]
 }

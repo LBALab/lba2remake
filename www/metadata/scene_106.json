@@ -1,1 +1,21 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "OliveItem1",
+    "OliveItem2",
+    "OliveItem3",
+    "OliveItem4",
+    "FrancoSoldier1",
+    "MosquiPik1",
+    "FrancoSoldier2",
+    "MosquiPik2",
+    "FrancoSoldier3",
+    "FrancoSoldier4",
+    "MosquiPik3",
+    "MosquiPik4",
+    "Pointer",
+    "FrancoSoldier5",
+    "OliveItem5"
+  ]
+}
