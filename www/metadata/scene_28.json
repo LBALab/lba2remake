@@ -2,10 +2,11 @@
   "actorNames": [
     null,
     null,
+    "Door1",
+    "Door2",
+    "Pointer",
     null,
-    null,
-    null,
-    null,
-    "Student"
+    "Aristide1",
+    "Aristide2"
   ]
 }
