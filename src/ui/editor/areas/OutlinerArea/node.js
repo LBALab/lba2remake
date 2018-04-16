@@ -238,6 +238,7 @@ export default class Node extends React.Component {
                 ref.value = this.state.name;
                 this.savedFocus = document.activeElement;
                 ref.focus();
+                ref.select();
             }
         };
 
