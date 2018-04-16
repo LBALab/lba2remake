@@ -5,8 +5,15 @@ versions:
     changes:
       - name: Features
         issues:
+          - (3) New metadata (thanks Hinatangel)
+        groups:
+          - name: Editor improvements
+            issues:
+              - (EDITOR) Changed selection behaviour (only select one object at a time)
+              - (EDITOR) Automatically select text when renaming object
       - name: Bugfixes
         issues:
+          - (GAME) Skipping through videos always triggered a new game (fixed to only do that on intro video)
 
   - tag: 0.0.12
     title: Patch release
