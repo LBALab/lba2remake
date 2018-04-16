@@ -9,6 +9,9 @@ export function centerIsoCamera(renderer, camera, scene, object) {
         object = scene.actors[0];
     }
 
+    if (!object.threeObject)
+        return;
+
     const pos = getObjectIsoPos(renderer, camera, object);
     const {width, height} = renderer.canvas;
     const sz = new THREE.Vector2(width, height);
