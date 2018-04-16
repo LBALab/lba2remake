@@ -234,10 +234,10 @@ function mapActors(ref) {
             if (DebugData.scope.scene) {
                 if (DebugData.scope.scene.index !== ref.scene) {
                     DebugData.sceneManager.goto(ref.scene, () => {
-                        DebugData.selection.actor = actor.actor;
+                        DebugData.selection = {type: 'actor', index: actor.actor};
                     });
                 } else {
-                    DebugData.selection.actor = actor.actor;
+                    DebugData.selection = {type: 'actor', index: actor.actor};
                 }
             }
         },
@@ -247,12 +247,10 @@ function mapActors(ref) {
                 if (DebugData.scope.scene) {
                     if (DebugData.scope.scene.index !== ref.scene) {
                         DebugData.sceneManager.goto(ref.scene, () => {
-                            DebugData.selection.actor = actor.actor;
-                            DebugData.selection.lifeLine = line;
+                            DebugData.selection = {type: 'actor', index: actor.actor, lifeLine: line};
                         });
                     } else {
-                        DebugData.selection.actor = actor.actor;
-                        DebugData.selection.lifeLine = line;
+                        DebugData.selection = {type: 'actor', index: actor.actor, lifeLine: line};
                     }
                 }
             },

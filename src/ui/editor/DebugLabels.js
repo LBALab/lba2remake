@@ -141,13 +141,16 @@ export default class DebugLabels extends FrameListener {
                 && POS.x < width
                 && POS.y > 0
                 && POS.y < height) {
+                const selection = DebugData.selection;
                 const item = {
                     id: `${scene.index}_${type}_${obj.index}`,
                     index: obj.index,
                     x: POS.x,
                     y: POS.y,
                     label: type === 'point' ? '' : getObjectName(type, scene.index, obj.index),
-                    selected: DebugData.selection[type] === obj.index,
+                    selected: selection
+                        && selection.type === obj.type
+                        && selection.index === obj.index,
                     type
                 };
                 if (type === 'zone') {
@@ -160,15 +163,7 @@ export default class DebugLabels extends FrameListener {
     }
 
     select(type, index) {
-        if (type === 'zone' || type === 'point') {
-            if (DebugData.selection[type] === index) {
-                DebugData.selection[type] = -1;
-            } else {
-                DebugData.selection[type] = index;
-            }
-        } else {
-            DebugData.selection[type] = index;
-        }
+        DebugData.selection = {type, index};
     }
 
     render() {

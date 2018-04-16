@@ -53,8 +53,11 @@ const Zone = {
     numChildren: zone => (zone.threeObject ? 1 : 0),
     child: () => SceneGraphNode,
     childData: zone => zone.threeObject,
-    selected: zone => DebugData.selection.zone === zone.index,
-    onClick: (zone) => { DebugData.selection.zone = zone.index; },
+    selected: (zone) => {
+        const selection = DebugData.selection;
+        return selection && selection.type === 'zone' && selection.index === zone.index;
+    },
+    onClick: (zone) => { DebugData.selection = {type: 'zone', index: zone.index}; },
     onDoubleClick: locateObject
 };
 

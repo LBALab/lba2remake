@@ -4,11 +4,7 @@ import {centerIsoCamera} from '../../game/loop/cameras/iso';
 
 const DebugData = {
     scope: {},
-    selection: {
-        actor: 0,
-        point: -1,
-        zone: -1
-    },
+    selection: null,
     script: {
         life: {},
         move: {}
@@ -27,11 +23,7 @@ const DebugData = {
 export default DebugData;
 
 export function initSceneDebugData() {
-    DebugData.selection = {
-        actor: 0,
-        point: -1,
-        zone: -1
-    };
+    DebugData.selection = null;
     DebugData.script = {
         life: {},
         move: {}
@@ -160,7 +152,7 @@ export function locateObject(object) {
     if (!object.threeObject || !scene || scene.isIsland)
         return;
 
-    DebugData.selection[object.type] = object.index;
+    DebugData.selection = {type: object.type, index: object.index};
 
     const isHero = object.type === 'actor' && object.index === 0;
     const controlsState = DebugData.scope.game.controlsState;
