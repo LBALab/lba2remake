@@ -14,7 +14,8 @@ versions:
       - name: Bugfixes
         issues:
           - (GAME) Skipping through videos always triggered a new game (fixed to only do that on intro video)
-          - (193) Don't center camera on objects with no threeObject
+          - (193)
+          - (194)
 
   - tag: 0.0.12
     title: Patch release
