@@ -3,7 +3,7 @@ const path = require('path');
 const FlowStatusWebpackPlugin = require('flow-status-webpack-plugin');
 
 module.exports = {
-    entry: './src/main.jsx',
+    entry: ['babel-polyfill', './src/main.jsx'],
     output: {
         path: path.join(__dirname, './www'),
         filename: "bundle.js"
