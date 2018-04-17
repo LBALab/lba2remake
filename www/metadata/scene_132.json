@@ -1,1 +1,18 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "Ferryman",
+    "Gem1",
+    "Gem2",
+    "GiantTorch1",
+    "GiantTorch2",
+    "GiantTorch3",
+    "TorchFireballs1",
+    "TorchFireballs2",
+    "LavaPlatform1",
+    "LavaPlatform2",
+    "TorchFireballs3",
+    "LavaPointer"
+  ]
+}

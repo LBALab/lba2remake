@@ -2,6 +2,20 @@
   "actorNames": [
     null,
     null,
-    "Gem"
+    "Gem1",
+    "Gem2",
+    "Gem3",
+    "GiantTorch1",
+    "TorchFireballs1",
+    "LavaPlatform1",
+    "LavaPlatform2",
+    "LavaPlatform3",
+    "LavaPlatform4",
+    "LavaPlatform5",
+    "GiantTorch2",
+    "TorchFireballs2",
+    "DescendingLavaPlatform1",
+    "DescendingLavaPlatform2",
+    "LavaPointer"
   ]
 }
