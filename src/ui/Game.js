@@ -126,8 +126,11 @@ export default class Game extends FrameListener {
 
     componentWillReceiveProps(newProps) {
         if (newProps.params.scene !== -1 && newProps.params.scene !== this.props.params.scene) {
-            this.hideMenu();
-            this.state.sceneManager.goto(newProps.params.scene);
+            const scene = this.state.sceneManager.getScene();
+            if (scene && newProps.params.scene !== scene.index) {
+                this.hideMenu();
+                this.state.sceneManager.goto(newProps.params.scene);
+            }
         }
         if (newProps.params.vr !== this.props.params.vr && this.canvas) {
             this.state.renderer.dispose();
