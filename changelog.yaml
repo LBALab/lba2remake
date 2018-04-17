@@ -1,6 +1,7 @@
 versions:
-  - tag: 0.0.13-dev
-    title: Pending patch release
+  - tag: 0.0.13
+    title: Patch release
+    date: 17.04.2018
     project: https://github.com/agrande/lba2remake/projects/9
     changes:
       - name: Features
