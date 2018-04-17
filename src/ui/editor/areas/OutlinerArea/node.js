@@ -16,6 +16,8 @@ export default class Node extends React.Component {
             icon: this.icon()
         };
         this.renameShortcut = this.renameShortcut.bind(this);
+        this.upShortcut = this.upShortcut.bind(this);
+        this.downShortcut = this.downShortcut.bind(this);
     }
 
     isInActivePath(props) {
@@ -45,6 +47,8 @@ export default class Node extends React.Component {
             this.props.ticker.register(this);
         }
         this.props.shortcuts.register('rename', this.renameShortcut);
+        this.props.shortcuts.register('up', this.upShortcut);
+        this.props.shortcuts.register('down', this.downShortcut);
     }
 
     componentWillUnmount() {
@@ -52,6 +56,8 @@ export default class Node extends React.Component {
             this.props.ticker.unregister(this);
         }
         this.props.shortcuts.unregister('rename', this.renameShortcut);
+        this.props.shortcuts.unregister('up', this.upShortcut);
+        this.props.shortcuts.unregister('down', this.downShortcut);
     }
 
     renameShortcut() {
@@ -62,6 +68,14 @@ export default class Node extends React.Component {
                 this.setState({renaming: true});
             }
         }
+    }
+
+    upShortcut() {
+        this.call('up', this.state.collapsed);
+    }
+
+    downShortcut() {
+        this.call('down', this.state.collapsed);
     }
 
     frame() {

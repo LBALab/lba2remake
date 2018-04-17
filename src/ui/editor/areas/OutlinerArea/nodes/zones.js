@@ -1,6 +1,7 @@
 import React from 'react';
 import DebugData, {getObjectName, renameObject, locateObject} from '../../../DebugData';
 import {SceneGraphNode} from './sceneGraph';
+import {makeObjectsNode} from './objects';
 
 const ZONE_TYPE = [
     'CUBE',
@@ -61,7 +62,7 @@ const Zone = {
     onDoubleClick: locateObject
 };
 
-export const ZonesNode = {
+export const ZonesNode = makeObjectsNode('zone', {
     dynamic: true,
     needsData: true,
     name: () => 'Zones',
@@ -75,4 +76,4 @@ export const ZonesNode = {
             setRoot();
         }
     }
-};
+});

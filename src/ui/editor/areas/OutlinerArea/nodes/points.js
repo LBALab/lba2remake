@@ -1,5 +1,6 @@
 import DebugData, {getObjectName, renameObject, locateObject} from '../../../DebugData';
 import {SceneGraphNode} from './sceneGraph';
+import {makeObjectsNode} from './objects';
 
 const Point = {
     dynamic: true,
@@ -27,7 +28,7 @@ const Point = {
     onDoubleClick: locateObject
 };
 
-export const PointsNode = {
+export const PointsNode = makeObjectsNode('point', {
     dynamic: true,
     needsData: true,
     name: () => 'Points',
@@ -41,4 +42,4 @@ export const PointsNode = {
             setRoot();
         }
     }
-};
+});

@@ -9,6 +9,7 @@ versions:
         groups:
           - name: Editor improvements
             issues:
+              - (220)
               - (EDITOR) Changed selection behaviour (only select one object at a time)
               - (EDITOR) Automatically select text when renaming object
       - name: Bugfixes

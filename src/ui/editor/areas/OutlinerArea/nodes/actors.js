@@ -7,6 +7,7 @@ import DebugData, {
 } from '../../../DebugData';
 import {SceneGraphNode} from './sceneGraph';
 import {mapComportementArg} from '../../ScriptEditorArea/listing';
+import {makeObjectsNode} from './objects';
 
 const compStyle = {
     border: '1px solid black',
@@ -85,7 +86,7 @@ const Actor = {
     onDoubleClick: locateObject
 };
 
-export const ActorsNode = {
+export const ActorsNode = makeObjectsNode('actor', {
     dynamic: true,
     needsData: true,
     name: () => 'Actors',
@@ -99,7 +100,7 @@ export const ActorsNode = {
             setRoot();
         }
     }
-};
+});
 
 
 function getComportement(actor) {
