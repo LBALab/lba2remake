@@ -1,10 +1,14 @@
 import {each} from 'lodash';
+import * as THREE from 'three';
 import {updateHero} from './hero';
 import {updateActor} from './actors';
 import {processPhysicsFrame} from './physics';
 import {processCameraMovement} from './cameras';
 import {getRandom} from '../../utils/lba';
 import DebugData from '../../ui/editor/DebugData';
+
+const dbgClock = new THREE.Clock(false);
+dbgClock.start();
 
 export function mainGameLoop(params, game, clock, renderer, scene, controls) {
     const time = {
@@ -40,7 +44,15 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
             processCameraMovement(game.controlsState, renderer, scene, time);
             renderer.render(scene);
             DebugData.step = false;
+        } else if (game.controlsState.freeCamera || DebugData.firstFrame) {
+            const dbgTime = {
+                delta: Math.min(dbgClock.getDelta(), 0.05),
+                elapsed: dbgClock.getElapsedTime()
+            };
+            processCameraMovement(game.controlsState, renderer, scene, dbgTime);
+            renderer.render(scene);
         }
+        delete DebugData.firstFrame;
         if (scene.actors && scene.actors.length > 0) {
             debugScope.hero = scene.actors[0];
         }

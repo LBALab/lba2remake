@@ -6,6 +6,7 @@ import {createState} from './state';
 import {createAudioManager, createMusicManager} from '../audio';
 import {loadHqrAsync} from '../hqr';
 import {loadTextsAsync} from '../text';
+import DebugData from '../ui/editor/DebugData';
 
 export function createGame(params: Object,
                            clock: Object,
@@ -62,6 +63,9 @@ export function createGame(params: Object,
             isPaused = wasPaused;
             if (!isPaused) {
                 clock.start();
+            } else {
+                DebugData.firstFrame = true;
+            }
             isLoading = false;
             this.setUiState({loading: false});
             // eslint-disable-next-line no-console
