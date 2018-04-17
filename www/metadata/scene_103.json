@@ -2,7 +2,10 @@
   "actorNames": [
     null,
     null,
-    null,
-    "WalrusGasMonster"
+    "EelGasMonster",
+    "WalrusGasMonster",
+    "Elevator",
+    "MosquibeeFragmentSafe",
+    "WiseMosquibee"
   ]
 }
