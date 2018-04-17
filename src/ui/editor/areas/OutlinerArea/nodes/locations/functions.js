@@ -2,6 +2,11 @@ import DebugData from '../../../../DebugData';
 
 function goto(index) {
     if (DebugData.sceneManager && DebugData.sceneManager.hideMenuAndGoto) {
+        const game = DebugData.scope.game;
+        const uiState = game.getUiState();
+        if (uiState.video) {
+            game.setUiState({video: null});
+        }
         DebugData.sceneManager.hideMenuAndGoto(index);
     }
 }

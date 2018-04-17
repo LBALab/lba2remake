@@ -10,6 +10,7 @@ versions:
           - name: Editor improvements
             issues:
               - (220)
+              - (EDITOR) Allow switching scenes while video is playing (stops the video)
               - (EDITOR) Changed selection behaviour (only select one object at a time)
               - (EDITOR) Automatically select text when renaming object
       - name: Bugfixes
