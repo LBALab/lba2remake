@@ -58,9 +58,9 @@ export function createGame(params: Object,
             // eslint-disable-next-line no-console
             console.log(`Loading scene #${index}`);
         },
-        loaded() {
-            isPaused = false;
-            if (!isPaused)
+        loaded(wasPaused: boolean = false) {
+            isPaused = wasPaused;
+            if (!isPaused) {
                 clock.start();
             isLoading = false;
             this.setUiState({loading: false});

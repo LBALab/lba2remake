@@ -33,12 +33,12 @@ export function createSceneManager(params, game, renderer, callback: Function, h
     };
 
     loadSceneMapData((sceneMap) => {
-        sceneManager.hideMenuAndGoto = function hideMenuAndGoto(index) {
-            hideMenu();
-            this.goto(index);
+        sceneManager.hideMenuAndGoto = function hideMenuAndGoto(index, wasPaused) {
+            hideMenu(wasPaused);
+            this.goto(index, noop, false, wasPaused);
         };
 
-        sceneManager.goto = function goto(index, pCallback = noop, force = false) {
+        sceneManager.goto = function goto(index, onLoad = noop, force = false, wasPaused = false) {
             if ((!force && scene && index === scene.index) || game.isLoading())
                 return;
 
@@ -74,7 +74,7 @@ export function createSceneManager(params, game, renderer, callback: Function, h
                     });
                 }
                 initSceneDebugData();
-                pCallback(scene);
+                onLoad(scene);
             } else {
                 game.loading(index);
                 loadScene(this, params, game, renderer, sceneMap, index, null, (err, pScene) => {
@@ -88,10 +88,10 @@ export function createSceneManager(params, game, renderer, callback: Function, h
                         });
                     }
                     initSceneDebugData();
-                    pCallback(scene);
+                    onLoad(scene);
                     scene.sceneNode.updateMatrixWorld();
                     initCameraMovement(game.controlsState, renderer, scene);
-                    game.loaded();
+                    game.loaded(wasPaused);
                 });
             }
         };

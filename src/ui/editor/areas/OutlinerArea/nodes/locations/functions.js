@@ -4,10 +4,11 @@ function goto(index) {
     if (DebugData.sceneManager && DebugData.sceneManager.hideMenuAndGoto) {
         const game = DebugData.scope.game;
         const uiState = game.getUiState();
+        const wasPaused = game.isPaused() && !uiState.video && !uiState.showMenu;
         if (uiState.video) {
             game.setUiState({video: null});
         }
-        DebugData.sceneManager.hideMenuAndGoto(index);
+        DebugData.sceneManager.hideMenuAndGoto(index, wasPaused);
     }
 }
 
