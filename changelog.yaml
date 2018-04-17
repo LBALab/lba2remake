@@ -11,6 +11,8 @@ versions:
             issues:
               - (220)
               - (EDITOR) Allow switching scenes while video is playing (stops the video)
+              - (EDITOR) Switching scenes when paused will keep the game paused
+              - (EDITOR) Allow moving around with free camera when paused
               - (EDITOR) Changed selection behaviour (only select one object at a time)
               - (EDITOR) Automatically select text when renaming object
       - name: Bugfixes
