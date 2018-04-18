@@ -8,5 +8,12 @@
     "LifePointsVending",
     "MissAmiradoo",
     "UmbrellaThief"
+  ],
+  "zoneNames": [
+    "cam_room",
+    "cash_register",
+    "to_lupin_bourg",
+    "flower_pot1",
+    "flower_pot2"
   ]
 }
