@@ -7,6 +7,10 @@ versions:
         issues:
       - name: Bugfixes
         issues:
+          - (151)
+      - name: Code quality
+        issues:
+          - (191)
 
   - tag: 0.0.13
     title: Patch release
