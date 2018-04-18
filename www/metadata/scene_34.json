@@ -14,5 +14,9 @@
     "Candle8",
     "Candle9",
     "Candle10"
+  ],
+  "zoneNames": [
+    "to_sewers",
+    "cam_room"
   ]
 }

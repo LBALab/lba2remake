@@ -11,5 +11,25 @@
     "Elevator3",
     "CardboardBox2",
     "CardboardBox3"
+  ],
+  "zoneNames": [
+    "to_downstairs",
+    "cam_lever_area",
+    "lever_right",
+    "lever_center",
+    "lever_left",
+    "elevator1",
+    "elevator2",
+    "elevator3",
+    "elevator4",
+    "dead_end1",
+    "appearing_box_start",
+    "corridor",
+    "box_arrival",
+    "conveyor_belt_altitude1",
+    "conveyor_belt_altitude2",
+    "conveyor_belt_altitude3",
+    "conveyor_belt_altitude4",
+    "conveyor_belt_altitude5"
   ]
 }

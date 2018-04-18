@@ -12,5 +12,19 @@
     "Note",
     "Pointer2",
     "Pointer3"
+  ],
+  "zoneNames": [
+    "table",
+    "gap_to_sewers",
+    "to_sewers",
+    "magical_tabata",
+    "cam_entrance",
+    "pot",
+    "entrance_hall",
+    null,
+    "to_outside",
+    "cam_room",
+    "bersimon_diploma",
+    "gate_opener"
   ]
 }

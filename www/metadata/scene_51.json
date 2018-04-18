@@ -10,5 +10,12 @@
     "Bat",
     null,
     "Spider"
+  ],
+  "zoneNames": [
+    "to_lower_outside",
+    "to_upper_outside",
+    "exit",
+    "entrance",
+    "corridor"
   ]
 }

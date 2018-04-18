@@ -9,5 +9,9 @@
     "TrashCanSupAgent",
     "CactusSupAgent",
     "NewspaperSupAgent"
+  ],
+  "zoneNames": [
+    "cam_upstairs",
+    "cam_downstairs"
   ]
 }
