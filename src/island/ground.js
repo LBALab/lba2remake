@@ -19,9 +19,9 @@ export function loadGround(section, geometries, usedTiles) {
 
             const triangle = (t) => {
                 const pts = map(t.points, pt => ((x + pt.x) * 65) + z + pt.z);
-                if (!isSeaLevelLiquid(t, pts) && (t.useColor || t.useTexture)) {
+                if (!isSeaLevelLiquid(t, pts) && (t.useColor || t.useTexture || t.unk0)) {
                     usedTiles[(x * 64) + z] = t0.orientation;
-                    if (t.useTexture) {
+                    if (t.useTexture || (!t.useTexture && !t.useColor)) {
                         push.apply(
                             geometries.ground_textured.positions,
                             getPositions(section, pts)
