@@ -11,5 +11,22 @@
     "Elevator2",
     "BaggageGrobo",
     "ProtopackBox"
+  ],
+  "zoneNames": [
+    "to_downstairs",
+    "downstairs_door",
+    "elevator_lever1",
+    "elevator1",
+    "elevator_lever2",
+    "elevator2",
+    "to_baggage_exit",
+    "entrance_room",
+    "to_lupin_bourg",
+    "boxes",
+    "crates",
+    "barrel1",
+    "exit_door",
+    "barrel2",
+    "barrel3"
   ]
 }
