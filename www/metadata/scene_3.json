@@ -50,5 +50,20 @@
     {
       "name": "tim_busy"
     }
+  ],
+  "zoneNames": [
+    "cellar_door",
+    "to_cellar",
+    "flower_pot1",
+    "jukebox",
+    "flower_pot2",
+    "flower_pot3",
+    "exit",
+    "cam_second_floor",
+    "cam_first_floor",
+    "cam_cellar_front",
+    "twinsen_poster",
+    "cam_bar_top_side",
+    "barrel"
   ]
 }

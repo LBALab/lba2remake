@@ -29,5 +29,24 @@
     "SendellOrnament",
     "FrancoSkateGuard",
     "Mushrooms3"
+  ],
+  "zoneNames": [
+    "to_upper_town",
+    "elevator1_descending",
+    "elevator1",
+    "to_wizard_tent",
+    "crawling_gap",
+    "gate",
+    "barrel1",
+    "barrel2",
+    null,
+    null,
+    null,
+    "to_landing_zone",
+    null,
+    null,
+    null,
+    null,
+    "to_sendell_ball"
   ]
 }

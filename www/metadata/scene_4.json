@@ -7,5 +7,19 @@
     "LabeledCrate2",
     "LabeledCrate3",
     "LabeledCrate4"
+  ],
+  "zoneNames": [
+    "to_bar",
+    "sewers_hole",
+    "barrel1",
+    "wine_bottles",
+    "barrel2",
+    "barrel3",
+    "small_gap",
+    "middle_barrel",
+    "life_points",
+    "barrel4",
+    "barrel5",
+    "barrel6"
   ]
 }

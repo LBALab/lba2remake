@@ -9,5 +9,19 @@
     "Darts",
     "MagicPointsVending",
     "Holomap"
+  ],
+  "zoneNames": [
+    "life_points_vending",
+    "cash_register",
+    "cam_room",
+    "reception",
+    "exit_door",
+    "exit",
+    "box",
+    null,
+    "meca_penguin",
+    "magic_points_vending",
+    "shop_items",
+    "flower_pot"
   ]
 }
