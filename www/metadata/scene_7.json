@@ -3,5 +3,13 @@
     null,
     null,
     "MrPaul"
+  ],
+  "zoneNames": [
+    "cam_room",
+    "to_harbour",
+    "furniture1",
+    "furniture2",
+    "furniture3",
+    "flowers"
   ]
 }
