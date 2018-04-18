@@ -8,5 +8,12 @@
     "Kid2",
     "Kid3",
     "Poster"
+  ],
+  "zoneNames": [
+    "cam_room",
+    "to_lupin_bourg",
+    "twinsun_poster",
+    "room_center",
+    "paper_rolls"
   ]
 }
