@@ -18,5 +18,23 @@
     null,
     null,
     "LighthouseEsmer"
+  ],
+  "zoneNames": [
+    "to_twinsen_house_area",
+    "to_harbour",
+    "lightouse_signal_front",
+    "cam_lighthouse_signal",
+    "lighthouse_signal_back",
+    "cam_narrow_road",
+    "cam_fork",
+    "ligthouse_area_limit1",
+    "trash_can",
+    "cam_lighhouse_door",
+    "cam_lighthouse_upstairs1",
+    "cam_lighthouse_upstairs2",
+    "front_lighthouse_door",
+    "lighthouse_door",
+    "lighthouse_area_limit2",
+    "cam_fork_dead_end"
   ]
 }
