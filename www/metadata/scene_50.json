@@ -8,5 +8,25 @@
     "TreePointer1",
     "TreePointer2",
     "Bridge"
+  ],
+  "varcubes": [
+    {
+      "name": "said_hello"
+    },
+    null,
+    {
+      "name": "bridge_moving"
+    },
+    null,
+    null,
+    {
+      "name": "tree1_bonus_count"
+    },
+    {
+      "name": "tree2_bonus_count"
+    },
+    {
+      "name": "scooter_trip_destination"
+    }
   ]
 }
