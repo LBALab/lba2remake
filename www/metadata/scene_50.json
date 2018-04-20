@@ -28,5 +28,27 @@
     {
       "name": "scooter_trip_destination"
     }
+  ],
+  "zoneNames": [
+    "to_flower_circle",
+    "woodbridge_signal_front",
+    "woodbridge_signal_back",
+    "cam_woodbridge_signal",
+    "cam_lane_to_spider_cave",
+    "cam_front_bridge_lever",
+    "cliffs_signal_front",
+    "cliffs_signal_back",
+    "bridge_lever",
+    "cam_bridge_lever",
+    "cam_bridge",
+    "tree1_side1",
+    "tree1_side2",
+    "tree1_side3",
+    "tree1_side4",
+    "tree2_side1",
+    "tree2_side2",
+    "tree2_side3",
+    "tree2_side4",
+    "cam_road_fork"
   ]
 }
