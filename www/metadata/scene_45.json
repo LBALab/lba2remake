@@ -8,5 +8,17 @@
     "ShyGuy",
     "SupAgent",
     "Mushroom"
+  ],
+  "zoneNames": [
+    "to_wizard_tent",
+    "to_flower_circle",
+    "cam_front_tralu_cave",
+    "cam_wizard_tent",
+    "to_tralu_cave",
+    "wizard_lane_signal_front",
+    "wizard_lane_signal_back",
+    "cam_wizard_lane_signal",
+    "cam_downtown_upper_view",
+    "cam_ocean_upper_view"
   ]
 }
