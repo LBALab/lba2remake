@@ -5,5 +5,19 @@
     "ThunderSound",
     "GrandRector",
     "DinoFly"
+  ],
+  "zoneNames": [
+    "to_inside_dome",
+    "cam_front_door",
+    "cam_back_door",
+    "back_door_zone",
+    "dinofly_front",
+    "cam_dinofly1",
+    "cam_dinofly_front",
+    "clunky_ladder",
+    "inside_map",
+    "dome_signal",
+    "cam_dome_signal",
+    "cam_dinofly2"
   ]
 }
