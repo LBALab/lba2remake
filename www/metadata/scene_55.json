@@ -15,5 +15,27 @@
     "Mine6",
     "CloverBox",
     "DesertRose"
+  ],
+  "zoneNames": [
+    "to_between_oasis_and_racetrack",
+    "to_town_square",
+    "harbour_signal_front",
+    "harbour_signal_back",
+    "cam_dinofly_landing_zone1",
+    "cactus1_bonus",
+    "cactus2_bonus",
+    "palm1",
+    "palm2",
+    "palm3",
+    "cactus3_bonus",
+    "cactus2",
+    "cactus1",
+    "cactus3",
+    "bell",
+    "cam_bell",
+    "cloverbox_rock",
+    "cam_dinofly_landing_zone2",
+    "cam_dinofly_landing_zone3",
+    "cam_dinofly_landing_zone4"
   ]
 }
