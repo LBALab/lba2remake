@@ -20,5 +20,20 @@
     "Mine11",
     "Mine12",
     "Mine13"
+  ],
+  "zoneNames": [
+    "to_oasis",
+    "to_racetrack",
+    "to_graveyard",
+    "cactus1_bonus",
+    "cactus2_bonus",
+    "cactus3_bonus",
+    "cactus4_bonus",
+    "palm1",
+    "palm2",
+    "cactus2",
+    "cactus3",
+    "cactus1",
+    "cactus4"
   ]
 }
