@@ -6,5 +6,16 @@
     "TwinsensCar",
     "Racer",
     "DesertRose"
+  ],
+  "zoneNames": [
+    "to_between_oasis_and_racetrack",
+    "to_behind_racetrack",
+    "to_springboard",
+    "cam_racetrack_signal",
+    "race_starting_point",
+    "cam_race_starting_point",
+    "racetrack_signal_front",
+    "racetrack_signal_back",
+    "race_finish_line"
   ]
 }

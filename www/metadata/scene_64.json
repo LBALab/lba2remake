@@ -8,5 +8,17 @@
     "Bell",
     "TwinsensCar",
     "DesertRose"
+  ],
+  "zoneNames": [
+    "to_esmer_landing_zone",
+    "to_headland",
+    "to_behind_pearl_cave",
+    "cam_arriving_pearl_cave",
+    "to_pearl_cave",
+    "pearl_cave_entrance",
+    "cam_pearl_cave_entrance",
+    "bell",
+    "board_end",
+    "cam_bell"
   ]
 }
