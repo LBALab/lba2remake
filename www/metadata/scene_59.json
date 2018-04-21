@@ -6,5 +6,13 @@
     "TwinsensCar",
     "HiddenMecaPinguin",
     "DesertRose"
+  ],
+  "zoneNames": [
+    "to_town_square",
+    "to_pearl_cave",
+    "cam_entering_harbour",
+    "cam_harbour_entrance1",
+    "cam_harbour_entrance2",
+    "cam_harbour"
   ]
 }
