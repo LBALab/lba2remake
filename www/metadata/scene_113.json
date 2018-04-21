@@ -8,5 +8,19 @@
     "CloverBox",
     "Mushrooms",
     "Trap"
+  ],
+  "zoneNames": [
+    "to_outside_pearl_cave",
+    "cam_entrance",
+    "cam_solid_ground",
+    "cam_spikes",
+    "cam_pearl",
+    "water_zone",
+    "small_island1",
+    "small_island2",
+    "spikes",
+    "pearl_front",
+    "spring_water",
+    "entrance"
   ]
 }
