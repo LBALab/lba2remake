@@ -9,5 +9,10 @@
     "LifePointsVending",
     "MagicPointsVending",
     "GallicAcid"
+  ],
+  "zoneNames": [
+    "cam_room",
+    "golden_candle_holder",
+    "to_town_square"
   ]
 }
