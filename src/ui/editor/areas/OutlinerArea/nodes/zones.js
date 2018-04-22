@@ -44,7 +44,8 @@ const Zone = {
                         label = `GOTO -> ${zone.props.snap}`;
                         break;
                     case 'TEXT':
-                        label = DebugData.scope.scene.data.texts[zone.props.snap].value;
+                        if (DebugData.scope.scene.data.texts[zone.props.snap])
+                            label = DebugData.scope.scene.data.texts[zone.props.snap].value;
                         break;
                 }
                 return <span style={{color}}>{label}</span>;
