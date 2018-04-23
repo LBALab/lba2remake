@@ -11,5 +11,15 @@
     "TrashCanAgent",
     "CactusAgent",
     "NewspaperAgent"
+  ],
+  "zoneNames": [
+    "cam_upstairs",
+    "cam_downstairs",
+    "control_panel",
+    "cam_entrance",
+    "to_spacecraft_area",
+    "ladder",
+    "tourist_terminal",
+    "entrance_stairs"
   ]
 }

@@ -10,5 +10,13 @@
     "Mushrooms2",
     "Mushrooms3",
     "Mushrooms4"
+  ],
+  "zoneNames": [
+    "cam_room",
+    "spike_trap1",
+    "spike_trap2",
+    "spike_trap3",
+    "spike_trap4",
+    "to_temple_of_bu"
   ]
 }
