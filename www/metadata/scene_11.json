@@ -27,5 +27,23 @@
     "Mushrooms2",
     "Mushrooms3",
     "MecaPenguinAltar"
+  ],
+  "zoneNames": [
+    "rail_fork1",
+    "rail_fork2",
+    "rail_fork3",
+    "clay_vases",
+    "upstairs",
+    "to_spacecraft_area",
+    "spring_water_trap_zone",
+    "cam_spring_water_trap_zone",
+    "ball_trap1_zone",
+    "start_trap_zone",
+    "ball_trap2_zone",
+    "end_trap_zone",
+    "to_upstairs",
+    "ladder",
+    "steel_doors",
+    "rail_fork4"
   ]
 }
