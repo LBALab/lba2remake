@@ -7,5 +7,15 @@
     null,
     "Customer1",
     "Customer2"
+  ],
+  "zoneNames": [
+    "to_central_area",
+    "plant_pot",
+    "clay_vase",
+    "roof_ladder",
+    "to_outside_door1",
+    "to_outside_door2",
+    "to_hacienda_roof",
+    "ladder_front"
   ]
 }
