@@ -22,5 +22,11 @@
     "Pointer",
     "CloverBox",
     "Hourglass"
+  ],
+  "zoneNames": [
+    "cam_room",
+    "pedestal",
+    "to_classroom",
+    "entrance"
   ]
 }
