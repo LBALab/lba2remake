@@ -8,5 +8,15 @@
     null,
     "Aristide1",
     "Aristide2"
+  ],
+  "zoneNames": [
+    "to_classroom",
+    "classroom_door",
+    "notice_board",
+    "aristide_placement",
+    "to_graveyard",
+    "candle1",
+    "candle2",
+    "sendell_sign"
   ]
 }
