@@ -7,5 +7,15 @@
     "TwinsensCar",
     "EsmerRobot",
     "Leopold"
+  ],
+  "zoneNames": [
+    "to_behind_landing_zone",
+    "to_hacienda",
+    "to_center_dunes",
+    "temple_signal_front",
+    "temple_signal_back",
+    "hacienda_signal_front",
+    "hacienda_signal_back",
+    "palm"
   ]
 }
