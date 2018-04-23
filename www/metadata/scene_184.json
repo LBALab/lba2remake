@@ -21,5 +21,15 @@
     "Bat1",
     "Bat2",
     "Pointer"
+  ],
+  "zoneNames": [
+    "to_cave_first_area",
+    "to_cave_first_area_by_water",
+    "monster_room",
+    "monster_room_limit",
+    "monster_room_exit",
+    "skeleton_area",
+    "stairs_to_monster_room",
+    "on_statue_area"
   ]
 }
