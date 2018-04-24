@@ -34,6 +34,27 @@ export const Locator = makeOutlinerArea('locator', 'Locator', LocationsNode, {
     }
 });
 
+const obj = (data, root) => data || (root && root()) || [];
+const keys = (data, root) => Object.keys(obj(data, root));
+
+const WatcherNode = (name, root = () => DebugData.scope) => ({
+    dynamic: true,
+    name: () => name,
+    numChildren: data => keys(data, root).length,
+    child: (data, idx) => WatcherNode(keys(data, root)[idx], null),
+    childData: (data, idx) => {
+        const k = keys(data, root)[idx];
+        return obj(data, root)[k];
+    }
+});
+
+export const Watcher = makeOutlinerArea('watcher', 'Watcher', WatcherNode('Watcher'), {
+    icon: 'holomap.png',
+    style: {
+        background: '#111111'
+    }
+});
+
 export const IslandOutliner = makeOutlinerArea('islands_list', 'Islands', {
     name: 'Islands',
     children: []
