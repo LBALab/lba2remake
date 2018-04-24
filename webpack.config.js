@@ -51,8 +51,10 @@ module.exports = {
                 'NODE_ENV': '"' + process.env.NODE_ENV + '"'
             }
         }),
+        new webpack.NoErrorsPlugin(),
         new FlowStatusWebpackPlugin({
             failOnError: true,
+            restartFlow: false,
             binaryPath: require('flow-bin')
         })
     ]

@@ -8,10 +8,37 @@ import {loadHqrAsync} from '../hqr';
 import {loadTextsAsync} from '../text';
 import DebugData from '../ui/editor/DebugData';
 
+export type ControlsState = {
+    heroSpeed: -1 | 0 | 1,
+    heroRotationSpeed: 0,
+    cameraSpeed: THREE.Vector3,
+    cameraLerp: THREE.Vector3,
+    cameraLookAtLerp: THREE.Vector3,
+    cameraOrientation: THREE.Quaternion,
+    cameraHeadOrientation: THREE.Quaternion,
+    freeCamera: boolean,
+    action: 0 | 1,
+    jump: 0 | 1,
+    fight: 0 | 1,
+    crunch: 0 | 1,
+    weapon: 0 | 1
+}
+
+export type Game = {
+    isPaused: () => boolean,
+    isLoading: () => boolean,
+    controlsState: ControlsState,
+    getState: () => Object,
+    getUiState: () => Object,
+    resetControlsState: () => void,
+    resetState: () => void,
+    setUiState: () => void
+}
+
 export function createGame(params: Object,
                            clock: Object,
                            setUiState: Function,
-                           getUiState: Function) {
+                           getUiState: Function): Game {
     let isPaused = false;
     let isLoading = false;
 
