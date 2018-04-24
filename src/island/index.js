@@ -1,3 +1,4 @@
+// @flow
 import async from 'async';
 import * as THREE from 'three';
 import {map, each, assign, tail} from 'lodash';
@@ -13,6 +14,7 @@ import {createBoundingBox} from '../utils/rendering';
 
 import islandsInfo from './data/islands';
 import environments from './data/environments';
+import type {Scenery} from '../flowtypes';
 
 const islandProps = {};
 each(islandsInfo, (island) => {
@@ -23,11 +25,14 @@ each(islandsInfo, (island) => {
 
 const islands = {};
 
-export function getEnvInfo(name) {
+export function getEnvInfo(name: string) {
     return islandProps[name].envInfo;
 }
 
-export function loadIslandScenery(params, name, ambience, callback) {
+export function loadIslandScenery(params: Object,
+                                  name: string,
+                                  ambience: Object,
+                                  callback: Function) {
     if (name in islands) {
         callback(null, islands[name]);
     } else {
@@ -43,7 +48,7 @@ export function loadIslandScenery(params, name, ambience, callback) {
     }
 }
 
-function loadIslandNode(params, props, files, ambience) {
+function loadIslandNode(params, props, files, ambience): Scenery {
     const islandObject = new THREE.Object3D();
     islandObject.name = `scenery_${props.name}`;
     islandObject.matrixAutoUpdate = false;
@@ -100,7 +105,8 @@ function loadIslandNode(params, props, files, ambience) {
             each(section.boundingBoxes, (bb, idx) => {
                 const box = createBoundingBox(bb, new THREE.Vector3(0.9, 0.9, 0.9));
                 box.name = `[${section.x},${section.z}]:${idx}`;
-                boundingBoxes.add(box);
+                if (boundingBoxes)
+                    boundingBoxes.add(box);
             });
         }
     });
