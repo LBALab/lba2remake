@@ -26,7 +26,7 @@ export default function Expression({expr, value, addExpression}) {
     return <span key={expr.expr}> {expr.expr} = N/A</span>;
 }
 
-function Value({expr, value, root = true, addExpression}) {
+export function Value({expr, value, root = true, addExpression}) {
     if (value === undefined) {
         return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>undefined</span>;
     }
