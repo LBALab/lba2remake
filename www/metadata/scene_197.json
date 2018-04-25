@@ -17,5 +17,29 @@
     "FrancoSkateGuard2",
     "Esmer",
     "SupAgent"
+  ],
+  "zoneNames": [
+    "to_landing_zone",
+    "to_paul_house",
+    "to_ticket_office",
+    "cam_paul_house",
+    "cam_ticket_office",
+    "to_lighthouse_area",
+    "cam_harbour",
+    "harbour_signal_front",
+    "cam_harbour_signal",
+    "harbour_signal_back",
+    "harbour_central_zone",
+    "crab_placement",
+    "fishing_zone_water",
+    "fishing_zone_seashore",
+    "cam_ferry_placement1",
+    "cam_ferry_placement2",
+    "ferry_entrance",
+    "cam_bridge_front",
+    "harbour_garden_zone",
+    "cam_ferry_front",
+    "cam_ferry_placement3",
+    "to_twinsen_house_area"
   ]
 }
