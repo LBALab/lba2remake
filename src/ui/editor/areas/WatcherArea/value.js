@@ -97,9 +97,10 @@ function Matrix({mat, n, root}) {
             return <span key={r} >
                 &nbsp;
                 &nbsp;
+                &nbsp;
                 {intersperse(components, ', ')}</span>;
         });
-        return <span>Mat{n}[<br/>{intersperseBR(rows)}<br/>]</span>;
+        return <span>Mat{n}[<br/>{intersperseBR(rows)}<br/>&nbsp;&nbsp;]</span>;
     }
     return <span>Mat{n}[...]</span>;
 }
