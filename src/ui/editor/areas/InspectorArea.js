@@ -1,11 +1,11 @@
 import {findIndex} from 'lodash';
-import {WatcherContent} from './WatcherArea/content';
+import {InspectorContent} from './InspectorArea/content';
 
-const WatcherArea = {
-    id: 'watcher',
-    name: 'Watcher',
+const InspectorArea = {
+    id: 'inspector',
+    name: 'Inspector',
     icon: 'terminal.png',
-    content: WatcherContent,
+    content: InspectorContent,
     getInitialState: () => ({
         path: [],
         watches: []
@@ -34,4 +34,4 @@ const WatcherArea = {
     }
 };
 
-export default WatcherArea;
+export default InspectorArea;

@@ -1,7 +1,7 @@
 import React from 'react';
 import {map, extend} from 'lodash';
 import {makeContentComponent} from '../OutlinerArea/content';
-import {WatcherNode} from './node';
+import {InspectorNode} from './node';
 import {editor} from '../../../styles';
 
 const headerStyle = {
@@ -50,12 +50,12 @@ const contentStyle = {
     position: 'relative'
 };
 
-export class WatcherContent extends React.Component {
+export class InspectorContent extends React.Component {
     constructor(props) {
         super(props);
         const addWatch = props.stateHandler.addWatch;
-        this.content = makeContentComponent(WatcherNode('DBG', addWatch), null, null, 'dot');
-        this.watchContent = makeContentComponent(WatcherNode('DBG', addWatch), null, contentStyle, 'dot');
+        this.content = makeContentComponent(InspectorNode('DBG', addWatch), null, null, 'dot');
+        this.watchContent = makeContentComponent(InspectorNode('DBG', addWatch), null, contentStyle, 'dot');
         this.state = {
             tab: 'explore'
         };
@@ -76,6 +76,9 @@ export class WatcherContent extends React.Component {
         } else if (this.state.tab === 'watch') {
             const watches = this.props.sharedState.watches;
             return <div style={watchesStyle}>
+                {(!watches || watches.length === 0) && <div style={{margin: 25, textAlign: 'center'}}>
+                    Nothing to watch just yet...
+                </div>}
                 {map(watches, (w, idx) => {
                     const props = {
                         sharedState: {

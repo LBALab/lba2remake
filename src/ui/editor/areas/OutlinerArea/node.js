@@ -192,7 +192,7 @@ export default class Node extends React.Component {
         const setRoot = this.props.setRoot.bind(null, this.props.path);
         const onClick = node.onClick ? node.onClick.bind(null, this.props.data, setRoot) : setRoot;
         const onDoubleClick = node.onDoubleClick ?
-            node.onDoubleClick.bind(null, this.props.data) : noop;
+            node.onDoubleClick.bind(null, this.props.data, this) : noop;
 
         const color = (isFunction(node.color) ? this.call('color') : node.color) || 'inherit';
 
@@ -308,7 +308,7 @@ export default class Node extends React.Component {
                             key={prop.id}
                             style={extend({}, propStyle, prop.style)}
                         >
-                            {prop.render(prop.value)}
+                            {prop.render(prop.value, this)}
                         </span> : null))
                 }
             </span>;

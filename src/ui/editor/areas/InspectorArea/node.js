@@ -19,7 +19,7 @@ const hash = (data, root) => {
     return `${value};${id}`;
 };
 
-export const WatcherNode = (name, addWatch, root = () => DebugData.scope) => ({
+export const InspectorNode = (name, addWatch, root = () => DebugData.scope) => ({
     dynamic: true,
     icon: () => 'none',
     name: () => name,
@@ -28,7 +28,7 @@ export const WatcherNode = (name, addWatch, root = () => DebugData.scope) => ({
             return 0;
         return keys(data, root).length;
     },
-    child: (data, idx) => WatcherNode(keys(data, root)[idx], addWatch, null),
+    child: (data, idx) => InspectorNode(keys(data, root)[idx], addWatch, null),
     childData: (data, idx) => {
         const k = keys(data, root)[idx];
         return objOrEA(data, root)[k];
@@ -48,6 +48,18 @@ export const WatcherNode = (name, addWatch, root = () => DebugData.scope) => ({
         render: () => (expanded || keys(data, root).length === 0) && <span style={{color: '#FFFFFF'}}>
             <Value value={root ? root() : data}/>
         </span>
+    }, {
+        id: 'watch',
+        value: null,
+        render: (dt, component) => {
+            if (!root && addWatch && component.props.level !== 0) {
+                const onClick = () => {
+                    addWatch(component.props.path);
+                };
+                return <span style={{fontSize: 12, cursor: 'pointer', float: 'right'}} onClick={onClick}>watch</span>;
+            }
+            return null;
+        }
     }],
     ctxMenu: !root && addWatch && [
         {
@@ -55,6 +67,6 @@ export const WatcherNode = (name, addWatch, root = () => DebugData.scope) => ({
             onClick: (component) => {
                 addWatch(component.props.path);
             }
-        }
+        },
     ],
 });
