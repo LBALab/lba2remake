@@ -11,5 +11,22 @@
     "Mussel1",
     "Mussel2",
     "Zoe"
+  ],
+  "zoneNames": [
+    "to_twinsen_house_area",
+    "to_harbour",
+    "lighthouse_signal_front",
+    "cam_lighthouse_signal",
+    "lighthouse_signal_back",
+    "cam_narrow_road",
+    "cam_fork",
+    "cam_lighthouse_upstairs1",
+    "cam_lighthouse_upstairs2",
+    "lighthouse_door",
+    "lighthouse_area_limit",
+    "trash_can",
+    "cam_lighthouse_door",
+    "cam_lighthouse_upstairs3",
+    "cam_road_to_lighthouse"
   ]
 }
