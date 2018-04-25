@@ -8,5 +8,13 @@
     "DesertRose",
     "CloverBox",
     "Mushroom2"
+  ],
+  "zoneNames": [
+    "to_hacienda",
+    "to_behind_temple_of_bu",
+    "cam_dinofly_landing_area1",
+    "cam_dinofly_landing_area2",
+    "cam_dinofly_landing_area3",
+    "to_protection_spell_cave"
   ]
 }

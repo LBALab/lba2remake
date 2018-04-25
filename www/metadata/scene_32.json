@@ -6,5 +6,15 @@
     "Guard",
     "Boat",
     "Esmer"
+  ],
+  "zoneNames": [
+    "elevator_shaft",
+    "to_mens_bath",
+    "cam_esmer_platform",
+    "cam_exit",
+    "to_spacecraft_area",
+    "near_exit_zone",
+    "esmer_platform",
+    "box"
   ]
 }

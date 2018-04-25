@@ -6,5 +6,11 @@
     "CactusAgent",
     "TwinsensCar",
     "DesertRose"
+  ],
+  "zoneNames": [
+    "to_behind_pearl_cave",
+    "to_between_hacienda_and_landing_zone",
+    "to_esmer_landing_zone",
+    "palm"
   ]
 }
