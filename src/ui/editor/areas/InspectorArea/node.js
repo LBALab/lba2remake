@@ -1,5 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import React from 'react';
-import {isFunction, filter} from 'lodash';
+import {isFunction, filter, extend, map} from 'lodash';
 import DebugData from '../../DebugData';
 import {Value, FuncResult} from './value';
 
@@ -19,9 +20,19 @@ const hash = (data, root) => {
     return `${value};${id}`;
 };
 
-const isFuncLike = value => isFunction(value) || value instanceof FuncResult;
+function mapUtil(array, path) {
+    const actualPath = path || undefined;
+    return map(array, actualPath);
+}
+mapUtil.__argTypes = [null, 'path'];
 
-export const InspectorNode = (name, addWatch, root = () => DebugData.scope) => ({
+const isFuncLike = value => isFunction(value) || value instanceof FuncResult;
+const getRoot = () => extend({
+    map: mapUtil,
+    __pure_functions: ['map']
+}, DebugData.scope);
+
+export const InspectorNode = (name, addWatch, root = getRoot) => ({
     dynamic: true,
     icon: () => 'none',
     name: () => name,
@@ -35,10 +46,14 @@ export const InspectorNode = (name, addWatch, root = () => DebugData.scope) => (
     childData: (data, idx) => {
         const k = keys(data, root)[idx];
         const o = objOrEA(data, root)[k];
-        // eslint-disable-next-line no-underscore-dangle
-        const pure = (data && data.__pure_functions) || [];
+        const pure = (data && data.__pure_functions) || (root && root().__pure_functions) || [];
         if (isFunction(o) && pure.includes(k)) {
-            return new FuncResult(o);
+            if (!o.__func_result) {
+                o.__func_result = new FuncResult(o, data);
+            } else {
+                o.__func_result.tryCall();
+            }
+            return o.__func_result;
         }
         return o;
     },

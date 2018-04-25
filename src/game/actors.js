@@ -213,7 +213,8 @@ export function loadActor(params: Object,
             }
             this.loadMesh();
             scene.addMesh(this.threeObject);
-        }
+        },
+        __pure_functions: ['getDistance', 'getDistanceLba']
     };
 
     const euler = new THREE.Euler(0, angleToRad(props.angle), 0, 'XZY');

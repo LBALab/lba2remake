@@ -1,12 +1,65 @@
 /* eslint-disable no-underscore-dangle */
 import React from 'react';
-import {flatMap, isArray, isEmpty, isFunction, map, slice, take, times} from 'lodash';
+import {flatMap, isArray, isEmpty, isFunction, map, each, slice, take, times} from 'lodash';
 import * as THREE from 'three';
+import DebugData from '../../DebugData';
+
+class ArgWrapper {
+    constructor(fct, index) {
+        this.__fct = fct;
+        this.__value = '';
+        this.__index = index;
+    }
+
+    setValue(value) {
+        this.__value = value;
+        this.__fct.tryCall();
+    }
+
+    __getValue() {
+        if (this.__getType() === 'path') {
+            return this.__value;
+        }
+        let scope = DebugData.scope;
+        const path = this.__value.split('.');
+        for (let i = 0; i < path.length; i += 1) {
+            if (path[i] in scope) {
+                scope = scope[path[i]];
+            } else {
+                return undefined;
+            }
+        }
+        return scope;
+    }
+
+    __getType() {
+        const fct = this.__fct.__func;
+        return fct.__argTypes && fct.__argTypes[this.__index];
+    }
+}
 
 export class FuncResult {
-    constructor(fct) {
-        this['[call!]'] = fct();
+    constructor(fct, thisValue) {
+        const params = getParamNames(fct);
+        if (params.length > 0) {
+            this.__params = [];
+            each(params, (p, idx) => {
+                const arg = new ArgWrapper(this, idx);
+                this[`[arg:${p}]`] = arg;
+                this.__params[idx] = arg;
+            });
+        }
         this.__func = fct;
+        this.__this = thisValue;
+        this.tryCall();
+    }
+
+    tryCall() {
+        try {
+            this['[call!]'] = this.__func.apply(this.__this, map(this.__params, p => p.__getValue()));
+        } catch (e) {
+            this['[call!]'] = e;
+        }
     }
 }
 
@@ -16,6 +69,30 @@ export function Value({value}) {
     }
     if (value === null) {
         return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>null</span>;
+    }
+    if (value instanceof Error) {
+        return <span style={{color: 'red', fontStyle: 'italic'}}>Error: {value.message}</span>;
+    }
+    if (value instanceof ArgWrapper) {
+        const style = {
+            background: value.__getValue() ? '#ffffff' : '#ffa5a1'
+        };
+        const onKeyDown = (e) => {
+            e.stopPropagation();
+        };
+        const onChange = (e) => {
+            value.setValue(e.target.value);
+        };
+        const onRef = (ref) => {
+            if (ref) {
+                ref.value = value.__value;
+            }
+        };
+        const type = value.__getType();
+        return <span>
+            {type ? `(${type})` : 'DBG.'}
+            <input ref={onRef} type="text" style={style} onKeyDown={onKeyDown} onChange={onChange}/>
+        </span>;
     }
     if (value instanceof FuncResult) {
         return <span style={{color: '#5cffa9'}}>(
