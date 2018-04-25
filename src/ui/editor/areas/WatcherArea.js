@@ -6,11 +6,18 @@ const WatcherArea = {
     icon: 'terminal.png',
     content: WatcherContent,
     getInitialState: () => ({
-        path: []
+        path: [],
+        watches: []
     }),
     stateHandler: {
         setPath(path) {
             this.setState({path});
+        },
+        addWatch() {
+
+        },
+        removeWatch() {
+
         }
     }
 };

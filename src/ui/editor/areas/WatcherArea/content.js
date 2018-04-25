@@ -1,5 +1,5 @@
 import React from 'react';
-import {map, extend} from 'lodash';
+import {map, extend, findIndex} from 'lodash';
 import {makeContentComponent} from '../OutlinerArea/content';
 import {WatcherNode} from './node';
 import {editor} from '../../../styles';
@@ -32,10 +32,22 @@ const watchesStyle = extend({}, mainStyle, {
 });
 
 const watchStyle = {
+    position: 'relative',
     background: editor.base.background,
     margin: 8,
     border: '1px solid grey',
     borderRadius: 8
+};
+
+const trashIconStyle = {
+    position: 'absolute',
+    right: 8,
+    top: 8,
+    cursor: 'pointer'
+};
+
+const contentStyle = {
+    position: 'relative'
 };
 
 export class WatcherContent extends React.Component {
@@ -43,21 +55,28 @@ export class WatcherContent extends React.Component {
         super(props);
         this.addWatch = this.addWatch.bind(this);
         this.content = makeContentComponent(WatcherNode('DBG', this.addWatch), null, null, 'dot');
+        this.watchContent = makeContentComponent(WatcherNode('DBG', this.addWatch), null, contentStyle, 'dot');
         this.state = {
             tab: 'explore',
             watches: []
         };
     }
 
+    removeWatch(id) {
+        const watches = this.state.watches;
+        const idx = findIndex(watches, w => w.id === id);
+        if (idx !== -1) {
+            watches.splice(idx, 1);
+        }
+        this.setState({watches});
+    }
+
     addWatch(path) {
         const watches = this.state.watches;
-        const watchStyle = {
-            position: 'relative'
-        };
-        console.log(path);
+        const id = new Date().getTime();
         watches.push({
-            path,
-            content: makeContentComponent(WatcherNode('[Watch]: DBG', this.addWatch), null, watchStyle, 'dot')
+            id,
+            path
         });
         this.setState({watches});
     }
@@ -88,7 +107,12 @@ export class WatcherContent extends React.Component {
                         ticker: this.props.ticker,
                     };
                     return <div key={idx} style={watchStyle}>
-                        {React.createElement(w.content, props)}
+                        {React.createElement(this.watchContent, props)}
+                        <img
+                            style={trashIconStyle}
+                            src="editor/icons/trash.png"
+                            onClick={this.removeWatch.bind(this, w.id)}
+                        />
                     </div>;
                 })}
             </div>;
@@ -107,7 +131,7 @@ export class WatcherContent extends React.Component {
         const onClick = tab => this.setState({tab});
         return <div style={headerStyle}>
             <span style={tabStyle(this.state.tab === 'explore')} onClick={() => onClick('explore')}>Explore</span>
-            <span style={tabStyle(this.state.tab === 'watch')} onClick={() => onClick('watch')}>Watch</span>
+            <span style={tabStyle(this.state.tab === 'watch')} onClick={() => onClick('watch')}>Watch<b>[{this.state.watches.length}]</b></span>
         </div>;
     }
 }
