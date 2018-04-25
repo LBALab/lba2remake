@@ -1,6 +1,6 @@
 import React from 'react';
 import DebugData from '../../DebugData';
-import {Value} from '../DebugHUDArea/Expression';
+import {Value} from './value';
 
 const obj = (data, root) => data || (root && root()) || [];
 const keys = (data, root) => Object.keys(obj(data, root));
@@ -33,13 +33,7 @@ export const WatcherNode = (name, root = () => DebugData.scope) => ({
         id: 'value',
         value: hash(data, root),
         render: () => (expanded || keys(data, root).length === 0) && <span style={{color: '#FFFFFF'}}>
-            {Value({
-                expr: name,
-                value: root ? root() : data,
-                root: false,
-                addExpression: () => {
-                }
-            })}
+            <Value value={root ? root() : data}/>
         </span>
     }]
 });
