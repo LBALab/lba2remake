@@ -1,6 +1,14 @@
+/* eslint-disable no-underscore-dangle */
 import React from 'react';
 import {flatMap, isArray, isEmpty, isFunction, map, slice, take, times} from 'lodash';
 import * as THREE from 'three';
+
+export class FuncResult {
+    constructor(fct) {
+        this['() =>'] = fct();
+        this.__func = fct;
+    }
+}
 
 export function Value({value}) {
     if (value === undefined) {
@@ -8,6 +16,13 @@ export function Value({value}) {
     }
     if (value === null) {
         return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>null</span>;
+    }
+    if (value instanceof FuncResult) {
+        return <span style={{color: '#5cffa9'}}>(
+            <span style={{color: 'grey'}}>
+                {getParamNames(value.__func).join(', ')}
+            </span>)
+        </span>;
     }
     if (isFunction(value)) {
         return <span style={{color: '#5cffa9'}}>(<span style={{color: 'grey'}}>{getParamNames(value).join(', ')}</span>)</span>;

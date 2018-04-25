@@ -1,11 +1,11 @@
 import React from 'react';
-import {isFunction} from 'lodash';
+import {isFunction, filter} from 'lodash';
 import DebugData from '../../DebugData';
-import {Value} from './value';
+import {Value, FuncResult} from './value';
 
 const obj = (data, root) => data || (root && root()) || [];
 const objOrEA = (data, root) => obj(data, root) || [];
-const keys = (data, root) => Object.keys(objOrEA(data, root));
+const keys = (data, root) => filter(Object.keys(objOrEA(data, root)), k => k.substr(0, 2) !== '__');
 
 const hash = (data, root) => {
     const ks = keys(data, root);
@@ -19,23 +19,32 @@ const hash = (data, root) => {
     return `${value};${id}`;
 };
 
+const isFuncLike = value => isFunction(value) || value instanceof FuncResult;
+
 export const InspectorNode = (name, addWatch, root = () => DebugData.scope) => ({
     dynamic: true,
     icon: () => 'none',
     name: () => name,
     numChildren: (data) => {
-        if (typeof (obj(data, root)) === 'string')
+        const o = obj(data, root);
+        if (typeof (o) === 'string')
             return 0;
         return keys(data, root).length;
     },
     child: (data, idx) => InspectorNode(keys(data, root)[idx], addWatch, null),
     childData: (data, idx) => {
         const k = keys(data, root)[idx];
-        return objOrEA(data, root)[k];
+        const o = objOrEA(data, root)[k];
+        // eslint-disable-next-line no-underscore-dangle
+        const pure = (data && data.__pure_functions) || [];
+        if (isFunction(o) && pure.includes(k)) {
+            return new FuncResult(o);
+        }
+        return o;
     },
     color: (data) => {
         const value = obj(data, root);
-        if (isFunction(value)) {
+        if (isFuncLike(value)) {
             return '#5cffa9';
         }
         return '#49d2ff';
@@ -43,7 +52,7 @@ export const InspectorNode = (name, addWatch, root = () => DebugData.scope) => (
     hasChanged: () => true,
     props: (data, expanded) => [{
         id: 'value',
-        style: {paddingLeft: isFunction(obj(data, root)) ? 0 : 10},
+        style: {paddingLeft: isFuncLike(obj(data, root)) ? 0 : 10},
         value: hash(data, root),
         render: () => (expanded || keys(data, root).length === 0) && <span style={{color: '#FFFFFF'}}>
             <Value value={root ? root() : data}/>
