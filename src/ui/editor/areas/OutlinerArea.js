@@ -2,7 +2,6 @@ import {map, drop} from 'lodash';
 import {SceneNode} from './OutlinerArea/nodes/scene';
 import {makeOutlinerArea} from './OutlinerArea/factory';
 import {findScenePath, LocationsNode, LocatorMenu} from './OutlinerArea/nodes/locations/index';
-import {WatcherNode} from './OutlinerArea/nodes/watcher';
 import DebugData from '../DebugData';
 
 export const SceneOutliner = makeOutlinerArea('scene_outliner', 'Scene', SceneNode, {
@@ -33,13 +32,6 @@ export const Locator = makeOutlinerArea('locator', 'Locator', LocationsNode, {
     style: {
         background: '#111111'
     }
-});
-
-export const Watcher = makeOutlinerArea('watcher', 'Watcher', WatcherNode('DBG'), {
-    style: {
-        background: 'rgb(45, 45, 48)'
-    },
-    separator: 'dot'
 });
 
 export const IslandOutliner = makeOutlinerArea('islands_list', 'Islands', {

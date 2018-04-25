@@ -1,6 +1,6 @@
 import React from 'react';
-import DebugData from '../../../DebugData';
-import {Value} from '../../DebugHUDArea/Expression';
+import DebugData from '../../DebugData';
+import {Value} from '../DebugHUDArea/Expression';
 
 const obj = (data, root) => data || (root && root()) || [];
 const keys = (data, root) => Object.keys(obj(data, root));
@@ -28,6 +28,7 @@ export const WatcherNode = (name, root = () => DebugData.scope) => ({
         return obj(data, root)[k];
     },
     color: '#49d2ff',
+    hasChanged: () => true,
     props: (data, expanded) => [{
         id: 'value',
         value: hash(data, root),
