@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 export class FuncResult {
     constructor(fct) {
-        this['() =>'] = fct();
+        this['[call!]'] = fct();
         this.__func = fct;
     }
 }

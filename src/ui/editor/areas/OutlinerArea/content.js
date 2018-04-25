@@ -76,7 +76,7 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
                     />}
                 </WithShortcuts>;
             }
-            return 'Node is not available.';
+            return <span>Node is not available. {sep === 'dot' && <button onClick={() => this.setRoot([])}>Reset</button>}</span>;
         }
 
         renderPath() {

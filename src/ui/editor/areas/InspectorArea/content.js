@@ -86,7 +86,10 @@ export class InspectorContent extends React.Component {
                             path: w.path
                         },
                         stateHandler: {
-                            setPath: () => {},
+                            setPath: (path) => {
+                                this.props.stateHandler.setPath(path);
+                                this.props.stateHandler.setTab('explore');
+                            },
                         },
                         ticker: this.props.ticker,
                     };

@@ -50,11 +50,11 @@ export const InspectorNode = (name, addWatch, root = () => DebugData.scope) => (
         return '#49d2ff';
     },
     hasChanged: () => true,
-    props: (data, expanded) => [{
+    props: (data, collapsed) => [{
         id: 'value',
         style: {paddingLeft: isFuncLike(obj(data, root)) ? 0 : 10},
         value: hash(data, root),
-        render: () => (expanded || keys(data, root).length === 0) && <span style={{color: '#FFFFFF'}}>
+        render: () => (collapsed || keys(data, root).length === 0 || isFuncLike(obj(data, root))) && <span style={{color: '#FFFFFF'}}>
             <Value value={root ? root() : data}/>
         </span>
     }, {
