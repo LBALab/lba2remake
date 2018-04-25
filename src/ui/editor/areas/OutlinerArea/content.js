@@ -14,12 +14,9 @@ const style = extend({
     fontWeight: 'normal'
 }, fullscreen);
 
-const Separator = {
-    normal: <React.Fragment>
-        &nbsp;<span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
-    </React.Fragment>,
-    dot: '.'
-};
+const Separator = <React.Fragment>
+    &nbsp;<span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
+</React.Fragment>;
 
 export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
     return class OutlinerContent extends FrameListener {
@@ -53,7 +50,7 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
         render() {
             const extStyle = extend({}, style, ownStyle);
             return <div style={extStyle}>
-                {this.renderPath()}
+                {sep !== 'dot' && this.renderPath()}
                 {this.renderContent()}
             </div>;
         }
@@ -74,6 +71,8 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
                         level={0}
                         split={this.props.split}
                         shortcuts={shortcuts}
+                        pathInName={sep === 'dot'}
+                        rootName={isFunction(tree.name) ? tree.name() : tree.name}
                     />}
                 </WithShortcuts>;
             }
@@ -92,14 +91,10 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
                     {map(path, (name, idx) => {
                         const subpath = path.slice(0, idx + 1);
                         return <span key={idx}>
-                            {Separator[sep]}
+                            {Separator}
                             {renderElement(subpath, name)}
                         </span>;
                     })}
-                </div>;
-            } else if (sep === 'dot') {
-                return <div style={{paddingBottom: 8}}>
-                    {renderElement([], isFunction(tree.name) ? tree.name() : tree.name)}
                 </div>;
             }
             return null;

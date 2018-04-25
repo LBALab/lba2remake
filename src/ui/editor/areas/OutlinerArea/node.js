@@ -1,5 +1,5 @@
 import React from 'react';
-import {map, concat, times, isObject, isEqual, noop} from 'lodash';
+import {map, concat, times, isObject, isEqual, noop, isFunction, extend} from 'lodash';
 
 export default class Node extends React.Component {
     constructor(props) {
@@ -134,7 +134,6 @@ export default class Node extends React.Component {
                 {this.renderCollapseButton()}
                 {this.renderIcon()}
                 {this.renderName()}
-                &nbsp;
                 {this.renderProps()}
             </div>
             <div style={{paddingLeft: '2ch'}}>{this.renderChildren(childFontSize)}</div>
@@ -195,13 +194,14 @@ export default class Node extends React.Component {
         const onDoubleClick = node.onDoubleClick ?
             node.onDoubleClick.bind(null, this.props.data) : noop;
 
-        const color = node.color || 'inherit';
+        const color = (isFunction(node.color) ? this.call('color') : node.color) || 'inherit';
 
         const nameStyle = {
             cursor: 'pointer',
             background: selected ? 'white' : 'transparent',
             color: selected ? 'black' : color,
-            padding: selected ? '0 2px' : 0
+            padding: selected ? '0 2px' : 0,
+            verticalAlign: 'middle'
         };
 
         const onContextMenu = (e) => {
@@ -253,6 +253,22 @@ export default class Node extends React.Component {
             }
         };
 
+        if (this.props.pathInName) {
+            const onElemClick = (idx) => {
+                this.props.setRoot(this.props.path.slice(0, idx + 1));
+            };
+
+            return <span
+                style={nameStyle}
+                onDoubleClick={onDoubleClick}
+                onContextMenu={renaming ? null : onContextMenu}
+            >
+                <span key="root" onClick={() => this.props.setRoot([])}>{this.props.rootName}</span>
+                {map(this.props.path, (name, idx) =>
+                    <span key={idx} onClick={() => onElemClick(idx)}>.{name}</span>)}
+            </span>;
+        }
+
         return <span
             style={nameStyle}
             onClick={onClick}
@@ -281,14 +297,17 @@ export default class Node extends React.Component {
     renderProps() {
         const nodeProps = this.state.nodeProps;
         const propStyle = {
-            padding: '0 3px',
+            paddingLeft: 10,
             verticalAlign: 'middle'
         };
         if (nodeProps) {
             return <span style={{color: '#858585'}}>
                 {
                     map(nodeProps, prop =>
-                        (prop.render ? <span key={prop.id} style={propStyle}>
+                        (prop.render ? <span
+                            key={prop.id}
+                            style={extend({}, propStyle, prop.style)}
+                        >
                             {prop.render(prop.value)}
                         </span> : null))
                 }

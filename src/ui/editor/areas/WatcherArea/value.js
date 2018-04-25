@@ -9,6 +9,9 @@ export function Value({value}) {
     if (value === null) {
         return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>null</span>;
     }
+    if (isFunction(value)) {
+        return <span style={{color: '#5cffa9'}}>(<span style={{color: 'grey'}}>{getParamNames(value).join(', ')}</span>)</span>;
+    }
     if (typeof (value) === 'string') {
         return <span style={{color: 'orange'}}>&apos;{value}&apos;</span>;
     }
@@ -17,9 +20,6 @@ export function Value({value}) {
     }
     if (typeof (value) === 'number' && !Number.isInteger(value)) {
         return <span>{value.toFixed(3)}</span>;
-    }
-    if (isFunction(value)) {
-        return <span>function(<span style={{color: 'grey'}}>{getParamNames(value).join(', ')}</span>)</span>;
     }
     if (isArray(value)) {
         return <span>[{value.length}]</span>;
