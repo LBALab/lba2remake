@@ -1,8 +1,8 @@
 import React from 'react';
-import {extend, map} from 'lodash';
+import {map, extend} from 'lodash';
 import {makeContentComponent} from '../OutlinerArea/content';
-import {editor as editorStyle} from '../../../styles';
 import {WatcherNode} from './node';
+import {editor} from '../../../styles';
 
 const headerStyle = {
     position: 'absolute',
@@ -11,7 +11,7 @@ const headerStyle = {
     left: 0,
     right: 0,
     padding: 4,
-    textAlign: 'right',
+    textAlign: 'left',
     background: '#333333',
     borderBottom: '1px solid gray'
 };
@@ -26,44 +26,88 @@ const mainStyle = {
     overflow: 'auto'
 };
 
-const inputStyle = extend({
-    width: '80%'
-}, editorStyle.input);
+const watchesStyle = extend({}, mainStyle, {
+    background: 'black',
+    padding: 0,
+});
+
+const watchStyle = {
+    background: editor.base.background,
+    margin: 8,
+    border: '1px solid grey',
+    borderRadius: 8
+};
 
 export class WatcherContent extends React.Component {
     constructor(props) {
         super(props);
-        this.content = makeContentComponent(WatcherNode('DBG'), null, null, 'dot');
-        this.state = {};
+        this.addWatch = this.addWatch.bind(this);
+        this.content = makeContentComponent(WatcherNode('DBG', this.addWatch), null, null, 'dot');
+        this.state = {
+            tab: 'explore',
+            watches: []
+        };
+    }
+
+    addWatch(path) {
+        const watches = this.state.watches;
+        const watchStyle = {
+            position: 'relative'
+        };
+        console.log(path);
+        watches.push({
+            path,
+            content: makeContentComponent(WatcherNode('[Watch]: DBG', this.addWatch), null, watchStyle, 'dot')
+        });
+        this.setState({watches});
     }
 
     render() {
         return <div>
             {this.renderHeader()}
-            <div style={mainStyle}>
-                {React.createElement(this.content, this.props)}
-            </div>
+            {this.renderContent()}
         </div>;
     }
 
+    renderContent() {
+        if (this.state.tab === 'explore') {
+            return <div style={mainStyle}>
+                {React.createElement(this.content, this.props)}
+            </div>;
+        } else if (this.state.tab === 'watch') {
+            const watches = this.state.watches;
+            return <div style={watchesStyle}>
+                {map(watches, (w, idx) => {
+                    const props = {
+                        sharedState: {
+                            path: w.path
+                        },
+                        stateHandler: {
+                            setPath: () => {},
+                        },
+                        ticker: this.props.ticker,
+                    };
+                    return <div key={idx} style={watchStyle}>
+                        {React.createElement(w.content, props)}
+                    </div>;
+                })}
+            </div>;
+        }
+        return null;
+    }
+
     renderHeader() {
+        const tabStyle = selected => ({
+            height: 20,
+            lineHeight: '20px',
+            padding: '0 10px',
+            cursor: 'pointer',
+            color: selected ? 'white' : 'grey'
+        });
+        const onClick = tab => this.setState({tab});
         return <div style={headerStyle}>
-            <input
-                key="exprInput"
-                ref={(ref) => {
-                    this.input = ref;
-                }}
-                style={inputStyle}
-                list="dbgHUD_completion"
-                spellCheck={false}
-                onKeyDown={this.inputKeyDown}
-                onKeyUp={e => e.stopPropagation()}
-                placeholder="<type expression>"
-            />
-            <datalist id="dbgHUD_completion">
-                {map(this.state.completion, (value, idx) => <option key={idx} value={value}/>)}
-            </datalist>
-            <button style={editorStyle.button} onClick={() => this.addExpression}>+</button>
+            <span style={tabStyle(this.state.tab === 'explore')} onClick={() => onClick('explore')}>Explore</span>
+            <span style={tabStyle(this.state.tab === 'watch')} onClick={() => onClick('watch')}>Watch</span>
         </div>;
     }
 }
