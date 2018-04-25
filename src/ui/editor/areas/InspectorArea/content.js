@@ -34,16 +34,19 @@ const watchesStyle = extend({}, mainStyle, {
 const watchStyle = {
     position: 'relative',
     background: editor.base.background,
-    margin: 8,
+    margin: '16px 12px',
     border: '1px solid grey',
     borderRadius: 8
 };
 
 const trashIconStyle = {
     position: 'absolute',
-    right: 8,
-    top: 8,
-    cursor: 'pointer'
+    right: -11,
+    top: -11,
+    cursor: 'pointer',
+    background: 'rgba(0, 0, 0, 0.5)',
+    border: '1px solid rgba(255, 255, 255, 0.5)',
+    borderRadius: 4
 };
 
 const contentStyle = {
@@ -56,9 +59,6 @@ export class InspectorContent extends React.Component {
         const addWatch = props.stateHandler.addWatch;
         this.content = makeContentComponent(InspectorNode('DBG', addWatch), null, null, 'dot');
         this.watchContent = makeContentComponent(InspectorNode('DBG', addWatch), null, contentStyle, 'dot');
-        this.state = {
-            tab: 'explore'
-        };
     }
 
     render() {
@@ -69,11 +69,12 @@ export class InspectorContent extends React.Component {
     }
 
     renderContent() {
-        if (this.state.tab === 'explore') {
+        const tab = this.props.sharedState.tab || 'explore';
+        if (tab === 'explore') {
             return <div style={mainStyle}>
                 {React.createElement(this.content, this.props)}
             </div>;
-        } else if (this.state.tab === 'watch') {
+        } else if (tab === 'watch') {
             const watches = this.props.sharedState.watches;
             return <div style={watchesStyle}>
                 {(!watches || watches.length === 0) && <div style={{margin: 25, textAlign: 'center'}}>
@@ -111,11 +112,12 @@ export class InspectorContent extends React.Component {
             cursor: 'pointer',
             color: selected ? 'white' : 'grey'
         });
-        const onClick = tab => this.setState({tab});
+        const onClick = tab => this.props.stateHandler.setTab(tab);
         const watches = this.props.sharedState.watches;
+        const tab = this.props.sharedState.tab || 'explore';
         return <div style={headerStyle}>
-            <span style={tabStyle(this.state.tab === 'explore')} onClick={() => onClick('explore')}>Explore</span>
-            <span style={tabStyle(this.state.tab === 'watch')} onClick={() => onClick('watch')}>Watch<b>[{watches.length}]</b></span>
+            <span style={tabStyle(tab === 'explore')} onClick={() => onClick('explore')}>Explore</span>
+            <span style={tabStyle(tab === 'watch')} onClick={() => onClick('watch')}>Watch<b>[{watches.length}]</b></span>
         </div>;
     }
 }

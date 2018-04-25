@@ -8,9 +8,13 @@ const InspectorArea = {
     content: InspectorContent,
     getInitialState: () => ({
         path: [],
-        watches: []
+        watches: [],
+        tab: 'explore'
     }),
     stateHandler: {
+        setTab(tab) {
+            this.setState({tab});
+        },
         setPath(path) {
             this.setState({path});
         },
