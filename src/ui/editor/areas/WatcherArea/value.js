@@ -1,5 +1,5 @@
 import React from 'react';
-import {constant, flatMap, isArray, isEmpty, isFunction, map, slice, take, times} from 'lodash';
+import {flatMap, isArray, isEmpty, isFunction, map, slice, take, times} from 'lodash';
 import * as THREE from 'three';
 
 export function Value({value}) {
@@ -56,12 +56,12 @@ function intersperseBR(arr) {
     return flatMap(arr, (a, i) => (i ? [<br key={`br${i}`}/>, a] : [a]));
 }
 
-var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-var ARGUMENT_NAMES = /([^\s,]+)/g;
+const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+const ARGUMENT_NAMES = /([^\s,]+)/g;
 function getParamNames(func) {
-    var fnStr = func.toString().replace(STRIP_COMMENTS, '');
-    var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
-    if(result === null)
+    const fnStr = func.toString().replace(STRIP_COMMENTS, '');
+    let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
+    if (result === null)
         result = [];
     return result;
 }
