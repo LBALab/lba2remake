@@ -184,7 +184,7 @@ export default class Node extends React.Component {
     }
 
     renderIcon() {
-        return <img key="icon" style={{verticalAlign: 'middle', padding: '0 5px'}} src={this.state.icon}/>;
+        return this.state.icon !== 'none' ? <img key="icon" style={{verticalAlign: 'middle', padding: '0 5px'}} src={this.state.icon}/> : ' ';
     }
 
     renderName() {
@@ -364,7 +364,7 @@ export default class Node extends React.Component {
 
     nodeProps() {
         const node = this.props.node;
-        return node.dynamic ? this.call('props') : (node.props ? node.props : []);
+        return node.dynamic ? this.call('props', this.state && this.state.collapsed) : (node.props ? node.props : []);
     }
 
     call(method, arg) {

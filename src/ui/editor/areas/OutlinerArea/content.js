@@ -14,7 +14,14 @@ const style = extend({
     fontWeight: 'normal'
 }, fullscreen);
 
-export function makeContentComponent(tree, frame, ownStyle) {
+const Separator = {
+    normal: <React.Fragment>
+        &nbsp;<span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
+    </React.Fragment>,
+    dot: '.'
+};
+
+export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
     return class OutlinerContent extends FrameListener {
         constructor(props) {
             super(props);
@@ -84,11 +91,15 @@ export function makeContentComponent(tree, frame, ownStyle) {
                     {renderElement([], isFunction(tree.name) ? tree.name() : tree.name)}
                     {map(path, (name, idx) => {
                         const subpath = path.slice(0, idx + 1);
-                        return <span key={idx}>&nbsp;
-                            <span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
+                        return <span key={idx}>
+                            {Separator[sep]}
                             {renderElement(subpath, name)}
                         </span>;
                     })}
+                </div>;
+            } else if (sep === 'dot') {
+                return <div style={{paddingBottom: 8}}>
+                    {renderElement([], isFunction(tree.name) ? tree.name() : tree.name)}
                 </div>;
             }
             return null;

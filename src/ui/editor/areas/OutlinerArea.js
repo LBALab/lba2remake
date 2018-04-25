@@ -39,8 +39,21 @@ export const Locator = makeOutlinerArea('locator', 'Locator', LocationsNode, {
 const obj = (data, root) => data || (root && root()) || [];
 const keys = (data, root) => Object.keys(obj(data, root));
 
+const hash = (data, root) => {
+    const ks = keys(data, root);
+    let value;
+    if (ks.length === 0) {
+        value = data || (root && root());
+    } else {
+        value = ks.join(',');
+    }
+    const id = Math.round(new Date().getTime() * 0.01);
+    return `${value};${id}`;
+};
+
 const WatcherNode = (name, root = () => DebugData.scope) => ({
     dynamic: true,
+    icon: () => 'none',
     name: () => name,
     numChildren: data => keys(data, root).length,
     child: (data, idx) => WatcherNode(keys(data, root)[idx], null),
@@ -48,26 +61,27 @@ const WatcherNode = (name, root = () => DebugData.scope) => ({
         const k = keys(data, root)[idx];
         return obj(data, root)[k];
     },
-    color: '#90ebff',
-    props: data => [{
+    color: '#49d2ff',
+    props: (data, expanded) => [{
         id: 'value',
-        value: data,
-        render: value => <span style={{color: '#FFFFFF'}}>
+        value: hash(data, root),
+        render: () => (expanded || keys(data, root).length === 0) && <span style={{color: '#FFFFFF'}}>
             {Value({
                 expr: name,
-                value: root ? root() : value,
+                value: root ? root() : data,
                 root: false,
-                addExpression: () => {}
+                addExpression: () => {
+                }
             })}
         </span>
     }]
 });
 
-export const Watcher = makeOutlinerArea('watcher', 'Watcher', WatcherNode('DebugData.scope'), {
-    icon: 'terminal.png',
+export const Watcher = makeOutlinerArea('watcher', 'Watcher', WatcherNode('DBG'), {
     style: {
         background: 'rgb(45, 45, 48)'
-    }
+    },
+    separator: 'dot'
 });
 
 export const IslandOutliner = makeOutlinerArea('islands_list', 'Islands', {
