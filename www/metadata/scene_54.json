@@ -13,5 +13,14 @@
     null,
     "Fan1",
     "Fan2"
+  ],
+  "zoneNames": [
+    "to_l_shaped_corridors",
+    "road_to_jail",
+    "lock_area",
+    "cam_jail_room",
+    "barrel1",
+    "barrel2",
+    "fire_extinguisher"
   ]
 }
