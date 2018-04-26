@@ -5,5 +5,20 @@
     "Spacecraft",
     "SpacesuitGuard1",
     "SpacesuitGuard2"
+  ],
+  "zoneNames": [
+    "cam_triangle_airlock",
+    "cam_circle_airlock",
+    "cam_spacecraft_entrance1",
+    "cam_spacecraft_entrance2",
+    "circle_airlock_light1",
+    "circle_airlock_light2",
+    "landing_platform_light1",
+    "landing_platform_light2",
+    "esmer_spacecraft",
+    "road_light",
+    "triangle_airlock_light",
+    "cam_between_landing_platforms",
+    "landing_zone_area"
   ]
 }

@@ -14,5 +14,19 @@
     "Pointer2",
     "Translator",
     "Pointer3"
+  ],
+  "zoneNames": [
+    "cam_upstairs",
+    "cam_downstairs",
+    "ladder",
+    "control_panel",
+    "to_spaceport",
+    "couch",
+    "tourist_terminal",
+    "spherical_device1",
+    "spacecraft",
+    "translator",
+    "cam_entrance",
+    "spherical_device2"
   ]
 }
