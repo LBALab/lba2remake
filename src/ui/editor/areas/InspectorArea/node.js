@@ -1,91 +1,144 @@
-/* eslint-disable no-underscore-dangle */
 import React from 'react';
-import {isFunction, filter, extend, map} from 'lodash';
+import * as THREE from 'three';
+import {map, filter, isFunction, isEmpty} from 'lodash';
 import DebugData from '../../DebugData';
-import {Value, FuncResult} from './value';
+import {Value} from './value';
 
-const obj = (data, root) => data || (root && root()) || [];
-const objOrEA = (data, root) => obj(data, root) || [];
-const keys = (data, root) => filter(Object.keys(objOrEA(data, root)), k => k.substr(0, 2) !== '__');
+const getObj = (data, root) => {
+    if (root)
+        return root();
+    return data;
+};
+
+const getKeys = obj => filter(Object.keys(obj || []), k => k.substr(0, 2) !== '__');
+
+const isPureFunc = (obj, key, parent) => {
+    if (isFunction(obj)) {
+        // eslint-disable-next-line no-underscore-dangle
+        const pure = parent.__pure_functions || [];
+        return pure.includes(key);
+    }
+    return false;
+};
 
 const hash = (data, root) => {
-    const ks = keys(data, root);
-    let value;
-    if (ks.length === 0) {
-        value = data || (root && root());
-    } else {
-        value = ks.join(',');
-    }
+    const obj = getObj(data, root);
+    const keys = getKeys(obj);
+    const value = keys.join(',');
     const id = Math.round(new Date().getTime() * 0.01);
     return `${value};${id}`;
 };
 
-function mapUtil(array, path) {
-    const actualPath = path || undefined;
-    return map(array, actualPath);
-}
-mapUtil.__argTypes = [null, 'path'];
+const isMatrix = obj => obj instanceof THREE.Matrix3 || obj instanceof THREE.Matrix4;
 
-const isFuncLike = value => isFunction(value) || value instanceof FuncResult;
-const getRoot = () => extend({
-    map: mapUtil,
-    __pure_functions: ['map']
-}, DebugData.scope);
+const isSimpleValue = obj =>
+    obj === null
+    || isEmpty(obj)
+    || typeof (obj) === 'string'
+    || typeof (obj) === 'number'
+    || typeof (obj) === 'boolean';
 
-export const InspectorNode = (name, addWatch, root = getRoot) => ({
+const getRoot = () => DebugData.scope;
+
+export const InspectorNode = (name, addWatch, root = getRoot, parent) => ({
     dynamic: true,
     icon: () => 'none',
     name: () => name,
     numChildren: (data) => {
-        const o = obj(data, root);
-        if (typeof (o) === 'string')
-            return 0;
-        return keys(data, root).length;
-    },
-    child: (data, idx) => InspectorNode(keys(data, root)[idx], addWatch, null),
-    childData: (data, idx, component) => {
-        const sS = component.props.sharedState;
-        const watchID = sS && sS.watchID;
-        const k = keys(data, root)[idx];
-        const o = objOrEA(data, root)[k];
-        const pure = (data && data.__pure_functions) || (root && root().__pure_functions) || [];
-        if (isFunction(o) && pure.includes(k)) {
-            if (watchID) {
-                if (!o.__func_result_watches) {
-                    o.__func_result_watches = {};
+        let obj = getObj(data, root);
+        if (isFunction(obj)) {
+            if (isPureFunc(obj, name, parent)) {
+                const params = getParamNames(obj);
+                if (params.length === 0) {
+                    obj = obj();
                 }
-                if (!o.__func_result_watches[watchID]) {
-                    o.__func_result_watches[watchID] = new FuncResult(o, data);
-                } else {
-                    o.__func_result_watches[watchID].tryCall();
-                }
-                return o.__func_result_watches[watchID];
             } else {
-                if (!o.__func_result) {
-                    o.__func_result = new FuncResult(o, data);
-                } else {
-                    o.__func_result.tryCall();
-                }
-                return o.__func_result;
+                return 0;
             }
         }
-        return o;
+        if (typeof (obj) === 'string')
+            return 0;
+        return getKeys(obj).length;
+    },
+    child: (data, idx) => {
+        let obj = getObj(data, root);
+        if (isFunction(obj)) {
+            if (isPureFunc(obj, name, parent)) {
+                const params = getParamNames(obj);
+                if (params.length === 0) {
+                    obj = obj();
+                }
+            }
+        }
+        return InspectorNode(getKeys(obj)[idx], addWatch, null, obj);
+    },
+    childData: (data, idx) => {
+        let obj = getObj(data, root);
+        if (isFunction(obj)) {
+            if (isPureFunc(obj, name, parent)) {
+                const params = getParamNames(obj);
+                if (params.length === 0) {
+                    obj = obj();
+                }
+            }
+        }
+        const k = getKeys(obj)[idx];
+        return obj[k];
     },
     color: (data) => {
-        const value = obj(data, root);
-        if (isFuncLike(value)) {
-            return '#5cffa9';
+        const obj = getObj(data, root);
+        if (isFunction(obj)) {
+            if (isPureFunc(obj, name, parent)) {
+                return '#5cffa9';
+            }
+            return '#3d955d';
         }
         return '#49d2ff';
     },
     hasChanged: () => true,
     props: (data, collapsed) => [{
-        id: 'value',
-        style: {paddingLeft: isFuncLike(obj(data, root)) ? 0 : 10},
+        id: 'params',
+        style: {paddingLeft: 0},
         value: hash(data, root),
-        render: () => (collapsed || keys(data, root).length === 0 || isFuncLike(obj(data, root))) && <span style={{color: '#FFFFFF'}}>
-            <Value value={root ? root() : data}/>
-        </span>
+        render: () => {
+            const obj = getObj(data, root);
+            if (isFunction(obj)) {
+                const isPure = isPureFunc(obj, name, parent);
+                return <span style={{color: isPure ? '#5cffa9' : '#3d955d'}}>
+                    (
+                    {map(getParamNames(obj), (param, idx) => <React.Fragment>
+                        {idx > 0 ? ', ' : null}
+                        {isPure
+                            ? <span style={{color: '#BBBBBB', cursor: 'pointer'}}>{param}</span>
+                            : <span style={{color: '#666666'}}>{param}</span>}
+                    </React.Fragment>)}
+                    )
+                </span>;
+            }
+            return null;
+        }
+    }, {
+        id: 'value',
+        value: hash(data, root),
+        render: () => {
+            let obj = getObj(data, root);
+            if (isFunction(obj)) {
+                if (isPureFunc(obj, name, parent)) {
+                    const params = getParamNames(obj);
+                    if (params.length === 0) {
+                        obj = obj();
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            }
+            if (collapsed || isSimpleValue(obj) || isMatrix(obj)) {
+                return <Value value={obj}/>;
+            }
+            return null;
+        }
     }, {
         id: 'watch',
         value: null,
@@ -108,3 +161,13 @@ export const InspectorNode = (name, addWatch, root = getRoot) => ({
         },
     ],
 });
+
+const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+const ARGUMENT_NAMES = /([^\s,]+)/g;
+function getParamNames(func) {
+    const fnStr = func.toString().replace(STRIP_COMMENTS, '');
+    let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
+    if (result === null)
+        result = [];
+    return result;
+}

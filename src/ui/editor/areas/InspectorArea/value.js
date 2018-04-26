@@ -1,67 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import React from 'react';
-import {flatMap, isArray, isEmpty, isFunction, map, each, slice, take, times} from 'lodash';
+import {flatMap, isArray, isEmpty, map, slice, take, times} from 'lodash';
 import * as THREE from 'three';
-import DebugData from '../../DebugData';
-
-class ArgWrapper {
-    constructor(fct, index) {
-        this.__fct = fct;
-        this.__value = '';
-        this.__index = index;
-    }
-
-    setValue(value) {
-        this.__value = value;
-        this.__fct.tryCall();
-    }
-
-    __getValue() {
-        if (this.__getType() === 'path') {
-            return this.__value;
-        }
-        let scope = DebugData.scope;
-        const path = this.__value.split('.');
-        for (let i = 0; i < path.length; i += 1) {
-            if (path[i] in scope) {
-                scope = scope[path[i]];
-            } else {
-                return undefined;
-            }
-        }
-        return scope;
-    }
-
-    __getType() {
-        const fct = this.__fct.__func;
-        return fct.__argTypes && fct.__argTypes[this.__index];
-    }
-}
-
-export class FuncResult {
-    constructor(fct, thisValue) {
-        const params = getParamNames(fct);
-        if (params.length > 0) {
-            this.__params = [];
-            each(params, (p, idx) => {
-                const arg = new ArgWrapper(this, idx);
-                this[`[arg:${p}]`] = arg;
-                this.__params[idx] = arg;
-            });
-        }
-        this.__func = fct;
-        this.__this = thisValue;
-        this.tryCall();
-    }
-
-    tryCall() {
-        try {
-            this['[call!]'] = this.__func.apply(this.__this, map(this.__params, p => p.__getValue()));
-        } catch (e) {
-            this['[call!]'] = e;
-        }
-    }
-}
 
 export function Value({value}) {
     if (value === undefined) {
@@ -73,48 +13,18 @@ export function Value({value}) {
     if (value instanceof Error) {
         return <span style={{color: 'red', fontStyle: 'italic'}}>Error: {value.message}</span>;
     }
-    if (value instanceof ArgWrapper) {
-        const style = {
-            background: value.__getValue() ? '#ffffff' : '#ffa5a1'
-        };
-        const onKeyDown = (e) => {
-            e.stopPropagation();
-        };
-        const onChange = (e) => {
-            value.setValue(e.target.value);
-        };
-        const onRef = (ref) => {
-            if (ref) {
-                ref.value = value.__value;
-            }
-        };
-        const type = value.__getType();
-        return <span>
-            {type ? `(${type})` : 'DBG.'}
-            <input ref={onRef} type="text" style={style} onKeyDown={onKeyDown} onChange={onChange}/>
-        </span>;
-    }
-    if (value instanceof FuncResult) {
-        return <span style={{color: '#5cffa9'}}>(
-            <span style={{color: 'grey'}}>
-                {getParamNames(value.__func).join(', ')}
-            </span>)
-        </span>;
-    }
-    if (isFunction(value)) {
-        return <span style={{color: '#5cffa9'}}>(<span style={{color: 'grey'}}>{getParamNames(value).join(', ')}</span>)</span>;
-    }
     if (typeof (value) === 'string') {
         return <span style={{color: 'orange'}}>&apos;{value}&apos;</span>;
     }
     if (typeof (value) === 'boolean') {
         return <span style={{color: value ? 'lime' : 'red', fontStyle: 'italic'}}>{value ? 'true' : 'false'}</span>;
     }
-    if (typeof (value) === 'number' && !Number.isInteger(value)) {
-        return <span>{value.toFixed(3)}</span>;
+    if (typeof (value) === 'number') {
+        const num = Number.isInteger(value) ? value : value.toFixed(3);
+        return <span style={{color: 'yellow'}}>{num}</span>;
     }
     if (isArray(value)) {
-        return <span>[{value.length}]</span>;
+        return <span style={{color: 'white'}}>[{value.length}]</span>;
     }
     if (value instanceof Object) {
         if (value instanceof THREE.Vector2
@@ -126,73 +36,111 @@ export function Value({value}) {
         } else if (value instanceof THREE.Euler) {
             return <Euler euler={value}/>;
         } else if (value instanceof THREE.Matrix3) {
-            return <Matrix mat={value} n={3} root={root}/>;
+            return <Matrix mat={value} n={3}/>;
         } else if (value instanceof THREE.Matrix4) {
-            return <Matrix mat={value} n={4} root={root}/>;
+            return <Matrix mat={value} n={4}/>;
         } else if (value.type) {
-            return <span style={{color: '#b238ff'}}>{value.type}</span>;
+            return <span style={{color: '#b238ff'}}>{value.type}<span style={{color: 'white'}}>{'{}'}</span></span>;
         }
         if (isEmpty(value)) {
-            return <span>{'{}'}</span>;
+            return <span style={{color: 'grey'}}>{'{}'}</span>;
         }
-        return <span>{'{}'}</span>;
+        return <span style={{color: 'white'}}>{'{}'}</span>;
     }
-    return <span>{value}</span>;
+    return <span style={{color: 'grey'}}>{value}</span>;
 }
 
 function intersperse(arr, inter) {
     return flatMap(arr, (a, i) => (i ? [inter, a] : [a]));
 }
 
-function intersperseBR(arr) {
-    return flatMap(arr, (a, i) => (i ? [<br key={`br${i}`}/>, a] : [a]));
-}
+const ARRAY_COLOR = ['#ff9089', '#8bff8f', '#92e0ff', '#fbffb2'];
 
-const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-const ARGUMENT_NAMES = /([^\s,]+)/g;
-function getParamNames(func) {
-    const fnStr = func.toString().replace(STRIP_COMMENTS, '');
-    let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
-    if (result === null)
-        result = [];
-    return result;
-}
-
-const ARRAY_COLOR = ['red', 'lime', 'lightskyblue', 'yellow'];
+const wrapStyleVec = {
+    display: 'inline-block',
+    fontSize: 13,
+    fontWeight: 'bold',
+    verticalAlign: 'middle',
+    padding: '0 4px',
+    marginLeft: 6,
+    borderLeft: '2px solid white',
+    borderRight: '2px solid white'
+};
 
 function Vector({vec}) {
-    const mapComp = (n, i) => <span key={i} style={{color: ARRAY_COLOR[i]}}>{n.toFixed(3)}</span>;
+    const mapComp = (n, i) => <span key={i} style={{color: ARRAY_COLOR[i]}}>
+        {Number.isInteger(n) ? n : n.toFixed(3)}
+    </span>;
     const va = vec.toArray();
-    const components = intersperse(map(va, mapComp), ', ');
-    return <span>Vec{va.length}({components})</span>;
+    const components = intersperse(map(va, mapComp), ' ');
+    return <span style={{color: 'white'}}>Vec{va.length}
+        <span style={wrapStyleVec}>{components}</span>
+    </span>;
 }
 
 function Quat({quat}) {
-    const mapComp = (n, i) => <span key={i} style={{color: ARRAY_COLOR[i]}}>{n.toFixed(3)}</span>;
-    const components = intersperse(map(quat.toArray(), mapComp), ', ');
-    return <span>Quat({components})</span>;
+    const mapComp = (n, i) => <span key={i} style={{color: ARRAY_COLOR[i]}}>
+        {Number.isInteger(n) ? n : n.toFixed(3)}
+    </span>;
+    const components = intersperse(map(quat.toArray(), mapComp), ' ');
+    return <span style={{color: 'white'}}>Quat
+        <span style={wrapStyleVec}>{components}</span>
+    </span>;
 }
 
 function Euler({euler}) {
-    const mapComp = (n, i) => <span key={i} style={{color: ARRAY_COLOR[i]}}>{n.toFixed(3)}</span>;
-    const components = intersperse(map(take(euler.toArray(), 3), mapComp), ', ');
-    const order = <span style={{color: 'orange'}}>&quot;{euler.order}&quot;</span>;
-    return <span>Euler({components}, {order})</span>;
+    const mapComp = (n, i) => <span key={i} style={{color: ARRAY_COLOR[i]}}>
+        {Number.isInteger(n) ? n : n.toFixed(3)}
+    </span>;
+    const components = intersperse(map(take(euler.toArray(), 3), mapComp), ' ');
+    const order = <span style={{color: 'orange'}}>&apos;{euler.order}&apos;</span>;
+    return <span style={{color: 'white'}}>Euler
+        <span style={wrapStyleVec}>{components} {order}</span>
+    </span>;
 }
 
-function Matrix({mat, n, root}) {
-    if (root) {
-        const mapComp = (num, i) =>
-            <span key={i} style={{color: ARRAY_COLOR[i]}}>{num.toFixed(3)}</span>;
-        const rows = times(n, (r) => {
-            const components = map(slice(mat.elements, r * n, (r * n) + n), mapComp);
-            return <span key={r} >
-                &nbsp;
-                &nbsp;
-                &nbsp;
-                {intersperse(components, ', ')}</span>;
-        });
-        return <span>Mat{n}[<br/>{intersperseBR(rows)}<br/>&nbsp;&nbsp;]</span>;
+const wrapStyleMat = {
+    display: 'inline-block',
+    fontSize: 11,
+    fontWeight: 'bold',
+    verticalAlign: 'top',
+    padding: 0,
+    marginLeft: 6,
+    borderLeft: '2px solid white',
+    borderRight: '2px solid white'
+};
+
+const dispNum = (num, fixed = 3) => {
+    if (Math.abs(num) < 0.005) {
+        num = 0;
+    } else if (Math.abs(num - Math.round(num)) < 0.005) {
+        num = Math.round(num);
     }
-    return <span>Mat{n}[...]</span>;
+    return Number.isInteger(num)
+        ? num
+        : num.toFixed(fixed);
+};
+
+function Matrix({mat, n}) {
+    const mapComp = (num, i) =>
+        <div key={i}>
+            {dispNum(num, 2)}
+        </div>;
+    const columns = times(n, (r) => {
+        const components = map(slice(mat.elements, r * n, (r * n) + n), mapComp);
+        const style = {
+            color: ARRAY_COLOR[r],
+            display: 'inline-block',
+            padding: '0 4px'
+        };
+        return <div key={r} style={style}>
+            {components}
+        </div>;
+    });
+    return <span style={{color: 'white'}}>
+        Mat{n}
+        <span style={wrapStyleMat}>
+            {columns}
+        </span>
+    </span>;
 }
