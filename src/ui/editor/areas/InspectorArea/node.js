@@ -1,8 +1,9 @@
 import React from 'react';
 import * as THREE from 'three';
-import {map, filter, isFunction, isEmpty} from 'lodash';
+import {map, filter, concat, isFunction, isEmpty} from 'lodash';
 import DebugData from '../../DebugData';
 import {Value} from './value';
+import {getParamNames} from './utils';
 
 const getObj = (data, root) => {
     if (root)
@@ -40,7 +41,14 @@ const isSimpleValue = obj =>
 
 const getRoot = () => DebugData.scope;
 
-export const InspectorNode = (name, addWatch, root = getRoot, parent) => ({
+export const InspectorNode = (
+    name,
+    addWatch,
+    editParams,
+    root = getRoot,
+    parent = null,
+    path = []
+) => ({
     dynamic: true,
     icon: () => 'none',
     name: () => name,
@@ -66,11 +74,18 @@ export const InspectorNode = (name, addWatch, root = getRoot, parent) => ({
             if (isPureFunc(obj, name, parent)) {
                 const params = getParamNames(obj);
                 if (params.length === 0) {
-                    obj = obj();
+                    obj = obj.call(parent);
                 }
             }
         }
-        return InspectorNode(getKeys(obj)[idx], addWatch, null, obj);
+        return InspectorNode(
+            getKeys(obj)[idx],
+            addWatch,
+            editParams,
+            null,
+            obj,
+            concat(path, name)
+        );
     },
     childData: (data, idx) => {
         let obj = getObj(data, root);
@@ -78,7 +93,7 @@ export const InspectorNode = (name, addWatch, root = getRoot, parent) => ({
             if (isPureFunc(obj, name, parent)) {
                 const params = getParamNames(obj);
                 if (params.length === 0) {
-                    obj = obj();
+                    obj = obj.call(parent);
                 }
             }
         }
@@ -106,12 +121,19 @@ export const InspectorNode = (name, addWatch, root = getRoot, parent) => ({
                 const isPure = isPureFunc(obj, name, parent);
                 return <span style={{color: isPure ? '#5cffa9' : '#3d955d'}}>
                     (
-                    {map(getParamNames(obj), (param, idx) => <React.Fragment key={idx}>
-                        {idx > 0 ? ', ' : null}
-                        {isPure
-                            ? <span style={{color: '#BBBBBB', cursor: 'pointer'}}>{param}</span>
-                            : <span style={{color: '#666666'}}>{param}</span>}
-                    </React.Fragment>)}
+                    {map(getParamNames(obj), (param, idx) => {
+                        const style = {
+                            color: '#BBBBBB',
+                            cursor: 'pointer'
+                        };
+                        const onClick = () => editParams(concat(path, name).slice(1), parent);
+                        return <React.Fragment key={idx}>
+                            {idx > 0 ? ', ' : null}
+                            {isPure
+                                ? <span style={style} onClick={onClick}>{param}</span>
+                                : <span style={{color: '#666666'}}>{param}</span>}
+                        </React.Fragment>;
+                    })}
                     )
                 </span>;
             }
@@ -126,7 +148,7 @@ export const InspectorNode = (name, addWatch, root = getRoot, parent) => ({
                 if (isPureFunc(obj, name, parent)) {
                     const params = getParamNames(obj);
                     if (params.length === 0) {
-                        obj = obj();
+                        obj = obj.call(parent);
                     } else {
                         return null;
                     }
@@ -142,7 +164,7 @@ export const InspectorNode = (name, addWatch, root = getRoot, parent) => ({
     }, {
         id: 'watch',
         value: null,
-        render: (dt, component) => {
+        render: (value, component) => {
             if (!root && addWatch && component.props.level !== 0) {
                 const onClick = () => {
                     addWatch(component.props.path);
@@ -161,13 +183,3 @@ export const InspectorNode = (name, addWatch, root = getRoot, parent) => ({
         },
     ],
 });
-
-const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-const ARGUMENT_NAMES = /([^\s,]+)/g;
-function getParamNames(func) {
-    const fnStr = func.toString().replace(STRIP_COMMENTS, '');
-    let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
-    if (result === null)
-        result = [];
-    return result;
-}
