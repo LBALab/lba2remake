@@ -117,7 +117,7 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
                 for (let i = 0; i < numChildren; i += 1) {
                     const child = node.dynamic ? node.child(data, i) : node.children[i];
                     if (child) {
-                        const childData = node.dynamic ? node.childData(data, i) : null;
+                        const childData = node.dynamic ? node.childData(data, i, this) : null;
                         const childName = child.dynamic ? child.name(childData, i) : child.name;
                         if (childName === name) {
                             childNode = child;

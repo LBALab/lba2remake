@@ -83,7 +83,8 @@ export class InspectorContent extends React.Component {
                 {map(watches, (w, idx) => {
                     const props = {
                         sharedState: {
-                            path: w.path
+                            path: w.path,
+                            watchID: w.id
                         },
                         stateHandler: {
                             setPath: (path) => {

@@ -43,17 +43,31 @@ export const InspectorNode = (name, addWatch, root = getRoot) => ({
         return keys(data, root).length;
     },
     child: (data, idx) => InspectorNode(keys(data, root)[idx], addWatch, null),
-    childData: (data, idx) => {
+    childData: (data, idx, component) => {
+        const sS = component.props.sharedState;
+        const watchID = sS && sS.watchID;
         const k = keys(data, root)[idx];
         const o = objOrEA(data, root)[k];
         const pure = (data && data.__pure_functions) || (root && root().__pure_functions) || [];
         if (isFunction(o) && pure.includes(k)) {
-            if (!o.__func_result) {
-                o.__func_result = new FuncResult(o, data);
+            if (watchID) {
+                if (!o.__func_result_watches) {
+                    o.__func_result_watches = {};
+                }
+                if (!o.__func_result_watches[watchID]) {
+                    o.__func_result_watches[watchID] = new FuncResult(o, data);
+                } else {
+                    o.__func_result_watches[watchID].tryCall();
+                }
+                return o.__func_result_watches[watchID];
             } else {
-                o.__func_result.tryCall();
+                if (!o.__func_result) {
+                    o.__func_result = new FuncResult(o, data);
+                } else {
+                    o.__func_result.tryCall();
+                }
+                return o.__func_result;
             }
-            return o.__func_result;
         }
         return o;
     },

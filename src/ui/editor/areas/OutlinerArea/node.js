@@ -387,15 +387,15 @@ export default class Node extends React.Component {
     }
 
     call(method, arg) {
-        return call(method, this.props.node, this.props.data, arg);
+        return call(method, this.props.node, this.props.data, arg, this);
     }
 }
 
-function call(method, node, data, arg) {
+function call(method, node, data, arg, component) {
     const fct = node[method];
     const ok = node.needsData ? (data !== undefined && data !== null) : true;
     if (fct && ok) {
-        return fct(data, arg);
+        return fct(data, arg, component);
     } else if (method === 'numChildren') {
         return 0;
     } else if (method === 'props') {
