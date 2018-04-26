@@ -207,11 +207,6 @@ export class InspectorContent extends React.Component {
             verticalAlign: 'middle'
         };
 
-        const inputStyle = {
-            width: '80%',
-            verticalAlign: 'middle'
-        };
-
         return <div style={funcEditorStyle}>
             <div style={titleStyle}>
                 {path.join('.')}
@@ -226,12 +221,18 @@ export class InspectorContent extends React.Component {
 
                 const onKeyDown = e => e.stopPropagation();
 
+                const pValue = this.state.editParams.params[idx];
+
                 const onRef = (ref) => {
-                    if (ref) {
-                        const param = this.state.editParams.params[idx];
-                        if (param)
-                            ref.value = param;
+                    if (ref && pValue) {
+                        ref.value = pValue;
                     }
+                };
+
+                const inputStyle = {
+                    width: '80%',
+                    verticalAlign: 'middle',
+                    background: pValue && getValue(pValue.split('.'), DebugData.scope) !== undefined ? 'white' : '#ffa5a1'
                 };
 
                 const iconStyle = {
