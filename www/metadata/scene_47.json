@@ -12,10 +12,12 @@
     "Snake2",
     "Snake3",
     "Pointer",
-    null,
+    "Joe",
     "RoseMarie",
     "SupAgent1",
-    "SupAgent2"
+    "SupAgent2",
+    null,
+    "StoneArchBonus"
   ],
   "zoneNames": [
     "to_lupin_bourg",
