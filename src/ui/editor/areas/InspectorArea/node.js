@@ -106,7 +106,7 @@ export const InspectorNode = (name, addWatch, root = getRoot, parent) => ({
                 const isPure = isPureFunc(obj, name, parent);
                 return <span style={{color: isPure ? '#5cffa9' : '#3d955d'}}>
                     (
-                    {map(getParamNames(obj), (param, idx) => <React.Fragment>
+                    {map(getParamNames(obj), (param, idx) => <React.Fragment key={idx}>
                         {idx > 0 ? ', ' : null}
                         {isPure
                             ? <span style={{color: '#BBBBBB', cursor: 'pointer'}}>{param}</span>
