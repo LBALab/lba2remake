@@ -6,7 +6,9 @@
     "BalsamPlant",
     "CactusAgent",
     "TwinsensCar",
-    "EsmerRobot"
+    "EsmerRobot",
+    "GrandRector",
+    "BalsamSprout"
   ],
   "zoneNames": [
     "to_graveyard",
