@@ -125,6 +125,10 @@ export default class Node extends React.Component {
         }
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return true;
+    }
+
     render() {
         const fontSize = this.props.fontSize || 18;
         const childFontSize = Math.max(fontSize - 2, 14);

@@ -4,6 +4,7 @@ import {map, filter, concat, isFunction, isEmpty} from 'lodash';
 import DebugData from '../../DebugData';
 import {Value} from './value';
 import {getParamNames, getParamValues} from './utils';
+import {RootSym} from './content';
 
 const getObj = (data, root) => {
     if (root)
@@ -134,7 +135,7 @@ export const InspectorNode = (
                     const bPath = (component.props.path || []).join('.');
                     if (userData && userData.bindings && bPath in userData.bindings) {
                         const bindings = userData.bindings[bPath];
-                        paramNames = map(paramNames, (p, idx) => `DBG.${bindings[idx]}`);
+                        paramNames = map(paramNames, (p, idx) => `${RootSym}.${bindings[idx]}`);
                     }
                 }
                 return <span style={{color: isPure ? '#5cffa9' : '#3d955d'}}>

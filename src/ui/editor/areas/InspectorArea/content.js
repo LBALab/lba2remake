@@ -60,14 +60,16 @@ const watchButtonStyle = extend({}, editor.button, {
     padding: 4
 });
 
+export const RootSym = '{$}';
+
 export class InspectorContent extends React.Component {
     constructor(props) {
         super(props);
         const addWatch = props.stateHandler.addWatch;
         this.editBindings = this.editBindings.bind(this);
-        this.content = makeContentComponent(InspectorNode('DBG', addWatch, this.editBindings), null, null, 'dot');
-        this.watchContent = makeContentComponent(InspectorNode('DBG', addWatch, this.editBindings), null, contentStyle, 'dot');
-        this.browseContent = makeContentComponent(InspectorNode('DBG', null, this.editBindings), null, contentStyle, 'dot');
+        this.content = makeContentComponent(InspectorNode(RootSym, addWatch, this.editBindings), null, null, 'dot');
+        this.watchContent = makeContentComponent(InspectorNode(RootSym, addWatch, this.editBindings), null, contentStyle, 'dot');
+        this.browseContent = makeContentComponent(InspectorNode(RootSym, null, this.editBindings), null, contentStyle, 'dot');
         this.state = {
             bindings: null
         };
