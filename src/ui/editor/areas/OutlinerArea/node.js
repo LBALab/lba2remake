@@ -362,6 +362,7 @@ export default class Node extends React.Component {
             level={this.props.level + 1}
             split={this.props.split}
             shortcuts={this.props.shortcuts}
+            userData={this.props.userData}
         />;
     }
 

@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {map, filter, concat, isFunction, isEmpty} from 'lodash';
 import DebugData from '../../DebugData';
 import {Value} from './value';
-import {getParamNames} from './utils';
+import {getParamNames, getParamValues} from './utils';
 
 const getObj = (data, root) => {
     if (root)
@@ -41,6 +41,28 @@ const isSimpleValue = obj =>
 
 const getRoot = () => DebugData.scope;
 
+function safeCall(fct, parent, pValues) {
+    try {
+        return pValues ? fct.call(parent, ...pValues) : fct.call(parent);
+    } catch (e) {
+        return e;
+    }
+}
+
+function applyFct(obj, parent, component) {
+    const params = getParamNames(obj);
+    if (params.length === 0) {
+        return safeCall(obj, parent);
+    }
+    const userData = component.props.userData;
+    const path = (component.props.path || []).join('.');
+    if (userData && userData.bindings && path in userData.bindings) {
+        const pValues = getParamValues(userData.bindings[path]);
+        return safeCall(obj, parent, pValues);
+    }
+    return obj;
+}
+
 export const InspectorNode = (
     name,
     addWatch,
@@ -52,14 +74,11 @@ export const InspectorNode = (
     dynamic: true,
     icon: () => 'none',
     name: () => name,
-    numChildren: (data) => {
+    numChildren: (data, ignored, component) => {
         let obj = getObj(data, root);
         if (isFunction(obj)) {
             if (isPureFunc(obj, name, parent)) {
-                const params = getParamNames(obj);
-                if (params.length === 0) {
-                    obj = obj();
-                }
+                obj = applyFct(obj, parent, component);
             } else {
                 return 0;
             }
@@ -68,15 +87,10 @@ export const InspectorNode = (
             return 0;
         return getKeys(obj).length;
     },
-    child: (data, idx) => {
+    child: (data, idx, component) => {
         let obj = getObj(data, root);
-        if (isFunction(obj)) {
-            if (isPureFunc(obj, name, parent)) {
-                const params = getParamNames(obj);
-                if (params.length === 0) {
-                    obj = obj.call(parent);
-                }
-            }
+        if (isPureFunc(obj, name, parent)) {
+            obj = applyFct(obj, parent, component);
         }
         return InspectorNode(
             getKeys(obj)[idx],
@@ -87,15 +101,10 @@ export const InspectorNode = (
             concat(path, name)
         );
     },
-    childData: (data, idx) => {
+    childData: (data, idx, component) => {
         let obj = getObj(data, root);
-        if (isFunction(obj)) {
-            if (isPureFunc(obj, name, parent)) {
-                const params = getParamNames(obj);
-                if (params.length === 0) {
-                    obj = obj.call(parent);
-                }
-            }
+        if (isPureFunc(obj, name, parent)) {
+            obj = applyFct(obj, parent, component);
         }
         const k = getKeys(obj)[idx];
         return obj[k];
@@ -115,13 +124,22 @@ export const InspectorNode = (
         id: 'params',
         style: {paddingLeft: 0},
         value: hash(data, root),
-        render: () => {
+        render: (value, component) => {
             const obj = getObj(data, root);
             if (isFunction(obj)) {
                 const isPure = isPureFunc(obj, name, parent);
+                let paramNames = getParamNames(obj);
+                if (isPure) {
+                    const userData = component.props.userData;
+                    const bPath = (component.props.path || []).join('.');
+                    if (userData && userData.bindings && bPath in userData.bindings) {
+                        const bindings = userData.bindings[bPath];
+                        paramNames = map(paramNames, (p, idx) => `DBG.${bindings[idx]}`);
+                    }
+                }
                 return <span style={{color: isPure ? '#5cffa9' : '#3d955d'}}>
                     (
-                    {map(getParamNames(obj), (param, idx) => {
+                    {map(paramNames, (param, idx) => {
                         const style = {
                             color: '#BBBBBB',
                             cursor: 'pointer'
@@ -142,16 +160,15 @@ export const InspectorNode = (
     }, {
         id: 'value',
         value: hash(data, root),
-        render: () => {
+        render: (value, component) => {
             let obj = getObj(data, root);
             if (isFunction(obj)) {
                 if (isPureFunc(obj, name, parent)) {
-                    const params = getParamNames(obj);
-                    if (params.length === 0) {
-                        obj = obj.call(parent);
-                    } else {
+                    const nObj = applyFct(obj, parent, component);
+                    if (obj === nObj) {
                         return null;
                     }
+                    obj = nObj;
                 } else {
                     return null;
                 }

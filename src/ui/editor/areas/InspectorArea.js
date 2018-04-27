@@ -18,12 +18,13 @@ const InspectorArea = {
         setPath(path) {
             this.setState({path});
         },
-        addWatch(path) {
+        addWatch(path, params) {
             const watches = this.state.watches || [];
             const id = new Date().getTime();
             watches.push({
                 id,
-                path
+                path,
+                params
             });
             this.setState({watches});
         },

@@ -4,7 +4,7 @@ import {makeContentComponent} from '../OutlinerArea/content';
 import {InspectorNode} from './node';
 import {editor} from '../../../styles';
 import DebugData from '../../DebugData';
-import {getParamNames} from './utils';
+import {getParamNames, getParamValues, getValue} from './utils';
 import {Value} from './value';
 
 const headerStyle = {
@@ -55,18 +55,10 @@ const contentStyle = {
     position: 'relative'
 };
 
-const getValue = (path, baseScope) => {
-    let scope = baseScope;
-    for (let i = 0; i < path.length; i += 1) {
-        const p = path[i];
-        if (p in scope) {
-            scope = scope[p];
-        } else {
-            return undefined;
-        }
-    }
-    return scope;
-};
+const watchButtonStyle = extend({}, editor.button, {
+    fontSize: 14,
+    padding: 4
+});
 
 export class InspectorContent extends React.Component {
     constructor(props) {
@@ -130,8 +122,7 @@ export class InspectorContent extends React.Component {
             {map(watches, (w, idx) => {
                 const props = {
                     sharedState: {
-                        path: w.path,
-                        watchID: w.id
+                        path: w.path
                     },
                     stateHandler: {
                         setPath: (path) => {
@@ -140,6 +131,11 @@ export class InspectorContent extends React.Component {
                         },
                     },
                     ticker: this.props.ticker,
+                    userData: {
+                        bindings: {
+                            [w.path.join('.')]: w.params
+                        }
+                    }
                 };
                 return <div key={idx} style={watchStyle}>
                     {React.createElement(this.watchContent, props)}
@@ -205,6 +201,11 @@ export class InspectorContent extends React.Component {
             borderRadius: 2,
             paddingLeft: 4,
             verticalAlign: 'middle'
+        };
+
+        const addWatch = () => {
+            this.props.stateHandler.addWatch(path, params);
+            this.props.stateHandler.setTab('watch');
         };
 
         return <div style={funcEditorStyle}>
@@ -295,6 +296,9 @@ export class InspectorContent extends React.Component {
                     <ReturnValue params={params} parent={parent} fct={fct}/>
                 </div>
             </div>
+            <div style={{paddingTop: 16, textAlign: 'right'}}>
+                <button style={watchButtonStyle} onClick={addWatch}>Watch</button>
+            </div>
         </div>;
     }
 }
@@ -314,12 +318,7 @@ class ReturnValue extends React.Component {
     render() {
         let returnValue;
         try {
-            const pValues = map(this.props.params, (p) => {
-                if (p) {
-                    return getValue(p.split('.'), DebugData.scope);
-                }
-                return undefined;
-            });
+            const pValues = getParamValues(this.props.params);
             returnValue = this.props.fct.call(this.props.parent, ...pValues);
         } catch (e) {
             returnValue = e;
