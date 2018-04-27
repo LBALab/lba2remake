@@ -66,7 +66,7 @@ function applyFct(obj, parent, component) {
 export const InspectorNode = (
     name,
     addWatch,
-    editParams,
+    editBindings,
     root = getRoot,
     parent = null,
     path = []
@@ -95,7 +95,7 @@ export const InspectorNode = (
         return InspectorNode(
             getKeys(obj)[idx],
             addWatch,
-            editParams,
+            editBindings,
             null,
             obj,
             concat(path, name)
@@ -144,7 +144,7 @@ export const InspectorNode = (
                             color: '#BBBBBB',
                             cursor: 'pointer'
                         };
-                        const onClick = () => editParams(concat(path, name).slice(1), parent);
+                        const onClick = () => editBindings(concat(path, name).slice(1), parent);
                         return <React.Fragment key={idx}>
                             {idx > 0 ? ', ' : null}
                             {isPure

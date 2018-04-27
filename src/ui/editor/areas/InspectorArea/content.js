@@ -64,24 +64,24 @@ export class InspectorContent extends React.Component {
     constructor(props) {
         super(props);
         const addWatch = props.stateHandler.addWatch;
-        this.editParams = this.editParams.bind(this);
-        this.content = makeContentComponent(InspectorNode('DBG', addWatch, this.editParams), null, null, 'dot');
-        this.watchContent = makeContentComponent(InspectorNode('DBG', addWatch, this.editParams), null, contentStyle, 'dot');
-        this.browseContent = makeContentComponent(InspectorNode('DBG', null, this.editParams), null, contentStyle, 'dot');
+        this.editBindings = this.editBindings.bind(this);
+        this.content = makeContentComponent(InspectorNode('DBG', addWatch, this.editBindings), null, null, 'dot');
+        this.watchContent = makeContentComponent(InspectorNode('DBG', addWatch, this.editBindings), null, contentStyle, 'dot');
+        this.browseContent = makeContentComponent(InspectorNode('DBG', null, this.editBindings), null, contentStyle, 'dot');
         this.state = {
-            editParams: null
+            bindings: null
         };
     }
 
-    editParams(path, parent) {
+    editBindings(path, parent) {
         this.setState({
-            editParams: {
+            bindings: {
                 path,
                 parent,
                 params: []
             }
         });
-        this.props.stateHandler.setTab('func');
+        this.props.stateHandler.setTab('bindings');
     }
 
     render() {
@@ -97,8 +97,8 @@ export class InspectorContent extends React.Component {
             return this.renderExplorer();
         } else if (tab === 'watch') {
             return this.renderWatches();
-        } else if (tab === 'func') {
-            return this.renderFuncEditor();
+        } else if (tab === 'bindings') {
+            return this.renderBindings();
         }
         return null;
     }
@@ -163,15 +163,15 @@ export class InspectorContent extends React.Component {
         return <div style={headerStyle}>
             <span style={tabStyle(tab === 'explore')} onClick={() => onClick('explore')}>Explore</span>
             <span style={tabStyle(tab === 'watch')} onClick={() => onClick('watch')}>Watch<b>[{watches.length}]</b></span>
-            <span style={tabStyle(tab === 'func')} onClick={() => onClick('func')}>Function</span>
+            <span style={tabStyle(tab === 'bindings')} onClick={() => onClick('bindings')}>Bindings</span>
         </div>;
     }
 
-    renderFuncEditor() {
-        if (!this.state.editParams)
+    renderBindings() {
+        if (!this.state.bindings)
             return null;
 
-        const {path, parent, params, browse} = this.state.editParams;
+        const {path, parent, params, browse} = this.state.bindings;
         const fct = getValue(path, DebugData.scope);
 
         if (typeof (fct) !== 'function') {
@@ -215,14 +215,14 @@ export class InspectorContent extends React.Component {
             </div>
             {map(paramNames, (p, idx) => {
                 const onChange = ({target: {value}}) => {
-                    const editParams = this.state.editParams;
-                    editParams.params[idx] = value;
-                    this.setState({editParams});
+                    const bindings = this.state.bindings;
+                    bindings.params[idx] = value;
+                    this.setState({bindings});
                 };
 
                 const onKeyDown = e => e.stopPropagation();
 
-                const pValue = this.state.editParams.params[idx];
+                const pValue = this.state.bindings.params[idx];
 
                 const onRef = (ref) => {
                     if (ref && pValue) {
@@ -245,14 +245,14 @@ export class InspectorContent extends React.Component {
                 };
 
                 const onClick = () => {
-                    const editParams = this.state.editParams;
-                    editParams.browse = idx;
-                    this.setState({editParams});
+                    const bindings = this.state.bindings;
+                    bindings.browse = idx;
+                    this.setState({bindings});
                 };
 
                 let content;
                 if (browse === idx) {
-                    const param = this.state.editParams.params[idx];
+                    const param = this.state.bindings.params[idx];
                     const sharedState = {
                         path: param ? param.split('.') : []
                     };
@@ -261,10 +261,10 @@ export class InspectorContent extends React.Component {
                         stateHandler: {
                             setPath: (newPath) => {
                                 if (newPath.length > 0) {
-                                    const editParams = this.state.editParams;
-                                    editParams.params[idx] = newPath.join('.');
-                                    delete editParams.browse;
-                                    this.setState({editParams});
+                                    const bindings = this.state.bindings;
+                                    bindings.params[idx] = newPath.join('.');
+                                    delete bindings.browse;
+                                    this.setState({bindings});
                                 } else {
                                     sharedState.path = newPath;
                                 }
