@@ -1,5 +1,6 @@
 import React from 'react';
-import {map, concat, times, isObject, isEqual, noop, isFunction, extend} from 'lodash';
+import {map, concat, times, isEqual, noop, isFunction} from 'lodash';
+import NodeProps from './node_props';
 
 export default class Node extends React.Component {
     constructor(props) {
@@ -9,7 +10,6 @@ export default class Node extends React.Component {
             collapsed: !(this.props.level < 1 || this.isInActivePath(props)),
             name: this.name(),
             numChildren: this.numChildren(),
-            nodeProps: this.nodeProps(),
             selected: call('selected', node, this.props.data),
             menu: null,
             renaming: false,
@@ -18,6 +18,7 @@ export default class Node extends React.Component {
         this.renameShortcut = this.renameShortcut.bind(this);
         this.upShortcut = this.upShortcut.bind(this);
         this.downShortcut = this.downShortcut.bind(this);
+        this.nodeProps = this.nodeProps.bind(this);
     }
 
     isInActivePath(props) {
@@ -92,41 +93,11 @@ export default class Node extends React.Component {
             if (numChildren !== this.state.numChildren) {
                 this.setState({numChildren});
             }
-            const nodeProps = this.nodeProps();
-            const oldProps = this.state.nodeProps;
-            if (nodeProps.length !== oldProps.length) {
-                this.setState({nodeProps});
-            } else {
-                for (let i = 0; i < nodeProps.length; i += 1) {
-                    let foundDiff = false;
-                    const p = nodeProps[i];
-                    const op = oldProps[i];
-                    if (p.id !== op.id) {
-                        foundDiff = true;
-                    } else if (typeof (p.value) !== typeof (op.value)) {
-                        foundDiff = true;
-                    } else if (isObject(p.value) && isObject(op.value)) {
-                        if (p.value.key !== op.value.key) {
-                            foundDiff = true;
-                        }
-                    } else if (p.value !== op.value) {
-                        foundDiff = true;
-                    }
-                    if (foundDiff) {
-                        this.setState({nodeProps});
-                        break;
-                    }
-                }
-            }
         }
         const selected = call('selected', this.props.node, this.props.data);
         if (selected !== this.state.selected) {
             this.setState({selected});
         }
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        return true;
     }
 
     render() {
@@ -283,25 +254,11 @@ export default class Node extends React.Component {
     }
 
     renderProps() {
-        const nodeProps = this.state.nodeProps;
-        const propStyle = {
-            paddingLeft: 10,
-            verticalAlign: 'middle'
-        };
-        if (nodeProps) {
-            return <span style={{color: '#858585'}}>
-                {
-                    map(nodeProps, prop =>
-                        (prop.render ? <span
-                            key={prop.id}
-                            style={extend({}, propStyle, prop.style)}
-                        >
-                            {prop.render(prop.value, this)}
-                        </span> : null))
-                }
-            </span>;
-        }
-        return null;
+        return <NodeProps
+            nodeProps={this.nodeProps}
+            ticker={this.props.ticker}
+            dynamic={this.props.node.dynamic}
+        />;
     }
 
     renderChildren(childFontSize) {
