@@ -253,22 +253,6 @@ export default class Node extends React.Component {
             }
         };
 
-        if (this.props.pathInName) {
-            const onElemClick = (idx) => {
-                this.props.setRoot(this.props.path.slice(0, idx + 1));
-            };
-
-            return <span
-                style={nameStyle}
-                onDoubleClick={onDoubleClick}
-                onContextMenu={renaming ? null : onContextMenu}
-            >
-                <span key="root" onClick={() => this.props.setRoot([])}>{this.props.rootName}</span>
-                {map(this.props.path, (name, idx) =>
-                    <span key={idx} onClick={() => onElemClick(idx)}>.{name}</span>)}
-            </span>;
-        }
-
         return <span
             style={nameStyle}
             onClick={onClick}

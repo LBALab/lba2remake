@@ -14,9 +14,12 @@ const style = extend({
     fontWeight: 'normal'
 }, fullscreen);
 
-const Separator = <React.Fragment>
-    &nbsp;<span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
-</React.Fragment>;
+const Separator = {
+    normal: <React.Fragment>
+        &nbsp;<span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
+    </React.Fragment>,
+    dot: '.'
+};
 
 export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
     return class OutlinerContent extends FrameListener {
@@ -50,7 +53,7 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
         render() {
             const extStyle = extend({}, style, ownStyle);
             return <div style={extStyle}>
-                {sep !== 'dot' && this.renderPath()}
+                {this.renderPath()}
                 {this.renderContent()}
             </div>;
         }
@@ -71,7 +74,6 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
                         level={0}
                         split={this.props.split}
                         shortcuts={shortcuts}
-                        pathInName={sep === 'dot'}
                         rootName={isFunction(tree.name) ? tree.name() : tree.name}
                         userData={this.props.userData}
                     />}
@@ -92,7 +94,7 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
                     {map(path, (name, idx) => {
                         const subpath = path.slice(0, idx + 1);
                         return <span key={idx}>
-                            {Separator}
+                            {Separator[sep]}
                             {renderElement(subpath, name)}
                         </span>;
                     })}
