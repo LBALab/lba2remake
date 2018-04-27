@@ -206,6 +206,7 @@ export class InspectorContent extends React.Component {
         const addWatch = () => {
             this.props.stateHandler.addWatch(path, params);
             this.props.stateHandler.setTab('watch');
+            this.setState({bindings: null});
         };
 
         return <div style={funcEditorStyle}>
