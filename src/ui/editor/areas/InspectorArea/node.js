@@ -179,18 +179,6 @@ export const InspectorNode = (
             }
             return null;
         }
-    }, {
-        id: 'watch',
-        value: null,
-        render: (value, component) => {
-            if (!root && addWatch && component.props.level !== 0) {
-                const onClick = () => {
-                    addWatch(component.props.path);
-                };
-                return <span style={{fontSize: 12, cursor: 'pointer', float: 'right'}} onClick={onClick}>watch</span>;
-            }
-            return null;
-        }
     }],
     ctxMenu: !root && addWatch && [
         {
