@@ -57,7 +57,12 @@ const contentStyle = {
 
 const watchButtonStyle = extend({}, editor.button, {
     fontSize: 14,
-    padding: 4
+    padding: '2px 12px',
+    color: 'white',
+    fontWeight: 'bold',
+    border: '1px inset #5cffa9',
+    borderRadius: 4,
+    background: 'rgba(0, 0, 0, 0.5)',
 });
 
 export const RootSym = '{$}';
@@ -160,7 +165,12 @@ export class InspectorContent extends React.Component {
             cursor: 'pointer',
             color: selected ? 'white' : 'grey'
         });
-        const onClick = tab => this.props.stateHandler.setTab(tab);
+        const onClick = (tab) => {
+            if (tab !== 'bindings') {
+                this.setState({bindings: null});
+            }
+            this.props.stateHandler.setTab(tab);
+        };
         const watches = this.props.sharedState.watches;
         const tab = this.props.sharedState.tab || 'explore';
         return <div style={headerStyle}>
@@ -297,7 +307,7 @@ export class InspectorContent extends React.Component {
                 </div>
             </div>
             <div style={{paddingTop: 16, textAlign: 'right'}}>
-                <button style={watchButtonStyle} onClick={addWatch}>Watch</button>
+                <button style={watchButtonStyle} onClick={addWatch}>Add watch</button>
             </div>
         </div>;
     }

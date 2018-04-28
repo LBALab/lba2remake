@@ -154,7 +154,8 @@ export const InspectorNode = (
                 const paramStyle = {
                     color: isPure ? '#BBBBBB' : '#666666'
                 };
-                const onClick = () => editBindings(concat(path, name).slice(1), parent);
+                const onClick = () =>
+                    editBindings(concat(path, name).slice(1), parent, component.props.userData);
                 return <span style={{color: isPure ? '#5cffa9' : '#3d955d', wordBreak: 'break-word'}}>
                     (
                     {map(paramNames, (param, idx) =>
