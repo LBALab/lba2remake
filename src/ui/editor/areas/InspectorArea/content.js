@@ -5,7 +5,7 @@ import {makeContentComponent} from '../OutlinerArea/content';
 import {InspectorNode} from './node';
 import {editor} from '../../../styles';
 import DebugData from '../../DebugData';
-import {RootSym, applyFunction, getParamNames, getValue} from './utils';
+import {RootSym, applyFunction, getParamNames, getValue, getAllowedKinds} from './utils';
 
 const headerStyle = {
     position: 'absolute',
@@ -282,13 +282,7 @@ export class InspectorContent extends React.Component {
         const {parent, path, params} = this.state.bindings;
         const fctName = last(path);
 
-        let allowedKinds = ['g', 'e'];
-        if (parent.__param_kind && fctName in parent.__param_kind) {
-            const paramKinds = parent.__param_kind[fctName].split(',');
-            const kinds = paramKinds[idx];
-            allowedKinds = kinds.split('|');
-        }
-
+        const allowedKinds = getAllowedKinds(parent, fctName, idx);
         const selectedKind = (params[idx] && params[idx].kind) || allowedKinds[0];
 
         const onChange = ({target: {value}}) => {

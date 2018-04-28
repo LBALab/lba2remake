@@ -1,10 +1,73 @@
-import {map, noop} from 'lodash';
+import {isFunction, map, noop} from 'lodash';
+import * as THREE from 'three';
 import DebugData from '../../DebugData';
 
 export const RootSym = '{$}';
 
 const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES = /([^\s,]+)/g;
+
+const vecData = {
+    pure: ['getComponent', 'min', 'max', 'lengthSq', 'length', 'manhattanLength', 'toArray'],
+    kind: {
+        getComponent: ['e|g'],
+        toArray: ['g|e', 'e|g'],
+    }
+};
+
+const pureFunctionsByType = [
+    {
+        type: THREE.Vector2,
+        pure: vecData.pure,
+        kind: vecData.kind
+    },
+    {
+        type: THREE.Vector3,
+        pure: vecData.pure,
+        kind: vecData.kind
+    },
+    {
+        type: THREE.Vector4,
+        pure: vecData.pure,
+        kind: vecData.kind
+    }
+];
+
+export function isPureFunc(obj, key, parent) {
+    if (isFunction(obj)) {
+        // eslint-disable-next-line no-underscore-dangle
+        if (parent && parent.__pure_functions) {
+            // eslint-disable-next-line no-underscore-dangle
+            return parent.__pure_functions.includes(key);
+        }
+        for (let i = 0; i < pureFunctionsByType.length; i += 1) {
+            const pf = pureFunctionsByType[i];
+            if (parent instanceof pf.type) {
+                return pf.pure.includes(key);
+            }
+        }
+    }
+    return false;
+}
+
+export function getAllowedKinds(parent, key, idx) {
+    let allowedKinds = ['g', 'e'];
+    // eslint-disable-next-line no-underscore-dangle
+    if (parent.__param_kind && key in parent.__param_kind) {
+        // eslint-disable-next-line no-underscore-dangle
+        const paramKinds = parent.__param_kind[key].split(',');
+        const kinds = paramKinds[idx];
+        allowedKinds = kinds.split('|');
+    } else {
+        for (let i = 0; i < pureFunctionsByType.length; i += 1) {
+            const pf = pureFunctionsByType[i];
+            if (parent instanceof pf.type && key in pf.kind) {
+                return pf.kind[key][idx].split('|');
+            }
+        }
+    }
+    return allowedKinds;
+}
 
 export function getParamNames(func) {
     const fnStr = func.toString().replace(STRIP_COMMENTS, '');
@@ -29,6 +92,9 @@ export function getValue(path, baseScope) {
 
 export function getParamValues(params) {
     return map(params, ({value, kind}) => {
+        if (!value) {
+            return undefined;
+        }
         if (kind === 'g') {
             return getValue(value.split('.'), DebugData.scope);
         } else if (kind === 'e') {

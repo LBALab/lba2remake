@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {map, filter, concat, isFunction, isEmpty, uniq} from 'lodash';
 import DebugData from '../../DebugData';
 import {Value} from './value';
-import {RootSym, applyFunction, getParamNames} from './utils';
+import {RootSym, applyFunction, getParamNames, isPureFunc} from './utils';
 
 const getObj = (data, root) => {
     if (root)
@@ -16,15 +16,6 @@ const getKeysBase = obj => ((Object.getPrototypeOf(obj))
     : Object.keys(obj));
 
 const getKeys = obj => uniq(filter(getKeysBase(obj || []), k => k.substr(0, 2) !== '__'));
-
-const isPureFunc = (obj, key, parent) => {
-    if (isFunction(obj)) {
-        // eslint-disable-next-line no-underscore-dangle
-        const pure = (parent && parent.__pure_functions) || [];
-        return pure.includes(key);
-    }
-    return false;
-};
 
 const hash = (data, root) => {
     const obj = getObj(data, root);
