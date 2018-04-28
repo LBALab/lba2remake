@@ -2,6 +2,7 @@
 import React from 'react';
 import {flatMap, isArray, isEmpty, map, slice, take, times} from 'lodash';
 import * as THREE from 'three';
+import DebugData, {getObjectName} from '../../DebugData';
 
 export function Value({value}) {
     if (value === undefined) {
@@ -40,7 +41,20 @@ export function Value({value}) {
         } else if (value instanceof THREE.Matrix4) {
             return <Matrix mat={value} n={4}/>;
         } else if (value.type) {
-            return <span style={{color: '#b238ff'}}>{value.type}<span style={{color: 'white'}}>{'{}'}</span></span>;
+            let name = null;
+            if (DebugData.scope.scene && (value.type === 'actor' || value.type === 'zone')) {
+                const mName = getObjectName(value.type, DebugData.scope.scene.index, value.index);
+                if (mName) {
+                    name = <React.Fragment>
+                        :<span style={{color: 'orange'}}>&apos;{mName}&apos;</span>
+                    </React.Fragment>;
+                }
+            } else if (value.name) {
+                name = <React.Fragment>
+                    :<span style={{color: 'orange'}}>&apos;{value.name}&apos;</span>
+                </React.Fragment>;
+            }
+            return <span style={{color: '#b238ff'}}>{value.type}{name}<span style={{color: 'white'}}>{'{}'}</span></span>;
         }
         if (isEmpty(value)) {
             return <span style={{color: 'grey'}}>{'{}'}</span>;
