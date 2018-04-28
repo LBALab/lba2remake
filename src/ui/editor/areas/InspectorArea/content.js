@@ -197,10 +197,6 @@ export class InspectorContent extends React.Component {
         };
 
         const prefixStyle = {
-            color: 'black',
-            background: '#aaaaaa',
-            border: '1px solid black',
-            borderRadius: 2,
             paddingLeft: 4,
             verticalAlign: 'middle'
         };
@@ -280,7 +276,7 @@ export class InspectorContent extends React.Component {
                     </div>;
                 } else {
                     content = <div style={{paddingTop: 8, lineHeight: '20px', verticalAlign: 'middle'}}>
-                        <span style={prefixStyle}>DBG.</span>
+                        <span style={prefixStyle}>{RootSym}.</span>
                         <input ref={onRef} type="text" onChange={onChange} style={inputStyle} onKeyDown={onKeyDown}/>
                         <img style={iconStyle} src="editor/icons/magnifier.png" onClick={onClick}/>
                     </div>;

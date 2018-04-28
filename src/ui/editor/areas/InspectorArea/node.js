@@ -135,25 +135,38 @@ export const InspectorNode = (
                     const bPath = (component.props.path || []).join('.');
                     if (userData && userData.bindings && bPath in userData.bindings) {
                         const bindings = userData.bindings[bPath];
-                        paramNames = map(paramNames, (p, idx) => `${RootSym}.${bindings[idx]}`);
+                        paramNames = map(paramNames, (p, idx) =>
+                            <span style={{color: 'white'}}>{RootSym}.{bindings[idx]}</span>
+                        );
                     }
                 }
+                const editStyle = {
+                    display: 'inline-block',
+                    padding: '0 6px',
+                    margin: '0 3px',
+                    verticalAlign: 'center',
+                    color: 'white',
+                    fontSize: 11,
+                    fontWeight: 'bold',
+                    border: '1px inset #5cffa9',
+                    borderRadius: 4,
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    cursor: 'pointer'
+                };
+                const paramStyle = {
+                    color: isPure ? '#BBBBBB' : '#666666'
+                };
+                const onClick = () => editBindings(concat(path, name).slice(1), parent);
                 return <span style={{color: isPure ? '#5cffa9' : '#3d955d'}}>
                     (
-                    {map(paramNames, (param, idx) => {
-                        const style = {
-                            color: '#BBBBBB',
-                            cursor: 'pointer'
-                        };
-                        const onClick = () => editBindings(concat(path, name).slice(1), parent);
-                        return <React.Fragment key={idx}>
+                    {map(paramNames, (param, idx) =>
+                        <React.Fragment key={idx}>
                             {idx > 0 ? ', ' : null}
-                            {isPure
-                                ? <span style={style} onClick={onClick}>{param}</span>
-                                : <span style={{color: '#666666'}}>{param}</span>}
-                        </React.Fragment>;
-                    })}
+                            <span style={paramStyle}>{param}</span>
+                        </React.Fragment>)}
                     )
+                    {isPure && paramNames.length > 0 &&
+                        <div style={editStyle} onClick={onClick}>EDIT</div>}
                 </span>;
             }
             return null;

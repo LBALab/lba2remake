@@ -258,6 +258,8 @@ export default class Node extends React.Component {
             nodeProps={this.nodeProps}
             ticker={this.props.ticker}
             dynamic={this.props.node.dynamic}
+            userData={this.props.userData}
+            path={this.props.path}
         />;
     }
 
