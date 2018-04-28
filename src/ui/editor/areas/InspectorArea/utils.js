@@ -91,16 +91,16 @@ export function getValue(path, baseScope) {
 }
 
 export function getParamValues(params) {
-    return map(params, ({value, kind}) => {
-        if (!value) {
+    return map(params, (p) => {
+        if (!p || !p.value) {
             return undefined;
         }
-        if (kind === 'g') {
-            return getValue(value.split('.'), DebugData.scope);
-        } else if (kind === 'e') {
+        if (p.kind === 'g') {
+            return getValue(p.value.split('.'), DebugData.scope);
+        } else if (p.kind === 'e') {
             try {
                 // eslint-disable-next-line no-new-func
-                return Function(`return (${value});`)();
+                return Function(`return (${p.value});`)();
             } catch (e) { /* ignore */ }
         }
         return undefined;
