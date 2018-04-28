@@ -14,5 +14,21 @@
     "FrancoLaserGuard1",
     "FrancoLaserGuard2",
     "DarkMonkAnnouncement"
+  ],
+  "zoneNames": [
+    "to_town_square1",
+    "to_town_square2",
+    "elevators_area",
+    "elevator1_area",
+    "elevator2_area",
+    "elevator3_area",
+    "elevator4_area",
+    "to_lower_building_area",
+    "downstairs_area",
+    "flyer_tower1",
+    "flyer_tower2",
+    "dark_monk_announcement_back",
+    "dark_monk_announcement_front",
+    "zeelich_poster"
   ]
 }

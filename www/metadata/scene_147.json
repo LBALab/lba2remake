@@ -12,5 +12,11 @@
     "Umbrella",
     "MemoryViewer",
     "FakeShopAttendant"
+  ],
+  "zoneNames": [
+    "to_town_square",
+    "to_secret_room",
+    "fake_bookshelf",
+    "cam_room"
   ]
 }
