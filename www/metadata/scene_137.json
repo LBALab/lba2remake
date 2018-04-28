@@ -9,5 +9,22 @@
     null,
     "Rick",
     "Pointer2"
+  ],
+  "zoneNames": [
+    "cam_room",
+    "to_bar",
+    "to_rehearsal_room",
+    "sink",
+    "gramitte_painting",
+    "rigid_plant",
+    "secret_passage_area",
+    "couch",
+    "secret_passage_hole",
+    "main_entrance_area",
+    "room_right_area",
+    "bathroom_area",
+    "rick_area_left",
+    "rick_area_right",
+    "secret_passage"
   ]
 }
