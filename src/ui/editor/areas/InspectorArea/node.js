@@ -3,8 +3,7 @@ import * as THREE from 'three';
 import {map, filter, concat, isFunction, isEmpty} from 'lodash';
 import DebugData from '../../DebugData';
 import {Value} from './value';
-import {applyFunction, getParamNames} from './utils';
-import {RootSym} from './content';
+import {RootSym, applyFunction, getParamNames} from './utils';
 
 const getObj = (data, root) => {
     if (root)
@@ -17,7 +16,7 @@ const getKeys = obj => filter(Object.keys(obj || []), k => k.substr(0, 2) !== '_
 const isPureFunc = (obj, key, parent) => {
     if (isFunction(obj)) {
         // eslint-disable-next-line no-underscore-dangle
-        const pure = parent.__pure_functions || [];
+        const pure = (parent && parent.__pure_functions) || [];
         return pure.includes(key);
     }
     return false;
@@ -54,6 +53,10 @@ function applyFctFromComponent(obj, parent, component) {
     const userData = component.props.userData;
     return applyFunction(obj, parent, path, userData && userData.bindings);
 }
+
+const prefixByKind = {
+    g: `${RootSym}.`
+};
 
 export const InspectorNode = (
     name,
@@ -122,8 +125,8 @@ export const InspectorNode = (
                     const bPath = (component.props.path || []).join('.');
                     if (userData && userData.bindings && bPath in userData.bindings) {
                         const bindings = userData.bindings[bPath];
-                        paramNames = map(paramNames, (p, idx) =>
-                            <span style={{color: 'white'}}>{RootSym}.{bindings[idx]}</span>
+                        paramNames = map(bindings, (p, idx) =>
+                            <span key={idx} style={{color: 'white'}}>{prefixByKind[p.kind]}{p.value}</span>
                         );
                     }
                 }

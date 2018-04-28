@@ -1,11 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import React from 'react';
-import {map, extend, last} from 'lodash';
+import {map, extend, last, filter} from 'lodash';
 import {makeContentComponent} from '../OutlinerArea/content';
 import {InspectorNode} from './node';
 import {editor} from '../../../styles';
 import DebugData from '../../DebugData';
-import {getParamNames, getParamValues, getValue} from './utils';
+import {RootSym, applyFunction, getParamNames, getValue} from './utils';
 
 const headerStyle = {
     position: 'absolute',
@@ -78,13 +78,13 @@ const prefixStyle = {
     verticalAlign: 'middle'
 };
 
-export const RootSym = '{$}';
-
 const UtilFunctions = {
     map,
-    __pure_functions: ['map'],
+    filter,
+    __pure_functions: ['map', 'filter'],
     __param_kind: {
-        map: 'g|e,r|e'
+        map: 'g|e,e',
+        filter: 'g|e,e'
     }
 };
 
@@ -247,6 +247,9 @@ export class InspectorContent extends React.Component {
             this.setState({bindings: null});
         };
 
+        const jPath = path.join('.');
+        const result = applyFunction(fct, parent, jPath, {[jPath]: params}, new Error('Invalid call'));
+
         return <div style={funcEditorStyle}>
             <div style={titleStyle}>
                 {path.join('.')}
@@ -254,12 +257,7 @@ export class InspectorContent extends React.Component {
             </div>
             {map(paramNames, (p, idx) => this.renderBindingParam(p, idx, browse))}
             <div style={itemStyle}>
-                <ReturnValue
-                    params={params}
-                    parent={parent}
-                    fct={fct}
-                    renderer={this.renderValueBrowser}
-                />
+                {this.renderValueBrowser('result', result)}
             </div>
             <div style={{paddingTop: 16, textAlign: 'right'}}>
                 <button style={watchButtonStyle} onClick={addWatch}>
@@ -270,27 +268,30 @@ export class InspectorContent extends React.Component {
     }
 
     renderBindingParam(p, idx, browse) {
-        const bindings = this.state.bindings;
-
-        const {parent, path} = bindings;
+        const {parent, path, params} = this.state.bindings;
+        const fctName = last(path);
 
         let allowedKinds = ['g', 'e'];
-        if (parent.__param_kind && last(path) in parent) {
-            const types = parent.__param_kind[last(path)].split(',');
-            const type = types[idx];
-            allowedKinds = type.split('|');
+        if (parent.__param_kind && fctName in parent.__param_kind) {
+            const paramKinds = parent.__param_kind[fctName].split(',');
+            const kinds = paramKinds[idx];
+            allowedKinds = kinds.split('|');
         }
 
-        const selectedKind = (bindings.kinds && bindings.kinds[idx]) || allowedKinds[0];
+        const selectedKind = (params[idx] && params[idx].kind) || allowedKinds[0];
 
         const onChange = ({target: {value}}) => {
-            bindings.params[idx] = value;
+            const bindings = this.state.bindings;
+            if (!bindings.params[idx])
+                bindings.params[idx] = {kind: selectedKind, value};
+            else
+                bindings.params[idx].value = value;
             this.setState({bindings});
         };
 
         const onKeyDown = e => e.stopPropagation();
 
-        const pValue = this.state.bindings.params[idx];
+        const pValue = params[idx] ? params[idx].value : undefined;
 
         const onRef = (ref) => {
             if (ref && pValue) {
@@ -326,6 +327,7 @@ export class InspectorContent extends React.Component {
         };
 
         const onClick = () => {
+            const bindings = this.state.bindings;
             bindings.browse = idx;
             this.setState({bindings});
         };
@@ -334,14 +336,19 @@ export class InspectorContent extends React.Component {
         if (browse === idx) {
             const param = this.state.bindings.params[idx];
             const sharedState = {
-                path: param ? param.split('.') : []
+                path: param && param.value ? param.value.split('.') : []
             };
             const props = {
                 sharedState,
                 stateHandler: {
                     setPath: (newPath) => {
+                        const bindings = this.state.bindings;
                         if (newPath.length > 0) {
-                            bindings.params[idx] = newPath.join('.');
+                            if (!bindings.params[idx]) {
+                                bindings.params[idx] = {value: newPath.join('.'), kind: selectedKind};
+                            } else {
+                                bindings.params[idx].value = newPath.join('.');
+                            }
                             delete bindings.browse;
                             this.setState({bindings});
                         } else {
@@ -369,17 +376,17 @@ export class InspectorContent extends React.Component {
         const prettyKind = {
             g: 'Global path',
             e: 'Expression',
-            r: 'Relative path'
         };
 
         const onSelectKind = (e) => {
-            if (bindings.kinds === undefined) {
-                bindings.kinds = [];
-            }
+            const bindings = this.state.bindings;
             if (bindings.browse === idx && e.target.value === 'e') {
                 delete bindings.browse;
             }
-            bindings.kinds[idx] = e.target.value;
+            if (!bindings.params[idx])
+                bindings.params[idx] = {kind: e.target.value};
+            else
+                bindings.params[idx].kind = e.target.value;
             this.setState({bindings});
         };
 
@@ -427,15 +434,3 @@ export class InspectorContent extends React.Component {
         return React.createElement(content, props);
     }
 }
-
-// eslint-disable-next-line react/no-multi-comp
-const ReturnValue = (props) => {
-    let returnValue;
-    try {
-        const pValues = getParamValues(props.params);
-        returnValue = props.fct.call(props.parent, ...pValues);
-    } catch (e) {
-        returnValue = e;
-    }
-    return props.renderer('result', returnValue);
-};
