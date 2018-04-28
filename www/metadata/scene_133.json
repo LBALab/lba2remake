@@ -11,5 +11,16 @@
     "GoldenRingedBarrier2",
     "Pointer1",
     "Pointer2"
+  ],
+  "zoneNames": [
+    "to_casino",
+    "hidden_exit_area",
+    "central_area",
+    "cam_entrance_barrier",
+    "wheel_stand",
+    "cam_wheel_stand",
+    "to_town_square",
+    "entrance_corridor",
+    "exit_door"
   ]
 }

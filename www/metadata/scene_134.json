@@ -11,7 +11,21 @@
     "FrancoDancer",
     "SleepyFranco",
     "TheDemon",
-    null,
+    "FrancoDancerEntering",
     "HiddenMecaPenguin"
+  ],
+  "zoneNames": [
+    "to_bar",
+    "passage_openers",
+    "cam_passage_openers",
+    "secret_passage_hole",
+    "to_rick_office",
+    "fire_extinguisher",
+    "room_entrance",
+    "secret_passage",
+    "pillar_area_left_corner",
+    "cam_secret_passage",
+    "under_secret_passage",
+    "chest"
   ]
 }

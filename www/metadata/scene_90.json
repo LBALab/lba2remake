@@ -23,7 +23,9 @@
     null,
     null,
     null,
-    "FrancoLaserGuard3"
+    "FrancoLaserGuard3",
+    null,
+    "FishBull3"
   ],
   "zoneNames": [
     "to_town_square",

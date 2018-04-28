@@ -30,5 +30,28 @@
     "LaserBarrier2",
     "Clover",
     "LifePoints"
+  ],
+  "zoneNames": [
+    "upstairs_corridor_left",
+    "jail_corridor_right",
+    "jail_corridor_left",
+    "downstairs_left_corner",
+    "downstairs_center_area",
+    "to_jail",
+    "to_esmer_robot_area",
+    "twinsens_jail_and_jail_openers",
+    "cam_twinsens_jail",
+    "twinsens_jail_center_area",
+    "twinsens_jail_bench",
+    "twinsens_jail_iron bars",
+    "twinsens_jail_right_area",
+    "twinsens_jail_left_area",
+    "barrel1",
+    "laser_barrier1",
+    "laser_barrier2",
+    "joan_loumins_jail",
+    "trash_can",
+    "rest_area",
+    "barrel2"
   ]
 }

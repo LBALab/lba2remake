@@ -56,5 +56,30 @@
     "SupGambler2",
     "EntranceFeePointer",
     "BarGloum"
+  ],
+  "zoneNames": [
+    "lemuzard_slot4",
+    "lemuzard_slot3",
+    "lemuzard_slot2",
+    "lemuzard_slot1",
+    "lemuzard_slot1_hole",
+    "lemuzard_slot2_hole",
+    "lemuzard_slot3_hole",
+    "lemuzard_slot4_hole",
+    "duam_finish_line",
+    "cam_lemuzard_gambling",
+    "cam_duam_racing",
+    "rigid_plant1",
+    "rigid_plant2",
+    "rigid_plant3",
+    "rigid_plant4",
+    "speaker",
+    "elevator_area",
+    "to_wheel_room",
+    "golden_ringed_door",
+    "to_town_square",
+    "entrance",
+    "elevator_right",
+    "elevator_left"
   ]
 }

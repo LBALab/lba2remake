@@ -7,5 +7,19 @@
     "WannieDissident",
     "JohnnyRocket",
     "HiddenMecaPenguin"
+  ],
+  "zoneNames": [
+    "to_shop",
+    "stairs",
+    "giant_cotton_swab",
+    "cam_entrance_corridor",
+    "cam_stairs",
+    "cam_dissident_meeting",
+    "boxes1",
+    "boxes2",
+    "cork1",
+    "cork2",
+    "plan_checking1",
+    "plan_checking2"
   ]
 }

@@ -11,5 +11,16 @@
     "AlarmPointer",
     "FrancoPolice2",
     "FrancoPolice3"
+  ],
+  "zoneNames": [
+    "alarm_buttons_corner",
+    "cam_room",
+    "to_cells",
+    "to_dog_training_center1",
+    "to_dog_training_center2",
+    "bench",
+    "alarm_button1",
+    "alarm_button2",
+    "trash_can"
   ]
 }
