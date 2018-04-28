@@ -8,10 +8,27 @@ const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES = /([^\s,]+)/g;
 
 const vecData = {
-    pure: ['getComponent', 'min', 'max', 'lengthSq', 'length', 'manhattanLength', 'toArray'],
+    pure: ['getComponent', 'equals', 'min', 'max', 'lengthSq', 'length', 'manhattanLength', 'toArray'],
     kind: {
         getComponent: ['e|g'],
-        toArray: ['g|e', 'e|g'],
+        toArray: ['g|e', 'e|g']
+    }
+};
+
+const matData = {
+    pure: [
+        'extractBasis',
+        'extractRotation',
+        'extractPosition',
+        'determinant',
+        'getInverse',
+        'decompose',
+        'equals',
+        'toArray',
+        'getPosition'
+    ],
+    kind: {
+        toArray: ['g|e', 'e|g']
     }
 };
 
@@ -30,6 +47,30 @@ const pureFunctionsByType = [
         type: THREE.Vector4,
         pure: vecData.pure,
         kind: vecData.kind
+    },
+    {
+        type: THREE.Quaternion,
+        pure: ['lengthSq', 'length', 'equals', 'toArray'],
+        kind: {
+            toArray: ['g|e', 'e|g']
+        }
+    },
+    {
+        type: THREE.Euler,
+        pure: ['equals', 'toArray', 'toVector3'],
+        kind: {
+            toArray: ['g|e', 'e|g']
+        }
+    },
+    {
+        type: THREE.Matrix3,
+        pure: matData.pure,
+        kind: matData.kind
+    },
+    {
+        type: THREE.Matrix4,
+        pure: matData.pure,
+        kind: matData.kind
     }
 ];
 
