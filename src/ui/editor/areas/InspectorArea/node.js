@@ -1,6 +1,6 @@
 import React from 'react';
 import * as THREE from 'three';
-import {map, filter, concat, isFunction, isEmpty} from 'lodash';
+import {map, filter, concat, isFunction, isEmpty, uniq} from 'lodash';
 import DebugData from '../../DebugData';
 import {Value} from './value';
 import {RootSym, applyFunction, getParamNames} from './utils';
@@ -15,7 +15,7 @@ const getKeysBase = obj => ((Object.getPrototypeOf(obj))
     ? concat(Object.keys(obj), getKeys(Object.getPrototypeOf(obj)))
     : Object.keys(obj));
 
-const getKeys = obj => filter(getKeysBase(obj || []), k => k.substr(0, 2) !== '__');
+const getKeys = obj => uniq(filter(getKeysBase(obj || []), k => k.substr(0, 2) !== '__'));
 
 const isPureFunc = (obj, key, parent) => {
     if (isFunction(obj)) {

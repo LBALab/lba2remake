@@ -409,8 +409,7 @@ export class InspectorContent extends React.Component {
     }
 
     renderUtils() {
-        return <div style={funcEditorStyle}>
-            <div>Edit a utility function to apply it on the game&apos;s data.</div>
+        return <div style={mainStyle}>
             {this.renderValueBrowser('Utils', UtilFunctions)}
         </div>;
     }
