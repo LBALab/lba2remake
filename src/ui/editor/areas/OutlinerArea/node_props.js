@@ -2,8 +2,9 @@ import React from 'react';
 import {extend, isObject, map} from 'lodash';
 
 const propStyle = {
-    paddingLeft: 10,
-    verticalAlign: 'middle'
+    paddingLeft: 8,
+    verticalAlign: 'middle',
+    display: 'inline-block'
 };
 
 export default class NodeProps extends React.Component {

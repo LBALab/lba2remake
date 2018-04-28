@@ -141,10 +141,8 @@ export const InspectorNode = (
                     }
                 }
                 const editStyle = {
-                    display: 'inline-block',
                     padding: '0 6px',
                     margin: '0 3px',
-                    verticalAlign: 'center',
                     color: 'white',
                     fontSize: 11,
                     fontWeight: 'bold',
@@ -157,7 +155,7 @@ export const InspectorNode = (
                     color: isPure ? '#BBBBBB' : '#666666'
                 };
                 const onClick = () => editBindings(concat(path, name).slice(1), parent);
-                return <span style={{color: isPure ? '#5cffa9' : '#3d955d'}}>
+                return <span style={{color: isPure ? '#5cffa9' : '#3d955d', wordBreak: 'break-word'}}>
                     (
                     {map(paramNames, (param, idx) =>
                         <React.Fragment key={idx}>
@@ -166,7 +164,7 @@ export const InspectorNode = (
                         </React.Fragment>)}
                     )
                     {isPure && paramNames.length > 0 &&
-                        <div style={editStyle} onClick={onClick}>EDIT</div>}
+                        <span style={editStyle} onClick={onClick}>EDIT</span>}
                 </span>;
             }
             return null;

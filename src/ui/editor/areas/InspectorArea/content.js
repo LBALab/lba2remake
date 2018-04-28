@@ -25,8 +25,7 @@ const mainStyle = {
     top: headerStyle.height + (headerStyle.padding * 2) + 1,
     left: 0,
     right: 0,
-    padding: 4,
-    overflow: 'auto'
+    padding: 4
 };
 
 const watchStyle = {

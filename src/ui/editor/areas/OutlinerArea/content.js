@@ -6,11 +6,11 @@ import FrameListener from '../../../utils/FrameListener';
 import {WithShortcuts} from '../../Area';
 
 const style = extend({
-    overflow: 'auto',
+    overflowY: 'auto',
+    overflowX: 'hidden',
     padding: 8,
     userSelect: 'none',
     cursor: 'default',
-    whiteSpace: 'nowrap',
     fontWeight: 'normal'
 }, fullscreen);
 

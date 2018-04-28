@@ -103,15 +103,26 @@ export default class Node extends React.Component {
     render() {
         const fontSize = this.props.fontSize || 18;
         const childFontSize = Math.max(fontSize - 2, 14);
+        const lineStyle = {
+            marginLeft: 16,
+            display: 'inline-block',
+            whiteSpace: 'normal'
+        };
 
         return <div>
-            <div style={{fontSize, padding: `${fontSize / 8}px 0`}}>
+            <div style={{fontSize, padding: `${fontSize / 8}px 0`, position: 'relative'}}>
                 {this.renderCollapseButton()}
-                {this.renderIcon()}
-                {this.renderName()}
-                {this.renderProps()}
+                <div style={lineStyle}>
+                    <span style={{whiteSpace: 'nowrap'}}>
+                        {this.renderIcon()}
+                        {this.renderName()}
+                    </span>
+                    <span style={{whiteSpace: 'normal', wordBreak: 'break-word'}}>
+                        {this.renderProps()}
+                    </span>
+                </div>
             </div>
-            <div style={{paddingLeft: '2ch'}}>{this.renderChildren(childFontSize)}</div>
+            <div style={{paddingLeft: 16}}>{this.renderChildren(childFontSize)}</div>
             {this.renderContextMenu()}
         </div>;
     }
@@ -248,9 +259,9 @@ export default class Node extends React.Component {
         const numChildren = this.state.numChildren;
         const collapsed = this.state.collapsed;
         if (numChildren > 0) {
-            return <span onClick={toggleCollapse} style={{cursor: 'pointer'}}>{collapsed ? '+' : '-'}</span>;
+            return <span onClick={toggleCollapse} style={{cursor: 'pointer', display: 'inline-block', position: 'absolute', left: 0}}>{collapsed ? '+' : '-'}</span>;
         }
-        return <span>&nbsp;</span>;
+        return null;
     }
 
     renderProps() {
