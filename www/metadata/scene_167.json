@@ -13,5 +13,15 @@
     null,
     null,
     "Fan"
+  ],
+  "zoneNames": [
+    "to_l_shaped_corridors",
+    "to_landing_zone",
+    "cam_room",
+    "corridors_door",
+    "metallic_doors",
+    "spacesuit_area",
+    "alarm_button",
+    "fire_extinguiser"
   ]
 }

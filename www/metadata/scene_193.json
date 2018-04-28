@@ -5,5 +5,23 @@
     "CellarDoor",
     "SendellPortrait",
     "Zoe"
+  ],
+  "zoneNames": [
+    "table",
+    "to_cellar",
+    "cellar_door",
+    "bed_table",
+    "exit",
+    "library2",
+    "secret_msg",
+    "main_door",
+    "library1",
+    "window",
+    "zoe_portrait",
+    "cam_bedroom",
+    "flowers",
+    "pencil_pot",
+    "paint_bucket",
+    "cam_baby_room"
   ]
 }

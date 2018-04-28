@@ -6,5 +6,10 @@
     "Star1",
     "Star2",
     "Star3"
+  ],
+  "zoneNames": [
+    "to_exit",
+    "to_entrance",
+    "cam_entrance"
   ]
 }

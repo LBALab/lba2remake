@@ -3,5 +3,17 @@
     null,
     null,
     "SpaceSuitGuard"
+  ],
+  "zoneNames": [
+    "to_landing_zone",
+    "cam_square_airlock",
+    "to_square_airlock",
+    "to_switches_building",
+    "cam_switches_building",
+    "road_light1",
+    "road_light2",
+    "switches_building_light1",
+    "switches_building_light2",
+    "square_airlock_light"
   ]
 }

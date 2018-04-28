@@ -15,5 +15,23 @@
     "FrancoTechnician2",
     "SupInformer",
     "Translator"
+  ],
+  "zoneNames": [
+    "cam_middle_area",
+    "cam_lower_area",
+    "to_upper_control_tower",
+    "ladder_middle_area",
+    "ladder_upper_area",
+    "to_lower_control_tower1",
+    "to_spaceport",
+    "to_lower_control_tower2",
+    "to_lower_control_tower3",
+    "cam_upper_room",
+    "ramp_start",
+    "ramp_end",
+    "entrance_area",
+    "ladder_gap",
+    "hole",
+    "technician1_placement"
   ]
 }

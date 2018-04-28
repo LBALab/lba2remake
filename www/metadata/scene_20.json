@@ -12,7 +12,9 @@
     "Bat1",
     "Bat2",
     "Bat3",
-    "Bat4"
+    "Bat4",
+    null,
+    "Joe"
   ],
   "zoneNames": [
     "to_cave_first_area",

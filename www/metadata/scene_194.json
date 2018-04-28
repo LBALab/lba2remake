@@ -9,5 +9,16 @@
     "Candle",
     "Holomap",
     "Darts"
+  ],
+  "zoneNames": [
+    "door",
+    "radio",
+    "boxes",
+    "darts",
+    "holomap",
+    "magicball",
+    "dino_portrait",
+    "prophecy",
+    "funfrock_statue"
   ]
 }

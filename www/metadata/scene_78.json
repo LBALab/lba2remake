@@ -14,5 +14,24 @@
     "SensorLight2",
     "Door1",
     "Door2"
+  ],
+  "zoneNames": [
+    "to_spaceport1",
+    "to_dog_training_center",
+    "elevator_left",
+    "elevator_right",
+    "to_spaceport2",
+    "sensor_entrance_left",
+    "crystal_doors",
+    "elevator_corridors",
+    "trash_can1",
+    "trash_can2",
+    "trash_can3",
+    "trash_can4",
+    "sensor_entrance_right",
+    "departure_board",
+    "esmer_plant1",
+    "esmer_plant2",
+    "cam_sensor_entrances"
   ]
 }

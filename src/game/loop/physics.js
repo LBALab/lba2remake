@@ -65,12 +65,16 @@ function processTeleports(scene) {
 }
 
 const ACTOR_BOX = new THREE.Box3();
+const ACTOR2_BOX = new THREE.Box3();
 const INTERSECTION = new THREE.Box3();
 const DIFF = new THREE.Vector3();
+const ITRS_SIZE = new THREE.Vector3();
+const CENTER1 = new THREE.Vector3();
+const CENTER2 = new THREE.Vector3();
 
 function processCollisionsWithActors(scene, actor) {
     actor.hasCollidedWithActor = -1;
-    if (actor.model === null) {
+    if (actor.model === null || actor.isKilled || !actor.props.flags.hasCollisions) {
         return;
     }
     ACTOR_BOX.copy(actor.model.boundingBox);
@@ -79,14 +83,32 @@ function processCollisionsWithActors(scene, actor) {
     ACTOR_BOX.translate(DIFF);
     for (let i = 0; i < scene.actors.length; i += 1) {
         const a = scene.actors[i];
-        if (a.model === null || a.index === actor.index) {
+        if (a.model === null
+            || a.index === actor.index
+            || a.isKilled
+            || !a.props.flags.hasCollisions) {
             continue;
         }
         INTERSECTION.copy(a.model.boundingBox);
         INTERSECTION.translate(a.physics.position);
         DIFF.set(0, 1 / 128, 0);
         INTERSECTION.translate(DIFF);
-        if (INTERSECTION.intersectsBox(ACTOR_BOX)) {
+        ACTOR2_BOX.copy(INTERSECTION);
+        if (ACTOR2_BOX.intersectsBox(ACTOR_BOX)) {
+            INTERSECTION.intersect(ACTOR_BOX);
+            INTERSECTION.getSize(ITRS_SIZE);
+            ACTOR_BOX.getCenter(CENTER1);
+            ACTOR2_BOX.getCenter(CENTER2);
+            const dir = CENTER1.sub(CENTER2);
+            if (actor.physics.position.y < ACTOR2_BOX.max.y - 0.015) {
+                if (ITRS_SIZE.x < ITRS_SIZE.z) {
+                    DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
+                } else {
+                    DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
+                }
+            }
+            actor.physics.position.add(DIFF);
+            ACTOR_BOX.translate(DIFF);
             actor.hasCollidedWithActor = a.index;
         }
     }

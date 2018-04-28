@@ -22,5 +22,28 @@
     "FrancoTechnician5",
     "FrancoTechnician6",
     "Baldino"
+  ],
+  "zoneNames": [
+    "to_cross_airlock",
+    "to_square_airlock",
+    "to_l_shaped_corridors",
+    "radar_room_downstairs",
+    "lock_room",
+    "lever",
+    "cam_lever",
+    "cross_airlock_door",
+    "barrel1",
+    "hose1",
+    "barrel2",
+    "barrel3",
+    "barrel4",
+    "armored_door_front",
+    "barrel5",
+    "hose2",
+    "cam_radar_room_upstairs",
+    "radar_room_upstairs",
+    "alarm_button",
+    "square_airlock_door",
+    "lock_area"
   ]
 }
