@@ -74,7 +74,7 @@ const CENTER2 = new THREE.Vector3();
 
 function processCollisionsWithActors(scene, actor) {
     actor.hasCollidedWithActor = -1;
-    if (actor.model === null) {
+    if (actor.model === null || actor.isKilled || !actor.props.flags.hasCollisions) {
         return;
     }
     ACTOR_BOX.copy(actor.model.boundingBox);
@@ -83,7 +83,10 @@ function processCollisionsWithActors(scene, actor) {
     ACTOR_BOX.translate(DIFF);
     for (let i = 0; i < scene.actors.length; i += 1) {
         const a = scene.actors[i];
-        if (a.model === null || a.index === actor.index || a.isKilled) {
+        if (a.model === null
+            || a.index === actor.index
+            || a.isKilled
+            || !a.props.flags.hasCollisions) {
             continue;
         }
         INTERSECTION.copy(a.model.boundingBox);
