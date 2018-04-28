@@ -108,8 +108,8 @@ export class InspectorContent extends React.Component {
                 id: userData && userData.id,
                 path,
                 parent,
-                params: (userData && userData.bindings[path.join('.')]) || [],
-                root: root || ((userData && userData.rootName === 'utils') ? () => UtilFunctions : undefined)
+                params: (userData && userData.bindings && userData.bindings[path.join('.')]) || [],
+                root: root || ((userData && userData.rootName === 'utils') ? (() => UtilFunctions) : undefined)
             }
         });
         this.props.stateHandler.setTab('bindings');
@@ -224,7 +224,7 @@ export class InspectorContent extends React.Component {
             return null;
 
         const {id, path, parent, params, browse, root} = this.state.bindings;
-        const fct = getValue(path, (root && root()) || DebugData.scope);
+        const fct = getValue(path, (root && root()) || DebugData.scope, params);
 
         if (typeof (fct) !== 'function') {
             return null;
@@ -314,7 +314,7 @@ export class InspectorContent extends React.Component {
                 // ignore
             }
         } else if (selectedKind === 'g') {
-            validParam = pValue && getValue(pValue.split('.'), DebugData.scope) !== undefined;
+            validParam = pValue && getValue(pValue.split('.'), DebugData.scope, params) !== undefined;
         }
 
         const inputStyle = {

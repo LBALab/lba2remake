@@ -24,7 +24,7 @@ const InspectorArea = {
                 const watch = find(watches, w => w.id === editId);
                 if (watch) {
                     watch.path = path;
-                    Object.assign(watch.bindings, bindings);
+                    Object.assign(watch.bindings || {}, bindings);
                 }
             } else {
                 const id = new Date().getTime();

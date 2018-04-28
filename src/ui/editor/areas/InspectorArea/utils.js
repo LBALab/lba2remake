@@ -118,12 +118,16 @@ export function getParamNames(func) {
     return result;
 }
 
-export function getValue(path, baseScope) {
+export function getValue(path, baseScope, bindings) {
     let scope = baseScope;
     for (let i = 0; i < path.length; i += 1) {
         const p = path[i];
         if (scope && p in scope) {
-            scope = scope[p];
+            if (isFunction(scope[p]) && i < path.length - 1) {
+                scope = applyFunction(scope[p], scope, path, bindings);
+            } else {
+                scope = scope[p];
+            }
         } else {
             return undefined;
         }
@@ -131,13 +135,13 @@ export function getValue(path, baseScope) {
     return scope;
 }
 
-export function getParamValues(params) {
+export function getParamValues(params, bindings) {
     return map(params, (p) => {
         if (!p || !p.value) {
             return undefined;
         }
         if (p.kind === 'g') {
-            return getValue(p.value.split('.'), DebugData.scope);
+            return getValue(p.value.split('.'), DebugData.scope, bindings);
         } else if (p.kind === 'e') {
             try {
                 // eslint-disable-next-line no-new-func
@@ -162,7 +166,7 @@ export function applyFunction(fct, parent, path, bindings, defaultValue = noop) 
         return safeCall(fct, parent);
     }
     if (bindings && path in bindings) {
-        const pValues = getParamValues(bindings[path]);
+        const pValues = getParamValues(bindings[path], bindings);
         return safeCall(fct, parent, pValues);
     }
     return defaultValue;
