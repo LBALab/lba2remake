@@ -87,12 +87,8 @@ export const InspectorNode = (
     name: () => name,
     numChildren: (data, ignored, component) => {
         let obj = getObj(data, root);
-        if (isFunction(obj)) {
-            if (isPureFunc(obj, name, parent)) {
-                obj = applyFct(obj, parent, component);
-            } else {
-                return 0;
-            }
+        if (isPureFunc(obj, name, parent)) {
+            obj = applyFct(obj, parent, component);
         }
         if (typeof (obj) === 'string')
             return 0;
