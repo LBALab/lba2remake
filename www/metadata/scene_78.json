@@ -13,7 +13,8 @@
     "SensorLight1",
     "SensorLight2",
     "Door1",
-    "Door2"
+    "Door2",
+    "FrancoSpearGuard"
   ],
   "zoneNames": [
     "to_spaceport1",
