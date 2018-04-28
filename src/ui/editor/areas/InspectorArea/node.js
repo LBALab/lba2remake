@@ -11,7 +11,11 @@ const getObj = (data, root) => {
     return data;
 };
 
-const getKeys = obj => filter(Object.keys(obj || []), k => k.substr(0, 2) !== '__');
+const getKeysBase = obj => ((Object.getPrototypeOf(obj))
+    ? concat(Object.keys(obj), getKeys(Object.getPrototypeOf(obj)))
+    : Object.keys(obj));
+
+const getKeys = obj => filter(getKeysBase(obj || []), k => k.substr(0, 2) !== '__');
 
 const isPureFunc = (obj, key, parent) => {
     if (isFunction(obj)) {
