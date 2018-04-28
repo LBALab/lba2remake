@@ -11,5 +11,25 @@
     null,
     "FrancoLaserGuard",
     "DarkMonkAnnouncement"
+  ],
+  "zoneNames": [
+    "to_town_square",
+    "to_upper_city1",
+    "to_upper_city2",
+    "esmer_plant1",
+    "trash_can1",
+    "esmer_plant2",
+    "trash_can2",
+    "esmer_plant3",
+    "esmer_plant4",
+    "trash_can3",
+    "trash_can4",
+    "upper_corridor",
+    "central_area",
+    "stairs_right",
+    "stairs_left",
+    "elevators_area",
+    "dark_monk_announcement",
+    "flyer_tower"
   ]
 }
