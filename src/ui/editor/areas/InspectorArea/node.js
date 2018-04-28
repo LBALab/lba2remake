@@ -31,7 +31,14 @@ const hash = (data, root) => {
     return `${value};${id}`;
 };
 
-const isMatrix = obj => obj instanceof THREE.Matrix3 || obj instanceof THREE.Matrix4;
+const isThree = obj =>
+    obj instanceof THREE.Matrix3
+    || obj instanceof THREE.Matrix4
+    || obj instanceof THREE.Vector2
+    || obj instanceof THREE.Vector3
+    || obj instanceof THREE.Vector4
+    || obj instanceof THREE.Quaternion
+    || obj instanceof THREE.Euler;
 
 const isSimpleValue = obj =>
     obj === null
@@ -189,7 +196,7 @@ export const InspectorNode = (
                     return null;
                 }
             }
-            if (collapsed || isSimpleValue(obj) || isMatrix(obj)) {
+            if (collapsed || isSimpleValue(obj) || isThree(obj)) {
                 return <Value value={obj}/>;
             }
             return null;
