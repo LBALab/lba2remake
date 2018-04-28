@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {map, filter, concat, isFunction, isEmpty} from 'lodash';
 import DebugData from '../../DebugData';
 import {Value} from './value';
-import {getParamNames, getParamValues} from './utils';
+import {applyFunction, getParamNames} from './utils';
 import {RootSym} from './content';
 
 const getObj = (data, root) => {
@@ -49,29 +49,10 @@ const isSimpleValue = obj =>
 
 const getRoot = () => DebugData.scope;
 
-function safeCall(fct, parent, pValues) {
-    try {
-        return pValues ? fct.call(parent, ...pValues) : fct.call(parent);
-    } catch (e) {
-        return e;
-    }
-}
-
-function applyFct(obj, parent, component) {
-    if (!component) {
-        return new Error('Invalid context');
-    }
-    const params = getParamNames(obj);
-    if (params.length === 0) {
-        return safeCall(obj, parent);
-    }
-    const userData = component.props.userData;
+function applyFctFromComponent(obj, parent, component) {
     const path = (component.props.path || []).join('.');
-    if (userData && userData.bindings && path in userData.bindings) {
-        const pValues = getParamValues(userData.bindings[path]);
-        return safeCall(obj, parent, pValues);
-    }
-    return obj;
+    const userData = component.props.userData;
+    return applyFunction(obj, parent, path, userData && userData.bindings);
 }
 
 export const InspectorNode = (
@@ -88,7 +69,7 @@ export const InspectorNode = (
     numChildren: (data, ignored, component) => {
         let obj = getObj(data, root);
         if (isPureFunc(obj, name, parent)) {
-            obj = applyFct(obj, parent, component);
+            obj = applyFctFromComponent(obj, parent, component);
         }
         if (typeof (obj) === 'string')
             return 0;
@@ -97,7 +78,7 @@ export const InspectorNode = (
     child: (data, idx, component) => {
         let obj = getObj(data, root);
         if (isPureFunc(obj, name, parent)) {
-            obj = applyFct(obj, parent, component);
+            obj = applyFctFromComponent(obj, parent, component);
         }
         return InspectorNode(
             getKeys(obj)[idx],
@@ -111,7 +92,7 @@ export const InspectorNode = (
     childData: (data, idx, component) => {
         let obj = getObj(data, root);
         if (isPureFunc(obj, name, parent)) {
-            obj = applyFct(obj, parent, component);
+            obj = applyFctFromComponent(obj, parent, component);
         }
         const k = getKeys(obj)[idx];
         return obj[k];
@@ -183,7 +164,7 @@ export const InspectorNode = (
             let obj = getObj(data, root);
             if (isFunction(obj)) {
                 if (isPureFunc(obj, name, parent)) {
-                    const nObj = applyFct(obj, parent, component);
+                    const nObj = applyFctFromComponent(obj, parent, component);
                     if (obj === nObj) {
                         return null;
                     }

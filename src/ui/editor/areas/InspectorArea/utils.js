@@ -33,3 +33,23 @@ export function getParamValues(params) {
         return undefined;
     });
 }
+
+function safeCall(fct, parent, pValues) {
+    try {
+        return pValues ? fct.call(parent, ...pValues) : fct.call(parent);
+    } catch (e) {
+        return e;
+    }
+}
+
+export function applyFunction(fct, parent, path, bindings) {
+    const params = getParamNames(fct);
+    if (params.length === 0) {
+        return safeCall(fct, parent);
+    }
+    if (bindings && path in bindings) {
+        const pValues = getParamValues(bindings[path]);
+        return safeCall(fct, parent, pValues);
+    }
+    return fct;
+}

@@ -1,5 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import React from 'react';
-import {map, extend} from 'lodash';
+import {map, extend, last} from 'lodash';
 import {makeContentComponent} from '../OutlinerArea/content';
 import {InspectorNode} from './node';
 import {editor} from '../../../styles';
@@ -81,7 +82,10 @@ export const RootSym = '{$}';
 
 const UtilFunctions = {
     map,
-    __pure_functions: ['map']
+    __pure_functions: ['map'],
+    __param_kind: {
+        map: 'g|e,r|e'
+    }
 };
 
 export class InspectorContent extends React.Component {
@@ -266,8 +270,20 @@ export class InspectorContent extends React.Component {
     }
 
     renderBindingParam(p, idx, browse) {
+        const bindings = this.state.bindings;
+
+        const {parent, path} = bindings;
+
+        let allowedKinds = ['g', 'e'];
+        if (parent.__param_kind && last(path) in parent) {
+            const types = parent.__param_kind[last(path)].split(',');
+            const type = types[idx];
+            allowedKinds = type.split('|');
+        }
+
+        const selectedKind = (bindings.kinds && bindings.kinds[idx]) || allowedKinds[0];
+
         const onChange = ({target: {value}}) => {
-            const bindings = this.state.bindings;
             bindings.params[idx] = value;
             this.setState({bindings});
         };
@@ -282,10 +298,23 @@ export class InspectorContent extends React.Component {
             }
         };
 
+        let validParam = false;
+        if (selectedKind === 'e') {
+            try {
+                // eslint-disable-next-line no-new-func
+                const expr = Function(`return (${pValue});`)();
+                validParam = expr !== undefined;
+            } catch (e) {
+                // ignore
+            }
+        } else if (selectedKind === 'g') {
+            validParam = pValue && getValue(pValue.split('.'), DebugData.scope) !== undefined;
+        }
+
         const inputStyle = {
             width: '80%',
             verticalAlign: 'middle',
-            background: pValue && getValue(pValue.split('.'), DebugData.scope) !== undefined ? 'white' : '#ffa5a1'
+            background: validParam ? 'white' : '#ffa5a1'
         };
 
         const iconStyle = {
@@ -297,7 +326,6 @@ export class InspectorContent extends React.Component {
         };
 
         const onClick = () => {
-            const bindings = this.state.bindings;
             bindings.browse = idx;
             this.setState({bindings});
         };
@@ -313,7 +341,6 @@ export class InspectorContent extends React.Component {
                 stateHandler: {
                     setPath: (newPath) => {
                         if (newPath.length > 0) {
-                            const bindings = this.state.bindings;
                             bindings.params[idx] = newPath.join('.');
                             delete bindings.browse;
                             this.setState({bindings});
@@ -328,16 +355,47 @@ export class InspectorContent extends React.Component {
                 {React.createElement(this.browseContent, props)}
             </div>;
         } else {
+            const prefixByKind = {
+                g: <span style={prefixStyle}>{RootSym}.</span>,
+                e: <span style={prefixStyle}>(expr) = </span>
+            };
             content = <div style={{paddingTop: 8, lineHeight: '20px', verticalAlign: 'middle'}}>
-                <span style={prefixStyle}>{RootSym}.</span>
+                {prefixByKind[selectedKind]}
                 <input ref={onRef} type="text" onChange={onChange} style={inputStyle} onKeyDown={onKeyDown}/>
-                <img style={iconStyle} src="editor/icons/magnifier.png" onClick={onClick}/>
+                {selectedKind !== 'e' && <img style={iconStyle} src="editor/icons/magnifier.png" onClick={onClick}/>}
             </div>;
         }
+
+        const prettyKind = {
+            g: 'Global path',
+            e: 'Expression',
+            r: 'Relative path'
+        };
+
+        const onSelectKind = (e) => {
+            if (bindings.kinds === undefined) {
+                bindings.kinds = [];
+            }
+            if (bindings.browse === idx && e.target.value === 'e') {
+                delete bindings.browse;
+            }
+            bindings.kinds[idx] = e.target.value;
+            this.setState({bindings});
+        };
+
+        const kindSelection = <select
+            onChange={onSelectKind}
+            value={selectedKind}
+            style={editor.select}
+        >
+            {map(allowedKinds, kind => <option key={kind} value={kind}>{prettyKind[kind]}</option>)}
+        </select>;
 
         return <div key={idx} style={itemStyle}>
             <div>
                 Param&nbsp;<span style={{color: 'grey'}}>{p}</span>
+                &nbsp;
+                Kind: {kindSelection}
             </div>
             {content}
         </div>;
