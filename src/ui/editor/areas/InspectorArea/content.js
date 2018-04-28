@@ -66,6 +66,7 @@ const watchButtonStyle = extend({}, editor.button, {
 });
 
 const itemStyle = {
+    position: 'relative',
     marginTop: 14,
     padding: 8,
     border: '1px solid rgba(255, 255, 255, 0.5)',
@@ -247,8 +248,17 @@ export class InspectorContent extends React.Component {
             this.setState({bindings: null});
         };
 
+        const refreshIconStyle = {
+            cursor: 'pointer',
+            position: 'absolute',
+            top: 4,
+            right: 4,
+        };
+
         const jPath = path.join('.');
         const result = applyFunction(fct, parent, jPath, {[jPath]: params}, new Error('Invalid call'));
+
+        const onClickRefresh = () => this.forceUpdate();
 
         return <div style={funcEditorStyle}>
             <div style={titleStyle}>
@@ -258,6 +268,7 @@ export class InspectorContent extends React.Component {
             {map(paramNames, (p, idx) => this.renderBindingParam(p, idx, browse))}
             <div style={itemStyle}>
                 {this.renderValueBrowser('result', result)}
+                <img style={refreshIconStyle} src="editor/icons/reset.png" onClick={onClickRefresh}/>
             </div>
             <div style={{paddingTop: 16, textAlign: 'right'}}>
                 <button style={watchButtonStyle} onClick={addWatch}>
