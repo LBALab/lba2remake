@@ -113,7 +113,7 @@ export default class Node extends React.Component {
             <div style={{fontSize, padding: `${fontSize / 8}px 0`, position: 'relative'}}>
                 {this.renderCollapseButton()}
                 <div style={lineStyle}>
-                    <span style={{whiteSpace: 'nowrap'}}>
+                    <span style={{whiteSpace: 'nowrap', verticalAlign: 'top'}}>
                         {this.renderIcon()}
                         {this.renderName()}
                     </span>

@@ -3,7 +3,7 @@ import {extend, isObject, map} from 'lodash';
 
 const propStyle = {
     paddingLeft: 8,
-    verticalAlign: 'middle',
+    verticalAlign: 'top',
     display: 'inline-block'
 };
 
