@@ -5,7 +5,6 @@ import {InspectorNode} from './node';
 import {editor} from '../../../styles';
 import DebugData from '../../DebugData';
 import {getParamNames, getParamValues, getValue} from './utils';
-import {Value} from './value';
 
 const headerStyle = {
     position: 'absolute',
@@ -65,28 +64,47 @@ const watchButtonStyle = extend({}, editor.button, {
     background: 'rgba(0, 0, 0, 0.5)',
 });
 
+const itemStyle = {
+    marginTop: 14,
+    padding: 8,
+    border: '1px solid rgba(255, 255, 255, 0.5)',
+    borderRadius: 4,
+    background: 'rgb(35,35,35)',
+};
+
+const prefixStyle = {
+    paddingLeft: 4,
+    verticalAlign: 'middle'
+};
+
 export const RootSym = '{$}';
+
+const UtilFunctions = {
+    map,
+    __pure_functions: ['map']
+};
 
 export class InspectorContent extends React.Component {
     constructor(props) {
         super(props);
         const addWatch = props.stateHandler.addWatch;
         this.editBindings = this.editBindings.bind(this);
+        this.renderValueBrowser = this.renderValueBrowser.bind(this);
         this.content = makeContentComponent(InspectorNode(RootSym, addWatch, this.editBindings), null, null, 'dot');
-        this.watchContent = makeContentComponent(InspectorNode(RootSym, addWatch, this.editBindings), null, contentStyle, 'dot');
         this.browseContent = makeContentComponent(InspectorNode(RootSym, null, this.editBindings), null, contentStyle, 'dot');
         this.state = {
             bindings: null
         };
     }
 
-    editBindings(path, parent, userData) {
+    editBindings(path, parent, userData, root) {
         this.setState({
             bindings: {
                 id: userData && userData.id,
                 path,
                 parent,
-                params: (userData && userData.bindings[path.join('.')]) || []
+                params: (userData && userData.bindings[path.join('.')]) || [],
+                root: root || ((userData && userData.rootName === 'utils') ? () => UtilFunctions : undefined)
             }
         });
         this.props.stateHandler.setTab('bindings');
@@ -99,12 +117,20 @@ export class InspectorContent extends React.Component {
         </div>;
     }
 
+    componentDidMount() {
+        if (this.props.sharedState.tab === 'bindings' && !this.state.bindings) {
+            this.props.stateHandler.setTab('explore');
+        }
+    }
+
     renderContent() {
         const tab = this.props.sharedState.tab || 'explore';
         if (tab === 'explore') {
             return this.renderExplorer();
         } else if (tab === 'watch') {
             return this.renderWatches();
+        } else if (tab === 'utils') {
+            return this.renderUtils();
         } else if (tab === 'bindings') {
             return this.renderBindings();
         }
@@ -143,11 +169,16 @@ export class InspectorContent extends React.Component {
                     userData: {
                         id: w.id,
                         path: w.path,
-                        bindings: w.bindings
+                        bindings: w.bindings,
+                        rootName: w.rootName
                     }
                 };
+                const getRoot = () => (w.rootName === 'utils' ? UtilFunctions : DebugData.scope);
+                const sym = w.rootName === 'utils' ? 'Utils' : RootSym;
+                const node = InspectorNode(sym, null, this.editBindings, getRoot);
+                const content = makeContentComponent(node, null, contentStyle, 'dot');
                 return <div key={idx} style={watchStyle}>
-                    {React.createElement(this.watchContent, props)}
+                    {React.createElement(content, props)}
                     <img
                         style={trashIconStyle}
                         src="editor/icons/trash.png"
@@ -177,7 +208,9 @@ export class InspectorContent extends React.Component {
         return <div style={headerStyle}>
             <span style={tabStyle(tab === 'explore')} onClick={() => onClick('explore')}>Explore</span>
             <span style={tabStyle(tab === 'watch')} onClick={() => onClick('watch')}>Watch<b>[{watches.length}]</b></span>
-            <span style={tabStyle(tab === 'bindings')} onClick={() => onClick('bindings')}>Bindings</span>
+            <span style={tabStyle(tab === 'utils')} onClick={() => onClick('utils')}>Utils</span>
+            {this.state.bindings &&
+                <span style={tabStyle(tab === 'bindings')} onClick={() => onClick('bindings')}>Bindings</span>}
         </div>;
     }
 
@@ -185,8 +218,8 @@ export class InspectorContent extends React.Component {
         if (!this.state.bindings)
             return null;
 
-        const {id, path, parent, params, browse} = this.state.bindings;
-        const fct = getValue(path, DebugData.scope);
+        const {id, path, parent, params, browse, root} = this.state.bindings;
+        const fct = getValue(path, (root && root()) || DebugData.scope);
 
         if (typeof (fct) !== 'function') {
             return null;
@@ -200,21 +233,12 @@ export class InspectorContent extends React.Component {
             textAlign: 'center',
         };
 
-        const itemStyle = {
-            marginTop: 14,
-            padding: 8,
-            border: '1px solid rgba(255, 255, 255, 0.5)',
-            borderRadius: 4,
-            background: 'rgb(35,35,35)',
-        };
-
-        const prefixStyle = {
-            paddingLeft: 4,
-            verticalAlign: 'middle'
-        };
-
         const addWatch = () => {
-            this.props.stateHandler.addWatch(path, {[path.join('.')]: params}, id);
+            let rootName = null;
+            if (root && root() === UtilFunctions) {
+                rootName = 'utils';
+            }
+            this.props.stateHandler.addWatch(path, {[path.join('.')]: params}, id, rootName);
             this.props.stateHandler.setTab('watch');
             this.setState({bindings: null});
         };
@@ -224,88 +248,14 @@ export class InspectorContent extends React.Component {
                 {path.join('.')}
                 (<span style={{color: 'grey'}}>{paramNames.join(', ')}</span>)
             </div>
-            {map(paramNames, (p, idx) => {
-                const onChange = ({target: {value}}) => {
-                    const bindings = this.state.bindings;
-                    bindings.params[idx] = value;
-                    this.setState({bindings});
-                };
-
-                const onKeyDown = e => e.stopPropagation();
-
-                const pValue = this.state.bindings.params[idx];
-
-                const onRef = (ref) => {
-                    if (ref && pValue) {
-                        ref.value = pValue;
-                    }
-                };
-
-                const inputStyle = {
-                    width: '80%',
-                    verticalAlign: 'middle',
-                    background: pValue && getValue(pValue.split('.'), DebugData.scope) !== undefined ? 'white' : '#ffa5a1'
-                };
-
-                const iconStyle = {
-                    cursor: 'pointer',
-                    padding: 0,
-                    margin: 0,
-                    verticalAlign: 'middle',
-                    paddingLeft: 8
-                };
-
-                const onClick = () => {
-                    const bindings = this.state.bindings;
-                    bindings.browse = idx;
-                    this.setState({bindings});
-                };
-
-                let content;
-                if (browse === idx) {
-                    const param = this.state.bindings.params[idx];
-                    const sharedState = {
-                        path: param ? param.split('.') : []
-                    };
-                    const props = {
-                        sharedState,
-                        stateHandler: {
-                            setPath: (newPath) => {
-                                if (newPath.length > 0) {
-                                    const bindings = this.state.bindings;
-                                    bindings.params[idx] = newPath.join('.');
-                                    delete bindings.browse;
-                                    this.setState({bindings});
-                                } else {
-                                    sharedState.path = newPath;
-                                }
-                            },
-                        },
-                        ticker: this.props.ticker,
-                    };
-                    content = <div>
-                        {React.createElement(this.browseContent, props)}
-                    </div>;
-                } else {
-                    content = <div style={{paddingTop: 8, lineHeight: '20px', verticalAlign: 'middle'}}>
-                        <span style={prefixStyle}>{RootSym}.</span>
-                        <input ref={onRef} type="text" onChange={onChange} style={inputStyle} onKeyDown={onKeyDown}/>
-                        <img style={iconStyle} src="editor/icons/magnifier.png" onClick={onClick}/>
-                    </div>;
-                }
-
-                return <div key={idx} style={itemStyle}>
-                    <div>
-                        Param&nbsp;<span style={{color: 'grey'}}>{p}</span>
-                    </div>
-                    {content}
-                </div>;
-            })}
+            {map(paramNames, (p, idx) => this.renderBindingParam(p, idx, browse))}
             <div style={itemStyle}>
-                <div><i>Return value</i></div>
-                <div style={{paddingTop: 8}}>
-                    <ReturnValue params={params} parent={parent} fct={fct}/>
-                </div>
+                <ReturnValue
+                    params={params}
+                    parent={parent}
+                    fct={fct}
+                    renderer={this.renderValueBrowser}
+                />
             </div>
             <div style={{paddingTop: 16, textAlign: 'right'}}>
                 <button style={watchButtonStyle} onClick={addWatch}>
@@ -314,28 +264,120 @@ export class InspectorContent extends React.Component {
             </div>
         </div>;
     }
+
+    renderBindingParam(p, idx, browse) {
+        const onChange = ({target: {value}}) => {
+            const bindings = this.state.bindings;
+            bindings.params[idx] = value;
+            this.setState({bindings});
+        };
+
+        const onKeyDown = e => e.stopPropagation();
+
+        const pValue = this.state.bindings.params[idx];
+
+        const onRef = (ref) => {
+            if (ref && pValue) {
+                ref.value = pValue;
+            }
+        };
+
+        const inputStyle = {
+            width: '80%',
+            verticalAlign: 'middle',
+            background: pValue && getValue(pValue.split('.'), DebugData.scope) !== undefined ? 'white' : '#ffa5a1'
+        };
+
+        const iconStyle = {
+            cursor: 'pointer',
+            padding: 0,
+            margin: 0,
+            verticalAlign: 'middle',
+            paddingLeft: 8
+        };
+
+        const onClick = () => {
+            const bindings = this.state.bindings;
+            bindings.browse = idx;
+            this.setState({bindings});
+        };
+
+        let content;
+        if (browse === idx) {
+            const param = this.state.bindings.params[idx];
+            const sharedState = {
+                path: param ? param.split('.') : []
+            };
+            const props = {
+                sharedState,
+                stateHandler: {
+                    setPath: (newPath) => {
+                        if (newPath.length > 0) {
+                            const bindings = this.state.bindings;
+                            bindings.params[idx] = newPath.join('.');
+                            delete bindings.browse;
+                            this.setState({bindings});
+                        } else {
+                            sharedState.path = newPath;
+                        }
+                    },
+                },
+                ticker: this.props.ticker,
+            };
+            content = <div>
+                {React.createElement(this.browseContent, props)}
+            </div>;
+        } else {
+            content = <div style={{paddingTop: 8, lineHeight: '20px', verticalAlign: 'middle'}}>
+                <span style={prefixStyle}>{RootSym}.</span>
+                <input ref={onRef} type="text" onChange={onChange} style={inputStyle} onKeyDown={onKeyDown}/>
+                <img style={iconStyle} src="editor/icons/magnifier.png" onClick={onClick}/>
+            </div>;
+        }
+
+        return <div key={idx} style={itemStyle}>
+            <div>
+                Param&nbsp;<span style={{color: 'grey'}}>{p}</span>
+            </div>
+            {content}
+        </div>;
+    }
+
+    renderUtils() {
+        return <div style={funcEditorStyle}>
+            <div>Edit a utility function to apply it on the game&apos;s data.</div>
+            {this.renderValueBrowser('Utils', UtilFunctions)}
+        </div>;
+    }
+
+    renderValueBrowser(name, root) {
+        const getRoot = () => root;
+        const editBindings = (path, parent) => {
+            this.editBindings(path, parent, null, getRoot);
+        };
+        const node = InspectorNode(name, null, editBindings, getRoot);
+        const content = makeContentComponent(node, null, contentStyle, 'dot');
+        const props = {
+            sharedState: {
+                path: []
+            },
+            stateHandler: {
+                setPath: () => {}
+            },
+            ticker: this.props.ticker
+        };
+        return React.createElement(content, props);
+    }
 }
 
 // eslint-disable-next-line react/no-multi-comp
-class ReturnValue extends React.Component {
-    componentWillMount() {
-        this.itv = setInterval(() => {
-            this.forceUpdate();
-        }, 100);
+const ReturnValue = (props) => {
+    let returnValue;
+    try {
+        const pValues = getParamValues(props.params);
+        returnValue = props.fct.call(props.parent, ...pValues);
+    } catch (e) {
+        returnValue = e;
     }
-
-    componentWillUnmount() {
-        clearInterval(this.itv);
-    }
-
-    render() {
-        let returnValue;
-        try {
-            const pValues = getParamValues(this.props.params);
-            returnValue = this.props.fct.call(this.props.parent, ...pValues);
-        } catch (e) {
-            returnValue = e;
-        }
-        return <Value value={returnValue} />;
-    }
-}
+    return props.renderer('result', returnValue);
+};

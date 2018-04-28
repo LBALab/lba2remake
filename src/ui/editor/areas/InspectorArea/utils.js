@@ -16,7 +16,7 @@ export function getValue(path, baseScope) {
     let scope = baseScope;
     for (let i = 0; i < path.length; i += 1) {
         const p = path[i];
-        if (p in scope) {
+        if (scope && p in scope) {
             scope = scope[p];
         } else {
             return undefined;
