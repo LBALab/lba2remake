@@ -80,12 +80,13 @@ export class InspectorContent extends React.Component {
         };
     }
 
-    editBindings(path, parent) {
+    editBindings(path, parent, userData) {
         this.setState({
             bindings: {
+                id: userData && userData.id,
                 path,
                 parent,
-                params: []
+                params: (userData && userData.bindings[path.join('.')]) || []
             }
         });
         this.props.stateHandler.setTab('bindings');
@@ -140,9 +141,9 @@ export class InspectorContent extends React.Component {
                     },
                     ticker: this.props.ticker,
                     userData: {
-                        bindings: {
-                            [w.path.join('.')]: w.params
-                        }
+                        id: w.id,
+                        path: w.path,
+                        bindings: w.bindings
                     }
                 };
                 return <div key={idx} style={watchStyle}>
@@ -184,7 +185,7 @@ export class InspectorContent extends React.Component {
         if (!this.state.bindings)
             return null;
 
-        const {path, parent, params, browse} = this.state.bindings;
+        const {id, path, parent, params, browse} = this.state.bindings;
         const fct = getValue(path, DebugData.scope);
 
         if (typeof (fct) !== 'function') {
@@ -213,7 +214,7 @@ export class InspectorContent extends React.Component {
         };
 
         const addWatch = () => {
-            this.props.stateHandler.addWatch(path, params);
+            this.props.stateHandler.addWatch(path, {[path.join('.')]: params}, id);
             this.props.stateHandler.setTab('watch');
             this.setState({bindings: null});
         };
@@ -307,7 +308,9 @@ export class InspectorContent extends React.Component {
                 </div>
             </div>
             <div style={{paddingTop: 16, textAlign: 'right'}}>
-                <button style={watchButtonStyle} onClick={addWatch}>Add watch</button>
+                <button style={watchButtonStyle} onClick={addWatch}>
+                    {id ? 'Edit watch' : 'Add watch'}
+                </button>
             </div>
         </div>;
     }

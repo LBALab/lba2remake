@@ -1,4 +1,4 @@
-import {findIndex} from 'lodash';
+import {findIndex, find} from 'lodash';
 import {InspectorContent} from './InspectorArea/content';
 
 const InspectorArea = {
@@ -18,14 +18,22 @@ const InspectorArea = {
         setPath(path) {
             this.setState({path});
         },
-        addWatch(path, params) {
+        addWatch(path, bindings, editId) {
             const watches = this.state.watches || [];
-            const id = new Date().getTime();
-            watches.push({
-                id,
-                path,
-                params
-            });
+            if (editId) {
+                const watch = find(watches, w => w.id === editId);
+                if (watch) {
+                    watch.path = path;
+                    Object.assign(watch.bindings, bindings);
+                }
+            } else {
+                const id = new Date().getTime();
+                watches.push({
+                    id,
+                    path,
+                    bindings
+                });
+            }
             this.setState({watches});
         },
         removeWatch(id) {

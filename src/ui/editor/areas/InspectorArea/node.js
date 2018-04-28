@@ -51,6 +51,9 @@ function safeCall(fct, parent, pValues) {
 }
 
 function applyFct(obj, parent, component) {
+    if (!component) {
+        return new Error('Invalid context');
+    }
     const params = getParamNames(obj);
     if (params.length === 0) {
         return safeCall(obj, parent);
