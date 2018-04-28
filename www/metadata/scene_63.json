@@ -8,5 +8,17 @@
     "DesertRose1",
     "DesertRose2",
     "FishBull"
+  ],
+  "zoneNames": [
+    "to_springboard",
+    "to_behind_racetrack",
+    "to_behind_temple_of_bu",
+    "harbour_signal_back",
+    "harbour_signal_front",
+    "palm",
+    "palm_surroundings1",
+    "palm_surroundings2",
+    "palm_surroundings3",
+    "palm_surroundings4"
   ]
 }

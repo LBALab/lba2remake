@@ -7,7 +7,7 @@
     "Paul",
     "TwinsensCar",
     "Zoe",
-    null,
+    "Peddler",
     "FishBull",
     "SupAgent1",
     "SupAgent2",
@@ -16,5 +16,29 @@
     null,
     "Pointer1",
     "Pointer2"
+  ],
+  "zoneNames": [
+    "to_pearl_cave",
+    "to_center_dunes",
+    "to_town_square",
+    "to_behind_landing_zone",
+    "harbour_signal_front",
+    "harbour_signal_back",
+    "cam_harbour_signal",
+    "hacienda_signal_front",
+    "hacienda_sinal_back",
+    "cam_ferry_placement1",
+    "cam_ferry_front",
+    "cam_ferry_placement2",
+    "ferry_front",
+    "ferry_door",
+    "palm1",
+    "palm2",
+    "palm3",
+    "wooden_boxes",
+    "landing_zone",
+    "landing_zone_limit",
+    "road_to_town_square",
+    "spacecraft_entrance"
   ]
 }

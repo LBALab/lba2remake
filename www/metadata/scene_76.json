@@ -1,1 +1,6 @@
-{}
+{
+  "zoneNames": [
+    "cam_cross_airlock",
+    "to_cross_airlock"
+  ]
+}

@@ -20,5 +20,22 @@
     "cam_wizard_lane_signal",
     "cam_downtown_upper_view",
     "cam_ocean_upper_view"
+  ],
+  "varcubes": [
+    {
+      "name": "said_hello"
+    },
+    {
+      "name": "scooter_trip_destination"
+    },
+    {
+      "name": "said_hello_zed"
+    },
+    {
+      "name": "supagent_passive_behaviour"
+    },
+    {
+      "name": "said_hello_shyguy"
+    }
   ]
 }

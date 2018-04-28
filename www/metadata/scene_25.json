@@ -9,5 +9,9 @@
     "FishBull2",
     "FishBull3",
     "FishBull4"
+  ],
+  "zoneNames": [
+    "to_central_area",
+    "cam_room"
   ]
 }

@@ -26,5 +26,26 @@
     "cam_room",
     "bersimon_diploma",
     "gate_opener"
+  ],
+  "varcubes": [
+    {
+      "name": "said_hello"
+    },
+    null,
+    null,
+    null,
+    {
+      "name": "gate_opened"
+    },
+    null,
+    {
+      "name": "tabata_interaction"
+    },
+    {
+      "name": "pot_boiling"
+    },
+    {
+      "name": "tabata_anim_finished"
+    }
   ]
 }

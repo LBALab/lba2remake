@@ -4,5 +4,13 @@
     null,
     "Peddler",
     "TwinsensCar"
+  ],
+  "zoneNames": [
+    "to_temple_of_bu",
+    "to_behind_temple_2",
+    "to_small_island",
+    "temple_signal_front",
+    "temple_signal_back",
+    "palm"
   ]
 }

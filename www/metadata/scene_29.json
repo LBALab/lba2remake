@@ -8,5 +8,16 @@
     "Customer",
     "FrancoSkateGuard",
     "AngryClerk"
+  ],
+  "zoneNames": [
+    "to_bar_area",
+    "to_mens_bath",
+    "to_womens_bath",
+    "near_baths_area",
+    "left_side_area",
+    "right_side_area",
+    "near_exit_area",
+    "fountain",
+    "cam_esmer_placement"
   ]
 }
