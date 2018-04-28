@@ -47,7 +47,8 @@ const trashIconStyle = {
 };
 
 const funcEditorStyle = extend({}, mainStyle, {
-    padding: 16
+    padding: 16,
+    overflowY: 'auto'
 });
 
 const contentStyle = {
@@ -115,6 +116,7 @@ export class InspectorContent extends React.Component {
         const watchesStyle = extend({}, mainStyle, {
             background: watches.length > 0 ? 'black' : 'inherit',
             padding: 0,
+            overflowY: 'auto'
         });
         return <div style={watchesStyle}>
             {(!watches || watches.length === 0) && <div style={{margin: 25, textAlign: 'center'}}>
