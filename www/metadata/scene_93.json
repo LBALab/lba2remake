@@ -4,5 +4,15 @@
     null,
     null,
     "DevotedWannie"
+  ],
+  "zoneNames": [
+    "to_celebration_island",
+    "prophecy_part1",
+    "prophecy_part2",
+    "fragments_placement",
+    "wannie_statue",
+    "mosquibee_statue",
+    "sup_statue",
+    "franco_statue"
   ]
 }

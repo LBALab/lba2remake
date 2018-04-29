@@ -1,1 +1,11 @@
-{}
+{
+  "actorNames": [
+    null,
+    null,
+    "JohnnyRocket"
+  ],
+  "zoneNames": [
+    "cam_room",
+    "to_hotel"
+  ]
+}

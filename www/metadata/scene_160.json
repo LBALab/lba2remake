@@ -8,5 +8,21 @@
     "Door3",
     "Door4",
     "Chest"
+  ],
+  "zoneNames": [
+    "to_top_left2",
+    "to_middle1",
+    "to_top_right1",
+    "to_middle4",
+    "cam_room",
+    "flower_pot_side1",
+    "flower_pot_side2",
+    "flower_pot_side4",
+    "flower_pot_side3",
+    "flower_pot_diagonal1",
+    "flower_pot_diagonal2",
+    "flower_pot_diagonal3",
+    "flower_pot_diagonal4",
+    "flower_pot"
   ]
 }

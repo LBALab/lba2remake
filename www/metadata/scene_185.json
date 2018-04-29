@@ -47,5 +47,25 @@
     "FunFrock",
     "TeleporterPointer1",
     "TeleporterPointer2"
+  ],
+  "zoneNames": [
+    "to_middle_bottom",
+    "to_celebration_island",
+    "jail_falling",
+    "teleporter1",
+    "entrance_area",
+    "teleporter2",
+    "iron_bars_front",
+    "monitor_area",
+    "to_top",
+    "elevator_shaft",
+    "iron_bars",
+    "cam_monitors",
+    "cam_lever_area1",
+    "cam_lever_area2",
+    "cam_elevator_top",
+    "between_stairs_right_side",
+    "teleporter2_bottom",
+    "teleporter1_bottom"
   ]
 }

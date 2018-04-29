@@ -32,5 +32,21 @@
     "TeleporterPointer1",
     "TeleporterPointer2",
     "Pointer"
+  ],
+  "zoneNames": [
+    "to_lava",
+    "to_middle_bottom",
+    "teleporter1",
+    "lava_falling_area",
+    "cam_funfrock_area",
+    "bridge_to_funfrock_area",
+    "funfrock_area_downstairs",
+    "cliff_edge",
+    "teleporter2",
+    "prophecy_final_part",
+    "teleporter1_bottom",
+    "teleporter2_bottom",
+    "funfrock_area_right_corner",
+    "cliff_edge_upstairs"
   ]
 }

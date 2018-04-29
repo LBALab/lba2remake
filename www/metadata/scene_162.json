@@ -11,5 +11,21 @@
     null,
     "Pointer",
     "FishBullPoop"
+  ],
+  "zoneNames": [
+    "to_middle4",
+    "to_bottom_right1",
+    "to_right_corner",
+    "cam_room",
+    "flower_pot1",
+    "flower_pot2",
+    "flower_pot2_side1",
+    "flower_pot1_side1",
+    "flower_pot1_side3",
+    "flower_pot2_side3",
+    "flower_pot2_side4",
+    "flower_pot1_side4",
+    "flower_pot2_side2",
+    "flower_pot1_side2"
   ]
 }

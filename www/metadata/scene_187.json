@@ -34,5 +34,23 @@
     "TeleporterPointer3",
     "TeleporterPointer4",
     "TeleporterPointer5"
+  ],
+  "zoneNames": [
+    "to_bottom",
+    "jail_falling",
+    "behind_locked_gate_area",
+    "teleporter1",
+    "teleporter2",
+    "teleporter3",
+    "teleporter4",
+    "teleporter5",
+    "under_scenario",
+    "cam_twinsen_falling",
+    "teleporter3_bottom",
+    "teleporter4_bottom",
+    "teleporter5_bottom",
+    "teleporter1_bottom",
+    "teleporter2_bottom",
+    "to_meca_penguins_room"
   ]
 }

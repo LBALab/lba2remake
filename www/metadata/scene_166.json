@@ -9,5 +9,24 @@
     null,
     null,
     "Hussar"
+  ],
+  "zoneNames": [
+    "to_bottom_right2",
+    "to_top_right2",
+    "cam_room",
+    "flower_pot1",
+    "flower_pot2",
+    "flower_pot3",
+    "flower_pot4",
+    "flower_pot1_side1",
+    "flower_pot3_side1",
+    "flower_pot4_side1",
+    "flower_pot1_side2",
+    "flower_pot3_side2",
+    "flower_pot1_side3",
+    "flower_pot2_side1",
+    "flower_pot2_side2",
+    "flower_pot4_side2",
+    "flower_pot1_side4"
   ]
 }

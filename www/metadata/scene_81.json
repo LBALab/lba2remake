@@ -16,5 +16,18 @@
     "HammockPointer",
     "MagicPointsVending",
     "LifePointsVending"
+  ],
+  "zoneNames": [
+    "to_upper_city1",
+    "to_meeting_room",
+    "to_spy_room",
+    "to_womans_room",
+    "meeting_room_door",
+    "spy_room_door",
+    "womans_room_door",
+    "towel",
+    "reception_area",
+    "to_upper_city2",
+    "hammock"
   ]
 }

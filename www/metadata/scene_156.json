@@ -11,5 +11,26 @@
     null,
     null,
     "Chest"
+  ],
+  "zoneNames": [
+    "to_top_left1",
+    "to_bottom_left2",
+    "to_middle2",
+    "to_middle3",
+    "cam_room",
+    "flower_pot1",
+    "flower_pot2",
+    "flower_pot3",
+    "flower_pot4",
+    "flower_pot1_side1",
+    "flower_pot4_side1",
+    "flower_pot1_side2",
+    "flower_pot4_side2",
+    "flower_pot1_side4",
+    "flower_pot2_side1",
+    "flower_pot3_side1",
+    "flower_pot3_side2",
+    "flower_pot2_side2",
+    "flower_pot1_side3"
   ]
 }

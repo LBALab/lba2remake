@@ -10,5 +10,12 @@
     "CandlePointer2",
     "CandlePointer3",
     "StanleyOpar"
+  ],
+  "zoneNames": [
+    "to_top_left1",
+    "to_top_left3",
+    "to_middle3",
+    "cam_room",
+    "fireplace"
   ]
 }

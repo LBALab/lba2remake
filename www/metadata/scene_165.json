@@ -10,5 +10,17 @@
     "CandlePointer2",
     "FrancoLaserGuard1",
     "FrancoLaserGuard2"
+  ],
+  "zoneNames": [
+    "to_right_corner",
+    "to_middle4",
+    "to_top_right1",
+    "cam_room",
+    "flower_pot1",
+    "flower_pot2",
+    "fireplace",
+    "flower_pot1_side1",
+    "flower_pot1_side2",
+    "bench_left_side"
   ]
 }

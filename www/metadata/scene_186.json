@@ -18,5 +18,15 @@
     "Kid3",
     "Kid3",
     "TeleporterPointer"
+  ],
+  "zoneNames": [
+    "jail_falling",
+    "to_statue_middle",
+    "cam_elevator",
+    "teleporter",
+    "elevator_area",
+    "under_scenario",
+    "teleporter_bottom",
+    "elevator_placement"
   ]
 }
