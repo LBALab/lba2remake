@@ -7,6 +7,7 @@ import {createAudioManager, createMusicManager} from '../audio';
 import {loadHqrAsync} from '../hqr';
 import {loadTextsAsync} from '../text';
 import DebugData from '../ui/editor/DebugData';
+import {pure} from '../decorators';
 
 export function createGame(params: Object,
                            clock: Object,
@@ -22,6 +23,7 @@ export function createGame(params: Object,
 
     return {
         setUiState,
+        @pure
         getUiState,
         controlsState: {
             heroSpeed: 0,
@@ -72,11 +74,16 @@ export function createGame(params: Object,
             console.log('Loaded!');
         },
 
+        @pure
         isPaused: () => isPaused,
+        @pure
         isLoading: () => isLoading,
 
+        @pure
         getState: () => state,
+        @pure
         getAudioManager: () => audio,
+        @pure
         getAudioMenuManager: () => audioMenu,
 
         togglePause() {
@@ -130,15 +137,7 @@ export function createGame(params: Object,
                 that.texts = files.loadGameText;
                 callback();
             });
-        },
-        __pure_functions: [
-            'isPaused',
-            'isLoading',
-            'getState',
-            'getAudioManager',
-            'getAudioMenuManager',
-            'getUiState'
-        ]
+        }
     };
 }
 

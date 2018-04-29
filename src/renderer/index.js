@@ -13,6 +13,7 @@ import {
 } from './cameras';
 import Cardboard from './utils/Cardboard';
 import {EngineError} from '../crash_reporting';
+import {pure} from '../decorators';
 
 const PixelRatioMode = {
     DEVICE: () => window.devicePixelRatio || 1.0,
@@ -69,10 +70,13 @@ export function createRenderer(params, canvas) {
             resize3DCamera(camera3D, width, height);
             resizeIsometricCamera(cameraIso, getPixelRatio(), width, height);
         },
-        getMainCamera: scene => (scene.isIsland ? camera3D : cameraIso),
+        @pure
+        getMainCamera: scene => (scene && typeof (scene.isIsland) === 'boolean'
+            ? (scene.isIsland ? camera3D : cameraIso)
+            : null),
+        @pure
         pixelRatio: getPixelRatio,
-        setPixelRatio(value) { baseRenderer.setPixelRatio(value); },
-        __pure_functions: ['pixelRatio', 'getMainCamera']
+        setPixelRatio(value) { baseRenderer.setPixelRatio(value); }
     };
 
     function keyListener(event) {

@@ -2,12 +2,16 @@
 import {isFunction, map, filter, noop, concat} from 'lodash';
 import * as THREE from 'three';
 import DebugData, {getObjectName} from '../../DebugData';
+import {pure} from '../../../../decorators';
 
 const allowedNameTypes = ['actor', 'zone', 'point'];
 
 export const UtilFunctions = {
+    @pure
     map,
+    @pure
     filter,
+    @pure
     name: (obj) => {
         if (!obj) {
             throw new Error('Need to provide an object');
@@ -26,8 +30,8 @@ export const UtilFunctions = {
         }
         return getObjectName(obj.type, DebugData.scope.scene.index, obj.index);
     },
+    @pure
     expression: expr => expr,
-    __pure_functions: ['map', 'filter', 'name', 'expression'],
     __param_kind: {
         map: 'g|e,e',
         filter: 'g|e,e',
@@ -110,22 +114,7 @@ const pureFunctionsByType = [
     }
 ];
 
-export function isPureFunc(obj, key, parent) {
-    if (isFunction(obj)) {
-        // eslint-disable-next-line no-underscore-dangle
-        if (parent && parent.__pure_functions) {
-            // eslint-disable-next-line no-underscore-dangle
-            return parent.__pure_functions.includes(key);
-        }
-        for (let i = 0; i < pureFunctionsByType.length; i += 1) {
-            const pf = pureFunctionsByType[i];
-            if (parent instanceof pf.type) {
-                return pf.pure.includes(key);
-            }
-        }
-    }
-    return false;
-}
+export const isPureFunc = obj => isFunction(obj) && obj.__pure_function === true;
 
 export function getAllowedKinds(parent, key, idx) {
     let allowedKinds = ['g', 'e'];

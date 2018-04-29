@@ -1,6 +1,7 @@
 {
   "presets": ["react", "env", "flow"],
   "plugins": [
+    "transform-decorators-legacy",
     "transform-dirname-filename",
     "transform-line",
     "transform-class-properties",

@@ -9,6 +9,7 @@ import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
 import {loadSprite} from '../iso/sprites';
 
 import {getObjectName} from '../ui/editor/DebugData';
+import {pure} from '../decorators';
 
 type ActorFlags = {
     hasCollisions: boolean,
@@ -146,9 +147,11 @@ export function loadActor(params: Object,
             this.props.angle = angle;
             this.physics.temp.destAngle = angleToRad(angle);
         },
+        @pure
         getDistance(pos) {
             return distance2D(this.physics.position, pos);
         },
+        @pure
         getDistanceLba(pos) {
             return getDistanceLba(this.getDistance(pos));
         },
@@ -213,8 +216,7 @@ export function loadActor(params: Object,
             }
             this.loadMesh();
             scene.addMesh(this.threeObject);
-        },
-        __pure_functions: ['getDistance', 'getDistanceLba']
+        }
     };
 
     const euler = new THREE.Euler(0, angleToRad(props.angle), 0, 'XZY');
