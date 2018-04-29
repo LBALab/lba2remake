@@ -130,7 +130,15 @@ export function createGame(params: Object,
                 that.texts = files.loadGameText;
                 callback();
             });
-        }
+        },
+        __pure_functions: [
+            'isPaused',
+            'isLoading',
+            'getState',
+            'getAudioManager',
+            'getAudioMenuManager',
+            'getUiState'
+        ]
     };
 }
 

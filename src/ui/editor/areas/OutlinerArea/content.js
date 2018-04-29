@@ -6,15 +6,22 @@ import FrameListener from '../../../utils/FrameListener';
 import {WithShortcuts} from '../../Area';
 
 const style = extend({
-    overflow: 'auto',
+    overflowY: 'auto',
+    overflowX: 'hidden',
     padding: 8,
     userSelect: 'none',
     cursor: 'default',
-    whiteSpace: 'nowrap',
     fontWeight: 'normal'
 }, fullscreen);
 
-export function makeContentComponent(tree, frame, ownStyle) {
+const Separator = {
+    normal: <React.Fragment>
+        &nbsp;<span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
+    </React.Fragment>,
+    dot: '.'
+};
+
+export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
     return class OutlinerContent extends FrameListener {
         constructor(props) {
             super(props);
@@ -67,10 +74,12 @@ export function makeContentComponent(tree, frame, ownStyle) {
                         level={0}
                         split={this.props.split}
                         shortcuts={shortcuts}
+                        rootName={isFunction(tree.name) ? tree.name() : tree.name}
+                        userData={this.props.userData}
                     />}
                 </WithShortcuts>;
             }
-            return 'Node is not available.';
+            return <span>Node is not available. {sep === 'dot' && <button onClick={() => this.setRoot([])}>Reset</button>}</span>;
         }
 
         renderPath() {
@@ -84,8 +93,8 @@ export function makeContentComponent(tree, frame, ownStyle) {
                     {renderElement([], isFunction(tree.name) ? tree.name() : tree.name)}
                     {map(path, (name, idx) => {
                         const subpath = path.slice(0, idx + 1);
-                        return <span key={idx}>&nbsp;
-                            <span style={{color: '#65a7ff'}}>&gt;</span>&nbsp;
+                        return <span key={idx}>
+                            {Separator[sep]}
                             {renderElement(subpath, name)}
                         </span>;
                     })}
@@ -107,11 +116,13 @@ export function makeContentComponent(tree, frame, ownStyle) {
                     return;
 
                 let childNode = null;
-                const numChildren = node.dynamic ? node.numChildren(data) : node.children.length;
+                const numChildren = node.dynamic
+                    ? node.numChildren(data, null, this)
+                    : node.children.length;
                 for (let i = 0; i < numChildren; i += 1) {
-                    const child = node.dynamic ? node.child(data, i) : node.children[i];
+                    const child = node.dynamic ? node.child(data, i, this) : node.children[i];
                     if (child) {
-                        const childData = node.dynamic ? node.childData(data, i) : null;
+                        const childData = node.dynamic ? node.childData(data, i, this) : null;
                         const childName = child.dynamic ? child.name(childData, i) : child.name;
                         if (childName === name) {
                             childNode = child;

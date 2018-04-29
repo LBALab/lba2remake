@@ -71,7 +71,8 @@ export function createRenderer(params, canvas) {
         },
         getMainCamera: scene => (scene.isIsland ? camera3D : cameraIso),
         pixelRatio: getPixelRatio,
-        setPixelRatio(value) { baseRenderer.setPixelRatio(value); }
+        setPixelRatio(value) { baseRenderer.setPixelRatio(value); },
+        __pure_functions: ['pixelRatio', 'getMainCamera']
     };
 
     function keyListener(event) {

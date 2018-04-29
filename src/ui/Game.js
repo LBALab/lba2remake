@@ -243,7 +243,7 @@ export default class Game extends FrameListener {
                 scene,
                 hero: scene && scene.actors[0],
                 controls,
-                ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls')
+                ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls', 'scene')
             };
             DebugData.sceneManager = sceneManager;
         }
