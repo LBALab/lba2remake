@@ -1,4 +1,10 @@
 {
   "presets": ["react", "env"],
-  "plugins": ["transform-flow-strip-types", "transform-class-properties", "transform-object-rest-spread"]
+  "plugins": [
+    "transform-dirname-filename",
+    "transform-line",
+    "transform-flow-strip-types",
+    "transform-class-properties",
+    "transform-object-rest-spread"
+  ]
 }
