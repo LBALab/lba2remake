@@ -3,5 +3,12 @@
     null,
     null,
     "NakedSupWoman"
+  ],
+  "zoneNames": [
+    "to_hotel",
+    "cam_room",
+    "to_upper_city",
+    "open_window",
+    "open_window_gap"
   ]
 }
