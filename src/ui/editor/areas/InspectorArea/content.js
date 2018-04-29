@@ -5,7 +5,8 @@ import {makeContentComponent} from '../OutlinerArea/content';
 import {InspectorNode} from './node';
 import {editor} from '../../../styles';
 import DebugData from '../../DebugData';
-import {RootSym, applyFunction, getParamNames, getValue, getAllowedKinds, UtilFunctions} from './utils';
+import {RootSym, applyFunction, getParamNames, getValue, getAllowedKinds, UtilFunctions, isPureFunc} from './utils';
+import {CustomValue} from './value';
 
 const headerStyle = {
     position: 'absolute',
@@ -221,6 +222,8 @@ export class InspectorContent extends React.Component {
             return null;
         }
 
+        const isPure = isPureFunc(fct, last(path), parent);
+
         const paramNames = getParamNames(fct);
 
         const titleStyle = {
@@ -239,6 +242,18 @@ export class InspectorContent extends React.Component {
             this.setState({bindings: null});
         };
 
+        const action = () => {
+            if (isPure) {
+                addWatch();
+            } else {
+                this.setState({
+                    result: {
+                        value: applyFunction(fct, parent, jPath, {[jPath]: params}, new Error('Invalid call'))
+                    }
+                });
+            }
+        };
+
         const refreshIconStyle = {
             cursor: 'pointer',
             position: 'absolute',
@@ -247,11 +262,28 @@ export class InspectorContent extends React.Component {
         };
 
         const jPath = path.join('.');
-        const result = applyFunction(fct, parent, jPath, {[jPath]: params}, new Error('Invalid call'));
+        let result = new CustomValue(
+            <span>
+                Not available.<br/>
+                Click <button style={watchButtonStyle} onClick={action}>
+                    call function
+                </button> to get result.
+            </span>
+        );
+        if (isPure) {
+            result = applyFunction(fct, parent, jPath, {[jPath]: params}, new Error('Invalid call'));
+        } else if (this.state.result) {
+            result = this.state.result.value;
+        }
 
         const onClickRefresh = () => this.forceUpdate();
 
         return <div style={funcEditorStyle}>
+            {!isPure &&
+                <span style={{color: 'red'}}>
+                    Warning! This is an unpure function, calling it will change the game state,
+                    and may cause crashes if not called appropriately. Use with caution!<br/>
+                </span>}
             <div style={titleStyle}>
                 {path.join('.')}
                 (<span style={{color: 'grey'}}>{paramNames.join(', ')}</span>)
@@ -259,11 +291,11 @@ export class InspectorContent extends React.Component {
             {map(paramNames, (p, idx) => this.renderBindingParam(p, idx, browse))}
             <div style={itemStyle}>
                 {this.renderValueBrowser('result', result)}
-                <img style={refreshIconStyle} src="editor/icons/reset.png" onClick={onClickRefresh}/>
+                {isPure && <img style={refreshIconStyle} src="editor/icons/reset.png" onClick={onClickRefresh}/>}
             </div>
             <div style={{paddingTop: 16, textAlign: 'right'}}>
-                <button style={watchButtonStyle} onClick={addWatch}>
-                    {id ? 'Edit watch' : 'Add watch'}
+                <button style={watchButtonStyle} onClick={action}>
+                    {isPure ? (id ? 'Edit watch' : 'Add watch') : 'Call'}
                 </button>
             </div>
         </div>;

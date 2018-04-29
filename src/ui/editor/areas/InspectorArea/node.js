@@ -2,7 +2,7 @@ import React from 'react';
 import * as THREE from 'three';
 import {map, filter, concat, isFunction, isEmpty, uniq} from 'lodash';
 import DebugData from '../../DebugData';
-import {Value} from './value';
+import {CustomValue, Value} from './value';
 import {RootSym, applyFunction, getParamNames, isPureFunc} from './utils';
 
 const getObj = (data, root) => {
@@ -69,7 +69,7 @@ export const InspectorNode = (
         if (isPureFunc(obj, name, parent)) {
             obj = applyFctFromComponent(obj, parent, component);
         }
-        if (typeof (obj) === 'string')
+        if (typeof (obj) === 'string' || obj instanceof CustomValue)
             return 0;
         return getKeys(obj).length;
     },
@@ -128,10 +128,10 @@ export const InspectorNode = (
                 const editStyle = {
                     padding: '0 6px',
                     margin: '0 3px',
-                    color: 'white',
+                    color: isPure ? 'white' : 'grey',
                     fontSize: 11,
                     fontWeight: 'bold',
-                    border: '1px inset #5cffa9',
+                    border: isPure ? '1px inset #5cffa9' : '1px inset #3d955d',
                     borderRadius: 4,
                     background: 'rgba(0, 0, 0, 0.5)',
                     cursor: 'pointer'
@@ -149,7 +149,7 @@ export const InspectorNode = (
                             <span style={paramStyle}>{param}</span>
                         </React.Fragment>)}
                     )
-                    {isPure && paramNames.length > 0 &&
+                    {!(isPure && paramNames.length === 0) &&
                         <span style={editStyle} onClick={onClick}>EDIT</span>}
                 </span>;
             }
@@ -171,7 +171,7 @@ export const InspectorNode = (
                     return null;
                 }
             }
-            if (collapsed || isSimpleValue(obj) || isThree(obj)) {
+            if (collapsed || isSimpleValue(obj) || isThree(obj) || obj instanceof CustomValue) {
                 return <Value value={obj}/>;
             }
             return null;

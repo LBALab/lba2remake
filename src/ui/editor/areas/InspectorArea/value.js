@@ -4,12 +4,25 @@ import {flatMap, isArray, isEmpty, map, slice, take, times} from 'lodash';
 import * as THREE from 'three';
 import DebugData, {getObjectName} from '../../DebugData';
 
+export class CustomValue {
+    constructor(renderElem) {
+        this.renderElem = renderElem;
+    }
+
+    render() {
+        return this.renderElem;
+    }
+}
+
 export function Value({value}) {
     if (value === undefined) {
         return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>undefined</span>;
     }
     if (value === null) {
         return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>null</span>;
+    }
+    if (value instanceof CustomValue) {
+        return value.render();
     }
     if (value instanceof Error) {
         return <span style={{color: 'red', fontStyle: 'italic'}}>Error: {value.message}</span>;
