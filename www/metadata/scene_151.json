@@ -13,5 +13,11 @@
     "FrancoLaserGuard2",
     "CandlePointer1",
     "CandlePointer2"
+  ],
+  "zoneNames": [
+    "to_bottom_left2",
+    "to_top_left1",
+    "cam_rom",
+    "fireplace"
   ]
 }
