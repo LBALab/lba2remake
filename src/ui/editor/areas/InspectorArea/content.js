@@ -202,8 +202,9 @@ export class InspectorContent extends React.Component {
         const tab = this.props.sharedState.tab || 'explore';
         return <div style={headerStyle}>
             <span style={tabStyle(tab === 'explore')} onClick={() => onClick('explore')}>Explore</span>
-            <span style={tabStyle(tab === 'watch')} onClick={() => onClick('watch')}>Watch<b>[{watches.length}]</b></span>
             <span style={tabStyle(tab === 'utils')} onClick={() => onClick('utils')}>Utils</span>
+            {watches.length > 0 &&
+                <span style={tabStyle(tab === 'watch')} onClick={() => onClick('watch')}>Watch<b>[{watches.length}]</b></span>}
             {this.state.bindings &&
                 <span style={tabStyle(tab === 'bindings')} onClick={() => onClick('bindings')}>Bindings</span>}
         </div>;
@@ -385,19 +386,18 @@ export class InspectorContent extends React.Component {
             this.setState({bindings});
         };
 
-        const kindSelection = <select
-            onChange={onSelectKind}
-            value={selectedKind}
-            style={editor.select}
-        >
-            {map(allowedKinds, kind => <option key={kind} value={kind}>{prettyKind[kind]}</option>)}
-        </select>;
+        const kindSelection = allowedKinds.length > 1 ?
+            <select onChange={onSelectKind} value={selectedKind} style={extend({float: 'right'}, editor.select)}>
+                {map(allowedKinds, kind =>
+                    <option key={kind} value={kind}>{prettyKind[kind]}</option>)}
+            </select>
+            : <span style={{fontStyle: 'italic', float: 'right'}}>{prettyKind[selectedKind]}</span>;
 
         return <div key={idx} style={itemStyle}>
             <div>
                 Param&nbsp;<span style={{color: 'grey'}}>{p}</span>
                 &nbsp;
-                Kind: {kindSelection}
+                {kindSelection}
             </div>
             {content}
         </div>;

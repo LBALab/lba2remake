@@ -38,7 +38,7 @@ export const UtilFunctions = {
     }
 };
 
-export const RootSym = '{$}';
+export const RootSym = 'this';
 
 const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES = /([^\s,]+)/g;
