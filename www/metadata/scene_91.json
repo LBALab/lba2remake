@@ -1,1 +1,11 @@
-{}
+{
+  "zoneNames": [
+    "to_upper_city",
+    "to_inside_palace",
+    "cam_inside_palace",
+    "cam_slope_turn",
+    "cam_entrance",
+    "cam_secret_exit",
+    "secret_exit_area"
+  ]
+}
