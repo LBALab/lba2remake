@@ -1,19 +1,19 @@
 // @flow
 import {each} from 'lodash';
-import FrameListerner from './FrameListener';
+import FrameListener from './FrameListener';
 
 export default class Ticker {
-    listeners: [];
+    listeners: Array<FrameListener> = [];
 
     constructor() {
         this.listeners = [];
     }
 
-    register(component: FrameListerner) {
+    register(component: FrameListener) {
         this.listeners.push(component);
     }
 
-    unregister(component: FrameListerner) {
+    unregister(component: FrameListener) {
         const idx = this.listeners.indexOf(component);
         if (idx !== -1) {
             this.listeners.splice(idx, 1);

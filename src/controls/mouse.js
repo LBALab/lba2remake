@@ -51,7 +51,8 @@ function pointerLockChanged(controls) {
 }
 
 function handleClick(params, game) {
-    if (document.body.requestPointerLock && (!params.editor || game.controlsState.freeCamera)) {
+    if (document.body && document.body.requestPointerLock
+        && (!params.editor || game.controlsState.freeCamera)) {
         document.body.requestPointerLock();
     }
 }
