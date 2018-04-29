@@ -1,7 +1,6 @@
 import {find, filter} from 'lodash';
 import NewArea from './areas/NewArea';
 import GameArea from './areas/GameArea';
-import DebugHUDArea from './areas/DebugHUDArea';
 import ScriptEditorArea from './areas/ScriptEditorArea';
 import {SceneOutliner, Locator, IslandOutliner} from './areas/OutlinerArea';
 import IslandArea from './areas/IslandArea';
@@ -14,7 +13,6 @@ const AllAreas = [
     GameArea,
     SceneOutliner,
     Locator,
-    DebugHUDArea,
     InspectorArea,
     ScriptEditorArea,
     IslandArea,
@@ -27,7 +25,7 @@ const Generators = {
 };
 
 export function findAreaContentById(id) {
-    return find(AllAreas, area => area.id === id);
+    return find(AllAreas, area => area.id === id || area.replaces === id);
 }
 
 export function findMainAreas() {

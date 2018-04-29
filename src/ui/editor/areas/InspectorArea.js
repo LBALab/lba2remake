@@ -3,6 +3,7 @@ import {InspectorContent} from './InspectorArea/content';
 
 const InspectorArea = {
     id: 'inspector',
+    replaces: 'dbg_hud',
     name: 'Inspector',
     icon: 'terminal.png',
     content: InspectorContent,

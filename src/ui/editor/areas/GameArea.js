@@ -1,7 +1,6 @@
 import {clone} from 'lodash';
 import Game from '../../Game';
 import ScriptEditorArea from './ScriptEditorArea';
-import DebugHUDArea from './DebugHUDArea';
 import InspectorArea from './InspectorArea';
 import {SceneOutliner, Locator} from './OutlinerArea';
 import {GameMenu} from './GameArea/menu';
@@ -30,7 +29,6 @@ const GameArea = {
     },
     toolAreas: [
         ScriptEditorArea,
-        DebugHUDArea,
         InspectorArea,
         SceneOutliner,
         Locator,
@@ -64,7 +62,7 @@ const GameArea = {
                             { type: Type.AREA, content_id: 'locator' }
                         ]
                     },
-                    { type: Type.AREA, content_id: 'dbg_hud' }
+                    { type: Type.AREA, content_id: 'inspector' }
                 ]
             }
         ]

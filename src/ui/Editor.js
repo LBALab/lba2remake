@@ -369,6 +369,11 @@ function loadNode(editor, node) {
         tgtNode.content = AreaLoader;
     } else {
         tgtNode.content = findAreaContentById(node.content_id) || NewArea;
+        if (tgtNode
+            && node.content_id !== tgtNode.content.id
+            && node.content_id === tgtNode.content.replaces) {
+            node.state = null;
+        }
     }
 
     initStateHandler(editor, tgtNode, node.state);
