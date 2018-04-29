@@ -7,5 +7,14 @@
     "Door3",
     "Door4",
     "Chest"
+  ],
+  "zoneNames": [
+    "to_middle1",
+    "to_bottom_left1",
+    "to_middle4",
+    "to_bottom_right1",
+    "cam_room",
+    "flower_pot1",
+    "flower_pot2"
   ]
 }
