@@ -1,12 +1,32 @@
 /* eslint-disable no-underscore-dangle */
 import {isFunction, map, filter, noop, concat} from 'lodash';
 import * as THREE from 'three';
-import DebugData from '../../DebugData';
+import DebugData, {getObjectName} from '../../DebugData';
+
+const allowedNameTypes = ['actor', 'zone', 'point'];
 
 export const UtilFunctions = {
     map,
     filter,
-    __pure_functions: ['map', 'filter'],
+    name: (obj) => {
+        if (!obj) {
+            throw new Error('Need to provide an object');
+        }
+        if (obj.name) {
+            throw obj.name;
+        }
+        if (!obj.type || !allowedNameTypes.includes(obj.type)) {
+            throw new Error(`Invalid object type: ${obj.type}`);
+        }
+        if (!DebugData.scope.scene) {
+            throw new Error('Need to have a scene loaded');
+        }
+        if (!Number.isInteger(obj.index) || obj.index < 0) {
+            throw new Error(`Invalid object index: ${obj.index}`);
+        }
+        return getObjectName(obj.type, DebugData.scope.scene.index, obj.index);
+    },
+    __pure_functions: ['map', 'filter', 'name'],
     __param_kind: {
         map: 'g|e,e',
         filter: 'g|e,e'
@@ -149,27 +169,42 @@ export function getValue(path, baseScope, bindings) {
     return scope;
 }
 
-export function getParamValues(params, bindings, parent, path) {
-    return map(params, (p, idx) => {
-        if (!p || !p.value) {
-            return undefined;
+function getParamFunc(p, idx, bindings, parent, path) {
+    try {
+        let doCall = true;
+        let args = ['THREE', 'map', 'filter', 'name'];
+        if (parent && parent.__cb_info
+            && path in parent.__cb_info
+            && parent.__cb_info[path][idx]) {
+            // eslint-disable-next-line no-new-func
+            args = concat(args, parent.__cb_info[path][idx].split(','));
+            doCall = false;
         }
-        if (p.kind === 'g') {
-            return getValue(p.value.split('.'), DebugData.scope, bindings);
-        } else if (p.kind === 'e') {
-            try {
-                let args = ['THREE'];
-                if (parent && parent.__cb_info && path in parent.__cb_info) {
-                    // eslint-disable-next-line no-new-func
-                    args = concat(args, parent.__cb_info[path][idx].split(','));
-                }
-                args.push(`return (${p.value});`);
-                const scope = Object.assign({}, DebugData.scope, UtilFunctions);
-                return Function.call(null, ...args).bind(scope, THREE);
-            } catch (e) { /* ignore */ }
-        }
+        args.push(`return (${p.value});`);
+        const scope = DebugData.scope;
+        const expr =
+            Function.call(null, ...args).bind(scope, THREE, map, filter, UtilFunctions.name);
+        return doCall ? expr() : expr;
+    } catch (e) {
+        /* ignore */
+    }
+    return undefined;
+}
+
+function getParamValue(p, idx, bindings, parent, path) {
+    if (!p || !p.value) {
         return undefined;
-    });
+    }
+    if (p.kind === 'g') {
+        return getValue(p.value.split('.'), DebugData.scope, bindings);
+    } else if (p.kind === 'e') {
+        return getParamFunc(p, idx, bindings, parent, path);
+    }
+    return undefined;
+}
+
+export function getParamValues(params, bindings, parent, path) {
+    return map(params, (p, idx) => getParamValue(p, idx, bindings, parent, path));
 }
 
 function safeCall(fct, parent, pValues) {
@@ -187,6 +222,7 @@ export function applyFunction(fct, parent, path, bindings, defaultValue = noop) 
     }
     if (bindings && path in bindings) {
         const pValues = getParamValues(bindings[path], bindings, parent, path);
+        console.log(path, pValues);
         return safeCall(fct, parent, pValues);
     }
     return defaultValue;

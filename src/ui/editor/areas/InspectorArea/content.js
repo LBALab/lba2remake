@@ -294,24 +294,8 @@ export class InspectorContent extends React.Component {
             }
         };
 
-        let validParam = false;
-        if (selectedKind === 'e') {
-            try {
-                let expr;
-                if (parent && parent.__cb_info && path in parent.__cb_info) {
-                    // eslint-disable-next-line no-new-func
-                    const args = parent.__cb_info[path][idx].split(',');
-                    args.push(`return (${p.value});`);
-                    expr = Function.call(null, ...args);
-                } else {
-                    // eslint-disable-next-line no-new-func
-                    expr = Function(`return (${pValue});`)();
-                }
-                validParam = expr !== undefined;
-            } catch (e) {
-                // ignore
-            }
-        } else if (selectedKind === 'g') {
+        let validParam = true;
+        if (selectedKind === 'g') {
             validParam = pValue && getValue(pValue.split('.'), DebugData.scope, params) !== undefined;
         }
 
