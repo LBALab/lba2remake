@@ -1,7 +1,20 @@
 /* eslint-disable no-underscore-dangle */
-import {isFunction, map, noop} from 'lodash';
+import {isFunction, map, filter, noop, concat} from 'lodash';
 import * as THREE from 'three';
 import DebugData from '../../DebugData';
+
+export const UtilFunctions = {
+    map,
+    filter,
+    __pure_functions: ['map', 'filter'],
+    __param_kind: {
+        map: 'g|e,e',
+        filter: 'g|e,e'
+    },
+    __cb_info: {
+        map: ['', 'item,idx,collection']
+    }
+};
 
 export const RootSym = '{$}';
 
@@ -145,14 +158,14 @@ export function getParamValues(params, bindings, parent, path) {
             return getValue(p.value.split('.'), DebugData.scope, bindings);
         } else if (p.kind === 'e') {
             try {
+                let args = ['THREE'];
                 if (parent && parent.__cb_info && path in parent.__cb_info) {
                     // eslint-disable-next-line no-new-func
-                    const args = parent.__cb_info[path][idx].split(',');
-                    args.push(`return (${p.value});`);
-                    return Function.call(null, ...args);
+                    args = concat(args, parent.__cb_info[path][idx].split(','));
                 }
-                // eslint-disable-next-line no-new-func
-                return Function(`return (${p.value});`)();
+                args.push(`return (${p.value});`);
+                const scope = Object.assign({}, DebugData.scope, UtilFunctions);
+                return Function.call(null, ...args).bind(scope, THREE);
             } catch (e) { /* ignore */ }
         }
         return undefined;

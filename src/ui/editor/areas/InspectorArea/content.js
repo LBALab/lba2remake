@@ -1,11 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import React from 'react';
-import {map, extend, last, filter} from 'lodash';
+import {map, extend, last} from 'lodash';
 import {makeContentComponent} from '../OutlinerArea/content';
 import {InspectorNode} from './node';
 import {editor} from '../../../styles';
 import DebugData from '../../DebugData';
-import {RootSym, applyFunction, getParamNames, getValue, getAllowedKinds} from './utils';
+import {RootSym, applyFunction, getParamNames, getValue, getAllowedKinds, UtilFunctions} from './utils';
 
 const headerStyle = {
     position: 'absolute',
@@ -77,19 +77,6 @@ const itemStyle = {
 const prefixStyle = {
     paddingLeft: 4,
     verticalAlign: 'middle'
-};
-
-const UtilFunctions = {
-    map,
-    filter,
-    __pure_functions: ['map', 'filter'],
-    __param_kind: {
-        map: 'g|e,e',
-        filter: 'g|e,e'
-    },
-    __cb_info: {
-        map: ['', 'item,idx']
-    }
 };
 
 export class InspectorContent extends React.Component {
