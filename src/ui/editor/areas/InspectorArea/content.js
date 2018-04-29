@@ -86,6 +86,9 @@ const UtilFunctions = {
     __param_kind: {
         map: 'g|e,e',
         filter: 'g|e,e'
+    },
+    __cb_info: {
+        map: ['', 'item,idx']
     }
 };
 
@@ -307,8 +310,16 @@ export class InspectorContent extends React.Component {
         let validParam = false;
         if (selectedKind === 'e') {
             try {
-                // eslint-disable-next-line no-new-func
-                const expr = Function(`return (${pValue});`)();
+                let expr;
+                if (parent && parent.__cb_info && path in parent.__cb_info) {
+                    // eslint-disable-next-line no-new-func
+                    const args = parent.__cb_info[path][idx].split(',');
+                    args.push(`return (${p.value});`);
+                    expr = Function.call(null, ...args);
+                } else {
+                    // eslint-disable-next-line no-new-func
+                    expr = Function(`return (${pValue});`)();
+                }
                 validParam = expr !== undefined;
             } catch (e) {
                 // ignore
@@ -318,7 +329,7 @@ export class InspectorContent extends React.Component {
         }
 
         const inputStyle = {
-            width: '80%',
+            width: '60%',
             verticalAlign: 'middle',
             background: validParam ? 'white' : '#ffa5a1'
         };
@@ -368,11 +379,19 @@ export class InspectorContent extends React.Component {
             </div>;
         } else {
             const prefixByKind = {
-                g: <span style={prefixStyle}>{RootSym}.</span>,
-                e: <span style={prefixStyle}>(expr) = </span>
+                g: () => <span style={prefixStyle}>{RootSym}.</span>,
+                e: () => {
+                    let args = '';
+                    if (parent && parent.__cb_info && path in parent.__cb_info) {
+                        // eslint-disable-next-line no-new-func
+                        args = parent.__cb_info[path][idx].split(',').join(', ');
+                        return <span style={prefixStyle}>({args}) =&gt; </span>;
+                    }
+                    return null;
+                }
             };
             content = <div style={{paddingTop: 8, lineHeight: '20px', verticalAlign: 'middle'}}>
-                {prefixByKind[selectedKind]}
+                {prefixByKind[selectedKind]()}
                 <input ref={onRef} type="text" onChange={onChange} style={inputStyle} onKeyDown={onKeyDown}/>
                 {selectedKind !== 'e' && <img style={iconStyle} src="editor/icons/magnifier.png" onClick={onClick}/>}
             </div>;
