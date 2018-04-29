@@ -26,13 +26,15 @@ export const UtilFunctions = {
         }
         return getObjectName(obj.type, DebugData.scope.scene.index, obj.index);
     },
-    __pure_functions: ['map', 'filter', 'name'],
+    expression: expr => expr,
+    __pure_functions: ['map', 'filter', 'name', 'expression'],
     __param_kind: {
         map: 'g|e,e',
-        filter: 'g|e,e'
+        filter: 'g|e,e',
+        expression: 'e'
     },
     __cb_info: {
-        map: ['', 'item,idx,collection']
+        map: ['', 'item,idx,collection'],
     }
 };
 
@@ -222,7 +224,6 @@ export function applyFunction(fct, parent, path, bindings, defaultValue = noop) 
     }
     if (bindings && path in bindings) {
         const pValues = getParamValues(bindings[path], bindings, parent, path);
-        console.log(path, pValues);
         return safeCall(fct, parent, pValues);
     }
     return defaultValue;
