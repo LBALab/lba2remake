@@ -7,6 +7,9 @@
 .*/node_modules/flow.*
 .*/node_modules/raw-loader/.*
 .*/node_modules/webpack.*
+.*/node_modules/log-symbols.*
+.*/node_modules/yeoman-environment.*
+.*/node_modules/yeoman-generator.*
 .*/sync_server/.*
 .*/webpack/.*
 .*/www/.*
@@ -16,4 +19,5 @@
 [libs]
 
 [options]
+esproposal.decorators=ignore
 unsafe.enable_getters_and_setters=true

@@ -1,9 +1,8 @@
 {
-  "presets": ["react", "env"],
+  "presets": ["react", "env", "flow"],
   "plugins": [
     "transform-dirname-filename",
     "transform-line",
-    "transform-flow-strip-types",
     "transform-class-properties",
     "transform-object-rest-spread"
   ]

@@ -4,5 +4,4 @@ node_modules
 /apps/win10/bin
 /apps/win10/obj
 /www/data
-/www/bundle.js
 /crash_report.json

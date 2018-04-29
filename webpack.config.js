@@ -1,15 +1,15 @@
 const webpack = require('webpack');
 const path = require('path');
-const FlowStatusWebpackPlugin = require('flow-status-webpack-plugin');
 
 module.exports = {
+    mode: process.env.NODE_ENV || 'none',
     entry: ['babel-polyfill', './src/main.jsx'],
     output: {
-        path: path.join(__dirname, './www'),
-        filename: "bundle.js"
+        path: path.join(__dirname, './dist'),
+        filename: 'bundle.js'
     },
     resolve: {
-        extensions: ['', '.js', '.jsx']
+        extensions: ['.js', '.jsx', '.glsl', '.proto', '.yaml']
     },
     resolveLoader: {
         alias: {
@@ -17,43 +17,46 @@ module.exports = {
         }
     },
     module: {
-        loaders: [
-            {
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                loaders: ['babel', 'eslint']
-            },
-            {
-                test: /\.glsl?$/,
+        rules: [{
+            test: /\.jsx?$/,
+            exclude: /node_modules/,
+            use: [{
+                loader: 'babel-loader',
+                options: {
+                    'presets': ['react', 'env', 'flow'],
+                    'plugins': [
+                        'transform-decorators-legacy',
+                        'transform-dirname-filename',
+                        'transform-line',
+                        'transform-class-properties',
+                        'transform-object-rest-spread'
+                    ]
+                }
+            }, {
+                loader: 'eslint-loader'
+            }]
+        }, {
+            test: /\.glsl?$/,
+            use: [{
                 loader: 'glsl-custom-loader'
-            },
-            {
-                test: /\.proto?$/,
+            }]
+        }, {
+            test: /\.proto?$/,
+            use: [{
                 loader: 'raw-loader'
-            },
-            {
-                test: /\.json?$/,
-                loader: 'json-loader'
-            },
-            {
-                test: /\.yaml?$/,
+            }]
+        }, {
+            test: /\.yaml?$/,
+            use: [{
                 loader: 'yml-loader'
-            }
-        ]
-    },
-    devServer: {
-        inline: true,
-        contentBase: path.join(__dirname, './www')
+            }]
+        }]
     },
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {
                 'NODE_ENV': '"' + process.env.NODE_ENV + '"'
             }
-        }),
-        new FlowStatusWebpackPlugin({
-            failOnError: true,
-            binaryPath: require('flow-bin')
         })
     ]
 };
