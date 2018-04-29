@@ -10,5 +10,11 @@
     "Door2",
     "Door3",
     "Chest"
+  ],
+  "zoneNames": [
+    "to_palace_entrance",
+    "to_bottom_left2",
+    "to_middle2",
+    "cam_room"
   ]
 }
