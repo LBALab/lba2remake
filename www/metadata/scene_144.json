@@ -14,5 +14,14 @@
     "Lever3",
     null,
     "Lever4"
+  ],
+  "zoneNames": [
+    "to_refinery_area",
+    "to_zeppelin_port",
+    "barrel1",
+    "barrel2",
+    "barrel3",
+    "entrance_area",
+    "door_to_zeppelin_port"
   ]
 }
