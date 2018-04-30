@@ -5,5 +5,25 @@
     null,
     "FrancoLaserGuard1",
     "FrancoLaserGuard2"
+  ],
+  "zoneNames": [
+    "to_access_building",
+    "zeppelin",
+    "spilled_gazogem1",
+    "spilled_gazogem2",
+    "cam_zeppelin",
+    "cam_gas_area",
+    "barrel1",
+    "barrel2",
+    "barrel3",
+    "barrel4",
+    "barrel5",
+    "barrel6",
+    "barrel7",
+    "cam_zepplin_front",
+    "harbour_map",
+    "cam_harbour_map",
+    "barrel8",
+    "cam_crane_bottom"
   ]
 }

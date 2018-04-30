@@ -4,5 +4,15 @@
     null,
     "Frankie",
     "FrancoPriest"
+  ],
+  "zoneNames": [
+    "to_village",
+    "flower_pot1",
+    "flower_pot2",
+    "flower_pot3",
+    "flower_pot4",
+    "flower_pot5",
+    "flower_pot6",
+    "flower_pot7"
   ]
 }

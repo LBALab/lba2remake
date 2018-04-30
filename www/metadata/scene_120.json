@@ -6,5 +6,20 @@
     null,
     "WoodenBoxPointer1",
     "WoodenBoxPointer2"
+  ],
+  "zoneNames": [
+    "cam_elevator_doors",
+    "elevator_doors",
+    "to_undergas",
+    "platform_elevator_front",
+    "cam_platform_elevator_front",
+    "cam_zeppelin_area",
+    "cam_zeppelin_front",
+    "platform_turn_area",
+    "cam_gas_area_behind_elevator",
+    "cam_gas_area_behind_zeppelin",
+    "zeppelin_front",
+    "cam_crane_bottom",
+    "cam_platform_turn_area"
   ]
 }

@@ -14,5 +14,27 @@
     "FrancoSoldier3",
     "FrancoSoldier4",
     "ImperialSpacecraft"
+  ],
+  "zoneNames": [
+    "ladder",
+    "to_emperor_room1",
+    "to_emperor_room2",
+    "to_emperor_room3",
+    "trash_can1",
+    "trash_can2",
+    "to_control_tower",
+    "cam_underground_passage1",
+    "cam_underground_passage2",
+    "manhole_cover",
+    "underground_passage2",
+    "underground_passage1",
+    "door_to_emperor_room1",
+    "door_to_emperor_room2",
+    "underground_passage3",
+    "cam_underground_passage3",
+    "door_to_emperor_room3",
+    "control_tower_door",
+    "to_emperor_spacecraft",
+    "cam_behind_emperor_spacecraft"
   ]
 }

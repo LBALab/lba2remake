@@ -14,5 +14,29 @@
     "Door4",
     "FrancoSpearGuard",
     "Pointer"
+  ],
+  "zoneNames": [
+    "to_previous_room",
+    "to_next_room",
+    "gas_ejector1",
+    "gas_ejector2",
+    "gas_ejector3",
+    "gas_ejector4",
+    "gas_ejector5",
+    "gas_ejector6",
+    "gas_ejector7",
+    "gas_ejector8",
+    "gas_ejector9",
+    "cam_door_to_next_room",
+    "cam_moving_platform_start",
+    "entrance_area",
+    "door_to_next_room",
+    "small_gas_ejector1",
+    "small_gas_ejector2",
+    "small_gas_ejector3",
+    "small_gas_ejector4",
+    "small_gas_ejector5",
+    "small_gas_ejector6",
+    "small_gas_ejector7"
   ]
 }

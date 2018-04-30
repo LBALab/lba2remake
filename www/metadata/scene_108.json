@@ -7,5 +7,20 @@
     "FrancoSpearGuard",
     "ImperialFlag1",
     "ImperialFlag2"
+  ],
+  "zoneNames": [
+    "to_village",
+    "to_refinery1",
+    "to_refinery2",
+    "to_refinery_balcony",
+    "to_zeppelin_port",
+    "cam_refinery_balcony",
+    "barrel1",
+    "barrel2",
+    "barrel3",
+    "barrel4",
+    "refinery_map_front",
+    "cam_refinery_map",
+    "refinery_map_back"
   ]
 }

@@ -15,5 +15,27 @@
     "Door3",
     "Door4",
     "FrancoSpearGuard"
+  ],
+  "zoneNames": [
+    "to_prefious_room",
+    "to_gas_tanks_bonus_room",
+    "bonus_room_entrance_gap",
+    "to_next_room",
+    "barrel1",
+    "gas_ejector1",
+    "barrel2",
+    "barrel3",
+    "gas_ejector2",
+    "gas_ejector3",
+    "gas_ejector4",
+    "gas_ejector5",
+    "upstairs_area",
+    "door_to_next_room",
+    "door_to_previous_room",
+    "small_gas_ejector1",
+    "small_gas_ejector2",
+    "small_gas_ejector3",
+    "small_gas_ejector4",
+    "elevator"
   ]
 }

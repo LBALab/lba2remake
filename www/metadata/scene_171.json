@@ -7,5 +7,10 @@
     "LifePointsVending",
     "MagicPointsVending",
     "FryingPanPointer"
+  ],
+  "zoneNames": [
+    "cam_room",
+    "to_village",
+    "flower_pot"
   ]
 }

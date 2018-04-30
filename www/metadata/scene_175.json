@@ -4,5 +4,14 @@
     null,
     "RogerBrother",
     "Pointer"
+  ],
+  "zoneNames": [
+    "to_village",
+    "flower_pot1",
+    "flower_pot2",
+    "flower_pot3",
+    "cam_entrace_area",
+    "cam_deepest_area",
+    "closet"
   ]
 }
