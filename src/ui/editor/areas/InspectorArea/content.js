@@ -222,7 +222,7 @@ export class InspectorContent extends React.Component {
             return null;
         }
 
-        const isPure = isPureFunc(fct);
+        const isPure = isPureFunc(fct, last(path), parent);
 
         const paramNames = getParamNames(fct);
 
@@ -280,14 +280,14 @@ export class InspectorContent extends React.Component {
 
         return <div style={funcEditorStyle}>
             {!isPure &&
-                <span style={{color: 'red'}}>
-                    Warning!<br/>
-                    <small>
-                        This is an unpure function, calling it will change the game state,
-                        and may cause crashes if not called appropriately. Use with caution!
-                    </small>
-                    <br/>
-                </span>}
+                <div style={{color: 'red'}}>
+                    <div style={{textAlign: 'center'}}>WARNING!</div>
+                    <p>
+                        This function is unpure, calling it will change the game state.
+                        It may cause crashes if not called appropriately.
+                        Use with caution!
+                    </p>
+                </div>}
             <div style={titleStyle}>
                 {path.join('.')}
                 (<span style={{color: 'grey'}}>{paramNames.join(', ')}</span>)

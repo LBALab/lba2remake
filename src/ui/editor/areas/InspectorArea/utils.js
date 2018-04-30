@@ -114,7 +114,21 @@ const pureFunctionsByType = [
     }
 ];
 
-export const isPureFunc = obj => isFunction(obj) && obj.__pure_function === true;
+export function isPureFunc(obj, key, parent) {
+    if (isFunction(obj)) {
+        // eslint-disable-next-line no-underscore-dangle
+        if (obj.__pure_function === true) {
+            return true;
+        }
+        for (let i = 0; i < pureFunctionsByType.length; i += 1) {
+            const pf = pureFunctionsByType[i];
+            if (parent instanceof pf.type) {
+                return pf.pure.includes(key);
+            }
+        }
+    }
+    return false;
+}
 
 export function getAllowedKinds(parent, key, idx) {
     let allowedKinds = ['g', 'e'];

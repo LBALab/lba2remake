@@ -66,7 +66,7 @@ export const InspectorNode = (
     name: () => name,
     numChildren: (data, ignored, component) => {
         let obj = getObj(data, root);
-        if (isPureFunc(obj)) {
+        if (isPureFunc(obj, name, parent)) {
             obj = applyFctFromComponent(obj, parent, component);
         }
         if (typeof (obj) === 'string' || obj instanceof CustomValue)
@@ -75,7 +75,7 @@ export const InspectorNode = (
     },
     child: (data, idx, component) => {
         let obj = getObj(data, root);
-        if (isPureFunc(obj)) {
+        if (isPureFunc(obj, name, parent)) {
             obj = applyFctFromComponent(obj, parent, component);
         }
         return InspectorNode(
@@ -89,7 +89,7 @@ export const InspectorNode = (
     },
     childData: (data, idx, component) => {
         let obj = getObj(data, root);
-        if (isPureFunc(obj)) {
+        if (isPureFunc(obj, name, parent)) {
             obj = applyFctFromComponent(obj, parent, component);
         }
         const k = getKeys(obj)[idx];
@@ -98,7 +98,7 @@ export const InspectorNode = (
     color: (data) => {
         const obj = getObj(data, root);
         if (isFunction(obj)) {
-            if (isPureFunc(obj)) {
+            if (isPureFunc(obj, name, parent)) {
                 return '#5cffa9';
             }
             return '#3d955d';
