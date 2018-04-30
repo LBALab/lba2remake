@@ -16,6 +16,9 @@ module.exports = {
             'glsl-custom-loader': path.join(__dirname, './utils/webpack-loaders/glsl_loader.js')
         }
     },
+    optimization: {
+        minimize: false
+    },
     module: {
         rules: [{
             test: /\.jsx?$/,
@@ -23,8 +26,10 @@ module.exports = {
             use: [{
                 loader: 'babel-loader',
                 options: {
-                    'presets': ['react', 'env', 'flow'],
-                    'plugins': [
+                    presets: ['react', 'env', 'flow', ['minify', {
+                        mangle: false
+                    }]],
+                    plugins: [
                         path.join(__dirname, './utils/babel-transforms/location.js'),
                         'transform-decorators-legacy',
                         'transform-class-properties',

@@ -4,6 +4,7 @@
   "description": "Little Big Adventure 2, HD version, for the web",
   "dependencies": {
     "async": ">=2.6.0",
+    "babel-preset-minify": "^0.4.0",
     "eslint-loader": "^2.0.0",
     "lodash": ">=4.17.5",
     "protobufjs": "^5.0.2",
