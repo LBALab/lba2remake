@@ -24,5 +24,21 @@
     "HiddenMecaPenguin",
     "MonitorDisplay",
     "Pointer3"
+  ],
+  "zoneNames": [
+    "to_underground_passage2",
+    "to_dragon_corridor1",
+    "to_dragon_corridor2",
+    "under_elevator2",
+    "to_underground_passage1",
+    "to_underground_passage3",
+    "elevator_shaft",
+    "to_control_tower",
+    "metallic_doors",
+    "cam_imperial_elevator",
+    "sword_chest",
+    "emperors_chest",
+    "cam_time_lever_platform",
+    "fire_extiguisher"
   ]
 }
