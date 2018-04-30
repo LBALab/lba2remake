@@ -97,6 +97,9 @@ export const InspectorNode = (
     },
     childData: (data, idx, component) => {
         let obj = getObj(data, root);
+        if (obj === undefined || obj === null) {
+            return obj;
+        }
         if (isPureFunc(obj, name, parent)) {
             obj = applyFctFromComponent(obj, parent, component);
         }
