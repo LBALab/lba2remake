@@ -14,6 +14,7 @@ export function makeKeyboardControls(params: Object,
     canvas.addEventListener('keyup', onKeyUp, true);
     canvas.addEventListener('focusout', onFocusOut, true);
     return {
+        type: 'keyboard',
         dispose: () => {
             canvas.removeEventListener('keydown', onKeyDown);
             canvas.removeEventListener('keyup', onKeyUp);

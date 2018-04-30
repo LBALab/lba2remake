@@ -12,6 +12,7 @@ export function makeGyroscopeControls(game: any) {
     window.addEventListener('orientationchange', onOrientationChange, false);
     window.addEventListener('deviceorientation', onDeviceOrientation, false);
     return {
+        type: 'gyroscope',
         dispose: () => {
             window.removeEventListener('orientationchange', onOrientationChange);
             window.removeEventListener('deviceorientation', onDeviceOrientation);

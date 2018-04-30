@@ -17,6 +17,7 @@ export function makeFirstPersonMouseControls(params: Object, domElement: HTMLEle
     domElement.addEventListener('click', onClick, false);
 
     return {
+        type: 'mouse(FPS)',
         dispose: () => {
             document.removeEventListener('mousemove', onMouseMove, false);
             document.removeEventListener('pointerlockchange', onPointerLockChange);

@@ -17,6 +17,7 @@ export function makeFirstPersonTouchControls(game: any) {
     // document.addEventListener('touchend', onTouchEnd, false);
 
     return {
+        type: 'touch',
         dispose: () => {
             document.removeEventListener('touchmove', onTouchMove, false);
             // document.removeEventListener('touchend', onTouchEnd, false);

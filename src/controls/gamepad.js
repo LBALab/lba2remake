@@ -13,6 +13,7 @@ export function makeGamepadControls(sceneManager: Object, game: Object) {
     window.addEventListener('dpadvaluechanged', onDpadValueChanged, false);
     window.addEventListener('gamepadbuttonpressed', onButtonPressed, false);
     return {
+        type: 'gamepad',
         dispose: () => {
             window.removeEventListener('dpadvaluechanged', onDpadValueChanged);
             window.removeEventListener('gamepadbuttonpressed', onButtonPressed);
