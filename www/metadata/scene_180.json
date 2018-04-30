@@ -27,5 +27,11 @@
     "HiddenItem21",
     "WalrusGasMonster",
     "BlueGasMonster"
+  ],
+  "zoneNames": [
+    "to_emperor_room_left_elevator",
+    "left_elevator",
+    "to_emperor_room_right_elevator",
+    "right_elevator"
   ]
 }
