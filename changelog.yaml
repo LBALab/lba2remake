@@ -1,16 +1,34 @@
 versions:
   - tag: 0.0.14-dev
-    title: Pending patch release
+    title: Inspector + Actor collisions + Metadata
     project: https://github.com/agrande/lba2remake/projects/10
     changes:
+      - name: Inspector area in editor
+        issues:
+          - (GOAL) Replacing the DebugHUD in helping to observe the engine's internals in a more approachable way
+          - (FEATURE) Explore tab lets you explore a tree of relevant game data
+          - (FEATURE) Right click on an item to watch it
+          - (FEATURE) Edit functions parameter binding and add watch on function calls
+          - (FEATURE) Support pure and unpure functions differently (unpure ones are called only on a button press)
+          - (FEATURE) Utils tab gives you some useful functions to bind against
+          - (FEATURE) Display function location with github link if properly annotated with @locate(__location) and available in scope
+      - name: Metadata
+        issues:
+          - (ACTORS) Almost, if not all actors in the game are named (Thanks @SendellX)
+          - (ZONES) Many scenes are covered already (Thanks @SendellX)
       - name: Features
         issues:
+          - (15)
       - name: Bugfixes
         issues:
           - (151)
+          - (232)
       - name: Code quality
         issues:
           - (191)
+          - Introduced @decorators
+          - Updated build system (webpack)
+          - Quite a bit of refactoring
 
   - tag: 0.0.13
     title: Patch release
