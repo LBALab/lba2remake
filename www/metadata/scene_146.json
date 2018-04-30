@@ -3,5 +3,8 @@
     null,
     null,
     "NutsItem"
+  ],
+  "zoneNames": [
+    "to_last_room"
   ]
 }
