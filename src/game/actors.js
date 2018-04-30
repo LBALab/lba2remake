@@ -10,6 +10,7 @@ import {loadSprite} from '../iso/sprites';
 
 import {getObjectName} from '../ui/editor/DebugData';
 import {pure, locate} from '../decorators';
+import {runScript} from '../scripting';
 
 type ActorFlags = {
     hasCollisions: boolean,
@@ -98,7 +99,12 @@ export function loadActor(params: Object,
         model: null,
         threeObject: null,
         animState,
-        runScripts: null,
+        runScripts(time) {
+            if (this.scripts) {
+                runScript(params, this.scripts.life, time);
+                runScript(params, this.scripts.move, time);
+            }
+        },
         reset() {
             this.resetAnimState();
             this.resetPhysics();

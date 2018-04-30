@@ -14,14 +14,10 @@ export function loadScripts(params, game, scene) {
     });
     each(scene.actors, (actor) => {
         compileScripts(game, scene, actor);
-        actor.runScripts = (time) => {
-            runScript(params, actor.scripts.life, time);
-            runScript(params, actor.scripts.move, time);
-        };
     });
 }
 
-function runScript(params, script, time) {
+export function runScript(params, script, time) {
     const instructions = script.instructions;
     const commands = script.commands;
     const context = script.context;
