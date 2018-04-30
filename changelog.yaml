@@ -1,5 +1,5 @@
 versions:
-  - tag: 0.0.14-dev
+  - tag: 0.0.14
     title: Inspector + Actor collisions + Metadata
     project: https://github.com/agrande/lba2remake/projects/10
     changes:
