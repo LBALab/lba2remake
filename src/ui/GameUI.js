@@ -215,7 +215,7 @@ export default class GameUI extends FrameListener {
                 this.hideMenu();
                 break;
             }
-            case 71: { // New GameUI
+            case 71: { // New Game
                 this.hideMenu();
                 const that = this;
                 const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
