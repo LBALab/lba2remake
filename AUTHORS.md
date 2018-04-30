@@ -12,14 +12,15 @@
 * @chucksellick
 
 ### Metadata
+* Sara González Ramajo (@SendellX)
 * Jeffrey Veenhuis (@Jeffroiscool)
-* Hinatangel
 
 ### Bug Reports & Feature Suggestions
 * Felipe Corrêa da Silva Sanches
 * Michel Sterenberg (via Facebook)
 * João Paulo Tiz (via Facebook)
 * Jeffrey Veenhuis (@Jeffroiscool)
+* Sara González Ramajo (@SendellX)
 
 ## Special Thanks
 * Frédérick Raynal for supporting this project from its early stages
