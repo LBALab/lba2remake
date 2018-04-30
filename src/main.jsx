@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Ticker from './ui/utils/Ticker';
-import Game from './ui/Game';
+import GameUI from './ui/GameUI';
 import Editor from './ui/Editor';
 import Popup from './ui/Popup';
 import {loadParams} from './params';
@@ -53,7 +53,7 @@ class Root extends React.Component {
         if (this.state.params.editor) {
             content = <Editor params={this.state.params} ticker={this.props.ticker} />;
         } else {
-            content = <Game params={this.state.params} ticker={this.props.ticker} />;
+            content = <GameUI params={this.state.params} ticker={this.props.ticker} />;
         }
         return <div>
             {content}

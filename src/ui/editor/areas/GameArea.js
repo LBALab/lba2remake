@@ -1,5 +1,5 @@
 import {clone} from 'lodash';
-import Game from '../../Game';
+import GameUI from '../../GameUI';
 import ScriptEditorArea from './ScriptEditorArea';
 import InspectorArea from './InspectorArea';
 import {SceneOutliner, Locator} from './OutlinerArea';
@@ -10,7 +10,7 @@ const GameArea = {
     id: 'game',
     name: 'Gameplay Editor',
     menu: GameMenu,
-    content: Game,
+    content: GameUI,
     icon: 'game.png',
     mainArea: true,
     getInitialState: () => ({

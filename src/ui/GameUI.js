@@ -23,8 +23,10 @@ import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
 import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
+import {locate, pure} from '../decorators';
+import {sBind} from '../utils';
 
-export default class Game extends FrameListener {
+export default class GameUI extends FrameListener {
     constructor(props) {
         super(props);
 
@@ -35,6 +37,8 @@ export default class Game extends FrameListener {
         this.onGameReady = this.onGameReady.bind(this);
         this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
         this.onMenuItemChanged = this.onMenuItemChanged.bind(this);
+        this.setUiState = sBind(this.setUiState, this);
+        this.getUiState = sBind(this.getUiState, this);
         this.listener = this.listener.bind(this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
@@ -42,13 +46,17 @@ export default class Game extends FrameListener {
 
         if (props.mainData) {
             const state = props.mainData.state;
-            state.game.setUiState = this.setUiState.bind(this);
-            state.game.getUiState = () => this.state;
+            state.game.setUiState = this.setUiState;
+            state.game.getUiState = this.getUiState;
             this.state = state;
         } else {
             const clock = new THREE.Clock(false);
-            const game =
-                createGame(props.params, clock, this.setUiState.bind(this), () => this.state);
+            const game = createGame(
+                props.params,
+                clock,
+                this.setUiState,
+                this.getUiState
+            );
 
             this.state = {
                 clock,
@@ -71,8 +79,15 @@ export default class Game extends FrameListener {
         }
     }
 
+    @locate(__location)
     setUiState(state) {
         this.setState(state, this.saveData);
+    }
+
+    @pure
+    @locate(__location)
+    getUiState() {
+        return this.state;
     }
 
     saveData() {
@@ -200,7 +215,7 @@ export default class Game extends FrameListener {
                 this.hideMenu();
                 break;
             }
-            case 71: { // New Game
+            case 71: { // New GameUI
                 this.hideMenu();
                 const that = this;
                 const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
@@ -241,6 +256,7 @@ export default class Game extends FrameListener {
                 clock,
                 renderer,
                 scene,
+                sceneManager,
                 hero: scene && scene.actors[0],
                 controls,
                 ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls', 'scene')
