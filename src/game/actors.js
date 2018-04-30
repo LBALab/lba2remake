@@ -99,24 +99,34 @@ export function loadActor(params: Object,
         model: null,
         threeObject: null,
         animState,
+
+        @locate(__location)
         runScripts(time) {
             if (this.scripts) {
                 runScript(params, this.scripts.life, time);
                 runScript(params, this.scripts.move, time);
             }
         },
+
+        @locate(__location)
         reset() {
             this.resetAnimState();
             this.resetPhysics();
             this.isKilled = false;
             this.floorSound = -1;
         },
+
+        @locate(__location)
         resetAnimState() {
             resetAnimState(this.animState);
         },
+
+        @locate(__location)
         resetPhysics() {
             this.physics = initPhysics(props);
         },
+
+        @locate(__location)
         goto(point) {
             this.physics.temp.destination = point;
             let destAngle = angleTo(this.physics.position, point);
@@ -134,6 +144,8 @@ export function loadActor(params: Object,
             this.props.runtimeFlags.isTurning = true;
             return this.getDistance(point);
         },
+
+        @locate(__location)
         facePoint(point) {
             let destAngle = angleTo(this.physics.position, point);
             const signCurr = this.physics.temp.destAngle > 0 ? 1 : -1;
@@ -148,26 +160,35 @@ export function loadActor(params: Object,
             this.physics.temp.destAngle = destAngle;
             this.props.runtimeFlags.isTurning = true;
         },
+
+        @locate(__location)
         setAngle(angle) {
             this.props.runtimeFlags.isTurning = true;
             this.props.angle = angle;
             this.physics.temp.destAngle = angleToRad(angle);
         },
+
         @pure
         @locate(__location)
         getDistance(pos) {
             return distance2D(this.physics.position, pos);
         },
+
         @pure
+        @locate(__location)
         getDistanceLba(pos) {
             return getDistanceLba(this.getDistance(pos));
         },
+
+        @locate(__location)
         stop() {
             this.props.runtimeFlags.isWalking = false;
             this.props.runtimeFlags.isTurning = false;
             this.physics.temp.destAngle = this.physics.temp.angle;
             delete this.physics.temp.destination;
         },
+
+        @locate(__location)
         loadMesh(callback: Function) {
             const that = this;
             // only if not sprite actor
@@ -212,6 +233,8 @@ export function loadActor(params: Object,
                 });
             }
         },
+
+        @locate(__location)
         reload(scene) {
             if (this.threeObject) {
                 this.threeObject.visible = false;

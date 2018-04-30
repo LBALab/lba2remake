@@ -13,6 +13,7 @@ import {createBoundingBox} from '../utils/rendering';
 
 import islandsInfo from './data/islands';
 import environments from './data/environments';
+import {locate} from '../decorators';
 
 const islandProps = {};
 each(islandsInfo, (island) => {
@@ -112,6 +113,8 @@ function loadIslandNode(params, props, files, ambience) {
         sections: map(layout.groundSections, section => ({x: section.x, z: section.z})),
         threeObject: islandObject,
         physics: loadIslandPhysics(sections),
+
+        @locate(__location)
         update: (game, scene, time) => {
             updateShadows(scene, matByName);
             seaTimeUniform.value = time.elapsed;

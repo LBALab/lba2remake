@@ -6,6 +6,7 @@ import {loadGrid} from './grid';
 import {processCollisions} from './physics';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
+import {locate} from '../decorators';
 
 export function loadIsometricScenery(renderer, entry, callback) {
     async.auto({
@@ -27,6 +28,8 @@ export function loadIsometricScenery(renderer, entry, callback) {
             physics: {
                 processCollisions: processCollisions.bind(null, grid)
             },
+
+            @locate(__location)
             update: () => {}
         });
     });

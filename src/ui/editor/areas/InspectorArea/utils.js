@@ -3,6 +3,7 @@ import {isFunction, map, filter, noop, concat} from 'lodash';
 import * as THREE from 'three';
 import DebugData, {getObjectName} from '../../DebugData';
 import {pure} from '../../../../decorators';
+import {getParamNames} from '../../../../utils';
 
 const allowedNameTypes = ['actor', 'zone', 'point'];
 
@@ -39,13 +40,11 @@ export const UtilFunctions = {
     },
     __cb_info: {
         map: ['', 'item,idx,collection'],
+        filter: ['', 'item,idx,collection'],
     }
 };
 
 export const RootSym = 'this';
-
-const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-const ARGUMENT_NAMES = /([^\s,]+)/g;
 
 const vecData = {
     pure: ['getComponent', 'equals', 'min', 'max', 'lengthSq', 'length', 'manhattanLength', 'toArray'],
@@ -147,14 +146,6 @@ export function getAllowedKinds(parent, key, idx) {
         }
     }
     return allowedKinds;
-}
-
-export function getParamNames(func) {
-    const fnStr = func.toString().replace(STRIP_COMMENTS, '');
-    let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
-    if (result === null)
-        result = [];
-    return result;
 }
 
 export function getValue(path, baseScope, bindings) {

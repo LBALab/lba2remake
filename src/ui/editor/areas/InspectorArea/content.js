@@ -5,9 +5,10 @@ import {makeContentComponent} from '../OutlinerArea/content';
 import {InspectorNode} from './node';
 import {editor} from '../../../styles';
 import DebugData from '../../DebugData';
-import {RootSym, applyFunction, getParamNames, getValue, getAllowedKinds, UtilFunctions, isPureFunc} from './utils';
+import {RootSym, applyFunction, getValue, getAllowedKinds, UtilFunctions, isPureFunc} from './utils';
 import {CustomValue} from './value';
 import {version} from '../../../../../package.json';
+import {getParamNames} from '../../../../utils';
 
 const headerStyle = {
     position: 'absolute',

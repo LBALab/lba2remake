@@ -4,7 +4,8 @@ import * as THREE from 'three';
 import {map, filter, concat, isFunction, isEmpty, uniq} from 'lodash';
 import DebugData from '../../DebugData';
 import {CustomValue, Value} from './value';
-import {RootSym, applyFunction, getParamNames, isPureFunc} from './utils';
+import {RootSym, applyFunction, isPureFunc} from './utils';
+import {getParamNames} from '../../../../utils';
 
 const getObj = (data, root) => {
     if (root)
