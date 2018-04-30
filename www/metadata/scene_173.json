@@ -4,5 +4,10 @@
     null,
     "MrKurtz",
     "CandlePointer"
+  ],
+  "zoneNames": [
+    "to_village",
+    "cam_room",
+    "golden_globe"
   ]
 }
