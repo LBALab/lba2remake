@@ -13,7 +13,7 @@ import {
 } from './cameras';
 import Cardboard from './utils/Cardboard';
 import {EngineError} from '../crash_reporting';
-import {pure} from '../decorators';
+import {locate, pure} from '../decorators';
 
 const PixelRatioMode = {
     DEVICE: () => window.devicePixelRatio || 1.0,
@@ -44,41 +44,6 @@ export function createRenderer(params, canvas) {
 
     displayRenderMode();
 
-    const renderer = {
-        canvas,
-        render: (scene) => {
-            tgtRenderer.antialias = antialias;
-            const camera = scene.isIsland ? camera3D : cameraIso;
-            if (antialias) {
-                smaa.render(scene.threeScene, camera);
-            } else {
-                tgtRenderer.render(scene.threeScene, camera);
-            }
-        },
-        applySceneryProps: (props) => {
-            const sc = props.envInfo.skyColor;
-            const color = new THREE.Color(sc[0], sc[1], sc[2]);
-            baseRenderer.setClearColor(color.getHex(), 1);
-        },
-        stats,
-        cameras: {
-            camera3D,
-            isoCamera: cameraIso
-        },
-        resize: (width = tgtRenderer.getSize().width, height = tgtRenderer.getSize().height) => {
-            tgtRenderer.setSize(width, height);
-            resize3DCamera(camera3D, width, height);
-            resizeIsometricCamera(cameraIso, getPixelRatio(), width, height);
-        },
-        @pure
-        getMainCamera: scene => (scene && typeof (scene.isIsland) === 'boolean'
-            ? (scene.isIsland ? camera3D : cameraIso)
-            : null),
-        @pure
-        pixelRatio: getPixelRatio,
-        setPixelRatio(value) { baseRenderer.setPixelRatio(value); }
-    };
-
     function keyListener(event) {
         if (event.code === 'KeyH') {
             antialias = !antialias;
@@ -94,11 +59,55 @@ export function createRenderer(params, canvas) {
         }
     }
 
-    window.addEventListener('keydown', keyListener);
-
-    renderer.dispose = () => {
-        window.removeEventListener('keydown', keyListener);
+    const renderer = {
+        @locate(__location)
+        canvas,
+        @locate(__location)
+        render: (scene) => {
+            tgtRenderer.antialias = antialias;
+            const camera = scene.isIsland ? camera3D : cameraIso;
+            if (antialias) {
+                smaa.render(scene.threeScene, camera);
+            } else {
+                tgtRenderer.render(scene.threeScene, camera);
+            }
+        },
+        @locate(__location)
+        applySceneryProps: (props) => {
+            const sc = props.envInfo.skyColor;
+            const color = new THREE.Color(sc[0], sc[1], sc[2]);
+            baseRenderer.setClearColor(color.getHex(), 1);
+        },
+        @locate(__location)
+        stats,
+        @locate(__location)
+        cameras: {
+            camera3D,
+            isoCamera: cameraIso
+        },
+        @locate(__location)
+        resize: (width = tgtRenderer.getSize().width, height = tgtRenderer.getSize().height) => {
+            tgtRenderer.setSize(width, height);
+            resize3DCamera(camera3D, width, height);
+            resizeIsometricCamera(cameraIso, getPixelRatio(), width, height);
+        },
+        @pure
+        @locate(__location)
+        getMainCamera: scene => (scene && typeof (scene.isIsland) === 'boolean'
+            ? (scene.isIsland ? camera3D : cameraIso)
+            : null),
+        @pure
+        @locate(__location)
+        pixelRatio: getPixelRatio,
+        @locate(__location)
+        setPixelRatio(value) { baseRenderer.setPixelRatio(value); },
+        @locate(__location)
+        dispose() {
+            window.removeEventListener('keydown', keyListener);
+        }
     };
+
+    window.addEventListener('keydown', keyListener);
 
     return renderer;
 }

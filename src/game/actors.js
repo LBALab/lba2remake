@@ -9,7 +9,7 @@ import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
 import {loadSprite} from '../iso/sprites';
 
 import {getObjectName} from '../ui/editor/DebugData';
-import {pure} from '../decorators';
+import {pure, locate} from '../decorators';
 
 type ActorFlags = {
     hasCollisions: boolean,
@@ -148,6 +148,7 @@ export function loadActor(params: Object,
             this.physics.temp.destAngle = angleToRad(angle);
         },
         @pure
+        @locate(__location)
         getDistance(pos) {
             return distance2D(this.physics.position, pos);
         },

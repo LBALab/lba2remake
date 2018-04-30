@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React from 'react';
 import * as THREE from 'three';
 import {map, filter, concat, isFunction, isEmpty, uniq} from 'lodash';
@@ -64,6 +65,12 @@ export const InspectorNode = (
     dynamic: true,
     icon: () => 'none',
     name: () => name,
+    title: (data) => {
+        const obj = getObj(data, root);
+        if (obj && obj.__location)
+            return obj.__location;
+        return undefined;
+    },
     numChildren: (data, ignored, component) => {
         let obj = getObj(data, root);
         if (isPureFunc(obj, name, parent)) {

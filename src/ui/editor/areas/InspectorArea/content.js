@@ -17,7 +17,8 @@ const headerStyle = {
     padding: 4,
     textAlign: 'left',
     background: '#333333',
-    borderBottom: '1px solid gray'
+    borderBottom: '1px solid gray',
+    userSelect: 'none'
 };
 
 const mainStyle = {

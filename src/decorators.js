@@ -9,3 +9,10 @@ export function pure(target, name, descriptor) {
     }
     return descriptor;
 }
+
+export function locate(location) {
+    return (target, name, descriptor) => {
+        target[name].__location = location;
+        return descriptor;
+    };
+}

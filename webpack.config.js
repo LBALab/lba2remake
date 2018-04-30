@@ -13,7 +13,7 @@ module.exports = {
     },
     resolveLoader: {
         alias: {
-            'glsl-custom-loader': path.join(__dirname, "./utils/webpack-loaders/glsl_loader.js")
+            'glsl-custom-loader': path.join(__dirname, './utils/webpack-loaders/glsl_loader.js')
         }
     },
     module: {
@@ -25,9 +25,8 @@ module.exports = {
                 options: {
                     'presets': ['react', 'env', 'flow'],
                     'plugins': [
+                        path.join(__dirname, './utils/babel-transforms/location.js'),
                         'transform-decorators-legacy',
-                        'transform-dirname-filename',
-                        'transform-line',
                         'transform-class-properties',
                         'transform-object-rest-spread'
                     ]

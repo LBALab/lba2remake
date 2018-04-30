@@ -14,6 +14,11 @@ export class CustomValue {
     }
 }
 
+const selectStyle = {
+    userSelect: 'text',
+    cursor: 'text'
+};
+
 export function Value({value}) {
     if (value === undefined) {
         return <span style={{color: 'darkgrey', fontStyle: 'italic'}}>undefined</span>;
@@ -28,7 +33,9 @@ export function Value({value}) {
         return <span style={{color: 'red', fontStyle: 'italic'}}>Error: {value.message}</span>;
     }
     if (typeof (value) === 'string') {
-        return <span style={{color: 'orange'}}>&apos;{value}&apos;</span>;
+        return <span style={{color: 'orange'}}>
+            &apos;<span style={selectStyle}>{value}</span>&apos;
+        </span>;
     }
     if (typeof (value) === 'boolean') {
         return <span style={{color: value ? 'lime' : 'red', fontStyle: 'italic'}}>{value ? 'true' : 'false'}</span>;

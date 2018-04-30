@@ -181,6 +181,9 @@ export default class Node extends React.Component {
             node.onDoubleClick.bind(null, this.props.data, this) : noop;
 
         const color = (isFunction(node.color) ? this.call('color') : node.color) || 'inherit';
+        const title = node.title
+            ? (isFunction(node.title) ? this.call('title') : node.title)
+            : undefined;
 
         const nameStyle = {
             cursor: 'pointer',
@@ -240,6 +243,7 @@ export default class Node extends React.Component {
         };
 
         return <span
+            title={title}
             style={nameStyle}
             onClick={onClick}
             onDoubleClick={onDoubleClick}
