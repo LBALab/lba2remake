@@ -27,5 +27,21 @@
     "FishBullPoop2",
     "FishBullPoop3",
     "FishBullPoop4"
+  ],
+  "zoneNames": [
+    "to_previous_room",
+    "to_secret_bonus_room",
+    "to_outside_refinery",
+    "bonus_room_entrance_gap",
+    "gas_ejector",
+    "spear_guard_area",
+    "fish_bull_area",
+    "near_door_to_outside_refinery",
+    "door_to_outside_refinery",
+    "door_to_previous_room",
+    "small_gas_ejector1",
+    "gas_trap_area1",
+    "gas_trap_area2",
+    "small_gas_ejector2"
   ]
 }
