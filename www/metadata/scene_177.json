@@ -5,5 +5,16 @@
     "ItineraryToken",
     "Hussar1",
     "Hussar2"
+  ],
+  "zoneNames": [
+    "to_switches_room",
+    "ladder_bottom_area",
+    "to_control_room_upstairs",
+    "to_control_room_downstairs1",
+    "to_control_room_downstairs2",
+    "ladder_upper_area",
+    "barrel1",
+    "barrel2",
+    "ladder_area"
   ]
 }
