@@ -19,5 +19,24 @@
     "KeyBox",
     "Door5",
     "Door6"
+  ],
+  "zoneNames": [
+    "to_outside_refinery1",
+    "to_outside_refinery2",
+    "to_next_room",
+    "barrel1",
+    "spear_guard_area",
+    "elevator",
+    "gas_ejector1",
+    "gas_ejector2",
+    "gas_ejector3",
+    "gas_ejector4",
+    "gas_ejector5",
+    "gas_ejector6",
+    "gas_ejector7",
+    "door_to_next_room",
+    "door_to_outside_refinery2",
+    "door_to_outside_refinery1",
+    "barrel2"
   ]
 }
