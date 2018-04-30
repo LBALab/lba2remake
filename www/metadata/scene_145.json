@@ -5,5 +5,8 @@
     "NutsItem1",
     "NutsItem2",
     "NutsItem3"
+  ],
+  "zoneNames": [
+    "to_previous_room"
   ]
 }
