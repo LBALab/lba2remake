@@ -10,5 +10,11 @@
     "RedPigMan",
     "YellowPigMan",
     "BrownPigMan"
+  ],
+  "zoneNames": [
+    "to_top_right1",
+    "to_top_left2",
+    "to_final_boss_room",
+    "cam_room"
   ]
 }
