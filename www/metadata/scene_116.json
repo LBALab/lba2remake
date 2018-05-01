@@ -7,5 +7,14 @@
     "AnnieHousemaid",
     "WannieKidToys",
     "WannieKidStanding"
+  ],
+  "zoneNames": [
+    "to_church_building",
+    "shelf",
+    "chest",
+    "stones",
+    "flower_pot",
+    "table_objects",
+    "monster_painting"
   ]
 }
