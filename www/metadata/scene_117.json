@@ -13,5 +13,12 @@
     "PickWannieMiner2",
     null,
     "Pointer"
+  ],
+  "zoneNames": [
+    "to_outside",
+    "sacred_water1",
+    "sacred_water2",
+    "sacred_pillar1",
+    "sacred_pillar2"
   ]
 }
