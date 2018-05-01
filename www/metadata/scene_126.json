@@ -7,5 +7,13 @@
     "FrancoSpearGuard",
     "ClosedBox1",
     "ClosedBox2"
+  ],
+  "zoneNames": [
+    "to_mine_area",
+    "ladder",
+    "to_roof",
+    "boxes",
+    "boxes_area",
+    "ladder_area"
   ]
 }
