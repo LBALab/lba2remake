@@ -10,5 +10,22 @@
     "FrancoTechnician",
     "FrancoPolice1",
     "FrancoPolice2"
+  ],
+  "zoneNames": [
+    "to_dog_training_center",
+    "cam_spaceport_center",
+    "to_control_tower",
+    "cam_control_tower",
+    "to_spaceport1",
+    "cam_spaceport_doors",
+    "to_esmer_spacecraft",
+    "cam_esmer_spacecraft1",
+    "to_spaceport2",
+    "landing_platform",
+    "cam_esmer_spacecraft2",
+    "spaceport_doors_front",
+    "astroport_map_front",
+    "astroport_map_back",
+    "cam_astroport_map"
   ]
 }
