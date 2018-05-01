@@ -26,5 +26,33 @@
     "FrancoLaserGuard3",
     "SupBankManager",
     "SupCrazyGlasses"
+  ],
+  "zoneNames": [
+    "secret_room_behind_door3",
+    "secret_room_behind_door2",
+    "secret_room_hidden_behind_door3",
+    "room_behind_door2",
+    "room_behind_door3",
+    "hidden_room_behind_door3",
+    "trash_can1",
+    "trash_can2",
+    "trash_can3",
+    "barrel1",
+    "barrel2",
+    "hidden_room_bonus1",
+    "hidden_room_bonus2",
+    "sensor_door",
+    "sensor_door_front",
+    "door_to_jail_area",
+    "laser_guard1_area",
+    "after_sensor_door_room",
+    "previous_to_jail_area",
+    "to_mine_area",
+    "hidden_room_bonus3",
+    "esmer_plant",
+    "cam_sensor_door",
+    "bank_entrance_area",
+    "hidden_rooms_corridor",
+    "first_floor_area"
   ]
 }

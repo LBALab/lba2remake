@@ -12,5 +12,16 @@
     "FireflyTart2",
     "WanniesGlove",
     "AnimatedFan"
+  ],
+  "zoneNames": [
+    "cam_entrance",
+    "cam_table",
+    "to_church_building",
+    "food_pot",
+    "chest",
+    "flower_pot",
+    "schmoutz_jail",
+    "shelf",
+    "monster_painting"
   ]
 }

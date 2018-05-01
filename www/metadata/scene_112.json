@@ -22,5 +22,20 @@
     null,
     null,
     "Gem3"
+  ],
+  "zoneNames": [
+    "to_fragment_room",
+    "to_gem_corridor",
+    "fragment_room_door",
+    "to_mine",
+    "area_next_to_fragment_room",
+    "fragment_room_front",
+    "stones1",
+    "stones2",
+    "stones3",
+    "stones4",
+    "stones5",
+    "stones6",
+    "boulders_on_lava_lower_area"
   ]
 }

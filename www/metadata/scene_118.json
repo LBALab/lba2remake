@@ -6,5 +6,22 @@
     "ChurchLockedDoor",
     "ChurchSignPointer",
     "ChurchSign"
+  ],
+  "zoneNames": [
+    "to_firefly_tart_house",
+    "ladder1",
+    "ladder2",
+    "to_monk_home",
+    "to_stairs_to_church",
+    "stones1",
+    "stones2",
+    "stones3",
+    "church_locked_door",
+    "to_outside1",
+    "to_outside2",
+    "to_outside3",
+    "to_outside4",
+    "old_wannie_area",
+    "stones4"
   ]
 }

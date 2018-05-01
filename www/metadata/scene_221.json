@@ -9,5 +9,17 @@
     "ArmoredDoor2",
     "Hussar1",
     "Hussar2"
+  ],
+  "zoneNames": [
+    "to_control_tower_entrance1",
+    "to_control_room",
+    "to_control_tower_entrance",
+    "armored_door1",
+    "barrels1",
+    "barrels2",
+    "control_room_door",
+    "aremored_door2",
+    "barrels3",
+    "cam_hideout"
   ]
 }
