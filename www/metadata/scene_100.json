@@ -45,5 +45,30 @@
     null,
     "Gem4",
     "Gem5"
+  ],
+  "zoneNames": [
+    "entrance",
+    "stones1",
+    "stones2",
+    "cam_crane",
+    "to_passage_to_bank",
+    "ladder_near_lava_platforms",
+    "to_lower_gem_corridor",
+    "to_upper_gem_corridor",
+    "to_access_to_fragment_room",
+    "crane_entrance",
+    "area_to_fragment_room1",
+    "area_to_fragment_room2",
+    "area_to_fragment_room3",
+    "rail_turn_next_to_crane",
+    "entrance_area",
+    "area_next_to_wannie_miner3",
+    "stones3",
+    "stones4",
+    "stones5",
+    "stones6",
+    "schmoutz_jail",
+    "stones7",
+    "falling_lava_balls_rail"
   ]
 }
