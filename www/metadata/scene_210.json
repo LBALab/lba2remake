@@ -30,5 +30,21 @@
     "UnsettledFranco",
     "FrancoDancer",
     "NoisyFranco"
+  ],
+  "zoneNames": [
+    "to_rehearsal_room",
+    "to_rick_office",
+    "to_harbour",
+    "rigid_plant1",
+    "rigid_plant2",
+    "rigid_plant3",
+    "gloum_area",
+    "bodyguard1_area",
+    "office_door",
+    "bodyguard3_area",
+    "railing",
+    "stage",
+    "behind_curtains_area",
+    "gramitte_painting"
   ]
 }
