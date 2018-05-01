@@ -15,5 +15,19 @@
     "Gemstones",
     "AnimatedFan",
     "FishBull"
+  ],
+  "zoneNames": [
+    "to_mine",
+    "to_outside_mine_area",
+    "entrance_to_mine",
+    "entrance_to_mine_front",
+    "to_box_transit_room",
+    "rail_turn_near_conveyor_belt",
+    "hole_to_box_transit_room",
+    "rail_turn_to_mine",
+    "stones1",
+    "stones2",
+    "conveyor_belt",
+    "fish_bull_area"
   ]
 }
