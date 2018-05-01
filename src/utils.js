@@ -8,7 +8,7 @@ export function bits(bitfield: number, offset: number, length: number) : number 
 const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES = /([^\s,]+)/g;
 
-export function getParamNames(func) {
+export function getParamNames(func: Function) {
     if (func.__param_names) {
         return func.__param_names;
     }
@@ -21,7 +21,9 @@ export function getParamNames(func) {
 
 export function sBind(fct: Function, thisValue: any, ...args: any) {
     const tgt = fct.bind(thisValue, ...args);
-    tgt.__param_names = getParamNames(fct).slice(args.length);
+    const paramNames = getParamNames(fct);
+    if (paramNames && paramNames.length > 0)
+        tgt.__param_names = paramNames.slice(args.length);
     if (fct.__pure_function) {
         tgt.__pure_function = fct.__pure_function;
     }
