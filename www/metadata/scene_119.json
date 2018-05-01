@@ -8,5 +8,13 @@
     "Firefly1",
     "Firefly2",
     "Firefly3"
+  ],
+  "zoneNames": [
+    "to_church_building",
+    "ladder",
+    "to_church",
+    "stones1",
+    "stones2",
+    "stones3"
   ]
 }
