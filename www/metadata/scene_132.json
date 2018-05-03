@@ -14,5 +14,18 @@
     "LavaPlatform2",
     "TorchFireballs3",
     "LavaPointer"
+  ],
+  "zoneNames": [
+    "to_cave_area",
+    "cam_ferryman_dock",
+    "ferryman_dock",
+    "cam_lava_platforms_elevated1",
+    "cam_lava_platforms_elevated2",
+    "cam_cam_lava_platforms",
+    "volcano_island_signal",
+    "cam_near_volcano_island_signal",
+    "ferryman_song_platform",
+    "cam_ferryman_song_platform",
+    "cam_way_back_end"
   ]
 }
