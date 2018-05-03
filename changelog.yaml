@@ -1,12 +1,11 @@
 versions:
-  - tag: 0.0.15-dev
-    title: Pending patch release
-    project: https://github.com/agrande/lba2remake/projects/11
+  - tag: 0.0.15
+    date: 03.05.2018
+    title: Context menu bugfix
     changes:
-      - name: Features
-        issues:
       - name: Bugfixes
         issues:
+          - Context menu not being displayed correctly
 
   - tag: 0.0.14
     date: 01.05.2018

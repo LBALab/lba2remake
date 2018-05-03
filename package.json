@@ -1,6 +1,6 @@
 {
   "name": "lba2remake",
-  "version": "0.0.15-dev",
+  "version": "0.0.15",
   "description": "Little Big Adventure 2, HD version, for the web",
   "dependencies": {
     "async": ">=2.6.0",
