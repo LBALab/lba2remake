@@ -6,5 +6,16 @@
     "FrancoLaserGuard",
     "InjuredWannie",
     "Gem"
+  ],
+  "zoneNames": [
+    "to_church_area",
+    "cam_ferryman",
+    "cam_bridge",
+    "cam_ferrymans_lane_signal",
+    "ferrymans_lane_signal_front",
+    "ferrymans_lane_signal_back",
+    "ferryman_song_platform",
+    "cam_ferryman_song_platform",
+    "to_mine_area"
   ]
 }

@@ -7,5 +7,19 @@
     "Elevator",
     "MosquibeeFragmentSafe",
     "WiseMosquibee"
+  ],
+  "zoneNames": [
+    "to_nest_area",
+    "cam_monster_field_elevated_view1",
+    "cam_monster_field_elevated_view2",
+    "cam_monster_field_elevated_view3",
+    "cam_monster_field_side_view1",
+    "cam_monster_field_side_view2",
+    "to_upper_exit_by_bridge",
+    "to_upper_exit_elevator",
+    "cam_monster_field",
+    "ladder",
+    "elevator_area",
+    "cam_elevator"
   ]
 }

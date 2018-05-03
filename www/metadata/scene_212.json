@@ -12,5 +12,30 @@
     "Valentin",
     "GoldenOwl",
     "BlueGasMonster"
+  ],
+  "zoneNames": [
+    "to_refinery_area",
+    "cam_gas_area",
+    "cam_taxi_area",
+    "cam_taxi_driver",
+    "fragment_location",
+    "to_shop",
+    "to_bar",
+    "to_mr_kurtz_house",
+    "to_nursery",
+    "to_rogers_house",
+    "mr_kurtz_notice",
+    "cam_mr_kurtz_house_right_sida",
+    "roger_de_la_fontaine_notice",
+    "golden_owl_niche",
+    "nuersery_entrance",
+    "bar_entrance",
+    "rogers_house_entrance",
+    "mr_kurtz_house_entrance",
+    "franco_village_signal_front",
+    "cam_near_franco_village_signal",
+    "franco_village_signal_back",
+    "cam_blue_gas_monster_area",
+    "cam_mr_kurtz_house"
   ]
 }

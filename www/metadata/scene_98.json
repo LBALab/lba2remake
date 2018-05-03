@@ -9,5 +9,16 @@
     null,
     "EelGasMonster",
     "MorayEelGasMonster"
+  ],
+  "zoneNames": [
+    "to_mine_area",
+    "to_church_area",
+    "to_elevator_building1",
+    "to_elevator_building2",
+    "elevator_building_doors",
+    "cam_elevator_area",
+    "under_elevator_building",
+    "elevator_shaft_area",
+    "wannies_map"
   ]
 }

@@ -3,13 +3,29 @@
     null,
     null,
     "WannieVillager",
-    "Arno",
-    "WannieMiner",
     "Johnny",
+    "WannieMiner",
+    "Arno",
     "Firefly",
     "BlueToad",
     "Mushroom1",
     "Mushroom2",
     "Mushroom3"
+  ],
+  "zoneNames": [
+    "to_ferryman_area",
+    "to_elevator_area",
+    "to_church_building_main_entrance",
+    "to_church_building1",
+    "to_church_building2",
+    "to_church_building3",
+    "cam_bonus_area1",
+    "cam_bonus_area2",
+    "cam_bonus_area3",
+    "wannies_village_signal_front",
+    "wannies_village_signal_back",
+    "cam_wannies_village_signal",
+    "waterlily",
+    "cam_blue_toad_pond"
   ]
 }

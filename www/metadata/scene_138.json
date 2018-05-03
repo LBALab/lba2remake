@@ -5,5 +5,13 @@
     "Baldino",
     "BlueGasMonster1",
     "BlueGasMonster2"
+  ],
+  "zoneNames": [
+    "cam_near_spaceship",
+    "cam_near_spaceship_elevated",
+    "to_harbour",
+    "to_dog_training_center",
+    "boulder1",
+    "boulder2"
   ]
 }

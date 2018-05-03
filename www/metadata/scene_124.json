@@ -17,5 +17,13 @@
     "Gemstones",
     "Pointer",
     "LidPlacingMachine"
+  ],
+  "zoneNames": [
+    "to_mine_area",
+    "box_stopping_area",
+    "ladder1",
+    "ladder2",
+    "barrel",
+    "conveyor"
   ]
 }

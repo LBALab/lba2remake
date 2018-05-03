@@ -10,5 +10,24 @@
     "FrancoLaserGuard6",
     "Mushroom1",
     "Mushroom2"
+  ],
+  "zoneNames": [
+    "to_elevator_area",
+    "to_passage_to_bank",
+    "narrow_road_to_mines",
+    "to_hatch_room",
+    "to_hatch_room_from_roof",
+    "to_bank",
+    "to_bank_from_roof",
+    "cam_gap_between_buildings",
+    "cam_hatch_room_door",
+    "barrels1",
+    "barrels2",
+    "barrels3",
+    "barrels4",
+    "building_company_map_front",
+    "cam_near_building_company_map",
+    "building_company_map_back",
+    "to_ferryman_area"
   ]
 }
