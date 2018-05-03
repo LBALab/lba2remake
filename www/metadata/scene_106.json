@@ -17,5 +17,30 @@
     "Pointer",
     "FrancoSoldier5",
     "OliveItem5"
+  ],
+  "zoneNames": [
+    "to_queen_throne_room",
+    "to_upper_outside",
+    "ladder1",
+    "ladder2",
+    "to_lower_outside",
+    "ladder3",
+    "ladder4",
+    "ladder5",
+    "upper_outside_exit",
+    "bridge_near_soldier1",
+    "bridge_near_soldier2",
+    "bridge_near_soldier4",
+    "area_near_mosqui_pik2",
+    "area_near_soldier3",
+    "bridge_front_soldier5",
+    "bridge_side_soldier5",
+    "entrance_to_queen_throne",
+    "area_under_soldier1",
+    "area_between_soldier1_and_mosqui_pik2",
+    "bridge_near_mosqui_pik2",
+    "near_soldier2_bottom",
+    "near_soldier2_side",
+    "area_under_soldier2"
   ]
 }
