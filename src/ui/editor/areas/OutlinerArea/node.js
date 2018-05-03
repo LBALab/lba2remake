@@ -132,15 +132,16 @@ export default class Node extends React.Component {
         if (menu) {
             const menuStyle = {
                 position: 'fixed',
-                left: menu.x - 4,
-                top: menu.y - 4,
+                left: menu.x - 12,
+                top: menu.y - 12,
                 padding: 0,
                 background: '#cccccc',
                 color: '#000000',
                 border: '1px solid black',
                 borderRadius: 4,
                 cursor: 'pointer',
-                boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.5)'
+                boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.5)',
+                zIndex: 1
             };
 
             const menuEntry = {
