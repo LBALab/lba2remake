@@ -24,5 +24,28 @@
     "FrancoSoldier4",
     "FrancoSoldier5",
     "GhazkhulLeGrand"
+  ],
+  "zoneNames": [
+    "to_blowtron_test",
+    "to_nest",
+    "ladder",
+    "ladder_front_area",
+    "lower_area_between_soldier_1_and_2",
+    "lower_area_near_soldier1",
+    "soldier1_bottom_area",
+    "lower_area_left_corner",
+    "soldier3_bottom_area",
+    "throne_front_elevated_area",
+    "entrance_from_nest_area",
+    "bridge_ladder_left_area",
+    "throne_area_front",
+    "soldier3_placement",
+    "soldier3_upper_area",
+    "throne",
+    "to_passage_to_cx",
+    "bridge_soldier1_right",
+    "soldier1_placement",
+    "bridge_soldier1_left",
+    "throne_front"
   ]
 }
