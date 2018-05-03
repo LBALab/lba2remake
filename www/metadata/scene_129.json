@@ -7,5 +7,10 @@
     "EscapedMosquibee3",
     "Gem",
     "CloverBox"
+  ],
+  "zoneNames": [
+    "to_outside",
+    "stones1",
+    "stones2"
   ]
 }

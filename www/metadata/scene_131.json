@@ -17,5 +17,14 @@
     "DescendingLavaPlatform1",
     "DescendingLavaPlatform2",
     "LavaPointer"
+  ],
+  "zoneNames": [
+    "to_ferryman_area",
+    "to_cave",
+    "cam_near_torch1",
+    "cam_way_back_precipice1",
+    "cam_near_lava_river_boulder",
+    "cam_way_back_precipice2",
+    "cam_lava_river_top"
   ]
 }
