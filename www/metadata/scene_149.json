@@ -8,5 +8,15 @@
     "OliveItem3",
     "Gem",
     "SmallSpider"
+  ],
+  "zoneNames": [
+    "to_bridge",
+    "ladder1",
+    "ladder2",
+    "ladder3",
+    "to_monster_area",
+    "elevator_shaft",
+    "under_bridge1",
+    "under_bridge2"
   ]
 }
