@@ -8,18 +8,11 @@ export function PALETTE() {
 }
 
 export function BODY_OBJ(actor, bodyIndex) {
-    if (actor.props.bodyIndex !== bodyIndex) {
-        actor.props.bodyIndex = bodyIndex;
-        actor.reload(this.scene);
-    }
+    actor.setBody(this.scene, bodyIndex);
 }
 
 export function ANIM_OBJ(actor, animIndex) {
-    if (actor.props.animIndex === animIndex) {
-        return;
-    }
-    actor.props.animIndex = animIndex;
-    actor.resetAnimState();
+    actor.setAnim(animIndex);
 }
 
 export function SET_CAMERA() {

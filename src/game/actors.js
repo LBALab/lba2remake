@@ -235,6 +235,24 @@ export function loadActor(params: Object,
         },
 
         @locate(__location)
+        setBody(scene, index) {
+            if (this.props.bodyIndex === index) {
+                return;
+            }
+            this.props.bodyIndex = index;
+            this.reload(scene);
+        },
+
+        @locate(__location)
+        setAnim(index) {
+            if (this.props.animIndex === index) {
+                return;
+            }
+            this.props.animIndex = index;
+            this.resetAnimState();
+        },
+
+        @locate(__location)
         reload(scene) {
             if (this.threeObject) {
                 this.threeObject.visible = false;
