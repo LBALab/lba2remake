@@ -15,5 +15,14 @@
     "GiantTorch2",
     "TorchFireballs2",
     "LavaPointer"
+  ],
+  "zoneNames": [
+    "to_ferryman_area",
+    "to_mountain_top",
+    "to_cave",
+    "cam_near_torch1",
+    "cam_way_back_precipice1",
+    "cam_near_lava_river_boulder",
+    "cam_way_back_precipice2"
   ]
 }
