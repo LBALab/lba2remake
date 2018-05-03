@@ -66,5 +66,17 @@
     "MosquibeeCrowd39",
     "JoanLoumin",
     "QueenElevator"
+  ],
+  "zoneNames": [
+    "to_queen_throne_room",
+    "cam_test_field_small_area",
+    "cam_test_field",
+    "test_field_limit_right",
+    "test_field_limit_left",
+    "locked_door1",
+    "locked_door2",
+    "locked_door3",
+    "middle_hole",
+    "inside_locked_doors"
   ]
 }
