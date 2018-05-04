@@ -1,9 +1,11 @@
 function test(a) {
     return {
+        /* @inspector(locate, pure) */
         x() {
             return 42 + a;
         }
     };
 }
 
-test(0);
+console.log(test(0).x);
+console.log(test(0).x());
