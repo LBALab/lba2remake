@@ -30,6 +30,7 @@ module.exports = {
                         mangle: false
                     }]],
                     plugins: [
+                        path.join(__dirname, './utils/babel-transforms/inspector-annotations.js'),
                         'transform-class-properties',
                         'transform-object-rest-spread'
                     ]
