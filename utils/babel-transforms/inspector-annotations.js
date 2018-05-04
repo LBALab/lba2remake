@@ -1,4 +1,19 @@
+const nodePath = require('path');
 const {find, map} = require('lodash');
+
+function getLocation(t, path, state) {
+    const location = path.node.loc;
+    const line = (location
+        && location.start.line !== null
+        && location.start.line !== undefined)
+        ? `:${location.start.line}`
+        : '';
+    const filename = nodePath.relative(
+        process.cwd(),
+        nodePath.resolve(state.file.opts.filename)
+    );
+    return t.stringLiteral(`${filename}${line}`);
+}
 
 function findAnnotation(node) {
     const comment = find(node.leadingComments, c => c.value.match(/^ *@inspector\(.*\) *$/));
@@ -17,18 +32,26 @@ module.exports = (ctx) => {
     const t = ctx.types;
     return {
         visitor: {
-            ObjectMethod(path) {
+            ObjectMethod(path, state) {
                 const values = findAnnotation(path.node);
-                console.log(path.node);
                 if (values) {
                     const node = path.node;
                     const id = node.key.name;
                     path.replaceWith(t.objectProperty(
                         t.identifier(id),
-                        t.functionExpression(
-                            t.identifier(id),
-                            node.params,
-                            node.body
+                        t.callExpression(
+                            t.identifier('inspector_patch_fct'),
+                            [
+                                t.functionExpression(
+                                    null,
+                                    node.params,
+                                    node.body
+                                ),
+                                values.includes('locate')
+                                    ? getLocation(t, path, state)
+                                    : t.nullLiteral(),
+                                t.booleanLiteral(values.includes('pure'))
+                            ]
                         )
                     ));
                 }

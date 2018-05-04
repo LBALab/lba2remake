@@ -3,7 +3,11 @@ const path = require('path');
 
 module.exports = {
     mode: process.env.NODE_ENV || 'none',
-    entry: ['./src/test.js'],
+    entry: [
+        'babel-polyfill',
+        './utils/babel-transforms/inspector-globals.js',
+        './src/main.jsx'
+    ],
     output: {
         path: path.join(__dirname, './dist'),
         filename: 'bundle.js'
