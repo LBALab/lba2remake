@@ -23,7 +23,6 @@ import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
 import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
-import {locate, pure} from '../decorators';
 import {sBind} from '../utils';
 
 export default class GameUI extends FrameListener {
@@ -79,13 +78,12 @@ export default class GameUI extends FrameListener {
         }
     }
 
-    @locate(__location)
+    /* @inspector(locate) */
     setUiState(state) {
         this.setState(state, this.saveData);
     }
 
-    @pure
-    @locate(__location)
+    /* @inspector(locate, pure) */
     getUiState() {
         return this.state;
     }

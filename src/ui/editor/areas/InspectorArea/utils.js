@@ -2,17 +2,18 @@
 import {isFunction, map, filter, noop, concat} from 'lodash';
 import * as THREE from 'three';
 import DebugData, {getObjectName} from '../../DebugData';
-import {pure} from '../../../../decorators';
 import {getParamNames} from '../../../../utils';
 
 const allowedNameTypes = ['actor', 'zone', 'point'];
 
 export const UtilFunctions = {
-    @pure
+    /* @inspector(pure) */
     map,
-    @pure
+
+    /* @inspector(pure) */
     filter,
-    @pure
+
+    /* @inspector(pure) */
     name: (obj) => {
         if (!obj) {
             throw new Error('Need to provide an object');
@@ -31,7 +32,8 @@ export const UtilFunctions = {
         }
         return getObjectName(obj.type, DebugData.scope.scene.index, obj.index);
     },
-    @pure
+
+    /* @inspector(pure) */
     expression: expr => expr,
     __param_kind: {
         map: 'g|e,e',

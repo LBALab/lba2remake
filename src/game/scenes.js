@@ -18,7 +18,6 @@ import {loadZone} from './zones';
 import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initCameraMovement} from './loop/cameras';
 import DebugData, * as DBG from '../ui/editor/DebugData';
-import {locate, pure} from '../decorators';
 import {sBind} from '../utils';
 
 const {initSceneDebugData, loadSceneMetaData} = DBG;
@@ -27,19 +26,18 @@ export function createSceneManager(params, game, renderer, callback: Function, h
     let scene = null;
     let sceneMap = null;
     const sceneManager = {
-        @pure
-        @locate(__location)
+        /* @inspector(locate, pure) */
         getScene() {
             return scene;
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         hideMenuAndGoto(index, wasPaused) {
             hideMenu(wasPaused);
             this.goto(index, noop, false, wasPaused);
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         goto(index, onLoad = noop, force = false, wasPaused = false) {
             if ((!force && scene && index === scene.index) || game.isLoading())
                 return;
@@ -108,7 +106,7 @@ export function createSceneManager(params, game, renderer, callback: Function, h
             }
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         next(pCallback) {
             if (scene) {
                 const nextIdx = (scene.index + 1) % sceneMap.length;
@@ -116,7 +114,7 @@ export function createSceneManager(params, game, renderer, callback: Function, h
             }
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         previous(pCallback) {
             if (scene) {
                 const previousIdx = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
@@ -205,7 +203,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                 zoneState: { listener: null, ended: false },
                 goto: sBind(sceneManager.goto, sceneManager),
 
-                @locate(__location)
+                /* @inspector(locate) */
                 reset() {
                     each(this.actors, (actor) => {
                         actor.reset();
@@ -218,12 +216,12 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                     scene.variables = createSceneVariables(scene);
                 },
 
-                @locate(__location)
+                /* @inspector(locate) */
                 removeMesh(threeObject) {
                     this.threeScene.remove(threeObject);
                 },
 
-                @locate(__location)
+                /* @inspector(locate) */
                 addMesh(threeObject) {
                     this.threeScene.add(threeObject);
                 }

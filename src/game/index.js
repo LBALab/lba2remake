@@ -7,7 +7,6 @@ import {createAudioManager, createMusicManager} from '../audio';
 import {loadHqrAsync} from '../hqr';
 import {loadTextsAsync} from '../text';
 import DebugData from '../ui/editor/DebugData';
-import {locate, pure} from '../decorators';
 
 export function createGame(params: Object,
                            clock: Object,
@@ -40,13 +39,13 @@ export function createGame(params: Object,
             weapon: 0
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         resetState() {
             state = createState();
             this.resetControlsState();
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         resetControlsState() {
             this.controlsState.heroSpeed = 0;
             this.controlsState.heroRotationSpeed = 0;
@@ -57,7 +56,7 @@ export function createGame(params: Object,
             this.controlsState.weapon = 0;
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         loading(index: number) {
             isPaused = true;
             isLoading = true;
@@ -67,7 +66,7 @@ export function createGame(params: Object,
             console.log(`Loading scene #${index}`);
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         loaded(wasPaused: boolean = false) {
             isPaused = wasPaused;
             if (!isPaused) {
@@ -81,27 +80,22 @@ export function createGame(params: Object,
             console.log('Loaded!');
         },
 
-        @pure
-        @locate(__location)
+        /* @inspector(locate, pure) */
         isPaused: () => isPaused,
 
-        @pure
-        @locate(__location)
+        /* @inspector(locate, pure) */
         isLoading: () => isLoading,
 
-        @pure
-        @locate(__location)
+        /* @inspector(locate, pure) */
         getState: () => state,
 
-        @pure
-        @locate(__location)
+        /* @inspector(locate, pure) */
         getAudioManager: () => audio,
 
-        @pure
-        @locate(__location)
+        /* @inspector(locate, pure) */
         getAudioMenuManager: () => audioMenu,
 
-        @locate(__location)
+        /* @inspector(locate) */
         togglePause() {
             if (isPaused) {
                 this.resume();
@@ -110,7 +104,7 @@ export function createGame(params: Object,
             }
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         pause: () => {
             isPaused = true;
             clock.stop();
@@ -124,7 +118,7 @@ export function createGame(params: Object,
             console.log('Pause');
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         resume: () => {
             const musicSource = audio.getMusicSource();
             musicSource.resume();
@@ -138,7 +132,7 @@ export function createGame(params: Object,
             console.log('Resume');
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         preload(callback: Function) {
             const that = this;
             async.auto({

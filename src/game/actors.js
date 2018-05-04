@@ -9,7 +9,6 @@ import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
 import {loadSprite} from '../iso/sprites';
 
 import {getObjectName} from '../ui/editor/DebugData';
-import {pure, locate} from '../decorators';
 import {runScript} from '../scripting';
 
 type ActorFlags = {
@@ -100,7 +99,7 @@ export function loadActor(params: Object,
         threeObject: null,
         animState,
 
-        @locate(__location)
+        /* @inspector(locate) */
         runScripts(time) {
             if (this.scripts) {
                 runScript(params, this.scripts.life, time);
@@ -108,7 +107,7 @@ export function loadActor(params: Object,
             }
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         reset() {
             this.resetAnimState();
             this.resetPhysics();
@@ -116,17 +115,17 @@ export function loadActor(params: Object,
             this.floorSound = -1;
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         resetAnimState() {
             resetAnimState(this.animState);
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         resetPhysics() {
             this.physics = initPhysics(props);
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         goto(point) {
             this.physics.temp.destination = point;
             let destAngle = angleTo(this.physics.position, point);
@@ -145,7 +144,7 @@ export function loadActor(params: Object,
             return this.getDistance(point);
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         facePoint(point) {
             let destAngle = angleTo(this.physics.position, point);
             const signCurr = this.physics.temp.destAngle > 0 ? 1 : -1;
@@ -161,26 +160,24 @@ export function loadActor(params: Object,
             this.props.runtimeFlags.isTurning = true;
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         setAngle(angle) {
             this.props.runtimeFlags.isTurning = true;
             this.props.angle = angle;
             this.physics.temp.destAngle = angleToRad(angle);
         },
 
-        @pure
-        @locate(__location)
+        /* @inspector(locate, pure) */
         getDistance(pos) {
             return distance2D(this.physics.position, pos);
         },
 
-        @pure
-        @locate(__location)
+        /* @inspector(locate, pure) */
         getDistanceLba(pos) {
             return getDistanceLba(this.getDistance(pos));
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         stop() {
             this.props.runtimeFlags.isWalking = false;
             this.props.runtimeFlags.isTurning = false;
@@ -188,7 +185,7 @@ export function loadActor(params: Object,
             delete this.physics.temp.destination;
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         loadMesh(callback: Function) {
             const that = this;
             // only if not sprite actor
@@ -234,7 +231,7 @@ export function loadActor(params: Object,
             }
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         setBody(scene, index) {
             if (this.props.bodyIndex === index) {
                 return;
@@ -243,7 +240,7 @@ export function loadActor(params: Object,
             this.reload(scene);
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         setAnim(index) {
             if (this.props.animIndex === index) {
                 return;
@@ -252,7 +249,7 @@ export function loadActor(params: Object,
             this.resetAnimState();
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         reload(scene) {
             if (this.threeObject) {
                 this.threeObject.visible = false;

@@ -13,7 +13,6 @@ import {
 } from './cameras';
 import Cardboard from './utils/Cardboard';
 import {EngineError} from '../crash_reporting';
-import {locate, pure} from '../decorators';
 
 const PixelRatioMode = {
     DEVICE: () => window.devicePixelRatio || 1.0,
@@ -62,7 +61,7 @@ export function createRenderer(params, canvas) {
     const renderer = {
         canvas,
 
-        @locate(__location)
+        /* @inspector(locate) */
         render: (scene) => {
             tgtRenderer.antialias = antialias;
             const camera = scene.isIsland ? camera3D : cameraIso;
@@ -73,7 +72,7 @@ export function createRenderer(params, canvas) {
             }
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         applySceneryProps: (props) => {
             const sc = props.envInfo.skyColor;
             const color = new THREE.Color(sc[0], sc[1], sc[2]);
@@ -86,27 +85,25 @@ export function createRenderer(params, canvas) {
             isoCamera: cameraIso
         },
 
-        @locate(__location)
+        /* @inspector(locate) */
         resize: (width = tgtRenderer.getSize().width, height = tgtRenderer.getSize().height) => {
             tgtRenderer.setSize(width, height);
             resize3DCamera(camera3D, width, height);
             resizeIsometricCamera(cameraIso, getPixelRatio(), width, height);
         },
 
-        @pure
-        @locate(__location)
+        /* @inspector(locate, pure) */
         getMainCamera: scene => (scene && typeof (scene.isIsland) === 'boolean'
             ? (scene.isIsland ? camera3D : cameraIso)
             : null),
 
-        @pure
-        @locate(__location)
+        /* @inspector(locate, pure) */
         pixelRatio: getPixelRatio,
 
-        @locate(__location)
+        /* @inspector(locate, pure) */
         setPixelRatio(value) { baseRenderer.setPixelRatio(value); },
 
-        @locate(__location)
+        /* @inspector(locate) */
         dispose() {
             window.removeEventListener('keydown', keyListener);
         }
