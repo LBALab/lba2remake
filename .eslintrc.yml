@@ -6,7 +6,6 @@ env:
   browser: true
 globals:
   ga: false
-  __location: false
 rules:
   indent:
     - error

@@ -30,8 +30,6 @@ module.exports = {
                         mangle: false
                     }]],
                     plugins: [
-                        path.join(__dirname, './utils/babel-transforms/location.js'),
-                        'transform-decorators-legacy',
                         'transform-class-properties',
                         'transform-object-rest-spread'
                     ]
