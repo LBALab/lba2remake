@@ -13,13 +13,25 @@ function findAnnotation(node) {
     return null;
 }
 
-module.exports = ({t}) => {
+module.exports = (ctx) => {
+    const t = ctx.types;
     return {
         visitor: {
             ObjectMethod(path) {
-                const name = path.scope.generateDeclaredUidIdentifier('fistfuck');
                 const values = findAnnotation(path.node);
-                console.log(values);
+                console.log(path.node);
+                if (values) {
+                    const node = path.node;
+                    const id = node.key.name;
+                    path.replaceWith(t.objectProperty(
+                        t.identifier(id),
+                        t.functionExpression(
+                            t.identifier(id),
+                            node.params,
+                            node.body
+                        )
+                    ));
+                }
             }
         }
     };
