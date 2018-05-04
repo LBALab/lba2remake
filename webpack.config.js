@@ -3,7 +3,7 @@ const path = require('path');
 
 module.exports = {
     mode: process.env.NODE_ENV || 'none',
-    entry: ['babel-polyfill', './src/main.jsx'],
+    entry: ['./src/test.js'],
     output: {
         path: path.join(__dirname, './dist'),
         filename: 'bundle.js'
