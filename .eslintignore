@@ -4,3 +4,4 @@ deploy
 apps
 node_modules
 devserver.js
+dist
