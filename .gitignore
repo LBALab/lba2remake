@@ -1,6 +1,5 @@
 node_modules
 /.idea
-/.vscode
 /apps/win10/bin
 /apps/win10/obj
 /www/data

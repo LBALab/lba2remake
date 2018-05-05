@@ -1,0 +1,6 @@
+{
+    "flow.useNPMPackagedFlow": true,
+    "javascript.validate.enable": false,
+    "files.trimTrailingWhitespace": true,
+    "eslint.enable": true
+}
