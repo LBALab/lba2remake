@@ -37,4 +37,4 @@ jobs:
       - run: npm run -s build
 
       # Flow type checking
-      #- run: npm run -s flow
+      - run: npm run -s flow
