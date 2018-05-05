@@ -2,6 +2,8 @@
     "recommendations": [
         "dbaeumer.vscode-eslint",
         "flowtype.flow-for-vscode",
-        "msjsdiag.debugger-for-chrome"
+        "msjsdiag.debugger-for-chrome",
+        "christian-kohler.npm-intellisense",
+        "eg2.vscode-npm-script"
     ]
 }
