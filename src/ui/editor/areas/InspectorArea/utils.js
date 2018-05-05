@@ -8,10 +8,10 @@ const allowedNameTypes = ['actor', 'zone', 'point'];
 
 export const UtilFunctions = {
     /* @inspector(pure) */
-    map,
+    map: (collection, iteratee) => map(collection, iteratee),
 
     /* @inspector(pure) */
-    filter,
+    filter: (collection, predicate) => filter(collection, predicate),
 
     /* @inspector(pure) */
     name: (obj) => {

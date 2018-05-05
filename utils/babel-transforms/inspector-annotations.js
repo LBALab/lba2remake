@@ -1,4 +1,3 @@
-const nodePath = require('path');
 const {find, map} = require('lodash');
 
 function getLocation(t, path, state) {
@@ -8,10 +7,7 @@ function getLocation(t, path, state) {
         && location.start.line !== undefined)
         ? `:${location.start.line}`
         : '';
-    const filename = nodePath.relative(
-        process.cwd(),
-        nodePath.resolve(state.file.opts.filename)
-    );
+    const filename = state.file.opts.sourceFileName;
     return t.stringLiteral(`${filename}${line}`);
 }
 
@@ -32,28 +28,29 @@ module.exports = (ctx) => {
     const t = ctx.types;
     return {
         visitor: {
-            ObjectMethod(path, state) {
-                const values = findAnnotation(path.node);
-                if (values) {
+            ObjectProperty(path, state) {
+                const annotValues = findAnnotation(path.node);
+                if (annotValues) {
                     const node = path.node;
                     const id = node.key.name;
-                    path.replaceWith(t.objectProperty(
-                        t.identifier(id),
-                        t.callExpression(
-                            t.identifier('inspector_patch_fct'),
-                            [
-                                t.functionExpression(
-                                    null,
-                                    node.params,
-                                    node.body
-                                ),
-                                values.includes('locate')
-                                    ? getLocation(t, path, state)
-                                    : t.nullLiteral(),
-                                t.booleanLiteral(values.includes('pure'))
-                            ]
-                        )
-                    ));
+                    const valueType = node.value.type;
+                    if (valueType === 'FunctionExpression' || valueType === 'ArrowFunctionExpression') {
+                        path.replaceWith(t.objectProperty(
+                            t.identifier(id),
+                            t.callExpression(
+                                t.identifier('inspector_patch_fct'),
+                                [
+                                    node.value,
+                                    annotValues.includes('locate')
+                                        ? getLocation(t, path, state)
+                                        : t.nullLiteral(),
+                                    t.booleanLiteral(annotValues.includes('pure'))
+                                ]
+                            )
+                        ));
+                    } else if (valueType !== 'CallExpression' || node.value.callee.name !== 'inspector_patch_fct') {
+                        throw path.buildCodeFrameError(`Inspector annotations are unsupported on ${valueType} ${id}`);
+                    }
                 }
             }
         }

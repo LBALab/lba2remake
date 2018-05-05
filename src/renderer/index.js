@@ -98,9 +98,9 @@ export function createRenderer(params, canvas) {
             : null),
 
         /* @inspector(locate, pure) */
-        pixelRatio: getPixelRatio,
+        pixelRatio: () => getPixelRatio(),
 
-        /* @inspector(locate, pure) */
+        /* @inspector(locate) */
         setPixelRatio(value) { baseRenderer.setPixelRatio(value); },
 
         /* @inspector(locate) */
