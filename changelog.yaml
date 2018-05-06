@@ -10,11 +10,14 @@ versions:
 
   - tag: 0.0.15
     date: 03.05.2018
-    title: Context menu bugfix
+    title: Context menu bugfix + Metadata
     changes:
       - name: Bugfixes
         issues:
-          - Context menu not being displayed correctly
+          - (EDITOR) BUG Context menu not being displayed correctly
+      - name: Metadata
+        issues:
+          - (ZONES) All zones in the game are now named (Thanks @SendellX)
 
   - tag: 0.0.14
     date: 01.05.2018
@@ -49,7 +52,7 @@ versions:
           - Quite a bit of refactoring
 
   - tag: 0.0.13
-    title: Patch release
+    title: Editor improvements + Bugfixes + Metadata
     date: 17.04.2018
     project: https://github.com/agrande/lba2remake/projects/9
     changes:
@@ -72,7 +75,7 @@ versions:
           - (194)
 
   - tag: 0.0.12
-    title: Patch release
+    title: Editor metadata workflow improvement
     date: 15.04.2018
     changes:
       - name: Features
@@ -85,7 +88,7 @@ versions:
               - (3) New metadata (thanks Hinatangel)
 
   - tag: 0.0.11
-    title: Patch release
+    title: New server + Metadata
     date: 15.04.2018
     changes:
       - name: Features
@@ -100,7 +103,7 @@ versions:
               - "Github issue links in text. Example: gh(7)"
 
   - tag: 0.0.10
-    title: Patch release
+    title: New loader + Ribbon + Audio bugfixes
     date: 07.04.2018
     changes:
       - name: Features
@@ -122,7 +125,7 @@ versions:
               - (185)
 
   - tag: 0.0.9
-    title: Patch release
+    title: Editor UX + Firefox bugfixes + Iso camera following Twinsen + Metadata
     date: 29.03.2018
     changes:
       - name: Features
@@ -148,7 +151,7 @@ versions:
           - (EDITOR) BUG Fix for crash in scripting area (React) when switching scenes
 
   - tag: 0.0.8
-    title: Patch release
+    title: Fixed crashes + Audio fixes + Metadata
     date: 23.03.2018
     changes:
       - name: Features
@@ -170,7 +173,7 @@ versions:
           - (GAME) BUG Trailing parentheses in some locator nodes.
 
   - tag: 0.0.7
-    title: Patch release
+    title: Metadata system
     date: 15.03.2018
     changes:
       - name: Misc
@@ -178,7 +181,7 @@ versions:
           - (150)
 
   - tag: 0.0.6
-    title: Patch release
+    title: Basic fan translations support + Bugfixes
     date: 15.03.2018
     changes:
       - name: Features
@@ -191,7 +194,7 @@ versions:
           - (153)
 
   - tag: 0.0.5
-    title: Patch release
+    title: Bugfixes + metadata support
     date: 11.03.2018
     changes:
       - name: Features
@@ -203,7 +206,7 @@ versions:
           - (147) BUG Fixed incorrect move wait command being parsed (Tim stuck at the Tavern)
 
   - tag: 0.0.4
-    title: Patch release
+    title: Bugfixes
     date: 26.02.2018
     changes:
       - name: Bugfixes
@@ -214,7 +217,7 @@ versions:
           - (GAME) BUG Fix warning in params parsing
 
   - tag: 0.0.3
-    title: Patch release
+    title: Fonts + Sprite improvements + Menu + Bugfixes
     date: 13.02.2018
     changes:
       - name: Features
@@ -232,7 +235,7 @@ versions:
           - (GAME) BUG Multiple Music playing simultaneous
 
   - tag: 0.0.2
-    title: Patch release
+    title: Changelog + Bugfixes
     date: 07.02.2018
     changes:
       - name: Features
