@@ -38,3 +38,10 @@ jobs:
 
       # Flow type checking
       - run: npm run -s flow
+
+      # Store artifacts
+      - store_artifacts:
+          path: ~/repo/www
+
+      - store_artifacts:
+          path: ~/repo/dist/bundle.js
