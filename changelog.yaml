@@ -5,7 +5,10 @@ versions:
     changes:
       - name: Bugfixes
         issues:
-          - Context menu not being displayed correctly
+          - (EDITOR) BUG Context menu not being displayed correctly
+      - name: Metadata
+        issues:
+          - (ZONES) All zones in the game are now named (Thanks @SendellX)
 
   - tag: 0.0.14
     date: 01.05.2018
