@@ -16,14 +16,6 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
         elapsed: clock.getElapsedTime()
     };
 
-    const debugScope = {
-        params,
-        game,
-        clock,
-        renderer,
-        scene
-    };
-
     renderer.stats.begin();
     if (scene) {
         each(controls, ctrl => ctrl.update && ctrl.update());
@@ -53,10 +45,6 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
             renderer.render(scene);
         }
         delete DebugData.firstFrame;
-        if (scene.actors && scene.actors.length > 0) {
-            debugScope.hero = scene.actors[0];
-        }
-        debugScope.camera = renderer.getMainCamera(scene);
     }
     renderer.stats.end();
 }
