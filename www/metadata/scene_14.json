@@ -2,7 +2,7 @@
   "actorNames": [
     null,
     null,
-    "GroboClerk",
+    "MrBazoo",
     "LifePointsVending",
     "CashRegister",
     "MecaPinguinOnDisplay",
@@ -23,5 +23,25 @@
     "magic_points_vending",
     "shop_items",
     "flower_pot"
+  ],
+  "varcubes": [
+    {
+      "name": "twinsen_tries_stealing_cash"
+    },
+    {
+      "name": "meca_penguin_used"
+    },
+    null,
+    {
+      "name": "grobo_fled_to_box_area"
+    },
+    null,
+    null,
+    {
+      "name": "twinsen_talking"
+    },
+    {
+      "name": "said_hello_to_bazoo"
+    }
   ]
 }
