@@ -21,5 +21,12 @@
     "prophecy",
     "funfrock_statue",
     "lamp"
+  ],
+  "varcubes": [
+    null,
+    null,
+    {
+      "name": "speaking_through_radio"
+    }
   ]
 }
