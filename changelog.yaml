@@ -7,6 +7,11 @@ versions:
         issues:
       - name: Bugfixes
         issues:
+      - name: Code Quality
+        issues:
+          - Use comment decorators (/* @inspector(locate) */) instead of actual decorators (@locate(__location))
+          - Re-enable flow check on CI (was broken by decorators)
+          - Share VSCode config
 
   - tag: 0.0.15
     date: 03.05.2018
