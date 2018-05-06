@@ -27,7 +27,9 @@
   ],
   "varcubes": [
     null,
-    null,
+    {
+      "name": "zoe_talked"
+    },
     null,
     {
       "name": "said_hello"

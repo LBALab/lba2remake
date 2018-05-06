@@ -4,11 +4,11 @@
     null,
     "Raph",
     "TraluBoss",
-    "Gate2",
+    "Gate",
     "Snake",
     "Switch",
     "Pointer1",
-    "Gate1",
+    "JailGate",
     "Zoe",
     "Skeleton",
     null,
@@ -60,5 +60,36 @@
     "cam_tralu_elevated_entrance",
     "cam_raph_room",
     "fork_right"
+  ],
+  "varcubes": [
+    null,
+    null,
+    {
+      "name": "raph_asking_for_help_counter"
+    },
+    null,
+    null,
+    null,
+    null,
+    {
+      "name": "gate_opened"
+    },
+    null,
+    null,
+    {
+      "name": "rocks1_hit"
+    },
+    {
+      "name": "rocks2_hit"
+    },
+    {
+      "name": "rocks3_hit"
+    },
+    {
+      "name": "rocks4_hit"
+    },
+    {
+      "name": "rocks5_hit"
+    }
   ]
 }
