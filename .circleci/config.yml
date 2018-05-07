@@ -34,14 +34,20 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # build
-      - run: npm run -s build
+      - run:
+          name: Build
+          command: npm run -s build
 
       # Flow type checking
-      - run: npm run -s flow
+      - run:
+          name: Flow type-checking
+          command: npm run -s flow
+
+      # Copy files over
+      - run:
+          name: Build archive
+          command: npm pack && mv lba2remake-`node -p "require('./package.json').version"`.tgz /tmp/lba2remake.tgz
 
       # Store artifacts
       - store_artifacts:
-          path: ~/repo/www
-
-      - store_artifacts:
-          path: ~/repo/dist/bundle.js
+          path: /tmp/lba2remake.tgz

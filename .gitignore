@@ -4,3 +4,4 @@ node_modules
 /apps/win10/obj
 /www/data
 /crash_report.json
+/dist
