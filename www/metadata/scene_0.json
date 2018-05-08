@@ -28,7 +28,8 @@
   "varcubes": [
     null,
     {
-      "name": "zoe_talked"
+      "name": "zoe_talked",
+      "type": "boolean"
     },
     null,
     {
