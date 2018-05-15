@@ -38,6 +38,7 @@ export default function Ribbon({mode, editor}) {
         default: break;
     }
     const logo = mode === 'game' && !editor;
+    const build = window.buildNumber;
     return <div style={overlay}>
         {logo ? [<img key="logo" src="images/remake_logo.png" />, <br key="br"/>] : null}
         <span
@@ -45,6 +46,7 @@ export default function Ribbon({mode, editor}) {
             onClick={changelog}
         >
             v<i>{version}</i>
+            {build && <React.Fragment>-{build}</React.Fragment>}
         </span>
     </div>;
 }

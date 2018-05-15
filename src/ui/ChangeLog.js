@@ -32,6 +32,24 @@ function TagIcon() {
     return <img src="./images/label.png" style={{width: 16, height: 16, paddingRight: 4}}/>;
 }
 
+function Version({version, isExpanded}) {
+    const linkStyle = {
+        textDecoration: 'none',
+        fontStyle: 'italic',
+        color: isExpanded ? 'rgb(150, 150, 255)' : 'rgb(200, 200, 255)',
+    };
+    const build = window.buildNumber && version.tag === currentVersion ?
+        <a style={linkStyle} href={`https://circleci.com/gh/agrande/lba2remake/${window.buildNumber}`} target="_blank">
+            -build-{window.buildNumber}
+        </a>
+        : null;
+    return <React.Fragment>
+        <TagIcon/>
+        {version.tag}
+        {build}
+    </React.Fragment>;
+}
+
 /**
  * @return {null}
  */
@@ -150,7 +168,8 @@ export default class ChangeLog extends React.Component {
         if (isExpanded) {
             return <div key={version.tag} style={{marginBottom: 14}}>
                 <div onClick={toggle} style={titleStyle}>
-                    <b style={expanderStyle}>-</b><TagIcon/>{version.tag}
+                    <b style={expanderStyle}>-</b>
+                    <Version version={version} isExpanded={isExpanded}/>
                     <VersionTitle version={version}/>
                     <VersionDate date={version.date}/>
                 </div>
@@ -164,7 +183,8 @@ export default class ChangeLog extends React.Component {
             </div>;
         }
         return <div key={version.tag} onClick={toggle} style={titleStyle}>
-            <b style={expanderStyle}>+</b><TagIcon/>{version.tag}
+            <b style={expanderStyle}>+</b>
+            <Version version={version}/>
             <VersionTitle version={version}/>
             <VersionDate date={version.date}/>
         </div>;

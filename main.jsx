@@ -1,6 +1,7 @@
+/* eslint-disable react/no-danger */
 const React = require('react');
 
-module.exports = ({script}) => <html lang="en">
+module.exports = ({script, buildNumber}) => <html lang="en">
     <head>
         <meta charSet="UTF-8"/>
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
@@ -11,6 +12,7 @@ module.exports = ({script}) => <html lang="en">
         <link rel="manifest" href="manifest.json"/>
         <link rel="stylesheet" href="layout.css"/>
         <title>LBA2</title>
+        {buildNumber && <script dangerouslySetInnerHTML={{__html: `window.buildNumber=${buildNumber};`}} />}
         <script dangerouslySetInnerHTML={{__html: script || 'window.ga=function(){}'}} />
     </head>
     <body>
