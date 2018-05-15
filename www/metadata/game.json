@@ -223,15 +223,36 @@
     },
     null,
     {
-      "name": "tralus_cave_gate_opened"
+      "name": "tralus_cave_gate_opened",
+      "type": "boolean"
+    },
+    null,
+    null,
+    {
+      "name": "clearing_up_the_rain",
+      "type": "enum",
+      "enumValues": {
+        "0": "no_clue",
+        "1": "solution_found",
+        "2": "not_yet",
+        "3": "way_to_lighthouse_with_zoe",
+        "4": "inside_the_lighthouse",
+        "5": "achieved"
+      }
     },
     null,
     null,
     null,
-    null,
-    null,
-    null,
-    null,
+    {
+      "name": "freeing_raph_status",
+      "type": "enum",
+      "enumValues": {
+        "0": "nothing",
+        "1": "saw_tralu",
+        "2": "defeated_tralu",
+        "3": "freed_raph"
+      }
+    },
     null,
     null,
     null,
