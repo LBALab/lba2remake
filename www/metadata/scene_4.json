@@ -21,5 +21,11 @@
     "barrel4",
     "barrel5",
     "barrel6"
+  ],
+  "varcubes": [
+    {
+      "name": "tim_scolded_twinsen",
+      "type": "boolean"
+    }
   ]
 }
