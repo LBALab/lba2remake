@@ -72,7 +72,8 @@
     null,
     null,
     {
-      "name": "gate_opened"
+      "name": "gate_opened",
+      "type": "boolean"
     },
     null,
     null,
