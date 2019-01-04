@@ -1,0 +1,29 @@
+@import './_media.scss';
+@import './main.scss';
+
+.bgMenu {
+    background-image: url('/images/2_screen_menubg_extended.png');
+    background-repeat: repeat-x;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+}
+
+.bgInGameMenu {
+    background: rgba(0, 0, 0, 0.5);
+    height: 100%;
+}
+
+.menu {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    list-style: none;
+}
+
+.menuList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}

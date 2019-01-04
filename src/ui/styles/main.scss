@@ -1,0 +1,59 @@
+.fullscreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.bigButton {
+    padding: 5px 15px;
+    font-size: 1.1em;
+}
+
+.editor {
+    .base {
+        background: rgb(45,45,48);
+        color: white;
+        font-family: Courier, monospace;
+        font-size: 14;
+        font-weight: bold;
+    }
+
+    .button {
+        color: black;
+        background: white;
+        border-radius: 5;
+        cursor: pointer;
+        padding: 1px 4px;
+        margin: 0px 2px;
+    }
+
+    .input {
+        border-radius: 5;
+        padding: 1px 4px;
+        margin: 0px 2px;
+    }
+
+    .select {
+        color: black;
+        background: white;
+        border-radius: 5;
+        cursor: pointer;
+        padding: 1px 4px;
+        margin: 0px 2px;
+    }
+
+    .icon {
+        vertical-align: middle;
+        cursor: pointer;
+        padding: 1px 2px;
+    }
+}
