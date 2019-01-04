@@ -4,9 +4,9 @@ const path = require('path');
 module.exports = {
     mode: process.env.NODE_ENV || 'none',
     entry: [
-        'babel-polyfill',
+        '@babel/polyfill',
         './utils/babel-transforms/inspector-globals.js',
-        './src/main.jsx'
+        './src/main.js'
     ],
     output: {
         path: path.join(__dirname, './dist'),
@@ -25,18 +25,19 @@ module.exports = {
     },
     module: {
         rules: [{
-            test: /\.jsx?$/,
+            test: /\.(js|jsx)?$/,
+            include: /src/,
             exclude: /node_modules/,
             use: [{
                 loader: 'babel-loader',
                 options: {
-                    presets: ['react', 'env', 'flow', ['minify', {
+                    presets: ['@babel/preset-react', '@babel/preset-env', '@babel/preset-flow', ['minify', {
                         mangle: false
                     }]],
                     plugins: [
                         path.join(__dirname, './utils/babel-transforms/inspector-annotations.js'),
-                        'transform-class-properties',
-                        'transform-object-rest-spread'
+                        '@babel/plugin-proposal-class-properties',
+                        '@babel/plugin-proposal-object-rest-spread'
                     ]
                 }
             }, {
