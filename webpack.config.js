@@ -10,7 +10,8 @@ module.exports = {
     ],
     output: {
         path: path.join(__dirname, './dist'),
-        filename: 'bundle.js'
+        filename: 'bundle.js',
+        publicPath: path.join(__dirname, './www'),
     },
     resolve: {
         extensions: ['.js', '.jsx', '.glsl', '.proto', '.yaml']
@@ -58,6 +59,19 @@ module.exports = {
             use: [{
                 loader: 'yml-loader'
             }]
+        }, {
+            test: /\.css$/,
+            use: [
+                "style-loader",
+                "css-loader",
+            ]
+        }, {
+            test: /\.scss$/,
+            use: [
+                "style-loader",
+                "css-loader",
+                "sass-loader"
+            ]
         }]
     },
     plugins: [

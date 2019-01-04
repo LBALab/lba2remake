@@ -1,34 +1,7 @@
 import React from 'react';
 import {extend, map, each, filter} from 'lodash';
 
-import {fullscreen} from '../styles/index';
-
-const styleBgMenu = {
-    backgroundImage: 'url(images/2_screen_menubg_extended.png)',
-    backgroundRepeat: 'repeat-x',
-    height: '100%',
-    backgroundPosition: 'center',
-    backgroundSize: 'cover'
-};
-
-const styleBgInGameMenu = {
-    background: 'rgba(0,0,0,0.5)',
-    height: '100%'
-};
-
-const styleMenu = {
-    position: 'absolute',
-    bottom: '10%',
-    left: '50%',
-    transform: 'translate(-50%, 0)',
-    listStyle: 'none'
-};
-
-const styleMenuList = {
-    listStyle: 'none',
-    padding: 0,
-    margin: 0
-};
+import '../styles/menu.scss';
 
 const menuItems = [
     { item: 'ResumeGame', index: 70, isVisible: false, isEnabled: true, text: null },
@@ -105,12 +78,9 @@ export default class Menu extends React.Component {
 
     render() {
         if (this.props.showMenu) {
-            const styleFull = this.props.inGameMenu ?
-                extend(styleBgInGameMenu, fullscreen)
-                : extend(styleBgMenu, fullscreen);
-            return <div style={styleFull}>
-                <div style={styleMenu}>
-                    <ul style={styleMenuList}>
+            return <div className={`${this.props.inGameMenu ? 'bgInGameMenu' : 'bgMenu'} fullscreen`}>
+                <div className="menu">
+                    <ul className="menuList">
                         {map(this.state.items, (i, idx) =>
                             ((i.isVisible) ? <li key={idx} style={styleMenuItemList}>
                                 <MenuItem
