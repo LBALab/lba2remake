@@ -7,7 +7,7 @@
     "babel-preset-minify": "^0.4.3",
     "eslint-loader": "^2.1.1",
     "lodash": "^4.17.11",
-    "protobufjs": "^6.8.8",
+    "protobufjs": "^5.0.2",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "three": "^0.100.0"
