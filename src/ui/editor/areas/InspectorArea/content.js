@@ -325,7 +325,7 @@ export class InspectorContent extends React.Component {
             const href = `https://github.com/agrande/lba2remake/blob/${tag}/${filename}#L${line}`;
             return <div style={itemStyle}>
                 Source:
-                <a href={href} style={linkStyle} target="_blank">
+                <a href={href} style={linkStyle} target="_blank" rel="noopener noreferrer">
                     {fct.__location}
                 </a>
             </div>;

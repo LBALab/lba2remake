@@ -1,7 +1,7 @@
 /* eslint-disable react/no-danger */
 const React = require('react');
 
-module.exports = ({script, buildNumber}) => <html lang="en">
+module.exports = ({script, buildNumber}) => (<html lang="en">
     <head>
         <meta charSet="UTF-8"/>
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
@@ -33,4 +33,4 @@ module.exports = ({script, buildNumber}) => <html lang="en">
         <div id="root"/>
         <script type="text/javascript" src="bundle.js"/>
     </body>
-</html>;
+</html>);

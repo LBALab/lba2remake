@@ -39,7 +39,7 @@ function Version({version, isExpanded}) {
         color: isExpanded ? 'rgb(150, 150, 255)' : 'rgb(200, 200, 255)',
     };
     const build = window.buildNumber && version.tag === currentVersion ?
-        <a style={linkStyle} href={`https://circleci.com/gh/agrande/lba2remake/${window.buildNumber}`} target="_blank">
+        <a style={linkStyle} href={`https://circleci.com/gh/agrande/lba2remake/${window.buildNumber}`} target="_blank" rel="noopener noreferrer">
             -build-{window.buildNumber}
         </a>
         : null;
@@ -174,7 +174,7 @@ export default class ChangeLog extends React.Component {
                     <VersionDate date={version.date}/>
                 </div>
                 <div style={{paddingLeft: 24, paddingTop: 8, fontSize: '18px'}}>
-                    {version.project && <a href={version.project} target="_blank" style={projectStyle}>
+                    {version.project && <a href={version.project} target="_blank" style={projectStyle} rel="noopener noreferrer">
                         <img src="./images/github.png" style={{width: 16, height: 16, paddingRight: 8}}/>
                         Github Project
                     </a>}
@@ -230,7 +230,7 @@ function GitHub({id, closed, small}) {
     };
     const imgUrl = `./images/${closed ? 'github_closed' : 'github'}.png`;
 
-    return <a href={`${BASE_URL}/issues/${id}`} style={linkStyle} target="_blank">
+    return <a href={`${BASE_URL}/issues/${id}`} style={linkStyle} target="_blank" rel="noopener noreferrer">
         <img src={imgUrl} style={iconStyle}/>
         <span style={{fontSize: 12, lineHeight: '14px', border: '1px solid white', padding: '0 5px'}}>{id}</span>
     </a>;

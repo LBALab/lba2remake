@@ -1,5 +1,9 @@
 'use strict';
 
+require('@babel/register')({
+    presets: ['@babel/preset-env', '@babel/preset-react']
+})
+
 const fs = require('fs');
 const http = require('http');
 const React = require('react');
@@ -9,7 +13,6 @@ const middleware = require('webpack-dev-middleware');
 const webpackConfig = require('./webpack.config.js');
 const webpack = require('webpack');
 const bodyParser = require('body-parser');
-require('node-jsx').install();
 const Main = require('./main.jsx');
 
 const app = express();
