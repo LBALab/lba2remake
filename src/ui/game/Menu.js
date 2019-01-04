@@ -1,5 +1,5 @@
 import React from 'react';
-import {extend, map, each, filter} from 'lodash';
+import { map, each, filter } from 'lodash';
 
 import '../styles/menu.scss';
 
@@ -82,7 +82,7 @@ export default class Menu extends React.Component {
                 <div className="menu">
                     <ul className="menuList">
                         {map(this.state.items, (i, idx) =>
-                            ((i.isVisible) ? <li key={idx} style={styleMenuItemList}>
+                            ((i.isVisible) ? <li key={idx} className="menuItemList">
                                 <MenuItem
                                     item={i}
                                     selected={idx === this.state.selectedIndex}
@@ -97,33 +97,13 @@ export default class Menu extends React.Component {
     }
 }
 
-const styleMenuItemList = {
-    padding: 10,
-    width: '700px'
-};
-
-const styleMenuItem = {
-    position: 'relative',
-    fontFamily: 'LBA',
-    textShadow: 'black 4px 4px',
-    paddingBottom: 5,
-    border: '2px outset #61cece',
-    borderRadius: 15,
-    fontSize: '2.5em',
-    textAlign: 'center',
-    width: '100%'
-};
-
 function MenuItem(props) {
     if (props.item.text) {
         const extendedStyle = {
             color: props.item.isEnabled ? 'white' : '#828282',
             background: props.selected ? 'rgba(32, 162, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-            userSelect: 'none',
-            cursor: 'pointer'
         };
-        const style = extend(extendedStyle, styleMenuItem);
-        return <div style={style} onClick={props.onClick}>{props.item.text}</div>;
+        return <div className="menuItem" style={extendedStyle} onClick={props.onClick}>{props.item.text}</div>;
     }
     return null;
 }
