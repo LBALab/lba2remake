@@ -5,7 +5,7 @@
     background-image: url('/images/2_screen_menubg_extended.png');
     background-repeat: repeat-x;
     height: 100%;
-    background-position: center;
+    // background-position: center;
     background-size: cover;
 }
 
@@ -20,10 +20,54 @@
     left: 50%;
     transform: translate(-50%, 0);
     list-style: none;
+
+    @include media("<desktop") {
+        bottom: 5%;
+    }
 }
 
 .menuList {
     list-style: none;
-    padding: 0;
-    margin: 0;
+    padding: 0px;
+    margin: 0px;
+}
+
+.menuItemList {
+    padding: 10px;
+    width: 700px;
+
+    @include media("<desktop") {
+        width: 450px;
+        padding: 5px;
+    }
+    @include media("<tablet", "portrait") {
+        width: 250px;
+        padding: 5px;
+    }
+}
+
+.menuItem {
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    font-family: LBA;
+    text-shadow: black 4px 4px;
+    padding-bottom: 5px;
+    border: 2px outset #61cece;
+    border-radius: 15px;
+    font-size: 2.5em;
+    text-align: center;
+    width: 100%;
+
+    @include media("<desktop") {
+        font-size: 1.5em;
+        border-radius: 10px;
+        text-shadow: black 3px 3px;
+    }
+
+    @include media("<tablet","portrait") {
+        font-size: 1em;
+        border-radius: 8px;
+        text-shadow: black 2px 2px;
+    }
 }

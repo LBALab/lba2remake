@@ -298,12 +298,6 @@ export default class GameUI extends FrameListener {
                     ticker={this.props.ticker}
                 /> : null}
             <CinemaEffect enabled={this.state.cinema} />
-            {!this.state.showMenu ? <TextBox text={this.state.text} /> : null}
-            {!this.state.showMenu ? <AskChoice
-                ask={this.state.ask}
-                onChoiceChanged={this.onAskChoiceChanged}
-            /> : null}
-            {!this.state.showMenu ? <FoundObject foundObject={this.state.foundObject} /> : null}
             <TextInterjections
                 scene={this.state.scene}
                 renderer={this.state.renderer}
@@ -320,6 +314,12 @@ export default class GameUI extends FrameListener {
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
             <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} editor={this.props.params.editor} />
             {this.state.loading ? <Loader/> : null}
+            {!this.state.showMenu ? <TextBox text={this.state.text} /> : null}
+            {!this.state.showMenu ? <AskChoice
+                ask={this.state.ask}
+                onChoiceChanged={this.onAskChoiceChanged}
+            /> : null}
+            {!this.state.showMenu ? <FoundObject foundObject={this.state.foundObject} /> : null}
         </div>;
     }
 }
