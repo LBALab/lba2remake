@@ -11,20 +11,20 @@ export function createBoundingBox(bb, color) {
     const material = new THREE.RawShaderMaterial({
         vertexShader: `
             precision lowp float;
-        
+
             uniform mat4 projectionMatrix;
             uniform mat4 modelViewMatrix;
-            
+
             attribute vec3 position;
-            
+
             void main() {
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(position.x, position.y + 0.001, position.z, 1.0);
             }`,
         fragmentShader: `
             precision lowp float;
-            
+
             uniform vec3 color;
-            
+
             void main() {
                 gl_FragColor = vec4(color, 1.0);
             }`,
@@ -33,6 +33,8 @@ export function createBoundingBox(bb, color) {
         }
     });
     const wireframe = new THREE.LineSegments(edgesGeometry, material);
-    wireframe.position.copy(bb.getCenter());
+    const center = new THREE.Vector3();
+    bb.getCenter(center);
+    wireframe.position.copy(center);
     return wireframe;
 }
