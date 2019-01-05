@@ -71,8 +71,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             const that = this;
             cmdState.listener = function listener(event) {
                 const key = event.code || event.which || event.keyCode;
-                if (key === 'Enter' || key === 13 ||
-                    key === 'Escape' || key === 27) {
+                if (key === 'Enter' || key === 13) {
                     const skip = that.game.getUiState().skip;
                     if (skip) {
                         cmdState.ended = true;
@@ -247,8 +246,7 @@ export function FOUND_OBJECT(cmdState, id) {
         const that = this;
         cmdState.listener = function listener(event) {
             const key = event.code || event.which || event.keyCode;
-            if (key === 'Enter' || key === 13 ||
-                key === 'Escape' || key === 27) {
+            if (key === 'Enter' || key === 13) {
                 const skip = that.game.getUiState().skip;
                 if (skip) {
                     cmdState.ended = true;
