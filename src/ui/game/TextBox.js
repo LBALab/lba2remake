@@ -28,6 +28,11 @@ export default class TextBox extends React.Component {
                 this.interval = null;
             }
         }
+        if (newProps.skip !== this.props.skip) {
+            this.setState({offset: 0, content: this.props.text.value.replace(/@/g, '\n')});
+            clearInterval(this.interval);
+            this.interval = null;
+        }
     }
 
     componentWillUnmount() {

@@ -62,6 +62,7 @@ export default class GameUI extends FrameListener {
                 game,
                 cinema: false,
                 text: null,
+                skip: false,
                 ask: {choices: []},
                 interjections: {},
                 foundObject: null,
@@ -314,7 +315,10 @@ export default class GameUI extends FrameListener {
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
             <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} editor={this.props.params.editor} />
             {this.state.loading ? <Loader/> : null}
-            {!this.state.showMenu ? <TextBox text={this.state.text} /> : null}
+            {!this.state.showMenu ? <TextBox
+                text={this.state.text}
+                skip={this.state.skip}
+            /> : null}
             {!this.state.showMenu ? <AskChoice
                 ask={this.state.ask}
                 onChoiceChanged={this.onAskChoiceChanged}

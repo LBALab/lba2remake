@@ -68,13 +68,40 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                     color: actor.props.textColor
                 }
             });
+            const that = this;
             cmdState.listener = function listener(event) {
                 const key = event.code || event.which || event.keyCode;
                 if (key === 'Enter' || key === 13) {
-                    cmdState.ended = true;
+                    const skip = that.game.getUiState().skip;
+                    if (skip) {
+                        cmdState.ended = true;
+                    } else {
+                        that.game.setUiState({
+                            skip: true
+                        });
+                    }
+                }
+            };
+            cmdState.listenerStart = function listenerStart() {
+                cmdState.startTime = Date.now();
+            };
+            cmdState.listenerEnd = function listenerEnd() {
+                const endTime = Date.now();
+                const elapsed = endTime - cmdState.startTime;
+                if (elapsed < 300) {
+                    const skip = that.game.getUiState().skip;
+                    if (skip) {
+                        cmdState.ended = true;
+                    } else {
+                        that.game.setUiState({
+                            skip: true
+                        });
+                    }
                 }
             };
             window.addEventListener('keydown', cmdState.listener);
+            window.addEventListener('touchstart', cmdState.listenerStart);
+            window.addEventListener('touchend', cmdState.listenerEnd);
             if (text.type === 9) {
                 setTimeout(() => {
                     cmdState.listener();
@@ -90,12 +117,19 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         voiceSource.stop();
         const text = this.scene.data.texts[id];
         if (text.type !== 9) {
-            this.game.setUiState({ text: null });
+            this.game.setUiState({ text: null, skip: false, });
             window.removeEventListener('keydown', cmdState.listener);
+            window.removeEventListener('touchstart', cmdState.listenerStart);
+            window.removeEventListener('touchend', cmdState.listenerEnd);
             hero.props.dirMode = DirMode.MANUAL;
         }
         delete cmdState.listener;
+        delete cmdState.listenerStart;
+        delete cmdState.listenerEnd;
         delete cmdState.ended;
+        if (cmdState.startTime) {
+            delete cmdState.startTime;
+        }
     } else {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
@@ -209,13 +243,40 @@ export function FOUND_OBJECT(cmdState, id) {
             },
             foundObject: id
         });
+        const that = this;
         cmdState.listener = function listener(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13) {
-                cmdState.ended = true;
+                const skip = that.game.getUiState().skip;
+                if (skip) {
+                    cmdState.ended = true;
+                } else {
+                    that.game.setUiState({
+                        skip: true
+                    });
+                }
+            }
+        };
+        cmdState.listenerStart = function listenerStart() {
+            cmdState.startTime = Date.now();
+        };
+        cmdState.listenerEnd = function listenerEnd() {
+            const endTime = Date.now();
+            const elapsed = endTime - cmdState.startTime;
+            if (elapsed < 300) {
+                const skip = that.game.getUiState().skip;
+                if (skip) {
+                    cmdState.ended = true;
+                } else {
+                    that.game.setUiState({
+                        skip: true
+                    });
+                }
             }
         };
         window.addEventListener('keydown', cmdState.listener);
+        window.addEventListener('touchstart', cmdState.listenerStart);
+        window.addEventListener('touchend', cmdState.listenerEnd);
         if (text.type === 9) {
             setTimeout(() => {
                 cmdState.listener();
@@ -229,12 +290,19 @@ export function FOUND_OBJECT(cmdState, id) {
     }
     if (cmdState.ended) {
         voiceSource.stop();
-        this.game.setUiState({ text: null, foundObject: null });
+        this.game.setUiState({ skip: false, text: null, foundObject: null });
         window.removeEventListener('keydown', cmdState.listener);
+        window.removeEventListener('touchstart', cmdState.listenerStart);
+        window.removeEventListener('touchend', cmdState.listenerEnd);
         hero.props.dirMode = DirMode.MANUAL;
 
         delete cmdState.listener;
+        delete cmdState.listenerStart;
+        delete cmdState.listenerEnd;
         delete cmdState.ended;
+        if (cmdState.startTime) {
+            delete cmdState.startTime;
+        }
     } else {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
@@ -319,29 +387,56 @@ export function PLAY_SMK(cmdState, video) {
         const that = this;
         this.game.pause();
         const src = VideoData.VIDEO.find(v => v.name === video).file;
-        this.game.setUiState({video: {
-            src,
-            callback: () => {
-                that.game.setUiState({video: null});
-                cmdState.ended = true;
-                that.game.resume();
-            }
-        }});
+        const callback = () => {
+            that.game.setUiState({video: null, skip: false});
+            cmdState.ended = true;
+            that.game.resume();
+        };
+        this.game.setUiState({ skip: false,
+            video: {
+                src,
+                callback
+            }});
         cmdState.listener = function listener(event) {
             const key = event.code || event.which || event.keyCode;
-            if (key === 'Enter' || key === 13) {
-                that.game.setUiState({video: null});
-                cmdState.ended = true;
-                that.game.resume();
+            if (key === 'Enter' || key === 13 ||
+                key === 'Escape' || key === 27) {
+                callback();
+            }
+        };
+        cmdState.listenerStart = function listenerStart() {
+            cmdState.startTime = Date.now();
+        };
+        cmdState.listenerEnd = function listenerEnd() {
+            const endTime = Date.now();
+            const elapsed = endTime - cmdState.startTime;
+            if (elapsed < 300) {
+                const skip = that.game.getUiState().skip;
+                if (skip) {
+                    callback();
+                } else {
+                    that.game.setUiState({
+                        skip: true
+                    });
+                }
             }
         };
         window.addEventListener('keydown', cmdState.listener);
+        window.addEventListener('touchstart', cmdState.listenerStart);
+        window.addEventListener('touchend', cmdState.listenerEnd);
     }
 
     if (cmdState.ended) {
         window.removeEventListener('keydown', cmdState.listener);
+        window.removeEventListener('touchstart', cmdState.listenerStart);
+        window.removeEventListener('touchend', cmdState.listenerEnd);
         delete cmdState.listener;
+        delete cmdState.listenerStart;
+        delete cmdState.listenerEnd;
         delete cmdState.ended;
+        if (cmdState.startTime) {
+            delete cmdState.startTime;
+        }
     } else {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;

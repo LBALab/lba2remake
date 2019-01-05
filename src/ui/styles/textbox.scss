@@ -30,6 +30,9 @@
 
     &.small {
         min-height: 135px;
+        @include media("<desktop") {
+            min-height: 105px;
+        }
     }
 
     &.big {
