@@ -28,7 +28,9 @@ export default class TextBox extends React.Component {
                 this.interval = null;
             }
         }
-        if (newProps.skip !== this.props.skip) {
+        if (newProps.skip !== this.props.skip
+            && this.props.text
+            && this.props.text.value) {
             this.setState({offset: 0, content: this.props.text.value.replace(/@/g, '\n')});
             clearInterval(this.interval);
             this.interval = null;
@@ -51,6 +53,9 @@ export default class TextBox extends React.Component {
         offset += 1;
         if (offset >= text.length) {
             clearInterval(this.interval);
+            if (this.props.textAnimEnded) {
+                this.props.textAnimEnded();
+            }
         }
         this.setState({offset, content});
     }

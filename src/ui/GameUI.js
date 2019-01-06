@@ -42,6 +42,7 @@ export default class GameUI extends FrameListener {
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
         this.startNewGameScene = this.startNewGameScene.bind(this);
+        this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
 
         if (props.mainData) {
             const state = props.mainData.state;
@@ -287,6 +288,10 @@ export default class GameUI extends FrameListener {
         this.setState({choice});
     }
 
+    textAnimEndedHandler() {
+        this.setUiState({ skip: true });
+    }
+
     render() {
         return <div style={fullscreen}>
             <div ref={this.onLoad} style={fullscreen}/>
@@ -318,6 +323,7 @@ export default class GameUI extends FrameListener {
             {!this.state.showMenu ? <TextBox
                 text={this.state.text}
                 skip={this.state.skip}
+                textAnimEnded={this.textAnimEndedHandler}
             /> : null}
             {!this.state.showMenu ? <AskChoice
                 ask={this.state.ask}
