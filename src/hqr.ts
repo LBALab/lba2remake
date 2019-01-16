@@ -1,12 +1,12 @@
 import {each} from 'lodash';
 
-type Entry = {
-    type: number,
-    offset: number,
-    originalSize: number,
-    compressedSize: number,
-    hasHiddenEntry: boolean,
-    nextHiddenEntry: ?number
+interface Entry {
+    type: number;
+    offset: number;
+    originalSize: number;
+    compressedSize: number;
+    hasHiddenEntry: boolean;
+    nextHiddenEntry?: number;
 };
 
 export default class HQR {

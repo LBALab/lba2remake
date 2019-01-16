@@ -3,6 +3,8 @@
   "version": "0.0.16-dev",
   "description": "Little Big Adventure 2, HD version, for the web",
   "dependencies": {
+    "@types/lodash": "^4.14.119",
+    "@types/three": "^0.93.15",
     "async": "^2.6.1",
     "babel-preset-minify": "^0.4.3",
     "eslint-loader": "^2.1.1",

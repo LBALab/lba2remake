@@ -1,4 +1,4 @@
-export type Time = {
-    delta: number,
-    elapsed: number
+export interface Time {
+    delta: number;
+    elapsed: number;
 }

@@ -19,7 +19,7 @@ const paramsDefinitions = {
     }
 };
 
-export function loadParams() : Object {
+export function loadParams() : any {
     const query = window.location.hash.replace(/^#/, '');
     const src = {};
     const tgt = {};

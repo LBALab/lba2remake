@@ -1,10 +1,10 @@
 import {switchStats} from '../renderer/stats';
 import {BehaviourMode} from '../game/loop/hero';
 
-export function makeKeyboardControls(params: Object,
-                                     canvas: Object,
-                                     sceneManager: Object,
-                                     game: Object) {
+export function makeKeyboardControls(params: any,
+                                     canvas: any,
+                                     sceneManager: any,
+                                     game: any) {
     const onKeyDown = keyDownHandler.bind(null, params, game, sceneManager);
     const onKeyUp = keyUpHandler.bind(null, game);
     const onFocusOut = focusOutHandler.bind(null, game);
