@@ -20,6 +20,10 @@ import {initCameraMovement} from './loop/cameras';
 import DebugData, * as DBG from '../ui/editor/DebugData';
 import {sBind} from '../utils';
 
+declare global {
+    var ga: Function;
+}
+
 const {initSceneDebugData, loadSceneMetaData} = DBG;
 
 export function createSceneManager(params, game, renderer, callback: Function, hideMenu: Function) {

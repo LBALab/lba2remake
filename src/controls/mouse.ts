@@ -1,5 +1,15 @@
 import * as THREE from 'three';
 
+declare global {
+    interface Document {
+        pointerLockElement?: any;
+    }
+
+    interface HTMLElement {
+        requestPointerLock: Function;
+      }
+}
+
 // Move pointerLock mechanics out of this
 export function makeFirstPersonMouseControls(params: any, domElement: HTMLElement, game: any) {
     const controls = {
