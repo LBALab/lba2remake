@@ -38,11 +38,6 @@ jobs:
           name: Build
           command: npm run -s build
 
-      # Flow type checking
-      - run:
-          name: Flow type-checking
-          command: npm run -s flow
-
       # Copy files over
       - run:
           name: Build archive
