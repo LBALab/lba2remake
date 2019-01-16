@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 
-import {Model} from '../model';
-import {loadModel} from '../model';
+import {loadModel, Model} from '../model';
 import {loadAnimState, resetAnimState} from '../model/animState';
 import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
 import {loadSprite} from '../iso/sprites';

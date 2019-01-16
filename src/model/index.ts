@@ -2,8 +2,7 @@ import async from 'async';
 
 import * as THREE from 'three';
 import {loadHqrAsync} from '../hqr';
-import {Entity} from './entity';
-import {loadEntity, getBodyIndex, getAnimIndex, getAnim} from './entity';
+import {loadEntity, getBodyIndex, getAnimIndex, getAnim, Entity} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
 import {initSkeleton, createSkeleton, updateKeyframe, updateKeyframeInterpolation} from './animState';
