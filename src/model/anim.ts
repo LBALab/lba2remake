@@ -1,5 +1,3 @@
-// @flow
-
 import * as THREE from 'three';
 
 type BoneframeCanFall = {

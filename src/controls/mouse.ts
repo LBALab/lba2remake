@@ -1,5 +1,3 @@
-// @flow
-
 import * as THREE from 'three';
 
 // Move pointerLock mechanics out of this

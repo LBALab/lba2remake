@@ -1,4 +1,3 @@
-// @flow
 import {map, each} from 'lodash';
 
 const paramsDefinitions = {

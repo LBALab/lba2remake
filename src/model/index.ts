@@ -1,5 +1,3 @@
-// @flow
-
 import async from 'async';
 
 import * as THREE from 'three';

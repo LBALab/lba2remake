@@ -1,5 +1,3 @@
-// @flow
-
 import * as THREE from 'three';
 
 export function makeGyroscopeControls(game: any) {

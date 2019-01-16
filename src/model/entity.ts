@@ -1,5 +1,3 @@
-// @flow
-
 type Action = {
     type: number,
     animFrame: number,

@@ -1,5 +1,3 @@
-// @flow
-
 import * as THREE from 'three';
 
 import type {Model} from '../model';

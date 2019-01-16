@@ -1,5 +1,3 @@
-// @flow
-
 import {each} from 'lodash';
 
 type Entry = {

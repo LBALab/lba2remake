@@ -1,4 +1,3 @@
-// @flow
 import {each} from 'lodash';
 import FrameListener from './FrameListener';
 

@@ -1,5 +1,3 @@
-// @flow
-
 import * as THREE from 'three';
 import {map, each} from 'lodash';
 

@@ -1,5 +1,3 @@
-// @flow
-
 import * as THREE from 'three';
 import {switchStats} from '../renderer/stats';
 
