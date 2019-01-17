@@ -1,4 +1,4 @@
-import async from 'async';
+import * as async from 'async';
 
 import * as THREE from 'three';
 import {loadHqrAsync} from '../hqr';
