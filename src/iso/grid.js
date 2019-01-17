@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {map, each, range, last} from 'lodash';
-import {bits} from '../utils';
+import {bits} from '../utils.ts';
 import {loadBricksMapping} from './mapping';
 
 export function loadGrid(bkg, bricks, palette, entry) {

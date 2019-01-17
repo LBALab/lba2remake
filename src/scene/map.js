@@ -1,6 +1,6 @@
 import async from 'async';
 
-import {loadHqrAsync} from '../hqr';
+import {loadHqrAsync} from '../hqr.ts';
 
 export function loadSceneMapData(callback) {
     async.auto({

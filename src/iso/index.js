@@ -1,6 +1,6 @@
 import async from 'async';
 import * as THREE from 'three';
-import {loadHqrAsync} from '../hqr';
+import {loadHqrAsync} from '../hqr.ts';
 import {loadBricks} from './bricks';
 import {loadGrid} from './grid';
 import {processCollisions} from './physics';

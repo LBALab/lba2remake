@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import async from 'async';
+import * as async from 'async';
 
 import {createState} from './state';
 import {createAudioManager, createMusicManager} from '../audio';

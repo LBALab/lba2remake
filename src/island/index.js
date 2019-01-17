@@ -2,7 +2,7 @@ import async from 'async';
 import * as THREE from 'three';
 import {map, each, assign, tail} from 'lodash';
 
-import {loadHqrAsync} from '../hqr';
+import {loadHqrAsync} from '../hqr.ts';
 import {prepareGeometries} from './geometries';
 import {loadLayout} from './layout';
 import {loadGround} from './ground';

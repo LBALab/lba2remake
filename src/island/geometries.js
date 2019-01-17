@@ -4,7 +4,7 @@ import {
     loadSubTexture,
     loadPaletteTexture,
     loadTexture
-} from '../texture';
+} from '../texture.ts';
 
 import VERT_GROUND_COLORED from './shaders/ground/colored.vert.glsl';
 import FRAG_GROUND_COLORED from './shaders/ground/colored.frag.glsl';

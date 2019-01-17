@@ -1,7 +1,7 @@
 import async from 'async';
 
 import AudioData from './data';
-import {loadHqrAsync} from '../hqr';
+import {loadHqrAsync} from '../hqr.ts';
 import {getFrequency} from '../utils/lba';
 
 const musicSourceCache = [];

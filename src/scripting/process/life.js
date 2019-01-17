@@ -1,6 +1,6 @@
 import {clone} from 'lodash';
-import {DirMode} from '../../game/actors';
-import {setMagicBallLevel} from '../../game/state';
+import {DirMode} from '../../game/actors.ts';
+import {setMagicBallLevel} from '../../game/state.ts';
 import VideoData from '../../video/data';
 
 export function PALETTE() {

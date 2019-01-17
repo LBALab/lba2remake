@@ -1,5 +1,5 @@
 import {getHtmlColor} from '../../scene';
-import {DirMode} from '../../game/actors';
+import {DirMode} from '../../game/actors.ts';
 
 export const ZoneOpcode = [
     { opcode: 0, command: 'CUBE', callback: CUBE },
