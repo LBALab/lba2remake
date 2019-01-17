@@ -32,7 +32,7 @@ export function loadPaletteTexture(palette: Uint8Array) {
 
 export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array) {
     const pixel_data = new Uint8Array(buffer);
-    let image_data = new Uint8ClampedArray(256 * 256 * 4);
+    let image_data = new Uint8Array(256 * 256 * 4);
     for (let x = 0; x < 256; x += 1) {
         for (let y = 0; y < 256; y += 1) {
             const idx = (x * 256) + y;
@@ -55,6 +55,7 @@ export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array) {
         THREE.NearestMipMapNearestFilter
     );
     texture.mipmaps = [{
+        // @ts-ignore
         data: image_data,
         width: 256,
         height: 256
@@ -63,6 +64,7 @@ export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array) {
         const dim = Math.pow(2, 8 - level);
         image_data = loadMipmapLevelPal(image_data, level, palette);
         texture.mipmaps.push({
+            // @ts-ignore
             data: image_data,
             width: dim,
             height: dim
@@ -107,9 +109,9 @@ export function loadTexture2(buffer: ArrayBuffer, palette: Uint8Array) {
     return texture;
 }
 
-function loadMipmapLevelPal(source_data: Uint8ClampedArray, level: number, palette: Uint8Array) {
+function loadMipmapLevelPal(source_data: Uint8Array, level: number, palette: Uint8Array) {
     const dim = Math.pow(2, 8 - level);
-    const tgt_data = new Uint8ClampedArray(dim * dim * 4);
+    const tgt_data = new Uint8Array(dim * dim * 4);
     for (let y = 0; y < dim; y += 1) {
         for (let x = 0; x < dim; x += 1) {
             const idx = (y * dim) + x;
