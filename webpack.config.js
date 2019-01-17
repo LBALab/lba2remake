@@ -60,6 +60,12 @@ module.exports = {
                         '@babel/plugin-proposal-object-rest-spread'
                     ]
                 }
+            }, {
+                loader: 'tslint-loader',
+                options: {
+                    emitErrors: true,
+                    formatter: 'msbuild'
+                }
             }]
         }, {
             test: /\.glsl?$/,

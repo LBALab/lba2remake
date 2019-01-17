@@ -3,6 +3,7 @@
         "dbaeumer.vscode-eslint",
         "msjsdiag.debugger-for-chrome",
         "christian-kohler.npm-intellisense",
-        "eg2.vscode-npm-script"
+        "eg2.vscode-npm-script",
+        "eg2.tslint"
     ]
 }
