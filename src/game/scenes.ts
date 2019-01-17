@@ -149,14 +149,11 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             skyColor: [0, 0, 0],
             fogDensity: 0,
         };
-        const loadSteps = {
+        const loadSteps: any = {
             metadata: callback => (params.editor ? loadSceneMetaData(index, callback) : callback()),
             actors: ['metadata', (data, callback) => { async.map(sceneData.actors, loadActor.bind(null, params, envInfo, sceneData.ambience), callback); }],
             points: ['metadata', (data, callback) => { async.map(sceneData.points, loadPoint, callback); }],
             zones: ['metadata', (data, callback) => { async.map(sceneData.zones, loadZone, callback); }],
-            scenery: undefined,
-            threeScene: undefined,
-            sideScenes: undefined
         };
 
         if (!parent) {
@@ -191,7 +188,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };
         }
 
-        async.auto(loadSteps, (err, data) => {
+        async.auto(loadSteps, (err, data: any) => {
             const sceneNode = loadSceneNode(index, indexInfo, data);
             data.threeScene.add(sceneNode);
             const scene = {
@@ -300,7 +297,7 @@ function loadSideScenes(sceneManager,
         loadScene(sceneManager, params, game, renderer, sceneMap, sideIndex, parent, callback);
     }, (err, sideScenes) => {
         const sideScenesMap = {};
-        each(sideScenes, (sideScene) => {
+        each(sideScenes, (sideScene: any) => {
             sideScenesMap[sideScene.index] = sideScene;
         });
         mainCallback(null, sideScenesMap);
