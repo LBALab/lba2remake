@@ -3,6 +3,7 @@
   "version": "0.0.16-dev",
   "description": "Little Big Adventure 2, HD version, for the web",
   "dependencies": {
+    "@types/async": "^2.0.50",
     "@types/lodash": "^4.14.119",
     "@types/three": "^0.93.15",
     "async": "^2.6.1",
