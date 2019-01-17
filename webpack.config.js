@@ -26,7 +26,26 @@ module.exports = {
     },
     module: {
         rules: [{
-            test: /\.(js|jsx|ts)?$/,
+            test: /\.(js|jsx)?$/,
+            include: /src/,
+            exclude: /node_modules/,
+            use: [{
+                loader: 'babel-loader',
+                options: {
+                    presets: ['@babel/preset-react', '@babel/preset-env', ['minify', {
+                        mangle: false
+                    }]],
+                    plugins: [
+                        path.join(__dirname, './utils/babel-transforms/inspector-annotations.js'),
+                        '@babel/plugin-proposal-class-properties',
+                        '@babel/plugin-proposal-object-rest-spread'
+                    ]
+                }
+            }, {
+                loader: 'eslint-loader'
+            }]
+        }, {
+            test: /\.(ts)?$/,
             include: /src/,
             exclude: /node_modules/,
             use: [{
@@ -41,8 +60,6 @@ module.exports = {
                         '@babel/plugin-proposal-object-rest-spread'
                     ]
                 }
-            }, {
-                loader: 'eslint-loader'
             }]
         }, {
             test: /\.glsl?$/,
