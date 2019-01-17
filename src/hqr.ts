@@ -7,7 +7,7 @@ interface Entry {
     compressedSize: number;
     hasHiddenEntry: boolean;
     nextHiddenEntry?: number;
-};
+}
 
 export default class HQR {
     entries: Entry[] = [];
@@ -86,7 +86,8 @@ export default class HQR {
                 src_pos += 1;
             }
             return tgt_buffer;
-        } else if (entry.hasHiddenEntry) {
+        }
+        if (entry.hasHiddenEntry) {
             const tgt_buffer = new ArrayBuffer(entry.originalSize);
             const source = new Uint8Array(this.buffer, entry.offset, entry.compressedSize);
             const target = new Uint8Array(tgt_buffer);

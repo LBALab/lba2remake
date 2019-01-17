@@ -2,7 +2,7 @@ import {each} from 'lodash';
 import FrameListener from './FrameListener';
 
 export default class Ticker {
-    listeners: Array<FrameListener> = [];
+    listeners: FrameListener[] = [];
 
     constructor() {
         this.listeners = [];

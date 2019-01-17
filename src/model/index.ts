@@ -5,7 +5,12 @@ import {loadHqrAsync} from '../hqr';
 import {loadEntity, getBodyIndex, getAnimIndex, getAnim, Entity} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
-import {initSkeleton, createSkeleton, updateKeyframe, updateKeyframeInterpolation} from './animState';
+import {
+    initSkeleton,
+    createSkeleton,
+    updateKeyframe,
+    updateKeyframeInterpolation
+} from './animState';
 import {processAnimAction} from './animAction';
 import {loadMesh} from './geometries';
 import {loadTexture2} from '../texture';

@@ -3,7 +3,7 @@ import {switchStats} from '../renderer/stats';
 
 const euler = new THREE.Euler();
 const PI_4 = Math.PI / 4;
-const MAX_X_ANGLE = Math.PI;// / 2.5;
+const MAX_X_ANGLE = Math.PI; // / 2.5;
 
 export function makeGamepadControls(sceneManager: any, game: any) {
     const onDpadValueChanged = dpadValueChangeHandler.bind(null, game);

@@ -136,7 +136,7 @@ function loadMipmapLevelPal(source_data: Uint8Array, level: number, palette: Uin
     return tgt_data;
 }
 
-function findNearestColor(palette: Uint8Array, colors: Array< Array<number> >) {
+function findNearestColor(palette: Uint8Array, colors: number[][]) {
     const sum = [0, 0, 0];
     let count = 0;
     each(colors, ([r, g, b, idx]) => {

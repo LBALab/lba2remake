@@ -38,7 +38,7 @@ interface ActorPhysics {
         position: THREE.Vector3,
         angle: number,
         destAngle: number
-    }
+    };
 }
 
 export interface Actor {
@@ -218,7 +218,10 @@ export function loadActor(params: any,
                             that.model = model;
                             that.threeObject = model.mesh;
                             if (that.threeObject) {
-                                that.threeObject.name = `actor:${getObjectName('actor', that.props.sceneIndex, that.props.index)}`;
+                                const name = getObjectName('actor',
+                                                            that.props.sceneIndex,
+                                                            that.props.index);
+                                that.threeObject.name = `actor:${name}`;
                                 that.threeObject.visible = that.isVisible;
                             }
                         }
@@ -232,7 +235,10 @@ export function loadActor(params: any,
                     // sprite.threeObject.quaternion.copy(actor.physics.orientation);
                     that.threeObject = sprite.threeObject;
                     if (that.threeObject) {
-                        that.threeObject.name = `actor:${getObjectName('actor', that.props.sceneIndex, that.props.index)}`;
+                        const name = getObjectName('actor',
+                                                    that.props.sceneIndex,
+                                                    that.props.index);
+                        that.threeObject.name = `actor:${name}`;
                         that.threeObject.visible = that.isVisible;
                     }
                     if (callback) {
