@@ -52,7 +52,8 @@
     "dev": "cross-env NODE_ENV=development node devserver.js",
     "dev:debug": "cross-env SRCMAP=true NODE_ENV=development node devserver.js",
     "build": "cross-env NODE_ENV=production webpack -p",
-    "lint": "eslint -f codeframe ./src"
+    "lint": "eslint -f codeframe ./src",
+    "typecheck": "tsc"
   },
   "repository": "https://github.com/agrande/lba2remake.git",
   "author": "Adrien Grandemange",

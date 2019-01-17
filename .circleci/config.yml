@@ -38,6 +38,11 @@ jobs:
           name: Build
           command: npm run -s build
 
+      # Typecheck
+      - run:
+          name: Typecheck
+          command: npm run -s typecheck
+
       # Copy files over
       - run:
           name: Build archive
