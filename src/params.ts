@@ -1,5 +1,6 @@
-// @flow
 import {map, each} from 'lodash';
+
+const mobileRE = /Mobile|webOS|iPhone|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i;
 
 const paramsDefinitions = {
     vr: {
@@ -8,7 +9,7 @@ const paramsDefinitions = {
     },
     mobile: {
         type: 'boolean',
-        default: /Mobile|webOS|iPhone|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        default: mobileRE.test(navigator.userAgent)
     },
     scene: {
         type: 'int',
@@ -20,7 +21,7 @@ const paramsDefinitions = {
     }
 };
 
-export function loadParams() : Object {
+export function loadParams() : any {
     const query = window.location.hash.replace(/^#/, '');
     const src = {};
     const tgt = {};
@@ -48,7 +49,8 @@ function parseParam(param, name, src) {
         case 'boolean':
             if (src === 'true') {
                 return true;
-            } else if (src === 'false') {
+            }
+            if (src === 'false') {
                 return false;
             }
             // eslint-disable-next-line no-console

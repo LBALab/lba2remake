@@ -1,52 +1,50 @@
-// @flow
-
-type Action = {
-    type: number,
-    animFrame: number,
-    sampleIndex: number,
-    frequency: number,
-    unk1: number,
-    unk2: number,
-    unk3: number,
-    unk4: number,
-    unk5: number,
-    strength: number,
-    distanceX: number,
-    distanceY: number,
-    distanceZ: number,
-    yHeight: number,
-    spriteIndex: number,
-    repeat: number,
-    targetActor: number
+interface Action {
+    type: number;
+    animFrame: number;
+    sampleIndex: number;
+    frequency: number;
+    unk1: number;
+    unk2: number;
+    unk3: number;
+    unk4: number;
+    unk5: number;
+    strength: number;
+    distanceX: number;
+    distanceY: number;
+    distanceZ: number;
+    yHeight: number;
+    spriteIndex: number;
+    repeat: number;
+    targetActor: number;
 }
 
-type Anim = {
-    index: number,
-    animIndex: number,
-    actions: Action[],
-    offset: number
+interface Anim {
+    index: number;
+    animIndex: number;
+    actions: Action[];
+    offset: number;
 }
 
-type Box = {
-    xMin: number,
-    yMin: number,
-    zMin: number,
-    xMax: number,
-    yMax: number,
-    zMax: number
+interface Box {
+    xMin: number;
+    yMin: number;
+    zMin: number;
+    xMax: number;
+    yMax: number;
+    zMax: number;
 }
 
-export type Body = {
-    bodyIndex: number,
-    index: number,
-    offset: number,
-    hasCollisionBox: boolean,
-    box: Box
+export interface Body {
+    bodyIndex: number;
+    index: number;
+    offset: number;
+    hasCollisionBox: boolean;
+    box: Box;
 }
 
-export type Entity = {
-    anims: Anim[],
-    bodies: Body[]
+export interface Entity {
+    anims: Anim[];
+    bodies: Body[];
 }
 
 /* eslint-disable key-spacing */

@@ -1,9 +1,9 @@
 import async from 'async';
 import * as THREE from 'three';
-import {DirMode} from '../game/actors';
+import {DirMode} from '../game/actors.ts';
 
-import {loadHqrAsync} from '../hqr';
-import {bits} from '../utils';
+import {loadHqrAsync} from '../hqr.ts';
+import {bits} from '../utils.ts';
 import {loadTextData, getTextFile} from '../text';
 
 export function loadSceneData(language, index, callback) {

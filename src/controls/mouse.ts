@@ -1,9 +1,17 @@
-// @flow
-
 import * as THREE from 'three';
 
+declare global {
+    interface Document {
+        pointerLockElement?: any;
+    }
+
+    interface HTMLElement {
+        requestPointerLock: Function;
+      }
+}
+
 // Move pointerLock mechanics out of this
-export function makeFirstPersonMouseControls(params: Object, domElement: HTMLElement, game: any) {
+export function makeFirstPersonMouseControls(params: any, domElement: HTMLElement, game: any) {
     const controls = {
         enabled: false
     };
@@ -48,7 +56,7 @@ function handleMouseEvent(controls, game, event: MouseEvent) {
 }
 
 function pointerLockChanged(controls) {
-    controls.enabled = (document: any).pointerLockElement === document.body;
+    controls.enabled = document.pointerLockElement === document.body;
 }
 
 function handleClick(params, game) {

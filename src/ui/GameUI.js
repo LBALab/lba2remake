@@ -3,9 +3,9 @@ import * as THREE from 'three';
 import {clone, omit, noop} from 'lodash';
 
 import {createRenderer} from '../renderer';
-import {createGame} from '../game';
+import {createGame} from '../game/index.ts';
 import {mainGameLoop} from '../game/loop';
-import {createSceneManager} from '../game/scenes';
+import {createSceneManager} from '../game/scenes.ts';
 import {createControls} from '../controls/index';
 
 import {fullscreen} from './styles/index';
@@ -23,7 +23,7 @@ import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
 import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
-import {sBind} from '../utils';
+import {sBind} from '../utils.ts';
 
 export default class GameUI extends FrameListener {
     constructor(props) {

@@ -1,4 +1,4 @@
-import async from 'async';
+import * as async from 'async';
 import * as THREE from 'three';
 import {
     map,
@@ -19,6 +19,10 @@ import {loadScripts, killActor, reviveActor} from '../scripting';
 import {initCameraMovement} from './loop/cameras';
 import DebugData, * as DBG from '../ui/editor/DebugData';
 import {sBind} from '../utils';
+
+declare global {
+    var ga: Function;
+}
 
 const {initSceneDebugData, loadSceneMetaData} = DBG;
 
@@ -145,11 +149,18 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             skyColor: [0, 0, 0],
             fogDensity: 0,
         };
-        const loadSteps = {
+        const loadSteps: any = {
             metadata: callback => (params.editor ? loadSceneMetaData(index, callback) : callback()),
-            actors: ['metadata', (data, callback) => { async.map(sceneData.actors, loadActor.bind(null, params, envInfo, sceneData.ambience), callback); }],
-            points: ['metadata', (data, callback) => { async.map(sceneData.points, loadPoint, callback); }],
-            zones: ['metadata', (data, callback) => { async.map(sceneData.zones, loadZone, callback); }],
+            actors: ['metadata', (data, callback) => {
+                async.map(sceneData.actors,
+                            loadActor.bind(null, params, envInfo, sceneData.ambience), callback);
+            }],
+            points: ['metadata', (data, callback) => {
+                async.map(sceneData.points, loadPoint, callback);
+            }],
+            zones: ['metadata', (data, callback) => {
+                async.map(sceneData.zones, loadZone, callback);
+            }],
         };
 
         if (!parent) {
@@ -184,7 +195,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };
         }
 
-        async.auto(loadSteps, (err, data) => {
+        async.auto(loadSteps, (err, data: any) => {
             const sceneNode = loadSceneNode(index, indexInfo, data);
             data.threeScene.add(sceneNode);
             const scene = {
@@ -200,6 +211,9 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
                 points: data.points,
                 zones: data.zones,
                 isActive: false,
+                variables: null,
+                section: null,
+                usedVarGames: null,
                 zoneState: { listener: null, ended: false },
                 goto: sBind(sceneManager.goto, sceneManager),
 
@@ -290,7 +304,7 @@ function loadSideScenes(sceneManager,
         loadScene(sceneManager, params, game, renderer, sceneMap, sideIndex, parent, callback);
     }, (err, sideScenes) => {
         const sideScenesMap = {};
-        each(sideScenes, (sideScene) => {
+        each(sideScenes, (sideScene: any) => {
             sideScenesMap[sideScene.index] = sideScene;
         });
         mainCallback(null, sideScenesMap);

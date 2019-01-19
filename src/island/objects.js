@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {each} from 'lodash';
-import {bits} from '../utils';
+import {bits} from '../utils.ts';
 
 const push = Array.prototype.push;
 

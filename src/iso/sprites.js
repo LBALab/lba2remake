@@ -1,8 +1,8 @@
 import async from 'async';
 import * as THREE from 'three';
 import {each, orderBy} from 'lodash';
-import {bits} from '../utils';
-import {loadHqrAsync} from '../hqr';
+import {bits} from '../utils.ts';
+import {loadHqrAsync} from '../hqr.ts';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
 

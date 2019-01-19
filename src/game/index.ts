@@ -1,6 +1,5 @@
-// @flow
 import * as THREE from 'three';
-import async from 'async';
+import * as async from 'async';
 
 import {createState} from './state';
 import {createAudioManager, createMusicManager} from '../audio';
@@ -8,8 +7,8 @@ import {loadHqrAsync} from '../hqr';
 import {loadTextsAsync} from '../text';
 import DebugData from '../ui/editor/DebugData';
 
-export function createGame(params: Object,
-                           clock: Object,
+export function createGame(params: any,
+                           clock: any,
                            setUiState: Function,
                            getUiState: Function) {
     let isPaused = false;
@@ -137,12 +136,14 @@ export function createGame(params: Object,
             const that = this;
             async.auto({
                 menu: preloadFileAsync('images/2_screen_menubg_extended.png', 'Menu Background'),
-                ribbon: preloadFileAsync('images/remake_logo.png'),
+                ribbon: preloadFileAsync('images/remake_logo.png', 'Logo'),
                 ress: preloadFileAsync('data/RESS.HQR', 'Resources'),
-                text: loadHqrAsync('TEXT.HQR', 'Texts'),
-                voxgame: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`, 'Main Voices'),
-                vox000: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_000_AAC.VOX`, 'Voices'),
-                muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4'),
+                text: loadHqrAsync('TEXT.HQR'),
+                voxgame: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`,
+                                            'Main Voices'),
+                vox000: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_000_AAC.VOX`,
+                                            'Voices'),
+                muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4', 'Adeline Theme'),
                 mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4', 'Main Theme'),
                 mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4', 'First Song'),
                 musmenu: preloadFileAsync('data/MUSIC/Track6.mp4', 'Menu Music'),
@@ -158,7 +159,7 @@ export function createGame(params: Object,
 }
 
 function preloadFileAsync(url, name) {
-    const send = (eventName, progress) => {
+    const send = (eventName, progress?) => {
         if (name) {
             document.dispatchEvent(new CustomEvent(eventName, {detail: {name, progress}}));
         }
