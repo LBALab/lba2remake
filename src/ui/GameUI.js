@@ -76,7 +76,7 @@ export default class GameUI extends FrameListener {
             };
 
             clock.start();
-            game.preload(this.onGameReady);
+            game.preload().then(() => this.onGameReady());
         }
     }
 
