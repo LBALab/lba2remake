@@ -1,8 +1,7 @@
-import async from 'async';
 import * as THREE from 'three';
 import {map, each, assign, tail} from 'lodash';
 
-import {loadHqrAsync} from '../hqr.ts';
+import {loadHqr} from '../hqr.ts';
 import {prepareGeometries} from './geometries';
 import {loadLayout} from './layout';
 import {loadGround} from './ground';
@@ -28,19 +27,23 @@ export function getEnvInfo(name) {
 }
 
 export function loadIslandScenery(params, name, ambience, callback) {
+    loadIslandSceneryAsync(params, name, ambience)
+        .then(island => callback(null, island));
+}
+
+async function loadIslandSceneryAsync(params, name, ambience) {
     if (name in islands) {
-        callback(null, islands[name]);
-    } else {
-        async.auto({
-            ress: loadHqrAsync('RESS.HQR'),
-            ile: loadHqrAsync(`${name}.ILE`),
-            obl: loadHqrAsync(`${name}.OBL`)
-        }, (err, files) => {
-            const island = loadIslandNode(params, islandProps[name], files, ambience);
-            islands[name] = island;
-            callback(null, island);
-        });
+        return islands[name];
     }
+    const [ress, ile, obl] = await Promise.all([
+        loadHqr('RESS.HQR'),
+        loadHqr(`${name}.ILE`),
+        loadHqr(`${name}.OBL`)
+    ]);
+    const files = {ress, ile, obl};
+    const island = loadIslandNode(params, islandProps[name], files, ambience);
+    islands[name] = island;
+    return island;
 }
 
 function loadIslandNode(params, props, files, ambience) {
