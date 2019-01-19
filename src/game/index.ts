@@ -5,8 +5,7 @@ import {createAudioManager, createMusicManager} from '../audio';
 import {loadTexts} from '../text';
 import DebugData from '../ui/editor/DebugData';
 
-export function createGame(params: any,
-                           clock: any,
+export function createGame(clock: any,
                            setUiState: Function,
                            getUiState: Function) {
     let isPaused = false;
