@@ -271,13 +271,14 @@ export function loadActor(params: any,
             if (this.threeObject) {
                 this.threeObject.visible = false;
                 scene.removeMesh(this.threeObject);
-                delete this.threeObject;
+                this.threeObject = null;
             }
             if (this.model) {
-                delete this.model;
+                this.model = null;
             }
-            this.loadMesh();
-            scene.addMesh(this.threeObject);
+            this.loadMesh(() => {
+                scene.addMesh(this.threeObject);
+            });
         }
     };
 
