@@ -202,15 +202,8 @@ export function loadActor(params: any,
             // only if not sprite actor
             if (!that.isSprite && that.props.bodyIndex !== 0xFF) {
                 const {entityIndex, bodyIndex, animIndex} = that.props;
-                loadModel(
-                    params,
-                    entityIndex,
-                    bodyIndex,
-                    animIndex,
-                    animState,
-                    envInfo,
-                    ambience,
-                    (model) => {
+                loadModel(params, entityIndex, bodyIndex, animIndex, animState, envInfo, ambience)
+                    .then((model) => {
                         if (model !== null) {
                             // model.mesh.visible = actor.isVisible;
                             model.mesh.position.copy(that.physics.position);
