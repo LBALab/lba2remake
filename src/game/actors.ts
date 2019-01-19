@@ -230,7 +230,7 @@ export function loadActor(params: any,
                         }
                     });
             } else {
-                loadSprite(that.props.spriteIndex, (sprite) => {
+                loadSprite(that.props.spriteIndex).then((sprite) => {
                     sprite.threeObject.position.copy(that.physics.position);
                     // sprite.threeObject.quaternion.copy(actor.physics.orientation);
                     that.threeObject = sprite.threeObject;
