@@ -176,13 +176,3 @@ export async function loadHqr(file: string) {
     hqrCache[file] = hqr;
     return await hqr.load();
 }
-
-export function loadHqrAsync(file: string) {
-    return (callback: Function) => loadHqr(file)
-        .then((hqr) => {
-            callback(null, hqr);
-        })
-        .catch((err) => {
-            callback(err);
-        });
-}
