@@ -1,8 +1,7 @@
-import async from 'async';
 import * as THREE from 'three';
 import {each, orderBy} from 'lodash';
 import {bits} from '../utils.ts';
-import {loadHqrAsync} from '../hqr.ts';
+import {loadHqr} from '../hqr.ts';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
 
@@ -11,26 +10,25 @@ const push = Array.prototype.push;
 let spriteCache = null;
 let spriteRawCache = null;
 
-export function loadSprite(index, callback) {
-    async.auto({
-        ress: loadHqrAsync('RESS.HQR'),
-        sprites: loadHqrAsync('SPRITES.HQR'),
-        spritesRaw: loadHqrAsync('SPRIRAW.HQR')
-    }, (err, files) => {
-        const palette = new Uint8Array(files.ress.getEntry(0));
-        // lets keep it with two separate textures for now
-        if (!spriteCache) {
-            const sprites = loadAllSprites(files.sprites);
-            spriteCache = loadSpritesMapping(sprites, palette);
-        }
-        if (!spriteRawCache) {
-            const sprites = loadAllSpritesRaw(files.spritesRaw);
-            spriteRawCache = loadSpritesMapping(sprites, palette);
-        }
-        callback({
-            threeObject: loadMesh(index, (index < 100) ? spriteRawCache : spriteCache)
-        });
-    });
+export async function loadSprite(index) {
+    const [ress, spritesFile, spritesRaw] = await Promise.all([
+        loadHqr('RESS.HQR'),
+        loadHqr('SPRITES.HQR'),
+        loadHqr('SPRIRAW.HQR')
+    ]);
+    const palette = new Uint8Array(ress.getEntry(0));
+    // lets keep it with two separate textures for now
+    if (!spriteCache) {
+        const sprites = loadAllSprites(spritesFile);
+        spriteCache = loadSpritesMapping(sprites, palette);
+    }
+    if (!spriteRawCache) {
+        const sprites = loadAllSpritesRaw(spritesRaw);
+        spriteRawCache = loadSpritesMapping(sprites, palette);
+    }
+    return {
+        threeObject: loadMesh(index, (index < 100) ? spriteRawCache : spriteCache)
+    };
 }
 
 function loadMesh(index, sprite) {

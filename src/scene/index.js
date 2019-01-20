@@ -1,19 +1,18 @@
-import async from 'async';
 import * as THREE from 'three';
 import {DirMode} from '../game/actors.ts';
 
-import {loadHqrAsync} from '../hqr.ts';
+import {loadHqr} from '../hqr.ts';
 import {bits} from '../utils.ts';
 import {loadTextData, getTextFile} from '../text';
 
-export function loadSceneData(language, index, callback) {
-    async.auto({
-        scene: loadHqrAsync('SCENE.HQR'),
-        text: loadHqrAsync(getTextFile(language)),
-        ress: loadHqrAsync('RESS.HQR')
-    }, (err, files) => {
-        callback(loadSceneDataSync(files, language, index));
-    });
+export async function loadSceneData(language, index) {
+    const [scene, text, ress] = await Promise.all([
+        loadHqr('SCENE.HQR'),
+        loadHqr(getTextFile(language)),
+        loadHqr('RESS.HQR')
+    ]);
+    const files = {scene, text, ress};
+    return loadSceneDataSync(files, language, index);
 }
 
 const cachedSceneData = [];

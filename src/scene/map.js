@@ -1,17 +1,12 @@
-import async from 'async';
+import {loadHqr} from '../hqr.ts';
 
-import {loadHqrAsync} from '../hqr.ts';
-
-export function loadSceneMapData(callback) {
-    async.auto({
-        bkg: loadHqrAsync('LBA_BKG.HQR')
-    }, (err, files) => {
-        callback(loadSceneMap(files));
-    });
+export async function loadSceneMapData() {
+    const bkg = await loadHqr('LBA_BKG.HQR');
+    return loadSceneMap(bkg);
 }
 
-function loadSceneMap(files) {
-    const buffer = files.bkg.getEntry(18100); // last entry
+function loadSceneMap(bkg) {
+    const buffer = bkg.getEntry(18100); // last entry
     const data = new DataView(buffer);
     let offset = 0;
     const map = [];

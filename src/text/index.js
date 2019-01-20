@@ -1,27 +1,13 @@
-import async from 'async';
-
-import {loadHqrAsync} from '../hqr.ts';
-
-export function loadTextsAsync(language, index) {
-    return callback => loadTexts(language, index, (texts) => {
-        callback(null, texts);
-    });
-}
+import {loadHqr} from '../hqr.ts';
 
 export function getTextFile(language) {
     const fanSuffix = language.isFan ? `_${language.code}` : '';
     return `TEXT${fanSuffix}.HQR`;
 }
 
-export function loadTexts(language, index, callback) {
-    async.auto({
-        text: loadHqrAsync(getTextFile(language)),
-    }, (err, files) => {
-        const text = loadTextData(files.text, getLanguageTextIndex(language, index));
-        if (callback) {
-            callback(text);
-        }
-    });
+export async function loadTexts(language, index) {
+    const hqr = await loadHqr(getTextFile(language));
+    return loadTextData(hqr, getLanguageTextIndex(language, index));
 }
 
 function getLanguageTextIndex(language, index) {

@@ -52,7 +52,6 @@ export default class GameUI extends FrameListener {
         } else {
             const clock = new THREE.Clock(false);
             const game = createGame(
-                props.params,
                 clock,
                 this.setUiState,
                 this.getUiState
@@ -76,7 +75,7 @@ export default class GameUI extends FrameListener {
             };
 
             clock.start();
-            game.preload(this.onGameReady);
+            game.preload().then(() => this.onGameReady());
         }
     }
 
