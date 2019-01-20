@@ -14,7 +14,7 @@ module.exports = {
         publicPath: path.join(__dirname, './www'),
     },
     resolve: {
-        extensions: ['.js', '.jsx', '.glsl', '.proto', '.yaml']
+        extensions: ['.ts', '.js', '.jsx', '.glsl', '.proto', '.yaml']
     },
     resolveLoader: {
         alias: {
@@ -32,7 +32,7 @@ module.exports = {
             use: [{
                 loader: 'babel-loader',
                 options: {
-                    presets: ['@babel/preset-react', '@babel/preset-env', '@babel/preset-flow', ['minify', {
+                    presets: ['@babel/preset-react', '@babel/preset-env', ['minify', {
                         mangle: false
                     }]],
                     plugins: [
@@ -43,6 +43,29 @@ module.exports = {
                 }
             }, {
                 loader: 'eslint-loader'
+            }]
+        }, {
+            test: /\.(ts)?$/,
+            include: /src/,
+            exclude: /node_modules/,
+            use: [{
+                loader: 'babel-loader',
+                options: {
+                    presets: ['@babel/preset-react', '@babel/preset-env', '@babel/preset-typescript', ['minify', {
+                        mangle: false
+                    }]],
+                    plugins: [
+                        path.join(__dirname, './utils/babel-transforms/inspector-annotations.js'),
+                        '@babel/plugin-proposal-class-properties',
+                        '@babel/plugin-proposal-object-rest-spread'
+                    ]
+                }
+            }, {
+                loader: 'tslint-loader',
+                options: {
+                    emitErrors: true,
+                    formatter: 'msbuild'
+                }
             }]
         }, {
             test: /\.glsl?$/,

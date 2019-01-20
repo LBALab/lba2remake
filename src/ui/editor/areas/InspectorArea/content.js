@@ -8,7 +8,7 @@ import DebugData from '../../DebugData';
 import {RootSym, applyFunction, getValue, getAllowedKinds, UtilFunctions, isPureFunc} from './utils';
 import {CustomValue} from './value';
 import {version} from '../../../../../package.json';
-import {getParamNames} from '../../../../utils';
+import {getParamNames} from '../../../../utils.ts';
 
 const headerStyle = {
     position: 'absolute',

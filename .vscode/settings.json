@@ -1,5 +1,13 @@
 {
-    "flow.useNPMPackagedFlow": true,
     "files.trimTrailingWhitespace": true,
-    "eslint.enable": true
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "apps": true,
+    },
+    "eslint.enable": true,
+    "typescript.tsdk": "./node_modules/typescript/lib"
 }

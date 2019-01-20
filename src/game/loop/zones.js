@@ -1,5 +1,5 @@
 import {getHtmlColor} from '../../scene';
-import {DirMode} from '../../game/actors';
+import {DirMode} from '../../game/actors.ts';
 
 export const ZoneOpcode = [
     { opcode: 0, command: 'CUBE', callback: CUBE },
@@ -76,30 +76,62 @@ function TEXT(game, scene, zone, hero) {
                     color: getHtmlColor(scene.data.palette, (zone.props.info0 * 16) + 12)
                 }
             });
-
             scene.zoneState.listener = (event) => {
                 const key = event.code || event.which || event.keyCode;
                 if (key === 'Enter' || key === 13) {
-                    scene.zoneState.ended = true;
-                    game.setUiState({text: null});
-                    scene.actors[0].props.dirMode = DirMode.MANUAL;
+                    const skip = game.getUiState().skip;
+                    if (skip) {
+                        scene.zoneState.ended = true;
+                    } else {
+                        game.setUiState({
+                            skip: true
+                        });
+                    }
+                }
+            };
+            scene.zoneState.listenerStart = function listenerStart() {
+                scene.zoneState.startTime = Date.now();
+            };
+            scene.zoneState.listenerEnd = function listenerEnd() {
+                const endTime = Date.now();
+                const elapsed = endTime - scene.zoneState.startTime;
+                if (elapsed < 300) {
+                    const skip = game.getUiState().skip;
+                    if (skip) {
+                        scene.zoneState.ended = true;
+                    } else {
+                        game.setUiState({
+                            skip: true
+                        });
+                    }
                 }
             };
 
             window.addEventListener('keydown', scene.zoneState.listener);
+            window.addEventListener('touchstart', scene.zoneState.listenerStart);
+            window.addEventListener('touchend', scene.zoneState.listenerEnd);
+
             voiceSource.load(text.index, scene.data.textBankId, () => {
                 voiceSource.play();
             });
         }
     }
     if (scene.zoneState.ended) {
+        scene.actors[0].props.dirMode = DirMode.MANUAL;
         hero.props.entityIndex = hero.props.prevEntityIndex;
         hero.props.animIndex = hero.props.prevAnimIndex;
         voiceSource.stop();
-        game.setUiState({text: null});
+        game.setUiState({ text: null, skip: false });
         window.removeEventListener('keydown', scene.zoneState.listener);
+        window.removeEventListener('touchstart', scene.zoneState.listenerStart);
+        window.removeEventListener('touchend', scene.zoneState.listenerEnd);
         delete scene.zoneState.listener;
+        delete scene.zoneState.listenerStart;
+        delete scene.zoneState.listenerEnd;
         delete scene.zoneState.ended;
+        if (scene.zoneState.startTime) {
+            delete scene.zoneState.startTime;
+        }
     }
 }
 

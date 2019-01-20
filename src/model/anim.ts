@@ -1,39 +1,37 @@
-// @flow
-
 import * as THREE from 'three';
 
-type BoneframeCanFall = {
-    boneframe: Boneframe,
-    canFall: boolean
+interface BoneframeCanFall {
+    boneframe: Boneframe;
+    canFall: boolean;
 }
 
-type Boneframe = {
-    type: number,
-    veuler: THREE.Object3D,
-    pos: THREE.Object3D
+interface Boneframe {
+    type: number;
+    veuler: THREE.Vector3;
+    pos: THREE.Vector3;
 }
 
-type Keyframe = {
-    length: number,
-    x: number,
-    y: number,
-    z: number,
-    canFall: boolean,
-    boneframes: Boneframe[]
+interface Keyframe {
+    length: number;
+    x: number;
+    y: number;
+    z: number;
+    canFall: boolean;
+    boneframes: Boneframe[];
 }
 
-export type Anim = {
-    numKeyframes: number,
-    numBoneframes: number,
-    loopFrame: number,
-    unk1: number,
-    buffer: ArrayBuffer,
-    keyframes: Keyframe[],
+export interface Anim {
+    numKeyframes: number;
+    numBoneframes: number;
+    loopFrame: number;
+    unk1: number;
+    buffer: ArrayBuffer;
+    keyframes: Keyframe[];
 }
 
 // TODO export this from a new Model type file
-type Model = {
-    files: any
+interface Model {
+    files: any;
 }
 
 export function loadAnim(model: Model, anims: Anim[], index: number) {

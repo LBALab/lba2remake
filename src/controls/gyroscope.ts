@@ -1,12 +1,17 @@
-// @flow
-
 import * as THREE from 'three';
 
+function getScreenOrientation() {
+    if ('screen' in window && 'orientation' in window.screen) {
+        return window.screen.orientation.angle;
+    }
+    return Number(window.orientation) || 0;
+}
+
 export function makeGyroscopeControls(game: any) {
-    let screenOrientation = window.orientation || 0;
+    let screenOrientation = getScreenOrientation();
     let deviceOrientation = {alpha: 0, beta: 0, gamma: 0};
 
-    const onOrientationChange = () => { screenOrientation = window.orientation || 0; };
+    const onOrientationChange = () => { screenOrientation = getScreenOrientation(); };
     const onDeviceOrientation = (event) => { deviceOrientation = event; };
 
     window.addEventListener('orientationchange', onOrientationChange, false);

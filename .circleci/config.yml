@@ -38,10 +38,10 @@ jobs:
           name: Build
           command: npm run -s build
 
-      # Flow type checking
+      # Typecheck
       - run:
-          name: Flow type-checking
-          command: npm run -s flow
+          name: Typecheck
+          command: npm run -s typecheck
 
       # Copy files over
       - run:

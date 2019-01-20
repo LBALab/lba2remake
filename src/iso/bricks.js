@@ -1,4 +1,4 @@
-import {bits} from '../utils';
+import {bits} from '../utils.ts';
 
 const bricks = [];
 

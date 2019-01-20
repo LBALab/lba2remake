@@ -1,9 +1,8 @@
-// @flow
 import * as THREE from 'three';
 import {updateModel} from '../../model';
-import type {Actor} from '../actors';
+import {Actor} from '../actors';
 
-export function updateActor(game: Object, scene: Object, actor: Actor, time: Object, step: Object) {
+export function updateActor(game: any, scene: any, actor: Actor, time: any, step: any) {
     if (actor.runScripts) {
         actor.runScripts(time, step);
     }
@@ -25,7 +24,7 @@ export function updateActor(game: Object, scene: Object, actor: Actor, time: Obj
     }
 }
 
-function updateMovements(actor: Actor, time: Object) {
+function updateMovements(actor: Actor, time: any) {
     const delta = time.delta * 1000;
     if (actor.props.runtimeFlags.isTurning) {
         const baseAngle = ((actor.physics.temp.destAngle - actor.physics.temp.angle) * delta);

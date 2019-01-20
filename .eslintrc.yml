@@ -1,7 +1,5 @@
 extends: airbnb
 parser: babel-eslint
-plugins:
-  - flowtype
 env:
   browser: true
 globals:

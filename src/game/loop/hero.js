@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {DirMode} from '../actors';
+import {DirMode} from '../actors.ts';
 
 export const BehaviourMode = {
     NORMAL: 0,

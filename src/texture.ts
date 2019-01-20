@@ -1,5 +1,3 @@
-// @flow
-
 import * as THREE from 'three';
 import {map, each} from 'lodash';
 
@@ -57,6 +55,7 @@ export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array) {
         THREE.NearestMipMapNearestFilter
     );
     texture.mipmaps = [{
+        // @ts-ignore
         data: image_data,
         width: 256,
         height: 256
@@ -65,6 +64,7 @@ export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array) {
         const dim = Math.pow(2, 8 - level);
         image_data = loadMipmapLevelPal(image_data, level, palette);
         texture.mipmaps.push({
+            // @ts-ignore
             data: image_data,
             width: dim,
             height: dim
@@ -136,7 +136,7 @@ function loadMipmapLevelPal(source_data: Uint8Array, level: number, palette: Uin
     return tgt_data;
 }
 
-function findNearestColor(palette: Uint8Array, colors: Array< Array<number> >) {
+function findNearestColor(palette: Uint8Array, colors: number[][]) {
     const sum = [0, 0, 0];
     let count = 0;
     each(colors, ([r, g, b, idx]) => {

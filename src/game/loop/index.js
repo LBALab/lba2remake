@@ -1,7 +1,7 @@
 import {each} from 'lodash';
 import * as THREE from 'three';
 import {updateHero} from './hero';
-import {updateActor} from './actors';
+import {updateActor} from './actors.ts';
 import {processPhysicsFrame} from './physics';
 import {processCameraMovement} from './cameras';
 import {getRandom} from '../../utils/lba';

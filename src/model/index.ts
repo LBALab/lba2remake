@@ -1,29 +1,31 @@
-// @flow
-
-import async from 'async';
+import * as async from 'async';
 
 import * as THREE from 'three';
 import {loadHqrAsync} from '../hqr';
-import type {Entity} from './entity';
-import {loadEntity, getBodyIndex, getAnimIndex, getAnim} from './entity';
+import {loadEntity, getBodyIndex, getAnimIndex, getAnim, Entity} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
-import {initSkeleton, createSkeleton, updateKeyframe, updateKeyframeInterpolation} from './animState';
+import {
+    initSkeleton,
+    createSkeleton,
+    updateKeyframe,
+    updateKeyframeInterpolation
+} from './animState';
 import {processAnimAction} from './animAction';
 import {loadMesh} from './geometries';
 import {loadTexture2} from '../texture';
 import {createBoundingBox} from '../utils/rendering';
-import type {Time} from '../flowtypes';
+import {Time} from '../datatypes';
 
-export type Model = {
-    state: any,
-    anims: any,
-    files: ?any,
-    entities: Entity[],
-    mesh: THREE.Object3D
+export interface Model {
+    state: any;
+    anims: any;
+    files?: any;
+    entities: Entity[];
+    mesh: THREE.Object3D;
 }
 
-export function loadModel(params: Object,
+export function loadModel(params: any,
                           entityIdx: number,
                           bodyIdx: number,
                           animIdx: number,
@@ -57,7 +59,7 @@ export function loadModel(params: Object,
  *  This will allow to mantain different states for body animations.
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
-function loadModelData(params: Object,
+function loadModelData(params: any,
                        files,
                        entityIdx,
                        bodyIdx,
@@ -80,7 +82,9 @@ function loadModelData(params: Object,
         texture: loadTexture2(files.ress.getEntry(6), palette),
         state: null,
         mesh: null,
-        entities
+        entities,
+        boundingBox: null,
+        boundingBoxDebugMesh: null,
     };
 
     const entity = entities[entityIdx];
@@ -119,10 +123,10 @@ function loadModelData(params: Object,
     return model;
 }
 
-export function updateModel(game: Object,
-                            sceneIsActive: Object,
+export function updateModel(game: any,
+                            sceneIsActive: any,
                             model: any,
-                            animState: Object,
+                            animState: any,
                             entityIdx: number,
                             animIdx: number,
                             time: Time) {

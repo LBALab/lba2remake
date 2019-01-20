@@ -1,13 +1,11 @@
-// @flow
-
 import * as THREE from 'three';
 import {switchStats} from '../renderer/stats';
 
 const euler = new THREE.Euler();
 const PI_4 = Math.PI / 4;
-const MAX_X_ANGLE = Math.PI;// / 2.5;
+const MAX_X_ANGLE = Math.PI; // / 2.5;
 
-export function makeGamepadControls(sceneManager: Object, game: Object) {
+export function makeGamepadControls(sceneManager: any, game: any) {
     const onDpadValueChanged = dpadValueChangeHandler.bind(null, game);
     const onButtonPressed = buttonPressedHandler.bind(null, game, sceneManager);
     window.addEventListener('dpadvaluechanged', onDpadValueChanged, false);
@@ -34,7 +32,7 @@ function dpadValueChangeHandler(game, {detail: {x, y, name}}) {
     }
 }
 
-function buttonPressedHandler(game: Object, sceneManager: Object, {detail: {name, isPressed}}) {
+function buttonPressedHandler(game: any, sceneManager: any, {detail: {name, isPressed}}) {
     if (isPressed) {
         switch (name) {
             case 'leftShoulder':

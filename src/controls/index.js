@@ -1,8 +1,8 @@
-import {makeFirstPersonMouseControls} from './mouse';
-import {makeKeyboardControls} from './keyboard';
-import {makeGyroscopeControls} from './gyroscope';
-import {makeGamepadControls} from './gamepad';
-import {makeFirstPersonTouchControls} from './touch';
+import {makeFirstPersonMouseControls} from './mouse.ts';
+import {makeKeyboardControls} from './keyboard.ts';
+import {makeGyroscopeControls} from './gyroscope.ts';
+import {makeGamepadControls} from './gamepad.ts';
+import {makeFirstPersonTouchControls} from './touch.ts';
 
 export function createControls(params, game, canvas, sceneManager) {
     let controls;

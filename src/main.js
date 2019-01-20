@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Ticker from './ui/utils/Ticker';
+import Ticker from './ui/utils/Ticker.ts';
 import GameUI from './ui/GameUI';
 import Editor from './ui/Editor';
 import Popup from './ui/Popup';
-import {loadParams} from './params';
+import {loadParams} from './params.ts';
 import {loadGameMetaData} from './ui/editor/DebugData';
 import {CrashHandler} from './crash_reporting';
 import ChangeLog from './ui/ChangeLog';

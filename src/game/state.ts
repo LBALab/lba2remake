@@ -1,5 +1,3 @@
-// @flow
-
 import TextData from '../text/data';
 
 export function createState() {

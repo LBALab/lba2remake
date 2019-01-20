@@ -1,9 +1,6 @@
-// @flow
-
 import * as THREE from 'three';
 
-import type {Model} from '../model';
-import {loadModel} from '../model';
+import {loadModel, Model} from '../model';
 import {loadAnimState, resetAnimState} from '../model/animState';
 import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
 import {loadSprite} from '../iso/sprites';
@@ -11,52 +8,66 @@ import {loadSprite} from '../iso/sprites';
 import {getObjectName} from '../ui/editor/DebugData';
 import {runScript} from '../scripting';
 
-type ActorFlags = {
-    hasCollisions: boolean,
-    isVisible: boolean,
-    isSprite: boolean,
-    spriteAnim3DNumber: boolean
+interface ActorFlags {
+    hasCollisions: boolean;
+    isVisible: boolean;
+    isSprite: boolean;
+    spriteAnim3DNumber: boolean;
 }
 
-type ActorProps = {
-    index: number,
-    sceneIndex: number,
-    pos: [number, number, number],
-    life: number,
-    flags: ActorFlags,
-    runtimeFlags: any,
-    entityIndex: number,
-    bodyIndex: number,
-    animIndex: number,
-    angle: number,
-    speed: number,
-    spriteIndex: number,
-    hasSpriteAnim3D: number
+interface ActorProps {
+    index: number;
+    sceneIndex: number;
+    pos: [number, number, number];
+    life: number;
+    flags: ActorFlags;
+    runtimeFlags: any;
+    entityIndex: number;
+    bodyIndex: number;
+    animIndex: number;
+    angle: number;
+    speed: number;
+    spriteIndex: number;
+    hasSpriteAnim3D: number;
 }
 
-type ActorPhysics = {
-    position: THREE.Vector3,
-    orientation: THREE.Quaternion,
+interface ActorPhysics {
+    position: THREE.Vector3;
+    orientation: THREE.Quaternion;
     temp: {
         position: THREE.Vector3,
         angle: number,
         destAngle: number
-    }
+    };
 }
 
-export type Actor = {
-    type: 'actor',
-    props: ActorProps,
-    threeObject: ?THREE.Object3D,
-    model: ?Model,
-    physics: ActorPhysics,
-    animState: any,
-    isVisible: boolean,
-    isSprite: boolean,
-    isKilled: boolean,
-    runScripts: ?Function,
-    loadMesh: Function,
-    reload: Function
+export interface Actor {
+    index: number;
+    type: 'actor';
+    props: ActorProps;
+    threeObject?: THREE.Object3D;
+    model?: Model;
+    physics: ActorPhysics;
+    animState: any;
+    isVisible: boolean;
+    isSprite: boolean;
+    isKilled: boolean;
+    runScripts?: Function;
+    loadMesh: Function;
+    reload: Function;
+    hasCollidedWithActor: number;
+    floorSound: number;
+    reset: Function;
+    resetAnimState: Function;
+    resetPhysics: Function;
+    goto: Function;
+    facePoint: Function;
+    setAngle: Function;
+    getDistance: Function;
+    getDistanceLba: Function;
+    stop: Function;
+    setBody: Function;
+    setAnim: Function;
 }
 
 export const DirMode = {
@@ -77,7 +88,7 @@ export const DirMode = {
 };
 
 // TODO: move section offset to container THREE.Object3D
-export function loadActor(params: Object,
+export function loadActor(params: any,
                           envInfo: any,
                           ambience: any,
                           props: ActorProps,
@@ -207,7 +218,10 @@ export function loadActor(params: Object,
                             that.model = model;
                             that.threeObject = model.mesh;
                             if (that.threeObject) {
-                                that.threeObject.name = `actor:${getObjectName('actor', that.props.sceneIndex, that.props.index)}`;
+                                const name = getObjectName('actor',
+                                                            that.props.sceneIndex,
+                                                            that.props.index);
+                                that.threeObject.name = `actor:${name}`;
                                 that.threeObject.visible = that.isVisible;
                             }
                         }
@@ -221,7 +235,10 @@ export function loadActor(params: Object,
                     // sprite.threeObject.quaternion.copy(actor.physics.orientation);
                     that.threeObject = sprite.threeObject;
                     if (that.threeObject) {
-                        that.threeObject.name = `actor:${getObjectName('actor', that.props.sceneIndex, that.props.index)}`;
+                        const name = getObjectName('actor',
+                                                    that.props.sceneIndex,
+                                                    that.props.index);
+                        that.threeObject.name = `actor:${name}`;
                         that.threeObject.visible = that.isVisible;
                     }
                     if (callback) {
@@ -254,13 +271,14 @@ export function loadActor(params: Object,
             if (this.threeObject) {
                 this.threeObject.visible = false;
                 scene.removeMesh(this.threeObject);
-                delete this.threeObject;
+                this.threeObject = null;
             }
             if (this.model) {
-                delete this.model;
+                this.model = null;
             }
-            this.loadMesh();
-            scene.addMesh(this.threeObject);
+            this.loadMesh(() => {
+                scene.addMesh(this.threeObject);
+            });
         }
     };
 
