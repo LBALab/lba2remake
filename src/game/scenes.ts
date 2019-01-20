@@ -127,7 +127,7 @@ export function createSceneManager(params, game, renderer, callback: Function, h
         }
     };
 
-    loadSceneMapData((smap) => {
+    loadSceneMapData().then((smap) => {
         sceneMap = smap;
         callback(sceneManager);
     });
