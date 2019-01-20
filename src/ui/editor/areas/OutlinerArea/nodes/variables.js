@@ -268,7 +268,8 @@ function findAllRefsInSceneList(varDef, sceneList, mainCallback) {
         sceneList,
         (idx, callback) => {
             async.parallel([
-                innerCallback => loadSceneData(language, idx, scene => innerCallback(null, scene)),
+                innerCallback => loadSceneData(language, idx)
+                    .then(scene => innerCallback(null, scene)),
                 innerCallback => loadSceneMetaData(idx, innerCallback)
             ], (err, [scene]) => {
                 const foundResults = findAllRefsInScene(varDef, scene);

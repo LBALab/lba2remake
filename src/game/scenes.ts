@@ -136,7 +136,7 @@ export function createSceneManager(params, game, renderer, callback: Function, h
 }
 
 function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent, mainCallback) {
-    loadSceneData(game.getState().config.language, index, (sceneData) => {
+    loadSceneData(game.getState().config.language, index).then((sceneData) => {
         const indexInfo = sceneMap[index];
         let islandName;
         if (indexInfo.isIsland) {
