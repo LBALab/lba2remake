@@ -10,40 +10,47 @@ interface Entry {
 }
 
 export default class HQR {
-    entries: Entry[] = [];
-    buffer: ArrayBuffer;
-    loaded = false;
-    loadCallbacks: Function[] = [];
+    private url: string;
+    private entries: Entry[] = [];
+    private buffer: ArrayBuffer = null;
+    private loadPromise: Promise<HQR> = null;
 
-    load(url: string, callback: Function) {
-        const that = this;
-        const request = new XMLHttpRequest();
-        request.responseType = 'arraybuffer';
-        request.open('GET', url, true);
-        const isVoxHQR = url.toLowerCase().includes('vox');
-
-        request.onload = function onload() {
-            if (this.status === 200) {
-                that.buffer = request.response;
-                that.readHeader(isVoxHQR);
-                that.loaded = true;
-                callback.call(that);
-                each(that.loadCallbacks, (cb) => {
-                    cb.call(that);
-                });
-                that.loadCallbacks = [];
-            }
-        };
-
-        request.send(null);
+    constructor(url: string) {
+        this.url = url;
     }
 
-    callWhenLoaded(callback: Function) {
-        if (this.loaded) {
-            callback.call(this);
-        } else {
-            this.loadCallbacks.push(callback);
+    async load() {
+        if (this.buffer) {
+            return this;
         }
+
+        const that = this;
+        if (!this.loadPromise) {
+            this.loadPromise = new Promise((resolve, reject) => {
+                const request = new XMLHttpRequest();
+                request.responseType = 'arraybuffer';
+                request.open('GET', that.url, true);
+                const isVoxHQR = that.url.toLowerCase().includes('vox');
+
+                request.onload = function onload() {
+                    if (this.status === 200) {
+                        that.buffer = request.response;
+                        that.readHeader(isVoxHQR);
+                        that.loadPromise = null;
+                        resolve(that);
+                    } else {
+                        reject(`HQR file download failed: statuc=${this.status}`);
+                    }
+                };
+
+                request.onerror = function onerror(err) {
+                    reject(err);
+                };
+
+                request.send(null);
+            });
+        }
+        return this.loadPromise;
     }
 
     get length(): number {
@@ -160,19 +167,12 @@ export default class HQR {
 
 const hqrCache = {};
 
-export function loadHqrAsync(file: string) {
-    return (callback: Function) => {
-        if (file in hqrCache) {
-            const hqr = hqrCache[file];
-            hqr.callWhenLoaded(() => {
-                callback(null, hqr);
-            });
-        } else {
-            const hqr = new HQR();
-            hqrCache[file] = hqr;
-            hqr.load(`data/${file}`, () => {
-                callback(null, hqr);
-            });
-        }
-    };
+export async function loadHqr(file: string) {
+    if (file in hqrCache) {
+        return await hqrCache[file].load();
+    }
+
+    const hqr = new HQR(`data/${file}`);
+    hqrCache[file] = hqr;
+    return await hqr.load();
 }

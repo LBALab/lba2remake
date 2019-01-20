@@ -1,6 +1,5 @@
-import async from 'async';
 import * as THREE from 'three';
-import {loadHqrAsync} from '../hqr.ts';
+import {loadHqr} from '../hqr.ts';
 import {loadBricks} from './bricks';
 import {loadGrid} from './grid';
 import {processCollisions} from './physics';
@@ -8,30 +7,34 @@ import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 
 export function loadIsometricScenery(renderer, entry, callback) {
-    async.auto({
-        ress: loadHqrAsync('RESS.HQR'),
-        bkg: loadHqrAsync('LBA_BKG.HQR')
-    }, (err, files) => {
-        const palette = new Uint8Array(files.ress.getEntry(0));
-        const bricks = loadBricks(files.bkg);
-        const grid = loadGrid(files.bkg, bricks, palette, entry + 1);
+    loadIsometricSceneryAsync(renderer, entry)
+        .then(isoScenery => callback(null, isoScenery));
+}
 
-        callback(null, {
-            props: {
-                startPosition: [0, 0],
-                envInfo: {
-                    skyColor: [0, 0, 0]
-                }
-            },
-            threeObject: loadMesh(renderer, grid, entry),
-            physics: {
-                processCollisions: processCollisions.bind(null, grid)
-            },
+async function loadIsometricSceneryAsync(renderer, entry) {
+    const [ress, bkg] = await Promise.all([
+        loadHqr('RESS.HQR'),
+        loadHqr('LBA_BKG.HQR')
+    ]);
+    const palette = new Uint8Array(ress.getEntry(0));
+    const bricks = loadBricks(bkg);
+    const grid = loadGrid(bkg, bricks, palette, entry + 1);
 
-            /* @inspector(locate) */
-            update: () => {}
-        });
-    });
+    return {
+        props: {
+            startPosition: [0, 0],
+            envInfo: {
+                skyColor: [0, 0, 0]
+            }
+        },
+        threeObject: loadMesh(renderer, grid, entry),
+        physics: {
+            processCollisions: processCollisions.bind(null, grid)
+        },
+
+        /* @inspector(locate) */
+        update: () => {}
+    };
 }
 
 function loadMesh(renderer, grid, entry) {

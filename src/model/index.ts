@@ -1,7 +1,7 @@
 import * as async from 'async';
 
 import * as THREE from 'three';
-import {loadHqrAsync} from '../hqr';
+import {loadHqr} from '../hqr';
 import {loadEntity, getBodyIndex, getAnimIndex, getAnim, Entity} from './entity';
 import {loadBody} from './body';
 import {loadAnim} from './anim';
@@ -25,33 +25,30 @@ export interface Model {
     mesh: THREE.Object3D;
 }
 
-export function loadModel(params: any,
+export async function loadModel(params: any,
                           entityIdx: number,
                           bodyIdx: number,
                           animIdx: number,
                           animState: any,
                           envInfo: any,
-                          ambience: any,
-                          callback: Function) {
-    async.auto({
-        ress: loadHqrAsync('RESS.HQR'),
-        body: loadHqrAsync('BODY.HQR'),
-        anim: loadHqrAsync('ANIM.HQR'),
-        anim3ds: loadHqrAsync('ANIM3DS.HQR')
-    }, (err, files) => {
-        callback(
-            loadModelData(
-                params,
-                files,
-                entityIdx,
-                bodyIdx,
-                animIdx,
-                animState,
-                envInfo,
-                ambience
-            )
-        );
-    });
+                          ambience: any) {
+    const [ress, body, anim, anim3ds] = await Promise.all([
+        loadHqr('RESS.HQR'),
+        loadHqr('BODY.HQR'),
+        loadHqr('ANIM.HQR'),
+        loadHqr('ANIM3DS.HQR')
+    ]);
+    const files = {ress, body, anim, anim3ds};
+    return loadModelData(
+        params,
+        files,
+        entityIdx,
+        bodyIdx,
+        animIdx,
+        animState,
+        envInfo,
+        ambience
+    );
 }
 
 /** Load Models Data

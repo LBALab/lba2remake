@@ -1,14 +1,11 @@
 import * as THREE from 'three';
-import * as async from 'async';
 
 import {createState} from './state';
 import {createAudioManager, createMusicManager} from '../audio';
-import {loadHqrAsync} from '../hqr';
-import {loadTextsAsync} from '../text';
+import {loadTexts} from '../text';
 import DebugData from '../ui/editor/DebugData';
 
-export function createGame(params: any,
-                           clock: any,
+export function createGame(clock: any,
                            setUiState: Function,
                            getUiState: Function) {
     let isPaused = false;
@@ -132,39 +129,34 @@ export function createGame(params: any,
         },
 
         /* @inspector(locate) */
-        preload(callback: Function) {
-            const that = this;
-            async.auto({
-                menu: preloadFileAsync('images/2_screen_menubg_extended.png', 'Menu Background'),
-                ribbon: preloadFileAsync('images/remake_logo.png', 'Logo'),
-                ress: preloadFileAsync('data/RESS.HQR', 'Resources'),
-                text: loadHqrAsync('TEXT.HQR'),
-                voxgame: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`,
-                                            'Main Voices'),
-                vox000: preloadFileAsync(`data/VOX/${state.config.languageVoice.code}_000_AAC.VOX`,
-                                            'Voices'),
-                muslogo: preloadFileAsync('data/MUSIC/LOGADPCM.mp4', 'Adeline Theme'),
-                mus15: preloadFileAsync('data/MUSIC/JADPCM15.mp4', 'Main Theme'),
-                mus16: preloadFileAsync('data/MUSIC/JADPCM16.mp4', 'First Song'),
-                musmenu: preloadFileAsync('data/MUSIC/Track6.mp4', 'Menu Music'),
-                loadMenuText: loadTextsAsync(state.config.language, 0),
-                loadGameText: loadTextsAsync(state.config.language, 4)
-            }, (err, files) => {
-                that.menuTexts = files.loadMenuText;
-                that.texts = files.loadGameText;
-                callback();
-            });
+        async preload() {
+            const langCode = state.config.languageVoice.code;
+            const [menuTexts, gameTexts] = await Promise.all([
+                loadTexts(state.config.language, 0),
+                loadTexts(state.config.language, 4),
+                preloadFile('images/2_screen_menubg_extended.png', 'Menu Background'),
+                preloadFile('images/remake_logo.png', 'Logo'),
+                preloadFile('data/RESS.HQR', 'Resources'),
+                preloadFile(`data/VOX/${langCode}_GAM_AAC.VOX`, 'Main Voices'),
+                preloadFile(`data/VOX/${langCode}_000_AAC.VOX`, 'Voices'),
+                preloadFile('data/MUSIC/LOGADPCM.mp4', 'Adeline Theme'),
+                preloadFile('data/MUSIC/JADPCM15.mp4', 'Main Theme'),
+                preloadFile('data/MUSIC/JADPCM16.mp4', 'First Song'),
+                preloadFile('data/MUSIC/Track6.mp4', 'Menu Music'),
+            ]);
+            this.menuTexts = menuTexts;
+            this.texts = gameTexts;
         }
     };
 }
 
-function preloadFileAsync(url, name) {
+async function preloadFile(url, name) {
     const send = (eventName, progress?) => {
         if (name) {
             document.dispatchEvent(new CustomEvent(eventName, {detail: {name, progress}}));
         }
     };
-    return (callback: Function) => {
+    return new Promise((resolve: Function, reject: Function) => {
         send('loaderprogress', 0);
         const request = new XMLHttpRequest();
         request.open('GET', url, true);
@@ -173,10 +165,17 @@ function preloadFileAsync(url, name) {
             const progress = event.loaded / event.total;
             send('loaderprogress', progress);
         };
-        request.onload = () => {
-            send('loaderend');
-            callback();
+        request.onload = function onload() {
+            if (this.status === 200) {
+                send('loaderend');
+                resolve();
+            } else {
+                reject(`Failed to load resource: status=${this.status}`);
+            }
+        };
+        request.onerror = (err) => {
+            reject(err);
         };
         request.send();
-    };
+    });
 }
