@@ -1,7 +1,5 @@
-import async from 'async';
-
 import AudioData from './data';
-import {loadHqrAsync} from '../hqr.ts';
+import {loadHqr} from '../hqr.ts';
 import {getFrequency} from '../utils/lba';
 
 const musicSourceCache = [];
@@ -161,9 +159,7 @@ function getSoundFxSource(state, context, data) {
         context.resume();
     };
     source.load = (index, callback) => {
-        async.auto({
-            samples: loadHqrAsync('SAMPLES_AAC.HQR')
-        }, (err, files) => {
+        loadHqr('SAMPLES_AAC.HQR').then((samples) => {
             if (index <= -1 || (source.currentIndex === index && source.isPlaying)) {
                 return;
             }
@@ -184,7 +180,7 @@ function getSoundFxSource(state, context, data) {
                 source.connect();
                 callback.call();
             } else {
-                const entryBuffer = files.samples.getEntry(index);
+                const entryBuffer = samples.getEntry(index);
                 context.decodeAudioData(entryBuffer, (buffer) => {
                     // this bypasses a browser issue while loading same sample
                     // in short period of time.
@@ -252,9 +248,7 @@ function getVoiceSource(state, context, data) {
         if (textBankId === -1) {
             filename = `VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`;
         }
-        async.auto({
-            voices: loadHqrAsync(filename)
-        }, (err, files) => {
+        loadHqr(filename).then((voices) => {
             if (index === -1 || (source.currentIndex === index && source.isPlaying)) {
                 return;
             }
@@ -264,13 +258,13 @@ function getVoiceSource(state, context, data) {
             source.currentIndex = index;
             source.bufferSource = context.createBufferSource();
             source.bufferSource.onended = () => {
-                if (source.isPlaying && files.voices.hasHiddenEntries(index)) {
-                    source.load(files.voices.getNextHiddenEntry(index), textBankId, callback);
+                if (source.isPlaying && voices.hasHiddenEntries(index)) {
+                    source.load(voices.getNextHiddenEntry(index), textBankId, callback);
                 }
                 source.isPlaying = false;
             };
 
-            const entryBuffer = files.voices.getEntry(index);
+            const entryBuffer = voices.getEntry(index);
             context.decodeAudioData(entryBuffer, (buffer) => {
                 if (!source.bufferSource.buffer) {
                     source.bufferSource.buffer = buffer;
