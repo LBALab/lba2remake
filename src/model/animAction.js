@@ -10,8 +10,8 @@ export function processAnimAction(ctx) {
     each(actions, (action) => {
         if (action.animFrame === animFrame && animState.keyframeChanged) {
             const actionType = AnimActionOpcode[action.type];
-            if (actionType !== undefined && actionType.callback !== undefined) {
-                actionType.callback(action, ctx);
+            if (actionType !== undefined && actionType.handler !== undefined) {
+                actionType.handler(action, ctx);
             }
         }
     });
