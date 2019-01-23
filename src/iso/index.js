@@ -6,12 +6,7 @@ import {processCollisions} from './physics';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 
-export function loadIsometricScenery(renderer, entry, callback) {
-    loadIsometricSceneryAsync(renderer, entry)
-        .then(isoScenery => callback(null, isoScenery));
-}
-
-async function loadIsometricSceneryAsync(renderer, entry) {
+export async function loadIsometricScenery(renderer, entry) {
     const [ress, bkg] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr('LBA_BKG.HQR')
