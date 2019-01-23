@@ -166,26 +166,32 @@ export function locateObject(object) {
     centerIsoCamera(renderer, renderer.cameras.isoCamera, scene, object);
 }
 
-export function loadSceneMetaData(sceneIndex, callback) {
+export async function loadSceneMetaData(sceneIndex) {
     if (sceneIndex in DebugData.metadata.scenes) {
-        callback();
-        return;
+        return null;
     }
-    const request = new XMLHttpRequest();
-    request.open('GET', `metadata/scene_${sceneIndex}.json${getAuthQueryString()}`, true);
 
-    request.onload = function onload() {
-        if (this.status === 200) {
-            try {
-                DebugData.metadata.scenes[sceneIndex] = JSON.parse(request.response);
-            } catch (e) {
-                // continue regardless of error
+    return new Promise((resolve) => {
+        const request = new XMLHttpRequest();
+        request.open('GET', `metadata/scene_${sceneIndex}.json${getAuthQueryString()}`, true);
+
+        request.onload = function onload() {
+            if (this.status === 200) {
+                try {
+                    DebugData.metadata.scenes[sceneIndex] = JSON.parse(request.response);
+                } catch (e) {
+                    // continue regardless of error
+                }
             }
-        }
-        callback();
-    };
+            resolve();
+        };
 
-    request.send(null);
+        request.onerror = function onerror() {
+            resolve();
+        };
+
+        request.send(null);
+    });
 }
 
 function saveMetaData(metadata) {

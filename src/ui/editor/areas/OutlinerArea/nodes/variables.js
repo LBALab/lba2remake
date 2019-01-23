@@ -1,5 +1,4 @@
 import React from 'react';
-import async from 'async';
 import {
     times,
     map,
@@ -165,32 +164,29 @@ export function makeVarDef(type, idx, getVars, getCtx) {
     };
 }
 
-export function findAllReferences(varDef) {
-    return new Promise((resolve) => {
-        let sceneList;
-        const isVarGames = varDef.type === 'vargame';
-        if (isVarGames) {
-            sceneList = times(222);
-        } else {
-            sceneList = [varDef.ctx.scene];
+export async function findAllReferences(varDef) {
+    let sceneList;
+    const isVarGames = varDef.type === 'vargame';
+    if (isVarGames) {
+        sceneList = times(222);
+    } else {
+        sceneList = [varDef.ctx.scene];
+    }
+    const refs = await findAllRefsInSceneList(varDef, sceneList);
+    const varname = getVarName(varDef);
+    const area = makeOutlinerArea(
+        `references_to_${varname}`,
+        `References to ${varname}`,
+        {
+            name: `References to ${varname}${!isVarGames ? ` (Scene #${varDef.ctx.scene})` : ''}`,
+            children: isVarGames ? mapLocations(refs) : mapActors(refs[0])
         }
-        findAllRefsInSceneList(varDef, sceneList, (refs) => {
-            const varname = getVarName(varDef);
-            const area = makeOutlinerArea(
-                `references_to_${varname}`,
-                `References to ${varname}`,
-                {
-                    name: `References to ${varname}${!isVarGames ? ` (Scene #${varDef.ctx.scene})` : ''}`,
-                    children: isVarGames ? mapLocations(refs) : mapActors(refs[0])
-                }
-            );
-            area.generator = {
-                func: 'findAllReferences',
-                data: varDef
-            };
-            resolve(area);
-        });
-    });
+    );
+    area.generator = {
+        func: 'findAllReferences',
+        data: varDef
+    };
+    return area;
 }
 
 function mapLocations(refs, locations = LocationsNode.children) {
@@ -259,34 +255,29 @@ function mapActors(ref) {
     }));
 }
 
-function findAllRefsInSceneList(varDef, sceneList, mainCallback) {
+async function findAllRefsInSceneList(varDef, sceneList) {
     const game = DebugData.scope.game;
     if (!game)
-        return;
+        return null;
+
     const language = game.getState().config.language;
-    async.map(
-        sceneList,
-        (idx, callback) => {
-            async.parallel([
-                innerCallback => loadSceneData(language, idx)
-                    .then(scene => innerCallback(null, scene)),
-                innerCallback => loadSceneMetaData(idx, innerCallback)
-            ], (err, [scene]) => {
-                const foundResults = findAllRefsInScene(varDef, scene);
-                if (foundResults.length > 0) {
-                    callback(null, {
-                        scene: idx,
-                        actors: foundResults
-                    });
-                } else {
-                    callback();
-                }
-            });
-        },
-        (err, results) => {
-            mainCallback(filter(results));
-        }
+    const results = await Promise.all(
+        map(sceneList, async (idx) => {
+            const [sceneData] = await Promise.all([
+                loadSceneData(language, idx),
+                loadSceneMetaData(idx)
+            ]);
+            const foundResults = findAllRefsInScene(varDef, sceneData);
+            if (foundResults.length > 0) {
+                return {
+                    scene: idx,
+                    actors: foundResults
+                };
+            }
+            return null;
+        })
     );
+    return filter(results);
 }
 
 function findAllRefsInScene(varDef, scene) {

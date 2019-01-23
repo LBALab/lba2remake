@@ -147,7 +147,11 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             fogDensity: 0,
         };
         const loadSteps: any = {
-            metadata: callback => (params.editor ? loadSceneMetaData(index, callback) : callback()),
+            metadata: callback => (
+                params.editor
+                ? loadSceneMetaData(index).then(() => callback())
+                : callback()
+            ),
             actors: ['metadata', (data, callback) => {
                 async.map(sceneData.actors,
                             loadActor.bind(null, params, envInfo, sceneData.ambience), callback);
