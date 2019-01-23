@@ -98,7 +98,7 @@ export default class GameUI extends FrameListener {
         }
     }
 
-    onLoad(root) {
+    async onLoad(root) {
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;
@@ -107,12 +107,13 @@ export default class GameUI extends FrameListener {
                 this.canvas.tabIndex = 0;
                 const game = this.state.game;
                 const renderer = createRenderer(this.props.params, this.canvas);
-                const sceneManager = createSceneManager(
+                const sceneManager = await createSceneManager(
                     this.props.params,
                     game,
                     renderer,
-                    this.onSceneManagerReady,
-                    this.hideMenu.bind(this));
+                    this.hideMenu.bind(this)
+                );
+                this.onSceneManagerReady(sceneManager);
                 const controls = createControls(this.props.params, game, this.canvas, sceneManager);
                 this.setState({ renderer, sceneManager, controls }, this.saveData);
             }

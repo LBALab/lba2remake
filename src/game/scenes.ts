@@ -25,7 +25,7 @@ declare global {
 
 const {initSceneDebugData, loadSceneMetaData} = DBG;
 
-export function createSceneManager(params, game, renderer, callback: Function, hideMenu: Function) {
+export async function createSceneManager(params, game, renderer, hideMenu: Function) {
     let scene = null;
     let sceneMap = null;
     const sceneManager = {
@@ -122,10 +122,7 @@ export function createSceneManager(params, game, renderer, callback: Function, h
         }
     };
 
-    loadSceneMapData().then((smap) => {
-        sceneMap = smap;
-        callback(sceneManager);
-    });
+    sceneMap = await loadSceneMapData();
 
     return sceneManager;
 }
