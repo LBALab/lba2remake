@@ -223,7 +223,7 @@ export default class GameUI extends FrameListener {
                 this.setState({
                     video: {
                         src,
-                        callback: () => {
+                        onEnded: () => {
                             that.setState({video: null});
                             that.startNewGameScene();
                         }
