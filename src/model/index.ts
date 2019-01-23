@@ -1,5 +1,3 @@
-import * as async from 'async';
-
 import * as THREE from 'three';
 import {loadHqr} from '../hqr';
 import {loadEntity, getBodyIndex, getAnimIndex, getAnim, Entity} from './entity';
