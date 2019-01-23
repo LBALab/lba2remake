@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {getObjectName} from '../ui/editor/DebugData';
 
-export function loadPoint(props, callback) {
+export function loadPoint(props) {
     const pos = props.pos;
     const point = {
         type: 'point',
@@ -20,7 +20,7 @@ export function loadPoint(props, callback) {
     obj.matrixAutoUpdate = false;
     point.threeObject = obj;
 
-    callback(null, point);
+    return point;
 }
 
 const stickMaterial = makeMaterial(new THREE.Color('#321d0a'));
@@ -56,20 +56,20 @@ function makeMaterial(color) {
     return new THREE.RawShaderMaterial({
         vertexShader: `
             precision lowp float;
-        
+
             uniform mat4 projectionMatrix;
             uniform mat4 modelViewMatrix;
-            
+
             attribute vec3 position;
-            
+
             void main() {
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
             }`,
         fragmentShader: `
             precision lowp float;
-            
+
             uniform vec3 color;
-            
+
             void main() {
                 gl_FragColor = vec4(color, 1.0);
             }`,

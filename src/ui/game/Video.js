@@ -16,7 +16,7 @@ export default function Video(props) {
             autoPlay
             width={width}
             height={height}
-            onEnded={props.video.callback}
+            onEnded={props.video.onEnded}
         >
             <source type="video/mp4" src={props.video.src} />
         </video>;

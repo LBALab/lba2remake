@@ -1,6 +1,6 @@
 import React from 'react';
 import * as THREE from 'three';
-import {clone, omit, noop} from 'lodash';
+import {clone, omit} from 'lodash';
 
 import {createRenderer} from '../renderer';
 import {createGame} from '../game/index.ts';
@@ -98,7 +98,7 @@ export default class GameUI extends FrameListener {
         }
     }
 
-    onLoad(root) {
+    async onLoad(root) {
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;
@@ -107,12 +107,13 @@ export default class GameUI extends FrameListener {
                 this.canvas.tabIndex = 0;
                 const game = this.state.game;
                 const renderer = createRenderer(this.props.params, this.canvas);
-                const sceneManager = createSceneManager(
+                const sceneManager = await createSceneManager(
                     this.props.params,
                     game,
                     renderer,
-                    this.onSceneManagerReady,
-                    this.hideMenu.bind(this));
+                    this.hideMenu.bind(this)
+                );
+                this.onSceneManagerReady(sceneManager);
                 const controls = createControls(this.props.params, game, this.canvas, sceneManager);
                 this.setState({ renderer, sceneManager, controls }, this.saveData);
             }
@@ -205,7 +206,7 @@ export default class GameUI extends FrameListener {
     startNewGameScene() {
         this.state.game.resume();
         this.state.game.resetState();
-        this.state.sceneManager.goto(0, noop, true);
+        this.state.sceneManager.goto(0, true);
     }
 
     onMenuItemChanged(item) {
@@ -222,7 +223,7 @@ export default class GameUI extends FrameListener {
                 this.setState({
                     video: {
                         src,
-                        callback: () => {
+                        onEnded: () => {
                             that.setState({video: null});
                             that.startNewGameScene();
                         }

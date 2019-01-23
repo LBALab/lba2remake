@@ -166,47 +166,52 @@ export function locateObject(object) {
     centerIsoCamera(renderer, renderer.cameras.isoCamera, scene, object);
 }
 
-export function loadSceneMetaData(sceneIndex, callback) {
+export async function loadSceneMetaData(sceneIndex) {
     if (sceneIndex in DebugData.metadata.scenes) {
-        callback();
-        return;
+        return null;
     }
-    const request = new XMLHttpRequest();
-    request.open('GET', `metadata/scene_${sceneIndex}.json${getAuthQueryString()}`, true);
 
-    request.onload = function onload() {
-        if (this.status === 200) {
-            try {
-                DebugData.metadata.scenes[sceneIndex] = JSON.parse(request.response);
-            } catch (e) {
-                // continue regardless of error
+    return new Promise((resolve) => {
+        const request = new XMLHttpRequest();
+        request.open('GET', `metadata/scene_${sceneIndex}.json${getAuthQueryString()}`, true);
+
+        request.onload = function onload() {
+            if (this.status === 200) {
+                try {
+                    DebugData.metadata.scenes[sceneIndex] = JSON.parse(request.response);
+                } catch (e) {
+                    // continue regardless of error
+                }
             }
-        }
-        callback();
-    };
+            resolve();
+        };
 
-    request.send(null);
+        request.onerror = function onerror() {
+            resolve();
+        };
+
+        request.send(null);
+    });
 }
 
-function saveMetaData(metadata) {
-    checkAuth((authData) => {
-        if (authData) {
-            const content = extend({}, metadata, {auth: authData});
-            const request = new XMLHttpRequest();
-            request.open('POST', 'metadata', true);
-            request.onload = function onload() {
-                if (this.status === 200) {
-                    // eslint-disable-next-line no-console
-                    console.log('Saved metadata:', content);
-                } else {
-                    // eslint-disable-next-line no-console
-                    console.error('Failed to save metadata');
-                }
-            };
-            request.setRequestHeader('Content-Type', 'application/json');
-            request.send(JSON.stringify(content));
-        }
-    });
+async function saveMetaData(metadata) {
+    const authData = await checkAuth();
+    if (authData) {
+        const content = extend({}, metadata, {auth: authData});
+        const request = new XMLHttpRequest();
+        request.open('POST', 'metadata', true);
+        request.onload = function onload() {
+            if (this.status === 200) {
+                // eslint-disable-next-line no-console
+                console.log('Saved metadata:', content);
+            } else {
+                // eslint-disable-next-line no-console
+                console.error('Failed to save metadata');
+            }
+        };
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.send(JSON.stringify(content));
+    }
 }
 
 export function loadGameMetaData() {
