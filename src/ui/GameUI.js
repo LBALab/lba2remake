@@ -1,6 +1,6 @@
 import React from 'react';
 import * as THREE from 'three';
-import {clone, omit, noop} from 'lodash';
+import {clone, omit} from 'lodash';
 
 import {createRenderer} from '../renderer';
 import {createGame} from '../game/index.ts';
@@ -205,7 +205,7 @@ export default class GameUI extends FrameListener {
     startNewGameScene() {
         this.state.game.resume();
         this.state.game.resetState();
-        this.state.sceneManager.goto(0, noop, true);
+        this.state.sceneManager.goto(0, true);
     }
 
     onMenuItemChanged(item) {

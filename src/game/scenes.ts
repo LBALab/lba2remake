@@ -38,11 +38,11 @@ export function createSceneManager(params, game, renderer, callback: Function, h
         /* @inspector(locate) */
         hideMenuAndGoto(index, wasPaused) {
             hideMenu(wasPaused);
-            this.goto(index, noop, false, wasPaused);
+            return this.goto(index, false, wasPaused);
         },
 
         /* @inspector(locate) */
-        goto(index, onLoad = noop, force = false, wasPaused = false) {
+        async goto(index, force = false, wasPaused = false) {
             if ((!force && scene && index === scene.index) || game.isLoading())
                 return;
 
@@ -78,51 +78,47 @@ export function createSceneManager(params, game, renderer, callback: Function, h
                     });
                 }
                 initSceneDebugData();
-                onLoad(scene);
-            } else {
-                game.loading(index);
-                loadScene(
-                    this,
-                    params,
-                    game,
-                    renderer,
-                    sceneMap,
-                    index,
-                    null,
-                    (err, pScene) => {
-                        renderer.applySceneryProps(pScene.scenery.props);
-                        scene = pScene;
-                        scene.isActive = true;
-                        if (!musicSource.isPlaying) {
-                            musicSource.load(scene.data.ambience.musicIndex, () => {
-                                // if menu music has started playing during load
-                                menuMusicSource.stop();
-                                musicSource.play();
-                            });
-                        }
-                        initSceneDebugData();
-                        onLoad(scene);
-                        scene.sceneNode.updateMatrixWorld();
-                        initCameraMovement(game.controlsState, renderer, scene);
-                        game.loaded(wasPaused);
-                    }
-                );
+                return scene;
             }
+            game.loading(index);
+            scene = await loadScene(
+                this,
+                params,
+                game,
+                renderer,
+                sceneMap,
+                index,
+                null
+            );
+            renderer.applySceneryProps(scene.scenery.props);
+            scene.isActive = true;
+            if (!musicSource.isPlaying) {
+                musicSource.load(scene.data.ambience.musicIndex, () => {
+                    // if menu music has started playing during load
+                    menuMusicSource.stop();
+                    musicSource.play();
+                });
+            }
+            initSceneDebugData();
+            scene.sceneNode.updateMatrixWorld();
+            initCameraMovement(game.controlsState, renderer, scene);
+            game.loaded(wasPaused);
+            return scene;
         },
 
         /* @inspector(locate) */
-        next(pCallback) {
+        async next() {
             if (scene) {
                 const nextIdx = (scene.index + 1) % sceneMap.length;
-                this.goto(nextIdx, pCallback);
+                return this.goto(nextIdx);
             }
         },
 
         /* @inspector(locate) */
-        previous(pCallback) {
+        async previous() {
             if (scene) {
                 const previousIdx = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
-                this.goto(previousIdx, pCallback);
+                return this.goto(previousIdx);
             }
         }
     };
@@ -135,8 +131,9 @@ export function createSceneManager(params, game, renderer, callback: Function, h
     return sceneManager;
 }
 
-function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent, mainCallback) {
-    loadSceneData(game.getState().config.language, index).then((sceneData) => {
+async function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent) {
+    const sceneData = await loadSceneData(game.getState().config.language, index);
+    return new Promise((resolve) => {
         const indexInfo = sceneMap[index];
         let islandName;
         if (indexInfo.isIsland) {
@@ -250,7 +247,7 @@ function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent
             if (parent) {
                 killActor(scene.actors[0]);
             }
-            mainCallback(null, scene);
+            resolve(scene);
         });
     });
 }
@@ -301,7 +298,8 @@ function loadSideScenes(sceneManager,
         id => id !== null
     );
     async.map(sideIndices, (sideIndex, callback) => {
-        loadScene(sceneManager, params, game, renderer, sceneMap, sideIndex, parent, callback);
+        loadScene(sceneManager, params, game, renderer, sceneMap, sideIndex, parent)
+            .then(sideScene => callback(null, sideScene));
     }, (err, sideScenes) => {
         const sideScenesMap = {};
         each(sideScenes, (sideScene: any) => {

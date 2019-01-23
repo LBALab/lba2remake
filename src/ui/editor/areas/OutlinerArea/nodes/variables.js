@@ -233,7 +233,7 @@ function mapActors(ref) {
         onClick: () => {
             if (DebugData.scope.scene) {
                 if (DebugData.scope.scene.index !== ref.scene) {
-                    DebugData.sceneManager.goto(ref.scene, () => {
+                    DebugData.sceneManager.goto(ref.scene).then(() => {
                         DebugData.selection = {type: 'actor', index: actor.actor};
                     });
                 } else {
@@ -246,7 +246,7 @@ function mapActors(ref) {
             onClick: () => {
                 if (DebugData.scope.scene) {
                     if (DebugData.scope.scene.index !== ref.scene) {
-                        DebugData.sceneManager.goto(ref.scene, () => {
+                        DebugData.sceneManager.goto(ref.scene).then(() => {
                             DebugData.selection = {type: 'actor', index: actor.actor, lifeLine: line};
                         });
                     } else {

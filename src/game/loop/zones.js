@@ -41,7 +41,7 @@ export function processZones(game, scene) {
  */
 function CUBE(game, scene, zone, hero) {
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
-        scene.goto(zone.props.snap, (newScene) => {
+        scene.goto(zone.props.snap).then((newScene) => {
             const newHero = newScene.actors[0];
             newHero.physics.position.x = ((0x8000 - zone.props.info2) + 511) / 0x4000;
             newHero.physics.position.y = zone.props.info1 / 0x4000;
