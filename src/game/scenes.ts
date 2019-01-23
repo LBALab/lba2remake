@@ -153,14 +153,18 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 : callback()
             ),
             actors: ['metadata', (data, callback) => {
-                async.map(sceneData.actors,
-                            loadActor.bind(null, params, envInfo, sceneData.ambience), callback);
+                Promise.all(
+                    map(
+                        sceneData.actors,
+                        actor => loadActor(params, envInfo, sceneData.ambience, actor)
+                    )
+                ).then(actors => callback(null, actors));
             }],
             points: ['metadata', (data, callback) => {
-                async.map(sceneData.points, loadPoint, callback);
+                callback(null, map(sceneData.points, loadPoint));
             }],
             zones: ['metadata', (data, callback) => {
-                async.map(sceneData.zones, loadZone, callback);
+                callback(null, map(sceneData.zones, loadZone));
             }],
         };
 
