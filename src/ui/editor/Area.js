@@ -205,7 +205,7 @@ export default class Area extends React.Component {
     renderPopup() {
         const popup = this.state.popup;
         const ok = () => {
-            popup.callback();
+            popup.onConfirm();
             this.setState({popup: null});
         };
         const cancel = () => {
@@ -231,13 +231,13 @@ export default class Area extends React.Component {
         return null;
     }
 
-    confirmPopup(msg, ok, cancel, callback) {
+    confirmPopup(msg, ok, cancel, onConfirm) {
         this.setState({
             popup: {
                 msg,
                 ok,
                 cancel,
-                callback,
+                onConfirm,
                 style: {
                     background: 'black',
                     padding: 15

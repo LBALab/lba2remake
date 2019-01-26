@@ -50,7 +50,7 @@ function processTeleports(scene) {
                 && globalPos.z < nodePos.z + 1.99;
         });
         if (foundSideScene) {
-            scene.goto(foundSideScene.index, (newScene) => {
+            scene.goto(foundSideScene.index).then((newScene) => {
                 const newHero = newScene.actors[0];
                 newHero.threeObject.quaternion.copy(hero.threeObject.quaternion);
                 newHero.threeObject.position.copy(globalPos);

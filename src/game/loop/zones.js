@@ -2,16 +2,16 @@ import {getHtmlColor} from '../../scene';
 import {DirMode} from '../../game/actors.ts';
 
 export const ZoneOpcode = [
-    { opcode: 0, command: 'CUBE', callback: CUBE },
-    { opcode: 1, command: 'CAMERA', callback: NOP },
-    { opcode: 2, command: 'SCENERIC', callback: NOP },
-    { opcode: 3, command: 'FRAGMENT', callback: NOP },
-    { opcode: 4, command: 'BONUS', callback: NOP },
-    { opcode: 5, command: 'TEXT', callback: TEXT },
-    { opcode: 6, command: 'LADDER', callback: NOP },
-    { opcode: 7, command: 'CONVEYOR', callback: NOP },
-    { opcode: 8, command: 'SPIKE', callback: NOP },
-    { opcode: 9, command: 'RAIL', callback: NOP }
+    { opcode: 0, command: 'CUBE', handler: CUBE },
+    { opcode: 1, command: 'CAMERA', handler: NOP },
+    { opcode: 2, command: 'SCENERIC', handler: NOP },
+    { opcode: 3, command: 'FRAGMENT', handler: NOP },
+    { opcode: 4, command: 'BONUS', handler: NOP },
+    { opcode: 5, command: 'TEXT', handler: TEXT },
+    { opcode: 6, command: 'LADDER', handler: NOP },
+    { opcode: 7, command: 'CONVEYOR', handler: NOP },
+    { opcode: 8, command: 'SPIKE', handler: NOP },
+    { opcode: 9, command: 'RAIL', handler: NOP }
 ];
 
 export function processZones(game, scene) {
@@ -28,8 +28,8 @@ export function processZones(game, scene) {
             pos.y > box.yMin && pos.y < box.yMax &&
             pos.z > box.zMin && pos.z < box.zMax) {
             const zoneType = ZoneOpcode[zone.props.type];
-            if (zoneType !== null && zoneType.callback !== null) {
-                if (zoneType.callback(game, scene, zone, hero))
+            if (zoneType !== null && zoneType.handler !== null) {
+                if (zoneType.handler(game, scene, zone, hero))
                     break;
             }
         }
@@ -41,7 +41,7 @@ export function processZones(game, scene) {
  */
 function CUBE(game, scene, zone, hero) {
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
-        scene.goto(zone.props.snap, (newScene) => {
+        scene.goto(zone.props.snap).then((newScene) => {
             const newHero = newScene.actors[0];
             newHero.physics.position.x = ((0x8000 - zone.props.info2) + 511) / 0x4000;
             newHero.physics.position.y = zone.props.info1 / 0x4000;

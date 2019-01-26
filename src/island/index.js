@@ -26,12 +26,7 @@ export function getEnvInfo(name) {
     return islandProps[name].envInfo;
 }
 
-export function loadIslandScenery(params, name, ambience, callback) {
-    loadIslandSceneryAsync(params, name, ambience)
-        .then(island => callback(null, island));
-}
-
-async function loadIslandSceneryAsync(params, name, ambience) {
+export async function loadIslandScenery(params, name, ambience) {
     if (name in islands) {
         return islands[name];
     }

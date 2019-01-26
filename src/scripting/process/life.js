@@ -387,7 +387,7 @@ export function PLAY_SMK(cmdState, video) {
         const that = this;
         this.game.pause();
         const src = VideoData.VIDEO.find(v => v.name === video).file;
-        const callback = () => {
+        const onEnded = () => {
             that.game.setUiState({video: null, skip: false});
             cmdState.ended = true;
             that.game.resume();
@@ -395,13 +395,13 @@ export function PLAY_SMK(cmdState, video) {
         this.game.setUiState({ skip: false,
             video: {
                 src,
-                callback
+                onEnded
             }});
         cmdState.listener = function listener(event) {
             const key = event.code || event.which || event.keyCode;
             if (key === 'Enter' || key === 13 ||
                 key === 'Escape' || key === 27) {
-                callback();
+                onEnded();
             }
         };
         cmdState.listenerStart = function listenerStart() {
@@ -413,7 +413,7 @@ export function PLAY_SMK(cmdState, video) {
             if (elapsed < 300) {
                 const skip = that.game.getUiState().skip;
                 if (skip) {
-                    callback();
+                    onEnded();
                 } else {
                     that.game.setUiState({
                         skip: true

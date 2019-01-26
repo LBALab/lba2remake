@@ -31,22 +31,26 @@ function validateId(auth) {
     return auth;
 }
 
-export function checkAuth(callback) {
-    let auth = null;
+export async function checkAuth() {
     const raw_auth = localStorage.getItem('editor_auth');
     try {
         if (raw_auth) {
-            auth = validateId(JSON.parse(raw_auth));
+            const auth = validateId(JSON.parse(raw_auth));
+            return auth;
         }
     } catch (e) {
         // continue regardless of error
     }
 
-    if (auth) {
-        callback(auth);
-    } else {
-        Popup.display(props => <AuthPopup callback={saveAuth.bind(null, callback)} {...props}/>);
-    }
+    return new Promise((resolve) => {
+        const onValidate = (auth) => {
+            if (auth) {
+                localStorage.setItem('editor_auth', JSON.stringify(auth));
+            }
+            resolve(auth);
+        };
+        Popup.display(props => <AuthPopup onValidate={onValidate} {...props}/>);
+    });
 }
 
 export function getAuthQueryString() {
@@ -62,13 +66,6 @@ export function getAuthQueryString() {
         // continue regardless of error
     }
     return '';
-}
-
-function saveAuth(callback, auth) {
-    if (auth) {
-        localStorage.setItem('editor_auth', JSON.stringify(auth));
-    }
-    callback(auth);
 }
 
 function stopPropagation(e) {
@@ -92,7 +89,7 @@ class AuthPopup extends React.Component {
 
     cancel() {
         this.props.close();
-        this.props.callback();
+        this.props.onValidate();
     }
 
     send() {
@@ -106,7 +103,7 @@ class AuthPopup extends React.Component {
                 auth.email = `${auth.id}@lba2remake.net`;
             }
             this.props.close();
-            this.props.callback(auth);
+            this.props.onValidate(auth);
         } else {
             this.setState({clickedSend: true});
         }

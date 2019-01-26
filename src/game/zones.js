@@ -30,7 +30,7 @@ const ZONE_TYPE_MATERIAL_COLOR = [
     '#008000',
 ];
 
-export function loadZone(props, callback) {
+export function loadZone(props) {
     const pos = props.pos;
     const zone = {
         type: 'zone',
@@ -54,5 +54,5 @@ export function loadZone(props, callback) {
     bbGeom.matrixAutoUpdate = false;
     zone.threeObject = bbGeom;
 
-    callback(null, zone);
+    return zone;
 }

@@ -1,4 +1,3 @@
-import * as async from 'async';
 import * as THREE from 'three';
 import {
     map,
@@ -26,7 +25,7 @@ declare global {
 
 const {initSceneDebugData, loadSceneMetaData} = DBG;
 
-export function createSceneManager(params, game, renderer, callback: Function, hideMenu: Function) {
+export async function createSceneManager(params, game, renderer, hideMenu: Function) {
     let scene = null;
     let sceneMap = null;
     const sceneManager = {
@@ -38,11 +37,11 @@ export function createSceneManager(params, game, renderer, callback: Function, h
         /* @inspector(locate) */
         hideMenuAndGoto(index, wasPaused) {
             hideMenu(wasPaused);
-            this.goto(index, noop, false, wasPaused);
+            return this.goto(index, false, wasPaused);
         },
 
         /* @inspector(locate) */
-        goto(index, onLoad = noop, force = false, wasPaused = false) {
+        async goto(index, force = false, wasPaused = false) {
             if ((!force && scene && index === scene.index) || game.isLoading())
                 return;
 
@@ -78,189 +77,172 @@ export function createSceneManager(params, game, renderer, callback: Function, h
                     });
                 }
                 initSceneDebugData();
-                onLoad(scene);
-            } else {
-                game.loading(index);
-                loadScene(
-                    this,
-                    params,
-                    game,
-                    renderer,
-                    sceneMap,
-                    index,
-                    null,
-                    (err, pScene) => {
-                        renderer.applySceneryProps(pScene.scenery.props);
-                        scene = pScene;
-                        scene.isActive = true;
-                        if (!musicSource.isPlaying) {
-                            musicSource.load(scene.data.ambience.musicIndex, () => {
-                                // if menu music has started playing during load
-                                menuMusicSource.stop();
-                                musicSource.play();
-                            });
-                        }
-                        initSceneDebugData();
-                        onLoad(scene);
-                        scene.sceneNode.updateMatrixWorld();
-                        initCameraMovement(game.controlsState, renderer, scene);
-                        game.loaded(wasPaused);
-                    }
-                );
+                return scene;
             }
+            game.loading(index);
+            scene = await loadScene(
+                this,
+                params,
+                game,
+                renderer,
+                sceneMap,
+                index,
+                null
+            );
+            renderer.applySceneryProps(scene.scenery.props);
+            scene.isActive = true;
+            if (!musicSource.isPlaying) {
+                musicSource.load(scene.data.ambience.musicIndex, () => {
+                    // if menu music has started playing during load
+                    menuMusicSource.stop();
+                    musicSource.play();
+                });
+            }
+            initSceneDebugData();
+            scene.sceneNode.updateMatrixWorld();
+            initCameraMovement(game.controlsState, renderer, scene);
+            game.loaded(wasPaused);
+            return scene;
         },
 
         /* @inspector(locate) */
-        next(pCallback) {
+        async next() {
             if (scene) {
                 const nextIdx = (scene.index + 1) % sceneMap.length;
-                this.goto(nextIdx, pCallback);
+                return this.goto(nextIdx);
             }
         },
 
         /* @inspector(locate) */
-        previous(pCallback) {
+        async previous() {
             if (scene) {
                 const previousIdx = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
-                this.goto(previousIdx, pCallback);
+                return this.goto(previousIdx);
             }
         }
     };
 
-    loadSceneMapData().then((smap) => {
-        sceneMap = smap;
-        callback(sceneManager);
-    });
+    sceneMap = await loadSceneMapData();
 
     return sceneManager;
 }
 
-function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent, mainCallback) {
-    loadSceneData(game.getState().config.language, index).then((sceneData) => {
-        const indexInfo = sceneMap[index];
-        let islandName;
+async function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent) {
+    const sceneData = await loadSceneData(game.getState().config.language, index);
+    if (params.editor) {
+        await loadSceneMetaData(index);
+    }
+    const indexInfo = sceneMap[index];
+    let islandName;
+    if (indexInfo.isIsland) {
+        islandName = islandSceneMapping[index].island;
+        if (game.getState().flags.quest[152] && islandName === 'CITABAU') {
+            islandName = 'CITADEL';
+        }
+    }
+    const envInfo = indexInfo.isIsland ? getEnvInfo(islandName) : {
+        skyColor: [0, 0, 0],
+        fogDensity: 0,
+    };
+    const actors = await Promise.all(map(
+        sceneData.actors,
+        actor => loadActor(params, envInfo, sceneData.ambience, actor)
+    ));
+    const points = map(sceneData.points, loadPoint);
+    const zones = map(sceneData.zones, loadZone);
+
+    let scenery = null;
+    let threeScene = null;
+    if (!parent) {
+        threeScene = new THREE.Scene();
         if (indexInfo.isIsland) {
-            islandName = islandSceneMapping[index].island;
-            if (game.getState().flags.quest[152] && islandName === 'CITABAU') {
-                islandName = 'CITADEL';
-            }
-        }
-        const envInfo = indexInfo.isIsland ? getEnvInfo(islandName) : {
-            skyColor: [0, 0, 0],
-            fogDensity: 0,
-        };
-        const loadSteps: any = {
-            metadata: callback => (params.editor ? loadSceneMetaData(index, callback) : callback()),
-            actors: ['metadata', (data, callback) => {
-                async.map(sceneData.actors,
-                            loadActor.bind(null, params, envInfo, sceneData.ambience), callback);
-            }],
-            points: ['metadata', (data, callback) => {
-                async.map(sceneData.points, loadPoint, callback);
-            }],
-            zones: ['metadata', (data, callback) => {
-                async.map(sceneData.zones, loadZone, callback);
-            }],
-        };
-
-        if (!parent) {
-            if (indexInfo.isIsland) {
-                loadSteps.scenery =
-                    loadIslandScenery.bind(null, params, islandName, sceneData.ambience);
-            } else {
-                loadSteps.scenery =
-                    loadIsometricScenery.bind(null, renderer, indexInfo.index);
-            }
-            loadSteps.threeScene = ['scenery', (data, callback) => {
-                const threeScene = new THREE.Scene();
-                threeScene.name = `${indexInfo.isIsland ? '3D' : 'iso'}_scene`;
-                threeScene.add(data.scenery.threeObject);
-                callback(null, threeScene);
-            }];
-            if (indexInfo.isIsland) {
-                loadSteps.sideScenes = ['scenery', 'threeScene', (data, callback) => {
-                    loadSideScenes(
-                        sceneManager,
-                        params,
-                        game,
-                        renderer,
-                        sceneMap,
-                        index,
-                        data,
-                        callback);
-                }];
-            }
+            scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
+            threeScene.name = '3D_scene';
         } else {
-            loadSteps.scenery = (callback) => { callback(null, parent.scenery); };
-            loadSteps.threeScene = (callback) => { callback(null, parent.threeScene); };
+            scenery = await loadIsometricScenery(renderer, indexInfo.index);
+            threeScene.name = 'iso_scene';
         }
 
-        async.auto(loadSteps, (err, data: any) => {
-            const sceneNode = loadSceneNode(index, indexInfo, data);
-            data.threeScene.add(sceneNode);
-            const scene = {
-                index,
-                data: sceneData,
-                isIsland: indexInfo.isIsland,
-                threeScene: data.threeScene,
-                sceneNode,
-                scenery: data.scenery,
-                sideScenes: data.sideScenes,
-                parentScene: data,
-                actors: data.actors,
-                points: data.points,
-                zones: data.zones,
-                isActive: false,
-                variables: null,
-                section: null,
-                usedVarGames: null,
-                zoneState: { listener: null, ended: false },
-                goto: sBind(sceneManager.goto, sceneManager),
+        threeScene.add(scenery.threeObject);
+    } else {
+        scenery = parent.scenery;
+        threeScene = parent.threeScene;
+    }
 
-                /* @inspector(locate) */
-                reset() {
-                    each(this.actors, (actor) => {
-                        actor.reset();
-                    });
-                    loadScripts(params, game, scene);
-                    initCameraMovement(game.controlsState, renderer, scene);
-                    if (game.isPaused()) {
-                        DebugData.step = true;
-                    }
-                    scene.variables = createSceneVariables(scene);
-                },
+    const sceneNode = loadSceneNode(index, indexInfo, scenery, actors, zones, points);
+    threeScene.add(sceneNode);
+    const scene = {
+        index,
+        data: sceneData,
+        isIsland: indexInfo.isIsland,
+        threeScene,
+        sceneNode,
+        scenery,
+        parentScene: parent,
+        sideScenes: null,
+        actors,
+        points,
+        zones,
+        isActive: false,
+        variables: null,
+        section: null,
+        usedVarGames: null,
+        zoneState: { listener: null, ended: false },
+        goto: sBind(sceneManager.goto, sceneManager),
 
-                /* @inspector(locate) */
-                removeMesh(threeObject) {
-                    this.threeScene.remove(threeObject);
-                },
-
-                /* @inspector(locate) */
-                addMesh(threeObject) {
-                    this.threeScene.add(threeObject);
-                }
-            };
-            if (scene.isIsland) {
-                scene.section = islandSceneMapping[index].section;
-            }
+        /* @inspector(locate) */
+        reset() {
+            each(this.actors, (actor) => {
+                actor.reset();
+            });
             loadScripts(params, game, scene);
-            scene.variables = createSceneVariables(scene);
-            scene.usedVarGames = findUsedVarGames(scene);
-            // Kill twinsen if side scene
-            if (parent) {
-                killActor(scene.actors[0]);
+            initCameraMovement(game.controlsState, renderer, scene);
+            if (game.isPaused()) {
+                DebugData.step = true;
             }
-            mainCallback(null, scene);
-        });
-    });
+            scene.variables = createSceneVariables(scene);
+        },
+
+        /* @inspector(locate) */
+        removeMesh(threeObject) {
+            this.threeScene.remove(threeObject);
+        },
+
+        /* @inspector(locate) */
+        addMesh(threeObject) {
+            this.threeScene.add(threeObject);
+        }
+    };
+    if (scene.isIsland) {
+        scene.section = islandSceneMapping[index].section;
+        if (!parent) {
+            scene.sideScenes = await loadSideScenes(
+                sceneManager,
+                params,
+                game,
+                renderer,
+                sceneMap,
+                index,
+                scene
+            );
+        }
+    }
+    loadScripts(params, game, scene);
+    scene.variables = createSceneVariables(scene);
+    scene.usedVarGames = findUsedVarGames(scene);
+    // Kill twinsen if side scene
+    if (parent) {
+        killActor(scene.actors[0]);
+    }
+    return scene;
 }
 
-function loadSceneNode(index, indexInfo, data) {
+function loadSceneNode(index, indexInfo, scenery, actors, zones, points) {
     const sceneNode = indexInfo.isIsland ? new THREE.Object3D() : new THREE.Scene();
     sceneNode.name = `scene_${index}`;
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
-        const section = data.scenery.sections[sectionIdx];
+        const section = scenery.sections[sectionIdx];
         sceneNode.position.x = section.x * 2;
         sceneNode.position.z = section.z * 2;
     }
@@ -270,20 +252,19 @@ function loadSceneNode(index, indexInfo, data) {
         }
     };
 
-    each(data.actors, addToSceneNode);
-    each(data.zones, addToSceneNode);
-    each(data.points, addToSceneNode);
+    each(actors, addToSceneNode);
+    each(zones, addToSceneNode);
+    each(points, addToSceneNode);
     return sceneNode;
 }
 
-function loadSideScenes(sceneManager,
-                        params,
-                        game,
-                        renderer,
-                        sceneMap,
-                        index,
-                        parent,
-                        mainCallback) {
+async function loadSideScenes(sceneManager,
+                                params,
+                                game,
+                                renderer,
+                                sceneMap,
+                                index,
+                                parent) {
     const sideIndices = filter(
         map(sceneMap, (indexInfo, sideIndex) => {
             if (sideIndex !== index
@@ -300,15 +281,24 @@ function loadSideScenes(sceneManager,
         }),
         id => id !== null
     );
-    async.map(sideIndices, (sideIndex, callback) => {
-        loadScene(sceneManager, params, game, renderer, sceneMap, sideIndex, parent, callback);
-    }, (err, sideScenes) => {
-        const sideScenesMap = {};
-        each(sideScenes, (sideScene: any) => {
-            sideScenesMap[sideScene.index] = sideScene;
-        });
-        mainCallback(null, sideScenesMap);
+
+    const sideScenes = await Promise.all(map(
+        sideIndices,
+        async sideIndex => loadScene(
+            sceneManager,
+            params,
+            game,
+            renderer,
+            sceneMap,
+            sideIndex,
+            parent
+        )
+    ));
+    const sideScenesMap = {};
+    each(sideScenes, (sideScene: any) => {
+        sideScenesMap[sideScene.index] = sideScene;
     });
+    return sideScenesMap;
 }
 
 function createSceneVariables(scene) {

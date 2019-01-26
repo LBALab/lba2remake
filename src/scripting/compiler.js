@@ -42,8 +42,8 @@ function compileInstruction(script, cmd, cmdOffset) {
 
     postProcess(script, cmd, cmdOffset, args);
 
-    const callback = cmd.op.callback;
-    const instruction = callback.bind(...args);
+    const handler = cmd.op.handler;
+    const instruction = handler.bind(...args);
     instruction.dbgLabel = `${cmdOffset} ${cmd.op.command}`;
     instruction.section = cmd.section;
     if (condition)
@@ -55,12 +55,12 @@ function compileInstruction(script, cmd, cmdOffset) {
 }
 
 function compileCondition(script, cmd) {
-    return cmd.condition.op.callback.bind(script.context,
+    return cmd.condition.op.handler.bind(script.context,
         compileValue(script, cmd.condition.param));
 }
 
 function compileOperator(cmd) {
-    return cmd.operator.op.callback.bind(null, cmd.operator.operand.value);
+    return cmd.operator.op.handler.bind(null, cmd.operator.operand.value);
 }
 
 function compileValue(script, value, cmdOffset) {
