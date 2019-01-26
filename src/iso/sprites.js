@@ -10,7 +10,7 @@ const push = Array.prototype.push;
 let spriteCache = null;
 let spriteRawCache = null;
 
-export async function loadSprite(index) {
+export async function loadSprite(index, isBillboard = false) {
     const [ress, spritesFile, spritesRaw] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr('SPRITES.HQR'),
@@ -26,8 +26,9 @@ export async function loadSprite(index) {
         const sprites = loadAllSpritesRaw(spritesRaw);
         spriteRawCache = loadSpritesMapping(sprites, palette);
     }
+    const cache = (index < 100) ? spriteRawCache : spriteCache;
     return {
-        threeObject: loadMesh(index, (index < 100) ? spriteRawCache : spriteCache)
+        threeObject: (isBillboard) ? loadBillboardSprite(index, cache) : loadMesh(index, cache),
     };
 }
 
@@ -106,6 +107,28 @@ function loadMesh(index, sprite) {
     object.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 3 * (Math.PI / 4.0));
     return object;
 }
+
+function loadBillboardSprite(index, sprite) {
+    const s = sprite.spritesMap[index];
+    const spriteTexture = sprite.texture;
+
+    spriteTexture.offset = new THREE.Vector2(s.u / 2048, s.v / 2048);
+    spriteTexture.repeat = new THREE.Vector2(s.w / sprite.width, s.h / sprite.height);
+
+    const spriteMaterial = new THREE.SpriteMaterial({
+        map: spriteTexture,
+        rotation: THREE.Math.degToRad(180),
+    });
+
+    const threeSprite = new THREE.Sprite(spriteMaterial);
+    threeSprite.scale.set(s.h / 1024, s.w / 1024, 1);
+
+    const object = new THREE.Object3D();
+
+    object.add(threeSprite);
+    return object;
+}
+
 export function loadAllSprites(spriteFile) {
     const sprites = [];
     for (let i = 0; i < 425; i += 1) {

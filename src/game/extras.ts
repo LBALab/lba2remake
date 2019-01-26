@@ -79,7 +79,7 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
 
         /* @inspector(locate) */
         async loadMesh() {
-            const sprite = await loadSprite(spriteIndex);
+            const sprite = await loadSprite(spriteIndex); // , scene.data.isOutsideScene);
             sprite.threeObject.position.copy(this.physics.position);
             this.threeObject = sprite.threeObject;
             if (this.threeObject) {
