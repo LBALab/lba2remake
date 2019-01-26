@@ -6,7 +6,14 @@ import { loadSprite } from '../iso/sprites';
 import { addExtraToScene } from './scenes';
 
 export const ExtraFlag = {
+    TIME_OUT: 1 << 0,
+    FLY: 1 << 1,
+    STOP_COL: 1 << 4,
+    TAKABLE: 1 << 5,
+    FLASH: 1 << 6,
     TIME_IN: 1 << 10,
+    WAIT_NO_COL: 1 << 13,
+    BONUS: 1 << 14,
 };
 
 interface ExtraPhysics {
@@ -22,11 +29,20 @@ interface ExtraPhysics {
 export interface Extra {
     type: 'extra';
     physics: ExtraPhysics;
+
+    flags: number;
+    lifeTime: number;
+    info: number;
+    hitStrength: number;
+    time: any;
+
     isVisible: boolean;
     isSprite: boolean;
     isKilled: boolean;
-    loadMesh: Function;
     hasCollidedWithActor: boolean;
+
+    loadMesh: Function;
+    init: Function;
 }
 
 function initPhysics(position, angle) {
@@ -42,7 +58,7 @@ function initPhysics(position, angle) {
     };
 }
 
-export async function addExtra(scene, position, angle, spriteIndex, bonus) : Promise<Extra> {
+export async function addExtra(scene, position, angle, spriteIndex, bonus, time) : Promise<Extra> {
     const extra: Extra = {
         type: 'extra',
         physics: initPhysics(position, angle),
@@ -50,6 +66,16 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus) : Pro
         isVisible: true,
         isSprite: (spriteIndex) ? true : false,
         hasCollidedWithActor: false,
+        flags: (
+            ExtraFlag.STOP_COL
+            | ExtraFlag.WAIT_NO_COL
+            | ExtraFlag.BONUS
+            | ExtraFlag.TAKABLE
+        ),
+        lifeTime: 20 * 1000, // 20 seconds
+        info: bonus,
+        hitStrength: 0,
+        time,
 
         /* @inspector(locate) */
         async loadMesh() {
@@ -60,8 +86,20 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus) : Pro
                 this.threeObject.name = 'extra';
                 this.threeObject.visible = this.isVisible;
             }
-        }
+        },
+
+        init(angle, speed, weight, time) {
+            this.flags |= ExtraFlag.FLY;
+            // TODO set speed
+            this.time = time;
+        },
     };
+
+    if (spriteIndex !== SpriteType.KEY) {
+        extra.flags += ExtraFlag.TIME_OUT + ExtraFlag.FLASH;
+    }
+
+    extra.init(angle, 40, 15);
 
     const euler = new THREE.Euler(0, angle, 0, 'XZY');
     extra.physics.orientation.setFromEuler(euler);

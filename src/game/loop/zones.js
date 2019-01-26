@@ -164,6 +164,7 @@ function BONUS(game, scene, zone, hero) {
             destAngle,
             bonusSprite,
             zone.props.info1,
+            game.getTime(),
         ).then((extra) => {
             extra.flags |= ExtraFlag.TIME_IN;
 
