@@ -341,3 +341,10 @@ function findUsedVarGames(scene) {
     usedVars.sort((a, b) => a - b);
     return usedVars;
 }
+
+export function addExtraToScene(scene, extra) {
+    scene.extras.push(extra);
+    if (extra.threeObject !== null) { // because of the sprite actors
+        scene.sceneNode.add(extra.threeObject);
+    }
+}
