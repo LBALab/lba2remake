@@ -1,5 +1,8 @@
-import {getHtmlColor} from '../../scene';
-import {DirMode} from '../../game/actors.ts';
+import { getHtmlColor } from '../../scene';
+import { DirMode } from '../../game/actors.ts';
+import { AnimType } from '../data/constants';
+
+function NOP() { }
 
 export const ZoneOpcode = [
     { opcode: 0, command: 'CUBE', handler: CUBE },
@@ -65,7 +68,7 @@ function TEXT(game, scene, zone, hero) {
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
-            hero.props.animIndex = 28; // talking / reading
+            hero.props.animIndex = AnimType.TALK;
             scene.zoneState.currentChar = 0;
 
             const text = scene.data.texts[zone.props.snap];
@@ -133,7 +136,4 @@ function TEXT(game, scene, zone, hero) {
             delete scene.zoneState.startTime;
         }
     }
-}
-
-function NOP() {
 }
