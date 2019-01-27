@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {getTriangleFromPos} from './ground';
+import {getTriangleFromPos} from '../../island/ground';
 
 export function loadIslandPhysics(sections) {
     return {
