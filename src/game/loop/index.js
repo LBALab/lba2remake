@@ -11,10 +11,7 @@ const dbgClock = new THREE.Clock(false);
 dbgClock.start();
 
 export function mainGameLoop(params, game, clock, renderer, scene, controls) {
-    const time = {
-        delta: Math.min(clock.getDelta(), 0.05),
-        elapsed: clock.getElapsedTime()
-    };
+    const time = game.getTime();
 
     renderer.stats.begin();
     if (scene) {

@@ -1,6 +1,7 @@
-import {clone} from 'lodash';
-import {DirMode} from '../../game/actors.ts';
-import {setMagicBallLevel} from '../../game/state.ts';
+import { clone } from 'lodash';
+import { DirMode } from '../../game/actors.ts';
+import { AnimType } from '../../game/data/constants';
+import { setMagicBallLevel } from '../../game/state.ts';
 import VideoData from '../../video/data';
 
 export function PALETTE() {
@@ -58,9 +59,9 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
             if (actor.index === 0)
-                hero.props.animIndex = 28; // talking / reading
+                hero.props.animIndex = AnimType.TALK;
             else
-                hero.props.animIndex = 0;
+                hero.props.animIndex = AnimType.NONE;
             this.game.setUiState({
                 text: {
                     type: text.type === 3 ? 'big' : 'small',
@@ -228,7 +229,7 @@ export function FOUND_OBJECT(cmdState, id) {
         hero.props.prevEntityIndex = hero.props.entityIndex;
         hero.props.prevAnimIndex = hero.props.animIndex;
         hero.props.entityIndex = 0;
-        hero.props.animIndex = 0;
+        hero.props.animIndex = AnimType.NONE;
         this.game.getState().flags.quest[id] = 1;
         const soundFxSource = this.game.getAudioManager().getSoundFxSource();
         soundFxSource.load(6, () => {
@@ -481,9 +482,9 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
         hero.props.prevAnimIndex = hero.props.animIndex;
         hero.props.entityIndex = 0;
         if (actor.index === 0)
-            hero.props.animIndex = 28; // talking / reading
+            hero.props.animIndex = AnimType.TALK;
         else
-            hero.props.animIndex = 0;
+            hero.props.animIndex = AnimType.NONE;
         const uiState = this.game.getUiState();
         uiState.ask.text = {
             type: 'small',
