@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import {DirMode} from '../actors.ts';
+import { DirMode } from '../actors.ts';
+import { AnimType } from '../data/constants';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -48,34 +49,35 @@ function processActorMovement(controlsState, hero, time, behaviour) {
     }
     if (!hero.props.runtimeFlags.isJumping) {
         toggleJump(hero, false);
-        animIndex = 0;
+        animIndex = AnimType.NONE;
         if (controlsState.heroSpeed !== 0) {
             hero.props.runtimeFlags.isWalking = true;
-            animIndex = controlsState.heroSpeed === 1 ? 1 : 2;
+            animIndex = controlsState.heroSpeed === 1 ? AnimType.FORWARD : AnimType.BACKWARD;
             if (controlsState.sideStep === 1) {
-                animIndex = controlsState.heroSpeed === 1 ? 42 : 43;
+                animIndex = controlsState.heroSpeed === 1 ?
+                    AnimType.DODGE_FORWARD : AnimType.DODGE_BACKWARD;
             }
         }
         if (controlsState.jump === 1) {
             toggleJump(hero, true);
-            animIndex = 14; // jump
+            animIndex = AnimType.JUMP;
             if (controlsState.heroSpeed === 1) {
-                animIndex = 25; // jump while running
+                animIndex = AnimType.RUNNING_JUMP;
             }
         }
         if (controlsState.fight === 1) {
             hero.props.runtimeFlags.isWalking = true;
             if (!hero.props.runtimeFlags.isFighting) {
-                animIndex = 17 + Math.floor(Math.random() * 3);
+                animIndex = AnimType.PUNCH_1 + Math.floor(Math.random() * 3);
                 hero.props.runtimeFlags.repeatHit = Math.floor(Math.random() * 2);
                 hero.props.runtimeFlags.isFighting = true;
             } else {
                 if (hero.animState.hasEnded) {
                     if (!hero.props.runtimeFlags.isSwitchingHit) {
                         if (hero.props.runtimeFlags.repeatHit <= 0) {
-                            animIndex = 17 + Math.floor(Math.random() * 3);
+                            animIndex = AnimType.PUNCH_1 + Math.floor(Math.random() * 3);
                             while (animIndex === hero.props.animIndex) {
-                                animIndex = 17 + Math.floor(Math.random() * 3);
+                                animIndex = AnimType.PUNCH_1 + Math.floor(Math.random() * 3);
                             }
                             hero.props.runtimeFlags.repeatHit = Math.floor(Math.random() * 2);
                         } else {
@@ -100,10 +102,10 @@ function processActorMovement(controlsState, hero, time, behaviour) {
             hero.props.runtimeFlags.isCrouching = false;
         }
         if (hero.props.runtimeFlags.isCrouching) {
-            animIndex = 16;
+            animIndex = AnimType.CROUCH;
         }
         if (controlsState.weapon === 1) {
-            animIndex = 15;
+            animIndex = AnimType.THROW;
         }
     }
     if (controlsState.heroRotationSpeed !== 0 && !controlsState.crouch) {
@@ -116,17 +118,19 @@ function processActorMovement(controlsState, hero, time, behaviour) {
             euler.y += controlsState.heroRotationSpeed * time.delta * 1.2;
             hero.physics.temp.angle = euler.y;
             if (controlsState.heroSpeed === 0) {
-                animIndex = controlsState.heroRotationSpeed === 1 ? 3 : 4;
+                animIndex = controlsState.heroRotationSpeed === 1 ? AnimType.LEFT : AnimType.RIGHT;
             }
             hero.physics.orientation.setFromEuler(euler);
             // hero.props.runtimeFlags.isTurning = true;
         } else {
-            animIndex = controlsState.heroRotationSpeed === 1 ? 40 : 41;
+            animIndex = controlsState.heroRotationSpeed === 1 ?
+                AnimType.DODGE_RIGHT : AnimType.DODGE_LEFT;
             if (behaviour === BehaviourMode.ATHLETIC) {
                 // for some reason Sportif mode as the animations step inversed
                 hero.physics.temp.position.x *= -1;
                 hero.physics.temp.position.z *= -1;
-                animIndex = controlsState.heroRotationSpeed === 1 ? 41 : 40;
+                animIndex = controlsState.heroRotationSpeed === 1 ?
+                    AnimType.DODGE_LEFT : AnimType.DODGE_RIGHT;
             }
         }
     }

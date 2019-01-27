@@ -1,12 +1,17 @@
-import {getHtmlColor} from '../../scene';
-import {DirMode} from '../../game/actors.ts';
+import { getHtmlColor } from '../../scene';
+import { DirMode } from '../../game/actors.ts';
+import { AnimType } from '../data/constants';
+import { angleTo, angleToRad, getRandom } from '../../utils/lba';
+import { addExtra, ExtraFlag, randomBonus } from '../extras.ts';
+
+function NOP() { }
 
 export const ZoneOpcode = [
     { opcode: 0, command: 'CUBE', handler: CUBE },
     { opcode: 1, command: 'CAMERA', handler: NOP },
     { opcode: 2, command: 'SCENERIC', handler: NOP },
     { opcode: 3, command: 'FRAGMENT', handler: NOP },
-    { opcode: 4, command: 'BONUS', handler: NOP },
+    { opcode: 4, command: 'BONUS', handler: BONUS },
     { opcode: 5, command: 'TEXT', handler: TEXT },
     { opcode: 6, command: 'LADDER', handler: NOP },
     { opcode: 7, command: 'CONVEYOR', handler: NOP },
@@ -65,7 +70,7 @@ function TEXT(game, scene, zone, hero) {
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
-            hero.props.animIndex = 28; // talking / reading
+            hero.props.animIndex = AnimType.TALK;
             scene.zoneState.currentChar = 0;
 
             const text = scene.data.texts[zone.props.snap];
@@ -135,5 +140,39 @@ function TEXT(game, scene, zone, hero) {
     }
 }
 
-function NOP() {
+function BONUS(game, scene, zone, hero) {
+    if (game.controlsState.action === 1) {
+        game.controlsState.action = 0;
+
+        hero.props.prevEntityIndex = hero.props.entityIndex;
+        hero.props.prevAnimIndex = hero.props.animIndex;
+        hero.props.entityIndex = 0;
+        hero.props.animIndex = AnimType.ACTION;
+
+        if (zone.props.info2) {
+            return false;
+        }
+
+        const bonusSprite = randomBonus(zone.props.info0);
+
+        let destAngle = angleTo(zone.physics.position, hero.physics.position);
+        destAngle += angleToRad(getRandom(0, 300) - 150);
+
+        addExtra(
+            scene,
+            zone.physics.position,
+            destAngle,
+            bonusSprite,
+            zone.props.info1,
+            game.getTime(),
+        ).then((extra) => {
+            extra.flags |= ExtraFlag.TIME_IN;
+
+            hero.props.entityIndex = hero.props.prevEntityIndex;
+            hero.props.animIndex = hero.props.prevAnimIndex;
+            zone.props.info2 = 1;
+        });
+        return true;
+    }
+    return false;
 }
