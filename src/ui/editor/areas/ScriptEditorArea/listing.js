@@ -1,5 +1,5 @@
 import {cloneDeep, map, each, find, isFinite, isInteger, extend} from 'lodash';
-import Indent from '../../../../scripting/indent';
+import Indent from '../../../../game/scripting/indent';
 import {getRotation} from '../../../../utils/lba';
 import {getObjectName, getVarName} from '../../DebugData';
 import {formatVar} from '../OutlinerArea/nodes/variables';

@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 
-import {loadModel, Model} from '../model';
-import {loadAnimState, resetAnimState} from '../model/animState';
-import {angleToRad, distance2D, angleTo, getDistanceLba} from '../utils/lba';
-import {loadSprite} from '../iso/sprites';
+import { loadModel, Model } from '../model';
+import { loadAnimState, resetAnimState } from '../model/animState';
+import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
+import { loadSprite } from '../iso/sprites';
 
-import {getObjectName} from '../ui/editor/DebugData';
-import {runScript} from '../scripting';
+import { getObjectName } from '../ui/editor/DebugData';
+import { runScript } from './scripting';
 
 interface ActorFlags {
     hasCollisions: boolean;

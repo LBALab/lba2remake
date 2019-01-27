@@ -1,6 +1,6 @@
 import { getHtmlColor } from '../../scene';
 import { DirMode } from '../../game/actors.ts';
-import { AnimType } from '../data/constants';
+import { AnimType } from '../data/animType';
 import { angleTo, angleToRad, getRandom } from '../../utils/lba';
 import { addExtra, ExtraFlag, randomBonus } from '../extras.ts';
 

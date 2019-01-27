@@ -1,14 +1,14 @@
 import * as THREE from 'three';
-import {map, each, assign, tail} from 'lodash';
+import { map, each, assign, tail} from 'lodash';
 
-import {loadHqr} from '../hqr.ts';
-import {prepareGeometries} from './geometries';
-import {loadLayout} from './layout';
-import {loadGround} from './ground';
-import {loadSea} from './sea';
-import {loadObjects} from './objects';
-import {loadIslandPhysics} from './physics';
-import {createBoundingBox} from '../utils/rendering';
+import { loadHqr } from '../hqr.ts';
+import { prepareGeometries } from './geometries';
+import { loadLayout } from './layout';
+import { loadGround } from './ground';
+import { loadSea } from './sea';
+import { loadObjects } from './objects';
+import { loadIslandPhysics } from '../game/loop/physicsIsland';
+import { createBoundingBox } from '../utils/rendering';
 
 import islandsInfo from './data/islands';
 import environments from './data/environments';

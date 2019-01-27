@@ -1,4 +1,4 @@
-import {BODY_OBJ, ANIM_OBJ} from './life';
+import { BODY_OBJ, ANIM_OBJ } from './life';
 
 export function BODY(bodyIndex) {
     BODY_OBJ.call(this, this.actor, bodyIndex);
