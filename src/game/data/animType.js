@@ -17,9 +17,3 @@ export const AnimType = {
     DODGE_FORWARD: 42,
     DODGE_BACKWARD: 43,
 };
-
-export const SpriteType = {
-    KEY: 6,
-    KASHES: 18,
-    ZLITOS: 19,
-};

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { getRandom } from '../utils/lba';
-import { SpriteType } from './data/constants';
+import { SpriteType } from './data/spriteType';
 import { loadSprite } from '../iso/sprites';
 import { addExtraToScene } from './scenes';
 

@@ -1,6 +1,14 @@
 import * as THREE from 'three';
-import {updateModel} from '../../model';
-import {Actor} from '../actors';
+
+import { Actor} from '../actors';
+import { getAnim } from '../../model/entity';
+import { loadAnim } from '../../model/anim';
+import {
+    updateKeyframe,
+    updateKeyframeInterpolation
+} from '../../model/animState';
+import { processAnimAction } from './animAction';
+import { Time } from '../../datatypes';
 
 export function updateActor(game: any, scene: any, actor: Actor, time: any, step: any) {
     if (actor.runScripts) {
@@ -50,5 +58,35 @@ function updateMovements(actor: Actor, time: any) {
             (actor.animState.step.y * delta) / (actor.animState.keyframeLength);
     } else {
         actor.physics.temp.position.set(0, 0, 0);
+    }
+}
+
+function updateModel(game: any,
+                            sceneIsActive: any,
+                            model: any,
+                            animState: any,
+                            entityIdx: number,
+                            animIdx: number,
+                            time: Time) {
+    const entity = model.entities[entityIdx];
+    const entityAnim = getAnim(entity, animIdx);
+    if (entityAnim !== null) {
+        const realAnimIdx = entityAnim.animIndex;
+        const anim = loadAnim(model, model.anims, realAnimIdx);
+        animState.loopFrame = anim.loopFrame;
+        if (animState.prevRealAnimIdx !== -1 && realAnimIdx !== animState.prevRealAnimIdx) {
+            updateKeyframeInterpolation(anim, animState, time, realAnimIdx);
+        }
+        if (realAnimIdx === animState.realAnimIdx || animState.realAnimIdx === -1) {
+            updateKeyframe(anim, animState, time, realAnimIdx);
+        }
+        if (sceneIsActive) {
+            processAnimAction({
+                game,
+                model,
+                entityAnim,
+                animState
+            });
+        }
     }
 }

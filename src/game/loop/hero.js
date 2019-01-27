@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { DirMode } from '../actors.ts';
-import { AnimType } from '../data/constants';
+import { AnimType } from '../data/animType';
 
 export const BehaviourMode = {
     NORMAL: 0,
