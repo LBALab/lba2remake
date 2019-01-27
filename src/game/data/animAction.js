@@ -1,4 +1,4 @@
-import * as aa from '../animAction';
+import * as aa from '../loop/animAction';
 
 export const AnimActionOpcode = [
     { opcode: 0, command: 'NOP', handler: aa.NOP },

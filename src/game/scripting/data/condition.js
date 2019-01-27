@@ -1,4 +1,4 @@
-import * as lc from '../process/condition';
+import * as lc from '../condition';
 
 export const ConditionOpcode = [
     { opcode: 0x00, command: 'COL', handler: lc.COL, operand: 'Uint8:actor' },

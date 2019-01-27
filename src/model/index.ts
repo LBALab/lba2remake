@@ -1,19 +1,15 @@
 import * as THREE from 'three';
-import {loadHqr} from '../hqr';
-import {loadEntity, getBodyIndex, getAnimIndex, getAnim, Entity} from './entity';
-import {loadBody} from './body';
-import {loadAnim} from './anim';
+import { loadHqr } from '../hqr';
+import { loadEntity, getBodyIndex, getAnimIndex, getAnim, Entity } from './entity';
+import { loadBody } from './body';
+import { loadAnim } from './anim';
 import {
     initSkeleton,
     createSkeleton,
-    updateKeyframe,
-    updateKeyframeInterpolation
 } from './animState';
-import {processAnimAction} from './animAction';
-import {loadMesh} from './geometries';
-import {loadTexture2} from '../texture';
-import {createBoundingBox} from '../utils/rendering';
-import {Time} from '../datatypes';
+import { loadMesh } from './geometries';
+import { loadTexture2 } from '../texture';
+import { createBoundingBox } from '../utils/rendering';
 
 export interface Model {
     state: any;
@@ -116,34 +112,4 @@ function loadModelData(params: any,
     }
 
     return model;
-}
-
-export function updateModel(game: any,
-                            sceneIsActive: any,
-                            model: any,
-                            animState: any,
-                            entityIdx: number,
-                            animIdx: number,
-                            time: Time) {
-    const entity = model.entities[entityIdx];
-    const entityAnim = getAnim(entity, animIdx);
-    if (entityAnim !== null) {
-        const realAnimIdx = entityAnim.animIndex;
-        const anim = loadAnim(model, model.anims, realAnimIdx);
-        animState.loopFrame = anim.loopFrame;
-        if (animState.prevRealAnimIdx !== -1 && realAnimIdx !== animState.prevRealAnimIdx) {
-            updateKeyframeInterpolation(anim, animState, time, realAnimIdx);
-        }
-        if (realAnimIdx === animState.realAnimIdx || animState.realAnimIdx === -1) {
-            updateKeyframe(anim, animState, time, realAnimIdx);
-        }
-        if (sceneIsActive) {
-            processAnimAction({
-                game,
-                model,
-                entityAnim,
-                animState
-            });
-        }
-    }
 }

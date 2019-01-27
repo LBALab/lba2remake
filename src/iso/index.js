@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import {loadHqr} from '../hqr.ts';
-import {loadBricks} from './bricks';
-import {loadGrid} from './grid';
-import {processCollisions} from './physics';
+import { loadHqr } from '../hqr.ts';
+import { loadBricks } from './bricks';
+import { loadGrid } from './grid';
+import { processCollisions } from '../game/loop/physicsIso';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 
