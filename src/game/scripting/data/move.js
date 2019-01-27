@@ -1,6 +1,6 @@
-import * as mv from '../process/move';
-import * as cm from '../process/common';
-import * as st from '../process/structural';
+import * as mv from '../move';
+import * as cm from '../common';
+import * as st from '../structural';
 import Indent from '../indent';
 
 export const MoveOpcode = [

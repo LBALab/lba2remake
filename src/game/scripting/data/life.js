@@ -1,6 +1,6 @@
-import * as lf from '../process/life';
-import * as cm from '../process/common';
-import * as st from '../process/structural';
+import * as lf from '../life';
+import * as cm from '../common';
+import * as st from '../structural';
 import Indent from '../indent';
 
 export const LifeOpcode = [

@@ -7,17 +7,18 @@ import {
 } from 'lodash';
 
 import islandSceneMapping from '../island/data/sceneMapping';
-import {loadIslandScenery, getEnvInfo} from '../island';
-import {loadIsometricScenery} from '../iso';
-import {loadSceneData} from '../scene';
-import {loadSceneMapData} from '../scene/map';
-import {loadActor} from './actors';
-import {loadPoint} from './points';
-import {loadZone} from './zones';
-import {loadScripts, killActor, reviveActor} from '../scripting';
-import {initCameraMovement} from './loop/cameras';
+import { loadIslandScenery, getEnvInfo } from '../island';
+import { loadIsometricScenery } from '../iso';
+import { loadSceneData } from '../scene';
+import { loadSceneMapData } from '../scene/map';
+import { loadActor } from './actors';
+import { loadPoint } from './points';
+import { loadZone } from './zones';
+import { loadScripts } from '../scripting';
+import { killActor, reviveActor } from './scripting';
+import {initCameraMovement } from './loop/cameras';
 import DebugData, * as DBG from '../ui/editor/DebugData';
-import {sBind} from '../utils';
+import { sBind } from '../utils';
 
 declare global {
     var ga: Function;

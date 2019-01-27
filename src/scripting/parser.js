@@ -1,8 +1,8 @@
-import {last} from 'lodash';
-import {LifeOpcode} from './data/life';
-import {MoveOpcode} from './data/move';
-import {ConditionOpcode} from './data/condition';
-import {OperatorOpcode} from './data/operator';
+import { last } from 'lodash';
+import { LifeOpcode } from '../game/scripting/data/life';
+import { MoveOpcode } from '../game/scripting/data/move';
+import { ConditionOpcode } from '../game/scripting/data/condition';
+import { OperatorOpcode } from '../game/scripting/data/operator';
 
 const TypeSize = {
     Int8: 1,

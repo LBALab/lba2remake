@@ -1,4 +1,4 @@
-import {getDistance} from '../../utils/lba';
+import { getDistance } from '../../utils/lba';
 
 export function GOTO_POINT(pointIndex) {
     const point = this.scene.points[pointIndex];

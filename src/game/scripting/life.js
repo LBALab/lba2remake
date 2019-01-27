@@ -1,6 +1,6 @@
 import { clone } from 'lodash';
 import { DirMode } from '../../game/actors.ts';
-import { AnimType } from '../../game/data/constants';
+import { AnimType } from '../data/constants';
 import { setMagicBallLevel } from '../../game/state.ts';
 import VideoData from '../../video/data';
 

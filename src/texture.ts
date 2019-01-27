@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {map, each} from 'lodash';
+import { map, each } from 'lodash';
 
 export function loadPaletteTexture(palette: Uint8Array) {
     const image_data = new Uint8Array(256 * 4);
