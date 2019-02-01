@@ -19,9 +19,10 @@ export function loadBricksMapping(layouts, bricks, palette) {
     const bricksMap = {};
     const {width, height} = computeTextureSize(usedBricks.length);
     const image_data = new Uint8Array(width * height * 4);
+    const nWidth = Math.floor(width / 48);
     each(usedBricks, (brick, idx) => {
-        const offsetX = (idx % 21) * 48;
-        const offsetY = Math.round(idx / 21) * 38;
+        const offsetX = (idx % nWidth) * 48;
+        const offsetY = Math.floor(idx / nWidth) * 38;
         bricksMap[brick] = {
             u: offsetX,
             v: offsetY
