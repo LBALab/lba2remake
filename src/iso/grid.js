@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {map, each, range, last} from 'lodash';
+import {map, last} from 'lodash';
 import {bits} from '../utils.ts';
 import {loadBricksMapping} from './mapping';
 
@@ -147,8 +147,9 @@ function loadLayout(dataView) {
 
 function buildCell(library, blocks, geometries, x, z) {
     const h = 0.5;
-    const {positions, centers, tiles} = geometries;
+    const {positions, uvs} = geometries;
     const {width, height} = library.texture.image;
+
     for (let yIdx = 0; yIdx < blocks.length; yIdx += 1) {
         const y = (yIdx * h) + h;
         if (blocks[yIdx]) {
@@ -157,32 +158,48 @@ function buildCell(library, blocks, geometries, x, z) {
                 const block = layout.blocks[blocks[yIdx].block];
                 if (block && block.brick) {
                     const {u, v} = library.bricksMap[block.brick];
+                    const pushUv = (u0, v0) => {
+                        uvs.push((u + u0) / width, (v + v0) / height);
+                    };
 
                     positions.push(x, y, z);
+                    pushUv(24, 0);
                     positions.push(x, y, z + 1);
+                    pushUv(48, 12);
                     positions.push(x + 1, y, z);
+                    pushUv(0, 12);
                     positions.push(x + 1, y, z);
+                    pushUv(0, 12);
                     positions.push(x, y, z + 1);
+                    pushUv(48, 12);
                     positions.push(x + 1, y, z + 1);
+                    pushUv(24, 24);
 
                     positions.push(x + 1, y, z);
+                    pushUv(0, 12);
                     positions.push(x + 1, y, z + 1);
+                    pushUv(24, 24);
                     positions.push(x + 1, y - h, z + 1);
+                    pushUv(24, 38);
                     positions.push(x + 1, y, z);
+                    pushUv(0, 12);
                     positions.push(x + 1, y - h, z + 1);
+                    pushUv(24, 38);
                     positions.push(x + 1, y - h, z);
+                    pushUv(0, 28);
 
                     positions.push(x, y, z + 1);
+                    pushUv(48, 12);
                     positions.push(x + 1, y - h, z + 1);
+                    pushUv(24, 38);
                     positions.push(x + 1, y, z + 1);
+                    pushUv(24, 24);
                     positions.push(x, y, z + 1);
+                    pushUv(48, 12);
                     positions.push(x, y - h, z + 1);
+                    pushUv(48, 28);
                     positions.push(x + 1, y - h, z + 1);
-
-                    each(range(18), () => {
-                        centers.push(x + 0.5, y - (h * 0.5), z + 0.5);
-                        tiles.push(u / width, v / height);
-                    });
+                    pushUv(24, 38);
                 }
             }
         }

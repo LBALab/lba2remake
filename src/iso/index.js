@@ -35,8 +35,7 @@ export async function loadIsometricScenery(renderer, entry) {
 function loadMesh(renderer, grid, entry) {
     const geometries = {
         positions: [],
-        centers: [],
-        tiles: []
+        uvs: []
     };
     let c = 0;
     for (let z = 0; z < 64; z += 1) {
@@ -48,17 +47,13 @@ function loadMesh(renderer, grid, entry) {
 
     const bufferGeometry = new THREE.BufferGeometry();
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
-    bufferGeometry.addAttribute('center', new THREE.BufferAttribute(new Float32Array(geometries.centers), 3));
-    bufferGeometry.addAttribute('tile', new THREE.BufferAttribute(new Float32Array(geometries.tiles), 2));
-    const {width, height} = grid.library.texture.image;
+    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
     const mesh = new THREE.Mesh(bufferGeometry, new THREE.RawShaderMaterial({
         vertexShader: brick_vertex,
         fragmentShader: brick_fragment,
         transparent: true,
         uniforms: {
             library: {value: grid.library.texture},
-            tileSize: {value: new THREE.Vector2(48 / width, 38 / height)},
-            pixelSize: {value: 1.0 / renderer.pixelRatio()},
             offset: {value: renderer.cameras.isoCamera.offset},
             size: {value: renderer.cameras.isoCamera.size},
         }
