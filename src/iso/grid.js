@@ -163,43 +163,43 @@ function buildCell(library, blocks, geometries, x, z) {
                     };
 
                     positions.push(x, y, z);
-                    pushUv(24, 0);
+                    pushUv(24, -0.5);
                     positions.push(x, y, z + 1);
-                    pushUv(48, 12);
-                    positions.push(x + 1, y, z);
-                    pushUv(0, 12);
-                    positions.push(x + 1, y, z);
-                    pushUv(0, 12);
-                    positions.push(x, y, z + 1);
-                    pushUv(48, 12);
+                    pushUv(48, 11.5);
                     positions.push(x + 1, y, z + 1);
-                    pushUv(24, 24);
+                    pushUv(24, 23.5);
+                    positions.push(x, y, z);
+                    pushUv(24, -0.5);
+                    positions.push(x + 1, y, z + 1);
+                    pushUv(24, 23.5);
+                    positions.push(x + 1, y, z);
+                    pushUv(0, 11.5);
 
                     positions.push(x + 1, y, z);
-                    pushUv(0, 12);
+                    pushUv(0, 11.5);
                     positions.push(x + 1, y, z + 1);
-                    pushUv(24, 24);
+                    pushUv(24, 23.5);
                     positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38);
+                    pushUv(24, 38.5);
                     positions.push(x + 1, y, z);
-                    pushUv(0, 12);
+                    pushUv(0, 11.5);
                     positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38);
+                    pushUv(24, 38.5);
                     positions.push(x + 1, y - h, z);
-                    pushUv(0, 28);
+                    pushUv(0, 26.5);
 
                     positions.push(x, y, z + 1);
-                    pushUv(48, 12);
+                    pushUv(48, 11.5);
                     positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38);
+                    pushUv(24, 38.5);
                     positions.push(x + 1, y, z + 1);
-                    pushUv(24, 24);
+                    pushUv(24, 23.5);
                     positions.push(x, y, z + 1);
-                    pushUv(48, 12);
+                    pushUv(48, 11.5);
                     positions.push(x, y - h, z + 1);
-                    pushUv(48, 28);
+                    pushUv(48, 26.5);
                     positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38);
+                    pushUv(24, 38.5);
                 }
             }
         }
