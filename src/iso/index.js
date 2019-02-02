@@ -53,9 +53,7 @@ function loadMesh(renderer, grid, entry) {
         fragmentShader: brick_fragment,
         transparent: true,
         uniforms: {
-            library: {value: grid.library.texture},
-            offset: {value: renderer.cameras.isoCamera.offset},
-            size: {value: renderer.cameras.isoCamera.size},
+            library: {value: grid.library.texture}
         }
     }));
 
