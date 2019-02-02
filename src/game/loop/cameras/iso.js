@@ -13,7 +13,7 @@ export function centerIsoCamera(renderer, camera, scene, object) {
         return;
 
     const pos = getObjectIsoPos(renderer, camera, object);
-    const {width, height} = renderer.canvas;
+    const {width, height} = camera.size;
     const sz = new THREE.Vector2(width, height);
     pos.multiply(sz);
     camera.offset.add(pos);

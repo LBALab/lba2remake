@@ -37,7 +37,7 @@ export function createRenderer(params, canvas) {
     const baseRenderer = setupBaseRenderer(pixelRatio, canvas);
     const tgtRenderer = params.vr ? setupVR(baseRenderer) : baseRenderer;
     const camera3D = get3DCamera();
-    const cameraIso = getIsometricCamera(pixelRatio.getValue());
+    const cameraIso = getIsometricCamera();
     let smaa = setupSMAA(tgtRenderer, pixelRatio);
     const stats = setupStats(params.vr);
 
@@ -89,7 +89,7 @@ export function createRenderer(params, canvas) {
         resize: (width = tgtRenderer.getSize().width, height = tgtRenderer.getSize().height) => {
             tgtRenderer.setSize(width, height);
             resize3DCamera(camera3D, width, height);
-            resizeIsometricCamera(cameraIso, getPixelRatio(), width, height);
+            resizeIsometricCamera(cameraIso, width, height);
         },
 
         /* @inspector(locate, pure) */

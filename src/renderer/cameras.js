@@ -2,16 +2,21 @@ import * as THREE from 'three';
 import {IsometricCamera} from './utils/IsometricCamera';
 
 export function getIsometricCamera() {
-    const width = (480 / window.innerHeight) * window.innerWidth;
-    const size = new THREE.Vector2(width, 480);
+    const size = getIsoCameraSize(window.innerWidth, window.innerHeight);
     const offset = new THREE.Vector2(3500, 1001);
     return new IsometricCamera(size, offset);
 }
 
-export function resizeIsometricCamera(camera, pixelRatio, width, height) {
-    const tWidth = (480 / height) * width;
-    camera.size.set(tWidth, 480);
+export function resizeIsometricCamera(camera, width, height) {
+    camera.size.copy(getIsoCameraSize(width, height));
     camera.updateProjectionMatrix();
+}
+
+function getIsoCameraSize(width, height) {
+    if (width > height) {
+        return new THREE.Vector2(560, (560 / width) * height);
+    }
+    return new THREE.Vector2((560 / height) * width, 560);
 }
 
 export function get3DCamera() {
