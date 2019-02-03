@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import {map, last} from 'lodash';
 import {bits} from '../utils.ts';
-import {loadBricksMapping} from './mapping';
+import {loadBricksMapping, Side, OffsetBySide} from './mapping';
 
-export function loadGrid(bkg, bricks, palette, entry) {
+export function loadGrid(bkg, bricks, mask, palette, entry) {
     const gridData = new DataView(bkg.getEntry(entry));
     const libIndex = gridData.getUint8(0);
     const maxOffset = 34 + (4096 * 2);
@@ -11,7 +11,7 @@ export function loadGrid(bkg, bricks, palette, entry) {
     for (let i = 34; i < maxOffset; i += 2) {
         offsets.push(gridData.getUint16(i, true) + 34);
     }
-    const library = loadLibrary(bkg, bricks, palette, libIndex);
+    const library = loadLibrary(bkg, bricks, mask, palette, libIndex);
     return {
         library,
         cells: map(offsets, (offset, idx) => {
@@ -95,7 +95,7 @@ function getBlockData(library, block) {
 
 const libraries = [];
 
-function loadLibrary(bkg, bricks, palette, entry) {
+function loadLibrary(bkg, bricks, mask, palette, entry) {
     if (libraries[entry]) {
         return libraries[entry];
     }
@@ -111,7 +111,7 @@ function loadLibrary(bkg, bricks, palette, entry) {
         const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
         layouts.push(loadLayout(layoutDataView));
     }
-    const mapping = loadBricksMapping(layouts, bricks, palette);
+    const mapping = loadBricksMapping(layouts, bricks, mask, palette);
     const library = {
         texture: mapping.texture,
         bricksMap: mapping.bricksMap,
@@ -158,48 +158,49 @@ function buildCell(library, blocks, geometries, x, z) {
                 const block = layout.blocks[blocks[yIdx].block];
                 if (block && block.brick) {
                     const {u, v} = library.bricksMap[block.brick];
-                    const pushUv = (u0, v0) => {
-                        uvs.push((u + u0) / width, (v + v0) / height);
+                    const pushUv = (u0, v0, side) => {
+                        const o = OffsetBySide[side];
+                        uvs.push((u + u0 + o.x) / width, (v + v0 + o.y) / height);
                     };
 
                     positions.push(x, y, z);
-                    pushUv(24, -0.5);
+                    pushUv(24, -0.5, Side.TOP);
                     positions.push(x, y, z + 1);
-                    pushUv(48, 11.5);
+                    pushUv(48, 11.5, Side.TOP);
                     positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5);
+                    pushUv(24, 23.5, Side.TOP);
                     positions.push(x, y, z);
-                    pushUv(24, -0.5);
+                    pushUv(24, -0.5, Side.TOP);
                     positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5);
+                    pushUv(24, 23.5, Side.TOP);
                     positions.push(x + 1, y, z);
-                    pushUv(0, 11.5);
+                    pushUv(0, 11.5, Side.TOP);
 
                     positions.push(x + 1, y, z);
-                    pushUv(0, 11.5);
+                    pushUv(0, 11.5, Side.LEFT);
                     positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5);
+                    pushUv(24, 23.5, Side.LEFT);
                     positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5);
+                    pushUv(24, 38.5, Side.LEFT);
                     positions.push(x + 1, y, z);
-                    pushUv(0, 11.5);
+                    pushUv(0, 11.5, Side.LEFT);
                     positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5);
+                    pushUv(24, 38.5, Side.LEFT);
                     positions.push(x + 1, y - h, z);
-                    pushUv(0, 26.5);
+                    pushUv(0, 26.5, Side.LEFT);
 
                     positions.push(x, y, z + 1);
-                    pushUv(48, 11.5);
+                    pushUv(48, 11.5, Side.RIGHT);
                     positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5);
+                    pushUv(24, 38.5, Side.RIGHT);
                     positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5);
+                    pushUv(24, 23.5, Side.RIGHT);
                     positions.push(x, y, z + 1);
-                    pushUv(48, 11.5);
+                    pushUv(48, 11.5, Side.RIGHT);
                     positions.push(x, y - h, z + 1);
-                    pushUv(48, 26.5);
+                    pushUv(48, 26.5, Side.RIGHT);
                     positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5);
+                    pushUv(24, 38.5, Side.RIGHT);
                 }
             }
         }

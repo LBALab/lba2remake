@@ -6,14 +6,30 @@ import { processCollisions } from '../game/loop/physicsIso';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 
+async function loadImageData(src) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = function onload() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            context.drawImage(img, 0, 0);
+            resolve(context.getImageData(0, 0, img.width, img.height));
+        };
+        img.src = src;
+    });
+}
+
 export async function loadIsometricScenery(renderer, entry) {
-    const [ress, bkg] = await Promise.all([
+    const [ress, bkg, mask] = await Promise.all([
         loadHqr('RESS.HQR'),
-        loadHqr('LBA_BKG.HQR')
+        loadHqr('LBA_BKG.HQR'),
+        loadImageData('images/brick_mask.png')
     ]);
     const palette = new Uint8Array(ress.getEntry(0));
     const bricks = loadBricks(bkg);
-    const grid = loadGrid(bkg, bricks, palette, entry + 1);
+    const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
 
     return {
         props: {
