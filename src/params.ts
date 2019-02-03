@@ -18,6 +18,10 @@ const paramsDefinitions = {
     editor: {
         type: 'boolean',
         default: false
+    },
+    iso3d: {
+        type: 'boolean',
+        default: false
     }
 };
 

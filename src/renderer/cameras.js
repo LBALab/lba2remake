@@ -1,15 +1,22 @@
 import * as THREE from 'three';
 import {IsometricCamera} from './utils/IsometricCamera';
 
-export function getIsometricCamera() {
+export function getIsometricCamera(use3d) {
+    if (use3d) {
+        return get3DCamera();
+    }
     const size = getIsoCameraSize(window.innerWidth, window.innerHeight);
     const offset = new THREE.Vector2(3500, 1001);
     return new IsometricCamera(size, offset);
 }
 
 export function resizeIsometricCamera(camera, width, height) {
-    camera.size.copy(getIsoCameraSize(width, height));
-    camera.updateProjectionMatrix();
+    if (camera.type === 'PerspectiveCamera') {
+        resize3DCamera(camera, width, height);
+    } else {
+        camera.size.copy(getIsoCameraSize(width, height));
+        camera.updateProjectionMatrix();
+    }
 }
 
 function getIsoCameraSize(width, height) {

@@ -37,7 +37,7 @@ export function createRenderer(params, canvas) {
     const baseRenderer = setupBaseRenderer(pixelRatio, canvas);
     const tgtRenderer = params.vr ? setupVR(baseRenderer) : baseRenderer;
     const camera3D = get3DCamera();
-    const cameraIso = getIsometricCamera();
+    const cameraIso = getIsometricCamera(params.iso3d);
     let smaa = setupSMAA(tgtRenderer, pixelRatio);
     const stats = setupStats(params.vr);
 

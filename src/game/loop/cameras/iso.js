@@ -5,27 +5,38 @@ export function processFollowIsoMovement(renderer, camera, scene) {
 }
 
 export function centerIsoCamera(renderer, camera, scene, object) {
-    if (!object) {
-        object = scene.actors[0];
+    if (camera.type === 'PerspectiveCamera') {
+        const hero = scene.actors[0];
+        const heroPos = new THREE.Vector3();
+        heroPos.applyMatrix4(hero.threeObject.matrixWorld);
+        camera.position.copy(heroPos);
+        camera.position.add(new THREE.Vector3(-0.25, 0.3, 0.25));
+        camera.lookAt(heroPos);
+    } else {
+        if (!object) {
+            object = scene.actors[0];
+        }
+
+        if (!object.threeObject)
+            return;
+
+        const pos = getObjectIsoPos(renderer, camera, object);
+        const {width, height} = camera.size;
+        const sz = new THREE.Vector2(width, height);
+        pos.multiply(sz);
+        camera.offset.add(pos);
+        camera.updateProjectionMatrix();
     }
-
-    if (!object.threeObject)
-        return;
-
-    const pos = getObjectIsoPos(renderer, camera, object);
-    const {width, height} = camera.size;
-    const sz = new THREE.Vector2(width, height);
-    pos.multiply(sz);
-    camera.offset.add(pos);
-    camera.updateProjectionMatrix();
 }
 
 export function processFreeIsoMovement(controlsState, camera, time) {
-    camera.offset.add(new THREE.Vector2(
-        controlsState.cameraSpeed.x * time.delta * 500,
-        -controlsState.cameraSpeed.z * time.delta * 500
-    ));
-    camera.updateProjectionMatrix();
+    if (camera.type !== 'PerspectiveCamera') {
+        camera.offset.add(new THREE.Vector2(
+            controlsState.cameraSpeed.x * time.delta * 500,
+            -controlsState.cameraSpeed.z * time.delta * 500
+        ));
+        camera.updateProjectionMatrix();
+    }
 }
 
 function getObjectIsoPos(renderer, camera, object) {
