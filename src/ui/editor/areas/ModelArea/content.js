@@ -88,8 +88,8 @@ export default class Model extends FrameListener {
             skyColor: [0, 0, 0]
         };
         const ambience = {
-            lightingAlpha: 0,
-            lightingBeta: 0
+            lightingAlpha: 309,
+            lightingBeta: 2500
         };
         const model = await loadModel(
             {},
