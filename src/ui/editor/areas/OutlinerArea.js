@@ -39,3 +39,12 @@ export const IslandOutliner = makeOutlinerArea('islands_list', 'Islands', {
     children: []
 });
 
+export const ModelsOutliner = makeOutlinerArea('models_list', 'Models', {
+    name: 'Models',
+    children: []
+});
+
+export const AnimationsOutliner = makeOutlinerArea('anims_list', 'Animations', {
+    name: 'Animations',
+    children: []
+});

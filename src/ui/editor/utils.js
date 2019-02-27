@@ -2,9 +2,16 @@ import {find, filter} from 'lodash';
 import NewArea from './areas/NewArea';
 import GameArea from './areas/GameArea';
 import ScriptEditorArea from './areas/ScriptEditorArea';
-import {SceneOutliner, Locator, IslandOutliner} from './areas/OutlinerArea';
+import {
+    SceneOutliner,
+    Locator,
+    IslandOutliner,
+    ModelsOutliner,
+    AnimationsOutliner
+} from './areas/OutlinerArea';
 import IslandArea from './areas/IslandArea';
 import InspectorArea from './areas/InspectorArea';
+import ModelArea from './areas/ModelArea';
 import ChangeLogArea from './areas/ChangeLogArea';
 import {findAllReferences} from './areas/OutlinerArea/nodes/variables';
 
@@ -17,6 +24,9 @@ const AllAreas = [
     ScriptEditorArea,
     IslandArea,
     IslandOutliner,
+    ModelArea,
+    ModelsOutliner,
+    AnimationsOutliner,
     ChangeLogArea
 ];
 
