@@ -153,6 +153,12 @@ export default class GameUI extends FrameListener {
                 renderer: createRenderer(newProps.params, this.canvas)
             }, this.saveData);
         }
+        if (newProps.params.iso3d !== this.props.params.iso3d) {
+            const scene = this.state.sceneManager.getScene();
+            if (scene) {
+                scene.resetCamera(newProps.params);
+            }
+        }
     }
 
     onGameReady() {
