@@ -102,7 +102,7 @@ function setupBaseRenderer(pixelRatio, canvas) {
         const renderer = new THREE.WebGLRenderer({
             antialias: false,
             alpha: false,
-            logarithmicDepthBuffer: true,
+            logarithmicDepthBuffer: false,
             canvas
         });
 
