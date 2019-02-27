@@ -43,6 +43,7 @@ const iconStyle = base => (extend({
 const mainIconStyle = base => (extend({
     float: 'left',
     cursor: 'pointer',
+    paddingTop: '2px',
     paddingLeft: '2px',
     paddingRight: '5px'
 }, base));
