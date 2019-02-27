@@ -1,6 +1,5 @@
 import {extend} from 'lodash';
 import {checkAuth, getAuthQueryString} from './auth';
-import {centerIsoCamera} from '../../game/loop/cameras/iso';
 
 const DebugData = {
     scope: {},
@@ -162,8 +161,7 @@ export function locateObject(object) {
         controlsState.freeCamera = false;
     }
 
-    const renderer = DebugData.scope.renderer;
-    centerIsoCamera(renderer, renderer.cameras.isoCamera, scene, object);
+    scene.camera.centerOn(object);
 }
 
 export async function loadSceneMetaData(sceneIndex) {

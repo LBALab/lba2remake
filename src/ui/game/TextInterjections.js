@@ -26,7 +26,7 @@ export default function TextInterjections(props) {
             actor.threeObject.updateMatrixWorld();
             POS.setFromMatrixPosition(actor.threeObject.matrixWorld);
             POS.y += 0.1;
-            POS.project(renderer.getMainCamera(props.scene));
+            POS.project(props.scene.camera.threeCamera);
             POS.x = (POS.x * widthHalf) + widthHalf;
             POS.y = -(POS.y * heightHalf) + heightHalf;
             if (POS.z < 1) {

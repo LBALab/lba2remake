@@ -3,22 +3,46 @@ import * as THREE from 'three';
 const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
 const HERO_TARGET_POS = new THREE.Vector3(0, 0.08, 0);
 
-export function initFollow3DMovement(controlsState, camera, scene) {
-    const hero = scene.actors[0];
-    const heroPos = HERO_TARGET_POS.clone();
-    heroPos.applyMatrix4(hero.threeObject.matrixWorld);
+export function get3DCamera() {
+    const camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.001,
+        100
+    ); // 1m = 0.0625 units
+    return {
+        threeCamera: camera,
+        resize: (width, height) => {
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        },
+        init: (scene, controlsState) => {
+            if (!controlsState.freeCamera) {
+                const hero = scene.actors[0];
+                const heroPos = HERO_TARGET_POS.clone();
+                heroPos.applyMatrix4(hero.threeObject.matrixWorld);
 
-    if (!controlsState.vr) {
-        const cameraPos = CAMERA_HERO_OFFSET.clone();
-        cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
-        controlsState.cameraLerp.copy(cameraPos);
-        controlsState.cameraLookAtLerp.copy(heroPos);
-        camera.position.copy(cameraPos);
-        camera.lookAt(controlsState.cameraLookAtLerp);
-    }
+                if (!controlsState.vr) {
+                    const cameraPos = CAMERA_HERO_OFFSET.clone();
+                    cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+                    controlsState.cameraLerp.copy(cameraPos);
+                    controlsState.cameraLookAtLerp.copy(heroPos);
+                    camera.position.copy(cameraPos);
+                    camera.lookAt(controlsState.cameraLookAtLerp);
+                }
+            }
+        },
+        update: (scene, controlsState, time) => {
+            if (controlsState.freeCamera) {
+                processFree3DMovement(controlsState, camera, scene, time);
+            } else {
+                processFollow3DMovement(controlsState, camera, scene, time);
+            }
+        }
+    };
 }
 
-export function processFollow3DMovement(controlsState, camera, scene) {
+function processFollow3DMovement(controlsState, camera, scene) {
     const hero = scene.actors[0];
     const heroPos = HERO_TARGET_POS.clone();
     const cameraPos = CAMERA_HERO_OFFSET.clone();
@@ -53,7 +77,7 @@ export function processFollow3DMovement(controlsState, camera, scene) {
     }
 }
 
-export function processFree3DMovement(controlsState, camera, scene, time) {
+function processFree3DMovement(controlsState, camera, scene, time) {
     const groundInfo = scene.scenery.physics.getGroundInfo(camera.position);
     const altitude = Math.max(0.0, Math.min(1.0, (camera.position.y - groundInfo.height) * 0.7));
 

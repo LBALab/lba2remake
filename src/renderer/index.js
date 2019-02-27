@@ -5,12 +5,6 @@ import EffectComposer from './effects/postprocess/EffectComposer';
 import SMAAPass from './effects/postprocess/SMAAPass';
 import RenderPass from './effects/postprocess/RenderPass';
 import setupStats from './stats';
-import {
-    get3DCamera,
-    resize3DCamera,
-    getIsometricCamera,
-    resizeIsometricCamera
-} from './cameras';
 import Cardboard from './utils/Cardboard';
 import {EngineError} from '../crash_reporting';
 
@@ -36,8 +30,6 @@ export function createRenderer(params, canvas) {
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
     const baseRenderer = setupBaseRenderer(pixelRatio, canvas);
     const tgtRenderer = params.vr ? setupVR(baseRenderer) : baseRenderer;
-    const camera3D = get3DCamera();
-    const cameraIso = getIsometricCamera(params.iso3d);
     let smaa = setupSMAA(tgtRenderer, pixelRatio);
     const stats = setupStats(params.vr);
 
@@ -63,12 +55,14 @@ export function createRenderer(params, canvas) {
 
         /* @inspector(locate) */
         render: (scene) => {
+            const width = tgtRenderer.getSize().width;
+            const height = tgtRenderer.getSize().height;
+            scene.camera.resize(width, height);
             tgtRenderer.antialias = antialias;
-            const camera = scene.isIsland ? camera3D : cameraIso;
             if (antialias) {
-                smaa.render(scene.threeScene, camera);
+                smaa.render(scene.threeScene, scene.camera.threeCamera);
             } else {
-                tgtRenderer.render(scene.threeScene, camera);
+                tgtRenderer.render(scene.threeScene, scene.camera.threeCamera);
             }
         },
 
@@ -80,22 +74,11 @@ export function createRenderer(params, canvas) {
         },
 
         stats,
-        cameras: {
-            camera3D,
-            isoCamera: cameraIso
-        },
 
         /* @inspector(locate) */
         resize: (width = tgtRenderer.getSize().width, height = tgtRenderer.getSize().height) => {
             tgtRenderer.setSize(width, height);
-            resize3DCamera(camera3D, width, height);
-            resizeIsometricCamera(cameraIso, width, height);
         },
-
-        /* @inspector(locate, pure) */
-        getMainCamera: scene => (scene && typeof (scene.isIsland) === 'boolean'
-            ? (scene.isIsland ? camera3D : cameraIso)
-            : null),
 
         /* @inspector(locate, pure) */
         pixelRatio: () => getPixelRatio(),

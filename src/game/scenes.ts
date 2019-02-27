@@ -16,9 +16,11 @@ import { loadPoint } from './points';
 import { loadZone } from './zones';
 import { loadScripts } from '../scripting';
 import { killActor, reviveActor } from './scripting';
-import {initCameraMovement } from './loop/cameras';
 import DebugData, * as DBG from '../ui/editor/DebugData';
 import { sBind } from '../utils';
+import { get3DCamera } from '../cameras/3d';
+import { getIsometricCamera } from '../cameras/iso';
+import { getIso3DCamera } from '../cameras/iso3d';
 
 declare global {
     var ga: Function;
@@ -101,7 +103,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             }
             initSceneDebugData();
             scene.sceneNode.updateMatrixWorld();
-            initCameraMovement(game.controlsState, renderer, scene);
+            scene.firstFrame = true;
             game.loaded(wasPaused);
             return scene;
         },
@@ -154,20 +156,28 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
 
     let scenery = null;
     let threeScene = null;
+    let camera = null;
     if (!parent) {
         threeScene = new THREE.Scene();
         if (indexInfo.isIsland) {
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
             threeScene.name = '3D_scene';
+            camera = get3DCamera();
         } else {
             scenery = await loadIsometricScenery(renderer, indexInfo.index);
             threeScene.name = 'iso_scene';
+            if (params.iso3d) {
+                camera = getIso3DCamera();
+            } else {
+                camera = getIsometricCamera();
+            }
         }
 
         threeScene.add(scenery.threeObject);
     } else {
         scenery = parent.scenery;
         threeScene = parent.threeScene;
+        camera = parent.camera;
     }
 
     const sceneNode = loadSceneNode(index, indexInfo, scenery, actors, zones, points);
@@ -176,6 +186,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         index,
         data: sceneData,
         isIsland: indexInfo.isIsland,
+        camera,
         threeScene,
         sceneNode,
         scenery,
@@ -186,6 +197,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         zones,
         extras: [],
         isActive: false,
+        firstFrame: false,
         variables: null,
         section: null,
         usedVarGames: null,
@@ -198,7 +210,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 actor.reset();
             });
             loadScripts(params, game, scene);
-            initCameraMovement(game.controlsState, renderer, scene);
+            scene.firstFrame = true;
             if (game.isPaused()) {
                 DebugData.step = true;
             }
