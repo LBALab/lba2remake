@@ -13,22 +13,6 @@ import { getAnim } from '../../../../model/entity.ts';
 import { loadAnim } from '../../../../model/anim.ts';
 import DebugData from '../../DebugData';
 
-function updateModel(model, animState, entityIdx, animIdx, time) {
-    const entity = model.entities[entityIdx];
-    const entityAnim = getAnim(entity, animIdx);
-    if (entityAnim !== null) {
-        const realAnimIdx = entityAnim.animIndex;
-        const anim = loadAnim(model, model.anims, realAnimIdx);
-        animState.loopFrame = anim.loopFrame;
-        if (animState.prevRealAnimIdx !== -1 && realAnimIdx !== animState.prevRealAnimIdx) {
-            updateKeyframeInterpolation(anim, animState, time, realAnimIdx);
-        }
-        if (realAnimIdx === animState.realAnimIdx || animState.realAnimIdx === -1) {
-            updateKeyframe(anim, animState, time, realAnimIdx);
-        }
-    }
-}
-
 export default class Model extends FrameListener {
     constructor(props) {
         super(props);
@@ -75,7 +59,6 @@ export default class Model extends FrameListener {
                 this.canvas.tabIndex = 0;
                 const renderer = createRenderer(this.props.params, this.canvas);
                 this.setState({ renderer }, this.saveData);
-                this.loadModel();
             }
             this.root = root;
             this.root.appendChild(this.canvas);
@@ -83,6 +66,12 @@ export default class Model extends FrameListener {
     }
 
     async loadModel() {
+        const oldModel = this.state.model;
+        if (oldModel) {
+            this.state.scene.threeScene.remove(oldModel.mesh);
+        }
+        this.entity = this.props.sharedState.entity;
+        this.body = this.props.sharedState.body;
         const animState = loadAnimState();
         const envInfo = {
             skyColor: [0, 0, 0]
@@ -93,9 +82,9 @@ export default class Model extends FrameListener {
         };
         const model = await loadModel(
             {},
-            0,
-            1,
-            0,
+            this.props.sharedState.entity,
+            this.props.sharedState.body,
+            this.props.sharedState.anim,
             animState,
             envInfo,
             ambience
@@ -115,6 +104,13 @@ export default class Model extends FrameListener {
 
     frame() {
         const { renderer, animState, clock, model, scene } = this.state;
+        const { entity, body, anim } = this.props.sharedState;
+        if (this.entity !== entity || this.body !== body) {
+            this.loadModel();
+        }
+        if (this.anim !== anim) {
+            this.anim = anim;
+        }
         this.checkResize();
         const time = {
             delta: Math.min(clock.getDelta(), 0.05),
@@ -122,11 +118,36 @@ export default class Model extends FrameListener {
         };
         renderer.stats.begin();
         if (model) {
-            updateModel(model, animState, 0, 0, time);
+            const interpolate = this.updateModel(
+                model,
+                animState,
+                entity,
+                anim,
+                time
+            );
         }
         scene.camera.update(model, time);
         renderer.render(scene);
         renderer.stats.end();
+    }
+
+    updateModel(model, animState, entityIdx, animIdx, time) {
+        const entity = model.entities[entityIdx];
+        const entityAnim = getAnim(entity, animIdx);
+        let interpolate = false;
+        if (entityAnim !== null) {
+            const realAnimIdx = entityAnim.animIndex;
+            const anim = loadAnim(model, model.anims, realAnimIdx);
+            animState.loopFrame = anim.loopFrame;
+            if (animState.prevRealAnimIdx !== -1 && realAnimIdx !== animState.prevRealAnimIdx) {
+                updateKeyframeInterpolation(anim, animState, time, realAnimIdx);
+                interpolate = true;
+            }
+            if (realAnimIdx === animState.realAnimIdx || animState.realAnimIdx === -1) {
+                updateKeyframe(anim, animState, time, realAnimIdx);
+            }
+        }
+        return interpolate;
     }
 
     checkResize() {
