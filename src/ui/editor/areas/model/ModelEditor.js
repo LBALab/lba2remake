@@ -1,6 +1,6 @@
 import ModelEditorContent from './ModelEditorContent';
 import {Orientation, Type} from '../../layout';
-import ModelsBrowserArea from './models/ModelsBrowserArea';
+import ModelsBrowserArea from './browser/ModelsBrowserArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 
 const ModelEditor = {
