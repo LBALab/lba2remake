@@ -23,6 +23,17 @@ export default class Model extends FrameListener {
         this.onLoad = this.onLoad.bind(this);
         this.frame = this.frame.bind(this);
         this.saveData = this.saveData.bind(this);
+        this.onMouseDown = this.onMouseDown.bind(this);
+        this.onMouseUp = this.onMouseUp.bind(this);
+        this.onMouseMove = this.onMouseMove.bind(this);
+        this.onWheel = this.onWheel.bind(this);
+
+        this.mouseSpeed = {
+            x: 0,
+            y: 0
+        };
+
+        this.zoom = 0;
 
         if (props.mainData) {
             this.state = props.mainData.state;
@@ -107,6 +118,35 @@ export default class Model extends FrameListener {
         this.setState({ animState, model }, this.saveData);
     }
 
+    onMouseDown() {
+        this.moving = true;
+        this.moved = false;
+    }
+
+    onMouseMove(e) {
+        if (this.moving) {
+            if (!this.moved) {
+                this.props.stateHandler.setRotateView(false);
+            }
+            this.mouseSpeed.x = e.movementX;
+            this.mouseSpeed.y = e.movementY;
+            this.moved = true;
+        }
+    }
+
+    onMouseUp() {
+        this.moving = false;
+        if (!this.moved) {
+            this.mouseSpeed.x = 0;
+        }
+        this.mouseSpeed.y = 0;
+    }
+
+    onWheel(e) {
+        this.zoom += e.deltaY * 0.01;
+        this.zoom = Math.min(Math.max(-1, this.zoom), 8);
+    }
+
     componentWillReceiveProps(newProps) {
         if (newProps.params.vr !== this.props.params.vr && this.canvas) {
             this.state.renderer.dispose();
@@ -143,7 +183,7 @@ export default class Model extends FrameListener {
             );
             this.updateMovement(grid, animState, time, interpolate);
         }
-        scene.camera.update(model, rotateView, time);
+        scene.camera.update(model, rotateView, this.mouseSpeed, this.zoom, time);
         renderer.render(scene);
         renderer.stats.end();
     }
@@ -205,7 +245,14 @@ export default class Model extends FrameListener {
     }
 
     render() {
-        return <div style={fullscreen}>
+        return <div
+            style={fullscreen}
+            onMouseDown={this.onMouseDown}
+            onMouseUp={this.onMouseUp}
+            onMouseMove={this.onMouseMove}
+            onMouseLeave={this.onMouseUp}
+            onWheel={this.onWheel}
+        >
             <div ref={this.onLoad} style={fullscreen}/>
             <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
