@@ -1,9 +1,9 @@
 import React from 'react';
-import {map, findIndex, extend} from 'lodash';
+import {map, findIndex, extend, isEmpty} from 'lodash';
 import {editor, fullscreen} from '../styles/index';
 import {Orientation} from './layout';
-import NewArea, {NewAreaContent} from './areas/NewArea';
-import AreaLoader from './areas/AreaLoader';
+import NewArea, {NewAreaContent} from './areas/utils/NewArea';
+import AreaLoader from './areas/utils/AreaLoader';
 
 const menuHeight = 26;
 
@@ -124,7 +124,13 @@ export default class Area extends React.Component {
             })
             : null;
         const icon = this.props.area.icon || 'default.png';
-        const numIcons = this.props.close ? 3 : 2;
+        const isMain = this.props.area.mainArea;
+        const doSplit = !(isMain && isEmpty(this.props.area.toolAreas));
+        let numIcons = 0;
+        if (this.props.close)
+            numIcons += 1;
+        if (doSplit)
+            numIcons += 2;
 
         const onClickIcon = () => {
             if (this.state.popup) {
@@ -136,20 +142,24 @@ export default class Area extends React.Component {
             }
         };
 
-        const isMain = this.props.area.mainArea;
-
         const titleStyle = extend({
             fontSize: isMain ? 20 : 18
         }, mainIconStyle());
+
+        const closeIcon = this.props.close &&
+            <img style={iconStyle({right: 2})} onClick={this.props.close} src="editor/icons/close.png"/>;
+
+        const splitH = doSplit && <img style={iconStyle({right: ((numIcons - 1) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>;
+        const splitV = doSplit && <img style={iconStyle({right: ((numIcons - 2) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>;
 
         return <div style={menuStyle(numIcons, isMain)}>
             <img onClick={onClickIcon} style={mainIconStyle()} src={`editor/icons/areas/${icon}`}/>
             <span onClick={onClickIcon} style={titleStyle}>{this.props.area.name}</span>
 
             <span style={menuContentStyle}>{menu}</span>
-            <img style={iconStyle({right: ((numIcons - 1) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>
-            <img style={iconStyle({right: ((numIcons - 2) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>
-            {this.props.close ? <img style={iconStyle({right: 2})} onClick={this.props.close} src="editor/icons/close.png"/> : null}
+            {splitH}
+            {splitV}
+            {closeIcon}
         </div>;
     }
 

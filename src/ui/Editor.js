@@ -2,10 +2,11 @@ import React from 'react';
 import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
 import Area from './editor/Area';
 import {fullscreen} from './styles';
-import NewArea from './editor/areas/NewArea';
+import NewArea from './editor/areas/utils/NewArea';
 import {Type, Orientation} from './editor/layout';
-import {findAreaContentById, findMainAreas, generateContent} from './editor/utils';
-import AreaLoader from './editor/areas/AreaLoader';
+import {findAreaContentById, findMainAreas, generateContent} from './editor/areas';
+import AreaLoader from './editor/areas/utils/AreaLoader';
+import DebugData from './editor/DebugData';
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
 
@@ -252,6 +253,7 @@ export default class Editor extends React.Component {
         const layout = this.state.layout;
         const node = this.findNodeFromPath(layout, path);
         if (node.root) {
+            DebugData.scope = {};
             this.setState({
                 mainData: undefined,
                 layout: loadLayout(this, area.id),

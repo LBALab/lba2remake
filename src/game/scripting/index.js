@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash';
 import {SUICIDE} from './life';
 import DebugData from '../../ui/editor/DebugData';
-import { mapDataName } from '../../ui/editor/areas/ScriptEditorArea/listing';
+import { mapDataName } from '../../ui/editor/areas/gameplay/scripts/listing';
 
 export function runScript(params, script, time) {
     const instructions = script.instructions;
