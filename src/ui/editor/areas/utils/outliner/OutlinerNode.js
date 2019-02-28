@@ -10,7 +10,7 @@ export default class OutlinerNode extends React.Component {
             collapsed: !(this.props.level < 1 || this.isInActivePath(props) || node.noCollapse),
             name: this.name(),
             numChildren: this.numChildren(),
-            selected: call('selected', node, this.props.data),
+            selected: call('selected', node, this.props.data, this),
             menu: null,
             renaming: false,
             icon: this.icon()
@@ -72,11 +72,11 @@ export default class OutlinerNode extends React.Component {
     }
 
     upShortcut() {
-        this.call('up', this.state.collapsed);
+        this.call('up', this.state.collapsed, this);
     }
 
     downShortcut() {
-        this.call('down', this.state.collapsed);
+        this.call('down', this.state.collapsed, this);
     }
 
     frame() {
@@ -94,7 +94,7 @@ export default class OutlinerNode extends React.Component {
                 this.setState({numChildren});
             }
         }
-        const selected = call('selected', this.props.node, this.props.data);
+        const selected = call('selected', this.props.node, this.props.data, this);
         if (selected !== this.state.selected) {
             this.setState({selected});
         }
@@ -177,7 +177,7 @@ export default class OutlinerNode extends React.Component {
         const node = this.props.node;
         const selected = this.state.selected;
         const setRoot = this.props.setRoot.bind(null, this.props.path);
-        const onClick = node.onClick ? node.onClick.bind(null, this.props.data, setRoot) : setRoot;
+        const onClick = node.onClick ? node.onClick.bind(null, this.props.data, setRoot, this) : setRoot;
         const onDoubleClick = node.onDoubleClick ?
             node.onDoubleClick.bind(null, this.props.data, this) : noop;
 
