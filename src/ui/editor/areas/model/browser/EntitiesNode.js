@@ -12,8 +12,12 @@ const entityChildren = [
 
 const EntityNode = {
     dynamic: true,
-    name: data => `entity_${data.index}`,
+    name: data => data.name || `entity_${data.index}`,
     numChildren: () => 2,
+    allowRenaming: () => true,
+    rename: (data, newName) => {
+        data.name = newName;
+    },
     child: (data, idx) => entityChildren[idx],
     childData: data => data,
     onClick: (data, setRoot, component) => {

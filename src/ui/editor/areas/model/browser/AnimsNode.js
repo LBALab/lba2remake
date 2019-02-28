@@ -1,6 +1,10 @@
 const AnimNode = {
     dynamic: true,
-    name: data => `anim_${data.index}`,
+    name: data => data.name || `anim_${data.index}`,
+    allowRenaming: () => true,
+    rename: (data, newName) => {
+        data.name = newName;
+    },
     numChildren: () => 0,
     child: () => null,
     childData: () => null,

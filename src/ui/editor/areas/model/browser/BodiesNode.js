@@ -1,6 +1,10 @@
 const BodyNode = {
     dynamic: true,
-    name: data => `body_${data.index}`,
+    name: data => data.name || `body_${data.index}`,
+    allowRenaming: () => true,
+    rename: (data, newName) => {
+        data.name = newName;
+    },
     numChildren: () => 0,
     child: () => null,
     childData: () => null,
