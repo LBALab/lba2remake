@@ -1,7 +1,6 @@
 import ModelEditorContent from './ModelEditorContent';
 import {Orientation, Type} from '../../layout';
 import ModelsBrowserArea from './models/ModelsBrowserArea';
-import AnimsBrowserArea from './anims/AnimsBrowserArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 
 const ModelEditor = {
@@ -14,7 +13,6 @@ const ModelEditor = {
     stateHandler: {},
     toolAreas: [
         ModelsBrowserArea,
-        AnimsBrowserArea,
         InspectorArea
     ],
     defaultLayout: {
@@ -23,15 +21,7 @@ const ModelEditor = {
         splitAt: 75,
         children: [
             { type: Type.AREA, content_id: 'model', root: true },
-            {
-                type: Type.LAYOUT,
-                orientation: Orientation.VERTICAL,
-                splitAt: 60,
-                children: [
-                    { type: Type.AREA, content_id: 'models_list' },
-                    { type: Type.AREA, content_id: 'anims_list' }
-                ]
-            }
+            { type: Type.AREA, content_id: 'models_list' },
         ]
     }
 };
