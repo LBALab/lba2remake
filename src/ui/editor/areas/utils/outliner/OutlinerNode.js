@@ -7,7 +7,7 @@ export default class OutlinerNode extends React.Component {
         super(props);
         const node = props.node;
         this.state = {
-            collapsed: !(this.props.level < 1 || this.isInActivePath(props)),
+            collapsed: !(this.props.level < 1 || this.isInActivePath(props) || node.noCollapse),
             name: this.name(),
             numChildren: this.numChildren(),
             selected: call('selected', node, this.props.data),
@@ -263,7 +263,7 @@ export default class OutlinerNode extends React.Component {
 
         const numChildren = this.state.numChildren;
         const collapsed = this.state.collapsed;
-        if (numChildren > 0) {
+        if (numChildren > 0 && !this.props.node.noCollapse) {
             return <span onClick={toggleCollapse} style={{cursor: 'pointer', display: 'inline-block', position: 'absolute', left: 0}}>{collapsed ? '+' : '-'}</span>;
         }
         return null;
