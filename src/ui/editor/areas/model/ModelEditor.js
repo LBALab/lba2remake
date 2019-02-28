@@ -1,4 +1,5 @@
 import ModelEditorContent from './ModelEditorContent';
+import ModelEditorMenu from './ModelEditorMenu';
 import {Orientation, Type} from '../../layout';
 import ModelsBrowserArea from './browser/ModelsBrowserArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
@@ -8,13 +9,18 @@ const ModelEditor = {
     name: 'Model Editor',
     icon: 'model.png',
     content: ModelEditorContent,
+    menu: ModelEditorMenu,
     mainArea: true,
     getInitialState: () => ({
         entity: 0,
         body: 0,
-        anim: 0
+        anim: 0,
+        rotateView: true
     }),
     stateHandler: {
+        setRotateView(rotateView) {
+            this.setState({ rotateView });
+        },
         setEntity(entity) {
             this.setState({
                 entity,

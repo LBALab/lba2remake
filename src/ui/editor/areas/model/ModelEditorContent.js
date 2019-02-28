@@ -13,6 +13,8 @@ import {
 import { getAnim } from '../../../../model/entity.ts';
 import { loadAnim } from '../../../../model/anim.ts';
 import DebugData from '../../DebugData';
+import fmod from './utils/fmod';
+import {get3DOrbitCamera} from './utils/orbitCamera';
 
 export default class Model extends FrameListener {
     constructor(props) {
@@ -116,7 +118,7 @@ export default class Model extends FrameListener {
 
     frame() {
         const { renderer, animState, clock, model, scene, grid } = this.state;
-        const { entity, body, anim } = this.props.sharedState;
+        const { entity, body, anim, rotateView } = this.props.sharedState;
         if (this.entity !== entity || this.body !== body) {
             this.loadModel();
             grid.position.y = 0;
@@ -141,7 +143,7 @@ export default class Model extends FrameListener {
             );
             this.updateMovement(grid, animState, time, interpolate);
         }
-        scene.camera.update(model, time);
+        scene.camera.update(model, rotateView, time);
         renderer.render(scene);
         renderer.stats.end();
     }
@@ -209,37 +211,4 @@ export default class Model extends FrameListener {
             <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
         </div>;
     }
-}
-
-function get3DOrbitCamera() {
-    const camera = new THREE.PerspectiveCamera(
-        45,
-        window.innerWidth / window.innerHeight,
-        0.001,
-        100
-    ); // 1m = 0.0625 units
-    return {
-        threeCamera: camera,
-        resize: (width, height) => {
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-        },
-        update: (model, time) => {
-            let height = 0;
-            if (model) {
-                const bb = model.boundingBox;
-                height = bb.max.y - bb.min.y;
-            }
-            const dt = -time.elapsed * 0.5;
-            camera.position.set(
-                Math.cos(dt) * 0.2,
-                height + 0.05,
-                Math.sin(dt) * 0.2);
-            camera.lookAt(new THREE.Vector3(0, height * 0.5, 0));
-        }
-    };
-}
-
-function fmod(a, b) {
-    return Number((a - (Math.floor(a / b) * b)).toPrecision(8));
 }
