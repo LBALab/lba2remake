@@ -1,5 +1,6 @@
 import React from 'react';
 import * as THREE from 'three';
+import { each } from 'lodash';
 import { createRenderer } from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
@@ -29,12 +30,23 @@ export default class Model extends FrameListener {
                 camera,
                 threeScene: new THREE.Scene()
             };
-            const grid = new THREE.GridHelper(0.2, 10);
+            const grid = new THREE.Object3D();
+            for (let x = -4; x <= 4; x += 1) {
+                for (let z = -4; z <= 4; z += 1) {
+                    const tile = new THREE.GridHelper(0.04, 2);
+                    tile.position.x = x * 0.04;
+                    tile.position.z = z * 0.04;
+                    tile.material.transparent = true;
+                    tile.material.opacity = 1;
+                    grid.add(tile);
+                }
+            }
             scene.threeScene.add(grid);
             const clock = new THREE.Clock(false);
             this.state = {
                 scene,
-                clock
+                clock,
+                grid
             };
             clock.start();
         }
@@ -103,12 +115,14 @@ export default class Model extends FrameListener {
     }
 
     frame() {
-        const { renderer, animState, clock, model, scene } = this.state;
+        const { renderer, animState, clock, model, scene, grid } = this.state;
         const { entity, body, anim } = this.props.sharedState;
         if (this.entity !== entity || this.body !== body) {
             this.loadModel();
+            grid.position.y = 0;
         }
         if (this.anim !== anim) {
+            grid.position.y = 0;
             this.anim = anim;
         }
         this.checkResize();
@@ -125,6 +139,7 @@ export default class Model extends FrameListener {
                 anim,
                 time
             );
+            this.updateMovement(grid, animState, time, interpolate);
         }
         scene.camera.update(model, time);
         renderer.render(scene);
@@ -148,6 +163,29 @@ export default class Model extends FrameListener {
             }
         }
         return interpolate;
+    }
+
+    updateMovement(grid, animState, time, interpolate) {
+        const delta = time.delta * 1000;
+        const speedZ = ((animState.step.z * delta) / animState.keyframeLength);
+        const speedY = ((animState.step.y * delta) / animState.keyframeLength);
+        const speedX = ((animState.step.x * delta) / animState.keyframeLength);
+        const ts = 0.04;
+        const inRange = v => fmod(v + (ts * 4.5), ts * 9) - (ts * 4.5);
+
+        if (!interpolate) {
+            grid.position.y = inRange(grid.position.y - speedY);
+        }
+        each(grid.children, (tile) => {
+            const pos = tile.position;
+            pos.x = inRange(pos.x - speedX);
+            pos.z = inRange(pos.z - speedZ);
+            const p = Math.max(
+                Math.max(Math.abs(pos.x), Math.abs(pos.z)),
+                Math.abs(grid.position.y)
+            );
+            tile.material.opacity = Math.min((0.16 - p) / 0.16, 1);
+        });
     }
 
     checkResize() {
@@ -200,4 +238,8 @@ function get3DOrbitCamera() {
             camera.lookAt(new THREE.Vector3(0, height * 0.5, 0));
         }
     };
+}
+
+function fmod(a, b) {
+    return Number((a - (Math.floor(a / b) * b)).toPrecision(8));
 }
