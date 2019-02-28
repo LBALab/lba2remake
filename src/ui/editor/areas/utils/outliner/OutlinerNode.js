@@ -326,6 +326,8 @@ export default class OutlinerNode extends React.Component {
             split={this.props.split}
             shortcuts={this.props.shortcuts}
             userData={this.props.userData}
+            rootStateHandler={this.props.rootStateHandler}
+            rootState={this.props.rootState}
         />;
     }
 

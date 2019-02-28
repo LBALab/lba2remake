@@ -123,10 +123,11 @@ export default class Editor extends React.Component {
     }
 
     render() {
-        return this.renderLayout(this.state.layout, baseStyle, []);
+        const root = findRootNode(this.state.layout);
+        return this.renderLayout(this.state.layout, baseStyle, [], root);
     }
 
-    renderLayout(node, style, path) {
+    renderLayout(node, style, path, root) {
         if (!node) {
             return null;
         }
@@ -167,12 +168,12 @@ export default class Editor extends React.Component {
 
             if (!node.children[1]) {
                 return <div ref={setRootRef} style={style}>
-                    {this.renderLayout(node.children[0], styles[0], concat(path, 0))}
+                    {this.renderLayout(node.children[0], styles[0], concat(path, 0), root)}
                 </div>;
             }
             return <div ref={setRootRef} style={style}>
-                {this.renderLayout(node.children[0], styles[0], concat(path, 0))}
-                {this.renderLayout(node.children[1], styles[1], concat(path, 1))}
+                {this.renderLayout(node.children[0], styles[0], concat(path, 0), root)}
+                {this.renderLayout(node.children[1], styles[1], concat(path, 1), root)}
                 <div ref={setSeparatorRef} style={separator}>
                     <div style={sepInnerLine}/>
                 </div>
@@ -194,6 +195,7 @@ export default class Editor extends React.Component {
             close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}
             saveMainData={this.saveMainData}
             mainData={this.state.mainData}
+            rootStateHandler={root.stateHandler}
         />;
     }
 
@@ -382,9 +384,14 @@ function loadNode(editor, node) {
     return tgtNode;
 }
 
-function findRootArea(node) {
+function findRootNode(node) {
     if (node.type === Type.LAYOUT) {
-        return findRootArea(node.children[0]) || findRootArea(node.children[1]);
+        return findRootNode(node.children[0]) || findRootNode(node.children[1]);
     }
-    return node.root ? node.content : null;
+    return node.root ? node : null;
+}
+
+function findRootArea(node) {
+    const root = findRootNode(node);
+    return root ? root.content : null;
 }

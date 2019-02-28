@@ -76,6 +76,8 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
                         shortcuts={shortcuts}
                         rootName={isFunction(tree.name) ? tree.name() : tree.name}
                         userData={this.props.userData}
+                        rootStateHandler={this.props.rootStateHandler}
+                        rootState={this.props.rootState}
                     />}
                 </WithShortcuts>;
             }
