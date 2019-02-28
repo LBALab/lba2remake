@@ -9,8 +9,34 @@ const ModelEditor = {
     icon: 'model.png',
     content: ModelEditorContent,
     mainArea: true,
-    getInitialState: () => ({}),
-    stateHandler: {},
+    getInitialState: () => ({
+        entity: 0,
+        body: 0,
+        anim: 0
+    }),
+    stateHandler: {
+        setEntity(entity) {
+            this.setState({
+                entity,
+                body: 0,
+                anim: 0
+            });
+        },
+        setBody(entity, body) {
+            if (entity !== this.state.entity) {
+                this.setState({ entity, body, anim: 0 });
+            } else {
+                this.setState({ entity, body });
+            }
+        },
+        setAnim(entity, anim) {
+            if (entity !== this.state.entity) {
+                this.setState({ entity, anim, body: 0 });
+            } else {
+                this.setState({ entity, anim });
+            }
+        }
+    },
     toolAreas: [
         ModelsBrowserArea,
         InspectorArea
