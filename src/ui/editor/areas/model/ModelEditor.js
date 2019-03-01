@@ -2,6 +2,7 @@ import ModelEditorContent from './ModelEditorContent';
 import ModelEditorMenu from './ModelEditorMenu';
 import {Orientation, Type} from '../../layout';
 import ModelsBrowserArea from './browser/ModelsBrowserArea';
+import TimelineArea from './timeline/TimelineArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 
 const ModelEditor = {
@@ -45,6 +46,7 @@ const ModelEditor = {
     },
     toolAreas: [
         ModelsBrowserArea,
+        TimelineArea,
         InspectorArea
     ],
     defaultLayout: {
