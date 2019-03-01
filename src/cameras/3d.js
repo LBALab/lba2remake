@@ -10,8 +10,14 @@ export function get3DCamera() {
         0.001,
         100
     ); // 1m = 0.0625 units
+    const controlNode = new THREE.Object3D();
+    const orientation = new THREE.Object3D();
+    orientation.rotation.set(0, Math.PI, 0);
+    controlNode.add(orientation);
+    orientation.add(camera);
     return {
         threeCamera: camera,
+        controlNode,
         resize: (width, height) => {
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
@@ -22,27 +28,25 @@ export function get3DCamera() {
                 const heroPos = HERO_TARGET_POS.clone();
                 heroPos.applyMatrix4(hero.threeObject.matrixWorld);
 
-                if (!controlsState.vr) {
-                    const cameraPos = CAMERA_HERO_OFFSET.clone();
-                    cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
-                    controlsState.cameraLerp.copy(cameraPos);
-                    controlsState.cameraLookAtLerp.copy(heroPos);
-                    camera.position.copy(cameraPos);
-                    camera.lookAt(controlsState.cameraLookAtLerp);
-                }
+                const cameraPos = CAMERA_HERO_OFFSET.clone();
+                cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+                controlsState.cameraLerp.copy(cameraPos);
+                controlsState.cameraLookAtLerp.copy(heroPos);
+                controlNode.position.copy(cameraPos);
+                controlNode.lookAt(controlsState.cameraLookAtLerp);
             }
         },
         update: (scene, controlsState, time) => {
             if (controlsState.freeCamera) {
-                processFree3DMovement(controlsState, camera, scene, time);
+                processFree3DMovement(controlsState, controlNode, scene, time);
             } else {
-                processFollow3DMovement(controlsState, camera, scene, time);
+                processFollow3DMovement(controlsState, controlNode, scene, time);
             }
         }
     };
 }
 
-function processFollow3DMovement(controlsState, camera, scene) {
+function processFollow3DMovement(controlsState, controlNode, scene) {
     const hero = scene.actors[0];
     const heroPos = HERO_TARGET_POS.clone();
     const cameraPos = CAMERA_HERO_OFFSET.clone();
@@ -50,36 +54,24 @@ function processFollow3DMovement(controlsState, camera, scene) {
     cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
     scene.scenery.physics.processCameraCollisions(cameraPos);
 
-    if (controlsState.vr) {
-        if (camera.position.distanceTo(cameraPos) > 0.3) {
-            const orientation = [cameraPos.x - heroPos.x, cameraPos.z - heroPos.z];
-            camera.position.copy(cameraPos);
-            const euler = new THREE.Euler();
-            const q = controlsState.cameraOrientation;
-            euler.setFromQuaternion(q, 'YXZ');
-            euler.y = Math.atan2(-orientation[1], orientation[0]) + (Math.PI / 2);
-            q.setFromEuler(euler);
-        }
-
-        camera.quaternion.copy(controlsState.cameraOrientation);
-        camera.quaternion.multiply(controlsState.cameraHeadOrientation);
-    } else {
-        controlsState.cameraLerp.lerpVectors(camera.position, cameraPos, 0.025);
-        controlsState.cameraLookAtLerp.lerpVectors(
-            controlsState.cameraLookAtLerp.clone(),
-            heroPos,
-            0.1);
-        camera.position.set(
-            controlsState.cameraLerp.x,
-            controlsState.cameraLerp.y,
-            controlsState.cameraLerp.z);
-        camera.lookAt(controlsState.cameraLookAtLerp);
-    }
+    controlsState.cameraLerp.lerpVectors(controlNode.position, cameraPos, 0.025);
+    controlsState.cameraLookAtLerp.lerpVectors(
+        controlsState.cameraLookAtLerp.clone(),
+        heroPos,
+        0.1);
+    controlNode.position.set(
+        controlsState.cameraLerp.x,
+        controlsState.cameraLerp.y,
+        controlsState.cameraLerp.z);
+    controlNode.lookAt(controlsState.cameraLookAtLerp);
 }
 
-function processFree3DMovement(controlsState, camera, scene, time) {
-    const groundInfo = scene.scenery.physics.getGroundInfo(camera.position);
-    const altitude = Math.max(0.0, Math.min(1.0, (camera.position.y - groundInfo.height) * 0.7));
+function processFree3DMovement(controlsState, controlNode, scene, time) {
+    const groundInfo = scene.scenery.physics.getGroundInfo(controlNode.position);
+    const altitude = Math.max(
+        0.0,
+        Math.min(1.0, (controlNode.position.y - groundInfo.height) * 0.7)
+    );
 
     const euler = new THREE.Euler();
     euler.setFromQuaternion(controlsState.cameraHeadOrientation, 'YXZ');
@@ -94,10 +86,10 @@ function processFree3DMovement(controlsState, camera, scene, time) {
     speed.applyQuaternion(onlyY(controlsState.cameraHeadOrientation));
     speed.multiplyScalar(time.delta);
 
-    camera.position.add(speed);
-    camera.position.y = Math.max(groundInfo.height + 0.08, camera.position.y);
-    camera.quaternion.copy(controlsState.cameraOrientation);
-    camera.quaternion.multiply(controlsState.cameraHeadOrientation);
+    controlNode.position.add(speed);
+    controlNode.position.y = Math.max(groundInfo.height + 0.08, controlNode.position.y);
+    controlNode.quaternion.copy(controlsState.cameraOrientation);
+    controlNode.quaternion.multiply(controlsState.cameraHeadOrientation);
 }
 
 function onlyY(src) {

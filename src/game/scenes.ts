@@ -172,7 +172,9 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 camera = getIsometricCamera();
             }
         }
-
+        if (camera.controlNode) {
+            threeScene.add(camera.controlNode);
+        }
         threeScene.add(scenery.threeObject);
     } else {
         scenery = parent.scenery;

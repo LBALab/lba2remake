@@ -9,7 +9,13 @@ export function get3DOrbitCamera() {
     ); // 1m = 0.0625 units
     let angle = 0.8;
     let vAngle = 0.6;
+    const controlNode = new THREE.Object3D();
+    const orientation = new THREE.Object3D();
+    orientation.rotation.set(0, Math.PI, 0);
+    controlNode.add(orientation);
+    orientation.add(camera);
     return {
+        controlNode,
         threeCamera: camera,
         resize: (width, height) => {
             camera.aspect = width / height;
@@ -38,8 +44,8 @@ export function get3DOrbitCamera() {
             pos.applyEuler(euler);
             pos.multiplyScalar(distance);
             pos.add(new THREE.Vector3(0, height * 0.5, 0));
-            camera.position.copy(pos);
-            camera.lookAt(new THREE.Vector3(0, height * 0.5, 0));
+            controlNode.position.copy(pos);
+            controlNode.lookAt(new THREE.Vector3(0, height * 0.5, 0));
         }
     };
 }

@@ -7,7 +7,13 @@ export function getIso3DCamera() {
         0.001,
         100
     ); // 1m = 0.0625 units
+    const controlNode = new THREE.Object3D();
+    const orientation = new THREE.Object3D();
+    orientation.rotation.set(0, Math.PI, 0);
+    controlNode.add(orientation);
+    orientation.add(camera);
     return {
+        controlNode,
         threeCamera: camera,
         resize: (width, height) => {
             camera.aspect = width / height;
@@ -17,20 +23,20 @@ export function getIso3DCamera() {
             const { heroPos, cameraPos } = getTargetPos(scene);
             controlsState.cameraLerp.copy(cameraPos);
             controlsState.cameraLookAtLerp.copy(heroPos);
-            camera.position.copy(controlsState.cameraLerp);
-            camera.lookAt(controlsState.cameraLookAtLerp);
+            controlNode.position.copy(controlsState.cameraLerp);
+            controlNode.lookAt(controlsState.cameraLookAtLerp);
         },
         update: (scene, controlsState) => {
             const { heroPos, cameraPos } = getTargetPos(scene);
 
-            controlsState.cameraLerp.lerpVectors(camera.position, cameraPos, 0.1);
+            controlsState.cameraLerp.lerpVectors(controlNode.position, cameraPos, 0.1);
             controlsState.cameraLookAtLerp.lerpVectors(
                 controlsState.cameraLookAtLerp.clone(),
                 heroPos,
                 0.1);
 
-            camera.position.copy(controlsState.cameraLerp);
-            camera.lookAt(controlsState.cameraLookAtLerp);
+            controlNode.position.copy(controlsState.cameraLerp);
+            controlNode.lookAt(controlsState.cameraLookAtLerp);
         }
     };
 }

@@ -55,6 +55,7 @@ export default class Model extends FrameListener {
                 }
             }
             scene.threeScene.add(grid);
+            scene.threeScene.add(camera.controlNode);
             const clock = new THREE.Clock(false);
             this.state = {
                 scene,
