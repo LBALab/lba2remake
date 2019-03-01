@@ -82,7 +82,10 @@ export default class Model extends FrameListener {
             } else {
                 this.canvas = document.createElement('canvas');
                 this.canvas.tabIndex = 0;
-                const renderer = createRenderer(this.props.params, this.canvas);
+                const renderer = createRenderer(this.canvas);
+                renderer.threeRenderer.setAnimationLoop(() => {
+                    this.props.ticker.frame();
+                });
                 this.setState({ renderer }, this.saveData);
             }
             this.root = root;
@@ -145,15 +148,6 @@ export default class Model extends FrameListener {
     onWheel(e) {
         this.zoom += e.deltaY * 0.01;
         this.zoom = Math.min(Math.max(-1, this.zoom), 8);
-    }
-
-    componentWillReceiveProps(newProps) {
-        if (newProps.params.vr !== this.props.params.vr && this.canvas) {
-            this.state.renderer.dispose();
-            this.setState({
-                renderer: createRenderer(newProps.params, this.canvas)
-            }, this.saveData);
-        }
     }
 
     frame() {
@@ -254,8 +248,7 @@ export default class Model extends FrameListener {
             onWheel={this.onWheel}
         >
             <div ref={this.onLoad} style={fullscreen}/>
-            <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
-            <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
+            <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
         </div>;
     }
 }

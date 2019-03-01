@@ -106,15 +106,24 @@ export default class GameUI extends FrameListener {
                 this.canvas = document.createElement('canvas');
                 this.canvas.tabIndex = 0;
                 const game = this.state.game;
-                const renderer = createRenderer(this.props.params, this.canvas);
+                const renderer = createRenderer(this.canvas);
                 const sceneManager = await createSceneManager(
                     this.props.params,
                     game,
                     renderer,
                     this.hideMenu.bind(this)
                 );
+                renderer.threeRenderer.setAnimationLoop(() => {
+                    this.props.ticker.frame();
+                });
                 this.onSceneManagerReady(sceneManager);
-                const controls = createControls(this.props.params, game, this.canvas, sceneManager);
+                const controls = createControls(
+                    this.props.params,
+                    game,
+                    this.canvas,
+                    sceneManager,
+                    renderer
+                );
                 this.setState({ renderer, sceneManager, controls }, this.saveData);
             }
             this.root = root;
@@ -146,12 +155,6 @@ export default class GameUI extends FrameListener {
                 this.hideMenu();
                 this.state.sceneManager.goto(newProps.params.scene);
             }
-        }
-        if (newProps.params.vr !== this.props.params.vr && this.canvas) {
-            this.state.renderer.dispose();
-            this.setState({
-                renderer: createRenderer(newProps.params, this.canvas)
-            }, this.saveData);
         }
         if (newProps.params.iso3d !== this.props.params.iso3d) {
             const scene = this.state.sceneManager.getScene();
@@ -322,8 +325,7 @@ export default class GameUI extends FrameListener {
                 inGameMenu={this.state.inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />
-            <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
-            <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
+            <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} editor={this.props.params.editor} />
             {this.state.loading ? <Loader/> : null}
             {!this.state.showMenu ? <TextBox

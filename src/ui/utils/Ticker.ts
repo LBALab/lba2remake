@@ -19,16 +19,11 @@ export default class Ticker {
         }
     }
 
-    run() {
-        const that = this;
-        function frame() {
-            each(that.listeners, (component) => {
-                if (component) {
-                    component.frame();
-                }
-            });
-            requestAnimationFrame(frame);
-        }
-        frame();
+    frame() {
+        each(this.listeners, (component) => {
+            if (component) {
+                component.frame();
+            }
+        });
     }
 }

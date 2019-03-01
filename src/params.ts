@@ -3,10 +3,6 @@ import {map, each} from 'lodash';
 const mobileRE = /Mobile|webOS|iPhone|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i;
 
 const paramsDefinitions = {
-    vr: {
-        type: 'boolean',
-        default: false
-    },
     mobile: {
         type: 'boolean',
         default: mobileRE.test(navigator.userAgent)

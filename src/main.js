@@ -80,5 +80,4 @@ function init(error) {
         ? <CrashHandler error={error}/>
         : <Root ticker={ticker}/>);
     ReactDOM.render(<Renderer/>, document.getElementById('root'));
-    ticker.run();
 }
