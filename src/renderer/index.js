@@ -105,20 +105,26 @@ export function createRenderer(canvas) {
 
 function setupThreeRenderer(pixelRatio, canvas, antialias) {
     try {
-        const renderer = new THREE.WebGLRenderer({
+        const options = {
             antialias,
             alpha: false,
             logarithmicDepthBuffer: false,
             canvas
-        });
+        };
+        if (window.WebGL2RenderingContext) {
+            options.context = canvas.getContext('webgl2');
+        }
+        const renderer = new THREE.WebGLRenderer(options);
 
         renderer.setClearColor(0x000000);
         renderer.setPixelRatio(pixelRatio.getValue());
         renderer.setSize(0, 0);
         renderer.autoClear = true;
 
-        renderer.context.getExtension('EXT_shader_texture_lod');
-        renderer.context.getExtension('OES_standard_derivatives');
+        if (!(renderer.context instanceof window.WebGL2RenderingContext)) {
+            renderer.context.getExtension('EXT_shader_texture_lod');
+            renderer.context.getExtension('OES_standard_derivatives');
+        }
         return renderer;
     } catch (err) {
         throw new EngineError('webgl');
