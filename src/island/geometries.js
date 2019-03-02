@@ -55,7 +55,7 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector4().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: groundTexture},
+                    uTexture: {value: groundTexture},
                     palette: {value: paletteTexture},
                     actorPos: {value: times(10, () => new THREE.Vector4()), type: 'v4v'}
                 }
@@ -87,7 +87,7 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: objectsTexture},
+                    uTexture: {value: objectsTexture},
                     palette: {value: paletteTexture},
                     light: {value: light}
                 }
@@ -105,7 +105,7 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: objectsTexture},
+                    uTexture: {value: objectsTexture},
                     palette: {value: paletteTexture},
                     light: {value: light}
                 }
@@ -117,7 +117,7 @@ export function prepareGeometries(island, data, ambience) {
                 vertexShader: envInfo.index !== 14 ? VERT_SEA : VERT_MOON,
                 fragmentShader: envInfo.index !== 14 ? FRAG_SEA : FRAG_ENV,
                 uniforms: {
-                    texture: {
+                    uTexture: {
                         value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)
                     },
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
@@ -132,7 +132,7 @@ export function prepareGeometries(island, data, ambience) {
                 vertexShader: VERT_ENV,
                 fragmentShader: FRAG_ENV,
                 uniforms: {
-                    texture: {
+                    uTexture: {
                         value: loadSubTexture(
                             ress.getEntry(envInfo.index),
                             palette,

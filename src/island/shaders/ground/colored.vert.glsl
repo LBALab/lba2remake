@@ -1,16 +1,17 @@
+#version 300 es
 precision highp float;
 
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
-attribute vec3 position;
-attribute float color;
-attribute float intensity;
+in vec3 position;
+in float color;
+in float intensity;
 
-varying vec3 vPosition;
-varying float vColor;
-varying float vIntensity;
-varying vec2 vGridPos;
+out vec3 vPosition;
+out float vColor;
+out float vIntensity;
+out vec2 vGridPos;
 
 void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);

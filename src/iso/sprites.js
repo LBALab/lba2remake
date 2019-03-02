@@ -90,7 +90,7 @@ function loadMesh(index, sprite) {
         fragmentShader: sprite_fragment,
         transparent: true,
         uniforms: {
-            texture: {value: sprite.texture},
+            uTexture: {value: sprite.texture},
         },
         side: THREE.DoubleSide,
         depthTest: true,

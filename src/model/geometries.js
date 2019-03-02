@@ -53,7 +53,7 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: texture},
+                    uTexture: {value: texture},
                     palette: {value: paletteTexture},
                     light: {value: light},
                     bonePos: { value: bones.position, type: 'v3v' },
@@ -79,7 +79,7 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: texture},
+                    uTexture: {value: texture},
                     palette: {value: paletteTexture},
                     light: {value: light},
                     bonePos: { value: bones.position, type: 'v3v' },

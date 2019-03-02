@@ -14,5 +14,5 @@ vec4 dither(float color, float intensity) {
     float noise = mix(vnoise[0], vnoise[1], 1.0 - fract(bias * 5.0));
     uv.x = uv.x + noise * 0.0375 * (2.0 - bias);
     uv += 0.03125;
-    return texture2D(palette, uv);
+    return texture(palette, uv);
 }
