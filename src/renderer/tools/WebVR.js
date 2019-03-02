@@ -30,23 +30,6 @@ const WebVR = {
             renderer.vr.setDevice(device);
         }
 
-        function showVRNotFound() {
-            button.style.display = '';
-
-            button.style.cursor = 'auto';
-            button.style.left = 'calc(50% - 75px)';
-            button.style.width = '150px';
-
-            button.textContent = 'VR NOT FOUND';
-
-            button.onmouseenter = null;
-            button.onmouseleave = null;
-
-            button.onclick = null;
-
-            renderer.vr.setDevice(null);
-        }
-
         function stylizeElement(element) {
             element.style.position = 'absolute';
             element.style.bottom = '20px';
@@ -73,7 +56,7 @@ const WebVR = {
             }, false);
 
             window.addEventListener('vrdisplaydisconnect', () => {
-                showVRNotFound();
+                button.style.display = 'none';
             }, false);
 
             window.addEventListener('vrdisplaypresentchange', (event) => {
@@ -93,10 +76,12 @@ const WebVR = {
                     if (displays.length > 0) {
                         showEnterVR(displays[0]);
                     } else {
-                        showVRNotFound();
+                        button.style.display = 'none';
                     }
                 })
-                .catch(showVRNotFound);
+                .catch(() => {
+                    button.style.display = 'none';
+                });
 
             return button;
         }
