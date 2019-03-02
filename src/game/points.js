@@ -24,13 +24,13 @@ export function loadPoint(props) {
 }
 
 const stickMaterial = makeMaterial(new THREE.Color('#321d0a'));
-const stickGeom = new THREE.CylinderGeometry(0.0015, 0.0015, 0.04, 6, 1, false);
+const stickGeom = new THREE.CylinderGeometry(0.036, 0.036, 0.96, 6, 1, false);
 
 const clothMaterial = makeMaterial(new THREE.Color('#1a78c0'));
 const clothGeom = new THREE.Geometry();
-const v1 = new THREE.Vector3(0, 0.04, 0);
-const v2 = new THREE.Vector3(0, 0.02, 0);
-const v3 = new THREE.Vector3(0, 0.03, 0.02);
+const v1 = new THREE.Vector3(0, 0.96, 0);
+const v2 = new THREE.Vector3(0, 0.48, 0);
+const v3 = new THREE.Vector3(0, 0.72, 0.48);
 
 clothGeom.vertices.push(v1);
 clothGeom.vertices.push(v2);
@@ -43,7 +43,7 @@ clothGeom.computeFaceNormals();
 function makeFlag() {
     const obj = new THREE.Object3D();
     const stick = new THREE.Mesh(stickGeom, stickMaterial);
-    stick.position.set(0, 0.02, 0);
+    stick.position.set(0, 0.48, 0);
     stick.name = 'stick';
     obj.add(stick);
     const cloth = new THREE.Mesh(clothGeom, clothMaterial);
