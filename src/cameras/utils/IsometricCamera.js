@@ -9,7 +9,7 @@ export const IsometricCamera = function IsometricCamera(windowSize, offset = new
     this.offset = offset;
     this.zScale = 0.01;
 
-    const scale = 1 / 32;
+    const scale = 24 / 32;
     this.scale.set(scale, scale, scale);
     this.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
 
