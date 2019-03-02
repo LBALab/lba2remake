@@ -1,12 +1,14 @@
 import * as THREE from 'three';
 
+const CAMERA_HERO_OFFSET = new THREE.Vector3(-6, 7.2, 6);
+
 export function getIso3DCamera() {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
-        0.001,
-        100
-    ); // 1m = 0.0625 units
+        0.1,
+        1000
+    );
     const controlNode = new THREE.Object3D();
     const orientation = new THREE.Object3D();
     orientation.rotation.set(0, Math.PI, 0);
@@ -46,6 +48,6 @@ function getTargetPos(scene) {
     const heroPos = new THREE.Vector3();
     heroPos.applyMatrix4(hero.threeObject.matrixWorld);
     const cameraPos = heroPos.clone();
-    cameraPos.add(new THREE.Vector3(-0.25, 0.3, 0.25));
+    cameraPos.add(CAMERA_HERO_OFFSET);
     return { heroPos, cameraPos };
 }

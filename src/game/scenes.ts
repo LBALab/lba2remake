@@ -271,8 +271,8 @@ function loadSceneNode(index, indexInfo, scenery, actors, zones, points) {
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
         const section = scenery.sections[sectionIdx];
-        sceneNode.position.x = section.x * 2;
-        sceneNode.position.z = section.z * 2;
+        sceneNode.position.x = section.x * 48;
+        sceneNode.position.z = section.z * 48;
     }
     const addToSceneNode = (obj) => {
         if (obj.threeObject !== null) { // because of the sprite actors

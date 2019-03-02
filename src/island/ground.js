@@ -1,6 +1,7 @@
 import {map} from 'lodash';
 import * as THREE from 'three';
 import {bits} from '../utils.ts';
+import {WORLD_SCALE} from '../utils/lba';
 
 const push = Array.prototype.push;
 
@@ -119,7 +120,7 @@ function loadTriangleForPhysics(section, x, z, xTgt, zTgt, idx) {
         const ptIdx = ((x + pt.x) * 65) + z + pt.z;
         PTS[i].set(
             x + pt.x,
-            section.heightmap[ptIdx] / 0x4000,
+            section.heightmap[ptIdx] * WORLD_SCALE,
             z + pt.z
         );
     }
@@ -155,7 +156,7 @@ function getPositions(section, points) {
         const x = (section.x * 64) + (65 - Math.floor(idx / 65));
         const y = section.heightmap[idx];
         const z = (section.z * 64) + (idx % 65);
-        positions.push(x / 32, y / 0x4000, z / 32);
+        positions.push(x * 0.75, y * WORLD_SCALE, z * 0.75);
     }
     return positions;
 }

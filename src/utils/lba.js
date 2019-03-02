@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+export const WORLD_SCALE = 24 / 0x4000;
+
 export function getRotation(nextValue, currentValue, interpolation) {
     let angleDif = nextValue - currentValue;
     let computedAngle = 0;

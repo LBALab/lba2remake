@@ -4,8 +4,8 @@ export function get3DOrbitCamera() {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
-        0.001,
-        100
+        0.1,
+        1000
     ); // 1m = 0.0625 units
     let angle = 0.8;
     let vAngle = 0.6;
@@ -38,7 +38,7 @@ export function get3DOrbitCamera() {
             } else {
                 mouseSpeed.x = 0;
             }
-            const distance = 0.2 + (zoom * 0.1);
+            const distance = 4.8 + (zoom * 2.4);
             const euler = new THREE.Euler(0, -angle, vAngle, 'XYZ');
             const pos = new THREE.Vector3(1, 0, 0);
             pos.applyEuler(euler);

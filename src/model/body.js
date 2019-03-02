@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {WORLD_SCALE} from '../utils/lba';
 
 export function loadBody(model, bodies, index, bodyProps) {
     if (bodies[index]) {
@@ -76,9 +77,9 @@ function loadVertices(object) {
     for (let i = 0; i < object.verticesSize; i += 1) {
         const index = i * 8;
         object.vertices.push({
-            x: data.getInt16(index, true) / 0x4000,
-            y: data.getInt16(index + 2, true) / 0x4000,
-            z: data.getInt16(index + 4, true) / 0x4000,
+            x: data.getInt16(index, true) * WORLD_SCALE,
+            y: data.getInt16(index + 2, true) * WORLD_SCALE,
+            z: data.getInt16(index + 4, true) * WORLD_SCALE,
             bone: data.getUint16(index + 6, true)
         });
     }
@@ -90,9 +91,9 @@ function loadNormals(object) {
     for (let i = 0; i < object.normalsSize; i += 1) {
         const index = i * 4;
         object.normals.push({
-            x: rawNormals[index] / 0x4000,
-            y: rawNormals[index + 1] / 0x4000,
-            z: rawNormals[index + 2] / 0x4000,
+            x: rawNormals[index],
+            y: rawNormals[index + 1],
+            z: rawNormals[index + 2],
             colour: Math.floor((rawNormals[index + 3] & 0x00FF) / 16)
         });
     }
@@ -218,7 +219,7 @@ function loadSpheres(object) {
             unk1: rawSpheres[index],
             colour: Math.floor((rawSpheres[index + 1] & 0x00FF) / 16),
             vertex: rawSpheres[index + 2],
-            size: rawSpheres[index + 3] / 0x4000
+            size: rawSpheres[index + 3] * WORLD_SCALE
         });
     }
 }
@@ -246,30 +247,30 @@ function computeBoundingBox(object, bodyProps) {
         const {xMin, yMin, zMin, xMax, yMax, zMax} = bodyProps.box;
         object.boundingBox = new THREE.Box3(
             new THREE.Vector3(
-                xMin / 0x4000,
-                yMin / 0x4000,
-                zMin / 0x4000
+                xMin * WORLD_SCALE,
+                yMin * WORLD_SCALE,
+                zMin * WORLD_SCALE
             )
             ,
             new THREE.Vector3(
-                xMax / 0x4000,
-                yMax / 0x4000,
-                zMax / 0x4000
+                xMax * WORLD_SCALE,
+                yMax * WORLD_SCALE,
+                zMax * WORLD_SCALE
             )
         );
     } else {
         const {xMin, yMin, zMin, xMax, yMax, zMax} = object;
         object.boundingBox = new THREE.Box3(
             new THREE.Vector3(
-                xMin / 0x4000,
-                yMin / 0x4000,
-                zMin / 0x4000
+                xMin * WORLD_SCALE,
+                yMin * WORLD_SCALE,
+                zMin * WORLD_SCALE
             )
             ,
             new THREE.Vector3(
-                xMax / 0x4000,
-                yMax / 0x4000,
-                zMax / 0x4000
+                xMax * WORLD_SCALE,
+                yMax * WORLD_SCALE,
+                zMax * WORLD_SCALE
             )
         );
     }

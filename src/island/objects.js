@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {each} from 'lodash';
 import {bits} from '../utils.ts';
+import {WORLD_SCALE} from '../utils/lba';
 
 const push = Array.prototype.push;
 
@@ -17,12 +18,16 @@ export function loadObjects(island, section, geometries, objects) {
 
 function loadObjectInfo(objects, section, index) {
     const offset = index * 48;
+    const ox = objects.getInt32(offset + 12, true);
+    const oy = objects.getInt32(offset + 8, true);
+    const oz = objects.getInt32(offset + 4, true);
+    const angle = objects.getUint8(offset + 21) >> 2;
     return {
         index: objects.getUint32(offset, true),
-        x: (((0x8000 - objects.getInt32(offset + 12, true)) + 512) / 0x4000) + (section.x * 2),
-        y: objects.getInt32(offset + 8, true) / 0x4000,
-        z: (objects.getInt32(offset + 4, true) / 0x4000) + (section.z * 2),
-        angle: objects.getUint8(offset + 21) >> 2,
+        x: (((0x8000 - ox) + 512) * WORLD_SCALE) + (section.x * 48),
+        y: oy * WORLD_SCALE,
+        z: (oz * WORLD_SCALE) + (section.z * 48),
+        angle,
         iv: 1
     };
 }
@@ -148,8 +153,8 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
             });
         }
     }
-    bb.min.divideScalar(0x4000);
-    bb.max.divideScalar(0x4000);
+    bb.min.multiplyScalar(WORLD_SCALE);
+    bb.max.multiplyScalar(WORLD_SCALE);
     bb.applyMatrix4(angleMatrix[(info.angle + 3) % 4]);
     bb.translate(new THREE.Vector3(info.x, info.y, info.z));
     boundingBoxes.push(bb);
@@ -180,17 +185,17 @@ function getFaceNormal(object, section, info, i) {
 
 function getVertexNormal(object, info, index) {
     return rotate([
-        object.normals[index * 4] / 0x4000,
-        object.normals[(index * 4) + 1] / 0x4000,
-        object.normals[(index * 4) + 2] / 0x4000
+        object.normals[index * 4],
+        object.normals[(index * 4) + 1],
+        object.normals[(index * 4) + 2]
     ], info.angle);
 }
 
 function getPosition(object, info, index) {
     const pos = rotate([
-        object.vertices[index * 4] / 0x4000,
-        object.vertices[(index * 4) + 1] / 0x4000,
-        object.vertices[(index * 4) + 2] / 0x4000
+        object.vertices[index * 4] * WORLD_SCALE,
+        object.vertices[(index * 4) + 1] * WORLD_SCALE,
+        object.vertices[(index * 4) + 2] * WORLD_SCALE
     ], info.angle);
     return [
         pos[0] + info.x,

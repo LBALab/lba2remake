@@ -1,15 +1,15 @@
 import * as THREE from 'three';
 
-const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
-const HERO_TARGET_POS = new THREE.Vector3(0, 0.08, 0);
+const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 3.6, -4.8);
+const HERO_TARGET_POS = new THREE.Vector3(0, 1.92, 0);
 
 export function get3DCamera() {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
-        0.001,
-        100
-    ); // 1m = 0.0625 units
+        0.1,
+        1000
+    );
     const controlNode = new THREE.Object3D();
     const orientation = new THREE.Object3D();
     orientation.rotation.set(0, Math.PI, 0);

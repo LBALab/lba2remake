@@ -73,9 +73,9 @@ function loadMesh(renderer, grid, entry) {
         }
     }));
 
-    const scale = 1 / 32;
+    const scale = 0.75;
     mesh.scale.set(scale, scale, scale);
-    mesh.position.set(2, 0, 0);
+    mesh.position.set(48, 0, 0);
     mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
     mesh.frustumCulled = false;
     mesh.name = `scenery_iso_${entry}`;

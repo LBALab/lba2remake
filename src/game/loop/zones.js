@@ -1,7 +1,7 @@
 import { getHtmlColor } from '../../scene';
 import { DirMode } from '../../game/actors.ts';
 import { AnimType } from '../data/animType';
-import { angleTo, angleToRad, getRandom } from '../../utils/lba';
+import { angleTo, angleToRad, getRandom, WORLD_SCALE } from '../../utils/lba';
 import { addExtra, ExtraFlag, randomBonus } from '../extras.ts';
 
 function NOP() { }
@@ -48,9 +48,9 @@ function CUBE(game, scene, zone, hero) {
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
         scene.goto(zone.props.snap).then((newScene) => {
             const newHero = newScene.actors[0];
-            newHero.physics.position.x = ((0x8000 - zone.props.info2) + 511) / 0x4000;
-            newHero.physics.position.y = zone.props.info1 / 0x4000;
-            newHero.physics.position.z = zone.props.info0 / 0x4000;
+            newHero.physics.position.x = ((0x8000 - zone.props.info2) + 511) * WORLD_SCALE;
+            newHero.physics.position.y = zone.props.info1 * WORLD_SCALE;
+            newHero.physics.position.z = zone.props.info0 * WORLD_SCALE;
             newHero.physics.temp.angle = hero.physics.temp.angle;
             newHero.physics.orientation.copy(hero.physics.orientation);
             newHero.threeObject.quaternion.copy(newHero.physics.orientation);

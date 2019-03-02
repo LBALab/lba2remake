@@ -46,9 +46,9 @@ export default class Model extends FrameListener {
             const grid = new THREE.Object3D();
             for (let x = -4; x <= 4; x += 1) {
                 for (let z = -4; z <= 4; z += 1) {
-                    const tile = new THREE.GridHelper(0.04, 2);
-                    tile.position.x = x * 0.04;
-                    tile.position.z = z * 0.04;
+                    const tile = new THREE.GridHelper(0.96, 2);
+                    tile.position.x = x * 0.96;
+                    tile.position.z = z * 0.96;
                     tile.material.transparent = true;
                     tile.material.opacity = 1;
                     grid.add(tile);
@@ -207,7 +207,7 @@ export default class Model extends FrameListener {
         const speedZ = ((animState.step.z * delta) / animState.keyframeLength);
         const speedY = ((animState.step.y * delta) / animState.keyframeLength);
         const speedX = ((animState.step.x * delta) / animState.keyframeLength);
-        const ts = 0.04;
+        const ts = 0.96;
         const inRange = v => fmod(v + (ts * 4.5), ts * 9) - (ts * 4.5);
 
         if (!interpolate) {
@@ -221,7 +221,7 @@ export default class Model extends FrameListener {
                 Math.max(Math.abs(pos.x), Math.abs(pos.z)),
                 Math.abs(grid.position.y)
             );
-            tile.material.opacity = Math.min((0.16 - p) / 0.16, 1);
+            tile.material.opacity = Math.min((3.84 - p) / 3.84, 1);
         });
     }
 
