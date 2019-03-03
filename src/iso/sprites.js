@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {each, orderBy} from 'lodash';
 import {bits} from '../utils.ts';
 import {loadHqr} from '../hqr.ts';
+import {compile} from '../utils/shaders';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
 
@@ -86,8 +87,8 @@ function loadMesh(index, sprite) {
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
     bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
     const mesh = new THREE.Mesh(bufferGeometry, new THREE.RawShaderMaterial({
-        vertexShader: sprite_vertex,
-        fragmentShader: sprite_fragment,
+        vertexShader: compile('vert', sprite_vertex),
+        fragmentShader: compile('frag', sprite_fragment),
         transparent: true,
         uniforms: {
             uTexture: {value: sprite.texture},

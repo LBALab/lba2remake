@@ -2,6 +2,14 @@ import {map, each} from 'lodash';
 
 const mobileRE = /Mobile|webOS|iPhone|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i;
 
+declare global {
+    interface Window {
+        params?: any;
+    }
+}
+
+window.params = {};
+
 const paramsDefinitions = {
     mobile: {
         type: 'boolean',
@@ -18,6 +26,10 @@ const paramsDefinitions = {
     iso3d: {
         type: 'boolean',
         default: false
+    },
+    webgl2: {
+        type: 'boolean',
+        default: true
     }
 };
 
@@ -40,6 +52,7 @@ export function loadParams() : any {
         } else {
             tgt[name] = param.default;
         }
+        window.params[name] = tgt[name];
     });
     return tgt;
 }

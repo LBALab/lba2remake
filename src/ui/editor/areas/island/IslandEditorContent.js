@@ -34,7 +34,7 @@ export default class IslandEditorContent extends FrameListener {
             } else {
                 this.canvas = document.createElement('canvas');
                 this.canvas.tabIndex = 0;
-                const renderer = createRenderer(this.canvas);
+                const renderer = createRenderer(this.props.params, this.canvas);
                 this.setState({ renderer }, this.saveData);
             }
             this.root = root;
