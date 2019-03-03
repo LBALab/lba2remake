@@ -1,13 +1,9 @@
 import * as THREE from 'three';
 import {IsometricCamera} from './utils/IsometricCamera';
-import {get3DCamera} from './3d';
 
 const BASE_OFFSET = new THREE.Vector2(3500, 1001);
 
-export function getIsometricCamera(use3d) {
-    if (use3d) {
-        return get3DCamera();
-    }
+export function getIsometricCamera() {
     const size = getCameraSize(window.innerWidth, window.innerHeight);
     const camera = new IsometricCamera(size, BASE_OFFSET.clone());
     return {
