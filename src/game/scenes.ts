@@ -19,6 +19,7 @@ import { killActor, reviveActor } from './scripting';
 import DebugData, * as DBG from '../ui/editor/DebugData';
 import { sBind } from '../utils';
 import { get3DCamera } from '../cameras/3d';
+import { getVRCamera } from '../cameras/vr';
 import { getIsometricCamera } from '../cameras/iso';
 import { getIso3DCamera } from '../cameras/iso3d';
 
@@ -162,7 +163,11 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         if (indexInfo.isIsland) {
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
             threeScene.name = '3D_scene';
-            camera = get3DCamera();
+            if (renderer.vr) {
+                camera = getVRCamera();
+            } else {
+                camera = get3DCamera();
+            }
         } else {
             scenery = await loadIsometricScenery(renderer, indexInfo.index);
             threeScene.name = 'iso_scene';
