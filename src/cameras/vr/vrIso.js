@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-const CAMERA_HERO_OFFSET = new THREE.Vector3(-6, 7.2, 6);
+const CAMERA_HERO_OFFSET = new THREE.Vector3(-5, 6, 5);
 
 export function getVRIsoCamera() {
     const camera = new THREE.PerspectiveCamera(
