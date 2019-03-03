@@ -241,6 +241,7 @@ export default class Model extends FrameListener {
 
     render() {
         return <div
+            id="renderZone"
             style={fullscreen}
             onMouseDown={this.onMouseDown}
             onMouseUp={this.onMouseUp}

@@ -302,7 +302,7 @@ export default class GameUI extends FrameListener {
     }
 
     render() {
-        return <div style={fullscreen}>
+        return <div id="renderZone" style={fullscreen}>
             <div ref={this.onLoad} style={fullscreen}/>
             {this.props.params.editor ?
                 <DebugLabels

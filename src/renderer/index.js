@@ -33,7 +33,10 @@ export function createRenderer(params, canvas) {
 
     if (vrButton) {
         threeRenderer.vr.enabled = true;
-        document.body.appendChild(vrButton);
+        const renderZone = document.getElementById('renderZone');
+        if (renderZone) {
+            renderZone.appendChild(vrButton);
+        }
     }
 
     displayRenderMode();
