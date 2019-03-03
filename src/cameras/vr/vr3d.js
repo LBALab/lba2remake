@@ -3,7 +3,7 @@ import * as THREE from 'three';
 const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 2, -4.8);
 const HERO_TARGET_POS = new THREE.Vector3(0, 2, 0);
 
-export function getVRCamera() {
+export function getVR3DCamera() {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,

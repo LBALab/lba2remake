@@ -19,9 +19,10 @@ import { killActor, reviveActor } from './scripting';
 import DebugData, * as DBG from '../ui/editor/DebugData';
 import { sBind } from '../utils';
 import { get3DCamera } from '../cameras/3d';
-import { getVRCamera } from '../cameras/vr';
 import { getIsometricCamera } from '../cameras/iso';
 import { getIso3DCamera } from '../cameras/iso3d';
+import { getVR3DCamera } from '../cameras/vr/vr3d';
+import { getVRIsoCamera } from '../cameras/vr/vrIso';
 
 declare global {
     var ga: Function;
@@ -164,14 +165,16 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
             threeScene.name = '3D_scene';
             if (renderer.vr) {
-                camera = getVRCamera();
+                camera = getVR3DCamera();
             } else {
                 camera = get3DCamera();
             }
         } else {
             scenery = await loadIsometricScenery(renderer, indexInfo.index);
             threeScene.name = 'iso_scene';
-            if (params.iso3d || renderer.vr) {
+            if (renderer.vr) {
+                camera = getVRIsoCamera();
+            } else if (params.iso3d) {
                 camera = getIso3DCamera();
             } else {
                 camera = getIsometricCamera();
