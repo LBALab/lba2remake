@@ -25,6 +25,7 @@ export function makeVRControls(game: any) {
                     game.controlsState.heroSpeed = 0;
                 }
                 game.controlsState.heroRotationSpeed = x;
+                game.controlsState.action = gamepad.buttons[0].pressed ? 1 : 0;
             }
         }
     };
