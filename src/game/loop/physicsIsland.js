@@ -56,7 +56,7 @@ function processCollisions(sections, scene, actor) {
             TGT.setY(0);
             if (TGT.lengthSq() !== 0) {
                 TGT.normalize();
-                TGT.multiplyScalar(0.005);
+                TGT.multiplyScalar(0.12);
                 TGT.add(actor.threeObject.position);
                 TGT.applyMatrix4(scene.sceneNode.matrixWorld);
                 const gInfo = getGroundInfo(section, TGT);

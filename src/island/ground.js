@@ -125,7 +125,7 @@ function loadTriangleForPhysics(section, x, z, xTgt, zTgt, idx) {
         );
     }
 
-    RAY.origin.set(xTgt, 5, zTgt);
+    RAY.origin.set(xTgt, 5 * 24, zTgt);
     const tgt = RAY.intersectTriangle(PTS[0], PTS[2], PTS[1], true, TGT);
 
     return {
