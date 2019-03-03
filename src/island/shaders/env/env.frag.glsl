@@ -1,13 +1,16 @@
+#version 300 es
 precision highp float;
 
-uniform sampler2D texture;
+uniform sampler2D uTexture;
 uniform float scale;
 
-varying vec2 vUv;
+in vec2 vUv;
+
+out vec4 fragColor;
 
 #require "../common/fog.frag"
 
 void main() {
-    vec3 color = texture2D(texture, vUv * scale).rgb;
-    gl_FragColor = vec4(fog(color), 1.0);
+    vec3 color = texture(uTexture, vUv * scale).rgb;
+    fragColor = vec4(fog(color), 1.0);
 }

@@ -1,3 +1,4 @@
+#version 300 es
 precision highp float;
 
 uniform mat4 modelViewMatrix;
@@ -6,14 +7,14 @@ uniform vec3 bonePos[30];
 uniform vec4 boneRot[30];
 uniform mat4 rotationMatrix;
 
-attribute vec3 position;
-attribute vec3 normal;
-attribute float color;
-attribute float boneIndex;
+in vec3 position;
+in vec3 normal;
+in float color;
+in float boneIndex;
 
-varying vec3 vPosition;
-varying vec3 vNormal;
-varying float vColor;
+out vec3 vPosition;
+out vec3 vNormal;
+out float vColor;
 
 void main() {
     int idx = int(boneIndex);

@@ -18,13 +18,13 @@ export const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'],
     name
 }));
 
-export function createRenderer(canvas) {
+export function createRenderer(params, canvas) {
     let pixelRatio = PixelRatio[2]; // SET NORMAL AS DEFAULT
     const getPixelRatio = () => pixelRatio.getValue();
     let antialias = false;
     // eslint-disable-next-line no-console
     const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
-    let threeRenderer = setupThreeRenderer(pixelRatio, canvas, antialias);
+    let threeRenderer = setupThreeRenderer(pixelRatio, canvas, antialias, params.webgl2);
     const stats = setupStats();
 
     const vrButton = WebVR.createButton(threeRenderer, {
@@ -103,22 +103,29 @@ export function createRenderer(canvas) {
     return renderer;
 }
 
-function setupThreeRenderer(pixelRatio, canvas, antialias) {
+function setupThreeRenderer(pixelRatio, canvas, antialias, webgl2) {
     try {
-        const renderer = new THREE.WebGLRenderer({
+        const options = {
             antialias,
             alpha: false,
             logarithmicDepthBuffer: false,
             canvas
-        });
+        };
+        if (webgl2 && window.WebGL2RenderingContext) {
+            options.context = canvas.getContext('webgl2');
+        }
+        const renderer = new THREE.WebGLRenderer(options);
 
         renderer.setClearColor(0x000000);
         renderer.setPixelRatio(pixelRatio.getValue());
         renderer.setSize(0, 0);
         renderer.autoClear = true;
 
-        renderer.context.getExtension('EXT_shader_texture_lod');
-        renderer.context.getExtension('OES_standard_derivatives');
+        if (!(window.WebGL2RenderingContext
+                && renderer.context instanceof window.WebGL2RenderingContext)) {
+            renderer.context.getExtension('EXT_shader_texture_lod');
+            renderer.context.getExtension('OES_standard_derivatives');
+        }
         return renderer;
     } catch (err) {
         throw new EngineError('webgl');

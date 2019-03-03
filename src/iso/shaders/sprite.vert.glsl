@@ -1,12 +1,13 @@
+#version 300 es
 precision highp float;
 
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
-attribute vec3 position;
-attribute vec2 uv;
+in vec3 position;
+in vec2 uv;
 
-varying vec2 vUV;
+out vec2 vUV;
 
 void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);

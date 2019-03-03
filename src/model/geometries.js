@@ -7,6 +7,7 @@ import VERT_TEXTURED from './shaders/textured.vert.glsl';
 import FRAG_TEXTURED from './shaders/textured.frag.glsl';
 
 import {loadPaletteTexture} from '../texture.ts';
+import {compile} from '../utils/shaders';
 
 const push = Array.prototype.push;
 
@@ -24,8 +25,8 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
             lineColors: [],
             lineBones: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: VERT_COLORED,
-                fragmentShader: FRAG_COLORED,
+                vertexShader: compile('vert', VERT_COLORED),
+                fragmentShader: compile('frag', FRAG_COLORED),
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -48,12 +49,12 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
             lineColors: [],
             lineBones: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: VERT_TEXTURED,
-                fragmentShader: FRAG_TEXTURED,
+                vertexShader: compile('vert', VERT_TEXTURED),
+                fragmentShader: compile('frag', FRAG_TEXTURED),
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: texture},
+                    uTexture: {value: texture},
                     palette: {value: paletteTexture},
                     light: {value: light},
                     bonePos: { value: bones.position, type: 'v3v' },
@@ -74,12 +75,12 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
             lineBones: [],
             material: new THREE.RawShaderMaterial({
                 transparent: true,
-                vertexShader: VERT_TEXTURED,
-                fragmentShader: FRAG_TEXTURED,
+                vertexShader: compile('vert', VERT_TEXTURED),
+                fragmentShader: compile('frag', FRAG_TEXTURED),
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    texture: {value: texture},
+                    uTexture: {value: texture},
                     palette: {value: paletteTexture},
                     light: {value: light},
                     bonePos: { value: bones.position, type: 'v3v' },
