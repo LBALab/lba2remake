@@ -160,9 +160,9 @@ function processCamRelativeMovement(controlsState, scene, hero, animIndex) {
         heroPos.y = 0;
         flatCam.lookAt(heroPos);
 
-        const speed = controlsState.controlVector.length();
+        const cvLength = controlsState.controlVector.length();
         const worldAngle = Math.PI / 2;
-        if (speed > 0.2) {
+        if (cvLength > 0.4) {
             const baseAngle = controlsState.controlVector.angle();
             const q = new THREE.Quaternion();
             q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), baseAngle - worldAngle);
