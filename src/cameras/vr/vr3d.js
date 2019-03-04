@@ -31,26 +31,22 @@ export function getVR3DCamera() {
     };
 }
 
-const CAMERA_TARGET = new THREE.Object3D();
-
 function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
     const hero = scene.actors[0];
     const heroPos = HERO_TARGET_POS.clone();
-    const cameraPos = CAMERA_HERO_OFFSET.clone();
     heroPos.applyMatrix4(hero.threeObject.matrixWorld);
-    cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
-    scene.scenery.physics.processCameraCollisions(cameraPos, 2, 4);
 
-    CAMERA_TARGET.position.copy(cameraPos);
-    CAMERA_TARGET.lookAt(heroPos);
-    const angleDiff = CAMERA_TARGET.quaternion.angleTo(controlNode.quaternion);
-    const distance = CAMERA_TARGET.position.distanceTo(controlNode.position);
-    const distanceFromHero = CAMERA_TARGET.position.distanceTo(heroPos);
+    const flatHeroPos = new THREE.Vector3(heroPos.x, 0, heroPos.z);
+    const flatCamPos = controlNode.position.clone();
+    flatCamPos.y = 0;
+    const distanceToHero = flatCamPos.distanceTo(flatHeroPos);
 
     if (forceUpdate
-        || Math.abs(angleDiff) > Math.PI / 4
-        || distance > 5
-        || distanceFromHero < 1) {
+        || distanceToHero > 8
+        || distanceToHero < 1.5) {
+        const cameraPos = CAMERA_HERO_OFFSET.clone();
+        cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+        scene.scenery.physics.processCameraCollisions(cameraPos, 2, 4);
         controlNode.position.copy(cameraPos);
         controlNode.lookAt(heroPos);
     }

@@ -17,14 +17,8 @@ export function makeVRControls(game: any) {
                 }
             }
             if (gamepad) {
-                const x = -gamepad.axes[0];
-                const y = -gamepad.axes[1];
-                if (Math.abs(x) < 0.8) {
-                    game.controlsState.controlVector.y = Math.sign(y);
-                } else {
-                    game.controlsState.controlVector.y = 0;
-                }
-                game.controlsState.controlVector.x = x;
+                game.controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
+                game.controlsState.relativeToCam = true;
                 game.controlsState.action = gamepad.buttons[0].pressed ? 1 : 0;
             }
         }

@@ -19,12 +19,12 @@ export const BehaviourMode = {
     SKELETON: 13
 };
 
-export function updateHero(game, hero, time) {
+export function updateHero(game, scene, hero, time) {
     if (hero.props.dirMode !== DirMode.MANUAL)
         return;
     const behaviour = game.getState().hero.behaviour;
     handleBehaviourChanges(hero, behaviour);
-    processActorMovement(game.controlsState, hero, time, behaviour);
+    processActorMovement(game.controlsState, scene, hero, time, behaviour);
 }
 
 function handleBehaviourChanges(hero, behaviour) {
@@ -42,7 +42,7 @@ function toggleJump(hero, value) {
     hero.props.runtimeFlags.hasGravityByAnim = value;
 }
 
-function processActorMovement(controlsState, hero, time, behaviour) {
+function processActorMovement(controlsState, scene, hero, time, behaviour) {
     let animIndex = hero.props.animIndex;
     if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
         toggleJump(hero, false);
@@ -134,8 +134,40 @@ function processActorMovement(controlsState, hero, time, behaviour) {
             }
         }
     }
+    animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex);
     if (hero.props.animIndex !== animIndex) {
         hero.props.animIndex = animIndex;
         hero.resetAnimState();
     }
+}
+
+function processCamRelativeMovement(controlsState, scene, hero, animIndex) {
+    if (controlsState.relativeToCam) {
+        const camera = scene.camera.controlNode;
+        if (!camera)
+            return animIndex;
+
+        const flatCam = new THREE.Object3D();
+        flatCam.position.set(camera.position.x, 0, camera.position.z);
+        const heroPos = new THREE.Vector3();
+        heroPos.applyMatrix4(hero.threeObject.matrixWorld);
+        heroPos.y = 0;
+        flatCam.lookAt(heroPos);
+
+        const speed = controlsState.controlVector.length();
+        const worldAngle = Math.PI / 2;
+        if (speed > 0.2) {
+            const baseAngle = controlsState.controlVector.angle();
+            const q = new THREE.Quaternion();
+            q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), baseAngle - worldAngle);
+            flatCam.quaternion.multiply(q);
+            const euler = new THREE.Euler();
+            euler.setFromQuaternion(flatCam.quaternion, 'XZY');
+            hero.physics.temp.angle = euler.y;
+            hero.physics.orientation = flatCam.quaternion.clone();
+            animIndex = AnimType.FORWARD;
+            hero.props.runtimeFlags.isWalking = true;
+        }
+    }
+    return animIndex;
 }

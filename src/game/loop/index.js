@@ -61,7 +61,7 @@ function updateScene(game, scene, time, step) {
         updateActor(game, scene, actor, time, step);
         if (scene.isActive) {
             if (actor.index === 0) {
-                updateHero(game, actor, time);
+                updateHero(game, scene, actor, time);
             }
         }
     });
