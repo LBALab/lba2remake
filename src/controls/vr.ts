@@ -20,11 +20,11 @@ export function makeVRControls(game: any) {
                 const x = -gamepad.axes[0];
                 const y = -gamepad.axes[1];
                 if (Math.abs(x) < 0.8) {
-                    game.controlsState.heroSpeed = Math.sign(y);
+                    game.controlsState.controlVector.y = Math.sign(y);
                 } else {
-                    game.controlsState.heroSpeed = 0;
+                    game.controlsState.controlVector.y = 0;
                 }
-                game.controlsState.heroRotationSpeed = x;
+                game.controlsState.controlVector.x = x;
                 game.controlsState.action = gamepad.buttons[0].pressed ? 1 : 0;
             }
         }

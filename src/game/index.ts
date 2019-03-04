@@ -20,14 +20,14 @@ export function createGame(clock: any,
         setUiState,
         getUiState,
         controlsState: {
-            heroSpeed: 0,
-            heroRotationSpeed: 0,
+            controlVector: new THREE.Vector2(),
             cameraSpeed: new THREE.Vector3(),
             cameraLerp: new THREE.Vector3(),
             cameraLookAtLerp: new THREE.Vector3(),
             cameraOrientation: new THREE.Quaternion(),
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
+            relativeToCam: false,
             action: 0,
             jump: 0,
             fight: 0,
@@ -43,8 +43,7 @@ export function createGame(clock: any,
 
         /* @inspector(locate) */
         resetControlsState() {
-            this.controlsState.heroSpeed = 0;
-            this.controlsState.heroRotationSpeed = 0;
+            this.controlsState.controlVector.set(0, 0),
             this.controlsState.action = 0;
             this.controlsState.jump = 0;
             this.controlsState.fight = 0;

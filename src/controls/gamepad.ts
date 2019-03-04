@@ -27,8 +27,8 @@ function dpadValueChangeHandler(game, {detail: {x, y, name}}) {
             game.controlsState.cameraSpeed.z = -y * 0.45;
         }
     } else {
-        game.controlsState.heroSpeed = y >= 0.5 ? 1 : (y <= -0.5 ? -1 : 0);
-        game.controlsState.heroRotationSpeed = -x;
+        game.controlsState.controlVector.y = y >= 0.5 ? 1 : (y <= -0.5 ? -1 : 0);
+        game.controlsState.controlVector.x = -x;
     }
 }
 
