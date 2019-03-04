@@ -230,10 +230,12 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         /* @inspector(locate) */
         resetCamera(params) {
             if (!scene.isIsland) {
-                if (params.iso3d || renderer.vr) {
-                    scene.camera = getIso3DCamera();
-                } else {
-                    scene.camera = getIsometricCamera();
+                if (!renderer.vr) {
+                    if (params.iso3d) {
+                        scene.camera = getIso3DCamera();
+                    } else {
+                        scene.camera = getIsometricCamera();
+                    }
                 }
                 scene.camera.init(scene, game.controlsState);
             }
