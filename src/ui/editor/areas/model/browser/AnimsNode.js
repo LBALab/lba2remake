@@ -1,30 +1,22 @@
+import React from 'react';
 import { findIndex } from 'lodash';
 import { getEntities } from './entitities';
 
-const animNames = {};
-
-const getKey = (anim, idx) => {
-    if (anim && anim.index !== undefined && anim.animIndex !== undefined) {
-        return `anim_${anim.index}_${anim.animIndex}`;
-    } else if (idx !== undefined) {
-        return `unknown_anim_${idx}`;
-    }
-    return null;
-};
-
-const getName = (anim, idx) => {
-    const key = getKey(anim, idx);
-    return animNames[key] || key;
-};
+const animNames = [];
 
 const AnimNode = {
     dynamic: true,
-    name: (anim, idx) => getName(anim, idx),
+    name: (anim) => {
+        if (anim && anim.index !== undefined) {
+            return animNames[anim.index] || `anim_${anim.index}`;
+        }
+        return 'unknown';
+    },
+    key: (anim, idx) => `anim_${idx}`,
     allowRenaming: () => true,
     rename: (anim, newName) => {
-        const key = getKey(anim);
-        if (key !== null) {
-            animNames[key] = newName;
+        if (anim && anim.index !== undefined) {
+            animNames[anim.index] = newName;
         }
     },
     numChildren: () => 0,
@@ -34,6 +26,13 @@ const AnimNode = {
         const {setAnim} = component.props.rootStateHandler;
         setAnim(data.index);
     },
+    props: anim => [
+        {
+            id: 'index',
+            value: anim.index,
+            render: value => <span>[{value}]</span>
+        }
+    ],
     selected: (data, component) => {
         if (!component.props.rootState || !data)
             return false;

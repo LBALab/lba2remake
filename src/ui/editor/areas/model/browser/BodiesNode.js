@@ -1,30 +1,22 @@
+import React from 'react';
 import { findIndex } from 'lodash';
 import { getEntities } from './entitities';
 
-const bodyNames = {};
-
-const getKey = (body, idx) => {
-    if (body && body.index !== undefined && body.bodyIndex !== undefined) {
-        return `body_${body.index}_${body.bodyIndex}`;
-    } else if (idx !== undefined) {
-        return `unknown_body_${idx}`;
-    }
-    return null;
-};
-
-const getName = (body, idx) => {
-    const key = getKey(body, idx);
-    return bodyNames[key] || key;
-};
+const bodyNames = [];
 
 const BodyNode = {
     dynamic: true,
-    name: (body, idx) => getName(body, idx),
+    name: (body) => {
+        if (body && body.bodyIndex !== undefined) {
+            return bodyNames[body.bodyIndex] || `body_${body.bodyIndex}`;
+        }
+        return 'unknown';
+    },
+    key: (body, idx) => `body_${idx}`,
     allowRenaming: () => true,
     rename: (body, newName) => {
-        const key = getKey(body);
-        if (key !== null) {
-            bodyNames[key] = newName;
+        if (body && body.bodyIndex !== undefined) {
+            bodyNames[body.bodyIndex] = newName;
         }
     },
     numChildren: () => 0,
@@ -34,6 +26,13 @@ const BodyNode = {
         const {setBody} = component.props.rootStateHandler;
         setBody(data.index);
     },
+    props: body => [
+        {
+            id: 'index',
+            value: body.index,
+            render: value => <span>[{value}]</span>
+        }
+    ],
     selected: (data, component) => {
         if (!component.props.rootState || !data)
             return false;
