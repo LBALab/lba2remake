@@ -25,7 +25,8 @@ function mapCommands(scene, actor, commands) {
             args: mapArguments(scene, actor, cmd),
             condition: mapCondition(scene, cmd.condition, state),
             operator: mapOperator(scene, cmd.operator, state),
-            section: cmd.section
+            section: cmd.section,
+            unimplemented: cmd.op.handler.unimplemented
         };
         indent = processIndent(newCmd, prevCommand, cmd.op, indent);
         prevCommand = newCmd;

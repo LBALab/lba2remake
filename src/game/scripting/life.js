@@ -3,10 +3,9 @@ import { DirMode } from '../../game/actors.ts';
 import { AnimType } from '../data/animType';
 import { setMagicBallLevel } from '../../game/state.ts';
 import VideoData from '../../video/data';
+import { unimplemented } from './utils';
 
-export function PALETTE() {
-
-}
+export const PALETTE = unimplemented();
 
 export function BODY_OBJ(actor, bodyIndex) {
     actor.setBody(this.scene, bodyIndex);
@@ -16,13 +15,9 @@ export function ANIM_OBJ(actor, animIndex) {
     actor.setAnim(animIndex);
 }
 
-export function SET_CAMERA() {
+export const SET_CAMERA = unimplemented();
 
-}
-
-export function CAMERA_CENTER() {
-
-}
+export const CAMERA_CENTER = unimplemented();
 
 export function MESSAGE(cmdState, id) {
     MESSAGE_OBJ.call(this, cmdState, this.actor, id);
@@ -158,9 +153,7 @@ export function SET_DIRMODE_OBJ(index, dirMode) {
     }
 }
 
-export function CAM_FOLLOW() {
-
-}
+export const CAM_FOLLOW = unimplemented();
 
 export function SET_BEHAVIOUR(value) {
     this.game.getState().hero.behaviour = value;
@@ -310,25 +303,15 @@ export function FOUND_OBJECT(cmdState, id) {
     }
 }
 
-export function SET_DOOR_LEFT() {
+export const SET_DOOR_LEFT = unimplemented();
 
-}
+export const SET_DOOR_RIGHT = unimplemented();
 
-export function SET_DOOR_RIGHT() {
+export const SET_DOOR_UP = unimplemented();
 
-}
+export const SET_DOOR_DOWN = unimplemented();
 
-export function SET_DOOR_UP() {
-
-}
-
-export function SET_DOOR_DOWN() {
-
-}
-
-export function GIVE_BONUS() {
-
-}
+export const GIVE_BONUS = unimplemented();
 
 export function CHANGE_CUBE(index) {
     this.scene.goto(index);
@@ -350,9 +333,7 @@ export function INVISIBLE(hidden) {
     }
 }
 
-export function SHADOW_OBJ() {
-
-}
+export const SHADOW_OBJ = unimplemented();
 
 export function SET_MAGIC_LEVEL(index) {
     const magicball = setMagicBallLevel(index);
@@ -444,9 +425,7 @@ export function PLAY_SMK(cmdState, video) {
     }
 }
 
-export function ECLAIR() {
-
-}
+export const ECLAIR = unimplemented();
 
 export function INC_CLOVER_BOX() {
     if (this.game.getState().hero.clover.boxes < 10) {
@@ -519,21 +498,13 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
     }
 }
 
-export function INIT_BUGGY() {
+export const INIT_BUGGY = unimplemented();
 
-}
+export const MEMO_SLATE = unimplemented();
 
-export function MEMO_SLATE() {
+export const SET_HOLO_POS = unimplemented();
 
-}
-
-export function SET_HOLO_POS() {
-
-}
-
-export function CLR_HOLO_POS() {
-
-}
+export const CLR_HOLO_POS = unimplemented();
 
 export function ADD_FUEL(fuel) {
     this.game.getState().hero.fuel += fuel;
@@ -549,13 +520,9 @@ export function SUB_FUEL(fuel) {
     }
 }
 
-export function SET_GRM() {
+export const SET_GRM = unimplemented();
 
-}
-
-export function SET_CHANGE_CUBE() {
-
-}
+export const SET_CHANGE_CUBE = unimplemented();
 
 export function MESSAGE_ZOE(cmdState, id) {
     const colorHero = this.actor.props.textColor;
@@ -569,45 +536,29 @@ export function FULL_POINT() {
     this.game.getState().hero.magic = this.game.getState().hero.magicball.level * 20;
 }
 
-export function FADE_TO_PAL() {
+export const FADE_TO_PAL = unimplemented();
 
-}
+export const ACTION = unimplemented();
 
-export function ACTION() {
+export const SET_FRAME = unimplemented();
 
-}
-
-export function SET_FRAME() {
-
-}
-
-export function SET_SPRITE() {
-
-}
+export const SET_SPRITE = unimplemented();
 
 export function SET_FRAME_3DS() {
 
 }
 
-export function IMPACT_OBJ() {
+export const IMPACT_OBJ = unimplemented();
 
-}
-
-export function IMPACT_POINT() {
-
-}
+export const IMPACT_POINT = unimplemented();
 
 export function ADD_MESSAGE(cmdState, id) {
     MESSAGE_OBJ.call(this, cmdState, this.actor, id);
 }
 
-export function BALLOON() {
+export const BALLOON = unimplemented();
 
-}
-
-export function NO_SHOCK() {
-
-}
+export const NO_SHOCK = unimplemented();
 
 export function CINEMA_MODE(mode) {
     if (mode === 1) {
@@ -619,21 +570,13 @@ export function CINEMA_MODE(mode) {
     }
 }
 
-export function SAVE_HERO() {
+export const SAVE_HERO = unimplemented();
 
-}
+export const RESTORE_HERO = unimplemented();
 
-export function RESTORE_HERO() {
+export const ANIM_SET = unimplemented();
 
-}
-
-export function ANIM_SET() {
-
-}
-
-export function RAIN() {
-
-}
+export const RAIN = unimplemented();
 
 export function GAME_OVER() {
     this.game.getState().hero.life = 0;
@@ -646,9 +589,7 @@ export function THE_END() {
     this.game.getState().hero.magic = 80;
 }
 
-export function ESCALATOR() {
-
-}
+export const ESCALATOR = unimplemented();
 
 export function PLAY_MUSIC(index) {
     const musicSource = this.game.getAudioManager().getMusicSource();
@@ -657,21 +598,13 @@ export function PLAY_MUSIC(index) {
     });
 }
 
-export function TRACK_TO_VAR_GAME() {
+export const TRACK_TO_VAR_GAME = unimplemented();
 
-}
+export const VAR_GAME_TO_TRACK = unimplemented();
 
-export function VAR_GAME_TO_TRACK() {
+export const ANIM_TEXTURE = unimplemented();
 
-}
-
-export function ANIM_TEXTURE() {
-
-}
-
-export function ADD_MESSAGE_OBJ() {
-
-}
+export const ADD_MESSAGE_OBJ = unimplemented();
 
 export function BRUTAL_EXIT() {
     this.state.continue = false;
@@ -681,21 +614,13 @@ export function BRUTAL_EXIT() {
     this.actor.isVisible = false;
 }
 
-export function REPLACE() {
+export const REPLACE = unimplemented();
 
-}
+export const SCALE = unimplemented();
 
-export function SCALE() {
+export const SET_ARMOR = unimplemented();
 
-}
-
-export function SET_ARMOR() {
-
-}
-
-export function SET_ARMOR_OBJ() {
-
-}
+export const SET_ARMOR_OBJ = unimplemented();
 
 export function ADD_LIFE_POINT_OBJ(index, points) {
     const actor = this.scene.actors[index];
@@ -704,13 +629,9 @@ export function ADD_LIFE_POINT_OBJ(index, points) {
     }
 }
 
-export function STATE_INVENTORY() {
+export const STATE_INVENTORY = unimplemented();
 
-}
-
-export function SET_HIT_ZONE() {
-
-}
+export const SET_HIT_ZONE = unimplemented();
 
 export function SAMPLE(index) {
     const soundFxSource = this.game.getAudioManager().getSoundFxSource();
@@ -733,25 +654,15 @@ export function SAMPLE_ALWAYS(index) {
     });
 }
 
-export function SAMPLE_STOP() {
+export const SAMPLE_STOP = unimplemented();
 
-}
+export const REPEAT_SAMPLE = unimplemented();
 
-export function REPEAT_SAMPLE() {
+export const BACKGROUND = unimplemented();
 
-}
+export const SET_RAIL = unimplemented();
 
-export function BACKGROUND() {
-
-}
-
-export function SET_RAIL() {
-
-}
-
-export function INVERSE_BETA() {
-
-}
+export const INVERSE_BETA = unimplemented();
 
 export function ADD_GOLD_PIECES(value) {
     this.game.getState().hero.money += value;
@@ -760,59 +671,31 @@ export function ADD_GOLD_PIECES(value) {
     }
 }
 
-export function SPY() {
+export const SPY = unimplemented();
 
-}
+export const DEBUG = unimplemented();
 
-export function DEBUG() {
+export const DEBUG_OBJ = unimplemented();
 
-}
+export const POPCORN = unimplemented();
 
-export function DEBUG_OBJ() {
+export const FLOW_POINT = unimplemented();
 
-}
+export const FLOW_OBJ = unimplemented();
 
-export function POPCORN() {
+export const SET_ANIM_DIAL = unimplemented();
 
-}
+export const PCX = unimplemented();
 
-export function FLOW_POINT() {
+export const END_MESSAGE = unimplemented();
 
-}
+export const END_MESSAGE_OBJ = unimplemented();
 
-export function FLOW_OBJ() {
+export const PARM_SAMPLE = unimplemented();
 
-}
+export const NEW_SAMPLE = unimplemented();
 
-export function SET_ANIM_DIAL() {
+export const POS_OBJ_AROUND = unimplemented();
 
-}
-
-export function PCX() {
-
-}
-
-export function END_MESSAGE() {
-
-}
-
-export function END_MESSAGE_OBJ() {
-
-}
-
-export function PARM_SAMPLE() {
-
-}
-
-export function NEW_SAMPLE() {
-
-}
-
-export function POS_OBJ_AROUND() {
-
-}
-
-export function PCX_MESS_OBJ() {
-
-}
+export const PCX_MESS_OBJ = unimplemented();
 

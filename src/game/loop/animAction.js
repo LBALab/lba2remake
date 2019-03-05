@@ -2,6 +2,7 @@ import { each } from 'lodash';
 
 import { AnimActionOpcode } from '../data/animAction';
 import { getRandom } from '../../utils/lba';
+import { unimplemented } from '../scripting/utils';
 
 export function processAnimAction(ctx) {
     const {entityAnim, animState} = ctx;
@@ -17,29 +18,17 @@ export function processAnimAction(ctx) {
     });
 }
 
-export function NOP() {
+export const NOP = unimplemented();
 
-}
+export const BODY = unimplemented();
 
-export function BODY() {
+export const BODP = unimplemented();
 
-}
+export const ANIM = unimplemented();
 
-export function BODP() {
+export const ANIP = unimplemented();
 
-}
-
-export function ANIM() {
-
-}
-
-export function ANIP() {
-
-}
-
-export function HIT() {
-
-}
+export const HIT = unimplemented();
 
 export function SAMPLE(action, {game}) {
     const soundFxSource = game.getAudioManager().getSoundFxSource();
@@ -59,33 +48,19 @@ export function SAMPLE_RND(action, {game}) {
     });
 }
 
-export function THROW() {
+export const THROW = unimplemented();
 
-}
+export const THROW_MAGIC = unimplemented();
 
-export function THROW_MAGIC() {
+export const SAMPLE_REPEAT = unimplemented();
 
-}
+export const THROW_SEARCH = unimplemented();
 
-export function SAMPLE_REPEAT() {
+export const THROW_ALPHA = unimplemented();
 
-}
+export const SAMPLE_STOP = unimplemented();
 
-export function THROW_SEARCH() {
-
-}
-
-export function THROW_ALPHA() {
-
-}
-
-export function SAMPLE_STOP() {
-
-}
-
-export function ZV() {
-
-}
+export const ZV = unimplemented();
 
 export function LEFT_STEP(action, {game, animState}) {
     let sampleIndex = animState.floorSound;
@@ -111,9 +86,7 @@ export function RIGHT_STEP(action, {game, animState}) {
     }
 }
 
-export function HIT_HERO() {
-
-}
+export const HIT_HERO = unimplemented();
 
 export function THROW_3D() {
 
@@ -131,72 +104,45 @@ export function THROW_3D_MAGIC() {
 
 }
 
-export function SUPER_HIT() {
-
-}
+export const SUPER_HIT = unimplemented();
 
 export function THROW_OBJ_3D() {
 
 }
 
-export function PATH() {
+export const PATH = unimplemented();
 
-}
-
-export function FLOW() {
-
-}
+export const FLOW = unimplemented();
 
 export function FLOW_3D() {
 
 }
 
-export function THROW_DART() {
+export const THROW_DART = unimplemented();
 
-}
+export const SHIELD = unimplemented();
 
-export function SHIELD() {
-
-}
-
-export function SAMPLE_MAGIC() {
-}
+export const SAMPLE_MAGIC = unimplemented();
 
 export function THROW_3D_CONQUE() {
 
 }
 
-export function ZV_ANIMIT() {
+export const ZV_ANIMIT = unimplemented();
 
-}
+export const IMPACT = unimplemented();
 
-export function IMPACT() {
+export const RENVOIE = unimplemented();
 
-}
+export const RENVOYABLE = unimplemented();
 
-export function RENVOIE() {
+export const TRANSPARENT = unimplemented();
 
-}
+export const SCALE = unimplemented();
 
-export function RENVOYABLE() {
+export const LEFT_JUMP = unimplemented();
 
-}
-
-export function TRANSPARENT() {
-
-}
-
-export function SCALE() {
-
-}
-
-export function LEFT_JUMP() {
-
-}
-
-export function RIGHT_JUMP() {
-
-}
+export const RIGHT_JUMP = unimplemented();
 
 export function NEW_SAMPLE(action, {game}) {
     const soundFxSource = game.getAudioManager().getSoundFxSource();
@@ -209,10 +155,6 @@ export function IMPACT_3D() {
 
 }
 
-export function THROW_MAGIC_EXTRA() {
+export const THROW_MAGIC_EXTRA = unimplemented();
 
-}
-
-export function THROW_FOUDRE() {
-
-}
+export const THROW_FOUDRE = unimplemented();

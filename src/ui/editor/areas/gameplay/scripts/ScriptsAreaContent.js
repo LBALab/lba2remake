@@ -471,6 +471,7 @@ function getLineStyle(line, command, dash) {
     return extend({
         marginTop: isFirst ? '0.5em' : 0,
         paddingTop: isFirst ? '0.5em' : 0,
-        borderTop: isFirst ? dashLine : 0
+        borderTop: isFirst ? dashLine : 0,
+        opacity: command.unimplemented ? 0.5 : 1
     }, lineBaseStyle);
 }

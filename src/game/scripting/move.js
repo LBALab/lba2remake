@@ -1,4 +1,5 @@
 import { getDistance } from '../../utils/lba';
+import { unimplemented } from './utils';
 
 export function GOTO_POINT(pointIndex) {
     const point = this.scene.points[pointIndex];
@@ -25,9 +26,7 @@ export function ANGLE(angle) {
     this.actor.setAngle(angle);
 }
 
-export function GOTO_SYM_POINT() {
-
-}
+export const GOTO_SYM_POINT = unimplemented();
 
 export function WAIT_NUM_ANIM(repeats) {
     if (!this.state.animCount) {
@@ -64,9 +63,7 @@ export function SPEED(speed) {
     this.actor.props.speed = speed;
 }
 
-export function BACKGROUND() {
-
-}
+export const BACKGROUND = unimplemented();
 
 export function WAIT_NUM_SECOND(numSeconds, unknown, time) {
     if (!this.state.waitUntil) {
@@ -94,29 +91,17 @@ export function WAIT_NUM_DECIMAL_RND(maxNumDsec, unknown, time) {
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, null, time);
 }
 
-export function OPEN_LEFT() {
+export const OPEN_LEFT = unimplemented();
 
-}
+export const OPEN_RIGHT = unimplemented();
 
-export function OPEN_RIGHT() {
+export const OPEN_UP = unimplemented();
 
-}
+export const OPEN_DOWN = unimplemented();
 
-export function OPEN_UP() {
+export const CLOSE = unimplemented();
 
-}
-
-export function OPEN_DOWN() {
-
-}
-
-export function CLOSE() {
-
-}
-
-export function WAIT_DOOR() {
-
-}
+export const WAIT_DOOR = unimplemented();
 
 export function SAMPLE_RND(index) {
     const soundFxSource = this.game.getAudioManager().getSoundFxSource();
@@ -132,17 +117,11 @@ export function SAMPLE_ALWAYS(index) {
     });
 }
 
-export function SAMPLE_STOP() {
+export const SAMPLE_STOP = unimplemented();
 
-}
+export const PLAY_ACF = unimplemented();
 
-export function PLAY_ACF() {
-
-}
-
-export function REPEAT_SAMPLE() {
-
-}
+export const REPEAT_SAMPLE = unimplemented();
 
 export function SIMPLE_SAMPLE(index) {
     const soundFxSource = this.game.getAudioManager().getSoundFxSource();
@@ -165,21 +144,13 @@ export function FACE_HERO() {
     }
 }
 
-export function ANGLE_RND() {
+export const ANGLE_RND = unimplemented();
 
-}
+export const REPLACE = unimplemented();
 
-export function REPLACE() {
+export const SPRITE = unimplemented();
 
-}
-
-export function SPRITE() {
-
-}
-
-export function SET_FRAME() {
-
-}
+export const SET_FRAME = unimplemented();
 
 export function SET_FRAME_3DS() {
 
@@ -209,14 +180,8 @@ export function WAIT_FRAME_3DS() {
 
 }
 
-export function INTERVAL() {
+export const INTERVAL = unimplemented();
 
-}
+export const FREQUENCY = unimplemented();
 
-export function FREQUENCY() {
-
-}
-
-export function VOLUME() {
-
-}
+export const VOLUME = unimplemented();
