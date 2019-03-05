@@ -6,8 +6,8 @@ import Indent from '../indent';
 export const MoveOpcode = [
     { opcode: 0x00, command: 'END', handler: st.END, indent: Indent.ZERO },
     { opcode: 0x01, command: 'NOP', handler: st.NOP, indent: Indent.ONE },
-    { opcode: 0x02, command: 'BODY', handler: cm.BODY, args: ['Int8'], indent: Indent.ONE },
-    { opcode: 0x03, command: 'ANIM', handler: cm.ANIM, args: ['Uint16'], indent: Indent.ONE },
+    { opcode: 0x02, command: 'BODY', handler: cm.BODY, args: ['Int8:body'], indent: Indent.ONE },
+    { opcode: 0x03, command: 'ANIM', handler: cm.ANIM, args: ['Uint16:anim'], indent: Indent.ONE },
     { opcode: 0x04, command: 'GOTO_POINT', handler: mv.GOTO_POINT, args: ['Uint8'], indent: Indent.ONE },
     { opcode: 0x05, command: 'WAIT_ANIM', handler: mv.WAIT_ANIM, indent: Indent.ONE },
     { opcode: 0x06, command: 'LOOP', handler: st.NOP, indent: Indent.ONE },

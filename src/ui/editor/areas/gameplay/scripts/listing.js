@@ -1,7 +1,7 @@
 import {cloneDeep, map, each, find, isFinite, isInteger, extend} from 'lodash';
 import Indent from '../../../../../game/scripting/indent';
 import {getRotation} from '../../../../../utils/lba';
-import {getObjectName, getVarName} from '../../../DebugData';
+import DebugData, {getObjectName, getVarName} from '../../../DebugData';
 import {formatVar} from './format';
 
 export function getDebugListing(type, scene, actor) {
@@ -201,6 +201,10 @@ export function mapDataName(scene, data) {
             type: data.type.substr(0, 7),
             idx: data.idx
         }, data.value);
+    } else if (data.type === 'anim') {
+        return DebugData.metadata.anims[data.value] || data.value;
+    } else if (data.type === 'body') {
+        return DebugData.metadata.bodies[data.value] || data.value;
     }
     if (isFinite(data.value) && !isInteger(data.value)) {
         return data.value.toFixed(2);
