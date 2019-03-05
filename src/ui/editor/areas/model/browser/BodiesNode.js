@@ -1,7 +1,9 @@
 import React from 'react';
-import { findIndex } from 'lodash';
+import { map, filter, find, findIndex } from 'lodash';
 import { getEntities } from './entitities';
 import DebugData, { saveMetaData } from '../../../DebugData';
+import { Orientation } from '../../../layout';
+import { makeOutlinerArea } from '../../utils/outliner';
 
 const BodyNode = {
     dynamic: true,
@@ -24,6 +26,16 @@ const BodyNode = {
             });
         }
     },
+    ctxMenu: [
+        {
+            name: 'Find all references',
+            onClick: (component, body) => {
+                findAllReferencesToBody(body, component).then((area) => {
+                    component.props.split(Orientation.VERTICAL, area);
+                });
+            }
+        }
+    ],
     numChildren: () => 0,
     child: () => null,
     childData: () => null,
@@ -34,7 +46,7 @@ const BodyNode = {
     props: body => [
         {
             id: 'index',
-            value: body.index,
+            value: body.bodyIndex,
             render: value => <span>[{value}]</span>
         }
     ],
@@ -86,5 +98,28 @@ const BodiesNode = {
         }
     }
 };
+
+async function findAllReferencesToBody(body, component) {
+    const name = DebugData.metadata.bodies[body.index] || `body_${body.index}`;
+    const entities = getEntities();
+    const filteredEntities = filter(entities, e => find(e.bodies, b => b.index === body.index));
+    const area = makeOutlinerArea(
+        `references_to_${name}`,
+        `References to ${name}`,
+        {
+            name: `References to ${name}`,
+            children: map(filteredEntities, e => ({
+                name: DebugData.metadata.entities[e.index] || `entity_${e.index}`,
+                children: [],
+                onClick: () => {
+                    const {setEntity, setBody} = component.props.rootStateHandler;
+                    setEntity(e.index);
+                    setBody(body.index);
+                }
+            }))
+        }
+    );
+    return area;
+}
 
 export default BodiesNode;

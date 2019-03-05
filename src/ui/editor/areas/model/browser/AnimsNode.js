@@ -1,7 +1,9 @@
 import React from 'react';
-import { findIndex } from 'lodash';
+import { map, filter, find, findIndex } from 'lodash';
 import { getEntities } from './entitities';
 import DebugData, { saveMetaData } from '../../../DebugData';
+import { Orientation } from '../../../layout';
+import { makeOutlinerArea } from '../../utils/outliner';
 
 const AnimNode = {
     dynamic: true,
@@ -24,6 +26,16 @@ const AnimNode = {
             });
         }
     },
+    ctxMenu: [
+        {
+            name: 'Find all references',
+            onClick: (component, anim) => {
+                findAllReferencesToAnim(anim, component).then((area) => {
+                    component.props.split(Orientation.VERTICAL, area);
+                });
+            }
+        }
+    ],
     numChildren: () => 0,
     child: () => null,
     childData: () => null,
@@ -34,7 +46,7 @@ const AnimNode = {
     props: anim => [
         {
             id: 'index',
-            value: anim.index,
+            value: anim.animIndex,
             render: value => <span>[{value}]</span>
         }
     ],
@@ -86,5 +98,28 @@ const AnimsNode = {
         }
     }
 };
+
+async function findAllReferencesToAnim(anim, component) {
+    const name = DebugData.metadata.anims[anim.index] || `anim_${anim.index}`;
+    const entities = getEntities();
+    const filteredEntities = filter(entities, e => find(e.anims, a => a.index === anim.index));
+    const area = makeOutlinerArea(
+        `references_to_${name}`,
+        `References to ${name}`,
+        {
+            name: `References to ${name}`,
+            children: map(filteredEntities, e => ({
+                name: DebugData.metadata.entities[e.index] || `entity_${e.index}`,
+                children: [],
+                onClick: () => {
+                    const {setEntity, setAnim} = component.props.rootStateHandler;
+                    setEntity(e.index);
+                    setAnim(anim.index);
+                }
+            }))
+        }
+    );
+    return area;
+}
 
 export default AnimsNode;
