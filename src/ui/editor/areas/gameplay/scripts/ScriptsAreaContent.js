@@ -155,7 +155,7 @@ export default class ScriptEditor extends FrameListener {
                     if (active) {
                         if (firstBreakpoint) {
                             if (this.scrollElem !== lineNum) {
-                                lineNum.scrollIntoView();
+                                lineNum.scrollIntoView({block: 'center'});
                                 this.scrollElem = lineNum;
                             }
                             firstBreakpoint = false;
@@ -173,7 +173,7 @@ export default class ScriptEditor extends FrameListener {
                     if (active) {
                         if (autoScroll && firstActive && firstBreakpoint) {
                             if (this.scrollElem !== lineNum) {
-                                lineNum.scrollIntoView();
+                                lineNum.scrollIntoView({block: 'center'});
                                 this.scrollElem = lineNum;
                             }
                             firstActive = false;
@@ -188,7 +188,7 @@ export default class ScriptEditor extends FrameListener {
                     if (type === 'life' && DebugData.selection && DebugData.selection.lifeLine === i + 1) {
                         const tgt = i + 1;
                         const ll = Math.max(i - 1, 0);
-                        ln[ll].scrollIntoView();
+                        ln[ll].scrollIntoView({block: 'center'});
                         this.scrollElem = ln[ll];
                         lineCmd.style.background = '#7d6b37';
                         setTimeout(() => {
