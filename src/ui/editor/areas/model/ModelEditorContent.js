@@ -204,9 +204,14 @@ export default class Model extends FrameListener {
 
     updateMovement(grid, animState, time, interpolate) {
         const delta = time.delta * 1000;
-        const speedZ = ((animState.step.z * delta) / animState.keyframeLength);
-        const speedY = ((animState.step.y * delta) / animState.keyframeLength);
-        const speedX = ((animState.step.x * delta) / animState.keyframeLength);
+        let speedZ = 0;
+        let speedY = 0;
+        let speedX = 0;
+        if (animState.keyframeLength > 0) {
+            speedZ = ((animState.step.z * delta) / animState.keyframeLength);
+            speedY = ((animState.step.y * delta) / animState.keyframeLength);
+            speedX = ((animState.step.x * delta) / animState.keyframeLength);
+        }
         const ts = 0.96;
         const inRange = v => fmod(v + (ts * 4.5), ts * 9) - (ts * 4.5);
 
