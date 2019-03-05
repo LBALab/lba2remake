@@ -6,20 +6,20 @@ import DebugData, { saveMetaData } from '../../../DebugData';
 const BodyNode = {
     dynamic: true,
     name: (body) => {
-        if (body && body.bodyIndex !== undefined) {
-            return DebugData.metadata.bodies[body.bodyIndex] || `body_${body.bodyIndex}`;
+        if (body && body.index !== undefined) {
+            return DebugData.metadata.bodies[body.index] || `body_${body.index}`;
         }
         return 'unknown';
     },
     key: (body, idx) => `body_${idx}`,
     allowRenaming: () => true,
     rename: (body, newName) => {
-        if (body && body.bodyIndex !== undefined) {
-            DebugData.metadata.bodies[body.bodyIndex] = newName;
+        if (body && body.index !== undefined) {
+            DebugData.metadata.bodies[body.index] = newName;
             saveMetaData({
                 type: 'models',
                 subType: 'bodies',
-                subIndex: body.bodyIndex,
+                subIndex: body.index,
                 value: newName
             });
         }
