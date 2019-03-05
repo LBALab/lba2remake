@@ -1,0 +1,22 @@
+{
+  "entities": [
+    "twinsen_normal",
+    "twinsen_athletic",
+    "twinsen_aggressive",
+    "twinsen_discreet"
+  ],
+  "bodies": [
+    "twinsen_sweater",
+    "twinsen_tunic",
+    "twinsen_sword",
+    "twinsen_blowgun",
+    "twinsen_blowtron"
+  ],
+  "anims": [
+    "idle",
+    "move_forward",
+    "move_backward",
+    "turn_left",
+    "turn_right"
+  ]
+}

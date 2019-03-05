@@ -1,12 +1,19 @@
 import { getEntities } from './entitities';
+import DebugData, { saveMetaData } from '../../../DebugData';
 
 const EntityNode = {
     dynamic: true,
-    name: data => data.name || `entity_${data.index}`,
+    name: entity => DebugData.metadata.entities[entity.index] || `entity_${entity.index}`,
     numChildren: () => 0,
     allowRenaming: () => true,
-    rename: (data, newName) => {
-        data.name = newName;
+    rename: (entity, newName) => {
+        DebugData.metadata.entities[entity.index] = newName;
+        saveMetaData({
+            type: 'models',
+            subType: 'entities',
+            subIndex: entity.index,
+            value: newName
+        });
     },
     onClick: (data, setRoot, component) => {
         const {setEntity} = component.props.rootStateHandler;

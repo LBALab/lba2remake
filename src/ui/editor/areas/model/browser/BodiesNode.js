@@ -1,14 +1,13 @@
 import React from 'react';
 import { findIndex } from 'lodash';
 import { getEntities } from './entitities';
-
-const bodyNames = [];
+import DebugData, { saveMetaData } from '../../../DebugData';
 
 const BodyNode = {
     dynamic: true,
     name: (body) => {
         if (body && body.bodyIndex !== undefined) {
-            return bodyNames[body.bodyIndex] || `body_${body.bodyIndex}`;
+            return DebugData.metadata.bodies[body.bodyIndex] || `body_${body.bodyIndex}`;
         }
         return 'unknown';
     },
@@ -16,7 +15,13 @@ const BodyNode = {
     allowRenaming: () => true,
     rename: (body, newName) => {
         if (body && body.bodyIndex !== undefined) {
-            bodyNames[body.bodyIndex] = newName;
+            DebugData.metadata.bodies[body.bodyIndex] = newName;
+            saveMetaData({
+                type: 'models',
+                subType: 'bodies',
+                subIndex: body.bodyIndex,
+                value: newName
+            });
         }
     },
     numChildren: () => 0,

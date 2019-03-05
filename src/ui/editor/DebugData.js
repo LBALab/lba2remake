@@ -14,7 +14,10 @@ const DebugData = {
     },
     metadata: {
         game: {},
-        scenes: {}
+        scenes: {},
+        entities: [],
+        bodies: [],
+        anims: []
     },
     step: false
 };
@@ -164,6 +167,33 @@ export function locateObject(object) {
     scene.camera.centerOn(object);
 }
 
+export async function loadModelsMetaData() {
+    return new Promise((resolve) => {
+        const request = new XMLHttpRequest();
+        request.open('GET', `metadata/models.json${getAuthQueryString()}`, true);
+
+        request.onload = function onload() {
+            if (this.status === 200) {
+                try {
+                    const models = JSON.parse(request.response);
+                    DebugData.metadata.entities = models.entities;
+                    DebugData.metadata.bodies = models.bodies;
+                    DebugData.metadata.anims = models.anims;
+                } catch (e) {
+                    // continue regardless of error
+                }
+            }
+            resolve();
+        };
+
+        request.onerror = function onerror() {
+            resolve();
+        };
+
+        request.send(null);
+    });
+}
+
 export async function loadSceneMetaData(sceneIndex) {
     if (sceneIndex in DebugData.metadata.scenes) {
         return null;
@@ -192,7 +222,7 @@ export async function loadSceneMetaData(sceneIndex) {
     });
 }
 
-async function saveMetaData(metadata) {
+export async function saveMetaData(metadata) {
     const authData = await checkAuth();
     if (authData) {
         const content = extend({}, metadata, {auth: authData});

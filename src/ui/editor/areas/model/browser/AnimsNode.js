@@ -1,14 +1,13 @@
 import React from 'react';
 import { findIndex } from 'lodash';
 import { getEntities } from './entitities';
-
-const animNames = [];
+import DebugData, { saveMetaData } from '../../../DebugData';
 
 const AnimNode = {
     dynamic: true,
     name: (anim) => {
         if (anim && anim.index !== undefined) {
-            return animNames[anim.index] || `anim_${anim.index}`;
+            return DebugData.metadata.anims[anim.index] || `anim_${anim.index}`;
         }
         return 'unknown';
     },
@@ -16,7 +15,13 @@ const AnimNode = {
     allowRenaming: () => true,
     rename: (anim, newName) => {
         if (anim && anim.index !== undefined) {
-            animNames[anim.index] = newName;
+            DebugData.metadata.anims[anim.index] = newName;
+            saveMetaData({
+                type: 'models',
+                subType: 'anims',
+                subIndex: anim.index,
+                value: newName
+            });
         }
     },
     numChildren: () => 0,
