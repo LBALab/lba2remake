@@ -82,6 +82,7 @@ const BodiesNode = {
             if (idx !== -1) {
                 const newIndex = Math.max(idx - 1, 0);
                 setBody(ent.bodies[newIndex].index);
+                centerView(newIndex);
             }
         }
     },
@@ -94,10 +95,18 @@ const BodiesNode = {
             if (idx !== -1) {
                 const newIndex = Math.min(idx + 1, ent.bodies.length - 1);
                 setBody(ent.bodies[newIndex].index);
+                centerView(newIndex);
             }
         }
     }
 };
+
+function centerView(index) {
+    const elem = document.getElementById(`otl.Bodies.body_${index}`);
+    if (elem) {
+        elem.scrollIntoView({block: 'center'});
+    }
+}
 
 async function findAllReferencesToBody(body, component) {
     const name = DebugData.metadata.bodies[body.index] || `body_${body.index}`;

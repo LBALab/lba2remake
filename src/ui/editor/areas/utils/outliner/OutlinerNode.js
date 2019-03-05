@@ -109,7 +109,7 @@ export default class OutlinerNode extends React.Component {
             whiteSpace: 'normal'
         };
 
-        return <div>
+        return <div id={this.props.id}>
             <div style={{fontSize, padding: `${fontSize / 8}px 0`, position: 'relative'}}>
                 {this.renderCollapseButton()}
                 <div style={lineStyle}>
@@ -311,11 +311,13 @@ export default class OutlinerNode extends React.Component {
         if (!child)
             return null;
 
+        const rootName = this.props.rootName;
         const childName = child.dynamic ? call('name', child, childData, idx) : child.name;
         const key = child.dynamic ? call('key', child, childData, idx) : child.key;
         const path = concat(this.props.path, key || childName || idx);
         return <OutlinerNode
             key={path.join('/')}
+            id={`otl.${rootName}.${path.join('.')}`}
             node={child}
             data={childData}
             fontSize={childFontSize}

@@ -82,6 +82,7 @@ const AnimsNode = {
             if (idx !== -1) {
                 const newIndex = Math.max(idx - 1, 0);
                 setAnim(ent.anims[newIndex].index);
+                centerView(newIndex);
             }
         }
     },
@@ -94,10 +95,18 @@ const AnimsNode = {
             if (idx !== -1) {
                 const newIndex = Math.min(idx + 1, ent.anims.length - 1);
                 setAnim(ent.anims[newIndex].index);
+                centerView(newIndex);
             }
         }
     }
 };
+
+function centerView(index) {
+    const elem = document.getElementById(`otl.Anims.anim_${index}`);
+    if (elem) {
+        elem.scrollIntoView({block: 'center'});
+    }
+}
 
 async function findAllReferencesToAnim(anim, component) {
     const name = DebugData.metadata.anims[anim.index] || `anim_${anim.index}`;

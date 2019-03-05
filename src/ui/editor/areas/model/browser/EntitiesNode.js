@@ -1,9 +1,12 @@
 import { getEntities } from './entitities';
 import DebugData, { saveMetaData } from '../../../DebugData';
 
+const name = entity =>
+    DebugData.metadata.entities[entity.index] || `entity_${entity.index}`;
+
 const EntityNode = {
     dynamic: true,
-    name: entity => DebugData.metadata.entities[entity.index] || `entity_${entity.index}`,
+    name,
     numChildren: () => 0,
     allowRenaming: () => true,
     rename: (entity, newName) => {
@@ -37,13 +40,27 @@ const EntitiesNode = {
     up: (data, collapsed, component) => {
         const {entity} = component.props.rootState;
         const {setEntity} = component.props.rootStateHandler;
-        setEntity(Math.max(entity - 1, 0));
+        const index = Math.max(entity - 1, 0);
+        setEntity(index);
+        centerView(index);
     },
     down: (data, collapsed, component) => {
         const {entity} = component.props.rootState;
         const {setEntity} = component.props.rootStateHandler;
-        setEntity(Math.min(entity + 1, getEntities().length - 1));
+        const index = Math.min(entity + 1, getEntities().length - 1);
+        setEntity(index);
+        centerView(index);
     }
 };
+
+function centerView(index) {
+    const ent = getEntities()[index];
+    if (ent) {
+        const elem = document.getElementById(`otl.Entities.${name(ent)}`);
+        if (elem) {
+            elem.scrollIntoView({block: 'center'});
+        }
+    }
+}
 
 export default EntitiesNode;
