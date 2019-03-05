@@ -3,7 +3,6 @@ import {map, findIndex, extend, isEmpty} from 'lodash';
 import {editor, fullscreen} from '../styles/index';
 import {Orientation} from './layout';
 import NewArea, {NewAreaContent} from './areas/utils/NewArea';
-import AreaLoader from './areas/utils/AreaLoader';
 
 const menuHeight = 26;
 
@@ -164,9 +163,6 @@ export default class Area extends React.Component {
     }
 
     renderAreaSelectionPopup() {
-        if (this.props.area === AreaLoader) {
-            return null;
-        }
         const isNew = (this.props.area === NewArea);
         const availableAreas = map(this.props.availableAreas);
         if (!isNew) {

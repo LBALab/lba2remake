@@ -156,7 +156,7 @@ export async function findAllReferences(varDef) {
     }
     const refs = await findAllRefsInSceneList(varDef, sceneList);
     const varname = getVarName(varDef);
-    const area = makeOutlinerArea(
+    return makeOutlinerArea(
         `references_to_${varname}`,
         `References to ${varname}`,
         {
@@ -164,11 +164,6 @@ export async function findAllReferences(varDef) {
             children: isVarGames ? mapLocations(refs) : mapActors(refs[0])
         }
     );
-    area.generator = {
-        func: 'findAllReferences',
-        data: varDef
-    };
-    return area;
 }
 
 function mapLocations(refs, locations = LocationsNode.children) {

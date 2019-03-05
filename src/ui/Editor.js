@@ -4,8 +4,7 @@ import Area from './editor/Area';
 import {fullscreen} from './styles';
 import NewArea from './editor/areas/utils/NewArea';
 import {Type, Orientation} from './editor/layout';
-import {findAreaContentById, findMainAreas, generateContent} from './editor/areas';
-import AreaLoader from './editor/areas/utils/AreaLoader';
+import {findAreaContentById, findMainAreas} from './editor/areas';
 import DebugData from './editor/DebugData';
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
@@ -320,7 +319,6 @@ function saveNode(node) {
     return {
         type: Type.AREA,
         content_id: node.content.id,
-        generator: node.content.generator,
         state: node.stateHandler.state,
         root: node.root
     };
@@ -365,19 +363,11 @@ function loadNode(editor, node) {
         type: Type.AREA,
         root: node.root
     };
-    if (node.generator) {
-        generateContent(node.generator).then((area) => {
-            tgtNode.content = area;
-            editor.setState({layout: editor.state.layout});
-        });
-        tgtNode.content = AreaLoader;
-    } else {
-        tgtNode.content = findAreaContentById(node.content_id) || NewArea;
-        if (tgtNode
-            && node.content_id !== tgtNode.content.id
-            && node.content_id === tgtNode.content.replaces) {
-            node.state = null;
-        }
+    tgtNode.content = findAreaContentById(node.content_id) || NewArea;
+    if (tgtNode
+        && node.content_id !== tgtNode.content.id
+        && node.content_id === tgtNode.content.replaces) {
+        node.state = null;
     }
 
     initStateHandler(editor, tgtNode, node.state);
