@@ -35,7 +35,7 @@ const EntitiesNode = {
     down: (data, collapsed, component) => {
         const {entity} = component.props.rootState;
         const {setEntity} = component.props.rootStateHandler;
-        setEntity(Math.min(entity + 1, getEntities().length));
+        setEntity(Math.min(entity + 1, getEntities().length - 1));
     }
 };
 

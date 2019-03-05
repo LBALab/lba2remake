@@ -1,15 +1,31 @@
+import { findIndex } from 'lodash';
 import { getEntities } from './entitities';
 
 const bodyNames = {};
 
-const getName = key => bodyNames[key] || key;
+const getKey = (body, idx) => {
+    if (body && body.index !== undefined && body.bodyIndex !== undefined) {
+        return `body_${body.index}_${body.bodyIndex}`;
+    } else if (idx !== undefined) {
+        return `unknown_body_${idx}`;
+    }
+    return null;
+};
+
+const getName = (body, idx) => {
+    const key = getKey(body, idx);
+    return bodyNames[key] || key;
+};
 
 const BodyNode = {
     dynamic: true,
-    name: data => getName(`body_${data.index}_${data.bodyIndex}`),
+    name: (body, idx) => getName(body, idx),
     allowRenaming: () => true,
-    rename: (data, newName) => {
-        bodyNames[`body_${data.index}_${data.bodyIndex}`] = newName;
+    rename: (body, newName) => {
+        const key = getKey(body);
+        if (key !== null) {
+            bodyNames[key] = newName;
+        }
     },
     numChildren: () => 0,
     child: () => null,
@@ -19,10 +35,10 @@ const BodyNode = {
         setBody(data.index);
     },
     selected: (data, component) => {
-        if (!component.props.rootState)
+        if (!component.props.rootState || !data)
             return false;
-        const { entity, body } = component.props.rootState;
-        return entity === data.entity && body === data.index;
+        const { body } = component.props.rootState;
+        return body === data.index;
     },
     icon: () => 'editor/icons/body.png',
 };
@@ -39,12 +55,31 @@ const BodiesNode = {
     childData: (ignored, idx, component) => {
         const { entity } = component.props.rootState;
         const ent = getEntities()[entity];
-        if (!ent)
-            return null;
-
-        return Object.assign({
-            entity: ent.index
-        }, ent.bodies[idx]);
+        return ent && ent.bodies[idx];
+    },
+    up: (data, collapsed, component) => {
+        const {entity, body} = component.props.rootState;
+        const {setBody} = component.props.rootStateHandler;
+        const ent = getEntities()[entity];
+        if (ent) {
+            const idx = findIndex(ent.bodies, b => b.index === body);
+            if (idx !== -1) {
+                const newIndex = Math.max(idx - 1, 0);
+                setBody(ent.bodies[newIndex].index);
+            }
+        }
+    },
+    down: (data, collapsed, component) => {
+        const {entity, body} = component.props.rootState;
+        const {setBody} = component.props.rootStateHandler;
+        const ent = getEntities()[entity];
+        if (ent) {
+            const idx = findIndex(ent.bodies, b => b.index === body);
+            if (idx !== -1) {
+                const newIndex = Math.min(idx + 1, ent.bodies.length - 1);
+                setBody(ent.bodies[newIndex].index);
+            }
+        }
     }
 };
 
