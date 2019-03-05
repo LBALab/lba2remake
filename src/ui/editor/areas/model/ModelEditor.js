@@ -1,7 +1,11 @@
 import ModelEditorContent from './ModelEditorContent';
 import ModelEditorMenu from './ModelEditorMenu';
 import {Orientation, Type} from '../../layout';
-import ModelsBrowserArea from './browser/ModelsBrowserArea';
+import {
+    EntityBrowserArea,
+    BodyBrowserArea,
+    AnimBrowserArea
+} from './browser/ModelsBrowserArea';
 import TimelineArea from './timeline/TimelineArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 
@@ -29,33 +33,43 @@ const ModelEditor = {
                 anim: 0
             });
         },
-        setBody(entity, body) {
-            if (entity !== this.state.entity) {
-                this.setState({ entity, body, anim: 0 });
-            } else {
-                this.setState({ entity, body });
-            }
+        setBody(body) {
+            this.setState({ body });
         },
-        setAnim(entity, anim) {
-            if (entity !== this.state.entity) {
-                this.setState({ entity, anim, body: 0 });
-            } else {
-                this.setState({ entity, anim });
-            }
+        setAnim(anim) {
+            this.setState({ anim });
         }
     },
     toolAreas: [
-        ModelsBrowserArea,
+        EntityBrowserArea,
+        BodyBrowserArea,
+        AnimBrowserArea,
         TimelineArea,
         InspectorArea
     ],
     defaultLayout: {
         type: Type.LAYOUT,
         orientation: Orientation.HORIZONTAL,
-        splitAt: 75,
+        splitAt: 70,
         children: [
             { type: Type.AREA, content_id: 'model', root: true },
-            { type: Type.AREA, content_id: 'models_list' },
+            {
+                type: Type.LAYOUT,
+                orientation: Orientation.VERTICAL,
+                splitAt: 50,
+                children: [
+                    { type: Type.AREA, content_id: 'entities' },
+                    {
+                        type: Type.LAYOUT,
+                        orientation: Orientation.HORIZONTAL,
+                        splitAt: 50,
+                        children: [
+                            { type: Type.AREA, content_id: 'bodies' },
+                            { type: Type.AREA, content_id: 'anims' },
+                        ]
+                    },
+                ]
+            }
         ]
     }
 };
