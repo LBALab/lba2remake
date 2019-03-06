@@ -5,15 +5,24 @@ import AnimsNode from './AnimsNode';
 
 export const EntityBrowserArea = makeOutlinerArea('entities', 'Entities', EntitiesNode, {
     name: 'Entities',
-    icon: 'folder.png'
+    icon: 'folder.png',
+    style: {
+        background: '#111111'
+    }
 });
 
 export const BodyBrowserArea = makeOutlinerArea('bodies', 'Bodies', BodiesNode, {
     name: 'Bodies',
-    icon: 'folder.png'
+    icon: 'folder.png',
+    style: {
+        background: '#110000'
+    }
 });
 
 export const AnimBrowserArea = makeOutlinerArea('anims', 'Anims', AnimsNode, {
     name: 'Anims',
-    icon: 'folder.png'
+    icon: 'folder.png',
+    style: {
+        background: '#000011'
+    }
 });
