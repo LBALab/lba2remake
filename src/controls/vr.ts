@@ -1,4 +1,6 @@
 export function makeVRControls(game: any) {
+    let pressed = false;
+    let pressTS = null;
     return {
         type: 'vr',
         dispose: () => {},
@@ -17,9 +19,33 @@ export function makeVRControls(game: any) {
                 }
             }
             if (gamepad) {
-                game.controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
-                game.controlsState.relativeToCam = true;
-                game.controlsState.action = gamepad.buttons[0].pressed ? 1 : 0;
+                //
+                // Using following code as documentation:
+                // https://github.com/stewdio/THREE.VRController/blob/master/VRController.js
+                //
+                if (gamepad.id === 'Oculus Go Controller') {
+                    game.controlsState.action = 0;
+                    if (gamepad.buttons[0].pressed) {
+                        if (pressed === false) {
+                            pressed = true;
+                            pressTS = new Date().getTime();
+                        }
+                        game.controlsState.controlVector.set(0, 0);
+                    } else {
+                        game.controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
+                        if (pressed) {
+                            const now = new Date().getTime();
+                            if (now - pressTS > 500) {
+                                game.getState().hero.behaviour =
+                                    (game.getState().hero.behaviour + 1) % 4;
+                            } else {
+                                game.controlsState.action = 1;
+                            }
+                            pressed = false;
+                        }
+                    }
+                    game.controlsState.relativeToCam = true;
+                }
             }
         }
     };
