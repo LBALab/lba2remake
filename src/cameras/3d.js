@@ -66,28 +66,33 @@ function processFollow3DMovement(controlsState, controlNode, scene, time) {
     controlNode.lookAt(controlsState.cameraLookAtLerp);
 }
 
-function processFree3DMovement(controlsState, controlNode, scene, time) {
-    const groundInfo = scene.scenery.physics.getGroundInfo(controlNode.position);
-    const altitude = Math.max(
-        0.0,
-        Math.min(1.0, (controlNode.position.y - groundInfo.height) * 0.7)
-    );
+export function processFree3DMovement(controlsState, controlNode, scene, time) {
+    let speedFactor = 0;
+    let height = 0;
+    if (scene.isIsland) {
+        const groundInfo = scene.scenery.physics.getGroundInfo(controlNode.position);
+        height = groundInfo.height;
+        speedFactor = Math.max(
+            0.0,
+            Math.min(1.0, (controlNode.position.y - groundInfo.height) * 0.7)
+        );
+    }
 
     const euler = new THREE.Euler();
     euler.setFromQuaternion(controlsState.cameraHeadOrientation, 'YXZ');
     const speed = new THREE.Vector3().set(
-        controlsState.cameraSpeed.x * 0.3,
-        -(controlsState.cameraSpeed.z * 0.5) * euler.x,
-        controlsState.cameraSpeed.z * 0.5
+        controlsState.cameraSpeed.x * 7.2,
+        -(controlsState.cameraSpeed.z * 12) * euler.x,
+        controlsState.cameraSpeed.z * 7.2
     );
 
-    speed.multiplyScalar((altitude * altitude * 3) + 1);
+    speed.multiplyScalar((speedFactor * speedFactor * 0.125) + 1);
     speed.applyQuaternion(controlsState.cameraOrientation);
     speed.applyQuaternion(onlyY(controlsState.cameraHeadOrientation));
     speed.multiplyScalar(time.delta);
 
     controlNode.position.add(speed);
-    controlNode.position.y = Math.max(groundInfo.height + 0.08, controlNode.position.y);
+    controlNode.position.y = Math.max(height + 1.5, controlNode.position.y);
     controlNode.quaternion.copy(controlsState.cameraOrientation);
     controlNode.quaternion.multiply(controlsState.cameraHeadOrientation);
 }

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { processFree3DMovement } from './3d';
 
 const CAMERA_HERO_OFFSET = new THREE.Vector3(-6, 7.2, 6);
 
@@ -28,17 +29,21 @@ export function getIso3DCamera() {
             controlNode.position.copy(controlsState.cameraLerp);
             controlNode.lookAt(controlsState.cameraLookAtLerp);
         },
-        update: (scene, controlsState) => {
-            const { heroPos, cameraPos } = getTargetPos(scene);
+        update: (scene, controlsState, time) => {
+            if (controlsState.freeCamera) {
+                processFree3DMovement(controlsState, controlNode, scene, time);
+            } else {
+                const { heroPos, cameraPos } = getTargetPos(scene);
 
-            controlsState.cameraLerp.lerpVectors(controlNode.position, cameraPos, 0.1);
-            controlsState.cameraLookAtLerp.lerpVectors(
-                controlsState.cameraLookAtLerp.clone(),
-                heroPos,
-                0.1);
+                controlsState.cameraLerp.lerpVectors(controlNode.position, cameraPos, 0.1);
+                controlsState.cameraLookAtLerp.lerpVectors(
+                    controlsState.cameraLookAtLerp.clone(),
+                    heroPos,
+                    0.1);
 
-            controlNode.position.copy(controlsState.cameraLerp);
-            controlNode.lookAt(controlsState.cameraLookAtLerp);
+                controlNode.position.copy(controlsState.cameraLerp);
+                controlNode.lookAt(controlsState.cameraLookAtLerp);
+            }
         }
     };
 }
