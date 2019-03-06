@@ -140,14 +140,14 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
             }
         }
     }
-    animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex);
+    animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex, time);
     if (hero.props.animIndex !== animIndex) {
         hero.props.animIndex = animIndex;
         hero.resetAnimState();
     }
 }
 
-function processCamRelativeMovement(controlsState, scene, hero, animIndex) {
+function processCamRelativeMovement(controlsState, scene, hero, animIndex, time) {
     if (controlsState.relativeToCam) {
         const camera = scene.camera.controlNode;
         if (!camera)
@@ -170,7 +170,7 @@ function processCamRelativeMovement(controlsState, scene, hero, animIndex) {
             const euler = new THREE.Euler();
             euler.setFromQuaternion(flatCam.quaternion, 'XZY');
             hero.physics.temp.angle = euler.y;
-            hero.physics.orientation = flatCam.quaternion.clone();
+            hero.physics.orientation.slerp(flatCam.quaternion, time.delta * 15);
             animIndex = AnimType.FORWARD;
             hero.props.runtimeFlags.isWalking = true;
         }
