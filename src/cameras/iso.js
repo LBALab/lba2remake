@@ -63,8 +63,8 @@ function getObjectIsoPos(camera, object) {
 
 export function processFreeIsoMovement(camera, controlsState, time) {
     camera.offset.add(new THREE.Vector2(
-        controlsState.cameraSpeed.x * time.delta * 500,
-        -controlsState.cameraSpeed.z * time.delta * 500
+        -controlsState.cameraSpeed.x * time.delta * 500,
+        controlsState.cameraSpeed.z * time.delta * 500
     ));
     camera.updateProjectionMatrix();
 }
