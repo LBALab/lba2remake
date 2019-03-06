@@ -8,9 +8,13 @@ in vec2 vUv;
 
 out vec4 fragColor;
 
-#require "../common/fog.frag"
+float fog() {
+    float depth = (gl_FragCoord.z * 0.04) / gl_FragCoord.w;
+    float a = exp2(-0.25 * depth * depth * 1.442695);
+    return a;
+}
 
 void main() {
     vec3 color = texture(uTexture, vUv * scale).rgb;
-    fragColor = vec4(fog(color), 1.0);
+    fragColor = vec4(color, fog());
 }

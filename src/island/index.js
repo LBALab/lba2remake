@@ -120,10 +120,10 @@ function loadIslandNode(params, props, files, ambience) {
 }
 
 function loadSky(geometries) {
-    const sky = new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 1, 1), geometries.sky.material);
+    const sky = new THREE.Mesh(new THREE.PlaneGeometry(3072, 3072, 1, 1), geometries.sky.material);
     sky.name = 'sky';
     sky.rotateX(Math.PI / 2.0);
-    sky.position.y = 2.0;
+    sky.position.y = 48.0;
     return sky;
 }
 

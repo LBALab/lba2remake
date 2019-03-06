@@ -146,7 +146,8 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     scale: {value: envInfo.scale}
-                }
+                },
+                transparent: true
             })
         }
     };
