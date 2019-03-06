@@ -116,6 +116,11 @@ function setupThreeRenderer(pixelRatio, canvas, antialias, webgl2) {
         };
         if (webgl2 && window.WebGL2RenderingContext) {
             options.context = canvas.getContext('webgl2');
+            // eslint-disable-next-line
+            console.log('Using WebGL 2');
+        } else {
+            // eslint-disable-next-line
+            console.log('Using WebGL 1');
         }
         const renderer = new THREE.WebGLRenderer(options);
 
