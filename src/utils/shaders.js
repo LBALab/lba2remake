@@ -19,16 +19,16 @@ const textureLodPolyfill =
 #endif
 }`;
 
-const R_IN = /^( *)in( .*)$/;
-const R_OUT = /^( *)out( .*)$/;
-const R_FRAGCOLOR = /^( *)fragColor( .*)$/;
-const R_TEXTURE = /^(.*)texture\((.*)$/;
-const R_TEXTURE_LOD = /^(.*)textureLod\((.*)$/;
-const R_PRECISION = /^( *)precision(.*)$/;
+const R_IN = /^( *)in( .*)\r?$/;
+const R_OUT = /^( *)out( .*)\r?$/;
+const R_FRAGCOLOR = /^( *)fragColor( .*)\r?$/;
+const R_TEXTURE = /^(.*)texture\((.*)\r?$/;
+const R_TEXTURE_LOD = /^(.*)textureLod\((.*)\r?$/;
+const R_PRECISION = /^( *)precision(.*)\r?$/;
 
 export function compile(type, source) {
     const lines = source.split('\n');
-    if (lines[0] !== '#version 300 es') {
+    if (!lines[0].match('#version 300 es')) {
         throw new Error('Shader must have "#version 300 es" directive as first line');
     }
     const webGL2 = window.WebGL2RenderingContext && window.params.webgl2;
