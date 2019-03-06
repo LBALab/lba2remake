@@ -46,7 +46,7 @@ export function get3DCamera() {
     };
 }
 
-function processFollow3DMovement(controlsState, controlNode, scene) {
+function processFollow3DMovement(controlsState, controlNode, scene, time) {
     const hero = scene.actors[0];
     const heroPos = HERO_TARGET_POS.clone();
     const cameraPos = CAMERA_HERO_OFFSET.clone();
@@ -54,11 +54,11 @@ function processFollow3DMovement(controlsState, controlNode, scene) {
     cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
     scene.scenery.physics.processCameraCollisions(cameraPos);
 
-    controlsState.cameraLerp.lerpVectors(controlNode.position, cameraPos, 0.025);
+    controlsState.cameraLerp.lerpVectors(controlNode.position, cameraPos, time.delta * 2);
     controlsState.cameraLookAtLerp.lerpVectors(
         controlsState.cameraLookAtLerp.clone(),
         heroPos,
-        0.1);
+        time.delta * 6);
     controlNode.position.set(
         controlsState.cameraLerp.x,
         controlsState.cameraLerp.y,
