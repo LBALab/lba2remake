@@ -5,6 +5,17 @@ import DebugData, { saveMetaData } from '../../../DebugData';
 import { Orientation } from '../../../layout';
 import { makeOutlinerArea } from '../../utils/outliner';
 
+const idxStyle = {
+    fontSize: 13,
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    padding: 2,
+    color: 'white',
+    background: 'black',
+    opacity: 0.8
+};
+
 const BodyNode = {
     dynamic: true,
     name: (body) => {
@@ -47,7 +58,7 @@ const BodyNode = {
         {
             id: 'index',
             value: body.bodyIndex,
-            render: value => <span>[{value}]</span>
+            render: value => <span style={idxStyle}>{value}</span>
         }
     ],
     selected: (data, component) => {
