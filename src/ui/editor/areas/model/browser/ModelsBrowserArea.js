@@ -8,7 +8,8 @@ export const EntityBrowserArea = makeOutlinerArea('entities', 'Entities', Entiti
     icon: 'folder.png',
     style: {
         background: '#111111'
-    }
+    },
+    hideRoot: true
 });
 
 export const BodyBrowserArea = makeOutlinerArea('bodies', 'Bodies', BodiesNode, {
@@ -16,7 +17,8 @@ export const BodyBrowserArea = makeOutlinerArea('bodies', 'Bodies', BodiesNode, 
     icon: 'folder.png',
     style: {
         background: '#110000'
-    }
+    },
+    hideRoot: true
 });
 
 export const AnimBrowserArea = makeOutlinerArea('anims', 'Anims', AnimsNode, {
@@ -24,5 +26,6 @@ export const AnimBrowserArea = makeOutlinerArea('anims', 'Anims', AnimsNode, {
     icon: 'folder.png',
     style: {
         background: '#000011'
-    }
+    },
+    hideRoot: true
 });
