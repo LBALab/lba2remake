@@ -38,7 +38,7 @@ function processActorPhysics(scene, actor, time) {
 function processTeleports(scene) {
     const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
-    pos.y += 0.005;
+    pos.y += 0.12;
     if (scene.isIsland && (pos.x < 0.1 || pos.z < 0.1 || pos.x > 47.9 || pos.z > 47.9)) {
         const globalPos = new THREE.Vector3();
         globalPos.applyMatrix4(hero.threeObject.matrixWorld);
