@@ -23,6 +23,9 @@ export function getIso3DCamera() {
             camera.updateProjectionMatrix();
         },
         init: (scene, controlsState) => {
+            if (!scene.actors[0].threeObject)
+                return;
+
             const { heroPos, cameraPos } = getTargetPos(scene);
             controlsState.cameraLerp.copy(cameraPos);
             controlsState.cameraLookAtLerp.copy(heroPos);
@@ -33,6 +36,9 @@ export function getIso3DCamera() {
             if (controlsState.freeCamera) {
                 processFree3DMovement(controlsState, controlNode, scene, time);
             } else {
+                if (!scene.actors[0].threeObject)
+                    return;
+
                 const { heroPos, cameraPos } = getTargetPos(scene);
 
                 controlsState.cameraLerp.lerpVectors(controlNode.position, cameraPos, 0.1);
