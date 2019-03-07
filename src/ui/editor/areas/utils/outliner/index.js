@@ -11,7 +11,8 @@ export function makeOutlinerArea(id, name, content, extensions = {}) {
             content,
             extensions.frame,
             extensions.style,
-            extensions.separator
+            extensions.separator,
+            extensions.hideRoot
         ),
         getInitialState: () => ({
             path: []

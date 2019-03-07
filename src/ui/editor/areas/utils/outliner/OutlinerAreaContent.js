@@ -21,7 +21,7 @@ const Separator = {
     dot: '.'
 };
 
-export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
+export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hideRoot = false) {
     return class OutlinerAreaContent extends FrameListener {
         constructor(props) {
             super(props);
@@ -64,6 +64,7 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal') {
             if (root.node) {
                 return <WithShortcuts>
                     {shortcuts => <OutlinerNode
+                        hidden={hideRoot}
                         key={path.join('/')}
                         node={root.node}
                         data={root.data}

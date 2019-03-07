@@ -2,6 +2,35 @@ import React from 'react';
 import {map, concat, times, isEqual, noop, isFunction} from 'lodash';
 import NodeProps from './NodeProps';
 
+const KeyValueNode = {
+    dynamic: true,
+    needsData: true,
+    iconStyle: {
+        width: 14,
+        height: 14
+    },
+    name: data => data.key,
+    icon: data => data.icon,
+    props: data => [
+        {
+            id: 'value',
+            value: data.value,
+            render: (value) => {
+                if (data.render) {
+                    return data.render(value);
+                }
+                const onClick = () => {
+                    if (data.onClick) {
+                        data.onClick();
+                    }
+                };
+                return <span onClick={onClick}>{value}</span>;
+            }
+        }
+    ],
+    onClick: () => {},
+    color: (data) => data.color
+};
 export default class OutlinerNode extends React.Component {
     constructor(props) {
         super(props);
@@ -103,27 +132,46 @@ export default class OutlinerNode extends React.Component {
     render() {
         const fontSize = this.props.fontSize || 18;
         const childFontSize = Math.max(fontSize - 2, 14);
+        const paddingLeft = this.props.hidden ? 0 : 16;
+
+        return <div id={this.props.id}>
+            {this.renderTitle(fontSize)}
+            <div style={{paddingLeft}}>{this.renderChildProps(childFontSize)}</div>
+            <div style={{paddingLeft}}>{this.renderChildren(childFontSize)}</div>
+            {this.renderContextMenu()}
+        </div>;
+    }
+
+    renderTitle(fontSize) {
+        if (this.props.hidden) {
+            return null;
+        }
+
         const lineStyle = {
             marginLeft: 16,
             display: 'inline-block',
             whiteSpace: 'normal'
         };
 
-        return <div id={this.props.id}>
-            <div style={{fontSize, padding: `${fontSize / 8}px 0`, position: 'relative'}}>
-                {this.renderCollapseButton()}
-                <div style={lineStyle}>
-                    <span style={{whiteSpace: 'nowrap', verticalAlign: 'top'}}>
-                        {this.renderIcon()}
-                        {this.renderName()}
-                    </span>
-                    <span style={{whiteSpace: 'normal', wordBreak: 'break-word'}}>
-                        {this.renderProps()}
-                    </span>
-                </div>
+        const selectedStyle = this.state.selected && this.props.node.selectedStyle;
+
+        const style = Object.assign({
+            fontSize,
+            padding: `${fontSize / 8}px 0`,
+            position: 'relative'
+        }, this.props.node.style || {}, selectedStyle || {});
+
+        return <div style={style}>
+            {this.renderCollapseButton()}
+            <div style={lineStyle}>
+                <span style={{whiteSpace: 'nowrap', verticalAlign: 'top'}}>
+                    {this.renderIcon()}
+                    {this.renderName()}
+                </span>
+                <span style={{whiteSpace: 'nowrap', overflow: 'hidden'}}>
+                    {this.renderProps()}
+                </span>
             </div>
-            <div style={{paddingLeft: 16}}>{this.renderChildren(childFontSize)}</div>
-            {this.renderContextMenu()}
         </div>;
     }
 
@@ -170,7 +218,14 @@ export default class OutlinerNode extends React.Component {
     }
 
     renderIcon() {
-        return this.state.icon !== 'none' ? <img key="icon" style={{verticalAlign: 'middle', padding: '0 5px'}} src={this.state.icon}/> : ' ';
+        if (this.state.icon === 'none')
+            return ' ';
+
+        const style = Object.assign({
+            verticalAlign: 'middle',
+            padding: '0 5px'
+        }, this.props.node.iconStyle || {});
+        return <img key="icon" style={style} src={this.state.icon}/>;
     }
 
     renderName() {
@@ -186,13 +241,13 @@ export default class OutlinerNode extends React.Component {
             ? (isFunction(node.title) ? this.call('title') : node.title)
             : undefined;
 
-        const nameStyle = {
+        const nameStyle = Object.assign({
             cursor: 'pointer',
             background: selected ? 'white' : 'transparent',
             color: selected ? 'black' : color,
             padding: selected ? '0 2px' : 0,
             verticalAlign: 'middle'
-        };
+        }, node.nameStyle || {});
 
         const onContextMenu = (e) => {
             e.preventDefault();
@@ -261,7 +316,9 @@ export default class OutlinerNode extends React.Component {
             this.setState({collapsed: !this.state.collapsed});
         };
 
-        const numChildren = this.state.numChildren;
+        const node = this.props.node;
+        const numChildProps = node.childProps ? node.childProps.length : 0;
+        const numChildren = this.state.numChildren + numChildProps;
         const collapsed = this.state.collapsed;
         if (numChildren > 0 && !this.props.node.noCollapse) {
             return <span onClick={toggleCollapse} style={{cursor: 'pointer', display: 'inline-block', position: 'absolute', left: 0}}>{collapsed ? '+' : '-'}</span>;
@@ -277,6 +334,24 @@ export default class OutlinerNode extends React.Component {
             userData={this.props.userData}
             path={this.props.path}
         />;
+    }
+
+    renderChildProps(childFontSize) {
+        const node = this.props.node;
+        if (!this.state.collapsed) {
+            return map(
+                node.childProps,
+                (prop, idx) =>
+                    this.renderChild(childFontSize, KeyValueNode, idx, {
+                        key: prop.name,
+                        value: prop.value(this.props.data),
+                        icon: prop.icon && prop.icon(this.props.data),
+                        render: prop.render,
+                        color: prop.color
+                    })
+            );
+        }
+        return null;
     }
 
     renderChildren(childFontSize) {
