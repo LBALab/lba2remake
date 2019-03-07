@@ -43,14 +43,18 @@ function processCollisions(sections, scene, actor) {
     const ground = getGround(section, POSITION);
     const height = ground.height;
 
-    actor.physics.position.y = Math.max(height, actor.physics.position.y);
+    if (actor.props.flags.hasCollisionFloor) {
+        actor.physics.position.y = Math.max(height, actor.physics.position.y);
+    }
     actor.animState.floorSound = -1;
 
     if (section) {
         actor.animState.floorSound = ground.sound;
 
-        processBoxIntersections(section, actor, POSITION);
-        if (!FLAGS.hitObject) {
+        if (actor.props.flags.hasCollisionBricks) {
+            processBoxIntersections(section, actor, POSITION);
+        }
+        if (!FLAGS.hitObject && actor.props.flags.hasCollisionFloor) {
             TGT.copy(actor.physics.position);
             TGT.sub(actor.threeObject.position);
             TGT.setY(0);
