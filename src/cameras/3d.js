@@ -25,6 +25,8 @@ export function get3DCamera() {
         init: (scene, controlsState) => {
             if (!controlsState.freeCamera) {
                 const hero = scene.actors[0];
+                if (!hero.threeObject)
+                    return;
                 const heroPos = HERO_TARGET_POS.clone();
                 heroPos.applyMatrix4(hero.threeObject.matrixWorld);
 
