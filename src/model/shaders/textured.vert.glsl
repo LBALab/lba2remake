@@ -14,6 +14,7 @@ in float color;
 in float boneIndex;
 
 out vec2 vUv;
+out vec3 vNormal;
 
 void main() {
     int idx = int(boneIndex);
@@ -21,9 +22,8 @@ void main() {
     vec4 bRot = boneRot[idx];
     vec3 pos = position + 2.0 * cross(bRot.xyz, cross(bRot.xyz, position) + bRot.w * position) + bPos;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    //vPosition = position;
-    //vec4 newNormal = rotationMatrix * bones[int(boneIndex)] * vec4(normal, 1.0);
-    //vNormal = newNormal.xyz;
-    //vColor = color;
+    vec3 n = normal + 2.0 * cross(bRot.xyz, cross(bRot.xyz, normal) + bRot.w * normal);
+    vec4 newNormal = rotationMatrix * vec4(n, 1.0);
+    vNormal = newNormal.xyz;
     vUv = uv;
 }
