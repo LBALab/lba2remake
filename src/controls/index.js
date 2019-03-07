@@ -8,6 +8,7 @@ export function createControls(params, game, canvas, sceneManager, renderer) {
     let controls;
     if (renderer.vr) {
         controls = [
+            makeFirstPersonTouchControls(game),
             makeVRControls(game)
         ];
     } else if (params.mobile) {

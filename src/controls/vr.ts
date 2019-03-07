@@ -28,18 +28,21 @@ export function makeVRControls(game: any) {
                     if (gamepad.buttons[0].pressed) {
                         if (pressed === false) {
                             pressed = true;
-                            pressTS = new Date().getTime();
+                            pressTS = Date.now();
                         }
                         game.controlsState.controlVector.set(0, 0);
                     } else {
                         game.controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
                         if (pressed) {
-                            const now = new Date().getTime();
-                            if (now - pressTS > 500) {
-                                game.getState().hero.behaviour =
-                                    (game.getState().hero.behaviour + 1) % 4;
+                            if (game.controlsState.skipListener) {
+                                game.controlsState.skipListener();
                             } else {
-                                game.controlsState.action = 1;
+                                if (Date.now() - pressTS > 300) {
+                                    game.getState().hero.behaviour =
+                                        (game.getState().hero.behaviour + 1) % 4;
+                                } else {
+                                    game.controlsState.action = 1;
+                                }
                             }
                             pressed = false;
                         }

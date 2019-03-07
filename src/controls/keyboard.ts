@@ -77,7 +77,9 @@ function keyDownHandler(params, game, sceneManager, event) {
             break;
         case 90:
         case 'KeyZ':
-            game.controlsState.action = 1;
+            if (!game.controlsState.skipListener) {
+                game.controlsState.action = 1;
+            }
             break;
         case 18:
         case 'AltLeft':
@@ -132,6 +134,12 @@ function keyDownHandler(params, game, sceneManager, event) {
         case 80: // p
         case 'KeyP':
             game.togglePause();
+            break;
+        case 13:
+        case 'Enter':
+            if (game.controlsState.skipListener) {
+                game.controlsState.skipListener();
+            }
             break;
     }
 }

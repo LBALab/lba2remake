@@ -26,7 +26,7 @@ export function MESSAGE(cmdState, id) {
 export function MESSAGE_OBJ(cmdState, actor, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
     const hero = this.scene.actors[0];
-    if (!cmdState.listener) {
+    if (!cmdState.skipListener) {
         const text = this.scene.data.texts[id];
         if (text.type === 9) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
@@ -41,7 +41,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 value: text.value
             };
             this.game.setUiState({interjections});
-            cmdState.listener = function listener() { };
+            cmdState.skipListener = function skipListener() { };
             setTimeout(() => {
                 const interjectionsCopy = clone(this.game.getUiState().interjections);
                 delete interjectionsCopy[itrjId];
@@ -65,42 +65,20 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 }
             });
             const that = this;
-            cmdState.listener = function listener(event) {
-                const key = event.code || event.which || event.keyCode;
-                if (key === 'Enter' || key === 13) {
-                    const skip = that.game.getUiState().skip;
-                    if (skip) {
-                        cmdState.ended = true;
-                    } else {
-                        that.game.setUiState({
-                            skip: true
-                        });
-                    }
+            cmdState.skipListener = function skipListener() {
+                const skip = that.game.getUiState().skip;
+                if (skip) {
+                    cmdState.ended = true;
+                } else {
+                    that.game.setUiState({
+                        skip: true
+                    });
                 }
             };
-            cmdState.listenerStart = function listenerStart() {
-                cmdState.startTime = Date.now();
-            };
-            cmdState.listenerEnd = function listenerEnd() {
-                const endTime = Date.now();
-                const elapsed = endTime - cmdState.startTime;
-                if (elapsed < 300) {
-                    const skip = that.game.getUiState().skip;
-                    if (skip) {
-                        cmdState.ended = true;
-                    } else {
-                        that.game.setUiState({
-                            skip: true
-                        });
-                    }
-                }
-            };
-            window.addEventListener('keydown', cmdState.listener);
-            window.addEventListener('touchstart', cmdState.listenerStart);
-            window.addEventListener('touchend', cmdState.listenerEnd);
+            this.game.controlsState.skipListener = cmdState.skipListener;
             if (text.type === 9) {
                 setTimeout(() => {
-                    cmdState.listener();
+                    cmdState.skipListener();
                 }, 4500);
             }
         }
@@ -114,14 +92,10 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         const text = this.scene.data.texts[id];
         if (text.type !== 9) {
             this.game.setUiState({ text: null, skip: false, });
-            window.removeEventListener('keydown', cmdState.listener);
-            window.removeEventListener('touchstart', cmdState.listenerStart);
-            window.removeEventListener('touchend', cmdState.listenerEnd);
+            this.game.controlsState.skipListener = null;
             hero.props.dirMode = DirMode.MANUAL;
         }
-        delete cmdState.listener;
-        delete cmdState.listenerStart;
-        delete cmdState.listenerEnd;
+        delete cmdState.skipListener;
         delete cmdState.ended;
         if (cmdState.startTime) {
             delete cmdState.startTime;
@@ -217,7 +191,7 @@ export function INC_CHAPTER() {
 export function FOUND_OBJECT(cmdState, id) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
     const hero = this.scene.actors[0];
-    if (!cmdState.listener) {
+    if (!cmdState.skipListener) {
         hero.props.dirMode = DirMode.NO_MOVE;
         hero.props.prevEntityIndex = hero.props.entityIndex;
         hero.props.prevAnimIndex = hero.props.animIndex;
@@ -238,42 +212,20 @@ export function FOUND_OBJECT(cmdState, id) {
             foundObject: id
         });
         const that = this;
-        cmdState.listener = function listener(event) {
-            const key = event.code || event.which || event.keyCode;
-            if (key === 'Enter' || key === 13) {
-                const skip = that.game.getUiState().skip;
-                if (skip) {
-                    cmdState.ended = true;
-                } else {
-                    that.game.setUiState({
-                        skip: true
-                    });
-                }
+        cmdState.skipListener = function skipListener() {
+            const skip = that.game.getUiState().skip;
+            if (skip) {
+                cmdState.ended = true;
+            } else {
+                that.game.setUiState({
+                    skip: true
+                });
             }
         };
-        cmdState.listenerStart = function listenerStart() {
-            cmdState.startTime = Date.now();
-        };
-        cmdState.listenerEnd = function listenerEnd() {
-            const endTime = Date.now();
-            const elapsed = endTime - cmdState.startTime;
-            if (elapsed < 300) {
-                const skip = that.game.getUiState().skip;
-                if (skip) {
-                    cmdState.ended = true;
-                } else {
-                    that.game.setUiState({
-                        skip: true
-                    });
-                }
-            }
-        };
-        window.addEventListener('keydown', cmdState.listener);
-        window.addEventListener('touchstart', cmdState.listenerStart);
-        window.addEventListener('touchend', cmdState.listenerEnd);
+        this.game.controlsState.skipListener = cmdState.skipListener;
         if (text.type === 9) {
             setTimeout(() => {
-                cmdState.listener();
+                cmdState.skipListener();
             }, 6500);
         }
         voiceSource.load(text.index, -1, () => {
@@ -285,14 +237,10 @@ export function FOUND_OBJECT(cmdState, id) {
     if (cmdState.ended) {
         voiceSource.stop();
         this.game.setUiState({ skip: false, text: null, foundObject: null });
-        window.removeEventListener('keydown', cmdState.listener);
-        window.removeEventListener('touchstart', cmdState.listenerStart);
-        window.removeEventListener('touchend', cmdState.listenerEnd);
+        this.game.controlsState.skipListener = null;
         hero.props.dirMode = DirMode.MANUAL;
 
-        delete cmdState.listener;
-        delete cmdState.listenerStart;
-        delete cmdState.listenerEnd;
+        delete cmdState.skipListener;
         delete cmdState.ended;
         if (cmdState.startTime) {
             delete cmdState.startTime;
@@ -365,7 +313,7 @@ export function HIT_OBJ(actor, strength) {
 }
 
 export function PLAY_SMK(cmdState, video) {
-    if (!cmdState.listener) {
+    if (!cmdState.skipListener) {
         const that = this;
         this.game.pause();
         const src = VideoData.VIDEO.find(v => v.name === video).file;
@@ -379,43 +327,16 @@ export function PLAY_SMK(cmdState, video) {
                 src,
                 onEnded
             }});
-        cmdState.listener = function listener(event) {
-            const key = event.code || event.which || event.keyCode;
-            if (key === 'Enter' || key === 13 ||
-                key === 'Escape' || key === 27) {
-                onEnded();
-            }
+        cmdState.skipListener = function skipListener() {
+            onEnded();
         };
-        cmdState.listenerStart = function listenerStart() {
-            cmdState.startTime = Date.now();
-        };
-        cmdState.listenerEnd = function listenerEnd() {
-            const endTime = Date.now();
-            const elapsed = endTime - cmdState.startTime;
-            if (elapsed < 300) {
-                const skip = that.game.getUiState().skip;
-                if (skip) {
-                    onEnded();
-                } else {
-                    that.game.setUiState({
-                        skip: true
-                    });
-                }
-            }
-        };
-        window.addEventListener('keydown', cmdState.listener);
-        window.addEventListener('touchstart', cmdState.listenerStart);
-        window.addEventListener('touchend', cmdState.listenerEnd);
+        this.game.controlsState.skipListener = cmdState.skipListener;
     }
 
     if (cmdState.ended) {
-        window.removeEventListener('keydown', cmdState.listener);
-        window.removeEventListener('touchstart', cmdState.listenerStart);
-        window.removeEventListener('touchend', cmdState.listenerEnd);
-        delete cmdState.listener;
-        delete cmdState.listenerStart;
-        delete cmdState.listenerEnd;
+        delete cmdState.skipListener;
         delete cmdState.ended;
+        this.game.controlsState.skipListener = null;
         if (cmdState.startTime) {
             delete cmdState.startTime;
         }
@@ -454,7 +375,7 @@ export function ASK_CHOICE(cmdState, index) {
 export function ASK_CHOICE_OBJ(cmdState, actor, index) {
     const voiceSource = this.game.getAudioManager().getVoiceSource();
     const hero = this.scene.actors[0];
-    if (!cmdState.listener) {
+    if (!cmdState.skipListener) {
         const text = this.scene.data.texts[index];
         hero.props.dirMode = DirMode.NO_MOVE;
         hero.props.prevEntityIndex = hero.props.entityIndex;
@@ -471,13 +392,10 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
             color: actor.props.textColor
         };
         this.game.setUiState({ ask: uiState.ask });
-        cmdState.listener = function listener(event) {
-            const key = event.code || event.which || event.keyCode;
-            if (key === 'Enter' || key === 13) {
-                cmdState.ended = true;
-            }
+        cmdState.skipListener = function skipListener() {
+            cmdState.ended = true;
         };
-        window.addEventListener('keydown', cmdState.listener);
+        this.game.controlsState.skipListener = cmdState.skipListener;
 
         voiceSource.load(text.index, this.scene.data.textBankId, () => {
             voiceSource.play();
@@ -488,9 +406,9 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
         const uiState = this.game.getUiState();
         this.state.choice = uiState.choice;
         this.game.setUiState({ ask: {choices: []}, choice: null });
-        window.removeEventListener('keydown', cmdState.listener);
+        this.game.controlsState.skipListener = null;
         hero.props.dirMode = DirMode.MANUAL;
-        delete cmdState.listener;
+        delete cmdState.skipListener;
         delete cmdState.ended;
     } else {
         this.state.reentryOffset = this.state.offset;

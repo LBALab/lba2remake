@@ -191,17 +191,7 @@ export default class GameUI extends FrameListener {
 
     listener(event) {
         const key = event.code || event.which || event.keyCode;
-        if (this.state.video) {
-            const videoSrc = this.state.video.src;
-            if (key === 'Enter' || key === 13 ||
-                key === 'Escape' || key === 27) {
-                this.setState({video: null});
-                const introSrc = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
-                if (videoSrc === introSrc) {
-                    this.startNewGameScene();
-                }
-            }
-        } else {
+        if (!this.state.video) {
             if (key === 'Escape' || key === 27) {
                 if (!this.state.game.isPaused()) {
                     this.showMenu(true);
@@ -226,16 +216,18 @@ export default class GameUI extends FrameListener {
             }
             case 71: { // New Game
                 this.hideMenu();
-                const that = this;
                 const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
+                const onEnded = () => {
+                    this.setState({video: null});
+                    this.startNewGameScene();
+                    this.state.game.controlsState.skipListener = null;
+                };
+                this.state.game.controlsState.skipListener = onEnded;
                 this.state.game.pause();
                 this.setState({
                     video: {
                         src,
-                        onEnded: () => {
-                            that.setState({video: null});
-                            that.startNewGameScene();
-                        }
+                        onEnded
                     }
                 });
                 break;

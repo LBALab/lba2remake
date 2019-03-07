@@ -64,7 +64,7 @@ function GOTO_SCENE(game, scene, zone, hero) {
 function TEXT(game, scene, zone, hero) {
     const voiceSource = game.getAudioManager().getVoiceSource();
     if (game.controlsState.action === 1) {
-        if (!scene.zoneState.listener) {
+        if (!scene.zoneState.skipListener) {
             scene.actors[0].props.dirMode = DirMode.NO_MOVE;
 
             hero.props.prevEntityIndex = hero.props.entityIndex;
@@ -81,40 +81,18 @@ function TEXT(game, scene, zone, hero) {
                     color: getHtmlColor(scene.data.palette, (zone.props.info0 * 16) + 12)
                 }
             });
-            scene.zoneState.listener = (event) => {
-                const key = event.code || event.which || event.keyCode;
-                if (key === 'Enter' || key === 13) {
-                    const skip = game.getUiState().skip;
-                    if (skip) {
-                        scene.zoneState.ended = true;
-                    } else {
-                        game.setUiState({
-                            skip: true
-                        });
-                    }
-                }
-            };
-            scene.zoneState.listenerStart = function listenerStart() {
-                scene.zoneState.startTime = Date.now();
-            };
-            scene.zoneState.listenerEnd = function listenerEnd() {
-                const endTime = Date.now();
-                const elapsed = endTime - scene.zoneState.startTime;
-                if (elapsed < 300) {
-                    const skip = game.getUiState().skip;
-                    if (skip) {
-                        scene.zoneState.ended = true;
-                    } else {
-                        game.setUiState({
-                            skip: true
-                        });
-                    }
+            scene.zoneState.skipListener = () => {
+                const skip = game.getUiState().skip;
+                if (skip) {
+                    scene.zoneState.ended = true;
+                } else {
+                    game.setUiState({
+                        skip: true
+                    });
                 }
             };
 
-            window.addEventListener('keydown', scene.zoneState.listener);
-            window.addEventListener('touchstart', scene.zoneState.listenerStart);
-            window.addEventListener('touchend', scene.zoneState.listenerEnd);
+            game.controlsState.skipListener = scene.zoneState.skipListener;
 
             voiceSource.load(text.index, scene.data.textBankId, () => {
                 voiceSource.play();
@@ -127,12 +105,8 @@ function TEXT(game, scene, zone, hero) {
         hero.props.animIndex = hero.props.prevAnimIndex;
         voiceSource.stop();
         game.setUiState({ text: null, skip: false });
-        window.removeEventListener('keydown', scene.zoneState.listener);
-        window.removeEventListener('touchstart', scene.zoneState.listenerStart);
-        window.removeEventListener('touchend', scene.zoneState.listenerEnd);
-        delete scene.zoneState.listener;
-        delete scene.zoneState.listenerStart;
-        delete scene.zoneState.listenerEnd;
+        game.controlsState.skipListener = null;
+        delete scene.zoneState.skipListener;
         delete scene.zoneState.ended;
         if (scene.zoneState.startTime) {
             delete scene.zoneState.startTime;

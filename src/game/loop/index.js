@@ -13,8 +13,8 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
     const time = game.getTime();
 
     renderer.stats.begin();
+    each(controls, ctrl => ctrl.update && ctrl.update());
     if (scene) {
-        each(controls, ctrl => ctrl.update && ctrl.update());
         const step = game.isPaused() && DebugData.step;
         if (!game.isPaused() || step) {
             if (step) {
