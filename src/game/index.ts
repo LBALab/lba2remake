@@ -122,16 +122,18 @@ export function createGame(clock: any,
 
         /* @inspector(locate) */
         resume: () => {
-            const musicSource = audio.getMusicSource();
-            musicSource.resume();
-            const voiceSource = audio.getVoiceSource();
-            voiceSource.resume();
-            const sfxSource = audio.getSoundFxSource();
-            sfxSource.resume();
-            isPaused = false;
-            clock.start();
-            // eslint-disable-next-line no-console
-            console.log('Resume');
+            if (isPaused) {
+                const musicSource = audio.getMusicSource();
+                musicSource.resume();
+                const voiceSource = audio.getVoiceSource();
+                voiceSource.resume();
+                const sfxSource = audio.getSoundFxSource();
+                sfxSource.resume();
+                isPaused = false;
+                clock.start();
+                // eslint-disable-next-line no-console
+                console.log('Resume');
+            }
         },
 
         /* @inspector(locate) */

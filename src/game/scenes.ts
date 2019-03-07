@@ -11,7 +11,7 @@ import { loadIslandScenery, getEnvInfo } from '../island';
 import { loadIsometricScenery } from '../iso';
 import { loadSceneData } from '../scene';
 import { loadSceneMapData } from '../scene/map';
-import { loadActor } from './actors';
+import { loadActor, DirMode } from './actors';
 import { loadPoint } from './points';
 import { loadZone } from './zones';
 import { loadScripts } from '../scripting';
@@ -23,6 +23,7 @@ import { getIsometricCamera } from '../cameras/iso';
 import { getIso3DCamera } from '../cameras/iso3d';
 import { getVR3DCamera } from '../cameras/vr/vr3d';
 import { getVRIsoCamera } from '../cameras/vr/vrIso';
+import { angleToRad } from '../utils/lba';
 
 declare global {
     var ga: Function;
@@ -46,7 +47,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
         },
 
         /* @inspector(locate) */
-        async goto(index, force = false, wasPaused = false) {
+        async goto(index, force = false, wasPaused = false, teleport = true) {
             if ((!force && scene && index === scene.index) || game.isLoading())
                 return;
 
@@ -72,6 +73,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 delete sideScene.sideScenes[index];
                 delete scene.sideScenes;
                 sideScene.sideScenes[scene.index] = scene;
+                transferActor(scene.actors[0], sideScene.actors[0], sideScene, teleport);
                 scene = sideScene;
                 reviveActor(scene.actors[0]); // Awake twinsen
                 scene.isActive = true;
@@ -151,7 +153,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
     };
     const actors = await Promise.all(map(
         sceneData.actors,
-        actor => loadActor(params, envInfo, sceneData.ambience, actor)
+        actor => loadActor(params, envInfo, sceneData.ambience, actor, parent)
     ));
     const points = map(sceneData.points, loadPoint);
     const zones = map(sceneData.zones, loadZone);
@@ -384,4 +386,48 @@ export function addExtraToScene(scene, extra) {
     if (extra.threeObject !== null) { // because of the sprite actors
         scene.sceneNode.add(extra.threeObject);
     }
+}
+
+function transferActor(hero, newHero, newScene, teleport) {
+    const globalPos = new THREE.Vector3();
+    globalPos.applyMatrix4(hero.threeObject.matrixWorld);
+    newScene.sceneNode.remove(newHero.threeObject);
+    newHero.threeObject = hero.threeObject;
+    newHero.threeObject.position.copy(globalPos);
+    newHero.threeObject.position.sub(newScene.sceneNode.position);
+    newHero.model = hero.model;
+    newScene.sceneNode.add(newHero.threeObject);
+
+    newHero.props.dirMode = hero.props.dirMode;
+    newHero.props.entityIndex = hero.props.entityIndex;
+    newHero.props.bodyIndex = hero.props.bodyIndex;
+    newHero.props.animIndex = hero.props.animIndex;
+
+    if (teleport) {
+        const {pos, angle} = newHero.props;
+        const angleRad = angleToRad(angle);
+        newHero.physics.position.set(pos[0], pos[1], pos[2]);
+        const euler = new THREE.Euler(0, angleRad, 0, 'XZY');
+        newHero.physics.orientation.setFromEuler(euler);
+        newHero.physics.temp.destination.set(0, 0, 0);
+        newHero.physics.temp.position.set(0, 0, 0);
+        newHero.physics.temp.angle = angleRad;
+        newHero.physics.temp.destAngle = angleRad;
+        newHero.props.dirMode = DirMode.MANUAL;
+    } else {
+        newHero.physics.position.copy(newHero.threeObject.position);
+        newHero.physics.orientation.copy(hero.physics.orientation);
+        newHero.physics.temp.angle = hero.physics.temp.angle;
+        newHero.physics.temp.position.copy(hero.physics.temp.position);
+        newHero.physics.temp.destination.copy(hero.physics.temp.destination);
+    }
+
+    newHero.animState = hero.animState;
+    // eslint-disable-next-line guard-for-in
+    Object.keys(hero.props.runtimeFlags).forEach((k) => {
+        newHero.props.runtimeFlags[k] = hero.props.runtimeFlags[k];
+    });
+    hero.animState = null;
+    hero.model = null;
+    hero.threeObject = null;
 }

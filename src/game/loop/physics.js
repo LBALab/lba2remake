@@ -10,7 +10,7 @@ export function processPhysicsFrame(game, scene, time) {
     });
     if (scene.isActive) {
         processZones(game, scene);
-        processTeleports(scene);
+        processSidesceneTransitions(scene);
     }
 }
 
@@ -35,7 +35,7 @@ function processActorPhysics(scene, actor, time) {
     }
 }
 
-function processTeleports(scene) {
+function processSidesceneTransitions(scene) {
     const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
     pos.y += 0.12;
@@ -50,16 +50,7 @@ function processTeleports(scene) {
                 && globalPos.z < nodePos.z + 47.9;
         });
         if (foundSideScene) {
-            scene.goto(foundSideScene.index).then((newScene) => {
-                const newHero = newScene.actors[0];
-                newHero.threeObject.quaternion.copy(hero.threeObject.quaternion);
-                newHero.threeObject.position.copy(globalPos);
-                newHero.threeObject.position.sub(newScene.sceneNode.position);
-                newHero.physics.position.copy(newHero.threeObject.position);
-                newHero.physics.temp.angle = hero.physics.temp.angle;
-                newHero.physics.orientation.copy(hero.physics.orientation);
-                newHero.props.dirMode = hero.props.dirMode;
-            });
+            scene.goto(foundSideScene.index, false, false, false);
         }
     }
 }
