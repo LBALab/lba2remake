@@ -118,6 +118,7 @@ export default class Model extends FrameListener {
             envInfo,
             ambience
         );
+        model.entity = this.entity;
         this.state.scene.threeScene.add(model.mesh);
         this.setState({ animState, model }, this.saveData);
     }

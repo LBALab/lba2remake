@@ -1,5 +1,18 @@
+import React from 'react';
 import { getEntities } from './entitities';
 import DebugData, { saveMetaData } from '../../../DebugData';
+import { createRenderer } from '../../../../../renderer';
+
+const indexStyle = {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    color: 'white',
+    fontSize: '12px',
+    background: 'black',
+    opacity: 0.8,
+    padding: '0 2px'
+};
 
 const name = entity =>
     DebugData.metadata.entities[entity.index] || `entity_${entity.index}`;
@@ -9,6 +22,36 @@ const EntityNode = {
     name,
     numChildren: () => 0,
     allowRenaming: () => true,
+    style: {
+        height: '50px',
+        background: '#1F1F1F',
+        margin: '4px 0',
+        padding: '0'
+    },
+    nameStyle: {
+        lineHeight: '50px',
+        height: '50px',
+        display: 'block',
+        position: 'absolute',
+        left: 50,
+        right: 0,
+        top: 0,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+    },
+    selectedStyle: {
+        background: 'white',
+    },
+    iconStyle: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        height: '50px',
+        width: '50px',
+        padding: 0,
+        margin: 0
+    },
     rename: (entity, newName) => {
         DebugData.metadata.entities[entity.index] = newName;
         saveMetaData({
@@ -22,14 +65,71 @@ const EntityNode = {
         const {setEntity} = component.props.rootStateHandler;
         setEntity(data.index);
     },
+    onDoubleClick: (data, component) => {
+        saveIcon(data, component);
+    },
     selected: (data, component) => {
         if (!component.props.rootState)
             return false;
         const { entity } = component.props.rootState;
         return entity === data.index;
     },
-    icon: () => 'editor/icons/entity.png',
+    icon: (data, ignored, component) => getIcon(data, component),
+    props: data => [
+        {
+            id: 'index',
+            value: data.index,
+            render: value => <div style={indexStyle}>{value}</div>
+        }
+    ]
 };
+
+const icons = {};
+const iconsCanvas = document.createElement('canvas');
+iconsCanvas.width = '50px';
+iconsCanvas.heigth = '50px';
+const iconRenderer = createRenderer({webgl2: true}, iconsCanvas, {
+    preserveDrawingBuffer: true
+});
+iconRenderer.applySceneryProps({
+    opacity: 0,
+    envInfo: { skyColor: [0, 0, 0] }
+});
+
+function saveIcon(data, component) {
+    if (component && component.props.rootState) {
+        const { entity } = component.props.rootState;
+        if (entity === data.index
+            && DebugData.scope.model
+            && DebugData.scope.model.entity === entity
+            && DebugData.scope.model.mesh) {
+            DebugData.scope.grid.visible = false;
+            iconRenderer.resize(50, 50);
+            iconRenderer.render(DebugData.scope.scene);
+            const dataUrl = iconsCanvas.toDataURL();
+            if (dataUrl && dataUrl !== 'data:,') {
+                icons[data.index] = dataUrl;
+            }
+            localStorage.setItem(`icon_model_entity_${data.index}`, dataUrl);
+            DebugData.scope.grid.visible = true;
+        }
+    }
+}
+
+function getIcon(data, component) {
+    if (data.index in icons) {
+        return icons[data.index];
+    }
+    const savedIcon = localStorage.getItem(`icon_model_entity_${data.index}`);
+    if (savedIcon) {
+        if (!icons[data.index]) {
+            icons[data.index] = savedIcon;
+        }
+        return savedIcon;
+    }
+    saveIcon(data, component);
+    return 'editor/icons/entity.png';
+}
 
 const EntitiesNode = {
     dynamic: true,
