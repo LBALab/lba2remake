@@ -34,6 +34,8 @@ export function getVR3DCamera() {
 
 function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
     const hero = scene.actors[0];
+    if (!hero.threeObject)
+        return;
     const heroPos = HERO_TARGET_POS.clone();
     heroPos.applyMatrix4(hero.threeObject.matrixWorld);
 

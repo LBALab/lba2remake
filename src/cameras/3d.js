@@ -48,6 +48,9 @@ export function get3DCamera() {
 
 function processFollow3DMovement(controlsState, controlNode, scene, time) {
     const hero = scene.actors[0];
+    if (!hero.threeObject)
+        return;
+
     const heroPos = HERO_TARGET_POS.clone();
     const cameraPos = CAMERA_HERO_OFFSET.clone();
     heroPos.applyMatrix4(hero.threeObject.matrixWorld);
