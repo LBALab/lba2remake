@@ -95,7 +95,7 @@ const Actor = {
             icon: () => 'editor/icons/areas/script.png',
             render: (value) => {
                 if (value === 'terminated') {
-                    return <span>(OFF)</span>;
+                    return <i>[OFF]</i>;
                 }
                 return <span>{mapComportementArg(value)}</span>;
             }
@@ -107,7 +107,7 @@ const Actor = {
             icon: () => 'editor/icons/areas/script.png',
             render: (value) => {
                 if (!value)
-                    return <span>(OFF)</span>;
+                    return <i>[OFF]</i>;
 
                 return <span>{value.cmdName}
                     {value.args
