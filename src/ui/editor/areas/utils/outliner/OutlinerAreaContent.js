@@ -65,6 +65,7 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
                 return <WithShortcuts>
                     {shortcuts => <OutlinerNode
                         hidden={hideRoot}
+                        parentHidden={false}
                         key={path.join('/')}
                         node={root.node}
                         data={root.data}

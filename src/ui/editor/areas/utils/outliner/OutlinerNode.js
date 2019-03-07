@@ -148,7 +148,7 @@ export default class OutlinerNode extends React.Component {
         }
 
         const lineStyle = {
-            marginLeft: 16,
+            marginLeft: this.props.parentHidden ? 0 : 16,
             display: 'inline-block',
             whiteSpace: 'normal'
         };
@@ -393,6 +393,8 @@ export default class OutlinerNode extends React.Component {
         return <OutlinerNode
             key={path.join('/')}
             id={`otl.${rootName}.${path.join('.')}`}
+            hidden={false}
+            parentHidden={this.props.hidden}
             node={child}
             data={childData}
             fontSize={childFontSize}
