@@ -192,7 +192,7 @@ function updateSkeletonAtKeyframe(state,
                                   nextkeyframe,
                                   numBones,
                                   length = keyframe.length) {
-    const interpolation = state.currentTime / length;
+    const interpolation = length > 0 ? state.currentTime / length : 0;
     try {
         for (let i = 0; i < numBones; i += 1) {
             const s = state.skeleton[i];
