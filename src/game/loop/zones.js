@@ -7,7 +7,7 @@ import { addExtra, ExtraFlag, randomBonus } from '../extras.ts';
 function NOP() { }
 
 export const ZoneOpcode = [
-    { opcode: 0, command: 'CUBE', handler: CUBE },
+    { opcode: 0, command: 'GOTO_SCENE', handler: GOTO_SCENE },
     { opcode: 1, command: 'CAMERA', handler: NOP },
     { opcode: 2, command: 'SCENERIC', handler: NOP },
     { opcode: 3, command: 'FRAGMENT', handler: NOP },
@@ -44,7 +44,7 @@ export function processZones(game, scene) {
 /**
  * @return {boolean}
  */
-function CUBE(game, scene, zone, hero) {
+function GOTO_SCENE(game, scene, zone, hero) {
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
         scene.goto(zone.props.snap).then((newScene) => {
             const newHero = newScene.actors[0];

@@ -9,13 +9,6 @@ import {SceneGraphNode} from './SceneGraphNode';
 import {mapComportementArg} from '../../scripts/listing';
 import {makeObjectsNode} from '../node_factories/objects';
 
-const compStyle = {
-    border: '1px solid black',
-    background: '#20a2ff',
-    color: 'black',
-    padding: '0 2px'
-};
-
 const Actor = {
     dynamic: true,
     needsData: true,
@@ -53,26 +46,76 @@ const Actor = {
                     style={{cursor: 'pointer'}}
                 />;
             }
+        }
+    ],
+    childProps: [
+        {
+            id: 'entity',
+            name: 'Entity',
+            value: (actor) => {
+                if (actor.props.entityIndex === -1) {
+                    return '<no-entity>';
+                } else if (DebugData.metadata.entities[actor.props.entityIndex]) {
+                    return DebugData.metadata.entities[actor.props.entityIndex];
+                }
+                return `entity_${actor.props.entityIndex}`;
+            },
+            icon: actor => localStorage.getItem(`icon_model_entity_${actor.props.entityIndex}`)
         },
         {
-            id: 'comportement',
-            value: getComportement(actor),
+            id: 'body',
+            name: 'Body',
+            value: (actor) => {
+                if (actor.props.bodyIndex === -1) {
+                    return '<no-body>';
+                } else if (DebugData.metadata.bodies[actor.props.bodyIndex]) {
+                    return DebugData.metadata.bodies[actor.props.bodyIndex];
+                }
+                return `body_${actor.props.bodyIndex}`;
+            },
+            icon: () => 'editor/icons/body.png'
+        },
+        {
+            id: 'anim',
+            name: 'Anim',
+            value: (actor) => {
+                if (actor.props.animIndex === -1) {
+                    return '<no-anim>';
+                } else if (DebugData.metadata.anims[actor.props.animIndex]) {
+                    return DebugData.metadata.anims[actor.props.animIndex];
+                }
+                return `anim_${actor.props.animIndex}`;
+            },
+            icon: () => 'editor/icons/anim.png'
+        },
+        {
+            id: 'life',
+            name: 'Life',
+            value: actor => getComportement(actor),
+            icon: () => 'editor/icons/areas/script.png',
             render: (value) => {
                 if (value === 'terminated') {
-                    return null;
+                    return <span>(OFF)</span>;
                 }
-                return <span style={compStyle}>{mapComportementArg(value)}</span>;
+                return <span>{mapComportementArg(value)}</span>;
             }
         },
         {
-            id: 'moveAction',
-            value: getMoveAction(actor),
-            render: value => (value
-                ? <span>&nbsp;{value.cmdName}
-                    {value.args ? <span>{'('}<i style={{color: '#ca0000'}}>{value.args}</i>{')'}</span> : ''}
+            id: 'move',
+            name: 'Move',
+            value: actor => getMoveAction(actor),
+            icon: () => 'editor/icons/areas/script.png',
+            render: (value) => {
+                if (!value)
+                    return <span>(OFF)</span>;
+
+                return <span>{value.cmdName}
+                    {value.args
+                        ? <span>{'('}<i style={{color: '#ca0000'}}>{value.args}</i>{')'}</span>
+                        : ''}
                     {value.extra ? <span style={{color: '#1a78c0'}}>&nbsp;{value.extra}</span> : null}
-                </span>
-                : '')
+                </span>;
+            }
         }
     ],
     numChildren: actor => (actor.threeObject ? 1 : 0),
@@ -101,7 +144,6 @@ export const ActorsNode = makeObjectsNode('actor', {
         }
     }
 });
-
 
 function getComportement(actor) {
     const lifeScript = actor.scripts.life;

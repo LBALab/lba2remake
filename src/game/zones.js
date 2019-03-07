@@ -4,7 +4,7 @@ import {getObjectName} from '../ui/editor/DebugData';
 
 /*
 const ZONE_TYPE = {
-    CUBE:       0,
+    GOTO_SCENE: 0,
     CAMERA:     1,
     SCENERIC:   2,
     FRAGMENT:   3,

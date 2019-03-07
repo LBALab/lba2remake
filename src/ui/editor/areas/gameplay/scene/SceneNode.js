@@ -55,10 +55,6 @@ const VarGameConfig = {
     filterInventory: false
 };
 
-const labelStyle = {
-    fontSize: 12
-};
-
 const VarGame = {
     dynamic: true,
     name: () => 'Game Variables',
@@ -100,26 +96,32 @@ const VarGame = {
         }
         return null;
     },
-    props: data => [
+    childProps: [
         {
             id: 'filter_scene',
-            value: data.filterScene,
+            name: 'Only in scene',
+            value: data => data.filterScene,
             render: (value) => {
                 const onChange = (e) => {
-                    data.filterScene = e.target.checked;
+                    VarGameConfig.filterScene = e.target.checked;
                 };
-                return <label style={labelStyle} key="used"><input type="checkbox" checked={value} onChange={onChange}/>Only in scene&nbsp;</label>;
-            }
+                return <input type="checkbox" checked={value} onChange={onChange}/>;
+            },
+            icon: () => 'editor/icons/settings.png',
+            color: '#AAAAAA'
         },
         {
             id: 'filter_inventory',
-            value: data.filterInventory,
+            name: 'Only inventory',
+            value: data => data.filterInventory,
             render: (value) => {
                 const onChange = (e) => {
-                    data.filterInventory = e.target.checked;
+                    VarGameConfig.filterInventory = e.target.checked;
                 };
-                return <label style={labelStyle} key="inventory"><input type="checkbox" checked={value} onChange={onChange}/>Only inventory</label>;
-            }
+                return <input type="checkbox" checked={value} onChange={onChange}/>;
+            },
+            icon: () => 'editor/icons/settings.png',
+            color: '#AAAAAA'
         }
     ]
 };

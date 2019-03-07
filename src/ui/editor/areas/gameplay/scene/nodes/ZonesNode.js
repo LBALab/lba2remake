@@ -4,7 +4,7 @@ import {SceneGraphNode} from './SceneGraphNode';
 import {makeObjectsNode} from '../node_factories/objects';
 
 const ZONE_TYPE = [
-    'CUBE',
+    'GOTO_SCENE',
     'CAMERA',
     'SCENERIC',
     'FRAGMENT',
@@ -30,25 +30,29 @@ const Zone = {
         }
     ],
     name: zone => getObjectName('zone', zone.props.sceneIndex, zone.index),
-    icon: () => 'editor/icons/zone2.png',
-    props: zone => [
+    icon: zone => `editor/icons/zones/${ZONE_TYPE[zone.props.type]}.png`,
+    childProps: [
         {
             id: 'type',
-            value: ZONE_TYPE[zone.props.type],
-            render: (value) => {
+            name: 'Type',
+            value: zone => zone,
+            render: (zone) => {
                 const {r, g, b} = zone.color;
                 const color = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},1)`;
-                let label = `${value} (${zone.props.snap})`;
-                switch (value) {
-                    case 'CUBE':
-                        label = `GOTO -> ${zone.props.snap}`;
-                        break;
-                    case 'TEXT':
-                        if (DebugData.scope.scene.data.texts[zone.props.snap])
-                            label = DebugData.scope.scene.data.texts[zone.props.snap].value;
-                        break;
+                return <span style={{color}}>{ZONE_TYPE[zone.props.type]}</span>;
+            }
+        },
+        {
+            id: 'param',
+            name: 'Param',
+            value: (zone) => {
+                let value = zone.props.snap;
+                if (ZONE_TYPE[zone.props.type] === 'TEXT') {
+                    if (DebugData.scope.scene.data.texts[value]) {
+                        value = DebugData.scope.scene.data.texts[value].value;
+                    }
                 }
-                return <span style={{color}}>{label}</span>;
+                return value;
             }
         },
     ],
