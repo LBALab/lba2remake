@@ -168,7 +168,7 @@ function loadActors(scene, offset) {
 
         actor.entityIndex = data.getInt16(offset, true);
         offset += 2;
-        actor.bodyIndex = data.getInt8(offset, true);
+        actor.bodyIndex = data.getUint8(offset, true);
         offset += 1;
         actor.animIndex = data.getInt16(offset, true);
         offset += 2;
