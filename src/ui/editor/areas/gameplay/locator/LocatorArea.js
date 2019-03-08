@@ -2,11 +2,9 @@ import {map, drop} from 'lodash';
 import {makeOutlinerArea} from '../../utils/outliner';
 import findScenePath from './findScenePath';
 import LocationsNode from './LocationsNode';
-import LocatorAreaMenu from './LocatorAreaMenu';
 import DebugData from '../../../DebugData';
 
 const LocatorArea = makeOutlinerArea('locator', 'Locator', LocationsNode, {
-    menu: LocatorAreaMenu,
     icon: 'holomap.png',
     frame() {
         const scene = DebugData.scope.scene;
