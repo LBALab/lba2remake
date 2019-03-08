@@ -106,7 +106,7 @@ export default class GameUI extends FrameListener {
                 this.canvas = document.createElement('canvas');
                 this.canvas.tabIndex = 0;
                 const game = this.state.game;
-                const renderer = createRenderer(this.props.params, this.canvas);
+                const renderer = createRenderer(this.props.params, this.canvas, {}, 'game');
                 const sceneManager = await createSceneManager(
                     this.props.params,
                     game,
@@ -145,6 +145,9 @@ export default class GameUI extends FrameListener {
 
     componentWillUnmount() {
         window.removeEventListener('keydown', this.listener);
+        if (this.state.renderer) {
+            this.state.renderer.dispose();
+        }
         super.componentWillUnmount();
     }
 

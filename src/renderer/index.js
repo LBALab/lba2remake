@@ -18,12 +18,10 @@ export const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'],
     name
 }));
 
-export function createRenderer(params, canvas, rendererOptions = {}) {
+export function createRenderer(params, canvas, rendererOptions = {}, type = 'unknown') {
     let pixelRatio = PixelRatio[2]; // SET NORMAL AS DEFAULT
     const getPixelRatio = () => pixelRatio.getValue();
     let antialias = false;
-    // eslint-disable-next-line no-console
-    const displayRenderMode = () => console.log(`Renderer mode: pixelRatio=${pixelRatio.name}(${pixelRatio.getValue()}x), antialiasing(${antialias})`);
     let threeRenderer =
         setupThreeRenderer(pixelRatio, canvas, antialias, params.webgl2, rendererOptions);
     const stats = setupStats();
@@ -40,6 +38,11 @@ export function createRenderer(params, canvas, rendererOptions = {}) {
         }
     }
 
+    // eslint-disable-next-line no-console
+    const displayRenderMode = () => console.log(`[Starting renderer(${type})]
+    pixelRatio: ${pixelRatio.getValue()}
+    antialiasing: ${antialias}
+    webgl: ${threeRenderer.webglVersion}`);
     displayRenderMode();
 
     function keyListener(event) {
@@ -53,7 +56,8 @@ export function createRenderer(params, canvas, rendererOptions = {}) {
         if (event.code === 'KeyR') {
             pixelRatio = PixelRatio[(pixelRatio.index + 1) % PixelRatio.length];
             threeRenderer.setPixelRatio(pixelRatio.getValue());
-            displayRenderMode();
+            // eslint-disable-next-line no-console
+            console.log('pixelRatio:', pixelRatio.getValue());
             renderer.resize();
         }
     }
@@ -95,6 +99,9 @@ export function createRenderer(params, canvas, rendererOptions = {}) {
 
         /* @inspector(locate) */
         dispose() {
+            // eslint-disable-next-line no-console
+            console.log(`[Stopping renderer(${type})`);
+            threeRenderer.dispose();
             window.removeEventListener('keydown', keyListener);
         },
 
@@ -116,13 +123,12 @@ function setupThreeRenderer(pixelRatio, canvas, antialias, webgl2, rendererOptio
             canvas,
             preserveDrawingBuffer: rendererOptions.preserveDrawingBuffer
         };
+        let webglVersion = -1;
         if (webgl2 && window.WebGL2RenderingContext) {
             options.context = canvas.getContext('webgl2');
-            // eslint-disable-next-line
-            console.log('Using WebGL 2');
+            webglVersion = 2;
         } else {
-            // eslint-disable-next-line
-            console.log('Using WebGL 1');
+            webglVersion = 1;
         }
         const renderer = new THREE.WebGLRenderer(options);
 
@@ -130,6 +136,7 @@ function setupThreeRenderer(pixelRatio, canvas, antialias, webgl2, rendererOptio
         renderer.setPixelRatio(pixelRatio.getValue());
         renderer.setSize(0, 0);
         renderer.autoClear = true;
+        renderer.webglVersion = webglVersion;
 
         if (!(window.WebGL2RenderingContext
                 && renderer.context instanceof window.WebGL2RenderingContext)) {

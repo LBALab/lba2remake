@@ -66,6 +66,12 @@ export default class Model extends FrameListener {
         }
     }
 
+    componentWillUnmount() {
+        if (this.state.renderer) {
+            this.state.renderer.dispose();
+        }
+    }
+
     saveData() {
         if (this.props.saveMainData) {
             DebugData.scope = this.state;
@@ -83,7 +89,7 @@ export default class Model extends FrameListener {
             } else {
                 this.canvas = document.createElement('canvas');
                 this.canvas.tabIndex = 0;
-                const renderer = createRenderer(this.props.params, this.canvas);
+                const renderer = createRenderer(this.props.params, this.canvas, {}, 'models_editor');
                 renderer.threeRenderer.setAnimationLoop(() => {
                     this.props.ticker.frame();
                 });

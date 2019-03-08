@@ -88,13 +88,7 @@ const icons = {};
 const iconsCanvas = document.createElement('canvas');
 iconsCanvas.width = '50px';
 iconsCanvas.heigth = '50px';
-const iconRenderer = createRenderer({webgl2: true}, iconsCanvas, {
-    preserveDrawingBuffer: true
-});
-iconRenderer.applySceneryProps({
-    opacity: 0,
-    envInfo: { skyColor: [0, 0, 0] }
-});
+let iconRenderer = null;
 
 function saveIcon(data, component) {
     if (component && component.props.rootState) {
@@ -104,6 +98,15 @@ function saveIcon(data, component) {
             && DebugData.scope.model.entity === entity
             && DebugData.scope.model.mesh) {
             DebugData.scope.grid.visible = false;
+            if (!iconRenderer) {
+                iconRenderer = createRenderer({webgl2: true}, iconsCanvas, {
+                    preserveDrawingBuffer: true
+                }, 'thumbnails');
+                iconRenderer.applySceneryProps({
+                    opacity: 0,
+                    envInfo: { skyColor: [0, 0, 0] }
+                });
+            }
             iconRenderer.resize(50, 50);
             iconRenderer.render(DebugData.scope.scene);
             const dataUrl = iconsCanvas.toDataURL();
