@@ -73,7 +73,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 delete sideScene.sideScenes[index];
                 delete scene.sideScenes;
                 sideScene.sideScenes[scene.index] = scene;
-                transferActor(scene.actors[0], sideScene.actors[0], sideScene, teleport);
+                relocateHero(scene.actors[0], sideScene.actors[0], sideScene, teleport);
                 scene = sideScene;
                 reviveActor(scene.actors[0]); // Awake twinsen
                 scene.isActive = true;
@@ -388,12 +388,13 @@ export function addExtraToScene(scene, extra) {
     }
 }
 
-function transferActor(hero, newHero, newScene, teleport) {
+function relocateHero(hero, newHero, newScene, teleport) {
     const globalPos = new THREE.Vector3();
     globalPos.applyMatrix4(hero.threeObject.matrixWorld);
     newScene.sceneNode.remove(newHero.threeObject);
     newHero.threeObject = hero.threeObject;
     newHero.threeObject.position.copy(globalPos);
+    newScene.sceneNode.updateMatrixWorld();
     newHero.threeObject.position.sub(newScene.sceneNode.position);
     newHero.model = hero.model;
     newScene.sceneNode.add(newHero.threeObject);
@@ -404,16 +405,22 @@ function transferActor(hero, newHero, newScene, teleport) {
     newHero.props.animIndex = hero.props.animIndex;
 
     if (teleport) {
+        newHero.props.dirMode = DirMode.MANUAL;
+
         const {pos, angle} = newHero.props;
+        const position = new THREE.Vector3(pos[0], pos[1], pos[2]);
         const angleRad = angleToRad(angle);
-        newHero.physics.position.set(pos[0], pos[1], pos[2]);
         const euler = new THREE.Euler(0, angleRad, 0, 'XZY');
+
+        newHero.physics.position.copy(position);
         newHero.physics.orientation.setFromEuler(euler);
-        newHero.physics.temp.destination.set(0, 0, 0);
-        newHero.physics.temp.position.set(0, 0, 0);
+        newHero.physics.temp.destination.copy(position);
+        newHero.physics.temp.position.copy(position);
         newHero.physics.temp.angle = angleRad;
         newHero.physics.temp.destAngle = angleRad;
-        newHero.props.dirMode = DirMode.MANUAL;
+
+        newHero.threeObject.position.set(pos[0], pos[1], pos[2]);
+        newHero.threeObject.quaternion.copy(newHero.physics.orientation);
     } else {
         newHero.physics.position.copy(newHero.threeObject.position);
         newHero.physics.orientation.copy(hero.physics.orientation);
