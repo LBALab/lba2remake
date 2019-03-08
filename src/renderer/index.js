@@ -21,9 +21,7 @@ export const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'],
 export function createRenderer(params, canvas, rendererOptions = {}, type = 'unknown') {
     let pixelRatio = PixelRatio[2]; // SET NORMAL AS DEFAULT
     const getPixelRatio = () => pixelRatio.getValue();
-    let antialias = false;
-    let threeRenderer =
-        setupThreeRenderer(pixelRatio, canvas, antialias, params.webgl2, rendererOptions);
+    const threeRenderer = setupThreeRenderer(pixelRatio, canvas, params.webgl2, rendererOptions);
     const stats = setupStats();
 
     const vrButton = WebVR.createButton(threeRenderer, {
@@ -41,18 +39,10 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
     // eslint-disable-next-line no-console
     const displayRenderMode = () => console.log(`[Starting renderer(${type})]
     pixelRatio: ${pixelRatio.getValue()}
-    antialiasing: ${antialias}
     webgl: ${threeRenderer.webglVersion}`);
     displayRenderMode();
 
     function keyListener(event) {
-        if (event.code === 'KeyH') {
-            antialias = !antialias;
-            threeRenderer = setupThreeRenderer(pixelRatio, canvas, antialias);
-            renderer.threeRenderer = threeRenderer;
-            displayRenderMode();
-            renderer.resize();
-        }
         if (event.code === 'KeyR' && !event.ctrlKey && !event.metaKey) {
             pixelRatio = PixelRatio[(pixelRatio.index + 1) % PixelRatio.length];
             threeRenderer.setPixelRatio(pixelRatio.getValue());
@@ -115,10 +105,9 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
     return renderer;
 }
 
-function setupThreeRenderer(pixelRatio, canvas, antialias, webgl2, rendererOptions = {}) {
+function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions = {}) {
     try {
         const options = {
-            antialias,
             alpha: false,
             canvas,
             preserveDrawingBuffer: rendererOptions.preserveDrawingBuffer
