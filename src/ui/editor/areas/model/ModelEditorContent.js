@@ -66,12 +66,6 @@ export default class Model extends FrameListener {
         }
     }
 
-    componentWillUnmount() {
-        if (this.state.renderer) {
-            this.state.renderer.dispose();
-        }
-    }
-
     saveData() {
         if (this.props.saveMainData) {
             DebugData.scope = this.state;

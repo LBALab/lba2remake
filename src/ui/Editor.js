@@ -255,6 +255,12 @@ export default class Editor extends React.Component {
         const node = this.findNodeFromPath(layout, path);
         if (node.root) {
             DebugData.scope = {};
+            if (this.state.mainData && this.state.mainData.state) {
+                const {renderer} = this.state.mainData.state;
+                if (renderer) {
+                    renderer.dispose();
+                }
+            }
             this.setState({
                 mainData: undefined,
                 layout: loadLayout(this, area.id),

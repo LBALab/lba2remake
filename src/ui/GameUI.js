@@ -164,9 +164,6 @@ export default class GameUI extends FrameListener {
 
     componentWillUnmount() {
         window.removeEventListener('keydown', this.listener);
-        if (this.state.renderer) {
-            this.state.renderer.dispose();
-        }
         super.componentWillUnmount();
     }
 
