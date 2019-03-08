@@ -71,7 +71,7 @@ export default class Loader extends React.Component {
                     {content}
                 </div>
             </div>
-            <Ribbon mode="loader" editor={this.props.editor}/>
+            <Ribbon mode="loader"/>
         </div>;
     }
 

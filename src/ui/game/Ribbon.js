@@ -9,16 +9,17 @@ const overlay = {
     fontFamily: 'LBA',
 };
 
-const versionText = color => ({
+const versionText = (color, opacity = 0.5) => ({
     color,
     display: 'inline-block',
     userSelect: 'none',
     cursor: 'pointer',
     fontSize: 14,
-    background: 'rgba(0, 0, 0, 0.5)',
+    background: `rgba(0, 0, 0, ${opacity})`,
     border: `1px outset ${color}`,
     borderRadius: 3,
-    padding: '1px 3px'
+    padding: '1px 3px',
+    textAlign: 'center'
 });
 
 const editorVersionText = versionText('white');
@@ -29,23 +30,26 @@ function changelog() {
     document.dispatchEvent(new Event('displaychangelog'));
 }
 
-export default function Ribbon({mode, editor}) {
+export default function Ribbon({mode}) {
     let color;
+    let opacity = 0.5;
     switch (mode) {
         case 'loader': color = 'rgba(49, 89, 255, 1)'; break;
         case 'menu': color = '#ffffff'; break;
-        case 'game': color = '#c01813'; break;
+        case 'game':
+            color = 'rgba(255, 255, 255, 0.2)';
+            opacity = 0.1;
+            break;
         default: break;
     }
-    const logo = mode === 'game' && !editor;
     const build = window.buildNumber;
     return <div style={overlay}>
-        {logo ? [<img key="logo" src="images/remake_logo.png" />, <br key="br"/>] : null}
         <span
-            style={editor ? versionText('white') : versionText(color)}
+            style={versionText(color, opacity)}
             onClick={changelog}
         >
-            v<i>{version}</i>
+            LBA2Remake<br/>
+            <i style={{fontSize: 12}}>{version}</i>
             {build && <React.Fragment>-{build}</React.Fragment>}
         </span>
     </div>;
