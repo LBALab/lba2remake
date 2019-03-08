@@ -1,8 +1,9 @@
-import {cloneDeep, map, each, find, isFinite, isInteger, extend} from 'lodash';
+import {cloneDeep, map, each, find, isFinite, isInteger, extend, findKey} from 'lodash';
 import Indent from '../../../../../game/scripting/indent';
 import {getRotation} from '../../../../../utils/lba';
 import DebugData, {getObjectName, getVarName} from '../../../DebugData';
 import {formatVar} from './format';
+import { DirMode } from '../../../../../game/actors.ts';
 
 export function getDebugListing(type, scene, actor) {
     if (scene && actor) {
@@ -206,6 +207,8 @@ export function mapDataName(scene, data) {
         return DebugData.metadata.anims[data.value] || data.value;
     } else if (data.type === 'body') {
         return DebugData.metadata.bodies[data.value] || data.value;
+    } else if (data.type === 'dirmode') {
+        return findKey(DirMode, m => m === data.value);
     }
     if (isFinite(data.value) && !isInteger(data.value)) {
         return data.value.toFixed(2);
