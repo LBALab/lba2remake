@@ -196,7 +196,7 @@ export default class GameUI extends FrameListener {
         audioMenuManager.getMusicSource().load(6, () => {
             audioMenuManager.getMusicSource().play();
         });
-        this.setState({showMenu: true, inGameMenu});
+        this.setState({showMenu: true, inGameMenu}, this.saveData);
     }
 
     hideMenu(wasPaused = false) {
@@ -204,7 +204,7 @@ export default class GameUI extends FrameListener {
         audioMenuManager.getMusicSource().stop();
         if (!wasPaused)
             this.state.game.resume();
-        this.setState({showMenu: false, inGameMenu: false});
+        this.setState({showMenu: false, inGameMenu: false}, this.saveData);
         this.canvas.focus();
     }
 
@@ -237,7 +237,7 @@ export default class GameUI extends FrameListener {
                 this.hideMenu();
                 const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
                 const onEnded = () => {
-                    this.setState({video: null});
+                    this.setState({video: null}, this.saveData);
                     this.startNewGameScene();
                     this.state.game.controlsState.skipListener = null;
                 };
@@ -248,7 +248,7 @@ export default class GameUI extends FrameListener {
                         src,
                         onEnded
                     }
-                });
+                }, this.saveData);
                 break;
             }
         }
@@ -305,7 +305,7 @@ export default class GameUI extends FrameListener {
     }
 
     onAskChoiceChanged(choice) {
-        this.setState({choice});
+        this.setState({choice}, this.saveData);
     }
 
     textAnimEndedHandler() {
