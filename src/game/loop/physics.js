@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {each, find} from 'lodash';
+import { DirMode } from '../actors.ts';
 
 import {processZones} from './zones';
 
@@ -21,7 +22,8 @@ function processActorPhysics(scene, actor, time) {
     actor.physics.position.add(actor.physics.temp.position);
     if (actor.props.flags.hasCollisions) {
         if (!actor.props.runtimeFlags.hasGravityByAnim
-            && actor.props.flags.canFall) {
+            && actor.props.flags.canFall
+            && actor.props.dirMode !== DirMode.NO_MOVE) {
             actor.physics.position.y -= 6 * time.delta;
         }
         scene.scenery.physics.processCollisions(scene, actor);
