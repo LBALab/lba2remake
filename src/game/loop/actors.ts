@@ -32,6 +32,8 @@ export function updateActor(game: any, scene: any, actor: Actor, time: any, step
     }
 }
 
+const wEuler = new THREE.Euler();
+
 function updateMovements(actor: Actor, time: any) {
     const delta = time.delta * 1000;
     if (actor.props.runtimeFlags.isTurning) {
@@ -39,8 +41,8 @@ function updateMovements(actor: Actor, time: any) {
         let angle = baseAngle / (actor.props.speed * 10);
         angle = Math.atan2(Math.sin(angle), Math.cos(angle));
         actor.physics.temp.angle += angle;
-        const euler = new THREE.Euler(0, actor.physics.temp.angle, 0, 'XZY');
-        actor.physics.orientation.setFromEuler(euler);
+        wEuler.set(0, actor.physics.temp.angle, 0, 'XZY');
+        actor.physics.orientation.setFromEuler(wEuler);
     }
     if (actor.props.runtimeFlags.isWalking) {
         actor.physics.temp.position.set(0, 0, 0);
