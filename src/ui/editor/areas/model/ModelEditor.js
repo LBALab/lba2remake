@@ -20,11 +20,19 @@ const ModelEditor = {
         entity: 0,
         body: 0,
         anim: 0,
-        rotateView: true
+        rotateView: true,
+        wireframe: false,
+        grid: true
     }),
     stateHandler: {
         setRotateView(rotateView) {
             this.setState({ rotateView });
+        },
+        setWireframe(wireframe) {
+            this.setState({ wireframe });
+        },
+        setGrid(grid) {
+            this.setState({ grid });
         },
         setEntity(entity) {
             this.setState({

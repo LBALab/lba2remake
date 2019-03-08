@@ -121,6 +121,7 @@ export default class Model extends FrameListener {
         model.entity = this.entity;
         this.state.scene.threeScene.add(model.mesh);
         this.setState({ animState, model }, this.saveData);
+        this.wireframe = false;
     }
 
     onMouseDown() {
@@ -154,7 +155,7 @@ export default class Model extends FrameListener {
 
     frame() {
         const { renderer, animState, clock, model, scene, grid } = this.state;
-        const { entity, body, anim, rotateView } = this.props.sharedState;
+        const { entity, body, anim, rotateView, wireframe } = this.props.sharedState;
         if (this.entity !== entity || this.body !== body) {
             this.loadModel();
             grid.position.y = 0;
@@ -163,6 +164,15 @@ export default class Model extends FrameListener {
             grid.position.y = 0;
             this.anim = anim;
         }
+        if (this.wireframe !== wireframe && model) {
+            model.mesh.traverse((obj) => {
+                if (obj instanceof THREE.Mesh) {
+                    obj.material.wireframe = wireframe;
+                }
+            });
+            this.wireframe = wireframe;
+        }
+        grid.visible = this.props.sharedState.grid || false;
         this.checkResize();
         const time = {
             delta: Math.min(clock.getDelta(), 0.05),
