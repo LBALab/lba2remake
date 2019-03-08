@@ -4,7 +4,7 @@ import {makeGamepadControls} from './gamepad.ts';
 import {makeVRControls} from './vr.ts';
 import {makeFirstPersonTouchControls} from './touch.ts';
 
-export function createControls(params, game, canvas, sceneManager, renderer) {
+export function createControls(params, game, elem, sceneManager, renderer) {
     let controls;
     if (renderer.vr) {
         controls = [
@@ -18,8 +18,8 @@ export function createControls(params, game, canvas, sceneManager, renderer) {
         ];
     } else {
         controls = [
-            makeFirstPersonMouseControls(params, canvas, game),
-            makeKeyboardControls(params, canvas, sceneManager, game),
+            makeFirstPersonMouseControls(params, elem, game),
+            makeKeyboardControls(params, elem, sceneManager, game),
             makeGamepadControls(sceneManager, game)
         ];
     }

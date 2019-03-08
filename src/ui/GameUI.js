@@ -29,7 +29,8 @@ export default class GameUI extends FrameListener {
     constructor(props) {
         super(props);
 
-        this.onLoad = this.onLoad.bind(this);
+        this.onRenderZoneRef = this.onRenderZoneRef.bind(this);
+        this.onCanvasWrapperRef = this.onCanvasWrapperRef.bind(this);
         this.frame = this.frame.bind(this);
         this.saveData = this.saveData.bind(this);
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
@@ -98,13 +99,28 @@ export default class GameUI extends FrameListener {
         }
     }
 
-    async onLoad(root) {
-        if (!this.root) {
+    async onRenderZoneRef(renderZoneElem) {
+        if (!this.renderZoneElem && renderZoneElem) {
+            this.renderZoneElem = renderZoneElem;
+            if (this.state.renderer && this.state.sceneManager) {
+                const controls = createControls(
+                    this.props.params,
+                    this.state.game,
+                    renderZoneElem,
+                    this.state.sceneManager,
+                    this.state.renderer
+                );
+                this.setState({ controls }, this.saveData);
+            }
+        }
+    }
+
+    async onCanvasWrapperRef(canvasWrapperElem) {
+        if (!this.canvasWrapperElem && canvasWrapperElem) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;
             } else {
                 this.canvas = document.createElement('canvas');
-                this.canvas.tabIndex = 0;
                 const game = this.state.game;
                 const renderer = createRenderer(this.props.params, this.canvas, {}, 'game');
                 const sceneManager = await createSceneManager(
@@ -117,17 +133,20 @@ export default class GameUI extends FrameListener {
                     this.props.ticker.frame();
                 });
                 this.onSceneManagerReady(sceneManager);
-                const controls = createControls(
-                    this.props.params,
-                    game,
-                    this.canvas,
-                    sceneManager,
-                    renderer
-                );
+                let controls;
+                if (this.renderZoneElem) {
+                    controls = createControls(
+                        this.props.params,
+                        game,
+                        this.renderZoneElem,
+                        sceneManager,
+                        renderer
+                    );
+                }
                 this.setState({ renderer, sceneManager, controls }, this.saveData);
             }
-            this.root = root;
-            this.root.appendChild(this.canvas);
+            this.canvasWrapperElem = canvasWrapperElem;
+            this.canvasWrapperElem.appendChild(this.canvas);
         }
     }
 
@@ -270,9 +289,9 @@ export default class GameUI extends FrameListener {
     }
 
     checkResize() {
-        if (this.root && this.canvas && this.state.renderer) {
-            const roundedWidth = Math.floor(this.root.clientWidth * 0.5) * 2;
-            const roundedHeight = Math.floor(this.root.clientHeight * 0.5) * 2;
+        if (this.canvasWrapperElem && this.canvas && this.state.renderer) {
+            const roundedWidth = Math.floor(this.canvasWrapperElem.clientWidth * 0.5) * 2;
+            const roundedHeight = Math.floor(this.canvasWrapperElem.clientHeight * 0.5) * 2;
             const rWidth = `${roundedWidth}px`;
             const rHeight = `${roundedHeight}px`;
             const cvWidth = this.canvas.style.width;
@@ -297,8 +316,9 @@ export default class GameUI extends FrameListener {
     }
 
     render() {
-        return <div id="renderZone" style={fullscreen}>
-            <div ref={this.onLoad} style={fullscreen}/>
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+        return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex="0">
+            <div ref={this.onCanvasWrapperRef} style={fullscreen}/>
             {this.props.params.editor ?
                 <DebugLabels
                     params={this.props.params}
