@@ -7,10 +7,14 @@ export function getIsometricCamera() {
     const size = getCameraSize(window.innerWidth, window.innerHeight);
     const camera = new IsometricCamera(size, BASE_OFFSET.clone());
     return {
+        width: window.innerWidth,
+        height: window.innerHeight,
         threeCamera: camera,
-        resize: (width, height) => {
-            camera.size.copy(getCameraSize(width, height));
-            camera.updateProjectionMatrix();
+        resize(width, height) {
+            if (width !== this.width || height || this.height) {
+                camera.size.copy(getCameraSize(width, height));
+                camera.updateProjectionMatrix();
+            }
         },
         init: (scene) => {
             centerCamera(camera, scene.actors[0]);

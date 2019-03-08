@@ -15,11 +15,15 @@ export function getVRIsoCamera() {
     controlNode.add(orientation);
     orientation.add(camera);
     return {
+        width: window.innerWidth,
+        height: window.innerHeight,
         controlNode,
         threeCamera: camera,
-        resize: (width, height) => {
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
+        resize(width, height) {
+            if (width !== this.width || height || this.height) {
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+            }
         },
         init: (scene) => {
             processFollowMovement(controlNode, scene, true);

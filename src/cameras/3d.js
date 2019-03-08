@@ -16,11 +16,15 @@ export function get3DCamera() {
     controlNode.add(orientation);
     orientation.add(camera);
     return {
+        width: window.innerWidth,
+        height: window.innerHeight,
         threeCamera: camera,
         controlNode,
-        resize: (width, height) => {
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
+        resize(width, height) {
+            if (width !== this.width || height || this.height) {
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+            }
         },
         init: (scene, controlsState) => {
             if (!controlsState.freeCamera) {
