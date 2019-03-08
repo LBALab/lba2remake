@@ -53,7 +53,7 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
             displayRenderMode();
             renderer.resize();
         }
-        if (event.code === 'KeyR') {
+        if (event.code === 'KeyR' && !event.ctrlKey && !event.metaKey) {
             pixelRatio = PixelRatio[(pixelRatio.index + 1) % PixelRatio.length];
             threeRenderer.setPixelRatio(pixelRatio.getValue());
             // eslint-disable-next-line no-console
