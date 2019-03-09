@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import {extend, map, filter, isObject} from 'lodash';
+import {extend, map, filter, tail, first} from 'lodash';
 import {fullscreen} from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';
 import {getDebugListing} from './listing';
@@ -160,13 +160,13 @@ export default class ScriptEditor extends FrameListener {
                             }
                             firstBreakpoint = false;
                         }
-                        lineNum.style.background = '#580000';
-                        lineNum.style.color = '#ffffff';
-                        lineCmd.style.background = '#200000';
-                    } else {
                         lineNum.style.background = '#ff0000';
+                        lineNum.style.color = 'black';
+                        lineCmd.style.background = '#330000';
+                    } else {
+                        lineNum.style.background = '#660000';
                         lineNum.style.color = 'inherit';
-                        lineCmd.style.background = 'transparent';
+                        lineCmd.style.background = 'black';
                     }
                 } else {
                     lineNum.style.color = 'inherit';
@@ -178,12 +178,14 @@ export default class ScriptEditor extends FrameListener {
                             }
                             firstActive = false;
                         }
-                        lineNum.style.background = '#009700';
-                        lineCmd.style.background = 'rgb(51,51,52)';
+                        lineNum.style.color = 'black';
+                        lineNum.style.background = '#00ff00';
+                        lineCmd.style.background = '#001100';
                     } else {
                         const activeSection = commands[i].section === activeCommands.section;
-                        lineNum.style.background = activeSection ? '#232323' : 'transparent';
-                        lineCmd.style.background = activeSection ? '#232323' : 'transparent';
+                        lineNum.style.color = activeSection ? 'white' : '#666666';
+                        lineNum.style.background = activeSection ? 'black' : '#151515';
+                        lineCmd.style.background = activeSection ? 'black' : '#151515';
                     }
                     if (type === 'life' && DebugData.selection && DebugData.selection.lifeLine === i + 1) {
                         const tgt = i + 1;
@@ -203,14 +205,12 @@ export default class ScriptEditor extends FrameListener {
                     result.style.display = active ? 'inline-block' : 'none';
                     if (active && 'condValue' in activeCommands[i]) {
                         const condValue = activeCommands[i].condValue;
-                        if (isObject(condValue)) {
-                            const elem = <span>: {condValue}</span>;
-                            result.innerHTML = ReactDOMServer.renderToStaticMarkup(elem, result);
-                        } else {
-                            result.innerText = `: ${condValue}`;
-                        }
+                        const elem = <span style={{opacity: '0.8', background: 'black', padding: '0 4px', border: '1px solid grey'}}>
+                            {condValue}
+                        </span>;
+                        result.innerHTML = ReactDOMServer.renderToStaticMarkup(elem, result);
                     } else {
-                        result.innerText = '?';
+                        result.innerText = '';
                     }
                 }
             }
@@ -319,54 +319,10 @@ export default class ScriptEditor extends FrameListener {
     }
 }
 
-const cmdStyleTypes = {
-    conditional: {
-        color: '#03A9F4',
-    },
-    structural: {
-        color: '#9356ff',
-    }
-};
-
-const cmdStyles = {
-    IF: cmdStyleTypes.conditional,
-    ELSE: cmdStyleTypes.conditional,
-    SNIF: cmdStyleTypes.conditional,
-    NEVERIF: cmdStyleTypes.conditional,
-    SWIF: cmdStyleTypes.conditional,
-    ONEIF: cmdStyleTypes.conditional,
-    OR_IF: cmdStyleTypes.conditional,
-    AND_IF: cmdStyleTypes.conditional,
-    SWITCH: cmdStyleTypes.conditional,
-    END_SWITCH: cmdStyleTypes.conditional,
-    CASE: cmdStyleTypes.conditional,
-    OR_CASE: cmdStyleTypes.conditional,
-    DEFAULT: cmdStyleTypes.conditional,
-    BREAK: cmdStyleTypes.conditional,
-    ENDIF: cmdStyleTypes.conditional,
-
-    COMPORTEMENT: cmdStyleTypes.structural,
-    END_COMPORTEMENT: cmdStyleTypes.structural,
-    SET_COMPORTEMENT: cmdStyleTypes.structural,
-    SET_COMPORTEMENT_OBJ: cmdStyleTypes.structural,
-    SAVE_COMPORTEMENT: cmdStyleTypes.structural,
-    RESTORE_COMPORTEMENT: cmdStyleTypes.structural,
-    END: cmdStyleTypes.structural,
-    TRACK: cmdStyleTypes.structural,
-    SET_TRACK: cmdStyleTypes.structural,
-    SET_TRACK_OBJ: cmdStyleTypes.structural,
-    STOP_CURRENT_TRACK: cmdStyleTypes.structural,
-    RESTORE_LAST_TRACK: cmdStyleTypes.structural,
-    GOTO: cmdStyleTypes.structural,
-    STOP: cmdStyleTypes.structural,
-    REPLACE: cmdStyleTypes.structural,
-    SUICIDE: cmdStyleTypes.structural
-};
-
 const lineNumBaseStyle = {
     display: 'inline-block',
     textAlign: 'right',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
 };
 
 function LineNumber({line, command, nDigits, toggleBreakpoint}) {
@@ -379,21 +335,144 @@ function LineNumber({line, command, nDigits, toggleBreakpoint}) {
     </div>;
 }
 
-function Command({line, command}) {
-    const cmdStyle = extend({
-        paddingLeft: `${(command.indent * 2) + 1}ch`
-    }, cmdStyles[command.name]);
+/*
+const cmdStyles = {
+    prop: {
+        color: '#72ccf4'
+    },
+    fct: {
+        color: '#ffc42c'
+    },
+    keyword: {
+        color: '#03A9F4'
+    },
+    var: {
+        color: '#10ee00'
+    },
+    cond: {
+        color: '#03A9F4'
+    },
+};
+*/
 
+const cmdColors = {
+    keyword: '#03A9F4',
+    cond: '#03A9F4',
+    fct: '#ffc42c',
+    read_prop: '#72ccf4',
+    assignment: '#72ccf4',
+    increment: '#72ccf4',
+    decrement: '#72ccf4',
+    read_var: '#10ee00',
+    var_assignment: '#10ee00',
+    var_increment: '#10ee00',
+    var_decrement: '#10ee00',
+};
+
+function Scope({scope, children}) {
+    if (scope !== undefined) {
+        return <span style={{color: 'white'}}>
+            <span style={{color: cmdColors.keyword}}>
+                {scope}
+            </span>
+            .
+            {children}
+        </span>;
+    }
+    return children;
+}
+
+function getWrappers(type) {
+    // wlm = wrapper-left-most
+    // wl = wrapper-left
+    // wr = wrapper-right
+    switch (type) {
+        case 'keyword':
+            return { wl: ' ' };
+        case 'cond':
+            return { wlm: ' (', wr: ')' };
+        case 'fct':
+            return { wl: '(', wr: ')' };
+        case 'assignment':
+        case 'var_assignment':
+            return { wl: ' = ' };
+        case 'increment':
+        case 'var_increment':
+            return { wl: ' += ' };
+        case 'decrement':
+        case 'var_decrement':
+            return { wl: ' -= ' };
+    }
+    return {};
+}
+
+function Command({line, command}) {
+    const cmdIndentStyle = {
+        paddingLeft: `${(command.indent * 3) + 1}ch`
+    };
+
+    let prefix = null;
+    let postfix = null;
+    let name = command.name.toLowerCase();
+    let args = command.args;
+    const objCmd = name.match(/^(.*)_obj$/);
+    if (objCmd) {
+        name = objCmd[1];
+        prefix = <span style={{color: 'white'}}><Arg arg={first(args)}/>.</span>;
+        args = tail(args);
+    }
+
+    const ifCmd = name.match(/^(.*)_if$/);
+    if (ifCmd) {
+        name = 'if';
+        postfix = <span style={{color: cmdColors.keyword}}>&nbsp;{ifCmd[1]}</span>;
+    }
+
+    if (command.type.substring(0, 4) === 'var_') {
+        name = first(args).value;
+        args = tail(args);
+    }
+
+    const {wlm, wl, wr} = getWrappers(command.type);
     return <div style={getLineStyle(line, command, true)}>
-        <span style={cmdStyle}>{command.name}</span>
+        <span style={cmdIndentStyle}>
+            <Scope scope={command.scope}>
+                {prefix}
+                <span style={{color: cmdColors[command.type]}}>
+                    {command.prop || name}
+                </span>
+            </Scope>
+        </span>
+        {wlm}
         <Condition condition={command.condition}/>
         <Operator operator={command.operator}/>
-        <Args args={command.args}/>
+        {wl}<Args args={args}/>{wr}
+        {postfix}
     </div>;
 }
 
-const condStyle = { color: '#00a900' };
-const argStyle = { color: '#ca0000' };
+const argIcon = (path, color) => ({
+    color,
+    paddingLeft: '2ch',
+    background: `url("${path}") no-repeat`,
+    backgroundSize: '14px 14px',
+    backgroundPosition: '1px 1px'
+});
+
+const defaultArgStyle = { color: '#98ee92', fontStyle: 'italic' };
+const argStyle = {
+    actor: argIcon('editor/icons/actor.png', '#ff0000'),
+    zone: argIcon('editor/icons/zones/SCENERIC.png', '#6495ed'),
+    point: argIcon('editor/icons/point.png', '#0084ff'),
+    body: argIcon('editor/icons/body.png', '#ffffff'),
+    anim: argIcon('editor/icons/anim.png', '#ffffff'),
+    dirmode: { color: 'white' },
+    text: { color: '#ff7448' },
+    offset: { color: 'white' },
+    label: { color: 'white' },
+    behaviour: { color: 'white' },
+    boolean: { color: cmdColors.keyword }
+};
 
 /**
  * @return {null}
@@ -401,19 +480,36 @@ const argStyle = { color: '#ca0000' };
 function Condition({condition}) {
     if (condition) {
         let param = null;
-        if ('param' in condition) {
+        if (condition.param) {
             param = <span>
-                {'('}<span style={argStyle}>{condition.param}</span>{')'}
+                <Arg arg={condition.param}/>
             </span>;
         }
-        const rStyle = extend({
-            display: 'none',
-            boxShadow: 'inset 0px 0px 0px 1px white',
-        }, argStyle);
+
+        let prefix = null;
+        let name = condition.name.toLowerCase();
+        const objCmd = name.match(/^(.*)_obj$/);
+        if (objCmd) {
+            name = objCmd[1];
+            prefix = <span style={{color: 'white'}}><Arg arg={condition.param}/>.</span>;
+            param = null;
+        }
+
+        if (condition.type === 'read_var') {
+            name = condition.param.value;
+            param = null;
+        }
+
+        const wl = condition.type === 'fct' && '(';
+        const wr = condition.type === 'fct' && ')';
         return <span>
-            &nbsp;<span style={condStyle}>{condition.name}</span>
-            {param}
-            <span className="result" style={rStyle}/>
+            <Scope scope={condition.scope}>
+                {prefix}
+                <span style={{color: cmdColors[condition.type]}}>
+                    {condition.prop || name}
+                </span>
+            </Scope>
+            {wl}{param}{wr}
         </span>;
     }
     return null;
@@ -424,13 +520,27 @@ function Condition({condition}) {
  */
 function Operator({operator}) {
     if (operator) {
-        const text = operator.value ? <span>&nbsp;&lt;<i>{operator.value}</i>&gt;</span> : null;
+        const operand = operator.operand;
+        const rStyle = extend({
+            display: 'none',
+            position: 'absolute',
+            right: 0
+        }, argStyle[operand && operand.type] || defaultArgStyle);
         return <span>
             &nbsp;{operator.name}
-            &nbsp;<span style={argStyle}>{operator.operand}{text}</span>
+            &nbsp;<Arg arg={operator.operand}/>
+            <span className="result" style={rStyle}/>
         </span>;
     }
     return null;
+}
+
+function intersperse(arr, sep) {
+    if (arr.length === 0) {
+        return [];
+    }
+
+    return arr.slice(1).reduce((xs, x) => xs.concat([sep, x]), [arr[0]]);
 }
 
 /**
@@ -440,22 +550,29 @@ function Args({args}) {
     if (args) {
         return <span>
             {
-                map(
+                intersperse(map(
                     filter(args, arg => !arg.hide),
-                    (arg, i) => {
-                        const text = arg.text ? <span>&nbsp;&lt;<i>{arg.text}</i>&gt;</span> : null;
-                        return <span key={i} style={argStyle}>&nbsp;{arg.value}{text}</span>;
-                    }
-                )
+                    (arg, i) => <Arg key={i} arg={arg}/>
+                ), ', ')
             }
         </span>;
     }
     return null;
 }
 
+function Arg({arg}) {
+    if (!arg) {
+        return '<undefined>';
+    }
+    const style = argStyle[arg.type] || defaultArgStyle;
+    return <span style={style}>
+        {arg.value}
+    </span>;
+}
+
 const lineBaseStyle = {
     whiteSpace: 'nowrap',
-    lineHeight: '16px',
+    lineHeight: '20px',
     fontWeight: 'normal',
     fontSize: 14
 };
@@ -469,9 +586,9 @@ function getLineStyle(line, command, dash) {
     const dashLine = dash ? '1px dashed rgb(51,51,51)' : '1px solid transparent';
 
     return extend({
-        marginTop: isFirst ? '0.5em' : 0,
-        paddingTop: isFirst ? '0.5em' : 0,
+        marginTop: isFirst ? '1em' : 0,
+        paddingTop: 0,
         borderTop: isFirst ? dashLine : 0,
-        opacity: command.unimplemented ? 0.5 : 1
+        textDecoration: command.unimplemented ? 'line-through' : 'none'
     }, lineBaseStyle);
 }

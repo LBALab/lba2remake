@@ -95,11 +95,11 @@ export function LIFE_POINT_OBJ(actor) {
     return actor.props.life;
 }
 
-export function NUM_LITTLE_KEYS() {
+export function KEYS() {
     return this.game.getState().hero.keys;
 }
 
-export function NUM_GOLD_PIECES() {
+export function MONEY() {
     return this.game.getState().hero.money;
 }
 
@@ -119,12 +119,12 @@ export function MAGIC_LEVEL() {
     return this.game.getState().hero.magic;
 }
 
-export function MAGIC_POINT() {
+export function MAGIC_POINTS() {
     return this.game.getState().hero.magicball.level;
 }
 
-export function USE_INVENTORY() {
-    return -1;
+export function USING_INVENTORY() {
+    return 0;
 }
 
 export function CHOICE() {

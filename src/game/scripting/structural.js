@@ -1,5 +1,3 @@
-import { unimplemented } from './utils';
-
 /* Conditionals */
 
 export function IF(condition, operator, offset) {
@@ -68,7 +66,9 @@ export function CASE(operator, offset) {
     }
 }
 
-export const DEFAULT = unimplemented();
+export function DEFAULT() {
+    // do nothing
+}
 
 export function BREAK(offset) {
     OFFSET.call(this, offset);
@@ -179,7 +179,9 @@ export function END_LIFE() {
     END.call(this);
 }
 
-export const NOP = unimplemented();
+export function NOP() {
+    // DO NOTHING
+}
 
 export function RETURN() {
     this.state.reentryOffset = this.state.comportementOffset;

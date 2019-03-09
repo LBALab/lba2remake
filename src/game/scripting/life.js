@@ -177,8 +177,8 @@ export function USE_ONE_LITTLE_KEY() {
     this.game.getState().hero.keys += 1;
 }
 
-export function GIVE_GOLD_PIECES(amount) {
-    this.game.getState().hero.money += amount;
+export function SUB_MONEY(amount) {
+    this.game.getState().hero.money -= amount;
     if (this.game.getState().hero.money > 999) {
         this.game.getState().hero.money = 999;
     }
@@ -312,7 +312,7 @@ export function HIT_OBJ(actor, strength) {
     actor.props.life -= strength;
 }
 
-export function PLAY_SMK(cmdState, video) {
+export function PLAY_VIDEO(cmdState, video) {
     if (!cmdState.skipListener) {
         const that = this;
         this.game.pause();
@@ -582,7 +582,7 @@ export const SET_RAIL = unimplemented();
 
 export const INVERSE_BETA = unimplemented();
 
-export function ADD_GOLD_PIECES(value) {
+export function ADD_MONEY(value) {
     this.game.getState().hero.money += value;
     if (this.game.getState().hero.money > 999) {
         this.game.getState().hero.money = 999;

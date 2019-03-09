@@ -1,6 +1,6 @@
 import {cloneDeep, map, each, find, isFinite, isInteger, extend, findKey} from 'lodash';
 import Indent from '../../../../../game/scripting/indent';
-import {getRotation} from '../../../../../utils/lba';
+import {getRotation, getDistance} from '../../../../../utils/lba';
 import DebugData, {getObjectName, getVarName} from '../../../DebugData';
 import {formatVar} from './format';
 import { DirMode } from '../../../../../game/actors.ts';
@@ -27,7 +27,10 @@ function mapCommands(scene, actor, commands) {
             condition: mapCondition(scene, cmd.condition, state),
             operator: mapOperator(scene, cmd.operator, state),
             section: cmd.section,
-            unimplemented: cmd.op.handler.unimplemented
+            unimplemented: cmd.op.handler.unimplemented,
+            type: cmd.op.type,
+            prop: cmd.op.prop,
+            scope: cmd.op.scope
         };
         indent = processIndent(newCmd, prevCommand, cmd.op, indent);
         prevCommand = newCmd;
@@ -50,6 +53,9 @@ function mapArguments(scene, actor, cmd) {
         (obj, index) => mapComportementArg(obj.scripts.life.comportementMap[index] + 1);
 
     switch (cmd.op.command) {
+        case 'TRACK':
+            args[0].value = args[0].value;
+            break;
         case 'COMPORTEMENT':
             args[0].value = mapComportementArg(args[0].value);
             break;
@@ -79,9 +85,6 @@ function mapArguments(scene, actor, cmd) {
             args[0].value = actor.scripts.move.tracksMap[args[0].value];
             break;
         case 'ANGLE':
-        case 'BETA':
-            args[0].value = getRotation(args[0].value, 0, 1) - 90;
-            break;
         case 'ADD_CHOICE':
         case 'ASK_CHOICE':
         case 'MESSAGE_ZOE':
@@ -116,7 +119,13 @@ function mapCondition(scene, condition, state) {
         }
         return {
             name: condition.op.command,
-            param: mapDataName(scene, condition.param)
+            type: condition.op.type,
+            scope: condition.op.scope,
+            prop: condition.op.prop,
+            param: condition.param && {
+                type: condition.param.type,
+                value: mapDataName(scene, condition.param)
+            }
         };
     }
     return null;
@@ -128,10 +137,13 @@ function mapOperator(scene, operator, state) {
         if (operator.operand.type === 'vargame_value' || operator.operand.type === 'varcube_value') {
             return {
                 name: operator.op.command,
-                operand: mapDataName(
-                    scene,
-                    extend({idx: state.condition.param.value}, operator.operand)
-                )
+                operand: {
+                    type: operator.operand.type,
+                    value: mapDataName(
+                        scene,
+                        extend({idx: state.condition.param.value}, operator.operand)
+                    )
+                }
             };
         } else if (operator.operand.type === 'choice_value') {
             if (scene.data.texts[operator.operand.value]) {
@@ -140,7 +152,10 @@ function mapOperator(scene, operator, state) {
         }
         return {
             name: operator.op.command,
-            operand: mapDataName(scene, operator.operand),
+            operand: {
+                type: operator.operand.type,
+                value: mapDataName(scene, operator.operand)
+            },
             value: text
         };
     }
@@ -177,22 +192,42 @@ function processIndent(cmd, prevCmd, op, indent) {
     throw new Error('Missing indent op');
 }
 
+const BehaviourMap = {
+    0: 'NORMAL',
+    1: 'ATHLETIC',
+    2: 'AGGRESSIVE',
+    3: 'DISCREET',
+    4: 'PROTOPACK',
+    5: 'WITH_ZOE',
+    6: 'HORN',
+    7: 'SPACESUIT_INDOORS_NORMAL',
+    8: 'JETPACK',
+    9: 'SPACESUIT_INDOORS_ATHLETIC',
+    10: 'SPACESUIT_OUTDOORS_NORMAL',
+    11: 'SPACESUIT_OUTDOORS_ATHLETIC',
+    12: 'CAR',
+    13: 'ELECTROCUTED'
+};
+
 export function mapDataName(scene, data) {
     if (!data) {
         return null;
+    } else if (data.type === 'text') {
+        const ellipsis = data.text.length > 50 ? '_[...]' : '';
+        return ['`', data.text.substring(0, 50), ellipsis, '`'].join('');
     } else if (data.type === 'actor' || data.type === 'point') {
         if (data.value === -1)
-            return `<no-${data.type}>`;
+            return 'none';
         return getObjectName(data.type, scene.index, data.value);
     } else if (data.type === 'zone') {
         if (data.value === -1)
-            return '<no-zone>';
+            return 'none';
         const foundZone = find(scene.zones, zone =>
             zone.props.type === 2 && zone.props.snap === data.value);
         if (foundZone) {
             return getObjectName('zone', scene.index, foundZone.index);
         }
-        return '<no-zone>';
+        return 'none';
     } else if (data.type === 'vargame' || data.type === 'varcube') {
         return getVarName({
             type: data.type,
@@ -204,11 +239,19 @@ export function mapDataName(scene, data) {
             idx: data.idx
         }, data.value);
     } else if (data.type === 'anim') {
-        return DebugData.metadata.anims[data.value] || data.value;
+        return DebugData.metadata.anims[data.value] || `anim_${data.value}`;
     } else if (data.type === 'body') {
-        return DebugData.metadata.bodies[data.value] || data.value;
+        return DebugData.metadata.bodies[data.value] || `body_${data.value}`;
     } else if (data.type === 'dirmode') {
         return findKey(DirMode, m => m === data.value);
+    } else if (data.type === 'distance') {
+        return `${getDistance(data.value).toFixed(1)}m`;
+    } else if (data.type === 'behaviour') {
+        return BehaviourMap[data.value] || data.value;
+    } else if (data.type === 'angle') {
+        return `${Math.round(getRotation(data.value, 0, 1) - 90)}°`;
+    } else if (data.type === 'boolean') {
+        return `${data.value !== 0}`;
     }
     if (isFinite(data.value) && !isInteger(data.value)) {
         return data.value.toFixed(2);

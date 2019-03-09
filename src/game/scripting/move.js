@@ -1,8 +1,7 @@
 import { getDistance } from '../../utils/lba';
 import { unimplemented } from './utils';
 
-export function GOTO_POINT(pointIndex) {
-    const point = this.scene.points[pointIndex];
+export function GOTO_POINT(point) {
     const distance = this.actor.goto(point.physics.position);
 
     if (distance > getDistance(500)) {
@@ -55,9 +54,7 @@ export function SAMPLE(index) {
     });
 }
 
-export function GOTO_POINT_3D() {
-
-}
+export const GOTO_POINT_3D = unimplemented();
 
 export function SPEED(speed) {
     this.actor.props.speed = speed;
@@ -144,6 +141,10 @@ export function FACE_HERO() {
     }
 }
 
+export const DO = unimplemented();
+
+export const AFF_TIMER = unimplemented();
+
 export const ANGLE_RND = unimplemented();
 
 export const REPLACE = unimplemented();
@@ -152,36 +153,24 @@ export const SPRITE = unimplemented();
 
 export const SET_FRAME = unimplemented();
 
-export function SET_FRAME_3DS() {
+export const SET_FRAME_3DS = unimplemented();
 
-}
+export const SET_START_3DS = unimplemented();
 
-export function SET_START_3DS() {
+export const SET_END_3DS = unimplemented();
 
-}
+export const START_ANIM_3DS = unimplemented();
 
-export function SET_END_3DS() {
+export const STOP_ANIM_3DS = unimplemented();
 
-}
+export const WAIT_ANIM_3DS = unimplemented();
 
-export function START_ANIM_3DS() {
-
-}
-
-export function STOP_ANIM_3DS() {
-
-}
-
-export function WAIT_ANIM_3DS() {
-
-}
-
-export function WAIT_FRAME_3DS() {
-
-}
+export const WAIT_FRAME_3DS = unimplemented();
 
 export const INTERVAL = unimplemented();
 
 export const FREQUENCY = unimplemented();
 
 export const VOLUME = unimplemented();
+
+export const LOOP = unimplemented();
