@@ -12,7 +12,7 @@ export function formatVar(varDef, value) {
                 const allValues = map(info.enumValues, (v, k) => `${k}:${v}`).join('\n');
                 return <span style={{color: '#b9a0b3'}}>
                     <span title={allValues}>{info.enumValues[value].toUpperCase()}</span>
-                    <sup>({value})</sup>
+                    ({value})
                 </span>;
             }
             return <span style={{color: '#b9a0b3'}}>({value})</span>;
