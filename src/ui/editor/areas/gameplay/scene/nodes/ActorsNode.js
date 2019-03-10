@@ -56,7 +56,8 @@ const Actor = {
                 if (actor.props.entityIndex === -1) {
                     return '<no-entity>';
                 } else if (DebugData.metadata.entities[actor.props.entityIndex]) {
-                    return DebugData.metadata.entities[actor.props.entityIndex];
+                    const name = DebugData.metadata.entities[actor.props.entityIndex];
+                    return `${name} (${actor.props.entityIndex})`;
                 }
                 return `entity_${actor.props.entityIndex}`;
             },
