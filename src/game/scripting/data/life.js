@@ -579,7 +579,7 @@ export const LifeOpcode = [
         opcode: 0x44,
         command: 'ADD_CHOICE',
         handler: lf.ADD_CHOICE,
-        args: ['Uint16'],
+        args: ['Uint16:text'],
         indent: Indent.KEEP,
         type: 'fct'
     },
