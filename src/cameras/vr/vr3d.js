@@ -35,6 +35,9 @@ export function getVR3DCamera() {
         },
         update: (scene) => {
             processFollow3DMovement(controlNode, scene);
+        },
+        center: (scene) => {
+            processFollow3DMovement(controlNode, scene, true);
         }
     };
 }

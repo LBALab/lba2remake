@@ -9,7 +9,7 @@ export function createControls(params, game, elem, sceneManager, renderer) {
     if (renderer.vr) {
         controls = [
             makeFirstPersonTouchControls(game),
-            makeVRControls(game)
+            makeVRControls(sceneManager, game)
         ];
     } else if (params.mobile) {
         controls = [

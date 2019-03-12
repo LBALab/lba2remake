@@ -33,6 +33,9 @@ export function getVRIsoCamera() {
         },
         update: (scene) => {
             processFollowMovement(controlNode, scene);
+        },
+        center: (scene) => {
+            processFollowMovement(controlNode, scene, true);
         }
     };
 }
