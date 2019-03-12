@@ -10,7 +10,9 @@ export function get3DCamera() {
         0.1,
         1000
     );
+    camera.name = '3DCamera';
     const controlNode = new THREE.Object3D();
+    controlNode.name = 'CameraControlNode';
     const orientation = new THREE.Object3D();
     orientation.rotation.set(0, Math.PI, 0);
     controlNode.add(orientation);

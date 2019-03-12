@@ -9,9 +9,12 @@ export function getVRIsoCamera() {
         0.1,
         1000
     );
+    camera.name = 'VRIsoCamera';
     const controlNode = new THREE.Object3D();
+    controlNode.name = 'CameraControlNode';
     const orientation = new THREE.Object3D();
     orientation.rotation.set(0, Math.PI, 0);
+    orientation.name = 'AxisTransform';
     controlNode.add(orientation);
     orientation.add(camera);
     return {

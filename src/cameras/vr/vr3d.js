@@ -11,8 +11,11 @@ export function getVR3DCamera() {
         0.1,
         1000
     );
+    camera.name = 'VR3DCamera';
     const controlNode = new THREE.Object3D();
+    controlNode.name = 'CameraControlNode';
     const orientation = new THREE.Object3D();
+    orientation.name = 'AxisTransform';
     orientation.rotation.set(0, Math.PI, 0);
     controlNode.add(orientation);
     orientation.add(camera);

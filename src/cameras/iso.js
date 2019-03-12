@@ -6,6 +6,7 @@ const BASE_OFFSET = new THREE.Vector2(3500, 1001);
 export function getIsometricCamera() {
     const size = getCameraSize(window.innerWidth, window.innerHeight);
     const camera = new IsometricCamera(size, BASE_OFFSET.clone());
+    camera.name = 'IsometricCamera';
     return {
         width: window.innerWidth,
         height: window.innerHeight,
