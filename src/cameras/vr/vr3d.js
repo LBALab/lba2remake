@@ -39,29 +39,39 @@ export function getVR3DCamera() {
     };
 }
 
+const HERO_POS = new THREE.Vector3();
+const FLAT_HERO_POS = new THREE.Vector3();
+const FLAT_CAM = new THREE.Object3D();
+const FLAT_CAM_POS = new THREE.Vector3();
+const CAM_HERO_VEC = new THREE.Vector3();
+const CAM_DIR_VEC = new THREE.Vector3();
+const CAM_DIR_TARGET = new THREE.Object3D();
+const HERO_VECTOR = new THREE.Vector3();
+
 function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
     const hero = scene.actors[0];
     if (!hero.threeObject)
         return;
-    const heroPos = HERO_TARGET_POS.clone();
-    heroPos.applyMatrix4(hero.threeObject.matrixWorld);
 
-    const flatHeroPos = new THREE.Vector3(heroPos.x, 0, heroPos.z);
-    const flatCamPos = controlNode.position.clone();
-    flatCamPos.y = 0;
-    const distanceToHero = flatCamPos.distanceTo(flatHeroPos);
+    HERO_POS.copy(HERO_TARGET_POS);
+    HERO_POS.applyMatrix4(hero.threeObject.matrixWorld);
 
-    const flatCam = new THREE.Object3D();
-    flatCam.position.copy(flatCamPos);
-    flatCam.lookAt(flatHeroPos);
+    FLAT_HERO_POS.copy(HERO_POS);
+    FLAT_HERO_POS.y = 0;
+    FLAT_CAM_POS.copy(controlNode.position);
+    FLAT_CAM_POS.y = 0;
+    const distanceToHero = FLAT_CAM_POS.distanceTo(FLAT_HERO_POS);
 
-    const camHeroVector = flatHeroPos.clone();
-    camHeroVector.sub(flatCamPos);
+    FLAT_CAM.position.copy(FLAT_CAM_POS);
+    FLAT_CAM.lookAt(FLAT_HERO_POS);
 
-    const camDirVector = new THREE.Vector3(0, 0, 1);
-    camDirVector.applyQuaternion(controlNode.quaternion);
+    CAM_HERO_VEC.copy(FLAT_HERO_POS);
+    CAM_HERO_VEC.sub(FLAT_CAM_POS);
 
-    const angle = angleBetween(camDirVector, camHeroVector);
+    CAM_DIR_VEC.set(0, 0, 1);
+    CAM_DIR_VEC.applyQuaternion(controlNode.quaternion);
+
+    const angle = angleBetween(CAM_DIR_VEC, CAM_HERO_VEC);
     const isMoreThan22DegsOff = Math.abs(angle) > (Math.PI / 8);
 
     if (forceUpdate
@@ -71,18 +81,14 @@ function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
         const cameraPos = CAMERA_HERO_OFFSET.clone();
         cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
 
-        const camDirTarget = new THREE.Object3D();
-        camDirTarget.position.copy(cameraPos);
-        camDirTarget.position.y = 0;
-        camDirTarget.lookAt(flatHeroPos);
+        CAM_DIR_TARGET.position.copy(cameraPos);
+        CAM_DIR_TARGET.position.y = 0;
+        CAM_DIR_TARGET.lookAt(FLAT_HERO_POS);
 
-        const newCamDirVector = new THREE.Vector3(0, 0, 1);
-        newCamDirVector.applyQuaternion(camDirTarget.quaternion);
+        HERO_VECTOR.set(0, 0, 1);
+        HERO_VECTOR.applyQuaternion(hero.physics.orientation);
 
-        const heroVector = new THREE.Vector3(0, 0, 1);
-        heroVector.applyQuaternion(hero.physics.orientation);
-
-        const camHeroAngle = angleBetween(camDirVector, heroVector);
+        const camHeroAngle = angleBetween(CAM_DIR_VEC, HERO_VECTOR);
         if (Math.abs(camHeroAngle) > Math.PI / 4 && !forceUpdate) {
             const targetAngle = (Math.PI / 8) * Math.sign(camHeroAngle);
             cameraPos.copy(HERO_TARGET_POS);
@@ -99,16 +105,17 @@ function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
         }
         scene.scenery.physics.processCameraCollisions(cameraPos, 2, 4);
         controlNode.position.copy(cameraPos);
-        controlNode.lookAt(heroPos);
+        controlNode.lookAt(HERO_POS);
     }
 }
 
+const QUAT = new THREE.Quaternion();
+const EULER = new THREE.Euler();
+
 function angleBetween(a, b) {
-    const q = new THREE.Quaternion();
     const u1 = a.clone().normalize();
     const u2 = b.clone().normalize();
-    q.setFromUnitVectors(u1, u2);
-    const e = new THREE.Euler();
-    e.setFromQuaternion(q, 'YXZ');
-    return e.y;
+    QUAT.setFromUnitVectors(u1, u2);
+    EULER.setFromQuaternion(QUAT, 'YXZ');
+    return EULER.y;
 }
