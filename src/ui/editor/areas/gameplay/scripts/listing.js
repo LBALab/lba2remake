@@ -122,6 +122,7 @@ function mapCondition(scene, condition, state) {
             type: condition.op.type,
             scope: condition.op.scope,
             prop: condition.op.prop,
+            unimplemented: condition.op.handler.unimplemented,
             param: condition.param && {
                 type: condition.param.type,
                 value: mapDataName(scene, condition.param)

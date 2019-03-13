@@ -504,10 +504,15 @@ function Condition({condition}) {
 
         const wl = condition.type === 'fct' && '(';
         const wr = condition.type === 'fct' && ')';
+        const style = {
+            color: cmdColors[condition.type],
+            textDecoration: condition.unimplemented ? 'line-through' : 'none'
+        };
+
         return <span>
             <Scope scope={condition.scope}>
                 {prefix}
-                <span style={{color: cmdColors[condition.type]}}>
+                <span style={style}>
                     {condition.prop || name}
                 </span>
             </Scope>

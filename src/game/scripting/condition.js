@@ -75,6 +75,8 @@ export function CONE_VIEW() {
     return 10000;
 }
 
+CONE_VIEW.unimplemented = true;
+
 export function HIT_BY() {
     return this.actor.hasCollidedWithActor;
 }
@@ -127,6 +129,8 @@ export function USING_INVENTORY() {
     return 0;
 }
 
+USING_INVENTORY.unimplemented = true;
+
 export function CHOICE() {
     return this.state.choice;
 }
@@ -139,6 +143,8 @@ export function CARRIED_BY() {
     return -1;
 }
 
+CARRIED_BY.unimplemented = true;
+
 export function CDROM() {
     return 1;
 }
@@ -147,6 +153,8 @@ export function LADDER() {
     return -1;
 }
 
+LADDER.unimplemented = true;
+
 export function RND(max) {
     return Math.floor(Math.random() * max);
 }
@@ -154,6 +162,8 @@ export function RND(max) {
 export function RAIL() {
     return -1;
 }
+
+RAIL.unimplemented = true;
 
 export function BETA() {
     return BETA_OBJ.call(this, this.actor);
@@ -168,9 +178,13 @@ export function CARRIED_OBJ_BY() {
     return -1;
 }
 
+CARRIED_OBJ_BY.unimplemented = true;
+
 export function ANGLE() {
     return -1;
 }
+
+ANGLE.unimplemented = true;
 
 export function DISTANCE_MESSAGE(actor) {
     return DISTANCE.call(this, actor);
@@ -184,17 +198,25 @@ export function REAL_ANGLE() {
     return -1;
 }
 
+REAL_ANGLE.unimplemented = true;
+
 export function DEMO() {
     return -1;
 }
+
+DEMO.unimplemented = true;
 
 export function COL_DECORS() {
     return -1;
 }
 
+COL_DECORS.unimplemented = true;
+
 export function COL_DECORS_OBJ() {
     return -1;
 }
+
+COL_DECORS_OBJ.unimplemented = true;
 
 export function PROCESSOR() {
     return 1; // default cpu 486
@@ -204,6 +226,10 @@ export function OBJECT_DISPLAYED() {
     return -1;
 }
 
+OBJECT_DISPLAYED.unimplemented = true;
+
 export function ANGLE_OBJ() {
     return -1;
 }
+
+ANGLE_OBJ.unimplemented = true;
