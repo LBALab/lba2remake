@@ -11,7 +11,7 @@ const KeyValueNode = {
     },
     name: data => data.key,
     icon: data => data.icon,
-    props: data => [
+    props: (data, collapsed, component) => [
         {
             id: 'value',
             value: data.value,
@@ -21,10 +21,13 @@ const KeyValueNode = {
                 }
                 const onClick = () => {
                     if (data.onClick) {
-                        data.onClick();
+                        data.onClick(data, component);
                     }
                 };
-                return <span onClick={onClick}>{value}</span>;
+                const style = {
+                    cursor: data.onClick ? 'pointer' : undefined
+                };
+                return <span onClick={onClick} style={style}>{value}</span>;
             }
         }
     ],
@@ -345,9 +348,11 @@ export default class OutlinerNode extends React.Component {
                     this.renderChild(childFontSize, KeyValueNode, idx, {
                         key: prop.name,
                         value: prop.value(this.props.data),
+                        context: this.props.data,
                         icon: prop.icon && prop.icon(this.props.data),
                         render: prop.render,
-                        color: prop.color
+                        color: prop.color,
+                        onClick: prop.onClick
                     })
             );
         }

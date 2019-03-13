@@ -251,10 +251,10 @@ export default class Editor extends React.Component {
         }
     }
 
-    switchEditor(id) {
+    switchEditor(id, rootState) {
         const area = findAreaContentById(id);
         if (area && area.mainArea) {
-            this.selectAreaContent([0], area);
+            this.selectMainAreaContent(area, rootState);
         } else {
             // eslint-disable-next-line no-console
             console.warn(`Invalid editor id: ${id}`);
@@ -265,25 +265,29 @@ export default class Editor extends React.Component {
         const layout = this.state.layout;
         const node = this.findNodeFromPath(layout, path);
         if (node.root) {
-            DebugData.scope = {};
-            if (this.state.mainData && this.state.mainData.state) {
-                const {renderer} = this.state.mainData.state;
-                if (renderer) {
-                    renderer.dispose();
-                }
-            }
-            this.setState({
-                mainData: undefined,
-                layout: loadLayout(this, area.id),
-                root: area
-            });
-            localStorage.setItem('editor_mode', area.id);
+            this.selectMainAreaContent(area);
         } else {
             node.content = area;
             initStateHandler(this, node);
             this.setState({layout});
             saveLayout(layout);
         }
+    }
+
+    selectMainAreaContent(area, rootState) {
+        DebugData.scope = {};
+        if (this.state.mainData && this.state.mainData.state) {
+            const {renderer} = this.state.mainData.state;
+            if (renderer) {
+                renderer.dispose();
+            }
+        }
+        this.setState({
+            mainData: undefined,
+            layout: loadLayout(this, area.id, rootState),
+            root: area
+        });
+        localStorage.setItem('editor_mode', area.id);
     }
 
     saveMainData(data) {
@@ -341,7 +345,7 @@ function saveNode(node) {
     };
 }
 
-function loadLayout(editor, mode) {
+function loadLayout(editor, mode, rootState) {
     if (!mode) {
         mode = localStorage.getItem('editor_mode') || 'game';
     }
@@ -358,17 +362,17 @@ function loadLayout(editor, mode) {
         const mainArea = findAreaContentById(mode);
         layout = mainArea.defaultLayout;
     }
-    return loadNode(editor, layout);
+    return loadNode(editor, layout, rootState);
 }
 
-function loadNode(editor, node) {
+function loadNode(editor, node, rootState) {
     if (!node) {
         return null;
     }
     if (node.type === Type.LAYOUT) {
         const childNodes = [
-            loadNode(editor, node.children[0]),
-            loadNode(editor, node.children[1])
+            loadNode(editor, node.children[0], rootState),
+            loadNode(editor, node.children[1], rootState)
         ];
         if (!childNodes[0]) {
             return childNodes[1];
@@ -399,7 +403,11 @@ function loadNode(editor, node) {
         node.state = null;
     }
 
-    initStateHandler(editor, tgtNode, node.state);
+    if (tgtNode.root && rootState) {
+        initStateHandler(editor, tgtNode, Object.assign(node.state, rootState));
+    } else {
+        initStateHandler(editor, tgtNode, node.state);
+    }
     return tgtNode;
 }
 
