@@ -128,7 +128,6 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
             bufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(boneIndices), 1));
 
             const modelMesh = new THREE.Mesh(bufferGeometry, material);
-            modelMesh.frustumCulled = false;
             modelMesh.name = name;
             object.add(modelMesh);
         }
