@@ -24,6 +24,7 @@ import Menu from './game/Menu';
 import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
 import {sBind} from '../utils.ts';
+import {updateVRGui} from './vr/vrGui';
 
 export default class GameUI extends FrameListener {
     constructor(props) {
@@ -255,9 +256,15 @@ export default class GameUI extends FrameListener {
     }
 
     frame() {
-        this.checkResize();
         const {game, clock, renderer, sceneManager, controls} = this.state;
         if (renderer && sceneManager) {
+            const presenting = renderer.isPresenting();
+            if (this.state.isPresenting !== presenting) {
+                this.state.isPresenting = presenting;
+            }
+            if (!presenting) {
+                this.checkResize(presenting);
+            }
             const scene = sceneManager.getScene();
             if (this.state.scene !== scene) {
                 this.setState({scene}, this.saveData);
@@ -270,6 +277,7 @@ export default class GameUI extends FrameListener {
                 scene,
                 controls
             );
+            updateVRGui(presenting);
             if (this.props.params.editor) {
                 DebugData.scope = {
                     params: this.props.params,
@@ -288,9 +296,6 @@ export default class GameUI extends FrameListener {
     }
 
     checkResize() {
-        if (this.state.renderer.isPresenting())
-            return;
-
         if (this.canvasWrapperElem && this.canvas && this.state.renderer) {
             const { clientWidth, clientHeight } = this.canvasWrapperElem;
             const rWidth = `${clientWidth}px`;
@@ -319,6 +324,15 @@ export default class GameUI extends FrameListener {
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex="0">
             <div ref={this.onCanvasWrapperRef} style={fullscreen}/>
+            {this.renderGUI()}
+        </div>;
+    }
+
+    renderGUI() {
+        if (this.state.isPresenting)
+            return null;
+
+        return <React.Fragment>
             {this.props.params.editor ?
                 <DebugLabels
                     params={this.props.params}
@@ -353,6 +367,6 @@ export default class GameUI extends FrameListener {
                 onChoiceChanged={this.onAskChoiceChanged}
             /> : null}
             {!this.state.showMenu ? <FoundObject foundObject={this.state.foundObject} /> : null}
-        </div>;
+        </React.Fragment>;
     }
 }

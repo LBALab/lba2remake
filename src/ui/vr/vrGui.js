@@ -14,11 +14,11 @@ export function addVRGuiNode(renderer, controlNode) {
     controlNode.add(gui.cube);
 }
 
-export function updateVRGui(renderer) {
+export function updateVRGui(presenting) {
     if (!gui)
         return;
 
-    gui.cube.visible = renderer.isPresenting();
+    gui.cube.visible = presenting;
 }
 
 function createVRGui(renderer) {
