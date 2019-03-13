@@ -58,6 +58,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 scene.isActive = false;
 
             game.setUiState({ text: null, cinema: false });
+            game.controlsState.skipListener = null;
 
             const hash = window.location.hash;
             if (hash.match(/scene=\d+/)) {
