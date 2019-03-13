@@ -97,7 +97,15 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
 
         threeRenderer,
 
-        vr: threeRenderer.vr.enabled
+        vr: threeRenderer.vr.enabled,
+
+        isPresenting: () => {
+            if (!threeRenderer.vr.enabled)
+                return false;
+
+            const device = threeRenderer.vr.getDevice();
+            return device && device.isPresenting;
+        }
     };
 
     window.addEventListener('keydown', keyListener);

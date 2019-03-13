@@ -18,8 +18,7 @@ export function updateVRGui(renderer) {
     if (!gui)
         return;
 
-    const device = renderer.threeRenderer.vr.getDevice();
-    gui.cube.visible = device && device.isPresenting;
+    gui.cube.visible = renderer.isPresenting();
 }
 
 function createVRGui(renderer) {

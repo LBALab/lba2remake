@@ -288,15 +288,16 @@ export default class GameUI extends FrameListener {
     }
 
     checkResize() {
+        if (this.state.renderer.isPresenting())
+            return;
+
         if (this.canvasWrapperElem && this.canvas && this.state.renderer) {
-            const roundedWidth = Math.floor(this.canvasWrapperElem.clientWidth * 0.5) * 2;
-            const roundedHeight = Math.floor(this.canvasWrapperElem.clientHeight * 0.5) * 2;
-            const rWidth = `${roundedWidth}px`;
-            const rHeight = `${roundedHeight}px`;
-            const cvWidth = this.canvas.style.width;
-            const cvHeight = this.canvas.style.height;
-            if (rWidth !== cvWidth || rHeight !== cvHeight) {
-                this.state.renderer.resize(roundedWidth, roundedHeight);
+            const { clientWidth, clientHeight } = this.canvasWrapperElem;
+            const rWidth = `${clientWidth}px`;
+            const rHeight = `${clientHeight}px`;
+            const style = this.canvas.style;
+            if (rWidth !== style.width || rHeight !== style.height) {
+                this.state.renderer.resize(clientWidth, clientHeight);
                 if (this.state.video) {
                     this.setState({
                         video: clone(this.state.video)
