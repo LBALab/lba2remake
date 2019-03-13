@@ -90,7 +90,7 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
         /* @inspector(locate) */
         dispose() {
             // eslint-disable-next-line no-console
-            console.log(`[Stopping renderer(${type})`);
+            console.log(`[Stopping renderer(${type})]`);
             threeRenderer.dispose();
             window.removeEventListener('keydown', keyListener);
         },
