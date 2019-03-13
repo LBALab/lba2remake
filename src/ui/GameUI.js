@@ -270,18 +270,20 @@ export default class GameUI extends FrameListener {
                 scene,
                 controls
             );
-            DebugData.scope = {
-                params: this.props.params,
-                game,
-                clock,
-                renderer,
-                scene,
-                sceneManager,
-                hero: scene && scene.actors[0],
-                controls,
-                ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls', 'scene')
-            };
-            DebugData.sceneManager = sceneManager;
+            if (this.props.params.editor) {
+                DebugData.scope = {
+                    params: this.props.params,
+                    game,
+                    clock,
+                    renderer,
+                    scene,
+                    sceneManager,
+                    hero: scene && scene.actors[0],
+                    controls,
+                    ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls', 'scene')
+                };
+                DebugData.sceneManager = sceneManager;
+            }
         }
     }
 

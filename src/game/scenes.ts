@@ -192,7 +192,15 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         camera = parent.camera;
     }
 
-    const sceneNode = loadSceneNode(index, indexInfo, scenery, actors, zones, points);
+    const sceneNode = loadSceneNode(
+        index,
+        indexInfo,
+        scenery,
+        actors,
+        zones,
+        points,
+        params.editor
+    );
     threeScene.add(sceneNode);
     const scene = {
         index,
@@ -277,7 +285,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
     return scene;
 }
 
-function loadSceneNode(index, indexInfo, scenery, actors, zones, points) {
+function loadSceneNode(index, indexInfo, scenery, actors, zones, points, editor) {
     const sceneNode = indexInfo.isIsland ? new THREE.Object3D() : new THREE.Scene();
     sceneNode.name = `scene_${index}`;
     if (indexInfo.isIsland) {
@@ -293,8 +301,10 @@ function loadSceneNode(index, indexInfo, scenery, actors, zones, points) {
     };
 
     each(actors, addToSceneNode);
-    each(zones, addToSceneNode);
-    each(points, addToSceneNode);
+    if (editor) {
+        each(zones, addToSceneNode);
+        each(points, addToSceneNode);
+    }
     return sceneNode;
 }
 
