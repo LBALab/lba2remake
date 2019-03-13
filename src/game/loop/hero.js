@@ -148,7 +148,7 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
 }
 
 const FLAT_CAM = new THREE.Object3D();
-const HERO_POS = new THREE.Object3D();
+const HERO_POS = new THREE.Vector3();
 const UP = new THREE.Vector3(0, 1, 0);
 const QUAT = new THREE.Quaternion();
 const EULER = new THREE.Euler();

@@ -21,11 +21,17 @@ export default function setupStats() {
 
 export function switchStats() {
     if (stats) {
-        document.getElementById('stats').removeChild(stats.widgets[0].domElement);
+        const elem = document.getElementById('stats');
+        if (elem) {
+            elem.removeChild(stats.widgets[0].domElement);
+        }
         stats = null;
     } else {
         stats = new Stats(1);
         stats.widgets[0].domElement.style.left = '45px';
-        document.getElementById('stats').appendChild(stats.widgets[0].domElement);
+        const elem = document.getElementById('stats');
+        if (elem) {
+            elem.appendChild(stats.widgets[0].domElement);
+        }
     }
 }
