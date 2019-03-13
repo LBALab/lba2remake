@@ -366,13 +366,23 @@ function loadNode(editor, node) {
         return null;
     }
     if (node.type === Type.LAYOUT) {
+        const childNodes = [
+            loadNode(editor, node.children[0]),
+            loadNode(editor, node.children[1])
+        ];
+        if (!childNodes[0]) {
+            return childNodes[1];
+        }
+        if (!childNodes[1]) {
+            return childNodes[0];
+        }
         return {
             type: Type.LAYOUT,
             orientation: node.orientation,
             splitAt: node.splitAt,
             children: [
-                loadNode(editor, node.children[0]),
-                loadNode(editor, node.children[1])
+                childNodes[0],
+                childNodes[1]
             ]
         };
     }
@@ -380,9 +390,11 @@ function loadNode(editor, node) {
         type: Type.AREA,
         root: node.root
     };
-    tgtNode.content = findAreaContentById(node.content_id) || NewArea;
-    if (tgtNode
-        && node.content_id !== tgtNode.content.id
+    tgtNode.content = findAreaContentById(node.content_id);
+    if (!tgtNode.content)
+        return null;
+
+    if (node.content_id !== tgtNode.content.id
         && node.content_id === tgtNode.content.replaces) {
         node.state = null;
     }
