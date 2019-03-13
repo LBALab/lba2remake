@@ -1,15 +1,9 @@
 import {each} from 'lodash';
 
 class StatsWidget {
-    constructor(owner) {
+    constructor() {
         const container = document.createElement('div');
         container.id = 'stats';
-        container.addEventListener('mousedown', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            owner.mode += 1;
-            owner.setMode(owner.mode % 2);
-        }, false);
         container.style.cssText = 'width:80px;opacity:0.9;cursor:pointer;position:absolute;left:50%;top:5px;margin-left:-40px;';
 
         this.fpsDiv = document.createElement('div');
@@ -36,7 +30,7 @@ class StatsWidget {
 
         this.msDiv = document.createElement('div');
         this.msDiv.id = 'ms';
-        this.msDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#020;display:none';
+        this.msDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#020;display:block';
         container.appendChild(this.msDiv);
 
         this.msText = document.createElement('div');
@@ -77,7 +71,6 @@ export default class Stats {
         this.fpsMin = Infinity;
         this.fpsMax = 0;
         this.frames = 0;
-        this.mode = 0;
         this.widgets = [];
         for (let i = 0; i < numWidgets; i += 1) {
             this.widgets.push(new StatsWidget(this));
@@ -116,23 +109,5 @@ export default class Stats {
             this.frames = 0;
         }
         return time;
-    }
-
-    setMode(value) {
-        this.mode = value;
-        switch (this.mode) {
-            case 0:
-                each(this.widgets, (widget) => {
-                    widget.fpsDiv.style.display = 'block';
-                    widget.msDiv.style.display = 'none';
-                });
-                break;
-            case 1:
-                each(this.widgets, (widget) => {
-                    widget.fpsDiv.style.display = 'none';
-                    widget.msDiv.style.display = 'block';
-                });
-                break;
-        }
     }
 }
