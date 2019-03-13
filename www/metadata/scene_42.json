@@ -23,7 +23,9 @@
     "FishBull",
     "Manhole",
     "FrancoSkateGuard2",
-    "EsmerRobot"
+    "EsmerRobot",
+    "Pointer1",
+    "Pointer2"
   ],
   "zoneNames": [
     "to_twinsen_house_area1",
