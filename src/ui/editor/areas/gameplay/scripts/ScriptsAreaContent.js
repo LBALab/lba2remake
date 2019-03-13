@@ -337,26 +337,6 @@ function LineNumber({line, command, nDigits, toggleBreakpoint}) {
     </div>;
 }
 
-/*
-const cmdStyles = {
-    prop: {
-        color: '#72ccf4'
-    },
-    fct: {
-        color: '#ffc42c'
-    },
-    keyword: {
-        color: '#03A9F4'
-    },
-    var: {
-        color: '#10ee00'
-    },
-    cond: {
-        color: '#03A9F4'
-    },
-};
-*/
-
 const cmdColors = {
     keyword: '#03A9F4',
     cond: '#03A9F4',
