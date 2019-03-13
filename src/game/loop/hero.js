@@ -147,30 +147,33 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
     }
 }
 
+const FLAT_CAM = new THREE.Object3D();
+const HERO_POS = new THREE.Object3D();
+const UP = new THREE.Vector3(0, 1, 0);
+const QUAT = new THREE.Quaternion();
+const EULER = new THREE.Euler();
+
 function processCamRelativeMovement(controlsState, scene, hero, animIndex, time) {
     if (controlsState.relativeToCam) {
         const camera = scene.camera.controlNode;
         if (!camera)
             return animIndex;
 
-        const flatCam = new THREE.Object3D();
-        flatCam.position.set(camera.position.x, 0, camera.position.z);
-        const heroPos = new THREE.Vector3();
-        heroPos.applyMatrix4(hero.threeObject.matrixWorld);
-        heroPos.y = 0;
-        flatCam.lookAt(heroPos);
+        FLAT_CAM.position.set(camera.position.x, 0, camera.position.z);
+        HERO_POS.set(0, 0, 0);
+        HERO_POS.applyMatrix4(hero.threeObject.matrixWorld);
+        HERO_POS.y = 0;
+        FLAT_CAM.lookAt(HERO_POS);
 
         const cvLength = controlsState.controlVector.length();
         const worldAngle = Math.PI / 2;
         if (cvLength > 0.4) {
             const baseAngle = controlsState.controlVector.angle();
-            const q = new THREE.Quaternion();
-            q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), baseAngle - worldAngle);
-            flatCam.quaternion.multiply(q);
-            const euler = new THREE.Euler();
-            euler.setFromQuaternion(flatCam.quaternion, 'XZY');
-            hero.physics.temp.angle = euler.y;
-            hero.physics.orientation.slerp(flatCam.quaternion, time.delta * 15);
+            QUAT.setFromAxisAngle(UP, baseAngle - worldAngle);
+            FLAT_CAM.quaternion.multiply(QUAT);
+            EULER.setFromQuaternion(FLAT_CAM.quaternion, 'XZY');
+            hero.physics.temp.angle = EULER.y;
+            hero.physics.orientation.slerp(FLAT_CAM.quaternion, time.delta * 15);
             animIndex = AnimType.FORWARD;
             hero.props.runtimeFlags.isWalking = true;
         }
