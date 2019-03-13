@@ -116,7 +116,8 @@ export default class ScriptEditor extends FrameListener {
             this.props.stateHandler.setActor(selection);
         }
         const actor = scene ? scene.actors[this.state.actorIndex] : null;
-        if (DebugData.selection && DebugData.selection.lifeLine) {
+        if (DebugData.selection &&
+                (DebugData.selection.lifeLine || DebugData.selection.moveLine)) {
             this.props.stateHandler.setAutoScroll(false);
         }
         if (this.scene !== scene || this.actor !== actor) {
@@ -125,7 +126,8 @@ export default class ScriptEditor extends FrameListener {
                     life: getDebugListing('life', scene, actor),
                     move: getDebugListing('move', scene, actor)
                 },
-                lifeLine: undefined
+                lifeLine: undefined,
+                moveLine: undefined
             });
             this.scene = scene;
             this.actor = actor;
@@ -187,15 +189,15 @@ export default class ScriptEditor extends FrameListener {
                         lineNum.style.background = activeSection ? 'black' : '#151515';
                         lineCmd.style.background = activeSection ? 'black' : '#151515';
                     }
-                    if (type === 'life' && DebugData.selection && DebugData.selection.lifeLine === i + 1) {
+                    if (DebugData.selection && DebugData.selection[`${type}Line`] === i + 1) {
                         const tgt = i + 1;
                         const ll = Math.max(i - 1, 0);
                         ln[ll].scrollIntoView({block: 'center'});
                         this.scrollElem = ln[ll];
                         lineCmd.style.background = '#7d6b37';
                         setTimeout(() => {
-                            if (DebugData.selection && tgt === DebugData.selection.lifeLine) {
-                                delete DebugData.selection.lifeLine;
+                            if (DebugData.selection && tgt === DebugData.selection[`${type}Line`]) {
+                                delete DebugData.selection[`${type}Line`];
                             }
                         }, 500);
                     }

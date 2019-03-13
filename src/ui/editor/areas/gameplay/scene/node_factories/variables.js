@@ -162,6 +162,9 @@ export async function findAllReferences(varDef) {
         {
             name: `References to ${varname}${!isVarGames ? ` (Scene #${varDef.ctx.scene})` : ''}`,
             children: isVarGames ? mapLocations(refs) : mapActors(refs[0])
+        },
+        {
+            icon: 'ref.png'
         }
     );
 }

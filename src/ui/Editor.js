@@ -195,6 +195,7 @@ export default class Editor extends React.Component {
             saveMainData={this.saveMainData}
             mainData={this.state.mainData}
             rootStateHandler={root.stateHandler}
+            editor={this}
         />;
     }
 
@@ -247,6 +248,16 @@ export default class Editor extends React.Component {
             gpNode.children[idx] = pNode.children[tgtIdx];
             this.setState({layout});
             saveLayout(layout);
+        }
+    }
+
+    switchEditor(id) {
+        const area = findAreaContentById(id);
+        if (area && area.mainArea) {
+            this.selectAreaContent([0], area);
+        } else {
+            // eslint-disable-next-line no-console
+            console.warn(`Invalid editor id: ${id}`);
         }
     }
 

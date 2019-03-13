@@ -80,6 +80,7 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
                         userData={this.props.userData}
                         rootStateHandler={this.props.rootStateHandler}
                         rootState={this.props.rootState}
+                        editor={this.props.editor}
                     />}
                 </WithShortcuts>;
             }

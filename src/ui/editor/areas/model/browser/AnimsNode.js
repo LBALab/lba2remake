@@ -4,6 +4,7 @@ import { getEntities } from './entitities';
 import DebugData, { saveMetaData } from '../../../DebugData';
 import { Orientation } from '../../../layout';
 import { makeOutlinerArea } from '../../utils/outliner';
+import { findRefsInScenes } from './findRefsInScenes';
 
 const idxStyle = {
     fontSize: 13,
@@ -43,6 +44,16 @@ const AnimNode = {
             onClick: (component, anim) => {
                 findAllReferencesToAnim(anim, component).then((area) => {
                     component.props.split(Orientation.VERTICAL, area);
+                });
+            }
+        },
+        {
+            name: 'Find in scripts',
+            onClick: (component, anim) => {
+                findRefsInScenes('anim', anim).then((area) => {
+                    const editor = component.props.editor;
+                    editor.switchEditor('game');
+                    editor.split([0], Orientation.HORIZONTAL, area);
                 });
             }
         }
@@ -128,8 +139,14 @@ async function findAllReferencesToAnim(anim, component) {
         `References to ${name}`,
         {
             name: `References to ${name}`,
+            icon: 'editor/icons/anim.png',
             children: map(filteredEntities, e => ({
                 name: DebugData.metadata.entities[e.index] || `entity_${e.index}`,
+                icon: 'editor/icons/entity.png',
+                iconStyle: {
+                    width: 20,
+                    height: 20
+                },
                 children: [],
                 onClick: () => {
                     const {setEntity, setAnim} = component.props.rootStateHandler;
@@ -137,6 +154,9 @@ async function findAllReferencesToAnim(anim, component) {
                     setAnim(anim.index);
                 }
             }))
+        },
+        {
+            icon: 'ref.png'
         }
     );
     return area;

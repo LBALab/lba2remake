@@ -408,6 +408,7 @@ export default class OutlinerNode extends React.Component {
             userData={this.props.userData}
             rootStateHandler={this.props.rootStateHandler}
             rootState={this.props.rootState}
+            editor={this.props.editor}
         />;
     }
 

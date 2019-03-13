@@ -197,7 +197,8 @@ export default class Area extends React.Component {
             confirmPopup: this.confirmPopup,
             split: this.props.split,
             rootStateHandler: this.props.rootStateHandler,
-            rootState: this.props.rootStateHandler && this.props.rootStateHandler.state
+            rootState: this.props.rootStateHandler && this.props.rootStateHandler.state,
+            editor: this.props.editor
         };
         if (this.props.mainArea) {
             extend(props, {
