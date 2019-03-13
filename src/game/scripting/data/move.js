@@ -22,7 +22,7 @@ export const MoveOpcode = [
         opcode: 0x02,
         command: 'BODY',
         handler: cm.BODY,
-        args: ['Int8:body'],
+        args: ['Uint8:body'],
         indent: Indent.ONE,
         type: 'assignment',
         prop: 'body'
