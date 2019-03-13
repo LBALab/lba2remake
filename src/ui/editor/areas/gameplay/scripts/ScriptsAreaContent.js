@@ -476,9 +476,11 @@ const argDoubleClick = {
         if (scene) {
             const actor = scene.actors[actorIndex];
             editor.switchEditor('model', {
-                entity: actor.props.entityIndex,
-                body: body.realValue,
-                anim: actor.props.animIndex,
+                rootState: {
+                    entity: actor.props.entityIndex,
+                    body: body.realValue,
+                    anim: actor.props.animIndex
+                }
             });
         }
     },
@@ -487,9 +489,11 @@ const argDoubleClick = {
         if (scene) {
             const actor = scene.actors[actorIndex];
             editor.switchEditor('model', {
-                entity: actor.props.entityIndex,
-                body: actor.props.bodyIndex,
-                anim: anim.realValue
+                rootState: {
+                    entity: actor.props.entityIndex,
+                    body: actor.props.bodyIndex,
+                    anim: anim.realValue
+                }
             });
         }
     }

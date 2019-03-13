@@ -52,8 +52,10 @@ const BodyNode = {
             onClick: (component, anim) => {
                 findRefsInScenes('body', anim).then((area) => {
                     const editor = component.props.editor;
-                    editor.switchEditor('game');
-                    editor.split([0], Orientation.HORIZONTAL, area);
+                    editor.switchEditor('game', {
+                        injectArea: area,
+                        injectOrientation: Orientation.HORIZONTAL
+                    });
                 });
             }
         }

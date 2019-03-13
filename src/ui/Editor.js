@@ -251,10 +251,10 @@ export default class Editor extends React.Component {
         }
     }
 
-    switchEditor(id, rootState) {
+    switchEditor(id, options) {
         const area = findAreaContentById(id);
         if (area && area.mainArea) {
-            this.selectMainAreaContent(area, rootState);
+            this.selectMainAreaContent(area, options);
         } else {
             // eslint-disable-next-line no-console
             console.warn(`Invalid editor id: ${id}`);
@@ -274,7 +274,7 @@ export default class Editor extends React.Component {
         }
     }
 
-    selectMainAreaContent(area, rootState) {
+    selectMainAreaContent(area, options) {
         DebugData.scope = {};
         if (this.state.mainData && this.state.mainData.state) {
             const {renderer} = this.state.mainData.state;
@@ -284,7 +284,7 @@ export default class Editor extends React.Component {
         }
         this.setState({
             mainData: undefined,
-            layout: loadLayout(this, area.id, rootState),
+            layout: loadLayout(this, area.id, options),
             root: area
         });
         localStorage.setItem('editor_mode', area.id);
@@ -345,7 +345,7 @@ function saveNode(node) {
     };
 }
 
-function loadLayout(editor, mode, rootState) {
+function loadLayout(editor, mode, options) {
     if (!mode) {
         mode = localStorage.getItem('editor_mode') || 'game';
     }
@@ -362,17 +362,17 @@ function loadLayout(editor, mode, rootState) {
         const mainArea = findAreaContentById(mode);
         layout = mainArea.defaultLayout;
     }
-    return loadNode(editor, layout, rootState);
+    return loadNode(editor, layout, options);
 }
 
-function loadNode(editor, node, rootState) {
+function loadNode(editor, node, options = {}) {
     if (!node) {
         return null;
     }
     if (node.type === Type.LAYOUT) {
         const childNodes = [
-            loadNode(editor, node.children[0], rootState),
-            loadNode(editor, node.children[1], rootState)
+            loadNode(editor, node.children[0], options),
+            loadNode(editor, node.children[1], options)
         ];
         if (!childNodes[0]) {
             return childNodes[1];
@@ -390,6 +390,20 @@ function loadNode(editor, node, rootState) {
             ]
         };
     }
+    if (node.root && options.injectArea) {
+        return {
+            type: Type.LAYOUT,
+            orientation: options.injectOrientation !== undefined
+                ? options.injectOrientation
+                : Orientation.HORIZONTAL,
+            splitAt: 50,
+            children: [
+                loadNode(editor, node, {rootState: options.rootState}),
+                editor.createNewArea(options.injectArea)
+            ]
+        };
+    }
+
     const tgtNode = {
         type: Type.AREA,
         root: node.root
@@ -403,8 +417,8 @@ function loadNode(editor, node, rootState) {
         node.state = null;
     }
 
-    if (tgtNode.root && rootState) {
-        initStateHandler(editor, tgtNode, Object.assign(node.state, rootState));
+    if (tgtNode.root && options.rootState) {
+        initStateHandler(editor, tgtNode, Object.assign(node.state, options.rootState));
     } else {
         initStateHandler(editor, tgtNode, node.state);
     }

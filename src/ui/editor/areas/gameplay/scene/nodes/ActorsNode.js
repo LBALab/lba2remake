@@ -64,9 +64,11 @@ const Actor = {
             onClick: (entity, component) => {
                 const actor = component.props.data.context;
                 component.props.editor.switchEditor('model', {
-                    entity: actor.props.entityIndex,
-                    body: 0,
-                    anim: 0,
+                    rootState: {
+                        entity: actor.props.entityIndex,
+                        body: 0,
+                        anim: 0
+                    }
                 });
             },
             icon: actor => localStorage.getItem(`icon_model_entity_${actor.props.entityIndex}`)
@@ -85,9 +87,11 @@ const Actor = {
             onClick: (entity, component) => {
                 const actor = component.props.data.context;
                 component.props.editor.switchEditor('model', {
-                    entity: actor.props.entityIndex,
-                    body: actor.props.bodyIndex,
-                    anim: 0,
+                    rootState: {
+                        entity: actor.props.entityIndex,
+                        body: actor.props.bodyIndex,
+                        anim: 0
+                    }
                 });
             },
             icon: () => 'editor/icons/body.png'
@@ -106,9 +110,11 @@ const Actor = {
             onClick: (entity, component) => {
                 const actor = component.props.data.context;
                 component.props.editor.switchEditor('model', {
-                    entity: actor.props.entityIndex,
-                    body: 0,
-                    anim: actor.props.animIndex,
+                    rootState: {
+                        entity: actor.props.entityIndex,
+                        body: 0,
+                        anim: actor.props.animIndex
+                    }
                 });
             },
             icon: () => 'editor/icons/anim.png'
