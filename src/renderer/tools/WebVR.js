@@ -23,7 +23,11 @@ const WebVR = {
                     device.exitPresent();
                 } else {
                     device.requestPresent([
-                        { source: renderer.domElement }
+                        {
+                            source: renderer.domElement,
+                            highRefreshRate: true,
+                            foveationLevel: 3
+                        }
                     ]);
                 }
             };
@@ -67,7 +71,11 @@ const WebVR = {
 
             window.addEventListener('vrdisplayactivate', (event) => {
                 event.display.requestPresent([
-                    { source: renderer.domElement }
+                    {
+                        source: renderer.domElement,
+                        highRefreshRate: true,
+                        foveationLevel: 3
+                    }
                 ]);
             }, false);
 
