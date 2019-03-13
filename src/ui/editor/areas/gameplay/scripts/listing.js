@@ -106,6 +106,7 @@ function mapArguments(scene, actor, cmd) {
             break;
     }
     each(args, (arg) => {
+        arg.realValue = arg.value;
         arg.value = mapDataName(scene, arg);
     });
     return args;
@@ -125,6 +126,7 @@ function mapCondition(scene, condition, state) {
             unimplemented: condition.op.handler.unimplemented,
             param: condition.param && {
                 type: condition.param.type,
+                realValue: condition.param.value,
                 value: mapDataName(scene, condition.param)
             }
         };
@@ -140,6 +142,7 @@ function mapOperator(scene, operator, state) {
                 name: operator.op.command,
                 operand: {
                     type: operator.operand.type,
+                    realValue: operator.operand.value,
                     value: mapDataName(
                         scene,
                         extend({idx: state.condition.param.value}, operator.operand)
@@ -155,6 +158,7 @@ function mapOperator(scene, operator, state) {
             name: operator.op.command,
             operand: {
                 type: operator.operand.type,
+                realValue: operator.operand.value,
                 value: mapDataName(scene, operator.operand)
             },
             value: text

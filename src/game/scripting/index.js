@@ -47,6 +47,7 @@ export function runScript(params, script, time) {
                         context.scene, {
                             type: operandType,
                             value: condValue,
+                            realValue: condValue,
                             idx
                         });
                 }

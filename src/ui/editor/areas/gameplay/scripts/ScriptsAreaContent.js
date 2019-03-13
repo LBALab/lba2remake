@@ -287,9 +287,14 @@ export default class ScriptEditor extends FrameListener {
                     command={cmd}
                 />
             );
+            const data = {
+                editor: this.props.editor,
+                actorIndex: this.state.actorIndex
+            };
             commands = map(
                 listing.commands,
-                (cmd, line) => <Command key={line} line={line} command={cmd}/>
+                (cmd, line) =>
+                    <Command key={line} line={line} command={cmd} data={data}/>
             );
         }
         const lineNumberStyle = {
@@ -388,7 +393,7 @@ function getWrappers(type) {
     return {};
 }
 
-function Command({line, command}) {
+function Command({line, command, data}) {
     const cmdIndentStyle = {
         paddingLeft: `${(command.indent * 3) + 1}ch`
     };
@@ -400,7 +405,7 @@ function Command({line, command}) {
     const objCmd = name.match(/^(.*)_obj$/);
     if (objCmd) {
         name = objCmd[1];
-        prefix = <span style={{color: 'white'}}><Arg arg={first(args)}/>.</span>;
+        prefix = <span style={{color: 'white'}}><Arg arg={first(args)} data={data}/>.</span>;
         args = tail(args);
     }
 
@@ -426,9 +431,9 @@ function Command({line, command}) {
             </Scope>
         </span>
         {wlm}
-        <Condition condition={command.condition}/>
-        <Operator operator={command.operator}/>
-        {wl}<Args args={args}/>{wr}
+        <Condition condition={command.condition} data={data}/>
+        <Operator operator={command.operator} data={data}/>
+        {wl}<Args args={args} data={data}/>{wr}
         {postfix}
     </div>;
 }
@@ -456,15 +461,49 @@ const argStyle = {
     boolean: { color: cmdColors.keyword }
 };
 
+const argDoubleClick = {
+    actor: (actor) => {
+        DebugData.selection = {type: 'actor', index: actor.realValue};
+    },
+    zone: (zone) => {
+        DebugData.selection = {type: 'zone', index: zone.realValue};
+    },
+    point: (point) => {
+        DebugData.selection = {type: 'point', index: point.realValue};
+    },
+    body: (body, {actorIndex, editor}) => {
+        const scene = DebugData.scope.scene;
+        if (scene) {
+            const actor = scene.actors[actorIndex];
+            editor.switchEditor('model', {
+                entity: actor.props.entityIndex,
+                body: body.realValue,
+                anim: actor.props.animIndex,
+            });
+        }
+    },
+    anim: (anim, {actorIndex, editor}) => {
+        const scene = DebugData.scope.scene;
+        if (scene) {
+            const actor = scene.actors[actorIndex];
+            editor.switchEditor('model', {
+                entity: actor.props.entityIndex,
+                body: actor.props.bodyIndex,
+                anim: anim.realValue
+            });
+        }
+    }
+};
+
 /**
  * @return {null}
  */
-function Condition({condition}) {
+function Condition({condition, data}) {
     if (condition) {
         let param = null;
         if (condition.param) {
             param = <span>
-                <Arg arg={condition.param}/>
+                <Arg arg={condition.param} data={data}/>
             </span>;
         }
 
@@ -473,7 +512,7 @@ function Condition({condition}) {
         const objCmd = name.match(/^(.*)_obj$/);
         if (objCmd) {
             name = objCmd[1];
-            prefix = <span style={{color: 'white'}}><Arg arg={condition.param}/>.</span>;
+            prefix = <span style={{color: 'white'}}><Arg arg={condition.param} data={data}/>.</span>;
             param = null;
         }
 
@@ -505,7 +544,7 @@ function Condition({condition}) {
 /**
  * @return {null}
  */
-function Operator({operator}) {
+function Operator({operator, data}) {
     if (operator) {
         const operand = operator.operand;
         const rStyle = extend({
@@ -515,7 +554,7 @@ function Operator({operator}) {
         }, argStyle[operand && operand.type] || defaultArgStyle);
         return <span>
             &nbsp;{operator.name}
-            &nbsp;<Arg arg={operator.operand}/>
+            &nbsp;<Arg arg={operator.operand} data={data}/>
             <span className="result" style={rStyle}/>
         </span>;
     }
@@ -533,13 +572,13 @@ function intersperse(arr, sep) {
 /**
  * @return {null}
  */
-function Args({args}) {
+function Args({args, data}) {
     if (args) {
         return <span>
             {
                 intersperse(map(
                     filter(args, arg => !arg.hide),
-                    (arg, i) => <Arg key={i} arg={arg}/>
+                    (arg, i) => <Arg key={i} arg={arg} data={data}/>
                 ), ', ')
             }
         </span>;
@@ -547,12 +586,15 @@ function Args({args}) {
     return null;
 }
 
-function Arg({arg}) {
+function Arg({arg, data}) {
     if (!arg) {
         return '<undefined>';
     }
     const style = argStyle[arg.type] || defaultArgStyle;
-    return <span style={style}>
+    const onDoubleClick = arg.type in argDoubleClick
+        ? argDoubleClick[arg.type].bind(null, arg, data)
+        : null;
+    return <span style={style} onDoubleClick={onDoubleClick}>
         {arg.value}
     </span>;
 }
