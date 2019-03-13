@@ -153,10 +153,10 @@ function loadGeometries(island, data, ambience) {
 
 const DIFF = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
+const HERO_POS = new THREE.Vector3();
 
 function updateShadows(baseScene, matByName) {
     const shadows = [];
-    let heroPos = null;
 
     function computeShadow(scene, actor) {
         if (!actor.props.flags.isSprite
@@ -166,7 +166,7 @@ function updateShadows(baseScene, matByName) {
             const sz = actor.model.boundingBox.max.x - actor.model.boundingBox.min.x;
             POSITION.copy(actor.physics.position);
             POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
-            const distToHero = heroPos ? DIFF.subVectors(POSITION, heroPos).lengthSq() : 0;
+            const distToHero = HERO_POS ? DIFF.subVectors(POSITION, HERO_POS).lengthSq() : 0;
             if (distToHero < 2.5) {
                 shadows.push({
                     data: [POSITION.x, POSITION.z, 2.8 / sz, 1],
@@ -177,7 +177,7 @@ function updateShadows(baseScene, matByName) {
     }
 
     computeShadow(baseScene, baseScene.actors[0]);
-    heroPos = POSITION.clone();
+    HERO_POS.copy(POSITION);
     each(tail(baseScene.actors), computeShadow.bind(null, baseScene));
     each(baseScene.sideScenes, (sideScene) => {
         each(sideScene.actors, computeShadow.bind(null, sideScene));
