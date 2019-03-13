@@ -13,21 +13,18 @@ export default function setupStats() {
             if (stats) {
                 stats.end();
             }
-        }
+        },
+        /* @inspector(locate, pure) */
+        getStats: () => stats
     };
 }
 
 export function switchStats() {
     if (stats) {
-        if (stats.mode === 1) {
-            stats.setMode(0);
-        } else {
-            document.getElementById('stats').removeChild(stats.widgets[0].domElement);
-            stats = null;
-        }
+        document.getElementById('stats').removeChild(stats.widgets[0].domElement);
+        stats = null;
     } else {
         stats = new Stats(1);
-        stats.setMode(1); // 0: fps, 1: ms
         stats.widgets[0].domElement.style.left = '45px';
         document.getElementById('stats').appendChild(stats.widgets[0].domElement);
     }

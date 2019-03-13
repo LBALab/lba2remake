@@ -24,6 +24,7 @@ import { getIso3DCamera } from '../cameras/iso3d';
 import { getVR3DCamera } from '../cameras/vr/vr3d';
 import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { angleToRad } from '../utils/lba';
+import { addVRGuiNode } from '../ui/vr/vrGui';
 
 declare global {
     var ga: Function;
@@ -184,6 +185,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             }
         }
         if (camera.controlNode) {
+            addVRGuiNode(renderer, camera.controlNode);
             threeScene.add(camera.controlNode);
         }
         threeScene.add(scenery.threeObject);

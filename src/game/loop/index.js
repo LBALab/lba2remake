@@ -4,6 +4,7 @@ import {updateHero} from './hero';
 import {updateActor} from './actors.ts';
 import {processPhysicsFrame} from './physics';
 import {getRandom} from '../../utils/lba';
+import {updateVRGui} from '../../ui/vr/vrGui';
 import DebugData from '../../ui/editor/DebugData';
 
 const dbgClock = new THREE.Clock(false);
@@ -49,6 +50,7 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
         scene.firstFrame = false;
         delete DebugData.firstFrame;
     }
+    updateVRGui(renderer);
     renderer.stats.end();
 }
 
