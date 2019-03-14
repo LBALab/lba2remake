@@ -26,17 +26,21 @@ export function ZONE() {
 
 export function ZONE_OBJ(actor) {
     const pos = actor.physics.position.clone();
-    pos.y += 0.005;
-    pos.x -= 0.005;
+    let halfHeight = 0.12; // 12 cm, this is totally arbitrary
+    if (actor.model && actor.model.boundingBox) {
+        const bb = actor.model.boundingBox;
+        halfHeight = (bb.max.y - bb.max.y) * 0.5;
+    }
+    pos.y += halfHeight;
     for (let i = 0; i < this.scene.zones.length; i += 1) {
         const zone = this.scene.zones[i];
         if (zone.props.type !== 2)
             continue;
 
         const box = zone.props.box;
-        if (pos.x >= box.xMin && pos.x < box.xMax &&
+        if (pos.x >= box.xMin && pos.x <= box.xMax &&
             pos.y >= box.yMin && pos.y <= box.yMax &&
-            pos.z >= box.zMin && pos.z < box.zMax) {
+            pos.z >= box.zMin && pos.z <= box.zMax) {
             return zone.props.snap;
         }
     }
