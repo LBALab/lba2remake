@@ -98,7 +98,7 @@ function loadMesh(index, sprite) {
         wireframe: false
     }));
 
-    const scale = 1 / 1024;
+    const scale = 1 / 48;
     mesh.scale.set(scale, scale, scale);
     mesh.frustumCulled = true;
 
