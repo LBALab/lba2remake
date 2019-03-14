@@ -22,7 +22,7 @@ async function loadImageData(src) {
     });
 }
 
-export async function loadIsometricScenery(renderer, entry) {
+export async function loadIsometricScenery(params, renderer, entry) {
     const [ress, bkg, mask] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr('LBA_BKG.HQR'),
@@ -30,7 +30,7 @@ export async function loadIsometricScenery(renderer, entry) {
     ]);
     const palette = new Uint8Array(ress.getEntry(0));
     const bricks = loadBricks(bkg);
-    const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
+    const grid = loadGrid(params, bkg, bricks, mask, palette, entry + 1);
 
     return {
         props: {

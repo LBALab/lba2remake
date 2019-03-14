@@ -174,7 +174,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 camera = get3DCamera();
             }
         } else {
-            scenery = await loadIsometricScenery(renderer, indexInfo.index);
+            scenery = await loadIsometricScenery(params, renderer, indexInfo.index);
             threeScene.name = 'iso_scene';
             if (renderer.vr) {
                 camera = getVRIsoCamera();
