@@ -187,7 +187,7 @@ export default class Model extends FrameListener {
                 anim,
                 time
             );
-            this.updateMovement(grid, animState, time, interpolate);
+            this.updateMovement(grid, animState, time, interpolate, model.mesh.quaternion);
         }
         scene.camera.update(model, rotateView, this.mouseSpeed, this.zoom, time);
         renderer.render(scene);
@@ -209,30 +209,42 @@ export default class Model extends FrameListener {
             if (realAnimIdx === animState.realAnimIdx || animState.realAnimIdx === -1) {
                 updateKeyframe(anim, animState, time, realAnimIdx);
             }
+            const q = new THREE.Quaternion();
+            const delta = time.delta * 1000;
+            let angle = 0;
+            if (animState.keyframeLength > 0) {
+                angle = (animState.rotation.y * delta) / animState.keyframeLength;
+            }
+            q.setFromAxisAngle(
+                new THREE.Vector3(0, 1, 0),
+                angle
+            );
+            model.mesh.quaternion.multiply(q);
         }
         return interpolate;
     }
 
-    updateMovement(grid, animState, time, interpolate) {
+    updateMovement(grid, animState, time, interpolate, rotation) {
         const delta = time.delta * 1000;
-        let speedZ = 0;
-        let speedY = 0;
-        let speedX = 0;
+        const speed = new THREE.Vector3();
         if (animState.keyframeLength > 0) {
-            speedZ = ((animState.step.z * delta) / animState.keyframeLength);
-            speedY = ((animState.step.y * delta) / animState.keyframeLength);
-            speedX = ((animState.step.x * delta) / animState.keyframeLength);
+            speed.set(
+                ((animState.step.x * delta) / animState.keyframeLength),
+                ((animState.step.y * delta) / animState.keyframeLength),
+                ((animState.step.z * delta) / animState.keyframeLength)
+            );
+            speed.applyQuaternion(rotation);
         }
         const ts = 0.96;
         const inRange = v => fmod(v + (ts * 4.5), ts * 9) - (ts * 4.5);
 
         if (!interpolate) {
-            grid.position.y = inRange(grid.position.y - speedY);
+            grid.position.y = inRange(grid.position.y - speed.y);
         }
         each(grid.children, (tile) => {
             const pos = tile.position;
-            pos.x = inRange(pos.x - speedX);
-            pos.z = inRange(pos.z - speedZ);
+            pos.x = inRange(pos.x - speed.x);
+            pos.z = inRange(pos.z - speed.z);
             const p = Math.max(
                 Math.max(Math.abs(pos.x), Math.abs(pos.z)),
                 Math.abs(grid.position.y)
