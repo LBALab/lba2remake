@@ -155,6 +155,9 @@ const DIFF = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
 const HERO_POS = new THREE.Vector3();
 
+const SHADOW_MAX_DIST = 15;
+const SHADOW_MAX_DIST_SQ = SHADOW_MAX_DIST * SHADOW_MAX_DIST;
+
 function updateShadows(baseScene, matByName) {
     const shadows = [];
 
@@ -167,7 +170,7 @@ function updateShadows(baseScene, matByName) {
             POSITION.copy(actor.physics.position);
             POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
             const distToHero = HERO_POS ? DIFF.subVectors(POSITION, HERO_POS).lengthSq() : 0;
-            if (distToHero < 2.5) {
+            if (distToHero < SHADOW_MAX_DIST_SQ) {
                 shadows.push({
                     data: [POSITION.x, POSITION.z, 2.8 / sz, 1],
                     distToHero
