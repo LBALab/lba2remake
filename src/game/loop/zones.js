@@ -48,7 +48,7 @@ function GOTO_SCENE(game, scene, zone, hero) {
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
         scene.goto(zone.props.snap).then((newScene) => {
             const newHero = newScene.actors[0];
-            newHero.physics.position.x = ((0x8000 - zone.props.info2) + 511) * WORLD_SCALE;
+            newHero.physics.position.x = ((0x8000 - zone.props.info2) + 512) * WORLD_SCALE;
             newHero.physics.position.y = zone.props.info1 * WORLD_SCALE;
             newHero.physics.position.z = zone.props.info0 * WORLD_SCALE;
             newHero.physics.temp.angle = hero.physics.temp.angle;

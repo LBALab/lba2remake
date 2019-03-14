@@ -116,12 +116,19 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
             if (!controlsState.sideStep) {
                 const euler = new THREE.Euler();
                 euler.setFromQuaternion(hero.physics.orientation, 'YXZ');
-                euler.y -= controlsState.controlVector.x * time.delta * 1.2;
                 hero.physics.temp.angle = euler.y;
                 if (controlsState.controlVector.y === 0) {
                     animIndex = controlsState.controlVector.x === 1
-                        ? AnimType.LEFT
-                        : AnimType.RIGHT;
+                        ? AnimType.RIGHT
+                        : AnimType.LEFT;
+                    let dy = 0;
+                    if (hero.animState.keyframeLength) {
+                        dy = (hero.animState.rotation.y * time.delta * 1000)
+                                / hero.animState.keyframeLength;
+                    }
+                    euler.y += dy;
+                } else {
+                    euler.y -= controlsState.controlVector.x * time.delta * 1.2;
                 }
                 hero.physics.orientation.setFromEuler(euler);
                 // hero.props.runtimeFlags.isTurning = true;

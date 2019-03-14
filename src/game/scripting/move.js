@@ -1,10 +1,9 @@
-import { getDistance } from '../../utils/lba';
 import { unimplemented } from './utils';
 
 export function GOTO_POINT(point) {
     const distance = this.actor.goto(point.physics.position);
 
-    if (distance > getDistance(500)) {
+    if (distance > 0.5) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     } else {
