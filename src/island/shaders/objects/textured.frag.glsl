@@ -18,7 +18,6 @@ out vec4 fragColor;
 
 void main() {
     vec2 uv = mod(vUv, vUvGroup.zw) + vUvGroup.xy;
-    float colorIndex = mipmapLookup(uv / 255.0);
-    vec4 tex = texturePal(colorIndex, intensity());
-    fragColor = vec4(fog(tex.rgb), tex.a);
+    vec4 tex = texture(uTexture, uv / 255.0);
+    fragColor = vec4(fog(tex.rgb * (intensity() / 12.0 + 0.125)), tex.a);
 }

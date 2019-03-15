@@ -2,6 +2,7 @@
 precision highp float;
 
 uniform sampler2D palette;
+uniform sampler2D noise;
 uniform vec4 actorPos[10];
 
 in vec3 vPosition;

@@ -5,6 +5,6 @@ float mipLevel(vec2 uv) {
     return floor(0.5 * log2(d) + 0.5);
 }
 
-float mipmapLookup(vec2 uv) {
-    return textureLod(uTexture, uv, min(mipLevel(uv), 3.0)).r;
+vec4 mipmapLookup(vec2 uv) {
+    return textureLod(uTexture, uv, min(mipLevel(uv), 3.0));
 }

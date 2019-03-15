@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import tumult from 'tumult';
 import { map, each } from 'lodash';
 
 export function loadPaletteTexture(palette: Uint8Array) {
@@ -101,8 +102,8 @@ export function loadTextureRGBA(buffer: ArrayBuffer, palette: Uint8Array) {
         THREE.UVMapping,
         THREE.RepeatWrapping,
         THREE.RepeatWrapping,
-        THREE.NearestFilter,
-        THREE.LinearFilter
+        THREE.LinearFilter,
+        THREE.LinearMipMapLinearFilter
     );
     texture.needsUpdate = true;
     texture.generateMipmaps = true;
@@ -199,5 +200,32 @@ export function loadSubTexture(buffer: ArrayBuffer,
     );
     texture.needsUpdate = true;
     texture.generateMipmaps = true;
+    return texture;
+}
+
+const noiseGen = new tumult.Perlin2('LBA');
+
+export function makeNoiseTexture() {
+    const dim = 1024;
+    const pDim = 6;
+    const image_data = new Uint8Array(dim * dim);
+    for (let i = 0; i < dim * dim; i += 1) {
+        const x = Math.floor(i / dim);
+        const y = i % dim;
+        const v = noiseGen.gen(x / pDim, y / pDim);
+        const pixel = Math.floor((v + 0.5) * 256);
+        image_data[i] = pixel;
+    }
+
+    const texture = new THREE.DataTexture(image_data, dim, dim);
+    texture.format = THREE.AlphaFormat;
+    texture.type = THREE.UnsignedByteType;
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.magFilter = THREE.LinearFilter;
+    texture.minFilter = THREE.LinearMipMapLinearFilter;
+    texture.needsUpdate = true;
+    texture.generateMipmaps = true;
+
     return texture;
 }

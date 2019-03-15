@@ -3,6 +3,7 @@ precision highp float;
 
 uniform sampler2D uTexture;
 uniform sampler2D palette;
+uniform sampler2D noise;
 uniform vec4 actorPos[10];
 
 in float vColor;
@@ -20,9 +21,9 @@ out vec4 fragColor;
 #require "../common/shadow.frag"
 
 void main() {
-    float colorIndex = mipmapLookup(vUv / 255.0);
-    vec4 tex = texturePal(colorIndex, shadow(vIntensity, 1.0));
-    vec4 color = dither(vColor, shadow(vIntensity, 0.5));
-    vec3 fColor = mix(color.rgb, tex.rgb, tex.a);
+    float intensity = shadow(vIntensity, 0.5);
+    vec4 tex = texture(uTexture, vUv / 255.0);
+    vec4 color = dither(vColor, intensity);
+    vec3 fColor = mix(color.rgb, tex.rgb * (intensity / 12.0 + 0.125), tex.a);
     fragColor = vec4(fog(fColor), 1.0);
 }

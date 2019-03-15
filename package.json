@@ -9,7 +9,8 @@
     "protobufjs": "^5.0.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
-    "three": "^0.101.0"
+    "three": "^0.101.0",
+    "tumult": "^3.0.11"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",

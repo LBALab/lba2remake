@@ -3,7 +3,8 @@ import * as THREE from 'three';
 import {
     loadSubTexture,
     loadPaletteTexture,
-    loadTexture
+    loadTextureRGBA,
+    makeNoiseTexture
 } from '../texture.ts';
 import {compile} from '../utils/shaders';
 
@@ -25,8 +26,9 @@ export function prepareGeometries(island, data, ambience) {
     const {envInfo} = island;
     const {files: {ile, ress}, palette} = data;
     const paletteTexture = loadPaletteTexture(palette);
-    const groundTexture = loadTexture(ile.getEntry(1), palette);
-    const objectsTexture = loadTexture(ile.getEntry(2), palette);
+    const groundTexture = loadTextureRGBA(ile.getEntry(1), palette);
+    const objectsTexture = loadTextureRGBA(ile.getEntry(2), palette);
+    const noiseTexture = makeNoiseTexture();
     const light = getLightVector(ambience);
     return {
         ground_colored: {
@@ -41,6 +43,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector4().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
+                    noise: {value: noiseTexture},
                     actorPos: {value: times(10, () => new THREE.Vector4()), type: 'v4v'}
                 }
             })
@@ -58,6 +61,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogDensity: {value: envInfo.fogDensity},
                     uTexture: {value: groundTexture},
                     palette: {value: paletteTexture},
+                    noise: {value: noiseTexture},
                     actorPos: {value: times(10, () => new THREE.Vector4()), type: 'v4v'}
                 }
             })
@@ -73,6 +77,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
+                    noise: {value: noiseTexture},
                     light: {value: light}
                 }
             })
