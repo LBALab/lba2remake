@@ -15,12 +15,13 @@ export function makeVRControls(sceneManager: any, game: any) {
                     updateState(gamepad);
                     switch (gamepad.id) {
                         case 'Oculus Go Controller':
-                        case 'Oculus Remote':
+                        // case 'Oculus Remote':
                             handleOculusGoController(gamepad, sceneManager, game);
                             break;
                         case 'Oculus Touch (Left)':
                         case 'Oculus Touch (Right)':
                             handleOculusRiftController(gamepad, sceneManager, game);
+                            break;
                     }
                 }
             }
@@ -99,13 +100,19 @@ function handleOculusRiftController(gamepad, sceneManager, game) {
     const buttonB = getButtonState(gamepad, B); // fps
     const thumbrest = getButtonState(gamepad, THUMBREST); // recentre
 
-    if (!thumbstick.pressed) {
-        controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
+    if (buttonB.pressed) {
+        if (controlsState.skipListener) {
+            controlsState.skipListener();
+            return;
+        }
     }
-    if (thumbrest.tapped && camera && scene) {
+
+    controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
+
+    if (buttonA.longPressed && camera && scene) {
         camera.center(scene);
     }
-    if (buttonB.pressed) {
+    if (buttonB.longPressed) {
         switchStats();
     }
 
