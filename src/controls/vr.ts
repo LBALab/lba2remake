@@ -15,12 +15,13 @@ export function makeVRControls(sceneManager: any, game: any) {
                     updateState(gamepad);
                     switch (gamepad.id) {
                         case 'Oculus Go Controller':
-                        case 'Oculus Remote':
+                        // case 'Oculus Remote':
                             handleOculusGoController(gamepad, sceneManager, game);
                             break;
                         case 'Oculus Touch (Left)':
                         case 'Oculus Touch (Right)':
                             handleOculusRiftController(gamepad, sceneManager, game);
+                            break;
                     }
                 }
             }
@@ -90,6 +91,8 @@ function handleOculusRiftController(gamepad, sceneManager, game) {
     const scene = sceneManager.getScene();
     const camera = scene && scene.camera;
     const hero = game.getState().hero;
+    controlsState.action = 0;
+    controlsState.jump = 0;
     controlsState.relativeToCam = true;
 
     const thumbstick = getButtonState(gamepad, THUMBSTICK); // Bahaviour loop
@@ -99,13 +102,19 @@ function handleOculusRiftController(gamepad, sceneManager, game) {
     const buttonB = getButtonState(gamepad, B); // fps
     const thumbrest = getButtonState(gamepad, THUMBREST); // recentre
 
-    if (!thumbstick.pressed) {
-        controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
+    if (buttonB.pressed) {
+        if (controlsState.skipListener) {
+            controlsState.skipListener();
+            return;
+        }
     }
-    if (thumbrest.tapped && camera && scene) {
+
+    controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
+
+    if (buttonA.longPressed && camera && scene) {
         camera.center(scene);
     }
-    if (buttonB.pressed) {
+    if (buttonB.longPressed) {
         switchStats();
     }
 
@@ -113,6 +122,7 @@ function handleOculusRiftController(gamepad, sceneManager, game) {
     if (grip.pressed) {
         hero.prevBehaviour = hero.behaviour;
         hero.behaviour = 1;
+        controlsState.jump = trigger.pressed ? 1 : 0;
     }
     if (thumbstick.pressed) {
         hero.behaviour = (hero.behaviour + 1) % 4;
@@ -122,7 +132,9 @@ function handleOculusRiftController(gamepad, sceneManager, game) {
         hero.prevBehaviour = hero.behaviour;
     }
     controlsState.action = buttonA.pressed ? 1 : 0;
-    controlsState.weapon = trigger.pressed ? 1 : 0;
+    if (!grip.pressed) {
+        controlsState.weapon = trigger.pressed ? 1 : 0;
+    }
 }
 
 const gamepadState = {};

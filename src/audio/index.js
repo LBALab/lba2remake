@@ -262,6 +262,9 @@ function getVoiceSource(state, context, data) {
                     source.load(voices.getNextHiddenEntry(index), textBankId, callback);
                 }
                 source.isPlaying = false;
+                if (source.ended) {
+                    source.ended();
+                }
             };
 
             const entryBuffer = voices.getEntry(index);

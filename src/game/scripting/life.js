@@ -28,6 +28,9 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
         const text = this.scene.data.texts[id];
+        voiceSource.load(text.index, this.scene.data.textBankId, () => {
+            voiceSource.play();
+        });
         if (text.type === 9) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
@@ -48,7 +51,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 this.game.setUiState({interjections: interjectionsCopy});
                 cmdState.ended = true;
             }, 4500);
-        } else {
+        } else if (!this.scene.vr) {
             hero.props.dirMode = DirMode.NO_MOVE;
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
@@ -64,18 +67,6 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                     color: actor.props.textColor
                 }
             });
-            const that = this;
-            cmdState.skipListener = function skipListener() {
-                const skip = that.game.getUiState().skip;
-                if (skip) {
-                    cmdState.ended = true;
-                } else {
-                    that.game.setUiState({
-                        skip: true
-                    });
-                }
-            };
-            this.game.controlsState.skipListener = cmdState.skipListener;
             if (text.type === 9) {
                 setTimeout(() => {
                     cmdState.skipListener();
@@ -83,10 +74,25 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             }
         }
 
-        voiceSource.load(text.index, this.scene.data.textBankId, () => {
-            voiceSource.play();
-        });
+        const that = this;
+        cmdState.skipListener = function skipListener() {
+            const skip = that.game.getUiState().skip;
+            if (skip) {
+                cmdState.ended = true;
+            } else {
+                that.game.setUiState({
+                    skip: true
+                });
+            }
+        };
+        this.game.controlsState.skipListener = cmdState.skipListener;
+        if (this.scene.vr) {
+            voiceSource.ended = () => {
+                cmdState.ended = true;
+            };
+        }
     }
+
     if (cmdState.ended) {
         voiceSource.stop();
         const text = this.scene.data.texts[id];
