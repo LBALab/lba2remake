@@ -129,7 +129,8 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
 
             if (body.boundingBox) {
                 bufferGeometry.boundingBox = body.boundingBox;
-                bufferGeometry.boundingSphere = body.boundingBox.getBoundingSphere();
+                const sphere = new THREE.Sphere();
+                bufferGeometry.boundingSphere = body.boundingBox.getBoundingSphere(sphere);
             }
 
             const modelMesh = new THREE.Mesh(bufferGeometry, material);
