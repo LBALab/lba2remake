@@ -79,7 +79,7 @@ function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
 
     if (forceUpdate
         || isMoreThan22DegsOff
-        || distanceToHero > 10
+        || distanceToHero > 15
         || distanceToHero < 1.5) {
         const cameraPos = CAMERA_HERO_OFFSET.clone();
         cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
