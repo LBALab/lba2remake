@@ -2,10 +2,10 @@ import React from 'react';
 import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
 import Area from './editor/Area';
 import {fullscreen} from './styles';
-import NewArea from './editor/areas/NewArea';
+import NewArea from './editor/areas/utils/NewArea';
 import {Type, Orientation} from './editor/layout';
-import {findAreaContentById, findMainAreas, generateContent} from './editor/utils';
-import AreaLoader from './editor/areas/AreaLoader';
+import {findAreaContentById, findMainAreas} from './editor/areas';
+import DebugData from './editor/DebugData';
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
 
@@ -122,10 +122,11 @@ export default class Editor extends React.Component {
     }
 
     render() {
-        return this.renderLayout(this.state.layout, baseStyle, []);
+        const root = findRootNode(this.state.layout);
+        return this.renderLayout(this.state.layout, baseStyle, [], root);
     }
 
-    renderLayout(node, style, path) {
+    renderLayout(node, style, path, root) {
         if (!node) {
             return null;
         }
@@ -166,12 +167,12 @@ export default class Editor extends React.Component {
 
             if (!node.children[1]) {
                 return <div ref={setRootRef} style={style}>
-                    {this.renderLayout(node.children[0], styles[0], concat(path, 0))}
+                    {this.renderLayout(node.children[0], styles[0], concat(path, 0), root)}
                 </div>;
             }
             return <div ref={setRootRef} style={style}>
-                {this.renderLayout(node.children[0], styles[0], concat(path, 0))}
-                {this.renderLayout(node.children[1], styles[1], concat(path, 1))}
+                {this.renderLayout(node.children[0], styles[0], concat(path, 0), root)}
+                {this.renderLayout(node.children[1], styles[1], concat(path, 1), root)}
                 <div ref={setSeparatorRef} style={separator}>
                     <div style={sepInnerLine}/>
                 </div>
@@ -193,6 +194,8 @@ export default class Editor extends React.Component {
             close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}
             saveMainData={this.saveMainData}
             mainData={this.state.mainData}
+            rootStateHandler={root.stateHandler}
+            editor={this}
         />;
     }
 
@@ -248,22 +251,43 @@ export default class Editor extends React.Component {
         }
     }
 
+    switchEditor(id, options) {
+        const area = findAreaContentById(id);
+        if (area && area.mainArea) {
+            this.selectMainAreaContent(area, options);
+        } else {
+            // eslint-disable-next-line no-console
+            console.warn(`Invalid editor id: ${id}`);
+        }
+    }
+
     selectAreaContent(path, area) {
         const layout = this.state.layout;
         const node = this.findNodeFromPath(layout, path);
         if (node.root) {
-            this.setState({
-                mainData: undefined,
-                layout: loadLayout(this, area.id),
-                root: area
-            });
-            localStorage.setItem('editor_mode', area.id);
+            this.selectMainAreaContent(area);
         } else {
             node.content = area;
             initStateHandler(this, node);
             this.setState({layout});
             saveLayout(layout);
         }
+    }
+
+    selectMainAreaContent(area, options) {
+        DebugData.scope = {};
+        if (this.state.mainData && this.state.mainData.state) {
+            const {renderer} = this.state.mainData.state;
+            if (renderer) {
+                renderer.dispose();
+            }
+        }
+        this.setState({
+            mainData: undefined,
+            layout: loadLayout(this, area.id, options),
+            root: area
+        });
+        localStorage.setItem('editor_mode', area.id);
     }
 
     saveMainData(data) {
@@ -316,13 +340,12 @@ function saveNode(node) {
     return {
         type: Type.AREA,
         content_id: node.content.id,
-        generator: node.content.generator,
         state: node.stateHandler.state,
         root: node.root
     };
 }
 
-function loadLayout(editor, mode) {
+function loadLayout(editor, mode, options) {
     if (!mode) {
         mode = localStorage.getItem('editor_mode') || 'game';
     }
@@ -339,50 +362,77 @@ function loadLayout(editor, mode) {
         const mainArea = findAreaContentById(mode);
         layout = mainArea.defaultLayout;
     }
-    return loadNode(editor, layout);
+    return loadNode(editor, layout, options);
 }
 
-function loadNode(editor, node) {
+function loadNode(editor, node, options = {}) {
     if (!node) {
         return null;
     }
     if (node.type === Type.LAYOUT) {
+        const childNodes = [
+            loadNode(editor, node.children[0], options),
+            loadNode(editor, node.children[1], options)
+        ];
+        if (!childNodes[0]) {
+            return childNodes[1];
+        }
+        if (!childNodes[1]) {
+            return childNodes[0];
+        }
         return {
             type: Type.LAYOUT,
             orientation: node.orientation,
             splitAt: node.splitAt,
             children: [
-                loadNode(editor, node.children[0]),
-                loadNode(editor, node.children[1])
+                childNodes[0],
+                childNodes[1]
             ]
         };
     }
+    if (node.root && options.injectArea) {
+        return {
+            type: Type.LAYOUT,
+            orientation: options.injectOrientation !== undefined
+                ? options.injectOrientation
+                : Orientation.HORIZONTAL,
+            splitAt: 50,
+            children: [
+                loadNode(editor, node, {rootState: options.rootState}),
+                editor.createNewArea(options.injectArea)
+            ]
+        };
+    }
+
     const tgtNode = {
         type: Type.AREA,
         root: node.root
     };
-    if (node.generator) {
-        generateContent(node.generator).then((area) => {
-            tgtNode.content = area;
-            editor.setState({layout: editor.state.layout});
-        });
-        tgtNode.content = AreaLoader;
-    } else {
-        tgtNode.content = findAreaContentById(node.content_id) || NewArea;
-        if (tgtNode
-            && node.content_id !== tgtNode.content.id
-            && node.content_id === tgtNode.content.replaces) {
-            node.state = null;
-        }
+    tgtNode.content = findAreaContentById(node.content_id);
+    if (!tgtNode.content)
+        return null;
+
+    if (node.content_id !== tgtNode.content.id
+        && node.content_id === tgtNode.content.replaces) {
+        node.state = null;
     }
 
-    initStateHandler(editor, tgtNode, node.state);
+    if (tgtNode.root && options.rootState) {
+        initStateHandler(editor, tgtNode, Object.assign(node.state, options.rootState));
+    } else {
+        initStateHandler(editor, tgtNode, node.state);
+    }
     return tgtNode;
 }
 
-function findRootArea(node) {
+function findRootNode(node) {
     if (node.type === Type.LAYOUT) {
-        return findRootArea(node.children[0]) || findRootArea(node.children[1]);
+        return findRootNode(node.children[0]) || findRootNode(node.children[1]);
     }
-    return node.root ? node.content : null;
+    return node.root ? node : null;
+}
+
+function findRootArea(node) {
+    const root = findRootNode(node);
+    return root ? root.content : null;
 }

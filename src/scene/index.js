@@ -4,6 +4,7 @@ import {DirMode} from '../game/actors.ts';
 import {loadHqr} from '../hqr.ts';
 import {bits} from '../utils.ts';
 import {loadTextData, getTextFile} from '../text';
+import {WORLD_SCALE} from '../utils/lba';
 
 export async function loadSceneData(language, index) {
     const [scene, text, ress] = await Promise.all([
@@ -89,9 +90,9 @@ function loadHero(scene, offset) {
         entityIndex: 0,
         bodyIndex: 0,
         pos: [
-            ((0x8000 - data.getInt16(offset + 4, true)) + 512) / 0x4000,
-            data.getInt16(offset + 2, true) / 0x4000,
-            data.getInt16(offset, true) / 0x4000
+            ((0x8000 - data.getInt16(offset + 4, true)) + 512) * WORLD_SCALE,
+            data.getInt16(offset + 2, true) * WORLD_SCALE,
+            data.getInt16(offset, true) * WORLD_SCALE
         ],
         index: 0,
         textColor: getHtmlColor(scene.palette, (12 * 16) + 12),
@@ -167,7 +168,7 @@ function loadActors(scene, offset) {
 
         actor.entityIndex = data.getInt16(offset, true);
         offset += 2;
-        actor.bodyIndex = data.getInt8(offset, true);
+        actor.bodyIndex = data.getUint8(offset, true);
         offset += 1;
         actor.animIndex = data.getInt16(offset, true);
         offset += 2;
@@ -175,9 +176,9 @@ function loadActors(scene, offset) {
         offset += 2;
 
         actor.pos = [
-            ((0x8000 - data.getInt16(offset + 4, true)) + 512) / 0x4000,
-            data.getInt16(offset + 2, true) / 0x4000,
-            data.getInt16(offset, true) / 0x4000
+            ((0x8000 - data.getInt16(offset + 4, true)) + 512) * WORLD_SCALE,
+            data.getInt16(offset + 2, true) * WORLD_SCALE,
+            data.getInt16(offset, true) * WORLD_SCALE
         ];
         offset += 6;
 
@@ -256,12 +257,12 @@ function loadZones(scene, offset) {
             box: {}
         };
 
-        const xMin = ((0x8000 - data.getInt32(offset + 8, true)) + 512) / 0x4000;
-        const yMin = data.getInt32(offset + 4, true) / 0x4000;
-        const zMin = data.getInt32(offset, true) / 0x4000;
-        const xMax = ((0x8000 - data.getInt32(offset + 20, true)) + 512) / 0x4000;
-        const yMax = data.getInt32(offset + 16, true) / 0x4000;
-        const zMax = data.getInt32(offset + 12, true) / 0x4000;
+        const xMin = ((0x8000 - data.getInt32(offset + 8, true)) + 512) * WORLD_SCALE;
+        const yMin = data.getInt32(offset + 4, true) * WORLD_SCALE;
+        const zMin = data.getInt32(offset, true) * WORLD_SCALE;
+        const xMax = ((0x8000 - data.getInt32(offset + 20, true)) + 512) * WORLD_SCALE;
+        const yMax = data.getInt32(offset + 16, true) * WORLD_SCALE;
+        const zMax = data.getInt32(offset + 12, true) * WORLD_SCALE;
         zone.box.xMin = Math.min(xMin, xMax);
         zone.box.yMin = Math.min(yMin, yMax);
         zone.box.zMin = Math.min(zMin, zMax);
@@ -307,9 +308,9 @@ function loadPoints(scene, offset) {
             sceneIndex: scene.index,
             index: i,
             pos: [
-                ((0x8000 - data.getInt32(offset + 8, true)) + 512) / 0x4000,
-                data.getInt32(offset + 4, true) / 0x4000,
-                data.getInt32(offset, true) / 0x4000
+                ((0x8000 - data.getInt32(offset + 8, true)) + 512) * WORLD_SCALE,
+                data.getInt32(offset + 4, true) * WORLD_SCALE,
+                data.getInt32(offset, true) * WORLD_SCALE
             ]
         };
         offset += 12;

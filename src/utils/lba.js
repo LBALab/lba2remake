@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+export const WORLD_SCALE = 24 / 0x4000;
+
 export function getRotation(nextValue, currentValue, interpolation) {
     let angleDif = nextValue - currentValue;
     let computedAngle = 0;
@@ -47,7 +49,7 @@ export function distance2D(from, to) {
     return Math.sqrt(distsquared);
 }
 
-const distanceThreeJs = 1 / 32;
+const distanceThreeJs = 24 / 32;
 
 export function getDistance(value) {
     return (value * distanceThreeJs) / 500;

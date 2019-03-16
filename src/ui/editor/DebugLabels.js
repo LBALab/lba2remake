@@ -131,7 +131,7 @@ export default class DebugLabels extends FrameListener {
 
             obj.threeObject.updateMatrixWorld();
             POS.setFromMatrixPosition(obj.threeObject.matrixWorld);
-            POS.project(renderer.getMainCamera(scene));
+            POS.project(scene.camera.threeCamera);
 
             POS.x = (POS.x * widthHalf) + widthHalf;
             POS.y = -(POS.y * heightHalf) + heightHalf;

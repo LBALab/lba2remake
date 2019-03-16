@@ -1,13 +1,13 @@
 import { getHtmlColor } from '../../scene';
 import { DirMode } from '../../game/actors.ts';
 import { AnimType } from '../data/animType';
-import { angleTo, angleToRad, getRandom } from '../../utils/lba';
+import { angleTo, angleToRad, getRandom, WORLD_SCALE } from '../../utils/lba';
 import { addExtra, ExtraFlag, randomBonus } from '../extras.ts';
 
 function NOP() { }
 
 export const ZoneOpcode = [
-    { opcode: 0, command: 'CUBE', handler: CUBE },
+    { opcode: 0, command: 'GOTO_SCENE', handler: GOTO_SCENE },
     { opcode: 1, command: 'CAMERA', handler: NOP },
     { opcode: 2, command: 'SCENERIC', handler: NOP },
     { opcode: 3, command: 'FRAGMENT', handler: NOP },
@@ -44,13 +44,13 @@ export function processZones(game, scene) {
 /**
  * @return {boolean}
  */
-function CUBE(game, scene, zone, hero) {
+function GOTO_SCENE(game, scene, zone, hero) {
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
         scene.goto(zone.props.snap).then((newScene) => {
             const newHero = newScene.actors[0];
-            newHero.physics.position.x = ((0x8000 - zone.props.info2) + 511) / 0x4000;
-            newHero.physics.position.y = zone.props.info1 / 0x4000;
-            newHero.physics.position.z = zone.props.info0 / 0x4000;
+            newHero.physics.position.x = ((0x8000 - zone.props.info2) + 512) * WORLD_SCALE;
+            newHero.physics.position.y = zone.props.info1 * WORLD_SCALE;
+            newHero.physics.position.z = zone.props.info0 * WORLD_SCALE;
             newHero.physics.temp.angle = hero.physics.temp.angle;
             newHero.physics.orientation.copy(hero.physics.orientation);
             newHero.threeObject.quaternion.copy(newHero.physics.orientation);
@@ -64,7 +64,7 @@ function CUBE(game, scene, zone, hero) {
 function TEXT(game, scene, zone, hero) {
     const voiceSource = game.getAudioManager().getVoiceSource();
     if (game.controlsState.action === 1) {
-        if (!scene.zoneState.listener) {
+        if (!scene.zoneState.skipListener) {
             scene.actors[0].props.dirMode = DirMode.NO_MOVE;
 
             hero.props.prevEntityIndex = hero.props.entityIndex;
@@ -81,40 +81,18 @@ function TEXT(game, scene, zone, hero) {
                     color: getHtmlColor(scene.data.palette, (zone.props.info0 * 16) + 12)
                 }
             });
-            scene.zoneState.listener = (event) => {
-                const key = event.code || event.which || event.keyCode;
-                if (key === 'Enter' || key === 13) {
-                    const skip = game.getUiState().skip;
-                    if (skip) {
-                        scene.zoneState.ended = true;
-                    } else {
-                        game.setUiState({
-                            skip: true
-                        });
-                    }
-                }
-            };
-            scene.zoneState.listenerStart = function listenerStart() {
-                scene.zoneState.startTime = Date.now();
-            };
-            scene.zoneState.listenerEnd = function listenerEnd() {
-                const endTime = Date.now();
-                const elapsed = endTime - scene.zoneState.startTime;
-                if (elapsed < 300) {
-                    const skip = game.getUiState().skip;
-                    if (skip) {
-                        scene.zoneState.ended = true;
-                    } else {
-                        game.setUiState({
-                            skip: true
-                        });
-                    }
+            scene.zoneState.skipListener = () => {
+                const skip = game.getUiState().skip;
+                if (skip) {
+                    scene.zoneState.ended = true;
+                } else {
+                    game.setUiState({
+                        skip: true
+                    });
                 }
             };
 
-            window.addEventListener('keydown', scene.zoneState.listener);
-            window.addEventListener('touchstart', scene.zoneState.listenerStart);
-            window.addEventListener('touchend', scene.zoneState.listenerEnd);
+            game.controlsState.skipListener = scene.zoneState.skipListener;
 
             voiceSource.load(text.index, scene.data.textBankId, () => {
                 voiceSource.play();
@@ -127,12 +105,8 @@ function TEXT(game, scene, zone, hero) {
         hero.props.animIndex = hero.props.prevAnimIndex;
         voiceSource.stop();
         game.setUiState({ text: null, skip: false });
-        window.removeEventListener('keydown', scene.zoneState.listener);
-        window.removeEventListener('touchstart', scene.zoneState.listenerStart);
-        window.removeEventListener('touchend', scene.zoneState.listenerEnd);
-        delete scene.zoneState.listener;
-        delete scene.zoneState.listenerStart;
-        delete scene.zoneState.listenerEnd;
+        game.controlsState.skipListener = null;
+        delete scene.zoneState.skipListener;
         delete scene.zoneState.ended;
         if (scene.zoneState.startTime) {
             delete scene.zoneState.startTime;

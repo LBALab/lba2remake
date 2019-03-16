@@ -11,16 +11,19 @@ export function makeFirstPersonTouchControls(game: any) {
     };
 
     const onTouchMove = handleTouchEvent.bind(null, controls, game);
-    // const onTouchEnd = handleTouchEndEvent.bind(null, controls, game);
+    const onTouchStart = handleTouchStartEvent.bind(null, controls, game);
+    const onTouchEnd = handleTouchEndEvent.bind(null, controls, game);
 
     document.addEventListener('touchmove', onTouchMove, false);
-    // document.addEventListener('touchend', onTouchEnd, false);
+    document.addEventListener('touchstart', onTouchStart, false);
+    document.addEventListener('touchend', onTouchEnd, false);
 
     return {
         type: 'touch',
         dispose: () => {
             document.removeEventListener('touchmove', onTouchMove, false);
-            // document.removeEventListener('touchend', onTouchEnd, false);
+            document.removeEventListener('touchstart', onTouchStart, false);
+            document.removeEventListener('touchend', onTouchEnd, false);
         }
     };
 }
@@ -55,10 +58,18 @@ function handleTouchEvent(controls, game, event: TouchEvent) {
     }
 }
 
-/*
-function handleTouchEndEvent(controls, game, event: TouchEvent) {
-    if (controls.enabled) {
-        game.controlsState.freeCamera = false;
+let startTime = null;
+
+function handleTouchStartEvent() {
+    startTime = Date.now();
+}
+
+function handleTouchEndEvent(controls, game) {
+    const endTime = Date.now();
+    const elapsed = endTime - startTime;
+    if (elapsed < 300) {
+        if (game.controlsState.skipListener) {
+            game.controlsState.skipListener();
+        }
     }
 }
-*/

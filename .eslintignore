@@ -1,8 +1,8 @@
-webpack.config.js
-webpack
-deploy
-apps
-node_modules
-devserver.js
-dist
-utils
+/webpack.config.js
+/webpack
+/deploy
+/apps
+/node_modules
+/devserver.js
+/dist
+/utils

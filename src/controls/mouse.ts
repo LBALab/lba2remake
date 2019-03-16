@@ -41,7 +41,7 @@ function handleMouseEvent(controls, game, event: MouseEvent) {
     if (controls.enabled && game.controlsState.freeCamera) {
         // Not supported on IE / Safari
         const movementX = event.movementX || 0;
-        const movementY = event.movementY || 0;
+        const movementY = -event.movementY || 0;
 
         euler.setFromQuaternion(game.controlsState.cameraHeadOrientation, 'YXZ');
         euler.y = 0;

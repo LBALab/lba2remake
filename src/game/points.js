@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {getObjectName} from '../ui/editor/DebugData';
+import { compile } from '../utils/shaders';
 
 export function loadPoint(props) {
     const pos = props.pos;
@@ -13,66 +14,89 @@ export function loadPoint(props) {
     };
 
     // For debug purposes
-    const obj = makeFlag();
-    obj.name = `point:${getObjectName('point', props.sceneIndex, props.index)}`;
-    obj.visible = false;
-    obj.position.set(point.physics.position.x, point.physics.position.y, point.physics.position.z);
-    obj.matrixAutoUpdate = false;
-    point.threeObject = obj;
+    const flag = makeFlag();
+    flag.name = `point:${getObjectName('point', props.sceneIndex, props.index)}`;
+    flag.visible = false;
+    flag.position.set(point.physics.position.x, point.physics.position.y, point.physics.position.z);
+    flag.matrixAutoUpdate = false;
+
+    point.threeObject = flag;
 
     return point;
 }
 
-const stickMaterial = makeMaterial(new THREE.Color('#321d0a'));
-const stickGeom = new THREE.CylinderGeometry(0.0015, 0.0015, 0.04, 6, 1, false);
-
-const clothMaterial = makeMaterial(new THREE.Color('#1a78c0'));
-const clothGeom = new THREE.Geometry();
-const v1 = new THREE.Vector3(0, 0.04, 0);
-const v2 = new THREE.Vector3(0, 0.02, 0);
-const v3 = new THREE.Vector3(0, 0.03, 0.02);
-
-clothGeom.vertices.push(v1);
-clothGeom.vertices.push(v2);
-clothGeom.vertices.push(v3);
-
-clothGeom.faces.push(new THREE.Face3(0, 1, 2));
-clothGeom.faces.push(new THREE.Face3(0, 2, 1));
-clothGeom.computeFaceNormals();
-
 function makeFlag() {
-    const obj = new THREE.Object3D();
+    const clothGeom = new THREE.Geometry();
+    const v1 = new THREE.Vector3(0, 0.96, 0);
+    const v2 = new THREE.Vector3(0, 0.48, 0);
+    const v3 = new THREE.Vector3(0, 0.72, 0.48);
+    clothGeom.vertices.push(v1);
+    clothGeom.vertices.push(v2);
+    clothGeom.vertices.push(v3);
+
+    clothGeom.faces.push(new THREE.Face3(0, 1, 2));
+    clothGeom.faces.push(new THREE.Face3(0, 2, 1));
+    clothGeom.computeFaceNormals();
+
+    const {
+        stickMaterial,
+        clothMaterial
+    } = makeFlagMaterials();
+
+    const stickGeom = new THREE.CylinderGeometry(0.036, 0.036, 0.96, 6, 1, false);
     const stick = new THREE.Mesh(stickGeom, stickMaterial);
-    stick.position.set(0, 0.02, 0);
+    stick.position.set(0, 0.48, 0);
     stick.name = 'stick';
-    obj.add(stick);
+
     const cloth = new THREE.Mesh(clothGeom, clothMaterial);
     cloth.name = 'cloth';
-    obj.add(cloth);
-    return obj;
+
+    const flag = new THREE.Object3D();
+    flag.add(stick);
+    flag.add(cloth);
+
+    return flag;
+}
+
+let flagMaterials = null;
+
+function makeFlagMaterials() {
+    if (!flagMaterials) {
+        const stickMaterial = makeMaterial(new THREE.Color('#321d0a'));
+        const clothMaterial = makeMaterial(new THREE.Color('#1a78c0'));
+
+        flagMaterials = {
+            stickMaterial,
+            clothMaterial
+        };
+    }
+
+    return flagMaterials;
 }
 
 function makeMaterial(color) {
     return new THREE.RawShaderMaterial({
-        vertexShader: `
-            precision lowp float;
+        vertexShader: compile('vert', `#version 300 es
+            precision highp float;
 
             uniform mat4 projectionMatrix;
             uniform mat4 modelViewMatrix;
 
-            attribute vec3 position;
+            in vec3 position;
 
             void main() {
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }`,
-        fragmentShader: `
-            precision lowp float;
+            }`),
+        fragmentShader: compile('frag', `#version 300 es
+            precision highp float;
 
             uniform vec3 color;
 
+            out vec4 fragColor;
+
             void main() {
-                gl_FragColor = vec4(color, 1.0);
-            }`,
+                fragColor = vec4(color, 1.0);
+            }`),
         uniforms: {
             color: {value: color}
         }

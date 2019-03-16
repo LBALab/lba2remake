@@ -66,7 +66,7 @@ function checkNewComportment(state, code) {
         state.comportement += 1;
         state.commands.push({
             op: LifeOpcode[0x20], // COMPORTEMENT
-            args: [{hide: false, value: state.comportement}],
+            args: [{hide: false, value: state.comportement, type: 'label'}],
             section: state.comportement
         });
         state.newComportement = false;
@@ -145,6 +145,7 @@ function parseArguments(state, script, op, cmd) {
             if (mode === 2 || mode === 4 || mode === 6 || mode === 10 || mode === 11) {
                 cmd.args.push({
                     value: script.getUint8(state.offset, true),
+                    type: 'actor',
                     hide: false
                 });
                 state.offset += 1;

@@ -6,7 +6,7 @@ import GameUI from './ui/GameUI';
 import Editor from './ui/Editor';
 import Popup from './ui/Popup';
 import {loadParams} from './params.ts';
-import {loadGameMetaData} from './ui/editor/DebugData';
+import {loadGameMetaData, loadModelsMetaData} from './ui/editor/DebugData';
 import {CrashHandler} from './crash_reporting';
 import ChangeLog from './ui/ChangeLog';
 
@@ -23,6 +23,7 @@ class Root extends React.Component {
         this.openChangeLog = this.openChangeLog.bind(this);
         if (params.editor) {
             loadGameMetaData();
+            loadModelsMetaData();
         }
     }
 
@@ -80,5 +81,4 @@ function init(error) {
         ? <CrashHandler error={error}/>
         : <Root ticker={ticker}/>);
     ReactDOM.render(<Renderer/>, document.getElementById('root'));
-    ticker.run();
 }

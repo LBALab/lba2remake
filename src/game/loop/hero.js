@@ -19,12 +19,12 @@ export const BehaviourMode = {
     SKELETON: 13
 };
 
-export function updateHero(game, hero, time) {
+export function updateHero(game, scene, hero, time) {
     if (hero.props.dirMode !== DirMode.MANUAL)
         return;
     const behaviour = game.getState().hero.behaviour;
     handleBehaviourChanges(hero, behaviour);
-    processActorMovement(game.controlsState, hero, time, behaviour);
+    processActorMovement(game.controlsState, scene, hero, time, behaviour);
 }
 
 function handleBehaviourChanges(hero, behaviour) {
@@ -42,7 +42,7 @@ function toggleJump(hero, value) {
     hero.props.runtimeFlags.hasGravityByAnim = value;
 }
 
-function processActorMovement(controlsState, hero, time, behaviour) {
+function processActorMovement(controlsState, scene, hero, time, behaviour) {
     let animIndex = hero.props.animIndex;
     if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
         toggleJump(hero, false);
@@ -50,18 +50,18 @@ function processActorMovement(controlsState, hero, time, behaviour) {
     if (!hero.props.runtimeFlags.isJumping) {
         toggleJump(hero, false);
         animIndex = AnimType.NONE;
-        if (controlsState.heroSpeed !== 0) {
+        if (!controlsState.relativeToCam && controlsState.controlVector.y !== 0) {
             hero.props.runtimeFlags.isWalking = true;
-            animIndex = controlsState.heroSpeed === 1 ? AnimType.FORWARD : AnimType.BACKWARD;
+            animIndex = controlsState.controlVector.y === 1 ? AnimType.FORWARD : AnimType.BACKWARD;
             if (controlsState.sideStep === 1) {
-                animIndex = controlsState.heroSpeed === 1 ?
+                animIndex = controlsState.controlVector.y === 1 ?
                     AnimType.DODGE_FORWARD : AnimType.DODGE_BACKWARD;
             }
         }
         if (controlsState.jump === 1) {
             toggleJump(hero, true);
             animIndex = AnimType.JUMP;
-            if (controlsState.heroSpeed === 1) {
+            if (!controlsState.relativeToCam && controlsState.controlVector.y === 1) {
                 animIndex = AnimType.RUNNING_JUMP;
             }
         }
@@ -98,7 +98,7 @@ function processActorMovement(controlsState, hero, time, behaviour) {
         }
         if (controlsState.crouch === 1) {
             hero.props.runtimeFlags.isCrouching = true;
-        } else if (controlsState.heroSpeed !== 0 || controlsState.heroRotationSpeed !== 0) {
+        } else if (controlsState.controlVector.y !== 0 || controlsState.controlVector.x !== 0) {
             hero.props.runtimeFlags.isCrouching = false;
         }
         if (hero.props.runtimeFlags.isCrouching) {
@@ -108,34 +108,82 @@ function processActorMovement(controlsState, hero, time, behaviour) {
             animIndex = AnimType.THROW;
         }
     }
-    if (controlsState.heroRotationSpeed !== 0 && !controlsState.crouch) {
-        toggleJump(hero, false);
-        hero.props.runtimeFlags.isCrouching = false;
-        hero.props.runtimeFlags.isWalking = true;
-        if (!controlsState.sideStep) {
-            const euler = new THREE.Euler();
-            euler.setFromQuaternion(hero.physics.orientation, 'YXZ');
-            euler.y += controlsState.heroRotationSpeed * time.delta * 1.2;
-            hero.physics.temp.angle = euler.y;
-            if (controlsState.heroSpeed === 0) {
-                animIndex = controlsState.heroRotationSpeed === 1 ? AnimType.LEFT : AnimType.RIGHT;
-            }
-            hero.physics.orientation.setFromEuler(euler);
-            // hero.props.runtimeFlags.isTurning = true;
-        } else {
-            animIndex = controlsState.heroRotationSpeed === 1 ?
-                AnimType.DODGE_RIGHT : AnimType.DODGE_LEFT;
-            if (behaviour === BehaviourMode.ATHLETIC) {
-                // for some reason Sportif mode as the animations step inversed
-                hero.physics.temp.position.x *= -1;
-                hero.physics.temp.position.z *= -1;
-                animIndex = controlsState.heroRotationSpeed === 1 ?
-                    AnimType.DODGE_LEFT : AnimType.DODGE_RIGHT;
+    if (!controlsState.relativeToCam) {
+        if (controlsState.controlVector.x !== 0 && !controlsState.crouch) {
+            toggleJump(hero, false);
+            hero.props.runtimeFlags.isCrouching = false;
+            hero.props.runtimeFlags.isWalking = true;
+            if (!controlsState.sideStep) {
+                const euler = new THREE.Euler();
+                euler.setFromQuaternion(hero.physics.orientation, 'YXZ');
+                hero.physics.temp.angle = euler.y;
+                if (controlsState.controlVector.y === 0) {
+                    animIndex = controlsState.controlVector.x === 1
+                        ? AnimType.RIGHT
+                        : AnimType.LEFT;
+                    let dy = 0;
+                    if (hero.animState.keyframeLength) {
+                        dy = (hero.animState.rotation.y * time.delta * 1000)
+                                / hero.animState.keyframeLength;
+                    }
+                    euler.y += dy;
+                } else {
+                    euler.y -= controlsState.controlVector.x * time.delta * 1.2;
+                }
+                hero.physics.orientation.setFromEuler(euler);
+                // hero.props.runtimeFlags.isTurning = true;
+            } else {
+                animIndex = controlsState.controlVector.x === 1
+                    ? AnimType.DODGE_RIGHT
+                    : AnimType.DODGE_LEFT;
+                if (behaviour === BehaviourMode.ATHLETIC) {
+                    // for some reason Sportif mode as the animations step inversed
+                    hero.physics.temp.position.x *= -1;
+                    hero.physics.temp.position.z *= -1;
+                    animIndex = controlsState.controlVector.x === 1
+                        ? AnimType.DODGE_LEFT
+                        : AnimType.DODGE_RIGHT;
+                }
             }
         }
     }
+    animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex, time);
     if (hero.props.animIndex !== animIndex) {
         hero.props.animIndex = animIndex;
         hero.resetAnimState();
     }
+}
+
+const FLAT_CAM = new THREE.Object3D();
+const HERO_POS = new THREE.Vector3();
+const UP = new THREE.Vector3(0, 1, 0);
+const QUAT = new THREE.Quaternion();
+const EULER = new THREE.Euler();
+
+function processCamRelativeMovement(controlsState, scene, hero, animIndex, time) {
+    if (controlsState.relativeToCam) {
+        const camera = scene.camera.controlNode;
+        if (!camera)
+            return animIndex;
+
+        FLAT_CAM.position.set(camera.position.x, 0, camera.position.z);
+        HERO_POS.set(0, 0, 0);
+        HERO_POS.applyMatrix4(hero.threeObject.matrixWorld);
+        HERO_POS.y = 0;
+        FLAT_CAM.lookAt(HERO_POS);
+
+        const cvLength = controlsState.controlVector.length();
+        const worldAngle = Math.PI / 2;
+        if (cvLength > 0.4) {
+            const baseAngle = controlsState.controlVector.angle();
+            QUAT.setFromAxisAngle(UP, baseAngle - worldAngle);
+            FLAT_CAM.quaternion.multiply(QUAT);
+            EULER.setFromQuaternion(FLAT_CAM.quaternion, 'XZY');
+            hero.physics.temp.angle = EULER.y;
+            hero.physics.orientation.slerp(FLAT_CAM.quaternion, time.delta * 15);
+            animIndex = AnimType.FORWARD;
+            hero.props.runtimeFlags.isWalking = true;
+        }
+    }
+    return animIndex;
 }

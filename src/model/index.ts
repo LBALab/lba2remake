@@ -8,7 +8,7 @@ import {
     createSkeleton,
 } from './animState';
 import { loadMesh } from './geometries';
-import { loadTexture2 } from '../texture';
+import { loadTextureRGBA } from '../texture';
 import { createBoundingBox } from '../utils/rendering';
 
 export interface Model {
@@ -70,7 +70,7 @@ function loadModelData(params: any,
         files,
         bodies: [],
         anims: [],
-        texture: loadTexture2(files.ress.getEntry(6), palette),
+        texture: loadTextureRGBA(files.ress.getEntry(6), palette),
         state: null,
         mesh: null,
         entities,

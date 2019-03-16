@@ -88,8 +88,14 @@ export const DirMode = {
 };
 
 // TODO: move section offset to container THREE.Object3D
-export async function loadActor(params: any, envInfo: any, ambience: any, props: ActorProps) {
-    const animState = loadAnimState();
+export async function loadActor(
+    params: any,
+    envInfo: any,
+    ambience: any,
+    props: ActorProps,
+    isSideScene: boolean) {
+    const skipModel = isSideScene && props.index === 0;
+    const animState = !skipModel ? loadAnimState() : null;
     const actor: Actor = {
         type: 'actor',
         index: props.index,
@@ -272,7 +278,9 @@ export async function loadActor(params: any, envInfo: any, ambience: any, props:
     const euler = new THREE.Euler(0, angleToRad(props.angle), 0, 'XZY');
     actor.physics.orientation.setFromEuler(euler);
 
-    await actor.loadMesh();
+    if (!skipModel) {
+        await actor.loadMesh();
+    }
     return actor;
 }
 

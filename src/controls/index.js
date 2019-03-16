@@ -1,19 +1,16 @@
 import {makeFirstPersonMouseControls} from './mouse.ts';
 import {makeKeyboardControls} from './keyboard.ts';
-import {makeGyroscopeControls} from './gyroscope.ts';
 import {makeGamepadControls} from './gamepad.ts';
+import {makeVRControls} from './vr.ts';
 import {makeFirstPersonTouchControls} from './touch.ts';
 
-export function createControls(params, game, canvas, sceneManager) {
+export function createControls(params, game, elem, sceneManager, renderer) {
     let controls;
-    if (params.vr) {
+    if (renderer.vr) {
         controls = [
-            makeGyroscopeControls(game),
-            makeGamepadControls(sceneManager, game)
+            makeFirstPersonTouchControls(game),
+            makeVRControls(sceneManager, game)
         ];
-        if (!params.mobile) {
-            controls.push(makeKeyboardControls(params, canvas, sceneManager, game));
-        }
     } else if (params.mobile) {
         controls = [
             makeFirstPersonTouchControls(game),
@@ -21,8 +18,8 @@ export function createControls(params, game, canvas, sceneManager) {
         ];
     } else {
         controls = [
-            makeFirstPersonMouseControls(params, canvas, game),
-            makeKeyboardControls(params, canvas, sceneManager, game),
+            makeFirstPersonMouseControls(params, elem, game),
+            makeKeyboardControls(params, elem, sceneManager, game),
             makeGamepadControls(sceneManager, game)
         ];
     }

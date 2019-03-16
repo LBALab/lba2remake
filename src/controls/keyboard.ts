@@ -2,21 +2,21 @@ import {switchStats} from '../renderer/stats';
 import {BehaviourMode} from '../game/loop/hero';
 
 export function makeKeyboardControls(params: any,
-                                     canvas: any,
+                                     elem: any,
                                      sceneManager: any,
                                      game: any) {
     const onKeyDown = keyDownHandler.bind(null, params, game, sceneManager);
     const onKeyUp = keyUpHandler.bind(null, game);
     const onFocusOut = focusOutHandler.bind(null, game);
-    canvas.addEventListener('keydown', onKeyDown, true);
-    canvas.addEventListener('keyup', onKeyUp, true);
-    canvas.addEventListener('focusout', onFocusOut, true);
+    elem.addEventListener('keydown', onKeyDown, true);
+    elem.addEventListener('keyup', onKeyUp, true);
+    elem.addEventListener('focusout', onFocusOut, true);
     return {
         type: 'keyboard',
         dispose: () => {
-            canvas.removeEventListener('keydown', onKeyDown);
-            canvas.removeEventListener('keyup', onKeyUp);
-            canvas.removeEventListener('focusout', onFocusOut);
+            elem.removeEventListener('keydown', onKeyDown);
+            elem.removeEventListener('keyup', onKeyUp);
+            elem.removeEventListener('focusout', onFocusOut);
         }
     };
 }
@@ -27,19 +27,19 @@ function keyDownHandler(params, game, sceneManager, event) {
     switch (key) {
         case 38: // up
         case 'ArrowUp':
-            game.controlsState.heroSpeed = 1;
+            game.controlsState.controlVector.y = 1;
             break;
         case 40: // down
         case 'ArrowDown':
-            game.controlsState.heroSpeed = -1;
+            game.controlsState.controlVector.y = -1;
             break;
         case 37: // left
         case 'ArrowLeft':
-            game.controlsState.heroRotationSpeed = 1;
+            game.controlsState.controlVector.x = -1;
             break;
         case 39: // right
         case 'ArrowRight':
-            game.controlsState.heroRotationSpeed = -1;
+            game.controlsState.controlVector.x = 1;
             break;
 
         case 49:
@@ -77,7 +77,9 @@ function keyDownHandler(params, game, sceneManager, event) {
             break;
         case 90:
         case 'KeyZ':
-            game.controlsState.action = 1;
+            if (!game.controlsState.skipListener) {
+                game.controlsState.action = 1;
+            }
             break;
         case 18:
         case 'AltLeft':
@@ -89,19 +91,19 @@ function keyDownHandler(params, game, sceneManager, event) {
             break;
         case 87: // w
         case 'KeyW':
-            game.controlsState.cameraSpeed.z = -1;
+            game.controlsState.cameraSpeed.z = 1;
             break;
         case 83: // s
         case 'KeyS':
-            game.controlsState.cameraSpeed.z = 1;
+            game.controlsState.cameraSpeed.z = -1;
             break;
         case 65: // a
         case 'KeyA':
-            game.controlsState.cameraSpeed.x = -1;
+            game.controlsState.cameraSpeed.x = 1;
             break;
         case 68: // d
         case 'KeyD':
-            game.controlsState.cameraSpeed.x = 1;
+            game.controlsState.cameraSpeed.x = -1;
             break;
 
         case 34: // pagedown
@@ -133,6 +135,12 @@ function keyDownHandler(params, game, sceneManager, event) {
         case 'KeyP':
             game.togglePause();
             break;
+        case 13:
+        case 'Enter':
+            if (game.controlsState.skipListener) {
+                game.controlsState.skipListener();
+            }
+            break;
     }
 }
 
@@ -141,23 +149,23 @@ function keyUpHandler(game, event) {
     switch (key) {
         case 38: // up
         case 'ArrowUp':
-            if (game.controlsState.heroSpeed === 1)
-                game.controlsState.heroSpeed = 0;
+            if (game.controlsState.controlVector.y === 1)
+                game.controlsState.controlVector.y = 0;
             break;
         case 40: // down
         case 'ArrowDown':
-            if (game.controlsState.heroSpeed === -1)
-                game.controlsState.heroSpeed = 0;
+            if (game.controlsState.controlVector.y === -1)
+                game.controlsState.controlVector.y = 0;
             break;
         case 37: // left
         case 'ArrowLeft':
-            if (game.controlsState.heroRotationSpeed === 1)
-                game.controlsState.heroRotationSpeed = 0;
+            if (game.controlsState.controlVector.x === -1)
+                game.controlsState.controlVector.x = 0;
             break;
         case 39: // right
         case 'ArrowRight':
-            if (game.controlsState.heroRotationSpeed === -1)
-                game.controlsState.heroRotationSpeed = 0;
+            if (game.controlsState.controlVector.x === 1)
+                game.controlsState.controlVector.x = 0;
             break;
         case 32:
         case 'Space':
@@ -184,22 +192,22 @@ function keyUpHandler(game, event) {
 
         case 87: // w
         case 'KeyW':
-            if (game.controlsState.cameraSpeed.z === -1)
+            if (game.controlsState.cameraSpeed.z === 1)
                 game.controlsState.cameraSpeed.z = 0;
             break;
         case 83: // s
         case 'KeyS':
-            if (game.controlsState.cameraSpeed.z === 1)
+            if (game.controlsState.cameraSpeed.z === -1)
                 game.controlsState.cameraSpeed.z = 0;
             break;
         case 65: // a
         case 'KeyA':
-            if (game.controlsState.cameraSpeed.x === -1)
+            if (game.controlsState.cameraSpeed.x === 1)
                 game.controlsState.cameraSpeed.x = 0;
             break;
         case 68: // d
         case 'KeyD':
-            if (game.controlsState.cameraSpeed.x === 1)
+            if (game.controlsState.cameraSpeed.x === -1)
                 game.controlsState.cameraSpeed.x = 0;
             break;
     }

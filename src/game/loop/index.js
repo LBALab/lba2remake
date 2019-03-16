@@ -3,7 +3,6 @@ import * as THREE from 'three';
 import {updateHero} from './hero';
 import {updateActor} from './actors.ts';
 import {processPhysicsFrame} from './physics';
-import {processCameraMovement} from './cameras';
 import {getRandom} from '../../utils/lba';
 import DebugData from '../../ui/editor/DebugData';
 
@@ -14,8 +13,8 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
     const time = game.getTime();
 
     renderer.stats.begin();
+    each(controls, ctrl => ctrl.update && ctrl.update());
     if (scene) {
-        each(controls, ctrl => ctrl.update && ctrl.update());
         const step = game.isPaused() && DebugData.step;
         if (!game.isPaused() || step) {
             if (step) {
@@ -30,7 +29,10 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
                 updateScene(game, sideScene, time);
                 processPhysicsFrame(game, sideScene, time);
             });
-            processCameraMovement(game.controlsState, renderer, scene, time);
+            if (scene.firstFrame) {
+                scene.camera.init(scene, game.controlsState);
+            }
+            scene.camera.update(scene, game.controlsState, time);
             renderer.render(scene);
             DebugData.step = false;
         } else if (game.controlsState.freeCamera || DebugData.firstFrame) {
@@ -38,9 +40,13 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
                 delta: Math.min(dbgClock.getDelta(), 0.05),
                 elapsed: dbgClock.getElapsedTime()
             };
-            processCameraMovement(game.controlsState, renderer, scene, dbgTime);
+            if (scene.firstFrame) {
+                scene.camera.init(scene, game.controlsState);
+            }
+            scene.camera.update(scene, game.controlsState, dbgTime);
             renderer.render(scene);
         }
+        scene.firstFrame = false;
         delete DebugData.firstFrame;
     }
     renderer.stats.end();
@@ -55,7 +61,7 @@ function updateScene(game, scene, time, step) {
         updateActor(game, scene, actor, time, step);
         if (scene.isActive) {
             if (actor.index === 0) {
-                updateHero(game, actor, time);
+                updateHero(game, scene, actor, time);
             }
         }
     });

@@ -26,17 +26,21 @@ export function ZONE() {
 
 export function ZONE_OBJ(actor) {
     const pos = actor.physics.position.clone();
-    pos.y += 0.005;
-    pos.x -= 0.005;
+    let halfHeight = 0.12; // 12 cm, this is totally arbitrary
+    if (actor.model && actor.model.boundingBox) {
+        const bb = actor.model.boundingBox;
+        halfHeight = (bb.max.y - bb.max.y) * 0.5;
+    }
+    pos.y += halfHeight;
     for (let i = 0; i < this.scene.zones.length; i += 1) {
         const zone = this.scene.zones[i];
         if (zone.props.type !== 2)
             continue;
 
         const box = zone.props.box;
-        if (pos.x >= box.xMin && pos.x < box.xMax &&
+        if (pos.x >= box.xMin && pos.x <= box.xMax &&
             pos.y >= box.yMin && pos.y <= box.yMax &&
-            pos.z >= box.zMin && pos.z < box.zMax) {
+            pos.z >= box.zMin && pos.z <= box.zMax) {
             return zone.props.snap;
         }
     }
@@ -75,6 +79,8 @@ export function CONE_VIEW() {
     return 10000;
 }
 
+CONE_VIEW.unimplemented = true;
+
 export function HIT_BY() {
     return this.actor.hasCollidedWithActor;
 }
@@ -95,11 +101,11 @@ export function LIFE_POINT_OBJ(actor) {
     return actor.props.life;
 }
 
-export function NUM_LITTLE_KEYS() {
+export function KEYS() {
     return this.game.getState().hero.keys;
 }
 
-export function NUM_GOLD_PIECES() {
+export function MONEY() {
     return this.game.getState().hero.money;
 }
 
@@ -119,13 +125,15 @@ export function MAGIC_LEVEL() {
     return this.game.getState().hero.magic;
 }
 
-export function MAGIC_POINT() {
+export function MAGIC_POINTS() {
     return this.game.getState().hero.magicball.level;
 }
 
-export function USE_INVENTORY() {
-    return -1;
+export function USING_INVENTORY() {
+    return 0;
 }
+
+USING_INVENTORY.unimplemented = true;
 
 export function CHOICE() {
     return this.state.choice;
@@ -139,6 +147,8 @@ export function CARRIED_BY() {
     return -1;
 }
 
+CARRIED_BY.unimplemented = true;
+
 export function CDROM() {
     return 1;
 }
@@ -147,6 +157,8 @@ export function LADDER() {
     return -1;
 }
 
+LADDER.unimplemented = true;
+
 export function RND(max) {
     return Math.floor(Math.random() * max);
 }
@@ -154,6 +166,8 @@ export function RND(max) {
 export function RAIL() {
     return -1;
 }
+
+RAIL.unimplemented = true;
 
 export function BETA() {
     return BETA_OBJ.call(this, this.actor);
@@ -168,9 +182,13 @@ export function CARRIED_OBJ_BY() {
     return -1;
 }
 
+CARRIED_OBJ_BY.unimplemented = true;
+
 export function ANGLE() {
     return -1;
 }
+
+ANGLE.unimplemented = true;
 
 export function DISTANCE_MESSAGE(actor) {
     return DISTANCE.call(this, actor);
@@ -184,17 +202,25 @@ export function REAL_ANGLE() {
     return -1;
 }
 
+REAL_ANGLE.unimplemented = true;
+
 export function DEMO() {
     return -1;
 }
+
+DEMO.unimplemented = true;
 
 export function COL_DECORS() {
     return -1;
 }
 
+COL_DECORS.unimplemented = true;
+
 export function COL_DECORS_OBJ() {
     return -1;
 }
+
+COL_DECORS_OBJ.unimplemented = true;
 
 export function PROCESSOR() {
     return 1; // default cpu 486
@@ -204,6 +230,10 @@ export function OBJECT_DISPLAYED() {
     return -1;
 }
 
+OBJECT_DISPLAYED.unimplemented = true;
+
 export function ANGLE_OBJ() {
     return -1;
 }
+
+ANGLE_OBJ.unimplemented = true;

@@ -39,7 +39,7 @@ export default class HQR {
                         that.loadPromise = null;
                         resolve(that);
                     } else {
-                        reject(`HQR file download failed: statuc=${this.status}`);
+                        reject(`HQR file download failed: status=${this.status}`);
                     }
                 };
 

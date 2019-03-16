@@ -120,10 +120,10 @@ function loadIslandNode(params, props, files, ambience) {
 }
 
 function loadSky(geometries) {
-    const sky = new THREE.Mesh(new THREE.PlaneGeometry(128, 128, 1, 1), geometries.sky.material);
+    const sky = new THREE.Mesh(new THREE.PlaneGeometry(3072, 3072, 1, 1), geometries.sky.material);
     sky.name = 'sky';
     sky.rotateX(Math.PI / 2.0);
-    sky.position.y = 2.0;
+    sky.position.y = 48.0;
     return sky;
 }
 
@@ -153,10 +153,13 @@ function loadGeometries(island, data, ambience) {
 
 const DIFF = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
+const HERO_POS = new THREE.Vector3();
+
+const SHADOW_MAX_DIST = 15;
+const SHADOW_MAX_DIST_SQ = SHADOW_MAX_DIST * SHADOW_MAX_DIST;
 
 function updateShadows(baseScene, matByName) {
     const shadows = [];
-    let heroPos = null;
 
     function computeShadow(scene, actor) {
         if (!actor.props.flags.isSprite
@@ -166,8 +169,8 @@ function updateShadows(baseScene, matByName) {
             const sz = actor.model.boundingBox.max.x - actor.model.boundingBox.min.x;
             POSITION.copy(actor.physics.position);
             POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
-            const distToHero = heroPos ? DIFF.subVectors(POSITION, heroPos).lengthSq() : 0;
-            if (distToHero < 2.5) {
+            const distToHero = HERO_POS ? DIFF.subVectors(POSITION, HERO_POS).lengthSq() : 0;
+            if (distToHero < SHADOW_MAX_DIST_SQ) {
                 shadows.push({
                     data: [POSITION.x, POSITION.z, 2.8 / sz, 1],
                     distToHero
@@ -177,7 +180,7 @@ function updateShadows(baseScene, matByName) {
     }
 
     computeShadow(baseScene, baseScene.actors[0]);
-    heroPos = POSITION.clone();
+    HERO_POS.copy(POSITION);
     each(tail(baseScene.actors), computeShadow.bind(null, baseScene));
     each(baseScene.sideScenes, (sideScene) => {
         each(sideScene.actors, computeShadow.bind(null, sideScene));

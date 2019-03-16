@@ -11,14 +11,20 @@ import { loadIslandScenery, getEnvInfo } from '../island';
 import { loadIsometricScenery } from '../iso';
 import { loadSceneData } from '../scene';
 import { loadSceneMapData } from '../scene/map';
-import { loadActor } from './actors';
+import { loadActor, DirMode } from './actors';
 import { loadPoint } from './points';
 import { loadZone } from './zones';
 import { loadScripts } from '../scripting';
 import { killActor, reviveActor } from './scripting';
-import {initCameraMovement } from './loop/cameras';
 import DebugData, * as DBG from '../ui/editor/DebugData';
 import { sBind } from '../utils';
+import { get3DCamera } from '../cameras/3d';
+import { getIsometricCamera } from '../cameras/iso';
+import { getIso3DCamera } from '../cameras/iso3d';
+import { getVR3DCamera } from '../cameras/vr/vr3d';
+import { getVRIsoCamera } from '../cameras/vr/vrIso';
+import { angleToRad } from '../utils/lba';
+import { addVRGuiNode } from '../ui/vr/vrGui';
 
 declare global {
     var ga: Function;
@@ -42,7 +48,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
         },
 
         /* @inspector(locate) */
-        async goto(index, force = false, wasPaused = false) {
+        async goto(index, force = false, wasPaused = false, teleport = true) {
             if ((!force && scene && index === scene.index) || game.isLoading())
                 return;
 
@@ -53,6 +59,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 scene.isActive = false;
 
             game.setUiState({ text: null, cinema: false });
+            game.controlsState.skipListener = null;
 
             const hash = window.location.hash;
             if (hash.match(/scene=\d+/)) {
@@ -68,6 +75,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 delete sideScene.sideScenes[index];
                 delete scene.sideScenes;
                 sideScene.sideScenes[scene.index] = scene;
+                relocateHero(scene.actors[0], sideScene.actors[0], sideScene, teleport);
                 scene = sideScene;
                 reviveActor(scene.actors[0]); // Awake twinsen
                 scene.isActive = true;
@@ -101,7 +109,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             }
             initSceneDebugData();
             scene.sceneNode.updateMatrixWorld();
-            initCameraMovement(game.controlsState, renderer, scene);
+            scene.firstFrame = true;
             game.loaded(wasPaused);
             return scene;
         },
@@ -147,35 +155,61 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
     };
     const actors = await Promise.all(map(
         sceneData.actors,
-        actor => loadActor(params, envInfo, sceneData.ambience, actor)
+        actor => loadActor(params, envInfo, sceneData.ambience, actor, parent)
     ));
     const points = map(sceneData.points, loadPoint);
     const zones = map(sceneData.zones, loadZone);
 
     let scenery = null;
     let threeScene = null;
+    let camera = null;
     if (!parent) {
         threeScene = new THREE.Scene();
         if (indexInfo.isIsland) {
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
             threeScene.name = '3D_scene';
+            if (renderer.vr) {
+                camera = getVR3DCamera();
+            } else {
+                camera = get3DCamera();
+            }
         } else {
-            scenery = await loadIsometricScenery(renderer, indexInfo.index);
+            scenery = await loadIsometricScenery(params, renderer, indexInfo.index);
             threeScene.name = 'iso_scene';
+            if (renderer.vr) {
+                camera = getVRIsoCamera();
+            } else if (params.iso3d) {
+                camera = getIso3DCamera();
+            } else {
+                camera = getIsometricCamera();
+            }
         }
-
+        if (camera.controlNode) {
+            addVRGuiNode(renderer, camera.controlNode);
+            threeScene.add(camera.controlNode);
+        }
         threeScene.add(scenery.threeObject);
     } else {
         scenery = parent.scenery;
         threeScene = parent.threeScene;
+        camera = parent.camera;
     }
 
-    const sceneNode = loadSceneNode(index, indexInfo, scenery, actors, zones, points);
+    const sceneNode = loadSceneNode(
+        index,
+        indexInfo,
+        scenery,
+        actors,
+        zones,
+        points,
+        params.editor
+    );
     threeScene.add(sceneNode);
     const scene = {
         index,
         data: sceneData,
         isIsland: indexInfo.isIsland,
+        camera,
         threeScene,
         sceneNode,
         scenery,
@@ -186,11 +220,13 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         zones,
         extras: [],
         isActive: false,
+        firstFrame: false,
         variables: null,
         section: null,
         usedVarGames: null,
         zoneState: { listener: null, ended: false },
         goto: sBind(sceneManager.goto, sceneManager),
+        vr: renderer.vr,
 
         /* @inspector(locate) */
         reset() {
@@ -198,11 +234,25 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 actor.reset();
             });
             loadScripts(params, game, scene);
-            initCameraMovement(game.controlsState, renderer, scene);
+            scene.firstFrame = true;
             if (game.isPaused()) {
                 DebugData.step = true;
             }
             scene.variables = createSceneVariables(scene);
+        },
+
+        /* @inspector(locate) */
+        resetCamera(params) {
+            if (!scene.isIsland) {
+                if (!renderer.vr) {
+                    if (params.iso3d) {
+                        scene.camera = getIso3DCamera();
+                    } else {
+                        scene.camera = getIsometricCamera();
+                    }
+                }
+                scene.camera.init(scene, game.controlsState);
+            }
         },
 
         /* @inspector(locate) */
@@ -239,14 +289,14 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
     return scene;
 }
 
-function loadSceneNode(index, indexInfo, scenery, actors, zones, points) {
+function loadSceneNode(index, indexInfo, scenery, actors, zones, points, editor) {
     const sceneNode = indexInfo.isIsland ? new THREE.Object3D() : new THREE.Scene();
     sceneNode.name = `scene_${index}`;
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
         const section = scenery.sections[sectionIdx];
-        sceneNode.position.x = section.x * 2;
-        sceneNode.position.z = section.z * 2;
+        sceneNode.position.x = section.x * 48;
+        sceneNode.position.z = section.z * 48;
     }
     const addToSceneNode = (obj) => {
         if (obj.threeObject !== null) { // because of the sprite actors
@@ -255,8 +305,10 @@ function loadSceneNode(index, indexInfo, scenery, actors, zones, points) {
     };
 
     each(actors, addToSceneNode);
-    each(zones, addToSceneNode);
-    each(points, addToSceneNode);
+    if (editor) {
+        each(zones, addToSceneNode);
+        each(points, addToSceneNode);
+    }
     return sceneNode;
 }
 
@@ -348,4 +400,55 @@ export function addExtraToScene(scene, extra) {
     if (extra.threeObject !== null) { // because of the sprite actors
         scene.sceneNode.add(extra.threeObject);
     }
+}
+
+function relocateHero(hero, newHero, newScene, teleport) {
+    const globalPos = new THREE.Vector3();
+    globalPos.applyMatrix4(hero.threeObject.matrixWorld);
+    newScene.sceneNode.remove(newHero.threeObject);
+    newHero.threeObject = hero.threeObject;
+    newHero.threeObject.position.copy(globalPos);
+    newScene.sceneNode.updateMatrixWorld();
+    newHero.threeObject.position.sub(newScene.sceneNode.position);
+    newHero.model = hero.model;
+    newScene.sceneNode.add(newHero.threeObject);
+
+    newHero.props.dirMode = hero.props.dirMode;
+    newHero.props.entityIndex = hero.props.entityIndex;
+    newHero.props.bodyIndex = hero.props.bodyIndex;
+    newHero.props.animIndex = hero.props.animIndex;
+
+    if (teleport) {
+        newHero.props.dirMode = DirMode.MANUAL;
+
+        const {pos, angle} = newHero.props;
+        const position = new THREE.Vector3(pos[0], pos[1], pos[2]);
+        const angleRad = angleToRad(angle);
+        const euler = new THREE.Euler(0, angleRad, 0, 'XZY');
+
+        newHero.physics.position.copy(position);
+        newHero.physics.orientation.setFromEuler(euler);
+        newHero.physics.temp.destination.copy(position);
+        newHero.physics.temp.position.copy(position);
+        newHero.physics.temp.angle = angleRad;
+        newHero.physics.temp.destAngle = angleRad;
+
+        newHero.threeObject.position.set(pos[0], pos[1], pos[2]);
+        newHero.threeObject.quaternion.copy(newHero.physics.orientation);
+    } else {
+        newHero.physics.position.copy(newHero.threeObject.position);
+        newHero.physics.orientation.copy(hero.physics.orientation);
+        newHero.physics.temp.angle = hero.physics.temp.angle;
+        newHero.physics.temp.position.copy(hero.physics.temp.position);
+        newHero.physics.temp.destination.copy(hero.physics.temp.destination);
+    }
+
+    newHero.animState = hero.animState;
+    // eslint-disable-next-line guard-for-in
+    Object.keys(hero.props.runtimeFlags).forEach((k) => {
+        newHero.props.runtimeFlags[k] = hero.props.runtimeFlags[k];
+    });
+    hero.animState = null;
+    hero.model = null;
+    hero.threeObject = null;
 }

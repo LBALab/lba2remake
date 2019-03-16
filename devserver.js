@@ -33,6 +33,9 @@ app.post('/metadata', function (req, res) {
         case 'game':
             fileName = './www/metadata/game.json';
             break;
+        case 'models':
+            fileName = './www/metadata/models.json';
+            break;
     }
     if (fileName) {
         fs.readFile(fileName, 'utf8', (err, file) => {

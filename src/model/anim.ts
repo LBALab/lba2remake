@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {WORLD_SCALE} from '../utils/lba';
 
 interface BoneframeCanFall {
     boneframe: Boneframe;
@@ -61,9 +62,9 @@ function loadKeyframes(anim) {
     for (let i = 0; i < anim.numKeyframes; i += 1) {
         const keyframe : Keyframe = {
             length: data.getUint16(offset, true),
-            x: data.getInt16(offset + 2, true) / 0x4000,
-            y: data.getInt16(offset + 4, true) / 0x4000,
-            z: data.getInt16(offset + 6, true) / 0x4000,
+            x: data.getInt16(offset + 2, true) * WORLD_SCALE,
+            y: data.getInt16(offset + 4, true) * WORLD_SCALE,
+            z: data.getInt16(offset + 6, true) * WORLD_SCALE,
             canFall: false,
             boneframes: []
         };
@@ -98,7 +99,11 @@ function loadBoneframe(data, offset) : BoneframeCanFall {
         boneframe.veuler = new THREE.Vector3(x, y, z);
     } else { // translation
         boneframe.veuler = new THREE.Vector3(0, 0, 0);
-        boneframe.pos = new THREE.Vector3(x / 0x4000, y / 0x4000, z / 0x4000);
+        boneframe.pos = new THREE.Vector3(
+            x * WORLD_SCALE,
+            y * WORLD_SCALE,
+            z * WORLD_SCALE
+        );
         canFall = true;
     }
     return { boneframe, canFall };

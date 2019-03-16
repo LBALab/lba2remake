@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {compile} from '../utils/shaders';
 
 export function createBoundingBox(bb, color) {
     const geometry = new THREE.BoxGeometry(
@@ -9,25 +10,27 @@ export function createBoundingBox(bb, color) {
 
     const edgesGeometry = new THREE.EdgesGeometry(geometry);
     const material = new THREE.RawShaderMaterial({
-        vertexShader: `
-            precision lowp float;
+        vertexShader: compile('vert', `#version 300 es
+            precision highp float;
 
             uniform mat4 projectionMatrix;
             uniform mat4 modelViewMatrix;
 
-            attribute vec3 position;
+            in vec3 position;
 
             void main() {
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(position.x, position.y + 0.001, position.z, 1.0);
-            }`,
-        fragmentShader: `
-            precision lowp float;
+            }`),
+        fragmentShader: compile('frag', `#version 300 es
+            precision highp float;
 
             uniform vec3 color;
 
+            out vec4 fragColor;
+
             void main() {
-                gl_FragColor = vec4(color, 1.0);
-            }`,
+                fragColor = vec4(color, 1.0);
+            }`),
         uniforms: {
             color: {value: color}
         }

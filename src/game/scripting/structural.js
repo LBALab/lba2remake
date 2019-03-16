@@ -67,7 +67,7 @@ export function CASE(operator, offset) {
 }
 
 export function DEFAULT() {
-
+    // do nothing
 }
 
 export function BREAK(offset) {
@@ -180,7 +180,7 @@ export function END_LIFE() {
 }
 
 export function NOP() {
-
+    // DO NOTHING
 }
 
 export function RETURN() {

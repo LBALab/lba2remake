@@ -35,7 +35,7 @@
       "name": "kashes"
     },
     {
-      "name": "pisto-laser",
+      "name": "pisto_laser",
       "type": "boolean"
     },
     {
@@ -47,14 +47,14 @@
       "type": "boolean"
     },
     {
-      "name": "proto-pack"
+      "name": "protopack"
     },
     {
       "name": "ferry_ticket",
       "type": "boolean"
     },
     {
-      "name": "nitro-meca-penguin"
+      "name": "nitro_meca_penguin"
     },
     {
       "name": "can_of_gazogem"
@@ -137,7 +137,7 @@
       "type": "boolean"
     },
     {
-      "name": "pick-ax",
+      "name": "pick_ax",
       "type": "boolean"
     },
     {

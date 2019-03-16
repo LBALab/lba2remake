@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 
 export function processCollisions(grid, scene, actor) {
-    const basePos = actor.threeObject.position;
-    const position = actor.physics.position;
+    const basePos = actor.threeObject.position.clone();
+    const position = actor.physics.position.clone();
+    basePos.multiplyScalar(1 / 24);
+    position.multiplyScalar(1 / 24);
     const dx = 64 - Math.floor(position.x * 32);
     const dz = Math.floor(position.z * 32);
     const cell = grid.cells[(dx * 64) + dz];
@@ -40,9 +42,13 @@ export function processCollisions(grid, scene, actor) {
             }
         }
     }
-    position.y = Math.max(height, position.y);
+    actor.physics.position.y = Math.max(height, position.y) * 24;
     if (actor.props.flags.hasCollisionBricks) {
-        processBoxIntersections(grid, actor, position, dx, dz);
+        const boxPos = actor.physics.position.clone();
+        boxPos.multiplyScalar(1 / 24);
+        processBoxIntersections(grid, actor, boxPos, dx, dz);
+        boxPos.multiplyScalar(24);
+        actor.physics.position.copy(boxPos);
     }
 }
 
@@ -56,6 +62,8 @@ const DIFF = new THREE.Vector3();
 function processBoxIntersections(grid, actor, position, dx, dz) {
     const boundingBox = actor.model.boundingBox;
     ACTOR_BOX.copy(boundingBox);
+    ACTOR_BOX.min.multiplyScalar(1 / 24);
+    ACTOR_BOX.max.multiplyScalar(1 / 24);
     ACTOR_BOX.translate(position);
     DIFF.set(0, 1 / 128, 0);
     ACTOR_BOX.translate(DIFF);

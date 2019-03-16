@@ -75,7 +75,7 @@ export function loadTexture(buffer: ArrayBuffer, palette: Uint8Array) {
     return texture;
 }
 
-export function loadTexture2(buffer: ArrayBuffer, palette: Uint8Array) {
+export function loadTextureRGBA(buffer: ArrayBuffer, palette: Uint8Array) {
     const pixel_data = new Uint8Array(buffer);
     const image_data = new Uint8Array(256 * 256 * 4);
     for (let i = 0; i < 65536; i += 1) { // 256 * 256
@@ -105,7 +105,7 @@ export function loadTexture2(buffer: ArrayBuffer, palette: Uint8Array) {
         THREE.LinearFilter
     );
     texture.needsUpdate = true;
-    texture.generateMipmaps = false;
+    texture.generateMipmaps = true;
     return texture;
 }
 

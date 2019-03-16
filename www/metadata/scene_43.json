@@ -16,7 +16,10 @@
     "FishBull2",
     "FrancoSkateGuard2",
     "Esmer",
-    "SupAgent"
+    "SupAgent",
+    "Pointer1",
+    "Pointer2",
+    "Pointer3"
   ],
   "zoneNames": [
     "to_landing_zone",

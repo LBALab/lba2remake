@@ -24,12 +24,14 @@ import Menu from './game/Menu';
 import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
 import {sBind} from '../utils.ts';
+import {updateVRGui} from './vr/vrGui';
 
 export default class GameUI extends FrameListener {
     constructor(props) {
         super(props);
 
-        this.onLoad = this.onLoad.bind(this);
+        this.onRenderZoneRef = this.onRenderZoneRef.bind(this);
+        this.onCanvasWrapperRef = this.onCanvasWrapperRef.bind(this);
         this.frame = this.frame.bind(this);
         this.saveData = this.saveData.bind(this);
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
@@ -98,27 +100,54 @@ export default class GameUI extends FrameListener {
         }
     }
 
-    async onLoad(root) {
-        if (!this.root) {
+    async onRenderZoneRef(renderZoneElem) {
+        if (!this.renderZoneElem && renderZoneElem) {
+            this.renderZoneElem = renderZoneElem;
+            if (this.state.renderer && this.state.sceneManager) {
+                const controls = createControls(
+                    this.props.params,
+                    this.state.game,
+                    renderZoneElem,
+                    this.state.sceneManager,
+                    this.state.renderer
+                );
+                this.setState({ controls }, this.saveData);
+            }
+        }
+    }
+
+    async onCanvasWrapperRef(canvasWrapperElem) {
+        if (!this.canvasWrapperElem && canvasWrapperElem) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;
             } else {
                 this.canvas = document.createElement('canvas');
-                this.canvas.tabIndex = 0;
                 const game = this.state.game;
-                const renderer = createRenderer(this.props.params, this.canvas);
+                const renderer = createRenderer(this.props.params, this.canvas, {}, 'game');
                 const sceneManager = await createSceneManager(
                     this.props.params,
                     game,
                     renderer,
                     this.hideMenu.bind(this)
                 );
+                renderer.threeRenderer.setAnimationLoop(() => {
+                    this.props.ticker.frame();
+                });
                 this.onSceneManagerReady(sceneManager);
-                const controls = createControls(this.props.params, game, this.canvas, sceneManager);
+                let controls;
+                if (this.renderZoneElem) {
+                    controls = createControls(
+                        this.props.params,
+                        game,
+                        this.renderZoneElem,
+                        sceneManager,
+                        renderer
+                    );
+                }
                 this.setState({ renderer, sceneManager, controls }, this.saveData);
             }
-            this.root = root;
-            this.root.appendChild(this.canvas);
+            this.canvasWrapperElem = canvasWrapperElem;
+            this.canvasWrapperElem.appendChild(this.canvas);
         }
     }
 
@@ -147,11 +176,11 @@ export default class GameUI extends FrameListener {
                 this.state.sceneManager.goto(newProps.params.scene);
             }
         }
-        if (newProps.params.vr !== this.props.params.vr && this.canvas) {
-            this.state.renderer.dispose();
-            this.setState({
-                renderer: createRenderer(newProps.params, this.canvas)
-            }, this.saveData);
+        if (newProps.params.iso3d !== this.props.params.iso3d) {
+            const scene = this.state.sceneManager.getScene();
+            if (scene) {
+                scene.resetCamera(newProps.params);
+            }
         }
     }
 
@@ -168,7 +197,7 @@ export default class GameUI extends FrameListener {
         audioMenuManager.getMusicSource().load(6, () => {
             audioMenuManager.getMusicSource().play();
         });
-        this.setState({showMenu: true, inGameMenu});
+        this.setState({showMenu: true, inGameMenu}, this.saveData);
     }
 
     hideMenu(wasPaused = false) {
@@ -176,23 +205,13 @@ export default class GameUI extends FrameListener {
         audioMenuManager.getMusicSource().stop();
         if (!wasPaused)
             this.state.game.resume();
-        this.setState({showMenu: false, inGameMenu: false});
+        this.setState({showMenu: false, inGameMenu: false}, this.saveData);
         this.canvas.focus();
     }
 
     listener(event) {
         const key = event.code || event.which || event.keyCode;
-        if (this.state.video) {
-            const videoSrc = this.state.video.src;
-            if (key === 'Enter' || key === 13 ||
-                key === 'Escape' || key === 27) {
-                this.setState({video: null});
-                const introSrc = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
-                if (videoSrc === introSrc) {
-                    this.startNewGameScene();
-                }
-            }
-        } else {
+        if (!this.state.video) {
             if (key === 'Escape' || key === 27) {
                 if (!this.state.game.isPaused()) {
                     this.showMenu(true);
@@ -217,27 +236,35 @@ export default class GameUI extends FrameListener {
             }
             case 71: { // New Game
                 this.hideMenu();
-                const that = this;
                 const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
+                const onEnded = () => {
+                    this.setState({video: null}, this.saveData);
+                    this.startNewGameScene();
+                    this.state.game.controlsState.skipListener = null;
+                };
+                this.state.game.controlsState.skipListener = onEnded;
                 this.state.game.pause();
                 this.setState({
                     video: {
                         src,
-                        onEnded: () => {
-                            that.setState({video: null});
-                            that.startNewGameScene();
-                        }
+                        onEnded
                     }
-                });
+                }, this.saveData);
                 break;
             }
         }
     }
 
     frame() {
-        this.checkResize();
         const {game, clock, renderer, sceneManager, controls} = this.state;
         if (renderer && sceneManager) {
+            const presenting = renderer.isPresenting();
+            if (this.state.isPresenting !== presenting) {
+                this.state.isPresenting = presenting;
+            }
+            if (!presenting) {
+                this.checkResize(presenting);
+            }
             const scene = sceneManager.getScene();
             if (this.state.scene !== scene) {
                 this.setState({scene}, this.saveData);
@@ -250,31 +277,32 @@ export default class GameUI extends FrameListener {
                 scene,
                 controls
             );
-            DebugData.scope = {
-                params: this.props.params,
-                game,
-                clock,
-                renderer,
-                scene,
-                sceneManager,
-                hero: scene && scene.actors[0],
-                controls,
-                ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls', 'scene')
-            };
-            DebugData.sceneManager = sceneManager;
+            updateVRGui(presenting);
+            if (this.props.params.editor) {
+                DebugData.scope = {
+                    params: this.props.params,
+                    game,
+                    clock,
+                    renderer,
+                    scene,
+                    sceneManager,
+                    hero: scene && scene.actors[0],
+                    controls,
+                    ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls', 'scene')
+                };
+                DebugData.sceneManager = sceneManager;
+            }
         }
     }
 
     checkResize() {
-        if (this.root && this.canvas && this.state.renderer) {
-            const roundedWidth = Math.floor(this.root.clientWidth * 0.5) * 2;
-            const roundedHeight = Math.floor(this.root.clientHeight * 0.5) * 2;
-            const rWidth = `${roundedWidth}px`;
-            const rHeight = `${roundedHeight}px`;
-            const cvWidth = this.canvas.style.width;
-            const cvHeight = this.canvas.style.height;
-            if (rWidth !== cvWidth || rHeight !== cvHeight) {
-                this.state.renderer.resize(roundedWidth, roundedHeight);
+        if (this.canvasWrapperElem && this.canvas && this.state.renderer) {
+            const { clientWidth, clientHeight } = this.canvasWrapperElem;
+            const rWidth = `${clientWidth}px`;
+            const rHeight = `${clientHeight}px`;
+            const style = this.canvas.style;
+            if (rWidth !== style.width || rHeight !== style.height) {
+                this.state.renderer.resize(clientWidth, clientHeight);
                 if (this.state.video) {
                     this.setState({
                         video: clone(this.state.video)
@@ -285,7 +313,7 @@ export default class GameUI extends FrameListener {
     }
 
     onAskChoiceChanged(choice) {
-        this.setState({choice});
+        this.setState({choice}, this.saveData);
     }
 
     textAnimEndedHandler() {
@@ -293,8 +321,18 @@ export default class GameUI extends FrameListener {
     }
 
     render() {
-        return <div style={fullscreen}>
-            <div ref={this.onLoad} style={fullscreen}/>
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+        return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex="0">
+            <div ref={this.onCanvasWrapperRef} style={fullscreen}/>
+            {this.renderGUI()}
+        </div>;
+    }
+
+    renderGUI() {
+        if (this.state.isPresenting)
+            return null;
+
+        return <React.Fragment>
             {this.props.params.editor ?
                 <DebugLabels
                     params={this.props.params}
@@ -316,9 +354,8 @@ export default class GameUI extends FrameListener {
                 inGameMenu={this.state.inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />
-            <div id="stats1" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
-            <div id="stats2" style={{position: 'absolute', top: 0, left: '50%', width: '50%'}}/>
-            <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} editor={this.props.params.editor} />
+            <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
+            <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} />
             {this.state.loading ? <Loader/> : null}
             {!this.state.showMenu ? <TextBox
                 text={this.state.text}
@@ -330,6 +367,6 @@ export default class GameUI extends FrameListener {
                 onChoiceChanged={this.onAskChoiceChanged}
             /> : null}
             {!this.state.showMenu ? <FoundObject foundObject={this.state.foundObject} /> : null}
-        </div>;
+        </React.Fragment>;
     }
 }

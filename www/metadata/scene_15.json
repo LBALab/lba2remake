@@ -17,7 +17,8 @@
     "FrancoSkateGuard1",
     "SupAgent1",
     "SupAgent2",
-    "FrancoSkateGuard2"
+    "FrancoSkateGuard2",
+    "StrongboxBonus"
   ],
   "zoneNames": [
     "grobo_reception",

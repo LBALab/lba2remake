@@ -1,7 +1,6 @@
-import { isEmpty } from 'lodash';
 import {SUICIDE} from './life';
 import DebugData from '../../ui/editor/DebugData';
-import { mapDataName } from '../../ui/editor/areas/ScriptEditorArea/listing';
+import { mapDataName } from '../../ui/editor/areas/gameplay/scripts/listing';
 
 export function runScript(params, script, time) {
     const instructions = script.instructions;
@@ -9,7 +8,7 @@ export function runScript(params, script, time) {
     const context = script.context;
     const state = context.state;
 
-    if (isEmpty(instructions))
+    if (!instructions)
         return;
 
     const activeDebug = params.editor && context.scene.isActive;
@@ -48,6 +47,7 @@ export function runScript(params, script, time) {
                         context.scene, {
                             type: operandType,
                             value: condValue,
+                            realValue: condValue,
                             idx
                         });
                 }
