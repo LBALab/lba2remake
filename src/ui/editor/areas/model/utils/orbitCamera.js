@@ -34,7 +34,7 @@ export function get3DOrbitCamera() {
             vAngle += mouseSpeed.y * 0.005;
             vAngle = Math.min(Math.max(-1.5, vAngle), 1.5);
             if (Math.abs(mouseSpeed.x) > 0.05) {
-                mouseSpeed.x = mouseSpeed.x * (1 - Math.min(time.delta * 4, 1));
+                mouseSpeed.x *= 1 - Math.min(time.delta * 4, 1);
             } else {
                 mouseSpeed.x = 0;
             }

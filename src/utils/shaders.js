@@ -1,4 +1,4 @@
-import { map, tail } from "lodash";
+import { map, tail } from 'lodash';
 
 const header =
 `#ifdef GL_OES_standard_derivatives
@@ -37,7 +37,7 @@ export function compile(type, source) {
         const polyFillsExt = [];
         const precision = [];
         let useTextureLod = false;
-        const tgtLines = map(tail(lines), line => {
+        const tgtLines = map(tail(lines), (line) => {
             if (type === 'vert') {
                 line = line.replace(R_IN, '$1attribute$2');
                 line = line.replace(R_OUT, '$1varying$2');
@@ -47,11 +47,11 @@ export function compile(type, source) {
                 line = line.replace(R_FRAGCOLOR, '$1gl_FragColor$2');
             }
             line = line.replace(R_TEXTURE, '$1texture2D($2');
-            if (R_TEXTURE_LOD.test(line)) {
+            if (R_TEXTURE_LOD.test(line)) {
                 useTextureLod = true;
                 line = line.replace(R_TEXTURE_LOD, '$1textureLodPolyfill($2');
             }
-            if (R_PRECISION.test(line)) {
+            if (R_PRECISION.test(line)) {
                 precision.push(line);
                 line = line.replace(R_PRECISION, '');
             }

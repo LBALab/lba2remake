@@ -32,7 +32,7 @@ const KeyValueNode = {
         }
     ],
     onClick: () => {},
-    color: (data) => data.color
+    color: data => data.color
 };
 export default class OutlinerNode extends React.Component {
     constructor(props) {
@@ -235,7 +235,9 @@ export default class OutlinerNode extends React.Component {
         const node = this.props.node;
         const selected = this.state.selected;
         const setRoot = this.props.setRoot.bind(null, this.props.path);
-        const onClick = node.onClick ? node.onClick.bind(null, this.props.data, setRoot, this) : setRoot;
+        const onClick = node.onClick
+            ? node.onClick.bind(null, this.props.data, setRoot, this)
+            : setRoot;
         const onDoubleClick = node.onDoubleClick ?
             node.onDoubleClick.bind(null, this.props.data, this) : noop;
 
