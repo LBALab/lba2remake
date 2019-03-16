@@ -24,7 +24,7 @@ import VERT_MOON from './shaders/env/moon.vert.glsl';
 
 export function prepareGeometries(island, data, ambience) {
     const {envInfo} = island;
-    const {files: {ile, ress}, palette} = data;
+    const {files: {ile, ress}, palette, lutTexture} = data;
     const paletteTexture = loadPaletteTexture(palette);
     const groundTexture = loadTextureRGBA(ile.getEntry(1), palette);
     const objectsTexture = loadTextureRGBA(ile.getEntry(2), palette);
@@ -61,6 +61,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogDensity: {value: envInfo.fogDensity},
                     uTexture: {value: groundTexture},
                     palette: {value: paletteTexture},
+                    lutTexture: {value: lutTexture},
                     noise: {value: noiseTexture},
                     actorPos: {value: times(10, () => new THREE.Vector4()), type: 'v4v'}
                 }
@@ -94,6 +95,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     uTexture: {value: objectsTexture},
+                    lutTexture: {value: lutTexture},
                     palette: {value: paletteTexture},
                     light: {value: light}
                 }
@@ -112,6 +114,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     uTexture: {value: objectsTexture},
+                    lutTexture: {value: lutTexture},
                     palette: {value: paletteTexture},
                     light: {value: light}
                 }

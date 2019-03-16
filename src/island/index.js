@@ -9,6 +9,7 @@ import { loadSea } from './sea';
 import { loadObjects } from './objects';
 import { loadIslandPhysics } from '../game/loop/physicsIsland';
 import { createBoundingBox } from '../utils/rendering';
+import { loadLUTTexture } from '../utils/lut';
 
 import islandsInfo from './data/islands';
 import environments from './data/environments';
@@ -30,18 +31,19 @@ export async function loadIslandScenery(params, name, ambience) {
     if (name in islands) {
         return islands[name];
     }
-    const [ress, ile, obl] = await Promise.all([
+    const [ress, ile, obl, lutTexture] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr(`${name}.ILE`),
-        loadHqr(`${name}.OBL`)
+        loadHqr(`${name}.OBL`),
+        loadLUTTexture()
     ]);
     const files = {ress, ile, obl};
-    const island = loadIslandNode(params, islandProps[name], files, ambience);
+    const island = loadIslandNode(params, islandProps[name], files, lutTexture, ambience);
     islands[name] = island;
     return island;
 }
 
-function loadIslandNode(params, props, files, ambience) {
+function loadIslandNode(params, props, files, lutTexture, ambience) {
     const islandObject = new THREE.Object3D();
     islandObject.name = `scenery_${props.name}`;
     islandObject.matrixAutoUpdate = false;
@@ -49,7 +51,8 @@ function loadIslandNode(params, props, files, ambience) {
     const data = {
         files,
         palette: new Uint8Array(files.ress.getEntry(0)),
-        layout
+        layout,
+        lutTexture
     };
 
     const geometries = loadGeometries(props, data, ambience);

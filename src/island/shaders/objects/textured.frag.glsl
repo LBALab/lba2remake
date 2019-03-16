@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
+precision highp sampler3D;
 
 uniform sampler2D uTexture;
 uniform sampler2D palette;
+uniform sampler3D lutTexture;
 uniform vec3 light;
 
 in vec3 vNormal;
@@ -19,5 +21,7 @@ out vec4 fragColor;
 void main() {
     vec2 uv = mod(vUv, vUvGroup.zw) + vUvGroup.xy;
     vec4 tex = texture(uTexture, uv / 255.0);
-    fragColor = vec4(fog(tex.rgb * (intensity() / 12.0 + 0.125)), tex.a);
+    float pColor = texture(lutTexture, tex.rgb).a;
+    vec4 tColor = texturePal(pColor, intensity());
+    fragColor = vec4(fog(tColor.rgb), tex.a);
 }
