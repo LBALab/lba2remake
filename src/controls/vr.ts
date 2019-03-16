@@ -11,12 +11,16 @@ export function makeVRControls(sceneManager: any, game: any) {
                 // The array may contain undefined gamepads, so check for that as
                 // well as a non-null pose. VR clicker devices such as the Carboard
                 // touch handler for Daydream have a displayId but no pose.
-                if (gamepad && (gamepad.pose || gamepad.displayId)) {
+                if (gamepad) { // && (gamepad.pose || gamepad.displayId)) {
                     updateState(gamepad);
                     switch (gamepad.id) {
                         case 'Oculus Go Controller':
+                        case 'Oculus Remote':
                             handleOculusGoController(gamepad, sceneManager, game);
                             break;
+                        case 'Oculus Touch (Left)':
+                        case 'Oculus Touch (Right)':
+                            handleOculusRiftController(gamepad, sceneManager, game);
                     }
                 }
             }
@@ -69,6 +73,56 @@ function handleOculusGoController(gamepad, sceneManager, game) {
         hero.behaviour = (hero.behaviour + 1) % 4;
     }
     controlsState.action = touchpad.tapped ? 1 : 0;
+}
+
+const OculusTouch = {
+    THUMBSTICK: 0,
+    TRIGGER: 1,
+    GRIP: 2,
+    A: 3, // X
+    B: 4, // Y
+    THUMBREST: 5,
+};
+
+function handleOculusRiftController(gamepad, sceneManager, game) {
+    const {controlsState} = game;
+    const {THUMBSTICK, TRIGGER, GRIP, A, B, THUMBREST} = OculusTouch;
+    const scene = sceneManager.getScene();
+    const camera = scene && scene.camera;
+    const hero = game.getState().hero;
+    controlsState.relativeToCam = true;
+
+    const thumbstick = getButtonState(gamepad, THUMBSTICK); // Bahaviour loop
+    const trigger = getButtonState(gamepad, TRIGGER); // throw
+    const grip = getButtonState(gamepad, GRIP); // Sports Behaviour
+    const buttonA = getButtonState(gamepad, A); // Action
+    const buttonB = getButtonState(gamepad, B); // fps
+    const thumbrest = getButtonState(gamepad, THUMBREST); // recentre
+
+    if (!thumbstick.pressed) {
+        controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
+    }
+    if (thumbrest.tapped && camera && scene) {
+        camera.center(scene);
+    }
+    if (buttonB.pressed) {
+        switchStats();
+    }
+
+    hero.behaviour = hero.prevBehaviour;
+    if (grip.pressed) {
+        hero.prevBehaviour = hero.behaviour;
+        hero.behaviour = 1;
+    }
+    if (thumbstick.pressed) {
+        hero.behaviour = (hero.behaviour + 1) % 4;
+        if (hero.behaviour === 1) { // skip
+            hero.behaviour += 1;
+        }
+        hero.prevBehaviour = hero.behaviour;
+    }
+    controlsState.action = buttonA.pressed ? 1 : 0;
+    controlsState.weapon = trigger.pressed ? 1 : 0;
 }
 
 const gamepadState = {};
