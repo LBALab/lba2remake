@@ -4,6 +4,7 @@ import ScriptEditorArea from './scripts/ScriptsArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 import SceneArea from './scene/SceneArea';
 import LocatorArea from './locator/LocatorArea';
+import PaletteArea from './palette/PaletteArea';
 import GameplayEditorMenu from './GameplayEditorMenu';
 import {Orientation, Type} from '../../layout';
 
@@ -33,6 +34,7 @@ const GameplayEditor = {
         InspectorArea,
         SceneArea,
         LocatorArea,
+        PaletteArea,
     ],
     defaultLayout: {
         type: Type.LAYOUT,
