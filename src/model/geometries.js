@@ -127,6 +127,12 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
             bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 1, false));
             bufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(boneIndices), 1));
 
+            if (body.boundingBox) {
+                bufferGeometry.boundingBox = body.boundingBox;
+                const sphere = new THREE.Sphere();
+                bufferGeometry.boundingSphere = body.boundingBox.getBoundingSphere(sphere);
+            }
+
             const modelMesh = new THREE.Mesh(bufferGeometry, material);
             modelMesh.name = name;
             object.add(modelMesh);
