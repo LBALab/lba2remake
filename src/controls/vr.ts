@@ -91,6 +91,8 @@ function handleOculusRiftController(gamepad, sceneManager, game) {
     const scene = sceneManager.getScene();
     const camera = scene && scene.camera;
     const hero = game.getState().hero;
+    controlsState.action = 0;
+    controlsState.jump = 0;
     controlsState.relativeToCam = true;
 
     const thumbstick = getButtonState(gamepad, THUMBSTICK); // Bahaviour loop
@@ -120,6 +122,7 @@ function handleOculusRiftController(gamepad, sceneManager, game) {
     if (grip.pressed) {
         hero.prevBehaviour = hero.behaviour;
         hero.behaviour = 1;
+        controlsState.jump = trigger.pressed ? 1 : 0;
     }
     if (thumbstick.pressed) {
         hero.behaviour = (hero.behaviour + 1) % 4;
@@ -129,7 +132,9 @@ function handleOculusRiftController(gamepad, sceneManager, game) {
         hero.prevBehaviour = hero.behaviour;
     }
     controlsState.action = buttonA.pressed ? 1 : 0;
-    controlsState.weapon = trigger.pressed ? 1 : 0;
+    if (!grip.pressed) {
+        controlsState.weapon = trigger.pressed ? 1 : 0;
+    }
 }
 
 const gamepadState = {};
