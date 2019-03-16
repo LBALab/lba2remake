@@ -14,5 +14,5 @@ out vec4 fragColor;
 
 void main() {
     vec4 tex = texture(uTexture, vUv);
-    fragColor = vec4(fog(tex.rgb) * intensity() * 0.125, tex.a);
+    fragColor = vec4(fog(tex.rgb * intensity() * 0.125), tex.a);
 }
