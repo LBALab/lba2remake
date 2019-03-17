@@ -10,10 +10,12 @@ uniform mat4 rotationMatrix;
 in vec3 position;
 in vec3 normal;
 in vec2 uv;
+in vec4 uvGroup;
 in float color;
 in float boneIndex;
 
 out vec2 vUv;
+out vec4 vUvGroup;
 out vec3 vNormal;
 
 void main() {
@@ -26,4 +28,5 @@ void main() {
     vec4 newNormal = rotationMatrix * vec4(n, 1.0);
     vNormal = newNormal.xyz;
     vUv = uv;
+    vUvGroup = uvGroup;
 }

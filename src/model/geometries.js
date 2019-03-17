@@ -42,6 +42,7 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
             positions: [],
             normals: [],
             uvs: [],
+            uvGroups: [],
             colors: [],
             bones: [],
             linePositions: [],
@@ -67,6 +68,7 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
             positions: [],
             normals: [],
             uvs: [],
+            uvGroups: [],
             colors: [],
             bones: [],
             linePositions: [],
@@ -108,6 +110,7 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
         const {
             positions,
             uvs,
+            uvGroups,
             colors,
             normals,
             bones: boneIndices,
@@ -122,7 +125,10 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
             bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
             bufferGeometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
             if (uvs) {
-                bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, true));
+                bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
+            }
+            if (uvGroups) {
+                bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, false));
             }
             bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 1, false));
             bufferGeometry.addAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(boneIndices), 1));
@@ -182,12 +188,14 @@ function loadFaceGeometry(geometries, body) {
                 );
                 push.apply(geometries.textured_transparent.normals, getNormal(body, vertexIndex));
                 push.apply(geometries.textured_transparent.uvs, getUVs(body, p, j));
+                push.apply(geometries.textured_transparent.uvGroups, getUVGroup(body, p));
                 push.apply(geometries.textured_transparent.bones, getBone(body, vertexIndex));
                 geometries.textured_transparent.colors.push(p.colour);
             } else if (p.hasTex) {
                 push.apply(geometries.textured.positions, getPosition(body, vertexIndex));
                 push.apply(geometries.textured.normals, getNormal(body, vertexIndex));
                 push.apply(geometries.textured.uvs, getUVs(body, p, j));
+                push.apply(geometries.textured.uvGroups, getUVGroup(body, p));
                 push.apply(geometries.textured.bones, getBone(body, vertexIndex));
                 geometries.textured.colors.push(p.colour);
             } else {
@@ -297,12 +305,19 @@ function getNormal(body, index) {
 
 function getUVs(body, p, vertex) {
     if (p.hasTex) {
-        const t = body.uvGroups[p.tex];
-        const x = p.texX[vertex] + (p.unkX[vertex] / 256);
-        const y = p.texY[vertex] + (p.unkY[vertex] / 256);
-        return [(x & t.width) + t.x, (y & t.height) + t.y];
+        return [
+            p.u[vertex],
+            p.v[vertex]
+        ];
     }
     return [0, 0];
+}
+
+function getUVGroup(body, p) {
+    if (p.hasTex) {
+        return body.uvGroups[p.tex];
+    }
+    return [0, 0, 255, 255];
 }
 
 function getLightVector(ambience) {
