@@ -78,7 +78,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
-                    noise: {value: noiseTexture},
+                    // noise: {value: noiseTexture},
                     light: {value: light}
                 }
             })
