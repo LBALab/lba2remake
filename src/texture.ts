@@ -107,6 +107,7 @@ export function loadTextureRGBA(buffer: ArrayBuffer, palette: Uint8Array) {
     );
     texture.needsUpdate = true;
     texture.generateMipmaps = true;
+    texture.anisotropy = 16;
     return texture;
 }
 
@@ -233,6 +234,7 @@ export function loadSubTextureRGBA(source: Uint8Array,
     );
     texture.needsUpdate = true;
     texture.generateMipmaps = true;
+    texture.anisotropy = 16;
     return texture;
 }
 
