@@ -203,6 +203,39 @@ export function loadSubTexture(buffer: ArrayBuffer,
     return texture;
 }
 
+export function loadSubTextureRGBA(source: Uint8Array,
+                                   x_offset: number,
+                                   y_offset: number,
+                                   width: number,
+                                   height: number) {
+    const image_data = new Uint8Array(width * height * 4);
+    for (let y = 0; y < height; y += 1) {
+        for (let x = 0; x < width; x += 1) {
+            const src_i = ((y + y_offset) * 256) + x + x_offset;
+            const tgt_i = (y * width) + x;
+            image_data[tgt_i * 4] = source[src_i * 4];
+            image_data[(tgt_i * 4) + 1] = source[(src_i * 4) + 1];
+            image_data[(tgt_i * 4) + 2] = source[(src_i * 4) + 2];
+            image_data[(tgt_i * 4) + 3] = source[(src_i * 4) + 3];
+        }
+    }
+    const texture = new THREE.DataTexture(
+        image_data,
+        width,
+        height,
+        THREE.RGBAFormat,
+        THREE.UnsignedByteType,
+        THREE.UVMapping,
+        THREE.RepeatWrapping,
+        THREE.RepeatWrapping,
+        THREE.LinearFilter,
+        THREE.LinearMipMapLinearFilter
+    );
+    texture.needsUpdate = true;
+    texture.generateMipmaps = true;
+    return texture;
+}
+
 const noiseGen = new tumult.Perlin2('LBA');
 
 export function makeNoiseTexture() {

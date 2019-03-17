@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {each} from 'lodash';
 import {bits} from '../utils.ts';
 import {WORLD_SCALE} from '../utils/lba';
+import {loadSubTextureRGBA} from '../texture.ts';
 
 const push = Array.prototype.push;
 
@@ -134,7 +135,9 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
                 );
                 geometries.objects_colored.colors.push(getColor(section, i));
             } else {
-                const group = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
+                const baseGroup = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
+                const group = uvGroup ? `${baseGroup}_${uvGroup.join(',')}` : baseGroup;
+                createSubgroupGeometry(geometries, group, baseGroup, uvGroup);
                 push.apply(geometries[group].positions, getPosition(object, info, index));
                 push.apply(
                     geometries[group].normals,
@@ -212,8 +215,8 @@ function getColor(section, face) {
 function getUVs(section, face, ptIndex) {
     const baseIndex = face * section.blockSize;
     const index = baseIndex + 12 + (ptIndex * 4);
-    const u = section.data.getUint8(index + 1);
-    const v = section.data.getUint8(index + 3);
+    const u = section.data.getUint16(index);
+    const v = section.data.getUint16(index + 2);
     return [u, v];
 }
 
@@ -239,4 +242,43 @@ function rotate(vec, angle) {
     const index = (angle + 3) % 4;
     const v = new THREE.Vector3().fromArray(vec);
     return v.applyMatrix4(angleMatrix[index]).toArray();
+}
+
+function createSubgroupGeometry(geometries, group, baseGroup, uvGroup) {
+    if (group in geometries) {
+        return;
+    }
+    const baseMaterial = geometries[baseGroup].material;
+    const baseUniforms = baseMaterial.uniforms;
+    const transparent = baseGroup === 'objects_textured_transparent';
+    const baseTexture = baseUniforms.uTexture.value;
+    let groupTexture = baseTexture;
+    if (uvGroup.join(',') !== '0,0,255,255') {
+        groupTexture = loadSubTextureRGBA(
+            baseTexture.image.data,
+            uvGroup[0],
+            uvGroup[1],
+            uvGroup[2] + 1,
+            uvGroup[3] + 1
+        );
+    }
+    geometries[group] = {
+        positions: [],
+        normals: [],
+        uvs: [],
+        uvGroups: [],
+        material: new THREE.RawShaderMaterial({
+            transparent,
+            vertexShader: baseMaterial.vertexShader,
+            fragmentShader: baseMaterial.fragmentShader,
+            uniforms: {
+                fogColor: baseUniforms.fogColor,
+                fogDensity: baseUniforms.fogDensity,
+                uTexture: {value: groupTexture},
+                lutTexture: baseUniforms.lutTexture,
+                palette: baseUniforms.palette,
+                light: baseUniforms.light
+            }
+        })
+    };
 }
