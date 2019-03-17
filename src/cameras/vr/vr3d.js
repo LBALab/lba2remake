@@ -108,6 +108,7 @@ function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
         }
         scene.scenery.physics.processCameraCollisions(cameraPos, 2, 4);
         controlNode.position.copy(cameraPos);
+        HERO_POS.y = cameraPos.y;
         controlNode.lookAt(HERO_POS);
     }
 }
