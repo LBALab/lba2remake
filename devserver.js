@@ -60,7 +60,7 @@ app.post('/crash', function (req, res) {
     fs.writeFile('./crash_report.json', JSON.stringify(report, null, 2), () => {});
     const content = JSON.stringify(report);
     const tgtReq = http.request({
-        host: 'lba2remake.xesf.net',
+        host: 'www.lba2remake.net',
         path: '/ws/crash/report',
         method: 'POST',
         headers: {
