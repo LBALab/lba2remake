@@ -1,6 +1,6 @@
 import React from 'react';
 import { extend } from 'lodash';
-import { generateLUTTexture, resetLUTTexture } from '../../../../../utils/lut';
+import { generateLUTTexture, resetLUTTexture, loadLUTTexture } from '../../../../../utils/lut';
 import { loadHqr } from '../../../../../hqr.ts';
 import { editor, fullscreen } from '../../../../styles';
 
@@ -24,6 +24,7 @@ export default class PaletteAreaContent extends React.Component {
 
         this.generate = this.generate.bind(this);
         this.onCanvasRef = this.onCanvasRef.bind(this);
+        this.onCanvasLUTRef = this.onCanvasLUTRef.bind(this);
         this.saveLUT = this.saveLUT.bind(this);
         this.reset = this.reset.bind(this);
 
@@ -35,12 +36,19 @@ export default class PaletteAreaContent extends React.Component {
             generating: false,
             progress: null,
             useLabColors: false,
-            saving: false
+            saving: false,
+            slice: 0,
         };
 
         loadHqr('RESS.HQR').then((ress) => {
             this.palette = new Uint8Array(ress.getEntry(0));
             this.draw();
+            this.drawLUT();
+        });
+
+        loadLUTTexture().then((lutTexture) => {
+            this.lutTexture = lutTexture;
+            this.drawLUT();
         });
 
         this.bb = {
@@ -128,15 +136,34 @@ export default class PaletteAreaContent extends React.Component {
             cursor: 'crosshair'
         };
 
-        return <div style={wrapperStyle}>
-            <canvas
-                style={canvasStyle}
-                ref={this.onCanvasRef}
-                onMouseDown={this.onMouseDown}
-                onMouseMove={this.onMouseMove}
-                onMouseUp={this.onMouseUp}
-                onMouseLeave={this.onMouseUp}
-            />
+        const onSlide = (e) => {
+            this.setState({ slice: e.target.value }, () => {
+                this.drawLUT();
+            });
+        };
+
+
+        return <div>
+            <div style={wrapperStyle}>
+                Palette:
+                <canvas
+                    style={canvasStyle}
+                    ref={this.onCanvasRef}
+                    onMouseDown={this.onMouseDown}
+                    onMouseMove={this.onMouseMove}
+                    onMouseUp={this.onMouseUp}
+                    onMouseLeave={this.onMouseUp}
+                />
+            </div>
+            <div style={wrapperStyle}>
+                LUT slice<br/>
+                Blue level: {this.state.slice}<br/>
+                <input type="range" min="0" max="63" value={this.state.slice} onChange={onSlide} style={{width: '100%'}}/>
+                <canvas
+                    style={canvasStyle}
+                    ref={this.onCanvasLUTRef}
+                />
+            </div>
         </div>;
     }
 
@@ -149,7 +176,9 @@ export default class PaletteAreaContent extends React.Component {
             bb: this.bb,
             useLabColors: this.state.useLabColors
         });
-        this.setState({ generating: false, progress: null, lutBuffer });
+        this.setState({ generating: false, progress: null, lutBuffer }, () => {
+            this.drawLUT();
+        });
     }
 
     draw() {
@@ -169,6 +198,22 @@ export default class PaletteAreaContent extends React.Component {
             const w = ((this.bb.xMax - this.bb.xMin) + 1) * 32;
             const h = ((this.bb.yMax - this.bb.yMin) + 1) * 32;
             this.ctx.strokeRect(x, y, w, h);
+        }
+    }
+
+    drawLUT() {
+        if (this.ctxLUT && this.palette && this.lutTexture) {
+            this.ctxLUT.clearRect(0, 0, 512, 512);
+            const p = this.palette;
+            const b = this.state.slice;
+            for (let r = 0; r < 64; r += 1) {
+                for (let g = 0; g < 64; g += 1) {
+                    const idx = r + (64 * (g + (64 * b)));
+                    const pIdx = this.lutTexture.image.data[idx];
+                    this.ctxLUT.fillStyle = `rgb(${p[pIdx * 3]},${p[(pIdx * 3) + 1]},${p[(pIdx * 3) + 2]})`;
+                    this.ctxLUT.fillRect(r * 8, g * 8, 8, 8);
+                }
+            }
         }
     }
 
@@ -201,6 +246,7 @@ export default class PaletteAreaContent extends React.Component {
             yMax: 14
         };
         this.draw();
+        this.drawLUT();
         this.setState({ lutBuffer: null });
     }
 
@@ -210,6 +256,15 @@ export default class PaletteAreaContent extends React.Component {
             canvas.height = 512;
             this.ctx = canvas.getContext('2d');
             this.draw();
+        }
+    }
+
+    onCanvasLUTRef(canvas) {
+        if (canvas) {
+            canvas.width = 512;
+            canvas.height = 512;
+            this.ctxLUT = canvas.getContext('2d');
+            this.drawLUT();
         }
     }
 
