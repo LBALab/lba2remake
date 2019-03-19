@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import tumult from 'tumult';
+import * as SimplexNoise from 'simplex-noise';
 import { map, each } from 'lodash';
 
 export function loadPaletteTexture(palette: Uint8Array) {
@@ -238,17 +238,16 @@ export function loadSubTextureRGBA(source: Uint8Array,
     return texture;
 }
 
-const noiseGen = new tumult.Perlin2('LBA');
+const noiseGen = new SimplexNoise('LBA');
 
 export function makeNoiseTexture() {
-    const dim = 1024;
-    const pDim = 6;
+    const dim = 256;
     const image_data = new Uint8Array(dim * dim);
     for (let i = 0; i < dim * dim; i += 1) {
         const x = Math.floor(i / dim);
         const y = i % dim;
-        const v = noiseGen.gen(x / pDim, y / pDim);
-        const pixel = Math.floor((v + 0.5) * 256);
+        const v = noiseGen.noise2D(x, y);
+        const pixel = Math.floor((v + 1.0) * 128);
         image_data[i] = pixel;
     }
 
@@ -259,6 +258,7 @@ export function makeNoiseTexture() {
     texture.wrapT = THREE.RepeatWrapping;
     texture.magFilter = THREE.LinearFilter;
     texture.minFilter = THREE.LinearMipMapLinearFilter;
+    texture.anisotropy = 16;
     texture.needsUpdate = true;
     texture.generateMipmaps = true;
 
