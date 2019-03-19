@@ -237,8 +237,8 @@ export default class PaletteAreaContent extends React.Component {
         }
     }
 
-    reset() {
-        resetLUTTexture();
+    async reset() {
+        await resetLUTTexture();
         this.bb = {
             xMin: 0,
             yMin: 1,
