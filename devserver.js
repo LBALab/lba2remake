@@ -74,6 +74,7 @@ app.post('/crash', function (req, res) {
 });
 
 app.use('/', express.static('./www'));
+app.use('/doc', express.static('./doc'));
 
 const indexBody = renderToStaticMarkup(React.createElement(Main));
 

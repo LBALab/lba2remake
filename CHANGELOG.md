@@ -22,7 +22,7 @@ _May 1st, 2018_
 
 The inspector area lets you take a look at the remake's game engine internals, this is a useful feature for debugging or learning how the engine works.
 
-![Inspector](images/inspector.png)
+![Inspector](doc/images/inspector.png)
 
 A video tutorial is available [here](https://youtu.be/qgCQObDvZbI) (for developpers)
 
