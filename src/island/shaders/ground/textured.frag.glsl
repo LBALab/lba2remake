@@ -18,16 +18,15 @@ out vec4 fragColor;
 
 #require "../common/mipmap.frag"
 #require "../common/dither.frag"
-#require "../common/texturePal.frag"
+#require "../common/palette.frag"
 #require "../common/fog.frag"
 #require "../common/shadow.frag"
 
 void main() {
     float intensity = shadow(vIntensity, 0.5);
-    vec4 tex = texture(uTexture, vUv / 255.0);
+    vec4 texColor = texture(uTexture, vUv / 255.0);
     vec4 color = dither(vColor, intensity);
-    float pColor = texture(lutTexture, tex.rgb).a;
-    vec4 tColor = texturePal(pColor, intensity);
-    vec3 fColor = mix(color.rgb, tColor.rgb, tex.a);
-    fragColor = vec4(fog(fColor), 1.0);
+    vec3 texPalColor = mapToPal(texColor.rgb, intensity);
+    vec3 tgtColor = mix(color.rgb, texPalColor.rgb, texColor.a);
+    fragColor = vec4(fog(tgtColor), 1.0);
 }
