@@ -11,7 +11,7 @@ import {compile} from '../utils/shaders';
 
 const push = Array.prototype.push;
 
-function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, ambience) {
+function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, envInfo, ambience) {
     const paletteTexture = loadPaletteTexture(palette);
     const light = getLightVector(ambience);
     return {
@@ -57,6 +57,7 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
                     fogDensity: {value: envInfo.fogDensity},
                     uTexture: {value: texture},
                     palette: {value: paletteTexture},
+                    lutTexture: {value: lutTexture},
                     light: {value: light},
                     bonePos: { value: bones.position, type: 'v3v' },
                     boneRot: { value: bones.rotation, type: 'v4v' },
@@ -84,6 +85,7 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
                     fogDensity: {value: envInfo.fogDensity},
                     uTexture: {value: texture},
                     palette: {value: paletteTexture},
+                    lutTexture: {value: lutTexture},
                     light: {value: light},
                     bonePos: { value: bones.position, type: 'v3v' },
                     boneRot: { value: bones.rotation, type: 'v4v' },
@@ -94,13 +96,23 @@ function prepareGeometries(texture, bones, matrixRotation, palette, envInfo, amb
     };
 }
 
-export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo, ambience) {
+export function loadMesh(
+    body,
+    texture,
+    bones,
+    matrixRotation,
+    palette,
+    lutTexture,
+    envInfo,
+    ambience
+) {
     const geometries = loadGeometry(
         body,
         texture,
         bones,
         matrixRotation,
         palette,
+        lutTexture,
         envInfo,
         ambience
     );
@@ -159,12 +171,22 @@ export function loadMesh(body, texture, bones, matrixRotation, palette, envInfo,
     return object;
 }
 
-function loadGeometry(body, texture, bones, matrixRotation, palette, envInfo, ambience) {
+function loadGeometry(
+    body,
+    texture,
+    bones,
+    matrixRotation,
+    palette,
+    lutTexture,
+    envInfo,
+    ambience
+) {
     const geometries = prepareGeometries(
         texture,
         bones,
         matrixRotation,
         palette,
+        lutTexture,
         envInfo,
         ambience
     );
