@@ -21,7 +21,7 @@ export const OffsetBySide = {
     [Side.RIGHT]: {x: 3, y: 3},
 };
 
-export function loadBricksMapping(params, layouts, bricks, mask, palette) {
+export function loadBricksMapping(renderer, params, layouts, bricks, mask, palette) {
     const usedBricks = filter(
         uniq(
             flatten(
@@ -71,7 +71,9 @@ export function loadBricksMapping(params, layouts, bricks, mask, palette) {
             }
         }
     });
-    const texFilter = params.iso3d ? THREE.LinearFilter : THREE.NearestFilter;
+    const iso3d = params.iso3d || renderer.vr;
+    const minFilter = iso3d ? THREE.LinearFilter : THREE.NearestFilter;
+    const magFilter = iso3d ? THREE.LinearMipMapLinearFilter : THREE.NearestFilter;
     const texture = new THREE.DataTexture(
         image_data,
         width,
@@ -81,11 +83,14 @@ export function loadBricksMapping(params, layouts, bricks, mask, palette) {
         THREE.UVMapping,
         THREE.ClampToEdgeWrapping,
         THREE.ClampToEdgeWrapping,
-        texFilter,
-        texFilter
+        minFilter,
+        magFilter
     );
     texture.needsUpdate = true;
-    texture.generateMipmaps = false;
+    if (iso3d) {
+        texture.generateMipmaps = true;
+        texture.anisotropy = 16;
+    }
     return {
         texture,
         bricksMap
