@@ -42,6 +42,9 @@ class Root extends React.Component {
     }
 
     openChangeLog() {
+        if (document.exitPointerLock) {
+            document.exitPointerLock();
+        }
         this.setState({ changelog: true });
     }
 

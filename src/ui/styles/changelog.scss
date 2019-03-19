@@ -1,0 +1,43 @@
+.changelog h1 {
+    width: fit-content;
+    border-bottom: 2px dotted rgb(32, 32, 32);
+}
+
+.changelog a {
+    color: rgb(32, 162, 255);
+}
+
+.changelog h2 a, .changelog h3 a {
+    color: white;
+    padding: 0 4px;
+    margin-right: 4px;
+    background: rgba(32, 162, 255, 0.5);
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.changelog h2, .changelog h3 {
+    background: rgb(32, 32, 32);
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.changelog h2 + p em, .changelog h3 + p em {
+    float: right;
+    color: rgb(180, 180, 180);
+    border: 1px solid rgba(180, 180, 180, 0.5);
+    text-indent: 0;
+    padding: 0 4px;
+}
+
+.changelog p, .changelog h4 {
+    text-indent: 1em;
+}
+
+.changelog hr {
+    border: none;
+    border-top: 2px dotted rgb(32, 32, 32);
+    margin-top: 0;
+    margin-left: 1em;
+    margin-bottom: 40px;
+}

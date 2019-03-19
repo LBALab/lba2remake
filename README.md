@@ -1,7 +1,7 @@
 # LBA2 Remake ![CircleCI](https://circleci.com/gh/agrande/lba2remake.png?style=shield&circle-token=:circle-token)
 A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in JavaScript / Three.js / React
 
-#### [Live demo](http://lba2remake.xesf.net) (or [Editor mode](http://lba2remake.xesf.net/#editor=true))
+#### [Live demo](https://www.lba2remake.net) (or [Editor mode](https://www.lba2remake.net/#editor=true))
 
 
 ## Vision / goals

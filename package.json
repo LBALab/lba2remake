@@ -1,6 +1,6 @@
 {
   "name": "lba2remake",
-  "version": "0.0.16-dev",
+  "version": "0.1.0-wip",
   "description": "Little Big Adventure 2, HD version, for the web",
   "dependencies": {
     "@types/lodash": "^4.14.123",
@@ -10,6 +10,7 @@
     "protobufjs": "^5.0.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
+    "react-markdown": "^4.0.6",
     "three": "^0.101.0",
     "tumult": "^3.0.11"
   },

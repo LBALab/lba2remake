@@ -48,8 +48,8 @@ export default function Ribbon({mode}) {
             style={versionText(color, opacity)}
             onClick={changelog}
         >
-            LBA2Remake<br/>
-            <i style={{fontSize: 12}}>{version}</i>
+            LBA2 Remake<br/>
+            <i style={{fontSize: 12}}>v{version}</i>
             {build && <React.Fragment>-{build}</React.Fragment>}
         </span>
     </div>;

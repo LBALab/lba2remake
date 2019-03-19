@@ -281,7 +281,7 @@ export default class OutlinerNode extends React.Component {
                 node.rename(this.props.data, e.target.value);
                 this.setState({renaming: false});
                 restoreFocus();
-            } else if (key === 'Esc' || key === 27) {
+            } else if (key === 'Escape' || key === 27) {
                 this.setState({renaming: false});
                 restoreFocus();
             }

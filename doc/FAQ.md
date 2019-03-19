@@ -8,7 +8,7 @@ Another goal is to make it easily accessible (cross-platform, can be played dire
 
 ### Do I need the original LBA2 in order to use this project?
 
-Yes, and no. At this point, you can directly play the [live demo](http://lba2remake.xesf.net/) thanks to Frederick Raynal kindly agreeing for us to share this link publicly as long as the game is still a work in progress.
+Yes, and no. At this point, you can directly play the [live demo](https://www.lba2remake.net/) thanks to Frederick Raynal kindly agreeing for us to share this link publicly as long as the game is still a work in progress.
 
 When the game becomes fully playable we will have to take down that link and require that you own a legal copy in order to use this implementation.
 
