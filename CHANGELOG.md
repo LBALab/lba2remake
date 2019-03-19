@@ -1,6 +1,6 @@
 # Version history
 
-## [v0.1.0-wip](https://github.com/agrande/lba2remake/compare/v0.0.15...master) - Work in progress
+## [v0.1.0-wip](https://github.com/agrande/lba2remake/compare/v0.0.15...master) Work in progress
 _Not released yet_
 
 #### Graphics (3D + Iso)
@@ -9,7 +9,7 @@ _Not released yet_
 
 -----------------------------
 
-### [v0.0.15](https://github.com/agrande/lba2remake/compare/v0.0.14...v0.0.15) - Bugfixes
+### [v0.0.15](https://github.com/agrande/lba2remake/compare/v0.0.14...v0.0.15) Bugfixes
 _May 3rd, 2018_
 
 - Context menu in editor was broken
@@ -17,7 +17,7 @@ _May 3rd, 2018_
 
 -----------------------------
 
-### [v0.0.14](https://github.com/agrande/lba2remake/compare/v0.0.13...v0.0.14) - Editor: Inspector area
+### [v0.0.14](https://github.com/agrande/lba2remake/compare/v0.0.13...v0.0.14) Editor: Inspector area
 _May 1st, 2018_
 
 The inspector area lets you take a look at the remake's game engine internals, this is a useful feature for debugging or learning how the engine works.
@@ -33,7 +33,7 @@ Also in this release:
 
 -----------------------------
 
-### [v0.0.13](https://github.com/agrande/lba2remake/compare/v0.0.12...v0.0.13) - Editor improvements
+### [v0.0.13](https://github.com/agrande/lba2remake/compare/v0.0.12...v0.0.13) Editor improvements
 _April 17th, 2018_
 
 - Use arrow keys to navigate between actors/zones/points
@@ -45,7 +45,7 @@ _April 17th, 2018_
 
 -----------------------------
 
-### [v0.0.12](https://github.com/agrande/lba2remake/compare/v0.0.11...v0.0.12) - Editor: Metadata improvements
+### [v0.0.12](https://github.com/agrande/lba2remake/compare/v0.0.11...v0.0.12) Editor: Metadata improvements
 _April 15th, 2018_
 
 - Allow using "Enter" key to rename objects (in addition to "F2")
@@ -53,7 +53,7 @@ _April 15th, 2018_
 
 -----------------------------
 
-### [v0.0.11](https://github.com/agrande/lba2remake/compare/v0.0.10...v0.0.11) - New server
+### [v0.0.11](https://github.com/agrande/lba2remake/compare/v0.0.10...v0.0.11) New server
 _April 15th, 2018_
 
 - Server moved to https://www.lba2remake.net
@@ -61,7 +61,7 @@ _April 15th, 2018_
 
 -----------------------------
 
-### [v0.0.10](https://github.com/agrande/lba2remake/compare/v0.0.9...v0.0.10) - Loader
+### [v0.0.10](https://github.com/agrande/lba2remake/compare/v0.0.9...v0.0.10) Loader
 _April 7th, 2018_
 
 - New spinning loader animation
@@ -70,7 +70,7 @@ _April 7th, 2018_
 
 -----------------------------
 
-### [v0.0.9](https://github.com/agrande/lba2remake/compare/v0.0.8...v0.0.9) - Isometric camera improvements
+### [v0.0.9](https://github.com/agrande/lba2remake/compare/v0.0.8...v0.0.9) Isometric camera improvements
 _March 29th, 2018_
 
 - Isometric camera now follows Twinsen
@@ -80,7 +80,7 @@ _March 29th, 2018_
 
 -----------------------------
 
-### [v0.0.8](https://github.com/agrande/lba2remake/compare/v0.0.7...v0.0.8) - Stability
+### [v0.0.8](https://github.com/agrande/lba2remake/compare/v0.0.7...v0.0.8) Stability
 _March 23rd, 2018_
 
 - Fixed various crashes and bugs
@@ -88,14 +88,14 @@ _March 23rd, 2018_
 
 -----------------------------
 
-### [v0.0.7](https://github.com/agrande/lba2remake/compare/v0.0.6...v0.0.7) - Metadata system
+### [v0.0.7](https://github.com/agrande/lba2remake/compare/v0.0.6...v0.0.7) Metadata system
 _March 15th, 2018_
 
 Support editing metadata directly from the public server (doing this previously required cloning the github project)
 
 -----------------------------
 
-### [v0.0.6](https://github.com/agrande/lba2remake/compare/v0.0.5...v0.0.6) - Basic fan translations support
+### [v0.0.6](https://github.com/agrande/lba2remake/compare/v0.0.5...v0.0.6) Basic fan translations support
 _March 15th, 2018_
 
 - Added basic support for fan translations (not visible yet)
@@ -104,7 +104,7 @@ _March 15th, 2018_
 
 -----------------------------
 
-### [v0.0.5](https://github.com/agrande/lba2remake/compare/v0.0.4...v0.0.5) - Basic metadata support
+### [v0.0.5](https://github.com/agrande/lba2remake/compare/v0.0.4...v0.0.5) Basic metadata support
 _March 11th, 2018_
 
 - Support editing metadata from the public server (work in progress)
@@ -113,14 +113,14 @@ _March 11th, 2018_
 
 -----------------------------
 
-### [v0.0.4](https://github.com/agrande/lba2remake/compare/v0.0.3...v0.0.4) - Minor bugfixes
+### [v0.0.4](https://github.com/agrande/lba2remake/compare/v0.0.3...v0.0.4) Minor bugfixes
 _February 26th, 2018_
 
 Various small bugfixes (mostly related to dialogues and audio)
 
 -----------------------------
 
-### [v0.0.3](https://github.com/agrande/lba2remake/compare/v0.0.2...v0.0.3) - Font, sprites, menus
+### [v0.0.3](https://github.com/agrande/lba2remake/compare/v0.0.2...v0.0.3) Font, sprites, menus
 _February 13th, 2018_
 
 - Updated font to match original game (thanks Jasiek)
@@ -132,7 +132,7 @@ _February 13th, 2018_
 
 -----------------------------
 
-### [v0.0.2](https://github.com/agrande/lba2remake/compare/v0.0.1...v0.0.2) - Changelog file
+### [v0.0.2](https://github.com/agrande/lba2remake/compare/v0.0.1...v0.0.2) Changelog file
 _February 7th, 2018_
 
 - Display a changelog (not this one, it was changed since then)
@@ -140,7 +140,7 @@ _February 7th, 2018_
 
 -----------------------------
 
-## [v0.0.1](https://github.com/agrande/lba2remake/releases/tag/v0.0.1) - First public release
+## [v0.0.1](https://github.com/agrande/lba2remake/releases/tag/v0.0.1) First public release
 _February 1st, 2018_
 
 This is the first version to be published, the project was secret before that.
