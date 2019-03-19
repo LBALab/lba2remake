@@ -11,6 +11,16 @@ import {compile} from '../utils/shaders';
 
 const push = Array.prototype.push;
 
+const fakeNoiseBuffer = new Uint8Array(1);
+fakeNoiseBuffer[0] = 128;
+const fakeNoise = new THREE.DataTexture(
+    fakeNoiseBuffer,
+    1,
+    1,
+    THREE.AlphaFormat,
+    THREE.UnsignedByteType
+);
+
 function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, envInfo, ambience) {
     const paletteTexture = loadPaletteTexture(palette);
     const light = getLightVector(ambience);
@@ -31,6 +41,7 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
+                    noise: {value: fakeNoise},
                     light: {value: light},
                     bonePos: { value: bones.position, type: 'v3v' },
                     boneRot: { value: bones.rotation, type: 'v4v' },

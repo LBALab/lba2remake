@@ -22,6 +22,16 @@ import VERT_ENV from './shaders/env/env.vert.glsl';
 import FRAG_ENV from './shaders/env/env.frag.glsl';
 import VERT_MOON from './shaders/env/moon.vert.glsl';
 
+const fakeNoiseBuffer = new Uint8Array(1);
+fakeNoiseBuffer[0] = 128;
+const fakeNoise = new THREE.DataTexture(
+    fakeNoiseBuffer,
+    1,
+    1,
+    THREE.AlphaFormat,
+    THREE.UnsignedByteType
+);
+
 export function prepareGeometries(island, data, ambience) {
     const {envInfo} = island;
     const {files: {ile, ress}, palette, lutTexture} = data;
@@ -78,7 +88,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
-                    // noise: {value: noiseTexture},
+                    noise: {value: fakeNoise},
                     light: {value: light}
                 }
             })
