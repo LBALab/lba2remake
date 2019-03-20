@@ -51,7 +51,7 @@ async function loadLUTData() {
     });
 }
 
-export async function generateLUTTexture({onProgress, bb, useLabColors}) {
+export async function generateLUTTexture({onProgress, bbs, useLabColors}) {
     const ress = await loadHqr('RESS.HQR');
     const palette = new Uint8Array(ress.getEntry(0));
     const buffer = new ArrayBuffer(64 * 64 * 64);
@@ -66,7 +66,7 @@ export async function generateLUTTexture({onProgress, bb, useLabColors}) {
                     (r / (64 - 1)) * 255,
                     (g / (64 - 1)) * 255,
                     (b / (64 - 1)) * 255
-                ], palette, useLabColors, bb);
+                ], palette, useLabColors, bbs);
                 const idx = r + (64 * (g + (64 * b)));
                 image_data[idx] = tgtIdx;
             }
@@ -85,14 +85,22 @@ async function delay() {
     });
 }
 
-function nearestColor([r, g, b], palette, useLabColors, bb) {
+function nearestColor([r, g, b], palette, useLabColors, bbs) {
     const c = useLabColors ? convert.rgb.lab(r, g, b) : [r, g, b];
     let min = Infinity;
-    let minIdx = 0;
+    let minIdx = 256;
     for (let i = 0; i < 256; i += 1) {
         const x = i % 16;
         const y = Math.floor(i / 16);
-        if (x < bb.xMin || x > bb.xMax || y < bb.yMin || y > bb.yMax) {
+        let keep = false;
+        for (let j = 0; j < bbs.length; j += 1) {
+            const bb = bbs[j];
+            if (x >= bb.xMin && x <= bb.xMax && y >= bb.yMin && y <= bb.yMax) {
+                keep = true;
+                break;
+            }
+        }
+        if (!keep) {
             continue;
         }
         const pr = palette[i * 3];

@@ -51,12 +51,7 @@ export default class PaletteAreaContent extends React.Component {
             this.drawLUT();
         });
 
-        this.bb = {
-            xMin: 0,
-            yMin: 1,
-            xMax: 15,
-            yMax: 14
-        };
+        this.bbs = [];
     }
 
     render() {
@@ -173,7 +168,7 @@ export default class PaletteAreaContent extends React.Component {
             onProgress: (progress) => {
                 this.setState({ progress });
             },
-            bb: this.bb,
+            bbs: this.bbs,
             useLabColors: this.state.useLabColors
         });
         this.setState({ generating: false, progress: null, lutBuffer }, () => {
@@ -193,11 +188,14 @@ export default class PaletteAreaContent extends React.Component {
             }
             this.ctx.strokeStyle = 'red';
             this.ctx.lineWidth = 2;
-            const x = this.bb.xMin * 32;
-            const y = this.bb.yMin * 32;
-            const w = ((this.bb.xMax - this.bb.xMin) + 1) * 32;
-            const h = ((this.bb.yMax - this.bb.yMin) + 1) * 32;
-            this.ctx.strokeRect(x, y, w, h);
+
+            this.bbs.forEach(({xMin, yMin, xMax, yMax}) => {
+                const x = xMin * 32;
+                const y = yMin * 32;
+                const w = ((xMax - xMin) + 1) * 32;
+                const h = ((yMax - yMin) + 1) * 32;
+                this.ctx.strokeRect(x, y, w, h);
+            });
         }
     }
 
@@ -239,12 +237,7 @@ export default class PaletteAreaContent extends React.Component {
 
     async reset() {
         await resetLUTTexture();
-        this.bb = {
-            xMin: 0,
-            yMin: 1,
-            xMax: 15,
-            yMax: 14
-        };
+        this.bbs = [];
         this.draw();
         this.drawLUT();
         this.setState({ lutBuffer: null });
@@ -273,10 +266,24 @@ export default class PaletteAreaContent extends React.Component {
             return;
 
         const { x, y } = this.getCoords(e);
-        this.bb.xMin = x;
-        this.bb.yMin = y;
-        this.bb.xMax = x;
-        this.bb.yMax = y;
+        if (e.shiftKey) {
+            this.bbs.push({
+                xMin: x,
+                yMin: y,
+                xMax: x,
+                yMax: y,
+            });
+            this.bbIndex = this.bbs.length - 1;
+        } else {
+            this.bbs = [{
+                xMin: x,
+                yMin: y,
+                xMax: x,
+                yMax: y,
+            }];
+            this.bbIndex = 0;
+        }
+
         this.draw();
         this.dragging = true;
     }
@@ -284,15 +291,29 @@ export default class PaletteAreaContent extends React.Component {
     onMouseMove(e) {
         if (this.dragging === true) {
             const { x, y } = this.getCoords(e);
-            this.bb.xMax = x;
-            this.bb.yMax = y;
+            const bb = this.bbs[this.bbIndex];
+            bb.xMax = x;
+            bb.yMax = y;
+            if (bb.xMax < bb.xMin) {
+                const tmp = bb.xMax;
+                bb.xMax = bb.xMin;
+                bb.xMin = tmp;
+            }
+            if (bb.yMax < bb.yMin) {
+                const tmp = bb.yMax;
+                bb.yMax = bb.yMin;
+                bb.yMin = tmp;
+            }
             this.draw();
         }
     }
 
     onMouseUp() {
-        this.draw();
-        this.dragging = false;
+        if (this.dragging === true) {
+            this.draw();
+            this.dragging = false;
+            delete this.bbIndex;
+        }
     }
 
     getCoords(e) {
