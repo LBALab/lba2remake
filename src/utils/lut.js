@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import convert from 'color-convert';
 import { loadHqr } from '../hqr.ts';
 
+export const LUT_DIM = 64;
+
+const LUT_DIM_M1 = LUT_DIM - 1;
 let lutTexture = null;
 
 export async function loadLUTTexture() {
@@ -10,7 +13,7 @@ export async function loadLUTTexture() {
     }
     const buffer = await loadLUTData();
     const image_data = new Uint8Array(buffer);
-    const texture = new THREE.DataTexture3D(image_data, 64, 64, 64);
+    const texture = new THREE.DataTexture3D(image_data, LUT_DIM, LUT_DIM, LUT_DIM);
     texture.format = THREE.AlphaFormat;
     texture.type = THREE.UnsignedByteType;
     texture.magFilter = THREE.NearestFilter;
@@ -54,20 +57,20 @@ async function loadLUTData() {
 export async function generateLUTTexture({onProgress, bbs, useLabColors}) {
     const ress = await loadHqr('RESS.HQR');
     const palette = new Uint8Array(ress.getEntry(0));
-    const buffer = new ArrayBuffer(64 * 64 * 64);
+    const buffer = new ArrayBuffer(LUT_DIM * LUT_DIM * LUT_DIM);
     const image_data = new Uint8Array(buffer);
-    for (let r = 0; r < 64; r += 1) {
-        onProgress(Math.round((r / 64) * 100));
+    for (let r = 0; r < LUT_DIM; r += 1) {
+        onProgress(Math.round((r / LUT_DIM) * 100));
         // eslint-disable-next-line no-await-in-loop
         await delay();
-        for (let g = 0; g < 64; g += 1) {
-            for (let b = 0; b < 64; b += 1) {
+        for (let g = 0; g < LUT_DIM; g += 1) {
+            for (let b = 0; b < LUT_DIM; b += 1) {
                 const tgtIdx = nearestColor([
-                    (r / 63) * 255,
-                    (g / 63) * 255,
-                    (b / 63) * 255
+                    (r / LUT_DIM_M1) * 255,
+                    (g / LUT_DIM_M1) * 255,
+                    (b / LUT_DIM_M1) * 255
                 ], palette, useLabColors, bbs);
-                const idx = r + (64 * (g + (64 * b)));
+                const idx = r + (LUT_DIM * (g + (LUT_DIM * b)));
                 image_data[idx] = tgtIdx;
             }
         }

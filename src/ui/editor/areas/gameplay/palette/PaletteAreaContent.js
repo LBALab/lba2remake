@@ -1,6 +1,6 @@
 import React from 'react';
 import { extend } from 'lodash';
-import { generateLUTTexture, resetLUTTexture, loadLUTTexture } from '../../../../../utils/lut';
+import { generateLUTTexture, resetLUTTexture, loadLUTTexture, LUT_DIM } from '../../../../../utils/lut';
 import { loadHqr } from '../../../../../hqr.ts';
 import { editor, fullscreen } from '../../../../styles';
 
@@ -163,7 +163,7 @@ export default class PaletteAreaContent extends React.Component {
             <div style={wrapperStyle}>
                 LUT slice<br/>
                 Blue level: {this.state.slice}<br/>
-                <input type="range" min="0" max="63" value={this.state.slice} onChange={onSlide} style={{width: '100%'}}/>
+                <input type="range" min="0" max={LUT_DIM - 1} value={this.state.slice} onChange={onSlide} style={{width: '100%'}}/>
                 <canvas
                     style={canvasStyle}
                     ref={this.onCanvasLUTRef}
@@ -210,16 +210,17 @@ export default class PaletteAreaContent extends React.Component {
     }
 
     drawLUT() {
+        const sqSize = 512 / LUT_DIM;
         if (this.ctxLUT && this.palette && this.lutTexture) {
             this.ctxLUT.clearRect(0, 0, 512, 512);
             const p = this.palette;
             const b = this.state.slice;
-            for (let r = 0; r < 64; r += 1) {
-                for (let g = 0; g < 64; g += 1) {
-                    const idx = r + (64 * (g + (64 * b)));
+            for (let r = 0; r < LUT_DIM; r += 1) {
+                for (let g = 0; g < LUT_DIM; g += 1) {
+                    const idx = r + (LUT_DIM * (g + (LUT_DIM * b)));
                     const pIdx = this.lutTexture.image.data[idx];
                     this.ctxLUT.fillStyle = `rgb(${p[pIdx * 3]},${p[(pIdx * 3) + 1]},${p[(pIdx * 3) + 2]})`;
-                    this.ctxLUT.fillRect(r * 8, g * 8, 8, 8);
+                    this.ctxLUT.fillRect(r * sqSize, g * sqSize, sqSize, sqSize);
                 }
             }
         }
