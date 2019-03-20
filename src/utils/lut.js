@@ -63,9 +63,9 @@ export async function generateLUTTexture({onProgress, bbs, useLabColors}) {
         for (let g = 0; g < 64; g += 1) {
             for (let b = 0; b < 64; b += 1) {
                 const tgtIdx = nearestColor([
-                    (r / (64 - 1)) * 255,
-                    (g / (64 - 1)) * 255,
-                    (b / (64 - 1)) * 255
+                    (r / 63) * 255,
+                    (g / 63) * 255,
+                    (b / 63) * 255
                 ], palette, useLabColors, bbs);
                 const idx = r + (64 * (g + (64 * b)));
                 image_data[idx] = tgtIdx;
