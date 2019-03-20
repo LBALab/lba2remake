@@ -38,6 +38,7 @@ export default class PaletteAreaContent extends React.Component {
             useLabColors: false,
             saving: false,
             slice: 0,
+            activeColor: '<no-color>'
         };
 
         loadHqr('RESS.HQR').then((ress) => {
@@ -107,7 +108,7 @@ export default class PaletteAreaContent extends React.Component {
         return <div>
             <label>
                 <input type="checkbox" onChange={onChangeCIELAB} checked={this.state.useLabColors}/>
-                Use CIELAB lab color space (slow)
+                Use CIELAB (slow)
             </label>
         </div>;
     }
@@ -137,10 +138,19 @@ export default class PaletteAreaContent extends React.Component {
             });
         };
 
+        const colStyle = {
+            width: '100%',
+            height: '1em',
+            lineHeight: '1em',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            color: '#BBBBBB'
+        };
 
         return <div>
             <div style={wrapperStyle}>
-                Palette:
+                Palette:<br/>
+                <div style={colStyle}>{this.state.activeColor}</div>
                 <canvas
                     style={canvasStyle}
                     ref={this.onCanvasRef}
@@ -289,8 +299,8 @@ export default class PaletteAreaContent extends React.Component {
     }
 
     onMouseMove(e) {
+        const { x, y } = this.getCoords(e);
         if (this.dragging === true) {
-            const { x, y } = this.getCoords(e);
             const bb = this.bbs[this.bbIndex];
             bb.xMax = x;
             bb.yMax = y;
@@ -306,6 +316,10 @@ export default class PaletteAreaContent extends React.Component {
             }
             this.draw();
         }
+        const idx = (y * 16) + x;
+        const p = this.palette;
+        const color = `rgb(${p[idx * 3]},${p[(idx * 3) + 1]},${p[(idx * 3) + 2]})`;
+        this.setState({activeColor: `[${x},${y}] = ${color}`});
     }
 
     onMouseUp() {
@@ -314,6 +328,7 @@ export default class PaletteAreaContent extends React.Component {
             this.dragging = false;
             delete this.bbIndex;
         }
+        this.setState({activeColor: '<no-color>'});
     }
 
     getCoords(e) {
