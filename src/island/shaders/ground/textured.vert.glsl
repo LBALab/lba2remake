@@ -12,14 +12,17 @@ in vec2 uv;
 out vec3 vPosition;
 out float vColor;
 out float vIntensity;
+out vec3 vMVPos;
 out vec2 vUv;
 out vec2 vGridPos;
 
 void main() {
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    vec4 mPos = modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * mPos;
     vGridPos = position.xz;
     vPosition = position;
     vColor = color;
     vIntensity = intensity;
     vUv = uv;
+    vMVPos = mPos.xyz;
 }

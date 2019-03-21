@@ -3,21 +3,19 @@ precision highp float;
 
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
+uniform vec3 cameraPosition;
 
 in vec3 position;
-in vec3 normal;
-in float color;
+in vec2 uv;
 
-out vec3 vPosition;
-out vec3 vNormal;
+out vec2 vUv;
 out vec3 vMVPos;
-out float vColor;
 
 void main() {
     vec4 mPos = modelViewMatrix * vec4(position, 1.0);
+    vec3 pos = vec3(position.x, cameraPosition.y, position.z);
+    vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mPos;
-    vPosition = position;
-    vNormal = normal;
-    vColor = color;
-    vMVPos = mPos.xyz;
+    vUv = uv;
+    vMVPos = mvPos.xyz;
 }

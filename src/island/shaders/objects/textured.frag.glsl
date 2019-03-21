@@ -10,6 +10,7 @@ uniform vec3 light;
 in vec3 vNormal;
 in vec2 vUv;
 in vec4 vUvGroup;
+in vec3 vMVPos;
 
 out vec4 fragColor;
 

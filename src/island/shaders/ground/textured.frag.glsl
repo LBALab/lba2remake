@@ -13,6 +13,7 @@ in float vIntensity;
 in vec2 vUv;
 in vec3 vPosition;
 in vec2 vGridPos;
+in vec3 vMVPos;
 
 out vec4 fragColor;
 

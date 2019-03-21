@@ -3,18 +3,16 @@ precision highp float;
 
 uniform sampler2D uTexture;
 uniform float scale;
+uniform float opacity;
 
 in vec2 vUv;
+in vec3 vMVPos;
 
 out vec4 fragColor;
 
-float fog() {
-    float depth = (gl_FragCoord.z * 0.04) / gl_FragCoord.w;
-    float a = exp2(-0.25 * depth * depth * 1.442695);
-    return a;
-}
+#require "../common/fog.frag"
 
 void main() {
     vec3 color = texture(uTexture, vUv * scale).rgb;
-    fragColor = vec4(color, fog());
+    fragColor = vec4(fog(color), opacity);
 }

@@ -12,11 +12,14 @@ in vec4 uvGroup;
 
 out vec3 vNormal;
 out vec2 vUv;
+out vec3 vMVPos;
 out vec4 vUvGroup;
 
 void main() {
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    vec4 mPos = modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * mPos;
     vNormal = normal;
     vUv = uv;
     vUvGroup = uvGroup;
+    vMVPos = mPos.xyz;
 }

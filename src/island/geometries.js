@@ -18,9 +18,10 @@ import VERT_OBJECTS_TEXTURED from './shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from './shaders/objects/textured.frag.glsl';
 import VERT_SEA from './shaders/env/sea.vert.glsl';
 import FRAG_SEA from './shaders/env/sea.frag.glsl';
-import VERT_ENV from './shaders/env/env.vert.glsl';
-import FRAG_ENV from './shaders/env/env.frag.glsl';
+import VERT_SKY from './shaders/env/sky.vert.glsl';
+import FRAG_SKY from './shaders/env/sky.frag.glsl';
 import VERT_MOON from './shaders/env/moon.vert.glsl';
+import FRAG_MOON from './shaders/env/moon.frag.glsl';
 
 const fakeNoiseBuffer = new Uint8Array(1);
 fakeNoiseBuffer[0] = 128;
@@ -134,7 +135,7 @@ export function prepareGeometries(island, data, ambience) {
             positions: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: compile('vert', envInfo.index !== 14 ? VERT_SEA : VERT_MOON),
-                fragmentShader: compile('frag', envInfo.index !== 14 ? FRAG_SEA : FRAG_ENV),
+                fragmentShader: compile('frag', envInfo.index !== 14 ? FRAG_SEA : FRAG_MOON),
                 uniforms: {
                     uTexture: {
                         value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)
@@ -142,14 +143,14 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     time: {value: 0.0},
-                    scale: {value: 512.0}
+                    scale: {value: envInfo.index !== 14 ? 512.0 : 16.0}
                 }
             })
         },
         sky: {
             material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', VERT_ENV),
-                fragmentShader: compile('frag', FRAG_ENV),
+                vertexShader: compile('vert', VERT_SKY),
+                fragmentShader: compile('frag', FRAG_SKY),
                 uniforms: {
                     uTexture: {
                         value: loadSubTexture(
@@ -162,7 +163,8 @@ export function prepareGeometries(island, data, ambience) {
                         )
                     },
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
-                    fogDensity: {value: envInfo.fogDensity},
+                    fogDensity: {value: 0.1},
+                    opacity: {value: envInfo.skyOpacity},
                     scale: {value: envInfo.scale}
                 },
                 transparent: true

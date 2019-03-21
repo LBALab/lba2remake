@@ -84,7 +84,7 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         }
     });
 
-    islandObject.add(loadSky(geometries));
+    islandObject.add(loadSky(geometries, props.envInfo));
 
     const sections = {};
     let boundingBoxes = null;
@@ -122,11 +122,32 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
     };
 }
 
-function loadSky(geometries) {
-    const sky = new THREE.Mesh(new THREE.PlaneGeometry(3072, 3072, 1, 1), geometries.sky.material);
+function loadSky(geometries, envInfo) {
+    const bufferGeometry = new THREE.BufferGeometry();
+    const height = envInfo.skyHeight || 48;
+    const positions = [
+        -1536, height, -1536,
+        1536, height, -1536,
+        1536, height, 1536,
+        -1536, height, -1536,
+        1536, height, 1536,
+        -1536, height, 1536
+    ];
+    const uvs = [
+        0, 0,
+        1, 0,
+        1, 1,
+        0, 0,
+        1, 1,
+        0, 1
+    ];
+    bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
+    const sky = new THREE.Mesh(
+        bufferGeometry,
+        geometries.sky.material
+    );
     sky.name = 'sky';
-    sky.rotateX(Math.PI / 2.0);
-    sky.position.y = 48.0;
     return sky;
 }
 
