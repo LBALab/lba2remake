@@ -5,7 +5,7 @@ import DebugData, {
     getObjectName,
     locateObject
 } from '../../../../DebugData';
-import {SceneGraphNode} from './SceneGraphNode';
+import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {mapComportementArg} from '../../scripts/listing';
 import {makeObjectsNode} from '../node_factories/objects';
 

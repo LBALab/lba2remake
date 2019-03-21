@@ -4,8 +4,8 @@ import DebugData from '../../../DebugData';
 import {ActorsNode} from './nodes/ActorsNode';
 import {ZonesNode} from './nodes/ZonesNode';
 import {PointsNode} from './nodes/PointsNode';
-import {SceneGraphNode} from './nodes/SceneGraphNode';
 import {makeVarDef, makeVariables, Var} from './node_factories/variables';
+import LocationsNode from '../locator/LocationsNode';
 
 const baseChildren = [
     ActorsNode,
@@ -16,6 +16,11 @@ const baseChildren = [
 const SubScene = {
     dynamic: true,
     name: scene => `Scene_${scene.index}`,
+    icon: () => 'editor/icons/areas/scene.png',
+    iconStyle: {
+        width: 16,
+        height: 16
+    },
     numChildren: () => {
         const scene = DebugData.scope.scene;
         return scene ? baseChildren.length : 0;
@@ -28,6 +33,11 @@ const SubScene = {
 const Siblings = {
     dynamic: true,
     name: () => 'Siblings',
+    icon: () => 'editor/icons/areas/scene.png',
+    iconStyle: {
+        width: 16,
+        height: 16
+    },
     numChildren: scene => size(scene.sideScenes),
     child: () => SubScene,
     childData: (scene, idx) => sortBy(scene.sideScenes)[idx],
@@ -130,13 +140,24 @@ const getChildren = () => {
     const scene = DebugData.scope.scene;
     if (scene) {
         const children = map(baseChildren);
+        const data = findSceneData(scene.index);
+        children.unshift({
+            name: data.name,
+            icon: data.icon,
+            props: data.props,
+            children: [],
+            style: {
+                height: '30px',
+                lineHeight: '30px',
+                background: '#1F1F1F',
+                margin: 0,
+                padding: 4
+            }
+        });
         children.push(VarCube);
         children.push(VarGame);
         if (scene.sideScenes) {
             children.push(Siblings);
-        }
-        if (scene.threeScene) {
-            children.push(SceneGraphNode);
         }
         return children;
     }
@@ -145,7 +166,15 @@ const getChildren = () => {
 
 const SceneNode = {
     dynamic: true,
-    name: () => 'Scene',
+    name: () => {
+        const scene = DebugData.scope.scene;
+        return scene ? `Scene ${scene.index}` : 'no_loaded_scene';
+    },
+    icon: () => 'editor/icons/areas/scene.png',
+    iconStyle: {
+        width: 16,
+        height: 16
+    },
     numChildren: () => getChildren().length,
     child: (data, idx) => getChildren()[idx],
     childData: (data, idx) => {
@@ -153,9 +182,7 @@ const SceneNode = {
         const child = getChildren()[idx];
         if (!child)
             return null;
-        if (child.type === SceneGraphNode.type) {
-            return scene && scene.threeScene;
-        } else if (child === VarGame) {
+        if (child === VarGame) {
             return VarGameConfig;
         }
         return scene;
@@ -171,5 +198,20 @@ const SceneNode = {
         ] : [];
     }
 };
+
+function findSceneData(sceneIndex, node = LocationsNode) {
+    if (node.props && node.props[0] && node.props[0].value === sceneIndex) {
+        return node;
+    }
+    if (node.children) {
+        for (let i = 0; i < node.children.length; i += 1) {
+            const childNode = findSceneData(sceneIndex, node.children[i]);
+            if (childNode) {
+                return childNode;
+            }
+        }
+    }
+    return null;
+}
 
 export default SceneNode;

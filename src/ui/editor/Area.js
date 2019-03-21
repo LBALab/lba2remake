@@ -21,7 +21,8 @@ const menuStyle = (numIcons, main) => extend({
 
 const menuContentStyle = {
     padding: '0 1ch',
-    float: 'right'
+    float: 'right',
+    overflow: 'hidden'
 };
 
 const contentStyle = extend({
