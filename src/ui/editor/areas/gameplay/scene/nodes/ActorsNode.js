@@ -199,7 +199,7 @@ function getMoveAction(actor) {
             let key = `${cmdName}_${args}`;
             let extra;
             switch (cmdName) {
-                case 'WAIT_NUM_SECONDS':
+                case 'WAIT_NUM_SECOND':
                 case 'WAIT_NUM_DSEC':
                 case 'WAIT_NUM_SECOND_RND':
                 case 'WAIT_NUM_DECIMAL_RND': {
