@@ -127,9 +127,9 @@ export function makeVariables(type, name, getVars, getCtx) {
         dynamic: true,
         name: () => name,
         icon: () => 'editor/icons/var.png',
-        numChildren: () => getVars().length,
+        numChildren: data => getVars(data).length,
         child: () => Var,
-        childData: (data, idx) => makeVarDef(type, idx, getVars, getCtx)
+        childData: (data, idx) => makeVarDef(type, idx, getVars, getCtx.bind(null, data))
     };
 }
 

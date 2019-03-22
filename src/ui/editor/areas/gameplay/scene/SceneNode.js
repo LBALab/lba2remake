@@ -7,15 +7,107 @@ import {PointsNode} from './nodes/PointsNode';
 import {makeVarDef, makeVariables, Var} from './node_factories/variables';
 import LocationsNode from '../locator/LocationsNode';
 
+const VarCube = makeVariables('varcube', 'Local Variables', (scene) => {
+    if (scene) {
+        return scene.variables;
+    }
+    return [];
+}, (scene) => {
+    if (scene) {
+        return {
+            scene: scene.index
+        };
+    }
+    return null;
+});
+
+const VarGameConfig = {
+    filterScene: true,
+    filterInventory: false
+};
+
+const VarGame = {
+    dynamic: true,
+    name: () => 'Game Variables',
+    icon: () => 'editor/icons/var.png',
+    numChildren: (scene) => {
+        const {game} = DebugData.scope;
+        if (scene && game) {
+            if (VarGameConfig.filterScene) {
+                if (VarGameConfig.filterInventory) {
+                    let count = 0;
+                    each(scene.usedVarGames, (varGame) => {
+                        if (varGame < 40)
+                            count += 1;
+                    });
+                    return count;
+                }
+                return scene.usedVarGames.length;
+            }
+            return VarGameConfig.filterInventory ? 40 : game.getState().flags.quest.length;
+        }
+        return 0;
+    },
+    child: () => Var,
+    childData: (scene, idx) => {
+        const {game} = DebugData.scope;
+        if (scene && game) {
+            const state = game.getState();
+            if (VarGameConfig.filterScene) {
+                const usedVarGames = VarGameConfig.filterInventory
+                    ? filter(scene.usedVarGames, vg => vg < 40)
+                    : scene.usedVarGames;
+                const varGame = usedVarGames[idx];
+                if (varGame !== undefined) {
+                    return makeVarDef('vargame', varGame, () => state.flags.quest, () => null);
+                }
+            } else {
+                return makeVarDef('vargame', idx, () => state.flags.quest, () => null);
+            }
+        }
+        return null;
+    },
+    childProps: [
+        {
+            id: 'filter_scene',
+            name: 'Only in scene',
+            value: () => VarGameConfig.filterScene,
+            render: (value) => {
+                const onChange = (e) => {
+                    VarGameConfig.filterScene = e.target.checked;
+                };
+                return <input type="checkbox" checked={value} onChange={onChange}/>;
+            },
+            icon: () => 'editor/icons/settings.png',
+            color: '#AAAAAA'
+        },
+        {
+            id: 'filter_inventory',
+            name: 'Only inventory',
+            value: () => VarGameConfig.filterInventory,
+            render: (value) => {
+                const onChange = (e) => {
+                    VarGameConfig.filterInventory = e.target.checked;
+                };
+                return <input type="checkbox" checked={value} onChange={onChange}/>;
+            },
+            icon: () => 'editor/icons/settings.png',
+            color: '#AAAAAA'
+        }
+    ]
+};
+
 const baseChildren = [
     ActorsNode,
     ZonesNode,
-    PointsNode
+    PointsNode,
+    VarCube,
+    VarGame
 ];
 
 const SubScene = {
     dynamic: true,
-    name: scene => `Scene_${scene.index}`,
+    name: scene => `Scene ${scene.index}`,
     icon: () => 'editor/icons/areas/scene.png',
     iconStyle: {
         width: 16,
@@ -44,98 +136,6 @@ const Siblings = {
     onClick: () => {}
 };
 
-const VarCube = makeVariables('varcube', 'Local Variables', () => {
-    const scene = DebugData.scope.scene;
-    if (scene) {
-        return scene.variables;
-    }
-    return [];
-}, () => {
-    const scene = DebugData.scope.scene;
-    if (scene) {
-        return {
-            scene: scene.index
-        };
-    }
-    return null;
-});
-
-const VarGameConfig = {
-    filterScene: true,
-    filterInventory: false
-};
-
-const VarGame = {
-    dynamic: true,
-    name: () => 'Game Variables',
-    icon: () => 'editor/icons/var.png',
-    numChildren: () => {
-        const {scene, game} = DebugData.scope;
-        if (scene && game) {
-            if (VarGameConfig.filterScene) {
-                if (VarGameConfig.filterInventory) {
-                    let count = 0;
-                    each(scene.usedVarGames, (varGame) => {
-                        if (varGame < 40)
-                            count += 1;
-                    });
-                    return count;
-                }
-                return scene.usedVarGames.length;
-            }
-            return VarGameConfig.filterInventory ? 40 : game.getState().flags.quest.length;
-        }
-        return 0;
-    },
-    child: () => Var,
-    childData: (data, idx) => {
-        const {scene, game} = DebugData.scope;
-        if (scene && game) {
-            const state = game.getState();
-            if (VarGameConfig.filterScene) {
-                const usedVarGames = VarGameConfig.filterInventory
-                    ? filter(scene.usedVarGames, vg => vg < 40)
-                    : scene.usedVarGames;
-                const varGame = usedVarGames[idx];
-                if (varGame !== undefined) {
-                    return makeVarDef('vargame', varGame, () => state.flags.quest, () => null);
-                }
-            } else {
-                return makeVarDef('vargame', idx, () => state.flags.quest, () => null);
-            }
-        }
-        return null;
-    },
-    childProps: [
-        {
-            id: 'filter_scene',
-            name: 'Only in scene',
-            value: data => data.filterScene,
-            render: (value) => {
-                const onChange = (e) => {
-                    VarGameConfig.filterScene = e.target.checked;
-                };
-                return <input type="checkbox" checked={value} onChange={onChange}/>;
-            },
-            icon: () => 'editor/icons/settings.png',
-            color: '#AAAAAA'
-        },
-        {
-            id: 'filter_inventory',
-            name: 'Only inventory',
-            value: data => data.filterInventory,
-            render: (value) => {
-                const onChange = (e) => {
-                    VarGameConfig.filterInventory = e.target.checked;
-                };
-                return <input type="checkbox" checked={value} onChange={onChange}/>;
-            },
-            icon: () => 'editor/icons/settings.png',
-            color: '#AAAAAA'
-        }
-    ]
-};
-
 const getChildren = () => {
     const scene = DebugData.scope.scene;
     if (scene) {
@@ -154,8 +154,6 @@ const getChildren = () => {
                 padding: 4
             }
         });
-        children.push(VarCube);
-        children.push(VarGame);
         if (scene.sideScenes) {
             children.push(Siblings);
         }
@@ -177,16 +175,7 @@ const SceneNode = {
     },
     numChildren: () => getChildren().length,
     child: (data, idx) => getChildren()[idx],
-    childData: (data, idx) => {
-        const scene = DebugData.scope.scene;
-        const child = getChildren()[idx];
-        if (!child)
-            return null;
-        if (child === VarGame) {
-            return VarGameConfig;
-        }
-        return scene;
-    },
+    childData: () => DebugData.scope.scene,
     props: () => {
         const scene = DebugData.scope.scene;
         return scene ? [
