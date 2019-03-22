@@ -64,7 +64,10 @@ const Zone = {
         return selection && selection.type === 'zone' && selection.index === zone.index;
     },
     onClick: (zone) => { DebugData.selection = {type: 'zone', index: zone.index}; },
-    onDoubleClick: locateObject
+    onDoubleClick: (zone, component, setRoot) => {
+        locateObject(zone);
+        setRoot();
+    }
 };
 
 export const ZonesNode = makeObjectsNode('zone', {
@@ -75,10 +78,5 @@ export const ZonesNode = makeObjectsNode('zone', {
     numChildren: scene => scene.zones.length,
     child: () => Zone,
     childData: (scene, idx) => scene.zones[idx],
-    hasChanged: scene => scene.index !== DebugData.scope.scene.index,
-    onClick: (scene, setRoot) => {
-        if (scene.isActive) {
-            setRoot();
-        }
-    }
+    hasChanged: scene => scene.index !== DebugData.scope.scene.index
 });

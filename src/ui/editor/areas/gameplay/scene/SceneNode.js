@@ -118,8 +118,7 @@ const SubScene = {
         return scene ? baseChildren.length : 0;
     },
     child: (scene, idx) => baseChildren[idx],
-    childData: scene => scene,
-    onClick: () => {}
+    childData: scene => scene
 };
 
 const Siblings = {
@@ -132,8 +131,7 @@ const Siblings = {
     },
     numChildren: scene => size(scene.sideScenes),
     child: () => SubScene,
-    childData: (scene, idx) => sortBy(scene.sideScenes)[idx],
-    onClick: () => {}
+    childData: (scene, idx) => sortBy(scene.sideScenes)[idx]
 };
 
 const getChildren = () => {
@@ -146,12 +144,19 @@ const getChildren = () => {
             icon: data.icon,
             props: data.props,
             children: [],
+            lineStyle: {
+                marginLeft: 0
+            },
+            nameStyle: {
+                marginLeft: 10
+            },
             style: {
                 height: '30px',
                 lineHeight: '30px',
                 background: '#1F1F1F',
                 margin: 0,
-                padding: 4
+                padding: 4,
+                overflow: 'hidden'
             }
         });
         if (scene.sideScenes) {

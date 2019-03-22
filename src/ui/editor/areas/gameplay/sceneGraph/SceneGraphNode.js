@@ -10,7 +10,7 @@ export const SceneGraphNode = {
         fontSize: 16,
         lineHeight: '20px'
     },
-    key: (obj, idx) => idx,
+    key: obj => obj.uuid,
     name: obj => obj.name || obj.uuid.substr(0, 8),
     icon: (obj) => {
         switch (obj.type) {
@@ -42,8 +42,7 @@ export const SceneGraphNode = {
             value: obj.type,
             render: value => <span style={{color: '#037acc'}}>{value}</span>
         }
-    ],
-    onClick: () => {}
+    ]
 };
 
 export const SceneGraphRootNode = {
@@ -51,9 +50,9 @@ export const SceneGraphRootNode = {
     name: () => {
         const scene = DebugData.scope.scene;
         if (scene) {
-            return `Scene #${scene.index}`;
+            return `scene_${scene.index}`;
         }
-        return 'None';
+        return 'none';
     },
     icon: () => 'editor/icons/areas/graph.png',
     iconStyle: {

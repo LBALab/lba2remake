@@ -157,7 +157,10 @@ const Actor = {
         return selection && selection.type === 'actor' && selection.index === actor.index;
     },
     onClick: (actor) => { DebugData.selection = {type: 'actor', index: actor.index}; },
-    onDoubleClick: locateObject
+    onDoubleClick: (actor, component, setRoot) => {
+        locateObject(actor);
+        setRoot();
+    }
 };
 
 export const ActorsNode = makeObjectsNode('actor', {
@@ -168,12 +171,7 @@ export const ActorsNode = makeObjectsNode('actor', {
     numChildren: scene => scene.actors.length,
     child: () => Actor,
     childData: (scene, idx) => scene.actors[idx],
-    hasChanged: scene => scene.index !== DebugData.scope.scene,
-    onClick: (scene, setRoot) => {
-        if (scene.isActive) {
-            setRoot();
-        }
-    }
+    hasChanged: scene => scene.index !== DebugData.scope.scene
 });
 
 function getComportement(actor) {

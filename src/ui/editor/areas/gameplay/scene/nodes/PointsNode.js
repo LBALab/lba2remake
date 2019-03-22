@@ -25,7 +25,10 @@ const Point = {
         return selection && selection.type === 'point' && selection.index === point.index;
     },
     onClick: (point) => { DebugData.selection = {type: 'point', index: point.index}; },
-    onDoubleClick: locateObject
+    onDoubleClick: (point, component, setRoot) => {
+        locateObject(point);
+        setRoot();
+    }
 };
 
 export const PointsNode = makeObjectsNode('point', {
@@ -36,10 +39,5 @@ export const PointsNode = makeObjectsNode('point', {
     numChildren: scene => scene.points.length,
     child: () => Point,
     childData: (scene, idx) => scene.points[idx],
-    hasChanged: scene => scene.index !== DebugData.scope.scene.index,
-    onClick: (scene, setRoot) => {
-        if (scene.isActive) {
-            setRoot();
-        }
-    }
+    hasChanged: scene => scene.index !== DebugData.scope.scene.index
 });

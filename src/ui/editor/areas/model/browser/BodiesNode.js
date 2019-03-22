@@ -25,6 +25,9 @@ const BodyNode = {
         }
         return 'unknown';
     },
+    lineStyle: {
+        marginLeft: 0
+    },
     key: (body, idx) => `body_${idx}`,
     allowRenaming: () => true,
     rename: (body, newName) => {

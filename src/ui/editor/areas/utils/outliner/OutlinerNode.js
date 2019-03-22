@@ -150,17 +150,11 @@ export default class OutlinerNode extends React.Component {
             return null;
         }
 
-        const node = this.props.node;
-
-        const skipMargin = this.props.parentHidden
-                            && this.state.numChildren === 0
-                            && (!node.childProps || node.childProps.length === 0);
-
-        const lineStyle = {
-            marginLeft: skipMargin ? 0 : 16,
+        const lineStyle = Object.assign({
+            marginLeft: 16,
             display: 'inline-block',
             whiteSpace: 'normal'
-        };
+        }, this.props.node.lineStyle || {});
 
         const selectedStyle = this.state.selected && this.props.node.selectedStyle;
 
@@ -240,12 +234,12 @@ export default class OutlinerNode extends React.Component {
     renderName() {
         const node = this.props.node;
         const selected = this.state.selected;
-        const setRoot = this.props.setRoot.bind(null, this.props.path);
+        const setRoot = this.props.setRoot.bind(null, this.props.path, this.props.prettyPath);
         const onClick = node.onClick
             ? node.onClick.bind(null, this.props.data, setRoot, this)
             : setRoot;
         const onDoubleClick = node.onDoubleClick ?
-            node.onDoubleClick.bind(null, this.props.data, this) : noop;
+            node.onDoubleClick.bind(null, this.props.data, this, setRoot) : noop;
 
         const color = (isFunction(node.color) ? this.call('color') : node.color) || 'inherit';
         const title = node.title
@@ -331,8 +325,17 @@ export default class OutlinerNode extends React.Component {
         const numChildProps = node.childProps ? node.childProps.length : 0;
         const numChildren = this.state.numChildren + numChildProps;
         const collapsed = this.state.collapsed;
-        if (numChildren > 0 && !this.props.node.noCollapse) {
-            return <span onClick={toggleCollapse} style={{cursor: 'pointer', display: 'inline-block', position: 'absolute', left: 0}}>{collapsed ? '+' : '-'}</span>;
+        const hasCollapse = numChildren > 0 && !this.props.node.noCollapse;
+
+        const style = {
+            cursor: 'pointer',
+            display: 'inline-block',
+            position: 'absolute',
+            left: 0
+        };
+
+        if (hasCollapse) {
+            return <span onClick={toggleCollapse} style={style}>{collapsed ? '+' : '-'}</span>;
         }
         return null;
     }
@@ -403,6 +406,7 @@ export default class OutlinerNode extends React.Component {
         const childName = child.dynamic ? call('name', child, childData, idx) : child.name;
         const key = child.dynamic ? call('key', child, childData, idx) : child.key;
         const path = concat(this.props.path, key || childName || idx);
+        const prettyPath = concat(this.props.prettyPath, childName || idx);
         return <OutlinerNode
             key={path.join('/')}
             id={`otl.${rootName}.${path.join('.')}`}
@@ -413,6 +417,7 @@ export default class OutlinerNode extends React.Component {
             fontSize={childFontSize}
             setRoot={this.props.setRoot}
             path={path}
+            prettyPath={prettyPath}
             activePath={this.props.activePath}
             ticker={this.props.ticker}
             level={this.props.level + 1}

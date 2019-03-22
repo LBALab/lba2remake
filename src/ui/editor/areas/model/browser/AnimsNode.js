@@ -25,6 +25,9 @@ const AnimNode = {
         }
         return 'unknown';
     },
+    lineStyle: {
+        marginLeft: 0
+    },
     key: (anim, idx) => `anim_${idx}`,
     allowRenaming: () => true,
     rename: (anim, newName) => {
