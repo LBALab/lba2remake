@@ -150,10 +150,14 @@ export default class OutlinerNode extends React.Component {
             return null;
         }
 
+        const node = this.props.node;
+
+        const skipMargin = this.props.parentHidden
+                            && this.state.numChildren === 0
+                            && (!node.childProps || node.childProps.length === 0);
+
         const lineStyle = {
-            marginLeft: this.props.parentHidden && this.state.numChildren === 0
-                ? 0
-                : 16,
+            marginLeft: skipMargin ? 0 : 16,
             display: 'inline-block',
             whiteSpace: 'normal'
         };
