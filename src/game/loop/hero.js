@@ -160,7 +160,7 @@ const UP = new THREE.Vector3(0, 1, 0);
 const QUAT = new THREE.Quaternion();
 const EULER = new THREE.Euler();
 
-function processCamRelativeMovement(controlsState, scene, hero, animIndex, time) {
+function processCamRelativeMovement(controlsState, scene, hero, animIndex) {
     if (controlsState.relativeToCam) {
         const camera = scene.camera.controlNode;
         if (!camera)
@@ -180,7 +180,7 @@ function processCamRelativeMovement(controlsState, scene, hero, animIndex, time)
             FLAT_CAM.quaternion.multiply(QUAT);
             EULER.setFromQuaternion(FLAT_CAM.quaternion, 'XZY');
             hero.physics.temp.angle = EULER.y;
-            hero.physics.orientation.slerp(FLAT_CAM.quaternion, time.delta * 15);
+            hero.physics.orientation.copy(FLAT_CAM.quaternion);
             animIndex = AnimType.FORWARD;
             hero.props.runtimeFlags.isWalking = true;
         }
