@@ -128,6 +128,10 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 const previousIdx = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
                 return this.goto(previousIdx);
             }
+        },
+
+        unloadScene() {
+            scene = null;
         }
     };
 

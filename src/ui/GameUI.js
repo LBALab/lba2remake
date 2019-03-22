@@ -153,8 +153,7 @@ export default class GameUI extends FrameListener {
 
     onSceneManagerReady(sceneManager) {
         if (this.props.params.scene >= 0) {
-            this.hideMenu();
-            sceneManager.goto(this.props.params.scene);
+            sceneManager.hideMenuAndGoto(this.props.params.scene);
         }
     }
 
@@ -169,11 +168,12 @@ export default class GameUI extends FrameListener {
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.params.scene !== -1 && newProps.params.scene !== this.props.params.scene) {
-            const scene = this.state.sceneManager.getScene();
-            if (scene && newProps.params.scene !== scene.index) {
-                this.hideMenu();
-                this.state.sceneManager.goto(newProps.params.scene);
+        if (newProps.params.scene !== this.props.params.scene) {
+            if (newProps.params.scene !== -1) {
+                this.state.sceneManager.hideMenuAndGoto(newProps.params.scene);
+            } else {
+                this.state.sceneManager.unloadScene();
+                this.showMenu();
             }
         }
     }
