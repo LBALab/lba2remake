@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import convert from 'color-convert';
 import { loadHqr } from '../hqr.ts';
 
-export const LUT_DIM = 64;
+export const LUT_DIM = 32;
 const LUT_DIM_M1 = LUT_DIM - 1;
-const TEXTURE_WIDTH = 1024;
+const TEXTURE_WIDTH = 256;
 const TEXTURE_HEIGHT = (LUT_DIM * LUT_DIM * LUT_DIM) / TEXTURE_WIDTH;
 
 let lutTexture = null;
