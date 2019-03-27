@@ -209,7 +209,7 @@ export default class GameUI extends FrameListener {
             if (key === 'Escape' || key === 27) {
                 if (!this.state.game.isPaused()) {
                     this.showMenu(true);
-                } else if (this.state.showMenu && !this.state.inGameMenu) {
+                } else if (this.state.showMenu) {
                     this.hideMenu();
                 }
             }
