@@ -3,8 +3,10 @@ import convert from 'color-convert';
 import { loadHqr } from '../hqr.ts';
 
 export const LUT_DIM = 64;
-
 const LUT_DIM_M1 = LUT_DIM - 1;
+const TEXTURE_WIDTH = 1024;
+const TEXTURE_HEIGHT = (LUT_DIM * LUT_DIM * LUT_DIM) / TEXTURE_WIDTH;
+
 let lutTexture = null;
 
 export async function loadLUTTexture() {
@@ -13,11 +15,18 @@ export async function loadLUTTexture() {
     }
     const buffer = await loadLUTData();
     const image_data = new Uint8Array(buffer);
-    const texture = new THREE.DataTexture3D(image_data, LUT_DIM, LUT_DIM, LUT_DIM);
-    texture.format = THREE.AlphaFormat;
-    texture.type = THREE.UnsignedByteType;
-    texture.magFilter = THREE.NearestFilter;
-    texture.minFilter = THREE.NearestFilter;
+    const texture = new THREE.DataTexture(
+        image_data,
+        TEXTURE_WIDTH,
+        TEXTURE_HEIGHT,
+        THREE.AlphaFormat,
+        THREE.UnsignedByteType,
+        THREE.UVMapping,
+        THREE.ClampToEdgeWrapping,
+        THREE.ClampToEdgeWrapping,
+        THREE.NearestFilter,
+        THREE.NearestFilter
+    );
     texture.needsUpdate = true;
     lutTexture = texture;
     return texture;

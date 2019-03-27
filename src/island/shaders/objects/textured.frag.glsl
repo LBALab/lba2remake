@@ -1,10 +1,9 @@
 #version 300 es
 precision highp float;
-precision highp sampler3D;
 
 uniform sampler2D uTexture;
 uniform sampler2D palette;
-uniform sampler3D lutTexture;
+uniform sampler2D lutTexture;
 uniform vec3 light;
 
 in vec3 vNormal;

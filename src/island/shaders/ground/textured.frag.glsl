@@ -1,11 +1,10 @@
 #version 300 es
 precision highp float;
-precision highp sampler3D;
 
 uniform sampler2D uTexture;
 uniform sampler2D palette;
 uniform sampler2D noise;
-uniform sampler3D lutTexture;
+uniform sampler2D lutTexture;
 uniform vec4 actorPos[10];
 
 in float vColor;
