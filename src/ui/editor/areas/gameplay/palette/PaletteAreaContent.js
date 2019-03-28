@@ -52,7 +52,14 @@ export default class PaletteAreaContent extends React.Component {
             this.drawLUT();
         });
 
-        this.bbs = [];
+        this.bbs = [
+            {
+                xMin: 0,
+                xMax: 15,
+                yMin: 1,
+                yMax: 14
+            }
+        ];
     }
 
     render() {
@@ -248,7 +255,14 @@ export default class PaletteAreaContent extends React.Component {
 
     async reset() {
         await resetLUTTexture();
-        this.bbs = [];
+        this.bbs = [
+            {
+                xMin: 0,
+                xMax: 15,
+                yMin: 1,
+                yMax: 14
+            }
+        ];
         this.draw();
         this.drawLUT();
         this.setState({ lutBuffer: null });
