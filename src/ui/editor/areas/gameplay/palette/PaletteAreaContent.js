@@ -25,6 +25,7 @@ export default class PaletteAreaContent extends React.Component {
         this.generate = this.generate.bind(this);
         this.onCanvasRef = this.onCanvasRef.bind(this);
         this.onCanvasLUTRef = this.onCanvasLUTRef.bind(this);
+        this.onCanvasCurvesRef = this.onCanvasCurvesRef.bind(this);
         this.saveLUT = this.saveLUT.bind(this);
         this.reset = this.reset.bind(this);
 
@@ -41,10 +42,13 @@ export default class PaletteAreaContent extends React.Component {
             activeColor: '<no-color>'
         };
 
+        this.ramp = 0;
+
         loadHqr('RESS.HQR').then((ress) => {
             this.palette = new Uint8Array(ress.getEntry(0));
             this.draw();
             this.drawLUT();
+            this.drawCurves();
         });
 
         loadLUTTexture().then((lutTexture) => {
@@ -168,6 +172,13 @@ export default class PaletteAreaContent extends React.Component {
                 />
             </div>
             <div style={wrapperStyle}>
+                Color curves:
+                <canvas
+                    style={canvasStyle}
+                    ref={this.onCanvasCurvesRef}
+                />
+            </div>
+            <div style={wrapperStyle}>
                 LUT slice<br/>
                 Blue level: {this.state.slice}<br/>
                 <input type="range" min="0" max={LUT_DIM - 1} value={this.state.slice} onChange={onSlide} style={{width: '100%'}}/>
@@ -233,6 +244,36 @@ export default class PaletteAreaContent extends React.Component {
         }
     }
 
+    drawCurves() {
+        if (this.ctxCurves && this.palette) {
+            const ctx = this.ctxCurves;
+            const p = this.palette;
+            ctx.fillStyle = 'black';
+            ctx.fillRect(16, 0, 480, 256);
+            ctx.lineWidth = 2;
+
+            const drawCurve = (color, offset) => {
+                ctx.strokeStyle = color;
+                ctx.beginPath();
+                for (let i = 0; i < 16; i += 1) {
+                    const idx = (this.ramp * 16) + i;
+                    const x = (i * 32) + 16;
+                    const y = 256 - p[(idx * 3) + offset];
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+            };
+
+            drawCurve('red', 0);
+            drawCurve('green', 1);
+            drawCurve('blue', 2);
+        }
+    }
+
     saveLUT() {
         if (this.state.lutBuffer && window.isLocalServer) {
             const start = Date.now();
@@ -286,6 +327,15 @@ export default class PaletteAreaContent extends React.Component {
         }
     }
 
+    onCanvasCurvesRef(canvas) {
+        if (canvas) {
+            canvas.width = 512;
+            canvas.height = 256;
+            this.ctxCurves = canvas.getContext('2d');
+            this.drawCurves();
+        }
+    }
+
     onMouseDown(e) {
         if (e.button !== 0)
             return;
@@ -331,10 +381,16 @@ export default class PaletteAreaContent extends React.Component {
             }
             this.draw();
         }
-        const idx = (y * 16) + x;
         const p = this.palette;
-        const color = `rgb(${p[idx * 3]},${p[(idx * 3) + 1]},${p[(idx * 3) + 2]})`;
-        this.setState({activeColor: `[${x},${y}] = ${color}`});
+        if (p) {
+            const idx = (y * 16) + x;
+            const color = `rgb(${p[idx * 3]},${p[(idx * 3) + 1]},${p[(idx * 3) + 2]})`;
+            if (this.ramp !== y) {
+                this.ramp = y;
+                this.drawCurves();
+            }
+            this.setState({activeColor: `[${x},${y}] = ${color}`});
+        }
     }
 
     onMouseUp() {
