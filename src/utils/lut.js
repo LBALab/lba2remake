@@ -19,7 +19,7 @@ export async function loadLUTTexture() {
         image_data,
         TEXTURE_WIDTH,
         TEXTURE_HEIGHT * 16,
-        THREE.AlphaFormat,
+        THREE.RGBAFormat,
         THREE.UnsignedByteType,
         THREE.UVMapping,
         THREE.ClampToEdgeWrapping,
@@ -66,7 +66,7 @@ async function loadLUTData() {
 export async function generateLUTTexture({onProgress, bbs, useLabColors}) {
     const ress = await loadHqr('RESS.HQR');
     const palette = new Uint8Array(ress.getEntry(0));
-    const buffer = new ArrayBuffer(LUT_DIM * LUT_DIM * LUT_DIM * 16);
+    const buffer = new ArrayBuffer(LUT_DIM * LUT_DIM * LUT_DIM * 16 * 4);
     const image_data = new Uint8Array(buffer);
     const clamp = v => Math.max(Math.min(v, 15), 0);
     for (let r = 0; r < LUT_DIM; r += 1) {
@@ -83,17 +83,12 @@ export async function generateLUTTexture({onProgress, bbs, useLabColors}) {
                 const x = tgtIdx % 16;
                 const y = Math.floor(tgtIdx / 16);
                 for (let i = 0; i < 16; i += 1) {
-                    const level = i * LUT_DIM * LUT_DIM * LUT_DIM;
-                    const idx = r + (LUT_DIM * (g + (LUT_DIM * b)));
-                    let tX = x + (i - 12);
-                    let tY = y;
-                    if (tY === 2 && tX < 6) {
-                        tX = clamp(tX + 2);
-                        tY = 1;
-                    } else {
-                        tX = clamp(tX);
-                    }
-                    image_data[level + idx] = tX + (tY * 16);
+                    const level = i * LUT_DIM * LUT_DIM * LUT_DIM * 4;
+                    const idx = (r + (LUT_DIM * (g + (LUT_DIM * b)))) * 4;
+                    const pIdx = clamp(x + (i - 12)) + (y * 16);
+                    image_data[level + idx] = palette[pIdx * 3];
+                    image_data[level + idx + 1] = palette[(pIdx * 3) + 1];
+                    image_data[level + idx + 2] = palette[(pIdx * 3) + 2];
                 }
             }
         }

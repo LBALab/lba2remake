@@ -238,16 +238,17 @@ export default class PaletteAreaContent extends React.Component {
 
     drawLUT() {
         const sqSize = 512 / LUT_DIM;
-        if (this.ctxLUT && this.palette && this.lutTexture) {
+        if (this.ctxLUT && this.lutTexture) {
             this.ctxLUT.clearRect(0, 0, 512, 512);
-            const p = this.palette;
             const b = this.state.slice;
-            const level = this.state.intensity * LUT_DIM * LUT_DIM * LUT_DIM;
+            const level = this.state.intensity * LUT_DIM * LUT_DIM * LUT_DIM * 4;
             for (let r = 0; r < LUT_DIM; r += 1) {
                 for (let g = 0; g < LUT_DIM; g += 1) {
-                    const idx = r + (LUT_DIM * (g + (LUT_DIM * b)));
-                    const pIdx = this.lutTexture.image.data[level + idx];
-                    this.ctxLUT.fillStyle = `rgb(${p[pIdx * 3]},${p[(pIdx * 3) + 1]},${p[(pIdx * 3) + 2]})`;
+                    const idx = (r + (LUT_DIM * (g + (LUT_DIM * b)))) * 4;
+                    const cR = this.lutTexture.image.data[level + idx];
+                    const cG = this.lutTexture.image.data[level + idx + 1];
+                    const cB = this.lutTexture.image.data[level + idx + 2];
+                    this.ctxLUT.fillStyle = `rgb(${cR},${cG},${cB})`;
                     this.ctxLUT.fillRect(r * sqSize, g * sqSize, sqSize, sqSize);
                 }
             }
