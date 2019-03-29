@@ -4,7 +4,7 @@ import { loadHqr } from '../hqr.ts';
 
 export const LUT_DIM = 32;
 const LUT_DIM_M1 = LUT_DIM - 1;
-const TEXTURE_WIDTH = 256;
+const TEXTURE_WIDTH = 512;
 const TEXTURE_HEIGHT = (LUT_DIM * LUT_DIM * LUT_DIM) / TEXTURE_WIDTH;
 
 let lutTexture = null;
@@ -18,7 +18,7 @@ export async function loadLUTTexture() {
     const texture = new THREE.DataTexture(
         image_data,
         TEXTURE_WIDTH,
-        TEXTURE_HEIGHT,
+        TEXTURE_HEIGHT * 16,
         THREE.AlphaFormat,
         THREE.UnsignedByteType,
         THREE.UVMapping,
@@ -66,8 +66,9 @@ async function loadLUTData() {
 export async function generateLUTTexture({onProgress, bbs, useLabColors}) {
     const ress = await loadHqr('RESS.HQR');
     const palette = new Uint8Array(ress.getEntry(0));
-    const buffer = new ArrayBuffer(LUT_DIM * LUT_DIM * LUT_DIM);
+    const buffer = new ArrayBuffer(LUT_DIM * LUT_DIM * LUT_DIM * 16);
     const image_data = new Uint8Array(buffer);
+    const clamp = v => Math.max(Math.min(v, 15), 0);
     for (let r = 0; r < LUT_DIM; r += 1) {
         onProgress(Math.round((r / LUT_DIM) * 100));
         // eslint-disable-next-line no-await-in-loop
@@ -79,8 +80,21 @@ export async function generateLUTTexture({onProgress, bbs, useLabColors}) {
                     (g / LUT_DIM_M1) * 255,
                     (b / LUT_DIM_M1) * 255
                 ], palette, useLabColors, bbs);
-                const idx = r + (LUT_DIM * (g + (LUT_DIM * b)));
-                image_data[idx] = tgtIdx;
+                const x = tgtIdx % 16;
+                const y = Math.floor(tgtIdx / 16);
+                for (let i = 0; i < 16; i += 1) {
+                    const level = i * LUT_DIM * LUT_DIM * LUT_DIM;
+                    const idx = r + (LUT_DIM * (g + (LUT_DIM * b)));
+                    let tX = x + (i - 12);
+                    let tY = y;
+                    if (tY === 2 && tX < 6) {
+                        tX = clamp(tX + 2);
+                        tY = 1;
+                    } else {
+                        tX = clamp(tX);
+                    }
+                    image_data[level + idx] = tX + (tY * 16);
+                }
             }
         }
     }

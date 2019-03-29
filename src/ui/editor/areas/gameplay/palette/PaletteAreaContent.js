@@ -39,6 +39,7 @@ export default class PaletteAreaContent extends React.Component {
             useLabColors: false,
             saving: false,
             slice: 0,
+            intensity: 0,
             activeColor: '<no-color>'
         };
 
@@ -149,6 +150,12 @@ export default class PaletteAreaContent extends React.Component {
             });
         };
 
+        const onSlideI = (e) => {
+            this.setState({ intensity: e.target.value }, () => {
+                this.drawLUT();
+            });
+        };
+
         const colStyle = {
             width: '100%',
             height: '1em',
@@ -180,6 +187,8 @@ export default class PaletteAreaContent extends React.Component {
             </div>
             <div style={wrapperStyle}>
                 LUT slice<br/>
+                Intensity: {this.state.intensity}<br/>
+                <input type="range" min="0" max="15" value={this.state.intensity} onChange={onSlideI} style={{width: '100%'}}/>
                 Blue level: {this.state.slice}<br/>
                 <input type="range" min="0" max={LUT_DIM - 1} value={this.state.slice} onChange={onSlide} style={{width: '100%'}}/>
                 <canvas
@@ -233,10 +242,11 @@ export default class PaletteAreaContent extends React.Component {
             this.ctxLUT.clearRect(0, 0, 512, 512);
             const p = this.palette;
             const b = this.state.slice;
+            const level = this.state.intensity * LUT_DIM * LUT_DIM * LUT_DIM;
             for (let r = 0; r < LUT_DIM; r += 1) {
                 for (let g = 0; g < LUT_DIM; g += 1) {
                     const idx = r + (LUT_DIM * (g + (LUT_DIM * b)));
-                    const pIdx = this.lutTexture.image.data[idx];
+                    const pIdx = this.lutTexture.image.data[level + idx];
                     this.ctxLUT.fillStyle = `rgb(${p[pIdx * 3]},${p[(pIdx * 3) + 1]},${p[(pIdx * 3) + 2]})`;
                     this.ctxLUT.fillRect(r * sqSize, g * sqSize, sqSize, sqSize);
                 }
