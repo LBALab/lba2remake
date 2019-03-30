@@ -18,8 +18,8 @@ out vec4 fragColor;
 #require "../../island/shaders/common/intensity.frag"
 
 void main() {
-    vec2 uv = mod(vUv, vUvGroup.zw + 1.0) + vUvGroup.xy;
-    vec4 texColor = texture(uTexture, uv / 256.0);
+    vec2 uv = vUv / (vUvGroup.zw + 1.0);
+    vec4 texColor = texture(uTexture, uv);
     vec3 palColor = mapToPal(texColor.rgb, intensity());
     fragColor = vec4(fog(palColor), texColor.a);
 }

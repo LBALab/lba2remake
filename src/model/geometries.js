@@ -6,7 +6,7 @@ import FRAG_COLORED from './shaders/colored.frag.glsl';
 import VERT_TEXTURED from './shaders/textured.vert.glsl';
 import FRAG_TEXTURED from './shaders/textured.frag.glsl';
 
-import {loadPaletteTexture} from '../texture.ts';
+import {loadPaletteTexture, loadSubTextureRGBA} from '../texture.ts';
 import {compile} from '../utils/shaders';
 
 const push = Array.prototype.push;
@@ -214,23 +214,17 @@ function loadFaceGeometry(geometries, body) {
     each(body.polygons, (p) => {
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
-            if (p.hasTransparency) {
-                push.apply(
-                    geometries.textured_transparent.positions,
-                    getPosition(body, vertexIndex)
-                );
-                push.apply(geometries.textured_transparent.normals, getNormal(body, vertexIndex));
-                push.apply(geometries.textured_transparent.uvs, getUVs(body, p, j));
-                push.apply(geometries.textured_transparent.uvGroups, getUVGroup(body, p));
-                push.apply(geometries.textured_transparent.bones, getBone(body, vertexIndex));
-                geometries.textured_transparent.colors.push(p.colour);
-            } else if (p.hasTex) {
-                push.apply(geometries.textured.positions, getPosition(body, vertexIndex));
-                push.apply(geometries.textured.normals, getNormal(body, vertexIndex));
-                push.apply(geometries.textured.uvs, getUVs(body, p, j));
-                push.apply(geometries.textured.uvGroups, getUVGroup(body, p));
-                push.apply(geometries.textured.bones, getBone(body, vertexIndex));
-                geometries.textured.colors.push(p.colour);
+            if (p.hasTransparency || p.hasTex) {
+                const uvGroup = getUVGroup(body, p);
+                const baseGroup = p.hasTransparency ? 'textured_transparent' : 'textured';
+                const group = uvGroup ? `${baseGroup}_${uvGroup.join(',')}` : baseGroup;
+                createSubgroupGeometry(geometries, group, baseGroup, uvGroup);
+                push.apply(geometries[group].positions, getPosition(body, vertexIndex));
+                push.apply(geometries[group].normals, getNormal(body, vertexIndex));
+                push.apply(geometries[group].uvs, getUVs(body, p, j));
+                push.apply(geometries[group].uvGroups, getUVGroup(body, p));
+                push.apply(geometries[group].bones, getBone(body, vertexIndex));
+                geometries[group].colors.push(p.colour);
             } else {
                 push.apply(geometries.colored.positions, getPosition(body, vertexIndex));
                 push.apply(geometries.colored.normals, getNormal(body, vertexIndex));
@@ -364,4 +358,52 @@ function getLightVector(ambience) {
         -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
     );
     return lightVector;
+}
+
+function createSubgroupGeometry(geometries, group, baseGroup, uvGroup) {
+    if (group in geometries) {
+        return;
+    }
+    const baseMaterial = geometries[baseGroup].material;
+    const baseUniforms = baseMaterial.uniforms;
+    const transparent = baseGroup === 'textured_transparent';
+    const baseTexture = baseUniforms.uTexture.value;
+    let groupTexture = baseTexture;
+    if (uvGroup.join(',') !== '0,0,255,255') {
+        groupTexture = loadSubTextureRGBA(
+            baseTexture.image.data,
+            uvGroup[0],
+            uvGroup[1],
+            uvGroup[2] + 1,
+            uvGroup[3] + 1
+        );
+    }
+    geometries[group] = {
+        positions: [],
+        normals: [],
+        uvs: [],
+        uvGroups: [],
+        colors: [],
+        bones: [],
+        linePositions: [],
+        lineNormals: [],
+        lineColors: [],
+        lineBones: [],
+        material: new THREE.RawShaderMaterial({
+            transparent,
+            vertexShader: baseMaterial.vertexShader,
+            fragmentShader: baseMaterial.fragmentShader,
+            uniforms: {
+                fogColor: baseUniforms.fogColor,
+                fogDensity: baseUniforms.fogDensity,
+                uTexture: {value: groupTexture},
+                lutTexture: baseUniforms.lutTexture,
+                palette: baseUniforms.palette,
+                light: baseUniforms.light,
+                bonePos: baseUniforms.bonePos,
+                boneRot: baseUniforms.boneRot,
+                rotationMatrix: baseUniforms.rotationMatrix,
+            }
+        })
+    };
 }
