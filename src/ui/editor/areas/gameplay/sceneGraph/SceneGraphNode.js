@@ -15,11 +15,11 @@ export const SceneGraphNode = {
     icon: (obj) => {
         switch (obj.type) {
             case 'Mesh':
-                return 'editor/icons/mesh.png';
+                return 'editor/icons/mesh.svg';
             case 'LineSegments':
-                return 'editor/icons/lines.png';
+                return 'editor/icons/lines.svg';
             case 'PerspectiveCamera':
-                return 'editor/icons/camera.png';
+                return 'editor/icons/camera.svg';
         }
         return 'editor/icons/three.png';
     },

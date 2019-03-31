@@ -147,10 +147,10 @@ export default class Area extends React.Component {
         }, mainIconStyle());
 
         const closeIcon = this.props.close &&
-            <img style={iconStyle({right: 2})} onClick={this.props.close} src="editor/icons/close.png"/>;
+            <img style={iconStyle({right: 2, width: 22, height: 22})} onClick={this.props.close} src="editor/icons/close.svg"/>;
 
-        const splitH = doSplit && <img style={iconStyle({right: ((numIcons - 1) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>;
-        const splitV = doSplit && <img style={iconStyle({right: ((numIcons - 2) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>;
+        const splitH = doSplit && <img style={iconStyle({right: ((numIcons - 1) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.svg"/>;
+        const splitV = doSplit && <img style={iconStyle({right: ((numIcons - 2) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.svg"/>;
 
         return <div style={menuStyle(numIcons, isMain)}>
             <img onClick={onClickIcon} style={mainIconStyle()} src={`editor/icons/areas/${icon}`}/>

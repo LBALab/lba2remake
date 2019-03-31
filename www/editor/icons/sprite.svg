@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="sprite_icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+	.st1{fill:url(#color_1_);}
+</style>
+<g id="group">
+	<path id="white_lining" class="st0" d="M4.1,0h41.8C48.2,0,50,1.8,50,4.1v41.8c0,2.3-1.8,4.1-4.1,4.1H4.1C1.8,50,0,48.2,0,45.9V4.1
+		C0,1.8,1.8,0,4.1,0z"/>
+	<radialGradient id="color_1_" cx="25.099" cy="25.199" r="28.4506" gradientUnits="userSpaceOnUse">
+		<stop  offset="0" style="stop-color:#FFFFFF"/>
+		<stop  offset="9.259074e-002" style="stop-color:#FDF9F8"/>
+		<stop  offset="0.2224" style="stop-color:#F6E7E6"/>
+		<stop  offset="0.3743" style="stop-color:#ECC9C8"/>
+		<stop  offset="0.5429" style="stop-color:#DDA09E"/>
+		<stop  offset="0.7253" style="stop-color:#CA6B69"/>
+		<stop  offset="0.9163" style="stop-color:#B32B29"/>
+		<stop  offset="1" style="stop-color:#A80D0A"/>
+	</radialGradient>
+	<rect id="color" x="2.9" y="3" class="st1" width="44.5" height="44.6"/>
+	<path id="lining" d="M43.4,6.9v36.6H6.8V6.9H43.4 M47.3,3H2.9v44.5h44.6V3H47.3z"/>
+</g>
+</svg>

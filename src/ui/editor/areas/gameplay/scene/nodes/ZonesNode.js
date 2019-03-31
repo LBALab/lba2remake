@@ -30,7 +30,7 @@ const Zone = {
         }
     ],
     name: zone => getObjectName('zone', zone.props.sceneIndex, zone.index),
-    icon: zone => `editor/icons/zones/${ZONE_TYPE[zone.props.type]}.png`,
+    icon: zone => `editor/icons/zones/${ZONE_TYPE[zone.props.type]}.svg`,
     childProps: [
         {
             id: 'type',

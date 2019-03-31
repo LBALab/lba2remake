@@ -83,7 +83,7 @@ const BodyNode = {
         const { body } = component.props.rootState;
         return body === data.index;
     },
-    icon: () => 'editor/icons/body.png',
+    icon: () => 'editor/icons/body.svg',
 };
 
 const BodiesNode = {
@@ -144,7 +144,7 @@ async function findAllReferencesToBody(body, component) {
         `References to ${name}`,
         {
             name: `References to ${name}`,
-            icon: 'editor/icons/body.png',
+            icon: 'editor/icons/body.svg',
             children: map(filteredEntities, e => ({
                 name: DebugData.metadata.entities[e.index] || `entity_${e.index}`,
                 icon: 'editor/icons/entity.png',

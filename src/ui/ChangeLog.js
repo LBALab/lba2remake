@@ -82,7 +82,7 @@ export default function ChangeLog(props) {
                     linkTarget="_blank"
                 />
             </div>
-            <img style={closeStyle} src="./editor/icons/close.png" onClick={props.close}/>
+            <img style={closeStyle} src="./editor/icons/close.svg" onClick={props.close}/>
         </div>
     </div>;
 }

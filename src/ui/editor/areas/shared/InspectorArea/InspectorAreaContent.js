@@ -306,7 +306,7 @@ export class InspectorAreaContent extends React.Component {
             {map(paramNames, (p, idx) => this.renderBindingParam(p, idx, browse))}
             <div style={itemStyle}>
                 {this.renderValueBrowser('result', result)}
-                {isPure && <img style={refreshIconStyle} src="editor/icons/reset.png" onClick={onClickRefresh}/>}
+                {isPure && <img style={refreshIconStyle} src="editor/icons/reset.svg" onClick={onClickRefresh}/>}
             </div>
             <div style={{paddingTop: 16, textAlign: 'right'}}>
                 <button style={watchButtonStyle} onClick={action}>
@@ -436,7 +436,7 @@ export class InspectorAreaContent extends React.Component {
             content = <div style={{paddingTop: 8, lineHeight: '20px', verticalAlign: 'middle'}}>
                 {prefixByKind[selectedKind]()}
                 <input ref={onRef} type="text" onChange={onChange} style={inputStyle} onKeyDown={onKeyDown}/>
-                {selectedKind !== 'e' && <img style={iconStyle} src="editor/icons/magnifier.png" onClick={onClick}/>}
+                {selectedKind !== 'e' && <img style={iconStyle} src="editor/icons/magnifier.svg" onClick={onClick}/>}
             </div>;
         }
 

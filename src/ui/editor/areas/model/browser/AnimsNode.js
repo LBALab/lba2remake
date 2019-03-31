@@ -83,7 +83,7 @@ const AnimNode = {
         const { anim } = component.props.rootState;
         return anim === data.index;
     },
-    icon: () => 'editor/icons/anim.png',
+    icon: () => 'editor/icons/anim.svg',
 };
 
 const AnimsNode = {
@@ -144,7 +144,7 @@ async function findAllReferencesToAnim(anim, component) {
         `References to ${name}`,
         {
             name: `References to ${name}`,
-            icon: 'editor/icons/anim.png',
+            icon: 'editor/icons/anim.svg',
             children: map(filteredEntities, e => ({
                 name: DebugData.metadata.entities[e.index] || `entity_${e.index}`,
                 icon: 'editor/icons/entity.png',

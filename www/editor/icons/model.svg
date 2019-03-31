@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="model_icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+	.st1{fill:#FFCED1;}
+	.st2{fill:#C11B1B;}
+</style>
+<g id="group_1_">
+	<path id="lining_1_" class="st0" d="M25,4l19.9,9.7v22.2L25,46L5.1,35.9V13.7L25,4 M25,0c-0.6,0-1.2,0.1-1.7,0.4L3.4,10.1
+		c-1.4,0.7-2.3,2.1-2.3,3.6v22.2c0,1.5,0.8,2.9,2.2,3.6l19.9,10.1c0.6,0.3,1.2,0.4,1.8,0.4s1.2-0.1,1.8-0.4l19.9-10.1
+		c1.3-0.7,2.2-2.1,2.2-3.6V13.7c0-1.5-0.9-2.9-2.3-3.6L26.8,0.5C26.2,0.2,25.6,0,25,0L25,0z"/>
+	<polygon id="color" class="st1" points="46.9,37 25,48.5 3.1,37 3.1,12.8 25,1.9 46.9,12.8 	"/>
+	<path id="color_lining" class="st2" d="M45.7,12.1L25.8,2.4c-0.5-0.2-1.1-0.2-1.6,0L4.3,12.1c-0.6,0.3-1,0.9-1,1.6v22.2
+		c0,0.7,0.4,1.3,1,1.6l19.9,10.1c0.3,0.1,0.5,0.2,0.8,0.2s0.6-0.1,0.8-0.2l19.9-10.1c0.6-0.3,1-0.9,1-1.6V13.7
+		C46.7,13,46.3,12.4,45.7,12.1z M25,6.1l15.7,7.7l-15.8,7.9l-15.6-8L25,6.1z M7,16.7l16.1,8.2V43L7,34.8V16.7z M26.8,43l-0.1-18.2
+		L43,16.7v18.1L26.8,43z"/>
+</g>
+</svg>

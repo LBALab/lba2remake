@@ -449,10 +449,10 @@ const argIcon = (path, color) => ({
 const defaultArgStyle = { color: '#98ee92', fontStyle: 'italic' };
 const argStyle = {
     actor: argIcon('editor/icons/actor.svg', '#ff0000'),
-    zone: argIcon('editor/icons/zones/SCENERIC.png', '#6495ed'),
+    zone: argIcon('editor/icons/zones/SCENERIC.svg', '#6495ed'),
     point: argIcon('editor/icons/point.svg', '#0084ff'),
-    body: argIcon('editor/icons/body.png', '#ffffff'),
-    anim: argIcon('editor/icons/anim.png', '#ffffff'),
+    body: argIcon('editor/icons/body.svg', '#ffffff'),
+    anim: argIcon('editor/icons/anim.svg', '#ffffff'),
     dirmode: { color: 'white' },
     text: { color: '#ff7448' },
     offset: { color: 'white' },

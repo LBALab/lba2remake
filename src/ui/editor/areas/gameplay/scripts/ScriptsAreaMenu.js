@@ -67,9 +67,9 @@ export default class ScriptsAreaMenu extends FrameListener {
         return <span>
             <label><input key="autoScroll" type="checkbox" onChange={toggleAutoScroll} checked={autoScroll} style={inputStyle}/>Autoscroll</label>
             &nbsp;
-            <img style={editor.icon} onClick={reset} src="editor/icons/reset.png"/>
+            <img style={editor.icon} onClick={reset} src="editor/icons/reset.svg"/>
             {paused ? <img style={editor.icon} onClick={step} src="editor/icons/step.png"/> : null}
-            <img style={editor.icon} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.png`}/>
+            <img style={editor.icon} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
             <select style={editor.select} value={this.state.selectedActor} onChange={onChange}>
                 {map(this.state.actors, (actor, idx) =>
                     <option key={idx} value={idx}>{actor}</option>)}

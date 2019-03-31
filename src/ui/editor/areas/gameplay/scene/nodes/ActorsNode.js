@@ -23,7 +23,7 @@ const Actor = {
         }
     ],
     name: actor => getObjectName('actor', actor.props.sceneIndex, actor.index),
-    icon: actor => `editor/icons/${actor.isSprite ? 'sprite' : 'model'}.png`,
+    icon: actor => `editor/icons/${actor.isSprite ? 'sprite' : 'model'}.svg`,
     props: actor => [
         {
             id: 'index',
@@ -94,7 +94,7 @@ const Actor = {
                     }
                 });
             },
-            icon: () => 'editor/icons/body.png'
+            icon: () => 'editor/icons/body.svg'
         },
         {
             id: 'anim',
@@ -117,7 +117,7 @@ const Actor = {
                     }
                 });
             },
-            icon: () => 'editor/icons/anim.png'
+            icon: () => 'editor/icons/anim.svg'
         },
         {
             id: 'life',
