@@ -193,7 +193,7 @@ const SceneNode = {
     }
 };
 
-function findSceneData(sceneIndex, node = LocationsNode) {
+export function findSceneData(sceneIndex, node = LocationsNode) {
     if (node.props && node.props[0] && node.props[0].value === sceneIndex) {
         return node;
     }

@@ -441,9 +441,11 @@ export const LifeOpcode = [
         opcode: 0x34,
         command: 'CHANGE_CUBE',
         handler: lf.CHANGE_CUBE,
-        args: ['Uint8'],
+        args: ['Uint8:scene'],
         indent: Indent.KEEP,
-        type: 'fct'
+        type: 'fct',
+        prop: 'goto',
+        scope: 'scene'
     },
     {
         opcode: 0x35,
