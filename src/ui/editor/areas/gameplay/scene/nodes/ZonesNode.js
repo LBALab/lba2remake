@@ -74,7 +74,7 @@ export const ZonesNode = makeObjectsNode('zone', {
     dynamic: true,
     needsData: true,
     name: () => 'Zones',
-    icon: () => 'editor/icons/zone.png',
+    icon: () => 'editor/icons/zone.svg',
     numChildren: scene => scene.zones.length,
     child: () => Zone,
     childData: (scene, idx) => scene.zones[idx],

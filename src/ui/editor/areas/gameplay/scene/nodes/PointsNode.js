@@ -16,7 +16,7 @@ const Point = {
         }
     ],
     name: point => getObjectName('point', point.props.sceneIndex, point.index),
-    icon: () => 'editor/icons/point2.png',
+    icon: () => 'editor/icons/point2.svg',
     numChildren: point => (point.threeObject ? 1 : 0),
     child: () => SceneGraphNode,
     childData: point => point.threeObject,
@@ -35,7 +35,7 @@ export const PointsNode = makeObjectsNode('point', {
     dynamic: true,
     needsData: true,
     name: () => 'Points',
-    icon: () => 'editor/icons/point.png',
+    icon: () => 'editor/icons/point.svg',
     numChildren: scene => scene.points.length,
     child: () => Point,
     childData: (scene, idx) => scene.points[idx],

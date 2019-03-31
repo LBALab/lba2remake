@@ -167,7 +167,7 @@ export const ActorsNode = makeObjectsNode('actor', {
     dynamic: true,
     needsData: true,
     name: () => 'Actors',
-    icon: () => 'editor/icons/actor.png',
+    icon: () => 'editor/icons/actor.svg',
     numChildren: scene => scene.actors.length,
     child: () => Actor,
     childData: (scene, idx) => scene.actors[idx],
