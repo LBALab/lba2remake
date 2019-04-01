@@ -661,7 +661,6 @@ export const LifeOpcode = [
         args: ['Uint8', 'Uint8'],
         indent: Indent.KEEP,
         type: 'fct',
-        prop: 'goto',
         scope: 'scene'
     },
     {
