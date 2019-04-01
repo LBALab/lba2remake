@@ -133,21 +133,26 @@ export default class ScriptsAreaToolbar extends FrameListener {
             top: 0,
             left: 0,
             right: 0,
-            bottom: 0
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
         };
 
-        const lineStyle = {
+        const textStyle = {
             height: 24,
             lineHeight: '24px',
             verticalAlign: 'middle',
             userSelect: 'none'
         };
 
-        const aLineStyle = Object.assign({}, lineStyle, {
+        const lineStyle = {
+            height: 24,
+            lineHeight: '24px',
+            verticalAlign: 'middle',
+            userSelect: 'none',
             cursor: 'pointer',
             overflow: 'hidden',
             width: '100%'
-        });
+        };
 
         const contentStyle = {
             background: 'black',
@@ -159,10 +164,10 @@ export default class ScriptsAreaToolbar extends FrameListener {
         };
 
         return <div style={style} onClick={() => this.setState({selecting: false})}>
-            <div style={lineStyle}>Select an actor:</div>
+            <div style={textStyle}>Select an actor:</div>
             <div style={contentStyle}>
                 {map(this.state.actors, (actor, idx) =>
-                    <div key={idx} style={aLineStyle} onClick={selectActor.bind(null, idx)}>
+                    <div key={idx} style={lineStyle} onClick={selectActor.bind(null, idx)}>
                         <img style={iconStyle} src="editor/icons/actor.svg"/>
                         {actor}
                         &nbsp;
