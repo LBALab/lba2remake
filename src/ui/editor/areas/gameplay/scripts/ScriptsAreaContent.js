@@ -112,7 +112,8 @@ export default class ScriptEditor extends FrameListener {
         const scene = DebugData.scope.scene;
         const actor = scene ? scene.actors[this.state.actorIndex] : null;
         if (DebugData.selection &&
-                (DebugData.selection.lifeLine || DebugData.selection.moveLine)) {
+                ('lifeLine' in DebugData.selection || 'moveLine' in DebugData.selection)) {
+            this.props.stateHandler.setActor(DebugData.selection.index);
             this.props.stateHandler.setAutoScroll(false);
         }
         if (this.scene !== scene || this.actor !== actor) {
