@@ -5,6 +5,7 @@ import {fullscreen} from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';
 import {getDebugListing} from './listing';
 import DebugData from '../../../DebugData';
+import ScriptsAreaToolbar from './ScriptsAreaToolbar';
 
 const defaultSplitDistance = 60;
 
@@ -24,14 +25,13 @@ const scriptStyle = {
     move: splitAt => extend({left: `${splitAt}%`, right: 0}, scriptBaseStyle)
 };
 
-let selection = null;
-
 export default class ScriptEditor extends FrameListener {
     constructor(props) {
         super(props);
 
         this.state = {
-            separator: null
+            separator: null,
+            actorIndex: props.sharedState.actorIndex
         };
 
         this.updateSeparator = this.updateSeparator.bind(this);
@@ -103,18 +103,13 @@ export default class ScriptEditor extends FrameListener {
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.sharedState.actor !== this.state.actorIndex) {
-            this.setState({ actorIndex: newProps.sharedState.actor });
+        if (newProps.sharedState.actorIndex !== this.state.actorIndex) {
+            this.setState({ actorIndex: newProps.sharedState.actorIndex });
         }
     }
 
     frame() {
         const scene = DebugData.scope.scene;
-        const mainSelection = DebugData.selection;
-        if (mainSelection && mainSelection.type === 'actor' && selection !== mainSelection.index) {
-            selection = mainSelection.index;
-            this.props.stateHandler.setActor(selection);
-        }
         const actor = scene ? scene.actors[this.state.actorIndex] : null;
         if (DebugData.selection &&
                 (DebugData.selection.lifeLine || DebugData.selection.moveLine)) {
@@ -242,7 +237,7 @@ export default class ScriptEditor extends FrameListener {
 
         const separator = {
             position: 'absolute',
-            top: 0,
+            top: 24,
             bottom: 0,
             left: `${splitAt}%`,
             width: 6,
@@ -261,12 +256,23 @@ export default class ScriptEditor extends FrameListener {
             opacity: 1,
         };
 
-        return <div ref={(ref) => { this.rootRef = ref; }} style={{fullscreen}}>
-            {this.renderListing('life', splitAt)}
-            {this.renderListing('move', splitAt)}
+        const contentStyle = extend({}, fullscreen, {
+            top: 24
+        });
+
+        return <div style={{fullscreen}}>
+            <div style={contentStyle} ref={(ref) => { this.rootRef = ref; }}>
+                {this.renderListing('life', splitAt)}
+                {this.renderListing('move', splitAt)}
+            </div>
             <div ref={(ref) => { this.separatorRef = ref; }} style={separator}>
                 <div style={sepInnerLine}/>
             </div>
+            <ScriptsAreaToolbar
+                ticker={this.props.ticker}
+                sharedState={this.props.sharedState}
+                stateHandler={this.props.stateHandler}
+            />
         </div>;
     }
 

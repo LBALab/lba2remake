@@ -1,10 +1,8 @@
 import ScriptsAreaContent from './ScriptsAreaContent';
-import ScriptsAreaMenu from './ScriptsAreaMenu';
 
 const ScriptsArea = {
     id: 'script_editor',
     name: 'Scripts',
-    menu: ScriptsAreaMenu,
     icon: 'script.png',
     content: ScriptsAreaContent,
     getInitialState: () => ({
@@ -18,8 +16,8 @@ const ScriptsArea = {
         setAutoScroll(autoScroll) {
             this.setState({autoScroll});
         },
-        setActor(actor) {
-            this.setState({actor});
+        setActor(actorIndex) {
+            this.setState({actorIndex});
         }
     }
 };
