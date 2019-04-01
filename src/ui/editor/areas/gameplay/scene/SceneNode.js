@@ -157,7 +157,8 @@ const getChildren = () => {
                 margin: 0,
                 padding: 4,
                 overflow: 'hidden'
-            }
+            },
+            onClick: () => {}
         });
         if (scene.sideScenes) {
             children.push(Siblings);

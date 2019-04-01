@@ -10,8 +10,9 @@ const inputStyle = {
 };
 
 const iconStyle = extend({}, editor.icon, {
-    width: 18,
-    hieght: 18
+    width: 16,
+    height: 16,
+    padding: '0 3px',
 });
 
 const toolbarStyle = {
@@ -19,8 +20,8 @@ const toolbarStyle = {
     top: 0,
     left: 0,
     right: 0,
-    height: 23,
-    lineHeight: '23px',
+    height: 20,
+    lineHeight: '20px',
     verticalAlign: 'middle',
     background: 'rgb(21, 21, 21)',
     userSelect: 'none'
@@ -96,12 +97,19 @@ export default class ScriptsAreaToolbar extends FrameListener {
             this.props.stateHandler.setAutoScroll(e.target.checked);
         };
 
+        const actorIcon = extend({}, iconStyle, {
+            padding: 0
+        });
+
         const autoScroll = this.props.sharedState.autoScroll;
 
         return <React.Fragment>
             <span style={{cursor: 'pointer'}} onClick={selectActor}>
-                <img style={iconStyle} src="editor/icons/actor.svg"/>
-                {this.state.actors[this.state.selectedActor] || <span style={{color: 'grey'}}>None</span>}
+                <img style={actorIcon} src="editor/icons/actor.svg"/>
+                <span style={{borderBottom: '1px solid white'}}>
+                    {this.state.actors[this.state.selectedActor]
+                        || <span style={{color: 'grey'}}>None</span>}
+                </span>
             </span>
             &nbsp;
             <img style={iconStyle} onClick={reset} src="editor/icons/reset.svg"/>
@@ -144,7 +152,7 @@ export default class ScriptsAreaToolbar extends FrameListener {
         const contentStyle = {
             background: 'black',
             position: 'absolute',
-            top: 24,
+            top: 22,
             left: 0,
             bottom: 0,
             overflow: 'auto'

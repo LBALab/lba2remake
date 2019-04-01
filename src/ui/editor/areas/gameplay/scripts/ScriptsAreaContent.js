@@ -257,7 +257,7 @@ export default class ScriptEditor extends FrameListener {
         };
 
         const contentStyle = extend({}, fullscreen, {
-            top: 24
+            top: 22
         });
 
         return <div style={{fullscreen}}>
