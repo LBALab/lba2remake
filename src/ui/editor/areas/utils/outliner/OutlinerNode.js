@@ -42,6 +42,7 @@ export default class OutlinerNode extends React.Component {
             collapsed: !(this.props.level < 1 || this.isInActivePath(props) || node.noCollapse),
             name: this.name(),
             numChildren: this.numChildren(),
+            childPropsHash: '',
             selected: call('selected', node, this.props.data, this),
             menu: null,
             renaming: false,
@@ -125,10 +126,31 @@ export default class OutlinerNode extends React.Component {
             if (numChildren !== this.state.numChildren) {
                 this.setState({numChildren});
             }
+            this.checkChildPropsDiff();
         }
         const selected = call('selected', this.props.node, this.props.data, this);
         if (selected !== this.state.selected) {
             this.setState({selected});
+        }
+    }
+
+    checkChildPropsDiff() {
+        const childProps = this.props.node.childProps;
+        if (!childProps)
+            return;
+
+        const childPropsValues = [];
+        for (let i = 0; i < childProps.length; i += 1) {
+            const prop = childProps[i];
+            if (prop.valueHash) {
+                childPropsValues.push(prop.valueHash(this.props.data));
+            } else {
+                childPropsValues.push(prop.value(this.props.data));
+            }
+        }
+        const childPropsHash = childPropsValues.join(',');
+        if (childPropsHash !== this.state.childPropsHash) {
+            this.setState({childPropsHash});
         }
     }
 

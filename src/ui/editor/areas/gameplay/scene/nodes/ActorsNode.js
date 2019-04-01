@@ -134,6 +134,16 @@ const Actor = {
         {
             id: 'move',
             name: 'Move',
+            valueHash: (actor) => {
+                const value = getMoveAction(actor);
+                if (!value) {
+                    return '[OFF]';
+                }
+                if (value.extra) {
+                    return `${value.cmdName}_${value.extra}`;
+                }
+                return value.cmdName;
+            },
             value: actor => getMoveAction(actor),
             icon: () => 'editor/icons/areas/script.png',
             render: (value) => {
