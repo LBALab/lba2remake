@@ -43,7 +43,7 @@ const Actor = {
                 return <img
                     src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}
                     onClick={onClick}
-                    style={{cursor: 'pointer'}}
+                    style={{cursor: 'pointer', width: 14, height: 14}}
                 />;
             }
         }
