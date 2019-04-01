@@ -167,7 +167,6 @@ export default class ScriptEditor extends FrameListener {
                         lineCmd.style.background = 'black';
                     }
                 } else {
-                    lineNum.style.color = 'inherit';
                     if (active) {
                         if (autoScroll && firstActive && firstBreakpoint) {
                             if (this.scrollElem !== lineNum) {
