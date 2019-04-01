@@ -71,7 +71,7 @@ const Actor = {
                     }
                 });
             },
-            icon: actor => localStorage.getItem(`icon_model_entity_${actor.props.entityIndex}`)
+            icon: () => 'editor/icons/entity.svg'
         },
         {
             id: 'body',

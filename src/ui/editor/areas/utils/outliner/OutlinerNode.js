@@ -229,7 +229,7 @@ export default class OutlinerNode extends React.Component {
             height: 14,
             verticalAlign: 'middle',
             padding: '0 5px'
-        }, this.props.node.iconStyle || {});
+        }, this.iconStyle() || {});
         return <img key="icon" style={style} src={this.state.icon}/>;
     }
 
@@ -446,6 +446,14 @@ export default class OutlinerNode extends React.Component {
     name() {
         const node = this.props.node;
         return node.dynamic ? this.call('name') : node.name;
+    }
+
+    iconStyle() {
+        const node = this.props.node;
+        if (typeof (node.iconStyle) === 'function') {
+            return this.call('iconStyle');
+        }
+        return node.iconStyle;
     }
 
     nodeProps() {
