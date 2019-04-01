@@ -171,7 +171,7 @@ const SceneNode = {
     dynamic: true,
     name: () => {
         const scene = DebugData.scope.scene;
-        return scene ? `Scene ${scene.index}` : 'no_loaded_scene';
+        return scene ? `Scene_${scene.index}` : '<N/A>';
     },
     icon: () => 'editor/icons/areas/scene.png',
     iconStyle: {

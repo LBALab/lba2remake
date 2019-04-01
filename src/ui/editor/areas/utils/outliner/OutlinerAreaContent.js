@@ -99,16 +99,19 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
                     {elem}
                 </span>;
             if (path.length > 0) {
-                return <div style={{paddingBottom: 8}}>
-                    {renderElement([], [], isFunction(tree.name) ? tree.name() : tree.name)}
-                    {map(prettyPath, (name, idx) => {
-                        const subpath = path.slice(0, idx + 1);
-                        const prettySubpath = prettyPath.slice(0, idx + 1);
-                        return <span key={idx}>
-                            {Separator[sep]}
-                            {renderElement(subpath, prettySubpath, name)}
-                        </span>;
-                    })}
+                return <div style={{paddingBottom: 2}}>
+                    <div style={{overflowX: 'auto', paddingBottom: 6, whiteSpace: 'nowrap'}}>
+                        {renderElement([], [], isFunction(tree.name) ? tree.name() : tree.name)}
+                        {map(prettyPath, (name, idx) => {
+                            const subpath = path.slice(0, idx + 1);
+                            const prettySubpath = prettyPath.slice(0, idx + 1);
+                            return <span key={idx}>
+                                {Separator[sep]}
+                                {renderElement(subpath, prettySubpath, name)}
+                            </span>;
+                        })}
+                    </div>
+                    <hr style={{border: 'none', borderBottom: '1px dashed rgba(200, 200, 200, 0.5)'}}/>
                 </div>;
             }
             return null;
