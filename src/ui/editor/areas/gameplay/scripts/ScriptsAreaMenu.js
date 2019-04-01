@@ -1,5 +1,5 @@
 import React from 'react';
-import {map} from 'lodash';
+import {map, extend} from 'lodash';
 import {editor} from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';
 import DebugData, {getObjectName} from '../../../DebugData';
@@ -8,6 +8,11 @@ const inputStyle = {
     textAlign: 'center',
     verticalAlign: 'middle'
 };
+
+const iconStyle = extend({}, editor.icon, {
+    width: 18,
+    hieght: 18
+});
 
 export default class ScriptsAreaMenu extends FrameListener {
     constructor(props) {
@@ -67,9 +72,9 @@ export default class ScriptsAreaMenu extends FrameListener {
         return <span>
             <label><input key="autoScroll" type="checkbox" onChange={toggleAutoScroll} checked={autoScroll} style={inputStyle}/>Autoscroll</label>
             &nbsp;
-            <img style={editor.icon} onClick={reset} src="editor/icons/reset.svg"/>
-            {paused ? <img style={editor.icon} onClick={step} src="editor/icons/step.png"/> : null}
-            <img style={editor.icon} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
+            <img style={iconStyle} onClick={reset} src="editor/icons/reset.svg"/>
+            {paused ? <img style={iconStyle} onClick={step} src="editor/icons/step.png"/> : null}
+            <img style={iconStyle} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
             <select style={editor.select} value={this.state.selectedActor} onChange={onChange}>
                 {map(this.state.actors, (actor, idx) =>
                     <option key={idx} value={idx}>{actor}</option>)}
