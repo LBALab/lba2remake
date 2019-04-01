@@ -21,7 +21,7 @@ export const SceneGraphNode = {
             case 'PerspectiveCamera':
                 return 'editor/icons/camera.svg';
         }
-        return 'editor/icons/three.png';
+        return 'editor/icons/three.svg';
     },
     numChildren: obj => obj.children.length,
     child: () => SceneGraphNode,
@@ -39,7 +39,7 @@ export const SceneGraphNode = {
                     width: 14,
                     height: 14
                 };
-                return <img style={style} onClick={toggleVisible} src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}/>;
+                return <img style={style} onClick={toggleVisible} src={`editor/icons/${value ? 'visible' : 'hidden'}.svg`}/>;
             }
         },
         {

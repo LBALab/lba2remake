@@ -147,7 +147,7 @@ async function findAllReferencesToAnim(anim, component) {
             icon: 'editor/icons/anim.svg',
             children: map(filteredEntities, e => ({
                 name: DebugData.metadata.entities[e.index] || `entity_${e.index}`,
-                icon: 'editor/icons/entity.png',
+                icon: 'editor/icons/entity.svg',
                 iconStyle: {
                     width: 20,
                     height: 20

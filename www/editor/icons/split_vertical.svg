@@ -10,20 +10,20 @@
 <g id="group">
 	<g id="rectangles">
 		<g id="rectangle_left">
-			<rect id="rectangle_left_color" x="0" class="st0" width="50" height="22.5"/>
-			<path id="rectangle_left_lining" d="M47,19.5H3V3h44V19.5 M50,22.5V0L0,0l0,22.5H50L50,22.5z"/>
+			<rect id="rectangle_left_color" x="1.3" y="1.1" class="st0" width="47.5" height="20.3"/>
+			<path id="rectangle_left_lining" d="M47,19.5H3V3h44V19.5 M50,22.5V0H0v22.5H50L50,22.5z"/>
 		</g>
 		<g id="rectangle_right">
-			<rect id="rectangle_right_color" x="0" y="27.5" class="st1" width="50" height="22.5"/>
-			<path id="rectangle_right_lining" d="M47,47H3V30.5h44V47 M50,50V27.5H0L0,50H50L50,50z"/>
+			<rect id="rectangle_right_color" x="1.3" y="28.6" class="st1" width="47.5" height="20.3"/>
+			<path id="rectangle_right_lining" d="M47,47H3V30.5h44V47 M50,50V27.5H0V50H50L50,50z"/>
 		</g>
 	</g>
 	<g id="arrows">
 		<path id="arrow_color" class="st2" d="M28,35.5V14.3l7.1,5.7v-7.1L26,5.6c-0.6-0.5-1.7-0.5-2.3,0l-8.8,7v7.1l6.8-5.5v21.2L14.9,30
 			v7.1l8.8,7c0.6,0.5,1.7,0.5,2.3,0l9.1-7.3v-7.1L28,35.5z"/>
-		<path id="arrow_lining" d="M13.9,37.5v-9.6l6.8,5.5v-17l-6.8,5.5v-9.6l9.2-7.3c1-0.8,2.6-0.8,3.6,0l9.5,7.6v9.6L29,16.4v17
-			l7.1-5.7v9.6l-9.5,7.6c-1,0.8-2.6,0.8-3.6,0L13.9,37.5z M15.9,32.1v4.5l8.4,6.7c0.3,0.2,0.8,0.2,1.1,0l8.7-7v-4.5L27,37.5V12.2
-			l7.1,5.7v-4.5l-8.7-7c-0.3-0.2-0.8-0.2-1.1,0l-8.4,6.7v4.5l6.8-5.5v25.3L15.9,32.1z"/>
+		<path id="arrow_lining" d="M13.9,37.5v-9.6l6.8,5.5v-17l-6.8,5.5v-9.6L23.1,5c1-0.8,2.6-0.8,3.6,0l9.5,7.6v9.6L29,16.4v17l7.1-5.7
+			v9.6l-9.5,7.6c-1,0.8-2.6,0.8-3.6,0L13.9,37.5z M15.9,32.1v4.5l8.4,6.7c0.3,0.2,0.8,0.2,1.1,0l8.7-7v-4.5L27,37.5V12.2l7.1,5.7
+			v-4.5l-8.7-7c-0.3-0.2-0.8-0.2-1.1,0l-8.4,6.7v4.5l6.8-5.5v25.3L15.9,32.1z"/>
 	</g>
 </g>
 </svg>

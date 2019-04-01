@@ -41,7 +41,7 @@ const Actor = {
                     }
                 };
                 return <img
-                    src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}
+                    src={`editor/icons/${value ? 'visible' : 'hidden'}.svg`}
                     onClick={onClick}
                     style={{cursor: 'pointer', width: 14, height: 14}}
                 />;

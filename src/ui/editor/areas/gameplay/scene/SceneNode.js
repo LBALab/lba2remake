@@ -29,7 +29,7 @@ const VarGameConfig = {
 const VarGame = {
     dynamic: true,
     name: () => 'Game Variables',
-    icon: () => 'editor/icons/var.png',
+    icon: () => 'editor/icons/var.svg',
     numChildren: (scene) => {
         const {game} = DebugData.scope;
         if (scene && game) {
@@ -78,7 +78,7 @@ const VarGame = {
                 };
                 return <input type="checkbox" checked={value} onChange={onChange}/>;
             },
-            icon: () => 'editor/icons/settings.png',
+            icon: () => 'editor/icons/settings.svg',
             color: '#AAAAAA'
         },
         {
@@ -91,7 +91,7 @@ const VarGame = {
                 };
                 return <input type="checkbox" checked={value} onChange={onChange}/>;
             },
-            icon: () => 'editor/icons/settings.png',
+            icon: () => 'editor/icons/settings.svg',
             color: '#AAAAAA'
         }
     ]

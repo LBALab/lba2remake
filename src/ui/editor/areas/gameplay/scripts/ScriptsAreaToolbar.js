@@ -113,7 +113,7 @@ export default class ScriptsAreaToolbar extends FrameListener {
             </span>
             &nbsp;
             <img style={iconStyle} onClick={reset} src="editor/icons/reset.svg"/>
-            {paused ? <img style={iconStyle} onClick={step} src="editor/icons/step.png"/> : null}
+            {paused ? <img style={iconStyle} onClick={step} src="editor/icons/step.svg"/> : null}
             <img style={iconStyle} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
             <label style={{float: 'right'}}><input key="autoScroll" type="checkbox" onChange={toggleAutoScroll} checked={autoScroll} style={inputStyle}/>Autoscroll</label>
         </React.Fragment>;

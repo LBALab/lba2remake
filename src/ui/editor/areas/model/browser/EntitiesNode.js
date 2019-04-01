@@ -131,7 +131,7 @@ function getIcon(data, component) {
         return savedIcon;
     }
     saveIcon(data, component);
-    return 'editor/icons/entity.png';
+    return 'editor/icons/entity.svg';
 }
 
 const EntitiesNode = {

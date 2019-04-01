@@ -187,7 +187,7 @@ export class InspectorAreaContent extends React.Component {
                     {React.createElement(content, props)}
                     <img
                         style={trashIconStyle}
-                        src="editor/icons/trash.png"
+                        src="editor/icons/trash.svg"
                         onClick={this.props.stateHandler.removeWatch.bind(null, w.id)}
                     />
                 </div>;
