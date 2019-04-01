@@ -107,7 +107,7 @@ export function getVarName(varDef) {
     if (info) {
         return info.name;
     }
-    return `${varDef.type}${varDef.idx}`;
+    return `var_${varDef.idx}`;
 }
 
 export function renameObject(type, sceneIndex, objIndex, name) {
