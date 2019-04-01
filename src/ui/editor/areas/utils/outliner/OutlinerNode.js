@@ -151,7 +151,7 @@ export default class OutlinerNode extends React.Component {
         }
 
         const lineStyle = Object.assign({
-            marginLeft: 16,
+            marginLeft: 12,
             display: 'inline-block',
             whiteSpace: 'normal'
         }, this.props.node.lineStyle || {});
