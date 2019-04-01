@@ -129,18 +129,18 @@ export function makeVariables(type, name, getVars, getCtx) {
         icon: () => 'editor/icons/var.svg',
         numChildren: data => getVars(data).length,
         child: () => Var,
-        childData: (data, idx) => makeVarDef(type, idx, getVars, getCtx.bind(null, data))
+        childData: (data, idx) => makeVarDef(data, type, idx, getVars, getCtx)
     };
 }
 
-export function makeVarDef(type, idx, getVars, getCtx) {
+export function makeVarDef(data, type, idx, getVars, getCtx) {
     return {
         type,
         key: `${type}_${idx}`,
-        ctx: getCtx && getCtx(),
-        value: () => getVars()[idx],
+        ctx: getCtx && getCtx(data),
+        value: () => getVars(data)[idx],
         edit: (value) => {
-            getVars()[idx] = value;
+            getVars(data)[idx] = value;
         },
         idx
     };

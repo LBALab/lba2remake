@@ -7,7 +7,7 @@ import {PointsNode} from './nodes/PointsNode';
 import {makeVarDef, makeVariables, Var} from './node_factories/variables';
 import LocationsNode from '../locator/LocationsNode';
 
-const VarCube = makeVariables('varcube', 'Local Variables', (scene) => {
+const VarCube = makeVariables('varcube', 'Scene Variables', (scene) => {
     if (scene) {
         return scene.variables;
     }
@@ -59,10 +59,10 @@ const VarGame = {
                     : scene.usedVarGames;
                 const varGame = usedVarGames[idx];
                 if (varGame !== undefined) {
-                    return makeVarDef('vargame', varGame, () => state.flags.quest, () => null);
+                    return makeVarDef(null, 'vargame', varGame, () => state.flags.quest, () => null);
                 }
             } else {
-                return makeVarDef('vargame', idx, () => state.flags.quest, () => null);
+                return makeVarDef(null, 'vargame', idx, () => state.flags.quest, () => null);
             }
         }
         return null;
