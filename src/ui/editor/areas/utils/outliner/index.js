@@ -5,7 +5,6 @@ export function makeOutlinerArea(id, name, content, extensions = {}) {
     return {
         id,
         name,
-        menu: extensions.menu,
         icon: extensions.icon,
         content: makeContentComponent(
             content,

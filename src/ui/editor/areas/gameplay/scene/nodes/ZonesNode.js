@@ -78,5 +78,27 @@ export const ZonesNode = makeObjectsNode('zone', {
     numChildren: scene => scene.zones.length,
     child: () => Zone,
     childData: (scene, idx) => scene.zones[idx],
-    hasChanged: scene => scene.index !== DebugData.scope.scene.index
+    hasChanged: scene => scene.index !== DebugData.scope.scene.index,
+    props: (data, ignored, component) => {
+        const label = component.props.rootState.labels.zone;
+        return [{
+            id: 'visible',
+            value: label,
+            render: (visible) => {
+                const style = {
+                    width: 14,
+                    height: 14,
+                    cursor: 'pointer'
+                };
+                const onClick = () => {
+                    component.props.rootStateHandler.setLabel('zone', !label);
+                };
+                return <img
+                    style={style}
+                    src={`editor/icons/${visible ? 'visible' : 'hidden'}.svg`}
+                    onClick={onClick}
+                />;
+            }
+        }];
+    }
 });

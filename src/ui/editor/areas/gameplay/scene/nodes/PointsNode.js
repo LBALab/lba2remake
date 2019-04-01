@@ -1,3 +1,4 @@
+import React from 'react';
 import DebugData, {getObjectName, renameObject, locateObject} from '../../../../DebugData';
 import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {makeObjectsNode} from '../node_factories/objects';
@@ -39,5 +40,27 @@ export const PointsNode = makeObjectsNode('point', {
     numChildren: scene => scene.points.length,
     child: () => Point,
     childData: (scene, idx) => scene.points[idx],
-    hasChanged: scene => scene.index !== DebugData.scope.scene.index
+    hasChanged: scene => scene.index !== DebugData.scope.scene.index,
+    props: (data, ignored, component) => {
+        const label = component.props.rootState.labels.point;
+        return [{
+            id: 'visible',
+            value: label,
+            render: (visible) => {
+                const style = {
+                    width: 14,
+                    height: 14,
+                    cursor: 'pointer'
+                };
+                const onClick = () => {
+                    component.props.rootStateHandler.setLabel('point', !label);
+                };
+                return <img
+                    style={style}
+                    src={`editor/icons/${visible ? 'visible' : 'hidden'}.svg`}
+                    onClick={onClick}
+                />;
+            }
+        }];
+    }
 });

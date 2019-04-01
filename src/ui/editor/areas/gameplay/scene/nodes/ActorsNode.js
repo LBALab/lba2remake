@@ -181,7 +181,29 @@ export const ActorsNode = makeObjectsNode('actor', {
     numChildren: scene => scene.actors.length,
     child: () => Actor,
     childData: (scene, idx) => scene.actors[idx],
-    hasChanged: scene => scene.index !== DebugData.scope.scene
+    hasChanged: scene => scene.index !== DebugData.scope.scene,
+    props: (data, ignored, component) => {
+        const label = component.props.rootState.labels.actor;
+        return [{
+            id: 'visible',
+            value: label,
+            render: (visible) => {
+                const style = {
+                    width: 14,
+                    height: 14,
+                    cursor: 'pointer'
+                };
+                const onClick = () => {
+                    component.props.rootStateHandler.setLabel('actor', !label);
+                };
+                return <img
+                    style={style}
+                    src={`editor/icons/${visible ? 'visible' : 'hidden'}.svg`}
+                    onClick={onClick}
+                />;
+            }
+        }];
+    }
 });
 
 function getComportement(actor) {
