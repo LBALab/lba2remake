@@ -1,5 +1,5 @@
 import ModelEditorContent from './ModelEditorContent';
-import ModelEditorMenu from './ModelEditorMenu';
+import ModelEditorSettings from './ModelEditorSettings';
 import {Orientation, Type} from '../../layout';
 import {
     EntityBrowserArea,
@@ -14,7 +14,7 @@ const ModelEditor = {
     name: 'Model Editor',
     icon: 'model.png',
     content: ModelEditorContent,
-    menu: ModelEditorMenu,
+    settings: ModelEditorSettings,
     mainArea: true,
     getInitialState: () => ({
         entity: 0,
