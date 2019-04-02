@@ -54,7 +54,9 @@ const trashIconStyle = {
     cursor: 'pointer',
     background: 'rgba(0, 0, 0, 0.5)',
     border: '1px solid rgba(255, 255, 255, 0.5)',
-    borderRadius: 4
+    borderRadius: 4,
+    width: 22,
+    height: 22
 };
 
 const funcEditorStyle = extend({}, mainStyle, {
@@ -269,6 +271,8 @@ export class InspectorAreaContent extends React.Component {
             position: 'absolute',
             top: 4,
             right: 4,
+            width: 16,
+            height: 16
         };
 
         const jPath = path.join('.');
