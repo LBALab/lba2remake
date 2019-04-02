@@ -6,11 +6,13 @@ import SceneArea from './scene/SceneArea';
 import LocatorArea from './locator/LocatorArea';
 import PaletteArea from './palette/PaletteArea';
 import SceneGraphArea from './sceneGraph/SceneGraphArea';
+import GameplayEditorSettings from './GameplayEditorSettings';
 import {Orientation, Type} from '../../layout';
 
 const GameplayEditor = {
     id: 'game',
     name: 'Gameplay Editor',
+    settings: GameplayEditorSettings,
     content: GameUI,
     icon: 'game.png',
     mainArea: true,
