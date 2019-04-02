@@ -44,7 +44,6 @@ const settingsStyle = extend({}, editor.base, {
     padding: 20,
     borderLeft: '1px solid rgb(0,122,204)',
     borderBottom: '1px solid rgb(0,122,204)',
-    borderRadius: 4,
     background: '#1F1F1F'
 });
 
