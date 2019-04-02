@@ -15,7 +15,6 @@ import CinemaEffect from './game/CinemaEffect';
 import TextBox from './game/TextBox';
 import AskChoice from './game/AskChoice';
 import TextInterjections from './game/TextInterjections';
-import DebugLabels from './editor/DebugLabels';
 import FoundObject from './game/FoundObject';
 import Loader from './game/Loader';
 import Video from './game/Video';
@@ -25,6 +24,7 @@ import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
 import {sBind} from '../utils.ts';
 import {updateVRGui} from './vr/vrGui';
+import {updateLabels} from './editor/labels';
 
 export default class GameUI extends FrameListener {
     constructor(props) {
@@ -273,6 +273,9 @@ export default class GameUI extends FrameListener {
             );
             updateVRGui(presenting);
             if (this.props.params.editor) {
+                updateLabels(scene, this.props.sharedState.labels);
+            }
+            if (this.props.params.editor) {
                 DebugData.scope = {
                     params: this.props.params,
                     game,
@@ -327,14 +330,6 @@ export default class GameUI extends FrameListener {
             return null;
 
         return <React.Fragment>
-            {this.props.params.editor ?
-                <DebugLabels
-                    params={this.props.params}
-                    labels={this.props.sharedState.labels}
-                    scene={this.state.scene}
-                    renderer={this.state.renderer}
-                    ticker={this.props.ticker}
-                /> : null}
             <CinemaEffect enabled={this.state.cinema} />
             <TextInterjections
                 scene={this.state.scene}

@@ -147,7 +147,7 @@ export function getObjectName(type, sceneIndex, objIndex) {
             return sceneMetaData[key][objIndex];
         }
     }
-    return `${type}${objIndex}`;
+    return `${type[0]}_${objIndex}`;
 }
 
 export function locateObject(object) {

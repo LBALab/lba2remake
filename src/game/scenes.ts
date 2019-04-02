@@ -157,12 +157,13 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         skyColor: [0, 0, 0],
         fogDensity: 0,
     };
+    const is3DCam = indexInfo.isIsland || renderer.vr || params.iso3d;
     const actors = await Promise.all(map(
         sceneData.actors,
-        actor => loadActor(params, envInfo, sceneData.ambience, actor, parent)
+        actor => loadActor(params, is3DCam, envInfo, sceneData.ambience, actor, parent)
     ));
-    const points = map(sceneData.points, loadPoint);
-    const zones = map(sceneData.zones, loadZone);
+    const points = map(sceneData.points, props => loadPoint(props, is3DCam));
+    const zones = map(sceneData.zones, props => loadZone(props, is3DCam));
 
     let scenery = null;
     let threeScene = null;

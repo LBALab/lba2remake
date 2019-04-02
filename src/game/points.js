@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import {getObjectName} from '../ui/editor/DebugData';
 import { compile } from '../utils/shaders';
+import {createPointLabel} from '../ui/editor/labels';
 
-export function loadPoint(props) {
+export function loadPoint(props, is3DCam) {
     const pos = props.pos;
     const point = {
         type: 'point',
@@ -15,12 +16,14 @@ export function loadPoint(props) {
 
     // For debug purposes
     const flag = makeFlag();
-    flag.name = `point:${getObjectName('point', props.sceneIndex, props.index)}`;
+    const name = getObjectName('point', props.sceneIndex, props.index);
+    flag.name = `point:${name}`;
     flag.visible = false;
     flag.position.set(point.physics.position.x, point.physics.position.y, point.physics.position.z);
     flag.matrixAutoUpdate = false;
 
     point.threeObject = flag;
+    createPointLabel(point, name, is3DCam);
 
     return point;
 }

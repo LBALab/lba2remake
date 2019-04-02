@@ -33,7 +33,7 @@ export default function GameplayEditorSettings(props) {
     const l = props.sharedState.labels;
 
     return <div>
-        <div style={headerStyle}>Display bounding boxes:</div>
+        <div style={headerStyle}>Display labels:</div>
         <div style={lineStyle}>
             <label>
                 <input type="checkbox" onChange={changeLabel.bind(null, 'actor')} checked={l.actor} style={inputStyle}/>

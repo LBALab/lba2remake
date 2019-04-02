@@ -1,21 +1,20 @@
 import * as THREE from 'three';
-import {createBoundingBox} from '../utils/rendering';
 import {getObjectName} from '../ui/editor/DebugData';
+import {createBoundingBox} from '../utils/rendering';
+import {createZoneLabel} from '../ui/editor/labels';
 
-/*
-const ZONE_TYPE = {
-    GOTO_SCENE: 0,
-    CAMERA:     1,
-    SCENERIC:   2,
-    FRAGMENT:   3,
-    BONUS:      4,
-    TEXT:       5,
-    LADDER:     6,
-    CONVEYOR:   7,
-    SPIKE:      8,
-    RAIL:       9
-};
-*/
+const ZONE_TYPE = [
+    'GOTO_SCENE',
+    'CAMERA',
+    'SCENERIC',
+    'FRAGMENT',
+    'BONUS',
+    'TEXT',
+    'LADDER',
+    'CONVEYOR',
+    'SPIKE',
+    'RAIL'
+];
 
 const ZONE_TYPE_MATERIAL_COLOR = [
     '#84ff84',
@@ -30,10 +29,11 @@ const ZONE_TYPE_MATERIAL_COLOR = [
     '#008000',
 ];
 
-export function loadZone(props) {
+export function loadZone(props, is3DCam) {
     const pos = props.pos;
     const zone = {
         type: 'zone',
+        zoneType: ZONE_TYPE[props.type],
         index: props.index,
         props,
         color: new THREE.Color(ZONE_TYPE_MATERIAL_COLOR[props.type]),
@@ -48,11 +48,13 @@ export function loadZone(props) {
         new THREE.Vector3(xMax, yMax, zMax)
     );
     const bbGeom = createBoundingBox(bb, zone.color);
-    bbGeom.name = `zone:${getObjectName('zone', props.sceneIndex, props.index)}`;
+    const name = getObjectName('zone', props.sceneIndex, props.index);
+    bbGeom.name = `zone:${name}`;
     bbGeom.visible = false;
     bbGeom.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
     bbGeom.matrixAutoUpdate = false;
     zone.threeObject = bbGeom;
+    createZoneLabel(zone, name, is3DCam);
 
     return zone;
 }
