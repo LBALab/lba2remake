@@ -167,9 +167,8 @@ const Actor = {
         return selection && selection.type === 'actor' && selection.index === actor.index;
     },
     onClick: (actor) => { DebugData.selection = {type: 'actor', index: actor.index}; },
-    onDoubleClick: (actor, component, setRoot) => {
+    onDoubleClick: (actor) => {
         locateObject(actor);
-        setRoot();
     }
 };
 
