@@ -156,7 +156,6 @@ export function createActorLabel(actor, name, is3DCam) {
     icon.onload = () => draw();
     const spriteMaterial = new THREE.SpriteMaterial({
         map: texture,
-        color: 0xffffff,
         depthTest: false
     });
     // @ts-ignore
@@ -190,6 +189,7 @@ export function createZoneLabel(zone, name, is3DCam) {
     icon.src = `editor/icons/zones/${zone.zoneType}.svg`;
     const texture = new THREE.CanvasTexture(canvas);
     const draw = (selected = false) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.font = '16px LBA';
         ctx.textAlign = 'center';
         const textWidth = Math.min(ctx.measureText(name).width, 256 - 64);
@@ -207,7 +207,6 @@ export function createZoneLabel(zone, name, is3DCam) {
     icon.onload = () => draw();
     const spriteMaterial = new THREE.SpriteMaterial({
         map: texture,
-        color: 0xffffff,
         depthTest: false
     });
     // @ts-ignore
@@ -237,6 +236,7 @@ export function createPointLabel(point, name, is3DCam) {
     iconDark.src = 'editor/icons/point_black_lining.svg';
     const texture = new THREE.CanvasTexture(canvas);
     const draw = (selected = false) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.font = '16px LBA';
         ctx.textAlign = 'center';
         const textWidth = Math.min(ctx.measureText(name).width, 256 - 64);
@@ -254,16 +254,15 @@ export function createPointLabel(point, name, is3DCam) {
     icon.onload = () => draw();
     const spriteMaterial = new THREE.SpriteMaterial({
         map: texture,
-        color: 0xffffff,
         depthTest: false
     });
-    // @ts-ignore
-    spriteMaterial.sizeAttenuation = false;
     const sprite = new THREE.Sprite(spriteMaterial);
     if (is3DCam) {
-        sprite.scale.set(0.2, 0.05, 1);
+        sprite.scale.set(2, 0.5, 1);
     } else {
         sprite.scale.set(200, 50, 1);
+        // @ts-ignore
+        spriteMaterial.sizeAttenuation = false;
     }
     sprite.renderOrder = 2;
     sprite.name = `label:${name}`;
