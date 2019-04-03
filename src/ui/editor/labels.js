@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {each} from 'lodash';
 import DebugData from './DebugData';
+import { ZONE_TYPE } from '../../game/zones';
 
 let currentScene = null;
 const selection = {
@@ -10,7 +11,8 @@ const selection = {
 const currentLabels = {
     actor: null,
     zone: null,
-    point: null
+    point: null,
+    zoneTypes: []
 };
 
 export function updateLabels(scene, labels) {
@@ -22,20 +24,22 @@ export function updateLabels(scene, labels) {
             toggleActors(currentScene, false);
         }
         if (labels.zone) {
-            toggleZones(currentScene, false);
+            toggleZones(currentScene, false, labels.zoneTypes || []);
         }
         if (labels.point) {
             togglePoints(currentScene, false);
         }
         toggleActors(scene, labels.actor);
-        toggleZones(scene, labels.zone);
+        toggleZones(scene, labels.zone, labels.zoneTypes || []);
         togglePoints(scene, labels.point);
     } else if (labels.actor !== currentLabels.actor) {
         toggleActors(scene, labels.actor);
         currentLabels.actor = labels.actor;
-    } else if (labels.zone !== currentLabels.zone) {
-        toggleZones(scene, labels.zone);
+    } else if (labels.zone !== currentLabels.zone
+                || labels.zoneTypes !== currentLabels.zoneTypes) {
+        toggleZones(scene, labels.zone, labels.zoneTypes || []);
         currentLabels.zone = labels.zone;
+        currentLabels.zoneTypes = labels.zoneTypes;
     } else if (labels.point !== currentLabels.point) {
         togglePoints(scene, labels.point);
         currentLabels.point = labels.point;
@@ -85,9 +89,10 @@ function toggleActors(scene, enabled) {
     }
 }
 
-function toggleZones(scene, enabled) {
+function toggleZones(scene, gEnabled, zoneTypes) {
     if (scene) {
         each(scene.zones, (zone) => {
+            const enabled = gEnabled && zoneTypes.includes(ZONE_TYPE[zone.props.type]);
             zone.threeObject.visible = enabled;
             if (enabled) {
                 zone.threeObject.updateMatrix();

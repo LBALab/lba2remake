@@ -1,4 +1,5 @@
 import React from 'react';
+import { ZONE_TYPE } from '../../../../game/zones';
 
 const inputStyle = {
     textAlign: 'center',
@@ -48,6 +49,7 @@ export default function GameplayEditorSettings(props) {
                 Zones
             </label>
         </div>
+        {renderZoneTypes(props)}
         <div style={lineStyle}>
             <label>
                 <input type="checkbox" onChange={changeLabel.bind(null, 'point')} checked={l.point} style={inputStyle}/>
@@ -55,5 +57,26 @@ export default function GameplayEditorSettings(props) {
                 Points
             </label>
         </div>
+    </div>;
+}
+
+function renderZoneTypes(props) {
+    const changeZoneType = (type, e) => {
+        props.stateHandler.setZoneTypeLabel(type, e.target.checked);
+    };
+
+    const selectedZoneTypes = props.sharedState.labels.zoneTypes || [];
+    const inputs = ZONE_TYPE.map((type) => {
+        const checked = selectedZoneTypes.includes(type);
+        return <div key={type} style={lineStyle}>
+            <label>
+                <input type="checkbox" onChange={changeZoneType.bind(null, type)} checked={checked} style={inputStyle}/>
+                <img style={iconStyle} src={`editor/icons/zones/${type}.svg`}/>
+                {type}
+            </label>
+        </div>;
+    });
+    return <div style={{paddingLeft: '3ch', paddingBottom: '4px'}}>
+        {inputs}
     </div>;
 }

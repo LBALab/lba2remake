@@ -8,6 +8,7 @@ import PaletteArea from './palette/PaletteArea';
 import SceneGraphArea from './sceneGraph/SceneGraphArea';
 import GameplayEditorSettings from './GameplayEditorSettings';
 import {Orientation, Type} from '../../layout';
+import {ZONE_TYPE} from '../../../../game/zones';
 
 const GameplayEditor = {
     id: 'game',
@@ -20,7 +21,8 @@ const GameplayEditor = {
         labels: {
             actor: false,
             zone: false,
-            point: false
+            point: false,
+            zoneTypes: clone(ZONE_TYPE)
         }
     }),
     stateHandler: {
@@ -28,6 +30,20 @@ const GameplayEditor = {
             const labels = clone(this.state.labels);
             labels[type] = value;
             this.setState({labels});
+        },
+        setZoneTypeLabel(type, enabled) {
+            const zoneTypes = new Set(this.state.labels.zoneTypes);
+            if (enabled) {
+                zoneTypes.add(type);
+            } else {
+                zoneTypes.delete(type);
+            }
+            this.setState({
+                labels: {
+                    ...this.state.labels,
+                    zoneTypes: Array.from(zoneTypes)
+                }
+            });
         }
     },
     toolAreas: [
