@@ -78,6 +78,10 @@ window.onerror = (message, file, line, column, data) => {
     init({message, file, line, column, stack, data});
 };
 
+window.addEventListener('unhandledrejection', (event) => {
+    init(event.reason);
+});
+
 function init(error) {
     const ticker = new Ticker();
     const Renderer = () => (error
