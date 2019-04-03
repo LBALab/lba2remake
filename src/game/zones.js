@@ -4,7 +4,7 @@ import {createBoundingBox} from '../utils/rendering';
 import {createZoneLabel} from '../ui/editor/labels';
 
 const ZONE_TYPE = [
-    'GOTO_SCENE',
+    'TELEPORT',
     'CAMERA',
     'SCENERIC',
     'FRAGMENT',
@@ -17,16 +17,16 @@ const ZONE_TYPE = [
 ];
 
 const ZONE_TYPE_MATERIAL_COLOR = [
-    '#84ff84',
-    '#ff8000',
-    '#6495ed',
-    '#ff00ff',
-    '#ffff6c',
-    '#00ff00',
-    '#5555ff',
-    '#96c09f',
-    '#ffc475',
-    '#008000',
+    '#84ff84', // TELEPORT
+    '#ffb200', // CAMERA
+    '#6495ed', // SCENERIC
+    '#ff00ff', // FRAGMENT
+    '#e7b5d6', // BONUS
+    '#ff7448', // TEXT
+    '#5555ff', // LADDER
+    '#96c09f', // CONVEYOR
+    '#ffc475', // SPIKE
+    '#008000', // RAIL
 ];
 
 export function loadZone(props, is3DCam) {

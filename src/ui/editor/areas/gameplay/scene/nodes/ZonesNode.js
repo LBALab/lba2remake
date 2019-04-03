@@ -4,7 +4,7 @@ import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {makeObjectsNode} from '../node_factories/objects';
 
 const ZONE_TYPE = [
-    'GOTO_SCENE',
+    'TELEPORT',
     'CAMERA',
     'SCENERIC',
     'FRAGMENT',
