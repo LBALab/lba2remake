@@ -162,7 +162,7 @@ export function createActorLabel(actor, name, is3DCam) {
     spriteMaterial.sizeAttenuation = false;
     const sprite = new THREE.Sprite(spriteMaterial);
     if (is3DCam) {
-        sprite.scale.set(0.2, 0.05, 1);
+        sprite.scale.set(0.4, 0.1, 1);
     } else {
         sprite.scale.set(200, 50, 1);
     }
@@ -213,7 +213,7 @@ export function createZoneLabel(zone, name, is3DCam) {
     spriteMaterial.sizeAttenuation = false;
     const sprite = new THREE.Sprite(spriteMaterial);
     if (is3DCam) {
-        sprite.scale.set(0.2, 0.05, 1);
+        sprite.scale.set(0.3, 0.075, 1);
     } else {
         sprite.scale.set(200, 50, 1);
     }
