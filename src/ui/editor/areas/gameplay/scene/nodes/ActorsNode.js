@@ -197,7 +197,7 @@ export const ActorsNode = makeObjectsNode('actor', {
                 };
                 return <img
                     style={style}
-                    src={`editor/icons/${visible ? 'visible' : 'hidden'}.svg`}
+                    src={`editor/icons/${visible ? 'visible' : 'hidden'}_actors.svg`}
                     onClick={onClick}
                 />;
             }

@@ -94,7 +94,7 @@ export const ZonesNode = makeObjectsNode('zone', {
                 };
                 return <img
                     style={style}
-                    src={`editor/icons/${visible ? 'visible' : 'hidden'}.svg`}
+                    src={`editor/icons/${visible ? 'visible' : 'hidden'}_zones.svg`}
                     onClick={onClick}
                 />;
             }

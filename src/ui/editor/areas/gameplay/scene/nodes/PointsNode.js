@@ -56,7 +56,7 @@ export const PointsNode = makeObjectsNode('point', {
                 };
                 return <img
                     style={style}
-                    src={`editor/icons/${visible ? 'visible' : 'hidden'}.svg`}
+                    src={`editor/icons/${visible ? 'visible' : 'hidden'}_points.svg`}
                     onClick={onClick}
                 />;
             }
