@@ -170,6 +170,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
     let camera = null;
     if (!parent) {
         threeScene = new THREE.Scene();
+        makeLight(threeScene, sceneData.ambience);
         if (indexInfo.isIsland) {
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
             threeScene.name = '3D_scene';
@@ -458,4 +459,19 @@ function relocateHero(hero, newHero, newScene, teleport) {
     hero.animState = null;
     hero.model = null;
     hero.threeObject = null;
+}
+
+function makeLight(threeScene, ambience) {
+    const light = new THREE.DirectionalLight();
+    light.name = 'light';
+    light.position.set(-1000, 0, 0);
+    light.position.applyAxisAngle(
+        new THREE.Vector3(0, 0, 1),
+        -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
+    );
+    light.position.applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
+    );
+    threeScene.add(light);
 }

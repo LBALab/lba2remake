@@ -23,10 +23,10 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
                 clock.elapsedTime += 0.05;
             }
             scene.scenery.update(game, scene, time);
-            updateScene(game, scene, time);
+            updateScene(params, game, scene, time);
             processPhysicsFrame(game, scene, time);
             each(scene.sideScenes, (sideScene) => {
-                updateScene(game, sideScene, time);
+                updateScene(params, game, sideScene, time);
                 processPhysicsFrame(game, sideScene, time);
             });
             if (scene.firstFrame) {
@@ -53,7 +53,7 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
 }
 
 
-function updateScene(game, scene, time, step) {
+function updateScene(params, game, scene, time, step) {
     // playAmbience(game, scene, time);
     each(scene.actors, (actor) => {
         if (actor.isKilled)
@@ -65,6 +65,11 @@ function updateScene(game, scene, time, step) {
             }
         }
     });
+    if (scene.isActive && params.editor) {
+        each(scene.points, (point) => {
+            point.update(scene.camera);
+        });
+    }
 }
 
 // eslint-disable-next-line no-unused-vars

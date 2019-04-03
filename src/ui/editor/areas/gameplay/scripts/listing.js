@@ -222,7 +222,7 @@ export function mapDataName(scene, data) {
     } else if (data.type === 'text') {
         const ellipsis = data.text.length > 50 ? '_[...]' : '';
         return ['`', data.text.substring(0, 50), ellipsis, '`'].join('');
-    } else if (data.type === 'actor' || data.type === 'point') {
+    } else if (data.type === 'actor') {
         if (data.value === -1)
             return 'none';
         return getObjectName(data.type, scene.index, data.value);

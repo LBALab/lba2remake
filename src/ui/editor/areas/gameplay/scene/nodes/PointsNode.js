@@ -1,5 +1,5 @@
 import React from 'react';
-import DebugData, {getObjectName, renameObject, locateObject} from '../../../../DebugData';
+import DebugData, {locateObject} from '../../../../DebugData';
 import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {makeObjectsNode} from '../node_factories/objects';
 
@@ -7,16 +7,13 @@ const Point = {
     dynamic: true,
     needsData: true,
     allowRenaming: () => true,
-    rename: (point, newName) => {
-        renameObject('point', point.props.sceneIndex, point.index, newName);
-    },
     ctxMenu: [
         {
             name: 'Locate',
             onClick: (component, point) => locateObject(point)
         }
     ],
-    name: point => getObjectName('point', point.props.sceneIndex, point.index),
+    name: point => point.index,
     icon: () => 'editor/icons/point2.svg',
     numChildren: point => (point.threeObject ? 1 : 0),
     child: () => SceneGraphNode,
@@ -30,11 +27,6 @@ const Point = {
         locateObject(point);
     },
     props: point => [
-        {
-            id: 'index',
-            value: point.index,
-            render: value => <span>#{value}</span>
-        },
         {
             id: 'visible',
             value: point.threeObject.visible,
