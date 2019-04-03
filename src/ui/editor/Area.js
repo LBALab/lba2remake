@@ -3,6 +3,7 @@ import {map, findIndex, extend, isEmpty} from 'lodash';
 import {editor, fullscreen} from '../styles/index';
 import {Orientation} from './layout';
 import NewArea, {NewAreaContent} from './areas/utils/NewArea';
+import SettingsIcon from '../utils/SettingsIcon';
 
 const menuHeight = 26;
 
@@ -167,7 +168,11 @@ export default class Area extends React.Component {
             this.setState({settings: !this.state.settings});
         };
 
-        const settingsIcon = settings && <img style={iconStyle({right: ((numIcons) * 26) + 2})} onClick={switchSettings} src="editor/icons/settings.svg"/>;
+        const settingsIcon = settings
+            && <SettingsIcon
+                style={iconStyle({right: ((numIcons) * 26) + 2})}
+                onClick={switchSettings}
+            />;
 
         return <div style={menuStyle(numIcons, isMain)}>
             <img onClick={onClickIcon} style={mainIconStyle()} src={`editor/icons/areas/${icon}`}/>
