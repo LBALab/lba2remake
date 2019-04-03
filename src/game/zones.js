@@ -3,7 +3,7 @@ import {getObjectName} from '../ui/editor/DebugData';
 import {createBoundingBox} from '../utils/rendering';
 import {createZoneLabel} from '../ui/editor/labels';
 
-const ZONE_TYPE = [
+export const ZONE_TYPE = [
     'TELEPORT',
     'CAMERA',
     'SCENERIC',

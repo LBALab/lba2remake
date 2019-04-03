@@ -2,19 +2,7 @@ import React from 'react';
 import DebugData, {getObjectName, renameObject, locateObject} from '../../../../DebugData';
 import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {makeObjectsNode} from '../node_factories/objects';
-
-const ZONE_TYPE = [
-    'TELEPORT',
-    'CAMERA',
-    'SCENERIC',
-    'FRAGMENT',
-    'BONUS',
-    'TEXT',
-    'LADDER',
-    'CONVEYOR',
-    'SPIKE',
-    'RAIL'
-];
+import {ZONE_TYPE} from '../../../../../../game/zones';
 
 const Zone = {
     dynamic: true,
