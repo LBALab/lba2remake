@@ -7,6 +7,7 @@ const ScriptsArea = {
     content: ScriptsAreaContent,
     getInitialState: () => ({
         autoScroll: true,
+        objectLabels: false,
         actorIndex: 0,
     }),
     stateHandler: {
@@ -15,6 +16,9 @@ const ScriptsArea = {
         },
         setAutoScroll(autoScroll) {
             this.setState({autoScroll});
+        },
+        setObjectLabels(objectLabels) {
+            this.setState({objectLabels});
         },
         setActor(actorIndex) {
             this.setState({actorIndex});

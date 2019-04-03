@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import {extend, map, filter, tail, first} from 'lodash';
+import {extend, map, filter, tail, first, each, find} from 'lodash';
 import {fullscreen} from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';
 import {getDebugListing} from './listing';
@@ -58,6 +58,9 @@ export default class ScriptEditor extends FrameListener {
 
     componentWillUnmount() {
         super.componentWillUnmount();
+        if (DebugData.scriptDebugLabels) {
+            DebugData.scriptDebugLabels = null;
+        }
         document.removeEventListener('mousedown', this.enableSeparator);
         document.removeEventListener('mousemove', this.updateSeparator);
         document.removeEventListener('mouseup', this.disableSeparator);
@@ -131,6 +134,53 @@ export default class ScriptEditor extends FrameListener {
         if (this.scene && this.actor) {
             this.updateActiveLines('life');
             this.updateActiveLines('move');
+            this.updateObjectLabels();
+        } else {
+            DebugData.scriptDebugLabels = null;
+        }
+    }
+
+    updateObjectLabels() {
+        if (this.props.sharedState.objectLabels) {
+            if ((!DebugData.scriptDebugLabels
+                || DebugData.scriptDebugLabels.actor !== this.actor)) {
+                const debugLabels = {
+                    actor: this.actor,
+                    actors: [],
+                    zones: [],
+                    points: []
+                };
+                const checkArg = (arg) => {
+                    if (arg.type === 'actor') {
+                        debugLabels.actors.push(arg.value);
+                    }
+                    if (arg.type === 'zone') {
+                        const zone = find(this.scene.zones, z =>
+                            z.props.type === 2 && z.props.snap === arg.value
+                        );
+                        if (zone) {
+                            debugLabels.zones.push(zone.index);
+                        }
+                    }
+                    if (arg.type === 'point') {
+                        debugLabels.points.push(arg.value);
+                    }
+                };
+                each(this.actor.scripts, (script) => {
+                    each(script.commands, (c) => {
+                        each(c.args, checkArg);
+                        if (c.operator && c.operator.operand) {
+                            checkArg(c.operator.operand);
+                        }
+                        if (c.condition && c.condition.param) {
+                            checkArg(c.condition.param);
+                        }
+                    });
+                });
+                DebugData.scriptDebugLabels = debugLabels;
+            }
+        } else {
+            DebugData.scriptDebugLabels = null;
         }
     }
 
@@ -444,19 +494,20 @@ function Command({line, command, data}) {
     </div>;
 }
 
-const argIcon = (path, color) => ({
+const argIcon = (path, color, ext) => ({
     color,
     paddingLeft: '2ch',
     background: `url("${path}") no-repeat`,
     backgroundSize: '14px 14px',
-    backgroundPosition: '1px 1px'
+    backgroundPosition: '1px 1px',
+    ...ext
 });
 
 const defaultArgStyle = { color: '#98ee92', fontStyle: 'italic' };
 const argStyle = {
     actor: argIcon('editor/icons/actor.svg', '#ff0000'),
     zone: argIcon('editor/icons/zones/SCENERIC.svg', '#6495ed'),
-    point: argIcon('editor/icons/point.svg', '#0084ff'),
+    point: argIcon('editor/icons/point.svg', '#ffffff', {fontWeight: 'bold'}),
     body: argIcon('editor/icons/body.svg', '#ffffff'),
     anim: argIcon('editor/icons/anim.svg', '#ffffff'),
     dirmode: { color: 'white' },

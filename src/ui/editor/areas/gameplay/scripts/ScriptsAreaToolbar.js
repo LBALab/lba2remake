@@ -97,11 +97,16 @@ export default class ScriptsAreaToolbar extends FrameListener {
             this.props.stateHandler.setAutoScroll(e.target.checked);
         };
 
+        const toggleObjectLabels = (e) => {
+            this.props.stateHandler.setObjectLabels(e.target.checked);
+        };
+
         const actorIcon = extend({}, iconStyle, {
             padding: 0
         });
 
         const autoScroll = this.props.sharedState.autoScroll;
+        const objectLabels = this.props.sharedState.objectLabels;
 
         return <React.Fragment>
             <span style={{cursor: 'pointer'}} onClick={selectActor}>
@@ -116,6 +121,7 @@ export default class ScriptsAreaToolbar extends FrameListener {
             {paused ? <img style={iconStyle} onClick={step} src="editor/icons/step.svg"/> : null}
             <img style={iconStyle} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
             <label style={{float: 'right'}}><input key="autoScroll" type="checkbox" onChange={toggleAutoScroll} checked={autoScroll} style={inputStyle}/>Autoscroll</label>
+            <label style={{float: 'right', paddingRight: '1ch'}}><input key="objlabels" type="checkbox" onChange={toggleObjectLabels} checked={objectLabels} style={inputStyle}/>Show active objects</label>
         </React.Fragment>;
     }
 

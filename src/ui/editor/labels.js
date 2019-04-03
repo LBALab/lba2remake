@@ -14,10 +14,19 @@ const currentLabels = {
     point: null,
     zoneTypes: []
 };
+let currentScriptActor = null;
 
 export function updateLabels(scene, labels) {
     if (!scene)
         return;
+
+    if (DebugData.scriptDebugLabels) {
+        updateScriptActorLabels(scene);
+        currentScene = null;
+        return;
+    }
+
+    currentScriptActor = null;
 
     if (currentScene !== scene) {
         if (labels.actor) {
@@ -59,6 +68,44 @@ export function updateLabels(scene, labels) {
     }
 
     currentScene = scene;
+}
+
+function updateScriptActorLabels(scene) {
+    if (!scene)
+        return;
+
+    if (currentScriptActor !== DebugData.scriptDebugLabels.actor) {
+        each(scene.actors, (actor) => {
+            const enabled = DebugData.scriptDebugLabels.actors.includes(actor.index)
+                || DebugData.scriptDebugLabels.actor.index === actor.index;
+            if (actor.model && actor.model.boundingBoxDebugMesh) {
+                actor.model.boundingBoxDebugMesh.visible = enabled;
+            }
+            if (actor.label) {
+                actor.label.visible = enabled;
+                if (enabled) {
+                    actor.refreshLabel();
+                }
+            }
+        });
+        each(scene.zones, (zone) => {
+            const enabled = DebugData.scriptDebugLabels.zones.includes(zone.index);
+            zone.threeObject.visible = enabled;
+            if (enabled) {
+                zone.threeObject.updateMatrix();
+                zone.refreshLabel();
+            }
+        });
+        each(scene.points, (point) => {
+            const enabled = DebugData.scriptDebugLabels.points.includes(point.index);
+            point.threeObject.visible = enabled;
+            if (enabled) {
+                point.threeObject.updateMatrix();
+                point.refreshLabel();
+            }
+        });
+        currentScriptActor = DebugData.scriptDebugLabels.actor;
+    }
 }
 
 function refreshSelection(scene, selected) {
