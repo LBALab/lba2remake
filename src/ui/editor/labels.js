@@ -1,7 +1,12 @@
 import * as THREE from 'three';
 import {each} from 'lodash';
+import DebugData from './DebugData';
 
 let currentScene = null;
+const selection = {
+    type: null,
+    index: -1
+};
 const currentLabels = {
     actor: null,
     zone: null,
@@ -35,7 +40,31 @@ export function updateLabels(scene, labels) {
         togglePoints(scene, labels.point);
         currentLabels.point = labels.point;
     }
+    const newSelection = DebugData.selection;
+    if (newSelection
+            && (newSelection.type !== selection.type
+                || newSelection.index !== selection.index)) {
+        refreshSelection(scene, false);
+        selection.type = newSelection.type;
+        selection.index = newSelection.index;
+        refreshSelection(scene, true);
+    } else if (!newSelection) {
+        refreshSelection(scene, false);
+        selection.type = null;
+        selection.index = -1;
+    }
+
     currentScene = scene;
+}
+
+function refreshSelection(scene, selected) {
+    if (selection.type !== null
+        && selection.index !== -1
+        && scene[`${selection.type}s`]
+        && scene[`${selection.type}s`][selection.index]
+        && scene[`${selection.type}s`][selection.index].refreshLabel) {
+        scene[`${selection.type}s`][selection.index].refreshLabel(selected);
+    }
 }
 
 function toggleActors(scene, enabled) {
@@ -46,6 +75,11 @@ function toggleActors(scene, enabled) {
             }
             if (actor.label) {
                 actor.label.visible = enabled;
+                if (enabled) {
+                    const selected = selection.type === 'actor'
+                        && selection.index === actor.index;
+                    actor.refreshLabel(selected);
+                }
             }
         });
     }
@@ -57,6 +91,9 @@ function toggleZones(scene, enabled) {
             zone.threeObject.visible = enabled;
             if (enabled) {
                 zone.threeObject.updateMatrix();
+                const selected = selection.type === 'zone'
+                    && selection.index === zone.index;
+                zone.refreshLabel(selected);
             }
         });
     }
@@ -68,6 +105,9 @@ function togglePoints(scene, enabled) {
             point.threeObject.visible = enabled;
             if (enabled) {
                 point.threeObject.updateMatrix();
+                const selected = selection.type === 'point'
+                    && selection.index === point.index;
+                point.refreshLabel(selected);
             }
         });
     }
@@ -81,18 +121,34 @@ export function createActorLabel(actor, name, is3DCam) {
     const icon = new Image(32, 32);
     icon.src = 'editor/icons/actor.svg';
     const texture = new THREE.CanvasTexture(canvas);
-    icon.onload = () => {
+
+    const draw = (selected = false) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.font = '22px LBA';
         ctx.textAlign = 'center';
         const textWidth = Math.min(ctx.measureText(name).width, 256 - 64);
+        if (selected) {
+            ctx.shadowColor = 'black';
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.fillStyle = 'white';
+            ctx.fillRect(128 - (textWidth * 0.5) - 18, 16, textWidth + 38, 32);
+            ctx.fillStyle = 'black';
+            ctx.shadowColor = 'transparent';
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        } else {
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = 'black';
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+        }
         ctx.drawImage(icon, 128 - (textWidth * 0.5) - 16, 16, 32, 32);
-        ctx.fillStyle = 'white';
-        ctx.shadowColor = 'black';
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
         ctx.fillText(name, 128 + 16, 42, 256 - 64);
         texture.needsUpdate = true;
     };
+
+    icon.onload = () => draw();
     const spriteMaterial = new THREE.SpriteMaterial({
         map: texture,
         color: 0xffffff,
@@ -116,6 +172,7 @@ export function createActorLabel(actor, name, is3DCam) {
     if (actor.threeObject) {
         actor.threeObject.add(sprite);
         actor.label = sprite;
+        actor.refreshLabel = draw;
     }
 }
 
@@ -127,20 +184,22 @@ export function createZoneLabel(zone, name, is3DCam) {
     const icon = new Image(32, 32);
     icon.src = `editor/icons/zones/${zone.zoneType}.svg`;
     const texture = new THREE.CanvasTexture(canvas);
-    icon.onload = () => {
+    const draw = (selected = false) => {
         ctx.font = '16px LBA';
         ctx.textAlign = 'center';
         const textWidth = Math.min(ctx.measureText(name).width, 256 - 64);
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = selected ? 'white' : 'black';
         ctx.fillRect(128 - (textWidth * 0.5) - 18, 16, textWidth + 38, 32);
         ctx.lineWidth = 2;
         ctx.strokeStyle = `#${zone.color.getHexString()}`;
         ctx.strokeRect(128 - (textWidth * 0.5) - 18, 16, textWidth + 38, 32);
         ctx.drawImage(icon, 128 - (textWidth * 0.5) - 16, 16, 32, 32);
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = selected ? 'black' : 'white';
         ctx.fillText(name, 128 + 18, 38, 256 - 64);
         texture.needsUpdate = true;
     };
+
+    icon.onload = () => draw();
     const spriteMaterial = new THREE.SpriteMaterial({
         map: texture,
         color: 0xffffff,
@@ -159,6 +218,7 @@ export function createZoneLabel(zone, name, is3DCam) {
     if (zone.threeObject) {
         zone.threeObject.add(sprite);
     }
+    zone.refreshLabel = draw;
 }
 
 export function createPointLabel(point, name, is3DCam) {
@@ -169,20 +229,22 @@ export function createPointLabel(point, name, is3DCam) {
     const icon = new Image(32, 32);
     icon.src = 'editor/icons/point.svg';
     const texture = new THREE.CanvasTexture(canvas);
-    icon.onload = () => {
+    const draw = (selected = false) => {
         ctx.font = '16px LBA';
         ctx.textAlign = 'center';
         const textWidth = Math.min(ctx.measureText(name).width, 256 - 64);
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-        ctx.fillRect(128 - (textWidth * 0.5) - 20, 16, textWidth + 42, 32);
+        ctx.fillStyle = selected ? 'rgb(180, 180, 180)' : 'rgba(0, 0, 0, 0.75)';
+        ctx.fillRect(128 - (textWidth * 0.5) - 20, 14, textWidth + 42, 36);
         ctx.lineWidth = 4;
         ctx.strokeStyle = '#1a78c0';
-        ctx.strokeRect(128 - (textWidth * 0.5) - 20, 16, textWidth + 42, 32);
+        ctx.strokeRect(128 - (textWidth * 0.5) - 20, 14, textWidth + 42, 36);
         ctx.drawImage(icon, 128 - (textWidth * 0.5) - 16, 16, 32, 32);
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = selected ? 'black' : 'white';
         ctx.fillText(name, 128 + 18, 38, 256 - 64);
         texture.needsUpdate = true;
     };
+
+    icon.onload = () => draw();
     const spriteMaterial = new THREE.SpriteMaterial({
         map: texture,
         color: 0xffffff,
@@ -201,4 +263,5 @@ export function createPointLabel(point, name, is3DCam) {
     if (point.threeObject) {
         point.threeObject.add(sprite);
     }
+    point.refreshLabel = draw;
 }

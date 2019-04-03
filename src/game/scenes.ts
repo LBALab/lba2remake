@@ -416,6 +416,8 @@ function relocateHero(hero, newHero, newScene, teleport) {
     newScene.sceneNode.updateMatrixWorld();
     newHero.threeObject.position.sub(newScene.sceneNode.position);
     newHero.model = hero.model;
+    newHero.label = hero.label;
+    newHero.refreshLabel = hero.refreshLabel;
     newScene.sceneNode.add(newHero.threeObject);
 
     newHero.props.dirMode = hero.props.dirMode;

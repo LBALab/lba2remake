@@ -23,6 +23,10 @@ export function loadPoint(props, is3DCam) {
     flag.matrixAutoUpdate = false;
 
     point.threeObject = flag;
+    point.boundingBox = new THREE.Box3(
+        new THREE.Vector3(-0.3, -0.2, -0.3),
+        new THREE.Vector3(0.3, 0.96, 0.3)
+    );
     createPointLabel(point, name, is3DCam);
 
     return point;
@@ -32,7 +36,7 @@ function makeFlag() {
     const clothGeom = new THREE.Geometry();
     const v1 = new THREE.Vector3(0, 0.96, 0);
     const v2 = new THREE.Vector3(0, 0.48, 0);
-    const v3 = new THREE.Vector3(0, 0.72, 0.48);
+    const v3 = new THREE.Vector3(0.48, 0.72, 0.48);
     clothGeom.vertices.push(v1);
     clothGeom.vertices.push(v2);
     clothGeom.vertices.push(v3);
