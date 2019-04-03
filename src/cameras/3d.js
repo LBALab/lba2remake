@@ -51,6 +51,17 @@ export function get3DCamera() {
             } else {
                 processFollow3DMovement(controlsState, controlNode, scene, time);
             }
+        },
+        centerOn: (object) => {
+            if (!object.threeObject)
+                return;
+
+            const objectPos = new THREE.Vector3();
+            objectPos.applyMatrix4(object.threeObject.matrixWorld);
+            const cameraPos = objectPos.clone();
+            cameraPos.add(CAMERA_HERO_OFFSET);
+            controlNode.position.copy(cameraPos);
+            controlNode.lookAt(objectPos);
         }
     };
 }

@@ -15,7 +15,6 @@ import CinemaEffect from './game/CinemaEffect';
 import TextBox from './game/TextBox';
 import AskChoice from './game/AskChoice';
 import TextInterjections from './game/TextInterjections';
-import DebugLabels from './editor/DebugLabels';
 import FoundObject from './game/FoundObject';
 import Loader from './game/Loader';
 import Video from './game/Video';
@@ -25,6 +24,7 @@ import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
 import {sBind} from '../utils.ts';
 import {updateVRGui} from './vr/vrGui';
+import {updateLabels} from './editor/labels';
 
 export default class GameUI extends FrameListener {
     constructor(props) {
@@ -43,6 +43,7 @@ export default class GameUI extends FrameListener {
         this.listener = this.listener.bind(this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
+        this.pick = this.pick.bind(this);
         this.startNewGameScene = this.startNewGameScene.bind(this);
         this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
 
@@ -216,6 +217,62 @@ export default class GameUI extends FrameListener {
         }
     }
 
+    pick(event) {
+        const scene = this.state.scene;
+        if (this.props.params.editor && scene && this.canvas) {
+            const { clientWidth, clientHeight } = this.canvas;
+            const mouse = new THREE.Vector2(
+                ((event.clientX / clientWidth) * 2) - 1,
+                -((event.clientY / clientHeight) * 2) + 1
+            );
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, scene.camera.threeCamera);
+
+            const tgt = new THREE.Vector3();
+
+            const foundPoint = scene.points.find((point) => {
+                if (point.threeObject.visible) {
+                    const bb = point.boundingBox.clone();
+                    bb.applyMatrix4(point.threeObject.matrixWorld);
+                    return raycaster.ray.intersectBox(bb, tgt);
+                }
+                return false;
+            });
+            if (foundPoint) {
+                DebugData.selection = {type: 'point', index: foundPoint.index};
+                event.stopPropagation();
+                return;
+            }
+
+            const foundActor = scene.actors.find((actor) => {
+                if (actor.model) {
+                    const bb = actor.model.boundingBox.clone();
+                    bb.applyMatrix4(actor.threeObject.matrixWorld);
+                    return raycaster.ray.intersectBox(bb, tgt);
+                }
+                return false;
+            });
+            if (foundActor) {
+                DebugData.selection = {type: 'actor', index: foundActor.index};
+                event.stopPropagation();
+                return;
+            }
+
+            const foundZone = scene.zones.find((zone) => {
+                if (zone.threeObject.visible) {
+                    const bb = zone.boundingBox.clone();
+                    bb.applyMatrix4(zone.threeObject.matrixWorld);
+                    return raycaster.ray.intersectBox(bb, tgt);
+                }
+                return false;
+            });
+            if (foundZone) {
+                DebugData.selection = {type: 'zone', index: foundZone.index};
+                event.stopPropagation();
+            }
+        }
+    }
+
     startNewGameScene() {
         this.state.game.resume();
         this.state.game.resetState();
@@ -285,6 +342,7 @@ export default class GameUI extends FrameListener {
                     ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls', 'scene')
                 };
                 DebugData.sceneManager = sceneManager;
+                updateLabels(scene, this.props.sharedState.labels);
             }
         }
     }
@@ -317,7 +375,7 @@ export default class GameUI extends FrameListener {
     render() {
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex="0">
-            <div ref={this.onCanvasWrapperRef} style={fullscreen}/>
+            <div ref={this.onCanvasWrapperRef} style={fullscreen} onClick={this.pick}/>
             {this.renderGUI()}
         </div>;
     }
@@ -327,14 +385,6 @@ export default class GameUI extends FrameListener {
             return null;
 
         return <React.Fragment>
-            {this.props.params.editor ?
-                <DebugLabels
-                    params={this.props.params}
-                    labels={this.props.sharedState.labels}
-                    scene={this.state.scene}
-                    renderer={this.state.renderer}
-                    ticker={this.props.ticker}
-                /> : null}
             <CinemaEffect enabled={this.state.cinema} />
             <TextInterjections
                 scene={this.state.scene}

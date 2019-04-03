@@ -1,75 +1,98 @@
 import * as THREE from 'three';
-import {IsometricCamera} from './utils/IsometricCamera';
 
-const BASE_OFFSET = new THREE.Vector2(3500, 1001);
+const CAMERA_HERO_OFFSET = new THREE.Vector3(-24, 19.2, 24);
 
 export function getIsometricCamera() {
-    const size = getCameraSize(window.innerWidth, window.innerHeight);
-    const camera = new IsometricCamera(size, BASE_OFFSET.clone());
-    camera.name = 'IsometricCamera';
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const camera = new THREE.OrthographicCamera(
+        -w * 0.5,
+        w * 0.5,
+        h * 0.5,
+        -h * 0.5,
+        0,
+        1000
+    );
+    camera.scale.set(0.01, 0.01, 1);
+    camera.name = 'IsoCamera';
     return {
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: w,
+        height: h,
         threeCamera: camera,
         resize(width, height) {
             if (width !== this.width || height || this.height) {
-                camera.size.copy(getCameraSize(width, height));
+                camera.left = -width * 0.5;
+                camera.right = width * 0.5;
+                camera.top = height * 0.5;
+                camera.bottom = -height * 0.5;
                 camera.updateProjectionMatrix();
             }
         },
-        init: (scene) => {
-            centerCamera(camera, scene.actors[0]);
+        init: (scene, controlsState) => {
+            if (!scene.actors[0].threeObject)
+                return;
+
+            const { objectPos, cameraPos } = getTargetPos(scene.actors[0]);
+            controlsState.cameraLerp.copy(cameraPos);
+            controlsState.cameraLookAtLerp.copy(objectPos);
+            camera.position.copy(controlsState.cameraLerp);
+            camera.lookAt(controlsState.cameraLookAtLerp);
         },
         update: (scene, controlsState, time) => {
             if (controlsState.freeCamera) {
-                processFreeIsoMovement(camera, controlsState, time);
+                processFreeIsoMovement(controlsState, camera, scene, time);
             } else {
-                centerCamera(camera, scene.actors[0]);
+                if (!scene.actors[0].threeObject)
+                    return;
+
+                const { objectPos, cameraPos } = getTargetPos(scene.actors[0]);
+
+                controlsState.cameraLerp.lerpVectors(camera.position, cameraPos, 0.2);
+                controlsState.cameraLookAtLerp.lerpVectors(
+                    controlsState.cameraLookAtLerp.clone(),
+                    objectPos,
+                    0.2);
+
+                camera.position.copy(controlsState.cameraLerp);
+                camera.lookAt(controlsState.cameraLookAtLerp);
             }
         },
         centerOn: (object) => {
-            centerCamera(camera, object);
+            if (!object.threeObject)
+                return;
+
+            const { objectPos, cameraPos } = getTargetPos(object);
+
+            camera.position.copy(cameraPos);
+            camera.lookAt(objectPos);
         }
     };
 }
 
-function getCameraSize(width, height) {
-    if (width > height) {
-        return new THREE.Vector2(560, (560 / width) * height);
-    }
-    return new THREE.Vector2((560 / height) * width, 560);
+function getTargetPos(object) {
+    const objectPos = new THREE.Vector3();
+    objectPos.applyMatrix4(object.threeObject.matrixWorld);
+    const cameraPos = objectPos.clone();
+    cameraPos.add(CAMERA_HERO_OFFSET);
+    return { objectPos, cameraPos };
 }
 
-function centerCamera(camera, object) {
-    if (!object.threeObject)
-        return;
+export function processFreeIsoMovement(controlsState, camera, scene, time) {
+    const speedX = new THREE.Vector3().set(
+        3.6,
+        0,
+        3.6
+    );
+    speedX.multiplyScalar(-controlsState.cameraSpeed.x);
+    const speedZ = new THREE.Vector3().set(
+        5,
+        0,
+        -5
+    );
+    speedZ.multiplyScalar(controlsState.cameraSpeed.z);
+    const speed = speedZ;
+    speed.add(speedX);
+    speed.multiplyScalar(time.delta);
 
-    const pos = getObjectIsoPos(camera, object);
-    const {width, height} = camera.size;
-    const sz = new THREE.Vector2(width, height);
-    pos.multiply(sz);
-    camera.offset.add(pos);
-    camera.updateProjectionMatrix();
-}
-
-function getObjectIsoPos(camera, object) {
-    let objectHeight = 0;
-    if (object.model) {
-        const bb = object.model.boundingBox;
-        objectHeight = bb.max.y - bb.min.y;
-    }
-    const pos = new THREE.Vector3(0, objectHeight * 0.5, 0);
-    object.threeObject.updateMatrix();
-    object.threeObject.updateMatrixWorld();
-    pos.applyMatrix4(object.threeObject.matrixWorld);
-    pos.project(camera);
-    return new THREE.Vector2(pos.x, pos.y);
-}
-
-export function processFreeIsoMovement(camera, controlsState, time) {
-    camera.offset.add(new THREE.Vector2(
-        -controlsState.cameraSpeed.x * time.delta * 500,
-        controlsState.cameraSpeed.z * time.delta * 500
-    ));
-    camera.updateProjectionMatrix();
+    camera.position.add(speed);
 }

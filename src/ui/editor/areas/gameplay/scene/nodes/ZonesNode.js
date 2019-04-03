@@ -64,9 +64,8 @@ const Zone = {
         return selection && selection.type === 'zone' && selection.index === zone.index;
     },
     onClick: (zone) => { DebugData.selection = {type: 'zone', index: zone.index}; },
-    onDoubleClick: (zone, component, setRoot) => {
+    onDoubleClick: (zone) => {
         locateObject(zone);
-        setRoot();
     }
 };
 

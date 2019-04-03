@@ -26,9 +26,8 @@ const Point = {
         return selection && selection.type === 'point' && selection.index === point.index;
     },
     onClick: (point) => { DebugData.selection = {type: 'point', index: point.index}; },
-    onDoubleClick: (point, component, setRoot) => {
+    onDoubleClick: (point) => {
         locateObject(point);
-        setRoot();
     }
 };
 

@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import {getObjectName} from '../ui/editor/DebugData';
 import { compile } from '../utils/shaders';
+import {createPointLabel} from '../ui/editor/labels';
 
-export function loadPoint(props) {
+export function loadPoint(props, is3DCam) {
     const pos = props.pos;
     const point = {
         type: 'point',
@@ -15,12 +16,18 @@ export function loadPoint(props) {
 
     // For debug purposes
     const flag = makeFlag();
-    flag.name = `point:${getObjectName('point', props.sceneIndex, props.index)}`;
+    const name = getObjectName('point', props.sceneIndex, props.index);
+    flag.name = `point:${name}`;
     flag.visible = false;
     flag.position.set(point.physics.position.x, point.physics.position.y, point.physics.position.z);
     flag.matrixAutoUpdate = false;
 
     point.threeObject = flag;
+    point.boundingBox = new THREE.Box3(
+        new THREE.Vector3(-0.3, -0.2, -0.3),
+        new THREE.Vector3(0.3, 0.96, 0.3)
+    );
+    createPointLabel(point, name, is3DCam);
 
     return point;
 }
@@ -29,7 +36,7 @@ function makeFlag() {
     const clothGeom = new THREE.Geometry();
     const v1 = new THREE.Vector3(0, 0.96, 0);
     const v2 = new THREE.Vector3(0, 0.48, 0);
-    const v3 = new THREE.Vector3(0, 0.72, 0.48);
+    const v3 = new THREE.Vector3(0.48, 0.72, 0.48);
     clothGeom.vertices.push(v1);
     clothGeom.vertices.push(v2);
     clothGeom.vertices.push(v3);

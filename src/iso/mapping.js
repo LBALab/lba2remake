@@ -71,9 +71,6 @@ export function loadBricksMapping(renderer, params, layouts, bricks, mask, palet
             }
         }
     });
-    const iso3d = params.iso3d || renderer.vr;
-    const minFilter = iso3d ? THREE.LinearFilter : THREE.NearestFilter;
-    const magFilter = iso3d ? THREE.LinearMipMapLinearFilter : THREE.NearestFilter;
     const texture = new THREE.DataTexture(
         image_data,
         width,
@@ -83,14 +80,12 @@ export function loadBricksMapping(renderer, params, layouts, bricks, mask, palet
         THREE.UVMapping,
         THREE.ClampToEdgeWrapping,
         THREE.ClampToEdgeWrapping,
-        minFilter,
-        magFilter
+        THREE.LinearFilter,
+        THREE.LinearMipMapLinearFilter
     );
     texture.needsUpdate = true;
-    if (iso3d) {
-        texture.generateMipmaps = true;
-        texture.anisotropy = 16;
-    }
+    texture.generateMipmaps = true;
+    texture.anisotropy = 16;
     return {
         texture,
         bricksMap

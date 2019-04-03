@@ -1,4 +1,5 @@
 import {extend} from 'lodash';
+import * as THREE from 'three';
 import {checkAuth, getAuthQueryString} from './auth';
 
 const DebugData = {
@@ -146,12 +147,12 @@ export function getObjectName(type, sceneIndex, objIndex) {
             return sceneMetaData[key][objIndex];
         }
     }
-    return `${type}${objIndex}`;
+    return `${type[0]}_${objIndex}`;
 }
 
 export function locateObject(object) {
     const scene = DebugData.scope.scene;
-    if (!object.threeObject || !scene || scene.isIsland)
+    if (!object.threeObject || !scene)
         return;
 
     DebugData.selection = {type: object.type, index: object.index};
@@ -165,7 +166,26 @@ export function locateObject(object) {
     }
 
     scene.camera.centerOn(object);
+    resetCameraOrientation(controlsState, scene);
 }
+
+function resetCameraOrientation(controlsState, scene) {
+    const controlNode = scene.camera.controlNode;
+    if (!controlNode)
+        return;
+
+    const baseEuler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+    const headEuler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+    baseEuler.setFromQuaternion(controlNode.quaternion, 'YXZ');
+    headEuler.copy(baseEuler);
+
+    headEuler.y = 0;
+    controlsState.cameraHeadOrientation.setFromEuler(headEuler);
+
+    baseEuler.x = 0;
+    controlsState.cameraOrientation.setFromEuler(baseEuler);
+}
+
 
 export async function loadModelsMetaData() {
     return new Promise((resolve) => {
