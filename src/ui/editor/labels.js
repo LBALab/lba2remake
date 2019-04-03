@@ -228,17 +228,19 @@ export function createPointLabel(point, name, is3DCam) {
     const ctx = canvas.getContext('2d');
     const icon = new Image(32, 32);
     icon.src = 'editor/icons/point.svg';
+    const iconDark = new Image(32, 32);
+    iconDark.src = 'editor/icons/point_black_lining.svg';
     const texture = new THREE.CanvasTexture(canvas);
     const draw = (selected = false) => {
         ctx.font = '16px LBA';
         ctx.textAlign = 'center';
         const textWidth = Math.min(ctx.measureText(name).width, 256 - 64);
-        ctx.fillStyle = selected ? 'rgb(180, 180, 180)' : 'rgba(0, 0, 0, 0.75)';
+        ctx.fillStyle = selected ? 'white' : 'rgba(0, 0, 0, 0.75)';
         ctx.fillRect(128 - (textWidth * 0.5) - 20, 14, textWidth + 42, 36);
         ctx.lineWidth = 4;
         ctx.strokeStyle = '#1a78c0';
         ctx.strokeRect(128 - (textWidth * 0.5) - 20, 14, textWidth + 42, 36);
-        ctx.drawImage(icon, 128 - (textWidth * 0.5) - 16, 16, 32, 32);
+        ctx.drawImage(selected ? iconDark : icon, 128 - (textWidth * 0.5) - 16, 16, 32, 32);
         ctx.fillStyle = selected ? 'black' : 'white';
         ctx.fillText(name, 128 + 18, 38, 256 - 64);
         texture.needsUpdate = true;
