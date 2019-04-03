@@ -28,7 +28,31 @@ const Point = {
     onClick: (point) => { DebugData.selection = {type: 'point', index: point.index}; },
     onDoubleClick: (point) => {
         locateObject(point);
-    }
+    },
+    props: point => [
+        {
+            id: 'index',
+            value: point.index,
+            render: value => <span>#{value}</span>
+        },
+        {
+            id: 'visible',
+            value: point.threeObject.visible,
+            render: (value) => {
+                const onClick = () => {
+                    point.threeObject.visible = !point.threeObject.visible;
+                    if (point.threeObject.visible) {
+                        point.threeObject.updateMatrix();
+                    }
+                };
+                return <img
+                    src={`editor/icons/${value ? 'visible' : 'hidden'}.svg`}
+                    onClick={onClick}
+                    style={{cursor: 'pointer', width: 14, height: 14}}
+                />;
+            }
+        }
+    ],
 };
 
 export const PointsNode = makeObjectsNode('point', {

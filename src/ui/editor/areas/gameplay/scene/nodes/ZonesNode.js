@@ -31,6 +31,30 @@ const Zone = {
     ],
     name: zone => getObjectName('zone', zone.props.sceneIndex, zone.index),
     icon: zone => `editor/icons/zones/${ZONE_TYPE[zone.props.type]}.svg`,
+    props: zone => [
+        {
+            id: 'index',
+            value: zone.index,
+            render: value => <span>#{value}</span>
+        },
+        {
+            id: 'visible',
+            value: zone.threeObject.visible,
+            render: (value) => {
+                const onClick = () => {
+                    zone.threeObject.visible = !zone.threeObject.visible;
+                    if (zone.threeObject.visible) {
+                        zone.threeObject.updateMatrix();
+                    }
+                };
+                return <img
+                    src={`editor/icons/${value ? 'visible' : 'hidden'}.svg`}
+                    onClick={onClick}
+                    style={{cursor: 'pointer', width: 14, height: 14}}
+                />;
+            }
+        }
+    ],
     childProps: [
         {
             id: 'type',
