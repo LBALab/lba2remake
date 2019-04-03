@@ -13,7 +13,7 @@ export function getIsometricCamera() {
         0,
         1000
     );
-    camera.scale.set(0.01, 0.01, 1);
+    setCameraScale(camera, w, h);
     camera.name = 'IsoCamera';
     return {
         width: w,
@@ -25,6 +25,7 @@ export function getIsometricCamera() {
                 camera.right = width * 0.5;
                 camera.top = height * 0.5;
                 camera.bottom = -height * 0.5;
+                setCameraScale(camera, width, height);
                 camera.updateProjectionMatrix();
             }
         },
@@ -67,6 +68,12 @@ export function getIsometricCamera() {
             camera.lookAt(objectPos);
         }
     };
+}
+
+function setCameraScale(camera, width, height) {
+    const baseSize = 8;
+    const scale = baseSize / (width < height ? width : height);
+    camera.scale.set(scale, scale, 1);
 }
 
 function getTargetPos(object) {
