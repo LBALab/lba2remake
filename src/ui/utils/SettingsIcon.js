@@ -1,15 +1,15 @@
 import React from 'react';
 
 const animStyle = `
-svg#settings-group:hover {
+svg#settings-group {
     transform-origin: 50% 50%;
-    -webkit-animation:spin 4s linear infinite;
-    -moz-animation:spin 4s linear infinite;
-    animation:spin 4s linear infinite;
+    transition: transform 0.5s ease;
+    transform: rotate(0deg);
 }
-@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
-@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
-@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+svg#settings-group:hover {
+    transition: transform 4s linear;
+    transform: rotate(360deg);
+}
 `;
 
 export default function SettingsIcon(props) {
