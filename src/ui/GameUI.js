@@ -245,7 +245,7 @@ export default class GameUI extends FrameListener {
             }
 
             const foundActor = scene.actors.find((actor) => {
-                if (actor.model) {
+                if (actor.threeObject.visible && actor.model) {
                     const bb = actor.model.boundingBox.clone();
                     bb.applyMatrix4(actor.threeObject.matrixWorld);
                     return raycaster.ray.intersectBox(bb, tgt);
