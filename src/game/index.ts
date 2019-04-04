@@ -101,7 +101,7 @@ export function createGame(clock: any,
 
         getTime: () => {
             return {
-                delta: Math.min(clock.getDelta(), 0.05),
+                delta: Math.min(clock.getDelta(), 0.025),
                 elapsed: clock.getElapsedTime(),
             };
         },
