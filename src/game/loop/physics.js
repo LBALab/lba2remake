@@ -22,6 +22,7 @@ function processActorPhysics(scene, actor, time) {
     if (actor.props.flags.hasCollisions) {
         if (!actor.props.runtimeFlags.hasGravityByAnim
             && actor.props.flags.canFall) {
+            // Max falling speed: 0.15m per frame
             actor.physics.position.y -= 6 * time.delta;
         }
         scene.scenery.physics.processCollisions(scene, actor);
