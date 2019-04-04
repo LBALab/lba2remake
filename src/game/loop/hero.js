@@ -108,9 +108,8 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
             animIndex = AnimType.THROW;
         }
     }
-    if (!controlsState.relativeToCam) {
+    if (!controlsState.relativeToCam && !hero.props.runtimeFlags.isJumping) {
         if (controlsState.controlVector.x !== 0 && !controlsState.crouch) {
-            toggleJump(hero, false);
             hero.props.runtimeFlags.isCrouching = false;
             hero.props.runtimeFlags.isWalking = true;
             if (!controlsState.sideStep) {
@@ -147,7 +146,9 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
             }
         }
     }
-    animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex, time);
+    if (!hero.props.runtimeFlags.isJumping) {
+        animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex, time);
+    }
     if (hero.props.animIndex !== animIndex) {
         hero.props.animIndex = animIndex;
         hero.resetAnimState();
