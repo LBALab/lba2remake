@@ -39,6 +39,10 @@ function processCollisions(sections, scene, actor) {
     const ground = getGround(section, POSITION);
     const height = ground.height;
 
+    let isTouchingGround = true;
+    if (actor.physics.position.y > height) {
+        isTouchingGround = false;
+    }
     actor.physics.position.y = Math.max(height, actor.physics.position.y);
     actor.animState.floorSound = -1;
 
@@ -56,7 +60,7 @@ function processCollisions(sections, scene, actor) {
                 TGT.add(actor.threeObject.position);
                 TGT.applyMatrix4(scene.sceneNode.matrixWorld);
                 const gInfo = getGroundInfo(section, TGT);
-                if (gInfo && gInfo.collision) {
+                if (gInfo && gInfo.collision && isTouchingGround) {
                     actor.physics.position.copy(actor.threeObject.position);
                 }
             }
