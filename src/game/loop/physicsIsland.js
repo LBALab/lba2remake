@@ -30,10 +30,6 @@ function processCameraCollisions(sections, camPosition, groundOffset = 3.6, objO
 }
 
 function processCollisions(sections, scene, actor) {
-    if (actor.props.runtimeFlags.hasGravityByAnim) {
-        return;
-    }
-
     POSITION.copy(actor.physics.position);
     POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
 
