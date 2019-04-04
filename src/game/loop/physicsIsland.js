@@ -121,12 +121,14 @@ function processBoxIntersections(section, actor, position) {
             ACTOR_BOX.getCenter(CENTER1);
             bb.getCenter(CENTER2);
             const dir = CENTER1.sub(CENTER2);
-            if (position.y < bb.max.y - 0.015) {
+            if (ACTOR_BOX.min.y < bb.max.y - 0.16) {
                 if (ITRS_SIZE.x < ITRS_SIZE.z) {
                     DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
                 } else {
                     DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
                 }
+            } else {
+                DIFF.set(0, ITRS_SIZE.y, 0);
             }
             actor.physics.position.add(DIFF);
             position.add(DIFF);
