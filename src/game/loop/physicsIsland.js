@@ -44,12 +44,13 @@ function processCollisions(sections, scene, actor) {
         isTouchingGround = false;
     }
     actor.physics.position.y = Math.max(height, actor.physics.position.y);
+    POSITION.y = actor.physics.position.y;
     actor.animState.floorSound = -1;
 
     if (section) {
         actor.animState.floorSound = ground.sound;
 
-        processBoxIntersections(section, actor, POSITION);
+        isTouchingGround = processBoxIntersections(section, actor, POSITION, isTouchingGround);
         if (!FLAGS.hitObject) {
             TGT.copy(actor.physics.position);
             TGT.sub(actor.threeObject.position);
@@ -108,7 +109,7 @@ const CENTER1 = new THREE.Vector3();
 const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
 
-function processBoxIntersections(section, actor, position) {
+function processBoxIntersections(section, actor, position, isTouchingGround) {
     const boundingBox = actor.model.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.translate(position);
@@ -128,13 +129,15 @@ function processBoxIntersections(section, actor, position) {
                     DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
                 }
             } else {
-                DIFF.set(0, ITRS_SIZE.y, 0);
+                DIFF.set(0, ITRS_SIZE.y * Math.sign(dir.y), 0);
+                isTouchingGround = false;
             }
             actor.physics.position.add(DIFF);
             position.add(DIFF);
             ACTOR_BOX.translate(DIFF);
         }
     }
+    return isTouchingGround;
 }
 
 const GRID_UNIT = 1 / 64;
