@@ -263,12 +263,12 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
 
         /* @inspector(locate) */
         removeMesh(threeObject) {
-            this.threeScene.remove(threeObject);
+            sceneNode.remove(threeObject);
         },
 
         /* @inspector(locate) */
         addMesh(threeObject) {
-            this.threeScene.add(threeObject);
+            sceneNode.add(threeObject);
         }
     };
     if (scene.isIsland) {
