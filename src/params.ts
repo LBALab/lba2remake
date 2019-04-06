@@ -30,6 +30,10 @@ const paramsDefinitions = {
     webgl2: {
         type: 'boolean',
         default: true
+    },
+    clipActors: {
+        type: 'boolean',
+        default: false
     }
 };
 

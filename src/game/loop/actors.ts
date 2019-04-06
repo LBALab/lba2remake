@@ -10,10 +10,37 @@ import {
 import { processAnimAction } from './animAction';
 import { Time } from '../../datatypes';
 
-export function updateActor(game: any, scene: any, actor: Actor, time: any, step: any) {
-    if (actor.runScripts) {
-        actor.runScripts(time, step);
+const ACTOR_POS = new THREE.Vector3();
+const HIDE_DISTANCE = 50;
+const HIDE_DISTANCE2 = HIDE_DISTANCE * HIDE_DISTANCE;
+
+export function updateActor(
+    params: any,
+    game: any,
+    scene: any,
+    actor: Actor,
+    time: any,
+    step: any
+) {
+    if ((params.mobile || params.clipActors)
+        && scene.isIsland
+        && actor.index > 0
+        && actor.threeObject
+        ) {
+        ACTOR_POS.copy(actor.physics.position);
+        ACTOR_POS.add(scene.sceneNode.position);
+        const camDist2 = ACTOR_POS.distanceToSquared(scene.camera.controlNode.position);
+        // @ts-ignore
+        actor.dist = Math.sqrt(camDist2);
+        if (camDist2 > HIDE_DISTANCE2) {
+            actor.threeObject.visible = false;
+            actor.threeObject.matrixAutoUpdate = false;
+            return;
+        }
+        actor.threeObject.matrixAutoUpdate = true;
+        actor.threeObject.visible = actor.isVisible;
     }
+    actor.runScripts(time, step);
 
     if (actor.model !== null && actor.threeObject && actor.threeObject.visible) {
         const model = actor.model;
