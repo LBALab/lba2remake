@@ -164,6 +164,7 @@ export function loadMesh(
 
             const modelMesh = new THREE.Mesh(bufferGeometry, material);
             modelMesh.name = name;
+            modelMesh.matrixAutoUpdate = false;
             object.add(modelMesh);
         }
 
@@ -176,6 +177,7 @@ export function loadMesh(
 
             const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
             lineSegments.name = 'lines';
+            lineSegments.matrixAutoUpdate = false;
             object.add(lineSegments);
         }
     });

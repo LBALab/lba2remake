@@ -4,7 +4,6 @@ import {each, find} from 'lodash';
 import {processZones} from './zones';
 
 export function processPhysicsFrame(game, scene, time) {
-    scene.sceneNode.updateMatrixWorld();
     each(scene.actors, (actor) => {
         processActorPhysics(scene, actor, time);
     });

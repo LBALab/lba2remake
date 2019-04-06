@@ -16,6 +16,8 @@ export function get3DCamera() {
     const orientation = new THREE.Object3D();
     orientation.name = 'AxisTransform';
     orientation.rotation.set(0, Math.PI, 0);
+    orientation.updateMatrix();
+    orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
     return {

@@ -15,6 +15,8 @@ export function getVRIsoCamera() {
     const orientation = new THREE.Object3D();
     orientation.rotation.set(0, Math.PI, 0);
     orientation.name = 'AxisTransform';
+    orientation.updateMatrix();
+    orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
     return {

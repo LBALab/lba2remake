@@ -108,7 +108,6 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 });
             }
             initSceneDebugData();
-            scene.sceneNode.updateMatrixWorld();
             scene.firstFrame = true;
             game.loaded(wasPaused);
             return scene;
@@ -170,6 +169,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
     let camera = null;
     if (!parent) {
         threeScene = new THREE.Scene();
+        threeScene.matrixAutoUpdate = false;
         makeLight(threeScene, sceneData.ambience);
         if (indexInfo.isIsland) {
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
@@ -298,11 +298,13 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
 function loadSceneNode(index, indexInfo, scenery, actors, zones, points, editor) {
     const sceneNode = indexInfo.isIsland ? new THREE.Object3D() : new THREE.Scene();
     sceneNode.name = `scene_${index}`;
+    sceneNode.matrixAutoUpdate = false;
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
         const section = scenery.sections[sectionIdx];
         sceneNode.position.x = section.x * 48;
         sceneNode.position.z = section.z * 48;
+        sceneNode.updateMatrix();
     }
     const addToSceneNode = (obj) => {
         if (obj.threeObject !== null) { // because of the sprite actors
@@ -414,7 +416,6 @@ function relocateHero(hero, newHero, newScene, teleport) {
     newScene.sceneNode.remove(newHero.threeObject);
     newHero.threeObject = hero.threeObject;
     newHero.threeObject.position.copy(globalPos);
-    newScene.sceneNode.updateMatrixWorld();
     newHero.threeObject.position.sub(newScene.sceneNode.position);
     newHero.model = hero.model;
     newHero.label = hero.label;
@@ -473,5 +474,7 @@ function makeLight(threeScene, ambience) {
         new THREE.Vector3(0, 1, 0),
         -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
     );
+    light.updateMatrix();
+    light.matrixAutoUpdate = false;
     threeScene.add(light);
 }
