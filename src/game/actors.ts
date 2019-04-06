@@ -238,7 +238,9 @@ export async function loadActor(
                     this.threeObject.visible = this.isVisible;
                 }
             }
-            createActorLabel(this, name, is3DCam);
+            if (params.editor) {
+                createActorLabel(this, name, is3DCam);
+            }
         },
 
         /* @inspector(locate) */
