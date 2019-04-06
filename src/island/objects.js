@@ -6,13 +6,13 @@ import {loadSubTextureRGBA} from '../texture.ts';
 
 const push = Array.prototype.push;
 
-export function loadObjects(island, section, geometries, objects) {
+export function loadObjects(section, geometries, models) {
     const numObjects = section.objInfo.numObjects;
     const boundingBoxes = [];
     for (let i = 0; i < numObjects; i += 1) {
         const info = loadObjectInfo(section.objects, section, i);
-        const object = loadObject(island, objects, info.index);
-        loadFaces(geometries, object, info, boundingBoxes);
+        const model = models[info.index];
+        loadFaces(geometries, model, info, boundingBoxes);
     }
     section.boundingBoxes = boundingBoxes;
 }
@@ -33,13 +33,9 @@ function loadObjectInfo(objects, section, index) {
     };
 }
 
-function loadObject(island, objects, index) {
-    if (objects[index]) {
-        return objects[index];
-    }
-    const buffer = island.files.obl.getEntry(index);
+export function loadModel(buffer) {
     const data = new DataView(buffer);
-    const obj = {
+    const model = {
         verticesOffset: data.getUint32(44, true),
         normalsOffset: data.getUint32(52, true),
         faceSectionOffset: data.getUint32(68, true),
@@ -53,42 +49,38 @@ function loadObject(island, objects, index) {
         numVerticesType2: data.getUint16(102, true),
         buffer
     };
-        // console.log(new Uint32Array(buffer, 0, 17));
-    obj.vertices = new Int16Array(buffer, obj.verticesOffset, obj.numVerticesType1 * 4);
-    obj.normals = new Int16Array(buffer, obj.normalsOffset, obj.numVerticesType1 * 4);
-    loadUVGroups(obj);
-    objects[index] = obj;
-    return obj;
-}
+    model.vertices = new Int16Array(buffer, model.verticesOffset, model.numVerticesType1 * 4);
+    model.normals = new Int16Array(buffer, model.normalsOffset, model.numVerticesType1 * 4);
 
-function loadUVGroups(object) {
-    object.uvGroups = [];
+    // uvGroups
+    model.uvGroups = [];
     const rawUVGroups = new Uint8Array(
-        object.buffer,
-        object.uvGroupsSectionOffset,
-        object.uvGroupsSectionSize * 4
+        model.buffer,
+        model.uvGroupsSectionOffset,
+        model.uvGroupsSectionSize * 4
     );
-    for (let i = 0; i < object.uvGroupsSectionSize; i += 1) {
+    for (let i = 0; i < model.uvGroupsSectionSize; i += 1) {
         const index = i * 4;
-        object.uvGroups.push([
+        model.uvGroups.push([
             rawUVGroups[index],
             rawUVGroups[index + 1],
             rawUVGroups[index + 2],
             rawUVGroups[index + 3]
         ]);
     }
+    return model;
 }
 
-function loadFaces(geometries, object, info, boundingBoxes) {
+function loadFaces(geometries, model, info, boundingBoxes) {
     const data = new DataView(
-        object.buffer,
-        object.faceSectionOffset,
-        object.lineSectionOffset - object.faceSectionOffset
+        model.buffer,
+        model.faceSectionOffset,
+        model.lineSectionOffset - model.faceSectionOffset
     );
     let offset = 0;
     while (offset < data.byteLength) {
-        const section = parseSectionHeader(data, object, offset);
-        loadSection(geometries, object, info, section, boundingBoxes);
+        const section = parseSectionHeader(data, model, offset);
+        loadSection(geometries, model, info, section, boundingBoxes);
         offset += section.size + 8;
     }
 }

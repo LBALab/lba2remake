@@ -6,7 +6,7 @@ import { prepareGeometries } from './geometries';
 import { loadLayout } from './layout';
 import { loadGround } from './ground';
 import { loadSea } from './sea';
-import { loadObjects } from './objects';
+import { loadObjects, loadModel } from './objects';
 import { loadIslandPhysics } from '../game/loop/physicsIsland';
 import { createBoundingBox } from '../utils/rendering';
 import { loadLUTTexture } from '../utils/lut';
@@ -154,13 +154,20 @@ function loadSky(geometries, envInfo) {
 function loadGeometries(island, data, ambience) {
     const geometries = prepareGeometries(island, data, ambience);
     const usedTiles = {};
-    const objects = [];
+
+    const models = [];
+    const obl = data.files.obl;
+    for (let i = 0; i < obl.length; i += 1) {
+        models.push(
+            loadModel(obl.getEntry(i))
+        );
+    }
 
     each(data.layout.groundSections, (section) => {
         const tilesKey = [section.x, section.z].join(',');
         usedTiles[tilesKey] = [];
         loadGround(section, geometries, usedTiles[tilesKey]);
-        loadObjects(data, section, geometries, objects);
+        loadObjects(section, geometries, models);
     });
 
     each(data.layout.seaSections, (section) => {
