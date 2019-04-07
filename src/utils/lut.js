@@ -8,11 +8,20 @@ const TEXTURE_WIDTH = 512;
 const TEXTURE_HEIGHT = (LUT_DIM * LUT_DIM * LUT_DIM) / TEXTURE_WIDTH;
 
 let lutTexture = null;
+let loading = false;
+let loadingCallbacks = [];
 
 export async function loadLUTTexture() {
     if (lutTexture) {
         return lutTexture;
     }
+    if (loading) {
+        const promise = new Promise((resolve) => {
+            loadingCallbacks.push(resolve);
+        });
+        return promise;
+    }
+    loading = true;
     const buffer = await loadLUTData();
     const image_data = new Uint8Array(buffer);
     const texture = new THREE.DataTexture(
@@ -29,6 +38,11 @@ export async function loadLUTTexture() {
     );
     texture.needsUpdate = true;
     lutTexture = texture;
+    loading = false;
+    loadingCallbacks.forEach((resolve) => {
+        resolve(lutTexture);
+    });
+    loadingCallbacks = [];
     return texture;
 }
 
