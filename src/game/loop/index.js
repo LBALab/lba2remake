@@ -24,15 +24,10 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
             }
             scene.scenery.update(game, scene, time);
             updateScene(params, game, scene, time);
-            if (scene.firstFrame) {
-                scene.sceneNode.updateMatrixWorld();
-            }
             processPhysicsFrame(game, scene, time);
             each(scene.sideScenes, (sideScene) => {
+                sideScene.firstFrame = scene.firstFrame;
                 updateScene(params, game, sideScene, time);
-                if (scene.firstFrame) {
-                    sideScene.sceneNode.updateMatrixWorld();
-                }
                 processPhysicsFrame(game, sideScene, time);
             });
             if (scene.firstFrame) {
@@ -61,6 +56,9 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
 
 function updateScene(params, game, scene, time, step) {
     // playAmbience(game, scene, time);
+    if (scene.firstFrame) {
+        scene.sceneNode.updateMatrixWorld();
+    }
     each(scene.actors, (actor) => {
         if (actor.isKilled)
             return;

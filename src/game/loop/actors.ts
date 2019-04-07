@@ -24,6 +24,7 @@ export function updateActor(
 ) {
     if ((params.mobile || params.clipActors)
         && scene.isIsland
+        && !scene.firstFrame
         && actor.index > 0
         && actor.threeObject
         ) {
