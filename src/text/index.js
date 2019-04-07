@@ -27,14 +27,14 @@ export function loadTextData(textFile, language) {
         start = data.getUint16(idx * 2, true);
         end = data.getUint16((idx * 2) + 2, true);
         const type = data.getUint8(start, true);
-        let value = '';
+        const value = [];
         for (let i = start + 1; i < end - 1; i += 1) {
-            value += String.fromCharCode((language.data.charmap) ?
+            value.push(String.fromCharCode((language.data.charmap) ?
                 language.data.charmap[data.getUint8(i)]
-                : data.getUint8(i)
+                : data.getUint8(i))
             );
         }
-        texts[mapData[idx]] = {type, index: idx, value};
+        texts[mapData[idx]] = {type, index: idx, value: value.join('')};
         idx += 1;
     } while (end < data.byteLength);
 
