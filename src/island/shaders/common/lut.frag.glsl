@@ -1,4 +1,6 @@
-vec3 lutLookup(vec3 c, float intensity) {
+uniform sampler2D lutTexture;
+
+vec3 lutLookupI(vec3 c, float intensity) {
     const vec2 uvScale = 1.0 / vec2(511.0, 1023.0);
     const float invU = 1.0 / 16.0;
     vec2 uv = vec2(
@@ -8,9 +10,9 @@ vec3 lutLookup(vec3 c, float intensity) {
     return texture(lutTexture, uv).rgb;
 }
 
-vec3 mapToPal(vec3 color, float intensity) {
+vec3 lutLookup(vec3 color, float intensity) {
     vec3 c = floor(color * 31.0);
-    vec3 c0 = lutLookup(c, floor(intensity));
-    vec3 c1 = lutLookup(c, ceil(intensity));
+    vec3 c0 = lutLookupI(c, floor(intensity));
+    vec3 c1 = lutLookupI(c, ceil(intensity));
     return mix(c0, c1, fract(intensity));
 }

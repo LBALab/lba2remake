@@ -1,3 +1,6 @@
+uniform sampler2D palette;
+uniform sampler2D noise;
+
 vec4 dither(float color, float intensity) {
     const vec2 halfPixV = vec2(0.0, 0.03125);
     float nz = texture(noise, vec2(vPosition.x, vPosition.z) * 0.5).a;

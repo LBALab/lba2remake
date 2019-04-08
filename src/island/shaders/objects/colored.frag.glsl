@@ -1,10 +1,6 @@
 #version 300 es
 precision highp float;
 
-uniform sampler2D palette;
-uniform sampler2D noise;
-uniform vec3 light;
-
 in vec3 vPosition;
 in vec3 vNormal;
 in float vColor;
