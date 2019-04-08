@@ -6,13 +6,14 @@ import { prepareGeometries } from './geometries';
 import { loadLayout } from './layout';
 import { loadGround } from './ground';
 import { loadSea } from './sea';
-import { loadObjects, loadModel } from './objects';
+import { loadObjects } from './objects';
+import { loadModel } from './model';
 import { loadIslandPhysics } from '../game/loop/physicsIsland';
 import { createBoundingBox } from '../utils/rendering';
 import { loadLUTTexture } from '../utils/lut';
-
 import islandsInfo from './data/islands';
 import environments from './data/environments';
+import { createTextureAtlas } from './atlas';
 
 const islandProps = {};
 each(islandsInfo, (island) => {
@@ -74,7 +75,7 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
                 bufferGeometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
             }
             if (uvGroups) {
-                bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, false));
+                bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint16Array(uvGroups), 4, false));
             }
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.matrixAutoUpdate = false;
@@ -152,22 +153,30 @@ function loadSky(geometries, envInfo) {
 }
 
 function loadGeometries(island, data, ambience) {
-    const geometries = prepareGeometries(island, data, ambience);
     const usedTiles = {};
 
     const models = [];
+    const uvGroupsS = new Set();
     const obl = data.files.obl;
     for (let i = 0; i < obl.length; i += 1) {
-        models.push(
-            loadModel(obl.getEntry(i))
-        );
+        const model = loadModel(obl.getEntry(i));
+        models.push(model);
+        each(model.uvGroups, (group) => {
+            uvGroupsS.add(group.join(','));
+        });
     }
+    const uvGroups = [...uvGroupsS]
+        .map(g => g.split(',').map(v => Number(v)))
+        .sort((g1, g2) => (g2[2] * g2[3]) - (g1[2] * g1[3]));
+    const atlas = createTextureAtlas(data, uvGroups);
+
+    const geometries = prepareGeometries(island, {...data, atlas}, ambience);
 
     each(data.layout.groundSections, (section) => {
         const tilesKey = [section.x, section.z].join(',');
         usedTiles[tilesKey] = [];
         loadGround(section, geometries, usedTiles[tilesKey]);
-        loadObjects(section, geometries, models);
+        loadObjects(section, geometries, models, atlas);
     });
 
     each(data.layout.seaSections, (section) => {

@@ -35,10 +35,9 @@ const fakeNoise = new THREE.DataTexture(
 
 export function prepareGeometries(island, data, ambience) {
     const {envInfo} = island;
-    const {files: {ile, ress}, palette, lutTexture} = data;
+    const {files: {ile, ress}, palette, lutTexture, atlas} = data;
     const paletteTexture = loadPaletteTexture(palette);
     const groundTexture = loadTextureRGBA(ile.getEntry(1), palette);
-    const objectsTexture = loadTextureRGBA(ile.getEntry(2), palette);
     const noiseTexture = makeNoiseTexture();
     const light = getLightVector(ambience);
     return {
@@ -105,7 +104,8 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    uTexture: {value: objectsTexture},
+                    uTexture: {value: atlas.texture},
+                    atlasDim: {value: atlas.texture.image.width},
                     lutTexture: {value: lutTexture},
                     palette: {value: paletteTexture},
                     light: {value: light}
@@ -124,7 +124,8 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    uTexture: {value: objectsTexture},
+                    uTexture: {value: atlas.texture},
+                    atlasDim: {value: atlas.texture.image.width},
                     lutTexture: {value: lutTexture},
                     palette: {value: paletteTexture},
                     light: {value: light}

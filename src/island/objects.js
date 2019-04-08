@@ -2,17 +2,16 @@ import * as THREE from 'three';
 import {each} from 'lodash';
 import {bits} from '../utils.ts';
 import {WORLD_SCALE} from '../utils/lba';
-import {loadSubTextureRGBA} from '../texture.ts';
 
 const push = Array.prototype.push;
 
-export function loadObjects(section, geometries, models) {
+export function loadObjects(section, geometries, models, atlas) {
     const numObjects = section.objInfo.numObjects;
     const boundingBoxes = [];
     for (let i = 0; i < numObjects; i += 1) {
         const info = loadObjectInfo(section.objects, section, i);
         const model = models[info.index];
-        loadFaces(geometries, model, info, boundingBoxes);
+        loadFaces(geometries, model, info, boundingBoxes, atlas);
     }
     section.boundingBoxes = boundingBoxes;
 }
@@ -33,45 +32,7 @@ function loadObjectInfo(objects, section, index) {
     };
 }
 
-export function loadModel(buffer) {
-    const data = new DataView(buffer);
-    const model = {
-        verticesOffset: data.getUint32(44, true),
-        normalsOffset: data.getUint32(52, true),
-        faceSectionOffset: data.getUint32(68, true),
-        lineSectionSize: data.getUint32(72, true),
-        lineSectionOffset: data.getUint32(76, true),
-        sphereSectionSize: data.getUint32(80, true),
-        sphereSectionOffset: data.getUint32(84, true),
-        uvGroupsSectionSize: data.getUint32(88, true),
-        uvGroupsSectionOffset: data.getUint32(92, true),
-        numVerticesType1: data.getUint16(100, true),
-        numVerticesType2: data.getUint16(102, true),
-        buffer
-    };
-    model.vertices = new Int16Array(buffer, model.verticesOffset, model.numVerticesType1 * 4);
-    model.normals = new Int16Array(buffer, model.normalsOffset, model.numVerticesType1 * 4);
-
-    // uvGroups
-    model.uvGroups = [];
-    const rawUVGroups = new Uint8Array(
-        model.buffer,
-        model.uvGroupsSectionOffset,
-        model.uvGroupsSectionSize * 4
-    );
-    for (let i = 0; i < model.uvGroupsSectionSize; i += 1) {
-        const index = i * 4;
-        model.uvGroups.push([
-            rawUVGroups[index],
-            rawUVGroups[index + 1],
-            rawUVGroups[index + 2],
-            rawUVGroups[index + 3]
-        ]);
-    }
-    return model;
-}
-
-function loadFaces(geometries, model, info, boundingBoxes) {
+function loadFaces(geometries, model, info, boundingBoxes, atlas) {
     const data = new DataView(
         model.buffer,
         model.faceSectionOffset,
@@ -80,7 +41,7 @@ function loadFaces(geometries, model, info, boundingBoxes) {
     let offset = 0;
     while (offset < data.byteLength) {
         const section = parseSectionHeader(data, model, offset);
-        loadSection(geometries, model, info, section, boundingBoxes);
+        loadSection(geometries, model, info, section, boundingBoxes, atlas);
         offset += section.size + 8;
     }
 }
@@ -101,10 +62,10 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
-function loadSection(geometries, object, info, section, boundingBoxes) {
+function loadSection(geometries, object, info, section, boundingBoxes, atlas) {
     const bb = new THREE.Box3();
     for (let i = 0; i < section.numFaces; i += 1) {
-        const uvGroup = getUVGroup(object, section, i);
+        const uvGroup = getUVGroup(object, section, i, atlas);
         const faceNormal = getFaceNormal(object, section, info, i);
         const addVertex = (j) => {
             const index = section.data.getUint16((i * section.blockSize) + (j * 2), true);
@@ -127,9 +88,7 @@ function loadSection(geometries, object, info, section, boundingBoxes) {
                 );
                 geometries.objects_colored.colors.push(getColor(section, i));
             } else {
-                const baseGroup = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
-                const group = uvGroup ? `${baseGroup}_${uvGroup.join(',')}` : baseGroup;
-                createSubgroupGeometry(geometries, group, baseGroup, uvGroup);
+                const group = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
                 push.apply(geometries[group].positions, getPosition(object, info, index));
                 push.apply(
                     geometries[group].normals,
@@ -212,13 +171,14 @@ function getUVs(section, face, ptIndex) {
     return [u, v];
 }
 
-function getUVGroup(object, section, face) {
+function getUVGroup(object, section, face, atlas) {
     if (section.blockSize === 24 || section.blockSize === 32) {
         const baseIndex = face * section.blockSize;
         const uvGroupIndex = section.blockSize === 32 ?
             section.data.getUint8(baseIndex + 28)
             : section.data.getUint8(baseIndex + 6);
-        return object.uvGroups[uvGroupIndex];
+        const uvGroup = object.uvGroups[uvGroupIndex];
+        return atlas.groups[uvGroup.join(',')].tgt;
     }
     return null;
 }
@@ -234,43 +194,4 @@ function rotate(vec, angle) {
     const index = (angle + 3) % 4;
     const v = new THREE.Vector3().fromArray(vec);
     return v.applyMatrix4(angleMatrix[index]).toArray();
-}
-
-function createSubgroupGeometry(geometries, group, baseGroup, uvGroup) {
-    if (group in geometries) {
-        return;
-    }
-    const baseMaterial = geometries[baseGroup].material;
-    const baseUniforms = baseMaterial.uniforms;
-    const transparent = baseGroup === 'objects_textured_transparent';
-    const baseTexture = baseUniforms.uTexture.value;
-    let groupTexture = baseTexture;
-    if (uvGroup.join(',') !== '0,0,255,255') {
-        groupTexture = loadSubTextureRGBA(
-            baseTexture.image.data,
-            uvGroup[0],
-            uvGroup[1],
-            uvGroup[2] + 1,
-            uvGroup[3] + 1
-        );
-    }
-    geometries[group] = {
-        positions: [],
-        normals: [],
-        uvs: [],
-        uvGroups: [],
-        material: new THREE.RawShaderMaterial({
-            transparent,
-            vertexShader: baseMaterial.vertexShader,
-            fragmentShader: baseMaterial.fragmentShader,
-            uniforms: {
-                fogColor: baseUniforms.fogColor,
-                fogDensity: baseUniforms.fogDensity,
-                uTexture: {value: groupTexture},
-                lutTexture: baseUniforms.lutTexture,
-                palette: baseUniforms.palette,
-                light: baseUniforms.light
-            }
-        })
-    };
 }
