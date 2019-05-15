@@ -20,6 +20,7 @@ import Loader from './game/Loader';
 import Video from './game/Video';
 import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
+import TeleportMenu from './game/TeleportMenu';
 import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
 import {sBind} from '../utils.ts';
@@ -74,7 +75,8 @@ export default class GameUI extends FrameListener {
                 choice: null,
                 menuTexts: null,
                 showMenu: false,
-                inGameMenu: false
+                inGameMenu: false,
+                teleportMenu: false
             };
 
             clock.start();
@@ -208,9 +210,11 @@ export default class GameUI extends FrameListener {
         const key = event.code || event.which || event.keyCode;
         if (!this.state.video) {
             if (key === 'Escape' || key === 27) {
-                if (!this.state.game.isPaused()) {
+                if (this.state.teleportMenu) {
+                    this.setState({teleportMenu: false});
+                } else if (!this.state.game.isPaused()) {
                     this.showMenu(true);
-                } else if (this.state.showMenu) {
+                } else if (this.state.showMenu && this.state.inGameMenu) {
                     this.hideMenu();
                 }
             }
@@ -303,6 +307,35 @@ export default class GameUI extends FrameListener {
                 }, this.saveData);
                 break;
             }
+            case -1: { // Teleport
+                this.setState({teleportMenu: true});
+                break;
+            }
+            case -2: { // Editor Mode
+                const hash = window.location.hash;
+                if (hash === '') {
+                    const renderer = this.state.renderer;
+                    if (renderer) {
+                        renderer.dispose();
+                    }
+                    if ('exitPointerLock' in document) {
+                        document.exitPointerLock();
+                    }
+                    window.location.hash = 'editor=true';
+                }
+                break;
+            }
+            case -3: { // Exit editor
+                const renderer = this.state.renderer;
+                if (renderer) {
+                    renderer.dispose();
+                }
+                if ('exitPointerLock' in document) {
+                    document.exitPointerLock();
+                }
+                window.location.hash = '';
+                break;
+            }
         }
     }
 
@@ -393,11 +426,23 @@ export default class GameUI extends FrameListener {
             />
             <Video video={this.state.video} renderer={this.state.renderer} />
             <Menu
-                showMenu={this.state.showMenu}
+                params={this.props.params}
+                showMenu={this.state.showMenu && !this.state.teleportMenu}
                 texts={this.state.game.menuTexts}
                 inGameMenu={this.state.inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />
+            {this.state.teleportMenu
+                && <TeleportMenu
+                    inGameMenu={this.state.inGameMenu}
+                    game={this.state.game}
+                    sceneManager={this.state.sceneManager}
+                    exit={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.setState({teleportMenu: false});
+                    }}
+                />}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} />
             {this.state.loading ? <Loader/> : null}

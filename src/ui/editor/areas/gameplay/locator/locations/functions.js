@@ -1,14 +1,17 @@
 import DebugData from '../../../../DebugData';
 
 function goto(index) {
-    if (DebugData.sceneManager && DebugData.sceneManager.hideMenuAndGoto) {
-        const game = DebugData.scope.game;
+    gotoWithArgs(index, DebugData.scope && DebugData.scope.game, DebugData.sceneManager);
+}
+
+function gotoWithArgs(index, game, sceneManager) {
+    if (game && sceneManager && sceneManager.hideMenuAndGoto) {
         const uiState = game.getUiState();
         const wasPaused = game.isPaused() && !uiState.video && !uiState.showMenu;
         if (uiState.video) {
             game.setUiState({video: null});
         }
-        DebugData.sceneManager.hideMenuAndGoto(index, wasPaused);
+        sceneManager.hideMenuAndGoto(index, wasPaused);
     }
 }
 
@@ -40,7 +43,8 @@ function baseScene(type, index, name, children) {
             }
         ],
         selected: isSelected.bind(null, index),
-        icon
+        icon,
+        goto: (game, sceneManager) => gotoWithArgs(index, game, sceneManager)
     };
 }
 
