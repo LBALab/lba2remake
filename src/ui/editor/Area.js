@@ -74,7 +74,12 @@ export default class Area extends React.Component {
         this.confirmPopup = this.confirmPopup.bind(this);
         this.keyDown = this.keyDown.bind(this);
         this.state = {
-            popup: null,
+            popup: props.area.id === 'new_area' ? {
+                msg: this.renderAreaSelectionPopup(),
+                style: {
+                    background: 'transparent'
+                }
+            } : null,
             settings: false
         };
         this.shortcuts = {
@@ -149,7 +154,10 @@ export default class Area extends React.Component {
                 this.setState({popup: null});
             } else {
                 this.setState({popup: {
-                    msg: this.renderAreaSelectionPopup()
+                    msg: this.renderAreaSelectionPopup(),
+                    style: {
+                        background: 'transparent'
+                    }
                 }});
             }
         };
@@ -229,7 +237,7 @@ export default class Area extends React.Component {
                 mainData: this.props.mainData
             });
         }
-        return <div style={contentStyle}>
+        return <div style={extend({}, contentStyle, this.props.area.style)}>
             {React.createElement(this.props.area.content, props)}
             {this.renderPopup()}
         </div>;

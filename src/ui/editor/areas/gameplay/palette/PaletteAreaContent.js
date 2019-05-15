@@ -136,12 +136,18 @@ export default class PaletteAreaContent extends React.Component {
 
     renderCanvas() {
         const wrapperStyle = {
-            marginTop: 20,
+            margin: 5,
+            padding: 5,
+            border: '1px solid black',
+            background: 'black',
+            display: 'inline-block',
+            verticalAlign: 'top'
         };
 
         const canvasStyle = {
             width: '100%',
-            cursor: 'crosshair'
+            cursor: 'crosshair',
+            maxWidth: '256px'
         };
 
         const onSlide = (e) => {
@@ -167,7 +173,7 @@ export default class PaletteAreaContent extends React.Component {
 
         return <div>
             <div style={wrapperStyle}>
-                Palette:<br/>
+                <b>Palette</b><hr/>
                 <div style={colStyle}>{this.state.activeColor}</div>
                 <canvas
                     style={canvasStyle}
@@ -179,18 +185,18 @@ export default class PaletteAreaContent extends React.Component {
                 />
             </div>
             <div style={wrapperStyle}>
-                Color curves:
+                <b>Color curves</b><hr/>
                 <canvas
                     style={canvasStyle}
                     ref={this.onCanvasCurvesRef}
                 />
             </div>
             <div style={wrapperStyle}>
-                LUT slice<br/>
+                <b>LUT slice</b><hr/>
                 Intensity: {this.state.intensity}<br/>
-                <input type="range" min="0" max="15" value={this.state.intensity} onChange={onSlideI} style={{width: '100%'}}/>
+                <input type="range" min="0" max="15" value={this.state.intensity} onChange={onSlideI} style={{width: '100%', maxWidth: '256px'}}/><br/>
                 Blue level: {this.state.slice}<br/>
-                <input type="range" min="0" max={LUT_DIM - 1} value={this.state.slice} onChange={onSlide} style={{width: '100%'}}/>
+                <input type="range" min="0" max={LUT_DIM - 1} value={this.state.slice} onChange={onSlide} style={{width: '100%', maxWidth: '256px'}}/><br/>
                 <canvas
                     style={canvasStyle}
                     ref={this.onCanvasLUTRef}
@@ -260,7 +266,7 @@ export default class PaletteAreaContent extends React.Component {
             const ctx = this.ctxCurves;
             const p = this.palette;
             ctx.fillStyle = 'black';
-            ctx.fillRect(16, 0, 480, 256);
+            ctx.fillRect(0, 0, 512, 256);
             ctx.lineWidth = 2;
 
             const drawCurve = (color, offset) => {
