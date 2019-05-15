@@ -118,7 +118,8 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions = {}) {
         const options = {
             alpha: false,
             canvas,
-            preserveDrawingBuffer: rendererOptions.preserveDrawingBuffer
+            preserveDrawingBuffer: rendererOptions.preserveDrawingBuffer,
+            antialias: true
         };
         let webglVersion = -1;
         if (webgl2 && window.WebGL2RenderingContext) {
