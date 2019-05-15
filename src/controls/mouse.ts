@@ -60,8 +60,9 @@ function pointerLockChanged(controls) {
 }
 
 function handleClick(params, game) {
+    const uiState = game.getUiState();
     if (document.body && document.body.requestPointerLock
-        && (!params.editor || game.controlsState.freeCamera)) {
+        && (!params.editor || game.controlsState.freeCamera) && uiState && !uiState.showMenu) {
         document.body.requestPointerLock();
     }
 }
