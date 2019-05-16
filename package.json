@@ -11,7 +11,7 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-markdown": "^4.0.6",
-    "three": "^0.101.0",
+    "three": "^0.104.0",
     "simplex-noise": "^2.4.0"
   },
   "devDependencies": {
