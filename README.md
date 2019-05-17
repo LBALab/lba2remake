@@ -1,4 +1,8 @@
-# LBA2 Remake ![CircleCI](https://circleci.com/gh/agrande/lba2remake.png?style=shield&circle-token=:circle-token)
+# LBA2 Remake
+![CircleCI](https://circleci.com/gh/agrande/lba2remake.png?style=shield&circle-token=:circle-token)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/agrande/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/agrande/lba2remake/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/agrande/lba2remake.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/agrande/lba2remake/context:javascript)
+
 A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in JavaScript / Three.js / React
 
 #### [Live demo](https://www.lba2remake.net) (or [Editor mode](https://www.lba2remake.net/#editor=true))
