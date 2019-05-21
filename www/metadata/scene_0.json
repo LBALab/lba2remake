@@ -33,7 +33,8 @@
     },
     null,
     {
-      "name": "said_hello"
+      "name": "said_hello",
+      "type": "boolean"
     }
   ]
 }

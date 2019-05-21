@@ -6,6 +6,7 @@ import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
 import { loadSprite } from '../iso/sprites';
 
 import { getObjectName } from '../ui/editor/DebugData';
+import { createActorLabel } from '../ui/editor/labels.js';
 import { runScript } from './scripting';
 
 interface ActorFlags {
@@ -90,6 +91,7 @@ export const DirMode = {
 // TODO: move section offset to container THREE.Object3D
 export async function loadActor(
     params: any,
+    is3DCam: boolean,
     envInfo: any,
     ambience: any,
     props: ActorProps,
@@ -200,6 +202,9 @@ export async function loadActor(
 
         /* @inspector(locate) */
         async loadMesh() {
+            const name = getObjectName('actor',
+                            this.props.sceneIndex,
+                            this.props.index);
             // only if not sprite actor
             if (!this.isSprite && this.props.bodyIndex !== 0xFF) {
                 const {entityIndex, bodyIndex, animIndex} = this.props;
@@ -219,9 +224,6 @@ export async function loadActor(
                     this.model = model;
                     this.threeObject = model.mesh;
                     if (this.threeObject) {
-                        const name = getObjectName('actor',
-                                                    this.props.sceneIndex,
-                                                    this.props.index);
                         this.threeObject.name = `actor:${name}`;
                         this.threeObject.visible = this.isVisible;
                     }
@@ -232,12 +234,12 @@ export async function loadActor(
                 // sprite.threeObject.quaternion.copy(actor.physics.orientation);
                 this.threeObject = sprite.threeObject;
                 if (this.threeObject) {
-                    const name = getObjectName('actor',
-                                                this.props.sceneIndex,
-                                                this.props.index);
                     this.threeObject.name = `actor:${name}`;
                     this.threeObject.visible = this.isVisible;
                 }
+            }
+            if (params.editor) {
+                createActorLabel(this, name, is3DCam);
             }
         },
 

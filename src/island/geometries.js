@@ -3,7 +3,8 @@ import * as THREE from 'three';
 import {
     loadSubTexture,
     loadPaletteTexture,
-    loadTexture
+    loadTextureRGBA,
+    makeNoiseTexture
 } from '../texture.ts';
 import {compile} from '../utils/shaders';
 
@@ -17,16 +18,27 @@ import VERT_OBJECTS_TEXTURED from './shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from './shaders/objects/textured.frag.glsl';
 import VERT_SEA from './shaders/env/sea.vert.glsl';
 import FRAG_SEA from './shaders/env/sea.frag.glsl';
-import VERT_ENV from './shaders/env/env.vert.glsl';
-import FRAG_ENV from './shaders/env/env.frag.glsl';
+import VERT_SKY from './shaders/env/sky.vert.glsl';
+import FRAG_SKY from './shaders/env/sky.frag.glsl';
 import VERT_MOON from './shaders/env/moon.vert.glsl';
+import FRAG_MOON from './shaders/env/moon.frag.glsl';
+
+const fakeNoiseBuffer = new Uint8Array(1);
+fakeNoiseBuffer[0] = 128;
+const fakeNoise = new THREE.DataTexture(
+    fakeNoiseBuffer,
+    1,
+    1,
+    THREE.AlphaFormat,
+    THREE.UnsignedByteType
+);
 
 export function prepareGeometries(island, data, ambience) {
     const {envInfo} = island;
-    const {files: {ile, ress}, palette} = data;
+    const {files: {ile, ress}, palette, lutTexture, atlas} = data;
     const paletteTexture = loadPaletteTexture(palette);
-    const groundTexture = loadTexture(ile.getEntry(1), palette);
-    const objectsTexture = loadTexture(ile.getEntry(2), palette);
+    const groundTexture = loadTextureRGBA(ile.getEntry(1), palette);
+    const noiseTexture = makeNoiseTexture();
     const light = getLightVector(ambience);
     return {
         ground_colored: {
@@ -41,6 +53,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector4().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
+                    noise: {value: noiseTexture},
                     actorPos: {value: times(10, () => new THREE.Vector4()), type: 'v4v'}
                 }
             })
@@ -58,6 +71,8 @@ export function prepareGeometries(island, data, ambience) {
                     fogDensity: {value: envInfo.fogDensity},
                     uTexture: {value: groundTexture},
                     palette: {value: paletteTexture},
+                    lutTexture: {value: lutTexture},
+                    noise: {value: noiseTexture},
                     actorPos: {value: times(10, () => new THREE.Vector4()), type: 'v4v'}
                 }
             })
@@ -73,6 +88,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
+                    noise: {value: fakeNoise},
                     light: {value: light}
                 }
             })
@@ -88,7 +104,9 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    uTexture: {value: objectsTexture},
+                    uTexture: {value: atlas.texture},
+                    atlasDim: {value: atlas.texture.image.width},
+                    lutTexture: {value: lutTexture},
                     palette: {value: paletteTexture},
                     light: {value: light}
                 }
@@ -106,7 +124,9 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    uTexture: {value: objectsTexture},
+                    uTexture: {value: atlas.texture},
+                    atlasDim: {value: atlas.texture.image.width},
+                    lutTexture: {value: lutTexture},
                     palette: {value: paletteTexture},
                     light: {value: light}
                 }
@@ -116,7 +136,7 @@ export function prepareGeometries(island, data, ambience) {
             positions: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: compile('vert', envInfo.index !== 14 ? VERT_SEA : VERT_MOON),
-                fragmentShader: compile('frag', envInfo.index !== 14 ? FRAG_SEA : FRAG_ENV),
+                fragmentShader: compile('frag', envInfo.index !== 14 ? FRAG_SEA : FRAG_MOON),
                 uniforms: {
                     uTexture: {
                         value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)
@@ -124,14 +144,14 @@ export function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
                     time: {value: 0.0},
-                    scale: {value: 512.0}
+                    scale: {value: envInfo.index !== 14 ? 512.0 : 16.0}
                 }
             })
         },
         sky: {
             material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', VERT_ENV),
-                fragmentShader: compile('frag', FRAG_ENV),
+                vertexShader: compile('vert', VERT_SKY),
+                fragmentShader: compile('frag', FRAG_SKY),
                 uniforms: {
                     uTexture: {
                         value: loadSubTexture(
@@ -144,7 +164,8 @@ export function prepareGeometries(island, data, ambience) {
                         )
                     },
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
-                    fogDensity: {value: envInfo.fogDensity},
+                    fogDensity: {value: 0.1},
+                    opacity: {value: envInfo.skyOpacity},
                     scale: {value: envInfo.scale}
                 },
                 transparent: true

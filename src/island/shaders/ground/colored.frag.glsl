@@ -1,13 +1,13 @@
 #version 300 es
 precision highp float;
 
-uniform sampler2D palette;
 uniform vec4 actorPos[10];
 
 in vec3 vPosition;
 in float vColor;
 in float vIntensity;
 in vec2 vGridPos;
+in vec3 vMVPos;
 
 out vec4 fragColor;
 

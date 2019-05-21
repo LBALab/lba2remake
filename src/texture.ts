@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as SimplexNoise from 'simplex-noise';
 import { map, each } from 'lodash';
 
 export function loadPaletteTexture(palette: Uint8Array) {
@@ -101,11 +102,12 @@ export function loadTextureRGBA(buffer: ArrayBuffer, palette: Uint8Array) {
         THREE.UVMapping,
         THREE.RepeatWrapping,
         THREE.RepeatWrapping,
-        THREE.NearestFilter,
-        THREE.LinearFilter
+        THREE.LinearFilter,
+        THREE.LinearMipMapLinearFilter
     );
     texture.needsUpdate = true;
     texture.generateMipmaps = true;
+    texture.anisotropy = 16;
     return texture;
 }
 
@@ -199,5 +201,66 @@ export function loadSubTexture(buffer: ArrayBuffer,
     );
     texture.needsUpdate = true;
     texture.generateMipmaps = true;
+    return texture;
+}
+
+export function loadSubTextureRGBA(source: Uint8Array,
+                                   x_offset: number,
+                                   y_offset: number,
+                                   width: number,
+                                   height: number) {
+    const image_data = new Uint8Array(width * height * 4);
+    for (let y = 0; y < height; y += 1) {
+        for (let x = 0; x < width; x += 1) {
+            const src_i = ((y + y_offset) * 256) + x + x_offset;
+            const tgt_i = (y * width) + x;
+            image_data[tgt_i * 4] = source[src_i * 4];
+            image_data[(tgt_i * 4) + 1] = source[(src_i * 4) + 1];
+            image_data[(tgt_i * 4) + 2] = source[(src_i * 4) + 2];
+            image_data[(tgt_i * 4) + 3] = source[(src_i * 4) + 3];
+        }
+    }
+    const texture = new THREE.DataTexture(
+        image_data,
+        width,
+        height,
+        THREE.RGBAFormat,
+        THREE.UnsignedByteType,
+        THREE.UVMapping,
+        THREE.RepeatWrapping,
+        THREE.RepeatWrapping,
+        THREE.LinearFilter,
+        THREE.LinearMipMapLinearFilter
+    );
+    texture.needsUpdate = true;
+    texture.generateMipmaps = true;
+    texture.anisotropy = 16;
+    return texture;
+}
+
+const noiseGen = new SimplexNoise('LBA');
+
+export function makeNoiseTexture() {
+    const dim = 256;
+    const image_data = new Uint8Array(dim * dim);
+    for (let i = 0; i < dim * dim; i += 1) {
+        const x = Math.floor(i / dim);
+        const y = i % dim;
+        const v = noiseGen.noise2D(x, y);
+        const pixel = Math.floor((v + 1.0) * 128);
+        image_data[i] = pixel;
+    }
+
+    const texture = new THREE.DataTexture(image_data, dim, dim);
+    texture.format = THREE.AlphaFormat;
+    texture.type = THREE.UnsignedByteType;
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.magFilter = THREE.LinearFilter;
+    texture.minFilter = THREE.LinearMipMapLinearFilter;
+    texture.anisotropy = 16;
+    texture.needsUpdate = true;
+    texture.generateMipmaps = true;
+
     return texture;
 }

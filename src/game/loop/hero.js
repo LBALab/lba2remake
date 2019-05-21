@@ -108,9 +108,8 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
             animIndex = AnimType.THROW;
         }
     }
-    if (!controlsState.relativeToCam) {
+    if (!controlsState.relativeToCam && !hero.props.runtimeFlags.isJumping) {
         if (controlsState.controlVector.x !== 0 && !controlsState.crouch) {
-            toggleJump(hero, false);
             hero.props.runtimeFlags.isCrouching = false;
             hero.props.runtimeFlags.isWalking = true;
             if (!controlsState.sideStep) {
@@ -147,7 +146,9 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
             }
         }
     }
-    animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex, time);
+    if (!hero.props.runtimeFlags.isJumping) {
+        animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex, time);
+    }
     if (hero.props.animIndex !== animIndex) {
         hero.props.animIndex = animIndex;
         hero.resetAnimState();
@@ -160,7 +161,7 @@ const UP = new THREE.Vector3(0, 1, 0);
 const QUAT = new THREE.Quaternion();
 const EULER = new THREE.Euler();
 
-function processCamRelativeMovement(controlsState, scene, hero, animIndex, time) {
+function processCamRelativeMovement(controlsState, scene, hero, animIndex) {
     if (controlsState.relativeToCam) {
         const camera = scene.camera.controlNode;
         if (!camera)
@@ -180,7 +181,7 @@ function processCamRelativeMovement(controlsState, scene, hero, animIndex, time)
             FLAT_CAM.quaternion.multiply(QUAT);
             EULER.setFromQuaternion(FLAT_CAM.quaternion, 'XZY');
             hero.physics.temp.angle = EULER.y;
-            hero.physics.orientation.slerp(FLAT_CAM.quaternion, time.delta * 15);
+            hero.physics.orientation.copy(FLAT_CAM.quaternion);
             animIndex = AnimType.FORWARD;
             hero.props.runtimeFlags.isWalking = true;
         }

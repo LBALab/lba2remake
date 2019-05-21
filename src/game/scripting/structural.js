@@ -140,6 +140,7 @@ export function SET_TRACK(offset) {
 
 export function SET_TRACK_OBJ(actor, offset) {
     actor.scripts.move.context.state.reentryOffset = offset;
+    actor.scripts.move.context.state.stopped = false;
 }
 
 export function STOP_CURRENT_TRACK() {

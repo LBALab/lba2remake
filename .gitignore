@@ -5,5 +5,5 @@ node_modules
 /www/data
 /crash_report.json
 /dist
-
-\.DS_Store
+/yarn.lock
+.DS_Store

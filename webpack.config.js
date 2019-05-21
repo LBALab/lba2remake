@@ -14,7 +14,7 @@ module.exports = {
         publicPath: path.join(__dirname, './www'),
     },
     resolve: {
-        extensions: ['.ts', '.js', '.jsx', '.glsl', '.proto', '.yaml']
+        extensions: ['.ts', '.js', '.jsx', '.glsl', '.proto', '.yaml', '.md']
     },
     resolveLoader: {
         alias: {
@@ -74,6 +74,11 @@ module.exports = {
             }]
         }, {
             test: /\.proto?$/,
+            use: [{
+                loader: 'raw-loader'
+            }]
+        }, {
+            test: /\.md?$/,
             use: [{
                 loader: 'raw-loader'
             }]

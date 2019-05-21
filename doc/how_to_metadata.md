@@ -8,10 +8,10 @@ We need metadata because:
  * It makes understanding the game's scripts easier
  * It helps us implement script commands better
  * It's an important step towards scripts _modding_
- 
+
 ## How to edit metadata
- 
- 1. Fire up the online [editor](http://lba2remake.xesf.net/#editor=true) and start a game.
+
+ 1. Fire up the online [editor](https://www.lba2remake.net/#editor=true) and start a game.
  2. Close the editor areas you don't need (`Scripts` and `Debug HUD`):
  ![Close areas you don't need](images/close_areas.png)
  3. Browse the scenes with the `Locator` area:

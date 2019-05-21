@@ -25,8 +25,11 @@ const WebVR = {
                     device.requestPresent([
                         {
                             source: renderer.domElement,
-                            highRefreshRate: true,
-                            foveationLevel: 3
+                            attributes: {
+                                highRefreshRate: true,
+                                foveationLevel: 3,
+                                antialias: true
+                            }
                         }
                     ]);
                 }
@@ -73,8 +76,11 @@ const WebVR = {
                 event.display.requestPresent([
                     {
                         source: renderer.domElement,
-                        highRefreshRate: true,
-                        foveationLevel: 3
+                        attributes: {
+                            highRefreshRate: true,
+                            foveationLevel: 3,
+                            antialias: true
+                        }
                     }
                 ]);
             }, false);

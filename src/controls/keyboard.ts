@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import {switchStats} from '../renderer/stats';
 import {BehaviourMode} from '../game/loop/hero';
 
@@ -129,6 +130,9 @@ function keyDownHandler(params, game, sceneManager, event) {
                 game.controlsState.freeCamera = !game.controlsState.freeCamera;
                 // eslint-disable-next-line no-console
                 console.log('Free camera: ', game.controlsState.freeCamera);
+                if (game.controlsState.freeCamera) {
+                    resetCameraOrientation(game, sceneManager);
+                }
             }
             break;
         case 80: // p
@@ -215,4 +219,25 @@ function keyUpHandler(game, event) {
 
 function focusOutHandler(game) {
     game.resetControlsState();
+}
+
+function resetCameraOrientation(game, sceneManager) {
+    const scene = sceneManager.getScene();
+    if (!scene)
+        return;
+
+    const controlNode = scene.camera.controlNode;
+    if (!controlNode)
+        return;
+
+    const baseEuler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+    const headEuler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+    baseEuler.setFromQuaternion(controlNode.quaternion, 'YXZ');
+    headEuler.copy(baseEuler);
+
+    headEuler.y = 0;
+    game.controlsState.cameraHeadOrientation.setFromEuler(headEuler);
+
+    baseEuler.x = 0;
+    game.controlsState.cameraOrientation.setFromEuler(baseEuler);
 }

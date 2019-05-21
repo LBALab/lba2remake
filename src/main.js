@@ -42,6 +42,9 @@ class Root extends React.Component {
     }
 
     openChangeLog() {
+        if (document.exitPointerLock) {
+            document.exitPointerLock();
+        }
         this.setState({ changelog: true });
     }
 
@@ -74,6 +77,10 @@ window.onerror = (message, file, line, column, data) => {
     const stack = (data && data.stack) || undefined;
     init({message, file, line, column, stack, data});
 };
+
+window.addEventListener('unhandledrejection', (event) => {
+    init(event.reason);
+});
 
 function init(error) {
     const ticker = new Ticker();

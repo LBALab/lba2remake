@@ -10,6 +10,7 @@ import {
 import { loadMesh } from './geometries';
 import { loadTextureRGBA } from '../texture';
 import { createBoundingBox } from '../utils/rendering';
+import { loadLUTTexture } from '../utils/lut';
 
 export interface Model {
     state: any;
@@ -26,11 +27,12 @@ export async function loadModel(params: any,
                           animState: any,
                           envInfo: any,
                           ambience: any) {
-    const [ress, body, anim, anim3ds] = await Promise.all([
+    const [ress, body, anim, anim3ds, lutTexture] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr('BODY.HQR'),
         loadHqr('ANIM.HQR'),
-        loadHqr('ANIM3DS.HQR')
+        loadHqr('ANIM3DS.HQR'),
+        loadLUTTexture()
     ]);
     const files = {ress, body, anim, anim3ds};
     return loadModelData(
@@ -41,7 +43,8 @@ export async function loadModel(params: any,
         animIdx,
         animState,
         envInfo,
-        ambience
+        ambience,
+        lutTexture
     );
 }
 
@@ -57,7 +60,8 @@ function loadModelData(params: any,
                        animIdx,
                        animState: any,
                        envInfo: any,
-                       ambience: any) {
+                       ambience: any,
+                       lutTexture: THREE.Texture) {
     if (entityIdx === -1 || bodyIdx === -1 || animIdx === -1)
         return null;
 
@@ -67,6 +71,7 @@ function loadModelData(params: any,
 
     const model = {
         palette,
+        lutTexture,
         files,
         bodies: [],
         anims: [],
@@ -94,6 +99,7 @@ function loadModelData(params: any,
         animState.bones,
         animState.matrixRotation,
         model.palette,
+        model.lutTexture,
         envInfo,
         ambience
     );

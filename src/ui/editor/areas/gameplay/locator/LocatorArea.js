@@ -26,7 +26,8 @@ const LocatorArea = makeOutlinerArea('locator', 'Locator', LocationsNode, {
     },
     style: {
         background: '#111111'
-    }
+    },
+    hideRoot: true
 });
 
 export default LocatorArea;

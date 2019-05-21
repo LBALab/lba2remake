@@ -1,9 +1,11 @@
+import React from 'react';
 import {cloneDeep, map, each, find, isFinite, isInteger, extend, findKey} from 'lodash';
 import Indent from '../../../../../game/scripting/indent';
 import {getRotation, getDistance} from '../../../../../utils/lba';
 import DebugData, {getObjectName, getVarName} from '../../../DebugData';
 import {formatVar} from './format';
 import { DirMode } from '../../../../../game/actors.ts';
+import { findSceneData } from '../scene/SceneNode';
 
 export function getDebugListing(type, scene, actor) {
     if (scene && actor) {
@@ -220,7 +222,7 @@ export function mapDataName(scene, data) {
     } else if (data.type === 'text') {
         const ellipsis = data.text.length > 50 ? '_[...]' : '';
         return ['`', data.text.substring(0, 50), ellipsis, '`'].join('');
-    } else if (data.type === 'actor' || data.type === 'point') {
+    } else if (data.type === 'actor') {
         if (data.value === -1)
             return 'none';
         return getObjectName(data.type, scene.index, data.value);
@@ -257,6 +259,18 @@ export function mapDataName(scene, data) {
         return `${Math.round(getRotation(data.value, 0, 1) - 90)}°`;
     } else if (data.type === 'boolean') {
         return `${data.value !== 0}`;
+    } else if (data.type === 'scene') {
+        const node = findSceneData(data.value);
+        if (node) {
+            const style = {
+                paddingLeft: '2ch',
+                background: `url("${node.icon}") no-repeat`,
+                backgroundSize: '14px 14px',
+                backgroundPosition: '1px 1px'
+            };
+            return <span style={style}>{node.name}&nbsp;<span style={{color: 'grey'}}>#{data.value}</span></span>;
+        }
+        return `#${data.value}`;
     }
     if (isFinite(data.value) && !isInteger(data.value)) {
         return data.value.toFixed(2);

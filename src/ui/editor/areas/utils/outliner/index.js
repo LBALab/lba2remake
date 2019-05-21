@@ -5,7 +5,6 @@ export function makeOutlinerArea(id, name, content, extensions = {}) {
     return {
         id,
         name,
-        menu: extensions.menu,
         icon: extensions.icon,
         content: makeContentComponent(
             content,
@@ -15,11 +14,12 @@ export function makeOutlinerArea(id, name, content, extensions = {}) {
             extensions.hideRoot
         ),
         getInitialState: () => ({
-            path: []
+            path: [],
+            prettyPath: []
         }),
         stateHandler: extend({
-            setPath(path) {
-                this.setState({path});
+            setPath(path, prettyPath) {
+                this.setState({path, prettyPath});
             }
         }, extensions.stateHandler)
     };

@@ -4,7 +4,7 @@ import ZeelishSurface from './locations/ZeelishSurface';
 import ZeelishUndergas from './locations/ZeelishUndergas';
 
 const LocationsNode = {
-    name: 'Locations',
+    name: 'Planets',
     type: 'all',
     children: [
         Twinsun,

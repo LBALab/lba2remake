@@ -52,14 +52,15 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
         }
     }
 
+    const rSize = new THREE.Vector2();
+
     const renderer = {
         canvas,
 
         /* @inspector(locate) */
         render: (scene) => {
-            const width = threeRenderer.getSize().width;
-            const height = threeRenderer.getSize().height;
-            scene.camera.resize(width, height);
+            threeRenderer.getSize(rSize);
+            scene.camera.resize(rSize.x, rSize.y);
             threeRenderer.render(scene.threeScene, scene.camera.threeCamera);
         },
 
@@ -118,7 +119,8 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions = {}) {
         const options = {
             alpha: false,
             canvas,
-            preserveDrawingBuffer: rendererOptions.preserveDrawingBuffer
+            preserveDrawingBuffer: rendererOptions.preserveDrawingBuffer,
+            antialias: true
         };
         let webglVersion = -1;
         if (webgl2 && window.WebGL2RenderingContext) {

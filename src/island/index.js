@@ -7,11 +7,13 @@ import { loadLayout } from './layout';
 import { loadGround } from './ground';
 import { loadSea } from './sea';
 import { loadObjects } from './objects';
+import { loadModel } from './model';
 import { loadIslandPhysics } from '../game/loop/physicsIsland';
 import { createBoundingBox } from '../utils/rendering';
-
+import { loadLUTTexture } from '../utils/lut';
 import islandsInfo from './data/islands';
 import environments from './data/environments';
+import { createTextureAtlas } from './atlas';
 
 const islandProps = {};
 each(islandsInfo, (island) => {
@@ -30,18 +32,19 @@ export async function loadIslandScenery(params, name, ambience) {
     if (name in islands) {
         return islands[name];
     }
-    const [ress, ile, obl] = await Promise.all([
+    const [ress, ile, obl, lutTexture] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr(`${name}.ILE`),
-        loadHqr(`${name}.OBL`)
+        loadHqr(`${name}.OBL`),
+        loadLUTTexture()
     ]);
     const files = {ress, ile, obl};
-    const island = loadIslandNode(params, islandProps[name], files, ambience);
+    const island = loadIslandNode(params, islandProps[name], files, lutTexture, ambience);
     islands[name] = island;
     return island;
 }
 
-function loadIslandNode(params, props, files, ambience) {
+function loadIslandNode(params, props, files, lutTexture, ambience) {
     const islandObject = new THREE.Object3D();
     islandObject.name = `scenery_${props.name}`;
     islandObject.matrixAutoUpdate = false;
@@ -49,7 +52,8 @@ function loadIslandNode(params, props, files, ambience) {
     const data = {
         files,
         palette: new Uint8Array(files.ress.getEntry(0)),
-        layout
+        layout,
+        lutTexture
     };
 
     const geometries = loadGeometries(props, data, ambience);
@@ -71,7 +75,7 @@ function loadIslandNode(params, props, files, ambience) {
                 bufferGeometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
             }
             if (uvGroups) {
-                bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, false));
+                bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint16Array(uvGroups), 4, false));
             }
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.matrixAutoUpdate = false;
@@ -81,7 +85,7 @@ function loadIslandNode(params, props, files, ambience) {
         }
     });
 
-    islandObject.add(loadSky(geometries));
+    islandObject.add(loadSky(geometries, props.envInfo));
 
     const sections = {};
     let boundingBoxes = null;
@@ -119,24 +123,60 @@ function loadIslandNode(params, props, files, ambience) {
     };
 }
 
-function loadSky(geometries) {
-    const sky = new THREE.Mesh(new THREE.PlaneGeometry(3072, 3072, 1, 1), geometries.sky.material);
+function loadSky(geometries, envInfo) {
+    const bufferGeometry = new THREE.BufferGeometry();
+    const height = envInfo.skyHeight || 48;
+    const positions = [
+        -1536, height, -1536,
+        1536, height, -1536,
+        1536, height, 1536,
+        -1536, height, -1536,
+        1536, height, 1536,
+        -1536, height, 1536
+    ];
+    const uvs = [
+        0, 0,
+        1, 0,
+        1, 1,
+        0, 0,
+        1, 1,
+        0, 1
+    ];
+    bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
+    const sky = new THREE.Mesh(
+        bufferGeometry,
+        geometries.sky.material
+    );
     sky.name = 'sky';
-    sky.rotateX(Math.PI / 2.0);
-    sky.position.y = 48.0;
     return sky;
 }
 
 function loadGeometries(island, data, ambience) {
-    const geometries = prepareGeometries(island, data, ambience);
     const usedTiles = {};
-    const objects = [];
+
+    const models = [];
+    const uvGroupsS = new Set();
+    const obl = data.files.obl;
+    for (let i = 0; i < obl.length; i += 1) {
+        const model = loadModel(obl.getEntry(i));
+        models.push(model);
+        each(model.uvGroups, (group) => {
+            uvGroupsS.add(group.join(','));
+        });
+    }
+    const uvGroups = [...uvGroupsS]
+        .map(g => g.split(',').map(v => Number(v)))
+        .sort((g1, g2) => (g2[2] * g2[3]) - (g1[2] * g1[3]));
+    const atlas = createTextureAtlas(data, uvGroups);
+
+    const geometries = prepareGeometries(island, {...data, atlas}, ambience);
 
     each(data.layout.groundSections, (section) => {
         const tilesKey = [section.x, section.z].join(',');
         usedTiles[tilesKey] = [];
         loadGround(section, geometries, usedTiles[tilesKey]);
-        loadObjects(data, section, geometries, objects);
+        loadObjects(section, geometries, models, atlas);
     });
 
     each(data.layout.seaSections, (section) => {
@@ -165,7 +205,8 @@ function updateShadows(baseScene, matByName) {
         if (!actor.props.flags.isSprite
             && !actor.props.flags.noShadow
             && actor.model
-            && actor.isVisible) {
+            && actor.isVisible
+            && actor.threeObject.visible) {
             const sz = actor.model.boundingBox.max.x - actor.model.boundingBox.min.x;
             POSITION.copy(actor.physics.position);
             POSITION.applyMatrix4(scene.sceneNode.matrixWorld);

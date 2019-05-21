@@ -71,6 +71,10 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
                         data={root.data}
                         setRoot={this.setRoot.bind(this)}
                         path={this.props.sharedState.path}
+                        prettyPath={
+                            this.props.sharedState.prettyPath
+                            || this.props.sharedState.path
+                        }
                         activePath={this.props.sharedState.activePath}
                         ticker={this.props.ticker}
                         level={0}
@@ -89,34 +93,39 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
 
         renderPath() {
             const path = this.props.sharedState.path;
+            const prettyPath = this.props.sharedState.prettyPath || path;
             const renderElement =
-                (subpath, elem) => <span style={{cursor: 'pointer'}} onClick={this.setRoot.bind(this, subpath)}>
+                (subpath, prettySubpath, elem) => <span style={{cursor: 'pointer'}} onClick={this.setRoot.bind(this, subpath, prettySubpath)}>
                     {elem}
                 </span>;
             if (path.length > 0) {
-                return <div style={{paddingBottom: 8}}>
-                    {renderElement([], isFunction(tree.name) ? tree.name() : tree.name)}
-                    {map(path, (name, idx) => {
-                        const subpath = path.slice(0, idx + 1);
-                        return <span key={idx}>
-                            {Separator[sep]}
-                            {renderElement(subpath, name)}
-                        </span>;
-                    })}
+                return <div style={{paddingBottom: 2}}>
+                    <div style={{overflowX: 'auto', paddingBottom: 6, whiteSpace: 'nowrap'}}>
+                        {renderElement([], [], isFunction(tree.name) ? tree.name() : tree.name)}
+                        {map(prettyPath, (name, idx) => {
+                            const subpath = path.slice(0, idx + 1);
+                            const prettySubpath = prettyPath.slice(0, idx + 1);
+                            return <span key={idx}>
+                                {Separator[sep]}
+                                {renderElement(subpath, prettySubpath, name)}
+                            </span>;
+                        })}
+                    </div>
+                    <hr style={{border: 'none', borderBottom: '1px dashed rgba(200, 200, 200, 0.5)'}}/>
                 </div>;
             }
             return null;
         }
 
-        setRoot(path) {
-            this.props.stateHandler.setPath(path);
+        setRoot(path, prettyPath) {
+            this.props.stateHandler.setPath(path, prettyPath);
         }
 
         findRoot(path) {
             let node = tree;
             let data = null;
 
-            each(path, (name) => {
+            each(path, (key) => {
                 if (!node)
                     return;
 
@@ -128,8 +137,15 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
                     const child = node.dynamic ? node.child(data, i, this) : node.children[i];
                     if (child) {
                         const childData = node.dynamic ? node.childData(data, i, this) : null;
-                        const childName = child.dynamic ? child.name(childData, i) : child.name;
-                        if (childName === name) {
+                        let childKey = null;
+                        if (child.dynamic) {
+                            childKey = child.key
+                                ? child.key(childData, i)
+                                : child.name(childData, i);
+                        } else {
+                            childKey = child.key || child.name;
+                        }
+                        if (childKey === key) {
                             childNode = child;
                             data = childData;
                             break;

@@ -25,6 +25,9 @@ const AnimNode = {
         }
         return 'unknown';
     },
+    lineStyle: {
+        marginLeft: 0
+    },
     key: (anim, idx) => `anim_${idx}`,
     allowRenaming: () => true,
     rename: (anim, newName) => {
@@ -80,7 +83,7 @@ const AnimNode = {
         const { anim } = component.props.rootState;
         return anim === data.index;
     },
-    icon: () => 'editor/icons/anim.png',
+    icon: () => 'editor/icons/anim.svg',
 };
 
 const AnimsNode = {
@@ -141,10 +144,10 @@ async function findAllReferencesToAnim(anim, component) {
         `References to ${name}`,
         {
             name: `References to ${name}`,
-            icon: 'editor/icons/anim.png',
+            icon: 'editor/icons/anim.svg',
             children: map(filteredEntities, e => ({
                 name: DebugData.metadata.entities[e.index] || `entity_${e.index}`,
-                icon: 'editor/icons/entity.png',
+                icon: 'editor/icons/entity.svg',
                 iconStyle: {
                     width: 20,
                     height: 20

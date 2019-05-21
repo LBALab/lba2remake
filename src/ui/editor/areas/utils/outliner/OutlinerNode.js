@@ -42,6 +42,7 @@ export default class OutlinerNode extends React.Component {
             collapsed: !(this.props.level < 1 || this.isInActivePath(props) || node.noCollapse),
             name: this.name(),
             numChildren: this.numChildren(),
+            childPropsHash: '',
             selected: call('selected', node, this.props.data, this),
             menu: null,
             renaming: false,
@@ -125,10 +126,31 @@ export default class OutlinerNode extends React.Component {
             if (numChildren !== this.state.numChildren) {
                 this.setState({numChildren});
             }
+            this.checkChildPropsDiff();
         }
         const selected = call('selected', this.props.node, this.props.data, this);
         if (selected !== this.state.selected) {
             this.setState({selected});
+        }
+    }
+
+    checkChildPropsDiff() {
+        const childProps = this.props.node.childProps;
+        if (!childProps)
+            return;
+
+        const childPropsValues = [];
+        for (let i = 0; i < childProps.length; i += 1) {
+            const prop = childProps[i];
+            if (prop.valueHash) {
+                childPropsValues.push(prop.valueHash(this.props.data));
+            } else {
+                childPropsValues.push(prop.value(this.props.data));
+            }
+        }
+        const childPropsHash = childPropsValues.join(',');
+        if (childPropsHash !== this.state.childPropsHash) {
+            this.setState({childPropsHash});
         }
     }
 
@@ -150,11 +172,11 @@ export default class OutlinerNode extends React.Component {
             return null;
         }
 
-        const lineStyle = {
-            marginLeft: this.props.parentHidden ? 0 : 16,
+        const lineStyle = Object.assign({
+            marginLeft: 12,
             display: 'inline-block',
             whiteSpace: 'normal'
-        };
+        }, this.props.node.lineStyle || {});
 
         const selectedStyle = this.state.selected && this.props.node.selectedStyle;
 
@@ -225,21 +247,23 @@ export default class OutlinerNode extends React.Component {
             return ' ';
 
         const style = Object.assign({
+            width: 14,
+            height: 14,
             verticalAlign: 'middle',
             padding: '0 5px'
-        }, this.props.node.iconStyle || {});
+        }, this.iconStyle() || {});
         return <img key="icon" style={style} src={this.state.icon}/>;
     }
 
     renderName() {
         const node = this.props.node;
         const selected = this.state.selected;
-        const setRoot = this.props.setRoot.bind(null, this.props.path);
+        const setRoot = this.props.setRoot.bind(null, this.props.path, this.props.prettyPath);
         const onClick = node.onClick
             ? node.onClick.bind(null, this.props.data, setRoot, this)
             : setRoot;
         const onDoubleClick = node.onDoubleClick ?
-            node.onDoubleClick.bind(null, this.props.data, this) : noop;
+            node.onDoubleClick.bind(null, this.props.data, this, setRoot) : noop;
 
         const color = (isFunction(node.color) ? this.call('color') : node.color) || 'inherit';
         const title = node.title
@@ -281,7 +305,7 @@ export default class OutlinerNode extends React.Component {
                 node.rename(this.props.data, e.target.value);
                 this.setState({renaming: false});
                 restoreFocus();
-            } else if (key === 'Esc' || key === 27) {
+            } else if (key === 'Escape' || key === 27) {
                 this.setState({renaming: false});
                 restoreFocus();
             }
@@ -325,8 +349,17 @@ export default class OutlinerNode extends React.Component {
         const numChildProps = node.childProps ? node.childProps.length : 0;
         const numChildren = this.state.numChildren + numChildProps;
         const collapsed = this.state.collapsed;
-        if (numChildren > 0 && !this.props.node.noCollapse) {
-            return <span onClick={toggleCollapse} style={{cursor: 'pointer', display: 'inline-block', position: 'absolute', left: 0}}>{collapsed ? '+' : '-'}</span>;
+        const hasCollapse = numChildren > 0 && !this.props.node.noCollapse;
+
+        const style = {
+            cursor: 'pointer',
+            display: 'inline-block',
+            position: 'absolute',
+            left: 0
+        };
+
+        if (hasCollapse) {
+            return <span onClick={toggleCollapse} style={style}>{collapsed ? '+' : '-'}</span>;
         }
         return null;
     }
@@ -397,6 +430,7 @@ export default class OutlinerNode extends React.Component {
         const childName = child.dynamic ? call('name', child, childData, idx) : child.name;
         const key = child.dynamic ? call('key', child, childData, idx) : child.key;
         const path = concat(this.props.path, key || childName || idx);
+        const prettyPath = concat(this.props.prettyPath, childName || idx);
         return <OutlinerNode
             key={path.join('/')}
             id={`otl.${rootName}.${path.join('.')}`}
@@ -407,6 +441,7 @@ export default class OutlinerNode extends React.Component {
             fontSize={childFontSize}
             setRoot={this.props.setRoot}
             path={path}
+            prettyPath={prettyPath}
             activePath={this.props.activePath}
             ticker={this.props.ticker}
             level={this.props.level + 1}
@@ -427,12 +462,20 @@ export default class OutlinerNode extends React.Component {
     icon() {
         const node = this.props.node;
         const icon = node.dynamic ? this.call('icon') : node.icon;
-        return icon || 'editor/icons/node.png';
+        return icon || 'editor/icons/node.svg';
     }
 
     name() {
         const node = this.props.node;
         return node.dynamic ? this.call('name') : node.name;
+    }
+
+    iconStyle() {
+        const node = this.props.node;
+        if (typeof (node.iconStyle) === 'function') {
+            return this.call('iconStyle');
+        }
+        return node.iconStyle;
     }
 
     nodeProps() {

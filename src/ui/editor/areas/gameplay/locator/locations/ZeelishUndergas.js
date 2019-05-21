@@ -1,6 +1,6 @@
 import {planet, island, section, iso} from './functions';
 
-const ZeelishUndergas = planet('Zeelish (undergas)', 'undergas', [
+const ZeelishUndergas = planet('Undergas', 'undergas', [
     island(-1, 'Elevator Island (Wannies)', [
         section(98, 'Elevator Area', [
             iso(123, 'Elevator Building')

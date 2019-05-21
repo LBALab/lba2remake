@@ -21,6 +21,9 @@ app.set('port', process.env.PORT || 8080);
 app.set('host', process.env.HOST || '0.0.0.0');
 
 app.use(bodyParser.json());
+app.use(bodyParser.raw({
+    limit: '2mb'
+}));
 
 app.post('/metadata', function (req, res) {
     const body = req.body;
@@ -60,7 +63,7 @@ app.post('/crash', function (req, res) {
     fs.writeFile('./crash_report.json', JSON.stringify(report, null, 2), () => {});
     const content = JSON.stringify(report);
     const tgtReq = http.request({
-        host: 'lba2remake.xesf.net',
+        host: 'www.lba2remake.net',
         path: '/ws/crash/report',
         method: 'POST',
         headers: {
@@ -73,9 +76,19 @@ app.post('/crash', function (req, res) {
     res.end();
 });
 
-app.use('/', express.static('./www'));
+app.post('/lut.dat', function(req, res) {
+    fs.writeFile('./www/lut.dat', req.body, () => {
+        console.log('Saved lut.dat');
+        res.end();
+    });
+});
 
-const indexBody = renderToStaticMarkup(React.createElement(Main));
+app.use('/', express.static('./www'));
+app.use('/doc', express.static('./doc'));
+
+const indexBody = renderToStaticMarkup(React.createElement(Main, {
+    script: 'window.ga=function(){};\nwindow.isLocalServer=true;'
+}));
 
 app.get('/', (req, res) => {
     res.end(indexBody);

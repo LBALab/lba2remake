@@ -1,39 +1,39 @@
 import * as THREE from 'three';
-import {createBoundingBox} from '../utils/rendering';
 import {getObjectName} from '../ui/editor/DebugData';
+import {createBoundingBox} from '../utils/rendering';
+import {createZoneLabel} from '../ui/editor/labels';
 
-/*
-const ZONE_TYPE = {
-    GOTO_SCENE: 0,
-    CAMERA:     1,
-    SCENERIC:   2,
-    FRAGMENT:   3,
-    BONUS:      4,
-    TEXT:       5,
-    LADDER:     6,
-    CONVEYOR:   7,
-    SPIKE:      8,
-    RAIL:       9
-};
-*/
-
-const ZONE_TYPE_MATERIAL_COLOR = [
-    '#84ff84',
-    '#ff8000',
-    '#6495ed',
-    '#ff00ff',
-    '#ffff6c',
-    '#00ff00',
-    '#5555ff',
-    '#96c09f',
-    '#ffc475',
-    '#008000',
+export const ZONE_TYPE = [
+    'TELEPORT',
+    'CAMERA',
+    'SCENERIC',
+    'FRAGMENT',
+    'BONUS',
+    'TEXT',
+    'LADDER',
+    'CONVEYOR',
+    'SPIKE',
+    'RAIL'
 ];
 
-export function loadZone(props) {
+const ZONE_TYPE_MATERIAL_COLOR = [
+    '#84ff84', // TELEPORT
+    '#ffb200', // CAMERA
+    '#6495ed', // SCENERIC
+    '#ff00ff', // FRAGMENT
+    '#e7b5d6', // BONUS
+    '#ff7448', // TEXT
+    '#5555ff', // LADDER
+    '#96c09f', // CONVEYOR
+    '#ffc475', // SPIKE
+    '#008000', // RAIL
+];
+
+export function loadZone(props, is3DCam) {
     const pos = props.pos;
     const zone = {
         type: 'zone',
+        zoneType: ZONE_TYPE[props.type],
         index: props.index,
         props,
         color: new THREE.Color(ZONE_TYPE_MATERIAL_COLOR[props.type]),
@@ -48,11 +48,20 @@ export function loadZone(props) {
         new THREE.Vector3(xMax, yMax, zMax)
     );
     const bbGeom = createBoundingBox(bb, zone.color);
-    bbGeom.name = `zone:${getObjectName('zone', props.sceneIndex, props.index)}`;
+    const name = getObjectName('zone', props.sceneIndex, props.index);
+    bbGeom.name = `zone:${name}`;
     bbGeom.visible = false;
     bbGeom.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
     bbGeom.matrixAutoUpdate = false;
     zone.threeObject = bbGeom;
+    const width = bb.max.x - bb.min.x;
+    const height = bb.max.y - bb.min.y;
+    const depth = bb.max.z - bb.min.z;
+    zone.boundingBox = new THREE.Box3(
+        new THREE.Vector3(-width * 0.5, -height * 0.5, -depth * 0.5),
+        new THREE.Vector3(width * 0.5, height * 0.5, depth * 0.5)
+    );
+    createZoneLabel(zone, name, is3DCam);
 
     return zone;
 }

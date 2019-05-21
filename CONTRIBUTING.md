@@ -12,13 +12,13 @@ We'd like to get in touch with you over [Slack](https://join.slack.com/t/lba2rem
 
 We are building a list of actor, zone, checkpoint and variable names for the game scenes.
 
-It is not required to be a programmer to help. You can do it right in the [editor](http://lba2remake.xesf.net/#editor=true).
+It is not required to be a programmer to help. You can do it right in the [editor](https://www.lba2remake.net/#editor=true).
 
 For more details, check [how to contribute metadata](doc/how_to_metadata.md).
 
 ### Reporting crashes and bugs
 
-You can try to make the [game](http://lba2remake.xesf.net/) or the [editor](http://lba2remake.xesf.net/#editor=true) crash, and use the `Send crash report` button to inform us of what needs fixing.
+You can try to make the [game](https://www.lba2remake.net/) or the [editor](https://www.lba2remake.net/#editor=true) crash, and use the `Send crash report` button to inform us of what needs fixing.
 
 If you observe a bug you can report it [here](https://github.com/agrande/lba2remake/issues/new).
 

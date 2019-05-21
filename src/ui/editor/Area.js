@@ -3,6 +3,7 @@ import {map, findIndex, extend, isEmpty} from 'lodash';
 import {editor, fullscreen} from '../styles/index';
 import {Orientation} from './layout';
 import NewArea, {NewAreaContent} from './areas/utils/NewArea';
+import SettingsIcon from '../utils/SettingsIcon';
 
 const menuHeight = 26;
 
@@ -19,11 +20,6 @@ const menuStyle = (numIcons, main) => extend({
     overflow: 'hidden'
 }, editor.base, { background: main ? 'black' : 'rgb(45,45,48)' });
 
-const menuContentStyle = {
-    padding: '0 1ch',
-    float: 'right'
-};
-
 const contentStyle = extend({
     position: 'absolute',
     top: menuHeight,
@@ -33,10 +29,31 @@ const contentStyle = extend({
     color: 'white'
 }, editor.base);
 
+const settingsWrapper = extend({}, editor.base, {
+    position: 'absolute',
+    top: menuHeight,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0, 0, 0, 0.5)'
+});
+
+const settingsStyle = extend({}, editor.base, {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 20,
+    borderLeft: '1px solid rgb(0,122,204)',
+    borderBottom: '1px solid rgb(0,122,204)',
+    background: '#1F1F1F'
+});
+
 const iconStyle = base => (extend({
     position: 'absolute',
     top: 1,
-    cursor: 'pointer'
+    cursor: 'pointer',
+    width: 22,
+    height: 22
 }, base));
 
 const mainIconStyle = base => (extend({
@@ -56,7 +73,15 @@ export default class Area extends React.Component {
         super(props);
         this.confirmPopup = this.confirmPopup.bind(this);
         this.keyDown = this.keyDown.bind(this);
-        this.state = { popup: null };
+        this.state = {
+            popup: props.area.id === 'new_area' ? {
+                msg: this.renderAreaSelectionPopup(),
+                style: {
+                    background: 'transparent'
+                }
+            } : null,
+            settings: false
+        };
         this.shortcuts = {
             listeners: {},
             register: function register(name, callback) {
@@ -108,22 +133,15 @@ export default class Area extends React.Component {
             <Provider value={this.shortcuts}>
                 {this.renderContent()}
                 {this.renderMenu()}
+                {this.renderSettings()}
             </Provider>
         </div>;
     }
 
     renderMenu() {
-        const menu = this.props.area.menu && !this.state.popup
-            ? React.createElement(this.props.area.menu, {
-                params: this.props.params,
-                ticker: this.props.ticker,
-                stateHandler: this.props.stateHandler,
-                sharedState: this.props.stateHandler.state,
-                confirmPopup: this.confirmPopup
-            })
-            : null;
         const icon = this.props.area.icon || 'default.png';
         const isMain = this.props.area.mainArea;
+        const settings = this.props.area.settings && !this.state.settings;
         const doSplit = !(isMain && isEmpty(this.props.area.toolAreas));
         let numIcons = 0;
         if (this.props.close)
@@ -136,7 +154,10 @@ export default class Area extends React.Component {
                 this.setState({popup: null});
             } else {
                 this.setState({popup: {
-                    msg: this.renderAreaSelectionPopup()
+                    msg: this.renderAreaSelectionPopup(),
+                    style: {
+                        background: 'transparent'
+                    }
                 }});
             }
         };
@@ -146,16 +167,26 @@ export default class Area extends React.Component {
         }, mainIconStyle());
 
         const closeIcon = this.props.close &&
-            <img style={iconStyle({right: 2})} onClick={this.props.close} src="editor/icons/close.png"/>;
+            <img style={iconStyle({right: 2})} onClick={this.props.close} src="editor/icons/close.svg"/>;
 
-        const splitH = doSplit && <img style={iconStyle({right: ((numIcons - 1) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.png"/>;
-        const splitV = doSplit && <img style={iconStyle({right: ((numIcons - 2) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.png"/>;
+        const splitH = doSplit && <img style={iconStyle({right: ((numIcons - 1) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.svg"/>;
+        const splitV = doSplit && <img style={iconStyle({right: ((numIcons - 2) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.svg"/>;
+
+        const switchSettings = () => {
+            this.setState({settings: !this.state.settings});
+        };
+
+        const settingsIcon = settings
+            && <SettingsIcon
+                style={iconStyle({right: ((numIcons) * 26) + 2})}
+                onClick={switchSettings}
+            />;
 
         return <div style={menuStyle(numIcons, isMain)}>
             <img onClick={onClickIcon} style={mainIconStyle()} src={`editor/icons/areas/${icon}`}/>
             <span onClick={onClickIcon} style={titleStyle}>{this.props.area.name}</span>
 
-            <span style={menuContentStyle}>{menu}</span>
+            {settingsIcon}
             {splitH}
             {splitV}
             {closeIcon}
@@ -206,10 +237,39 @@ export default class Area extends React.Component {
                 mainData: this.props.mainData
             });
         }
-        return <div style={contentStyle}>
+        return <div style={extend({}, contentStyle, this.props.area.style)}>
             {React.createElement(this.props.area.content, props)}
             {this.renderPopup()}
         </div>;
+    }
+
+    renderSettings() {
+        if (this.state.settings) {
+            const closeIconStyle = {
+                position: 'absolute',
+                top: 4,
+                right: 4,
+                width: 16,
+                height: 16,
+                cursor: 'pointer'
+            };
+            const close = () => {
+                this.setState({settings: false});
+            };
+            return <div style={settingsWrapper} onClick={close}>
+                <div style={settingsStyle} onClick={(e) => { e.stopPropagation(); }}>
+                    {React.createElement(this.props.area.settings, {
+                        params: this.props.params,
+                        ticker: this.props.ticker,
+                        stateHandler: this.props.stateHandler,
+                        sharedState: this.props.stateHandler.state,
+                        confirmPopup: this.confirmPopup
+                    })}
+                    <img style={closeIconStyle} src="editor/icons/close.svg" onClick={close}/>
+                </div>
+            </div>;
+        }
+        return null;
     }
 
     renderPopup() {

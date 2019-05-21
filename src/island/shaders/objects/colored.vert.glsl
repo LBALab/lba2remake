@@ -10,11 +10,14 @@ in float color;
 
 out vec3 vPosition;
 out vec3 vNormal;
+out vec3 vMVPos;
 out float vColor;
 
 void main() {
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    vec4 mPos = modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * mPos;
     vPosition = position;
     vNormal = normal;
     vColor = color;
+    vMVPos = mPos.xyz;
 }

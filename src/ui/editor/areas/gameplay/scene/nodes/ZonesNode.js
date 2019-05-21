@@ -1,20 +1,8 @@
 import React from 'react';
 import DebugData, {getObjectName, renameObject, locateObject} from '../../../../DebugData';
-import {SceneGraphNode} from './SceneGraphNode';
+import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {makeObjectsNode} from '../node_factories/objects';
-
-const ZONE_TYPE = [
-    'GOTO_SCENE',
-    'CAMERA',
-    'SCENERIC',
-    'FRAGMENT',
-    'BONUS',
-    'TEXT',
-    'LADDER',
-    'CONVEYOR',
-    'SPIKE',
-    'RAIL'
-];
+import {ZONE_TYPE} from '../../../../../../game/zones';
 
 const Zone = {
     dynamic: true,
@@ -30,7 +18,31 @@ const Zone = {
         }
     ],
     name: zone => getObjectName('zone', zone.props.sceneIndex, zone.index),
-    icon: zone => `editor/icons/zones/${ZONE_TYPE[zone.props.type]}.png`,
+    icon: zone => `editor/icons/zones/${ZONE_TYPE[zone.props.type]}.svg`,
+    props: zone => [
+        {
+            id: 'index',
+            value: zone.index,
+            render: value => <span>#{value}</span>
+        },
+        {
+            id: 'visible',
+            value: zone.threeObject.visible,
+            render: (value) => {
+                const onClick = () => {
+                    zone.threeObject.visible = !zone.threeObject.visible;
+                    if (zone.threeObject.visible) {
+                        zone.threeObject.updateMatrix();
+                    }
+                };
+                return <img
+                    src={`editor/icons/${value ? 'visible' : 'hidden'}.svg`}
+                    onClick={onClick}
+                    style={{cursor: 'pointer', width: 14, height: 14}}
+                />;
+            }
+        }
+    ],
     childProps: [
         {
             id: 'type',
@@ -64,21 +76,40 @@ const Zone = {
         return selection && selection.type === 'zone' && selection.index === zone.index;
     },
     onClick: (zone) => { DebugData.selection = {type: 'zone', index: zone.index}; },
-    onDoubleClick: locateObject
+    onDoubleClick: (zone) => {
+        locateObject(zone);
+    }
 };
 
 export const ZonesNode = makeObjectsNode('zone', {
     dynamic: true,
     needsData: true,
     name: () => 'Zones',
-    icon: () => 'editor/icons/zone.png',
+    icon: () => 'editor/icons/zone.svg',
     numChildren: scene => scene.zones.length,
     child: () => Zone,
     childData: (scene, idx) => scene.zones[idx],
     hasChanged: scene => scene.index !== DebugData.scope.scene.index,
-    onClick: (scene, setRoot) => {
-        if (scene.isActive) {
-            setRoot();
-        }
+    props: (data, ignored, component) => {
+        const label = component.props.rootState.labels.zone;
+        return [{
+            id: 'visible',
+            value: label,
+            render: (visible) => {
+                const style = {
+                    width: 14,
+                    height: 14,
+                    cursor: 'pointer'
+                };
+                const onClick = () => {
+                    component.props.rootStateHandler.setLabel('zone', !label);
+                };
+                return <img
+                    style={style}
+                    src={`editor/icons/${visible ? 'visible' : 'hidden'}_zones.svg`}
+                    onClick={onClick}
+                />;
+            }
+        }];
     }
 });

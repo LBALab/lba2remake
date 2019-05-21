@@ -1,11 +1,7 @@
-/* eslint-disable react/no-multi-comp */
 import React from 'react';
-import {map, filter} from 'lodash';
-import {versions} from '../../changelog.yaml';
-import {version as currentVersion} from '../../package.json';
-
-const BASE_API_URL = 'https://api.github.com/repos/agrande/lba2remake';
-const BASE_URL = 'https://github.com/agrande/lba2remake';
+import ReactMarkdown from 'react-markdown';
+import changelog from '../../CHANGELOG.md';
+import './styles/changelog.scss';
 
 const bg_style = {
     position: 'absolute',
@@ -13,367 +9,80 @@ const bg_style = {
     bottom: 0,
     left: 0,
     right: 0,
-    background: 'rgba(0, 0, 0, 0.75)'
+    background: 'rgba(0, 0, 0, 0.85)'
 };
 
-const inner_style = {
+const wrapper_style = {
     position: 'absolute',
     top: 0,
     bottom: 0,
     left: 0,
     right: 0,
-    margin: 50,
+    margin: 32,
     background: 'black',
+    color: 'white',
     border: '2px outset #61cece',
-    borderRadius: 15
+    borderRadius: 12,
+    overflow: 'hidden'
 };
 
-function TagIcon() {
-    return <img src="./images/label.png" style={{width: 16, height: 16, paddingRight: 4}}/>;
-}
-
-function Version({version, isExpanded}) {
-    const linkStyle = {
-        textDecoration: 'none',
-        fontStyle: 'italic',
-        color: isExpanded ? 'rgb(150, 150, 255)' : 'rgb(200, 200, 255)',
-    };
-    const build = window.buildNumber && version.tag === currentVersion ?
-        <a style={linkStyle} href={`https://circleci.com/gh/agrande/lba2remake/${window.buildNumber}`} target="_blank" rel="noopener noreferrer">
-            -build-{window.buildNumber}
-        </a>
-        : null;
-    return <React.Fragment>
-        <TagIcon/>
-        {version.tag}
-        {build}
-    </React.Fragment>;
-}
-
-/**
- * @return {null}
- */
-function VersionDate({date}) {
-    if (date) {
-        return <span style={{float: 'right', fontSize: 14}}>{date}&nbsp;</span>;
-    }
-    return <span style={{float: 'right', fontSize: 14, fontStyle: 'italic'}}>Unreleased&nbsp;</span>;
-}
-
-function VersionTitle({version}) {
-    const isCurrent = version.tag === currentVersion;
-    let currentText;
-    let title;
-    if (isCurrent) {
-        currentText = <span style={{fontSize: 14, color: 'rgb(100, 255, 100)'}}>&nbsp;(current version)</span>;
-    }
-    if (version.title) {
-        title = <span>&nbsp;{version.title}</span>;
-    }
-    return <span style={{color: 'white'}}>
-        {currentText}
-        {title}
-    </span>;
-}
-
-export default class ChangeLog extends React.Component {
-    constructor(props) {
-        super(props);
-        this.renderVersion = this.renderVersion.bind(this);
-        this.renderChangeGroup = this.renderChangeGroup.bind(this);
-        this.state = {
-            expanded: {
-                [currentVersion]: true,
-            }
-        };
-    }
-
-    render() {
-        const closeStyle = {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: 24,
-            height: 24,
-            cursor: 'pointer'
-        };
-
-        const content_style = {
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            margin: 15,
-            color: 'white',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            fontSize: '20px',
-            fontFamily: 'LBA'
-        };
-
-        const content = <div style={content_style}>
-            {this.props.close && <img style={closeStyle} src="./editor/icons/close.png" onClick={this.props.close}/>}
-            {this.props.title && <div style={{fontSize: 26, textDecoration: 'underline'}}>LBA2 Remake</div>}
-            {this.props.title && <div style={{paddingBottom: 20}}>Versions history</div>}
-            <div>
-                {map(versions, this.renderVersion)}
-            </div>
-        </div>;
-
-        if (this.props.fullscreen) {
-            return <div style={bg_style} onClick={this.props.close}>
-                <div style={inner_style} onClick={e => e.stopPropagation()}>
-                    {content}
-                </div>
-            </div>;
-        }
-        return content;
-    }
-
-    toggleExpand(tag) {
-        const expanded = this.state.expanded;
-        if (tag in expanded) {
-            delete expanded[tag];
-        } else {
-            expanded[tag] = true;
-        }
-        this.setState({expanded});
-    }
-
-    renderVersion(version) {
-        const expanded = this.state.expanded;
-        const isExpanded = version.tag in expanded;
-        const toggle = () => this.toggleExpand(version.tag);
-        const expanderStyle = {
-            width: '24px',
-            textAlign: 'center',
-            display: 'inline-block',
-            color: 'grey'
-        };
-        const titleStyle = {
-            cursor: 'pointer',
-            userSelect: 'none',
-            borderTop: '1px solid grey',
-            background: 'rgba(255, 255, 255, 0.1)',
-            color: isExpanded ? 'rgb(150, 150, 255)' : 'rgb(200, 200, 255)',
-            marginBottom: isExpanded ? 0 : 10
-        };
-        const projectStyle = {
-            textDecoration: 'none',
-            float: 'right',
-            color: 'white',
-            fontSize: 14
-        };
-        if (isExpanded) {
-            return <div key={version.tag} style={{marginBottom: 14}}>
-                <div onClick={toggle} style={titleStyle}>
-                    <b style={expanderStyle}>-</b>
-                    <Version version={version} isExpanded={isExpanded}/>
-                    <VersionTitle version={version}/>
-                    <VersionDate date={version.date}/>
-                </div>
-                <div style={{paddingLeft: 24, paddingTop: 8, fontSize: '18px'}}>
-                    {version.project && <a href={version.project} target="_blank" style={projectStyle} rel="noopener noreferrer">
-                        <img src="./images/github.png" style={{width: 16, height: 16, paddingRight: 8}}/>
-                        Github Project
-                    </a>}
-                    {map(version.changes, group => this.renderChangeGroup(group))}
-                </div>
-            </div>;
-        }
-        return <div key={version.tag} onClick={toggle} style={titleStyle}>
-            <b style={expanderStyle}>+</b>
-            <Version version={version}/>
-            <VersionTitle version={version}/>
-            <VersionDate date={version.date}/>
-        </div>;
-    }
-
-    renderChangeGroup(group, level = 0) {
-        const titleStyle = {
-            marginBottom: 8,
-            fontSize: 18 - (level * 2),
-            textDecoration: level === 0 ? 'underline' : 'none'
-        };
-
-        return <div key={group.name} style={{marginBottom: 12}}>
-            <div style={titleStyle}>{group.name}</div>
-            <div style={{paddingLeft: 24}}>
-                {map(group.issues, (issue, idx) => <Issue key={idx} issue={issue}/>)}
-            </div>
-            {group.groups ? <div style={{paddingLeft: 24, paddingTop: 12}}>
-                {map(group.groups, gp => this.renderChangeGroup(gp, level + 1))}
-            </div> : null}
-        </div>;
-    }
-}
-
-const issueStyle = {
-    fontSize: '14px',
-    textIndent: '-24px',
-    marginLeft: '24px',
-    lineHeight: '24px',
-    color: 'rgb(210, 210, 210)'
+const content_style = {
+    padding: '0px 24px',
+    overflow: 'hidden auto',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0
 };
 
-function GitHub({id, closed, small}) {
-    const linkStyle = {
-        color: 'white',
-        textDecoration: 'none',
-        paddingRight: small ? 0 : 8
+const closeStyle = {
+    position: 'absolute',
+    top: 2,
+    right: 8,
+    width: 24,
+    height: 24,
+    cursor: 'pointer'
+};
+
+const onKeyDown = (close, e) => {
+    const key = e.code || e.which || e.keyCode;
+    if (key === 'Escape' || key === 27) {
+        close();
+    }
+    e.stopPropagation();
+};
+
+const onKeyUp = (e) => {
+    e.stopPropagation();
+};
+
+export default function ChangeLog(props) {
+    const onRef = (ref) => {
+        if (ref) {
+            ref.focus();
+        }
     };
-    const iconStyle = {
-        width: 16,
-        height: 16,
-        paddingRight: 4
-    };
-    const imgUrl = `./images/${closed ? 'github_closed' : 'github'}.png`;
 
-    return <a href={`${BASE_URL}/issues/${id}`} style={linkStyle} target="_blank" rel="noopener noreferrer">
-        <img src={imgUrl} style={iconStyle}/>
-        <span style={{fontSize: 12, lineHeight: '14px', border: '1px solid white', padding: '0 5px'}}>{id}</span>
-    </a>;
-}
-
-const issueCache = {};
-
-class Issue extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = this.parse();
-    }
-
-    parse() {
-        let type = 'simple';
-        let id;
-        let tag;
-        let state;
-        let isBug;
-        let text = this.props.issue;
-        const mTags = this.props.issue.match(/^\(([a-zA-Z0-9]+)\)(.*)/);
-        if (mTags) {
-            const num = Number(mTags[1]);
-            let baseText = mTags[2].match(/ *(.*)/)[1];
-            if (baseText) {
-                const mBug = baseText.match(/BUG +(.*)/);
-                if (mBug) {
-                    isBug = true;
-                    baseText = mBug[1];
-                }
-            }
-            if (!Number.isNaN(num)) {
-                id = num;
-                text = <i>Loading issue... #{id}</i>;
-                type = 'github';
-                if (id in issueCache) {
-                    const info = issueCache[id];
-                    text = baseText || info.title;
-                    state = info.state;
-                    tag = this.findTag(info);
-                    isBug = isBug || map(info.labels, l => l.name).indexOf('[a] BUG') !== -1;
-                } else {
-                    this.fetchGithubIssue(id, baseText);
-                }
-            } else {
-                text = baseText;
-                tag = mTags[1];
-            }
-        }
-
-        if (type !== 'github') {
-            const mBug = text.match(/BUG +(.*)/);
-            if (mBug) {
-                isBug = true;
-                text = mBug[1];
-            }
-            text = this.replaceGitHubRefs(text);
-        }
-
-        return {type, id, isBug, tag, text, state};
-    }
-
-    replaceGitHubRefs(text) {
-        const content = [];
-        let i = 0;
-        let m;
-        let sub = text;
-        do {
-            m = sub.match(/gh\((\d+)\)/);
-            if (m) {
-                content.push(sub.substr(0, m.index));
-                content.push(<GitHub key={i} id={m[1]} small/>);
-                sub = sub.substr(m.index + m[0].length);
-                i += 1;
-            }
-        } while (m);
-        if (content.length > 0) {
-            content.push(sub);
-            return content;
-        }
-        return text;
-    }
-
-    fetchGithubIssue(id, text) {
-        const that = this;
-        const request = new XMLHttpRequest();
-        request.open('GET', `${BASE_API_URL}/issues/${id}`, true);
-
-        request.onload = function onload() {
-            if (this.status === 200) {
-                try {
-                    const info = JSON.parse(request.response);
-                    issueCache[id] = info;
-                    that.setState({
-                        text: text || info.title,
-                        state: info.state,
-                        tag: that.findTag(info),
-                        isBug: that.state.isBug || map(info.labels, l => l.name).indexOf('[a] BUG') !== -1
-                    });
-                } catch (e) {
-                    // continue regardless of error
-                }
-            }
-        };
-
-        request.send(null);
-    }
-
-    findTag(info) {
-        const rawLabels = filter(info.labels, ({name}) => name.substr(0, 4) === '[t] ');
-        const labels = map(rawLabels, ({name}) => name.substr(4));
-        return labels.join(' | ');
-    }
-
-    render() {
-        const {type, text, id, state, tag, isBug} = this.state;
-        const closed = state === 'closed';
-        const iconStyle = {
-            width: 16,
-            height: 16
-        };
-        const tagStyle = {
-            background: '#bfd4f2',
-            color: 'black',
-            marginRight: '8px',
-            borderRadius: '3px',
-            border: '1px solid white',
-            padding: '0 3px'
-        };
-        const bugStyle = {
-            background: '#b60205',
-            color: 'black',
-            marginRight: '8px',
-            borderRadius: '3px',
-            padding: '0 3px'
-        };
-        return <div style={issueStyle}>
-            {type === 'github' ?
-                <GitHub id={id} closed={closed}/>
-                : <span><img src="./images/issue.png" style={iconStyle}/>&nbsp;</span>}
-            {isBug && <span style={bugStyle}>BUG</span>}
-            {tag && <span style={tagStyle}>{tag}</span>}
-            {text}
-        </div>;
-    }
+    return <div
+        ref={onRef}
+        style={bg_style}
+        onClick={props.close}
+        onKeyDown={onKeyDown.bind(null, props.close)}
+        onKeyUp={onKeyUp}
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+        tabIndex={0}
+    >
+        <div style={wrapper_style} onClick={e => e.stopPropagation()}>
+            <div className="changelog" style={content_style}>
+                <ReactMarkdown
+                    source={changelog}
+                    escapeHtml={false}
+                    skipHtml={false}
+                    linkTarget="_blank"
+                />
+            </div>
+            <img style={closeStyle} src="./editor/icons/close.svg" onClick={props.close}/>
+        </div>
+    </div>;
 }

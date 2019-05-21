@@ -42,34 +42,38 @@ export default class Editor extends React.Component {
 
     componentWillMount() {
         document.addEventListener('mousedown', this.enableSeparator);
+        document.addEventListener('touchstart', this.enableSeparator);
         document.addEventListener('mousemove', this.updateSeparator);
+        document.addEventListener('touchmove', this.updateSeparator);
         document.addEventListener('mouseup', this.disableSeparator);
         document.addEventListener('mouseleave', this.disableSeparator);
+        document.addEventListener('touchend', this.disableSeparator);
+        document.addEventListener('touchcancel', this.disableSeparator);
     }
 
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.enableSeparator);
+        document.removeEventListener('touchstart', this.enableSeparator);
         document.removeEventListener('mousemove', this.updateSeparator);
+        document.removeEventListener('touchmove', this.updateSeparator);
         document.removeEventListener('mouseup', this.disableSeparator);
         document.removeEventListener('mouseleave', this.disableSeparator);
+        document.removeEventListener('touchend', this.disableSeparator);
+        document.removeEventListener('touchcancel', this.disableSeparator);
     }
 
     enableSeparator(e) {
         if (!e) {
             return;
-        } else if (!e.path) {
+        } else if (!e.composedPath) {
             this.enableSeparator({
-                path: [e.target],
-                preventDefault: () => e.preventDefault(),
-                stopPropagation: () => e.stopPropagation()
+                path: [e.target]
             });
         }
 
-        const separator = this.findSeparator(e.path, this.state.layout, []);
+        const separator = this.findSeparator(e.composedPath(), this.state.layout, []);
         if (separator) {
             this.setState({separator});
-            e.preventDefault();
-            e.stopPropagation();
         }
     }
 
@@ -104,12 +108,20 @@ export default class Editor extends React.Component {
     updateSeparator(e) {
         const separator = this.state.separator;
         if (separator) {
-            const splitAt = 100 * ((e[separator.prop] - separator.min) / separator.max);
-            const layout = this.state.layout;
-            separator.node.splitAt = Math.min(Math.max(splitAt, 5), 95);
-            this.setState({layout});
-            e.preventDefault();
-            e.stopPropagation();
+            let target = null;
+            if (e.touches) {
+                if (e.touches.length > 0) {
+                    target = e.touches[0];
+                }
+            } else {
+                target = e;
+            }
+            if (target) {
+                const splitAt = 100 * ((target[separator.prop] - separator.min) / separator.max);
+                const layout = this.state.layout;
+                separator.node.splitAt = Math.min(Math.max(splitAt, 5), 95);
+                this.setState({layout});
+            }
         }
     }
 
@@ -383,7 +395,7 @@ function loadNode(editor, node, options = {}) {
         return {
             type: Type.LAYOUT,
             orientation: node.orientation,
-            splitAt: node.splitAt,
+            splitAt: node.splitAt !== null ? node.splitAt : 50,
             children: [
                 childNodes[0],
                 childNodes[1]

@@ -108,7 +108,6 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 });
             }
             initSceneDebugData();
-            scene.sceneNode.updateMatrixWorld();
             scene.firstFrame = true;
             game.loaded(wasPaused);
             return scene;
@@ -128,6 +127,10 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 const previousIdx = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
                 return this.goto(previousIdx);
             }
+        },
+
+        unloadScene() {
+            scene = null;
         }
     };
 
@@ -153,18 +156,21 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         skyColor: [0, 0, 0],
         fogDensity: 0,
     };
+    const is3DCam = indexInfo.isIsland || renderer.vr || params.iso3d;
     const actors = await Promise.all(map(
         sceneData.actors,
-        actor => loadActor(params, envInfo, sceneData.ambience, actor, parent)
+        actor => loadActor(params, is3DCam, envInfo, sceneData.ambience, actor, parent)
     ));
-    const points = map(sceneData.points, loadPoint);
-    const zones = map(sceneData.zones, loadZone);
+    const points = map(sceneData.points, props => loadPoint(props, is3DCam));
+    const zones = map(sceneData.zones, props => loadZone(props, is3DCam));
 
     let scenery = null;
     let threeScene = null;
     let camera = null;
     if (!parent) {
         threeScene = new THREE.Scene();
+        threeScene.matrixAutoUpdate = false;
+        makeLight(threeScene, sceneData.ambience);
         if (indexInfo.isIsland) {
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
             threeScene.name = '3D_scene';
@@ -257,12 +263,12 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
 
         /* @inspector(locate) */
         removeMesh(threeObject) {
-            this.threeScene.remove(threeObject);
+            sceneNode.remove(threeObject);
         },
 
         /* @inspector(locate) */
         addMesh(threeObject) {
-            this.threeScene.add(threeObject);
+            sceneNode.add(threeObject);
         }
     };
     if (scene.isIsland) {
@@ -292,11 +298,13 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
 function loadSceneNode(index, indexInfo, scenery, actors, zones, points, editor) {
     const sceneNode = indexInfo.isIsland ? new THREE.Object3D() : new THREE.Scene();
     sceneNode.name = `scene_${index}`;
+    sceneNode.matrixAutoUpdate = false;
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
         const section = scenery.sections[sectionIdx];
         sceneNode.position.x = section.x * 48;
         sceneNode.position.z = section.z * 48;
+        sceneNode.updateMatrix();
     }
     const addToSceneNode = (obj) => {
         if (obj.threeObject !== null) { // because of the sprite actors
@@ -408,9 +416,10 @@ function relocateHero(hero, newHero, newScene, teleport) {
     newScene.sceneNode.remove(newHero.threeObject);
     newHero.threeObject = hero.threeObject;
     newHero.threeObject.position.copy(globalPos);
-    newScene.sceneNode.updateMatrixWorld();
     newHero.threeObject.position.sub(newScene.sceneNode.position);
     newHero.model = hero.model;
+    newHero.label = hero.label;
+    newHero.refreshLabel = hero.refreshLabel;
     newScene.sceneNode.add(newHero.threeObject);
 
     newHero.props.dirMode = hero.props.dirMode;
@@ -451,4 +460,21 @@ function relocateHero(hero, newHero, newScene, teleport) {
     hero.animState = null;
     hero.model = null;
     hero.threeObject = null;
+}
+
+function makeLight(threeScene, ambience) {
+    const light = new THREE.DirectionalLight();
+    light.name = 'light';
+    light.position.set(-1000, 0, 0);
+    light.position.applyAxisAngle(
+        new THREE.Vector3(0, 0, 1),
+        -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
+    );
+    light.position.applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
+    );
+    light.updateMatrix();
+    light.matrixAutoUpdate = false;
+    threeScene.add(light);
 }

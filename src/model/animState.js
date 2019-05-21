@@ -64,7 +64,7 @@ export function createSkeleton(body) {
             r: new THREE.Vector4(0, 0, 0, 0),
             m: new THREE.Matrix4(),
             type: 1, // translation by default
-            euler: null,
+            euler: new THREE.Vector3(),
             children: []
         };
 
@@ -205,7 +205,7 @@ function updateSkeletonAtKeyframe(state,
                 const eulerX = getRotation(nbf.veuler.x, bf.veuler.x, interpolation);
                 const eulerY = getRotation(nbf.veuler.y, bf.veuler.y, interpolation);
                 const eulerZ = getRotation(nbf.veuler.z, bf.veuler.z, interpolation);
-                s.euler = new THREE.Vector3(eulerX, eulerY, eulerZ);
+                s.euler.set(eulerX, eulerY, eulerZ);
             } else { // translation
                 s.pos.x = bf.pos.x + ((nbf.pos.x - bf.pos.x) * interpolation);
                 s.pos.y = bf.pos.y + ((nbf.pos.y - bf.pos.y) * interpolation);
@@ -234,6 +234,7 @@ function updateSkeletonAtKeyframe(state,
 
 const tmpM = new THREE.Matrix4();
 const tmpQ = new THREE.Quaternion();
+const tmpEuler = new THREE.Euler();
 
 function updateSkeletonHierarchy(skeleton, index) {
     const s = skeleton[index];
@@ -243,9 +244,13 @@ function updateSkeletonHierarchy(skeleton, index) {
         const pos = s.vertex.clone();
 
         if (s.type === 0) { // rotation
-            s.m.makeRotationFromEuler(new THREE.Euler(THREE.Math.degToRad(s.euler.x),
+            tmpEuler.set(
+                THREE.Math.degToRad(s.euler.x),
                 THREE.Math.degToRad(s.euler.y),
-                THREE.Math.degToRad(s.euler.z), 'XZY'));
+                THREE.Math.degToRad(s.euler.z),
+                'XZY'
+            );
+            s.m.makeRotationFromEuler(tmpEuler);
         } else { // translation
             pos.x += s.pos.x;
             pos.y += s.pos.y;

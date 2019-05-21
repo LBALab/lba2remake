@@ -16,6 +16,8 @@ export function getIso3DCamera() {
     const orientation = new THREE.Object3D();
     orientation.rotation.set(0, Math.PI, 0);
     orientation.name = 'AxisTransform';
+    orientation.updateMatrix();
+    orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
     return {
@@ -33,9 +35,9 @@ export function getIso3DCamera() {
             if (!scene.actors[0].threeObject)
                 return;
 
-            const { heroPos, cameraPos } = getTargetPos(scene);
+            const { objectPos, cameraPos } = getTargetPos(scene.actors[0]);
             controlsState.cameraLerp.copy(cameraPos);
-            controlsState.cameraLookAtLerp.copy(heroPos);
+            controlsState.cameraLookAtLerp.copy(objectPos);
             controlNode.position.copy(controlsState.cameraLerp);
             controlNode.lookAt(controlsState.cameraLookAtLerp);
         },
@@ -46,26 +48,34 @@ export function getIso3DCamera() {
                 if (!scene.actors[0].threeObject)
                     return;
 
-                const { heroPos, cameraPos } = getTargetPos(scene);
+                const { objectPos, cameraPos } = getTargetPos(scene.actors[0]);
 
                 controlsState.cameraLerp.lerpVectors(controlNode.position, cameraPos, 0.1);
                 controlsState.cameraLookAtLerp.lerpVectors(
                     controlsState.cameraLookAtLerp.clone(),
-                    heroPos,
+                    objectPos,
                     0.1);
 
                 controlNode.position.copy(controlsState.cameraLerp);
                 controlNode.lookAt(controlsState.cameraLookAtLerp);
             }
+        },
+        centerOn: (object) => {
+            if (!object.threeObject)
+                return;
+
+            const { objectPos, cameraPos } = getTargetPos(object);
+
+            controlNode.position.copy(cameraPos);
+            controlNode.lookAt(objectPos);
         }
     };
 }
 
-function getTargetPos(scene) {
-    const hero = scene.actors[0];
-    const heroPos = new THREE.Vector3();
-    heroPos.applyMatrix4(hero.threeObject.matrixWorld);
-    const cameraPos = heroPos.clone();
+function getTargetPos(object) {
+    const objectPos = new THREE.Vector3();
+    objectPos.applyMatrix4(object.threeObject.matrixWorld);
+    const cameraPos = objectPos.clone();
     cameraPos.add(CAMERA_HERO_OFFSET);
-    return { heroPos, cameraPos };
+    return { objectPos, cameraPos };
 }

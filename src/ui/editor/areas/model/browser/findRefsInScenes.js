@@ -116,7 +116,7 @@ function mapActors(ref) {
         return [];
     return map(ref.actors, actor => ({
         name: getObjectName('actor', ref.scene, actor.actor),
-        icon: 'editor/icons/model.png',
+        icon: 'editor/icons/model.svg',
         onClick: () => {
             if (DebugData.scope.scene) {
                 if (DebugData.scope.scene.index !== ref.scene) {

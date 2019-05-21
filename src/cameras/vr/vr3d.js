@@ -17,6 +17,8 @@ export function getVR3DCamera() {
     const orientation = new THREE.Object3D();
     orientation.name = 'AxisTransform';
     orientation.rotation.set(0, Math.PI, 0);
+    orientation.updateMatrix();
+    orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
     return {
@@ -108,6 +110,7 @@ function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
         }
         scene.scenery.physics.processCameraCollisions(cameraPos, 2, 4);
         controlNode.position.copy(cameraPos);
+        HERO_POS.y = cameraPos.y;
         controlNode.lookAt(HERO_POS);
     }
 }

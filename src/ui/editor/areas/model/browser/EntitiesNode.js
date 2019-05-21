@@ -42,15 +42,27 @@ const EntityNode = {
     selectedStyle: {
         background: 'white',
     },
-    iconStyle: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        height: '50px',
-        width: '50px',
-        padding: 0,
-        margin: 0
+    iconStyle: (data) => {
+        let useThumb = false;
+        if (data.index in icons) {
+            useThumb = true;
+        } else {
+            const savedIcon = localStorage.getItem(`icon_model_entity_${data.index}`);
+            if (savedIcon) {
+                useThumb = true;
+            }
+        }
+
+        return {
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            height: useThumb ? '50px' : '20px',
+            width: useThumb ? '50px' : '20px',
+            padding: useThumb ? 0 : 15,
+            margin: 0
+        };
     },
     rename: (entity, newName) => {
         DebugData.metadata.entities[entity.index] = newName;
@@ -131,7 +143,7 @@ function getIcon(data, component) {
         return savedIcon;
     }
     saveIcon(data, component);
-    return 'editor/icons/entity.png';
+    return 'editor/icons/entity.svg';
 }
 
 const EntitiesNode = {

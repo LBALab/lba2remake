@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-const CAMERA_HERO_OFFSET = new THREE.Vector3(-5, 6, 5);
+const CAMERA_HERO_OFFSET = new THREE.Vector3(-5, 0, 5);
 
 export function getVRIsoCamera() {
     const camera = new THREE.PerspectiveCamera(
@@ -15,6 +15,8 @@ export function getVRIsoCamera() {
     const orientation = new THREE.Object3D();
     orientation.rotation.set(0, Math.PI, 0);
     orientation.name = 'AxisTransform';
+    orientation.updateMatrix();
+    orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
     return {
@@ -40,17 +42,19 @@ export function getVRIsoCamera() {
     };
 }
 
+const HERO_POS = new THREE.Vector3();
+
 function processFollowMovement(controlNode, scene, forceUpdate = false) {
     const hero = scene.actors[0];
-    const heroPos = new THREE.Vector3();
-    heroPos.applyMatrix4(hero.threeObject.matrixWorld);
-    const cameraPos = heroPos.clone();
+    HERO_POS.set(0, 4, 0);
+    HERO_POS.applyMatrix4(hero.threeObject.matrixWorld);
+    const cameraPos = HERO_POS.clone();
     cameraPos.add(CAMERA_HERO_OFFSET);
 
     const distance = cameraPos.distanceTo(controlNode.position);
 
     if (forceUpdate || distance > 3) {
         controlNode.position.copy(cameraPos);
-        controlNode.lookAt(heroPos);
+        controlNode.lookAt(HERO_POS);
     }
 }

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import {getObjectName} from '../ui/editor/DebugData';
-import { compile } from '../utils/shaders';
+
+const EULER = new THREE.Euler();
 
 export function loadPoint(props) {
     const pos = props.pos;
@@ -14,41 +14,55 @@ export function loadPoint(props) {
     };
 
     // For debug purposes
-    const flag = makeFlag();
-    flag.name = `point:${getObjectName('point', props.sceneIndex, props.index)}`;
+    const texture = createPointLabel(point, props.index);
+    const flag = makeFlag(texture);
+    flag.name = `point:${props.index}`;
     flag.visible = false;
     flag.position.set(point.physics.position.x, point.physics.position.y, point.physics.position.z);
-    flag.matrixAutoUpdate = false;
 
     point.threeObject = flag;
+    point.boundingBox = new THREE.Box3(
+        new THREE.Vector3(-0.3, -0.2, -0.3),
+        new THREE.Vector3(0.3, 0.96, 0.3)
+    );
+
+    flag.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 4);
+    flag.renderOrder = 2;
+
+    point.update = (camera) => {
+        const controlNode = camera.controlNode;
+        if (!controlNode)
+            return;
+
+        EULER.setFromQuaternion(controlNode.quaternion, 'YXZ');
+        EULER.y += Math.PI;
+        EULER.x = 0;
+        EULER.z = 0;
+
+        flag.quaternion.setFromEuler(EULER);
+    };
 
     return point;
 }
 
-function makeFlag() {
-    const clothGeom = new THREE.Geometry();
-    const v1 = new THREE.Vector3(0, 0.96, 0);
-    const v2 = new THREE.Vector3(0, 0.48, 0);
-    const v3 = new THREE.Vector3(0, 0.72, 0.48);
-    clothGeom.vertices.push(v1);
-    clothGeom.vertices.push(v2);
-    clothGeom.vertices.push(v3);
+const stickMaterial = new THREE.MeshLambertMaterial({
+    color: new THREE.Color('#84572e')
+});
 
-    clothGeom.faces.push(new THREE.Face3(0, 1, 2));
-    clothGeom.faces.push(new THREE.Face3(0, 2, 1));
-    clothGeom.computeFaceNormals();
-
-    const {
-        stickMaterial,
-        clothMaterial
-    } = makeFlagMaterials();
-
-    const stickGeom = new THREE.CylinderGeometry(0.036, 0.036, 0.96, 6, 1, false);
+function makeFlag(texture) {
+    const stickGeom = new THREE.CylinderBufferGeometry(0.036, 0.036, 0.96, 6, 1, false);
     const stick = new THREE.Mesh(stickGeom, stickMaterial);
     stick.position.set(0, 0.48, 0);
     stick.name = 'stick';
 
+    const clothMaterial = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true
+    });
+
+    const clothGeom = new THREE.PlaneBufferGeometry(0.7, 0.7);
     const cloth = new THREE.Mesh(clothGeom, clothMaterial);
+    cloth.position.set(0.35, 0.61, 0);
     cloth.name = 'cloth';
 
     const flag = new THREE.Object3D();
@@ -58,47 +72,34 @@ function makeFlag() {
     return flag;
 }
 
-let flagMaterials = null;
+export function createPointLabel(point, index) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    ctx.font = '20px LBA';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 4;
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.anisotropy = 16;
+    const draw = (selected = false) => {
+        ctx.clearRect(0, 0, 64, 64);
+        ctx.fillStyle = selected ? 'white' : '#1a78c0';
+        ctx.strokeStyle = selected ? 'black' : 'white';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(64, 32);
+        ctx.lineTo(0, 64);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = selected ? 'black' : 'white';
+        ctx.fillText(index, 20, 32, 32);
+        texture.needsUpdate = true;
+    };
 
-function makeFlagMaterials() {
-    if (!flagMaterials) {
-        const stickMaterial = makeMaterial(new THREE.Color('#321d0a'));
-        const clothMaterial = makeMaterial(new THREE.Color('#1a78c0'));
+    draw();
 
-        flagMaterials = {
-            stickMaterial,
-            clothMaterial
-        };
-    }
-
-    return flagMaterials;
-}
-
-function makeMaterial(color) {
-    return new THREE.RawShaderMaterial({
-        vertexShader: compile('vert', `#version 300 es
-            precision highp float;
-
-            uniform mat4 projectionMatrix;
-            uniform mat4 modelViewMatrix;
-
-            in vec3 position;
-
-            void main() {
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }`),
-        fragmentShader: compile('frag', `#version 300 es
-            precision highp float;
-
-            uniform vec3 color;
-
-            out vec4 fragColor;
-
-            void main() {
-                fragColor = vec4(color, 1.0);
-            }`),
-        uniforms: {
-            color: {value: color}
-        }
-    });
+    point.refreshLabel = draw;
+    return texture;
 }

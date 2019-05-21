@@ -138,10 +138,8 @@ function loadPolygon(data, offset, renderType, blockSize) {
         vertex: [],
         colour: 0,
         intensity: 0,
-        unkX: [],
-        texX: [],
-        unkY: [],
-        texY: [],
+        u: [],
+        v: [],
         tex: 0,
         numVertex,
         hasTex,
@@ -177,10 +175,8 @@ function loadPolygon(data, offset, renderType, blockSize) {
 
     if (hasTex) {
         for (let k = 0; k < numVertex; k += 1) {
-            poly.unkX[k] = data.getInt8(offset + 12 + (k * 4), true);
-            poly.texX[k] = data.getInt8(offset + 13 + (k * 4), true);
-            poly.unkY[k] = data.getInt8(offset + 14 + (k * 4), true);
-            poly.texY[k] = data.getInt8(offset + 15 + (k * 4), true);
+            poly.u[k] = data.getUint8(offset + 13 + (k * 4), true);
+            poly.v[k] = data.getUint8(offset + 15 + (k * 4), true);
         }
         // for blocksize 32 with quad texture
         if (numVertex === 4) {
@@ -188,8 +184,8 @@ function loadPolygon(data, offset, renderType, blockSize) {
         }
     }
     // else if (hasExtra) {
-    //     poly.texX[0] = data.getInt8(offset + 12, true);
-    //     poly.texY[0] = data.getInt8(offset + 13, true);
+    //     poly.u[0] = data.getInt8(offset + 12, true);
+    //     poly.v[0] = data.getInt8(offset + 13, true);
     //     poly.tex = data.getUint8(offset + 14, true);
     // }
 
@@ -233,12 +229,12 @@ function loadUVGroups(object) {
     );
     for (let i = 0; i < object.uvGroupsSize; i += 1) {
         const index = i * 4;
-        object.uvGroups.push({
-            x: rawUVGroups[index],
-            y: rawUVGroups[index + 1],
-            width: rawUVGroups[index + 2],
-            height: rawUVGroups[index + 3]
-        });
+        object.uvGroups.push([
+            rawUVGroups[index],
+            rawUVGroups[index + 1],
+            rawUVGroups[index + 2],
+            rawUVGroups[index + 3]
+        ]);
     }
 }
 

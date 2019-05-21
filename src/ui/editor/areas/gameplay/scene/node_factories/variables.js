@@ -126,21 +126,21 @@ export function makeVariables(type, name, getVars, getCtx) {
     return {
         dynamic: true,
         name: () => name,
-        icon: () => 'editor/icons/var.png',
-        numChildren: () => getVars().length,
+        icon: () => 'editor/icons/var.svg',
+        numChildren: data => getVars(data).length,
         child: () => Var,
-        childData: (data, idx) => makeVarDef(type, idx, getVars, getCtx)
+        childData: (data, idx) => makeVarDef(data, type, idx, getVars, getCtx)
     };
 }
 
-export function makeVarDef(type, idx, getVars, getCtx) {
+export function makeVarDef(data, type, idx, getVars, getCtx) {
     return {
         type,
         key: `${type}_${idx}`,
-        ctx: getCtx && getCtx(),
-        value: () => getVars()[idx],
+        ctx: getCtx && getCtx(data),
+        value: () => getVars(data)[idx],
         edit: (value) => {
-            getVars()[idx] = value;
+            getVars(data)[idx] = value;
         },
         idx
     };
@@ -205,7 +205,7 @@ function mapActors(ref) {
         return [];
     return map(ref.actors, actor => ({
         name: getObjectName('actor', ref.scene, actor.actor),
-        icon: 'editor/icons/model.png',
+        icon: 'editor/icons/model.svg',
         onClick: () => {
             if (DebugData.scope.scene) {
                 if (DebugData.scope.scene.index !== ref.scene) {

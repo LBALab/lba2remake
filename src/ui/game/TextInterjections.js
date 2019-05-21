@@ -23,7 +23,6 @@ export default function TextInterjections(props) {
             const widthHalf = 0.5 * renderer.canvas.clientWidth;
             const heightHalf = 0.5 * renderer.canvas.clientHeight;
 
-            actor.threeObject.updateMatrixWorld();
             POS.setFromMatrixPosition(actor.threeObject.matrixWorld);
             POS.y += 0.1;
             POS.project(props.scene.camera.threeCamera);

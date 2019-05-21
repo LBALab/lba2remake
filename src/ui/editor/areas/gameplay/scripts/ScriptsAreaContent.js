@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import {extend, map, filter, tail, first} from 'lodash';
+import {extend, map, filter, tail, first, each, find} from 'lodash';
 import {fullscreen} from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';
 import {getDebugListing} from './listing';
 import DebugData from '../../../DebugData';
+import ScriptsAreaToolbar from './ScriptsAreaToolbar';
 
 const defaultSplitDistance = 60;
 
@@ -24,14 +25,13 @@ const scriptStyle = {
     move: splitAt => extend({left: `${splitAt}%`, right: 0}, scriptBaseStyle)
 };
 
-let selection = null;
-
 export default class ScriptEditor extends FrameListener {
     constructor(props) {
         super(props);
 
         this.state = {
-            separator: null
+            separator: null,
+            actorIndex: props.sharedState.actorIndex
         };
 
         this.updateSeparator = this.updateSeparator.bind(this);
@@ -58,6 +58,9 @@ export default class ScriptEditor extends FrameListener {
 
     componentWillUnmount() {
         super.componentWillUnmount();
+        if (DebugData.scriptDebugLabels) {
+            DebugData.scriptDebugLabels = null;
+        }
         document.removeEventListener('mousedown', this.enableSeparator);
         document.removeEventListener('mousemove', this.updateSeparator);
         document.removeEventListener('mouseup', this.disableSeparator);
@@ -103,21 +106,17 @@ export default class ScriptEditor extends FrameListener {
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.sharedState.actor !== this.state.actorIndex) {
-            this.setState({ actorIndex: newProps.sharedState.actor });
+        if (newProps.sharedState.actorIndex !== this.state.actorIndex) {
+            this.setState({ actorIndex: newProps.sharedState.actorIndex });
         }
     }
 
     frame() {
         const scene = DebugData.scope.scene;
-        const mainSelection = DebugData.selection;
-        if (mainSelection && mainSelection.type === 'actor' && selection !== mainSelection.index) {
-            selection = mainSelection.index;
-            this.props.stateHandler.setActor(selection);
-        }
         const actor = scene ? scene.actors[this.state.actorIndex] : null;
         if (DebugData.selection &&
-                (DebugData.selection.lifeLine || DebugData.selection.moveLine)) {
+                ('lifeLine' in DebugData.selection || 'moveLine' in DebugData.selection)) {
+            this.props.stateHandler.setActor(DebugData.selection.index);
             this.props.stateHandler.setAutoScroll(false);
         }
         if (this.scene !== scene || this.actor !== actor) {
@@ -135,6 +134,53 @@ export default class ScriptEditor extends FrameListener {
         if (this.scene && this.actor) {
             this.updateActiveLines('life');
             this.updateActiveLines('move');
+            this.updateObjectLabels();
+        } else {
+            DebugData.scriptDebugLabels = null;
+        }
+    }
+
+    updateObjectLabels() {
+        if (this.props.sharedState.objectLabels) {
+            if ((!DebugData.scriptDebugLabels
+                || DebugData.scriptDebugLabels.actor !== this.actor)) {
+                const debugLabels = {
+                    actor: this.actor,
+                    actors: [],
+                    zones: [],
+                    points: []
+                };
+                const checkArg = (arg) => {
+                    if (arg.type === 'actor') {
+                        debugLabels.actors.push(arg.value);
+                    }
+                    if (arg.type === 'zone') {
+                        const zone = find(this.scene.zones, z =>
+                            z.props.type === 2 && z.props.snap === arg.value
+                        );
+                        if (zone) {
+                            debugLabels.zones.push(zone.index);
+                        }
+                    }
+                    if (arg.type === 'point') {
+                        debugLabels.points.push(arg.value);
+                    }
+                };
+                each(this.actor.scripts, (script) => {
+                    each(script.commands, (c) => {
+                        each(c.args, checkArg);
+                        if (c.operator && c.operator.operand) {
+                            checkArg(c.operator.operand);
+                        }
+                        if (c.condition && c.condition.param) {
+                            checkArg(c.condition.param);
+                        }
+                    });
+                });
+                DebugData.scriptDebugLabels = debugLabels;
+            }
+        } else {
+            DebugData.scriptDebugLabels = null;
         }
     }
 
@@ -171,7 +217,6 @@ export default class ScriptEditor extends FrameListener {
                         lineCmd.style.background = 'black';
                     }
                 } else {
-                    lineNum.style.color = 'inherit';
                     if (active) {
                         if (autoScroll && firstActive && firstBreakpoint) {
                             if (this.scrollElem !== lineNum) {
@@ -242,7 +287,7 @@ export default class ScriptEditor extends FrameListener {
 
         const separator = {
             position: 'absolute',
-            top: 0,
+            top: 24,
             bottom: 0,
             left: `${splitAt}%`,
             width: 6,
@@ -261,12 +306,23 @@ export default class ScriptEditor extends FrameListener {
             opacity: 1,
         };
 
-        return <div ref={(ref) => { this.rootRef = ref; }} style={{fullscreen}}>
-            {this.renderListing('life', splitAt)}
-            {this.renderListing('move', splitAt)}
+        const contentStyle = extend({}, fullscreen, {
+            top: 22
+        });
+
+        return <div style={{fullscreen}}>
+            <div style={contentStyle} ref={(ref) => { this.rootRef = ref; }}>
+                {this.renderListing('life', splitAt)}
+                {this.renderListing('move', splitAt)}
+            </div>
             <div ref={(ref) => { this.separatorRef = ref; }} style={separator}>
                 <div style={sepInnerLine}/>
             </div>
+            <ScriptsAreaToolbar
+                ticker={this.props.ticker}
+                sharedState={this.props.sharedState}
+                stateHandler={this.props.stateHandler}
+            />
         </div>;
     }
 
@@ -438,21 +494,22 @@ function Command({line, command, data}) {
     </div>;
 }
 
-const argIcon = (path, color) => ({
+const argIcon = (path, color, ext) => ({
     color,
     paddingLeft: '2ch',
     background: `url("${path}") no-repeat`,
     backgroundSize: '14px 14px',
-    backgroundPosition: '1px 1px'
+    backgroundPosition: '1px 1px',
+    ...ext
 });
 
 const defaultArgStyle = { color: '#98ee92', fontStyle: 'italic' };
 const argStyle = {
-    actor: argIcon('editor/icons/actor.png', '#ff0000'),
-    zone: argIcon('editor/icons/zones/SCENERIC.png', '#6495ed'),
-    point: argIcon('editor/icons/point.png', '#0084ff'),
-    body: argIcon('editor/icons/body.png', '#ffffff'),
-    anim: argIcon('editor/icons/anim.png', '#ffffff'),
+    actor: argIcon('editor/icons/actor.svg', '#ff0000'),
+    zone: argIcon('editor/icons/zones/SCENERIC.svg', '#6495ed'),
+    point: argIcon('editor/icons/point.svg', '#ffffff', {fontWeight: 'bold'}),
+    body: argIcon('editor/icons/body.svg', '#ffffff'),
+    anim: argIcon('editor/icons/anim.svg', '#ffffff'),
     dirmode: { color: 'white' },
     text: { color: '#ff7448' },
     offset: { color: 'white' },

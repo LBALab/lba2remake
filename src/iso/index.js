@@ -30,7 +30,7 @@ export async function loadIsometricScenery(params, renderer, entry) {
     ]);
     const palette = new Uint8Array(ress.getEntry(0));
     const bricks = loadBricks(bkg);
-    const grid = loadGrid(params, bkg, bricks, mask, palette, entry + 1);
+    const grid = loadGrid(renderer, params, bkg, bricks, mask, palette, entry + 1);
 
     return {
         props: {

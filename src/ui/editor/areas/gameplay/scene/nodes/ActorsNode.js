@@ -5,7 +5,7 @@ import DebugData, {
     getObjectName,
     locateObject
 } from '../../../../DebugData';
-import {SceneGraphNode} from './SceneGraphNode';
+import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {mapComportementArg} from '../../scripts/listing';
 import {makeObjectsNode} from '../node_factories/objects';
 
@@ -23,7 +23,7 @@ const Actor = {
         }
     ],
     name: actor => getObjectName('actor', actor.props.sceneIndex, actor.index),
-    icon: actor => `editor/icons/${actor.isSprite ? 'sprite' : 'model'}.png`,
+    icon: actor => `editor/icons/${actor.isSprite ? 'sprite' : 'model'}.svg`,
     props: actor => [
         {
             id: 'index',
@@ -41,9 +41,9 @@ const Actor = {
                     }
                 };
                 return <img
-                    src={`editor/icons/${value ? 'visible' : 'hidden'}.png`}
+                    src={`editor/icons/${value ? 'visible' : 'hidden'}.svg`}
                     onClick={onClick}
-                    style={{cursor: 'pointer'}}
+                    style={{cursor: 'pointer', width: 14, height: 14}}
                 />;
             }
         }
@@ -71,7 +71,7 @@ const Actor = {
                     }
                 });
             },
-            icon: actor => localStorage.getItem(`icon_model_entity_${actor.props.entityIndex}`)
+            icon: () => 'editor/icons/entity.svg'
         },
         {
             id: 'body',
@@ -94,7 +94,7 @@ const Actor = {
                     }
                 });
             },
-            icon: () => 'editor/icons/body.png'
+            icon: () => 'editor/icons/body.svg'
         },
         {
             id: 'anim',
@@ -117,7 +117,7 @@ const Actor = {
                     }
                 });
             },
-            icon: () => 'editor/icons/anim.png'
+            icon: () => 'editor/icons/anim.svg'
         },
         {
             id: 'life',
@@ -134,6 +134,16 @@ const Actor = {
         {
             id: 'move',
             name: 'Move',
+            valueHash: (actor) => {
+                const value = getMoveAction(actor);
+                if (!value) {
+                    return '[OFF]';
+                }
+                if (value.extra) {
+                    return `${value.cmdName}_${value.extra}`;
+                }
+                return value.cmdName;
+            },
             value: actor => getMoveAction(actor),
             icon: () => 'editor/icons/areas/script.png',
             render: (value) => {
@@ -157,22 +167,41 @@ const Actor = {
         return selection && selection.type === 'actor' && selection.index === actor.index;
     },
     onClick: (actor) => { DebugData.selection = {type: 'actor', index: actor.index}; },
-    onDoubleClick: locateObject
+    onDoubleClick: (actor) => {
+        locateObject(actor);
+    }
 };
 
 export const ActorsNode = makeObjectsNode('actor', {
     dynamic: true,
     needsData: true,
     name: () => 'Actors',
-    icon: () => 'editor/icons/actor.png',
+    icon: () => 'editor/icons/actor.svg',
     numChildren: scene => scene.actors.length,
     child: () => Actor,
     childData: (scene, idx) => scene.actors[idx],
     hasChanged: scene => scene.index !== DebugData.scope.scene,
-    onClick: (scene, setRoot) => {
-        if (scene.isActive) {
-            setRoot();
-        }
+    props: (data, ignored, component) => {
+        const label = component.props.rootState.labels.actor;
+        return [{
+            id: 'visible',
+            value: label,
+            render: (visible) => {
+                const style = {
+                    width: 14,
+                    height: 14,
+                    cursor: 'pointer'
+                };
+                const onClick = () => {
+                    component.props.rootStateHandler.setLabel('actor', !label);
+                };
+                return <img
+                    style={style}
+                    src={`editor/icons/${visible ? 'visible' : 'hidden'}_actors.svg`}
+                    onClick={onClick}
+                />;
+            }
+        }];
     }
 });
 
@@ -199,7 +228,7 @@ function getMoveAction(actor) {
             let key = `${cmdName}_${args}`;
             let extra;
             switch (cmdName) {
-                case 'WAIT_NUM_SECONDS':
+                case 'WAIT_NUM_SECOND':
                 case 'WAIT_NUM_DSEC':
                 case 'WAIT_NUM_SECOND_RND':
                 case 'WAIT_NUM_DECIMAL_RND': {

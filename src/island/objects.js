@@ -5,13 +5,13 @@ import {WORLD_SCALE} from '../utils/lba';
 
 const push = Array.prototype.push;
 
-export function loadObjects(island, section, geometries, objects) {
+export function loadObjects(section, geometries, models, atlas) {
     const numObjects = section.objInfo.numObjects;
     const boundingBoxes = [];
     for (let i = 0; i < numObjects; i += 1) {
         const info = loadObjectInfo(section.objects, section, i);
-        const object = loadObject(island, objects, info.index);
-        loadFaces(geometries, object, info, boundingBoxes);
+        const model = models[info.index];
+        loadFaces(geometries, model, info, boundingBoxes, atlas);
     }
     section.boundingBoxes = boundingBoxes;
 }
@@ -32,62 +32,16 @@ function loadObjectInfo(objects, section, index) {
     };
 }
 
-function loadObject(island, objects, index) {
-    if (objects[index]) {
-        return objects[index];
-    }
-    const buffer = island.files.obl.getEntry(index);
-    const data = new DataView(buffer);
-    const obj = {
-        verticesOffset: data.getUint32(44, true),
-        normalsOffset: data.getUint32(52, true),
-        faceSectionOffset: data.getUint32(68, true),
-        lineSectionSize: data.getUint32(72, true),
-        lineSectionOffset: data.getUint32(76, true),
-        sphereSectionSize: data.getUint32(80, true),
-        sphereSectionOffset: data.getUint32(84, true),
-        uvGroupsSectionSize: data.getUint32(88, true),
-        uvGroupsSectionOffset: data.getUint32(92, true),
-        numVerticesType1: data.getUint16(100, true),
-        numVerticesType2: data.getUint16(102, true),
-        buffer
-    };
-        // console.log(new Uint32Array(buffer, 0, 17));
-    obj.vertices = new Int16Array(buffer, obj.verticesOffset, obj.numVerticesType1 * 4);
-    obj.normals = new Int16Array(buffer, obj.normalsOffset, obj.numVerticesType1 * 4);
-    loadUVGroups(obj);
-    objects[index] = obj;
-    return obj;
-}
-
-function loadUVGroups(object) {
-    object.uvGroups = [];
-    const rawUVGroups = new Uint8Array(
-        object.buffer,
-        object.uvGroupsSectionOffset,
-        object.uvGroupsSectionSize * 4
-    );
-    for (let i = 0; i < object.uvGroupsSectionSize; i += 1) {
-        const index = i * 4;
-        object.uvGroups.push([
-            rawUVGroups[index],
-            rawUVGroups[index + 1],
-            rawUVGroups[index + 2],
-            rawUVGroups[index + 3]
-        ]);
-    }
-}
-
-function loadFaces(geometries, object, info, boundingBoxes) {
+function loadFaces(geometries, model, info, boundingBoxes, atlas) {
     const data = new DataView(
-        object.buffer,
-        object.faceSectionOffset,
-        object.lineSectionOffset - object.faceSectionOffset
+        model.buffer,
+        model.faceSectionOffset,
+        model.lineSectionOffset - model.faceSectionOffset
     );
     let offset = 0;
     while (offset < data.byteLength) {
-        const section = parseSectionHeader(data, object, offset);
-        loadSection(geometries, object, info, section, boundingBoxes);
+        const section = parseSectionHeader(data, model, offset);
+        loadSection(geometries, model, info, section, boundingBoxes, atlas);
         offset += section.size + 8;
     }
 }
@@ -108,10 +62,10 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
-function loadSection(geometries, object, info, section, boundingBoxes) {
+function loadSection(geometries, object, info, section, boundingBoxes, atlas) {
     const bb = new THREE.Box3();
     for (let i = 0; i < section.numFaces; i += 1) {
-        const uvGroup = getUVGroup(object, section, i);
+        const uvGroup = getUVGroup(object, section, i, atlas);
         const faceNormal = getFaceNormal(object, section, info, i);
         const addVertex = (j) => {
             const index = section.data.getUint16((i * section.blockSize) + (j * 2), true);
@@ -212,18 +166,19 @@ function getColor(section, face) {
 function getUVs(section, face, ptIndex) {
     const baseIndex = face * section.blockSize;
     const index = baseIndex + 12 + (ptIndex * 4);
-    const u = section.data.getUint8(index + 1);
-    const v = section.data.getUint8(index + 3);
+    const u = section.data.getUint16(index);
+    const v = section.data.getUint16(index + 2);
     return [u, v];
 }
 
-function getUVGroup(object, section, face) {
+function getUVGroup(object, section, face, atlas) {
     if (section.blockSize === 24 || section.blockSize === 32) {
         const baseIndex = face * section.blockSize;
         const uvGroupIndex = section.blockSize === 32 ?
             section.data.getUint8(baseIndex + 28)
             : section.data.getUint8(baseIndex + 6);
-        return object.uvGroups[uvGroupIndex];
+        const uvGroup = object.uvGroups[uvGroupIndex];
+        return atlas.groups[uvGroup.join(',')].tgt;
     }
     return null;
 }

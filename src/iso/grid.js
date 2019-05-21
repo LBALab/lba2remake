@@ -3,7 +3,7 @@ import {map, last} from 'lodash';
 import {bits} from '../utils.ts';
 import {loadBricksMapping, Side, OffsetBySide} from './mapping';
 
-export function loadGrid(params, bkg, bricks, mask, palette, entry) {
+export function loadGrid(renderer, params, bkg, bricks, mask, palette, entry) {
     const gridData = new DataView(bkg.getEntry(entry));
     const libIndex = gridData.getUint8(0);
     const maxOffset = 34 + (4096 * 2);
@@ -11,7 +11,7 @@ export function loadGrid(params, bkg, bricks, mask, palette, entry) {
     for (let i = 34; i < maxOffset; i += 2) {
         offsets.push(gridData.getUint16(i, true) + 34);
     }
-    const library = loadLibrary(params, bkg, bricks, mask, palette, libIndex);
+    const library = loadLibrary(renderer, params, bkg, bricks, mask, palette, libIndex);
     return {
         library,
         cells: map(offsets, (offset, idx) => {
@@ -95,7 +95,7 @@ function getBlockData(library, block) {
 
 const libraries = [];
 
-function loadLibrary(params, bkg, bricks, mask, palette, entry) {
+function loadLibrary(renderer, params, bkg, bricks, mask, palette, entry) {
     if (libraries[entry]) {
         return libraries[entry];
     }
@@ -111,7 +111,7 @@ function loadLibrary(params, bkg, bricks, mask, palette, entry) {
         const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
         layouts.push(loadLayout(layoutDataView));
     }
-    const mapping = loadBricksMapping(params, layouts, bricks, mask, palette);
+    const mapping = loadBricksMapping(renderer, params, layouts, bricks, mask, palette);
     const library = {
         texture: mapping.texture,
         bricksMap: mapping.bricksMap,

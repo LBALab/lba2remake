@@ -30,10 +30,6 @@ function processCameraCollisions(sections, camPosition, groundOffset = 3.6, objO
 }
 
 function processCollisions(sections, scene, actor) {
-    if (actor.props.runtimeFlags.hasGravityByAnim) {
-        return;
-    }
-
     POSITION.copy(actor.physics.position);
     POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
 
@@ -43,13 +39,18 @@ function processCollisions(sections, scene, actor) {
     const ground = getGround(section, POSITION);
     const height = ground.height;
 
+    let isTouchingGround = true;
+    if (actor.physics.position.y > height) {
+        isTouchingGround = false;
+    }
     actor.physics.position.y = Math.max(height, actor.physics.position.y);
+    POSITION.y = actor.physics.position.y;
     actor.animState.floorSound = -1;
 
     if (section) {
         actor.animState.floorSound = ground.sound;
 
-        processBoxIntersections(section, actor, POSITION);
+        isTouchingGround = processBoxIntersections(section, actor, POSITION, isTouchingGround);
         if (!FLAGS.hitObject) {
             TGT.copy(actor.physics.position);
             TGT.sub(actor.threeObject.position);
@@ -60,7 +61,7 @@ function processCollisions(sections, scene, actor) {
                 TGT.add(actor.threeObject.position);
                 TGT.applyMatrix4(scene.sceneNode.matrixWorld);
                 const gInfo = getGroundInfo(section, TGT);
-                if (gInfo && gInfo.collision) {
+                if (gInfo && gInfo.collision && isTouchingGround) {
                     actor.physics.position.copy(actor.threeObject.position);
                 }
             }
@@ -108,7 +109,7 @@ const CENTER1 = new THREE.Vector3();
 const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
 
-function processBoxIntersections(section, actor, position) {
+function processBoxIntersections(section, actor, position, isTouchingGround) {
     const boundingBox = actor.model.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.translate(position);
@@ -121,18 +122,22 @@ function processBoxIntersections(section, actor, position) {
             ACTOR_BOX.getCenter(CENTER1);
             bb.getCenter(CENTER2);
             const dir = CENTER1.sub(CENTER2);
-            if (position.y < bb.max.y - 0.015) {
+            if (ACTOR_BOX.min.y < bb.max.y - 0.16) {
                 if (ITRS_SIZE.x < ITRS_SIZE.z) {
                     DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
                 } else {
                     DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
                 }
+            } else {
+                DIFF.set(0, ITRS_SIZE.y * Math.sign(dir.y), 0);
+                isTouchingGround = false;
             }
             actor.physics.position.add(DIFF);
             position.add(DIFF);
             ACTOR_BOX.translate(DIFF);
         }
     }
+    return isTouchingGround;
 }
 
 const GRID_UNIT = 1 / 64;

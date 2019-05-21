@@ -6,6 +6,7 @@ uniform float scale;
 
 in vec2 vUv;
 in float shore;
+in vec3 vMVPos;
 
 out vec4 fragColor;
 

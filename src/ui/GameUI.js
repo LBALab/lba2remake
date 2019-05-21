@@ -15,16 +15,17 @@ import CinemaEffect from './game/CinemaEffect';
 import TextBox from './game/TextBox';
 import AskChoice from './game/AskChoice';
 import TextInterjections from './game/TextInterjections';
-import DebugLabels from './editor/DebugLabels';
 import FoundObject from './game/FoundObject';
 import Loader from './game/Loader';
 import Video from './game/Video';
 import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
+import TeleportMenu from './game/TeleportMenu';
 import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
 import {sBind} from '../utils.ts';
 import {updateVRGui} from './vr/vrGui';
+import {updateLabels} from './editor/labels';
 
 export default class GameUI extends FrameListener {
     constructor(props) {
@@ -43,6 +44,7 @@ export default class GameUI extends FrameListener {
         this.listener = this.listener.bind(this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
+        this.pick = this.pick.bind(this);
         this.startNewGameScene = this.startNewGameScene.bind(this);
         this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
 
@@ -73,7 +75,8 @@ export default class GameUI extends FrameListener {
                 choice: null,
                 menuTexts: null,
                 showMenu: false,
-                inGameMenu: false
+                inGameMenu: false,
+                teleportMenu: false
             };
 
             clock.start();
@@ -153,8 +156,7 @@ export default class GameUI extends FrameListener {
 
     onSceneManagerReady(sceneManager) {
         if (this.props.params.scene >= 0) {
-            this.hideMenu();
-            sceneManager.goto(this.props.params.scene);
+            sceneManager.hideMenuAndGoto(this.props.params.scene);
         }
     }
 
@@ -169,17 +171,12 @@ export default class GameUI extends FrameListener {
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.params.scene !== -1 && newProps.params.scene !== this.props.params.scene) {
-            const scene = this.state.sceneManager.getScene();
-            if (scene && newProps.params.scene !== scene.index) {
-                this.hideMenu();
-                this.state.sceneManager.goto(newProps.params.scene);
-            }
-        }
-        if (newProps.params.iso3d !== this.props.params.iso3d) {
-            const scene = this.state.sceneManager.getScene();
-            if (scene) {
-                scene.resetCamera(newProps.params);
+        if (newProps.params.scene !== this.props.params.scene) {
+            if (newProps.params.scene !== -1) {
+                this.state.sceneManager.hideMenuAndGoto(newProps.params.scene);
+            } else {
+                this.state.sceneManager.unloadScene();
+                this.showMenu();
             }
         }
     }
@@ -213,11 +210,69 @@ export default class GameUI extends FrameListener {
         const key = event.code || event.which || event.keyCode;
         if (!this.state.video) {
             if (key === 'Escape' || key === 27) {
-                if (!this.state.game.isPaused()) {
+                if (this.state.teleportMenu) {
+                    this.setState({teleportMenu: false});
+                } else if (!this.state.game.isPaused()) {
                     this.showMenu(true);
-                } else {
+                } else if (this.state.showMenu && this.state.inGameMenu) {
                     this.hideMenu();
                 }
+            }
+        }
+    }
+
+    pick(event) {
+        const scene = this.state.scene;
+        if (this.props.params.editor && scene && this.canvas) {
+            const { clientWidth, clientHeight } = this.canvas;
+            const mouse = new THREE.Vector2(
+                ((event.clientX / clientWidth) * 2) - 1,
+                -((event.clientY / clientHeight) * 2) + 1
+            );
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, scene.camera.threeCamera);
+
+            const tgt = new THREE.Vector3();
+
+            const foundPoint = scene.points.find((point) => {
+                if (point.threeObject.visible) {
+                    const bb = point.boundingBox.clone();
+                    bb.applyMatrix4(point.threeObject.matrixWorld);
+                    return raycaster.ray.intersectBox(bb, tgt);
+                }
+                return false;
+            });
+            if (foundPoint) {
+                DebugData.selection = {type: 'point', index: foundPoint.index};
+                event.stopPropagation();
+                return;
+            }
+
+            const foundActor = scene.actors.find((actor) => {
+                if (actor.threeObject.visible && actor.model) {
+                    const bb = actor.model.boundingBox.clone();
+                    bb.applyMatrix4(actor.threeObject.matrixWorld);
+                    return raycaster.ray.intersectBox(bb, tgt);
+                }
+                return false;
+            });
+            if (foundActor) {
+                DebugData.selection = {type: 'actor', index: foundActor.index};
+                event.stopPropagation();
+                return;
+            }
+
+            const foundZone = scene.zones.find((zone) => {
+                if (zone.threeObject.visible) {
+                    const bb = zone.boundingBox.clone();
+                    bb.applyMatrix4(zone.threeObject.matrixWorld);
+                    return raycaster.ray.intersectBox(bb, tgt);
+                }
+                return false;
+            });
+            if (foundZone) {
+                DebugData.selection = {type: 'zone', index: foundZone.index};
+                event.stopPropagation();
             }
         }
     }
@@ -250,6 +305,35 @@ export default class GameUI extends FrameListener {
                         onEnded
                     }
                 }, this.saveData);
+                break;
+            }
+            case -1: { // Teleport
+                this.setState({teleportMenu: true});
+                break;
+            }
+            case -2: { // Editor Mode
+                const hash = window.location.hash;
+                if (hash === '') {
+                    const renderer = this.state.renderer;
+                    if (renderer) {
+                        renderer.dispose();
+                    }
+                    if ('exitPointerLock' in document) {
+                        document.exitPointerLock();
+                    }
+                    window.location.hash = 'editor=true';
+                }
+                break;
+            }
+            case -3: { // Exit editor
+                const renderer = this.state.renderer;
+                if (renderer) {
+                    renderer.dispose();
+                }
+                if ('exitPointerLock' in document) {
+                    document.exitPointerLock();
+                }
+                window.location.hash = '';
                 break;
             }
         }
@@ -291,6 +375,7 @@ export default class GameUI extends FrameListener {
                     ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls', 'scene')
                 };
                 DebugData.sceneManager = sceneManager;
+                updateLabels(scene, this.props.sharedState.labels);
             }
         }
     }
@@ -323,7 +408,7 @@ export default class GameUI extends FrameListener {
     render() {
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex="0">
-            <div ref={this.onCanvasWrapperRef} style={fullscreen}/>
+            <div ref={this.onCanvasWrapperRef} style={fullscreen} onClick={this.pick}/>
             {this.renderGUI()}
         </div>;
     }
@@ -333,14 +418,6 @@ export default class GameUI extends FrameListener {
             return null;
 
         return <React.Fragment>
-            {this.props.params.editor ?
-                <DebugLabels
-                    params={this.props.params}
-                    labels={this.props.sharedState.labels}
-                    scene={this.state.scene}
-                    renderer={this.state.renderer}
-                    ticker={this.props.ticker}
-                /> : null}
             <CinemaEffect enabled={this.state.cinema} />
             <TextInterjections
                 scene={this.state.scene}
@@ -349,11 +426,23 @@ export default class GameUI extends FrameListener {
             />
             <Video video={this.state.video} renderer={this.state.renderer} />
             <Menu
-                showMenu={this.state.showMenu}
+                params={this.props.params}
+                showMenu={this.state.showMenu && !this.state.teleportMenu}
                 texts={this.state.game.menuTexts}
                 inGameMenu={this.state.inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />
+            {this.state.teleportMenu
+                && <TeleportMenu
+                    inGameMenu={this.state.inGameMenu}
+                    game={this.state.game}
+                    sceneManager={this.state.sceneManager}
+                    exit={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.setState({teleportMenu: false});
+                    }}
+                />}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
             <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} />
             {this.state.loading ? <Loader/> : null}

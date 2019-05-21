@@ -54,7 +54,9 @@ const trashIconStyle = {
     cursor: 'pointer',
     background: 'rgba(0, 0, 0, 0.5)',
     border: '1px solid rgba(255, 255, 255, 0.5)',
-    borderRadius: 4
+    borderRadius: 4,
+    width: 22,
+    height: 22
 };
 
 const funcEditorStyle = extend({}, mainStyle, {
@@ -187,7 +189,7 @@ export class InspectorAreaContent extends React.Component {
                     {React.createElement(content, props)}
                     <img
                         style={trashIconStyle}
-                        src="editor/icons/trash.png"
+                        src="editor/icons/trash.svg"
                         onClick={this.props.stateHandler.removeWatch.bind(null, w.id)}
                     />
                 </div>;
@@ -269,6 +271,8 @@ export class InspectorAreaContent extends React.Component {
             position: 'absolute',
             top: 4,
             right: 4,
+            width: 16,
+            height: 16
         };
 
         const jPath = path.join('.');
@@ -306,7 +310,7 @@ export class InspectorAreaContent extends React.Component {
             {map(paramNames, (p, idx) => this.renderBindingParam(p, idx, browse))}
             <div style={itemStyle}>
                 {this.renderValueBrowser('result', result)}
-                {isPure && <img style={refreshIconStyle} src="editor/icons/reset.png" onClick={onClickRefresh}/>}
+                {isPure && <img style={refreshIconStyle} src="editor/icons/reset.svg" onClick={onClickRefresh}/>}
             </div>
             <div style={{paddingTop: 16, textAlign: 'right'}}>
                 <button style={watchButtonStyle} onClick={action}>
@@ -436,7 +440,7 @@ export class InspectorAreaContent extends React.Component {
             content = <div style={{paddingTop: 8, lineHeight: '20px', verticalAlign: 'middle'}}>
                 {prefixByKind[selectedKind]()}
                 <input ref={onRef} type="text" onChange={onChange} style={inputStyle} onKeyDown={onKeyDown}/>
-                {selectedKind !== 'e' && <img style={iconStyle} src="editor/icons/magnifier.png" onClick={onClick}/>}
+                {selectedKind !== 'e' && <img style={iconStyle} src="editor/icons/magnifier.svg" onClick={onClick}/>}
             </div>;
         }
 
