@@ -6,6 +6,7 @@ import FrameListener from '../../../utils/FrameListener';
 import { loadIslandScenery } from '../../../../island/index';
 import DebugData from '../../DebugData';
 import {get3DOrbitCamera} from './utils/orbitCamera';
+import IslandAmbience from './browser/ambience';
 
 export default class Island extends FrameListener {
     constructor(props) {
@@ -34,24 +35,11 @@ export default class Island extends FrameListener {
                 camera,
                 threeScene: new THREE.Scene()
             };
-            const grid = new THREE.Object3D();
-            for (let x = -4; x <= 4; x += 1) {
-                for (let z = -4; z <= 4; z += 1) {
-                    const tile = new THREE.GridHelper(0.96, 2);
-                    tile.position.x = x * 0.96;
-                    tile.position.z = z * 0.96;
-                    tile.material.transparent = true;
-                    tile.material.opacity = 1;
-                    grid.add(tile);
-                }
-            }
-            scene.threeScene.add(grid);
             scene.threeScene.add(camera.controlNode);
             const clock = new THREE.Clock(false);
             this.state = {
                 scene,
                 clock,
-                grid
             };
             clock.start();
         }
@@ -91,14 +79,10 @@ export default class Island extends FrameListener {
             this.state.scene.threeScene.remove(oldIsland.threeObject);
         }
         this.entity = this.props.sharedState.entity;
-        const ambience = {
-            lightingAlpha: 309,
-            lightingBeta: 2500
-        };
         const island = await loadIslandScenery(
             { editor: true },
             this.props.sharedState.entity,
-            ambience
+            IslandAmbience[this.props.sharedState.entity],
         );
         island.entity = this.entity;
         this.state.scene.threeScene.add(island.threeObject);
@@ -132,15 +116,14 @@ export default class Island extends FrameListener {
 
     onWheel(e) {
         this.zoom += e.deltaY * 0.01;
-        this.zoom = Math.min(Math.max(-1, this.zoom), 8);
+        this.zoom = Math.min(Math.max(-1, this.zoom), 18);
     }
 
     frame() {
-        const { renderer, clock, island, scene, grid } = this.state;
+        const { renderer, clock, island, scene } = this.state;
         const { entity, rotateView, wireframe } = this.props.sharedState;
         if (this.entity !== entity) {
             this.loadIsland();
-            grid.position.y = 0;
         }
         if (this.wireframe !== wireframe && island) {
             island.threeObject.traverse((obj) => {
@@ -150,7 +133,6 @@ export default class Island extends FrameListener {
             });
             this.wireframe = wireframe;
         }
-        grid.visible = this.props.sharedState.grid || false;
         this.checkResize();
         const time = {
             delta: Math.min(clock.getDelta(), 0.05),
