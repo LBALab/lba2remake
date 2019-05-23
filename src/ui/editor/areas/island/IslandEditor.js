@@ -8,7 +8,7 @@ import {
 const IslandEditor = {
     id: 'island',
     name: 'Island Editor',
-    icon: 'model.png',
+    icon: 'islands.png',
     content: IslandEditorContent,
     settings: IslandEditorSettings,
     mainArea: true,

@@ -26,14 +26,15 @@ const IslandNode = {
         height: '50px',
         background: '#1F1F1F',
         margin: '4px 0',
-        padding: '0'
+        padding: '0',
+        fontSize: '12px'
     },
     nameStyle: {
         lineHeight: '50px',
         height: '50px',
         display: 'block',
         position: 'absolute',
-        left: 50,
+        left: 60,
         right: 0,
         top: 0,
         overflow: 'hidden',
@@ -171,9 +172,8 @@ const IslandsNode = {
 };
 
 function centerView(name) {
-    const ent = name;
-    if (ent) {
-        const elem = document.getElementById(`otl.Entities.${name(ent)}`);
+    if (name) {
+        const elem = document.getElementById(`otl.Islands.${name}`);
         if (elem) {
             elem.scrollIntoView({block: 'center'});
         }
