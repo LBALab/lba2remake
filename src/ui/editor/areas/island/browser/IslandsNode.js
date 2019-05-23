@@ -1,6 +1,6 @@
 import React from 'react';
 import islandsInfo from '../../../../../island/data/islands';
-import DebugData from '../../../DebugData';
+import DebugData, { saveMetaData } from '../../../DebugData';
 import { createRenderer } from '../../../../../renderer';
 
 const indexStyle = {
@@ -16,9 +16,12 @@ const indexStyle = {
 
 const IslandNode = {
     dynamic: true,
-    name: island => island.name,
+    name: (island) => {
+        const index = islandsInfo.findIndex(i => i.name === island.name);
+        return DebugData.metadata.islands[index] || island.name;
+    },
     numChildren: () => 0,
-    allowRenaming: () => false,
+    allowRenaming: () => true,
     style: {
         height: '50px',
         background: '#1F1F1F',
@@ -61,7 +64,15 @@ const IslandNode = {
             margin: 0
         };
     },
-    rename: null,
+    rename: (name, newName) => {
+        const index = islandsInfo.findIndex(i => i.name === name);
+        DebugData.metadata.islands[index] = newName;
+        saveMetaData({
+            type: 'islands',
+            index,
+            value: newName
+        });
+    },
     onClick: (data, setRoot, component) => {
         const {setName} = component.props.rootStateHandler;
         setName(data.name);
