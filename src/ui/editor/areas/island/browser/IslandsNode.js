@@ -114,11 +114,8 @@ function saveIcon(data, component) {
                 iconRenderer = createRenderer({webgl2: true}, iconsCanvas, {
                     preserveDrawingBuffer: true
                 }, 'thumbnails');
-                iconRenderer.applySceneryProps({
-                    opacity: 0,
-                    envInfo: { skyColor: [0, 0, 0] }
-                });
             }
+            iconRenderer.applySceneryProps(DebugData.scope.island.props);
             iconRenderer.resize(50, 50);
             iconRenderer.render(DebugData.scope.scene);
             const dataUrl = iconsCanvas.toDataURL();
