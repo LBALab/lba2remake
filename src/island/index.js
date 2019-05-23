@@ -111,10 +111,14 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
 
     return {
         props,
-        sections: map(layout.groundSections, section => ({x: section.x, z: section.z})),
+        sections: map(layout.groundSections,
+            section => ({x: section.x, z: section.z, boundingBoxes: section.boundingBoxes })),
         threeObject: islandObject,
         physics: loadIslandPhysics(sections),
 
+        updateSeaTime: (time) => {
+            seaTimeUniform.value = time.elapsed;
+        },
         /* @inspector(locate) */
         update: (game, scene, time) => {
             updateShadows(scene, matByName);

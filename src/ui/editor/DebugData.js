@@ -18,7 +18,8 @@ const DebugData = {
         scenes: {},
         entities: [],
         bodies: [],
-        anims: []
+        anims: [],
+        islands: []
     },
     step: false
 };
@@ -186,7 +187,6 @@ function resetCameraOrientation(controlsState, scene) {
     controlsState.cameraOrientation.setFromEuler(baseEuler);
 }
 
-
 export async function loadModelsMetaData() {
     return new Promise((resolve) => {
         const request = new XMLHttpRequest();
@@ -277,4 +277,29 @@ export function loadGameMetaData() {
     };
 
     request.send(null);
+}
+
+export async function loadIslandsMetaData() {
+    return new Promise((resolve) => {
+        const request = new XMLHttpRequest();
+        request.open('GET', `metadata/islands.json${getAuthQueryString()}`, true);
+
+        request.onload = function onload() {
+            if (this.status === 200) {
+                try {
+                    const resp = JSON.parse(request.response);
+                    DebugData.metadata.islands = resp.islands;
+                } catch (e) {
+                    // continue regardless of error
+                }
+            }
+            resolve();
+        };
+
+        request.onerror = function onerror() {
+            resolve();
+        };
+
+        request.send(null);
+    });
 }
