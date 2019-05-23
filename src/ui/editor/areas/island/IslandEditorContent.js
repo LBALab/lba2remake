@@ -1,11 +1,12 @@
 import React from 'react';
 import * as THREE from 'three';
+
 import { createRenderer } from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
-import { loadIslandScenery } from '../../../../island/index';
+import { loadIslandScenery } from '../../../../island';
 import DebugData from '../../DebugData';
-import {get3DOrbitCamera} from './utils/orbitCamera';
+import {get3DFreeCamera} from './utils/freeCamera';
 import IslandAmbience from './browser/ambience';
 
 export default class Island extends FrameListener {
@@ -15,10 +16,10 @@ export default class Island extends FrameListener {
         this.onLoad = this.onLoad.bind(this);
         this.frame = this.frame.bind(this);
         this.saveData = this.saveData.bind(this);
-        this.onMouseDown = this.onMouseDown.bind(this);
-        this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onWheel = this.onWheel.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
+        this.onKeyUp = this.onKeyUp.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -30,7 +31,7 @@ export default class Island extends FrameListener {
         if (props.mainData) {
             this.state = props.mainData.state;
         } else {
-            const camera = get3DOrbitCamera();
+            const camera = get3DFreeCamera();
             const scene = {
                 camera,
                 threeScene: new THREE.Scene()
@@ -40,6 +41,12 @@ export default class Island extends FrameListener {
             this.state = {
                 scene,
                 clock,
+                cameraOrientation: new THREE.Quaternion(),
+                cameraHeadOrientation: new THREE.Quaternion(),
+                cameraSpeed: {
+                    x: 0,
+                    z: 0
+                },
             };
             clock.start();
         }
@@ -79,49 +86,89 @@ export default class Island extends FrameListener {
             this.state.scene.threeScene.remove(oldIsland.threeObject);
         }
         this.entity = this.props.sharedState.entity;
+        const ambience = IslandAmbience[this.props.sharedState.entity];
         const island = await loadIslandScenery(
             { editor: true },
             this.props.sharedState.entity,
-            IslandAmbience[this.props.sharedState.entity],
+            ambience,
         );
         island.entity = this.entity;
+
         this.state.scene.threeScene.add(island.threeObject);
         this.setState({ island }, this.saveData);
         this.wireframe = false;
     }
 
-    onMouseDown() {
-        this.moving = true;
-        this.moved = false;
-    }
-
     onMouseMove(e) {
-        if (this.moving) {
-            if (!this.moved) {
-                this.props.stateHandler.setRotateView(false);
-            }
-            this.mouseSpeed.x = e.movementX;
-            this.mouseSpeed.y = e.movementY;
-            this.moved = true;
-        }
-    }
-
-    onMouseUp() {
-        this.moving = false;
-        if (!this.moved) {
-            this.mouseSpeed.x = 0;
-        }
-        this.mouseSpeed.y = 0;
+        handleMouseEvent(this.state, e);
     }
 
     onWheel(e) {
-        this.zoom += e.deltaY * 0.01;
-        this.zoom = Math.min(Math.max(-1, this.zoom), 18);
+        this.zoom += e.deltaY * 0.05;
+        this.zoom = Math.min(Math.max(-1, this.zoom), 50);
+    }
+
+    onKeyDown(e) {
+        const key = e.code || e.which || e.keyCode;
+        const cameraSpeed = {
+            x: this.state.cameraSpeed.x,
+            z: this.state.cameraSpeed.z,
+        };
+        switch (key) {
+            case 87: // w
+            case 'KeyW':
+                cameraSpeed.z = 1;
+                break;
+            case 83: // s
+            case 'KeyS':
+                cameraSpeed.z = -1;
+                break;
+            case 65: // a
+            case 'KeyA':
+                cameraSpeed.x = 1;
+                break;
+            case 68: // d
+            case 'KeyD':
+                cameraSpeed.x = -1;
+                break;
+        }
+        this.setState({ cameraSpeed }, this.saveData);
+    }
+
+    onKeyUp(e) {
+        const key = e.code || e.which || e.keyCode;
+        const cameraSpeed = {
+            x: this.state.cameraSpeed.x,
+            z: this.state.cameraSpeed.z,
+        };
+        switch (key) {
+            case 87: // w
+            case 'KeyW':
+                if (cameraSpeed.z === 1)
+                    cameraSpeed.z = 0;
+                break;
+            case 83: // s
+            case 'KeyS':
+                if (cameraSpeed.z === -1)
+                    cameraSpeed.z = 0;
+                break;
+            case 65: // a
+            case 'KeyA':
+                if (cameraSpeed.x === 1)
+                    cameraSpeed.x = 0;
+                break;
+            case 68: // d
+            case 'KeyD':
+                if (cameraSpeed.x === -1)
+                    cameraSpeed.x = 0;
+                break;
+        }
+        this.setState({ cameraSpeed }, this.saveData);
     }
 
     frame() {
         const { renderer, clock, island, scene } = this.state;
-        const { entity, rotateView, wireframe } = this.props.sharedState;
+        const { entity, wireframe } = this.props.sharedState;
         if (this.entity !== entity) {
             this.loadIsland();
         }
@@ -139,7 +186,7 @@ export default class Island extends FrameListener {
             elapsed: clock.getElapsedTime()
         };
         renderer.stats.begin();
-        scene.camera.update(island, rotateView, this.mouseSpeed, this.zoom, time);
+        scene.camera.update(island, this.state, time);
         renderer.render(scene);
         renderer.stats.end();
     }
@@ -167,9 +214,30 @@ export default class Island extends FrameListener {
             onMouseMove={this.onMouseMove}
             onMouseLeave={this.onMouseUp}
             onWheel={this.onWheel}
+            onKeyDown={this.onKeyDown}
+            onKeyUp={this.onKeyUp}
         >
             <div ref={this.onLoad} style={fullscreen}/>
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
         </div>;
     }
+}
+
+
+const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
+const MAX_X_ANGLE = Math.PI / 2.5;
+
+function handleMouseEvent(controlsState, event) {
+    const movementX = event.movementX || 0;
+    const movementY = -event.movementY || 0;
+
+    euler.setFromQuaternion(controlsState.cameraHeadOrientation, 'YXZ');
+    euler.y = 0;
+    euler.x = Math.min(Math.max(euler.x - (movementY * 0.002), -MAX_X_ANGLE), MAX_X_ANGLE);
+    controlsState.cameraHeadOrientation.setFromEuler(euler);
+
+    euler.setFromQuaternion(controlsState.cameraOrientation, 'YXZ');
+    euler.x = 0;
+    euler.y -= movementX * 0.002;
+    controlsState.cameraOrientation.setFromEuler(euler);
 }
