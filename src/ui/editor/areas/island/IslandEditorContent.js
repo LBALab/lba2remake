@@ -93,6 +93,7 @@ export default class Island extends FrameListener {
             ambience,
         );
         island.entity = this.entity;
+        this.state.renderer.applySceneryProps(island.props);
 
         this.state.scene.threeScene.add(island.threeObject);
         this.setState({ island }, this.saveData);
