@@ -18,7 +18,7 @@ const IslandNode = {
     dynamic: true,
     name: island => island.name,
     numChildren: () => 0,
-    allowRenaming: () => true,
+    allowRenaming: () => false,
     style: {
         height: '50px',
         background: '#1F1F1F',
@@ -44,7 +44,7 @@ const IslandNode = {
         if (data.name in icons) {
             useThumb = true;
         } else {
-            const savedIcon = localStorage.getItem(`icon_model_entity_${data.name}`);
+            const savedIcon = localStorage.getItem(`icon_island_${data.name}`);
             if (savedIcon) {
                 useThumb = true;
             }
@@ -63,8 +63,8 @@ const IslandNode = {
     },
     rename: null,
     onClick: (data, setRoot, component) => {
-        const {setEntity} = component.props.rootStateHandler;
-        setEntity(data.name);
+        const {setName} = component.props.rootStateHandler;
+        setName(data.name);
     },
     onDoubleClick: (data, component) => {
         saveIcon(data, component);
@@ -72,8 +72,8 @@ const IslandNode = {
     selected: (data, component) => {
         if (!component.props.rootState)
             return false;
-        const { entity } = component.props.rootState;
-        return entity === data.name;
+        const { name } = component.props.rootState;
+        return name === data.name;
     },
     icon: (data, ignored, component) => getIcon(data, component),
     props: data => [
@@ -93,10 +93,10 @@ let iconRenderer = null;
 
 function saveIcon(data, component) {
     if (component && component.props.rootState) {
-        const { entity } = component.props.rootState;
-        if (entity === data.name
+        const { name } = component.props.rootState;
+        if (name === data.name
             && DebugData.scope.island
-            && DebugData.scope.island.entity === entity
+            && DebugData.scope.island.name === name
             && DebugData.scope.island.threeObject) {
             if (!iconRenderer) {
                 iconRenderer = createRenderer({webgl2: true}, iconsCanvas, {
@@ -113,7 +113,7 @@ function saveIcon(data, component) {
             if (dataUrl && dataUrl !== 'data:,') {
                 icons[data.name] = dataUrl;
             }
-            localStorage.setItem(`icon_model_entity_${data.name}`, dataUrl);
+            localStorage.setItem(`icon_island_${data.name}`, dataUrl);
         }
     }
 }
@@ -122,7 +122,7 @@ function getIcon(data, component) {
     if (data.name in icons) {
         return icons[data.name];
     }
-    const savedIcon = localStorage.getItem(`icon_model_entity_${data.name}`);
+    const savedIcon = localStorage.getItem(`icon_island_${data.name}`);
     if (savedIcon) {
         if (!icons[data.name]) {
             icons[data.name] = savedIcon;
@@ -140,20 +140,22 @@ const IslandsNode = {
     child: () => IslandNode,
     childData: (data, idx) => islandsInfo[idx],
     up: (data, collapsed, component) => {
-        const {entity} = component.props.rootState;
-        const {setEntity} = component.props.rootStateHandler;
-        const index = Math.max(entity - 1, 0);
-        const name = islandsInfo[index].name;
-        setEntity(name);
-        centerView(name);
+        const {name} = component.props.rootState;
+        const {setName} = component.props.rootStateHandler;
+        const currentIndex = islandsInfo.findIndex(i => i.name === name);
+        const index = Math.max(currentIndex - 1, 0);
+        const newName = islandsInfo[index].name;
+        setName(newName);
+        centerView(newName);
     },
     down: (data, collapsed, component) => {
-        const {entity} = component.props.rootState;
-        const {setEntity} = component.props.rootStateHandler;
-        const index = Math.min(entity + 1, islandsInfo.length - 1);
-        const name = islandsInfo[index].name;
-        setEntity(name);
-        centerView(name);
+        const {name} = component.props.rootState;
+        const {setName} = component.props.rootStateHandler;
+        const currentIndex = islandsInfo.findIndex(i => i.name === name);
+        const index = Math.min(currentIndex + 1, islandsInfo.length - 1);
+        const newName = islandsInfo[index].name;
+        setName(newName);
+        centerView(newName);
     }
 };
 

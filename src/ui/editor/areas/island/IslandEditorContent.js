@@ -85,14 +85,14 @@ export default class Island extends FrameListener {
         if (oldIsland) {
             this.state.scene.threeScene.remove(oldIsland.threeObject);
         }
-        this.entity = this.props.sharedState.entity;
-        const ambience = IslandAmbience[this.props.sharedState.entity];
+        this.name = this.props.sharedState.name;
+        const ambience = IslandAmbience[this.props.sharedState.name];
         const island = await loadIslandScenery(
             { editor: true },
-            this.props.sharedState.entity,
+            this.props.sharedState.name,
             ambience,
         );
-        island.entity = this.entity;
+        island.name = this.name;
         this.state.renderer.applySceneryProps(island.props);
 
         this.state.scene.threeScene.add(island.threeObject);
@@ -169,8 +169,8 @@ export default class Island extends FrameListener {
 
     frame() {
         const { renderer, clock, island, scene } = this.state;
-        const { entity, wireframe } = this.props.sharedState;
-        if (this.entity !== entity) {
+        const { name, wireframe } = this.props.sharedState;
+        if (this.name !== name) {
             this.loadIsland();
         }
         if (this.wireframe !== wireframe && island) {

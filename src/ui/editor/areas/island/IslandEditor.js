@@ -13,24 +13,16 @@ const IslandEditor = {
     settings: IslandEditorSettings,
     mainArea: true,
     getInitialState: () => ({
-        entity: 'CITADEL',
-        rotateView: true,
+        island: 'CITADEL',
         wireframe: false,
-        grid: true
     }),
     stateHandler: {
-        setRotateView(rotateView) {
-            this.setState({ rotateView });
-        },
         setWireframe(wireframe) {
             this.setState({ wireframe });
         },
-        setGrid(grid) {
-            this.setState({ grid });
-        },
-        setEntity(entity) {
+        setName(name) {
             this.setState({
-                entity,
+                name,
             });
         },
     },
