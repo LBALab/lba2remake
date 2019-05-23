@@ -20,6 +20,10 @@ export default class Island extends FrameListener {
         this.onWheel = this.onWheel.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
+        this.onPointerLockChange = this.onPointerLockChange.bind(this);
+
+        document.addEventListener('mousemove', this.onMouseMove, false);
+        document.addEventListener('pointerlockchange', this.onPointerLockChange, false);
 
         this.mouseSpeed = {
             x: 0,
@@ -27,6 +31,7 @@ export default class Island extends FrameListener {
         };
 
         this.zoom = 0;
+        this.mouseEnabled = false;
 
         if (props.mainData) {
             this.state = props.mainData.state;
@@ -50,6 +55,11 @@ export default class Island extends FrameListener {
             };
             clock.start();
         }
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('pointerlockchange', this.onPointerLockChange);
+        document.removeEventListener('mousemove', this.onMouseMove);
     }
 
     saveData() {
@@ -100,8 +110,18 @@ export default class Island extends FrameListener {
         this.wireframe = false;
     }
 
+    handleClick() {
+        document.body.requestPointerLock();
+    }
+
+    onPointerLockChange() {
+        this.mouseEnabled = document.pointerLockElement === document.body;
+    }
+
     onMouseMove(e) {
-        handleMouseEvent(this.state, e);
+        if (this.mouseEnabled) {
+            handleMouseEvent(this.state, e);
+        }
     }
 
     onWheel(e) {
@@ -213,13 +233,10 @@ export default class Island extends FrameListener {
         return <div
             id="renderZone"
             style={fullscreen}
-            onMouseDown={this.onMouseDown}
-            onMouseUp={this.onMouseUp}
-            onMouseMove={this.onMouseMove}
-            onMouseLeave={this.onMouseUp}
             onWheel={this.onWheel}
             onKeyDown={this.onKeyDown}
             onKeyUp={this.onKeyUp}
+            onClick={this.handleClick}
         >
             <div ref={this.onLoad} style={fullscreen}/>
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
