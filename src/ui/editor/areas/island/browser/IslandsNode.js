@@ -98,7 +98,6 @@ function saveIcon(data, component) {
             && DebugData.scope.island
             && DebugData.scope.island.entity === entity
             && DebugData.scope.island.threeObject) {
-            DebugData.scope.grid.visible = false;
             if (!iconRenderer) {
                 iconRenderer = createRenderer({webgl2: true}, iconsCanvas, {
                     preserveDrawingBuffer: true
@@ -115,7 +114,6 @@ function saveIcon(data, component) {
                 icons[data.name] = dataUrl;
             }
             localStorage.setItem(`icon_model_entity_${data.name}`, dataUrl);
-            DebugData.scope.grid.visible = true;
         }
     }
 }
