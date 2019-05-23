@@ -187,6 +187,9 @@ export default class Island extends FrameListener {
         };
         renderer.stats.begin();
         scene.camera.update(island, this.state, time);
+        if (island) {
+            island.updateSeaTime(time);
+        }
         renderer.render(scene);
         renderer.stats.end();
     }

@@ -116,10 +116,13 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         threeObject: islandObject,
         physics: loadIslandPhysics(sections),
 
+        updateSeaTime: (time) => {
+            seaTimeUniform.value = time.elapsed;
+        },
         /* @inspector(locate) */
         update: (game, scene, time) => {
             updateShadows(scene, matByName);
-            seaTimeUniform.value = time.elapsed;
+            this.updateSeaTime(time);
         }
     };
 }
