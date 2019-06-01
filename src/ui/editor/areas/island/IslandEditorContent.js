@@ -130,7 +130,7 @@ export default class Island extends FrameListener {
     }
 
     onKeyDown(e) {
-        const key = e.code || e.which || e.keyCode;
+        const key = e.nativeEvent.code || e.which || e.keyCode;
         const cameraSpeed = {
             x: this.state.cameraSpeed.x,
             z: this.state.cameraSpeed.z,
@@ -157,7 +157,7 @@ export default class Island extends FrameListener {
     }
 
     onKeyUp(e) {
-        const key = e.code || e.which || e.keyCode;
+        const key = e.nativeEvent.code || e.which || e.keyCode;
         const cameraSpeed = {
             x: this.state.cameraSpeed.x,
             z: this.state.cameraSpeed.z,
