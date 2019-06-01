@@ -26,7 +26,7 @@ function isSelected(index) {
 const indirectSceneColor = '#AAAAAA';
 
 function baseScene(type, index, name, children) {
-    const icon = `editor/icons/locations/${type}.png`;
+    const icon = `editor/icons/locations/${type}.svg`;
     if (index === -1) {
         return {name, type, children, icon, color: indirectSceneColor};
     }
@@ -58,6 +58,6 @@ export function planet(name, icon, children) {
         name,
         color: indirectSceneColor,
         children,
-        icon: `editor/icons/locations/${icon}.png`
+        icon: `editor/icons/locations/${icon}.svg`
     };
 }
