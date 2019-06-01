@@ -54,7 +54,7 @@ export function prepareGeometries(island, data, ambience) {
                     fogDensity: {value: envInfo.fogDensity},
                     palette: {value: paletteTexture},
                     noise: {value: noiseTexture},
-                    actorPos: {value: times(10, () => new THREE.Vector4()), type: 'v4v'}
+                    actorPos: {value: times(10, () => new THREE.Vector4(0, 0, 0, 0)), type: 'v4v'}
                 }
             })
         },
@@ -73,7 +73,7 @@ export function prepareGeometries(island, data, ambience) {
                     palette: {value: paletteTexture},
                     lutTexture: {value: lutTexture},
                     noise: {value: noiseTexture},
-                    actorPos: {value: times(10, () => new THREE.Vector4()), type: 'v4v'}
+                    actorPos: {value: times(10, () => new THREE.Vector4(0, 0, 0, 0)), type: 'v4v'}
                 }
             })
         },
