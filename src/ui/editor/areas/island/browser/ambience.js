@@ -1,11 +1,11 @@
 export default {
     CITADEL: {
-        lightingAlpha: 419, // FIXME
-        lightingBeta: 2285, // FIXME
-    },
-    CITABAU: {
         lightingAlpha: 356,
         lightingBeta: 3411,
+    },
+    CITABAU: {
+        lightingAlpha: 419, // FIXME
+        lightingBeta: 2285, // FIXME
     },
     DESERT: {
         lightingAlpha: 419,
