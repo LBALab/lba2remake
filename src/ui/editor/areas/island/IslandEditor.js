@@ -4,6 +4,7 @@ import {Orientation, Type} from '../../layout';
 import {
     IslandsBrowserArea,
 } from './browser/IslandsBrowserArea';
+import InspectorArea from '../shared/InspectorArea/InspectorArea';
 
 const IslandEditor = {
     id: 'island',
@@ -28,6 +29,7 @@ const IslandEditor = {
     },
     toolAreas: [
         IslandsBrowserArea,
+        InspectorArea,
     ],
     defaultLayout: {
         type: Type.LAYOUT,
