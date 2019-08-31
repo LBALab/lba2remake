@@ -345,6 +345,9 @@ export default class GameUI extends FrameListener {
             const presenting = renderer.isPresenting();
             if (this.state.isPresenting !== presenting) {
                 this.state.isPresenting = presenting;
+                if (!presenting) {
+                    this.showMenu(true);
+                }
             }
             if (!presenting) {
                 this.checkResize(presenting);
