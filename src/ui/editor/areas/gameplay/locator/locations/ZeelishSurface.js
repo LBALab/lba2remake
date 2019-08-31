@@ -62,14 +62,16 @@ const ZeelishSurface = planet('Zeelish Surface', 'zeelish', [
             ])
         ])
     ]),
-    island(95, 'Celebration Island', [
-        iso(93, 'Temple'),
-        iso(185, 'Statue (middle)', [
-            iso(186, 'Top'),
-            iso(187, 'Middle-bottom'),
-            iso(192, 'Meca-Pinguins Room'),
-            iso(188, 'Bottom (FunFrock)'),
-            iso(190, 'Lava'),
+    island(-1, 'Celebration Island', [
+        section(95, 'Volcano', [
+            iso(93, 'Temple'),
+            iso(185, 'Statue (middle)', [
+                iso(186, 'Top'),
+                iso(187, 'Middle-bottom'),
+                iso(192, 'Meca-Pinguins Room'),
+                iso(188, 'Bottom (FunFrock)'),
+                iso(190, 'Lava'),
+            ]),
         ]),
     ]),
     island(-1, 'Franco Island', [
@@ -92,15 +94,19 @@ const ZeelishSurface = planet('Zeelish Surface', 'zeelish', [
         ]),
         section(107, 'Zeppelin Port')
     ]),
-    island(120, 'Elevator'),
-    island(110, 'Island CX', [
-        iso(180, 'Corridor (dragon)'),
-        iso(179, 'Control Tower', [
-            iso(178, 'Switches room'),
-            iso(177, 'Stairs + Control room'),
-            iso(181, 'Emperor room'),
+    island(-1, 'Elevator island', [
+        section(120, 'Elevator')
+    ]),
+    island(-1, 'Island CX', [
+        section(110, 'Emperor base', [
+            iso(180, 'Corridor (dragon)'),
+            iso(179, 'Control Tower', [
+                iso(178, 'Switches room'),
+                iso(177, 'Stairs + Control room'),
+                iso(181, 'Emperor room'),
+            ]),
+            iso(182, 'Emperor Spacecraft (CX)')
         ]),
-        iso(182, 'Emperor Spacecraft (CX)')
     ]),
     island(-1, '[DEMO] Otringal', [
         section(205, '[DEMO] Spaceport'),
@@ -116,18 +122,22 @@ const ZeelishSurface = planet('Zeelish Surface', 'zeelish', [
         ])
     ]),
     island(-1, '[DEMO] Celebration Island', [
-        iso(-1, '[DEMO] Statue', [
-            iso(218, '[DEMO] Middle')
+        section(-1, '[DEMO] Volcano', [
+            iso(-1, '[DEMO] Statue', [
+                iso(218, '[DEMO] Middle')
+            ]),
         ]),
     ]),
     island(-1, '[DEMO] Franco Island', [
         section(212, '[DEMO] Village')
     ]),
     island(-1, '[DEMO] Island CX', [
-        iso(-1, '[DEMO] Control Tower', [
-            iso(221, '[DEMO] Switches Room')
-        ])
-    ])
+        section(-1, '[DEMO] Emperor base', [
+            iso(-1, '[DEMO] Control Tower', [
+                iso(221, '[DEMO] Switches Room')
+            ]),
+        ]),
+    ]),
 ]);
 
 export default ZeelishSurface;

@@ -1,7 +1,7 @@
 import {planet, island, section, iso} from './functions';
 
 const ZeelishUndergas = planet('Undergas', 'undergas', [
-    island(-1, 'Elevator Island (Wannies)', [
+    island(-1, 'Wanny Island', [
         section(98, 'Elevator Area', [
             iso(123, 'Elevator Building')
         ]),
@@ -47,7 +47,7 @@ const ZeelishUndergas = planet('Undergas', 'undergas', [
         ]),
         section(130, 'Mountain Top')
     ]),
-    island(-1, '[DEMO] Elevator Island (Wannies)', [
+    island(-1, '[DEMO] Wanny Island', [
         section(213, '[DEMO] Elevator Area'),
         section(-1, '[DEMO] Mine Area', [
             iso(214, '[DEMO] Mine'),
