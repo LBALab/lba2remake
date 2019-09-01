@@ -435,6 +435,7 @@ export default class GameUI extends FrameListener {
                 inGameMenu={this.state.inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />
+            <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} />
             {this.state.teleportMenu
                 && <TeleportMenu
                     inGameMenu={this.state.inGameMenu}
@@ -447,7 +448,6 @@ export default class GameUI extends FrameListener {
                     }}
                 />}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
-            <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} />
             {this.state.loading ? <Loader/> : null}
             {!this.state.showMenu ? <TextBox
                 text={this.state.text}
