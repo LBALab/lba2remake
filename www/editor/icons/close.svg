@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="close_icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+	 viewBox="0 0 50 50" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#FFFFFF;}
 </style>
-<polygon id="cross" class="st0" points="47.5,3 41.4,3 25,19.5 8.6,3 3,3 3,8.6 19.5,25 3,41.4 3,47.5 8.1,47.5 25,30.6 41.9,47.5 
+<polygon id="cross" class="st0" points="47.5,3 41.4,3 25,19.5 8.6,3 3,3 3,8.6 19.5,25 3,41.4 3,47.5 8.1,47.5 25,30.6 41.9,47.5
 	47.5,47.5 47.5,41.9 30.6,25 47.5,8.1 "/>
 </svg>
