@@ -4,10 +4,11 @@ import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
 
 const style = {
     position: 'absolute',
-    top: 75,
-    bottom: 75,
-    left: 50,
-    right: 50,
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    margin: 32,
     border: '2px outset #61cece',
     borderRadius: 12,
     background: 'black',
@@ -95,6 +96,15 @@ const islandIconStyle = {
     margin: '0 8px'
 };
 
+const closeStyle = {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    width: 24,
+    height: 24,
+    cursor: 'pointer'
+};
+
 export default class TeleportMenu extends React.Component {
     constructor(props) {
         super(props);
@@ -170,6 +180,7 @@ export default class TeleportMenu extends React.Component {
                         {this.renderPlanet(selectedPlanet)}
                     </div>
                 </div>
+                <img style={closeStyle} src="./editor/icons/close.svg" onClick={this.props.exit}/>
             </div>
         </div>;
     }
