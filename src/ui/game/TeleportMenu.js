@@ -85,7 +85,7 @@ const islandContentStyle = {
     bottom: 0,
 };
 
-const smallIslandContentStyle = selecting => Object.assign({}, islandContentStyle, {
+const smIslandContentStyle = selecting => Object.assign({}, islandContentStyle, {
     left: 0,
     top: 45,
     padding: selecting ? 0 : '8px 16px'
@@ -278,7 +278,7 @@ export default class TeleportMenu extends React.Component {
                         {island.name}
                     </div>)}
             </div>}
-            <div style={small ? smallIslandContentStyle(this.state.selectIsland) : islandContentStyle}>
+            <div style={small ? smIslandContentStyle(this.state.selectIsland) : islandContentStyle}>
                 {this.state.selectIsland
                     ? this.renderIslandSelection(planet)
                     : this.renderNode(selectedIsland, 0)}
