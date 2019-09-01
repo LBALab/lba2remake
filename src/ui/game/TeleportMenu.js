@@ -17,7 +17,7 @@ const style = {
 const planetStyle = selected => ({
     display: 'inline-block',
     color: selected ? 'white' : 'rgb(100, 100, 100)',
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'LBA',
     width: '25%',
     textAlign: 'center',
@@ -27,7 +27,7 @@ const planetStyle = selected => ({
     textShadow: selected ? 'black 3px 3px' : 'rgb(20, 20, 20) 3px 3px',
     background: selected ? 'rgba(32, 162, 255, 0.5)' : 'transparent',
     overflow: 'hidden',
-    padding: '12px 0'
+    padding: '10px 0'
 });
 
 const islandStyle = selected => ({
@@ -50,14 +50,14 @@ const headerStyle = {
     borderBottom: '2px outset #61cece',
     margin: 0,
     background: 'black',
-    height: 76,
+    height: 86,
 };
 
 const contentStyle = {
     position: 'absolute',
     overflow: 'auto',
     padding: 0,
-    top: 78,
+    top: 88,
     left: 0,
     right: 0,
     bottom: 0
@@ -85,8 +85,8 @@ const islandContentStyle = {
 };
 
 const planetIconStyle = {
-    width: 32,
-    height: 32
+    width: 48,
+    height: 48
 };
 
 const islandIconStyle = {
