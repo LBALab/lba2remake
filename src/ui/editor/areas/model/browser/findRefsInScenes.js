@@ -37,7 +37,7 @@ export async function findRefsInScenes(type, value) {
         {
             name: `References to ${name}`,
             children: mapLocations(refs),
-            icon: `editor/icons/${type}.png`
+            icon: `editor/icons/${type}.svg`
         },
         {
             icon: 'ref.png'
