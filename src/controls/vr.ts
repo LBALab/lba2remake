@@ -1,4 +1,10 @@
+import * as THREE from 'three';
 import {switchStats} from '../renderer/stats';
+
+const oculusTouch = {
+    left: makeOculusTouchController('LEFT'),
+    right: makeOculusTouchController('RIGHT'),
+};
 
 export function makeVRControls(sceneManager: any, game: any) {
     return {
@@ -19,12 +25,15 @@ export function makeVRControls(sceneManager: any, game: any) {
                             handleOculusGoController(gamepad, sceneManager, game);
                             break;
                         case 'Oculus Touch (Left)':
+                            updateOculusTouchController(gamepad, oculusTouch.left);
+                            break;
                         case 'Oculus Touch (Right)':
-                            handleOculusRiftController(gamepad, sceneManager, game);
+                            updateOculusTouchController(gamepad, oculusTouch.right);
                             break;
                     }
                 }
             }
+            unifiedOculusTouchHandler(oculusTouch, sceneManager, game);
         }
     };
 }
@@ -80,60 +89,93 @@ const OculusTouch = {
     THUMBSTICK: 0,
     TRIGGER: 1,
     GRIP: 2,
-    A: 3, // X
-    B: 4, // Y
+    A: 3,
+    X: 3,
+    B: 4,
+    Y: 4,
     THUMBREST: 5,
 };
 
-function handleOculusRiftController(gamepad, sceneManager, game) {
+function makeOculusTouchController(type) {
+    return {
+        type,
+        enabled: false,
+        pad: new THREE.Vector2()
+    };
+}
+
+function updateOculusTouchController(gamepad, controller) {
+    const {THUMBSTICK, TRIGGER, GRIP, X, Y, A, B} = OculusTouch;
+
+    controller.enabled = true;
+    controller.thumbstick = getButtonState(gamepad, THUMBSTICK);
+    controller.trigger = getButtonState(gamepad, TRIGGER);
+    controller.grip = getButtonState(gamepad, GRIP);
+
+    if (controller.type === 'LEFT') {
+        controller.buttonX = getButtonState(gamepad, X);
+        controller.buttonY = getButtonState(gamepad, Y);
+    } else {
+        controller.buttonA = getButtonState(gamepad, A);
+        controller.buttonB = getButtonState(gamepad, B);
+    }
+    controller.pad.set(gamepad.axes[0], -gamepad.axes[1]);
+}
+
+function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
+    if (!left.enabled || !right.enabled)
+        return;
+
     const {controlsState} = game;
-    const {THUMBSTICK, TRIGGER, GRIP, A, B, THUMBREST} = OculusTouch;
     const scene = sceneManager.getScene();
     const camera = scene && scene.camera;
     const hero = game.getState().hero;
-    controlsState.action = 0;
-    controlsState.jump = 0;
+
     controlsState.relativeToCam = true;
+    controlsState.jump = 0;
+    controlsState.weapon = 0;
 
-    const thumbstick = getButtonState(gamepad, THUMBSTICK); // Bahaviour loop
-    const trigger = getButtonState(gamepad, TRIGGER); // throw
-    const grip = getButtonState(gamepad, GRIP); // Sports Behaviour
-    const buttonA = getButtonState(gamepad, A); // Action
-    const buttonB = getButtonState(gamepad, B); // fps
-    const thumbrest = getButtonState(gamepad, THUMBREST); // recentre
-
-    if (buttonB.pressed) {
-        if (controlsState.skipListener) {
-            controlsState.skipListener();
-            return;
-        }
-    }
-
-    controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
-
-    if (buttonA.longPressed && camera && scene) {
+    // Center camera
+    if (right.trigger.tapped && camera && scene) {
         camera.center(scene);
     }
-    if (buttonB.longPressed) {
+
+    // Skip dialogues
+    if (controlsState.skipListener) {
+        controlsState.action = 0;
+        if (left.buttonX.tapped
+            || left.buttonY.tapped
+            || right.buttonA.tapped
+            || right.buttonB.tapped) {
+            controlsState.skipListener();
+        }
+        return;
+    }
+
+    // Hero movement
+    controlsState.controlVector.copy(left.pad);
+
+    // Action button
+    controlsState.action = left.buttonX.tapped || right.buttonA.tapped ? 1 : 0;
+
+    if (left.buttonY.longPressed) {
         switchStats();
     }
 
     hero.behaviour = hero.prevBehaviour;
-    if (grip.pressed) {
+    if (left.grip.pressed) {
         hero.prevBehaviour = hero.behaviour;
         hero.behaviour = 1;
-        controlsState.jump = trigger.pressed ? 1 : 0;
+        controlsState.jump = left.trigger.pressed ? 1 : 0;
+    } else {
+        controlsState.weapon = left.trigger.pressed ? 1 : 0;
     }
-    if (thumbstick.pressed) {
+    if (left.buttonY.tapped || right.buttonB.tapped) {
         hero.behaviour = (hero.behaviour + 1) % 4;
-        if (hero.behaviour === 1) { // skip
+        if (hero.behaviour === 1) { // skip sporty
             hero.behaviour += 1;
         }
         hero.prevBehaviour = hero.behaviour;
-    }
-    controlsState.action = buttonA.pressed ? 1 : 0;
-    if (!grip.pressed) {
-        controlsState.weapon = trigger.pressed ? 1 : 0;
     }
 }
 
