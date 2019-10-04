@@ -1,6 +1,5 @@
 import React from 'react';
 import * as THREE from 'three';
-import {clone, omit} from 'lodash';
 
 import {createRenderer} from '../renderer';
 import {createGame} from '../game/index.ts';
@@ -11,22 +10,12 @@ import {createControls} from '../controls/index';
 import {fullscreen} from './styles/index';
 
 import FrameListener from './utils/FrameListener';
-import CinemaEffect from './game/CinemaEffect';
-import TextBox from './game/TextBox';
-import AskChoice from './game/AskChoice';
-import TextInterjections from './game/TextInterjections';
-import FoundObject from './game/FoundObject';
 import Loader from './game/Loader';
-import Video from './game/Video';
-import DebugData from './editor/DebugData';
-import Menu from './game/Menu';
-import TeleportMenu from './game/TeleportMenu';
 import VideoData from '../video/data';
-import Ribbon from './game/Ribbon';
 import {sBind} from '../utils.ts';
-import {updateLabels} from './editor/labels';
+import {updateVRGui} from './vr/vrGui';
 
-export default class GameUI extends FrameListener {
+export default class VRGameUI extends FrameListener {
     constructor(props) {
         super(props);
 
@@ -34,16 +23,19 @@ export default class GameUI extends FrameListener {
         this.onCanvasWrapperRef = this.onCanvasWrapperRef.bind(this);
         this.frame = this.frame.bind(this);
         this.saveData = this.saveData.bind(this);
+        this.onVrDisplayConnect = this.onVrDisplayConnect.bind(this);
+        this.onVrDisplayDisconnect = this.onVrDisplayDisconnect.bind(this);
+        this.onVrDisplayPresentChange = this.onVrDisplayPresentChange.bind(this);
+        this.onVrDisplayActivate = this.onVrDisplayActivate.bind(this);
+        this.requestPresence = this.requestPresence.bind(this);
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
         this.onGameReady = this.onGameReady.bind(this);
         this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
         this.onMenuItemChanged = this.onMenuItemChanged.bind(this);
         this.setUiState = sBind(this.setUiState, this);
         this.getUiState = sBind(this.getUiState, this);
-        this.listener = this.listener.bind(this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
-        this.pick = this.pick.bind(this);
         this.startNewGameScene = this.startNewGameScene.bind(this);
         this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
 
@@ -75,7 +67,8 @@ export default class GameUI extends FrameListener {
                 menuTexts: null,
                 showMenu: false,
                 inGameMenu: false,
-                teleportMenu: false
+                teleportMenu: false,
+                display: null
             };
 
             clock.start();
@@ -161,23 +154,45 @@ export default class GameUI extends FrameListener {
 
     componentWillMount() {
         super.componentWillMount();
-        window.addEventListener('keydown', this.listener);
+        window.addEventListener('vrdisplayconnect', this.onVrDisplayConnect);
+        window.addEventListener('vrdisplaydisconnect', this.onVrDisplayDisconnect);
+        window.addEventListener('vrdisplaypresentchange', this.onVrDisplayPresentChange);
+        window.addEventListener('vrdisplayactivate', this.onVrDisplayActivate);
+        navigator.getVRDisplays()
+            .then((displays) => {
+                if (displays.length > 0) {
+                    this.setState({ display: displays[0] });
+                } else {
+                    this.setState({ display: null });
+                }
+            })
+            .catch(() => {
+                this.setState({ display: null });
+            });
     }
 
     componentWillUnmount() {
-        window.removeEventListener('keydown', this.listener);
+        window.removeEventListener('vrdisplayconnect', this.onVrDisplayConnect);
+        window.removeEventListener('vrdisplaydisconnect', this.onVrDisplayDisconnect);
+        window.removeEventListener('vrdisplaypresentchange', this.onVrDisplayPresentChange);
+        window.removeEventListener('vrdisplayactivate', this.onVrDisplayActivate);
         super.componentWillUnmount();
     }
 
-    componentWillReceiveProps(newProps) {
-        if (newProps.params.scene !== this.props.params.scene) {
-            if (newProps.params.scene !== -1) {
-                this.state.sceneManager.hideMenuAndGoto(newProps.params.scene);
-            } else {
-                this.state.sceneManager.unloadScene();
-                this.showMenu();
-            }
-        }
+    onVrDisplayConnect(event) {
+        this.setState({ display: event.display });
+    }
+
+    onVrDisplayDisconnect() {
+        this.setState({ display: null });
+    }
+
+    onVrDisplayPresentChange() {
+
+    }
+
+    onVrDisplayActivate() {
+
     }
 
     onGameReady() {
@@ -203,77 +218,6 @@ export default class GameUI extends FrameListener {
             this.state.game.resume();
         this.setState({showMenu: false, inGameMenu: false}, this.saveData);
         this.canvas.focus();
-    }
-
-    listener(event) {
-        const key = event.code || event.which || event.keyCode;
-        if (!this.state.video) {
-            if (key === 'Escape' || key === 27) {
-                if (this.state.teleportMenu) {
-                    this.setState({teleportMenu: false});
-                } else if (!this.state.game.isPaused()) {
-                    this.showMenu(true);
-                } else if (this.state.showMenu && this.state.inGameMenu) {
-                    this.hideMenu();
-                }
-            }
-        }
-    }
-
-    pick(event) {
-        const scene = this.state.scene;
-        if (this.props.params.editor && scene && this.canvas) {
-            const { clientWidth, clientHeight } = this.canvas;
-            const mouse = new THREE.Vector2(
-                ((event.clientX / clientWidth) * 2) - 1,
-                -((event.clientY / clientHeight) * 2) + 1
-            );
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(mouse, scene.camera.threeCamera);
-
-            const tgt = new THREE.Vector3();
-
-            const foundPoint = scene.points.find((point) => {
-                if (point.threeObject.visible) {
-                    const bb = point.boundingBox.clone();
-                    bb.applyMatrix4(point.threeObject.matrixWorld);
-                    return raycaster.ray.intersectBox(bb, tgt);
-                }
-                return false;
-            });
-            if (foundPoint) {
-                DebugData.selection = {type: 'point', index: foundPoint.index};
-                event.stopPropagation();
-                return;
-            }
-
-            const foundActor = scene.actors.find((actor) => {
-                if (actor.threeObject.visible && actor.model) {
-                    const bb = actor.model.boundingBox.clone();
-                    bb.applyMatrix4(actor.threeObject.matrixWorld);
-                    return raycaster.ray.intersectBox(bb, tgt);
-                }
-                return false;
-            });
-            if (foundActor) {
-                DebugData.selection = {type: 'actor', index: foundActor.index};
-                event.stopPropagation();
-                return;
-            }
-
-            const foundZone = scene.zones.find((zone) => {
-                if (zone.threeObject.visible) {
-                    const bb = zone.boundingBox.clone();
-                    bb.applyMatrix4(zone.threeObject.matrixWorld);
-                    return raycaster.ray.intersectBox(bb, tgt);
-                }
-                return false;
-            });
-            if (foundZone) {
-                DebugData.selection = {type: 'zone', index: foundZone.index};
-                event.stopPropagation();
-            }
-        }
     }
 
     startNewGameScene() {
@@ -341,7 +285,7 @@ export default class GameUI extends FrameListener {
     frame() {
         const {game, clock, renderer, sceneManager, controls} = this.state;
         if (renderer && sceneManager) {
-            this.checkResize();
+            const presenting = renderer.isPresenting();
             const scene = sceneManager.getScene();
             if (this.state.scene !== scene) {
                 this.setState({scene}, this.saveData);
@@ -354,38 +298,7 @@ export default class GameUI extends FrameListener {
                 scene,
                 controls
             );
-            if (this.props.params.editor) {
-                DebugData.scope = {
-                    params: this.props.params,
-                    game,
-                    clock,
-                    renderer,
-                    scene,
-                    sceneManager,
-                    hero: scene && scene.actors[0],
-                    controls,
-                    ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls', 'scene')
-                };
-                DebugData.sceneManager = sceneManager;
-                updateLabels(scene, this.props.sharedState.labels);
-            }
-        }
-    }
-
-    checkResize() {
-        if (this.canvasWrapperElem && this.canvas && this.state.renderer) {
-            const { clientWidth, clientHeight } = this.canvasWrapperElem;
-            const rWidth = `${clientWidth}px`;
-            const rHeight = `${clientHeight}px`;
-            const style = this.canvas.style;
-            if (rWidth !== style.width || rHeight !== style.height) {
-                this.state.renderer.resize(clientWidth, clientHeight);
-                if (this.state.video) {
-                    this.setState({
-                        video: clone(this.state.video)
-                    }, this.saveData); // Force video rerender
-                }
-            }
+            updateVRGui(presenting);
         }
     }
 
@@ -398,56 +311,58 @@ export default class GameUI extends FrameListener {
     }
 
     render() {
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-        return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex="0">
-            <div ref={this.onCanvasWrapperRef} style={fullscreen} onClick={this.pick}/>
+        return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen}>
+            <div ref={this.onCanvasWrapperRef} style={fullscreen}/>
             {this.renderGUI()}
         </div>;
     }
 
     renderGUI() {
-        if (this.state.isPresenting)
+        const { renderer } = this.state;
+        const presenting = renderer && renderer.isPresenting();
+        if (presenting)
             return null;
 
         return <React.Fragment>
-            <CinemaEffect enabled={this.state.cinema} />
-            <TextInterjections
-                scene={this.state.scene}
-                renderer={this.state.renderer}
-                interjections={this.state.interjections}
-            />
-            <Video video={this.state.video} renderer={this.state.renderer} />
-            <Menu
-                params={this.props.params}
-                showMenu={this.state.showMenu && !this.state.teleportMenu}
-                texts={this.state.game.menuTexts}
-                inGameMenu={this.state.inGameMenu}
-                onItemChanged={this.onMenuItemChanged}
-            />
-            <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} />
-            {this.state.teleportMenu
-                && <TeleportMenu
-                    inGameMenu={this.state.inGameMenu}
-                    game={this.state.game}
-                    sceneManager={this.state.sceneManager}
-                    exit={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        this.setState({teleportMenu: false});
-                    }}
-                />}
-            <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
+            {this.renderVRSelector()}
             {this.state.loading ? <Loader/> : null}
-            {!this.state.showMenu ? <TextBox
-                text={this.state.text}
-                skip={this.state.skip}
-                textAnimEnded={this.textAnimEndedHandler}
-            /> : null}
-            {!this.state.showMenu ? <AskChoice
-                ask={this.state.ask}
-                onChoiceChanged={this.onAskChoiceChanged}
-            /> : null}
-            {!this.state.showMenu ? <FoundObject foundObject={this.state.foundObject} /> : null}
         </React.Fragment>;
+    }
+
+    requestPresence() {
+        if (!this.state.renderer || !this.state.display) {
+            return;
+        }
+        this.state.renderer.threeRenderer.vr.setDevice(this.state.display);
+        this.state.display.requestPresent([
+            {
+                source: this.state.renderer.canvas,
+                attributes: {
+                    highRefreshRate: true,
+                    foveationLevel: 3,
+                    antialias: true
+                }
+            }
+        ]);
+        this.startNewGameScene();
+    }
+
+    renderVRSelector() {
+        if (!this.state.renderer || !this.state.display) {
+            return null;
+        }
+        const buttonStyle = {
+            color: 'white',
+            background: 'rgba(32, 162, 255, 0.5)',
+        };
+        return <div className="bgMenu fullscreen">
+            <div className="menu">
+                <ul className="menuList">
+                    <li className="menuItemList" onClick={this.requestPresence}>
+                        <div className="menuItem" style={buttonStyle}>Enter VR!</div>
+                    </li>
+                </ul>
+            </div>
+        </div>;
     }
 }

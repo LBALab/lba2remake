@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import Ticker from './ui/utils/Ticker.ts';
 import GameUI from './ui/GameUI';
+import VRGameUI from './ui/VRGameUI';
 import Editor from './ui/Editor';
 import Popup from './ui/Popup';
 import {loadParams} from './params.ts';
@@ -16,7 +17,8 @@ class Root extends React.Component {
         const params = loadParams();
         this.state = {
             params,
-            changelog: false
+            changelog: false,
+            vr: 'getVRDisplays' in navigator,
         };
         this.onHashChange = this.onHashChange.bind(this);
         this.closeChangeLog = this.closeChangeLog.bind(this);
@@ -57,6 +59,8 @@ class Root extends React.Component {
         let content;
         if (this.state.params.editor) {
             content = <Editor params={this.state.params} ticker={this.props.ticker} />;
+        } else if (this.state.vr) {
+            content = <VRGameUI params={this.state.params} ticker={this.props.ticker} />;
         } else {
             content = <GameUI params={this.state.params} ticker={this.props.ticker} />;
         }

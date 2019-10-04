@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import {map} from 'lodash';
 import setupStats from './stats';
-import WebVR from './tools/WebVR';
 import {EngineError} from '../crash_reporting';
 
 const PixelRatioMode = {
@@ -24,16 +23,9 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
     const threeRenderer = setupThreeRenderer(pixelRatio, canvas, params.webgl2, rendererOptions);
     const stats = setupStats();
 
-    const vrButton = WebVR.createButton(threeRenderer, {
-        frameOfReferenceType: 'eye-level'
-    });
-
-    if (vrButton) {
+    if ('getVRDisplays' in navigator) {
         threeRenderer.vr.enabled = true;
-        const renderZone = document.getElementById('renderZone');
-        if (renderZone) {
-            renderZone.appendChild(vrButton);
-        }
+        threeRenderer.vr.setFrameOfReferenceType('eye-level');
     }
 
     // eslint-disable-next-line no-console
