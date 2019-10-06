@@ -351,17 +351,38 @@ export default class VRGameUI extends FrameListener {
         if (!this.state.renderer || !this.state.display) {
             return null;
         }
+        const buttonWrapperStyle = {
+            position: 'absolute',
+            bottom: 30,
+            left: 30,
+            right: 30,
+            textAlign: 'center',
+            verticalAlign: 'middle',
+            cursor: 'pointer',
+            userSelect: 'none',
+            overflow: 'hidden'
+        };
+        const imgStyle = {
+            width: 100
+        };
         const buttonStyle = {
             color: 'white',
             background: 'rgba(32, 162, 255, 0.5)',
+            userSelect: 'none',
+            cursor: 'pointer',
+            position: 'relative',
+            fontFamily: 'LBA',
+            textShadow: 'black 4px 4px',
+            padding: '10px',
+            border: '2px outset #61cece',
+            borderRadius: '15px',
+            fontSize: '28px',
+            textAlign: 'center'
         };
         return <div className="bgMenu fullscreen">
-            <div className="menu">
-                <ul className="menuList">
-                    <li className="menuItemList" onClick={this.requestPresence}>
-                        <div className="menuItem" style={buttonStyle}>Enter VR!</div>
-                    </li>
-                </ul>
+            <div style={buttonWrapperStyle} onClick={this.requestPresence}>
+                <img style={imgStyle} src="images/vr_goggles.png"/><br/>
+                <div style={buttonStyle}>Enter VR</div>
             </div>
         </div>;
     }
