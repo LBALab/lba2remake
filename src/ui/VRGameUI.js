@@ -11,7 +11,6 @@ import {fullscreen} from './styles/index';
 
 import FrameListener from './utils/FrameListener';
 import Loader from './game/Loader';
-import VideoData from '../video/data';
 import {sBind} from '../utils.ts';
 import {updateVRGui} from './vr/vrGui';
 
@@ -31,7 +30,6 @@ export default class VRGameUI extends FrameListener {
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
         this.onGameReady = this.onGameReady.bind(this);
         this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
-        this.onMenuItemChanged = this.onMenuItemChanged.bind(this);
         this.setUiState = sBind(this.setUiState, this);
         this.getUiState = sBind(this.getUiState, this);
         this.showMenu = this.showMenu.bind(this);
@@ -224,62 +222,6 @@ export default class VRGameUI extends FrameListener {
         this.state.game.resume();
         this.state.game.resetState();
         this.state.sceneManager.goto(0, true);
-    }
-
-    onMenuItemChanged(item) {
-        switch (item) {
-            case 70: { // Resume
-                this.hideMenu();
-                break;
-            }
-            case 71: { // New Game
-                this.hideMenu();
-                const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
-                const onEnded = () => {
-                    this.setState({video: null}, this.saveData);
-                    this.startNewGameScene();
-                    this.state.game.controlsState.skipListener = null;
-                };
-                this.state.game.controlsState.skipListener = onEnded;
-                this.state.game.pause();
-                this.setState({
-                    video: {
-                        src,
-                        onEnded
-                    }
-                }, this.saveData);
-                break;
-            }
-            case -1: { // Teleport
-                this.setState({teleportMenu: true});
-                break;
-            }
-            case -2: { // Editor Mode
-                const hash = window.location.hash;
-                if (hash === '') {
-                    const renderer = this.state.renderer;
-                    if (renderer) {
-                        renderer.dispose();
-                    }
-                    if ('exitPointerLock' in document) {
-                        document.exitPointerLock();
-                    }
-                    window.location.hash = 'editor=true';
-                }
-                break;
-            }
-            case -3: { // Exit editor
-                const renderer = this.state.renderer;
-                if (renderer) {
-                    renderer.dispose();
-                }
-                if ('exitPointerLock' in document) {
-                    document.exitPointerLock();
-                }
-                window.location.hash = '';
-                break;
-            }
-        }
     }
 
     frame() {
