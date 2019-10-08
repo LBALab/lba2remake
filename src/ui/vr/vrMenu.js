@@ -60,7 +60,7 @@ function roundRect(ctx, x, y, w, h, r) {
 function createSkybox() {
     const geometry = new THREE.BoxBufferGeometry(4, 4, 4);
     const material = new THREE.MeshBasicMaterial({
-        color: 0xFF0000,
+        color: 0x1E3F43,
         transparent: true,
         side: THREE.BackSide,
     });
