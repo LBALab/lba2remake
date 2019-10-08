@@ -25,7 +25,7 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
 
     if ('getVRDisplays' in navigator) {
         threeRenderer.vr.enabled = true;
-        threeRenderer.vr.setFrameOfReferenceType('eye-level');
+        threeRenderer.vr.setReferenceSpaceType('eye-level');
     }
 
     // eslint-disable-next-line no-console
