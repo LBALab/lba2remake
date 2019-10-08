@@ -1,6 +1,6 @@
 import { createVRCube } from './vrCube';
 import { createFPSCounter } from './vrFPS';
-import { createMainMenu } from './vrMenu';
+import { createMainMenu, updateMenu } from './vrMenu';
 
 let gui = null;
 
@@ -20,6 +20,7 @@ export function updateVRGui(presenting) {
         return;
 
     gui.cube.visible = presenting;
+    updateMenu(presenting);
 }
 
 function createVRGui(renderer) {
