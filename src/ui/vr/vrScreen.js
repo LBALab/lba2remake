@@ -14,7 +14,7 @@ export function createScreen(options) {
     const geometry = new THREE.PlaneBufferGeometry(width / density, height / density);
     const material = new THREE.MeshBasicMaterial({
         color: 0xFFFFFF,
-        depthTest: false,
+        depthTest: !options.noDepth,
         transparent: true,
         opacity: 1,
         map: new THREE.CanvasTexture(canvas)
@@ -23,7 +23,9 @@ export function createScreen(options) {
     const mesh = new THREE.Mesh(geometry, material);
     mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
     mesh.position.set(x / density, y / density, 1.5);
-    mesh.renderOrder = 2;
+    if (options.noDepth) {
+        mesh.renderOrder = 2;
+    }
 
     return {
         mesh,

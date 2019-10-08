@@ -61,7 +61,6 @@ function createSkybox() {
     const geometry = new THREE.BoxBufferGeometry(4, 4, 4);
     const material = new THREE.MeshBasicMaterial({
         color: 0x1E3F43,
-        transparent: true,
         side: THREE.BackSide,
     });
     return new THREE.Mesh(geometry, material);
