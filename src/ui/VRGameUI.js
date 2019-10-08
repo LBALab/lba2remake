@@ -13,6 +13,7 @@ import FrameListener from './utils/FrameListener';
 import Loader from './game/Loader';
 import {sBind} from '../utils.ts';
 import {updateVRGui} from './vr/vrGui';
+import {loadVRScene} from './vr/vrScene.ts';
 
 export default class VRGameUI extends FrameListener {
     constructor(props) {
@@ -137,7 +138,8 @@ export default class VRGameUI extends FrameListener {
                         renderer
                     );
                 }
-                this.setState({ renderer, sceneManager, controls }, this.saveData);
+                const vrScene = loadVRScene(renderer);
+                this.setState({ renderer, sceneManager, controls, vrScene }, this.saveData);
             }
             this.canvasWrapperElem = canvasWrapperElem;
             this.canvasWrapperElem.appendChild(this.canvas);
@@ -225,7 +227,7 @@ export default class VRGameUI extends FrameListener {
     }
 
     frame() {
-        const {game, clock, renderer, sceneManager, controls} = this.state;
+        const {game, clock, renderer, sceneManager, controls, vrScene} = this.state;
         if (renderer && sceneManager) {
             const presenting = renderer.isPresenting();
             const scene = sceneManager.getScene();
@@ -238,7 +240,8 @@ export default class VRGameUI extends FrameListener {
                 clock,
                 renderer,
                 scene,
-                controls
+                controls,
+                vrScene
             );
             updateVRGui(presenting);
         }
@@ -286,7 +289,6 @@ export default class VRGameUI extends FrameListener {
                 }
             }
         ]);
-        this.startNewGameScene();
     }
 
     renderVRSelector() {

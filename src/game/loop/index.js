@@ -9,7 +9,7 @@ import DebugData from '../../ui/editor/DebugData';
 const dbgClock = new THREE.Clock(false);
 dbgClock.start();
 
-export function mainGameLoop(params, game, clock, renderer, scene, controls) {
+export function mainGameLoop(params, game, clock, renderer, scene, controls, vrScene) {
     const time = game.getTime();
 
     renderer.stats.begin();
@@ -49,6 +49,8 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
         }
         scene.firstFrame = false;
         delete DebugData.firstFrame;
+    } else if (vrScene) {
+        renderer.render(vrScene);
     }
     renderer.stats.end();
 }
