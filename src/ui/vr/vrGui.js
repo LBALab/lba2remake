@@ -15,12 +15,12 @@ export function addVRGuiNode(renderer, controlNode) {
     controlNode.add(gui.cube);
 }
 
-export function updateVRGui(presenting) {
+export function updateVRGui(presenting, game, sceneManager) {
     if (!gui)
         return;
 
     gui.cube.visible = presenting;
-    updateMenu(presenting);
+    updateMenu(game, sceneManager);
 }
 
 function createVRGui(renderer) {

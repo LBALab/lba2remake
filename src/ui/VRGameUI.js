@@ -243,7 +243,11 @@ export default class VRGameUI extends FrameListener {
                 controls,
                 vrScene
             );
-            updateVRGui(presenting);
+            updateVRGui(
+                presenting,
+                game,
+                sceneManager
+            );
         }
     }
 

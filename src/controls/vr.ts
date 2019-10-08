@@ -177,6 +177,7 @@ function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
         }
         hero.prevBehaviour = hero.behaviour;
     }
+    controlsState.menuTapped = left.trigger.tapped || right.trigger.tapped;
 }
 
 const gamepadState = {};

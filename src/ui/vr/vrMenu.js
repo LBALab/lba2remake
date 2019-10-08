@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createScreen } from './vrScreen';
 
+let menu = null;
 let leftCtrl = null;
 let rightCtrl = null;
 const menuItems = [];
@@ -12,7 +13,7 @@ export function createMainMenu(renderer) {
     menuItems.push(newGame);
     const teleport = createMenuItem({id: 'teleport', text: 'Teleport', y: -75});
     menuItems.push(teleport);
-    const menu = new THREE.Object3D();
+    menu = new THREE.Object3D();
     const skybox = createSkybox();
     menu.add(skybox);
     menu.add(newGame);
@@ -40,9 +41,13 @@ export function createMainMenu(renderer) {
     return menu;
 }
 
-export function updateMenu() {
-    raycast(leftCtrl, tgtLeft);
-    raycast(rightCtrl, tgtRight);
+export function updateMenu(game, sceneManager) {
+    const showMenu = game.getUiState().showMenu;
+    menu.visible = showMenu;
+    if (showMenu) {
+        raycast(leftCtrl, tgtLeft, game, sceneManager);
+        raycast(rightCtrl, tgtRight, game, sceneManager);
+    }
 }
 
 const raycaster = new THREE.Raycaster();
@@ -51,7 +56,7 @@ const position = new THREE.Vector3();
 const offset = new THREE.Vector3();
 const worldOrientation = new THREE.Euler(0, -Math.PI, 0);
 
-function raycast(controller, tgt) {
+function raycast(controller, tgt, game, sceneManager) {
     tgt.visible = false;
     if (controller) {
         direction.set(0, 0, -1);
@@ -67,6 +72,13 @@ function raycast(controller, tgt) {
             const intersect = intersects[0];
             tgt.visible = true;
             tgt.position.copy(intersect.point);
+            if (game.controlsState.menuTapped) {
+                if (intersect.object.name === 'newgame') {
+                    game.resume();
+                    game.resetState();
+                    sceneManager.hideMenuAndGoto(0, false);
+                }
+            }
         }
     }
 }
