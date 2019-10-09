@@ -1,14 +1,11 @@
 import * as THREE from 'three';
 import { createScreen } from './vrScreen';
+import { createHands, handlePicking } from './vrHands';
 import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
 
 let menuNode = null;
 let teleportMenu = null;
 let mainMenu = null;
-let leftCtrl = null;
-let rightCtrl = null;
-const tgtLeft = makeTgt();
-const tgtRight = makeTgt();
 
 export function createMenu(renderer) {
     menuNode = new THREE.Object3D();
@@ -32,26 +29,8 @@ export function createMenu(renderer) {
         }
     }));
 
-    const handsOrientation = new THREE.Object3D();
-    handsOrientation.name = 'RevAxisTransform';
-    handsOrientation.rotation.set(0, -Math.PI, 0);
-    handsOrientation.updateMatrix();
-    leftCtrl = renderer.threeRenderer.vr.getController(0);
-    if (leftCtrl) {
-        const leftHand = createHand('left');
-        leftCtrl.add(leftHand);
-        handsOrientation.add(leftCtrl);
-    }
-    rightCtrl = renderer.threeRenderer.vr.getController(1);
-    window.rightCtrl = rightCtrl;
-    if (rightCtrl) {
-        const rightHand = createHand('right');
-        rightCtrl.add(rightHand);
-        handsOrientation.add(rightCtrl);
-    }
-    menuNode.add(handsOrientation);
-    menuNode.add(tgtLeft);
-    menuNode.add(tgtRight);
+    const hands = createHands(renderer);
+    menuNode.add(hands);
 
     teleportMenu = createTeleportMenu();
     menuNode.add(teleportMenu);
@@ -65,46 +44,8 @@ export function updateMenu(game, sceneManager) {
     teleportMenu.visible = showTeleportMenu;
     if (showMenu && !showTeleportMenu) {
         handlePicking(mainMenu.children, {game, sceneManager});
-    }
-    if (showTeleportMenu) {
+    } else if (showTeleportMenu) {
         updateTeleportMenu(game);
-    }
-}
-
-const raycaster = new THREE.Raycaster();
-const direction = new THREE.Vector3();
-const position = new THREE.Vector3();
-const offset = new THREE.Vector3();
-const worldOrientation = new THREE.Euler(0, -Math.PI, 0);
-
-function handlePicking(objects, ctx) {
-    raycastCtrl(leftCtrl, tgtLeft, objects, ctx);
-    raycastCtrl(rightCtrl, tgtRight, objects, ctx);
-}
-
-function raycastCtrl(controller, tgt, objects, ctx) {
-    tgt.visible = false;
-    if (controller) {
-        direction.set(0, 0, -1);
-        direction.applyQuaternion(controller.quaternion);
-        direction.applyEuler(worldOrientation);
-        offset.set(0, 0.02, 0);
-        offset.applyQuaternion(controller.quaternion);
-        position.setFromMatrixPosition(controller.matrixWorld);
-        position.add(offset);
-        raycaster.set(position, direction);
-        const intersects = raycaster.intersectObjects(objects, true);
-        if (intersects.length > 0) {
-            const intersect = intersects[0];
-            tgt.visible = true;
-            tgt.position.copy(intersect.point);
-            if (ctx.game.controlsState.menuTapped) {
-                const userData = intersect.object.userData;
-                if (userData && userData.callback) {
-                    userData.callback(ctx);
-                }
-            }
-        }
     }
 }
 
@@ -151,40 +92,4 @@ function roundRect(ctx, x, y, w, h, r) {
     ctx.arcTo(x, y + h, x, y, r);
     ctx.arcTo(x, y, x + w, y, r);
     ctx.closePath();
-}
-
-function createHand(type) {
-    const color = type === 'left' ? 0x0000FF : 0xFF0000;
-    const geometry = new THREE.BoxGeometry(0.02, 0.06, 0.06);
-    const material = new THREE.MeshBasicMaterial({color});
-    const fingerGeom = new THREE.BoxGeometry(0.02, 0.02, 0.04);
-    const pointerGeom = new THREE.ConeGeometry(0.005, 0.3, 4);
-    const pointerMaterial = new THREE.MeshBasicMaterial({
-        color: 0xFFFFFF,
-        transparent: true,
-        opacity: 0.5
-    });
-    const palm = new THREE.Mesh(geometry, material);
-    const finger = new THREE.Mesh(fingerGeom, material);
-    const pointer = new THREE.Mesh(pointerGeom, pointerMaterial);
-    finger.position.set(0, 0.02, -0.05);
-    pointer.position.set(0, 0.02, -0.15);
-    pointer.rotation.x = -Math.PI / 2;
-    const hand = new THREE.Object3D();
-    hand.add(palm);
-    hand.add(finger);
-    hand.add(pointer);
-    return hand;
-}
-
-function makeTgt() {
-    const geom = new THREE.SphereGeometry(0.01, 6, 4);
-    const mat = new THREE.MeshBasicMaterial({
-        color: 0xFFFFFF,
-        transparent: true,
-        opacity: 0.8
-    });
-    const tgt = new THREE.Mesh(geom, mat);
-    tgt.visible = false;
-    return tgt;
 }

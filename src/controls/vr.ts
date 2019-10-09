@@ -25,10 +25,10 @@ export function makeVRControls(sceneManager: any, game: any) {
                             handleOculusGoController(gamepad, sceneManager, game);
                             break;
                         case 'Oculus Touch (Left)':
-                            updateOculusTouchController(gamepad, oculusTouch.left);
+                            updateOculusTouchController(gamepad, oculusTouch.left, game, i);
                             break;
                         case 'Oculus Touch (Right)':
-                            updateOculusTouchController(gamepad, oculusTouch.right);
+                            updateOculusTouchController(gamepad, oculusTouch.right, game, i);
                             break;
                     }
                 }
@@ -83,7 +83,7 @@ function handleOculusGoController(gamepad, sceneManager, game) {
         hero.behaviour = (hero.behaviour + 1) % 4;
     }
     controlsState.action = touchpad.tapped ? 1 : 0;
-    controlsState.menuTapped = trigger.tapped;
+    controlsState.ctrlTriggers[0] = trigger.tapped;
 }
 
 const OculusTouch = {
@@ -105,8 +105,9 @@ function makeOculusTouchController(type) {
     };
 }
 
-function updateOculusTouchController(gamepad, controller) {
+function updateOculusTouchController(gamepad, controller, game, id) {
     const {THUMBSTICK, TRIGGER, GRIP, X, Y, A, B} = OculusTouch;
+    const {controlsState} = game;
 
     controller.enabled = true;
     controller.thumbstick = getButtonState(gamepad, THUMBSTICK);
@@ -120,6 +121,7 @@ function updateOculusTouchController(gamepad, controller) {
         controller.buttonA = getButtonState(gamepad, A);
         controller.buttonB = getButtonState(gamepad, B);
     }
+    controlsState.ctrlTriggers[id] = controller.trigger.tapped;
     controller.pad.set(gamepad.axes[0], -gamepad.axes[1]);
 }
 
@@ -178,7 +180,6 @@ function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
         }
         hero.prevBehaviour = hero.behaviour;
     }
-    controlsState.menuTapped = left.trigger.tapped || right.trigger.tapped;
 }
 
 const gamepadState = {};

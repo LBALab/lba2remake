@@ -32,7 +32,8 @@ export function createGame(clock: any,
             jump: 0,
             fight: 0,
             crunch: 0,
-            weapon: 0
+            weapon: 0,
+            ctrlTriggers: []
         },
 
         /* @inspector(locate) */

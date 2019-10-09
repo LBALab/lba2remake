@@ -59,7 +59,7 @@ export function updateTeleportMenu(game) {
     if (activeIsland === null && !loading) {
         loadIsland(islands[0]);
     }
-    if (game.controlsState.menuTapped && !loading) {
+    if (game.controlsState.rightTrigger && !loading) {
         let idx = 0;
         if (activeIsland) {
             idx = islands.indexOf(activeIsland.name);
