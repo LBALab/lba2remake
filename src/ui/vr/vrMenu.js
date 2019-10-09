@@ -13,9 +13,6 @@ const tgtRight = makeTgt();
 export function createMenu(renderer) {
     menuNode = new THREE.Object3D();
 
-    const skybox = createSkybox();
-    menuNode.add(skybox);
-
     mainMenu = new THREE.Object3D();
     menuNode.add(mainMenu);
     mainMenu.add(createMenuItem({
@@ -156,15 +153,6 @@ function roundRect(ctx, x, y, w, h, r) {
     ctx.arcTo(x, y + h, x, y, r);
     ctx.arcTo(x, y, x + w, y, r);
     ctx.closePath();
-}
-
-function createSkybox() {
-    const geometry = new THREE.BoxBufferGeometry(20, 20, 20);
-    const material = new THREE.MeshBasicMaterial({
-        color: 0x1E3F43,
-        side: THREE.BackSide,
-    });
-    return new THREE.Mesh(geometry, material);
 }
 
 function createHand(type) {
