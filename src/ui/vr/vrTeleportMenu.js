@@ -1,28 +1,47 @@
 import * as THREE from 'three';
-import {map} from 'lodash';
+import {each} from 'lodash';
 import IslandAmbience from '../editor/areas/island/browser/ambience';
 import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
 import { loadIslandScenery } from '../../island';
 import { createScreen } from './vrScreen';
+import { handlePicking } from './vrHands';
 
 let islandWrapper = null;
 let activeIsland = null;
 let loading = false;
+let selectedPlanet = 0;
+const planetButtons = [];
+const planetButtonObjects = [];
 
-const islands = map(IslandAmbience, (c, key) => key);
 const planets = LocationsNode.children;
+
+const planetDefaultIsland = [
+    'CITABAU',
+    'EMERAUDE',
+    'OTRINGAL',
+    'PLATFORM'
+];
 
 export function createTeleportMenu() {
     const teleportMenu = new THREE.Object3D();
 
     for (let i = 0; i < 4; i += 1) {
         const p = createPlanetItem({
+            idx: i,
             text: planets[i].name,
             icon: planets[i].icon,
-            x: (i - 1.5) * 240,
-            y: 100
+            x: -(i - 1.5) * 240,
+            y: 100,
+            // eslint-disable-next-line no-loop-func
+            callback: () => {
+                selectedPlanet = i;
+                each(planetButtons, pb => pb.draw());
+                loadIsland(planetDefaultIsland[i]);
+            }
         });
-        teleportMenu.add(p);
+        teleportMenu.add(p.mesh);
+        planetButtons.push(p);
+        planetButtonObjects.push(p.mesh);
     }
 
     islandWrapper = new THREE.Object3D();
@@ -57,22 +76,15 @@ export function updateTeleportMenu(game) {
         elapsed: clock.getElapsedTime()
     };
     if (activeIsland === null && !loading) {
-        loadIsland(islands[0]);
-    }
-    if (game.controlsState.rightTrigger && !loading) {
-        let idx = 0;
-        if (activeIsland) {
-            idx = islands.indexOf(activeIsland.name);
-        }
-        idx = (idx + 1) % islands.length;
-        loadIsland(islands[idx]);
+        loadIsland('CITABAU');
     }
     if (activeIsland) {
         activeIsland.update(null, null, time);
     }
+    handlePicking(planetButtonObjects, {game});
 }
 
-function createPlanetItem({x, y, text, icon: iconSrc, callback}) {
+function createPlanetItem({x, y, text, icon: iconSrc, idx, callback}) {
     const width = 200;
     const height = 220;
     const {ctx, mesh} = createScreen({
@@ -85,33 +97,34 @@ function createPlanetItem({x, y, text, icon: iconSrc, callback}) {
     const icon = new Image(160, 160);
     icon.src = iconSrc;
 
-    ctx.font = '20px LBA';
-    ctx.clearRect(0, 0, width, height);
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.shadowColor = 'transparent';
-    ctx.strokeStyle = 'rgb(97, 206, 206)';
-    ctx.fillStyle = 'black';
-    ctx.lineWidth = 4;
-    roundRect(ctx, 2, 2, width - 4, height - 4, 20);
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = 'white';
-    ctx.shadowColor = 'rgba(255, 255, 255, 0.1)';
-    ctx.shadowOffsetX = 4;
-    ctx.shadowOffsetY = 4;
-    ctx.fillText(text, width / 2, 200);
+    function draw() {
+        const selected = idx === selectedPlanet;
+        ctx.font = '20px LBA';
+        ctx.clearRect(0, 0, width, height);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowColor = 'transparent';
+        ctx.strokeStyle = 'rgb(97, 206, 206)';
+        ctx.fillStyle = selected ? 'rgb(32, 162, 255)' : 'rgba(0, 0, 0, 0.5)';
+        ctx.lineWidth = 4;
+        roundRect(ctx, 2, 2, width - 4, height - 4, 20);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = selected ? 'white' : 'grey';
+        ctx.shadowColor = 'black';
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.fillText(text, width / 2, 200);
+        ctx.drawImage(icon, 20, 20, 160, 160);
+        mesh.material.map.needsUpdate = true;
+    }
 
-    mesh.material.map.needsUpdate = true;
+    icon.onload = () => draw();
+
     mesh.visible = true;
     mesh.userData = { callback };
 
-    icon.onload = () => {
-        ctx.drawImage(icon, 20, 20, 160, 160);
-        mesh.material.map.needsUpdate = true;
-    };
-
-    return mesh;
+    return {mesh, draw};
 }
 
 function roundRect(ctx, x, y, w, h, r) {
