@@ -1,23 +1,40 @@
 import * as THREE from 'three';
 import { createScreen } from './vrScreen';
+import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
 
+let menuNode = null;
+let teleportMenu = null;
 let mainMenu = null;
 let leftCtrl = null;
 let rightCtrl = null;
-const menuItems = [];
 const tgtLeft = makeTgt();
 const tgtRight = makeTgt();
 
 export function createMenu(renderer) {
-    const newGame = createMenuItem({id: 'newgame', text: 'New Game', y: 75});
-    menuItems.push(newGame);
-    const teleport = createMenuItem({id: 'teleport', text: 'Teleport', y: -75});
-    menuItems.push(teleport);
-    mainMenu = new THREE.Object3D();
+    menuNode = new THREE.Object3D();
+
     const skybox = createSkybox();
-    mainMenu.add(skybox);
-    mainMenu.add(newGame);
-    mainMenu.add(teleport);
+    menuNode.add(skybox);
+
+    mainMenu = new THREE.Object3D();
+    menuNode.add(mainMenu);
+    mainMenu.add(createMenuItem({
+        text: 'New Game',
+        y: 75,
+        callback: ({game, sceneManager}) => {
+            game.resume();
+            game.resetState();
+            sceneManager.hideMenuAndGoto(0, false);
+        }
+    }));
+    mainMenu.add(createMenuItem({
+        text: 'Teleport',
+        y: -75,
+        callback: ({game}) => {
+            game.setUiState({ teleportMenu: true });
+        }
+    }));
+
     const handsOrientation = new THREE.Object3D();
     handsOrientation.name = 'RevAxisTransform';
     handsOrientation.rotation.set(0, -Math.PI, 0);
@@ -35,18 +52,25 @@ export function createMenu(renderer) {
         rightCtrl.add(rightHand);
         handsOrientation.add(rightCtrl);
     }
-    mainMenu.add(handsOrientation);
-    mainMenu.add(tgtLeft);
-    mainMenu.add(tgtRight);
-    return mainMenu;
+    menuNode.add(handsOrientation);
+    menuNode.add(tgtLeft);
+    menuNode.add(tgtRight);
+
+    teleportMenu = createTeleportMenu();
+    menuNode.add(teleportMenu);
+    return menuNode;
 }
 
 export function updateMenu(game, sceneManager) {
-    const showMenu = game.getUiState().showMenu;
-    mainMenu.visible = showMenu;
-    if (showMenu) {
-        raycast(leftCtrl, tgtLeft, game, sceneManager);
-        raycast(rightCtrl, tgtRight, game, sceneManager);
+    const { showMenu, teleportMenu: showTeleportMenu } = game.getUiState();
+    menuNode.visible = showMenu;
+    mainMenu.visible = !showTeleportMenu;
+    teleportMenu.visible = showTeleportMenu;
+    if (showMenu && !showTeleportMenu) {
+        handlePicking(mainMenu.children, {game, sceneManager});
+    }
+    if (showTeleportMenu) {
+        updateTeleportMenu(teleportMenu);
     }
 }
 
@@ -56,7 +80,12 @@ const position = new THREE.Vector3();
 const offset = new THREE.Vector3();
 const worldOrientation = new THREE.Euler(0, -Math.PI, 0);
 
-function raycast(controller, tgt, game, sceneManager) {
+function handlePicking(objects, ctx) {
+    raycastCtrl(leftCtrl, tgtLeft, objects, ctx);
+    raycastCtrl(rightCtrl, tgtRight, objects, ctx);
+}
+
+function raycastCtrl(controller, tgt, objects, ctx) {
     tgt.visible = false;
     if (controller) {
         direction.set(0, 0, -1);
@@ -67,25 +96,22 @@ function raycast(controller, tgt, game, sceneManager) {
         position.setFromMatrixPosition(controller.matrixWorld);
         position.add(offset);
         raycaster.set(position, direction);
-        const intersects = raycaster.intersectObjects(menuItems, true);
+        const intersects = raycaster.intersectObjects(objects, true);
         if (intersects.length > 0) {
             const intersect = intersects[0];
             tgt.visible = true;
             tgt.position.copy(intersect.point);
-            if (game.controlsState.menuTapped) {
-                if (intersect.object.name === 'newgame') {
-                    game.resume();
-                    game.resetState();
-                    sceneManager.hideMenuAndGoto(0, false);
-                } else if (intersect.object.name === 'teleport') {
-                    game.setUiState({ teleportMenu: true });
+            if (ctx.game.controlsState.menuTapped) {
+                const userData = intersect.object.userData;
+                if (userData && userData.callback) {
+                    userData.callback(ctx);
                 }
             }
         }
     }
 }
 
-function createMenuItem({x, y, text, id}) {
+function createMenuItem({x, y, text, id, callback}) {
     const width = 800;
     const height = 100;
     const {ctx, mesh} = createScreen({
@@ -114,6 +140,7 @@ function createMenuItem({x, y, text, id}) {
     mesh.material.map.needsUpdate = true;
     mesh.visible = true;
     mesh.name = id;
+    mesh.userData = { callback };
 
     return mesh;
 }
