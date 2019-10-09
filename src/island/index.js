@@ -85,7 +85,9 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         }
     });
 
-    islandObject.add(loadSky(geometries, props.envInfo));
+    if (!params.skipSky) {
+        islandObject.add(loadSky(geometries, props.envInfo));
+    }
 
     const sections = {};
     let boundingBoxes = null;
@@ -121,7 +123,9 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         },
         /* @inspector(locate) */
         update: (game, scene, time) => {
-            updateShadows(scene, matByName);
+            if (scene) {
+                updateShadows(scene, matByName);
+            }
             seaTimeUniform.value = time.elapsed;
         }
     };

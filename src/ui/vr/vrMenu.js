@@ -70,7 +70,7 @@ export function updateMenu(game, sceneManager) {
         handlePicking(mainMenu.children, {game, sceneManager});
     }
     if (showTeleportMenu) {
-        updateTeleportMenu(teleportMenu);
+        updateTeleportMenu();
     }
 }
 
@@ -159,7 +159,7 @@ function roundRect(ctx, x, y, w, h, r) {
 }
 
 function createSkybox() {
-    const geometry = new THREE.BoxBufferGeometry(4, 4, 4);
+    const geometry = new THREE.BoxBufferGeometry(20, 20, 20);
     const material = new THREE.MeshBasicMaterial({
         color: 0x1E3F43,
         side: THREE.BackSide,
