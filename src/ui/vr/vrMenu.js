@@ -67,7 +67,7 @@ export function updateMenu(game, sceneManager) {
         handlePicking(mainMenu.children, {game, sceneManager});
     }
     if (showTeleportMenu) {
-        updateTeleportMenu();
+        updateTeleportMenu(game);
     }
 }
 
@@ -108,7 +108,7 @@ function raycastCtrl(controller, tgt, objects, ctx) {
     }
 }
 
-function createMenuItem({x, y, text, id, callback}) {
+function createMenuItem({x, y, text, callback}) {
     const width = 800;
     const height = 100;
     const {ctx, mesh} = createScreen({
@@ -118,13 +118,13 @@ function createMenuItem({x, y, text, id, callback}) {
         y,
     });
 
-    ctx.font = '48px LBA';
+    ctx.font = '50px LBA';
     ctx.clearRect(0, 0, width, height);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.shadowColor = 'transparent';
-    ctx.strokeStyle = 'rgba(97, 206, 206, 0.8)';
-    ctx.fillStyle = 'rgba(32, 162, 255, 0.5)';
+    ctx.strokeStyle = 'black';
+    ctx.fillStyle = 'rgba(32, 162, 255, 0.6)';
     ctx.lineWidth = 4;
     roundRect(ctx, 2, 2, width - 4, height - 4, 20);
     ctx.fill();
@@ -136,7 +136,6 @@ function createMenuItem({x, y, text, id, callback}) {
     ctx.fillText(text, width / 2, height / 2);
     mesh.material.map.needsUpdate = true;
     mesh.visible = true;
-    mesh.name = id;
     mesh.userData = { callback };
 
     return mesh;
@@ -149,7 +148,6 @@ function roundRect(ctx, x, y, w, h, r) {
     ctx.moveTo(x + r, y);
     ctx.arcTo(x + w, y, x + w, y + h, r);
     ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.strokeStyle = 'rgb(65,174,174)';
     ctx.arcTo(x, y + h, x, y, r);
     ctx.arcTo(x, y, x + w, y, r);
     ctx.closePath();
