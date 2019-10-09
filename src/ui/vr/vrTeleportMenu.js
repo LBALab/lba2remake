@@ -11,7 +11,7 @@ export function createTeleportMenu() {
     const teleportMenu = new THREE.Object3D();
 
     islandWrapper = new THREE.Object3D();
-    islandWrapper.scale.set(0.015, 0.015, 0.015);
+    islandWrapper.scale.set(0.02, 0.02, 0.02);
     islandWrapper.quaternion.setFromEuler(new THREE.Euler(0, Math.PI, 0));
     islandWrapper.position.set(0, -1.4, 1.4);
 
