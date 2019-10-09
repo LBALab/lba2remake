@@ -83,6 +83,7 @@ function handleOculusGoController(gamepad, sceneManager, game) {
         hero.behaviour = (hero.behaviour + 1) % 4;
     }
     controlsState.action = touchpad.tapped ? 1 : 0;
+    controlsState.menuTapped = trigger.tapped;
 }
 
 const OculusTouch = {
