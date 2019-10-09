@@ -91,8 +91,8 @@ function raycastCtrl(controller, tgt, objects, ctx) {
         direction.set(0, 0, -1);
         direction.applyQuaternion(controller.quaternion);
         direction.applyEuler(worldOrientation);
-        // offset.set(0, 0, -0.05);
-        // offset.applyQuaternion(controller.quaternion);
+        offset.set(0, 0.02, 0);
+        offset.applyQuaternion(controller.quaternion);
         position.setFromMatrixPosition(controller.matrixWorld);
         position.add(offset);
         raycaster.set(position, direction);
