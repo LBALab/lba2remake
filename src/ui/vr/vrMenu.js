@@ -1,23 +1,23 @@
 import * as THREE from 'three';
 import { createScreen } from './vrScreen';
 
-let menu = null;
+let mainMenu = null;
 let leftCtrl = null;
 let rightCtrl = null;
 const menuItems = [];
 const tgtLeft = makeTgt();
 const tgtRight = makeTgt();
 
-export function createMainMenu(renderer) {
+export function createMenu(renderer) {
     const newGame = createMenuItem({id: 'newgame', text: 'New Game', y: 75});
     menuItems.push(newGame);
     const teleport = createMenuItem({id: 'teleport', text: 'Teleport', y: -75});
     menuItems.push(teleport);
-    menu = new THREE.Object3D();
+    mainMenu = new THREE.Object3D();
     const skybox = createSkybox();
-    menu.add(skybox);
-    menu.add(newGame);
-    menu.add(teleport);
+    mainMenu.add(skybox);
+    mainMenu.add(newGame);
+    mainMenu.add(teleport);
     const handsOrientation = new THREE.Object3D();
     handsOrientation.name = 'RevAxisTransform';
     handsOrientation.rotation.set(0, -Math.PI, 0);
@@ -35,15 +35,15 @@ export function createMainMenu(renderer) {
         rightCtrl.add(rightHand);
         handsOrientation.add(rightCtrl);
     }
-    menu.add(handsOrientation);
-    menu.add(tgtLeft);
-    menu.add(tgtRight);
-    return menu;
+    mainMenu.add(handsOrientation);
+    mainMenu.add(tgtLeft);
+    mainMenu.add(tgtRight);
+    return mainMenu;
 }
 
 export function updateMenu(game, sceneManager) {
     const showMenu = game.getUiState().showMenu;
-    menu.visible = showMenu;
+    mainMenu.visible = showMenu;
     if (showMenu) {
         raycast(leftCtrl, tgtLeft, game, sceneManager);
         raycast(rightCtrl, tgtRight, game, sceneManager);
@@ -77,6 +77,8 @@ function raycast(controller, tgt, game, sceneManager) {
                     game.resume();
                     game.resetState();
                     sceneManager.hideMenuAndGoto(0, false);
+                } else if (intersect.object.name === 'teleport') {
+                    game.setUiState({ teleportMenu: true });
                 }
             }
         }

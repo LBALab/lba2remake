@@ -1,6 +1,6 @@
 import { createVRCube } from './vrCube';
 import { createFPSCounter } from './vrFPS';
-import { createMainMenu, updateMenu } from './vrMenu';
+import { createMenu, updateMenu } from './vrMenu';
 
 let gui = null;
 
@@ -26,9 +26,9 @@ export function updateVRGui(presenting, game, sceneManager) {
 function createVRGui(renderer) {
     const cube = createVRCube();
     const fps = createFPSCounter(renderer);
-    const mainMenu = createMainMenu(renderer);
+    const menu = createMenu(renderer);
     cube.add(fps);
-    cube.add(mainMenu);
+    cube.add(menu);
     return {
         cube,
         fps
