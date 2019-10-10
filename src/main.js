@@ -19,10 +19,12 @@ class Root extends React.Component {
             params,
             changelog: false,
             vr: 'getVRDisplays' in navigator,
+            skipVR: false
         };
         this.onHashChange = this.onHashChange.bind(this);
         this.closeChangeLog = this.closeChangeLog.bind(this);
         this.openChangeLog = this.openChangeLog.bind(this);
+        this.exitVR = this.exitVR.bind(this);
         if (params.editor) {
             loadGameMetaData();
             loadModelsMetaData();
@@ -55,12 +57,20 @@ class Root extends React.Component {
         this.setState({ changelog: false });
     }
 
+    exitVR() {
+        this.setState({ skipVR: true });
+    }
+
     render() {
         let content;
         if (this.state.params.editor) {
             content = <Editor params={this.state.params} ticker={this.props.ticker} />;
-        } else if (this.state.vr) {
-            content = <VRGameUI params={this.state.params} ticker={this.props.ticker} />;
+        } else if (this.state.vr && !this.state.skipVR) {
+            content = <VRGameUI
+                params={this.state.params}
+                ticker={this.props.ticker}
+                exitVR={this.exitVR}
+            />;
         } else {
             content = <GameUI params={this.state.params} ticker={this.props.ticker} />;
         }

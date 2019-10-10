@@ -301,36 +301,46 @@ export default class VRGameUI extends FrameListener {
         }
         const buttonWrapperStyle = {
             position: 'absolute',
-            bottom: 30,
-            left: 30,
-            right: 30,
+            left: 0,
+            right: 0,
+            bottom: 20,
             textAlign: 'center',
-            verticalAlign: 'middle',
-            cursor: 'pointer',
-            userSelect: 'none',
-            overflow: 'hidden'
+            verticalAlign: 'middle'
         };
         const imgStyle = {
-            width: 100
+            width: 200,
+            height: 200
         };
         const buttonStyle = {
             color: 'white',
             background: 'rgba(32, 162, 255, 0.5)',
             userSelect: 'none',
             cursor: 'pointer',
-            position: 'relative',
+            display: 'inline-block',
             fontFamily: 'LBA',
-            textShadow: 'black 4px 4px',
-            padding: '10px',
+            padding: 20,
+            textShadow: 'black 3px 3px',
             border: '2px outset #61cece',
             borderRadius: '15px',
-            fontSize: '28px',
-            textAlign: 'center'
+            fontSize: '30px',
+            textAlign: 'center',
+            verticalAlign: 'middle'
         };
+        const buttonStyle2 = Object.assign({}, buttonStyle, {
+            padding: 10,
+            fontSize: '20px'
+        });
         return <div className="bgMenu fullscreen">
-            <div style={buttonWrapperStyle} onClick={this.requestPresence}>
-                <img style={imgStyle} src="images/vr_goggles.png"/><br/>
-                <div style={buttonStyle}>Enter VR</div>
+            <div style={buttonWrapperStyle}>
+                <div style={buttonStyle} onClick={this.requestPresence}>
+                    <img style={imgStyle} src="images/vr_goggles.png"/>
+                    <br/>
+                    Play in VR!
+                </div>
+                <br/><br/>
+                <div style={buttonStyle2} onClick={this.props.exitVR}>
+                    Play on screen
+                </div>
             </div>
         </div>;
     }
