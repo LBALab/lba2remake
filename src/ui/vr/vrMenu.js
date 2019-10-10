@@ -48,10 +48,22 @@ export function updateMenu(game, sceneManager) {
     menuNode.visible = showMenu;
     mainMenu.visible = !showTeleportMenu;
     teleportMenu.visible = showTeleportMenu;
-    if (showMenu && !showTeleportMenu) {
-        handlePicking(mainMenu.children, {game, sceneManager});
-    } else if (showTeleportMenu) {
-        updateTeleportMenu(game);
+    if (showMenu) {
+        if (showTeleportMenu) {
+            updateTeleportMenu(game);
+            if (controlsState.backButton) {
+                game.setUiState({teleportMenu: false});
+            }
+        } else {
+            handlePicking(mainMenu.children, {game, sceneManager});
+        }
+    } else if (controlsState.backButton) {
+        game.pause();
+        const audioMenuManager = game.getAudioMenuManager();
+        audioMenuManager.getMusicSource().load(6, () => {
+            audioMenuManager.getMusicSource().play();
+        });
+        game.setUiState({showMenu: true});
     }
     if (!controllerInfo && controlsState.controllerType) {
         controllerInfo = createControllerInfo(controlsState.controllerType);
