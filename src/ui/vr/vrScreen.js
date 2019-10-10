@@ -4,6 +4,8 @@ export function createScreen(options) {
     const {width, height} = options;
     const x = options.x || 0;
     const y = options.y || 0;
+    const z = options.z || 768;
+    const angle = options.angle ? THREE.Math.degToRad(180 + options.angle) : Math.PI;
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
@@ -21,8 +23,8 @@ export function createScreen(options) {
     });
 
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
-    mesh.position.set(x / density, y / density, 1.5);
+    mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+    mesh.position.set(x / density, y / density, z / density);
     if (options.noDepth) {
         mesh.renderOrder = 2;
     }

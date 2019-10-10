@@ -55,6 +55,7 @@ function handleOculusGoController(gamepad, sceneManager, game) {
     const hero = game.getState().hero;
     controlsState.action = 0;
     controlsState.relativeToCam = true;
+    controlsState.controllerType = 'oculusgo';
 
     const touchpad = getButtonState(gamepad, TOUCHPAD);
     const trigger = getButtonState(gamepad, TRIGGER);
@@ -137,6 +138,7 @@ function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
     controlsState.relativeToCam = true;
     controlsState.jump = 0;
     controlsState.weapon = 0;
+    controlsState.controllerType = 'oculustouch';
 
     // Center camera
     if (right.trigger.tapped && camera && scene) {

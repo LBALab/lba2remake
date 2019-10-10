@@ -5,6 +5,7 @@ import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
 import { loadIslandScenery } from '../../island';
 import { createScreen } from './vrScreen';
 import { handlePicking } from './vrHands';
+import { drawFrame } from './vrUtils';
 
 let islandWrapper = null;
 let activeIsland = null;
@@ -99,17 +100,10 @@ function createPlanetItem({x, y, text, icon: iconSrc, idx, callback}) {
 
     function draw() {
         const selected = idx === selectedPlanet;
+        drawFrame(ctx, 0, 0, width, height, selected);
         ctx.font = '20px LBA';
-        ctx.clearRect(0, 0, width, height);
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.shadowColor = 'transparent';
-        ctx.strokeStyle = 'rgb(97, 206, 206)';
-        ctx.fillStyle = selected ? 'rgb(32, 162, 255)' : 'rgba(0, 0, 0, 0.5)';
-        ctx.lineWidth = 4;
-        roundRect(ctx, 2, 2, width - 4, height - 4, 20);
-        ctx.fill();
-        ctx.stroke();
         ctx.fillStyle = selected ? 'white' : 'grey';
         ctx.shadowColor = 'black';
         ctx.shadowOffsetX = 2;
@@ -125,16 +119,4 @@ function createPlanetItem({x, y, text, icon: iconSrc, idx, callback}) {
     mesh.userData = { callback };
 
     return {mesh, draw};
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-    if (w < 2 * r) r = w / 2;
-    if (h < 2 * r) r = h / 2;
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + w, y, x + w, y + h, r);
-    ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r);
-    ctx.arcTo(x, y, x + w, y, r);
-    ctx.closePath();
 }

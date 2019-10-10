@@ -1,11 +1,15 @@
 import * as THREE from 'three';
+import { each } from 'lodash';
 import { createScreen } from './vrScreen';
 import { createHands, handlePicking } from './vrHands';
 import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
+import ControllerScreens from './data/controllerScreens';
+import { drawFrame } from './vrUtils';
 
 let menuNode = null;
 let teleportMenu = null;
 let mainMenu = null;
+let controllerInfo = null;
 
 export function createMenu(renderer) {
     menuNode = new THREE.Object3D();
@@ -34,10 +38,12 @@ export function createMenu(renderer) {
 
     teleportMenu = createTeleportMenu();
     menuNode.add(teleportMenu);
+
     return menuNode;
 }
 
 export function updateMenu(game, sceneManager) {
+    const { controlsState } = game;
     const { showMenu, teleportMenu: showTeleportMenu } = game.getUiState();
     menuNode.visible = showMenu;
     mainMenu.visible = !showTeleportMenu;
@@ -46,6 +52,10 @@ export function updateMenu(game, sceneManager) {
         handlePicking(mainMenu.children, {game, sceneManager});
     } else if (showTeleportMenu) {
         updateTeleportMenu(game);
+    }
+    if (!controllerInfo && controlsState.controllerType) {
+        controllerInfo = createControllerInfo(controlsState.controllerType);
+        menuNode.add(controllerInfo);
     }
 }
 
@@ -58,22 +68,14 @@ function createMenuItem({x, y, text, callback}) {
         x,
         y,
     });
-
+    drawFrame(ctx, 0, 0, width, height, true);
     ctx.font = '50px LBA';
-    ctx.clearRect(0, 0, width, height);
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.shadowColor = 'transparent';
-    ctx.strokeStyle = 'black';
-    ctx.fillStyle = 'rgba(32, 162, 255, 0.6)';
-    ctx.lineWidth = 4;
-    roundRect(ctx, 2, 2, width - 4, height - 4, 20);
-    ctx.fill();
-    ctx.stroke();
     ctx.fillStyle = 'white';
     ctx.shadowColor = 'black';
     ctx.shadowOffsetX = 4;
     ctx.shadowOffsetY = 4;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
     ctx.fillText(text, width / 2, height / 2);
     mesh.material.map.needsUpdate = true;
     mesh.visible = true;
@@ -82,14 +84,39 @@ function createMenuItem({x, y, text, callback}) {
     return mesh;
 }
 
-function roundRect(ctx, x, y, w, h, r) {
-    if (w < 2 * r) r = w / 2;
-    if (h < 2 * r) r = h / 2;
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + w, y, x + w, y + h, r);
-    ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r);
-    ctx.arcTo(x, y, x + w, y, r);
-    ctx.closePath();
+function createControllerInfo(type) {
+    const info = ControllerScreens[type];
+    const {ctx, mesh} = createScreen({
+        width: info.width,
+        height: info.height,
+        angle: info.angle,
+        x: info.x,
+        z: info.z
+    });
+
+    const icon = new Image(info.width, info.height);
+    icon.src = `images/vr_controllers/${type}.png`;
+
+    function draw() {
+        drawFrame(ctx, 0, 0, info.width, info.height, false);
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'white';
+        ctx.shadowColor = 'black';
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.drawImage(icon, 0, 0, info.width, info.height);
+        each(info.labels, (label) => {
+            ctx.textAlign = label.textAlign;
+            ctx.font = `${label.fontSize}px LBA`;
+            const lines = label.text.split('\n');
+            each(lines, (line, idx) => {
+                ctx.fillText(line, label.x, label.y + (idx * label.fontSize));
+            });
+        });
+        mesh.material.map.needsUpdate = true;
+    }
+
+    icon.onload = () => draw();
+
+    return mesh;
 }
