@@ -12,7 +12,7 @@ let activeIsland = null;
 let loading = false;
 let selectedPlanet = 0;
 const planetButtons = [];
-const planetButtonObjects = [];
+const intersectObjects = [];
 
 const planets = LocationsNode.children;
 
@@ -32,7 +32,7 @@ export function createTeleportMenu() {
             text: planets[i].name,
             icon: planets[i].icon,
             x: -(i - 1.5) * 240,
-            y: 100,
+            y: 50,
             // eslint-disable-next-line no-loop-func
             callback: () => {
                 selectedPlanet = i;
@@ -42,8 +42,18 @@ export function createTeleportMenu() {
         });
         teleportMenu.add(p.mesh);
         planetButtons.push(p);
-        planetButtonObjects.push(p.mesh);
+        intersectObjects.push(p.mesh);
     }
+
+    const backButton = createButton({
+        text: 'Back to main menu',
+        y: 230,
+        callback: ({game}) => {
+            game.setUiState({ teleportMenu: false });
+        }
+    });
+    teleportMenu.add(backButton);
+    intersectObjects.push(backButton);
 
     islandWrapper = new THREE.Object3D();
     islandWrapper.scale.set(0.02, 0.02, 0.02);
@@ -82,7 +92,7 @@ export function updateTeleportMenu(game) {
     if (activeIsland) {
         activeIsland.update(null, null, time);
     }
-    handlePicking(planetButtonObjects, {game});
+    handlePicking(intersectObjects, {game});
 }
 
 function createPlanetItem({x, y, text, icon: iconSrc, idx, callback}) {
@@ -119,4 +129,29 @@ function createPlanetItem({x, y, text, icon: iconSrc, idx, callback}) {
     mesh.userData = { callback };
 
     return {mesh, draw};
+}
+
+function createButton({x, y, text, callback}) {
+    const width = 400;
+    const height = 75;
+    const {ctx, mesh} = createScreen({
+        width,
+        height,
+        x,
+        y,
+    });
+    drawFrame(ctx, 0, 0, width, height, true);
+    ctx.font = '30px LBA';
+    ctx.fillStyle = 'white';
+    ctx.shadowColor = 'black';
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 2;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, width / 2, height / 2);
+    mesh.material.map.needsUpdate = true;
+    mesh.visible = true;
+    mesh.userData = { callback };
+
+    return mesh;
 }

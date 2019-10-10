@@ -3,8 +3,8 @@ export default {
         width: 1200,
         height: 700,
         angle: 45,
-        x: 1100,
-        z: 750,
+        x: 1200,
+        z: 720,
         labels: [
             {
                 name: 'LThumbStick',
