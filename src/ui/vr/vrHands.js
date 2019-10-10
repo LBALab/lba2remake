@@ -74,34 +74,54 @@ function makeTgt() {
 }
 
 export function handlePicking(objects, ctx) {
-    const {controlsState} = ctx.game;
-    for (let i = 0; i < controllers.length; i += 1) {
-        raycastCtrl(controllers[i], targets[i], controlsState.ctrlTriggers[i], objects, ctx);
+    for (let i = 0; i < targets.length; i += 1) {
+        targets[i].visible = false;
+    }
+    performRaycasting(objects, ctx, menuHandler);
+}
+
+function menuHandler(idx, intersect, triggered, ctx) {
+    const tgt = targets[idx];
+    tgt.visible = true;
+    tgt.position.copy(intersect.point);
+    if (triggered) {
+        const userData = intersect.object.userData;
+        if (userData && userData.callback) {
+            userData.callback(ctx);
+        }
     }
 }
 
-function raycastCtrl(controller, tgt, triggered, objects, ctx) {
-    tgt.visible = false;
-    if (controller) {
-        direction.set(0, 0, -1);
-        direction.applyQuaternion(controller.quaternion);
-        direction.applyEuler(worldOrientation);
-        offset.set(0, 0.02, 0);
-        offset.applyQuaternion(controller.quaternion);
-        position.setFromMatrixPosition(controller.matrixWorld);
-        position.add(offset);
-        raycaster.set(position, direction);
-        const intersects = raycaster.intersectObjects(objects, true);
-        if (intersects.length > 0) {
-            const intersect = intersects[0];
-            tgt.visible = true;
-            tgt.position.copy(intersect.point);
-            if (triggered) {
-                const userData = intersect.object.userData;
-                if (userData && userData.callback) {
-                    userData.callback(ctx);
-                }
-            }
+export function performRaycasting(objects, ctx, handler) {
+    for (let i = 0; i < controllers.length; i += 1) {
+        if (controllers[i]) {
+            raycastCtrl(
+                i,
+                objects,
+                handler,
+                ctx
+            );
         }
+    }
+}
+
+function raycastCtrl(idx, objects, handler, ctx) {
+    const {controlsState} = ctx.game;
+    const triggered = controlsState.ctrlTriggers[idx];
+    const controller = controllers[idx];
+
+    direction.set(0, 0, -1);
+    direction.applyQuaternion(controller.quaternion);
+    direction.applyEuler(worldOrientation);
+    offset.set(0, 0.02, 0);
+    offset.applyQuaternion(controller.quaternion);
+    position.setFromMatrixPosition(controller.matrixWorld);
+    position.add(offset);
+    raycaster.set(position, direction);
+    const intersects = raycaster.intersectObjects(objects, false);
+
+    if (intersects.length > 0) {
+        const intersect = intersects[0];
+        handler(idx, intersect, triggered, ctx);
     }
 }

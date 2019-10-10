@@ -4,15 +4,22 @@ import IslandAmbience from '../editor/areas/island/browser/ambience';
 import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
 import { loadIslandScenery } from '../../island';
 import { createScreen } from './vrScreen';
-import { handlePicking } from './vrHands';
+import { handlePicking, performRaycasting } from './vrHands';
 import { drawFrame } from './vrUtils';
 
 let islandWrapper = null;
 let activeIsland = null;
 let loading = false;
 let selectedPlanet = 0;
+let sectionsPlanes = null;
+let light = null;
 const planetButtons = [];
 const intersectObjects = [];
+const arrows = [
+    createArrow(),
+    createArrow()
+];
+const invWorldMat = new THREE.Matrix4();
 
 const planets = LocationsNode.children;
 
@@ -23,7 +30,7 @@ const planetDefaultIsland = [
     'PLATFORM'
 ];
 
-export function createTeleportMenu() {
+export function createTeleportMenu(sceneLight) {
     const teleportMenu = new THREE.Object3D();
 
     for (let i = 0; i < 4; i += 1) {
@@ -59,8 +66,17 @@ export function createTeleportMenu() {
     islandWrapper.scale.set(0.02, 0.02, 0.02);
     islandWrapper.quaternion.setFromEuler(new THREE.Euler(0, Math.PI, 0));
     islandWrapper.position.set(0, -1.4, 1.4);
+    islandWrapper.updateMatrixWorld();
+    invWorldMat.getInverse(islandWrapper.matrixWorld);
 
     teleportMenu.add(islandWrapper);
+
+    for (let i = 0; i < 2; i += 1) {
+        arrows[i].visible = false;
+        teleportMenu.add(arrows[i]);
+    }
+
+    light = sceneLight;
 
     return teleportMenu;
 }
@@ -68,13 +84,22 @@ export function createTeleportMenu() {
 async function loadIsland(name) {
     loading = true;
     const ambience = IslandAmbience[name];
-    const island = await loadIslandScenery({skipSky: true}, name, ambience);
+    const island = await loadIslandScenery({skipSky: true, sectionPlanes: true}, name, ambience);
     island.name = name;
     if (activeIsland) {
         islandWrapper.remove(activeIsland.threeObject);
     }
     activeIsland = island;
     islandWrapper.add(island.threeObject);
+    sectionsPlanes = island.threeObject.getObjectByName('sectionsPlanes');
+    light.position.applyAxisAngle(
+        new THREE.Vector3(0, 0, 1),
+        -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
+    );
+    light.position.applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        (-(ambience.lightingBeta * 2 * Math.PI) / 0x1000) + Math.PI
+    );
     loading = false;
 }
 
@@ -91,8 +116,26 @@ export function updateTeleportMenu(game) {
     }
     if (activeIsland) {
         activeIsland.update(null, null, time);
+        arrows[0].visible = false;
+        arrows[1].visible = false;
+        performRaycasting(sectionsPlanes.children, {game}, handleGroundIntersection);
     }
     handlePicking(intersectObjects, {game});
+}
+
+const POS = new THREE.Vector3();
+
+function handleGroundIntersection(idx, intersect, triggered /* , ctx */) {
+    const arrow = arrows[idx];
+    arrow.visible = true;
+    arrow.position.copy(intersect.point);
+    POS.copy(intersect.point);
+    POS.applyMatrix4(invWorldMat);
+    const groundInfo = activeIsland.physics.getGroundInfo(POS);
+    arrow.position.y += groundInfo.height * 0.02;
+    if (triggered) {
+        // do something
+    }
 }
 
 function createPlanetItem({x, y, text, icon: iconSrc, idx, callback}) {
@@ -154,4 +197,24 @@ function createButton({x, y, text, callback}) {
     mesh.userData = { callback };
 
     return mesh;
+}
+
+function createArrow() {
+    const arrow = new THREE.Object3D();
+    const material = new THREE.MeshPhongMaterial({color: 0xFF0000});
+
+    const cnGeometry = new THREE.ConeGeometry(5, 20, 32);
+    const cone = new THREE.Mesh(cnGeometry, material);
+    cone.quaternion.setFromEuler(new THREE.Euler(Math.PI, 0, 0));
+    cone.position.set(0, 10, 0);
+    arrow.add(cone);
+
+    const clGeometry = new THREE.CylinderGeometry(1, 1, 20, 32);
+    const cylinder = new THREE.Mesh(clGeometry, material);
+    cylinder.position.set(0, 30, 0);
+    arrow.add(cylinder);
+
+    arrow.scale.set(0.01, 0.01, 0.01);
+
+    return arrow;
 }

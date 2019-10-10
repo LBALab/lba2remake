@@ -98,6 +98,9 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         boundingBoxes.matrixAutoUpdate = false;
         islandObject.add(boundingBoxes);
     }
+    if (params.sectionPlanes) {
+        loadSectionPlanes(islandObject, data);
+    }
     each(data.layout.groundSections, (section) => {
         sections[`${section.x},${section.z}`] = section;
         if (params.editor) {
@@ -129,6 +132,27 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
             seaTimeUniform.value = time.elapsed;
         }
     };
+}
+
+function loadSectionPlanes(islandObject, data) {
+    const sectionsPlanes = new THREE.Object3D();
+    const sectionsPlanesGeom = new THREE.PlaneBufferGeometry(64 * 0.75, 64 * 0.75);
+    const sectionsPlanesMat = new THREE.MeshBasicMaterial({color: 0xff0000});
+    sectionsPlanes.name = 'sectionsPlanes';
+    sectionsPlanes.visible = false;
+    sectionsPlanes.renderOrder = 3;
+    islandObject.add(sectionsPlanes);
+    each(data.layout.groundSections, (section) => {
+        const plane = new THREE.Mesh(sectionsPlanesGeom, sectionsPlanesMat);
+        plane.position.set(((section.x * 64) + 33) * 0.75, 0, ((section.z * 64) + 32) * 0.75);
+        plane.quaternion.setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
+        plane.userData = {
+            x: section.x,
+            y: section.y,
+            info: section
+        };
+        sectionsPlanes.add(plane);
+    });
 }
 
 function loadSky(geometries, envInfo) {

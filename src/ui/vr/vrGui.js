@@ -4,12 +4,12 @@ import { createMenu, updateMenu } from './vrMenu';
 
 let gui = null;
 
-export function addVRGuiNode(renderer, controlNode) {
+export function addVRGuiNode(renderer, controlNode, light) {
     if (!renderer.vr)
         return;
 
     if (!gui) {
-        gui = createVRGui(renderer);
+        gui = createVRGui(renderer, light);
     }
 
     controlNode.add(gui.cube);
@@ -23,10 +23,10 @@ export function updateVRGui(presenting, game, sceneManager) {
     updateMenu(game, sceneManager);
 }
 
-function createVRGui(renderer) {
+function createVRGui(renderer, light) {
     const cube = createVRCube();
     const fps = createFPSCounter(renderer);
-    const menu = createMenu(renderer);
+    const menu = createMenu(renderer, light);
     cube.add(fps);
     cube.add(menu);
     return {

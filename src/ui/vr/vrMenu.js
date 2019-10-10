@@ -11,7 +11,7 @@ let teleportMenu = null;
 let mainMenu = null;
 let controllerInfo = null;
 
-export function createMenu(renderer) {
+export function createMenu(renderer, light) {
     menuNode = new THREE.Object3D();
 
     mainMenu = new THREE.Object3D();
@@ -36,7 +36,7 @@ export function createMenu(renderer) {
     const hands = createHands(renderer);
     menuNode.add(hands);
 
-    teleportMenu = createTeleportMenu();
+    teleportMenu = createTeleportMenu(light);
     menuNode.add(teleportMenu);
 
     return menuNode;

@@ -17,7 +17,10 @@ export function loadVRScene(renderer) {
     ]);
     threeScene.background = texture;
 
-    addVRGuiNode(renderer, camera.controlNode);
+    const light = new THREE.DirectionalLight();
+    threeScene.add(light);
+
+    addVRGuiNode(renderer, camera.controlNode, light);
     threeScene.add(camera.controlNode);
     return { threeScene, camera };
 }
