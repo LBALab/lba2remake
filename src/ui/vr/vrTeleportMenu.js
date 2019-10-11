@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {each, findKey} from 'lodash';
+import {each, filter, findKey} from 'lodash';
 import IslandAmbience from '../editor/areas/island/browser/ambience';
 import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
 import { loadIslandScenery } from '../../island';
@@ -12,9 +12,11 @@ let islandWrapper = null;
 let activeIsland = null;
 let loading = false;
 let selectedPlanet = 0;
+let selectedIsland = 0;
 let sectionsPlanes = null;
 let light = null;
 const planetButtons = [];
+const islandButtons = [];
 const intersectObjects = [];
 const arrows = [
     createArrow(),
@@ -23,13 +25,6 @@ const arrows = [
 const invWorldMat = new THREE.Matrix4();
 
 const planets = LocationsNode.children;
-
-const planetDefaultIsland = [
-    'CITABAU',
-    'EMERAUDE',
-    'OTRINGAL',
-    'PLATFORM'
-];
 
 export function createTeleportMenu(sceneLight) {
     const teleportMenu = new THREE.Object3D();
@@ -43,15 +38,21 @@ export function createTeleportMenu(sceneLight) {
             y: 50,
             // eslint-disable-next-line no-loop-func
             callback: () => {
-                selectedPlanet = i;
-                each(planetButtons, pb => pb.draw());
-                loadIsland(planetDefaultIsland[i]);
+                if (selectedPlanet !== i) {
+                    selectedPlanet = i;
+                    selectedIsland = 0;
+                    each(planetButtons, pb => pb.draw());
+                    refreshIslandButtons(teleportMenu);
+                    loadIsland(planets[i].children[0].id);
+                }
             }
         });
         teleportMenu.add(p.mesh);
         planetButtons.push(p);
         intersectObjects.push(p.mesh);
     }
+
+    refreshIslandButtons(teleportMenu);
 
     const backButton = createButton({
         text: 'Back to main menu',
@@ -80,6 +81,50 @@ export function createTeleportMenu(sceneLight) {
     light = sceneLight;
 
     return teleportMenu;
+}
+
+function refreshIslandButtons(teleportMenu) {
+    const planet = planets[selectedPlanet];
+    const islands = filter(planet.children, n => !n.name.match(/^\[DEMO\]/));
+    // cleanup
+    for (let i = 0; i < islandButtons.length; i += 1) {
+        teleportMenu.remove(islandButtons[i].mesh);
+        const idx = intersectObjects.indexOf(islandButtons[i].mesh);
+        intersectObjects.splice(idx, 1);
+    }
+    islandButtons.length = 0;
+    for (let i = 0; i < islands.length; i += 1) {
+        let x;
+        let y;
+        if (islands.length <= 3) {
+            const offset = (islands.length - 1) * 0.5;
+            x = -(i - offset) * 320;
+            y = -130;
+        } else if (i < 3) {
+            x = -(i - 1) * 320;
+            y = -130;
+        } else {
+            const offset = (islands.length - 4) * 0.5;
+            x = -((i - 3) - offset) * 320;
+            y = -230;
+        }
+
+        const isl = createIslandItem({
+            idx: i,
+            text: islands[i].name,
+            x,
+            y,
+            // eslint-disable-next-line no-loop-func
+            callback: () => {
+                selectedIsland = i;
+                each(islandButtons, ib => ib.draw());
+                loadIsland(islands[i].id);
+            }
+        });
+        teleportMenu.add(isl.mesh);
+        islandButtons.push(isl);
+        intersectObjects.push(isl.mesh);
+    }
 }
 
 async function loadIsland(name) {
@@ -173,6 +218,43 @@ function createPlanetItem({x, y, text, icon: iconSrc, idx, callback}) {
         ctx.shadowOffsetY = 2;
         ctx.fillText(text, width / 2, 200);
         ctx.drawImage(icon, 20, 20, 160, 160);
+        mesh.material.map.needsUpdate = true;
+    }
+
+    icon.onload = () => draw();
+
+    mesh.visible = true;
+    mesh.userData = { callback };
+
+    return {mesh, draw};
+}
+
+function createIslandItem({x, y, text, idx, callback}) {
+    const width = 300;
+    const height = 80;
+    const {ctx, mesh} = createScreen({
+        width,
+        height,
+        x,
+        y,
+    });
+
+    const icon = new Image(40, 40);
+    icon.src = 'editor/icons/locations/island.svg';
+
+    function draw() {
+        const selected = idx === selectedIsland;
+        drawFrame(ctx, 0, 0, width, height, selected);
+        ctx.font = '20px LBA';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = selected ? 'white' : 'grey';
+        ctx.shadowColor = 'black';
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.fillText(text, 175, 40);
+        const metrics = ctx.measureText(text);
+        ctx.drawImage(icon, 115 - (metrics.width * 0.5), 20, 40, 40);
         mesh.material.map.needsUpdate = true;
     }
 

@@ -20,7 +20,7 @@ export default {
                 y: 72,
                 fontSize: 22,
                 textAlign: 'right',
-                text: '<nothing>'
+                text: '[N/A]'
             },
             {
                 name: 'LTrigger',
@@ -52,7 +52,7 @@ export default {
                 y: 544,
                 fontSize: 22,
                 textAlign: 'right',
-                text: '<nothing>'
+                text: '[N/A]'
             },
             {
                 name: 'X',
@@ -66,9 +66,9 @@ export default {
                 name: 'Y',
                 x: 438,
                 y: 313,
-                fontSize: 22,
+                fontSize: 18,
                 textAlign: 'left',
-                text: 'Behaviour'
+                text: 'Switch\nBehaviour'
             },
             {
                 name: 'A',
@@ -84,7 +84,7 @@ export default {
                 y: 309,
                 fontSize: 22,
                 textAlign: 'right',
-                text: 'Behaviour'
+                text: 'Back'
             },
             {
                 name: 'Start',

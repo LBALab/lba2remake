@@ -1,7 +1,7 @@
 import {planet, island, section, iso} from './functions';
 
 const Moon = planet('Emerald moon', 'moon', [
-    island(-1, 'Moon base', [
+    island(-1, 'Moon base', 'EMERAUDE', [
         section(75, 'Landing zone', [
             iso(115, 'Esmer Spacecraft'),
             iso(52, 'Circle Airlock'),

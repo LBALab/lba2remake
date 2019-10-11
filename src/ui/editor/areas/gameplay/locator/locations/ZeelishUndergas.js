@@ -1,7 +1,7 @@
 import {planet, island, section, iso} from './functions';
 
 const ZeelishUndergas = planet('Undergas', 'undergas', [
-    island(-1, 'Wanny Island', [
+    island(-1, 'Wanny Island', 'PLATFORM', [
         section(98, 'Elevator Area', [
             iso(123, 'Elevator Building')
         ]),
@@ -27,7 +27,7 @@ const ZeelishUndergas = planet('Undergas', 'undergas', [
         ]),
         section(97, 'Ferryman Area')
     ]),
-    island(-1, 'Mosquibee Island', [
+    island(-1, 'Mosquibee Island', 'MOSQUIBE', [
         section(105, 'Nest Area', [
             iso(106, 'Nest', [
                 iso(104, 'Queen Throne room'),
@@ -40,25 +40,25 @@ const ZeelishUndergas = planet('Undergas', 'undergas', [
         ]),
         section(102, 'Mountain Top')
     ]),
-    island(-1, 'Volcano Island', [
+    island(-1, 'Volcano Island', 'SOUSCELB', [
         section(132, 'Ferryman Area'),
         section(131, 'Cave Area', [
             iso(129, 'Cave')
         ]),
         section(130, 'Mountain Top')
     ]),
-    island(-1, '[DEMO] Wanny Island', [
+    island(-1, '[DEMO] Wanny Island', 'PLATFORM', [
         section(213, '[DEMO] Elevator Area'),
         section(-1, '[DEMO] Mine Area', [
             iso(214, '[DEMO] Mine'),
         ])
     ]),
-    island(-1, '[DEMO] Mosquibee Island', [
+    island(-1, '[DEMO] Mosquibee Island', 'MOSQUIBE', [
         section(216, '[DEMO] Nest Area', [
             iso(215, '[DEMO] Queen Throne room')
         ])
     ]),
-    island(-1, '[DEMO] Volcano Island', [
+    island(-1, '[DEMO] Volcano Island', 'SOUSCELB', [
         section(219, '[DEMO] Cave Area')
     ])
 ]);

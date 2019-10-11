@@ -19,7 +19,7 @@ export function createMenu(renderer, light) {
     menuNode.add(mainMenu);
     resume = createMenuItem({
         text: 'Resume Game',
-        y: 225,
+        y: 150,
         callback: ({game}) => {
             const audioMenuManager = game.getAudioMenuManager();
             audioMenuManager.getMusicSource().stop();
@@ -30,7 +30,7 @@ export function createMenu(renderer, light) {
     mainMenu.add(resume);
     mainMenu.add(createMenuItem({
         text: 'New Game',
-        y: 75,
+        y: 0,
         callback: ({game, sceneManager}) => {
             game.resume();
             game.resetState();
@@ -39,7 +39,7 @@ export function createMenu(renderer, light) {
     }));
     mainMenu.add(createMenuItem({
         text: 'Teleport',
-        y: -75,
+        y: -150,
         callback: ({game}) => {
             game.setUiState({ teleportMenu: true });
         }
