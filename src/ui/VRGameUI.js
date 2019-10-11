@@ -187,11 +187,11 @@ export default class VRGameUI extends FrameListener {
     }
 
     onVrDisplayPresentChange() {
-
+        this.forceUpdate();
     }
 
     onVrDisplayActivate() {
-
+        this.requestPresence();
     }
 
     onGameReady() {
