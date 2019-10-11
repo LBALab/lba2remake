@@ -316,15 +316,15 @@ function createArrow() {
     const arrow = new THREE.Object3D();
     const material = new THREE.MeshPhongMaterial({color: 0xFF0000});
 
-    const cnGeometry = new THREE.ConeGeometry(5, 20, 32);
+    const cnGeometry = new THREE.ConeGeometry(5, 12, 32);
     const cone = new THREE.Mesh(cnGeometry, material);
     cone.quaternion.setFromEuler(new THREE.Euler(Math.PI, 0, 0));
-    cone.position.set(0, 10, 0);
+    cone.position.set(0, 6, 0);
     arrow.add(cone);
 
-    const clGeometry = new THREE.CylinderGeometry(1, 1, 20, 32);
+    const clGeometry = new THREE.CylinderGeometry(1, 1, 10, 32);
     const cylinder = new THREE.Mesh(clGeometry, material);
-    cylinder.position.set(0, 30, 0);
+    cylinder.position.set(0, 16, 0);
     arrow.add(cylinder);
 
     arrow.scale.set(0.01, 0.01, 0.01);

@@ -21,6 +21,9 @@ export function loadVRScene(renderer) {
     const light = new THREE.DirectionalLight();
     threeScene.add(light);
 
+    const ambient = new THREE.AmbientLight(0x404040);
+    threeScene.add(ambient);
+
     const fps = createFPSCounter(renderer);
     camera.controlNode.add(fps);
 
