@@ -10,12 +10,24 @@ let menuNode = null;
 let teleportMenu = null;
 let mainMenu = null;
 let controllerInfo = null;
+let resume = null;
 
 export function createMenu(renderer, light) {
     menuNode = new THREE.Object3D();
 
     mainMenu = new THREE.Object3D();
     menuNode.add(mainMenu);
+    resume = createMenuItem({
+        text: 'Resume Game',
+        y: 225,
+        callback: ({game}) => {
+            const audioMenuManager = game.getAudioMenuManager();
+            audioMenuManager.getMusicSource().stop();
+            game.resume();
+            game.setUiState({ showMenu: false });
+        }
+    });
+    mainMenu.add(resume);
     mainMenu.add(createMenuItem({
         text: 'New Game',
         y: 75,
@@ -44,9 +56,10 @@ export function createMenu(renderer, light) {
 
 export function updateMenu(game, sceneManager) {
     const { controlsState } = game;
-    const { showMenu, teleportMenu: showTeleportMenu } = game.getUiState();
+    const { showMenu, teleportMenu: showTeleportMenu, inGameMenu } = game.getUiState();
     menuNode.visible = showMenu;
     mainMenu.visible = !showTeleportMenu;
+    resume.visible = inGameMenu;
     teleportMenu.visible = showTeleportMenu;
     if (showMenu) {
         if (showTeleportMenu) {
@@ -63,7 +76,7 @@ export function updateMenu(game, sceneManager) {
         audioMenuManager.getMusicSource().load(6, () => {
             audioMenuManager.getMusicSource().play();
         });
-        game.setUiState({showMenu: true, teleportMenu: false});
+        game.setUiState({showMenu: true, teleportMenu: false, inGameMenu: true});
     }
     if (!controllerInfo && controlsState.controllerType) {
         controllerInfo = createControllerInfo(controlsState.controllerType);
