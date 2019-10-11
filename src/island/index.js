@@ -23,15 +23,21 @@ each(islandsInfo, (island) => {
 });
 
 const islands = {};
+const islandPreviews = {};
 
 export function getEnvInfo(name) {
     return islandProps[name].envInfo;
 }
 
 export async function loadIslandScenery(params, name, ambience) {
-    if (name in islands) {
+    if (params.preview) {
+        if (name in islandPreviews) {
+            return islandPreviews[name];
+        }
+    } else if (name in islands) {
         return islands[name];
     }
+
     const [ress, ile, obl, lutTexture] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr(`${name}.ILE`),
@@ -40,7 +46,11 @@ export async function loadIslandScenery(params, name, ambience) {
     ]);
     const files = {ress, ile, obl};
     const island = loadIslandNode(params, islandProps[name], files, lutTexture, ambience);
-    islands[name] = island;
+    if (params.preview) {
+        islandPreviews[name] = island;
+    } else {
+        islands[name] = island;
+    }
     return island;
 }
 
@@ -85,7 +95,7 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         }
     });
 
-    if (!params.skipSky) {
+    if (!params.preview) {
         islandObject.add(loadSky(geometries, props.envInfo));
     }
 
@@ -98,7 +108,7 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         boundingBoxes.matrixAutoUpdate = false;
         islandObject.add(boundingBoxes);
     }
-    if (params.sectionPlanes) {
+    if (params.preview) {
         loadSectionPlanes(islandObject, data);
     }
     each(data.layout.groundSections, (section) => {

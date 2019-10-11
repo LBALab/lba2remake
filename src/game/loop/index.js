@@ -11,10 +11,11 @@ dbgClock.start();
 
 export function mainGameLoop(params, game, clock, renderer, scene, controls, vrScene) {
     const time = game.getTime();
+    const uiState = game.getUiState();
 
     renderer.stats.begin();
     each(controls, ctrl => ctrl.update && ctrl.update());
-    if (scene) {
+    if (scene && !uiState.showMenu) {
         const step = game.isPaused() && DebugData.step;
         if (!game.isPaused() || step) {
             if (step) {

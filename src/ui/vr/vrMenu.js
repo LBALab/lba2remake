@@ -50,7 +50,7 @@ export function updateMenu(game, sceneManager) {
     teleportMenu.visible = showTeleportMenu;
     if (showMenu) {
         if (showTeleportMenu) {
-            updateTeleportMenu(game);
+            updateTeleportMenu(game, sceneManager);
             if (controlsState.backButton) {
                 game.setUiState({teleportMenu: false});
             }
@@ -63,7 +63,7 @@ export function updateMenu(game, sceneManager) {
         audioMenuManager.getMusicSource().load(6, () => {
             audioMenuManager.getMusicSource().play();
         });
-        game.setUiState({showMenu: true});
+        game.setUiState({showMenu: true, teleportMenu: false});
     }
     if (!controllerInfo && controlsState.controllerType) {
         controllerInfo = createControllerInfo(controlsState.controllerType);

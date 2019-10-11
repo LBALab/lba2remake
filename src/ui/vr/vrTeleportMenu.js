@@ -1,11 +1,12 @@
 import * as THREE from 'three';
-import {each} from 'lodash';
+import {each, findKey} from 'lodash';
 import IslandAmbience from '../editor/areas/island/browser/ambience';
 import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
 import { loadIslandScenery } from '../../island';
 import { createScreen } from './vrScreen';
 import { handlePicking, performRaycasting } from './vrHands';
 import { drawFrame } from './vrUtils';
+import sceneMapping from '../../island/data/sceneMapping';
 
 let islandWrapper = null;
 let activeIsland = null;
@@ -84,7 +85,7 @@ export function createTeleportMenu(sceneLight) {
 async function loadIsland(name) {
     loading = true;
     const ambience = IslandAmbience[name];
-    const island = await loadIslandScenery({skipSky: true, sectionPlanes: true}, name, ambience);
+    const island = await loadIslandScenery({preview: true}, name, ambience);
     island.name = name;
     if (activeIsland) {
         islandWrapper.remove(activeIsland.threeObject);
@@ -106,7 +107,7 @@ async function loadIsland(name) {
 const clock = new THREE.Clock(false);
 clock.start();
 
-export function updateTeleportMenu(game) {
+export function updateTeleportMenu(game, sceneManager) {
     const time = {
         delta: Math.min(clock.getDelta(), 0.05),
         elapsed: clock.getElapsedTime()
@@ -118,14 +119,14 @@ export function updateTeleportMenu(game) {
         activeIsland.update(null, null, time);
         arrows[0].visible = false;
         arrows[1].visible = false;
-        performRaycasting(sectionsPlanes.children, {game}, handleGroundIntersection);
+        performRaycasting(sectionsPlanes.children, {game, sceneManager}, handleGroundIntersection);
     }
     handlePicking(intersectObjects, {game});
 }
 
 const POS = new THREE.Vector3();
 
-function handleGroundIntersection(idx, intersect, triggered /* , ctx */) {
+function handleGroundIntersection(idx, intersect, triggered, {game, sceneManager}) {
     const arrow = arrows[idx];
     arrow.visible = true;
     arrow.position.copy(intersect.point);
@@ -134,7 +135,16 @@ function handleGroundIntersection(idx, intersect, triggered /* , ctx */) {
     const groundInfo = activeIsland.physics.getGroundInfo(POS);
     arrow.position.y += groundInfo.height * 0.02;
     if (triggered) {
-        // do something
+        const section = intersect.object.userData.info;
+        const scene = findKey(
+            sceneMapping,
+            s => s.island === activeIsland.name && s.section === section.index
+        );
+        if (scene !== undefined) {
+            game.resume();
+            sceneManager.hideMenuAndGoto(Number(scene), false);
+            game.setUiState({teleportMenu: false});
+        }
     }
 }
 

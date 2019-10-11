@@ -12,8 +12,7 @@ import {fullscreen} from './styles/index';
 import FrameListener from './utils/FrameListener';
 import Loader from './game/Loader';
 import {sBind} from '../utils.ts';
-import {updateVRGui} from './vr/vrGui';
-import {loadVRScene} from './vr/vrScene.ts';
+import {loadVRScene, updateVRScene} from './vr/vrScene.ts';
 
 export default class VRGameUI extends FrameListener {
     constructor(props) {
@@ -243,7 +242,8 @@ export default class VRGameUI extends FrameListener {
                 controls,
                 vrScene
             );
-            updateVRGui(
+            updateVRScene(
+                vrScene,
                 presenting,
                 game,
                 sceneManager
