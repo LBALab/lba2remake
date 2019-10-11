@@ -1,7 +1,7 @@
 import {planet, island, section, iso} from './functions';
 
 const Twinsun = planet('Twinsun', 'twinsun', [
-    island(-1, 'Citadel island', [
+    island(-1, 'Citadel island', 'CITABAU', [
         section(49, 'Twinsen\'s House Area', [
             iso(0, 'Twinsen\'s House', [
                 iso(1, 'Cellar'),
@@ -48,7 +48,7 @@ const Twinsun = planet('Twinsun', 'twinsun', [
         ]),
         section(50, 'Woodbridge')
     ]),
-    island(-1, 'Desert island', [
+    island(-1, 'Desert island', 'DESERT', [
         section(55, 'Oasis'),
         section(56, 'Between Oasis and Racetrack'),
         section(57, 'Racetrack'),
@@ -101,7 +101,7 @@ const Twinsun = planet('Twinsun', 'twinsun', [
             ]),
         ])
     ]),
-    island(-1, '[DEMO] Citadel island', [
+    island(-1, '[DEMO] Citadel island', 'CITABAU', [
         section(195, '[DEMO] Twinsen\'s House Area', [
             iso(193, '[DEMO] Twinsen\'s House', [
                 iso(194, '[DEMO] Cellar')
@@ -113,7 +113,7 @@ const Twinsun = planet('Twinsun', 'twinsun', [
             iso(202, '[DEMO] In the Dome')
         ]),
     ]),
-    island(-1, '[DEMO] Desert island', [
+    island(-1, '[DEMO] Desert island', 'DESERT', [
         section(203, '[DEMO] Oasis'),
         section(200, '[DEMO] Town Square'),
         section(198, '[DEMO] Headland'),

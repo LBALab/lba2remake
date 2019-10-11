@@ -2,8 +2,7 @@ import * as THREE from 'three';
 import {
     map,
     filter,
-    each,
-    noop
+    each
 } from 'lodash';
 
 import islandSceneMapping from '../island/data/sceneMapping';
@@ -24,7 +23,6 @@ import { getIso3DCamera } from '../cameras/iso3d';
 import { getVR3DCamera } from '../cameras/vr/vr3d';
 import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { angleToRad } from '../utils/lba';
-import { addVRGuiNode } from '../ui/vr/vrGui';
 
 declare global {
     var ga: Function;
@@ -50,7 +48,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
         /* @inspector(locate) */
         async goto(index, force = false, wasPaused = false, teleport = true) {
             if ((!force && scene && index === scene.index) || game.isLoading())
-                return;
+                return scene;
 
             ga('set', 'page', `/scene/${index}`);
             ga('send', 'pageview');
@@ -191,7 +189,6 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             }
         }
         if (camera.controlNode) {
-            addVRGuiNode(renderer, camera.controlNode);
             threeScene.add(camera.controlNode);
         }
         threeScene.add(scenery.threeObject);

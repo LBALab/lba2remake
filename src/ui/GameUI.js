@@ -24,7 +24,6 @@ import TeleportMenu from './game/TeleportMenu';
 import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
 import {sBind} from '../utils.ts';
-import {updateVRGui} from './vr/vrGui';
 import {updateLabels} from './editor/labels';
 
 export default class GameUI extends FrameListener {
@@ -342,16 +341,7 @@ export default class GameUI extends FrameListener {
     frame() {
         const {game, clock, renderer, sceneManager, controls} = this.state;
         if (renderer && sceneManager) {
-            const presenting = renderer.isPresenting();
-            if (this.state.isPresenting !== presenting) {
-                this.state.isPresenting = presenting;
-                if (!presenting) {
-                    this.showMenu(true);
-                }
-            }
-            if (!presenting) {
-                this.checkResize(presenting);
-            }
+            this.checkResize();
             const scene = sceneManager.getScene();
             if (this.state.scene !== scene) {
                 this.setState({scene}, this.saveData);
@@ -364,7 +354,6 @@ export default class GameUI extends FrameListener {
                 scene,
                 controls
             );
-            updateVRGui(presenting);
             if (this.props.params.editor) {
                 DebugData.scope = {
                     params: this.props.params,

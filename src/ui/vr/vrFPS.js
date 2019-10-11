@@ -6,7 +6,8 @@ export function createFPSCounter(renderer) {
     const {ctx, mesh} = createScreen({
         width,
         height,
-        y: -200
+        y: -200,
+        noDepth: true
     });
 
     ctx.font = '25px LBA';

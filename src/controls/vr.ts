@@ -25,10 +25,10 @@ export function makeVRControls(sceneManager: any, game: any) {
                             handleOculusGoController(gamepad, sceneManager, game);
                             break;
                         case 'Oculus Touch (Left)':
-                            updateOculusTouchController(gamepad, oculusTouch.left);
+                            updateOculusTouchController(gamepad, oculusTouch.left, game, i);
                             break;
                         case 'Oculus Touch (Right)':
-                            updateOculusTouchController(gamepad, oculusTouch.right);
+                            updateOculusTouchController(gamepad, oculusTouch.right, game, i);
                             break;
                     }
                 }
@@ -55,6 +55,7 @@ function handleOculusGoController(gamepad, sceneManager, game) {
     const hero = game.getState().hero;
     controlsState.action = 0;
     controlsState.relativeToCam = true;
+    controlsState.controllerType = 'oculusgo';
 
     const touchpad = getButtonState(gamepad, TOUCHPAD);
     const trigger = getButtonState(gamepad, TRIGGER);
@@ -83,6 +84,7 @@ function handleOculusGoController(gamepad, sceneManager, game) {
         hero.behaviour = (hero.behaviour + 1) % 4;
     }
     controlsState.action = touchpad.tapped ? 1 : 0;
+    controlsState.ctrlTriggers[0] = trigger.tapped;
 }
 
 const OculusTouch = {
@@ -104,8 +106,9 @@ function makeOculusTouchController(type) {
     };
 }
 
-function updateOculusTouchController(gamepad, controller) {
+function updateOculusTouchController(gamepad, controller, game, id) {
     const {THUMBSTICK, TRIGGER, GRIP, X, Y, A, B} = OculusTouch;
+    const {controlsState} = game;
 
     controller.enabled = true;
     controller.thumbstick = getButtonState(gamepad, THUMBSTICK);
@@ -119,6 +122,7 @@ function updateOculusTouchController(gamepad, controller) {
         controller.buttonA = getButtonState(gamepad, A);
         controller.buttonB = getButtonState(gamepad, B);
     }
+    controlsState.ctrlTriggers[id] = controller.trigger.tapped;
     controller.pad.set(gamepad.axes[0], -gamepad.axes[1]);
 }
 
@@ -134,6 +138,7 @@ function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
     controlsState.relativeToCam = true;
     controlsState.jump = 0;
     controlsState.weapon = 0;
+    controlsState.controllerType = 'oculustouch';
 
     // Center camera
     if (right.trigger.tapped && camera && scene) {
@@ -145,8 +150,7 @@ function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
         controlsState.action = 0;
         if (left.buttonX.tapped
             || left.buttonY.tapped
-            || right.buttonA.tapped
-            || right.buttonB.tapped) {
+            || right.buttonA.tapped) {
             controlsState.skipListener();
         }
         return;
@@ -157,6 +161,8 @@ function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
 
     // Action button
     controlsState.action = left.buttonX.tapped || right.buttonA.tapped ? 1 : 0;
+
+    controlsState.backButton = right.buttonB.tapped;
 
     if (left.buttonY.longPressed) {
         switchStats();
@@ -170,7 +176,7 @@ function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
     } else {
         controlsState.weapon = left.trigger.pressed ? 1 : 0;
     }
-    if (left.buttonY.tapped || right.buttonB.tapped) {
+    if (left.buttonY.tapped) {
         hero.behaviour = (hero.behaviour + 1) % 4;
         if (hero.behaviour === 1) { // skip sporty
             hero.behaviour += 1;

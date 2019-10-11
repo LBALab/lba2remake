@@ -48,7 +48,13 @@ function baseScene(type, index, name, children) {
     };
 }
 
-export const island = baseScene.bind(null, 'island');
+export function island(index, name, id, children) {
+    return {
+        ...baseScene('island', index, name, children),
+        id
+    };
+}
+
 export const section = baseScene.bind(null, 'section');
 export const iso = baseScene.bind(null, 'building');
 
