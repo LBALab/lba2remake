@@ -7,6 +7,7 @@ import { createScreen } from './vrScreen';
 import { handlePicking, performRaycasting } from './vrHands';
 import { drawFrame } from './vrUtils';
 import sceneMapping from '../../island/data/sceneMapping';
+import islandOffsets from './data/islandOffsets';
 
 let islandWrapper = null;
 let activeIsland = null;
@@ -66,10 +67,6 @@ export function createTeleportMenu(sceneLight) {
 
     islandWrapper = new THREE.Object3D();
     islandWrapper.scale.set(0.02, 0.02, 0.02);
-    islandWrapper.quaternion.setFromEuler(new THREE.Euler(0, Math.PI, 0));
-    islandWrapper.position.set(0, -1.4, 1.4);
-    islandWrapper.updateMatrixWorld();
-    invWorldMat.getInverse(islandWrapper.matrixWorld);
 
     teleportMenu.add(islandWrapper);
 
@@ -146,6 +143,14 @@ async function loadIsland(name) {
         new THREE.Vector3(0, 1, 0),
         (-(ambience.lightingBeta * 2 * Math.PI) / 0x1000) + Math.PI
     );
+    const offset = islandOffsets[name];
+    islandWrapper.position.set(offset.x, -1.4, offset.z);
+    islandWrapper.quaternion.setFromEuler(
+        new THREE.Euler(0, THREE.Math.degToRad(offset.angle), 0)
+    );
+    islandWrapper.updateMatrixWorld();
+    invWorldMat.getInverse(islandWrapper.matrixWorld);
+
     loading = false;
 }
 
@@ -167,6 +172,22 @@ export function updateTeleportMenu(game, sceneManager) {
         performRaycasting(sectionsPlanes.children, {game, sceneManager}, handleGroundIntersection);
     }
     handlePicking(intersectObjects, {game});
+
+    // The following commented code is used for adjusting the island offset
+    /*
+    const {controlsState} = game;
+    const cv = controlsState.controlVector;
+    angle += controlsState.angle * 0.01;
+    islandWrapper.position.add(new THREE.Vector3(cv.x * 0.02, 0, -cv.y * 0.02));
+    islandWrapper.quaternion.setFromEuler(new THREE.Euler(0, angle, 0));
+    if (controlsState.action) {
+        console.log(activeIsland.name, {
+            x: islandWrapper.position.x,
+            z: islandWrapper.position.z,
+            angle: THREE.Math.radToDeg(angle)
+        });
+    }
+    */
 }
 
 const POS = new THREE.Vector3();
