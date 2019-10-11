@@ -48,7 +48,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
         /* @inspector(locate) */
         async goto(index, force = false, wasPaused = false, teleport = true) {
             if ((!force && scene && index === scene.index) || game.isLoading())
-                return;
+                return scene;
 
             ga('set', 'page', `/scene/${index}`);
             ga('send', 'pageview');

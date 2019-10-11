@@ -200,6 +200,7 @@ function handleGroundIntersection(idx, intersect, triggered, {game, sceneManager
     POS.applyMatrix4(invWorldMat);
     const groundInfo = activeIsland.physics.getGroundInfo(POS);
     arrow.position.y += groundInfo.height * 0.02;
+    POS.y = groundInfo.height;
     if (triggered) {
         const section = intersect.object.userData.info;
         const scene = findKey(
@@ -208,7 +209,17 @@ function handleGroundIntersection(idx, intersect, triggered, {game, sceneManager
         );
         if (scene !== undefined) {
             game.resume();
-            sceneManager.hideMenuAndGoto(Number(scene), false);
+            sceneManager.hideMenuAndGoto(Number(scene), false)
+                .then((newScene) => {
+                    const newHero = newScene.actors[0];
+                    POS.add(new THREE.Vector3(
+                        -((section.x * 64) + 1) * 0.75,
+                        0,
+                        -(section.z * 64) * 0.75
+                    ));
+                    newHero.physics.position.copy(POS);
+                    newHero.threeObject.position.copy(POS);
+                });
             game.setUiState({teleportMenu: false});
         }
     }
