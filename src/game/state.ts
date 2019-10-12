@@ -1,10 +1,18 @@
+import {findIndex} from 'lodash';
 import TextData from '../text/data';
 
-export function createState() {
+export function createState(params) {
+    const lang = params.lang || navigator.language.substring(0, 2);
+    const language = findIndex(TextData.LANGUAGE, (l: any) => l.culture.substring(0, 2) === lang);
+    const languageV = findIndex(
+        TextData.LANGUAGE,
+        (l: any) => l.culture.substring(0, 2) === lang && l.hasVoice
+    );
+    console.log(lang, language, languageV);
     return {
         config: {
-            language: TextData.LANGUAGE[0],
-            languageVoice: TextData.LANGUAGE[0],
+            language: TextData.LANGUAGE[language !== -1 ? language : 0],
+            languageVoice: TextData.LANGUAGE[languageV !== -1 ? languageV : 0],
             displayText: true,
             musicVolume: 0.8,
             soundFxVolume: 0.5,

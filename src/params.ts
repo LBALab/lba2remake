@@ -34,6 +34,10 @@ const paramsDefinitions = {
     clipActors: {
         type: 'boolean',
         default: false
+    },
+    lang: {
+        type: 'string',
+        default: null
     }
 };
 
@@ -88,6 +92,9 @@ function parseParam(param, name, src) {
                 console.warn(`Invalid value for param ${name}, value: ${src}, type=int`);
                 return param.default;
             }
+
+        case 'string':
+            return src;
     }
     return param.default;
 }

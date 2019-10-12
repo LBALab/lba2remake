@@ -45,6 +45,7 @@ export default class VRGameUI extends FrameListener {
         } else {
             const clock = new THREE.Clock(false);
             const game = createGame(
+                props.params,
                 clock,
                 this.setUiState,
                 this.getUiState

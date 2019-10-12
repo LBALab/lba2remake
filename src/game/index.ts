@@ -5,13 +5,14 @@ import {createAudioManager, createMusicManager} from '../audio';
 import {loadTexts} from '../text';
 import DebugData from '../ui/editor/DebugData';
 
-export function createGame(clock: any,
+export function createGame(params: any,
+                           clock: any,
                            setUiState: Function,
                            getUiState: Function) {
     let isPaused = false;
     let isLoading = false;
 
-    let state = createState();
+    let state = createState(params);
 
     const audio = createAudioManager(state);
     const audioMenu = createMusicManager(state);
@@ -38,7 +39,7 @@ export function createGame(clock: any,
 
         /* @inspector(locate) */
         resetState() {
-            state = createState();
+            state = createState(params);
             this.resetControlsState();
         },
 
