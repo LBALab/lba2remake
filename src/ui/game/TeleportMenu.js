@@ -201,7 +201,7 @@ export default class TeleportMenu extends React.Component {
                             {planet.name}
                         </div>)}
                 </div>
-                {<div
+                <div
                     style={contentStyle}
                     onClick={(e) => {
                         e.preventDefault();
@@ -211,7 +211,7 @@ export default class TeleportMenu extends React.Component {
                     <div>
                         {this.renderPlanet(selectedPlanet)}
                     </div>
-                </div>}
+                </div>
                 <img style={closeStyle} src="./editor/icons/close.svg" onClick={this.props.exit}/>
             </div>
         </div>;
