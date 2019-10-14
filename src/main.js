@@ -19,7 +19,6 @@ class Root extends React.Component {
             params,
             changelog: false,
             vr: 'getVRDisplays' in navigator,
-            skipVR: false
         };
         this.onHashChange = this.onHashChange.bind(this);
         this.closeChangeLog = this.closeChangeLog.bind(this);
@@ -58,14 +57,14 @@ class Root extends React.Component {
     }
 
     exitVR() {
-        this.setState({ skipVR: true });
+        this.setState({ vr: false });
     }
 
     render() {
         let content;
         if (this.state.params.editor) {
             content = <Editor params={this.state.params} ticker={this.props.ticker} />;
-        } else if (this.state.vr && !this.state.skipVR) {
+        } else if (this.state.vr) {
             content = <VRGameUI
                 params={this.state.params}
                 ticker={this.props.ticker}

@@ -23,7 +23,7 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
     const threeRenderer = setupThreeRenderer(pixelRatio, canvas, params.webgl2, rendererOptions);
     const stats = setupStats();
 
-    if ('getVRDisplays' in navigator) {
+    if (rendererOptions.vr) {
         threeRenderer.vr.enabled = true;
         threeRenderer.vr.setReferenceSpaceType('eye-level');
     }
