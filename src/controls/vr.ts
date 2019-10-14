@@ -152,8 +152,8 @@ function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
             || left.buttonY.tapped
             || right.buttonA.tapped) {
             controlsState.skipListener();
+            return;
         }
-        return;
     }
 
     // Hero movement
