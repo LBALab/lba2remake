@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { getHtmlColor } from '../../scene';
 import { DirMode } from '../../game/actors.ts';
 import { AnimType } from '../data/animType';
@@ -51,10 +52,16 @@ function GOTO_SCENE(game, scene, zone, hero) {
             newHero.physics.position.x = ((0x8000 - zone.props.info2) + 512) * WORLD_SCALE;
             newHero.physics.position.y = zone.props.info1 * WORLD_SCALE;
             newHero.physics.position.z = zone.props.info0 * WORLD_SCALE;
-            newHero.physics.temp.angle = hero.physics.temp.angle;
-            newHero.physics.orientation.copy(hero.physics.orientation);
-            newHero.threeObject.quaternion.copy(newHero.physics.orientation);
             newHero.threeObject.position.copy(newHero.physics.position);
+
+            const dAngle = -zone.props.info3 * (Math.PI / 2);
+            const euler = new THREE.Euler();
+            euler.setFromQuaternion(hero.physics.orientation, 'YXZ');
+            euler.y += dAngle;
+            newHero.physics.temp.angle = euler.y;
+            newHero.physics.temp.destAngle = euler.y;
+            newHero.physics.orientation.setFromEuler(euler);
+            newHero.threeObject.quaternion.copy(newHero.physics.orientation);
         });
         return true;
     }
