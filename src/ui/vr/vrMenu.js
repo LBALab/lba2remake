@@ -12,13 +12,14 @@ let mainMenu = null;
 let controllerInfo = null;
 let resume = null;
 
-export function createMenu(renderer, light) {
+export function createMenu(menuTexts, renderer, light) {
     menuNode = new THREE.Object3D();
 
     mainMenu = new THREE.Object3D();
     menuNode.add(mainMenu);
     resume = createMenuItem({
-        text: 'Resume Game',
+        // Resume Game
+        text: menuTexts[70].value,
         y: 150,
         callback: ({game}) => {
             const audioMenuManager = game.getAudioMenuManager();
@@ -29,7 +30,8 @@ export function createMenu(renderer, light) {
     });
     mainMenu.add(resume);
     mainMenu.add(createMenuItem({
-        text: 'New Game',
+        // New Game
+        text: menuTexts[71].value,
         y: 0,
         callback: ({game, sceneManager}) => {
             game.resume();
