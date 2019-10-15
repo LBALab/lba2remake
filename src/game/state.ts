@@ -8,7 +8,6 @@ export function createState(params) {
         TextData.LANGUAGE,
         (l: any) => l.culture.substring(0, 2) === lang && l.hasVoice
     );
-    console.log(lang, language, languageV);
     return {
         config: {
             language: TextData.LANGUAGE[language !== -1 ? language : 0],
