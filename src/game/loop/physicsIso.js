@@ -2,14 +2,21 @@ import * as THREE from 'three';
 
 export function processCollisions(grid, scene, actor) {
     const basePos = actor.threeObject.position.clone();
-    const position = actor.physics.position.clone();
     basePos.multiplyScalar(1 / 24);
+    const position = actor.physics.position.clone();
     position.multiplyScalar(1 / 24);
-    const dx = 64 - Math.floor(position.x * 32);
-    const dz = Math.floor(position.z * 32);
+    const savedY = position.y;
+    position.y = basePos.y;
+    let dx = 64 - Math.floor(position.x * 32);
+    let dz = Math.floor(position.z * 32);
+    if (actor.props.flags.hasCollisionBricks) {
+        processBoxIntersections(grid, actor, position, dx, dz);
+    }
+    dx = 64 - Math.floor(position.x * 32);
+    dz = Math.floor(position.z * 32);
     const cell = grid.cells[(dx * 64) + dz];
-    let height = 0;
     actor.floorSound = -1;
+    position.y = savedY;
     if (cell
         && (actor.props.flags.hasCollisionFloor
             || actor.props.flags.canFall)) {
@@ -36,20 +43,16 @@ export function processCollisions(grid, scene, actor) {
                     y = bb.max.y;
                     break;
             }
-            if (basePos.y > y - (1 / 64) && position.y < y) {
-                height = y;
+            const minY = i > 0 ? bb.min.y : -Infinity;
+            if (basePos.y > minY && position.y < y) {
+                position.y = Math.max(y, position.y);
                 break;
             }
         }
     }
-    actor.physics.position.y = Math.max(height, position.y) * 24;
-    if (actor.props.flags.hasCollisionBricks) {
-        const boxPos = actor.physics.position.clone();
-        boxPos.multiplyScalar(1 / 24);
-        processBoxIntersections(grid, actor, boxPos, dx, dz);
-        boxPos.multiplyScalar(24);
-        actor.physics.position.copy(boxPos);
-    }
+    position.y = Math.max(0, position.y);
+    position.multiplyScalar(24);
+    actor.physics.position.copy(position);
 }
 
 const ACTOR_BOX = new THREE.Box3();
@@ -58,6 +61,7 @@ const ITRS_SIZE = new THREE.Vector3();
 const CENTER1 = new THREE.Vector3();
 const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
+const BB = new THREE.Box3();
 
 function processBoxIntersections(grid, actor, position, dx, dz) {
     const boundingBox = actor.model.boundingBox;
@@ -74,15 +78,16 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
                 if (cell) {
                     for (let i = 0; i < cell.columns.length; i += 1) {
                         const column = cell.columns[i];
-                        const bb = column.box;
-                        if ((column.shape === 1 || column.shape > 5)
-                            && ACTOR_BOX.intersectsBox(bb)
-                        ) {
+                        BB.copy(column.box);
+                        if (column.shape !== 1) {
+                            BB.max.y -= 1 / 24;
+                        }
+                        if (ACTOR_BOX.intersectsBox(BB)) {
                             INTERSECTION.copy(ACTOR_BOX);
-                            INTERSECTION.intersect(bb);
+                            INTERSECTION.intersect(BB);
                             INTERSECTION.getSize(ITRS_SIZE);
                             ACTOR_BOX.getCenter(CENTER1);
-                            bb.getCenter(CENTER2);
+                            BB.getCenter(CENTER2);
                             const dir = CENTER1.sub(CENTER2);
                             if (ITRS_SIZE.x < ITRS_SIZE.z) {
                                 DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
