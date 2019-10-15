@@ -82,25 +82,33 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
                         if (column.shape !== 1) {
                             BB.max.y -= 1 / 24;
                         }
-                        if (ACTOR_BOX.intersectsBox(BB)) {
-                            INTERSECTION.copy(ACTOR_BOX);
-                            INTERSECTION.intersect(BB);
-                            INTERSECTION.getSize(ITRS_SIZE);
-                            ACTOR_BOX.getCenter(CENTER1);
-                            BB.getCenter(CENTER2);
-                            const dir = CENTER1.sub(CENTER2);
-                            if (ITRS_SIZE.x < ITRS_SIZE.z) {
-                                DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
-                            } else {
-                                DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
-                            }
-                            actor.physics.position.add(DIFF);
-                            position.add(DIFF);
-                            ACTOR_BOX.translate(DIFF);
-                        }
+                        intersectBox(actor, position);
                     }
+                } else {
+                    BB.min.set((64 - (dx + ox)) / 32, -Infinity, (dz + oz) / 32);
+                    BB.max.set((65 - (dx + ox)) / 32, Infinity, (dz + oz + 1) / 32);
+                    intersectBox(actor, position);
                 }
             }
         }
+    }
+}
+
+function intersectBox(actor, position) {
+    if (ACTOR_BOX.intersectsBox(BB)) {
+        INTERSECTION.copy(ACTOR_BOX);
+        INTERSECTION.intersect(BB);
+        INTERSECTION.getSize(ITRS_SIZE);
+        ACTOR_BOX.getCenter(CENTER1);
+        BB.getCenter(CENTER2);
+        const dir = CENTER1.sub(CENTER2);
+        if (ITRS_SIZE.x < ITRS_SIZE.z) {
+            DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
+        } else {
+            DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
+        }
+        actor.physics.position.add(DIFF);
+        position.add(DIFF);
+        ACTOR_BOX.translate(DIFF);
     }
 }
