@@ -289,9 +289,15 @@ export default class Editor extends React.Component {
     selectMainAreaContent(area, options) {
         DebugData.scope = {};
         if (this.state.mainData && this.state.mainData.state) {
-            const {renderer} = this.state.mainData.state;
+            const {renderer, game} = this.state.mainData.state;
             if (renderer) {
                 renderer.dispose();
+            }
+            if (game) {
+                const audioMenuManager = game.getAudioMenuManager();
+                audioMenuManager.getMusicSource().stop();
+                const audioManager = game.getAudioManager();
+                audioManager.getMusicSource().stop();
             }
         }
         this.setState({

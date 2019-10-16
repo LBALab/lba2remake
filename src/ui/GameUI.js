@@ -318,6 +318,11 @@ export default class GameUI extends FrameListener {
                     if (renderer) {
                         renderer.dispose();
                     }
+                    const game = this.state.game;
+                    if (game) {
+                        const audioMenuManager = game.getAudioMenuManager();
+                        audioMenuManager.getMusicSource().stop();
+                    }
                     if ('exitPointerLock' in document) {
                         document.exitPointerLock();
                     }
@@ -329,6 +334,11 @@ export default class GameUI extends FrameListener {
                 const renderer = this.state.renderer;
                 if (renderer) {
                     renderer.dispose();
+                }
+                const game = this.state.game;
+                if (game) {
+                    const audioMenuManager = game.getAudioMenuManager();
+                    audioMenuManager.getMusicSource().stop();
                 }
                 if ('exitPointerLock' in document) {
                     document.exitPointerLock();
