@@ -9,7 +9,7 @@ const menuItems = [
     { item: 'LoadGame', index: 72, isVisible: false, isEnabled: false, text: null },
     { item: 'SaveGame', index: 73, isVisible: false, isEnabled: false, text: null },
     { item: 'Teleport', index: -1, isVisible: true, isEnabled: true, text: 'Teleport' },
-    { item: 'Editor', index: -2, isVisible: true, isEnabled: true, text: 'Editor Mode' },
+    { item: 'Editor', index: -2, isVisible: true, isEnabled: true, text: 'Editor' },
     { item: 'ExitEditor', index: -3, isVisible: true, isEnabled: true, text: 'Exit Editor' },
     { item: 'Options', index: 74, isVisible: true, isEnabled: false, text: null },
     { item: 'Quit', index: 75, isVisible: false, isEnabled: false, text: null },
