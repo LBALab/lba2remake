@@ -1,22 +1,16 @@
 import * as THREE from 'three';
 
+const STEP = 1 / 24;
+
 export function processCollisions(grid, scene, actor) {
     const basePos = actor.threeObject.position.clone();
-    basePos.multiplyScalar(1 / 24);
     const position = actor.physics.position.clone();
-    position.multiplyScalar(1 / 24);
-    const savedY = position.y;
-    position.y = basePos.y;
-    let dx = 64 - Math.floor(position.x * 32);
-    let dz = Math.floor(position.z * 32);
-    if (actor.props.flags.hasCollisionBricks) {
-        processBoxIntersections(grid, actor, position, dx, dz);
-    }
-    dx = 64 - Math.floor(position.x * 32);
-    dz = Math.floor(position.z * 32);
+    basePos.multiplyScalar(STEP);
+    position.multiplyScalar(STEP);
+    const dx = 64 - Math.floor(position.x * 32);
+    const dz = Math.floor(position.z * 32);
     const cell = grid.cells[(dx * 64) + dz];
     actor.floorSound = -1;
-    position.y = savedY;
     if (cell
         && (actor.props.flags.hasCollisionFloor
             || actor.props.flags.canFall)) {
@@ -43,14 +37,17 @@ export function processCollisions(grid, scene, actor) {
                     y = bb.max.y;
                     break;
             }
-            const minY = i > 0 ? bb.min.y : -Infinity;
-            if (basePos.y > minY && position.y < y) {
+            const minY = i > 0 ? bb.min.y - (2 * STEP) : -Infinity;
+            if (basePos.y >= minY && position.y < y) {
                 position.y = Math.max(y, position.y);
                 break;
             }
         }
     }
     position.y = Math.max(0, position.y);
+    if (actor.props.flags.hasCollisionBricks) {
+        processBoxIntersections(grid, actor, position, dx, dz);
+    }
     position.multiplyScalar(24);
     actor.physics.position.copy(position);
 }
