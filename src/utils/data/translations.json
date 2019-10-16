@@ -1,0 +1,12 @@
+{
+    "EN": {
+        "teleport": "Teleport",
+        "editor": "Editor",
+        "exitEditor": "Exit Editor"
+    },
+    "FR": {
+        "teleport": "Téléporter",
+        "editor": "Editeur",
+        "exitEditor": "Quitter l'éditeur"
+    }
+}

@@ -5,6 +5,7 @@ import { createHands, handlePicking } from './vrHands';
 import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
 import ControllerScreens from './data/controllerScreens';
 import { drawFrame } from './vrUtils';
+import tr from '../../utils/tr';
 
 let menuNode = null;
 let teleportMenu = null;
@@ -12,16 +13,16 @@ let mainMenu = null;
 let controllerInfo = null;
 let resume = null;
 
-export function createMenu(menuTexts, renderer, light) {
+export function createMenu(game, renderer, light) {
     menuNode = new THREE.Object3D();
 
     mainMenu = new THREE.Object3D();
     menuNode.add(mainMenu);
     resume = createMenuItem({
         // Resume Game
-        text: menuTexts[70].value,
+        text: game.menuTexts[70].value,
         y: 150,
-        callback: ({game}) => {
+        callback: () => {
             const audioMenuManager = game.getAudioMenuManager();
             audioMenuManager.getMusicSource().stop();
             game.resume();
@@ -31,18 +32,18 @@ export function createMenu(menuTexts, renderer, light) {
     mainMenu.add(resume);
     mainMenu.add(createMenuItem({
         // New Game
-        text: menuTexts[71].value,
+        text: game.menuTexts[71].value,
         y: 0,
-        callback: ({game, sceneManager}) => {
+        callback: ({sceneManager}) => {
             game.resume();
             game.resetState();
             sceneManager.hideMenuAndGoto(0, false);
         }
     }));
     mainMenu.add(createMenuItem({
-        text: 'Teleport',
+        text: tr(game, 'teleport'),
         y: -150,
-        callback: ({game}) => {
+        callback: () => {
             game.setUiState({ teleportMenu: true });
         }
     }));

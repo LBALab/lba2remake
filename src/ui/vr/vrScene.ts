@@ -3,7 +3,7 @@ import { getVR3DCamera } from '../../cameras/vr/vr3d';
 import { createFPSCounter } from './vrFPS';
 import { createMenu, updateMenu } from './vrMenu';
 
-export function loadVRScene(menuTexts, renderer) {
+export function loadVRScene(game, renderer) {
     const threeScene = new THREE.Scene();
     const camera = getVR3DCamera();
 
@@ -27,7 +27,7 @@ export function loadVRScene(menuTexts, renderer) {
     const fps = createFPSCounter(renderer);
     camera.controlNode.add(fps);
 
-    const menu = createMenu(menuTexts, renderer, light);
+    const menu = createMenu(game, renderer, light);
     threeScene.add(menu);
 
     threeScene.add(camera.controlNode);

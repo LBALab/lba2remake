@@ -418,9 +418,6 @@ export default class GameUI extends FrameListener {
     }
 
     renderGUI() {
-        if (this.state.isPresenting)
-            return null;
-
         return <React.Fragment>
             <CinemaEffect enabled={this.state.cinema} />
             <TextInterjections
@@ -430,6 +427,7 @@ export default class GameUI extends FrameListener {
             />
             <Video video={this.state.video} renderer={this.state.renderer} />
             <Menu
+                game={this.state.game}
                 params={this.props.params}
                 showMenu={this.state.showMenu && !this.state.teleportMenu}
                 texts={this.state.game.menuTexts}

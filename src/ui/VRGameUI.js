@@ -200,7 +200,7 @@ export default class VRGameUI extends FrameListener {
             this.showMenu();
         }
         const { game, renderer } = this.state;
-        const vrScene = loadVRScene(game.menuTexts, renderer);
+        const vrScene = loadVRScene(game, renderer);
         this.setState({ vrScene }, this.saveData);
     }
 
