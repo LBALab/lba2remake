@@ -51,7 +51,7 @@ export function createMenu(game, renderer, light) {
     const hands = createHands(renderer);
     menuNode.add(hands);
 
-    teleportMenu = createTeleportMenu(light);
+    teleportMenu = createTeleportMenu(game, light);
     menuNode.add(teleportMenu);
 
     return menuNode;
@@ -72,6 +72,12 @@ export function updateMenu(game, sceneManager) {
             }
         } else {
             handlePicking(mainMenu.children, {game, sceneManager});
+            if (controlsState.backButton && inGameMenu) {
+                const audioMenuManager = game.getAudioMenuManager();
+                audioMenuManager.getMusicSource().stop();
+                game.resume();
+                game.setUiState({ showMenu: false });
+            }
         }
     } else if (controlsState.backButton) {
         game.pause();

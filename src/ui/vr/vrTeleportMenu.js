@@ -8,6 +8,7 @@ import { handlePicking, performRaycasting } from './vrHands';
 import { drawFrame } from './vrUtils';
 import sceneMapping from '../../island/data/sceneMapping';
 import islandOffsets from './data/islandOffsets';
+import tr from '../../utils/tr';
 
 let islandWrapper = null;
 let activeIsland = null;
@@ -27,7 +28,7 @@ const invWorldMat = new THREE.Matrix4();
 
 const planets = LocationsNode.children;
 
-export function createTeleportMenu(sceneLight) {
+export function createTeleportMenu(game, sceneLight) {
     const teleportMenu = new THREE.Object3D();
 
     for (let i = 0; i < 4; i += 1) {
@@ -56,9 +57,9 @@ export function createTeleportMenu(sceneLight) {
     refreshIslandButtons(teleportMenu);
 
     const backButton = createButton({
-        text: 'Back to main menu',
+        text: tr(game, 'backToMainMenu'),
         y: 230,
-        callback: ({game}) => {
+        callback: () => {
             game.setUiState({ teleportMenu: false });
         }
     });
@@ -299,7 +300,7 @@ function createIslandItem({x, y, text, idx, callback}) {
 }
 
 function createButton({x, y, text, callback}) {
-    const width = 400;
+    const width = 500;
     const height = 75;
     const {ctx, mesh} = createScreen({
         width,

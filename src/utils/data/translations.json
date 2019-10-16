@@ -2,11 +2,13 @@
     "EN": {
         "teleport": "Teleport",
         "editor": "Editor",
-        "exitEditor": "Exit Editor"
+        "exitEditor": "Exit Editor",
+        "backToMainMenu": "Back to Main Menu"
     },
     "FR": {
         "teleport": "Téléporter",
         "editor": "Editeur",
-        "exitEditor": "Quitter l'éditeur"
+        "exitEditor": "Quitter l'éditeur",
+        "backToMainMenu": "Retour au menu principal"
     }
 }
