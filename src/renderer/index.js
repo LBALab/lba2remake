@@ -130,9 +130,9 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions = {}) {
         renderer.webglVersion = webglVersion;
 
         if (!(window.WebGL2RenderingContext
-                && renderer.context instanceof window.WebGL2RenderingContext)) {
-            renderer.context.getExtension('EXT_shader_texture_lod');
-            renderer.context.getExtension('OES_standard_derivatives');
+                && renderer.getContext() instanceof window.WebGL2RenderingContext)) {
+            renderer.getContext().getExtension('EXT_shader_texture_lod');
+            renderer.getContext().getExtension('OES_standard_derivatives');
         }
         return renderer;
     } catch (err) {
