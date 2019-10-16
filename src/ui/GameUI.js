@@ -312,20 +312,21 @@ export default class GameUI extends FrameListener {
                 break;
             }
             case -2: { // Editor Mode
-                const hash = window.location.hash;
-                if (hash === '') {
-                    const renderer = this.state.renderer;
-                    if (renderer) {
-                        renderer.dispose();
-                    }
-                    const game = this.state.game;
-                    if (game) {
-                        const audioMenuManager = game.getAudioMenuManager();
-                        audioMenuManager.getMusicSource().stop();
-                    }
-                    if ('exitPointerLock' in document) {
-                        document.exitPointerLock();
-                    }
+                const renderer = this.state.renderer;
+                if (renderer) {
+                    renderer.dispose();
+                }
+                const game = this.state.game;
+                if (game) {
+                    const audioMenuManager = game.getAudioMenuManager();
+                    audioMenuManager.getMusicSource().stop();
+                }
+                if ('exitPointerLock' in document) {
+                    document.exitPointerLock();
+                }
+                if (window.location.hash) {
+                    window.location.hash = `${window.location.hash}&editor=true`;
+                } else {
                     window.location.hash = 'editor=true';
                 }
                 break;
