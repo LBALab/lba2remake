@@ -151,7 +151,8 @@ function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
         controlsState.action = 0;
         if (left.buttonX.tapped
             || left.buttonY.tapped
-            || right.buttonA.tapped) {
+            || right.buttonA.tapped
+            || right.buttonB.tapped) {
             controlsState.skipListener();
             return;
         }
@@ -163,7 +164,7 @@ function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
     // Action button
     controlsState.action = left.buttonX.tapped || right.buttonA.tapped ? 1 : 0;
 
-    controlsState.backButton = right.buttonB.tapped;
+    controlsState.backButton = left.buttonY.tapped;
 
     if (left.buttonY.longPressed) {
         switchStats();
@@ -177,7 +178,7 @@ function unifiedOculusTouchHandler({left, right}, sceneManager, game) {
     } else {
         controlsState.weapon = left.trigger.pressed ? 1 : 0;
     }
-    if (left.buttonY.tapped) {
+    if (right.buttonB.tapped) {
         hero.behaviour = (hero.behaviour + 1) % 4;
         if (hero.behaviour === 1) { // skip sporty
             hero.behaviour += 1;

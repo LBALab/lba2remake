@@ -58,7 +58,7 @@ export default {
                 name: 'X',
                 x: 435,
                 y: 355,
-                fontSize: 22,
+                fontSize: 20,
                 textAlign: 'left',
                 text: 'Action'
             },
@@ -66,15 +66,15 @@ export default {
                 name: 'Y',
                 x: 438,
                 y: 313,
-                fontSize: 18,
+                fontSize: 20,
                 textAlign: 'left',
-                text: 'Switch\nBehaviour'
+                text: 'Back'
             },
             {
                 name: 'A',
                 x: 769,
                 y: 355,
-                fontSize: 22,
+                fontSize: 20,
                 textAlign: 'right',
                 text: 'Action'
             },
@@ -82,9 +82,9 @@ export default {
                 name: 'B',
                 x: 766,
                 y: 309,
-                fontSize: 22,
+                fontSize: 20,
                 textAlign: 'right',
-                text: 'Back'
+                text: 'Switch Behaviour'
             },
             {
                 name: 'Start',
