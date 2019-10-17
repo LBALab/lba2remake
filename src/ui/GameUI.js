@@ -23,6 +23,7 @@ import Menu from './game/Menu';
 import TeleportMenu from './game/TeleportMenu';
 import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
+import {KeyHelpIcon, KeyHelpScreen} from './game/KeyboardHelp';
 import {sBind} from '../utils.ts';
 import {updateLabels} from './editor/labels';
 
@@ -43,6 +44,8 @@ export default class GameUI extends FrameListener {
         this.listener = this.listener.bind(this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
+        this.openKeyHelp = this.openKeyHelp.bind(this);
+        this.closeKeyHelp = this.closeKeyHelp.bind(this);
         this.pick = this.pick.bind(this);
         this.startNewGameScene = this.startNewGameScene.bind(this);
         this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
@@ -76,7 +79,8 @@ export default class GameUI extends FrameListener {
                 menuTexts: null,
                 showMenu: false,
                 inGameMenu: false,
-                teleportMenu: false
+                teleportMenu: false,
+                keyHelp: false
             };
 
             clock.start();
@@ -204,6 +208,14 @@ export default class GameUI extends FrameListener {
             this.state.game.resume();
         this.setState({showMenu: false, inGameMenu: false}, this.saveData);
         this.canvas.focus();
+    }
+
+    openKeyHelp() {
+        this.setState({keyHelp: true}, this.saveData);
+    }
+
+    closeKeyHelp() {
+        this.setState({keyHelp: false}, this.saveData);
     }
 
     listener(event) {
@@ -434,6 +446,8 @@ export default class GameUI extends FrameListener {
                 inGameMenu={this.state.inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />
+            {this.state.showMenu && !this.state.teleportMenu
+                && <KeyHelpIcon open={this.openKeyHelp}/>}
             <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} />
             {this.state.teleportMenu
                 && <TeleportMenu
@@ -458,6 +472,7 @@ export default class GameUI extends FrameListener {
                 onChoiceChanged={this.onAskChoiceChanged}
             /> : null}
             {!this.state.showMenu ? <FoundObject foundObject={this.state.foundObject} /> : null}
+            {this.state.keyHelp && <KeyHelpScreen close={this.closeKeyHelp}/>}
         </React.Fragment>;
     }
 }
