@@ -133,15 +133,15 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
                 // hero.props.runtimeFlags.isTurning = true;
             } else {
                 animIndex = controlsState.controlVector.x === 1
-                    ? AnimType.DODGE_RIGHT
-                    : AnimType.DODGE_LEFT;
+                    ? AnimType.DODGE_LEFT
+                    : AnimType.DODGE_RIGHT;
                 if (behaviour === BehaviourMode.ATHLETIC) {
                     // for some reason Sportif mode as the animations step inversed
                     hero.physics.temp.position.x *= -1;
                     hero.physics.temp.position.z *= -1;
                     animIndex = controlsState.controlVector.x === 1
-                        ? AnimType.DODGE_LEFT
-                        : AnimType.DODGE_RIGHT;
+                        ? AnimType.DODGE_RIGHT
+                        : AnimType.DODGE_LEFT;
                 }
             }
         }
