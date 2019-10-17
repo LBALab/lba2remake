@@ -20,6 +20,7 @@ export function makeVRControls(sceneManager: any, game: any) {
                 if (gamepad) { // && (gamepad.pose || gamepad.displayId)) {
                     updateState(gamepad);
                     switch (gamepad.id) {
+                        case 'Gear VR Controller':
                         case 'Oculus Go Controller':
                         // case 'Oculus Remote':
                             handleOculusGoController(gamepad, sceneManager, game);
