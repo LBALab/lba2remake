@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import {createState} from './state';
 import {createAudioManager, createMusicManager} from '../audio';
 import {loadTexts} from '../text';
+import {getLanguageConfig} from '../lang';
 import DebugData from '../ui/editor/DebugData';
 
 export function createGame(params: any,
@@ -12,7 +13,7 @@ export function createGame(params: any,
     let isPaused = false;
     let isLoading = false;
 
-    let state = createState(params);
+    let state = createState();
 
     const audio = createAudioManager(state);
     const audioMenu = createMusicManager(state);
@@ -39,7 +40,7 @@ export function createGame(params: any,
 
         /* @inspector(locate) */
         resetState() {
-            state = createState(params);
+            state = createState();
             this.resetControlsState();
         },
 
@@ -140,15 +141,15 @@ export function createGame(params: any,
 
         /* @inspector(locate) */
         async preload() {
-            const langCode = state.config.languageVoice.code;
+            const {language, languageVoice} = getLanguageConfig();
             const [menuTexts, gameTexts] = await Promise.all([
-                loadTexts(state.config.language, 0),
-                loadTexts(state.config.language, 4),
+                loadTexts(language, 0),
+                loadTexts(language, 4),
                 preloadFile('images/2_screen_menubg_extended.png', 'Menu Background'),
                 preloadFile('images/remake_logo.png', 'Logo'),
                 preloadFile('data/RESS.HQR', 'Resources'),
-                preloadFile(`data/VOX/${langCode}_GAM_AAC.VOX`, 'Main Voices'),
-                preloadFile(`data/VOX/${langCode}_000_AAC.VOX`, 'Voices'),
+                preloadFile(`data/VOX/${languageVoice.code}_GAM_AAC.VOX`, 'Main Voices'),
+                preloadFile(`data/VOX/${languageVoice.code}_000_AAC.VOX`, 'Voices'),
                 preloadFile('data/MUSIC/LOGADPCM.mp4', 'Adeline Theme'),
                 preloadFile('data/MUSIC/JADPCM15.mp4', 'Main Theme'),
                 preloadFile('data/MUSIC/JADPCM16.mp4', 'First Song'),

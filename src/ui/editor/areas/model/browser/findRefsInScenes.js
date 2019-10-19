@@ -3,7 +3,7 @@ import DebugData, {
     loadSceneMetaData,
     getObjectName
 } from '../../../DebugData';
-import TextData from '../../../../../text/data';
+import {getLanguageConfig} from '../../../../../lang';
 import LocationsNode from '../../gameplay/locator/LocationsNode';
 import {loadSceneData} from '../../../../../scene';
 import {makeOutlinerArea} from '../../utils/outliner';
@@ -11,7 +11,7 @@ import {parseScript} from '../../../../../scripting/parser';
 
 export async function findRefsInScenes(type, value) {
     const sceneList = times(222);
-    const language = TextData.LANGUAGE[0];
+    const {language} = getLanguageConfig();
     const results = await Promise.all(
         map(sceneList, async (idx) => {
             const [sceneData] = await Promise.all([

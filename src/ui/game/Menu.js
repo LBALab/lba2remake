@@ -1,6 +1,6 @@
 import React from 'react';
 import { map, each, filter } from 'lodash';
-import tr from '../../utils/tr';
+import {tr} from '../../lang';
 
 import '../styles/menu.scss';
 
@@ -40,7 +40,7 @@ export default class Menu extends React.Component {
             const items = filter(menu, 'isVisible');
             each(items, (i) => {
                 if (i.textId) {
-                    i.text = tr(newProps.game, i.textId);
+                    i.text = tr(i.textId);
                 } else {
                     i.text = newProps.texts[i.index].value;
                 }

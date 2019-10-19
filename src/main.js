@@ -11,11 +11,13 @@ import {loadParams} from './params.ts';
 import {loadGameMetaData, loadModelsMetaData, loadIslandsMetaData} from './ui/editor/DebugData';
 import {CrashHandler} from './crash_reporting';
 import ChangeLog from './ui/ChangeLog';
+import { initLanguageConfig } from './lang';
 
 class Root extends React.Component {
     constructor(props) {
         super(props);
         const params = loadParams();
+        initLanguageConfig(params);
         this.state = {
             params,
             changelog: false,

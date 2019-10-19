@@ -1,0 +1,60 @@
+[
+    {
+        "index": 0,
+        "name": "English",
+        "code": "EN",
+        "culture": "en-GB",
+        "charmap": "default",
+        "hasVoice": true
+    },
+    {
+        "index": 1,
+        "name": "Français",
+        "code": "FR",
+        "culture": "fr-FR",
+        "charmap": "default",
+        "hasVoice": true
+    },
+    {
+        "index": 2,
+        "name": "Deutsch",
+        "code": "DE",
+        "culture": "de-DE",
+        "charmap": "default",
+        "hasVoice": true
+    },
+    {
+        "index": 3,
+        "name": "Español",
+        "code": "SP",
+        "culture": "es-ES",
+        "charmap": "default",
+        "hasVoice": false
+    },
+    {
+        "index": 4,
+        "name": "Italiano",
+        "code": "IT",
+        "culture": "it-IT",
+        "charmap": "default",
+        "hasVoice": false
+    },
+    {
+        "index": 5,
+        "name": "Português",
+        "code": "PO",
+        "culture": "pt-PT",
+        "charmap": "default",
+        "hasVoice": false
+    },
+    {
+        "index": 0,
+        "name": "Magyar",
+        "code": "HUN",
+        "culture": "hu-HU",
+        "charmap": "default",
+        "hasVoice": false,
+        "isFan": true,
+        "author": "Gergely"
+    }
+]

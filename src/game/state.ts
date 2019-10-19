@@ -1,22 +1,13 @@
-import {findIndex} from 'lodash';
-import TextData from '../text/data';
+import {getLanguageConfig} from '../lang';
 
-export function createState(params) {
-    const lang = params.lang || navigator.language.substring(0, 2);
-    const language = findIndex(TextData.LANGUAGE, (l: any) => l.culture.substring(0, 2) === lang);
-    const languageV = findIndex(
-        TextData.LANGUAGE,
-        (l: any) => l.culture.substring(0, 2) === lang && l.hasVoice
-    );
+export function createState() {
     return {
-        config: {
-            language: TextData.LANGUAGE[language !== -1 ? language : 0],
-            languageVoice: TextData.LANGUAGE[languageV !== -1 ? languageV : 0],
+        config: Object.assign({
             displayText: true,
             musicVolume: 0.8,
             soundFxVolume: 0.5,
             voiceVolume: 1.0
-        },
+        }, getLanguageConfig()),
         hero: {
             behaviour: 0,
             prevBehaviour: 0,

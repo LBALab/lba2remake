@@ -5,7 +5,7 @@ import { createHands, handlePicking } from './vrHands';
 import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
 import ControllerScreens from './data/controllerScreens';
 import { drawFrame } from './vrUtils';
-import tr from '../../utils/tr';
+import {tr} from '../../lang';
 
 let menuNode = null;
 let teleportMenu = null;
@@ -41,7 +41,7 @@ export function createMenu(game, renderer, light) {
         }
     }));
     mainMenu.add(createMenuItem({
-        text: tr(game, 'teleport'),
+        text: tr('teleport'),
         y: -150,
         callback: () => {
             game.setUiState({ teleportMenu: true });
@@ -51,7 +51,7 @@ export function createMenu(game, renderer, light) {
     const hands = createHands(renderer);
     menuNode.add(hands);
 
-    teleportMenu = createTeleportMenu(game, light);
+    teleportMenu = createTeleportMenu(light);
     menuNode.add(teleportMenu);
 
     return menuNode;

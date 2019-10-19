@@ -23,6 +23,7 @@ import { getIso3DCamera } from '../cameras/iso3d';
 import { getVR3DCamera } from '../cameras/vr/vr3d';
 import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { angleToRad } from '../utils/lba';
+import { getLanguageConfig } from '../lang';
 
 declare global {
     var ga: Function;
@@ -138,7 +139,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
 }
 
 async function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent) {
-    const sceneData = await loadSceneData(game.getState().config.language, index);
+    const sceneData = await loadSceneData(getLanguageConfig().language, index);
     if (params.editor) {
         await loadSceneMetaData(index);
     }
