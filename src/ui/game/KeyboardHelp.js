@@ -1,5 +1,6 @@
 import React from 'react';
 import {each} from 'lodash';
+import {tr} from '../../lang';
 
 const overlay = {
     position: 'absolute',
@@ -27,7 +28,7 @@ export function KeyHelpIcon(props) {
         <span style={frame} onClick={props.open}>
             <img src="images/keyhelp.png"/>
             <br/>
-            Help
+            {tr('help')}
         </span>
     </div>;
 }

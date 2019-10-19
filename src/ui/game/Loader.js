@@ -2,6 +2,7 @@ import React from 'react';
 import {extend, isEmpty, map, entries, sortBy} from 'lodash';
 import {fullscreen} from '../styles/index';
 import Ribbon from './Ribbon';
+import {tr} from '../../lang';
 
 const overlay = extend({background: 'black'}, fullscreen);
 
@@ -67,7 +68,7 @@ export default class Loader extends React.Component {
                     <div className="n5"/>
                 </div>
                 <div className="lds-roller-text">
-                    <span className="lds-title">Loading</span><br/>
+                    <span className="lds-title">{tr('loading')}</span><br/>
                     {content}
                 </div>
             </div>

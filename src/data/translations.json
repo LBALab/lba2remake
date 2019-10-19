@@ -1,11 +1,15 @@
 {
     "EN": {
+        "loading": "Loading",
+        "help": "Help",
         "teleport": "Teleport",
         "editor": "Editor",
         "exitEditor": "Exit Editor",
         "backToMainMenu": "Back to Main Menu"
     },
     "FR": {
+        "loading": "Chargement",
+        "help": "Aide",
         "teleport": "Téléporter",
         "editor": "Editeur",
         "exitEditor": "Quitter l'éditeur",
