@@ -70,22 +70,20 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
     ACTOR_BOX.translate(DIFF);
     for (let ox = -1; ox < 2; ox += 1) {
         for (let oz = -1; oz < 2; oz += 1) {
-            if (!(ox === 0 && oz === 0)) {
-                const cell = grid.cells[((dx + ox) * 64) + (dz + oz)];
-                if (cell) {
-                    for (let i = 0; i < cell.columns.length; i += 1) {
-                        const column = cell.columns[i];
-                        BB.copy(column.box);
-                        if (column.shape !== 1) {
-                            BB.max.y -= 1 / 24;
-                        }
-                        intersectBox(actor, position);
+            const cell = grid.cells[((dx + ox) * 64) + (dz + oz)];
+            if (cell && cell.columns.length > 0) {
+                for (let i = 0; i < cell.columns.length; i += 1) {
+                    const column = cell.columns[i];
+                    BB.copy(column.box);
+                    if (column.shape !== 1) {
+                        BB.max.y -= 1 / 24;
                     }
-                } else {
-                    BB.min.set((64 - (dx + ox)) / 32, -Infinity, (dz + oz) / 32);
-                    BB.max.set((65 - (dx + ox)) / 32, Infinity, (dz + oz + 1) / 32);
                     intersectBox(actor, position);
                 }
+            } else {
+                BB.min.set((64 - (dx + ox)) / 32, -Infinity, (dz + oz) / 32);
+                BB.max.set((65 - (dx + ox)) / 32, Infinity, (dz + oz + 1) / 32);
+                intersectBox(actor, position);
             }
         }
     }
