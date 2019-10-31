@@ -34,26 +34,41 @@ export function loadGrid(renderer, params, bkg, bricks, mask, palette, entry) {
                 if (block)
                     offset += 2;
 
+                let isValid = false;
+
                 for (let j = 0; j < height; j += 1) {
                     switch (type) {
                         case 0:
                             blocks.push(null);
                             break;
-                        case 1:
-                            blocks.push({
-                                layout: gridData.getUint8(offset) - 1,
-                                block: gridData.getUint8(offset + 1)
-                            });
+                        case 1: {
+                            const layout = gridData.getUint8(offset) - 1;
+                            if (layout !== -1) {
+                                isValid = true;
+                                blocks.push({
+                                    layout,
+                                    block: gridData.getUint8(offset + 1)
+                                });
+                            } else {
+                                blocks.push(null);
+                            }
+
                             offset += 2;
                             break;
+                        }
                         case 2:
-                            blocks.push(block);
+                            if (block && block.layout !== -1) {
+                                isValid = true;
+                                blocks.push(block);
+                            } else {
+                                blocks.push(null);
+                            }
                             break;
                         case 3:
                             throw new Error('Unsupported block type');
                     }
                 }
-                if (type !== 0) {
+                if (type !== 0 && isValid) {
                     const x = Math.floor(idx / 64) - 1;
                     const z = idx % 64;
 
@@ -86,6 +101,9 @@ export function loadGrid(renderer, params, bkg, bricks, mask, palette, entry) {
 }
 
 function getBlockData(library, block) {
+    if (!block)
+        return null;
+
     const layout = library.layouts[block.layout];
     if (layout) {
         return layout.blocks[block.block];
