@@ -25,7 +25,9 @@
         "CameraEditor": "Camera\n(Editor)",
         "Dodge": "Dodge",
         "WeaponWIP": "Weapon (WIP)",
-        "Action": "Action"
+        "Action": "Action",
+        "PlayInVR": "Play in VR!",
+        "PlayOnScreen": "Play on screen"
     },
     "FR": {
         "loading": "Chargement",
@@ -53,6 +55,8 @@
         "CameraEditor": "Camera\n(Editeur)",
         "Dodge": "Esquiver",
         "WeaponWIP": "Arme\n(pas fini)",
-        "Action": "Action"
+        "Action": "Action",
+        "PlayInVR": "Jouer en VR!",
+        "PlayOnScreen": "Jouer sur l'écran"
     }
 }

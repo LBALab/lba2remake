@@ -13,6 +13,7 @@ import FrameListener from './utils/FrameListener';
 import Loader from './game/Loader';
 import {sBind} from '../utils.ts';
 import {loadVRScene, updateVRScene} from './vr/vrScene.ts';
+import {tr} from '../lang';
 
 export default class VRGameUI extends FrameListener {
     constructor(props) {
@@ -340,11 +341,11 @@ export default class VRGameUI extends FrameListener {
                 <div style={buttonStyle} onClick={this.requestPresence}>
                     <img style={imgStyle} src="images/vr_goggles.png"/>
                     <br/>
-                    Play in VR!
+                    {tr('PlayInVR')}
                 </div>
                 <br/><br/>
                 <div style={buttonStyle2} onClick={this.props.exitVR}>
-                    Play on screen
+                    {tr('PlayOnScreen')}
                 </div>
             </div>
         </div>;
