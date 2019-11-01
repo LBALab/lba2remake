@@ -27,7 +27,14 @@
         "WeaponWIP": "Weapon (WIP)",
         "Action": "Action",
         "PlayInVR": "Play in VR!",
-        "PlayOnScreen": "Play on screen"
+        "PlayOnScreen": "Play on screen",
+        "ExitVR": "Exit VR",
+        "Nothing": "Nothing",
+        "Jump": "Jump",
+        "CenterCamera": "Center Camera",
+        "HoldToRun": "Hold to Run",
+        "Back": "Back",
+        "SwitchBehaviour": "Switch Behaviour"
     },
     "FR": {
         "loading": "Chargement",
@@ -57,6 +64,13 @@
         "WeaponWIP": "Arme\n(pas fini)",
         "Action": "Action",
         "PlayInVR": "Jouer en VR!",
-        "PlayOnScreen": "Jouer sur l'écran"
+        "PlayOnScreen": "Jouer sur l'écran",
+        "ExitVR": "Sortir\nde la VR",
+        "Nothing": "Rien",
+        "Jump": "Sauter",
+        "CenterCamera": "Centrer Camera",
+        "HoldToRun": "Maintenir pour Courir",
+        "Back": "Retour",
+        "SwitchBehaviour": "Changer\nComportement"
     }
 }

@@ -3,7 +3,7 @@ import { each } from 'lodash';
 import { createScreen } from './vrScreen';
 import { createHands, handlePicking } from './vrHands';
 import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
-import ControllerScreens from './data/controllerScreens';
+import controllerScreens from './data/controllerScreens';
 import { drawFrame } from './vrUtils';
 import {tr} from '../../lang';
 
@@ -119,7 +119,7 @@ function createMenuItem({x, y, text, callback}) {
 }
 
 function createControllerInfo(type) {
-    const info = ControllerScreens[type];
+    const info = controllerScreens(type);
     const {ctx, mesh} = createScreen({
         width: info.width,
         height: info.height,

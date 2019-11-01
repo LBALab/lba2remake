@@ -1,4 +1,6 @@
-export default {
+import {tr} from '../../../lang';
+
+export default type => ({
     oculustouch: {
         width: 1200,
         height: 700,
@@ -12,7 +14,7 @@ export default {
                 y: 75,
                 fontSize: 22,
                 textAlign: 'left',
-                text: 'Walk / Run'
+                text: tr('WalkRun')
             },
             {
                 name: 'RThumbStick',
@@ -20,7 +22,7 @@ export default {
                 y: 72,
                 fontSize: 22,
                 textAlign: 'right',
-                text: '[N/A]'
+                text: tr('Nothing')
             },
             {
                 name: 'LTrigger',
@@ -28,7 +30,7 @@ export default {
                 y: 492,
                 fontSize: 22,
                 textAlign: 'left',
-                text: 'Jump'
+                text: tr('Jump')
             },
             {
                 name: 'RTrigger',
@@ -36,7 +38,7 @@ export default {
                 y: 492,
                 fontSize: 22,
                 textAlign: 'right',
-                text: 'Center Camera'
+                text: tr('CenterCamera')
             },
             {
                 name: 'LGrip',
@@ -44,7 +46,7 @@ export default {
                 y: 547,
                 fontSize: 22,
                 textAlign: 'left',
-                text: 'Hold to run'
+                text: tr('HoldToRun')
             },
             {
                 name: 'RGrip',
@@ -52,7 +54,7 @@ export default {
                 y: 544,
                 fontSize: 22,
                 textAlign: 'right',
-                text: '[N/A]'
+                text: tr('Nothing')
             },
             {
                 name: 'X',
@@ -60,7 +62,7 @@ export default {
                 y: 355,
                 fontSize: 20,
                 textAlign: 'left',
-                text: 'Action'
+                text: tr('Action')
             },
             {
                 name: 'Y',
@@ -68,7 +70,7 @@ export default {
                 y: 313,
                 fontSize: 20,
                 textAlign: 'left',
-                text: 'Back'
+                text: tr('Back')
             },
             {
                 name: 'A',
@@ -76,7 +78,7 @@ export default {
                 y: 355,
                 fontSize: 20,
                 textAlign: 'right',
-                text: 'Action'
+                text: tr('Action')
             },
             {
                 name: 'B',
@@ -84,7 +86,7 @@ export default {
                 y: 309,
                 fontSize: 20,
                 textAlign: 'right',
-                text: 'Switch Behaviour'
+                text: tr('SwitchBehaviour')
             },
             {
                 name: 'Start',
@@ -92,7 +94,7 @@ export default {
                 y: 271,
                 fontSize: 22,
                 textAlign: 'right',
-                text: 'Exit VR'
+                text: tr('ExitVR')
             },
             {
                 name: 'Oculus',
@@ -117,7 +119,7 @@ export default {
                 y: 94,
                 fontSize: 22,
                 textAlign: 'right',
-                text: 'Walk / Run'
+                text: tr('WalkRun')
             },
             {
                 name: 'Trigger',
@@ -125,7 +127,7 @@ export default {
                 y: 120,
                 fontSize: 22,
                 textAlign: 'left',
-                text: 'Center Camera'
+                text: tr('CenterCamera')
             },
             {
                 name: 'Back',
@@ -133,7 +135,7 @@ export default {
                 y: 373,
                 fontSize: 22,
                 textAlign: 'right',
-                text: 'Exit VR'
+                text: tr('ExitVR')
             },
             {
                 name: 'Oculus',
@@ -145,4 +147,4 @@ export default {
             },
         ]
     }
-};
+}[type]);
