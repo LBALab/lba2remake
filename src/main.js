@@ -11,6 +11,7 @@ import {loadParams} from './params.ts';
 import {loadGameMetaData, loadModelsMetaData, loadIslandsMetaData} from './ui/editor/DebugData';
 import {CrashHandler} from './crash_reporting';
 import ChangeLog from './ui/ChangeLog';
+import Disclaimer from './ui/Disclaimer';
 import { initLanguageConfig } from './lang';
 
 class Root extends React.Component {
@@ -22,11 +23,13 @@ class Root extends React.Component {
             params,
             changelog: false,
             vr: 'getVRDisplays' in navigator,
+            showDisclaimer: localStorage.getItem('disclaimerShown') !== 'yes'
         };
         this.onHashChange = this.onHashChange.bind(this);
         this.closeChangeLog = this.closeChangeLog.bind(this);
         this.openChangeLog = this.openChangeLog.bind(this);
         this.exitVR = this.exitVR.bind(this);
+        this.acceptDisclaimer = this.acceptDisclaimer.bind(this);
         if (params.editor) {
             loadGameMetaData();
             loadModelsMetaData();
@@ -63,7 +66,15 @@ class Root extends React.Component {
         this.setState({ vr: false });
     }
 
+    acceptDisclaimer() {
+        localStorage.setItem('disclaimerShown', 'yes');
+        this.setState({ showDisclaimer: false });
+    }
+
     render() {
+        if (this.state.showDisclaimer) {
+            return <Disclaimer accept={this.acceptDisclaimer}/>;
+        }
         let content;
         if (this.state.params.editor) {
             content = <Editor params={this.state.params} ticker={this.props.ticker} />;
