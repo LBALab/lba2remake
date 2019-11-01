@@ -41,7 +41,7 @@ export default class Loader extends React.Component {
     render() {
         const compStyle = {
             display: 'block',
-            margin: 0,
+            margin: 'auto',
             padding: 0,
             width: 128,
             height: 14 * 6,

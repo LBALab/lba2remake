@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {createState} from './state';
 import {createAudioManager, createMusicManager} from '../audio';
 import {loadTexts} from '../text';
-import {getLanguageConfig} from '../lang';
+import {getLanguageConfig, tr} from '../lang';
 import DebugData from '../ui/editor/DebugData';
 
 export function createGame(params: any,
@@ -145,15 +145,15 @@ export function createGame(params: any,
             const [menuTexts, gameTexts] = await Promise.all([
                 loadTexts(language, 0),
                 loadTexts(language, 4),
-                preloadFile('images/2_screen_menubg_extended.png', 'Menu Background'),
-                preloadFile('images/remake_logo.png', 'Logo'),
-                preloadFile('data/RESS.HQR', 'Resources'),
-                preloadFile(`data/VOX/${languageVoice.code}_GAM_AAC.VOX`, 'Main Voices'),
-                preloadFile(`data/VOX/${languageVoice.code}_000_AAC.VOX`, 'Voices'),
-                preloadFile('data/MUSIC/LOGADPCM.mp4', 'Adeline Theme'),
-                preloadFile('data/MUSIC/JADPCM15.mp4', 'Main Theme'),
-                preloadFile('data/MUSIC/JADPCM16.mp4', 'First Song'),
-                preloadFile('data/MUSIC/Track6.mp4', 'Menu Music'),
+                preloadFile('images/2_screen_menubg_extended.png', tr('MenuBackground')),
+                preloadFile('images/remake_logo.png', tr('Logo')),
+                preloadFile('data/RESS.HQR', tr('Resources')),
+                preloadFile(`data/VOX/${languageVoice.code}_GAM_AAC.VOX`, tr('MainVoices')),
+                preloadFile(`data/VOX/${languageVoice.code}_000_AAC.VOX`, tr('Voices')),
+                preloadFile('data/MUSIC/LOGADPCM.mp4', tr('AdelineTheme')),
+                preloadFile('data/MUSIC/JADPCM15.mp4', tr('MainTheme')),
+                preloadFile('data/MUSIC/JADPCM16.mp4', tr('FirstSong')),
+                preloadFile('data/MUSIC/Track6.mp4', tr('MenuMusic')),
             ]);
             this.menuTexts = menuTexts;
             this.texts = gameTexts;

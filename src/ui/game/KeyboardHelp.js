@@ -88,14 +88,14 @@ const onKeyUp = (e) => {
     e.stopPropagation();
 };
 
-const labels = [
+const labels = () => [
     {
         name: 'WASD',
         x: 202,
         y: 250,
         fontSize: 22,
         textAlign: 'right',
-        text: 'Move camera\n(Editor)'
+        text: tr('MoveCameraEditor')
     },
     {
         name: '1,2,3,4',
@@ -103,7 +103,7 @@ const labels = [
         y: 65,
         fontSize: 22,
         textAlign: 'center',
-        text: 'Select Behaviour'
+        text: tr('SelectBehaviour')
     },
     {
         name: 'F',
@@ -111,7 +111,7 @@ const labels = [
         y: 102,
         fontSize: 22,
         textAlign: 'left',
-        text: 'Show FPS'
+        text: tr('ShowFPS')
     },
     {
         name: 'P',
@@ -119,7 +119,7 @@ const labels = [
         y: 114,
         fontSize: 22,
         textAlign: 'left',
-        text: 'Pause'
+        text: tr('Pause')
     },
     {
         name: 'Enter',
@@ -127,7 +127,7 @@ const labels = [
         y: 330,
         fontSize: 22,
         textAlign: 'left',
-        text: 'Skip dialogs'
+        text: tr('SkipDialogs')
     },
     {
         name: 'Arrows',
@@ -135,7 +135,7 @@ const labels = [
         y: 576,
         fontSize: 22,
         textAlign: 'left',
-        text: 'Walk / Run'
+        text: tr('WalkRun')
     },
     {
         name: 'Space',
@@ -143,7 +143,7 @@ const labels = [
         y: 538,
         fontSize: 20,
         textAlign: 'left',
-        text: 'Action / Jump /\nFight / Crouch'
+        text: tr('ActionJumpFightCrouch')
     },
     {
         name: 'C',
@@ -151,7 +151,7 @@ const labels = [
         y: 586,
         fontSize: 22,
         textAlign: 'center',
-        text: 'Camera\n(Editor)'
+        text: tr('CameraEditor')
     },
     {
         name: 'X',
@@ -159,7 +159,7 @@ const labels = [
         y: 568,
         fontSize: 22,
         textAlign: 'center',
-        text: 'Dodge'
+        text: tr('Dodge')
     },
     {
         name: 'Alt',
@@ -167,7 +167,7 @@ const labels = [
         y: 545,
         fontSize: 22,
         textAlign: 'left',
-        text: 'Weapon (WIP)'
+        text: tr('WeaponWIP')
     },
     {
         name: 'Z',
@@ -175,7 +175,7 @@ const labels = [
         y: 574,
         fontSize: 22,
         textAlign: 'right',
-        text: 'Action'
+        text: tr('Action')
     }
 ];
 
@@ -195,7 +195,7 @@ const onCanvas = (canvas) => {
             ctx.shadowOffsetX = 2;
             ctx.shadowOffsetY = 2;
             ctx.drawImage(icon, 0, 0);
-            each(labels, (label) => {
+            each(labels(), (label) => {
                 ctx.textAlign = label.textAlign;
                 ctx.font = `${label.fontSize}px LBA`;
                 const lines = label.text.split('\n');
