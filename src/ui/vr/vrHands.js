@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { find } from 'lodash';
 
 const controllers = [];
 const targets = [];
@@ -8,6 +9,8 @@ const direction = new THREE.Vector3();
 const position = new THREE.Vector3();
 const offset = new THREE.Vector3();
 const worldOrientation = new THREE.Euler(0, -Math.PI, 0);
+const hovering = new Set();
+const hitOnFrame = new Set();
 
 export function createHands(renderer) {
     const handsRoot = new THREE.Object3D();
@@ -74,20 +77,36 @@ function makeTgt() {
 }
 
 export function handlePicking(objects, ctx) {
+    hitOnFrame.clear();
     for (let i = 0; i < targets.length; i += 1) {
         targets[i].visible = false;
     }
     performRaycasting(objects, ctx, menuHandler);
+    hovering.forEach((uuid) => {
+        if (!hitOnFrame.has(uuid)) {
+            hovering.delete(uuid);
+            const object = find(objects, o => o.uuid === uuid);
+            if (object && object.userData && object.userData.onLeave) {
+                object.userData.onLeave();
+            }
+        }
+    });
 }
 
 function menuHandler(idx, intersect, triggered, ctx) {
     const tgt = targets[idx];
+    const object = intersect.object;
     tgt.visible = true;
     tgt.position.copy(intersect.point);
     if (triggered) {
-        const userData = intersect.object.userData;
-        if (userData && userData.callback) {
-            userData.callback(ctx);
+        if (object.userData && object.userData.callback) {
+            object.userData.callback(ctx);
+        }
+    }
+    if (!hovering.has(object.uuid)) {
+        hovering.add(object.uuid);
+        if (object.userData && object.userData.onEnter) {
+            object.userData.onEnter();
         }
     }
 }
@@ -122,6 +141,7 @@ function raycastCtrl(idx, objects, handler, ctx) {
 
     if (intersects.length > 0) {
         const intersect = intersects[0];
+        hitOnFrame.add(intersect.object.uuid);
         handler(idx, intersect, triggered, ctx);
     }
 }

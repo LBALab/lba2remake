@@ -239,13 +239,15 @@ function createPlanetItem({x, y, text, icon: iconSrc, idx, callback}) {
     const icon = new Image(160, 160);
     icon.src = iconSrc;
 
+    let hovering = false;
+
     function draw() {
         const selected = idx === selectedPlanet;
         drawFrame(ctx, 0, 0, width, height, selected);
         ctx.font = '20px LBA';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = selected ? 'white' : 'grey';
+        ctx.fillStyle = selected || hovering ? 'white' : 'grey';
         ctx.shadowColor = 'black';
         ctx.shadowOffsetX = 2;
         ctx.shadowOffsetY = 2;
@@ -257,7 +259,17 @@ function createPlanetItem({x, y, text, icon: iconSrc, idx, callback}) {
     icon.onload = () => draw();
 
     mesh.visible = true;
-    mesh.userData = { callback };
+    mesh.userData = {
+        callback,
+        onEnter: () => {
+            hovering = true;
+            draw();
+        },
+        onLeave: () => {
+            hovering = false;
+            draw();
+        }
+    };
 
     return {mesh, draw};
 }
@@ -275,13 +287,15 @@ function createIslandItem({x, y, text, idx, callback}) {
     const icon = new Image(40, 40);
     icon.src = 'editor/icons/locations/island.svg';
 
-    function draw() {
+    let hovering = false;
+
+    const draw = () => {
         const selected = idx === selectedIsland;
         drawFrame(ctx, 0, 0, width, height, selected);
         ctx.font = '20px LBA';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = selected ? 'white' : 'grey';
+        ctx.fillStyle = selected || hovering ? 'white' : 'grey';
         ctx.shadowColor = 'black';
         ctx.shadowOffsetX = 2;
         ctx.shadowOffsetY = 2;
@@ -289,12 +303,22 @@ function createIslandItem({x, y, text, idx, callback}) {
         const metrics = ctx.measureText(text);
         ctx.drawImage(icon, 115 - (metrics.width * 0.5), 20, 40, 40);
         mesh.material.map.needsUpdate = true;
-    }
+    };
 
     icon.onload = () => draw();
 
     mesh.visible = true;
-    mesh.userData = { callback };
+    mesh.userData = {
+        callback,
+        onEnter: () => {
+            hovering = true;
+            draw();
+        },
+        onLeave: () => {
+            hovering = false;
+            draw();
+        }
+    };
 
     return {mesh, draw};
 }
@@ -308,18 +332,25 @@ function createButton({x, y, text, callback}) {
         x,
         y,
     });
-    drawFrame(ctx, 0, 0, width, height, true);
-    ctx.font = '30px LBA';
-    ctx.fillStyle = 'white';
-    ctx.shadowColor = 'black';
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, width / 2, height / 2);
-    mesh.material.map.needsUpdate = true;
+    const draw = (hovering = false) => {
+        drawFrame(ctx, 0, 0, width, height, hovering);
+        ctx.font = '30px LBA';
+        ctx.fillStyle = 'white';
+        ctx.shadowColor = 'black';
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, width / 2, height / 2);
+        mesh.material.map.needsUpdate = true;
+    };
+    draw();
     mesh.visible = true;
-    mesh.userData = { callback };
+    mesh.userData = {
+        callback,
+        onEnter: () => draw(true),
+        onLeave: () => draw()
+    };
 
     return mesh;
 }

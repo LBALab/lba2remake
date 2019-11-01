@@ -102,18 +102,25 @@ function createMenuItem({x, y, text, callback}) {
         x,
         y,
     });
-    drawFrame(ctx, 0, 0, width, height, true);
-    ctx.font = '50px LBA';
-    ctx.fillStyle = 'white';
-    ctx.shadowColor = 'black';
-    ctx.shadowOffsetX = 4;
-    ctx.shadowOffsetY = 4;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, width / 2, height / 2);
-    mesh.material.map.needsUpdate = true;
+    const draw = (hovering = false) => {
+        drawFrame(ctx, 0, 0, width, height, hovering);
+        ctx.font = '50px LBA';
+        ctx.fillStyle = 'white';
+        ctx.shadowColor = 'black';
+        ctx.shadowOffsetX = 4;
+        ctx.shadowOffsetY = 4;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, width / 2, height / 2);
+        mesh.material.map.needsUpdate = true;
+    };
+    draw();
     mesh.visible = true;
-    mesh.userData = { callback };
+    mesh.userData = {
+        callback,
+        onEnter: () => draw(true),
+        onLeave: () => draw()
+    };
 
     return mesh;
 }
