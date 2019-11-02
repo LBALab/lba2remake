@@ -42,17 +42,39 @@ export function processZones(game, scene) {
     }
 }
 
+// This is used to show a visual indicator of the target
+// position to which the hero teleports after changing scene
+/*
+function debugZoneTargetPos(newScene, newHero) {
+    const axesHelper = new THREE.AxesHelper(5);
+    const geometry = new THREE.SphereGeometry(0.2, 32, 32);
+    const material = new THREE.MeshBasicMaterial({color: 0xffff00});
+    const sphere = new THREE.Mesh(geometry, material);
+    const helper = new THREE.Object3D();
+    helper.add(sphere);
+    helper.add(axesHelper);
+    helper.position.copy(newHero.physics.position);
+    newScene.sceneNode.add(helper);
+}
+*/
+
 /**
  * @return {boolean}
  */
 function GOTO_SCENE(game, scene, zone, hero) {
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
+        const box = zone.props.box;
         scene.goto(zone.props.snap).then((newScene) => {
             const newHero = newScene.actors[0];
-            newHero.physics.position.x = ((0x8000 - zone.props.info2) + 512) * WORLD_SCALE;
-            newHero.physics.position.y = zone.props.info1 * WORLD_SCALE;
-            newHero.physics.position.z = zone.props.info0 * WORLD_SCALE;
+            const dx = hero.physics.position.x - box.xMax;
+            const dy = hero.physics.position.y - box.yMin;
+            const dz = hero.physics.position.z - box.zMin;
+            newHero.physics.position.x = dx + (((0x8000 - zone.props.info2) + 512) * WORLD_SCALE);
+            newHero.physics.position.y = dy + (zone.props.info1 * WORLD_SCALE);
+            newHero.physics.position.z = dz + (zone.props.info0 * WORLD_SCALE);
             newHero.threeObject.position.copy(newHero.physics.position);
+
+            // debugZoneTargetPos(newScene, newHero);
 
             const dAngle = -zone.props.info3 * (Math.PI / 2);
             const euler = new THREE.Euler();

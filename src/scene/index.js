@@ -257,18 +257,13 @@ function loadZones(scene, offset) {
             box: {}
         };
 
-        const xMin = ((0x8000 - data.getInt32(offset + 8, true)) + 512) * WORLD_SCALE;
-        const yMin = data.getInt32(offset + 4, true) * WORLD_SCALE;
-        const zMin = data.getInt32(offset, true) * WORLD_SCALE;
-        const xMax = ((0x8000 - data.getInt32(offset + 20, true)) + 512) * WORLD_SCALE;
-        const yMax = data.getInt32(offset + 16, true) * WORLD_SCALE;
-        const zMax = data.getInt32(offset + 12, true) * WORLD_SCALE;
-        zone.box.xMin = Math.min(xMin, xMax);
-        zone.box.yMin = Math.min(yMin, yMax);
-        zone.box.zMin = Math.min(zMin, zMax);
-        zone.box.xMax = Math.max(xMin, xMax);
-        zone.box.yMax = Math.max(yMin, yMax);
-        zone.box.zMax = Math.max(zMin, zMax);
+        // xMin and xMax are inverted because x axis is inverted
+        zone.box.xMax = ((0x8000 - data.getInt32(offset + 8, true)) + 512) * WORLD_SCALE;
+        zone.box.yMin = data.getInt32(offset + 4, true) * WORLD_SCALE;
+        zone.box.zMin = data.getInt32(offset, true) * WORLD_SCALE;
+        zone.box.xMin = ((0x8000 - data.getInt32(offset + 20, true)) + 512) * WORLD_SCALE;
+        zone.box.yMax = data.getInt32(offset + 16, true) * WORLD_SCALE;
+        zone.box.zMax = data.getInt32(offset + 12, true) * WORLD_SCALE;
         offset += 24;
 
         zone.info0 = data.getInt32(offset, true);
