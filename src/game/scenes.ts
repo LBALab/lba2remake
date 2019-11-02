@@ -22,6 +22,7 @@ import { getIsometricCamera } from '../cameras/iso';
 import { getIso3DCamera } from '../cameras/iso3d';
 import { getVR3DCamera } from '../cameras/vr/vr3d';
 import { getVRIsoCamera } from '../cameras/vr/vrIso';
+import { createFPSCounter } from '../ui/vr/vrFPS';
 import { angleToRad } from '../utils/lba';
 import { getLanguageConfig } from '../lang';
 
@@ -191,6 +192,10 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         }
         if (camera.controlNode) {
             threeScene.add(camera.controlNode);
+            if (renderer.vr) {
+                const fps = createFPSCounter(renderer);
+                camera.controlNode.add(fps);
+            }
         }
         threeScene.add(scenery.threeObject);
     } else {
