@@ -6,7 +6,6 @@ export const SceneGraphNode = {
     dynamic: true,
     needsData: true,
     style: {
-        height: 20,
         fontSize: 16,
         lineHeight: '20px'
     },
