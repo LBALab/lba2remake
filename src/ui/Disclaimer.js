@@ -9,7 +9,7 @@ const wrapper_style = Object.assign({}, fullscreen, editor_style.base, {
     left: 0,
     right: 0,
     margin: 32,
-    background: 'black',
+    background: 'rgba(0, 0, 0, 0.75)',
     color: 'white',
     border: '2px outset #61cece',
     borderRadius: 12,
@@ -57,18 +57,20 @@ const textContainer = {
 };
 
 export default function Disclaimer({accept}) {
-    return <div style={wrapper_style}>
-        <div style={content_style}>
-            <div style={center_vert}>
-                <img src="images/remake_logo.png"/>
-                <h1 style={titleStyle}>{tr('Disclaimer')}</h1>
-                <div style={textContainer}>
-                    <p>{tr('disclaimer1')}</p>
-                    <p>{tr('disclaimer2')}</p>
-                    <p>{tr('disclaimer3')}</p>
+    return <div className="bgMenu fullscreen">
+        <div style={wrapper_style}>
+            <div style={content_style}>
+                <div style={center_vert}>
+                    <img src="images/remake_logo.png"/>
+                    <h1 style={titleStyle}>{tr('Disclaimer')}</h1>
+                    <div style={textContainer}>
+                        <p>{tr('disclaimer1')}</p>
+                        <p>{tr('disclaimer2')}</p>
+                        <p>{tr('disclaimer3')}</p>
+                    </div>
+                    <br/>
+                    <button style={buttonStyle} onClick={accept}>OK</button>
                 </div>
-                <br/>
-                <button style={buttonStyle} onClick={accept}>OK</button>
             </div>
         </div>
     </div>;
