@@ -146,5 +146,94 @@ export default type => ({
                 text: 'Oculus Home'
             },
         ]
+    },
+    htcvive: {
+        width: 1250,
+        height: 500,
+        angle: 45,
+        x: 1250,
+        z: 700,
+        labels: [
+            {
+                name: 'LMenu',
+                x: 240,
+                y: 40,
+                fontSize: 22,
+                textAlign: 'right',
+                text: tr('Back')
+            },
+            {
+                name: 'RMenu',
+                x: 1008,
+                y: 80,
+                fontSize: 22,
+                textAlign: 'left',
+                text: tr('Action')
+            },
+            {
+                name: 'LTrackpad',
+                x: 220,
+                y: 109,
+                fontSize: 22,
+                textAlign: 'right',
+                text: tr('WalkRun')
+            },
+            {
+                name: 'RTrackpad',
+                x: 1029,
+                y: 149,
+                fontSize: 18,
+                textAlign: 'left',
+                text: tr('TapToSwitchBehaviour')
+            },
+            {
+                name: 'LTrigger',
+                x: 481,
+                y: 279,
+                fontSize: 22,
+                textAlign: 'left',
+                text: tr('Jump')
+            },
+            {
+                name: 'RTrigger',
+                x: 767,
+                y: 319,
+                fontSize: 22,
+                textAlign: 'right',
+                text: tr('CenterCamera')
+            },
+            {
+                name: 'LGrip',
+                x: 449,
+                y: 371,
+                fontSize: 22,
+                textAlign: 'left',
+                text: tr('HoldToRun')
+            },
+            {
+                name: 'RGrip',
+                x: 798,
+                y: 411,
+                fontSize: 22,
+                textAlign: 'right',
+                text: tr('Nothing')
+            },
+            {
+                name: 'LSteam',
+                x: 218,
+                y: 185,
+                fontSize: 22,
+                textAlign: 'right',
+                text: tr('SteamMenu')
+            },
+            {
+                name: 'RSteam',
+                x: 1030,
+                y: 225,
+                fontSize: 22,
+                textAlign: 'left',
+                text: tr('SteamMenu')
+            },
+        ]
     }
 }[type]);
