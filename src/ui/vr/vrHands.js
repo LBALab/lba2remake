@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { find } from 'lodash';
 
 const controllers = [];
@@ -11,6 +12,8 @@ const offset = new THREE.Vector3();
 const worldOrientation = new THREE.Euler(0, -Math.PI, 0);
 const hovering = new Set();
 const hitOnFrame = new Set();
+
+const loader = new GLTFLoader();
 
 export function createHands(renderer) {
     const handsRoot = new THREE.Object3D();
@@ -41,25 +44,21 @@ export function createHands(renderer) {
 }
 
 function createHand(type) {
-    const color = type === 'left' ? 0x0000FF : 0xFF0000;
-    const geometry = new THREE.BoxGeometry(0.02, 0.06, 0.06);
-    const material = new THREE.MeshBasicMaterial({color});
-    const fingerGeom = new THREE.BoxGeometry(0.02, 0.02, 0.04);
     const pointerGeom = new THREE.ConeGeometry(0.005, 0.3, 4);
     const pointerMaterial = new THREE.MeshBasicMaterial({
         color: 0xFFFFFF,
         transparent: true,
         opacity: 0.5
     });
-    const palm = new THREE.Mesh(geometry, material);
-    const finger = new THREE.Mesh(fingerGeom, material);
     const pointer = new THREE.Mesh(pointerGeom, pointerMaterial);
-    finger.position.set(0, 0.02, -0.05);
     pointer.position.set(0, 0.02, -0.15);
     pointer.rotation.x = -Math.PI / 2;
     const hand = new THREE.Object3D();
-    hand.add(palm);
-    hand.add(finger);
+    loader.load('models/hands.glb', (gltf) => {
+        const mesh = gltf.scene.getObjectByName(`${type}_hand`);
+        hand.add(mesh);
+    });
+
     hand.add(pointer);
     return hand;
 }
