@@ -178,7 +178,7 @@ function buildCell(library, blocks, geometries, x, z) {
                     const {u, v} = library.bricksMap[block.brick];
                     const pushUv = (u0, v0, side) => {
                         const o = OffsetBySide[side];
-                        uvs.push((u + u0 + o.x) / width, (v + v0 + o.y) / height);
+                        uvs.push((u + u0 + o.x) / width, 1.0 - ((v + v0 + o.y) / height));
                     };
 
                     positions.push(x, y, z);

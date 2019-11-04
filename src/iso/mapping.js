@@ -86,6 +86,16 @@ export function loadBricksMapping(renderer, params, layouts, bricks, mask, palet
     texture.needsUpdate = true;
     texture.generateMipmaps = true;
     texture.anisotropy = 16;
+    const arr = new Uint8ClampedArray(width * height * 4);
+    for (let i = 0; i < arr.length; i += 1) {
+        arr[i] = image_data[i];
+    }
+    const imageData = new ImageData(arr, width, height);
+    createImageBitmap(imageData).then((img) => {
+        img.naturalWidth = width;
+        img.naturalHeight = height;
+        texture.image = img;
+    });
     return {
         texture,
         bricksMap

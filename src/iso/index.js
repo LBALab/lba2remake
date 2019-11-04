@@ -3,9 +3,6 @@ import { loadHqr } from '../hqr.ts';
 import { loadBricks } from './bricks';
 import { loadGrid } from './grid';
 import { processCollisions } from '../game/loop/physicsIso';
-import {compile} from '../utils/shaders';
-import brick_vertex from './shaders/brick.vert.glsl';
-import brick_fragment from './shaders/brick.frag.glsl';
 
 async function loadImageData(src) {
     return new Promise((resolve) => {
@@ -65,13 +62,9 @@ function loadMesh(renderer, grid, entry) {
     const bufferGeometry = new THREE.BufferGeometry();
     bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
     bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
-    const mesh = new THREE.Mesh(bufferGeometry, new THREE.RawShaderMaterial({
-        vertexShader: compile('vert', brick_vertex),
-        fragmentShader: compile('frag', brick_fragment),
+    const mesh = new THREE.Mesh(bufferGeometry, new THREE.MeshStandardMaterial({
         transparent: true,
-        uniforms: {
-            library: {value: grid.library.texture}
-        }
+        map: grid.library.texture
     }));
 
     const scale = 0.75;
