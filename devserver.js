@@ -22,7 +22,8 @@ app.set('host', process.env.HOST || '0.0.0.0');
 
 app.use(bodyParser.json());
 app.use(bodyParser.raw({
-    limit: '2mb'
+    limit: '50mb',
+    extended: true
 }));
 
 app.post('/metadata', function (req, res) {
@@ -83,6 +84,22 @@ app.post('/lut.dat', function(req, res) {
     fs.writeFile('./www/lut.dat', req.body, () => {
         console.log('Saved lut.dat');
         res.end();
+    });
+});
+
+app.post('/upload/:filename', function(req, res) {
+    const save = () => {
+        fs.writeFile(`./uploads/${req.params.filename}`, req.body, () => {
+            console.log(`Saved ${req.params.filename}`);
+            res.end();
+        });
+    }
+    fs.exists('./uploads', (exists) => {
+        if (exists) {
+            save();
+        } else {
+            fs.mkdir('./uploads', save);
+        }
     });
 });
 

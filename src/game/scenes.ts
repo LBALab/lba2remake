@@ -24,6 +24,7 @@ import { getVR3DCamera } from '../cameras/vr/vr3d';
 import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { createFPSCounter } from '../ui/vr/vrFPS';
 import { angleToRad } from '../utils/lba';
+import { exportNode } from '../utils/exporter';
 import { getLanguageConfig } from '../lang';
 
 declare global {
@@ -173,6 +174,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         makeLight(threeScene, sceneData.ambience);
         if (indexInfo.isIsland) {
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
+            exportNode(scenery.threeObject, islandName);
             threeScene.name = '3D_scene';
             if (renderer.vr) {
                 camera = getVR3DCamera();
@@ -181,6 +183,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             }
         } else {
             scenery = await loadIsometricScenery(params, renderer, indexInfo.index);
+            exportNode(scenery.threeObject, `scene_${index}`);
             threeScene.name = 'iso_scene';
             if (renderer.vr) {
                 camera = getVRIsoCamera();
