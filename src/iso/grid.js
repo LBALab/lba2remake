@@ -57,7 +57,7 @@ export function loadGrid(renderer, params, bkg, bricks, mask, palette, entry) {
                             break;
                         }
                         case 2:
-                            if (block && block.layout !== -1) {
+                            if (block && block.layout !== -1 && block.block > 0) {
                                 isValid = true;
                                 blocks.push(block);
                             } else {
