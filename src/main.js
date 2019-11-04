@@ -22,7 +22,7 @@ class Root extends React.Component {
         this.state = {
             params,
             changelog: false,
-            vr: 'getVRDisplays' in navigator,
+            vr: 'getVRDisplays' in navigator ? undefined : false,
             showDisclaimer: localStorage.getItem('disclaimerShown') !== 'yes'
         };
         this.onHashChange = this.onHashChange.bind(this);
@@ -40,6 +40,15 @@ class Root extends React.Component {
     componentWillMount() {
         window.addEventListener('hashchange', this.onHashChange);
         document.addEventListener('displaychangelog', this.openChangeLog);
+        if ('getVRDisplays' in navigator) {
+            navigator.getVRDisplays()
+                .then((displays) => {
+                    this.setState({vr: displays.length > 0});
+                })
+                .catch(() => {
+                    this.setState({vr: false});
+                });
+        }
     }
 
     componentWillUnmount() {
@@ -84,7 +93,7 @@ class Root extends React.Component {
                 ticker={this.props.ticker}
                 exitVR={this.exitVR}
             />;
-        } else {
+        } else if (this.state.vr === false) {
             content = <GameUI params={this.state.params} ticker={this.props.ticker} />;
         }
         return <div>
