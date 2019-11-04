@@ -228,7 +228,7 @@ export async function loadActor(
                         this.threeObject.visible = this.isVisible;
                     }
                 }
-            } else {
+            } else if (this.isSprite) {
                 const sprite = await loadSprite(this.props.spriteIndex);
                 sprite.threeObject.position.copy(this.physics.position);
                 // sprite.threeObject.quaternion.copy(actor.physics.orientation);
@@ -237,6 +237,10 @@ export async function loadActor(
                     this.threeObject.name = `actor:${name}`;
                     this.threeObject.visible = this.isVisible;
                 }
+            } else {
+                this.threeObject = new THREE.Object3D();
+                this.threeObject.name = `actor:${name}(dummy)`;
+                this.threeObject.visible = this.isVisible;
             }
             if (params.editor) {
                 createActorLabel(this, name, is3DCam);
