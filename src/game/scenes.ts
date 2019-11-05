@@ -194,6 +194,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             threeScene.add(camera.controlNode);
             if (renderer.vr) {
                 const fps = createFPSCounter(renderer);
+                fps.visible = false;
                 camera.controlNode.add(fps);
             }
         }
