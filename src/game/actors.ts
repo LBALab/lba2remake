@@ -3,7 +3,9 @@ import * as THREE from 'three';
 import { loadModel, Model } from '../model';
 import { loadAnimState, resetAnimState } from '../model/animState';
 import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
-import { loadSprite } from '../iso/sprites';
+import {WORLD_SCALE} from '../utils/lba.js';
+import {createBoundingBox} from '../utils/rendering.js';
+import { loadSprite, loadSpriteBB } from '../iso/sprites';
 
 import { getObjectName } from '../ui/editor/DebugData';
 import { createActorLabel } from '../ui/editor/labels.js';
@@ -228,19 +230,33 @@ export async function loadActor(
                         this.threeObject.visible = this.isVisible;
                     }
                 }
-            } else if (this.isSprite) {
-                const sprite = await loadSprite(this.props.spriteIndex);
-                sprite.threeObject.position.copy(this.physics.position);
-                // sprite.threeObject.quaternion.copy(actor.physics.orientation);
-                this.threeObject = sprite.threeObject;
-                if (this.threeObject) {
-                    this.threeObject.name = `actor:${name}`;
-                    this.threeObject.visible = this.isVisible;
-                }
             } else {
                 this.threeObject = new THREE.Object3D();
-                this.threeObject.name = `actor:${name}(dummy)`;
+                this.threeObject.name = `actor:${name}`;
                 this.threeObject.visible = this.isVisible;
+                this.threeObject.position.copy(this.physics.position);
+                this.threeObject.quaternion.copy(this.physics.orientation);
+                if (this.isSprite) {
+                    const sprite = await loadSprite(this.props.spriteIndex, false);
+                    this.sprite = sprite;
+                    this.threeObject.add(sprite.threeObject);
+                    if (params.editor) {
+                        const {spriteIndex, flags: {hasSpriteAnim3D}} = this.props;
+                        const box = await loadSpriteBB(spriteIndex, hasSpriteAnim3D);
+                        const {xMin, xMax, yMin, yMax, zMin, zMax} = box;
+                        sprite.boundingBox = new THREE.Box3(
+                            new THREE.Vector3(xMin, yMin, zMin).multiplyScalar(WORLD_SCALE),
+                            new THREE.Vector3(xMax, yMax, zMax).multiplyScalar(WORLD_SCALE)
+                        );
+                        sprite.boundingBoxDebugMesh = createBoundingBox(
+                            sprite.boundingBox,
+                            new THREE.Vector3(1, 0, 0)
+                        );
+                        sprite.boundingBoxDebugMesh.name = 'BoundingBox';
+                        sprite.boundingBoxDebugMesh.visible = false;
+                        this.threeObject.add(sprite.boundingBoxDebugMesh);
+                    }
+                }
             }
             if (params.editor) {
                 createActorLabel(this, name, is3DCam);

@@ -29,7 +29,25 @@ export async function loadSprite(index, isBillboard = false) {
     }
     const cache = (index < 100) ? spriteRawCache : spriteCache;
     return {
-        threeObject: (isBillboard) ? loadBillboardSprite(index, cache) : loadMesh(index, cache),
+        props: cache.spritesMap[index],
+        threeObject: (isBillboard)
+            ? loadBillboardSprite(index, cache)
+            : loadMesh(index, cache),
+    };
+}
+
+export async function loadSpriteBB(entry, hasSpriteAnim3D) {
+    const ress = await loadHqr('RESS.HQR');
+    const ressEntry = hasSpriteAnim3D ? 43 : (entry < 100 ? 8 : 5);
+    const rDataView = new DataView(ress.getEntry(ressEntry));
+    const rOffset = (entry * 16) + 4;
+    return {
+        xMin: rDataView.getInt16(rOffset, true),
+        xMax: rDataView.getInt16(rOffset + 2, true),
+        yMin: rDataView.getInt16(rOffset + 4, true),
+        yMax: rDataView.getInt16(rOffset + 6, true),
+        zMin: rDataView.getInt16(rOffset + 8, true),
+        zMax: rDataView.getInt16(rOffset + 10, true),
     };
 }
 
@@ -97,6 +115,7 @@ function loadMesh(index, sprite) {
         depthTest: true,
         wireframe: false
     }));
+    mesh.name = 'Sprite';
 
     const scale = 1 / 48;
     mesh.scale.set(scale, scale, scale);
@@ -104,6 +123,7 @@ function loadMesh(index, sprite) {
 
     const object = new THREE.Object3D();
     object.add(mesh);
+    object.name = 'SpriteTransform';
 
     object.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 3 * (Math.PI / 4.0));
     return object;
@@ -123,8 +143,10 @@ function loadBillboardSprite(index, sprite) {
 
     const threeSprite = new THREE.Sprite(spriteMaterial);
     threeSprite.scale.set(s.h / 1024, s.w / 1024, 1);
+    threeSprite.name = 'SpriteBillboard';
 
     const object = new THREE.Object3D();
+    object.name = 'SpriteHolder';
 
     object.add(threeSprite);
     return object;
@@ -192,7 +214,6 @@ function loadSpriteData(sprites, entry) {
         index: entry
     };
 }
-
 
 function loadSpriteRawData(sprites, entry) {
     const dataView = new DataView(sprites.getEntry(entry));
