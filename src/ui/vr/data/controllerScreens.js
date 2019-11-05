@@ -28,9 +28,9 @@ export default type => ({
                 name: 'LTrigger',
                 x: 387,
                 y: 492,
-                fontSize: 22,
+                fontSize: 20,
                 textAlign: 'left',
-                text: tr('Jump')
+                text: tr('Fight/Jump')
             },
             {
                 name: 'RTrigger',
@@ -70,7 +70,7 @@ export default type => ({
                 y: 313,
                 fontSize: 20,
                 textAlign: 'left',
-                text: tr('Back')
+                text: tr('Nothing')
             },
             {
                 name: 'A',
@@ -94,7 +94,7 @@ export default type => ({
                 y: 271,
                 fontSize: 22,
                 textAlign: 'right',
-                text: tr('ExitVR')
+                text: tr('Back')
             },
             {
                 name: 'Oculus',
@@ -115,11 +115,11 @@ export default type => ({
         labels: [
             {
                 name: 'TouchPad',
-                x: 247,
-                y: 94,
-                fontSize: 22,
-                textAlign: 'right',
-                text: tr('WalkRun')
+                x: 145,
+                y: 114,
+                fontSize: 20,
+                textAlign: 'center',
+                text: tr('MoveSwitchAction')
             },
             {
                 name: 'Trigger',
@@ -135,7 +135,7 @@ export default type => ({
                 y: 373,
                 fontSize: 22,
                 textAlign: 'right',
-                text: tr('ExitVR')
+                text: tr('Back')
             },
             {
                 name: 'Oculus',
@@ -160,7 +160,7 @@ export default type => ({
                 y: 40,
                 fontSize: 22,
                 textAlign: 'right',
-                text: tr('Back')
+                text: tr('Nothing')
             },
             {
                 name: 'RMenu',
@@ -190,9 +190,9 @@ export default type => ({
                 name: 'LTrigger',
                 x: 481,
                 y: 279,
-                fontSize: 22,
+                fontSize: 20,
                 textAlign: 'left',
-                text: tr('Jump')
+                text: tr('Fight/Jump')
             },
             {
                 name: 'RTrigger',
