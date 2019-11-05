@@ -57,7 +57,7 @@ export function loadGrid(renderer, params, bkg, bricks, mask, palette, entry) {
                             break;
                         }
                         case 2:
-                            if (block && block.layout !== -1 && block.block > 0) {
+                            if (block && block.layout !== -1 && block.block !== -1) {
                                 isValid = true;
                                 blocks.push(block);
                             } else {
@@ -174,7 +174,7 @@ function buildCell(library, blocks, geometries, x, z) {
             const layout = library.layouts[blocks[yIdx].layout];
             if (layout) {
                 const block = layout.blocks[blocks[yIdx].block];
-                if (block && block.brick) {
+                if (block && block.brick in library.bricksMap) {
                     const {u, v} = library.bricksMap[block.brick];
                     const pushUv = (u0, v0, side) => {
                         const o = OffsetBySide[side];
