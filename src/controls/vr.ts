@@ -1,10 +1,12 @@
 import {updateState} from './vr/utils';
 import OculusTouch from './vr/OculusTouch';
 import OculusGo from './vr/OculusGo';
+import HTCVive from './vr/HTCVive';
 
 const handlers = [
     new OculusTouch(),
-    new OculusGo()
+    new OculusGo(),
+    new HTCVive()
 ];
 
 //
