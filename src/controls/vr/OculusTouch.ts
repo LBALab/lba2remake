@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { switchStats } from '../../renderer/stats';
-import { getButtonState } from './buttonState';
+import { getButtonState, getGamepadIndex } from './utils';
 
 const BUTTONS = {
     THUMBSTICK: 0,
@@ -56,7 +56,7 @@ export default class OculusTouch {
             controller.buttonA = getButtonState(gamepad, A);
             controller.buttonB = getButtonState(gamepad, B);
         }
-        controlsState.ctrlTriggers[idx] = controller.trigger.tapped;
+        controlsState.ctrlTriggers[getGamepadIndex(gamepad, idx)] = controller.trigger.tapped;
         controller.pad.set(gamepad.axes[0], -gamepad.axes[1]);
     }
 

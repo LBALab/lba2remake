@@ -12,7 +12,7 @@
     "react-dom": "^16.8.6",
     "react-markdown": "^4.0.8",
     "simplex-noise": "^2.4.0",
-    "three": "^0.109.0"
+    "three": "^0.110.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",

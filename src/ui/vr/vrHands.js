@@ -28,7 +28,7 @@ export function createHands(renderer) {
     for (let i = 0; i < 2; i += 1) {
         const controller = renderer.threeRenderer.vr.getController(i);
         if (controller) {
-            const hand = createHand(i === 0 ? 'left' : 'right');
+            const hand = createHand(i === 0 ? 'right' : 'left');
             controller.add(hand);
             revTransform.add(controller);
 

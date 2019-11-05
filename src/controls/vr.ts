@@ -1,4 +1,4 @@
-import {updateState} from './vr/buttonState';
+import {updateState} from './vr/utils';
 import OculusTouch from './vr/OculusTouch';
 import OculusGo from './vr/OculusGo';
 

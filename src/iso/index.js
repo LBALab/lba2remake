@@ -63,8 +63,8 @@ function loadMesh(renderer, grid, entry) {
     }
 
     const bufferGeometry = new THREE.BufferGeometry();
-    bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
-    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
+    bufferGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
+    bufferGeometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
     const mesh = new THREE.Mesh(bufferGeometry, new THREE.RawShaderMaterial({
         vertexShader: compile('vert', brick_vertex),
         fragmentShader: compile('frag', brick_fragment),

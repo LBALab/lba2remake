@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { switchStats } from '../../renderer/stats';
-import { getButtonState } from './buttonState';
+import { getButtonState, getGamepadIndex } from './utils';
 
 const BUTTONS = {
     THUMBPAD: 0,
@@ -39,7 +39,7 @@ export default class HTCVive {
         controller.grip = getButtonState(gamepad, GRIP);
         controller.menu = getButtonState(gamepad, THUMBPAD);
 
-        controlsState.ctrlTriggers[idx] = controller.trigger.tapped;
+        controlsState.ctrlTriggers[getGamepadIndex(gamepad, idx)] = controller.trigger.tapped;
         controller.pad.set(gamepad.axes[0], gamepad.axes[1]);
     }
 

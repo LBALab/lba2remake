@@ -36,3 +36,9 @@ export function updateState(gamepad) {
         };
     }
 }
+
+export function getGamepadIndex(gamepad, idx) {
+    if (!gamepad.hand)
+        return idx;
+    return gamepad.hand === 'right' ? 0 : 1;
+}

@@ -1,5 +1,5 @@
 import { switchStats } from '../../renderer/stats';
-import { getButtonState } from './buttonState';
+import { getButtonState, getGamepadIndex } from './utils';
 
 const BUTTONS = {
     TOUCHPAD: 0,
@@ -49,7 +49,7 @@ export default class OculusGo {
             hero.behaviour = (hero.behaviour + 1) % 4;
         }
         controlsState.action = touchpad.tapped ? 1 : 0;
-        controlsState.ctrlTriggers[0] = trigger.tapped;
+        controlsState.ctrlTriggers[getGamepadIndex(gamepad, idx)] = trigger.tapped;
     }
 
     update() {}

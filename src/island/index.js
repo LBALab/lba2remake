@@ -71,21 +71,21 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
     each(geometries, ({positions, uvs, colors, intensities, normals, uvGroups, material}, name) => {
         if (positions && positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
-            bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+            bufferGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
             if (uvs) {
-                bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
+                bufferGeometry.setAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
             }
             if (colors) {
-                bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 1, false));
+                bufferGeometry.setAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 1, false));
             }
             if (intensities) {
-                bufferGeometry.addAttribute('intensity', new THREE.BufferAttribute(new Uint8Array(intensities), 1, false));
+                bufferGeometry.setAttribute('intensity', new THREE.BufferAttribute(new Uint8Array(intensities), 1, false));
             }
             if (normals) {
-                bufferGeometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
+                bufferGeometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
             }
             if (uvGroups) {
-                bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint16Array(uvGroups), 4, false));
+                bufferGeometry.setAttribute('uvGroup', new THREE.BufferAttribute(new Uint16Array(uvGroups), 4, false));
             }
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.matrixAutoUpdate = false;
@@ -184,8 +184,8 @@ function loadSky(geometries, envInfo) {
         1, 1,
         0, 1
     ];
-    bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
+    bufferGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+    bufferGeometry.setAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
     const sky = new THREE.Mesh(
         bufferGeometry,
         geometries.sky.material
