@@ -59,8 +59,8 @@ export function createTeleportMenu(sceneLight) {
     const backButton = createButton({
         text: tr('backToMainMenu'),
         y: 230,
-        callback: ({game}) => {
-            game.setUiState({ teleportMenu: false });
+        callback: () => {
+            history.back();
         }
     });
     teleportMenu.add(backButton);
@@ -222,6 +222,7 @@ function handleGroundIntersection(idx, intersect, triggered, {game, sceneManager
                     newHero.threeObject.position.copy(POS);
                 });
             game.setUiState({teleportMenu: false});
+            history.pushState({id: 'game'}, '');
         }
     }
 }

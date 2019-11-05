@@ -98,8 +98,6 @@ export default class OculusTouch {
         // Action button
         controlsState.action = left.buttonX.tapped || right.buttonA.tapped ? 1 : 0;
 
-        controlsState.backButton = left.buttonY.tapped;
-
         if (left.buttonY.longPressed) {
             switchStats();
         }

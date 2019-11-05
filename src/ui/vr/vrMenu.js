@@ -27,6 +27,7 @@ export function createMenu(game, renderer, light) {
             audioMenuManager.getMusicSource().stop();
             game.resume();
             game.setUiState({ showMenu: false });
+            history.pushState({id: 'game'}, '');
         }
     });
     mainMenu.add(resume);
@@ -38,6 +39,7 @@ export function createMenu(game, renderer, light) {
             game.resume();
             game.resetState();
             sceneManager.hideMenuAndGoto(0, false);
+            history.pushState({id: 'game'}, '');
         }
     }));
     mainMenu.add(createMenuItem({
@@ -45,8 +47,28 @@ export function createMenu(game, renderer, light) {
         y: -150,
         callback: () => {
             game.setUiState({ teleportMenu: true });
+            history.pushState({id: 'teleport'}, '');
         }
     }));
+
+    window.onpopstate = (event) => {
+        const {showMenu} = game.getUiState();
+        if (!showMenu) {
+            game.pause();
+            const audioMenuManager = game.getAudioMenuManager();
+            audioMenuManager.getMusicSource().load(6, () => {
+                audioMenuManager.getMusicSource().play();
+            });
+            game.setUiState({inGameMenu: true});
+        }
+        game.setUiState({
+            showMenu: true,
+            teleportMenu: event.state && event.state.id === 'teleport'
+        });
+    };
+
+    history.replaceState({id: 'menu'}, '');
+
 
     const hands = createHands(renderer);
     menuNode.add(hands);
@@ -67,25 +89,9 @@ export function updateMenu(game, sceneManager) {
     if (showMenu) {
         if (showTeleportMenu) {
             updateTeleportMenu(game, sceneManager);
-            if (controlsState.backButton) {
-                game.setUiState({teleportMenu: false});
-            }
         } else {
             handlePicking(mainMenu.children, {game, sceneManager});
-            if (controlsState.backButton && inGameMenu) {
-                const audioMenuManager = game.getAudioMenuManager();
-                audioMenuManager.getMusicSource().stop();
-                game.resume();
-                game.setUiState({ showMenu: false });
-            }
         }
-    } else if (controlsState.backButton) {
-        game.pause();
-        const audioMenuManager = game.getAudioMenuManager();
-        audioMenuManager.getMusicSource().load(6, () => {
-            audioMenuManager.getMusicSource().play();
-        });
-        game.setUiState({showMenu: true, teleportMenu: false, inGameMenu: true});
     }
     if (!controllerInfo && controlsState.controllerType) {
         controllerInfo = createControllerInfo(controlsState.controllerType);

@@ -79,8 +79,6 @@ export default class HTCVive {
         // Action button
         controlsState.action = right.menu.tapped ? 1 : 0;
 
-        controlsState.backButton = left.menu.tapped;
-
         if (left.menu.longPressed) {
             switchStats();
         }
