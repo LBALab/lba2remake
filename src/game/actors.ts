@@ -164,6 +164,13 @@ export async function loadActor(
         },
 
         /* @inspector(locate) */
+        gotoSprite(point, delta) {
+            this.physics.position.lerp(point, delta);
+            this.threeObject.position.copy(this.physics.position);
+            return this.getDistance(point);
+        },
+
+        /* @inspector(locate) */
         facePoint(point) {
             let destAngle = angleTo(this.physics.position, point);
             const signCurr = this.physics.temp.destAngle > 0 ? 1 : -1;

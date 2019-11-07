@@ -401,7 +401,7 @@ export const LifeOpcode = [
         opcode: 0x2F,
         command: 'SET_DOOR_LEFT',
         handler: lf.SET_DOOR_LEFT,
-        args: ['Int16'],
+        args: ['Int16:distance'],
         indent: Indent.KEEP,
         type: 'fct'
     },
@@ -409,7 +409,7 @@ export const LifeOpcode = [
         opcode: 0x30,
         command: 'SET_DOOR_RIGHT',
         handler: lf.SET_DOOR_RIGHT,
-        args: ['Int16'],
+        args: ['Int16:distance'],
         indent: Indent.KEEP,
         type: 'fct'
     },
@@ -417,7 +417,7 @@ export const LifeOpcode = [
         opcode: 0x31,
         command: 'SET_DOOR_UP',
         handler: lf.SET_DOOR_UP,
-        args: ['Int16'],
+        args: ['Int16:distance'],
         indent: Indent.KEEP,
         type: 'fct'
     },
@@ -425,7 +425,7 @@ export const LifeOpcode = [
         opcode: 0x32,
         command: 'SET_DOOR_DOWN',
         handler: lf.SET_DOOR_DOWN,
-        args: ['Int16'],
+        args: ['Int16:distance'],
         indent: Indent.KEEP,
         type: 'fct'
     },
