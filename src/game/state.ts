@@ -14,7 +14,7 @@ export function createState() {
             life: 50,
             money: 100,
             magic: 0,
-            keys: 0,
+            keys: 1,
             fuel: 0,
             pinguin: 0,
             clover: { boxes: 2, leafs: 0 },
