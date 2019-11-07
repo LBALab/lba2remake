@@ -12,7 +12,12 @@ const push = Array.prototype.push;
 let spriteCache = null;
 let spriteRawCache = null;
 
-export async function loadSprite(index, hasSpriteAnim3D = false, isBillboard = false) {
+export async function loadSprite(
+    index,
+    hasSpriteAnim3D = false,
+    isBillboard = false,
+    is3DCam = false
+) {
     const [ress, spritesFile, spritesRaw] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr('SPRITES.HQR'),
@@ -39,7 +44,7 @@ export async function loadSprite(index, hasSpriteAnim3D = false, isBillboard = f
         ),
         props: cache.spritesMap[index],
         threeObject: (isBillboard)
-            ? loadBillboardSprite(index, cache)
+            ? loadBillboardSprite(index, cache, is3DCam)
             : loadMesh(index, cache, box),
     };
 }
@@ -148,27 +153,54 @@ function loadMesh(index, sprite, box) {
     return mesh;
 }
 
-function loadBillboardSprite(index, sprite) {
+function loadBillboardSprite(index, sprite, is3DCam) {
     const s = sprite.spritesMap[index];
-    const spriteTexture = sprite.texture;
+    const { image: { data: srcImage } } = sprite.texture;
 
-    spriteTexture.offset = new THREE.Vector2(s.u / 2048, s.v / 2048);
-    spriteTexture.repeat = new THREE.Vector2(s.w / sprite.width, s.h / sprite.height);
+    const tgtImage = new Uint8Array(s.w * s.h * 4);
+
+    for (let y = 0; y < s.h; y += 1) {
+        for (let x = 0; x < s.w; x += 1) {
+            const src_i = ((y + s.v) * sprite.width) + (x + s.u);
+            const tgt_i = (y * s.w) + x;
+
+            tgtImage[tgt_i * 4] = srcImage[src_i * 4];
+            tgtImage[(tgt_i * 4) + 1] = srcImage[(src_i * 4) + 1];
+            tgtImage[(tgt_i * 4) + 2] = srcImage[(src_i * 4) + 2];
+            tgtImage[(tgt_i * 4) + 3] = srcImage[(src_i * 4) + 3];
+        }
+    }
+
+    const texture = new THREE.DataTexture(
+        tgtImage,
+        s.w,
+        s.h,
+        THREE.RGBAFormat,
+        THREE.UnsignedByteType,
+        THREE.UVMapping,
+        THREE.ClampToEdgeWrapping,
+        THREE.ClampToEdgeWrapping,
+        THREE.LinearFilter,
+        THREE.LinearFilter
+    );
+
+    texture.needsUpdate = true;
+    texture.generateMipmaps = false;
 
     const spriteMaterial = new THREE.SpriteMaterial({
-        map: spriteTexture,
+        map: texture,
         rotation: THREE.Math.degToRad(180),
     });
 
     const threeSprite = new THREE.Sprite(spriteMaterial);
-    threeSprite.scale.set(s.h / 1024, s.w / 1024, 1);
-    threeSprite.name = 'SpriteBillboard';
+    if (is3DCam) {
+        threeSprite.scale.set(s.w / 75, s.h / 75, 1);
+    } else {
+        threeSprite.scale.set(s.w * 2, s.h * 2, 1);
+    }
+    threeSprite.name = 'Sprite';
 
-    const object = new THREE.Object3D();
-    object.name = 'SpriteHolder';
-
-    object.add(threeSprite);
-    return object;
+    return threeSprite;
 }
 
 export function loadAllSprites(spriteFile) {

@@ -4,6 +4,7 @@ import { getRandom } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
 import { loadSprite } from '../iso/sprites';
 import { addExtraToScene } from './scenes';
+import {createBoundingBox} from '../utils/rendering.js';
 
 export const ExtraFlag = {
     TIME_OUT: 1 << 0,
@@ -79,13 +80,20 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
 
         /* @inspector(locate) */
         async loadMesh() {
-            const sprite = await loadSprite(spriteIndex); // , scene.data.isOutsideScene);
-            sprite.threeObject.position.copy(this.physics.position);
-            this.threeObject = sprite.threeObject;
-            if (this.threeObject) {
-                this.threeObject.name = 'extra';
-                this.threeObject.visible = this.isVisible;
-            }
+            this.threeObject = new THREE.Object3D();
+            this.threeObject.position.copy(this.physics.position);
+            const sprite = await loadSprite(spriteIndex, false, true, scene.is3DCam);
+            /*
+            sprite.boundingBoxDebugMesh = createBoundingBox(
+                sprite.boundingBox,
+                new THREE.Vector3(1, 0, 0)
+            );
+            sprite.boundingBoxDebugMesh.name = 'BoundingBox';
+            this.threeObject.add(sprite.boundingBoxDebugMesh);
+            */
+            this.threeObject.add(sprite.threeObject);
+            this.threeObject.name = `extra_${bonus}`;
+            this.threeObject.visible = this.isVisible;
         },
 
         init(angle, speed, weight, time) {

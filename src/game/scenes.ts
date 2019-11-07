@@ -237,6 +237,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         zoneState: { listener: null, ended: false },
         goto: sBind(sceneManager.goto, sceneManager),
         vr: renderer.vr,
+        is3DCam,
 
         /* @inspector(locate) */
         reset() {
