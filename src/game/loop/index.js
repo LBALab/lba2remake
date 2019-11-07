@@ -5,6 +5,7 @@ import {updateActor} from './actors.ts';
 import {processPhysicsFrame} from './physics';
 import {getRandom} from '../../utils/lba';
 import DebugData from '../../ui/editor/DebugData';
+import { updateExtra } from '../extras.ts';
 
 const dbgClock = new THREE.Clock(false);
 dbgClock.start();
@@ -74,6 +75,9 @@ function updateScene(params, game, scene, time, step) {
                 updateHero(game, scene, actor, time);
             }
         }
+    });
+    each(scene.extras, (extra) => {
+        updateExtra(game, scene, extra, time);
     });
     if (scene.isActive && params.editor) {
         each(scene.points, (point) => {

@@ -415,6 +415,16 @@ export function addExtraToScene(scene, extra) {
     }
 }
 
+export function removeExtraFromScene(scene, extra) {
+    const idx = scene.extras.indexOf(extra);
+    if (idx !== -1) {
+        scene.extras.splice(idx, 1);
+    }
+    if (extra.threeObject !== null) { // because of the sprite actors
+        scene.sceneNode.remove(extra.threeObject);
+    }
+}
+
 function relocateHero(hero, newHero, newScene, teleport) {
     const globalPos = new THREE.Vector3();
     globalPos.applyMatrix4(hero.threeObject.matrixWorld);

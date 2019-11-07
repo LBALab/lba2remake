@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { getRandom } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
 import { loadSprite } from '../iso/sprites';
-import { addExtraToScene } from './scenes';
+import { addExtraToScene, removeExtraFromScene } from './scenes';
 import {createBoundingBox} from '../utils/rendering.js';
 
 export const ExtraFlag = {
@@ -36,6 +36,8 @@ export interface Extra {
     info: number;
     hitStrength: number;
     time: any;
+    spawnTime: number;
+    spriteIndex: number;
 
     isVisible: boolean;
     isSprite: boolean;
@@ -73,6 +75,8 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
             | ExtraFlag.BONUS
             | ExtraFlag.TAKABLE
         ),
+        spriteIndex,
+        spawnTime: 0,
         lifeTime: 20 * 1000, // 20 seconds
         info: bonus,
         hitStrength: 0,
@@ -94,6 +98,7 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
             this.threeObject.add(sprite.threeObject);
             this.threeObject.name = `extra_${bonus}`;
             this.threeObject.visible = this.isVisible;
+            this.sprite = sprite;
         },
 
         init(angle, speed, weight, time) {
@@ -109,6 +114,8 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
 
     extra.init(angle, 40, 15);
 
+    extra.spawnTime = time.elapsed;
+
     const euler = new THREE.Euler(0, angle, 0, 'XZY');
     extra.physics.orientation.setFromEuler(euler);
 
@@ -116,6 +123,56 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
     addExtraToScene(scene, extra);
 
     return extra;
+}
+
+const ACTOR_BOX = new THREE.Box3();
+const EXTRA_BOX = new THREE.Box3();
+const INTERSECTION = new THREE.Box3();
+const DIFF = new THREE.Vector3();
+
+export function updateExtra(game, scene, extra, time) {
+    let hitActor = null;
+
+    if (time.elapsed - extra.spawnTime > 1) {
+        EXTRA_BOX.copy(extra.sprite.boundingBox);
+        EXTRA_BOX.translate(extra.physics.position);
+        DIFF.set(0, 1 / 128, 0);
+        EXTRA_BOX.translate(DIFF);
+        for (let i = 0; i < scene.actors.length; i += 1) {
+            const a = scene.actors[i];
+            if ((a.model === null && a.sprite === null)
+                || a.isKilled
+                || !(a.props.flags.hasCollisions || a.props.flags.isSprite)) {
+                continue;
+            }
+            const boundingBox = a.model ? a.model.boundingBox : a.sprite.boundingBox;
+            INTERSECTION.copy(boundingBox);
+            if (a.model) {
+                INTERSECTION.translate(a.physics.position);
+            } else {
+                INTERSECTION.applyMatrix4(a.threeObject.matrixWorld);
+            }
+            DIFF.set(0, 1 / 128, 0);
+            INTERSECTION.translate(DIFF);
+            ACTOR_BOX.copy(INTERSECTION);
+            if (ACTOR_BOX.intersectsBox(EXTRA_BOX)) {
+                hitActor = a;
+                break;
+            }
+        }
+    }
+
+    if (hitActor && hitActor.index === 0) {
+        switch (extra.spriteIndex) {
+            case SpriteType.KEY:
+                game.getState().hero.keys += 1;
+                break;
+            case SpriteType.KASHES:
+                game.getState().hero.money += extra.info;
+                break;
+        }
+        removeExtraFromScene(scene, extra);
+    }
 }
 
 export function randomBonus(type) {
