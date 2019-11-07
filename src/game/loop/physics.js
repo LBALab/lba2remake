@@ -74,14 +74,19 @@ function processCollisionsWithActors(scene, actor) {
     ACTOR_BOX.translate(DIFF);
     for (let i = 0; i < scene.actors.length; i += 1) {
         const a = scene.actors[i];
-        if (a.model === null
+        if ((a.model === null && a.sprite === null)
             || a.index === actor.index
             || a.isKilled
-            || !a.props.flags.hasCollisions) {
+            || !(a.props.flags.hasCollisions || a.props.flags.isSprite)) {
             continue;
         }
-        INTERSECTION.copy(a.model.boundingBox);
-        INTERSECTION.translate(a.physics.position);
+        const boundingBox = a.model ? a.model.boundingBox : a.sprite.boundingBox;
+        INTERSECTION.copy(boundingBox);
+        if (a.model) {
+            INTERSECTION.translate(a.physics.position);
+        } else {
+            INTERSECTION.applyMatrix4(a.threeObject.matrixWorld);
+        }
         DIFF.set(0, 1 / 128, 0);
         INTERSECTION.translate(DIFF);
         ACTOR2_BOX.copy(INTERSECTION);
