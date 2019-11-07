@@ -3,9 +3,8 @@ import * as THREE from 'three';
 import { loadModel, Model } from '../model';
 import { loadAnimState, resetAnimState } from '../model/animState';
 import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
-import {WORLD_SCALE} from '../utils/lba.js';
 import {createBoundingBox} from '../utils/rendering.js';
-import { loadSprite, loadSpriteBB } from '../iso/sprites';
+import { loadSprite } from '../iso/sprites';
 
 import { getObjectName } from '../ui/editor/DebugData';
 import { createActorLabel } from '../ui/editor/labels.js';
@@ -50,6 +49,7 @@ export interface Actor {
     props: ActorProps;
     threeObject?: THREE.Object3D;
     model?: Model;
+    sprite?: any;
     physics: ActorPhysics;
     animState: any;
     isVisible: boolean;
@@ -64,6 +64,7 @@ export interface Actor {
     resetAnimState: Function;
     resetPhysics: Function;
     goto: Function;
+    gotoSprite: Function;
     facePoint: Function;
     setAngle: Function;
     getDistance: Function;
@@ -113,6 +114,7 @@ export async function loadActor(
         hasCollidedWithActor: -1,
         floorSound: -1,
         model: null,
+        sprite: null,
         threeObject: null,
         animState,
 
@@ -237,17 +239,10 @@ export async function loadActor(
                 this.threeObject.position.copy(this.physics.position);
                 this.threeObject.quaternion.copy(this.physics.orientation);
                 if (this.isSprite) {
-                    const sprite = await loadSprite(this.props.spriteIndex, false);
-                    this.sprite = sprite;
+                    const {spriteIndex, flags: {hasSpriteAnim3D}} = this.props;
+                    const sprite = await loadSprite(spriteIndex, hasSpriteAnim3D, false);
                     this.threeObject.add(sprite.threeObject);
                     if (params.editor) {
-                        const {spriteIndex, flags: {hasSpriteAnim3D}} = this.props;
-                        const box = await loadSpriteBB(spriteIndex, hasSpriteAnim3D);
-                        const {xMin, xMax, yMin, yMax, zMin, zMax} = box;
-                        sprite.boundingBox = new THREE.Box3(
-                            new THREE.Vector3(xMin, yMin, zMin).multiplyScalar(WORLD_SCALE),
-                            new THREE.Vector3(xMax, yMax, zMax).multiplyScalar(WORLD_SCALE)
-                        );
                         sprite.boundingBoxDebugMesh = createBoundingBox(
                             sprite.boundingBox,
                             new THREE.Vector3(1, 0, 0)
@@ -256,6 +251,7 @@ export async function loadActor(
                         sprite.boundingBoxDebugMesh.visible = false;
                         this.threeObject.add(sprite.boundingBoxDebugMesh);
                     }
+                    this.sprite = sprite;
                 }
             }
             if (params.editor) {
