@@ -188,7 +188,7 @@ export async function loadActor(
 
         /* @inspector(locate) */
         setAngle(angle) {
-            this.props.runtimeFlags.isTurning = true;
+            // this.props.runtimeFlags.isTurning = true;
             this.props.angle = angle;
             this.physics.temp.destAngle = angleToRad(angle);
         },
