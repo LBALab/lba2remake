@@ -539,9 +539,9 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x3F,
-        command: 'HIT_BY_OBJ',
-        handler: lf.HIT_BY_OBJ,
-        args: ['Uint8:actor', 'Uint8:actor'],
+        command: 'HIT',
+        handler: lf.HIT,
+        args: ['Uint8:actor', 'Uint8'],
         indent: Indent.KEEP,
         type: 'fct'
     },
