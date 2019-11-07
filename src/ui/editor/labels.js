@@ -81,6 +81,9 @@ function updateScriptActorLabels(scene) {
             if (actor.model && actor.model.boundingBoxDebugMesh) {
                 actor.model.boundingBoxDebugMesh.visible = enabled;
             }
+            if (actor.sprite && actor.sprite.boundingBoxDebugMesh) {
+                actor.sprite.boundingBoxDebugMesh.visible = enabled;
+            }
             if (actor.label) {
                 actor.label.visible = enabled;
                 if (enabled) {
@@ -123,6 +126,9 @@ function toggleActors(scene, enabled) {
         each(scene.actors, (actor) => {
             if (actor.model && actor.model.boundingBoxDebugMesh) {
                 actor.model.boundingBoxDebugMesh.visible = enabled;
+            }
+            if (actor.sprite && actor.sprite.boundingBoxDebugMesh) {
+                actor.sprite.boundingBoxDebugMesh.visible = enabled;
             }
             if (actor.label) {
                 actor.label.visible = enabled;

@@ -4,6 +4,7 @@ import {editor, fullscreen} from '../styles/index';
 import {Orientation} from './layout';
 import NewArea, {NewAreaContent} from './areas/utils/NewArea';
 import SettingsIcon from '../utils/SettingsIcon';
+import DebugData from '../editor/DebugData';
 
 const menuHeight = 26;
 
@@ -202,8 +203,32 @@ export default class Area extends React.Component {
                 availableAreas.push(this.props.area);
             }
         }
+        if (this.props.area.mainArea) {
+            availableAreas.push({
+                id: 'close',
+                name: 'Exit Editor',
+                icon: '../close.svg'
+            });
+        }
 
         const selectAreaContent = (area) => {
+            if (area.id === 'close') {
+                const {renderer, game} = DebugData.scope;
+                if (renderer) {
+                    renderer.dispose();
+                }
+                if (game) {
+                    const audioMenuManager = game.getAudioMenuManager();
+                    audioMenuManager.getMusicSource().stop();
+                    const audioManager = game.getAudioManager();
+                    audioManager.getMusicSource().stop();
+                }
+                if ('exitPointerLock' in document) {
+                    document.exitPointerLock();
+                }
+                window.location.hash = '';
+                return;
+            }
             if (area.id !== this.props.area.id) {
                 this.props.selectAreaContent(area);
             } else {

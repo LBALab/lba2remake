@@ -9,12 +9,13 @@ import DebugData from '../../ui/editor/DebugData';
 const dbgClock = new THREE.Clock(false);
 dbgClock.start();
 
-export function mainGameLoop(params, game, clock, renderer, scene, controls) {
+export function mainGameLoop(params, game, clock, renderer, scene, controls, vrScene) {
     const time = game.getTime();
+    const uiState = game.getUiState();
 
     renderer.stats.begin();
     each(controls, ctrl => ctrl.update && ctrl.update());
-    if (scene) {
+    if (scene && !uiState.showMenu) {
         const step = game.isPaused() && DebugData.step;
         if (!game.isPaused() || step) {
             if (step) {
@@ -49,6 +50,8 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls) {
         }
         scene.firstFrame = false;
         delete DebugData.firstFrame;
+    } else if (vrScene) {
+        renderer.render(vrScene);
     }
     renderer.stats.end();
 }
@@ -59,6 +62,9 @@ function updateScene(params, game, scene, time, step) {
     if (scene.firstFrame) {
         scene.sceneNode.updateMatrixWorld();
     }
+    each(scene.actors, (actor) => {
+        actor.wasHitBy = -1;
+    });
     each(scene.actors, (actor) => {
         if (actor.isKilled)
             return;

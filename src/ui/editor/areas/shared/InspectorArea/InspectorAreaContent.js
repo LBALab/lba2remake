@@ -386,7 +386,9 @@ export class InspectorAreaContent extends React.Component {
             padding: 0,
             margin: 0,
             verticalAlign: 'middle',
-            paddingLeft: 8
+            paddingLeft: 8,
+            width: 16,
+            height: 16
         };
 
         const onClick = () => {

@@ -23,8 +23,8 @@ import Menu from './game/Menu';
 import TeleportMenu from './game/TeleportMenu';
 import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
+import {KeyHelpIcon, KeyHelpScreen} from './game/KeyboardHelp';
 import {sBind} from '../utils.ts';
-import {updateVRGui} from './vr/vrGui';
 import {updateLabels} from './editor/labels';
 
 export default class GameUI extends FrameListener {
@@ -44,6 +44,8 @@ export default class GameUI extends FrameListener {
         this.listener = this.listener.bind(this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
+        this.openKeyHelp = this.openKeyHelp.bind(this);
+        this.closeKeyHelp = this.closeKeyHelp.bind(this);
         this.pick = this.pick.bind(this);
         this.startNewGameScene = this.startNewGameScene.bind(this);
         this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
@@ -56,6 +58,7 @@ export default class GameUI extends FrameListener {
         } else {
             const clock = new THREE.Clock(false);
             const game = createGame(
+                props.params,
                 clock,
                 this.setUiState,
                 this.getUiState
@@ -76,7 +79,8 @@ export default class GameUI extends FrameListener {
                 menuTexts: null,
                 showMenu: false,
                 inGameMenu: false,
-                teleportMenu: false
+                teleportMenu: false,
+                keyHelp: false
             };
 
             clock.start();
@@ -206,6 +210,14 @@ export default class GameUI extends FrameListener {
         this.canvas.focus();
     }
 
+    openKeyHelp() {
+        this.setState({keyHelp: true}, this.saveData);
+    }
+
+    closeKeyHelp() {
+        this.setState({keyHelp: false}, this.saveData);
+    }
+
     listener(event) {
         const key = event.code || event.which || event.keyCode;
         if (!this.state.video) {
@@ -312,15 +324,21 @@ export default class GameUI extends FrameListener {
                 break;
             }
             case -2: { // Editor Mode
-                const hash = window.location.hash;
-                if (hash === '') {
-                    const renderer = this.state.renderer;
-                    if (renderer) {
-                        renderer.dispose();
-                    }
-                    if ('exitPointerLock' in document) {
-                        document.exitPointerLock();
-                    }
+                const renderer = this.state.renderer;
+                if (renderer) {
+                    renderer.dispose();
+                }
+                const game = this.state.game;
+                if (game) {
+                    const audioMenuManager = game.getAudioMenuManager();
+                    audioMenuManager.getMusicSource().stop();
+                }
+                if ('exitPointerLock' in document) {
+                    document.exitPointerLock();
+                }
+                if (window.location.hash) {
+                    window.location.hash = `${window.location.hash}&editor=true`;
+                } else {
                     window.location.hash = 'editor=true';
                 }
                 break;
@@ -329,6 +347,11 @@ export default class GameUI extends FrameListener {
                 const renderer = this.state.renderer;
                 if (renderer) {
                     renderer.dispose();
+                }
+                const game = this.state.game;
+                if (game) {
+                    const audioMenuManager = game.getAudioMenuManager();
+                    audioMenuManager.getMusicSource().stop();
                 }
                 if ('exitPointerLock' in document) {
                     document.exitPointerLock();
@@ -342,13 +365,7 @@ export default class GameUI extends FrameListener {
     frame() {
         const {game, clock, renderer, sceneManager, controls} = this.state;
         if (renderer && sceneManager) {
-            const presenting = renderer.isPresenting();
-            if (this.state.isPresenting !== presenting) {
-                this.state.isPresenting = presenting;
-            }
-            if (!presenting) {
-                this.checkResize(presenting);
-            }
+            this.checkResize();
             const scene = sceneManager.getScene();
             if (this.state.scene !== scene) {
                 this.setState({scene}, this.saveData);
@@ -361,7 +378,6 @@ export default class GameUI extends FrameListener {
                 scene,
                 controls
             );
-            updateVRGui(presenting);
             if (this.props.params.editor) {
                 DebugData.scope = {
                     params: this.props.params,
@@ -414,9 +430,6 @@ export default class GameUI extends FrameListener {
     }
 
     renderGUI() {
-        if (this.state.isPresenting)
-            return null;
-
         return <React.Fragment>
             <CinemaEffect enabled={this.state.cinema} />
             <TextInterjections
@@ -426,12 +439,16 @@ export default class GameUI extends FrameListener {
             />
             <Video video={this.state.video} renderer={this.state.renderer} />
             <Menu
+                game={this.state.game}
                 params={this.props.params}
                 showMenu={this.state.showMenu && !this.state.teleportMenu}
                 texts={this.state.game.menuTexts}
                 inGameMenu={this.state.inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />
+            {this.state.showMenu && !this.state.teleportMenu
+                && <KeyHelpIcon open={this.openKeyHelp}/>}
+            <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} />
             {this.state.teleportMenu
                 && <TeleportMenu
                     inGameMenu={this.state.inGameMenu}
@@ -444,7 +461,6 @@ export default class GameUI extends FrameListener {
                     }}
                 />}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
-            <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} />
             {this.state.loading ? <Loader/> : null}
             {!this.state.showMenu ? <TextBox
                 text={this.state.text}
@@ -456,6 +472,7 @@ export default class GameUI extends FrameListener {
                 onChoiceChanged={this.onAskChoiceChanged}
             /> : null}
             {!this.state.showMenu ? <FoundObject foundObject={this.state.foundObject} /> : null}
+            {this.state.keyHelp && <KeyHelpScreen close={this.closeKeyHelp}/>}
         </React.Fragment>;
     }
 }

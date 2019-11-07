@@ -1,4 +1,6 @@
+import * as THREE from 'three';
 import { unimplemented } from './utils';
+import { WORLD_SCALE } from '../../utils/lba';
 
 export function GOTO_POINT(point) {
     const distance = this.actor.goto(point.physics.position);
@@ -87,15 +89,49 @@ export function WAIT_NUM_DECIMAL_RND(maxNumDsec, unknown, time) {
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, null, time);
 }
 
-export const OPEN_LEFT = unimplemented();
+export function OPEN_LEFT(dist, time) {
+    openDoor.call(this, [0, 0, -dist * WORLD_SCALE], time);
+}
 
-export const OPEN_RIGHT = unimplemented();
+export function OPEN_RIGHT(dist, time) {
+    openDoor.call(this, [0, 0, dist * WORLD_SCALE], time);
+}
 
-export const OPEN_UP = unimplemented();
+export function OPEN_UP(dist, time) {
+    openDoor.call(this, [dist * WORLD_SCALE, 0, 0], time);
+}
 
-export const OPEN_DOWN = unimplemented();
+export function OPEN_DOWN(dist, time) {
+    openDoor.call(this, [-dist * WORLD_SCALE, 0, 0], time);
+}
 
-export const CLOSE = unimplemented();
+const TGT = new THREE.Vector3();
+
+function openDoor(tgt, time) {
+    const {pos} = this.actor.props;
+    TGT.set(pos[0] + tgt[0], pos[1] + tgt[1], pos[2] + tgt[2]);
+    const distance = this.actor.gotoSprite(TGT, time.delta * 2);
+
+    if (distance > 0.001) {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+    } else {
+        this.actor.stop();
+    }
+}
+
+export function CLOSE(time) {
+    const {pos} = this.actor.props;
+    TGT.set(pos[0], pos[1], pos[2]);
+    const distance = this.actor.gotoSprite(TGT, time.delta * 2);
+
+    if (distance > 0.001) {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+    } else {
+        this.actor.stop();
+    }
+}
 
 export const WAIT_DOOR = unimplemented();
 

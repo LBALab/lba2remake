@@ -16,6 +16,7 @@ import {makeOutlinerArea} from '../../../utils/outliner';
 import LocationsNode from '../../locator/LocationsNode';
 import {formatVar} from '../../scripts/format';
 import {editor as editorStyle} from '../../../../../styles';
+import {getLanguageConfig} from '../../../../../../lang';
 
 const {
     getObjectName,
@@ -240,7 +241,7 @@ async function findAllRefsInSceneList(varDef, sceneList) {
     if (!game)
         return null;
 
-    const language = game.getState().config.language;
+    const {language} = getLanguageConfig();
     const results = await Promise.all(
         map(sceneList, async (idx) => {
             const [sceneData] = await Promise.all([

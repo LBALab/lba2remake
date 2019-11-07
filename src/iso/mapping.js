@@ -28,7 +28,7 @@ export function loadBricksMapping(renderer, params, layouts, bricks, mask, palet
                 map(layouts, ({blocks}) => map(blocks, block => block.brick))
             )
         ),
-        idx => idx !== 0
+        idx => idx !== 0 && idx !== 127 // forbidden bricks
     );
     const bricksMap = {};
     const {width, height} = computeTextureSize(usedBricks.length);

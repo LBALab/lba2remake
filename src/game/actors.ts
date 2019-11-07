@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { loadModel, Model } from '../model';
 import { loadAnimState, resetAnimState } from '../model/animState';
 import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
+import {createBoundingBox} from '../utils/rendering.js';
 import { loadSprite } from '../iso/sprites';
 
 import { getObjectName } from '../ui/editor/DebugData';
@@ -48,6 +49,7 @@ export interface Actor {
     props: ActorProps;
     threeObject?: THREE.Object3D;
     model?: Model;
+    sprite?: any;
     physics: ActorPhysics;
     animState: any;
     isVisible: boolean;
@@ -62,6 +64,7 @@ export interface Actor {
     resetAnimState: Function;
     resetPhysics: Function;
     goto: Function;
+    gotoSprite: Function;
     facePoint: Function;
     setAngle: Function;
     getDistance: Function;
@@ -111,6 +114,7 @@ export async function loadActor(
         hasCollidedWithActor: -1,
         floorSound: -1,
         model: null,
+        sprite: null,
         threeObject: null,
         animState,
 
@@ -160,6 +164,13 @@ export async function loadActor(
         },
 
         /* @inspector(locate) */
+        gotoSprite(point, delta) {
+            this.physics.position.lerp(point, delta);
+            this.threeObject.position.copy(this.physics.position);
+            return this.getDistance(point);
+        },
+
+        /* @inspector(locate) */
         facePoint(point) {
             let destAngle = angleTo(this.physics.position, point);
             const signCurr = this.physics.temp.destAngle > 0 ? 1 : -1;
@@ -177,7 +188,7 @@ export async function loadActor(
 
         /* @inspector(locate) */
         setAngle(angle) {
-            this.props.runtimeFlags.isTurning = true;
+            // this.props.runtimeFlags.isTurning = true;
             this.props.angle = angle;
             this.physics.temp.destAngle = angleToRad(angle);
         },
@@ -229,13 +240,25 @@ export async function loadActor(
                     }
                 }
             } else {
-                const sprite = await loadSprite(this.props.spriteIndex);
-                sprite.threeObject.position.copy(this.physics.position);
-                // sprite.threeObject.quaternion.copy(actor.physics.orientation);
-                this.threeObject = sprite.threeObject;
-                if (this.threeObject) {
-                    this.threeObject.name = `actor:${name}`;
-                    this.threeObject.visible = this.isVisible;
+                this.threeObject = new THREE.Object3D();
+                this.threeObject.name = `actor:${name}`;
+                this.threeObject.visible = this.isVisible;
+                this.threeObject.position.copy(this.physics.position);
+                this.threeObject.quaternion.copy(this.physics.orientation);
+                if (this.isSprite) {
+                    const {spriteIndex, flags: {hasSpriteAnim3D}} = this.props;
+                    const sprite = await loadSprite(spriteIndex, hasSpriteAnim3D, false);
+                    this.threeObject.add(sprite.threeObject);
+                    if (params.editor) {
+                        sprite.boundingBoxDebugMesh = createBoundingBox(
+                            sprite.boundingBox,
+                            new THREE.Vector3(1, 0, 0)
+                        );
+                        sprite.boundingBoxDebugMesh.name = 'BoundingBox';
+                        sprite.boundingBoxDebugMesh.visible = false;
+                        this.threeObject.add(sprite.boundingBoxDebugMesh);
+                    }
+                    this.sprite = sprite;
                 }
             }
             if (params.editor) {

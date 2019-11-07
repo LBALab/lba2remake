@@ -1,22 +1,20 @@
-import TextData from '../text/data';
+import {getLanguageConfig} from '../lang';
 
 export function createState() {
     return {
-        config: {
-            language: TextData.LANGUAGE[0],
-            languageVoice: TextData.LANGUAGE[0],
+        config: Object.assign({
             displayText: true,
             musicVolume: 0.8,
             soundFxVolume: 0.5,
             voiceVolume: 1.0
-        },
+        }, getLanguageConfig()),
         hero: {
             behaviour: 0,
             prevBehaviour: 0,
             life: 50,
             money: 100,
             magic: 0,
-            keys: 0,
+            keys: 1,
             fuel: 0,
             pinguin: 0,
             clover: { boxes: 2, leafs: 0 },

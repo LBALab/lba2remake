@@ -23,15 +23,21 @@ each(islandsInfo, (island) => {
 });
 
 const islands = {};
+const islandPreviews = {};
 
 export function getEnvInfo(name) {
     return islandProps[name].envInfo;
 }
 
 export async function loadIslandScenery(params, name, ambience) {
-    if (name in islands) {
+    if (params.preview) {
+        if (name in islandPreviews) {
+            return islandPreviews[name];
+        }
+    } else if (name in islands) {
         return islands[name];
     }
+
     const [ress, ile, obl, lutTexture] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr(`${name}.ILE`),
@@ -40,7 +46,11 @@ export async function loadIslandScenery(params, name, ambience) {
     ]);
     const files = {ress, ile, obl};
     const island = loadIslandNode(params, islandProps[name], files, lutTexture, ambience);
-    islands[name] = island;
+    if (params.preview) {
+        islandPreviews[name] = island;
+    } else {
+        islands[name] = island;
+    }
     return island;
 }
 
@@ -61,21 +71,21 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
     each(geometries, ({positions, uvs, colors, intensities, normals, uvGroups, material}, name) => {
         if (positions && positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
-            bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+            bufferGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
             if (uvs) {
-                bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
+                bufferGeometry.setAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
             }
             if (colors) {
-                bufferGeometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 1, false));
+                bufferGeometry.setAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 1, false));
             }
             if (intensities) {
-                bufferGeometry.addAttribute('intensity', new THREE.BufferAttribute(new Uint8Array(intensities), 1, false));
+                bufferGeometry.setAttribute('intensity', new THREE.BufferAttribute(new Uint8Array(intensities), 1, false));
             }
             if (normals) {
-                bufferGeometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
+                bufferGeometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
             }
             if (uvGroups) {
-                bufferGeometry.addAttribute('uvGroup', new THREE.BufferAttribute(new Uint16Array(uvGroups), 4, false));
+                bufferGeometry.setAttribute('uvGroup', new THREE.BufferAttribute(new Uint16Array(uvGroups), 4, false));
             }
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.matrixAutoUpdate = false;
@@ -85,7 +95,9 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         }
     });
 
-    islandObject.add(loadSky(geometries, props.envInfo));
+    if (!params.preview) {
+        islandObject.add(loadSky(geometries, props.envInfo));
+    }
 
     const sections = {};
     let boundingBoxes = null;
@@ -95,6 +107,9 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         boundingBoxes.visible = false;
         boundingBoxes.matrixAutoUpdate = false;
         islandObject.add(boundingBoxes);
+    }
+    if (params.preview) {
+        loadSectionPlanes(islandObject, data);
     }
     each(data.layout.groundSections, (section) => {
         sections[`${section.x},${section.z}`] = section;
@@ -111,16 +126,43 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
 
     return {
         props,
-        sections: map(layout.groundSections, section => ({x: section.x, z: section.z})),
+        sections: map(layout.groundSections,
+            section => ({x: section.x, z: section.z, boundingBoxes: section.boundingBoxes })),
         threeObject: islandObject,
         physics: loadIslandPhysics(sections),
 
+        updateSeaTime: (time) => {
+            seaTimeUniform.value = time.elapsed;
+        },
         /* @inspector(locate) */
         update: (game, scene, time) => {
-            updateShadows(scene, matByName);
+            if (scene) {
+                updateShadows(scene, matByName);
+            }
             seaTimeUniform.value = time.elapsed;
         }
     };
+}
+
+function loadSectionPlanes(islandObject, data) {
+    const sectionsPlanes = new THREE.Object3D();
+    const sectionsPlanesGeom = new THREE.PlaneBufferGeometry(64 * 0.75, 64 * 0.75);
+    const sectionsPlanesMat = new THREE.MeshBasicMaterial({color: 0xff0000});
+    sectionsPlanes.name = 'sectionsPlanes';
+    sectionsPlanes.visible = false;
+    sectionsPlanes.renderOrder = 3;
+    islandObject.add(sectionsPlanes);
+    each(data.layout.groundSections, (section) => {
+        const plane = new THREE.Mesh(sectionsPlanesGeom, sectionsPlanesMat);
+        plane.position.set(((section.x * 64) + 33) * 0.75, 0, ((section.z * 64) + 32) * 0.75);
+        plane.quaternion.setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
+        plane.userData = {
+            x: section.x,
+            y: section.y,
+            info: section
+        };
+        sectionsPlanes.add(plane);
+    });
 }
 
 function loadSky(geometries, envInfo) {
@@ -142,8 +184,8 @@ function loadSky(geometries, envInfo) {
         1, 1,
         0, 1
     ];
-    bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
+    bufferGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+    bufferGeometry.setAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
     const sky = new THREE.Mesh(
         bufferGeometry,
         geometries.sky.material

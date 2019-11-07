@@ -82,7 +82,7 @@ export function CONE_VIEW() {
 CONE_VIEW.unimplemented = true;
 
 export function HIT_BY() {
-    return this.actor.hasCollidedWithActor;
+    return this.actor.wasHitBy;
 }
 
 export function ACTION() {

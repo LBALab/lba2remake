@@ -4,6 +4,7 @@ import { AnimType } from '../data/animType';
 import { setMagicBallLevel } from '../../game/state.ts';
 import VideoData from '../../video/data';
 import { unimplemented } from './utils';
+import { WORLD_SCALE } from '../../utils/lba';
 
 export const PALETTE = unimplemented();
 
@@ -257,13 +258,33 @@ export function FOUND_OBJECT(cmdState, id) {
     }
 }
 
-export const SET_DOOR_LEFT = unimplemented();
+export function SET_DOOR_LEFT(dist) {
+    const {pos} = this.actor.props;
+    const l = (dist * WORLD_SCALE);
+    this.actor.physics.position.set(pos[0], pos[1], pos[2] - l);
+    this.actor.threeObject.position.set(pos[0], pos[1], pos[2] - l);
+}
 
-export const SET_DOOR_RIGHT = unimplemented();
+export function SET_DOOR_RIGHT(dist) {
+    const {pos} = this.actor.props;
+    const l = (dist * WORLD_SCALE);
+    this.actor.physics.position.set(pos[0], pos[1], pos[2] + l);
+    this.actor.threeObject.position.set(pos[0], pos[1], pos[2] + l);
+}
 
-export const SET_DOOR_UP = unimplemented();
+export function SET_DOOR_UP(dist) {
+    const {pos} = this.actor.props;
+    const l = (dist * WORLD_SCALE);
+    this.actor.physics.position.set(pos[0] + l, pos[1], pos[2]);
+    this.actor.threeObject.position.set(pos[0] + l, pos[1], pos[2]);
+}
 
-export const SET_DOOR_DOWN = unimplemented();
+export function SET_DOOR_DOWN(dist) {
+    const {pos} = this.actor.props;
+    const l = (dist * WORLD_SCALE);
+    this.actor.physics.position.set(pos[0] - l, pos[1], pos[2]);
+    this.actor.threeObject.position.set(pos[0] - l, pos[1], pos[2]);
+}
 
 export const GIVE_BONUS = unimplemented();
 
@@ -312,10 +333,8 @@ export function SUB_LIFE_POINT_OBJ(actor, value) {
     }
 }
 
-export function HIT_OBJ(actor, strength) {
-    // quick and dirty hit object
-    actor.hasCollidedWithActor = this.index;
-    actor.props.life -= strength;
+export function HIT_BY_OBJ(actor) {
+    actor.wasHitBy = this.actor.index;
 }
 
 export function PLAY_VIDEO(cmdState, video) {

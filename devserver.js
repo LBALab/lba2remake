@@ -39,6 +39,9 @@ app.post('/metadata', function (req, res) {
         case 'models':
             fileName = './www/metadata/models.json';
             break;
+        case 'islands':
+            fileName = './www/metadata/islands.json';
+            break;
     }
     if (fileName) {
         fs.readFile(fileName, 'utf8', (err, file) => {

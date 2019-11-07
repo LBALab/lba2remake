@@ -175,7 +175,7 @@ export const MoveOpcode = [
         opcode: 0x15,
         command: 'OPEN_LEFT',
         handler: mv.OPEN_LEFT,
-        args: ['Int16'],
+        args: ['Int16:distance'],
         indent: Indent.ONE,
         type: 'fct'
     },
@@ -183,7 +183,7 @@ export const MoveOpcode = [
         opcode: 0x16,
         command: 'OPEN_RIGHT',
         handler: mv.OPEN_RIGHT,
-        args: ['Int16'],
+        args: ['Int16:distance'],
         indent: Indent.ONE,
         type: 'fct'
     },
@@ -191,7 +191,7 @@ export const MoveOpcode = [
         opcode: 0x17,
         command: 'OPEN_UP',
         handler: mv.OPEN_UP,
-        args: ['Int16'],
+        args: ['Int16:distance'],
         indent: Indent.ONE,
         type: 'fct'
     },
@@ -199,7 +199,7 @@ export const MoveOpcode = [
         opcode: 0x18,
         command: 'OPEN_DOWN',
         handler: mv.OPEN_DOWN,
-        args: ['Int16'],
+        args: ['Int16:distance'],
         indent: Indent.ONE,
         type: 'fct'
     },

@@ -3,6 +3,7 @@ import {each, orderBy} from 'lodash';
 import {bits} from '../utils.ts';
 import {loadHqr} from '../hqr.ts';
 import {compile} from '../utils/shaders';
+import {WORLD_SCALE} from '../utils/lba';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
 
@@ -11,7 +12,7 @@ const push = Array.prototype.push;
 let spriteCache = null;
 let spriteRawCache = null;
 
-export async function loadSprite(index, isBillboard = false) {
+export async function loadSprite(index, hasSpriteAnim3D = false, isBillboard = false) {
     const [ress, spritesFile, spritesRaw] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr('SPRITES.HQR'),
@@ -28,43 +29,89 @@ export async function loadSprite(index, isBillboard = false) {
         spriteRawCache = loadSpritesMapping(sprites, palette);
     }
     const cache = (index < 100) ? spriteRawCache : spriteCache;
+    const box = loadSpriteBB(ress, index, hasSpriteAnim3D);
+    const {xMin, xMax, yMin, yMax, zMin, zMax} = box;
     return {
-        threeObject: (isBillboard) ? loadBillboardSprite(index, cache) : loadMesh(index, cache),
+        box,
+        boundingBox: new THREE.Box3(
+            new THREE.Vector3(xMin, yMin, zMin).multiplyScalar(WORLD_SCALE),
+            new THREE.Vector3(xMax, yMax, zMax).multiplyScalar(WORLD_SCALE)
+        ),
+        props: cache.spritesMap[index],
+        threeObject: (isBillboard)
+            ? loadBillboardSprite(index, cache)
+            : loadMesh(index, cache, box),
     };
 }
 
-function loadMesh(index, sprite) {
+function loadSpriteBB(ress, entry, hasSpriteAnim3D) {
+    const ressEntry = hasSpriteAnim3D ? 43 : (entry < 100 ? 8 : 5);
+    const rDataView = new DataView(ress.getEntry(ressEntry));
+    const rOffset = (entry * 16) + 4;
+    return {
+        xMin: rDataView.getInt16(rOffset, true),
+        xMax: rDataView.getInt16(rOffset + 2, true),
+        yMin: rDataView.getInt16(rOffset + 4, true),
+        yMax: rDataView.getInt16(rOffset + 6, true),
+        zMin: rDataView.getInt16(rOffset + 8, true),
+        zMax: rDataView.getInt16(rOffset + 10, true),
+    };
+}
+
+function loadMesh(index, sprite, box) {
     const s = sprite.spritesMap[index];
-    const vertices = [
-        [0, 0, 0],
-        [s.w, 0, 0],
-        [s.w, s.h, 0],
-        [0, s.h, 0]
-        /*
-        [-s.w/2, -s.h/2, 0],
-        [s.w/2,  -s.h/2, 0],
-        [s.w/2,   s.h/2, 0],
-        [-s.w/2,  s.h/2, 0]
-         */
-    ];
-    const uvs = [
-        [
-            s.u / sprite.width,
-            (s.v / sprite.height) + (s.h / sprite.height)
-        ],
-        [
-            (s.u / sprite.width) + (s.w / sprite.width),
-            (s.v / sprite.height) + (s.h / sprite.height)
-        ],
-        [
-            (s.u / sprite.width) + (s.w / sprite.width),
-            s.v / sprite.height
-        ],
-        [
-            s.u / sprite.width,
-            s.v / sprite.height
+    const xMajor = (box.xMax - box.xMin) > (box.zMax - box.zMin);
+    const vertices = xMajor
+        ? [
+            [box.xMax * WORLD_SCALE, box.yMin * WORLD_SCALE, 0],
+            [box.xMin * WORLD_SCALE, box.yMin * WORLD_SCALE, 0],
+            [box.xMin * WORLD_SCALE, box.yMax * WORLD_SCALE, 0],
+            [box.xMax * WORLD_SCALE, box.yMax * WORLD_SCALE, 0]
         ]
-    ];
+        : [
+            [0, box.yMin * WORLD_SCALE, box.zMin * WORLD_SCALE],
+            [0, box.yMin * WORLD_SCALE, box.zMax * WORLD_SCALE],
+            [0, box.yMax * WORLD_SCALE, box.zMax * WORLD_SCALE],
+            [0, box.yMax * WORLD_SCALE, box.zMin * WORLD_SCALE]
+        ];
+    const baseUvs = xMajor
+        ? [
+            [
+                s.u,
+                (s.v + s.h)
+            ],
+            [
+                s.u + s.w,
+                (s.v + s.h) - (s.w / 2)
+            ],
+            [
+                s.u + s.w,
+                s.v
+            ],
+            [
+                s.u,
+                s.v + (s.w / 2)
+            ]
+        ]
+        : [
+            [
+                s.u,
+                (s.v + s.h) - (s.w / 2)
+            ],
+            [
+                s.u + s.w,
+                s.v + s.h
+            ],
+            [
+                s.u + s.w,
+                s.v + (s.w / 2)
+            ],
+            [
+                s.u,
+                s.v
+            ]
+        ];
+    const uvs = baseUvs.map(([u, v]) => [u / sprite.width, v / sprite.height]);
     const geometries = {
         positions: [],
         uvs: []
@@ -84,8 +131,8 @@ function loadMesh(index, sprite) {
     });
 
     const bufferGeometry = new THREE.BufferGeometry();
-    bufferGeometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
-    bufferGeometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
+    bufferGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(geometries.positions), 3));
+    bufferGeometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometries.uvs), 2));
     const mesh = new THREE.Mesh(bufferGeometry, new THREE.RawShaderMaterial({
         vertexShader: compile('vert', sprite_vertex),
         fragmentShader: compile('frag', sprite_fragment),
@@ -97,16 +144,8 @@ function loadMesh(index, sprite) {
         depthTest: true,
         wireframe: false
     }));
-
-    const scale = 1 / 48;
-    mesh.scale.set(scale, scale, scale);
-    mesh.frustumCulled = true;
-
-    const object = new THREE.Object3D();
-    object.add(mesh);
-
-    object.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 3 * (Math.PI / 4.0));
-    return object;
+    mesh.name = 'Sprite';
+    return mesh;
 }
 
 function loadBillboardSprite(index, sprite) {
@@ -123,8 +162,10 @@ function loadBillboardSprite(index, sprite) {
 
     const threeSprite = new THREE.Sprite(spriteMaterial);
     threeSprite.scale.set(s.h / 1024, s.w / 1024, 1);
+    threeSprite.name = 'SpriteBillboard';
 
     const object = new THREE.Object3D();
+    object.name = 'SpriteHolder';
 
     object.add(threeSprite);
     return object;
@@ -193,7 +234,6 @@ function loadSpriteData(sprites, entry) {
     };
 }
 
-
 function loadSpriteRawData(sprites, entry) {
     const dataView = new DataView(sprites.getEntry(entry));
     const width = dataView.getUint8(8);
@@ -229,7 +269,7 @@ export function loadSpritesMapping(sprites, palette) {
     let w = 0;
     let maxH = 0;
     sprites = orderBy(sprites, ['height'], ['desc']);
-    each(sprites, (sprite, idx) => {
+    each(sprites, (sprite) => {
         if (maxH < sprite.height) {
             maxH = sprite.height;
         }
@@ -246,7 +286,7 @@ export function loadSpritesMapping(sprites, palette) {
             u: offsetX,
             v: offsetY
         };
-        const pixels = sprites[idx].pixels;
+        const pixels = sprite.pixels;
         for (let y = 0; y < sprite.height; y += 1) {
             for (let x = 0; x < sprite.width; x += 1) {
                 const src_i = (y * sprite.width) + (sprite.width - 1 - x);

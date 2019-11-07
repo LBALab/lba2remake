@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import {map} from 'lodash';
 import setupStats from './stats';
-import WebVR from './tools/WebVR';
 import {EngineError} from '../crash_reporting';
 
 const PixelRatioMode = {
@@ -24,16 +23,9 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
     const threeRenderer = setupThreeRenderer(pixelRatio, canvas, params.webgl2, rendererOptions);
     const stats = setupStats();
 
-    const vrButton = WebVR.createButton(threeRenderer, {
-        frameOfReferenceType: 'eye-level'
-    });
-
-    if (vrButton) {
+    if (rendererOptions.vr) {
         threeRenderer.vr.enabled = true;
-        const renderZone = document.getElementById('renderZone');
-        if (renderZone) {
-            renderZone.appendChild(vrButton);
-        }
+        threeRenderer.vr.setReferenceSpaceType('eye-level');
     }
 
     // eslint-disable-next-line no-console
@@ -138,9 +130,9 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions = {}) {
         renderer.webglVersion = webglVersion;
 
         if (!(window.WebGL2RenderingContext
-                && renderer.context instanceof window.WebGL2RenderingContext)) {
-            renderer.context.getExtension('EXT_shader_texture_lod');
-            renderer.context.getExtension('OES_standard_derivatives');
+                && renderer.getContext() instanceof window.WebGL2RenderingContext)) {
+            renderer.getContext().getExtension('EXT_shader_texture_lod');
+            renderer.getContext().getExtension('OES_standard_derivatives');
         }
         return renderer;
     } catch (err) {

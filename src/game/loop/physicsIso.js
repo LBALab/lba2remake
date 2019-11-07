@@ -1,14 +1,15 @@
 import * as THREE from 'three';
 
+const STEP = 1 / 24;
+
 export function processCollisions(grid, scene, actor) {
     const basePos = actor.threeObject.position.clone();
     const position = actor.physics.position.clone();
-    basePos.multiplyScalar(1 / 24);
-    position.multiplyScalar(1 / 24);
+    basePos.multiplyScalar(STEP);
+    position.multiplyScalar(STEP);
     const dx = 64 - Math.floor(position.x * 32);
     const dz = Math.floor(position.z * 32);
     const cell = grid.cells[(dx * 64) + dz];
-    let height = 0;
     actor.floorSound = -1;
     if (cell
         && (actor.props.flags.hasCollisionFloor
@@ -36,20 +37,19 @@ export function processCollisions(grid, scene, actor) {
                     y = bb.max.y;
                     break;
             }
-            if (basePos.y > y - (1 / 64) && position.y < y) {
-                height = y;
+            const minY = i > 0 ? bb.min.y - (2 * STEP) : -Infinity;
+            if (basePos.y >= minY && position.y < y) {
+                position.y = Math.max(y, position.y);
                 break;
             }
         }
     }
-    actor.physics.position.y = Math.max(height, position.y) * 24;
+    position.y = Math.max(0, position.y);
     if (actor.props.flags.hasCollisionBricks) {
-        const boxPos = actor.physics.position.clone();
-        boxPos.multiplyScalar(1 / 24);
-        processBoxIntersections(grid, actor, boxPos, dx, dz);
-        boxPos.multiplyScalar(24);
-        actor.physics.position.copy(boxPos);
+        processBoxIntersections(grid, actor, position, dx, dz);
     }
+    position.multiplyScalar(24);
+    actor.physics.position.copy(position);
 }
 
 const ACTOR_BOX = new THREE.Box3();
@@ -58,6 +58,7 @@ const ITRS_SIZE = new THREE.Vector3();
 const CENTER1 = new THREE.Vector3();
 const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
+const BB = new THREE.Box3();
 
 function processBoxIntersections(grid, actor, position, dx, dz) {
     const boundingBox = actor.model.boundingBox;
@@ -69,33 +70,40 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
     ACTOR_BOX.translate(DIFF);
     for (let ox = -1; ox < 2; ox += 1) {
         for (let oz = -1; oz < 2; oz += 1) {
-            if (!(ox === 0 && oz === 0)) {
-                const cell = grid.cells[((dx + ox) * 64) + (dz + oz)];
-                if (cell) {
-                    for (let i = 0; i < cell.columns.length; i += 1) {
-                        const column = cell.columns[i];
-                        const bb = column.box;
-                        if ((column.shape === 1 || column.shape > 5)
-                            && ACTOR_BOX.intersectsBox(bb)
-                        ) {
-                            INTERSECTION.copy(ACTOR_BOX);
-                            INTERSECTION.intersect(bb);
-                            INTERSECTION.getSize(ITRS_SIZE);
-                            ACTOR_BOX.getCenter(CENTER1);
-                            bb.getCenter(CENTER2);
-                            const dir = CENTER1.sub(CENTER2);
-                            if (ITRS_SIZE.x < ITRS_SIZE.z) {
-                                DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
-                            } else {
-                                DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
-                            }
-                            actor.physics.position.add(DIFF);
-                            position.add(DIFF);
-                            ACTOR_BOX.translate(DIFF);
-                        }
+            const cell = grid.cells[((dx + ox) * 64) + (dz + oz)];
+            if (cell && cell.columns.length > 0) {
+                for (let i = 0; i < cell.columns.length; i += 1) {
+                    const column = cell.columns[i];
+                    BB.copy(column.box);
+                    if (column.shape !== 1) {
+                        BB.max.y -= 1 / 24;
                     }
+                    intersectBox(actor, position);
                 }
+            } else {
+                BB.min.set((64 - (dx + ox)) / 32, -Infinity, (dz + oz) / 32);
+                BB.max.set((65 - (dx + ox)) / 32, Infinity, (dz + oz + 1) / 32);
+                intersectBox(actor, position);
             }
         }
+    }
+}
+
+function intersectBox(actor, position) {
+    if (ACTOR_BOX.intersectsBox(BB)) {
+        INTERSECTION.copy(ACTOR_BOX);
+        INTERSECTION.intersect(BB);
+        INTERSECTION.getSize(ITRS_SIZE);
+        ACTOR_BOX.getCenter(CENTER1);
+        BB.getCenter(CENTER2);
+        const dir = CENTER1.sub(CENTER2);
+        if (ITRS_SIZE.x < ITRS_SIZE.z) {
+            DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
+        } else {
+            DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
+        }
+        actor.physics.position.add(DIFF);
+        position.add(DIFF);
+        ACTOR_BOX.translate(DIFF);
     }
 }
