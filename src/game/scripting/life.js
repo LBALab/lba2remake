@@ -86,7 +86,9 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 });
             }
         };
-        this.game.controlsState.skipListener = cmdState.skipListener;
+        if (text.type !== 9) {
+            this.game.controlsState.skipListener = cmdState.skipListener;
+        }
         if (this.scene.vr) {
             voiceSource.ended = () => {
                 cmdState.ended = true;
