@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {cloneDeep} from 'lodash';
 
 import { loadModel, Model } from '../model';
 import { loadAnimState, resetAnimState } from '../model/animState';
@@ -104,7 +105,7 @@ export async function loadActor(
     const actor: Actor = {
         type: 'actor',
         index: props.index,
-        props,
+        props: cloneDeep(props),
         physics: initPhysics(props),
         isKilled: false,
         isVisible: props.flags.isVisible

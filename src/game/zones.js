@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {cloneDeep} from 'lodash';
 import {getObjectName} from '../ui/editor/DebugData';
 import {createBoundingBox} from '../utils/rendering';
 import {createZoneLabel} from '../ui/editor/labels';
@@ -35,7 +36,7 @@ export function loadZone(props, is3DCam) {
         type: 'zone',
         zoneType: ZONE_TYPE[props.type],
         index: props.index,
-        props,
+        props: cloneDeep(props),
         color: new THREE.Color(ZONE_TYPE_MATERIAL_COLOR[props.type]),
         physics: {
             position: new THREE.Vector3(pos[0], pos[1], pos[2])
