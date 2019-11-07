@@ -181,7 +181,7 @@ export function SUICIDE() {
 }
 
 export function USE_ONE_LITTLE_KEY() {
-    this.game.getState().hero.keys += 1;
+    this.game.getState().hero.keys -= 1;
 }
 
 export function SUB_MONEY(amount) {
