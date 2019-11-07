@@ -63,6 +63,9 @@ function updateScene(params, game, scene, time, step) {
         scene.sceneNode.updateMatrixWorld();
     }
     each(scene.actors, (actor) => {
+        actor.wasHitBy = -1;
+    });
+    each(scene.actors, (actor) => {
         if (actor.isKilled)
             return;
         updateActor(params, game, scene, actor, time, step);

@@ -333,10 +333,8 @@ export function SUB_LIFE_POINT_OBJ(actor, value) {
     }
 }
 
-export function HIT_OBJ(actor, strength) {
-    // quick and dirty hit object
-    actor.hasCollidedWithActor = this.index;
-    actor.props.life -= strength;
+export function HIT_BY_OBJ(actor) {
+    actor.wasHitBy = this.actor.index;
 }
 
 export function PLAY_VIDEO(cmdState, video) {
