@@ -308,7 +308,7 @@ export const ConditionOpcode = [
         command: 'HIT_OBJ_BY',
         handler: lc.HIT_OBJ_BY,
         param: 'Uint8:actor',
-        operand: 'Uint8',
+        operand: 'Uint8:actor',
         type: 'fct'
     },
     {

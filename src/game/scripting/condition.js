@@ -195,7 +195,7 @@ export function DISTANCE_MESSAGE(actor) {
 }
 
 export function HIT_OBJ_BY(actor) {
-    return actor.hasCollidedWithActor;
+    return actor.wasHitBy;
 }
 
 export function REAL_ANGLE() {
