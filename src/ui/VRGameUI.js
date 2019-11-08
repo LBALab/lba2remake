@@ -67,7 +67,8 @@ export default class VRGameUI extends FrameListener {
                 showMenu: false,
                 inGameMenu: false,
                 teleportMenu: false,
-                display: null
+                display: null,
+                enteredVR: false
             };
 
             clock.start();
@@ -192,6 +193,7 @@ export default class VRGameUI extends FrameListener {
     }
 
     onVrDisplayPresentChange() {
+        this.setState({enteredVR: true});
         this.forceUpdate();
     }
 
@@ -343,12 +345,12 @@ export default class VRGameUI extends FrameListener {
                 <div style={buttonStyle} onClick={this.requestPresence}>
                     <img style={imgStyle} src="images/vr_goggles.png"/>
                     <br/>
-                    {tr('PlayInVR')}
+                    {this.state.enteredVR ? tr('ReturnToVR') : tr('PlayInVR')}
                 </div>
                 <br/><br/>
-                <div style={buttonStyle2} onClick={this.props.exitVR}>
+                {!this.state.enteredVR && <div style={buttonStyle2} onClick={this.props.exitVR}>
                     {tr('PlayOnScreen')}
-                </div>
+                </div>}
             </div>
         </div>;
     }
