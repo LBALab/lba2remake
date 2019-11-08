@@ -30,7 +30,6 @@ export default class VRGameUI extends FrameListener {
         this.requestPresence = this.requestPresence.bind(this);
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
         this.onGameReady = this.onGameReady.bind(this);
-        this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
         this.setUiState = sBind(this.setUiState, this);
         this.getUiState = sBind(this.getUiState, this);
         this.showMenu = this.showMenu.bind(this);
@@ -77,8 +76,13 @@ export default class VRGameUI extends FrameListener {
     }
 
     /* @inspector(locate) */
-    setUiState(state) {
-        this.setState(state, this.saveData);
+    setUiState(state, callback) {
+        this.setState(state, () => {
+            if (callback) {
+                callback();
+            }
+            this.saveData();
+        });
     }
 
     /* @inspector(locate, pure) */
@@ -257,10 +261,6 @@ export default class VRGameUI extends FrameListener {
                 );
             }
         }
-    }
-
-    onAskChoiceChanged(choice) {
-        this.setState({choice}, this.saveData);
     }
 
     textAnimEndedHandler() {

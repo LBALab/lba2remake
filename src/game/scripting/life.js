@@ -414,8 +414,11 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
             color: actor.props.textColor
         };
         this.game.setUiState({ ask: uiState.ask });
-        cmdState.skipListener = function skipListener() {
-            cmdState.ended = true;
+        cmdState.skipListener = () => {
+            if (!this.scene.vr
+                || this.game.getUiState().choice !== null) {
+                cmdState.ended = true;
+            }
         };
         this.game.controlsState.skipListener = cmdState.skipListener;
 

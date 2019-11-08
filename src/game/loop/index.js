@@ -6,6 +6,7 @@ import {processPhysicsFrame} from './physics';
 import {getRandom} from '../../utils/lba';
 import DebugData from '../../ui/editor/DebugData';
 import { updateExtra } from '../extras.ts';
+import { updateVRGUI } from '../../ui/vr/vrGUI';
 
 const dbgClock = new THREE.Clock(false);
 dbgClock.start();
@@ -83,6 +84,9 @@ function updateScene(params, game, scene, time, step) {
         each(scene.points, (point) => {
             point.update(scene.camera);
         });
+    }
+    if (scene.vrGUI) {
+        updateVRGUI(game, scene, scene.vrGUI);
     }
 }
 

@@ -23,6 +23,7 @@ import { getIso3DCamera } from '../cameras/iso3d';
 import { getVR3DCamera } from '../cameras/vr/vr3d';
 import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { createFPSCounter } from '../ui/vr/vrFPS';
+import { createVRGUI } from '../ui/vr/vrGUI';
 import { angleToRad } from '../utils/lba';
 import { getLanguageConfig } from '../lang';
 
@@ -167,6 +168,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
     let scenery = null;
     let threeScene = null;
     let camera = null;
+    let vrGUI = null;
     if (!parent) {
         threeScene = new THREE.Scene();
         threeScene.matrixAutoUpdate = false;
@@ -196,6 +198,8 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 const fps = createFPSCounter(renderer);
                 fps.visible = false;
                 camera.controlNode.add(fps);
+                vrGUI = createVRGUI(renderer);
+                camera.controlNode.add(vrGUI);
             }
         }
         threeScene.add(scenery.threeObject);
@@ -237,6 +241,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         zoneState: { listener: null, ended: false },
         goto: sBind(sceneManager.goto, sceneManager),
         vr: renderer.vr,
+        vrGUI,
         is3DCam,
 
         /* @inspector(locate) */

@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { find } from 'lodash';
 
+let handsRoot = null;
+
 const controllers = [];
 const targets = [];
 
@@ -9,34 +11,35 @@ const raycaster = new THREE.Raycaster();
 const direction = new THREE.Vector3();
 const position = new THREE.Vector3();
 const offset = new THREE.Vector3();
-const worldOrientation = new THREE.Euler(0, -Math.PI, 0);
 const hovering = new Set();
 const hitOnFrame = new Set();
 
 const loader = new GLTFLoader();
 
-export function createHands(renderer) {
-    const handsRoot = new THREE.Object3D();
-    handsRoot.name = 'Hands';
+export function getOrCreateHands(renderer) {
+    if (!handsRoot) {
+        handsRoot = new THREE.Object3D();
+        handsRoot.name = 'Hands';
 
-    const revTransform = new THREE.Object3D();
-    revTransform.name = 'HandsRevTransform';
-    revTransform.rotation.set(0, -Math.PI, 0);
-    revTransform.updateMatrix();
-    handsRoot.add(revTransform);
+        const revTransform = new THREE.Object3D();
+        revTransform.name = 'HandsRevTransform';
+        revTransform.rotation.set(0, -Math.PI, 0);
+        revTransform.updateMatrix();
+        handsRoot.add(revTransform);
 
-    for (let i = 0; i < 2; i += 1) {
-        const controller = renderer.threeRenderer.vr.getController(i);
-        if (controller) {
-            const hand = createHand(i === 0 ? 'right' : 'left');
-            controller.add(hand);
-            revTransform.add(controller);
+        for (let i = 0; i < 2; i += 1) {
+            const controller = renderer.threeRenderer.vr.getController(i);
+            if (controller) {
+                const hand = createHand(i === 0 ? 'right' : 'left');
+                controller.add(hand);
+                revTransform.add(controller);
 
-            const target = makeTgt();
-            handsRoot.add(target);
+                const target = makeTgt();
+                handsRoot.add(target);
 
-            targets.push(target);
-            controllers.push(controller);
+                targets.push(target);
+                controllers.push(controller);
+            }
         }
     }
 
@@ -123,16 +126,18 @@ export function performRaycasting(objects, ctx, handler) {
     }
 }
 
+const rotation = new THREE.Matrix4();
+
 function raycastCtrl(idx, objects, handler, ctx) {
     const {controlsState} = ctx.game;
     const triggered = controlsState.ctrlTriggers[idx];
     const controller = controllers[idx];
 
     direction.set(0, 0, -1);
-    direction.applyQuaternion(controller.quaternion);
-    direction.applyEuler(worldOrientation);
+    rotation.extractRotation(controller.matrixWorld);
+    direction.applyMatrix4(rotation);
     offset.set(0, 0.02, 0);
-    offset.applyQuaternion(controller.quaternion);
+    offset.applyMatrix4(rotation);
     position.setFromMatrixPosition(controller.matrixWorld);
     position.add(offset);
     raycaster.set(position, direction);
