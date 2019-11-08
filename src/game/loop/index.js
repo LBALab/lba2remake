@@ -16,7 +16,7 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls, vrS
 
     renderer.stats.begin();
     each(controls, ctrl => ctrl.update && ctrl.update());
-    if (scene && !uiState.showMenu) {
+    if (scene && !uiState.showMenu && !uiState.video) {
         const step = game.isPaused() && DebugData.step;
         if (!game.isPaused() || step) {
             if (step) {

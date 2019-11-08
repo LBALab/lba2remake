@@ -6,6 +6,7 @@ import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
 import controllerScreens from './data/controllerScreens';
 import { drawFrame } from './vrUtils';
 import {tr} from '../../lang';
+import VideoData from '../../video/data';
 
 let menuNode = null;
 let teleportMenu = null;
@@ -36,9 +37,25 @@ export function createMenu(game, renderer, light) {
         text: game.menuTexts[71].value,
         y: 0,
         callback: ({sceneManager}) => {
-            game.resume();
-            game.resetState();
-            sceneManager.hideMenuAndGoto(0, false);
+            const audioMenuManager = game.getAudioMenuManager();
+            audioMenuManager.getMusicSource().stop();
+
+            const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
+            const onEnded = () => {
+                game.setUiState({video: null});
+                game.controlsState.skipListener = null;
+                game.resume();
+                game.resetState();
+                sceneManager.goto(0, false);
+            };
+            game.controlsState.skipListener = onEnded;
+            game.setUiState({
+                showMenu: false,
+                video: {
+                    src,
+                    onEnded
+                }
+            });
             history.pushState({id: 'game'}, '');
         }
     }));
@@ -59,11 +76,12 @@ export function createMenu(game, renderer, light) {
             audioMenuManager.getMusicSource().load(6, () => {
                 audioMenuManager.getMusicSource().play();
             });
-            game.setUiState({inGameMenu: true});
+            game.setUiState({inGameMenu: true, video: null});
         }
         game.setUiState({
             showMenu: true,
-            teleportMenu: event.state && event.state.id === 'teleport'
+            teleportMenu: event.state && event.state.id === 'teleport',
+            video: null
         });
     };
 
