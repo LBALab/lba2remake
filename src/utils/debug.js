@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 // eslint-disable-next-line no-unused-vars
-function createDebugGizmo(object) {
+function createGizmo() {
     const axesHelper = new THREE.AxesHelper(1.2);
     axesHelper.name = 'Axes';
     const geometry = new THREE.SphereGeometry(0.1, 32, 32);
