@@ -185,8 +185,7 @@ export function NOP() {
 }
 
 export function RETURN() {
-    this.state.reentryOffset = this.state.comportementOffset;
-    this.state.continue = false;
+    END_COMPORTEMENT.call(this);
 }
 
 export function OFFSET(offset) {
