@@ -53,7 +53,8 @@ const textContainer = {
     display: 'inline-block',
     maxWidth: 800,
     textAlign: 'left',
-    fontSize: '1.1em'
+    fontSize: '1.1em',
+    padding: '0 10px'
 };
 
 export default function Disclaimer({accept}) {
