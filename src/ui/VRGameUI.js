@@ -209,7 +209,9 @@ export default class VRGameUI extends FrameListener {
         this.state.game.pause();
         const audioMenuManager = this.state.game.getAudioMenuManager();
         audioMenuManager.getMusicSource().load(6, () => {
-            audioMenuManager.getMusicSource().play();
+            if (this.state.showMenu && !this.state.video) {
+                audioMenuManager.getMusicSource().play();
+            }
         });
         this.setState({showMenu: true, inGameMenu}, this.saveData);
     }
