@@ -1,3 +1,4 @@
+import charmaps from '../data/charmaps.json';
 import {loadHqr} from '../hqr.ts';
 
 export function getTextFile(language) {
@@ -23,14 +24,16 @@ export function loadTextData(textFile, language) {
     let end;
     let idx = 0;
 
+    const charmap = charmaps[language.data.charmap];
+
     do {
         start = data.getUint16(idx * 2, true);
         end = data.getUint16((idx * 2) + 2, true);
         const type = data.getUint8(start, true);
         const value = [];
         for (let i = start + 1; i < end - 1; i += 1) {
-            value.push(String.fromCharCode((language.data.charmap) ?
-                language.data.charmap[data.getUint8(i)]
+            value.push(String.fromCharCode(charmap ?
+                charmap[data.getUint8(i)]
                 : data.getUint8(i))
             );
         }

@@ -1,7 +1,6 @@
 import {findIndex} from 'lodash';
 import translations from './data/translations.json';
 import languages from './data/languages.json';
-import charmaps from './data/charmaps.json';
 
 let language = null;
 let languageVoice = null;
@@ -14,9 +13,7 @@ export function initLanguageConfig(params) {
         l => l.culture.substring(0, 2) === lang && l.hasVoice
     );
     language = languages[ln !== -1 ? ln : 0];
-    language.charmap = charmaps[language.charmap];
     languageVoice = languages[lnV !== -1 ? lnV : 0];
-    languageVoice.charmap = charmaps[languageVoice.charmap];
 }
 
 export function getLanguageConfig() {
