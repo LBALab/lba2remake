@@ -29,7 +29,7 @@ export function updateVRGUI(game, scene, vrGUI) {
             each(ask.choices, (c) => {
                 choice.add(createItem({
                     x: 0,
-                    y: i * 150,
+                    y: -(i * 150) + (ask.choices.length * 75),
                     text: c.text.value,
                     callback: () => {
                         game.setUiState({choice: c.value}, () => {
