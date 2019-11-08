@@ -131,6 +131,9 @@ const INTERSECTION = new THREE.Box3();
 const DIFF = new THREE.Vector3();
 
 export function updateExtra(game, scene, extra, time) {
+    if (!extra)
+        return;
+
     let hitActor = null;
 
     if (time.elapsed - extra.spawnTime > 1) {
