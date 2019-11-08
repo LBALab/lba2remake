@@ -46,6 +46,9 @@ const HERO_POS = new THREE.Vector3();
 
 function processFollowMovement(controlNode, scene, forceUpdate = false) {
     const hero = scene.actors[0];
+    if (!hero.threeObject)
+        return;
+
     HERO_POS.set(0, 4, 0);
     HERO_POS.applyMatrix4(hero.threeObject.matrixWorld);
     const cameraPos = HERO_POS.clone();

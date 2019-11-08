@@ -164,7 +164,7 @@ const EULER = new THREE.Euler();
 function processCamRelativeMovement(controlsState, scene, hero, animIndex) {
     if (controlsState.relativeToCam) {
         const camera = scene.camera.controlNode;
-        if (!camera)
+        if (!camera || !hero.threeObject)
             return animIndex;
 
         FLAT_CAM.position.set(camera.position.x, 0, camera.position.z);
