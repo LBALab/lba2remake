@@ -95,11 +95,17 @@ export function handlePicking(objects, ctx) {
     });
 }
 
+const invTransform = new THREE.Matrix4();
+
 function menuHandler(idx, intersect, triggered, ctx) {
     const tgt = targets[idx];
     const object = intersect.object;
     tgt.visible = true;
     tgt.position.copy(intersect.point);
+    if (ctx.scene) {
+        invTransform.getInverse(ctx.scene.camera.controlNode.matrixWorld);
+        tgt.position.applyMatrix4(invTransform);
+    }
     if (triggered) {
         if (object.userData && object.userData.callback) {
             object.userData.callback(ctx);

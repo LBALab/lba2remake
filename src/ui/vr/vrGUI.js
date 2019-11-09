@@ -21,7 +21,7 @@ export function updateVRGUI(game, scene, vrGUI) {
     const {ask} = game.getUiState();
     if (ask.text) {
         if (choice) {
-            handlePicking(choice.children, {game});
+            handlePicking(choice.children, {game, scene});
         } else {
             choice = new THREE.Object3D();
             vrGUI.add(choice);
