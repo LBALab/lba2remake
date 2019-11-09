@@ -1,6 +1,10 @@
 # Version history
 
-## [v0.1.0](https://github.com/agrande/lba2remake/compare/v0.0.15...v0.1.0)
+### [v0.1.1](https://github.com/agrande/lba2remake/compare/v0.1.0...v0.1.1) Bugfixes
+
+Add Y as back button on Oculus Touch controller
+
+## [v0.1.0](https://github.com/agrande/lba2remake/compare/v0.0.15...v0.1.0) Major release
 _November 9th, 2019_
 
 This is a major release, but there is still a lot of work to do!

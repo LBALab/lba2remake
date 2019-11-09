@@ -70,7 +70,7 @@ export default type => ({
                 y: 313,
                 fontSize: 20,
                 textAlign: 'left',
-                text: tr('Nothing')
+                text: tr('Back')
             },
             {
                 name: 'A',

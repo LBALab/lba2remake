@@ -84,12 +84,16 @@ export default class OculusTouch {
         if (controlsState.skipListener) {
             controlsState.action = 0;
             if (left.buttonX.tapped
-                || left.buttonY.tapped
                 || right.buttonA.tapped
                 || right.buttonB.tapped) {
                 controlsState.skipListener();
                 return;
             }
+        }
+
+        if (left.buttonY.tapped) {
+            history.back();
+            return;
         }
 
         // Hero movement
