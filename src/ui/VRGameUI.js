@@ -22,58 +22,45 @@ export default class VRGameUI extends FrameListener {
         this.onRenderZoneRef = this.onRenderZoneRef.bind(this);
         this.onCanvasWrapperRef = this.onCanvasWrapperRef.bind(this);
         this.frame = this.frame.bind(this);
-        this.saveData = this.saveData.bind(this);
         this.onVrDisplayConnect = this.onVrDisplayConnect.bind(this);
         this.onVrDisplayDisconnect = this.onVrDisplayDisconnect.bind(this);
         this.onVrDisplayPresentChange = this.onVrDisplayPresentChange.bind(this);
         this.onVrDisplayActivate = this.onVrDisplayActivate.bind(this);
         this.requestPresence = this.requestPresence.bind(this);
-        this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
-        this.onGameReady = this.onGameReady.bind(this);
         this.setUiState = sBind(this.setUiState, this);
         this.getUiState = sBind(this.getUiState, this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
-        this.startNewGameScene = this.startNewGameScene.bind(this);
-        this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
 
-        if (props.mainData) {
-            const state = props.mainData.state;
-            state.game.setUiState = this.setUiState;
-            state.game.getUiState = this.getUiState;
-            this.state = state;
-        } else {
-            const clock = new THREE.Clock(false);
-            const game = createGame(
-                props.params,
-                clock,
-                this.setUiState,
-                this.getUiState
-            );
+        const clock = new THREE.Clock(false);
+        const game = createGame(
+            props.params,
+            clock,
+            this.setUiState,
+            this.getUiState
+        );
 
-            this.state = {
-                clock,
-                game,
-                cinema: false,
-                text: null,
-                skip: false,
-                ask: {choices: []},
-                interjections: {},
-                foundObject: null,
-                loading: true,
-                video: null,
-                choice: null,
-                menuTexts: null,
-                showMenu: false,
-                inGameMenu: false,
-                teleportMenu: false,
-                display: null,
-                enteredVR: false
-            };
+        this.state = {
+            clock,
+            game,
+            cinema: false,
+            text: null,
+            skip: false,
+            ask: {choices: []},
+            interjections: {},
+            foundObject: null,
+            loading: true,
+            video: null,
+            choice: null,
+            menuTexts: null,
+            showMenu: false,
+            inGameMenu: false,
+            teleportMenu: false,
+            display: null,
+            enteredVR: false
+        };
 
-            clock.start();
-            game.preload().then(() => this.onGameReady());
-        }
+        clock.start();
     }
 
     /* @inspector(locate) */
@@ -82,7 +69,6 @@ export default class VRGameUI extends FrameListener {
             if (callback) {
                 callback();
             }
-            this.saveData();
         });
     }
 
@@ -91,16 +77,7 @@ export default class VRGameUI extends FrameListener {
         return this.state;
     }
 
-    saveData() {
-        if (this.props.saveMainData) {
-            this.props.saveMainData({
-                state: this.state,
-                canvas: this.canvas
-            });
-        }
-    }
-
-    async onRenderZoneRef(renderZoneElem) {
+    onRenderZoneRef(renderZoneElem) {
         if (!this.renderZoneElem && renderZoneElem) {
             this.renderZoneElem = renderZoneElem;
             if (this.state.renderer && this.state.sceneManager) {
@@ -111,7 +88,7 @@ export default class VRGameUI extends FrameListener {
                     this.state.sceneManager,
                     this.state.renderer
                 );
-                this.setState({ controls }, this.saveData);
+                this.setState({ controls });
             }
         }
     }
@@ -122,7 +99,13 @@ export default class VRGameUI extends FrameListener {
                 this.canvas = this.props.mainData.canvas;
             } else {
                 this.canvas = document.createElement('canvas');
+
                 const game = this.state.game;
+                await game.preload();
+                game.loaded();
+                if (this.props.params.scene === -1) {
+                    this.showMenu();
+                }
                 const renderer = createRenderer(this.props.params, this.canvas, {vr: true}, 'game');
                 const sceneManager = await createSceneManager(
                     this.props.params,
@@ -133,7 +116,9 @@ export default class VRGameUI extends FrameListener {
                 renderer.threeRenderer.setAnimationLoop(() => {
                     this.props.ticker.frame();
                 });
-                this.onSceneManagerReady(sceneManager);
+                if (this.props.params.scene >= 0) {
+                    sceneManager.hideMenuAndGoto(this.props.params.scene);
+                }
                 let controls;
                 if (this.renderZoneElem) {
                     controls = createControls(
@@ -144,16 +129,11 @@ export default class VRGameUI extends FrameListener {
                         renderer
                     );
                 }
-                this.setState({ renderer, sceneManager, controls }, this.saveData);
+                const vrScene = loadVRScene(game, renderer);
+                this.setState({ renderer, sceneManager, controls, vrScene });
             }
             this.canvasWrapperElem = canvasWrapperElem;
             this.canvasWrapperElem.appendChild(this.canvas);
-        }
-    }
-
-    onSceneManagerReady(sceneManager) {
-        if (this.props.params.scene >= 0) {
-            sceneManager.hideMenuAndGoto(this.props.params.scene);
         }
     }
 
@@ -201,16 +181,6 @@ export default class VRGameUI extends FrameListener {
         this.requestPresence();
     }
 
-    onGameReady() {
-        this.state.game.loaded();
-        if (this.props.params.scene === -1) {
-            this.showMenu();
-        }
-        const { game, renderer } = this.state;
-        const vrScene = loadVRScene(game, renderer);
-        this.setState({ vrScene }, this.saveData);
-    }
-
     showMenu(inGameMenu = false) {
         this.state.game.pause();
         const audioMenuManager = this.state.game.getAudioMenuManager();
@@ -219,7 +189,7 @@ export default class VRGameUI extends FrameListener {
                 audioMenuManager.getMusicSource().play();
             }
         });
-        this.setState({showMenu: true, inGameMenu}, this.saveData);
+        this.setState({showMenu: true, inGameMenu});
     }
 
     hideMenu(wasPaused = false) {
@@ -227,14 +197,8 @@ export default class VRGameUI extends FrameListener {
         audioMenuManager.getMusicSource().stop();
         if (!wasPaused)
             this.state.game.resume();
-        this.setState({showMenu: false, inGameMenu: false}, this.saveData);
+        this.setState({showMenu: false, inGameMenu: false});
         this.canvas.focus();
-    }
-
-    startNewGameScene() {
-        this.state.game.resume();
-        this.state.game.resetState();
-        this.state.sceneManager.goto(0, true);
     }
 
     frame() {
@@ -243,7 +207,7 @@ export default class VRGameUI extends FrameListener {
             const presenting = renderer.isPresenting();
             const scene = sceneManager.getScene();
             if (this.state.scene !== scene) {
-                this.setState({scene}, this.saveData);
+                this.setState({scene});
             }
             mainGameLoop(
                 this.props.params,
@@ -263,10 +227,6 @@ export default class VRGameUI extends FrameListener {
                 );
             }
         }
-    }
-
-    textAnimEndedHandler() {
-        this.setUiState({ skip: true });
     }
 
     render() {
