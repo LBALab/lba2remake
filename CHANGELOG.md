@@ -1,6 +1,12 @@
 # Version history
 
+### [v0.1.2](https://github.com/agrande/lba2remake/compare/v0.1.1...v0.1.2) Bugfixes
+_November 9th, 2019_
+
+Fix for a crash when setting up VR renderer
+
 ### [v0.1.1](https://github.com/agrande/lba2remake/compare/v0.1.0...v0.1.1) Bugfixes
+_November 9th, 2019_
 
 Add Y as back button on Oculus Touch controller
 
