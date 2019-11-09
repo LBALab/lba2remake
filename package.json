@@ -1,6 +1,6 @@
 {
   "name": "lba2remake",
-  "version": "0.1.1",
+  "version": "0.1.2-WIP",
   "description": "Little Big Adventure 2, HD version, for the web",
   "dependencies": {
     "@types/lodash": "^4.14.132",
