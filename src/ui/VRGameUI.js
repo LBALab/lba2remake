@@ -124,7 +124,7 @@ export default class VRGameUI extends FrameListener {
                 this.canvas = document.createElement('canvas');
                 const renderer = createRenderer(this.props.params, this.canvas, {vr: true}, 'game');
                 this.setState({ renderer }, this.saveData);
-                if (this.state.game && !this.gameComponents) {
+                if (this.state.game && !this.state.game.isLoading() && !this.gameComponents) {
                     await this.setupGameComponents(this.state.game, renderer);
                 }
             }
