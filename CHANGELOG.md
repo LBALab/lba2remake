@@ -1,11 +1,47 @@
 # Version history
 
-## [v0.1.0-wip](https://github.com/agrande/lba2remake/compare/v0.0.15...master) Work in progress
-_Not released yet_
+## [v0.1.0](https://github.com/agrande/lba2remake/compare/v0.0.15...v0.1.0)
+_November 9th, 2019_
+
+This is a major release, but there is still a lot of work to do!
+
+#### VR
+
+The game can now be played in VR!!!
+
+Tested devices:
+- Oculus Quest
+- Oculus Rift
+- Oculus Go
+
+Should also work on (but not tested):
+- HTC Vive
+- Gear VR
+
+#### Gameplay
+
+- Bonuses work in a basic way (no gravity)
+- Doors can be opened and closed
+- Fixed many bugs that were affecting gameplay
 
 #### Graphics (3D + Iso)
-#### VR
-#### Model editor
+
+Major graphics upgrade for both indoor and outdoor views.
+- Some sprites are now displayed (mostly) correctly, like doors
+- Isometric scenes are resolution-independant
+- 3D scenes have texture filtering
+- Character textures are fixed
+- Improved shaders
+
+#### Editor
+
+- Improved the scripting area
+- Created new icons for the editor
+- New editors: model and island editors
+
+#### Bug fixes
+
+Too many to list!
 
 -----------------------------
 
