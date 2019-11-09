@@ -122,41 +122,34 @@ export default class VRGameUI extends FrameListener {
                 this.canvas = this.props.mainData.canvas;
             } else {
                 this.canvas = document.createElement('canvas');
+                const game = this.state.game;
                 const renderer = createRenderer(this.props.params, this.canvas, {vr: true}, 'game');
-                this.setState({ renderer }, this.saveData);
-                if (this.state.game && !this.gameComponents) {
-                    await this.setupGameComponents(this.state.game, renderer);
+                const sceneManager = await createSceneManager(
+                    this.props.params,
+                    game,
+                    renderer,
+                    this.hideMenu.bind(this)
+                );
+                renderer.threeRenderer.setAnimationLoop(() => {
+                    this.props.ticker.frame();
+                });
+                this.onSceneManagerReady(sceneManager);
+                let controls;
+                if (this.renderZoneElem) {
+                    controls = createControls(
+                        this.props.params,
+                        game,
+                        this.renderZoneElem,
+                        sceneManager,
+                        renderer
+                    );
                 }
+                const vrScene = loadVRScene(game, renderer);
+                this.setState({ renderer, sceneManager, controls, vrScene }, this.saveData);
             }
             this.canvasWrapperElem = canvasWrapperElem;
             this.canvasWrapperElem.appendChild(this.canvas);
         }
-    }
-
-    async setupGameComponents(game, renderer) {
-        this.gameComponents = true;
-        const sceneManager = await createSceneManager(
-            this.props.params,
-            game,
-            renderer,
-            this.hideMenu.bind(this)
-        );
-        renderer.threeRenderer.setAnimationLoop(() => {
-            this.props.ticker.frame();
-        });
-        this.onSceneManagerReady(sceneManager);
-        let controls;
-        if (this.renderZoneElem) {
-            controls = createControls(
-                this.props.params,
-                game,
-                this.renderZoneElem,
-                sceneManager,
-                renderer
-            );
-        }
-        const vrScene = loadVRScene(game, renderer);
-        this.setState({ sceneManager, controls, vrScene }, this.saveData);
     }
 
     onSceneManagerReady(sceneManager) {
@@ -213,9 +206,6 @@ export default class VRGameUI extends FrameListener {
         this.state.game.loaded();
         if (this.props.params.scene === -1) {
             this.showMenu();
-        }
-        if (this.state.renderer && !this.gameComponents) {
-            this.setupGameComponents(this.state.game, this.state.renderer);
         }
     }
 
