@@ -144,8 +144,7 @@ export default class VRGameUI extends FrameListener {
                         renderer
                     );
                 }
-                const vrScene = loadVRScene(game, renderer);
-                this.setState({ renderer, sceneManager, controls, vrScene }, this.saveData);
+                this.setState({ renderer, sceneManager, controls }, this.saveData);
             }
             this.canvasWrapperElem = canvasWrapperElem;
             this.canvasWrapperElem.appendChild(this.canvas);
@@ -207,6 +206,9 @@ export default class VRGameUI extends FrameListener {
         if (this.props.params.scene === -1) {
             this.showMenu();
         }
+        const { game, renderer } = this.state;
+        const vrScene = loadVRScene(game, renderer);
+        this.setState({ vrScene }, this.saveData);
     }
 
     showMenu(inGameMenu = false) {
