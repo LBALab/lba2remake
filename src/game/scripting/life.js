@@ -31,6 +31,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         const text = this.scene.data.texts[id];
         voiceSource.load(text.index, this.scene.data.textBankId, () => {
             voiceSource.play();
+            cmdState.playing = true;
         });
         if (text.type === 9) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
@@ -52,7 +53,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 this.game.setUiState({interjections: interjectionsCopy});
                 cmdState.ended = true;
             }, 4500);
-        } else if (!this.scene.vr) {
+        } else {
             hero.props.dirMode = DirMode.NO_MOVE;
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
@@ -61,24 +62,21 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 hero.props.animIndex = AnimType.TALK;
             else
                 hero.props.animIndex = AnimType.NONE;
-            this.game.setUiState({
-                text: {
-                    type: text.type === 3 ? 'big' : 'small',
-                    value: text.value,
-                    color: actor.props.textColor
-                }
-            });
-            if (text.type === 9) {
-                setTimeout(() => {
-                    cmdState.skipListener();
-                }, 4500);
+            if (!this.scene.vr) {
+                this.game.setUiState({
+                    text: {
+                        type: text.type === 3 ? 'big' : 'small',
+                        value: text.value,
+                        color: actor.props.textColor
+                    }
+                });
             }
         }
 
         const that = this;
         cmdState.skipListener = function skipListener() {
             const skip = that.game.getUiState().skip;
-            if (skip) {
+            if (skip || that.scene.vr) {
                 cmdState.ended = true;
             } else {
                 that.game.setUiState({
@@ -91,7 +89,9 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         }
         if (this.scene.vr) {
             voiceSource.ended = () => {
-                cmdState.ended = true;
+                if (cmdState.playing) {
+                    cmdState.ended = true;
+                }
             };
         }
     }
