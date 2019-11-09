@@ -121,7 +121,7 @@ function menuHandler(idx, intersect, triggered, ctx) {
 
 export function performRaycasting(objects, ctx, handler) {
     for (let i = 0; i < controllers.length; i += 1) {
-        if (controllers[i]) {
+        if (controllers[i] && controllers[i].visible) {
             raycastCtrl(
                 i,
                 objects,

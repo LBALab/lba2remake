@@ -24,6 +24,9 @@ export default class OculusGo {
 
         const touchpad = getButtonState(gamepad, TOUCHPAD);
         const trigger = getButtonState(gamepad, TRIGGER);
+
+        controlsState.ctrlTriggers[getGamepadIndex(gamepad, idx)] = trigger.tapped;
+
         if (touchpad.tapped || trigger.tapped) {
             if (controlsState.skipListener) {
                 controlsState.skipListener();
@@ -49,7 +52,6 @@ export default class OculusGo {
             hero.behaviour = (hero.behaviour + 1) % 4;
         }
         controlsState.action = touchpad.tapped ? 1 : 0;
-        controlsState.ctrlTriggers[getGamepadIndex(gamepad, idx)] = trigger.tapped;
     }
 
     update() {}
