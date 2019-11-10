@@ -27,6 +27,10 @@ const paramsDefinitions = {
         type: 'boolean',
         default: false
     },
+    isoCam3d: {
+        type: 'boolean',
+        default: false
+    },
     webgl2: {
         type: 'boolean',
         default: true

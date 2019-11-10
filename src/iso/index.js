@@ -41,7 +41,8 @@ export async function loadIsometricScenery(params, renderer, entry) {
         },
         threeObject: loadMesh(renderer, grid, entry),
         physics: {
-            processCollisions: processCollisions.bind(null, grid)
+            processCollisions: processCollisions.bind(null, grid),
+            processCameraCollisions: () => null
         },
 
         /* @inspector(locate) */
