@@ -5,7 +5,7 @@ import {map, filter, concat, isFunction, isEmpty, uniq} from 'lodash';
 import DebugData from '../../../DebugData';
 import {CustomValue, Value} from './Value';
 import {RootSym, applyFunction, isPureFunc} from './utils';
-import {getParamNames} from '../../../../../utils.ts';
+import {getParamNames} from '../../../../../utils';
 
 const getObj = (data, root) => {
     if (root)

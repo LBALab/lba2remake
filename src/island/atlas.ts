@@ -73,7 +73,8 @@ export function createTextureAtlas({files: {ile}, palette}, uvGroups) {
                 g.x, g.y
             );
         } else {
-            const [x, y, width, height] = key.split(',').map((v, idx) => Number(v) + Math.floor(idx / 2));
+            const [x, y, width, height] =
+                key.split(',').map((v, idx) => Number(v) + Math.floor(idx / 2));
             copySubImage(
                 texture.image,
                 rawTexture,
@@ -232,9 +233,9 @@ async function debugAtlas({image}, fittedGroups) {
     canvas.width = image.width;
     canvas.height = image.height;
     canvas.style.position = 'fixed';
-    canvas.style.left = 256;
-    canvas.style.width = 512;
-    canvas.style.height = 512;
+    canvas.style.left = '256px';
+    canvas.style.width = '512px';
+    canvas.style.height = '512px';
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = 'rgb(127, 0, 223)';
     ctx.fillRect(0, 0, image.width, image.height);

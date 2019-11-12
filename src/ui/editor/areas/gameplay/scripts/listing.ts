@@ -4,7 +4,7 @@ import Indent from '../../../../../game/scripting/indent';
 import {getRotation, getDistance} from '../../../../../utils/lba';
 import DebugData, {getObjectName, getVarName} from '../../../DebugData';
 import {formatVar} from './format';
-import { DirMode } from '../../../../../game/actors.ts';
+import { DirMode } from '../../../../../game/actors';
 import { findSceneData } from '../scene/SceneNode';
 
 export function getDebugListing(type, scene, actor) {

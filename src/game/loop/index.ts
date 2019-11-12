@@ -1,11 +1,11 @@
 import {each} from 'lodash';
 import * as THREE from 'three';
 import {updateHero} from './hero';
-import {updateActor} from './actors.ts';
+import {updateActor} from './actors';
 import {processPhysicsFrame} from './physics';
 import {getRandom} from '../../utils/lba';
 import DebugData from '../../ui/editor/DebugData';
-import { updateExtra } from '../extras.ts';
+import { updateExtra } from '../extras';
 import { updateVRGUI } from '../../ui/vr/vrGUI';
 
 const dbgClock = new THREE.Clock(false);
@@ -58,8 +58,7 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls, vrS
     renderer.stats.end();
 }
 
-
-function updateScene(params, game, scene, time, step) {
+function updateScene(params, game, scene, time) {
     // playAmbience(game, scene, time);
     if (scene.firstFrame) {
         scene.sceneNode.updateMatrixWorld();
@@ -70,7 +69,7 @@ function updateScene(params, game, scene, time, step) {
     each(scene.actors, (actor) => {
         if (actor.isKilled)
             return;
-        updateActor(params, game, scene, actor, time, step);
+        updateActor(params, game, scene, actor, time);
         if (scene.isActive) {
             if (actor.index === 0) {
                 updateHero(game, scene, actor, time);
@@ -124,4 +123,3 @@ function playAmbience(game, scene, time) {
         scene.data.ambience.sampleElapsedTime = time.elapsed + 200000;
     }
 }
-

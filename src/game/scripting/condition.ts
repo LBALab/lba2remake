@@ -1,3 +1,5 @@
+// tslint:disable:function-name
+
 import * as THREE from 'three';
 
 export function COL() {

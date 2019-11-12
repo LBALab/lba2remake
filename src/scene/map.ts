@@ -1,4 +1,4 @@
-import {loadHqr} from '../hqr.ts';
+import {loadHqr} from '../hqr';
 
 export async function loadSceneMapData() {
     const bkg = await loadHqr('LBA_BKG.HQR');

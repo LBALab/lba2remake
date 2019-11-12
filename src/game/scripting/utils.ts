@@ -1,3 +1,5 @@
+// tslint:disable:function-name
+
 function UNIMPLEMENTED() {}
 UNIMPLEMENTED.unimplemented = true;
 

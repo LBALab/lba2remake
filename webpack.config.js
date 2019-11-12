@@ -6,7 +6,7 @@ module.exports = {
     entry: [
         '@babel/polyfill',
         './utils/babel-transforms/inspector-globals.js',
-        './src/main.js'
+        './src/main.ts'
     ],
     output: {
         path: path.join(__dirname, './dist'),
@@ -14,7 +14,7 @@ module.exports = {
         publicPath: path.join(__dirname, './www'),
     },
     resolve: {
-        extensions: ['.ts', '.js', '.jsx', '.glsl', '.proto', '.yaml', '.md']
+        extensions: ['.ts', '.js', '.glsl', '.proto', '.yaml', '.md']
     },
     resolveLoader: {
         alias: {

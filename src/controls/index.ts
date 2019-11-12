@@ -1,8 +1,8 @@
-import {makeFirstPersonMouseControls} from './mouse.ts';
-import {makeKeyboardControls} from './keyboard.ts';
-import {makeGamepadControls} from './gamepad.ts';
-import {makeVRControls} from './vr.ts';
-import {makeFirstPersonTouchControls} from './touch.ts';
+import {makeFirstPersonMouseControls} from './mouse';
+import {makeKeyboardControls} from './keyboard';
+import {makeGamepadControls} from './gamepad';
+import {makeVRControls} from './vr';
+import {makeFirstPersonTouchControls} from './touch';
 
 export function createControls(params, game, elem, sceneManager, renderer) {
     let controls;

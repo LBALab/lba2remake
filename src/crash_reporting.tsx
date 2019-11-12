@@ -7,6 +7,8 @@ import {bigButton, center, editor as editor_style, fullscreen} from './ui/styles
 let sent_report = false;
 
 export class EngineError extends Error {
+    type: string;
+
     constructor(type) {
         super();
         this.name = 'EngineError';
@@ -21,7 +23,7 @@ export function sendCrashReport(error) {
     const request = new XMLHttpRequest();
     request.open('POST', 'crash', true);
     request.onload = () => {
-        // eslint-disable-next-line no-console
+        // tslint:disable-next-line:no-console
         console.log('Sent crash report.');
         sent_report = true;
     };
@@ -39,7 +41,14 @@ export function sendCrashReport(error) {
 }
 
 function getCrashReportData() {
-    const data = {};
+    const data = {
+        loading: null,
+        paused: null,
+        scene: null,
+        params: null,
+        ui: null,
+        clock: null
+    };
     const scope = DebugData.scope;
     if (scope) {
         const game = scope.game;
@@ -77,6 +86,7 @@ const center_vert = extend({}, center, {
 
 const reload = () => location.reload();
 
+// tslint:disable-next-line:function-name
 export function CrashHandler(props) {
     let report_on = true;
     let reload_on = true;

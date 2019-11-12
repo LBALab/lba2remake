@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import {DirMode} from '../game/actors.ts';
+import {DirMode} from '../game/actors';
 
-import {loadHqr} from '../hqr.ts';
-import {bits} from '../utils.ts';
+import {loadHqr} from '../hqr';
+import {bits} from '../utils';
 import {loadTextData, getTextFile} from '../text';
 import {WORLD_SCALE} from '../utils/lba';
 

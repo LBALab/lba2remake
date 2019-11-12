@@ -1,3 +1,5 @@
+// tslint:disable:function-name
+
 import * as THREE from 'three';
 import { unimplemented } from './utils';
 import { WORLD_SCALE } from '../../utils/lba';

@@ -3,9 +3,9 @@ import * as THREE from 'three';
 import {clone, omit} from 'lodash';
 
 import {createRenderer} from '../renderer';
-import {createGame} from '../game/index.ts';
+import {createGame} from '../game/index';
 import {mainGameLoop} from '../game/loop';
-import {createSceneManager} from '../game/scenes.ts';
+import {createSceneManager} from '../game/scenes';
 import {createControls} from '../controls/index';
 
 import {fullscreen} from './styles/index';
@@ -24,7 +24,7 @@ import TeleportMenu from './game/TeleportMenu';
 import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
 import {KeyHelpIcon, KeyHelpScreen} from './game/KeyboardHelp';
-import {sBind} from '../utils.ts';
+import {sBind} from '../utils';
 import {updateLabels} from './editor/labels';
 
 export default class GameUI extends FrameListener {

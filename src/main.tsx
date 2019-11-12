@@ -2,12 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {each} from 'lodash';
 
-import Ticker from './ui/utils/Ticker.ts';
 import GameUI from './ui/GameUI';
 import VRGameUI from './ui/VRGameUI';
 import Editor from './ui/Editor';
 import Popup from './ui/Popup';
-import {loadParams} from './params.ts';
+import {loadParams} from './params';
 import {loadGameMetaData, loadModelsMetaData, loadIslandsMetaData} from './ui/editor/DebugData';
 import {CrashHandler} from './crash_reporting';
 import ChangeLog from './ui/ChangeLog';
@@ -15,6 +14,8 @@ import Disclaimer from './ui/Disclaimer';
 import { initLanguageConfig } from './lang';
 
 class Root extends React.Component {
+    state: any;
+
     constructor(props) {
         super(props);
         const params = loadParams();

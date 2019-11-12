@@ -1,5 +1,5 @@
-import {loadHqr} from '../../../../../hqr.ts';
-import {loadEntity} from '../../../../../model/entity.ts';
+import {loadHqr} from '../../../../../hqr';
+import {loadEntity} from '../../../../../model/entity';
 import {loadModelsMetaData} from '../../../DebugData';
 
 let loading = false;

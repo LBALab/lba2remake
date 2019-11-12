@@ -60,7 +60,7 @@ export function createGame(params: any,
             isLoading = true;
             clock.stop();
             this.setUiState({loading: true});
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.log(`Loading scene #${index}`);
         },
 
@@ -74,7 +74,7 @@ export function createGame(params: any,
             }
             isLoading = false;
             this.setUiState({loading: false});
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.log('Loaded!');
         },
 
@@ -119,7 +119,7 @@ export function createGame(params: any,
             voiceSource.suspend();
             const musicSource = audio.getMusicSource();
             musicSource.suspend();
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.log('Pause');
         },
 
@@ -134,7 +134,7 @@ export function createGame(params: any,
                 sfxSource.resume();
                 isPaused = false;
                 clock.start();
-                // eslint-disable-next-line no-console
+                // tslint:disable-next-line:no-console
                 console.log('Resume');
             }
         },

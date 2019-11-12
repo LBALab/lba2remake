@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { map, each, assign, tail} from 'lodash';
 
-import { loadHqr } from '../hqr.ts';
+import { loadHqr } from '../hqr';
 import { prepareGeometries } from './geometries';
 import { loadLayout } from './layout';
 import { loadGround } from './ground';

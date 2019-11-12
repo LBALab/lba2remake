@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {each, orderBy} from 'lodash';
-import {bits} from '../utils.ts';
-import {loadHqr} from '../hqr.ts';
+import {bits} from '../utils';
+import {loadHqr} from '../hqr';
 import {compile} from '../utils/shaders';
 import {WORLD_SCALE} from '../utils/lba';
 import sprite_vertex from './shaders/sprite.vert.glsl';
@@ -42,6 +42,8 @@ export async function loadSprite(
             new THREE.Vector3(xMin, yMin, zMin).multiplyScalar(WORLD_SCALE),
             new THREE.Vector3(xMax, yMax, zMax).multiplyScalar(WORLD_SCALE)
         ),
+        boundingBoxDebugMesh: null,
+
         props: cache.spritesMap[index],
         threeObject: (isBillboard)
             ? loadBillboardSprite(index, cache, is3DCam)

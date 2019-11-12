@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import convert from 'color-convert';
-import { loadHqr } from '../hqr.ts';
+import { loadHqr } from '../hqr';
 
 export const LUT_DIM = 32;
 const LUT_DIM_M1 = LUT_DIM - 1;

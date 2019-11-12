@@ -28,7 +28,7 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
         threeRenderer.vr.setReferenceSpaceType('eye-level');
     }
 
-    // eslint-disable-next-line no-console
+    // tslint:disable-next-line:no-console
     const displayRenderMode = () => console.log(`[Starting renderer(${type})]
     pixelRatio: ${pixelRatio.getValue()}
     webgl: ${threeRenderer.webglVersion}`);
@@ -38,7 +38,7 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
         if (event.code === 'KeyR' && !event.ctrlKey && !event.metaKey) {
             pixelRatio = PixelRatio[(pixelRatio.index + 1) % PixelRatio.length];
             threeRenderer.setPixelRatio(pixelRatio.getValue());
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.log('pixelRatio:', pixelRatio.getValue());
             renderer.resize();
         }
@@ -82,7 +82,7 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
 
         /* @inspector(locate) */
         dispose() {
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.log(`[Stopping renderer(${type})]`);
             threeRenderer.dispose();
             window.removeEventListener('keydown', keyListener);

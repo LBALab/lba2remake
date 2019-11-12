@@ -1,5 +1,5 @@
 import charmaps from '../data/charmaps.json';
-import {loadHqr} from '../hqr.ts';
+import {loadHqr} from '../hqr';
 
 export function getTextFile(language) {
     const fanSuffix = language.isFan ? `_${language.code}` : '';

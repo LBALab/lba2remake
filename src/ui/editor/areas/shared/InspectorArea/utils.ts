@@ -2,7 +2,7 @@
 import {isFunction, map, filter, noop, concat} from 'lodash';
 import * as THREE from 'three';
 import DebugData, {getObjectName} from '../../../DebugData';
-import {getParamNames} from '../../../../../utils.ts';
+import {getParamNames} from '../../../../../utils';
 
 const allowedNameTypes = ['actor', 'zone', 'point'];
 

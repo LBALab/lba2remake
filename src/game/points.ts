@@ -10,7 +10,13 @@ export function loadPoint(props) {
         props,
         physics: {
             position: new THREE.Vector3(pos[0], pos[1], pos[2])
-        }
+        },
+        threeObject: null,
+        boundingBox: new THREE.Box3(
+            new THREE.Vector3(-0.3, -0.2, -0.3),
+            new THREE.Vector3(0.3, 0.96, 0.3)
+        ),
+        update: null
     };
 
     // For debug purposes
@@ -21,10 +27,6 @@ export function loadPoint(props) {
     flag.position.set(point.physics.position.x, point.physics.position.y, point.physics.position.z);
 
     point.threeObject = flag;
-    point.boundingBox = new THREE.Box3(
-        new THREE.Vector3(-0.3, -0.2, -0.3),
-        new THREE.Vector3(0.3, 0.96, 0.3)
-    );
 
     flag.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 4);
     flag.renderOrder = 2;

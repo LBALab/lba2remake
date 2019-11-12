@@ -15,7 +15,7 @@ import {
 } from './utils';
 import {CustomValue} from './Value';
 import {version} from '../../../../../../package.json';
-import {getParamNames} from '../../../../../utils.ts';
+import {getParamNames} from '../../../../../utils';
 
 const headerStyle = {
     position: 'absolute',

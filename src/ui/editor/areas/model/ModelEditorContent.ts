@@ -4,14 +4,14 @@ import { each } from 'lodash';
 import { createRenderer } from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
-import { loadModel } from '../../../../model/index.ts';
+import { loadModel } from '../../../../model/index';
 import {
     loadAnimState,
     updateKeyframe,
     updateKeyframeInterpolation
 } from '../../../../model/animState';
-import { getAnim } from '../../../../model/entity.ts';
-import { loadAnim } from '../../../../model/anim.ts';
+import { getAnim } from '../../../../model/entity';
+import { loadAnim } from '../../../../model/anim';
 import DebugData from '../../DebugData';
 import fmod from './utils/fmod';
 import {get3DOrbitCamera} from './utils/orbitCamera';

@@ -1,5 +1,5 @@
-import * as THREE from 'three';
-import * as SimplexNoise from 'simplex-noise';
+import THREE from 'three';
+import SimplexNoise from 'simplex-noise';
 import { map, each } from 'lodash';
 
 export function loadPaletteTexture(palette: Uint8Array) {

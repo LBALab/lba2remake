@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { loadHqr } from '../hqr.ts';
+import { loadHqr } from '../hqr';
 import { loadBricks } from './bricks';
 import { loadGrid } from './grid';
 import { processCollisions } from '../game/loop/physicsIso';

@@ -268,7 +268,7 @@ export default class Editor extends React.Component {
         if (area && area.mainArea) {
             this.selectMainAreaContent(area, options);
         } else {
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.warn(`Invalid editor id: ${id}`);
         }
     }

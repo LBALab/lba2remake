@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {checkAuth, getAuthQueryString} from './auth';
 
 const DebugData = {
-    scope: {},
+    scope: <any> {},
     selection: null,
     script: {
         life: {},
@@ -21,7 +21,8 @@ const DebugData = {
         anims: [],
         islands: []
     },
-    step: false
+    step: false,
+    firstFrame: false
 };
 
 export default DebugData;
@@ -250,10 +251,10 @@ export async function saveMetaData(metadata) {
         request.open('POST', 'metadata', true);
         request.onload = function onload() {
             if (this.status === 200) {
-                // eslint-disable-next-line no-console
+                // tslint:disable-next-line:no-console
                 console.log('Saved metadata:', content);
             } else {
-                // eslint-disable-next-line no-console
+                // tslint:disable-next-line:no-console
                 console.error('Failed to save metadata');
             }
         };

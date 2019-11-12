@@ -1,6 +1,6 @@
 import {map} from 'lodash';
 import * as THREE from 'three';
-import {bits} from '../utils.ts';
+import {bits} from '../utils';
 import {WORLD_SCALE} from '../utils/lba';
 
 const push = Array.prototype.push;

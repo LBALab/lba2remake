@@ -2,17 +2,17 @@ import React from 'react';
 import * as THREE from 'three';
 
 import {createRenderer} from '../renderer';
-import {createGame} from '../game/index.ts';
+import {createGame} from '../game/index';
 import {mainGameLoop} from '../game/loop';
-import {createSceneManager} from '../game/scenes.ts';
+import {createSceneManager} from '../game/scenes';
 import {createControls} from '../controls/index';
 
 import {fullscreen} from './styles/index';
 
 import FrameListener from './utils/FrameListener';
 import Loader from './game/Loader';
-import {sBind} from '../utils.ts';
-import {loadVRScene, updateVRScene} from './vr/vrScene.ts';
+import {sBind} from '../utils';
+import {loadVRScene, updateVRScene} from './vr/vrScene';
 import {tr} from '../lang';
 
 export default class VRGameUI extends FrameListener {

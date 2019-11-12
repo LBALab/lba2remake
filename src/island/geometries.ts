@@ -5,7 +5,7 @@ import {
     loadPaletteTexture,
     loadTextureRGBA,
     makeNoiseTexture
-} from '../texture.ts';
+} from '../texture';
 import {compile} from '../utils/shaders';
 
 import VERT_GROUND_COLORED from './shaders/ground/colored.vert.glsl';

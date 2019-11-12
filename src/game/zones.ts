@@ -40,7 +40,9 @@ export function loadZone(props, is3DCam) {
         color: new THREE.Color(ZONE_TYPE_MATERIAL_COLOR[props.type]),
         physics: {
             position: new THREE.Vector3(pos[0], pos[1], pos[2])
-        }
+        },
+        threeObject: null,
+        boundingBox: null
     };
 
     const {xMin, yMin, zMin, xMax, yMax, zMax} = props.box;

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {each} from 'lodash';
-import {bits} from '../utils.ts';
+import {bits} from '../utils';
 import {WORLD_SCALE} from '../utils/lba';
 
 const push = Array.prototype.push;
@@ -88,7 +88,9 @@ function loadSection(geometries, object, info, section, boundingBoxes, atlas) {
                 );
                 geometries.objects_colored.colors.push(getColor(section, i));
             } else {
-                const group = section.isTransparent ? 'objects_textured_transparent' : 'objects_textured';
+                const group = section.isTransparent
+                    ? 'objects_textured_transparent'
+                    : 'objects_textured';
                 push.apply(geometries[group].positions, getPosition(object, info, index));
                 push.apply(
                     geometries[group].normals,

@@ -1,9 +1,15 @@
 import AudioData from './data';
-import {loadHqr} from '../hqr.ts';
+import {loadHqr} from '../hqr';
 import {getFrequency} from '../utils/lba';
 
 const musicSourceCache = [];
 const samplesSourceCache = [];
+
+declare global {
+    interface Window {
+        webkitAudioContext?: any;
+    }
+}
 
 function createAudioContext() {
     window.AudioContext = window.AudioContext || window.webkitAudioContext; // needed for Safari
@@ -52,6 +58,12 @@ function getMusicSource(state, context, data) {
         currentIndex: -1,
         bufferSource: null,
         gainNode: context.createGain(),
+        play: null,
+        stop: null,
+        suspend: null,
+        resume: null,
+        load: null,
+        connect: null,
         pause: () => {},
         data
     };
@@ -66,7 +78,7 @@ function getMusicSource(state, context, data) {
                 source.bufferSource.stop();
             }
         } catch (error) {
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.debug(error);
         }
         source.isPlaying = false;
@@ -120,7 +132,7 @@ function getMusicSource(state, context, data) {
     return source;
 }
 
-function getSoundFxSource(state, context, data) {
+function getSoundFxSource(state, context, data = null) {
     const source = {
         volume: state.config.soundFxVolume,
         isPlaying: false,
@@ -129,6 +141,12 @@ function getSoundFxSource(state, context, data) {
         bufferSource: null,
         gainNode: context.createGain(),
         lowPassFilter: context.createBiquadFilter(),
+        play: null,
+        stop: null,
+        suspend: null,
+        resume: null,
+        load: null,
+        connect: null,
         pause: () => {},
         data
     };
@@ -147,7 +165,7 @@ function getSoundFxSource(state, context, data) {
                 source.bufferSource.stop();
             }
         } catch (error) {
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.debug(error);
         }
         source.isPlaying = false;
@@ -208,7 +226,7 @@ function getSoundFxSource(state, context, data) {
     return source;
 }
 
-function getVoiceSource(state, context, data) {
+function getVoiceSource(state, context, data = null) {
     const source = {
         volume: state.config.voiceVolume,
         isPlaying: false,
@@ -216,6 +234,13 @@ function getVoiceSource(state, context, data) {
         currentIndex: -1,
         bufferSource: null,
         gainNode: context.createGain(),
+        play: null,
+        stop: null,
+        suspend: null,
+        resume: null,
+        load: null,
+        connect: null,
+        ended: null,
         pause: () => {},
         data
     };
@@ -231,7 +256,7 @@ function getVoiceSource(state, context, data) {
                 source.bufferSource.stop();
             }
         } catch (error) {
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.debug(error);
         }
         source.isPlaying = false;
@@ -244,6 +269,7 @@ function getVoiceSource(state, context, data) {
     };
     source.load = (index, textBankId, callback) => {
         const textBank = `${textBankId}`;
+        // tslint:disable-next-line:max-line-length
         let filename = `VOX/${state.config.languageVoice.code}_${(`000${textBank}`).substring(0, 3 - textBank.length) + textBank}_AAC.VOX`;
         if (textBankId === -1) {
             filename = `VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`;

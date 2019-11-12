@@ -1,7 +1,7 @@
 import React from 'react';
 import { extend } from 'lodash';
 import { generateLUTTexture, resetLUTTexture, loadLUTTexture, LUT_DIM } from '../../../../../utils/lut';
-import { loadHqr } from '../../../../../hqr.ts';
+import { loadHqr } from '../../../../../hqr';
 import { editor, fullscreen } from '../../../../styles';
 
 const style = extend({

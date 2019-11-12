@@ -54,7 +54,7 @@ export function loadParams() : any {
         if (name && name in paramsDefinitions) {
             src[name] = decodeURIComponent(value);
         } else if (name) {
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.warn(`Unknown parameter: ${part}.`);
         }
     });
@@ -78,7 +78,7 @@ function parseParam(param, name, src) {
             if (src === 'false') {
                 return false;
             }
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.warn(`Invalid value for param ${name}, value: ${src}, type=boolean`);
             return param.default;
 
@@ -86,13 +86,13 @@ function parseParam(param, name, src) {
             try {
                 const i = Number(src);
                 if (Number.isNaN(i)) {
-                    // eslint-disable-next-line no-console
+                    // tslint:disable-next-line:no-console
                     console.warn(`Invalid value for param ${name}, value: ${src}, type=int`);
                     return param.default;
                 }
                 return i;
             } catch (e) {
-                // eslint-disable-next-line no-console
+                // tslint:disable-next-line:no-console
                 console.warn(`Invalid value for param ${name}, value: ${src}, type=int`);
                 return param.default;
             }

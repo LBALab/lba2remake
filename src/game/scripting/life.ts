@@ -1,7 +1,9 @@
+// tslint:disable:function-name
+
 import { clone } from 'lodash';
-import { DirMode } from '../../game/actors.ts';
+import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
-import { setMagicBallLevel } from '../../game/state.ts';
+import { setMagicBallLevel } from '../../game/state';
 import VideoData from '../../video/data';
 import { unimplemented } from './utils';
 import { WORLD_SCALE } from '../../utils/lba';
@@ -641,4 +643,3 @@ export const NEW_SAMPLE = unimplemented();
 export const POS_OBJ_AROUND = unimplemented();
 
 export const PCX_MESS_OBJ = unimplemented();
-

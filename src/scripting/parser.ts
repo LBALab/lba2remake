@@ -37,7 +37,7 @@ export function parseScript(actor, type, script) {
         try {
             state.commands.push(parseCommand(state, script, op, type));
         } catch (e) {
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.error(`Interrupted parsing actor ${actor}'s ${type} script:\n`, e);
             break;
         }

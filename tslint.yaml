@@ -24,6 +24,7 @@ rules:
   object-curly-newline: [off]
   object-shorthand-properties-first: [off]
 
+  no-console: [true, log, warn]
   no-lonely-if: [off]
   no-continue: [off]
   no-bitwise: [off]

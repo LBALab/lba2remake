@@ -426,4 +426,3 @@ export const MoveOpcode = [
         type: 'assignment'
     }
 ];
-

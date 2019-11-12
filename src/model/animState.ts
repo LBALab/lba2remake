@@ -220,7 +220,7 @@ function updateSkeletonAtKeyframe(state,
             }
         }
     } catch (e) {
-        // eslint-disable-next-line no-console
+        // tslint:disable-next-line:no-console
         console.debug('ANIM: exception on updateSkeletonAtKeyframe', e);
     }
 

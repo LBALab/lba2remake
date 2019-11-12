@@ -128,7 +128,7 @@ function keyDownHandler(params, game, sceneManager, event) {
         case 'KeyC':
             if (params.editor) {
                 game.controlsState.freeCamera = !game.controlsState.freeCamera;
-                // eslint-disable-next-line no-console
+                // tslint:disable-next-line:no-console
                 console.log('Free camera: ', game.controlsState.freeCamera);
                 if (game.controlsState.freeCamera) {
                     resetCameraOrientation(game, sceneManager);

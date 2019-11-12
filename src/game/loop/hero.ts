@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { DirMode } from '../actors.ts';
+import { DirMode } from '../actors';
 import { AnimType } from '../data/animType';
 
 export const BehaviourMode = {
@@ -147,7 +147,7 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
         }
     }
     if (!hero.props.runtimeFlags.isJumping) {
-        animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex, time);
+        animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex);
     }
     if (hero.props.animIndex !== animIndex) {
         hero.props.animIndex = animIndex;

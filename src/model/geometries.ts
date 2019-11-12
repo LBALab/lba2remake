@@ -6,7 +6,7 @@ import FRAG_COLORED from './shaders/colored.frag.glsl';
 import VERT_TEXTURED from './shaders/textured.vert.glsl';
 import FRAG_TEXTURED from './shaders/textured.frag.glsl';
 
-import {loadPaletteTexture, loadSubTextureRGBA} from '../texture.ts';
+import {loadPaletteTexture, loadSubTextureRGBA} from '../texture';
 import {compile} from '../utils/shaders';
 
 const push = Array.prototype.push;
