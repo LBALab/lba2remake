@@ -2,7 +2,24 @@ import React from 'react';
 
 import '../styles/textbox.scss';
 
-export default class TextBox extends React.Component {
+interface TBProps {
+    text: {
+        value: string;
+        color: string;
+        type: string;
+    };
+    skip?: boolean;
+    textAnimEnded?: Function;
+}
+
+interface TBState {
+    offset: number;
+    content: string;
+}
+
+export default class TextBox extends React.Component<TBProps, TBState> {
+    interval: number;
+
     constructor(props) {
         super(props);
         this.update = this.update.bind(this);
@@ -63,9 +80,11 @@ export default class TextBox extends React.Component {
     render() {
         const text = this.props.text;
         if (text) {
-            return <div className={`textbox ${text.type}`} style={{color: text.color}}>{this.state.content}</div>;
+            return <div className={`textbox ${text.type}`}
+                        style={{color: text.color}}>
+                {this.state.content}
+            </div>;
         }
         return null;
     }
 }
-

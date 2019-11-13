@@ -162,7 +162,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         sceneData.actors,
         actor => loadActor(params, is3DCam, envInfo, sceneData.ambience, actor, parent)
     ));
-    const points = map(sceneData.points, props => loadPoint(props, is3DCam));
+    const points = map(sceneData.points, props => loadPoint(props));
     const zones = map(sceneData.zones, props => loadZone(props, is3DCam));
 
     let scenery = null;

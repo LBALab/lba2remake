@@ -4,20 +4,36 @@ import {extend, map} from 'lodash';
 import TextBox from './TextBox';
 
 const styleChoices = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 30,
     left: 100,
     right: 100,
-    listStyle: 'none'
+    listStyle: 'none' as const
 };
 
 const styleChoiceList = {
-    listStyle: 'none',
+    listStyle: 'none' as const,
     padding: 0,
     margin: 0
 };
 
-export default class AskChoice extends React.Component {
+interface ACProps {
+    ask: {
+        text?: {
+            value: string;
+            color: string;
+            type: string;
+        };
+        choices: any[];
+    };
+    onChoiceChanged(number);
+}
+
+interface ACState {
+    selectedIndex: number;
+}
+
+export default class AskChoice extends React.Component<ACProps, ACState> {
     constructor(props) {
         super(props);
         this.update = this.update.bind(this);

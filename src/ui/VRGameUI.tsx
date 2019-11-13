@@ -29,7 +29,11 @@ interface VRGameUIState {
     sceneManager?: any;
     controls?: any;
     cinema: boolean;
-    text?: string;
+    text?: {
+        value: string;
+        color: string;
+        type: string;
+    };
     skip: boolean;
     ask: {choices: []};
     interjections: {};

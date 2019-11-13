@@ -70,7 +70,9 @@ function processCollisions(sections, scene, actor) {
 }
 
 const DEFAULT_GROUND = {
-    height: 0
+    height: 0,
+    sound: null,
+    collision: null
 };
 
 function getGround(section, position) {
@@ -84,7 +86,9 @@ function getGround(section, position) {
             && position.y <= bb.max.y && position.y > bb.max.y - 0.015) {
             FLAGS.hitObject = true;
             return {
-                height: bb.max.y
+                height: bb.max.y,
+                sound: null,
+                collision: null
             };
         }
     }

@@ -3,7 +3,7 @@ import {map, filter} from 'lodash';
 import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
 
 const style = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     bottom: 0,
     left: 0,
@@ -12,38 +12,38 @@ const style = {
     border: '2px outset #61cece',
     borderRadius: 12,
     background: 'black',
-    overflow: 'hidden'
+    overflow: 'hidden' as const
 };
 
 const planetStyle = selected => ({
-    display: 'inline-block',
+    display: 'inline-block' as const,
     color: selected ? 'white' : 'rgb(100, 100, 100)',
     fontSize: 14,
     fontFamily: 'LBA',
     width: '25%',
-    textAlign: 'center',
-    verticalAlign: 'middle',
-    cursor: 'pointer',
-    userSelect: 'none',
+    textAlign: 'center' as const,
+    verticalAlign: 'middle' as const,
+    cursor: 'pointer' as const,
+    userSelect: 'none' as const,
     textShadow: selected ? 'black 3px 3px' : 'rgb(20, 20, 20) 3px 3px',
     background: selected ? 'rgba(32, 162, 255, 0.5)' : 'transparent',
-    overflow: 'hidden',
+    overflow: 'hidden' as const,
     padding: '10px 0'
 });
 
 const islandStyle = selected => ({
-    display: 'inline-block',
+    display: 'inline-block' as const,
     color: selected ? 'white' : 'rgb(100, 100, 100)',
     fontSize: 14,
     fontFamily: 'LBA',
     width: '100%',
-    textAlign: 'left',
-    verticalAlign: 'middle',
-    cursor: 'pointer',
-    userSelect: 'none',
+    textAlign: 'left' as const,
+    verticalAlign: 'middle' as const,
+    cursor: 'pointer' as const,
+    userSelect: 'none' as const,
     textShadow: selected ? 'black 3px 3px' : 'rgb(20, 20, 20) 3px 3px',
     background: selected ? 'rgba(32, 162, 255, 0.5)' : 'transparent',
-    overflow: 'hidden',
+    overflow: 'hidden' as const,
     padding: '12px 0'
 });
 
@@ -55,8 +55,8 @@ const headerStyle = {
 };
 
 const contentStyle = {
-    position: 'absolute',
-    overflow: 'auto',
+    position: 'absolute' as const,
+    overflow: 'auto' as const,
     padding: 0,
     top: 88,
     left: 0,
@@ -65,8 +65,8 @@ const contentStyle = {
 };
 
 const islandHeaderStyle = {
-    position: 'absolute',
-    overflow: 'auto',
+    position: 'absolute' as const,
+    overflow: 'auto' as const,
     padding: 0,
     top: 0,
     left: 0,
@@ -75,8 +75,8 @@ const islandHeaderStyle = {
 };
 
 const islandContentStyle = {
-    position: 'absolute',
-    overflow: 'auto',
+    position: 'absolute' as const,
+    overflow: 'auto' as const,
     background: 'rgb(45, 45, 45)',
     padding: '8px 16px',
     top: 0,
@@ -103,15 +103,32 @@ const islandIconStyle = {
 };
 
 const closeStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 2,
     right: 2,
     width: 24,
     height: 24,
-    cursor: 'pointer'
+    cursor: 'pointer' as const
 };
 
-export default class TeleportMenu extends React.Component {
+interface TMProps {
+    inGameMenu: boolean;
+    exit: (any) => any;
+    game: any;
+    sceneManager: any;
+}
+
+interface TMState {
+    small: boolean;
+    planet: number;
+    island: number;
+    selectPlanet: boolean;
+    selectIsland: boolean;
+}
+
+export default class TeleportMenu extends React.Component<TMProps, TMState> {
+    mainElem: HTMLElement;
+
     constructor(props) {
         super(props);
 
@@ -184,7 +201,8 @@ export default class TeleportMenu extends React.Component {
         const small = this.state.small;
         const planets = LocationsNode.children;
         const selectedPlanet = planets[this.state.planet];
-        return <div className={`${this.props.inGameMenu ? 'bgInGameMenu' : 'bgMenu'} fullscreen`} onClick={this.props.exit}>
+        return <div className={`${this.props.inGameMenu ? 'bgInGameMenu' : 'bgMenu'} fullscreen`}
+                    onClick={this.props.exit}>
             <div style={style} ref={getRef}>
                 <div style={headerStyle}>
                     {small ? this.renderSmallPlanet(selectedPlanet) : planets.map((planet, idx) =>
@@ -338,12 +356,12 @@ export default class TeleportMenu extends React.Component {
         return <div style={{color: 'white'}}>
             {map(children, (child) => {
                 const childStyle = {
-                    textAlign: 'left',
+                    textAlign: 'left' as const,
                     fontSize: 12,
                     fontFamily: 'LBA',
                     background: 'rgb(45, 45, 45)',
-                    cursor: 'pointer',
-                    userSelect: 'none',
+                    cursor: 'pointer' as const,
+                    userSelect: 'none' as const,
                     paddingTop: 8,
                     paddingLeft: level * 16
                 };

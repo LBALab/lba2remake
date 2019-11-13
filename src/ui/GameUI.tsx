@@ -45,9 +45,20 @@ interface GameUIState {
     sceneManager?: any;
     controls?: any;
     cinema: boolean;
-    text?: string;
+    text?: {
+        value: string;
+        color: string;
+        type: string;
+    };
     skip: boolean;
-    ask: {choices: []};
+    ask: {
+        text?: {
+            value: string;
+            color: string;
+            type: string;
+        };
+        choices: any[];
+    };
     interjections: {};
     foundObject?: any;
     loading: boolean;
