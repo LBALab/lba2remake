@@ -5,7 +5,7 @@ import {
     uniq,
     each
 } from 'lodash';
-import * as THREE from 'three';
+import THREE from 'three';
 
 export const Side = {
     NONE: 0,

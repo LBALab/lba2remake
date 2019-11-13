@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import { map, each, assign, tail} from 'lodash';
 
 import { loadHqr } from '../hqr';

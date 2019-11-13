@@ -22,7 +22,17 @@ const animsCSS = `
 }
 `;
 
-export default class CinemaEffect extends React.Component {
+interface CEProps {
+    enabled: boolean;
+}
+
+interface CEState {
+    animate: boolean;
+}
+
+export default class CinemaEffect extends React.Component<CEProps, CEState> {
+    timeout?: number;
+
     constructor(props) {
         super(props);
         this.state = {animate: false};
@@ -47,7 +57,9 @@ export default class CinemaEffect extends React.Component {
         const enabled = this.props.enabled;
         const banner = extend({
             height: enabled ? height : 0,
-            animation: this.state.animate ? `cinemaModeAnim${enabled ? 'In' : 'Out'} ${duration}s forwards` : undefined
+            animation: this.state.animate
+                ? `cinemaModeAnim${enabled ? 'In' : 'Out'} ${duration}s forwards`
+                : undefined
         }, bannerBase);
         const bannerTop = extend({top: 0}, banner);
         const bannerBottom = extend({bottom: 0}, banner);

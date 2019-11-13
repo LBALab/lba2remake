@@ -1,6 +1,9 @@
 import React from 'react';
+import {TickerProps} from './Ticker';
 
-export default class FrameListener extends React.Component {
+export default abstract class FrameListener<TProps extends TickerProps = TickerProps, TState = {}>
+                    extends React.Component<TProps, TState>
+{
     constructor(props) {
         super(props);
         if (!props.ticker) {
@@ -15,4 +18,6 @@ export default class FrameListener extends React.Component {
     componentWillUnmount() {
         this.props.ticker.unregister(this);
     }
+
+    abstract frame(): void;
 }

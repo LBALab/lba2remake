@@ -4,7 +4,8 @@ import {editor, fullscreen} from '../styles/index';
 import {Orientation} from './layout';
 import NewArea, {NewAreaContent} from './areas/utils/NewArea';
 import SettingsIcon from '../utils/SettingsIcon';
-import DebugData from '../editor/DebugData';
+import DebugData from './DebugData';
+import Ticker from '../utils/Ticker';
 
 const menuHeight = 26;
 
@@ -40,7 +41,7 @@ const settingsWrapper = extend({}, editor.base, {
 });
 
 const settingsStyle = extend({}, editor.base, {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     right: 0,
     padding: 20,
@@ -49,27 +50,75 @@ const settingsStyle = extend({}, editor.base, {
     background: '#1F1F1F'
 });
 
-const iconStyle = base => (extend({
-    position: 'absolute',
+const iconStyle = (base = {}) => (extend({
+    position: 'absolute' as const,
     top: 1,
-    cursor: 'pointer',
+    cursor: 'pointer' as const,
     width: 22,
     height: 22
 }, base));
 
-const mainIconStyle = base => (extend({
-    float: 'left',
-    cursor: 'pointer',
+const mainIconStyle = (base = {}) => (extend({
+    float: 'left' as const,
+    cursor: 'pointer' as const,
     paddingTop: '2px',
     paddingLeft: '2px',
     paddingRight: '5px'
 }, base));
 
-const {Provider, Consumer} = React.createContext();
+const {Provider, Consumer} = React.createContext(undefined);
 
 export const WithShortcuts = Consumer;
 
-export default class Area extends React.Component {
+export interface AreaDefinition {
+    id: string;
+    name: string;
+    icon: string;
+    mainArea: boolean;
+    toolAreas: AreaDefinition[];
+    settings?: React.Component;
+    content: () => JSX.Element;
+    style: React.CSSProperties;
+    getInitialState: () => Object;
+}
+
+const CloseAreaShortcut = {
+    id: 'close',
+    name: 'Exit Editor',
+    icon: '../close.svg'
+};
+
+interface AreaProps {
+    style: React.CSSProperties;
+    area: AreaDefinition;
+    mainArea: AreaDefinition;
+    params: any;
+    ticker: Ticker;
+    stateHandler: any;
+    rootStateHandler: any;
+    close?: (any) => any;
+    split: Function;
+    availableAreas: AreaDefinition[];
+    selectAreaContent: (AreaDefinition) => void;
+    editor: any;
+    saveMainData: Function;
+    mainData: Object;
+}
+
+interface AreaState {
+    settings: boolean;
+    popup?: {
+        msg: any;
+        style: React.CSSProperties;
+        onConfirm?: Function;
+        ok?: string;
+        cancel?: string;
+    };
+}
+
+export default class Area extends React.Component<AreaProps, AreaState> {
+    shortcuts: any;
+
     constructor(props) {
         super(props);
         this.confirmPopup = this.confirmPopup.bind(this);
@@ -168,10 +217,18 @@ export default class Area extends React.Component {
         }, mainIconStyle());
 
         const closeIcon = this.props.close &&
-            <img style={iconStyle({right: 2})} onClick={this.props.close} src="editor/icons/close.svg"/>;
+            <img style={iconStyle({right: 2})}
+                onClick={this.props.close}
+                src="editor/icons/close.svg"/>;
 
-        const splitH = doSplit && <img style={iconStyle({right: ((numIcons - 1) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)} src="editor/icons/split_horizontal.svg"/>;
-        const splitV = doSplit && <img style={iconStyle({right: ((numIcons - 2) * 26) + 2})} onClick={this.props.split.bind(null, Orientation.VERTICAL, null)} src="editor/icons/split_vertical.svg"/>;
+        const splitH = doSplit
+            && <img style={iconStyle({right: ((numIcons - 1) * 26) + 2})}
+                    onClick={this.props.split.bind(null, Orientation.HORIZONTAL, null)}
+                    src="editor/icons/split_horizontal.svg"/>;
+        const splitV = doSplit
+            && <img style={iconStyle({right: ((numIcons - 2) * 26) + 2})}
+                    onClick={this.props.split.bind(null, Orientation.VERTICAL, null)}
+                    src="editor/icons/split_vertical.svg"/>;
 
         const switchSettings = () => {
             this.setState({settings: !this.state.settings});
@@ -204,11 +261,7 @@ export default class Area extends React.Component {
             }
         }
         if (this.props.area.mainArea) {
-            availableAreas.push({
-                id: 'close',
-                name: 'Exit Editor',
-                icon: '../close.svg'
-            });
+            availableAreas.push(CloseAreaShortcut as AreaDefinition);
         }
 
         const selectAreaContent = (area) => {
@@ -271,19 +324,19 @@ export default class Area extends React.Component {
     renderSettings() {
         if (this.state.settings) {
             const closeIconStyle = {
-                position: 'absolute',
+                position: 'absolute' as const,
                 top: 4,
                 right: 4,
                 width: 16,
                 height: 16,
-                cursor: 'pointer'
+                cursor: 'pointer' as const
             };
             const close = () => {
                 this.setState({settings: false});
             };
             return <div style={settingsWrapper} onClick={close}>
                 <div style={settingsStyle} onClick={(e) => { e.stopPropagation(); }}>
-                    {React.createElement(this.props.area.settings, {
+                    {React.createElement(this.props.area.settings as any, {
                         params: this.props.params,
                         ticker: this.props.ticker,
                         stateHandler: this.props.stateHandler,

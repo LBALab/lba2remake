@@ -1,5 +1,3 @@
-// tslint:disable:function-name
-
 import { BODY_OBJ, ANIM_OBJ } from './life';
 
 export function BODY(bodyIndex) {

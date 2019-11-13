@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 
 declare global {
     interface Document {

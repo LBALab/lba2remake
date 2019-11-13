@@ -4,7 +4,16 @@ import {tr} from '../../lang';
 
 import '../styles/menu.scss';
 
-const menuItems = [
+interface Item {
+    item: string;
+    index: number;
+    isVisible: boolean;
+    isEnabled: boolean;
+    textId?: string;
+    text?: string;
+}
+
+const menuItems: Item[] = [
     { item: 'ResumeGame', index: 70, isVisible: false, isEnabled: true, textId: null },
     { item: 'NewGame', index: 71, isVisible: true, isEnabled: true, textId: null },
     { item: 'LoadGame', index: 72, isVisible: false, isEnabled: false, textId: null },
@@ -16,7 +25,18 @@ const menuItems = [
     { item: 'Quit', index: 75, isVisible: false, isEnabled: false, textId: null },
 ];
 
-export default class Menu extends React.Component {
+interface MProps {
+    showMenu: boolean;
+    inGameMenu: boolean;
+    onItemChanged: (id: number) => void;
+}
+
+interface MState {
+    items?: Item[];
+    selectedIndex: number;
+}
+
+export default class Menu extends React.Component<MProps, MState> {
     constructor(props) {
         super(props);
         this.update = this.update.bind(this);
@@ -87,7 +107,8 @@ export default class Menu extends React.Component {
 
     render() {
         if (this.props.showMenu) {
-            return <div className={`${this.props.inGameMenu ? 'bgInGameMenu' : 'bgMenu'} fullscreen`}>
+            const className = `${this.props.inGameMenu ? 'bgInGameMenu' : 'bgMenu'} fullscreen`;
+            return <div className={className}>
                 <div className="menu">
                     <ul className="menuList">
                         {map(this.state.items, (i, idx) =>
@@ -112,7 +133,11 @@ function MenuItem(props) {
             color: props.item.isEnabled ? 'white' : '#828282',
             background: props.selected ? 'rgba(32, 162, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
         };
-        return <div className="menuItem" style={extendedStyle} onClick={props.onClick}>{props.item.text}</div>;
+        return <div className="menuItem"
+                    style={extendedStyle}
+                    onClick={props.onClick}>
+            {props.item.text}
+        </div>;
     }
     return null;
 }

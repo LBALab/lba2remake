@@ -1,5 +1,5 @@
 import {times} from 'lodash';
-import * as THREE from 'three';
+import THREE from 'three';
 import {
     loadSubTexture,
     loadPaletteTexture,

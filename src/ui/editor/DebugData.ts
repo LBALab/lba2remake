@@ -1,6 +1,7 @@
 import {extend} from 'lodash';
-import * as THREE from 'three';
+import THREE from 'three';
 import {checkAuth, getAuthQueryString} from './auth';
+import { any } from 'prop-types';
 
 const DebugData = {
     scope: <any> {},
@@ -22,7 +23,8 @@ const DebugData = {
         islands: []
     },
     step: false,
-    firstFrame: false
+    firstFrame: false,
+    sceneManager: null
 };
 
 export default DebugData;

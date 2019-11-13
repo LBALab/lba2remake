@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import {cloneDeep} from 'lodash';
 
 import { loadModel, Model } from '../model';

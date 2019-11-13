@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import convert from 'color-convert';
 import { loadHqr } from '../hqr';
 
@@ -55,7 +55,7 @@ export async function resetLUTTexture() {
     }
 }
 
-async function loadLUTData() {
+async function loadLUTData() : Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
         const request = new XMLHttpRequest();
         request.responseType = 'arraybuffer';

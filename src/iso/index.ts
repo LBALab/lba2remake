@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import { loadHqr } from '../hqr';
 import { loadBricks } from './bricks';
 import { loadGrid } from './grid';

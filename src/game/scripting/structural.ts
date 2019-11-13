@@ -1,4 +1,3 @@
-// tslint:disable:function-name
 /* Conditionals */
 
 export function IF(condition, operator, offset) {

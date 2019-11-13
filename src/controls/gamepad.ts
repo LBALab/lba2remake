@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import {switchStats} from '../renderer/stats';
 
 const euler = new THREE.Euler();

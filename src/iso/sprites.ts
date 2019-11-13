@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import {each, orderBy} from 'lodash';
 import {bits} from '../utils';
 import {loadHqr} from '../hqr';

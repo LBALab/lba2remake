@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 
 const STEP = 1 / 24;
 

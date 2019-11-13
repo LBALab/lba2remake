@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import {
     map,
     filter,
@@ -43,7 +43,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
         },
 
         /* @inspector(locate) */
-        hideMenuAndGoto(index, wasPaused) {
+        hideMenuAndGoto(index, wasPaused = false) {
             hideMenu(wasPaused);
             return this.goto(index, false, wasPaused);
         },

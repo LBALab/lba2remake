@@ -1,5 +1,5 @@
 import React from 'react';
-import * as THREE from 'three';
+import THREE from 'three';
 
 import {createRenderer} from '../renderer';
 import {createGame} from '../game/index';
@@ -14,8 +14,43 @@ import Loader from './game/Loader';
 import {sBind} from '../utils';
 import {loadVRScene, updateVRScene} from './vr/vrScene';
 import {tr} from '../lang';
+import { TickerProps } from './utils/Ticker';
 
-export default class VRGameUI extends FrameListener {
+interface VRGameUIProps extends TickerProps {
+    params: any;
+    exitVR: (any) => any;
+}
+
+interface VRGameUIState {
+    clock: THREE.Clock;
+    game: any;
+    scene?: any;
+    renderer?: any;
+    sceneManager?: any;
+    controls?: any;
+    cinema: boolean;
+    text?: string;
+    skip: boolean;
+    ask: {choices: []};
+    interjections: {};
+    foundObject?: any;
+    loading: boolean;
+    video?: any;
+    choice?: number;
+    menuTexts?: any;
+    showMenu: boolean;
+    inGameMenu: boolean;
+    teleportMenu: boolean;
+    display: VRDisplay;
+    enteredVR: boolean;
+    vrScene?: any;
+}
+
+export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState> {
+    canvas: HTMLCanvasElement;
+    canvasWrapperElem: HTMLElement;
+    renderZoneElem: HTMLElement;
+
     constructor(props) {
         super(props);
 
@@ -95,43 +130,38 @@ export default class VRGameUI extends FrameListener {
 
     async onCanvasWrapperRef(canvasWrapperElem) {
         if (!this.canvasWrapperElem && canvasWrapperElem) {
-            if (this.props.mainData) {
-                this.canvas = this.props.mainData.canvas;
-            } else {
-                this.canvas = document.createElement('canvas');
-
-                const game = this.state.game;
-                await game.preload();
-                game.loaded();
-                if (this.props.params.scene === -1) {
-                    this.showMenu();
-                }
-                const renderer = createRenderer(this.props.params, this.canvas, {vr: true}, 'game');
-                const sceneManager = await createSceneManager(
+            this.canvas = document.createElement('canvas');
+            const game = this.state.game;
+            await game.preload();
+            game.loaded();
+            if (this.props.params.scene === -1) {
+                this.showMenu();
+            }
+            const renderer = createRenderer(this.props.params, this.canvas, {vr: true}, 'game');
+            const sceneManager = await createSceneManager(
+                this.props.params,
+                game,
+                renderer,
+                this.hideMenu.bind(this)
+            );
+            renderer.threeRenderer.setAnimationLoop(() => {
+                this.props.ticker.frame();
+            });
+            if (this.props.params.scene >= 0) {
+                sceneManager.hideMenuAndGoto(this.props.params.scene);
+            }
+            let controls;
+            if (this.renderZoneElem) {
+                controls = createControls(
                     this.props.params,
                     game,
-                    renderer,
-                    this.hideMenu.bind(this)
+                    this.renderZoneElem,
+                    sceneManager,
+                    renderer
                 );
-                renderer.threeRenderer.setAnimationLoop(() => {
-                    this.props.ticker.frame();
-                });
-                if (this.props.params.scene >= 0) {
-                    sceneManager.hideMenuAndGoto(this.props.params.scene);
-                }
-                let controls;
-                if (this.renderZoneElem) {
-                    controls = createControls(
-                        this.props.params,
-                        game,
-                        this.renderZoneElem,
-                        sceneManager,
-                        renderer
-                    );
-                }
-                const vrScene = loadVRScene(game, renderer);
-                this.setState({ renderer, sceneManager, controls, vrScene });
             }
+            const vrScene = loadVRScene(game, renderer);
+            this.setState({ renderer, sceneManager, controls, vrScene });
             this.canvasWrapperElem = canvasWrapperElem;
             this.canvasWrapperElem.appendChild(this.canvas);
         }
@@ -261,7 +291,7 @@ export default class VRGameUI extends FrameListener {
                     foveationLevel: 3,
                     antialias: true
                 }
-            }
+            } as any
         ]);
     }
 
@@ -270,12 +300,12 @@ export default class VRGameUI extends FrameListener {
             return null;
         }
         const buttonWrapperStyle = {
-            position: 'absolute',
+            position: 'absolute' as const,
             left: 0,
             right: 0,
             bottom: 20,
-            textAlign: 'center',
-            verticalAlign: 'middle'
+            textAlign: 'center' as const,
+            verticalAlign: 'middle' as const
         };
         const imgStyle = {
             width: 200,
@@ -284,17 +314,17 @@ export default class VRGameUI extends FrameListener {
         const buttonStyle = {
             color: 'white',
             background: 'rgba(32, 162, 255, 0.5)',
-            userSelect: 'none',
-            cursor: 'pointer',
-            display: 'inline-block',
+            userSelect: 'none' as const,
+            cursor: 'pointer' as const,
+            display: 'inline-block' as const,
             fontFamily: 'LBA',
             padding: 20,
             textShadow: 'black 3px 3px',
             border: '2px outset #61cece',
             borderRadius: '15px',
             fontSize: '30px',
-            textAlign: 'center',
-            verticalAlign: 'middle'
+            textAlign: 'center' as const,
+            verticalAlign: 'middle' as const
         };
         const buttonStyle2 = Object.assign({}, buttonStyle, {
             padding: 10,

@@ -45,7 +45,7 @@ module.exports = {
                 loader: 'eslint-loader'
             }]
         }, {
-            test: /\.(ts)?$/,
+            test: /\.(ts|tsx)?$/,
             include: /src/,
             exclude: /node_modules/,
             use: [{

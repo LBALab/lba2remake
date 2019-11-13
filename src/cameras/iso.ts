@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 
 const CAMERA_HERO_OFFSET = new THREE.Vector3(-24, 19.2, 24);
 

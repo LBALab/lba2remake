@@ -1,5 +1,5 @@
 import React from 'react';
-import * as THREE from 'three';
+import THREE from 'three';
 import {clone, omit} from 'lodash';
 
 import {createRenderer} from '../renderer';
@@ -25,9 +25,46 @@ import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
 import {KeyHelpIcon, KeyHelpScreen} from './game/KeyboardHelp';
 import {sBind} from '../utils';
+import {TickerProps} from './utils/Ticker';
 import {updateLabels} from './editor/labels';
 
-export default class GameUI extends FrameListener {
+interface GameUIProps extends TickerProps {
+    saveMainData?: Function;
+    mainData?: {
+        canvas: HTMLCanvasElement;
+    };
+    params: any;
+    sharedState?: any;
+}
+
+interface GameUIState {
+    clock: THREE.Clock;
+    game: any;
+    scene?: any;
+    renderer?: any;
+    sceneManager?: any;
+    controls?: any;
+    cinema: boolean;
+    text?: string;
+    skip: boolean;
+    ask: {choices: []};
+    interjections: {};
+    foundObject?: any;
+    loading: boolean;
+    video?: any;
+    choice?: number;
+    menuTexts?: any;
+    showMenu: boolean;
+    inGameMenu: boolean;
+    teleportMenu: boolean;
+    keyHelp: boolean;
+}
+
+export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
+    canvas: HTMLCanvasElement;
+    renderZoneElem: HTMLElement;
+    canvasWrapperElem: HTMLElement;
+
     constructor(props) {
         super(props);
 
@@ -388,7 +425,15 @@ export default class GameUI extends FrameListener {
                     sceneManager,
                     hero: scene && scene.actors[0],
                     controls,
-                    ui: omit(this.state, 'clock', 'game', 'renderer', 'sceneManager', 'controls', 'scene')
+                    ui: omit(
+                        this.state,
+                        'clock',
+                        'game',
+                        'renderer',
+                        'sceneManager',
+                        'controls',
+                        'scene'
+                    )
                 };
                 DebugData.sceneManager = sceneManager;
                 updateLabels(scene, this.props.sharedState.labels);
@@ -423,7 +468,7 @@ export default class GameUI extends FrameListener {
 
     render() {
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-        return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex="0">
+        return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex={0}>
             <div ref={this.onCanvasWrapperRef} style={fullscreen} onClick={this.pick}/>
             {this.renderGUI()}
         </div>;
@@ -439,10 +484,7 @@ export default class GameUI extends FrameListener {
             />
             <Video video={this.state.video} renderer={this.state.renderer} />
             <Menu
-                game={this.state.game}
-                params={this.props.params}
                 showMenu={this.state.showMenu && !this.state.teleportMenu}
-                texts={this.state.game.menuTexts}
                 inGameMenu={this.state.inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />

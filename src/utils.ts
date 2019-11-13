@@ -8,9 +8,9 @@ const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const ARGUMENT_NAMES = /([^\s,]+)/g;
 
 interface MetaFunction extends Function {
-    __param_names: any;
-    __pure_function: boolean;
-    __location: string;
+    __param_names?: [string];
+    __pure_function?: boolean;
+    __location?: string;
 }
 
 export function getParamNames(func: MetaFunction) {

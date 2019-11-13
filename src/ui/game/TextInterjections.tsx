@@ -1,6 +1,6 @@
 import React from 'react';
 import {extend, map} from 'lodash';
-import * as THREE from 'three';
+import THREE from 'three';
 
 const baseStyle = {
     position: 'absolute',

@@ -1,19 +1,25 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import {each} from 'lodash';
 
-import GameUI from './ui/GameUI';
-import VRGameUI from './ui/VRGameUI';
-import Editor from './ui/Editor';
-import Popup from './ui/Popup';
-import {loadParams} from './params';
-import {loadGameMetaData, loadModelsMetaData, loadIslandsMetaData} from './ui/editor/DebugData';
-import {CrashHandler} from './crash_reporting';
-import ChangeLog from './ui/ChangeLog';
-import Disclaimer from './ui/Disclaimer';
-import { initLanguageConfig } from './lang';
+import GameUI from './GameUI';
+import VRGameUI from './VRGameUI';
+import Editor from './Editor';
+import Popup from './Popup';
+import {loadParams} from '../params';
+import {
+    loadGameMetaData,
+    loadModelsMetaData,
+    loadIslandsMetaData
+} from './editor/DebugData';
+import ChangeLog from './ChangeLog';
+import Disclaimer from './Disclaimer';
+import { initLanguageConfig } from '../lang';
+import Ticker from './utils/Ticker';
 
-class Root extends React.Component {
+interface RootProps {
+    ticker: Ticker;
+}
+
+export default class Root extends React.Component<RootProps> {
     state: any;
 
     constructor(props) {
@@ -104,35 +110,4 @@ class Root extends React.Component {
                 <ChangeLog fullscreen title close={this.closeChangeLog}/> : null}
         </div>;
     }
-}
-
-window.onload = () => {
-    init();
-    document.body.removeChild(document.getElementById('preload'));
-};
-
-window.onerror = (message, file, line, column, data) => {
-    if ('getVRDisplays' in navigator) {
-        navigator.getVRDisplays().then((displays) => {
-            each(displays, (display) => {
-                if (display.isPresenting) {
-                    display.exitPresent();
-                }
-            });
-        });
-    }
-    const stack = (data && data.stack) || undefined;
-    init({message, file, line, column, stack, data});
-};
-
-window.addEventListener('unhandledrejection', (event) => {
-    init(event.reason);
-});
-
-function init(error) {
-    const ticker = new Ticker();
-    const Renderer = () => (error
-        ? <CrashHandler error={error}/>
-        : <Root ticker={ticker}/>);
-    ReactDOM.render(<Renderer/>, document.getElementById('root'));
 }

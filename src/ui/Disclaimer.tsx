@@ -3,7 +3,7 @@ import {tr} from '../lang';
 import {center, editor as editor_style, fullscreen} from './styles';
 
 const wrapper_style = Object.assign({}, fullscreen, editor_style.base, {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     bottom: 0,
     left: 0,
@@ -13,13 +13,13 @@ const wrapper_style = Object.assign({}, fullscreen, editor_style.base, {
     color: 'white',
     border: '2px outset #61cece',
     borderRadius: 12,
-    overflow: 'hidden'
+    overflow: 'hidden' as const
 });
 
 const content_style = {
     padding: 24,
-    overflow: 'hidden',
-    position: 'absolute',
+    overflow: 'hidden' as const,
+    position: 'absolute' as const,
     top: 0,
     bottom: 0,
     left: 0,
@@ -30,7 +30,7 @@ const center_vert = Object.assign({}, center, {
     left: 0,
     right: 0,
     transform: 'translate(0, -50%)',
-    textAlign: 'center',
+    textAlign: 'center' as const,
     maxHeight: '100%',
     overflow: 'auto'
 });
@@ -52,7 +52,7 @@ const titleStyle = {
 const textContainer = {
     display: 'inline-block',
     maxWidth: 800,
-    textAlign: 'left',
+    textAlign: 'left' as const,
     fontSize: '1.1em',
     padding: '0 10px'
 };

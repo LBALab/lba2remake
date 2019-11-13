@@ -1,5 +1,3 @@
-// tslint:disable:function-name
-
 import { clone } from 'lodash';
 import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';

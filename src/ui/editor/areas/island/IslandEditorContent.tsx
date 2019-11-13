@@ -1,5 +1,5 @@
 import React from 'react';
-import * as THREE from 'three';
+import THREE from 'three';
 
 import { createRenderer } from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';

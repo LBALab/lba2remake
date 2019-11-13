@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import {each, find} from 'lodash';
 
 import {processZones} from './zones';

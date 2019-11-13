@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import { each } from 'lodash';
 import { getOrCreateHands, handlePicking } from './vrHands';
 import { createScreen } from './vrScreen';

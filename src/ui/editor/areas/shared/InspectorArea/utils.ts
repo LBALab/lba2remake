@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import {isFunction, map, filter, noop, concat} from 'lodash';
-import * as THREE from 'three';
+import THREE from 'three';
 import DebugData, {getObjectName} from '../../../DebugData';
 import {getParamNames} from '../../../../../utils';
 

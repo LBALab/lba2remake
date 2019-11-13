@@ -1,11 +1,12 @@
 import React from 'react';
 import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
-import Area from './editor/Area';
+import Area, {AreaDefinition} from './editor/Area';
 import {fullscreen} from './styles';
 import NewArea from './editor/areas/utils/NewArea';
 import {Type, Orientation} from './editor/layout';
 import {findAreaContentById, findMainAreas} from './editor/areas';
 import DebugData from './editor/DebugData';
+import Ticker from './utils/Ticker';
 
 const baseStyle = extend({overflow: 'hidden'}, fullscreen);
 
@@ -22,7 +23,46 @@ const separatorStyle = {
     }
 };
 
-export default class Editor extends React.Component {
+interface BaseNode {
+    type: number;
+}
+
+interface LayoutNode extends BaseNode {
+    children: Node[];
+    orientation: number;
+    splitAt: number;
+}
+
+interface AreaNode extends BaseNode {
+    content: any;
+}
+
+type Node = LayoutNode | AreaNode;
+
+interface NodeOptions {
+    injectArea?: AreaDefinition;
+    injectOrientation?: number;
+    rootState?: any;
+}
+
+interface EditorProps {
+    params: any;
+    ticker: Ticker;
+}
+
+interface EditorState {
+    layout: Node;
+    root: AreaDefinition;
+    separator: {
+        prop: 'clientX' | 'clientY';
+        min: number,
+        max: number,
+        node: LayoutNode
+    };
+    mainData?: any;
+}
+
+export default class Editor extends React.Component<EditorProps, EditorState> {
     constructor(props) {
         super(props);
 
@@ -65,7 +105,9 @@ export default class Editor extends React.Component {
     enableSeparator(e) {
         if (!e) {
             return;
-        } else if (!e.composedPath) {
+        }
+
+        if (!e.composedPath) {
             this.enableSeparator({
                 path: [e.target]
             });
@@ -89,7 +131,7 @@ export default class Editor extends React.Component {
                     prop: horizontal ? 'clientX' : 'clientY',
                     min: bb[horizontal ? 'left' : 'top'],
                     max: node.rootRef[horizontal ? 'clientWidth' : 'clientHeight'],
-                    node
+                    node: node as LayoutNode
                 };
             }
             return this.findSeparator(path, node.children[0], concat(sepPath, 0))
@@ -193,7 +235,6 @@ export default class Editor extends React.Component {
         const availableAreas = node.content.mainArea ? findMainAreas() : this.state.root.toolAreas;
         return <Area
             key={`${path.join('/')}/${node.content.name}`}
-            node={node}
             area={node.content}
             stateHandler={node.stateHandler}
             mainArea={node.content.mainArea}
@@ -247,7 +288,8 @@ export default class Editor extends React.Component {
 
     close(path) {
         if (path.length === 1) {
-            const layout = this.state.layout.children[1 - path[0]];
+            const rootLayout = this.state.layout as LayoutNode;
+            const layout = rootLayout.children[1 - path[0]];
             this.setState({layout});
             saveLayout(layout);
         } else {
@@ -286,7 +328,7 @@ export default class Editor extends React.Component {
         }
     }
 
-    selectMainAreaContent(area, options) {
+    selectMainAreaContent(area, options = {}) {
         DebugData.scope = {};
         if (this.state.mainData && this.state.mainData.state) {
             const {renderer, game} = this.state.mainData.state;
@@ -322,7 +364,7 @@ export default class Editor extends React.Component {
     }
 }
 
-function initStateHandler(editor, node, state) {
+function initStateHandler(editor, node, state = null) {
     node.stateHandler = {
         state: state ? cloneDeep(state) : node.content.getInitialState(),
         setState: (newState) => {
@@ -363,7 +405,7 @@ function saveNode(node) {
     };
 }
 
-function loadLayout(editor, mode, options) {
+function loadLayout(editor, mode = null, options: NodeOptions = {}) {
     if (!mode) {
         mode = localStorage.getItem('editor_mode') || 'game';
     }
@@ -383,7 +425,7 @@ function loadLayout(editor, mode, options) {
     return loadNode(editor, layout, options);
 }
 
-function loadNode(editor, node, options = {}) {
+function loadNode(editor, node, options: NodeOptions = {}) {
     if (!node) {
         return null;
     }
@@ -424,7 +466,8 @@ function loadNode(editor, node, options = {}) {
 
     const tgtNode = {
         type: Type.AREA,
-        root: node.root
+        root: node.root,
+        content: null
     };
     tgtNode.content = findAreaContentById(node.content_id);
     if (!tgtNode.content)

@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 
 export function createVRCube() {
     const geometry = new THREE.BoxBufferGeometry(6, 6, 6);

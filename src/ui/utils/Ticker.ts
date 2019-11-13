@@ -27,3 +27,7 @@ export default class Ticker {
         });
     }
 }
+
+export interface TickerProps {
+    ticker: Ticker;
+}

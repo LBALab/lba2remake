@@ -86,7 +86,6 @@ const center_vert = extend({}, center, {
 
 const reload = () => location.reload();
 
-// tslint:disable-next-line:function-name
 export function CrashHandler(props) {
     let report_on = true;
     let reload_on = true;

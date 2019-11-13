@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import {DirMode} from '../game/actors';
 
 import {loadHqr} from '../hqr';

@@ -1,5 +1,5 @@
 export const fullscreen = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     left: 0,
     right: 0,
@@ -7,7 +7,7 @@ export const fullscreen = {
 };
 
 export const center = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)'
@@ -24,13 +24,13 @@ export const editor = {
         color: 'white',
         fontFamily: '\'Courier\', monospace',
         fontSize: 14,
-        fontWeight: 'bold'
+        fontWeight: 'bold' as const
     },
     button: {
         color: 'black',
         background: 'white',
         borderRadius: 5,
-        cursor: 'pointer',
+        cursor: 'pointer' as const,
         padding: '1px 4px',
         margin: '0px 2px'
     },
@@ -43,13 +43,13 @@ export const editor = {
         color: 'black',
         background: 'white',
         borderRadius: 5,
-        cursor: 'pointer',
+        cursor: 'pointer' as const,
         padding: '1px 4px',
         margin: '0px 2px'
     },
     icon: {
-        verticalAlign: 'middle',
-        cursor: 'pointer',
+        verticalAlign: 'middle' as const,
+        cursor: 'pointer' as const,
         padding: '1px 2px'
     }
 };

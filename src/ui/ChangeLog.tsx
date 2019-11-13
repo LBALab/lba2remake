@@ -4,7 +4,7 @@ import changelog from '../../CHANGELOG.md';
 import './styles/changelog.scss';
 
 const bg_style = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     bottom: 0,
     left: 0,
@@ -13,7 +13,7 @@ const bg_style = {
 };
 
 const wrapper_style = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     bottom: 0,
     left: 0,
@@ -23,13 +23,13 @@ const wrapper_style = {
     color: 'white',
     border: '2px outset #61cece',
     borderRadius: 12,
-    overflow: 'hidden'
+    overflow: 'hidden' as const
 };
 
 const content_style = {
     padding: '0px 24px',
     overflow: 'hidden auto',
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     bottom: 0,
     left: 0,
@@ -37,12 +37,12 @@ const content_style = {
 };
 
 const closeStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 2,
     right: 8,
     width: 24,
     height: 24,
-    cursor: 'pointer'
+    cursor: 'pointer' as const
 };
 
 const onKeyDown = (close, e) => {

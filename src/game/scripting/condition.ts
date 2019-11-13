@@ -1,6 +1,4 @@
-// tslint:disable:function-name
-
-import * as THREE from 'three';
+import THREE from 'three';
 
 export function COL() {
     if (this.actor.life <= 0) {

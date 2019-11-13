@@ -1,4 +1,3 @@
-// tslint:disable:function-name
 import { each } from 'lodash';
 
 import { AnimActionOpcode } from '../data/animAction';

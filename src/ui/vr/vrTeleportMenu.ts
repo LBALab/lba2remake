@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import {each, filter, findKey} from 'lodash';
 import IslandAmbience from '../editor/areas/island/browser/ambience';
 import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';

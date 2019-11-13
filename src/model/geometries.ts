@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import {each} from 'lodash';
 
 import VERT_COLORED from './shaders/colored.vert.glsl';

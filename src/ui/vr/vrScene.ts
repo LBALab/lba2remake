@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import { getVR3DCamera } from '../../cameras/vr/vr3d';
 import { createFPSCounter } from './vrFPS';
 import { createMenu, updateMenu } from './vrMenu';

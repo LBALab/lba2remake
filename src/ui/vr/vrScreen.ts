@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 
 export function createScreen(options) {
     const {width, height} = options;

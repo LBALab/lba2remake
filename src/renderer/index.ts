@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 import {map} from 'lodash';
 import setupStats from './stats';
 import {EngineError} from '../crash_reporting';

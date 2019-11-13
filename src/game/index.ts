@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import THREE from 'three';
 
 import {createState} from './state';
 import {createAudioManager, createMusicManager} from '../audio';
