@@ -14,7 +14,7 @@ module.exports = {
         publicPath: path.join(__dirname, './www'),
     },
     resolve: {
-        extensions: ['.ts', '.js', '.glsl', '.proto', '.yaml', '.md']
+        extensions: ['.ts', '.tsx', '.js', '.glsl', '.proto', '.yaml', '.md']
     },
     resolveLoader: {
         alias: {

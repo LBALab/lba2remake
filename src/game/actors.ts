@@ -4,11 +4,11 @@ import {cloneDeep} from 'lodash';
 import { loadModel, Model } from '../model';
 import { loadAnimState, resetAnimState } from '../model/animState';
 import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
-import {createBoundingBox} from '../utils/rendering.js';
+import {createBoundingBox} from '../utils/rendering';
 import { loadSprite } from '../iso/sprites';
 
 import { getObjectName } from '../ui/editor/DebugData';
-import { createActorLabel } from '../ui/editor/labels.js';
+import { createActorLabel } from '../ui/editor/labels';
 import { runScript } from './scripting';
 
 interface ActorFlags {
