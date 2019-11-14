@@ -3,10 +3,11 @@ import {map, extend} from 'lodash';
 import {editor} from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';
 import DebugData, {getObjectName} from '../../../DebugData';
+import { TickerProps } from '../../../../utils/Ticker';
 
 const inputStyle = {
-    textAlign: 'center',
-    verticalAlign: 'middle'
+    textAlign: 'center' as const,
+    verticalAlign: 'middle' as const
 };
 
 const iconStyle = extend({}, editor.icon, {
@@ -16,18 +17,36 @@ const iconStyle = extend({}, editor.icon, {
 });
 
 const toolbarStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     left: 0,
     right: 0,
     height: 20,
     lineHeight: '20px',
-    verticalAlign: 'middle',
+    verticalAlign: 'middle' as const,
     background: 'rgb(21, 21, 21)',
-    userSelect: 'none'
+    userSelect: 'none' as const
 };
 
-export default class ScriptsAreaToolbar extends FrameListener {
+interface Props extends TickerProps {
+    sharedState: {
+        actorIndex: number;
+        autoScroll: boolean;
+        objectLabels: boolean;
+    };
+    stateHandler: any;
+}
+
+interface State {
+    actors: any[];
+    selectedActor: number;
+    selecting: boolean;
+    isPaused: boolean;
+}
+
+export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
+    scene: number;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -42,14 +61,19 @@ export default class ScriptsAreaToolbar extends FrameListener {
         const {scene, game} = DebugData.scope;
         const selectedActor = this.props.sharedState.actorIndex;
         if (this.scene !== scene) {
-            this.setState({actors: map(scene && scene.actors, actor => getObjectName('actor', scene.index, actor.index))});
+            this.setState({
+                actors: map(
+                    scene && scene.actors,
+                    actor => getObjectName('actor', scene.index, actor.index)
+                )
+            });
             this.scene = scene;
         }
         if (this.state.selectedActor !== selectedActor) {
             this.setState({selectedActor});
         }
-        if (game && game.isPaused() !== this.state.paused) {
-            this.setState({paused: game.isPaused()});
+        if (game && game.isPaused() !== this.state.isPaused) {
+            this.setState({isPaused: game.isPaused()});
         }
     }
 
@@ -91,7 +115,7 @@ export default class ScriptsAreaToolbar extends FrameListener {
             }
         };
 
-        const paused = this.state.paused;
+        const paused = this.state.isPaused;
 
         const toggleAutoScroll = (e) => {
             this.props.stateHandler.setAutoScroll(e.target.checked);
@@ -119,9 +143,25 @@ export default class ScriptsAreaToolbar extends FrameListener {
             &nbsp;
             <img style={iconStyle} onClick={reset} src="editor/icons/reset.svg"/>
             {paused ? <img style={iconStyle} onClick={step} src="editor/icons/step.svg"/> : null}
-            <img style={iconStyle} onClick={togglePause} src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
-            <label style={{float: 'right'}}><input key="autoScroll" type="checkbox" onChange={toggleAutoScroll} checked={autoScroll} style={inputStyle}/>Autoscroll</label>
-            <label style={{float: 'right', paddingRight: '1ch'}}><input key="objlabels" type="checkbox" onChange={toggleObjectLabels} checked={objectLabels} style={inputStyle}/>Show active objects</label>
+            <img style={iconStyle}
+                    onClick={togglePause}
+                    src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
+            <label style={{float: 'right' as const}}>
+                <input key="autoScroll"
+                        type="checkbox"
+                        onChange={toggleAutoScroll}
+                        checked={autoScroll}
+                        style={inputStyle}/>
+                Autoscroll
+            </label>
+            <label style={{float: 'right' as const, paddingRight: '1ch'}}>
+                <input key="objlabels"
+                        type="checkbox"
+                        onChange={toggleObjectLabels}
+                        checked={objectLabels}
+                        style={inputStyle}/>
+                Show active objects
+            </label>
         </React.Fragment>;
     }
 
@@ -135,7 +175,7 @@ export default class ScriptsAreaToolbar extends FrameListener {
         };
 
         const style = {
-            position: 'absolute',
+            position: 'absolute' as const,
             top: 0,
             left: 0,
             right: 0,
@@ -146,27 +186,27 @@ export default class ScriptsAreaToolbar extends FrameListener {
         const textStyle = {
             height: 24,
             lineHeight: '24px',
-            verticalAlign: 'middle',
-            userSelect: 'none'
+            verticalAlign: 'middle' as const,
+            userSelect: 'none' as const
         };
 
         const lineStyle = {
             height: 24,
             lineHeight: '24px',
-            verticalAlign: 'middle',
-            userSelect: 'none',
-            cursor: 'pointer',
-            overflow: 'hidden',
+            verticalAlign: 'middle' as const,
+            userSelect: 'none' as const,
+            cursor: 'pointer' as const,
+            overflow: 'hidden' as const,
             width: '100%'
         };
 
         const contentStyle = {
             background: 'black',
-            position: 'absolute',
+            position: 'absolute' as const,
             top: 22,
             left: 0,
             bottom: 0,
-            overflow: 'auto'
+            overflow: 'auto' as const
         };
 
         return <div style={style} onClick={() => this.setState({selecting: false})}>

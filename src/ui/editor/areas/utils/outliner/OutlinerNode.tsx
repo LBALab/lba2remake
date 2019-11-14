@@ -1,6 +1,7 @@
 import React from 'react';
 import {map, concat, times, isEqual, noop, isFunction} from 'lodash';
 import NodeProps from './NodeProps';
+import Ticker from '../../../../utils/Ticker';
 
 const KeyValueNode = {
     dynamic: true,
@@ -34,7 +35,42 @@ const KeyValueNode = {
     onClick: () => {},
     color: data => data.color
 };
-export default class OutlinerNode extends React.Component {
+
+interface Props {
+    id?: string;
+    ticker: Ticker;
+    node: any;
+    shortcuts: any;
+    path: string[];
+    prettyPath: string[];
+    activePath: string[];
+    level: number;
+    data: any;
+    fontSize?: number;
+    hidden: boolean;
+    setRoot: Function;
+    rootName?: string;
+    split: boolean;
+    userData: any;
+    rootStateHandler: any;
+    rootState: any;
+    editor: any;
+}
+
+interface State {
+    collapsed: boolean;
+    name: string;
+    numChildren: number;
+    childPropsHash: string;
+    selected: boolean;
+    menu: any;
+    renaming: boolean;
+    icon: string;
+}
+
+export default class OutlinerNode extends React.Component<Props, State> {
+    savedFocus: HTMLElement;
+
     constructor(props) {
         super(props);
         const node = props.node;
@@ -43,7 +79,7 @@ export default class OutlinerNode extends React.Component {
             name: this.name(),
             numChildren: this.numChildren(),
             childPropsHash: '',
-            selected: call('selected', node, this.props.data, this),
+            selected: call('selected', node, this.props.data, null, this),
             menu: null,
             renaming: false,
             icon: this.icon()
@@ -105,11 +141,11 @@ export default class OutlinerNode extends React.Component {
     }
 
     upShortcut() {
-        this.call('up', this.state.collapsed, this);
+        this.call('up', this.state.collapsed);
     }
 
     downShortcut() {
-        this.call('down', this.state.collapsed, this);
+        this.call('down', this.state.collapsed);
     }
 
     frame() {
@@ -128,7 +164,7 @@ export default class OutlinerNode extends React.Component {
             }
             this.checkChildPropsDiff();
         }
-        const selected = call('selected', this.props.node, this.props.data, this);
+        const selected = call('selected', this.props.node, this.props.data, null, this);
         if (selected !== this.state.selected) {
             this.setState({selected});
         }
@@ -204,7 +240,7 @@ export default class OutlinerNode extends React.Component {
         const menu = this.state.menu;
         if (menu) {
             const menuStyle = {
-                position: 'fixed',
+                position: 'fixed' as const,
                 left: menu.x - 12,
                 top: menu.y - 12,
                 padding: 0,
@@ -212,7 +248,7 @@ export default class OutlinerNode extends React.Component {
                 color: '#000000',
                 border: '1px solid black',
                 borderRadius: 4,
-                cursor: 'pointer',
+                cursor: 'pointer' as const,
                 boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.5)',
                 zIndex: 1
             };
@@ -321,7 +357,7 @@ export default class OutlinerNode extends React.Component {
         const onInputRef = (ref) => {
             if (ref && ref !== document.activeElement) {
                 ref.value = this.state.name;
-                this.savedFocus = document.activeElement;
+                this.savedFocus = document.activeElement as any;
                 ref.focus();
                 ref.select();
             }
@@ -352,9 +388,9 @@ export default class OutlinerNode extends React.Component {
         const hasCollapse = numChildren > 0 && !this.props.node.noCollapse;
 
         const style = {
-            cursor: 'pointer',
-            display: 'inline-block',
-            position: 'absolute',
+            cursor: 'pointer' as const,
+            display: 'inline-block' as const,
+            position: 'absolute' as const,
             left: 0
         };
 
@@ -369,8 +405,6 @@ export default class OutlinerNode extends React.Component {
             nodeProps={this.nodeProps}
             ticker={this.props.ticker}
             dynamic={this.props.node.dynamic}
-            userData={this.props.userData}
-            path={this.props.path}
         />;
     }
 
@@ -422,20 +456,19 @@ export default class OutlinerNode extends React.Component {
         );
     }
 
-    renderChild(childFontSize, child, idx, childData) {
+    renderChild(childFontSize, child, idx, childData = null) {
         if (!child)
             return null;
 
         const rootName = this.props.rootName;
-        const childName = child.dynamic ? call('name', child, childData, idx) : child.name;
-        const key = child.dynamic ? call('key', child, childData, idx) : child.key;
+        const childName = child.dynamic ? call('name', child, childData, idx, this) : child.name;
+        const key = child.dynamic ? call('key', child, childData, idx, this) : child.key;
         const path = concat(this.props.path, key || childName || idx);
         const prettyPath = concat(this.props.prettyPath, childName || idx);
         return <OutlinerNode
             key={path.join('/')}
             id={`otl.${rootName}.${path.join('.')}`}
             hidden={false}
-            parentHidden={this.props.hidden}
             node={child}
             data={childData}
             fontSize={childFontSize}
@@ -480,10 +513,12 @@ export default class OutlinerNode extends React.Component {
 
     nodeProps() {
         const node = this.props.node;
-        return node.dynamic ? this.call('props', this.state && this.state.collapsed) : (node.props ? node.props : []);
+        return node.dynamic
+            ? this.call('props', this.state && this.state.collapsed)
+            : (node.props ? node.props : []);
     }
 
-    call(method, arg) {
+    call(method, arg = null) {
         return call(method, this.props.node, this.props.data, arg, this);
     }
 }
@@ -493,9 +528,11 @@ function call(method, node, data, arg, component) {
     const ok = node.needsData ? (data !== undefined && data !== null) : true;
     if (fct && ok) {
         return fct(data, arg, component);
-    } else if (method === 'numChildren') {
+    }
+    if (method === 'numChildren') {
         return 0;
-    } else if (method === 'props') {
+    }
+    if (method === 'props') {
         return [];
     }
     return null;

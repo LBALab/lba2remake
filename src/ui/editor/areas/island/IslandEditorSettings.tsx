@@ -1,8 +1,8 @@
 import React from 'react';
 
 const inputStyle = {
-    textAlign: 'center',
-    verticalAlign: 'middle',
+    textAlign: 'center' as const,
+    verticalAlign: 'middle' as const,
     marginRight: '1ch'
 };
 

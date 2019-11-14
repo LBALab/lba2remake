@@ -8,8 +8,43 @@ import { loadIslandScenery } from '../../../../island';
 import DebugData from '../../DebugData';
 import {get3DFreeCamera} from './utils/freeCamera';
 import IslandAmbience from './browser/ambience';
+import { TickerProps } from '../../../utils/Ticker';
 
-export default class Island extends FrameListener {
+interface Props extends TickerProps {
+    mainData: any;
+    saveMainData: Function;
+    params: any;
+    sharedState: {
+        name: string;
+        wireframe: boolean;
+    };
+    stateHandler: any;
+}
+
+interface State {
+    island?: any;
+    renderer?: any;
+    scene: any;
+    clock: THREE.Clock;
+    cameraOrientation: THREE.Quaternion;
+    cameraHeadOrientation: THREE.Quaternion;
+    cameraSpeed: {
+        x: number;
+        z: number;
+    };
+}
+export default class Island extends FrameListener<Props, State> {
+    mouseSpeed: {
+        x: number;
+        y: number;
+    };
+    zoom: number;
+    root: HTMLElement;
+    canvas: HTMLCanvasElement;
+    mouseEnabled: boolean;
+    name: string;
+    wireframe: boolean;
+
     constructor(props) {
         super(props);
 
@@ -79,7 +114,12 @@ export default class Island extends FrameListener {
             } else {
                 this.canvas = document.createElement('canvas');
                 this.canvas.tabIndex = 0;
-                const renderer = createRenderer(this.props.params, this.canvas, {}, 'islands_editor');
+                const renderer = createRenderer(
+                    this.props.params,
+                    this.canvas,
+                    {},
+                    'islands_editor'
+                );
                 renderer.threeRenderer.setAnimationLoop(() => {
                     this.props.ticker.frame();
                 });
@@ -196,7 +236,7 @@ export default class Island extends FrameListener {
         if (this.wireframe !== wireframe && island) {
             island.threeObject.traverse((obj) => {
                 if (obj instanceof THREE.Mesh) {
-                    obj.material.wireframe = wireframe;
+                    (obj.material as THREE.RawShaderMaterial).wireframe = wireframe;
                 }
             });
             this.wireframe = wireframe;
@@ -243,7 +283,6 @@ export default class Island extends FrameListener {
         </div>;
     }
 }
-
 
 const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
 const MAX_X_ANGLE = Math.PI / 2.5;

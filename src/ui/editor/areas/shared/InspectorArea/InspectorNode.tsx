@@ -125,14 +125,16 @@ export const InspectorNode = (
             const obj = getObj(data, root);
             if (isFunction(obj)) {
                 const isPure = isPureFunc(obj, name, parent);
-                let paramNames = getParamNames(obj);
+                let paramNames: any[] = getParamNames(obj);
                 if (isPure) {
                     const userData = component.props.userData;
                     const bPath = (component.props.path || []).join('.');
                     if (userData && userData.bindings && bPath in userData.bindings) {
                         const bindings = userData.bindings[bPath];
                         paramNames = map(bindings, (p, idx) =>
-                            <span key={idx} style={{color: 'white'}}>{prefixByKind[p.kind]}{p.value}</span>
+                            <span key={idx} style={{color: 'white'}}>
+                                {prefixByKind[p.kind]}{p.value}
+                            </span>
                         );
                     }
                 }
@@ -141,18 +143,22 @@ export const InspectorNode = (
                     margin: '0 3px',
                     color: isPure ? 'white' : 'grey',
                     fontSize: 11,
-                    fontWeight: 'bold',
+                    fontWeight: 'bold' as const,
                     border: isPure ? '1px inset #5cffa9' : '1px inset #3d955d',
                     borderRadius: 4,
                     background: 'rgba(0, 0, 0, 0.5)',
-                    cursor: 'pointer'
+                    cursor: 'pointer' as const
                 };
                 const paramStyle = {
                     color: isPure ? '#BBBBBB' : '#666666'
                 };
                 const onClick = () =>
                     editBindings(concat(path, name).slice(1), parent, component.props.userData);
-                return <span style={{color: isPure ? '#5cffa9' : '#3d955d', wordBreak: 'break-word'}}>
+                const style = {
+                    color: isPure ? '#5cffa9' : '#3d955d',
+                    wordBreak: 'break-word' as const
+                };
+                return <span style={style}>
                     (
                     {map(paramNames, (param, idx) =>
                         <React.Fragment key={idx}>

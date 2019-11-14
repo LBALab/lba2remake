@@ -55,7 +55,8 @@ const Actor = {
             value: (actor) => {
                 if (actor.props.entityIndex === -1) {
                     return '<no-entity>';
-                } else if (DebugData.metadata.entities[actor.props.entityIndex]) {
+                }
+                if (DebugData.metadata.entities[actor.props.entityIndex]) {
                     const name = DebugData.metadata.entities[actor.props.entityIndex];
                     return `${name} (${actor.props.entityIndex})`;
                 }
@@ -79,7 +80,8 @@ const Actor = {
             value: (actor) => {
                 if (actor.props.bodyIndex === -1) {
                     return '<no-body>';
-                } else if (DebugData.metadata.bodies[actor.props.bodyIndex]) {
+                }
+                if (DebugData.metadata.bodies[actor.props.bodyIndex]) {
                     return DebugData.metadata.bodies[actor.props.bodyIndex];
                 }
                 return `body_${actor.props.bodyIndex}`;
@@ -102,7 +104,8 @@ const Actor = {
             value: (actor) => {
                 if (actor.props.animIndex === -1) {
                     return '<no-anim>';
-                } else if (DebugData.metadata.anims[actor.props.animIndex]) {
+                }
+                if (DebugData.metadata.anims[actor.props.animIndex]) {
                     return DebugData.metadata.anims[actor.props.animIndex];
                 }
                 return `anim_${actor.props.animIndex}`;
@@ -154,7 +157,11 @@ const Actor = {
                     {value.args
                         ? <span>(<i style={{color: '#ca0000'}}>{value.args}</i>)</span>
                         : ''}
-                    {value.extra ? <span style={{color: '#1a78c0'}}>&nbsp;{value.extra}</span> : null}
+                    {value.extra
+                        ? <span style={{color: '#1a78c0'}}>
+                            &nbsp;{value.extra}
+                        </span>
+                        : null}
                 </span>;
             }
         }

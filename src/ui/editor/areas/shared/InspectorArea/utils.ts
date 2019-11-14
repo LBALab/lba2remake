@@ -124,14 +124,10 @@ const pureFunctionsByType = [
     }
 ];
 
-interface MaybePureObject {
-    __pure_function?: boolean;
-}
-
-export function isPureFunc(obj: MaybePureObject, key, parent) {
+export function isPureFunc(obj, key, parent) {
     if (isFunction(obj)) {
         // eslint-disable-next-line no-underscore-dangle
-        if (obj.__pure_function === true) {
+        if ((obj as any).__pure_function === true) {
             return true;
         }
         for (let i = 0; i < pureFunctionsByType.length; i += 1) {
@@ -227,7 +223,7 @@ function safeCall(fct, parent, pValues = null) {
     }
 }
 
-export function applyFunction(fct, parent, path, bindings, defaultValue = noop) {
+export function applyFunction(fct, parent, path, bindings, defaultValue: any | Error = noop) {
     const params = getParamNames(fct);
     if (params.length === 0) {
         return safeCall(fct, parent);

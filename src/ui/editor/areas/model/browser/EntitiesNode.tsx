@@ -4,7 +4,7 @@ import DebugData, { saveMetaData } from '../../../DebugData';
 import { createRenderer } from '../../../../../renderer';
 
 const indexStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     right: 0,
     color: 'white',
@@ -80,7 +80,7 @@ const EntityNode = {
     onDoubleClick: (data, component) => {
         saveIcon(data, component);
     },
-    selected: (data, component) => {
+    selected: (data, ignored, component) => {
         if (!component.props.rootState)
             return false;
         const { entity } = component.props.rootState;
@@ -98,8 +98,8 @@ const EntityNode = {
 
 const icons = {};
 const iconsCanvas = document.createElement('canvas');
-iconsCanvas.width = '50px';
-iconsCanvas.heigth = '50px';
+iconsCanvas.width = 50;
+iconsCanvas.height = 50;
 let iconRenderer = null;
 
 function saveIcon(data, component) {

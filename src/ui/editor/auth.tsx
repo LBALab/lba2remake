@@ -1,5 +1,6 @@
 import React from 'react';
 import Popup from '../Popup';
+import { string } from 'prop-types';
 
 const popup_style = {
     background: 'rgb(45, 45, 48)',
@@ -72,7 +73,22 @@ function stopPropagation(e) {
     e.stopPropagation();
 }
 
-class AuthPopup extends React.Component {
+interface Props {
+    close: Function;
+    onValidate: Function;
+}
+
+interface State {
+    authData: {
+        id?: number;
+        name: string;
+        email: string;
+        nocredit: boolean;
+    };
+    clickedSend: boolean;
+}
+
+class AuthPopup extends React.Component<Props, State> {
     constructor(props) {
         super(props);
         this.cancel = this.cancel.bind(this);

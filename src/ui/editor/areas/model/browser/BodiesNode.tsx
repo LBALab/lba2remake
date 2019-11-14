@@ -8,7 +8,7 @@ import { findRefsInScenes } from './findRefsInScenes';
 
 const idxStyle = {
     fontSize: 13,
-    position: 'absolute',
+    position: 'absolute' as const,
     right: 0,
     bottom: 0,
     padding: 2,
@@ -77,7 +77,7 @@ const BodyNode = {
             render: value => <span style={idxStyle}>{value}</span>
         }
     ],
-    selected: (data, component) => {
+    selected: (data, ignored, component) => {
         if (!component.props.rootState || !data)
             return false;
         const { body } = component.props.rootState;
@@ -105,7 +105,7 @@ const BodiesNode = {
         const {setBody} = component.props.rootStateHandler;
         const ent = getEntities()[entity];
         if (ent) {
-            const idx = findIndex(ent.bodies, b => b.index === body);
+            const idx = findIndex(ent.bodies, (b: any) => b.index === body);
             if (idx !== -1) {
                 const newIndex = Math.max(idx - 1, 0);
                 setBody(ent.bodies[newIndex].index);
@@ -118,7 +118,7 @@ const BodiesNode = {
         const {setBody} = component.props.rootStateHandler;
         const ent = getEntities()[entity];
         if (ent) {
-            const idx = findIndex(ent.bodies, b => b.index === body);
+            const idx = findIndex(ent.bodies, (b: any) => b.index === body);
             if (idx !== -1) {
                 const newIndex = Math.min(idx + 1, ent.bodies.length - 1);
                 setBody(ent.bodies[newIndex].index);

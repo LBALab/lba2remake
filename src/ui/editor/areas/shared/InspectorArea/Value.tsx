@@ -5,6 +5,8 @@ import THREE from 'three';
 import DebugData, {getObjectName} from '../../../DebugData';
 
 export class CustomValue {
+    renderElem: React.ReactElement;
+
     constructor(renderElem) {
         this.renderElem = renderElem;
     }
@@ -15,8 +17,8 @@ export class CustomValue {
 }
 
 const selectStyle = {
-    userSelect: 'text',
-    cursor: 'text'
+    userSelect: 'text' as const,
+    cursor: 'text' as const
 };
 
 export function Value({value}) {
@@ -38,7 +40,9 @@ export function Value({value}) {
         </span>;
     }
     if (typeof (value) === 'boolean') {
-        return <span style={{color: value ? 'lime' : 'red', fontStyle: 'italic'}}>{value ? 'true' : 'false'}</span>;
+        return <span style={{color: value ? 'lime' : 'red', fontStyle: 'italic'}}>
+            {value ? 'true' : 'false'}
+        </span>;
     }
     if (typeof (value) === 'number') {
         const num = Number.isInteger(value) ? value : value.toFixed(3);
@@ -52,15 +56,20 @@ export function Value({value}) {
             || value instanceof THREE.Vector3
             || value instanceof THREE.Vector4) {
             return <Vector vec={value}/>;
-        } else if (value instanceof THREE.Quaternion) {
+        }
+        if (value instanceof THREE.Quaternion) {
             return <Quat quat={value}/>;
-        } else if (value instanceof THREE.Euler) {
+        }
+        if (value instanceof THREE.Euler) {
             return <Euler euler={value}/>;
-        } else if (value instanceof THREE.Matrix3) {
+        }
+        if (value instanceof THREE.Matrix3) {
             return <Matrix mat={value} n={3}/>;
-        } else if (value instanceof THREE.Matrix4) {
+        }
+        if (value instanceof THREE.Matrix4) {
             return <Matrix mat={value} n={4}/>;
-        } else if (value.type) {
+        }
+        if (value.type) {
             let name = null;
             if (DebugData.scope.scene && (value.type === 'actor' || value.type === 'zone')) {
                 const mName = getObjectName(value.type, DebugData.scope.scene.index, value.index);
@@ -74,7 +83,9 @@ export function Value({value}) {
                     :<span style={{color: 'orange'}}>&apos;{value.name}&apos;</span>
                 </React.Fragment>;
             }
-            return <span style={{color: '#b238ff'}}>{value.type}{name}<span style={{color: 'white'}}>{'{}'}</span></span>;
+            return <span style={{color: '#b238ff'}}>
+                {value.type}{name}<span style={{color: 'white'}}>{'{}'}</span>
+            </span>;
         }
         if (isEmpty(value)) {
             return <span style={{color: 'grey'}}>{'{}'}</span>;
@@ -91,10 +102,10 @@ function intersperse(arr, inter) {
 const ARRAY_COLOR = ['#ff9089', '#8bff8f', '#92e0ff', '#fbffb2'];
 
 const wrapStyleVec = {
-    display: 'inline-block',
+    display: 'inline-block' as const,
     fontSize: 13,
-    fontWeight: 'bold',
-    verticalAlign: 'middle',
+    fontWeight: 'bold' as const,
+    verticalAlign: 'middle' as const,
     padding: '0 4px',
     marginLeft: 6,
     borderLeft: '2px solid white',
@@ -134,10 +145,10 @@ function Euler({euler}) {
 }
 
 const wrapStyleMat = {
-    display: 'inline-block',
+    display: 'inline-block' as const,
     fontSize: 11,
-    fontWeight: 'bold',
-    verticalAlign: 'top',
+    fontWeight: 'bold' as const,
+    verticalAlign: 'top' as const,
     padding: 0,
     marginLeft: 6,
     borderLeft: '2px solid white',

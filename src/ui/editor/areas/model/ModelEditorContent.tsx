@@ -15,8 +15,48 @@ import { loadAnim } from '../../../../model/anim';
 import DebugData from '../../DebugData';
 import fmod from './utils/fmod';
 import {get3DOrbitCamera} from './utils/orbitCamera';
+import { TickerProps } from '../../../utils/Ticker';
+import NodeProps from '../utils/outliner/NodeProps';
 
-export default class Model extends FrameListener {
+interface Props extends TickerProps {
+    mainData: any;
+    saveMainData: Function;
+    params: any;
+    sharedState: {
+        entity: number;
+        body: number;
+        anim: number;
+        rotateView: boolean;
+        wireframe: boolean;
+        grid: boolean;
+    };
+    stateHandler: any;
+}
+
+interface State {
+    model?: any;
+    renderer?: any;
+    scene: any;
+    clock: THREE.Clock;
+    grid: any;
+    animState?: any;
+}
+
+export default class Model extends FrameListener<Props, State> {
+    mouseSpeed: {
+        x: number;
+        y: number;
+    };
+    zoom: number;
+    root: HTMLElement;
+    canvas: HTMLCanvasElement;
+    entity: number;
+    body: number;
+    wireframe: boolean;
+    moving: boolean;
+    moved: boolean;
+    anim: number;
+
     constructor(props) {
         super(props);
 
@@ -49,8 +89,8 @@ export default class Model extends FrameListener {
                     const tile = new THREE.GridHelper(0.96, 2);
                     tile.position.x = x * 0.96;
                     tile.position.z = z * 0.96;
-                    tile.material.transparent = true;
-                    tile.material.opacity = 1;
+                    (tile.material as THREE.LineBasicMaterial).transparent = true;
+                    (tile.material as THREE.LineBasicMaterial).opacity = 1;
                     grid.add(tile);
                 }
             }
@@ -83,7 +123,12 @@ export default class Model extends FrameListener {
             } else {
                 this.canvas = document.createElement('canvas');
                 this.canvas.tabIndex = 0;
-                const renderer = createRenderer(this.props.params, this.canvas, {}, 'models_editor');
+                const renderer = createRenderer(
+                    this.props.params,
+                    this.canvas,
+                    {},
+                    'models_editor'
+                );
                 renderer.threeRenderer.setAnimationLoop(() => {
                     this.props.ticker.frame();
                 });
@@ -167,7 +212,7 @@ export default class Model extends FrameListener {
         if (this.wireframe !== wireframe && model) {
             model.mesh.traverse((obj) => {
                 if (obj instanceof THREE.Mesh) {
-                    obj.material.wireframe = wireframe;
+                    (obj.material as THREE.RawShaderMaterial).wireframe = wireframe;
                 }
             });
             this.wireframe = wireframe;

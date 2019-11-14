@@ -1,5 +1,6 @@
 import React from 'react';
 import {extend, isObject, map} from 'lodash';
+import Ticker from '../../../../utils/Ticker';
 
 const propStyle = {
     paddingLeft: 8,
@@ -7,7 +8,18 @@ const propStyle = {
     display: 'inline-block'
 };
 
-export default class NodeProps extends React.Component {
+interface Props {
+    dynamic: boolean;
+    nodeProps: Function;
+    ticker: Ticker;
+
+}
+
+interface State {
+    nodeProps: any[];
+}
+
+export default class NodeProps extends React.Component<Props, State> {
     constructor(props) {
         super(props);
         this.state = {

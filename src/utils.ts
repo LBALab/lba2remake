@@ -13,7 +13,7 @@ interface MetaFunction extends Function {
     __location?: string;
 }
 
-export function getParamNames(func: MetaFunction) {
+export function getParamNames(func: MetaFunction) : string[] {
     if (func.__param_names) {
         return func.__param_names;
     }

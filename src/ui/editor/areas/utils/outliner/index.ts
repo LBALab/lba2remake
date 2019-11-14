@@ -1,7 +1,17 @@
 import {extend} from 'lodash';
 import {makeContentComponent} from './OutlinerAreaContent';
+import { CSSProperties } from 'react';
 
-export function makeOutlinerArea(id, name, content, extensions = {}) {
+interface Extensions {
+    icon?: string;
+    frame?: Function;
+    style?: CSSProperties;
+    separator?: string;
+    hideRoot?: boolean;
+    stateHandler?: any;
+}
+
+export function makeOutlinerArea(id, name, content, extensions: Extensions = {}) {
     return {
         id,
         name,

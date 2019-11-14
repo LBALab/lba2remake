@@ -40,7 +40,7 @@ const InspectorArea = {
         },
         removeWatch(id) {
             const watches = this.state.watches || [];
-            const idx = findIndex(watches, w => w.id === id);
+            const idx = findIndex(watches, (w: any) => w.id === id);
             if (idx !== -1) {
                 watches.splice(idx, 1);
             }

@@ -4,6 +4,7 @@ import OutlinerNode from './OutlinerNode';
 import {fullscreen} from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';
 import {WithShortcuts} from '../../../Area';
+import { TickerProps } from '../../../../utils/Ticker';
 
 const style = extend({
     overflowY: 'auto',
@@ -21,8 +22,29 @@ const Separator = {
     dot: '.'
 };
 
+const hrStyle = {
+    border: 'none',
+    borderBottom: '1px dashed rgba(200, 200, 200, 0.5)'
+};
+
+interface Props extends TickerProps {
+    sharedState: any;
+    split: boolean;
+    userData: any;
+    rootStateHandler: any;
+    rootState: any;
+    editor: any;
+    stateHandler: any;
+}
+
+interface State {
+    root: any;
+}
+
 export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hideRoot = false) {
-    return class OutlinerAreaContent extends FrameListener {
+    return class OutlinerAreaContent extends FrameListener<Props, State> {
+        extraFrameHandler: Function;
+
         constructor(props) {
             super(props);
             this.state = {
@@ -65,7 +87,6 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
                 return <WithShortcuts>
                     {shortcuts => <OutlinerNode
                         hidden={hideRoot}
-                        parentHidden={false}
                         key={path.join('/')}
                         node={root.node}
                         data={root.data}
@@ -88,14 +109,19 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
                     />}
                 </WithShortcuts>;
             }
-            return <span>Node is not available. {sep === 'dot' && <button onClick={() => this.setRoot([])}>Reset</button>}</span>;
+            return <span>
+                Node is not available.
+                {sep === 'dot' && <button onClick={() => this.setRoot([], [])}>Reset</button>}
+            </span>;
         }
 
         renderPath() {
             const path = this.props.sharedState.path;
             const prettyPath = this.props.sharedState.prettyPath || path;
             const renderElement =
-                (subpath, prettySubpath, elem) => <span style={{cursor: 'pointer'}} onClick={this.setRoot.bind(this, subpath, prettySubpath)}>
+                (subpath, prettySubpath, elem) =>
+                    <span style={{cursor: 'pointer'}}
+                            onClick={this.setRoot.bind(this, subpath, prettySubpath)}>
                     {elem}
                 </span>;
             if (path.length > 0) {
@@ -111,7 +137,7 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
                             </span>;
                         })}
                     </div>
-                    <hr style={{border: 'none', borderBottom: '1px dashed rgba(200, 200, 200, 0.5)'}}/>
+                    <hr style={hrStyle}/>
                 </div>;
             }
             return null;

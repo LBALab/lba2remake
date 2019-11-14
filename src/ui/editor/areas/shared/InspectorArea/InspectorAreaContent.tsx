@@ -16,22 +16,23 @@ import {
 import {CustomValue} from './Value';
 import {version} from '../../../../../../package.json';
 import {getParamNames} from '../../../../../utils';
+import { TickerProps } from '../../../../utils/Ticker';
 
 const headerStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     height: 20,
     top: 0,
     left: 0,
     right: 0,
     padding: 4,
-    textAlign: 'left',
+    textAlign: 'left' as const,
     background: '#333333',
     borderBottom: '1px solid gray',
-    userSelect: 'none'
+    userSelect: 'none' as const
 };
 
 const mainStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     bottom: 0,
     top: headerStyle.height + (headerStyle.padding * 2) + 1,
     left: 0,
@@ -40,7 +41,7 @@ const mainStyle = {
 };
 
 const watchStyle = {
-    position: 'relative',
+    position: 'relative' as const,
     background: editor.base.background,
     margin: '16px 12px',
     border: '1px solid grey',
@@ -48,10 +49,10 @@ const watchStyle = {
 };
 
 const trashIconStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     right: -11,
     top: -11,
-    cursor: 'pointer',
+    cursor: 'pointer' as const,
     background: 'rgba(0, 0, 0, 0.5)',
     border: '1px solid rgba(255, 255, 255, 0.5)',
     borderRadius: 4,
@@ -61,25 +62,25 @@ const trashIconStyle = {
 
 const funcEditorStyle = extend({}, mainStyle, {
     padding: 16,
-    overflowY: 'auto'
+    overflowY: 'auto' as const
 });
 
 const contentStyle = {
-    position: 'relative'
+    position: 'relative' as const
 };
 
 const watchButtonStyle = extend({}, editor.button, {
     fontSize: 14,
     padding: '2px 12px',
     color: 'white',
-    fontWeight: 'bold',
+    fontWeight: 'bold' as const,
     border: '1px inset #5cffa9',
     borderRadius: 4,
     background: 'rgba(0, 0, 0, 0.5)',
 });
 
 const itemStyle = {
-    position: 'relative',
+    position: 'relative' as const,
     marginTop: 14,
     padding: 8,
     border: '1px solid rgba(255, 255, 255, 0.5)',
@@ -89,17 +90,42 @@ const itemStyle = {
 
 const prefixStyle = {
     paddingLeft: 4,
-    verticalAlign: 'middle'
+    verticalAlign: 'middle' as const
 };
 
-export class InspectorAreaContent extends React.Component {
+interface Props extends TickerProps {
+    stateHandler: any;
+    sharedState: any;
+}
+
+interface State {
+    bindings: any;
+    result?: {
+        value: any;
+    };
+}
+
+export class InspectorAreaContent extends React.Component<Props, State> {
+    content: any;
+    browseContent: any;
+
     constructor(props) {
         super(props);
         const addWatch = props.stateHandler.addWatch;
         this.editBindings = this.editBindings.bind(this);
         this.renderValueBrowser = this.renderValueBrowser.bind(this);
-        this.content = makeContentComponent(InspectorNode(RootSym, addWatch, this.editBindings), null, null, 'dot');
-        this.browseContent = makeContentComponent(InspectorNode(RootSym, null, this.editBindings), null, contentStyle, 'dot');
+        this.content = makeContentComponent(
+            InspectorNode(RootSym, addWatch, this.editBindings),
+            null,
+            null,
+            'dot'
+        );
+        this.browseContent = makeContentComponent(
+            InspectorNode(RootSym, null, this.editBindings),
+            null,
+            contentStyle,
+            'dot'
+        );
         this.state = {
             bindings: null
         };
@@ -112,7 +138,10 @@ export class InspectorAreaContent extends React.Component {
                 path,
                 parent,
                 params: (userData && userData.bindings && userData.bindings[path.join('.')]) || [],
-                root: root || ((userData && userData.rootName === 'utils') ? (() => UtilFunctions) : undefined)
+                root: root ||
+                    ((userData && userData.rootName === 'utils')
+                        ? (() => UtilFunctions)
+                        : undefined)
             }
         });
         this.props.stateHandler.setTab('bindings');
@@ -135,11 +164,14 @@ export class InspectorAreaContent extends React.Component {
         const tab = this.props.sharedState.tab || 'explore';
         if (tab === 'explore') {
             return this.renderExplorer();
-        } else if (tab === 'watch') {
+        }
+        if (tab === 'watch') {
             return this.renderWatches();
-        } else if (tab === 'utils') {
+        }
+        if (tab === 'utils') {
             return this.renderUtils();
-        } else if (tab === 'bindings') {
+        }
+        if (tab === 'bindings') {
             return this.renderBindings();
         }
         return null;
@@ -214,12 +246,20 @@ export class InspectorAreaContent extends React.Component {
         const watches = this.props.sharedState.watches;
         const tab = this.props.sharedState.tab || 'explore';
         return <div style={headerStyle}>
-            <span style={tabStyle(tab === 'explore')} onClick={() => onClick('explore')}>Explore</span>
-            <span style={tabStyle(tab === 'utils')} onClick={() => onClick('utils')}>Utils</span>
+            <span style={tabStyle(tab === 'explore')} onClick={() => onClick('explore')}>
+                Explore
+            </span>
+            <span style={tabStyle(tab === 'utils')} onClick={() => onClick('utils')}>
+                Utils
+            </span>
             {watches.length > 0 &&
-                <span style={tabStyle(tab === 'watch')} onClick={() => onClick('watch')}>Watch<b>[{watches.length}]</b></span>}
+                <span style={tabStyle(tab === 'watch')} onClick={() => onClick('watch')}>
+                    Watch<b>[{watches.length}]</b>
+                </span>}
             {this.state.bindings &&
-                <span style={tabStyle(tab === 'bindings')} onClick={() => onClick('bindings')}>Bindings</span>}
+                <span style={tabStyle(tab === 'bindings')} onClick={() => onClick('bindings')}>
+                    Bindings
+                </span>}
         </div>;
     }
 
@@ -241,7 +281,7 @@ export class InspectorAreaContent extends React.Component {
         const titleStyle = {
             color: '#5cffa9',
             fontSize: 16,
-            textAlign: 'center',
+            textAlign: 'center' as const,
         };
 
         const addWatch = () => {
@@ -260,15 +300,21 @@ export class InspectorAreaContent extends React.Component {
             } else {
                 this.setState({
                     result: {
-                        value: applyFunction(fct, parent, jPath, {[jPath]: params}, new Error('Invalid call'))
+                        value: applyFunction(
+                            fct,
+                            parent,
+                            jPath,
+                            {[jPath]: params},
+                            new Error('Invalid call')
+                        )
                     }
                 });
             }
         };
 
         const refreshIconStyle = {
-            cursor: 'pointer',
-            position: 'absolute',
+            cursor: 'pointer' as const,
+            position: 'absolute' as const,
             top: 4,
             right: 4,
             width: 16,
@@ -285,7 +331,13 @@ export class InspectorAreaContent extends React.Component {
             </span>
         );
         if (isPure) {
-            result = applyFunction(fct, parent, jPath, {[jPath]: params}, new Error('Invalid call'));
+            result = applyFunction(
+                fct,
+                parent,
+                jPath,
+                {[jPath]: params},
+                new Error('Invalid call')
+            );
         } else if (this.state.result) {
             result = this.state.result.value;
         }
@@ -310,7 +362,10 @@ export class InspectorAreaContent extends React.Component {
             {map(paramNames, (p, idx) => this.renderBindingParam(p, idx, browse))}
             <div style={itemStyle}>
                 {this.renderValueBrowser('result', result)}
-                {isPure && <img style={refreshIconStyle} src="editor/icons/reset.svg" onClick={onClickRefresh}/>}
+                {isPure &&
+                    <img style={refreshIconStyle}
+                            src="editor/icons/reset.svg"
+                            onClick={onClickRefresh}/>}
             </div>
             <div style={{paddingTop: 16, textAlign: 'right'}}>
                 <button style={watchButtonStyle} onClick={action}>
@@ -322,9 +377,9 @@ export class InspectorAreaContent extends React.Component {
 
     renderDocumentation(fct) {
         const linkStyle = {
-            textAlign: 'center',
+            textAlign: 'center' as const,
             color: 'grey',
-            textDecoration: 'none',
+            textDecoration: 'none' as const,
             padding: '2px 8px'
         };
         if (fct && fct.__location) {
@@ -372,7 +427,8 @@ export class InspectorAreaContent extends React.Component {
 
         let validParam = true;
         if (selectedKind === 'g') {
-            validParam = pValue && getValue(pValue.split('.'), DebugData.scope, params) !== undefined;
+            validParam = pValue &&
+                getValue(pValue.split('.'), DebugData.scope, params) !== undefined;
         }
 
         const inputStyle = {
@@ -410,7 +466,10 @@ export class InspectorAreaContent extends React.Component {
                         const bindings = this.state.bindings;
                         if (newPath.length > 0) {
                             if (!bindings.params[idx]) {
-                                bindings.params[idx] = {value: newPath.join('.'), kind: selectedKind};
+                                bindings.params[idx] = {
+                                    value: newPath.join('.'),
+                                    kind: selectedKind
+                                };
                             } else {
                                 bindings.params[idx].value = newPath.join('.');
                             }
@@ -441,8 +500,13 @@ export class InspectorAreaContent extends React.Component {
             };
             content = <div style={{paddingTop: 8, lineHeight: '20px', verticalAlign: 'middle'}}>
                 {prefixByKind[selectedKind]()}
-                <input ref={onRef} type="text" onChange={onChange} style={inputStyle} onKeyDown={onKeyDown}/>
-                {selectedKind !== 'e' && <img style={iconStyle} src="editor/icons/magnifier.svg" onClick={onClick}/>}
+                <input ref={onRef}
+                        type="text"
+                        onChange={onChange}
+                        style={inputStyle}
+                        onKeyDown={onKeyDown}/>
+                {selectedKind !== 'e' &&
+                    <img style={iconStyle} src="editor/icons/magnifier.svg" onClick={onClick}/>}
             </div>;
         }
 
@@ -464,7 +528,9 @@ export class InspectorAreaContent extends React.Component {
         };
 
         const kindSelection = allowedKinds.length > 1 ?
-            <select onChange={onSelectKind} value={selectedKind} style={extend({float: 'right'}, editor.select)}>
+            <select onChange={onSelectKind}
+                    value={selectedKind}
+                    style={extend({float: 'right'}, editor.select)}>
                 {map(allowedKinds, kind =>
                     <option key={kind} value={kind}>{prettyKind[kind]}</option>)}
             </select>
