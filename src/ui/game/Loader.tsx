@@ -8,17 +8,21 @@ const overlay = extend({background: 'black'}, fullscreen);
 
 const loadingComponents = {};
 
-document.addEventListener('loaderprogress', ({detail}) => {
+document.addEventListener('loaderprogress', ({detail}: CustomEvent) => {
     loadingComponents[detail.name] = detail.progress;
 });
 
-document.addEventListener('loaderend', ({detail}) => {
+document.addEventListener('loaderend', ({detail}: CustomEvent) => {
     delete loadingComponents[detail.name];
 });
 
-export default class Loader extends React.Component {
-    constructor() {
-        super();
+interface State {
+    components: any;
+}
+
+export default class Loader extends React.Component<{}, State> {
+    constructor(props) {
+        super(props);
         this.onLoadEvent = this.onLoadEvent.bind(this);
         this.renderComponent = this.renderComponent.bind(this);
         this.state = {components: loadingComponents};
@@ -49,7 +53,10 @@ export default class Loader extends React.Component {
         };
         const content = !isEmpty(this.state.components)
             && <span className="lds-subtext" style={compStyle}><br/>
-                {map(sortBy(entries(this.state.components), e => 1 - e[1]), this.renderComponent)}
+                {map(
+                    sortBy(entries(this.state.components), (e: number[]) => 1 - e[1]),
+                    this.renderComponent
+                )}
             </span>;
         return <div style={overlay}>
             <div className="loader">
@@ -78,24 +85,24 @@ export default class Loader extends React.Component {
 
     renderComponent([name, progress]) {
         const style = {
-            position: 'relative',
+            position: 'relative' as const,
             fontSize: '12px',
             height: 13,
             lineHeight: '13px',
             width: 128,
             borderBottom: '1px solid rgba(49, 89, 255, 0.2)',
-            textAlign: 'center'
+            textAlign: 'center' as const
         };
         const nameStyle = {
-            position: 'absolute',
+            position: 'absolute' as const,
             left: 0,
             top: 0,
             right: 0,
-            fontStyle: 'normal',
+            fontStyle: 'normal' as const,
             lineHeight: '13px',
         };
         const progStyle = {
-            position: 'absolute',
+            position: 'absolute' as const,
             left: 0,
             top: 0,
             bottom: 0,

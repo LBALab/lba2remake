@@ -145,7 +145,9 @@ class AuthPopup extends React.Component {
                 />
             </div>
             <div style={form_line}>
-                <input type="checkbox" onChange={this.onChange.bind(this, 'nocredit')} checked={auth.nocredit}/>
+                <input type="checkbox"
+                        onChange={this.onChange.bind(this, 'nocredit')}
+                        checked={auth.nocredit}/>
                 <label style={{paddingLeft: 10}}>
                     I DO NOT want to be credited for my contributions<br/>
                     (only check this if you don&apos;t want your name
@@ -168,7 +170,8 @@ class AuthPopup extends React.Component {
                 return <p style={{color: 'red'}}>
                     You should either choose not to be credited or fill in your name.
                 </p>;
-            } else if (!validateEmail(auth.email)) {
+            }
+            if (!validateEmail(auth.email)) {
                 return <p style={{color: 'orange'}}>
                     Invalid email address.
                 </p>;
@@ -179,6 +182,7 @@ class AuthPopup extends React.Component {
 }
 
 function validateEmail(email) {
+    // tslint:disable-next-line:max-line-length
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return !email || re.test(email.toLowerCase());
 }

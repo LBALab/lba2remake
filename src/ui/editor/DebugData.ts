@@ -15,8 +15,8 @@ const DebugData = {
         move: {}
     },
     metadata: {
-        game: {},
-        scenes: {},
+        game: <any> {},
+        scenes: <any> {},
         entities: [],
         bodies: [],
         anims: [],
@@ -24,7 +24,13 @@ const DebugData = {
     },
     step: false,
     firstFrame: false,
-    sceneManager: null
+    sceneManager: null,
+    scriptDebugLabels: {
+        actor: <any> null,
+        actors: [],
+        zones: [],
+        points: []
+    }
 };
 
 export default DebugData;
@@ -140,7 +146,8 @@ export function getObjectName(type, sceneIndex, objIndex) {
     if (type === 'actor') {
         if (objIndex === 0) {
             return 'Twinsen';
-        } else if (objIndex === 1) {
+        }
+        if (objIndex === 1) {
             return 'MecaPinguin';
         }
     }

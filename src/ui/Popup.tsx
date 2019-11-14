@@ -16,7 +16,11 @@ const style = {
     transform: 'translate(-50%, -50%)'
 };
 
-export default class Popup extends React.Component {
+interface PopupState {
+    content: React.ElementType;
+}
+
+export default class Popup extends React.Component<{}, PopupState> {
     static instance = null;
 
     static display(component) {

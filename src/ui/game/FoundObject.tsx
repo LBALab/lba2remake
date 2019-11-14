@@ -1,7 +1,7 @@
 import React from 'react';
 
 const baseStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 30,
     left: 30,
     width: 100,

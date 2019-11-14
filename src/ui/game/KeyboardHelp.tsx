@@ -3,24 +3,24 @@ import {each} from 'lodash';
 import {tr} from '../../lang';
 
 const overlay = {
-    position: 'absolute',
+    position: 'absolute' as const,
     left: 5,
     top: 5,
-    textAlign: 'right',
+    textAlign: 'right' as const,
     fontFamily: 'LBA',
 };
 
 const frame = {
     color: '#ffffff',
-    display: 'inline-block',
-    userSelect: 'none',
-    cursor: 'pointer',
+    display: 'inline-block' as const,
+    userSelect: 'none' as const,
+    cursor: 'pointer' as const,
     fontSize: 14,
     background: 'rgba(0, 0, 0, 0.5)',
     border: '2px outset #ffffff',
     borderRadius: 5,
     padding: 5,
-    textAlign: 'center'
+    textAlign: 'center' as const
 };
 
 export function KeyHelpIcon(props) {
@@ -34,7 +34,7 @@ export function KeyHelpIcon(props) {
 }
 
 const bg_style = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     bottom: 0,
     left: 0,
@@ -43,7 +43,7 @@ const bg_style = {
 };
 
 const wrapper_style = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     bottom: 0,
     left: 0,
@@ -53,11 +53,11 @@ const wrapper_style = {
     color: 'white',
     border: '2px outset #61cece',
     borderRadius: 12,
-    overflow: 'hidden'
+    overflow: 'hidden' as const
 };
 
 const canvas_wrapper = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 28,
     left: 5,
     right: 5
@@ -68,12 +68,12 @@ const canvas_style = {
 };
 
 const closeStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 2,
     right: 8,
     width: 24,
     height: 24,
-    cursor: 'pointer'
+    cursor: 'pointer' as const
 };
 
 const onKeyDown = (close, e) => {
@@ -199,7 +199,7 @@ const onCanvas = (canvas) => {
                 ctx.textAlign = label.textAlign;
                 ctx.font = `${label.fontSize}px LBA`;
                 const lines = label.text.split('\n');
-                each(lines, (line, idx) => {
+                each(lines, (line, idx: number) => {
                     ctx.fillText(line, label.x, label.y + (idx * label.fontSize));
                 });
             });
@@ -231,4 +231,3 @@ export function KeyHelpScreen(props) {
         </div>
     </div>;
 }
-

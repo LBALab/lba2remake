@@ -34,7 +34,7 @@ interface LayoutNode extends BaseNode {
 }
 
 interface AreaNode extends BaseNode {
-    content: any;
+    content: React.ElementType;
 }
 
 type Node = LayoutNode | AreaNode;
