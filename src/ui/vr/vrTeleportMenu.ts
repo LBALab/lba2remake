@@ -324,7 +324,14 @@ function createIslandItem({x, y, text, idx, callback}) {
     return {mesh, draw};
 }
 
-function createButton({x, y, text, callback}) {
+interface ButtonOptions {
+    x?: number;
+    y?: number;
+    text: string;
+    callback?: Function;
+}
+
+function createButton({x, y, text, callback}: ButtonOptions) {
     const width = 500;
     const height = 75;
     const {ctx, mesh} = createScreen({

@@ -124,7 +124,11 @@ const pureFunctionsByType = [
     }
 ];
 
-export function isPureFunc(obj, key, parent) {
+interface MaybePureObject {
+    __pure_function?: boolean;
+}
+
+export function isPureFunc(obj: MaybePureObject, key, parent) {
     if (isFunction(obj)) {
         // eslint-disable-next-line no-underscore-dangle
         if (obj.__pure_function === true) {

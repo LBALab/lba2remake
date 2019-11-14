@@ -119,7 +119,14 @@ export function updateMenu(game, sceneManager) {
     }
 }
 
-function createMenuItem({x, y, text, callback}) {
+interface MenuItemOptions {
+    x?: number;
+    y?: number;
+    text: string;
+    callback?: Function;
+}
+
+function createMenuItem({x, y, text, callback}: MenuItemOptions) {
     const width = 800;
     const height = 100;
     const {ctx, mesh} = createScreen({
