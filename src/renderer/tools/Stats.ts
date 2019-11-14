@@ -1,25 +1,93 @@
 import {each} from 'lodash';
 
+const containerStyle = `
+width:80px;
+opacity:0.9;
+cursor:pointer;
+position:absolute;
+left:50%;
+top:5px;
+margin-left:-40px;
+`;
+
+const fpsDivStyle = `
+padding:0 0 3px 3px;
+text-align:left;
+background-color:#002;
+`;
+
+const fpsTextStyle = `
+color:#0ff;
+font-family:Helvetica,Arial,sans-serif;
+font-size:9px;
+font-weight:bold;
+line-height:15px;
+`;
+
+const fpsGraphStyle = `
+position:relative;
+width:74px;
+height:30px;
+background-color:#0ff;
+`;
+
+const msDivStyle = `
+padding:0 0 3px 3px;
+text-align:left;
+background-color:#020;
+display:block;
+`;
+
+const msTextStyle = `
+color:#0f0;
+font-family:Helvetica,Arial,sans-serif;
+font-size:9px;
+font-weight:bold;
+line-height:15px;
+`;
+
+const msGraphStyle = `
+position:relative;
+width:74px;
+height:30px;
+background-color:#0f0;
+`;
+
+const barStyle = `
+width:1px;
+height:30px;
+float:left;
+background-color:#131
+`;
+
 class StatsWidget {
+    domElement: HTMLDivElement;
+    fpsDiv: HTMLDivElement;
+    fpsText: HTMLDivElement;
+    fpsGraph: HTMLDivElement;
+    msDiv: HTMLDivElement;
+    msGraph: HTMLDivElement;
+    msText: HTMLDivElement;
+
     constructor() {
         const container = document.createElement('div');
         container.id = 'stats';
-        container.style.cssText = 'width:80px;opacity:0.9;cursor:pointer;position:absolute;left:50%;top:5px;margin-left:-40px;';
+        container.style.cssText = containerStyle;
 
         this.fpsDiv = document.createElement('div');
         this.fpsDiv.id = 'fps';
-        this.fpsDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#002';
+        this.fpsDiv.style.cssText = fpsDivStyle;
         container.appendChild(this.fpsDiv);
 
         this.fpsText = document.createElement('div');
         this.fpsText.id = 'fpsText';
-        this.fpsText.style.cssText = 'color:#0ff;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px';
+        this.fpsText.style.cssText = fpsTextStyle;
         this.fpsText.innerHTML = 'FPS';
         this.fpsDiv.appendChild(this.fpsText);
 
         this.fpsGraph = document.createElement('div');
         this.fpsGraph.id = 'fpsGraph';
-        this.fpsGraph.style.cssText = 'position:relative;width:74px;height:30px;background-color:#0ff';
+        this.fpsGraph.style.cssText = fpsGraphStyle;
         this.fpsDiv.appendChild(this.fpsGraph);
 
         while (this.fpsGraph.children.length < 74) {
@@ -30,23 +98,23 @@ class StatsWidget {
 
         this.msDiv = document.createElement('div');
         this.msDiv.id = 'ms';
-        this.msDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#020;display:block';
+        this.msDiv.style.cssText = msDivStyle;
         container.appendChild(this.msDiv);
 
         this.msText = document.createElement('div');
         this.msText.id = 'msText';
-        this.msText.style.cssText = 'color:#0f0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px';
+        this.msText.style.cssText = msTextStyle;
         this.msText.innerHTML = 'MS';
         this.msDiv.appendChild(this.msText);
 
         this.msGraph = document.createElement('div');
         this.msGraph.id = 'msGraph';
-        this.msGraph.style.cssText = 'position:relative;width:74px;height:30px;background-color:#0f0';
+        this.msGraph.style.cssText = msGraphStyle;
         this.msDiv.appendChild(this.msGraph);
 
         while (this.msGraph.children.length < 74) {
             const bar = document.createElement('span');
-            bar.style.cssText = 'width:1px;height:30px;float:left;background-color:#131';
+            bar.style.cssText = barStyle;
             this.msGraph.appendChild(bar);
         }
 
@@ -60,6 +128,17 @@ class StatsWidget {
 }
 
 export default class Stats {
+    startTime: number;
+    prevTime: number;
+    ms: number;
+    msMin: number;
+    msMax: number;
+    fps: number;
+    fpsMin: number;
+    fpsMax: number;
+    frames: number;
+    widgets: StatsWidget[];
+
     constructor(numWidgets) {
         numWidgets = numWidgets || 1;
         this.startTime = Date.now();
@@ -73,7 +152,7 @@ export default class Stats {
         this.frames = 0;
         this.widgets = [];
         for (let i = 0; i < numWidgets; i += 1) {
-            this.widgets.push(new StatsWidget(this));
+            this.widgets.push(new StatsWidget());
         }
     }
 

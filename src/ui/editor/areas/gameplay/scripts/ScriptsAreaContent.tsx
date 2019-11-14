@@ -6,6 +6,7 @@ import FrameListener from '../../../../utils/FrameListener';
 import {getDebugListing} from './listing';
 import DebugData from '../../../DebugData';
 import ScriptsAreaToolbar from './ScriptsAreaToolbar';
+import { TickerProps } from '../../../../utils/Ticker';
 
 const defaultSplitDistance = 60;
 
@@ -20,12 +21,51 @@ const scriptBaseStyle = {
     fontSize: 16
 };
 
+const condValueStyle = {
+    opacity: '0.8',
+    background: 'black',
+    padding: '0 4px',
+    border: '1px solid grey'
+};
+
 const scriptStyle = {
     life: splitAt => extend({left: 0, width: `${splitAt}%`}, scriptBaseStyle),
     move: splitAt => extend({left: `${splitAt}%`, right: 0}, scriptBaseStyle)
 };
 
-export default class ScriptEditor extends FrameListener {
+interface Props extends TickerProps {
+    sharedState: any;
+    stateHandler: any;
+    editor: boolean;
+}
+
+interface State {
+    separator?: {
+        min: number;
+        max: number;
+    };
+    actorIndex: number;
+    splitAt?: number;
+    listing?: any;
+    lifeLine?: number;
+    moveLine?: number;
+}
+
+export default class ScriptEditor extends FrameListener<Props, State> {
+    lineNumbers: {
+        life: number;
+        move: number;
+    };
+    lineCmds: {
+        life: any;
+        move: any;
+    };
+    separatorRef: HTMLElement;
+    rootRef: HTMLElement;
+    scene: any;
+    actor: any;
+    scrollElem: HTMLElement;
+
     constructor(props) {
         super(props);
 
@@ -252,10 +292,10 @@ export default class ScriptEditor extends FrameListener {
                     result.style.display = active ? 'inline-block' : 'none';
                     if (active && 'condValue' in activeCommands[i]) {
                         const condValue = activeCommands[i].condValue;
-                        const elem = <span style={{opacity: '0.8', background: 'black', padding: '0 4px', border: '1px solid grey'}}>
+                        const elem = <span style={condValueStyle}>
                             {condValue}
                         </span>;
-                        result.innerHTML = ReactDOMServer.renderToStaticMarkup(elem, result);
+                        result.innerHTML = ReactDOMServer.renderToStaticMarkup(elem);
                     } else {
                         result.innerText = '';
                     }
@@ -286,18 +326,18 @@ export default class ScriptEditor extends FrameListener {
             || defaultSplitDistance;
 
         const separator = {
-            position: 'absolute',
+            position: 'absolute' as const,
             top: 24,
             bottom: 0,
             left: `${splitAt}%`,
             width: 6,
             transform: 'translate(-3px, 0)',
             background: 'rgba(0,0,0,0)',
-            cursor: 'col-resize',
+            cursor: 'col-resize' as const,
         };
 
         const sepInnerLine = {
-            position: 'absolute',
+            position: 'absolute' as const,
             top: 0,
             bottom: 0,
             left: 2,
@@ -310,7 +350,7 @@ export default class ScriptEditor extends FrameListener {
             top: 22
         });
 
-        return <div style={{fullscreen}}>
+        return <div style={fullscreen}>
             <div style={contentStyle} ref={(ref) => { this.rootRef = ref; }}>
                 {this.renderListing('life', splitAt)}
                 {this.renderListing('move', splitAt)}
@@ -354,19 +394,19 @@ export default class ScriptEditor extends FrameListener {
             );
         }
         const lineNumberStyle = {
-            position: 'absolute',
+            position: 'absolute' as const,
             left: 0,
             width: `${nDigits}ch`,
             top: 0,
             background: 'rbg(51,51,51)',
             color: 'rbg(37,37,38)',
-            cursor: 'pointer',
-            userSelect: 'none',
+            cursor: 'pointer' as const,
+            userSelect: 'none' as const,
             fontSize: 16
         };
         const commandsStyle = {
-            position: 'absolute',
-            overflowY: 'hidden',
+            position: 'absolute' as const,
+            overflowY: 'hidden' as const,
             left: `${nDigits}ch`,
             right: 0,
             top: 0
@@ -472,7 +512,7 @@ function Command({line, command, data}) {
     }
 
     if (command.type.substring(0, 4) === 'var_') {
-        name = first(args).value;
+        name = (first(args) as any).value;
         args = tail(args);
     }
 
@@ -494,7 +534,7 @@ function Command({line, command, data}) {
     </div>;
 }
 
-const argIcon = (path, color, ext) => ({
+const argIcon = (path, color, ext = {}) => ({
     color,
     paddingLeft: '2ch',
     background: `url("${path}") no-repeat`,
@@ -573,7 +613,9 @@ function Condition({condition, data}) {
         const objCmd = name.match(/^(.*)_obj$/);
         if (objCmd) {
             name = objCmd[1];
-            prefix = <span style={{color: 'white'}}><Arg arg={condition.param} data={data}/>.</span>;
+            prefix = <span style={{color: 'white'}}>
+                <Arg arg={condition.param} data={data}/>.
+            </span>;
             param = null;
         }
 
@@ -649,7 +691,7 @@ function Args({args, data}) {
 
 function Arg({arg, data}) {
     if (!arg) {
-        return '<undefined>';
+        return <span>{'<undefined>'}</span>;
     }
     const style = argStyle[arg.type] || defaultArgStyle;
     const onDoubleClick = arg.type in argDoubleClick

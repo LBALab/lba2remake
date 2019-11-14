@@ -9,11 +9,15 @@ export function compileScripts(game, scene, actor) {
 
 function compileScript(type, game, scene, actor) {
     const script = actor.scripts[type];
-    const state = { reentryOffset: 0 };
-    if (type === 'move') {
-        state.stopped = true;
-        state.trackIndex = -1;
-    }
+    const state = type === 'life'
+        ? {
+            reentryOffset: 0
+        }
+        : {
+            reentryOffset: 0,
+            stopped: false,
+            trackIndex: -1
+        };
     script.context = {game, scene, actor, state, type};
     script.instructions = map(script.commands, (cmd, idx) =>
         compileInstruction(script, cmd, idx + 1));
@@ -28,7 +32,7 @@ function compileInstruction(script, cmd, cmdOffset) {
     }
 
     if (cmd.condition) {
-        condition = compileCondition(script, cmd);
+        condition = compileCondition(script, cmd, cmdOffset);
         args.push(condition);
     }
 
@@ -54,9 +58,9 @@ function compileInstruction(script, cmd, cmdOffset) {
     return instruction;
 }
 
-function compileCondition(script, cmd) {
+function compileCondition(script, cmd, cmdOffset) {
     return cmd.condition.op.handler.bind(script.context,
-        compileValue(script, cmd.condition.param));
+        compileValue(script, cmd.condition.param, cmdOffset));
 }
 
 function compileOperator(cmd) {
@@ -70,7 +74,7 @@ function compileValue(script, value, cmdOffset) {
     switch (value.type) {
         case 'offset':
             if (script.opMap[value.value] === undefined) {
-                // tslint:disable-next-line:no-console
+                // tslint:disable-next-line:no-console max-line-length
                 console.warn(`Failed to parse offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${value.value}`);
             }
             return script.opMap[value.value];
@@ -89,7 +93,7 @@ function postProcess(script, cmd, cmdOffset, args) {
         case 'SET_TRACK':
             opMap = script.context.actor.scripts.move.opMap;
             if (opMap[args[1]] === undefined) {
-                // tslint:disable-next-line:no-console
+                // tslint:disable-next-line:no-console max-line-length
                 console.warn(`Failed to parse SET_TRACK offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[1]}`);
             }
             args[1] = opMap[args[1]];
@@ -97,7 +101,7 @@ function postProcess(script, cmd, cmdOffset, args) {
         case 'SET_TRACK_OBJ':
             opMap = args[1].scripts.move.opMap;
             if (opMap[args[2]] === undefined) {
-                // tslint:disable-next-line:no-console
+                // tslint:disable-next-line:no-console max-line-length
                 console.warn(`Failed to parse SET_TRACK_OBJ offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[2]}`);
             }
             args[2] = opMap[args[2]];
@@ -105,7 +109,7 @@ function postProcess(script, cmd, cmdOffset, args) {
         case 'SET_COMPORTEMENT_OBJ':
             opMap = args[1].scripts.life.opMap;
             if (opMap[args[2]] === undefined) {
-                // tslint:disable-next-line:no-console
+                // tslint:disable-next-line:no-console max-line-length
                 console.warn(`Failed to parse SET_COMPORTEMENT_OBJ offset: ${script.context.scene.index}:${script.context.actor.index}:${script.context.type}:${cmdOffset} offset=${args[2]}`);
             }
             args[2] = opMap[args[2]];

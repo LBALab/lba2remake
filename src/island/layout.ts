@@ -55,11 +55,11 @@ function loadSeaSections(groundSections) {
         }
     }
     const nbs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-    each(indexedSections, (section) => {
+    each(indexedSections, (section: any) => {
         if (section.lod === 0)
             return;
-        each(nbs, (nb) => {
-            const nearSection = indexedSections[[section.x - nb[0], section.z + nb[1]]];
+        each(nbs, (nb: any) => {
+            const nearSection = indexedSections[[section.x - nb[0], section.z + nb[1]] as any];
             if (nearSection && nearSection.lod < section.lod) {
                 section.reduceEdges.push(nb.join(','));
             }

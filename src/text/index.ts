@@ -29,7 +29,7 @@ export function loadTextData(textFile, language) {
     do {
         start = data.getUint16(idx * 2, true);
         end = data.getUint16((idx * 2) + 2, true);
-        const type = data.getUint8(start, true);
+        const type = data.getUint8(start);
         const value = [];
         for (let i = start + 1; i < end - 1; i += 1) {
             value.push(String.fromCharCode(charmap ?

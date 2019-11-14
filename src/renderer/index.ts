@@ -1,4 +1,4 @@
-import THREE from 'three';
+import THREE, {WebGLRenderer} from 'three';
 import {map} from 'lodash';
 import setupStats from './stats';
 import {EngineError} from '../crash_reporting';
@@ -17,7 +17,19 @@ export const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'],
     name
 }));
 
-export function createRenderer(params, canvas, rendererOptions = {}, type = 'unknown') {
+const TGT_SIZE = new THREE.Vector2();
+
+interface RendererOptions {
+    vr?: boolean;
+    preserveDrawingBuffer?: boolean;
+}
+
+export function createRenderer(
+    params,
+    canvas,
+    rendererOptions: RendererOptions = {},
+    type = 'unknown'
+) {
     let pixelRatio = PixelRatio[2]; // SET NORMAL AS DEFAULT
     const getPixelRatio = () => pixelRatio.getValue();
     const threeRenderer = setupThreeRenderer(pixelRatio, canvas, params.webgl2, rendererOptions);
@@ -31,7 +43,7 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
     // tslint:disable-next-line:no-console
     const displayRenderMode = () => console.log(`[Starting renderer(${type})]
     pixelRatio: ${pixelRatio.getValue()}
-    webgl: ${threeRenderer.webglVersion}`);
+    webgl: ${(threeRenderer as any).webglVersion}`);
     displayRenderMode();
 
     function keyListener(event) {
@@ -68,8 +80,8 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
 
         /* @inspector(locate) */
         resize: (
-            width = threeRenderer.getSize().width,
-            height = threeRenderer.getSize().height
+            width = threeRenderer.getSize(TGT_SIZE).width,
+            height = threeRenderer.getSize(TGT_SIZE).height
         ) => {
             threeRenderer.setSize(width, height);
         },
@@ -106,13 +118,14 @@ export function createRenderer(params, canvas, rendererOptions = {}, type = 'unk
     return renderer;
 }
 
-function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions = {}) {
+function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
     try {
         const options = {
             alpha: false,
             canvas,
             preserveDrawingBuffer: rendererOptions.preserveDrawingBuffer,
-            antialias: true
+            antialias: true,
+            context: null
         };
         let webglVersion = -1;
         if (webgl2 && window.WebGL2RenderingContext) {
@@ -127,7 +140,7 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions = {}) {
         renderer.setPixelRatio(pixelRatio.getValue());
         renderer.setSize(0, 0);
         renderer.autoClear = true;
-        renderer.webglVersion = webglVersion;
+        (renderer as any).webglVersion = webglVersion;
 
         if (!(window.WebGL2RenderingContext
                 && renderer.getContext() instanceof window.WebGL2RenderingContext)) {

@@ -7,6 +7,7 @@ const samplesSourceCache = [];
 
 declare global {
     interface Window {
+        AudioContext?: any;
         webkitAudioContext?: any;
     }
 }

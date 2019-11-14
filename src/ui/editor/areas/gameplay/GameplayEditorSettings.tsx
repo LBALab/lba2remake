@@ -2,8 +2,8 @@ import React from 'react';
 import { ZONE_TYPE } from '../../../../game/zones';
 
 const inputStyle = {
-    textAlign: 'center',
-    verticalAlign: 'middle',
+    textAlign: 'center' as const,
+    verticalAlign: 'middle' as const,
     marginRight: '1ch'
 };
 
@@ -17,7 +17,7 @@ const lineStyle = {
     height: 20,
     lineHeight: '20px',
     fontSize: 14,
-    verticalAlign: 'middle'
+    verticalAlign: 'middle' as const
 };
 
 const iconStyle = {
@@ -37,14 +37,20 @@ export default function GameplayEditorSettings(props) {
         <div style={headerStyle}>Display labels:</div>
         <div style={lineStyle}>
             <label>
-                <input type="checkbox" onChange={changeLabel.bind(null, 'actor')} checked={l.actor} style={inputStyle}/>
+                <input type="checkbox"
+                        onChange={changeLabel.bind(null, 'actor')}
+                        checked={l.actor}
+                        style={inputStyle}/>
                 <img style={iconStyle} src="editor/icons/actor.svg"/>
                 Actors
             </label>
         </div>
         <div style={lineStyle}>
             <label>
-                <input type="checkbox" onChange={changeLabel.bind(null, 'zone')} checked={l.zone} style={inputStyle}/>
+                <input type="checkbox"
+                        onChange={changeLabel.bind(null, 'zone')}
+                        checked={l.zone}
+                        style={inputStyle}/>
                 <img style={iconStyle} src="editor/icons/zone.svg"/>
                 Zones
             </label>
@@ -52,7 +58,10 @@ export default function GameplayEditorSettings(props) {
         {renderZoneTypes(props)}
         <div style={lineStyle}>
             <label>
-                <input type="checkbox" onChange={changeLabel.bind(null, 'point')} checked={l.point} style={inputStyle}/>
+                <input type="checkbox"
+                        onChange={changeLabel.bind(null, 'point')}
+                        checked={l.point}
+                        style={inputStyle}/>
                 <img style={iconStyle} src="editor/icons/point.svg"/>
                 Points
             </label>
@@ -70,7 +79,10 @@ function renderZoneTypes(props) {
         const checked = selectedZoneTypes.includes(type);
         return <div key={type} style={lineStyle}>
             <label>
-                <input type="checkbox" onChange={changeZoneType.bind(null, type)} checked={checked} style={inputStyle}/>
+                <input type="checkbox"
+                        onChange={changeZoneType.bind(null, type)}
+                        checked={checked}
+                        style={inputStyle}/>
                 <img style={iconStyle} src={`editor/icons/zones/${type}.svg`}/>
                 {type}
             </label>

@@ -139,7 +139,8 @@ function mapCondition(scene, condition, state) {
 function mapOperator(scene, operator, state) {
     if (operator) {
         let text = null;
-        if (operator.operand.type === 'vargame_value' || operator.operand.type === 'varcube_value') {
+        if (operator.operand.type === 'vargame_value' ||
+                operator.operand.type === 'varcube_value') {
             return {
                 name: operator.op.command,
                 operand: {
@@ -151,7 +152,8 @@ function mapOperator(scene, operator, state) {
                     )
                 }
             };
-        } else if (operator.operand.type === 'choice_value') {
+        }
+        if (operator.operand.type === 'choice_value') {
             if (scene.data.texts[operator.operand.value]) {
                 text = scene.data.texts[operator.operand.value].value;
             }
@@ -170,7 +172,10 @@ function mapOperator(scene, operator, state) {
 }
 
 function processIndent(cmd, prevCmd, op, indent) {
-    if (prevCmd && prevCmd.name !== 'BREAK' && prevCmd.name !== 'SWITCH' && prevCmd.name !== 'OR_CASE' && (op.command === 'CASE' || op.command === 'OR_CASE' || op.command === 'DEFAULT')) {
+    if (prevCmd && prevCmd.name !== 'BREAK' &&
+            prevCmd.name !== 'SWITCH' &&
+            prevCmd.name !== 'OR_CASE' &&
+            (op.command === 'CASE' || op.command === 'OR_CASE' || op.command === 'DEFAULT')) {
         indent = Math.max(indent - 1, 0);
     }
     switch (op.indent) {
@@ -219,14 +224,17 @@ const BehaviourMap = {
 export function mapDataName(scene, data) {
     if (!data) {
         return null;
-    } else if (data.type === 'text') {
+    }
+    if (data.type === 'text') {
         const ellipsis = data.text.length > 50 ? '_[...]' : '';
         return ['`', data.text.substring(0, 50), ellipsis, '`'].join('');
-    } else if (data.type === 'actor') {
+    }
+    if (data.type === 'actor') {
         if (data.value === -1)
             return 'none';
         return getObjectName(data.type, scene.index, data.value);
-    } else if (data.type === 'zone') {
+    }
+    if (data.type === 'zone') {
         if (data.value === -1)
             return 'none';
         const foundZone = find(scene.zones, zone =>
@@ -235,31 +243,41 @@ export function mapDataName(scene, data) {
             return getObjectName('zone', scene.index, foundZone.index);
         }
         return 'none';
-    } else if (data.type === 'vargame' || data.type === 'varcube') {
+    }
+    if (data.type === 'vargame' || data.type === 'varcube') {
         return getVarName({
             type: data.type,
             idx: data.value
         });
-    } else if (data.type === 'vargame_value' || data.type === 'varcube_value') {
+    }
+    if (data.type === 'vargame_value' || data.type === 'varcube_value') {
         return formatVar({
             type: data.type.substr(0, 7),
             idx: data.idx
         }, data.value);
-    } else if (data.type === 'anim') {
+    }
+    if (data.type === 'anim') {
         return DebugData.metadata.anims[data.value] || `anim_${data.value}`;
-    } else if (data.type === 'body') {
+    }
+    if (data.type === 'body') {
         return DebugData.metadata.bodies[data.value] || `body_${data.value}`;
-    } else if (data.type === 'dirmode') {
+    }
+    if (data.type === 'dirmode') {
         return findKey(DirMode, m => m === data.value);
-    } else if (data.type === 'distance') {
+    }
+    if (data.type === 'distance') {
         return `${getDistance(data.value).toFixed(1)}m`;
-    } else if (data.type === 'behaviour') {
+    }
+    if (data.type === 'behaviour') {
         return BehaviourMap[data.value] || data.value;
-    } else if (data.type === 'angle') {
+    }
+    if (data.type === 'angle') {
         return `${Math.round(getRotation(data.value, 0, 1) - 90)}°`;
-    } else if (data.type === 'boolean') {
+    }
+    if (data.type === 'boolean') {
         return `${data.value !== 0}`;
-    } else if (data.type === 'scene') {
+    }
+    if (data.type === 'scene') {
         const node = findSceneData(data.value);
         if (node) {
             const style = {
@@ -268,7 +286,9 @@ export function mapDataName(scene, data) {
                 backgroundSize: '14px 14px',
                 backgroundPosition: '1px 1px'
             };
-            return <span style={style}>{node.name}&nbsp;<span style={{color: 'grey'}}>#{data.value}</span></span>;
+            return <span style={style}>
+                {node.name}&nbsp;<span style={{color: 'grey'}}>#{data.value}</span>
+            </span>;
         }
         return `#${data.value}`;
     }

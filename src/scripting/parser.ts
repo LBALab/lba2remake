@@ -78,7 +78,8 @@ function parseCommand(state, script, op, type) {
     state.offset += 1;
     const cmd = {
         op,
-        section: type === 'life' ? state.comportement : state.track
+        section: type === 'life' ? state.comportement : state.track,
+        args: null
     };
     if (op.argsFirst) {
         parseArguments(state, script, op, cmd);
@@ -141,7 +142,7 @@ function parseArguments(state, script, op, cmd) {
             cmd.args.push(parseValue(state, script, op.args[i]));
         }
         if (op.command === 'SET_DIRMODE' || op.command === 'SET_DIRMODE_OBJ') {
-            const mode = last(cmd.args).value;
+            const mode = (last(cmd.args) as any).value;
             if (mode === 2 || mode === 4 || mode === 6 || mode === 10 || mode === 11) {
                 cmd.args.push({
                     value: script.getUint8(state.offset, true),

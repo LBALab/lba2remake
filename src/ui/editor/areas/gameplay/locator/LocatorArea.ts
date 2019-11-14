@@ -13,7 +13,7 @@ const LocatorArea = makeOutlinerArea('locator', 'Locator', LocationsNode, {
             if (scene) {
                 const path = findScenePath(LocationsNode, scene.index);
                 if (path) {
-                    const activePath = map(drop(path), node => node.name);
+                    const activePath = map(drop(path), (node: any) => node.name);
                     this.props.stateHandler.setActivePath(activePath);
                 }
             }

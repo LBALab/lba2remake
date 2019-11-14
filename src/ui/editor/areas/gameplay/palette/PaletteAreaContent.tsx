@@ -1,6 +1,11 @@
 import React from 'react';
 import { extend } from 'lodash';
-import { generateLUTTexture, resetLUTTexture, loadLUTTexture, LUT_DIM } from '../../../../../utils/lut';
+import {
+    generateLUTTexture,
+    resetLUTTexture,
+    loadLUTTexture,
+    LUT_DIM
+} from '../../../../../utils/lut';
 import { loadHqr } from '../../../../../hqr';
 import { editor, fullscreen } from '../../../../styles';
 
@@ -18,7 +23,43 @@ const buttonStyle = extend({}, editor.button, {
     margin: 2
 });
 
-export default class PaletteAreaContent extends React.Component {
+declare global {
+    interface Window {
+        isLocalServer?: boolean;
+    }
+}
+
+interface Props {
+
+}
+
+interface State {
+    generating: boolean;
+    progress: string;
+    useLabColors: boolean;
+    saving: boolean;
+    slice: number;
+    intensity: number;
+    activeColor: string;
+    lutBuffer?: ArrayBuffer;
+}
+
+export default class PaletteAreaContent extends React.Component<Props, State> {
+    ramp: number;
+    palette: Uint8Array;
+    lutTexture: THREE.DataTexture;
+    bbs: {
+        xMin: number;
+        xMax: number;
+        yMin: number;
+        yMax: number;
+    }[];
+    bbIndex: number;
+    ctx: CanvasRenderingContext2D;
+    ctxLUT: CanvasRenderingContext2D;
+    ctxCurves: CanvasRenderingContext2D;
+    dragging: boolean;
+
     constructor(props) {
         super(props);
 
@@ -166,8 +207,8 @@ export default class PaletteAreaContent extends React.Component {
             width: '100%',
             height: '1em',
             lineHeight: '1em',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
+            whiteSpace: 'nowrap' as const,
+            overflow: 'hidden' as const,
             color: '#BBBBBB'
         };
 
@@ -194,9 +235,21 @@ export default class PaletteAreaContent extends React.Component {
             <div style={wrapperStyle}>
                 <b>LUT slice</b><hr/>
                 Intensity: {this.state.intensity}<br/>
-                <input type="range" min="0" max="15" value={this.state.intensity} onChange={onSlideI} style={{width: '100%', maxWidth: '256px'}}/><br/>
+                <input type="range"
+                        min="0"
+                        max="15"
+                        value={this.state.intensity}
+                        onChange={onSlideI}
+                        style={{width: '100%', maxWidth: '256px'}}/>
+                <br/>
                 Blue level: {this.state.slice}<br/>
-                <input type="range" min="0" max={LUT_DIM - 1} value={this.state.slice} onChange={onSlide} style={{width: '100%', maxWidth: '256px'}}/><br/>
+                <input type="range"
+                        min="0"
+                        max={LUT_DIM - 1}
+                        value={this.state.slice}
+                        onChange={onSlide}
+                        style={{width: '100%', maxWidth: '256px'}}/>
+                <br/>
                 <canvas
                     style={canvasStyle}
                     ref={this.onCanvasLUTRef}

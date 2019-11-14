@@ -141,6 +141,7 @@ function TEXT(game, scene, zone, hero) {
             delete scene.zoneState.startTime;
         }
     }
+    return scene.zoneState.skipListener ? true : false;
 }
 
 function BONUS(game, scene, zone, hero) {

@@ -54,6 +54,9 @@ export const Var = {
                 if (varDef.key in varEdits) {
                     const info = getVarInfo(varDef);
                     const actualValue = varDef.value();
+                    const close = () => {
+                        delete varEdits[varDef.key];
+                    };
                     if (info && info.type === 'enum') {
                         const onChange = (e) => {
                             delete varEdits[varDef.key];
@@ -86,9 +89,7 @@ export const Var = {
                                 varDef.edit(v);
                         }
                     };
-                    const close = () => {
-                        delete varEdits[varDef.key];
-                    };
+
                     return <input
                         type="number"
                         ref={(ref) => {
@@ -224,10 +225,18 @@ function mapActors(ref) {
                 if (DebugData.scope.scene) {
                     if (DebugData.scope.scene.index !== ref.scene) {
                         DebugData.sceneManager.goto(ref.scene).then(() => {
-                            DebugData.selection = {type: 'actor', index: actor.actor, lifeLine: line};
+                            DebugData.selection = {
+                                type: 'actor',
+                                index: actor.actor,
+                                lifeLine: line
+                            };
                         });
                     } else {
-                        DebugData.selection = {type: 'actor', index: actor.actor, lifeLine: line};
+                        DebugData.selection = {
+                            type: 'actor',
+                            index: actor.actor,
+                            lifeLine: line
+                        };
                     }
                 }
             },

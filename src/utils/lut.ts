@@ -11,7 +11,7 @@ let lutTexture = null;
 let loading = false;
 let loadingCallbacks = [];
 
-export async function loadLUTTexture() {
+export async function loadLUTTexture() : Promise<THREE.DataTexture> {
     if (lutTexture) {
         return lutTexture;
     }
@@ -19,7 +19,7 @@ export async function loadLUTTexture() {
         const promise = new Promise((resolve) => {
             loadingCallbacks.push(resolve);
         });
-        return promise;
+        return promise as Promise<THREE.DataTexture>;
     }
     loading = true;
     const buffer = await loadLUTData();
