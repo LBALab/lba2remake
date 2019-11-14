@@ -49,7 +49,16 @@ export const UtilFunctions = {
 export const RootSym = 'this';
 
 const vecData = {
-    pure: ['getComponent', 'equals', 'min', 'max', 'lengthSq', 'length', 'manhattanLength', 'toArray'],
+    pure: [
+        'getComponent',
+        'equals',
+        'min',
+        'max',
+        'lengthSq',
+        'length',
+        'manhattanLength',
+        'toArray'
+    ],
     kind: {
         getComponent: ['e|g'],
         toArray: ['g|e', 'e|g']
@@ -195,7 +204,8 @@ function getParamValue(p, idx, bindings, parent, path) {
     }
     if (p.kind === 'g') {
         return getValue(p.value.split('.'), DebugData.scope, bindings);
-    } else if (p.kind === 'e') {
+    }
+    if (p.kind === 'e') {
         return getParamFunc(p, idx, bindings, parent, path);
     }
     return undefined;
@@ -205,7 +215,7 @@ export function getParamValues(params, bindings, parent, path) {
     return map(params, (p, idx) => getParamValue(p, idx, bindings, parent, path));
 }
 
-function safeCall(fct, parent, pValues) {
+function safeCall(fct, parent, pValues = null) {
     try {
         return pValues ? fct.call(parent, ...pValues) : fct.call(parent);
     } catch (e) {

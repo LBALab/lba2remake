@@ -27,7 +27,7 @@ export function createFPSCounter(renderer) {
             ctx.shadowOffsetX = 4;
             ctx.shadowOffsetY = 4;
             ctx.fillText(`fps: ${stats.fps} | ms: ${stats.ms}`, width / 2, 25);
-            mesh.material.map.needsUpdate = true;
+            (mesh.material as THREE.MeshBasicMaterial).map.needsUpdate = true;
             mesh.visible = true;
         } else {
             mesh.visible = false;

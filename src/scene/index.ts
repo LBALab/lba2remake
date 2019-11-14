@@ -24,19 +24,20 @@ function loadSceneDataSync(files, language, index) {
     }
     const buffer = files.scene.getEntry(index + 1); // first entry is not a scene
     const data = new DataView(buffer);
-    const textBankId = data.getInt8(0, true);
+    const textBankId = data.getInt8(0);
 
     const sceneData = {
         index,
         textBankId,
         textIndex: (textBankId * 2) + 6 + (language.index * 30),
-        gameOverScene: data.getInt8(1, true),
+        gameOverScene: data.getInt8(1),
         unknown1: data.getUint16(2, true),
         unknown2: data.getUint16(4, true),
-        isOutsideScene: data.getInt8(6, true) === 1,
+        isOutsideScene: data.getInt8(6) === 1,
         buffer,
         palette: new Uint8Array(files.ress.getEntry(0)),
-        actors: []
+        actors: [],
+        texts: null
     };
 
     let offset = 7;
@@ -64,7 +65,7 @@ function loadAmbience(scene, offset) {
         sampleMinDelay: data.getInt16(innerOffset + 44, true),
         sampleMinDelayRnd: data.getInt16(innerOffset + 46, true),
         sampleElapsedTime: 0,
-        musicIndex: data.getInt8(innerOffset + 48, true),
+        musicIndex: data.getInt8(innerOffset + 48),
     };
 
     innerOffset = 4;
@@ -81,7 +82,6 @@ function loadAmbience(scene, offset) {
 
     return offset + 49;
 }
-
 
 function loadHero(scene, offset) {
     const data = new DataView(scene.buffer);
@@ -125,7 +125,11 @@ function loadHero(scene, offset) {
             noShadow: false,
             noElectricShock: false,
             noPreClipping: false,
-        }
+        },
+        moveScriptSize: 0,
+        moveScript: null,
+        lifeScriptSize: 0,
+        lifeScript: null
     };
     offset += 6;
 
@@ -160,6 +164,31 @@ function loadActors(scene, offset) {
             index: i,
             dirMode: DirMode.NO_MOVE,
             runtimeFlags: createRuntimeFlags(),
+            flags: null,
+            entityIndex: -1,
+            bodyIndex: -1,
+            animIndex: -1,
+            spriteIndex: -1,
+            pos: null,
+            hitStrength: 0,
+            extraType: -1,
+            angle: 0,
+            speed: 0,
+            controlMode: 0,
+            info0: -1,
+            info1: -1,
+            info2: -1,
+            info3: -1,
+            extraAmount: -1,
+            textColor: null,
+            spriteAnim3DNumber: -1,
+            spriteSizeHit: -1,
+            armour: -1,
+            life: -1,
+            moveScriptSize: 0,
+            moveScript: null,
+            lifeScriptSize: 0,
+            lifeScript: null
         };
 
         const staticFlags = data.getUint32(offset, true);
@@ -168,7 +197,7 @@ function loadActors(scene, offset) {
 
         actor.entityIndex = data.getInt16(offset, true);
         offset += 2;
-        actor.bodyIndex = data.getUint8(offset, true);
+        actor.bodyIndex = data.getUint8(offset);
         offset += 1;
         actor.animIndex = data.getInt16(offset, true);
         offset += 2;
@@ -182,7 +211,7 @@ function loadActors(scene, offset) {
         ];
         offset += 6;
 
-        actor.hitStrength = data.getInt8(offset, true);
+        actor.hitStrength = data.getInt8(offset);
         offset += 1;
         actor.extraType = data.getInt16(offset, true);
         offset += 2;
@@ -190,7 +219,7 @@ function loadActors(scene, offset) {
         offset += 2;
         actor.speed = data.getInt16(offset, true);
         offset += 2;
-        actor.controlMode = data.getInt8(offset, true);
+        actor.controlMode = data.getInt8(offset);
         offset += 1;
 
         actor.info0 = data.getInt16(offset, true);
@@ -204,7 +233,7 @@ function loadActors(scene, offset) {
 
         actor.extraAmount = data.getInt16(offset, true);
         offset += 2;
-        const textColor = data.getInt8(offset, true);
+        const textColor = data.getInt8(offset);
         offset += 1;
         actor.textColor = getHtmlColor(scene.palette, (textColor * 16) + 12);
 
@@ -215,9 +244,9 @@ function loadActors(scene, offset) {
             actor.info3 = actor.spriteSizeHit;
             offset += 2;
         }
-        actor.armour = data.getUint8(offset, true);
+        actor.armour = data.getUint8(offset);
         offset += 1;
-        actor.life = data.getUint8(offset, true);
+        actor.life = data.getUint8(offset);
         offset += 1;
 
         actor.moveScriptSize = data.getInt16(offset, true);
@@ -254,7 +283,17 @@ function loadZones(scene, offset) {
             sceneIndex: scene.index,
             index: i,
             type: 0,
-            box: {}
+            box: {xMin: 0, xMax: 0, yMin: 0, yMax: 0, zMin: 0, zMax: 0},
+            info0: -1,
+            info1: -1,
+            info2: -1,
+            info3: -1,
+            info4: -1,
+            info5: -1,
+            info6: -1,
+            info7: -1,
+            snap: -1,
+            pos: null
         };
 
         // xMin and xMax are inverted because x axis is inverted

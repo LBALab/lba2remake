@@ -138,7 +138,7 @@ function createMenuItem({x, y, text, callback}) {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(text, width / 2, height / 2);
-        mesh.material.map.needsUpdate = true;
+        (mesh.material as THREE.MeshBasicMaterial).map.needsUpdate = true;
     };
     draw();
     mesh.visible = true;
@@ -176,11 +176,11 @@ function createControllerInfo(type) {
             ctx.textAlign = label.textAlign;
             ctx.font = `${label.fontSize}px LBA`;
             const lines = label.text.split('\n');
-            each(lines, (line, idx) => {
+            each(lines, (line, idx: number) => {
                 ctx.fillText(line, label.x, label.y + (idx * label.fontSize));
             });
         });
-        mesh.material.map.needsUpdate = true;
+        (mesh.material as THREE.MeshBasicMaterial).map.needsUpdate = true;
     }
 
     icon.onload = () => draw();

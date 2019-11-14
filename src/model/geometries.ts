@@ -21,6 +21,20 @@ const fakeNoise = new THREE.DataTexture(
     THREE.UnsignedByteType
 );
 
+interface ModelGeometry {
+    positions: number[];
+    uvs?: number[];
+    uvGroups?: number[];
+    colors: number[];
+    normals: number[];
+    bones: number[];
+    linePositions: number[];
+    lineNormals: number[];
+    lineColors: number[];
+    lineBones: number[];
+    material: THREE.Material;
+}
+
 function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, envInfo, ambience) {
     const paletteTexture = loadPaletteTexture(palette);
     const light = getLightVector(ambience);
@@ -129,7 +143,7 @@ export function loadMesh(
     );
     const object = new THREE.Object3D();
 
-    each(geometries, (geom, name) => {
+    each(geometries, (geom: ModelGeometry, name) => {
         const {
             positions,
             uvs,
@@ -145,16 +159,34 @@ export function loadMesh(
         } = geom;
         if (positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
-            bufferGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-            bufferGeometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
+            bufferGeometry.setAttribute(
+                'position',
+                new THREE.BufferAttribute(new Float32Array(positions), 3)
+            );
+            bufferGeometry.setAttribute(
+                'normal',
+                new THREE.BufferAttribute(new Float32Array(normals), 3)
+            );
             if (uvs) {
-                bufferGeometry.setAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
+                bufferGeometry.setAttribute(
+                    'uv',
+                    new THREE.BufferAttribute(new Uint8Array(uvs), 2, false)
+                );
             }
             if (uvGroups) {
-                bufferGeometry.setAttribute('uvGroup', new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, false));
+                bufferGeometry.setAttribute(
+                    'uvGroup',
+                    new THREE.BufferAttribute(new Uint8Array(uvGroups), 4, false)
+                );
             }
-            bufferGeometry.setAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 1, false));
-            bufferGeometry.setAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(boneIndices), 1));
+            bufferGeometry.setAttribute(
+                'color',
+                new THREE.BufferAttribute(new Uint8Array(colors), 1, false)
+            );
+            bufferGeometry.setAttribute(
+                'boneIndex',
+                new THREE.BufferAttribute(new Uint8Array(boneIndices), 1)
+            );
 
             if (body.boundingBox) {
                 bufferGeometry.boundingBox = body.boundingBox;
@@ -170,10 +202,22 @@ export function loadMesh(
 
         if (linePositions.length > 0) {
             const linebufferGeometry = new THREE.BufferGeometry();
-            linebufferGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(linePositions), 3));
-            linebufferGeometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(lineNormals), 3));
-            linebufferGeometry.setAttribute('color', new THREE.BufferAttribute(new Uint8Array(lineColors), 1, false));
-            linebufferGeometry.setAttribute('boneIndex', new THREE.BufferAttribute(new Uint8Array(lineBones), 1));
+            linebufferGeometry.setAttribute(
+                'position',
+                new THREE.BufferAttribute(new Float32Array(linePositions), 3)
+            );
+            linebufferGeometry.setAttribute(
+                'normal',
+                new THREE.BufferAttribute(new Float32Array(lineNormals), 3)
+            );
+            linebufferGeometry.setAttribute(
+                'color',
+                new THREE.BufferAttribute(new Uint8Array(lineColors), 1, false)
+            );
+            linebufferGeometry.setAttribute(
+                'boneIndex',
+                new THREE.BufferAttribute(new Uint8Array(lineBones), 1)
+            );
 
             const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
             lineSegments.name = 'lines';

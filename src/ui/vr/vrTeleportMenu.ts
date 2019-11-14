@@ -254,7 +254,7 @@ function createPlanetItem({x, y, text, icon: iconSrc, idx, callback}) {
         ctx.shadowOffsetY = 2;
         ctx.fillText(text, width / 2, 200);
         ctx.drawImage(icon, 20, 20, 160, 160);
-        mesh.material.map.needsUpdate = true;
+        (mesh.material as THREE.MeshBasicMaterial).map.needsUpdate = true;
     }
 
     icon.onload = () => draw();
@@ -303,7 +303,7 @@ function createIslandItem({x, y, text, idx, callback}) {
         ctx.fillText(text, 175, 40);
         const metrics = ctx.measureText(text);
         ctx.drawImage(icon, 115 - (metrics.width * 0.5), 20, 40, 40);
-        mesh.material.map.needsUpdate = true;
+        (mesh.material as THREE.MeshBasicMaterial).map.needsUpdate = true;
     };
 
     icon.onload = () => draw();
@@ -343,7 +343,7 @@ function createButton({x, y, text, callback}) {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(text, width / 2, height / 2);
-        mesh.material.map.needsUpdate = true;
+        (mesh.material as THREE.MeshBasicMaterial).map.needsUpdate = true;
     };
     draw();
     mesh.visible = true;

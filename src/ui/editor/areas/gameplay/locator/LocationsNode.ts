@@ -4,6 +4,7 @@ import ZeelishSurface from './locations/ZeelishSurface';
 import ZeelishUndergas from './locations/ZeelishUndergas';
 
 interface LocationType {
+    id?: string;
     name: string;
     type: string;
     children: LocationType[];

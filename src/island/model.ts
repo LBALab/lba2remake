@@ -12,13 +12,15 @@ export function loadModel(buffer) {
         uvGroupsSectionOffset: data.getUint32(92, true),
         numVerticesType1: data.getUint16(100, true),
         numVerticesType2: data.getUint16(102, true),
+        vertices: null,
+        normals: null,
+        uvGroups: [],
         buffer
     };
     model.vertices = new Int16Array(buffer, model.verticesOffset, model.numVerticesType1 * 4);
     model.normals = new Int16Array(buffer, model.normalsOffset, model.numVerticesType1 * 4);
 
     // uvGroups
-    model.uvGroups = [];
     const rawUVGroups = new Uint8Array(
         model.buffer,
         model.uvGroupsSectionOffset,

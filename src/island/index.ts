@@ -25,6 +25,16 @@ each(islandsInfo, (island) => {
 const islands = {};
 const islandPreviews = {};
 
+interface IslandGeometry {
+    positions?: number[];
+    uvs?: number[];
+    uvGroups?: number[];
+    colors?: number[];
+    normals?: number[];
+    intensities?: number[];
+    material: THREE.Material;
+}
+
 export function getEnvInfo(name) {
     return islandProps[name].envInfo;
 }
@@ -68,24 +78,43 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
 
     const geometries = loadGeometries(props, data, ambience);
     const matByName = {};
-    each(geometries, ({positions, uvs, colors, intensities, normals, uvGroups, material}, name) => {
+    each(geometries, (geom: IslandGeometry, name) => {
+        const {positions, uvs, colors, intensities, normals, uvGroups, material} = geom;
         if (positions && positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
-            bufferGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+            bufferGeometry.setAttribute(
+                'position',
+                new THREE.BufferAttribute(new Float32Array(positions), 3)
+            );
             if (uvs) {
-                bufferGeometry.setAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
+                bufferGeometry.setAttribute(
+                    'uv',
+                    new THREE.BufferAttribute(new Uint8Array(uvs), 2, false)
+                );
             }
             if (colors) {
-                bufferGeometry.setAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 1, false));
+                bufferGeometry.setAttribute(
+                    'color',
+                    new THREE.BufferAttribute(new Uint8Array(colors), 1, false)
+                );
             }
             if (intensities) {
-                bufferGeometry.setAttribute('intensity', new THREE.BufferAttribute(new Uint8Array(intensities), 1, false));
+                bufferGeometry.setAttribute(
+                    'intensity',
+                    new THREE.BufferAttribute(new Uint8Array(intensities), 1, false)
+                );
             }
             if (normals) {
-                bufferGeometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
+                bufferGeometry.setAttribute(
+                    'normal',
+                    new THREE.BufferAttribute(new Float32Array(normals), 3)
+                );
             }
             if (uvGroups) {
-                bufferGeometry.setAttribute('uvGroup', new THREE.BufferAttribute(new Uint16Array(uvGroups), 4, false));
+                bufferGeometry.setAttribute(
+                    'uvGroup',
+                    new THREE.BufferAttribute(new Uint16Array(uvGroups), 4, false)
+                );
             }
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.matrixAutoUpdate = false;
@@ -122,7 +151,8 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         }
     });
 
-    const seaTimeUniform = islandObject.getObjectByName('sea').material.uniforms.time;
+    const seaMesh = islandObject.getObjectByName('sea') as THREE.Mesh;
+    const seaTimeUniform = (seaMesh.material as THREE.RawShaderMaterial).uniforms.time;
 
     return {
         props,
@@ -184,8 +214,14 @@ function loadSky(geometries, envInfo) {
         1, 1,
         0, 1
     ];
-    bufferGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-    bufferGeometry.setAttribute('uv', new THREE.BufferAttribute(new Uint8Array(uvs), 2, false));
+    bufferGeometry.setAttribute(
+        'position',
+        new THREE.BufferAttribute(new Float32Array(positions), 3)
+    );
+    bufferGeometry.setAttribute(
+        'uv',
+        new THREE.BufferAttribute(new Uint8Array(uvs), 2, false)
+    );
     const sky = new THREE.Mesh(
         bufferGeometry,
         geometries.sky.material
@@ -198,7 +234,7 @@ function loadGeometries(island, data, ambience) {
     const usedTiles = {};
 
     const models = [];
-    const uvGroupsS = new Set();
+    const uvGroupsS : Set<string> = new Set();
     const obl = data.files.obl;
     for (let i = 0; i < obl.length; i += 1) {
         const model = loadModel(obl.getEntry(i));

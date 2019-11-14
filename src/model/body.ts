@@ -7,8 +7,9 @@ export function loadBody(model, bodies, index, bodyProps) {
     }
     const buffer = model.files.body.getEntry(index);
     const data = new DataView(buffer);
+    const bodyFlag = data.getInt32(0x00, true);
     const obj = {
-        bodyFlag: data.getInt32(0x00, true),
+        bodyFlag,
         xMin: data.getInt32(0x08, true),
         xMax: data.getInt32(0x0C, true),
         yMin: data.getInt32(0x10, true),
@@ -31,14 +32,12 @@ export function loadBody(model, bodies, index, bodyProps) {
         spheresOffset: data.getUint32(0x54, true),
         uvGroupsSize: data.getUint32(0x58, true),
         uvGroupsOffset: data.getUint32(0x5C, true),
-
+        version: bodyFlag & 0xff,
+        hasAnimation: bodyFlag & (1 << 8),
+        noSort: bodyFlag & (1 << 9),
+        hasTransparency: bodyFlag & (1 << 10),
         buffer
     };
-
-    obj.version = obj.bodyFlag & 0xff;
-    obj.hasAnimation = obj.bodyFlag & (1 << 8);
-    obj.noSort = obj.bodyFlag & (1 << 9);
-    obj.hasTransparency = obj.bodyFlag & (1 << 10);
 
     loadBones(obj);
     loadVertices(obj);

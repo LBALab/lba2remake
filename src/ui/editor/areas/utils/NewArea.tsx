@@ -6,6 +6,7 @@ const NewArea = {
     name: 'New area',
     content: Blank,
     style: {
+        // tslint:disable-next-line:max-line-length
         backgroundImage: 'linear-gradient(-45deg, rgba(2,0,36,1) 0%, rgb(13, 20, 45) 35%, rgba(45,45,45,1) 100%)'
     },
     getInitialState: () => ({})
@@ -14,12 +15,12 @@ const NewArea = {
 export default NewArea;
 
 const wrapperStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     left: 0,
     border: '1 px solid white',
     background: 'rgb(45, 45, 45)',
-    overflowY: 'auto',
+    overflowY: 'auto' as const,
     padding: 0,
     paddingBottom: 14,
     boxShadow: '3px 3px 50px 0px rgba(255, 255, 255, 0.3)',
@@ -29,11 +30,11 @@ const wrapperStyle = {
 };
 
 const style = {
-    position: 'relative',
+    position: 'relative' as const,
     fontSize: 16,
-    fontWeight: 'normal',
+    fontWeight: 'normal' as const,
     lineHeight: '20px',
-    cursor: 'pointer',
+    cursor: 'pointer' as const,
     padding: '5px 15px',
     marginLeft: 14,
     marginTop: 14,
@@ -56,7 +57,8 @@ export function NewAreaContent(props) {
             onClick={props.selectAreaContent.bind(null, area)}
             style={style}
         >
-            <img style={{position: 'absolute', left: 14, top: 5, width: 20, height: 20}} src={`editor/icons/areas/${icon}`}/>
+            <img style={{position: 'absolute', left: 14, top: 5, width: 20, height: 20}}
+                    src={`editor/icons/areas/${icon}`}/>
             <span style={{paddingLeft: 28}}>{area.name}</span>
         </div>;
     })}</div>;

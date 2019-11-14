@@ -69,7 +69,7 @@ function createItem({x, y, text, callback}) {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(text, width / 2, height / 2);
-        mesh.material.map.needsUpdate = true;
+        (mesh.material as THREE.MeshBasicMaterial).map.needsUpdate = true;
     };
     draw();
     mesh.visible = true;

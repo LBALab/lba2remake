@@ -1,7 +1,7 @@
 import React from 'react';
 
 const bg_style = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     bottom: 0,
     left: 0,
@@ -10,7 +10,7 @@ const bg_style = {
 };
 
 const style = {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)'

@@ -6,7 +6,13 @@ const R_FRAGCOLOR = /^( *)fragColor( .*)\r?$/;
 const R_TEXTURE = /^(.*)texture\((.*)\r?$/;
 const R_PRECISION = /^( *)precision(.*)\r?$/;
 
-export function compile(type, source) {
+declare global {
+    interface Window {
+        WebGL2RenderingContext?: any;
+    }
+}
+
+export function compile(type, source: string) {
     const lines = source.split('\n');
     if (!lines[0].match('#version 300 es')) {
         throw new Error('Shader must have "#version 300 es" directive as first line');

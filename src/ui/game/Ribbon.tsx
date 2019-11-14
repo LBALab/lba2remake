@@ -2,24 +2,24 @@ import React from 'react';
 import {version} from '../../../package.json';
 
 const overlay = {
-    position: 'absolute',
+    position: 'absolute' as const,
     right: 5,
     top: 5,
-    textAlign: 'right',
+    textAlign: 'right' as const,
     fontFamily: 'LBA',
 };
 
 const versionText = (color, opacity = 0.5) => ({
     color,
-    display: 'inline-block',
-    userSelect: 'none',
-    cursor: 'pointer',
+    display: 'inline-block' as const,
+    userSelect: 'none' as const,
+    cursor: 'pointer' as const,
     fontSize: 14,
     background: `rgba(0, 0, 0, ${opacity})`,
     border: `1px outset ${color}`,
     borderRadius: 3,
     padding: '1px 3px',
-    textAlign: 'center'
+    textAlign: 'center' as const
 });
 
 const editorVersionText = versionText('white');
@@ -28,6 +28,12 @@ delete editorVersionText.borderRadius;
 
 function changelog() {
     document.dispatchEvent(new Event('displaychangelog'));
+}
+
+declare global {
+    interface Window {
+        buildNumber: string;
+    }
 }
 
 export default function Ribbon({mode}) {

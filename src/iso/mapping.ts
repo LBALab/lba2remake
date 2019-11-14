@@ -95,9 +95,11 @@ export function loadBricksMapping(renderer, params, layouts, bricks, mask, palet
 function getSide(mask, pos) {
     if (mask.data[pos * 4]) {
         return Side.TOP;
-    } else if (mask.data[(pos * 4) + 1]) {
+    }
+    if (mask.data[(pos * 4) + 1]) {
         return Side.LEFT;
-    } else if (mask.data[(pos * 4) + 2]) {
+    }
+    if (mask.data[(pos * 4) + 2]) {
         return Side.RIGHT;
     }
     return Side.NONE;
