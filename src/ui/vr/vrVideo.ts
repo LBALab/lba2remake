@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 export function createVideoScreen(video) {
     const videoElem = document.createElement('video');

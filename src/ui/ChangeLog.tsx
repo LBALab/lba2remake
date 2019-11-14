@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 import changelog from '../../CHANGELOG.md';
 import './styles/changelog.scss';

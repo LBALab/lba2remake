@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {cloneDeep, map, each, find, isFinite, isInteger, extend, findKey} from 'lodash';
 import Indent from '../../../../../game/scripting/indent';
 import {getRotation, getDistance} from '../../../../../utils/lba';

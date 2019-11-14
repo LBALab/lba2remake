@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import {each} from 'lodash';
 import {bits} from '../utils';
 import {WORLD_SCALE} from '../utils/lba';

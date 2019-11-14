@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { getEntities } from './entitities';
 import DebugData, { saveMetaData } from '../../../DebugData';
 import { createRenderer } from '../../../../../renderer';

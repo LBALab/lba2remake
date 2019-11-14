@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {map, extend} from 'lodash';
 import {editor} from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';

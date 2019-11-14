@@ -1,5 +1,5 @@
 import {extend} from 'lodash';
-import THREE from 'three';
+import * as THREE from 'three';
 import {checkAuth, getAuthQueryString} from './auth';
 import { any } from 'prop-types';
 

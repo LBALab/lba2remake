@@ -49,24 +49,19 @@ module.exports = {
             include: /src/,
             exclude: /node_modules/,
             use: [{
-                loader: 'babel-loader',
+                loader: 'ts-loader',
                 options: {
-                    presets: ['@babel/preset-react', '@babel/preset-env', '@babel/preset-typescript', ['minify', {
-                        mangle: false
-                    }]],
-                    plugins: [
-                        path.join(__dirname, './utils/babel-transforms/inspector-annotations.js'),
-                        '@babel/plugin-proposal-class-properties',
-                        '@babel/plugin-proposal-object-rest-spread'
-                    ]
+                    compilerOptions: {
+                        noEmit: false
+                    }
                 }
-            }, {
+            }/*, {
                 loader: 'tslint-loader',
                 options: {
                     emitErrors: true,
                     formatter: 'msbuild'
                 }
-            }]
+            }*/]
         }, {
             test: /\.glsl?$/,
             use: [{

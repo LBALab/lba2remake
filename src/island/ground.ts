@@ -1,5 +1,5 @@
 import {map} from 'lodash';
-import THREE from 'three';
+import * as THREE from 'three';
 import {bits} from '../utils';
 import {WORLD_SCALE} from '../utils/lba';
 

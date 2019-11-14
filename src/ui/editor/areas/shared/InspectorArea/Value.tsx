@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
-import React from 'react';
+import * as React from 'react';
 import {flatMap, isArray, isEmpty, map, slice, take, times} from 'lodash';
-import THREE from 'three';
+import * as THREE from 'three';
 import DebugData, {getObjectName} from '../../../DebugData';
 
 export class CustomValue {

@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import convert from 'color-convert';
 import { loadHqr } from '../hqr';
 

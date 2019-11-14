@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 // eslint-disable-next-line no-unused-vars
 function createGizmo() {

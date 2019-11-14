@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React from 'react';
+import * as React from 'react';
 import {map, extend, last} from 'lodash';
 import {makeContentComponent} from '../../utils/outliner/OutlinerAreaContent';
 import {InspectorNode} from './InspectorNode';

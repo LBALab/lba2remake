@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import islandsInfo from '../../../../../island/data/islands';
 import DebugData, { saveMetaData } from '../../../DebugData';
 import { createRenderer } from '../../../../../renderer';

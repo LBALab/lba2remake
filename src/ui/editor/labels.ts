@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import {each} from 'lodash';
 import DebugData from './DebugData';
 import { ZONE_TYPE } from '../../game/zones';

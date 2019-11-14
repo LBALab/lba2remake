@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import {switchStats} from '../renderer/stats';
 import {BehaviourMode} from '../game/loop/hero';
 

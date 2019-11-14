@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import SimplexNoise from 'simplex-noise';
 import { map, each } from 'lodash';
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {map, concat, times, isEqual, noop, isFunction} from 'lodash';
 import NodeProps from './NodeProps';
 import Ticker from '../../../../utils/Ticker';

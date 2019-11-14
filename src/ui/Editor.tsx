@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
 import Area, {AreaDefinition} from './editor/Area';
 import {fullscreen} from './styles';

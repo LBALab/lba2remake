@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {map, filter} from 'lodash';
 import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
 

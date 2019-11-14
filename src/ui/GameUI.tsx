@@ -1,5 +1,5 @@
-import React from 'react';
-import THREE from 'three';
+import * as React from 'react';
+import * as THREE from 'three';
 import {clone, omit} from 'lodash';
 
 import {createRenderer} from '../renderer';
@@ -495,7 +495,9 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             />
             <Video video={this.state.video} renderer={this.state.renderer} />
             <Menu
+                params={this.props.params}
                 showMenu={this.state.showMenu && !this.state.teleportMenu}
+                texts={this.state.game.menuTexts}
                 inGameMenu={this.state.inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {tr} from '../lang';
 import {center, editor as editor_style, fullscreen} from './styles';
 

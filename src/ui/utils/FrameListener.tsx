@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {TickerProps} from './Ticker';
 
 export default abstract class FrameListener<TProps extends TickerProps = TickerProps, TState = {}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { map, filter, find, findIndex } from 'lodash';
 import { getEntities } from './entitities';
 import DebugData, { saveMetaData } from '../../../DebugData';

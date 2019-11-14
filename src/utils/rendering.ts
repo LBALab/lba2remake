@@ -1,5 +1,5 @@
 // tslint:disable:max-line-length
-import THREE from 'three';
+import * as THREE from 'three';
 import {compile} from '../utils/shaders';
 
 export function createBoundingBox(bb, color) {

@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 import { Actor} from '../actors';
 import { getAnim } from '../../model/entity';

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { map, each, filter } from 'lodash';
 import {tr} from '../../lang';
 
@@ -28,6 +28,8 @@ const menuItems: Item[] = [
 interface MProps {
     showMenu: boolean;
     inGameMenu: boolean;
+    texts?: any[];
+    params?: any;
     onItemChanged: (id: number) => void;
 }
 

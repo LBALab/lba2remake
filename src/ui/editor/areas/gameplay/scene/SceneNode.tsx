@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {size, sortBy, map, each, filter} from 'lodash';
 import DebugData from '../../../DebugData';
 import {ActorsNode} from './nodes/ActorsNode';

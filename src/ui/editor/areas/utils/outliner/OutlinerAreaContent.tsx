@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {extend, map, each, isFunction} from 'lodash';
 import OutlinerNode from './OutlinerNode';
 import {fullscreen} from '../../../../styles';

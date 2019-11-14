@@ -1,5 +1,5 @@
 import {each} from 'lodash';
-import THREE from 'three';
+import * as THREE from 'three';
 import {updateHero} from './hero';
 import {updateActor} from './actors';
 import {processPhysicsFrame} from './physics';

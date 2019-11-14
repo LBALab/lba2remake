@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import {WORLD_SCALE} from '../utils/lba';
 
 export function loadBody(model, bodies, index, bodyProps) {

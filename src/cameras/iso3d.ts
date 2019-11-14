@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import { processFree3DMovement } from './3d';
 
 const CAMERA_HERO_OFFSET = new THREE.Vector3(-6, 7.2, 6);

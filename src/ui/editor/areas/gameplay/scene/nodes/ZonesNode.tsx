@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import DebugData, {getObjectName, renameObject, locateObject} from '../../../../DebugData';
 import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {makeObjectsNode} from '../node_factories/objects';

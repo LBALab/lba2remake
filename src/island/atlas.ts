@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import {each, find} from 'lodash';
 
 export function createTextureAtlas({files: {ile}, palette}, uvGroups) {

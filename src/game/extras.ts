@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 import { getRandom } from '../utils/lba';
 import { SpriteType } from './data/spriteType';

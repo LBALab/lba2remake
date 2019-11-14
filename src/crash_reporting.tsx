@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {extend, omit} from 'lodash';
 import {version} from '../package.json';
 import DebugData from './ui/editor/DebugData';

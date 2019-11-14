@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {map, findIndex, extend, isEmpty} from 'lodash';
 import {editor, fullscreen} from '../styles/index';
 import {Orientation} from './layout';

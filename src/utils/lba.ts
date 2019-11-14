@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 export const WORLD_SCALE = 24 / 0x4000;
 

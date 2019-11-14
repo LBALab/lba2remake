@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import {cloneDeep} from 'lodash';
 import {getObjectName} from '../ui/editor/DebugData';
 import {createBoundingBox} from '../utils/rendering';

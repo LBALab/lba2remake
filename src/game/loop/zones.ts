@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import { getHtmlColor } from '../../scene';
 import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import Ticker from './utils/Ticker';
 import {CrashHandler} from '../crash_reporting';
 import Root from './Root';

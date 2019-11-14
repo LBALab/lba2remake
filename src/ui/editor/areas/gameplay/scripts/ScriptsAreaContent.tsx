@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import {extend, map, filter, tail, first, each, find} from 'lodash';
 import {fullscreen} from '../../../../styles';

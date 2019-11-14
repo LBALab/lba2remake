@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {extend, isEmpty, map, entries, sortBy} from 'lodash';
 import {fullscreen} from '../styles/index';
 import Ribbon from './Ribbon';

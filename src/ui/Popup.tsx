@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 const bg_style = {
     position: 'absolute' as const,

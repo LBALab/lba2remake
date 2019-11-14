@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 
 export function COL() {
     if (this.actor.life <= 0) {
