@@ -50,14 +50,9 @@ export const RootSym = 'this';
 
 const vecData = {
     pure: [
-        'getComponent',
-        'equals',
-        'min',
-        'max',
         'lengthSq',
         'length',
         'manhattanLength',
-        'toArray'
     ],
     kind: {
         getComponent: ['e|g'],
@@ -67,15 +62,7 @@ const vecData = {
 
 const matData = {
     pure: [
-        'extractBasis',
-        'extractRotation',
-        'extractPosition',
         'determinant',
-        'getInverse',
-        'decompose',
-        'equals',
-        'toArray',
-        'getPosition'
     ],
     kind: {
         toArray: ['g|e', 'e|g']
@@ -100,14 +87,14 @@ const pureFunctionsByType = [
     },
     {
         type: THREE.Quaternion,
-        pure: ['lengthSq', 'length', 'equals', 'toArray'],
+        pure: ['lengthSq', 'length'],
         kind: {
             toArray: ['g|e', 'e|g']
         }
     },
     {
         type: THREE.Euler,
-        pure: ['equals', 'toArray', 'toVector3'],
+        pure: [],
         kind: {
             toArray: ['g|e', 'e|g']
         }
