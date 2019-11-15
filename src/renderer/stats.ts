@@ -3,7 +3,7 @@ import { pure } from '../utils/decorators';
 
 let stats = null;
 
-class StatsHandler {
+export default class StatsHandler {
     begin() {
         if (stats) {
             stats.begin();
@@ -20,10 +20,6 @@ class StatsHandler {
     getStats() {
         return stats;
     }
-}
-
-export default function setupStats() {
-    return new StatsHandler();
 }
 
 export function switchStats() {
