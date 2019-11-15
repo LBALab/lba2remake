@@ -1,17 +1,6 @@
 {
     "presets": [
         "@babel/preset-env",
-        "@babel/preset-react",
-        "@babel/preset-typescript",
-        [
-            "minify",
-            {
-                "mangle": false
-            }
-        ]
-    ],
-    "plugins": [
-        "@babel/plugin-proposal-class-properties",
-        "@babel/plugin-proposal-object-rest-spread"
+        "@babel/preset-react"
     ]
 }
