@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as THREE from 'three';
 
-import { createRenderer } from '../../../../renderer';
+import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
 import { loadIslandScenery } from '../../../../island';
@@ -114,7 +114,7 @@ export default class Island extends FrameListener<Props, State> {
             } else {
                 this.canvas = document.createElement('canvas');
                 this.canvas.tabIndex = 0;
-                const renderer = createRenderer(
+                const renderer = new Renderer(
                     this.props.params,
                     this.canvas,
                     {},

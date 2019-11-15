@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as THREE from 'three';
 import {clone, omit} from 'lodash';
 
-import {createRenderer} from '../renderer';
+import Renderer from '../renderer';
 import {createGame} from '../game/index';
 import {mainGameLoop} from '../game/loop';
 import {createSceneManager} from '../game/scenes';
@@ -178,7 +178,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             } else {
                 this.canvas = document.createElement('canvas');
                 const game = this.state.game;
-                const renderer = createRenderer(this.props.params, this.canvas, {}, 'game');
+                const renderer = new Renderer(this.props.params, this.canvas, {}, 'game');
                 const sceneManager = await createSceneManager(
                     this.props.params,
                     game,

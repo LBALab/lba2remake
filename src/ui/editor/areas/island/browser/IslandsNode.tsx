@@ -1,7 +1,7 @@
 import * as React from 'react';
 import islandsInfo from '../../../../../island/data/islands';
 import DebugData, { saveMetaData } from '../../../DebugData';
-import { createRenderer } from '../../../../../renderer';
+import Renderer from '../../../../../renderer';
 
 const indexStyle = {
     position: 'absolute' as const,
@@ -111,7 +111,7 @@ function saveIcon(data, component) {
             && DebugData.scope.island.name === name
             && DebugData.scope.island.threeObject) {
             if (!iconRenderer) {
-                iconRenderer = createRenderer({webgl2: true}, iconsCanvas, {
+                iconRenderer = new Renderer({webgl2: true}, iconsCanvas, {
                     preserveDrawingBuffer: true
                 }, 'thumbnails');
             }

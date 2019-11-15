@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as THREE from 'three';
 
-import {createRenderer} from '../renderer';
+import Renderer from '../renderer';
 import {createGame} from '../game/index';
 import {mainGameLoop} from '../game/loop';
 import {createSceneManager} from '../game/scenes';
@@ -141,7 +141,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
             if (this.props.params.scene === -1) {
                 this.showMenu();
             }
-            const renderer = createRenderer(this.props.params, this.canvas, {vr: true}, 'game');
+            const renderer = new Renderer(this.props.params, this.canvas, {vr: true}, 'game');
             const sceneManager = await createSceneManager(
                 this.props.params,
                 game,

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {map} from 'lodash';
 import setupStats from './stats';
 import {EngineError} from '../crash_reporting';
+import { pure } from '../utils/decorators';
 
 const PixelRatioMode = {
     DEVICE: () => window.devicePixelRatio || 1.0,
@@ -17,100 +18,107 @@ export const PixelRatio = map(['DEVICE', 'DOUBLE', 'NORMAL', 'HALF', 'QUARTER'],
     name
 }));
 
-const TGT_SIZE = new THREE.Vector2();
-
 interface RendererOptions {
     vr?: boolean;
     preserveDrawingBuffer?: boolean;
 }
 
-export function createRenderer(
-    params,
-    canvas,
-    rendererOptions: RendererOptions = {},
-    type = 'unknown'
-) {
-    let pixelRatio = PixelRatio[2]; // SET NORMAL AS DEFAULT
-    const getPixelRatio = () => pixelRatio.getValue();
-    const threeRenderer = setupThreeRenderer(pixelRatio, canvas, params.webgl2, rendererOptions);
-    const stats = setupStats();
+const RSIZE = new THREE.Vector2();
 
-    if (rendererOptions.vr) {
-        threeRenderer.vr.enabled = true;
-        threeRenderer.vr.setReferenceSpaceType('eye-level');
-    }
+export default class Renderer {
+    private pixelRatioP: any;
+    private keyListener: EventListenerObject;
+    readonly canvas: HTMLCanvasElement;
+    readonly threeRenderer: THREE.WebGLRenderer;
+    readonly vr: boolean;
+    readonly type: string;
+    readonly stats;
 
-    // tslint:disable-next-line:no-console
-    const displayRenderMode = () => console.log(`[Starting renderer(${type})]
-    pixelRatio: ${pixelRatio.getValue()}
-    webgl: ${(threeRenderer as any).webglVersion}`);
-    displayRenderMode();
-
-    function keyListener(event) {
-        if (event.code === 'KeyR' && !event.ctrlKey && !event.metaKey) {
-            pixelRatio = PixelRatio[(pixelRatio.index + 1) % PixelRatio.length];
-            threeRenderer.setPixelRatio(pixelRatio.getValue());
-            // tslint:disable-next-line:no-console
-            console.log('pixelRatio:', pixelRatio.getValue());
-            renderer.resize();
-        }
-    }
-
-    const rSize = new THREE.Vector2();
-
-    const renderer = {
+    constructor(
+        params,
         canvas,
+        rendererOptions: RendererOptions = {},
+        type = 'unknown'
+    ) {
+        this.type = type;
+        this.pixelRatioP = PixelRatio[2]; // SET NORMAL AS DEFAULT
+        this.threeRenderer = setupThreeRenderer(
+            this.pixelRatioP,
+            canvas,
+            params.webgl2,
+            rendererOptions
+        );
+        this.canvas = canvas;
+        this.stats = setupStats();
 
-        render: (scene) => {
-            threeRenderer.getSize(rSize);
-            scene.camera.resize(rSize.x, rSize.y);
-            threeRenderer.render(scene.threeScene, scene.camera.threeCamera);
-        },
-
-        applySceneryProps: (props) => {
-            const sc = props.envInfo.skyColor;
-            const color = new THREE.Color(sc[0], sc[1], sc[2]);
-            const opacity = props.opacity !== undefined ? props.opacity : 1;
-            threeRenderer.setClearColor(color.getHex(), opacity);
-        },
-
-        stats,
-
-        resize: (
-            width = threeRenderer.getSize(TGT_SIZE).width,
-            height = threeRenderer.getSize(TGT_SIZE).height
-        ) => {
-            threeRenderer.setSize(width, height);
-        },
-
-        // @pure()
-        pixelRatio: () => getPixelRatio(),
-
-        setPixelRatio(value) { threeRenderer.setPixelRatio(value); },
-
-        dispose() {
-            // tslint:disable-next-line:no-console
-            console.log(`[Stopping renderer(${type})]`);
-            threeRenderer.dispose();
-            window.removeEventListener('keydown', keyListener);
-        },
-
-        threeRenderer,
-
-        vr: threeRenderer.vr.enabled,
-
-        isPresenting: () => {
-            if (!threeRenderer.vr.enabled)
-                return false;
-
-            const device = threeRenderer.vr.getDevice();
-            return device && device.isPresenting;
+        if (rendererOptions.vr) {
+            this.threeRenderer.vr.enabled = true;
+            this.threeRenderer.vr.setReferenceSpaceType('eye-level');
         }
-    };
+        this.vr = rendererOptions.vr || false;
 
-    window.addEventListener('keydown', keyListener);
+        const prInfo = `pixelRatio: ${this.pixelRatioP.getValue()}`;
+        const glInfo = `webgl: ${(this.threeRenderer as any).webglVersion}`;
+        // tslint:disable-next-line:no-console
+        console.log(`[Starting renderer(${type})]\n\t${prInfo}\n\t${glInfo}`);
+        this.keyListener = keyListener.bind(this);
+        window.addEventListener('keydown', this.keyListener);
+    }
 
-    return renderer;
+    render(scene) {
+        this.threeRenderer.getSize(RSIZE);
+        scene.camera.resize(RSIZE.x, RSIZE.y);
+        this.threeRenderer.render(scene.threeScene, scene.camera.threeCamera);
+    }
+
+    applySceneryProps(props) {
+        const sc = props.envInfo.skyColor;
+        const color = new THREE.Color(sc[0], sc[1], sc[2]);
+        const opacity = props.opacity !== undefined ? props.opacity : 1;
+        this.threeRenderer.setClearColor(color.getHex(), opacity);
+    }
+
+    resize(
+        width = this.threeRenderer.getSize(RSIZE).width,
+        height = this.threeRenderer.getSize(RSIZE).height
+    ) {
+        this.threeRenderer.setSize(width, height);
+    }
+
+    @pure()
+    pixelRatio() {
+        return this.pixelRatioP.getValue();
+    }
+
+    setPixelRatio(value) {
+        this.threeRenderer.setPixelRatio(value);
+    }
+
+    dispose() {
+        // tslint:disable-next-line:no-console
+        console.log(`[Stopping renderer(${this.type})]`);
+        this.threeRenderer.dispose();
+        window.removeEventListener('keydown', this.keyListener);
+    }
+
+    @pure()
+    isPresenting() {
+        if (!this.threeRenderer.vr.enabled)
+            return false;
+
+        const device = this.threeRenderer.vr.getDevice();
+        return device && device.isPresenting;
+    }
+}
+
+function keyListener(event) {
+    if (event.code === 'KeyR' && !event.ctrlKey && !event.metaKey) {
+        this.pixelRatioP = PixelRatio[(this.pixelRatioP.index + 1) % PixelRatio.length];
+        this.threeRenderer.setPixelRatio(this.pixelRatioP.getValue());
+        // tslint:disable-next-line:no-console
+        console.log('pixelRatio:', this.pixelRatioP.getValue());
+        this.resize();
+    }
 }
 
 function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
