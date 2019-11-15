@@ -14,7 +14,6 @@ import {
     isPureFunc
 } from './utils';
 import {CustomValue} from './Value';
-import {version} from '../../../../../../package.json';
 import {getParamNames} from '../../../../../utils';
 import { TickerProps } from '../../../../utils/Ticker';
 
@@ -131,11 +130,12 @@ export class InspectorAreaContent extends React.Component<Props, State> {
         };
     }
 
-    editBindings(path, parent, userData, root) {
+    editBindings(path, prettyPath, parent, userData, root) {
         this.setState({
             bindings: {
                 id: userData && userData.id,
                 path,
+                prettyPath,
                 parent,
                 params: (userData && userData.bindings && userData.bindings[path.join('.')]) || [],
                 root: root ||
@@ -197,7 +197,8 @@ export class InspectorAreaContent extends React.Component<Props, State> {
             {map(watches, (w, idx) => {
                 const props = {
                     sharedState: {
-                        path: w.path
+                        path: w.path,
+                        prettyPath: w.prettyPath
                     },
                     stateHandler: {
                         setPath: (path, prettyPath) => {
@@ -209,6 +210,7 @@ export class InspectorAreaContent extends React.Component<Props, State> {
                     userData: {
                         id: w.id,
                         path: w.path,
+                        prettyPath: w.prettyPath,
                         bindings: w.bindings,
                         rootName: w.rootName
                     }
@@ -267,7 +269,7 @@ export class InspectorAreaContent extends React.Component<Props, State> {
         if (!this.state.bindings)
             return null;
 
-        const {id, path, parent, params, browse, root} = this.state.bindings;
+        const {id, path, prettyPath, parent, params, browse, root} = this.state.bindings;
         const fct = getValue(path, (root && root()) || DebugData.scope, params);
 
         if (typeof (fct) !== 'function') {
@@ -289,7 +291,13 @@ export class InspectorAreaContent extends React.Component<Props, State> {
             if (root && root() === UtilFunctions) {
                 rootName = 'utils';
             }
-            this.props.stateHandler.addWatch(path, {[path.join('.')]: params}, id, rootName);
+            this.props.stateHandler.addWatch(
+                path,
+                prettyPath,
+                {[path.join('.')]: params},
+                id,
+                rootName
+            );
             this.props.stateHandler.setTab('watch');
             this.setState({bindings: null});
         };
@@ -529,8 +537,8 @@ export class InspectorAreaContent extends React.Component<Props, State> {
 
     renderValueBrowser(name, root) {
         const getRoot = () => root;
-        const editBindings = (path, parent) => {
-            this.editBindings(path, parent, null, getRoot);
+        const editBindings = (path, prettyPath, parent) => {
+            this.editBindings(path, prettyPath, parent, null, getRoot);
         };
         const node = InspectorNode(name, null, editBindings, getRoot);
         const content = makeContentComponent(node, null, contentStyle, 'dot');

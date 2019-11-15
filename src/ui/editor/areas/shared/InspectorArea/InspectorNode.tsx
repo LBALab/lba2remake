@@ -13,6 +13,10 @@ const getObj = (data, root) => {
     return data;
 };
 
+const filterKeys = keys => filter(keys, k => typeof(k) === 'number'
+                                        || (k.substr(0, 2) !== '__'
+                                            && k !== 'constructor'));
+
 const getKeys = (obj): (string | number)[] => {
     if (obj === null
         || obj === undefined
@@ -29,11 +33,11 @@ const getKeys = (obj): (string | number)[] => {
     }
     if (Object.getPrototypeOf(obj)) {
         return concat(
-            Object.getOwnPropertyNames(obj),
+            filterKeys(Object.getOwnPropertyNames(obj)),
             getKeys(Object.getPrototypeOf(obj))
         );
     }
-    return Object.keys(obj);
+    return filterKeys(Object.keys(obj));
 };
 
 const countKeys = (obj): number => {
@@ -51,10 +55,10 @@ const countKeys = (obj): number => {
         return obj.length;
     }
     if (Object.getPrototypeOf(obj)) {
-        return Object.getOwnPropertyNames(obj).length
+        return filterKeys(Object.getOwnPropertyNames(obj)).length
             + countKeys(Object.getPrototypeOf(obj));
     }
-    return Object.keys(obj).length;
+    return filterKeys(Object.keys(obj)).length;
 };
 
 const hash = (data, root) => {
@@ -99,7 +103,8 @@ export const InspectorNode = (
     editBindings,
     root = getRoot,
     parent = null,
-    path = []
+    path = [],
+    prettyPath = []
 ) => ({
     dynamic: true,
     icon: () => 'none',
@@ -125,7 +130,8 @@ export const InspectorNode = (
             editBindings,
             null,
             obj,
-            concat(path, name)
+            concat(path, name),
+            concat(prettyPath, name)
         );
     },
     childData: (data, idx, component) => {
@@ -186,7 +192,12 @@ export const InspectorNode = (
                     color: isPure ? '#BBBBBB' : '#666666'
                 };
                 const onClick = () =>
-                    editBindings(concat(path, name).slice(1), parent, component.props.userData);
+                    editBindings(
+                        concat(path, name).slice(1),
+                        concat(prettyPath, name).slice(1),
+                        parent,
+                        component.props.userData
+                    );
                 const style = {
                     color: isPure ? '#5cffa9' : '#3d955d',
                     wordBreak: 'break-word' as const
@@ -231,7 +242,7 @@ export const InspectorNode = (
         {
             name: 'Watch',
             onClick: (component) => {
-                addWatch(component.props.path);
+                addWatch(component.props.path, component.props.prettyPath);
             }
         },
     ],

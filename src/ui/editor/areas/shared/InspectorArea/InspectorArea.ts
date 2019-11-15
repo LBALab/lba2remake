@@ -20,12 +20,13 @@ const InspectorArea = {
         setPath(path, prettyPath) {
             this.setState({path, prettyPath});
         },
-        addWatch(path, bindings, editId, rootName) {
+        addWatch(path, prettyPath, bindings, editId, rootName) {
             const watches = this.state.watches || [];
             if (editId) {
                 const watch = find(watches, w => w.id === editId);
                 if (watch) {
                     watch.path = path;
+                    watch.prettyPath = prettyPath;
                     Object.assign(watch.bindings || {}, bindings);
                 }
             } else {
@@ -33,6 +34,7 @@ const InspectorArea = {
                 watches.push({
                     id,
                     path,
+                    prettyPath,
                     bindings,
                     rootName
                 });

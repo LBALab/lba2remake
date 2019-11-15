@@ -7,13 +7,10 @@ import {getParamNames} from '../../../../../utils';
 const allowedNameTypes = ['actor', 'zone', 'point'];
 
 export const UtilFunctions = {
-    // @pure()
     map: (collection, iteratee) => map(collection, iteratee),
 
-    // @pure()
     filter: (collection, predicate) => filter(collection, predicate),
 
-    // @pure()
     name: (obj) => {
         if (!obj) {
             throw new Error('Need to provide an object');
@@ -33,7 +30,6 @@ export const UtilFunctions = {
         return getObjectName(obj.type, DebugData.scope.scene.index, obj.index);
     },
 
-    // @pure()
     expression: expr => expr,
     __param_kind: {
         map: 'g|e,e',
@@ -45,6 +41,15 @@ export const UtilFunctions = {
         filter: ['', 'item,idx,collection'],
     }
 };
+
+const makePure = (fct) => {
+    fct.__pure_function = true;
+};
+
+makePure(UtilFunctions.map);
+makePure(UtilFunctions.filter);
+makePure(UtilFunctions.name);
+makePure(UtilFunctions.expression);
 
 export const RootSym = 'this';
 
