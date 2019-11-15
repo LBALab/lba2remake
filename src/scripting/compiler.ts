@@ -15,7 +15,7 @@ function compileScript(type, game, scene, actor) {
         }
         : {
             reentryOffset: 0,
-            stopped: false,
+            stopped: true,
             trackIndex: -1
         };
     script.context = {game, scene, actor, state, type};
