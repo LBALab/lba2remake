@@ -1,3 +1,4 @@
+// tslint:disable:max-line-length
 import * as React from 'react';
 
 const animStyle = `

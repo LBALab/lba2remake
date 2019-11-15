@@ -33,15 +33,20 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      # build
+      # lint
       - run:
-          name: Build
-          command: npm run -s build
+          name: Lint
+          command: npm run -s lint
 
       # Typecheck
       - run:
           name: Typecheck
           command: npm run -s typecheck
+
+      # build
+      - run:
+          name: Build
+          command: npm run -s build
 
       # Copy files over
       - run:

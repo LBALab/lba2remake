@@ -18,7 +18,7 @@ module.exports = {
         }
     },
     optimization: {
-        minimize: false
+        minimize: process.env.NODE_ENV === 'production' ? true : false
     },
     module: {
         rules: [{
@@ -32,13 +32,22 @@ module.exports = {
                         noEmit: false
                     }
                 }
-            }/*, {
-                loader: 'tslint-loader',
-                options: {
-                    emitErrors: true,
-                    formatter: 'msbuild'
+            }]
+        }, {
+            test: /\.tsx?$/,
+            include: /src/,
+            exclude: /node_modules/,
+            enforce: 'pre',
+            use: [
+                {
+                    loader: 'tslint-loader',
+                    options: {
+                        configFile: './tslint.yaml',
+                        tsConfigFile: './tsconfig.json',
+                        emitErrors: false
+                    }
                 }
-            }*/]
+            ]
         }, {
             test: /\.glsl?$/,
             use: [{

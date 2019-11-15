@@ -44,8 +44,10 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development node devserver.js",
     "dev:debug": "cross-env SRCMAP=true NODE_ENV=development node devserver.js",
+    "dev:prod": "cross-env NODE_ENV=production node devserver.js",
     "build": "cross-env NODE_ENV=production webpack -p",
-    "lint": "tslint -t codeFrame -p ./tsconfig.json",
+    "build:debug": "cross-env SRCMAP=true NODE_ENV=development webpack -p",
+    "lint": "tslint -t msbuild -p ./tsconfig.json",
     "typecheck": "tsc"
   },
   "repository": "https://github.com/agrande/lba2remake.git",

@@ -18,6 +18,7 @@ rules:
   function-paren-newline: [off]
   camelcase: [off]
   align: [off]
+  no-boolean-literal-compare: [off]
 
   class-methods-use-this: [off]
 

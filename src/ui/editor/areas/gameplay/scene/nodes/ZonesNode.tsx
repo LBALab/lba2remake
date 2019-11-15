@@ -50,6 +50,7 @@ const Zone = {
             value: zone => zone,
             render: (zone) => {
                 const {r, g, b} = zone.color;
+                // tslint:disable-next-line:max-line-length
                 const color = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},1)`;
                 return <span style={{color}}>{ZONE_TYPE[zone.props.type]}</span>;
             }

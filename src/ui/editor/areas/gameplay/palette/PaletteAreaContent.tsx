@@ -85,6 +85,7 @@ export default class PaletteAreaContent extends React.Component<Props, State> {
         };
 
         this.ramp = 0;
+        this.dragging = false;
 
         loadHqr('RESS.HQR').then((ress) => {
             this.palette = new Uint8Array(ress.getEntry(0));
@@ -435,7 +436,7 @@ export default class PaletteAreaContent extends React.Component<Props, State> {
 
     onMouseMove(e) {
         const { x, y } = this.getCoords(e);
-        if (this.dragging === true) {
+        if (this.dragging) {
             const bb = this.bbs[this.bbIndex];
             bb.xMax = x;
             bb.yMax = y;
@@ -464,7 +465,7 @@ export default class PaletteAreaContent extends React.Component<Props, State> {
     }
 
     onMouseUp() {
-        if (this.dragging === true) {
+        if (this.dragging) {
             this.draw();
             this.dragging = false;
             delete this.bbIndex;
