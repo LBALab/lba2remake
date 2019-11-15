@@ -10,6 +10,7 @@ import { loadSprite } from '../iso/sprites';
 import { getObjectName } from '../ui/editor/DebugData';
 import { createActorLabel } from '../ui/editor/labels';
 import { runScript } from './scripting';
+import { makePure } from '../utils/debug';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -186,12 +187,10 @@ export async function loadActor(
             this.physics.temp.destAngle = angleToRad(angle);
         },
 
-        // @pure()
         getDistance(pos) {
             return distance2D(this.physics.position, pos);
         },
 
-        // @pure()
         getDistanceLba(pos) {
             return getDistanceLba(this.getDistance(pos));
         },
@@ -287,6 +286,9 @@ export async function loadActor(
             });
         }
     };
+
+    makePure(actor.getDistance);
+    makePure(actor.getDistanceLba);
 
     const euler = new THREE.Euler(0, angleToRad(props.angle), 0, 'XZY');
     actor.physics.orientation.setFromEuler(euler);

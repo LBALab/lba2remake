@@ -26,6 +26,7 @@ import { createFPSCounter } from '../ui/vr/vrFPS';
 import { createVRGUI } from '../ui/vr/vrGUI';
 import { angleToRad } from '../utils/lba';
 import { getLanguageConfig } from '../lang';
+import { makePure } from '../utils/debug';
 
 declare global {
     var ga: Function;
@@ -37,7 +38,6 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
     let scene = null;
     let sceneMap = null;
     const sceneManager = {
-        // @pure()
         getScene() {
             return scene;
         },
@@ -130,6 +130,8 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             scene = null;
         }
     };
+
+    makePure(sceneManager.getScene);
 
     sceneMap = await loadSceneMapData();
 

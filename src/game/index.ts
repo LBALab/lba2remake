@@ -5,6 +5,7 @@ import {createAudioManager, createMusicManager} from '../audio';
 import {loadTexts} from '../text';
 import {getLanguageConfig, tr} from '../lang';
 import DebugData from '../ui/editor/DebugData';
+import { makePure } from '../utils/debug';
 
 export function createGame(params: any,
                            clock: any,
@@ -18,7 +19,7 @@ export function createGame(params: any,
     const audio = createAudioManager(state);
     const audioMenu = createMusicManager(state);
 
-    return {
+    const game = {
         setUiState,
         getUiState,
         controlsState: {
@@ -74,19 +75,10 @@ export function createGame(params: any,
             console.log('Loaded!');
         },
 
-        // @pure()
         isPaused: () => isPaused,
-
-        // @pure()
         isLoading: () => isLoading,
-
-        // @pure()
         getState: () => state,
-
-        // @pure()
         getAudioManager: () => audio,
-
-        // @pure()
         getAudioMenuManager: () => audioMenu,
 
         togglePause() {
@@ -151,6 +143,14 @@ export function createGame(params: any,
             this.texts = gameTexts;
         }
     };
+
+    makePure(game.isPaused);
+    makePure(game.isLoading);
+    makePure(game.getState);
+    makePure(game.getAudioManager);
+    makePure(game.getAudioMenuManager);
+
+    return game;
 }
 
 async function preloadFile(url, name) {

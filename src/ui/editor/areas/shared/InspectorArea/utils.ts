@@ -3,6 +3,7 @@ import {isFunction, map, filter, noop, concat} from 'lodash';
 import * as THREE from 'three';
 import DebugData, {getObjectName} from '../../../DebugData';
 import {getParamNames} from '../../../../../utils';
+import { makePure } from '../../../../../utils/debug';
 
 const allowedNameTypes = ['actor', 'zone', 'point'];
 
@@ -40,10 +41,6 @@ export const UtilFunctions = {
         map: ['', 'item,idx,collection'],
         filter: ['', 'item,idx,collection'],
     }
-};
-
-const makePure = (fct) => {
-    fct.__pure_function = true;
 };
 
 makePure(UtilFunctions.map);
