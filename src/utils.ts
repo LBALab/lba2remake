@@ -10,7 +10,6 @@ const ARGUMENT_NAMES = /([^\s,]+)/g;
 interface MetaFunction extends Function {
     __param_names?: [string];
     __pure_function?: boolean;
-    __location?: string;
 }
 
 export function getParamNames(func: MetaFunction) : string[] {
@@ -31,9 +30,6 @@ export function sBind(fct: MetaFunction, thisValue: any, ...args: any) {
         tgt.__param_names = paramNames.slice(args.length);
     if (fct.__pure_function) {
         tgt.__pure_function = fct.__pure_function;
-    }
-    if (fct.__location) {
-        tgt.__location = fct.__location;
     }
     return tgt;
 }

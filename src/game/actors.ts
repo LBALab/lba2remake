@@ -119,7 +119,6 @@ export async function loadActor(
         threeObject: null,
         animState,
 
-        /* @inspector(locate) */
         runScripts(time) {
             if (this.scripts) {
                 runScript(params, this.scripts.life, time);
@@ -127,7 +126,6 @@ export async function loadActor(
             }
         },
 
-        /* @inspector(locate) */
         reset() {
             this.resetAnimState();
             this.resetPhysics();
@@ -135,17 +133,14 @@ export async function loadActor(
             this.floorSound = -1;
         },
 
-        /* @inspector(locate) */
         resetAnimState() {
             resetAnimState(this.animState);
         },
 
-        /* @inspector(locate) */
         resetPhysics() {
             this.physics = initPhysics(props);
         },
 
-        /* @inspector(locate) */
         goto(point) {
             this.physics.temp.destination = point;
             let destAngle = angleTo(this.physics.position, point);
@@ -164,14 +159,12 @@ export async function loadActor(
             return this.getDistance(point);
         },
 
-        /* @inspector(locate) */
         gotoSprite(point, delta) {
             this.physics.position.lerp(point, delta);
             this.threeObject.position.copy(this.physics.position);
             return this.getDistance(point);
         },
 
-        /* @inspector(locate) */
         facePoint(point) {
             let destAngle = angleTo(this.physics.position, point);
             const signCurr = this.physics.temp.destAngle > 0 ? 1 : -1;
@@ -187,24 +180,22 @@ export async function loadActor(
             this.props.runtimeFlags.isTurning = true;
         },
 
-        /* @inspector(locate) */
         setAngle(angle) {
             // this.props.runtimeFlags.isTurning = true;
             this.props.angle = angle;
             this.physics.temp.destAngle = angleToRad(angle);
         },
 
-        /* @inspector(locate, pure) */
+        // @pure()
         getDistance(pos) {
             return distance2D(this.physics.position, pos);
         },
 
-        /* @inspector(locate, pure) */
+        // @pure()
         getDistanceLba(pos) {
             return getDistanceLba(this.getDistance(pos));
         },
 
-        /* @inspector(locate) */
         stop() {
             this.props.runtimeFlags.isWalking = false;
             this.props.runtimeFlags.isTurning = false;
@@ -212,7 +203,6 @@ export async function loadActor(
             delete this.physics.temp.destination;
         },
 
-        /* @inspector(locate) */
         async loadMesh() {
             const name = getObjectName('actor',
                             this.props.sceneIndex,
@@ -267,7 +257,6 @@ export async function loadActor(
             }
         },
 
-        /* @inspector(locate) */
         setBody(scene, index) {
             if (this.props.bodyIndex === index) {
                 return;
@@ -276,7 +265,6 @@ export async function loadActor(
             this.reload(scene);
         },
 
-        /* @inspector(locate) */
         setAnim(index) {
             if (this.props.animIndex === index) {
                 return;
@@ -285,7 +273,6 @@ export async function loadActor(
             this.resetAnimState();
         },
 
-        /* @inspector(locate) */
         reload(scene) {
             if (this.threeObject) {
                 this.threeObject.visible = false;

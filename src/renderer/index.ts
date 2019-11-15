@@ -61,14 +61,12 @@ export function createRenderer(
     const renderer = {
         canvas,
 
-        /* @inspector(locate) */
         render: (scene) => {
             threeRenderer.getSize(rSize);
             scene.camera.resize(rSize.x, rSize.y);
             threeRenderer.render(scene.threeScene, scene.camera.threeCamera);
         },
 
-        /* @inspector(locate) */
         applySceneryProps: (props) => {
             const sc = props.envInfo.skyColor;
             const color = new THREE.Color(sc[0], sc[1], sc[2]);
@@ -78,7 +76,6 @@ export function createRenderer(
 
         stats,
 
-        /* @inspector(locate) */
         resize: (
             width = threeRenderer.getSize(TGT_SIZE).width,
             height = threeRenderer.getSize(TGT_SIZE).height
@@ -86,13 +83,11 @@ export function createRenderer(
             threeRenderer.setSize(width, height);
         },
 
-        /* @inspector(locate, pure) */
+        // @pure()
         pixelRatio: () => getPixelRatio(),
 
-        /* @inspector(locate) */
         setPixelRatio(value) { threeRenderer.setPixelRatio(value); },
 
-        /* @inspector(locate) */
         dispose() {
             // tslint:disable-next-line:no-console
             console.log(`[Stopping renderer(${type})]`);

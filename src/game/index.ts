@@ -38,13 +38,11 @@ export function createGame(params: any,
             ctrlTriggers: []
         },
 
-        /* @inspector(locate) */
         resetState() {
             state = createState();
             this.resetControlsState();
         },
 
-        /* @inspector(locate) */
         resetControlsState() {
             this.controlsState.controlVector.set(0, 0),
             this.controlsState.action = 0;
@@ -54,7 +52,6 @@ export function createGame(params: any,
             this.controlsState.weapon = 0;
         },
 
-        /* @inspector(locate) */
         loading(index: number) {
             isPaused = true;
             isLoading = true;
@@ -64,7 +61,6 @@ export function createGame(params: any,
             console.log(`Loading scene #${index}`);
         },
 
-        /* @inspector(locate) */
         loaded(wasPaused: boolean = false) {
             isPaused = wasPaused;
             if (!isPaused) {
@@ -78,22 +74,21 @@ export function createGame(params: any,
             console.log('Loaded!');
         },
 
-        /* @inspector(locate, pure) */
+        // @pure()
         isPaused: () => isPaused,
 
-        /* @inspector(locate, pure) */
+        // @pure()
         isLoading: () => isLoading,
 
-        /* @inspector(locate, pure) */
+        // @pure()
         getState: () => state,
 
-        /* @inspector(locate, pure) */
+        // @pure()
         getAudioManager: () => audio,
 
-        /* @inspector(locate, pure) */
+        // @pure()
         getAudioMenuManager: () => audioMenu,
 
-        /* @inspector(locate) */
         togglePause() {
             if (isPaused) {
                 this.resume();
@@ -109,7 +104,6 @@ export function createGame(params: any,
             };
         },
 
-        /* @inspector(locate) */
         pause: () => {
             isPaused = true;
             clock.stop();
@@ -123,7 +117,6 @@ export function createGame(params: any,
             console.log('Pause');
         },
 
-        /* @inspector(locate) */
         resume: () => {
             if (isPaused) {
                 const musicSource = audio.getMusicSource();
@@ -139,7 +132,6 @@ export function createGame(params: any,
             }
         },
 
-        /* @inspector(locate) */
         async preload() {
             const {language, languageVoice} = getLanguageConfig();
             const [menuTexts, gameTexts] = await Promise.all([

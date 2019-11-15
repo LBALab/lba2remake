@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
 import * as THREE from 'three';
-import {map, filter, concat, isFunction, isEmpty, uniq} from 'lodash';
+import {map, filter, concat, isFunction, isEmpty, uniq, times} from 'lodash';
 import DebugData from '../../../DebugData';
 import {CustomValue, Value} from './Value';
 import {RootSym, applyFunction, isPureFunc} from './utils';
@@ -13,11 +13,33 @@ const getObj = (data, root) => {
     return data;
 };
 
-const getKeysBase = obj => ((Object.getPrototypeOf(obj))
-    ? concat(Object.keys(obj), getKeys(Object.getPrototypeOf(obj)))
-    : Object.keys(obj));
+const getKeysBase = (obj): (string | number)[] => {
+    if (obj === null
+        || obj === undefined
+        || obj === {}
+        || obj instanceof Function
+        || typeof(obj) === 'number'
+        || typeof(obj) === 'string'
+        || typeof(obj) === 'boolean'
+    ) {
+        return [];
+    }
+    if (Array.isArray(obj)) {
+        return times(obj.length);
+    }
+    if (Object.getPrototypeOf(obj)) {
+        return concat(
+            Object.getOwnPropertyNames(obj),
+            getKeysBase(Object.getPrototypeOf(obj))
+        );
+    }
+    return Object.keys(obj);
+};
 
-const getKeys = obj => uniq(filter(getKeysBase(obj || []), k => k.substr(0, 2) !== '__'));
+const getKeys = obj => uniq(
+    filter(getKeysBase(obj || []),
+    k => typeof(k) === 'number' || k.substr(0, 2) !== '__')
+);
 
 const hash = (data, root) => {
     const obj = getObj(data, root);
@@ -66,12 +88,6 @@ export const InspectorNode = (
     dynamic: true,
     icon: () => 'none',
     name: () => name,
-    title: (data) => {
-        const obj = getObj(data, root);
-        if (obj && obj.__location)
-            return obj.__location;
-        return undefined;
-    },
     numChildren: (data, ignored, component) => {
         let obj = getObj(data, root);
         if (isPureFunc(obj, name, parent)) {

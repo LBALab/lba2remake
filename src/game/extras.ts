@@ -82,7 +82,6 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
         hitStrength: 0,
         time,
 
-        /* @inspector(locate) */
         async loadMesh() {
             this.threeObject = new THREE.Object3D();
             this.threeObject.position.copy(this.physics.position);

@@ -15,6 +15,7 @@ import {sBind} from '../utils';
 import {loadVRScene, updateVRScene} from './vr/vrScene';
 import {tr} from '../lang';
 import { TickerProps } from './utils/Ticker';
+import { pure } from '../utils/decorators';
 
 interface VRGameUIProps extends TickerProps {
     params: any;
@@ -102,7 +103,6 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         clock.start();
     }
 
-    /* @inspector(locate) */
     setUiState(state, callback) {
         this.setState(state, () => {
             if (callback) {
@@ -111,7 +111,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         });
     }
 
-    /* @inspector(locate, pure) */
+    @pure()
     getUiState() {
         return this.state;
     }

@@ -358,7 +358,6 @@ export class InspectorAreaContent extends React.Component<Props, State> {
                 {path.join('.')}
                 (<span style={{color: 'grey'}}>{paramNames.join(', ')}</span>)
             </div>
-            {this.renderDocumentation(fct)}
             {map(paramNames, (p, idx) => this.renderBindingParam(p, idx, browse))}
             <div style={itemStyle}>
                 {this.renderValueBrowser('result', result)}
@@ -373,30 +372,6 @@ export class InspectorAreaContent extends React.Component<Props, State> {
                 </button>
             </div>
         </div>;
-    }
-
-    renderDocumentation(fct) {
-        const linkStyle = {
-            textAlign: 'center' as const,
-            color: 'grey',
-            textDecoration: 'none' as const,
-            padding: '2px 8px'
-        };
-        if (fct && fct.__location) {
-            const [filename, line] = fct.__location.split(':');
-            let tag = 'master';
-            if (!version.match('-dev')) {
-                tag = `v${version}`;
-            }
-            const href = `https://github.com/agrande/lba2remake/blob/${tag}/${filename}#L${line}`;
-            return <div style={itemStyle}>
-                Source:
-                <a href={href} style={linkStyle} target="_blank" rel="noopener noreferrer">
-                    {fct.__location}
-                </a>
-            </div>;
-        }
-        return null;
     }
 
     renderBindingParam(p, idx, browse) {

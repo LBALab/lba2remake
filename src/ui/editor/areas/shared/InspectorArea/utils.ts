@@ -7,13 +7,13 @@ import {getParamNames} from '../../../../../utils';
 const allowedNameTypes = ['actor', 'zone', 'point'];
 
 export const UtilFunctions = {
-    /* @inspector(pure) */
+    // @pure()
     map: (collection, iteratee) => map(collection, iteratee),
 
-    /* @inspector(pure) */
+    // @pure()
     filter: (collection, predicate) => filter(collection, predicate),
 
-    /* @inspector(pure) */
+    // @pure()
     name: (obj) => {
         if (!obj) {
             throw new Error('Need to provide an object');
@@ -33,7 +33,7 @@ export const UtilFunctions = {
         return getObjectName(obj.type, DebugData.scope.scene.index, obj.index);
     },
 
-    /* @inspector(pure) */
+    // @pure()
     expression: expr => expr,
     __param_kind: {
         map: 'g|e,e',

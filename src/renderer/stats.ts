@@ -1,22 +1,29 @@
 import Stats from './tools/Stats';
+import { pure } from '../utils/decorators';
 
 let stats = null;
 
+class StatsHandler {
+    begin() {
+        if (stats) {
+            stats.begin();
+        }
+    }
+
+    end() {
+        if (stats) {
+            stats.end();
+        }
+    }
+
+    @pure()
+    getStats() {
+        return stats;
+    }
+}
+
 export default function setupStats() {
-    return {
-        begin: () => {
-            if (stats) {
-                stats.begin();
-            }
-        },
-        end: () => {
-            if (stats) {
-                stats.end();
-            }
-        },
-        /* @inspector(locate, pure) */
-        getStats: () => stats
-    };
+    return new StatsHandler();
 }
 
 export function switchStats() {

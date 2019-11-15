@@ -27,6 +27,7 @@ import {KeyHelpIcon, KeyHelpScreen} from './game/KeyboardHelp';
 import {sBind} from '../utils';
 import {TickerProps} from './utils/Ticker';
 import {updateLabels} from './editor/labels';
+import { pure } from '../utils/decorators';
 
 interface GameUIProps extends TickerProps {
     saveMainData?: Function;
@@ -136,12 +137,11 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         }
     }
 
-    /* @inspector(locate) */
     setUiState(state) {
         this.setState(state, this.saveData);
     }
 
-    /* @inspector(locate, pure) */
+    @pure()
     getUiState() {
         return this.state;
     }

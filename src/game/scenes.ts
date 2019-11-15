@@ -37,18 +37,16 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
     let scene = null;
     let sceneMap = null;
     const sceneManager = {
-        /* @inspector(locate, pure) */
+        // @pure()
         getScene() {
             return scene;
         },
 
-        /* @inspector(locate) */
         hideMenuAndGoto(index, wasPaused = false) {
             hideMenu(wasPaused);
             return this.goto(index, false, wasPaused);
         },
 
-        /* @inspector(locate) */
         async goto(index, force = false, wasPaused = false, teleport = true) {
             if ((!force && scene && index === scene.index) || game.isLoading())
                 return scene;
@@ -114,7 +112,6 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             return scene;
         },
 
-        /* @inspector(locate) */
         async next() {
             if (scene) {
                 const nextIdx = (scene.index + 1) % sceneMap.length;
@@ -122,7 +119,6 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             }
         },
 
-        /* @inspector(locate) */
         async previous() {
             if (scene) {
                 const previousIdx = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
@@ -248,7 +244,6 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         vrGUI,
         is3DCam,
 
-        /* @inspector(locate) */
         reset() {
             each(this.actors, (actor) => {
                 actor.reset();
@@ -261,7 +256,6 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             scene.variables = createSceneVariables(scene);
         },
 
-        /* @inspector(locate) */
         resetCamera(params) {
             if (!scene.isIsland) {
                 if (!renderer.vr) {
@@ -275,12 +269,10 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             }
         },
 
-        /* @inspector(locate) */
         removeMesh(threeObject) {
             sceneNode.remove(threeObject);
         },
 
-        /* @inspector(locate) */
         addMesh(threeObject) {
             sceneNode.add(threeObject);
         }

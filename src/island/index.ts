@@ -164,7 +164,6 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         updateSeaTime: (time) => {
             seaTimeUniform.value = time.elapsed;
         },
-        /* @inspector(locate) */
         update: (game, scene, time) => {
             if (scene) {
                 updateShadows(scene, matByName);
