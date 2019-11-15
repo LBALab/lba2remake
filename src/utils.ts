@@ -4,7 +4,8 @@ export function bits(bitfield: number, offset: number, length: number) : number 
     return (bitfield & ((((1 << length) - 1)) << offset)) >> offset;
 }
 
-const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+// tslint:disable-next-line:max-line-length
+const STRIP_COMMENTS = /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,\)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,\)]*))/mg;
 const ARGUMENT_NAMES = /([^\s,]+)/g;
 
 interface MetaFunction extends Function {
