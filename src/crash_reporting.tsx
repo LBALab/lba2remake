@@ -8,11 +8,13 @@ let sent_report = false;
 
 export class EngineError extends Error {
     type: string;
+    rootCause: Error;
 
-    constructor(type) {
+    constructor(type, rootCause) {
         super();
         this.name = 'EngineError';
         this.type = type;
+        this.rootCause = rootCause;
     }
 }
 
@@ -84,23 +86,25 @@ const center_vert = extend({}, center, {
     textAlign: 'center'
 });
 
+const link = {
+    color: 'grey'
+};
+
 const reload = () => location.reload();
 
 export function CrashHandler(props) {
-    let report_on = true;
-    let reload_on = true;
     let message = <div>
         <b>Error: </b>
         <i style={{color: 'red'}}>{props.error.message}</i>
     </div>;
     if (props.error.data && props.error.data.name === 'EngineError') {
         if (props.error.data.type === 'webgl') {
-            report_on = false;
-            reload_on = false;
             message = <div>
                 It seems like your browser does not support WebGL.<br/>
-                Check out why <a href="https://get.webgl.org/">here.</a><br/>
-                WebGL is required to run this game.
+                Check out why <a href="https://get.webgl.org/" style={link}>here.</a><br/>
+                WebGL is required to run this game.<br/><br/>
+                <b>Error: </b>
+                <i style={{color: 'red'}}>{props.error.data.rootCause.message}</i>
             </div>;
         }
     }
@@ -109,13 +113,11 @@ export function CrashHandler(props) {
             <img src="images/broken.png"/>
             <h1>Ooops! Something went wrong...</h1>
             {message}
-            {(report_on || reload_on) ? <hr style={{margin: '3em 6em'}}/> : null}
-            {report_on ?
-                <button style={bigButton} onClick={sendCrashReport.bind(null, props.error)}>
-                    Send crash report
-                </button>
-                : null}
-            {reload_on ? <button style={bigButton} onClick={reload}>Reload app!</button> : null}
+            <hr style={{margin: '3em 6em'}}/>
+            <button style={bigButton} onClick={sendCrashReport.bind(null, props.error)}>
+                Send crash report
+            </button>
+            <button style={bigButton} onClick={reload}>Reload app!</button>
         </div>
     </div>;
 }

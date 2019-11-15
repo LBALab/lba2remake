@@ -132,6 +132,6 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
         }
         return renderer;
     } catch (err) {
-        throw new EngineError('webgl');
+        throw new EngineError('webgl', err);
     }
 }
