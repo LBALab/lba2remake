@@ -13,7 +13,7 @@ const getObj = (data, root) => {
     return data;
 };
 
-const getKeysBase = (obj): (string | number)[] => {
+const getKeys = (obj): (string | number)[] => {
     if (obj === null
         || obj === undefined
         || obj === {}
@@ -30,16 +30,32 @@ const getKeysBase = (obj): (string | number)[] => {
     if (Object.getPrototypeOf(obj)) {
         return concat(
             Object.getOwnPropertyNames(obj),
-            getKeysBase(Object.getPrototypeOf(obj))
+            getKeys(Object.getPrototypeOf(obj))
         );
     }
     return Object.keys(obj);
 };
 
-const getKeys = obj => uniq(
-    filter(getKeysBase(obj || []),
-    k => typeof(k) === 'number' || k.substr(0, 2) !== '__')
-);
+const countKeys = (obj): number => {
+    if (obj === null
+        || obj === undefined
+        || obj === {}
+        || obj instanceof Function
+        || typeof(obj) === 'number'
+        || typeof(obj) === 'string'
+        || typeof(obj) === 'boolean'
+    ) {
+        return 0;
+    }
+    if (Array.isArray(obj)) {
+        return obj.length;
+    }
+    if (Object.getPrototypeOf(obj)) {
+        return Object.getOwnPropertyNames(obj).length
+            + countKeys(Object.getPrototypeOf(obj));
+    }
+    return Object.keys(obj).length;
+};
 
 const hash = (data, root) => {
     const obj = getObj(data, root);
@@ -88,6 +104,7 @@ export const InspectorNode = (
     dynamic: true,
     icon: () => 'none',
     name: () => name,
+    key: (obj, idx) => idx,
     numChildren: (data, ignored, component) => {
         let obj = getObj(data, root);
         if (isPureFunc(obj, name, parent)) {
@@ -95,7 +112,7 @@ export const InspectorNode = (
         }
         if (typeof (obj) === 'string' || obj instanceof CustomValue)
             return 0;
-        return getKeys(obj).length;
+        return countKeys(obj);
     },
     child: (data, idx, component) => {
         let obj = getObj(data, root);
@@ -120,7 +137,7 @@ export const InspectorNode = (
             obj = applyFctFromComponent(obj, parent, component);
         }
         const k = getKeys(obj)[idx];
-        return obj[k];
+        return obj && obj[k];
     },
     color: (data) => {
         const obj = getObj(data, root);

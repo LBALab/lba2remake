@@ -463,7 +463,10 @@ export default class OutlinerNode extends React.Component<Props, State> {
         const rootName = this.props.rootName;
         const childName = child.dynamic ? call('name', child, childData, idx, this) : child.name;
         const key = child.dynamic ? call('key', child, childData, idx, this) : child.key;
-        const path = concat(this.props.path, key || childName || idx);
+        const path = concat(
+            this.props.path,
+            key !== null && key !== undefined ? key : (childName || idx)
+        );
         const prettyPath = concat(this.props.prettyPath, childName || idx);
         return <OutlinerNode
             key={path.join('/')}

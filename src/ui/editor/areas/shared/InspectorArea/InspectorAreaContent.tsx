@@ -200,8 +200,8 @@ export class InspectorAreaContent extends React.Component<Props, State> {
                         path: w.path
                     },
                     stateHandler: {
-                        setPath: (path) => {
-                            this.props.stateHandler.setPath(path);
+                        setPath: (path, prettyPath) => {
+                            this.props.stateHandler.setPath(path, prettyPath);
                             this.props.stateHandler.setTab('explore');
                         },
                     },

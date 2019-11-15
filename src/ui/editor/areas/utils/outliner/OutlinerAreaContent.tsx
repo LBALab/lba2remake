@@ -169,7 +169,9 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
                                 ? child.key(childData, i)
                                 : child.name(childData, i);
                         } else {
-                            childKey = child.key || child.name;
+                            childKey = child.key !== null && child.key !== undefined
+                                ? child.key
+                                : child.name;
                         }
                         if (childKey === key) {
                             childNode = child;

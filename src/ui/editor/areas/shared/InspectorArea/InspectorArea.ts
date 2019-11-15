@@ -9,6 +9,7 @@ const InspectorArea = {
     content: InspectorAreaContent,
     getInitialState: () => ({
         path: [],
+        prettyPath: [],
         watches: [],
         tab: 'explore'
     }),
@@ -16,8 +17,8 @@ const InspectorArea = {
         setTab(tab) {
             this.setState({tab});
         },
-        setPath(path) {
-            this.setState({path});
+        setPath(path, prettyPath) {
+            this.setState({path, prettyPath});
         },
         addWatch(path, bindings, editId, rootName) {
             const watches = this.state.watches || [];
