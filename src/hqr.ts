@@ -1,5 +1,3 @@
-import {each} from 'lodash';
-
 interface Entry {
     type: number;
     offset: number;

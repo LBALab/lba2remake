@@ -14,9 +14,11 @@ rules:
   trailing-comma: [off]
   prefer-destructuring: [off]
   default-case: [off]
+  function-name: [off]
   function-paren-newline: [off]
   camelcase: [off]
   align: [off]
+  no-boolean-literal-compare: [off]
 
   class-methods-use-this: [off]
 
@@ -24,13 +26,14 @@ rules:
   object-curly-newline: [off]
   object-shorthand-properties-first: [off]
 
+  no-console: [true, log, warn]
   no-lonely-if: [off]
   no-continue: [off]
   no-bitwise: [off]
   no-param-reassign: [off]
   no-parameter-reassignment: [off]
   no-use-before-define: [off]
-  no-shadow: [warn]
+  no-shadowed-variable: [true]
   no-nested-ternary: [off]
   no-restricted-globals: [off]
   no-restricted-properties: [off]

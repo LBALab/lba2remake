@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { getVR3DCamera } from '../../cameras/vr/vr3d';
 import { createFPSCounter } from './vrFPS';
 import { createMenu, updateMenu } from './vrMenu';
+import { createVideoScreen } from './vrVideo';
+
+let videoScreen = null;
 
 export function loadVRScene(game, renderer) {
     const threeScene = new THREE.Scene();
@@ -35,6 +38,16 @@ export function loadVRScene(game, renderer) {
 }
 
 export function updateVRScene(vrScene, presenting, game, sceneManager) {
-    vrScene.visible = presenting;
+    vrScene.threeScene.visible = presenting;
     updateMenu(game, sceneManager);
+
+    const { video } = game.getUiState();
+    if (video && videoScreen === null) {
+        videoScreen = createVideoScreen(video);
+        vrScene.threeScene.add(videoScreen.mesh);
+    } else if (!video && videoScreen) {
+        vrScene.threeScene.remove(videoScreen.mesh);
+        videoScreen.videoElem.pause();
+        videoScreen = null;
+    }
 }

@@ -5,11 +5,9 @@ import {createAudioManager, createMusicManager} from '../audio';
 import {loadTexts} from '../text';
 import {getLanguageConfig, tr} from '../lang';
 import DebugData from '../ui/editor/DebugData';
+import { makePure } from '../utils/debug';
 
-export function createGame(params: any,
-                           clock: any,
-                           setUiState: Function,
-                           getUiState: Function) {
+export function createGame(clock: any, setUiState: Function, getUiState: Function) {
     let isPaused = false;
     let isLoading = false;
 
@@ -18,7 +16,7 @@ export function createGame(params: any,
     const audio = createAudioManager(state);
     const audioMenu = createMusicManager(state);
 
-    return {
+    const game = {
         setUiState,
         getUiState,
         controlsState: {
@@ -38,13 +36,11 @@ export function createGame(params: any,
             ctrlTriggers: []
         },
 
-        /* @inspector(locate) */
         resetState() {
             state = createState();
             this.resetControlsState();
         },
 
-        /* @inspector(locate) */
         resetControlsState() {
             this.controlsState.controlVector.set(0, 0),
             this.controlsState.action = 0;
@@ -54,17 +50,15 @@ export function createGame(params: any,
             this.controlsState.weapon = 0;
         },
 
-        /* @inspector(locate) */
         loading(index: number) {
             isPaused = true;
             isLoading = true;
             clock.stop();
             this.setUiState({loading: true});
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.log(`Loading scene #${index}`);
         },
 
-        /* @inspector(locate) */
         loaded(wasPaused: boolean = false) {
             isPaused = wasPaused;
             if (!isPaused) {
@@ -74,26 +68,16 @@ export function createGame(params: any,
             }
             isLoading = false;
             this.setUiState({loading: false});
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.log('Loaded!');
         },
 
-        /* @inspector(locate, pure) */
         isPaused: () => isPaused,
-
-        /* @inspector(locate, pure) */
         isLoading: () => isLoading,
-
-        /* @inspector(locate, pure) */
         getState: () => state,
-
-        /* @inspector(locate, pure) */
         getAudioManager: () => audio,
-
-        /* @inspector(locate, pure) */
         getAudioMenuManager: () => audioMenu,
 
-        /* @inspector(locate) */
         togglePause() {
             if (isPaused) {
                 this.resume();
@@ -109,7 +93,6 @@ export function createGame(params: any,
             };
         },
 
-        /* @inspector(locate) */
         pause: () => {
             isPaused = true;
             clock.stop();
@@ -119,11 +102,10 @@ export function createGame(params: any,
             voiceSource.suspend();
             const musicSource = audio.getMusicSource();
             musicSource.suspend();
-            // eslint-disable-next-line no-console
+            // tslint:disable-next-line:no-console
             console.log('Pause');
         },
 
-        /* @inspector(locate) */
         resume: () => {
             if (isPaused) {
                 const musicSource = audio.getMusicSource();
@@ -134,12 +116,11 @@ export function createGame(params: any,
                 sfxSource.resume();
                 isPaused = false;
                 clock.start();
-                // eslint-disable-next-line no-console
+                // tslint:disable-next-line:no-console
                 console.log('Resume');
             }
         },
 
-        /* @inspector(locate) */
         async preload() {
             const {language, languageVoice} = getLanguageConfig();
             const [menuTexts, gameTexts] = await Promise.all([
@@ -159,6 +140,14 @@ export function createGame(params: any,
             this.texts = gameTexts;
         }
     };
+
+    makePure(game.isPaused);
+    makePure(game.isLoading);
+    makePure(game.getState);
+    makePure(game.getAudioManager);
+    makePure(game.getAudioMenuManager);
+
+    return game;
 }
 
 async function preloadFile(url, name) {

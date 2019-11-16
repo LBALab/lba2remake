@@ -19,8 +19,7 @@ export function updateActor(
     game: any,
     scene: any,
     actor: Actor,
-    time: any,
-    step: any
+    time: any
 ) {
     if ((params.mobile || params.clipActors)
         && scene.isIsland
@@ -41,7 +40,7 @@ export function updateActor(
         actor.threeObject.matrixAutoUpdate = true;
         actor.threeObject.visible = actor.isVisible;
     }
-    actor.runScripts(time, step);
+    actor.runScripts(time);
 
     if (actor.model !== null && actor.threeObject && actor.threeObject.visible) {
         const model = actor.model;

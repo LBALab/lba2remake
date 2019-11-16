@@ -23,8 +23,10 @@ import { getIso3DCamera } from '../cameras/iso3d';
 import { getVR3DCamera } from '../cameras/vr/vr3d';
 import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { createFPSCounter } from '../ui/vr/vrFPS';
+import { createVRGUI } from '../ui/vr/vrGUI';
 import { angleToRad } from '../utils/lba';
 import { getLanguageConfig } from '../lang';
+import { makePure } from '../utils/debug';
 
 declare global {
     var ga: Function;
@@ -36,18 +38,15 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
     let scene = null;
     let sceneMap = null;
     const sceneManager = {
-        /* @inspector(locate, pure) */
         getScene() {
             return scene;
         },
 
-        /* @inspector(locate) */
-        hideMenuAndGoto(index, wasPaused) {
+        hideMenuAndGoto(index, wasPaused = false) {
             hideMenu(wasPaused);
             return this.goto(index, false, wasPaused);
         },
 
-        /* @inspector(locate) */
         async goto(index, force = false, wasPaused = false, teleport = true) {
             if ((!force && scene && index === scene.index) || game.isLoading())
                 return scene;
@@ -113,7 +112,6 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             return scene;
         },
 
-        /* @inspector(locate) */
         async next() {
             if (scene) {
                 const nextIdx = (scene.index + 1) % sceneMap.length;
@@ -121,7 +119,6 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             }
         },
 
-        /* @inspector(locate) */
         async previous() {
             if (scene) {
                 const previousIdx = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
@@ -133,6 +130,8 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             scene = null;
         }
     };
+
+    makePure(sceneManager.getScene);
 
     sceneMap = await loadSceneMapData();
 
@@ -161,12 +160,13 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         sceneData.actors,
         actor => loadActor(params, is3DCam, envInfo, sceneData.ambience, actor, parent)
     ));
-    const points = map(sceneData.points, props => loadPoint(props, is3DCam));
+    const points = map(sceneData.points, props => loadPoint(props));
     const zones = map(sceneData.zones, props => loadZone(props, is3DCam));
 
     let scenery = null;
     let threeScene = null;
     let camera = null;
+    let vrGUI = null;
     if (!parent) {
         threeScene = new THREE.Scene();
         threeScene.matrixAutoUpdate = false;
@@ -180,12 +180,16 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 camera = get3DCamera();
             }
         } else {
-            scenery = await loadIsometricScenery(params, renderer, indexInfo.index);
+            scenery = await loadIsometricScenery(indexInfo.index);
             threeScene.name = 'iso_scene';
             if (renderer.vr) {
-                camera = getVRIsoCamera();
-            } else if (params.iso3d) {
-                camera = getIso3DCamera();
+                camera = params.isoCam3d
+                    ? getVR3DCamera()
+                    : getVRIsoCamera();
+            } else if (params.iso3d || params.isoCam3d) {
+                camera = params.isoCam3d
+                    ? get3DCamera()
+                    : getIso3DCamera();
             } else {
                 camera = getIsometricCamera();
             }
@@ -196,6 +200,8 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 const fps = createFPSCounter(renderer);
                 fps.visible = false;
                 camera.controlNode.add(fps);
+                vrGUI = createVRGUI(renderer);
+                camera.controlNode.add(vrGUI);
             }
         }
         threeScene.add(scenery.threeObject);
@@ -237,13 +243,14 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         zoneState: { listener: null, ended: false },
         goto: sBind(sceneManager.goto, sceneManager),
         vr: renderer.vr,
+        vrGUI,
+        is3DCam,
 
-        /* @inspector(locate) */
         reset() {
             each(this.actors, (actor) => {
                 actor.reset();
             });
-            loadScripts(params, game, scene);
+            loadScripts(game, scene);
             scene.firstFrame = true;
             if (game.isPaused()) {
                 DebugData.step = true;
@@ -251,11 +258,10 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             scene.variables = createSceneVariables(scene);
         },
 
-        /* @inspector(locate) */
-        resetCamera(params) {
+        resetCamera(newParams) {
             if (!scene.isIsland) {
                 if (!renderer.vr) {
-                    if (params.iso3d) {
+                    if (newParams.iso3d) {
                         scene.camera = getIso3DCamera();
                     } else {
                         scene.camera = getIsometricCamera();
@@ -265,12 +271,10 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             }
         },
 
-        /* @inspector(locate) */
         removeMesh(threeObject) {
             sceneNode.remove(threeObject);
         },
 
-        /* @inspector(locate) */
         addMesh(threeObject) {
             sceneNode.add(threeObject);
         }
@@ -289,7 +293,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             );
         }
     }
-    loadScripts(params, game, scene);
+    loadScripts(game, scene);
     scene.variables = createSceneVariables(scene);
     scene.usedVarGames = findUsedVarGames(scene);
     // Kill twinsen if side scene
@@ -414,6 +418,16 @@ export function addExtraToScene(scene, extra) {
     }
 }
 
+export function removeExtraFromScene(scene, extra) {
+    const idx = scene.extras.indexOf(extra);
+    if (idx !== -1) {
+        scene.extras.splice(idx, 1);
+    }
+    if (extra.threeObject !== null) { // because of the sprite actors
+        scene.sceneNode.remove(extra.threeObject);
+    }
+}
+
 function relocateHero(hero, newHero, newScene, teleport) {
     const globalPos = new THREE.Vector3();
     globalPos.applyMatrix4(hero.threeObject.matrixWorld);
@@ -457,7 +471,6 @@ function relocateHero(hero, newHero, newScene, teleport) {
     }
 
     newHero.animState = hero.animState;
-    // eslint-disable-next-line guard-for-in
     Object.keys(hero.props.runtimeFlags).forEach((k) => {
         newHero.props.runtimeFlags[k] = hero.props.runtimeFlags[k];
     });

@@ -3,18 +3,14 @@ const path = require('path');
 
 module.exports = {
     mode: process.env.NODE_ENV || 'none',
-    entry: [
-        '@babel/polyfill',
-        './utils/babel-transforms/inspector-globals.js',
-        './src/main.js'
-    ],
+    entry: './src/main.ts',
     output: {
         path: path.join(__dirname, './dist'),
         filename: 'bundle.js',
         publicPath: path.join(__dirname, './www'),
     },
     resolve: {
-        extensions: ['.ts', '.js', '.jsx', '.glsl', '.proto', '.yaml', '.md']
+        extensions: ['.ts', '.tsx', '.js', '.glsl', '.proto', '.yaml', '.md']
     },
     resolveLoader: {
         alias: {
@@ -22,60 +18,40 @@ module.exports = {
         }
     },
     optimization: {
-        minimize: false
+        minimize: process.env.NODE_ENV === 'production' ? true : false
     },
     module: {
         rules: [{
-            test: /\.(js|jsx)?$/,
+            test: /\.tsx?$/,
             include: /src/,
             exclude: /node_modules/,
             use: [{
-                loader: 'babel-loader',
+                loader: 'ts-loader',
                 options: {
-                    presets: ['@babel/preset-react', '@babel/preset-env', ['minify', {
-                        mangle: false
-                    }]],
-                    plugins: [
-                        path.join(__dirname, './utils/babel-transforms/inspector-annotations.js'),
-                        '@babel/plugin-proposal-class-properties',
-                        '@babel/plugin-proposal-object-rest-spread'
-                    ]
+                    compilerOptions: {
+                        noEmit: false
+                    }
                 }
-            }, {
-                loader: 'eslint-loader'
             }]
         }, {
-            test: /\.(ts)?$/,
+            test: /\.tsx?$/,
             include: /src/,
             exclude: /node_modules/,
-            use: [{
-                loader: 'babel-loader',
-                options: {
-                    presets: ['@babel/preset-react', '@babel/preset-env', '@babel/preset-typescript', ['minify', {
-                        mangle: false
-                    }]],
-                    plugins: [
-                        path.join(__dirname, './utils/babel-transforms/inspector-annotations.js'),
-                        '@babel/plugin-proposal-class-properties',
-                        '@babel/plugin-proposal-object-rest-spread'
-                    ]
+            enforce: 'pre',
+            use: [
+                {
+                    loader: 'tslint-loader',
+                    options: {
+                        configFile: './tslint.yaml',
+                        tsConfigFile: './tsconfig.json',
+                        emitErrors: false
+                    }
                 }
-            }, {
-                loader: 'tslint-loader',
-                options: {
-                    emitErrors: true,
-                    formatter: 'msbuild'
-                }
-            }]
+            ]
         }, {
             test: /\.glsl?$/,
             use: [{
                 loader: 'glsl-custom-loader'
-            }]
-        }, {
-            test: /\.proto?$/,
-            use: [{
-                loader: 'raw-loader'
             }]
         }, {
             test: /\.md?$/,

@@ -29,7 +29,7 @@ export default class HTCVive {
     }
 
     handleGamepad(gamepad, idx, {game}) {
-        const {THUMBPAD, TRIGGER, GRIP, MENU} = BUTTONS;
+        const {THUMBPAD, TRIGGER, GRIP} = BUTTONS;
         const {controlsState} = game;
         const controller = controllers[gamepad.hand];
 

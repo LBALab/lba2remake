@@ -49,7 +49,7 @@ function buttonPressedHandler(game: any, sceneManager: any, {detail: {name, isPr
                 break;
             case 'buttonY':
                 game.controlsState.freeCamera = !game.controlsState.freeCamera;
-                // eslint-disable-next-line no-console
+                // tslint:disable-next-line:no-console
                 console.log('Free camera: ', game.controlsState.freeCamera);
                 break;
             case 'leftTrigger':

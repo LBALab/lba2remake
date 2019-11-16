@@ -1,14 +1,16 @@
 import * as THREE from 'three';
+import {cloneDeep} from 'lodash';
 
 import { loadModel, Model } from '../model';
 import { loadAnimState, resetAnimState } from '../model/animState';
 import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
-import {createBoundingBox} from '../utils/rendering.js';
+import {createBoundingBox} from '../utils/rendering';
 import { loadSprite } from '../iso/sprites';
 
 import { getObjectName } from '../ui/editor/DebugData';
-import { createActorLabel } from '../ui/editor/labels.js';
+import { createActorLabel } from '../ui/editor/labels';
 import { runScript } from './scripting';
+import { makePure } from '../utils/debug';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -104,7 +106,7 @@ export async function loadActor(
     const actor: Actor = {
         type: 'actor',
         index: props.index,
-        props,
+        props: cloneDeep(props),
         physics: initPhysics(props),
         isKilled: false,
         isVisible: props.flags.isVisible
@@ -118,7 +120,6 @@ export async function loadActor(
         threeObject: null,
         animState,
 
-        /* @inspector(locate) */
         runScripts(time) {
             if (this.scripts) {
                 runScript(params, this.scripts.life, time);
@@ -126,7 +127,6 @@ export async function loadActor(
             }
         },
 
-        /* @inspector(locate) */
         reset() {
             this.resetAnimState();
             this.resetPhysics();
@@ -134,17 +134,14 @@ export async function loadActor(
             this.floorSound = -1;
         },
 
-        /* @inspector(locate) */
         resetAnimState() {
             resetAnimState(this.animState);
         },
 
-        /* @inspector(locate) */
         resetPhysics() {
             this.physics = initPhysics(props);
         },
 
-        /* @inspector(locate) */
         goto(point) {
             this.physics.temp.destination = point;
             let destAngle = angleTo(this.physics.position, point);
@@ -163,14 +160,12 @@ export async function loadActor(
             return this.getDistance(point);
         },
 
-        /* @inspector(locate) */
         gotoSprite(point, delta) {
             this.physics.position.lerp(point, delta);
             this.threeObject.position.copy(this.physics.position);
             return this.getDistance(point);
         },
 
-        /* @inspector(locate) */
         facePoint(point) {
             let destAngle = angleTo(this.physics.position, point);
             const signCurr = this.physics.temp.destAngle > 0 ? 1 : -1;
@@ -186,24 +181,20 @@ export async function loadActor(
             this.props.runtimeFlags.isTurning = true;
         },
 
-        /* @inspector(locate) */
         setAngle(angle) {
             // this.props.runtimeFlags.isTurning = true;
             this.props.angle = angle;
             this.physics.temp.destAngle = angleToRad(angle);
         },
 
-        /* @inspector(locate, pure) */
         getDistance(pos) {
             return distance2D(this.physics.position, pos);
         },
 
-        /* @inspector(locate, pure) */
         getDistanceLba(pos) {
             return getDistanceLba(this.getDistance(pos));
         },
 
-        /* @inspector(locate) */
         stop() {
             this.props.runtimeFlags.isWalking = false;
             this.props.runtimeFlags.isTurning = false;
@@ -211,7 +202,6 @@ export async function loadActor(
             delete this.physics.temp.destination;
         },
 
-        /* @inspector(locate) */
         async loadMesh() {
             const name = getObjectName('actor',
                             this.props.sceneIndex,
@@ -266,7 +256,6 @@ export async function loadActor(
             }
         },
 
-        /* @inspector(locate) */
         setBody(scene, index) {
             if (this.props.bodyIndex === index) {
                 return;
@@ -275,7 +264,6 @@ export async function loadActor(
             this.reload(scene);
         },
 
-        /* @inspector(locate) */
         setAnim(index) {
             if (this.props.animIndex === index) {
                 return;
@@ -284,7 +272,6 @@ export async function loadActor(
             this.resetAnimState();
         },
 
-        /* @inspector(locate) */
         reload(scene) {
             if (this.threeObject) {
                 this.threeObject.visible = false;
@@ -299,6 +286,9 @@ export async function loadActor(
             });
         }
     };
+
+    makePure(actor.getDistance);
+    makePure(actor.getDistanceLba);
 
     const euler = new THREE.Euler(0, angleToRad(props.angle), 0, 'XZY');
     actor.physics.orientation.setFromEuler(euler);

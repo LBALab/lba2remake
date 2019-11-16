@@ -9,4 +9,7 @@ out vec4 fragColor;
 
 void main() {
     fragColor = texture(library, vUv);
+    if (fragColor.a < 0.5) {
+        discard;
+    }
 }

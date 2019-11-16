@@ -1,4 +1,3 @@
-/* eslint-disable react/no-danger */
 const React = require('react');
 
 module.exports = ({script, buildNumber}) => (<html lang="en">

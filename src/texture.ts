@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import * as SimplexNoise from 'simplex-noise';
+import SimplexNoise from 'simplex-noise';
 import { map, each } from 'lodash';
 
 export function loadPaletteTexture(palette: Uint8Array) {
@@ -141,11 +141,11 @@ function loadMipmapLevelPal(source_data: Uint8Array, level: number, palette: Uin
 function findNearestColor(palette: Uint8Array, colors: number[][]) {
     const sum = [0, 0, 0];
     let count = 0;
-    each(colors, ([r, g, b, idx]) => {
+    each(colors, ([sr, sg, sb, idx]) => {
         if (idx > 0) {
-            sum[0] += r;
-            sum[1] += g;
-            sum[2] += b;
+            sum[0] += sr;
+            sum[1] += sg;
+            sum[2] += sb;
             count += 1;
         }
     });

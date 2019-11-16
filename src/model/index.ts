@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { loadHqr } from '../hqr';
-import { loadEntity, getBodyIndex, getAnimIndex, getAnim, Entity } from './entity';
+import { loadEntity, getBodyIndex, getAnimIndex, Entity } from './entity';
 import { loadBody } from './body';
 import { loadAnim } from './anim';
 import {
@@ -81,14 +81,13 @@ function loadModelData(params: any,
         entities,
         boundingBox: null,
         boundingBoxDebugMesh: null,
+        entity: entities[entityIdx]
     };
 
-    const entity = entities[entityIdx];
+    const realBodyIdx = getBodyIndex(model.entity, bodyIdx);
+    const realAnimIdx = getAnimIndex(model.entity, animIdx);
 
-    const realBodyIdx = getBodyIndex(entity, bodyIdx);
-    const realAnimIdx = getAnimIndex(entity, animIdx);
-
-    const body = loadBody(model, model.bodies, realBodyIdx, entity.bodies[bodyIdx]);
+    const body = loadBody(model, model.bodies, realBodyIdx, model.entity.bodies[bodyIdx]);
     const anim = loadAnim(model, model.anims, realAnimIdx);
 
     const skeleton = createSkeleton(body);

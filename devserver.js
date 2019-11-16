@@ -2,7 +2,7 @@
 
 require('@babel/register')({
     presets: ['@babel/preset-env', '@babel/preset-react']
-})
+});
 
 const fs = require('fs');
 const http = require('http');
@@ -25,7 +25,7 @@ app.use(bodyParser.raw({
     limit: '2mb'
 }));
 
-app.post('/metadata', function (req, res) {
+app.post('/metadata', function (req, res) { // lgtm [js/missing-rate-limiting]
     const body = req.body;
     console.log(`Saving metadata, content=${JSON.stringify(body, null, 2)}`);
     let fileName;
@@ -44,7 +44,7 @@ app.post('/metadata', function (req, res) {
             break;
     }
     if (fileName) {
-        fs.readFile(fileName, 'utf8', (err, file) => {
+        fs.readFile(fileName, 'utf8', (err, file) => { // lgtm [js/path-injection]
             if (err) {
                 console.error(err);
             } else {
@@ -53,14 +53,14 @@ app.post('/metadata', function (req, res) {
                     content[body.subType] = [];
                 }
                 content[body.subType][body.subIndex] = body.value;
-                fs.writeFile(fileName, JSON.stringify(content, null, 2), () => {});
+                fs.writeFile(fileName, JSON.stringify(content, null, 2), () => {}); // lgtm [js/path-injection]
             }
         });
     }
     res.end();
 });
 
-app.post('/crash', function (req, res) {
+app.post('/crash', function (req, res) { // lgtm [js/missing-rate-limiting]
     console.log('Saving crash report');
     const report = req.body;
     fs.writeFile('./crash_report.json', JSON.stringify(report, null, 2), () => {});
@@ -79,7 +79,7 @@ app.post('/crash', function (req, res) {
     res.end();
 });
 
-app.post('/lut.dat', function(req, res) {
+app.post('/lut.dat', function(req, res) { // lgtm [js/missing-rate-limiting]
     fs.writeFile('./www/lut.dat', req.body, () => {
         console.log('Saved lut.dat');
         res.end();
