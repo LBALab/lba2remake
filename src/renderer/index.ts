@@ -27,7 +27,7 @@ export default class Renderer {
         type = 'unknown'
     ) {
         this.type = type;
-        this.pixelRatio = window.devicePixelRatio || 1;
+        this.pixelRatio = 1;
         this.threeRenderer = setupThreeRenderer(
             this.pixelRatio,
             canvas,
