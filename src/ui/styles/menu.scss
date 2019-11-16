@@ -58,6 +58,16 @@
     font-size: 2.5em;
     text-align: center;
     width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+
+    &.active,
+    &.active:hover {
+        background: rgba(32, 162, 255, 0.5);
+    }
+
+    &:hover {
+        background: rgba(32, 162, 255, 0.25);
+    }
 
     @include media("<desktop") {
         font-size: 1.5em;
