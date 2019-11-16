@@ -3,16 +3,27 @@
 .textbox {
     position: absolute;
     background: rgba(0, 0, 0, 0.5);
-    font-family: 'LBA';
-    text-shadow: black 4px 4px;
-    padding: 20px;
     border: 2px outset #61cece;
     border-radius: 15px;
-    font-size: 1.9em;
-    text-align: justify;
     bottom: 30px;
     left: 30px;
     right: 30px;
+    position: absolute;
+    padding: 20px;
+    text-shadow: none;
+    text-align: justify;
+    color: rgba(0, 0, 0, 0);
+    font-family: 'LBA';
+    font-size: 1.9em;
+
+    > div {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        left: 20px;
+        bottom: 20px;
+        text-shadow: black 4px 4px;
+    }
 
     @include media("<desktop") {
         font-size: 1.5em;
@@ -29,10 +40,7 @@
     }
 
     &.small {
-        min-height: 135px;
-        @include media("<desktop") {
-            min-height: 105px;
-        }
+        min-height: 100px;
     }
 
     &.big {
