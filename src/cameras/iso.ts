@@ -41,7 +41,7 @@ export function getIsometricCamera() {
         },
         update: (scene, controlsState, time) => {
             if (controlsState.freeCamera) {
-                processFreeIsoMovement(controlsState, camera, scene, time);
+                processFreeIsoMovement(controlsState, camera, time);
             } else {
                 if (!scene.actors[0].threeObject)
                     return;
@@ -84,7 +84,7 @@ function getTargetPos(object) {
     return { objectPos, cameraPos };
 }
 
-export function processFreeIsoMovement(controlsState, camera, scene, time) {
+export function processFreeIsoMovement(controlsState, camera, time) {
     const speedX = new THREE.Vector3().set(
         3.6,
         0,

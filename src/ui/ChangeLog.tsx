@@ -70,7 +70,6 @@ export default function ChangeLog(props) {
         onClick={props.close}
         onKeyDown={onKeyDown.bind(null, props.close)}
         onKeyUp={onKeyUp}
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         tabIndex={0}
     >
         <div style={wrapper_style} onClick={e => e.stopPropagation()}>

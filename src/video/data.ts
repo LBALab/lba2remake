@@ -1,4 +1,3 @@
-/* eslint-disable key-spacing,no-multi-spaces */
 export default {
     VIDEO: [
         { index: 0,  name: 'ASCENSEU',  file:'data/VIDEO/VIDEO01.mp4' },

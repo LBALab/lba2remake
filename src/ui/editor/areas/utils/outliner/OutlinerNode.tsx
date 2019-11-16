@@ -12,7 +12,7 @@ const KeyValueNode = {
     },
     name: data => data.key,
     icon: data => data.icon,
-    props: (data, collapsed, component) => [
+    props: (data, _collapsed, component) => [
         {
             id: 'value',
             value: data.value,
@@ -316,14 +316,14 @@ export default class OutlinerNode extends React.Component<Props, State> {
 
         const onContextMenu = (e) => {
             e.preventDefault();
-            const renaming = node.allowRenaming && node.allowRenaming(this.props.data);
-            if (node.ctxMenu || renaming) {
+            const allowRenaming = node.allowRenaming && node.allowRenaming(this.props.data);
+            if (node.ctxMenu || allowRenaming) {
                 this.setState({
                     menu: {
                         x: e.clientX,
                         y: e.clientY,
                         entries: node.ctxMenu,
-                        renaming
+                        renaming: allowRenaming
                     }
                 });
             }
@@ -378,7 +378,7 @@ export default class OutlinerNode extends React.Component<Props, State> {
 
     renderCollapseButton() {
         const toggleCollapse = () => {
-            this.setState({collapsed: !this.state.collapsed});
+            this.setState(state => ({collapsed: !state.collapsed}));
         };
 
         const node = this.props.node;

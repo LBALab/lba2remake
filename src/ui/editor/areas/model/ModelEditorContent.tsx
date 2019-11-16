@@ -16,7 +16,6 @@ import DebugData from '../../DebugData';
 import fmod from './utils/fmod';
 import {get3DOrbitCamera} from './utils/orbitCamera';
 import { TickerProps } from '../../../utils/Ticker';
-import NodeProps from '../utils/outliner/NodeProps';
 
 interface Props extends TickerProps {
     mainData: any;

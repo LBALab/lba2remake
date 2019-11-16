@@ -28,7 +28,7 @@ const AnimNode = {
     lineStyle: {
         marginLeft: 0
     },
-    key: (anim, idx) => `anim_${idx}`,
+    key: (_anim, idx) => `anim_${idx}`,
     allowRenaming: () => true,
     rename: (anim, newName) => {
         if (anim && anim.index !== undefined) {
@@ -66,7 +66,7 @@ const AnimNode = {
     numChildren: () => 0,
     child: () => null,
     childData: () => null,
-    onClick: (data, setRoot, component) => {
+    onClick: (data, _setRoot, component) => {
         const {setAnim} = component.props.rootStateHandler;
         setAnim(data.index);
     },
@@ -77,7 +77,7 @@ const AnimNode = {
             render: value => <span style={idxStyle}>{value}</span>
         }
     ],
-    selected: (data, ignored, component) => {
+    selected: (data, _ignored, component) => {
         if (!component.props.rootState || !data)
             return false;
         const { anim } = component.props.rootState;
@@ -89,18 +89,18 @@ const AnimNode = {
 const AnimsNode = {
     dynamic: true,
     name: () => 'Anims',
-    numChildren: (ignored1, ignored2, component) => {
+    numChildren: (_ignored1, _ignored2, component) => {
         const { entity } = component.props.rootState;
         const ent = getEntities()[entity];
         return ent ? ent.anims.length : 0;
     },
     child: () => AnimNode,
-    childData: (ignored, idx, component) => {
+    childData: (_ignored, idx, component) => {
         const { entity } = component.props.rootState;
         const ent = getEntities()[entity];
         return ent && ent.anims[idx];
     },
-    up: (data, collapsed, component) => {
+    up: (_data, _collapsed, component) => {
         const {entity, anim} = component.props.rootState;
         const {setAnim} = component.props.rootStateHandler;
         const ent = getEntities()[entity];
@@ -113,7 +113,7 @@ const AnimsNode = {
             }
         }
     },
-    down: (data, collapsed, component) => {
+    down: (_data, _collapsed, component) => {
         const {entity, anim} = component.props.rootState;
         const {setAnim} = component.props.rootStateHandler;
         const ent = getEntities()[entity];

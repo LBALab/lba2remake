@@ -11,7 +11,6 @@ function loadSceneMap(bkg) {
     let offset = 0;
     const map = [];
 
-    // eslint-disable-next-line no-constant-condition
     while (true) {
         const opcode = data.getUint8(offset);
         const index = data.getUint8(offset + 1);

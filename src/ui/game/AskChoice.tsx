@@ -26,7 +26,7 @@ interface ACProps {
         };
         choices: any[];
     };
-    onChoiceChanged(number);
+    onChoiceChanged(choice: number) : void;
 }
 
 interface ACState {

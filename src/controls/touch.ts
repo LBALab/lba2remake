@@ -64,7 +64,7 @@ function handleTouchStartEvent() {
     startTime = Date.now();
 }
 
-function handleTouchEndEvent(controls, game) {
+function handleTouchEndEvent(_controls, game) {
     const endTime = Date.now();
     const elapsed = endTime - startTime;
     if (elapsed < 300) {

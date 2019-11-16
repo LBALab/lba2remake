@@ -19,7 +19,7 @@ const Actor = {
     ctxMenu: [
         {
             name: 'Locate',
-            onClick: (component, actor) => locateObject(actor)
+            onClick: (_component, actor) => locateObject(actor)
         }
     ],
     name: actor => getObjectName('actor', actor.props.sceneIndex, actor.index),
@@ -62,7 +62,7 @@ const Actor = {
                 }
                 return `entity_${actor.props.entityIndex}`;
             },
-            onClick: (entity, component) => {
+            onClick: (_entity, component) => {
                 const actor = component.props.data.context;
                 component.props.editor.switchEditor('model', {
                     rootState: {
@@ -86,7 +86,7 @@ const Actor = {
                 }
                 return `body_${actor.props.bodyIndex}`;
             },
-            onClick: (entity, component) => {
+            onClick: (_entity, component) => {
                 const actor = component.props.data.context;
                 component.props.editor.switchEditor('model', {
                     rootState: {
@@ -110,7 +110,7 @@ const Actor = {
                 }
                 return `anim_${actor.props.animIndex}`;
             },
-            onClick: (entity, component) => {
+            onClick: (_entity, component) => {
                 const actor = component.props.data.context;
                 component.props.editor.switchEditor('model', {
                     rootState: {
@@ -188,7 +188,7 @@ export const ActorsNode = makeObjectsNode('actor', {
     child: () => Actor,
     childData: (scene, idx) => scene.actors[idx],
     hasChanged: scene => scene.index !== DebugData.scope.scene,
-    props: (data, ignored, component) => {
+    props: (_data, _ignored, component) => {
         const label = component.props.rootState.labels.actor;
         return [{
             id: 'visible',

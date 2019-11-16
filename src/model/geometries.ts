@@ -328,7 +328,7 @@ function loadLineGeometry(geometries, body) {
     });
 }
 
-// eslint-disable-next-line no-unused-vars
+/*
 function debugBoneGeometry(geometries, body) {
     each(body.bones, (s) => {
         const centerPos = getPosition(body, s.vertex);
@@ -351,6 +351,7 @@ function debugBoneGeometry(geometries, body) {
         });
     });
 }
+*/
 
 function getBone(body, index) {
     const vertex = body.vertices[index];
@@ -376,7 +377,7 @@ function getNormal(body, index) {
     ];
 }
 
-function getUVs(body, p, vertex) {
+function getUVs(_body, p, vertex) {
     if (p.hasTex) {
         return [
             p.u[vertex],

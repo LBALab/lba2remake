@@ -29,7 +29,7 @@ export function ZONE_OBJ(actor) {
     let halfHeight = 0.12; // 12 cm, this is totally arbitrary
     if (actor.model && actor.model.boundingBox) {
         const bb = actor.model.boundingBox;
-        halfHeight = (bb.max.y - bb.max.y) * 0.5;
+        halfHeight = (bb.max.y - bb.min.y) * 0.5;
     }
     pos.y += halfHeight;
     for (let i = 0; i < this.scene.zones.length; i += 1) {

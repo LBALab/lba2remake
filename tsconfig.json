@@ -4,6 +4,8 @@
       "target": "es2018",
       "lib": ["es2018", "dom"],
       "noImplicitAny": false,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
       "removeComments": true,
       "preserveConstEnums": true,
       "sourceMap": true,

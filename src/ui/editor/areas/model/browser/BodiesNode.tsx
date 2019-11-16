@@ -28,7 +28,7 @@ const BodyNode = {
     lineStyle: {
         marginLeft: 0
     },
-    key: (body, idx) => `body_${idx}`,
+    key: (_body, idx) => `body_${idx}`,
     allowRenaming: () => true,
     rename: (body, newName) => {
         if (body && body.index !== undefined) {
@@ -66,7 +66,7 @@ const BodyNode = {
     numChildren: () => 0,
     child: () => null,
     childData: () => null,
-    onClick: (data, setRoot, component) => {
+    onClick: (data, _setRoot, component) => {
         const {setBody} = component.props.rootStateHandler;
         setBody(data.index);
     },
@@ -77,7 +77,7 @@ const BodyNode = {
             render: value => <span style={idxStyle}>{value}</span>
         }
     ],
-    selected: (data, ignored, component) => {
+    selected: (data, _ignored, component) => {
         if (!component.props.rootState || !data)
             return false;
         const { body } = component.props.rootState;
@@ -89,18 +89,18 @@ const BodyNode = {
 const BodiesNode = {
     dynamic: true,
     name: () => 'Bodies',
-    numChildren: (ignored1, ignored2, component) => {
+    numChildren: (_ignored1, _ignored2, component) => {
         const { entity } = component.props.rootState;
         const ent = getEntities()[entity];
         return ent ? ent.bodies.length : 0;
     },
     child: () => BodyNode,
-    childData: (ignored, idx, component) => {
+    childData: (_ignored, idx, component) => {
         const { entity } = component.props.rootState;
         const ent = getEntities()[entity];
         return ent && ent.bodies[idx];
     },
-    up: (data, collapsed, component) => {
+    up: (_data, _collapsed, component) => {
         const {entity, body} = component.props.rootState;
         const {setBody} = component.props.rootStateHandler;
         const ent = getEntities()[entity];
@@ -113,7 +113,7 @@ const BodiesNode = {
             }
         }
     },
-    down: (data, collapsed, component) => {
+    down: (_data, _collapsed, component) => {
         const {entity, body} = component.props.rootState;
         const {setBody} = component.props.rootStateHandler;
         const ent = getEntities()[entity];

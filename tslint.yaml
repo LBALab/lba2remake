@@ -33,7 +33,7 @@ rules:
   no-param-reassign: [off]
   no-parameter-reassignment: [off]
   no-use-before-define: [off]
-  no-shadow: [warn]
+  no-shadowed-variable: [true]
   no-nested-ternary: [off]
   no-restricted-globals: [off]
   no-restricted-properties: [off]

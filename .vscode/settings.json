@@ -8,7 +8,6 @@
         "**/.DS_Store": true,
         "apps": true,
     },
-    "eslint.enable": true,
     "typescript.tsdk": "./node_modules/typescript/lib",
     "editor.tabSize": 4,
     "editor.insertSpaces": true

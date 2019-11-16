@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import * as React from 'react';
 import {map, extend, last} from 'lodash';
 import {makeContentComponent} from '../../utils/outliner/OutlinerAreaContent';
@@ -239,11 +238,11 @@ export class InspectorAreaContent extends React.Component<Props, State> {
             cursor: 'pointer',
             color: selected ? 'white' : 'grey'
         });
-        const onClick = (tab) => {
-            if (tab !== 'bindings') {
+        const onClick = (newTab) => {
+            if (newTab !== 'bindings') {
                 this.setState({bindings: null});
             }
-            this.props.stateHandler.setTab(tab);
+            this.props.stateHandler.setTab(newTab);
         };
         const watches = this.props.sharedState.watches;
         const tab = this.props.sharedState.tab || 'explore';
@@ -474,7 +473,6 @@ export class InspectorAreaContent extends React.Component<Props, State> {
                 e: () => {
                     let args = '';
                     if (parent && parent.__cb_info && path in parent.__cb_info) {
-                        // eslint-disable-next-line no-new-func
                         args = parent.__cb_info[path][idx].split(',').join(', ');
                         return <span style={prefixStyle}>({args}) =&gt; </span>;
                     }

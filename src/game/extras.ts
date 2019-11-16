@@ -4,7 +4,6 @@ import { getRandom } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
 import { loadSprite } from '../iso/sprites';
 import { addExtraToScene, removeExtraFromScene } from './scenes';
-import {createBoundingBox} from '../utils/rendering.js';
 
 export const ExtraFlag = {
     TIME_OUT: 1 << 0,
@@ -100,7 +99,7 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
             this.sprite = sprite;
         },
 
-        init(angle, speed, weight, time) {
+        init(_angle, _speed, _weight) {
             this.flags |= ExtraFlag.FLY;
             // TODO set speed
             this.time = time;

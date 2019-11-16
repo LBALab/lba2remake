@@ -61,7 +61,7 @@ function debugZoneTargetPos(newScene, newHero) {
 /**
  * @return {boolean}
  */
-function GOTO_SCENE(game, scene, zone, hero) {
+function GOTO_SCENE(_game, scene, zone, hero) {
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
         const box = zone.props.box;
         scene.goto(zone.props.snap).then((newScene) => {

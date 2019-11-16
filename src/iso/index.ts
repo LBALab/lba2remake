@@ -22,7 +22,7 @@ async function loadImageData(src) {
     });
 }
 
-export async function loadIsometricScenery(params, renderer, entry) {
+export async function loadIsometricScenery(entry) {
     const [ress, bkg, mask] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr('LBA_BKG.HQR'),
@@ -30,7 +30,7 @@ export async function loadIsometricScenery(params, renderer, entry) {
     ]);
     const palette = new Uint8Array(ress.getEntry(0));
     const bricks = loadBricks(bkg);
-    const grid = loadGrid(renderer, params, bkg, bricks, mask, palette, entry + 1);
+    const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
 
     return {
         props: {
@@ -39,7 +39,7 @@ export async function loadIsometricScenery(params, renderer, entry) {
                 skyColor: [0, 0, 0]
             }
         },
-        threeObject: loadMesh(renderer, grid, entry),
+        threeObject: loadMesh(grid, entry),
         physics: {
             processCollisions: processCollisions.bind(null, grid),
             processCameraCollisions: () => null
@@ -49,7 +49,7 @@ export async function loadIsometricScenery(params, renderer, entry) {
     };
 }
 
-function loadMesh(renderer, grid, entry) {
+function loadMesh(grid, entry) {
     const geometries = {
         positions: [],
         uvs: []

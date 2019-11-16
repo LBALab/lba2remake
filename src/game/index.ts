@@ -7,10 +7,7 @@ import {getLanguageConfig, tr} from '../lang';
 import DebugData from '../ui/editor/DebugData';
 import { makePure } from '../utils/debug';
 
-export function createGame(params: any,
-                           clock: any,
-                           setUiState: Function,
-                           getUiState: Function) {
+export function createGame(clock: any, setUiState: Function, getUiState: Function) {
     let isPaused = false;
     let isLoading = false;
 

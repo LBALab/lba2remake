@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import * as React from 'react';
 import {flatMap, isArray, isEmpty, map, slice, take, times} from 'lodash';
 import * as THREE from 'three';

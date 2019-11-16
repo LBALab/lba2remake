@@ -1,7 +1,6 @@
 import {SUICIDE} from './life';
 import DebugData from '../../ui/editor/DebugData';
 import { mapDataName } from '../../ui/editor/areas/gameplay/scripts/listing';
-import { any } from 'prop-types';
 
 export function runScript(params, script, time) {
     const instructions = script.instructions;

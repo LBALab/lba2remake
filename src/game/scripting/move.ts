@@ -63,7 +63,7 @@ export function SPEED(speed) {
 
 export const BACKGROUND = unimplemented();
 
-export function WAIT_NUM_SECOND(numSeconds, unknown, time) {
+export function WAIT_NUM_SECOND(numSeconds, _unknown, time) {
     if (!this.state.waitUntil) {
         this.state.waitUntil = time.elapsed + numSeconds;
     }
@@ -75,16 +75,16 @@ export function WAIT_NUM_SECOND(numSeconds, unknown, time) {
     }
 }
 
-export function WAIT_NUM_DSEC(numDsec, unknown, time) {
+export function WAIT_NUM_DSEC(numDsec, _unknown, time) {
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, null, time);
 }
 
-export function WAIT_NUM_SECOND_RND(maxNumSeconds, unknown, time) {
+export function WAIT_NUM_SECOND_RND(maxNumSeconds, _unknown, time) {
     const numSeconds = Math.floor(Math.random() * maxNumSeconds);
     WAIT_NUM_SECOND.call(this, numSeconds, null, time);
 }
 
-export function WAIT_NUM_DECIMAL_RND(maxNumDsec, unknown, time) {
+export function WAIT_NUM_DECIMAL_RND(maxNumDsec, _unknown, time) {
     const numDsec = Math.floor(Math.random() * maxNumDsec);
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, null, time);
 }

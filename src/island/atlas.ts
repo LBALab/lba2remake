@@ -203,7 +203,7 @@ function createAtlasTexture(dim) {
     return texture;
 }
 
-// eslint-disable-next-line no-unused-vars
+/*
 async function debugTexture(rawTexture, palette, uvGroups) {
     const canvas = document.createElement('canvas');
     canvas.id = 'debugTexture';
@@ -226,7 +226,6 @@ async function debugTexture(rawTexture, palette, uvGroups) {
     document.body.appendChild(canvas);
 }
 
-// eslint-disable-next-line no-unused-vars
 async function debugAtlas({image}, fittedGroups) {
     const canvas = document.createElement('canvas');
     canvas.id = 'debugAtlas';
@@ -262,7 +261,6 @@ async function debugAtlas({image}, fittedGroups) {
     document.body.appendChild(canvas);
 }
 
-// eslint-disable-next-line no-unused-vars
 async function loadObjImage(rawTexture, palette) {
     const arr = new Uint8ClampedArray(256 * 256 * 4);
     for (let i = 0; i < 256 * 256; i += 1) {
@@ -280,3 +278,4 @@ async function loadObjImage(rawTexture, palette) {
     const bmp = new ImageData(arr, 256, 256);
     return createImageBitmap(bmp);
 }
+*/

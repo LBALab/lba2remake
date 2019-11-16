@@ -85,7 +85,6 @@ export async function generateLUTTexture({onProgress, bbs, useLabColors}) {
     const image_data = new Uint8Array(buffer);
     for (let r = 0; r < LUT_DIM; r += 1) {
         onProgress(Math.round((r / LUT_DIM) * 100));
-        // eslint-disable-next-line no-await-in-loop
         await delay();
         for (let g = 0; g < LUT_DIM; g += 1) {
             for (let b = 0; b < LUT_DIM; b += 1) {

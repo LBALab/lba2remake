@@ -74,20 +74,20 @@ const IslandNode = {
             value: newName
         });
     },
-    onClick: (data, setRoot, component) => {
+    onClick: (data, _setRoot, component) => {
         const {setName} = component.props.rootStateHandler;
         setName(data.name);
     },
     onDoubleClick: (data, component) => {
         saveIcon(data, component);
     },
-    selected: (data, ignored, component) => {
+    selected: (data, _ignored, component) => {
         if (!component.props.rootState)
             return false;
         const { name } = component.props.rootState;
         return name === data.name;
     },
-    icon: (data, ignored, component) => getIcon(data, component),
+    icon: (data, _ignored, component) => getIcon(data, component),
     props: data => [
         {
             id: 'name',
@@ -147,8 +147,8 @@ const IslandsNode = {
     name: () => 'Islands',
     numChildren: () => islandsInfo.length,
     child: () => IslandNode,
-    childData: (data, idx) => islandsInfo[idx],
-    up: (data, collapsed, component) => {
+    childData: (_data, idx) => islandsInfo[idx],
+    up: (_data, _collapsed, component) => {
         const {name} = component.props.rootState;
         const {setName} = component.props.rootStateHandler;
         const currentIndex = islandsInfo.findIndex(i => i.name === name);
@@ -157,7 +157,7 @@ const IslandsNode = {
         setName(newName);
         centerView(newName);
     },
-    down: (data, collapsed, component) => {
+    down: (_data, _collapsed, component) => {
         const {name} = component.props.rootState;
         const {setName} = component.props.rootStateHandler;
         const currentIndex = islandsInfo.findIndex(i => i.name === name);

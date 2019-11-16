@@ -62,7 +62,7 @@ export const SAMPLE_STOP = unimplemented();
 
 export const ZV = unimplemented();
 
-export function LEFT_STEP(action, {game, animState}) {
+export function LEFT_STEP(_action, {game, animState}) {
     let sampleIndex = animState.floorSound;
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
@@ -74,7 +74,7 @@ export function LEFT_STEP(action, {game, animState}) {
     }
 }
 
-export function RIGHT_STEP(action, {game, animState}) {
+export function RIGHT_STEP(_action, {game, animState}) {
     let sampleIndex = animState.floorSound;
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;

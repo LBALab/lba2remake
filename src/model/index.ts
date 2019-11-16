@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { loadHqr } from '../hqr';
-import { loadEntity, getBodyIndex, getAnimIndex, getAnim, Entity } from './entity';
+import { loadEntity, getBodyIndex, getAnimIndex, Entity } from './entity';
 import { loadBody } from './body';
 import { loadAnim } from './anim';
 import {

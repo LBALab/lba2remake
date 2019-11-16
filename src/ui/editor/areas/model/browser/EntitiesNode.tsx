@@ -73,20 +73,20 @@ const EntityNode = {
             value: newName
         });
     },
-    onClick: (data, setRoot, component) => {
+    onClick: (data, _setRoot, component) => {
         const {setEntity} = component.props.rootStateHandler;
         setEntity(data.index);
     },
     onDoubleClick: (data, component) => {
         saveIcon(data, component);
     },
-    selected: (data, ignored, component) => {
+    selected: (data, _ignored, component) => {
         if (!component.props.rootState)
             return false;
         const { entity } = component.props.rootState;
         return entity === data.index;
     },
-    icon: (data, ignored, component) => getIcon(data, component),
+    icon: (data, _ignored, component) => getIcon(data, component),
     props: data => [
         {
             id: 'index',
@@ -151,15 +151,15 @@ const EntitiesNode = {
     name: () => 'Entities',
     numChildren: () => getEntities().length,
     child: () => EntityNode,
-    childData: (data, idx) => getEntities()[idx],
-    up: (data, collapsed, component) => {
+    childData: (_data, idx) => getEntities()[idx],
+    up: (_data, _collapsed, component) => {
         const {entity} = component.props.rootState;
         const {setEntity} = component.props.rootStateHandler;
         const index = Math.max(entity - 1, 0);
         setEntity(index);
         centerView(index);
     },
-    down: (data, collapsed, component) => {
+    down: (_data, _collapsed, component) => {
         const {entity} = component.props.rootState;
         const {setEntity} = component.props.rootStateHandler;
         const index = Math.min(entity + 1, getEntities().length - 1);

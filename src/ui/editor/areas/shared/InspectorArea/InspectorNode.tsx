@@ -1,7 +1,6 @@
-/* eslint-disable no-underscore-dangle */
 import * as React from 'react';
 import * as THREE from 'three';
-import {map, filter, concat, isFunction, isEmpty, uniq, times} from 'lodash';
+import {map, filter, concat, isFunction, isEmpty, times} from 'lodash';
 import DebugData from '../../../DebugData';
 import {CustomValue, Value} from './Value';
 import {RootSym, applyFunction, isPureFunc} from './utils';
@@ -109,8 +108,8 @@ export const InspectorNode = (
     dynamic: true,
     icon: () => 'none',
     name: () => name,
-    key: (obj, idx) => idx,
-    numChildren: (data, ignored, component) => {
+    key: (_obj, idx) => idx,
+    numChildren: (data, _ignored, component) => {
         let obj = getObj(data, root);
         if (isPureFunc(obj, name, parent)) {
             obj = applyFctFromComponent(obj, parent, component);
@@ -160,7 +159,7 @@ export const InspectorNode = (
         id: 'params',
         style: {paddingLeft: 0},
         value: hash(data, root),
-        render: (value, component) => {
+        render: (_value, component) => {
             const obj = getObj(data, root);
             if (isFunction(obj)) {
                 const isPure = isPureFunc(obj, name, parent);
@@ -219,7 +218,7 @@ export const InspectorNode = (
     }, {
         id: 'value',
         value: hash(data, root),
-        render: (value, component) => {
+        render: (_value, component) => {
             let obj = getObj(data, root);
             if (isFunction(obj)) {
                 if (isPureFunc(obj, name, parent)) {

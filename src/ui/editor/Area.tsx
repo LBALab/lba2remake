@@ -99,7 +99,7 @@ interface AreaProps {
     close?: (any) => any;
     split: Function;
     availableAreas: AreaDefinition[];
-    selectAreaContent: (AreaDefinition) => void;
+    selectAreaContent: (content: AreaDefinition) => void;
     editor: any;
     saveMainData: Function;
     mainData: Object;
@@ -177,7 +177,6 @@ export default class Area extends React.Component<AreaProps, AreaState> {
         return <div
             style={this.props.style}
             onKeyDown={this.keyDown}
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
             tabIndex={0}
         >
             <Provider value={this.shortcuts}>
@@ -231,7 +230,9 @@ export default class Area extends React.Component<AreaProps, AreaState> {
                     src="editor/icons/split_vertical.svg"/>;
 
         const switchSettings = () => {
-            this.setState({settings: !this.state.settings});
+            this.setState(state => ({
+                settings: !state.settings
+            }));
         };
 
         const settingsIcon = settings

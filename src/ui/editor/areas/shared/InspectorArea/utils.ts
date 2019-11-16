@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import {isFunction, map, filter, noop, concat} from 'lodash';
 import * as THREE from 'three';
 import DebugData, {getObjectName} from '../../../DebugData';
@@ -115,7 +114,6 @@ const pureFunctionsByType = [
 
 export function isPureFunc(obj, key, parent) {
     if (isFunction(obj)) {
-        // eslint-disable-next-line no-underscore-dangle
         if ((obj as any).__pure_function === true) {
             return true;
         }
@@ -131,9 +129,7 @@ export function isPureFunc(obj, key, parent) {
 
 export function getAllowedKinds(parent, key, idx) {
     let allowedKinds = ['g', 'e'];
-    // eslint-disable-next-line no-underscore-dangle
     if (parent.__param_kind && key in parent.__param_kind) {
-        // eslint-disable-next-line no-underscore-dangle
         const paramKinds = parent.__param_kind[key].split(',');
         const kinds = paramKinds[idx];
         allowedKinds = kinds.split('|');
@@ -165,14 +161,13 @@ export function getValue(path, baseScope, bindings) {
     return scope;
 }
 
-function getParamFunc(p, idx, bindings, parent, path) {
+function getParamFunc(p, idx, _bindings, parent, path) {
     try {
         let doCall = true;
         let args = ['THREE', 'map', 'filter', 'name'];
         if (parent && parent.__cb_info
             && path in parent.__cb_info
             && parent.__cb_info[path][idx]) {
-            // eslint-disable-next-line no-new-func
             args = concat(args, parent.__cb_info[path][idx].split(','));
             doCall = false;
         }

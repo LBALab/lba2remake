@@ -14,7 +14,7 @@ const Zone = {
     ctxMenu: [
         {
             name: 'Locate',
-            onClick: (component, zone) => locateObject(zone)
+            onClick: (_component, zone) => locateObject(zone)
         }
     ],
     name: zone => getObjectName('zone', zone.props.sceneIndex, zone.index),
@@ -91,7 +91,7 @@ export const ZonesNode = makeObjectsNode('zone', {
     child: () => Zone,
     childData: (scene, idx) => scene.zones[idx],
     hasChanged: scene => scene.index !== DebugData.scope.scene.index,
-    props: (data, ignored, component) => {
+    props: (_data, _ignored, component) => {
         const label = component.props.rootState.labels.zone;
         return [{
             id: 'visible',

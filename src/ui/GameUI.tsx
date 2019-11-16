@@ -107,7 +107,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         } else {
             const clock = new THREE.Clock(false);
             const game = createGame(
-                props.params,
                 clock,
                 this.setUiState,
                 this.getUiState
@@ -478,7 +477,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     }
 
     render() {
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex={0}>
             <div ref={this.onCanvasWrapperRef} style={fullscreen} onClick={this.pick}/>
             {this.renderGUI()}

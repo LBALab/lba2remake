@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Popup from '../Popup';
-import { string } from 'prop-types';
 
 const popup_style = {
     background: 'rgb(45, 45, 48)',

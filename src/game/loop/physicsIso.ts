@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 const STEP = 1 / 24;
 
-export function processCollisions(grid, scene, actor) {
+export function processCollisions(grid, _scene, actor) {
     const basePos = actor.threeObject.position.clone();
     const position = actor.physics.position.clone();
     basePos.multiplyScalar(STEP);

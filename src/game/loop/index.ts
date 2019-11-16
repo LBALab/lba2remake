@@ -3,7 +3,6 @@ import * as THREE from 'three';
 import {updateHero} from './hero';
 import {updateActor} from './actors';
 import {processPhysicsFrame} from './physics';
-import {getRandom} from '../../utils/lba';
 import DebugData from '../../ui/editor/DebugData';
 import { updateExtra } from '../extras';
 import { updateVRGUI } from '../../ui/vr/vrGUI';
@@ -89,7 +88,7 @@ function updateScene(params, game, scene, time) {
     }
 }
 
-// eslint-disable-next-line no-unused-vars
+/*
 function playAmbience(game, scene, time) {
     const soundFxSource = game.getAudioManager().getSoundFxSource();
     let samplePlayed = 0;
@@ -123,3 +122,4 @@ function playAmbience(game, scene, time) {
         scene.data.ambience.sampleElapsedTime = time.elapsed + 200000;
     }
 }
+*/

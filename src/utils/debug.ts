@@ -4,7 +4,6 @@ export const makePure = (fct) => {
     fct.__pure_function = true;
 };
 
-// eslint-disable-next-line no-unused-vars
 export function createGizmo() {
     const axesHelper = new THREE.AxesHelper(1.2);
     axesHelper.name = 'Axes';

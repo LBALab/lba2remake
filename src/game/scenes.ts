@@ -180,7 +180,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 camera = get3DCamera();
             }
         } else {
-            scenery = await loadIsometricScenery(params, renderer, indexInfo.index);
+            scenery = await loadIsometricScenery(indexInfo.index);
             threeScene.name = 'iso_scene';
             if (renderer.vr) {
                 camera = params.isoCam3d
@@ -250,7 +250,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             each(this.actors, (actor) => {
                 actor.reset();
             });
-            loadScripts(params, game, scene);
+            loadScripts(game, scene);
             scene.firstFrame = true;
             if (game.isPaused()) {
                 DebugData.step = true;
@@ -258,10 +258,10 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             scene.variables = createSceneVariables(scene);
         },
 
-        resetCamera(params) {
+        resetCamera(newParams) {
             if (!scene.isIsland) {
                 if (!renderer.vr) {
-                    if (params.iso3d) {
+                    if (newParams.iso3d) {
                         scene.camera = getIso3DCamera();
                     } else {
                         scene.camera = getIsometricCamera();
@@ -293,7 +293,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             );
         }
     }
-    loadScripts(params, game, scene);
+    loadScripts(game, scene);
     scene.variables = createSceneVariables(scene);
     scene.usedVarGames = findUsedVarGames(scene);
     // Kill twinsen if side scene
@@ -471,7 +471,6 @@ function relocateHero(hero, newHero, newScene, teleport) {
     }
 
     newHero.animState = hero.animState;
-    // eslint-disable-next-line guard-for-in
     Object.keys(hero.props.runtimeFlags).forEach((k) => {
         newHero.props.runtimeFlags[k] = hero.props.runtimeFlags[k];
     });

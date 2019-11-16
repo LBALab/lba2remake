@@ -21,7 +21,7 @@ export const OffsetBySide = {
     [Side.RIGHT]: {x: 3, y: 3},
 };
 
-export function loadBricksMapping(renderer, params, layouts, bricks, mask, palette) {
+export function loadBricksMapping(layouts, bricks, mask, palette) {
     const usedBricks = filter(
         uniq(
             flatten(

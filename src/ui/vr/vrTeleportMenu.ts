@@ -38,7 +38,6 @@ export function createTeleportMenu(sceneLight) {
             icon: planets[i].icon,
             x: -(i - 1.5) * 240,
             y: 50,
-            // eslint-disable-next-line no-loop-func
             callback: () => {
                 if (selectedPlanet !== i) {
                     selectedPlanet = i;
@@ -112,7 +111,6 @@ function refreshIslandButtons(teleportMenu) {
             text: islands[i].name,
             x,
             y,
-            // eslint-disable-next-line no-loop-func
             callback: () => {
                 selectedIsland = i;
                 each(islandButtons, ib => ib.draw());

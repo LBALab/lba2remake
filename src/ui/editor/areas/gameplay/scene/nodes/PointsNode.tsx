@@ -10,7 +10,7 @@ const Point = {
     ctxMenu: [
         {
             name: 'Locate',
-            onClick: (component, point) => locateObject(point)
+            onClick: (_component, point) => locateObject(point)
         }
     ],
     name: point => point.index,
@@ -56,7 +56,7 @@ export const PointsNode = makeObjectsNode('point', {
     child: () => Point,
     childData: (scene, idx) => scene.points[idx],
     hasChanged: scene => scene.index !== DebugData.scope.scene.index,
-    props: (data, ignored, component) => {
+    props: (_data, _ignored, component) => {
         const label = component.props.rootState.labels.point;
         return [{
             id: 'visible',

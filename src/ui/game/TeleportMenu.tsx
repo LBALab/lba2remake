@@ -240,7 +240,7 @@ export default class TeleportMenu extends React.Component<TMProps, TMState> {
             key={planet.name}
             style={Object.assign(planetStyle(true), {width: '100%'})}
             onClick={(e) => {
-                this.setState({ selectPlanet: !this.state.selectPlanet });
+                this.setState(state => ({ selectPlanet: !state.selectPlanet }));
                 e.preventDefault();
                 e.stopPropagation();
             }}
@@ -252,7 +252,7 @@ export default class TeleportMenu extends React.Component<TMProps, TMState> {
 
     renderPlanet(planet) {
         if (this.state.selectPlanet) {
-            const select = (idx) => {
+            const selectPlanet = (idx) => {
                 this.setState({planet: idx, island: 0, selectPlanet: false});
             };
             const planets = LocationsNode.children;
@@ -264,7 +264,7 @@ export default class TeleportMenu extends React.Component<TMProps, TMState> {
                         key={p.name}
                         style={Object.assign(planetStyle(false), {width: '100%'})}
                         onClick={(e) => {
-                            select(idx);
+                            selectPlanet(idx);
                             e.preventDefault();
                             e.stopPropagation();
                         }}
@@ -277,7 +277,7 @@ export default class TeleportMenu extends React.Component<TMProps, TMState> {
         }
 
         const small = this.state.small;
-        const select = idx => this.setState({island: idx});
+        const selectIsland = idx => this.setState({island: idx});
         const islands = filter(planet.children, n => !n.name.match(/^\[DEMO\]/));
         const selectedIsland = islands[this.state.island];
         return <React.Fragment>
@@ -287,7 +287,7 @@ export default class TeleportMenu extends React.Component<TMProps, TMState> {
                         key={island.name}
                         style={islandStyle(this.state.island === idx)}
                         onClick={(e) => {
-                            select(idx);
+                            selectIsland(idx);
                             e.preventDefault();
                             e.stopPropagation();
                         }}
@@ -333,7 +333,7 @@ export default class TeleportMenu extends React.Component<TMProps, TMState> {
             key={island.name}
             style={islandStyle(true)}
             onClick={(e) => {
-                this.setState({ selectIsland: !this.state.selectIsland });
+                this.setState(state => ({ selectIsland: !state.selectIsland }));
                 e.preventDefault();
                 e.stopPropagation();
             }}

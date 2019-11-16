@@ -2,7 +2,7 @@ import { each } from 'lodash';
 import { parseScript } from './parser';
 import { compileScripts } from './compiler';
 
-export function loadScripts(params, game, scene) {
+export function loadScripts(game, scene) {
     each(scene.actors, (actor) => {
         actor.scripts = {
             life: parseScript(actor.index, 'life', actor.props.lifeScript),

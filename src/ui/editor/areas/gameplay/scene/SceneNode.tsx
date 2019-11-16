@@ -129,7 +129,7 @@ const SubScene = {
         const scene = DebugData.scope.scene;
         return scene ? baseChildren.length : 0;
     },
-    child: (scene, idx) => baseChildren[idx],
+    child: (_scene, idx) => baseChildren[idx],
     childData: scene => scene
 };
 
@@ -192,7 +192,7 @@ const SceneNode = {
         height: 16
     },
     numChildren: () => getChildren().length,
-    child: (data, idx) => getChildren()[idx],
+    child: (_data, idx) => getChildren()[idx],
     childData: () => DebugData.scope.scene,
     props: () => {
         const scene = DebugData.scope.scene;

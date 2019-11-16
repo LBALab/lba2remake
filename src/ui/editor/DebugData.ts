@@ -1,7 +1,6 @@
 import {extend} from 'lodash';
 import * as THREE from 'three';
 import {checkAuth, getAuthQueryString} from './auth';
-import { any } from 'prop-types';
 
 const DebugData = {
     scope: <any> {},
