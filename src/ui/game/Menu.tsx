@@ -133,9 +133,8 @@ function MenuItem(props) {
     if (props.item.text) {
         const extendedStyle = {
             color: props.item.isEnabled ? 'white' : '#828282',
-            background: props.selected ? 'rgba(32, 162, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
         };
-        return <div className="menuItem"
+        return <div className={`menuItem${props.selected ? ' active' : ''}`}
                     style={extendedStyle}
                     onClick={props.onClick}>
             {props.item.text}

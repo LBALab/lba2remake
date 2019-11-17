@@ -80,10 +80,12 @@ export default class TextBox extends React.Component<TBProps, TBState> {
     render() {
         const text = this.props.text;
         if (text) {
-            return <div className={`textbox ${text.type}`}
-                        style={{color: text.color}}>
-                {this.state.content}
-            </div>;
+            return (
+                <div className={`textbox ${text.type}`}>
+                    {text.value}
+                    <div style={{color: text.color}}>{this.state.content}</div>
+                </div>
+            );
         }
         return null;
     }
