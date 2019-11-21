@@ -20,6 +20,7 @@ interface Props extends TickerProps {
     saveMainData: Function;
     params: any;
     sharedState: {
+        library: number;
         layout: number;
         rotateView: boolean;
         wireframe: boolean;
@@ -30,6 +31,7 @@ interface Props extends TickerProps {
 
 interface State {
     layout?: any;
+    library?: any;
     renderer?: any;
     scene: any;
     clock: THREE.Clock;
@@ -48,6 +50,7 @@ export default class Model extends FrameListener<Props, State> {
     zoom: number;
     root: HTMLElement;
     canvas: HTMLCanvasElement;
+    library: number;
     layout: number;
     wireframe: boolean;
     moving: boolean;
@@ -158,25 +161,31 @@ export default class Model extends FrameListener<Props, State> {
     }
 
     listener(event) {
-        const key = event.code || event.which || event.keyCode;
-        switch (key) {
-            case 37: // left
-            case 'ArrowLeft': {
-                const newLayout = Math.max(0, this.props.sharedState.layout - 1);
-                this.props.stateHandler.setLayout(newLayout);
-                break;
-            }
-            case 39: // right
-            case 'ArrowRight': {
-                const newLayout = Math.min(174, this.props.sharedState.layout + 1);
-                this.props.stateHandler.setLayout(newLayout);
-                break;
+        if (this.state.library) {
+            const key = event.code || event.which || event.keyCode;
+            switch (key) {
+                case 37: // left
+                case 'ArrowLeft': {
+                    const newLayout = Math.max(0, this.props.sharedState.layout - 1);
+                    this.props.stateHandler.setLayout(newLayout);
+                    break;
+                }
+                case 39: // right
+                case 'ArrowRight': {
+                    const newLayout = Math.min(
+                        this.state.library.layouts.length - 1,
+                        this.props.sharedState.layout + 1
+                    );
+                    this.props.stateHandler.setLayout(newLayout);
+                    break;
+                }
             }
         }
     }
 
-    async loadLayout(layout) {
-        this.layout = layout;
+    async loadLayout(libraryIdx, layoutIdx) {
+        this.layout = layoutIdx;
+        this.library = libraryIdx;
         const [ress, bkg] = await Promise.all([
             loadHqr('RESS.HQR'),
             loadHqr('LBA_BKG.HQR'),
@@ -186,9 +195,10 @@ export default class Model extends FrameListener<Props, State> {
         }
         const palette = new Uint8Array(ress.getEntry(0));
         const bricks = loadBricks(bkg);
-        const library = loadLibrary(bkg, bricks, this.mask, palette, 0);
-        const layoutMesh = loadLayoutMesh(library, this.props.sharedState.layout);
+        const library = loadLibrary(bkg, bricks, this.mask, palette, libraryIdx);
+        const layoutMesh = loadLayoutMesh(library, layoutIdx);
         const layoutObj = {
+            index: layoutIdx,
             threeObject: layoutMesh
         };
         const oldLayout = this.state.layout;
@@ -196,7 +206,7 @@ export default class Model extends FrameListener<Props, State> {
             this.state.scene.threeScene.remove(oldLayout.threeObject);
         }
         this.state.scene.threeScene.add(layoutObj.threeObject);
-        this.setState({ layout: layoutObj }, this.saveData);
+        this.setState({ library, layout: layoutObj }, this.saveData);
         this.wireframe = false;
     }
 
@@ -228,9 +238,9 @@ export default class Model extends FrameListener<Props, State> {
 
     frame() {
         const { layout: layoutObj, renderer, clock, scene, grid } = this.state;
-        const { layout, wireframe } = this.props.sharedState;
-        if (this.layout !== layout) {
-            this.loadLayout(layout);
+        const { layout, library, wireframe } = this.props.sharedState;
+        if (this.library !== library || this.layout !== layout) {
+            this.loadLayout(library, layout);
         }
         if (this.wireframe !== wireframe && layoutObj) {
             layoutObj.threeObject.traverse((obj) => {
@@ -278,6 +288,9 @@ export default class Model extends FrameListener<Props, State> {
         >
             <div ref={this.onLoad} style={fullscreen}/>
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
+            <div style={{position: 'absolute', top: 0, right: 0, background: 'black', padding: 5}}>
+                {this.state.layout && this.state.layout.index}
+            </div>
         </div>;
     }
 }

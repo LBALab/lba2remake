@@ -12,11 +12,15 @@ const LayoutsEditor = {
     settings: LayoutsEditorSettings,
     mainArea: true,
     getInitialState: () => ({
+        library: 0,
         layout: 0,
         wireframe: false,
         grid: true
     }),
     stateHandler: {
+        setLibrary(library) {
+            this.setState({ library, layout: 0 });
+        },
         setLayout(layout) {
             this.setState({ layout });
         },
