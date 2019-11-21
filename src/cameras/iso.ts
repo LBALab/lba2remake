@@ -43,10 +43,13 @@ export function getIsometricCamera() {
             if (controlsState.freeCamera) {
                 processFreeIsoMovement(controlsState, camera, time);
             } else {
-                if (!scene.actors[0].threeObject)
+                if (!(scene.actors && scene.actors[0].threeObject)
+                    && !scene.target
+                )
                     return;
 
-                const { objectPos, cameraPos } = getTargetPos(scene.actors[0]);
+                const target = scene.actors ? scene.actors[0] : scene.target;
+                const { objectPos, cameraPos } = getTargetPos(target);
 
                 controlsState.cameraLerp.lerpVectors(camera.position, cameraPos, 0.2);
                 controlsState.cameraLookAtLerp.lerpVectors(

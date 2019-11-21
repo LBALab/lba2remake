@@ -7,7 +7,7 @@ import {compile} from '../utils/shaders';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 
-async function loadImageData(src) {
+export async function loadImageData(src) : Promise<ImageData> {
     return new Promise((resolve) => {
         const img = new Image();
         img.onload = function onload() {

@@ -113,7 +113,7 @@ function getBlockData(library, block) {
 
 const libraries = [];
 
-function loadLibrary(bkg, bricks, mask, palette, entry) {
+export function loadLibrary(bkg, bricks, mask, palette, entry) {
     if (libraries[entry]) {
         return libraries[entry];
     }
