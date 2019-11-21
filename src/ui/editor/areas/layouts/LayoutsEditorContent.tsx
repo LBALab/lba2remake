@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as THREE from 'three';
+import { saveAs } from 'file-saver';
+import { ColladaExporter } from 'three/examples/jsm/exporters/ColladaExporter';
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
@@ -42,6 +44,29 @@ interface State {
     };
 }
 
+const canvasStyle = {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 100
+};
+
+const infoStyle = {
+    position: 'absolute' as const,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 100
+};
+
+const infoButton = {
+    margin: '2px 4px',
+    padding: '5px 10px'
+};
+
+const exporter = new ColladaExporter();
+
 export default class Model extends FrameListener<Props, State> {
     mouseSpeed: {
         x: number;
@@ -68,6 +93,8 @@ export default class Model extends FrameListener<Props, State> {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onWheel = this.onWheel.bind(this);
         this.listener = this.listener.bind(this);
+        this.export = this.export.bind(this);
+        this.exportTexture = this.exportTexture.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -196,9 +223,11 @@ export default class Model extends FrameListener<Props, State> {
         const palette = new Uint8Array(ress.getEntry(0));
         const bricks = loadBricks(bkg);
         const library = loadLibrary(bkg, bricks, this.mask, palette, libraryIdx);
-        const layoutMesh = loadLayoutMesh(library, layoutIdx);
+        const layoutProps = library.layouts[layoutIdx];
+        const layoutMesh = await loadLayoutMesh(library, layoutIdx);
         const layoutObj = {
             index: layoutIdx,
+            props: layoutProps,
             threeObject: layoutMesh
         };
         const oldLayout = this.state.layout;
@@ -276,6 +305,26 @@ export default class Model extends FrameListener<Props, State> {
         }
     }
 
+    async export() {
+        const { layout, library } = this.state;
+        if (library && layout) {
+            const meshToExport = await loadLayoutMesh(library, layout.index, true);
+            exporter.parse(meshToExport, (dae) => {
+                const blob = new Blob([dae.data], {type: 'application/xml;charset=utf-8'});
+                saveAs(blob, `layout_${library.index}_${layout.index}.dae`);
+            }, {});
+        }
+    }
+
+    async exportTexture() {
+        const { library } = this.state;
+        if (library) {
+            const data = await textureToPNG(library.texture);
+            const blob = new Blob([data], {type: 'image/png;charset=utf-8'});
+            saveAs(blob, `library_${library.index}.png`);
+        }
+    }
+
     render() {
         return <div
             id="renderZone"
@@ -286,16 +335,38 @@ export default class Model extends FrameListener<Props, State> {
             onMouseLeave={this.onMouseUp}
             onWheel={this.onWheel}
         >
-            <div ref={this.onLoad} style={fullscreen}/>
+            <div ref={this.onLoad} style={canvasStyle}/>
+            {this.renderInfo()}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
-            <div style={{position: 'absolute', top: 0, right: 0, background: 'black', padding: 5}}>
-                {this.state.layout && this.state.layout.index}
-            </div>
         </div>;
+    }
+
+    renderInfo() {
+        const {layout} = this.state;
+        if (layout) {
+            return <div style={infoStyle}>
+                <div>
+                    Layout {layout.index}<br/><br/>
+                    Width (x): {layout.props.nX}<br/>
+                    Height (x): {layout.props.nY}<br/>
+                    Depth (z): {layout.props.nZ}
+                </div>
+                <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'right'}}>
+                    <button style={infoButton} onClick={this.export}>
+                        Download layout
+                    </button>
+                    <br/>
+                    <button style={infoButton} onClick={this.exportTexture}>
+                        Download library texture
+                    </button>
+                </div>
+            </div>;
+        }
+        return null;
     }
 }
 
-function loadLayoutMesh(library, layoutIdx) {
+async function loadLayoutMesh(library, layoutIdx, loadForExporting = false) {
     const h = 0.5;
     const positions = [];
     const uvs = [];
@@ -311,7 +382,11 @@ function loadLayoutMesh(library, layoutIdx) {
                     const {u, v} = library.bricksMap[block.brick];
                     const pushUv = (u0, v0, side) => {
                         const o = OffsetBySide[side];
-                        uvs.push((u + u0 + o.x) / width, (v + v0 + o.y) / height);
+                        if (loadForExporting) {
+                            uvs.push((u + u0 + o.x) / width, 1 - ((v + v0 + o.y) / height));
+                        } else {
+                            uvs.push((u + u0 + o.x) / width, (v + v0 + o.y) / height);
+                        }
                     };
 
                     positions.push(x, pY, z);
@@ -367,14 +442,20 @@ function loadLayoutMesh(library, layoutIdx) {
         'uv',
         new THREE.BufferAttribute(new Float32Array(uvs), 2)
     );
-    const mesh = new THREE.Mesh(bufferGeometry, new THREE.RawShaderMaterial({
-        vertexShader: compile('vert', brick_vertex),
-        fragmentShader: compile('frag', brick_fragment),
-        transparent: true,
-        uniforms: {
-            library: {value: library.texture}
-        }
-    }));
+    const material = loadForExporting
+        ? new THREE.MeshStandardMaterial({
+            transparent: true,
+            map: await convertTextureForExport(library.texture, library.index)
+        })
+        : new THREE.RawShaderMaterial({
+            vertexShader: compile('vert', brick_vertex),
+            fragmentShader: compile('frag', brick_fragment),
+            transparent: true,
+            uniforms: {
+                library: {value: library.texture}
+            }
+        });
+    const mesh = new THREE.Mesh(bufferGeometry, material);
 
     const scale = 0.75;
     mesh.scale.set(scale, scale, scale);
@@ -384,4 +465,57 @@ function loadLayoutMesh(library, layoutIdx) {
     mesh.name = `layout_${layoutIdx}`;
 
     return mesh;
+}
+
+async function convertTextureForExport(texture, index) {
+    const newTexture = texture.clone();
+    newTexture.image = await extractImageFromTexture(texture);
+    newTexture.name = `library_${index}`;
+    return newTexture;
+}
+
+async function extractImageFromTexture(texture) {
+    const {width, height, data: image_data} = texture.image;
+    const arr = new Uint8ClampedArray(width * height * 4);
+    for (let i = 0; i < arr.length; i += 1) {
+        arr[i] = image_data[i];
+    }
+    const imageData = new ImageData(arr, width, height);
+    const img = await createImageBitmap(imageData);
+    (img as any).naturalWidth = width;
+    (img as any).naturalHeight = height;
+    return img;
+}
+
+let expCanvas;
+let expCtx;
+
+async function textureToPNG(texture) {
+    const image = await extractImageFromTexture(texture);
+    expCanvas = expCanvas || document.createElement('canvas');
+    expCtx = expCtx || expCanvas.getContext('2d');
+
+    expCanvas.width = (image as any).naturalWidth;
+    expCanvas.height = (image as any).naturalHeight;
+
+    expCtx.drawImage(image, 0, 0);
+
+    // Get the base64 encoded data
+    const base64data = expCanvas
+        .toDataURL('image/png', 1)
+        .replace(/^data:image\/png;base64,/, '');
+
+    // Convert to a uint8 array
+    return base64ToBuffer(base64data);
+}
+
+function base64ToBuffer(str) {
+    const b = atob(str);
+    const buf = new Uint8Array(b.length);
+
+    for (let i = 0, l = buf.length; i < l; i += 1) {
+        buf[i] = b.charCodeAt(i);
+    }
+
+    return buf;
 }

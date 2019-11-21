@@ -131,6 +131,7 @@ export function loadLibrary(bkg, bricks, mask, palette, entry) {
     }
     const mapping = loadBricksMapping(layouts, bricks, mask, palette);
     const library = {
+        index: entry,
         texture: mapping.texture,
         bricksMap: mapping.bricksMap,
         layouts
