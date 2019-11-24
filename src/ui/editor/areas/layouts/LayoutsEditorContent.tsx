@@ -48,7 +48,6 @@ interface State {
     replacement?: {
         threeObject: THREE.Object3D;
         file: string;
-        scale: number;
     };
 }
 
@@ -332,7 +331,6 @@ export default class Model extends FrameListener<Props, State> {
         if (replacement) {
             const model = await loadModel(replacement.file);
             replacement.threeObject = model.scene;
-            model.scene.scale.set(replacement.scale, replacement.scale, replacement.scale);
             this.state.scene.threeScene.add(replacement.threeObject);
             layoutObj.threeObject.visible = false;
         }
@@ -466,7 +464,6 @@ export default class Model extends FrameListener<Props, State> {
         }
         const replacement = {
             threeObject: model.scene,
-            scale: 1,
             file
         };
         const { library, layout } = this.props.sharedState;
@@ -549,9 +546,6 @@ export default class Model extends FrameListener<Props, State> {
         if (replacement) {
             return <div style={dataBlock}>
                 Replacement:<br/><br/>
-                Scale: <input type="number"
-                                value={replacement.scale}
-                                onChange={this.changeScale}/><br/>
                 Angle: <select>
                     <option>0°</option>
                     <option>90°</option>
