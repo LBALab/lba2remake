@@ -1,7 +1,9 @@
 import * as React from 'react';
 import * as THREE from 'three';
+import { omit, cloneDeep } from 'lodash';
 import { saveAs } from 'file-saver';
 import { ColladaExporter } from 'three/examples/jsm/exporters/ColladaExporter';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
@@ -42,6 +44,12 @@ interface State {
         cameraLerp: THREE.Vector3;
         cameraLookAtLerp: THREE.Vector3;
     };
+    replacementFiles?: string[];
+    replacement?: {
+        threeObject: THREE.Object3D;
+        file: string;
+        scale: number;
+    };
 }
 
 const canvasStyle = {
@@ -65,7 +73,48 @@ const infoButton = {
     padding: '5px 10px'
 };
 
+const fileSelectorWrapper = Object.assign({}, fullscreen, {
+    background: 'rgba(0, 0, 0, 0.75)',
+    padding: 20,
+    textAlign: 'left' as const,
+});
+
+const fileInnerWrapper = {
+    position: 'absolute' as const,
+    right: 20,
+    top: 20,
+    bottom: 20,
+    padding: 20,
+    background: 'grey',
+    overflowY: 'auto' as const
+};
+
+const fileStyle = {
+    cursor: 'pointer' as const,
+    fontSize: 24,
+    lineHeight: '32px',
+};
+
+const dataBlock = {
+    display: 'inline-block' as const,
+    borderRight: '1px dashed black',
+    padding: '5px 10px',
+    height: '100%'
+};
+
+const closeStyle = {
+    position: 'absolute' as const,
+    top: 2,
+    right: 8,
+    width: 24,
+    height: 24,
+    cursor: 'pointer' as const
+};
+
 const exporter = new ColladaExporter();
+const loader = new GLTFLoader();
+
+let replacementData = null;
 
 export default class Model extends FrameListener<Props, State> {
     mouseSpeed: {
@@ -95,6 +144,10 @@ export default class Model extends FrameListener<Props, State> {
         this.listener = this.listener.bind(this);
         this.export = this.export.bind(this);
         this.exportTexture = this.exportTexture.bind(this);
+        this.replaceByModel = this.replaceByModel.bind(this);
+        this.closeReplacement = this.closeReplacement.bind(this);
+        this.resetToIso = this.resetToIso.bind(this);
+        this.changeScale = this.changeScale.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -133,6 +186,26 @@ export default class Model extends FrameListener<Props, State> {
             }
             scene.threeScene.add(grid);
             scene.threeScene.add(camera.threeCamera);
+            const ambience = {
+                lightingAlpha: 414,
+                lightingBeta: 136
+            };
+            const light = new THREE.DirectionalLight();
+            light.name = 'light';
+            light.position.set(-1000, 0, 0);
+            light.position.applyAxisAngle(
+                new THREE.Vector3(0, 0, 1),
+                -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
+            );
+            light.position.applyAxisAngle(
+                new THREE.Vector3(0, 1, 0),
+                -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
+            );
+            light.updateMatrix();
+            light.matrixAutoUpdate = false;
+            light.intensity = 10;
+            scene.threeScene.add(light);
+            scene.threeScene.add(new THREE.AmbientLight(0xFFFFFF, 0.5));
             const clock = new THREE.Clock(false);
             this.state = {
                 scene,
@@ -206,6 +279,13 @@ export default class Model extends FrameListener<Props, State> {
                     this.props.stateHandler.setLayout(newLayout);
                     break;
                 }
+                case 27: // escape
+                case 'Escape': {
+                    if (this.state.replacementFiles) {
+                        this.closeReplacement();
+                    }
+                    break;
+                }
             }
         }
     }
@@ -230,12 +310,38 @@ export default class Model extends FrameListener<Props, State> {
             props: layoutProps,
             threeObject: layoutMesh
         };
-        const oldLayout = this.state.layout;
+        const {
+            layout: oldLayout,
+            replacement: oldReplacement
+        } = this.state;
         if (oldLayout) {
             this.state.scene.threeScene.remove(oldLayout.threeObject);
         }
+        if (oldReplacement) {
+            this.state.scene.threeScene.remove(oldReplacement.threeObject);
+        }
+        if (!replacementData) {
+            const rawRD = await fetch('/metadata/layout_replacements.json');
+            replacementData = await rawRD.json();
+        }
+        let replacement = null;
+        if (libraryIdx in replacementData
+            && layoutIdx in replacementData[libraryIdx]) {
+            replacement = cloneDeep(replacementData[libraryIdx][layoutIdx]);
+        }
+        if (replacement) {
+            const model = await loadModel(replacement.file);
+            replacement.threeObject = model.scene;
+            model.scene.scale.set(replacement.scale, replacement.scale, replacement.scale);
+            this.state.scene.threeScene.add(replacement.threeObject);
+            layoutObj.threeObject.visible = false;
+        }
         this.state.scene.threeScene.add(layoutObj.threeObject);
-        this.setState({ library, layout: layoutObj }, this.saveData);
+        this.setState({
+            library,
+            layout: layoutObj,
+            replacement
+        }, this.saveData);
         this.wireframe = false;
     }
 
@@ -325,6 +431,67 @@ export default class Model extends FrameListener<Props, State> {
         }
     }
 
+    async replaceByModel() {
+        const data = await fetch('/layout_models');
+        const files = await data.json();
+        this.setState({ replacementFiles: files });
+    }
+
+    async resetToIso() {
+        const { threeScene } = this.state.scene;
+        const oldReplacement = this.state.replacement;
+        if (oldReplacement) {
+            threeScene.remove(oldReplacement.threeObject);
+        }
+        this.state.layout.threeObject.visible = true;
+        const { library, layout } = this.props.sharedState;
+        delete replacementData[library][layout];
+        await this.saveMetadata();
+        this.setState({ replacement: null });
+    }
+
+    closeReplacement() {
+        this.setState({ replacementFiles: null });
+    }
+
+    async useFile(file) {
+        this.setState({ replacementFiles: null });
+        const model = await loadModel(file);
+        const { threeScene } = this.state.scene;
+        const oldReplacement = this.state.replacement;
+        if (oldReplacement) {
+            threeScene.remove(oldReplacement.threeObject);
+        } else {
+            this.state.layout.threeObject.visible = false;
+        }
+        const replacement = {
+            threeObject: model.scene,
+            scale: 1,
+            file
+        };
+        const { library, layout } = this.props.sharedState;
+        if (!(library in replacementData)) {
+            replacementData[library] = {};
+        }
+        replacementData[library][layout] = omit(replacement, 'threeObject');
+        await this.saveMetadata();
+        threeScene.add(replacement.threeObject);
+        this.setState({ replacement });
+    }
+
+    async saveMetadata() {
+        return fetch('/metadata', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                type: 'layouts',
+                content: replacementData
+            })
+        });
+    }
+
     render() {
         return <div
             id="renderZone"
@@ -337,20 +504,22 @@ export default class Model extends FrameListener<Props, State> {
         >
             <div ref={this.onLoad} style={canvasStyle}/>
             {this.renderInfo()}
+            {this.renderFileSelector()}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
         </div>;
     }
 
     renderInfo() {
-        const {layout} = this.state;
+        const {layout, replacement} = this.state;
         if (layout) {
             return <div style={infoStyle}>
-                <div>
+                <div style={dataBlock}>
                     Layout {layout.index}<br/><br/>
                     Width (x): {layout.props.nX}<br/>
                     Height (x): {layout.props.nY}<br/>
                     Depth (z): {layout.props.nZ}
                 </div>
+                {this.renderReplacementData()}
                 <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'right'}}>
                     <button style={infoButton} onClick={this.export}>
                         Download layout
@@ -359,11 +528,72 @@ export default class Model extends FrameListener<Props, State> {
                     <button style={infoButton} onClick={this.exportTexture}>
                         Download library texture
                     </button>
+                    <br/>
+                    {replacement
+                        ? <button style={infoButton} onClick={this.resetToIso}>
+                            Reset to iso
+                        </button>
+                        : <button style={infoButton} onClick={this.replaceByModel}>
+                            Replace by 3D model
+                        </button>}
                 </div>
             </div>;
         }
         return null;
     }
+
+    changeScale(event) {
+    }
+
+    renderReplacementData() {
+        const {replacement} = this.state;
+        if (replacement) {
+            return <div style={dataBlock}>
+                Replacement:<br/><br/>
+                Scale: <input type="number"
+                                value={replacement.scale}
+                                onChange={this.changeScale}/><br/>
+                Angle: <select>
+                    <option>0°</option>
+                    <option>90°</option>
+                    <option>180°</option>
+                    <option>270°</option>
+                </select>
+            </div>;
+        }
+        return null;
+    }
+
+    renderFileSelector() {
+        const {replacementFiles} = this.state;
+        if (replacementFiles) {
+            return <div style={fileSelectorWrapper} onClick={e => e.stopPropagation()}>
+                <div style={fileInnerWrapper}>
+                    {replacementFiles.map(f =>
+                        <div key={f}
+                                style={fileStyle}
+                                onClick={this.useFile.bind(this, f)}>
+                            <img src="editor/icons/gltf.svg" style={{height: 20}}/>
+                            {f}
+                        </div>)}
+                </div>
+                <img style={closeStyle}
+                        src="./editor/icons/close.svg"
+                        onClick={this.closeReplacement}/>
+            </div>;
+        }
+        return null;
+    }
+}
+
+interface GLTFModel {
+    scene: THREE.Scene;
+}
+
+async function loadModel(file) : Promise<GLTFModel> {
+    return new Promise((resolve) => {
+        loader.load(`/models/layouts/${file}`, resolve);
+    });
 }
 
 async function loadLayoutMesh(library, layoutIdx, loadForExporting = false) {

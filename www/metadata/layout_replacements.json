@@ -1,0 +1,12 @@
+{
+  "0": {
+    "56": {
+      "scale": 0.08,
+      "file": "armchair.glb"
+    },
+    "78": {
+      "scale": 1,
+      "file": "bedside_table.glb"
+    }
+  }
+}

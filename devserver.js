@@ -27,8 +27,9 @@ app.use(bodyParser.raw({
 
 app.post('/metadata', function (req, res) { // lgtm [js/missing-rate-limiting]
     const body = req.body;
-    console.log(`Saving metadata, content=${JSON.stringify(body, null, 2)}`);
+    console.log(`Saving metadata, type=${body.type}`);
     let fileName;
+    let kind = 'partial';
     switch (body.type) {
         case 'scene':
             fileName = `./www/metadata/scene_${body.index}.json`;
@@ -42,20 +43,28 @@ app.post('/metadata', function (req, res) { // lgtm [js/missing-rate-limiting]
         case 'islands':
             fileName = './www/metadata/islands.json';
             break;
+        case 'layouts':
+            fileName = './www/metadata/layout_replacements.json';
+            kind = 'full';
+            break;
     }
     if (fileName) {
-        fs.readFile(fileName, 'utf8', (err, file) => { // lgtm [js/path-injection]
-            if (err) {
-                console.error(err);
-            } else {
-                const content = JSON.parse(file);
-                if (!(body.subType in content)) {
-                    content[body.subType] = [];
+        if (kind === 'full') {
+            fs.writeFile(fileName, JSON.stringify(body.content, null, 2), () => {}); // lgtm [js/path-injection]
+        } else {
+            fs.readFile(fileName, 'utf8', (err, file) => { // lgtm [js/path-injection]
+                if (err) {
+                    console.error(err);
+                } else {
+                    const content = JSON.parse(file);
+                    if (!(body.subType in content)) {
+                        content[body.subType] = [];
+                    }
+                    content[body.subType][body.subIndex] = body.value;
+                    fs.writeFile(fileName, JSON.stringify(content, null, 2), () => {}); // lgtm [js/path-injection]
                 }
-                content[body.subType][body.subIndex] = body.value;
-                fs.writeFile(fileName, JSON.stringify(content, null, 2), () => {}); // lgtm [js/path-injection]
-            }
-        });
+            });
+        }
     }
     res.end();
 });
@@ -84,6 +93,12 @@ app.post('/lut.dat', function(req, res) { // lgtm [js/missing-rate-limiting]
         console.log('Saved lut.dat');
         res.end();
     });
+});
+
+app.get('/layout_models', function(req, res) {
+    fs.readdir('./www/models/layouts', (err, files) => {
+        res.end(JSON.stringify(files));
+      });
 });
 
 app.use('/', express.static('./www'));
