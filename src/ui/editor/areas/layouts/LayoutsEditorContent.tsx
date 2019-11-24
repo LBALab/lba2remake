@@ -542,8 +542,7 @@ export default class Model extends FrameListener<Props, State> {
         return null;
     }
 
-    changeScale(event) {
-    }
+    changeScale() {}
 
     renderReplacementData() {
         const {replacement} = this.state;
