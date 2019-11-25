@@ -204,7 +204,7 @@ export default class Model extends FrameListener<Props, State> {
             light.matrixAutoUpdate = false;
             light.intensity = 10;
             scene.threeScene.add(light);
-            scene.threeScene.add(new THREE.AmbientLight(0xFFFFFF, 0.5));
+            scene.threeScene.add(new THREE.AmbientLight(0xFFFFFF, 0.2));
             const clock = new THREE.Clock(false);
             this.state = {
                 scene,
