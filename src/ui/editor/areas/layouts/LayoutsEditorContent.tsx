@@ -48,6 +48,7 @@ interface State {
     replacement?: {
         threeObject: THREE.Object3D;
         file: string;
+        orientation: number;
     };
 }
 
@@ -146,7 +147,7 @@ export default class Model extends FrameListener<Props, State> {
         this.replaceByModel = this.replaceByModel.bind(this);
         this.closeReplacement = this.closeReplacement.bind(this);
         this.resetToIso = this.resetToIso.bind(this);
-        this.changeScale = this.changeScale.bind(this);
+        this.changeAngle = this.changeAngle.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -330,6 +331,10 @@ export default class Model extends FrameListener<Props, State> {
         }
         if (replacement) {
             const model = await loadModel(replacement.file);
+            model.scene.quaternion.setFromAxisAngle(
+                new THREE.Vector3(0, 1, 0),
+                (Math.PI / 2.0) * replacement.orientation
+            );
             replacement.threeObject = model.scene;
             this.state.scene.threeScene.add(replacement.threeObject);
             layoutObj.threeObject.visible = false;
@@ -464,7 +469,8 @@ export default class Model extends FrameListener<Props, State> {
         }
         const replacement = {
             threeObject: model.scene,
-            file
+            file,
+            orientation: 0
         };
         const { library, layout } = this.props.sharedState;
         if (!(library in replacementData)) {
@@ -539,18 +545,28 @@ export default class Model extends FrameListener<Props, State> {
         return null;
     }
 
-    changeScale() {}
+    async changeAngle(e) {
+        const {replacement} = this.state;
+        const { library, layout } = this.props.sharedState;
+        replacement.orientation = Number(e.target.value);
+        replacement.threeObject.quaternion.setFromAxisAngle(
+            new THREE.Vector3(0, 1, 0),
+            (Math.PI / 2.0) * replacement.orientation
+        );
+        this.setState({replacement});
+        replacementData[library][layout].orientation = replacement.orientation;
+        await this.saveMetadata();
+    }
 
     renderReplacementData() {
         const {replacement} = this.state;
         if (replacement) {
             return <div style={dataBlock}>
                 Replacement:<br/><br/>
-                Angle: <select>
-                    <option>0°</option>
-                    <option>90°</option>
-                    <option>180°</option>
-                    <option>270°</option>
+                Angle: <select onChange={this.changeAngle} value={replacement.orientation}>
+                    {[0, 1, 2, 3].map(v => <option key={v} value={v}>
+                        {v * 90}°
+                    </option>)}
                 </select>
             </div>;
         }

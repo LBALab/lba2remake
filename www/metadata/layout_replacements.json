@@ -1,32 +1,76 @@
 {
   "0": {
     "29": {
-      "file": "29_tall_lamp.glb"
+      "file": "29_tall_lamp.glb",
+      "orientation": 0
     },
     "47": {
-      "file": "47_chair.glb"
+      "file": "47_chair.glb",
+      "orientation": 0
+    },
+    "48": {
+      "file": "47_chair.glb",
+      "orientation": 3
+    },
+    "49": {
+      "file": "47_chair.glb",
+      "orientation": 1
+    },
+    "50": {
+      "file": "47_chair.glb",
+      "orientation": 2
+    },
+    "53": {
+      "file": "54_bed.glb",
+      "orientation": 3
     },
     "54": {
-      "file": "54_bed.glb"
+      "file": "54_bed.glb",
+      "orientation": 0
+    },
+    "55": {
+      "file": "56_armchair.glb",
+      "orientation": 3
     },
     "56": {
-      "file": "56_armchair.glb"
+      "file": "56_armchair.glb",
+      "orientation": 0
+    },
+    "57": {
+      "file": "56_armchair.glb",
+      "orientation": 1
+    },
+    "58": {
+      "file": "56_armchair.glb",
+      "orientation": 2
     },
     "78": {
       "file": "78_bedside_table.glb",
       "orientation": 0
     },
+    "79": {
+      "file": "78_bedside_table.glb",
+      "orientation": 3
+    },
     "84": {
-      "file": "84_plate_stack.glb"
+      "file": "84_plate_stack.glb",
+      "orientation": 0
     },
     "85": {
-      "file": "85_single_plate.glb"
+      "file": "85_single_plate.glb",
+      "orientation": 0
     },
     "86": {
-      "file": "86_candlestick.glb"
+      "file": "86_candlestick.glb",
+      "orientation": 0
     },
     "89": {
-      "file": "89_small_lamp.glb"
+      "file": "89_small_lamp.glb",
+      "orientation": 0
+    },
+    "90": {
+      "file": "89_small_lamp.glb",
+      "orientation": 3
     }
   }
 }
