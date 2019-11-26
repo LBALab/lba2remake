@@ -130,6 +130,7 @@ export default class Model extends FrameListener<Props, State> {
     moving: boolean;
     moved: boolean;
     mask: ImageData;
+    loading: boolean = false;
 
     constructor(props) {
         super(props);
@@ -291,6 +292,10 @@ export default class Model extends FrameListener<Props, State> {
     }
 
     async loadLayout(libraryIdx, layoutIdx) {
+        if (this.loading) {
+            return;
+        }
+        this.loading = true;
         this.layout = layoutIdx;
         this.library = libraryIdx;
         const [ress, bkg] = await Promise.all([
@@ -346,6 +351,7 @@ export default class Model extends FrameListener<Props, State> {
             replacement
         }, this.saveData);
         this.wireframe = false;
+        this.loading = false;
     }
 
     onMouseDown() {
