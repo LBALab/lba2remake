@@ -1,4 +1,7 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { map } from 'lodash';
+
 import { loadHqr } from '../hqr';
 import { loadBricks } from './bricks';
 import { loadGrid } from './grid';
@@ -31,6 +34,7 @@ export async function loadIsometricScenery(entry) {
     const palette = new Uint8Array(ress.getEntry(0));
     const bricks = loadBricks(bkg);
     const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
+    const replacements = await loadReplacements(grid.library);
 
     return {
         props: {
@@ -39,7 +43,7 @@ export async function loadIsometricScenery(entry) {
                 skyColor: [0, 0, 0]
             }
         },
-        threeObject: loadMesh(grid, entry),
+        threeObject: loadMesh(grid, entry, replacements),
         physics: {
             processCollisions: processCollisions.bind(null, grid),
             processCameraCollisions: () => null
@@ -49,7 +53,35 @@ export async function loadIsometricScenery(entry) {
     };
 }
 
-function loadMesh(grid, entry) {
+async function loadReplacements(library) {
+    const rawRD = await fetch('/metadata/layout_replacements.json');
+    const replacementDataAll = await rawRD.json();
+    const replacementData = replacementDataAll[library.index];
+    const replacements = {};
+    await Promise.all(map(replacementData, async (data, idx) => {
+        const model = await loadModel(data.file);
+        replacements[idx] = {
+            ...data,
+            threeObject: model.scene
+        };
+    }));
+    return replacements;
+}
+
+interface GLTFModel {
+    scene: THREE.Scene;
+}
+
+const loader = new GLTFLoader();
+
+async function loadModel(file) : Promise<GLTFModel> {
+    return new Promise((resolve) => {
+        loader.load(`/models/layouts/${file}`, resolve);
+    });
+}
+
+function loadMesh(grid, entry, replacements) {
+    const scene = new THREE.Object3D();
     const geometries = {
         positions: [],
         uvs: []
@@ -57,7 +89,10 @@ function loadMesh(grid, entry) {
     let c = 0;
     for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
-            grid.cells[c].build(geometries, x, z - 1);
+            const o = grid.cells[c].build(geometries, x, z - 1, replacements);
+            if (o) {
+                scene.add(o);
+            }
             c += 1;
         }
     }
@@ -80,12 +115,16 @@ function loadMesh(grid, entry) {
         }
     }));
 
-    const scale = 0.75;
-    mesh.scale.set(scale, scale, scale);
-    mesh.position.set(48, 0, 0);
-    mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
     mesh.frustumCulled = false;
-    mesh.name = `scenery_iso_${entry}`;
+    mesh.name = 'iso_grid';
 
-    return mesh;
+    scene.add(mesh);
+
+    const scale = 0.75;
+    scene.name = `scenery_iso_${entry}`;
+    scene.scale.set(scale, scale, scale);
+    scene.position.set(48, 0, 0);
+    scene.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
+
+    return scene;
 }

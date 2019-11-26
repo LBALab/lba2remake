@@ -127,7 +127,7 @@ export function loadLibrary(bkg, bricks, mask, palette, entry) {
             dataView.byteLength
             : dataView.getUint32((i + 1) * 4, true);
         const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
-        layouts.push(loadLayout(layoutDataView));
+        layouts.push(loadLayout(layoutDataView, i));
     }
     const mapping = loadBricksMapping(layouts, bricks, mask, palette);
     const library = {
@@ -140,7 +140,7 @@ export function loadLibrary(bkg, bricks, mask, palette, entry) {
     return library;
 }
 
-function loadLayout(dataView) {
+function loadLayout(dataView, index) {
     const nX = dataView.getUint8(0);
     const nY = dataView.getUint8(1);
     const nZ = dataView.getUint8(2);
@@ -157,6 +157,7 @@ function loadLayout(dataView) {
         });
     }
     return {
+        index,
         nX,
         nY,
         nZ,
@@ -164,7 +165,14 @@ function loadLayout(dataView) {
     };
 }
 
-function buildCell(library, blocks, geometries, x, z) {
+const angleMapping = [
+    Math.PI / 2.0,
+    Math.PI,
+    -Math.PI / 2.0,
+    0,
+];
+
+function buildCell(library, blocks, geometries, x, z, replacements) {
     const h = 0.5;
     const {positions, uvs} = geometries;
     const {width, height} = library.texture.image;
@@ -173,6 +181,15 @@ function buildCell(library, blocks, geometries, x, z) {
         const y = (yIdx * h) + h;
         if (blocks[yIdx]) {
             const layout = library.layouts[blocks[yIdx].layout];
+            if (layout.index in replacements && layout.nX === 1 && layout.nZ === 1) {
+                const replacement = replacements[layout.index];
+                const obj = replacement.threeObject.clone();
+                obj.position.set(x + 0.5, y - h, z + 0.5);
+                const orientation = replacement.orientation;
+                const angle = angleMapping[orientation];
+                obj.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+                return obj;
+            }
             if (layout) {
                 const block = layout.blocks[blocks[yIdx].block];
                 if (block && block.brick in library.bricksMap) {
