@@ -184,7 +184,9 @@ function buildCell(library, blocks, geometries, x, z, replacements) {
             if (layout.index in replacements && layout.nX === 1 && layout.nZ === 1) {
                 const replacement = replacements[layout.index];
                 const obj = replacement.threeObject.clone();
+                const scale = 1 / 0.75;
                 obj.position.set(x + 0.5, y - h, z + 0.5);
+                obj.scale.set(scale, scale, scale);
                 const orientation = replacement.orientation;
                 const angle = angleMapping[orientation];
                 obj.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
