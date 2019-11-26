@@ -8,6 +8,22 @@
       "file": "03_04_wall_deco_2_joins.glb",
       "orientation": 1
     },
+    "5": {
+      "file": "05_06_07_08_wall_deco_1_join.glb",
+      "orientation": 1
+    },
+    "6": {
+      "file": "05_06_07_08_wall_deco_1_join.glb",
+      "orientation": 3
+    },
+    "7": {
+      "file": "05_06_07_08_wall_deco_1_join.glb",
+      "orientation": 2
+    },
+    "8": {
+      "file": "05_06_07_08_wall_deco_1_join.glb",
+      "orientation": 0
+    },
     "29": {
       "file": "29_tall_lamp.glb",
       "orientation": 0
