@@ -84,6 +84,7 @@ export function createPointLabel(point, index) {
     ctx.textBaseline = 'middle';
     ctx.lineWidth = 4;
     const texture = new THREE.CanvasTexture(canvas);
+    texture.encoding = THREE.GammaEncoding;
     texture.anisotropy = 16;
     const draw = (selected = false) => {
         ctx.clearRect(0, 0, 64, 64);

@@ -179,6 +179,7 @@ export function createActorLabel(actor, name, is3DCam) {
     const icon = new Image(32, 32);
     icon.src = 'editor/icons/actor.svg';
     const texture = new THREE.CanvasTexture(canvas);
+    texture.encoding = THREE.GammaEncoding;
 
     const draw = (selected = false) => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -241,6 +242,7 @@ export function createZoneLabel(zone, name, is3DCam) {
     const icon = new Image(32, 32);
     icon.src = `editor/icons/zones/${zone.zoneType}.svg`;
     const texture = new THREE.CanvasTexture(canvas);
+    texture.encoding = THREE.GammaEncoding;
     const draw = (selected = false) => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.font = '16px LBA';

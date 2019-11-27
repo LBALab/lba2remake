@@ -192,12 +192,13 @@ function loadBillboardSprite(index, sprite, is3DCam) {
         THREE.LinearFilter
     );
 
+    texture.encoding = THREE.GammaEncoding;
     texture.needsUpdate = true;
     texture.generateMipmaps = false;
 
     const spriteMaterial = new THREE.SpriteMaterial({
         map: texture,
-        rotation: THREE.Math.degToRad(180),
+        rotation: THREE.Math.degToRad(180)
     });
 
     const threeSprite = new THREE.Sprite(spriteMaterial);
