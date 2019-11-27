@@ -494,4 +494,5 @@ function makeLight(threeScene, ambience) {
     light.updateMatrix();
     light.matrixAutoUpdate = false;
     threeScene.add(light);
+    threeScene.add(new THREE.AmbientLight(0xFFFFFF, 0.08));
 }
