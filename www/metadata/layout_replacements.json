@@ -24,6 +24,38 @@
       "file": "05_06_07_08_wall_deco_1_join.glb",
       "orientation": 0
     },
+    "9": {
+      "file": "09_10_11_12_wall_deco_L_join.glb",
+      "orientation": 3
+    },
+    "10": {
+      "file": "09_10_11_12_wall_deco_L_join.glb",
+      "orientation": 1
+    },
+    "11": {
+      "file": "09_10_11_12_wall_deco_L_join.glb",
+      "orientation": 2
+    },
+    "12": {
+      "file": "09_10_11_12_wall_deco_L_join.glb",
+      "orientation": 0
+    },
+    "13": {
+      "file": "13_wall_deco_4_joins.glb",
+      "orientation": 0
+    },
+    "14": {
+      "file": "14_16_17_wall_deco_3_joins.glb",
+      "orientation": 1
+    },
+    "16": {
+      "file": "14_16_17_wall_deco_3_joins.glb",
+      "orientation": 0
+    },
+    "17": {
+      "file": "14_16_17_wall_deco_3_joins.glb",
+      "orientation": 2
+    },
     "29": {
       "file": "29_tall_lamp.glb",
       "orientation": 0
