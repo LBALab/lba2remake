@@ -94,6 +94,7 @@ export function loadGrid(bkg, bricks, mask, palette, entry) {
             }
             return {
                 build: buildCell.bind(null, library, blocks),
+                blocks,
                 columns
             };
         })
@@ -165,14 +166,7 @@ function loadLayout(dataView, index) {
     };
 }
 
-const angleMapping = [
-    Math.PI / 2.0,
-    Math.PI,
-    -Math.PI / 2.0,
-    0,
-];
-
-function buildCell(library, blocks, geometries, x, z, replacements) {
+function buildCell(library, blocks, geometries, x, z, gridRepsBricks) {
     const h = 0.5;
     const {positions, uvs} = geometries;
     const {width, height} = library.texture.image;
@@ -181,18 +175,10 @@ function buildCell(library, blocks, geometries, x, z, replacements) {
         const y = (yIdx * h) + h;
         if (blocks[yIdx]) {
             const layout = library.layouts[blocks[yIdx].layout];
-            if (layout.index in replacements && layout.nX === 1 && layout.nZ === 1) {
-                const replacement = replacements[layout.index];
-                const obj = replacement.threeObject.clone();
-                const scale = 1 / 0.75;
-                obj.position.set(x + 0.5, y - h, z + 0.5);
-                obj.scale.set(scale, scale, scale);
-                const orientation = replacement.orientation;
-                const angle = angleMapping[orientation];
-                obj.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
-                return obj;
-            }
             if (layout) {
+                if (gridRepsBricks.has(`${x},${yIdx},${z}`))
+                    continue;
+
                 const block = layout.blocks[blocks[yIdx].block];
                 if (block && block.brick in library.bricksMap) {
                     const {u, v} = library.bricksMap[block.brick];

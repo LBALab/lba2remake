@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { map } from 'lodash';
+import { map, each } from 'lodash';
 
 import { loadHqr } from '../hqr';
 import { loadBricks } from './bricks';
@@ -9,6 +9,7 @@ import { processCollisions } from '../game/loop/physicsIso';
 import {compile} from '../utils/shaders';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
+import { extractGridReplacements } from './replacements';
 
 export async function loadImageData(src) : Promise<ImageData> {
     return new Promise((resolve) => {
@@ -86,10 +87,15 @@ function loadMesh(grid, entry, replacements) {
         positions: [],
         uvs: []
     };
+    const gridReps = extractGridReplacements(grid, replacements);
+    each(gridReps.objects, (threeObject) => {
+        scene.add(threeObject);
+    });
+
     let c = 0;
     for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
-            const o = grid.cells[c].build(geometries, x, z - 1, replacements);
+            const o = grid.cells[c].build(geometries, x, z - 1, gridReps.bricks);
             if (o) {
                 scene.add(o);
             }
