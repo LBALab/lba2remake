@@ -116,7 +116,7 @@ const loader = new GLTFLoader();
 
 let replacementData = null;
 
-export default class Model extends FrameListener<Props, State> {
+export default class LayoutsEditorContent extends FrameListener<Props, State> {
     mouseSpeed: {
         x: number;
         y: number;
