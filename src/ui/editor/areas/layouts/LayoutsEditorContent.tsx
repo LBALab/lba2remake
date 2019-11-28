@@ -552,7 +552,10 @@ export default class Model extends FrameListener<Props, State> {
     }
 
     async changeAngle(e) {
-        const {replacement} = this.state;
+        const { replacement } = this.state;
+        if (!replacement) {
+            return;
+        }
         const { library, layout } = this.props.sharedState;
         replacement.orientation = Number(e.target.value);
         replacement.threeObject.quaternion.setFromAxisAngle(
