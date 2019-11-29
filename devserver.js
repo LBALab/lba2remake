@@ -44,7 +44,7 @@ app.post('/metadata', function (req, res) { // lgtm [js/missing-rate-limiting]
             fileName = './www/metadata/islands.json';
             break;
         case 'layouts':
-            fileName = './www/metadata/layout_replacements.json';
+            fileName = './www/metadata/layouts.json';
             kind = 'full';
             break;
     }

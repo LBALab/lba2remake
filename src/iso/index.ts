@@ -9,7 +9,7 @@ import { processCollisions } from '../game/loop/physicsIso';
 import {compile} from '../utils/shaders';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
-import { extractGridReplacements } from './replacements';
+import { extractGridMetadata } from './metadata';
 
 export async function loadImageData(src) : Promise<ImageData> {
     return new Promise((resolve) => {
@@ -35,7 +35,7 @@ export async function loadIsometricScenery(entry) {
     const palette = new Uint8Array(ress.getEntry(0));
     const bricks = loadBricks(bkg);
     const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
-    const replacements = await loadReplacements(grid.library);
+    const metadata = await loadMetadata(grid.library);
 
     return {
         props: {
@@ -44,7 +44,7 @@ export async function loadIsometricScenery(entry) {
                 skyColor: [0, 0, 0]
             }
         },
-        threeObject: loadMesh(grid, entry, replacements),
+        threeObject: loadMesh(grid, entry, metadata),
         physics: {
             processCollisions: processCollisions.bind(null, grid),
             processCameraCollisions: () => null
@@ -54,19 +54,21 @@ export async function loadIsometricScenery(entry) {
     };
 }
 
-async function loadReplacements(library) {
-    const rawRD = await fetch('/metadata/layout_replacements.json');
-    const replacementDataAll = await rawRD.json();
-    const replacementData = replacementDataAll[library.index];
-    const replacements = {};
-    await Promise.all(map(replacementData, async (data, idx) => {
-        const model = await loadModel(data.file);
-        replacements[idx] = {
-            ...data,
-            threeObject: model.scene
-        };
+async function loadMetadata(library) {
+    const rawRD = await fetch('/metadata/layouts.json');
+    const metadataAll = await rawRD.json();
+    const libMetadata = metadataAll[library.index];
+    const metadata = {};
+    await Promise.all(map(libMetadata, async (data, idx) => {
+        if (data.replace) {
+            const model = await loadModel(data.file);
+            metadata[idx] = {
+                ...data,
+                threeObject: model.scene
+            };
+        }
     }));
-    return replacements;
+    return metadata;
 }
 
 interface GLTFModel {
@@ -81,21 +83,21 @@ async function loadModel(file) : Promise<GLTFModel> {
     });
 }
 
-function loadMesh(grid, entry, replacements) {
+function loadMesh(grid, entry, metadata) {
     const scene = new THREE.Object3D();
     const geometries = {
         positions: [],
         uvs: []
     };
-    const gridReps = extractGridReplacements(grid, replacements);
-    each(gridReps.objects, (threeObject) => {
+    const { replacements } = extractGridMetadata(grid, metadata);
+    each(replacements.objects, (threeObject) => {
         scene.add(threeObject);
     });
 
     let c = 0;
     for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
-            const o = grid.cells[c].build(geometries, x, z - 1, gridReps.bricks);
+            const o = grid.cells[c].build(geometries, x, z - 1, replacements.bricks);
             if (o) {
                 scene.add(o);
             }
