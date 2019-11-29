@@ -124,6 +124,34 @@
       "file": "29_tall_lamp.glb",
       "orientation": 0
     },
+    "36": {
+      "file": "36_38_wall_deco_round_corner_no_wood_gray.glb",
+      "orientation": 0
+    },
+    "37": {
+      "file": "37_39_wall_deco_round_corner_I_gray.glb",
+      "orientation": 0
+    },
+    "38": {
+      "file": "36_38_wall_deco_round_corner_no_wood_gray.glb",
+      "orientation": 2
+    },
+    "39": {
+      "file": "37_39_wall_deco_round_corner_I_gray.glb",
+      "orientation": 2
+    },
+    "40": {
+      "file": "36_38_wall_deco_round_corner_no_wood_gray.glb",
+      "orientation": 3
+    },
+    "41": {
+      "file": "37_39_wall_deco_round_corner_I_gray.glb",
+      "orientation": 3
+    },
+    "43": {
+      "file": "37_39_wall_deco_round_corner_I_gray.glb",
+      "orientation": 1
+    },
     "47": {
       "replace": true,
       "file": "47_chair.glb",
@@ -208,6 +236,10 @@
       "replace": true,
       "file": "89_small_lamp.glb",
       "orientation": 3
+    },
+    "158": {
+      "file": "158_wall_deco_round_corner_no_wood_blue.glb",
+      "orientation": 0
     }
   }
 }
