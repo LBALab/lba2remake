@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { DirMode } from '../actors';
 import { AnimType } from '../data/animType';
+import { Camera } from 'three';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -42,6 +43,9 @@ function toggleJump(hero, value) {
     hero.props.runtimeFlags.hasGravityByAnim = value;
 }
 
+let oldTime = 0;
+let reset = true;
+
 function processActorMovement(controlsState, scene, hero, time, behaviour) {
     let animIndex = hero.props.animIndex;
     if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
@@ -50,9 +54,9 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
     if (!hero.props.runtimeFlags.isJumping) {
         toggleJump(hero, false);
         animIndex = AnimType.NONE;
-        if (!controlsState.relativeToCam && controlsState.controlVector.y !== 0) {
+        if (!controlsState.relativeToCam && Math.abs(controlsState.controlVector.y) > 0.6) {
             hero.props.runtimeFlags.isWalking = true;
-            animIndex = controlsState.controlVector.y === 1 ? AnimType.FORWARD : AnimType.BACKWARD;
+            animIndex = controlsState.controlVector.y > 0 ? AnimType.FORWARD : AnimType.BACKWARD;
             if (controlsState.sideStep === 1) {
                 animIndex = controlsState.controlVector.y === 1 ?
                     AnimType.DODGE_FORWARD : AnimType.DODGE_BACKWARD;
@@ -109,14 +113,15 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
         }
     }
     if (!controlsState.relativeToCam && !hero.props.runtimeFlags.isJumping) {
+        const orientation = onlyY(scene.camera.threeCamera.quaternion);
         if (controlsState.controlVector.x !== 0 && !controlsState.crouch) {
             hero.props.runtimeFlags.isCrouching = false;
             hero.props.runtimeFlags.isWalking = true;
             if (!controlsState.sideStep) {
                 const euler = new THREE.Euler();
-                euler.setFromQuaternion(hero.physics.orientation, 'YXZ');
+                euler.setFromQuaternion(orientation, 'YXZ');
                 hero.physics.temp.angle = euler.y;
-                if (controlsState.controlVector.y === 0) {
+                if (controlsState.controlVector.y === 0 && false) {
                     animIndex = controlsState.controlVector.x === 1
                         ? AnimType.RIGHT
                         : AnimType.LEFT;
@@ -127,7 +132,20 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
                     }
                     euler.y += dy;
                 } else {
-                    euler.y -= controlsState.controlVector.x * time.delta * 1.2;
+                    /*
+                    const newTime = Date.now();
+                    let update = false;
+                    if (newTime - oldTime > 100) {
+                        update = true;
+                        oldTime = newTime;
+                    }
+                    if (update && reset && Math.abs(controlsState.controlVector.x) > 0.8) {
+                        euler.y -= Math.sign(controlsState.controlVector.x) * Math.PI / 4;
+                        reset = false;
+                    } else if (!reset && Math.abs(controlsState.controlVector.x) < 0.6) {
+                        reset = true;
+                    }
+                    */
                 }
                 hero.physics.orientation.setFromEuler(euler);
                 // hero.props.runtimeFlags.isTurning = true;
@@ -153,6 +171,14 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
         hero.props.animIndex = animIndex;
         hero.resetAnimState();
     }
+}
+
+function onlyY(src) {
+    const euler = new THREE.Euler();
+    euler.setFromQuaternion(src, 'YXZ');
+    euler.x = 0;
+    euler.z = 0;
+    return new THREE.Quaternion().setFromEuler(euler);
 }
 
 const FLAT_CAM = new THREE.Object3D();

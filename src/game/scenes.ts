@@ -20,13 +20,12 @@ import { sBind } from '../utils';
 import { get3DCamera } from '../cameras/3d';
 import { getIsometricCamera } from '../cameras/iso';
 import { getIso3DCamera } from '../cameras/iso3d';
-import { getVR3DCamera } from '../cameras/vr/vr3d';
-import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { createFPSCounter } from '../ui/vr/vrFPS';
 import { createVRGUI } from '../ui/vr/vrGUI';
 import { angleToRad } from '../utils/lba';
 import { getLanguageConfig } from '../lang';
 import { makePure } from '../utils/debug';
+import { getVrFirstPersonCamera } from '../cameras/vr/vrFirstPerson';
 
 declare global {
     var ga: Function;
@@ -174,18 +173,16 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         if (indexInfo.isIsland) {
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
             threeScene.name = '3D_scene';
-            if (renderer.vr) {
-                camera = getVR3DCamera();
+            if (renderer.vr || true) {
+                camera = getVrFirstPersonCamera();
             } else {
                 camera = get3DCamera();
             }
         } else {
             scenery = await loadIsometricScenery(indexInfo.index);
             threeScene.name = 'iso_scene';
-            if (renderer.vr) {
-                camera = params.isoCam3d
-                    ? getVR3DCamera()
-                    : getVRIsoCamera();
+            if (renderer.vr || true) {
+                camera = getVrFirstPersonCamera();
             } else if (params.iso3d || params.isoCam3d) {
                 camera = params.isoCam3d
                     ? get3DCamera()

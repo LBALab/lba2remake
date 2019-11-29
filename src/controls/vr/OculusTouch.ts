@@ -70,13 +70,13 @@ export default class OculusTouch {
         const camera = scene && scene.camera;
         const hero = game.getState().hero;
 
-        controlsState.relativeToCam = true;
+        controlsState.relativeToCam = false;
         controlsState.jump = 0;
         controlsState.weapon = 0;
         controlsState.controllerType = 'oculustouch';
 
         // Center camera
-        if (right.trigger.tapped && camera && scene) {
+        if (right.trigger.tapped && camera && camera.center && scene) {
             camera.center(scene);
         }
 

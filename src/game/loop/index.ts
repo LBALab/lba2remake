@@ -1,4 +1,4 @@
-import {each} from 'lodash';
+import {each, first} from 'lodash';
 import * as THREE from 'three';
 import {updateHero} from './hero';
 import {updateActor} from './actors';
@@ -85,6 +85,10 @@ function updateScene(params, game, scene, time) {
     }
     if (scene.vrGUI) {
         updateVRGUI(game, scene, scene.vrGUI);
+    }
+    const hero = first(scene.actors) as any;
+    if (hero && hero.threeObject) {
+        hero.threeObject.visible = false;
     }
 }
 

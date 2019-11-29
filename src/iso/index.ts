@@ -118,7 +118,8 @@ function loadMesh(grid, entry, replacements) {
         transparent: true,
         uniforms: {
             library: {value: grid.library.texture}
-        }
+        },
+        side: THREE.DoubleSide
     }));
 
     mesh.frustumCulled = false;

@@ -26,7 +26,7 @@ export function updateActor(
         && !scene.firstFrame
         && actor.index > 0
         && actor.threeObject
-        ) {
+        && false) {
         ACTOR_POS.copy(actor.physics.position);
         ACTOR_POS.add(scene.sceneNode.position);
         const camDist2 = ACTOR_POS.distanceToSquared(scene.camera.controlNode.position);
@@ -42,7 +42,9 @@ export function updateActor(
     }
     actor.runScripts(time);
 
-    if (actor.model !== null && actor.threeObject && actor.threeObject.visible) {
+    if (actor.model !== null
+        && actor.threeObject
+        && (actor.threeObject.visible || actor.index === 0)) {
         const model = actor.model;
         actor.animState.matrixRotation.makeRotationFromQuaternion(actor.physics.orientation);
         updateModel(

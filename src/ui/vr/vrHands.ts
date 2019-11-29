@@ -62,7 +62,7 @@ function createHand(type) {
         hand.add(mesh);
     });
 
-    hand.add(pointer);
+    // hand.add(pointer);
     return hand;
 }
 

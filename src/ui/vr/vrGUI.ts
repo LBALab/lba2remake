@@ -13,7 +13,7 @@ export function createVRGUI(renderer) {
         hands = getOrCreateHands(renderer);
     }
     vrGUI.add(hands);
-    hands.visible = false;
+    hands.visible = true;
     return vrGUI;
 }
 
@@ -41,12 +41,12 @@ export function updateVRGUI(game, scene, vrGUI) {
                 }));
                 i += 1;
             });
-            hands.visible = true;
+            // hands.visible = true;
         }
     } else if (choice) {
         vrGUI.remove(choice);
         choice = null;
-        hands.visible = false;
+        // hands.visible = false;
     }
 }
 
