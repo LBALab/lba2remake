@@ -80,6 +80,22 @@
       "file": "20_21_wall_deco_vert_1_join.glb",
       "orientation": 2
     },
+    "24": {
+      "file": "24_25_wall_deco_round_corner_L_blue.glb",
+      "orientation": 0
+    },
+    "25": {
+      "file": "24_25_wall_deco_round_corner_L_blue.glb",
+      "orientation": 2
+    },
+    "26": {
+      "file": "24_25_wall_deco_round_corner_L_blue.glb",
+      "orientation": 3
+    },
+    "27": {
+      "file": "24_25_wall_deco_round_corner_L_blue.glb",
+      "orientation": 1
+    },
     "29": {
       "file": "29_tall_lamp.glb",
       "orientation": 0
