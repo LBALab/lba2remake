@@ -195,6 +195,10 @@
     "90": {
       "file": "89_small_lamp.glb",
       "orientation": 3
+    },
+    "158": {
+      "file": "158_wall_deco_round_corner_no_wood_blue.glb",
+      "orientation": 0
     }
   }
 }
