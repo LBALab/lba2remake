@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { DirMode } from '../actors';
 import { AnimType } from '../data/animType';
-import { Camera } from 'three';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -42,9 +41,6 @@ function toggleJump(hero, value) {
     // check in the original game how this is actually set
     hero.props.runtimeFlags.hasGravityByAnim = value;
 }
-
-let oldTime = 0;
-let reset = true;
 
 function processActorMovement(controlsState, scene, hero, time, behaviour) {
     let animIndex = hero.props.animIndex;
