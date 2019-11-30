@@ -86,9 +86,11 @@ function updateScene(params, game, scene, time) {
     if (scene.vrGUI) {
         updateVRGUI(game, scene, scene.vrGUI);
     }
-    const hero = first(scene.actors) as any;
-    if (hero && hero.threeObject) {
-        hero.threeObject.visible = false;
+    if (scene.isActive && game.controlsState.firstPerson) {
+        const hero = first(scene.actors) as any;
+        if (hero && hero.threeObject) {
+            hero.threeObject.visible = false;
+        }
     }
 }
 

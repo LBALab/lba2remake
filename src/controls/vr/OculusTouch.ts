@@ -70,7 +70,7 @@ export default class OculusTouch {
         const camera = scene && scene.camera;
         const hero = game.getState().hero;
 
-        controlsState.relativeToCam = false;
+        controlsState.relativeToCam = true;
         controlsState.jump = 0;
         controlsState.weapon = 0;
         controlsState.controllerType = 'oculustouch';

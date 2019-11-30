@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { find } from 'lodash';
+import { find, each } from 'lodash';
 
 let handsRoot = null;
 
@@ -20,6 +20,7 @@ export function getOrCreateHands(renderer) {
     if (!handsRoot) {
         handsRoot = new THREE.Object3D();
         handsRoot.name = 'Hands';
+        handsRoot.userData = { hands: [] };
 
         const revTransform = new THREE.Object3D();
         revTransform.name = 'HandsRevTransform';
@@ -31,6 +32,9 @@ export function getOrCreateHands(renderer) {
             const controller = renderer.threeRenderer.vr.getController(i);
             if (controller) {
                 const hand = createHand(i === 0 ? 'right' : 'left');
+
+                handsRoot.userData.hands.push(hand);
+
                 controller.add(hand);
                 revTransform.add(controller);
 
@@ -44,6 +48,19 @@ export function getOrCreateHands(renderer) {
     }
 
     return handsRoot;
+}
+
+export function updateHands({ game }, inMenu: boolean) {
+    if (handsRoot) {
+        if (game.controlsState.firstPerson) {
+            const { hands } = handsRoot.userData;
+            each(hands, (hand) => {
+                hand.userData.pointer.visible = inMenu;
+            });
+        } else {
+            handsRoot.visible = inMenu;
+        }
+    }
 }
 
 function createHand(type) {
@@ -62,7 +79,10 @@ function createHand(type) {
         hand.add(mesh);
     });
 
-    // hand.add(pointer);
+    hand.add(pointer);
+    hand.userData = {
+        pointer
+    };
     return hand;
 }
 

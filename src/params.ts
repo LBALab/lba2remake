@@ -31,6 +31,10 @@ const paramsDefinitions = {
         type: 'boolean',
         default: false
     },
+    firstPerson: {
+        type: 'boolean',
+        default: false
+    },
     webgl2: {
         type: 'boolean',
         default: true

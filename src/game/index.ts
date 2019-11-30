@@ -7,7 +7,7 @@ import {getLanguageConfig, tr} from '../lang';
 import DebugData from '../ui/editor/DebugData';
 import { makePure } from '../utils/debug';
 
-export function createGame(clock: any, setUiState: Function, getUiState: Function) {
+export function createGame(params: any, clock: any, setUiState: Function, getUiState: Function) {
     let isPaused = false;
     let isLoading = false;
 
@@ -28,6 +28,7 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
             relativeToCam: false,
+            firstPerson: params.firstPerson,
             action: 0,
             jump: 0,
             fight: 0,
