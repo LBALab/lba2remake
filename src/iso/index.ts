@@ -26,7 +26,7 @@ export async function loadImageData(src) : Promise<ImageData> {
     });
 }
 
-export async function loadIsometricScenery(entry) {
+export async function loadIsometricScenery(entry, ambience) {
     const [ress, bkg, mask] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr('LBA_BKG.HQR'),
@@ -44,7 +44,7 @@ export async function loadIsometricScenery(entry) {
                 skyColor: [0, 0, 0]
             }
         },
-        threeObject: loadMesh(grid, entry, metadata),
+        threeObject: await loadMesh(grid, entry, metadata, ambience),
         physics: {
             processCollisions: processCollisions.bind(null, grid),
             processCameraCollisions: () => null
@@ -85,13 +85,13 @@ async function loadModel(file) : Promise<GLTFModel> {
     });
 }
 
-function loadMesh(grid, entry, metadata) {
+async function loadMesh(grid, entry, metadata, ambience) {
     const scene = new THREE.Object3D();
     const geometries = {
         positions: [],
         uvs: []
     };
-    const gridMetadata = extractGridMetadata(grid, metadata);
+    const gridMetadata = await extractGridMetadata(grid, metadata, ambience);
     each(gridMetadata.replacements.objects, (threeObject) => {
         scene.add(threeObject);
     });
