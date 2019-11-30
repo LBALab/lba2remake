@@ -66,6 +66,8 @@ async function loadMetadata(library) {
                 ...data,
                 threeObject: model.scene
             };
+        } else if (data.mirror) {
+            metadata[idx] = {...data};
         }
     }));
     return metadata;
@@ -89,15 +91,15 @@ function loadMesh(grid, entry, metadata) {
         positions: [],
         uvs: []
     };
-    const { replacements } = extractGridMetadata(grid, metadata);
-    each(replacements.objects, (threeObject) => {
+    const gridMetadata = extractGridMetadata(grid, metadata);
+    each(gridMetadata.replacements.objects, (threeObject) => {
         scene.add(threeObject);
     });
 
     let c = 0;
     for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
-            const o = grid.cells[c].build(geometries, x, z - 1, replacements.bricks);
+            const o = grid.cells[c].build(geometries, x, z - 1, gridMetadata);
             if (o) {
                 scene.add(o);
             }

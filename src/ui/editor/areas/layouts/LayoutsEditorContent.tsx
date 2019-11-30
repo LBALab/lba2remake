@@ -46,10 +46,11 @@ interface State {
     };
     replacementFiles?: string[];
     lSettings?: {
-        replace: boolean;
-        threeObject: THREE.Object3D;
-        file: string;
-        orientation: number;
+        mirror?: boolean;
+        replace?: boolean;
+        threeObject?: THREE.Object3D;
+        file?: string;
+        orientation?: number;
     };
 }
 
@@ -150,6 +151,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.closeReplacement = this.closeReplacement.bind(this);
         this.resetToIso = this.resetToIso.bind(this);
         this.changeAngle = this.changeAngle.bind(this);
+        this.setMirror = this.setMirror.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -530,6 +532,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                     Height (x): {layout.props.nY}<br/>
                     Depth (z): {layout.props.nZ}
                 </div>
+                {this.renderLayoutOptions()}
                 {this.renderReplacementData()}
                 <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'right'}}>
                     <button style={infoButton} onClick={this.export}>
@@ -567,6 +570,29 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.setState({lSettings});
         layoutsMetadata[library][layout].orientation = lSettings.orientation;
         await this.saveMetadata();
+    }
+
+    async setMirror(e) {
+        const { library, layout } = this.props.sharedState;
+        this.setState({lSettings: { mirror: e.target.checked }});
+        if (!(library in layoutsMetadata)) {
+            layoutsMetadata[library] = {};
+        }
+        layoutsMetadata[library][layout] = { mirror: e.target.checked };
+        await this.saveMetadata();
+    }
+
+    renderLayoutOptions() {
+        const {lSettings} = this.state;
+        if (!lSettings || !lSettings.replace) {
+            return <div style={dataBlock}>
+                <input type="checkbox"
+                        checked={(lSettings && lSettings.mirror) ? true : false}
+                        onChange={this.setMirror}/>
+                <label>Mirror</label>
+            </div>;
+        }
+        return null;
     }
 
     renderReplacementData() {

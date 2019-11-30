@@ -14,6 +14,7 @@ export function extractGridMetadata(grid, metadata) {
         objects: [],
         bricks: new Set()
     };
+    const mirrors = new Set();
     let c = 0;
     for (let z = -1; z < 63; z += 1) {
         for (let x = 0; x < 64; x += 1) {
@@ -46,13 +47,19 @@ export function extractGridMetadata(grid, metadata) {
                                 }
                             }
                         }
+                        if (lMetadata.mirror) {
+                            mirrors.add(`${x},${yIdx},${z}`);
+                        }
                     }
                 }
             }
             c += 1;
         }
     }
-    return {replacements};
+    return {
+        replacements,
+        mirrors
+    };
 }
 
 function checkMatch(grid, layout, x, y, z) {
