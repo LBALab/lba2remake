@@ -331,14 +331,15 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }
         if (lSettings && lSettings.replace) {
             const model = await loadModel(lSettings.file);
+            const angle = (Math.PI / 2.0) * lSettings.orientation;
             model.scene.quaternion.setFromAxisAngle(
                 new THREE.Vector3(0, 1, 0),
-                (Math.PI / 2.0) * lSettings.orientation
+                angle
             );
             lSettings.threeObject = model.scene;
             lSettings.threeObject.traverse((node) => {
                 if (node instanceof THREE.Mesh) {
-                    const rotation = new THREE.Matrix4().makeRotationY(-Math.PI / 2);
+                    const rotation = new THREE.Matrix4().makeRotationY(angle - Math.PI / 2);
                     node.updateMatrixWorld();
                     rotation.multiply(node.matrixWorld);
                     const normalMatrix = new THREE.Matrix3();
