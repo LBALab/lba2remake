@@ -189,23 +189,28 @@
     },
     "47": {
       "replace": true,
-      "file": "47_chair.glb",
+      "file": "47_48_chair.glb",
       "orientation": 0
     },
     "48": {
       "replace": true,
-      "file": "47_chair.glb",
+      "file": "47_48_chair.glb",
       "orientation": 3
     },
     "49": {
       "replace": true,
-      "file": "47_chair.glb",
+      "file": "47_48_chair.glb",
       "orientation": 1
     },
     "50": {
       "replace": true,
-      "file": "47_chair.glb",
+      "file": "47_48_chair.glb",
       "orientation": 2
+    },
+    "51": {
+      "replace": true,
+      "file": "51_table.glb",
+      "orientation": 0
     },
     "53": {
       "replace": true,
@@ -292,6 +297,11 @@
     },
     "93": {
       "mirror": true
+    },
+    "104": {
+      "replace": true,
+      "file": "104_open_book.glb",
+      "orientation": 0
     },
     "111": {
       "mirror": true
