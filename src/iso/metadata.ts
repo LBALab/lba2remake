@@ -9,11 +9,12 @@ const angleMapping = [
 
 const H = 0.5;
 
-export function extractGridReplacements(grid, replacements) {
-    const gridReps = {
+export function extractGridMetadata(grid, metadata) {
+    const replacements = {
         objects: [],
         bricks: new Set()
     };
+    const mirrors = new Set();
     let c = 0;
     for (let z = -1; z < 63; z += 1) {
         for (let x = 0; x < 64; x += 1) {
@@ -23,26 +24,31 @@ export function extractGridReplacements(grid, replacements) {
                 const y = (yIdx * H) + H;
                 if (blocks[yIdx]) {
                     const layout = grid.library.layouts[blocks[yIdx].layout];
-                    if (layout && layout.index in replacements) {
-                        const replacement = replacements[layout.index];
-                        const {nX, nY, nZ} = layout;
-                        const idx = blocks[yIdx].block;
-                        const zb = Math.floor(idx / (nY * nX));
-                        const yb = Math.floor(idx / nX) - (zb * nY);
-                        const xb = idx % nX;
-                        // Check brick at the bottom corner of layout
-                        if (yb === 0 && xb === nX - 1 && zb === nZ - 1) {
-                            if (checkMatch(grid, layout, x, yIdx, z)) {
-                                suppressBricks(gridReps, layout, x, yIdx, z);
-                                addReplacementObject(
-                                    gridReps,
-                                    replacement,
-                                    x - (nX * 0.5) + 1, y - H, z - (nZ * 0.5) + 1
-                                );
-                            } else {
-                                // Log when missing match
-                                // console.log(replacement.file, xb, yb, zb);
+                    if (layout && layout.index in metadata) {
+                        const lMetadata = metadata[layout.index];
+                        if (lMetadata.replace) {
+                            const {nX, nY, nZ} = layout;
+                            const idx = blocks[yIdx].block;
+                            const zb = Math.floor(idx / (nY * nX));
+                            const yb = Math.floor(idx / nX) - (zb * nY);
+                            const xb = idx % nX;
+                            // Check brick at the bottom corner of layout
+                            if (yb === 0 && xb === nX - 1 && zb === nZ - 1) {
+                                if (checkMatch(grid, layout, x, yIdx, z)) {
+                                    suppressBricks(replacements, layout, x, yIdx, z);
+                                    addReplacementObject(
+                                        replacements,
+                                        lMetadata,
+                                        x - (nX * 0.5) + 1, y - H, z - (nZ * 0.5) + 1
+                                    );
+                                } else {
+                                    // Log when missing match
+                                    // console.log(replacement.file, xb, yb, zb);
+                                }
                             }
+                        }
+                        if (lMetadata.mirror) {
+                            mirrors.add(`${x},${yIdx},${z}`);
                         }
                     }
                 }
@@ -50,7 +56,10 @@ export function extractGridReplacements(grid, replacements) {
             c += 1;
         }
     }
-    return gridReps;
+    return {
+        replacements,
+        mirrors
+    };
 }
 
 function checkMatch(grid, layout, x, y, z) {
@@ -91,12 +100,12 @@ function suppressBricks(gridReps, layout, x, y, z) {
     }
 }
 
-function addReplacementObject(gridReps, replacement, x, y, z) {
-    const threeObject = replacement.threeObject.clone();
+function addReplacementObject(gridReps, metadata, x, y, z) {
+    const threeObject = metadata.threeObject.clone();
     const scale = 1 / 0.75;
     threeObject.position.set(x, y, z);
     threeObject.scale.set(scale, scale, scale);
-    const orientation = replacement.orientation;
+    const orientation = metadata.orientation;
     const angle = angleMapping[orientation];
     threeObject.quaternion.setFromAxisAngle(
         new THREE.Vector3(0, 1, 0),

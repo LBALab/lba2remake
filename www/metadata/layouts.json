@@ -1,204 +1,347 @@
 {
   "0": {
+    "0": {
+      "mirror": true
+    },
+    "1": {
+      "mirror": true
+    },
+    "2": {
+      "mirror": true
+    },
     "3": {
+      "replace": true,
       "file": "03_04_wall_deco_2_joins.glb",
       "orientation": 0
     },
     "4": {
+      "replace": true,
       "file": "03_04_wall_deco_2_joins.glb",
       "orientation": 1
     },
     "5": {
+      "replace": true,
       "file": "05_06_07_08_wall_deco_1_join.glb",
       "orientation": 1
     },
     "6": {
+      "replace": true,
       "file": "05_06_07_08_wall_deco_1_join.glb",
       "orientation": 3
     },
     "7": {
+      "replace": true,
       "file": "05_06_07_08_wall_deco_1_join.glb",
       "orientation": 2
     },
     "8": {
+      "replace": true,
       "file": "05_06_07_08_wall_deco_1_join.glb",
       "orientation": 0
     },
     "9": {
+      "replace": true,
       "file": "09_10_11_12_wall_deco_L_join.glb",
       "orientation": 3
     },
     "10": {
+      "replace": true,
       "file": "09_10_11_12_wall_deco_L_join.glb",
       "orientation": 1
     },
     "11": {
+      "replace": true,
       "file": "09_10_11_12_wall_deco_L_join.glb",
       "orientation": 2
     },
     "12": {
+      "replace": true,
       "file": "09_10_11_12_wall_deco_L_join.glb",
       "orientation": 0
     },
     "13": {
+      "replace": true,
       "file": "13_wall_deco_4_joins.glb",
       "orientation": 0
     },
     "14": {
+      "replace": true,
       "file": "14_16_17_wall_deco_3_joins.glb",
       "orientation": 1
     },
     "16": {
+      "replace": true,
       "file": "14_16_17_wall_deco_3_joins.glb",
       "orientation": 0
     },
     "17": {
+      "replace": true,
       "file": "14_16_17_wall_deco_3_joins.glb",
       "orientation": 2
     },
     "18": {
+      "replace": true,
       "file": "18_19_wall_deco_vert_2_joins.glb",
       "orientation": 0
     },
     "19": {
+      "replace": true,
       "file": "18_19_wall_deco_vert_2_joins.glb",
       "orientation": 1
     },
     "20": {
+      "replace": true,
       "file": "20_21_wall_deco_vert_1_join.glb",
       "orientation": 1
     },
     "21": {
+      "replace": true,
       "file": "20_21_wall_deco_vert_1_join.glb",
       "orientation": 0
     },
     "22": {
+      "replace": true,
       "file": "20_21_wall_deco_vert_1_join.glb",
       "orientation": 3
     },
     "23": {
+      "replace": true,
       "file": "20_21_wall_deco_vert_1_join.glb",
       "orientation": 2
     },
     "24": {
+      "replace": true,
       "file": "24_25_wall_deco_round_corner_L_blue.glb",
       "orientation": 0
     },
     "25": {
+      "replace": true,
       "file": "24_25_wall_deco_round_corner_L_blue.glb",
       "orientation": 2
     },
     "26": {
+      "replace": true,
       "file": "24_25_wall_deco_round_corner_L_blue.glb",
       "orientation": 3
     },
     "27": {
+      "replace": true,
       "file": "24_25_wall_deco_round_corner_L_blue.glb",
       "orientation": 1
     },
     "29": {
+      "replace": true,
       "file": "29_tall_lamp.glb",
       "orientation": 0
     },
+    "30": {
+      "mirror": true
+    },
+    "32": {
+      "mirror": true
+    },
+    "33": {
+      "mirror": true
+    },
+    "34": {
+      "mirror": true
+    },
+    "35": {
+      "mirror": true
+    },
     "36": {
+      "replace": true,
       "file": "36_38_wall_deco_round_corner_no_wood_gray.glb",
       "orientation": 0
     },
     "37": {
+      "replace": true,
       "file": "37_39_wall_deco_round_corner_I_gray.glb",
       "orientation": 0
     },
     "38": {
+      "replace": true,
       "file": "36_38_wall_deco_round_corner_no_wood_gray.glb",
       "orientation": 2
     },
     "39": {
+      "replace": true,
       "file": "37_39_wall_deco_round_corner_I_gray.glb",
       "orientation": 2
     },
     "40": {
+      "replace": true,
       "file": "36_38_wall_deco_round_corner_no_wood_gray.glb",
       "orientation": 3
     },
     "41": {
+      "replace": true,
       "file": "37_39_wall_deco_round_corner_I_gray.glb",
       "orientation": 3
     },
     "43": {
+      "replace": true,
       "file": "37_39_wall_deco_round_corner_I_gray.glb",
       "orientation": 1
     },
+    "45": {
+      "mirror": true
+    },
     "47": {
+      "replace": true,
       "file": "47_chair.glb",
       "orientation": 0
     },
     "48": {
+      "replace": true,
       "file": "47_chair.glb",
       "orientation": 3
     },
     "49": {
+      "replace": true,
       "file": "47_chair.glb",
       "orientation": 1
     },
     "50": {
+      "replace": true,
       "file": "47_chair.glb",
       "orientation": 2
     },
     "53": {
+      "replace": true,
       "file": "54_bed.glb",
       "orientation": 3
     },
     "54": {
+      "replace": true,
       "file": "54_bed.glb",
       "orientation": 0
     },
     "55": {
+      "replace": true,
       "file": "56_armchair.glb",
       "orientation": 3
     },
     "56": {
+      "replace": true,
       "file": "56_armchair.glb",
       "orientation": 0
     },
     "57": {
+      "replace": true,
       "file": "56_armchair.glb",
       "orientation": 1
     },
     "58": {
+      "replace": true,
       "file": "56_armchair.glb",
       "orientation": 2
     },
+    "59": {
+      "mirror": true
+    },
+    "60": {
+      "mirror": true
+    },
     "78": {
+      "replace": true,
       "file": "78_bedside_table.glb",
       "orientation": 0
     },
     "79": {
+      "replace": true,
       "file": "78_bedside_table.glb",
       "orientation": 3
     },
+    "80": {
+      "mirror": true
+    },
+    "81": {
+      "mirror": true
+    },
     "84": {
+      "replace": true,
       "file": "84_plate_stack.glb",
       "orientation": 0
     },
     "85": {
+      "replace": true,
       "file": "85_single_plate.glb",
       "orientation": 0
     },
     "86": {
+      "replace": true,
       "file": "86_candlestick.glb",
       "orientation": 0
     },
+    "87": {
+      "mirror": true
+    },
+    "88": {
+      "mirror": true
+    },
     "89": {
+      "replace": true,
       "file": "89_small_lamp.glb",
       "orientation": 0
     },
     "90": {
+      "replace": true,
       "file": "89_small_lamp.glb",
       "orientation": 3
     },
+    "93": {
+      "mirror": true
+    },
+    "111": {
+      "mirror": true
+    },
+    "122": {
+      "mirror": true
+    },
+    "126": {
+      "mirror": true
+    },
+    "142": {
+      "mirror": true
+    },
+    "143": {
+      "mirror": true
+    },
+    "148": {
+      "mirror": false
+    },
+    "150": {
+      "mirror": true
+    },
+    "152": {
+      "mirror": true
+    },
+    "153": {
+      "mirror": true
+    },
+    "154": {
+      "mirror": true
+    },
     "158": {
+      "replace": true,
       "file": "158_wall_deco_round_corner_no_wood_blue.glb",
       "orientation": 0
+    },
+    "159": {
+      "mirror": true
+    },
+    "161": {
+      "mirror": true
+    },
+    "162": {
+      "mirror": true
+    },
+    "170": {
+      "mirror": true
+    },
+    "171": {
+      "mirror": true
     }
   }
 }

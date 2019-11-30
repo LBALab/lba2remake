@@ -45,10 +45,12 @@ interface State {
         cameraLookAtLerp: THREE.Vector3;
     };
     replacementFiles?: string[];
-    replacement?: {
-        threeObject: THREE.Object3D;
-        file: string;
-        orientation: number;
+    lSettings?: {
+        mirror?: boolean;
+        replace?: boolean;
+        threeObject?: THREE.Object3D;
+        file?: string;
+        orientation?: number;
     };
 }
 
@@ -114,7 +116,7 @@ const closeStyle = {
 const exporter = new ColladaExporter();
 const loader = new GLTFLoader();
 
-let replacementData = null;
+let layoutsMetadata = null;
 
 export default class LayoutsEditorContent extends FrameListener<Props, State> {
     mouseSpeed: {
@@ -149,6 +151,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.closeReplacement = this.closeReplacement.bind(this);
         this.resetToIso = this.resetToIso.bind(this);
         this.changeAngle = this.changeAngle.bind(this);
+        this.setMirror = this.setMirror.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -317,38 +320,38 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         };
         const {
             layout: oldLayout,
-            replacement: oldReplacement
+            lSettings: oldSettings
         } = this.state;
         if (oldLayout) {
             this.state.scene.threeScene.remove(oldLayout.threeObject);
         }
-        if (oldReplacement) {
-            this.state.scene.threeScene.remove(oldReplacement.threeObject);
+        if (oldSettings) {
+            this.state.scene.threeScene.remove(oldSettings.threeObject);
         }
-        if (!replacementData) {
-            const rawRD = await fetch('/metadata/layout_replacements.json');
-            replacementData = await rawRD.json();
+        if (!layoutsMetadata) {
+            const rawRD = await fetch('/metadata/layouts.json');
+            layoutsMetadata = await rawRD.json();
         }
-        let replacement = null;
-        if (libraryIdx in replacementData
-            && layoutIdx in replacementData[libraryIdx]) {
-            replacement = cloneDeep(replacementData[libraryIdx][layoutIdx]);
+        let lSettings = null;
+        if (libraryIdx in layoutsMetadata
+            && layoutIdx in layoutsMetadata[libraryIdx]) {
+            lSettings = cloneDeep(layoutsMetadata[libraryIdx][layoutIdx]);
         }
-        if (replacement) {
-            const model = await loadModel(replacement.file);
+        if (lSettings && lSettings.replace) {
+            const model = await loadModel(lSettings.file);
             model.scene.quaternion.setFromAxisAngle(
                 new THREE.Vector3(0, 1, 0),
-                (Math.PI / 2.0) * replacement.orientation
+                (Math.PI / 2.0) * lSettings.orientation
             );
-            replacement.threeObject = model.scene;
-            this.state.scene.threeScene.add(replacement.threeObject);
+            lSettings.threeObject = model.scene;
+            this.state.scene.threeScene.add(lSettings.threeObject);
             layoutObj.threeObject.visible = false;
         }
         this.state.scene.threeScene.add(layoutObj.threeObject);
         this.setState({
             library,
             layout: layoutObj,
-            replacement
+            lSettings
         }, this.saveData);
         this.wireframe = false;
         this.loading = false;
@@ -448,15 +451,15 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
 
     async resetToIso() {
         const { threeScene } = this.state.scene;
-        const oldReplacement = this.state.replacement;
-        if (oldReplacement) {
-            threeScene.remove(oldReplacement.threeObject);
+        const oldSettings = this.state.lSettings;
+        if (oldSettings) {
+            threeScene.remove(oldSettings.threeObject);
         }
         this.state.layout.threeObject.visible = true;
         const { library, layout } = this.props.sharedState;
-        delete replacementData[library][layout];
+        delete layoutsMetadata[library][layout];
         await this.saveMetadata();
-        this.setState({ replacement: null });
+        this.setState({ lSettings: null });
     }
 
     closeReplacement() {
@@ -467,25 +470,26 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.setState({ replacementFiles: null });
         const model = await loadModel(file);
         const { threeScene } = this.state.scene;
-        const oldReplacement = this.state.replacement;
-        if (oldReplacement) {
-            threeScene.remove(oldReplacement.threeObject);
+        const oldSettings = this.state.lSettings;
+        if (oldSettings) {
+            threeScene.remove(oldSettings.threeObject);
         } else {
             this.state.layout.threeObject.visible = false;
         }
-        const replacement = {
+        const lSettings = {
+            replace: true,
             threeObject: model.scene,
             file,
             orientation: 0
         };
         const { library, layout } = this.props.sharedState;
-        if (!(library in replacementData)) {
-            replacementData[library] = {};
+        if (!(library in layoutsMetadata)) {
+            layoutsMetadata[library] = {};
         }
-        replacementData[library][layout] = omit(replacement, 'threeObject');
+        layoutsMetadata[library][layout] = omit(lSettings, 'threeObject');
         await this.saveMetadata();
-        threeScene.add(replacement.threeObject);
-        this.setState({ replacement });
+        threeScene.add(lSettings.threeObject);
+        this.setState({ lSettings });
     }
 
     async saveMetadata() {
@@ -496,7 +500,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             },
             body: JSON.stringify({
                 type: 'layouts',
-                content: replacementData
+                content: layoutsMetadata
             })
         });
     }
@@ -519,7 +523,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     renderInfo() {
-        const {layout, replacement} = this.state;
+        const {layout, lSettings} = this.state;
         if (layout) {
             return <div style={infoStyle}>
                 <div style={dataBlock}>
@@ -528,6 +532,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                     Height (x): {layout.props.nY}<br/>
                     Depth (z): {layout.props.nZ}
                 </div>
+                {this.renderLayoutOptions()}
                 {this.renderReplacementData()}
                 <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'right'}}>
                     <button style={infoButton} onClick={this.export}>
@@ -538,7 +543,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                         Download library texture
                     </button>
                     <br/>
-                    {replacement
+                    {(lSettings && lSettings.replace)
                         ? <button style={infoButton} onClick={this.resetToIso}>
                             Reset to iso
                         </button>
@@ -552,27 +557,50 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     async changeAngle(e) {
-        const { replacement } = this.state;
-        if (!replacement) {
+        const { lSettings } = this.state;
+        if (!lSettings || !lSettings.replace) {
             return;
         }
         const { library, layout } = this.props.sharedState;
-        replacement.orientation = Number(e.target.value);
-        replacement.threeObject.quaternion.setFromAxisAngle(
+        lSettings.orientation = Number(e.target.value);
+        lSettings.threeObject.quaternion.setFromAxisAngle(
             new THREE.Vector3(0, 1, 0),
-            (Math.PI / 2.0) * replacement.orientation
+            (Math.PI / 2.0) * lSettings.orientation
         );
-        this.setState({replacement});
-        replacementData[library][layout].orientation = replacement.orientation;
+        this.setState({lSettings});
+        layoutsMetadata[library][layout].orientation = lSettings.orientation;
         await this.saveMetadata();
     }
 
+    async setMirror(e) {
+        const { library, layout } = this.props.sharedState;
+        this.setState({lSettings: { mirror: e.target.checked }});
+        if (!(library in layoutsMetadata)) {
+            layoutsMetadata[library] = {};
+        }
+        layoutsMetadata[library][layout] = { mirror: e.target.checked };
+        await this.saveMetadata();
+    }
+
+    renderLayoutOptions() {
+        const {lSettings} = this.state;
+        if (!lSettings || !lSettings.replace) {
+            return <div style={dataBlock}>
+                <input type="checkbox"
+                        checked={(lSettings && lSettings.mirror) ? true : false}
+                        onChange={this.setMirror}/>
+                <label>Mirror</label>
+            </div>;
+        }
+        return null;
+    }
+
     renderReplacementData() {
-        const {replacement} = this.state;
-        if (replacement) {
+        const {lSettings} = this.state;
+        if (lSettings && lSettings.replace) {
             return <div style={dataBlock}>
                 Replacement:<br/><br/>
-                Angle: <select onChange={this.changeAngle} value={replacement.orientation}>
+                Angle: <select onChange={this.changeAngle} value={lSettings.orientation}>
                     {[0, 1, 2, 3].map(v => <option key={v} value={v}>
                         {v * 90}°
                     </option>)}
