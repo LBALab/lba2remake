@@ -18,6 +18,12 @@ import { OffsetBySide, Side } from '../../../../iso/mapping';
 import { compile } from '../../../../utils/shaders';
 import brick_vertex from '../../../../iso/shaders/brick.vert.glsl';
 import brick_fragment from '../../../../iso/shaders/brick.frag.glsl';
+import { loadLUTTexture } from '../../../../utils/lut';
+import { loadPaletteTexture } from '../../../../texture';
+import VERT_OBJECTS_COLORED from '../../../../iso/shaders/objects/colored.vert.glsl';
+import FRAG_OBJECTS_COLORED from '../../../../iso/shaders/objects/colored.frag.glsl';
+import VERT_OBJECTS_TEXTURED from '../../../../iso/shaders/objects/textured.vert.glsl';
+import FRAG_OBJECTS_TEXTURED from '../../../../iso/shaders/objects/textured.frag.glsl';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -40,6 +46,7 @@ interface State {
     scene: any;
     clock: THREE.Clock;
     grid: any;
+    showOriginal: boolean;
     controlsState: {
         cameraLerp: THREE.Vector3;
         cameraLookAtLerp: THREE.Vector3;
@@ -152,6 +159,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.resetToIso = this.resetToIso.bind(this);
         this.changeAngle = this.changeAngle.bind(this);
         this.setMirror = this.setMirror.bind(this);
+        this.setShowOriginal = this.setShowOriginal.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -190,32 +198,13 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             }
             scene.threeScene.add(grid);
             scene.threeScene.add(camera.threeCamera);
-            const ambience = {
-                lightingAlpha: 414,
-                lightingBeta: 136
-            };
-            const light = new THREE.DirectionalLight();
-            light.name = 'light';
-            light.position.set(-1000, 0, 0);
-            light.position.applyAxisAngle(
-                new THREE.Vector3(0, 0, 1),
-                -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
-            );
-            light.position.applyAxisAngle(
-                new THREE.Vector3(0, 1, 0),
-                -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
-            );
-            light.updateMatrix();
-            light.matrixAutoUpdate = false;
-            light.intensity = 10;
-            scene.threeScene.add(light);
-            scene.threeScene.add(new THREE.AmbientLight(0xFFFFFF, 0.2));
             const clock = new THREE.Clock(false);
             this.state = {
                 scene,
                 clock,
                 grid,
-                controlsState
+                controlsState,
+                showOriginal: false
             };
             clock.start();
         }
@@ -301,14 +290,17 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.loading = true;
         this.layout = layoutIdx;
         this.library = libraryIdx;
-        const [ress, bkg] = await Promise.all([
+        const [ress, bkg, lutTexture] = await Promise.all([
             loadHqr('RESS.HQR'),
             loadHqr('LBA_BKG.HQR'),
+            await loadLUTTexture(),
         ]);
+        const palette = new Uint8Array(ress.getEntry(0));
+        const paletteTexture = loadPaletteTexture(palette);
+        const light = getLightVector();
         if (!this.mask) {
             this.mask = await loadImageData('images/brick_mask.png');
         }
-        const palette = new Uint8Array(ress.getEntry(0));
         const bricks = loadBricks(bkg);
         const library = loadLibrary(bkg, bricks, this.mask, palette, libraryIdx);
         const layoutProps = library.layouts[layoutIdx];
@@ -344,11 +336,49 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                 (Math.PI / 2.0) * lSettings.orientation
             );
             lSettings.threeObject = model.scene;
+            lSettings.threeObject.traverse((node) => {
+                if (node instanceof THREE.Mesh) {
+                    const rotation = new THREE.Matrix4().makeRotationY(-Math.PI / 2);
+                    node.updateMatrixWorld();
+                    rotation.multiply(node.matrixWorld);
+                    const normalMatrix = new THREE.Matrix3();
+                    normalMatrix.setFromMatrix4(rotation);
+                    const material = node.material as THREE.MeshStandardMaterial;
+                    if (material.map) {
+                        node.material = new THREE.RawShaderMaterial({
+                            vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
+                            fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
+                            uniforms: {
+                                uNormalMatrix: {value: normalMatrix},
+                                uTexture: {value: material.map},
+                                lutTexture: {value: lutTexture},
+                                palette: {value: paletteTexture},
+                                light: {value: light}
+                            }
+                        });
+                    } else {
+                        const mColor = material.color.clone().convertLinearToGamma();
+                        const color = new THREE.Vector3().fromArray(mColor.toArray());
+                        node.material = new THREE.RawShaderMaterial({
+                            vertexShader: compile('vert', VERT_OBJECTS_COLORED),
+                            fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
+                            uniforms: {
+                                uNormalMatrix: {value: normalMatrix},
+                                uColor: {value: color},
+                                lutTexture: {value: lutTexture},
+                                palette: {value: paletteTexture},
+                                light: {value: light}
+                            }
+                        });
+                    }
+                }
+            });
             this.state.scene.threeScene.add(lSettings.threeObject);
             layoutObj.threeObject.visible = false;
         }
         this.state.scene.threeScene.add(layoutObj.threeObject);
         this.setState({
+            showOriginal: false,
             library,
             layout: layoutObj,
             lSettings
@@ -459,7 +489,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         const { library, layout } = this.props.sharedState;
         delete layoutsMetadata[library][layout];
         await this.saveMetadata();
-        this.setState({ lSettings: null });
+        this.setState({ lSettings: null , showOriginal: true });
     }
 
     closeReplacement() {
@@ -489,7 +519,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         layoutsMetadata[library][layout] = omit(lSettings, 'threeObject');
         await this.saveMetadata();
         threeScene.add(lSettings.threeObject);
-        this.setState({ lSettings });
+        this.setState({ lSettings, showOriginal: false });
     }
 
     async saveMetadata() {
@@ -582,6 +612,11 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         await this.saveMetadata();
     }
 
+    async setShowOriginal(e) {
+        this.state.layout.threeObject.visible = e.target.checked;
+        this.setState({showOriginal: e.target.checked});
+    }
+
     renderLayoutOptions() {
         const {lSettings} = this.state;
         if (!lSettings || !lSettings.replace) {
@@ -596,10 +631,17 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     renderReplacementData() {
-        const {lSettings} = this.state;
+        const {lSettings, showOriginal} = this.state;
         if (lSettings && lSettings.replace) {
             return <div style={dataBlock}>
                 Replacement:<br/><br/>
+
+                <label style={{cursor: 'pointer', userSelect: 'none'}}>
+                    <input type="checkBox"
+                            checked={showOriginal}
+                            onChange={this.setShowOriginal} />
+                    Show original
+                </label><br/>
                 Angle: <select onChange={this.changeAngle} value={lSettings.orientation}>
                     {[0, 1, 2, 3].map(v => <option key={v} value={v}>
                         {v * 90}°
@@ -794,4 +836,22 @@ function base64ToBuffer(str) {
     }
 
     return buf;
+}
+
+const ambience = {
+    lightingAlpha: 414,
+    lightingBeta: 136
+};
+
+function getLightVector() {
+    const lightVector = new THREE.Vector3(-1, 0, 0);
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 0, 1),
+        -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
+    );
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
+    );
+    return lightVector;
 }
