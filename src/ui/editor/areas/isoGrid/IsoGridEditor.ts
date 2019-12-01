@@ -74,8 +74,14 @@ const IsoGridEditor = {
     content: IsoGridEditorContent,
     settings: IsoGridEditorSettings,
     mainArea: true,
-    getInitialState: () => ({}),
-    stateHandler: {},
+    getInitialState: () => ({
+        cam: 0
+    }),
+    stateHandler: {
+        setCam(cam) {
+            this.setState({cam});
+        }
+    },
     toolAreas: [
         IsoBrowserArea,
         InspectorArea

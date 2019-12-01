@@ -10,6 +10,7 @@ import { loadIsometricScenery } from '../../../../iso';
 import { loadSceneMapData } from '../../../../scene/map';
 import { getLanguageConfig } from '../../../../lang';
 import { loadSceneData } from '../../../../scene';
+import { getIso3DCamera } from '../../../../cameras/iso3d';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -17,6 +18,7 @@ interface Props extends TickerProps {
     params: any;
     sharedState: {
         isoGridIdx: number;
+        cam: number;
     };
     stateHandler: any;
 }
@@ -27,6 +29,7 @@ interface State {
     renderer?: any;
     scene: any;
     clock: THREE.Clock;
+    cameras: any[];
     controlsState: {
         cameraLerp: THREE.Vector3;
         cameraLookAtLerp: THREE.Vector3;
@@ -84,6 +87,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     zoom: number = 1;
     lastTick = 0;
     angle = 0;
+    cam = 0;
 
     constructor(props) {
         super(props);
@@ -101,7 +105,10 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         if (props.mainData) {
             this.state = props.mainData.state;
         } else {
-            const camera = getIsometricCamera();
+            const isoCamera = getIsometricCamera();
+            const iso3DCamera = getIso3DCamera();
+            const cameras = [isoCamera, iso3DCamera];
+            const camera = cameras[this.cam];
             const scene = {
                 camera,
                 threeScene: new THREE.Scene(),
@@ -113,13 +120,15 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 cameraLerp: new THREE.Vector3(),
                 cameraLookAtLerp: new THREE.Vector3()
             };
-            scene.threeScene.add(camera.threeCamera);
+            scene.threeScene.add(isoCamera.threeCamera);
+            scene.threeScene.add(iso3DCamera.controlNode);
             const clock = new THREE.Clock(false);
             this.state = {
                 scene,
                 clock,
                 controlsState,
-                isoGridIdx: 0
+                isoGridIdx: 0,
+                cameras
             };
             clock.start();
         }
@@ -245,10 +254,15 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     frame() {
-        const { renderer, clock, scene } = this.state;
+        const { renderer, clock, scene, cameras, controlsState } = this.state;
+        const { cam } = this.props.sharedState;
         const { isoGridIdx } = DebugData.scope;
         if (this.isoGridIdx !== isoGridIdx && isoGridIdx !== undefined) {
             this.loadIsoGrid(isoGridIdx);
+        }
+        if (this.cam !== cam && cam !== undefined) {
+            this.cam = cam;
+            scene.camera = cameras[cam];
         }
         this.checkResize();
         const time = {
@@ -256,7 +270,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             elapsed: clock.getElapsedTime()
         };
         renderer.stats.begin();
-        scene.camera.update(scene, this.state.controlsState, time);
+        scene.camera.update(scene, controlsState, time);
         renderer.render(scene);
         renderer.stats.end();
     }
