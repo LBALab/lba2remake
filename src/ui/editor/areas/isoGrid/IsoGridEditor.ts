@@ -32,6 +32,9 @@ function collectIsoScenes(location, scenes, push = true) {
             children: map(location.children, c => collectIsoScenes(c, scenes, false)),
             onClick: () => {
                 DebugData.scope.isoGridIdx = location.props[0].value;
+            },
+            selected: () => {
+                return DebugData.scope.isoGridIdx === location.props[0].value;
             }
         };
         if (push) {
