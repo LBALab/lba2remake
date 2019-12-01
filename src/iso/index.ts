@@ -78,11 +78,19 @@ interface GLTFModel {
 }
 
 const loader = new GLTFLoader();
+const models = {};
 
 async function loadModel(file) : Promise<GLTFModel> {
-    return new Promise((resolve) => {
-        loader.load(`/models/layouts/${file}`, resolve);
+    if (file in models) {
+        return models[file];
+    }
+    const model = await new Promise<GLTFModel>((resolve) => {
+        loader.load(`/models/layouts/${file}`, (m: GLTFModel) => {
+            resolve(m);
+        });
     });
+    models[file] = model;
+    return model;
 }
 
 async function loadMesh(grid, entry, metadata, ambience) {
