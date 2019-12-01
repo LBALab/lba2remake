@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 
 const CAMERA_HERO_OFFSET = new THREE.Vector3(-24, 19.2, 24);
+const ANGLE_LEFT = new THREE.Euler(0, -Math.PI / 2, 0, 'YXZ');
+const ANGLE_RIGHT = new THREE.Euler(0, Math.PI / 2, 0, 'YXZ');
 
 export function getIsometricCamera() {
     const w = window.innerWidth;
@@ -43,10 +45,9 @@ export function getIsometricCamera() {
             if (controlsState.freeCamera) {
                 processFreeIsoMovement(controlsState, camera, time);
             } else {
-                if (!(scene.actors && scene.actors[0].threeObject)
-                    && !scene.target
-                )
+                if (!(scene.actors && scene.actors[0].threeObject) && !scene.target) {
                     return;
+                }
 
                 const target = scene.actors ? scene.actors[0] : scene.target;
                 const { objectPos, cameraPos } = getTargetPos(target);
@@ -69,6 +70,12 @@ export function getIsometricCamera() {
 
             camera.position.copy(cameraPos);
             camera.lookAt(objectPos);
+        },
+        rotateLeft() {
+            CAMERA_HERO_OFFSET.applyEuler(ANGLE_LEFT);
+        },
+        rotateRight() {
+            CAMERA_HERO_OFFSET.applyEuler(ANGLE_RIGHT);
         }
     };
 }
