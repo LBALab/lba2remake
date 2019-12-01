@@ -20,10 +20,7 @@ import brick_vertex from '../../../../iso/shaders/brick.vert.glsl';
 import brick_fragment from '../../../../iso/shaders/brick.frag.glsl';
 import { loadLUTTexture } from '../../../../utils/lut';
 import { loadPaletteTexture } from '../../../../texture';
-import VERT_OBJECTS_COLORED from '../../../../iso/shaders/objects/colored.vert.glsl';
-import FRAG_OBJECTS_COLORED from '../../../../iso/shaders/objects/colored.frag.glsl';
-import VERT_OBJECTS_TEXTURED from '../../../../iso/shaders/objects/textured.vert.glsl';
-import FRAG_OBJECTS_TEXTURED from '../../../../iso/shaders/objects/textured.frag.glsl';
+import { replaceMaterials } from '../../../../iso/metadata';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -301,6 +298,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         if (!this.mask) {
             this.mask = await loadImageData('images/brick_mask.png');
         }
+        const shaderData = {lutTexture, paletteTexture, light};
         const bricks = loadBricks(bkg);
         const library = loadLibrary(bkg, bricks, this.mask, palette, libraryIdx);
         const layoutProps = library.layouts[layoutIdx];
@@ -337,43 +335,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                 angle
             );
             lSettings.threeObject = model.scene;
-            lSettings.threeObject.traverse((node) => {
-                if (node instanceof THREE.Mesh) {
-                    const rotation = new THREE.Matrix4().makeRotationY(angle - Math.PI / 2);
-                    node.updateMatrixWorld();
-                    rotation.multiply(node.matrixWorld);
-                    const normalMatrix = new THREE.Matrix3();
-                    normalMatrix.setFromMatrix4(rotation);
-                    const material = node.material as THREE.MeshStandardMaterial;
-                    if (material.map) {
-                        node.material = new THREE.RawShaderMaterial({
-                            vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
-                            fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
-                            uniforms: {
-                                uNormalMatrix: {value: normalMatrix},
-                                uTexture: {value: material.map},
-                                lutTexture: {value: lutTexture},
-                                palette: {value: paletteTexture},
-                                light: {value: light}
-                            }
-                        });
-                    } else {
-                        const mColor = material.color.clone().convertLinearToGamma();
-                        const color = new THREE.Vector3().fromArray(mColor.toArray());
-                        node.material = new THREE.RawShaderMaterial({
-                            vertexShader: compile('vert', VERT_OBJECTS_COLORED),
-                            fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
-                            uniforms: {
-                                uNormalMatrix: {value: normalMatrix},
-                                uColor: {value: color},
-                                lutTexture: {value: lutTexture},
-                                palette: {value: paletteTexture},
-                                light: {value: light}
-                            }
-                        });
-                    }
-                }
-            });
+            replaceMaterials(lSettings.threeObject, shaderData, angle);
             this.state.scene.threeScene.add(lSettings.threeObject);
             layoutObj.threeObject.visible = false;
         }
@@ -513,6 +475,15 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             file,
             orientation: 0
         };
+        const [ress, lutTexture] = await Promise.all([
+            loadHqr('RESS.HQR'),
+            await loadLUTTexture(),
+        ]);
+        const palette = new Uint8Array(ress.getEntry(0));
+        const paletteTexture = loadPaletteTexture(palette);
+        const light = getLightVector();
+        const shaderData = {lutTexture, paletteTexture, light};
+        replaceMaterials(lSettings.threeObject, shaderData, 0);
         const { library, layout } = this.props.sharedState;
         if (!(library in layoutsMetadata)) {
             layoutsMetadata[library] = {};

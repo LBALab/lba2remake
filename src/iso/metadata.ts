@@ -83,6 +83,47 @@ export async function extractGridMetadata(grid, metadata, ambience) {
     };
 }
 
+export async function replaceMaterials(threeObject, shaderData, angle) {
+    const {lutTexture, paletteTexture, light} = shaderData;
+    threeObject.traverse((node) => {
+        if (node instanceof THREE.Mesh) {
+            const rotation = new THREE.Matrix4().makeRotationY(angle - Math.PI / 2);
+            node.updateMatrixWorld();
+            rotation.multiply(node.matrixWorld);
+            const normalMatrix = new THREE.Matrix3();
+            normalMatrix.setFromMatrix4(rotation);
+            const material = node.material as THREE.MeshStandardMaterial;
+            if (material.map) {
+                node.material = new THREE.RawShaderMaterial({
+                    vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
+                    fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
+                    uniforms: {
+                        uNormalMatrix: {value: normalMatrix},
+                        uTexture: {value: material.map},
+                        lutTexture: {value: lutTexture},
+                        palette: {value: paletteTexture},
+                        light: {value: light}
+                    }
+                });
+            } else {
+                const mColor = material.color.clone().convertLinearToGamma();
+                const color = new THREE.Vector3().fromArray(mColor.toArray());
+                node.material = new THREE.RawShaderMaterial({
+                    vertexShader: compile('vert', VERT_OBJECTS_COLORED),
+                    fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
+                    uniforms: {
+                        uNormalMatrix: {value: normalMatrix},
+                        uColor: {value: color},
+                        lutTexture: {value: lutTexture},
+                        palette: {value: paletteTexture},
+                        light: {value: light}
+                    }
+                });
+            }
+        }
+    });
+}
+
 function checkMatch(grid, layout, x, y, z) {
     const {nX, nY, nZ} = layout;
     for (let zL = 0; zL < nZ; zL += 1) {
@@ -132,44 +173,7 @@ async function addReplacementObject(gridReps, metadata, x, y, z, shaderData) {
         new THREE.Vector3(0, 1, 0),
         angle
     );
-    const {lutTexture, paletteTexture, light} = shaderData;
-    threeObject.traverse((node) => {
-        if (node instanceof THREE.Mesh) {
-            const rotation = new THREE.Matrix4().makeRotationY(angle - Math.PI / 2);
-            node.updateMatrixWorld();
-            rotation.multiply(node.matrixWorld);
-            const normalMatrix = new THREE.Matrix3();
-            normalMatrix.setFromMatrix4(rotation);
-            const material = node.material as THREE.MeshStandardMaterial;
-            if (material.map) {
-                node.material = new THREE.RawShaderMaterial({
-                    vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
-                    fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
-                    uniforms: {
-                        uNormalMatrix: {value: normalMatrix},
-                        uTexture: {value: material.map},
-                        lutTexture: {value: lutTexture},
-                        palette: {value: paletteTexture},
-                        light: {value: light}
-                    }
-                });
-            } else {
-                const mColor = material.color.clone().convertLinearToGamma();
-                const color = new THREE.Vector3().fromArray(mColor.toArray());
-                node.material = new THREE.RawShaderMaterial({
-                    vertexShader: compile('vert', VERT_OBJECTS_COLORED),
-                    fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
-                    uniforms: {
-                        uNormalMatrix: {value: normalMatrix},
-                        uColor: {value: color},
-                        lutTexture: {value: lutTexture},
-                        palette: {value: paletteTexture},
-                        light: {value: light}
-                    }
-                });
-            }
-        }
-    });
+    replaceMaterials(threeObject, shaderData, angle);
     gridReps.objects.push(threeObject);
 }
 
