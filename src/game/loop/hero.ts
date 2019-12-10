@@ -72,8 +72,10 @@ function processFirstPersonsMovement(controlsState, scene, hero) {
         const orientation = onlyY(scene.camera.threeCamera.quaternion);
         const euler = new THREE.Euler();
         euler.setFromQuaternion(orientation, 'YXZ');
-        hero.physics.temp.angle = euler.y;
         hero.physics.orientation.setFromEuler(euler);
+        const baseEuler = new THREE.Euler();
+        baseEuler.setFromQuaternion(scene.camera.controlNode.quaternion, 'YXZ');
+        hero.physics.temp.angle = baseEuler.y + euler.y;
     }
     if (hero.props.animIndex !== animIndex) {
         hero.props.animIndex = animIndex;
