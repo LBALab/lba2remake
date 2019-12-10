@@ -95,6 +95,7 @@ export const DirMode = {
 
 // TODO: move section offset to container THREE.Object3D
 export async function loadActor(
+    game: any,
     params: any,
     is3DCam: boolean,
     envInfo: any,
@@ -226,7 +227,11 @@ export async function loadActor(
                     this.threeObject = model.mesh;
                     if (this.threeObject) {
                         this.threeObject.name = `actor:${name}`;
-                        this.threeObject.visible = this.isVisible;
+                        if (props.index === 0 && game.controlsState.firstPerson) {
+                            this.threeObject.visible = false;
+                        } else {
+                            this.threeObject.visible = this.isVisible;
+                        }
                     }
                 }
             } else {

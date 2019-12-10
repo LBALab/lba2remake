@@ -77,7 +77,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 sideScene.sideScenes[scene.index] = scene;
                 relocateHero(scene.actors[0], sideScene.actors[0], sideScene, teleport);
                 scene = sideScene;
-                reviveActor(scene.actors[0]); // Awake twinsen
+                reviveActor(scene.actors[0], game); // Awake twinsen
                 scene.isActive = true;
                 if (!musicSource.isPlaying) {
                     musicSource.load(scene.data.ambience.musicIndex, () => {
@@ -159,7 +159,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
     const is3DCam = indexInfo.isIsland || renderer.vr || params.iso3d;
     const actors = await Promise.all(map(
         sceneData.actors,
-        actor => loadActor(params, is3DCam, envInfo, sceneData.ambience, actor, parent)
+        actor => loadActor(game, params, is3DCam, envInfo, sceneData.ambience, actor, parent)
     ));
     const points = map(sceneData.points, props => loadPoint(props));
     const zones = map(sceneData.zones, props => loadZone(props, is3DCam));

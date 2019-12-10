@@ -85,10 +85,14 @@ export function killActor(actor) {
     SUICIDE.call(actor.scripts.life.context);
 }
 
-export function reviveActor(actor) {
+export function reviveActor(actor, game) {
     actor.isVisible = true;
     if (actor.threeObject) {
-        actor.threeObject.visible = true;
+        if (actor.index === 0 && game.controlsState.firstPerson) {
+            actor.threeObject.visible = false;
+        } else {
+            actor.threeObject.visible = true;
+        }
     }
     actor.scripts.life.context.state.terminated = false;
     actor.scripts.life.context.state.reentryOffset = 0;
