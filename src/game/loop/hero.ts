@@ -46,6 +46,8 @@ function toggleJump(hero, value) {
     hero.props.runtimeFlags.hasGravityByAnim = value;
 }
 
+let turnReset = true;
+
 function processFirstPersonsMovement(controlsState, scene, hero) {
     let animIndex = hero.props.animIndex;
     if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
@@ -59,6 +61,15 @@ function processFirstPersonsMovement(controlsState, scene, hero) {
             animIndex = controlsState.controlVector.y > 0 ? AnimType.FORWARD : AnimType.BACKWARD;
         } else {
             hero.props.runtimeFlags.isWalking = true;
+        }
+        if (Math.abs(controlsState.altControlVector.x) > 0.6 && turnReset) {
+            const euler = new THREE.Euler();
+            euler.setFromQuaternion(scene.camera.controlNode.quaternion, 'YXZ');
+            euler.y -= Math.sign(controlsState.altControlVector.x) * Math.PI / 8;
+            scene.camera.controlNode.quaternion.setFromEuler(euler);
+            turnReset = false;
+        } else if (Math.abs(controlsState.altControlVector.x) < 0.3) {
+            turnReset = true;
         }
         if (controlsState.jump === 1) {
             toggleJump(hero, true);

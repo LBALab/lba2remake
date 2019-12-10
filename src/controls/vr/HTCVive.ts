@@ -75,6 +75,7 @@ export default class HTCVive {
 
         // Hero movement
         controlsState.controlVector.copy(left.pad);
+        controlsState.altControlVector.copy(right.pad);
 
         // Action button
         controlsState.action = right.menu.tapped ? 1 : 0;

@@ -21,6 +21,7 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
         getUiState,
         controlsState: {
             controlVector: new THREE.Vector2(),
+            altControlVector: new THREE.Vector2(),
             cameraSpeed: new THREE.Vector3(),
             cameraLerp: new THREE.Vector3(),
             cameraLookAtLerp: new THREE.Vector3(),

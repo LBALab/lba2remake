@@ -36,11 +36,14 @@ export default class OculusGo {
 
         if (touchpad.touched) {
             controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
+            controlsState.altControlVector.copy(gamepad.axes[0], 0);
         } else {
             controlsState.controlVector.set(0, 0);
+            controlsState.altControlVector.set(0, 0);
         }
         if (touchpad.pressed) {
             controlsState.controlVector.set(0, 0);
+            controlsState.altControlVector.set(0, 0);
         }
         if (trigger.tapped && camera && scene) {
             camera.center(scene);
