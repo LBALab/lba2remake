@@ -42,12 +42,18 @@ export function createMenu(game, sceneManager, renderer, light) {
             audioMenuManager.getMusicSource().stop();
 
             const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
-            const onEnded = () => {
+            const onEnded = async () => {
                 game.setUiState({video: null});
                 game.controlsState.skipListener = null;
                 game.resume();
                 game.resetState();
-                sceneManager.goto(0, false);
+                const scene = await sceneManager.goto(0, false);
+                if (game.controlsState.firstPerson) {
+                    scene.camera.controlNode.quaternion.setFromAxisAngle(
+                        new THREE.Vector3(0, 1, 0),
+                        Math.PI / 2
+                    );
+                }
             };
             game.controlsState.skipListener = onEnded;
             game.setUiState({
