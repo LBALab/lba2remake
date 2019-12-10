@@ -74,7 +74,6 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
 
         const clock = new THREE.Clock(false);
         const game = createGame(
-            props.params,
             clock,
             this.setUiState,
             this.getUiState
@@ -164,7 +163,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
                     renderer
                 );
             }
-            const vrScene = loadVRScene(game, renderer);
+            const vrScene = loadVRScene(game, sceneManager, renderer);
             this.setState({ renderer, sceneManager, controls, vrScene });
             this.canvasWrapperElem = canvasWrapperElem;
             this.canvasWrapperElem.appendChild(this.canvas);

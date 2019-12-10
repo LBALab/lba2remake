@@ -7,7 +7,7 @@ import {getLanguageConfig, tr} from '../lang';
 import DebugData from '../ui/editor/DebugData';
 import { makePure } from '../utils/debug';
 
-export function createGame(params: any, clock: any, setUiState: Function, getUiState: Function) {
+export function createGame(clock: any, setUiState: Function, getUiState: Function) {
     let isPaused = false;
     let isLoading = false;
 
@@ -28,7 +28,7 @@ export function createGame(params: any, clock: any, setUiState: Function, getUiS
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
             relativeToCam: false,
-            firstPerson: params.firstPerson,
+            firstPerson: getSavedVRFirstPersonMode(),
             action: 0,
             jump: 0,
             fight: 0,
@@ -179,4 +179,12 @@ async function preloadFile(url, name) {
         };
         request.send();
     });
+}
+
+function getSavedVRFirstPersonMode() {
+    const firstPerson = localStorage.getItem('vrFirstPerson');
+    if (firstPerson !== null && firstPerson !== undefined) {
+        return JSON.parse(firstPerson);
+    }
+    return false;
 }

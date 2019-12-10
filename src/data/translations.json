@@ -42,7 +42,10 @@
         "Disclaimer": "Disclaimer",
         "disclaimer1": "You are about to play an unofficial remake of the 1997 cult action/adventure game: Little Big Adventure 2 (also known as Twinsen's Odyssey).",
         "disclaimer2": "This effort is still a work in progress, the game is far from being fully playable, so expect many bugs and missing features.",
-        "disclaimer3": "This demo website makes use of the original game's assets, with the kind authorization of Frédérick Raynal. The demo may become unavailable at any moment."
+        "disclaimer3": "This demo website makes use of the original game's assets, with the kind authorization of Frédérick Raynal. The demo may become unavailable at any moment.",
+        "1stPerson": "1st person",
+        "3rdPerson": "3rd person",
+        "Camera": "Camera"
     },
     "FR": {
         "loading": "Chargement",
@@ -87,6 +90,9 @@
         "Disclaimer": "Avertissement",
         "disclaimer1": "Vous êtes sur le point de jouer à un remake non officiel du jeu d'action/aventure culte: Little Big Adventure 2 (1997).",
         "disclaimer2": "Ce travail n'est pas terminé, le jeu est encore loin d'être jouable dans son intégralité. Attendez-vous à beaucoup de bugs et fonctionnalités manquantes.",
-        "disclaimer3": "Ce site de démo utilise les données du jeu original, avec l'aimable autorisation de Frédérick Raynal. La démo est susceptible d'être rendue indisponible à n'importe quel moment."
+        "disclaimer3": "Ce site de démo utilise les données du jeu original, avec l'aimable autorisation de Frédérick Raynal. La démo est susceptible d'être rendue indisponible à n'importe quel moment.",
+        "1stPerson": "1ère personne",
+        "3rdPerson": "3ème personne",
+        "Camera": "Camera"
     }
 }

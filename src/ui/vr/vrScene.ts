@@ -6,7 +6,7 @@ import { createVideoScreen } from './vrVideo';
 
 let videoScreen = null;
 
-export function loadVRScene(game, renderer) {
+export function loadVRScene(game, sceneManager, renderer) {
     const threeScene = new THREE.Scene();
     const camera = getVR3DCamera();
 
@@ -30,7 +30,7 @@ export function loadVRScene(game, renderer) {
     const fps = createFPSCounter(renderer);
     camera.controlNode.add(fps);
 
-    const menu = createMenu(game, renderer, light);
+    const menu = createMenu(game, sceneManager, renderer, light);
     threeScene.add(menu);
 
     threeScene.add(camera.controlNode);

@@ -176,7 +176,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
             threeScene.name = '3D_scene';
             if (renderer.vr) {
-                if (params.firstPerson) {
+                if (game.controlsState.firstPerson) {
                     camera = getVrFirstPersonCamera();
                 } else {
                     camera = getVR3DCamera();
@@ -188,7 +188,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             scenery = await loadIsometricScenery(indexInfo.index, sceneData.ambience);
             threeScene.name = 'iso_scene';
             if (renderer.vr) {
-                if (params.firstPerson) {
+                if (game.controlsState.firstPerson) {
                     camera = getVrFirstPersonCamera();
                 } else {
                     camera = getVRIsoCamera();
