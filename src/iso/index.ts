@@ -10,6 +10,7 @@ import {compile} from '../utils/shaders';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 import { extractGridMetadata } from './metadata';
+import {Side, OffsetBySide} from './mapping';
 
 export async function loadImageData(src) : Promise<ImageData> {
     return new Promise((resolve) => {
@@ -99,6 +100,7 @@ async function loadMesh(grid, entry, metadata, ambience) {
         positions: [],
         uvs: []
     };
+    const {library, cells} = grid;
     const gridMetadata = await extractGridMetadata(grid, metadata, ambience);
     each(gridMetadata.replacements.objects, (threeObject) => {
         scene.add(threeObject);
@@ -107,10 +109,14 @@ async function loadMesh(grid, entry, metadata, ambience) {
     let c = 0;
     for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
-            const o = grid.cells[c].build(geometries, x, z - 1, gridMetadata);
-            if (o) {
-                scene.add(o);
-            }
+            buildCell(
+                library,
+                cells[c].blocks,
+                geometries,
+                x,
+                z - 1,
+                gridMetadata
+            );
             c += 1;
         }
     }
@@ -146,4 +152,112 @@ async function loadMesh(grid, entry, metadata, ambience) {
     scene.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
 
     return scene;
+}
+
+function buildCell(library, blocks, geometries, x, z, gridMetadata) {
+    const h = 0.5;
+    const {positions, uvs} = geometries;
+    const {width, height} = library.texture.image;
+    const {replacements, mirrors} = gridMetadata;
+
+    for (let yIdx = 0; yIdx < blocks.length; yIdx += 1) {
+        const y = (yIdx * h) + h;
+        if (blocks[yIdx]) {
+            const layout = library.layouts[blocks[yIdx].layout];
+            if (layout) {
+                const key = `${x},${yIdx},${z}`;
+                if (replacements.bricks.has(key))
+                    continue;
+
+                const block = layout.blocks[blocks[yIdx].block];
+                if (block && block.brick in library.bricksMap) {
+                    const {u, v} = library.bricksMap[block.brick];
+                    const pushUv = (u0, v0, side) => {
+                        const o = OffsetBySide[side];
+                        uvs.push((u + u0 + o.x) / width, (v + v0 + o.y) / height);
+                    };
+
+                    positions.push(x, y, z);
+                    pushUv(24, -0.5, Side.TOP);
+                    positions.push(x, y, z + 1);
+                    pushUv(48, 11.5, Side.TOP);
+                    positions.push(x + 1, y, z + 1);
+                    pushUv(24, 23.5, Side.TOP);
+                    positions.push(x, y, z);
+                    pushUv(24, -0.5, Side.TOP);
+                    positions.push(x + 1, y, z + 1);
+                    pushUv(24, 23.5, Side.TOP);
+                    positions.push(x + 1, y, z);
+                    pushUv(0, 11.5, Side.TOP);
+
+                    positions.push(x + 1, y, z);
+                    pushUv(0, 11.5, Side.LEFT);
+                    positions.push(x + 1, y, z + 1);
+                    pushUv(24, 23.5, Side.LEFT);
+                    positions.push(x + 1, y - h, z + 1);
+                    pushUv(24, 38.5, Side.LEFT);
+                    positions.push(x + 1, y, z);
+                    pushUv(0, 11.5, Side.LEFT);
+                    positions.push(x + 1, y - h, z + 1);
+                    pushUv(24, 38.5, Side.LEFT);
+                    positions.push(x + 1, y - h, z);
+                    pushUv(0, 26.5, Side.LEFT);
+
+                    positions.push(x, y, z + 1);
+                    pushUv(48, 11.5, Side.RIGHT);
+                    positions.push(x + 1, y - h, z + 1);
+                    pushUv(24, 38.5, Side.RIGHT);
+                    positions.push(x + 1, y, z + 1);
+                    pushUv(24, 23.5, Side.RIGHT);
+                    positions.push(x, y, z + 1);
+                    pushUv(48, 11.5, Side.RIGHT);
+                    positions.push(x, y - h, z + 1);
+                    pushUv(48, 26.5, Side.RIGHT);
+                    positions.push(x + 1, y - h, z + 1);
+                    pushUv(24, 38.5, Side.RIGHT);
+
+                    if (mirrors.has(key)) {
+                        positions.push(x, y - h, z);
+                        pushUv(24, -0.5, Side.TOP);
+                        positions.push(x, y - h, z + 1);
+                        pushUv(48, 11.5, Side.TOP);
+                        positions.push(x + 1, y - h, z + 1);
+                        pushUv(24, 23.5, Side.TOP);
+                        positions.push(x, y - h, z);
+                        pushUv(24, -0.5, Side.TOP);
+                        positions.push(x + 1, y - h, z + 1);
+                        pushUv(24, 23.5, Side.TOP);
+                        positions.push(x + 1, y - h, z);
+                        pushUv(0, 11.5, Side.TOP);
+
+                        positions.push(x, y, z);
+                        pushUv(0, 11.5, Side.LEFT);
+                        positions.push(x, y, z + 1);
+                        pushUv(24, 23.5, Side.LEFT);
+                        positions.push(x, y - h, z + 1);
+                        pushUv(24, 38.5, Side.LEFT);
+                        positions.push(x, y, z);
+                        pushUv(0, 11.5, Side.LEFT);
+                        positions.push(x, y - h, z + 1);
+                        pushUv(24, 38.5, Side.LEFT);
+                        positions.push(x, y - h, z);
+                        pushUv(0, 26.5, Side.LEFT);
+
+                        positions.push(x, y, z);
+                        pushUv(48, 11.5, Side.RIGHT);
+                        positions.push(x + 1, y - h, z);
+                        pushUv(24, 38.5, Side.RIGHT);
+                        positions.push(x + 1, y, z);
+                        pushUv(24, 23.5, Side.RIGHT);
+                        positions.push(x, y, z);
+                        pushUv(48, 11.5, Side.RIGHT);
+                        positions.push(x, y - h, z);
+                        pushUv(48, 26.5, Side.RIGHT);
+                        positions.push(x + 1, y - h, z);
+                        pushUv(24, 38.5, Side.RIGHT);
+                    }
+                }
+            }
+        }
+    }
 }

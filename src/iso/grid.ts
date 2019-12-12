@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {map, last} from 'lodash';
 import {bits} from '../utils';
-import {loadBricksMapping, Side, OffsetBySide} from './mapping';
+import {loadBricksMapping} from './mapping';
 
 export function loadGrid(bkg, bricks, mask, palette, entry) {
     const gridData = new DataView(bkg.getEntry(entry));
@@ -93,7 +93,6 @@ export function loadGrid(bkg, bricks, mask, palette, entry) {
                 baseHeight += height;
             }
             return {
-                build: buildCell.bind(null, library, blocks),
                 blocks,
                 columns
             };
@@ -164,112 +163,4 @@ function loadLayout(dataView, index) {
         nZ,
         blocks
     };
-}
-
-function buildCell(library, blocks, geometries, x, z, gridMetadata) {
-    const h = 0.5;
-    const {positions, uvs} = geometries;
-    const {width, height} = library.texture.image;
-    const {replacements, mirrors} = gridMetadata;
-
-    for (let yIdx = 0; yIdx < blocks.length; yIdx += 1) {
-        const y = (yIdx * h) + h;
-        if (blocks[yIdx]) {
-            const layout = library.layouts[blocks[yIdx].layout];
-            if (layout) {
-                const key = `${x},${yIdx},${z}`;
-                if (replacements.bricks.has(key))
-                    continue;
-
-                const block = layout.blocks[blocks[yIdx].block];
-                if (block && block.brick in library.bricksMap) {
-                    const {u, v} = library.bricksMap[block.brick];
-                    const pushUv = (u0, v0, side) => {
-                        const o = OffsetBySide[side];
-                        uvs.push((u + u0 + o.x) / width, (v + v0 + o.y) / height);
-                    };
-
-                    positions.push(x, y, z);
-                    pushUv(24, -0.5, Side.TOP);
-                    positions.push(x, y, z + 1);
-                    pushUv(48, 11.5, Side.TOP);
-                    positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5, Side.TOP);
-                    positions.push(x, y, z);
-                    pushUv(24, -0.5, Side.TOP);
-                    positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5, Side.TOP);
-                    positions.push(x + 1, y, z);
-                    pushUv(0, 11.5, Side.TOP);
-
-                    positions.push(x + 1, y, z);
-                    pushUv(0, 11.5, Side.LEFT);
-                    positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5, Side.LEFT);
-                    positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5, Side.LEFT);
-                    positions.push(x + 1, y, z);
-                    pushUv(0, 11.5, Side.LEFT);
-                    positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5, Side.LEFT);
-                    positions.push(x + 1, y - h, z);
-                    pushUv(0, 26.5, Side.LEFT);
-
-                    positions.push(x, y, z + 1);
-                    pushUv(48, 11.5, Side.RIGHT);
-                    positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5, Side.RIGHT);
-                    positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5, Side.RIGHT);
-                    positions.push(x, y, z + 1);
-                    pushUv(48, 11.5, Side.RIGHT);
-                    positions.push(x, y - h, z + 1);
-                    pushUv(48, 26.5, Side.RIGHT);
-                    positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5, Side.RIGHT);
-
-                    if (mirrors.has(key)) {
-                        positions.push(x, y - h, z);
-                        pushUv(24, -0.5, Side.TOP);
-                        positions.push(x, y - h, z + 1);
-                        pushUv(48, 11.5, Side.TOP);
-                        positions.push(x + 1, y - h, z + 1);
-                        pushUv(24, 23.5, Side.TOP);
-                        positions.push(x, y - h, z);
-                        pushUv(24, -0.5, Side.TOP);
-                        positions.push(x + 1, y - h, z + 1);
-                        pushUv(24, 23.5, Side.TOP);
-                        positions.push(x + 1, y - h, z);
-                        pushUv(0, 11.5, Side.TOP);
-
-                        positions.push(x, y, z);
-                        pushUv(0, 11.5, Side.LEFT);
-                        positions.push(x, y, z + 1);
-                        pushUv(24, 23.5, Side.LEFT);
-                        positions.push(x, y - h, z + 1);
-                        pushUv(24, 38.5, Side.LEFT);
-                        positions.push(x, y, z);
-                        pushUv(0, 11.5, Side.LEFT);
-                        positions.push(x, y - h, z + 1);
-                        pushUv(24, 38.5, Side.LEFT);
-                        positions.push(x, y - h, z);
-                        pushUv(0, 26.5, Side.LEFT);
-
-                        positions.push(x, y, z);
-                        pushUv(48, 11.5, Side.RIGHT);
-                        positions.push(x + 1, y - h, z);
-                        pushUv(24, 38.5, Side.RIGHT);
-                        positions.push(x + 1, y, z);
-                        pushUv(24, 23.5, Side.RIGHT);
-                        positions.push(x, y, z);
-                        pushUv(48, 11.5, Side.RIGHT);
-                        positions.push(x, y - h, z);
-                        pushUv(48, 26.5, Side.RIGHT);
-                        positions.push(x + 1, y - h, z);
-                        pushUv(24, 38.5, Side.RIGHT);
-                    }
-                }
-            }
-        }
-    }
 }
