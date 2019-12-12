@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 1.6, -0.1);
 const HERO_TARGET_POS = new THREE.Vector3(0, 1.6, 0);
 
 export function getVrFirstPersonCamera() {
@@ -20,7 +19,7 @@ export function getVrFirstPersonCamera() {
     orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
-    return {
+    const scnCamera = {
         width: window.innerWidth,
         height: window.innerHeight,
         threeCamera: camera,
@@ -31,32 +30,19 @@ export function getVrFirstPersonCamera() {
                 camera.updateProjectionMatrix();
             }
         },
-        init: (scene, controlsState) => {
-            if (!controlsState.freeCamera) {
-                const hero = scene.actors[0];
-                if (!hero.threeObject)
-                    return;
-                const heroPos = HERO_TARGET_POS.clone();
-                heroPos.applyMatrix4(hero.threeObject.matrixWorld);
-
-                const cameraPos = CAMERA_HERO_OFFSET.clone();
-                cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
-                controlNode.position.copy(cameraPos);
-                // controlNode.lookAt(heroPos);
-            }
+        init: (scene) => {
+            scnCamera.update(scene);
         },
         update: (scene) => {
             const hero = scene.actors[0];
             if (!hero.threeObject)
-                    return;
+                return;
 
             const heroPos = HERO_TARGET_POS.clone();
-            const cameraPos = CAMERA_HERO_OFFSET.clone();
             heroPos.applyMatrix4(hero.threeObject.matrixWorld);
-            cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
 
-            controlNode.position.copy(cameraPos);
-            // controlNode.lookAt(heroPos);
+            controlNode.position.copy(heroPos);
         }
     };
+    return scnCamera;
 }
