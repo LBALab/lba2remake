@@ -877,5 +877,310 @@
     "251": {
       "mirror": true
     }
+  },
+  "8": {
+    "0": {
+      "mirror": true
+    },
+    "1": {
+      "mirror": true
+    },
+    "2": {
+      "mirror": true
+    },
+    "3": {
+      "mirror": true
+    },
+    "15": {
+      "mirror": true
+    },
+    "16": {
+      "mirror": true
+    },
+    "17": {
+      "mirror": true
+    },
+    "18": {
+      "mirror": true
+    },
+    "21": {
+      "mirror": true
+    },
+    "26": {
+      "mirror": true
+    },
+    "31": {
+      "mirror": true
+    },
+    "32": {
+      "mirror": true
+    },
+    "34": {
+      "mirror": true
+    },
+    "35": {
+      "mirror": true
+    },
+    "36": {
+      "mirror": true
+    },
+    "37": {
+      "mirror": true
+    },
+    "38": {
+      "mirror": true
+    },
+    "39": {
+      "mirror": true
+    },
+    "66": {
+      "mirror": true
+    },
+    "67": {
+      "mirror": true
+    }
+  },
+  "9": {
+    "0": {
+      "mirror": true
+    },
+    "2": {
+      "mirror": true
+    },
+    "3": {
+      "mirror": true
+    },
+    "4": {
+      "mirror": true
+    },
+    "5": {
+      "mirror": true
+    },
+    "6": {
+      "mirror": true
+    },
+    "7": {
+      "mirror": true
+    },
+    "8": {
+      "mirror": true
+    },
+    "9": {
+      "mirror": true
+    },
+    "23": {
+      "mirror": true
+    },
+    "24": {
+      "mirror": true
+    },
+    "27": {
+      "mirror": true
+    },
+    "32": {
+      "mirror": true
+    },
+    "33": {
+      "mirror": true
+    },
+    "34": {
+      "mirror": true
+    },
+    "35": {
+      "mirror": true
+    },
+    "36": {
+      "mirror": true
+    },
+    "37": {
+      "mirror": true
+    },
+    "39": {
+      "mirror": true
+    },
+    "41": {
+      "mirror": true
+    },
+    "42": {
+      "mirror": true
+    },
+    "43": {
+      "mirror": true
+    },
+    "44": {
+      "mirror": true
+    },
+    "45": {
+      "mirror": true
+    },
+    "47": {
+      "mirror": true
+    },
+    "51": {
+      "mirror": true
+    },
+    "52": {
+      "mirror": true
+    },
+    "64": {
+      "mirror": true
+    },
+    "67": {
+      "mirror": true
+    },
+    "68": {
+      "mirror": true
+    },
+    "69": {
+      "mirror": true
+    },
+    "103": {
+      "mirror": true
+    },
+    "104": {
+      "mirror": true
+    },
+    "105": {
+      "mirror": true
+    }
+  },
+  "10": {
+    "4": {
+      "mirror": true
+    },
+    "7": {
+      "mirror": true
+    },
+    "8": {
+      "mirror": true
+    },
+    "12": {
+      "mirror": true
+    },
+    "33": {
+      "mirror": true
+    },
+    "34": {
+      "mirror": true
+    },
+    "61": {
+      "mirror": true
+    },
+    "62": {
+      "mirror": true
+    },
+    "64": {
+      "mirror": true
+    },
+    "65": {
+      "mirror": true
+    },
+    "67": {
+      "mirror": true
+    },
+    "68": {
+      "mirror": true
+    },
+    "69": {
+      "mirror": true
+    },
+    "86": {
+      "mirror": true
+    },
+    "105": {
+      "mirror": true
+    },
+    "110": {
+      "mirror": true
+    },
+    "124": {
+      "mirror": true
+    }
+  },
+  "11": {
+    "13": {
+      "mirror": true
+    },
+    "35": {
+      "mirror": true
+    },
+    "64": {
+      "mirror": true
+    },
+    "65": {
+      "mirror": true
+    },
+    "66": {
+      "mirror": true
+    },
+    "67": {
+      "mirror": true
+    },
+    "70": {
+      "mirror": true
+    },
+    "79": {
+      "mirror": true
+    },
+    "80": {
+      "mirror": true
+    },
+    "85": {
+      "mirror": true
+    },
+    "86": {
+      "mirror": true
+    },
+    "87": {
+      "mirror": true
+    },
+    "88": {
+      "mirror": true
+    },
+    "97": {
+      "mirror": true
+    },
+    "98": {
+      "mirror": true
+    },
+    "106": {
+      "mirror": true
+    },
+    "107": {
+      "mirror": true
+    },
+    "124": {
+      "mirror": true
+    },
+    "125": {
+      "mirror": true
+    },
+    "143": {
+      "mirror": true
+    },
+    "149": {
+      "mirror": true
+    },
+    "150": {
+      "mirror": true
+    },
+    "152": {
+      "mirror": true
+    },
+    "155": {
+      "mirror": true
+    },
+    "192": {
+      "mirror": true
+    },
+    "198": {
+      "mirror": true
+    },
+    "202": {
+      "mirror": true
+    },
+    "203": {
+      "mirror": true
+    }
   }
 }
