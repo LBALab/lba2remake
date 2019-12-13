@@ -605,5 +605,88 @@
     "198": {
       "mirror": true
     }
+  },
+  "4": {
+    "3": {
+      "mirror": true
+    },
+    "4": {
+      "mirror": true
+    },
+    "5": {
+      "mirror": true
+    },
+    "6": {
+      "mirror": true
+    },
+    "7": {
+      "mirror": true
+    },
+    "8": {
+      "mirror": true
+    },
+    "14": {
+      "mirror": true
+    },
+    "16": {
+      "mirror": true
+    },
+    "17": {
+      "mirror": true
+    },
+    "18": {
+      "mirror": true
+    },
+    "59": {
+      "mirror": false
+    },
+    "60": {
+      "mirror": false
+    },
+    "68": {
+      "mirror": true
+    },
+    "69": {
+      "mirror": true
+    },
+    "70": {
+      "mirror": true
+    },
+    "78": {
+      "mirror": true
+    },
+    "79": {
+      "mirror": true
+    },
+    "82": {
+      "mirror": false
+    },
+    "84": {
+      "mirror": true
+    },
+    "85": {
+      "mirror": true
+    },
+    "86": {
+      "mirror": true
+    },
+    "87": {
+      "mirror": true
+    },
+    "88": {
+      "mirror": true
+    },
+    "89": {
+      "mirror": true
+    },
+    "90": {
+      "mirror": true
+    },
+    "155": {
+      "mirror": true
+    },
+    "157": {
+      "mirror": true
+    }
   }
 }
