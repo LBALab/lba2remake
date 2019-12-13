@@ -1182,5 +1182,405 @@
     "203": {
       "mirror": true
     }
+  },
+  "12": {
+    "89": {
+      "mirror": true
+    },
+    "92": {
+      "mirror": true
+    },
+    "93": {
+      "mirror": true
+    },
+    "94": {
+      "mirror": true
+    },
+    "96": {
+      "mirror": true
+    },
+    "97": {
+      "mirror": true
+    },
+    "108": {
+      "mirror": true
+    },
+    "109": {
+      "mirror": true
+    },
+    "110": {
+      "mirror": true
+    },
+    "145": {
+      "mirror": true
+    },
+    "146": {
+      "mirror": true
+    },
+    "147": {
+      "mirror": true
+    },
+    "148": {
+      "mirror": true
+    },
+    "149": {
+      "mirror": true
+    },
+    "150": {
+      "mirror": true
+    }
+  },
+  "13": {
+    "0": {
+      "mirror": true
+    },
+    "6": {
+      "mirror": true
+    },
+    "10": {
+      "mirror": true
+    },
+    "15": {
+      "mirror": true
+    },
+    "18": {
+      "mirror": true
+    },
+    "22": {
+      "mirror": true
+    },
+    "26": {
+      "mirror": true
+    },
+    "27": {
+      "mirror": true
+    },
+    "29": {
+      "mirror": true
+    },
+    "36": {
+      "mirror": true
+    },
+    "66": {
+      "mirror": true
+    },
+    "67": {
+      "mirror": true
+    },
+    "89": {
+      "mirror": true
+    },
+    "91": {
+      "mirror": true
+    },
+    "127": {
+      "mirror": true
+    },
+    "128": {
+      "mirror": true
+    },
+    "136": {
+      "mirror": true
+    },
+    "137": {
+      "mirror": true
+    },
+    "151": {
+      "mirror": true
+    },
+    "165": {
+      "mirror": true
+    },
+    "200": {
+      "mirror": true
+    }
+  },
+  "14": {
+    "18": {
+      "mirror": true
+    },
+    "19": {
+      "mirror": true
+    },
+    "20": {
+      "mirror": true
+    },
+    "21": {
+      "mirror": true
+    },
+    "26": {
+      "mirror": true
+    },
+    "27": {
+      "mirror": true
+    },
+    "28": {
+      "mirror": true
+    },
+    "35": {
+      "mirror": true
+    },
+    "36": {
+      "mirror": true
+    },
+    "37": {
+      "mirror": true
+    },
+    "38": {
+      "mirror": true
+    },
+    "39": {
+      "mirror": true
+    },
+    "51": {
+      "mirror": true
+    },
+    "52": {
+      "mirror": true
+    },
+    "53": {
+      "mirror": true
+    },
+    "54": {
+      "mirror": true
+    },
+    "55": {
+      "mirror": true
+    },
+    "56": {
+      "mirror": true
+    },
+    "62": {
+      "mirror": true
+    },
+    "70": {
+      "mirror": true
+    },
+    "71": {
+      "mirror": true
+    },
+    "72": {
+      "mirror": true
+    },
+    "73": {
+      "mirror": true
+    },
+    "88": {
+      "mirror": true
+    },
+    "100": {
+      "mirror": true
+    },
+    "107": {
+      "mirror": true
+    },
+    "108": {
+      "mirror": true
+    },
+    "123": {
+      "mirror": true
+    },
+    "124": {
+      "mirror": true
+    },
+    "130": {
+      "mirror": true
+    },
+    "131": {
+      "mirror": true
+    },
+    "132": {
+      "mirror": true
+    },
+    "133": {
+      "mirror": true
+    },
+    "134": {
+      "mirror": true
+    },
+    "135": {
+      "mirror": true
+    },
+    "137": {
+      "mirror": true
+    },
+    "138": {
+      "mirror": true
+    },
+    "156": {
+      "mirror": true
+    },
+    "158": {
+      "mirror": true
+    },
+    "159": {
+      "mirror": true
+    },
+    "160": {
+      "mirror": true
+    },
+    "161": {
+      "mirror": true
+    },
+    "162": {
+      "mirror": true
+    },
+    "163": {
+      "mirror": true
+    },
+    "173": {
+      "mirror": true
+    },
+    "174": {
+      "mirror": true
+    },
+    "175": {
+      "mirror": true
+    },
+    "184": {
+      "mirror": true
+    }
+  },
+  "16": {
+    "2": {
+      "mirror": true
+    },
+    "4": {
+      "mirror": true
+    },
+    "8": {
+      "mirror": true
+    },
+    "9": {
+      "mirror": true
+    },
+    "11": {
+      "mirror": true
+    },
+    "12": {
+      "mirror": true
+    },
+    "13": {
+      "mirror": true
+    },
+    "19": {
+      "mirror": true
+    },
+    "28": {
+      "mirror": true
+    },
+    "56": {
+      "mirror": true
+    },
+    "60": {
+      "mirror": true
+    },
+    "67": {
+      "mirror": true
+    },
+    "68": {
+      "mirror": true
+    },
+    "96": {
+      "mirror": true
+    },
+    "97": {
+      "mirror": true
+    },
+    "175": {
+      "mirror": false
+    },
+    "205": {
+      "mirror": true
+    }
+  },
+  "17": {
+    "3": {
+      "mirror": true
+    },
+    "4": {
+      "mirror": true
+    },
+    "5": {
+      "mirror": true
+    },
+    "7": {
+      "mirror": true
+    },
+    "8": {
+      "mirror": true
+    },
+    "12": {
+      "mirror": true
+    },
+    "14": {
+      "mirror": true
+    },
+    "16": {
+      "mirror": true
+    },
+    "17": {
+      "mirror": true
+    },
+    "18": {
+      "mirror": true
+    },
+    "64": {
+      "mirror": true
+    },
+    "68": {
+      "mirror": true
+    },
+    "72": {
+      "mirror": true
+    },
+    "74": {
+      "mirror": true
+    },
+    "76": {
+      "mirror": true
+    },
+    "78": {
+      "mirror": true
+    },
+    "79": {
+      "mirror": true
+    },
+    "85": {
+      "mirror": true
+    },
+    "86": {
+      "mirror": true
+    },
+    "87": {
+      "mirror": true
+    },
+    "88": {
+      "mirror": true
+    },
+    "89": {
+      "mirror": true
+    },
+    "101": {
+      "mirror": true
+    },
+    "113": {
+      "mirror": true
+    },
+    "118": {
+      "mirror": true
+    },
+    "119": {
+      "mirror": true
+    },
+    "139": {
+      "mirror": true
+    },
+    "155": {
+      "mirror": true
+    },
+    "156": {
+      "mirror": true
+    }
   }
 }
