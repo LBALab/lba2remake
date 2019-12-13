@@ -771,5 +771,25 @@
     "95": {
       "mirror": true
     }
+  },
+  "6": {
+    "11": {
+      "mirror": true
+    },
+    "30": {
+      "mirror": false
+    },
+    "45": {
+      "mirror": true
+    },
+    "71": {
+      "mirror": true
+    },
+    "72": {
+      "mirror": true
+    },
+    "75": {
+      "mirror": true
+    }
   }
 }
