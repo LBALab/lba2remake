@@ -593,10 +593,12 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         const {lSettings} = this.state;
         if (!lSettings || !lSettings.replace) {
             return <div style={dataBlock}>
-                <input type="checkbox"
+                <label>
+                    <input type="checkbox"
                         checked={(lSettings && lSettings.mirror) ? true : false}
                         onChange={this.setMirror}/>
-                <label>Mirror</label>
+                    Mirror
+                </label>
             </div>;
         }
         return null;
