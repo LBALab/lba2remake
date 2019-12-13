@@ -276,6 +276,11 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                     }
                     break;
                 }
+                case 77: // Semicolon
+                case 'Semicolon': {
+                    this.toggleMirror();
+                    break;
+                }
             }
         }
     }
@@ -581,6 +586,17 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             layoutsMetadata[library] = {};
         }
         layoutsMetadata[library][layout] = { mirror: e.target.checked };
+        await this.saveMetadata();
+    }
+
+    async toggleMirror() {
+        const { library, layout } = this.props.sharedState;
+        const mirror = this.state.lSettings ? !this.state.lSettings.mirror : true;
+        this.setState({lSettings: { mirror }});
+        if (!(library in layoutsMetadata)) {
+            layoutsMetadata[library] = {};
+        }
+        layoutsMetadata[library][layout] = { mirror };
         await this.saveMetadata();
     }
 
