@@ -9,6 +9,7 @@ import {
 } from '../../model/animState';
 import { processAnimAction } from './animAction';
 import { Time } from '../../datatypes';
+import { AnimType } from '../data/animType';
 
 const ACTOR_POS = new THREE.Vector3();
 const HIDE_DISTANCE = 50;
@@ -56,17 +57,42 @@ export function updateActor(
             actor.props.animIndex,
             time);
         if (actor.animState.isPlaying) {
-            updateMovements(actor, time);
+            const firstPerson = game.controlsState.firstPerson
+                && scene.isActive
+                && actor.index === 0;
+            const behaviour = game.getState().hero.behaviour;
+            updateMovements(actor, firstPerson, behaviour, time);
         }
     }
 }
 
 const wEuler = new THREE.Euler();
 
-function updateMovements(actor: Actor, time: any) {
-    const delta = time.delta * 1000;
+const slowMove = {
+    [AnimType.FORWARD]: {x: 0, z: 2.5},
+    [AnimType.BACKWARD]: {x: 0, z: -1.5},
+    [AnimType.DODGE_LEFT]: {x: 1.5, z: 0},
+    [AnimType.DODGE_RIGHT]: {x: -1.5, z: 0},
+};
+
+const fastMove = {
+    [AnimType.FORWARD]: {x: 0, z: 4},
+    [AnimType.BACKWARD]: {x: 0, z: -3},
+    [AnimType.DODGE_LEFT]: {x: 2, z: 0},
+    [AnimType.DODGE_RIGHT]: {x: -2, z: 0},
+};
+
+const vrFPsteps = [
+    slowMove,
+    fastMove,
+    slowMove,
+    slowMove
+];
+
+function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, time: any) {
+    const deltaMS = time.delta * 1000;
     if (actor.props.runtimeFlags.isTurning) {
-        const baseAngle = ((actor.physics.temp.destAngle - actor.physics.temp.angle) * delta);
+        const baseAngle = ((actor.physics.temp.destAngle - actor.physics.temp.angle) * deltaMS);
         let angle = baseAngle / (actor.props.speed * 10);
         angle = Math.atan2(Math.sin(angle), Math.cos(angle));
         actor.physics.temp.angle += angle;
@@ -76,8 +102,15 @@ function updateMovements(actor: Actor, time: any) {
     if (actor.props.runtimeFlags.isWalking) {
         actor.physics.temp.position.set(0, 0, 0);
 
-        const speedZ = ((actor.animState.step.z * delta) / actor.animState.keyframeLength);
-        const speedX = ((actor.animState.step.x * delta) / actor.animState.keyframeLength);
+        const animIndex = actor.props.animIndex;
+        const useVrSteps = (firstPerson && behaviour < 4 && animIndex in vrFPsteps[behaviour]);
+
+        const speedZ = useVrSteps
+            ? vrFPsteps[behaviour][animIndex].z * time.delta
+            : (actor.animState.step.z * deltaMS) / actor.animState.keyframeLength;
+        const speedX = useVrSteps
+            ? vrFPsteps[behaviour][animIndex].x * time.delta
+            : (actor.animState.step.x * deltaMS) / actor.animState.keyframeLength;
 
         actor.physics.temp.position.x += Math.sin(actor.physics.temp.angle) * speedZ;
         actor.physics.temp.position.z += Math.cos(actor.physics.temp.angle) * speedZ;
@@ -86,19 +119,19 @@ function updateMovements(actor: Actor, time: any) {
         actor.physics.temp.position.z += Math.sin(actor.physics.temp.angle) * speedX;
 
         actor.physics.temp.position.y +=
-            (actor.animState.step.y * delta) / (actor.animState.keyframeLength);
+            (actor.animState.step.y * deltaMS) / (actor.animState.keyframeLength);
     } else {
         actor.physics.temp.position.set(0, 0, 0);
     }
 }
 
 function updateModel(game: any,
-                            sceneIsActive: any,
-                            model: any,
-                            animState: any,
-                            entityIdx: number,
-                            animIdx: number,
-                            time: Time) {
+                        sceneIsActive: any,
+                        model: any,
+                        animState: any,
+                        entityIdx: number,
+                        animIdx: number,
+                        time: Time) {
     const entity = model.entities[entityIdx];
     const entityAnim = getAnim(entity, animIdx);
     if (entityAnim !== null) {
