@@ -59,8 +59,13 @@ function processFirstPersonsMovement(controlsState, scene, hero) {
         if (Math.abs(controlsState.controlVector.y) > 0.6) {
             hero.props.runtimeFlags.isWalking = true;
             animIndex = controlsState.controlVector.y > 0 ? AnimType.FORWARD : AnimType.BACKWARD;
-        } else {
+        } else if (Math.abs(controlsState.controlVector.x) > 0.7) {
             hero.props.runtimeFlags.isWalking = true;
+            animIndex = controlsState.controlVector.x > 0
+                ? AnimType.DODGE_LEFT
+                : AnimType.DODGE_RIGHT;
+        } else {
+            hero.props.runtimeFlags.isWalking = false;
         }
         if (Math.abs(controlsState.altControlVector.x) > 0.6 && turnReset) {
             const euler = new THREE.Euler();
