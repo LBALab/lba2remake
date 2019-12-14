@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { find, each } from 'lodash';
 import { loadLUTTexture } from '../utils/lut';
 import { loadPaletteTexture } from '../texture';
 import VERT_OBJECTS_COLORED from './shaders/objects/colored.vert.glsl';
@@ -22,7 +23,7 @@ export async function extractGridMetadata(grid, metadata, ambience) {
         objects: [],
         bricks: new Set()
     };
-    const mirrors = new Set();
+    const mirrorGroups = {};
     let c = 0;
     const [lutTexture, ress] = await Promise.all([
         await loadLUTTexture(),
@@ -36,30 +37,31 @@ export async function extractGridMetadata(grid, metadata, ambience) {
         lutTexture,
         paletteTexture
     };
-    for (let z = -1; z < 63; z += 1) {
+    for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
             const cell = grid.cells[c];
             const blocks = cell.blocks;
-            for (let yIdx = 0; yIdx < blocks.length; yIdx += 1) {
-                const y = (yIdx * H) + H;
-                if (blocks[yIdx]) {
-                    const layout = grid.library.layouts[blocks[yIdx].layout];
+            for (let y = 0; y < blocks.length; y += 1) {
+                const yPos = (y * H) + H;
+                const zPos = z - 1;
+                if (blocks[y]) {
+                    const layout = grid.library.layouts[blocks[y].layout];
                     if (layout && layout.index in metadata) {
                         const lMetadata = metadata[layout.index];
                         if (lMetadata.replace) {
                             const {nX, nY, nZ} = layout;
-                            const idx = blocks[yIdx].block;
+                            const idx = blocks[y].block;
                             const zb = Math.floor(idx / (nY * nX));
                             const yb = Math.floor(idx / nX) - (zb * nY);
                             const xb = idx % nX;
                             // Check brick at the bottom corner of layout
                             if (yb === 0 && xb === nX - 1 && zb === nZ - 1) {
-                                if (checkMatch(grid, layout, x, yIdx, z)) {
-                                    suppressBricks(replacements, layout, x, yIdx, z);
+                                if (checkMatch(grid, layout, x, y, zPos)) {
+                                    suppressBricks(replacements, layout, x, y, z);
                                     addReplacementObject(
                                         replacements,
                                         lMetadata,
-                                        x - (nX * 0.5) + 1, y - H, z - (nZ * 0.5) + 1,
+                                        x - (nX * 0.5) + 1, yPos - H, zPos - (nZ * 0.5) + 1,
                                         shaderData
                                     );
                                 } else {
@@ -69,7 +71,40 @@ export async function extractGridMetadata(grid, metadata, ambience) {
                             }
                         }
                         if (lMetadata.mirror) {
-                            mirrors.add(`${x},${yIdx},${z}`);
+                            let groups = mirrorGroups[layout.index];
+                            if (!groups) {
+                                groups = [];
+                                mirrorGroups[layout.index] = groups;
+                            }
+                            const fg = find(groups, (g) => {
+                                for (let dz = -1; dz <= 0; dz += 1) {
+                                    for (let dx = -1; dx <= 0; dx += 1) {
+                                        for (let dy = -1; dy <= 0; dy += 1) {
+                                            if (!(dz === 0 && dx === 0 && dy === 0)) {
+                                                const key = `${x + dx},${y + dy},${z + dz}`;
+                                                if (g.cells.has(key)) {
+                                                    return true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                return false;
+                            });
+                            if (fg) {
+                                fg.cells.add(`${x},${y},${z}`);
+                                fg.max.x = Math.max(fg.max.x, x);
+                                fg.max.y = Math.max(fg.max.y, y);
+                                fg.max.z = Math.max(fg.max.z, z);
+                            } else {
+                                const cells = new Set();
+                                cells.add(`${x},${y},${z}`);
+                                groups.push({
+                                    cells,
+                                    min: {x, y, z},
+                                    max: {x, y, z}
+                                });
+                            }
                         }
                     }
                 }
@@ -77,6 +112,30 @@ export async function extractGridMetadata(grid, metadata, ambience) {
             c += 1;
         }
     }
+    const mirrors = new Map<string, number[][]>();
+    each(mirrorGroups, (groups) => {
+        each(groups, (g: any) => {
+            for (let x = g.min.x; x <= g.max.x; x += 1) {
+                for (let y = g.min.y; y <= g.max.y; y += 1) {
+                    for (let z = g.min.z; z <= g.max.z; z += 1) {
+                        if (x === g.min.x || y === g.min.y || z === g.min.z) {
+                            const sides = [];
+                            if (x === g.min.x) {
+                                sides[0] = [g.max.x, y, z];
+                            }
+                            if (y === g.min.y) {
+                                sides[1] = [x, g.max.y, z];
+                            }
+                            if (z === g.min.z) {
+                                sides[2] = [x, y, g.max.z];
+                            }
+                            mirrors[`${x},${y},${z}`] = sides;
+                        }
+                    }
+                }
+            }
+        });
+    });
     return {
         replacements,
         mirrors

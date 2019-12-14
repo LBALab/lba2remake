@@ -106,18 +106,16 @@ async function loadMesh(grid, entry, metadata, ambience) {
         scene.add(threeObject);
     });
 
-    let c = 0;
     for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
-            buildCell(
+            buildColumn(
                 library,
-                cells[c].blocks,
+                cells,
                 geometries,
                 x,
-                z - 1,
+                z,
                 gridMetadata
             );
-            c += 1;
         }
     }
 
@@ -154,22 +152,39 @@ async function loadMesh(grid, entry, metadata, ambience) {
     return scene;
 }
 
-function buildCell(library, blocks, geometries, x, z, gridMetadata) {
+function buildColumn(library, cells, geometries, x, z, gridMetadata) {
     const h = 0.5;
     const {positions, uvs} = geometries;
     const {width, height} = library.texture.image;
     const {replacements, mirrors} = gridMetadata;
+    const blocks = cells[z * 64 + x].blocks;
 
-    for (let yIdx = 0; yIdx < blocks.length; yIdx += 1) {
-        const y = (yIdx * h) + h;
-        if (blocks[yIdx]) {
-            const layout = library.layouts[blocks[yIdx].layout];
+    const pushMirror = (layout, sides, handler) => {
+        const rBlocks = cells[sides[2] * 64 + sides[0]].blocks;
+        if (rBlocks[sides[1]]) {
+            const rBlock = layout.blocks[rBlocks[sides[1]].block];
+            if (rBlock && rBlock.brick in library.bricksMap) {
+                const {u, v} = library.bricksMap[rBlock.brick];
+                const pushUvM = (u0, v0, side) => {
+                    const o = OffsetBySide[side];
+                    uvs.push((u + u0 + o.x) / width, (v + v0 + o.y) / height);
+                };
+                handler(pushUvM);
+            }
+        }
+    };
+
+    const zPos = z - 1;
+    for (let y = 0; y < blocks.length; y += 1) {
+        const yPos = (y * h) + h;
+        if (blocks[y]) {
+            const layout = library.layouts[blocks[y].layout];
             if (layout) {
-                const key = `${x},${yIdx},${z}`;
+                const key = `${x},${y},${z}`;
                 if (replacements.bricks.has(key))
                     continue;
 
-                const block = layout.blocks[blocks[yIdx].block];
+                const block = layout.blocks[blocks[y].block];
                 if (block && block.brick in library.bricksMap) {
                     const {u, v} = library.bricksMap[block.brick];
                     const pushUv = (u0, v0, side) => {
@@ -177,84 +192,97 @@ function buildCell(library, blocks, geometries, x, z, gridMetadata) {
                         uvs.push((u + u0 + o.x) / width, (v + v0 + o.y) / height);
                     };
 
-                    positions.push(x, y, z);
+                    positions.push(x, yPos, zPos);
                     pushUv(24, -0.5, Side.TOP);
-                    positions.push(x, y, z + 1);
+                    positions.push(x, yPos, zPos + 1);
                     pushUv(48, 11.5, Side.TOP);
-                    positions.push(x + 1, y, z + 1);
+                    positions.push(x + 1, yPos, zPos + 1);
                     pushUv(24, 23.5, Side.TOP);
-                    positions.push(x, y, z);
+                    positions.push(x, yPos, zPos);
                     pushUv(24, -0.5, Side.TOP);
-                    positions.push(x + 1, y, z + 1);
+                    positions.push(x + 1, yPos, zPos + 1);
                     pushUv(24, 23.5, Side.TOP);
-                    positions.push(x + 1, y, z);
+                    positions.push(x + 1, yPos, zPos);
                     pushUv(0, 11.5, Side.TOP);
 
-                    positions.push(x + 1, y, z);
+                    positions.push(x + 1, yPos, zPos);
                     pushUv(0, 11.5, Side.LEFT);
-                    positions.push(x + 1, y, z + 1);
+                    positions.push(x + 1, yPos, zPos + 1);
                     pushUv(24, 23.5, Side.LEFT);
-                    positions.push(x + 1, y - h, z + 1);
+                    positions.push(x + 1, yPos - h, zPos + 1);
                     pushUv(24, 38.5, Side.LEFT);
-                    positions.push(x + 1, y, z);
+                    positions.push(x + 1, yPos, zPos);
                     pushUv(0, 11.5, Side.LEFT);
-                    positions.push(x + 1, y - h, z + 1);
+                    positions.push(x + 1, yPos - h, zPos + 1);
                     pushUv(24, 38.5, Side.LEFT);
-                    positions.push(x + 1, y - h, z);
+                    positions.push(x + 1, yPos - h, zPos);
                     pushUv(0, 26.5, Side.LEFT);
 
-                    positions.push(x, y, z + 1);
+                    positions.push(x, yPos, zPos + 1);
                     pushUv(48, 11.5, Side.RIGHT);
-                    positions.push(x + 1, y - h, z + 1);
+                    positions.push(x + 1, yPos - h, zPos + 1);
                     pushUv(24, 38.5, Side.RIGHT);
-                    positions.push(x + 1, y, z + 1);
+                    positions.push(x + 1, yPos, zPos + 1);
                     pushUv(24, 23.5, Side.RIGHT);
-                    positions.push(x, y, z + 1);
+                    positions.push(x, yPos, zPos + 1);
                     pushUv(48, 11.5, Side.RIGHT);
-                    positions.push(x, y - h, z + 1);
+                    positions.push(x, yPos - h, zPos + 1);
                     pushUv(48, 26.5, Side.RIGHT);
-                    positions.push(x + 1, y - h, z + 1);
+                    positions.push(x + 1, yPos - h, zPos + 1);
                     pushUv(24, 38.5, Side.RIGHT);
 
-                    if (mirrors.has(key)) {
-                        positions.push(x, y - h, z);
-                        pushUv(24, -0.5, Side.TOP);
-                        positions.push(x, y - h, z + 1);
-                        pushUv(48, 11.5, Side.TOP);
-                        positions.push(x + 1, y - h, z + 1);
-                        pushUv(24, 23.5, Side.TOP);
-                        positions.push(x, y - h, z);
-                        pushUv(24, -0.5, Side.TOP);
-                        positions.push(x + 1, y - h, z + 1);
-                        pushUv(24, 23.5, Side.TOP);
-                        positions.push(x + 1, y - h, z);
-                        pushUv(0, 11.5, Side.TOP);
+                    const mirror = mirrors[key];
+                    if (mirror) {
+                        if (mirror[0]) {
+                            pushMirror(layout, mirror[0], (pushUvM) => {
+                                positions.push(x, yPos, zPos);
+                                pushUvM(0, 11.5, Side.LEFT);
+                                positions.push(x, yPos, zPos + 1);
+                                pushUvM(24, 23.5, Side.LEFT);
+                                positions.push(x, yPos - h, zPos + 1);
+                                pushUvM(24, 38.5, Side.LEFT);
+                                positions.push(x, yPos, zPos);
+                                pushUvM(0, 11.5, Side.LEFT);
+                                positions.push(x, yPos - h, zPos + 1);
+                                pushUvM(24, 38.5, Side.LEFT);
+                                positions.push(x, yPos - h, zPos);
+                                pushUvM(0, 26.5, Side.LEFT);
+                            });
+                        }
 
-                        positions.push(x, y, z);
-                        pushUv(0, 11.5, Side.LEFT);
-                        positions.push(x, y, z + 1);
-                        pushUv(24, 23.5, Side.LEFT);
-                        positions.push(x, y - h, z + 1);
-                        pushUv(24, 38.5, Side.LEFT);
-                        positions.push(x, y, z);
-                        pushUv(0, 11.5, Side.LEFT);
-                        positions.push(x, y - h, z + 1);
-                        pushUv(24, 38.5, Side.LEFT);
-                        positions.push(x, y - h, z);
-                        pushUv(0, 26.5, Side.LEFT);
+                        if (mirror[1]) {
+                            pushMirror(layout, mirror[1], (pushUvM) => {
+                                positions.push(x, yPos - h, zPos);
+                                pushUvM(24, -0.5, Side.TOP);
+                                positions.push(x, yPos - h, zPos + 1);
+                                pushUvM(48, 11.5, Side.TOP);
+                                positions.push(x + 1, yPos - h, zPos + 1);
+                                pushUvM(24, 23.5, Side.TOP);
+                                positions.push(x, yPos - h, zPos);
+                                pushUvM(24, -0.5, Side.TOP);
+                                positions.push(x + 1, yPos - h, zPos + 1);
+                                pushUvM(24, 23.5, Side.TOP);
+                                positions.push(x + 1, yPos - h, zPos);
+                                pushUvM(0, 11.5, Side.TOP);
+                            });
+                        }
 
-                        positions.push(x, y, z);
-                        pushUv(48, 11.5, Side.RIGHT);
-                        positions.push(x + 1, y - h, z);
-                        pushUv(24, 38.5, Side.RIGHT);
-                        positions.push(x + 1, y, z);
-                        pushUv(24, 23.5, Side.RIGHT);
-                        positions.push(x, y, z);
-                        pushUv(48, 11.5, Side.RIGHT);
-                        positions.push(x, y - h, z);
-                        pushUv(48, 26.5, Side.RIGHT);
-                        positions.push(x + 1, y - h, z);
-                        pushUv(24, 38.5, Side.RIGHT);
+                        if (mirror[2]) {
+                            pushMirror(layout, mirror[2], (pushUvM) => {
+                                positions.push(x, yPos, zPos);
+                                pushUvM(48, 11.5, Side.RIGHT);
+                                positions.push(x + 1, yPos - h, zPos);
+                                pushUvM(24, 38.5, Side.RIGHT);
+                                positions.push(x + 1, yPos, zPos);
+                                pushUvM(24, 23.5, Side.RIGHT);
+                                positions.push(x, yPos, zPos);
+                                pushUvM(48, 11.5, Side.RIGHT);
+                                positions.push(x, yPos - h, zPos);
+                                pushUvM(48, 26.5, Side.RIGHT);
+                                positions.push(x + 1, yPos - h, zPos);
+                                pushUvM(24, 38.5, Side.RIGHT);
+                            });
+                        }
                     }
                 }
             }
