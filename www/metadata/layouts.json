@@ -214,33 +214,33 @@
     },
     "53": {
       "replace": true,
-      "file": "54_bed.glb",
+      "file": "53_54_bed.glb",
       "orientation": 3
     },
     "54": {
       "replace": true,
-      "file": "54_bed.glb",
+      "file": "53_54_bed.glb",
       "orientation": 0
     },
     "55": {
       "replace": true,
-      "file": "56_armchair.glb",
-      "orientation": 3
+      "file": "55_56_armchair.glb",
+      "orientation": 0
     },
     "56": {
       "replace": true,
-      "file": "56_armchair.glb",
-      "orientation": 0
+      "file": "55_56_armchair.glb",
+      "orientation": 1
     },
     "57": {
       "replace": true,
-      "file": "56_armchair.glb",
-      "orientation": 1
+      "file": "55_56_armchair.glb",
+      "orientation": 2
     },
     "58": {
       "replace": true,
-      "file": "56_armchair.glb",
-      "orientation": 2
+      "file": "55_56_armchair.glb",
+      "orientation": 3
     },
     "59": {
       "mirror": true
