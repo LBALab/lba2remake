@@ -317,8 +317,8 @@ function loadSceneNode(index, indexInfo, scenery, actors, zones, points, editor)
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
         const section = scenery.sections[sectionIdx];
-        sceneNode.position.x = section.x * 48;
-        sceneNode.position.z = section.z * 48;
+        sceneNode.position.x = section.x * 40;
+        sceneNode.position.z = section.z * 40;
         sceneNode.updateMatrix();
     }
     const addToSceneNode = (obj) => {

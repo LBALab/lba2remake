@@ -39,15 +39,15 @@ function processSidesceneTransitions(scene) {
     const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
     pos.y += 0.12;
-    if (scene.isIsland && (pos.x < 0.1 || pos.z < 0.1 || pos.x > 47.9 || pos.z > 47.9)) {
+    if (scene.isIsland && (pos.x < 0.1 || pos.z < 0.1 || pos.x > 39.9 || pos.z > 39.9)) {
         const globalPos = new THREE.Vector3();
         globalPos.applyMatrix4(hero.threeObject.matrixWorld);
         const foundSideScene = find(scene.sideScenes, (sideScene) => {
             const nodePos = sideScene.sceneNode.position;
             return globalPos.x > nodePos.x + 0.1
-                && globalPos.x < nodePos.x + 47.9
+                && globalPos.x < nodePos.x + 39.9
                 && globalPos.z > nodePos.z + 0.1
-                && globalPos.z < nodePos.z + 47.9;
+                && globalPos.z < nodePos.z + 39.9;
         });
         if (foundSideScene) {
             scene.goto(foundSideScene.index, false, false, false);

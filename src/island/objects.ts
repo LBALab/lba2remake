@@ -24,9 +24,9 @@ function loadObjectInfo(objects, section, index) {
     const angle = objects.getUint8(offset + 21) >> 2;
     return {
         index: objects.getUint32(offset, true),
-        x: (((0x8000 - ox) + 512) * WORLD_SCALE) + (section.x * 48),
+        x: (((0x8000 - ox) + 512) * WORLD_SCALE) + (section.x * 40),
         y: oy * WORLD_SCALE,
-        z: (oz * WORLD_SCALE) + (section.z * 48),
+        z: (oz * WORLD_SCALE) + (section.z * 40),
         angle,
         iv: 1
     };

@@ -143,10 +143,10 @@ async function loadMesh(grid, entry, metadata, ambience) {
 
     scene.add(mesh);
 
-    const scale = 0.75;
+    const scale = 0.75 * 20 / 24;
     scene.name = `scenery_iso_${entry}`;
     scene.scale.set(scale, scale, scale);
-    scene.position.set(48, 0, 0);
+    scene.position.set(40, 0, 0);
     scene.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
 
     return scene;

@@ -156,7 +156,7 @@ function getPositions(section, points) {
         const x = (section.x * 64) + (65 - Math.floor(idx / 65));
         const y = section.heightmap[idx];
         const z = (section.z * 64) + (idx % 65);
-        positions.push(x * 0.75, y * WORLD_SCALE, z * 0.75);
+        positions.push(x * 0.625, y * WORLD_SCALE, z * 0.625);
     }
     return positions;
 }

@@ -95,14 +95,14 @@ function getGround(section, position) {
     return getGroundInfo(section, position);
 }
 
-const GRID_SCALE = 64 / 48;
+const GRID_SCALE = 64 / 40;
 
 function getGroundInfo(section, position) {
     if (!section) {
         return DEFAULT_GROUND;
     }
-    const xLocal = ((48 - (position.x - (section.x * 48))) * GRID_SCALE) + 1;
-    const zLocal = (position.z - (section.z * 48)) * GRID_SCALE;
+    const xLocal = ((40 - (position.x - (section.x * 40))) * GRID_SCALE) + 1;
+    const zLocal = (position.z - (section.z * 40)) * GRID_SCALE;
     return getTriangleFromPos(section, xLocal, zLocal);
 }
 
@@ -147,5 +147,5 @@ function processBoxIntersections(section, actor, position, isTouchingGround) {
 const GRID_UNIT = 1 / 64;
 
 function findSection(sections, position) {
-    return sections[`${Math.floor((position.x / 48) - GRID_UNIT)},${Math.floor(position.z / 48)}`];
+    return sections[`${Math.floor((position.x / 40) - GRID_UNIT)},${Math.floor(position.z / 40)}`];
 }
