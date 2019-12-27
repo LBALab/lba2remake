@@ -291,7 +291,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
                 source: this.state.renderer.canvas,
                 attributes: {
                     highRefreshRate: true,
-                    foveationLevel: 3,
+                    foveationLevel: 0,
                     antialias: true
                 }
             } as any
