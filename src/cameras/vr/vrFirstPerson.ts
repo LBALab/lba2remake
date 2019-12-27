@@ -28,6 +28,8 @@ export function getVrFirstPersonCamera() {
             if (width !== this.width || height || this.height) {
                 camera.aspect = width / height;
                 camera.updateProjectionMatrix();
+                this.width = width;
+                this.height = height;
             }
         },
         init: (scene) => {
