@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { DirMode } from '../actors';
 import { AnimType } from '../data/animType';
+import { WORLD_SIZE } from '../../utils/lba';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -179,8 +180,8 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
                         : AnimType.LEFT;
                     let dy = 0;
                     if (hero.animState.keyframeLength) {
-                        dy = (hero.animState.rotation.y * time.delta * 1000)
-                                / hero.animState.keyframeLength;
+                        const rotY = (hero.animState.rotation.y * 24) / WORLD_SIZE;
+                        dy = (rotY * time.delta * 1000) / hero.animState.keyframeLength;
                     }
                     euler.y += dy;
                 } else {
