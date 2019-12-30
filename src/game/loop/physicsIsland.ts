@@ -16,15 +16,15 @@ const FLAGS = {
     hitObject: false
 };
 
-function processCameraCollisions(sections, camPosition, groundOffset = 3.6, objOffset = 4.8) {
+function processCameraCollisions(sections, camPosition, groundOffset = 0.15, objOffset = 0.2) {
     const section = findSection(sections, camPosition);
     const ground = getGroundInfo(section, camPosition);
-    camPosition.y = Math.max(ground.height + groundOffset, camPosition.y);
+    camPosition.y = Math.max(ground.height + groundOffset * WORLD_SIZE, camPosition.y);
     if (section) {
         for (let i = 0; i < section.boundingBoxes.length; i += 1) {
             const bb = section.boundingBoxes[i];
             if (bb.containsPoint(camPosition)) {
-                camPosition.y = bb.max.y + objOffset;
+                camPosition.y = bb.max.y + objOffset * WORLD_SIZE;
             }
         }
     }
