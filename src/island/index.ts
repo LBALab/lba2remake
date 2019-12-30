@@ -204,7 +204,9 @@ function loadSectionPlanes(islandObject, data) {
 
 function loadSky(geometries, envInfo) {
     const bufferGeometry = new THREE.BufferGeometry();
-    const height = envInfo.skyHeight || 48;
+    const height = envInfo.skyHeight
+        ? (envInfo.skyHeight * WORLD_SIZE) / 24
+        : WORLD_SIZE * 2;
     const w = 64 * WORLD_SIZE;
     const positions = [
         -w, height, -w,

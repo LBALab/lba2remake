@@ -8,6 +8,7 @@ import FRAG_TEXTURED from './shaders/textured.frag.glsl';
 
 import {loadPaletteTexture, loadSubTextureRGBA} from '../texture';
 import {compile} from '../utils/shaders';
+import { WORLD_SIZE } from '../utils/lba';
 
 const push = Array.prototype.push;
 
@@ -35,6 +36,8 @@ interface ModelGeometry {
     material: THREE.Material;
 }
 
+const worldScale = 1 / (WORLD_SIZE * 0.04);
+
 function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, envInfo, ambience) {
     const paletteTexture = loadPaletteTexture(palette);
     const light = getLightVector(ambience);
@@ -54,6 +57,7 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    worldScale: {value: worldScale},
                     palette: {value: paletteTexture},
                     noise: {value: fakeNoise},
                     light: {value: light},
@@ -80,6 +84,7 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    worldScale: {value: worldScale},
                     uTexture: {value: texture},
                     palette: {value: paletteTexture},
                     lutTexture: {value: lutTexture},
@@ -108,6 +113,7 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    worldScale: {value: worldScale},
                     uTexture: {value: texture},
                     palette: {value: paletteTexture},
                     lutTexture: {value: lutTexture},
@@ -445,6 +451,7 @@ function createSubgroupGeometry(geometries, group, baseGroup, uvGroup) {
             uniforms: {
                 fogColor: baseUniforms.fogColor,
                 fogDensity: baseUniforms.fogDensity,
+                worldScale: {value: worldScale},
                 uTexture: {value: groupTexture},
                 lutTexture: baseUniforms.lutTexture,
                 palette: baseUniforms.palette,
