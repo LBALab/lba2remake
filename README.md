@@ -66,7 +66,7 @@ A list of current and past contributors can be found [here](AUTHORS.md).
 
 ## Community
 
-* [Slack](https://join.slack.com/t/lba2remake/shared_invite/enQtMzIyNzIwNDMzNTIxLTc5OGVkNjI3NGE4YjM5ZTE5YmRkODBjMzNjOTk5NGM1NGIyMTI2N2FlOTYzYjBlZjE4NzIzYWI3ZWI0YmViMmI) - For development related discussions
+* [Slack](https://join.slack.com/t/lba2remake/shared_invite/enQtMzIyNzIwNDMzNTIxLTM3MTk2NjFlODAxNmI0NmVhNTVjMzFiZDk1NmQwZDMwZTA5MWVhNDQ2ZGNmMjQ3N2ZiYTVjODZlODMyNjc2NDI) - For development related discussions
 * [Discord](https://discord.gg/cDmFTWq)
 * [MBN forum](https://forum.magicball.net/showthread.php?t=18208)
 * Reddit: [r/linux_gaming](https://www.reddit.com/r/linux_gaming/comments/8049mn/a_little_big_adventure_2_twinsens_odyssey/) or [r/gamedev](https://www.reddit.com/r/gamedev/comments/80cn9u/open_source_reimplementation_of_little_big/)
