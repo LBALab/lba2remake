@@ -3,7 +3,7 @@ uniform sampler2D noise;
 
 vec4 dither(float color, float intensity) {
     const vec2 halfPixV = vec2(0.0, 0.03125);
-    float nz = texture(noise, vec2(vPosition.x, vPosition.z) * 0.5).a;
+    float nz = texture(noise, vec2(vPosition.x * worldScale, vPosition.z * worldScale) * 0.5).a;
     float offset = (nz - 0.5) * 2.0;
     float fintensity = floor(intensity) + offset;
     vec2 uvb = vec2(fintensity, color) * 0.0625;

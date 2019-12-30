@@ -13,9 +13,9 @@ in vec3 vMVPos;
 
 out vec4 fragColor;
 
-#require "../common/dither.frag"
 #require "../common/lut.frag"
 #require "../common/fog.frag"
+#require "../common/dither.frag"
 #require "../common/shadow.frag"
 
 void main() {
