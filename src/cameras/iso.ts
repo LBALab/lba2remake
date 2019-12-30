@@ -15,7 +15,7 @@ export function getIsometricCamera() {
         h * 0.5,
         -h * 0.5,
         0,
-        1000
+        42 * WORLD_SIZE
     );
     setCameraScale(camera, w, h);
     camera.name = 'IsoCamera';

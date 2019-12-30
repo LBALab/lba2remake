@@ -1,15 +1,17 @@
 import * as THREE from 'three';
+import { WORLD_SIZE } from '../../utils/lba';
 
-const BASE_DISTANCE = -4.8;
-const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 2, BASE_DISTANCE);
-const HERO_TARGET_POS = new THREE.Vector3(0, 2, 0);
+const BASE_DISTANCE = -0.2 * WORLD_SIZE;
+const BASE_HEIGHT = 0.08 * WORLD_SIZE;
+const CAMERA_HERO_OFFSET = new THREE.Vector3(0, BASE_HEIGHT, BASE_DISTANCE);
+const HERO_TARGET_POS = new THREE.Vector3(0, BASE_HEIGHT, 0);
 
 export function getVR3DCamera() {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
         0.1,
-        1000
+        42 * WORLD_SIZE
     );
     camera.name = 'VR3DCamera';
     const controlNode = new THREE.Object3D();
@@ -53,6 +55,9 @@ const CAM_DIR_VEC = new THREE.Vector3();
 const CAM_DIR_TARGET = new THREE.Object3D();
 const HERO_VECTOR = new THREE.Vector3();
 
+const MIN_DIST = 0.0625 * WORLD_SIZE;
+const MAX_DIST = 0.625 * WORLD_SIZE;
+
 function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
     const hero = scene.actors[0];
     if (!hero.threeObject)
@@ -81,8 +86,8 @@ function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
 
     if (forceUpdate
         || isMoreThan22DegsOff
-        || distanceToHero > 15
-        || distanceToHero < 1.5) {
+        || distanceToHero > MAX_DIST
+        || distanceToHero < MIN_DIST) {
         const cameraPos = CAMERA_HERO_OFFSET.clone();
         cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
 

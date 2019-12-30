@@ -1,13 +1,15 @@
 import * as THREE from 'three';
+import { WORLD_SIZE } from '../../utils/lba';
 
-const CAMERA_HERO_OFFSET = new THREE.Vector3(-5, 0, 5);
+const CAMERA_HERO_OFFSET = new THREE.Vector3(-0.2, 0, 0.2);
+CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
 
 export function getVRIsoCamera() {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
         0.1,
-        1000
+        42 * WORLD_SIZE
     );
     camera.name = 'VRIsoCamera';
     const controlNode = new THREE.Object3D();
@@ -43,20 +45,22 @@ export function getVRIsoCamera() {
 }
 
 const HERO_POS = new THREE.Vector3();
+const DIST_THRESHOLD = 0.125 * WORLD_SIZE;
+const CAM_HEIGHT = 0.17 * WORLD_SIZE;
 
 function processFollowMovement(controlNode, scene, forceUpdate = false) {
     const hero = scene.actors[0];
     if (!hero.threeObject)
         return;
 
-    HERO_POS.set(0, 4, 0);
+    HERO_POS.set(0, CAM_HEIGHT, 0);
     HERO_POS.applyMatrix4(hero.threeObject.matrixWorld);
     const cameraPos = HERO_POS.clone();
     cameraPos.add(CAMERA_HERO_OFFSET);
 
     const distance = cameraPos.distanceTo(controlNode.position);
 
-    if (forceUpdate || distance > 3) {
+    if (forceUpdate || distance > DIST_THRESHOLD) {
         controlNode.position.copy(cameraPos);
         controlNode.lookAt(HERO_POS);
     }

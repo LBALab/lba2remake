@@ -1,14 +1,17 @@
 import * as THREE from 'three';
+import { WORLD_SIZE } from '../utils/lba';
 
-const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 3.6, -4.8);
-const HERO_TARGET_POS = new THREE.Vector3(0, 1.92, 0);
+const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
+CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
+const HERO_TARGET_POS = new THREE.Vector3(0, 0.08, 0);
+HERO_TARGET_POS.multiplyScalar(WORLD_SIZE);
 
 export function get3DCamera() {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
         0.1,
-        1000
+        42 * WORLD_SIZE
     );
     camera.name = '3DCamera';
     const controlNode = new THREE.Object3D();

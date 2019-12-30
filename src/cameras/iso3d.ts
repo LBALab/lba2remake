@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import { processFree3DMovement } from './3d';
+import { WORLD_SIZE } from '../utils/lba';
 
-const CAMERA_HERO_OFFSET = new THREE.Vector3(-6, 7.2, 6);
+const CAMERA_HERO_OFFSET = new THREE.Vector3(-0.25, 0.3, 0.25);
+CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
 
 const ANGLE_LEFT = new THREE.Euler(0, -Math.PI / 2, 0, 'YXZ');
 const ANGLE_RIGHT = new THREE.Euler(0, Math.PI / 2, 0, 'YXZ');
@@ -11,7 +13,7 @@ export function getIso3DCamera() {
         45,
         window.innerWidth / window.innerHeight,
         0.1,
-        1000
+        42 * WORLD_SIZE
     );
     camera.name = 'Iso3DCamera';
     const controlNode = new THREE.Object3D();

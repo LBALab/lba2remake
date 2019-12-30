@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { WORLD_SIZE } from '../../utils/lba';
 
 const HERO_TARGET_POS = new THREE.Vector3(0, 1.43, 0);
 
@@ -7,7 +8,7 @@ export function getVrFirstPersonCamera() {
         45,
         window.innerWidth / window.innerHeight,
         0.1,
-        1000
+        42 * WORLD_SIZE
     );
     camera.name = 'VRFirstPersonCamera';
     const controlNode = new THREE.Object3D();
