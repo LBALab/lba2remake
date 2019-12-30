@@ -41,7 +41,7 @@ export function processCollisions(grid, _scene, actor) {
             const minY = i > 0 ? bb.min.y - (2 * STEP) : -Infinity;
             if (basePos.y >= minY && position.y < y) {
                 const newY = Math.max(y, position.y);
-                if (newY - position.y < WORLD_SIZE * 0.005) {
+                if (newY - position.y < 0.12) {
                     position.y = newY;
                 }
                 break;
