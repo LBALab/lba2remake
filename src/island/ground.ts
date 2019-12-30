@@ -1,7 +1,7 @@
 import {map} from 'lodash';
 import * as THREE from 'three';
 import {bits} from '../utils';
-import {WORLD_SCALE} from '../utils/lba';
+import {WORLD_SCALE, WORLD_SCALE_B} from '../utils/lba';
 
 const push = Array.prototype.push;
 
@@ -156,7 +156,11 @@ function getPositions(section, points) {
         const x = (section.x * 64) + (65 - Math.floor(idx / 65));
         const y = section.heightmap[idx];
         const z = (section.z * 64) + (idx % 65);
-        positions.push(x * 0.625, y * WORLD_SCALE, z * 0.625);
+        positions.push(
+            x * WORLD_SCALE_B,
+            y * WORLD_SCALE,
+            z * WORLD_SCALE_B
+        );
     }
     return positions;
 }

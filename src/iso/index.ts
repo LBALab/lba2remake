@@ -11,6 +11,7 @@ import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 import { extractGridMetadata } from './metadata';
 import {Side, OffsetBySide} from './mapping';
+import { WORLD_SCALE_B, WORLD_SIZE } from '../utils/lba';
 
 export async function loadImageData(src) : Promise<ImageData> {
     return new Promise((resolve) => {
@@ -143,10 +144,9 @@ async function loadMesh(grid, entry, metadata, ambience) {
 
     scene.add(mesh);
 
-    const scale = 0.75 * 20 / 24;
     scene.name = `scenery_iso_${entry}`;
-    scene.scale.set(scale, scale, scale);
-    scene.position.set(40, 0, 0);
+    scene.scale.set(WORLD_SCALE_B, WORLD_SCALE_B, WORLD_SCALE_B);
+    scene.position.set(WORLD_SIZE * 2, 0, 0);
     scene.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
 
     return scene;

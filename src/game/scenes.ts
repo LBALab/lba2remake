@@ -24,7 +24,7 @@ import { getVR3DCamera } from '../cameras/vr/vr3d';
 import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { createFPSCounter } from '../ui/vr/vrFPS';
 import { createVRGUI } from '../ui/vr/vrGUI';
-import { angleToRad } from '../utils/lba';
+import { angleToRad, WORLD_SIZE } from '../utils/lba';
 import { getLanguageConfig } from '../lang';
 import { makePure } from '../utils/debug';
 import { getVrFirstPersonCamera } from '../cameras/vr/vrFirstPerson';
@@ -317,8 +317,8 @@ function loadSceneNode(index, indexInfo, scenery, actors, zones, points, editor)
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
         const section = scenery.sections[sectionIdx];
-        sceneNode.position.x = section.x * 40;
-        sceneNode.position.z = section.z * 40;
+        sceneNode.position.x = section.x * WORLD_SIZE * 2;
+        sceneNode.position.z = section.z * WORLD_SIZE * 2;
         sceneNode.updateMatrix();
     }
     const addToSceneNode = (obj) => {

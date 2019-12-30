@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {each} from 'lodash';
 import {bits} from '../utils';
-import {WORLD_SCALE} from '../utils/lba';
+import {WORLD_SCALE, WORLD_SIZE} from '../utils/lba';
 
 const push = Array.prototype.push;
 
@@ -24,9 +24,9 @@ function loadObjectInfo(objects, section, index) {
     const angle = objects.getUint8(offset + 21) >> 2;
     return {
         index: objects.getUint32(offset, true),
-        x: (((0x8000 - ox) + 512) * WORLD_SCALE) + (section.x * 40),
+        x: (((0x8000 - ox) + 512) * WORLD_SCALE) + (section.x * WORLD_SIZE * 2),
         y: oy * WORLD_SCALE,
-        z: (oz * WORLD_SCALE) + (section.z * 40),
+        z: (oz * WORLD_SCALE) + (section.z * WORLD_SIZE * 2),
         angle,
         iv: 1
     };

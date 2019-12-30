@@ -1,6 +1,7 @@
 import * as THREE from 'three';
+import { WORLD_SIZE } from '../../utils/lba';
 
-const STEP = 1 / 20;
+const STEP = 1 / WORLD_SIZE;
 
 export function processCollisions(grid, _scene, actor) {
     const basePos = actor.threeObject.position.clone();
@@ -40,7 +41,7 @@ export function processCollisions(grid, _scene, actor) {
             const minY = i > 0 ? bb.min.y - (2 * STEP) : -Infinity;
             if (basePos.y >= minY && position.y < y) {
                 const newY = Math.max(y, position.y);
-                if (newY - position.y < 0.1) {
+                if (newY - position.y < WORLD_SIZE * 0.005) {
                     position.y = newY;
                 }
                 break;
@@ -51,7 +52,7 @@ export function processCollisions(grid, _scene, actor) {
     if (actor.props.flags.hasCollisionBricks) {
         processBoxIntersections(grid, actor, position, dx, dz);
     }
-    position.multiplyScalar(20);
+    position.multiplyScalar(WORLD_SIZE);
     actor.physics.position.copy(position);
 }
 
@@ -66,8 +67,8 @@ const BB = new THREE.Box3();
 function processBoxIntersections(grid, actor, position, dx, dz) {
     const boundingBox = actor.model.boundingBox;
     ACTOR_BOX.copy(boundingBox);
-    ACTOR_BOX.min.multiplyScalar(1 / 20);
-    ACTOR_BOX.max.multiplyScalar(1 / 20);
+    ACTOR_BOX.min.multiplyScalar(STEP);
+    ACTOR_BOX.max.multiplyScalar(STEP);
     ACTOR_BOX.translate(position);
     DIFF.set(0, 1 / 128, 0);
     ACTOR_BOX.translate(DIFF);
@@ -79,7 +80,7 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
                     const column = cell.columns[i];
                     BB.copy(column.box);
                     if (column.shape !== 1) {
-                        BB.max.y -= 1 / 20;
+                        BB.max.y -= STEP;
                     }
                     intersectBox(actor, position);
                 }
