@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-const HERO_TARGET_POS = new THREE.Vector3(0, 1.53, 0);
+const HERO_TARGET_POS = new THREE.Vector3(0, 1.43, 0);
 
 export function getVrFirstPersonCamera() {
     const camera = new THREE.PerspectiveCamera(
