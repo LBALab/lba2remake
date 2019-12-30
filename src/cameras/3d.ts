@@ -10,7 +10,7 @@ export function get3DCamera() {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
-        0.1,
+        Math.min(0.004 * WORLD_SIZE, 0.1),
         42 * WORLD_SIZE
     );
     camera.name = '3DCamera';
