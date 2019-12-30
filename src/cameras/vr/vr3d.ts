@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../../utils/lba';
 
-const BASE_DISTANCE = -0.2 * WORLD_SIZE;
-const BASE_HEIGHT = 0.08 * WORLD_SIZE;
+const ADJ_WORLD_SIZE = Math.max(WORLD_SIZE, 2);
+
+const BASE_DISTANCE = -0.2 * ADJ_WORLD_SIZE;
+const BASE_HEIGHT = 0.08 * ADJ_WORLD_SIZE;
 const CAMERA_HERO_OFFSET = new THREE.Vector3(0, BASE_HEIGHT, BASE_DISTANCE);
 const HERO_TARGET_POS = new THREE.Vector3(0, BASE_HEIGHT, 0);
 
@@ -55,8 +57,8 @@ const CAM_DIR_VEC = new THREE.Vector3();
 const CAM_DIR_TARGET = new THREE.Object3D();
 const HERO_VECTOR = new THREE.Vector3();
 
-const MIN_DIST = 0.0625 * WORLD_SIZE;
-const MAX_DIST = 0.625 * WORLD_SIZE;
+const MIN_DIST = 0.0625 * ADJ_WORLD_SIZE;
+const MAX_DIST = 0.625 * ADJ_WORLD_SIZE;
 
 function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
     const hero = scene.actors[0];
@@ -113,7 +115,9 @@ function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
             cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
             cameraPos.add(offset);
         }
-        scene.scenery.physics.processCameraCollisions(cameraPos, 2, 4);
+        const groundOffset = 0.08 * ADJ_WORLD_SIZE;
+        const objOffset = 0.16 * ADJ_WORLD_SIZE;
+        scene.scenery.physics.processCameraCollisions(cameraPos, groundOffset, objOffset);
         controlNode.position.copy(cameraPos);
         HERO_POS.y = cameraPos.y;
         controlNode.lookAt(HERO_POS);

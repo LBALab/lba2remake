@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../../utils/lba';
 
+const ADJ_WORLD_SIZE = Math.max(WORLD_SIZE, 2);
+
 const CAMERA_HERO_OFFSET = new THREE.Vector3(-0.2, 0, 0.2);
-CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
+CAMERA_HERO_OFFSET.multiplyScalar(ADJ_WORLD_SIZE);
 
 export function getVRIsoCamera() {
     const camera = new THREE.PerspectiveCamera(
@@ -45,8 +47,8 @@ export function getVRIsoCamera() {
 }
 
 const HERO_POS = new THREE.Vector3();
-const DIST_THRESHOLD = 0.125 * WORLD_SIZE;
-const CAM_HEIGHT = 0.17 * WORLD_SIZE;
+const DIST_THRESHOLD = 0.125 * ADJ_WORLD_SIZE;
+const CAM_HEIGHT = 0.17 * ADJ_WORLD_SIZE;
 
 function processFollowMovement(controlNode, scene, forceUpdate = false) {
     const hero = scene.actors[0];
