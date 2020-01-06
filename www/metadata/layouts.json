@@ -11,131 +11,142 @@
     },
     "3": {
       "replace": true,
-      "file": "03_04_wall_deco_2_joins.glb",
+      "file": "003_004_wall_deco_2_joins.glb",
       "orientation": 0
     },
     "4": {
       "replace": true,
-      "file": "03_04_wall_deco_2_joins.glb",
+      "file": "003_004_wall_deco_2_joins.glb",
       "orientation": 1
     },
     "5": {
       "replace": true,
-      "file": "05_06_07_08_wall_deco_1_join.glb",
+      "file": "005_006_007_008_wall_deco_1_join.glb",
       "orientation": 1
     },
     "6": {
       "replace": true,
-      "file": "05_06_07_08_wall_deco_1_join.glb",
+      "file": "005_006_007_008_wall_deco_1_join.glb",
       "orientation": 3
     },
     "7": {
       "replace": true,
-      "file": "05_06_07_08_wall_deco_1_join.glb",
+      "file": "005_006_007_008_wall_deco_1_join.glb",
       "orientation": 2
     },
     "8": {
       "replace": true,
-      "file": "05_06_07_08_wall_deco_1_join.glb",
+      "file": "005_006_007_008_wall_deco_1_join.glb",
       "orientation": 0
     },
     "9": {
       "replace": true,
-      "file": "09_10_11_12_wall_deco_L_join.glb",
+      "file": "009_010_011_012_wall_deco_L_join.glb",
       "orientation": 3
     },
     "10": {
       "replace": true,
-      "file": "09_10_11_12_wall_deco_L_join.glb",
+      "file": "009_010_011_012_wall_deco_L_join.glb",
       "orientation": 1
     },
     "11": {
       "replace": true,
-      "file": "09_10_11_12_wall_deco_L_join.glb",
+      "file": "009_010_011_012_wall_deco_L_join.glb",
       "orientation": 2
     },
     "12": {
       "replace": true,
-      "file": "09_10_11_12_wall_deco_L_join.glb",
+      "file": "009_010_011_012_wall_deco_L_join.glb",
       "orientation": 0
     },
     "13": {
       "replace": true,
-      "file": "13_wall_deco_4_joins.glb",
+      "file": "013_wall_deco_4_joins.glb",
       "orientation": 0
     },
     "14": {
       "replace": true,
-      "file": "14_16_17_wall_deco_3_joins.glb",
+      "file": "014_016_017_wall_deco_3_joins.glb",
       "orientation": 1
     },
     "16": {
       "replace": true,
-      "file": "14_16_17_wall_deco_3_joins.glb",
+      "file": "014_016_017_wall_deco_3_joins.glb",
       "orientation": 0
     },
     "17": {
       "replace": true,
-      "file": "14_16_17_wall_deco_3_joins.glb",
+      "file": "014_016_017_wall_deco_3_joins.glb",
       "orientation": 2
     },
     "18": {
       "replace": true,
-      "file": "18_19_wall_deco_vert_2_joins.glb",
+      "file": "018_019_wall_deco_vert_2_joins.glb",
       "orientation": 0
     },
     "19": {
       "replace": true,
-      "file": "18_19_wall_deco_vert_2_joins.glb",
+      "file": "018_019_wall_deco_vert_2_joins.glb",
       "orientation": 1
     },
     "20": {
       "replace": true,
-      "file": "20_21_wall_deco_vert_1_join.glb",
+      "file": "020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 1
     },
     "21": {
       "replace": true,
-      "file": "20_21_wall_deco_vert_1_join.glb",
+      "file": "020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 0
     },
     "22": {
       "replace": true,
-      "file": "20_21_wall_deco_vert_1_join.glb",
+      "file": "020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 3
     },
     "23": {
       "replace": true,
-      "file": "20_21_wall_deco_vert_1_join.glb",
+      "file": "020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 2
     },
     "24": {
       "replace": true,
-      "file": "24_25_wall_deco_round_corner_L_blue.glb",
-      "orientation": 0
+      "file": "024_025_026_027_wall_deco_round_corner_L_blue.glb",
+      "orientation": 1
     },
     "25": {
       "replace": true,
-      "file": "24_25_wall_deco_round_corner_L_blue.glb",
-      "orientation": 2
+      "file": "024_025_026_027_wall_deco_round_corner_L_blue.glb",
+      "orientation": 3
     },
     "26": {
       "replace": true,
-      "file": "24_25_wall_deco_round_corner_L_blue.glb",
-      "orientation": 3
+      "file": "024_025_026_027_wall_deco_round_corner_L_blue.glb",
+      "orientation": 0
     },
     "27": {
       "replace": true,
-      "file": "24_25_wall_deco_round_corner_L_blue.glb",
-      "orientation": 1
+      "file": "024_025_026_027_wall_deco_round_corner_L_blue.glb",
+      "orientation": 2
+    },
+    "28": {
+      "replace": true,
+      "file": "028_flower_vase.glb",
+      "orientation": 0
     },
     "29": {
       "replace": true,
-      "file": "29_tall_lamp.glb",
-      "orientation": 0
+      "file": "029_tall_lamp.glb",
+      "orientation": 2
     },
     "30": {
-      "mirror": true
+      "mirror": true,
+      "orientation": 3
+    },
+    "31": {
+      "replace": true,
+      "file": "031_tomatoes.glb",
+      "orientation": 0
     },
     "32": {
       "mirror": true
@@ -151,95 +162,95 @@
     },
     "36": {
       "replace": true,
-      "file": "36_38_wall_deco_round_corner_no_wood_gray.glb",
-      "orientation": 0
+      "file": "036_038_040_wall_deco_round_corner_no_wood_gray.glb",
+      "orientation": 1
     },
     "37": {
       "replace": true,
-      "file": "37_39_wall_deco_round_corner_I_gray.glb",
-      "orientation": 0
+      "file": "037_039_041_043_wall_deco_round_corner_I_gray.glb",
+      "orientation": 1
     },
     "38": {
       "replace": true,
-      "file": "36_38_wall_deco_round_corner_no_wood_gray.glb",
-      "orientation": 2
+      "file": "036_038_040_wall_deco_round_corner_no_wood_gray.glb",
+      "orientation": 3
     },
     "39": {
       "replace": true,
-      "file": "37_39_wall_deco_round_corner_I_gray.glb",
-      "orientation": 2
+      "file": "037_039_041_043_wall_deco_round_corner_I_gray.glb",
+      "orientation": 3
     },
     "40": {
       "replace": true,
-      "file": "36_38_wall_deco_round_corner_no_wood_gray.glb",
-      "orientation": 3
+      "file": "036_038_040_wall_deco_round_corner_no_wood_gray.glb",
+      "orientation": 0
     },
     "41": {
       "replace": true,
-      "file": "37_39_wall_deco_round_corner_I_gray.glb",
-      "orientation": 3
+      "file": "037_039_041_043_wall_deco_round_corner_I_gray.glb",
+      "orientation": 0
     },
     "43": {
       "replace": true,
-      "file": "37_39_wall_deco_round_corner_I_gray.glb",
-      "orientation": 1
+      "file": "037_039_041_043_wall_deco_round_corner_I_gray.glb",
+      "orientation": 2
     },
     "45": {
       "mirror": true
     },
     "47": {
       "replace": true,
-      "file": "47_48_chair.glb",
+      "file": "047_048_chair.glb",
       "orientation": 0
     },
     "48": {
       "replace": true,
-      "file": "47_48_chair.glb",
+      "file": "047_048_chair.glb",
       "orientation": 3
     },
     "49": {
       "replace": true,
-      "file": "47_48_chair.glb",
+      "file": "047_048_chair.glb",
       "orientation": 1
     },
     "50": {
       "replace": true,
-      "file": "47_48_chair.glb",
+      "file": "047_048_chair.glb",
       "orientation": 2
     },
     "51": {
       "replace": true,
-      "file": "51_table.glb",
+      "file": "051_table.glb",
       "orientation": 0
     },
     "53": {
       "replace": true,
-      "file": "53_54_bed.glb",
+      "file": "053_054_bed.glb",
       "orientation": 3
     },
     "54": {
       "replace": true,
-      "file": "53_54_bed.glb",
+      "file": "053_054_bed.glb",
       "orientation": 0
     },
     "55": {
       "replace": true,
-      "file": "55_56_armchair.glb",
+      "file": "055_056_armchair.glb",
       "orientation": 0
     },
     "56": {
       "replace": true,
-      "file": "55_56_armchair.glb",
+      "file": "055_056_armchair.glb",
       "orientation": 1
     },
     "57": {
       "replace": true,
-      "file": "55_56_armchair.glb",
+      "file": "055_056_armchair.glb",
       "orientation": 2
     },
     "58": {
       "replace": true,
-      "file": "55_56_armchair.glb",
+      "file": "055_056_armchair.glb",
       "orientation": 3
     },
     "59": {
@@ -248,14 +259,59 @@
     "60": {
       "mirror": true
     },
+    "65": {
+      "replace": true,
+      "file": "065_books.glb",
+      "orientation": 0
+    },
+    "67": {
+      "replace": true,
+      "file": "067_books_long.glb",
+      "orientation": 0
+    },
+    "68": {
+      "replace": true,
+      "file": "068_books_horizontal_reversed.glb",
+      "orientation": 3
+    },
+    "69": {
+      "replace": true,
+      "file": "069_books_horizontal.glb",
+      "orientation": 0
+    },
+    "70": {
+      "replace": true,
+      "file": "070_books_tilted.glb",
+      "orientation": 3
+    },
+    "71": {
+      "replace": true,
+      "file": "071_books_tilted_reversed.glb",
+      "orientation": 0
+    },
+    "72": {
+      "replace": true,
+      "file": "072_books_reversed.glb",
+      "orientation": 3
+    },
+    "73": {
+      "replace": true,
+      "file": "073_books_medium.glb",
+      "orientation": 3
+    },
+    "74": {
+      "replace": true,
+      "file": "074_books_long_reversed.glb",
+      "orientation": 3
+    },
     "78": {
       "replace": true,
-      "file": "78_bedside_table.glb",
+      "file": "078_bedside_table.glb",
       "orientation": 0
     },
     "79": {
       "replace": true,
-      "file": "78_bedside_table.glb",
+      "file": "078_bedside_table.glb",
       "orientation": 3
     },
     "80": {
@@ -266,17 +322,17 @@
     },
     "84": {
       "replace": true,
-      "file": "84_plate_stack.glb",
+      "file": "084_plate_stack.glb",
       "orientation": 0
     },
     "85": {
       "replace": true,
-      "file": "85_single_plate.glb",
+      "file": "085_single_plate.glb",
       "orientation": 0
     },
     "86": {
       "replace": true,
-      "file": "86_candlestick.glb",
+      "file": "086_candlestick.glb",
       "orientation": 0
     },
     "87": {
@@ -287,12 +343,12 @@
     },
     "89": {
       "replace": true,
-      "file": "89_small_lamp.glb",
+      "file": "089_small_lamp.glb",
       "orientation": 0
     },
     "90": {
       "replace": true,
-      "file": "89_small_lamp.glb",
+      "file": "089_small_lamp.glb",
       "orientation": 3
     },
     "93": {
