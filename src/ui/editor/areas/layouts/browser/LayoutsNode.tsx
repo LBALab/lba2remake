@@ -15,12 +15,53 @@ const indexStyle = {
     padding: '0 2px'
 };
 
+const mark3DStyle = {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    color: 'red',
+    fontSize: '12px',
+    background: 'black',
+    opacity: 0.8,
+    padding: '0 2px'
+};
+
+const markMirrorStyle = {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    color: 'blue',
+    fontSize: '12px',
+    background: 'black',
+    opacity: 0.8,
+    padding: '0 2px'
+};
+
+const getMetadata = (layout) => {
+    if (DebugData.scope.layoutsMetadata
+        && layout.library in DebugData.scope.layoutsMetadata
+        && layout.index in DebugData.scope.layoutsMetadata[layout.library]) {
+        return DebugData.scope.layoutsMetadata[layout.library][layout.index];
+    }
+    return null;
+};
+
 const name = (layout) => {
-    if (layout.library in DebugData.metadata.libraries
-        && layout.index in DebugData.metadata.libraries[layout.library]) {
-        return DebugData.metadata.libraries[layout.library][layout.index].name;
+    const lSettings = getMetadata(layout);
+    if (lSettings && lSettings.replace) {
+        return lSettings.file;
     }
     return `layout_${layout.index}`;
+};
+
+const is3D = (layout) => {
+    const lSettings = getMetadata(layout);
+    return lSettings && lSettings.replace;
+};
+
+const isMirror = (layout) => {
+    const lSettings = getMetadata(layout);
+    return lSettings && lSettings.mirror;
 };
 
 const key = data => `${data.library}_${data.index}`;
@@ -73,17 +114,6 @@ const LayoutNode = {
             margin: 0
         };
     },
-    rename: (_layout, _newName) => {
-        /*
-        DebugData.metadata.libraries[layout.library][layout.index] = newName;
-        saveMetaData({
-            type: 'libraries',
-            subType: 'layouts',
-            subIndex: layout.index,
-            value: newName
-        });
-        */
-    },
     onClick: (data, _setRoot, component) => {
         const {setLayout} = component.props.rootStateHandler;
         setLayout(data.index);
@@ -103,6 +133,16 @@ const LayoutNode = {
             id: 'index',
             value: data.index,
             render: value => <div style={indexStyle}>{value}</div>
+        },
+        {
+            id: 'p3D',
+            value: is3D(data) ? '3D' : null,
+            render: value => <div style={mark3DStyle}>{value}</div>
+        },
+        {
+            id: 'pMirror',
+            value: isMirror(data) ? 'm' : null,
+            render: value => <div style={markMirrorStyle}>{value}</div>
         }
     ]
 };

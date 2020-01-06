@@ -326,6 +326,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         if (!layoutsMetadata) {
             const rawRD = await fetch('/metadata/layouts.json');
             layoutsMetadata = await rawRD.json();
+            DebugData.scope.layoutsMetadata = layoutsMetadata;
         }
         let lSettings = null;
         if (libraryIdx in layoutsMetadata
