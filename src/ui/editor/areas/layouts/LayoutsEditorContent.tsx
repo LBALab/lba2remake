@@ -551,9 +551,12 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                     </button>
                     <br/>
                     {(lSettings && lSettings.replace)
-                        ? <button style={infoButton} onClick={this.resetToIso}>
-                            Reset to iso
-                        </button>
+                        ? <React.Fragment>
+                            <small>{lSettings.file}</small>&nbsp;
+                            <button style={infoButton} onClick={this.resetToIso}>
+                                Reset to iso
+                            </button>
+                        </React.Fragment>
                         : <button style={infoButton} onClick={this.replaceByModel}>
                             Replace by 3D model
                         </button>}
