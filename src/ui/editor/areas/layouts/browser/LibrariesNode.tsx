@@ -14,7 +14,7 @@ const indexStyle = {
 
 const LibraryNode = {
     dynamic: true,
-    name: entity => entity.name,
+    name: library => library.name,
     numChildren: () => 0,
     allowRenaming: () => false,
     style: {
