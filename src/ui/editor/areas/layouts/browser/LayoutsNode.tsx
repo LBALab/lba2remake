@@ -68,6 +68,7 @@ const key = data => `${data.library}_${data.index}`;
 
 const LayoutNode = {
     dynamic: true,
+    key,
     name,
     numChildren: () => 0,
     allowRenaming: () => false,
