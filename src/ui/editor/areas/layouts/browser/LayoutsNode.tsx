@@ -251,7 +251,7 @@ const LayoutsNode = {
 function centerView(index) {
     const lt = getLayouts()[index];
     if (lt) {
-        const elem = document.getElementById(`otl.Layouts.${name(lt)}`);
+        const elem = document.getElementById(`otl.Layouts.${key(lt)}`);
         if (elem) {
             elem.scrollIntoView({block: 'center'});
         }
