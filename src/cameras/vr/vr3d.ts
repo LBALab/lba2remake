@@ -115,8 +115,8 @@ function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
             cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
             cameraPos.add(offset);
         }
-        const groundOffset = 0.08 * ADJ_WORLD_SIZE;
-        const objOffset = 0.16 * ADJ_WORLD_SIZE;
+        const groundOffset = 0.01 * ADJ_WORLD_SIZE;
+        const objOffset = 0.016 * ADJ_WORLD_SIZE;
         scene.scenery.physics.processCameraCollisions(cameraPos, groundOffset, objOffset);
         controlNode.position.copy(cameraPos);
         HERO_POS.y = cameraPos.y;
