@@ -19,7 +19,8 @@ const DebugData = {
         entities: [],
         bodies: [],
         anims: [],
-        islands: []
+        islands: [],
+        libraries: <any> {}
     },
     step: false,
     firstFrame: false,

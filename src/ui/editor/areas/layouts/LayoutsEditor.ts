@@ -3,6 +3,7 @@ import LayoutsEditorSettings from './LayoutsEditorSettings';
 import {Orientation, Type} from '../../layout';
 import LibrariesBrowserArea from './browser/LibrariesBrowserArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
+import LayoutsBrowserArea from './browser/LayoutsBrowserArea';
 
 const LayoutsEditor = {
     id: 'layouts',
@@ -33,6 +34,7 @@ const LayoutsEditor = {
     },
     toolAreas: [
         LibrariesBrowserArea,
+        LayoutsBrowserArea,
         InspectorArea
     ],
     defaultLayout: {
@@ -41,7 +43,15 @@ const LayoutsEditor = {
         splitAt: 70,
         children: [
             { type: Type.AREA, content_id: 'layouts', root: true },
-            { type: Type.AREA, content_id: 'libraries_browser' }
+            {
+                type: Type.LAYOUT,
+                orientation: Orientation.VERTICAL,
+                splitAt: 50,
+                children: [
+                    { type: Type.AREA, content_id: 'libraries_browser' },
+                    { type: Type.AREA, content_id: 'layouts_browser' }
+                ]
+            }
         ]
     }
 };
