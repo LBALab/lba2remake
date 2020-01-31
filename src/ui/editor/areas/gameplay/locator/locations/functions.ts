@@ -44,7 +44,8 @@ function baseScene(type, index, name, children) {
         ],
         selected: isSelected.bind(null, index),
         icon,
-        goto: (game, sceneManager) => gotoWithArgs(index, game, sceneManager)
+        goto: (game, sceneManager) => gotoWithArgs(index, game, sceneManager),
+        sceneIndex: index
     };
 }
 
