@@ -161,6 +161,9 @@ export const PLAY_ACF = unimplemented();
 export const REPEAT_SAMPLE = unimplemented();
 
 export function SIMPLE_SAMPLE(index) {
+    if (index === 381 || index === 385) {
+        return; // Skip thunder sounds
+    }
     const soundFxSource = this.game.getAudioManager().getSoundFxSource();
     soundFxSource.load(index, () => {
         soundFxSource.play();
