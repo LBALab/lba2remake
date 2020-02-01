@@ -94,13 +94,13 @@ export function updateLightning(game, scene, time) {
         game.lightningStrength = Math.random()
             * (1 - Math.abs((t - 0.5) * 2))
             * nextLightning.intensity
-            * 2;
+            * 1.5;
+        const camDist = camPos.distanceTo(game.lightningPos);
         if (!nextLightning.playedSample) {
-            const dist = scene.camera.controlNode.position.distanceTo(game.lightningPos);
-            const volume = Math.min(1, Math.max(0, 1 - (dist / 200)));
+            const volume = Math.min(1, Math.max(0, 1 - (camDist / 200)));
             const soundFxSource = game.getAudioManager().getSoundFxSource();
             soundFxSource.volume = volume;
-            const index = (nextLightning.intensity < 0.3 || dist > 30)
+            const index = (nextLightning.intensity < 0.1 || camDist > 40)
                 ? 385
                 : 381;
             soundFxSource.load(index, () => {
@@ -108,7 +108,7 @@ export function updateLightning(game, scene, time) {
             });
             nextLightning.playedSample = true;
         }
-        rayParams.straightness = Math.min(t * 1.5, 0.8);
+        rayParams.straightness = Math.min(t * 1.5, 0.85);
         rayParams.destOffset.y = THREE.Math.lerp(
             WORLD_SIZE * 2,
             game.lightningPos.y,
@@ -116,7 +116,8 @@ export function updateLightning(game, scene, time) {
         );
         lightningStrike.update(time.elapsed);
         lightningStrikeMesh.visible = true;
-        lightningMaterial.opacity = Math.min(game.lightningStrength, 1);
+        const att = Math.max(1.0 - Math.min(camDist * 0.01, 1), 0.07);
+        lightningMaterial.opacity = Math.min(game.lightningStrength * att, 1);
     } else {
         game.lightningStrength = 0;
         nextLightning.playedSample = false;
