@@ -16,12 +16,12 @@ out vec4 fragColor;
 #require "../common/fog.frag"
 
 float lIntensity(float distLightning) {
-    float dist = 1.0 - clamp(distLightning * 0.03 * (1.0 / (lightningStrength + 0.1)), 0.0, 1.0);
+    float dist = 1.0 - clamp(distLightning * 0.2 * (1.0 / (lightningStrength + 0.1)), 0.0, 1.0);
     return dist * dist * lightningStrength;
 }
 
 vec3 lightning(vec3 color, float distLightning) {
-    return mix(color, vec3(1.0), lIntensity(distLightning));
+    return mix(color, lFog(vec3(1.0)), lIntensity(distLightning));
 }
 
 void main() {

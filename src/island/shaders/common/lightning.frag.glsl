@@ -13,7 +13,7 @@ float lIntensity() {
 }
 
 vec3 lightning(vec3 color) {
-    return mix(color, vec3(1.0), lIntensity());
+    return mix(color, lFog(vec3(1.0)), lIntensity());
 }
 
 float lightningIntensity(float intensity) {
