@@ -43,6 +43,8 @@ const lightningStrikeMesh = new THREE.Mesh(
 lightningStrikeMesh.frustumCulled = false;
 lightningStrikeMesh.renderOrder = 5;
 
+const heroPos = new THREE.Vector3();
+
 export function updateLightning(game, scene, time) {
     if (game.isPaused()
         || !scene
@@ -62,6 +64,15 @@ export function updateLightning(game, scene, time) {
         nextLightning.scenery = scene.scenery;
     }
 
+    const camPos = scene.camera.controlNode.position;
+    const hero = scene.actors[0];
+    if (hero.threeObject) {
+        heroPos.set(0, 0, 0);
+        heroPos.applyMatrix4(hero.threeObject.matrixWorld);
+    } else {
+        heroPos.set(10000, 10000, 10000);
+    }
+
     if (time.elapsed > nextLightning.time + nextLightning.duration) {
         const delay = Math.random() > 0.3
             ? Math.random() * 8 + 4
@@ -71,7 +82,7 @@ export function updateLightning(game, scene, time) {
         nextLightning.intensity = Math.random() * 0.5 + 0.5;
         game.lightningStrength = 0;
         lightningStrikeMesh.visible = false;
-        scene.scenery.physics.getLightningPosition(game.lightningPos);
+        scene.scenery.physics.getLightningPosition(game.lightningPos, camPos, heroPos);
         rayParams.sourceOffset.copy(game.lightningPos);
         rayParams.sourceOffset.y = WORLD_SIZE * 2;
         rayParams.destOffset.copy(game.lightningPos);

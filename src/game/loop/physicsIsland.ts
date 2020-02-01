@@ -31,7 +31,7 @@ function processCameraCollisions(sections, camPosition, groundOffset = 0.15, obj
     }
 }
 
-function getLightningPosition(sections, position) {
+function getLightningPosition(sections, position, camPosition, heroPosition) {
     while (true) {
         position.set(
             Math.random() * 200 - 100,
@@ -49,6 +49,10 @@ function getLightningPosition(sections, position) {
                     position.y = bb.max.y;
                     hitObj = true;
                 }
+            }
+            if (camPosition.distanceTo(position) < 6 ||
+                heroPosition.distanceTo(position) < 6) {
+                continue;
             }
             if (hitObj
                 || (position.y > 10 && Math.random() < 0.8)
