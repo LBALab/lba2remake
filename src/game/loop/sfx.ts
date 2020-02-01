@@ -25,7 +25,7 @@ const rayParams = {
     subrayPeriod: 3.5,
     subrayDutyCycle: 0.6,
     maxSubrayRecursion: 3,
-    ramification: 7,
+    ramification: 3,
     recursionProbability: 0.6,
     roughness: 0.85,
     straightness: 0.6
