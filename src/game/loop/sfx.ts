@@ -63,7 +63,9 @@ export function updateLightning(game, scene, time) {
     }
 
     if (time.elapsed > nextLightning.time + nextLightning.duration) {
-        const delay = Math.random() * 2;
+        const delay = Math.random() > 0.3
+            ? Math.random() * 8 + 4
+            : Math.random() * 0.2;
         nextLightning.time = time.elapsed + delay;
         nextLightning.duration = Math.random() * 0.6 + 0.8;
         nextLightning.intensity = Math.random() * 0.5 + 0.5;
