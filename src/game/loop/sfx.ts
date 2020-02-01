@@ -86,8 +86,8 @@ export function updateLightning(game, scene, time) {
         rayParams.sourceOffset.copy(game.lightningPos);
         rayParams.sourceOffset.y = WORLD_SIZE * 2;
         rayParams.destOffset.copy(game.lightningPos);
-        rayParams.radius0 = nextLightning.intensity * 0.375;
-        rayParams.radius1 = rayParams.radius0 * 0.027;
+        rayParams.radius0 = nextLightning.intensity * 0.31875;
+        rayParams.radius1 = rayParams.radius0 * 0.0318;
         nextLightning.playedSample = false;
     } else if (time.elapsed > nextLightning.time && nextLightning.duration > 0) {
         const t = (time.elapsed - nextLightning.time) / nextLightning.duration;
