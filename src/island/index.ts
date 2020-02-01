@@ -79,6 +79,7 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
 
     const geometries = loadGeometries(props, data, ambience);
     const matByName = {};
+    const materials = [];
     each(geometries, (geom: IslandGeometry, name) => {
         const {positions, uvs, colors, intensities, normals, uvGroups, material} = geom;
         if (positions && positions.length > 0) {
@@ -121,6 +122,7 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
             mesh.matrixAutoUpdate = false;
             mesh.name = name;
             matByName[name] = material;
+            materials.push(material);
             islandObject.add(mesh);
         }
     });
@@ -155,6 +157,8 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
     const seaMesh = islandObject.getObjectByName('sea') as THREE.Mesh;
     const seaTimeUniform = (seaMesh.material as THREE.RawShaderMaterial).uniforms.time;
 
+    materials.push(geometries.sky.material);
+
     return {
         props,
         sections: map(layout.groundSections,
@@ -165,11 +169,20 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         updateSeaTime: (time) => {
             seaTimeUniform.value = time.elapsed;
         },
-        update: (_game, scene, time) => {
+        update: (game, scene, time) => {
             if (scene) {
                 updateShadows(scene, matByName);
             }
             seaTimeUniform.value = time.elapsed;
+            if (game) {
+                each(materials, (mat) => {
+                    const uniforms = (mat as THREE.RawShaderMaterial).uniforms;
+                    if (uniforms.lightningStrength) {
+                        uniforms.lightningStrength.value = game.lightningStrength;
+                        uniforms.lightningPos.value.copy(game.lightningPos);
+                    }
+                });
+            }
         }
     };
 }

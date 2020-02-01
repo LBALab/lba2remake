@@ -2,6 +2,7 @@
 precision highp float;
 
 uniform mat4 modelViewMatrix;
+uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;
 uniform vec3 bonePos[30];
 uniform vec4 boneRot[30];
@@ -18,12 +19,16 @@ out vec2 vUv;
 out vec4 vUvGroup;
 out vec3 vNormal;
 out vec3 vMVPos;
+out float vDistLightning;
+
+#require "../../island/shaders/common/lightning.vert"
 
 void main() {
     int idx = int(boneIndex);
     vec3 bPos = bonePos[idx];
     vec4 bRot = boneRot[idx];
     vec3 pos = position + 2.0 * cross(bRot.xyz, cross(bRot.xyz, position) + bRot.w * position) + bPos;
+    vDistLightning = distLightning((modelMatrix * vec4(pos, 1.0)).xyz);
     vec4 mPos = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mPos;
     vec3 n = normal + 2.0 * cross(bRot.xyz, cross(bRot.xyz, normal) + bRot.w * normal);

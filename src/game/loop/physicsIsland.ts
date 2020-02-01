@@ -6,7 +6,8 @@ export function loadIslandPhysics(sections) {
     return {
         processCollisions: processCollisions.bind(null, sections),
         processCameraCollisions: processCameraCollisions.bind(null, sections),
-        getGroundInfo: position => getGroundInfo(findSection(sections, position), position)
+        getGroundInfo: position => getGroundInfo(findSection(sections, position), position),
+        getLightningPosition: getLightningPosition.bind(null, sections)
     };
 }
 
@@ -25,6 +26,35 @@ function processCameraCollisions(sections, camPosition, groundOffset = 0.15, obj
             const bb = section.boundingBoxes[i];
             if (bb.containsPoint(camPosition)) {
                 camPosition.y = bb.max.y + objOffset * WORLD_SIZE;
+            }
+        }
+    }
+}
+
+function getLightningPosition(sections, position) {
+    while (true) {
+        position.set(
+            Math.random() * 200 - 100,
+            0,
+            Math.random() * 200 - 100
+        );
+        const section = findSection(sections, position);
+        if (section) {
+            const ground = getGroundInfo(section, position);
+            position.y = ground.height;
+            let hitObj = false;
+            for (let i = 0; i < section.boundingBoxes.length; i += 1) {
+                const bb = section.boundingBoxes[i];
+                if (bb.containsPoint(position)) {
+                    position.y = bb.max.y;
+                    hitObj = true;
+                }
+            }
+            if (hitObj
+                || (position.y > 10 && Math.random() < 0.8)
+                || (position.y > 2 && Math.random() < 0.2)
+                || Math.random() < 0.05) {
+                break;
             }
         }
     }

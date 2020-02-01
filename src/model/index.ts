@@ -81,7 +81,8 @@ function loadModelData(params: any,
         entities,
         boundingBox: null,
         boundingBoxDebugMesh: null,
-        entity: entities[entityIdx]
+        entity: entities[entityIdx],
+        materials: []
     };
 
     const realBodyIdx = getBodyIndex(model.entity, bodyIdx);
@@ -92,7 +93,7 @@ function loadModelData(params: any,
 
     const skeleton = createSkeleton(body);
     initSkeleton(animState, skeleton, anim.loopFrame);
-    model.mesh = loadMesh(
+    const { object, materials } = loadMesh(
         body,
         model.texture,
         animState.bones,
@@ -102,6 +103,8 @@ function loadModelData(params: any,
         envInfo,
         ambience
     );
+    model.mesh = object;
+    model.materials = materials;
 
     if (model.mesh) {
         model.boundingBox = body.boundingBox;

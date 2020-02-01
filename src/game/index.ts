@@ -38,6 +38,9 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
             ctrlTriggers: []
         },
 
+        lightningStrength: 0,
+        lightningPos: new THREE.Vector3(0, 0, 0),
+
         resetState() {
             state = createState();
             this.resetControlsState();

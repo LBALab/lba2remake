@@ -54,6 +54,8 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector4().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    lightningStrength: {value: 0.0},
+                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     palette: {value: paletteTexture},
                     noise: {value: noiseTexture},
@@ -72,6 +74,8 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector4().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    lightningStrength: {value: 0.0},
+                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     uTexture: {value: groundTexture},
                     palette: {value: paletteTexture},
@@ -91,6 +95,8 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    lightningStrength: {value: 0.0},
+                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     palette: {value: paletteTexture},
                     noise: {value: fakeNoise},
@@ -109,6 +115,8 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    lightningStrength: {value: 0.0},
+                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     uTexture: {value: atlas.texture},
                     atlasDim: {value: atlas.texture.image.width},
@@ -130,6 +138,8 @@ export function prepareGeometries(island, data, ambience) {
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    lightningStrength: {value: 0.0},
+                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     uTexture: {value: atlas.texture},
                     atlasDim: {value: atlas.texture.image.width},
@@ -150,6 +160,8 @@ export function prepareGeometries(island, data, ambience) {
                     },
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    lightningStrength: {value: 0.0},
+                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     time: {value: 0.0},
                     scale: {value: envInfo.index !== 14 ? 512.0 : 16.0}
@@ -173,6 +185,8 @@ export function prepareGeometries(island, data, ambience) {
                     },
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: 0.1},
+                    lightningStrength: {value: 0.0},
+                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     opacity: {value: envInfo.skyOpacity},
                     scale: {value: envInfo.scale}

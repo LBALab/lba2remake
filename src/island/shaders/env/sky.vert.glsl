@@ -10,10 +10,12 @@ in vec2 uv;
 
 out vec2 vUv;
 out vec3 vMVPos;
+out vec3 vPos;
 
 void main() {
     vec4 mPos = modelViewMatrix * vec4(position, 1.0);
     vec3 pos = vec3(position.x, cameraPosition.y, position.z);
+    vPos = pos;
     vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mPos;
     vUv = uv;

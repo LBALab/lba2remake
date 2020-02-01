@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { each } from 'lodash';
 
 import { Actor} from '../actors';
 import { getAnim } from '../../model/entity';
@@ -153,4 +154,11 @@ function updateModel(game: any,
             });
         }
     }
+    each(model.materials, (mat) => {
+        const uniforms = (mat as THREE.RawShaderMaterial).uniforms;
+        if (uniforms.lightningStrength) {
+            uniforms.lightningStrength.value = game.lightningStrength;
+            uniforms.lightningPos.value.copy(game.lightningPos);
+        }
+    });
 }

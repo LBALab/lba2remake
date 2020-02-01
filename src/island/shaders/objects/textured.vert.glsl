@@ -14,8 +14,12 @@ out vec3 vNormal;
 out vec2 vUv;
 out vec3 vMVPos;
 out vec4 vUvGroup;
+out float vDistLightning;
+
+#require "../common/lightning.vert"
 
 void main() {
+    vDistLightning = distLightning(position);
     vec4 mPos = modelViewMatrix * vec4(position, 1.0);
     gl_Position = projectionMatrix * mPos;
     vNormal = normal;

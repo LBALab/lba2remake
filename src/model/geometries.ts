@@ -57,6 +57,8 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    lightningStrength: {value: 0.0},
+                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     palette: {value: paletteTexture},
                     noise: {value: fakeNoise},
@@ -84,6 +86,8 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    lightningStrength: {value: 0.0},
+                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     uTexture: {value: texture},
                     palette: {value: paletteTexture},
@@ -113,6 +117,8 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
+                    lightningStrength: {value: 0.0},
+                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     uTexture: {value: texture},
                     palette: {value: paletteTexture},
@@ -137,6 +143,7 @@ export function loadMesh(
     envInfo,
     ambience
 ) {
+    const materials = [];
     const geometries = loadGeometry(
         body,
         texture,
@@ -204,6 +211,7 @@ export function loadMesh(
             modelMesh.name = name;
             modelMesh.matrixAutoUpdate = false;
             object.add(modelMesh);
+            materials.push(material);
         }
 
         if (linePositions.length > 0) {
@@ -229,9 +237,10 @@ export function loadMesh(
             lineSegments.name = 'lines';
             lineSegments.matrixAutoUpdate = false;
             object.add(lineSegments);
+            materials.push(material);
         }
     });
-    return object;
+    return {object, materials};
 }
 
 function loadGeometry(
@@ -451,6 +460,8 @@ function createSubgroupGeometry(geometries, group, baseGroup, uvGroup) {
             uniforms: {
                 fogColor: baseUniforms.fogColor,
                 fogDensity: baseUniforms.fogDensity,
+                lightningStrength: {value: 0.0},
+                lightningPos: {value: new THREE.Vector3()},
                 worldScale: {value: worldScale},
                 uTexture: {value: groupTexture},
                 lutTexture: baseUniforms.lutTexture,

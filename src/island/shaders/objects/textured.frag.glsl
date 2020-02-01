@@ -14,11 +14,13 @@ in vec3 vNormal;
 in vec2 vUv;
 in vec4 vUvGroup;
 in vec3 vMVPos;
+in float vDistLightning;
 
 out vec4 fragColor;
 
 #require "../common/lut.frag"
 #require "../common/fog.frag"
+#require "../common/lightning.frag"
 #require "../common/intensity.frag"
 
 vec4 textureMipMap(sampler2D s, vec2 uv) {
@@ -45,5 +47,7 @@ void main() {
     vec2 uv = mod(vUv, vUvGroup.zw) + vUvGroup.xy;
     vec4 texColor = textureMipMap(uTexture, uv / atlasDim);
     vec3 palColor = lutLookup(texColor.rgb, intensity());
-    fragColor = vec4(fog(palColor), texColor.a);
+    vec3 colWithFog = fog(palColor);
+    vec3 colWithLightning = lightning(colWithFog);
+    fragColor = vec4(colWithLightning, texColor.a);
 }
