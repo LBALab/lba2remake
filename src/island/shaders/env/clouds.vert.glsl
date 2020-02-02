@@ -2,8 +2,8 @@
 precision highp float;
 
 uniform mat4 modelViewMatrix;
+uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;
-uniform vec3 cameraPosition;
 
 in vec3 position;
 in vec2 uv;
@@ -13,11 +13,9 @@ out vec3 vMVPos;
 out vec3 vPos;
 
 void main() {
+    vPos = (modelMatrix * vec4(position, 1.0)).xyz;
     vec4 mPos = modelViewMatrix * vec4(position, 1.0);
-    vec3 pos = vec3(position.x, cameraPosition.y, position.z);
-    vPos = pos;
-    vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mPos;
+    vMVPos = mPos.xyz;
     vUv = uv;
-    vMVPos = mvPos.xyz;
 }

@@ -41,7 +41,7 @@ const lightningStrikeMesh = new THREE.Mesh(
     lightningMaterial
 );
 lightningStrikeMesh.frustumCulled = false;
-lightningStrikeMesh.renderOrder = 5;
+lightningStrikeMesh.renderOrder = 100;
 
 const heroPos = new THREE.Vector3();
 
@@ -82,12 +82,6 @@ export function updateLightning(game, scene, time) {
         nextLightning.intensity = Math.random() * 0.5 + 0.5;
         game.lightningStrength = 0;
         lightningStrikeMesh.visible = false;
-        scene.scenery.physics.getLightningPosition(game.lightningPos, camPos, heroPos);
-        rayParams.sourceOffset.copy(game.lightningPos);
-        rayParams.sourceOffset.y = WORLD_SIZE * 2;
-        rayParams.destOffset.copy(game.lightningPos);
-        rayParams.radius0 = nextLightning.intensity * 0.31875;
-        rayParams.radius1 = rayParams.radius0 * 0.0318;
         nextLightning.playedSample = false;
     } else if (time.elapsed > nextLightning.time && nextLightning.duration > 0) {
         const t = (time.elapsed - nextLightning.time) / nextLightning.duration;
@@ -95,8 +89,10 @@ export function updateLightning(game, scene, time) {
             * (1 - Math.abs((t - 0.5) * 2))
             * nextLightning.intensity
             * 1.5;
-        const camDist = camPos.distanceTo(game.lightningPos);
+        let camDist = Infinity;
         if (!nextLightning.playedSample) {
+            scene.scenery.physics.getLightningPosition(game.lightningPos, camPos, heroPos);
+            camDist = camPos.distanceTo(game.lightningPos);
             const volume = Math.min(1, Math.max(0, 1 - (camDist / 200)));
             const soundFxSource = game.getAudioManager().getSoundFxSource();
             soundFxSource.volume = volume;
@@ -107,6 +103,13 @@ export function updateLightning(game, scene, time) {
                 soundFxSource.play();
             });
             nextLightning.playedSample = true;
+            rayParams.sourceOffset.copy(game.lightningPos);
+            rayParams.sourceOffset.y = WORLD_SIZE * 2 + Math.random() * 5 - 20;
+            rayParams.destOffset.copy(game.lightningPos);
+            rayParams.radius0 = nextLightning.intensity * 0.31875;
+            rayParams.radius1 = rayParams.radius0 * 0.0318;
+        } else {
+            camDist = camPos.distanceTo(game.lightningPos);
         }
         rayParams.straightness = Math.min(t * 1.5, 0.85);
         rayParams.destOffset.y = THREE.Math.lerp(

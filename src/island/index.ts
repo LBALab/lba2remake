@@ -56,7 +56,7 @@ export async function loadIslandScenery(params, name, ambience) {
         loadLUTTexture()
     ]);
     const files = {ress, ile, obl};
-    const island = loadIslandNode(params, islandProps[name], files, lutTexture, ambience);
+    const island = await loadIslandNode(params, islandProps[name], files, lutTexture, ambience);
     if (params.preview) {
         islandPreviews[name] = island;
     } else {
@@ -65,7 +65,7 @@ export async function loadIslandScenery(params, name, ambience) {
     return island;
 }
 
-function loadIslandNode(params, props, files, lutTexture, ambience) {
+async function loadIslandNode(params, props, files, lutTexture, ambience) {
     const islandObject = new THREE.Object3D();
     islandObject.name = `scenery_${props.name}`;
     islandObject.matrixAutoUpdate = false;
@@ -77,7 +77,7 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         lutTexture
     };
 
-    const geometries = loadGeometries(props, data, ambience);
+    const geometries = await loadGeometries(props, data, ambience);
     const matByName = {};
     const materials = [];
     each(geometries, (geom: IslandGeometry, name) => {
@@ -127,8 +127,12 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
         }
     });
 
+    let updateClouds = (_time) => {};
     if (!params.preview) {
-        islandObject.add(loadSky(geometries, props.envInfo));
+        // islandObject.add(loadSky(geometries, props.envInfo));
+        const {clouds, update} = loadClouds(geometries);
+        updateClouds = update;
+        islandObject.add(clouds);
     }
 
     const sections = {};
@@ -157,7 +161,7 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
     const seaMesh = islandObject.getObjectByName('sea') as THREE.Mesh;
     const seaTimeUniform = (seaMesh.material as THREE.RawShaderMaterial).uniforms.time;
 
-    materials.push(geometries.sky.material);
+    materials.push(geometries.clouds.material);
 
     return {
         props,
@@ -183,6 +187,7 @@ function loadIslandNode(params, props, files, lutTexture, ambience) {
                     }
                 });
             }
+            updateClouds(time);
         }
     };
 }
@@ -215,45 +220,27 @@ function loadSectionPlanes(islandObject, data) {
     });
 }
 
-function loadSky(geometries, envInfo) {
-    const bufferGeometry = new THREE.BufferGeometry();
-    const height = envInfo.skyHeight
-        ? (envInfo.skyHeight * WORLD_SIZE) / 24
-        : WORLD_SIZE * 2;
-    const w = 64 * WORLD_SIZE;
-    const positions = [
-        -w, height, -w,
-        w, height, -w,
-        w, height, w,
-        -w, height, -w,
-        w, height, w,
-        -w, height, w
-    ];
-    const uvs = [
-        0, 0,
-        1, 0,
-        1, 1,
-        0, 0,
-        1, 1,
-        0, 1
-    ];
-    bufferGeometry.setAttribute(
-        'position',
-        new THREE.BufferAttribute(new Float32Array(positions), 3)
-    );
-    bufferGeometry.setAttribute(
-        'uv',
-        new THREE.BufferAttribute(new Uint8Array(uvs), 2, false)
-    );
-    const sky = new THREE.Mesh(
-        bufferGeometry,
-        geometries.sky.material
-    );
-    sky.name = 'sky';
-    return sky;
+function loadClouds(geometries) {
+    const clouds = new THREE.Object3D();
+    const cloudGeo = new THREE.PlaneBufferGeometry(600, 600);
+    for (let p = 0; p < 50; p += 1) {
+        const cloud = new THREE.Mesh(cloudGeo, geometries.clouds.material);
+        cloud.position.set(
+            p === 0 ? 0 : Math.random() * 1600 - 800,
+            WORLD_SIZE * 2 + p - 20,
+            p === 0 ? 0 : Math.random() * 1600 - 800
+        );
+        cloud.rotation.x = Math.PI / 2;
+        cloud.renderOrder = 4 + (50 - p);
+        clouds.add(cloud);
+    }
+    const update = (time) => {
+        each(clouds.children, cloud => cloud.rotation.z += 0.02 * time.delta);
+    };
+    return {clouds, update};
 }
 
-function loadGeometries(island, data, ambience) {
+async function loadGeometries(island, data, ambience) {
     const usedTiles = {};
 
     const models = [];
@@ -271,7 +258,7 @@ function loadGeometries(island, data, ambience) {
         .sort((g1, g2) => (g2[2] * g2[3]) - (g1[2] * g1[3]));
     const atlas = createTextureAtlas(data, uvGroups);
 
-    const geometries = prepareGeometries(island, {...data, atlas}, ambience);
+    const geometries = await prepareGeometries(island, {...data, atlas}, ambience);
 
     each(data.layout.groundSections, (section) => {
         const tilesKey = [section.x, section.z].join(',');

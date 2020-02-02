@@ -18,8 +18,8 @@ import VERT_OBJECTS_TEXTURED from './shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from './shaders/objects/textured.frag.glsl';
 import VERT_SEA from './shaders/env/sea.vert.glsl';
 import FRAG_SEA from './shaders/env/sea.frag.glsl';
-import VERT_SKY from './shaders/env/sky.vert.glsl';
-import FRAG_SKY from './shaders/env/sky.frag.glsl';
+import VERT_CLOUDS from './shaders/env/clouds.vert.glsl';
+import FRAG_CLOUDS from './shaders/env/clouds.frag.glsl';
 import VERT_MOON from './shaders/env/moon.vert.glsl';
 import FRAG_MOON from './shaders/env/moon.frag.glsl';
 import { WORLD_SIZE } from '../utils/lba';
@@ -34,7 +34,9 @@ const fakeNoise = new THREE.DataTexture(
     THREE.UnsignedByteType
 );
 
-export function prepareGeometries(island, data, ambience) {
+const loader = new THREE.TextureLoader();
+
+export async function prepareGeometries(island, data, ambience) {
     const {envInfo} = island;
     const {files: {ile, ress}, palette, lutTexture, atlas} = data;
     const paletteTexture = loadPaletteTexture(palette);
@@ -42,6 +44,9 @@ export function prepareGeometries(island, data, ambience) {
     const noiseTexture = makeNoiseTexture();
     const light = getLightVector(ambience);
     const worldScale = 1 / (WORLD_SIZE * 0.04);
+    const cloudsTexture = await new Promise(resolve =>
+        loader.load('images/smoke.png', resolve)
+    );
     return {
         ground_colored: {
             positions: [],
@@ -168,12 +173,13 @@ export function prepareGeometries(island, data, ambience) {
                 }
             })
         },
-        sky: {
+        clouds: {
             material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', VERT_SKY),
-                fragmentShader: compile('frag', FRAG_SKY),
+                vertexShader: compile('vert', VERT_CLOUDS),
+                fragmentShader: compile('frag', FRAG_CLOUDS),
                 uniforms: {
-                    uTexture: {
+                    uTexture: {value: cloudsTexture},
+                    uTexture2: {
                         value: loadSubTexture(
                             ress.getEntry(envInfo.index),
                             palette,
@@ -188,8 +194,7 @@ export function prepareGeometries(island, data, ambience) {
                     lightningStrength: {value: 0.0},
                     lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
-                    opacity: {value: envInfo.skyOpacity},
-                    scale: {value: envInfo.scale}
+                    opacity: {value: 0.6}
                 },
                 transparent: true
             })
