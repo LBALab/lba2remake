@@ -14,7 +14,9 @@ import { loadLUTTexture } from '../utils/lut';
 import islandsInfo from './data/islands';
 import environments from './data/environments';
 import { createTextureAtlas } from './atlas';
-import { WORLD_SIZE, WORLD_SCALE_B } from '../utils/lba';
+import { WORLD_SCALE_B } from '../utils/lba';
+import { loadRain } from './rain';
+import { loadClouds } from './clouds';
 
 const islandProps = {};
 each(islandsInfo, (island) => {
@@ -127,12 +129,17 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
         }
     });
 
-    let updateClouds = (_time) => {};
+    let updateWeather = (_game, _scene, _time) => {};
     if (!params.preview) {
         // islandObject.add(loadSky(geometries, props.envInfo));
-        const {clouds, update} = loadClouds(geometries);
-        updateClouds = update;
+        const {clouds, update: updateClouds} = loadClouds(geometries);
         islandObject.add(clouds);
+        const {rain, update: updateRain} = loadRain();
+        islandObject.add(rain);
+        updateWeather = (_game, scene, time) => {
+            updateClouds(time);
+            updateRain(scene, time);
+        };
     }
 
     const sections = {};
@@ -187,7 +194,7 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
                     }
                 });
             }
-            updateClouds(time);
+            updateWeather(game, scene, time);
         }
     };
 }
@@ -218,26 +225,6 @@ function loadSectionPlanes(islandObject, data) {
         };
         sectionsPlanes.add(plane);
     });
-}
-
-function loadClouds(geometries) {
-    const clouds = new THREE.Object3D();
-    const cloudGeo = new THREE.PlaneBufferGeometry(600, 600);
-    for (let p = 0; p < 50; p += 1) {
-        const cloud = new THREE.Mesh(cloudGeo, geometries.clouds.material);
-        cloud.position.set(
-            p === 0 ? 0 : Math.random() * 1600 - 800,
-            WORLD_SIZE * 2 + p - 20,
-            p === 0 ? 0 : Math.random() * 1600 - 800
-        );
-        cloud.rotation.x = Math.PI / 2;
-        cloud.renderOrder = 4 + (50 - p);
-        clouds.add(cloud);
-    }
-    const update = (time) => {
-        each(clouds.children, cloud => cloud.rotation.z += 0.02 * time.delta);
-    };
-    return {clouds, update};
 }
 
 async function loadGeometries(island, data, ambience) {
