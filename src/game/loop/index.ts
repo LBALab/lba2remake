@@ -6,7 +6,6 @@ import {processPhysicsFrame} from './physics';
 import DebugData from '../../ui/editor/DebugData';
 import { updateExtra } from '../extras';
 import { updateVRGUI } from '../../ui/vr/vrGUI';
-import { updateLightning } from './sfx';
 
 const dbgClock = new THREE.Clock(false);
 dbgClock.start();
@@ -37,7 +36,6 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls, vrS
                 scene.camera.init(scene, game.controlsState);
             }
             scene.camera.update(scene, game.controlsState, time);
-            updateLightning(game, scene, time);
             renderer.render(scene);
             DebugData.step = false;
         } else if (game.controlsState.freeCamera || DebugData.firstFrame) {
@@ -54,10 +52,7 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls, vrS
         scene.firstFrame = false;
         delete DebugData.firstFrame;
     } else if (vrScene) {
-        updateLightning(game, scene, time);
         renderer.render(vrScene);
-    } else {
-        updateLightning(game, scene, time);
     }
     renderer.stats.end();
 }

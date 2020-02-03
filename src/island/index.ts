@@ -17,6 +17,7 @@ import { createTextureAtlas } from './atlas';
 import { WORLD_SCALE_B } from '../utils/lba';
 import { loadRain } from './rain';
 import { loadClouds } from './clouds';
+import { loadLightning, applyLightningUniforms } from './lightning';
 
 const islandProps = {};
 each(islandsInfo, (island) => {
@@ -123,24 +124,12 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
             const mesh = new THREE.Mesh(bufferGeometry, material);
             mesh.matrixAutoUpdate = false;
             mesh.name = name;
+            mesh.onBeforeRender = applyLightningUniforms;
             matByName[name] = material;
             materials.push(material);
             islandObject.add(mesh);
         }
     });
-
-    let updateWeather = (_game, _scene, _time) => {};
-    if (!params.preview) {
-        // islandObject.add(loadSky(geometries, props.envInfo));
-        const {clouds, update: updateClouds} = loadClouds(geometries);
-        islandObject.add(clouds);
-        const {rain, update: updateRain} = loadRain();
-        islandObject.add(rain);
-        updateWeather = (_game, scene, time) => {
-            updateClouds(time);
-            updateRain(scene, time);
-        };
-    }
 
     const sections = {};
     let boundingBoxes = null;
@@ -168,6 +157,22 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
     const seaMesh = islandObject.getObjectByName('sea') as THREE.Mesh;
     const seaTimeUniform = (seaMesh.material as THREE.RawShaderMaterial).uniforms.time;
 
+    let updateWeather = (_game, _scene, _time) => {};
+    if (!params.preview) {
+        const clouds = loadClouds(geometries);
+        islandObject.add(clouds.threeObject);
+        const rain = loadRain();
+        islandObject.add(rain.threeObject);
+        materials.push(rain.material);
+        const lightning = loadLightning(sections);
+        islandObject.add(lightning.threeObject);
+        updateWeather = (game, scene, time) => {
+            clouds.update(time);
+            rain.update(scene, time);
+            lightning.update(game, scene, time);
+        };
+    }
+
     materials.push(geometries.clouds.material);
 
     return {
@@ -185,15 +190,6 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
                 updateShadows(scene, matByName);
             }
             seaTimeUniform.value = time.elapsed;
-            if (game) {
-                each(materials, (mat) => {
-                    const uniforms = (mat as THREE.RawShaderMaterial).uniforms;
-                    if (uniforms.lightningStrength) {
-                        uniforms.lightningStrength.value = game.lightningStrength;
-                        uniforms.lightningPos.value.copy(game.lightningPos);
-                    }
-                });
-            }
             updateWeather(game, scene, time);
         }
     };

@@ -6,8 +6,7 @@ export function loadIslandPhysics(sections) {
     return {
         processCollisions: processCollisions.bind(null, sections),
         processCameraCollisions: processCameraCollisions.bind(null, sections),
-        getGroundInfo: position => getGroundInfo(findSection(sections, position), position),
-        getLightningPosition: getLightningPosition.bind(null, sections)
+        getGroundInfo: position => getGroundInfo(findSection(sections, position), position)
     };
 }
 
@@ -26,39 +25,6 @@ function processCameraCollisions(sections, camPosition, groundOffset = 0.15, obj
             const bb = section.boundingBoxes[i];
             if (bb.containsPoint(camPosition)) {
                 camPosition.y = bb.max.y + objOffset * WORLD_SIZE;
-            }
-        }
-    }
-}
-
-function getLightningPosition(sections, position, camPosition, heroPosition) {
-    while (true) {
-        position.set(
-            Math.random() * 200 - 100,
-            0,
-            Math.random() * 200 - 100
-        );
-        const section = findSection(sections, position);
-        if (section) {
-            const ground = getGroundInfo(section, position);
-            position.y = ground.height;
-            let hitObj = false;
-            for (let i = 0; i < section.boundingBoxes.length; i += 1) {
-                const bb = section.boundingBoxes[i];
-                if (bb.containsPoint(position)) {
-                    position.y = bb.max.y;
-                    hitObj = true;
-                }
-            }
-            if (camPosition.distanceTo(position) < 6 ||
-                heroPosition.distanceTo(position) < 6) {
-                continue;
-            }
-            if (hitObj
-                || (position.y > 10 && Math.random() < 0.8)
-                || (position.y > 2 && Math.random() < 0.2)
-                || Math.random() < 0.05) {
-                break;
             }
         }
     }
@@ -135,7 +101,7 @@ function getGround(section, position) {
 const GRID_SCALE = 32 / WORLD_SIZE;
 const WORLD_SIZE_M2 = WORLD_SIZE * 2;
 
-function getGroundInfo(section, position) {
+export function getGroundInfo(section, position) {
     if (!section) {
         return DEFAULT_GROUND;
     }
@@ -185,7 +151,7 @@ function processBoxIntersections(section, actor, position, isTouchingGround) {
 
 const GRID_UNIT = 1 / 64;
 
-function findSection(sections, position) {
+export function findSection(sections, position) {
     const x = Math.floor((position.x / WORLD_SIZE_M2) - GRID_UNIT);
     const z = Math.floor(position.z / WORLD_SIZE_M2);
     return sections[`${x},${z}`];

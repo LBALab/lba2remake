@@ -9,6 +9,7 @@ import FRAG_TEXTURED from './shaders/textured.frag.glsl';
 import {loadPaletteTexture, loadSubTextureRGBA} from '../texture';
 import {compile} from '../utils/shaders';
 import { WORLD_SIZE } from '../utils/lba';
+import { applyLightningUniforms } from '../island/lightning';
 
 const push = Array.prototype.push;
 
@@ -57,8 +58,6 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    lightningStrength: {value: 0.0},
-                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     palette: {value: paletteTexture},
                     noise: {value: fakeNoise},
@@ -86,8 +85,6 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    lightningStrength: {value: 0.0},
-                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     uTexture: {value: texture},
                     palette: {value: paletteTexture},
@@ -117,8 +114,6 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
-                    lightningStrength: {value: 0.0},
-                    lightningPos: {value: new THREE.Vector3()},
                     worldScale: {value: worldScale},
                     uTexture: {value: texture},
                     palette: {value: paletteTexture},
@@ -208,6 +203,7 @@ export function loadMesh(
             }
 
             const modelMesh = new THREE.Mesh(bufferGeometry, material);
+            modelMesh.onBeforeRender = applyLightningUniforms;
             modelMesh.name = name;
             modelMesh.matrixAutoUpdate = false;
             object.add(modelMesh);
@@ -234,6 +230,7 @@ export function loadMesh(
             );
 
             const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
+            lineSegments.onBeforeRender = applyLightningUniforms;
             lineSegments.name = 'lines';
             lineSegments.matrixAutoUpdate = false;
             object.add(lineSegments);
@@ -460,8 +457,6 @@ function createSubgroupGeometry(geometries, group, baseGroup, uvGroup) {
             uniforms: {
                 fogColor: baseUniforms.fogColor,
                 fogDensity: baseUniforms.fogDensity,
-                lightningStrength: {value: 0.0},
-                lightningPos: {value: new THREE.Vector3()},
                 worldScale: {value: worldScale},
                 uTexture: {value: groupTexture},
                 lutTexture: baseUniforms.lutTexture,

@@ -1,38 +1,21 @@
 import * as THREE from 'three';
 
+import RAIN_VERT from './shaders/env/rain.vert.glsl';
+import RAIN_FRAG from './shaders/env/rain.frag.glsl';
+import { applyLightningUniforms } from './lightning';
+
 const rainMaterial = new THREE.ShaderMaterial({
-    vertexShader: `
-        uniform float time;
-
-        varying float opacity;
-
-        void main() {
-            float t = mod(position.y + time, 1.0);
-            vec4 pos = vec4(
-                position.x * 40.0 - 20.0,
-                (1.0 - t) * 20.0,
-                position.z * 40.0 - 20.0,
-                1.0
-            );
-            float lim = 1.0 - step(0.94, t);
-            opacity = t * lim;
-            gl_Position = projectionMatrix * modelViewMatrix * pos;
-        }`,
-    fragmentShader: `
-        varying float opacity;
-
-        void main() {
-            vec3 color = vec3(0.7, 0.7, 1.0);
-            gl_FragColor = vec4(color, 0.25 * opacity);
-        }`,
+    vertexShader: RAIN_VERT,
+    fragmentShader: RAIN_FRAG,
     transparent: true,
     uniforms: {
         time: { value: 1.0 },
+        wind: { value: new THREE.Vector2(20, 0) },
     }
 });
 
 export function loadRain() {
-    const rainCount = 200000;
+    const rainCount = 5000;
     const rainGeo = new THREE.BufferGeometry();
     const positions = [];
     for (let i = 0; i < rainCount; i += 1) {
@@ -43,19 +26,29 @@ export function loadRain() {
         positions.push(y);
         positions.push(z);
         positions.push(x);
-        positions.push(y + 0.05);
+        positions.push(y + 0.01);
         positions.push(z);
     }
     const posArray = new Float32Array(positions);
     const posAttr = new THREE.BufferAttribute(posArray, 3);
     rainGeo.setAttribute('position', posAttr);
 
-    const rain = new THREE.LineSegments(rainGeo, rainMaterial);
-    rain.renderOrder = 100;
-    rain.frustumCulled = false;
-    const update = (scene, time) => {
-        const camPos = scene.camera.controlNode.position;
+    const threeObject = new THREE.Object3D();
+    for (let x = 0; x < 3; x += 1) {
+        for (let z = 0; z < 3; z += 1) {
+            const section = new THREE.LineSegments(rainGeo, rainMaterial);
+            section.onBeforeRender = applyLightningUniforms;
+            section.renderOrder = 200;
+            section.frustumCulled = false;
+            section.position.x = x * 20;
+            section.position.z = z * 20;
+            threeObject.add(section);
+        }
+    }
+
+    const update = (_scene, time) => {
+        // const camPos = scene.camera.controlNode.position;
         rainMaterial.uniforms.time.value = time.elapsed;
     };
-    return {rain, update};
+    return {threeObject, update, material: rainMaterial};
 }
