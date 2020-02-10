@@ -15,7 +15,7 @@ void main() {
     float fogDensity = 0.8; // 0.8
     float a = exp2(-fogDensity * fogDensity * depth * depth * 0.003);
     float fogFactor = clamp(a, 0.0, 1.0);
-    vec3 color = vec3(0.5, 0.5, 0.8);
-    vec4 tgt = vec4(color * alpha, 0.3 * alpha * fogFactor);
+    vec3 color = vec3(0.5, 0.5, 0.6);
+    vec4 tgt = vec4(color, 0.16 * alpha * fogFactor);
     gl_FragColor = mix(tgt, vec4(1.0, 1.0, 1.0, alpha * fogFactor), lIntensity());
 }
