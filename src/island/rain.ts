@@ -17,8 +17,8 @@ const rainMaterial = new THREE.ShaderMaterial({
 
 const noiseGen = new SimplexNoise('LBA');
 
-export function loadRain() {
-    const rainCount = 5000;
+export function loadRain(props) {
+    const rainCount = props.count;
     const rainGeo = new THREE.BufferGeometry();
     const positions = [];
     for (let i = 0; i < rainCount; i += 1) {

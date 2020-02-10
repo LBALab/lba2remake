@@ -157,19 +157,27 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
     const seaMesh = islandObject.getObjectByName('sea') as THREE.Mesh;
     const seaTimeUniform = (seaMesh.material as THREE.RawShaderMaterial).uniforms.time;
 
+    const { envInfo } = props;
+
     let updateWeather = (_game, _scene, _time) => {};
     if (!params.preview) {
-        const clouds = loadClouds(geometries);
-        islandObject.add(clouds.threeObject);
-        const rain = loadRain();
-        islandObject.add(rain.threeObject);
-        materials.push(rain.material);
-        const lightning = loadLightning(sections);
-        islandObject.add(lightning.threeObject);
+        const clouds = envInfo.clouds ? loadClouds(envInfo.clouds, geometries) : null;
+        if (clouds) {
+            islandObject.add(clouds.threeObject);
+        }
+        const rain = envInfo.rain ? loadRain(envInfo.rain) : null;
+        if (rain) {
+            islandObject.add(rain.threeObject);
+            materials.push(rain.material);
+        }
+        const lightning = envInfo.lightning ? loadLightning(envInfo.lightning, sections) : null;
+        if (lightning) {
+            islandObject.add(lightning.threeObject);
+        }
         updateWeather = (game, scene, time) => {
-            clouds.update(time);
-            rain.update(scene, time);
-            lightning.update(game, scene, time);
+            clouds && clouds.update(time);
+            rain && rain.update(scene, time);
+            lightning && lightning.update(game, scene, time);
         };
     }
 

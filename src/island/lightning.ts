@@ -6,7 +6,7 @@ import { findSection, getGroundInfo } from '../game/loop/physicsIsland';
 
 let currentLightning = null;
 
-export function loadLightning(islandSections) {
+export function loadLightning(props, islandSections) {
     const params = {
         sourceOffset: new THREE.Vector3(),
         destOffset: new THREE.Vector3(),
@@ -40,6 +40,7 @@ export function loadLightning(islandSections) {
     lightningStrikeMesh.renderOrder = 100;
 
     const lightning = {
+        props,
         nextTime: -Infinity,
         strength: 0,
         intensity: 0,
@@ -94,12 +95,12 @@ function updateLightning(lightning, islandSections, game, scene, time) {
 }
 
 function planNextStrike(lightning, time) {
-    const delay = Math.random() > 0.3
+    const delay = Math.random() > lightning.props.frequency
             ? Math.random() * 8 + 4
             : Math.random() * 0.2;
     lightning.nextTime = time.elapsed + delay;
     lightning.duration = Math.random() * 0.6 + 0.8;
-    lightning.intensity = Math.random() * 0.5 + 0.5;
+    lightning.intensity = Math.random() * 0.5 + 0.5 * lightning.props.intensity;
     lightning.strength = 0;
     lightning.lightningStrikeMesh.visible = false;
     lightning.newStrike = true;

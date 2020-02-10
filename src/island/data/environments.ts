@@ -4,14 +4,25 @@ export default {
         skyColor: [0.02, 0.02, 0.01],
         skyOpacity: 0.5,
         fogDensity: 0.8,
-        scale: 1.0
+        scale: 1.0,
+        rain: { count: 5000 },
+        clouds: { speed: 0.04 },
+        lightning: {
+            intensity: 1,
+            frequency: 0.3
+        }
     },
     TWINSUN_SUNNY: {
         index: 13,
         skyColor: [0.51, 0.71, 0.84],
         skyOpacity: 1.0,
         fogDensity: 0.12,
-        scale: 2.0
+        scale: 2.0,
+        clouds: {
+            speed: 0.02,
+            whiteness: 1,
+            opacity: 0.1
+        }
     },
     MOON: {
         index: 14,
@@ -25,7 +36,8 @@ export default {
         skyColor: [0.45, 0.41, 0.48],
         skyOpacity: 0.75,
         fogDensity: 0.4,
-        scale: 1.0
+        scale: 1.0,
+        clouds: { speed: 0.04 }
     },
     UNDERGAS: {
         index: 17,
@@ -33,6 +45,11 @@ export default {
         skyOpacity: 0.2,
         skyHeight: 35,
         fogDensity: 0.45,
-        scale: 1.0
+        scale: 1.0,
+        clouds: { speed: 0.1 },
+        lightning: {
+            intensity: 0.2,
+            frequency: 0.7
+        }
     }
 };

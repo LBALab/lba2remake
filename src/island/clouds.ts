@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { WORLD_SIZE } from '../utils/lba';
 import { applyLightningUniforms } from './lightning';
 
-export function loadClouds(geometries) {
+export function loadClouds(props, geometries) {
     const threeObject = new THREE.Object3D();
     const cloudGeo = new THREE.PlaneBufferGeometry(600, 600);
     for (let p = 0; p < 50; p += 1) {
@@ -19,8 +19,14 @@ export function loadClouds(geometries) {
         cloud.renderOrder = 4 + (50 - p);
         threeObject.add(cloud);
     }
+    if (props.whiteness) {
+        geometries.clouds.material.uniforms.whiteness.value = props.whiteness;
+    }
+    if (props.opacity) {
+        geometries.clouds.material.uniforms.opacity.value = props.opacity;
+    }
     const update = (time) => {
-        each(threeObject.children, cloud => cloud.rotation.z += 0.03 * time.delta);
+        each(threeObject.children, cloud => cloud.rotation.z += props.speed * time.delta);
     };
     return {threeObject, update};
 }

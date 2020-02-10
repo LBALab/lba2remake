@@ -6,6 +6,7 @@ uniform sampler2D uTexture2;
 uniform float opacity;
 uniform float lightningStrength;
 uniform vec3 lightningPos;
+uniform float whiteness;
 
 in vec2 vUv;
 in vec3 vMVPos;
@@ -34,6 +35,7 @@ void main() {
     vec4 color = texture(uTexture, vUv);
     vec3 color2 = texture(uTexture2, vUv).rgb;
     vec3 tgtColor = mix(vec3(0.0), color2, color.r);
-    vec3 colWithFog = fog(tgtColor.rgb);
+    vec3 colWithWhiteness = mix(tgtColor, vec3(1.0), whiteness);
+    vec3 colWithFog = fog(colWithWhiteness);
     fragColor = lightning(colWithFog, distLightning, color.a * opacity);
 }

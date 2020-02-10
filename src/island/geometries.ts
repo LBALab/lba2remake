@@ -180,7 +180,8 @@ export async function prepareGeometries(island, data, ambience) {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: 0.1},
                     worldScale: {value: worldScale},
-                    opacity: {value: 0.6}
+                    opacity: {value: 0.6},
+                    whiteness: {value: 0.0}
                 },
                 transparent: true
             })
