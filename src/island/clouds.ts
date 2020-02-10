@@ -20,7 +20,7 @@ export function loadClouds(geometries) {
         threeObject.add(cloud);
     }
     const update = (time) => {
-        each(threeObject.children, cloud => cloud.rotation.z += 0.02 * time.delta);
+        each(threeObject.children, cloud => cloud.rotation.z += 0.03 * time.delta);
     };
     return {threeObject, update};
 }
