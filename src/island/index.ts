@@ -82,7 +82,6 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
 
     const geometries = await loadGeometries(props, data, ambience);
     const matByName = {};
-    const materials = [];
     each(geometries, (geom: IslandGeometry, name) => {
         const {positions, uvs, colors, intensities, normals, uvGroups, material} = geom;
         if (positions && positions.length > 0) {
@@ -126,7 +125,6 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
             mesh.name = name;
             mesh.onBeforeRender = applyLightningUniforms;
             matByName[name] = material;
-            materials.push(material);
             islandObject.add(mesh);
         }
     });
@@ -180,8 +178,6 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
             lightning && lightning.update(game, scene, time);
         };
     }
-
-    materials.push(geometries.clouds.material);
 
     return {
         props,
