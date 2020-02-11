@@ -1,27 +1,24 @@
 import {times} from 'lodash';
 import * as THREE from 'three';
 import {
-    loadSubTexture,
     loadPaletteTexture,
     loadTextureRGBA,
     makeNoiseTexture
 } from '../texture';
 import {compile} from '../utils/shaders';
 
-import VERT_GROUND_COLORED from './shaders/ground/colored.vert.glsl';
-import FRAG_GROUND_COLORED from './shaders/ground/colored.frag.glsl';
-import VERT_GROUND_TEXTURED from './shaders/ground/textured.vert.glsl';
-import FRAG_GROUND_TEXTURED from './shaders/ground/textured.frag.glsl';
-import VERT_OBJECTS_COLORED from './shaders/objects/colored.vert.glsl';
-import FRAG_OBJECTS_COLORED from './shaders/objects/colored.frag.glsl';
-import VERT_OBJECTS_TEXTURED from './shaders/objects/textured.vert.glsl';
-import FRAG_OBJECTS_TEXTURED from './shaders/objects/textured.frag.glsl';
-import VERT_SEA from './shaders/env/sea.vert.glsl';
-import FRAG_SEA from './shaders/env/sea.frag.glsl';
-import VERT_CLOUDS from './shaders/env/clouds.vert.glsl';
-import FRAG_CLOUDS from './shaders/env/clouds.frag.glsl';
-import VERT_MOON from './shaders/env/moon.vert.glsl';
-import FRAG_MOON from './shaders/env/moon.frag.glsl';
+import GROUND_COLORED__VERT from './shaders/ground/colored.vert.glsl';
+import GROUND_COLORED__FRAG from './shaders/ground/colored.frag.glsl';
+
+import GROUND_TEXTURED__VERT from './shaders/ground/textured.vert.glsl';
+import GROUND_TEXTURED__FRAG from './shaders/ground/textured.frag.glsl';
+
+import OBJECTS_COLORED__VERT from './shaders/objects/colored.vert.glsl';
+import OBJECTS_COLORED__FRAG from './shaders/objects/colored.frag.glsl';
+
+import OBJECTS_TEXTURED__VERT from './shaders/objects/textured.vert.glsl';
+import OBJECTS_TEXTURED__FRAG from './shaders/objects/textured.frag.glsl';
+
 import { WORLD_SIZE } from '../utils/lba';
 
 const fakeNoiseBuffer = new Uint8Array(1);
@@ -34,19 +31,14 @@ const fakeNoise = new THREE.DataTexture(
     THREE.UnsignedByteType
 );
 
-const loader = new THREE.TextureLoader();
-
 export async function prepareGeometries(island, data, ambience) {
     const {envInfo} = island;
-    const {files: {ile, ress}, palette, lutTexture, atlas} = data;
+    const {files: {ile}, palette, lutTexture, atlas} = data;
     const paletteTexture = loadPaletteTexture(palette);
     const groundTexture = loadTextureRGBA(ile.getEntry(1), palette);
     const noiseTexture = makeNoiseTexture();
     const light = getLightVector(ambience);
     const worldScale = 1 / (WORLD_SIZE * 0.04);
-    const cloudsTexture = await new Promise(resolve =>
-        loader.load('images/smoke.png', resolve)
-    );
     return {
         ground_colored: {
             positions: [],
@@ -54,8 +46,8 @@ export async function prepareGeometries(island, data, ambience) {
             colors: [],
             intensities: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', VERT_GROUND_COLORED),
-                fragmentShader: compile('frag', FRAG_GROUND_COLORED),
+                vertexShader: compile('vert', GROUND_COLORED__VERT),
+                fragmentShader: compile('frag', GROUND_COLORED__FRAG),
                 uniforms: {
                     fogColor: {value: new THREE.Vector4().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -72,8 +64,8 @@ export async function prepareGeometries(island, data, ambience) {
             colors: [],
             intensities: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', VERT_GROUND_TEXTURED),
-                fragmentShader: compile('frag', FRAG_GROUND_TEXTURED),
+                vertexShader: compile('vert', GROUND_TEXTURED__VERT),
+                fragmentShader: compile('frag', GROUND_TEXTURED__FRAG),
                 uniforms: {
                     fogColor: {value: new THREE.Vector4().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -91,8 +83,8 @@ export async function prepareGeometries(island, data, ambience) {
             normals: [],
             colors: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', VERT_OBJECTS_COLORED),
-                fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
+                vertexShader: compile('vert', OBJECTS_COLORED__VERT),
+                fragmentShader: compile('frag', OBJECTS_COLORED__FRAG),
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -109,8 +101,8 @@ export async function prepareGeometries(island, data, ambience) {
             uvs: [],
             uvGroups: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
-                fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
+                vertexShader: compile('vert', OBJECTS_TEXTURED__VERT),
+                fragmentShader: compile('frag', OBJECTS_TEXTURED__FRAG),
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -130,8 +122,8 @@ export async function prepareGeometries(island, data, ambience) {
             uvGroups: [],
             material: new THREE.RawShaderMaterial({
                 transparent: true,
-                vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
-                fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
+                vertexShader: compile('vert', OBJECTS_TEXTURED__VERT),
+                fragmentShader: compile('frag', OBJECTS_TEXTURED__FRAG),
                 uniforms: {
                     fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
                     fogDensity: {value: envInfo.fogDensity},
@@ -142,48 +134,6 @@ export async function prepareGeometries(island, data, ambience) {
                     palette: {value: paletteTexture},
                     light: {value: light}
                 }
-            })
-        },
-        sea: {
-            positions: [],
-            material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', envInfo.index !== 14 ? VERT_SEA : VERT_MOON),
-                fragmentShader: compile('frag', envInfo.index !== 14 ? FRAG_SEA : FRAG_MOON),
-                uniforms: {
-                    uTexture: {
-                        value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)
-                    },
-                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
-                    fogDensity: {value: envInfo.fogDensity},
-                    worldScale: {value: worldScale},
-                    time: {value: 0.0},
-                    scale: {value: envInfo.index !== 14 ? 512.0 : 16.0}
-                }
-            })
-        },
-        clouds: {
-            material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', VERT_CLOUDS),
-                fragmentShader: compile('frag', FRAG_CLOUDS),
-                uniforms: {
-                    uTexture: {value: cloudsTexture},
-                    uTexture2: {
-                        value: loadSubTexture(
-                            ress.getEntry(envInfo.index),
-                            palette,
-                            128,
-                            0,
-                            128,
-                            128
-                        )
-                    },
-                    fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
-                    fogDensity: {value: 0.1},
-                    worldScale: {value: worldScale},
-                    opacity: {value: 0.6},
-                    whiteness: {value: 0.0}
-                },
-                transparent: true
             })
         }
     };

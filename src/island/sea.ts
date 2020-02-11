@@ -1,5 +1,13 @@
 import {each, every} from 'lodash';
 import { WORLD_SIZE } from '../utils/lba';
+import { applyLightningUniforms } from './lightning';
+import * as THREE from 'three';
+import { compile } from '../utils/shaders';
+import VERT_SEA from './shaders/env/sea.vert.glsl';
+import FRAG_SEA from './shaders/env/sea.frag.glsl';
+import VERT_MOON from './shaders/env/moon.vert.glsl';
+import FRAG_MOON from './shaders/env/moon.frag.glsl';
+import { loadSubTexture } from '../texture';
 
 const push = Array.prototype.push;
 
@@ -58,7 +66,62 @@ const triangles = {
     ]
 };
 
-export function loadSea(section, geometries, usedTile, offsetX, offsetZ, skyIndex) {
+const worldScale = 1 / (WORLD_SIZE * 0.04);
+
+export function loadSea(_props, {layout, usedTiles, envInfo, ress, palette}) {
+    const positions = [];
+    each(layout.seaSections, (section) => {
+        const xd = Math.floor(section.x / 2);
+        const zd = Math.floor(section.z / 2);
+        const offsetX = 1 - Math.abs(section.x % 2);
+        const offsetZ = Math.abs(section.z % 2);
+        const tilesKey = [xd, zd].join(',');
+        loadSeaGeometry(
+            section,
+            positions,
+            usedTiles[tilesKey],
+            offsetX,
+            offsetZ,
+            envInfo.index
+        );
+    });
+
+    const seaTimeUniforms = {
+        uTexture: {
+            value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)
+        },
+        fogColor: {value: new THREE.Vector3().fromArray(envInfo.skyColor)},
+        fogDensity: {value: envInfo.fogDensity},
+        worldScale: {value: worldScale},
+        time: {value: 0.0},
+        scale: {value: envInfo.index !== 14 ? 512.0 : 16.0}
+    };
+
+    const material = new THREE.RawShaderMaterial({
+        vertexShader: compile('vert', envInfo.index !== 14 ? VERT_SEA : VERT_MOON),
+        fragmentShader: compile('frag', envInfo.index !== 14 ? FRAG_SEA : FRAG_MOON),
+        uniforms: seaTimeUniforms
+    });
+
+    const bufferGeometry = new THREE.BufferGeometry();
+    bufferGeometry.setAttribute(
+        'position',
+        new THREE.BufferAttribute(new Float32Array(positions), 3)
+    );
+    const seaMesh = new THREE.Mesh(bufferGeometry, material);
+    seaMesh.matrixAutoUpdate = false;
+    seaMesh.name = name;
+    seaMesh.onBeforeRender = applyLightningUniforms;
+
+    return {
+        threeObject: seaMesh,
+        update: (time) => {
+            seaTimeUniforms.time.value = time.elapsed;
+        },
+    };
+}
+
+function loadSeaGeometry(section, positions, usedTile, offsetX, offsetZ, skyIndex) {
     const n = Math.pow(2, 2 - section.lod) * 8;
     const dn = 32 / n;
     for (let x = 0; x < n; x += 1) {
@@ -74,7 +137,7 @@ export function loadSea(section, geometries, usedTile, offsetX, offsetZ, skyInde
                 const type = getTriangleType(section, isShore, usedTile, x, z, tx, tz, n);
                 each(triangles[type], (tris) => {
                     push.apply(
-                        geometries.sea.positions,
+                        positions,
                         getSeaPositions(
                             section,
                             [point(tris[0]), point(tris[1]), point(tris[2])],

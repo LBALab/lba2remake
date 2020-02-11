@@ -10,7 +10,8 @@ export default {
         lightning: {
             intensity: 1,
             frequency: 0.3
-        }
+        },
+        sea: {}
     },
     TWINSUN_SUNNY: {
         index: 13,
@@ -22,7 +23,8 @@ export default {
             speed: 0.02,
             whiteness: 1,
             opacity: 0.1
-        }
+        },
+        sea: {}
     },
     MOON: {
         index: 14,
@@ -40,7 +42,13 @@ export default {
         skyOpacity: 0.75,
         fogDensity: 0.4,
         scale: 1.0,
-        clouds: { speed: 0.04 }
+        clouds: { speed: 0.04 },
+        groundClouds: {
+            speed: -0.02,
+            ground: true,
+            whiteness: 0.5,
+            scale: 64.0
+        }
     },
     UNDERGAS: {
         index: 17,
@@ -53,6 +61,7 @@ export default {
         lightning: {
             intensity: 0.1,
             frequency: 0.7
-        }
+        },
+        sea: {}
     }
 };

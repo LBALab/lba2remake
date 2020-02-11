@@ -81,7 +81,7 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
         lutTexture
     };
 
-    const geometries = await loadGeometries(props, data, ambience);
+    const {geometries, usedTiles} = await loadGeometries(props, data, ambience);
     const matByName = {};
     each(geometries, (geom: IslandGeometry, name) => {
         const {positions, uvs, colors, intensities, normals, uvGroups, material} = geom;
@@ -153,28 +153,51 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
         }
     });
 
-    const seaMesh = islandObject.getObjectByName('sea') as THREE.Mesh;
-    const seaTimeUniform = (seaMesh.material as THREE.RawShaderMaterial).uniforms.time;
-
     const { envInfo } = props;
 
-    let updateWeather = (_game, _scene, _time) => {};
+    let updateEnv = (_game, _scene, _time) => {};
     if (!params.preview) {
-        const clouds = envInfo.clouds ? loadClouds(envInfo.clouds, geometries) : null;
-        const rain = envInfo.rain ? loadRain(envInfo.rain) : null;
-        const lightning = envInfo.lightning ? loadLightning(envInfo.lightning, sections) : null;
-        const stars = envInfo.stars ? loadStars(envInfo.stars) : null;
+        const clouds = envInfo.clouds
+            && await loadClouds(envInfo.clouds, {
+                envInfo,
+                ress: files.ress,
+                palette: data.palette
+            });
+        const groundClouds = envInfo.groundClouds
+            && await loadClouds(envInfo.groundClouds, {
+                envInfo,
+                ress: files.ress,
+                palette: data.palette
+            });
+        const rain = envInfo.rain
+            && loadRain(envInfo.rain);
+        const lightning = envInfo.lightning
+            && loadLightning(envInfo.lightning, sections);
+        const stars = envInfo.stars
+            && loadStars(envInfo.stars);
+        const sea = envInfo.sea
+            && loadSea(envInfo.sea, {
+                layout,
+                usedTiles,
+                envInfo,
+                ress: files.ress,
+                palette: data.palette
+            });
 
         clouds && islandObject.add(clouds.threeObject);
         rain && islandObject.add(rain.threeObject);
         lightning && islandObject.add(lightning.threeObject);
         stars && islandObject.add(stars.threeObject);
+        sea && islandObject.add(sea.threeObject);
+        groundClouds && islandObject.add(groundClouds.threeObject);
 
-        updateWeather = (game, scene, time) => {
+        updateEnv = (game, scene, time) => {
             clouds && clouds.update(time);
             rain && rain.update(scene, time);
             lightning && lightning.update(game, scene, time);
             stars && stars.update(time);
+            sea && sea.update(time);
+            groundClouds && groundClouds.update(time);
         };
     }
 
@@ -185,15 +208,11 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
         threeObject: islandObject,
         physics: loadIslandPhysics(sections),
 
-        updateSeaTime: (time) => {
-            seaTimeUniform.value = time.elapsed;
-        },
         update: (game, scene, time) => {
             if (scene) {
                 updateShadows(scene, matByName);
             }
-            seaTimeUniform.value = time.elapsed;
-            updateWeather(game, scene, time);
+            updateEnv(game, scene, time);
         }
     };
 }
@@ -253,16 +272,7 @@ async function loadGeometries(island, data, ambience) {
         loadObjects(section, geometries, models, atlas);
     });
 
-    each(data.layout.seaSections, (section) => {
-        const xd = Math.floor(section.x / 2);
-        const zd = Math.floor(section.z / 2);
-        const offsetX = 1 - Math.abs(section.x % 2);
-        const offsetZ = Math.abs(section.z % 2);
-        const tilesKey = [xd, zd].join(',');
-        loadSea(section, geometries, usedTiles[tilesKey], offsetX, offsetZ, island.envInfo.index);
-    });
-
-    return geometries;
+    return { geometries, usedTiles };
 }
 
 const DIFF = new THREE.Vector3();

@@ -7,6 +7,7 @@ uniform float opacity;
 uniform float lightningStrength;
 uniform vec3 lightningPos;
 uniform float whiteness;
+uniform float scale;
 
 in vec2 vUv;
 in vec3 vMVPos;
@@ -33,7 +34,7 @@ void main() {
     vec3 lp = vec3(lightningPos.x, 20.0, lightningPos.z);
     float distLightning = length(vPos - lp);
     vec4 color = texture(uTexture, vUv);
-    vec3 color2 = texture(uTexture2, vUv).rgb;
+    vec3 color2 = texture(uTexture2, vUv * scale).rgb;
     vec3 tgtColor = mix(vec3(0.0), color2, color.r);
     vec3 colWithWhiteness = mix(tgtColor, vec3(1.0), whiteness);
     vec3 colWithFog = fog(colWithWhiteness);
