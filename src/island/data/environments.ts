@@ -44,9 +44,9 @@ export default {
         scale: 1.0,
         clouds: { speed: 0.04 },
         groundClouds: {
-            speed: -0.02,
+            speed: -0.012,
             ground: true,
-            whiteness: 0.5,
+            whiteness: 0.6,
             scale: 64.0
         }
     },
