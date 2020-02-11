@@ -18,6 +18,7 @@ import { WORLD_SCALE_B } from '../utils/lba';
 import { loadRain } from './rain';
 import { loadClouds } from './clouds';
 import { loadLightning, applyLightningUniforms } from './lightning';
+import { loadStars } from './stars';
 
 const islandProps = {};
 each(islandsInfo, (island) => {
@@ -160,22 +161,20 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
     let updateWeather = (_game, _scene, _time) => {};
     if (!params.preview) {
         const clouds = envInfo.clouds ? loadClouds(envInfo.clouds, geometries) : null;
-        if (clouds) {
-            islandObject.add(clouds.threeObject);
-        }
         const rain = envInfo.rain ? loadRain(envInfo.rain) : null;
-        if (rain) {
-            islandObject.add(rain.threeObject);
-            materials.push(rain.material);
-        }
         const lightning = envInfo.lightning ? loadLightning(envInfo.lightning, sections) : null;
-        if (lightning) {
-            islandObject.add(lightning.threeObject);
-        }
+        const stars = envInfo.stars ? loadStars(envInfo.stars) : null;
+
+        clouds && islandObject.add(clouds.threeObject);
+        rain && islandObject.add(rain.threeObject);
+        lightning && islandObject.add(lightning.threeObject);
+        stars && islandObject.add(stars.threeObject);
+
         updateWeather = (game, scene, time) => {
             clouds && clouds.update(time);
             rain && rain.update(scene, time);
             lightning && lightning.update(game, scene, time);
+            stars && stars.update(time);
         };
     }
 

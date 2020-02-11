@@ -26,10 +26,13 @@ export default {
     },
     MOON: {
         index: 14,
-        skyColor: [0.0, 0.07, 0.10],
+        skyColor: [0.0, 0.0, 0.0],
         skyOpacity: 1.0,
         fogDensity: 0,
-        scale: 128.0
+        scale: 128.0,
+        stars: {
+            count: 10000
+        }
     },
     ZEELISH: {
         index: 16,
