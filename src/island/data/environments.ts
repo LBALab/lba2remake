@@ -48,7 +48,7 @@ export default {
         scale: 1.0,
         clouds: { speed: 0.1 },
         lightning: {
-            intensity: 0.2,
+            intensity: 0.1,
             frequency: 0.7
         }
     }
