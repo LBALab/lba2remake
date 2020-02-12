@@ -97,15 +97,21 @@ function processFollow3DMovement(
     cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
     scene.scenery.physics.processCameraCollisions(cameraPos);
 
-    controlsState.cameraLerp.lerpVectors(controlNode.position, cameraPos, time.delta * 2);
+    if (controlsState.camZone) {
+        controlsState.cameraLerp.lerpVectors(
+            controlNode.position,
+            controlsState.camZone,
+            time.delta * 2
+        );
+    } else {
+        controlsState.cameraLerp.lerpVectors(controlNode.position, cameraPos, time.delta * 2);
+    }
     controlsState.cameraLookAtLerp.lerpVectors(
         controlsState.cameraLookAtLerp.clone(),
         heroPos,
-        time.delta * 6);
-    controlNode.position.set(
-        controlsState.cameraLerp.x,
-        controlsState.cameraLerp.y,
-        controlsState.cameraLerp.z);
+        time.delta * 6
+    );
+    controlNode.position.copy(controlsState.cameraLerp);
     controlNode.lookAt(controlsState.cameraLookAtLerp);
 }
 
