@@ -57,7 +57,7 @@ export default {
         skyHeight: 35,
         fogDensity: 0.45,
         scale: 1.0,
-        clouds: { speed: 0.1 },
+        clouds: { speed: 0.02 },
         lightning: {
             intensity: 0.1,
             frequency: 0.7
