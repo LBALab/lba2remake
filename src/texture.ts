@@ -238,11 +238,10 @@ export function loadSubTextureRGBA(source: Uint8Array,
     return texture;
 }
 
-const noiseGen = new SimplexNoise('LBA');
-
-export function makeNoiseTexture() {
+export function makeNoiseTexture(seed = 'LBA') {
     const dim = 256;
     const image_data = new Uint8Array(dim * dim);
+    const noiseGen = new SimplexNoise(seed);
     for (let i = 0; i < dim * dim; i += 1) {
         const x = Math.floor(i / dim);
         const y = i % dim;

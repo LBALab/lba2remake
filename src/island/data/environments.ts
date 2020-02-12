@@ -11,20 +11,26 @@ export default {
             intensity: 1,
             frequency: 0.3
         },
-        sea: {}
+        sea: {
+            scale: 128.0,
+            amplitude: 0.5
+        }
     },
     TWINSUN_SUNNY: {
         index: 13,
         skyColor: [0.51, 0.71, 0.84],
         skyOpacity: 1.0,
-        fogDensity: 0.12,
+        fogDensity: 0.0012,
         scale: 2.0,
         clouds: {
             speed: 0.02,
             whiteness: 1,
             opacity: 0.1
         },
-        sea: {}
+        sea: {
+            scale: 128.0,
+            amplitude: 0.1
+        }
     },
     MOON: {
         index: 14,
@@ -58,10 +64,9 @@ export default {
         fogDensity: 0.45,
         scale: 1.0,
         clouds: { speed: 0.02 },
-        lightning: {
-            intensity: 0.1,
-            frequency: 0.7
-        },
-        sea: {}
+        sea: {
+            scale: 512,
+            amplitude: 0.3
+        }
     }
 };

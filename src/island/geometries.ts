@@ -139,7 +139,7 @@ export async function prepareGeometries(island, data, ambience) {
     };
 }
 
-function getLightVector(ambience) {
+export function getLightVector(ambience) {
     const lightVector = new THREE.Vector3(-1, 0, 0);
     lightVector.applyAxisAngle(
         new THREE.Vector3(0, 0, 1),

@@ -7,7 +7,8 @@ import VERT_SEA from './shaders/env/sea.vert.glsl';
 import FRAG_SEA from './shaders/env/sea.frag.glsl';
 import VERT_MOON from './shaders/env/moon.vert.glsl';
 import FRAG_MOON from './shaders/env/moon.frag.glsl';
-import { loadSubTexture } from '../texture';
+import { loadSubTexture, makeNoiseTexture } from '../texture';
+import { getLightVector } from './geometries';
 
 const push = Array.prototype.push;
 
@@ -68,7 +69,7 @@ const triangles = {
 
 const worldScale = 1 / (WORLD_SIZE * 0.04);
 
-export function loadSea(_props, {layout, usedTiles, envInfo, ress, palette}) {
+export function loadSea(props, {layout, usedTiles, envInfo, ress, palette, ambience}) {
     const positions = [];
     each(layout.seaSections, (section) => {
         const xd = Math.floor(section.x / 2);
@@ -86,7 +87,10 @@ export function loadSea(_props, {layout, usedTiles, envInfo, ress, palette}) {
         );
     });
 
-    const seaTimeUniforms = {
+    const light = getLightVector(ambience);
+    const noiseTexture = makeNoiseTexture('LBA_SEA');
+
+    const uniforms = {
         uTexture: {
             value: loadSubTexture(ress.getEntry(envInfo.index), palette, 0, 0, 128, 128)
         },
@@ -94,13 +98,17 @@ export function loadSea(_props, {layout, usedTiles, envInfo, ress, palette}) {
         fogDensity: {value: envInfo.fogDensity},
         worldScale: {value: worldScale},
         time: {value: 0.0},
-        scale: {value: envInfo.index !== 14 ? 512.0 : 16.0}
+        scale: {value: props.scale},
+        light: {value: light},
+        noise: {value: noiseTexture},
+        amplitude: {value: props.amplitude || 0.1}
     };
 
     const material = new THREE.RawShaderMaterial({
         vertexShader: compile('vert', envInfo.index !== 14 ? VERT_SEA : VERT_MOON),
         fragmentShader: compile('frag', envInfo.index !== 14 ? FRAG_SEA : FRAG_MOON),
-        uniforms: seaTimeUniforms
+        uniforms,
+        // wireframe: true
     });
 
     const bufferGeometry = new THREE.BufferGeometry();
@@ -116,7 +124,7 @@ export function loadSea(_props, {layout, usedTiles, envInfo, ress, palette}) {
     return {
         threeObject: seaMesh,
         update: (time) => {
-            seaTimeUniforms.time.value = time.elapsed;
+            uniforms.time.value = time.elapsed;
         },
     };
 }

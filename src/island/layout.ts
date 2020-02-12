@@ -39,8 +39,8 @@ function loadGroundSections(ile) {
 function loadSeaSections(groundSections) {
     const seaSections = [];
     const indexedSections = {};
-    for (let x = -14; x <= 16; x += 1) {
-        for (let z = -16; z <= 14; z += 1) {
+    for (let x = -20; x <= 20; x += 1) {
+        for (let z = -20; z <= 20; z += 1) {
             const distanceFromGround = computeDistanceFromGround(groundSections, x, z);
             if (distanceFromGround < 12) {
                 const section = {

@@ -155,7 +155,25 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
 
     const { envInfo } = props;
 
-    let updateEnv = (_game, _scene, _time) => {};
+    const sea = envInfo.sea
+        && loadSea(envInfo.sea, {
+            layout,
+            usedTiles,
+            envInfo,
+            ress: files.ress,
+            palette: data.palette,
+            ambience
+        });
+    const groundClouds = envInfo.groundClouds
+        && await loadClouds(envInfo.groundClouds, {
+            envInfo,
+            ress: files.ress,
+            palette: data.palette
+        });
+    sea && islandObject.add(sea.threeObject);
+    groundClouds && islandObject.add(groundClouds.threeObject);
+
+    let updateEnv = null;
     if (!params.preview) {
         const clouds = envInfo.clouds
             && await loadClouds(envInfo.clouds, {
@@ -163,39 +181,29 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
                 ress: files.ress,
                 palette: data.palette
             });
-        const groundClouds = envInfo.groundClouds
-            && await loadClouds(envInfo.groundClouds, {
-                envInfo,
-                ress: files.ress,
-                palette: data.palette
-            });
+
         const rain = envInfo.rain
             && loadRain(envInfo.rain);
         const lightning = envInfo.lightning
             && loadLightning(envInfo.lightning, sections);
         const stars = envInfo.stars
             && loadStars(envInfo.stars);
-        const sea = envInfo.sea
-            && loadSea(envInfo.sea, {
-                layout,
-                usedTiles,
-                envInfo,
-                ress: files.ress,
-                palette: data.palette
-            });
 
         clouds && islandObject.add(clouds.threeObject);
         rain && islandObject.add(rain.threeObject);
         lightning && islandObject.add(lightning.threeObject);
         stars && islandObject.add(stars.threeObject);
-        sea && islandObject.add(sea.threeObject);
-        groundClouds && islandObject.add(groundClouds.threeObject);
 
         updateEnv = (game, scene, time) => {
             clouds && clouds.update(time);
             rain && rain.update(scene, time);
             lightning && lightning.update(game, scene, time);
             stars && stars.update(time);
+            sea && sea.update(time);
+            groundClouds && groundClouds.update(time);
+        };
+    } else {
+        updateEnv = (_game, _scene, time) => {
             sea && sea.update(time);
             groundClouds && groundClouds.update(time);
         };
