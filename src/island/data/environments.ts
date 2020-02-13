@@ -20,7 +20,7 @@ export default {
         index: 13,
         skyColor: [0.51, 0.71, 0.84],
         skyOpacity: 1.0,
-        fogDensity: 0.0012,
+        fogDensity: 0.12,
         scale: 2.0,
         clouds: {
             speed: 0.02,
