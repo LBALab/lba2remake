@@ -17,7 +17,7 @@ out vec3 vMVPos;
 out float vDistLightning;
 out vec2 vPos;
 
-#require "../common/lightning.vert"
+#require "../../shaders/common/lightning.vert"
 
 void main() {
     vec3 pos = position;

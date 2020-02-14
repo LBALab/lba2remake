@@ -1,14 +1,12 @@
 import {each, every} from 'lodash';
-import { WORLD_SIZE } from '../utils/lba';
+import { WORLD_SIZE } from '../../utils/lba';
 import { applyLightningUniforms } from './lightning';
 import * as THREE from 'three';
-import { compile } from '../utils/shaders';
-import VERT_SEA from './shaders/env/sea.vert.glsl';
-import FRAG_SEA from './shaders/env/sea.frag.glsl';
-import VERT_MOON from './shaders/env/moon.vert.glsl';
-import FRAG_MOON from './shaders/env/moon.frag.glsl';
-import { loadSubTexture, makeNoiseTexture } from '../texture';
-import { getLightVector } from './geometries';
+import { compile } from '../../utils/shaders';
+import VERT_SEA from './shaders/sea.vert.glsl';
+import FRAG_SEA from './shaders/sea.frag.glsl';
+import { loadSubTexture, makeNoiseTexture } from '../../texture';
+import { getLightVector } from '../geometries';
 
 const push = Array.prototype.push;
 
@@ -105,8 +103,8 @@ export function loadSea(props, {layout, usedTiles, envInfo, ress, palette, ambie
     };
 
     const material = new THREE.RawShaderMaterial({
-        vertexShader: compile('vert', envInfo.index !== 14 ? VERT_SEA : VERT_MOON),
-        fragmentShader: compile('frag', envInfo.index !== 14 ? FRAG_SEA : FRAG_MOON),
+        vertexShader: compile('vert', VERT_SEA),
+        fragmentShader: compile('frag', FRAG_SEA),
         uniforms,
         // wireframe: true
     });

@@ -5,7 +5,7 @@ import { loadHqr } from '../hqr';
 import { prepareGeometries } from './geometries';
 import { loadLayout } from './layout';
 import { loadGround } from './ground';
-import { loadSea } from './sea';
+import { loadSea } from './environment/sea';
 import { loadObjects } from './objects';
 import { loadModel } from './model';
 import { loadIslandPhysics } from '../game/loop/physicsIsland';
@@ -15,10 +15,10 @@ import islandsInfo from './data/islands';
 import environments from './data/environments';
 import { createTextureAtlas } from './atlas';
 import { WORLD_SCALE_B } from '../utils/lba';
-import { loadRain } from './rain';
-import { loadClouds } from './clouds';
-import { loadLightning, applyLightningUniforms } from './lightning';
-import { loadStars } from './stars';
+import { loadRain } from './environment/rain';
+import { loadClouds } from './environment/clouds';
+import { loadLightning, applyLightningUniforms } from './environment/lightning';
+import { loadStars } from './environment/stars';
 
 const islandProps = {};
 each(islandsInfo, (island) => {

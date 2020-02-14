@@ -1,8 +1,8 @@
 import { LightningStrike } from 'three/examples/jsm/geometries/LightningStrike.js';
 import * as THREE from 'three';
 
-import { WORLD_SIZE } from '../utils/lba';
-import { findSection, getGroundInfo } from '../game/loop/physicsIsland';
+import { WORLD_SIZE } from '../../utils/lba';
+import { findSection, getGroundInfo } from '../../game/loop/physicsIsland';
 
 let currentLightning = null;
 

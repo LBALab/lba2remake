@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import SimplexNoise from 'simplex-noise';
 
-import STARS_VERT from './shaders/env/stars.vert.glsl';
-import STARS_FRAG from './shaders/env/stars.frag.glsl';
+import STARS_VERT from './shaders/stars.vert.glsl';
+import STARS_FRAG from './shaders/stars.frag.glsl';
 
 const starsMaterial = new THREE.ShaderMaterial({
     uniforms: {

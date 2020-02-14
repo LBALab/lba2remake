@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-import RAIN_VERT from './shaders/env/rain.vert.glsl';
-import RAIN_FRAG from './shaders/env/rain.frag.glsl';
+import RAIN_VERT from './shaders/rain.vert.glsl';
+import RAIN_FRAG from './shaders/rain.frag.glsl';
 import { applyLightningUniforms } from './lightning';
 import SimplexNoise from 'simplex-noise';
 

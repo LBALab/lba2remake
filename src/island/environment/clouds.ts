@@ -1,13 +1,13 @@
 import { each } from 'lodash';
 import * as THREE from 'three';
 
-import { WORLD_SIZE } from '../utils/lba';
-import { loadSubTexture } from '../texture';
-import { compile } from '../utils/shaders';
+import { WORLD_SIZE } from '../../utils/lba';
+import { loadSubTexture } from '../../texture';
+import { compile } from '../../utils/shaders';
 
 import { applyLightningUniforms } from './lightning';
-import VERT_CLOUDS from './shaders/env/clouds.vert.glsl';
-import FRAG_CLOUDS from './shaders/env/clouds.frag.glsl';
+import VERT_CLOUDS from './shaders/clouds.vert.glsl';
+import FRAG_CLOUDS from './shaders/clouds.frag.glsl';
 
 const worldScale = 1 / (WORLD_SIZE * 0.04);
 

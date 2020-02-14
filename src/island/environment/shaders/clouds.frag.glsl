@@ -15,7 +15,7 @@ in vec3 vPos;
 
 out vec4 fragColor;
 
-#require "../common/fog.frag"
+#require "../../shaders/common/fog.frag"
 
 float lIntensity(float distLightning) {
     float adjStrength = lightningStrength * 0.25;

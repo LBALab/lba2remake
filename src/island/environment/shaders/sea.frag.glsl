@@ -15,8 +15,8 @@ in vec2 vPos;
 
 out vec4 fragColor;
 
-#require "../common/fog.frag"
-#require "../common/lightning.frag"
+#require "../../shaders/common/fog.frag"
+#require "../../shaders/common/lightning.frag"
 
 void main() {
     float dp = dot(vNormal, light);
