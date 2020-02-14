@@ -232,7 +232,11 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.isoGridIdx = isoGridIdx;
         const sceneData = await loadSceneData(getLanguageConfig().language, isoGridIdx);
         const sceneMap = await loadSceneMapData();
-        const isoGrid = await loadIsometricScenery(sceneMap[isoGridIdx].index, sceneData.ambience);
+        const isoGrid = await loadIsometricScenery(
+            sceneMap[isoGridIdx].index,
+            sceneData.ambience,
+            true
+        );
         const { isoGrid: oldIsoGrid } = this.state;
         if (oldIsoGrid) {
             this.state.scene.threeScene.remove(oldIsoGrid.threeObject);
