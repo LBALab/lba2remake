@@ -52,7 +52,7 @@ export default {
         groundClouds: {
             speed: -0.012,
             ground: true,
-            whiteness: 0.6,
+            whiteness: 0.4,
             scale: 64.0
         }
     },
