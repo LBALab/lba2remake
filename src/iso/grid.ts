@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {map, last} from 'lodash';
 import {bits} from '../utils';
-import {loadBricksMapping, Side, OffsetBySide} from './mapping';
+import {loadBricksMapping} from './mapping';
 
 export function loadGrid(bkg, bricks, mask, palette, entry) {
     const gridData = new DataView(bkg.getEntry(entry));
@@ -93,7 +93,7 @@ export function loadGrid(bkg, bricks, mask, palette, entry) {
                 baseHeight += height;
             }
             return {
-                build: buildCell.bind(null, library, blocks),
+                blocks,
                 columns
             };
         })
@@ -113,7 +113,7 @@ function getBlockData(library, block) {
 
 const libraries = [];
 
-function loadLibrary(bkg, bricks, mask, palette, entry) {
+export function loadLibrary(bkg, bricks, mask, palette, entry) {
     if (libraries[entry]) {
         return libraries[entry];
     }
@@ -127,10 +127,11 @@ function loadLibrary(bkg, bricks, mask, palette, entry) {
             dataView.byteLength
             : dataView.getUint32((i + 1) * 4, true);
         const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
-        layouts.push(loadLayout(layoutDataView));
+        layouts.push(loadLayout(layoutDataView, i));
     }
     const mapping = loadBricksMapping(layouts, bricks, mask, palette);
     const library = {
+        index: entry,
         texture: mapping.texture,
         bricksMap: mapping.bricksMap,
         layouts
@@ -139,7 +140,7 @@ function loadLibrary(bkg, bricks, mask, palette, entry) {
     return library;
 }
 
-function loadLayout(dataView) {
+function loadLayout(dataView, index) {
     const nX = dataView.getUint8(0);
     const nY = dataView.getUint8(1);
     const nZ = dataView.getUint8(2);
@@ -156,71 +157,10 @@ function loadLayout(dataView) {
         });
     }
     return {
+        index,
         nX,
         nY,
         nZ,
         blocks
     };
-}
-
-function buildCell(library, blocks, geometries, x, z) {
-    const h = 0.5;
-    const {positions, uvs} = geometries;
-    const {width, height} = library.texture.image;
-
-    for (let yIdx = 0; yIdx < blocks.length; yIdx += 1) {
-        const y = (yIdx * h) + h;
-        if (blocks[yIdx]) {
-            const layout = library.layouts[blocks[yIdx].layout];
-            if (layout) {
-                const block = layout.blocks[blocks[yIdx].block];
-                if (block && block.brick in library.bricksMap) {
-                    const {u, v} = library.bricksMap[block.brick];
-                    const pushUv = (u0, v0, side) => {
-                        const o = OffsetBySide[side];
-                        uvs.push((u + u0 + o.x) / width, (v + v0 + o.y) / height);
-                    };
-
-                    positions.push(x, y, z);
-                    pushUv(24, -0.5, Side.TOP);
-                    positions.push(x, y, z + 1);
-                    pushUv(48, 11.5, Side.TOP);
-                    positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5, Side.TOP);
-                    positions.push(x, y, z);
-                    pushUv(24, -0.5, Side.TOP);
-                    positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5, Side.TOP);
-                    positions.push(x + 1, y, z);
-                    pushUv(0, 11.5, Side.TOP);
-
-                    positions.push(x + 1, y, z);
-                    pushUv(0, 11.5, Side.LEFT);
-                    positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5, Side.LEFT);
-                    positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5, Side.LEFT);
-                    positions.push(x + 1, y, z);
-                    pushUv(0, 11.5, Side.LEFT);
-                    positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5, Side.LEFT);
-                    positions.push(x + 1, y - h, z);
-                    pushUv(0, 26.5, Side.LEFT);
-
-                    positions.push(x, y, z + 1);
-                    pushUv(48, 11.5, Side.RIGHT);
-                    positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5, Side.RIGHT);
-                    positions.push(x + 1, y, z + 1);
-                    pushUv(24, 23.5, Side.RIGHT);
-                    positions.push(x, y, z + 1);
-                    pushUv(48, 11.5, Side.RIGHT);
-                    positions.push(x, y - h, z + 1);
-                    pushUv(48, 26.5, Side.RIGHT);
-                    positions.push(x + 1, y - h, z + 1);
-                    pushUv(24, 38.5, Side.RIGHT);
-                }
-            }
-        }
-    }
 }

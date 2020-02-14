@@ -13,13 +13,16 @@ export function createScreen(options) {
 
     const density = 512;
 
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.encoding = THREE.GammaEncoding;
+    texture.anisotropy = 16;
     const geometry = new THREE.PlaneBufferGeometry(width / density, height / density);
     const material = new THREE.MeshBasicMaterial({
         color: 0xFFFFFF,
         depthTest: !options.noDepth,
         transparent: true,
         opacity: 1,
-        map: new THREE.CanvasTexture(canvas)
+        map: texture
     });
 
     const mesh = new THREE.Mesh(geometry, material);

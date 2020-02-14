@@ -61,7 +61,7 @@ function debugZoneTargetPos(newScene, newHero) {
 /**
  * @return {boolean}
  */
-function GOTO_SCENE(_game, scene, zone, hero) {
+function GOTO_SCENE(game, scene, zone, hero) {
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
         const box = zone.props.box;
         scene.goto(zone.props.snap).then((newScene) => {
@@ -77,13 +77,20 @@ function GOTO_SCENE(_game, scene, zone, hero) {
             // debugZoneTargetPos(newScene, newHero);
 
             const dAngle = -zone.props.info3 * (Math.PI / 2);
-            const euler = new THREE.Euler();
-            euler.setFromQuaternion(hero.physics.orientation, 'YXZ');
-            euler.y += dAngle;
-            newHero.physics.temp.angle = euler.y;
-            newHero.physics.temp.destAngle = euler.y;
-            newHero.physics.orientation.setFromEuler(euler);
-            newHero.threeObject.quaternion.copy(newHero.physics.orientation);
+            if (game.controlsState.firstPerson) {
+                const euler = new THREE.Euler();
+                euler.setFromQuaternion(scene.camera.controlNode.quaternion, 'YXZ');
+                euler.y += dAngle;
+                newScene.camera.controlNode.quaternion.setFromEuler(euler);
+            } else {
+                const euler = new THREE.Euler();
+                euler.setFromQuaternion(hero.physics.orientation, 'YXZ');
+                euler.y += dAngle;
+                newHero.physics.temp.angle = euler.y;
+                newHero.physics.temp.destAngle = euler.y;
+                newHero.physics.orientation.setFromEuler(euler);
+                newHero.threeObject.quaternion.copy(newHero.physics.orientation);
+            }
         });
         return true;
     }

@@ -3,6 +3,11 @@ import { unimplemented } from './utils';
 import { WORLD_SCALE } from '../../utils/lba';
 
 export function GOTO_POINT(point) {
+    if (this.actor.index === 0 && this.game.controlsState.firstPerson) {
+        this.actor.physics.position.copy(point.physics.position);
+        this.actor.stop();
+        return;
+    }
     const distance = this.actor.goto(point.physics.position);
 
     if (distance > 0.5) {

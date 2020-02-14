@@ -1,6 +1,10 @@
 import * as THREE from 'three';
+import { WORLD_SIZE } from '../utils/lba';
 
-const CAMERA_HERO_OFFSET = new THREE.Vector3(-24, 19.2, 24);
+const CAMERA_HERO_OFFSET = new THREE.Vector3(-1, 0.8, 1);
+CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
+const ANGLE_LEFT = new THREE.Euler(0, -Math.PI / 2, 0, 'YXZ');
+const ANGLE_RIGHT = new THREE.Euler(0, Math.PI / 2, 0, 'YXZ');
 
 export function getIsometricCamera() {
     const w = window.innerWidth;
@@ -11,7 +15,7 @@ export function getIsometricCamera() {
         h * 0.5,
         -h * 0.5,
         0,
-        1000
+        42 * WORLD_SIZE
     );
     setCameraScale(camera, w, h);
     camera.name = 'IsoCamera';
@@ -43,10 +47,12 @@ export function getIsometricCamera() {
             if (controlsState.freeCamera) {
                 processFreeIsoMovement(controlsState, camera, time);
             } else {
-                if (!scene.actors[0].threeObject)
+                if (!(scene.actors && scene.actors[0].threeObject) && !scene.target) {
                     return;
+                }
 
-                const { objectPos, cameraPos } = getTargetPos(scene.actors[0]);
+                const target = scene.actors ? scene.actors[0] : scene.target;
+                const { objectPos, cameraPos } = getTargetPos(target);
 
                 controlsState.cameraLerp.lerpVectors(camera.position, cameraPos, 0.2);
                 controlsState.cameraLookAtLerp.lerpVectors(
@@ -66,12 +72,18 @@ export function getIsometricCamera() {
 
             camera.position.copy(cameraPos);
             camera.lookAt(objectPos);
+        },
+        rotateLeft() {
+            CAMERA_HERO_OFFSET.applyEuler(ANGLE_LEFT);
+        },
+        rotateRight() {
+            CAMERA_HERO_OFFSET.applyEuler(ANGLE_RIGHT);
         }
     };
 }
 
 function setCameraScale(camera, width, height) {
-    const baseSize = 8;
+    const baseSize = WORLD_SIZE / 3;
     const scale = baseSize / (width < height ? width : height);
     camera.scale.set(scale, scale, 1);
 }

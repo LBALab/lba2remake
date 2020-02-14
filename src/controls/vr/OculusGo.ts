@@ -19,6 +19,7 @@ export default class OculusGo {
         const camera = scene && scene.camera;
         const hero = game.getState().hero;
         controlsState.action = 0;
+        controlsState.jump = 0;
         controlsState.relativeToCam = true;
         controlsState.controllerType = 'oculusgo';
 
@@ -36,14 +37,25 @@ export default class OculusGo {
 
         if (touchpad.touched) {
             controlsState.controlVector.set(gamepad.axes[0], -gamepad.axes[1]);
+            controlsState.altControlVector.set(gamepad.axes[0], 0);
         } else {
             controlsState.controlVector.set(0, 0);
+            controlsState.altControlVector.set(0, 0);
         }
         if (touchpad.pressed) {
             controlsState.controlVector.set(0, 0);
+            controlsState.altControlVector.set(0, 0);
         }
-        if (trigger.tapped && camera && scene) {
-            camera.center(scene);
+        if (trigger.tapped) {
+            if (!controlsState.firstPerson && camera && scene) {
+                camera.center(scene);
+            } else if (controlsState.firstPerson) {
+                if (hero.behaviour === 1) {
+                    controlsState.jump = 1;
+                } else {
+                    controlsState.action = 1;
+                }
+            }
         }
         if (trigger.longPressed) {
             switchStats();

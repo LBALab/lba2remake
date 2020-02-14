@@ -1,0 +1,20 @@
+[
+    {"name": "Citadel Island", "index": 0},
+    {"name": "Sewers", "index": 1},
+    {"name": "Gray Buildings", "index": 2},
+    {"name": "Caves", "index": 3},
+    {"name": "Emerald Moon", "index": 4},
+    {"name": "Desert Island", "index": 5},
+    {"name": "Esmer Shuttle", "index": 6},
+    {"name": "Zeelish factories/buildings", "index": 7},
+    {"name": "Imperial Hotel", "index": 8},
+    {"name": "Emperor's Palace", "index": 9},
+    {"name": "Dark Monk Statue", "index": 10},
+    {"name": "Undergas", "index": 11},
+    {"name": "Mosquibees", "index": 12},
+    {"name": "Otringal", "index": 13},
+    {"name": "Gazogem Refinery", "index": 14},
+    {"name": "Francos Island", "index": 15},
+    {"name": "Spaceport", "index": 16},
+    {"name": "Island CX", "index": 17}
+]

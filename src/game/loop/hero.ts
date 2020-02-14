@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { DirMode } from '../actors';
 import { AnimType } from '../data/animType';
+import { WORLD_SIZE } from '../../utils/lba';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -24,7 +25,11 @@ export function updateHero(game, scene, hero, time) {
         return;
     const behaviour = game.getState().hero.behaviour;
     handleBehaviourChanges(hero, behaviour);
-    processActorMovement(game.controlsState, scene, hero, time, behaviour);
+    if (game.controlsState.firstPerson) {
+        processFirstPersonsMovement(game.controlsState, scene, hero);
+    } else {
+        processActorMovement(game.controlsState, scene, hero, time, behaviour);
+    }
 }
 
 function handleBehaviourChanges(hero, behaviour) {
@@ -40,6 +45,59 @@ function toggleJump(hero, value) {
     hero.props.runtimeFlags.isWalking = value;
     // check in the original game how this is actually set
     hero.props.runtimeFlags.hasGravityByAnim = value;
+}
+
+let turnReset = true;
+
+function processFirstPersonsMovement(controlsState, scene, hero) {
+    let animIndex = hero.props.animIndex;
+    if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
+        toggleJump(hero, false);
+    }
+    if (!hero.props.runtimeFlags.isJumping) {
+        toggleJump(hero, false);
+        animIndex = AnimType.NONE;
+        if (Math.abs(controlsState.controlVector.y) > 0.6) {
+            hero.props.runtimeFlags.isWalking = true;
+            animIndex = controlsState.controlVector.y > 0 ? AnimType.FORWARD : AnimType.BACKWARD;
+        } else if (Math.abs(controlsState.controlVector.x) > 0.7) {
+            hero.props.runtimeFlags.isWalking = true;
+            animIndex = controlsState.controlVector.x > 0
+                ? AnimType.DODGE_LEFT
+                : AnimType.DODGE_RIGHT;
+        } else {
+            hero.props.runtimeFlags.isWalking = false;
+        }
+        if (Math.abs(controlsState.altControlVector.x) > 0.6 && turnReset) {
+            const euler = new THREE.Euler();
+            euler.setFromQuaternion(scene.camera.controlNode.quaternion, 'YXZ');
+            euler.y -= Math.sign(controlsState.altControlVector.x) * Math.PI / 8;
+            scene.camera.controlNode.quaternion.setFromEuler(euler);
+            turnReset = false;
+        } else if (Math.abs(controlsState.altControlVector.x) < 0.3) {
+            turnReset = true;
+        }
+        if (controlsState.jump === 1) {
+            toggleJump(hero, true);
+            animIndex = AnimType.JUMP;
+            if (Math.abs(controlsState.controlVector.y) > 0.6) {
+                animIndex = AnimType.RUNNING_JUMP;
+            }
+        }
+    }
+    if (!hero.props.runtimeFlags.isJumping) {
+        const orientation = onlyY(scene.camera.threeCamera.quaternion);
+        const euler = new THREE.Euler();
+        euler.setFromQuaternion(orientation, 'YXZ');
+        hero.physics.orientation.setFromEuler(euler);
+        const baseEuler = new THREE.Euler();
+        baseEuler.setFromQuaternion(scene.camera.controlNode.quaternion, 'YXZ');
+        hero.physics.temp.angle = baseEuler.y + euler.y;
+    }
+    if (hero.props.animIndex !== animIndex) {
+        hero.props.animIndex = animIndex;
+        hero.resetAnimState();
+    }
 }
 
 function processActorMovement(controlsState, scene, hero, time, behaviour) {
@@ -122,8 +180,8 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
                         : AnimType.LEFT;
                     let dy = 0;
                     if (hero.animState.keyframeLength) {
-                        dy = (hero.animState.rotation.y * time.delta * 1000)
-                                / hero.animState.keyframeLength;
+                        const rotY = (hero.animState.rotation.y * 24) / WORLD_SIZE;
+                        dy = (rotY * time.delta * 1000) / hero.animState.keyframeLength;
                     }
                     euler.y += dy;
                 } else {
@@ -153,6 +211,14 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
         hero.props.animIndex = animIndex;
         hero.resetAnimState();
     }
+}
+
+function onlyY(src) {
+    const euler = new THREE.Euler();
+    euler.setFromQuaternion(src, 'YXZ');
+    euler.x = 0;
+    euler.z = 0;
+    return new THREE.Quaternion().setFromEuler(euler);
 }
 
 const FLAT_CAM = new THREE.Object3D();

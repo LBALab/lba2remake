@@ -1,4 +1,5 @@
 import {each, every} from 'lodash';
+import { WORLD_SIZE } from '../utils/lba';
 
 const push = Array.prototype.push;
 
@@ -141,7 +142,7 @@ function getSeaPositions(section, points, isEdge) {
         const idx = points[i];
         const x = ((section.x * 32) + (65 - Math.floor(idx / 65))) - 32;
         const z = (section.z * 32) + (idx % 65);
-        positions.push((x / 32) * 24, isEdge[i] ? 0 : 1, (z / 32) * 24);
+        positions.push((x / 32) * WORLD_SIZE, isEdge[i] ? 0 : 1, (z / 32) * WORLD_SIZE);
     }
     return positions;
 }

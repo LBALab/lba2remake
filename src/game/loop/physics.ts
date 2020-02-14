@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {each, find} from 'lodash';
 
 import {processZones} from './zones';
+import { WORLD_SIZE } from '../../utils/lba';
 
 export function processPhysicsFrame(game, scene, time) {
     each(scene.actors, (actor) => {
@@ -22,7 +23,7 @@ function processActorPhysics(scene, actor, time) {
         if (!actor.props.runtimeFlags.hasGravityByAnim
             && actor.props.flags.canFall) {
             // Max falling speed: 0.15m per frame
-            actor.physics.position.y -= 6 * time.delta;
+            actor.physics.position.y -= 0.25 * WORLD_SIZE * time.delta;
         }
         scene.scenery.physics.processCollisions(scene, actor);
         processCollisionsWithActors(scene, actor);
@@ -35,19 +36,23 @@ function processActorPhysics(scene, actor, time) {
     }
 }
 
+const BB_MIN = 0.004 * WORLD_SIZE;
+const BB_MAX = (WORLD_SIZE * 2) - BB_MIN;
+const BOX_Y_OFFSET = 0.005 * WORLD_SIZE;
+
 function processSidesceneTransitions(scene) {
     const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
-    pos.y += 0.12;
-    if (scene.isIsland && (pos.x < 0.1 || pos.z < 0.1 || pos.x > 47.9 || pos.z > 47.9)) {
+    pos.y += BOX_Y_OFFSET;
+    if (scene.isIsland && (pos.x < BB_MIN || pos.z < BB_MIN || pos.x > BB_MAX || pos.z > BB_MAX)) {
         const globalPos = new THREE.Vector3();
         globalPos.applyMatrix4(hero.threeObject.matrixWorld);
         const foundSideScene = find(scene.sideScenes, (sideScene) => {
             const nodePos = sideScene.sceneNode.position;
-            return globalPos.x > nodePos.x + 0.1
-                && globalPos.x < nodePos.x + 47.9
-                && globalPos.z > nodePos.z + 0.1
-                && globalPos.z < nodePos.z + 47.9;
+            return globalPos.x > nodePos.x + BB_MIN
+                && globalPos.x < nodePos.x + BB_MAX
+                && globalPos.z > nodePos.z + BB_MIN
+                && globalPos.z < nodePos.z + BB_MAX;
         });
         if (foundSideScene) {
             scene.goto(foundSideScene.index, false, false, false);
@@ -63,6 +68,9 @@ const ITRS_SIZE = new THREE.Vector3();
 const CENTER1 = new THREE.Vector3();
 const CENTER2 = new THREE.Vector3();
 
+const YSTEP = WORLD_SIZE / 3072;
+const Y_THRESHOLD = WORLD_SIZE * 0.000625;
+
 function processCollisionsWithActors(scene, actor) {
     actor.hasCollidedWithActor = -1;
     if (actor.model === null || actor.isKilled || !actor.props.flags.hasCollisions) {
@@ -70,7 +78,7 @@ function processCollisionsWithActors(scene, actor) {
     }
     ACTOR_BOX.copy(actor.model.boundingBox);
     ACTOR_BOX.translate(actor.physics.position);
-    DIFF.set(0, 1 / 128, 0);
+    DIFF.set(0, YSTEP, 0);
     ACTOR_BOX.translate(DIFF);
     for (let i = 0; i < scene.actors.length; i += 1) {
         const a = scene.actors[i];
@@ -87,7 +95,7 @@ function processCollisionsWithActors(scene, actor) {
         } else {
             INTERSECTION.applyMatrix4(a.threeObject.matrixWorld);
         }
-        DIFF.set(0, 1 / 128, 0);
+        DIFF.set(0, YSTEP, 0);
         INTERSECTION.translate(DIFF);
         ACTOR2_BOX.copy(INTERSECTION);
         if (ACTOR2_BOX.intersectsBox(ACTOR_BOX)) {
@@ -96,7 +104,7 @@ function processCollisionsWithActors(scene, actor) {
             ACTOR_BOX.getCenter(CENTER1);
             ACTOR2_BOX.getCenter(CENTER2);
             const dir = CENTER1.sub(CENTER2);
-            if (actor.physics.position.y < ACTOR2_BOX.max.y - 0.015) {
+            if (actor.physics.position.y < ACTOR2_BOX.max.y - Y_THRESHOLD) {
                 if (ITRS_SIZE.x < ITRS_SIZE.z) {
                     DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
                 } else {

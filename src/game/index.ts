@@ -21,6 +21,7 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
         getUiState,
         controlsState: {
             controlVector: new THREE.Vector2(),
+            altControlVector: new THREE.Vector2(),
             cameraSpeed: new THREE.Vector3(),
             cameraLerp: new THREE.Vector3(),
             cameraLookAtLerp: new THREE.Vector3(),
@@ -28,6 +29,7 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
             relativeToCam: false,
+            firstPerson: getSavedVRFirstPersonMode(),
             action: 0,
             jump: 0,
             fight: 0,
@@ -178,4 +180,12 @@ async function preloadFile(url, name) {
         };
         request.send();
     });
+}
+
+function getSavedVRFirstPersonMode() {
+    const firstPerson = localStorage.getItem('vrFirstPerson');
+    if (firstPerson !== null && firstPerson !== undefined) {
+        return JSON.parse(firstPerson);
+    }
+    return false;
 }

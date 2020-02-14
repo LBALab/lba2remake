@@ -9,6 +9,7 @@ interface Extensions {
     separator?: string;
     hideRoot?: boolean;
     stateHandler?: any;
+    settings?: any;
 }
 
 export function makeOutlinerArea(id, name, content, extensions: Extensions = {}) {
@@ -31,6 +32,7 @@ export function makeOutlinerArea(id, name, content, extensions: Extensions = {})
             setPath(path, prettyPath) {
                 this.setState({path, prettyPath});
             }
-        }, extensions.stateHandler)
+        }, extensions.stateHandler),
+        settings: extensions.settings
     };
 }

@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 
-export const WORLD_SCALE = 24 / 0x4000;
+export const WORLD_SIZE = 20; // the length of half an outdoors section in meters
+export const WORLD_SCALE = WORLD_SIZE / 0x4000;
+export const WORLD_SCALE_B = 0.03125 * WORLD_SIZE;
 
 export function getRotation(nextValue, currentValue, interpolation) {
     let angleDif = nextValue - currentValue;
@@ -49,7 +51,7 @@ export function distance2D(from, to) {
     return Math.sqrt(distsquared);
 }
 
-const distanceThreeJs = 24 / 32;
+const distanceThreeJs = WORLD_SIZE / 32;
 
 export function getDistance(value) {
     return (value * distanceThreeJs) / 500;

@@ -24,9 +24,10 @@ import { getVR3DCamera } from '../cameras/vr/vr3d';
 import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { createFPSCounter } from '../ui/vr/vrFPS';
 import { createVRGUI } from '../ui/vr/vrGUI';
-import { angleToRad } from '../utils/lba';
+import { angleToRad, WORLD_SIZE } from '../utils/lba';
 import { getLanguageConfig } from '../lang';
 import { makePure } from '../utils/debug';
+import { getVrFirstPersonCamera } from '../cameras/vr/vrFirstPerson';
 
 declare global {
     var ga: Function;
@@ -76,7 +77,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 sideScene.sideScenes[scene.index] = scene;
                 relocateHero(scene.actors[0], sideScene.actors[0], sideScene, teleport);
                 scene = sideScene;
-                reviveActor(scene.actors[0]); // Awake twinsen
+                reviveActor(scene.actors[0], game); // Awake twinsen
                 scene.isActive = true;
                 if (!musicSource.isPlaying) {
                     musicSource.load(scene.data.ambience.musicIndex, () => {
@@ -158,7 +159,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
     const is3DCam = indexInfo.isIsland || renderer.vr || params.iso3d;
     const actors = await Promise.all(map(
         sceneData.actors,
-        actor => loadActor(params, is3DCam, envInfo, sceneData.ambience, actor, parent)
+        actor => loadActor(game, params, is3DCam, envInfo, sceneData.ambience, actor, parent)
     ));
     const points = map(sceneData.points, props => loadPoint(props));
     const zones = map(sceneData.zones, props => loadZone(props, is3DCam));
@@ -175,17 +176,28 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
             threeScene.name = '3D_scene';
             if (renderer.vr) {
-                camera = getVR3DCamera();
+                if (game.controlsState.firstPerson) {
+                    camera = getVrFirstPersonCamera();
+                } else {
+                    camera = getVR3DCamera();
+                }
             } else {
                 camera = get3DCamera();
             }
         } else {
-            scenery = await loadIsometricScenery(indexInfo.index);
+            const useReplacements = renderer.vr || params.iso3d || params.isoCam3d;
+            scenery = await loadIsometricScenery(
+                indexInfo.index,
+                sceneData.ambience,
+                useReplacements
+            );
             threeScene.name = 'iso_scene';
             if (renderer.vr) {
-                camera = params.isoCam3d
-                    ? getVR3DCamera()
-                    : getVRIsoCamera();
+                if (game.controlsState.firstPerson) {
+                    camera = getVrFirstPersonCamera();
+                } else {
+                    camera = getVRIsoCamera();
+                }
             } else if (params.iso3d || params.isoCam3d) {
                 camera = params.isoCam3d
                     ? get3DCamera()
@@ -310,8 +322,8 @@ function loadSceneNode(index, indexInfo, scenery, actors, zones, points, editor)
     if (indexInfo.isIsland) {
         const sectionIdx = islandSceneMapping[index].section;
         const section = scenery.sections[sectionIdx];
-        sceneNode.position.x = section.x * 48;
-        sceneNode.position.z = section.z * 48;
+        sceneNode.position.x = section.x * WORLD_SIZE * 2;
+        sceneNode.position.z = section.z * WORLD_SIZE * 2;
         sceneNode.updateMatrix();
     }
     const addToSceneNode = (obj) => {
@@ -494,4 +506,5 @@ function makeLight(threeScene, ambience) {
     light.updateMatrix();
     light.matrixAutoUpdate = false;
     threeScene.add(light);
+    threeScene.add(new THREE.AmbientLight(0xFFFFFF, 0.08));
 }

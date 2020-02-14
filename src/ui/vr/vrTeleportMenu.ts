@@ -9,6 +9,7 @@ import { drawFrame } from './vrUtils';
 import sceneMapping from '../../island/data/sceneMapping';
 import islandOffsets from './data/islandOffsets';
 import {tr} from '../../lang';
+import { WORLD_SCALE_B, WORLD_SIZE } from '../../utils/lba';
 
 let islandWrapper = null;
 let activeIsland = null;
@@ -66,7 +67,8 @@ export function createTeleportMenu(sceneLight) {
     intersectObjects.push(backButton);
 
     islandWrapper = new THREE.Object3D();
-    islandWrapper.scale.set(0.02, 0.02, 0.02);
+    const scale = 0.5 / WORLD_SIZE;
+    islandWrapper.scale.set(scale, scale, scale);
 
     teleportMenu.add(islandWrapper);
 
@@ -212,9 +214,9 @@ function handleGroundIntersection(idx, intersect, triggered, {game, sceneManager
                 .then((newScene) => {
                     const newHero = newScene.actors[0];
                     POS.add(new THREE.Vector3(
-                        -((section.x * 64) + 1) * 0.75,
+                        -((section.x * 64) + 1) * WORLD_SCALE_B,
                         0,
-                        -(section.z * 64) * 0.75
+                        -(section.z * 64) * WORLD_SCALE_B
                     ));
                     newHero.physics.position.copy(POS);
                     newHero.threeObject.position.copy(POS);

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { WORLD_SIZE } from '../../utils/lba';
 
 export function COL() {
     if (this.actor.life <= 0) {
@@ -26,7 +27,7 @@ export function ZONE() {
 
 export function ZONE_OBJ(actor) {
     const pos = actor.physics.position.clone();
-    let halfHeight = 0.12; // 12 cm, this is totally arbitrary
+    let halfHeight = 0.005 * WORLD_SIZE;
     if (actor.model && actor.model.boundingBox) {
         const bb = actor.model.boundingBox;
         halfHeight = (bb.max.y - bb.min.y) * 0.5;

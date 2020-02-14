@@ -76,7 +76,7 @@ export default class OculusTouch {
         controlsState.controllerType = 'oculustouch';
 
         // Center camera
-        if (right.trigger.tapped && camera && scene) {
+        if (right.trigger.tapped && camera && camera.center && scene) {
             camera.center(scene);
         }
 
@@ -98,6 +98,7 @@ export default class OculusTouch {
 
         // Hero movement
         controlsState.controlVector.copy(left.pad);
+        controlsState.altControlVector.copy(right.pad);
 
         // Action button
         controlsState.action = left.buttonX.tapped || right.buttonA.tapped ? 1 : 0;

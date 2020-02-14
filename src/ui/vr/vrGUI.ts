@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { each } from 'lodash';
-import { getOrCreateHands, handlePicking } from './vrHands';
+import { getOrCreateHands, handlePicking, updateHands } from './vrHands';
 import { createScreen } from './vrScreen';
 import { drawFrame } from './vrUtils';
 
@@ -13,7 +13,7 @@ export function createVRGUI(renderer) {
         hands = getOrCreateHands(renderer);
     }
     vrGUI.add(hands);
-    hands.visible = false;
+    hands.visible = true;
     return vrGUI;
 }
 
@@ -41,12 +41,15 @@ export function updateVRGUI(game, scene, vrGUI) {
                 }));
                 i += 1;
             });
-            hands.visible = true;
         }
+        updateHands({game}, true);
     } else if (choice) {
         vrGUI.remove(choice);
         choice = null;
-        hands.visible = false;
+        updateHands({game}, false);
+    } else {
+        handlePicking([], {game, scene});
+        updateHands({game}, false);
     }
 }
 

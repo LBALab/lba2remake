@@ -163,7 +163,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
                     renderer
                 );
             }
-            const vrScene = loadVRScene(game, renderer);
+            const vrScene = loadVRScene(game, sceneManager, renderer);
             this.setState({ renderer, sceneManager, controls, vrScene });
             this.canvasWrapperElem = canvasWrapperElem;
             this.canvasWrapperElem.appendChild(this.canvas);
@@ -291,7 +291,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
                 source: this.state.renderer.canvas,
                 attributes: {
                     highRefreshRate: true,
-                    foveationLevel: 3,
+                    foveationLevel: 0,
                     antialias: true
                 }
             } as any

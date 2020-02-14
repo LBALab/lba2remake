@@ -19,17 +19,13 @@ const DebugData = {
         entities: [],
         bodies: [],
         anims: [],
-        islands: []
+        islands: [],
+        libraries: <any> {}
     },
     step: false,
     firstFrame: false,
     sceneManager: null,
-    scriptDebugLabels: {
-        actor: <any> null,
-        actors: [],
-        zones: [],
-        points: []
-    }
+    scriptDebugLabels: null
 };
 
 export default DebugData;

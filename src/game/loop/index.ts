@@ -1,4 +1,4 @@
-import {each} from 'lodash';
+import {each, first} from 'lodash';
 import * as THREE from 'three';
 import {updateHero} from './hero';
 import {updateActor} from './actors';
@@ -9,6 +9,14 @@ import { updateVRGUI } from '../../ui/vr/vrGUI';
 
 const dbgClock = new THREE.Clock(false);
 dbgClock.start();
+
+const emptyVRScene = {
+    threeScene: new THREE.Scene(),
+    camera: {
+        resize: () => {},
+        threeCamera: new THREE.PerspectiveCamera()
+    }
+};
 
 export function mainGameLoop(params, game, clock, renderer, scene, controls, vrScene = null) {
     const time = game.getTime();
@@ -48,6 +56,8 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls, vrS
             }
             scene.camera.update(scene, game.controlsState, dbgTime);
             renderer.render(scene);
+        } else if (renderer.vr) {
+            renderer.render(emptyVRScene);
         }
         scene.firstFrame = false;
         delete DebugData.firstFrame;
@@ -85,6 +95,12 @@ function updateScene(params, game, scene, time) {
     }
     if (scene.vrGUI) {
         updateVRGUI(game, scene, scene.vrGUI);
+    }
+    if (scene.isActive && game.controlsState.firstPerson) {
+        const hero = first(scene.actors) as any;
+        if (hero && hero.threeObject) {
+            hero.threeObject.visible = false;
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {getTriangleFromPos} from '../../island/ground';
+import { WORLD_SIZE } from '../../utils/lba';
 
 export function loadIslandPhysics(sections) {
     return {
@@ -15,15 +16,15 @@ const FLAGS = {
     hitObject: false
 };
 
-function processCameraCollisions(sections, camPosition, groundOffset = 3.6, objOffset = 4.8) {
+function processCameraCollisions(sections, camPosition, groundOffset = 0.15, objOffset = 0.2) {
     const section = findSection(sections, camPosition);
     const ground = getGroundInfo(section, camPosition);
-    camPosition.y = Math.max(ground.height + groundOffset, camPosition.y);
+    camPosition.y = Math.max(ground.height + groundOffset * WORLD_SIZE, camPosition.y);
     if (section) {
         for (let i = 0; i < section.boundingBoxes.length; i += 1) {
             const bb = section.boundingBoxes[i];
             if (bb.containsPoint(camPosition)) {
-                camPosition.y = bb.max.y + objOffset;
+                camPosition.y = bb.max.y + objOffset * WORLD_SIZE;
             }
         }
     }
@@ -57,7 +58,7 @@ function processCollisions(sections, scene, actor) {
             TGT.setY(0);
             if (TGT.lengthSq() !== 0) {
                 TGT.normalize();
-                TGT.multiplyScalar(0.12);
+                TGT.multiplyScalar(0.005 * WORLD_SIZE);
                 TGT.add(actor.threeObject.position);
                 TGT.applyMatrix4(scene.sceneNode.matrixWorld);
                 const gInfo = getGroundInfo(section, TGT);
@@ -75,6 +76,8 @@ const DEFAULT_GROUND = {
     collision: null
 };
 
+const Y_THRESHOLD = WORLD_SIZE / 1600;
+
 function getGround(section, position) {
     if (!section)
         return DEFAULT_GROUND;
@@ -83,7 +86,7 @@ function getGround(section, position) {
         const bb = section.boundingBoxes[i];
         if (position.x >= bb.min.x && position.x <= bb.max.x
             && position.z >= bb.min.z && position.z <= bb.max.z
-            && position.y <= bb.max.y && position.y > bb.max.y - 0.015) {
+            && position.y <= bb.max.y && position.y > bb.max.y - Y_THRESHOLD) {
             FLAGS.hitObject = true;
             return {
                 height: bb.max.y,
@@ -95,14 +98,15 @@ function getGround(section, position) {
     return getGroundInfo(section, position);
 }
 
-const GRID_SCALE = 64 / 48;
+const GRID_SCALE = 32 / WORLD_SIZE;
+const WORLD_SIZE_M2 = WORLD_SIZE * 2;
 
 function getGroundInfo(section, position) {
     if (!section) {
         return DEFAULT_GROUND;
     }
-    const xLocal = ((48 - (position.x - (section.x * 48))) * GRID_SCALE) + 1;
-    const zLocal = (position.z - (section.z * 48)) * GRID_SCALE;
+    const xLocal = ((WORLD_SIZE_M2 - (position.x - (section.x * WORLD_SIZE_M2))) * GRID_SCALE) + 1;
+    const zLocal = (position.z - (section.z * WORLD_SIZE_M2)) * GRID_SCALE;
     return getTriangleFromPos(section, xLocal, zLocal);
 }
 
@@ -112,6 +116,7 @@ const ITRS_SIZE = new THREE.Vector3();
 const CENTER1 = new THREE.Vector3();
 const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
+const H_THRESHOLD = 0.007 * WORLD_SIZE;
 
 function processBoxIntersections(section, actor, position, isTouchingGround) {
     const boundingBox = actor.model.boundingBox;
@@ -126,7 +131,7 @@ function processBoxIntersections(section, actor, position, isTouchingGround) {
             ACTOR_BOX.getCenter(CENTER1);
             bb.getCenter(CENTER2);
             const dir = CENTER1.sub(CENTER2);
-            if (ACTOR_BOX.min.y < bb.max.y - 0.16) {
+            if (ACTOR_BOX.min.y < bb.max.y - H_THRESHOLD) {
                 if (ITRS_SIZE.x < ITRS_SIZE.z) {
                     DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
                 } else {
@@ -147,5 +152,7 @@ function processBoxIntersections(section, actor, position, isTouchingGround) {
 const GRID_UNIT = 1 / 64;
 
 function findSection(sections, position) {
-    return sections[`${Math.floor((position.x / 48) - GRID_UNIT)},${Math.floor(position.z / 48)}`];
+    const x = Math.floor((position.x / WORLD_SIZE_M2) - GRID_UNIT);
+    const z = Math.floor(position.z / WORLD_SIZE_M2);
+    return sections[`${x},${z}`];
 }
