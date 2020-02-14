@@ -1,8 +1,8 @@
 #version 300 es
 precision highp float;
 
-uniform sampler2D uTexture;
-uniform sampler2D uTexture2;
+uniform sampler2D txSmoke;
+uniform sampler2D txEnv;
 uniform float opacity;
 uniform float lightningStrength;
 uniform vec3 lightningPos;
@@ -33,8 +33,8 @@ vec4 lightning(vec3 color, float distLightning, float preAlpha) {
 void main() {
     vec3 lp = vec3(lightningPos.x, 20.0, lightningPos.z);
     float distLightning = length(vPos - lp);
-    vec4 color = texture(uTexture, vUv);
-    vec3 color2 = texture(uTexture2, vUv * scale).rgb;
+    vec4 color = texture(txSmoke, vUv);
+    vec3 color2 = texture(txEnv, vUv * scale).rgb;
     vec3 tgtColor = mix(vec3(0.0), color2, color.r);
     vec3 colWithWhiteness = mix(tgtColor, vec3(1.0), whiteness);
     vec3 colWithFog = fog(colWithWhiteness);

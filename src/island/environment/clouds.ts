@@ -14,15 +14,15 @@ const worldScale = 1 / (WORLD_SIZE * 0.04);
 const loader = new THREE.TextureLoader();
 
 export async function loadClouds(props, {envInfo, ress, palette}) {
-    const cloudsTexture = await new Promise(resolve =>
+    const smokeTexture = await new Promise(resolve =>
         loader.load('images/smoke.png', resolve)
     );
     const material = new THREE.RawShaderMaterial({
         vertexShader: compile('vert', VERT_CLOUDS),
         fragmentShader: compile('frag', FRAG_CLOUDS),
         uniforms: {
-            uTexture: {value: cloudsTexture},
-            uTexture2: {
+            txSmoke: {value: smokeTexture},
+            txEnv: {
                 value: loadSubTexture(
                     ress.getEntry(envInfo.index),
                     palette,
