@@ -494,7 +494,7 @@ function relocateHero(hero, newHero, newScene, teleport) {
 
 function makeLight(threeScene, ambience) {
     const light = new THREE.DirectionalLight();
-    light.name = 'light';
+    light.name = 'DirectionalLight';
     light.position.set(-1000, 0, 0);
     light.position.applyAxisAngle(
         new THREE.Vector3(0, 0, 1),
@@ -507,5 +507,7 @@ function makeLight(threeScene, ambience) {
     light.updateMatrix();
     light.matrixAutoUpdate = false;
     threeScene.add(light);
-    threeScene.add(new THREE.AmbientLight(0xFFFFFF, 0.08));
+    const ambient = new THREE.AmbientLight(0xFFFFFF, 0.08);
+    ambient.name = 'AmbientLight';
+    threeScene.add(ambient);
 }

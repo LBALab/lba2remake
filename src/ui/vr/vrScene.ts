@@ -22,9 +22,11 @@ export function loadVRScene(game, sceneManager, renderer) {
     threeScene.background = texture;
 
     const light = new THREE.DirectionalLight();
+    light.name = 'DirectionalLight';
     threeScene.add(light);
 
     const ambient = new THREE.AmbientLight(0x404040);
+    ambient.name = 'AmbientLight';
     threeScene.add(ambient);
 
     const fps = createFPSCounter(renderer);
