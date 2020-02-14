@@ -10,6 +10,14 @@ import { updateVRGUI } from '../../ui/vr/vrGUI';
 const dbgClock = new THREE.Clock(false);
 dbgClock.start();
 
+const emptyVRScene = {
+    threeScene: new THREE.Scene(),
+    camera: {
+        resize: () => {},
+        threeCamera: new THREE.PerspectiveCamera()
+    }
+};
+
 export function mainGameLoop(params, game, clock, renderer, scene, controls, vrScene = null) {
     const time = game.getTime();
     const uiState = game.getUiState();
@@ -48,6 +56,8 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls, vrS
             }
             scene.camera.update(scene, game.controlsState, dbgTime);
             renderer.render(scene);
+        } else if (renderer.vr) {
+            renderer.render(emptyVRScene);
         }
         scene.firstFrame = false;
         delete DebugData.firstFrame;
