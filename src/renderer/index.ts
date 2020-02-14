@@ -64,6 +64,10 @@ export default class Renderer {
         this.threeRenderer.setClearColor(color.getHex(), opacity);
     }
 
+    setClearColor(color: number) {
+        this.threeRenderer.setClearColor(color);
+    }
+
     resize(width = 0, height = 0) {
         if (!width || !height) {
             this.threeRenderer.getSize(RSIZE);
