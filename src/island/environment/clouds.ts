@@ -1,4 +1,3 @@
-import { each } from 'lodash';
 import * as THREE from 'three';
 
 import { WORLD_SIZE } from '../../utils/lba';
@@ -37,10 +36,11 @@ export async function loadClouds(props, {envInfo, ress, palette}) {
             worldScale: {value: worldScale},
             opacity: {value: 0.6},
             whiteness: {value: 0.0},
-            scale: {value: props.scale || 1.0}
+            scale: {value: props.scale || 1.0},
+            time: {value: 0.0}
         },
-        transparent: true,
-        side: props.ground ? THREE.BackSide : THREE.FrontSide
+        side: props.ground ? THREE.BackSide : THREE.FrontSide,
+        transparent: true
     });
     if (props.whiteness) {
         material.uniforms.whiteness.value = props.whiteness;
@@ -48,29 +48,53 @@ export async function loadClouds(props, {envInfo, ress, palette}) {
     if (props.opacity) {
         material.uniforms.opacity.value = props.opacity;
     }
-    const threeObject = new THREE.Object3D();
-    const cloudGeo = new THREE.PlaneBufferGeometry(600, 600);
-    for (let p = 0; p < 50; p += 1) {
-        const cloud = new THREE.Mesh(cloudGeo, material);
-        cloud.onBeforeRender = applyLightningUniforms;
-        cloud.position.set(
+    const positions = [];
+    const uvs = [];
+    const angles = [];
+    const POS = new THREE.Vector3();
+    for (let p = 50; p >= 0; p -= 1) {
+        POS.set(
             p === 0 ? 0 : Math.random() * 1600 - 800,
             props.ground
-                ? p * 0.05 - 0.9
+                ? 0.5 - p * 0.012
                 : WORLD_SIZE * 2 + p - 20,
             p === 0 ? 0 : Math.random() * 1600 - 800
         );
-        cloud.rotation.x = Math.PI / 2;
-        if (props.ground) {
-            cloud.renderOrder = 400 + p;
-        } else {
-            cloud.renderOrder = 4 + (50 - p);
-        }
-        threeObject.add(cloud);
+        const angle = Math.random() * Math.PI * 2.0;
+        angles.push(angle, angle, angle, angle, angle, angle);
+
+        positions.push(POS.x, POS.y, POS.z);
+        uvs.push(0, 0);
+        positions.push(POS.x, POS.y, POS.z);
+        uvs.push(1, 0);
+        positions.push(POS.x, POS.y, POS.z);
+        uvs.push(0, 1);
+
+        positions.push(POS.x, POS.y, POS.z);
+        uvs.push(0, 1);
+        positions.push(POS.x, POS.y, POS.z);
+        uvs.push(1, 0);
+        positions.push(POS.x, POS.y, POS.z);
+        uvs.push(1, 1);
     }
+    const bufferGeometry = new THREE.BufferGeometry();
+    bufferGeometry.setAttribute(
+        'position',
+        new THREE.BufferAttribute(new Float32Array(positions), 3)
+    );
+    bufferGeometry.setAttribute(
+        'uv',
+        new THREE.BufferAttribute(new Uint8Array(uvs), 2, false)
+    );
+    bufferGeometry.setAttribute(
+        'angle',
+        new THREE.BufferAttribute(new Float32Array(angles), 1, false)
+    );
+    const clouds = new THREE.Mesh(bufferGeometry, material);
+    clouds.onBeforeRender = applyLightningUniforms;
 
     const update = (time) => {
-        each(threeObject.children, cloud => cloud.rotation.z += props.speed * time.delta);
+        material.uniforms.time.value = time.elapsed * props.speed;
     };
-    return {threeObject, update};
+    return {threeObject: clouds, update};
 }

@@ -39,4 +39,5 @@ void main() {
     vec3 colWithWhiteness = mix(tgtColor, vec3(1.0), whiteness);
     vec3 colWithFog = fog(colWithWhiteness);
     fragColor = lightning(colWithFog, distLightning, color.a * opacity);
+    // fragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }
