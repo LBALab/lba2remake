@@ -27,10 +27,12 @@
     "express": "^4.17.0",
     "json-loader": "^0.5.7",
     "node-libs-browser": "^1.1.1",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.13.1",
     "raw-loader": "^0.5.1",
     "sass-loader": "^7.1.0",
+    "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
+    "ts-loader": "^6.2.1",
     "tslint": "^5.16.0",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-loader": "^3.6.0",
@@ -38,9 +40,7 @@
     "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2",
     "webpack-dev-middleware": "^3.7.0",
-    "yml-loader": "^2.1.0",
-    "source-map-loader": "^0.2.4",
-    "ts-loader": "^6.2.1"
+    "yml-loader": "^2.1.0"
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development node devserver.js",

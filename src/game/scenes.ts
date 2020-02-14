@@ -89,6 +89,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 return scene;
             }
             game.loading(index);
+            renderer.setClearColor(0x000000);
             scene = await loadScene(
                 this,
                 params,
