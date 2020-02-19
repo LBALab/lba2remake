@@ -129,11 +129,6 @@
       "file": "024_025_026_027_wall_deco_round_corner_L_blue.glb",
       "orientation": 2
     },
-    "28": {
-      "replace": true,
-      "file": "028_flower_vase.glb",
-      "orientation": 0
-    },
     "29": {
       "replace": true,
       "file": "029_tall_lamp.glb",
