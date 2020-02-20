@@ -398,6 +398,16 @@
     "162": {
       "mirror": true
     },
+    "163": {
+      "replace": true,
+      "file": "163_paint_bucket.glb",
+      "orientation": 3
+    },
+    "165": {
+      "replace": true,
+      "file": "165_pencil_jar.glb",
+      "orientation": 0
+    },
     "170": {
       "mirror": true
     },
