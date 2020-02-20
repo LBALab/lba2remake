@@ -20,7 +20,7 @@ import brick_vertex from '../../../../iso/shaders/brick.vert.glsl';
 import brick_fragment from '../../../../iso/shaders/brick.frag.glsl';
 import { loadLUTTexture } from '../../../../utils/lut';
 import { loadPaletteTexture } from '../../../../texture';
-import { replaceMaterials } from '../../../../iso/metadata';
+import { replaceMaterialsForPreview } from '../../../../iso/metadata';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -341,7 +341,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                 angle
             );
             lSettings.threeObject = model.scene;
-            replaceMaterials(lSettings.threeObject, shaderData, angle);
+            replaceMaterialsForPreview(lSettings.threeObject, shaderData);
             this.state.scene.threeScene.add(lSettings.threeObject);
             layoutObj.threeObject.visible = false;
         }
@@ -489,7 +489,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         const paletteTexture = loadPaletteTexture(palette);
         const light = getLightVector();
         const shaderData = {lutTexture, paletteTexture, light};
-        replaceMaterials(lSettings.threeObject, shaderData, 0);
+        replaceMaterialsForPreview(lSettings.threeObject, shaderData);
         const { library, layout } = this.props.sharedState;
         if (!(library in layoutsMetadata)) {
             layoutsMetadata[library] = {};
@@ -578,6 +578,14 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             new THREE.Vector3(0, 1, 0),
             (Math.PI / 2.0) * lSettings.orientation
         );
+        lSettings.threeObject.traverse((node) => {
+            node.updateMatrix();
+            node.updateMatrixWorld(true);
+            if (node instanceof THREE.Mesh) {
+                const material = node.material as THREE.RawShaderMaterial;
+                material.uniforms.uNormalMatrix.value.setFromMatrix4(node.matrixWorld);
+            }
+        });
         this.setState({lSettings});
         layoutsMetadata[library][layout].orientation = lSettings.orientation;
         await this.saveMetadata();

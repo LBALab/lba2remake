@@ -4,8 +4,10 @@ import XXH from 'xxhashjs';
 import { loadLUTTexture } from '../utils/lut';
 import { loadPaletteTexture } from '../texture';
 import VERT_OBJECTS_COLORED from './shaders/objects/colored.vert.glsl';
+import VERT_OBJECTS_COLORED_PREVIEW from './shaders/objects/colored.preview.vert.glsl';
 import FRAG_OBJECTS_COLORED from './shaders/objects/colored.frag.glsl';
 import VERT_OBJECTS_TEXTURED from './shaders/objects/textured.vert.glsl';
+import VERT_OBJECTS_TEXTURED_PREVIEW from './shaders/objects/textured.preview.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from './shaders/objects/textured.frag.glsl';
 import { loadHqr } from '../hqr';
 import { compile } from '../utils/shaders';
@@ -164,19 +166,18 @@ export async function extractGridMetadata(grid, metadata, ambience) {
     };
 }
 
-export async function replaceMaterials(threeObject, shaderData, angle) {
+export async function replaceMaterialsForPreview(threeObject, shaderData) {
     const {lutTexture, paletteTexture, light} = shaderData;
     threeObject.traverse((node) => {
+        node.updateMatrix();
+        node.updateMatrixWorld(true);
         if (node instanceof THREE.Mesh) {
-            const rotation = new THREE.Matrix4().makeRotationY(angle - Math.PI / 2);
-            node.updateMatrixWorld();
-            rotation.multiply(node.matrixWorld);
             const normalMatrix = new THREE.Matrix3();
-            normalMatrix.setFromMatrix4(rotation);
+            normalMatrix.setFromMatrix4(node.matrixWorld);
             const material = node.material as THREE.MeshStandardMaterial;
             if (material.map) {
                 node.material = new THREE.RawShaderMaterial({
-                    vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
+                    vertexShader: compile('vert', VERT_OBJECTS_TEXTURED_PREVIEW),
                     fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
                     uniforms: {
                         uNormalMatrix: {value: normalMatrix},
@@ -190,7 +191,7 @@ export async function replaceMaterials(threeObject, shaderData, angle) {
                 const mColor = material.color.clone().convertLinearToGamma();
                 const color = new THREE.Vector3().fromArray(mColor.toArray());
                 node.material = new THREE.RawShaderMaterial({
-                    vertexShader: compile('vert', VERT_OBJECTS_COLORED),
+                    vertexShader: compile('vert', VERT_OBJECTS_COLORED_PREVIEW),
                     fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
                     uniforms: {
                         uNormalMatrix: {value: normalMatrix},
