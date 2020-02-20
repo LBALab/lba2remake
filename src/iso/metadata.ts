@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { find, each } from 'lodash';
+import XXH from 'xxhashjs';
 import { loadLUTTexture } from '../utils/lut';
 import { loadPaletteTexture } from '../texture';
 import VERT_OBJECTS_COLORED from './shaders/objects/colored.vert.glsl';
@@ -19,9 +20,10 @@ const angleMapping = [
 const H = 0.5;
 
 export async function extractGridMetadata(grid, metadata, ambience) {
+    const replacementData = await loadReplacementData(ambience);
     const replacements = {
         threeObject: null,
-        geometries: await prepareReplacementGeometries(ambience),
+        geometries: prepareReplacementGeometries(replacementData),
         bricks: new Set()
     };
     const mirrorGroups = {};
@@ -50,6 +52,7 @@ export async function extractGridMetadata(grid, metadata, ambience) {
                                     addReplacementObject(
                                         replacements,
                                         lMetadata,
+                                        replacementData,
                                         x - (nX * 0.5) + 1, yPos - H, zPos - (nZ * 0.5) + 1
                                     );
                                 } else {
@@ -138,7 +141,7 @@ export async function extractGridMetadata(grid, metadata, ambience) {
                 'normal',
                 new THREE.BufferAttribute(new Float32Array(geom.normals), 3)
             );
-            if (key === 'textured') {
+            if (key.substring(0, 9) === 'textured_') {
                 bufferGeometry.setAttribute(
                     'uv',
                     new THREE.BufferAttribute(new Float32Array(geom.uvs), 2)
@@ -240,7 +243,7 @@ function suppressBricks(gridReps, layout, x, y, z) {
     }
 }
 
-async function addReplacementObject(replacements, metadata, gx, gy, gz) {
+async function addReplacementObject(replacements, metadata, replacementData, gx, gy, gz) {
     const threeObject = metadata.threeObject;
     const scale = 1 / 0.75;
     const orientation = metadata.orientation;
@@ -277,19 +280,45 @@ async function addReplacementObject(replacements, metadata, gx, gy, gz) {
             normalMatrix.setFromMatrix4(rotation);
             const baseMaterial = node.material as THREE.MeshStandardMaterial;
             let color = null;
-            const geomGroup = baseMaterial.map ? 'textured' : 'colored';
+            let geomGroup = 'colored';
+            if (baseMaterial.map) {
+                const image = baseMaterial.map.image;
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = image.width;
+                canvas.height = image.height;
+                context.drawImage(image, 0, 0);
+                const imageData = context.getImageData(0, 0, image.width, image.height);
+                const textureId = XXH.h32(imageData.data, 0).toString(16);
+                geomGroup = `textured_${textureId}`;
+                if (!(geomGroup in replacements.geometries)) {
+                    replacements.geometries[geomGroup] = {
+                        positions: [],
+                        normals: [],
+                        colors: null,
+                        uvs: [],
+                        material: new THREE.RawShaderMaterial({
+                            vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
+                            fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
+                            uniforms: {
+                                uTexture: {value: baseMaterial.map},
+                                lutTexture: {value: replacementData.lutTexture},
+                                palette: {value: replacementData.paletteTexture},
+                                light: {value: replacementData.light}
+                            }
+                        })
+                    };
+                }
+            }
             const {
                 positions,
                 normals,
                 colors,
-                uvs,
-                material
+                uvs
             } = replacements.geometries[geomGroup];
             if (!baseMaterial.map) {
                 const mColor = baseMaterial.color.clone().convertLinearToGamma();
                 color = new THREE.Vector3().fromArray(mColor.toArray());
-            } else {
-                material.uniforms.uTexture.value = baseMaterial.map;
             }
             for (let i = 0; i < index_attr.count; i += 1) {
                 const idx = index_attr.array[i];
@@ -317,7 +346,7 @@ async function addReplacementObject(replacements, metadata, gx, gy, gz) {
     });
 }
 
-async function prepareReplacementGeometries(ambience) {
+async function loadReplacementData(ambience) {
     const [lutTexture, ress] = await Promise.all([
         await loadLUTTexture(),
         await loadHqr('RESS.HQR')
@@ -325,6 +354,14 @@ async function prepareReplacementGeometries(ambience) {
     const palette = new Uint8Array(ress.getEntry(0));
     const paletteTexture = loadPaletteTexture(palette);
     const light = getLightVector(ambience);
+    return {
+        paletteTexture,
+        lutTexture,
+        light
+    };
+}
+
+function prepareReplacementGeometries({lutTexture, paletteTexture, light}) {
     return {
         colored: {
             positions: [],
@@ -335,22 +372,6 @@ async function prepareReplacementGeometries(ambience) {
                 vertexShader: compile('vert', VERT_OBJECTS_COLORED),
                 fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
                 uniforms: {
-                    lutTexture: {value: lutTexture},
-                    palette: {value: paletteTexture},
-                    light: {value: light}
-                }
-            })
-        },
-        textured: {
-            positions: [],
-            normals: [],
-            colors: null,
-            uvs: [],
-            material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
-                fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
-                uniforms: {
-                    uTexture: {value: null},
                     lutTexture: {value: lutTexture},
                     palette: {value: paletteTexture},
                     light: {value: light}

@@ -13,7 +13,8 @@
     "react-dom": "16.8.6",
     "react-markdown": "^4.0.8",
     "simplex-noise": "^2.4.0",
-    "three": "^0.110.0"
+    "three": "^0.110.0",
+    "xxhashjs": "^0.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
