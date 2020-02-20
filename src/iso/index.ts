@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { map, each } from 'lodash';
+import { map } from 'lodash';
 
 import { loadHqr } from '../hqr';
 import { loadBricks } from './bricks';
@@ -39,7 +39,7 @@ export async function loadIsometricScenery(entry, ambience, useReplacements) {
     const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
     const metadata = useReplacements
         ? await loadMetadata(grid.library)
-        : {};
+        : null;
 
     return {
         props: {
@@ -104,10 +104,16 @@ async function loadMesh(grid, entry, metadata, ambience) {
         uvs: []
     };
     const {library, cells} = grid;
-    const gridMetadata = await extractGridMetadata(grid, metadata, ambience);
-    each(gridMetadata.replacements.objects, (threeObject) => {
-        scene.add(threeObject);
-    });
+    let gridMetadata = {
+        replacements: null,
+        mirrors: null
+    };
+    if (metadata) {
+        gridMetadata = await extractGridMetadata(grid, metadata, ambience);
+        if (gridMetadata.replacements.threeObject) {
+            scene.add(gridMetadata.replacements.threeObject);
+        }
+    }
 
     for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
@@ -183,7 +189,7 @@ function buildColumn(library, cells, geometries, x, z, gridMetadata) {
             const layout = library.layouts[blocks[y].layout];
             if (layout) {
                 const key = `${x},${y},${z}`;
-                if (replacements.bricks.has(key))
+                if (replacements && replacements.bricks.has(key))
                     continue;
 
                 const block = layout.blocks[blocks[y].block];
@@ -233,7 +239,7 @@ function buildColumn(library, cells, geometries, x, z, gridMetadata) {
                     positions.push(x + 1, yPos - h, zPos + 1);
                     pushUv(24, 38.5, Side.RIGHT);
 
-                    const mirror = mirrors[key];
+                    const mirror = mirrors && mirrors[key];
                     if (mirror) {
                         if (mirror[0]) {
                             pushMirror(layout, mirror[0], (pushUvM) => {

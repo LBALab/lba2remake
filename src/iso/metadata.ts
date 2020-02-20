@@ -20,23 +20,12 @@ const H = 0.5;
 
 export async function extractGridMetadata(grid, metadata, ambience) {
     const replacements = {
-        objects: [],
+        threeObject: null,
+        geometries: await prepareReplacementGeometries(ambience),
         bricks: new Set()
     };
     const mirrorGroups = {};
     let c = 0;
-    const [lutTexture, ress] = await Promise.all([
-        await loadLUTTexture(),
-        await loadHqr('RESS.HQR')
-    ]);
-    const palette = new Uint8Array(ress.getEntry(0));
-    const paletteTexture = loadPaletteTexture(palette);
-    const light = getLightVector(ambience);
-    const shaderData = {
-        light,
-        lutTexture,
-        paletteTexture
-    };
     for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
             const cell = grid.cells[c];
@@ -61,8 +50,7 @@ export async function extractGridMetadata(grid, metadata, ambience) {
                                     addReplacementObject(
                                         replacements,
                                         lMetadata,
-                                        x - (nX * 0.5) + 1, yPos - H, zPos - (nZ * 0.5) + 1,
-                                        shaderData
+                                        x - (nX * 0.5) + 1, yPos - H, zPos - (nZ * 0.5) + 1
                                     );
                                 } else {
                                     // Log when missing match
@@ -136,6 +124,37 @@ export async function extractGridMetadata(grid, metadata, ambience) {
             }
         });
     });
+
+    replacements.threeObject = new THREE.Object3D();
+    replacements.threeObject.name = 'replacements';
+    each(replacements.geometries, (geom, key) => {
+        if (geom.positions.length > 0) {
+            const bufferGeometry = new THREE.BufferGeometry();
+            bufferGeometry.setAttribute(
+                'position',
+                new THREE.BufferAttribute(new Float32Array(geom.positions), 3)
+            );
+            bufferGeometry.setAttribute(
+                'normal',
+                new THREE.BufferAttribute(new Float32Array(geom.normals), 3)
+            );
+            if (key === 'textured') {
+                bufferGeometry.setAttribute(
+                    'uv',
+                    new THREE.BufferAttribute(new Float32Array(geom.uvs), 2)
+                );
+            } else {
+                bufferGeometry.setAttribute(
+                    'color',
+                    new THREE.BufferAttribute(new Uint8Array(geom.colors), 3, true)
+                );
+            }
+            const mesh = new THREE.Mesh(bufferGeometry, geom.material);
+            mesh.name = key;
+            replacements.threeObject.add(mesh);
+        }
+    });
+
     return {
         replacements,
         mirrors
@@ -221,19 +240,124 @@ function suppressBricks(gridReps, layout, x, y, z) {
     }
 }
 
-async function addReplacementObject(gridReps, metadata, x, y, z, shaderData) {
-    const threeObject = metadata.threeObject.clone();
+async function addReplacementObject(replacements, metadata, gx, gy, gz) {
+    const threeObject = metadata.threeObject;
     const scale = 1 / 0.75;
-    threeObject.position.set(x, y, z);
-    threeObject.scale.set(scale, scale, scale);
     const orientation = metadata.orientation;
     const angle = angleMapping[orientation];
-    threeObject.quaternion.setFromAxisAngle(
-        new THREE.Vector3(0, 1, 0),
-        angle
+    const gTransform = new THREE.Matrix4();
+    gTransform.compose(
+        new THREE.Vector3(gx, gy, gz),
+        new THREE.Quaternion().setFromAxisAngle(
+            new THREE.Vector3(0, 1, 0),
+            angle
+        ),
+        new THREE.Vector3(scale, scale, scale)
     );
-    replaceMaterials(threeObject, shaderData, angle);
-    gridReps.objects.push(threeObject);
+
+    const POS = new THREE.Vector3();
+    const NORM = new THREE.Vector3();
+
+    threeObject.traverse((node) => {
+        node.updateMatrix();
+        node.updateMatrixWorld(true);
+        if (node instanceof THREE.Mesh) {
+            const transform = gTransform.clone();
+            transform.multiply(node.matrixWorld);
+
+            const geom = node.geometry as THREE.BufferGeometry;
+            const pos_attr = geom.attributes.position;
+            const normal_attr = geom.attributes.normal;
+            const uv_attr = geom.attributes.uv;
+            const index_attr = geom.index;
+
+            const rotation = new THREE.Matrix4().makeRotationY(angle - Math.PI / 2);
+            rotation.multiply(node.matrixWorld);
+            const normalMatrix = new THREE.Matrix3();
+            normalMatrix.setFromMatrix4(rotation);
+            const baseMaterial = node.material as THREE.MeshStandardMaterial;
+            let color = null;
+            const geomGroup = baseMaterial.map ? 'textured' : 'colored';
+            const {
+                positions,
+                normals,
+                colors,
+                uvs,
+                material
+            } = replacements.geometries[geomGroup];
+            if (!baseMaterial.map) {
+                const mColor = baseMaterial.color.clone().convertLinearToGamma();
+                color = new THREE.Vector3().fromArray(mColor.toArray());
+            } else {
+                material.uniforms.uTexture.value = baseMaterial.map;
+            }
+            for (let i = 0; i < index_attr.count; i += 1) {
+                const idx = index_attr.array[i];
+                const x = pos_attr.getX(idx);
+                const y = pos_attr.getY(idx);
+                const z = pos_attr.getZ(idx);
+                POS.set(x, y, z);
+                POS.applyMatrix4(transform);
+                positions.push(POS.x, POS.y, POS.z);
+                const nx = normal_attr.getX(idx);
+                const ny = normal_attr.getY(idx);
+                const nz = normal_attr.getZ(idx);
+                NORM.set(nx, ny, nz);
+                NORM.applyMatrix3(normalMatrix);
+                NORM.normalize();
+                normals.push(NORM.x, NORM.y, NORM.z);
+                if (colors) {
+                    colors.push(color.x * 255, color.y * 255, color.z * 255);
+                }
+                if (uvs) {
+                    uvs.push(uv_attr.getX(idx), uv_attr.getY(idx));
+                }
+            }
+        }
+    });
+}
+
+async function prepareReplacementGeometries(ambience) {
+    const [lutTexture, ress] = await Promise.all([
+        await loadLUTTexture(),
+        await loadHqr('RESS.HQR')
+    ]);
+    const palette = new Uint8Array(ress.getEntry(0));
+    const paletteTexture = loadPaletteTexture(palette);
+    const light = getLightVector(ambience);
+    return {
+        colored: {
+            positions: [],
+            normals: [],
+            colors: [],
+            uvs: null,
+            material: new THREE.RawShaderMaterial({
+                vertexShader: compile('vert', VERT_OBJECTS_COLORED),
+                fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
+                uniforms: {
+                    lutTexture: {value: lutTexture},
+                    palette: {value: paletteTexture},
+                    light: {value: light}
+                }
+            })
+        },
+        textured: {
+            positions: [],
+            normals: [],
+            colors: null,
+            uvs: [],
+            material: new THREE.RawShaderMaterial({
+                vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
+                fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
+                uniforms: {
+                    uTexture: {value: null},
+                    lutTexture: {value: lutTexture},
+                    palette: {value: paletteTexture},
+                    light: {value: light}
+                }
+            })
+        }
+    };
 }
 
 function getLightVector(ambience) {

@@ -1,10 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec3 uColor;
 uniform vec3 light;
 
 in vec3 vNormal;
+in vec3 vColor;
 
 out vec4 fragColor;
 
@@ -16,7 +16,7 @@ float intensity() {
 }
 
 void main() {
-    vec3 palColor = lutLookup(uColor, intensity());
+    vec3 palColor = lutLookup(vColor, intensity());
     fragColor = vec4(palColor, 1.0);
     // fragColor = vec4(vNormal, 1.0);
 }
