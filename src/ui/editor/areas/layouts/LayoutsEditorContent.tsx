@@ -20,7 +20,7 @@ import brick_vertex from '../../../../iso/shaders/brick.vert.glsl';
 import brick_fragment from '../../../../iso/shaders/brick.frag.glsl';
 import { loadLUTTexture } from '../../../../utils/lut';
 import { loadPaletteTexture } from '../../../../texture';
-import { replaceMaterialsForPreview } from '../../../../iso/metadata';
+import { replaceMaterialsForPreview } from '../../../../iso/metadata/preview';
 
 interface Props extends TickerProps {
     mainData: any;

@@ -22,7 +22,7 @@ app.set('host', process.env.HOST || '0.0.0.0');
 
 app.use(bodyParser.json());
 app.use(bodyParser.raw({
-    limit: '2mb'
+    limit: '64mb'
 }));
 
 app.post('/metadata', function (req, res) { // lgtm [js/missing-rate-limiting]
@@ -95,10 +95,31 @@ app.post('/lut.dat', function(req, res) { // lgtm [js/missing-rate-limiting]
     });
 });
 
+app.post('/iso_replacements/:entry', function(req, res) { // lgtm [js/missing-rate-limiting]
+    const entry = Number(req.params.entry);
+    fs.writeFile(`./www/models/iso_scenes/${entry}.glb`, req.body, () => {
+        console.log(`Saved models/iso_scenes/${entry}.glb`);
+        res.end();
+        fs.readFile('./www/metadata/iso_scenes.json', 'utf8', (err, file) => { // lgtm [js/path-injection]
+            if (err) {
+                console.error(err);
+            } else {
+                const content = JSON.parse(file);
+                if (!content.includes(entry)) {
+                    content.push(entry);
+                    fs.writeFile('./www/metadata/iso_scenes.json', JSON.stringify(content, null, 2), () => {  // lgtm [js/path-injection]
+                        console.log('Saved iso_scenes metadata');
+                    });
+                }
+            }
+        });
+    });
+});
+
 app.get('/layout_models', function(req, res) {
     fs.readdir('./www/models/layouts', (err, files) => {
         res.end(JSON.stringify(files));
-      });
+    });
 });
 
 app.use('/', express.static('./www'));

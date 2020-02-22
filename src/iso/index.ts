@@ -1,6 +1,4 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { map } from 'lodash';
 
 import { loadHqr } from '../hqr';
 import { loadBricks } from './bricks';
@@ -28,7 +26,7 @@ export async function loadImageData(src) : Promise<ImageData> {
     });
 }
 
-export async function loadIsometricScenery(entry, ambience, useReplacements) {
+export async function loadIsometricScenery(entry, ambience, is3D) {
     const [ress, bkg, mask] = await Promise.all([
         loadHqr('RESS.HQR'),
         loadHqr('LBA_BKG.HQR'),
@@ -37,9 +35,6 @@ export async function loadIsometricScenery(entry, ambience, useReplacements) {
     const palette = new Uint8Array(ress.getEntry(0));
     const bricks = loadBricks(bkg);
     const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
-    const metadata = useReplacements
-        ? await loadMetadata(grid.library)
-        : null;
 
     return {
         props: {
@@ -48,7 +43,7 @@ export async function loadIsometricScenery(entry, ambience, useReplacements) {
                 skyColor: [0, 0, 0]
             }
         },
-        threeObject: await loadMesh(grid, entry, metadata, ambience),
+        threeObject: await loadMesh(grid, entry, ambience, is3D),
         physics: {
             processCollisions: processCollisions.bind(null, grid),
             processCameraCollisions: () => null
@@ -58,61 +53,16 @@ export async function loadIsometricScenery(entry, ambience, useReplacements) {
     };
 }
 
-async function loadMetadata(library) {
-    const rawRD = await fetch('/metadata/layouts.json');
-    const metadataAll = await rawRD.json();
-    const libMetadata = metadataAll[library.index];
-    const metadata = {};
-    await Promise.all(map(libMetadata, async (data, idx) => {
-        if (data.replace) {
-            const model = await loadModel(data.file);
-            metadata[idx] = {
-                ...data,
-                threeObject: model.scene
-            };
-        } else if (data.mirror) {
-            metadata[idx] = {...data};
-        }
-    }));
-    return metadata;
-}
-
-interface GLTFModel {
-    scene: THREE.Scene;
-}
-
-const loader = new GLTFLoader();
-const models = {};
-
-async function loadModel(file) : Promise<GLTFModel> {
-    if (file in models) {
-        return models[file];
-    }
-    const model = await new Promise<GLTFModel>((resolve) => {
-        loader.load(`/models/layouts/${file}`, (m: GLTFModel) => {
-            resolve(m);
-        });
-    });
-    models[file] = model;
-    return model;
-}
-
-async function loadMesh(grid, entry, metadata, ambience) {
+async function loadMesh(grid, entry, ambience, is3D) {
     const scene = new THREE.Object3D();
     const geometries = {
         positions: [],
         uvs: []
     };
     const {library, cells} = grid;
-    let gridMetadata = {
-        replacements: null,
-        mirrors: null
-    };
-    if (metadata) {
-        gridMetadata = await extractGridMetadata(grid, metadata, ambience);
-        if (gridMetadata.replacements.threeObject) {
-            scene.add(gridMetadata.replacements.threeObject);
-        }
+    const gridMetadata = await extractGridMetadata(grid, entry, ambience, is3D);
+    if (gridMetadata.replacements.threeObject) {
+        scene.add(gridMetadata.replacements.threeObject);
     }
 
     for (let z = 0; z < 64; z += 1) {
