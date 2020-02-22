@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as THREE from 'three';
-import { omit, cloneDeep } from 'lodash';
+import { omit, cloneDeep, times, each } from 'lodash';
 import { saveAs } from 'file-saver';
 import { ColladaExporter } from 'three/examples/jsm/exporters/ColladaExporter';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -21,6 +21,10 @@ import brick_fragment from '../../../../iso/shaders/brick.frag.glsl';
 import { loadLUTTexture } from '../../../../utils/lut';
 import { loadPaletteTexture } from '../../../../texture';
 import { replaceMaterialsForPreview } from '../../../../iso/metadata/preview';
+import { loadSceneMapData } from '../../../../scene/map';
+import { loadSceneData } from '../../../../scene';
+import { getLanguageConfig } from '../../../../lang';
+import { saveSceneReplacementModel } from '../../../../iso/metadata';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -56,6 +60,7 @@ interface State {
         file?: string;
         orientation?: number;
     };
+    updateProgress?: string;
 }
 
 const canvasStyle = {
@@ -72,6 +77,12 @@ const infoStyle = {
     right: 0,
     bottom: 0,
     height: 100
+};
+
+const applyChangesStyle = {
+    position: 'absolute' as const,
+    left: 0,
+    bottom: 100
 };
 
 const infoButton = {
@@ -157,6 +168,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.changeAngle = this.changeAngle.bind(this);
         this.setMirror = this.setMirror.bind(this);
         this.setShowOriginal = this.setShowOriginal.bind(this);
+        this.applyChanges = this.applyChanges.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -201,7 +213,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                 clock,
                 grid,
                 controlsState,
-                showOriginal: false
+                showOriginal: false,
+                updateProgress: null
             };
             clock.start();
         }
@@ -526,6 +539,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             <div ref={this.onLoad} style={canvasStyle}/>
             {this.renderInfo()}
             {this.renderFileSelector()}
+            {this.renderApplyButton()}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
         </div>;
     }
@@ -565,6 +579,35 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             </div>;
         }
         return null;
+    }
+
+    renderApplyButton() {
+        const progressStyle = {
+            background: '#222222',
+            color: 'red',
+            padding: 5
+        };
+        return <div style={applyChangesStyle}>
+            {this.state.updateProgress
+                ? <div style={progressStyle}>{this.state.updateProgress}</div>
+                : <button style={infoButton} onClick={this.applyChanges}>
+                    Apply changes
+                </button>
+            }
+        </div>;
+    }
+
+    async applyChanges() {
+        const { library } = this.props.sharedState;
+        const scenes = await findScenesUsingLibrary(library);
+        for (let i = 0; i < scenes.length; i += 1) {
+            const scene = scenes[i];
+            this.setState({ updateProgress: `Updating scene ${i + 1} / ${scenes.length}` });
+            const sceneData = await loadSceneData(getLanguageConfig().language, scene);
+            const sceneMap = await loadSceneMapData();
+            await saveSceneReplacementModel(sceneMap[scene].index, sceneData.ambience);
+        }
+        this.setState({ updateProgress: null });
     }
 
     async changeAngle(e) {
@@ -856,4 +899,22 @@ function getLightVector() {
         -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
     );
     return lightVector;
+}
+
+async function findScenesUsingLibrary(library) {
+    const bkg = await loadHqr('LBA_BKG.HQR');
+    const sceneMap = await loadSceneMapData();
+    const scenes = [];
+    each(times(222), async (scene) => {
+        const indexInfo = sceneMap[scene];
+        if (indexInfo.isIsland) {
+            return;
+        }
+        const gridData = new DataView(bkg.getEntry(indexInfo.index + 1));
+        const libIndex = gridData.getUint8(0);
+        if (libIndex === library) {
+            scenes.push(scene);
+        }
+    });
+    return scenes;
 }

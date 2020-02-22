@@ -1,4 +1,4 @@
-import { find } from 'lodash';
+import { find, each } from 'lodash';
 
 export function processLayoutMirror(cellInfo, mirrorGroups) {
     const { layout, pos: {x, y, z} } = cellInfo;
@@ -36,4 +36,32 @@ export function processLayoutMirror(cellInfo, mirrorGroups) {
             max: {x, y, z}
         });
     }
+}
+
+export function buildMirrors(mirrorGroups) {
+    const mirrors = new Map<string, number[][]>();
+    each(mirrorGroups, (groups) => {
+        each(groups, (g: any) => {
+            for (let x = g.min.x; x <= g.max.x; x += 1) {
+                for (let y = g.min.y; y <= g.max.y; y += 1) {
+                    for (let z = g.min.z; z <= g.max.z; z += 1) {
+                        if (x === g.min.x || y === g.min.y || z === g.min.z) {
+                            const sides = [];
+                            if (x === g.min.x) {
+                                sides[0] = [g.max.x, y, z];
+                            }
+                            if (y === g.min.y) {
+                                sides[1] = [x, g.max.y, z];
+                            }
+                            if (z === g.min.z) {
+                                sides[2] = [x, y, g.max.z];
+                            }
+                            mirrors[`${x},${y},${z}`] = sides;
+                        }
+                    }
+                }
+            }
+        });
+    });
+    return mirrors;
 }

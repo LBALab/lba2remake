@@ -1,12 +1,15 @@
-import { each } from 'lodash';
 import { loadMetadata } from './metadata';
 import {
     initReplacements,
     processLayoutReplacement,
     buildReplacementMeshes
 } from './replacements';
-import { processLayoutMirror } from './mirrors';
+import { processLayoutMirror, buildMirrors } from './mirrors';
 import { saveFullSceneModel } from './models';
+import { loadGrid } from '../grid';
+import { loadHqr } from '../../hqr';
+import { loadImageData } from '..';
+import { loadBricks } from '../bricks';
 
 export async function extractGridMetadata(grid, entry, ambience, is3D) {
     if (!is3D) {
@@ -28,40 +31,40 @@ export async function extractGridMetadata(grid, entry, ambience, is3D) {
             processLayoutMirror(cellInfo, mirrorGroups);
         }
     });
-    const mirrors = new Map<string, number[][]>();
-    each(mirrorGroups, (groups) => {
-        each(groups, (g: any) => {
-            for (let x = g.min.x; x <= g.max.x; x += 1) {
-                for (let y = g.min.y; y <= g.max.y; y += 1) {
-                    for (let z = g.min.z; z <= g.max.z; z += 1) {
-                        if (x === g.min.x || y === g.min.y || z === g.min.z) {
-                            const sides = [];
-                            if (x === g.min.x) {
-                                sides[0] = [g.max.x, y, z];
-                            }
-                            if (y === g.min.y) {
-                                sides[1] = [x, g.max.y, z];
-                            }
-                            if (z === g.min.z) {
-                                sides[2] = [x, y, g.max.z];
-                            }
-                            mirrors[`${x},${y},${z}`] = sides;
-                        }
-                    }
-                }
-            }
-        });
+
+    if (!replacements.threeObject) {
+        replacements.threeObject = buildReplacementMeshes(entry, replacements);
+    }
+
+    return {
+        replacements,
+        mirrors: buildMirrors(mirrorGroups)
+    };
+}
+
+export async function saveSceneReplacementModel(entry, ambience) {
+    const [ress, bkg, mask] = await Promise.all([
+        loadHqr('RESS.HQR'),
+        loadHqr('LBA_BKG.HQR'),
+        loadImageData('images/brick_mask.png')
+    ]);
+    const palette = new Uint8Array(ress.getEntry(0));
+    const bricks = loadBricks(bkg);
+    const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
+
+    const metadata = await loadMetadata(entry, grid.library, true);
+    const replacements = await initReplacements(entry, metadata, ambience);
+
+    forEachCell(grid, metadata, (cellInfo) => {
+        if (cellInfo.replace) {
+            processLayoutReplacement(grid, cellInfo, replacements);
+        }
     });
 
     if (!replacements.threeObject) {
         replacements.threeObject = buildReplacementMeshes(entry, replacements);
         saveFullSceneModel(replacements.threeObject, entry);
     }
-
-    return {
-        replacements,
-        mirrors
-    };
 }
 
 function forEachCell(grid, metadata, handler) {
