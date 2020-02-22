@@ -403,6 +403,11 @@
       "file": "163_paint_bucket.glb",
       "orientation": 3
     },
+    "164": {
+      "replace": true,
+      "file": "164_wood_stairs.glb",
+      "orientation": 0
+    },
     "165": {
       "replace": true,
       "file": "165_pencil_jar.glb",
