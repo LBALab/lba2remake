@@ -24,6 +24,7 @@ export async function initReplacements(entry, metadata, ambience) {
         threeObject: null,
         geometries: {
             colored: {
+                index: [],
                 positions: [],
                 normals: [],
                 colors: [],
@@ -78,6 +79,9 @@ export function buildReplacementMeshes(entry, replacements) {
     each(replacements.geometries, (geom, key) => {
         if (geom.positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
+            bufferGeometry.setIndex(new THREE.BufferAttribute(
+                new Uint32Array(geom.index), 1
+            ));
             bufferGeometry.setAttribute(
                 'position',
                 new THREE.BufferAttribute(new Float32Array(geom.positions), 3)
@@ -200,6 +204,7 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
                 geomGroup = `textured_${textureId}`;
                 if (!(geomGroup in replacements.geometries)) {
                     replacements.geometries[geomGroup] = {
+                        index: [],
                         positions: [],
                         normals: [],
                         colors: null,
@@ -218,6 +223,7 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
                 }
             }
             const {
+                index,
                 positions,
                 normals,
                 colors,
@@ -227,17 +233,20 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
                 const mColor = baseMaterial.color.clone().convertLinearToGamma();
                 color = new THREE.Vector3().fromArray(mColor.toArray());
             }
+            const offset = positions.length / 3;
             for (let i = 0; i < index_attr.count; i += 1) {
-                const idx = index_attr.array[i];
-                const x = pos_attr.getX(idx);
-                const y = pos_attr.getY(idx);
-                const z = pos_attr.getZ(idx);
+                index.push(offset + index_attr.array[i]);
+            }
+            for (let i = 0; i < pos_attr.count; i += 1) {
+                const x = pos_attr.getX(i);
+                const y = pos_attr.getY(i);
+                const z = pos_attr.getZ(i);
                 POS.set(x, y, z);
                 POS.applyMatrix4(transform);
                 positions.push(POS.x, POS.y, POS.z);
-                const nx = normal_attr.getX(idx);
-                const ny = normal_attr.getY(idx);
-                const nz = normal_attr.getZ(idx);
+                const nx = normal_attr.getX(i);
+                const ny = normal_attr.getY(i);
+                const nz = normal_attr.getZ(i);
                 NORM.set(nx, ny, nz);
                 NORM.applyMatrix3(normalMatrix);
                 NORM.normalize();
@@ -246,7 +255,7 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
                     colors.push(color.x * 255, color.y * 255, color.z * 255);
                 }
                 if (uvs) {
-                    uvs.push(uv_attr.getX(idx), uv_attr.getY(idx));
+                    uvs.push(uv_attr.getX(i), uv_attr.getY(i));
                 }
             }
         }

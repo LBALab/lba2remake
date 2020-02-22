@@ -63,8 +63,8 @@ export async function saveFullSceneModel(threeObject, entry) {
         if (node instanceof THREE.Mesh) {
             const material = node.material as THREE.RawShaderMaterial;
             const uTexture = material.uniforms.uTexture;
-            node.material = new THREE.MeshStandardMaterial({
-                map: uTexture && uTexture.value
+            node.material = new THREE.MeshStandardMaterial(uTexture && {
+                map: uTexture.value
             });
         }
     });
