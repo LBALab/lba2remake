@@ -233,7 +233,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     }
 
     onGameReady() {
-        this.state.game.loaded();
+        this.state.game.loaded('game');
         if (this.props.params.scene === -1) {
             this.showMenu();
         }

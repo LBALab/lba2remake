@@ -110,7 +110,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             }
             initSceneDebugData();
             scene.firstFrame = true;
-            game.loaded(wasPaused);
+            game.loaded(`scene #${index}`, wasPaused);
             return scene;
         },
 

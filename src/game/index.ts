@@ -58,10 +58,10 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
             clock.stop();
             this.setUiState({loading: true});
             // tslint:disable-next-line:no-console
-            console.log(`Loading scene #${index}`);
+            console.log(`Loading scene #${index}...`);
         },
 
-        loaded(wasPaused: boolean = false) {
+        loaded(what: string, wasPaused: boolean = false) {
             isPaused = wasPaused;
             if (!isPaused) {
                 clock.start();
@@ -71,7 +71,7 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
             isLoading = false;
             this.setUiState({loading: false});
             // tslint:disable-next-line:no-console
-            console.log('Loaded!');
+            console.log(`Loaded ${what}!`);
         },
 
         isPaused: () => isPaused,

@@ -136,7 +136,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
             this.canvas = document.createElement('canvas');
             const game = this.state.game;
             await game.preload();
-            game.loaded();
+            game.loaded('game');
             if (this.props.params.scene === -1) {
                 this.showMenu();
             }
