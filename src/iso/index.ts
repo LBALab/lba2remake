@@ -139,7 +139,7 @@ function buildColumn(library, cells, geometries, x, z, gridMetadata) {
             const layout = library.layouts[blocks[y].layout];
             if (layout) {
                 const key = `${x},${y},${z}`;
-                if (replacements && replacements.bricks.has(key))
+                if (replacements && replacements.bricks && replacements.bricks.has(key))
                     continue;
 
                 const block = layout.blocks[blocks[y].block];
