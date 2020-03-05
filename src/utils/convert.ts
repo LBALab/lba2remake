@@ -33,11 +33,12 @@ const convertToMp4 = (videoIndex: number, inputFilePath: string, outputFilePath:
     return new Promise((resolve) => {
         let command: string;
         if (videoIndex === 17) {
+            resolve(); // TODO - remove
+
             // TODO - make work
-            resolve();
             return;
             // command = `ffmpeg -i "${inputFilePath}" -q:v 0 -q:a 0 -filter_complex "[0:1][0:3] amerge=inputs=2" "${inputFilePath}.avi" && `+
-            // `ffmpeg -i "${inputFilePath}.avi" -q:v 0 -q:a 0 "${outputFilePath}" && rm -f ${inputFilePath}.avi`;
+            // `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}.avi" -q:v 0 -q:a 0 "${outputFilePath}" && rm -f ${inputFilePath}.avi`;
         }
         else {
             command = `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}" -c:v libx264 -crf 22 -pix_fmt yuv420p "${outputFilePath}"`;
