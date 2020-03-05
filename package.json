@@ -34,6 +34,7 @@
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
     "ts-loader": "^6.2.1",
+    "ts-node": "^8.6.2",
     "tslint": "^5.16.0",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-loader": "^3.6.0",
@@ -50,7 +51,8 @@
     "build": "cross-env NODE_ENV=production webpack -p",
     "build:debug": "cross-env SRCMAP=true NODE_ENV=development webpack -p",
     "lint": "tslint -t msbuild -p ./tsconfig.json",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "convert": "ts-node src/utils/convert.ts"
   },
   "repository": "https://github.com/agrande/lba2remake.git",
   "author": "Adrien Grandemange",
