@@ -7,7 +7,7 @@ export interface Entry {
     nextHiddenEntry?: number;
 }
 
-export const readHeader = (buffer: ArrayBuffer, isVoxHQR: boolean) => {
+export const readHqrHeader = (buffer: ArrayBuffer, isVoxHQR: boolean) => {
     const entries: Entry[] = [];
     const firstOffset = new Int32Array(buffer, 0, 1);
     const numEntries = (firstOffset[0] / 4) - 1;
@@ -24,42 +24,45 @@ export const readHeader = (buffer: ArrayBuffer, isVoxHQR: boolean) => {
         });
     }
 
-    // check if hidden entries exist and add them - TODO - split into function
     if (isVoxHQR) {
-        for (let i = 0; i < idx_array.length; i += 1) {
-            const entry = entries[i];
-            let entryEndOffset = entry.offset + entry.compressedSize + 10;
-            let nextEntryOffset = buffer.byteLength; // end of file
-            if (i + 1 < idx_array.length) {
-                nextEntryOffset = entries[i + 1].offset;
-            }
-            if (entryEndOffset < nextEntryOffset) {
-                entry.hasHiddenEntry = true;
-                entry.nextHiddenEntry = entries.length;
-            }
-            while (entryEndOffset < nextEntryOffset) { // hidden entry found
-                const header = new DataView(buffer, entryEndOffset - 10, 10);
-                const e = {
-                    offset: entryEndOffset,
-                    originalSize: header.getUint32(0, true),
-                    compressedSize: header.getUint32(4, true),
-                    type: header.getInt16(8, true),
-                    hasHiddenEntry: false,
-                    nextHiddenEntry: -1
-                };
-                entryEndOffset = e.offset + e.compressedSize + 10;
-                if (entryEndOffset < nextEntryOffset) {
-                    e.hasHiddenEntry = true;
-                    e.nextHiddenEntry = entries.length + 1;
-                }
-                entries.push(e);
-            }
-        }
+        addHiddenEntriesIfExist(buffer, idx_array, entries);
     }
     return entries;
-}
+};
 
-export const readEntry = (buffer: ArrayBuffer, entry: Entry) => {
+const addHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array, entries: Entry[]) => {
+    for (let i = 0; i < idx_array.length; i += 1) {
+        const entry = entries[i];
+        let entryEndOffset = entry.offset + entry.compressedSize + 10;
+        let nextEntryOffset = buffer.byteLength; // end of file
+        if (i + 1 < idx_array.length) {
+            nextEntryOffset = entries[i + 1].offset;
+        }
+        if (entryEndOffset < nextEntryOffset) {
+            entry.hasHiddenEntry = true;
+            entry.nextHiddenEntry = entries.length;
+        }
+        while (entryEndOffset < nextEntryOffset) { // hidden entry found
+            const header = new DataView(buffer, entryEndOffset - 10, 10);
+            const e = {
+                offset: entryEndOffset,
+                originalSize: header.getUint32(0, true),
+                compressedSize: header.getUint32(4, true),
+                type: header.getInt16(8, true),
+                hasHiddenEntry: false,
+                nextHiddenEntry: -1
+            };
+            entryEndOffset = e.offset + e.compressedSize + 10;
+            if (entryEndOffset < nextEntryOffset) {
+                e.hasHiddenEntry = true;
+                e.nextHiddenEntry = entries.length + 1;
+            }
+            entries.push(e);
+        }
+    }
+};
+
+export const readHqrEntry = (buffer: ArrayBuffer, entry: Entry) => {
     if (entry.type) {
         const tgt_buffer = new ArrayBuffer(entry.originalSize);
         const source = new Uint8Array(buffer, entry.offset, entry.compressedSize);

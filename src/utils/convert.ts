@@ -1,5 +1,5 @@
 import fs from 'fs';
-import {readHeader, readEntry} from "./hqr_reader"
+import {readHqrHeader, readHqrEntry} from "./hqr_reader"
 
 const videoConvertor = () => {
     const videoFolderPath = "./www/data/VIDEO/";
@@ -11,10 +11,10 @@ const videoConvertor = () => {
     console.log(`Will now extract from ${videoHqrPath}`);
     const buffer = fs.readFileSync(videoHqrPath);
     const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-    const entries = readHeader(arrayBuffer, false);
+    const entries = readHqrHeader(arrayBuffer, false);
     const size = entries.length;
     for (let i = 0; i < size; i++) {
-        const video = readEntry(arrayBuffer, entries[i]);
+        const video = readHqrEntry(arrayBuffer, entries[i]);
         const writeBuffer = Buffer.from(new Uint8Array(video));
         const writePath = `${videoFolderPath}VIDEO${i.toString().padStart(2, "0")}.smk`;
         fs.writeFileSync(writePath, writeBuffer);
