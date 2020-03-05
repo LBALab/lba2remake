@@ -1,8 +1,25 @@
-import {loadHqr} from "../hqr"
+import fs from 'fs';
+import {readHeader, readEntry} from "./hqr_reader"
 
-const videoConvertor = async () => {
-    const videos = await loadHqr("VIDEO/VIDEO.HQR");
-    console.log(videos);
+const videoConvertor = () => {
+    const videoFolderPath = "./www/data/VIDEO/";
+    const videoHqrPath = videoFolderPath + "VIDEO.HQR";
+    if (!fs.existsSync(videoHqrPath)) {
+        console.error(`File not found: ${videoHqrPath}`);
+        return;
+    }
+    console.log(`Will now extract from ${videoHqrPath}`);
+    const buffer = fs.readFileSync(videoHqrPath);
+    const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+    const entries = readHeader(arrayBuffer, false);
+    const size = entries.length;
+    for (let i = 0; i < size; i++) {
+        const video = readEntry(arrayBuffer, entries[i]);
+        const writeBuffer = Buffer.from(new Uint8Array(video));
+        const writePath = `${videoFolderPath}VIDEO${i.toString().padStart(2, "0")}.smk`;
+        fs.writeFileSync(writePath, writeBuffer);
+        console.log(`Successfully extracted ${writePath}`);
+    }
 };
 
 const convertors = {

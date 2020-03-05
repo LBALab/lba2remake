@@ -53,7 +53,7 @@
     "build:debug": "cross-env SRCMAP=true NODE_ENV=development webpack -p",
     "lint": "tslint -t msbuild -p ./tsconfig.json",
     "typecheck": "tsc",
-    "convert": "ts-node src/utils/convert.ts video"
+    "convert-video": "ts-node src/utils/convert.ts video"
   },
   "repository": "https://github.com/agrande/lba2remake.git",
   "author": "Adrien Grandemange",
