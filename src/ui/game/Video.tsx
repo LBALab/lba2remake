@@ -17,6 +17,7 @@ export default function Video(props) {
             width={width}
             height={height}
             onEnded={props.video.onEnded}
+            onError={props.video.onEnded}
         >
             <source type="video/mp4" src={props.video.src} />
         </video>;
