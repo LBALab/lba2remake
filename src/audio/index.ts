@@ -22,6 +22,10 @@ function loadAudioAsync(context, url, callback) {
     request.open('GET', url, true);
     request.responseType = 'arraybuffer';
     request.onload = () => {
+        if (request.status === 404) {
+            callback(null);
+            return;
+        }
         context.decodeAudioData(request.response, callback, (err) => {
             throw new Error(err);
         });
@@ -111,6 +115,9 @@ function getMusicSource(state, context, data) {
         } else {
             const file = source.data[index].file;
             loadAudioAsync(context, file, (buffer) => {
+                if (!buffer)
+                    return;
+
                 // this bypasses a browser issue while loading same sample in short period of time
                 if (!musicSourceCache[index]) {
                     if (!source.bufferSource.buffer) {
@@ -178,7 +185,10 @@ function getSoundFxSource(state, context, data = null) {
         context.resume();
     };
     source.load = (index, callback) => {
-        loadHqr('SAMPLES_AAC.HQR').then((samples) => {
+        loadHqr('SAMPLES_AAC.HQR', true).then((samples) => {
+            if (!samples) {
+                return;
+            }
             if (index <= -1 || (source.currentIndex === index && source.isPlaying)) {
                 return;
             }
@@ -275,7 +285,10 @@ function getVoiceSource(state, context, data = null) {
         if (textBankId === -1) {
             filename = `VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`;
         }
-        loadHqr(filename).then((voices) => {
+        loadHqr(filename, true).then((voices) => {
+            if (!voices) {
+                return;
+            }
             if (index === -1 || (source.currentIndex === index && source.isPlaying)) {
                 return;
             }

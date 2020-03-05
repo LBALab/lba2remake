@@ -17,7 +17,7 @@ export default class HQR {
         this.url = url;
     }
 
-    async load() {
+    async load(ignoreUnavailable = false) {
         if (this.buffer) {
             return this;
         }
@@ -31,6 +31,10 @@ export default class HQR {
                 const isVoxHQR = that.url.toLowerCase().includes('vox');
 
                 request.onload = function onload() {
+                    if (ignoreUnavailable && this.status === 404) {
+                        resolve();
+                        return;
+                    }
                     if (this.status === 200) {
                         that.buffer = request.response;
                         that.readHeader(isVoxHQR);
@@ -165,12 +169,12 @@ export default class HQR {
 
 const hqrCache = {};
 
-export async function loadHqr(file: string) {
+export async function loadHqr(file: string, ignoreUnavailable = false) {
     if (file in hqrCache) {
         return await hqrCache[file].load();
     }
 
     const hqr = new HQR(`data/${file}`);
     hqrCache[file] = hqr;
-    return await hqr.load();
+    return await hqr.load(ignoreUnavailable);
 }
