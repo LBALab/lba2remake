@@ -7,7 +7,7 @@ We assume you have a working knowledge of git, github and running commands from 
 ## Prerequisites
 
 You'll need to install [Node.js](https://nodejs.org), which includes the `npm` command for managing dependencies.
- 
+
 If you already have `node.js` installed, make sure it is a recent version (`>= 8.x.x`). LTS versions are preferred.
 
 
@@ -21,17 +21,18 @@ You can obtain an original copy of the game from [GOG](https://www.gog.com/game/
 
 #### Copy the resource files
 
-Assets are stored in the _*.HQR_, _*.OBL_, _*.ILE_ files in the game installation folder, as well as the _VOX_ folder.
+Assets are stored in the _*.HQR_, _*.OBL_ and _*.ILE_ files in the game installation folder.
 You need to copy all those files to the _www/data_ folder of your local copy of the project repository.
 
 #### Convert the videos and musics
 
-Musics and videos can't be read directly, they have to be converted to mp4 files.
+Musics, voices, sound samples and videos can't be read directly, they have to be converted to mp4 and aac files.
 The remake can work without them, but if you want the complete thing you will have to convert them.
 At this point, no script is available to perform this task automatically, but the necessary commands are documented in [this issue](https://github.com/agrande/lba2remake/issues/4).
 
 * Musics end up in the _www/data/MUSIC_ folder
 * Videos end up in the _www/data/VIDEO_ folder
+* Voices and samples are a bit more tricky, no documentation is available yet for those, it involves repackaging them in new HQR files with entries in aac format
 
 
 ## Installing the dependencies
