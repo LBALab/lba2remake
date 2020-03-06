@@ -5,6 +5,7 @@ export function createVideoScreen(video) {
     videoElem.src = video.src;
     videoElem.autoplay = true;
     videoElem.onended = video.onEnded;
+    videoElem.onerror = video.onEnded;
 
     const density = 512;
     const texture = new THREE.VideoTexture(videoElem);

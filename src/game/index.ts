@@ -131,12 +131,12 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
                 preloadFile('images/2_screen_menubg_extended.png', tr('MenuBackground')),
                 preloadFile('images/remake_logo.png', tr('Logo')),
                 preloadFile('data/RESS.HQR', tr('Resources')),
-                preloadFile(`data/VOX/${languageVoice.code}_GAM_AAC.VOX`, tr('MainVoices')),
-                preloadFile(`data/VOX/${languageVoice.code}_000_AAC.VOX`, tr('Voices')),
-                preloadFile('data/MUSIC/LOGADPCM.mp4', tr('AdelineTheme')),
-                preloadFile('data/MUSIC/JADPCM15.mp4', tr('MainTheme')),
-                preloadFile('data/MUSIC/JADPCM16.mp4', tr('FirstSong')),
-                preloadFile('data/MUSIC/Track6.mp4', tr('MenuMusic')),
+                preloadFile(`data/VOX/${languageVoice.code}_GAM_AAC.VOX`, tr('MainVoices'), false),
+                preloadFile(`data/VOX/${languageVoice.code}_000_AAC.VOX`, tr('Voices'), false),
+                preloadFile('data/MUSIC/LOGADPCM.mp4', tr('AdelineTheme'), false),
+                preloadFile('data/MUSIC/JADPCM15.mp4', tr('MainTheme'), false),
+                preloadFile('data/MUSIC/JADPCM16.mp4', tr('FirstSong'), false),
+                preloadFile('data/MUSIC/Track6.mp4', tr('MenuMusic'), false),
             ]);
             this.menuTexts = menuTexts;
             this.texts = gameTexts;
@@ -152,7 +152,7 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
     return game;
 }
 
-async function preloadFile(url, name) {
+async function preloadFile(url, name, mandatory = true) {
     const send = (eventName, progress?) => {
         if (name) {
             document.dispatchEvent(new CustomEvent(eventName, {detail: {name, progress}}));
@@ -168,6 +168,9 @@ async function preloadFile(url, name) {
             send('loaderprogress', progress);
         };
         request.onload = function onload() {
+            if (!mandatory && this.status === 404) {
+                resolve();
+            }
             if (this.status === 200) {
                 send('loaderend');
                 resolve();
