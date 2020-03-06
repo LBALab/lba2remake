@@ -31,7 +31,7 @@ interface CEState {
 }
 
 export default class CinemaEffect extends React.Component<CEProps, CEState> {
-    timeout?: number;
+    timeout?: NodeJS.Timeout;
 
     constructor(props) {
         super(props);
@@ -50,7 +50,9 @@ export default class CinemaEffect extends React.Component<CEProps, CEState> {
     }
 
     componentWillUnmount() {
-        clearTimeout(this.timeout);
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+        }
     }
 
     render() {
