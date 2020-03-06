@@ -1,5 +1,5 @@
 // tslint:disable: no-console
-// tslint:disable: max-line-length => only for ffmpeg commands that look ugly if splitting them
+// tslint:disable: max-line-length => only for ffmpeg commands that look ugly if splitting them too much
 import fs from 'fs';
 import {readHqrHeader, readHqrEntry} from './hqr_reader';
 import { exec } from 'child_process';
@@ -14,7 +14,7 @@ const videoLanguageTracks = {
 
 const videoConvertor = async () => {
     const videoFolderPath = './www/data/VIDEO/';
-    const videoHqrPath = `videoFolderPath${'VIDEO.HQR'}`;
+    const videoHqrPath = `${videoFolderPath}VIDEO.HQR`;
     if (!fs.existsSync(videoHqrPath)) {
         console.error(`File not found: ${videoHqrPath}`);
         return;
