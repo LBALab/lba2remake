@@ -21,6 +21,7 @@
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.4.4",
+    "@types/node": "^13.7.7",
     "acorn": "^7.1.0",
     "body-parser": "^1.19.0",
     "cross-env": "^5.2.0",
@@ -34,6 +35,7 @@
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
     "ts-loader": "^6.2.1",
+    "ts-node": "^8.6.2",
     "tslint": "^5.16.0",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-loader": "^3.6.0",
@@ -50,7 +52,8 @@
     "build": "cross-env NODE_ENV=production webpack -p",
     "build:debug": "cross-env SRCMAP=true NODE_ENV=development webpack -p",
     "lint": "tslint -t msbuild -p ./tsconfig.json",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "convert-video": "ts-node src/utils/convert.ts video"
   },
   "repository": "https://github.com/agrande/lba2remake.git",
   "author": "Adrien Grandemange",

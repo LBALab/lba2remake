@@ -18,7 +18,7 @@ interface TBState {
 }
 
 export default class TextBox extends React.Component<TBProps, TBState> {
-    interval: number;
+    interval: NodeJS.Timeout;
 
     constructor(props) {
         super(props);
