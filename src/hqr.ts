@@ -1,4 +1,4 @@
-import { readHqrEntry, Entry, readHqrHeader } from "./utils/hqr_reader";
+import { readHqrEntry, Entry, readHqrHeader } from './utils/hqr_reader';
 
 export default class HQR {
     private url: string;
