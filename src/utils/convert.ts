@@ -123,7 +123,7 @@ const getMusicFileBitrate = (fileName: string, bitrates: number[]) => {
 
 const convertToMp4Audio = async (inputFilePath: string, outputFilePath: string, bitrate: number) => {
     console.log(`Converting ${inputFilePath} to ${outputFilePath} with bitrate ${bitrate}k`);
-    const command = `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}" -c:a libfdk_aac -b:a ${bitrate}k "${outputFilePath}"`;
+    const command = `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}" -c:a aac -b:a ${bitrate}k "${outputFilePath}"`;
     await executeCommand(command);
 };
 
