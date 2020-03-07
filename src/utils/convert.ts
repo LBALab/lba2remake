@@ -115,7 +115,6 @@ const getMusicFileBitrate = (fileName: string, bitrates: number[]) => {
         'tadpcm5.mp4': 1,
         'track6.mp4': 1
     };
-    console.log(fileName.toLowerCase(), bitrates);
     if (fileName.toLowerCase() in higherBitrateFiles) {
         return bitrates[0];
     }
