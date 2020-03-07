@@ -4,6 +4,7 @@ import fs from 'fs';
 import {readHqrHeader, readHqrEntry} from './hqr_reader';
 import { exec } from 'child_process';
 import path from 'path';
+import { readFromFile, writeToFile } from './array_buffer_fs';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {
@@ -16,25 +17,24 @@ const videoLanguageTracks = {
 const videoConvertor = async () => {
     const videoFolderPath = './www/data/VIDEO/';
     const videoHqrPath = `${videoFolderPath}VIDEO.HQR`;
-    if (!fs.existsSync(videoHqrPath)) {
+    const languageTrack = readLanguageTrackFromArguments();
+
+    const arrayBuffer = readFromFile(videoHqrPath);
+    if (arrayBuffer == null) {
         console.error(`File not found: ${videoHqrPath}`);
         return;
     }
-    const languageTrack = readLanguageTrackFromArguments();
+
     console.log(`Will now extract from ${videoHqrPath}`);
-    const buffer = fs.readFileSync(videoHqrPath);
-    const arrayBuffer = buffer.buffer.slice(
-        buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
     const entries = readHqrHeader(arrayBuffer, false);
     const size = entries.length;
     for (let i = 0; i < size; i += 1) {
         const ind = i + 1;
-        const video = readHqrEntry(arrayBuffer, entries[i]);
-        const writeBuffer = Buffer.from(new Uint8Array(video));
         const fileName = `${videoFolderPath}VIDEO${ind.toString().padStart(2, '0')}`;
         const writePath = `${fileName}.smk`;
         const writeMp4Path = `${fileName}.mp4`;
-        fs.writeFileSync(writePath, writeBuffer);
+        const video = readHqrEntry(arrayBuffer, entries[i]);
+        writeToFile(writePath, video);
         console.log(`Successfully extracted ${writePath}`);
         await convertToMp4(ind, languageTrack, writePath, writeMp4Path);
         if (fs.existsSync(writeMp4Path)) {
