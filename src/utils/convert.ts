@@ -3,6 +3,7 @@
 import fs from 'fs';
 import {readHqrHeader, readHqrEntry} from './hqr_reader';
 import { exec } from 'child_process';
+import path from 'path';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {
@@ -58,20 +59,51 @@ const readLanguageTrackFromArguments = () => {
     return languageTrack;
 };
 
-const convertToMp4 = (videoIndex: number, languageTrack: number,
+const convertToMp4 = async (videoIndex: number, languageTrack: number,
         inputFilePath: string, outputFilePath: string) => {
-    return new Promise((resolve) => {
-        let command: string;
-        if (videoIndex === introVideoIndex) {
-            const aviPath = `${inputFilePath}.avi`;
-            command = `rm -f "${aviPath}" && ` +
-            `ffmpeg -i "${inputFilePath}" -q:v 0 -q:a 0 -filter_complex "[0:1][0:${languageTrack}] amerge=inputs=2" "${aviPath}" && ` +
-            `rm -f "${outputFilePath}" && ffmpeg -i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}" && rm -f ${aviPath}`;
-        } else {
-            command = `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}" -c:v libx264 -crf 22 -pix_fmt yuv420p "${outputFilePath}"`;
-        }
 
-        exec(command, (error, _stdout, stderr) => {
+    let command: string;
+    if (videoIndex === introVideoIndex) {
+        const aviPath = `${inputFilePath}.avi`;
+        command = `rm -f "${aviPath}" && ` +
+        `ffmpeg -i "${inputFilePath}" -q:v 0 -q:a 0 -filter_complex "[0:1][0:${languageTrack}] amerge=inputs=2" "${aviPath}" && ` +
+        `rm -f "${outputFilePath}" && ffmpeg -i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}" && rm -f ${aviPath}`;
+    } else {
+        command = `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}" -c:v libx264 -crf 22 -pix_fmt yuv420p "${outputFilePath}"`;
+    }
+    await executeCommand(command);
+};
+
+const musicConvertor = async () => {
+    const folderPath = './www/data/MUSIC/';
+    const files = fs.readdirSync(folderPath);
+    const extensions = {'.wav': 1, '.ogg': 1};
+    const filesToConvert = files.filter(file => path.extname(file).toLowerCase() in extensions);
+    const size = filesToConvert.length;
+    for (let i = 0; i < size; i += 1) {
+        const file = filesToConvert[i];
+        const inputFile = `${folderPath}${file}`;
+        const outputFile = `${folderPath}${getOutputMusicFileName(file)}`;
+        console.log(`Writing ${outputFile}`);
+        await convertToMp4Audio(inputFile, outputFile);
+    }
+};
+
+const getOutputMusicFileName = (fileName) => {
+    if (fileName.toLowerCase() === 'lba2.ogg') {
+        return 'Track6.mp4';
+    }
+    return `${path.basename(fileName, path.extname(fileName))}.mp4`;
+};
+
+const convertToMp4Audio = async (inputFilePath: string, outputFilePath: string) => {
+    const command = `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}" -c:a libfdk_aac -b:a 128k "${outputFilePath}"`;
+    await executeCommand(command);
+};
+
+const executeCommand = async (cmd: string) => {
+    return new Promise((resolve) => {
+        exec(cmd, (error, _stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
             }
@@ -85,6 +117,7 @@ const convertToMp4 = (videoIndex: number, languageTrack: number,
 
 const convertors = {
     video: videoConvertor,
+    music: musicConvertor,
 };
 
 const convert = () => {
