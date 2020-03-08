@@ -1,5 +1,10 @@
+// tslint:disable: no-console
+
 export interface Entry {
+    index: number;
+    isBlank: boolean;
     type: number;
+    headerOffset: number;
     offset: number;
     originalSize: number;
     compressedSize: number;
@@ -8,13 +13,16 @@ export interface Entry {
 }
 
 export const readHqrHeader = (buffer: ArrayBuffer, isVoxHQR: boolean) => {
-    const entries: Entry[] = [];
+    let entries: Entry[] = [];
     const firstOffset = new Int32Array(buffer, 0, 1);
     const numEntries = (firstOffset[0] / 4) - 1;
     const idx_array = new Uint32Array(buffer, 0, numEntries);
     for (let i = 0; i < idx_array.length; i += 1) {
         const header = new DataView(buffer, idx_array[i], 10);
         entries.push({
+            index: i,
+            isBlank: idx_array[i] === 0,
+            headerOffset: idx_array[i],
             offset: idx_array[i] + 10,
             originalSize: header.getUint32(0, true),
             compressedSize: header.getUint32(4, true),
@@ -25,48 +33,154 @@ export const readHqrHeader = (buffer: ArrayBuffer, isVoxHQR: boolean) => {
     }
 
     if (isVoxHQR) {
-        addHiddenEntriesIfExist(buffer, idx_array, entries);
+        entries = entries.concat(entries, getHiddenEntriesIfExist(buffer, idx_array, entries));
     }
     return entries;
 };
 
-const addHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array, entries: Entry[]) => {
-    for (let i = 0; i < idx_array.length; i += 1) {
-        const entry = entries[i];
-        let entryEndOffset = entry.offset + entry.compressedSize + 10;
-        let nextEntryOffset = buffer.byteLength; // end of file
-        if (i + 1 < idx_array.length) {
-            nextEntryOffset = entries[i + 1].offset;
+const getHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array,
+    entries: Entry[]) => {
+
+    let index = 0;
+    let nextHiddenEntryIndex = entries.length;
+    const hiddenEntries: Entry[] = [];
+    while (true) {
+        const result = findFirstNonBlankEntry(entries, index);
+        let currentEntry = result[0] as Entry;
+        index = result[1] as number;
+        if (isLastIndex(index, idx_array.length)) {
+            break;
         }
-        if (entryEndOffset < nextEntryOffset) {
+        const nextResult = findFirstNonBlankEntry(entries, index + 1);
+        const nextEntry = nextResult[0] as Entry;
+
+        const nextOffsetInIndex = nextEntry ? nextEntry.offset : 0;
+        let nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
+
+        /*
+        if (currentEntry.index === 285) {
+            console.log('CURRENT ENTRY', currentEntry);
+            console.log('NEXT ENTRY', nextEntry);
+            console.log('NEXT CALC OFFSET', nextCalculatedOffset);
+            console.log('NEXT ENTRY FROM OFFSET',
+                createEntryFromOffset(buffer, nextCalculatedOffset, nextHiddenEntryIndex));
+
+            return;
+        }
+        */
+
+        while (nextCalculatedOffset < buffer.byteLength &&
+            nextOffsetInIndex !== nextCalculatedOffset) {
+
+            currentEntry.hasHiddenEntry = true;
+            currentEntry.nextHiddenEntry = nextHiddenEntryIndex;
+            currentEntry = createEntryFromOffset(buffer, nextCalculatedOffset,
+                nextHiddenEntryIndex);
+            hiddenEntries.push(currentEntry);
+            nextHiddenEntryIndex += 1;
+            nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
+        }
+        index += 1;
+    }
+
+    return hiddenEntries;
+};
+
+const createEntryFromOffset = (buffer: ArrayBuffer, offset: number, ind: number) => {
+    const header = new DataView(buffer, offset, 10);
+    return {
+        index: ind,
+        isBlank: offset === 0,
+        headerOffset: offset,
+        offset: offset + 10,
+        originalSize: header.getUint32(0, true),
+        compressedSize: header.getUint32(4, true),
+        type: header.getInt16(8, true),
+        hasHiddenEntry: false,
+        nextHiddenEntry: -1
+    } as Entry;
+};
+
+const isLastIndex = (index: number, size: number) => {
+    return index >= size - 1;
+};
+
+const findFirstNonBlankEntry = (entries: Entry[], index: number) => {
+    let i = index;
+    while (i < entries.length) {
+        if (entries[i].isBlank) {
+            i += 1;
+        } else {
+            return [entries[i], i];
+        }
+    }
+    return [null, i];
+};
+
+
+/*
+// TODO - refactor to not be so ugly
+const addHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array, entries: Entry[]) => {
+    let i = 0;
+    while (i < idx_array.length) {
+        const entry = entries[i];
+        let calculatedNextEntryOffset = entry.offset + entry.compressedSize;
+        let nextEntryOffset = 0;
+        let isLastEntry = i + 1 === idx_array.length;
+        if (!isLastEntry) {
+            nextEntryOffset = entries[i + 1].headerOffset;
+        }
+
+        console.log('ENTRY', entry, isLastEntry);
+        console.log('NEXT OFFSET MARKED CALCULATED', nextEntryOffset, calculatedNextEntryOffset);
+
+        if (!isLastEntry && calculatedNextEntryOffset !== nextEntryOffset) {
             entry.hasHiddenEntry = true;
             entry.nextHiddenEntry = entries.length;
+        } else {
+            i += 1;
         }
-        while (entryEndOffset < nextEntryOffset) { // hidden entry found
-            const header = new DataView(buffer, entryEndOffset - 10, 10);
+
+        if (i === 285) {
+            console.log('LAST GOOD', entry);
+            console.log('Next entry offset', nextEntryOffset);
+            console.log('entryEndOffset', calculatedNextEntryOffset);
+        }
+
+        // while hidden entry found
+        while (!isLastEntry && calculatedNextEntryOffset !== nextEntryOffset) {
+            const header = new DataView(buffer, calculatedNextEntryOffset, 10);
+
             const e = {
-                offset: entryEndOffset,
+                headerOffset: calculatedNextEntryOffset,
+                offset: calculatedNextEntryOffset + 10,
                 originalSize: header.getUint32(0, true),
                 compressedSize: header.getUint32(4, true),
                 type: header.getInt16(8, true),
                 hasHiddenEntry: false,
                 nextHiddenEntry: -1
             };
-            entryEndOffset = e.offset + e.compressedSize + 10;
-            if (entryEndOffset < nextEntryOffset) {
+            calculatedNextEntryOffset = e.offset + e.compressedSize;
+            isLastEntry = i + 1 === idx_array.length;
+            if (!isLastEntry) {
+                nextEntryOffset = entries[i + 1].headerOffset;
+            }
+            if (!isLastEntry && calculatedNextEntryOffset !== nextEntryOffset) {
                 e.hasHiddenEntry = true;
                 e.nextHiddenEntry = entries.length + 1;
             }
             entries.push(e);
+            i += 1;
         }
     }
 };
+*/
 
 export const readHqrEntry = (buffer: ArrayBuffer, entry: Entry) => {
-    if (isBlankOrInvalid(entry)) {
+    if (entry.isBlank) {
         return new ArrayBuffer(0);
     }
-    if (entry.type) {
+    if (entry.type > 0) {
         const tgt_buffer = new ArrayBuffer(entry.originalSize);
         const source = new Uint8Array(buffer, entry.offset, entry.compressedSize);
         const target = new Uint8Array(tgt_buffer);
@@ -112,9 +226,4 @@ export const readHqrEntry = (buffer: ArrayBuffer, entry: Entry) => {
         return tgt_buffer;
     }
     return buffer.slice(entry.offset, entry.offset + entry.compressedSize);
-};
-
-const isBlankOrInvalid = (entry: Entry) => {
-    return entry.type === 31352 || entry.type === 18688 || entry.offset === 10 ||
-    entry.type < 0 || entry.compressedSize === 0 || entry.originalSize > 300000000;
 };
