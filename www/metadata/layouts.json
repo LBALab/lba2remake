@@ -384,6 +384,21 @@
     "154": {
       "mirror": true
     },
+    "155": {
+      "replace": true,
+      "file": "155_unrolled_paper.glb",
+      "orientation": 0
+    },
+    "156": {
+      "replace": true,
+      "file": "156_three_paper_rolls.glb",
+      "orientation": 0
+    },
+    "157": {
+      "replace": true,
+      "file": "157_paper_roll.glb",
+      "orientation": 0
+    },
     "158": {
       "replace": true,
       "file": "158_wall_deco_round_corner_no_wood_blue.glb",
