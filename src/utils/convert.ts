@@ -127,25 +127,23 @@ const voiceConvertor = async () => {
     const files = fs.readdirSync(folderPath);
     const filesToConvert = files.filter(file =>
         path.extname(file).toLowerCase() === '.vox' &&
-        !path.extname(file).toLowerCase().includes('_aac.')
+        !file.toLowerCase().includes('_aac.')
     );
     const size = filesToConvert.length;
     for (let i = 0; i < size; i += 1) {
         const file = filesToConvert[i];
 
         // TODO - temp
-        /*
-        if (file !== 'EN_GAM.VOX') {
+        if (file !== 'DE_GAM.VOX') {
             continue;
         }
-        */
 
         const inputFile = `${folderPath}${file}`;
         await writeOpenHqr(inputFile, true, async (index, folder, entry, buffer) => {
             // Restoring RIFF in header because LBA format has 0 instead of first R
             new Uint8Array(buffer)[0] = 0x52;
 
-            const baseFileName = `voice_${index.toString().padStart(3, '0')}`;
+            const baseFileName = `voice_${(index + 1).toString().padStart(3, '0')}`;
             const originalFileName = `${baseFileName}.wav`;
             const originalFilePath = `${folder}${originalFileName}`;
             writeToFile(originalFilePath, buffer);
@@ -153,7 +151,7 @@ const voiceConvertor = async () => {
             const outputFileName =  `${baseFileName}.mp4`;
             const outputFilePath = `${folder}${outputFileName}`;
 
-            console.log('Processing HQR entry', entry);
+            console.log('Processing HQR entry', index, entry);
 
             await convertToMp4Audio(originalFilePath, outputFilePath, 64);
             if (fs.existsSync(outputFilePath)) {
