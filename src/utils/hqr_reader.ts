@@ -37,13 +37,13 @@ const getHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array,
     let index = 0;
     let nextHiddenEntryIndex = entries.length;
     const hiddenEntries: Entry[] = [];
-    while (true) {
+    while (index < idx_array.length) {
         console.log('START LOOKING FOR GOOD ENTRY FROM INDEX', index);
         const result = findFirstNonBlankEntry(entries, index);
         let currentEntry = result[0] as Entry;
         index = result[1] as number;
-        if (isLastIndex(index, idx_array.length)) {
-            console.log('LAST INDEX', index);
+        if (currentEntry == null) {
+            console.log('CURRENT NON BLANK ENTRY NOT FOUND');
             break;
         }
         console.log('NEXT NON BLANK ENTRY', currentEntry);
@@ -56,7 +56,8 @@ const getHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array,
         let nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
         console.log('NEXT CALC OFFSET', nextCalculatedOffset);
 
-        if (nextOffsetInIndex !== nextCalculatedOffset) {
+        if (nextOffsetInIndex !== nextCalculatedOffset &&
+            nextCalculatedOffset < buffer.byteLength) {
             console.log('OFFSETS DIFFERENT, looking for hidden group');
 
             while (true) {
@@ -101,10 +102,6 @@ const createEntryFromOffset = (buffer: ArrayBuffer, offset: number, ind: number)
         hasHiddenEntry: false,
         nextHiddenEntry: -1
     } as Entry;
-};
-
-const isLastIndex = (index: number, size: number) => {
-    return index >= size - 1;
 };
 
 const findFirstNonBlankEntry = (entries: Entry[], index: number) => {

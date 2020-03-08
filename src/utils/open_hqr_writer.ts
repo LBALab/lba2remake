@@ -33,6 +33,8 @@ export const writeOpenHqr = async (hqrFilePath: string, isVoxHQR: boolean,
     const buffer = readFromFile(hqrFilePath);
     const entries = readHqrHeader(buffer, isVoxHQR);
 
+    return;
+
     for (let i = 0; i < entries.length; i += 1) {
         const entry = entries[i];
         if (entry.isBlank) {
