@@ -11,13 +11,6 @@ The structure is the following
     instead of offsets
 <mhqrFile>_data => folder containing the files for each entry of this HQR
 
-Usage:
-writeOpenHqr('EN_GAM.VOX', true, (index, folder, buffer) => {
-    const fileName = `voice_${index}.mp4`;
-    fs.writeFileSync(`${folder}${fileName}`, buffer);
-    return fileName;
-});
-
 The callback is provided to specify the custom code to write entry to a file.
 Necessary convertions can be performed. The data folder and index is provided.
 The callback must return the fileName (without path) that will be referenced in the headers json.

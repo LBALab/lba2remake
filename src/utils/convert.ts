@@ -134,9 +134,11 @@ const voiceConvertor = async () => {
         const file = filesToConvert[i];
 
         // TODO - temp
+        /*
         if (file !== 'DE_GAM.VOX') {
             continue;
         }
+        */
 
         const inputFile = `${folderPath}${file}`;
         await writeOpenHqr(inputFile, true, async (index, folder, entry, buffer) => {
