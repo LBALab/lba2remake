@@ -5,6 +5,7 @@ import {readHqrHeader, readHqrEntry} from './hqr_reader';
 import { exec } from 'child_process';
 import path from 'path';
 import { readFromFile, writeToFile } from './array_buffer_fs';
+import { writeOpenHqr } from './open_hqr_writer';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {
@@ -121,6 +122,39 @@ const getMusicFileBitrate = (fileName: string, bitrates: number[]) => {
     return bitrates[1];
 };
 
+const voiceConvertor = async () => {
+    const folderPath = './www/data/VOX/';
+    const files = fs.readdirSync(folderPath);
+    const filesToConvert = files.filter(file =>
+        path.extname(file).toLowerCase() === '.vox' &&
+        !path.extname(file).toLowerCase().includes('_aac.')
+    );
+    const size = filesToConvert.length;
+    for (let i = 0; i < size; i += 1) {
+        const file = filesToConvert[i];
+
+        // TODO - temp
+        if (file !== 'EN_010.VOX') {
+            continue;
+        }
+
+        const inputFile = `${folderPath}${file}`;
+        writeOpenHqr(inputFile, true, (index, folder, buffer) => {
+            const originalFileName = `voice_${index}.wav`;
+            writeToFile(`${folder}${originalFileName}`, buffer);
+            // TODO - the convertation must happen before
+            return originalFileName;
+        });
+
+        /*
+        const outputFileName = getOutputMusicFileName(file);
+        const outputFilePath = `${folderPath}${outputFileName}`;
+        const bitrate = getMusicFileBitrate(outputFileName, bitrates);
+        await convertToMp4Audio(inputFile, outputFilePath, bitrate);
+        */
+    }
+};
+
 const convertToMp4Audio = async (inputFilePath: string, outputFilePath: string, bitrate: number) => {
     console.log(`Converting ${inputFilePath} to ${outputFilePath} with bitrate ${bitrate}k`);
     const command = `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}" -c:a aac -b:a ${bitrate}k "${outputFilePath}"`;
@@ -144,6 +178,7 @@ const executeCommand = async (cmd: string) => {
 const convertors = {
     video: videoConvertor,
     music: musicConvertor,
+    voice: voiceConvertor,
 };
 
 const convert = () => {

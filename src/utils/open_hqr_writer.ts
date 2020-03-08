@@ -14,7 +14,7 @@ The structure is the following
 Usage:
 writeOpenHqr('EN_GAM.VOX', true, (index, folder, buffer) => {
     const fileName = `voice_${index}.mp4`;
-    fs.writeFileSync(`${path}${fileName}`, buffer);
+    fs.writeFileSync(`${folder}${fileName}`, buffer);
     return fileName;
 });
 
@@ -44,7 +44,7 @@ export const writeOpenHqr = (hqrFilePath: string, isVoxHQR: boolean,
         const fileName = writeEntry(index, folderPath, entryBuffer);
         headers.push(buildHeader(entry, fileName));
     });
-    const jsonContent = JSON.stringify(entries);
+    const jsonContent = JSON.stringify(headers, null, 4);
     fs.writeFileSync(`${hqrFilePath}.json`, jsonContent, 'utf8');
 };
 
@@ -57,8 +57,8 @@ const buildHeader = (entry: Entry, fileName: string) => {
     };
 };
 
-const createFolderIfNotExists = (folderPath: string) {
-    if (fs.existsSync(folderPath)) {
+const createFolderIfNotExists = (folderPath: string) => {
+    if (!fs.existsSync(folderPath)) {
         fs.mkdirSync(folderPath);
     }
 };
