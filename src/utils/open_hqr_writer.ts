@@ -1,20 +1,20 @@
 import { readHqrHeader, readHqrEntry, Entry, } from './hqr_reader';
 import { readFromFile } from './array_buffer_fs';
 import fs from 'fs';
+import JSZip from 'jszip';
 
 /*
-This will unpack hqr file named <myHqrFile> to a folder-based format,
-that is accessible by users and code and allows to not repack hqr when doing changes to its parts.
+This will repack hqr file named <myHqrFile> to a so-called OpenHqr format, that is a .zip file.
 
 The structure is the following
-<myHqrFile>.json => json containing all the headers of the HQR files with references to file names
+header.json => json containing all the headers of the HQR files with references to file names
     instead of offsets
-<mhqrFile>_data => folder containing the files for each entry of this HQR
++ the files for each entry of this HQR (referenced in header.json)
 
-The callback is provided to specify the custom code to write entry to a file.
-Necessary convertions can be performed. The data folder and index is provided.
+The callback is required by client code to specify the custom code to write entry to a file.
+Necessary convertions can be performed. The write folder to use and index is provided.
 The callback must return the fileName (without path) that will be referenced in the headers json.
-
+Obviously the file name must be unique (usually add the index to the file name)
 */
 
 export interface OpenEntry {
@@ -32,7 +32,8 @@ export const writeOpenHqr = async (hqrFilePath: string, isVoxHQR: boolean,
     const headers = [];
     const buffer = readFromFile(hqrFilePath);
     const entries = readHqrHeader(buffer, isVoxHQR);
-
+    const folderPath = `${hqrFilePath}_data/`;
+    const zip = new JSZip();
     for (let i = 0; i < entries.length; i += 1) {
         const entry = entries[i];
         if (entry.isBlank) {
@@ -40,13 +41,24 @@ export const writeOpenHqr = async (hqrFilePath: string, isVoxHQR: boolean,
             continue;
         }
         const entryBuffer = readHqrEntry(buffer, entry);
-        const folderPath = `${hqrFilePath}_data/`;
         createFolderIfNotExists(folderPath);
         const fileName = await writeEntry(i, folderPath, entry, entryBuffer);
+        const filePath = `${folderPath}${fileName}`;
+        zip.file(fileName, fs.readFileSync(filePath));
+        fs.unlinkSync(filePath);
         headers.push(buildHeader(entry, fileName));
     }
     const jsonContent = JSON.stringify(headers, null, 4);
-    fs.writeFileSync(`${hqrFilePath}.json`, jsonContent, 'utf8');
+    zip.file('header.json', jsonContent);
+
+    const zipOptions = {type : 'uint8array', compression: 'STORE'};
+    const zippedData = await zip.generateAsync(zipOptions) as Uint8Array;
+    const zipName = `${hqrFilePath}.zip`;
+    fs.writeFileSync(zipName, zippedData);
+    fs.rmdirSync(folderPath);
+
+    // tslint:disable-next-line: no-console
+    console.log(`Packed OpenHqr: ${zipName}`);
 };
 
 const buildHeader = (entry: Entry, fileName: string) => {
