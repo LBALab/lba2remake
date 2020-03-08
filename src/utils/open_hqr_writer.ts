@@ -25,6 +25,7 @@ The callback must return the fileName (without path) that will be referenced in 
 */
 
 export interface OpenEntry {
+    index: number;
     type: number;
     file: string;
     hasHiddenEntry: boolean;
@@ -41,13 +42,11 @@ export const writeOpenHqr = async (hqrFilePath: string, isVoxHQR: boolean,
 
     for (let i = 0; i < entries.length; i += 1) {
         const entry = entries[i];
-        const entryBuffer = readHqrEntry(buffer, entry);
-        if (entryBuffer.byteLength === 0) {
-            // tslint:disable-next-line: no-console
-            console.log('EMPTY ENTRY', i + 1, entry);
+        if (entry.isBlank) {
             headers.push(buildHeader(entry, ''));
             continue;
         }
+        const entryBuffer = readHqrEntry(buffer, entry);
         const folderPath = `${hqrFilePath}_data/`;
         createFolderIfNotExists(folderPath);
         const fileName = await writeEntry(i, folderPath, entry, entryBuffer);
@@ -59,6 +58,7 @@ export const writeOpenHqr = async (hqrFilePath: string, isVoxHQR: boolean,
 
 const buildHeader = (entry: Entry, fileName: string) => {
     return {
+        index: entry.index,
         type: entry.type,
         file: fileName,
         hasHiddenEntry: entry.hasHiddenEntry,

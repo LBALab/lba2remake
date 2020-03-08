@@ -33,8 +33,10 @@ export const readHqrHeader = (buffer: ArrayBuffer, isVoxHQR: boolean) => {
     }
 
     if (isVoxHQR) {
-        entries = entries.concat(entries, getHiddenEntriesIfExist(buffer, idx_array, entries));
+        const hiddenEntries = getHiddenEntriesIfExist(buffer, idx_array, entries);
+        entries = entries.concat(hiddenEntries);
     }
+
     return entries;
 };
 
@@ -45,32 +47,27 @@ const getHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array,
     let nextHiddenEntryIndex = entries.length;
     const hiddenEntries: Entry[] = [];
     while (true) {
+        console.log('START LOOKING FOR GOOD ENTRY FROM INDEX', index);
         const result = findFirstNonBlankEntry(entries, index);
         let currentEntry = result[0] as Entry;
         index = result[1] as number;
         if (isLastIndex(index, idx_array.length)) {
+            console.log('LAST INDEX', index);
             break;
         }
-        while (index < idx_array.length - 3 && idx_array[index + 1] === 0) {
-            index += 1;
-        }
+        console.log('NEXT NON BLANK ENTRY', currentEntry);
+        const nextAfterNextEntry = findFirstNonBlankEntry(entries, index + 1)[0] as Entry;
+        console.log('NEXT AFTER NEXT NON BLANK ENTRY', nextAfterNextEntry);
 
-        const nextOffsetInIndex = idx_array[index + 1];
+        const nextOffsetInIndex = nextAfterNextEntry ? nextAfterNextEntry.headerOffset : 0;
+        console.log('NEXT OFFSET BY INDEX', nextOffsetInIndex);
+
         let nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
-
-        /*
-        if (currentEntry.index === 285) {
-            console.log('CURRENT ENTRY', currentEntry);
-            console.log('NEXT ENTRY', nextEntry);
-            console.log('NEXT CALC OFFSET', nextCalculatedOffset);
-            console.log('NEXT ENTRY FROM OFFSET',
-                createEntryFromOffset(buffer, nextCalculatedOffset, nextHiddenEntryIndex));
-
-            return;
-        }
-        */
+        console.log('NEXT CALC OFFSET', nextCalculatedOffset);
 
         if (nextOffsetInIndex !== nextCalculatedOffset) {
+            console.log('OFFSETS DIFFERENT, looking for hidden group');
+
             while (true) {
                 currentEntry.hasHiddenEntry = true;
                 currentEntry.nextHiddenEntry = nextHiddenEntryIndex;
@@ -78,7 +75,12 @@ const getHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array,
                     nextHiddenEntryIndex);
                 hiddenEntries.push(currentEntry);
                 nextHiddenEntryIndex += 1;
+
+                console.log('Added hidden entry', currentEntry);
+                console.log('Index is now ', nextHiddenEntryIndex);
+
                 if (isLastHiddenEntryOfGroup(buffer, currentEntry)) {
+                    console.log('That was last hidden entry in group. Break.');
                     break;
                 }
                 nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
