@@ -1,5 +1,3 @@
-// tslint:disable: no-console
-
 export interface Entry {
     index: number;
     isBlank: boolean;
@@ -38,27 +36,20 @@ const getHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array,
     let nextHiddenEntryIndex = entries.length;
     const hiddenEntries: Entry[] = [];
     while (index < idx_array.length) {
-        console.log('START LOOKING FOR GOOD ENTRY FROM INDEX', index);
         const result = findFirstNonBlankEntry(entries, index);
         let currentEntry = result[0] as Entry;
         index = result[1] as number;
         if (currentEntry == null) {
-            console.log('CURRENT NON BLANK ENTRY NOT FOUND');
             break;
         }
-        console.log('NEXT NON BLANK ENTRY', currentEntry);
+
         const nextAfterNextEntry = findFirstNonBlankEntry(entries, index + 1)[0] as Entry;
-        console.log('NEXT AFTER NEXT NON BLANK ENTRY', nextAfterNextEntry);
-
         const nextOffsetInIndex = nextAfterNextEntry ? nextAfterNextEntry.headerOffset : 0;
-        console.log('NEXT OFFSET BY INDEX', nextOffsetInIndex);
-
         let nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
-        console.log('NEXT CALC OFFSET', nextCalculatedOffset);
 
+        // If we need to look for hiden entries
         if (nextOffsetInIndex !== nextCalculatedOffset &&
             nextCalculatedOffset < buffer.byteLength) {
-            console.log('OFFSETS DIFFERENT, looking for hidden group');
 
             while (true) {
                 currentEntry.hasHiddenEntry = true;
@@ -68,16 +59,13 @@ const getHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array,
                 hiddenEntries.push(currentEntry);
                 nextHiddenEntryIndex += 1;
 
-                console.log('Added hidden entry', currentEntry);
-                console.log('Index is now ', nextHiddenEntryIndex);
-
                 if (isLastHiddenEntryOfGroup(buffer, currentEntry)) {
-                    console.log('That was last hidden entry in group. Break.');
                     break;
                 }
                 nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
             }
         }
+
         index += 1;
     }
 

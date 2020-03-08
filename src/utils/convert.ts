@@ -134,9 +134,11 @@ const voiceConvertor = async () => {
         const file = filesToConvert[i];
 
         // TODO - temp
+        /*
         if (file !== 'EN_010.VOX') {
             continue;
         }
+        */
 
         const inputFile = `${folderPath}${file}`;
         await writeOpenHqr(inputFile, true, async (index, folder, entry, buffer) => {
