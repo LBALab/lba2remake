@@ -43,8 +43,8 @@ const getHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array,
             break;
         }
 
-        const nextAfterNextEntry = findFirstNonBlankEntry(entries, index + 1)[0] as Entry;
-        const nextOffsetInIndex = nextAfterNextEntry ? nextAfterNextEntry.headerOffset : 0;
+        const nextEntry = findFirstNonBlankEntry(entries, index + 1)[0] as Entry;
+        const nextOffsetInIndex = nextEntry ? nextEntry.headerOffset : 0;
         let nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
 
         // If we need to look for hiden entries
