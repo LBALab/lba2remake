@@ -44,7 +44,7 @@ export const writeOpenHqr = async (hqrFilePath: string, isVoxHQR: boolean,
         const entryBuffer = readHqrEntry(buffer, entry);
         if (entryBuffer.byteLength === 0) {
             // tslint:disable-next-line: no-console
-            console.log('EMPTY ENTRY', i, entry);
+            console.log('EMPTY ENTRY', i + 1, entry);
             headers.push(buildHeader(entry, ''));
             continue;
         }
