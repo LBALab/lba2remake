@@ -31,19 +31,20 @@ export interface OpenEntry {
     nextHiddenEntry?: number;
 }
 
-export const writeOpenHqr = (hqrFilePath: string, isVoxHQR: boolean,
-    writeEntry: (index: number, folder: string, buffer: ArrayBuffer) => string) => {
+export const writeOpenHqr = async (hqrFilePath: string, isVoxHQR: boolean,
+    writeEntry: (index: number, folder: string, buffer: ArrayBuffer) => Promise<string>) => {
 
     const headers = [];
     const buffer = readFromFile(hqrFilePath);
     const entries = readHqrHeader(buffer, isVoxHQR);
-    entries.forEach((entry, index) => {
+    for (let i = 0; i < entries.length; i += 1) {
+        const entry = entries[i];
         const entryBuffer = readHqrEntry(buffer, entry);
         const folderPath = `${hqrFilePath}_data/`;
         createFolderIfNotExists(folderPath);
-        const fileName = writeEntry(index, folderPath, entryBuffer);
+        const fileName = await writeEntry(i, folderPath, entryBuffer);
         headers.push(buildHeader(entry, fileName));
-    });
+    }
     const jsonContent = JSON.stringify(headers, null, 4);
     fs.writeFileSync(`${hqrFilePath}.json`, jsonContent, 'utf8');
 };

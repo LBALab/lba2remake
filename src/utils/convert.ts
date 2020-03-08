@@ -139,23 +139,24 @@ const voiceConvertor = async () => {
         }
 
         const inputFile = `${folderPath}${file}`;
-        writeOpenHqr(inputFile, true, (index, folder, buffer) => {
+        await writeOpenHqr(inputFile, true, async (index, folder, buffer) => {
             // Restoring RIFF in header because LBA format has 0 instead of first R
             const access = new Uint8Array(buffer);
             access[0] = 0x52;
 
-            const originalFileName = `voice_${index}.wav`;
-            writeToFile(`${folder}${originalFileName}`, buffer);
-            // TODO - the convertation must happen before
-            return originalFileName;
-        });
+            const baseFileName = `voice_${index.toString().padStart(3, '0')}`;
+            const originalFileName = `${baseFileName}.wav`;
+            const originalFilePath = `${folder}${originalFileName}`;
+            writeToFile(originalFilePath, buffer);
 
-        /*
-        const outputFileName = getOutputMusicFileName(file);
-        const outputFilePath = `${folderPath}${outputFileName}`;
-        const bitrate = getMusicFileBitrate(outputFileName, bitrates);
-        await convertToMp4Audio(inputFile, outputFilePath, bitrate);
-        */
+            // TODO - filter out non-RIFF (garbage, empty records)
+
+            const outputFileName =  `${baseFileName}.mp4`;
+            const outputFilePath = `${folder}${outputFileName}`;
+            await convertToMp4Audio(originalFilePath, outputFilePath, 64);
+            fs.unlinkSync(originalFilePath);
+            return outputFileName;
+        });
     }
 };
 
