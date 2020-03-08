@@ -140,6 +140,10 @@ const voiceConvertor = async () => {
 
         const inputFile = `${folderPath}${file}`;
         writeOpenHqr(inputFile, true, (index, folder, buffer) => {
+            // Restoring RIFF in header because LBA format has 0 instead of first R
+            const access = new Uint8Array(buffer);
+            access[0] = 0x52;
+
             const originalFileName = `voice_${index}.wav`;
             writeToFile(`${folder}${originalFileName}`, buffer);
             // TODO - the convertation must happen before
