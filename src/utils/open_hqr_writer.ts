@@ -1,4 +1,4 @@
-import { readHqrHeader, readHqrEntry, Entry } from './hqr_reader';
+import { readHqrHeader, readHqrEntry, Entry, } from './hqr_reader';
 import { readFromFile } from './array_buffer_fs';
 import fs from 'fs';
 
@@ -32,17 +32,23 @@ export interface OpenEntry {
 }
 
 export const writeOpenHqr = async (hqrFilePath: string, isVoxHQR: boolean,
-    writeEntry: (index: number, folder: string, buffer: ArrayBuffer) => Promise<string>) => {
+    writeEntry: (index: number, folder: string,
+        entry: Entry, buffer: ArrayBuffer) => Promise<string>) => {
 
     const headers = [];
     const buffer = readFromFile(hqrFilePath);
     const entries = readHqrHeader(buffer, isVoxHQR);
+
     for (let i = 0; i < entries.length; i += 1) {
         const entry = entries[i];
         const entryBuffer = readHqrEntry(buffer, entry);
+        if (entryBuffer.byteLength === 0) {
+            headers.push(buildHeader(entry, ''));
+            continue;
+        }
         const folderPath = `${hqrFilePath}_data/`;
         createFolderIfNotExists(folderPath);
-        const fileName = await writeEntry(i, folderPath, entryBuffer);
+        const fileName = await writeEntry(i, folderPath, entry, entryBuffer);
         headers.push(buildHeader(entry, fileName));
     }
     const jsonContent = JSON.stringify(headers, null, 4);

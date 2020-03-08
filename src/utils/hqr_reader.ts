@@ -63,6 +63,9 @@ const addHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array, en
 };
 
 export const readHqrEntry = (buffer: ArrayBuffer, entry: Entry) => {
+    if (isBlankOrInvalid(entry)) {
+        return new ArrayBuffer(0);
+    }
     if (entry.type) {
         const tgt_buffer = new ArrayBuffer(entry.originalSize);
         const source = new Uint8Array(buffer, entry.offset, entry.compressedSize);
@@ -109,4 +112,9 @@ export const readHqrEntry = (buffer: ArrayBuffer, entry: Entry) => {
         return tgt_buffer;
     }
     return buffer.slice(entry.offset, entry.offset + entry.compressedSize);
+};
+
+const isBlankOrInvalid = (entry: Entry) => {
+    return entry.type === 31352 || entry.type === 18688 || entry.offset === 10 ||
+    entry.type < 0 || entry.compressedSize === 0 || entry.originalSize > 300000000;
 };
