@@ -153,9 +153,9 @@ const voiceConvertor = async () => {
             const outputFileName =  `${baseFileName}.mp4`;
             const outputFilePath = `${folder}${outputFileName}`;
 
-            console.log('Processing HQR entry', index + 1, entry);
+            console.log('Processing HQR entry ', entry);
 
-            await convertToMp4Audio(originalFilePath, outputFilePath, 64);
+            await convertToMp4Audio(originalFilePath, outputFilePath, 64); // TODO - read bitrate from argument
             if (fs.existsSync(outputFilePath)) {
                 fs.unlinkSync(originalFilePath);
             }

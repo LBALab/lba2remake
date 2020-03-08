@@ -22,20 +22,19 @@ export const readHqrHeader = (buffer: ArrayBuffer, isVoxHQR: boolean) => {
     }
 
     if (isVoxHQR) {
-        const hiddenEntries = getHiddenEntriesIfExist(buffer, idx_array, entries);
+        const hiddenEntries = getHiddenEntriesIfExist(buffer, entries);
         entries = entries.concat(hiddenEntries);
     }
 
     return entries;
 };
 
-const getHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array,
-    entries: Entry[]) => {
+const getHiddenEntriesIfExist = (buffer: ArrayBuffer, entries: Entry[]) => {
 
     let index = 0;
     let nextHiddenEntryIndex = entries.length;
     const hiddenEntries: Entry[] = [];
-    while (index < idx_array.length) {
+    while (index < entries.length) {
         const result = findFirstNonBlankEntry(entries, index);
         let currentEntry = result[0] as Entry;
         index = result[1] as number;
