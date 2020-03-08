@@ -135,7 +135,7 @@ const voiceConvertor = async () => {
 
         // TODO - temp
         /*
-        if (file !== 'EN_010.VOX') {
+        if (file !== 'EN_GAM.VOX') {
             continue;
         }
         */

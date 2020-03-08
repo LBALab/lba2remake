@@ -78,10 +78,18 @@ const isLastHiddenEntryOfGroup = (buffer: ArrayBuffer, entry: Entry) => {
 };
 
 const createEntryFromOffset = (buffer: ArrayBuffer, offset: number, ind: number) => {
+    if (offset === 0) {
+        return {
+            index: ind, isBlank: true,
+            headerOffset: 0, offset: 0, originalSize: 0, compressedSize: 0, type: -1,
+            hasHiddenEntry: false, nextHiddenEntry: -1
+        } as Entry;
+    }
+
     const header = new DataView(buffer, offset, 10);
     return {
         index: ind,
-        isBlank: offset === 0,
+        isBlank: false,
         headerOffset: offset,
         offset: offset + 10,
         originalSize: header.getUint32(0, true),
