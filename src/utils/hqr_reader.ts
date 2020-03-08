@@ -51,10 +51,11 @@ const getHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array,
         if (isLastIndex(index, idx_array.length)) {
             break;
         }
-        const nextResult = findFirstNonBlankEntry(entries, index + 1);
-        const nextEntry = nextResult[0] as Entry;
+        while (index < idx_array.length - 3 && idx_array[index + 1] === 0) {
+            index += 1;
+        }
 
-        const nextOffsetInIndex = nextEntry ? nextEntry.offset : 0;
+        const nextOffsetInIndex = idx_array[index + 1];
         let nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
 
         /*
@@ -69,21 +70,29 @@ const getHiddenEntriesIfExist = (buffer: ArrayBuffer, idx_array: Uint32Array,
         }
         */
 
-        while (nextCalculatedOffset < buffer.byteLength &&
-            nextOffsetInIndex !== nextCalculatedOffset) {
-
-            currentEntry.hasHiddenEntry = true;
-            currentEntry.nextHiddenEntry = nextHiddenEntryIndex;
-            currentEntry = createEntryFromOffset(buffer, nextCalculatedOffset,
-                nextHiddenEntryIndex);
-            hiddenEntries.push(currentEntry);
-            nextHiddenEntryIndex += 1;
-            nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
+        if (nextOffsetInIndex !== nextCalculatedOffset) {
+            while (true) {
+                currentEntry.hasHiddenEntry = true;
+                currentEntry.nextHiddenEntry = nextHiddenEntryIndex;
+                currentEntry = createEntryFromOffset(buffer, nextCalculatedOffset,
+                    nextHiddenEntryIndex);
+                hiddenEntries.push(currentEntry);
+                nextHiddenEntryIndex += 1;
+                if (isLastHiddenEntryOfGroup(buffer, currentEntry)) {
+                    break;
+                }
+                nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
+            }
         }
         index += 1;
     }
 
     return hiddenEntries;
+};
+
+const isLastHiddenEntryOfGroup = (buffer: ArrayBuffer, entry: Entry) => {
+    const data = new Uint8Array(buffer, entry.offset, 1);
+    return data[0] === 0;
 };
 
 const createEntryFromOffset = (buffer: ArrayBuffer, offset: number, ind: number) => {
