@@ -1,4 +1,4 @@
-import { readHqrEntry, Entry, readHqrHeader } from './utils/hqr_reader';
+import { readHqrEntry, Entry, readHqrHeader } from './utils/hqr/hqr_reader';
 import WebApi from './webapi';
 
 export enum HqrFormat {

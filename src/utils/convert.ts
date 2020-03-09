@@ -1,11 +1,11 @@
 // tslint:disable: no-console
 // tslint:disable: max-line-length => only for ffmpeg commands that look ugly if splitting them too much
 import fs from 'fs';
-import {readHqrHeader, readHqrEntry} from './hqr_reader';
+import {readHqrHeader, readHqrEntry} from './hqr/hqr_reader';
 import { exec } from 'child_process';
 import path from 'path';
-import { readFromFile, writeToFile } from './array_buffer_fs';
-import { writeOpenHqr } from './open_hqr_writer';
+import { readFromFile, writeToFile } from './hqr/array_buffer_fs';
+import { writeOpenHqr } from './hqr/open_hqr_writer';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {

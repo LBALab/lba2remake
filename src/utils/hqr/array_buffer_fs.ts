@@ -5,12 +5,14 @@ export const readFromFile = (filePath: string) => {
         return null;
     }
     const buffer = fs.readFileSync(filePath);
-    const arrayBuffer = buffer.buffer.slice(
-        buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-    return arrayBuffer;
+    return readFromBuffer(buffer);
 };
 
 export const writeToFile = (filePath: string, arrayBuffer : ArrayBuffer) => {
     const writeBuffer = Buffer.from(new Uint8Array(arrayBuffer));
     fs.writeFileSync(filePath, writeBuffer);
+};
+
+export const readFromBuffer = (buffer: Uint8Array) => {
+    return buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
 };

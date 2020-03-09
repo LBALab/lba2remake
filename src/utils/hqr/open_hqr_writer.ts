@@ -2,6 +2,7 @@ import { readHqrHeader, readHqrEntry, Entry, } from './hqr_reader';
 import { readFromFile } from './array_buffer_fs';
 import fs from 'fs';
 import JSZip from 'jszip';
+import { OpenEntry } from './open_hqr_reader';
 
 /*
 This will repack hqr file named <myHqrFile> to a so-called OpenHqr format, that is a .zip file.
@@ -16,14 +17,6 @@ Necessary convertions can be performed. The write folder to use and index is pro
 The callback must return the fileName (without path) that will be referenced in the headers json.
 Obviously the file name must be unique (usually add the index to the file name)
 */
-
-export interface OpenEntry {
-    index: number;
-    type: number;
-    file: string;
-    hasHiddenEntry: boolean;
-    nextHiddenEntry?: number;
-}
 
 export const writeOpenHqr = async (hqrFilePath: string, isVoxHQR: boolean,
     writeEntry: (index: number, folder: string,
@@ -68,7 +61,7 @@ const buildHeader = (entry: Entry, fileName: string) => {
         file: fileName,
         hasHiddenEntry: entry.hasHiddenEntry,
         nextHiddenEntry: entry.nextHiddenEntry
-    };
+    } as OpenEntry;
 };
 
 const createFolderIfNotExists = (folderPath: string) => {
