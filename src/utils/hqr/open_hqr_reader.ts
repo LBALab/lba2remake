@@ -10,17 +10,19 @@ export interface OpenEntry {
     nextHiddenEntry?: number;
 }
 
-export const readOpenHqrHeader = async (buffer: ArrayBuffer) => {
-    const zip = new JSZip(); // TODO - can make optimization and cache zip inside of HQR
+export const readZip = async (buffer: ArrayBuffer) => {
+    const zip = new JSZip();
     await zip.loadAsync(new Uint8Array(buffer));
+    return zip;
+};
+
+export const readOpenHqrHeader = async (zip: JSZip) => {
     const jsonText = await zip.file('header.json').async('string') as string;
     const header = JSON.parse(jsonText) as OpenEntry[];
     return header;
 };
 
-export const readOpenHqrEntry = async (buffer: ArrayBuffer, entry: OpenEntry) => {
-    const zip = new JSZip(); // TODO - can make optimization and cache zip inside of HQR
-    await zip.loadAsync(new Uint8Array(buffer));
+export const readOpenHqrEntry = async (zip: JSZip, entry: OpenEntry) => {
     if (!entry.file) {
         return new ArrayBuffer(0);
     }

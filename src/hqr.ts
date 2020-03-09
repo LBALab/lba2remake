@@ -1,6 +1,6 @@
 import { readHqrEntry, Entry, readHqrHeader } from './utils/hqr/hqr_reader';
 import WebApi from './webapi';
-import { readOpenHqrHeader, readOpenHqrEntry, OpenEntry } from './utils/hqr/open_hqr_reader';
+import { readOpenHqrHeader, readOpenHqrEntry, OpenEntry, readZip } from './utils/hqr/open_hqr_reader';
 
 export enum HqrFormat {
     HQR = 0,
@@ -12,6 +12,7 @@ export default class HQR {
     private entries: Entry[] = [];
     private openEntries: OpenEntry[] = [];
     private buffer: ArrayBuffer = null;
+    private zip: any = null;
     private format: HqrFormat;
     private loadPromise: Promise<HQR> = null;
 
@@ -20,7 +21,7 @@ export default class HQR {
     }
 
     async load(ignoreUnavailable = false, formats = [HqrFormat.HQR]) {
-        if (this.buffer) {
+        if (this.buffer || this.zip) {
             return this;
         }
         const api = new WebApi();
@@ -81,7 +82,7 @@ export default class HQR {
             return this.getEntry(index);
         }
         if (this.format === HqrFormat.OpenHQR) {
-            return await readOpenHqrEntry(this.buffer, this.openEntries[index]);
+            return await readOpenHqrEntry(this.zip, this.openEntries[index]);
         }
         throw `Unsupported format ${this.format}`;
     }
@@ -90,7 +91,9 @@ export default class HQR {
         if (this.format === HqrFormat.HQR) {
             this.entries = readHqrHeader(this.buffer, isVoxHQR);
         } else if (this.format === HqrFormat.OpenHQR) {
-            const result = await this.readOpenHqrToEntries(this.buffer);
+            this.zip = await readZip(this.buffer);
+            this.buffer = null;
+            const result = await this.readOpenHqrToEntries(this.zip);
             this.openEntries = result[0] as OpenEntry[];
             this.entries = result[1] as Entry[];
         } else {
