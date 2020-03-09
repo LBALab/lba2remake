@@ -6,7 +6,9 @@ export interface WebResponseData {
 
 export default class WebApi {
 
-    request(url: string, method: string, responseType: XMLHttpRequestResponseType) {
+    request(url: string, method: string, responseType: XMLHttpRequestResponseType,
+        onProgress?: (this: XMLHttpRequest, ev: any) => any) {
+
         return new Promise<WebResponseData>((resolve) => {
             const request = new XMLHttpRequest();
             request.responseType = responseType;
@@ -17,6 +19,9 @@ export default class WebApi {
                     body: request.response
                 });
             };
+            if (onProgress) {
+                request.onprogress = onProgress;
+            }
 
             request.onerror = function onerror(err) {
                 resolve({
@@ -24,7 +29,6 @@ export default class WebApi {
                     error: err,
                 });
             };
-
             request.send(null);
         });
     }

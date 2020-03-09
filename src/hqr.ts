@@ -40,6 +40,8 @@ export default class HQR {
 
                 if (result.status === 404) {
                     if (i < formats.length - 1) {
+                        // tslint:disable-next-line: no-console max-line-length
+                        console.log(`Ignore 404 error for ${requestUrl}; We will try to load ${HqrFormat[formats[i + 1]]} format`);
                         continue;
                     } else if (ignoreUnavailable) {
                         resolve();
