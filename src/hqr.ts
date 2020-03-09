@@ -49,19 +49,20 @@ export default class HQR {
                         resolve();
                         return;
                     }
-                } else if (result.status === 200) {
+                }
+
+                if (result.status === 200) {
                     that.buffer = result.body;
                     that.format = format;
                     await that.readHeader(isVoxHQR);
                     that.loadPromise = null;
                     resolve(that);
                     return;
-                } else {
-                    reject(`HQR file download failed: status=${result.status}`);
-                    return;
                 }
-            }
 
+                reject(`HQR file download failed: status=${result.status}`);
+                return;
+            }
         });
         return this.loadPromise;
     }
