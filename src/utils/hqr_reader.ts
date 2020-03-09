@@ -47,10 +47,8 @@ const getHiddenEntriesIfExist = (buffer: ArrayBuffer, entries: Entry[]) => {
         let nextCalculatedOffset = currentEntry.offset + currentEntry.compressedSize;
 
         // If we need to look for hiden entries
-        if (nextOffsetInIndex !== nextCalculatedOffset &&
-            nextCalculatedOffset < buffer.byteLength) {
-
-            while (true) {
+        if (nextOffsetInIndex !== nextCalculatedOffset) {
+            while (nextCalculatedOffset < buffer.byteLength) {
                 currentEntry.hasHiddenEntry = true;
                 currentEntry.nextHiddenEntry = nextHiddenEntryIndex;
                 currentEntry = createEntryFromOffset(buffer, nextCalculatedOffset,
