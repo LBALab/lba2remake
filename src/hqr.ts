@@ -1,5 +1,6 @@
 import { readHqrEntry, Entry, readHqrHeader } from './utils/hqr/hqr_reader';
 import WebApi from './webapi';
+import { readOpenHqrHeader, readOpenHqrEntry, OpenEntry } from './utils/hqr/open_hqr_reader';
 
 export enum HqrFormat {
     HQR = 0,
@@ -9,6 +10,7 @@ export enum HqrFormat {
 export default class HQR {
     private url: string;
     private entries: Entry[] = [];
+    private openEntries: OpenEntry[] = [];
     private buffer: ArrayBuffer = null;
     private format: HqrFormat;
     private loadPromise: Promise<HQR> = null;
@@ -46,7 +48,7 @@ export default class HQR {
                 } else if (result.status === 200) {
                     that.buffer = result.body;
                     that.format = format;
-                    that.readHeader(isVoxHQR);
+                    await that.readHeader(isVoxHQR);
                     that.loadPromise = null;
                     resolve(that);
                     return;
@@ -66,14 +68,30 @@ export default class HQR {
 
     getEntry(index: number) {
         const entry = this.entries[index];
-        return readHqrEntry(this.buffer, entry);
+        if (this.format === HqrFormat.HQR) {
+            return readHqrEntry(this.buffer, entry);
+        }
+        throw 'sync getEntry function works only with HQR format. Use getEntryAsync for OpenHqr.';
     }
 
-    readHeader(isVoxHQR: boolean) {
+    async getEntryAsync(index: number) {
+        if (this.format === HqrFormat.HQR) {
+            return this.getEntry(index);
+        }
+        if (this.format === HqrFormat.OpenHQR) {
+            return await readOpenHqrEntry(this.buffer, this.openEntries[index]);
+        }
+        throw `Unsupported format ${this.format}`;
+    }
+
+    async readHeader(isVoxHQR: boolean) {
         if (this.format === HqrFormat.HQR) {
             this.entries = readHqrHeader(this.buffer, isVoxHQR);
+        } else if (this.format === HqrFormat.OpenHQR) {
+            this.entries = await this.readOpenHqrToEntries(this.buffer);
+        } else {
+            throw `Unsupported format ${this.format}`;
         }
-        // TODO - load OpenHqr
     }
 
     hasHiddenEntries(index: number) {
@@ -86,6 +104,23 @@ export default class HQR {
 
     private getUrlForFormat(baseUrl: string, format: HqrFormat) {
         return (format === HqrFormat.HQR) ? baseUrl : `${baseUrl}.zip`;
+    }
+
+    private async readOpenHqrToEntries(buffer: ArrayBuffer) {
+        const openEntries = await readOpenHqrHeader(buffer);
+        return openEntries.map((openEntry) => {
+            return {
+                index: openEntry.index;
+                isBlank: openEntry.file === '';
+                type: openEntry.type;
+                headerOffset: 0;
+                offset: 0;
+                originalSize: 0;
+                compressedSize: 0;
+                hasHiddenEntry: openEntry.hasHiddenEntry;
+                nextHiddenEntry: openEntry.nextHiddenEntry;
+            } as Entry;
+        });
     }
 }
 
