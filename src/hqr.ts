@@ -1,6 +1,7 @@
 import { readHqrEntry, Entry, readHqrHeader } from './utils/hqr/hqr_reader';
 import WebApi from './webapi';
-import { readOpenHqrHeader, readOpenHqrEntry, OpenEntry, readZip } from './utils/hqr/open_hqr_reader';
+import { readOpenHqrHeader, readOpenHqrEntry, OpenEntry, readZip }
+    from './utils/hqr/open_hqr_reader';
 
 export enum HqrFormat {
     HQR = 0,
