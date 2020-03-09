@@ -1,4 +1,5 @@
 import { readHqrEntry, Entry, readHqrHeader } from './utils/hqr_reader';
+import WebApi from './webapi';
 
 export default class HQR {
     private url: string;
@@ -14,35 +15,29 @@ export default class HQR {
         if (this.buffer) {
             return this;
         }
-
+        const api = new WebApi();
         const that = this;
+        const isVoxHQR = that.url.toLowerCase().includes('vox');
         if (!this.loadPromise) {
-            this.loadPromise = new Promise((resolve, reject) => {
-                const request = new XMLHttpRequest();
-                request.responseType = 'arraybuffer';
-                request.open('GET', that.url, true);
-                const isVoxHQR = that.url.toLowerCase().includes('vox');
+            this.loadPromise = new Promise(async (resolve, reject) => {
+                const result = await api.request(that.url, 'GET', 'arraybuffer');
+                if (result.error) {
+                    reject(result.error);
+                    return;
+                }
 
-                request.onload = function onload() {
-                    if (ignoreUnavailable && this.status === 404) {
-                        resolve();
-                        return;
-                    }
-                    if (this.status === 200) {
-                        that.buffer = request.response;
-                        that.readHeader(isVoxHQR);
-                        that.loadPromise = null;
-                        resolve(that);
-                    } else {
-                        reject(`HQR file download failed: status=${this.status}`);
-                    }
-                };
-
-                request.onerror = function onerror(err) {
-                    reject(err);
-                };
-
-                request.send(null);
+                if (ignoreUnavailable && result.status === 404) {
+                    resolve();
+                    return;
+                }
+                if (result.status === 200) {
+                    that.buffer = result.body;
+                    that.readHeader(isVoxHQR);
+                    that.loadPromise = null;
+                    resolve(that);
+                    return;
+                }
+                reject(`HQR file download failed: status=${result.status}`);
             });
         }
         return this.loadPromise;
