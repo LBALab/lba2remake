@@ -88,7 +88,9 @@ export default class HQR {
         if (this.format === HqrFormat.HQR) {
             this.entries = readHqrHeader(this.buffer, isVoxHQR);
         } else if (this.format === HqrFormat.OpenHQR) {
-            this.entries = await this.readOpenHqrToEntries(this.buffer);
+            const result = await this.readOpenHqrToEntries(this.buffer);
+            this.openEntries = result[0] as OpenEntry[];
+            this.entries = result[1] as Entry[];
         } else {
             throw `Unsupported format ${this.format}`;
         }
@@ -108,7 +110,7 @@ export default class HQR {
 
     private async readOpenHqrToEntries(buffer: ArrayBuffer) {
         const openEntries = await readOpenHqrHeader(buffer);
-        return openEntries.map((openEntry) => {
+        return [openEntries, openEntries.map((openEntry) => {
             return {
                 index: openEntry.index,
                 isBlank: openEntry.file === '',
@@ -120,7 +122,7 @@ export default class HQR {
                 hasHiddenEntry: openEntry.hasHiddenEntry,
                 nextHiddenEntry: openEntry.nextHiddenEntry
             } as Entry;
-        });
+        })];
     }
 }
 
