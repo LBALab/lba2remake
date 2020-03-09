@@ -18,7 +18,7 @@ The callback must return the fileName (without path) that will be referenced in 
 Obviously the file name must be unique (usually add the index to the file name)
 */
 
-export const writeOpenHqr = async (hqrFilePath: string, isVoxHQR: boolean,
+export const writeOpenHqr = async (hqrFilePath: string, outputFilePath: string, isVoxHQR: boolean,
     writeEntry: (index: number, folder: string,
         entry: Entry, buffer: ArrayBuffer) => Promise<string>) => {
 
@@ -46,12 +46,11 @@ export const writeOpenHqr = async (hqrFilePath: string, isVoxHQR: boolean,
 
     const zipOptions = {type : 'uint8array', compression: 'STORE'};
     const zippedData = await zip.generateAsync(zipOptions) as Uint8Array;
-    const zipName = `${hqrFilePath}.zip`;
-    fs.writeFileSync(zipName, zippedData);
+    fs.writeFileSync(outputFilePath, zippedData);
     fs.rmdirSync(folderPath);
 
     // tslint:disable-next-line: no-console
-    console.log(`Packed OpenHqr: ${zipName}`);
+    console.log(`Packed OpenHqr: ${outputFilePath}`);
 };
 
 const buildHeader = (entry: Entry, fileName: string) => {

@@ -3,6 +3,7 @@ import { readFromBuffer } from './array_buffer';
 
 export interface OpenEntry {
     index: number;
+    name?: string;
     type: number;
     file: string;
     hasHiddenEntry: boolean;
