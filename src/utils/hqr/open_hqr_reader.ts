@@ -1,5 +1,5 @@
 import JSZip from 'jszip';
-import { readFromBuffer } from './array_buffer_fs';
+import { readFromBuffer } from './array_buffer';
 
 export interface OpenEntry {
     index: number;

@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { readFromBuffer } from './array_buffer';
 
 export const readFromFile = (filePath: string) => {
     if (!fs.existsSync(filePath)) {
@@ -11,8 +12,4 @@ export const readFromFile = (filePath: string) => {
 export const writeToFile = (filePath: string, arrayBuffer : ArrayBuffer) => {
     const writeBuffer = Buffer.from(new Uint8Array(arrayBuffer));
     fs.writeFileSync(filePath, writeBuffer);
-};
-
-export const readFromBuffer = (buffer: Uint8Array) => {
-    return buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
 };

@@ -110,15 +110,15 @@ export default class HQR {
         const openEntries = await readOpenHqrHeader(buffer);
         return openEntries.map((openEntry) => {
             return {
-                index: openEntry.index;
-                isBlank: openEntry.file === '';
-                type: openEntry.type;
-                headerOffset: 0;
-                offset: 0;
-                originalSize: 0;
-                compressedSize: 0;
-                hasHiddenEntry: openEntry.hasHiddenEntry;
-                nextHiddenEntry: openEntry.nextHiddenEntry;
+                index: openEntry.index,
+                isBlank: openEntry.file === '',
+                type: openEntry.type,
+                headerOffset: 0,
+                offset: 0,
+                originalSize: 0,
+                compressedSize: 0,
+                hasHiddenEntry: openEntry.hasHiddenEntry,
+                nextHiddenEntry: openEntry.nextHiddenEntry
             } as Entry;
         });
     }
