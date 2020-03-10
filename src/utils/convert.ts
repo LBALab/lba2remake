@@ -178,6 +178,32 @@ const voiceConvertor = async () => {
     }
 };
 
+const samplesConvertor = async () => {
+    const filePath = './www/data/SAMPLES.HQR';
+    const outputFile = './www/data/SAMPLES_AAC.HQR.zip';
+    const bitrate = readVoiceBitrateArguments();
+    await writeOpenHqr(filePath, outputFile, false, async (index, folder, entry, buffer) => {
+        // Restoring RIFF in header because LBA format has 0 instead of first R
+        new Uint8Array(buffer)[0] = 0x52;
+
+        const baseFileName = `sfx_${(index + 1).toString().padStart(3, '0')}`;
+        const originalFileName = `${baseFileName}.wav`;
+        const originalFilePath = `${folder}${originalFileName}`;
+        writeToFile(originalFilePath, buffer);
+
+        const outputFileName =  `${baseFileName}.mp4`;
+        const outputFilePath = `${folder}${outputFileName}`;
+
+        console.log('Processing HQR entry ', entry);
+
+        await convertToMp4Audio(originalFilePath, outputFilePath, bitrate);
+        if (fs.existsSync(outputFilePath)) {
+            fs.unlinkSync(originalFilePath);
+        }
+        return outputFileName;
+    });
+};
+
 const hqrToOpenHqrConvertor = async () => {
     const filePath = readFilePathFromArguments();
     const outputFile = `${filePath}.zip`;
@@ -213,6 +239,7 @@ const convertors = {
     video: videoConvertor,
     music: musicConvertor,
     voice: voiceConvertor,
+    samples: samplesConvertor,
     hqr: hqrToOpenHqrConvertor
 };
 
