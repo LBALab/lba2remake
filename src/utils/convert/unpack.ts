@@ -15,7 +15,7 @@ interface Paths {
     track: string;
 }
 
-const unpack = async (gameFolder: string, language: string) => {
+const unpack = async (gameFolder: string) => {
     createFolderIfNotExists('./www/data');
 
     const paths: Paths = findFiles(gameFolder);
@@ -28,19 +28,6 @@ const unpack = async (gameFolder: string, language: string) => {
     await extractImage(workDir);
     fs.copyFileSync(localPaths.track, './www/data/MUSIC/LBA2.OGG');
     await executeCommand(`rm -rf "${workDir}"`);
-    await convertAll(language);
-};
-
-const convertAll = async (language: string) => {
-    console.log('Converting music...');
-    await executeCommand('npm run convert music 128 32');
-    console.log('Converting video...');
-    await executeCommand(`npm run convert video ${language}`);
-    console.log('Converting voice. This will take some time...');
-    await executeCommand('npm run convert voice 64');
-    console.log('Converting samples...');
-    await executeCommand('npm run convert samples 32');
-    console.log('All converted! ', language);
 };
 
 const findFiles = (gameFolder: string) => {
@@ -91,12 +78,4 @@ const readGameFolderFromArguments = () => {
     return process.argv[2];
 };
 
-export const readLanguageFromArguments = () => {
-    if (process.argv.length < 4) {
-        console.warn('Not specified language. The video will be in english.');
-        return 'en';
-    }
-    return process.argv[3];
-};
-
-unpack(readGameFolderFromArguments(), readLanguageFromArguments());
+unpack(readGameFolderFromArguments());
