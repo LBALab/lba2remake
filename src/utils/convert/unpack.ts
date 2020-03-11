@@ -9,13 +9,14 @@
 import fs from 'fs';
 import path from 'path';
 import { createFolderIfNotExists, executeCommand } from '../fsutils';
+import { readLanguageTrackFromArguments } from './convert';
 
 interface Paths {
     image: string;
     track: string;
 }
 
-const unpack = async (gameFolder: string) => {
+const unpack = async (gameFolder: string, language: string) => {
     createFolderIfNotExists('./www/data');
 
     const paths: Paths = findFiles(gameFolder);
@@ -28,6 +29,15 @@ const unpack = async (gameFolder: string) => {
     await extractImage(workDir);
     fs.copyFileSync(localPaths.track, './www/data/MUSIC/LBA2.OGG');
     await executeCommand(`rm -rf "${workDir}"`);
+    await convertAll(language);
+};
+
+const convertAll = async (language: string) => {
+    await executeCommand('npm run convert music 128 32');
+    await executeCommand(`npm run convert video ${language}`);
+    await executeCommand('npm run convert voice 64');
+    await executeCommand('npm run convert samples 32');
+    console.log('All converted!');
 };
 
 const findFiles = (gameFolder: string) => {
@@ -78,4 +88,4 @@ const readGameFolderFromArguments = () => {
     return process.argv[2];
 };
 
-unpack(readGameFolderFromArguments());
+unpack(readGameFolderFromArguments(), readLanguageTrackFromArguments());
