@@ -6,6 +6,7 @@ import path from 'path';
 import { readFromFile, writeToFile } from '../hqr/array_buffer_fs';
 import { writeOpenHqr } from '../hqr/open_hqr_writer';
 import { executeCommand } from '../fsutils';
+import FFmpeg from 'ffmpeg-cli';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {
@@ -217,8 +218,8 @@ const hqrToOpenHqrConvertor = async () => {
 
 const convertToMp4Audio = async (inputFilePath: string, outputFilePath: string, bitrate: number) => {
     console.log(`Converting ${inputFilePath} to ${outputFilePath} with bitrate ${bitrate}k`);
-    const command = `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}" -c:a aac -b:a ${bitrate}k "${outputFilePath}"`;
-    await executeCommand(command);
+    await executeCommand(`rm -f "${outputFilePath}"`);
+    FFmpeg.runSync(`-i "${inputFilePath}" -c:a aac -b:a ${bitrate}k "${outputFilePath}"`);
 };
 
 const convertors = {
