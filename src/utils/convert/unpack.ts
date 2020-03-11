@@ -8,40 +8,34 @@
 // tslint:disable: max-line-length => only for ffmpeg commands that look ugly if splitting them too much
 import fs from 'fs';
 import path from 'path';
-import { createFolderIfNotExists } from '../fsutils';
-// import { exec } from 'child_process';
+import { createFolderIfNotExists, executeCommand } from '../fsutils';
 
 interface Paths {
     image: string;
     track: string;
-    dosbox: string;
-    unpack: string;
 }
 
-const unpack = (gameFolder: string) => {
+const unpack = async (gameFolder: string) => {
     createFolderIfNotExists('./www/data');
-    // gameFolder = addEndSlashIfAbsent(gameFolder); // TODO
 
     const paths: Paths = findFiles(gameFolder);
     if (!paths) {
         return;
     }
     const workDir = './www/data/_unpack/';
-    const workPaths = copyInputFiles(workDir, paths);
-    const imageDir = extractImage(workDir, workPaths);
-    console.log(imageDir);
-
-    // TODO -  copy all needed files from extracted image
-    // TODO - copy track file
-    // TODO - delete temporary folder (with rm -rf command )
+    const localPaths = copyInputFiles(workDir, paths);
+    console.log('Extracting image. Do not close the dosbox window.');
+    await extractImage(workDir);
+    fs.copyFileSync(localPaths.track, './www/data/MUSIC/LBA2.OGG');
+    await executeCommand(`rm -rf "${workDir}"`);
 };
 
 const findFiles = (gameFolder: string) => {
     const result = {
-        image: `${gameFolder}Contents/Resources/game/LBA2.GOG`,
-        track: `${gameFolder}Contents/Resources/game/LBA2.OGG`,
-        dosbox: `${gameFolder}Contents/Resources/dosbox/dosbox`,
-        unpack: './src/utils/convert/unpack.bat'
+        image: path.join(gameFolder, 'Contents/Resources/game/LBA2.GOG'),
+        track: path.join(gameFolder, 'Contents/Resources/game/LBA2.OGG'),
+        dosbox: path.join(gameFolder, 'Contents/Resources/dosbox/dosbox'),
+        unpack: path.join(__dirname, 'unpack.bat')
     };
     return verifyPaths(result);
 };
@@ -73,13 +67,15 @@ const copyInputFiles = (workDir: string, paths: Paths) => {
     return result as Paths;
 };
 
-const extractImage = (workDir: string, paths: Paths) => {
-    const outputDir = `${workDir}data`;
-    createFolderIfNotExists(outputDir);
-
-    // TODO - remove paths if not used?
-    console.log(paths);
-
+const extractImage = async (workDir: string) => {
+    await executeCommand(`cd "${workDir}" && ./dosbox unpack.bat -exit`);
 };
 
-unpack("/Applications/Little Big Adventure 2 (Twinsen's Odyssey).app/");
+const readGameFolderFromArguments = () => {
+    if (process.argv.length < 3) {
+        throw 'Please specify game folder';
+    }
+    return process.argv[2];
+};
+
+unpack(readGameFolderFromArguments());

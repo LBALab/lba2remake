@@ -2,10 +2,10 @@
 // tslint:disable: max-line-length => only for ffmpeg commands that look ugly if splitting them too much
 import fs from 'fs';
 import {readHqrHeader, readHqrEntry} from '../hqr/hqr_reader';
-import { exec } from 'child_process';
 import path from 'path';
 import { readFromFile, writeToFile } from '../hqr/array_buffer_fs';
 import { writeOpenHqr } from '../hqr/open_hqr_writer';
+import { executeCommand } from '../fsutils';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {
@@ -221,19 +221,6 @@ const convertToMp4Audio = async (inputFilePath: string, outputFilePath: string, 
     await executeCommand(command);
 };
 
-const executeCommand = async (cmd: string) => {
-    return new Promise((resolve) => {
-        exec(cmd, (error, _stdout, stderr) => {
-            if (error) {
-                console.log(`error: ${error.message}`);
-            }
-            if (stderr) {
-                console.log(`stderr: ${stderr}`);
-            }
-            resolve();
-        });
-    });
-};
 
 const convertors = {
     video: videoConvertor,
