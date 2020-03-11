@@ -87,16 +87,17 @@ const readFilePathFromArguments = () => {
 const convertToMp4 = async (videoIndex: number, languageTrack: number,
         inputFilePath: string, outputFilePath: string) => {
 
-    let command: string;
     if (videoIndex === introVideoIndex) {
         const aviPath = `${inputFilePath}.avi`;
-        command = `rm -f "${aviPath}" && ` +
-        `ffmpeg -i "${inputFilePath}" -q:v 0 -q:a 0 -filter_complex "[0:1][0:${languageTrack}] amerge=inputs=2" "${aviPath}" && ` +
-        `rm -f "${outputFilePath}" && ffmpeg -i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}" && rm -f ${aviPath}`;
+        await executeCommand(`rm -f "${aviPath}"`);
+        FFmpeg.runSync(`-i "${inputFilePath}" -q:v 0 -q:a 0 -filter_complex "[0:1][0:${languageTrack}] amerge=inputs=2" "${aviPath}"`);
+        await executeCommand(`rm -f "${outputFilePath}"`);
+        FFmpeg.runSync(`-i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}" && rm -f ${aviPath}`);
+        await executeCommand(`rm -f "${aviPath}"`);
     } else {
-        command = `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}" -c:v libx264 -crf 22 -pix_fmt yuv420p "${outputFilePath}"`;
+        await executeCommand(`rm -f "${outputFilePath}"`);
+        FFmpeg.runSync(`-i "${inputFilePath}" -c:v libx264 -crf 22 -pix_fmt yuv420p "${outputFilePath}"`);
     }
-    await executeCommand(command);
 };
 
 const musicConvertor = async () => {
