@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 npm run unpack "$1" $2
 npm run convert music 128 32
 npm run convert video $2
