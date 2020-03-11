@@ -9,7 +9,6 @@
 import fs from 'fs';
 import path from 'path';
 import { createFolderIfNotExists, executeCommand } from '../fsutils';
-import { readLanguageTrackFromArguments } from './convert';
 
 interface Paths {
     image: string;
@@ -33,11 +32,15 @@ const unpack = async (gameFolder: string, language: string) => {
 };
 
 const convertAll = async (language: string) => {
+    console.log('Converting music...');
     await executeCommand('npm run convert music 128 32');
+    console.log('Converting video...');
     await executeCommand(`npm run convert video ${language}`);
+    console.log('Converting voice. This will take some time...');
     await executeCommand('npm run convert voice 64');
+    console.log('Converting samples...');
     await executeCommand('npm run convert samples 32');
-    console.log('All converted!');
+    console.log('All converted! ', language);
 };
 
 const findFiles = (gameFolder: string) => {
@@ -88,4 +91,12 @@ const readGameFolderFromArguments = () => {
     return process.argv[2];
 };
 
-unpack(readGameFolderFromArguments(), readLanguageTrackFromArguments());
+export const readLanguageFromArguments = () => {
+    if (process.argv.length < 4) {
+        console.warn('Not specified language. The video will be in english.');
+        return 'en';
+    }
+    return process.argv[3];
+};
+
+unpack(readGameFolderFromArguments(), readLanguageFromArguments());
