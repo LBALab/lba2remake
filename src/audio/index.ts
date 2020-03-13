@@ -285,7 +285,7 @@ function getVoiceSource(state, context, data = null) {
         if (textBankId === -1) {
             filename = `VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`;
         }
-        loadHqr(filename, true, [HqrFormat.OpenHQR]).then(async (voices) => {
+        loadHqr(filename, true, HqrFormat.OpenHQR).then(async (voices) => {
             if (!voices) {
                 return;
             }
