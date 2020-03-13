@@ -1,9 +1,11 @@
 // tslint:disable: no-console
 // tslint:disable: max-line-length => only for ffmpeg commands that look ugly if splitting them too much
 import fs from 'fs';
-import {readHqrHeader, readHqrEntry} from './hqr_reader';
+import {readHqrHeader, readHqrEntry} from './hqr/hqr_reader';
 import { exec } from 'child_process';
 import path from 'path';
+import { readFromFile, writeToFile } from './hqr/array_buffer_fs';
+import { writeOpenHqr } from './hqr/open_hqr_writer';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {
@@ -16,25 +18,24 @@ const videoLanguageTracks = {
 const videoConvertor = async () => {
     const videoFolderPath = './www/data/VIDEO/';
     const videoHqrPath = `${videoFolderPath}VIDEO.HQR`;
-    if (!fs.existsSync(videoHqrPath)) {
+    const languageTrack = readLanguageTrackFromArguments();
+
+    const arrayBuffer = readFromFile(videoHqrPath);
+    if (arrayBuffer == null) {
         console.error(`File not found: ${videoHqrPath}`);
         return;
     }
-    const languageTrack = readLanguageTrackFromArguments();
+
     console.log(`Will now extract from ${videoHqrPath}`);
-    const buffer = fs.readFileSync(videoHqrPath);
-    const arrayBuffer = buffer.buffer.slice(
-        buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
     const entries = readHqrHeader(arrayBuffer, false);
     const size = entries.length;
     for (let i = 0; i < size; i += 1) {
         const ind = i + 1;
-        const video = readHqrEntry(arrayBuffer, entries[i]);
-        const writeBuffer = Buffer.from(new Uint8Array(video));
         const fileName = `${videoFolderPath}VIDEO${ind.toString().padStart(2, '0')}`;
         const writePath = `${fileName}.smk`;
         const writeMp4Path = `${fileName}.mp4`;
-        fs.writeFileSync(writePath, writeBuffer);
+        const video = readHqrEntry(arrayBuffer, entries[i]);
+        writeToFile(writePath, video);
         console.log(`Successfully extracted ${writePath}`);
         await convertToMp4(ind, languageTrack, writePath, writeMp4Path);
         if (fs.existsSync(writeMp4Path)) {
@@ -65,6 +66,21 @@ const readMusicBitrateArguments = () => {
         return [128, 32];
     }
     return [parseInt(process.argv[3], 10), parseInt(process.argv[4], 10)];
+};
+
+const readVoiceBitrateArguments = () => {
+    if (process.argv.length < 4) {
+        console.warn('Not specified voice bitrate. Will use 64k');
+        return 64;
+    }
+    return parseInt(process.argv[3], 10);
+};
+
+const readFilePathFromArguments = () => {
+    if (process.argv.length < 4) {
+        throw 'Not specified file path';
+    }
+    return process.argv[3];
 };
 
 const convertToMp4 = async (videoIndex: number, languageTrack: number,
@@ -99,11 +115,15 @@ const musicConvertor = async () => {
     }
 };
 
+const getBaseName = (fileName: string) => {
+    return `${path.basename(fileName, path.extname(fileName))}`;
+};
+
 const getOutputMusicFileName = (fileName: string) => {
     if (fileName.toLowerCase() === 'lba2.ogg') {
         return 'Track6.mp4';
     }
-    return `${path.basename(fileName, path.extname(fileName))}.mp4`;
+    return `${getBaseName(fileName)}.mp4`;
 };
 
 const getMusicFileBitrate = (fileName: string, bitrates: number[]) => {
@@ -119,6 +139,54 @@ const getMusicFileBitrate = (fileName: string, bitrates: number[]) => {
         return bitrates[0];
     }
     return bitrates[1];
+};
+
+const voiceConvertor = async () => {
+    const folderPath = './www/data/VOX/';
+    const files = fs.readdirSync(folderPath);
+    const bitrate = readVoiceBitrateArguments();
+    const filesToConvert = files.filter(file =>
+        path.extname(file).toLowerCase() === '.vox' &&
+        !file.toLowerCase().includes('_aac.')
+    );
+    const size = filesToConvert.length;
+    for (let i = 0; i < size; i += 1) {
+        const file = filesToConvert[i];
+        const inputFile = `${folderPath}${file}`;
+        const nameOnly = getBaseName(file);
+        const outputFile = `${folderPath}${nameOnly}_AAC.VOX.zip`;
+        await writeOpenHqr(inputFile, outputFile, true, async (index, folder, entry, buffer) => {
+            // Restoring RIFF in header because LBA format has 0 instead of first R
+            new Uint8Array(buffer)[0] = 0x52;
+
+            const baseFileName = `voice_${(index + 1).toString().padStart(3, '0')}`;
+            const originalFileName = `${baseFileName}.wav`;
+            const originalFilePath = `${folder}${originalFileName}`;
+            writeToFile(originalFilePath, buffer);
+
+            const outputFileName =  `${baseFileName}.mp4`;
+            const outputFilePath = `${folder}${outputFileName}`;
+
+            console.log('Processing HQR entry ', entry);
+
+            await convertToMp4Audio(originalFilePath, outputFilePath, bitrate);
+            if (fs.existsSync(outputFilePath)) {
+                fs.unlinkSync(originalFilePath);
+            }
+            return outputFileName;
+        });
+    }
+};
+
+const hqrToOpenHqrConvertor = async () => {
+    const filePath = readFilePathFromArguments();
+    const outputFile = `${filePath}.zip`;
+    await writeOpenHqr(filePath, outputFile, false, async (index, folder, _entry, buffer) => {
+        const itemFileName = `item_${(index + 1).toString().padStart(3, '0')}.dat`;
+        const originalFilePath = `${folder}${itemFileName}`;
+        writeToFile(originalFilePath, buffer);
+        return itemFileName;
+    });
 };
 
 const convertToMp4Audio = async (inputFilePath: string, outputFilePath: string, bitrate: number) => {
@@ -144,6 +212,8 @@ const executeCommand = async (cmd: string) => {
 const convertors = {
     video: videoConvertor,
     music: musicConvertor,
+    voice: voiceConvertor,
+    hqr: hqrToOpenHqrConvertor
 };
 
 const convert = () => {

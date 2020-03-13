@@ -1,5 +1,5 @@
 import AudioData from './data';
-import {loadHqr} from '../hqr';
+import {loadHqr, HqrFormat} from '../hqr';
 import {getFrequency} from '../utils/lba';
 
 const musicSourceCache = [];
@@ -285,7 +285,7 @@ function getVoiceSource(state, context, data = null) {
         if (textBankId === -1) {
             filename = `VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`;
         }
-        loadHqr(filename, true).then((voices) => {
+        loadHqr(filename, true, HqrFormat.OpenHQR).then(async (voices) => {
             if (!voices) {
                 return;
             }
@@ -307,7 +307,7 @@ function getVoiceSource(state, context, data = null) {
                 }
             };
 
-            const entryBuffer = voices.getEntry(index);
+            const entryBuffer = await voices.getEntryAsync(index);
             context.decodeAudioData(entryBuffer, (buffer) => {
                 if (!source.bufferSource.buffer) {
                     source.bufferSource.buffer = buffer;
