@@ -21,7 +21,7 @@ export default class HQR {
         this.url = url;
     }
 
-    async load(ignoreUnavailable = false, formats = [HqrFormat.HQR]) {
+    async load(ignoreUnavailable = false, format: HqrFormat) {
         if (this.buffer || this.zip) {
             return this;
         }
@@ -31,38 +31,29 @@ export default class HQR {
         if (this.loadPromise) return this.loadPromise;
 
         this.loadPromise = new Promise(async (resolve, reject) => {
-            for (let i = 0; i < formats.length; i += 1) {
-                const format = formats[i];
-                const requestUrl = that.getUrlForFormat(that.url, formats[i]);
-                const result = await api.request(requestUrl, 'GET', 'arraybuffer');
-                if (result.error) {
-                    reject(result.error);
-                    return;
-                }
-
-                if (result.status === 404) {
-                    if (i < formats.length - 1) {
-                        // tslint:disable-next-line: no-console max-line-length
-                        console.log(`Ignore 404 error for ${requestUrl}; We will try to load ${HqrFormat[formats[i + 1]]} format`);
-                        continue;
-                    } else if (ignoreUnavailable) {
-                        resolve();
-                        return;
-                    }
-                }
-
-                if (result.status === 200) {
-                    that.buffer = result.body;
-                    that.format = format;
-                    await that.readHeader(isVoxHQR);
-                    that.loadPromise = null;
-                    resolve(that);
-                    return;
-                }
-
-                reject(`HQR file download failed: status=${result.status}`);
+            const requestUrl = that.getUrlForFormat(that.url, format);
+            const result = await api.request(requestUrl, 'GET', 'arraybuffer');
+            if (result.error) {
+                reject(result.error);
                 return;
             }
+
+            if (result.status === 404 && ignoreUnavailable) {
+                resolve();
+                return;
+            }
+
+            if (result.status === 200) {
+                that.buffer = result.body;
+                that.format = format;
+                await that.readHeader(isVoxHQR);
+                that.loadPromise = null;
+                resolve(that);
+                return;
+            }
+
+            reject(`HQR file download failed: status=${result.status}`);
+            return;
         });
         return this.loadPromise;
     }
@@ -137,15 +128,13 @@ const hqrCache = {};
 
 // Loads HQR from file. Supports native HQR and OpenHQR (zip)
 // ignoreUnavailable - when true, will not fail the game if 404
-// formats - will try to load different formats in the order of preference
-//   e.g. [HqrFormat.HQR, HqrFormat.OpenHQR] - will try to load HQR file first,
-//   and if not found (404), then OpenHQR file next
-export async function loadHqr(file: string, ignoreUnavailable = false, formats = [HqrFormat.HQR]) {
+// format - will load the given hqr format (HQR, or OpenHQR)
+export async function loadHqr(file: string, ignoreUnavailable = false, format = HqrFormat.HQR) {
     if (file in hqrCache) {
         return await hqrCache[file].load();
     }
 
     const hqr = new HQR(`data/${file}`);
     hqrCache[file] = hqr;
-    return await hqr.load(ignoreUnavailable, formats);
+    return await hqr.load(ignoreUnavailable, format);
 }
