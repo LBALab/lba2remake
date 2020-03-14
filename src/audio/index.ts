@@ -185,7 +185,7 @@ function getSoundFxSource(state, context, data = null) {
         context.resume();
     };
     source.load = (index, callback) => {
-        loadHqr('SAMPLES_AAC.HQR', true, HqrFormat.HQR)
+        loadHqr('SAMPLES_AAC.HQR', true, HqrFormat.OpenHQR)
             .then(async (samples) => {
             if (!samples) {
                 return;
