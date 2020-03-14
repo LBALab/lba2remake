@@ -185,7 +185,7 @@ function getSoundFxSource(state, context, data = null) {
         context.resume();
     };
     source.load = (index, callback) => {
-        loadHqr('SAMPLES_AAC.HQR', true, [HqrFormat.HQR, HqrFormat.OpenHQR])
+        loadHqr('SAMPLES_AAC.HQR', true, HqrFormat.OpenHQR)
             .then(async (samples) => {
             if (!samples) {
                 return;
@@ -286,7 +286,7 @@ function getVoiceSource(state, context, data = null) {
         if (textBankId === -1) {
             filename = `VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`;
         }
-        loadHqr(filename, true, [HqrFormat.HQR, HqrFormat.OpenHQR]).then(async (voices) => {
+        loadHqr(filename, true, HqrFormat.OpenHQR).then(async (voices) => {
             if (!voices) {
                 return;
             }
