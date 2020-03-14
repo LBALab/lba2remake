@@ -3,7 +3,7 @@ import WebApi from './webapi';
 import { readOpenHqrHeader, readOpenHqrEntry, OpenEntry, readZip }
     from './utils/hqr/open_hqr_reader';
 
-export enum HqrFormat {
+enum HqrFormat {
     HQR = 0,
     OpenHQR = 1
 }
@@ -19,9 +19,10 @@ export default class HQR {
 
     constructor(url: string) {
         this.url = url;
+        this.format = this.getFormatFromUrl(this.url);
     }
 
-    async load(ignoreUnavailable = false, format: HqrFormat) {
+    async load(ignoreUnavailable = false) {
         if (this.buffer || this.zip) {
             return this;
         }
@@ -31,8 +32,7 @@ export default class HQR {
         if (this.loadPromise) return this.loadPromise;
 
         this.loadPromise = new Promise(async (resolve, reject) => {
-            const requestUrl = that.getUrlForFormat(that.url, format);
-            const result = await api.request(requestUrl, 'GET', 'arraybuffer');
+            const result = await api.request(that.url, 'GET', 'arraybuffer');
             if (result.error) {
                 reject(result.error);
                 return;
@@ -45,7 +45,6 @@ export default class HQR {
 
             if (result.status === 200) {
                 that.buffer = result.body;
-                that.format = format;
                 await that.readHeader(isVoxHQR);
                 that.loadPromise = null;
                 resolve(that);
@@ -102,8 +101,8 @@ export default class HQR {
         return this.entries[index].nextHiddenEntry;
     }
 
-    private getUrlForFormat(baseUrl: string, format: HqrFormat) {
-        return (format === HqrFormat.HQR) ? baseUrl : `${baseUrl}.zip`;
+    private getFormatFromUrl(baseUrl: string) {
+        return (baseUrl.toLowerCase().endsWith('.zip')) ? HqrFormat.OpenHQR : HqrFormat.HQR;
     }
 
     private async readOpenHqrToEntries(buffer: ArrayBuffer) {
@@ -128,13 +127,11 @@ const hqrCache = {};
 
 // Loads HQR from file. Supports native HQR and OpenHQR (zip)
 // ignoreUnavailable - when true, will not fail the game if 404
-// format - will load the given hqr format (HQR, or OpenHQR)
-export async function loadHqr(file: string, ignoreUnavailable = false, format = HqrFormat.HQR) {
+export async function loadHqr(file: string, ignoreUnavailable = false) {
     if (file in hqrCache) {
-        return await hqrCache[file].load();
+        return await hqrCache[file].load(ignoreUnavailable);
     }
-
     const hqr = new HQR(`data/${file}`);
     hqrCache[file] = hqr;
-    return await hqr.load(ignoreUnavailable, format);
+    return await hqr.load(ignoreUnavailable);
 }

@@ -3,6 +3,7 @@ import { readFromFile } from './array_buffer_fs';
 import fs from 'fs';
 import JSZip from 'jszip';
 import { OpenEntry } from './open_hqr_reader';
+import { createFolderIfNotExists } from '../fsutils';
 
 /*
 This will repack hqr file named <myHqrFile> to a so-called OpenHqr format, that is a .zip file.
@@ -61,10 +62,4 @@ const buildHeader = (entry: Entry, fileName: string) => {
         hasHiddenEntry: entry.hasHiddenEntry,
         nextHiddenEntry: entry.nextHiddenEntry
     } as OpenEntry;
-};
-
-const createFolderIfNotExists = (folderPath: string) => {
-    if (!fs.existsSync(folderPath)) {
-        fs.mkdirSync(folderPath);
-    }
 };
