@@ -1,5 +1,5 @@
 import AudioData from './data';
-import {loadHqr, HqrFormat} from '../hqr';
+import {loadHqr} from '../hqr';
 import {getFrequency} from '../utils/lba';
 
 const musicSourceCache = [];
