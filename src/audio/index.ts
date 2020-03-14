@@ -185,7 +185,8 @@ function getSoundFxSource(state, context, data = null) {
         context.resume();
     };
     source.load = (index, callback) => {
-        loadHqr('SAMPLES_AAC.HQR', true).then((samples) => {
+        loadHqr('SAMPLES_AAC.HQR', true, HqrFormat.OpenHQR)
+            .then(async (samples) => {
             if (!samples) {
                 return;
             }
@@ -209,7 +210,7 @@ function getSoundFxSource(state, context, data = null) {
                 source.connect();
                 callback.call();
             } else {
-                const entryBuffer = samples.getEntry(index);
+                const entryBuffer = await samples.getEntryAsync(index);
                 context.decodeAudioData(entryBuffer, (buffer) => {
                     // this bypasses a browser issue while loading same sample
                     // in short period of time.
