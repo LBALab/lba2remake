@@ -23,7 +23,7 @@ const PathDefinitions = {
     GogWin: {
         image: 'LBA2.GOG',
         track: 'LBA2.OGG',
-        dosbox: 'DOSBOX/DOSBox.exe'
+        dosbox: ['DOSBOX/DOSBox.exe', 'DOSBOX/SDL.dll', 'DOSBOX/SDL_net.dll']
     },
     GogMac: {
         image: 'Contents/Resources/game/LBA2.GOG',
@@ -33,8 +33,8 @@ const PathDefinitions = {
 };
 
 const UnpackCommands = {
-    'GogWin': 'DOSBox.exe',
-    'GogMac': 'dosbox'
+    'GogWin': 'powershell -File src/utils/convert/unpack.ps1',
+    'GogMac': 'cd www/data/_unpack && dosbox unpack.bat -exit'
 };
 
 const unpack = async (gameFolder: string) => {
@@ -52,7 +52,7 @@ const unpack = async (gameFolder: string) => {
     const localPaths = copyInputFiles(workDir, paths);
     console.log('Extracting image. Do not close the dosbox window.');
     await extractImage(workDir, version);
-    fs.copyFileSync(localPaths.track, './www/data/MUSIC/LBA2.OGG');
+    fs.copyFileSync(localPaths.track[0], './www/data/MUSIC/LBA2.OGG');
     await executeCommand(`rm -rf "${workDir}"`);
 };
 
@@ -60,7 +60,7 @@ const findFiles = (gameFolder: string, version: string) => {
     const result = {
         image: path.join(gameFolder, PathDefinitions[version].image),
         track: path.join(gameFolder, PathDefinitions[version].track),
-        dosbox: path.join(gameFolder, PathDefinitions[version].dosbox),
+        dosbox: PathDefinitions[version].dosbox.map((dbp: string) => path.join(gameFolder, dbp)),
         unpack: path.join(__dirname, 'unpack.bat')
     };
     return verifyPaths(result);
@@ -84,10 +84,14 @@ const detectVersion = (gameFolder: string) => {
 const verifyPaths = (paths: Paths) => {
     let result: Paths = paths;
     Object.keys(paths).forEach((item) => {
-        if (!fs.existsSync(paths[item])) {
-            console.error(`Cannot find ${item} path: ${paths[item]}`);
-            result = null;
-            return;
+        const inputPaths = Array.isArray(paths[item]) ? paths[item] : [paths[item]];
+        for (let i = 0; i < inputPaths.length; i += 1) {
+            const path = inputPaths[i];
+            if (!fs.existsSync(path)) {
+                console.error(`Cannot find part of ${item} path: ${path}`);
+                result = null;
+                return;
+            }
         }
     });
     return result;
@@ -97,19 +101,24 @@ const copyInputFiles = (workDir: string, paths: Paths) => {
     createFolderIfNotExists(workDir);
     const result = {};
     Object.keys(paths).forEach((item) => {
-        const inputPath = paths[item];
-        if (!inputPath) {
+        let inputPaths = paths[item];
+        if (!inputPaths) {
             return;
         }
-        const localPath = `${workDir}${path.basename(inputPath)}`;
-        result[item] = localPath;
-        fs.copyFileSync(inputPath, localPath);
+        inputPaths = Array.isArray(inputPaths) ? inputPaths : [inputPaths];
+
+        const localPaths = inputPaths.map((p) => `${workDir}${path.basename(p)}`);
+        result[item] = localPaths;
+        inputPaths.forEach((element: string, index: number) => {
+            fs.copyFileSync(element, localPaths[index]);
+        });
     });
     return result as Paths;
 };
 
 const extractImage = async (workDir: string, version: string) => {
-    await executeCommand(`cd "${workDir}" && ./${UnpackCommands[version]} unpack.bat -exit`);
+    console.log(workDir);
+    await executeCommand(UnpackCommands[version]);
 };
 
 const readGameFolderFromArguments = () => {
