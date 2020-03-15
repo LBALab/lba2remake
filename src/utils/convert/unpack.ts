@@ -28,13 +28,13 @@ const PathDefinitions = {
     GogMac: {
         image: 'Contents/Resources/game/LBA2.GOG',
         track: 'Contents/Resources/game/LBA2.OGG',
-        dosbox: 'Contents/Resources/dosbox/dosbox'
+        dosbox: ['Contents/Resources/dosbox/dosbox']
     }
 };
 
 const UnpackCommands = {
-    'GogWin': 'powershell -File src/utils/convert/unpack.ps1',
-    'GogMac': 'cd www/data/_unpack && dosbox unpack.bat -exit'
+    GogWin: 'powershell -File src/utils/convert/unpack.ps1',
+    GogMac: 'cd www/data/_unpack && ./dosbox unpack.bat -exit'
 };
 
 const unpack = async (gameFolder: string) => {
@@ -51,7 +51,7 @@ const unpack = async (gameFolder: string) => {
     const workDir = './www/data/_unpack/';
     const localPaths = copyInputFiles(workDir, paths);
     console.log('Extracting image. Do not close the dosbox window.');
-    await extractImage(workDir, version);
+    await extractImage(version);
     fs.copyFileSync(localPaths.track[0], './www/data/MUSIC/LBA2.OGG');
     await executeCommand(`rm -rf "${workDir}"`);
 };
@@ -75,7 +75,7 @@ const detectVersion = (gameFolder: string) => {
             return version;
         }
     }
-    console.error('Unsupported game installation. Currenttly supported GoG versions for windows and mac. '+
+    console.error('Unsupported game installation. Currenttly supported GoG versions for windows and mac. ' +
         'Make sure you specified the correct folder path with installed LBA 2 game. If you verified it is correct, then ' +
         'most probably you can still run the remake, but you will have to copy the game files manually. Refer to the README.md');
     return null;
@@ -86,8 +86,8 @@ const verifyPaths = (paths: Paths) => {
     Object.keys(paths).forEach((item) => {
         const inputPaths = Array.isArray(paths[item]) ? paths[item] : [paths[item]];
         for (let i = 0; i < inputPaths.length; i += 1) {
-            const path = inputPaths[i];
-            if (!fs.existsSync(path)) {
+            const currentPath = inputPaths[i];
+            if (!fs.existsSync(currentPath)) {
                 console.error(`Cannot find part of ${item} path: ${path}`);
                 result = null;
                 return;
@@ -107,7 +107,7 @@ const copyInputFiles = (workDir: string, paths: Paths) => {
         }
         inputPaths = Array.isArray(inputPaths) ? inputPaths : [inputPaths];
 
-        const localPaths = inputPaths.map((p) => `${workDir}${path.basename(p)}`);
+        const localPaths = inputPaths.map((p: string) => `${workDir}${path.basename(p)}`);
         result[item] = localPaths;
         inputPaths.forEach((element: string, index: number) => {
             fs.copyFileSync(element, localPaths[index]);
@@ -116,8 +116,7 @@ const copyInputFiles = (workDir: string, paths: Paths) => {
     return result as Paths;
 };
 
-const extractImage = async (workDir: string, version: string) => {
-    console.log(workDir);
+const extractImage = async (version: string) => {
     await executeCommand(UnpackCommands[version]);
 };
 
