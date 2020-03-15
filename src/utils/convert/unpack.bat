@@ -2,7 +2,7 @@
 
 set data=%1
 
-mount E: "../"
+mount E: ".."
 E:
 mkdir VOX
 mkdir MUSIC
