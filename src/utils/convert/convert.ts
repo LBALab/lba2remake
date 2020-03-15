@@ -1,11 +1,12 @@
 // tslint:disable: no-console
 // tslint:disable: max-line-length => only for ffmpeg commands that look ugly if splitting them too much
 import fs from 'fs';
-import {readHqrHeader, readHqrEntry} from './hqr/hqr_reader';
-import { exec } from 'child_process';
+import {readHqrHeader, readHqrEntry} from '../hqr/hqr_reader';
 import path from 'path';
-import { readFromFile, writeToFile } from './hqr/array_buffer_fs';
-import { writeOpenHqr } from './hqr/open_hqr_writer';
+import { readFromFile, writeToFile } from '../hqr/array_buffer_fs';
+import { writeOpenHqr } from '../hqr/open_hqr_writer';
+import { executeCommand } from '../fsutils';
+import FFmpeg from 'ffmpeg-cli';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {
@@ -44,7 +45,7 @@ const videoConvertor = async () => {
     }
 };
 
-const readLanguageTrackFromArguments = () => {
+export const readLanguageTrackFromArguments = () => {
     if (process.argv.length < 4) {
         console.warn('Not specified language. The voice will be in english. ' +
             `Supported languages: ${Object.keys(videoLanguageTracks)}`);
@@ -68,7 +69,7 @@ const readMusicBitrateArguments = () => {
     return [parseInt(process.argv[3], 10), parseInt(process.argv[4], 10)];
 };
 
-const readVoiceBitrateArguments = () => {
+const readBitrateArguments = () => {
     if (process.argv.length < 4) {
         console.warn('Not specified voice bitrate. Will use 64k');
         return 64;
@@ -86,16 +87,17 @@ const readFilePathFromArguments = () => {
 const convertToMp4 = async (videoIndex: number, languageTrack: number,
         inputFilePath: string, outputFilePath: string) => {
 
-    let command: string;
     if (videoIndex === introVideoIndex) {
         const aviPath = `${inputFilePath}.avi`;
-        command = `rm -f "${aviPath}" && ` +
-        `ffmpeg -i "${inputFilePath}" -q:v 0 -q:a 0 -filter_complex "[0:1][0:${languageTrack}] amerge=inputs=2" "${aviPath}" && ` +
-        `rm -f "${outputFilePath}" && ffmpeg -i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}" && rm -f ${aviPath}`;
+        await executeCommand(`rm -f "${aviPath}"`);
+        FFmpeg.runSync(`-i "${inputFilePath}" -q:v 0 -q:a 0 -filter_complex "[0:1][0:${languageTrack}] amerge=inputs=2" "${aviPath}"`);
+        await executeCommand(`rm -f "${outputFilePath}"`);
+        FFmpeg.runSync(`-i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}" && rm -f ${aviPath}`);
+        await executeCommand(`rm -f "${aviPath}"`);
     } else {
-        command = `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}" -c:v libx264 -crf 22 -pix_fmt yuv420p "${outputFilePath}"`;
+        await executeCommand(`rm -f "${outputFilePath}"`);
+        FFmpeg.runSync(`-i "${inputFilePath}" -c:v libx264 -crf 22 -pix_fmt yuv420p "${outputFilePath}"`);
     }
-    await executeCommand(command);
 };
 
 const musicConvertor = async () => {
@@ -144,7 +146,7 @@ const getMusicFileBitrate = (fileName: string, bitrates: number[]) => {
 const voiceConvertor = async () => {
     const folderPath = './www/data/VOX/';
     const files = fs.readdirSync(folderPath);
-    const bitrate = readVoiceBitrateArguments();
+    const bitrate = readBitrateArguments();
     const filesToConvert = files.filter(file =>
         path.extname(file).toLowerCase() === '.vox' &&
         !file.toLowerCase().includes('_aac.')
@@ -181,7 +183,7 @@ const voiceConvertor = async () => {
 const samplesConvertor = async () => {
     const filePath = './www/data/SAMPLES.HQR';
     const outputFile = './www/data/SAMPLES_AAC.HQR.zip';
-    const bitrate = readVoiceBitrateArguments();
+    const bitrate = readBitrateArguments();
     await writeOpenHqr(filePath, outputFile, false, async (index, folder, entry, buffer) => {
         // Restoring RIFF in header because LBA format has 0 instead of first R
         new Uint8Array(buffer)[0] = 0x52;
@@ -217,22 +219,8 @@ const hqrToOpenHqrConvertor = async () => {
 
 const convertToMp4Audio = async (inputFilePath: string, outputFilePath: string, bitrate: number) => {
     console.log(`Converting ${inputFilePath} to ${outputFilePath} with bitrate ${bitrate}k`);
-    const command = `rm -f "${outputFilePath}" && ffmpeg -i "${inputFilePath}" -c:a aac -b:a ${bitrate}k "${outputFilePath}"`;
-    await executeCommand(command);
-};
-
-const executeCommand = async (cmd: string) => {
-    return new Promise((resolve) => {
-        exec(cmd, (error, _stdout, stderr) => {
-            if (error) {
-                console.log(`error: ${error.message}`);
-            }
-            if (stderr) {
-                console.log(`stderr: ${stderr}`);
-            }
-            resolve();
-        });
-    });
+    await executeCommand(`rm -f "${outputFilePath}"`);
+    FFmpeg.runSync(`-i "${inputFilePath}" -c:a aac -b:a ${bitrate}k "${outputFilePath}"`);
 };
 
 const convertors = {
