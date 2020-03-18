@@ -21,3 +21,17 @@ export const executeCommand = async (cmd: string) => {
         });
     });
 };
+
+export const removeFile = (filename) => {
+    if (fs.existsSync(filename)) {
+        fs.unlinkSync(filename);
+    }
+};
+
+export const removeDirectoryRecursive = async (workDir) => {
+    let rmCommand = 'rm -rf';
+    if (process.platform === 'win32') {
+        rmCommand = 'rmdir /s /q';
+    }
+    await executeCommand(`${rmCommand} "${workDir}"`);
+};

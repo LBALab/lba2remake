@@ -8,7 +8,8 @@
 // tslint:disable: max-line-length
 import fs from 'fs';
 import path from 'path';
-import { createFolderIfNotExists, executeCommand } from '../fsutils';
+
+import { createFolderIfNotExists, executeCommand, removeDirectoryRecursive } from '../fsutils';
 
 interface Paths {
     image: string;
@@ -47,13 +48,13 @@ const unpack = async (gameFolder: string) => {
         return;
     }
 
-    createFolderIfNotExists('./www/data');
-    const workDir = './www/data/_unpack/';
+    createFolderIfNotExists(path.normalize('./www/data'));
+    const workDir = path.normalize('./www/data/_unpack/');
     const localPaths = copyInputFiles(workDir, paths);
     console.log('Extracting image. Do not close the dosbox window.');
     await extractImage(version);
-    fs.copyFileSync(localPaths.track[0], './www/data/MUSIC/LBA2.OGG');
-    await executeCommand(`rm -rf "${workDir}"`);
+    fs.copyFileSync(localPaths.track[0], path.normalize('./www/data/MUSIC/LBA2.OGG'));
+    removeDirectoryRecursive(workDir);
 };
 
 const findFiles = (gameFolder: string, version: string) => {
