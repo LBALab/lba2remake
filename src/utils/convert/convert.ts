@@ -1,12 +1,13 @@
 // tslint:disable: no-console
 // tslint:disable: max-line-length => only for ffmpeg commands that look ugly if splitting them too much
 import fs from 'fs';
-import {readHqrHeader, readHqrEntry} from '../hqr/hqr_reader';
 import path from 'path';
+import FFmpeg from 'ffmpeg-cli';
+
+import { readHqrHeader, readHqrEntry } from '../hqr/hqr_reader';
 import { readFromFile, writeToFile } from '../hqr/array_buffer_fs';
 import { writeOpenHqr } from '../hqr/open_hqr_writer';
-import { executeCommand } from '../fsutils';
-import FFmpeg from 'ffmpeg-cli';
+import { removeFile } from '../fsutils';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {
@@ -17,7 +18,7 @@ const videoLanguageTracks = {
 };
 
 const videoConvertor = async () => {
-    const videoFolderPath = './www/data/VIDEO/';
+    const videoFolderPath = path.normalize('./www/data/VIDEO/');
     const videoHqrPath = `${videoFolderPath}VIDEO.HQR`;
     const languageTrack = readLanguageTrackFromArguments();
 
@@ -89,19 +90,19 @@ const convertToMp4 = async (videoIndex: number, languageTrack: number,
 
     if (videoIndex === introVideoIndex) {
         const aviPath = `${inputFilePath}.avi`;
-        await executeCommand(`rm -f "${aviPath}"`);
+        removeFile(aviPath);
         FFmpeg.runSync(`-i "${inputFilePath}" -q:v 0 -q:a 0 -filter_complex "[0:1][0:${languageTrack}] amerge=inputs=2" "${aviPath}"`);
-        await executeCommand(`rm -f "${outputFilePath}"`);
-        FFmpeg.runSync(`-i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}" && rm -f ${aviPath}`);
-        await executeCommand(`rm -f "${aviPath}"`);
+        removeFile(outputFilePath);
+        FFmpeg.runSync(`-i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}" && del /f ${aviPath}`);
+        removeFile(aviPath);
     } else {
-        await executeCommand(`rm -f "${outputFilePath}"`);
+        removeFile(outputFilePath);
         FFmpeg.runSync(`-i "${inputFilePath}" -c:v libx264 -crf 22 -pix_fmt yuv420p "${outputFilePath}"`);
     }
 };
 
 const musicConvertor = async () => {
-    const folderPath = './www/data/MUSIC/';
+    const folderPath = path.normalize('./www/data/MUSIC/');
     const files = fs.readdirSync(folderPath);
     const extensions = {'.wav': 1, '.ogg': 1};
     const filesToConvert = files.filter(file => path.extname(file).toLowerCase() in extensions);
@@ -144,7 +145,7 @@ const getMusicFileBitrate = (fileName: string, bitrates: number[]) => {
 };
 
 const voiceConvertor = async () => {
-    const folderPath = './www/data/VOX/';
+    const folderPath = path.normalize('./www/data/VOX/');
     const files = fs.readdirSync(folderPath);
     const bitrate = readBitrateArguments();
     const filesToConvert = files.filter(file =>
@@ -181,8 +182,8 @@ const voiceConvertor = async () => {
 };
 
 const samplesConvertor = async () => {
-    const filePath = './www/data/SAMPLES.HQR';
-    const outputFile = './www/data/SAMPLES_AAC.HQR.zip';
+    const filePath = path.normalize('./www/data/SAMPLES.HQR');
+    const outputFile = path.normalize('./www/data/SAMPLES_AAC.HQR.zip');
     const bitrate = readBitrateArguments();
     await writeOpenHqr(filePath, outputFile, false, async (index, folder, entry, buffer) => {
         // Restoring RIFF in header because LBA format has 0 instead of first R
@@ -219,7 +220,7 @@ const hqrToOpenHqrConvertor = async () => {
 
 const convertToMp4Audio = async (inputFilePath: string, outputFilePath: string, bitrate: number) => {
     console.log(`Converting ${inputFilePath} to ${outputFilePath} with bitrate ${bitrate}k`);
-    await executeCommand(`rm -f "${outputFilePath}"`);
+    removeFile(outputFilePath);
     FFmpeg.runSync(`-i "${inputFilePath}" -c:a aac -b:a ${bitrate}k "${outputFilePath}"`);
 };
 

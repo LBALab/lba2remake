@@ -54,7 +54,8 @@
     "build:debug": "cross-env SRCMAP=true NODE_ENV=development webpack -p",
     "lint": "tslint -t msbuild -p ./tsconfig.json",
     "typecheck": "tsc",
-    "import": "src/utils/convert/install.sh",
+    "import": "src/utils/convert/import.sh",
+    "import-win": "powershell -File src/utils/convert/import.ps1",
     "convert": "ts-node src/utils/convert/convert.ts",
     "unpack": "ts-node src/utils/convert/unpack.ts"
   },
