@@ -43,7 +43,6 @@ const videoConvertor = async () => {
         for (let j = 0; j < languageTracks.length; j += 1) {
             const lang = languageTracks[j];
             const writeMp4Path = lang ? `${fileName}_${lang}.mp4` : `${fileName}.mp4`;
-            // tslint:disable-next-line: quotemark
             await convertToMp4(lang ? videoLanguageTracks[lang] : -1, writePath, writeMp4Path);
             writeMp4Paths.push(writeMp4Path);
         }
