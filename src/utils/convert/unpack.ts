@@ -2,7 +2,6 @@
 // It is supposed to support Steam and GoG versions on MacOS, Windows and Linux
 
 // TODO - make it work with Steam version
-// TODO - make it work on Windows with GoG and Steam, in Powershell and WSL
 
 // tslint:disable: no-console
 // tslint:disable: max-line-length
@@ -40,9 +39,6 @@ const UnpackCommands = {
 
 const unpack = async (gameFolder: string) => {
     const version = detectVersion(gameFolder);
-    if (!version) {
-        return null;
-    }
     const paths: Paths = findFiles(gameFolder, version);
     if (!paths) {
         return;
@@ -79,7 +75,7 @@ const detectVersion = (gameFolder: string) => {
     console.error('Unsupported game installation. Currenttly supported GoG versions for windows and mac. ' +
         'Make sure you specified the correct folder path with installed LBA 2 game. If you verified it is correct, then ' +
         'most probably you can still run the remake, but you will have to copy the game files manually. Refer to the README.md');
-    return null;
+    process.exit(1);
 };
 
 const verifyPaths = (paths: Paths) => {
