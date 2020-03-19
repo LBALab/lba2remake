@@ -11,16 +11,15 @@ import { removeFile } from '../fsutils';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {
-    en: 4,
-    de: 3,
-    fr: 2,
+    EN: 4,
+    DE: 3,
+    FR: 2,
     music: 1
 };
 
 const videoConvertor = async () => {
     const videoFolderPath = path.normalize('./www/data/VIDEO/');
     const videoHqrPath = `${videoFolderPath}VIDEO.HQR`;
-    const languageTrack = readLanguageTrackFromArguments();
 
     const arrayBuffer = readFromFile(videoHqrPath);
     if (arrayBuffer == null) {
@@ -35,31 +34,31 @@ const videoConvertor = async () => {
         const ind = i + 1;
         const fileName = `${videoFolderPath}VIDEO${ind.toString().padStart(2, '0')}`;
         const writePath = `${fileName}.smk`;
-        const writeMp4Path = `${fileName}.mp4`;
         const video = readHqrEntry(arrayBuffer, entries[i]);
         writeToFile(writePath, video);
         console.log(`Successfully extracted ${writePath}`);
-        await convertToMp4(ind, languageTrack, writePath, writeMp4Path);
-        if (fs.existsSync(writeMp4Path)) {
+        const languageTracks: string[] = getVideoLanguageTracks(ind);
+
+        const writeMp4Paths: string[] = [];
+        for (let j = 0; j < languageTracks.length; j += 1) {
+            const lang = languageTracks[j];
+            const writeMp4Path = lang ? `${fileName}_${lang}.mp4` : `${fileName}.mp4`;
+            // tslint:disable-next-line: quotemark
+            await convertToMp4(lang ? videoLanguageTracks[lang] : -1, writePath, writeMp4Path);
+            writeMp4Paths.push(writeMp4Path);
+        }
+
+        if (writeMp4Paths.length > 0 && fs.existsSync(writeMp4Paths[0])) {
             fs.unlinkSync(writePath);
         }
     }
 };
 
-export const readLanguageTrackFromArguments = () => {
-    if (process.argv.length < 4) {
-        console.warn('Not specified language. The voice will be in english. ' +
-            `Supported languages: ${Object.keys(videoLanguageTracks)}`);
-        return videoLanguageTracks['en'];
+const getVideoLanguageTracks = (videoIndex: number) => {
+    if (introVideoIndex === videoIndex) {
+        return ['EN', 'DE', 'FR'];
     }
-    const lang = process.argv[3];
-    const languageTrack = videoLanguageTracks[lang];
-    if (!languageTrack) {
-        console.warn(`Unsupported language ${lang}. Falling back to english. ` +
-            `Supported: ${Object.keys(videoLanguageTracks)}`);
-        return videoLanguageTracks['en'];
-    }
-    return languageTrack;
+    return [''];
 };
 
 const readMusicBitrateArguments = () => {
@@ -85,15 +84,13 @@ const readFilePathFromArguments = () => {
     return process.argv[3];
 };
 
-const convertToMp4 = async (videoIndex: number, languageTrack: number,
-        inputFilePath: string, outputFilePath: string) => {
-
-    if (videoIndex === introVideoIndex) {
+const convertToMp4 = async (languageTrack: number, inputFilePath: string, outputFilePath: string) => {
+    if (languageTrack !== -1) {
         const aviPath = `${inputFilePath}.avi`;
         removeFile(aviPath);
         FFmpeg.runSync(`-i "${inputFilePath}" -q:v 0 -q:a 0 -filter_complex "[0:1][0:${languageTrack}] amerge=inputs=2" "${aviPath}"`);
         removeFile(outputFilePath);
-        FFmpeg.runSync(`-i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}" && del /f ${aviPath}`);
+        FFmpeg.runSync(`-i "${aviPath}" -q:v 0 -q:a 0 "${outputFilePath}"`);
         removeFile(aviPath);
     } else {
         removeFile(outputFilePath);

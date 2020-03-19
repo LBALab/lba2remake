@@ -1,5 +1,4 @@
 $path = $args[0];
-$lang = $args[1];
 cd "$PSScriptRoot"
 
 npm run unpack "$path"
@@ -8,7 +7,7 @@ if (-not $?) {throw "Failed to unpack"}
 npm run convert music 128 32
 if (-not $?) {throw "Failed to convert music"}
 
-npm run convert video $lang
+npm run convert video
 if (-not $?) {throw "Failed to convert video"}
 
 npm run convert voice 64
