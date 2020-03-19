@@ -21,15 +21,13 @@ import Video from './game/Video';
 import DebugData from './editor/DebugData';
 import Menu from './game/Menu';
 import TeleportMenu from './game/TeleportMenu';
-import VideoData from '../video/data';
 import Ribbon from './game/Ribbon';
 import {KeyHelpIcon, KeyHelpScreen} from './game/KeyboardHelp';
 import {sBind} from '../utils';
 import {TickerProps} from './utils/Ticker';
 import {updateLabels} from './editor/labels';
 import { pure } from '../utils/decorators';
-import { getLanguageConfig } from '../lang';
-import path from 'path';
+import { getIntroVideoSrc } from '../video/access';
 
 interface GameUIProps extends TickerProps {
     saveMainData?: Function;
@@ -352,7 +350,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             }
             case 71: { // New Game
                 this.hideMenu();
-                const src = this.getIntroVideoSrc();
+                const src = getIntroVideoSrc();
                 const onEnded = () => {
                     this.setState({video: null}, this.saveData);
                     this.startNewGameScene();
@@ -409,14 +407,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 break;
             }
         }
-    }
-
-    getIntroVideoSrc() {
-        const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
-        const voice = getLanguageConfig().languageVoice.code;
-        const ext = path.extname(src);
-        const base = `${path.basename(src, ext)}`;
-        return `${base}_${voice}_${ext}`;
     }
 
     frame() {
