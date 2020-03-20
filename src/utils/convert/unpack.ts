@@ -1,7 +1,5 @@
 // This script is responsible to unpack the game files from the real game installation
-// It is supposed to support Steam and GoG versions on MacOS, Windows and Linux
-
-// TODO - make it work with Steam version
+// It supports Steam and GoG versions on MacOS and Windows
 
 // tslint:disable: no-console
 // tslint:disable: max-line-length
@@ -17,11 +15,16 @@ interface Paths {
     unpack: string;
 }
 
-const SupportedVersions = ['GogWin', 'GogMac'];
+const SupportedVersions = ['GogWin', 'SteamWin', 'GogMac'];
 
 const PathDefinitions = {
     GogWin: {
         image: 'LBA2.GOG',
+        track: 'LBA2.OGG',
+        dosbox: ['DOSBOX/DOSBox.exe', 'DOSBOX/SDL.dll', 'DOSBOX/SDL_net.dll']
+    },
+    SteamWin: {
+        image: 'LBA2.DOT',
         track: 'LBA2.OGG',
         dosbox: ['DOSBOX/DOSBox.exe', 'DOSBOX/SDL.dll', 'DOSBOX/SDL_net.dll']
     },
@@ -34,6 +37,7 @@ const PathDefinitions = {
 
 const UnpackCommands = {
     GogWin: 'powershell -File src/utils/convert/unpack.ps1',
+    SteamWin: 'powershell -File src/utils/convert/unpack.ps1',
     GogMac: 'cd www/data/_unpack && ./dosbox unpack.bat -exit'
 };
 

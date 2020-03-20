@@ -7,6 +7,7 @@ mkdir MUSIC
 mkdir VIDEO
 
 imgmount D "LBA2.GOG" -t iso
+imgmount D "LBA2.DOT" -t iso
 D:
 cd LBA2
 
