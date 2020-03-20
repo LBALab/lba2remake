@@ -58,13 +58,13 @@ Once your development environment is up and running, you can check the [architec
 
 ## Manual Import
 
-Only do this step if the import script failed (that means you have some other version then Steam or GoG. But if you have Steam or GoG version, make sure to update it to the latest before runing the import script)
+Only do this step if the import script failed (that means you have some other version than Steam or GoG. But if you have Steam or GoG version, make sure to update it to the latest before runing the import script, as it usually helps)
 
 #### Copy the resource files
 
 Musics, voices, sound samples and videos can't be read directly, they have to be converted to mp4 and aac files. We have a convert script, but before you need to copy the original files manually to the _www/data_
 
-* Copy the *.HQR, *.OBL, *.ILE files and the VOX, MUSIC, VIDEO folders from the original game install folder to www/data
+* Copy the *.HQR, *.OBL, *.ILE files and the VOX, MUSIC, VIDEO folders from the original game install folder to _www/data_
 All those files can be inside an ISO image that comes with your game, so you need to extract them. But they all must be there.
 * Music ends up in the _www/data/MUSIC_ folder
 * Video hqr file ends up in the _www/data/VIDEO_ folder
