@@ -55,10 +55,11 @@ A list of current and past contributors can be found [here](AUTHORS.md).
 (**[more details here](doc/getting_started.md)**)
 
 * Make sure you own a copy of the original game: [GOG](https://www.gog.com/game/little_big_adventure_2) or [Steam](http://store.steampowered.com/app/398000/Little_Big_Adventure_2/)
-* Copy the _*.HQR_, _*.OBL_, _*.ILE_ files and the _VOX_ folder from the original game install folder to _www/data_
-* (TODO) Import the musics and videos as mp4 (no script available for that at this time)
-* Download [Node.js LTS](https://nodejs.org) (if you already have node.js installed, make sure it is a recent version: `>= 8.x.x`)
+* Download [Node.js LTS](https://nodejs.org) (if you already have node.js installed, make sure it is a recent version: `>= 9.x.x`)
+* Clone the Git project and go to the root project folder in PowerShell on Windows or Terminal on Mac for the next commands.
 * Run `npm install`
+* Run `npm run import-win "original game folder>"` on Windows or `npm run import "<original game folder>"` on Mac
+  Example: `npm run import-win "c:\Games\Little Big Adventure 2"`
 * Run `npm run dev`
 * Fire up your browser at page http://localhost:8080
 * Enjoy!
