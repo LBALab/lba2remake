@@ -1,7 +1,5 @@
 @echo off
 
-set data=%1
-
 mount E: ".."
 E:
 mkdir VOX
