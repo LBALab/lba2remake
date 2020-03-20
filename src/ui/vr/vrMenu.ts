@@ -6,7 +6,7 @@ import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
 import controllerScreens from './data/controllerScreens';
 import { drawFrame } from './vrUtils';
 import {tr} from '../../lang';
-import VideoData from '../../video/data';
+import { getIntroVideoSrc } from '../../video/access';
 
 let menuNode = null;
 let teleportMenu = null;
@@ -41,7 +41,7 @@ export function createMenu(game, sceneManager, renderer, light) {
             const audioMenuManager = game.getAudioMenuManager();
             audioMenuManager.getMusicSource().stop();
 
-            const src = VideoData.VIDEO.find(v => v.name === 'INTRO').file;
+            const src = getIntroVideoSrc();
             const onEnded = async () => {
                 game.setUiState({video: null});
                 game.controlsState.skipListener = null;
