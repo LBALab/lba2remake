@@ -59,7 +59,7 @@ A list of current and past contributors can be found [here](AUTHORS.md).
 * Clone the Git project and go to the root project folder in PowerShell on Windows or Terminal on Mac for the next commands.
 * Run `npm install`
 * Run `npm run import-win "<original game folder>"` on Windows or `npm run import "<original game folder>"` on Mac
-  Example: `npm run import-win "c:\Games\Little Big Adventure 2"`
+  * Example: `npm run import-win "c:\Games\Little Big Adventure 2"`
 * Run `npm run dev`
 * Fire up your browser at page http://localhost:8080
 * Enjoy!
