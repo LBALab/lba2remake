@@ -1,7 +1,5 @@
 // This script is responsible to unpack the game files from the real game installation
-// It is supposed to support Steam and GoG versions on MacOS, Windows and Linux
-
-// TODO - make it work with Steam version
+// It supports Steam and GoG versions on MacOS and Windows
 
 // tslint:disable: no-console
 // tslint:disable: max-line-length
