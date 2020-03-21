@@ -185,7 +185,8 @@ function getSoundFxSource(state, context, data = null) {
         context.resume();
     };
     source.load = (index, callback) => {
-        loadHqr('SAMPLES_AAC.HQR', true).then((samples) => {
+        loadHqr('SAMPLES_AAC.HQR.zip', true)
+            .then(async (samples) => {
             if (!samples) {
                 return;
             }
@@ -209,7 +210,7 @@ function getSoundFxSource(state, context, data = null) {
                 source.connect();
                 callback.call();
             } else {
-                const entryBuffer = samples.getEntry(index);
+                const entryBuffer = await samples.getEntryAsync(index);
                 context.decodeAudioData(entryBuffer, (buffer) => {
                     // this bypasses a browser issue while loading same sample
                     // in short period of time.
@@ -281,11 +282,11 @@ function getVoiceSource(state, context, data = null) {
     source.load = (index, textBankId, callback) => {
         const textBank = `${textBankId}`;
         // tslint:disable-next-line:max-line-length
-        let filename = `VOX/${state.config.languageVoice.code}_${(`000${textBank}`).substring(0, 3 - textBank.length) + textBank}_AAC.VOX`;
+        let filename = `VOX/${state.config.languageVoice.code}_${(`000${textBank}`).substring(0, 3 - textBank.length) + textBank}_AAC.VOX.zip`;
         if (textBankId === -1) {
-            filename = `VOX/${state.config.languageVoice.code}_GAM_AAC.VOX`;
+            filename = `VOX/${state.config.languageVoice.code}_GAM_AAC.VOX.zip`;
         }
-        loadHqr(filename, true).then((voices) => {
+        loadHqr(filename, true).then(async (voices) => {
             if (!voices) {
                 return;
             }
@@ -307,7 +308,7 @@ function getVoiceSource(state, context, data = null) {
                 }
             };
 
-            const entryBuffer = voices.getEntry(index);
+            const entryBuffer = await voices.getEntryAsync(index);
             context.decodeAudioData(entryBuffer, (buffer) => {
                 if (!source.bufferSource.buffer) {
                     source.bufferSource.buffer = buffer;
