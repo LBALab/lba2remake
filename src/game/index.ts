@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
-import {createState} from './state';
-import {createAudioManager, createMusicManager} from '../audio';
-import {loadTexts} from '../text';
-import {getLanguageConfig, tr} from '../lang';
+import { createState } from './state';
+import { createAudioManager, createMusicManager } from '../audio';
+import { getTextFile, loadTexts } from '../text';
+import { getLanguageConfig, tr } from '../lang';
 import DebugData from '../ui/editor/DebugData';
 import { makePure } from '../utils/debug';
 
@@ -11,13 +11,15 @@ import { registerStaticResource, preloadResources } from '../resources';
 
 const registerResources = {
     lba1: () => {
+        const { language } = getLanguageConfig();
+
         registerStaticResource('ANIM', 'LBA1/ANIM.HQR');
         registerStaticResource('BODY', 'LBA1/BODY.HQR');
         registerStaticResource('RESS', 'LBA1/RESS.HQR');
         registerStaticResource('SAMPLES', 'LBA1/SAMPLES.HQR');
         registerStaticResource('SCENES', 'LBA1/SCENE.HQR');
         registerStaticResource('SPRITES', 'LBA1/SPRITES.HQR');
-        registerStaticResource('TEXT', 'LBA1/TEXT.HQR');
+        registerStaticResource('TEXT', getTextFile(language)); // get fan translated files
         // different assets from both games
         registerStaticResource('ENTITIES', 'LBA1/FILE3D.HQR');
         registerStaticResource('OBJECTS', 'LBA1/INVOBJ.HQR');
@@ -27,19 +29,31 @@ const registerResources = {
         registerStaticResource('MUSIC', 'LBA1/MIDI_MI_WIN.HQR');
     },
     lba2: () => {
+        const { language, languageVoice } = getLanguageConfig();
+
         registerStaticResource('ANIM', 'ANIM.HQR');
         registerStaticResource('BODY', 'BODY.HQR');
         registerStaticResource('RESS', 'RESS.HQR');
         registerStaticResource('SAMPLES', 'SAMPLES.HQR');
         registerStaticResource('SCENES', 'SCENE.HQR');
         registerStaticResource('SPRITES', 'SPRITES.HQR');
-        registerStaticResource('TEXT', 'TEXT.HQR');
+        registerStaticResource('TEXT', getTextFile(language)); // get fan translated files
         // different assets from both games
-        registerStaticResource('ENTITIES', 'RESS.HQR'); // entry
+        // registerStaticResource('ENTITIES', 'RESS.HQR'); // entry
         registerStaticResource('OBJECTS', 'OBJFIX.HQR');
         registerStaticResource('LAYOUTS', 'LBA_BKG.HQR'); // entries
-        registerStaticResource('BRICKS', 'LBA_BKG.HQR'); // entries
-        registerStaticResource('GRIDS', 'LBA_BKG.HQR'); // entries
+        // registerStaticResource('BRICKS', 'LBA_BKG.HQR'); // entries
+        // registerStaticResource('GRIDS', 'LBA_BKG.HQR'); // entries
+
+        registerStaticResource(tr('MenuBackground'), '../images/2_screen_menubg_extended.png');
+        registerStaticResource(tr('Logo'), '../images/remake_logo.png');
+
+        registerStaticResource(tr('MainVoices'), `VOX/${languageVoice.code}_GAM_AAC.VOX.zip`);
+        registerStaticResource(tr('Voices'), `VOX/${languageVoice.code}_000_AAC.VOX.zip`);
+        registerStaticResource(tr('AdelineTheme'), 'MUSIC/LOGADPCM.mp4');
+        registerStaticResource(tr('MainTheme'), 'MUSIC/JADPCM15.mp4');
+        registerStaticResource(tr('FirstSong'), 'MUSIC/JADPCM16.mp4');
+        registerStaticResource(tr('MenuMusic'), 'MUSIC/Track6.mp4');
     },
 };
 
@@ -162,24 +176,12 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
         registerResources: registerResources[params.game],
 
         async preload() {
-            const {language, languageVoice} = getLanguageConfig();
-
             await preloadResources();
 
+            const { language } = getLanguageConfig();
             const [menuTexts, gameTexts] = await Promise.all([
                 loadTexts(language, 0),
-                loadTexts(language, 4),
-                preloadFile('images/2_screen_menubg_extended.png', tr('MenuBackground')),
-                preloadFile('images/remake_logo.png', tr('Logo')),
-                preloadFile('data/RESS.HQR', tr('Resources')),
-                preloadFile(`data/VOX/${languageVoice.code}_GAM_AAC.VOX.zip`,
-                    tr('MainVoices'), false),
-                preloadFile(`data/VOX/${languageVoice.code}_000_AAC.VOX.zip`,
-                    tr('Voices'), false),
-                preloadFile('data/MUSIC/LOGADPCM.mp4', tr('AdelineTheme'), false),
-                preloadFile('data/MUSIC/JADPCM15.mp4', tr('MainTheme'), false),
-                preloadFile('data/MUSIC/JADPCM16.mp4', tr('FirstSong'), false),
-                preloadFile('data/MUSIC/Track6.mp4', tr('MenuMusic'), false),
+                loadTexts(language, 4)
             ]);
             this.menuTexts = menuTexts;
             this.texts = gameTexts;
@@ -193,39 +195,6 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
     makePure(game.getAudioMenuManager);
 
     return game;
-}
-
-async function preloadFile(url, name, mandatory = true) {
-    const send = (eventName, progress?) => {
-        if (name) {
-            document.dispatchEvent(new CustomEvent(eventName, {detail: {name, progress}}));
-        }
-    };
-    return new Promise((resolve: Function, reject: Function) => {
-        send('loaderprogress', 0);
-        const request = new XMLHttpRequest();
-        request.open('GET', url, true);
-        request.responseType = 'arraybuffer';
-        request.onprogress = (event) => {
-            const progress = event.loaded / event.total;
-            send('loaderprogress', progress);
-        };
-        request.onload = function onload() {
-            if (!mandatory && this.status === 404) {
-                resolve();
-            }
-            if (this.status === 200) {
-                send('loaderend');
-                resolve();
-            } else {
-                reject(`Failed to load resource: status=${this.status}`);
-            }
-        };
-        request.onerror = (err) => {
-            reject(err);
-        };
-        request.send();
-    });
 }
 
 function getSavedVRFirstPersonMode() {

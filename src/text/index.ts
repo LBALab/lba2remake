@@ -1,5 +1,6 @@
 import charmaps from '../data/charmaps.json';
-import {loadHqr} from '../hqr';
+
+import { getResource } from '../resources';
 
 export function getTextFile(language) {
     const fanSuffix = language.isFan ? `_${language.code}` : '';
@@ -7,8 +8,8 @@ export function getTextFile(language) {
 }
 
 export async function loadTexts(language, index) {
-    const hqr = await loadHqr(getTextFile(language));
-    return loadTextData(hqr, getLanguageTextIndex(language, index));
+    const resource = await getResource('TEXT');
+    return loadTextData(resource, getLanguageTextIndex(language, index));
 }
 
 function getLanguageTextIndex(language, index) {
@@ -16,9 +17,9 @@ function getLanguageTextIndex(language, index) {
     return { data: language, index: languageIndex };
 }
 
-export function loadTextData(textFile, language) {
-    const mapData = new Uint16Array(textFile.getEntry(language.index));
-    const data = new DataView(textFile.getEntry(language.index + 1));
+export function loadTextData(resource, language) {
+    const mapData = new Uint16Array(resource.getEntry(language.index));
+    const data = new DataView(resource.getEntry(language.index + 1));
     const texts = {};
     let start;
     let end;

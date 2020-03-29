@@ -6,13 +6,23 @@ const ResourceType = {
     STATIC: 1,
 };
 
+const HQRExtensions = [
+    '.HQR',
+    '.VOX',
+    '.ILE',
+    '.OBL',
+    '.zip',
+];
+
 interface Resource {
     type: number;
     name: string;
     path: string;
     loaded: boolean;
+    isHQR: boolean;
     hqr: HQR;
     getEntry: Function;
+    getEntryAsync: Function;
     load: Function;
 }
 
@@ -59,16 +69,20 @@ const registerResource = (type: number, name: string, path: string) => {
         name,
         path,
         loaded: false,
+        // HQR, VOX, ILE, OBL, ZIP (OpenHQR)
+        isHQR: new RegExp(HQRExtensions.join('|')).test(path),
         hqr: null,
         getEntry: null,
+        getEntryAsync: null,
         load: null,
     };
 
-    resource.getEntry = async (index: number) => {
-        if (!resource.hqr) {
-            return null;
-        }
-        return await resource.hqr.getEntry(index);
+    resource.getEntry = (index: number) => {
+        return resource.hqr.getEntry(index);
+    };
+
+    resource.getEntryAsync = async (index: number) => {
+        return await resource.hqr.getEntryAsync(index);
     };
 
     resource.load = async () => {
@@ -114,17 +128,24 @@ export const preloadResources = async () => {
     }
     await Promise.all(preload);
     for (const res of Object.values(Resources)) {
-        if (res.type === ResourceType.STATIC) {
+        if (res.isHQR && res.type === ResourceType.STATIC) {
             res.load();
         }
     }
 };
 
-export const getResourceEntry = async (name: string, index: number) => {
+export const getResource = async (name: string) => {
     const resource = Resources[name];
-    if (resource && resource.loaded) {
-        return await resource.getEntry();
+    if (resource && !resource.loaded) {
+        await resource.load();
     }
-    await resource.load();
+    return resource;
+};
+
+export const getResourceEntry = async (name: string, index: number) => {
+    const resource = await getResource(name);
+    if (!resource.isHQR) {
+        return null;
+    }
     return await resource.getEntry(index);
 };
