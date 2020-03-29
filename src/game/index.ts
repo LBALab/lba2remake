@@ -7,7 +7,43 @@ import {getLanguageConfig, tr} from '../lang';
 import DebugData from '../ui/editor/DebugData';
 import { makePure } from '../utils/debug';
 
-export function createGame(clock: any, setUiState: Function, getUiState: Function) {
+import { registerStaticResource, preloadResources } from '../resources';
+
+const registerResources = {
+    lba1: () => {
+        registerStaticResource('ANIM', 'LBA1/ANIM.HQR');
+        registerStaticResource('BODY', 'LBA1/BODY.HQR');
+        registerStaticResource('RESS', 'LBA1/RESS.HQR');
+        registerStaticResource('SAMPLES', 'LBA1/SAMPLES.HQR');
+        registerStaticResource('SCENES', 'LBA1/SCENE.HQR');
+        registerStaticResource('SPRITES', 'LBA1/SPRITES.HQR');
+        registerStaticResource('TEXT', 'LBA1/TEXT.HQR');
+        // different assets from both games
+        registerStaticResource('ENTITIES', 'LBA1/FILE3D.HQR');
+        registerStaticResource('OBJECTS', 'LBA1/INVOBJ.HQR');
+        registerStaticResource('LAYOUTS', 'LBA1/LBA_BLL.HQR');
+        registerStaticResource('BRICKS', 'LBA1/LBA_BRK.HQR');
+        registerStaticResource('GRIDS', 'LBA1/LBA_GRI.HQR');
+        registerStaticResource('MUSIC', 'LBA1/MIDI_MI_WIN.HQR');
+    },
+    lba2: () => {
+        registerStaticResource('ANIM', 'ANIM.HQR');
+        registerStaticResource('BODY', 'BODY.HQR');
+        registerStaticResource('RESS', 'RESS.HQR');
+        registerStaticResource('SAMPLES', 'SAMPLES.HQR');
+        registerStaticResource('SCENES', 'SCENE.HQR');
+        registerStaticResource('SPRITES', 'SPRITES.HQR');
+        registerStaticResource('TEXT', 'TEXT.HQR');
+        // different assets from both games
+        registerStaticResource('ENTITIES', 'RESS.HQR'); // entry
+        registerStaticResource('OBJECTS', 'OBJFIX.HQR');
+        registerStaticResource('LAYOUTS', 'LBA_BKG.HQR'); // entries
+        registerStaticResource('BRICKS', 'LBA_BKG.HQR'); // entries
+        registerStaticResource('GRIDS', 'LBA_BKG.HQR'); // entries
+    },
+};
+
+export function createGame(clock: any, setUiState: Function, getUiState: Function, params: any) {
     let isPaused = false;
     let isLoading = false;
 
@@ -123,8 +159,13 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
             }
         },
 
+        registerResources: registerResources[params.game],
+
         async preload() {
             const {language, languageVoice} = getLanguageConfig();
+
+            await preloadResources();
+
             const [menuTexts, gameTexts] = await Promise.all([
                 loadTexts(language, 0),
                 loadTexts(language, 4),

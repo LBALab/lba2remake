@@ -109,8 +109,10 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             const game = createGame(
                 clock,
                 this.setUiState,
-                this.getUiState
+                this.getUiState,
+                props.params,
             );
+            game.registerResources();
 
             this.state = {
                 clock,

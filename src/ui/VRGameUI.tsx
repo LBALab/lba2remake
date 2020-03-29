@@ -76,7 +76,8 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         const game = createGame(
             clock,
             this.setUiState,
-            this.getUiState
+            this.getUiState,
+            props.params,
         );
 
         this.state = {

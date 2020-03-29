@@ -123,15 +123,15 @@ export default class HQR {
     }
 }
 
-const hqrCache = {};
+// const hqrCache = {};
 
 // Loads HQR from file. Supports native HQR and OpenHQR (zip)
 // ignoreUnavailable - when true, will not fail the game if 404
 export async function loadHqr(file: string, ignoreUnavailable = false) {
-    if (file in hqrCache) {
-        return await hqrCache[file].load(ignoreUnavailable);
-    }
+    // if (file in hqrCache) {
+    //     return await hqrCache[file].load(ignoreUnavailable);
+    // }
     const hqr = new HQR(`data/${file}`);
-    hqrCache[file] = hqr;
+    // hqrCache[file] = hqr;
     return await hqr.load(ignoreUnavailable);
 }

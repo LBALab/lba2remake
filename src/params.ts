@@ -42,7 +42,11 @@ const paramsDefinitions = {
     lang: {
         type: 'string',
         default: null
-    }
+    },
+    game: {
+        type: 'string',
+        default: 'lba2',
+    },
 };
 
 export function loadParams() : any {
