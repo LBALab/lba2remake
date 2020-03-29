@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { map, each, assign, tail} from 'lodash';
 
-import { loadHqr } from '../hqr';
 import { prepareGeometries } from './geometries';
 import { loadLayout } from './layout';
 import { loadGround } from './ground';
@@ -57,7 +56,7 @@ export async function loadIslandScenery(params, name, ambience) {
     const [ress, ile, obl, lutTexture] = await Promise.all([
         getResource('RESS'),
         getResource(`${name}-ILE`),
-        loadHqr(`${name}.OBL`),
+        getResource(`${name}-OBL`),
         loadLUTTexture()
     ]);
     const files = {ress, ile, obl};

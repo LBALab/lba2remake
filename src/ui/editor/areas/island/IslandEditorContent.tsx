@@ -9,6 +9,11 @@ import DebugData from '../../DebugData';
 import {get3DFreeCamera} from './utils/freeCamera';
 import IslandAmbience from './browser/ambience';
 import { TickerProps } from '../../../utils/Ticker';
+import {
+    registerStaticResource,
+    registerTransientResource,
+    preloadResources
+} from '../../../../resources';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -107,7 +112,43 @@ export default class Island extends FrameListener<Props, State> {
         }
     }
 
+    preload() {
+        registerStaticResource('RESS', 'RESS.HQR');
+
+        registerTransientResource('ASCENCE-ILE',  'ASCENCE.ILE');
+        registerTransientResource('ASCENCE-OBL',  'ASCENCE.OBL');
+        registerTransientResource('CELEBRA2-ILE', 'CELEBRA2.ILE');
+        registerTransientResource('CELEBRA2-OBL', 'CELEBRA2.OBL');
+        registerTransientResource('CELEBRAT-ILE', 'CELEBRAT.ILE');
+        registerTransientResource('CELEBRAT-OBL', 'CELEBRAT.OBL');
+        registerTransientResource('CITABAU-ILE',  'CITABAU.ILE');
+        registerTransientResource('CITABAU-OBL',  'CITABAU.OBL');
+        registerTransientResource('CITADEL-ILE',  'CITADEL.ILE');
+        registerTransientResource('CITADEL-OBL',  'CITADEL.OBL');
+        registerTransientResource('DESERT-ILE',   'DESERT.ILE');
+        registerTransientResource('DESERT-OBL',   'DESERT.OBL');
+        registerTransientResource('EMERAUDE-ILE', 'EMERAUDE.ILE');
+        registerTransientResource('EMERAUDE-OBL', 'EMERAUDE.OBL');
+        registerTransientResource('ILOTCX-ILE',   'ILOTCX.ILE');
+        registerTransientResource('ILOTCX-OBL',   'ILOTCX.OBL');
+        registerTransientResource('KNARTAS-ILE',  'KNARTAS.ILE');
+        registerTransientResource('KNARTAS-OBL',  'KNARTAS.OBL');
+        registerTransientResource('MOON-ILE',     'MOON.ILE');
+        registerTransientResource('MOON-OBL',     'MOON.OBL');
+        registerTransientResource('MOSQUIBE-ILE', 'MOSQUIBE.ILE');
+        registerTransientResource('MOSQUIBE-OBL', 'MOSQUIBE.OBL');
+        registerTransientResource('OTRINGAL-ILE', 'OTRINGAL.ILE');
+        registerTransientResource('OTRINGAL-OBL', 'OTRINGAL.OBL');
+        registerTransientResource('PLATFORM-ILE', 'PLATFORM.ILE');
+        registerTransientResource('PLATFORM-OBL', 'PLATFORM.OBL');
+        registerTransientResource('SOUSCELB-ILE', 'SOUSCELB.ILE');
+        registerTransientResource('SOUSCELB-OBL', 'SOUSCELB.OBL');
+
+        preloadResources();
+    }
+
     onLoad(root) {
+        this.preload();
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;
@@ -248,9 +289,9 @@ export default class Island extends FrameListener<Props, State> {
         };
         renderer.stats.begin();
         scene.camera.update(island, this.state, time);
-        if (island) {
-            island.updateSeaTime(time);
-        }
+        // if (island) {
+        //     island.updateSeaTime(time); // FIXME looks like it does not exist anymore
+        // }
         renderer.render(scene);
         renderer.stats.end();
     }

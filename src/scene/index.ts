@@ -1,16 +1,16 @@
 import * as THREE from 'three';
-import {DirMode} from '../game/actors';
 
-import {loadHqr} from '../hqr';
-import {bits} from '../utils';
-import {loadTextData, getTextFile} from '../text';
-import {WORLD_SCALE} from '../utils/lba';
+import { DirMode } from '../game/actors';
+import { bits } from '../utils';
+import { loadTextData } from '../text';
+import  {WORLD_SCALE } from '../utils/lba';
+import { getResource } from '../resources';
 
 export async function loadSceneData(language, index) {
     const [scene, text, ress] = await Promise.all([
-        loadHqr('SCENE.HQR'),
-        loadHqr(getTextFile(language)),
-        loadHqr('RESS.HQR')
+        getResource('SCENE'),
+        getResource('TEXT'),
+        getResource('RESS')
     ]);
     const files = {scene, text, ress};
     return loadSceneDataSync(files, language, index);
@@ -25,7 +25,6 @@ function loadSceneDataSync(files, language, index) {
     const buffer = files.scene.getEntry(index + 1); // first entry is not a scene
     const data = new DataView(buffer);
     const textBankId = data.getInt8(0);
-
     const sceneData = {
         index,
         textBankId,

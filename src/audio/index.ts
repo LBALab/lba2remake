@@ -1,6 +1,6 @@
 import AudioData from './data';
-import {loadHqr} from '../hqr';
-import {getFrequency} from '../utils/lba';
+import { getFrequency } from '../utils/lba';
+import { getResource } from '../resources';
 
 const musicSourceCache = [];
 const samplesSourceCache = [];
@@ -185,7 +185,7 @@ function getSoundFxSource(state, context, data = null) {
         context.resume();
     };
     source.load = (index, callback) => {
-        loadHqr('SAMPLES_AAC.HQR.zip', true)
+        getResource('SAMPLES')
             .then(async (samples) => {
             if (!samples) {
                 return;
@@ -282,11 +282,11 @@ function getVoiceSource(state, context, data = null) {
     source.load = (index, textBankId, callback) => {
         const textBank = `${textBankId}`;
         // tslint:disable-next-line:max-line-length
-        let filename = `VOX/${state.config.languageVoice.code}_${(`000${textBank}`).substring(0, 3 - textBank.length) + textBank}_AAC.VOX.zip`;
+        let name = `VOICES-${(`000${textBank}`).substring(0, 3 - textBank.length) + textBank}`;
         if (textBankId === -1) {
-            filename = `VOX/${state.config.languageVoice.code}_GAM_AAC.VOX.zip`;
+            name = 'VOICES-GAM';
         }
-        loadHqr(filename, true).then(async (voices) => {
+        getResource(name).then(async (voices) => {
             if (!voices) {
                 return;
             }

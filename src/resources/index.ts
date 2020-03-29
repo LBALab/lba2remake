@@ -19,10 +19,12 @@ interface Resource {
     name: string;
     path: string;
     loaded: boolean;
+    length: number;
     isHQR: boolean;
     hqr: HQR;
     getEntry: Function;
     getEntryAsync: Function;
+    hasHiddenEntries: Function;
     load: Function;
 }
 
@@ -64,6 +66,10 @@ const preloadResource = async (url, name, mandatory = true) => {
 
 /** Add Resource */
 const registerResource = (type: number, name: string, path: string) => {
+    if (Resources[name]) {
+        return;
+    }
+
     const resource = {
         type,
         name,
@@ -75,10 +81,16 @@ const registerResource = (type: number, name: string, path: string) => {
         getEntry: null,
         getEntryAsync: null,
         load: null,
+        length: 0,
+        hasHiddenEntries: null,
     };
 
     resource.getEntry = (index: number) => {
         return resource.hqr.getEntry(index);
+    };
+
+    resource.hasHiddenEntries = (index: number) => {
+        return resource.hqr.hasHiddenEntries(index);
     };
 
     resource.getEntryAsync = async (index: number) => {
@@ -87,10 +99,11 @@ const registerResource = (type: number, name: string, path: string) => {
 
     resource.load = async () => {
         resource.hqr = await loadHqr(resource.path);
+        resource.length = resource.hqr.length;
         resource.loaded = true;
     };
 
-    Resources[`${name}`] = resource;
+    Resources[name] = resource;
 };
 
 export const registerStaticResource = (name: string, path: string) => {

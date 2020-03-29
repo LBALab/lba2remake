@@ -16,6 +16,8 @@ import DebugData from '../../DebugData';
 import fmod from './utils/fmod';
 import {get3DOrbitCamera} from './utils/orbitCamera';
 import { TickerProps } from '../../../utils/Ticker';
+import { registerStaticResource, preloadResources } from '../../../../resources';
+import { loadEntities } from './browser/entitities';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -115,7 +117,17 @@ export default class Model extends FrameListener<Props, State> {
         }
     }
 
+    preload() {
+        registerStaticResource('RESS', 'RESS.HQR');
+        registerStaticResource('BODY', 'BODY.HQR');
+        registerStaticResource('ANIM', 'ANIM.HQR');
+
+        preloadResources();
+        loadEntities();
+    }
+
     onLoad(root) {
+        this.preload();
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;

@@ -7,9 +7,9 @@ import {
 import { processLayoutMirror, buildMirrors } from './mirrors';
 import { saveFullSceneModel } from './models';
 import { loadGrid } from '../grid';
-import { loadHqr } from '../../hqr';
 import { loadImageData } from '..';
 import { loadBricks } from '../bricks';
+import { getResource } from '../../resources';
 
 export async function extractGridMetadata(grid, entry, ambience, is3D) {
     if (!is3D) {
@@ -44,8 +44,8 @@ export async function extractGridMetadata(grid, entry, ambience, is3D) {
 
 export async function saveSceneReplacementModel(entry, ambience) {
     const [ress, bkg, mask] = await Promise.all([
-        loadHqr('RESS.HQR'),
-        loadHqr('LBA_BKG.HQR'),
+        getResource('RESS'),
+        getResource('BRICKS'),
         loadImageData('images/brick_mask.png')
     ]);
     const palette = new Uint8Array(ress.getEntry(0));

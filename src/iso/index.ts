@@ -1,15 +1,15 @@
 import * as THREE from 'three';
 
-import { loadHqr } from '../hqr';
 import { loadBricks } from './bricks';
 import { loadGrid } from './grid';
 import { processCollisions } from '../game/loop/physicsIso';
-import {compile} from '../utils/shaders';
+import { compile } from '../utils/shaders';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 import { extractGridMetadata } from './metadata';
-import {Side, OffsetBySide} from './mapping';
+import { Side, OffsetBySide } from './mapping';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../utils/lba';
+import { getResource } from '../resources';
 
 export async function loadImageData(src) : Promise<ImageData> {
     return new Promise((resolve) => {
@@ -28,8 +28,8 @@ export async function loadImageData(src) : Promise<ImageData> {
 
 export async function loadIsometricScenery(entry, ambience, is3D) {
     const [ress, bkg, mask] = await Promise.all([
-        loadHqr('RESS.HQR'),
-        loadHqr('LBA_BKG.HQR'),
+        getResource('RESS'),
+        getResource('BRICKS'),
         loadImageData('images/brick_mask.png')
     ]);
     const palette = new Uint8Array(ress.getEntry(0));

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { loadHqr } from '../hqr';
+
 import { loadEntity, getBodyIndex, getAnimIndex, Entity } from './entity';
 import { loadBody } from './body';
 import { loadAnim } from './anim';
@@ -11,6 +11,7 @@ import { loadMesh } from './geometries';
 import { loadTextureRGBA } from '../texture';
 import { createBoundingBox } from '../utils/rendering';
 import { loadLUTTexture } from '../utils/lut';
+import { getResource } from '../resources';
 
 export interface Model {
     state: any;
@@ -27,14 +28,13 @@ export async function loadModel(params: any,
                           animState: any,
                           envInfo: any,
                           ambience: any) {
-    const [ress, body, anim, anim3ds, lutTexture] = await Promise.all([
-        loadHqr('RESS.HQR'),
-        loadHqr('BODY.HQR'),
-        loadHqr('ANIM.HQR'),
-        loadHqr('ANIM3DS.HQR'),
+    const [ress, body, anim, lutTexture] = await Promise.all([
+        getResource('RESS'),
+        getResource('BODY'),
+        getResource('ANIM'),
         loadLUTTexture()
     ]);
-    const files = {ress, body, anim, anim3ds};
+    const files = { ress, body, anim };
     return loadModelData(
         params,
         files,

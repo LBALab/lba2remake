@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as THREE from 'three';
 import { omit, cloneDeep, times, each } from 'lodash';
 import { saveAs } from 'file-saver';
+
 import { ColladaExporter } from 'three/examples/jsm/exporters/ColladaExporter';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Renderer from '../../../../renderer';
@@ -13,7 +14,6 @@ import { getIsometricCamera } from '../../../../cameras/iso';
 import { loadImageData } from '../../../../iso';
 import { loadLibrary } from '../../../../iso/grid';
 import { loadBricks } from '../../../../iso/bricks';
-import { loadHqr } from '../../../../hqr';
 import { OffsetBySide, Side } from '../../../../iso/mapping';
 import { compile } from '../../../../utils/shaders';
 import brick_vertex from '../../../../iso/shaders/brick.vert.glsl';
@@ -25,6 +25,7 @@ import { loadSceneMapData } from '../../../../scene/map';
 import { loadSceneData } from '../../../../scene';
 import { getLanguageConfig } from '../../../../lang';
 import { saveSceneReplacementModel } from '../../../../iso/metadata';
+import { getResource } from '../../../../resources';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -306,8 +307,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.layout = layoutIdx;
         this.library = libraryIdx;
         const [ress, bkg, lutTexture] = await Promise.all([
-            loadHqr('RESS.HQR'),
-            loadHqr('LBA_BKG.HQR'),
+            getResource('RESS'),
+            getResource('BRICKS'),
             await loadLUTTexture(),
         ]);
         const palette = new Uint8Array(ress.getEntry(0));
@@ -495,7 +496,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             orientation: 0
         };
         const [ress, lutTexture] = await Promise.all([
-            loadHqr('RESS.HQR'),
+            getResource('RESS'),
             await loadLUTTexture(),
         ]);
         const palette = new Uint8Array(ress.getEntry(0));
@@ -902,7 +903,7 @@ function getLightVector() {
 }
 
 async function findScenesUsingLibrary(library) {
-    const bkg = await loadHqr('LBA_BKG.HQR');
+    const bkg = await getResource('BRICKS');
     const sceneMap = await loadSceneMapData();
     const scenes = [];
     each(times(222), async (scene) => {

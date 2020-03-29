@@ -21,9 +21,10 @@ const registerResources = {
         registerStaticResource('BODY', 'LBA1/BODY.HQR');
         registerStaticResource('RESS', 'LBA1/RESS.HQR');
         registerStaticResource('SAMPLES', 'LBA1/SAMPLES.HQR');
-        registerStaticResource('SCENES', 'LBA1/SCENE.HQR');
+        registerStaticResource('SCENE', 'LBA1/SCENE.HQR');
         registerStaticResource('SPRITES', 'LBA1/SPRITES.HQR');
         registerStaticResource('TEXT', getTextFile(language)); // get fan translated files
+
         // different assets from both games
         registerStaticResource('ENTITIES', 'LBA1/FILE3D.HQR');
         registerStaticResource('OBJECTS', 'LBA1/INVOBJ.HQR');
@@ -38,28 +39,43 @@ const registerResources = {
         registerStaticResource('ANIM', 'ANIM.HQR');
         registerStaticResource('BODY', 'BODY.HQR');
         registerStaticResource('RESS', 'RESS.HQR');
-        registerStaticResource('SAMPLES', 'SAMPLES.HQR');
-        registerStaticResource('SCENES', 'SCENE.HQR');
+        registerStaticResource('SAMPLES', 'SAMPLES_AAC.HQR.zip');
+        registerStaticResource('SCENE', 'SCENE.HQR');
         registerStaticResource('SPRITES', 'SPRITES.HQR');
+        registerStaticResource('SPRITERAW', 'SPRIRAW.HQR');
         registerStaticResource('TEXT', getTextFile(language)); // get fan translated files
+
         // different assets from both games
         // registerStaticResource('ENTITIES', 'RESS.HQR'); // entry
         registerStaticResource('OBJECTS', 'OBJFIX.HQR');
-        registerStaticResource('LAYOUTS', 'LBA_BKG.HQR'); // entries
-        // registerStaticResource('BRICKS', 'LBA_BKG.HQR'); // entries
+        // registerStaticResource('LAYOUTS', 'LBA_BKG.HQR'); // entries
+        registerStaticResource('BRICKS', 'LBA_BKG.HQR'); // entries
         // registerStaticResource('GRIDS', 'LBA_BKG.HQR'); // entries
 
         registerStaticResource(tr('MenuBackground'), '../images/2_screen_menubg_extended.png');
         registerStaticResource(tr('Logo'), '../images/remake_logo.png');
 
-        registerStaticResource(tr('MainVoices'), `VOX/${languageVoice.code}_GAM_AAC.VOX.zip`);
-        registerStaticResource(tr('Voices'), `VOX/${languageVoice.code}_000_AAC.VOX.zip`);
         registerStaticResource(tr('AdelineTheme'), 'MUSIC/LOGADPCM.mp4');
         registerStaticResource(tr('MainTheme'), 'MUSIC/JADPCM15.mp4');
         registerStaticResource(tr('FirstSong'), 'MUSIC/JADPCM16.mp4');
         registerStaticResource(tr('MenuMusic'), 'MUSIC/Track6.mp4');
 
+        registerStaticResource('VOICES-GAM', `VOX/${languageVoice.code}_GAM_AAC.VOX.zip`);
+        registerStaticResource('VOICES-000', `VOX/${languageVoice.code}_000_AAC.VOX.zip`);
+
         // Transient resources
+        registerTransientResource('VOICES-001', `VOX/${languageVoice.code}_001_AAC.VOX.zip`);
+        registerTransientResource('VOICES-002', `VOX/${languageVoice.code}_002_AAC.VOX.zip`);
+        registerTransientResource('VOICES-003', `VOX/${languageVoice.code}_003_AAC.VOX.zip`);
+        registerTransientResource('VOICES-004', `VOX/${languageVoice.code}_004_AAC.VOX.zip`);
+        registerTransientResource('VOICES-005', `VOX/${languageVoice.code}_005_AAC.VOX.zip`);
+        registerTransientResource('VOICES-006', `VOX/${languageVoice.code}_006_AAC.VOX.zip`);
+        registerTransientResource('VOICES-007', `VOX/${languageVoice.code}_007_AAC.VOX.zip`);
+        registerTransientResource('VOICES-008', `VOX/${languageVoice.code}_008_AAC.VOX.zip`);
+        registerTransientResource('VOICES-009', `VOX/${languageVoice.code}_009_AAC.VOX.zip`);
+        registerTransientResource('VOICES-010', `VOX/${languageVoice.code}_010_AAC.VOX.zip`);
+        registerTransientResource('VOICES-011', `VOX/${languageVoice.code}_010_AAC.VOX.zip`);
+
         registerTransientResource('ASCENCE-ILE',  'ASCENCE.ILE');
         registerTransientResource('ASCENCE-OBL',  'ASCENCE.OBL');
         registerTransientResource('CELEBRA2-ILE', 'CELEBRA2.ILE');

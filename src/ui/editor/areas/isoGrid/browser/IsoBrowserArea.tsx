@@ -1,11 +1,12 @@
+import { map, drop } from 'lodash';
+
 import IsoBrowserAreaSettings from './IsoBrowserAreaSettings';
 import LocationsNode from '../../gameplay/locator/LocationsNode';
-import DebugData from '../../../DebugData';
-import { loadHqr } from '../../../../../hqr';
+import findScenePath from '../../gameplay/locator/findScenePath';
 import { loadSceneMapData } from '../../../../../scene/map';
 import { makeOutlinerArea } from '../../utils/outliner';
-import findScenePath from '../../gameplay/locator/findScenePath';
-import { map, drop } from 'lodash';
+import { getResource } from '../../../../../resources';
+import DebugData from '../../../DebugData';
 
 const IsoScenesNode = { children: [] };
 
@@ -72,7 +73,7 @@ async function collectIsoScenes(location, scenes, push = true) {
             if (filterLibrary === -1) {
                 scenes.push(newLocation);
             } else {
-                const bkg = await loadHqr('LBA_BKG.HQR');
+                const bkg = await getResource('BRICKS');
                 const sceneMap = await loadSceneMapData();
                 const gridData = new DataView(
                     bkg.getEntry(
