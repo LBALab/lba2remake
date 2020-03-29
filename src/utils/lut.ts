@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import convert from 'color-convert';
-import { loadHqr } from '../hqr';
+import { getResource } from '../resources';
 
 export const LUT_DIM = 32;
 const LUT_DIM_M1 = LUT_DIM - 1;
@@ -78,7 +78,7 @@ async function loadLUTData() : Promise<ArrayBuffer> {
 }
 
 export async function generateLUTTexture({onProgress, bbs, useLabColors}) {
-    const ress = await loadHqr('RESS.HQR');
+    const ress = await getResource('RESS');
     const palette = new Uint8Array(ress.getEntry(0));
     const compPalette = useLabColors ? buildLabPalette(palette) : palette;
     const buffer = new ArrayBuffer(LUT_DIM * LUT_DIM * LUT_DIM * 16 * 4);

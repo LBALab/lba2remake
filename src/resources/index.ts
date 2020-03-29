@@ -128,7 +128,7 @@ export const preloadResources = async () => {
     }
     await Promise.all(preload);
     for (const res of Object.values(Resources)) {
-        if (res.isHQR && res.type === ResourceType.STATIC) {
+        if (!res.loaded && res.isHQR && res.type === ResourceType.STATIC) {
             res.load();
         }
     }
@@ -142,10 +142,10 @@ export const getResource = async (name: string) => {
     return resource;
 };
 
-export const getResourceEntry = async (name: string, index: number) => {
-    const resource = await getResource(name);
-    if (!resource.isHQR) {
-        return null;
-    }
-    return await resource.getEntry(index);
-};
+// export const getResourceEntry = async (name: string, index: number) => {
+//     const resource = await getResource(name);
+//     if (!resource.isHQR) {
+//         return null;
+//     }
+//     return await resource.getEntry(index);
+// };

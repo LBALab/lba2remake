@@ -7,7 +7,11 @@ import { getLanguageConfig, tr } from '../lang';
 import DebugData from '../ui/editor/DebugData';
 import { makePure } from '../utils/debug';
 
-import { registerStaticResource, preloadResources } from '../resources';
+import {
+    registerStaticResource,
+    registerTransientResource,
+    preloadResources
+} from '../resources';
 
 const registerResources = {
     lba1: () => {
@@ -54,6 +58,36 @@ const registerResources = {
         registerStaticResource(tr('MainTheme'), 'MUSIC/JADPCM15.mp4');
         registerStaticResource(tr('FirstSong'), 'MUSIC/JADPCM16.mp4');
         registerStaticResource(tr('MenuMusic'), 'MUSIC/Track6.mp4');
+
+        // Transient resources
+        registerTransientResource('ASCENCE-ILE',  'ASCENCE.ILE');
+        registerTransientResource('ASCENCE-OBL',  'ASCENCE.OBL');
+        registerTransientResource('CELEBRA2-ILE', 'CELEBRA2.ILE');
+        registerTransientResource('CELEBRA2-OBL', 'CELEBRA2.OBL');
+        registerTransientResource('CELEBRAT-ILE', 'CELEBRAT.ILE');
+        registerTransientResource('CELEBRAT-OBL', 'CELEBRAT.OBL');
+        registerTransientResource('CITABAU-ILE',  'CITABAU.ILE');
+        registerTransientResource('CITABAU-OBL',  'CITABAU.OBL');
+        registerTransientResource('CITADEL-ILE',  'CITADEL.ILE');
+        registerTransientResource('CITADEL-OBL',  'CITADEL.OBL');
+        registerTransientResource('DESERT-ILE',   'DESERT.ILE');
+        registerTransientResource('DESERT-OBL',   'DESERT.OBL');
+        registerTransientResource('EMERAUDE-ILE', 'EMERAUDE.ILE');
+        registerTransientResource('EMERAUDE-OBL', 'EMERAUDE.OBL');
+        registerTransientResource('ILOTCX-ILE',   'ILOTCX.ILE');
+        registerTransientResource('ILOTCX-OBL',   'ILOTCX.OBL');
+        registerTransientResource('KNARTAS-ILE',  'KNARTAS.ILE');
+        registerTransientResource('KNARTAS-OBL',  'KNARTAS.OBL');
+        registerTransientResource('MOON-ILE',     'MOON.ILE');
+        registerTransientResource('MOON-OBL',     'MOON.OBL');
+        registerTransientResource('MOSQUIBE-ILE', 'MOSQUIBE.ILE');
+        registerTransientResource('MOSQUIBE-OBL', 'MOSQUIBE.OBL');
+        registerTransientResource('OTRINGAL-ILE', 'OTRINGAL.ILE');
+        registerTransientResource('OTRINGAL-OBL', 'OTRINGAL.OBL');
+        registerTransientResource('PLATFORM-ILE', 'PLATFORM.ILE');
+        registerTransientResource('PLATFORM-OBL', 'PLATFORM.OBL');
+        registerTransientResource('SOUSCELB-ILE', 'SOUSCELB.ILE');
+        registerTransientResource('SOUSCELB-OBL', 'SOUSCELB.OBL');
     },
 };
 
