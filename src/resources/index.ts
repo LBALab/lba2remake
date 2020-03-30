@@ -22,6 +22,8 @@ interface Resource {
     length: number;
     isHQR: boolean;
     hqr: HQR;
+    getBuffer: Function;
+    getBufferUint8: Function;
     getEntry: Function;
     getEntryAsync: Function;
     hasHiddenEntries: Function;
@@ -65,7 +67,12 @@ const preloadResource = async (url, name, mandatory = true) => {
 };
 
 /** Add Resource */
-const registerResource = (type: number, name: string, path: string) => {
+const registerResource = (
+    type: number,
+    name: string,
+    path: string,
+    entryIndex: number,
+) => {
     if (Resources[name]) {
         return;
     }
@@ -74,18 +81,52 @@ const registerResource = (type: number, name: string, path: string) => {
         type,
         name,
         path,
+        index: entryIndex,
         loaded: false,
         // HQR, VOX, ILE, OBL, ZIP (OpenHQR)
         isHQR: new RegExp(HQRExtensions.join('|')).test(path),
         hqr: null,
+        getBuffer: null,
+        getBufferUint8: null,
         getEntry: null,
         getEntryAsync: null,
         load: null,
         length: 0,
         hasHiddenEntries: null,
+        refName: null,
+    };
+
+    // check if we have already a resource with same file
+    // reuse the file to have a single file loaded in memory
+    // but keep reference to this resource
+    for (const res of Object.values(Resources)) {
+        if (res.path === path) {
+            resource.refName = res.name;
+            break;
+        }
+    }
+
+    resource.getBuffer = () => {
+        if (resource.refName) {
+            if (resource.index >= 0) {
+                return Resources[resource.refName].getEntry(resource.index);
+            }
+            return Resources[resource.refName].getBuffer();
+        }
+        if (resource.index >= 0) {
+            return resource.hqr.getEntry(resource.index);
+        }
+        return resource.hqr.getBuffer();
+    };
+
+    resource.getBufferUint8 = () => {
+        return new Uint8Array(resource.getBuffer());
     };
 
     resource.getEntry = (index: number) => {
+        if (resource.refName) {
+            return Resources[resource.refName].getEntry(index);
+        }
         return resource.hqr.getEntry(index);
     };
 
@@ -94,10 +135,18 @@ const registerResource = (type: number, name: string, path: string) => {
     };
 
     resource.getEntryAsync = async (index: number) => {
+        if (resource.refName) {
+            return Resources[resource.refName].getEntryAsync(index);
+        }
         return await resource.hqr.getEntryAsync(index);
     };
 
     resource.load = async () => {
+        if (resource.refName) {
+            resource.length = Resources[resource.refName].length;
+            resource.loaded = Resources[resource.refName].loaded;
+            return;
+        }
         resource.hqr = await loadHqr(resource.path);
         resource.length = resource.hqr.length;
         resource.loaded = true;
@@ -106,12 +155,20 @@ const registerResource = (type: number, name: string, path: string) => {
     Resources[name] = resource;
 };
 
-export const registerStaticResource = (name: string, path: string) => {
-    registerResource(ResourceType.STATIC, name, path);
+export const registerStaticResource = (
+    name: string,
+    path: string,
+    index: number = null,
+) => {
+    registerResource(ResourceType.STATIC, name, path, index);
 };
 
-export const registerTransientResource = (name: string, path: string) => {
-    registerResource(ResourceType.TRANSIENT, name, path);
+export const registerTransientResource = (
+    name: string,
+    path: string,
+    index: number = null,
+) => {
+    registerResource(ResourceType.TRANSIENT, name, path, index);
 };
 
 export const releaseAllResources = () => {
@@ -154,11 +211,3 @@ export const getResource = async (name: string) => {
     }
     return resource;
 };
-
-// export const getResourceEntry = async (name: string, index: number) => {
-//     const resource = await getResource(name);
-//     if (!resource.isHQR) {
-//         return null;
-//     }
-//     return await resource.getEntry(index);
-// };

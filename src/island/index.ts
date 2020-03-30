@@ -53,13 +53,14 @@ export async function loadIslandScenery(params, name, ambience) {
         return islands[name];
     }
 
-    const [ress, ile, obl, lutTexture] = await Promise.all([
+    const [ress, pal, ile, obl, lutTexture] = await Promise.all([
         getResource('RESS'),
+        getResource('PALETTE'),
         getResource(`${name}-ILE`),
         getResource(`${name}-OBL`),
         loadLUTTexture()
     ]);
-    const files = {ress, ile, obl};
+    const files = {ress, pal, ile, obl};
     const island = await loadIslandNode(params, islandProps[name], files, lutTexture, ambience);
     if (params.preview) {
         islandPreviews[name] = island;
@@ -76,7 +77,7 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
     const layout = loadLayout(files.ile);
     const data = {
         files,
-        palette: new Uint8Array(files.ress.getEntry(0)),
+        palette: files.pal.getBufferUint8(),
         layout,
         lutTexture
     };

@@ -7,12 +7,13 @@ import  {WORLD_SCALE } from '../utils/lba';
 import { getResource } from '../resources';
 
 export async function loadSceneData(language, index) {
-    const [scene, text, ress] = await Promise.all([
+    const [scene, text, ress, pal] = await Promise.all([
         getResource('SCENE'),
         getResource('TEXT'),
-        getResource('RESS')
+        getResource('RESS'),
+        getResource('PALETTE'),
     ]);
-    const files = {scene, text, ress};
+    const files = {scene, text, ress, pal};
     return loadSceneDataSync(files, language, index);
 }
 
@@ -34,7 +35,7 @@ function loadSceneDataSync(files, language, index) {
         unknown2: data.getUint16(4, true),
         isOutsideScene: data.getInt8(6) === 1,
         buffer,
-        palette: new Uint8Array(files.ress.getEntry(0)),
+        palette: files.pal.getBufferUint8(),
         actors: [],
         texts: null
     };

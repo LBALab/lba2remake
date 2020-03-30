@@ -61,6 +61,10 @@ export default class HQR {
         return this.entries.length;
     }
 
+    getBuffer() {
+        return this.buffer;
+    }
+
     getEntry(index: number) {
         const entry = this.entries[index];
         if (this.format === HqrFormat.HQR) {

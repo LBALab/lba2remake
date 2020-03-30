@@ -78,8 +78,8 @@ async function loadLUTData() : Promise<ArrayBuffer> {
 }
 
 export async function generateLUTTexture({onProgress, bbs, useLabColors}) {
-    const ress = await getResource('RESS');
-    const palette = new Uint8Array(ress.getEntry(0));
+    const pal = await getResource('PALETTE');
+    const palette = pal.getBufferUint8();
     const compPalette = useLabColors ? buildLabPalette(palette) : palette;
     const buffer = new ArrayBuffer(LUT_DIM * LUT_DIM * LUT_DIM * 16 * 4);
     const image_data = new Uint8Array(buffer);

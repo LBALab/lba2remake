@@ -20,12 +20,12 @@ const registerResources = {
         registerStaticResource('ANIM', 'LBA1/ANIM.HQR');
         registerStaticResource('BODY', 'LBA1/BODY.HQR');
         registerStaticResource('RESS', 'LBA1/RESS.HQR');
+        registerStaticResource('PALETTE', 'LBA1/RESS.HQR', 0);
         registerStaticResource('SAMPLES', 'LBA1/SAMPLES.HQR');
         registerStaticResource('SCENE', 'LBA1/SCENE.HQR');
         registerStaticResource('SPRITES', 'LBA1/SPRITES.HQR');
         registerStaticResource('TEXT', getTextFile(language)); // get fan translated files
 
-        // different assets from both games
         registerStaticResource('ENTITIES', 'LBA1/FILE3D.HQR');
         registerStaticResource('OBJECTS', 'LBA1/INVOBJ.HQR');
         registerStaticResource('LAYOUTS', 'LBA1/LBA_BLL.HQR');
@@ -39,14 +39,14 @@ const registerResources = {
         registerStaticResource('ANIM', 'ANIM.HQR');
         registerStaticResource('BODY', 'BODY.HQR');
         registerStaticResource('RESS', 'RESS.HQR');
+        registerStaticResource('ENTITIES', 'RESS.HQR', 44);
+        registerStaticResource('PALETTE', 'RESS.HQR', 0);
         registerStaticResource('SAMPLES', 'SAMPLES_AAC.HQR.zip');
         registerStaticResource('SCENE', 'SCENE.HQR');
         registerStaticResource('SPRITES', 'SPRITES.HQR');
         registerStaticResource('SPRITERAW', 'SPRIRAW.HQR');
         registerStaticResource('TEXT', getTextFile(language)); // get fan translated files
 
-        // different assets from both games
-        // registerStaticResource('ENTITIES', 'RESS.HQR'); // entry
         registerStaticResource('OBJECTS', 'OBJFIX.HQR');
         // registerStaticResource('LAYOUTS', 'LBA_BKG.HQR'); // entries
         registerStaticResource('BRICKS', 'LBA_BKG.HQR'); // entries

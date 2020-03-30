@@ -43,12 +43,12 @@ export async function extractGridMetadata(grid, entry, ambience, is3D) {
 }
 
 export async function saveSceneReplacementModel(entry, ambience) {
-    const [ress, bkg, mask] = await Promise.all([
-        getResource('RESS'),
+    const [pal, bkg, mask] = await Promise.all([
+        getResource('PALETTE'),
         getResource('BRICKS'),
         loadImageData('images/brick_mask.png')
     ]);
-    const palette = new Uint8Array(ress.getEntry(0));
+    const palette = pal.getBufferUint8();
     const bricks = loadBricks(bkg);
     const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
 

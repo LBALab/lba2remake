@@ -28,13 +28,15 @@ export async function loadModel(params: any,
                           animState: any,
                           envInfo: any,
                           ambience: any) {
-    const [ress, body, anim, lutTexture] = await Promise.all([
+    const [ress, pal, entities, body, anim, lutTexture] = await Promise.all([
         getResource('RESS'),
+        getResource('PALETTE'),
+        getResource('ENTITIES'),
         getResource('BODY'),
         getResource('ANIM'),
         loadLUTTexture()
     ]);
-    const files = { ress, body, anim };
+    const files = { ress, pal, entities, body, anim };
     return loadModelData(
         params,
         files,
@@ -65,8 +67,8 @@ function loadModelData(params: any,
     if (entityIdx === -1 || bodyIdx === -1 || animIdx === -1)
         return null;
 
-    const palette = new Uint8Array(files.ress.getEntry(0));
-    const entityInfo = files.ress.getEntry(44);
+    const palette = files.pal.getBufferUint8();
+    const entityInfo = files.entities.getBuffer();
     const entities = loadEntity(entityInfo);
 
     const model = {

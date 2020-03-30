@@ -306,12 +306,12 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.loading = true;
         this.layout = layoutIdx;
         this.library = libraryIdx;
-        const [ress, bkg, lutTexture] = await Promise.all([
-            getResource('RESS'),
+        const [pal, bkg, lutTexture] = await Promise.all([
+            getResource('PALETTE'),
             getResource('BRICKS'),
             await loadLUTTexture(),
         ]);
-        const palette = new Uint8Array(ress.getEntry(0));
+        const palette = pal.getBufferUint8();
         const paletteTexture = loadPaletteTexture(palette);
         const light = getLightVector();
         if (!this.mask) {
@@ -495,11 +495,11 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             file,
             orientation: 0
         };
-        const [ress, lutTexture] = await Promise.all([
-            getResource('RESS'),
+        const [pal, lutTexture] = await Promise.all([
+            getResource('PALETTE'),
             await loadLUTTexture(),
         ]);
-        const palette = new Uint8Array(ress.getEntry(0));
+        const palette = pal.getBufferUint8();
         const paletteTexture = loadPaletteTexture(palette);
         const light = getLightVector();
         const shaderData = {lutTexture, paletteTexture, light};
