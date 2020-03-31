@@ -117,113 +117,114 @@ const ResourceType = {
     VIDEO_INTRO_DE: 99,
 };
 
-const ResourceName = {
-    NONE: 'None',
-    ANIM: 'Animations',
-    BODY: '3d Models',
-    RESS: 'Global Resources',
-    SAMPLES: 'Samples',
-    SCENE: 'Scenes',
-    SPRITES: 'Sprites',
-    SPRITERAW: 'Raw Sprites',
-    TEXT: 'Text Dialogues',
-    OBJECTS: 'Inventory Objects',
-    LAYOUTS: 'Isometric Layouts',
-    BRICKS: 'Isometric Bricks',
-    GRIDS: 'Isometric Grids',
-    MUSIC: 'Music',
-    LOGO: 'LBA Logo',
-    THEME_ADELINE: 'Adeline Theme Song',
-    THEME_MAIN: 'LBA Theme Short Version',
-    THEME_MENU: 'LBA Theme',
-    MUSIC_TRACK_1: 'Citadel Music Scene',
-    VOICES_GAM: 'Main Game Voices',
-    VOICES_000: 'Voices 0',
-    VOICES_001: 'Voices 1',
-    VOICES_002: 'Voices 2',
-    VOICES_003: 'Voices 3',
-    VOICES_004: 'Voices 4',
-    VOICES_005: 'Voices 5',
-    VOICES_006: 'Voices 6',
-    VOICES_007: 'Voices 7',
-    VOICES_008: 'Voices 8',
-    VOICES_009: 'Voices 9',
-    VOICES_010: 'Voices 10',
-    VOICES_011: 'Voices 11',
-    ASCENCE_ILE: 'Undergas Elevator',
-    ASCENCE_OBL: 'Undergas Elevator Objects',
-    CELEBRA2_ILE: 'Celebration Island Statue Emerged',
-    CELEBRA2_OBL: 'Celebration Island Statue Emerged Objects',
-    CELEBRAT_ILE: 'Celebration Island',
-    CELEBRAT_OBL: 'Celebration Island Objects',
-    CITABAU_ILE: 'Citadel Island',
-    CITABAU_OBL: 'Citadel Island Objects',
-    CITADEL_ILE: 'Citadel Island Storm',
-    CITADEL_OBL: 'Citadel Island Storm Objects',
-    DESERT_ILE: 'Desert Island',
-    DESERT_OBL: 'Desert Island Objects',
-    EMERAUDE_ILE: 'Emerald Moon',
-    EMERAUDE_OBL: 'Emerald Moon Objects',
-    ILOTCX_ILE: 'Island CX',
-    ILOTCX_OBL: 'Island CX Objects',
-    KNARTAS_ILE: 'Francos Island',
-    KNARTAS_OBL: 'Francos Island Objects',
-    MOON_ILE: 'Emerald Moon 2',
-    MOON_OBL: 'Emerald Moon 2 Objects',
-    MOSQUIBE_ILE: 'Mosquibees Island',
-    MOSQUIBE_OBL: 'Mosquibees Island Objects',
-    OTRINGAL_ILE: 'Otringal',
-    OTRINGAL_OBL: 'Otringal Objects',
-    PLATFORM_ILE: 'Wannies Island',
-    PLATFORM_OBL: 'Wannies Island Objects',
-    SOUSCELB_ILE: 'Volcano Island',
-    SOUSCELB_OBL: 'Volcano Island Objects',
-    ENTITIES: '3D Animation & Model Entites',
-    PALETTE: 'Main Palette',
-    MENU_BACKGROUND: 'Menu Background Image',
-    VIDEO_ASCENSEU: 'Undergas Going Down',
-    VIDEO_ASRETOUR: 'Undergas Going Up',
-    VIDEO_BALDINO: 'Baldino',
-    VIDEO_BOAT1: 'Boat',
-    VIDEO_BOAT2: 'Boat',
-    VIDEO_BOAT3: 'Boat',
-    VIDEO_BOAT4: 'Boat',
-    VIDEO_BU: 'Temple of Bù',
-    VIDEO_CRASH: 'Crash',
-    VIDEO_DARK: 'Dark Monk Statue Rises',
-    VIDEO_DELUGE: 'Bad Ending',
-    VIDEO_END: 'The End',
-    VIDEO_END2: 'The End',
-    VIDEO_ENFA: 'ENFA',
-    VIDEO_FRAGMENT: 'Wannies Fragment',
-    VIDEO_GROTTE: 'Citadel Cliffs',
-    VIDEO_INTRO: 'Intro Sequence',
-    VIDEO_LUNES1: 'Emerald Moon Moves',
-    VIDEO_LUNES2: 'Emeral Moon Moves',
-    VIDEO_MONTCH: 'MONTCH',
-    VIDEO_MOON: 'Emerald Moon',
-    VIDEO_PASSEUR: 'Ferryman',
-    VIDEO_PUB1: 'PUB1',
-    VIDEO_PUB2: 'PUB2',
-    VIDEO_PUB3: 'PUB3',
-    VIDEO_PUB4A6: 'PUB4A6',
-    VIDEO_SENDELL: 'Sendell\'s Ball',
-    VIDEO_SORT: 'SORT',
-    VIDEO_SURSAUT: 'SURSAUT',
-    VIDEO_TAXI: 'TAXI',
-    VIDEO_TAXI_J: 'TAXI_J',
-    VIDEO_VOYAGEZ: 'VOYAGEZ',
-    VIDEO_ZEELP: 'Zeelich',
-    VIDEO_BABY: 'Baby Ending',
-    VIDEO_INTRO_EN: 'Intro Sequence',
-    VIDEO_INTRO_FR: 'Intro Sequence',
-    VIDEO_INTRO_DE: 'Intro Sequence',
-};
+const ResourceName = [
+    'None',
+    'Animations',
+    '3d Models',
+    'Global Resources',
+    'Samples',
+    'Scenes',
+    'Sprites',
+    'Raw Sprites',
+    'Text Dialogues',
+    'Inventory Objects',
+    'Isometric Layouts',
+    'Isometric Bricks',
+    'Isometric Grids',
+    'Music',
+    'LBA Logo',
+    'Adeline Theme Song', // 15
+    'LBA Theme Short Version',
+    'LBA Theme',
+    'Citadel Music Scene',
+    'Main Game Voices',
+    'Voices 0',
+    'Voices 1',
+    'Voices 2',
+    'Voices 3',
+    'Voices 4',
+    'Voices 5',
+    'Voices 6',
+    'Voices 7',
+    'Voices 8',
+    'Voices 9',
+    'Voices 10', // 30
+    'Voices 11',
+    'Undergas Elevator',
+    'Undergas Elevator Objects',
+    'Celebration Island Statue Emerged',
+    'Celebration Island Statue Emerged Objects',
+    'Celebration Island',
+    'Celebration Island Objects',
+    'Citadel Island',
+    'Citadel Island Objects',
+    'Citadel Island Storm',
+    'Citadel Island Storm Objects',
+    'Desert Island',
+    'Desert Island Objects',
+    'Emerald Moon',
+    'Emerald Moon Objects', // 45
+    'Island CX',
+    'Island CX Objects',
+    'Francos Island',
+    'Francos Island Objects',
+    'Emerald Moon 2',
+    'Emerald Moon 2 Objects',
+    'Mosquibees Island',
+    'Mosquibees Island Objects',
+    'Otringal',
+    'Otringal Objects',
+    'Wannies Island',
+    'Wannies Island Objects',
+    'Volcano Island',
+    'Volcano Island Objects',
+    '3D Animation & Model Entites', // 60
+    'Main Palette',
+    'Menu Background Image',
+    'Undergas Going Down',
+    'Undergas Going Up',
+    'Baldino',
+    'Boat',
+    'Boat',
+    'Boat',
+    'Boat',
+    'Temple of Bù',
+    'Crash',
+    'Dark Monk Statue Rises',
+    'Bad Ending',
+    'The End',
+    'The End', // 75
+    'ENFA',
+    'Wannies Fragment',
+    'Citadel Cliffs',
+    'Intro Sequence',
+    'Emerald Moon Moves',
+    'Emeral Moon Moves',
+    'MONTCH',
+    'Emerald Moon',
+    'Ferryman',
+    'PUB1',
+    'PUB2',
+    'PUB3',
+    'PUB4A6',
+    'Sendell\'s Ball',
+    'SORT', // 90
+    'SURSAUT',
+    'TAXI',
+    'TAXI_J',
+    'VOYAGEZ',
+    'Zeelich',
+    'Baby Ending',
+    'Intro Sequence',
+    'Intro Sequence',
+    'Intro Sequence',
+];
 
 interface Resource {
+    id: number;
+    refId: number;
     type: number;
     name: string;
-    refName: string;
     path: string;
     length: number;
     index: number;
@@ -302,25 +303,25 @@ const registerResource = (
         load: null,
         length: 0,
         hasHiddenEntries: null,
-        refName: null,
+        refId: null,
     };
 
     // check if we have already a resource with same file
     // reuse the file to have a single file loaded in memory
     // but keep reference to this resource
-    for (const res of Object.values(Resources)) {
-        if (res.path === path) {
-            resource.refName = res.name;
-            break;
-        }
-    }
+    // for (const res of Object.values(Resources)) {
+    //     if (res.path === path) {
+    //         resource.refId = res.id;
+    //         break;
+    //     }
+    // }
 
     resource.getBuffer = () => {
-        if (resource.refName) {
+        if (resource.refId) {
             if (resource.index >= 0) {
-                return Resources[resource.refName].getEntry(resource.index);
+                return Resources[resource.refId].getEntry(resource.index);
             }
-            return Resources[resource.refName].getBuffer();
+            return Resources[resource.refId].getBuffer();
         }
         if (resource.index >= 0) {
             return resource.hqr.getEntry(resource.index);
@@ -333,8 +334,8 @@ const registerResource = (
     };
 
     resource.getEntry = (index: number) => {
-        if (resource.refName) {
-            return Resources[resource.refName].getEntry(index);
+        if (resource.refId) {
+            return Resources[resource.refId].getEntry(index);
         }
         return resource.hqr.getEntry(index);
     };
@@ -344,16 +345,16 @@ const registerResource = (
     };
 
     resource.getEntryAsync = async (index: number) => {
-        if (resource.refName) {
-            return Resources[resource.refName].getEntryAsync(index);
+        if (resource.refId) {
+            return Resources[resource.refId].getEntryAsync(index);
         }
         return await resource.hqr.getEntryAsync(index);
     };
 
     resource.load = async () => {
-        if (resource.refName) {
-            resource.length = Resources[resource.refName].length;
-            resource.loaded = Resources[resource.refName].loaded;
+        if (resource.refId) {
+            resource.length = Resources[resource.refId].length;
+            resource.loaded = Resources[resource.refId].loaded;
             return;
         }
         resource.hqr = await loadHqr(resource.path);
@@ -387,7 +388,7 @@ const releaseAllResources = () => {
 const releaseTransientResources = () => {
     for (const res of Object.values(Resources)) {
         if (res.type === ResourceStrategyType.TRANSIENT) {
-            releaseResource(res.name);
+            releaseResource(res.id);
         }
     }
 };
