@@ -3,107 +3,120 @@ import * as THREE from 'three';
 import { createState } from './state';
 import { createAudioManager, createMusicManager } from '../audio';
 import { getTextFile, loadTexts } from '../text';
-import { getLanguageConfig, tr } from '../lang';
+import { getLanguageConfig } from '../lang';
 import DebugData from '../ui/editor/DebugData';
 import { makePure } from '../utils/debug';
 
 import {
     registerStaticResource,
     registerTransientResource,
-    preloadResources
+    preloadResources,
+    ResourceType,
 } from '../resources';
 
 const registerResources = {
     lba1: () => {
         const { language } = getLanguageConfig();
 
-        registerStaticResource('ANIM', 'LBA1/ANIM.HQR');
-        registerStaticResource('BODY', 'LBA1/BODY.HQR');
-        registerStaticResource('RESS', 'LBA1/RESS.HQR');
-        registerStaticResource('PALETTE', 'LBA1/RESS.HQR', 0);
-        registerStaticResource('SAMPLES', 'LBA1/SAMPLES.HQR');
-        registerStaticResource('SCENE', 'LBA1/SCENE.HQR');
-        registerStaticResource('SPRITES', 'LBA1/SPRITES.HQR');
-        registerStaticResource('TEXT', getTextFile(language)); // get fan translated files
+        registerStaticResource(ResourceType.ANIM, 'LBA1/ANIM.HQR');
+        registerStaticResource(ResourceType.BODY, 'LBA1/BODY.HQR');
+        registerStaticResource(ResourceType.RESS, 'LBA1/RESS.HQR');
+        registerStaticResource(ResourceType.PALETTE, 'LBA1/RESS.HQR', 0);
+        registerStaticResource(ResourceType.SAMPLES, 'LBA1/SAMPLES.HQR');
+        registerStaticResource(ResourceType.SCENE, 'LBA1/SCENE.HQR');
+        registerStaticResource(ResourceType.SPRITES, 'LBA1/SPRITES.HQR');
+        registerStaticResource(ResourceType.TEXT, getTextFile(language));
 
-        registerStaticResource('ENTITIES', 'LBA1/FILE3D.HQR');
-        registerStaticResource('OBJECTS', 'LBA1/INVOBJ.HQR');
-        registerStaticResource('LAYOUTS', 'LBA1/LBA_BLL.HQR');
-        registerStaticResource('BRICKS', 'LBA1/LBA_BRK.HQR');
-        registerStaticResource('GRIDS', 'LBA1/LBA_GRI.HQR');
-        registerStaticResource('MUSIC', 'LBA1/MIDI_MI_WIN.HQR');
+        registerStaticResource(ResourceType.ENTITIES, 'LBA1/FILE3D.HQR');
+        registerStaticResource(ResourceType.OBJECTS, 'LBA1/INVOBJ.HQR');
+        registerStaticResource(ResourceType.LAYOUTS, 'LBA1/LBA_BLL.HQR');
+        registerStaticResource(ResourceType.BRICKS, 'LBA1/LBA_BRK.HQR');
+        registerStaticResource(ResourceType.GRIDS, 'LBA1/LBA_GRI.HQR');
+        registerStaticResource(ResourceType.MUSIC, 'LBA1/MIDI_MI_WIN.HQR');
     },
     lba2: () => {
         const { language, languageVoice } = getLanguageConfig();
 
-        registerStaticResource('ANIM', 'ANIM.HQR');
-        registerStaticResource('BODY', 'BODY.HQR');
-        registerStaticResource('RESS', 'RESS.HQR');
-        registerStaticResource('ENTITIES', 'RESS.HQR', 44);
-        registerStaticResource('PALETTE', 'RESS.HQR', 0);
-        registerStaticResource('SAMPLES', 'SAMPLES_AAC.HQR.zip');
-        registerStaticResource('SCENE', 'SCENE.HQR');
-        registerStaticResource('SPRITES', 'SPRITES.HQR');
-        registerStaticResource('SPRITERAW', 'SPRIRAW.HQR');
-        registerStaticResource('TEXT', getTextFile(language)); // get fan translated files
+        registerStaticResource(ResourceType.ANIM, 'ANIM.HQR');
+        registerStaticResource(ResourceType.BODY, 'BODY.HQR');
+        registerStaticResource(ResourceType.RESS, 'RESS.HQR');
+        registerStaticResource(ResourceType.ENTITIES, 'RESS.HQR', 44);
+        registerStaticResource(ResourceType.PALETTE, 'RESS.HQR', 0);
+        registerStaticResource(ResourceType.SAMPLES, 'SAMPLES_AAC.HQR.zip');
+        registerStaticResource(ResourceType.SCENE, 'SCENE.HQR');
+        registerStaticResource(ResourceType.SPRITES, 'SPRITES.HQR');
+        registerStaticResource(ResourceType.SPRITERAW, 'SPRIRAW.HQR');
+        registerStaticResource(ResourceType.TEXT, getTextFile(language));
 
-        registerStaticResource('OBJECTS', 'OBJFIX.HQR');
-        // registerStaticResource('LAYOUTS', 'LBA_BKG.HQR'); // entries
-        registerStaticResource('BRICKS', 'LBA_BKG.HQR'); // entries
-        // registerStaticResource('GRIDS', 'LBA_BKG.HQR'); // entries
+        registerStaticResource(ResourceType.OBJECTS, 'OBJFIX.HQR');
+        registerStaticResource(ResourceType.LAYOUTS, 'LBA_BKG.HQR');
+        registerStaticResource(ResourceType.BRICKS, 'LBA_BKG.HQR');
+        registerStaticResource(ResourceType.GRIDS, 'LBA_BKG.HQR');
 
-        registerStaticResource(tr('MenuBackground'), '../images/2_screen_menubg_extended.png');
-        registerStaticResource(tr('Logo'), '../images/remake_logo.png');
+        registerStaticResource(ResourceType.MENU_BACKGROUND,
+            '../images/2_screen_menubg_extended.png');
+        registerStaticResource(ResourceType.LOGO, '../images/remake_logo.png');
 
-        registerStaticResource(tr('AdelineTheme'), 'MUSIC/LOGADPCM.mp4');
-        registerStaticResource(tr('MainTheme'), 'MUSIC/JADPCM15.mp4');
-        registerStaticResource(tr('FirstSong'), 'MUSIC/JADPCM16.mp4');
-        registerStaticResource(tr('MenuMusic'), 'MUSIC/Track6.mp4');
+        registerStaticResource(ResourceType.THEME_ADELINE, 'MUSIC/LOGADPCM.mp4');
+        registerStaticResource(ResourceType.THEME_MAIN, 'MUSIC/JADPCM15.mp4');
+        registerStaticResource(ResourceType.THEME_MENU, 'MUSIC/Track6.mp4');
+        registerStaticResource(ResourceType.MUSIC_TRACK_1, 'MUSIC/JADPCM16.mp4');
 
-        registerStaticResource('VOICES-GAM', `VOX/${languageVoice.code}_GAM_AAC.VOX.zip`);
-        registerStaticResource('VOICES-000', `VOX/${languageVoice.code}_000_AAC.VOX.zip`);
+        registerStaticResource(ResourceType.VOICESG, `VOX/${languageVoice.code}_GAM_AAC.VOX.zip`);
+        registerStaticResource(ResourceType.VOICES0, `VOX/${languageVoice.code}_000_AAC.VOX.zip`);
 
         // Transient resources
-        registerTransientResource('VOICES-001', `VOX/${languageVoice.code}_001_AAC.VOX.zip`);
-        registerTransientResource('VOICES-002', `VOX/${languageVoice.code}_002_AAC.VOX.zip`);
-        registerTransientResource('VOICES-003', `VOX/${languageVoice.code}_003_AAC.VOX.zip`);
-        registerTransientResource('VOICES-004', `VOX/${languageVoice.code}_004_AAC.VOX.zip`);
-        registerTransientResource('VOICES-005', `VOX/${languageVoice.code}_005_AAC.VOX.zip`);
-        registerTransientResource('VOICES-006', `VOX/${languageVoice.code}_006_AAC.VOX.zip`);
-        registerTransientResource('VOICES-007', `VOX/${languageVoice.code}_007_AAC.VOX.zip`);
-        registerTransientResource('VOICES-008', `VOX/${languageVoice.code}_008_AAC.VOX.zip`);
-        registerTransientResource('VOICES-009', `VOX/${languageVoice.code}_009_AAC.VOX.zip`);
-        registerTransientResource('VOICES-010', `VOX/${languageVoice.code}_010_AAC.VOX.zip`);
-        registerTransientResource('VOICES-011', `VOX/${languageVoice.code}_010_AAC.VOX.zip`);
+        registerTransientResource(ResourceType.VOICES1,
+            `VOX/${languageVoice.code}_001_AAC.VOX.zip`);
+        registerTransientResource(ResourceType.VOICES2,
+            `VOX/${languageVoice.code}_002_AAC.VOX.zip`);
+        registerTransientResource(ResourceType.VOICES3,
+            `VOX/${languageVoice.code}_003_AAC.VOX.zip`);
+        registerTransientResource(ResourceType.VOICES4,
+            `VOX/${languageVoice.code}_004_AAC.VOX.zip`);
+        registerTransientResource(ResourceType.VOICES5,
+            `VOX/${languageVoice.code}_005_AAC.VOX.zip`);
+        registerTransientResource(ResourceType.VOICES6,
+            `VOX/${languageVoice.code}_006_AAC.VOX.zip`);
+        registerTransientResource(ResourceType.VOICES7,
+            `VOX/${languageVoice.code}_007_AAC.VOX.zip`);
+        registerTransientResource(ResourceType.VOICES8,
+            `VOX/${languageVoice.code}_008_AAC.VOX.zip`);
+        registerTransientResource(ResourceType.VOICES9,
+            `VOX/${languageVoice.code}_009_AAC.VOX.zip`);
+        registerTransientResource(ResourceType.VOICES10,
+            `VOX/${languageVoice.code}_010_AAC.VOX.zip`);
+        registerTransientResource(ResourceType.VOICES11,
+            `VOX/${languageVoice.code}_010_AAC.VOX.zip`);
 
-        registerTransientResource('ASCENCE-ILE',  'ASCENCE.ILE');
-        registerTransientResource('ASCENCE-OBL',  'ASCENCE.OBL');
-        registerTransientResource('CELEBRA2-ILE', 'CELEBRA2.ILE');
-        registerTransientResource('CELEBRA2-OBL', 'CELEBRA2.OBL');
-        registerTransientResource('CELEBRAT-ILE', 'CELEBRAT.ILE');
-        registerTransientResource('CELEBRAT-OBL', 'CELEBRAT.OBL');
-        registerTransientResource('CITABAU-ILE',  'CITABAU.ILE');
-        registerTransientResource('CITABAU-OBL',  'CITABAU.OBL');
-        registerTransientResource('CITADEL-ILE',  'CITADEL.ILE');
-        registerTransientResource('CITADEL-OBL',  'CITADEL.OBL');
-        registerTransientResource('DESERT-ILE',   'DESERT.ILE');
-        registerTransientResource('DESERT-OBL',   'DESERT.OBL');
-        registerTransientResource('EMERAUDE-ILE', 'EMERAUDE.ILE');
-        registerTransientResource('EMERAUDE-OBL', 'EMERAUDE.OBL');
-        registerTransientResource('ILOTCX-ILE',   'ILOTCX.ILE');
-        registerTransientResource('ILOTCX-OBL',   'ILOTCX.OBL');
-        registerTransientResource('KNARTAS-ILE',  'KNARTAS.ILE');
-        registerTransientResource('KNARTAS-OBL',  'KNARTAS.OBL');
-        registerTransientResource('MOON-ILE',     'MOON.ILE');
-        registerTransientResource('MOON-OBL',     'MOON.OBL');
-        registerTransientResource('MOSQUIBE-ILE', 'MOSQUIBE.ILE');
-        registerTransientResource('MOSQUIBE-OBL', 'MOSQUIBE.OBL');
-        registerTransientResource('OTRINGAL-ILE', 'OTRINGAL.ILE');
-        registerTransientResource('OTRINGAL-OBL', 'OTRINGAL.OBL');
-        registerTransientResource('PLATFORM-ILE', 'PLATFORM.ILE');
-        registerTransientResource('PLATFORM-OBL', 'PLATFORM.OBL');
-        registerTransientResource('SOUSCELB-ILE', 'SOUSCELB.ILE');
-        registerTransientResource('SOUSCELB-OBL', 'SOUSCELB.OBL');
+        registerTransientResource(ResourceType.ASCENCE_ILE,  'ASCENCE.ILE');
+        registerTransientResource(ResourceType.ASCENCE_OBL,  'ASCENCE.OBL');
+        registerTransientResource(ResourceType.CELEBRA2_ILE, 'CELEBRA2.ILE');
+        registerTransientResource(ResourceType.CELEBRA2_OBL, 'CELEBRA2.OBL');
+        registerTransientResource(ResourceType.CELEBRAT_ILE, 'CELEBRAT.ILE');
+        registerTransientResource(ResourceType.CELEBRAT_OBL, 'CELEBRAT.OBL');
+        registerTransientResource(ResourceType.CITABAU_ILE,  'CITABAU.ILE');
+        registerTransientResource(ResourceType.CITABAU_OBL,  'CITABAU.OBL');
+        registerTransientResource(ResourceType.CITADEL_ILE,  'CITADEL.ILE');
+        registerTransientResource(ResourceType.CITADEL_OBL,  'CITADEL.OBL');
+        registerTransientResource(ResourceType.DESERT_ILE,   'DESERT.ILE');
+        registerTransientResource(ResourceType.DESERT_OBL,   'DESERT.OBL');
+        registerTransientResource(ResourceType.EMERAUDE_ILE, 'EMERAUDE.ILE');
+        registerTransientResource(ResourceType.EMERAUDE_OBL, 'EMERAUDE.OBL');
+        registerTransientResource(ResourceType.ILOTCX_ILE,   'ILOTCX.ILE');
+        registerTransientResource(ResourceType.ILOTCX_OBL,   'ILOTCX.OBL');
+        registerTransientResource(ResourceType.KNARTAS_ILE,  'KNARTAS.ILE');
+        registerTransientResource(ResourceType.KNARTAS_OBL,  'KNARTAS.OBL');
+        registerTransientResource(ResourceType.MOON_ILE,     'MOON.ILE');
+        registerTransientResource(ResourceType.MOON_OBL,     'MOON.OBL');
+        registerTransientResource(ResourceType.MOSQUIBE_ILE, 'MOSQUIBE.ILE');
+        registerTransientResource(ResourceType.MOSQUIBE_OBL, 'MOSQUIBE.OBL');
+        registerTransientResource(ResourceType.OTRINGAL_ILE, 'OTRINGAL.ILE');
+        registerTransientResource(ResourceType.OTRINGAL_OBL, 'OTRINGAL.OBL');
+        registerTransientResource(ResourceType.PLATFORM_ILE, 'PLATFORM.ILE');
+        registerTransientResource(ResourceType.PLATFORM_OBL, 'PLATFORM.OBL');
+        registerTransientResource(ResourceType.SOUSCELB_ILE, 'SOUSCELB.ILE');
+        registerTransientResource(ResourceType.SOUSCELB_OBL, 'SOUSCELB.OBL');
     },
 };
 

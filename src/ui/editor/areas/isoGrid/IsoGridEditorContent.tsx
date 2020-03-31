@@ -11,7 +11,11 @@ import { loadSceneMapData } from '../../../../scene/map';
 import { getLanguageConfig } from '../../../../lang';
 import { loadSceneData } from '../../../../scene';
 import { getIso3DCamera } from '../../../../cameras/iso3d';
-import { registerStaticResource, preloadResources } from '../../../../resources';
+import {
+    registerStaticResource,
+    preloadResources,
+    ResourceType,
+} from '../../../../resources';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -146,10 +150,11 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     preload() {
-        registerStaticResource('RESS', 'RESS.HQR');
-        registerStaticResource('BRICKS', 'LBA_BKG.HQR');
-        registerStaticResource('SCENE', 'SCENE.HQR');
-        registerStaticResource('TEXT', 'TEXT.HQR');
+        registerStaticResource(ResourceType.RESS, 'RESS.HQR');
+        registerStaticResource(ResourceType.PALETTE, 'RESS.HQR', 0);
+        registerStaticResource(ResourceType.BRICKS, 'LBA_BKG.HQR');
+        registerStaticResource(ResourceType.SCENE, 'SCENE.HQR');
+        registerStaticResource(ResourceType.TEXT, 'TEXT.HQR');
 
         preloadResources();
     }

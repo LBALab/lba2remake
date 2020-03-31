@@ -16,7 +16,11 @@ import DebugData from '../../DebugData';
 import fmod from './utils/fmod';
 import {get3DOrbitCamera} from './utils/orbitCamera';
 import { TickerProps } from '../../../utils/Ticker';
-import { registerStaticResource, preloadResources } from '../../../../resources';
+import {
+    registerStaticResource,
+    preloadResources,
+    ResourceType,
+} from '../../../../resources';
 import { loadEntities } from './browser/entitities';
 
 interface Props extends TickerProps {
@@ -118,9 +122,11 @@ export default class Model extends FrameListener<Props, State> {
     }
 
     preload() {
-        registerStaticResource('RESS', 'RESS.HQR');
-        registerStaticResource('BODY', 'BODY.HQR');
-        registerStaticResource('ANIM', 'ANIM.HQR');
+        registerStaticResource(ResourceType.RESS, 'RESS.HQR');
+        registerStaticResource(ResourceType.BODY, 'BODY.HQR');
+        registerStaticResource(ResourceType.ANIM, 'ANIM.HQR');
+        registerStaticResource(ResourceType.PALETTE, 'RESS.HQR', 0);
+        registerStaticResource(ResourceType.ENTITIES, 'RESS.HQR', 44);
 
         preloadResources();
         loadEntities();

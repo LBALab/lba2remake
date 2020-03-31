@@ -1,6 +1,6 @@
 import AudioData from './data';
 import { getFrequency } from '../utils/lba';
-import { getResource } from '../resources';
+import { getResource, ResourceType } from '../resources';
 
 const musicSourceCache = [];
 const samplesSourceCache = [];
@@ -185,7 +185,7 @@ function getSoundFxSource(state, context, data = null) {
         context.resume();
     };
     source.load = (index, callback) => {
-        getResource('SAMPLES')
+        getResource(ResourceType.SAMPLES)
             .then(async (samples) => {
             if (!samples) {
                 return;
@@ -282,11 +282,11 @@ function getVoiceSource(state, context, data = null) {
     source.load = (index, textBankId, callback) => {
         const textBank = `${textBankId}`;
         // tslint:disable-next-line:max-line-length
-        let name = `VOICES-${(`000${textBank}`).substring(0, 3 - textBank.length) + textBank}`;
+        let resType: number = ResourceType[`VOICES${textBank}`];
         if (textBankId === -1) {
-            name = 'VOICES-GAM';
+            resType = ResourceType.VOICESG;
         }
-        getResource(name).then(async (voices) => {
+        getResource(resType).then(async (voices) => {
             if (!voices) {
                 return;
             }

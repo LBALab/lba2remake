@@ -3,7 +3,7 @@ import { map, times } from 'lodash';
 
 import DebugData /*, { saveMetaData }*/ from '../../../DebugData';
 import Renderer from '../../../../../renderer';
-import { getResource } from '../../../../../resources';
+import { getResource, ResourceType } from '../../../../../resources';
 
 const indexStyle = {
     position: 'absolute' as const,
@@ -206,7 +206,7 @@ function getIcon(data, component) {
 let bkg = null;
 const libraries = {};
 
-getResource('BRICKS').then((lBkg) => {
+getResource(ResourceType.BRICKS).then((lBkg) => {
     bkg = lBkg;
 });
 

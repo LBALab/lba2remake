@@ -1,7 +1,7 @@
 
 import HQR, { loadHqr } from '../hqr';
 
-const ResourceType = {
+const ResourceStrategyType = {
     TRANSIENT: 0,
     STATIC: 1,
 };
@@ -14,12 +14,146 @@ const HQRExtensions = [
     '.zip',
 ];
 
+const ResourceType = {
+    NONE: 0,
+    ANIM: 1,
+    BODY: 2,
+    RESS: 3,
+    SAMPLES: 4,
+    SCENE: 5,
+    SPRITES: 6,
+    SPRITERAW: 7,
+    TEXT: 8,
+    OBJECTS: 9,
+    LAYOUTS: 10,
+    BRICKS: 11,
+    GRIDS: 12,
+    MUSIC: 13,
+    LOGO: 14,
+    THEME_ADELINE: 15,
+    THEME_MAIN: 16,
+    THEME_MENU: 17,
+    MUSIC_TRACK_1: 18,
+    VOICESG: 19,
+    VOICES0: 20,
+    VOICES1: 21,
+    VOICES2: 22,
+    VOICES3: 23,
+    VOICES4: 24,
+    VOICES5: 25,
+    VOICES6: 26,
+    VOICES7: 27,
+    VOICES8: 28,
+    VOICES9: 29,
+    VOICES10: 30,
+    VOICES11: 31,
+    ASCENCE_ILE: 32,
+    ASCENCE_OBL: 33,
+    CELEBRA2_ILE: 34,
+    CELEBRA2_OBL: 35,
+    CELEBRAT_ILE: 36,
+    CELEBRAT_OBL: 37,
+    CITABAU_ILE: 38,
+    CITABAU_OBL: 39,
+    CITADEL_ILE: 40,
+    CITADEL_OBL: 41,
+    DESERT_ILE: 42,
+    DESERT_OBL: 43,
+    EMERAUDE_ILE: 44,
+    EMERAUDE_OBL: 45,
+    ILOTCX_ILE: 46,
+    ILOTCX_OBL: 47,
+    KNARTAS_ILE: 48,
+    KNARTAS_OBL: 49,
+    MOON_ILE: 50,
+    MOON_OBL: 51,
+    MOSQUIBE_ILE: 52,
+    MOSQUIBE_OBL: 53,
+    OTRINGAL_ILE: 54,
+    OTRINGAL_OBL: 55,
+    PLATFORM_ILE: 56,
+    PLATFORM_OBL: 57,
+    SOUSCELB_ILE: 58,
+    SOUSCELB_OBL: 59,
+    ENTITIES: 60,
+    PALETTE: 61,
+    MENU_BACKGROUND: 62,
+};
+
+const ResourceName = {
+    NONE: 'None',
+    ANIM: 'Animations',
+    BODY: '3d Models',
+    RESS: 'Global Resources',
+    SAMPLES: 'Samples',
+    SCENE: 'Scenes',
+    SPRITES: 'Sprites',
+    SPRITERAW: 'Raw Sprites',
+    TEXT: 'Text Dialogues',
+    OBJECTS: 'Inventory Objects',
+    LAYOUTS: 'Isometric Layouts',
+    BRICKS: 'Isometric Bricks',
+    GRIDS: 'Isometric Grids',
+    MUSIC: 'Music',
+    LOGO: 'LBA Logo',
+    THEME_ADELINE: 'Adeline Theme Song',
+    THEME_MAIN: 'LBA Theme Short Version',
+    THEME_MENU: 'LBA Theme',
+    MUSIC_TRACK_1: 'Citadel Music Scene',
+    VOICESG: 'Main Game Voices',
+    VOICES0: 'Voices 0',
+    VOICES1: 'Voices 1',
+    VOICES2: 'Voices 2',
+    VOICES3: 'Voices 3',
+    VOICES4: 'Voices 4',
+    VOICES5: 'Voices 5',
+    VOICES6: 'Voices 6',
+    VOICES7: 'Voices 7',
+    VOICES8: 'Voices 8',
+    VOICES9: 'Voices 9',
+    VOICES10: 'Voices 10',
+    VOICES11: 'Voices 11',
+    ASCENCE_ILE: 'Undergas Elevator',
+    ASCENCE_OBL: 'Undergas Elevator Objects',
+    CELEBRA2_ILE: 'Celebration Island Statue Emerged',
+    CELEBRA2_OBL: 'Celebration Island Statue Emerged Objects',
+    CELEBRAT_ILE: 'Celebration Island',
+    CELEBRAT_OBL: 'Celebration Island Objects',
+    CITABAU_ILE: 'Citadel Island',
+    CITABAU_OBL: 'Citadel Island Objects',
+    CITADEL_ILE: 'Citadel Island Storm',
+    CITADEL_OBL: 'Citadel Island Storm Objects',
+    DESERT_ILE: 'Desert Island',
+    DESERT_OBL: 'Desert Island Objects',
+    EMERAUDE_ILE: 'Emerald Moon',
+    EMERAUDE_OBL: 'Emerald Moon Objects',
+    ILOTCX_ILE: 'Island CX',
+    ILOTCX_OBL: 'Island CX Objects',
+    KNARTAS_ILE: 'Francos Island',
+    KNARTAS_OBL: 'Francos Island Objects',
+    MOON_ILE: 'Emerald Moon 2',
+    MOON_OBL: 'Emerald Moon 2 Objects',
+    MOSQUIBE_ILE: 'Mosquibees Island',
+    MOSQUIBE_OBL: 'Mosquibees Island Objects',
+    OTRINGAL_ILE: 'Otringal',
+    OTRINGAL_OBL: 'Otringal Objects',
+    PLATFORM_ILE: 'Wannies Island',
+    PLATFORM_OBL: 'Wannies Island Objects',
+    SOUSCELB_ILE: 'Volcano Island',
+    SOUSCELB_OBL: 'Volcano Island Objects',
+    ENTITIES: '3D Animation & Model Entites',
+    PALETTE: 'Main Palette',
+    MENU_BACKGROUND: 'Menu Background Image',
+};
+
 interface Resource {
     type: number;
     name: string;
+    refName: string;
     path: string;
-    loaded: boolean;
     length: number;
+    index: number;
+    loaded: boolean;
     isHQR: boolean;
     hqr: HQR;
     getBuffer: Function;
@@ -69,17 +203,18 @@ const preloadResource = async (url, name, mandatory = true) => {
 /** Add Resource */
 const registerResource = (
     type: number,
-    name: string,
+    id: number,
     path: string,
     entryIndex: number,
 ) => {
-    if (Resources[name]) {
+    if (Resources[id]) {
         return;
     }
 
     const resource = {
+        id,
         type,
-        name,
+        name: ResourceName[id],
         path,
         index: entryIndex,
         loaded: false,
@@ -152,62 +287,77 @@ const registerResource = (
         resource.loaded = true;
     };
 
-    Resources[name] = resource;
+    Resources[id] = resource;
 };
 
-export const registerStaticResource = (
-    name: string,
+const registerStaticResource = (
+    id: number,
     path: string,
     index: number = null,
 ) => {
-    registerResource(ResourceType.STATIC, name, path, index);
+    registerResource(ResourceStrategyType.STATIC, id, path, index);
 };
 
-export const registerTransientResource = (
-    name: string,
+const registerTransientResource = (
+    id: number,
     path: string,
     index: number = null,
 ) => {
-    registerResource(ResourceType.TRANSIENT, name, path, index);
+    registerResource(ResourceStrategyType.TRANSIENT, id, path, index);
 };
 
-export const releaseAllResources = () => {
+const releaseAllResources = () => {
     Resources = {};
 };
 
-export const releaseTransientResources = () => {
+const releaseTransientResources = () => {
     for (const res of Object.values(Resources)) {
-        if (res.type === ResourceType.TRANSIENT) {
-            delete Resources[res.name];
+        if (res.type === ResourceStrategyType.TRANSIENT) {
+            releaseResource(res.name);
         }
     }
 };
 
-export const releaseResource = (name: string) => {
-    if (Resources[name]) {
-        delete Resources[name];
+const releaseResource = (id: number) => {
+    const res = Resources[id];
+    if (res) {
+        delete res.hqr;
+        res.loaded = false;
+        res.length = 0;
     }
 };
 
-export const preloadResources = async () => {
+const preloadResources = async () => {
     const preload = [];
     for (const res of Object.values(Resources)) {
-        if (res.type === ResourceType.STATIC) {
+        if (res.type === ResourceStrategyType.STATIC) {
             preload.push(preloadResource(res.path, res.name));
         }
     }
     await Promise.all(preload);
     for (const res of Object.values(Resources)) {
-        if (!res.loaded && res.isHQR && res.type === ResourceType.STATIC) {
+        if (!res.loaded && res.isHQR && res.type === ResourceStrategyType.STATIC) {
             res.load();
         }
     }
 };
 
-export const getResource = async (name: string) => {
-    const resource = Resources[name];
+const getResource = async (id: number) => {
+    const resource = Resources[id];
     if (resource && !resource.loaded) {
         await resource.load();
     }
     return resource;
+};
+
+export {
+    ResourceType,
+    ResourceName,
+    registerStaticResource,
+    registerTransientResource,
+    releaseAllResources,
+    releaseTransientResources,
+    releaseResource,
+    preloadResources,
+    getResource,
 };

@@ -25,7 +25,12 @@ import { loadSceneMapData } from '../../../../scene/map';
 import { loadSceneData } from '../../../../scene';
 import { getLanguageConfig } from '../../../../lang';
 import { saveSceneReplacementModel } from '../../../../iso/metadata';
-import { getResource } from '../../../../resources';
+import {
+    getResource,
+    ResourceType,
+    registerStaticResource,
+    preloadResources
+} from '../../../../resources';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -231,7 +236,17 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }
     }
 
+    preload() {
+        registerStaticResource(ResourceType.RESS, 'RESS.HQR');
+        registerStaticResource(ResourceType.PALETTE, 'RESS.HQR', 0);
+        registerStaticResource(ResourceType.BRICKS, 'LBA_BKG.HQR');
+
+        preloadResources();
+    }
+
     onLoad(root) {
+        this.preload();
+
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;
@@ -307,8 +322,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.layout = layoutIdx;
         this.library = libraryIdx;
         const [pal, bkg, lutTexture] = await Promise.all([
-            getResource('PALETTE'),
-            getResource('BRICKS'),
+            getResource(ResourceType.PALETTE),
+            getResource(ResourceType.BRICKS),
             await loadLUTTexture(),
         ]);
         const palette = pal.getBufferUint8();
@@ -496,7 +511,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             orientation: 0
         };
         const [pal, lutTexture] = await Promise.all([
-            getResource('PALETTE'),
+            getResource(ResourceType.PALETTE),
             await loadLUTTexture(),
         ]);
         const palette = pal.getBufferUint8();
@@ -903,7 +918,7 @@ function getLightVector() {
 }
 
 async function findScenesUsingLibrary(library) {
-    const bkg = await getResource('BRICKS');
+    const bkg = await getResource(ResourceType.BRICKS);
     const sceneMap = await loadSceneMapData();
     const scenes = [];
     each(times(222), async (scene) => {

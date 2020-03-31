@@ -5,7 +5,7 @@ import LocationsNode from '../../gameplay/locator/LocationsNode';
 import findScenePath from '../../gameplay/locator/findScenePath';
 import { loadSceneMapData } from '../../../../../scene/map';
 import { makeOutlinerArea } from '../../utils/outliner';
-import { getResource } from '../../../../../resources';
+import { getResource, ResourceType } from '../../../../../resources';
 import DebugData from '../../../DebugData';
 
 const IsoScenesNode = { children: [] };
@@ -73,7 +73,7 @@ async function collectIsoScenes(location, scenes, push = true) {
             if (filterLibrary === -1) {
                 scenes.push(newLocation);
             } else {
-                const bkg = await getResource('BRICKS');
+                const bkg = await getResource(ResourceType.BRICKS);
                 const sceneMap = await loadSceneMapData();
                 const gridData = new DataView(
                     bkg.getEntry(

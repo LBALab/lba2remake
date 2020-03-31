@@ -9,7 +9,7 @@ import brick_fragment from './shaders/brick.frag.glsl';
 import { extractGridMetadata } from './metadata';
 import { Side, OffsetBySide } from './mapping';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../utils/lba';
-import { getResource } from '../resources';
+import { getResource, ResourceType } from '../resources';
 
 export async function loadImageData(src) : Promise<ImageData> {
     return new Promise((resolve) => {
@@ -28,8 +28,8 @@ export async function loadImageData(src) : Promise<ImageData> {
 
 export async function loadIsometricScenery(entry, ambience, is3D) {
     const [pal, bkg, mask] = await Promise.all([
-        getResource('PALETTE'),
-        getResource('BRICKS'),
+        getResource(ResourceType.PALETTE),
+        getResource(ResourceType.BRICKS),
         loadImageData('images/brick_mask.png')
     ]);
     const palette = pal.getBufferUint8();
