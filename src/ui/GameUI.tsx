@@ -27,7 +27,8 @@ import {sBind} from '../utils';
 import {TickerProps} from './utils/Ticker';
 import {updateLabels} from './editor/labels';
 import { pure } from '../utils/decorators';
-import { getIntroVideoSrc } from '../video/access';
+import { getLanguageConfig } from '../lang';
+import { getResourcePath, ResourceType } from '../resources';
 
 interface GameUIProps extends TickerProps {
     saveMainData?: Function;
@@ -352,7 +353,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             }
             case 71: { // New Game
                 this.hideMenu();
-                const src = getIntroVideoSrc();
                 const onEnded = () => {
                     this.setState({video: null}, this.saveData);
                     this.startNewGameScene();
@@ -362,7 +362,9 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 this.state.game.pause();
                 this.setState({
                     video: {
-                        src,
+                        path: getResourcePath(
+                            ResourceType[`VIDEO_INTRO_${getLanguageConfig().languageVoice.code}`]
+                        ),
                         onEnded
                     }
                 }, this.saveData);

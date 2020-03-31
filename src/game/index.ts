@@ -62,31 +62,33 @@ const registerResources = {
         registerStaticResource(ResourceType.THEME_MENU, 'MUSIC/Track6.mp4');
         registerStaticResource(ResourceType.MUSIC_TRACK_1, 'MUSIC/JADPCM16.mp4');
 
-        registerStaticResource(ResourceType.VOICESG, `VOX/${languageVoice.code}_GAM_AAC.VOX.zip`);
-        registerStaticResource(ResourceType.VOICES0, `VOX/${languageVoice.code}_000_AAC.VOX.zip`);
+        registerStaticResource(ResourceType.VOICES_GAM,
+            `VOX/${languageVoice.code}_GAM_AAC.VOX.zip`);
+        registerStaticResource(ResourceType.VOICES_000,
+            `VOX/${languageVoice.code}_000_AAC.VOX.zip`);
 
         // Transient resources
-        registerTransientResource(ResourceType.VOICES1,
+        registerTransientResource(ResourceType.VOICES_001,
             `VOX/${languageVoice.code}_001_AAC.VOX.zip`);
-        registerTransientResource(ResourceType.VOICES2,
+        registerTransientResource(ResourceType.VOICES_002,
             `VOX/${languageVoice.code}_002_AAC.VOX.zip`);
-        registerTransientResource(ResourceType.VOICES3,
+        registerTransientResource(ResourceType.VOICES_003,
             `VOX/${languageVoice.code}_003_AAC.VOX.zip`);
-        registerTransientResource(ResourceType.VOICES4,
+        registerTransientResource(ResourceType.VOICES_004,
             `VOX/${languageVoice.code}_004_AAC.VOX.zip`);
-        registerTransientResource(ResourceType.VOICES5,
+        registerTransientResource(ResourceType.VOICES_005,
             `VOX/${languageVoice.code}_005_AAC.VOX.zip`);
-        registerTransientResource(ResourceType.VOICES6,
+        registerTransientResource(ResourceType.VOICES_006,
             `VOX/${languageVoice.code}_006_AAC.VOX.zip`);
-        registerTransientResource(ResourceType.VOICES7,
+        registerTransientResource(ResourceType.VOICES_007,
             `VOX/${languageVoice.code}_007_AAC.VOX.zip`);
-        registerTransientResource(ResourceType.VOICES8,
+        registerTransientResource(ResourceType.VOICES_008,
             `VOX/${languageVoice.code}_008_AAC.VOX.zip`);
-        registerTransientResource(ResourceType.VOICES9,
+        registerTransientResource(ResourceType.VOICES_009,
             `VOX/${languageVoice.code}_009_AAC.VOX.zip`);
-        registerTransientResource(ResourceType.VOICES10,
+        registerTransientResource(ResourceType.VOICES_010,
             `VOX/${languageVoice.code}_010_AAC.VOX.zip`);
-        registerTransientResource(ResourceType.VOICES11,
+        registerTransientResource(ResourceType.VOICES_011,
             `VOX/${languageVoice.code}_010_AAC.VOX.zip`);
 
         registerTransientResource(ResourceType.ASCENCE_ILE,  'ASCENCE.ILE');
@@ -117,6 +119,45 @@ const registerResources = {
         registerTransientResource(ResourceType.PLATFORM_OBL, 'PLATFORM.OBL');
         registerTransientResource(ResourceType.SOUSCELB_ILE, 'SOUSCELB.ILE');
         registerTransientResource(ResourceType.SOUSCELB_OBL, 'SOUSCELB.OBL');
+
+        registerTransientResource(ResourceType.VIDEO_ASCENSEU, 'VIDEO/VIDEO01.mp4');
+        registerTransientResource(ResourceType.VIDEO_ASRETOUR, 'VIDEO/VIDEO02.mp4');
+        registerTransientResource(ResourceType.VIDEO_BALDINO, 'VIDEO/VIDEO03.mp4');
+        registerTransientResource(ResourceType.VIDEO_BOAT1, 'VIDEO/VIDEO04.mp4');
+        registerTransientResource(ResourceType.VIDEO_BOAT2, 'VIDEO/VIDEO05.mp4');
+        registerTransientResource(ResourceType.VIDEO_BOAT3, 'VIDEO/VIDEO06.mp4');
+        registerTransientResource(ResourceType.VIDEO_BOAT4, 'VIDEO/VIDEO07.mp4');
+        registerTransientResource(ResourceType.VIDEO_BU, 'VIDEO/VIDEO08.mp4');
+        registerTransientResource(ResourceType.VIDEO_CRASH, 'VIDEO/VIDEO09.mp4');
+        registerTransientResource(ResourceType.VIDEO_DARK, 'VIDEO/VIDEO10.mp4');
+        registerTransientResource(ResourceType.VIDEO_DELUGE, 'VIDEO/VIDEO11.mp4');
+        registerTransientResource(ResourceType.VIDEO_END, 'VIDEO/VIDEO12.mp4');
+        registerTransientResource(ResourceType.VIDEO_END2, 'VIDEO/VIDEO13.mp4');
+        registerTransientResource(ResourceType.VIDEO_ENFA, 'VIDEO/VIDEO14.mp4');
+        registerTransientResource(ResourceType.VIDEO_FRAGMENT, 'VIDEO/VIDEO15.mp4');
+        registerTransientResource(ResourceType.VIDEO_GROTTE, 'VIDEO/VIDEO16.mp4');
+        registerTransientResource(ResourceType.VIDEO_INTRO, 'VIDEO/VIDEO17_EN.mp4');
+        registerTransientResource(
+            ResourceType[`VIDEO_INTRO_${languageVoice.code}`],
+            `VIDEO/VIDEO17_${languageVoice.code}.mp4`
+        );
+        registerTransientResource(ResourceType.VIDEO_LUNES1, 'VIDEO/VIDEO18.mp4');
+        registerTransientResource(ResourceType.VIDEO_LUNES2, 'VIDEO/VIDEO19.mp4');
+        registerTransientResource(ResourceType.VIDEO_MONTCH, 'VIDEO/VIDEO20.mp4');
+        registerTransientResource(ResourceType.VIDEO_MOON, 'VIDEO/VIDEO21.mp4');
+        registerTransientResource(ResourceType.VIDEO_PASSEUR, 'VIDEO/VIDEO22.mp4');
+        registerTransientResource(ResourceType.VIDEO_PUB1, 'VIDEO/VIDEO23.mp4');
+        registerTransientResource(ResourceType.VIDEO_PUB2, 'VIDEO/VIDEO24.mp4');
+        registerTransientResource(ResourceType.VIDEO_PUB3, 'VIDEO/VIDEO25.mp4');
+        registerTransientResource(ResourceType.VIDEO_PUB4A6, 'VIDEO/VIDEO26.mp4');
+        registerTransientResource(ResourceType.VIDEO_SENDELL, 'VIDEO/VIDEO27.mp4');
+        registerTransientResource(ResourceType.VIDEO_SORT, 'VIDEO/VIDEO28.mp4');
+        registerTransientResource(ResourceType.VIDEO_SURSAUT, 'VIDEO/VIDEO29.mp4');
+        registerTransientResource(ResourceType.VIDEO_TAXI, 'VIDEO/VIDEO30.mp4');
+        registerTransientResource(ResourceType.VIDEO_TAXI_J, 'VIDEO/VIDEO31.mp4');
+        registerTransientResource(ResourceType.VIDEO_VOYAGEZ, 'VIDEO/VIDEO32.mp4');
+        registerTransientResource(ResourceType.VIDEO_ZEELP, 'VIDEO/VIDEO33.mp4');
+        registerTransientResource(ResourceType.VIDEO_BABY, 'VIDEO/VIDEO34.mp4');
     },
 };
 

@@ -281,10 +281,11 @@ function getVoiceSource(state, context, data = null) {
     };
     source.load = (index, textBankId, callback) => {
         const textBank = `${textBankId}`;
-        // tslint:disable-next-line:max-line-length
-        let resType: number = ResourceType[`VOICES${textBank}`];
+        let resType: number =
+            ResourceType[`VOICES_${(`000${textBank}`)
+            .substring(0, 3 - textBank.length) + textBank}`];
         if (textBankId === -1) {
-            resType = ResourceType.VOICESG;
+            resType = ResourceType.VOICES_GAM;
         }
         getResource(resType).then(async (voices) => {
             if (!voices) {

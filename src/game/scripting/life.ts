@@ -2,9 +2,9 @@ import { clone } from 'lodash';
 import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
 import { setMagicBallLevel } from '../../game/state';
-import VideoData from '../../video/data';
 import { unimplemented } from './utils';
 import { WORLD_SCALE } from '../../utils/lba';
+import { getResourcePath, ResourceType } from '../../resources';
 
 export const PALETTE = unimplemented();
 
@@ -342,7 +342,6 @@ export function PLAY_VIDEO(cmdState, video) {
     if (!cmdState.skipListener) {
         const that = this;
         this.game.pause();
-        const src = VideoData.VIDEO.find(v => v.name === video).file;
         const onEnded = () => {
             that.game.setUiState({video: null, skip: false});
             cmdState.ended = true;
@@ -350,7 +349,9 @@ export function PLAY_VIDEO(cmdState, video) {
         };
         this.game.setUiState({ skip: false,
             video: {
-                src,
+                path: getResourcePath(
+                    ResourceType[`VIDEO_${video}`]
+                ),
                 onEnded
             }});
         cmdState.skipListener = function skipListener() {
