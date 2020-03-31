@@ -60,18 +60,10 @@ const getVideoLanguageTracks = (videoIndex: number) => {
     return [''];
 };
 
-const readMusicBitrateArguments = () => {
-    if (process.argv.length < 5) {
-        console.warn('Not specified music bitrate. Will use 128k for tracks and 32k for the rest.');
-        return [128, 32];
-    }
-    return [parseInt(process.argv[3], 10), parseInt(process.argv[4], 10)];
-};
-
 const readBitrateArguments = () => {
     if (process.argv.length < 4) {
-        console.warn('Not specified voice bitrate. Will use 64k');
-        return 64;
+        console.warn('Not specified bitrate. Will use 128k');
+        return 128;
     }
     return parseInt(process.argv[3], 10);
 };
@@ -103,13 +95,12 @@ const musicConvertor = async () => {
     const extensions = {'.wav': 1, '.ogg': 1};
     const filesToConvert = files.filter(file => path.extname(file).toLowerCase() in extensions);
     const size = filesToConvert.length;
-    const bitrates = readMusicBitrateArguments();
+    const bitrate = readBitrateArguments();
     for (let i = 0; i < size; i += 1) {
         const file = filesToConvert[i];
         const inputFile = `${folderPath}${file}`;
         const outputFileName = getOutputMusicFileName(file);
         const outputFilePath = `${folderPath}${outputFileName}`;
-        const bitrate = getMusicFileBitrate(outputFileName, bitrates);
         await convertToMp4Audio(inputFile, outputFilePath, bitrate);
     }
 };
@@ -123,21 +114,6 @@ const getOutputMusicFileName = (fileName: string) => {
         return 'Track6.mp4';
     }
     return `${getBaseName(fileName)}.mp4`;
-};
-
-const getMusicFileBitrate = (fileName: string, bitrates: number[]) => {
-    const higherBitrateFiles = {
-        'tadpcm1.mp4': 1,
-        'tadpcm2.mp4': 1,
-        'tadpcm3.mp4': 1,
-        'tadpcm4.mp4': 1,
-        'tadpcm5.mp4': 1,
-        'track6.mp4': 1
-    };
-    if (fileName.toLowerCase() in higherBitrateFiles) {
-        return bitrates[0];
-    }
-    return bitrates[1];
 };
 
 const voiceConvertor = async () => {
