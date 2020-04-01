@@ -123,9 +123,7 @@ export function createMenu(game, sceneManager, renderer, light) {
             hands.visible = true;
             game.pause();
             const audioMenuManager = game.getAudioMenuManager();
-            audioMenuManager.getMusicSource().load(6, () => {
-                audioMenuManager.getMusicSource().play();
-            });
+            audioMenuManager.getMusicSource().loadAndPlay(6);
             game.setUiState({inGameMenu: true, video: null});
         }
         game.setUiState({

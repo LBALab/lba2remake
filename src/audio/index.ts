@@ -11,6 +11,9 @@ declare global {
     }
 }
 
+const musicDecodedAudioCache = [];
+const soundFxDecodedAudioCache = [];
+
 function createAudioContext() {
     window.AudioContext = window.AudioContext || window.webkitAudioContext; // needed for Safari
     return new AudioContext();
@@ -51,6 +54,7 @@ function getMusicSource(state, context) {
         suspend: null,
         resume: null,
         load: null,
+        loadAndPlay: null,
         connect: null,
         pause: () => {},
     };
@@ -76,6 +80,11 @@ function getMusicSource(state, context) {
     source.resume = () => {
         context.resume();
     };
+    source.loadAndPlay = (index) => {
+        source.load(index, () => {
+            source.play();
+        });
+    };
     source.load = (index, callback) => {
         if (index === -1 || (source.currentIndex === index && source.isPlaying)) {
             return;
@@ -90,19 +99,26 @@ function getMusicSource(state, context) {
             source.isPlaying = false;
         };
 
+        const setBuffer = (buffer) => {
+            if (!source.bufferSource.buffer) {
+                source.bufferSource.buffer = buffer;
+                musicDecodedAudioCache[index] = buffer;
+                source.connect();
+                callback.call();
+            }
+        };
+
         const resId = ResourceType[`MUSIC_SCENE_${index}`];
+        if (musicDecodedAudioCache[index]) {
+            setBuffer(musicDecodedAudioCache[index]);
+            return;
+        }
         loadResource(resId).then((resource) => {
             if (!resource) {
                 return;
             }
             const entryBuffer = resource.getBuffer();
-            context.decodeAudioData(entryBuffer.slice(0), (buffer) => {
-                if (!source.bufferSource.buffer) {
-                    source.bufferSource.buffer = buffer;
-                    source.connect();
-                    callback.call();
-                }
-            });
+            context.decodeAudioData(entryBuffer.slice(0), setBuffer);
         });
     };
     source.connect = () => {
@@ -129,6 +145,7 @@ function getSoundFxSource(state, context, data = null) {
         suspend: null,
         resume: null,
         load: null,
+        loadAndPlay: null,
         connect: null,
         pause: () => {},
         data
@@ -159,6 +176,11 @@ function getSoundFxSource(state, context, data = null) {
     source.resume = () => {
         context.resume();
     };
+    source.loadAndPlay = (index) => {
+        source.load(index, () => {
+            source.play();
+        });
+    };
     source.load = (index, callback) => {
         if (index <= -1 || (source.currentIndex === index && source.isPlaying)) {
             return;
@@ -175,20 +197,25 @@ function getSoundFxSource(state, context, data = null) {
             source.isPlaying = false;
         };
 
+        const setBuffer = (buffer) => {
+            if (!source.bufferSource.buffer) {
+                source.bufferSource.buffer = buffer;
+                soundFxDecodedAudioCache[index] = buffer;
+                source.connect();
+                callback.call();
+            }
+        };
+
+        if (soundFxDecodedAudioCache[index]) {
+            setBuffer(soundFxDecodedAudioCache[index]);
+            return;
+        }
         loadResource(ResourceType.SAMPLES).then(async (resource) => {
             if (!resource) {
                 return;
             }
             const entryBuffer = await resource.getEntryAsync(index);
-            context.decodeAudioData(entryBuffer.slice(0), (buffer) => {
-                // this bypasses a browser issue while loading same sample
-                // in short period of time.
-                if (!source.bufferSource.buffer) {
-                    source.bufferSource.buffer = buffer;
-                    source.connect();
-                    callback.call();
-                }
-            });
+            context.decodeAudioData(entryBuffer.slice(0), setBuffer);
         });
     };
 
@@ -216,6 +243,7 @@ function getVoiceSource(state, context, data = null) {
         suspend: null,
         resume: null,
         load: null,
+        loadAndPlay: null,
         connect: null,
         ended: null,
         pause: () => {},
@@ -243,6 +271,11 @@ function getVoiceSource(state, context, data = null) {
     };
     source.resume = () => {
         context.resume();
+    };
+    source.loadAndPlay = (index) => {
+        source.load(index, () => {
+            source.play();
+        });
     };
     source.load = (index, textBankId, callback) => {
         const textBank = `${textBankId}`;
