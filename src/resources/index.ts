@@ -142,6 +142,7 @@ const ResourceType = {
     MUSIC_SCENE_24: 124,
 };
 
+// FIXME Move this to a metadata file perhaps
 const ResourceName = [
     'None',
     'Animations',
@@ -288,11 +289,11 @@ interface Resource {
     getEntryAsync: Function;
     hasHiddenEntries: Function;
     load: Function;
+    entries: [];
 }
 
 let Resources: Resource | {} = { };
 
-// TODO normalise this preload function using new Web Api wrapper
 const preloadResource = async (url, name = null, mandatory = true) => {
     const send = (eventName, progress?) => {
         if (name) {
@@ -356,6 +357,7 @@ const registerResource = (
         hasHiddenEntries: null,
         ref: null,
         buffer: null,
+        entries: [],
     };
 
     // check if we have already a resource with same file
@@ -369,14 +371,19 @@ const registerResource = (
     }
 
     resource.getBuffer = () => {
-        if (!resource.isHQR) {
+        if (resource.buffer || !resource.isHQR) {
             return resource.buffer;
         }
         if (resource.index >= 0) {
+            let buffer = null;
             if (resource.ref) {
-                return resource.ref.getEntry(resource.index);
+                buffer = resource.ref.getEntry(resource.index);
+                resource.ref.buffer = buffer;
+                return buffer;
             }
-            return resource.hqr.getEntry(resource.index);
+            buffer = resource.hqr.getEntry(resource.index);
+            resource.buffer = buffer;
+            return buffer;
         }
         if (resource.ref) {
             return resource.ref.getBuffer();
@@ -389,10 +396,18 @@ const registerResource = (
     };
 
     resource.getEntry = (index: number) => {
-        if (resource.ref) {
-            return resource.ref.getEntry(index);
+        if (resource.entries[index]) {
+            return resource.entries[index];
         }
-        return resource.hqr.getEntry(index);
+        let entry = null;
+        if (resource.ref) {
+            entry = resource.ref.getEntry(index);
+            resource.entries[index] = entry;
+            return entry;
+        }
+        entry = resource.hqr.getEntry(index);
+        resource.entries[index] = entry;
+        return entry;
     };
 
     resource.hasHiddenEntries = (index: number) => {
@@ -407,6 +422,9 @@ const registerResource = (
     };
 
     resource.load = async () => {
+        if (resource.loaded) {
+            return;
+        }
         if (!resource.isHQR) {
             resource.buffer = await preloadResource(resource.path);
             resource.loaded = true;
