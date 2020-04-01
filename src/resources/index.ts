@@ -33,7 +33,7 @@ const ResourceType = {
     THEME_ADELINE: 15,
     THEME_MAIN: 16,
     THEME_MENU: 17,
-    MUSIC_TRACK_1: 18,
+    // MUSIC_TRACK_1: 18,
     VOICES_GAM: 19,
     VOICES_000: 20,
     VOICES_001: 21,
@@ -115,6 +115,31 @@ const ResourceType = {
     VIDEO_INTRO_EN: 97,
     VIDEO_INTRO_FR: 98,
     VIDEO_INTRO_DE: 99,
+    MUSIC_SCENE_0: 100,
+    MUSIC_SCENE_1: 101,
+    MUSIC_SCENE_2: 102,
+    MUSIC_SCENE_3: 103,
+    MUSIC_SCENE_4: 104,
+    MUSIC_SCENE_5: 105,
+    MUSIC_SCENE_6: 106,
+    MUSIC_SCENE_7: 107,
+    MUSIC_SCENE_8: 108,
+    MUSIC_SCENE_9: 109,
+    MUSIC_SCENE_10: 110,
+    MUSIC_SCENE_11: 111,
+    MUSIC_SCENE_12: 112,
+    MUSIC_SCENE_13: 113,
+    MUSIC_SCENE_14: 114,
+    MUSIC_SCENE_15: 115,
+    MUSIC_SCENE_16: 116,
+    MUSIC_SCENE_17: 117,
+    MUSIC_SCENE_18: 118,
+    MUSIC_SCENE_19: 119,
+    MUSIC_SCENE_20: 120,
+    MUSIC_SCENE_21: 121,
+    MUSIC_SCENE_22: 122,
+    MUSIC_SCENE_23: 123,
+    MUSIC_SCENE_24: 124,
 };
 
 const ResourceName = [
@@ -136,7 +161,7 @@ const ResourceName = [
     'Adeline Theme Song', // 15
     'LBA Theme Short Version',
     'LBA Theme',
-    'Citadel Music Scene',
+    '',
     'Main Game Voices',
     'Voices 0',
     'Voices 1',
@@ -218,6 +243,31 @@ const ResourceName = [
     'Intro Sequence',
     'Intro Sequence',
     'Intro Sequence',
+    'Music Scene 0',
+    'Music Scene 1',
+    'Music Scene 2',
+    'Music Scene 3',
+    'Music Scene 4',
+    'Music Scene 5',
+    'Music Scene 6',
+    'Music Scene 7',
+    'Music Scene 8',
+    'Music Scene 9',
+    'Music Scene 10',
+    'Music Scene 11',
+    'Music Scene 12',
+    'Music Scene 13',
+    'Music Scene 14',
+    'Music Scene 15',
+    'Music Scene 16',
+    'Music Scene 17',
+    'Music Scene 18',
+    'Music Scene 19',
+    'Music Scene 20',
+    'Music Scene 21',
+    'Music Scene 22',
+    'Music Scene 23',
+    'Music Scene 24',
 ];
 
 interface Resource {
@@ -231,6 +281,7 @@ interface Resource {
     loaded: boolean;
     isHQR: boolean;
     hqr: HQR;
+    buffer: ArrayBuffer;
     getBuffer: Function;
     getBufferUint8: Function;
     getEntry: Function;
@@ -242,7 +293,7 @@ interface Resource {
 let Resources: Resource | {} = { };
 
 // TODO normalise this preload function using new Web Api wrapper
-const preloadResource = async (url, name, mandatory = true) => {
+const preloadResource = async (url, name = null, mandatory = true) => {
     const send = (eventName, progress?) => {
         if (name) {
             document.dispatchEvent(new CustomEvent(eventName, {detail: {name, progress}}));
@@ -263,7 +314,7 @@ const preloadResource = async (url, name, mandatory = true) => {
             }
             if (this.status === 200) {
                 send('loaderend');
-                resolve();
+                resolve(request.response);
             } else {
                 reject(`Failed to load resource: status=${this.status}`);
             }
@@ -304,6 +355,7 @@ const registerResource = (
         length: 0,
         hasHiddenEntries: null,
         ref: null,
+        buffer: null,
     };
 
     // check if we have already a resource with same file
@@ -317,8 +369,17 @@ const registerResource = (
     }
 
     resource.getBuffer = () => {
+        if (!resource.isHQR) {
+            return resource.buffer;
+        }
         if (resource.index >= 0) {
+            if (resource.ref) {
+                return resource.ref.getEntry(resource.index);
+            }
             return resource.hqr.getEntry(resource.index);
+        }
+        if (resource.ref) {
+            return resource.ref.getBuffer();
         }
         return resource.hqr.getBuffer();
     };
@@ -346,6 +407,11 @@ const registerResource = (
     };
 
     resource.load = async () => {
+        if (!resource.isHQR) {
+            resource.buffer = await preloadResource(resource.path);
+            resource.loaded = true;
+            return;
+        }
         if (resource.ref) {
             // if for some reason the referenced resource is not loaded
             // for the load of that resource. It can happen for transient resources
@@ -404,25 +470,31 @@ const releaseResource = (id: number) => {
 
 const preloadResources = async () => {
     const preload = [];
+    const resPreload = [];
     for (const res of Object.values(Resources)) {
-        if (res.type === ResourceStrategyType.STATIC) {
+        if (!res.loaded && res.type === ResourceStrategyType.STATIC) {
             preload.push(preloadResource(res.path, res.name));
         }
     }
     await Promise.all(preload);
     for (const res of Object.values(Resources)) {
-        if (!res.loaded && res.isHQR && res.type === ResourceStrategyType.STATIC) {
-            res.load();
+        if (!res.loaded && res.type === ResourceStrategyType.STATIC) {
+            resPreload.push(res.load());
         }
     }
+    await Promise.all(resPreload);
 };
 
-const getResource = async (id: number) => {
+const loadResource = async (id: number) => {
     const resource = Resources[id];
     if (resource && !resource.loaded) {
         await resource.load();
     }
     return resource;
+};
+
+const getResource = (id: number) => {
+    return Resources[id];
 };
 
 const getResourcePath = (id: number) => {
@@ -438,6 +510,7 @@ export {
     releaseTransientResources,
     releaseResource,
     preloadResources,
+    loadResource,
     getResource,
     getResourcePath,
 };

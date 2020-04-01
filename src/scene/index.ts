@@ -4,14 +4,14 @@ import { DirMode } from '../game/actors';
 import { bits } from '../utils';
 import { loadTextData } from '../text';
 import  {WORLD_SCALE } from '../utils/lba';
-import { getResource, ResourceType } from '../resources';
+import { loadResource, ResourceType } from '../resources';
 
 export async function loadSceneData(language, index) {
     const [scene, text, ress, pal] = await Promise.all([
-        getResource(ResourceType.SCENE),
-        getResource(ResourceType.TEXT),
-        getResource(ResourceType.RESS),
-        getResource(ResourceType.PALETTE),
+        loadResource(ResourceType.SCENE),
+        loadResource(ResourceType.TEXT),
+        loadResource(ResourceType.RESS),
+        loadResource(ResourceType.PALETTE),
     ]);
     const files = {scene, text, ress, pal};
     return loadSceneDataSync(files, language, index);

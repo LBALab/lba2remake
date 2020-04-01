@@ -18,7 +18,7 @@ import { loadRain } from './environment/rain';
 import { loadClouds } from './environment/clouds';
 import { loadLightning, applyLightningUniforms } from './environment/lightning';
 import { loadStars } from './environment/stars';
-import { getResource, ResourceType } from '../resources';
+import { loadResource, ResourceType } from '../resources';
 
 const islandProps = {};
 each(islandsInfo, (island) => {
@@ -54,10 +54,10 @@ export async function loadIslandScenery(params, name, ambience) {
     }
 
     const [ress, pal, ile, obl, lutTexture] = await Promise.all([
-        getResource(ResourceType.RESS),
-        getResource(ResourceType.PALETTE),
-        getResource(ResourceType[`${name}_ILE`]),
-        getResource(ResourceType[`${name}_OBL`]),
+        loadResource(ResourceType.RESS),
+        loadResource(ResourceType.PALETTE),
+        loadResource(ResourceType[`${name}_ILE`]),
+        loadResource(ResourceType[`${name}_OBL`]),
         loadLUTTexture()
     ]);
     const files = {ress, pal, ile, obl};

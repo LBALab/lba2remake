@@ -1,7 +1,7 @@
-import { getResource, ResourceType } from '../resources';
+import { loadResource, ResourceType } from '../resources';
 
 export async function loadSceneMapData() {
-    const bkg = await getResource(ResourceType.BRICKS);
+    const bkg = await loadResource(ResourceType.BRICKS);
     return loadSceneMap(bkg);
 }
 

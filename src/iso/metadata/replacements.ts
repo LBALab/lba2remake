@@ -10,7 +10,7 @@ import VERT_OBJECTS_TEXTURED from '../shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
 import { compile } from '../../utils/shaders';
 import { loadFullSceneModel } from './models';
-import { getResource, ResourceType } from '../../resources';
+import { loadResource, ResourceType } from '../../resources';
 
 export async function initReplacements(entry, metadata, ambience) {
     const data = await loadReplacementData(ambience);
@@ -265,7 +265,7 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
 async function loadReplacementData(ambience) {
     const [lutTexture, ress] = await Promise.all([
         await loadLUTTexture(),
-        await getResource(ResourceType.RESS)
+        await loadResource(ResourceType.RESS)
     ]);
     const palette = new Uint8Array(ress.getEntry(0));
     const paletteTexture = loadPaletteTexture(palette);

@@ -53,7 +53,6 @@ export const registerResources = {
         registerStaticResource(ResourceType.THEME_ADELINE, 'MUSIC/LOGADPCM.mp4');
         registerStaticResource(ResourceType.THEME_MAIN, 'MUSIC/JADPCM15.mp4');
         registerStaticResource(ResourceType.THEME_MENU, 'MUSIC/Track6.mp4');
-        registerStaticResource(ResourceType.MUSIC_TRACK_1, 'MUSIC/JADPCM16.mp4');
 
         registerStaticResource(ResourceType.VOICES_GAM,
             `VOX/${languageVoice.code}_GAM_AAC.VOX.zip`);
@@ -115,41 +114,67 @@ export const registerResources = {
 
         registerTransientResource(ResourceType.VIDEO_ASCENSEU, 'VIDEO/VIDEO01.mp4');
         registerTransientResource(ResourceType.VIDEO_ASRETOUR, 'VIDEO/VIDEO02.mp4');
-        registerTransientResource(ResourceType.VIDEO_BALDINO, 'VIDEO/VIDEO03.mp4');
-        registerTransientResource(ResourceType.VIDEO_BOAT1, 'VIDEO/VIDEO04.mp4');
-        registerTransientResource(ResourceType.VIDEO_BOAT2, 'VIDEO/VIDEO05.mp4');
-        registerTransientResource(ResourceType.VIDEO_BOAT3, 'VIDEO/VIDEO06.mp4');
-        registerTransientResource(ResourceType.VIDEO_BOAT4, 'VIDEO/VIDEO07.mp4');
-        registerTransientResource(ResourceType.VIDEO_BU, 'VIDEO/VIDEO08.mp4');
-        registerTransientResource(ResourceType.VIDEO_CRASH, 'VIDEO/VIDEO09.mp4');
-        registerTransientResource(ResourceType.VIDEO_DARK, 'VIDEO/VIDEO10.mp4');
-        registerTransientResource(ResourceType.VIDEO_DELUGE, 'VIDEO/VIDEO11.mp4');
-        registerTransientResource(ResourceType.VIDEO_END, 'VIDEO/VIDEO12.mp4');
-        registerTransientResource(ResourceType.VIDEO_END2, 'VIDEO/VIDEO13.mp4');
-        registerTransientResource(ResourceType.VIDEO_ENFA, 'VIDEO/VIDEO14.mp4');
+        registerTransientResource(ResourceType.VIDEO_BALDINO,  'VIDEO/VIDEO03.mp4');
+        registerTransientResource(ResourceType.VIDEO_BOAT1,    'VIDEO/VIDEO04.mp4');
+        registerTransientResource(ResourceType.VIDEO_BOAT2,    'VIDEO/VIDEO05.mp4');
+        registerTransientResource(ResourceType.VIDEO_BOAT3,    'VIDEO/VIDEO06.mp4');
+        registerTransientResource(ResourceType.VIDEO_BOAT4,    'VIDEO/VIDEO07.mp4');
+        registerTransientResource(ResourceType.VIDEO_BU,       'VIDEO/VIDEO08.mp4');
+        registerTransientResource(ResourceType.VIDEO_CRASH,    'VIDEO/VIDEO09.mp4');
+        registerTransientResource(ResourceType.VIDEO_DARK,     'VIDEO/VIDEO10.mp4');
+        registerTransientResource(ResourceType.VIDEO_DELUGE,   'VIDEO/VIDEO11.mp4');
+        registerTransientResource(ResourceType.VIDEO_END,      'VIDEO/VIDEO12.mp4');
+        registerTransientResource(ResourceType.VIDEO_END2,     'VIDEO/VIDEO13.mp4');
+        registerTransientResource(ResourceType.VIDEO_ENFA,     'VIDEO/VIDEO14.mp4');
         registerTransientResource(ResourceType.VIDEO_FRAGMENT, 'VIDEO/VIDEO15.mp4');
-        registerTransientResource(ResourceType.VIDEO_GROTTE, 'VIDEO/VIDEO16.mp4');
-        registerTransientResource(ResourceType.VIDEO_INTRO, 'VIDEO/VIDEO17_EN.mp4');
+        registerTransientResource(ResourceType.VIDEO_GROTTE,   'VIDEO/VIDEO16.mp4');
+        registerTransientResource(ResourceType.VIDEO_INTRO,    'VIDEO/VIDEO17_EN.mp4');
         registerTransientResource(
             ResourceType[`VIDEO_INTRO_${languageVoice.code}`],
             `VIDEO/VIDEO17_${languageVoice.code}.mp4`
         );
-        registerTransientResource(ResourceType.VIDEO_LUNES1, 'VIDEO/VIDEO18.mp4');
-        registerTransientResource(ResourceType.VIDEO_LUNES2, 'VIDEO/VIDEO19.mp4');
-        registerTransientResource(ResourceType.VIDEO_MONTCH, 'VIDEO/VIDEO20.mp4');
-        registerTransientResource(ResourceType.VIDEO_MOON, 'VIDEO/VIDEO21.mp4');
+        registerTransientResource(ResourceType.VIDEO_LUNES1,  'VIDEO/VIDEO18.mp4');
+        registerTransientResource(ResourceType.VIDEO_LUNES2,  'VIDEO/VIDEO19.mp4');
+        registerTransientResource(ResourceType.VIDEO_MONTCH,  'VIDEO/VIDEO20.mp4');
+        registerTransientResource(ResourceType.VIDEO_MOON,    'VIDEO/VIDEO21.mp4');
         registerTransientResource(ResourceType.VIDEO_PASSEUR, 'VIDEO/VIDEO22.mp4');
-        registerTransientResource(ResourceType.VIDEO_PUB1, 'VIDEO/VIDEO23.mp4');
-        registerTransientResource(ResourceType.VIDEO_PUB2, 'VIDEO/VIDEO24.mp4');
-        registerTransientResource(ResourceType.VIDEO_PUB3, 'VIDEO/VIDEO25.mp4');
-        registerTransientResource(ResourceType.VIDEO_PUB4A6, 'VIDEO/VIDEO26.mp4');
+        registerTransientResource(ResourceType.VIDEO_PUB1,    'VIDEO/VIDEO23.mp4');
+        registerTransientResource(ResourceType.VIDEO_PUB2,    'VIDEO/VIDEO24.mp4');
+        registerTransientResource(ResourceType.VIDEO_PUB3,    'VIDEO/VIDEO25.mp4');
+        registerTransientResource(ResourceType.VIDEO_PUB4A6,  'VIDEO/VIDEO26.mp4');
         registerTransientResource(ResourceType.VIDEO_SENDELL, 'VIDEO/VIDEO27.mp4');
-        registerTransientResource(ResourceType.VIDEO_SORT, 'VIDEO/VIDEO28.mp4');
+        registerTransientResource(ResourceType.VIDEO_SORT,    'VIDEO/VIDEO28.mp4');
         registerTransientResource(ResourceType.VIDEO_SURSAUT, 'VIDEO/VIDEO29.mp4');
-        registerTransientResource(ResourceType.VIDEO_TAXI, 'VIDEO/VIDEO30.mp4');
-        registerTransientResource(ResourceType.VIDEO_TAXI_J, 'VIDEO/VIDEO31.mp4');
+        registerTransientResource(ResourceType.VIDEO_TAXI,    'VIDEO/VIDEO30.mp4');
+        registerTransientResource(ResourceType.VIDEO_TAXI_J,  'VIDEO/VIDEO31.mp4');
         registerTransientResource(ResourceType.VIDEO_VOYAGEZ, 'VIDEO/VIDEO32.mp4');
-        registerTransientResource(ResourceType.VIDEO_ZEELP, 'VIDEO/VIDEO33.mp4');
-        registerTransientResource(ResourceType.VIDEO_BABY, 'VIDEO/VIDEO34.mp4');
+        registerTransientResource(ResourceType.VIDEO_ZEELP,   'VIDEO/VIDEO33.mp4');
+        registerTransientResource(ResourceType.VIDEO_BABY,    'VIDEO/VIDEO34.mp4');
+
+        registerTransientResource(ResourceType.MUSIC_SCENE_0,  'MUSIC/TADPCM1.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_1,  'MUSIC/TADPCM2.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_2,  'MUSIC/TADPCM3.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_3,  'MUSIC/TADPCM4.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_4,  'MUSIC/TADPCM5.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_5,  'MUSIC/JADPCM01.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_6,  'MUSIC/Track6.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_7,  'MUSIC/JADPCM02.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_8,  'MUSIC/JADPCM03.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_9,  'MUSIC/JADPCM04.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_10, 'MUSIC/JADPCM05.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_11, 'MUSIC/JADPCM06.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_12, 'MUSIC/JADPCM07.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_13, 'MUSIC/JADPCM08.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_14, 'MUSIC/JADPCM09.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_15, 'MUSIC/JADPCM10.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_16, 'MUSIC/JADPCM11.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_17, 'MUSIC/JADPCM12.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_18, 'MUSIC/JADPCM13.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_19, 'MUSIC/JADPCM14.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_20, 'MUSIC/JADPCM15.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_21, 'MUSIC/JADPCM16.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_22, 'MUSIC/JADPCM17.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_23, 'MUSIC/JADPCM18.mp4');
+        registerTransientResource(ResourceType.MUSIC_SCENE_24, 'MUSIC/LOGADPCM.mp4');
     },
 };

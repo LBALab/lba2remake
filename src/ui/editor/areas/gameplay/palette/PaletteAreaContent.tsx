@@ -8,7 +8,7 @@ import {
     LUT_DIM
 } from '../../../../../utils/lut';
 import { editor, fullscreen } from '../../../../styles';
-import { getResource, ResourceType } from '../../../../../resources';
+import { loadResource, ResourceType } from '../../../../../resources';
 
 const style = extend({
     overflowY: 'auto',
@@ -88,7 +88,7 @@ export default class PaletteAreaContent extends React.Component<Props, State> {
         this.ramp = 0;
         this.dragging = false;
 
-        getResource(ResourceType.RESS).then((ress) => {
+        loadResource(ResourceType.RESS).then((ress) => {
             this.palette = new Uint8Array(ress.getEntry(0));
             this.draw();
             this.drawLUT();

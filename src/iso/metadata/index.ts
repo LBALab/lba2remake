@@ -9,7 +9,7 @@ import { saveFullSceneModel } from './models';
 import { loadGrid } from '../grid';
 import { loadImageData } from '..';
 import { loadBricks } from '../bricks';
-import { getResource, ResourceType } from '../../resources';
+import { loadResource, ResourceType } from '../../resources';
 
 export async function extractGridMetadata(grid, entry, ambience, is3D) {
     if (!is3D) {
@@ -44,8 +44,8 @@ export async function extractGridMetadata(grid, entry, ambience, is3D) {
 
 export async function saveSceneReplacementModel(entry, ambience) {
     const [pal, bkg, mask] = await Promise.all([
-        getResource(ResourceType.PALETTE),
-        getResource(ResourceType.BRICKS),
+        loadResource(ResourceType.PALETTE),
+        loadResource(ResourceType.BRICKS),
         loadImageData('images/brick_mask.png')
     ]);
     const palette = pal.getBufferUint8();

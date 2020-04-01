@@ -11,7 +11,7 @@ import { loadMesh } from './geometries';
 import { loadTextureRGBA } from '../texture';
 import { createBoundingBox } from '../utils/rendering';
 import { loadLUTTexture } from '../utils/lut';
-import { getResource, ResourceType } from '../resources';
+import { loadResource, ResourceType } from '../resources';
 
 export interface Model {
     state: any;
@@ -29,11 +29,11 @@ export async function loadModel(params: any,
                           envInfo: any,
                           ambience: any) {
     const [ress, pal, entities, body, anim, lutTexture] = await Promise.all([
-        getResource(ResourceType.RESS),
-        getResource(ResourceType.PALETTE),
-        getResource(ResourceType.ENTITIES),
-        getResource(ResourceType.BODY),
-        getResource(ResourceType.ANIM),
+        loadResource(ResourceType.RESS),
+        loadResource(ResourceType.PALETTE),
+        loadResource(ResourceType.ENTITIES),
+        loadResource(ResourceType.BODY),
+        loadResource(ResourceType.ANIM),
         loadLUTTexture()
     ]);
     const files = { ress, pal, entities, body, anim };

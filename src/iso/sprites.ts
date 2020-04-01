@@ -6,7 +6,7 @@ import { compile } from '../utils/shaders';
 import { WORLD_SCALE } from '../utils/lba';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
-import { getResource, ResourceType } from '../resources';
+import { loadResource, ResourceType } from '../resources';
 
 const push = Array.prototype.push;
 
@@ -20,10 +20,10 @@ export async function loadSprite(
     is3DCam = false
 ) {
     const [ress, pal, spritesFile, spritesRaw] = await Promise.all([
-        getResource(ResourceType.RESS),
-        getResource(ResourceType.PALETTE),
-        getResource(ResourceType.SPRITES),
-        getResource(ResourceType.SPRITERAW)
+        loadResource(ResourceType.RESS),
+        loadResource(ResourceType.PALETTE),
+        loadResource(ResourceType.SPRITES),
+        loadResource(ResourceType.SPRITERAW)
     ]);
     const palette = pal.getBufferUint8();
     // lets keep it with two separate textures for now
