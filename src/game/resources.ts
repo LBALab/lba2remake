@@ -22,8 +22,8 @@ export const registerResources = {
 
         registerStaticResource(ResourceType.ENTITIES, 'LBA1/FILE3D.HQR');
         registerStaticResource(ResourceType.OBJECTS, 'LBA1/INVOBJ.HQR');
-        registerStaticResource(ResourceType.LAYOUTS, 'LBA1/LBA_BLL.HQR');
         registerStaticResource(ResourceType.BRICKS, 'LBA1/LBA_BRK.HQR');
+        registerStaticResource(ResourceType.LAYOUTS, 'LBA1/LBA_BLL.HQR');
         registerStaticResource(ResourceType.GRIDS, 'LBA1/LBA_GRI.HQR');
         registerStaticResource(ResourceType.MUSIC, 'LBA1/MIDI_MI_WIN.HQR');
     },
@@ -42,8 +42,8 @@ export const registerResources = {
         registerStaticResource(ResourceType.TEXT, getTextFile(language));
 
         registerStaticResource(ResourceType.OBJECTS, 'OBJFIX.HQR');
-        registerStaticResource(ResourceType.LAYOUTS, 'LBA_BKG.HQR');
         registerStaticResource(ResourceType.BRICKS, 'LBA_BKG.HQR');
+        registerStaticResource(ResourceType.LAYOUTS, 'LBA_BKG.HQR');
         registerStaticResource(ResourceType.GRIDS, 'LBA_BKG.HQR');
 
         registerStaticResource(ResourceType.MENU_BACKGROUND,

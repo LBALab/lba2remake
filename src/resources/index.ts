@@ -222,7 +222,7 @@ const ResourceName = [
 
 interface Resource {
     id: number;
-    refId: number;
+    ref: Resource;
     type: number;
     name: string;
     path: string;
@@ -303,26 +303,20 @@ const registerResource = (
         load: null,
         length: 0,
         hasHiddenEntries: null,
-        refId: null,
+        ref: null,
     };
 
     // check if we have already a resource with same file
     // reuse the file to have a single file loaded in memory
     // but keep reference to this resource
-    // for (const res of Object.values(Resources)) {
-    //     if (res.path === path) {
-    //         resource.refId = res.id;
-    //         break;
-    //     }
-    // }
+    for (const res of Object.values(Resources)) {
+        if (res.path === path) {
+            resource.ref = res;
+            break;
+        }
+    }
 
     resource.getBuffer = () => {
-        if (resource.refId) {
-            if (resource.index >= 0) {
-                return Resources[resource.refId].getEntry(resource.index);
-            }
-            return Resources[resource.refId].getBuffer();
-        }
         if (resource.index >= 0) {
             return resource.hqr.getEntry(resource.index);
         }
@@ -334,8 +328,8 @@ const registerResource = (
     };
 
     resource.getEntry = (index: number) => {
-        if (resource.refId) {
-            return Resources[resource.refId].getEntry(index);
+        if (resource.ref) {
+            return resource.ref.getEntry(index);
         }
         return resource.hqr.getEntry(index);
     };
@@ -345,16 +339,22 @@ const registerResource = (
     };
 
     resource.getEntryAsync = async (index: number) => {
-        if (resource.refId) {
-            return Resources[resource.refId].getEntryAsync(index);
+        if (resource.ref) {
+            return resource.ref.getEntryAsync(index);
         }
         return await resource.hqr.getEntryAsync(index);
     };
 
     resource.load = async () => {
-        if (resource.refId) {
-            resource.length = Resources[resource.refId].length;
-            resource.loaded = Resources[resource.refId].loaded;
+        if (resource.ref) {
+            // if for some reason the referenced resource is not loaded
+            // for the load of that resource. It can happen for transient resources
+            // or non-preloaded static resources
+            if (!resource.ref.loaded) {
+                resource.ref.hqr = await loadHqr(resource.ref.path);
+            }
+            resource.length = resource.ref.length;
+            resource.loaded = resource.ref.loaded;
             return;
         }
         resource.hqr = await loadHqr(resource.path);
