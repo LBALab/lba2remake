@@ -63,7 +63,9 @@ const mainIconStyle = (base = {}) => (extend({
     cursor: 'pointer' as const,
     paddingTop: '2px',
     paddingLeft: '2px',
-    paddingRight: '5px'
+    paddingRight: '5px',
+    width: 20,
+    height: 20
 }, base));
 
 const {Provider, Consumer} = React.createContext(undefined);

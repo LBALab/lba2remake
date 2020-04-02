@@ -9,6 +9,7 @@ import SceneGraphArea from './sceneGraph/SceneGraphArea';
 import GameplayEditorSettings from './GameplayEditorSettings';
 import {Orientation, Type} from '../../layout';
 import {ZONE_TYPE} from '../../../../game/zones';
+import BlocklyArea from './blockly/BlocklyArea';
 
 const GameplayEditor = {
     id: 'game',
@@ -48,6 +49,7 @@ const GameplayEditor = {
     },
     toolAreas: [
         ScriptEditorArea,
+        BlocklyArea,
         InspectorArea,
         SceneArea,
         SceneGraphArea,
