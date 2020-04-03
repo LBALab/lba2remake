@@ -207,7 +207,8 @@ export default class Area extends React.Component<AreaProps, AreaState> {
                 this.setState({popup: {
                     msg: this.renderAreaSelectionPopup(),
                     style: {
-                        background: 'transparent'
+                        background: 'transparent',
+                        zIndex: 100
                     }
                 }});
             }

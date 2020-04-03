@@ -2,11 +2,11 @@ import BlocklyAreaContent from './BlocklyAreaContent';
 
 const BlocklyArea = {
     id: 'blockly_editor',
-    name: 'Blockly',
+    name: 'BlockPack',
     icon: 'blockly.svg',
     content: BlocklyAreaContent,
     getInitialState: () => ({
-        autoScroll: true,
+        autoScroll: false,
         objectLabels: false,
         actorIndex: 0,
     }),
