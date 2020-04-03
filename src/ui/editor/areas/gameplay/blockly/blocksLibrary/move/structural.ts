@@ -6,8 +6,8 @@ export const lba_move_start = {
             .setCheck('MOVE')
             .appendField(new Blockly.FieldImage(
                 'editor/icons/start_flag.svg',
-                20,
-                20,
+                16,
+                16,
                 'start'
             ));
         this.setColour(198);
@@ -20,8 +20,8 @@ export const lba_move_track_start = {
             .setCheck('MOVE')
             .appendField(new Blockly.FieldImage(
                 'editor/icons/track.svg',
-                10,
-                20,
+                8,
+                16,
                 'start'
             ))
             .appendField(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'num_track');
@@ -35,8 +35,8 @@ export const lba_move_track = {
             .setCheck('MOVE')
             .appendField(new Blockly.FieldImage(
                 'editor/icons/track.svg',
-                10,
-                20,
+                8,
+                16,
                 'start'
             ))
             .appendField(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'num_track');
@@ -50,8 +50,8 @@ export const lba_move_stop = {
         this.appendDummyInput()
             .appendField(new Blockly.FieldImage(
                 'editor/icons/stop.svg',
-                20,
-                20,
+                16,
+                16,
                 'stop'
             ));
         this.setOutput(true, 'MOVE');

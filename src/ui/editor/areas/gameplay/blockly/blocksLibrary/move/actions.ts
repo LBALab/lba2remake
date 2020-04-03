@@ -8,8 +8,8 @@ export const lba_move_wait_sec = {
             .setCheck('MOVE')
             .appendField(new Blockly.FieldImage(
                 'editor/icons/watch.svg',
-                20,
-                20,
+                16,
+                16,
                 'wait'
             ))
             .appendField(new Blockly.FieldNumber(
@@ -31,8 +31,8 @@ export const lba_move_wait_anim = {
             .setCheck('MOVE')
             .appendField(new Blockly.FieldImage(
                 'editor/icons/wait_anim.svg',
-                20,
-                20,
+                16,
+                16,
                 'wait_anim'
             ));
         this.setOutput(true, 'MOVE');
@@ -46,8 +46,8 @@ export const lba_move_goto_point = {
             .setCheck('MOVE')
             .appendField(new Blockly.FieldImage(
                 'editor/icons/point.svg',
-                20,
-                20,
+                16,
+                16,
                 'goto'
             ))
             .appendField(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'point');
@@ -61,7 +61,7 @@ function moveAction(name, icon) {
         init() {
             this.appendValueInput('next')
                 .setCheck('MOVE')
-                .appendField(new Blockly.FieldImage(icon, 20, 20, name))
+                .appendField(new Blockly.FieldImage(icon, 16, 16, name))
                 .appendField(new Blockly.FieldDropdown([
                     [name.toUpperCase(), name.toUpperCase()]
                 ]), name);
