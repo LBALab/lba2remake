@@ -9,7 +9,7 @@ export function TRACK(workspace, cmd, connection) {
     if (connection) {
         connection.connect(block.outputConnection);
     }
-    block.setFieldValue(cmd.data.args[0].value, 'num_track');
+    block.setFieldValue(cmd.data.args[0].value, 'arg_0');
     return { connection: nextConnection };
 }
 
@@ -19,7 +19,7 @@ export function GOTO_POINT(workspace, cmd, connection) {
     if (connection) {
         connection.connect(block.outputConnection);
     }
-    block.setFieldValue(cmd.data.args[0].value, 'point');
+    block.setFieldValue(cmd.data.args[0].value, 'arg_0');
     return { connection: nextConnection };
 }
 
@@ -29,6 +29,7 @@ export function ANIM(workspace, cmd, connection) {
     if (connection) {
         connection.connect(block.outputConnection);
     }
+    block.setFieldValue(cmd.data.args[0].value, 'arg_0');
     return { connection: nextConnection };
 }
 

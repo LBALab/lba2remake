@@ -168,7 +168,7 @@ export const lba_dummy_operand = {
         }
         if (operand) {
             const operandInput = this.appendDummyInput('operand');
-            addOperand(operandInput, operand);
+            addOperand(this, operandInput, operand);
         }
     }
 };

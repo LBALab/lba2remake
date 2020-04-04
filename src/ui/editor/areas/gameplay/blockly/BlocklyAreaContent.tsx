@@ -78,6 +78,7 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
                         minScale: 0.2,
                         scaleSpeed: 1.3
                     },
+                    trashcan: false,
                     theme: (Blockly as any).Themes.Dark
                 });
                 this.rebuildWorkspace();
@@ -114,7 +115,8 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
             const blocks = this.workspace.getAllBlocks(false);
             for (let i = 0; i < blocks.length; i += 1) {
                 const b = blocks[i];
-                const highlight = b.index in activeCommands[b.scriptType];
+                const highlight = activeCommands[b.scriptType]
+                    && b.index in activeCommands[b.scriptType];
                 b.setHighlighted(highlight);
             }
         }
@@ -123,7 +125,9 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
     rebuildWorkspace() {
         if (this.scene && this.actor && this.workspace) {
             this.workspace.clear();
-            fillWorkspace(this.workspace, this.scene, this.actor);
+            this.workspace.actor = this.actor;
+            this.workspace.scene = this.scene;
+            fillWorkspace(this.workspace);
             this.workspace.cleanUp();
         }
     }

@@ -54,11 +54,19 @@ export const ONEIF = IF_GENERIC.bind(null, 'lba_oneif');
 export function SET_COMPORTEMENT(workspace, cmd, connection) {
     const block = newBlock(workspace, 'lba_set_behaviour', cmd);
     connection.connect(block.previousConnection);
+    const { comportementMap } = workspace.actor.scripts.life;
+    const value = comportementMap[cmd.data.args[0].value];
+    block.setFieldValue(`${value}`, 'arg_0');
     return { connection: block.nextConnection };
 }
 
 export function SET_COMPORTEMENT_OBJ(workspace, cmd, connection) {
     const block = newBlock(workspace, 'lba_set_behaviour_obj', cmd);
+    block.actor = workspace.scene.actors[cmd.data.args[0].value];
+    block.setFieldValue(`${cmd.data.args[0].value}`, 'actor');
+    const { comportementMap } = workspace.scene.actors[cmd.data.args[0].value].scripts.life;
+    const value = comportementMap[cmd.data.args[1].value];
+    block.setFieldValue(`${value}`, 'arg_0');
     connection.connect(block.previousConnection);
     return { connection: block.nextConnection };
 }

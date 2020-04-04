@@ -1,9 +1,9 @@
 import { head, tail } from 'lodash';
 import extractors from './extractors';
 
-export function fillWorkspace(workspace, _scene, actor) {
-    extractBlocksFromScript(workspace, actor, 'life');
-    extractBlocksFromScript(workspace, actor, 'move');
+export function fillWorkspace(workspace) {
+    extractBlocksFromScript(workspace, 'life');
+    extractBlocksFromScript(workspace, 'move');
 }
 
 function makeList(commands, type, index = 0) {
@@ -20,7 +20,7 @@ function makeList(commands, type, index = 0) {
 
 const defaultStop = _data => false;
 
-function extractBlocksFromScript(workspace, actor, type) {
+function extractBlocksFromScript(workspace, type) {
     function extractCommands(cmd, connection = null, stopCond = defaultStop, level = 0) {
         while (cmd && !stopCond(cmd.data)) {
             if (cmd.data.op.command in extractors[type]) {
@@ -34,5 +34,5 @@ function extractBlocksFromScript(workspace, actor, type) {
         }
         return cmd;
     }
-    return extractCommands(makeList(actor.scripts[type].commands, type));
+    return extractCommands(makeList(workspace.actor.scripts[type].commands, type));
 }
