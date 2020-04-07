@@ -27,16 +27,12 @@ import {
     lba_zone_obj
 } from './life/conditions';
 import {
-    lba_move_start,
-    lba_move_track_start,
-    lba_move_track,
-    lba_move_stop,
+    lba_track,
 } from './move/structural';
 import {
-    lba_move_set_anim,
-    lba_move_wait_sec,
-    lba_move_wait_anim,
-    lba_move_goto_point
+    lba_wait_sec,
+    lba_wait_anim,
+    lba_goto_point
 } from './move/actions';
 
 export default {
@@ -60,12 +56,8 @@ export default {
     lba_set_vargame,
     lba_set_anim,
     lba_set_anim_obj,
-    lba_move_start,
-    lba_move_track_start,
-    lba_move_track,
-    lba_move_stop,
-    lba_move_set_anim,
-    lba_move_wait_sec,
-    lba_move_wait_anim,
-    lba_move_goto_point
+    lba_track,
+    lba_wait_sec,
+    lba_wait_anim,
+    lba_goto_point
   };

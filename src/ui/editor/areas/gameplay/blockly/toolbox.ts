@@ -38,21 +38,13 @@ export default `<xml id="toolbox" style="display: none">
     </category>
     <category name="Move script" expanded="true">
         <category name="Structural" colour="198">
-            <block type="lba_move_start"/>
-            <block type="lba_move_track_start"/>
-            <block type="lba_move_track"/>
-            <block type="lba_move_stop"/>
+            <block type="lba_track"/>
         </category>
         <category name="Actions" colour="43">
-            <block type="lba_move_set_anim"/>
-            <block type="lba_move_set_anim">
-                <value name="next">
-                    <block type="lba_move_wait_anim"/>
-                </value>
-            </block>
-            <block type="lba_move_wait_anim"/>
-            <block type="lba_move_wait_sec"/>
-            <block type="lba_move_goto_point"/>
+            <block type="lba_set_anim"/>
+            <block type="lba_wait_anim"/>
+            <block type="lba_wait_sec"/>
+            <block type="lba_goto_point"/>
         </category>
     </category>
 </xml>`;

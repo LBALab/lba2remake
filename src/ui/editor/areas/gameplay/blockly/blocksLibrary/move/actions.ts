@@ -1,47 +1,37 @@
-import Blockly from 'blockly';
 import { makeIcon, FieldUint8 } from '../utils';
-import { generateAnims } from '../optionsGenerators';
 
-export const lba_move_set_anim = {
+export const lba_wait_sec = {
     init() {
-        this.appendValueInput('next')
-            .setCheck('MOVE')
-            .appendField(makeIcon('anim.svg'))
-            .appendField(new Blockly.FieldDropdown(generateAnims.bind(this)), 'arg_0');
-        this.setOutput(true, 'MOVE');
-        this.setColour(43);
-    }
-};
-
-export const lba_move_wait_sec = {
-    init() {
-        this.appendValueInput('next')
-            .setCheck('MOVE')
-            .appendField(makeIcon('watch.svg'))
+        this.appendDummyInput()
+            .appendField('wait')
             .appendField(new FieldUint8(), 'arg_0')
-            .appendField('s');
-        this.setOutput(true, 'MOVE');
+            .appendField('s')
+            .appendField(makeIcon('watch.svg'));
+        this.setPreviousStatement(true, 'MOVE');
+        this.setNextStatement(true, 'MOVE');
         this.setColour(43);
     }
 };
 
-export const lba_move_wait_anim = {
+export const lba_wait_anim = {
     init() {
-        this.appendValueInput('next')
-            .setCheck('MOVE')
+        this.appendDummyInput()
+            .appendField('wait anim')
             .appendField(makeIcon('wait_anim.svg'));
-        this.setOutput(true, 'MOVE');
+        this.setPreviousStatement(true, 'MOVE');
+        this.setNextStatement(true, 'MOVE');
         this.setColour(43);
     }
 };
 
-export const lba_move_goto_point = {
+export const lba_goto_point = {
     init() {
-        this.appendValueInput('next')
-            .setCheck('MOVE')
+        this.appendDummyInput()
+            .appendField('goto point')
             .appendField(makeIcon('point.svg'))
             .appendField(new FieldUint8(), 'arg_0');
-        this.setOutput(true, 'MOVE');
+        this.setPreviousStatement(true, 'MOVE');
+        this.setNextStatement(true, 'MOVE');
         this.setColour(43);
     }
 };

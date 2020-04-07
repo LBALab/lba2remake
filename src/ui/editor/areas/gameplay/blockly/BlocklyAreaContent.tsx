@@ -78,6 +78,7 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
                         minScale: 0.2,
                         scaleSpeed: 1.3
                     },
+                    sounds: false,
                     trashcan: false,
                     theme: (Blockly as any).Themes.Dark
                 });

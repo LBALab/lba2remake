@@ -1,6 +1,7 @@
+import { last, dropRight } from 'lodash';
 import { newBlock } from './blockUtils';
 
-export function COMPORTEMENT(workspace, cmd, connection, extractCommands) {
+export function COMPORTEMENT(workspace, cmd, _ctx) {
     const num = cmd.data.section;
     const type = num === 1
         ? 'lba_behaviour_init'
@@ -12,38 +13,37 @@ export function COMPORTEMENT(workspace, cmd, connection, extractCommands) {
         block.setFieldValue(`BEHAVIOUR ${num}`, 'name');
     }
     const statementsConnection = block.getInput('statements').connection;
-    const last = extractCommands(
-        cmd.next,
-        statementsConnection,
-        data => data.op.command === 'END_COMPORTEMENT'
-    );
     return {
-        connection,
-        next: last.next
+        connection: statementsConnection,
     };
 }
 
-function IF_GENERIC(type, workspace, cmd, connection, extractCommands) {
+function IF_GENERIC(type, workspace, cmd, ctx) {
+    const { connection } = ctx;
+    const ifBlocks = ctx.ifBlocks || [];
     const block = newBlock(workspace, type, cmd);
     connection.connect(block.previousConnection);
     const thenConnection = block.getInput('then_statements').connection;
-    let last = extractCommands(
-        cmd.next,
-        thenConnection,
-        data => data.op.command === 'ENDIF' || data.op.command === 'ELSE'
-    );
-    if (last.data.op.command === 'ELSE') {
-        block.enableElseBlock();
-        const elseConnection = block.getInput('else_statements').connection;
-        last = extractCommands(
-            last.next,
-            elseConnection,
-            data => data.op.command === 'ENDIF'
-        );
-    }
     return {
-        connection: block.nextConnection,
-        next: last.next
+        connection: thenConnection,
+        ifBlocks: [...ifBlocks, block]
+    };
+}
+
+export function ELSE(_workspace, _cmd, ctx) {
+    const ifBlock = last(ctx.ifBlocks) as any;
+    ifBlock.enableElseBlock();
+    const elseConnection = ifBlock.getInput('else_statements').connection;
+    return {
+        connection: elseConnection,
+    };
+}
+
+export function ENDIF(_workspace, _cmd, ctx) {
+    const ifBlock = last(ctx.ifBlocks) as any;
+    return {
+        ifBlocks: dropRight(ctx.ifBlocks),
+        connection: ifBlock.nextConnection
     };
 }
 
@@ -51,7 +51,7 @@ export const IF = IF_GENERIC.bind(null, 'lba_if');
 export const SWIF = IF_GENERIC.bind(null, 'lba_swif');
 export const ONEIF = IF_GENERIC.bind(null, 'lba_oneif');
 
-export function SET_COMPORTEMENT(workspace, cmd, connection) {
+export function SET_COMPORTEMENT(workspace, cmd, {connection}) {
     const block = newBlock(workspace, 'lba_set_behaviour', cmd);
     connection.connect(block.previousConnection);
     const { comportementMap } = workspace.actor.scripts.life;
@@ -60,7 +60,7 @@ export function SET_COMPORTEMENT(workspace, cmd, connection) {
     return { connection: block.nextConnection };
 }
 
-export function SET_COMPORTEMENT_OBJ(workspace, cmd, connection) {
+export function SET_COMPORTEMENT_OBJ(workspace, cmd, {connection}) {
     const block = newBlock(workspace, 'lba_set_behaviour_obj', cmd);
     block.actor = workspace.scene.actors[cmd.data.args[0].value];
     block.setFieldValue(`${cmd.data.args[0].value}`, 'actor');
@@ -71,26 +71,32 @@ export function SET_COMPORTEMENT_OBJ(workspace, cmd, connection) {
     return { connection: block.nextConnection };
 }
 
-export function SET_VAR_CUBE(workspace, cmd, connection) {
+export function SET_VAR_CUBE(workspace, cmd, {connection}) {
     const block = newBlock(workspace, 'lba_set_varscene', cmd);
     connection.connect(block.previousConnection);
+    block.setFieldValue(cmd.data.args[0].value, 'arg_0');
+    block.setFieldValue(cmd.data.args[1].value, 'arg_1');
     return { connection: block.nextConnection };
 }
 
-export function SET_VAR_GAME(workspace, cmd, connection) {
+export function SET_VAR_GAME(workspace, cmd, {connection}) {
     const block = newBlock(workspace, 'lba_set_vargame', cmd);
     connection.connect(block.previousConnection);
+    block.setFieldValue(cmd.data.args[0].value, 'arg_0');
+    block.setFieldValue(cmd.data.args[1].value, 'arg_1');
     return { connection: block.nextConnection };
 }
 
-export function ANIM(workspace, cmd, connection) {
+export function ANIM(workspace, cmd, {connection}) {
     const block = newBlock(workspace, 'lba_set_anim', cmd);
     connection.connect(block.previousConnection);
+    block.setFieldValue(cmd.data.args[0].value, 'arg_0');
     return { connection: block.nextConnection };
 }
 
-export function ANIM_OBJ(workspace, cmd, connection) {
+export function ANIM_OBJ(workspace, cmd, {connection}) {
     const block = newBlock(workspace, 'lba_set_anim_obj', cmd);
     connection.connect(block.previousConnection);
+    block.setFieldValue(cmd.data.args[0].value, 'arg_0');
     return { connection: block.nextConnection };
 }
