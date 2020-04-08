@@ -124,8 +124,8 @@ export const lba_switch = {
             .appendField('case')
             .setCheck('OPERAND');
 
-        this.appendStatementInput(`case_${index}_statement`)
-            .setCheck('LIFE');
+        const statementsInput = this.appendStatementInput(`case_${index}_statement`);
+        statementsInput.setCheck('LIFE');
 
         if (this.getInput('default_cond')) {
             this.moveInputBefore(`case_${index}_statement`, 'default_cond');
@@ -138,6 +138,7 @@ export const lba_switch = {
         this.cases[index] = {
             operandBlock
         };
+        return { statementsInput };
     },
     enableDefaultCase() {
         this.appendDummyInput('default_cond')

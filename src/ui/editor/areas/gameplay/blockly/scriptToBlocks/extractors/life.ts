@@ -61,6 +61,23 @@ export function SWITCH(workspace, cmd, ctx) {
     };
 }
 
+export function CASE(_workspace, _cmd, ctx) {
+    const { switchBlocks } = ctx;
+    const block = last(switchBlocks) as any;
+    const { statementsInput } = block.addCase();
+    return {
+        connection: statementsInput.connection
+    };
+}
+
+export function END_SWITCH(_workspace, _cmd, ctx) {
+    const switchBlocks = last(ctx.switchBlocks) as any;
+    return {
+        switchBlocks: dropRight(ctx.switchBlocks),
+        connection: switchBlocks.nextConnection
+    };
+}
+
 export function SET_COMPORTEMENT(workspace, cmd, {connection}) {
     const block = newBlock(workspace, 'lba_set_behaviour', cmd);
     connection.connect(block.previousConnection);
