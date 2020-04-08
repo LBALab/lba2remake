@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { each } from 'lodash';
+import { each, filter, sortBy } from 'lodash';
 import Blockly from 'blockly';
 import {fullscreen} from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';
@@ -129,8 +129,39 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
             this.workspace.actor = this.actor;
             this.workspace.scene = this.scene;
             fillWorkspace(this.workspace);
-            this.workspace.cleanUp();
+            this.reorganize();
         }
+    }
+
+    reorganize() {
+        this.workspace.setResizesEnabled(false);
+        Blockly.Events.setGroup(true);
+        const topBlocks = this.workspace.getTopBlocks(true);
+        const sortedBlocks = sortBy(topBlocks, ['index']);
+        const lifeBlocks = filter(sortedBlocks, b => b.scriptType === 'life');
+        const moveBlocks = filter(sortedBlocks, b => b.scriptType === 'move');
+        const width = this.reorderBlocks(lifeBlocks);
+        this.reorderBlocks(moveBlocks, width + 30);
+        Blockly.Events.setGroup(false);
+        this.workspace.setResizesEnabled(true);
+    }
+
+    reorderBlocks(blocks, posX = 0) {
+        let cursorY = 0;
+        let maxWidth = 0;
+        each(blocks, (block) => {
+            if (!block.isMovable()) {
+                return;
+            }
+            const xy = block.getRelativeToSurfaceXY();
+            block.moveBy(-xy.x + posX, cursorY - xy.y);
+            block.snapToGrid();
+            cursorY = block.getRelativeToSurfaceXY().y +
+                block.getHeightWidth().height +
+                this.workspace.renderer_.getConstants().MIN_BLOCK_HEIGHT;
+            maxWidth = Math.max(block.getHeightWidth().width, maxWidth);
+        });
+        return maxWidth;
     }
 
     render() {
