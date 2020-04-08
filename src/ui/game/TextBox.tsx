@@ -18,7 +18,7 @@ interface TBState {
 }
 
 export default class TextBox extends React.Component<TBProps, TBState> {
-    interval: NodeJS.Timeout;
+    interval: number;
 
     constructor(props) {
         super(props);
@@ -29,7 +29,7 @@ export default class TextBox extends React.Component<TBProps, TBState> {
 
     componentWillMount() {
         if (this.props.text) {
-            this.interval = setInterval(this.update, 35);
+            this.interval = window.setInterval(this.update, 35);
         }
     }
 
@@ -38,7 +38,7 @@ export default class TextBox extends React.Component<TBProps, TBState> {
             if (newProps.text) {
                 this.setState({ content: '', offset: 0 });
                 clearInterval(this.interval);
-                this.interval = setInterval(this.update, 35);
+                this.interval = window.setInterval(this.update, 35);
             } else {
                 this.setState({ content: '', offset: 0 });
                 clearInterval(this.interval);
