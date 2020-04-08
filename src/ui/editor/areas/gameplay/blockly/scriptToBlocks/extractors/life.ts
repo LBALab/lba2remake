@@ -18,7 +18,7 @@ export function COMPORTEMENT(workspace, cmd, _ctx) {
     };
 }
 
-function IF_GENERIC(type, workspace, cmd, ctx) {
+function genericIF(type, workspace, cmd, ctx) {
     const { connection } = ctx;
     const ifBlocks = ctx.ifBlocks || [];
     const block = newBlock(workspace, type, cmd);
@@ -29,6 +29,10 @@ function IF_GENERIC(type, workspace, cmd, ctx) {
         ifBlocks: [...ifBlocks, block]
     };
 }
+
+export const IF = genericIF.bind(null, 'lba_if');
+export const SWIF = genericIF.bind(null, 'lba_swif');
+export const ONEIF = genericIF.bind(null, 'lba_oneif');
 
 export function ELSE(_workspace, _cmd, ctx) {
     const ifBlock = last(ctx.ifBlocks) as any;

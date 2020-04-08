@@ -4,8 +4,8 @@ import { each } from 'lodash';
 import { addOperand } from './conditions';
 
 export const lba_if = ifBlock('if');
-export const lba_swif = ifBlock('if');
-export const lba_oneif = ifBlock('if');
+export const lba_swif = ifBlock('if (on change)');
+export const lba_oneif = ifBlock('if (once)');
 
 function ifBlock(type) {
     return {
@@ -14,7 +14,8 @@ function ifBlock(type) {
                 .setCheck(['COND', 'LOGIC'])
                 .appendField(type);
 
-            this.appendStatementInput('then_statements').setCheck('LIFE');
+            this.appendStatementInput('then_statements')
+                .setCheck('LIFE');
             this.disableElseBlock();
             this.setInputsInline(true);
             this.setPreviousStatement(true, 'LIFE');
@@ -22,25 +23,13 @@ function ifBlock(type) {
             this.setColour(180);
         },
         enableElseBlock() {
-            if (this.getInput('toggle_wrapper')) {
-                this.removeInput('toggle_wrapper');
-            }
-
             if (!this.getInput('else_block')) {
                 this.appendDummyInput('else_block')
-                    .appendField('else')
-                    .appendField(new Blockly.FieldImage(
-                        'editor/icons/toggle_up.svg',
-                        40,
-                        10,
-                        name,
-                        () => {
-                            this.disableElseBlock();
-                        }
-                    ));
+                    .appendField('else');
             }
             if (!this.getInput('else_statements')) {
-                this.appendStatementInput('else_statements').setCheck('LIFE');
+                this.appendStatementInput('else_statements')
+                    .setCheck('LIFE');
             }
         },
         disableElseBlock() {
@@ -50,17 +39,24 @@ function ifBlock(type) {
             if (this.getInput('else_statements')) {
                 this.removeInput('else_statements');
             }
-            if (!this.getInput('toggle_wrapper')) {
-                this.appendDummyInput('toggle_wrapper')
-                    .appendField(new Blockly.FieldImage(
-                        'editor/icons/toggle_down.svg',
-                        40,
-                        10,
-                        name,
-                        () => {
-                            this.enableElseBlock();
-                        }
-                    ));
+        },
+        customContextMenu(options) {
+            if (this.getInput('else_block')) {
+                options.unshift({
+                    text: "Remove 'else' branch",
+                    enabled: true,
+                    callback: () => {
+                        this.disableElseBlock();
+                    },
+                });
+            } else {
+                options.unshift({
+                    text: "Add 'else' branch",
+                    enabled: true,
+                    callback: () => {
+                        this.enableElseBlock();
+                    },
+                });
             }
         }
     };
@@ -74,19 +70,8 @@ export const lba_switch = {
         this.cases = {};
         this.appendValueInput('cond')
             .setCheck('COND')
-            .appendField(new Blockly.FieldImage(
-                'editor/icons/add_row.svg',
-                16,
-                16,
-                'add_row',
-                () => this.addCase()
-            ))
             .appendField('switch');
-        this.appendDummyInput('default_cond')
-            .setAlign(Blockly.ALIGN_RIGHT)
-            .appendField(new Blockly.FieldLabel('default'));
-        this.appendStatementInput('default_statement')
-            .setCheck('LIFE');
+
         this.setInputsInline(false);
         this.setPreviousStatement(true, 'LIFE');
         this.setNextStatement(true, 'LIFE');
@@ -142,7 +127,9 @@ export const lba_switch = {
         this.appendStatementInput(`case_${index}_statement`)
             .setCheck('LIFE');
 
-        this.moveInputBefore(`case_${index}_statement`, 'default_cond');
+        if (this.getInput('default_cond')) {
+            this.moveInputBefore(`case_${index}_statement`, 'default_cond');
+        }
         this.moveInputBefore(`case_${index}_cond`, `case_${index}_statement`);
         if (this.condBlock) {
             operandBlock.setOperand(this.condBlock.data);
@@ -151,6 +138,43 @@ export const lba_switch = {
         this.cases[index] = {
             operandBlock
         };
+    },
+    enableDefaultCase() {
+        this.appendDummyInput('default_cond')
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField('default');
+        this.appendStatementInput('default_statement')
+            .setCheck('LIFE');
+    },
+    disableDefaultCase() {
+        this.removeInput('default_cond');
+        this.removeInput('default_statement');
+    },
+    customContextMenu(options) {
+        if (this.getInput('default_cond')) {
+            options.unshift({
+                text: 'Disable default case',
+                enabled: true,
+                callback: () => {
+                    this.disableDefaultCase();
+                },
+            });
+        } else {
+            options.unshift({
+                text: 'Enable default case',
+                enabled: true,
+                callback: () => {
+                    this.enableDefaultCase();
+                },
+            });
+        }
+        options.unshift({
+            text: 'Add case',
+            enabled: true,
+            callback: () => {
+                this.addCase();
+            },
+        });
     }
 };
 
