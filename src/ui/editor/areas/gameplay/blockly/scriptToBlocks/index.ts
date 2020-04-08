@@ -15,7 +15,7 @@ function extractCommands(workspace, type) {
         const cmdName = data.op.command;
         if (cmdName in tExtractors) {
             const extractor = tExtractors[cmdName];
-            newCtx = extractor(workspace, {data, index}, ctx);
+            newCtx = extractor(workspace, {data, index, type}, ctx);
         }
         Object.assign(ctx, newCtx);
     });
