@@ -51,9 +51,15 @@ export function ENDIF(_workspace, _cmd, ctx) {
     };
 }
 
-export const IF = IF_GENERIC.bind(null, 'lba_if');
-export const SWIF = IF_GENERIC.bind(null, 'lba_swif');
-export const ONEIF = IF_GENERIC.bind(null, 'lba_oneif');
+export function SWITCH(workspace, cmd, ctx) {
+    const { connection } = ctx;
+    const block = newBlock(workspace, 'lba_switch', cmd);
+    const switchBlocks = ctx.switchBlocks || [];
+    connection.connect(block.previousConnection);
+    return {
+        switchBlocks: [...switchBlocks, block]
+    };
+}
 
 export function SET_COMPORTEMENT(workspace, cmd, {connection}) {
     const block = newBlock(workspace, 'lba_set_behaviour', cmd);
