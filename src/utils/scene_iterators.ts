@@ -27,15 +27,35 @@ export async function forEachScript(callback: ScriptCallback, type = null) {
                 callback(script, actor, scene, type);
             }
             if (!type || type === 'move') {
-                const script = parseScript(idx, 'move', actor.lifeScript);
+                const script = parseScript(idx, 'move', actor.moveScript);
                 callback(script, actor, scene, type);
             }
         });
     });
 }
 
-export function findCond(name) {
+function displayResults(scene, actor, results) {
+    if (results.length > 0) {
+        const actorName = getObjectName('actor', scene.index, actor.index);
+        // tslint:disable-next-line: no-console
+        console.log(`SCENE ${scene.index}, actor=${actorName}`);
+        each(results, (r) => {
+            // tslint:disable-next-line: no-console
+            console.log(r);
+        });
+    }
+}
 
+export function findCondition(name) {
+    forEachScript((script, actor, scene) => {
+        const results = [];
+        each(script.commands, (cmd, idx) => {
+            if (cmd.condition && cmd.condition.op.command === name) {
+                results.push(`  found cond ${name} at ${idx}`);
+            }
+        });
+        displayResults(scene, actor, results);
+    }, 'life');
 }
 
 export function findAndOrSeq() {
@@ -57,15 +77,7 @@ export function findAndOrSeq() {
                 count = 0;
             }
         });
-        if (results.length > 0) {
-            const actorName = getObjectName('actor', scene.index, actor.index);
-            // tslint:disable-next-line: no-console
-            console.log(`SCENE ${scene.index}, actor=${actorName}`);
-            each(results, (r) => {
-                // tslint:disable-next-line: no-console
-                console.log(r);
-            });
-        }
+        displayResults(scene, actor, results);
     }, 'life');
 }
 
@@ -87,14 +99,6 @@ export function findAndOrMixedSeq() {
                 pushed = false;
             }
         });
-        if (results.length > 0) {
-            const actorName = getObjectName('actor', scene.index, actor.index);
-            // tslint:disable-next-line: no-console
-            console.log(`SCENE ${scene.index}, actor=${actorName}`);
-            each(results, (r) => {
-                // tslint:disable-next-line: no-console
-                console.log(r);
-            });
-        }
+        displayResults(scene, actor, results);
     }, 'life');
 }
