@@ -34,6 +34,12 @@ export default `<xml id="toolbox" style="display: none">
             <label text="Zones"/>
             <block type="lba_zone"/>
             <block type="lba_zone_obj"/>
+            <label text="Animation"/>
+            <block type="lba_anim"/>
+            <block type="lba_anim_obj"/>
+            <label text="Body"/>
+            <block type="lba_body"/>
+            <block type="lba_body_obj"/>
         </category>
     </category>
     <category name="Move script" expanded="true">
