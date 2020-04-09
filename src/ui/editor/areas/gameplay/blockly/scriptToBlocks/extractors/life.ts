@@ -109,6 +109,16 @@ export function CASE(_workspace, _cmd, ctx) {
     };
 }
 
+export function DEFAULT(_workspace, _cmd, ctx) {
+    const { switchBlocks } = ctx;
+    const block = last(switchBlocks) as any;
+    block.enableDefaultCase();
+    const statementsInput = block.getInput('default_statement');
+    return {
+        connection: statementsInput.connection
+    };
+}
+
 export function END_SWITCH(_workspace, _cmd, ctx) {
     const switchBlocks = last(ctx.switchBlocks) as any;
     return {
