@@ -1,63 +1,15 @@
-import {
-    lba_behaviour,
-    lba_behaviour_init,
-    lba_set_behaviour,
-    lba_set_behaviour_obj
-} from './life/structural';
-import {
-    lba_if,
-    lba_swif,
-    lba_oneif,
-    lba_switch,
-    lba_dummy_operand,
-    lba_and,
-    lba_or
-} from './life/control';
-import {
-    lba_set_varscene,
-    lba_set_vargame,
-    lba_set_anim,
-    lba_set_anim_obj
-} from './life/actions';
-import {
-    lba_distance,
-    lba_collision,
-    lba_collision_obj,
-    lba_zone,
-    lba_zone_obj
-} from './life/conditions';
-import {
-    lba_track,
-} from './move/structural';
-import {
-    lba_wait_sec,
-    lba_wait_anim,
-    lba_goto_point
-} from './move/actions';
+import * as life_structural from './life/structural';
+import * as life_control from './life/control';
+import * as life_actions from './life/actions';
+import * as life_conditions from './life/conditions';
+import * as move_structural from './move/structural';
+import * as move_actions from './move/actions';
 
 export default {
-    lba_behaviour,
-    lba_behaviour_init,
-    lba_set_behaviour,
-    lba_set_behaviour_obj,
-    lba_if,
-    lba_swif,
-    lba_oneif,
-    lba_switch,
-    lba_dummy_operand,
-    lba_and,
-    lba_or,
-    lba_distance,
-    lba_collision,
-    lba_collision_obj,
-    lba_zone,
-    lba_zone_obj,
-    lba_set_varscene,
-    lba_set_vargame,
-    lba_set_anim,
-    lba_set_anim_obj,
-    lba_track,
-    lba_wait_sec,
-    lba_wait_anim,
-    lba_goto_point
-  };
+    ...life_structural,
+    ...life_control,
+    ...life_actions,
+    ...life_conditions,
+    ...move_structural,
+    ...move_actions
+};

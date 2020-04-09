@@ -10,7 +10,7 @@ export const lba_oneif = ifBlock('if (once)');
 function ifBlock(type) {
     return {
         init() {
-            this.appendValueInput('cond')
+            this.appendValueInput('condition')
                 .setCheck(['COND', 'LOGIC'])
                 .appendField(type);
 
@@ -68,7 +68,7 @@ export const lba_switch = {
         this.condBlock = null;
         this.operand = null;
         this.cases = {};
-        this.appendValueInput('cond')
+        this.appendValueInput('condition')
             .setCheck('COND')
             .appendField('switch');
 
@@ -80,14 +80,14 @@ export const lba_switch = {
         this.setOnChange((event) => {
             if (event instanceof Blockly.Events.Move) {
                 const e = event as any;
-                if (e.newParentId === this.id && e.newInputName === 'cond') {
-                    this.condBlock = this.getInput('cond').connection.targetBlock();
+                if (e.newParentId === this.id && e.newInputName === 'condition') {
+                    this.condBlock = this.getInput('condition').connection.targetBlock();
                     this.condBlock.removeInput('operand');
                     const operand = this.condBlock.data;
                     each(this.cases, ({operandBlock}) => {
                         operandBlock.setOperand(operand);
                     });
-                } else if (e.oldParentId === this.id && e.oldInputName === 'cond') {
+                } else if (e.oldParentId === this.id && e.oldInputName === 'condition') {
                     if (!this.condBlock.isDisposed()) {
                         this.condBlock.addOperand();
                     }
