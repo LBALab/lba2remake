@@ -82,7 +82,9 @@ export const lba_switch = {
                 const e = event as any;
                 if (e.newParentId === this.id && e.newInputName === 'condition') {
                     this.condBlock = this.getInput('condition').connection.targetBlock();
-                    this.condBlock.removeInput('operand');
+                    if (this.condBlock.getInput('operand')) {
+                        this.condBlock.removeInput('operand');
+                    }
                     const operand = this.condBlock.data;
                     each(this.cases, ({operandBlock}) => {
                         operandBlock.setOperand(operand);
