@@ -1,4 +1,5 @@
 import { map, tail, filter } from 'lodash';
+import { getParams } from '../params';
 
 const R_IN = /^( *)in( .*)\r?$/;
 const R_OUT = /^( *)out( .*)\r?$/;
@@ -17,7 +18,7 @@ export function compile(type, source: string) {
     if (!lines[0].match('#version 300 es')) {
         throw new Error('Shader must have "#version 300 es" directive as first line');
     }
-    const webGL2 = window.WebGL2RenderingContext && window.params.webgl2;
+    const webGL2 = window.WebGL2RenderingContext && getParams().webgl2;
     if (!webGL2) {
         const precision = [];
         const preproc = [];

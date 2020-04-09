@@ -4,7 +4,7 @@ import GameUI from './GameUI';
 import VRGameUI from './VRGameUI';
 import Editor from './Editor';
 import Popup from './Popup';
-import {loadParams} from '../params';
+import { getParams } from '../params';
 import {
     loadGameMetaData,
     loadModelsMetaData,
@@ -12,7 +12,6 @@ import {
 } from './editor/DebugData';
 import ChangeLog from './ChangeLog';
 import Disclaimer from './Disclaimer';
-import { initLanguageConfig } from '../lang';
 import Ticker from './utils/Ticker';
 
 interface RootProps {
@@ -24,8 +23,7 @@ export default class Root extends React.Component<RootProps> {
 
     constructor(props) {
         super(props);
-        const params = loadParams();
-        initLanguageConfig(params);
+        const params = getParams();
         this.state = {
             params,
             changelog: false,
@@ -64,7 +62,7 @@ export default class Root extends React.Component<RootProps> {
     }
 
     onHashChange() {
-        this.setState({ params: loadParams() });
+        this.setState({ params: getParams(true) });
     }
 
     openChangeLog() {
