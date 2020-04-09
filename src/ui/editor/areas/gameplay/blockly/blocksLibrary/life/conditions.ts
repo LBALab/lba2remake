@@ -2,21 +2,70 @@ import Blockly from 'blockly';
 import { makeIcon } from '../utils';
 import { generateActors, generateAnims, generateZones } from '../optionsGenerators';
 
-export const lba_distance = condition('distance to', 'actor', 'number');
-export const lba_collision = condition('collides with', null, 'actor');
-export const lba_collision_obj = condition('collides with', 'actor', 'actor', true);
-export const lba_zone = condition('in zone', null, 'zone');
-export const lba_zone_obj = condition('in zone', 'actor', 'zone', true);
+export const lba_distance = condition({
+    label: 'distance to',
+    param: 'actor',
+    operand: 'number'
+});
 
-function condition(label, param, operand, leftParam = false) {
+export const lba_collision = condition({
+    label: 'collides with',
+    operand: 'actor'
+});
+
+export const lba_collision_obj = condition({
+    label: 'collides with',
+    operand: 'actor',
+    objMode: true
+});
+
+export const lba_zone = condition({
+    label: 'in zone',
+    operand: 'zone',
+});
+
+export const lba_zone_obj = condition({
+    label: 'in zone',
+    operand: 'zone',
+    objMode: true
+});
+
+export const lba_anim = condition({
+    label: 'anim',
+    operand: 'anim',
+});
+
+export const lba_anim_obj = condition({
+    label: 'anim',
+    operand: 'anim',
+    objMode: true
+});
+
+export const lba_body = condition({
+    label: 'body',
+    operand: 'body',
+});
+
+export const lba_body_obj = condition({
+    label: 'body',
+    operand: 'body',
+    objMode: true
+});
+
+function condition({
+    label,
+    param = null,
+    operand,
+    objMode = false
+}) {
     return {
         init() {
             const input = this.appendDummyInput('param');
-            if (param && leftParam) {
-                addConditionParam(this, input, param);
+            if (objMode) {
+                addConditionParam(this, input, 'actor');
             }
             input.appendField(label);
-            if (param && !leftParam) {
+            if (param && !objMode) {
                 addConditionParam(this, input, param);
             }
             this.addOperand();
@@ -44,7 +93,9 @@ const operators = [
 const skipOperator = ['actor', 'zone'];
 const typeIcons = {
     actor: 'actor.svg',
-    zone: 'zone.svg'
+    body: 'body.svg',
+    anim: 'anim.svg',
+    zone: 'zone_scn.svg'
 };
 const typeGenerator = {
     actor: generateActors,
