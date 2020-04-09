@@ -131,3 +131,15 @@ function addConditionParam(block, input, param) {
         input.appendField(`${param}?`);
     }
 }
+
+export const lba_unknown_cond = {
+    init() {
+        this.appendDummyInput()
+            .appendField('unknown', 'label');
+        this.addOperand();
+        this.setInputsInline(true);
+        this.setOutput(true, 'COND');
+        this.setColour(15);
+    },
+    addOperand() {}
+};
