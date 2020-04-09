@@ -1,4 +1,4 @@
-import { map } from 'lodash';
+import { map, filter } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../DebugData';
 
 export function generateBehaviours() {
@@ -19,24 +19,32 @@ export function generateBehaviours() {
 }
 
 export function generateActors() {
-    return generateObjects.call(this, 'actor');
-}
-
-export function generateZones() {
-    return generateObjects.call(this, 'zone');
-}
-
-export function generateObjects(type) {
     const scene = this.workspace.scene;
     if (!scene) {
-        const value = `<${type}>`;
+        const value = '<actor>';
         return [[value, value]];
     }
     return map(
-        scene[`${type}s`],
-        (obj) => {
-            const name = getObjectName(type, scene.index, obj.index);
-            return [name, `${obj.index}`];
+        scene.actors,
+        (actor) => {
+            const name = getObjectName('actor', scene.index, actor.index);
+            return [name, `${actor.index}`];
+        }
+    );
+}
+
+export function generateZones() {
+    const scene = this.workspace.scene;
+    if (!scene) {
+        const value = '<zone>';
+        return [[value, value]];
+    }
+    const zones = filter(scene.zones, zone => zone.props.type === 2) as any;
+    return map(
+        zones,
+        (zone) => {
+            const name = getObjectName('zone', scene.index, zone.index);
+            return [name, `${zone.index}`];
         }
     );
 }
