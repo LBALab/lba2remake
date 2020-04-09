@@ -90,7 +90,7 @@ const operators = [
     ['≤', '<=']
 ];
 
-const skipOperator = ['actor', 'zone'];
+const skipOperator = ['actor', 'zone', 'anim', 'body'];
 const typeIcons = {
     actor: 'actor.svg',
     body: 'body.svg',
