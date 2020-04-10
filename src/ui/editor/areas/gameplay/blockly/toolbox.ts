@@ -11,9 +11,11 @@ export default `<xml id="toolbox" style="display: none">
         <label text="Variables &amp; Bonuse"/>
         <block type="lba_set_varscene"/>
         <block type="lba_set_vargame"/>
-        <label text="Animation"/>
+        <label text="3D Model"/>
         <block type="lba_set_anim"/>
         <block type="lba_set_anim_obj"/>
+        <block type="lba_set_body"/>
+        <block type="lba_set_body_obj"/>
     </category>
     <category name="Control" colour="180">
         <label text="Branching"/>
@@ -33,20 +35,25 @@ export default `<xml id="toolbox" style="display: none">
         <label text="Zones"/>
         <block type="lba_zone"/>
         <block type="lba_zone_obj"/>
-        <label text="Animation"/>
+        <label text="3D Model"/>
         <block type="lba_anim"/>
         <block type="lba_anim_obj"/>
-        <label text="Body"/>
         <block type="lba_body"/>
         <block type="lba_body_obj"/>
     </category>
     <category name="Tracks" colour="#666666">
         <label text="Structural"/>
         <block type="lba_track"/>
-        <label text="Actions"/>
+        <label text="3D Model"/>
         <block type="lba_move_set_anim"/>
         <block type="lba_wait_anim"/>
-        <block type="lba_wait_sec"/>
+        <block type="lba_move_set_body"/>
+        <label text="Movement"/>
         <block type="lba_goto_point"/>
+        <label text="Timing"/>
+        <block type="lba_wait_sec"/>
+        <block type="lba_wait_dsec"/>
+        <block type="lba_wait_sec_rnd"/>
+        <block type="lba_wait_dsec_rnd"/>
     </category>
 </xml>`;

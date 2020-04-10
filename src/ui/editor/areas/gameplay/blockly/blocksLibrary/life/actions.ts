@@ -6,6 +6,8 @@ export const lba_set_varscene = varSetterBlock('varscene');
 export const lba_set_vargame = varSetterBlock('vargame');
 export const lba_set_anim = setterBlock({scriptType: 'LIFE', type: 'anim'});
 export const lba_set_anim_obj = setterBlock({scriptType: 'LIFE', type: 'anim', objMode: true});
+export const lba_set_body = setterBlock({scriptType: 'LIFE', type: 'body'});
+export const lba_set_body_obj = setterBlock({scriptType: 'LIFE', type: 'body', objMode: true});
 
 export const lba_unknown_life_cmd = {
     init() {
