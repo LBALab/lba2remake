@@ -4,7 +4,7 @@ const DebugToolsArea = {
     id: 'dbg_tools',
     replaces: 'dbg_tools',
     name: 'Debug Tools',
-    icon: 'terminal.png',
+    icon: 'tools.svg',
     content: DebugToolsAreaContent,
     getInitialState: () => ({}),
     stateHandler: {}
