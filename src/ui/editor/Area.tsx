@@ -216,7 +216,7 @@ export default class Area extends React.Component<AreaProps, AreaState> {
 
         const titleStyle = extend({
             fontSize: isMain ? 20 : 18
-        }, mainIconStyle());
+        }, mainIconStyle(), {float: 'none'});
 
         const closeIcon = this.props.close &&
             <img style={iconStyle({right: 2})}
