@@ -1,8 +1,8 @@
 import { each } from 'lodash';
-import { loadSceneData } from '../scene';
-import { loadSceneMetaData, getObjectName } from '../ui/editor/DebugData';
-import { getLanguageConfig } from '../lang';
-import { parseScript } from '../scripting/parser';
+import { loadSceneData } from '../../../../../../scene';
+import { loadSceneMetaData, getObjectName } from '../../../../DebugData';
+import { getLanguageConfig } from '../../../../../../lang';
+import { parseScript } from '../../../../../../scripting/parser';
 
 export async function forEachScene(callback) {
     const {language} = getLanguageConfig();
@@ -46,6 +46,18 @@ function displayResults(scene, actor, results) {
     }
 }
 
+export function findCommand(name, type) {
+    forEachScript((script, actor, scene) => {
+        const results = [];
+        each(script.commands, (cmd, idx) => {
+            if (cmd.op.command === name) {
+                results.push(`  found command ${name} at ${idx}`);
+            }
+        });
+        displayResults(scene, actor, results);
+    }, type);
+}
+
 export function findCondition(name) {
     forEachScript((script, actor, scene) => {
         const results = [];
@@ -58,7 +70,7 @@ export function findCondition(name) {
     }, 'life');
 }
 
-export function findAndOrSeq() {
+export function findLogicSequence(minLength = 3) {
     forEachScript((script, actor, scene) => {
         let count = 0;
         let start = null;
@@ -71,8 +83,8 @@ export function findAndOrSeq() {
                 }
                 count += 1;
             } else {
-                if (count > 3) {
-                    results.push(`  found ${count} conds at ${start}`);
+                if (count >= minLength) {
+                    results.push(`  found ${count} logic operators at ${start}`);
                 }
                 count = 0;
             }
@@ -81,7 +93,7 @@ export function findAndOrSeq() {
     }, 'life');
 }
 
-export function findAndOrMixedSeq() {
+export function findMixedLogicSequence() {
     forEachScript((script, actor, scene) => {
         let pushed = false;
         let prev = null;
@@ -90,7 +102,7 @@ export function findAndOrMixedSeq() {
             const name = cmd.op.command;
             if (name === 'OR_IF' || name === 'AND_IF') {
                 if (prev !== null && name !== prev && !pushed) {
-                    results.push(`  found mixed seq at ${idx}`);
+                    results.push(`  found mixed logic sequence at ${idx}`);
                     pushed = true;
                 }
                 prev = name;
