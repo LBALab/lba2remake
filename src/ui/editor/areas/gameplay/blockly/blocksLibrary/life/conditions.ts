@@ -1,6 +1,5 @@
 import Blockly from 'blockly';
-import { makeIcon } from '../utils';
-import { generateActors, generateAnims, generateZones } from '../optionsGenerators';
+import { makeIcon, typeIcons, typeGenerator } from '../utils';
 
 export const lba_distance = condition({
     label: 'distance to',
@@ -91,17 +90,6 @@ const operators = [
 ];
 
 const skipOperator = ['actor', 'zone', 'anim', 'body'];
-const typeIcons = {
-    actor: 'actor.svg',
-    body: 'body.svg',
-    anim: 'anim.svg',
-    zone: 'zone_scn.svg'
-};
-const typeGenerator = {
-    actor: generateActors,
-    zone: generateZones,
-    anim: generateAnims
-};
 
 export function addOperand(block, input, operand) {
     if (!skipOperator.includes(operand)) {

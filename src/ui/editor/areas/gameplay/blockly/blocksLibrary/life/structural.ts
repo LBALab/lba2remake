@@ -1,6 +1,6 @@
 import Blockly from 'blockly';
 import { makeIcon } from '../utils';
-import { generateActors, generateBehaviours } from '../optionsGenerators';
+import { generateActors, generateBehaviours } from '../utils/optionsGenerators';
 
 export const lba_behaviour = {
     init() {

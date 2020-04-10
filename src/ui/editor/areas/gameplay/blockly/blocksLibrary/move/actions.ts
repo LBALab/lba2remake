@@ -1,4 +1,15 @@
-import { makeIcon, FieldUint8 } from '../utils';
+import { makeIcon, FieldUint8, setterBlock } from '../utils';
+
+export const lba_unknown_move_cmd = {
+    init() {
+        this.appendDummyInput()
+            .appendField('?unknown?', 'label');
+
+        this.setPreviousStatement(true, 'MOVE');
+        this.setNextStatement(true, 'MOVE');
+        this.setColour(34);
+    }
+};
 
 export const lba_wait_sec = {
     init() {
@@ -9,7 +20,7 @@ export const lba_wait_sec = {
             .appendField(makeIcon('watch.svg'));
         this.setPreviousStatement(true, 'MOVE');
         this.setNextStatement(true, 'MOVE');
-        this.setColour(43);
+        this.setColour(34);
     }
 };
 
@@ -20,7 +31,7 @@ export const lba_wait_anim = {
             .appendField(makeIcon('wait_anim.svg'));
         this.setPreviousStatement(true, 'MOVE');
         this.setNextStatement(true, 'MOVE');
-        this.setColour(43);
+        this.setColour(34);
     }
 };
 
@@ -32,6 +43,8 @@ export const lba_goto_point = {
             .appendField(new FieldUint8(), 'arg_0');
         this.setPreviousStatement(true, 'MOVE');
         this.setNextStatement(true, 'MOVE');
-        this.setColour(43);
+        this.setColour(34);
     }
 };
+
+export const lba_move_set_anim = setterBlock({scriptType: 'MOVE', type: 'anim'});

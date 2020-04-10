@@ -1,41 +1,37 @@
 import Blockly from 'blockly';
-import { generateVar, generateAnims, generateActors } from '../optionsGenerators';
-import { makeIcon } from '../utils';
+import { generateVar, generateActors } from '../utils/optionsGenerators';
+import { makeIcon, setterBlock } from '../utils';
 
-export const lba_set_varscene = varSetter('varscene');
-export const lba_set_vargame = varSetter('vargame');
-export const lba_set_anim = setter('anim', 'anim.svg', generateAnims, false, true);
-export const lba_set_anim_obj = setter('anim', 'anim.svg', generateAnims, true);
+export const lba_set_varscene = varSetterBlock('varscene');
+export const lba_set_vargame = varSetterBlock('vargame');
+export const lba_set_anim = setterBlock({scriptType: 'LIFE', type: 'anim'});
+export const lba_set_anim_obj = setterBlock({scriptType: 'LIFE', type: 'anim', objMode: true});
 
-function setter(type, icon, generator, otherActor = false, common = false) {
-    return {
-        init() {
-            const input = this.appendDummyInput();
-            if (otherActor) {
-                input.appendField('set');
-                input.appendField(makeIcon('actor.svg'));
-                input.appendField(new Blockly.FieldDropdown(generateActors.bind(this)), 'actor');
-                input.appendField(`'s ${type} to`);
-            } else {
-                input.appendField(`set ${type} to`);
-            }
-            if (icon) {
-                input.appendField(makeIcon(icon));
-            }
-            input.appendField(new Blockly.FieldDropdown(generator.bind(this)), 'arg_0');
-            if (common) {
-                this.setPreviousStatement(true, ['LIFE', 'MOVE']);
-                this.setNextStatement(true, ['LIFE', 'MOVE']);
-            } else {
-                this.setPreviousStatement(true, 'LIFE');
-                this.setNextStatement(true, 'LIFE');
-            }
-            this.setColour(43);
-        }
-    };
-}
+export const lba_unknown_life_cmd = {
+    init() {
+        this.appendDummyInput()
+            .appendField('?unknown?', 'label');
 
-function varSetter(type) {
+        this.setPreviousStatement(true, 'LIFE');
+        this.setNextStatement(true, 'LIFE');
+        this.setColour(42);
+    }
+};
+
+export const lba_unknown_life_cmd_obj = {
+    init() {
+        this.appendDummyInput()
+            .appendField(makeIcon('actor.svg'))
+            .appendField(new Blockly.FieldDropdown(generateActors.bind(this)), 'actor')
+            .appendField('?unknown?', 'label');
+
+        this.setPreviousStatement(true, 'LIFE');
+        this.setNextStatement(true, 'LIFE');
+        this.setColour(42);
+    }
+};
+
+function varSetterBlock(type) {
     return {
         init() {
             this.appendDummyInput()

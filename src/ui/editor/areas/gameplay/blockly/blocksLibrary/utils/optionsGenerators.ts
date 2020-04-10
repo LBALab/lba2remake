@@ -1,5 +1,5 @@
 import { map, filter } from 'lodash';
-import DebugData, { getVarName, getObjectName } from '../../../../DebugData';
+import DebugData, { getVarName, getObjectName } from '../../../../../DebugData';
 
 export function generateBehaviours() {
     const actor = this.actor || this.workspace.actor;
@@ -59,6 +59,20 @@ export function generateAnims() {
         (anim) => {
             const name = DebugData.metadata.anims[anim.index] || `anim_${anim.index}`;
             return [name, `${anim.index}`];
+        }
+    );
+}
+
+export function generateBodies() {
+    const actor = this.workspace.actor;
+    if (!actor || !actor.model || !actor.model.entity) {
+        return [['<body>', '<body>']];
+    }
+    return map(
+        actor.model.entity.bodies,
+        (body) => {
+            const name = DebugData.metadata.bodies[body.index] || `body_${body.index}`;
+            return [name, `${body.index}`];
         }
     );
 }
