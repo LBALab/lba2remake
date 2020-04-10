@@ -44,7 +44,7 @@ export function generateZones() {
         zones,
         (zone) => {
             const name = getObjectName('zone', scene.index, zone.index);
-            return [name, `${zone.index}`];
+            return [name, `${zone.props.snap}`];
         }
     );
 }

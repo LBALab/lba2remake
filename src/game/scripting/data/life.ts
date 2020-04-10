@@ -200,7 +200,7 @@ export const LifeOpcode = [
         opcode: 0x17,
         command: 'SET_TRACK',
         handler: st.SET_TRACK,
-        args: ['Uint16:label'],
+        args: ['Uint16:number'],
         indent: Indent.KEEP,
         type: 'assignment',
         prop: 'track'
@@ -209,7 +209,7 @@ export const LifeOpcode = [
         opcode: 0x18,
         command: 'SET_TRACK_OBJ',
         handler: st.SET_TRACK_OBJ,
-        args: ['Uint8:actor', 'Uint16:label'],
+        args: ['Uint8:actor', 'Uint16:number'],
         indent: Indent.KEEP,
         type: 'assignment',
         prop: 'track'

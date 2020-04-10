@@ -81,7 +81,7 @@ function condition({
 }
 
 const operators = [
-    ['=', '='],
+    ['=', '=='],
     ['≠', '!='],
     ['>', '>'],
     ['≥', '>='],
@@ -90,6 +90,7 @@ const operators = [
 ];
 
 const skipOperator = ['actor', 'zone', 'anim', 'body'];
+const numberTypes = ['number', 'label', 'varcube_value', 'vargame_value'];
 
 export function addOperand(block, input, operand) {
     if (!skipOperator.includes(operand)) {
@@ -98,7 +99,7 @@ export function addOperand(block, input, operand) {
     if (operand in typeIcons) {
         input.appendField(makeIcon(typeIcons[operand]));
     }
-    if (operand === 'number') {
+    if (numberTypes.includes(operand)) {
         input.appendField(new Blockly.FieldNumber(), 'operand');
     } else if (operand in typeGenerator) {
         input.appendField(new Blockly.FieldDropdown(typeGenerator[operand].bind(block)), 'operand');
@@ -111,7 +112,7 @@ function addConditionParam(block, input, param) {
     if (param in typeIcons) {
         input.appendField(makeIcon(typeIcons[param]));
     }
-    if (param === 'number') {
+    if (numberTypes.includes(param)) {
         input.appendField(new Blockly.FieldNumber(), 'param');
     } else if (param in typeGenerator) {
         input.appendField(new Blockly.FieldDropdown(typeGenerator[param].bind(block)), 'param');
@@ -122,12 +123,13 @@ function addConditionParam(block, input, param) {
 
 export const lba_unknown_cond = {
     init() {
-        this.appendDummyInput()
-            .appendField('unknown', 'label');
-        this.addOperand();
+        this.appendDummyInput().appendField('unknown', 'label');
         this.setInputsInline(true);
         this.setOutput(true, 'COND');
         this.setColour(15);
     },
-    addOperand() {}
+    addOperand(type) {
+        const operandInput = this.appendDummyInput('operand');
+        addOperand(this, operandInput, type);
+    }
 };

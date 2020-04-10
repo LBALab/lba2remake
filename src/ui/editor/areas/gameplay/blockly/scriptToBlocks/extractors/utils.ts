@@ -29,6 +29,7 @@ export function GENERIC_ACTION_OBJ(type, argCount, workspace, cmd, {connection})
 export function GENERIC_CONDITION(type, workspace, cmd, { connection }) {
     const block = newBlock(workspace, type, cmd);
     connection.connect(block.outputConnection);
+    return block;
 }
 
 export function GENERIC_CONDITION_OBJ(type, workspace, cmd, { connection }) {
@@ -36,6 +37,14 @@ export function GENERIC_CONDITION_OBJ(type, workspace, cmd, { connection }) {
     const cond = cmd.data.condition;
     block.setFieldValue(cond.param.value, 'param');
     connection.connect(block.outputConnection);
+    return block;
+}
+
+export function UNKNOWN_CONDITION(label, workspace, cmd, { connection }) {
+    const block = newBlock(workspace, 'lba_unknown_cond', cmd);
+    block.setFieldValue(label, 'label');
+    connection.connect(block.outputConnection);
+    return block;
 }
 
 export function UNKNOWN_CMD(label, workspace, cmd, {connection}) {
@@ -50,12 +59,6 @@ export function UNKNOWN_CMD_OBJ(label, workspace, cmd, {connection}) {
     connection.connect(block.previousConnection);
     block.setFieldValue(label, 'label');
     return { connection: block.nextConnection };
-}
-
-export function UNKNOWN_CONDITION(label, workspace, cmd, { connection }) {
-    const block = newBlock(workspace, 'lba_unknown_cond', cmd);
-    block.setFieldValue(label, 'label');
-    connection.connect(block.outputConnection);
 }
 
 export function UNKNOWN_MOVE_CMD(label, workspace, cmd, {connection}) {

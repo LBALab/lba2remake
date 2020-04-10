@@ -54,7 +54,18 @@ export function ENDIF(_workspace, _cmd, ctx) {
 function addCondition(workspace, cmd, ctx) {
     const condName = cmd.data.condition.op.command;
     if (condName in conditions) {
-        conditions[condName](workspace, cmd, ctx);
+        const condBlock = conditions[condName](workspace, cmd, ctx);
+        const { operator } = cmd.data;
+        if (condBlock.type === 'lba_unknown_cond') {
+            // console.log(condName, operator.operand);
+            condBlock.addOperand(operator.operand.type);
+        }
+        if (condBlock.getField('operator')) {
+            condBlock.setFieldValue(operator.op.command, 'operator');
+        }
+        if (condBlock.getField('operand')) {
+            condBlock.setFieldValue(operator.operand.value, 'operand');
+        }
     }
 }
 

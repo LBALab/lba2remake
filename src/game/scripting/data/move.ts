@@ -79,7 +79,7 @@ export const MoveOpcode = [
         opcode: 0x09,
         command: 'TRACK',
         handler: st.TRACK,
-        args: ['Uint8:label'],
+        args: ['Uint8:number'],
         indent: Indent.ZERO,
         type: 'keyword'
     },
