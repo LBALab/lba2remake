@@ -1,7 +1,21 @@
 {
   "name": "lba2remake",
   "version": "0.2.0-WIP",
-  "description": "Little Big Adventure 2, HD version, for the web",
+  "description": "Little Big Adventure 2 HD version for the web",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "cross-env NODE_ENV=development node devserver.js",
+    "dev:debug": "cross-env SRCMAP=true NODE_ENV=development node devserver.js",
+    "dev:prod": "cross-env NODE_ENV=production node devserver.js",
+    "build": "cross-env NODE_ENV=production webpack -p",
+    "build:debug": "cross-env SRCMAP=true NODE_ENV=development webpack -p",
+    "lint": "tslint -t msbuild -p ./tsconfig.json",
+    "typecheck": "tsc",
+    "import": "utils/convert/import.sh",
+    "import-win": "powershell -File utils/convert/import.ps1",
+    "convert": "ts-node utils/convert/convert.ts",
+    "unpack": "ts-node utils/convert/unpack.ts"
+  },
   "dependencies": {
     "@types/lodash": "^4.14.132",
     "@types/react-dom": "^16.8.6",
@@ -46,19 +60,6 @@
     "webpack-cli": "^3.3.2",
     "webpack-dev-middleware": "^3.7.0",
     "yml-loader": "^2.1.0"
-  },
-  "scripts": {
-    "dev": "cross-env NODE_ENV=development node devserver.js",
-    "dev:debug": "cross-env SRCMAP=true NODE_ENV=development node devserver.js",
-    "dev:prod": "cross-env NODE_ENV=production node devserver.js",
-    "build": "cross-env NODE_ENV=production webpack -p",
-    "build:debug": "cross-env SRCMAP=true NODE_ENV=development webpack -p",
-    "lint": "tslint -t msbuild -p ./tsconfig.json",
-    "typecheck": "tsc",
-    "import": "src/utils/convert/import.sh",
-    "import-win": "powershell -File src/utils/convert/import.ps1",
-    "convert": "ts-node src/utils/convert/convert.ts",
-    "unpack": "ts-node src/utils/convert/unpack.ts"
   },
   "repository": "https://github.com/agrande/lba2remake.git",
   "author": "Adrien Grandemange",

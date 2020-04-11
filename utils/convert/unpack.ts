@@ -6,7 +6,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { createFolderIfNotExists, executeCommand, removeDirectoryRecursive } from '../fsutils';
+import { createFolderIfNotExists, executeCommand, removeDirectoryRecursive } from '../../src/utils/fsutils';
 
 interface Paths {
     image: string;
@@ -36,9 +36,9 @@ const PathDefinitions = {
 };
 
 const UnpackCommands = {
-    GogWin: 'powershell -File src/utils/convert/unpack.ps1',
-    SteamWin: 'powershell -File src/utils/convert/unpack.ps1',
-    GogMac: 'cd www/data/_unpack && ./dosbox unpack.bat -exit'
+    GogWin: 'powershell -File utils/convert/unpack.ps1',
+    SteamWin: 'powershell -File utils/convert/unpack.ps1',
+    GogMac: 'cd www/data/LBA2/_unpack && ./dosbox unpack.bat -exit'
 };
 
 const unpack = async (gameFolder: string) => {
@@ -48,12 +48,12 @@ const unpack = async (gameFolder: string) => {
         return;
     }
 
-    createFolderIfNotExists(path.normalize('./www/data'));
-    const workDir = path.normalize('./www/data/_unpack/');
+    createFolderIfNotExists(path.normalize('./www/data/LBA2'));
+    const workDir = path.normalize('./www/data/LBA2/_unpack/');
     const localPaths = copyInputFiles(workDir, paths);
     console.log('Extracting image. Do not close the dosbox window.');
     await extractImage(version);
-    fs.copyFileSync(localPaths.track[0], path.normalize('./www/data/MUSIC/LBA2.OGG'));
+    fs.copyFileSync(localPaths.track[0], path.normalize('./www/data/LBA2/MUSIC/LBA2.OGG'));
     removeDirectoryRecursive(workDir);
 };
 

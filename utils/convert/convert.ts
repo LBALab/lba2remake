@@ -4,10 +4,10 @@ import fs from 'fs';
 import path from 'path';
 import FFmpeg from 'ffmpeg-cli';
 
-import { readHqrHeader, readHqrEntry } from '../hqr/hqr_reader';
-import { readFromFile, writeToFile } from '../hqr/array_buffer_fs';
-import { writeOpenHqr } from '../hqr/open_hqr_writer';
-import { removeFile } from '../fsutils';
+import { readHqrHeader, readHqrEntry } from '../../src/utils/hqr/hqr_reader';
+import { readFromFile, writeToFile } from '../../src/utils/hqr/array_buffer_fs';
+import { writeOpenHqr } from '../../src/utils/hqr/open_hqr_writer';
+import { removeFile } from '../../src/utils/fsutils';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {
@@ -18,7 +18,7 @@ const videoLanguageTracks = {
 };
 
 const videoConvertor = async () => {
-    const videoFolderPath = path.normalize('./www/data/VIDEO/');
+    const videoFolderPath = path.normalize('./www/data/LBA2/VIDEO/');
     const videoHqrPath = `${videoFolderPath}VIDEO.HQR`;
 
     const arrayBuffer = readFromFile(videoHqrPath);
@@ -90,7 +90,7 @@ const convertToMp4 = async (languageTrack: number, inputFilePath: string, output
 };
 
 const musicConvertor = async () => {
-    const folderPath = path.normalize('./www/data/MUSIC/');
+    const folderPath = path.normalize('./www/data/LBA2/MUSIC/');
     const files = fs.readdirSync(folderPath);
     const extensions = {'.wav': 1, '.ogg': 1};
     const filesToConvert = files.filter(file => path.extname(file).toLowerCase() in extensions);
@@ -101,7 +101,7 @@ const musicConvertor = async () => {
         const inputFile = `${folderPath}${file}`;
         const outputFileName = getOutputMusicFileName(file);
         const outputFilePath = `${folderPath}${outputFileName}`;
-        await convertToMp4Audio(inputFile, outputFilePath, bitrate);
+        await convertToM4aAudio(inputFile, outputFilePath, bitrate);
     }
 };
 
@@ -111,13 +111,13 @@ const getBaseName = (fileName: string) => {
 
 const getOutputMusicFileName = (fileName: string) => {
     if (fileName.toLowerCase() === 'lba2.ogg') {
-        return 'Track6.mp4';
+        return 'TADPCM6.m4a';
     }
-    return `${getBaseName(fileName)}.mp4`;
+    return `${getBaseName(fileName)}.m4a`;
 };
 
 const voiceConvertor = async () => {
-    const folderPath = path.normalize('./www/data/VOX/');
+    const folderPath = path.normalize('./www/data/LBA2/VOX/');
     const files = fs.readdirSync(folderPath);
     const bitrate = readBitrateArguments();
     const filesToConvert = files.filter(file =>
@@ -139,12 +139,12 @@ const voiceConvertor = async () => {
             const originalFilePath = `${folder}${originalFileName}`;
             writeToFile(originalFilePath, buffer);
 
-            const outputFileName =  `${baseFileName}.mp4`;
+            const outputFileName =  `${baseFileName}.m4a`;
             const outputFilePath = `${folder}${outputFileName}`;
 
             console.log('Processing HQR entry ', entry);
 
-            await convertToMp4Audio(originalFilePath, outputFilePath, bitrate);
+            await convertToM4aAudio(originalFilePath, outputFilePath, bitrate);
             if (fs.existsSync(outputFilePath)) {
                 fs.unlinkSync(originalFilePath);
             }
@@ -154,8 +154,8 @@ const voiceConvertor = async () => {
 };
 
 const samplesConvertor = async () => {
-    const filePath = path.normalize('./www/data/SAMPLES.HQR');
-    const outputFile = path.normalize('./www/data/SAMPLES_AAC.HQR.zip');
+    const filePath = path.normalize('./www/data/LBA2/SAMPLES.HQR');
+    const outputFile = path.normalize('./www/data/LBA2/SAMPLES_AAC.HQR.zip');
     const bitrate = readBitrateArguments();
     await writeOpenHqr(filePath, outputFile, false, async (index, folder, entry, buffer) => {
         // Restoring RIFF in header because LBA format has 0 instead of first R
@@ -166,12 +166,12 @@ const samplesConvertor = async () => {
         const originalFilePath = `${folder}${originalFileName}`;
         writeToFile(originalFilePath, buffer);
 
-        const outputFileName =  `${baseFileName}.mp4`;
+        const outputFileName =  `${baseFileName}.m4a`;
         const outputFilePath = `${folder}${outputFileName}`;
 
         console.log('Processing HQR entry ', entry);
 
-        await convertToMp4Audio(originalFilePath, outputFilePath, bitrate);
+        await convertToM4aAudio(originalFilePath, outputFilePath, bitrate);
         if (fs.existsSync(outputFilePath)) {
             fs.unlinkSync(originalFilePath);
         }
@@ -190,7 +190,7 @@ const hqrToOpenHqrConvertor = async () => {
     });
 };
 
-const convertToMp4Audio = async (inputFilePath: string, outputFilePath: string, bitrate: number) => {
+const convertToM4aAudio = async (inputFilePath: string, outputFilePath: string, bitrate: number) => {
     console.log(`Converting ${inputFilePath} to ${outputFilePath} with bitrate ${bitrate}k`);
     removeFile(outputFilePath);
     FFmpeg.runSync(`-i "${inputFilePath}" -c:a aac -b:a ${bitrate}k "${outputFilePath}"`);
