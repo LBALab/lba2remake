@@ -11,6 +11,10 @@ import { loadSceneMapData } from '../../../../scene/map';
 import { getLanguageConfig } from '../../../../lang';
 import { loadSceneData } from '../../../../scene';
 import { getIso3DCamera } from '../../../../cameras/iso3d';
+import {
+    registerResources,
+    preloadResources,
+} from '../../../../resources';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -144,7 +148,13 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    onLoad(root) {
+    async preload() {
+        await registerResources('lba2', 'EN', 'EN');
+        await preloadResources();
+    }
+
+    async onLoad(root) {
+        await this.preload();
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;

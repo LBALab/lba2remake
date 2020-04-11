@@ -76,7 +76,8 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         const game = createGame(
             clock,
             this.setUiState,
-            this.getUiState
+            this.getUiState,
+            props.params,
         );
 
         this.state = {
@@ -217,11 +218,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
     showMenu(inGameMenu = false) {
         this.state.game.pause();
         const audioMenuManager = this.state.game.getAudioMenuManager();
-        audioMenuManager.getMusicSource().load(6, () => {
-            if (this.state.showMenu && !this.state.video) {
-                audioMenuManager.getMusicSource().play();
-            }
-        });
+        audioMenuManager.getMusicSource().loadAndPlay(6);
         this.setState({showMenu: true, inGameMenu});
     }
 

@@ -1,7 +1,7 @@
-import {loadHqr} from '../hqr';
+import { loadResource, ResourceType } from '../resources';
 
 export async function loadSceneMapData() {
-    const bkg = await loadHqr('LBA_BKG.HQR');
+    const bkg = await loadResource(ResourceType.BRICKS);
     return loadSceneMap(bkg);
 }
 

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { loadHqr } from '../hqr';
+
 import { loadEntity, getBodyIndex, getAnimIndex, Entity } from './entity';
 import { loadBody } from './body';
 import { loadAnim } from './anim';
@@ -11,6 +11,7 @@ import { loadMesh } from './geometries';
 import { loadTextureRGBA } from '../texture';
 import { createBoundingBox } from '../utils/rendering';
 import { loadLUTTexture } from '../utils/lut';
+import { loadResource, ResourceType } from '../resources';
 
 export interface Model {
     state: any;
@@ -27,14 +28,15 @@ export async function loadModel(params: any,
                           animState: any,
                           envInfo: any,
                           ambience: any) {
-    const [ress, body, anim, anim3ds, lutTexture] = await Promise.all([
-        loadHqr('RESS.HQR'),
-        loadHqr('BODY.HQR'),
-        loadHqr('ANIM.HQR'),
-        loadHqr('ANIM3DS.HQR'),
+    const [ress, pal, entities, body, anim, lutTexture] = await Promise.all([
+        loadResource(ResourceType.RESS),
+        loadResource(ResourceType.PALETTE),
+        loadResource(ResourceType.ENTITIES),
+        loadResource(ResourceType.BODY),
+        loadResource(ResourceType.ANIM),
         loadLUTTexture()
     ]);
-    const files = {ress, body, anim, anim3ds};
+    const files = { ress, pal, entities, body, anim };
     return loadModelData(
         params,
         files,
@@ -65,8 +67,8 @@ function loadModelData(params: any,
     if (entityIdx === -1 || bodyIdx === -1 || animIdx === -1)
         return null;
 
-    const palette = new Uint8Array(files.ress.getEntry(0));
-    const entityInfo = files.ress.getEntry(44);
+    const palette = files.pal.getBufferUint8();
+    const entityInfo = files.entities.getBuffer();
     const entities = loadEntity(entityInfo);
 
     const model = {

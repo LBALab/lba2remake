@@ -9,6 +9,10 @@ import DebugData from '../../DebugData';
 import {get3DFreeCamera} from './utils/freeCamera';
 import IslandAmbience from './browser/ambience';
 import { TickerProps } from '../../../utils/Ticker';
+import {
+    registerResources,
+    preloadResources,
+} from '../../../../resources';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -107,7 +111,13 @@ export default class Island extends FrameListener<Props, State> {
         }
     }
 
-    onLoad(root) {
+    async preload() {
+        await registerResources('lba2', 'EN', 'EN');
+        await preloadResources();
+    }
+
+    async onLoad(root) {
+        await this.preload();
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;
@@ -248,9 +258,9 @@ export default class Island extends FrameListener<Props, State> {
         };
         renderer.stats.begin();
         scene.camera.update(island, this.state, time);
-        if (island) {
-            island.updateSeaTime(time);
-        }
+        // if (island) {
+        //     island.updateSeaTime(time); // FIXME looks like it does not exist anymore
+        // }
         renderer.render(scene);
         renderer.stats.end();
     }

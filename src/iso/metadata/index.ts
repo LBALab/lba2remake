@@ -7,9 +7,9 @@ import {
 import { processLayoutMirror, buildMirrors } from './mirrors';
 import { saveFullSceneModel } from './models';
 import { loadGrid } from '../grid';
-import { loadHqr } from '../../hqr';
 import { loadImageData } from '..';
 import { loadBricks } from '../bricks';
+import { loadResource, ResourceType } from '../../resources';
 
 export async function extractGridMetadata(grid, entry, ambience, is3D) {
     if (!is3D) {
@@ -43,12 +43,12 @@ export async function extractGridMetadata(grid, entry, ambience, is3D) {
 }
 
 export async function saveSceneReplacementModel(entry, ambience) {
-    const [ress, bkg, mask] = await Promise.all([
-        loadHqr('RESS.HQR'),
-        loadHqr('LBA_BKG.HQR'),
+    const [pal, bkg, mask] = await Promise.all([
+        loadResource(ResourceType.PALETTE),
+        loadResource(ResourceType.BRICKS),
         loadImageData('images/brick_mask.png')
     ]);
-    const palette = new Uint8Array(ress.getEntry(0));
+    const palette = pal.getBufferUint8();
     const bricks = loadBricks(bkg);
     const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
 

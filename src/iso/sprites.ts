@@ -1,11 +1,12 @@
 import * as THREE from 'three';
-import {each, orderBy} from 'lodash';
-import {bits} from '../utils';
-import {loadHqr} from '../hqr';
-import {compile} from '../utils/shaders';
-import {WORLD_SCALE} from '../utils/lba';
+
+import { each, orderBy } from 'lodash';
+import { bits } from '../utils';
+import { compile } from '../utils/shaders';
+import { WORLD_SCALE } from '../utils/lba';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
+import { loadResource, ResourceType } from '../resources';
 
 const push = Array.prototype.push;
 
@@ -18,12 +19,13 @@ export async function loadSprite(
     isBillboard = false,
     is3DCam = false
 ) {
-    const [ress, spritesFile, spritesRaw] = await Promise.all([
-        loadHqr('RESS.HQR'),
-        loadHqr('SPRITES.HQR'),
-        loadHqr('SPRIRAW.HQR')
+    const [ress, pal, spritesFile, spritesRaw] = await Promise.all([
+        loadResource(ResourceType.RESS),
+        loadResource(ResourceType.PALETTE),
+        loadResource(ResourceType.SPRITES),
+        loadResource(ResourceType.SPRITERAW)
     ]);
-    const palette = new Uint8Array(ress.getEntry(0));
+    const palette = pal.getBufferUint8();
     // lets keep it with two separate textures for now
     if (!spriteCache) {
         const sprites = loadAllSprites(spritesFile);

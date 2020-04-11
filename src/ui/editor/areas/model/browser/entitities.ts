@@ -1,22 +1,15 @@
-import {loadHqr} from '../../../../../hqr';
 import {loadEntity} from '../../../../../model/entity';
 import {loadModelsMetaData} from '../../../DebugData';
+import { loadResource, ResourceType } from '../../../../../resources';
 
-let loading = false;
 let entities = [];
 
-async function loadEntities() {
-    loading = true;
-    const ress = await loadHqr('RESS.HQR');
+export async function loadEntities() {
+    const entityInfo = await loadResource(ResourceType.ENTITIES);
     await loadModelsMetaData();
-    const entityInfo = ress.getEntry(44);
-    entities = loadEntity(entityInfo);
-    loading = false;
+    entities = loadEntity(entityInfo.getBuffer());
 }
 
 export function getEntities() {
-    if (entities.length === 0 && !loading) {
-        loadEntities();
-    }
     return entities;
 }

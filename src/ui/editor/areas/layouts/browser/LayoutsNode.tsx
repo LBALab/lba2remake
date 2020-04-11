@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { map, times } from 'lodash';
+
 import DebugData /*, { saveMetaData }*/ from '../../../DebugData';
 import Renderer from '../../../../../renderer';
-import { loadHqr } from '../../../../../hqr';
+import { loadResource, ResourceType } from '../../../../../resources';
 
 const indexStyle = {
     position: 'absolute' as const,
@@ -205,7 +206,7 @@ function getIcon(data, component) {
 let bkg = null;
 const libraries = {};
 
-loadHqr('LBA_BKG.HQR').then((lBkg) => {
+loadResource(ResourceType.BRICKS).then((lBkg) => {
     bkg = lBkg;
 });
 

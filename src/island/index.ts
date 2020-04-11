@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { map, each, assign, tail} from 'lodash';
 
-import { loadHqr } from '../hqr';
 import { prepareGeometries } from './geometries';
 import { loadLayout } from './layout';
 import { loadGround } from './ground';
@@ -19,6 +18,7 @@ import { loadRain } from './environment/rain';
 import { loadClouds } from './environment/clouds';
 import { loadLightning, applyLightningUniforms } from './environment/lightning';
 import { loadStars } from './environment/stars';
+import { loadResource, ResourceType } from '../resources';
 
 const islandProps = {};
 each(islandsInfo, (island) => {
@@ -53,13 +53,14 @@ export async function loadIslandScenery(params, name, ambience) {
         return islands[name];
     }
 
-    const [ress, ile, obl, lutTexture] = await Promise.all([
-        loadHqr('RESS.HQR'),
-        loadHqr(`${name}.ILE`),
-        loadHqr(`${name}.OBL`),
+    const [ress, pal, ile, obl, lutTexture] = await Promise.all([
+        loadResource(ResourceType.RESS),
+        loadResource(ResourceType.PALETTE),
+        loadResource(`${name}_ILE`),
+        loadResource(`${name}_OBL`),
         loadLUTTexture()
     ]);
-    const files = {ress, ile, obl};
+    const files = {ress, pal, ile, obl};
     const island = await loadIslandNode(params, islandProps[name], files, lutTexture, ambience);
     if (params.preview) {
         islandPreviews[name] = island;
@@ -76,7 +77,7 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
     const layout = loadLayout(files.ile);
     const data = {
         files,
-        palette: new Uint8Array(files.ress.getEntry(0)),
+        palette: files.pal.getBufferUint8(),
         layout,
         lutTexture
     };

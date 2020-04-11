@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 
-import {createState} from './state';
-import {createAudioManager, createMusicManager} from '../audio';
-import {loadTexts} from '../text';
-import {getLanguageConfig, tr} from '../lang';
+import { createState } from './state';
+import { createAudioManager, createMusicManager } from '../audio';
+import { loadTexts } from '../text';
+import { getLanguageConfig } from '../lang';
 import DebugData from '../ui/editor/DebugData';
 import { makePure } from '../utils/debug';
+import { registerResources, preloadResources } from '../resources';
 
-export function createGame(clock: any, setUiState: Function, getUiState: Function) {
+export function createGame(clock: any, setUiState: Function, getUiState: Function, params: any) {
     let isPaused = false;
     let isLoading = false;
 
@@ -123,22 +124,18 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
             }
         },
 
+        registerResources: async () => {
+            const { language, languageVoice } = getLanguageConfig();
+            await registerResources(params.game, language.code, languageVoice.code);
+        },
+
         async preload() {
-            const {language, languageVoice} = getLanguageConfig();
+            await preloadResources();
+
+            const { language } = getLanguageConfig();
             const [menuTexts, gameTexts] = await Promise.all([
                 loadTexts(language, 0),
-                loadTexts(language, 4),
-                preloadFile('images/2_screen_menubg_extended.png', tr('MenuBackground')),
-                preloadFile('images/remake_logo.png', tr('Logo')),
-                preloadFile('data/RESS.HQR', tr('Resources')),
-                preloadFile(`data/VOX/${languageVoice.code}_GAM_AAC.VOX.zip`,
-                    tr('MainVoices'), false),
-                preloadFile(`data/VOX/${languageVoice.code}_000_AAC.VOX.zip`,
-                    tr('Voices'), false),
-                preloadFile('data/MUSIC/LOGADPCM.mp4', tr('AdelineTheme'), false),
-                preloadFile('data/MUSIC/JADPCM15.mp4', tr('MainTheme'), false),
-                preloadFile('data/MUSIC/JADPCM16.mp4', tr('FirstSong'), false),
-                preloadFile('data/MUSIC/Track6.mp4', tr('MenuMusic'), false),
+                loadTexts(language, 4)
             ]);
             this.menuTexts = menuTexts;
             this.texts = gameTexts;
@@ -152,39 +149,6 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
     makePure(game.getAudioMenuManager);
 
     return game;
-}
-
-async function preloadFile(url, name, mandatory = true) {
-    const send = (eventName, progress?) => {
-        if (name) {
-            document.dispatchEvent(new CustomEvent(eventName, {detail: {name, progress}}));
-        }
-    };
-    return new Promise((resolve: Function, reject: Function) => {
-        send('loaderprogress', 0);
-        const request = new XMLHttpRequest();
-        request.open('GET', url, true);
-        request.responseType = 'arraybuffer';
-        request.onprogress = (event) => {
-            const progress = event.loaded / event.total;
-            send('loaderprogress', progress);
-        };
-        request.onload = function onload() {
-            if (!mandatory && this.status === 404) {
-                resolve();
-            }
-            if (this.status === 200) {
-                send('loaderend');
-                resolve();
-            } else {
-                reject(`Failed to load resource: status=${this.status}`);
-            }
-        };
-        request.onerror = (err) => {
-            reject(err);
-        };
-        request.send();
-    });
 }
 
 function getSavedVRFirstPersonMode() {

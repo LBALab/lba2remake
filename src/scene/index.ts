@@ -1,18 +1,19 @@
 import * as THREE from 'three';
-import {DirMode} from '../game/actors';
 
-import {loadHqr} from '../hqr';
-import {bits} from '../utils';
-import {loadTextData, getTextFile} from '../text';
-import {WORLD_SCALE} from '../utils/lba';
+import { DirMode } from '../game/actors';
+import { bits } from '../utils';
+import { loadTextData } from '../text';
+import  {WORLD_SCALE } from '../utils/lba';
+import { loadResource, ResourceType } from '../resources';
 
 export async function loadSceneData(language, index) {
-    const [scene, text, ress] = await Promise.all([
-        loadHqr('SCENE.HQR'),
-        loadHqr(getTextFile(language)),
-        loadHqr('RESS.HQR')
+    const [scene, text, ress, pal] = await Promise.all([
+        loadResource(ResourceType.SCENE),
+        loadResource(ResourceType.TEXT),
+        loadResource(ResourceType.RESS),
+        loadResource(ResourceType.PALETTE),
     ]);
-    const files = {scene, text, ress};
+    const files = {scene, text, ress, pal};
     return loadSceneDataSync(files, language, index);
 }
 
@@ -25,7 +26,6 @@ function loadSceneDataSync(files, language, index) {
     const buffer = files.scene.getEntry(index + 1); // first entry is not a scene
     const data = new DataView(buffer);
     const textBankId = data.getInt8(0);
-
     const sceneData = {
         index,
         textBankId,
@@ -35,7 +35,7 @@ function loadSceneDataSync(files, language, index) {
         unknown2: data.getUint16(4, true),
         isOutsideScene: data.getInt8(6) === 1,
         buffer,
-        palette: new Uint8Array(files.ress.getEntry(0)),
+        palette: files.pal.getBufferUint8(),
         actors: [],
         texts: null
     };

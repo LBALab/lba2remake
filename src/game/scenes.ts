@@ -37,8 +37,9 @@ const {initSceneDebugData, loadSceneMetaData} = DBG;
 
 export async function createSceneManager(params, game, renderer, hideMenu: Function) {
     let scene = null;
-    let sceneMap = null;
     const sceneManager = {
+        sceneMap: null,
+
         getScene() {
             return scene;
         },
@@ -90,12 +91,15 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             }
             game.loading(index);
             renderer.setClearColor(0x000000);
+            if (!this.sceneMap) {
+                this.sceneMap = await loadSceneMapData();
+            }
             scene = await loadScene(
                 this,
                 params,
                 game,
                 renderer,
-                sceneMap,
+                this.sceneMap,
                 index,
                 null
             );
@@ -116,14 +120,14 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
 
         async next() {
             if (scene) {
-                const nextIdx = (scene.index + 1) % sceneMap.length;
+                const nextIdx = (scene.index + 1) % this.sceneMap.length;
                 return this.goto(nextIdx);
             }
         },
 
         async previous() {
             if (scene) {
-                const previousIdx = scene.index > 0 ? scene.index - 1 : sceneMap.length - 1;
+                const previousIdx = scene.index > 0 ? scene.index - 1 : this.sceneMap.length - 1;
                 return this.goto(previousIdx);
             }
         },
@@ -135,7 +139,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
 
     makePure(sceneManager.getScene);
 
-    sceneMap = await loadSceneMapData();
+    // sceneMap = await loadSceneMapData();
 
     return sceneManager;
 }
@@ -237,6 +241,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
     const scene = {
         index,
         data: sceneData,
+        sceneMap,
         isIsland: indexInfo.isIsland,
         camera,
         threeScene,

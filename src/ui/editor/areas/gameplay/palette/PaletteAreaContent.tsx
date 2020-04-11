@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { extend } from 'lodash';
+
 import {
     generateLUTTexture,
     resetLUTTexture,
     loadLUTTexture,
     LUT_DIM
 } from '../../../../../utils/lut';
-import { loadHqr } from '../../../../../hqr';
 import { editor, fullscreen } from '../../../../styles';
+import { loadResource, ResourceType } from '../../../../../resources';
 
 const style = extend({
     overflowY: 'auto',
@@ -87,7 +88,7 @@ export default class PaletteAreaContent extends React.Component<Props, State> {
         this.ramp = 0;
         this.dragging = false;
 
-        loadHqr('RESS.HQR').then((ress) => {
+        loadResource(ResourceType.RESS).then((ress) => {
             this.palette = new Uint8Array(ress.getEntry(0));
             this.draw();
             this.drawLUT();

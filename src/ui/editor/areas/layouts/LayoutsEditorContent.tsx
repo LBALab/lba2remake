@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as THREE from 'three';
 import { omit, cloneDeep, times, each } from 'lodash';
 import { saveAs } from 'file-saver';
+
 import { ColladaExporter } from 'three/examples/jsm/exporters/ColladaExporter';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Renderer from '../../../../renderer';
@@ -13,7 +14,6 @@ import { getIsometricCamera } from '../../../../cameras/iso';
 import { loadImageData } from '../../../../iso';
 import { loadLibrary } from '../../../../iso/grid';
 import { loadBricks } from '../../../../iso/bricks';
-import { loadHqr } from '../../../../hqr';
 import { OffsetBySide, Side } from '../../../../iso/mapping';
 import { compile } from '../../../../utils/shaders';
 import brick_vertex from '../../../../iso/shaders/brick.vert.glsl';
@@ -25,6 +25,12 @@ import { loadSceneMapData } from '../../../../scene/map';
 import { loadSceneData } from '../../../../scene';
 import { getLanguageConfig } from '../../../../lang';
 import { saveSceneReplacementModel } from '../../../../iso/metadata';
+import {
+    loadResource,
+    ResourceType,
+    preloadResources,
+    registerResources
+} from '../../../../resources';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -230,7 +236,13 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    onLoad(root) {
+    async preload() {
+        await registerResources('lba2', 'EN', 'EN');
+        await preloadResources();
+    }
+
+    async onLoad(root) {
+        await this.preload();
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;
@@ -305,12 +317,12 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.loading = true;
         this.layout = layoutIdx;
         this.library = libraryIdx;
-        const [ress, bkg, lutTexture] = await Promise.all([
-            loadHqr('RESS.HQR'),
-            loadHqr('LBA_BKG.HQR'),
+        const [pal, bkg, lutTexture] = await Promise.all([
+            loadResource(ResourceType.PALETTE),
+            loadResource(ResourceType.BRICKS),
             await loadLUTTexture(),
         ]);
-        const palette = new Uint8Array(ress.getEntry(0));
+        const palette = pal.getBufferUint8();
         const paletteTexture = loadPaletteTexture(palette);
         const light = getLightVector();
         if (!this.mask) {
@@ -494,11 +506,11 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             file,
             orientation: 0
         };
-        const [ress, lutTexture] = await Promise.all([
-            loadHqr('RESS.HQR'),
+        const [pal, lutTexture] = await Promise.all([
+            loadResource(ResourceType.PALETTE),
             await loadLUTTexture(),
         ]);
-        const palette = new Uint8Array(ress.getEntry(0));
+        const palette = pal.getBufferUint8();
         const paletteTexture = loadPaletteTexture(palette);
         const light = getLightVector();
         const shaderData = {lutTexture, paletteTexture, light};
@@ -902,7 +914,7 @@ function getLightVector() {
 }
 
 async function findScenesUsingLibrary(library) {
-    const bkg = await loadHqr('LBA_BKG.HQR');
+    const bkg = await loadResource(ResourceType.BRICKS);
     const sceneMap = await loadSceneMapData();
     const scenes = [];
     each(times(222), async (scene) => {

@@ -16,6 +16,11 @@ import DebugData from '../../DebugData';
 import fmod from './utils/fmod';
 import {get3DOrbitCamera} from './utils/orbitCamera';
 import { TickerProps } from '../../../utils/Ticker';
+import {
+    registerResources,
+    preloadResources,
+} from '../../../../resources';
+import { loadEntities } from './browser/entitities';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -115,7 +120,14 @@ export default class Model extends FrameListener<Props, State> {
         }
     }
 
-    onLoad(root) {
+    async preload() {
+        await registerResources('lba2', 'EN', 'EN');
+        await preloadResources();
+        loadEntities();
+    }
+
+    async onLoad(root) {
+        await this.preload();
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;
