@@ -28,8 +28,8 @@ import { saveSceneReplacementModel } from '../../../../iso/metadata';
 import {
     loadResource,
     ResourceType,
-    registerStaticResource,
-    preloadResources
+    preloadResources,
+    registerResources
 } from '../../../../resources';
 
 interface Props extends TickerProps {
@@ -236,17 +236,13 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    preload() {
-        registerStaticResource(ResourceType.RESS, 'RESS.HQR');
-        registerStaticResource(ResourceType.PALETTE, 'RESS.HQR', 0);
-        registerStaticResource(ResourceType.BRICKS, 'LBA_BKG.HQR');
-
-        preloadResources();
+    async preload() {
+        await registerResources('lba2', 'EN', 'EN');
+        await preloadResources();
     }
 
-    onLoad(root) {
-        this.preload();
-
+    async onLoad(root) {
+        await this.preload();
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;

@@ -4,7 +4,7 @@ import { AnimType } from '../data/animType';
 import { setMagicBallLevel } from '../../game/state';
 import { unimplemented } from './utils';
 import { WORLD_SCALE } from '../../utils/lba';
-import { getResourcePath, ResourceType } from '../../resources';
+import { getResourcePath } from '../../resources';
 
 export const PALETTE = unimplemented();
 
@@ -349,9 +349,7 @@ export function PLAY_VIDEO(cmdState, video) {
         };
         this.game.setUiState({ skip: false,
             video: {
-                path: getResourcePath(
-                    ResourceType[`VIDEO_${video}`]
-                ),
+                path: getResourcePath(`VIDEO_${video}`),
                 onEnded
             }});
         cmdState.skipListener = function skipListener() {

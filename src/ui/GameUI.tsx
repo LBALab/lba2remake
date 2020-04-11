@@ -27,7 +27,6 @@ import {sBind} from '../utils';
 import {TickerProps} from './utils/Ticker';
 import {updateLabels} from './editor/labels';
 import { pure } from '../utils/decorators';
-import { getLanguageConfig } from '../lang';
 import { getResourcePath, ResourceType } from '../resources';
 
 interface GameUIProps extends TickerProps {
@@ -113,7 +112,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 this.getUiState,
                 props.params,
             );
-            game.registerResources();
 
             this.state = {
                 clock,
@@ -135,7 +133,11 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             };
 
             clock.start();
-            game.preload().then(() => this.onGameReady());
+            game.registerResources().then(() =>
+                game.preload().then(() => {
+                    this.onGameReady();
+                })
+            );
         }
     }
 
@@ -360,9 +362,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 this.state.game.pause();
                 this.setState({
                     video: {
-                        path: getResourcePath(
-                            ResourceType[`VIDEO_INTRO_${getLanguageConfig().languageVoice.code}`]
-                        ),
+                        path: getResourcePath(ResourceType.VIDEO_INTRO),
                         onEnded
                     }
                 }, this.saveData);

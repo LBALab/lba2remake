@@ -10,10 +10,8 @@ import {get3DFreeCamera} from './utils/freeCamera';
 import IslandAmbience from './browser/ambience';
 import { TickerProps } from '../../../utils/Ticker';
 import {
-    registerStaticResource,
-    registerTransientResource,
+    registerResources,
     preloadResources,
-    ResourceType,
 } from '../../../../resources';
 
 interface Props extends TickerProps {
@@ -113,44 +111,13 @@ export default class Island extends FrameListener<Props, State> {
         }
     }
 
-    preload() {
-        registerStaticResource(ResourceType.RESS, 'RESS.HQR');
-        registerStaticResource(ResourceType.PALETTE, 'RESS.HQR', 0);
-
-        registerTransientResource(ResourceType.ASCENCE_ILE,  'ASCENCE.ILE');
-        registerTransientResource(ResourceType.ASCENCE_OBL,  'ASCENCE.OBL');
-        registerTransientResource(ResourceType.CELEBRA2_ILE, 'CELEBRA2.ILE');
-        registerTransientResource(ResourceType.CELEBRA2_OBL, 'CELEBRA2.OBL');
-        registerTransientResource(ResourceType.CELEBRAT_ILE, 'CELEBRAT.ILE');
-        registerTransientResource(ResourceType.CELEBRAT_OBL, 'CELEBRAT.OBL');
-        registerTransientResource(ResourceType.CITABAU_ILE,  'CITABAU.ILE');
-        registerTransientResource(ResourceType.CITABAU_OBL,  'CITABAU.OBL');
-        registerTransientResource(ResourceType.CITADEL_ILE,  'CITADEL.ILE');
-        registerTransientResource(ResourceType.CITADEL_OBL,  'CITADEL.OBL');
-        registerTransientResource(ResourceType.DESERT_ILE,   'DESERT.ILE');
-        registerTransientResource(ResourceType.DESERT_OBL,   'DESERT.OBL');
-        registerTransientResource(ResourceType.EMERAUDE_ILE, 'EMERAUDE.ILE');
-        registerTransientResource(ResourceType.EMERAUDE_OBL, 'EMERAUDE.OBL');
-        registerTransientResource(ResourceType.ILOTCX_ILE,   'ILOTCX.ILE');
-        registerTransientResource(ResourceType.ILOTCX_OBL,   'ILOTCX.OBL');
-        registerTransientResource(ResourceType.KNARTAS_ILE,  'KNARTAS.ILE');
-        registerTransientResource(ResourceType.KNARTAS_OBL,  'KNARTAS.OBL');
-        registerTransientResource(ResourceType.MOON_ILE,     'MOON.ILE');
-        registerTransientResource(ResourceType.MOON_OBL,     'MOON.OBL');
-        registerTransientResource(ResourceType.MOSQUIBE_ILE, 'MOSQUIBE.ILE');
-        registerTransientResource(ResourceType.MOSQUIBE_OBL, 'MOSQUIBE.OBL');
-        registerTransientResource(ResourceType.OTRINGAL_ILE, 'OTRINGAL.ILE');
-        registerTransientResource(ResourceType.OTRINGAL_OBL, 'OTRINGAL.OBL');
-        registerTransientResource(ResourceType.PLATFORM_ILE, 'PLATFORM.ILE');
-        registerTransientResource(ResourceType.PLATFORM_OBL, 'PLATFORM.OBL');
-        registerTransientResource(ResourceType.SOUSCELB_ILE, 'SOUSCELB.ILE');
-        registerTransientResource(ResourceType.SOUSCELB_OBL, 'SOUSCELB.OBL');
-
-        preloadResources();
+    async preload() {
+        await registerResources('lba2', 'EN', 'EN');
+        await preloadResources();
     }
 
-    onLoad(root) {
-        this.preload();
+    async onLoad(root) {
+        await this.preload();
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;

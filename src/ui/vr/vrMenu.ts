@@ -5,7 +5,7 @@ import { getOrCreateHands, handlePicking } from './vrHands';
 import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
 import controllerScreens from './data/controllerScreens';
 import { drawFrame } from './vrUtils';
-import {tr, getLanguageConfig} from '../../lang';
+import { tr } from '../../lang';
 import { getResourcePath, ResourceType } from '../../resources';
 
 let menuNode = null;
@@ -58,9 +58,7 @@ export function createMenu(game, sceneManager, renderer, light) {
             game.setUiState({
                 showMenu: false,
                 video: {
-                    path: getResourcePath(
-                        ResourceType[`VIDEO_INTRO_${getLanguageConfig().languageVoice.code}`]
-                    ),
+                    path: getResourcePath(ResourceType.VIDEO_INTRO),
                     onEnded
                 }
             });

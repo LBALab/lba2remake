@@ -56,8 +56,8 @@ export async function loadIslandScenery(params, name, ambience) {
     const [ress, pal, ile, obl, lutTexture] = await Promise.all([
         loadResource(ResourceType.RESS),
         loadResource(ResourceType.PALETTE),
-        loadResource(ResourceType[`${name}_ILE`]),
-        loadResource(ResourceType[`${name}_OBL`]),
+        loadResource(`${name}_ILE`),
+        loadResource(`${name}_OBL`),
         loadLUTTexture()
     ]);
     const files = {ress, pal, ile, obl};

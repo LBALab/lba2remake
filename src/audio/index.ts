@@ -108,7 +108,7 @@ function getMusicSource(state, context) {
             }
         };
 
-        const resId = ResourceType[`MUSIC_SCENE_${index}`];
+        const resId = `MUSIC_SCENE_${index}`;
         if (musicDecodedAudioCache[index]) {
             setBuffer(musicDecodedAudioCache[index]);
             return;
@@ -279,11 +279,10 @@ function getVoiceSource(state, context, data = null) {
     };
     source.load = (index, textBankId, callback) => {
         const textBank = `${textBankId}`;
-        let resType: number =
-            ResourceType[`VOICES_${(`000${textBank}`)
-            .substring(0, 3 - textBank.length) + textBank}`];
+        let resType = `VOICES_${(`000${textBank}`)
+            .substring(0, 3 - textBank.length) + textBank}`;
         if (textBankId === -1) {
-            resType = ResourceType.VOICES_GAM;
+            resType = 'VOICES_GAM';
         }
         loadResource(resType).then(async (resource) => {
             if (!resource) {

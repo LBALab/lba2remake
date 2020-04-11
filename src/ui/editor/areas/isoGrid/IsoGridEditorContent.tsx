@@ -12,9 +12,8 @@ import { getLanguageConfig } from '../../../../lang';
 import { loadSceneData } from '../../../../scene';
 import { getIso3DCamera } from '../../../../cameras/iso3d';
 import {
-    registerStaticResource,
+    registerResources,
     preloadResources,
-    ResourceType,
 } from '../../../../resources';
 
 interface Props extends TickerProps {
@@ -149,18 +148,13 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    preload() {
-        registerStaticResource(ResourceType.RESS, 'RESS.HQR');
-        registerStaticResource(ResourceType.PALETTE, 'RESS.HQR', 0);
-        registerStaticResource(ResourceType.BRICKS, 'LBA_BKG.HQR');
-        registerStaticResource(ResourceType.SCENE, 'SCENE.HQR');
-        registerStaticResource(ResourceType.TEXT, 'TEXT.HQR');
-
-        preloadResources();
+    async preload() {
+        await registerResources('lba2', 'EN', 'EN');
+        await preloadResources();
     }
 
-    onLoad(root) {
-        this.preload();
+    async onLoad(root) {
+        await this.preload();
         if (!this.root) {
             if (this.props.mainData) {
                 this.canvas = this.props.mainData.canvas;

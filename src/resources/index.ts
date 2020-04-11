@@ -1,5 +1,6 @@
 
 import HQR, { loadHqr } from '../hqr';
+import WebApi from '../webapi';
 
 const ResourceStrategyType = {
     TRANSIENT: 0,
@@ -15,261 +16,24 @@ const HQRExtensions = [
 ];
 
 const ResourceType = {
-    NONE: 0,
-    ANIM: 1,
-    BODY: 2,
-    RESS: 3,
-    SAMPLES: 4,
-    SCENE: 5,
-    SPRITES: 6,
-    SPRITERAW: 7,
-    TEXT: 8,
-    OBJECTS: 9,
-    LAYOUTS: 10,
-    BRICKS: 11,
-    GRIDS: 12,
-    MUSIC: 13,
-    LOGO: 14,
-    THEME_ADELINE: 15,
-    THEME_MAIN: 16,
-    THEME_MENU: 17,
-    // MUSIC_TRACK_1: 18,
-    VOICES_GAM: 19,
-    VOICES_000: 20,
-    VOICES_001: 21,
-    VOICES_002: 22,
-    VOICES_003: 23,
-    VOICES_004: 24,
-    VOICES_005: 25,
-    VOICES_006: 26,
-    VOICES_007: 27,
-    VOICES_008: 28,
-    VOICES_009: 29,
-    VOICES_010: 30,
-    VOICES_011: 31,
-    ASCENCE_ILE: 32,
-    ASCENCE_OBL: 33,
-    CELEBRA2_ILE: 34,
-    CELEBRA2_OBL: 35,
-    CELEBRAT_ILE: 36,
-    CELEBRAT_OBL: 37,
-    CITABAU_ILE: 38,
-    CITABAU_OBL: 39,
-    CITADEL_ILE: 40,
-    CITADEL_OBL: 41,
-    DESERT_ILE: 42,
-    DESERT_OBL: 43,
-    EMERAUDE_ILE: 44,
-    EMERAUDE_OBL: 45,
-    ILOTCX_ILE: 46,
-    ILOTCX_OBL: 47,
-    KNARTAS_ILE: 48,
-    KNARTAS_OBL: 49,
-    MOON_ILE: 50,
-    MOON_OBL: 51,
-    MOSQUIBE_ILE: 52,
-    MOSQUIBE_OBL: 53,
-    OTRINGAL_ILE: 54,
-    OTRINGAL_OBL: 55,
-    PLATFORM_ILE: 56,
-    PLATFORM_OBL: 57,
-    SOUSCELB_ILE: 58,
-    SOUSCELB_OBL: 59,
-    ENTITIES: 60,
-    PALETTE: 61,
-    MENU_BACKGROUND: 62,
-    VIDEO_ASCENSEU: 63,
-    VIDEO_ASRETOUR: 64,
-    VIDEO_BALDINO: 65,
-    VIDEO_BOAT1: 66,
-    VIDEO_BOAT2: 67,
-    VIDEO_BOAT3: 68,
-    VIDEO_BOAT4: 69,
-    VIDEO_BU: 70,
-    VIDEO_CRASH: 71,
-    VIDEO_DARK: 72,
-    VIDEO_DELUGE: 73,
-    VIDEO_END: 74,
-    VIDEO_END2: 75,
-    VIDEO_ENFA: 76,
-    VIDEO_FRAGMENT: 77,
-    VIDEO_GROTTE: 78,
-    VIDEO_INTRO: 79,
-    VIDEO_LUNES1: 80,
-    VIDEO_LUNES2: 81,
-    VIDEO_MONTCH: 82,
-    VIDEO_MOON: 83,
-    VIDEO_PASSEUR: 84,
-    VIDEO_PUB1: 85,
-    VIDEO_PUB2: 86,
-    VIDEO_PUB3: 87,
-    VIDEO_PUB4A6: 88,
-    VIDEO_SENDELL: 89,
-    VIDEO_SORT: 90,
-    VIDEO_SURSAUT: 91,
-    VIDEO_TAXI: 92,
-    VIDEO_TAXI_J: 93,
-    VIDEO_VOYAGEZ: 94,
-    VIDEO_ZEELP: 95,
-    VIDEO_BABY: 96,
-    VIDEO_INTRO_EN: 97,
-    VIDEO_INTRO_FR: 98,
-    VIDEO_INTRO_DE: 99,
-    MUSIC_SCENE_0: 100,
-    MUSIC_SCENE_1: 101,
-    MUSIC_SCENE_2: 102,
-    MUSIC_SCENE_3: 103,
-    MUSIC_SCENE_4: 104,
-    MUSIC_SCENE_5: 105,
-    MUSIC_SCENE_6: 106,
-    MUSIC_SCENE_7: 107,
-    MUSIC_SCENE_8: 108,
-    MUSIC_SCENE_9: 109,
-    MUSIC_SCENE_10: 110,
-    MUSIC_SCENE_11: 111,
-    MUSIC_SCENE_12: 112,
-    MUSIC_SCENE_13: 113,
-    MUSIC_SCENE_14: 114,
-    MUSIC_SCENE_15: 115,
-    MUSIC_SCENE_16: 116,
-    MUSIC_SCENE_17: 117,
-    MUSIC_SCENE_18: 118,
-    MUSIC_SCENE_19: 119,
-    MUSIC_SCENE_20: 120,
-    MUSIC_SCENE_21: 121,
-    MUSIC_SCENE_22: 122,
-    MUSIC_SCENE_23: 123,
-    MUSIC_SCENE_24: 124,
+    NONE: 'NONE',
+    ANIM: 'ANIM',
+    BODY: 'BODY',
+    RESS: 'RESS',
+    SAMPLES: 'SAMPLES',
+    SCENE: 'SCENE',
+    SPRITES: 'SPRITES',
+    SPRITERAW: 'SPRITERAW',
+    TEXT: 'TEXT',
+    OBJECTS: 'OBJECTS',
+    LAYOUTS: 'LAYOUTS',
+    BRICKS: 'BRICKS',
+    GRIDS: 'GRIDS',
+    MUSIC: 'MUSIC',
+    ENTITIES: 'ENTITIES',
+    PALETTE: 'PALETTE',
+    VIDEO_INTRO: 'VIDEO_INTRO',
 };
-
-// FIXME Move this to a metadata file perhaps
-const ResourceName = [
-    'None',
-    'Animations',
-    '3d Models',
-    'Global Resources',
-    'Samples',
-    'Scenes',
-    'Sprites',
-    'Raw Sprites',
-    'Text Dialogues',
-    'Inventory Objects',
-    'Isometric Layouts',
-    'Isometric Bricks',
-    'Isometric Grids',
-    'Music',
-    'LBA Logo',
-    'Adeline Theme Song', // 15
-    'LBA Theme Short Version',
-    'LBA Theme',
-    '',
-    'Main Game Voices',
-    'Voices 0',
-    'Voices 1',
-    'Voices 2',
-    'Voices 3',
-    'Voices 4',
-    'Voices 5',
-    'Voices 6',
-    'Voices 7',
-    'Voices 8',
-    'Voices 9',
-    'Voices 10', // 30
-    'Voices 11',
-    'Undergas Elevator',
-    'Undergas Elevator Objects',
-    'Celebration Island Statue Emerged',
-    'Celebration Island Statue Emerged Objects',
-    'Celebration Island',
-    'Celebration Island Objects',
-    'Citadel Island',
-    'Citadel Island Objects',
-    'Citadel Island Storm',
-    'Citadel Island Storm Objects',
-    'Desert Island',
-    'Desert Island Objects',
-    'Emerald Moon',
-    'Emerald Moon Objects', // 45
-    'Island CX',
-    'Island CX Objects',
-    'Francos Island',
-    'Francos Island Objects',
-    'Emerald Moon 2',
-    'Emerald Moon 2 Objects',
-    'Mosquibees Island',
-    'Mosquibees Island Objects',
-    'Otringal',
-    'Otringal Objects',
-    'Wannies Island',
-    'Wannies Island Objects',
-    'Volcano Island',
-    'Volcano Island Objects',
-    '3D Animation & Model Entites', // 60
-    'Main Palette',
-    'Menu Background Image',
-    'Undergas Going Down',
-    'Undergas Going Up',
-    'Baldino',
-    'Boat',
-    'Boat',
-    'Boat',
-    'Boat',
-    'Temple of Bù',
-    'Crash',
-    'Dark Monk Statue Rises',
-    'Bad Ending',
-    'The End',
-    'The End', // 75
-    'ENFA',
-    'Wannies Fragment',
-    'Citadel Cliffs',
-    'Intro Sequence',
-    'Emerald Moon Moves',
-    'Emeral Moon Moves',
-    'MONTCH',
-    'Emerald Moon',
-    'Ferryman',
-    'PUB1',
-    'PUB2',
-    'PUB3',
-    'PUB4A6',
-    'Sendell\'s Ball',
-    'SORT', // 90
-    'SURSAUT',
-    'TAXI',
-    'TAXI_J',
-    'VOYAGEZ',
-    'Zeelich',
-    'Baby Ending',
-    'Intro Sequence',
-    'Intro Sequence',
-    'Intro Sequence',
-    'Music Scene 0',
-    'Music Scene 1',
-    'Music Scene 2',
-    'Music Scene 3',
-    'Music Scene 4',
-    'Music Scene 5',
-    'Music Scene 6',
-    'Music Scene 7',
-    'Music Scene 8',
-    'Music Scene 9',
-    'Music Scene 10',
-    'Music Scene 11',
-    'Music Scene 12',
-    'Music Scene 13',
-    'Music Scene 14',
-    'Music Scene 15',
-    'Music Scene 16',
-    'Music Scene 17',
-    'Music Scene 18',
-    'Music Scene 19',
-    'Music Scene 20',
-    'Music Scene 21',
-    'Music Scene 22',
-    'Music Scene 23',
-    'Music Scene 24',
-];
 
 interface Resource {
     id: number;
@@ -294,7 +58,11 @@ interface Resource {
 
 let Resources: Resource | {} = { };
 
-const preloadResource = async (url, name = null, mandatory = true) => {
+const requestResource = async (
+    url,
+    name = null,
+    mandatory = true,
+) => {
     const send = (eventName, progress?) => {
         if (name) {
             document.dispatchEvent(new CustomEvent(eventName, {detail: {name, progress}}));
@@ -328,9 +96,10 @@ const preloadResource = async (url, name = null, mandatory = true) => {
 };
 
 /** Add Resource */
-const registerResource = (
+const register = (
     type: number,
-    id: number,
+    id: string,
+    name: string,
     path: string,
     entryIndex: number,
 ) => {
@@ -341,7 +110,7 @@ const registerResource = (
     const resource = {
         id,
         type,
-        name: ResourceName[id],
+        name,
         path,
         index: entryIndex,
         loaded: false,
@@ -426,7 +195,7 @@ const registerResource = (
             return;
         }
         if (!resource.isHQR) {
-            resource.buffer = await preloadResource(resource.path);
+            resource.buffer = await requestResource(resource.path);
             resource.loaded = true;
             return;
         }
@@ -449,22 +218,6 @@ const registerResource = (
     Resources[id] = resource;
 };
 
-const registerStaticResource = (
-    id: number,
-    path: string,
-    index: number = null,
-) => {
-    registerResource(ResourceStrategyType.STATIC, id, path, index);
-};
-
-const registerTransientResource = (
-    id: number,
-    path: string,
-    index: number = null,
-) => {
-    registerResource(ResourceStrategyType.TRANSIENT, id, path, index);
-};
-
 const releaseAllResources = () => {
     Resources = {};
 };
@@ -477,7 +230,7 @@ const releaseTransientResources = () => {
     }
 };
 
-const releaseResource = (id: number) => {
+const releaseResource = (id: string) => {
     const res = Resources[id];
     if (res) {
         delete res.hqr;
@@ -491,7 +244,7 @@ const preloadResources = async () => {
     const resPreload = [];
     for (const res of Object.values(Resources)) {
         if (!res.loaded && res.type === ResourceStrategyType.STATIC) {
-            preload.push(preloadResource(res.path, res.name));
+            preload.push(requestResource(res.path, res.name));
         }
     }
     await Promise.all(preload);
@@ -503,7 +256,7 @@ const preloadResources = async () => {
     await Promise.all(resPreload);
 };
 
-const loadResource = async (id: number) => {
+const loadResource = async (id: string) => {
     const resource = Resources[id];
     if (resource && !resource.loaded) {
         await resource.load();
@@ -511,19 +264,32 @@ const loadResource = async (id: number) => {
     return resource;
 };
 
-const getResource = (id: number) => {
+const getResource = (id: string) => {
     return Resources[id];
 };
 
-const getResourcePath = (id: number) => {
+const getResourcePath = (id: string) => {
     return Resources[id].path;
+};
+
+const registerResources = async (game, language, languageVoice) => {
+    const api = new WebApi();
+    const response = await api.request(`resources/${game}.json`, 'GET', 'json');
+    if (response && response.body) {
+        const res = response.body;
+        // @ts-ignore
+        for (let e = 0; e < res.entries.length; e += 1) {
+            // @ts-ignore
+            const r = res.entries[e];
+            let path = r.path.replace('%LANGCODE%', language);
+            path = path.replace('%LANGVOICECODE%', languageVoice);
+            register(ResourceStrategyType[r.strategy], r.type, r.name, path, r.index);
+        }
+    }
 };
 
 export {
     ResourceType,
-    ResourceName,
-    registerStaticResource,
-    registerTransientResource,
     releaseAllResources,
     releaseTransientResources,
     releaseResource,
@@ -531,4 +297,5 @@ export {
     loadResource,
     getResource,
     getResourcePath,
+    registerResources,
 };
