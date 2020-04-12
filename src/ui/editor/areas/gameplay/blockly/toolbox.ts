@@ -1,11 +1,19 @@
 export default `<xml id="toolbox" style="display: none">
     <category name="Structural" colour="198">
-        <label text="Behaviour declaration"/>
+        <label text="Behaviours"/>
         <block type="lba_behaviour_init"/>
         <block type="lba_behaviour"/>
-        <label text="Behaviour navigation"/>
         <block type="lba_set_behaviour"/>
         <block type="lba_set_behaviour_obj"/>
+        <label text="Tracks"/>
+        <block type="lba_set_track"/>
+        <block type="lba_set_track_obj"/>
+        <block type="lba_save_current_track"/>
+        <block type="lba_save_current_track_obj"/>
+        <block type="lba_track_to_vargame"/>
+        <block type="lba_restore_last_track"/>
+        <block type="lba_restore_last_track_obj"/>
+        <block type="lba_vargame_to_track"/>
     </category>
     <category name="Actions" colour="42">
         <label text="Variables &amp; Bonuse"/>
@@ -16,6 +24,7 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_set_anim_obj"/>
         <block type="lba_set_body"/>
         <block type="lba_set_body_obj"/>
+        <block type="lba_no_body"/>
     </category>
     <category name="Control" colour="180">
         <label text="Branching"/>

@@ -1,8 +1,10 @@
 import { map, filter } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../DebugData';
 
-export function generateBehaviours() {
-    const actor = this.actor || this.workspace.actor;
+export function generateBehaviours(fromOtherActor) {
+    const actor = fromOtherActor
+        ? this.actor
+        : this.workspace.actor;
     if (!actor) {
         return [['<behaviour>', '<behaviour>']];
     }

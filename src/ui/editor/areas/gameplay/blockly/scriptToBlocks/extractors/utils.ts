@@ -7,21 +7,39 @@ export function newBlock(workspace, type, def) {
     return block;
 }
 
-export function GENERIC_ACTION(type, argCount, workspace, cmd, {connection}) {
+export function GENERIC_ACTION(type, arg, workspace, cmd, {connection}) {
     const block = newBlock(workspace, type, cmd);
     connection.connect(block.previousConnection);
-    for (let i = 0; i < argCount; i += 1) {
-        block.setFieldValue(cmd.data.args[i].value, `arg_${i}`);
+    if (Array.isArray(arg)) {
+        for (let i = 0; i < arg.length; i += 1) {
+            block.setFieldValue(arg[i](cmd.data.args[i].value, workspace, cmd), `arg_${i}`);
+        }
+    } else {
+        for (let i = 0; i < arg; i += 1) {
+            block.setFieldValue(cmd.data.args[i].value, `arg_${i}`);
+        }
     }
     return { connection: block.nextConnection };
 }
 
-export function GENERIC_ACTION_OBJ(type, argCount, workspace, cmd, {connection}) {
+export function GENERIC_ACTION_OBJ(type, arg, workspace, cmd, {connection}) {
+    const actor = workspace.scene.actors[cmd.data.args[0].value];
     const block = newBlock(workspace, type, cmd);
+    block.actor = actor;
+    if (block.postInit) {
+        block.postInit();
+    }
     connection.connect(block.previousConnection);
     block.setFieldValue(cmd.data.args[0].value, 'actor');
-    for (let i = 1; i < argCount + 1; i += 1) {
-        block.setFieldValue(cmd.data.args[i].value, `arg_${i - 1}`);
+    if (Array.isArray(arg)) {
+        for (let i = 1; i < arg.length + 1; i += 1) {
+            // tslint:disable-next-line: max-line-length
+            block.setFieldValue(arg[i - 1](actor, cmd.data.args[i].value, workspace, cmd), `arg_${i - 1}`);
+        }
+    } else {
+        for (let i = 1; i < arg + 1; i += 1) {
+            block.setFieldValue(cmd.data.args[i].value, `arg_${i - 1}`);
+        }
     }
     return { connection: block.nextConnection };
 }

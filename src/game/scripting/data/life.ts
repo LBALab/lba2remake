@@ -360,8 +360,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x2A,
-        command: 'STOP_CURRENT_TRACK',
-        handler: st.STOP_CURRENT_TRACK,
+        command: 'SAVE_CURRENT_TRACK',
+        handler: st.SAVE_CURRENT_TRACK,
         indent: Indent.KEEP,
         type: 'keyword'
     },
@@ -1146,8 +1146,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x89,
-        command: 'STOP_CURRENT_TRACK_OBJ',
-        handler: st.STOP_CURRENT_TRACK_OBJ,
+        command: 'SAVE_CURRENT_TRACK_OBJ',
+        handler: st.SAVE_CURRENT_TRACK_OBJ,
         args: ['Uint8:actor'],
         indent: Indent.KEEP,
         type: 'fct'
