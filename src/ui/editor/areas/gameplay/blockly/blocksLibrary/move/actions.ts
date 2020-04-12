@@ -7,7 +7,7 @@ function genericMoveCmd(setupInput) {
             setupInput((field, name) => input.appendField(field, name));
             this.setPreviousStatement(true, 'MOVE');
             this.setNextStatement(true, 'MOVE');
-            this.setColour(34);
+            this.setColour('#555555');
         }
     };
 }

@@ -9,46 +9,32 @@ export const lba_set_anim_obj = setterBlock({scriptType: 'LIFE', type: 'anim', o
 export const lba_set_body = setterBlock({scriptType: 'LIFE', type: 'body'});
 export const lba_set_body_obj = setterBlock({scriptType: 'LIFE', type: 'body', objMode: true});
 
-function genericLifeCmd(setupInput) {
+function action(setupInput) {
     return {
         init() {
             const input = this.appendDummyInput();
-            setupInput((field, name) => input.appendField(field, name));
+            setupInput(this, (field, name) => input.appendField(field, name));
             this.setPreviousStatement(true, 'LIFE');
             this.setNextStatement(true, 'LIFE');
-            this.setColour(42);
+            this.setColour('#666666');
         }
     };
 }
 
-export const lba_no_body = genericLifeCmd((field) => {
+export const lba_no_body = action((_block, field) => {
     field('remove body');
     field(makeIcon('body.svg'));
 });
 
-export const lba_unknown_life_cmd = {
-    init() {
-        this.appendDummyInput()
-            .appendField('?unknown?', 'label');
+export const lba_unknown_life_cmd = action((_block, field) => {
+    field('?unknown?', 'label');
+});
 
-        this.setPreviousStatement(true, 'LIFE');
-        this.setNextStatement(true, 'LIFE');
-        this.setColour(42);
-    }
-};
-
-export const lba_unknown_life_cmd_obj = {
-    init() {
-        this.appendDummyInput()
-            .appendField(makeIcon('actor.svg'))
-            .appendField(new Blockly.FieldDropdown(generateActors.bind(this)), 'actor')
-            .appendField('?unknown?', 'label');
-
-        this.setPreviousStatement(true, 'LIFE');
-        this.setNextStatement(true, 'LIFE');
-        this.setColour(42);
-    }
-};
+export const lba_unknown_life_cmd_obj = action((block, field) => {
+    field(makeIcon('actor.svg'));
+    field(new Blockly.FieldDropdown(generateActors.bind(block)), 'actor');
+    field('?unknown?', 'label');
+});
 
 function varSetterBlock(type) {
     return {
@@ -62,7 +48,7 @@ function varSetterBlock(type) {
                 .appendField(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'arg_1');
             this.setPreviousStatement(true, 'LIFE');
             this.setNextStatement(true, 'LIFE');
-            this.setColour(100);
+            this.setColour('#666666');
         }
     };
 }

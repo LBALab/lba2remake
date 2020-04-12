@@ -8,6 +8,6 @@ export const lba_track = {
             .appendField(new FieldUint8(), 'arg_0');
         this.setPreviousStatement(true, 'MOVE');
         this.setNextStatement(true, 'MOVE');
-        this.setColour('#666666');
+        this.setColour(100);
     }
 };

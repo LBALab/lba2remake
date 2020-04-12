@@ -41,10 +41,14 @@ export const SET_COMPORTEMENT_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_behav
     }
 ]);
 
-export const SAVE_COMPORTEMENT = UNKNOWN_CMD.bind(null, 'save_comportement');
-export const RESTORE_COMPORTEMENT = UNKNOWN_CMD.bind(null, 'restore_comportement');
-export const SAVE_COMPORTEMENT_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'save_comportement_obj');
-export const RESTORE_COMPORTEMENT_OBJ = UNKNOWN_CMD.bind(null, 'restore_comportement_obj');
+export const SAVE_COMPORTEMENT =
+    GENERIC_ACTION.bind(null, 'lba_save_behaviour', 0);
+export const RESTORE_COMPORTEMENT =
+    GENERIC_ACTION.bind(null, 'lba_restore_behaviour', 0);
+export const SAVE_COMPORTEMENT_OBJ =
+    GENERIC_ACTION_OBJ.bind(null, 'lba_save_behaviour_obj', 0);
+export const RESTORE_COMPORTEMENT_OBJ =
+    GENERIC_ACTION_OBJ.bind(null, 'lba_restore_behaviour_obj', 0);
 
 /*
 ** Control
@@ -73,10 +77,18 @@ export const OR_IF = LOGIC_OPERATOR;
 /*
 ** Tracks
 */
-export const SET_TRACK =
-    GENERIC_ACTION.bind(null, 'lba_set_track', 1);
-export const SET_TRACK_OBJ =
-    GENERIC_ACTION_OBJ.bind(null, 'lba_set_track_obj', 1);
+export const SET_TRACK = GENERIC_ACTION.bind(null, 'lba_set_track', [
+    (value, workspace) => {
+        const { tracksMap } = workspace.actor.scripts.move;
+        return tracksMap[value];
+    }
+]);
+export const SET_TRACK_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_track_obj', [
+    (actor, value) => {
+        const { tracksMap } = actor.scripts.move;
+        return tracksMap[value];
+    }
+]);
 export const SAVE_CURRENT_TRACK =
     GENERIC_ACTION.bind(null, 'lba_save_current_track', 0);
 export const SAVE_CURRENT_TRACK_OBJ =
