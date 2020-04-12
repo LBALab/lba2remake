@@ -389,13 +389,43 @@
       "file": "101_funfrock_statue.glb",
       "orientation": 0
     },
+    "102": {
+      "replace": true,
+      "file": "102_barrel.glb",
+      "orientation": 0
+    },
     "104": {
       "replace": true,
       "file": "104_open_book.glb",
       "orientation": 0
     },
+    "105": {
+      "replace": true,
+      "file": "105_106_shelf.glb",
+      "orientation": 0
+    },
+    "106": {
+      "replace": true,
+      "file": "105_106_shelf.glb",
+      "orientation": 3
+    },
+    "109": {
+      "replace": true,
+      "file": "109_classic_wall_lamp.glb",
+      "orientation": 0
+    },
     "111": {
-      "mirror": true
+      "replace": true,
+      "file": "111_box.glb",
+      "orientation": 0
+    },
+    "112": {
+      "replace": true,
+      "file": "112_desk.glb",
+      "orientation": 0
+    },
+    "114": {
+      "mirror": false
     },
     "122": {
       "mirror": true
