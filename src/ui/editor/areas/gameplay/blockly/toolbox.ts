@@ -10,6 +10,9 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_swif"/>
         <block type="lba_oneif"/>
         <block type="lba_switch"/>
+        <block type="lba_case"/>
+        <block type="lba_default"/>
+        <block type="lba_break"/>
 
         <label text="Logic"/>
         <block type="lba_and"/>

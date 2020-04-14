@@ -1,5 +1,5 @@
 import { last, dropRight } from 'lodash';
-import { newBlock } from './utils';
+import { newBlock, findLastConnection } from './utils';
 import * as conditions from './conditions';
 
 /*
@@ -90,20 +90,28 @@ export function SWITCH(workspace, cmd, ctx) {
     };
 }
 
-export function CASE(_workspace, _cmd, ctx) {
+export function CASE(workspace, cmd, ctx) {
+    const block = newBlock(workspace, 'lba_case', cmd);
     const { switchBlocks } = ctx;
-    const block = last(switchBlocks) as any;
-    const { statementsInput } = block.addCase();
+    const swBlock = last(switchBlocks) as any;
+    const swConnection = findLastConnection(swBlock.getInput('statements').connection);
+    swConnection.connect(block.previousConnection);
+    if (swBlock.condBlock) {
+        block.operandBlock.setOperand(swBlock.condBlock.data);
+    }
+    const statementsInput = block.getInput('statements');
     return {
         connection: statementsInput.connection
     };
 }
 
-export function DEFAULT(_workspace, _cmd, ctx) {
+export function DEFAULT(workspace, cmd, ctx) {
+    const block = newBlock(workspace, 'lba_default', cmd);
     const { switchBlocks } = ctx;
-    const block = last(switchBlocks) as any;
-    block.enableDefaultCase();
-    const statementsInput = block.getInput('default_statement');
+    const swBlock = last(switchBlocks) as any;
+    const swConnection = findLastConnection(swBlock.getInput('statements').connection);
+    swConnection.connect(block.previousConnection);
+    const statementsInput = block.getInput('statements');
     return {
         connection: statementsInput.connection
     };

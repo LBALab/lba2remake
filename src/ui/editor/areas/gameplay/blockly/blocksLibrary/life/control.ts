@@ -18,8 +18,9 @@ function ifBlock(type) {
                 .setCheck('LIFE');
             this.disableElseBlock();
             this.setInputsInline(true);
-            this.setPreviousStatement(true, 'LIFE');
-            this.setNextStatement(true, 'LIFE');
+            const checks = type === 'if' ? ['LIFE', 'SWITCH'] : 'LIFE';
+            this.setPreviousStatement(true, checks);
+            this.setNextStatement(true, checks);
             this.setColour(180);
         },
         enableElseBlock() {
@@ -64,15 +65,16 @@ function ifBlock(type) {
 
 export const lba_switch = {
     init() {
-        this.caseId = 0;
         this.condBlock = null;
         this.operand = null;
-        this.cases = {};
         this.appendValueInput('condition')
             .setCheck('COND')
             .appendField('switch');
 
-        this.setInputsInline(false);
+        this.appendStatementInput('statements')
+            .setCheck('SWITCH');
+
+        this.setInputsInline(true);
         this.setPreviousStatement(true, 'LIFE');
         this.setNextStatement(true, 'LIFE');
         this.setColour(180);
@@ -86,14 +88,14 @@ export const lba_switch = {
                         this.condBlock.removeInput('operand');
                     }
                     const operand = this.condBlock.data;
-                    each(this.cases, ({operandBlock}) => {
+                    each(this.getCases(), ({operandBlock}) => {
                         operandBlock.setOperand(operand);
                     });
                 } else if (e.oldParentId === this.id && e.oldInputName === 'condition') {
                     if (!this.condBlock.isDisposed()) {
                         this.condBlock.addOperand();
                     }
-                    each(this.cases, ({operandBlock}) => {
+                    each(this.getCases(), ({operandBlock}) => {
                         operandBlock.setOperand();
                     });
                     this.condBlock = null;
@@ -101,83 +103,58 @@ export const lba_switch = {
             }
         });
     },
-    addCase() {
-        const index = this.caseId;
-        this.caseId += 1;
-
-        const operandBlock = this.workspace.newBlock('lba_dummy_operand');
-        operandBlock.initSvg();
-        operandBlock.render();
-
-        const input = this.appendValueInput(`case_${index}_cond`)
-            .setAlign(Blockly.ALIGN_RIGHT)
-            .appendField(new Blockly.FieldImage(
-                'editor/icons/close.svg',
-                12,
-                12,
-                'close',
-                () => {
-                    this.removeInput(`case_${index}_cond`);
-                    this.removeInput(`case_${index}_statement`);
-                    operandBlock.dispose();
-                    delete this.cases[index];
-                }
-            ))
-            .appendField('case')
-            .setCheck('OPERAND');
-
-        const statementsInput = this.appendStatementInput(`case_${index}_statement`);
-        statementsInput.setCheck('LIFE');
-
-        if (this.getInput('default_cond')) {
-            this.moveInputBefore(`case_${index}_statement`, 'default_cond');
+    getCases() {
+        const cases = [];
+        let connection = this.getInput('statements').connection;
+        while (connection && connection.targetBlock()) {
+            if (connection.targetBlock().type === 'lba_case') {
+                cases.push(connection.targetBlock());
+            }
+            connection = connection.targetBlock().nextConnection;
         }
-        this.moveInputBefore(`case_${index}_cond`, `case_${index}_statement`);
-        if (this.condBlock) {
-            operandBlock.setOperand(this.condBlock.data);
-        }
-        operandBlock.outputConnection.connect(input.connection);
-        this.cases[index] = {
-            operandBlock
-        };
-        return { statementsInput };
-    },
-    enableDefaultCase() {
-        this.appendDummyInput('default_cond')
-            .setAlign(Blockly.ALIGN_RIGHT)
-            .appendField('default');
-        this.appendStatementInput('default_statement')
+        return cases;
+    }
+};
+
+export const lba_case = {
+    init() {
+        const input = this.appendValueInput('operand');
+        input.setCheck('OPERAND');
+        input.appendField('case:');
+
+        this.operandBlock = this.workspace.newBlock('lba_dummy_operand');
+        this.operandBlock.initSvg();
+        this.operandBlock.render();
+        this.operandBlock.outputConnection.connect(input.connection);
+
+        this.appendStatementInput('statements')
+            .setCheck(['SWITCH', 'LIFE']);
+
+        this.setInputsInline(true);
+        this.setPreviousStatement(true, 'SWITCH');
+        this.setNextStatement(true, 'SWITCH');
+        this.setColour(180);
+    }
+};
+
+export const lba_default = {
+    init() {
+        this.appendDummyInput()
+            .appendField('default:');
+
+        this.appendStatementInput('statements')
             .setCheck('LIFE');
-    },
-    disableDefaultCase() {
-        this.removeInput('default_cond');
-        this.removeInput('default_statement');
-    },
-    customContextMenu(options) {
-        if (this.getInput('default_cond')) {
-            options.unshift({
-                text: 'Disable default case',
-                enabled: true,
-                callback: () => {
-                    this.disableDefaultCase();
-                },
-            });
-        } else {
-            options.unshift({
-                text: 'Enable default case',
-                enabled: true,
-                callback: () => {
-                    this.enableDefaultCase();
-                },
-            });
-        }
-        options.unshift({
-            text: 'Add case',
-            enabled: true,
-            callback: () => {
-                this.addCase();
-            },
-        });
+
+        this.setPreviousStatement(true, 'SWITCH');
+        this.setColour(180);
+    }
+};
+
+export const lba_break = {
+    init() {
+        this.appendDummyInput().appendField('break');
+        this.setPreviousStatement(true, 'LIFE');
+        this.setColour(180);
     }
 };
 

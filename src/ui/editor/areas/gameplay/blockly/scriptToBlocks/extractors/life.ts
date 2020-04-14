@@ -66,7 +66,7 @@ export {
 } from './control';
 
 export const OR_CASE = UNKNOWN_CMD.bind(null, 'or_case');
-export const BREAK = UNKNOWN_CMD.bind(null, 'break');
+export const BREAK = GENERIC_ACTION.bind(null, 'lba_break', 0);
 
 /*
 ** Logic

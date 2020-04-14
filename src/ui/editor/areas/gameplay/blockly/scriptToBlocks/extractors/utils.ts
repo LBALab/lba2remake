@@ -7,6 +7,14 @@ export function newBlock(workspace, type, def) {
     return block;
 }
 
+export function findLastConnection(connection) {
+    let lastConnection = connection;
+    while (lastConnection.targetBlock()) {
+        lastConnection = lastConnection.targetBlock().nextConnection;
+    }
+    return lastConnection;
+}
+
 export function GENERIC_ACTION(type, arg, workspace, cmd, {connection}) {
     const block = newBlock(workspace, type, cmd);
     connection.connect(block.previousConnection);
