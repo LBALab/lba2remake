@@ -108,7 +108,7 @@ export const ANIM = GENERIC_ACTION.bind(null, 'lba_set_anim', 1);
 export const ANIM_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_anim_obj', 1);
 export const BODY = GENERIC_ACTION.bind(null, 'lba_set_body', 1);
 export const BODY_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_body_obj', 1);
-export const NO_BODY = GENERIC_ACTION.bind(null, 'no_body', 0);
+export const NO_BODY = GENERIC_ACTION.bind(null, 'lba_no_body', 0);
 
 export const MESSAGE = UNKNOWN_CMD.bind(null, 'message');
 export const MESSAGE_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'message_obj');
