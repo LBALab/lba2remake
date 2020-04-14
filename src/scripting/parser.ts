@@ -24,6 +24,7 @@ export function parseScript(actor, type, script) {
         opMap: {},
         tracksMap: {},
         ifStack: [],
+        switchStack: [],
         offset: 0,
         commands: [],
         choice: null
@@ -33,6 +34,7 @@ export function parseScript(actor, type, script) {
         state.opMap[state.offset] = state.commands.length;
         const code = script.getUint8(state.offset);
         const op = type === 'life' ? LifeOpcode[code] : MoveOpcode[code];
+        checkEndSwitch(state, code);
         checkNewComportment(state, code);
         try {
             state.commands.push(parseCommand(state, script, op, type));
@@ -57,6 +59,18 @@ function checkEndIf(state) {
             section: state.comportement
         });
         state.ifStack.pop();
+    }
+}
+
+function checkEndSwitch(state, code) {
+    while (code !== 0x76
+            && state.switchStack.length > 0
+            && state.offset === last(state.switchStack)) {
+        state.commands.push({
+            op: LifeOpcode[0x76],
+            section: state.comportement
+        });
+        state.switchStack.pop();
     }
 }
 
@@ -92,6 +106,17 @@ function parseCommand(state, script, op, type) {
         state.ifStack.push(cmd.args[0].value);
     } else if (op.command === 'ELSE') {
         state.ifStack[state.ifStack.length - 1] = cmd.args[0].value;
+    }
+    if (op.command === 'SWITCH') {
+        state.switchStack.push(-1);
+    } else if (op.command === 'BREAK' || op.command === 'CASE') {
+        state.switchStack[state.switchStack.length - 1] =
+            Math.max(
+                state.switchStack[state.switchStack.length - 1],
+                cmd.args[0].value
+            );
+    } else if (op.command === 'END_SWITCH') {
+        state.switchStack.pop();
     }
     if (op.command === 'END_COMPORTEMENT') {
         state.newComportement = true;
