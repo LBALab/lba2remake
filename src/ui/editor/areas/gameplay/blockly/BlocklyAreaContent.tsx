@@ -64,6 +64,11 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
             if (this.rootRef) {
                 this.workspace = Blockly.inject(ref, {
                     toolbox,
+                    move: {
+                        scrollbars: true,
+                        drag: true,
+                        wheel: true
+                    },
                     grid: {
                         spacing: 20,
                         length: 3,
