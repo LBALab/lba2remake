@@ -8,13 +8,15 @@ import {
     findCommand,
     findCondition,
     findLogicSequence,
-    findMixedLogicSequence
+    findMixedLogicSequence,
+    findStuff
 } from './tools/scene_iterators';
 import { ConditionOpcode } from '../../../../../game/scripting/data/condition';
 
 const mainStyle = Object.assign({}, fullscreen, {
     padding: 4,
-    margin: 2
+    margin: 2,
+    overflow: 'auto'
 });
 
 const buttonStyle = Object.assign({}, editor.button, {
@@ -37,7 +39,7 @@ const LIFE_CMDS = map(LifeOpcode, op => op.command).sort();
 const MOVE_CMDS = map(MoveOpcode, op => op.command).sort();
 const CONDS = map(ConditionOpcode, op => op.command).sort();
 
-export class DebugToolsAreaContent extends React.Component<Props, State> {
+export class DevToolsAreaContent extends React.Component<Props, State> {
     content: any;
     browseContent: any;
 
@@ -61,7 +63,7 @@ export class DebugToolsAreaContent extends React.Component<Props, State> {
         const onCondChange = e => this.setState({ cond: e.target.value });
         return <div style={mainStyle}>
             <div style={{color: '#BBBBBB'}}>
-                Following is a collection of search commands meant
+                Following is a collection of search tools meant
                 to help developping the remake engine. Results are
                 displayed in your browser's JavaScript console.
             </div>
@@ -126,6 +128,16 @@ export class DebugToolsAreaContent extends React.Component<Props, State> {
                     </select>
                     &nbsp;
                     <button style={buttonStyle} onClick={this.findMoveCommand}>
+                        Search
+                    </button>
+                </div>
+            </div>
+            <br/>
+            <div><u>Misc</u></div>
+            <div style={{paddingLeft: 8}}>
+                <div>
+                    Multipurpose search tool:&nbsp;
+                    <button style={buttonStyle} onClick={findStuff}>
                         Search
                     </button>
                 </div>

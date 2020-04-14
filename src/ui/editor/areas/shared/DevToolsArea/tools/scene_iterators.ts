@@ -114,3 +114,12 @@ export function findMixedLogicSequence() {
         displayResults(scene, actor, results);
     }, 'life');
 }
+
+/*
+** This function is for being able to easily
+** prototype a new search tool, or implement a
+** temporary/throw-away search tool.
+*/
+export async function findStuff() {
+    // Put whatever you want here
+}

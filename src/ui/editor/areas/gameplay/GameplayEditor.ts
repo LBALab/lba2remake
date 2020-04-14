@@ -2,7 +2,7 @@ import {clone} from 'lodash';
 import GameUI from '../../../GameUI';
 import ScriptEditorArea from './scripts/ScriptsArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
-import DebugToolsArea from '../shared/DebugToolsArea/DebugToolsArea';
+import DevToolsArea from '../shared/DevToolsArea/DevToolsArea';
 import SceneArea from './scene/SceneArea';
 import LocatorArea from './locator/LocatorArea';
 import PaletteArea from './palette/PaletteArea';
@@ -52,7 +52,7 @@ const GameplayEditor = {
         ScriptEditorArea,
         BlocklyArea,
         InspectorArea,
-        DebugToolsArea,
+        DevToolsArea,
         SceneArea,
         SceneGraphArea,
         LocatorArea,
