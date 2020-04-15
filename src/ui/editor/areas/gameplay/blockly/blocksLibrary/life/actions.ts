@@ -13,10 +13,10 @@ function action(setupInput) {
     return {
         init() {
             const input = this.appendDummyInput();
-            setupInput(this, (field, name) => input.appendField(field, name));
+            this.setColour('#666666');
             this.setPreviousStatement(true, 'LIFE');
             this.setNextStatement(true, 'LIFE');
-            this.setColour('#666666');
+            setupInput(this, (field, name) => input.appendField(field, name));
         }
     };
 }
@@ -26,14 +26,16 @@ export const lba_no_body = action((_block, field) => {
     field(makeIcon('body.svg'));
 });
 
-export const lba_unknown_life_cmd = action((_block, field) => {
+export const lba_unknown_life_cmd = action((block, field) => {
     field('?unknown?', 'label');
+    block.setColour('#333333');
 });
 
 export const lba_unknown_life_cmd_obj = action((block, field) => {
     field(makeIcon('actor.svg'));
     field(new Blockly.FieldDropdown(generateActors.bind(block)), 'actor');
     field('?unknown?', 'label');
+    block.setColour('#333333');
 });
 
 function varSetterBlock(type) {
