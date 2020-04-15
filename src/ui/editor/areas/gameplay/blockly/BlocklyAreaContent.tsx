@@ -21,7 +21,8 @@ interface State {
 
 let idCount = 0;
 
-Blockly.HSV_SATURATION = 0.8;
+Blockly.HSV_SATURATION = 0.9;
+Blockly.HSV_VALUE = 0.55;
 
 each(blocksLibrary, (def, type) => {
     Blockly.Blocks[type] = def;
