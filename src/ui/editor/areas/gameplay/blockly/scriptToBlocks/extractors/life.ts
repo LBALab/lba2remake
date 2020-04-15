@@ -65,7 +65,6 @@ export {
     END_SWITCH
 } from './control';
 
-export const OR_CASE = UNKNOWN_CMD.bind(null, 'or_case');
 export const BREAK = GENERIC_ACTION.bind(null, 'lba_break', 0);
 
 /*
@@ -73,6 +72,7 @@ export const BREAK = GENERIC_ACTION.bind(null, 'lba_break', 0);
 */
 export const AND_IF = LOGIC_OPERATOR;
 export const OR_IF = LOGIC_OPERATOR;
+export const OR_CASE = LOGIC_OPERATOR;
 
 /*
 ** Tracks

@@ -1,6 +1,7 @@
 import { last, dropRight } from 'lodash';
 import { newBlock, findLastConnection } from './utils';
 import * as conditions from './conditions';
+import { getRotation } from '../../../../../../../utils/lba';
 
 /*
 ** IF
@@ -20,10 +21,10 @@ export function GENERIC_IF(type, workspace, cmd, ctx) {
             : 'lba_or';
         const logicBlock = newBlock(workspace, logicType, logicCmd);
         condConnection.connect(logicBlock.outputConnection);
-        const left = logicBlock.getInput('left').connection;
-        addCondition(workspace, logicCmd, { ...ctx, connection: left });
-        const right = logicBlock.getInput('right').connection;
-        addCondition(workspace, cmd, { ...ctx, connection: right });
+        const arg0 = logicBlock.getInput('arg_0').connection;
+        addCondition(workspace, logicCmd, { ...ctx, connection: arg0 });
+        const arg1 = logicBlock.getInput('arg_1').connection;
+        addCondition(workspace, cmd, { ...ctx, connection: arg1 });
     } else {
         addCondition(workspace, cmd, { ...ctx, connection: condConnection });
     }
@@ -51,21 +52,25 @@ export function ENDIF(_workspace, _cmd, ctx) {
     };
 }
 
+function setOperand(cmd, opBlock) {
+    const { operator } = cmd.data;
+    if (opBlock.getField('operator')) {
+        opBlock.setFieldValue(operator.op.command, 'operator');
+    }
+    if (opBlock.getField('operand')) {
+        let value = operator.operand.value;
+        if (operator.operand.type === 'angle') {
+            value = Math.round(getRotation(value, 0, 1) - 90);
+        }
+        opBlock.setFieldValue(value, 'operand');
+    }
+}
+
 function addCondition(workspace, cmd, ctx) {
     const condName = cmd.data.condition.op.command;
     if (condName in conditions) {
         const condBlock = conditions[condName](workspace, cmd, ctx);
-        const { operator } = cmd.data;
-        if (condBlock.type === 'lba_unknown_cond') {
-            // console.log(condName, operator.operand);
-            condBlock.addOperand(operator.operand.type);
-        }
-        if (condBlock.getField('operator')) {
-            condBlock.setFieldValue(operator.op.command, 'operator');
-        }
-        if (condBlock.getField('operand')) {
-            condBlock.setFieldValue(operator.operand.value, 'operand');
-        }
+        setOperand(cmd, condBlock);
     }
 }
 
@@ -86,22 +91,40 @@ export function SWITCH(workspace, cmd, ctx) {
         });
     }
     return {
-        switchBlocks: [...switchBlocks, block]
+        switchBlocks: [...switchBlocks, block],
+        logicStack: null
     };
+}
+
+function addCaseOperand(workspace, cmd, { connection }) {
+    const { operator } = cmd.data;
+    const operandBlock = newBlock(workspace, `lba_operand_${operator.operand.type}`, cmd);
+    setOperand(cmd, operandBlock);
+    operandBlock.outputConnection.connect(connection);
 }
 
 export function CASE(workspace, cmd, ctx) {
     const block = newBlock(workspace, 'lba_case', cmd);
-    const { switchBlocks } = ctx;
+    const { switchBlocks, logicStack } = ctx;
     const swBlock = last(switchBlocks) as any;
     const swConnection = findLastConnection(swBlock.getInput('statements').connection);
     swConnection.connect(block.previousConnection);
-    if (swBlock.condBlock) {
-        block.operandBlock.setOperand(swBlock.condBlock.data);
+    const logicCmd = last(logicStack) as any;
+    if (logicCmd) {
+        const logicBlock = newBlock(workspace, 'lba_case_or', logicCmd);
+        block.getInput('operand').connection.connect(logicBlock.outputConnection);
+        const arg0 = logicBlock.getInput('arg_0').connection;
+        addCaseOperand(workspace, logicCmd, { connection: arg0 });
+        const arg1 = logicBlock.getInput('arg_1').connection;
+        addCaseOperand(workspace, cmd, { connection: arg1 });
+    } else {
+        const connection = block.getInput('operand').connection;
+        addCaseOperand(workspace, cmd, { connection });
     }
     const statementsInput = block.getInput('statements');
     return {
-        connection: statementsInput.connection
+        connection: statementsInput.connection,
+        logicStack: null
     };
 }
 

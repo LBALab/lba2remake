@@ -1,4 +1,4 @@
-import { map, filter } from 'lodash';
+import { map, filter, take } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../DebugData';
 
 export function generateBehaviours(fromOtherActor) {
@@ -114,3 +114,7 @@ export const generateVar = {
         );
     }
 };
+
+export function generateItems() {
+    return take(generateVar.vargame.call(this), 40);
+}

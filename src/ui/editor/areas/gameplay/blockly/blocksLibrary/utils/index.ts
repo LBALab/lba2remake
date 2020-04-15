@@ -3,7 +3,9 @@ import {
     generateActors,
     generateZones,
     generateAnims,
-    generateBodies
+    generateBodies,
+    generateVar,
+    generateItems
 } from './optionsGenerators';
 
 export const makeIcon = file => new Blockly.FieldImage(`editor/icons/${file}`, 15, 15);
@@ -18,7 +20,8 @@ export const typeIcons = {
     actor: 'actor.svg',
     body: 'body.svg',
     anim: 'anim.svg',
-    zone: 'zone_scn.svg'
+    zone: 'zone_scn.svg',
+    track: 'track.svg'
 };
 
 export const typeGenerator = {
@@ -26,6 +29,9 @@ export const typeGenerator = {
     zone: generateZones,
     anim: generateAnims,
     body: generateBodies,
+    vargame: generateVar.vargame,
+    varscene: generateVar.varscene,
+    item: generateItems
 };
 
 export function setterBlock({scriptType, type, objMode = false}) {

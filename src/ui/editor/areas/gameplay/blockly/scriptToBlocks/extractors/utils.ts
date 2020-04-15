@@ -52,23 +52,12 @@ export function GENERIC_ACTION_OBJ(type, arg, workspace, cmd, {connection}) {
     return { connection: block.nextConnection };
 }
 
-export function GENERIC_CONDITION(type, workspace, cmd, { connection }) {
+export function GENERIC_CONDITION(type, param, workspace, cmd, { connection }) {
     const block = newBlock(workspace, type, cmd);
-    connection.connect(block.outputConnection);
-    return block;
-}
-
-export function GENERIC_CONDITION_OBJ(type, workspace, cmd, { connection }) {
-    const block = newBlock(workspace, type, cmd);
-    const cond = cmd.data.condition;
-    block.setFieldValue(cond.param.value, 'param');
-    connection.connect(block.outputConnection);
-    return block;
-}
-
-export function UNKNOWN_CONDITION(label, workspace, cmd, { connection }) {
-    const block = newBlock(workspace, 'lba_unknown_cond', cmd);
-    block.setFieldValue(label, 'label');
+    if (param) {
+        const cond = cmd.data.condition;
+        block.setFieldValue(cond.param.value, 'param');
+    }
     connection.connect(block.outputConnection);
     return block;
 }

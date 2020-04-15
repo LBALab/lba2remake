@@ -1,6 +1,6 @@
 
 import Blockly from 'blockly';
-import { each } from 'lodash';
+import { each, map, isEqual } from 'lodash';
 import { addOperand } from './conditions';
 
 export const lba_if = ifBlock('if');
@@ -65,8 +65,6 @@ function ifBlock(type) {
 
 export const lba_switch = {
     init() {
-        this.condBlock = null;
-        this.operand = null;
         this.appendValueInput('condition')
             .setCheck('COND')
             .appendField('switch');
@@ -83,22 +81,22 @@ export const lba_switch = {
             if (event instanceof Blockly.Events.Move) {
                 const e = event as any;
                 if (e.newParentId === this.id && e.newInputName === 'condition') {
-                    this.condBlock = this.getInput('condition').connection.targetBlock();
-                    if (this.condBlock.getInput('operand')) {
-                        this.condBlock.removeInput('operand');
+                    const condBlock = this.getInput('condition').connection.targetBlock();
+                    if (condBlock.getInput('operand')) {
+                        condBlock.removeInput('operand');
                     }
-                    const operand = this.condBlock.data;
-                    each(this.getCases(), ({operandBlock}) => {
-                        operandBlock.setOperand(operand);
+                    const operandType = condBlock.data;
+                    each(this.getCases(), (caseBlock) => {
+                        caseBlock.setOperandType(operandType);
                     });
                 } else if (e.oldParentId === this.id && e.oldInputName === 'condition') {
-                    if (!this.condBlock.isDisposed()) {
-                        this.condBlock.addOperand();
+                    const condBlock = this.workspace.getBlockById(e.blockId);
+                    if (condBlock && !condBlock.isDisposed()) {
+                        condBlock.addOperand();
                     }
-                    each(this.getCases(), ({operandBlock}) => {
-                        operandBlock.setOperand();
+                    each(this.getCases(), (caseBlock) => {
+                        caseBlock.setOperandType(null);
                     });
-                    this.condBlock = null;
                 }
             }
         });
@@ -116,16 +114,27 @@ export const lba_switch = {
     }
 };
 
+const allowedOperandTypes = map(
+    [
+        'number',
+        'actor',
+        'zone',
+        'anim',
+        'body',
+        'track',
+        'vargame_value',
+        'varcube_value',
+        'angle',
+        'OR'
+    ],
+    type => `operand_${type}`
+);
+
 export const lba_case = {
     init() {
-        const input = this.appendValueInput('operand');
-        input.setCheck('OPERAND');
-        input.appendField('case:');
-
-        this.operandBlock = this.workspace.newBlock('lba_dummy_operand');
-        this.operandBlock.initSvg();
-        this.operandBlock.render();
-        this.operandBlock.outputConnection.connect(input.connection);
+        this.appendValueInput('operand')
+            .setCheck(allowedOperandTypes)
+            .appendField('case:');
 
         this.appendStatementInput('statements')
             .setCheck(['SWITCH', 'LIFE']);
@@ -134,6 +143,43 @@ export const lba_case = {
         this.setPreviousStatement(true, 'SWITCH');
         this.setNextStatement(true, 'SWITCH');
         this.setColour(180);
+    },
+    setOperandType(operandType) {
+        const input = this.getInput('operand');
+        const check = operandType
+            ? [`operand_${operandType}`, 'operand_OR']
+            : allowedOperandTypes;
+        if (!isEqual(check, input.connection.getCheck())) {
+            if (operandType
+                && input.connection.targetBlock()
+                && input.connection.targetBlock().type !== 'lba_case_or'
+                && !isEqual(input.connection.targetBlock().outputConnection.getCheck(), check)) {
+                input.connection.targetBlock().dispose();
+            }
+            input.setCheck(check);
+            if (operandType && !input.connection.targetBlock()) {
+                const block = this.workspace.newBlock(`lba_operand_${operandType}`);
+                block.initSvg();
+                block.render();
+                input.connection.connect(block.outputConnection);
+            }
+        }
+    },
+    customContextMenu(options) {
+        const input = this.getInput('operand');
+        if (!input.connection.targetBlock() && input.connection.getCheck().length === 1) {
+            const check = input.connection.getCheck()[0];
+            options.unshift({
+                text: 'Generate operand',
+                enabled: true,
+                callback: () => {
+                    const block = this.workspace.newBlock(`lba_${check}`);
+                    block.initSvg();
+                    block.render();
+                    input.connection.connect(block.outputConnection);
+                },
+            });
+        }
     }
 };
 
@@ -158,39 +204,55 @@ export const lba_break = {
     }
 };
 
-export const lba_dummy_operand = {
-    init() {
-        this.setInputsInline(true);
-        this.setOutput(true, 'OPERAND');
-        this.setMovable(false);
-        this.setDeletable(false);
-        this.setColour(15);
-    },
-    setOperand(operand = null) {
-        if (this.getInput('operand')) {
-            this.removeInput('operand');
-        }
-        if (operand) {
+function makeOperand(type) {
+    return {
+        init() {
+            this.setInputsInline(true);
+            this.setOutput(true, `operand_${type}`);
+            this.setColour(15);
             const operandInput = this.appendDummyInput('operand');
-            addOperand(this, operandInput, operand);
+            addOperand(this, operandInput, type);
         }
-    }
-};
+    };
+}
+
+export const lba_operand_number = makeOperand('number');
+export const lba_operand_actor = makeOperand('actor');
+export const lba_operand_zone = makeOperand('zone');
+export const lba_operand_anim = makeOperand('anim');
+export const lba_operand_body = makeOperand('body');
+export const lba_operand_track = makeOperand('track');
+export const lba_operand_vargame_value = makeOperand('vargame_value');
+export const lba_operand_varcube_value = makeOperand('varcube_value');
+export const lba_operand_angle = makeOperand('angle');
 
 export const lba_and = logicOperator('and');
 export const lba_or = logicOperator('or');
 
+export const lba_case_or = {
+    init() {
+        this.appendValueInput('arg_0')
+            .setCheck(allowedOperandTypes);
+        this.appendValueInput('arg_1')
+            .appendField('or')
+            .setCheck(allowedOperandTypes);
+        this.setInputsInline(false);
+        this.setOutput(true, 'operand_OR');
+        this.setColour(180);
+    }
+};
+
 function logicOperator(type) {
     return {
-      init() {
-        this.appendValueInput('left')
-            .setCheck(['COND', 'LOGIC']);
-        this.appendValueInput('right')
-            .appendField(type)
-            .setCheck(['COND', 'LOGIC']);
-        this.setInputsInline(false);
-        this.setOutput(true, 'LOGIC');
-        this.setColour(180);
-      }
+        init() {
+            this.appendValueInput('arg_0')
+                .setCheck(['COND', 'LOGIC']);
+            this.appendValueInput('arg_1')
+                .appendField(type)
+                .setCheck(['COND', 'LOGIC']);
+            this.setInputsInline(false);
+            this.setOutput(true, 'LOGIC');
+            this.setColour(180);
+        }
     };
 }
