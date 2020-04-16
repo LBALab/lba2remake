@@ -834,6 +834,7 @@ export const LifeOpcode = [
         opcode: 0x63,
         command: 'ESCALATOR',
         handler: lf.ESCALATOR,
+        args: ['Uint8', 'Uint8'],
         indent: Indent.KEEP,
         type: 'fct'
     },

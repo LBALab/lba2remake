@@ -45,6 +45,7 @@ export function parseScript(actor, type, script) {
         }
     }
     return {
+        type,
         opMap: state.opMap,
         comportementMap: state.comportementMap,
         tracksMap: state.tracksMap,
@@ -172,6 +173,13 @@ function parseArguments(state, script, op, cmd) {
                 cmd.args.push({
                     value: script.getUint8(state.offset, true),
                     type: 'actor',
+                    hide: false
+                });
+                state.offset += 1;
+            } else if (mode === 9) {
+                cmd.args.push({
+                    value: script.getUint8(state.offset, true),
+                    type: 'number',
                     hide: false
                 });
                 state.offset += 1;
