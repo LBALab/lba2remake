@@ -1,4 +1,4 @@
-import { last, dropRight } from 'lodash';
+import { last, dropRight, each } from 'lodash';
 import { newBlock, findLastConnection } from './utils';
 import * as conditions from './conditions';
 import { getRotation } from '../../../../../../../utils/lba';
@@ -107,20 +107,16 @@ export function CASE(workspace, cmd, ctx) {
     const block = newBlock(workspace, 'lba_case', cmd);
     const { switchBlocks, logicStack } = ctx;
     const swBlock = last(switchBlocks) as any;
-    const swConnection = findLastConnection(swBlock.getInput('statements').connection);
-    swConnection.connect(block.previousConnection);
-    const logicCmd = last(logicStack) as any;
-    if (logicCmd) {
-        const logicBlock = newBlock(workspace, 'lba_case_or', logicCmd);
-        block.getInput('operand').connection.connect(logicBlock.outputConnection);
-        const arg0 = logicBlock.getInput('arg_0').connection;
-        addCaseOperand(workspace, logicCmd, { connection: arg0 });
-        const arg1 = logicBlock.getInput('arg_1').connection;
-        addCaseOperand(workspace, cmd, { connection: arg1 });
-    } else {
-        const connection = block.getInput('operand').connection;
-        addCaseOperand(workspace, cmd, { connection });
-    }
+    let connection = findLastConnection(swBlock.getInput('statements').connection);
+    each(logicStack, (logicCmd) => {
+        const orBlock = newBlock(workspace, 'lba_or_case', logicCmd);
+        addCaseOperand(workspace, logicCmd, { connection: orBlock.getInput('operand').connection });
+        connection.connect(orBlock.previousConnection);
+        connection = orBlock.nextConnection;
+    });
+    connection.connect(block.previousConnection);
+    addCaseOperand(workspace, cmd, { connection: block.getInput('operand').connection });
+
     const statementsInput = block.getInput('statements');
     return {
         connection: statementsInput.connection,

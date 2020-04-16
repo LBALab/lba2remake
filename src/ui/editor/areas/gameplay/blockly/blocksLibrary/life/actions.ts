@@ -1,6 +1,5 @@
 import Blockly from 'blockly';
-import { generateVar, generateActors } from '../utils/optionsGenerators';
-import { makeIcon, setterBlock } from '../utils';
+import { makeIcon, setterBlock, FieldActor, FieldDropdownLBA } from '../utils';
 
 export const lba_set_varscene = varSetterBlock('varscene');
 export const lba_set_vargame = varSetterBlock('vargame');
@@ -33,7 +32,7 @@ export const lba_unknown_life_cmd = action((block, field) => {
 
 export const lba_unknown_life_cmd_obj = action((block, field) => {
     field(makeIcon('actor.svg'));
-    field(new Blockly.FieldDropdown(generateActors.bind(block)), 'actor');
+    field(new FieldActor(), 'actor');
     field('?unknown?', 'label');
     block.setColour('#333333');
 });
@@ -45,7 +44,7 @@ function varSetterBlock(type) {
                 .appendField(makeIcon('var.svg'))
                 .appendField('set')
                 .appendField(`[${type.substring(3)}]`)
-                .appendField(new Blockly.FieldDropdown(generateVar[type].bind(this)), 'arg_0')
+                .appendField(new FieldDropdownLBA(type), 'arg_0')
                 .appendField('to')
                 .appendField(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'arg_1');
             this.setPreviousStatement(true, 'LIFE');

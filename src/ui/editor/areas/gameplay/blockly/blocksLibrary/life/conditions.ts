@@ -1,5 +1,5 @@
 import Blockly from 'blockly';
-import { makeIcon, typeIcons, typeGenerator } from '../utils';
+import { makeIcon, typeIcons, FieldDropdownLBA, FieldActor } from '../utils';
 
 export const lba_distance = condition({
     label: 'distance to',
@@ -258,13 +258,13 @@ function condition({
 }) {
     return {
         init() {
-            const input = this.appendDummyInput('param');
+            const input = this.appendDummyInput();
             if (objMode) {
-                addConditionParam(this, input, 'actor');
+                addConditionParam(input, 'actor', true);
             }
             input.appendField(label);
             if (param && !objMode) {
-                addConditionParam(this, input, param);
+                addConditionParam(input, param, false);
             }
             this.addOperand();
             this.setInputsInline(true);
@@ -274,7 +274,7 @@ function condition({
         },
         addOperand() {
             const operandInput = this.appendDummyInput('operand');
-            addOperand(this, operandInput, operand);
+            addOperand(operandInput, operand);
         }
     };
 }
@@ -288,9 +288,9 @@ const operators = [
     ['≤', '<=']
 ];
 
-const numberTypes = ['number', 'label', 'varcube_value', 'vargame_value', 'track'];
+const numberTypes = ['number', 'label', 'varcube_value', 'vargame_value'];
 
-export function addOperand(block, input, operandType) {
+export function addOperand(input, operandType) {
     input.appendField(new Blockly.FieldDropdown(operators), 'operator');
     if (operandType in typeIcons) {
         input.appendField(makeIcon(typeIcons[operandType]));
@@ -299,24 +299,23 @@ export function addOperand(block, input, operandType) {
         input.appendField(new Blockly.FieldNumber(), 'operand');
     } else if (operandType === 'angle') {
         input.appendField(new Blockly.FieldAngle(), 'operand');
-    } else if (operandType in typeGenerator) {
-        input.appendField(
-            new Blockly.FieldDropdown(typeGenerator[operandType].bind(block)),
-            'operand'
-        );
+    } else if (FieldDropdownLBA.supports(operandType)) {
+        input.appendField(new FieldDropdownLBA(operandType), 'operand');
     } else {
         input.appendField(`${operandType}?`);
     }
 }
 
-function addConditionParam(block, input, paramType) {
+function addConditionParam(input, paramType, objMode) {
     if (paramType in typeIcons) {
         input.appendField(makeIcon(typeIcons[paramType]));
     }
-    if (numberTypes.includes(paramType)) {
+    if (paramType === 'actor' && objMode) {
+        input.appendField(new FieldActor(['operand']), 'actor');
+    } else if (numberTypes.includes(paramType)) {
         input.appendField(new Blockly.FieldNumber(), 'param');
-    } else if (paramType in typeGenerator) {
-        input.appendField(new Blockly.FieldDropdown(typeGenerator[paramType].bind(block)), 'param');
+    } else if (FieldDropdownLBA.supports(paramType)) {
+        input.appendField(new FieldDropdownLBA(paramType), 'param');
     } else {
         input.appendField(`${paramType}?`);
     }

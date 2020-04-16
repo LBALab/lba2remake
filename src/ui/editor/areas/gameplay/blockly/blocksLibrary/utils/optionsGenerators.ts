@@ -1,16 +1,29 @@
 import { map, filter, take } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../DebugData';
 
-export function generateBehaviours(fromOtherActor) {
-    const actor = fromOtherActor
-        ? this.actor
-        : this.workspace.actor;
+function getActor(field) {
+    const block = field.getSourceBlock();
+    if (!block) {
+        return null;
+    }
+    const actorField = block.getField('actor');
+    if (actorField) {
+        const idx = Number(actorField.getValue());
+        if (idx !== -1) {
+            return block.workspace.scene.actors[idx];
+        }
+    }
+    return block.workspace.actor;
+}
+
+export function generateBehaviours() {
+    const actor = getActor(this);
     if (!actor) {
-        return [['<behaviour>', '<behaviour>']];
+        return [['<behaviour>', '-1']];
     }
     const behaviours = map(actor.scripts.life.comportementMap).sort();
     if (behaviours.length === 0) {
-        return [['<behaviour>', '<behaviour>']];
+        return [['<behaviour>', '-1']];
     }
     return behaviours.map(b => [
         b === 0
@@ -20,11 +33,23 @@ export function generateBehaviours(fromOtherActor) {
     ]);
 }
 
+export function generateTracks() {
+    const actor = getActor(this);
+    if (!actor) {
+        return [['<track>', '-1']];
+    }
+    const tracks = map(actor.scripts.move.tracksMap);
+    if (tracks.length === 0) {
+        return [['<track>', '-1']];
+    }
+    return tracks.map(t => [`${t}`, `${t}`]);
+}
+
 export function generateActors() {
-    const scene = this.workspace.scene;
+    const block = this.getSourceBlock();
+    const scene = block && block.workspace.scene;
     if (!scene) {
-        const value = '<actor>';
-        return [[value, value]];
+        return [['<actor>', '-1']];
     }
     return map(
         scene.actors,
@@ -36,10 +61,10 @@ export function generateActors() {
 }
 
 export function generateZones() {
-    const scene = this.workspace.scene;
+    const block = this.getSourceBlock();
+    const scene = block && block.workspace.scene;
     if (!scene) {
-        const value = '<zone>';
-        return [[value, value]];
+        return [['<zone>', '-1']];
     }
     const zones = filter(scene.zones, zone => zone.props.type === 2) as any;
     return map(
@@ -52,9 +77,9 @@ export function generateZones() {
 }
 
 export function generateAnims() {
-    const actor = this.workspace.actor;
+    const actor = getActor(this);
     if (!actor || !actor.model || !actor.model.entity) {
-        return [['<anim>', '<anim>']];
+        return [['<anim>', '-1']];
     }
     return map(
         actor.model.entity.anims,
@@ -66,9 +91,9 @@ export function generateAnims() {
 }
 
 export function generateBodies() {
-    const actor = this.workspace.actor;
+    const actor = getActor(this);
     if (!actor || !actor.model || !actor.model.entity) {
-        return [['<body>', '<body>']];
+        return [['<body>', '-1']];
     }
     return map(
         actor.model.entity.bodies,
@@ -79,42 +104,43 @@ export function generateBodies() {
     );
 }
 
-export const generateVar = {
-    vargame: function generateVarGame() {
-        const {game} = DebugData.scope;
-        const scene = this.workspace.scene;
-        if (!game || !scene) {
-            return [['<vargame>', '<vargame>']];
-        }
-        return map(
-            game.getState().flags.quest,
-            (_value, idx) => {
-                const name = getVarName({
-                    type: 'vargame',
-                    idx
-                });
-                return [name, `${idx}`];
-            }
-        );
-    },
-    varscene: function generateVarScene() {
-        const scene = this.workspace.scene;
-        if (!scene) {
-            return [['<varscene>', '<varscene>']];
-        }
-        return map(
-            scene.variables,
-            (_value, idx) => {
-                const name = getVarName({
-                    type: 'varcube',
-                    idx
-                });
-                return [name, `${idx}`];
-            }
-        );
+export function generateVarGame() {
+    const {game} = DebugData.scope;
+    const block = this.getSourceBlock();
+    const scene = block && block.workspace.scene;
+    if (!game || !scene) {
+        return [['<vargame>', '-1']];
     }
-};
+    return map(
+        game.getState().flags.quest,
+        (_value, idx) => {
+            const name = getVarName({
+                type: 'vargame',
+                idx
+            });
+            return [name, `${idx}`];
+        }
+    );
+}
+
+export function generateVarScene() {
+    const block = this.getSourceBlock();
+    const scene = block && block.workspace.scene;
+    if (!scene) {
+        return [['<varscene>', '-1']];
+    }
+    return map(
+        scene.variables,
+        (_value, idx) => {
+            const name = getVarName({
+                type: 'varcube',
+                idx
+            });
+            return [name, `${idx}`];
+        }
+    );
+}
 
 export function generateItems() {
-    return take(generateVar.vargame.call(this), 40);
+    return take(generateVarGame.call(this), 40);
 }

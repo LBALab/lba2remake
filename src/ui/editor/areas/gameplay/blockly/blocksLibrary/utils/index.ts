@@ -4,8 +4,11 @@ import {
     generateZones,
     generateAnims,
     generateBodies,
-    generateVar,
-    generateItems
+    generateVarGame,
+    generateVarScene,
+    generateItems,
+    generateTracks,
+    generateBehaviours
 } from './optionsGenerators';
 
 export const makeIcon = file => new Blockly.FieldImage(`editor/icons/${file}`, 15, 15);
@@ -24,26 +27,69 @@ export const typeIcons = {
     track: 'track.svg'
 };
 
-export const typeGenerator = {
+export class FieldActor extends Blockly.FieldDropdown {
+    argsToUpdate: string[];
+
+    constructor(argsToUpdate: string[] = []) {
+        super(generateActors);
+        this.argsToUpdate = argsToUpdate;
+    }
+
+    setValue(value) {
+        this.getOptions();
+        super.setValue(value);
+        const block = this.getSourceBlock();
+        if (block) {
+            for (let i = 0; i < this.argsToUpdate.length; i += 1) {
+                const arg = this.argsToUpdate[i];
+                const field = block.getField(arg);
+                if (field && field instanceof Blockly.FieldDropdown) {
+                    field.getOptions();
+                }
+            }
+        }
+    }
+}
+
+const typeGenerator = {
     actor: generateActors,
     zone: generateZones,
     anim: generateAnims,
     body: generateBodies,
-    vargame: generateVar.vargame,
-    varscene: generateVar.varscene,
-    item: generateItems
+    vargame: generateVarGame,
+    varscene: generateVarScene,
+    item: generateItems,
+    track: generateTracks,
+    behaviour: generateBehaviours
 };
+
+export class FieldDropdownLBA extends Blockly.FieldDropdown {
+    static supports(type) {
+        return type in typeGenerator;
+    }
+
+    constructor(type) {
+        if (!FieldDropdownLBA.supports(type)) {
+            throw new Error(`Unsupported type: ${type}`);
+        }
+        super(typeGenerator[type]);
+    }
+
+    setValue(value) {
+        this.getOptions();
+        super.setValue(value);
+    }
+}
 
 export function setterBlock({scriptType, type, objMode = false}) {
     return {
         init() {
             const icon = typeIcons[type];
-            const generator = typeGenerator[type];
             const input = this.appendDummyInput();
             if (objMode) {
                 input.appendField('set');
                 input.appendField(makeIcon('actor.svg'));
-                input.appendField(new Blockly.FieldDropdown(generateActors.bind(this)), 'actor');
+                input.appendField(new FieldActor(['arg_0']), 'actor');
                 input.appendField(`'s ${type} to`);
             } else {
                 input.appendField(`set ${type} to`);
@@ -51,7 +97,7 @@ export function setterBlock({scriptType, type, objMode = false}) {
             if (icon) {
                 input.appendField(makeIcon(icon));
             }
-            input.appendField(new Blockly.FieldDropdown(generator.bind(this)), 'arg_0');
+            input.appendField(new FieldDropdownLBA(type), 'arg_0');
             this.setPreviousStatement(true, scriptType);
             this.setNextStatement(true, scriptType);
             if (scriptType === 'LIFE') {

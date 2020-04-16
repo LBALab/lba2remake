@@ -25,6 +25,7 @@ export default `<xml id="toolbox" style="display: none">
                 </block>
             </statement>
         </block>
+        <block type="lba_or_case"/>
         <block type="lba_case">
             <statement name="statements">
                 <block type="lba_break"/>

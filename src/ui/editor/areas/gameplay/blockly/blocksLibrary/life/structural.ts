@@ -1,6 +1,5 @@
 import Blockly from 'blockly';
-import { makeIcon, FieldUint8 } from '../utils';
-import { generateActors, generateBehaviours, generateVar } from '../utils/optionsGenerators';
+import { makeIcon, FieldActor, FieldDropdownLBA } from '../utils';
 
 /*
 ** Behaviours
@@ -35,7 +34,7 @@ function behaviourAction(setupInput) {
     return {
         init() {
             const input = this.appendDummyInput();
-            setupInput(this, (field, name) => input.appendField(field, name));
+            setupInput((field, name) => input.appendField(field, name));
             this.setPreviousStatement(true, 'LIFE');
             this.setNextStatement(true, 'LIFE');
             this.setColour(BEHAVIOUR_COLOR);
@@ -43,43 +42,40 @@ function behaviourAction(setupInput) {
     };
 }
 
-export const lba_set_behaviour = behaviourAction((block, field) => {
+export const lba_set_behaviour = behaviourAction((field) => {
     field('set behaviour to');
     field(makeIcon('behaviour.svg'));
-    field(new Blockly.FieldDropdown(generateBehaviours.bind(block, false)), 'arg_0');
+    field(new FieldDropdownLBA('behaviour'), 'arg_0');
 });
 
-export const lba_set_behaviour_obj = behaviourAction((block, field) => {
+export const lba_set_behaviour_obj = behaviourAction((field) => {
     field('set');
     field(makeIcon('actor.svg'));
-    field(new Blockly.FieldDropdown(generateActors.bind(block)), 'actor');
+    field(new FieldActor(['arg_0']), 'actor');
     field("'s behaviour to");
     field(makeIcon('behaviour.svg'));
-    field(new Blockly.FieldDropdown(generateBehaviours.bind(block, true)), 'arg_0');
-    block.postInit = function postInit() {
-        this.getField('arg_0').getOptions();
-    };
+    field(new FieldDropdownLBA('behaviour'), 'arg_0');
 });
 
-export const lba_save_behaviour = behaviourAction((_block, field) => {
+export const lba_save_behaviour = behaviourAction((field) => {
     field('save current behaviour');
 });
 
-export const lba_save_behaviour_obj = behaviourAction((block, field) => {
+export const lba_save_behaviour_obj = behaviourAction((field) => {
     field('save');
     field(makeIcon('actor.svg'));
-    field(new Blockly.FieldDropdown(generateActors.bind(block)), 'actor');
+    field(new FieldActor(), 'actor');
     field("'s current behaviour");
 });
 
-export const lba_restore_behaviour = behaviourAction((_block, field) => {
+export const lba_restore_behaviour = behaviourAction((field) => {
     field('restore saved behaviour');
 });
 
-export const lba_restore_behaviour_obj = behaviourAction((block, field) => {
+export const lba_restore_behaviour_obj = behaviourAction((field) => {
     field('restore');
     field(makeIcon('actor.svg'));
-    field(new Blockly.FieldDropdown(generateActors.bind(block)), 'actor');
+    field(new FieldActor(), 'actor');
     field("'s saved behaviour");
 });
 
@@ -91,7 +87,7 @@ function trackAction(setupInput) {
     return {
         init() {
             const input = this.appendDummyInput();
-            setupInput(this, (field, name) => input.appendField(field, name));
+            setupInput((field, name) => input.appendField(field, name));
             this.setPreviousStatement(true, 'LIFE');
             this.setNextStatement(true, 'LIFE');
             this.setColour(100);
@@ -99,49 +95,49 @@ function trackAction(setupInput) {
     };
 }
 
-export const lba_set_track = trackAction((_block, field) => {
+export const lba_set_track = trackAction((field) => {
     field('set track to');
     field(makeIcon('track.svg'));
-    field(new FieldUint8(), 'arg_0');
+    field(new FieldDropdownLBA('track'), 'arg_0');
 });
 
-export const lba_set_track_obj = trackAction((block, field) => {
+export const lba_set_track_obj = trackAction((field) => {
     field('set');
     field(makeIcon('actor.svg'));
-    field(new Blockly.FieldDropdown(generateActors.bind(block)), 'actor');
+    field(new FieldActor(['arg_0']), 'actor');
     field("'s track to");
     field(makeIcon('track.svg'));
-    field(new FieldUint8(), 'arg_0');
+    field(new FieldDropdownLBA('track'), 'arg_0');
 });
 
-export const lba_save_current_track = trackAction((_block, field) => {
+export const lba_save_current_track = trackAction((field) => {
     field('save current track');
 });
 
-export const lba_save_current_track_obj = trackAction((block, field) => {
+export const lba_save_current_track_obj = trackAction((field) => {
     field('save');
     field(makeIcon('actor.svg'));
-    field(new Blockly.FieldDropdown(generateActors.bind(block)), 'actor');
+    field(new FieldActor(), 'actor');
     field("'s current track");
 });
 
-export const lba_restore_last_track = trackAction((_block, field) => {
+export const lba_restore_last_track = trackAction((field) => {
     field('restore saved track');
 });
 
-export const lba_restore_last_track_obj = trackAction((block, field) => {
+export const lba_restore_last_track_obj = trackAction((field) => {
     field('restore');
     field(makeIcon('actor.svg'));
-    field(new Blockly.FieldDropdown(generateActors.bind(block)), 'actor');
+    field(new FieldActor(), 'actor');
     field("'s saved track");
 });
 
-export const lba_vargame_to_track = trackAction((block, field) => {
+export const lba_vargame_to_track = trackAction((field) => {
     field('restore saved track from [game]');
-    field(new Blockly.FieldDropdown(generateVar.vargame.bind(block)), 'arg_0');
+    field(new FieldDropdownLBA('vargame'), 'arg_0');
 });
 
-export const lba_track_to_vargame = trackAction((block, field) => {
+export const lba_track_to_vargame = trackAction((field) => {
     field('save current track to [game]');
-    field(new Blockly.FieldDropdown(generateVar.vargame.bind(block)), 'arg_0');
+    field(new FieldDropdownLBA('vargame'), 'arg_0');
 });

@@ -105,7 +105,8 @@ export const lba_switch = {
         const cases = [];
         let connection = this.getInput('statements').connection;
         while (connection && connection.targetBlock()) {
-            if (connection.targetBlock().type === 'lba_case') {
+            const type = connection.targetBlock().type;
+            if (type === 'lba_case' || type === 'lba_or_case') {
                 cases.push(connection.targetBlock());
             }
             connection = connection.targetBlock().nextConnection;
@@ -124,64 +125,75 @@ const allowedOperandTypes = map(
         'track',
         'vargame_value',
         'varcube_value',
-        'angle',
-        'OR'
+        'angle'
     ],
     type => `operand_${type}`
 );
 
-export const lba_case = {
-    init() {
-        this.appendValueInput('operand')
-            .setCheck(allowedOperandTypes)
-            .appendField('case:');
+function makeCase(orCase) {
+    return {
+        init() {
+            this.appendValueInput('operand')
+                .setCheck(allowedOperandTypes)
+                .appendField('case:');
 
-        this.appendStatementInput('statements')
-            .setCheck(['SWITCH', 'LIFE']);
+            if (orCase) {
+                this.appendDummyInput()
+                    .appendField('or');
+            } else {
+                this.appendStatementInput('statements')
+                    .setCheck(['SWITCH', 'LIFE']);
+            }
 
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, 'SWITCH');
-        this.setNextStatement(true, 'SWITCH');
-        this.setColour(180);
-    },
-    setOperandType(operandType) {
-        const input = this.getInput('operand');
-        const check = operandType
-            ? [`operand_${operandType}`, 'operand_OR']
-            : allowedOperandTypes;
-        if (!isEqual(check, input.connection.getCheck())) {
-            if (operandType
-                && input.connection.targetBlock()
-                && input.connection.targetBlock().type !== 'lba_case_or'
-                && !isEqual(input.connection.targetBlock().outputConnection.getCheck(), check)) {
-                input.connection.targetBlock().dispose();
-            }
-            input.setCheck(check);
-            if (operandType && !input.connection.targetBlock()) {
-                const block = this.workspace.newBlock(`lba_operand_${operandType}`);
-                block.initSvg();
-                block.render();
-                input.connection.connect(block.outputConnection);
-            }
-        }
-    },
-    customContextMenu(options) {
-        const input = this.getInput('operand');
-        if (!input.connection.targetBlock() && input.connection.getCheck().length === 1) {
-            const check = input.connection.getCheck()[0];
-            options.unshift({
-                text: 'Generate operand',
-                enabled: true,
-                callback: () => {
-                    const block = this.workspace.newBlock(`lba_${check}`);
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, 'SWITCH');
+            this.setNextStatement(true, 'SWITCH');
+            this.setColour(180);
+        },
+        setOperandType(operandType) {
+            const input = this.getInput('operand');
+            const check = operandType
+                ? [`operand_${operandType}`]
+                : allowedOperandTypes;
+            if (!isEqual(check, input.connection.getCheck())) {
+                if (operandType
+                    && input.connection.targetBlock()
+                    && !isEqual(
+                            input.connection.targetBlock().outputConnection.getCheck(),
+                            check
+                        )) {
+                    input.connection.targetBlock().dispose();
+                }
+                input.setCheck(check);
+                if (operandType && !input.connection.targetBlock()) {
+                    const block = this.workspace.newBlock(`lba_operand_${operandType}`);
                     block.initSvg();
                     block.render();
                     input.connection.connect(block.outputConnection);
-                },
-            });
+                }
+            }
+        },
+        customContextMenu(options) {
+            const input = this.getInput('operand');
+            if (!input.connection.targetBlock() && input.connection.getCheck().length === 1) {
+                const check = input.connection.getCheck()[0];
+                options.unshift({
+                    text: 'Generate operand',
+                    enabled: true,
+                    callback: () => {
+                        const block = this.workspace.newBlock(`lba_${check}`);
+                        block.initSvg();
+                        block.render();
+                        input.connection.connect(block.outputConnection);
+                    },
+                });
+            }
         }
-    }
-};
+    };
+}
+
+export const lba_case = makeCase(false);
+export const lba_or_case = makeCase(true);
 
 export const lba_default = {
     init() {
@@ -211,7 +223,7 @@ function makeOperand(type) {
             this.setOutput(true, `operand_${type}`);
             this.setColour(15);
             const operandInput = this.appendDummyInput('operand');
-            addOperand(this, operandInput, type);
+            addOperand(operandInput, type);
         }
     };
 }
@@ -228,19 +240,6 @@ export const lba_operand_angle = makeOperand('angle');
 
 export const lba_and = logicOperator('and');
 export const lba_or = logicOperator('or');
-
-export const lba_case_or = {
-    init() {
-        this.appendValueInput('arg_0')
-            .setCheck(allowedOperandTypes);
-        this.appendValueInput('arg_1')
-            .appendField('or')
-            .setCheck(allowedOperandTypes);
-        this.setInputsInline(false);
-        this.setOutput(true, 'operand_OR');
-        this.setColour(180);
-    }
-};
 
 function logicOperator(type) {
     return {

@@ -33,10 +33,6 @@ export function GENERIC_ACTION(type, arg, workspace, cmd, {connection}) {
 export function GENERIC_ACTION_OBJ(type, arg, workspace, cmd, {connection}) {
     const actor = workspace.scene.actors[cmd.data.args[0].value];
     const block = newBlock(workspace, type, cmd);
-    block.actor = actor;
-    if (block.postInit) {
-        block.postInit();
-    }
     connection.connect(block.previousConnection);
     block.setFieldValue(cmd.data.args[0].value, 'actor');
     if (Array.isArray(arg)) {
@@ -56,7 +52,11 @@ export function GENERIC_CONDITION(type, param, workspace, cmd, { connection }) {
     const block = newBlock(workspace, type, cmd);
     if (param) {
         const cond = cmd.data.condition;
-        block.setFieldValue(cond.param.value, 'param');
+        if (block.getField('actor')) {
+            block.setFieldValue(cond.param.value, 'actor');
+        } else {
+            block.setFieldValue(cond.param.value, 'param');
+        }
     }
     connection.connect(block.outputConnection);
     return block;

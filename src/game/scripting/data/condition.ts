@@ -73,7 +73,7 @@ export const ConditionOpcode = [
         opcode: 0x09,
         command: 'CURRENT_TRACK',
         handler: lc.CURRENT_TRACK,
-        operand: 'Uint8:number',
+        operand: 'Uint8:track',
         type: 'read_prop',
         prop: 'track'
     },
@@ -82,7 +82,7 @@ export const ConditionOpcode = [
         command: 'CURRENT_TRACK_OBJ',
         handler: lc.CURRENT_TRACK_OBJ,
         param: 'Uint8:actor',
-        operand: 'Uint8:number',
+        operand: 'Uint8:track',
         type: 'read_prop',
         prop: 'track'
     },
