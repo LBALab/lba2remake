@@ -102,6 +102,15 @@ export const VAR_GAME_TO_TRACK =
 export const TRACK_TO_VAR_GAME =
     GENERIC_ACTION.bind(null, 'lba_track_to_vargame', 1);
 
+export const END_LIFE = UNKNOWN_CMD.bind(null, 'end_life');
+// export const END = unknownCmd.bind(null, 'end');
+export const SUICIDE = UNKNOWN_CMD.bind(null, 'suicide');
+export const KILL_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'kill_obj');
+export const RETURN = UNKNOWN_CMD.bind(null, 'return');
+export const CHANGE_CUBE = UNKNOWN_CMD.bind(null, 'change_cube');
+export const THE_END = UNKNOWN_CMD.bind(null, 'the_end');
+export const GAME_OVER = UNKNOWN_CMD.bind(null, 'game_over');
+
 export const SET_VAR_CUBE = GENERIC_ACTION.bind(null, 'lba_set_varscene', 2);
 export const SET_VAR_GAME = GENERIC_ACTION.bind(null, 'lba_set_vargame', 2);
 export const ANIM = GENERIC_ACTION.bind(null, 'lba_set_anim', 1);
@@ -118,15 +127,6 @@ export const END_MESSAGE = UNKNOWN_CMD.bind(null, 'end_message');
 export const ADD_CHOICE = UNKNOWN_CMD.bind(null, 'add_choice');
 export const ASK_CHOICE = UNKNOWN_CMD.bind(null, 'ask_choice');
 export const ASK_CHOICE_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'ask_choice_obj');
-
-export const END_LIFE = UNKNOWN_CMD.bind(null, 'end_life');
-// export const END = unknownCmd.bind(null, 'end');
-export const SUICIDE = UNKNOWN_CMD.bind(null, 'suicide');
-export const KILL_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'kill_obj');
-export const RETURN = UNKNOWN_CMD.bind(null, 'return');
-export const CHANGE_CUBE = UNKNOWN_CMD.bind(null, 'change_cube');
-export const THE_END = UNKNOWN_CMD.bind(null, 'the_end');
-export const GAME_OVER = UNKNOWN_CMD.bind(null, 'game_over');
 
 export const SET_BEHAVIOUR = UNKNOWN_CMD.bind(null, 'set_behaviour');
 export const CINEMA_MODE = UNKNOWN_CMD.bind(null, 'cinema_mode');
