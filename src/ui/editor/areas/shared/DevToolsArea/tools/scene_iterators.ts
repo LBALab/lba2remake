@@ -34,14 +34,14 @@ export async function forEachScript(callback: ScriptCallback, type = null) {
     });
 }
 
-function displayResults(scene, actor, results) {
+function displayResults(scene, actor, script, results) {
     if (results.length > 0) {
         const actorName = getObjectName('actor', scene.index, actor.index);
         // tslint:disable-next-line: no-console
-        console.log(`SCENE ${scene.index}, actor=${actorName}`);
-        each(results, (r) => {
+        console.log(`SCENE ${scene.index}, actor=${actorName}, script=${script.type}`);
+        each(results, (result) => {
             // tslint:disable-next-line: no-console
-            console.log(r);
+            console.log(`  ${result}`);
         });
     }
 }
@@ -51,10 +51,10 @@ export function findCommand(name, type) {
         const results = [];
         each(script.commands, (cmd, idx) => {
             if (cmd.op.command === name) {
-                results.push(`  found command ${name} at ${idx}`);
+                results.push(`found command ${name} at ${idx}`);
             }
         });
-        displayResults(scene, actor, results);
+        displayResults(scene, actor, script, results);
     }, type);
 }
 
@@ -63,10 +63,10 @@ export function findCondition(name) {
         const results = [];
         each(script.commands, (cmd, idx) => {
             if (cmd.condition && cmd.condition.op.command === name) {
-                results.push(`  found cond ${name} at ${idx}`);
+                results.push(`found cond ${name} at ${idx}`);
             }
         });
-        displayResults(scene, actor, results);
+        displayResults(scene, actor, script, results);
     }, 'life');
 }
 
@@ -84,12 +84,12 @@ export function findLogicSequence(minLength = 3) {
                 count += 1;
             } else {
                 if (count >= minLength) {
-                    results.push(`  found ${count} logic operators at ${start}`);
+                    results.push(`found ${count} logic operators at ${start}`);
                 }
                 count = 0;
             }
         });
-        displayResults(scene, actor, results);
+        displayResults(scene, actor, script, results);
     }, 'life');
 }
 
@@ -102,7 +102,7 @@ export function findMixedLogicSequence() {
             const name = cmd.op.command;
             if (name === 'OR_IF' || name === 'AND_IF') {
                 if (prev !== null && name !== prev && !pushed) {
-                    results.push(`  found mixed logic sequence at ${idx}`);
+                    results.push(`found mixed logic sequence at ${idx}`);
                     pushed = true;
                 }
                 prev = name;
@@ -111,7 +111,7 @@ export function findMixedLogicSequence() {
                 pushed = false;
             }
         });
-        displayResults(scene, actor, results);
+        displayResults(scene, actor, script, results);
     }, 'life');
 }
 
