@@ -149,6 +149,31 @@ function makeCase(orCase) {
             this.setPreviousStatement(true, 'SWITCH');
             this.setNextStatement(true, 'SWITCH');
             this.setColour(180);
+            this.setOnChange((event) => {
+                if (event instanceof Blockly.Events.Move) {
+                    const e = event as any;
+                    if (e.blockId === this.id && e.newParentId) {
+                        const input = this.getInput('operand');
+                        if (!input.connection.targetBlock()) {
+                            let upperBlock = this.getSurroundParent();
+                            while (upperBlock && upperBlock.type !== 'lba_switch') {
+                                upperBlock = upperBlock.getSurroundParent();
+                            }
+                            if (upperBlock) {
+                                const condBlock = upperBlock.getInput('condition')
+                                                            .connection
+                                                            .targetBlock();
+                                if (condBlock) {
+                                    const operandType = condBlock.data;
+                                    this.setOperandType(operandType);
+                                }
+                            } else {
+                                this.previousConnection.disconnect();
+                            }
+                        }
+                    }
+                }
+            });
         },
         setOperandType(operandType) {
             const input = this.getInput('operand');
