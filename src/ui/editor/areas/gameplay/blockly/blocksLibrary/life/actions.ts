@@ -5,7 +5,7 @@ function action(setupInput) {
     return {
         init() {
             const input = this.appendDummyInput();
-            this.setColour('#666666');
+            this.setColour('#444444');
             this.setPreviousStatement(true, 'LIFE');
             this.setNextStatement(true, 'LIFE');
             setupInput(this, (field, name) => input.appendField(field, name));
@@ -592,7 +592,7 @@ function varSetterBlock(type) {
                 .appendField(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'arg_1');
             this.setPreviousStatement(true, 'LIFE');
             this.setNextStatement(true, 'LIFE');
-            this.setColour('#666666');
+            this.setColour('#444444');
         }
     };
 }

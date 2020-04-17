@@ -140,7 +140,7 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_cone_view"/>
         <block type="lba_object_displayed"/>
     </category>
-    <category name="Actions (for behaviours)" colour="#666666">
+    <category name="Actions (for behaviours)" colour="#444444">
         <label text="Actor"/>
         <block type="lba_end_life"/>
         <block type="lba_suicide"/>
@@ -172,7 +172,7 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_ask_choice"/>
         <block type="lba_ask_choice_obj"/>
     </category>
-    <category name="Actions (for tracks)" colour="#555555">
+    <category name="Actions (for tracks)" colour="#393939">
         <label text="3D Model"/>
         <block type="lba_move_set_anim"/>
         <block type="lba_wait_anim"/>

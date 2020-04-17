@@ -109,9 +109,9 @@ export function setterBlock({scriptType, type, objMode = false}) {
             this.setPreviousStatement(true, scriptType);
             this.setNextStatement(true, scriptType);
             if (scriptType === 'LIFE') {
-                this.setColour('#666666');
+                this.setColour('#444444');
             } else {
-                this.setColour('#555555');
+                this.setColour('#393939');
             }
         }
     };

@@ -6,7 +6,7 @@ function genericMoveCmd(setupInput) {
             const input = this.appendDummyInput();
             this.setPreviousStatement(true, 'MOVE');
             this.setNextStatement(true, 'MOVE');
-            this.setColour('#555555');
+            this.setColour('#393939');
             setupInput(this, (field, name) => input.appendField(field, name));
         }
     };
@@ -14,7 +14,7 @@ function genericMoveCmd(setupInput) {
 
 export const lba_unknown_move_cmd = genericMoveCmd((block, field) => {
     field('?unknown?', 'label');
-    block.setColour('#333333');
+    block.setColour('#111111');
 });
 
 export const lba_wait_sec = genericMoveCmd((_block, field) => {
