@@ -64,7 +64,7 @@ function checkEndIf(state) {
 }
 
 function checkEndSwitch(state, code) {
-    while (code !== 0x76
+    while (code !== 0x76 && code !== 0x72 && code !== 0x73 && code !== 0x74
             && state.switchStack.length > 0
             && state.offset === last(state.switchStack)) {
         state.commands.push({
