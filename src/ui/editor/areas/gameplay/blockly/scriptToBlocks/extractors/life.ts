@@ -1,11 +1,10 @@
 import {
     newBlock,
-    UNKNOWN_CMD,
-    UNKNOWN_CMD_OBJ,
     GENERIC_ACTION,
     GENERIC_ACTION_OBJ
 } from './utils';
 import { GENERIC_IF, LOGIC_OPERATOR } from './control';
+import { getRotation } from '../../../../../../../utils/lba';
 
 /*
 ** Behaviours
@@ -102,6 +101,21 @@ export const VAR_GAME_TO_TRACK =
 export const TRACK_TO_VAR_GAME =
     GENERIC_ACTION.bind(null, 'lba_track_to_vargame', 1);
 
+export function SET_DIRMODE(workspace, cmd, {connection}) {
+    const block = newBlock(workspace, 'lba_set_dirmode', cmd);
+    connection.connect(block.previousConnection);
+    block.setFieldValue(cmd.data.args[0].value, 'arg_0');
+    return { connection: block.nextConnection };
+}
+
+export function SET_DIRMODE_OBJ(workspace, cmd, {connection}) {
+    const block = newBlock(workspace, 'lba_set_dirmode_obj', cmd);
+    connection.connect(block.previousConnection);
+    block.setFieldValue(cmd.data.args[0].value, 'actor');
+    block.setFieldValue(cmd.data.args[1].value, 'arg_0');
+    return { connection: block.nextConnection };
+}
+
 export const END_LIFE = GENERIC_ACTION.bind(null, 'lba_end_life', 0);
 export const SUICIDE = GENERIC_ACTION.bind(null, 'lba_suicide', 0);
 export const KILL_OBJ = GENERIC_ACTION.bind(null, 'lba_kill_obj', 1);
@@ -128,85 +142,105 @@ export const ADD_CHOICE = GENERIC_ACTION.bind(null, 'lba_add_choice', 1);
 export const ASK_CHOICE = GENERIC_ACTION.bind(null, 'lba_ask_choice', 1);
 export const ASK_CHOICE_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_ask_choice_obj', 1);
 
-export const SET_BEHAVIOUR = UNKNOWN_CMD.bind(null, 'set_behaviour');
-export const CINEMA_MODE = UNKNOWN_CMD.bind(null, 'cinema_mode');
-export const SET_CAMERA = UNKNOWN_CMD.bind(null, 'set_camera');
-export const BETA = UNKNOWN_CMD.bind(null, 'beta');
-export const POS_POINT = UNKNOWN_CMD.bind(null, 'pos_point');
-export const CAM_FOLLOW = UNKNOWN_CMD.bind(null, 'cam_follow');
-export const SET_DIRMODE = UNKNOWN_CMD.bind(null, 'set_dirmode');
-export const SAVE_HERO = UNKNOWN_CMD.bind(null, 'save_hero');
-export const RESTORE_HERO = UNKNOWN_CMD.bind(null, 'restore_hero');
-export const SET_HOLO_POS = UNKNOWN_CMD.bind(null, 'set_holo_pos');
-export const SET_DOOR_DOWN = UNKNOWN_CMD.bind(null, 'set_door_down');
-export const USE_ONE_LITTLE_KEY = UNKNOWN_CMD.bind(null, 'use_one_little_key');
-export const SET_DIRMODE_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'set_dirmode_obj');
-export const CAMERA_CENTER = UNKNOWN_CMD.bind(null, 'camera_center');
-export const CLR_HOLO_POS = UNKNOWN_CMD.bind(null, 'clr_holo_pos');
-export const ADD_VAR_GAME = UNKNOWN_CMD.bind(null, 'add_var_game');
-export const FOUND_OBJECT = UNKNOWN_CMD.bind(null, 'found_object');
-export const GIVE_BONUS = UNKNOWN_CMD.bind(null, 'give_bonus');
-export const SAMPLE = UNKNOWN_CMD.bind(null, 'sample');
-export const HIT = UNKNOWN_CMD.bind(null, 'hit');
-export const SET_SPRITE = UNKNOWN_CMD.bind(null, 'set_sprite');
-export const SET_HIT_ZONE = UNKNOWN_CMD.bind(null, 'set_hit_zone');
-export const ADD_VAR_CUBE = UNKNOWN_CMD.bind(null, 'add_var_cube');
-export const INVISIBLE = UNKNOWN_CMD.bind(null, 'invisible');
-export const SET_ANIM_DIAL = UNKNOWN_CMD.bind(null, 'set_anim_dial');
-export const IMPACT_POINT = UNKNOWN_CMD.bind(null, 'impact_point');
-export const BALLOON = UNKNOWN_CMD.bind(null, 'balloon');
-export const SUB_MONEY = UNKNOWN_CMD.bind(null, 'sub_money');
-export const PLAY_MUSIC = UNKNOWN_CMD.bind(null, 'play_music');
-export const BACKGROUND = UNKNOWN_CMD.bind(null, 'background');
-export const SET_DOOR_RIGHT = UNKNOWN_CMD.bind(null, 'set_door_right');
-export const CAN_FALL = UNKNOWN_CMD.bind(null, 'can_fall');
-export const BRICK_COL = UNKNOWN_CMD.bind(null, 'brick_col');
-export const ADD_MONEY = UNKNOWN_CMD.bind(null, 'add_money');
-export const NO_SHOCK = UNKNOWN_CMD.bind(null, 'no_shock');
-export const PCX = UNKNOWN_CMD.bind(null, 'pcx');
-export const MEMO_SLATE = UNKNOWN_CMD.bind(null, 'memo_slate');
-export const SET_GRM = UNKNOWN_CMD.bind(null, 'set_grm');
-export const INVERSE_BETA = UNKNOWN_CMD.bind(null, 'inverse_beta');
-export const PLAY_VIDEO = UNKNOWN_CMD.bind(null, 'play_video');
-export const SET_RAIL = UNKNOWN_CMD.bind(null, 'set_rail');
-export const SET_DOOR_UP = UNKNOWN_CMD.bind(null, 'set_door_up');
-export const SET_CHANGE_CUBE = UNKNOWN_CMD.bind(null, 'set_change_cube');
-export const FADE_TO_PAL = UNKNOWN_CMD.bind(null, 'fade_to_pal');
-export const FLOW_POINT = UNKNOWN_CMD.bind(null, 'flow_point');
-export const STATE_INVENTORY = UNKNOWN_CMD.bind(null, 'state_inventory');
-export const SET_USED_INVENTORY = UNKNOWN_CMD.bind(null, 'set_used_inventory');
-export const SHADOW_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'shadow_obj');
-export const ADD_LIFE_POINT_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'add_life_point_obj');
-export const INC_CLOVER_BOX = UNKNOWN_CMD.bind(null, 'inc_clover_box');
-export const ANIM_SET = UNKNOWN_CMD.bind(null, 'anim_set');
-export const PCX_MESS_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'pcx_mess_obj');
-export const SET_FRAME = UNKNOWN_CMD.bind(null, 'set_frame');
-export const SET_MAGIC_LEVEL = UNKNOWN_CMD.bind(null, 'set_magic_level');
-export const NEW_SAMPLE = UNKNOWN_CMD.bind(null, 'new_sample');
-export const ANIM_TEXTURE = UNKNOWN_CMD.bind(null, 'anim_texture');
-export const PARM_SAMPLE = UNKNOWN_CMD.bind(null, 'parm_sample');
-export const SET_DOOR_LEFT = UNKNOWN_CMD.bind(null, 'set_door_left');
-export const FLOW_OBJ = UNKNOWN_CMD.bind(null, 'flow_obj');
-export const OBJ_COL = UNKNOWN_CMD.bind(null, 'obj_col');
-export const ECLAIR = UNKNOWN_CMD.bind(null, 'eclair');
-export const IMPACT_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'impact_obj');
-export const SAMPLE_STOP = UNKNOWN_CMD.bind(null, 'sample_stop');
-export const REPEAT_SAMPLE = UNKNOWN_CMD.bind(null, 'repeat_sample');
-export const POS_OBJ_AROUND = UNKNOWN_CMD.bind(null, 'pos_obj_around');
-export const INIT_BUGGY = UNKNOWN_CMD.bind(null, 'init_buggy');
-export const FULL_POINT = UNKNOWN_CMD.bind(null, 'full_point');
-export const SET_LIFE_POINT_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'set_life_point_obj');
-export const SCALE = UNKNOWN_CMD.bind(null, 'scale');
-export const SAMPLE_ALWAYS = UNKNOWN_CMD.bind(null, 'sample_always');
-export const SET_ARMOR_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'set_armor_obj');
-export const SUB_VAR_GAME = UNKNOWN_CMD.bind(null, 'sub_var_game');
-export const POPCORN = UNKNOWN_CMD.bind(null, 'popcorn');
-export const SET_ARMOR = UNKNOWN_CMD.bind(null, 'set_armor');
-export const SUB_VAR_CUBE = UNKNOWN_CMD.bind(null, 'sub_var_cube');
-export const RAIN = UNKNOWN_CMD.bind(null, 'rain');
-export const SET_FRAME_3DS = UNKNOWN_CMD.bind(null, 'set_frame_3ds');
-export const ESCALATOR = UNKNOWN_CMD.bind(null, 'escalator');
-// export const NOP = unknownCmd.bind(null, 'nop');
-export const SUB_LIFE_POINT_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'sub_life_point_obj');
-export const ACTION = UNKNOWN_CMD.bind(null, 'action');
-export const PALETTE = UNKNOWN_CMD.bind(null, 'palette');
+export const ADD_VAR_GAME = GENERIC_ACTION.bind(null, 'lba_add_vargame', 2);
+export const SUB_VAR_GAME = GENERIC_ACTION.bind(null, 'lba_sub_vargame', 2);
+export const ADD_VAR_CUBE = GENERIC_ACTION.bind(null, 'lba_add_varcube', 2);
+export const SUB_VAR_CUBE = GENERIC_ACTION.bind(null, 'lba_sub_varcube', 2);
+
+export const SET_BEHAVIOUR = GENERIC_ACTION.bind(null, 'lba_set_hero_behaviour', 1);
+export const SAVE_HERO = GENERIC_ACTION.bind(null, 'lba_save_hero', 0);
+export const RESTORE_HERO = GENERIC_ACTION.bind(null, 'lba_restore_hero', 0);
+export const SET_MAGIC_LEVEL = GENERIC_ACTION.bind(null, 'lba_set_magic_level', 1);
+
+export const CINEMA_MODE = GENERIC_ACTION.bind(null, 'lba_cinema_mode', 1);
+export const SET_CAMERA = GENERIC_ACTION.bind(null, 'lba_set_camera', 1);
+export const CAMERA_CENTER = GENERIC_ACTION.bind(null, 'lba_camera_center', 1);
+export const CAM_FOLLOW = GENERIC_ACTION.bind(null, 'lba_cam_follow', 1);
+
+export const POS_POINT = GENERIC_ACTION.bind(null, 'lba_set_position', 1);
+export const BETA = GENERIC_ACTION.bind(null, 'lba_set_orientation', [
+    (value) => {
+        return Math.round(getRotation(value, 0, 1) - 90);
+    }
+]);
+export const INVERSE_BETA = GENERIC_ACTION.bind(null, 'lba_set_inverse_orientation', [
+    (value) => {
+        return Math.round(getRotation(value, 0, 1) - 90);
+    }
+]);
+
+export const SET_DOOR_LEFT = GENERIC_ACTION.bind(null, 'lba_set_door_left', 1);
+export const SET_DOOR_RIGHT = GENERIC_ACTION.bind(null, 'lba_set_door_right', 1);
+export const SET_DOOR_UP = GENERIC_ACTION.bind(null, 'lba_set_door_up', 1);
+export const SET_DOOR_DOWN = GENERIC_ACTION.bind(null, 'lba_set_door_down', 1);
+
+export const SET_LIFE_POINT_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_life_point_obj', 1);
+export const ADD_LIFE_POINT_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_add_life_point_obj', 1);
+export const SUB_LIFE_POINT_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_sub_life_point_obj', 1);
+export const FULL_POINT = GENERIC_ACTION.bind(null, 'lba_full_point', 0);
+export const SET_ARMOR = GENERIC_ACTION.bind(null, 'lba_set_armor', 1);
+export const SET_ARMOR_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_armor_obj', 1);
+
+export const ADD_MONEY = GENERIC_ACTION.bind(null, 'lba_add_money', 1);
+export const SUB_MONEY = GENERIC_ACTION.bind(null, 'lba_sub_money', 1);
+export const USE_ONE_LITTLE_KEY = GENERIC_ACTION.bind(null, 'lba_use_one_little_key', 0);
+export const GIVE_BONUS = GENERIC_ACTION.bind(null, 'lba_give_bonus', 1);
+export const INC_CLOVER_BOX = GENERIC_ACTION.bind(null, 'lba_inc_clover_box', 0);
+
+export const FOUND_OBJECT = GENERIC_ACTION.bind(null, 'lba_found_object', 1);
+export const STATE_INVENTORY = GENERIC_ACTION.bind(null, 'lba_state_inventory', 2);
+export const SET_USED_INVENTORY = GENERIC_ACTION.bind(null, 'lba_set_used_inventory', 1);
+export const SET_HOLO_POS = GENERIC_ACTION.bind(null, 'lba_set_holo_pos', 1);
+export const CLR_HOLO_POS = GENERIC_ACTION.bind(null, 'lba_clr_holo_pos', 1);
+export const MEMO_SLATE = GENERIC_ACTION.bind(null, 'lba_memo_slate', 1);
+
+export const SAMPLE = GENERIC_ACTION.bind(null, 'lba_sample', 1);
+export const NEW_SAMPLE = GENERIC_ACTION.bind(null, 'lba_new_sample', 4);
+export const REPEAT_SAMPLE = GENERIC_ACTION.bind(null, 'lba_repeat_sample', 2);
+export const SAMPLE_ALWAYS = GENERIC_ACTION.bind(null, 'lba_sample_always', 1);
+export const SAMPLE_STOP = GENERIC_ACTION.bind(null, 'lba_sample_stop', 1);
+export const PARM_SAMPLE = GENERIC_ACTION.bind(null, 'lba_parm_sample', 3);
+export const PLAY_MUSIC = GENERIC_ACTION.bind(null, 'lba_play_music', 1);
+
+export const PLAY_VIDEO = GENERIC_ACTION.bind(null, 'lba_play_video', 1);
+
+export const HIT = GENERIC_ACTION.bind(null, 'lba_hit', 2);
+export const SET_HIT_ZONE = GENERIC_ACTION.bind(null, 'lba_set_hit_zone', 2);
+
+export const SET_SPRITE = GENERIC_ACTION.bind(null, 'lba_set_sprite', 1);
+export const ANIM_TEXTURE = GENERIC_ACTION.bind(null, 'lba_anim_texture', 1);
+
+export const INVISIBLE = GENERIC_ACTION.bind(null, 'lba_set_invisible', 1);
+
+export const SET_RAIL = GENERIC_ACTION.bind(null, 'lba_set_rail', 2);
+export const ESCALATOR = GENERIC_ACTION.bind(null, 'lba_escalator', 2);
+export const INIT_BUGGY = GENERIC_ACTION.bind(null, 'lba_init_buggy', 1);
+
+export const RAIN = GENERIC_ACTION.bind(null, 'lba_rain', 1);
+export const ECLAIR = GENERIC_ACTION.bind(null, 'lba_lightning', 1);
+
+export const SET_ANIM_DIAL = GENERIC_ACTION.bind(null, 'lba_set_anim_dial', 1);
+export const IMPACT_POINT = GENERIC_ACTION.bind(null, 'lba_impact_point', 2);
+export const BALLOON = GENERIC_ACTION.bind(null, 'lba_balloon', 1);
+export const BACKGROUND = GENERIC_ACTION.bind(null, 'lba_background', 1);
+export const CAN_FALL = GENERIC_ACTION.bind(null, 'lba_set_can_fall', 1);
+export const BRICK_COL = GENERIC_ACTION.bind(null, 'lba_brick_col', 1);
+export const OBJ_COL = GENERIC_ACTION.bind(null, 'lba_obj_col', 1);
+export const NO_SHOCK = GENERIC_ACTION.bind(null, 'lba_no_shock', 1);
+export const PCX = GENERIC_ACTION.bind(null, 'lba_pcx', 1);
+export const SET_GRM = GENERIC_ACTION.bind(null, 'lba_set_grm', 2);
+export const SET_CHANGE_CUBE = GENERIC_ACTION.bind(null, 'lba_set_change_cube', 2);
+export const FADE_TO_PAL = GENERIC_ACTION.bind(null, 'lba_fade_to_pal', 1);
+export const PALETTE = GENERIC_ACTION.bind(null, 'lba_palette', 1);
+export const FLOW_POINT = GENERIC_ACTION.bind(null, 'lba_flow_point', 2);
+export const SHADOW_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_shadow_obj', 2);
+export const ANIM_SET = GENERIC_ACTION.bind(null, 'lba_anim_set', 1);
+export const PCX_MESS_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_pcx_mess_obj', 2);
+export const SET_FRAME = GENERIC_ACTION.bind(null, 'lba_set_frame', 1);
+export const FLOW_OBJ = GENERIC_ACTION.bind(null, 'lba_flow_obj', 1);
+export const IMPACT_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_impact_obj', 2);
+export const POS_OBJ_AROUND = GENERIC_ACTION.bind(null, 'lba_pos_obj_around', 2);
+export const SCALE = GENERIC_ACTION.bind(null, 'lba_scale', 2);
+export const POPCORN = GENERIC_ACTION.bind(null, 'lba_popcorn', 0);
+export const SET_FRAME_3DS = GENERIC_ACTION.bind(null, 'lba_set_frame_3ds', 1);
+export const ACTION = GENERIC_ACTION.bind(null, 'lba_action', 0);

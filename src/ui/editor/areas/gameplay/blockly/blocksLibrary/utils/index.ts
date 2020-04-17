@@ -10,7 +10,9 @@ import {
     generateTracks,
     generateBehaviours,
     generateTexts,
-    generateScenes
+    generateScenes,
+    generateDirModes,
+    generateHeroBehaviours
 } from './optionsGenerators';
 
 export const makeIcon = file => new Blockly.FieldImage(`editor/icons/${file}`, 15, 15);
@@ -64,7 +66,9 @@ const typeGenerator = {
     track: generateTracks,
     behaviour: generateBehaviours,
     text: generateTexts,
-    scene: generateScenes
+    scene: generateScenes,
+    dirmode: generateDirModes,
+    hero_behaviour: generateHeroBehaviours
 };
 
 export class FieldDropdownLBA extends Blockly.FieldDropdown {

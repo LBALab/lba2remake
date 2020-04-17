@@ -1,6 +1,7 @@
 import { map, filter, take } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../DebugData';
 import LocationsNode from '../../../locator/LocationsNode';
+import { DirMode } from '../../../../../../../game/actors';
 
 function getActor(field) {
     const block = field.getSourceBlock();
@@ -189,4 +190,32 @@ export function generateScenes() {
         return [['<scene>', '-1']];
     }
     return sceneList;
+}
+
+const dirModes = map(
+    DirMode,
+    (idx, name) => ([name, `${idx}`])
+);
+
+export function generateDirModes() {
+    return dirModes;
+}
+
+export function generateHeroBehaviours() {
+    return [
+        ['NORMAL', '0'],
+        ['ATHLETIC', '1'],
+        ['AGGRESSIVE', '2'],
+        ['DISCREET', '3'],
+        ['PROTOPACK', '4'],
+        ['WITH_ZOE', '5'],
+        ['HORN', '6'],
+        ['SPACESUIT_INDOORS_NORMAL', '7'],
+        ['JETPACK', '8'],
+        ['SPACESUIT_INDOORS_ATHLETIC', '9'],
+        ['SPACESUIT_OUTDOORS_NORMAL', '10'],
+        ['SPACESUIT_OUTDOORS_ATHLETIC', '11'],
+        ['CAR', '12'],
+        ['ELECTROCUTED', '13']
+    ];
 }

@@ -715,7 +715,7 @@ export const LifeOpcode = [
         opcode: 0x54,
         command: 'SET_SPRITE',
         handler: lf.SET_SPRITE,
-        args: ['Uint8', 'Uint8'],
+        args: ['Uint16'],
         indent: Indent.KEEP,
         type: 'assignment'
     },

@@ -62,20 +62,6 @@ export function GENERIC_CONDITION(type, param, workspace, cmd, { connection }) {
     return block;
 }
 
-export function UNKNOWN_CMD(label, workspace, cmd, {connection}) {
-    const block = newBlock(workspace, 'lba_unknown_life_cmd', cmd);
-    connection.connect(block.previousConnection);
-    block.setFieldValue(label, 'label');
-    return { connection: block.nextConnection };
-}
-
-export function UNKNOWN_CMD_OBJ(label, workspace, cmd, {connection}) {
-    const block = newBlock(workspace, 'lba_unknown_life_cmd_obj', cmd);
-    connection.connect(block.previousConnection);
-    block.setFieldValue(label, 'label');
-    return { connection: block.nextConnection };
-}
-
 export function UNKNOWN_MOVE_CMD(label, workspace, cmd, {connection}) {
     const block = newBlock(workspace, 'lba_unknown_move_cmd', cmd);
     if (connection) {
