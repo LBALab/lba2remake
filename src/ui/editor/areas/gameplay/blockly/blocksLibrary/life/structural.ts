@@ -141,3 +141,34 @@ export const lba_track_to_vargame = trackAction((field) => {
     field('save current track to [game]');
     field(new FieldDropdownLBA('vargame'), 'arg_0');
 });
+
+export const lba_end_life = behaviourAction((field) => {
+    field('stop activity');
+});
+
+export const lba_suicide = behaviourAction((field) => {
+    field('suicide');
+});
+
+export const lba_kill_obj = behaviourAction((field) => {
+    field('kill');
+    field(makeIcon('actor.svg'));
+    field(new FieldActor(), 'arg_0');
+});
+
+export const lba_return = behaviourAction((field) => {
+    field('return');
+});
+
+export const lba_change_scene = behaviourAction((field) => {
+    field('change scene to');
+    field(new FieldDropdownLBA('scene'), 'arg_0');
+});
+
+export const lba_the_end = behaviourAction((field) => {
+    field('trigger end of game');
+});
+
+export const lba_game_over = behaviourAction((field) => {
+    field('trigger game over');
+});

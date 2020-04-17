@@ -8,7 +8,9 @@ import {
     generateVarScene,
     generateItems,
     generateTracks,
-    generateBehaviours
+    generateBehaviours,
+    generateTexts,
+    generateScenes
 } from './optionsGenerators';
 
 export const makeIcon = file => new Blockly.FieldImage(`editor/icons/${file}`, 15, 15);
@@ -60,7 +62,9 @@ const typeGenerator = {
     varscene: generateVarScene,
     item: generateItems,
     track: generateTracks,
-    behaviour: generateBehaviours
+    behaviour: generateBehaviours,
+    text: generateTexts,
+    scene: generateScenes
 };
 
 export class FieldDropdownLBA extends Blockly.FieldDropdown {

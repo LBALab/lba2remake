@@ -1,5 +1,6 @@
 import { map, filter, take } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../DebugData';
+import LocationsNode from '../../../locator/LocationsNode';
 
 function getActor(field) {
     const block = field.getSourceBlock();
@@ -143,4 +144,49 @@ export function generateVarScene() {
 
 export function generateItems() {
     return take(generateVarGame.call(this), 40);
+}
+
+export function generateTexts() {
+    const block = this.getSourceBlock();
+    const scene = block && block.workspace.scene;
+    if (!scene) {
+        return [['<text>', '-1']];
+    }
+    return map(
+        scene.data.texts,
+        ({value}, idx) => {
+            const text = value.replace(/@/g, '\\n');
+            const ellipsis = text.length > 50 ? '_[...]' : '';
+            return [`${text.substring(0, 50)}${ellipsis}`, `${idx}`];
+        }
+    );
+}
+
+const sceneList = [];
+
+function fillSceneList(node = LocationsNode, path = []) {
+    if (node.props && node.props[0]) {
+        sceneList.push([`${path.join('/')}/${node.name}`, `${node.props[0].value}`]);
+    }
+    if (node.children) {
+        for (let i = 0; i < node.children.length; i += 1) {
+            if (node === LocationsNode) {
+                fillSceneList(node.children[i], []);
+            } else {
+                fillSceneList(node.children[i], [...path, node.name]);
+            }
+        }
+    }
+    return null;
+}
+
+fillSceneList();
+
+export function generateScenes() {
+    const block = this.getSourceBlock();
+    const scene = block && block.workspace.scene;
+    if (!scene) {
+        return [['<scene>', '-1']];
+    }
+    return sceneList;
 }

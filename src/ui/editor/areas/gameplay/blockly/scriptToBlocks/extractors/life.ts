@@ -102,31 +102,31 @@ export const VAR_GAME_TO_TRACK =
 export const TRACK_TO_VAR_GAME =
     GENERIC_ACTION.bind(null, 'lba_track_to_vargame', 1);
 
-export const END_LIFE = UNKNOWN_CMD.bind(null, 'end_life');
-// export const END = unknownCmd.bind(null, 'end');
-export const SUICIDE = UNKNOWN_CMD.bind(null, 'suicide');
-export const KILL_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'kill_obj');
-export const RETURN = UNKNOWN_CMD.bind(null, 'return');
-export const CHANGE_CUBE = UNKNOWN_CMD.bind(null, 'change_cube');
-export const THE_END = UNKNOWN_CMD.bind(null, 'the_end');
-export const GAME_OVER = UNKNOWN_CMD.bind(null, 'game_over');
+export const END_LIFE = GENERIC_ACTION.bind(null, 'lba_end_life', 0);
+export const SUICIDE = GENERIC_ACTION.bind(null, 'lba_suicide', 0);
+export const KILL_OBJ = GENERIC_ACTION.bind(null, 'lba_kill_obj', 1);
+export const RETURN = GENERIC_ACTION.bind(null, 'lba_return', 0);
+export const CHANGE_CUBE = GENERIC_ACTION.bind(null, 'lba_change_scene', 1);
+export const THE_END = GENERIC_ACTION.bind(null, 'lba_the_end', 0);
+export const GAME_OVER = GENERIC_ACTION.bind(null, 'lba_game_over', 0);
 
 export const SET_VAR_CUBE = GENERIC_ACTION.bind(null, 'lba_set_varscene', 2);
 export const SET_VAR_GAME = GENERIC_ACTION.bind(null, 'lba_set_vargame', 2);
+
 export const ANIM = GENERIC_ACTION.bind(null, 'lba_set_anim', 1);
 export const ANIM_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_anim_obj', 1);
 export const BODY = GENERIC_ACTION.bind(null, 'lba_set_body', 1);
 export const BODY_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_body_obj', 1);
 export const NO_BODY = GENERIC_ACTION.bind(null, 'lba_no_body', 0);
 
-export const MESSAGE = UNKNOWN_CMD.bind(null, 'message');
-export const MESSAGE_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'message_obj');
-export const MESSAGE_ZOE = UNKNOWN_CMD.bind(null, 'message_zoe');
-export const ADD_MESSAGE = UNKNOWN_CMD.bind(null, 'add_message');
-export const END_MESSAGE = UNKNOWN_CMD.bind(null, 'end_message');
-export const ADD_CHOICE = UNKNOWN_CMD.bind(null, 'add_choice');
-export const ASK_CHOICE = UNKNOWN_CMD.bind(null, 'ask_choice');
-export const ASK_CHOICE_OBJ = UNKNOWN_CMD_OBJ.bind(null, 'ask_choice_obj');
+export const MESSAGE = GENERIC_ACTION.bind(null, 'lba_message', 1);
+export const MESSAGE_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_message_obj', 1);
+export const MESSAGE_ZOE = GENERIC_ACTION.bind(null, 'lba_message_zoe', 1);
+export const ADD_MESSAGE = GENERIC_ACTION.bind(null, 'lba_add_message', 1);
+export const END_MESSAGE = GENERIC_ACTION.bind(null, 'lba_end_message', 0);
+export const ADD_CHOICE = GENERIC_ACTION.bind(null, 'lba_add_choice', 1);
+export const ASK_CHOICE = GENERIC_ACTION.bind(null, 'lba_ask_choice', 1);
+export const ASK_CHOICE_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_ask_choice_obj', 1);
 
 export const SET_BEHAVIOUR = UNKNOWN_CMD.bind(null, 'set_behaviour');
 export const CINEMA_MODE = UNKNOWN_CMD.bind(null, 'cinema_mode');

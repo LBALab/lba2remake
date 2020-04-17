@@ -1,14 +1,38 @@
 export default `<xml id="toolbox" style="display: none">
-    <category name="Structural" colour="198">
+    <category name="Behaviours" colour="198">
+        <label text="Definition"/>
         <block type="lba_behaviour_init"/>
         <block type="lba_behaviour"/>
-        <block type="lba_track"/>
+
+        <label text="Actions"/>
+        <block type="lba_set_behaviour"/>
+        <block type="lba_set_behaviour_obj"/>
+        <block type="lba_save_behaviour"/>
+        <block type="lba_save_behaviour_obj"/>
+        <block type="lba_restore_behaviour"/>
+        <block type="lba_restore_behaviour_obj"/>
     </category>
-    <category name="Control" colour="180">
-        <label text="Branching"/>
+    <category name="Tracks" colour="100">
+        <label text="Definition"/>
+        <block type="lba_track"/>
+
+        <label text="Actions"/>
+        <block type="lba_set_track"/>
+        <block type="lba_set_track_obj"/>
+        <block type="lba_save_current_track"/>
+        <block type="lba_save_current_track_obj"/>
+        <block type="lba_track_to_vargame"/>
+        <block type="lba_restore_last_track"/>
+        <block type="lba_restore_last_track_obj"/>
+        <block type="lba_vargame_to_track"/>
+    </category>
+    <category name="Control flow" colour="180">
+        <label text="Branching (if)"/>
         <block type="lba_if"/>
         <block type="lba_swif"/>
         <block type="lba_oneif"/>
+
+        <label text="Branching (switch)"/>
         <block type="lba_switch">
             <statement name="statements">
                 <block type="lba_case">
@@ -38,7 +62,10 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_or_case"/>
         <block type="lba_break"/>
 
-        <label text="Logic"/>
+        <label text="Misc"/>
+        <block type="lba_return"/>
+
+        <label text="Logic gates"/>
         <block type="lba_and"/>
         <block type="lba_or"/>
     </category>
@@ -113,24 +140,16 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_cone_view"/>
         <block type="lba_object_displayed"/>
     </category>
-    <category name="Behaviour Actions" colour="#666666">
-        <label text="Behaviours"/>
-        <block type="lba_set_behaviour"/>
-        <block type="lba_set_behaviour_obj"/>
-        <block type="lba_save_behaviour"/>
-        <block type="lba_save_behaviour_obj"/>
-        <block type="lba_restore_behaviour"/>
-        <block type="lba_restore_behaviour_obj"/>
+    <category name="Actions (for behaviours)" colour="#666666">
+        <label text="Actor"/>
+        <block type="lba_end_life"/>
+        <block type="lba_suicide"/>
+        <block type="lba_kill_obj"/>
 
-        <label text="Tracks"/>
-        <block type="lba_set_track"/>
-        <block type="lba_set_track_obj"/>
-        <block type="lba_save_current_track"/>
-        <block type="lba_save_current_track_obj"/>
-        <block type="lba_track_to_vargame"/>
-        <block type="lba_restore_last_track"/>
-        <block type="lba_restore_last_track_obj"/>
-        <block type="lba_vargame_to_track"/>
+        <label text="Game"/>
+        <block type="lba_change_scene"/>
+        <block type="lba_the_end"/>
+        <block type="lba_game_over"/>
 
         <label text="Variables &amp; Bonuse"/>
         <block type="lba_set_varscene"/>
@@ -142,8 +161,18 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_set_body"/>
         <block type="lba_set_body_obj"/>
         <block type="lba_no_body"/>
+
+        <label text="Messages"/>
+        <block type="lba_message"/>
+        <block type="lba_message_obj"/>
+        <block type="lba_message_zoe"/>
+        <block type="lba_add_message"/>
+        <block type="lba_end_message"/>
+        <block type="lba_add_choice"/>
+        <block type="lba_ask_choice"/>
+        <block type="lba_ask_choice_obj"/>
     </category>
-    <category name="Track Actions" colour="#555555">
+    <category name="Actions (for tracks)" colour="#555555">
         <label text="3D Model"/>
         <block type="lba_move_set_anim"/>
         <block type="lba_wait_anim"/>
