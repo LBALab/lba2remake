@@ -380,6 +380,7 @@ export const lba_play_video = action((_block, field) => {
 */
 export const lba_hit = action((_block, field) => {
     field('hit');
+    field(makeIcon('actor.svg'));
     field(new FieldActor(), 'arg_0');
     field('with strength');
     field(new Blockly.FieldNumber(), 'arg_1');
@@ -576,7 +577,7 @@ export const lba_set_frame_3ds = action((_block, field) => {
     field(new Blockly.FieldNumber(), 'arg_0');
 });
 
-export const lba_action = action((_block, field) => {
+export const lba_set_action = action((_block, field) => {
     field('(?) action');
 });
 

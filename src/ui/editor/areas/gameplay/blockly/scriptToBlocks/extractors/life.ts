@@ -243,4 +243,4 @@ export const POS_OBJ_AROUND = GENERIC_ACTION.bind(null, 'lba_pos_obj_around', 2)
 export const SCALE = GENERIC_ACTION.bind(null, 'lba_scale', 2);
 export const POPCORN = GENERIC_ACTION.bind(null, 'lba_popcorn', 0);
 export const SET_FRAME_3DS = GENERIC_ACTION.bind(null, 'lba_set_frame_3ds', 1);
-export const ACTION = GENERIC_ACTION.bind(null, 'lba_action', 0);
+export const ACTION = GENERIC_ACTION.bind(null, 'lba_set_action', 0);

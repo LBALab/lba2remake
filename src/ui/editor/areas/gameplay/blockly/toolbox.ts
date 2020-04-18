@@ -151,9 +151,13 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_the_end"/>
         <block type="lba_game_over"/>
 
-        <label text="Variables &amp; Bonuse"/>
+        <label text="Variables"/>
         <block type="lba_set_varscene"/>
         <block type="lba_set_vargame"/>
+        <block type="lba_add_vargame"/>
+        <block type="lba_sub_vargame"/>
+        <block type="lba_add_varcube"/>
+        <block type="lba_sub_varcube"/>
 
         <label text="3D Model"/>
         <block type="lba_set_anim"/>
@@ -171,6 +175,109 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_add_choice"/>
         <block type="lba_ask_choice"/>
         <block type="lba_ask_choice_obj"/>
+
+        <label text="Movements"/>
+        <block type="lba_set_position"/>
+        <block type="lba_set_orientation"/>
+        <block type="lba_set_inverse_orientation"/>
+        <block type="lba_set_dirmode"/>
+        <block type="lba_set_dirmode_obj"/>
+
+        <label text="Hero"/>
+        <block type="lba_set_hero_behaviour"/>
+        <block type="lba_save_hero"/>
+        <block type="lba_restore_hero"/>
+        <block type="lba_set_magic_level"/>
+
+        <label text="Camera"/>
+        <block type="lba_cinema_mode"/>
+        <block type="lba_set_camera"/>
+        <block type="lba_camera_center"/>
+        <block type="lba_cam_follow"/>
+
+        <label text="Doors"/>
+        <block type="lba_set_door_left"/>
+        <block type="lba_set_door_right"/>
+        <block type="lba_set_door_up"/>
+        <block type="lba_set_door_down"/>
+
+        <label text="Life &amp; armor"/>
+        <block type="lba_set_life_point_obj"/>
+        <block type="lba_add_life_point_obj"/>
+        <block type="lba_sub_life_point_obj"/>
+        <block type="lba_full_point"/>
+        <block type="lba_set_armor"/>
+        <block type="lba_set_armor_obj"/>
+
+        <label text="Money &amp; bonuses"/>
+        <block type="lba_add_money"/>
+        <block type="lba_sub_money"/>
+        <block type="lba_use_one_little_key"/>
+        <block type="lba_give_bonus"/>
+        <block type="lba_inc_clover_box"/>
+
+        <label text="Inventory"/>
+        <block type="lba_found_object"/>
+        <block type="lba_state_inventory"/>
+        <block type="lba_set_used_inventory"/>
+        <block type="lba_set_holo_pos"/>
+        <block type="lba_clr_holo_pos"/>
+        <block type="lba_memo_slate"/>
+
+        <label text="Audio"/>
+        <block type="lba_sample"/>
+        <block type="lba_new_sample"/>
+        <block type="lba_repeat_sample"/>
+        <block type="lba_sample_always"/>
+        <block type="lba_sample_stop"/>
+        <block type="lba_parm_sample"/>
+        <block type="lba_play_music"/>
+
+        <label text="Video"/>
+        <block type="lba_play_video"/>
+
+        <label text="Misc"/>
+        <block type="lba_hit"/>
+        <block type="lba_set_hit_zone"/>
+        <block type="lba_set_sprite"/>
+        <block type="lba_anim_texture"/>
+        <block type="lba_set_invisible"/>
+
+        <label text="Transportation"/>
+        <block type="lba_set_rail"/>
+        <block type="lba_escalator"/>
+        <block type="lba_init_buggy"/>
+
+        <label text="Weather"/>
+        <block type="lba_rain"/>
+        <block type="lba_lightning"/>
+
+        <label text="Unknown"/>
+        <block type="lba_set_anim_dial"/>
+        <block type="lba_impact_point"/>
+        <block type="lba_balloon"/>
+        <block type="lba_background"/>
+        <block type="lba_set_can_fall"/>
+        <block type="lba_brick_col"/>
+        <block type="lba_obj_col"/>
+        <block type="lba_no_shock"/>
+        <block type="lba_pcx"/>
+        <block type="lba_set_grm"/>
+        <block type="lba_set_change_cube"/>
+        <block type="lba_fade_to_pal"/>
+        <block type="lba_palette"/>
+        <block type="lba_flow_point"/>
+        <block type="lba_shadow_obj"/>
+        <block type="lba_anim_set"/>
+        <block type="lba_pcx_mess_obj"/>
+        <block type="lba_set_frame"/>
+        <block type="lba_flow_obj"/>
+        <block type="lba_impact_obj"/>
+        <block type="lba_pos_obj_around"/>
+        <block type="lba_scale"/>
+        <block type="lba_popcorn"/>
+        <block type="lba_set_frame_3ds"/>
+        <block type="lba_set_action"/>
     </category>
     <category name="Actions (for tracks)" colour="#393939">
         <label text="3D Model"/>
