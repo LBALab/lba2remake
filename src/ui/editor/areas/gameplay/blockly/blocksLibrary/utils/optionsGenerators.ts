@@ -1,4 +1,4 @@
-import { map, filter, take } from 'lodash';
+import { map, filter, take, keys, times, find } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../DebugData';
 import LocationsNode from '../../../locator/LocationsNode';
 import { DirMode } from '../../../../../../../game/actors';
@@ -19,20 +19,39 @@ function getActor(field) {
 }
 
 export function generateBehaviours() {
-    const actor = getActor(this);
-    if (!actor) {
+    const block = this.getSourceBlock();
+    if (!block) {
         return [['<behaviour>', '-1']];
     }
-    const behaviours = map(actor.scripts.life.comportementMap).sort();
-    if (behaviours.length === 0) {
+    let actor = block.workspace.actor;
+    let otherActor = false;
+    const actorField = block.getField('actor');
+    if (actorField) {
+        const actorIdx = Number(actorField.getValue());
+        if (actorIdx === -1) {
+            return [['<behaviour>', '-1']];
+        }
+        actor = block.workspace.scene.actors[actorIdx];
+        otherActor = true;
+    }
+
+    const numBehaviours = keys(actor.scripts.life.comportementMap).length;
+    if (numBehaviours === 0) {
         return [['<behaviour>', '-1']];
     }
-    return behaviours.map(b => [
-        b === 0
-            ? '<start>'
-            : (b === 1 ? 'NORMAL' : `BEHAVIOUR ${b as number + 1}`),
-        `${b}`
-    ]);
+    return times(numBehaviours).map((idx) => {
+        if (idx === 0) {
+            return ['<start>', '0'];
+        }
+        if (!otherActor) {
+            const behaviourBlocks = block.workspace.getBlocksByType('lba_behaviour');
+            const tgtBlock = find(behaviourBlocks, b => b.data === idx);
+            if (tgtBlock) {
+                return [tgtBlock.getFieldValue('arg_0'), `${idx}`];
+            }
+        }
+        return [`BEHAVIOUR ${idx}`, `${idx}`];
+    });
 }
 
 export function generateTracks() {

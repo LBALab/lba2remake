@@ -12,7 +12,7 @@ export const lba_behaviour = {
         this.appendDummyInput()
             .appendField('behaviour')
             .appendField(makeIcon('behaviour.svg'))
-            .appendField(new Blockly.FieldTextInput('BEHAVIOUR'), 'name');
+            .appendField(new Blockly.FieldTextInput('BEHAVIOUR'), 'arg_0');
         this.appendStatementInput('statements')
             .setCheck('LIFE');
         this.setColour(BEHAVIOUR_COLOR);
