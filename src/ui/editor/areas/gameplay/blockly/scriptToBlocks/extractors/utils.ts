@@ -61,12 +61,3 @@ export function GENERIC_CONDITION(type, param, workspace, cmd, { connection }) {
     connection.connect(block.outputConnection);
     return block;
 }
-
-export function UNKNOWN_MOVE_CMD(label, workspace, cmd, {connection}) {
-    const block = newBlock(workspace, 'lba_unknown_move_cmd', cmd);
-    if (connection) {
-        connection.connect(block.previousConnection);
-    }
-    block.setFieldValue(label, 'label');
-    return { connection: block.nextConnection };
-}

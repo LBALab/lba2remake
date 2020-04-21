@@ -16,9 +16,6 @@ function extractCommands(workspace, type) {
         if (cmdName in tExtractors) {
             const extractor = tExtractors[cmdName];
             newCtx = extractor(workspace, {data, index, type}, ctx);
-        } else {
-            // tslint:disable-next-line: no-console
-            console.warn(`No mapping found for command: ${cmdName}`);
         }
         Object.assign(ctx, newCtx);
     });

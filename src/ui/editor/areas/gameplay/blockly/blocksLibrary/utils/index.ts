@@ -23,6 +23,18 @@ export class FieldUint8 extends Blockly.FieldNumber {
     }
 }
 
+export class FieldUint16 extends Blockly.FieldNumber {
+    constructor() {
+        super(0, 0, 65535, 0, Math.round);
+    }
+}
+
+export class FieldInt16 extends Blockly.FieldNumber {
+    constructor() {
+        super(0, -32768, 32767, 0, Math.round);
+    }
+}
+
 export const typeIcons = {
     actor: 'actor.svg',
     body: 'body.svg',

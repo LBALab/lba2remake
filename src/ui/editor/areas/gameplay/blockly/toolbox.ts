@@ -4,7 +4,7 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_behaviour_init"/>
         <block type="lba_behaviour"/>
 
-        <label text="Actions"/>
+        <label text="Actions (for behaviours)"/>
         <block type="lba_set_behaviour"/>
         <block type="lba_set_behaviour_obj"/>
         <block type="lba_save_behaviour"/>
@@ -14,9 +14,9 @@ export default `<xml id="toolbox" style="display: none">
     </category>
     <category name="Tracks" colour="100">
         <label text="Definition"/>
-        <block type="lba_track"/>
+        <block type="lba_move_track"/>
 
-        <label text="Actions"/>
+        <label text="Actions (for behaviours)"/>
         <block type="lba_set_track"/>
         <block type="lba_set_track_obj"/>
         <block type="lba_save_current_track"/>
@@ -25,6 +25,9 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_restore_last_track"/>
         <block type="lba_restore_last_track_obj"/>
         <block type="lba_vargame_to_track"/>
+
+        <label text="Actions (for tracks)"/>
+        <block type="lba_move_goto"/>
     </category>
     <category name="Control flow" colour="180">
         <label text="Branching (if)"/>
@@ -280,18 +283,62 @@ export default `<xml id="toolbox" style="display: none">
         <block type="lba_set_action"/>
     </category>
     <category name="Actions (for tracks)" colour="#393939">
+        <label text="Structural"/>
+        <block type="lba_move_replace"/>
+
         <label text="3D Model"/>
         <block type="lba_move_set_anim"/>
-        <block type="lba_wait_anim"/>
+        <block type="lba_move_wait_anim"/>
+        <block type="lba_move_wait_num_anim"/>
+        <block type="lba_move_set_frame"/>
         <block type="lba_move_set_body"/>
 
         <label text="Movement"/>
-        <block type="lba_goto_point"/>
+        <block type="lba_move_goto_point"/>
+        <block type="lba_move_goto_point_3d"/>
+        <block type="lba_move_goto_sym_point"/>
+        <block type="lba_move_pos_point"/>
+        <block type="lba_move_speed"/>
+        <block type="lba_move_set_angle"/>
+        <block type="lba_move_set_angle_rnd"/>
+        <block type="lba_move_set_orientation"/>
+        <block type="lba_move_face_hero"/>
 
         <label text="Timing"/>
-        <block type="lba_wait_sec"/>
-        <block type="lba_wait_dsec"/>
-        <block type="lba_wait_sec_rnd"/>
-        <block type="lba_wait_dsec_rnd"/>
+        <block type="lba_move_wait_sec"/>
+        <block type="lba_move_wait_dsec"/>
+        <block type="lba_move_wait_sec_rnd"/>
+        <block type="lba_move_wait_dsec_rnd"/>
+
+        <label text="Doors"/>
+        <block type="lba_move_open_left"/>
+        <block type="lba_move_open_right"/>
+        <block type="lba_move_open_up"/>
+        <block type="lba_move_open_down"/>
+        <block type="lba_move_close"/>
+        <block type="lba_move_wait_door"/>
+
+        <label text="Audio"/>
+        <block type="lba_move_sample"/>
+        <block type="lba_move_sample_stop"/>
+        <block type="lba_move_sample_always"/>
+        <block type="lba_move_repeat_sample"/>
+        <block type="lba_move_simple_sample"/>
+        <block type="lba_move_volume"/>
+        <block type="lba_move_frequency"/>
+        <block type="lba_move_interval"/>
+
+        <label text="Anim 3DS (?)"/>
+        <block type="lba_move_start_anim_3ds"/>
+        <block type="lba_move_stop_anim_3ds"/>
+        <block type="lba_move_set_start_3ds"/>
+        <block type="lba_move_set_end_3ds"/>
+        <block type="lba_move_set_frame_3ds"/>
+        <block type="lba_move_wait_anim_3ds"/>
+        <block type="lba_move_wait_frame_3ds"/>
+
+        <label text="Sprites"/>
+        <block type="lba_move_background"/>
+        <block type="lba_move_set_sprite"/>
     </category>
 </xml>`;
