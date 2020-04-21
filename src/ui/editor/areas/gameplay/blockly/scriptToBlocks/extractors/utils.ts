@@ -17,7 +17,9 @@ export function findLastConnection(connection) {
 
 export function GENERIC_ACTION(type, arg, workspace, cmd, {connection}) {
     const block = newBlock(workspace, type, cmd);
-    connection.connect(block.previousConnection);
+    if (connection) {
+        connection.connect(block.previousConnection);
+    }
     if (Array.isArray(arg)) {
         for (let i = 0; i < arg.length; i += 1) {
             block.setFieldValue(arg[i](cmd.data.args[i].value, workspace, cmd), `arg_${i}`);
