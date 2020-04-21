@@ -1,4 +1,4 @@
-import { last } from 'lodash';
+import { last, mapKeys } from 'lodash';
 import { LifeOpcode } from '../game/scripting/data/life';
 import { MoveOpcode } from '../game/scripting/data/move';
 import { ConditionOpcode } from '../game/scripting/data/condition';
@@ -12,6 +12,13 @@ const TypeSize = {
     Int32: 4,
     Uint32: 4,
 };
+
+export function parseScripts(actor) {
+    return {
+        life: parseScript(actor.index, 'life', actor.props.lifeScript),
+        move: parseScript(actor.index, 'move', actor.props.moveScript)
+    };
+}
 
 export function parseScript(actor, type, script) {
     const state = {
@@ -44,11 +51,12 @@ export function parseScript(actor, type, script) {
             break;
         }
     }
+    const mapOps = obj => mapKeys(obj, (_v, k) => state.opMap[k]);
     return {
         type,
         opMap: state.opMap,
-        comportementMap: state.comportementMap,
-        tracksMap: state.tracksMap,
+        comportementMap: mapOps(state.comportementMap),
+        tracksMap: mapOps(state.tracksMap),
         commands: state.commands
     };
 }
