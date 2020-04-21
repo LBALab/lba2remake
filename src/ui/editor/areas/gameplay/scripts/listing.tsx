@@ -21,14 +21,18 @@ export function getDebugListing(type, scene, actor) {
 function mapCommands(scene, actor, commands) {
     let indent = 0;
     let prevCommand = null;
+    let section = -1;
     const state = {};
     return map(commands, (cmd) => {
+        if (cmd.op.command === 'COMPORTEMENT' || cmd.op.command === 'TRACK') {
+            section = cmd.args[0].value;
+        }
         const newCmd = {
             name: cmd.op.command,
             args: mapArguments(scene, actor, cmd),
             condition: mapCondition(scene, cmd.condition, state),
             operator: mapOperator(scene, cmd.operator, state),
-            section: cmd.section,
+            section,
             unimplemented: cmd.op.handler.unimplemented,
             type: cmd.op.type,
             prop: cmd.op.prop,
@@ -42,8 +46,8 @@ function mapCommands(scene, actor, commands) {
 
 export function mapComportementArg(comportement) {
     switch (comportement) {
-        case 1: return 'INIT';
-        case 2: return 'NORMAL';
+        case 0: return 'INIT';
+        case 1: return 'NORMAL';
         default: return `CMP_${comportement}`;
     }
 }
@@ -52,7 +56,7 @@ function mapArguments(scene, actor, cmd) {
     const args = cloneDeep(cmd.args);
 
     const mapComportementSetterArg =
-        (obj, index) => mapComportementArg(obj.scripts.life.comportementMap[index] + 1);
+        (obj, index) => mapComportementArg(obj.scripts.life.comportementMap[index]);
 
     switch (cmd.op.command) {
         case 'TRACK':

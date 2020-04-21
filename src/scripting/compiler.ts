@@ -18,14 +18,19 @@ function compileScript(type, game, scene, actor) {
             stopped: true,
             trackIndex: -1
         };
+    const compileState = { section: -1 };
     script.context = {game, scene, actor, state, type};
     script.instructions = map(script.commands, (cmd, idx) =>
-        compileInstruction(script, cmd, idx + 1));
+        compileInstruction(script, cmd, idx + 1, compileState));
 }
 
-function compileInstruction(script, cmd, cmdOffset) {
+function compileInstruction(script, cmd, cmdOffset, compileState) {
     const args = [script.context];
     let condition = null;
+
+    if (cmd.op.command === 'COMPORTEMENT' || cmd.op.command === 'TRACK') {
+        compileState.section = cmd.args[0].value;
+    }
 
     if (cmd.op.cmdState) {
         args.push({});
@@ -49,7 +54,7 @@ function compileInstruction(script, cmd, cmdOffset) {
     const handler = cmd.op.handler;
     const instruction = handler.bind(...args);
     instruction.dbgLabel = `${cmdOffset} ${cmd.op.command}`;
-    instruction.section = cmd.section;
+    instruction.section = compileState.section;
     if (condition)
         instruction.condition = condition;
     if (cmd.op.skipSideScenes) {

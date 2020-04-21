@@ -127,7 +127,7 @@ export const MoveOpcode = [
         opcode: 0x0F,
         command: 'GOTO_POINT_3D',
         handler: mv.GOTO_POINT_3D,
-        args: ['Uint8'],
+        args: ['Uint8:point'],
         indent: Indent.ONE,
         type: 'fct'
     },

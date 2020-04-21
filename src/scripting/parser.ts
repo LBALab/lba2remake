@@ -17,7 +17,7 @@ export function parseScript(actor, type, script) {
     const state = {
         type,
         actor,
-        comportement: 0,
+        comportement: -1,
         track: -1,
         newComportement: (type === 'life'),
         comportementMap: {},
@@ -55,10 +55,7 @@ export function parseScript(actor, type, script) {
 
 function checkEndIf(state) {
     while (state.ifStack.length > 0 && state.offset === last(state.ifStack)) {
-        state.commands.push({
-            op: LifeOpcode[0x10],
-            section: state.comportement
-        });
+        state.commands.push({ op: LifeOpcode[0x10] });
         state.ifStack.pop();
     }
 }
@@ -67,34 +64,33 @@ function checkEndSwitch(state, code) {
     while (code !== 0x76 && code !== 0x72 && code !== 0x73 && code !== 0x74
             && state.switchStack.length > 0
             && state.offset === last(state.switchStack)) {
-        state.commands.push({
-            op: LifeOpcode[0x76],
-            section: state.comportement
-        });
+        state.commands.push({ op: LifeOpcode[0x76] });
         state.switchStack.pop();
     }
 }
 
 function checkNewComportment(state, code) {
     if (code !== 0 && state.newComportement) {
-        state.comportementMap[state.offset] = state.comportement;
         state.comportement += 1;
+        state.comportementMap[state.offset] = state.comportement;
         state.commands.push({
             op: LifeOpcode[0x20], // COMPORTEMENT
             args: [{hide: false, value: state.comportement, type: 'label'}],
-            section: state.comportement
         });
         state.newComportement = false;
     }
 }
 
-function parseCommand(state, script, op, type) {
+interface Cmd {
+    op: any;
+    args?: any;
+}
+
+function parseCommand(state, script, op, _type) {
     const baseOffset = state.offset;
     state.offset += 1;
-    const cmd = {
+    const cmd : Cmd = {
         op,
-        section: type === 'life' ? state.comportement : state.track,
-        args: null
     };
     if (op.argsFirst) {
         parseArguments(state, script, op, cmd);
@@ -125,10 +121,6 @@ function parseCommand(state, script, op, type) {
     if (op.command === 'TRACK') {
         state.tracksMap[baseOffset] = cmd.args[0].value;
         state.track = cmd.args[0].value;
-        cmd.section = cmd.args[0].value;
-    }
-    if (op.command === 'END') {
-        cmd.section = 'end';
     }
     return cmd;
 }
