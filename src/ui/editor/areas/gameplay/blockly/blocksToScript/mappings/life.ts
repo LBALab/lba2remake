@@ -1,4 +1,4 @@
-import { keyBy } from 'lodash';
+import { keyBy, last } from 'lodash';
 import { LifeOpcode } from '../../../../../../../game/scripting/data/life';
 import { OperatorOpcode } from '../../../../../../../game/scripting/data/operator';
 import condMappings from './conditions';
@@ -24,17 +24,17 @@ function getTypeInfo(spec) {
     };
 }
 
-function handleLogicGate(logicBlock, cmd, commands) {
+function handleLogicGate(logicBlock, cmd, ctx) {
     const left = logicBlock.getInput('arg_0').connection.targetBlock();
     const right = logicBlock.getInput('arg_1').connection.targetBlock();
     if (!left && !right) {
         return false;
     }
     if (!left) {
-        return handleCondition(right, cmd, commands);
+        return handleCondition(right, cmd, ctx);
     }
     if (!right) {
-        return handleCondition(left, cmd, commands);
+        return handleCondition(left, cmd, ctx);
     }
     const gateCmd = {
         op: logicBlock.type === 'lba_or'
@@ -46,18 +46,35 @@ function handleLogicGate(logicBlock, cmd, commands) {
             hide: true
         }]
     };
-    const leftRes = handleCondition(left, gateCmd, commands);
-    const rightRes = handleCondition(right, cmd, commands);
+    const leftRes = handleCondition(left, gateCmd, ctx);
+    const rightRes = handleCondition(right, cmd, ctx);
     if (leftRes && rightRes) {
-        commands.push(gateCmd);
+        ctx.commands.push(gateCmd);
         return true;
     }
     return false;
 }
 
-function handleCondition(condBlock, cmd, commands, usesOperand = true) {
+function handleOperand(condBlock, cmd, operand) {
+    const { type, hide } = getTypeInfo(operand);
+    const operatorValue = condBlock.getFieldValue('operator');
+    let operandValue = condBlock.getFieldValue('operand');
+    if (type === 'angle') {
+        operandValue = degreesToLBA(operandValue);
+    }
+    cmd.operator = {
+        op: operatorsByName[operatorValue],
+        operand: {
+            type,
+            value: operandValue,
+            hide
+        }
+    };
+}
+
+function handleCondition(condBlock, cmd, ctx, usesOperand = true) {
     if (condBlock.type === 'lba_or' || condBlock.type === 'lba_and') {
-        return handleLogicGate(condBlock, cmd, commands);
+        return handleLogicGate(condBlock, cmd, ctx);
     }
     const code = condMappings[condBlock.type];
     const op = ConditionOpcode[code];
@@ -65,25 +82,12 @@ function handleCondition(condBlock, cmd, commands, usesOperand = true) {
         return false;
     }
 
-    const { type: operandType, hide: hideOperand } = getTypeInfo(op.operand);
     cmd.condition = {
         op,
-        operandType
+        operandType: getTypeInfo(op.operand).type
     };
     if (usesOperand) {
-        const operatorValue = condBlock.getFieldValue('operator');
-        let operandValue = condBlock.getFieldValue('operand');
-        if (operandType === 'angle') {
-            operandValue = degreesToLBA(operandValue);
-        }
-        cmd.operator = {
-            op: operatorsByName[operatorValue],
-            operand: {
-                type: operandType,
-                value: operandValue,
-                hide: hideOperand
-            }
-        };
+        handleOperand(condBlock, cmd, op.operand);
     }
     if (op.param) {
         const { type: paramType, hide: hideParam } = getTypeInfo(op.param);
@@ -96,16 +100,16 @@ function handleCondition(condBlock, cmd, commands, usesOperand = true) {
     return true;
 }
 
-function ifDetailsHandler(block, cmd, commands) {
+function ifDetailsHandler(block, cmd, ctx) {
     const conn = block.getInput('condition').connection;
     if (conn.targetBlock()) {
         const condBlock = conn.targetBlock();
-        return handleCondition(condBlock, cmd, commands);
+        return handleCondition(condBlock, cmd, ctx);
     }
     return false;
 }
 
-function ifContentHandler(block, emit, commands) {
+function ifContentHandler(block, emit, ctx) {
     const conn = block.getInput('then_statements').connection;
     let childBlock = conn.targetBlock();
     while (childBlock) {
@@ -114,7 +118,7 @@ function ifContentHandler(block, emit, commands) {
     }
     const elseStatements = block.getInput('else_statements');
     if (elseStatements) {
-        commands.push({
+        ctx.commands.push({
             op: LifeOpcode[0x0F],
             args: [{
                 type: 'offset',
@@ -130,11 +134,38 @@ function ifContentHandler(block, emit, commands) {
     }
 }
 
-function switchDetailsHandler(block, cmd, commands) {
+function switchDetailsHandler(block, cmd, ctx) {
     const conn = block.getInput('condition').connection;
     if (conn.targetBlock()) {
         const condBlock = conn.targetBlock();
-        return handleCondition(condBlock, cmd, commands, false);
+        return handleCondition(condBlock, cmd, ctx, false);
+    }
+    return false;
+}
+
+function switchContentHandler(block, emit, ctx) {
+    const conn = block.getInput('condition').connection;
+    if (!conn.targetBlock()) {
+        return;
+    }
+    const condBlock = conn.targetBlock();
+    const code = condMappings[condBlock.type];
+    const op = ConditionOpcode[code];
+    if (!op) {
+        return;
+    }
+    ctx.switchOperandDefs.push(op.operand);
+    statementsWrapper(block, emit);
+    ctx.switchOperandDefs.pop();
+}
+
+function caseDetailsHandler(block, cmd, ctx) {
+    const conn = block.getInput('operand').connection;
+    if (conn.targetBlock()) {
+        const operandBlock = conn.targetBlock();
+        const operand = last(ctx.switchOperandDefs);
+        handleOperand(operandBlock, cmd, operand);
+        return true;
     }
     return false;
 }
@@ -173,18 +204,22 @@ export default {
     lba_switch: {
         code: 0x71,
         details: switchDetailsHandler,
-        content: statementsWrapper,
+        content: switchContentHandler,
         closeCode: 0x76
     },
     lba_case: {
         code: 0x73,
+        details: caseDetailsHandler,
         content: statementsWrapper
     },
     lba_default: {
         code: 0x74,
         content: statementsWrapper
     },
-    lba_or_case: { code: 0x72 },
+    lba_or_case: {
+        code: 0x72,
+        details: caseDetailsHandler
+    },
     lba_break: { code: 0x75 },
     lba_return: { code: 0x0B },
     lba_set_behaviour: { code: 0x21 },
