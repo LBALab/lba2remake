@@ -176,8 +176,8 @@ export function generateTexts() {
         scene.data.texts,
         ({value}, idx) => {
             const text = value.replace(/@/g, '\\n');
-            const ellipsis = text.length > 50 ? '_[...]' : '';
-            return [`${text.substring(0, 50)}${ellipsis}`, `${idx}`];
+            const ellipsis = text.length > 25 ? '(...)' : '';
+            return [`${text.substring(0, 25)}${ellipsis}`, `${idx}`];
         }
     );
 }
