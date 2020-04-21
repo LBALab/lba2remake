@@ -1,7 +1,7 @@
 import { last, dropRight, each } from 'lodash';
 import { newBlock, findLastConnection } from './utils';
 import * as conditions from './conditions';
-import { getRotation } from '../../../../../../../utils/lba';
+import { lbaToDegrees } from '../../../../../../../utils/lba';
 
 /*
 ** IF
@@ -60,7 +60,7 @@ function setOperand(cmd, opBlock) {
     if (opBlock.getField('operand')) {
         let value = operator.operand.value;
         if (operator.operand.type === 'angle') {
-            value = Math.round(getRotation(value, 0, 1) - 90);
+            value = lbaToDegrees(value);
         }
         opBlock.setFieldValue(value, 'operand');
     }

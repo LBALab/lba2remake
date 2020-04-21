@@ -4,25 +4,25 @@ import {
     GENERIC_ACTION_OBJ
 } from './utils';
 import { GENERIC_IF, LOGIC_OPERATOR } from './control';
-import { getRotation } from '../../../../../../../utils/lba';
+import { lbaToDegrees } from '../../../../../../../utils/lba';
 
 /*
 ** Behaviours
 */
-export function COMPORTEMENT(workspace, cmd, _ctx) {
-    const num = cmd.data.section;
-    const type = num === 1
+export function COMPORTEMENT(workspace, cmd, {behaviourId}) {
+    const id = behaviourId || 0;
+    const type = id === 0
         ? 'lba_behaviour_init'
         : 'lba_behaviour';
     const block = newBlock(workspace, type, cmd);
-    if (num === 2) {
-        block.setFieldValue('NORMAL', 'name');
-    } else if (num > 2) {
-        block.setFieldValue(`BEHAVIOUR ${num}`, 'name');
+    block.data = id;
+    if (id > 0) {
+        block.setFieldValue(`BEHAVIOUR ${id}`, 'arg_0');
     }
     const statementsConnection = block.getInput('statements').connection;
     return {
         connection: statementsConnection,
+        behaviourId: id + 1
     };
 }
 
@@ -159,14 +159,10 @@ export const CAM_FOLLOW = GENERIC_ACTION.bind(null, 'lba_cam_follow', 1);
 
 export const POS_POINT = GENERIC_ACTION.bind(null, 'lba_set_position', 1);
 export const BETA = GENERIC_ACTION.bind(null, 'lba_set_orientation', [
-    (value) => {
-        return Math.round(getRotation(value, 0, 1) - 90);
-    }
+    lbaToDegrees
 ]);
 export const INVERSE_BETA = GENERIC_ACTION.bind(null, 'lba_set_inverse_orientation', [
-    (value) => {
-        return Math.round(getRotation(value, 0, 1) - 90);
-    }
+    lbaToDegrees
 ]);
 
 export const SET_DOOR_LEFT = GENERIC_ACTION.bind(null, 'lba_set_door_left', 1);

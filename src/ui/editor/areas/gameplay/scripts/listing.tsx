@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {cloneDeep, map, each, find, isFinite, isInteger, extend, findKey} from 'lodash';
 import Indent from '../../../../../game/scripting/indent';
-import {getRotation, getDistance} from '../../../../../utils/lba';
+import {lbaToDegrees, getDistance} from '../../../../../utils/lba';
 import DebugData, {getObjectName, getVarName} from '../../../DebugData';
 import {formatVar} from './format';
 import { DirMode } from '../../../../../game/actors';
@@ -276,7 +276,7 @@ export function mapDataName(scene, data) {
         return BehaviourMap[data.value] || data.value;
     }
     if (data.type === 'angle') {
-        return `${Math.round(getRotation(data.value, 0, 1) - 90)}°`;
+        return `${lbaToDegrees(data.value)}°`;
     }
     if (data.type === 'boolean') {
         return `${data.value !== 0}`;

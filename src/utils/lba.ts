@@ -24,6 +24,14 @@ export function getRotation(nextValue, currentValue, interpolation) {
     return computedAngle;
 }
 
+export function lbaToDegrees(value) {
+    return Math.round(value * 360 / 0x1000);
+}
+
+export function degreesToLBA(value) {
+    return Math.round(value * 0x1000 / 360);
+}
+
 export function getStep(nextValue, currentValue, interpolation) {
     const stepDif = nextValue - currentValue;
     let computedStep = 0;
