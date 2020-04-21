@@ -173,6 +173,7 @@ export const lba_camera_center = action((_block, field) => {
 
 export const lba_cam_follow = action((_block, field) => {
     field('make camera follow');
+    field(makeIcon('actor.svg'));
     field(new FieldActor(), 'arg_0');
 });
 
