@@ -35,6 +35,7 @@ interface Props extends TickerProps {
         objectLabels: boolean;
     };
     stateHandler: any;
+    compile: () => void;
 }
 
 interface State {
@@ -162,6 +163,9 @@ export default class BlocklyAreaToolbar extends FrameListener<Props, State> {
                         style={inputStyle}/>
                 Show active objects
             </label>
+            <button onClick={this.props.compile}>
+                Compile
+            </button>
         </React.Fragment>;
     }
 

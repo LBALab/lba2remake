@@ -9,6 +9,7 @@ import blocksLibrary from './blocksLibrary';
 import toolbox from './toolbox';
 import BlocklyAreaToolbar from './BlocklyAreaToolbar';
 import { fillWorkspace } from './scriptToBlocks';
+import { compile } from './blocksToScript';
 
 interface Props extends TickerProps {
     sharedState: any;
@@ -46,6 +47,7 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
         super(props);
 
         this.onRef = this.onRef.bind(this);
+        this.compile = this.compile.bind(this);
         this.state = {
             actorIndex: props.sharedState.actorIndex,
         };
@@ -170,13 +172,18 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
         return maxWidth;
     }
 
+    compile() {
+        compile(this.workspace);
+    }
+
     render() {
         return <div>
             <div id={`blockly_workspace_${this.id}`} style={mainStyle} ref={this.onRef} />
             <BlocklyAreaToolbar
                 ticker={this.props.ticker}
                 sharedState={this.props.sharedState}
-                stateHandler={this.props.stateHandler}/>
+                stateHandler={this.props.stateHandler}
+                compile={this.compile}/>
         </div>
         ;
     }

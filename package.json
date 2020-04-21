@@ -9,6 +9,7 @@
     "blockly": "^3.20200402.1",
     "color-convert": "^2.0.0",
     "file-saver": "^2.0.2",
+    "jest-diff": "^25.4.0",
     "jszip": "^3.2.2",
     "lodash": "^4.17.15",
     "react": "16.8.6",
