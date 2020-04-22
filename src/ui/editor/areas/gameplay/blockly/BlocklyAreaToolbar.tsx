@@ -147,6 +147,9 @@ export default class BlocklyAreaToolbar extends FrameListener<Props, State> {
             <img style={iconStyle}
                     onClick={togglePause}
                     src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
+            <button onClick={this.props.compile}>
+                Compile
+            </button>
             <label style={{float: 'right' as const}}>
                 <input key="autoScroll"
                         type="checkbox"
@@ -163,9 +166,6 @@ export default class BlocklyAreaToolbar extends FrameListener<Props, State> {
                         style={inputStyle}/>
                 Show active objects
             </label>
-            <button onClick={this.props.compile}>
-                Compile
-            </button>
         </React.Fragment>;
     }
 
