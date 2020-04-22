@@ -1,10 +1,12 @@
-import { map, filter, each, sortBy } from 'lodash';
-import jestDiff from 'jest-diff';
+import { map, filter, each, sortBy, invert, mapValues, findKey } from 'lodash';
+// import jestDiff from 'jest-diff';
 import { LifeOpcode } from '../../../../../../game/scripting/data/life';
 import { MoveOpcode } from '../../../../../../game/scripting/data/move';
 import lifeMappings from './mappings/life';
 import moveMappings from './mappings/move';
 import { degreesToLBA } from '../../../../../../utils/lba';
+import { compileScripts } from '../../../../../../scripting/compiler';
+import DebugData from '../../../../DebugData';
 
 export function compile(workspace) {
     const topBlocks = workspace.getTopBlocks(true);
@@ -13,26 +15,42 @@ export function compile(workspace) {
     const behaviourBlocks = filter(sortedBlocks, b =>
             b.type === 'lba_behaviour' ||
             b.type === 'lba_behaviour_init');
-    const commands = compileBlocks(behaviourBlocks, 'life');
-    // tslint:disable-next-line: no-console
-    console.log(commands);
+    const script = compileBlocks(behaviourBlocks, 'life');
+    postProcess(script, workspace.actor.scripts.move, workspace.scene);
+    workspace.actor.scripts.life = script;
 
-    const diff = jestDiff(workspace.actor.scripts.life.commands, commands);
-    // tslint:disable-next-line: no-console
-    console.log(diff);
+    // console.log(script);
+    // const diff = jestDiff(workspace.actor.scripts.life.commands, script.commands);
+    // console.log(diff);
 
     // const trackBlocks = filter(sortedBlocks, b => b.scriptType === 'lba_move_track');
-    // compileScript(trackBlocks);
+    // compileBlocks(trackBlocks, 'move');
+    compileScripts(DebugData.scope.game, workspace.scene, workspace.actor);
 }
 
 function compileBlocks(blocks, type) {
     const ctx = {
         commands: [],
-        switchOperandDefs: []
+        switchOperandDefs: [],
+        orCmds: [],
+        andCmds: [],
+        lastCase: null,
+        breakCmds: [],
+        comportementMap: {},
+        tracksMap: {}
     };
     each(blocks, block => compileBlock(block, type, ctx));
-    ctx.commands.push({ op: LifeOpcode[0] });
-    return ctx.commands;
+    ctx.commands.push({
+        op: type === 'life'
+            ? LifeOpcode[0]
+            : MoveOpcode[0]
+    });
+    return {
+        type,
+        commands: ctx.commands,
+        comportementMap: ctx.comportementMap,
+        tracksMap: ctx.tracksMap
+    };
 }
 
 interface Cmd {
@@ -57,11 +75,12 @@ function compileBlock(block, type, ctx) {
             pushCmd = info.details(block, cmd, ctx);
         }
         if (pushCmd) {
+            block.index = ctx.commands.length;
             ctx.commands.push(cmd);
             if (info.content) {
                 info.content(block, (child) => {
                     compileBlock(child, type, ctx);
-                }, ctx);
+                }, ctx, cmd);
             }
             if ('closeCode' in info) {
                 const closeOp = type === 'life'
@@ -101,5 +120,34 @@ function mapArgs(block, op, argsMapping = {}) {
             }
         }
         return { type, value, hide };
+    });
+}
+
+function postProcess(script, moveScript, scene) {
+    const comportementRevMap = mapValues(invert(script.comportementMap), Number);
+    const otherScriptTracksRevMap = mapValues(invert(moveScript.tracksMap), Number);
+    each(script.commands, (cmd) => {
+        switch (cmd.op.command) {
+            case 'SET_COMPORTEMENT':
+                cmd.args[0].value = comportementRevMap[cmd.args[0].value];
+                break;
+            case 'SET_TRACK':
+                cmd.args[0].value = otherScriptTracksRevMap[cmd.args[0].value];
+                break;
+            case 'SET_COMPORTEMENT_OBJ': {
+                const actor = scene.actors[cmd.args[0].value];
+                const comportement = cmd.args[1].value;
+                const loc = findKey(actor.scripts.life.comportementMap, c => c === comportement);
+                cmd.args[1].value = Number(loc);
+                break;
+            }
+            case 'SET_TRACK_OBJ': {
+                const actor = scene.actors[cmd.args[0].value];
+                const track = cmd.args[1].value;
+                const loc = findKey(actor.scripts.move.tracksMap, c => c === track);
+                cmd.args[1].value = Number(loc);
+                break;
+            }
+        }
     });
 }

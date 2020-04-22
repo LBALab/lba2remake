@@ -1,4 +1,4 @@
-import { keyBy, last } from 'lodash';
+import { keyBy, last, each } from 'lodash';
 import { LifeOpcode } from '../../../../../../../game/scripting/data/life';
 import { OperatorOpcode } from '../../../../../../../game/scripting/data/operator';
 import condMappings from './conditions';
@@ -50,6 +50,11 @@ function handleLogicGate(logicBlock, cmd, ctx) {
     const rightRes = handleCondition(right, cmd, ctx);
     if (leftRes && rightRes) {
         ctx.commands.push(gateCmd);
+        if (logicBlock.type === 'lba_or') {
+            ctx.orCmds.push(gateCmd);
+        } else {
+            ctx.andCmds.push(gateCmd);
+        }
         return true;
     }
     return false;
@@ -91,9 +96,10 @@ function handleCondition(condBlock, cmd, ctx, usesOperand = true) {
     }
     if (op.param) {
         const { type: paramType, hide: hideParam } = getTypeInfo(op.param);
+        const actorField = condBlock.getField('actor');
         cmd.condition.param = {
             type: paramType,
-            value: condBlock.getFieldValue('param'),
+            value: actorField ? actorField.getValue() : condBlock.getFieldValue('param'),
             hide: hideParam
         };
     }
@@ -109,8 +115,12 @@ function ifDetailsHandler(block, cmd, ctx) {
     return false;
 }
 
-function ifContentHandler(block, emit, ctx) {
+function ifContentHandler(block, emit, ctx, cmd) {
     const conn = block.getInput('then_statements').connection;
+    each(ctx.orCmds, (orCmd) => {
+        orCmd.args[0].value = ctx.commands.length;
+    });
+    ctx.orCmds = [];
     let childBlock = conn.targetBlock();
     while (childBlock) {
         emit(childBlock);
@@ -118,19 +128,32 @@ function ifContentHandler(block, emit, ctx) {
     }
     const elseStatements = block.getInput('else_statements');
     if (elseStatements) {
-        ctx.commands.push({
+        const elseCmd = {
             op: LifeOpcode[0x0F],
             args: [{
                 type: 'offset',
                 value: null,
                 hide: true
             }]
+        };
+        ctx.commands.push(elseCmd);
+        cmd.args[0].value = ctx.commands.length;
+        each(ctx.andCmds, (andCmd) => {
+            andCmd.args[0].value = ctx.commands.length;
         });
+        ctx.andCmds = [];
         childBlock = elseStatements.connection.targetBlock();
         while (childBlock) {
             emit(childBlock);
             childBlock = childBlock.nextConnection.targetBlock();
         }
+        elseCmd.args[0].value = ctx.commands.length + 1;
+    } else {
+        cmd.args[0].value = ctx.commands.length + 1;
+        each(ctx.andCmds, (andCmd) => {
+            andCmd.args[0].value = ctx.commands.length + 1;
+        });
+        ctx.andCmds = [];
     }
 }
 
@@ -157,6 +180,14 @@ function switchContentHandler(block, emit, ctx) {
     ctx.switchOperandDefs.push(op.operand);
     statementsWrapper(block, emit);
     ctx.switchOperandDefs.pop();
+    each(ctx.breakCmds, (brk) => {
+        brk.args[0].value = ctx.commands.length + 1;
+    });
+    ctx.breakCmds = [];
+    if (ctx.lastCase) {
+        ctx.lastCase.args[0].value = ctx.commands.length;
+        ctx.lastCase = null;
+    }
 }
 
 function caseDetailsHandler(block, cmd, ctx) {
@@ -165,20 +196,39 @@ function caseDetailsHandler(block, cmd, ctx) {
         const operandBlock = conn.targetBlock();
         const operand = last(ctx.switchOperandDefs);
         handleOperand(operandBlock, cmd, operand);
+        if (ctx.lastCase) {
+            ctx.lastCase.args[0].value = ctx.commands.length;
+            ctx.lastCase = null;
+        }
+        if (block.type === 'lba_case') {
+            ctx.lastCase = cmd;
+        }
         return true;
     }
     return false;
+}
+
+function behaviourDetailsHandler(_block, cmd, ctx) {
+    ctx.comportementMap[ctx.commands.length] = cmd.args[0].value;
+    return true;
+}
+
+function breakDetailsHandler(_block, cmd, ctx) {
+    ctx.breakCmds.push(cmd);
+    return true;
 }
 
 export default {
     lba_behaviour_init: {
         code: 0x20,
         args: { 0: 0 },
+        details: behaviourDetailsHandler,
         content: statementsWrapper,
         closeCode: 0x23
     },
     lba_behaviour: {
         code: 0x20,
+        details: behaviourDetailsHandler,
         content: statementsWrapper,
         args: { 0: block => block.data },
         closeCode: 0x23
@@ -220,7 +270,10 @@ export default {
         code: 0x72,
         details: caseDetailsHandler
     },
-    lba_break: { code: 0x75 },
+    lba_break: {
+        code: 0x75,
+        details: breakDetailsHandler
+    },
     lba_return: { code: 0x0B },
     lba_set_behaviour: { code: 0x21 },
     lba_set_behaviour_obj: { code: 0x22 },
