@@ -186,7 +186,8 @@ export const lba_ladder = condition({
 });
 
 export const lba_random = condition({
-    label: 'random number',
+    label: 'random number from 0 to',
+    param: 'number',
     operand: 'number'
 });
 
@@ -310,8 +311,12 @@ function addConditionParam(input, paramType, objMode) {
     if (paramType in typeIcons) {
         input.appendField(makeIcon(typeIcons[paramType]));
     }
-    if (paramType === 'actor' && objMode) {
-        input.appendField(new FieldActor(['operand']), 'actor');
+    if (paramType === 'actor' || objMode) {
+        if (objMode) {
+            input.appendField(new FieldActor(['operand']), 'actor');
+        } else {
+            input.appendField(new FieldActor(), 'param');
+        }
     } else if (numberTypes.includes(paramType)) {
         input.appendField(new Blockly.FieldNumber(), 'param');
     } else if (FieldDropdownLBA.supports(paramType)) {
