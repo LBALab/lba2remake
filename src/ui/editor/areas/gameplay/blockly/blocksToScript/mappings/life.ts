@@ -3,7 +3,7 @@ import { LifeOpcode } from '../../../../../../../game/scripting/data/life';
 import { OperatorOpcode } from '../../../../../../../game/scripting/data/operator';
 import condMappings from './conditions';
 import { ConditionOpcode } from '../../../../../../../game/scripting/data/condition';
-import { degreesToLBA } from '../../../../../../../utils/lba';
+import { mapValue } from './utils';
 
 const operatorsByName = keyBy(OperatorOpcode, 'command');
 
@@ -63,15 +63,12 @@ function handleLogicGate(logicBlock, cmd, ctx) {
 function handleOperand(condBlock, cmd, operand) {
     const { type, hide } = getTypeInfo(operand);
     const operatorValue = condBlock.getFieldValue('operator');
-    let operandValue = condBlock.getFieldValue('operand');
-    if (type === 'angle') {
-        operandValue = degreesToLBA(operandValue);
-    }
+    const operandValue = condBlock.getFieldValue('operand');
     cmd.operator = {
         op: operatorsByName[operatorValue],
         operand: {
             type,
-            value: operandValue,
+            value: mapValue(operandValue, type),
             hide
         }
     };
@@ -97,9 +94,10 @@ function handleCondition(condBlock, cmd, ctx, usesOperand = true) {
     if (op.param) {
         const { type: paramType, hide: hideParam } = getTypeInfo(op.param);
         const actorField = condBlock.getField('actor');
+        const value = actorField ? actorField.getValue() : condBlock.getFieldValue('param');
         cmd.condition.param = {
             type: paramType,
-            value: actorField ? actorField.getValue() : condBlock.getFieldValue('param'),
+            value: mapValue(value, paramType),
             hide: hideParam
         };
     }

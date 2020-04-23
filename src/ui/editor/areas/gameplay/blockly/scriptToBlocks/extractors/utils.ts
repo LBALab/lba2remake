@@ -1,7 +1,8 @@
+import { lbaToDegrees } from '../../../../../../../utils/lba';
+
 export function newBlock(workspace, type, def) {
     const block = workspace.newBlock(type);
     block.index = def.index;
-    block.scriptType = def.type;
     block.initSvg();
     block.render();
     return block;
@@ -15,6 +16,17 @@ export function findLastConnection(connection) {
     return lastConnection;
 }
 
+function mapArgValue(cmd, idx) {
+    let value = cmd.data.args[idx].value;
+    const type = cmd.data.op.args[idx].split(':')[1];
+    switch (type) {
+        case 'angle':
+            value = lbaToDegrees(value);
+            break;
+    }
+    return value;
+}
+
 export function GENERIC_ACTION(type, arg, workspace, cmd, {connection}) {
     const block = newBlock(workspace, type, cmd);
     if (connection) {
@@ -26,7 +38,7 @@ export function GENERIC_ACTION(type, arg, workspace, cmd, {connection}) {
         }
     } else {
         for (let i = 0; i < arg; i += 1) {
-            block.setFieldValue(cmd.data.args[i].value, `arg_${i}`);
+            block.setFieldValue(mapArgValue(cmd, i), `arg_${i}`);
         }
     }
     return { connection: block.nextConnection };
@@ -44,7 +56,7 @@ export function GENERIC_ACTION_OBJ(type, arg, workspace, cmd, {connection}) {
         }
     } else {
         for (let i = 1; i < arg + 1; i += 1) {
-            block.setFieldValue(cmd.data.args[i].value, `arg_${i - 1}`);
+            block.setFieldValue(mapArgValue(cmd, i), `arg_${i - 1}`);
         }
     }
     return { connection: block.nextConnection };

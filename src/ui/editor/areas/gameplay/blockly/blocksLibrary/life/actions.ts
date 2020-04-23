@@ -8,6 +8,7 @@ function action(setupInput) {
             this.setColour('#444444');
             this.setPreviousStatement(true, 'LIFE');
             this.setNextStatement(true, 'LIFE');
+            this.scriptType = 'life';
             setupInput(this, (field, name) => input.appendField(field, name));
         }
     };
@@ -128,7 +129,7 @@ export const lba_set_hero_behaviour = action((_block, field) => {
 });
 
 export const lba_set_dirmode = action((_block, field) => {
-    field('set steering mode to');
+    field('set movement mode to');
     field(new FieldDropdownLBA('dirmode'), 'arg_0');
 });
 
@@ -136,7 +137,7 @@ export const lba_set_dirmode_obj = action((_block, field) => {
     field('set');
     field(makeIcon('actor.svg'));
     field(new FieldActor(), 'actor');
-    field("'s steering mode to");
+    field("'s movement mode to");
     field(new FieldDropdownLBA('dirmode'), 'arg_0');
 });
 
@@ -595,6 +596,7 @@ function varSetterBlock(type) {
             this.setPreviousStatement(true, 'LIFE');
             this.setNextStatement(true, 'LIFE');
             this.setColour('#444444');
+            this.scriptType = 'life';
         }
     };
 }

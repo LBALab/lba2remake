@@ -1,4 +1,4 @@
-import { map, filter, take, keys, times, find } from 'lodash';
+import { map, filter, take, find } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../DebugData';
 import LocationsNode from '../../../locator/LocationsNode';
 import { DirMode } from '../../../../../../../game/actors';
@@ -35,11 +35,11 @@ export function generateBehaviours() {
         otherActor = true;
     }
 
-    const numBehaviours = keys(actor.scripts.life.comportementMap).length;
-    if (numBehaviours === 0) {
+    const behaviours = map(actor.scripts.life.comportementMap);
+    if (behaviours.length === 0) {
         return [['<behaviour>', '-1']];
     }
-    return times(numBehaviours).map((idx) => {
+    return behaviours.map((idx) => {
         if (idx === 0) {
             return ['<start>', '0'];
         }

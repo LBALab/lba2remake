@@ -125,6 +125,7 @@ export function setterBlock({scriptType, type, objMode = false}) {
             } else {
                 this.setColour('#393939');
             }
+            this.scriptType = scriptType.toLowerCase();
         }
     };
 }

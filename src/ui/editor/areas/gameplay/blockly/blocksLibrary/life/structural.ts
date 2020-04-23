@@ -16,6 +16,8 @@ export const lba_behaviour = {
         this.appendStatementInput('statements')
             .setCheck('LIFE');
         this.setColour(BEHAVIOUR_COLOR);
+        this.data = -1;
+        this.scriptType = 'life';
     }
 };
 
@@ -27,7 +29,9 @@ export const lba_behaviour_init = {
         this.appendStatementInput('statements')
             .setCheck('LIFE');
         this.setColour(BEHAVIOUR_COLOR);
-      }
+        this.data = 0;
+        this.scriptType = 'life';
+    }
 };
 
 function behaviourAction(setupInput) {
@@ -38,6 +42,7 @@ function behaviourAction(setupInput) {
             this.setPreviousStatement(true, 'LIFE');
             this.setNextStatement(true, 'LIFE');
             this.setColour(BEHAVIOUR_COLOR);
+            this.scriptType = 'life';
         }
     };
 }
@@ -91,6 +96,7 @@ function trackAction(setupInput) {
             this.setPreviousStatement(true, 'LIFE');
             this.setNextStatement(true, 'LIFE');
             this.setColour(100);
+            this.scriptType = 'life';
         }
     };
 }

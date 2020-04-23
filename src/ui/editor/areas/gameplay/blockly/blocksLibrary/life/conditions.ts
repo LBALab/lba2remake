@@ -272,6 +272,7 @@ function condition({
             this.setOutput(true, 'COND');
             this.setColour(15);
             this.data = operand;
+            this.scriptType = 'life';
         },
         addOperand() {
             const operandInput = this.appendDummyInput('operand');

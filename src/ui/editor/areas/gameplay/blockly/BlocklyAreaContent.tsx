@@ -6,7 +6,7 @@ import FrameListener from '../../../../utils/FrameListener';
 import DebugData from '../../../DebugData';
 import { TickerProps } from '../../../../utils/Ticker';
 import blocksLibrary from './blocksLibrary';
-import toolbox from './toolbox';
+import { createToolboxTree } from './toolbox';
 import BlocklyAreaToolbar from './BlocklyAreaToolbar';
 import { fillWorkspace } from './scriptToBlocks';
 import { compile } from './blocksToScript';
@@ -42,12 +42,15 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
     id: number;
     width: number = -1;
     height: number = -1;
+    toolbox: Element;
+    initBehaviourId?: string;
 
     constructor(props) {
         super(props);
 
         this.onRef = this.onRef.bind(this);
         this.compile = this.compile.bind(this);
+        this.clearWorkspace = this.clearWorkspace.bind(this);
         this.state = {
             actorIndex: props.sharedState.actorIndex,
         };
@@ -65,8 +68,9 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
         if (ref !== this.rootRef) {
             this.rootRef = ref;
             if (this.rootRef) {
+                this.toolbox = createToolboxTree();
                 this.workspace = Blockly.inject(ref, {
-                    toolbox,
+                    toolbox: this.toolbox as any,
                     move: {
                         scrollbars: true,
                         drag: true,
@@ -89,6 +93,39 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
                     sounds: false,
                     trashcan: false,
                     theme: (Blockly as any).Themes.Dark
+                });
+                this.workspace.addChangeListener((e) => {
+                    if (e instanceof Blockly.Events.Create) {
+                        const newBlock = this.workspace.getBlockById(e.blockId);
+                        if (newBlock.type === 'lba_behaviour' && Number(newBlock.data) === -1) {
+                            let bId = 0;
+                            const behaviours = this.workspace.getBlocksByType('lba_behaviour');
+                            each(behaviours, (b) => {
+                                if (b.id !== e.blockId) {
+                                    bId = Math.max(bId, Number(b.data));
+                                }
+                            });
+                            newBlock.data = bId + 1;
+                            newBlock.setFieldValue(`BEHAVIOUR ${bId + 1}`, 'arg_0');
+                        } else if (newBlock.type === 'lba_behaviour_init') {
+                            if (this.initBehaviourId) {
+                                newBlock.dispose();
+                            } else {
+                                const elem = this.toolbox.querySelector('#init_behaviour');
+                                elem.setAttribute('disabled', 'true');
+                                this.workspace.updateToolbox(this.toolbox);
+                                this.initBehaviourId = e.blockId;
+                            }
+                        }
+                    }
+                    if (e instanceof Blockly.Events.Delete) {
+                        if (e.blockId === this.initBehaviourId) {
+                            const elem = this.toolbox.querySelector('#init_behaviour');
+                            elem.setAttribute('disabled', 'false');
+                            this.workspace.updateToolbox(this.toolbox);
+                            this.initBehaviourId = null;
+                        }
+                    }
                 });
                 this.rebuildWorkspace();
             }
@@ -176,6 +213,10 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
         compile(this.workspace);
     }
 
+    clearWorkspace() {
+        this.workspace.clear();
+    }
+
     render() {
         return <div>
             <div id={`blockly_workspace_${this.id}`} style={mainStyle} ref={this.onRef} />
@@ -183,7 +224,8 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
                 ticker={this.props.ticker}
                 sharedState={this.props.sharedState}
                 stateHandler={this.props.stateHandler}
-                compile={this.compile}/>
+                compile={this.compile}
+                clearWorkspace={this.clearWorkspace}/>
         </div>
         ;
     }

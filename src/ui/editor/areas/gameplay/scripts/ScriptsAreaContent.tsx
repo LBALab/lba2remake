@@ -159,7 +159,7 @@ export default class ScriptEditor extends FrameListener<Props, State> {
             this.props.stateHandler.setActor(DebugData.selection.index);
             this.props.stateHandler.setAutoScroll(false);
         }
-        if (this.scene !== scene || this.actor !== actor) {
+        if (this.scene !== scene || this.actor !== actor || this.props.sharedState.refreshing) {
             this.setState({
                 listing: {
                     life: getDebugListing('life', scene, actor),
@@ -170,6 +170,7 @@ export default class ScriptEditor extends FrameListener<Props, State> {
             });
             this.scene = scene;
             this.actor = actor;
+            this.props.stateHandler.setRefreshing(false);
         }
         if (this.scene && this.actor) {
             this.updateActiveLines('life');

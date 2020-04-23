@@ -9,6 +9,7 @@ export const lba_move_track = {
         this.setPreviousStatement(true, 'MOVE');
         this.setNextStatement(true, 'MOVE');
         this.setColour(100);
+        this.scriptType = 'move';
     }
 };
 
@@ -21,5 +22,6 @@ export const lba_move_goto = {
         this.setPreviousStatement(true, 'MOVE');
         this.setNextStatement(true, 'MOVE');
         this.setColour(100);
+        this.scriptType = 'move';
     }
 };

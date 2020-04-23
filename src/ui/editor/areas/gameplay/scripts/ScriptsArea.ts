@@ -9,8 +9,12 @@ const ScriptsArea = {
         autoScroll: true,
         objectLabels: false,
         actorIndex: 0,
+        refreshing: false
     }),
     stateHandler: {
+        setRefreshing(refreshing) {
+            this.setState({refreshing});
+        },
         splitAt(splitAt) {
             this.setState({splitAt});
         },

@@ -5,11 +5,6 @@ import FrameListener from '../../../../utils/FrameListener';
 import DebugData, {getObjectName} from '../../../DebugData';
 import { TickerProps } from '../../../../utils/Ticker';
 
-const inputStyle = {
-    textAlign: 'center' as const,
-    verticalAlign: 'middle' as const
-};
-
 const iconStyle = extend({}, editor.icon, {
     width: 16,
     height: 16,
@@ -36,6 +31,7 @@ interface Props extends TickerProps {
     };
     stateHandler: any;
     compile: () => void;
+    clearWorkspace: () => void;
 }
 
 interface State {
@@ -118,20 +114,9 @@ export default class BlocklyAreaToolbar extends FrameListener<Props, State> {
 
         const paused = this.state.isPaused;
 
-        const toggleAutoScroll = (e) => {
-            this.props.stateHandler.setAutoScroll(e.target.checked);
-        };
-
-        const toggleObjectLabels = (e) => {
-            this.props.stateHandler.setObjectLabels(e.target.checked);
-        };
-
         const actorIcon = extend({}, iconStyle, {
             padding: 0
         });
-
-        const autoScroll = this.props.sharedState.autoScroll;
-        const objectLabels = this.props.sharedState.objectLabels;
 
         return <React.Fragment>
             <span style={{cursor: 'pointer'}} onClick={selectActor}>
@@ -147,25 +132,14 @@ export default class BlocklyAreaToolbar extends FrameListener<Props, State> {
             <img style={iconStyle}
                     onClick={togglePause}
                     src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
+            &nbsp;
             <button onClick={this.props.compile}>
                 Compile
             </button>
-            <label style={{float: 'right' as const}}>
-                <input key="autoScroll"
-                        type="checkbox"
-                        onChange={toggleAutoScroll}
-                        checked={autoScroll}
-                        style={inputStyle}/>
-                Autoscroll
-            </label>
-            <label style={{float: 'right' as const, paddingRight: '1ch'}}>
-                <input key="objlabels"
-                        type="checkbox"
-                        onChange={toggleObjectLabels}
-                        checked={objectLabels}
-                        style={inputStyle}/>
-                Show active objects
-            </label>
+            &nbsp;
+            <button onClick={this.props.clearWorkspace}>
+                Clear Workspace
+            </button>
         </React.Fragment>;
     }
 

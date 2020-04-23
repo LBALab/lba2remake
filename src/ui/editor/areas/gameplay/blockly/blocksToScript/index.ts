@@ -1,31 +1,44 @@
 import { map, filter, each, sortBy, invert, mapValues, findKey } from 'lodash';
-// import jestDiff from 'jest-diff';
+// import jDiff from 'jest-diff';
 import { LifeOpcode } from '../../../../../../game/scripting/data/life';
 import { MoveOpcode } from '../../../../../../game/scripting/data/move';
 import lifeMappings from './mappings/life';
 import moveMappings from './mappings/move';
-import { degreesToLBA } from '../../../../../../utils/lba';
 import { compileScripts } from '../../../../../../scripting/compiler';
 import DebugData from '../../../../DebugData';
+import { mapValue } from './mappings/utils';
+
+const lifeRootTypes = ['lba_behaviour', 'lba_behaviour_init'];
+const moveRootTypes = ['lba_move_track', 'lba_move_replace'];
 
 export function compile(workspace) {
-    const topBlocks = workspace.getTopBlocks(true);
-    const sortedBlocks = sortBy(topBlocks, ['index']);
+    const topBlocks = workspace.getTopBlocks(false);
 
-    const behaviourBlocks = filter(sortedBlocks, b =>
-            b.type === 'lba_behaviour' ||
-            b.type === 'lba_behaviour_init');
-    const script = compileBlocks(behaviourBlocks, 'life');
-    postProcess(script, workspace.actor.scripts.move, workspace.scene);
-    workspace.actor.scripts.life = script;
+    const lifeScript = compileRootBlocks('life', topBlocks, lifeRootTypes);
+    const moveScript = compileRootBlocks('move', topBlocks, moveRootTypes);
 
-    // console.log(script);
-    // const diff = jestDiff(workspace.actor.scripts.life.commands, script.commands);
-    // console.log(diff);
+    postProcess(lifeScript, workspace.scene, moveScript);
+    postProcess(moveScript, workspace.scene);
 
-    // const trackBlocks = filter(sortedBlocks, b => b.scriptType === 'lba_move_track');
-    // compileBlocks(trackBlocks, 'move');
+    // console.log(jDiff(workspace.actor.scripts.move.commands, moveScript.commands));
+
+    workspace.actor.scripts.life = lifeScript;
+    workspace.actor.scripts.move = moveScript;
     compileScripts(DebugData.scope.game, workspace.scene, workspace.actor);
+}
+
+function compileRootBlocks(type, topBlocks, rootTypes) {
+    const sortField = type === 'life'
+        ? 'data'
+        : 'index';
+    const rootBlocks = filter(topBlocks, b => rootTypes.includes(b.type));
+    const sortedBlocks = sortBy(rootBlocks, [sortField]) as any[];
+    if (type === 'life'
+        && sortedBlocks.length > 0
+        && sortedBlocks[0].type !== 'lba_behaviour_init') {
+        return compileBlocks([], 'life');
+    }
+    return compileBlocks(sortedBlocks, type);
 }
 
 function compileBlocks(blocks, type) {
@@ -37,7 +50,8 @@ function compileBlocks(blocks, type) {
         lastCase: null,
         breakCmds: [],
         comportementMap: {},
-        tracksMap: {}
+        tracksMap: {},
+        inRootTrack: false
     };
     each(blocks, block => compileBlock(block, type, ctx));
     ctx.commands.push({
@@ -108,9 +122,7 @@ function mapArgs(block, op, argsMapping = {}) {
             idxOffset = -1;
         }
         let value = field && field.getValue();
-        if (type === 'angle') {
-            value = degreesToLBA(value);
-        }
+        value = mapValue(value, type);
         if (index in argsMapping) {
             const argm = argsMapping[index];
             if (typeof(argm) === 'function') {
@@ -123,9 +135,9 @@ function mapArgs(block, op, argsMapping = {}) {
     });
 }
 
-function postProcess(script, moveScript, scene) {
+function postProcess(script, scene, moveScript = null) {
     const comportementRevMap = mapValues(invert(script.comportementMap), Number);
-    const otherScriptTracksRevMap = mapValues(invert(moveScript.tracksMap), Number);
+    const otherScriptTracksRevMap = moveScript && mapValues(invert(moveScript.tracksMap), Number);
     each(script.commands, (cmd) => {
         switch (cmd.op.command) {
             case 'SET_COMPORTEMENT':

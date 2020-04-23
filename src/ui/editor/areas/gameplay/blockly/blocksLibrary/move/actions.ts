@@ -9,6 +9,7 @@ function genericMoveCmd(setupInput) {
             this.setNextStatement(true, 'MOVE');
             this.setColour('#393939');
             setupInput(this, (field, name) => input.appendField(field, name));
+            this.scriptType = 'move';
         }
     };
 }

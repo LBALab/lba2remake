@@ -22,6 +22,7 @@ function ifBlock(type) {
             this.setPreviousStatement(true, checks);
             this.setNextStatement(true, checks);
             this.setColour(180);
+            this.scriptType = 'life';
         },
         enableElseBlock() {
             if (!this.getInput('else_block')) {
@@ -100,6 +101,7 @@ export const lba_switch = {
                 }
             }
         });
+        this.scriptType = 'life';
     },
     getCases() {
         const cases = [];
@@ -174,6 +176,7 @@ function makeCase(orCase) {
                     }
                 }
             });
+            this.scriptType = 'life';
         },
         setOperandType(operandType) {
             const input = this.getInput('operand');
@@ -230,6 +233,7 @@ export const lba_default = {
 
         this.setPreviousStatement(true, 'SWITCH');
         this.setColour(180);
+        this.scriptType = 'life';
     }
 };
 
@@ -238,6 +242,7 @@ export const lba_break = {
         this.appendDummyInput().appendField('break');
         this.setPreviousStatement(true, 'LIFE');
         this.setColour(180);
+        this.scriptType = 'life';
     }
 };
 
@@ -249,6 +254,7 @@ function makeOperand(type) {
             this.setColour(15);
             const operandInput = this.appendDummyInput('operand');
             addOperand(operandInput, type);
+            this.scriptType = 'life';
         }
     };
 }
@@ -277,6 +283,7 @@ function logicOperator(type) {
             this.setInputsInline(false);
             this.setOutput(true, 'LOGIC');
             this.setColour(180);
+            this.scriptType = 'life';
         }
     };
 }
