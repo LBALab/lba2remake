@@ -176,12 +176,12 @@ const baseTree = `<xml id="toolbox" style="display: none">
 
     <sep gap="40"/>
     <label text="Variables"/>
-    <block type="lba_set_varscene"/>
     <block type="lba_set_vargame"/>
     <block type="lba_add_vargame"/>
     <block type="lba_sub_vargame"/>
-    <block type="lba_add_varcube"/>
-    <block type="lba_sub_varcube"/>
+    <block type="lba_set_varscene"/>
+    <block type="lba_add_varscene"/>
+    <block type="lba_sub_varscene"/>
 
     <sep gap="40"/>
     <label text="3D Model"/>

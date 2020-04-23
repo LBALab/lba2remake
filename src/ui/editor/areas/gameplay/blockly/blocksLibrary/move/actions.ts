@@ -1,5 +1,12 @@
 import Blockly from 'blockly';
-import { makeIcon, FieldUint8, FieldInt16, FieldUint16, setterBlock } from '../utils';
+import {
+    makeIcon,
+    setterBlock,
+    FieldUint8,
+    FieldInt16,
+    FieldUint16,
+    FieldDropdownLBA,
+} from '../utils';
 
 function genericMoveCmd(setupInput) {
     return {
@@ -55,19 +62,19 @@ export const lba_move_wait_door = genericMoveCmd((_block, field) => {
 export const lba_move_goto_point = genericMoveCmd((_block, field) => {
     field('goto point');
     field(makeIcon('point.svg'));
-    field(new FieldUint8(), 'arg_0');
+    field(new FieldDropdownLBA('point'), 'arg_0');
 });
 
 export const lba_move_goto_point_3d = genericMoveCmd((_block, field) => {
     field('goto point (3D)');
     field(makeIcon('point.svg'));
-    field(new FieldUint8(), 'arg_0');
+    field(new FieldDropdownLBA('point'), 'arg_0');
 });
 
 export const lba_move_goto_sym_point = genericMoveCmd((_block, field) => {
     field('goto sym point');
     field(makeIcon('point.svg'));
-    field(new FieldUint8(), 'arg_0');
+    field(new FieldDropdownLBA('point'), 'arg_0');
 });
 
 export const lba_move_set_anim = setterBlock({scriptType: 'MOVE', type: 'anim'});
@@ -192,7 +199,7 @@ export const lba_move_simple_sample = genericMoveCmd((_block, field) => {
 export const lba_move_pos_point = genericMoveCmd((_block, field) => {
     field('set position to');
     field(makeIcon('point.svg'));
-    field(new FieldUint8(), 'arg_0');
+    field(new FieldDropdownLBA('point'), 'arg_0');
 });
 
 export const lba_move_wait_anim_3ds = genericMoveCmd((_block, field) => {

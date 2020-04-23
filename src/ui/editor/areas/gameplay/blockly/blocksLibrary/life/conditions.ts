@@ -1,5 +1,5 @@
 import Blockly from 'blockly';
-import { makeIcon, typeIcons, FieldDropdownLBA, FieldActor } from '../utils';
+import { makeIcon, typeIcons, FieldDropdownLBA, FieldActor, FieldScope } from '../utils';
 
 export const lba_distance = condition({
     label: 'distance to',
@@ -75,13 +75,17 @@ export const lba_cur_track_obj = condition({
 });
 
 export const lba_vargame_value = condition({
-    label: '[game]',
+    label: (field) => {
+        field(new FieldScope('game'));
+    },
     param: 'vargame',
     operand: 'vargame_value'
 });
 
 export const lba_varscene_value = condition({
-    label: '[scene]',
+    label: (field) => {
+        field(new FieldScope('scene'));
+    },
     param: 'varscene',
     operand: 'varcube_value'
 });
@@ -263,7 +267,11 @@ function condition({
             if (objMode) {
                 addConditionParam(input, 'actor', true);
             }
-            input.appendField(label);
+            if (typeof(label) === 'function') {
+                label((field, name) => input.appendField(field, name));
+            } else {
+                input.appendField(label);
+            }
             if (param && !objMode) {
                 addConditionParam(input, param, false);
             }

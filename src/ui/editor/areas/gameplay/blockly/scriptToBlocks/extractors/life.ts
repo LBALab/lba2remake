@@ -26,12 +26,7 @@ export function COMPORTEMENT(workspace, cmd, {behaviourId}) {
     };
 }
 
-export const SET_COMPORTEMENT = GENERIC_ACTION.bind(null, 'lba_set_behaviour', [
-    (value, workspace) => {
-        const { comportementMap } = workspace.actor.scripts.life;
-        return comportementMap[value];
-    }
-]);
+export const SET_COMPORTEMENT = GENERIC_ACTION.bind(null, 'lba_set_behaviour', 0);
 
 export const SET_COMPORTEMENT_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_behaviour_obj', [
     (actor, value) => {
@@ -76,12 +71,7 @@ export const OR_CASE = LOGIC_OPERATOR;
 /*
 ** Tracks
 */
-export const SET_TRACK = GENERIC_ACTION.bind(null, 'lba_set_track', [
-    (value, workspace) => {
-        const { tracksMap } = workspace.actor.scripts.move;
-        return tracksMap[value];
-    }
-]);
+export const SET_TRACK = GENERIC_ACTION.bind(null, 'lba_set_track', 0);
 export const SET_TRACK_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_track_obj', [
     (actor, value) => {
         const { tracksMap } = actor.scripts.move;
@@ -144,8 +134,8 @@ export const ASK_CHOICE_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_ask_choice_obj'
 
 export const ADD_VAR_GAME = GENERIC_ACTION.bind(null, 'lba_add_vargame', 2);
 export const SUB_VAR_GAME = GENERIC_ACTION.bind(null, 'lba_sub_vargame', 2);
-export const ADD_VAR_CUBE = GENERIC_ACTION.bind(null, 'lba_add_varcube', 2);
-export const SUB_VAR_CUBE = GENERIC_ACTION.bind(null, 'lba_sub_varcube', 2);
+export const ADD_VAR_CUBE = GENERIC_ACTION.bind(null, 'lba_add_varscene', 2);
+export const SUB_VAR_CUBE = GENERIC_ACTION.bind(null, 'lba_sub_varscene', 2);
 
 export const SET_BEHAVIOUR = GENERIC_ACTION.bind(null, 'lba_set_hero_behaviour', 1);
 export const SAVE_HERO = GENERIC_ACTION.bind(null, 'lba_save_hero', 0);

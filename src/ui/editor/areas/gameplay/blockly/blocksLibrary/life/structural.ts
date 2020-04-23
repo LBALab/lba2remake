@@ -1,5 +1,5 @@
 import Blockly from 'blockly';
-import { makeIcon, FieldActor, FieldDropdownLBA } from '../utils';
+import { makeIcon, FieldActor, FieldDropdownLBA, FieldScope } from '../utils';
 
 /*
 ** Behaviours
@@ -139,12 +139,14 @@ export const lba_restore_last_track_obj = trackAction((field) => {
 });
 
 export const lba_vargame_to_track = trackAction((field) => {
-    field('restore saved track from [game]');
+    field('restore saved track from');
+    field(new FieldScope('game'));
     field(new FieldDropdownLBA('vargame'), 'arg_0');
 });
 
 export const lba_track_to_vargame = trackAction((field) => {
-    field('save current track to [game]');
+    field('save current track to');
+    field(new FieldScope('game'));
     field(new FieldDropdownLBA('vargame'), 'arg_0');
 });
 

@@ -2,6 +2,7 @@ import Blockly from 'blockly';
 import {
     generateActors,
     generateZones,
+    generatePoints,
     generateAnims,
     generateBodies,
     generateVarGame,
@@ -70,6 +71,7 @@ export class FieldActor extends Blockly.FieldDropdown {
 const typeGenerator = {
     actor: generateActors,
     zone: generateZones,
+    point: generatePoints,
     anim: generateAnims,
     body: generateBodies,
     vargame: generateVarGame,
@@ -98,6 +100,30 @@ export class FieldDropdownLBA extends Blockly.FieldDropdown {
     setValue(value) {
         this.getOptions();
         super.setValue(value);
+    }
+}
+
+const scopeColor = {
+    game: '#291563',
+    scene: '#15635d'
+};
+
+export class FieldScope extends Blockly.FieldLabel {
+    scope: string;
+
+    constructor(scope) {
+        super(scope);
+        this.scope = scope;
+    }
+
+    initView() {
+        this.createBorderRect_();
+        this.borderRect_.setAttribute(
+            'style',
+            `fill:${scopeColor[this.scope]};stroke:white;`
+        );
+        super.initView();
+        this.textElement_.setAttribute('style', 'fill:white');
     }
 }
 

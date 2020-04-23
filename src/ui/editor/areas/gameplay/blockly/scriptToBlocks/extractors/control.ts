@@ -57,6 +57,9 @@ function setOperand(cmd, opBlock) {
     if (opBlock.getField('operator')) {
         opBlock.setFieldValue(operator.op.command, 'operator');
     }
+    if (opBlock.type === 'lba_cur_track' || opBlock.type === 'lba_operand_track') {
+        return;
+    }
     if (opBlock.getField('operand')) {
         let value = operator.operand.value;
         if (operator.operand.type === 'angle') {

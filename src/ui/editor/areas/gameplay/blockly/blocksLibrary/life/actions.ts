@@ -1,5 +1,12 @@
 import Blockly from 'blockly';
-import { makeIcon, setterBlock, FieldActor, FieldDropdownLBA, FieldUint8 } from '../utils';
+import {
+    makeIcon,
+    setterBlock,
+    FieldActor,
+    FieldDropdownLBA,
+    FieldUint8,
+    FieldScope,
+} from '../utils';
 
 function action(setupInput) {
     return {
@@ -85,38 +92,51 @@ export const lba_ask_choice_obj = action((_block, field) => {
 /*
 ** Variables
 */
-export const lba_set_varscene = varSetterBlock('varscene');
-export const lba_set_vargame = varSetterBlock('vargame');
+export const lba_set_varscene = action((_block, field) => {
+    field('set');
+    field(new FieldScope('scene'));
+    field(new FieldDropdownLBA('varscene'), 'arg_0');
+    field('to');
+    field(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'arg_1');
+});
+
+export const lba_set_vargame = action((_block, field) => {
+    field('set');
+    field(new FieldScope('game'));
+    field(new FieldDropdownLBA('vargame'), 'arg_0');
+    field('to');
+    field(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'arg_1');
+});
 
 export const lba_add_vargame = action((_block, field) => {
-    field(makeIcon('var.svg'));
     field('add');
     field(new Blockly.FieldNumber(), 'arg_1');
-    field('to [game]');
+    field('to');
+    field(new FieldScope('game'));
     field(new FieldDropdownLBA('vargame'), 'arg_0');
 });
 
 export const lba_sub_vargame = action((_block, field) => {
-    field(makeIcon('var.svg'));
     field('subtract');
     field(new Blockly.FieldNumber(), 'arg_1');
-    field('to [game]');
+    field('to');
+    field(new FieldScope('game'));
     field(new FieldDropdownLBA('vargame'), 'arg_0');
 });
 
-export const lba_add_varcube = action((_block, field) => {
-    field(makeIcon('var.svg'));
+export const lba_add_varscene = action((_block, field) => {
     field('add');
     field(new Blockly.FieldNumber(), 'arg_1');
-    field('to [scene]');
+    field('to');
+    field(new FieldScope('scene'));
     field(new FieldDropdownLBA('varscene'), 'arg_0');
 });
 
-export const lba_sub_varcube = action((_block, field) => {
-    field(makeIcon('var.svg'));
+export const lba_sub_varscene = action((_block, field) => {
     field('subtract');
     field(new Blockly.FieldNumber(), 'arg_1');
-    field('to [scene]');
+    field('to');
+    field(new FieldScope('scene'));
     field(new FieldDropdownLBA('varscene'), 'arg_0');
 });
 
@@ -184,7 +204,7 @@ export const lba_cam_follow = action((_block, field) => {
 export const lba_set_position = action((_block, field) => {
     field('set position to');
     field(makeIcon('point.svg'));
-    field(new FieldUint8(), 'arg_0');
+    field(new FieldDropdownLBA('point'), 'arg_0');
 });
 
 export const lba_set_orientation = action((_block, field) => {
@@ -582,21 +602,3 @@ export const lba_set_frame_3ds = action((_block, field) => {
 export const lba_set_action = action((_block, field) => {
     field('(?) action');
 });
-
-function varSetterBlock(type) {
-    return {
-        init() {
-            this.appendDummyInput()
-                .appendField(makeIcon('var.svg'))
-                .appendField('set')
-                .appendField(`[${type.substring(3)}]`)
-                .appendField(new FieldDropdownLBA(type), 'arg_0')
-                .appendField('to')
-                .appendField(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'arg_1');
-            this.setPreviousStatement(true, 'LIFE');
-            this.setNextStatement(true, 'LIFE');
-            this.setColour('#444444');
-            this.scriptType = 'life';
-        }
-    };
-}

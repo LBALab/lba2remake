@@ -1,4 +1,4 @@
-import { map, filter, take, find } from 'lodash';
+import { map, filter, take, each, sortBy } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../DebugData';
 import LocationsNode from '../../../locator/LocationsNode';
 import { DirMode } from '../../../../../../../game/actors';
@@ -23,47 +23,69 @@ export function generateBehaviours() {
     if (!block) {
         return [['<behaviour>', '-1']];
     }
-    let actor = block.workspace.actor;
-    let otherActor = false;
     const actorField = block.getField('actor');
     if (actorField) {
         const actorIdx = Number(actorField.getValue());
         if (actorIdx === -1) {
             return [['<behaviour>', '-1']];
         }
-        actor = block.workspace.scene.actors[actorIdx];
-        otherActor = true;
+        const actor = block.workspace.scene.actors[actorIdx];
+        const behaviours = map(actor.scripts.life.comportementMap);
+        if (behaviours.length === 0) {
+            return [['<behaviour>', '-1']];
+        }
+        return behaviours.map((idx) => {
+            if (idx === 0) {
+                return ['<start>', '0'];
+            }
+            return [`BEHAVIOUR ${idx}`, `${idx}`];
+        });
     }
-
-    const behaviours = map(actor.scripts.life.comportementMap);
-    if (behaviours.length === 0) {
+    const list = [];
+    const behaviourInitBlocks = block.workspace.getBlocksByType('lba_behaviour_init');
+    if (behaviourInitBlocks.length > 0) {
+        list.push(['<start>', '0']);
+    }
+    const behaviourBlocks = block.workspace.getBlocksByType('lba_behaviour');
+    each(
+        sortBy(behaviourBlocks, ['data']),
+        b => list.push([`${b.getFieldValue('arg_0')}`, `${b.data}`])
+    );
+    if (list.length === 0) {
         return [['<behaviour>', '-1']];
     }
-    return behaviours.map((idx) => {
-        if (idx === 0) {
-            return ['<start>', '0'];
-        }
-        if (!otherActor) {
-            const behaviourBlocks = block.workspace.getBlocksByType('lba_behaviour');
-            const tgtBlock = find(behaviourBlocks, b => b.data === idx);
-            if (tgtBlock) {
-                return [tgtBlock.getFieldValue('arg_0'), `${idx}`];
-            }
-        }
-        return [`BEHAVIOUR ${idx}`, `${idx}`];
-    });
+    return list;
 }
 
 export function generateTracks() {
-    const actor = getActor(this);
-    if (!actor) {
+    const block = this.getSourceBlock();
+    if (!block) {
         return [['<track>', '-1']];
     }
-    const tracks = map(actor.scripts.move.tracksMap);
-    if (tracks.length === 0) {
+    const actorField = block.getField('actor');
+    if (actorField) {
+        const actorIdx = Number(actorField.getValue());
+        if (actorIdx === -1) {
+            return [['<track>', '-1']];
+        }
+        const actor = block.workspace.scene.actors[actorIdx];
+        const tracks = map(actor.scripts.move.tracksMap);
+        if (tracks.length === 0) {
+            return [['<track>', '-1']];
+        }
+        return tracks.map(t => [`${t}`, `${t}`]);
+    }
+    const trackBlocks = block.workspace.getBlocksByType('lba_move_track');
+    if (trackBlocks.length === 0) {
         return [['<track>', '-1']];
     }
-    return tracks.map(t => [`${t}`, `${t}`]);
+    return map(
+        sortBy(trackBlocks, ['index']),
+        (t) => {
+            const value = `${t.getFieldValue('arg_0')}`;
+            return [value, value];
+        }
+    );
 }
 
 export function generateActors() {
@@ -93,6 +115,20 @@ export function generateZones() {
         (zone) => {
             const name = getObjectName('zone', scene.index, zone.index);
             return [name, `${zone.props.snap}`];
+        }
+    );
+}
+
+export function generatePoints() {
+    const block = this.getSourceBlock();
+    const scene = block && block.workspace.scene;
+    if (!scene) {
+        return [['<point>', '-1']];
+    }
+    return map(
+        scene.points,
+        (point) => {
+            return [`${point.index}`, `${point.index}`];
         }
     );
 }
