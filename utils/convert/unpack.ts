@@ -15,7 +15,7 @@ interface Paths {
     unpack: string;
 }
 
-const SupportedVersions = ['GogWin', 'SteamWin', 'GogMac'];
+const SupportedVersions = ['GogWin', 'SteamWin', 'GogMac', 'GogMacStandalone'];
 
 const PathDefinitions = {
     GogWin: {
@@ -32,18 +32,30 @@ const PathDefinitions = {
         image: 'Contents/Resources/game/LBA2.GOG',
         track: 'Contents/Resources/game/LBA2.OGG',
         dosbox: ['Contents/Resources/dosbox/dosbox']
+    },
+    GogMacStandalone: {
+        image: 'Contents/Resources/Little Big Adventure 2.boxer/D.cdmedia/LBA2.GOG',
+        track: 'Contents/Resources/Little Big Adventure 2.boxer/D.cdmedia/LBA2.OGG',
+        dosbox: ['Contents/MacOS/DOSBox'],
+        externalDosbox: true
     }
 };
 
 const UnpackCommands = {
     GogWin: 'powershell -File utils/convert/unpack.ps1',
     SteamWin: 'powershell -File utils/convert/unpack.ps1',
-    GogMac: 'cd www/data/LBA2/_unpack && ./dosbox unpack.bat -exit'
+    GogMac: 'cd www/data/LBA2/_unpack && ./dosbox unpack.bat -exit',
+    GogMacStandalone: 'cd www/data/LBA2/_unpack && ./dosbox unpack.bat -exit'
 };
 
-const unpack = async (gameFolder: string) => {
-    const version = detectVersion(gameFolder);
-    const paths: Paths = findFiles(gameFolder, version);
+interface UnpackOptions {
+    gameFolder: string;
+    dosboxFolder: string;
+}
+
+const unpack = async ({gameFolder, dosboxFolder}: UnpackOptions) => {
+    const version = detectVersion(gameFolder, dosboxFolder);
+    const paths: Paths = findFiles(gameFolder, dosboxFolder, version);
     if (!paths) {
         return;
     }
@@ -57,26 +69,32 @@ const unpack = async (gameFolder: string) => {
     removeDirectoryRecursive(workDir);
 };
 
-const findFiles = (gameFolder: string, version: string) => {
+const findFiles = (gameFolder: string, dosboxFolder: string, version: string) => {
     const result = {
         image: path.join(gameFolder, PathDefinitions[version].image),
         track: path.join(gameFolder, PathDefinitions[version].track),
-        dosbox: PathDefinitions[version].dosbox.map((dbp: string) => path.join(gameFolder, dbp)),
+        dosbox: PathDefinitions[version].externalDosbox
+            ? PathDefinitions[version].dosbox.map((dbp: string) => path.join(dosboxFolder, dbp))
+            : PathDefinitions[version].dosbox.map((dbp: string) => path.join(gameFolder, dbp)),
         unpack: path.join(__dirname, 'unpack.bat')
     };
     return verifyPaths(result);
 };
 
-const detectVersion = (gameFolder: string) => {
+const detectVersion = (gameFolder: string, dosboxFolder: string) => {
     for (let i = 0; i < SupportedVersions.length; i += 1) {
         const version = SupportedVersions[i];
         const imagePath = path.join(gameFolder, PathDefinitions[version].image);
         if (fs.existsSync(imagePath)) {
             console.log(`Detected game instalation: ${version}`);
+            if (PathDefinitions[version].externalDosbox && !dosboxFolder) {
+                console.error('This version requires to provide a path to an installation of dosbox as second argument.');
+                process.exit(1);
+            }
             return version;
         }
     }
-    console.error('Unsupported game installation. Currenttly supported GoG versions for windows and mac. ' +
+    console.error('Unsupported game installation. Currently supported GoG versions for windows and mac. ' +
         'Make sure you specified the correct folder path with installed LBA 2 game. If you verified it is correct, then ' +
         'most probably you can still run the remake, but you will have to copy the game files manually. Refer to the README.md');
     process.exit(1);
@@ -125,7 +143,10 @@ const readGameFolderFromArguments = () => {
     if (process.argv.length < 3) {
         throw 'Please specify game folder';
     }
-    return process.argv[2];
+    return {
+        gameFolder: process.argv[2],
+        dosboxFolder: process.argv[3]
+    };
 };
 
 unpack(readGameFolderFromArguments());

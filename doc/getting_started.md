@@ -24,7 +24,7 @@ If you own it already, make sure you updated your game installation to the lates
 
 #### Open the command shell
 - Next commands are performed from your local copy's root folder.
-- Use PowerShell in Windows, or Terminal in Mac 
+- Use PowerShell in Windows, or Terminal in Mac
 
 #### Installing the dependencies
 - Run `npm install`
@@ -35,6 +35,9 @@ If you own it already, make sure you updated your game installation to the lates
 Example: `npm run import-win "C:\games\Little Big Adventure 2"`
 - On Mac run `npm run import "<path to installed GOG game>"`
 Example: `npm run import "/Applications/Little Big Adventure 2 (Twinsen's Odyssey).app"`
+
+If you are using the standalone GoG version on MacOS, you need to provide the path to an installed version of dosbox.
+Example: `npm run import "/Applications/Little Big Adventure 2 (Twinsen's Odyssey).app" /Applications/dosbox.app`
 
 ## Running the development server
 
