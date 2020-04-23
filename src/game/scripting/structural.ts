@@ -143,7 +143,7 @@ export function SET_TRACK_OBJ(actor, offset) {
     actor.scripts.move.context.state.stopped = false;
 }
 
-export function STOP_CURRENT_TRACK() {
+export function SAVE_CURRENT_TRACK() {
     this.moveState.savedOffset = this.moveState.trackOffset;
     this.moveState.stopped = true;
 }
@@ -155,7 +155,7 @@ export function RESTORE_LAST_TRACK() {
     }
 }
 
-export function STOP_CURRENT_TRACK_OBJ(actor) {
+export function SAVE_CURRENT_TRACK_OBJ(actor) {
     const state = actor.scripts.move.context.state;
     state.savedOffset = state.trackOffset;
     state.stopped = true;

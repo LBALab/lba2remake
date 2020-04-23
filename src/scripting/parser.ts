@@ -1,4 +1,4 @@
-import { last } from 'lodash';
+import { last, mapKeys } from 'lodash';
 import { LifeOpcode } from '../game/scripting/data/life';
 import { MoveOpcode } from '../game/scripting/data/move';
 import { ConditionOpcode } from '../game/scripting/data/condition';
@@ -13,17 +13,25 @@ const TypeSize = {
     Uint32: 4,
 };
 
+export function parseScripts(actor) {
+    return {
+        life: parseScript(actor.index, 'life', actor.props.lifeScript),
+        move: parseScript(actor.index, 'move', actor.props.moveScript)
+    };
+}
+
 export function parseScript(actor, type, script) {
     const state = {
         type,
         actor,
-        comportement: 0,
+        comportement: -1,
         track: -1,
         newComportement: (type === 'life'),
         comportementMap: {},
         opMap: {},
         tracksMap: {},
         ifStack: [],
+        switchStack: [],
         offset: 0,
         commands: [],
         choice: null
@@ -33,6 +41,7 @@ export function parseScript(actor, type, script) {
         state.opMap[state.offset] = state.commands.length;
         const code = script.getUint8(state.offset);
         const op = type === 'life' ? LifeOpcode[code] : MoveOpcode[code];
+        checkEndSwitch(state, code);
         checkNewComportment(state, code);
         try {
             state.commands.push(parseCommand(state, script, op, type));
@@ -42,44 +51,54 @@ export function parseScript(actor, type, script) {
             break;
         }
     }
+    const mapOps = obj => mapKeys(obj, (_v, k) => state.opMap[k]);
     return {
+        type,
         opMap: state.opMap,
-        comportementMap: state.comportementMap,
-        tracksMap: state.tracksMap,
+        comportementMap: mapOps(state.comportementMap),
+        tracksMap: mapOps(state.tracksMap),
         commands: state.commands
     };
 }
 
 function checkEndIf(state) {
     while (state.ifStack.length > 0 && state.offset === last(state.ifStack)) {
-        state.commands.push({
-            op: LifeOpcode[0x10],
-            section: state.comportement
-        });
+        state.commands.push({ op: LifeOpcode[0x10] });
         state.ifStack.pop();
+    }
+}
+
+function checkEndSwitch(state, code) {
+    while (code !== 0x76 && code !== 0x72 && code !== 0x73 && code !== 0x74
+            && state.switchStack.length > 0
+            && state.offset === last(state.switchStack)) {
+        state.commands.push({ op: LifeOpcode[0x76] });
+        state.switchStack.pop();
     }
 }
 
 function checkNewComportment(state, code) {
     if (code !== 0 && state.newComportement) {
-        state.comportementMap[state.offset] = state.comportement;
         state.comportement += 1;
+        state.comportementMap[state.offset] = state.comportement;
         state.commands.push({
             op: LifeOpcode[0x20], // COMPORTEMENT
             args: [{hide: false, value: state.comportement, type: 'label'}],
-            section: state.comportement
         });
         state.newComportement = false;
     }
 }
 
-function parseCommand(state, script, op, type) {
+interface Cmd {
+    op: any;
+    args?: any;
+}
+
+function parseCommand(state, script, op, _type) {
     const baseOffset = state.offset;
     state.offset += 1;
-    const cmd = {
+    const cmd : Cmd = {
         op,
-        section: type === 'life' ? state.comportement : state.track,
-        args: null
     };
     if (op.argsFirst) {
         parseArguments(state, script, op, cmd);
@@ -93,16 +112,23 @@ function parseCommand(state, script, op, type) {
     } else if (op.command === 'ELSE') {
         state.ifStack[state.ifStack.length - 1] = cmd.args[0].value;
     }
+    if (op.command === 'SWITCH') {
+        state.switchStack.push(-1);
+    } else if (op.command === 'BREAK' || op.command === 'CASE') {
+        state.switchStack[state.switchStack.length - 1] =
+            Math.max(
+                state.switchStack[state.switchStack.length - 1],
+                cmd.args[0].value
+            );
+    } else if (op.command === 'END_SWITCH') {
+        state.switchStack.pop();
+    }
     if (op.command === 'END_COMPORTEMENT') {
         state.newComportement = true;
     }
     if (op.command === 'TRACK') {
         state.tracksMap[baseOffset] = cmd.args[0].value;
         state.track = cmd.args[0].value;
-        cmd.section = cmd.args[0].value;
-    }
-    if (op.command === 'END') {
-        cmd.section = 'end';
     }
     return cmd;
 }
@@ -147,6 +173,13 @@ function parseArguments(state, script, op, cmd) {
                 cmd.args.push({
                     value: script.getUint8(state.offset, true),
                     type: 'actor',
+                    hide: false
+                });
+                state.offset += 1;
+            } else if (mode === 9) {
+                cmd.args.push({
+                    value: script.getUint8(state.offset, true),
+                    type: 'number',
                     hide: false
                 });
                 state.offset += 1;

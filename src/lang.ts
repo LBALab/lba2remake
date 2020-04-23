@@ -1,11 +1,13 @@
 import {findIndex} from 'lodash';
 import translations from './data/translations.json';
 import languages from './data/languages.json';
+import { getParams } from './params';
 
 let language = null;
 let languageVoice = null;
 
-export function initLanguageConfig(params) {
+function initLanguageConfig() {
+    const params = getParams();
     const lang = params.lang || navigator.language.substring(0, 2);
     const ln = findIndex(languages, l => l.culture.substring(0, 2) === lang);
     const lnV = findIndex(
@@ -17,6 +19,9 @@ export function initLanguageConfig(params) {
 }
 
 export function getLanguageConfig() {
+    if (!language) {
+        initLanguageConfig();
+    }
     return {language, languageVoice};
 }
 

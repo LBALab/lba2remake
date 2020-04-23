@@ -78,6 +78,9 @@ export default class HQR {
             return this.getEntry(index);
         }
         if (this.format === HqrFormat.OpenHQR) {
+            if (this.loadPromise) {
+                await this.loadPromise;
+            }
             return await readOpenHqrEntry(this.zip, this.openEntries[index]);
         }
         throw `Unsupported format ${this.format}`;

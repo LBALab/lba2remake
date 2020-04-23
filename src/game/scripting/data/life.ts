@@ -200,7 +200,7 @@ export const LifeOpcode = [
         opcode: 0x17,
         command: 'SET_TRACK',
         handler: st.SET_TRACK,
-        args: ['Uint16:label'],
+        args: ['Uint16:number'],
         indent: Indent.KEEP,
         type: 'assignment',
         prop: 'track'
@@ -209,7 +209,7 @@ export const LifeOpcode = [
         opcode: 0x18,
         command: 'SET_TRACK_OBJ',
         handler: st.SET_TRACK_OBJ,
-        args: ['Uint8:actor', 'Uint16:label'],
+        args: ['Uint8:actor', 'Uint16:number'],
         indent: Indent.KEEP,
         type: 'assignment',
         prop: 'track'
@@ -360,8 +360,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x2A,
-        command: 'STOP_CURRENT_TRACK',
-        handler: st.STOP_CURRENT_TRACK,
+        command: 'SAVE_CURRENT_TRACK',
+        handler: st.SAVE_CURRENT_TRACK,
         indent: Indent.KEEP,
         type: 'keyword'
     },
@@ -715,7 +715,7 @@ export const LifeOpcode = [
         opcode: 0x54,
         command: 'SET_SPRITE',
         handler: lf.SET_SPRITE,
-        args: ['Uint8', 'Uint8'],
+        args: ['Uint16'],
         indent: Indent.KEEP,
         type: 'assignment'
     },
@@ -834,6 +834,7 @@ export const LifeOpcode = [
         opcode: 0x63,
         command: 'ESCALATOR',
         handler: lf.ESCALATOR,
+        args: ['Uint8', 'Uint8'],
         indent: Indent.KEEP,
         type: 'fct'
     },
@@ -1146,8 +1147,8 @@ export const LifeOpcode = [
     },
     {
         opcode: 0x89,
-        command: 'STOP_CURRENT_TRACK_OBJ',
-        handler: st.STOP_CURRENT_TRACK_OBJ,
+        command: 'SAVE_CURRENT_TRACK_OBJ',
+        handler: st.SAVE_CURRENT_TRACK_OBJ,
         args: ['Uint8:actor'],
         indent: Indent.KEEP,
         type: 'fct'

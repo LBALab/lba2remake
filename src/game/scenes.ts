@@ -114,6 +114,9 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             }
             initSceneDebugData();
             scene.firstFrame = true;
+            if (params.editor) {
+                scene.savedState = game.getState().save();
+            }
             game.loaded(`scene #${index}`, wasPaused);
             return scene;
         },
@@ -263,17 +266,21 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         vr: renderer.vr,
         vrGUI,
         is3DCam,
+        savedState: null,
 
         reset() {
-            each(this.actors, (actor) => {
-                actor.reset();
-            });
-            loadScripts(game, scene);
-            scene.firstFrame = true;
-            if (game.isPaused()) {
-                DebugData.step = true;
+            if (params.editor) {
+                game.getState().load(scene.savedState);
+                game.setUiState({ text: null, cinema: false });
+                scene.variables = createSceneVariables(scene);
+                each(this.actors, (actor) => {
+                    actor.reset(this);
+                });
+                scene.firstFrame = true;
+                if (game.isPaused()) {
+                    DebugData.step = true;
+                }
             }
-            scene.variables = createSceneVariables(scene);
         },
 
         resetCamera(newParams) {

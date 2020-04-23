@@ -73,7 +73,7 @@ export const ConditionOpcode = [
         opcode: 0x09,
         command: 'CURRENT_TRACK',
         handler: lc.CURRENT_TRACK,
-        operand: 'Uint8:label',
+        operand: 'Uint8:track',
         type: 'read_prop',
         prop: 'track'
     },
@@ -82,7 +82,7 @@ export const ConditionOpcode = [
         command: 'CURRENT_TRACK_OBJ',
         handler: lc.CURRENT_TRACK_OBJ,
         param: 'Uint8:actor',
-        operand: 'Uint8:label',
+        operand: 'Uint8:track',
         type: 'read_prop',
         prop: 'track'
     },
@@ -114,7 +114,7 @@ export const ConditionOpcode = [
         opcode: 0x0E,
         command: 'ACTION',
         handler: lc.ACTION,
-        operand: 'Uint8',
+        operand: 'Uint8:number',
         type: 'read_prop',
         scope: 'input'
     },
@@ -131,7 +131,7 @@ export const ConditionOpcode = [
         opcode: 0x10,
         command: 'LIFE_POINT',
         handler: lc.LIFE_POINT,
-        operand: 'Uint16',
+        operand: 'Uint16:number',
         type: 'read_prop'
     },
     {
@@ -139,14 +139,14 @@ export const ConditionOpcode = [
         command: 'LIFE_POINT_OBJ',
         handler: lc.LIFE_POINT_OBJ,
         param: 'Uint8:actor',
-        operand: 'Uint16',
+        operand: 'Uint16:number',
         type: 'read_prop'
     },
     {
         opcode: 0x12,
         command: 'KEYS',
         handler: lc.KEYS,
-        operand: 'Uint8',
+        operand: 'Uint8:number',
         type: 'read_prop',
         scope: 'hero'
     },
@@ -154,7 +154,7 @@ export const ConditionOpcode = [
         opcode: 0x13,
         command: 'MONEY',
         handler: lc.MONEY,
-        operand: 'Uint16',
+        operand: 'Uint16:number',
         type: 'read_prop',
         prop: 'money',
         scope: 'hero'
@@ -172,7 +172,7 @@ export const ConditionOpcode = [
         opcode: 0x15,
         command: 'CHAPTER',
         handler: lc.CHAPTER,
-        operand: 'Uint8',
+        operand: 'Uint8:number',
         type: 'read_prop',
         prop: 'chapter',
         scope: 'game'
@@ -189,7 +189,7 @@ export const ConditionOpcode = [
         opcode: 0x17,
         command: 'MAGIC_LEVEL',
         handler: lc.MAGIC_LEVEL,
-        operand: 'Uint8',
+        operand: 'Uint8:number',
         type: 'read_prop',
         prop: 'magic_level',
         scope: 'hero'
@@ -198,7 +198,7 @@ export const ConditionOpcode = [
         opcode: 0x18,
         command: 'MAGIC_POINTS',
         handler: lc.MAGIC_POINTS,
-        operand: 'Uint8',
+        operand: 'Uint8:number',
         type: 'read_prop',
         prop: 'magic_points',
         scope: 'hero'
@@ -222,44 +222,44 @@ export const ConditionOpcode = [
         opcode: 0x1B,
         command: 'FUEL',
         handler: lc.FUEL,
-        operand: 'Uint8',
+        operand: 'Uint8:number',
         type: 'read_prop'
     },
     {
         opcode: 0x1C,
         command: 'CARRIED_BY',
         handler: lc.CARRIED_BY,
-        operand: 'Uint8',
+        operand: 'Uint8:number',
         type: 'read_prop'
     },
     {
         opcode: 0x1D,
         command: 'CDROM',
         handler: lc.CDROM,
-        operand: 'Uint8',
+        operand: 'Uint8:number',
         type: 'read_prop'
     },
     {
         opcode: 0x1E,
         command: 'LADDER',
         handler: lc.LADDER,
-        operand: 'Uint8',
+        operand: 'Uint8:number',
         type: 'read_prop'
     },
     {
         opcode: 0x1F,
         command: 'RND',
         handler: lc.RND,
-        param: 'Uint8',
-        operand: 'Uint8',
+        param: 'Uint8:number',
+        operand: 'Uint8:number',
         type: 'fct'
     },
     {
         opcode: 0x20,
         command: 'RAIL',
         handler: lc.RAIL,
-        param: 'Uint8',
-        operand: 'Uint8',
+        param: 'Uint8:number',
+        operand: 'Uint8:number',
         type: 'read_prop'
     },
     {
@@ -345,14 +345,14 @@ export const ConditionOpcode = [
         opcode: 0x2B,
         command: 'PROCESSOR',
         handler: lc.PROCESSOR,
-        operand: 'Uint8',
+        operand: 'Uint8:number',
         type: 'read_prop'
     },
     {
         opcode: 0x2C,
         command: 'OBJECT_DISPLAYED',
         handler: lc.OBJECT_DISPLAYED,
-        param: 'Uint8',
+        param: 'Uint8:number',
         operand: 'Uint8:boolean',
         type: 'fct'
     },

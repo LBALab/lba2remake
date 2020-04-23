@@ -2,13 +2,7 @@ import {map, each} from 'lodash';
 
 const mobileRE = /Mobile|webOS|iPhone|iPod|iOS|BlackBerry|IEMobile|Opera Mini/i;
 
-declare global {
-    interface Window {
-        params?: any;
-    }
-}
-
-window.params = {};
+let params = null;
 
 const paramsDefinitions = {
     mobile: {
@@ -49,10 +43,13 @@ const paramsDefinitions = {
     },
 };
 
-export function loadParams() : any {
+export function getParams(forceRefresh = false) : any {
+    if (params && !forceRefresh) {
+        return params;
+    }
+    params = {};
     const query = window.location.hash.replace(/^#/, '');
     const src = {};
-    const tgt = {};
     map(query.split('&'), (part) => {
         const [name, value] = part.split('=');
         if (name && name in paramsDefinitions) {
@@ -64,13 +61,12 @@ export function loadParams() : any {
     });
     each(paramsDefinitions, (param, name) => {
         if (name in src) {
-            tgt[name] = parseParam(param, name, src[name]);
+            params[name] = parseParam(param, name, src[name]);
         } else {
-            tgt[name] = param.default;
+            params[name] = param.default;
         }
-        window.params[name] = tgt[name];
     });
-    return tgt;
+    return params;
 }
 
 function parseParam(param, name, src) {

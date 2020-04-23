@@ -63,7 +63,9 @@ const mainIconStyle = (base = {}) => (extend({
     cursor: 'pointer' as const,
     paddingTop: '2px',
     paddingLeft: '2px',
-    paddingRight: '5px'
+    paddingRight: '5px',
+    width: 20,
+    height: 20
 }, base));
 
 const {Provider, Consumer} = React.createContext(undefined);
@@ -205,7 +207,8 @@ export default class Area extends React.Component<AreaProps, AreaState> {
                 this.setState({popup: {
                     msg: this.renderAreaSelectionPopup(),
                     style: {
-                        background: 'transparent'
+                        background: 'transparent',
+                        zIndex: 100
                     }
                 }});
             }
@@ -213,7 +216,7 @@ export default class Area extends React.Component<AreaProps, AreaState> {
 
         const titleStyle = extend({
             fontSize: isMain ? 20 : 18
-        }, mainIconStyle());
+        }, mainIconStyle(), {float: 'none'});
 
         const closeIcon = this.props.close &&
             <img style={iconStyle({right: 2})}

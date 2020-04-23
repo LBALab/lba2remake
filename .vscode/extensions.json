@@ -1,8 +1,7 @@
 {
     "recommendations": [
-        "msjsdiag.debugger-for-chrome",
         "christian-kohler.npm-intellisense",
         "eg2.vscode-npm-script",
-        "eg2.tslint"
+        "ms-vscode.vscode-typescript-tslint-plugin"
     ]
 }

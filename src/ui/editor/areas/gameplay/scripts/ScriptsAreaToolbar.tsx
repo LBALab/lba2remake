@@ -115,6 +115,10 @@ export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
             }
         };
 
+        const refresh = () => {
+            this.props.stateHandler.setRefreshing(true);
+        };
+
         const paused = this.state.isPaused;
 
         const toggleAutoScroll = (e) => {
@@ -146,6 +150,7 @@ export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
             <img style={iconStyle}
                     onClick={togglePause}
                     src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
+            <button onClick={refresh}>Refresh</button>
             <label style={{float: 'right' as const}}>
                 <input key="autoScroll"
                         type="checkbox"

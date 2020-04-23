@@ -212,6 +212,10 @@
     font-weight: bold;
 }
 
+.var-text {
+   color: rgb(16, 238, 0);
+}
+
 body {
     margin: 0;
     padding: 0;
