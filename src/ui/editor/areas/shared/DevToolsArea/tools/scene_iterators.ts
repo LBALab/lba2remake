@@ -63,7 +63,7 @@ export function findCondition(name) {
         const results = [];
         each(script.commands, (cmd, idx) => {
             if (cmd.condition && cmd.condition.op.command === name) {
-                results.push(`found cond ${name} at ${idx}`);
+                results.push(`found cond ${name} at ${idx} (cmd=${cmd.op.command})`);
             }
         });
         displayResults(scene, actor, script, results);
