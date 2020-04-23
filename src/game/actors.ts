@@ -11,6 +11,7 @@ import { getObjectName } from '../ui/editor/DebugData';
 import { createActorLabel } from '../ui/editor/labels';
 import { runScript } from './scripting';
 import { makePure } from '../utils/debug';
+import { compileScripts } from '../scripting/compiler';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -128,9 +129,10 @@ export async function loadActor(
             }
         },
 
-        reset() {
+        reset(scene) {
             this.resetAnimState();
             this.resetPhysics();
+            compileScripts(game, scene, this);
             this.isKilled = false;
             this.floorSound = -1;
         },

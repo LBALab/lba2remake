@@ -1,4 +1,5 @@
-import {getLanguageConfig} from '../lang';
+import { omit } from 'lodash';
+import { getLanguageConfig } from '../lang';
 
 export function createState() {
     return {
@@ -25,8 +26,13 @@ export function createState() {
             quest: createQuestFlags(),
             holomap: createHolomapFlags()
         },
-        save: () => {},
-        load: () => {}
+        save() {
+            return JSON.stringify(omit(this, ['save', 'load', 'config']));
+        },
+        load(savedState) {
+            const state = JSON.parse(savedState);
+            Object.assign(this, state);
+        }
     };
 }
 
