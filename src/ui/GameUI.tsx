@@ -76,6 +76,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     canvas: HTMLCanvasElement;
     renderZoneElem: HTMLElement;
     canvasWrapperElem: HTMLElement;
+    preloadPromise: Promise<void>;
 
     constructor(props) {
         super(props);
@@ -133,12 +134,14 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             };
 
             clock.start();
-            game.registerResources().then(() =>
-                game.preload().then(() => {
-                    this.onGameReady();
-                })
-            );
+            this.preloadPromise = this.preload(game);
         }
+    }
+
+    async preload(game) {
+        await game.registerResources();
+        await game.preload();
+        this.onGameReady();
     }
 
     setUiState(state) {
@@ -210,8 +213,9 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         }
     }
 
-    onSceneManagerReady(sceneManager) {
+    async onSceneManagerReady(sceneManager) {
         if (this.props.params.scene >= 0) {
+            await this.preloadPromise;
             sceneManager.hideMenuAndGoto(this.props.params.scene);
         }
     }
