@@ -12,7 +12,7 @@
     "lint": "tslint -t msbuild -p ./tsconfig.json",
     "typecheck": "tsc",
     "import": "utils/convert/import.sh",
-    "import-win": "powershell -File utils/convert/import.ps1",
+    "import:win": "powershell -File utils/convert/import.ps1",
     "convert": "ts-node utils/convert/convert.ts",
     "unpack": "ts-node utils/convert/unpack.ts"
   },
