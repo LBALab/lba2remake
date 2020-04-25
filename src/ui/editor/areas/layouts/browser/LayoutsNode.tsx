@@ -206,11 +206,12 @@ function getIcon(data, component) {
 let bkg = null;
 const libraries = {};
 
-loadResource(ResourceType.BRICKS).then((lBkg) => {
-    bkg = lBkg;
-});
-
 const getLayouts = () => {
+    if (!bkg) {
+        loadResource(ResourceType.BRICKS).then((lBkg) => {
+            bkg = lBkg;
+        });
+    }
     if (bkg && DebugData.scope.library) {
         const library = DebugData.scope.library.index;
         if (!(library in libraries)) {
