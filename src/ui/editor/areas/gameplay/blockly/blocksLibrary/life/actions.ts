@@ -2,10 +2,11 @@ import Blockly from 'blockly';
 import {
     makeIcon,
     setterBlock,
+    debuggerContextMenu,
     FieldActor,
     FieldDropdownLBA,
     FieldUint8,
-    FieldScope,
+    FieldScope
 } from '../utils';
 
 function action(setupInput) {
@@ -17,6 +18,9 @@ function action(setupInput) {
             this.setNextStatement(true, 'LIFE');
             this.scriptType = 'life';
             setupInput(this, (field, name) => input.appendField(field, name));
+        },
+        customContextMenu(options) {
+            debuggerContextMenu(this, options);
         }
     };
 }

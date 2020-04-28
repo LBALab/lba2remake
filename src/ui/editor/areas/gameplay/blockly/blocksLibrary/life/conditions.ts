@@ -1,5 +1,12 @@
 import Blockly from 'blockly';
-import { makeIcon, typeIcons, FieldDropdownLBA, FieldActor, FieldScope } from '../utils';
+import {
+    makeIcon,
+    typeIcons,
+    debuggerContextMenu,
+    FieldDropdownLBA,
+    FieldActor,
+    FieldScope
+} from '../utils';
 
 export const lba_distance = condition({
     label: 'distance to',
@@ -285,6 +292,9 @@ function condition({
         addOperand() {
             const operandInput = this.appendDummyInput('operand');
             addOperand(operandInput, operand);
+        },
+        customContextMenu(options) {
+            debuggerContextMenu(this, options);
         }
     };
 }

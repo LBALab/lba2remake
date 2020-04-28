@@ -34,6 +34,24 @@ const mainStyle = {
     top: 20
 };
 
+const expandToolboxStyle = {
+    position: 'absolute' as const,
+    left: 0,
+    height: 120,
+    lineHeight: '120px',
+    width: 10,
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'rgba(0, 0, 0, 0.7)',
+    border: '1px solid rgba(255, 255, 255, 0.4)',
+    borderRadius: '0px 3px 3px 0px',
+    color: 'rgba(255, 255, 255, 0.4)',
+    textAlign: 'center' as const,
+    verticalAlign: 'middle' as const,
+    cursor: 'pointer',
+    userSelect: 'none' as const
+};
+
 export default class BlocklyAreaContent extends FrameListener<Props, State> {
     rootRef: HTMLElement;
     scene: any;
@@ -43,7 +61,9 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
     width: number = -1;
     height: number = -1;
     toolbox: Element;
+    toolboxElem: HTMLElement;
     initBehaviourId?: string;
+    isPaused: boolean;
 
     constructor(props) {
         super(props);
@@ -51,10 +71,12 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
         this.onRef = this.onRef.bind(this);
         this.compile = this.compile.bind(this);
         this.clearWorkspace = this.clearWorkspace.bind(this);
+        this.expandToolbox = this.expandToolbox.bind(this);
         this.state = {
             actorIndex: props.sharedState.actorIndex,
         };
         this.id = idCount;
+        this.isPaused = false;
         idCount += 1;
     }
 
@@ -93,6 +115,23 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
                     sounds: false,
                     trashcan: false,
                     theme: (Blockly as any).Themes.Dark
+                });
+                this.toolboxElem = ref.querySelector('.blocklyToolboxDiv');
+                this.toolboxElem.style.transform = 'translateX(-100%)';
+                this.toolboxElem.style.transition = 'transform 0.5s';
+                const background = ref.querySelector('.blocklyMainBackground');
+                background.addEventListener('click', () => {
+                    this.toolboxElem.style.transform = 'translateX(-100%)';
+                });
+                ref.addEventListener('keydown', (event) => {
+                    const key = event.code || event.which || event.keyCode;
+                    if (key === 84 || key === 'KeyT') {
+                        if (this.toolboxElem.style.transform === 'translateX(0px)') {
+                            this.toolboxElem.style.transform = 'translateX(-100%)';
+                        } else {
+                            this.toolboxElem.style.transform = 'translateX(0px)';
+                        }
+                    }
                 });
                 this.workspace.addChangeListener((e) => {
                     if (e instanceof Blockly.Events.Create) {
@@ -153,18 +192,47 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
     }
 
     updateWorkspace() {
+        const isPaused = DebugData.scope.game && DebugData.scope.game.isPaused();
         if (this.workspace && this.actor) {
+            let scrolledToBreakpoint = false;
             const activeCommands = {
                 life: DebugData.script.life[this.actor.index] || {},
-                move: DebugData.script.move[this.actor.index] || {},
+                move: DebugData.script.move[this.actor.index] || {}
+            };
+            const breakpoints = {
+                life: DebugData.breakpoints.life[this.actor.index] || {},
+                move: DebugData.breakpoints.move[this.actor.index] || {}
             };
             const blocks = this.workspace.getAllBlocks(false);
             for (let i = 0; i < blocks.length; i += 1) {
                 const b = blocks[i];
-                const highlight = activeCommands[b.scriptType]
-                    && b.index in activeCommands[b.scriptType];
+                const highlight = b.index in activeCommands[b.scriptType];
                 b.setHighlighted(highlight);
+                const classList = b.pathObject.svgRoot.classList;
+                if (b.index in breakpoints[b.scriptType]) {
+                    if (!classList.contains('blocklyBreakpoint')) {
+                        classList.add('blocklyBreakpoint');
+                    }
+                    if (isPaused && !this.isPaused && !scrolledToBreakpoint && highlight) {
+                        this.workspace.centerOnBlock(b.id);
+                        if (!classList.contains('blocklyHitBP')) {
+                            classList.add('blocklyHitBP');
+                        }
+                        b.select();
+                        scrolledToBreakpoint = true;
+                    }
+                } else {
+                    if (classList.contains('blocklyBreakpoint')) {
+                        classList.remove('blocklyBreakpoint');
+                    }
+                }
+                if (this.isPaused && !isPaused) {
+                    if (classList.contains('blocklyHitBP')) {
+                        classList.remove('blocklyHitBP');
+                    }
+                }
             }
+            this.isPaused = isPaused;
         }
     }
 
@@ -217,6 +285,10 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
         this.workspace.clear();
     }
 
+    expandToolbox() {
+        this.toolboxElem.style.transform = 'translateX(0px)';
+    }
+
     render() {
         return <div>
             <div id={`blockly_workspace_${this.id}`} style={mainStyle} ref={this.onRef} />
@@ -226,7 +298,7 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
                 stateHandler={this.props.stateHandler}
                 compile={this.compile}
                 clearWorkspace={this.clearWorkspace}/>
-        </div>
-        ;
+            <div style={expandToolboxStyle} onClick={this.expandToolbox}>&gt;</div>
+        </div>;
     }
 }

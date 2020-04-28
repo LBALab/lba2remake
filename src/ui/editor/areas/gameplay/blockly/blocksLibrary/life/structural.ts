@@ -1,5 +1,5 @@
 import Blockly from 'blockly';
-import { makeIcon, FieldActor, FieldDropdownLBA, FieldScope } from '../utils';
+import { makeIcon, debuggerContextMenu, FieldActor, FieldDropdownLBA, FieldScope } from '../utils';
 
 /*
 ** Behaviours
@@ -18,6 +18,9 @@ export const lba_behaviour = {
         this.setColour(BEHAVIOUR_COLOR);
         this.data = -1;
         this.scriptType = 'life';
+    },
+    customContextMenu(options) {
+        debuggerContextMenu(this, options);
     }
 };
 
@@ -31,6 +34,9 @@ export const lba_behaviour_init = {
         this.setColour(BEHAVIOUR_COLOR);
         this.data = 0;
         this.scriptType = 'life';
+    },
+    customContextMenu(options) {
+        debuggerContextMenu(this, options);
     }
 };
 
@@ -43,6 +49,9 @@ function behaviourAction(setupInput) {
             this.setNextStatement(true, 'LIFE');
             this.setColour(BEHAVIOUR_COLOR);
             this.scriptType = 'life';
+        },
+        customContextMenu(options) {
+            debuggerContextMenu(this, options);
         }
     };
 }
@@ -97,6 +106,9 @@ function trackAction(setupInput) {
             this.setNextStatement(true, 'LIFE');
             this.setColour(100);
             this.scriptType = 'life';
+        },
+        customContextMenu(options) {
+            debuggerContextMenu(this, options);
         }
     };
 }

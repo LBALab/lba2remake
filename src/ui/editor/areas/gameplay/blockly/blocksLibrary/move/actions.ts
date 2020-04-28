@@ -2,10 +2,11 @@ import Blockly from 'blockly';
 import {
     makeIcon,
     setterBlock,
+    debuggerContextMenu,
     FieldUint8,
     FieldInt16,
     FieldUint16,
-    FieldDropdownLBA,
+    FieldDropdownLBA
 } from '../utils';
 
 function genericMoveCmd(setupInput) {
@@ -17,6 +18,9 @@ function genericMoveCmd(setupInput) {
             this.setColour('#393939');
             setupInput(this, (field, name) => input.appendField(field, name));
             this.scriptType = 'move';
+        },
+        customContextMenu(options) {
+            debuggerContextMenu(this, options);
         }
     };
 }

@@ -245,6 +245,7 @@ select:focus {
 *::-webkit-scrollbar-track
 {
     -webkit-box-shadow: inset 0 0 0px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 0px rgba(0,0,0,0.3);
     background-color: rgb(25,25,25);
 }
 
@@ -266,3 +267,27 @@ select:focus {
 {
     background-color: rgb(25,25,25);
 }
+
+.geras-renderer.dark-theme .blocklyBreakpoint>.blocklyPath {
+    stroke: darkred;
+    stroke-width: 3px;
+}
+
+.geras-renderer.dark-theme .blocklyBreakpoint.blocklyHitBP>.blocklyPath {
+    animation: 2s ease-in hitBP;
+}
+
+.geras-renderer.dark-theme .blocklySelected.blocklyBreakpoint>.blocklyPath {
+    stroke: red;
+    stroke-width: 3px;
+}
+
+@keyframes hitBP {
+    from {
+      fill: red;
+    }
+
+    to {
+      fill: inherit;
+    }
+  }

@@ -1,4 +1,4 @@
-import { makeIcon, FieldUint8, FieldDropdownLBA } from '../utils';
+import { makeIcon, debuggerContextMenu, FieldUint8, FieldDropdownLBA } from '../utils';
 
 export const lba_move_track = {
     init() {
@@ -10,6 +10,9 @@ export const lba_move_track = {
         this.setNextStatement(true, 'MOVE');
         this.setColour(100);
         this.scriptType = 'move';
+    },
+    customContextMenu(options) {
+        debuggerContextMenu(this, options);
     }
 };
 
@@ -23,5 +26,8 @@ export const lba_move_goto = {
         this.setNextStatement(true, 'MOVE');
         this.setColour(100);
         this.scriptType = 'move';
+    },
+    customContextMenu(options) {
+        debuggerContextMenu(this, options);
     }
 };

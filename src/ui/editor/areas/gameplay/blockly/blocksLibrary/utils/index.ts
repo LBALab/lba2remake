@@ -15,6 +15,7 @@ import {
     generateDirModes,
     generateHeroBehaviours
 } from './optionsGenerators';
+import DebugData from '../../../../../DebugData';
 
 export const makeIcon = file => new Blockly.FieldImage(`editor/icons/${file}`, 15, 15);
 
@@ -152,6 +153,50 @@ export function setterBlock({scriptType, type, objMode = false}) {
                 this.setColour('#393939');
             }
             this.scriptType = scriptType.toLowerCase();
+        },
+        customContextMenu(options) {
+            debuggerContextMenu(this, options);
         }
     };
+}
+
+function toggleBreakpoint(block) {
+    const actor = block.workspace.actor;
+    const sceneActiveCommands = DebugData.script[block.scriptType];
+    const sceneBreakpoints = DebugData.breakpoints[block.scriptType];
+    if (!(actor.index in sceneBreakpoints)) {
+        sceneBreakpoints[actor.index] = {};
+    }
+    if (sceneBreakpoints[actor.index][block.index]) {
+        delete sceneBreakpoints[actor.index][block.index];
+        if (actor.index in sceneActiveCommands && DebugData.scope.game.isPaused()) {
+            DebugData.scope.game.pause();
+        }
+    } else {
+        sceneBreakpoints[actor.index][block.index] = true;
+    }
+}
+
+function isBreakpointEnabled(block) {
+    const actor = block.workspace.actor;
+    const sceneBreakpoints = DebugData.breakpoints[block.scriptType];
+    return actor.index in sceneBreakpoints
+        && block.index in sceneBreakpoints[actor.index];
+}
+
+export function debuggerContextMenu(block, options) {
+    const actor = block.workspace.actor;
+    if (!actor) {
+        return;
+    }
+
+    options.unshift({
+        text: isBreakpointEnabled(block)
+            ? 'Remove breakpoint'
+            : 'Add breakpoint',
+        enabled: true,
+        callback: () => {
+            toggleBreakpoint(block);
+        },
+    });
 }

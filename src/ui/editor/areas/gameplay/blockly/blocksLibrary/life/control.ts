@@ -2,6 +2,7 @@
 import Blockly from 'blockly';
 import { each, map, isEqual } from 'lodash';
 import { addOperand } from './conditions';
+import { debuggerContextMenu } from '../utils';
 
 export const lba_if = ifBlock('if');
 export const lba_swif = ifBlock('if (on change)');
@@ -43,6 +44,7 @@ function ifBlock(type) {
             }
         },
         customContextMenu(options) {
+            debuggerContextMenu(this, options);
             if (this.getInput('else_block')) {
                 options.unshift({
                     text: "Remove 'else' branch",
@@ -114,6 +116,9 @@ export const lba_switch = {
             connection = connection.targetBlock().nextConnection;
         }
         return cases;
+    },
+    customContextMenu(options) {
+        debuggerContextMenu(this, options);
     }
 };
 
@@ -203,6 +208,7 @@ function makeCase(orCase) {
         },
         customContextMenu(options) {
             const input = this.getInput('operand');
+            debuggerContextMenu(this, options);
             if (!input.connection.targetBlock() && input.connection.getCheck().length === 1) {
                 const check = input.connection.getCheck()[0];
                 options.unshift({
@@ -234,6 +240,9 @@ export const lba_default = {
         this.setPreviousStatement(true, 'SWITCH');
         this.setColour(180);
         this.scriptType = 'life';
+    },
+    customContextMenu(options) {
+        debuggerContextMenu(this, options);
     }
 };
 
@@ -243,6 +252,9 @@ export const lba_break = {
         this.setPreviousStatement(true, 'LIFE');
         this.setColour(180);
         this.scriptType = 'life';
+    },
+    customContextMenu(options) {
+        debuggerContextMenu(this, options);
     }
 };
 
@@ -255,6 +267,9 @@ function makeOperand(type) {
             const operandInput = this.appendDummyInput('operand');
             addOperand(operandInput, type);
             this.scriptType = 'life';
+        },
+        customContextMenu(options) {
+            debuggerContextMenu(this, options);
         }
     };
 }
@@ -284,6 +299,9 @@ function logicOperator(type) {
             this.setOutput(true, 'LOGIC');
             this.setColour(180);
             this.scriptType = 'life';
+        },
+        customContextMenu(options) {
+            debuggerContextMenu(this, options);
         }
     };
 }
