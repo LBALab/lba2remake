@@ -2,7 +2,7 @@ import BlocklyAreaContent from './BlocklyAreaContent';
 
 const BlocklyArea = {
     id: 'blockly_editor',
-    name: 'Blockly Scripts',
+    name: 'Scripts (blockly)',
     icon: 'blockly.svg',
     content: BlocklyAreaContent,
     getInitialState: () => ({

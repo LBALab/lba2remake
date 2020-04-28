@@ -49,13 +49,13 @@ const GameplayEditor = {
         }
     },
     toolAreas: [
-        ScriptEditorArea,
-        BlocklyArea,
-        InspectorArea,
-        DevToolsArea,
         SceneArea,
         SceneGraphArea,
+        BlocklyArea,
+        ScriptEditorArea,
         LocatorArea,
+        InspectorArea,
+        DevToolsArea,
         PaletteArea,
     ],
     defaultLayout: {
