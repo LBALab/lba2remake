@@ -1,5 +1,4 @@
 import * as React from 'react';
-import ReactDOMServer from 'react-dom/server';
 import {extend, map, filter, tail, first} from 'lodash';
 import {fullscreen} from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';
@@ -20,13 +19,6 @@ const scriptBaseStyle = {
     background: 'rgb(25,25,25)',
     fontWeight: 'normal',
     fontSize: 16
-};
-
-const condValueStyle = {
-    opacity: '0.8',
-    background: 'black',
-    padding: '0 4px',
-    border: '1px solid grey'
 };
 
 const scriptStyle = {
@@ -186,7 +178,6 @@ export default class ScriptEditor extends FrameListener<Props, State> {
             for (let i = 0; i < ln.length; i += 1) {
                 const lineNum = ln[i];
                 const lineCmd = lc[i];
-                const result = lineCmd.querySelector('.result');
                 const active = (i in activeCommands);
                 if (breakpoints[i]) {
                     if (active) {
@@ -227,19 +218,6 @@ export default class ScriptEditor extends FrameListener<Props, State> {
                                 delete DebugData.selection[`${type}Line`];
                             }
                         }, 500);
-                    }
-                }
-
-                if (result) {
-                    result.style.display = active ? 'inline-block' : 'none';
-                    if (active && 'condValue' in activeCommands[i]) {
-                        const condValue = activeCommands[i].condValue;
-                        const elem = <span style={condValueStyle}>
-                            {condValue}
-                        </span>;
-                        result.innerHTML = ReactDOMServer.renderToStaticMarkup(elem);
-                    } else {
-                        result.innerText = '';
                     }
                 }
             }
@@ -620,16 +598,9 @@ function Condition({condition, data}) {
  */
 function Operator({operator, data}) {
     if (operator) {
-        const operand = operator.operand;
-        const rStyle = extend({
-            display: 'none',
-            position: 'absolute',
-            right: 0
-        }, argStyle[operand && operand.type] || defaultArgStyle);
         return <span>
             &nbsp;{operator.name}
             &nbsp;<Arg arg={operator.operand} data={data}/>
-            <span className="result" style={rStyle}/>
         </span>;
     }
     return null;

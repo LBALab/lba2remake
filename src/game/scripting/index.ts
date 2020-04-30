@@ -1,10 +1,8 @@
 import {SUICIDE} from './life';
 import DebugData from '../../ui/editor/DebugData';
-import { mapDataName } from '../../ui/editor/areas/gameplay/scripts/listing';
 
 export function runScript(params, script, time) {
     const instructions = script.instructions;
-    const commands = script.commands;
     const context = script.context;
     const state = context.state;
 
@@ -39,24 +37,6 @@ export function runScript(params, script, time) {
                 if (!('section' in activeCommands)) {
                     activeCommands.section = next.section;
                 }
-                const activeCommand : {
-                    condValue?: any;
-                } = {} ;
-                if (next.condition) {
-                    const condValue = next.condition();
-                    const cmdCond = commands[offset].condition;
-                    const operandType = cmdCond.operandType;
-                    const idx = cmdCond.param && cmdCond.param.value;
-                    activeCommand.condValue = mapDataName(
-                        context.scene, {
-                            type: operandType,
-                            subType: cmdCond.param && cmdCond.param.type,
-                            value: condValue,
-                            realValue: condValue,
-                            idx
-                        });
-                }
-                activeCommands[offset] = activeCommand;
                 if (offset in breakpoints) {
                     if (!context.game.isPaused()) {
                         const actor = context.actor;
