@@ -328,7 +328,7 @@ export default class ScriptEditor extends FrameListener<Props, State> {
             position: 'absolute' as const,
             overflowY: 'hidden' as const,
             left: `${nDigits}ch`,
-            right: 0,
+            minWidth: '90%',
             top: 0
         };
         return <div style={scriptStyle[type](splitAt)}>
