@@ -17,7 +17,7 @@ export const readZip = async (buffer: ArrayBuffer) => {
 };
 
 export const readOpenHqrHeader = async (zip: JSZip) => {
-    const jsonText = await zip.file('header.json').async('string') as string;
+    const jsonText = await zip.file('header.json').async('text') as string;
     const header = JSON.parse(jsonText) as OpenEntry[];
     return header;
 };

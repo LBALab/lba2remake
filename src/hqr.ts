@@ -1,3 +1,4 @@
+import JSZip from 'jszip';
 import { readHqrEntry, Entry, readHqrHeader } from './utils/hqr/hqr_reader';
 import WebApi from './webapi';
 import { readOpenHqrHeader, readOpenHqrEntry, OpenEntry, readZip }
@@ -112,7 +113,7 @@ export default class HQR {
         return (baseUrl.toLowerCase().endsWith('.zip')) ? HqrFormat.OpenHQR : HqrFormat.HQR;
     }
 
-    private async readOpenHqrToEntries(buffer: ArrayBuffer) {
+    private async readOpenHqrToEntries(buffer: JSZip) {
         const openEntries = await readOpenHqrHeader(buffer);
         return [openEntries, openEntries.map((openEntry) => {
             return {

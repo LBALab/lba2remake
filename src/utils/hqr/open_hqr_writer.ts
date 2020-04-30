@@ -45,8 +45,11 @@ export const writeOpenHqr = async (hqrFilePath: string, outputFilePath: string, 
     const jsonContent = JSON.stringify(headers, null, 4);
     zip.file('header.json', jsonContent);
 
-    const zipOptions = {type : 'uint8array', compression: 'STORE'};
-    const zippedData = await zip.generateAsync(zipOptions) as Uint8Array;
+    const zipOptions = {
+        type : 'uint8array',
+        compression: 'STORE'
+    };
+    const zippedData = await zip.generateAsync(zipOptions as any) as Uint8Array;
     fs.writeFileSync(outputFilePath, zippedData);
     fs.rmdirSync(folderPath);
 
