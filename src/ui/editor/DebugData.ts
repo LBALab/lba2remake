@@ -24,8 +24,7 @@ const DebugData = {
     },
     step: false,
     firstFrame: false,
-    sceneManager: null,
-    scriptDebugLabels: null
+    sceneManager: null
 };
 
 export default DebugData;

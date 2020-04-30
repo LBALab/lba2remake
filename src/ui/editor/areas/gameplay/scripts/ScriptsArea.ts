@@ -6,7 +6,6 @@ const ScriptsArea = {
     icon: 'script.png',
     content: ScriptsAreaContent,
     getInitialState: () => ({
-        objectLabels: false,
         actorIndex: 0,
         refreshing: false
     }),
@@ -16,9 +15,6 @@ const ScriptsArea = {
         },
         splitAt(splitAt) {
             this.setState({splitAt});
-        },
-        setObjectLabels(objectLabels) {
-            this.setState({objectLabels});
         },
         setActor(actorIndex) {
             this.setState({actorIndex});

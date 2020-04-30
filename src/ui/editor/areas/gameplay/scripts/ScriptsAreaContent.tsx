@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import {extend, map, filter, tail, first, each, find} from 'lodash';
+import {extend, map, filter, tail, first} from 'lodash';
 import {fullscreen} from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';
 import {getDebugListing} from './listing';
@@ -99,9 +99,6 @@ export default class ScriptEditor extends FrameListener<Props, State> {
 
     componentWillUnmount() {
         super.componentWillUnmount();
-        if (DebugData.scriptDebugLabels) {
-            DebugData.scriptDebugLabels = null;
-        }
         document.removeEventListener('mousedown', this.enableSeparator);
         document.removeEventListener('mousemove', this.updateSeparator);
         document.removeEventListener('mouseup', this.disableSeparator);
@@ -175,53 +172,6 @@ export default class ScriptEditor extends FrameListener<Props, State> {
         if (this.scene && this.actor) {
             this.updateActiveLines('life');
             this.updateActiveLines('move');
-            this.updateObjectLabels();
-        } else {
-            DebugData.scriptDebugLabels = null;
-        }
-    }
-
-    updateObjectLabels() {
-        if (this.props.sharedState.objectLabels) {
-            if ((!DebugData.scriptDebugLabels
-                || DebugData.scriptDebugLabels.actor !== this.actor)) {
-                const debugLabels = {
-                    actor: this.actor,
-                    actors: [],
-                    zones: [],
-                    points: []
-                };
-                const checkArg = (arg) => {
-                    if (arg.type === 'actor') {
-                        debugLabels.actors.push(arg.value);
-                    }
-                    if (arg.type === 'zone') {
-                        const zone = find(this.scene.zones, z =>
-                            z.props.type === 2 && z.props.snap === arg.value
-                        );
-                        if (zone) {
-                            debugLabels.zones.push(zone.index);
-                        }
-                    }
-                    if (arg.type === 'point') {
-                        debugLabels.points.push(arg.value);
-                    }
-                };
-                each(this.actor.scripts, (script) => {
-                    each(script.commands, (c) => {
-                        each(c.args, checkArg);
-                        if (c.operator && c.operator.operand) {
-                            checkArg(c.operator.operand);
-                        }
-                        if (c.condition && c.condition.param) {
-                            checkArg(c.condition.param);
-                        }
-                    });
-                });
-                DebugData.scriptDebugLabels = debugLabels;
-            }
-        } else {
-            DebugData.scriptDebugLabels = null;
         }
     }
 

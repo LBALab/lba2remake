@@ -5,11 +5,6 @@ import FrameListener from '../../../../utils/FrameListener';
 import DebugData, {getObjectName} from '../../../DebugData';
 import { TickerProps } from '../../../../utils/Ticker';
 
-const inputStyle = {
-    textAlign: 'center' as const,
-    verticalAlign: 'middle' as const
-};
-
 const iconStyle = extend({}, editor.icon, {
     width: 16,
     height: 16,
@@ -31,7 +26,6 @@ const toolbarStyle = {
 interface Props extends TickerProps {
     sharedState: {
         actorIndex: number;
-        objectLabels: boolean;
     };
     stateHandler: any;
 }
@@ -120,15 +114,9 @@ export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
 
         const paused = this.state.isPaused;
 
-        const toggleObjectLabels = (e) => {
-            this.props.stateHandler.setObjectLabels(e.target.checked);
-        };
-
         const actorIcon = extend({}, iconStyle, {
             padding: 0
         });
-
-        const objectLabels = this.props.sharedState.objectLabels;
 
         return <React.Fragment>
             <span style={{cursor: 'pointer'}} onClick={selectActor}>
@@ -145,14 +133,6 @@ export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
                     onClick={togglePause}
                     src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
             <button onClick={refresh}>Refresh</button>
-            <label style={{float: 'right' as const, paddingRight: '1ch'}}>
-                <input key="objlabels"
-                        type="checkbox"
-                        onChange={toggleObjectLabels}
-                        checked={objectLabels}
-                        style={inputStyle}/>
-                Show active objects
-            </label>
         </React.Fragment>;
     }
 
