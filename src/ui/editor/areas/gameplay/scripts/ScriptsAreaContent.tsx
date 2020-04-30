@@ -158,7 +158,6 @@ export default class ScriptEditor extends FrameListener<Props, State> {
         if (DebugData.selection &&
                 ('lifeLine' in DebugData.selection || 'moveLine' in DebugData.selection)) {
             this.props.stateHandler.setActor(DebugData.selection.index);
-            this.props.stateHandler.setAutoScroll(false);
         }
         if (this.scene !== scene || this.actor !== actor || this.props.sharedState.refreshing) {
             this.setState({
@@ -228,8 +227,6 @@ export default class ScriptEditor extends FrameListener<Props, State> {
 
     updateActiveLines(type) {
         let firstBreakpoint = true;
-        let firstActive = true;
-        const autoScroll = this.props.sharedState.autoScroll;
         if (this.lineNumbers[type] && this.lineCmds[type]) {
             const ln = this.lineNumbers[type].children;
             const lc = this.lineCmds[type].children;
@@ -260,13 +257,6 @@ export default class ScriptEditor extends FrameListener<Props, State> {
                     }
                 } else {
                     if (active) {
-                        if (autoScroll && firstActive && firstBreakpoint) {
-                            if (this.scrollElem !== lineNum) {
-                                lineNum.scrollIntoView({block: 'center'});
-                                this.scrollElem = lineNum;
-                            }
-                            firstActive = false;
-                        }
                         lineNum.style.color = 'black';
                         lineNum.style.background = '#00ff00';
                         lineCmd.style.background = '#001100';

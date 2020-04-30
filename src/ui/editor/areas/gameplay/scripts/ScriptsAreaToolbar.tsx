@@ -31,7 +31,6 @@ const toolbarStyle = {
 interface Props extends TickerProps {
     sharedState: {
         actorIndex: number;
-        autoScroll: boolean;
         objectLabels: boolean;
     };
     stateHandler: any;
@@ -121,10 +120,6 @@ export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
 
         const paused = this.state.isPaused;
 
-        const toggleAutoScroll = (e) => {
-            this.props.stateHandler.setAutoScroll(e.target.checked);
-        };
-
         const toggleObjectLabels = (e) => {
             this.props.stateHandler.setObjectLabels(e.target.checked);
         };
@@ -133,7 +128,6 @@ export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
             padding: 0
         });
 
-        const autoScroll = this.props.sharedState.autoScroll;
         const objectLabels = this.props.sharedState.objectLabels;
 
         return <React.Fragment>
@@ -151,14 +145,6 @@ export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
                     onClick={togglePause}
                     src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
             <button onClick={refresh}>Refresh</button>
-            <label style={{float: 'right' as const}}>
-                <input key="autoScroll"
-                        type="checkbox"
-                        onChange={toggleAutoScroll}
-                        checked={autoScroll}
-                        style={inputStyle}/>
-                Autoscroll
-            </label>
             <label style={{float: 'right' as const, paddingRight: '1ch'}}>
                 <input key="objlabels"
                         type="checkbox"

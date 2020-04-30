@@ -26,7 +26,6 @@ const toolbarStyle = {
 interface Props extends TickerProps {
     sharedState: {
         actorIndex: number;
-        autoScroll: boolean;
         objectLabels: boolean;
     };
     stateHandler: any;

@@ -6,7 +6,6 @@ const ScriptsArea = {
     icon: 'script.png',
     content: ScriptsAreaContent,
     getInitialState: () => ({
-        autoScroll: true,
         objectLabels: false,
         actorIndex: 0,
         refreshing: false
@@ -17,9 +16,6 @@ const ScriptsArea = {
         },
         splitAt(splitAt) {
             this.setState({splitAt});
-        },
-        setAutoScroll(autoScroll) {
-            this.setState({autoScroll});
         },
         setObjectLabels(objectLabels) {
             this.setState({objectLabels});
