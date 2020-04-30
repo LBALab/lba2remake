@@ -1,4 +1,4 @@
-const Indent = {
+export default {
     ZERO: 0,
     ONE: 1,
     KEEP: 2,
@@ -7,5 +7,3 @@ const Indent = {
     SUB_ADD: 5,
     POST_SUB: 6
 };
-
-export default Indent;

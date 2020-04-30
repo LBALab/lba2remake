@@ -19,11 +19,11 @@ export const ZONE_TYPE = [
 
 const ZONE_TYPE_MATERIAL_COLOR = [
     '#84ff84', // TELEPORT
-    '#ffb200', // CAMERA
+    '#ff7448', // CAMERA
     '#6495ed', // SCENERIC
     '#ff00ff', // FRAGMENT
     '#e7b5d6', // BONUS
-    '#ff7448', // TEXT
+    '#ffb200', // TEXT
     '#5555ff', // LADDER
     '#96c09f', // CONVEYOR
     '#ffc475', // SPIKE

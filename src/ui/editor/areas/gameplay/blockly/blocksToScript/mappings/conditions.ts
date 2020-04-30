@@ -25,8 +25,12 @@ export default {
     lba_angle: 0x24,
     lba_angle_obj: 0x2D,
     lba_real_angle: 0x27,
-    lba_vargame_value: 0x0F,
-    lba_varscene_value: 0x0B,
+    lba_var_value: (block) => {
+        const scope = block.getFieldValue('scope');
+        return scope === 'game' || scope === 'inventory'
+            ? 0x0F
+            : 0x0B;
+    },
     lba_random: 0x1F,
     lba_chapter: 0x15,
     lba_magic_level: 0x17,

@@ -110,7 +110,7 @@ export function MONEY() {
     return this.game.getState().hero.money;
 }
 
-export function BEHAVIOUR() {
+export function HERO_BEHAVIOUR() {
     return this.game.getState().hero.behaviour;
 }
 

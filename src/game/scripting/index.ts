@@ -46,10 +46,11 @@ export function runScript(params, script, time) {
                     const condValue = next.condition();
                     const cmdCond = commands[offset].condition;
                     const operandType = cmdCond.operandType;
-                    const idx = cmdCond.param ? cmdCond.param.value : undefined;
+                    const idx = cmdCond.param && cmdCond.param.value;
                     activeCommand.condValue = mapDataName(
                         context.scene, {
                             type: operandType,
+                            subType: cmdCond.param && cmdCond.param.type,
                             value: condValue,
                             realValue: condValue,
                             idx

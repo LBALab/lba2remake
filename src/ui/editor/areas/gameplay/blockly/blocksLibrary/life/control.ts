@@ -130,8 +130,7 @@ const allowedOperandTypes = map(
         'anim',
         'body',
         'track',
-        'vargame_value',
-        'varcube_value',
+        'var_value',
         'angle'
     ],
     type => `operand_${type}`
@@ -280,8 +279,7 @@ export const lba_operand_zone = makeOperand('zone');
 export const lba_operand_anim = makeOperand('anim');
 export const lba_operand_body = makeOperand('body');
 export const lba_operand_track = makeOperand('track');
-export const lba_operand_vargame_value = makeOperand('vargame_value');
-export const lba_operand_varcube_value = makeOperand('varcube_value');
+export const lba_operand_var_value = makeOperand('var_value');
 export const lba_operand_angle = makeOperand('angle');
 
 export const lba_and = logicOperator('and');

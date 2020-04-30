@@ -81,20 +81,12 @@ export const lba_cur_track_obj = condition({
     objMode: true
 });
 
-export const lba_vargame_value = condition({
+export const lba_var_value = condition({
     label: (field) => {
-        field(new FieldScope('game'));
+        field(new FieldScope('unknown'), 'scope');
     },
-    param: 'vargame',
-    operand: 'vargame_value'
-});
-
-export const lba_varscene_value = condition({
-    label: (field) => {
-        field(new FieldScope('scene'));
-    },
-    param: 'varscene',
-    operand: 'varcube_value'
+    param: 'var',
+    operand: 'var_value'
 });
 
 export const lba_cone_view = condition({
@@ -308,7 +300,7 @@ const operators = [
     ['≤', '<=']
 ];
 
-const numberTypes = ['number', 'label', 'varcube_value', 'vargame_value'];
+const numberTypes = ['number', 'label', 'var_value'];
 
 export function addOperand(input, operandType) {
     input.appendField(new Blockly.FieldDropdown(operators), 'operator');

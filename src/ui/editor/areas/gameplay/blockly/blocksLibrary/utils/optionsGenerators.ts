@@ -1,4 +1,4 @@
-import { map, filter, take, each, sortBy } from 'lodash';
+import { map, filter, take, drop, each, sortBy } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../DebugData';
 import LocationsNode from '../../../locator/LocationsNode';
 import { DirMode } from '../../../../../../../game/actors';
@@ -161,28 +161,29 @@ export function generateBodies() {
     );
 }
 
-export function generateVarGame() {
+function generateVarGame(inventory) {
     const {game} = DebugData.scope;
-    const block = this.getSourceBlock();
-    const scene = block && block.workspace.scene;
-    if (!game || !scene) {
+    if (!game) {
         return [['<vargame>', '-1']];
     }
+    const vars = inventory
+        ? take(game.getState().flags.quest, 40)
+        : drop(game.getState().flags.quest, 40);
+    const offset = inventory ? 0 : 40;
     return map(
-        game.getState().flags.quest,
+        vars,
         (_value, idx) => {
             const name = getVarName({
                 type: 'vargame',
-                idx
+                idx: idx + offset
             });
-            return [name, `${idx}`];
+            return [name, `${idx + offset}`];
         }
     );
 }
 
-export function generateVarScene() {
-    const block = this.getSourceBlock();
-    const scene = block && block.workspace.scene;
+function generateVarScene(workspace) {
+    const scene = workspace.scene;
     if (!scene) {
         return [['<varscene>', '-1']];
     }
@@ -198,8 +199,22 @@ export function generateVarScene() {
     );
 }
 
+export function generateVars() {
+    const block = this.getSourceBlock();
+    if (!block || !block.workspace) {
+        return [['<var>', '-1']];
+    }
+    const scope = block.getFieldValue('scope');
+    switch (scope) {
+        case 'inventory': return generateVarGame(true);
+        case 'game': return generateVarGame(false);
+        case 'scene': return generateVarScene(block.workspace);
+    }
+    return [['<var>', '-1']];
+}
+
 export function generateItems() {
-    return take(generateVarGame.call(this), 40);
+    return generateVarGame(true);
 }
 
 export function generateTexts() {

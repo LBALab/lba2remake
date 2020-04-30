@@ -159,6 +159,7 @@ export default class BlocklyAreaToolbar extends FrameListener<Props, State> {
             right: 0,
             bottom: 0,
             background: 'rgba(0, 0, 0, 0.8)',
+            zIndex: 85
         };
 
         const textStyle = {

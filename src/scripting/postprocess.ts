@@ -47,11 +47,11 @@ function postProcessCmd(script, cmd, cmdOffset, scene, actor) {
             }
             args[1].value = opMap[args[1].value];
             break;
-        case 'SET_COMPORTEMENT_OBJ':
+        case 'SET_BEHAVIOUR_OBJ':
             opMap = scene.actors[args[0].value].scripts.life.opMap;
             if (opMap[args[1].value] === undefined) {
                 // tslint:disable-next-line:no-console max-line-length
-                console.warn(`Failed to parse SET_COMPORTEMENT_OBJ offset: ${scene.index}:${actor.index}:${script.type}:${cmdOffset} offset=${args[1].value}`);
+                console.warn(`Failed to parse SET_BEHAVIOUR_OBJ offset: ${scene.index}:${actor.index}:${script.type}:${cmdOffset} offset=${args[1].value}`);
             }
             args[1].value = opMap[args[1].value];
             break;

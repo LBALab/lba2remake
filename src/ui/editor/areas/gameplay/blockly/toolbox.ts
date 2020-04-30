@@ -14,6 +14,7 @@ const baseTree = `<xml id="toolbox" style="display: none">
     <block type="lba_save_behaviour_obj"/>
     <block type="lba_restore_behaviour"/>
     <block type="lba_restore_behaviour_obj"/>
+    <block type="lba_return"/>
 </category>
 <category name="Tracks" colour="100">
     <label text="Definition"/>
@@ -72,10 +73,6 @@ const baseTree = `<xml id="toolbox" style="display: none">
     <block type="lba_break"/>
 
     <sep gap="40"/>
-    <label text="Misc"/>
-    <block type="lba_return"/>
-
-    <sep gap="40"/>
     <label text="Logic gates"/>
     <block type="lba_and"/>
     <block type="lba_or"/>
@@ -126,8 +123,8 @@ const baseTree = `<xml id="toolbox" style="display: none">
 
     <sep gap="40"/>
     <label text="Variables &amp; numbers"/>
-    <block type="lba_vargame_value"/>
-    <block type="lba_varscene_value"/>
+    <block type="lba_var_value"><field name="scope">game</field></block>
+    <block type="lba_var_value"><field name="scope">scene</field></block>
     <block type="lba_random"/>
 
     <sep gap="40"/>
@@ -176,12 +173,13 @@ const baseTree = `<xml id="toolbox" style="display: none">
 
     <sep gap="40"/>
     <label text="Variables"/>
-    <block type="lba_set_vargame"/>
-    <block type="lba_add_vargame"/>
-    <block type="lba_sub_vargame"/>
-    <block type="lba_set_varscene"/>
-    <block type="lba_add_varscene"/>
-    <block type="lba_sub_varscene"/>
+    <block type="lba_set_var"><field name="scope">game</field></block>
+    <block type="lba_add_var"><field name="scope">game</field></block>
+    <block type="lba_sub_var"><field name="scope">game</field></block>
+
+    <block type="lba_set_var"><field name="scope">scene</field></block>
+    <block type="lba_add_var"><field name="scope">scene</field></block>
+    <block type="lba_sub_var"><field name="scope">scene</field></block>
 
     <sep gap="40"/>
     <label text="3D Model"/>

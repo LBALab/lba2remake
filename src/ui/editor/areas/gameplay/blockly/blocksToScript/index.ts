@@ -74,7 +74,8 @@ interface Cmd {
 
 function compileBlock(block, type, ctx) {
     const mappings = type === 'life' ? lifeMappings : moveMappings;
-    const info = mappings[block.type];
+    const mapper = mappings[block.type];
+    const info = typeof(mapper) === 'function' ? mapper(block) : mapper;
     if (info) {
         const op = type === 'life'
             ? LifeOpcode[info.code]
@@ -140,13 +141,13 @@ function postProcess(script, scene, moveScript = null) {
     const otherScriptTracksRevMap = moveScript && mapValues(invert(moveScript.tracksMap), Number);
     each(script.commands, (cmd) => {
         switch (cmd.op.command) {
-            case 'SET_COMPORTEMENT':
+            case 'SET_BEHAVIOUR':
                 cmd.args[0].value = comportementRevMap[cmd.args[0].value];
                 break;
             case 'SET_TRACK':
                 cmd.args[0].value = otherScriptTracksRevMap[cmd.args[0].value];
                 break;
-            case 'SET_COMPORTEMENT_OBJ': {
+            case 'SET_BEHAVIOUR_OBJ': {
                 const actor = scene.actors[cmd.args[0].value];
                 const comportement = cmd.args[1].value;
                 const loc = findKey(actor.scripts.life.comportementMap, c => c === comportement);

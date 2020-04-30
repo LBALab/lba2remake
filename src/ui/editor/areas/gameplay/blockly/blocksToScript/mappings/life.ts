@@ -74,11 +74,19 @@ function handleOperand(condBlock, cmd, operand) {
     };
 }
 
+function getCondOpCode(block) {
+    const mapper = condMappings[block.type];
+    if (typeof(mapper) === 'function') {
+        return mapper(block);
+    }
+    return mapper;
+}
+
 function handleCondition(condBlock, cmd, ctx, usesOperand = true) {
     if (condBlock.type === 'lba_or' || condBlock.type === 'lba_and') {
         return handleLogicGate(condBlock, cmd, ctx);
     }
-    const code = condMappings[condBlock.type];
+    const code = getCondOpCode(condBlock);
     const op = ConditionOpcode[code];
     if (!op) {
         return false;
@@ -170,7 +178,7 @@ function switchContentHandler(block, emit, ctx) {
         return;
     }
     const condBlock = conn.targetBlock();
-    const code = condMappings[condBlock.type];
+    const code = getCondOpCode(condBlock);
     const op = ConditionOpcode[code];
     if (!op) {
         return;
@@ -293,12 +301,15 @@ export default {
     lba_change_scene: { code: 0x34 },
     lba_the_end: { code: 0x62 },
     lba_game_over: { code: 0x61 },
-    lba_set_vargame: { code: 0x24 },
-    lba_add_vargame: { code: 0x80 },
-    lba_sub_vargame: { code: 0x81 },
-    lba_set_varscene: { code: 0x1F },
-    lba_add_varscene: { code: 0x82 },
-    lba_sub_varscene: { code: 0x83 },
+    lba_set_var: block => ({
+        code: block.getFieldValue('scope') === 'game' ? 0x24 : 0x1F
+    }),
+    lba_add_var: block => ({
+        code: block.getFieldValue('scope') === 'game' ? 0x80 : 0x82
+    }),
+    lba_sub_var: block => ({
+        code: block.getFieldValue('scope') === 'game' ? 0x81 : 0x83
+    }),
     lba_set_anim: { code: 0x13 },
     lba_set_anim_obj: { code: 0x14 },
     lba_set_body: { code: 0x11 },

@@ -82,7 +82,7 @@ function checkNewComportment(state, code) {
         state.comportement += 1;
         state.comportementMap[state.offset] = state.comportement;
         state.commands.push({
-            op: LifeOpcode[0x20], // COMPORTEMENT
+            op: LifeOpcode[0x20], // BEHAVIOUR
             args: [{hide: false, value: state.comportement, type: 'label'}],
         });
         state.newComportement = false;
@@ -123,7 +123,7 @@ function parseCommand(state, script, op, _type) {
     } else if (op.command === 'END_SWITCH') {
         state.switchStack.pop();
     }
-    if (op.command === 'END_COMPORTEMENT') {
+    if (op.command === 'END_BEHAVIOUR') {
         state.newComportement = true;
     }
     if (op.command === 'TRACK') {

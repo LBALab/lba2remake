@@ -5,8 +5,7 @@ import {
     generatePoints,
     generateAnims,
     generateBodies,
-    generateVarGame,
-    generateVarScene,
+    generateVars,
     generateItems,
     generateTracks,
     generateBehaviours,
@@ -75,8 +74,7 @@ const typeGenerator = {
     point: generatePoints,
     anim: generateAnims,
     body: generateBodies,
-    vargame: generateVarGame,
-    varscene: generateVarScene,
+    var: generateVars,
     item: generateItems,
     track: generateTracks,
     behaviour: generateBehaviours,
@@ -104,27 +102,38 @@ export class FieldDropdownLBA extends Blockly.FieldDropdown {
     }
 }
 
-const scopeColor = {
+export const scopeColors = {
+    unknown: '#000000',
+    inventory: '#5f1563',
     game: '#291563',
-    scene: '#15635d'
+    scene: '#15635d',
+    actor: '#943b15'
 };
 
-export class FieldScope extends Blockly.FieldLabel {
-    scope: string;
-
+export class FieldScope extends Blockly.FieldLabelSerializable {
     constructor(scope) {
         super(scope);
-        this.scope = scope;
     }
 
     initView() {
         this.createBorderRect_();
-        this.borderRect_.setAttribute(
-            'style',
-            `fill:${scopeColor[this.scope]};stroke:white;`
-        );
+        this.applyScopeColor();
         super.initView();
         this.textElement_.setAttribute('style', 'fill:white');
+    }
+
+    setValue(value) {
+        super.setValue(value);
+        this.applyScopeColor();
+    }
+
+    applyScopeColor() {
+        if (this.borderRect_) {
+            this.borderRect_.setAttribute(
+                'style',
+                `fill:${scopeColors[this.value_]};stroke:white;`
+            );
+        }
     }
 }
 

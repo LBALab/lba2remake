@@ -1,7 +1,8 @@
 import {
     newBlock,
     GENERIC_ACTION,
-    GENERIC_ACTION_OBJ
+    GENERIC_ACTION_OBJ,
+    mapArgValue
 } from './utils';
 import { GENERIC_IF, LOGIC_OPERATOR } from './control';
 import { lbaToDegrees } from '../../../../../../../utils/lba';
@@ -9,7 +10,7 @@ import { lbaToDegrees } from '../../../../../../../utils/lba';
 /*
 ** Behaviours
 */
-export function COMPORTEMENT(workspace, cmd, {behaviourId}) {
+export function BEHAVIOUR(workspace, cmd, {behaviourId}) {
     const id = behaviourId || 0;
     const type = id === 0
         ? 'lba_behaviour_init'
@@ -26,22 +27,22 @@ export function COMPORTEMENT(workspace, cmd, {behaviourId}) {
     };
 }
 
-export const SET_COMPORTEMENT = GENERIC_ACTION.bind(null, 'lba_set_behaviour', 0);
+export const SET_BEHAVIOUR = GENERIC_ACTION.bind(null, 'lba_set_behaviour', 0);
 
-export const SET_COMPORTEMENT_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_behaviour_obj', [
+export const SET_BEHAVIOUR_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_behaviour_obj', [
     (actor, value) => {
         const { comportementMap } = actor.scripts.life;
         return comportementMap[value];
     }
 ]);
 
-export const SAVE_COMPORTEMENT =
+export const SAVE_BEHAVIOUR =
     GENERIC_ACTION.bind(null, 'lba_save_behaviour', 0);
-export const RESTORE_COMPORTEMENT =
+export const RESTORE_BEHAVIOUR =
     GENERIC_ACTION.bind(null, 'lba_restore_behaviour', 0);
-export const SAVE_COMPORTEMENT_OBJ =
+export const SAVE_BEHAVIOUR_OBJ =
     GENERIC_ACTION_OBJ.bind(null, 'lba_save_behaviour_obj', 0);
-export const RESTORE_COMPORTEMENT_OBJ =
+export const RESTORE_BEHAVIOUR_OBJ =
     GENERIC_ACTION_OBJ.bind(null, 'lba_restore_behaviour_obj', 0);
 
 /*
@@ -106,6 +107,21 @@ export function SET_DIRMODE_OBJ(workspace, cmd, {connection}) {
     return { connection: block.nextConnection };
 }
 
+function GENERIC_SETTER(type, scope, workspace, cmd, {connection}) {
+    const block = newBlock(workspace, `lba_${type}_var`, cmd);
+    if (connection) {
+        connection.connect(block.previousConnection);
+    }
+    const varIndex = cmd.data.args[0].value;
+    if (scope === 'game' && varIndex < 40) {
+        scope = 'inventory';
+    }
+    block.setFieldValue(scope, 'scope');
+    block.setFieldValue(mapArgValue(cmd, 0), 'arg_0');
+    block.setFieldValue(mapArgValue(cmd, 1), 'arg_1');
+    return { connection: block.nextConnection };
+}
+
 export const END_LIFE = GENERIC_ACTION.bind(null, 'lba_end_life', 0);
 export const SUICIDE = GENERIC_ACTION.bind(null, 'lba_suicide', 0);
 export const KILL_OBJ = GENERIC_ACTION.bind(null, 'lba_kill_obj', 1);
@@ -113,9 +129,6 @@ export const RETURN = GENERIC_ACTION.bind(null, 'lba_return', 0);
 export const CHANGE_CUBE = GENERIC_ACTION.bind(null, 'lba_change_scene', 1);
 export const THE_END = GENERIC_ACTION.bind(null, 'lba_the_end', 0);
 export const GAME_OVER = GENERIC_ACTION.bind(null, 'lba_game_over', 0);
-
-export const SET_VAR_CUBE = GENERIC_ACTION.bind(null, 'lba_set_varscene', 2);
-export const SET_VAR_GAME = GENERIC_ACTION.bind(null, 'lba_set_vargame', 2);
 
 export const ANIM = GENERIC_ACTION.bind(null, 'lba_set_anim', 1);
 export const ANIM_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_set_anim_obj', 1);
@@ -132,12 +145,14 @@ export const ADD_CHOICE = GENERIC_ACTION.bind(null, 'lba_add_choice', 1);
 export const ASK_CHOICE = GENERIC_ACTION.bind(null, 'lba_ask_choice', 1);
 export const ASK_CHOICE_OBJ = GENERIC_ACTION_OBJ.bind(null, 'lba_ask_choice_obj', 1);
 
-export const ADD_VAR_GAME = GENERIC_ACTION.bind(null, 'lba_add_vargame', 2);
-export const SUB_VAR_GAME = GENERIC_ACTION.bind(null, 'lba_sub_vargame', 2);
-export const ADD_VAR_CUBE = GENERIC_ACTION.bind(null, 'lba_add_varscene', 2);
-export const SUB_VAR_CUBE = GENERIC_ACTION.bind(null, 'lba_sub_varscene', 2);
+export const SET_VAR_GAME = GENERIC_SETTER.bind(null, 'set', 'game');
+export const ADD_VAR_GAME = GENERIC_SETTER.bind(null, 'add', 'game');
+export const SUB_VAR_GAME = GENERIC_SETTER.bind(null, 'sub', 'game');
+export const SET_VAR_CUBE = GENERIC_SETTER.bind(null, 'set', 'scene');
+export const ADD_VAR_CUBE = GENERIC_SETTER.bind(null, 'add', 'scene');
+export const SUB_VAR_CUBE = GENERIC_SETTER.bind(null, 'sub', 'scene');
 
-export const SET_BEHAVIOUR = GENERIC_ACTION.bind(null, 'lba_set_hero_behaviour', 1);
+export const SET_HERO_BEHAVIOUR = GENERIC_ACTION.bind(null, 'lba_set_hero_behaviour', 1);
 export const SAVE_HERO = GENERIC_ACTION.bind(null, 'lba_save_hero', 0);
 export const RESTORE_HERO = GENERIC_ACTION.bind(null, 'lba_restore_hero', 0);
 export const SET_MAGIC_LEVEL = GENERIC_ACTION.bind(null, 'lba_set_magic_level', 1);

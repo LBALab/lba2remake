@@ -1,11 +1,12 @@
-import * as React from 'react';
-import {cloneDeep, map, each, find, isFinite, isInteger, extend, findKey} from 'lodash';
-import Indent from '../../../../../game/scripting/indent';
+import {cloneDeep, map, filter, each, find, isFinite, isInteger, extend, findKey} from 'lodash';
 import {lbaToDegrees, getDistance} from '../../../../../utils/lba';
 import DebugData, {getObjectName, getVarName} from '../../../DebugData';
-import {formatVar} from './format';
 import { DirMode } from '../../../../../game/actors';
-import { findSceneData } from '../scene/SceneNode';
+import Indent from './data/indent';
+import LifeProps from './data/life';
+import MoveProps from './data/move';
+import ConditionProps from './data/condition';
+import {formatVar} from './format';
 
 export function getDebugListing(type, scene, actor) {
     if (scene && actor) {
@@ -13,32 +14,38 @@ export function getDebugListing(type, scene, actor) {
         const activeLine = script.context
             && script.context.state
             && script.context.state.lastOffset;
-        return {commands: mapCommands(scene, actor, script.commands), activeLine};
+        return {commands: mapCommands(type, scene, actor, script.commands), activeLine};
     }
     return null;
 }
 
-function mapCommands(scene, actor, commands) {
+function mapCommands(type, scene, actor, commands) {
     let indent = 0;
     let prevCommand = null;
     let section = -1;
-    const state = {};
-    return map(commands, (cmd) => {
-        if (cmd.op.command === 'COMPORTEMENT' || cmd.op.command === 'TRACK') {
+    const state = {
+        condition: null
+    };
+    const ExtraProps = type === 'life' ? LifeProps : MoveProps;
+    const filteredCommands = filter(commands, c => c.op.command !== 'END');
+    return map(filteredCommands, (cmd) => {
+        if (cmd.op.command === 'BEHAVIOUR' || cmd.op.command === 'TRACK') {
             section = cmd.args[0].value;
         }
         const newCmd = {
+            ...ExtraProps[cmd.op.command],
             name: cmd.op.command,
             args: mapArguments(scene, actor, cmd),
             condition: mapCondition(scene, cmd.condition, state),
-            operator: mapOperator(scene, cmd.operator, state),
+            operator: mapOperator(scene, cmd.condition || state.condition, cmd.operator, state),
             section,
             unimplemented: cmd.op.handler.unimplemented,
-            type: cmd.op.type,
-            prop: cmd.op.prop,
-            scope: cmd.op.scope
         };
-        indent = processIndent(newCmd, prevCommand, cmd.op, indent);
+        if (type === 'life') {
+            indent = processIndent(newCmd, prevCommand, cmd.op, indent);
+        } else {
+            newCmd.indent = 0;
+        }
         prevCommand = newCmd;
         return newCmd;
     });
@@ -46,9 +53,8 @@ function mapCommands(scene, actor, commands) {
 
 export function mapComportementArg(comportement) {
     switch (comportement) {
-        case 0: return 'INIT';
-        case 1: return 'NORMAL';
-        default: return `CMP_${comportement}`;
+        case 0: return 'start';
+        default: return `BEHAVIOUR_${comportement}`;
     }
 }
 
@@ -62,13 +68,13 @@ function mapArguments(scene, actor, cmd) {
         case 'TRACK':
             args[0].value = args[0].value;
             break;
-        case 'COMPORTEMENT':
+        case 'BEHAVIOUR':
             args[0].value = mapComportementArg(args[0].value);
             break;
-        case 'SET_COMPORTEMENT':
+        case 'SET_BEHAVIOUR':
             args[0].value = mapComportementSetterArg(actor, args[0].value);
             break;
-        case 'SET_COMPORTEMENT_OBJ': {
+        case 'SET_BEHAVIOUR_OBJ': {
             const obj = scene ? scene.actors[args[0].value] : null;
             if (obj) {
                 args[1].value = mapComportementSetterArg(obj, args[1].value);
@@ -112,6 +118,9 @@ function mapArguments(scene, actor, cmd) {
             break;
     }
     each(args, (arg) => {
+        if (arg.type === 'var_value') {
+            arg.subType = args[0].type;
+        }
         arg.realValue = arg.value;
         arg.value = mapDataName(scene, arg);
     });
@@ -121,14 +130,13 @@ function mapArguments(scene, actor, cmd) {
 function mapCondition(scene, condition, state) {
     if (condition) {
         if (condition.param) {
-            if (condition.param.type === 'vargame' || condition.param.type === 'varcube')
+            if (condition.param.type === 'vargame' || condition.param.type === 'varcube') {
                 state.condition = condition;
+            }
         }
         return {
+            ...ConditionProps[condition.op.command],
             name: condition.op.command,
-            type: condition.op.type,
-            scope: condition.op.scope,
-            prop: condition.op.prop,
             unimplemented: condition.op.handler.unimplemented,
             param: condition.param && {
                 type: condition.param.type,
@@ -140,11 +148,10 @@ function mapCondition(scene, condition, state) {
     return null;
 }
 
-function mapOperator(scene, operator, state) {
+function mapOperator(scene, condition, operator, state) {
     if (operator) {
         let text = null;
-        if (operator.operand.type === 'vargame_value' ||
-                operator.operand.type === 'varcube_value') {
+        if (operator.operand.type === 'var_value') {
             return {
                 name: operator.op.command,
                 operand: {
@@ -152,7 +159,10 @@ function mapOperator(scene, operator, state) {
                     realValue: operator.operand.value,
                     value: mapDataName(
                         scene,
-                        extend({idx: state.condition.param.value}, operator.operand)
+                        extend({
+                            subType: condition.param.type,
+                            idx: state.condition.param.value
+                        }, operator.operand)
                     )
                 }
             };
@@ -166,6 +176,7 @@ function mapOperator(scene, operator, state) {
             name: operator.op.command,
             operand: {
                 type: operator.operand.type,
+                subType: operator.operand.type,
                 realValue: operator.operand.value,
                 value: mapDataName(scene, operator.operand)
             },
@@ -182,7 +193,8 @@ function processIndent(cmd, prevCmd, op, indent) {
             (op.command === 'CASE' || op.command === 'OR_CASE' || op.command === 'DEFAULT')) {
         indent = Math.max(indent - 1, 0);
     }
-    switch (op.indent) {
+    const { indent: indentChange } = LifeProps[op.command];
+    switch (indentChange) {
         case Indent.ZERO:
             cmd.indent = 0;
             return 0;
@@ -254,9 +266,9 @@ export function mapDataName(scene, data) {
             idx: data.value
         });
     }
-    if (data.type === 'vargame_value' || data.type === 'varcube_value') {
+    if (data.type === 'var_value') {
         return formatVar({
-            type: data.type.substr(0, 7),
+            type: data.subType,
             idx: data.idx
         }, data.value);
     }
@@ -280,21 +292,6 @@ export function mapDataName(scene, data) {
     }
     if (data.type === 'boolean') {
         return `${data.value !== 0}`;
-    }
-    if (data.type === 'scene') {
-        const node = findSceneData(data.value);
-        if (node) {
-            const style = {
-                paddingLeft: '2ch',
-                background: `url("${node.icon}") no-repeat`,
-                backgroundSize: '14px 14px',
-                backgroundPosition: '1px 1px'
-            };
-            return <span style={style}>
-                {node.name}&nbsp;<span style={{color: 'grey'}}>#{data.value}</span>
-            </span>;
-        }
-        return `#${data.value}`;
     }
     if (isFinite(data.value) && !isInteger(data.value)) {
         return data.value.toFixed(2);

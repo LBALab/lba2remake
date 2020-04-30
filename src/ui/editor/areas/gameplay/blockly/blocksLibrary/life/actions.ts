@@ -96,52 +96,29 @@ export const lba_ask_choice_obj = action((_block, field) => {
 /*
 ** Variables
 */
-export const lba_set_varscene = action((_block, field) => {
+
+export const lba_set_var = action((_block, field) => {
     field('set');
-    field(new FieldScope('scene'));
-    field(new FieldDropdownLBA('varscene'), 'arg_0');
+    field(new FieldScope('unknown'), 'scope');
+    field(new FieldDropdownLBA('var'), 'arg_0');
     field('to');
     field(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'arg_1');
 });
 
-export const lba_set_vargame = action((_block, field) => {
-    field('set');
-    field(new FieldScope('game'));
-    field(new FieldDropdownLBA('vargame'), 'arg_0');
-    field('to');
-    field(new Blockly.FieldNumber(0, 0, 255, 0, Math.round), 'arg_1');
-});
-
-export const lba_add_vargame = action((_block, field) => {
+export const lba_add_var = action((_block, field) => {
     field('add');
     field(new Blockly.FieldNumber(), 'arg_1');
     field('to');
-    field(new FieldScope('game'));
-    field(new FieldDropdownLBA('vargame'), 'arg_0');
+    field(new FieldScope('unknown'), 'scope');
+    field(new FieldDropdownLBA('var'), 'arg_0');
 });
 
-export const lba_sub_vargame = action((_block, field) => {
+export const lba_sub_var = action((_block, field) => {
     field('subtract');
     field(new Blockly.FieldNumber(), 'arg_1');
     field('to');
-    field(new FieldScope('game'));
-    field(new FieldDropdownLBA('vargame'), 'arg_0');
-});
-
-export const lba_add_varscene = action((_block, field) => {
-    field('add');
-    field(new Blockly.FieldNumber(), 'arg_1');
-    field('to');
-    field(new FieldScope('scene'));
-    field(new FieldDropdownLBA('varscene'), 'arg_0');
-});
-
-export const lba_sub_varscene = action((_block, field) => {
-    field('subtract');
-    field(new Blockly.FieldNumber(), 'arg_1');
-    field('to');
-    field(new FieldScope('scene'));
-    field(new FieldDropdownLBA('varscene'), 'arg_0');
+    field(new FieldScope('unknown'), 'scope');
+    field(new FieldDropdownLBA('var'), 'arg_0');
 });
 
 /*

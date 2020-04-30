@@ -132,7 +132,7 @@ export function SET_DIRMODE_OBJ(actor, dirMode) {
 
 export const CAM_FOLLOW = unimplemented();
 
-export function SET_BEHAVIOUR(value) {
+export function SET_HERO_BEHAVIOUR(value) {
     this.game.getState().hero.behaviour = value;
 }
 

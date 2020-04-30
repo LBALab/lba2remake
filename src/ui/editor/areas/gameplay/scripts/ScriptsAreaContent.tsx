@@ -7,6 +7,7 @@ import {getDebugListing} from './listing';
 import DebugData from '../../../DebugData';
 import ScriptsAreaToolbar from './ScriptsAreaToolbar';
 import { TickerProps } from '../../../../utils/Ticker';
+import { scopeColors } from '../blockly/blocksLibrary/utils';
 
 const defaultSplitDistance = 60;
 
@@ -391,7 +392,7 @@ export default class ScriptEditor extends FrameListener<Props, State> {
             commands = map(
                 listing.commands,
                 (cmd, line) =>
-                    <Command key={line} line={line} command={cmd} data={data}/>
+                    <Command key={line} command={cmd} data={data}/>
             );
         }
         const lineNumberStyle = {
@@ -434,29 +435,69 @@ function LineNumber({line, command, nDigits, toggleBreakpoint}) {
         width: `${nDigits}ch`
     }, lineNumBaseStyle);
 
-    return <div onClick={toggleBreakpoint} style={getLineStyle(line, command, false)}>
+    return <div onClick={toggleBreakpoint} style={getLineStyle(command, false)}>
         <span style={lineNumStyle}>{line + 1}</span>
     </div>;
 }
 
 const cmdColors = {
-    keyword: '#03A9F4',
-    cond: '#03A9F4',
-    fct: '#ffc42c',
-    read_prop: '#72ccf4',
-    assignment: '#72ccf4',
-    increment: '#72ccf4',
-    decrement: '#72ccf4',
-    read_var: '#10ee00',
-    var_assignment: '#10ee00',
-    var_increment: '#10ee00',
-    var_decrement: '#10ee00',
+    structural: '#03A9F4',
+    structural_assignment: '#03A9F4',
+    track: '#54d115',
+    track_fct: '#54d115',
+    track_assignment: '#54d115',
+    control: '#13d1b8',
+    control_no_parens: '#13d1b8',
+    fct: '#c9c9c9',
+    cond_prop: '#d94616',
+    cond_var: '#d94616',
+    cond_fct: '#d94616',
+    assignment: '#c9c9c9',
+    increment: '#c9c9c9',
+    decrement: '#c9c9c9',
+    var_assignment: '#c9c9c9',
+    var_increment: '#c9c9c9',
+    var_decrement: '#c9c9c9',
 };
 
-function Scope({scope, children}) {
-    if (scope !== undefined) {
+const cmdScopes = {
+    SET_VAR_GAME: 'game',
+    ADD_VAR_GAME: 'game',
+    SUB_VAR_GAME: 'game',
+    SET_VAR_CUBE: 'scene',
+    ADD_VAR_CUBE: 'scene',
+    SUB_VAR_CUBE: 'scene',
+    VAR_GAME: 'game',
+    VAR_CUBE: 'scene'
+};
+
+function getScope(cmd) {
+    const baseScope = cmdScopes[cmd.name];
+    if (!baseScope) {
+        return null;
+    }
+    if (baseScope === 'game') {
+        if (cmd.name === 'VAR_GAME' || cmd.name === 'VAR_CUBE') {
+            if (cmd.param.realValue < 40) {
+                return 'inventory';
+            }
+        } else if (cmd.args[0].realValue < 40) {
+            return 'inventory';
+        }
+    }
+    return baseScope;
+}
+
+function Scope({cmd, children}) {
+    const scope = getScope(cmd);
+    if (scope) {
+        const scopeStyle = {
+            background: scopeColors[scope],
+            boxShadow: 'inset 0px 0px 0px 1px rgba(255, 255, 255, 0.3)',
+            borderRadius: 3
+        };
         return <span style={{color: 'white'}}>
-            <span style={{color: cmdColors.keyword}}>
+            <span style={scopeStyle}>
                 {scope}
             </span>
             .
@@ -466,19 +507,25 @@ function Scope({scope, children}) {
     return children;
 }
 
-function getWrappers(type) {
+function getWrappers(cmd) {
     // wlm = wrapper-left-most
     // wl = wrapper-left
     // wr = wrapper-right
-    switch (type) {
-        case 'keyword':
+    switch (cmd.type) {
+        case 'structural':
+        case 'track':
             return { wl: ' ' };
-        case 'cond':
+        case 'control':
             return { wlm: ' (', wr: ')' };
         case 'fct':
-            return { wl: '(', wr: ')' };
+        case 'track_fct':
+            return cmd.args && cmd.args.length > 0
+                ? { wl: '(', wr: ')' }
+                : {};
         case 'assignment':
         case 'var_assignment':
+        case 'structural_assignment':
+        case 'track_assignment':
             return { wl: ' = ' };
         case 'increment':
         case 'var_increment':
@@ -490,7 +537,7 @@ function getWrappers(type) {
     return {};
 }
 
-function Command({line, command, data}) {
+function Command({command, data}) {
     const cmdIndentStyle = {
         paddingLeft: `${(command.indent * 3) + 1}ch`
     };
@@ -509,7 +556,7 @@ function Command({line, command, data}) {
     const ifCmd = name.match(/^(.*)_if$/);
     if (ifCmd) {
         name = 'if';
-        postfix = <span style={{color: cmdColors.keyword}}>&nbsp;{ifCmd[1]}</span>;
+        postfix = <span style={{color: cmdColors.control}}>&nbsp;{ifCmd[1]}</span>;
     }
 
     if (command.type.substring(0, 4) === 'var_') {
@@ -517,10 +564,10 @@ function Command({line, command, data}) {
         args = tail(args);
     }
 
-    const {wlm, wl, wr} = getWrappers(command.type);
-    return <div style={getLineStyle(line, command, true)}>
+    const {wlm, wl, wr} = getWrappers(command);
+    return <div style={getLineStyle(command, true)}>
         <span style={cmdIndentStyle}>
-            <Scope scope={command.scope}>
+            <Scope cmd={command}>
                 {prefix}
                 <span style={{color: cmdColors[command.type]}}>
                     {command.prop || name}
@@ -535,28 +582,11 @@ function Command({line, command, data}) {
     </div>;
 }
 
-const argIcon = (path, color, ext = {}) => ({
-    color,
-    paddingLeft: '2ch',
-    background: `url("${path}") no-repeat`,
-    backgroundSize: '14px 14px',
-    backgroundPosition: '1px 1px',
-    ...ext
-});
-
-const defaultArgStyle = { color: '#98ee92', fontStyle: 'italic' };
+const defaultArgStyle = { fontWeight: 'bold', color: '#ffffff' };
 const argStyle = {
-    actor: argIcon('editor/icons/actor.svg', '#ff0000'),
-    zone: argIcon('editor/icons/zones/SCENERIC.svg', '#6495ed'),
-    point: argIcon('editor/icons/point.svg', '#ffffff', {fontWeight: 'bold'}),
-    body: argIcon('editor/icons/body.svg', '#ffffff'),
-    anim: argIcon('editor/icons/anim.svg', '#ffffff'),
-    dirmode: { color: 'white' },
-    text: { color: '#ff7448' },
-    offset: { color: 'white' },
-    label: { color: 'white' },
-    behaviour: { color: 'white' },
-    boolean: { color: cmdColors.keyword }
+    actor: { fontWeight: 'bold', background: '#ad0000', color: '#ffffff' },
+    zone: { fontWeight: 'bold', background: '#476bad', color: '#ffffff' },
+    text: { color: '#ffb200' },
 };
 
 const argDoubleClick = {
@@ -620,20 +650,20 @@ function Condition({condition, data}) {
             param = null;
         }
 
-        if (condition.type === 'read_var') {
+        if (condition.type === 'cond_var') {
             name = condition.param.value;
             param = null;
         }
 
-        const wl = condition.type === 'fct' && '(';
-        const wr = condition.type === 'fct' && ')';
+        const wl = condition.type === 'cond_fct' && '(';
+        const wr = condition.type === 'cond_fct' && ')';
         const style = {
             color: cmdColors[condition.type],
             textDecoration: condition.unimplemented ? 'line-through' : 'none'
         };
 
         return <span>
-            <Scope scope={condition.scope}>
+            <Scope cmd={condition}>
                 {prefix}
                 <span style={style}>
                     {condition.prop || name}
@@ -710,18 +740,16 @@ const lineBaseStyle = {
     fontSize: 14
 };
 
-function getLineStyle(line, command, dash) {
-    const isFirst = line > 0 &&
-        (command.name === 'COMPORTEMENT'
-            || command.name === 'TRACK'
-            || command.name === 'END');
+function getLineStyle(command, content) {
+    const isLast = command.name === 'END_BEHAVIOUR' || command.name === 'STOP';
 
-    const dashLine = dash ? '1px dashed rgb(51,51,51)' : '1px solid transparent';
+    const dashLine = '1px dashed rgb(51,51,51)';
 
     return extend({
-        marginTop: isFirst ? '1em' : 0,
+        marginBottom: isLast ? '1em' : 0,
         paddingTop: 0,
-        borderTop: isFirst ? dashLine : 0,
-        textDecoration: command.unimplemented ? 'line-through' : 'none'
+        borderBottom: isLast ? dashLine : 0,
+        textDecoration: command.unimplemented ? 'line-through' : 'none',
+        color: content && '#c9c9c9'
     }, lineBaseStyle);
 }

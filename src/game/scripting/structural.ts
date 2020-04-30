@@ -80,19 +80,19 @@ export function END_SWITCH() {
 
 /* Comportements */
 
-export function COMPORTEMENT() {
+export function BEHAVIOUR() {
     this.state.comportementOffset = this.state.offset;
 }
 
-export function SET_COMPORTEMENT(offset) {
+export function SET_BEHAVIOUR(offset) {
     this.state.nextComportement = offset;
 }
 
-export function SET_COMPORTEMENT_OBJ(actor, offset) {
+export function SET_BEHAVIOUR_OBJ(actor, offset) {
     actor.scripts.life.context.state.reentryOffset = offset;
 }
 
-export function END_COMPORTEMENT() {
+export function END_BEHAVIOUR() {
     if (this.state.nextComportement != null) {
         this.state.reentryOffset = this.state.nextComportement;
         delete this.state.nextComportement;
@@ -102,23 +102,23 @@ export function END_COMPORTEMENT() {
     this.state.continue = false;
 }
 
-export function SAVE_COMPORTEMENT() {
+export function SAVE_BEHAVIOUR() {
     this.state.savedOffset = this.state.comportementOffset;
 }
 
-export function RESTORE_COMPORTEMENT() {
+export function RESTORE_BEHAVIOUR() {
     if (this.state.savedOffset) {
         this.state.reentryOffset = this.state.savedOffset;
         this.state.continue = false;
     }
 }
 
-export function SAVE_COMPORTEMENT_OBJ(actor) {
+export function SAVE_BEHAVIOUR_OBJ(actor) {
     const state = actor.scripts.life.context.state;
     state.savedOffset = state.comportementOffset;
 }
 
-export function RESTORE_COMPORTEMENT_OBJ(actor) {
+export function RESTORE_BEHAVIOUR_OBJ(actor) {
     const state = actor.scripts.life.context.state;
     if (state.savedOffset) {
         state.reentryOffset = state.savedOffset;
@@ -185,7 +185,7 @@ export function NOP() {
 }
 
 export function RETURN() {
-    END_COMPORTEMENT.call(this);
+    END_BEHAVIOUR.call(this);
 }
 
 export function OFFSET(offset) {

@@ -16,7 +16,7 @@ export function findLastConnection(connection) {
     return lastConnection;
 }
 
-function mapArgValue(cmd, idx) {
+export function mapArgValue(cmd, idx) {
     let value = cmd.data.args[idx].value;
     const type = cmd.data.op.args[idx].split(':')[1];
     switch (type) {

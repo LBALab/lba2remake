@@ -28,7 +28,7 @@ function compileInstruction(script, cmd, cmdOffset, compileState) {
     const args = [script.context];
     let condition = null;
 
-    if (cmd.op.command === 'COMPORTEMENT' || cmd.op.command === 'TRACK') {
+    if (cmd.op.command === 'BEHAVIOUR' || cmd.op.command === 'TRACK') {
         compileState.section = cmd.args[0].value;
     }
 
