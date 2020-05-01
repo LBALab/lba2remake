@@ -37,6 +37,7 @@ export function runScript(params, script, time) {
                 if (!('section' in activeCommands)) {
                     activeCommands.section = next.section;
                 }
+                activeCommands[offset] = true;
                 if (offset in breakpoints) {
                     if (!context.game.isPaused()) {
                         const actor = context.actor;
