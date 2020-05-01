@@ -1,4 +1,4 @@
-import { MoveOpcode } from '../../../../../../../game/scripting/data/move';
+import { MoveOpcode } from '../../../../../../../../game/scripting/data/move';
 
 function rootBlockContentHandler(block, emit, ctx) {
     if (!ctx.inRootTrack) {

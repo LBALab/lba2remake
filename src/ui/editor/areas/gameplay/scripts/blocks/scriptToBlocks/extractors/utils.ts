@@ -1,4 +1,4 @@
-import { lbaToDegrees } from '../../../../../../../utils/lba';
+import { lbaToDegrees } from '../../../../../../../../utils/lba';
 
 export function newBlock(workspace, type, def) {
     const block = workspace.newBlock(type);

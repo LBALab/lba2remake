@@ -5,7 +5,7 @@ import {
     mapArgValue
 } from './utils';
 import { GENERIC_IF, LOGIC_OPERATOR } from './control';
-import { lbaToDegrees } from '../../../../../../../utils/lba';
+import { lbaToDegrees } from '../../../../../../../../utils/lba';
 
 /*
 ** Behaviours

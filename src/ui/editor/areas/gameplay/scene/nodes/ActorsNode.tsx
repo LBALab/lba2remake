@@ -6,7 +6,7 @@ import DebugData, {
     locateObject
 } from '../../../../DebugData';
 import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
-import {mapComportementArg} from '../../scripts/listing';
+import {mapComportementArg} from '../../scripts/text/listing';
 import {makeObjectsNode} from '../node_factories/objects';
 
 const Actor = {

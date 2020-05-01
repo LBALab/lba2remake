@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {map, extend} from 'lodash';
-import {editor} from '../../../../styles';
+import { map, extend } from 'lodash';
+import { editor } from '../../../../styles';
 import FrameListener from '../../../../utils/FrameListener';
 import DebugData, {getObjectName} from '../../../DebugData';
 import { TickerProps } from '../../../../utils/Ticker';
@@ -23,11 +23,21 @@ const toolbarStyle = {
     userSelect: 'none' as const
 };
 
+const switchButtonStyle = {
+    cursor: 'pointer',
+    userSelect: 'none' as const,
+    float: 'right' as const,
+};
+
 interface Props extends TickerProps {
     sharedState: {
         actorIndex: number;
+        objectLabels: boolean;
+        mode: string;
     };
     stateHandler: any;
+    compile: () => void;
+    clearWorkspace: () => void;
 }
 
 interface State {
@@ -37,7 +47,7 @@ interface State {
     isPaused: boolean;
 }
 
-export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
+export default class ScriptsEditorToolbar extends FrameListener<Props, State> {
     scene: number;
 
     constructor(props) {
@@ -108,15 +118,13 @@ export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
             }
         };
 
-        const refresh = () => {
-            this.props.stateHandler.setRefreshing(true);
-        };
-
         const paused = this.state.isPaused;
 
         const actorIcon = extend({}, iconStyle, {
             padding: 0
         });
+
+        const { mode } = this.props.sharedState;
 
         return <React.Fragment>
             <span style={{cursor: 'pointer'}} onClick={selectActor}>
@@ -132,8 +140,36 @@ export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
             <img style={iconStyle}
                     onClick={togglePause}
                     src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
-            <button onClick={refresh}>Refresh</button>
+            &nbsp;
+            {this.renderCompileButton()}
+            {this.renderClearWorkspaceButton()}
+            <span style={switchButtonStyle} onClick={this.props.stateHandler.switchMode}>
+                Switch to:&nbsp;
+                <img style={iconStyle} src={`editor/icons/${mode === 'text' ? 'blockly.svg' : 'script.png'}`}/>
+                {mode === 'text'
+                    ? 'blocks'
+                    : 'text'}
+            </span>
         </React.Fragment>;
+    }
+
+    renderCompileButton() {
+        if (this.props.compile) {
+            return <React.Fragment>
+                <button onClick={this.props.compile}>
+                    Compile
+                </button>
+                &nbsp;
+            </React.Fragment>;
+        }
+    }
+
+    renderClearWorkspaceButton() {
+        if (this.props.clearWorkspace) {
+            return <button onClick={this.props.clearWorkspace}>
+                Clear Workspace
+            </button>;
+        }
     }
 
     renderSelector() {
@@ -152,6 +188,7 @@ export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
             right: 0,
             bottom: 0,
             background: 'rgba(0, 0, 0, 0.8)',
+            zIndex: 85
         };
 
         const textStyle = {
@@ -177,7 +214,8 @@ export default class ScriptsAreaToolbar extends FrameListener<Props, State> {
             top: 22,
             left: 0,
             bottom: 0,
-            overflow: 'auto' as const
+            overflow: 'auto' as const,
+            zIndex: 90
         };
 
         return <div style={style} onClick={() => this.setState({selecting: false})}>

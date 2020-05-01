@@ -1,4 +1,4 @@
-import { degreesToLBA } from '../../../../../../../utils/lba';
+import { degreesToLBA } from '../../../../../../../../utils/lba';
 
 export function mapValue(value, type) {
     switch (type) {

@@ -14,7 +14,7 @@ import {parseScript} from '../../../../../../scripting/parser';
 import {Orientation} from '../../../../layout';
 import {makeOutlinerArea} from '../../../utils/outliner';
 import LocationsNode from '../../locator/LocationsNode';
-import {formatVar} from '../../scripts/format';
+import {formatVar} from '../../scripts/text/format';
 import {editor as editorStyle} from '../../../../../styles';
 import {getLanguageConfig} from '../../../../../../lang';
 

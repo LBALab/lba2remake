@@ -1,7 +1,7 @@
 import {cloneDeep, map, filter, each, find, isFinite, isInteger, extend, findKey} from 'lodash';
-import {lbaToDegrees, getDistance} from '../../../../../utils/lba';
-import DebugData, {getObjectName, getVarName} from '../../../DebugData';
-import { DirMode } from '../../../../../game/actors';
+import {lbaToDegrees, getDistance} from '../../../../../../utils/lba';
+import DebugData, {getObjectName, getVarName} from '../../../../DebugData';
+import { DirMode } from '../../../../../../game/actors';
 import Indent from './data/indent';
 import LifeProps from './data/life';
 import MoveProps from './data/move';

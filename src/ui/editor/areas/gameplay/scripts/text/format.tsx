@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {map} from 'lodash';
-import {getVarInfo} from '../../../DebugData';
+import {getVarInfo} from '../../../../DebugData';
 
 export function formatVar(varDef, value) {
     const info = getVarInfo(varDef);

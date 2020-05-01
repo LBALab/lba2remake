@@ -1,6 +1,5 @@
 import {clone} from 'lodash';
 import GameUI from '../../../GameUI';
-import ScriptEditorArea from './scripts/ScriptsArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 import DevToolsArea from '../shared/DevToolsArea/DevToolsArea';
 import SceneArea from './scene/SceneArea';
@@ -10,7 +9,7 @@ import SceneGraphArea from './sceneGraph/SceneGraphArea';
 import GameplayEditorSettings from './GameplayEditorSettings';
 import {Orientation, Type} from '../../layout';
 import {ZONE_TYPE} from '../../../../game/zones';
-import BlocklyArea from './blockly/BlocklyArea';
+import ScriptsEditorArea from './scripts/ScriptsEditorArea';
 
 const GameplayEditor = {
     id: 'game',
@@ -51,8 +50,7 @@ const GameplayEditor = {
     toolAreas: [
         SceneArea,
         SceneGraphArea,
-        BlocklyArea,
-        ScriptEditorArea,
+        ScriptsEditorArea,
         LocatorArea,
         InspectorArea,
         DevToolsArea,

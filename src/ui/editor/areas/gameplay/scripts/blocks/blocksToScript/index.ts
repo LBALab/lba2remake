@@ -1,11 +1,11 @@
 import { map, filter, each, sortBy, invert, mapValues, findKey } from 'lodash';
 // import jDiff from 'jest-diff';
-import { LifeOpcode } from '../../../../../../game/scripting/data/life';
-import { MoveOpcode } from '../../../../../../game/scripting/data/move';
+import { LifeOpcode } from '../../../../../../../game/scripting/data/life';
+import { MoveOpcode } from '../../../../../../../game/scripting/data/move';
 import lifeMappings from './mappings/life';
 import moveMappings from './mappings/move';
-import { compileScripts } from '../../../../../../scripting/compiler';
-import DebugData from '../../../../DebugData';
+import { compileScripts } from '../../../../../../../scripting/compiler';
+import DebugData from '../../../../../DebugData';
 import { mapValue } from './mappings/utils';
 
 const lifeRootTypes = ['lba_behaviour', 'lba_behaviour_init'];

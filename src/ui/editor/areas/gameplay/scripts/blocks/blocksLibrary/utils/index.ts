@@ -14,7 +14,7 @@ import {
     generateDirModes,
     generateHeroBehaviours
 } from './optionsGenerators';
-import DebugData from '../../../../../DebugData';
+import DebugData from '../../../../../../DebugData';
 
 export const makeIcon = file => new Blockly.FieldImage(`editor/icons/${file}`, 15, 15);
 

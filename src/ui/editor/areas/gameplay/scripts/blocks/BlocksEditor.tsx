@@ -1,25 +1,24 @@
 import * as React from 'react';
 import { each, filter, sortBy } from 'lodash';
 import Blockly from 'blockly';
-import {fullscreen, editor} from '../../../../styles';
-import FrameListener from '../../../../utils/FrameListener';
-import DebugData from '../../../DebugData';
-import { TickerProps } from '../../../../utils/Ticker';
+import { fullscreen } from '../../../../../styles';
+import FrameListener from '../../../../../utils/FrameListener';
+import DebugData from '../../../../DebugData';
+import { TickerProps } from '../../../../../utils/Ticker';
 import blocksLibrary from './blocksLibrary';
 import { createToolboxTree } from './toolbox';
-import BlocklyAreaToolbar from './BlocklyAreaToolbar';
 import { fillWorkspace } from './scriptToBlocks';
 import { compile } from './blocksToScript';
-import VariablesPanel from './VariablesPanel';
 
 interface Props extends TickerProps {
     sharedState: any;
     stateHandler: any;
+    toggleVariablesPanel: () => void;
+    hideVariablesPanel: () => void;
+    renderToolbar: (props: any) => React.ReactElement;
 }
 
 interface State {
-    actorIndex: number;
-    showVariables: boolean;
     scene: any;
 }
 
@@ -37,40 +36,7 @@ const mainStyle = {
     top: 21
 };
 
-const expandPanelStyle = {
-    position: 'absolute' as const,
-    top: 21,
-    margin: 4,
-    padding: 2,
-    paddingRight: 4,
-    background: 'rgba(0, 0, 0, 0.75)',
-    border: '1px solid rgba(255, 255, 255, 0.5)',
-    borderRadius: 5,
-    boxShadow: '2px 2px 6px 0px rgba(255, 255, 255, 0.15)',
-    color: 'white',
-    textAlign: 'center' as const,
-    verticalAlign: 'middle' as const,
-    cursor: 'pointer',
-    userSelect: 'none' as const
-};
-
-const expandToolboxStyle = {
-    ...expandPanelStyle,
-    left: 0,
-};
-
-const expandVariablesStyle = {
-    ...expandPanelStyle,
-    right: 0,
-};
-
-const iconStyle = Object.assign({}, editor.icon, {
-    width: 16,
-    height: 16,
-    padding: '0 3px',
-});
-
-export default class BlocklyAreaContent extends FrameListener<Props, State> {
+export default class BlocksEditor extends FrameListener<Props, State> {
     rootRef: HTMLElement;
     scene: any;
     actor: any;
@@ -89,22 +55,13 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
         this.onRef = this.onRef.bind(this);
         this.compile = this.compile.bind(this);
         this.clearWorkspace = this.clearWorkspace.bind(this);
-        this.toggleVariablesPanel = this.toggleVariablesPanel.bind(this);
         this.expandToolbox = this.expandToolbox.bind(this);
         this.state = {
-            actorIndex: props.sharedState.actorIndex,
-            showVariables: false,
             scene: null
         };
         this.id = idCount;
         this.isPaused = false;
         idCount += 1;
-    }
-
-    componentWillReceiveProps(newProps) {
-        if (newProps.sharedState.actorIndex !== this.state.actorIndex) {
-            this.setState({ actorIndex: newProps.sharedState.actorIndex });
-        }
     }
 
     onRef(ref) {
@@ -146,12 +103,12 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
                 const background = ref.querySelector('.blocklyMainBackground');
                 background.addEventListener('click', () => {
                     this.toolboxElem.style.transform = 'translateX(-100%)';
-                    this.setState({ showVariables: false });
+                    this.props.hideVariablesPanel();
                 });
                 ref.addEventListener('keydown', (event) => {
                     const key = event.code || event.which || event.keyCode;
                     if (key === 86 || key === 'KeyV') {
-                        this.toggleVariablesPanel();
+                        this.props.toggleVariablesPanel();
                     }
                     if (key === 66 || key === 'KeyB') {
                         if (this.toolboxElem.style.transform === 'translateX(0px)') {
@@ -180,7 +137,7 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
                             } else {
                                 const elem = this.toolbox.querySelector('#init_behaviour');
                                 elem.setAttribute('disabled', 'true');
-                                this.workspace.updateToolbox(this.toolbox);
+                                this.safeUpdateToolbox();
                                 this.initBehaviourId = e.blockId;
                             }
                         }
@@ -189,7 +146,7 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
                         if (e.blockId === this.initBehaviourId) {
                             const elem = this.toolbox.querySelector('#init_behaviour');
                             elem.setAttribute('disabled', 'false');
-                            this.workspace.updateToolbox(this.toolbox);
+                            this.safeUpdateToolbox();
                             this.initBehaviourId = null;
                         }
                     }
@@ -199,9 +156,18 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
         }
     }
 
+    safeUpdateToolbox() {
+        try {
+            this.workspace.updateToolbox(this.toolbox);
+        } catch (e) {
+            console.warn(e);
+        }
+    }
+
     frame() {
         const scene = DebugData.scope.scene;
-        const actor = scene ? scene.actors[this.state.actorIndex] : null;
+        const actorIndex = this.props.sharedState.actorIndex;
+        const actor = scene ? scene.actors[actorIndex] : null;
         if (this.scene !== scene || this.actor !== actor) {
             this.scene = scene;
             this.actor = actor;
@@ -317,51 +283,18 @@ export default class BlocklyAreaContent extends FrameListener<Props, State> {
         this.workspace.clear();
     }
 
-    toggleVariablesPanel() {
-        this.setState({
-            showVariables: !this.state.showVariables
-        });
-    }
-
     expandToolbox() {
         this.toolboxElem.style.transform = 'translateX(0px)';
     }
 
     render() {
-        return <div>
+        return <React.Fragment>
             <div id={`blockly_workspace_${this.id}`} style={mainStyle} ref={this.onRef} />
-            <BlocklyAreaToolbar
-                ticker={this.props.ticker}
-                sharedState={this.props.sharedState}
-                stateHandler={this.props.stateHandler}
-                compile={this.compile}
-                clearWorkspace={this.clearWorkspace}/>
-            <div style={expandToolboxStyle} onClick={this.expandToolbox}>
-                <img style={iconStyle} src="editor/icons/areas/blockly.svg"/>
-                Blocks
-            </div>
-            <div style={expandVariablesStyle} onClick={this.toggleVariablesPanel}>
-                <img style={iconStyle} src="editor/icons/var.svg"/>
-                Variables
-            </div>
-            {this.renderVariablesPanel()}
-        </div>;
-    }
-
-    renderVariablesPanel() {
-        const variablesStyle = {
-            transform: `translateX(${this.state.showVariables ? '0px' : '100%'})`,
-            transition: 'transform 0.5s',
-            position: 'absolute' as const,
-            right: 0,
-            top: 21,
-            bottom: 0,
-            zIndex: 80,
-            minWidth: '120px',
-            width: '40%'
-        };
-        return <div style={variablesStyle}>
-            <VariablesPanel scene={this.state.scene}/>
-        </div>;
+            {this.props.renderToolbar({
+                compile: this.compile,
+                clearWorkspace: this.clearWorkspace,
+                expandToolbox: this.expandToolbox
+            })}
+        </React.Fragment>;
     }
 }

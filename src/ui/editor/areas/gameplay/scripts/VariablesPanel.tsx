@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { map, take, drop } from 'lodash';
 import convert from 'color-convert';
-import { scopeColors } from './blocksLibrary/utils';
+import { scopeColors } from './blocks/blocksLibrary/utils';
 import { fullscreen } from '../../../../styles';
 import DebugData from '../../../DebugData';
 

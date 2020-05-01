@@ -1,12 +1,11 @@
 import * as React from 'react';
 import {extend, map, filter, tail, first} from 'lodash';
-import {fullscreen} from '../../../../styles';
-import FrameListener from '../../../../utils/FrameListener';
+import {fullscreen} from '../../../../../styles';
+import FrameListener from '../../../../../utils/FrameListener';
 import {getDebugListing} from './listing';
-import DebugData from '../../../DebugData';
-import ScriptsAreaToolbar from './ScriptsAreaToolbar';
-import { TickerProps } from '../../../../utils/Ticker';
-import { scopeColors } from '../blockly/blocksLibrary/utils';
+import DebugData from '../../../../DebugData';
+import { TickerProps } from '../../../../../utils/Ticker';
+import { scopeColors } from '../blocks/blocksLibrary/utils';
 
 const defaultSplitDistance = 60;
 
@@ -30,6 +29,7 @@ interface Props extends TickerProps {
     sharedState: any;
     stateHandler: any;
     editor: boolean;
+    renderToolbar: (props: any) => React.ReactElement;
 }
 
 interface State {
@@ -44,7 +44,7 @@ interface State {
     moveLine?: number;
 }
 
-export default class ScriptEditor extends FrameListener<Props, State> {
+export default class TextEditor extends FrameListener<Props, State> {
     lineNumbers: {
         life: number;
         move: number;
@@ -159,7 +159,6 @@ export default class ScriptEditor extends FrameListener<Props, State> {
             });
             this.scene = scene;
             this.actor = actor;
-            this.props.stateHandler.setRefreshing(false);
         }
         if (this.scene && this.actor) {
             this.updateActiveLines('life');
@@ -270,7 +269,7 @@ export default class ScriptEditor extends FrameListener<Props, State> {
             top: 22
         });
 
-        return <div style={fullscreen}>
+        return <React.Fragment>
             <div style={contentStyle} ref={(ref) => { this.rootRef = ref; }}>
                 {this.renderListing('life', splitAt)}
                 {this.renderListing('move', splitAt)}
@@ -278,12 +277,8 @@ export default class ScriptEditor extends FrameListener<Props, State> {
             <div ref={(ref) => { this.separatorRef = ref; }} style={separator}>
                 <div style={sepInnerLine}/>
             </div>
-            <ScriptsAreaToolbar
-                ticker={this.props.ticker}
-                sharedState={this.props.sharedState}
-                stateHandler={this.props.stateHandler}
-            />
-        </div>;
+            {this.props.renderToolbar({})}
+        </React.Fragment>;
     }
 
     renderListing(type, splitAt) {

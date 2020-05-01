@@ -1,8 +1,8 @@
 import { keyBy, last, each } from 'lodash';
-import { LifeOpcode } from '../../../../../../../game/scripting/data/life';
-import { OperatorOpcode } from '../../../../../../../game/scripting/data/operator';
+import { LifeOpcode } from '../../../../../../../../game/scripting/data/life';
+import { OperatorOpcode } from '../../../../../../../../game/scripting/data/operator';
 import condMappings from './conditions';
-import { ConditionOpcode } from '../../../../../../../game/scripting/data/condition';
+import { ConditionOpcode } from '../../../../../../../../game/scripting/data/condition';
 import { mapValue } from './utils';
 
 const operatorsByName = keyBy(OperatorOpcode, 'command');

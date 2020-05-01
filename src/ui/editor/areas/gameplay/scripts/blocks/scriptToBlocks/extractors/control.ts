@@ -1,7 +1,7 @@
 import { last, dropRight, each } from 'lodash';
 import { newBlock, findLastConnection } from './utils';
 import * as conditions from './conditions';
-import { lbaToDegrees } from '../../../../../../../utils/lba';
+import { lbaToDegrees } from '../../../../../../../../utils/lba';
 
 /*
 ** IF
