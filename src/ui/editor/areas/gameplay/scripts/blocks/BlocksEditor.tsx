@@ -107,10 +107,11 @@ export default class BlocksEditor extends FrameListener<Props, State> {
                 });
                 ref.addEventListener('keydown', (event) => {
                     const key = event.code || event.which || event.keyCode;
-                    if (key === 86 || key === 'KeyV') {
+                    const mod = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+                    if (!mod && (key === 86 || key === 'KeyV')) {
                         this.props.toggleVariablesPanel();
                     }
-                    if (key === 66 || key === 'KeyB') {
+                    if (!mod && (key === 66 || key === 'KeyB')) {
                         if (this.toolboxElem.style.transform === 'translateX(0px)') {
                             this.toolboxElem.style.transform = 'translateX(-100%)';
                         } else {
@@ -160,7 +161,8 @@ export default class BlocksEditor extends FrameListener<Props, State> {
         try {
             this.workspace.updateToolbox(this.toolbox);
         } catch (e) {
-            console.warn(e);
+            // tslint:disable-next-line: no-console
+            console.warn(`Failed to update toolbox: ${e.message}`);
         }
     }
 
