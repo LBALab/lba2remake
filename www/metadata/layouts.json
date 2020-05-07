@@ -434,6 +434,11 @@
       "file": "114_radio_broadcaster.glb",
       "orientation": 0
     },
+    "117": {
+      "replace": true,
+      "file": "117_paper_rolls_container.glb",
+      "orientation": 0
+    },
     "122": {
       "mirror": true
     },
