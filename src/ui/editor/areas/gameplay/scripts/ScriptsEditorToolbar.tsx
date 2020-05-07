@@ -144,11 +144,10 @@ export default class ScriptsEditorToolbar extends FrameListener<Props, State> {
             {this.renderCompileButton()}
             {this.renderClearWorkspaceButton()}
             <span style={switchButtonStyle} onClick={this.props.stateHandler.switchMode}>
-                Switch to:&nbsp;
-                <img style={iconStyle} src={`editor/icons/${mode === 'text' ? 'blockly.svg' : 'script.png'}`}/>
+                <img style={iconStyle} src={`editor/icons/${mode === 'text' ? 'script.png' : 'blockly.svg'}`}/>
                 {mode === 'text'
-                    ? 'blocks'
-                    : 'text'}
+                    ? 'text'
+                    : 'blocks'}
             </span>
         </React.Fragment>;
     }
@@ -167,7 +166,7 @@ export default class ScriptsEditorToolbar extends FrameListener<Props, State> {
     renderClearWorkspaceButton() {
         if (this.props.clearWorkspace) {
             return <button onClick={this.props.clearWorkspace}>
-                Clear Workspace
+                Clear Script
             </button>;
         }
     }

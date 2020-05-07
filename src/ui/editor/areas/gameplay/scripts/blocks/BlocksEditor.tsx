@@ -64,6 +64,16 @@ export default class BlocksEditor extends FrameListener<Props, State> {
         idCount += 1;
     }
 
+    setToolboxVisible(visible) {
+        if (visible) {
+            this.workspace.deleteAreaToolbox_ = this.workspace.toolbox_.getClientRect();
+            this.toolboxElem.style.transform = 'translateX(0px)';
+        } else {
+            this.workspace.deleteAreaToolbox_ = null;
+            this.toolboxElem.style.transform = 'translateX(-100%)';
+        }
+    }
+
     onRef(ref) {
         if (ref !== this.rootRef) {
             this.rootRef = ref;
@@ -96,13 +106,13 @@ export default class BlocksEditor extends FrameListener<Props, State> {
                     theme: (Blockly as any).Themes.Dark
                 });
                 this.toolboxElem = ref.querySelector('.blocklyToolboxDiv');
-                this.toolboxElem.style.transform = 'translateX(-100%)';
+                this.setToolboxVisible(false);
                 setTimeout(() => {
                     this.toolboxElem.style.transition = 'transform 0.5s';
                 }, 0);
                 const background = ref.querySelector('.blocklyMainBackground');
                 background.addEventListener('click', () => {
-                    this.toolboxElem.style.transform = 'translateX(-100%)';
+                    this.setToolboxVisible(false);
                     this.props.hideVariablesPanel();
                 });
                 ref.addEventListener('keydown', (event) => {
@@ -113,13 +123,18 @@ export default class BlocksEditor extends FrameListener<Props, State> {
                     }
                     if (!mod && (key === 66 || key === 'KeyB')) {
                         if (this.toolboxElem.style.transform === 'translateX(0px)') {
-                            this.toolboxElem.style.transform = 'translateX(-100%)';
+                            this.setToolboxVisible(false);
                         } else {
-                            this.toolboxElem.style.transform = 'translateX(0px)';
+                            this.setToolboxVisible(true);
                         }
                     }
                 });
                 this.workspace.addChangeListener((e) => {
+                    if (e instanceof Blockly.Events.Ui) {
+                        if ((e as any).element === 'click' && e.workspaceId === this.workspace.id) {
+                            this.setToolboxVisible(false);
+                        }
+                    }
                     if (e instanceof Blockly.Events.Create) {
                         const newBlock = this.workspace.getBlockById(e.blockId);
                         if (newBlock.type === 'lba_behaviour' && Number(newBlock.data) === -1) {
@@ -286,7 +301,7 @@ export default class BlocksEditor extends FrameListener<Props, State> {
     }
 
     expandToolbox() {
-        this.toolboxElem.style.transform = 'translateX(0px)';
+        this.setToolboxVisible(true);
     }
 
     render() {
