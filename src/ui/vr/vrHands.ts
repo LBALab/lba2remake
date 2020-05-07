@@ -29,7 +29,7 @@ export function getOrCreateHands(renderer) {
         handsRoot.add(revTransform);
 
         for (let i = 0; i < 2; i += 1) {
-            const controller = renderer.threeRenderer.vr.getController(i);
+            const controller = renderer.threeRenderer.xr.getController(i);
             if (controller) {
                 const hand = createHand(i === 0 ? 'right' : 'left');
 

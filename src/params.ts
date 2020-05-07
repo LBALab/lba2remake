@@ -41,6 +41,10 @@ const paramsDefinitions = {
         type: 'string',
         default: 'lba2',
     },
+    vrEmulator: {
+        type: 'boolean',
+        default: false
+    }
 };
 
 export function getParams(forceRefresh = false) : any {

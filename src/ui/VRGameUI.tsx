@@ -26,7 +26,7 @@ interface VRGameUIState {
     clock: THREE.Clock;
     game: any;
     scene?: any;
-    renderer?: any;
+    renderer?: Renderer;
     sceneManager?: any;
     controls?: any;
     cinema: boolean;
@@ -46,7 +46,6 @@ interface VRGameUIState {
     showMenu: boolean;
     inGameMenu: boolean;
     teleportMenu: boolean;
-    display: VRDisplay;
     enteredVR: boolean;
     vrScene?: any;
 }
@@ -55,6 +54,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
     canvas: HTMLCanvasElement;
     canvasWrapperElem: HTMLElement;
     renderZoneElem: HTMLElement;
+    session?: any;
 
     constructor(props) {
         super(props);
@@ -62,15 +62,14 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         this.onRenderZoneRef = this.onRenderZoneRef.bind(this);
         this.onCanvasWrapperRef = this.onCanvasWrapperRef.bind(this);
         this.frame = this.frame.bind(this);
-        this.onVrDisplayConnect = this.onVrDisplayConnect.bind(this);
-        this.onVrDisplayDisconnect = this.onVrDisplayDisconnect.bind(this);
-        this.onVrDisplayPresentChange = this.onVrDisplayPresentChange.bind(this);
-        this.onVrDisplayActivate = this.onVrDisplayActivate.bind(this);
+        this.onSessionEnd = this.onSessionEnd.bind(this);
         this.requestPresence = this.requestPresence.bind(this);
         this.setUiState = sBind(this.setUiState, this);
         this.getUiState = sBind(this.getUiState, this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
+
+        this.session = null;
 
         const clock = new THREE.Clock(false);
         const game = createGame(
@@ -96,7 +95,6 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
             showMenu: false,
             inGameMenu: false,
             teleportMenu: false,
-            display: null,
             enteredVR: false
         };
 
@@ -136,6 +134,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         if (!this.canvasWrapperElem && canvasWrapperElem) {
             this.canvas = document.createElement('canvas');
             const game = this.state.game;
+            await game.registerResources();
             await game.preload();
             game.loaded('game');
             if (this.props.params.scene === -1) {
@@ -173,46 +172,10 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
 
     componentWillMount() {
         super.componentWillMount();
-        window.addEventListener('vrdisplayconnect', this.onVrDisplayConnect);
-        window.addEventListener('vrdisplaydisconnect', this.onVrDisplayDisconnect);
-        window.addEventListener('vrdisplaypresentchange', this.onVrDisplayPresentChange);
-        window.addEventListener('vrdisplayactivate', this.onVrDisplayActivate);
-        navigator.getVRDisplays()
-            .then((displays) => {
-                if (displays.length > 0) {
-                    this.setState({ display: displays[0] });
-                } else {
-                    this.setState({ display: null });
-                }
-            })
-            .catch(() => {
-                this.setState({ display: null });
-            });
     }
 
     componentWillUnmount() {
-        window.removeEventListener('vrdisplayconnect', this.onVrDisplayConnect);
-        window.removeEventListener('vrdisplaydisconnect', this.onVrDisplayDisconnect);
-        window.removeEventListener('vrdisplaypresentchange', this.onVrDisplayPresentChange);
-        window.removeEventListener('vrdisplayactivate', this.onVrDisplayActivate);
         super.componentWillUnmount();
-    }
-
-    onVrDisplayConnect(event) {
-        this.setState({ display: event.display });
-    }
-
-    onVrDisplayDisconnect() {
-        this.setState({ display: null });
-    }
-
-    onVrDisplayPresentChange() {
-        this.setState({enteredVR: true});
-        this.forceUpdate();
-    }
-
-    onVrDisplayActivate() {
-        this.requestPresence();
     }
 
     showMenu(inGameMenu = false) {
@@ -234,6 +197,9 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
     frame() {
         const {game, clock, renderer, sceneManager, controls, vrScene} = this.state;
         if (renderer && sceneManager) {
+            if (this.props.params.vrEmulator) {
+                this.checkResizeForVREmulator();
+            }
             const presenting = renderer.isPresenting();
             const scene = sceneManager.getScene();
             if (this.state.scene !== scene) {
@@ -259,6 +225,18 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         }
     }
 
+    checkResizeForVREmulator() {
+        if (this.canvasWrapperElem && this.canvas && this.state.renderer) {
+            const { clientWidth, clientHeight } = this.canvasWrapperElem;
+            const rWidth = `${clientWidth}px`;
+            const rHeight = `${clientHeight}px`;
+            const style = this.canvas.style;
+            if (rWidth !== style.width || rHeight !== style.height) {
+                this.state.renderer.resize(clientWidth, clientHeight);
+            }
+        }
+    }
+
     render() {
         return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen}>
             <div ref={this.onCanvasWrapperRef} style={fullscreen}/>
@@ -269,7 +247,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
     renderGUI() {
         const { renderer } = this.state;
         const presenting = renderer && renderer.isPresenting();
-        if (presenting)
+        if (presenting || (this.props.params.vrEmulator && this.session))
             return null;
 
         return <React.Fragment>
@@ -278,25 +256,27 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         </React.Fragment>;
     }
 
-    requestPresence() {
-        if (!this.state.renderer || !this.state.display) {
+    async requestPresence() {
+        if (!this.state.renderer) {
             return;
         }
-        this.state.renderer.threeRenderer.vr.setDevice(this.state.display);
-        this.state.display.requestPresent([
-            {
-                source: this.state.renderer.canvas,
-                attributes: {
-                    highRefreshRate: true,
-                    foveationLevel: 0,
-                    antialias: true
-                }
-            } as any
-        ]);
+        const sessionInit = {
+            optionalFeatures: ['local-floor', 'bounded-floor']
+        };
+        this.session = await (navigator as any).xr.requestSession('immersive-vr', sessionInit);
+        this.session.addEventListener('end', this.onSessionEnd);
+        this.state.renderer.threeRenderer.xr.setSession(this.session);
+        this.setState({ enteredVR: true });
+    }
+
+    onSessionEnd() {
+        this.session.removeEventListener('end', this.onSessionEnd);
+        this.session = null;
+        this.forceUpdate();
     }
 
     renderVRSelector() {
-        if (!this.state.renderer || !this.state.display) {
+        if (!this.state.renderer) {
             return null;
         }
         const buttonWrapperStyle = {

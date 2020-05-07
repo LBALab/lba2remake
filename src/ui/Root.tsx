@@ -27,7 +27,8 @@ export default class Root extends React.Component<RootProps> {
         this.state = {
             params,
             changelog: false,
-            vr: 'getVRDisplays' in navigator ? undefined : false,
+            loading: true,
+            vr: false,
             showDisclaimer: localStorage.getItem('disclaimerShown') !== 'yes'
         };
         this.onHashChange = this.onHashChange.bind(this);
@@ -45,14 +46,24 @@ export default class Root extends React.Component<RootProps> {
     componentWillMount() {
         window.addEventListener('hashchange', this.onHashChange);
         document.addEventListener('displaychangelog', this.openChangeLog);
-        if ('getVRDisplays' in navigator) {
-            navigator.getVRDisplays()
-                .then((displays) => {
-                    this.setState({vr: displays.length > 0});
+        if ('xr' in navigator) {
+            (navigator as any).xr.isSessionSupported('immersive-vr')
+                .then((supported) => {
+                    this.setState({
+                        vr: supported,
+                        loading: false
+                    });
                 })
                 .catch(() => {
-                    this.setState({vr: false});
+                    this.setState({
+                        vr: false,
+                        loading: false
+                    });
                 });
+        } else {
+            this.setState({
+                loading: false
+            });
         }
     }
 
@@ -90,16 +101,18 @@ export default class Root extends React.Component<RootProps> {
             return <Disclaimer accept={this.acceptDisclaimer}/>;
         }
         let content;
-        if (this.state.params.editor) {
-            content = <Editor params={this.state.params} ticker={this.props.ticker} />;
-        } else if (this.state.vr) {
-            content = <VRGameUI
-                params={this.state.params}
-                ticker={this.props.ticker}
-                exitVR={this.exitVR}
-            />;
-        } else if (this.state.vr === false) {
-            content = <GameUI params={this.state.params} ticker={this.props.ticker} />;
+        if (!this.state.loading) {
+            if (this.state.params.editor) {
+                content = <Editor params={this.state.params} ticker={this.props.ticker} />;
+            } else if (this.state.vr) {
+                content = <VRGameUI
+                    params={this.state.params}
+                    ticker={this.props.ticker}
+                    exitVR={this.exitVR}
+                />;
+            } else if (this.state.vr === false) {
+                content = <GameUI params={this.state.params} ticker={this.props.ticker} />;
+            }
         }
         return <div>
             {content}

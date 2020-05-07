@@ -38,8 +38,7 @@ export default class Renderer {
         this.stats = new StatsHandler();
 
         if (rendererOptions.vr) {
-            this.threeRenderer.vr.enabled = true;
-            this.threeRenderer.vr.setReferenceSpaceType('eye-level');
+            this.threeRenderer.xr.enabled = true;
         }
         this.vr = rendererOptions.vr || false;
 
@@ -86,11 +85,10 @@ export default class Renderer {
 
     @pure()
     isPresenting() {
-        if (!this.threeRenderer.vr.enabled)
+        if (!this.threeRenderer.xr.enabled)
             return false;
 
-        const device = this.threeRenderer.vr.getDevice();
-        return device && device.isPresenting;
+        return this.threeRenderer.xr.isPresenting;
     }
 }
 
@@ -116,7 +114,9 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
         };
         let webglVersion = -1;
         if (webgl2 && window.WebGL2RenderingContext) {
-            options.context = canvas.getContext('webgl2');
+            options.context = canvas.getContext('webgl2', {
+                xrCompatible: rendererOptions.vr ? true : false
+            });
             webglVersion = 2;
         } else {
             webglVersion = 1;
