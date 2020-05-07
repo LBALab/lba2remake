@@ -60,7 +60,7 @@ export interface Actor {
     isKilled: boolean;
     runScripts?: Function;
     loadMesh: Function;
-    reload: Function;
+    reloadModel: Function;
     hasCollidedWithActor: number;
     floorSound: number;
     reset: Function;
@@ -268,7 +268,7 @@ export async function loadActor(
                 return;
             }
             this.props.bodyIndex = index;
-            this.reload(scene);
+            this.reloadModel(scene);
         },
 
         setAnim(index) {
@@ -279,16 +279,13 @@ export async function loadActor(
             this.resetAnimState();
         },
 
-        reload(scene) {
-            if (this.threeObject) {
-                this.threeObject.visible = false;
-                scene.removeMesh(this.threeObject);
-                this.threeObject = null;
-            }
-            if (this.model) {
-                this.model = null;
-            }
+        reloadModel(scene) {
+            const oldObject = this.threeObject;
             this.loadMesh().then(() => {
+                if (oldObject) {
+                    scene.removeMesh(oldObject);
+                }
+                this.threeObject.updateMatrixWorld();
                 scene.addMesh(this.threeObject);
             });
         }
