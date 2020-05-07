@@ -200,7 +200,7 @@ function loadBillboardSprite(index, sprite, is3DCam) {
 
     const spriteMaterial = new THREE.SpriteMaterial({
         map: texture,
-        rotation: THREE.Math.degToRad(180)
+        rotation: THREE.MathUtils.degToRad(180)
     });
 
     const threeSprite = new THREE.Sprite(spriteMaterial);

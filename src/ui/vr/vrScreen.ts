@@ -5,7 +5,7 @@ export function createScreen(options) {
     const x = options.x || 0;
     const y = options.y || 0;
     const z = options.z || 768;
-    const angle = options.angle ? THREE.Math.degToRad(180 + options.angle) : Math.PI;
+    const angle = options.angle ? THREE.MathUtils.degToRad(180 + options.angle) : Math.PI;
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;

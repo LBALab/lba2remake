@@ -123,7 +123,7 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
         }
         const renderer = new THREE.WebGLRenderer(options);
 
-        renderer.gammaOutput = true;
+        (renderer as any).outputEncoding = THREE.GammaEncoding;
         renderer.gammaFactor = 2.2;
         renderer.setClearColor(0x000000);
         renderer.setPixelRatio(pixelRatio);

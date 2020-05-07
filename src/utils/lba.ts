@@ -80,7 +80,7 @@ export function normalizeAngle(angle) {
 }
 
 export function angleToRad(angle) {
-    return normalizeAngle(THREE.Math.degToRad(getRotation(angle, 0, 1) - 90));
+    return normalizeAngle(THREE.MathUtils.degToRad(getRotation(angle, 0, 1) - 90));
 }
 
 export function getRandom(min, max) {

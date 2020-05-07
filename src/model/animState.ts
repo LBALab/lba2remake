@@ -245,9 +245,9 @@ function updateSkeletonHierarchy(skeleton, index) {
 
         if (s.type === 0) { // rotation
             tmpEuler.set(
-                THREE.Math.degToRad(s.euler.x),
-                THREE.Math.degToRad(s.euler.y),
-                THREE.Math.degToRad(s.euler.z),
+                THREE.MathUtils.degToRad(s.euler.x),
+                THREE.MathUtils.degToRad(s.euler.y),
+                THREE.MathUtils.degToRad(s.euler.z),
                 'XZY'
             );
             s.m.makeRotationFromEuler(tmpEuler);

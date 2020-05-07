@@ -147,7 +147,7 @@ async function loadIsland(name) {
     const offset = islandOffsets[name];
     islandWrapper.position.set(offset.x, -1.4, offset.z);
     islandWrapper.quaternion.setFromEuler(
-        new THREE.Euler(0, THREE.Math.degToRad(offset.angle), 0)
+        new THREE.Euler(0, THREE.MathUtils.degToRad(offset.angle), 0)
     );
     islandWrapper.updateMatrixWorld();
     invWorldMat.getInverse(islandWrapper.matrixWorld);
@@ -185,7 +185,7 @@ export function updateTeleportMenu(game, sceneManager) {
         console.log(activeIsland.name, {
             x: islandWrapper.position.x,
             z: islandWrapper.position.z,
-            angle: THREE.Math.radToDeg(angle)
+            angle: THREE.MathUtils.radToDeg(angle)
         });
     }
     */

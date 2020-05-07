@@ -135,7 +135,7 @@ function updateStrike(lightning, objPositions, time) {
         * 1.5;
     const {params, strike, lightningStrikeMesh} = lightning;
     params.straightness = Math.min(t * 1.5, 0.85);
-    params.destOffset.y = THREE.Math.lerp(
+    params.destOffset.y = THREE.MathUtils.lerp(
         WORLD_SIZE * 2,
         lightning.position.y,
         Math.min((time.elapsed - lightning.nextTime) * 5, 1.0)

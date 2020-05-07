@@ -4,7 +4,7 @@ import { omit, cloneDeep, times, each } from 'lodash';
 import { saveAs } from 'file-saver';
 
 import { ColladaExporter } from 'three/examples/jsm/exporters/ColladaExporter';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
@@ -731,11 +731,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 }
 
-interface GLTFModel {
-    scene: THREE.Scene;
-}
-
-async function loadModel(file) : Promise<GLTFModel> {
+async function loadModel(file) : Promise<GLTF> {
     return new Promise((resolve) => {
         loader.load(`/models/layouts/${file}`, resolve);
     });
