@@ -12,6 +12,7 @@ const lifeRootTypes = ['lba_behaviour', 'lba_behaviour_init'];
 const moveRootTypes = ['lba_move_track', 'lba_move_replace'];
 
 export function compile(workspace) {
+    console.time('Compile time');
     const topBlocks = workspace.getTopBlocks(false);
 
     const lifeScript = compileRootBlocks('life', topBlocks, lifeRootTypes);
@@ -25,6 +26,7 @@ export function compile(workspace) {
     workspace.actor.scripts.life = lifeScript;
     workspace.actor.scripts.move = moveScript;
     compileScripts(DebugData.scope.game, workspace.scene, workspace.actor);
+    console.timeEnd('Compile time');
 }
 
 function compileRootBlocks(type, topBlocks, rootTypes) {
