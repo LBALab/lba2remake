@@ -4,7 +4,7 @@ precision highp float;
 uniform vec3 light;
 
 in vec3 vNormal;
-in vec3 vColor;
+in vec4 vColor;
 
 out vec4 fragColor;
 
@@ -16,7 +16,7 @@ float intensity() {
 }
 
 void main() {
-    vec3 palColor = lutLookup(vColor, intensity());
-    fragColor = vec4(palColor, 1.0);
+    vec3 palColor = lutLookup(vColor.rgb, intensity());
+    fragColor = vec4(palColor, vColor.a);
     // fragColor = vec4(vNormal, 1.0);
 }

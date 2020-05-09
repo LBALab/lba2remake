@@ -6,10 +6,10 @@ uniform mat4 projectionMatrix;
 
 in vec3 position;
 in vec3 normal;
-in vec3 color;
+in vec4 color;
 
 out vec3 vNormal;
-out vec3 vColor;
+out vec4 vColor;
 
 void main() {
     vec4 mPos = modelViewMatrix * vec4(position, 1.0);

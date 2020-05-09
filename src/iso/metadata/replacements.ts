@@ -41,6 +41,7 @@ export async function initReplacements(entry, metadata, ambience) {
             }
         },
         data,
+        transparentGeomId: 0,
         bricks: new Set()
     };
 }
@@ -98,7 +99,7 @@ export function buildReplacementMeshes(entry, replacements) {
             } else {
                 bufferGeometry.setAttribute(
                     'color',
-                    new THREE.BufferAttribute(new Uint8Array(geom.colors), 3, true)
+                    new THREE.BufferAttribute(new Uint8Array(geom.colors), 4, true)
                 );
             }
             const mesh = new THREE.Mesh(bufferGeometry, geom.material);
@@ -192,6 +193,7 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
             const baseMaterial = node.material as THREE.MeshStandardMaterial;
             let color = null;
             let geomGroup = 'colored';
+            let groupType = null;
             if (baseMaterial.map) {
                 const image = baseMaterial.map.image;
                 const canvas = document.createElement('canvas');
@@ -202,7 +204,14 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
                 const imageData = context.getImageData(0, 0, image.width, image.height);
                 const textureId = XXH.h32(imageData.data, 0).toString(16);
                 geomGroup = `textured_${textureId}`;
-                if (!(geomGroup in replacements.geometries)) {
+                groupType = 'textured';
+            } else if (baseMaterial.opacity < 1) {
+                geomGroup = `transparent_${replacements.transparentGeomId}`;
+                groupType = 'transparent';
+                replacements.transparentGeomId += 1;
+            }
+            if (!(geomGroup in replacements.geometries)) {
+                if (groupType === 'textured') {
                     replacements.geometries[geomGroup] = {
                         index: [],
                         positions: [],
@@ -220,6 +229,22 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
                             }
                         })
                     };
+                } else {
+                    replacements.geometries[geomGroup] = {
+                        index: [],
+                        positions: [],
+                        normals: [],
+                        colors: [],
+                        material: new THREE.RawShaderMaterial({
+                            vertexShader: compile('vert', VERT_OBJECTS_COLORED),
+                            fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
+                            uniforms: {
+                                lutTexture: {value: replacementData.lutTexture},
+                                palette: {value: replacementData.paletteTexture},
+                                light: {value: replacementData.light}
+                            }
+                        })
+                    };
                 }
             }
             const {
@@ -231,7 +256,9 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
             } = replacements.geometries[geomGroup];
             if (!baseMaterial.map) {
                 const mColor = baseMaterial.color.clone().convertLinearToGamma();
-                color = new THREE.Vector3().fromArray(mColor.toArray());
+                color = new THREE.Vector4().fromArray(
+                    [...mColor.toArray(), baseMaterial.opacity]
+                );
             }
             const offset = positions.length / 3;
             for (let i = 0; i < index_attr.count; i += 1) {
@@ -252,7 +279,7 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
                 NORM.normalize();
                 normals.push(NORM.x, NORM.y, NORM.z);
                 if (colors) {
-                    colors.push(color.x * 255, color.y * 255, color.z * 255);
+                    colors.push(color.x * 255, color.y * 255, color.z * 255, color.w * 255);
                 }
                 if (uvs) {
                     uvs.push(uv_attr.getX(i), uv_attr.getY(i));

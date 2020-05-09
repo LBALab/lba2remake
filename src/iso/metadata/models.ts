@@ -45,6 +45,7 @@ export async function loadFullSceneModel(entry: number, replacementData) : Promi
                 fragmentShader: compile('frag', texture
                     ? FRAG_OBJECTS_TEXTURED
                     : FRAG_OBJECTS_COLORED),
+                transparent: node.name.substring(0, 12) === 'transparent_',
                 uniforms: {
                     uTexture: texture && { value: texture },
                     lutTexture: {value: replacementData.lutTexture},
@@ -52,6 +53,9 @@ export async function loadFullSceneModel(entry: number, replacementData) : Promi
                     light: {value: replacementData.light}
                 }
             });
+            if (node.material.transparent) {
+                node.renderOrder = 1;
+            }
         }
     });
     return threeObject;

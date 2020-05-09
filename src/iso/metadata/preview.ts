@@ -28,8 +28,11 @@ export async function replaceMaterialsForPreview(threeObject, shaderData) {
                 });
             } else {
                 const mColor = material.color.clone().convertLinearToGamma();
-                const color = new THREE.Vector3().fromArray(mColor.toArray());
+                const color = new THREE.Vector4().fromArray(
+                    [...mColor.toArray(), material.opacity]
+                );
                 node.material = new THREE.RawShaderMaterial({
+                    transparent: material.opacity < 1,
                     vertexShader: compile('vert', VERT_OBJECTS_COLORED_PREVIEW),
                     fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
                     uniforms: {
