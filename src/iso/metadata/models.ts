@@ -37,7 +37,11 @@ export async function loadFullSceneModel(entry: number, replacementData) : Promi
             if (color_attr) {
                 color_attr.normalized = true;
             }
-            const texture = (node.material as THREE.MeshStandardMaterial).map;
+            const material = (node.material as THREE.MeshStandardMaterial);
+            if (material.name.substring(0, 8) === 'keepMat_') {
+                return;
+            }
+            const texture = material.map;
             node.material = new THREE.RawShaderMaterial({
                 vertexShader: compile('vert', texture
                     ? VERT_OBJECTS_TEXTURED
@@ -66,6 +70,9 @@ export async function saveFullSceneModel(threeObject, entry) {
     savedObject.traverse((node) => {
         if (node instanceof THREE.Mesh) {
             const material = node.material as THREE.RawShaderMaterial;
+            if (material.name.substring(0, 8) === 'keepMat_') {
+                return;
+            }
             const uTexture = material.uniforms.uTexture;
             node.material = new THREE.MeshStandardMaterial(uTexture && {
                 map: uTexture.value

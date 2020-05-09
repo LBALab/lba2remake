@@ -41,6 +41,7 @@ export async function initReplacements(entry, metadata, ambience) {
             }
         },
         data,
+        originalGeomId: 0,
         transparentGeomId: 0,
         bricks: new Set()
     };
@@ -194,7 +195,11 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
             let color = null;
             let geomGroup = 'colored';
             let groupType = null;
-            if (baseMaterial.map) {
+            if (baseMaterial.name.substring(0, 8) === 'keepMat_') {
+                geomGroup = `original_${replacements.originalGeomId}`;
+                groupType = 'original';
+                replacements.originalGeomId += 1;
+            } else if (baseMaterial.map) {
                 const image = baseMaterial.map.image;
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
@@ -211,40 +216,53 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
                 replacements.transparentGeomId += 1;
             }
             if (!(geomGroup in replacements.geometries)) {
-                if (groupType === 'textured') {
-                    replacements.geometries[geomGroup] = {
-                        index: [],
-                        positions: [],
-                        normals: [],
-                        colors: null,
-                        uvs: [],
-                        material: new THREE.RawShaderMaterial({
-                            vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
-                            fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
-                            uniforms: {
-                                uTexture: {value: baseMaterial.map},
-                                lutTexture: {value: replacementData.lutTexture},
-                                palette: {value: replacementData.paletteTexture},
-                                light: {value: replacementData.light}
-                            }
-                        })
-                    };
-                } else {
-                    replacements.geometries[geomGroup] = {
-                        index: [],
-                        positions: [],
-                        normals: [],
-                        colors: [],
-                        material: new THREE.RawShaderMaterial({
-                            vertexShader: compile('vert', VERT_OBJECTS_COLORED),
-                            fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
-                            uniforms: {
-                                lutTexture: {value: replacementData.lutTexture},
-                                palette: {value: replacementData.paletteTexture},
-                                light: {value: replacementData.light}
-                            }
-                        })
-                    };
+                switch (groupType) {
+                    case 'textured':
+                        replacements.geometries[geomGroup] = {
+                            index: [],
+                            positions: [],
+                            normals: [],
+                            colors: null,
+                            uvs: [],
+                            material: new THREE.RawShaderMaterial({
+                                vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
+                                fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
+                                uniforms: {
+                                    uTexture: {value: baseMaterial.map},
+                                    lutTexture: {value: replacementData.lutTexture},
+                                    palette: {value: replacementData.paletteTexture},
+                                    light: {value: replacementData.light}
+                                }
+                            })
+                        };
+                        break;
+                    case 'transparent':
+                        replacements.geometries[geomGroup] = {
+                            index: [],
+                            positions: [],
+                            normals: [],
+                            colors: [],
+                            material: new THREE.RawShaderMaterial({
+                                vertexShader: compile('vert', VERT_OBJECTS_COLORED),
+                                fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
+                                uniforms: {
+                                    lutTexture: {value: replacementData.lutTexture},
+                                    palette: {value: replacementData.paletteTexture},
+                                    light: {value: replacementData.light}
+                                }
+                            })
+                        };
+                        break;
+                    case 'original':
+                        replacements.geometries[geomGroup] = {
+                            index: [],
+                            positions: [],
+                            normals: [],
+                            uvs: baseMaterial.map ? [] : null,
+                            colors: null,
+                            material: baseMaterial
+                        };
+                        break;
                 }
             }
             const {

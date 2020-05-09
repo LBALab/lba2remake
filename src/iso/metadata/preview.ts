@@ -14,6 +14,9 @@ export async function replaceMaterialsForPreview(threeObject, shaderData) {
             const normalMatrix = new THREE.Matrix3();
             normalMatrix.setFromMatrix4(node.matrixWorld);
             const material = node.material as THREE.MeshStandardMaterial;
+            if (material.name.substring(0, 8) === 'keepMat_') {
+                return;
+            }
             if (material.map) {
                 node.material = new THREE.RawShaderMaterial({
                     vertexShader: compile('vert', VERT_OBJECTS_TEXTURED_PREVIEW),
