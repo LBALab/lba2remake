@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import StatsHandler from './stats';
-import {EngineError} from '../crash_reporting';
 import { pure } from '../utils/decorators';
 
 const RSIZE = new THREE.Vector2();
@@ -104,40 +103,36 @@ function keyListener(event) {
 }
 
 function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
-    try {
-        const options = {
-            alpha: false,
-            canvas,
-            preserveDrawingBuffer: rendererOptions.preserveDrawingBuffer,
-            antialias: true,
-            context: null
-        };
-        let webglVersion = -1;
-        if (webgl2 && window.WebGL2RenderingContext) {
-            options.context = canvas.getContext('webgl2', {
-                xrCompatible: rendererOptions.vr ? true : false
-            });
-            webglVersion = 2;
-        } else {
-            webglVersion = 1;
-        }
-        const renderer = new THREE.WebGLRenderer(options);
-
-        (renderer as any).outputEncoding = THREE.GammaEncoding;
-        renderer.gammaFactor = 2.2;
-        renderer.setClearColor(0x000000);
-        renderer.setPixelRatio(pixelRatio);
-        renderer.setSize(0, 0);
-        renderer.autoClear = true;
-        (renderer as any).webglVersion = webglVersion;
-
-        if (!(window.WebGL2RenderingContext
-                && renderer.getContext() instanceof window.WebGL2RenderingContext)) {
-            renderer.getContext().getExtension('EXT_shader_texture_lod');
-            renderer.getContext().getExtension('OES_standard_derivatives');
-        }
-        return renderer;
-    } catch (err) {
-        throw new EngineError('webgl', err);
+    const options = {
+        alpha: false,
+        canvas,
+        preserveDrawingBuffer: rendererOptions.preserveDrawingBuffer,
+        antialias: true,
+        context: null
+    };
+    let webglVersion = -1;
+    if (webgl2 && window.WebGL2RenderingContext) {
+        options.context = canvas.getContext('webgl2', {
+            xrCompatible: rendererOptions.vr ? true : false
+        });
+        webglVersion = 2;
+    } else {
+        webglVersion = 1;
     }
+    const renderer = new THREE.WebGLRenderer(options);
+
+    (renderer as any).outputEncoding = THREE.GammaEncoding;
+    renderer.gammaFactor = 2.2;
+    renderer.setClearColor(0x000000);
+    renderer.setPixelRatio(pixelRatio);
+    renderer.setSize(0, 0);
+    renderer.autoClear = true;
+    (renderer as any).webglVersion = webglVersion;
+
+    if (!(window.WebGL2RenderingContext
+            && renderer.getContext() instanceof window.WebGL2RenderingContext)) {
+        renderer.getContext().getExtension('EXT_shader_texture_lod');
+        renderer.getContext().getExtension('OES_standard_derivatives');
+    }
+    return renderer;
 }

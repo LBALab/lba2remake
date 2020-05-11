@@ -6,18 +6,6 @@ import {bigButton, center, editor as editor_style, fullscreen} from './ui/styles
 
 let sent_report = false;
 
-export class EngineError extends Error {
-    type: string;
-    rootCause: Error;
-
-    constructor(type, rootCause) {
-        super();
-        this.name = 'EngineError';
-        this.type = type;
-        this.rootCause = rootCause;
-    }
-}
-
 export function sendCrashReport(error) {
     if (sent_report)
         return;
@@ -86,33 +74,17 @@ const center_vert = extend({}, center, {
     textAlign: 'center'
 });
 
-const link = {
-    color: 'grey'
-};
-
 const reload = () => location.reload();
 
 export function CrashHandler(props) {
-    let message = <div>
-        <b>Error: </b>
-        <i style={{color: 'red'}}>{props.error.message}</i>
-    </div>;
-    if (props.error.data && props.error.data.name === 'EngineError') {
-        if (props.error.data.type === 'webgl') {
-            message = <div>
-                It seems like your browser does not support WebGL.<br/>
-                Check out why <a href="https://get.webgl.org/" style={link}>here.</a><br/>
-                WebGL is required to run this game.<br/><br/>
-                <b>Error: </b>
-                <i style={{color: 'red'}}>{props.error.data.rootCause.message}</i>
-            </div>;
-        }
-    }
     return <div style={bsod_style}>
         <div style={center_vert}>
             <img src="images/broken.png"/>
             <h1>Ooops! Something went wrong...</h1>
-            {message}
+            <div>
+                <b>Error: </b>
+                <i style={{color: 'red'}}>{props.error.message}</i>
+            </div>
             <hr style={{margin: '3em 6em'}}/>
             <button style={bigButton} onClick={sendCrashReport.bind(null, props.error)}>
                 Send crash report

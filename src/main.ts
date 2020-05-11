@@ -4,7 +4,6 @@ import {each} from 'lodash';
 
 import Ticker from './ui/utils/Ticker';
 import UIWrapper from './ui/UIWrapper';
-import { EngineError } from './crash_reporting';
 
 window.onload = () => {
     init();
@@ -26,20 +25,13 @@ window.onerror = (message, file, line, column, data) => {
 };
 
 window.addEventListener('unhandledrejection', (event) => {
-    const error = {
-        message: 'unhandledrejection',
-        data: event.reason,
-        rootCause: null,
-        stack: null,
-    };
-    if (event.reason instanceof EngineError) {
-        if (event.reason.rootCause) {
-            error.rootCause = event.reason.rootCause.message;
-            error.stack = event.reason.rootCause.stack;
-        }
-    }
-
-    init(error);
+    const data = event.reason;
+    const message = data && data.message;
+    const stack = data && data.stack;
+    init({
+        message: `Unhandled promise rejection: ${message}`,
+        stack
+    });
 });
 
 function init(error = null) {
