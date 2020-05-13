@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 export function createVideoScreen(video) {
     const videoElem = document.createElement('video');
-    videoElem.src = video.src;
+    videoElem.src = `data/${video.path}`;
     videoElem.autoplay = true;
     videoElem.onended = video.onEnded;
     videoElem.onerror = video.onEnded;
