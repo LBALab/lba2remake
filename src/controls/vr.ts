@@ -105,6 +105,10 @@ export class VRControls {
         });
 
         vrController.addEventListener('selectstart', () => {
+            if (this.ctx.game.controlsState.skipListener) {
+                this.ctx.game.controlsState.skipListener();
+                return;
+            }
             if (this.activePointer === null) {
                 this.activatePointer(index);
             }
