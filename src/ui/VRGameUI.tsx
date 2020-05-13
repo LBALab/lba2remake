@@ -245,9 +245,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
     }
 
     renderGUI() {
-        const { renderer } = this.state;
-        const presenting = renderer && renderer.isPresenting();
-        if (presenting || (this.props.params.vrEmulator && this.session))
+        if (this.session && this.session.visibilityState !== 'hidden')
             return null;
 
         return <React.Fragment>
