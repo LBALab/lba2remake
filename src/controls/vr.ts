@@ -19,7 +19,7 @@ export class VRControls {
     activePointer: number;
     triggered: boolean;
 
-    constructor(sceneManager: any, game: any, renderer: any) {
+    constructor(params: any, sceneManager: any, game: any, renderer: any) {
         this.xr = renderer.threeRenderer.xr;
         this.ctx = { sceneManager, game };
         this.controllers = {};
@@ -29,7 +29,9 @@ export class VRControls {
         this.onInputSourcesChange = this.onInputSourcesChange.bind(this);
         this.initializeVRController(0);
         this.initializeVRController(1);
-        debugProfiles(this);
+        if (params.vrCtrlDBG) {
+            debugProfiles(this);
+        }
     }
 
     dispose() {}

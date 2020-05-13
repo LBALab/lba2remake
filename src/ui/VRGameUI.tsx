@@ -146,7 +146,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
             }
             const vrScene = loadVRScene(game, sceneManager, renderer);
             const controls = [
-                new VRControls(sceneManager, game, renderer)
+                new VRControls(this.props.params, sceneManager, game, renderer)
             ];
             this.setState({ renderer, sceneManager, controls, vrScene });
             this.canvasWrapperElem = canvasWrapperElem;

@@ -44,6 +44,10 @@ const paramsDefinitions = {
     vrEmulator: {
         type: 'boolean',
         default: false
+    },
+    vrCtrlDBG: {
+        type: 'boolean',
+        default: false
     }
 };
 
