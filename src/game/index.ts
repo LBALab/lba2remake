@@ -8,7 +8,13 @@ import DebugData from '../ui/editor/DebugData';
 import { makePure } from '../utils/debug';
 import { registerResources, preloadResources } from '../resources';
 
-export function createGame(clock: any, setUiState: Function, getUiState: Function, params: any) {
+export function createGame(
+    clock: any,
+    setUiState: Function,
+    getUiState: Function,
+    params: any,
+    vr: boolean = false
+) {
     let isPaused = false;
     let isLoading = false;
 
@@ -30,13 +36,14 @@ export function createGame(clock: any, setUiState: Function, getUiState: Functio
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
             relativeToCam: false,
-            firstPerson: getSavedVRFirstPersonMode(),
+            firstPerson: vr && getSavedVRFirstPersonMode(),
             action: 0,
             jump: 0,
             fight: 0,
             crunch: 0,
             weapon: 0,
-            ctrlTriggers: []
+            vrPointerTransform: new THREE.Matrix4(),
+            vrTriggered: false
         },
 
         resetState() {

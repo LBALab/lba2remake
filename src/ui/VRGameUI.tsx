@@ -5,7 +5,6 @@ import Renderer from '../renderer';
 import {createGame} from '../game/index';
 import {mainGameLoop} from '../game/loop';
 import {createSceneManager} from '../game/scenes';
-import {createControls} from '../controls/index';
 
 import {fullscreen} from './styles/index';
 
@@ -16,6 +15,7 @@ import {loadVRScene, updateVRScene} from './vr/vrScene';
 import {tr} from '../lang';
 import { TickerProps } from './utils/Ticker';
 import { pure } from '../utils/decorators';
+import { VRControls } from '../controls/vr';
 
 interface VRGameUIProps extends TickerProps {
     params: any;
@@ -77,6 +77,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
             this.setUiState,
             this.getUiState,
             props.params,
+            true
         );
 
         this.state = {
@@ -117,16 +118,6 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
     onRenderZoneRef(renderZoneElem) {
         if (!this.renderZoneElem && renderZoneElem) {
             this.renderZoneElem = renderZoneElem;
-            if (this.state.renderer && this.state.sceneManager) {
-                const controls = createControls(
-                    this.props.params,
-                    this.state.game,
-                    renderZoneElem,
-                    this.state.sceneManager,
-                    this.state.renderer
-                );
-                this.setState({ controls });
-            }
         }
     }
 
@@ -153,17 +144,10 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
             if (this.props.params.scene >= 0) {
                 sceneManager.hideMenuAndGoto(this.props.params.scene);
             }
-            let controls;
-            if (this.renderZoneElem) {
-                controls = createControls(
-                    this.props.params,
-                    game,
-                    this.renderZoneElem,
-                    sceneManager,
-                    renderer
-                );
-            }
             const vrScene = loadVRScene(game, sceneManager, renderer);
+            const controls = [
+                new VRControls(sceneManager, game, renderer)
+            ];
             this.setState({ renderer, sceneManager, controls, vrScene });
             this.canvasWrapperElem = canvasWrapperElem;
             this.canvasWrapperElem.appendChild(this.canvas);

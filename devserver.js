@@ -124,6 +124,7 @@ app.get('/layout_models', function(req, res) {
 
 app.use('/', express.static('./www'));
 app.use('/doc', express.static('./doc'));
+app.use('/webxr-assets', express.static('./node_modules/@webxr-input-profiles/assets/dist/profiles'));
 
 const indexBody = renderToStaticMarkup(React.createElement(Main, {
     script: 'window.ga=function(){};\nwindow.isLocalServer=true;'

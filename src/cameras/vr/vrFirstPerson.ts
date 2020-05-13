@@ -3,7 +3,7 @@ import { WORLD_SIZE } from '../../utils/lba';
 
 const HERO_TARGET_POS = new THREE.Vector3(0, 0, 0);
 
-export function getVrFirstPersonCamera() {
+export function getVrFirstPersonCamera(renderer) {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
@@ -20,6 +20,12 @@ export function getVrFirstPersonCamera() {
     orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
+    for (let i = 0; i < 2; i += 1) {
+        const vrControllerGrip = renderer.threeRenderer.xr.getControllerGrip(i);
+        orientation.add(vrControllerGrip);
+        const vrController = renderer.threeRenderer.xr.getController(i);
+        orientation.add(vrController);
+    }
     const scnCamera = {
         width: window.innerWidth,
         height: window.innerHeight,

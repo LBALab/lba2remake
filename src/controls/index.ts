@@ -1,15 +1,10 @@
 import {makeFirstPersonMouseControls} from './mouse';
 import {makeKeyboardControls} from './keyboard';
-import {makeVRControls} from './vr';
 import {makeFirstPersonTouchControls} from './touch';
 
-export function createControls(params, game, elem, sceneManager, renderer) {
+export function createControls(params, game, elem, sceneManager) {
     let controls;
-    if (renderer.vr) {
-        controls = [
-            makeVRControls(sceneManager, game)
-        ];
-    } else if (params.mobile) {
+    if (params.mobile) {
         controls = [
             makeFirstPersonTouchControls(game),
         ];

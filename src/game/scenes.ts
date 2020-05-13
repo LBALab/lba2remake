@@ -185,7 +185,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             threeScene.name = '3D_scene';
             if (renderer.vr) {
                 if (game.controlsState.firstPerson) {
-                    camera = getVrFirstPersonCamera();
+                    camera = getVrFirstPersonCamera(renderer);
                 } else {
                     camera = getVR3DCamera();
                 }
@@ -202,7 +202,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             threeScene.name = 'iso_scene';
             if (renderer.vr) {
                 if (game.controlsState.firstPerson) {
-                    camera = getVrFirstPersonCamera();
+                    camera = getVrFirstPersonCamera(renderer);
                 } else {
                     camera = getVRIsoCamera();
                 }
@@ -220,7 +220,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 const fps = createFPSCounter(renderer);
                 fps.visible = false;
                 camera.controlNode.add(fps);
-                vrGUI = createVRGUI(renderer);
+                vrGUI = createVRGUI();
                 camera.controlNode.add(vrGUI);
             }
         }

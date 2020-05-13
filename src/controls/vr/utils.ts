@@ -1,3 +1,6 @@
+import { fetchProfile, MotionController } from '@webxr-input-profiles/motion-controllers';
+import MockXRInputSource from './MockXRInputSource';
+
 const gamepadState = {};
 
 export const getButtonState = (gamepad, button) => gamepadState[gamepad.id].buttons[button];
@@ -41,4 +44,29 @@ export function getGamepadIndex(gamepad, idx) {
     if (!gamepad.hand)
         return idx;
     return gamepad.hand === 'right' ? 0 : 1;
+}
+
+export async function createMotionController(xrInputSource) {
+    const { profile, assetPath } = await this.safeFetchProfile(xrInputSource);
+    return new MotionController(xrInputSource, profile, assetPath);
+}
+
+export async function safeFetchProfile(xrInputSource) {
+    const path = '/webxr-assets';
+    try {
+        return await fetchProfile(xrInputSource, path);
+    } catch (e) {
+        // tslint:disable-next-line: no-console
+        console.warn(
+            'Failed to fetch VR controller profile, using generic profile',
+            xrInputSource.profiles
+        );
+        return await fetchProfile(
+            new MockXRInputSource(
+                ['generic-trigger-squeeze-touchpad-thumbstick'],
+                xrInputSource.gamepad, xrInputSource.handedness
+            ),
+            path
+        );
+    }
 }

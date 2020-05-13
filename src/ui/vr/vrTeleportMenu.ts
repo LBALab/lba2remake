@@ -4,7 +4,7 @@ import IslandAmbience from '../editor/areas/island/browser/ambience';
 import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
 import { loadIslandScenery } from '../../island';
 import { createScreen } from './vrScreen';
-import { handlePicking, performRaycasting } from './vrHands';
+import { handlePicking, performRaycasting } from './picking';
 import { drawFrame } from './vrUtils';
 import sceneMapping from '../../island/data/sceneMapping';
 import islandOffsets from './data/islandOffsets';
@@ -21,10 +21,7 @@ let light = null;
 const planetButtons = [];
 const islandButtons = [];
 const intersectObjects = [];
-const arrows = [
-    createArrow(),
-    createArrow()
-];
+const arrow = createArrow();
 const invWorldMat = new THREE.Matrix4();
 
 const planets = LocationsNode.children;
@@ -72,10 +69,8 @@ export function createTeleportMenu(sceneLight) {
 
     teleportMenu.add(islandWrapper);
 
-    for (let i = 0; i < 2; i += 1) {
-        arrows[i].visible = false;
-        teleportMenu.add(arrows[i]);
-    }
+    arrow.visible = false;
+    teleportMenu.add(arrow);
 
     light = sceneLight;
 
@@ -168,8 +163,7 @@ export function updateTeleportMenu(game, sceneManager) {
     }
     if (activeIsland) {
         activeIsland.update(null, null, time);
-        arrows[0].visible = false;
-        arrows[1].visible = false;
+        arrow.visible = false;
         performRaycasting(sectionsPlanes.children, {game, sceneManager}, handleGroundIntersection);
     }
     handlePicking(intersectObjects, {game});
@@ -193,8 +187,7 @@ export function updateTeleportMenu(game, sceneManager) {
 
 const POS = new THREE.Vector3();
 
-function handleGroundIntersection(idx, intersect, triggered, {game, sceneManager}) {
-    const arrow = arrows[idx];
+function handleGroundIntersection(intersect, triggered, {game, sceneManager}) {
     arrow.visible = true;
     arrow.position.copy(intersect.point);
     POS.copy(intersect.point);
@@ -364,21 +357,21 @@ function createButton({x, y, text, callback}: ButtonOptions) {
 }
 
 function createArrow() {
-    const arrow = new THREE.Object3D();
+    const newArrow = new THREE.Object3D();
     const material = new THREE.MeshPhongMaterial({color: 0xFF0000});
 
     const cnGeometry = new THREE.ConeGeometry(5, 12, 32);
     const cone = new THREE.Mesh(cnGeometry, material);
     cone.quaternion.setFromEuler(new THREE.Euler(Math.PI, 0, 0));
     cone.position.set(0, 6, 0);
-    arrow.add(cone);
+    newArrow.add(cone);
 
     const clGeometry = new THREE.CylinderGeometry(1, 1, 10, 32);
     const cylinder = new THREE.Mesh(clGeometry, material);
     cylinder.position.set(0, 16, 0);
-    arrow.add(cylinder);
+    newArrow.add(cylinder);
 
-    arrow.scale.set(0.01, 0.01, 0.01);
+    newArrow.scale.set(0.01, 0.01, 0.01);
 
-    return arrow;
+    return newArrow;
 }

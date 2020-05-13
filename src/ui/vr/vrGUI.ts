@@ -1,19 +1,14 @@
 import * as THREE from 'three';
 import { each } from 'lodash';
-import { getOrCreateHands, handlePicking, updateHands } from './vrHands';
+import { getPickingTarget, handlePicking } from './picking';
 import { createScreen } from './vrScreen';
 import { drawFrame } from './vrUtils';
 
 let choice = null;
-let hands = null;
 
-export function createVRGUI(renderer) {
+export function createVRGUI() {
     const vrGUI = new THREE.Object3D();
-    if (!hands) {
-        hands = getOrCreateHands(renderer);
-    }
-    vrGUI.add(hands);
-    hands.visible = true;
+    vrGUI.add(getPickingTarget());
     return vrGUI;
 }
 
@@ -42,14 +37,11 @@ export function updateVRGUI(game, scene, vrGUI) {
                 i += 1;
             });
         }
-        updateHands({game}, true);
     } else if (choice) {
         vrGUI.remove(choice);
         choice = null;
-        updateHands({game}, false);
     } else {
         handlePicking([], {game, scene});
-        updateHands({game}, false);
     }
 }
 

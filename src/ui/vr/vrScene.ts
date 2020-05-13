@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { getVR3DCamera } from '../../cameras/vr/vr3d';
+import { getVrFirstPersonCamera } from '../../cameras/vr/vrFirstPerson';
 import { createFPSCounter } from './vrFPS';
 import { createMenu, updateMenu } from './vrMenu';
 import { createVideoScreen } from './vrVideo';
@@ -8,7 +8,7 @@ let videoScreen = null;
 
 export function loadVRScene(game, sceneManager, renderer) {
     const threeScene = new THREE.Scene();
-    const camera = getVR3DCamera();
+    const camera = getVrFirstPersonCamera(renderer);
 
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
@@ -32,10 +32,11 @@ export function loadVRScene(game, sceneManager, renderer) {
     const fps = createFPSCounter(renderer);
     camera.controlNode.add(fps);
 
-    const menu = createMenu(game, sceneManager, renderer, light);
+    const menu = createMenu(game, sceneManager, light);
     threeScene.add(menu);
 
     threeScene.add(camera.controlNode);
+
     return { threeScene, camera };
 }
 

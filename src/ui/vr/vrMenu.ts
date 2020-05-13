@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { each } from 'lodash';
 import { createScreen } from './vrScreen';
-import { getOrCreateHands, handlePicking } from './vrHands';
+import { getPickingTarget, handlePicking } from './picking';
 import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
 import controllerScreens from './data/controllerScreens';
 import { drawFrame } from './vrUtils';
@@ -13,9 +13,8 @@ let teleportMenu = null;
 let mainMenu = null;
 let controllerInfo = null;
 let resume = null;
-let hands = null;
 
-export function createMenu(game, sceneManager, renderer, light) {
+export function createMenu(game, sceneManager, light) {
     menuNode = new THREE.Object3D();
 
     mainMenu = new THREE.Object3D();
@@ -90,8 +89,6 @@ export function createMenu(game, sceneManager, renderer, light) {
             await sceneManager.goto(scene.index, true, true);
             game.pause();
             game.setUiState({showMenu: true});
-            menuNode.add(hands);
-            hands.visible = true;
         }
     }
     const firstPerson = createOptionMenuItem({
@@ -117,8 +114,6 @@ export function createMenu(game, sceneManager, renderer, light) {
     window.onpopstate = (event) => {
         const {showMenu} = game.getUiState();
         if (!showMenu) {
-            menuNode.add(hands);
-            hands.visible = true;
             game.pause();
             const audioMenuManager = game.getAudioMenuManager();
             audioMenuManager.getMusicSource().loadAndPlay(6);
@@ -133,8 +128,7 @@ export function createMenu(game, sceneManager, renderer, light) {
 
     history.replaceState({id: 'menu'}, '');
 
-    hands = getOrCreateHands(renderer);
-    menuNode.add(hands);
+    menuNode.add(getPickingTarget());
 
     teleportMenu = createTeleportMenu(light);
     menuNode.add(teleportMenu);

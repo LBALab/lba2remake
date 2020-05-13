@@ -170,8 +170,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                     this.props.params,
                     this.state.game,
                     renderZoneElem,
-                    this.state.sceneManager,
-                    this.state.renderer
+                    this.state.sceneManager
                 );
                 this.setState({ controls }, this.saveData);
             }
@@ -202,8 +201,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                         this.props.params,
                         game,
                         this.renderZoneElem,
-                        sceneManager,
-                        renderer
+                        sceneManager
                     );
                 }
                 this.setState({ renderer, sceneManager, controls }, this.saveData);
