@@ -25,6 +25,7 @@ export class VRControls {
         this.controllers = {};
         this.pointers = [];
         this.triggered = false;
+        this.activePointer = null;
         this.onInputSourcesChange = this.onInputSourcesChange.bind(this);
         this.initializeVRController(0);
         this.initializeVRController(1);
