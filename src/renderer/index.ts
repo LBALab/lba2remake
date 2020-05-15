@@ -38,6 +38,7 @@ export default class Renderer {
 
         if (rendererOptions.vr) {
             this.threeRenderer.xr.enabled = true;
+            this.threeRenderer.xr.setReferenceSpaceType('local');
         }
         this.vr = rendererOptions.vr || false;
 

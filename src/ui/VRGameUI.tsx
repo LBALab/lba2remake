@@ -242,10 +242,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         if (!this.state.renderer) {
             return;
         }
-        const sessionInit = {
-            optionalFeatures: ['local-floor', 'bounded-floor']
-        };
-        this.session = await (navigator as any).xr.requestSession('immersive-vr', sessionInit);
+        this.session = await (navigator as any).xr.requestSession('immersive-vr');
         this.session.addEventListener('end', this.onSessionEnd);
         this.state.renderer.threeRenderer.xr.setSession(this.session);
         this.setState({ enteredVR: true });

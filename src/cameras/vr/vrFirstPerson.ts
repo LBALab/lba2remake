@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../../utils/lba';
 
-const HERO_TARGET_POS = new THREE.Vector3(0, 0, 0);
+const HERO_TARGET_POS = new THREE.Vector3(0, 1.43, 0);
 
 let controllersHolder = null;
 
