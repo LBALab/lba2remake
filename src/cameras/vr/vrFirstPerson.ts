@@ -3,6 +3,8 @@ import { WORLD_SIZE } from '../../utils/lba';
 
 const HERO_TARGET_POS = new THREE.Vector3(0, 0, 0);
 
+let controllersHolder = null;
+
 export function getVrFirstPersonCamera(renderer) {
     const camera = new THREE.PerspectiveCamera(
         45,
@@ -20,12 +22,6 @@ export function getVrFirstPersonCamera(renderer) {
     orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
-    for (let i = 0; i < 2; i += 1) {
-        const vrControllerGrip = renderer.threeRenderer.xr.getControllerGrip(i);
-        orientation.add(vrControllerGrip);
-        const vrController = renderer.threeRenderer.xr.getController(i);
-        orientation.add(vrController);
-    }
     const scnCamera = {
         width: window.innerWidth,
         height: window.innerHeight,
@@ -37,6 +33,17 @@ export function getVrFirstPersonCamera(renderer) {
                 camera.updateProjectionMatrix();
                 this.width = width;
                 this.height = height;
+            }
+        },
+        preRender() {
+            if (controllersHolder !== this) {
+                for (let i = 0; i < 2; i += 1) {
+                    const vrControllerGrip = renderer.threeRenderer.xr.getControllerGrip(i);
+                    orientation.add(vrControllerGrip);
+                    const vrController = renderer.threeRenderer.xr.getController(i);
+                    orientation.add(vrController);
+                }
+                controllersHolder = this;
             }
         },
         init: (scene) => {

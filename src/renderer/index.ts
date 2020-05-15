@@ -52,6 +52,9 @@ export default class Renderer {
     render(scene) {
         this.threeRenderer.getSize(RSIZE);
         scene.camera.resize(RSIZE.x, RSIZE.y);
+        if (scene.camera.preRender) {
+            scene.camera.preRender();
+        }
         this.threeRenderer.render(scene.threeScene, scene.camera.threeCamera);
     }
 
