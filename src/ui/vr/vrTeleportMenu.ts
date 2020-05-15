@@ -153,7 +153,7 @@ async function loadIsland(name) {
 const clock = new THREE.Clock(false);
 clock.start();
 
-export function updateTeleportMenu(game, sceneManager) {
+export function updateTeleportMenu(game, sceneManager, pickingTarget) {
     const time = {
         delta: Math.min(clock.getDelta(), 0.05),
         elapsed: clock.getElapsedTime()
@@ -161,12 +161,21 @@ export function updateTeleportMenu(game, sceneManager) {
     if (activeIsland === null && !loading) {
         loadIsland('CITABAU');
     }
+    const hit = handlePicking(intersectObjects, {
+        game,
+        pickingTarget
+    });
     if (activeIsland) {
         activeIsland.update(null, null, time);
         arrow.visible = false;
-        performRaycasting(sectionsPlanes.children, {game, sceneManager}, handleGroundIntersection);
+        if (!hit) {
+            performRaycasting(
+                sectionsPlanes.children,
+                {game, sceneManager},
+                handleGroundIntersection
+            );
+        }
     }
-    handlePicking(intersectObjects, {game});
 
     // The following commented code is used for adjusting the island offset
     /*
@@ -193,7 +202,7 @@ function handleGroundIntersection(intersect, triggered, {game, sceneManager}) {
     POS.copy(intersect.point);
     POS.applyMatrix4(invWorldMat);
     const groundInfo = activeIsland.physics.getGroundInfo(POS);
-    arrow.position.y += groundInfo.height * 0.02;
+    arrow.position.y += groundInfo.height * (0.5 / WORLD_SIZE);
     POS.y = groundInfo.height;
     if (triggered) {
         const section = intersect.object.userData.info;

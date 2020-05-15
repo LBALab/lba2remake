@@ -9,6 +9,7 @@ import { tr } from '../../lang';
 import { getResourcePath, ResourceType } from '../../resources';
 
 let menuNode = null;
+let pickingTarget = null;
 let teleportMenu = null;
 let mainMenu = null;
 let controllerInfo = null;
@@ -128,7 +129,8 @@ export function createMenu(game, sceneManager, light) {
 
     history.replaceState({id: 'menu'}, '');
 
-    menuNode.add(getPickingTarget());
+    pickingTarget = getPickingTarget();
+    menuNode.add(pickingTarget);
 
     teleportMenu = createTeleportMenu(light);
     menuNode.add(teleportMenu);
@@ -145,9 +147,13 @@ export function updateMenu(game, sceneManager) {
     teleportMenu.visible = showTeleportMenu;
     if (showMenu) {
         if (showTeleportMenu) {
-            updateTeleportMenu(game, sceneManager);
+            updateTeleportMenu(game, sceneManager, pickingTarget);
         } else {
-            handlePicking(mainMenu.children, {game, sceneManager});
+            handlePicking(mainMenu.children, {
+                game,
+                sceneManager,
+                pickingTarget
+            });
         }
     }
     if (!controllerInfo && controlsState.controllerType) {

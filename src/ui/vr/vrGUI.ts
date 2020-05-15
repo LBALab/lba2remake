@@ -16,7 +16,11 @@ export function updateVRGUI(game, scene, vrGUI) {
     const {ask} = game.getUiState();
     if (ask.text) {
         if (choice) {
-            handlePicking(choice.children, {game, scene});
+            handlePicking(choice.children, {
+                game,
+                scene,
+                pickingTarget: vrGUI.children[0]
+            });
         } else {
             choice = new THREE.Object3D();
             vrGUI.add(choice);
@@ -41,7 +45,11 @@ export function updateVRGUI(game, scene, vrGUI) {
         vrGUI.remove(choice);
         choice = null;
     } else {
-        handlePicking([], {game, scene});
+        handlePicking([], {
+            game,
+            scene,
+            pickingTarget: vrGUI.children[0]
+        });
     }
 }
 

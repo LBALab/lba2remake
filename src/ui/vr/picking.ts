@@ -1,21 +1,14 @@
 import * as THREE from 'three';
 import { find } from 'lodash';
 
-let pickingTarget = null;
-
 export function getPickingTarget() {
-    if (!pickingTarget) {
-        const geom = new THREE.SphereGeometry(0.01, 6, 4);
-        const mat = new THREE.MeshBasicMaterial({
-            color: 0xFFFFFF,
-            transparent: true,
-            opacity: 0.8
-        });
-        pickingTarget = new THREE.Mesh(geom, mat);
-        pickingTarget.visible = false;
-    }
-
-    return pickingTarget;
+    const geom = new THREE.SphereGeometry(0.01, 6, 4);
+    const mat = new THREE.MeshBasicMaterial({
+        color: 0xFFFFFF,
+        transparent: true,
+        opacity: 0.8
+    });
+    return new THREE.Mesh(geom, mat);
 }
 
 const hovering = new Set();
@@ -23,8 +16,8 @@ const hitOnFrame = new Set();
 
 export function handlePicking(objects, ctx) {
     hitOnFrame.clear();
-    pickingTarget.visible = false;
-    performRaycasting(objects, ctx, menuHandler);
+    ctx.pickingTarget.visible = false;
+    const hit = performRaycasting(objects, ctx, menuHandler);
     hovering.forEach((uuid) => {
         if (!hitOnFrame.has(uuid)) {
             hovering.delete(uuid);
@@ -34,6 +27,7 @@ export function handlePicking(objects, ctx) {
             }
         }
     });
+    return hit;
 }
 
 const raycaster = new THREE.Raycaster();
@@ -58,18 +52,20 @@ export function performRaycasting(objects, ctx, handler) {
         const intersect = intersects[0];
         hitOnFrame.add(intersect.object.uuid);
         handler(intersect, controlsState.vrTriggered, ctx);
+        return true;
     }
+    return false;
 }
 
 const invTransform = new THREE.Matrix4();
 
 function menuHandler(intersect, triggered, ctx) {
     const object = intersect.object;
-    pickingTarget.visible = true;
-    pickingTarget.position.copy(intersect.point);
+    ctx.pickingTarget.visible = true;
+    ctx.pickingTarget.position.copy(intersect.point);
     if (ctx.scene) {
         invTransform.getInverse(ctx.scene.camera.controlNode.matrixWorld);
-        pickingTarget.position.applyMatrix4(invTransform);
+        ctx.pickingTarget.position.applyMatrix4(invTransform);
     }
     if (triggered) {
         if (object.userData && object.userData.callback) {
