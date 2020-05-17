@@ -118,14 +118,7 @@ function TEXT(game, scene, zone, hero) {
                 }
             });
             scene.zoneState.skipListener = () => {
-                const skip = game.getUiState().skip;
-                if (skip) {
-                    scene.zoneState.ended = true;
-                } else {
-                    game.setUiState({
-                        skip: true
-                    });
-                }
+                scene.zoneState.ended = true;
             };
 
             game.controlsState.skipListener = scene.zoneState.skipListener;
@@ -140,7 +133,7 @@ function TEXT(game, scene, zone, hero) {
         hero.props.entityIndex = hero.props.prevEntityIndex;
         hero.props.animIndex = hero.props.prevAnimIndex;
         voiceSource.stop();
-        game.setUiState({ text: null, skip: false });
+        game.setUiState({ text: null });
         game.controlsState.skipListener = null;
         delete scene.zoneState.skipListener;
         delete scene.zoneState.ended;

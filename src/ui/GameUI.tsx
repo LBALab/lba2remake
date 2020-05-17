@@ -51,7 +51,6 @@ interface GameUIState {
         color: string;
         type: string;
     };
-    skip: boolean;
     ask: {
         text?: {
             value: string;
@@ -98,7 +97,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         this.closeKeyHelp = this.closeKeyHelp.bind(this);
         this.pick = this.pick.bind(this);
         this.startNewGameScene = this.startNewGameScene.bind(this);
-        this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
 
         if (props.mainData) {
             const state = props.mainData.state;
@@ -119,7 +117,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 game,
                 cinema: false,
                 text: null,
-                skip: false,
                 ask: {choices: []},
                 interjections: {},
                 foundObject: null,
@@ -476,10 +473,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         this.setState({choice}, this.saveData);
     }
 
-    textAnimEndedHandler() {
-        this.setUiState({ skip: true });
-    }
-
     render() {
         return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex={0}>
             <div ref={this.onCanvasWrapperRef} style={fullscreen} onClick={this.pick}/>
@@ -521,8 +514,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             {this.state.loading ? <Loader/> : null}
             {!this.state.showMenu ? <TextBox
                 text={this.state.text}
-                skip={this.state.skip}
-                textAnimEnded={this.textAnimEndedHandler}
             /> : null}
             {!this.state.showMenu ? <AskChoice
                 ask={this.state.ask}

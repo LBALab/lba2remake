@@ -73,16 +73,8 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             }
         }
 
-        const that = this;
         cmdState.skipListener = function skipListener() {
-            const skip = that.game.getUiState().skip;
-            if (skip || that.scene.vr) {
-                cmdState.ended = true;
-            } else {
-                that.game.setUiState({
-                    skip: true
-                });
-            }
+            cmdState.ended = true;
         };
         if (text.type !== 9) {
             this.game.controlsState.skipListener = cmdState.skipListener;
@@ -100,7 +92,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         voiceSource.stop();
         const text = this.scene.data.texts[id];
         if (text.type !== 9) {
-            this.game.setUiState({ text: null, skip: false, });
+            this.game.setUiState({ text: null });
             this.game.controlsState.skipListener = null;
             hero.props.dirMode = DirMode.MANUAL;
         }
@@ -214,16 +206,8 @@ export function FOUND_OBJECT(cmdState, id) {
             },
             foundObject: id
         });
-        const that = this;
         cmdState.skipListener = function skipListener() {
-            const skip = that.game.getUiState().skip;
-            if (skip) {
-                cmdState.ended = true;
-            } else {
-                that.game.setUiState({
-                    skip: true
-                });
-            }
+            cmdState.ended = true;
         };
         this.game.controlsState.skipListener = cmdState.skipListener;
         if (text.type === 9) {
@@ -239,7 +223,7 @@ export function FOUND_OBJECT(cmdState, id) {
     }
     if (cmdState.ended) {
         voiceSource.stop();
-        this.game.setUiState({ skip: false, text: null, foundObject: null });
+        this.game.setUiState({ text: null, foundObject: null });
         this.game.controlsState.skipListener = null;
         hero.props.dirMode = DirMode.MANUAL;
 
@@ -343,15 +327,16 @@ export function PLAY_VIDEO(cmdState, video) {
         const that = this;
         this.game.pause();
         const onEnded = () => {
-            that.game.setUiState({video: null, skip: false});
+            that.game.setUiState({video: null});
             cmdState.ended = true;
             that.game.resume();
         };
-        this.game.setUiState({ skip: false,
+        this.game.setUiState({
             video: {
                 path: getResourcePath(`VIDEO_${video}`),
                 onEnded
-            }});
+            }
+        });
         cmdState.skipListener = function skipListener() {
             onEnded();
         };

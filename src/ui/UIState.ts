@@ -5,7 +5,6 @@ export default interface UIState {
         color: string;
         type: string;
     };
-    skip: boolean;
     ask: {
         text?: {
             value: string;
