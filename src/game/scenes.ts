@@ -187,7 +187,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 if (game.controlsState.firstPerson) {
                     camera = getVrFirstPersonCamera(renderer);
                 } else {
-                    camera = getVR3DCamera();
+                    camera = getVR3DCamera(renderer);
                 }
             } else {
                 camera = get3DCamera();
@@ -204,7 +204,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
                 if (game.controlsState.firstPerson) {
                     camera = getVrFirstPersonCamera(renderer);
                 } else {
-                    camera = getVRIsoCamera();
+                    camera = getVRIsoCamera(renderer);
                 }
             } else if (params.iso3d || params.isoCam3d) {
                 camera = params.isoCam3d

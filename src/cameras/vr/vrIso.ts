@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../../utils/lba';
+import sharedData from './sharedData';
 
 const ADJ_WORLD_SIZE = Math.max(WORLD_SIZE, 2);
 
 const CAMERA_HERO_OFFSET = new THREE.Vector3(-0.2, 0, 0.2);
 CAMERA_HERO_OFFSET.multiplyScalar(ADJ_WORLD_SIZE);
 
-export function getVRIsoCamera() {
+export function getVRIsoCamera(renderer) {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
@@ -32,6 +33,17 @@ export function getVRIsoCamera() {
             if (width !== this.width || height || this.height) {
                 camera.aspect = width / height;
                 camera.updateProjectionMatrix();
+            }
+        },
+        preRender() {
+            if (sharedData.controllersHolder !== this) {
+                for (let i = 0; i < 2; i += 1) {
+                    const vrControllerGrip = renderer.threeRenderer.xr.getControllerGrip(i);
+                    orientation.add(vrControllerGrip);
+                    const vrController = renderer.threeRenderer.xr.getController(i);
+                    orientation.add(vrController);
+                }
+                sharedData.controllersHolder = this;
             }
         },
         init: (scene) => {

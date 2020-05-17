@@ -1,9 +1,8 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../../utils/lba';
+import sharedData from './sharedData';
 
 const HERO_TARGET_POS = new THREE.Vector3(0, 1.43, 0);
-
-let controllersHolder = null;
 
 export function getVrFirstPersonCamera(renderer) {
     const camera = new THREE.PerspectiveCamera(
@@ -36,14 +35,14 @@ export function getVrFirstPersonCamera(renderer) {
             }
         },
         preRender() {
-            if (controllersHolder !== this) {
+            if (sharedData.controllersHolder !== this) {
                 for (let i = 0; i < 2; i += 1) {
                     const vrControllerGrip = renderer.threeRenderer.xr.getControllerGrip(i);
                     orientation.add(vrControllerGrip);
                     const vrController = renderer.threeRenderer.xr.getController(i);
                     orientation.add(vrController);
                 }
-                controllersHolder = this;
+                sharedData.controllersHolder = this;
             }
         },
         init: (scene) => {
