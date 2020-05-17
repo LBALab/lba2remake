@@ -119,7 +119,7 @@ function TEXT(game, scene, zone, hero) {
             });
             scene.zoneState.skipListener = () => {
                 const skip = game.getUiState().skip;
-                if (skip) {
+                if (skip || scene.vr) {
                     scene.zoneState.ended = true;
                 } else {
                     game.setUiState({

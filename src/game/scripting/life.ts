@@ -217,7 +217,7 @@ export function FOUND_OBJECT(cmdState, id) {
         const that = this;
         cmdState.skipListener = function skipListener() {
             const skip = that.game.getUiState().skip;
-            if (skip) {
+            if (skip || that.scene.vr) {
                 cmdState.ended = true;
             } else {
                 that.game.setUiState({
