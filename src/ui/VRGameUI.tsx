@@ -35,6 +35,7 @@ interface VRGameUIState {
         color: string;
         type: string;
     };
+    skip: boolean;
     ask: {choices: []};
     interjections: {};
     foundObject?: any;
@@ -84,6 +85,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
             game,
             cinema: false,
             text: null,
+            skip: false,
             ask: {choices: []},
             interjections: {},
             foundObject: null,

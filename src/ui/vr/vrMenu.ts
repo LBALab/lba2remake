@@ -125,7 +125,6 @@ export function createMenu(game, sceneManager, light) {
             teleportMenu: event.state && event.state.id === 'teleport',
             video: null
         });
-        game.controlsState.skipListener = null;
     };
 
     history.replaceState({id: 'menu'}, '');

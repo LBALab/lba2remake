@@ -8,6 +8,7 @@ interface TBProps {
         color: string;
         type: string;
     };
+    skip?: boolean;
     textAnimEnded?: Function;
 }
 
@@ -43,6 +44,13 @@ export default class TextBox extends React.Component<TBProps, TBState> {
                 clearInterval(this.interval);
                 this.interval = null;
             }
+        }
+        if (newProps.skip !== this.props.skip
+            && this.props.text
+            && this.props.text.value) {
+            this.setState({offset: 0, content: this.props.text.value.replace(/@/g, '\n')});
+            clearInterval(this.interval);
+            this.interval = null;
         }
     }
 
