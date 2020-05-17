@@ -43,7 +43,7 @@ export function createGame(
             crunch: 0,
             weapon: 0,
             vrPointerTransform: new THREE.Matrix4(),
-            vrTriggered: false
+            vrTriggerButton: false
         },
 
         resetState() {

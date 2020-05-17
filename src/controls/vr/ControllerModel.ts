@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MotionController } from '@webxr-input-profiles/motion-controllers';
 import { drawFrame } from '../../ui/vr/vrUtils';
+import { tr } from '../../lang';
 
 const loader = new GLTFLoader();
 
@@ -14,6 +15,7 @@ export default class ControllerModel {
     threeObject: THREE.Object3D;
     vrControllerMesh: THREE.Object3D;
     handMesh: THREE.Object3D;
+    labels: THREE.Object3D;
 
     constructor(motionController) {
         this.motionController = motionController;
@@ -35,7 +37,11 @@ export default class ControllerModel {
         // this.threeObject.add(this.handMesh);
         this.threeObject.add(this.vrControllerMesh);
         this.addTouchPoints();
-        this.loadLabels();
+        // Update all matrices for correct label placement
+        this.vrControllerMesh.traverse((node) => {
+            node.updateMatrix();
+            node.updateMatrixWorld(true);
+        });
         // this.mesh.add(makeRootDebugSphere());
         return this;
     }
@@ -86,13 +92,19 @@ export default class ControllerModel {
         });
     }
 
-    loadLabels() {
-        // Update all matrices to place labels correctly
-        this.vrControllerMesh.traverse((node) => {
-            node.updateMatrix();
-            node.updateMatrixWorld(true);
-        });
-        each(this.motionController.components, (component: any) => {
+    loadLabels(mappings) {
+        if (this.labels) {
+            this.vrControllerMesh.remove(this.labels);
+        }
+        this.labels = new THREE.Object3D();
+        this.vrControllerMesh.add(this.labels);
+        const { components } = this.motionController;
+        each(mappings, (mapping, key) => {
+            const component = mapping && components[mapping.btn];
+            if (!component) {
+                return;
+            }
+
             let cmpModel = null;
             const visualResponse = first(Object.values(component.visualResponses)) as any;
             if (visualResponse) {
@@ -101,8 +113,8 @@ export default class ControllerModel {
             if (cmpModel) {
                 const position = new THREE.Vector3();
                 position.applyMatrix4(cmpModel.matrixWorld);
-                const label = makeLabel(CENTER, position, RADIUS, component.id);
-                this.vrControllerMesh.add(label);
+                const label = makeLabel(CENTER, position, RADIUS, tr(`vrButton_${key}`));
+                this.labels.add(label);
             }
         });
     }
@@ -160,26 +172,29 @@ function makeLabel(center: THREE.Vector3, position: THREE.Vector3, radius: numbe
 }
 
 function makeLabelCanvas(name) {
-    const baseWidth = 180;
-    const baseHeight = 26;
-    const borderSize = 2;
+    const width = 256;
+    const height = 32;
     const ctx = document.createElement('canvas').getContext('2d');
-    const doubleBorderSize = borderSize * 2;
-    const width = baseWidth + doubleBorderSize;
-    const height = baseHeight + doubleBorderSize;
     ctx.canvas.width = width;
     ctx.canvas.height = height;
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'center';
 
-    drawFrame(ctx, 0, 0, width, height, true, 5, 2);
+    const applyTextProps = () => {
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        ctx.font = '14px LBA';
+        ctx.fillStyle = 'white';
+        ctx.shadowColor = 'black';
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 1;
+    };
+    applyTextProps();
+    const metrics = ctx.measureText(name);
+    const textWidth = Math.min(metrics.width + 16, width);
+    const x = Math.floor((width - textWidth) * 0.5);
+    drawFrame(ctx, x, 0, textWidth, height, false, 5, 2);
 
-    ctx.translate(width / 2, height / 2);
-    ctx.font = '14px LBA';
-    ctx.fillStyle = 'white';
-    ctx.shadowColor = 'black';
-    ctx.shadowOffsetX = 1;
-    ctx.shadowOffsetY = 1;
+    applyTextProps();
+    ctx.translate(Math.round(width * 0.5), Math.round(height * 0.5));
     ctx.fillText(name, 0, 0);
 
     return ctx.canvas;

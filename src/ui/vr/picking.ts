@@ -51,7 +51,7 @@ export function performRaycasting(objects, ctx, handler) {
     if (intersects.length > 0) {
         const intersect = intersects[0];
         hitOnFrame.add(intersect.object.uuid);
-        handler(intersect, controlsState.vrTriggered, ctx);
+        handler(intersect, controlsState.vrTriggerButton, ctx);
         return true;
     }
     return false;

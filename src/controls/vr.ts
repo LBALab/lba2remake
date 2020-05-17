@@ -1,30 +1,38 @@
-import { each } from 'lodash';
+import { each, size } from 'lodash';
 import * as THREE from 'three';
 import { WebXRManager } from 'three/src/renderers/webxr/WebXRManager';
 import { MotionController } from '@webxr-input-profiles/motion-controllers';
 import ControllerModel from './vr/ControllerModel';
 import { createMotionController } from './vr/utils';
 import { debugProfiles } from './vr/debugProfiles';
+import { getControllerMappings, applyMappings, Mappings } from './vr/mappings';
 
 export class VRControls {
     xr: WebXRManager;
     ctx: any;
     controllers: {
         [key: number]: {
-            specs: MotionController;
+            info: MotionController;
             model: ControllerModel;
+            mappings?: Mappings;
         }
     };
     pointers: any[];
     activePointer: number;
     triggered: boolean;
+    skipping: boolean;
 
     constructor(params: any, sceneManager: any, game: any, renderer: any) {
         this.xr = renderer.threeRenderer.xr;
-        this.ctx = { sceneManager, game };
+        this.ctx = {
+            sceneManager,
+            game,
+            state: {}
+        };
         this.controllers = {};
         this.pointers = [];
         this.triggered = false;
+        this.skipping = false;
         this.activePointer = null;
         this.onInputSourcesChange = this.onInputSourcesChange.bind(this);
         this.initializeVRController(0);
@@ -37,9 +45,18 @@ export class VRControls {
     dispose() {}
 
     update() {
+        const { controlsState } = this.ctx.game;
+        const scene = this.ctx.sceneManager.getScene();
+        const ctx = {
+            ...this.ctx,
+            scene,
+            camera: scene && scene.camera
+        };
+        controlsState.action = 0;
         each(this.controllers, (controller) => {
-            controller.specs.updateFromGamepad();
+            controller.info.updateFromGamepad();
             controller.model.update();
+            applyMappings(controller.info, controller.mappings, ctx);
         });
         for (let i = 0; i < 2; i += 1) {
             if (this.activePointer === i) {
@@ -47,7 +64,17 @@ export class VRControls {
                 this.ctx.game.controlsState.vrPointerTransform.copy(vrController.matrixWorld);
             }
         }
-        this.ctx.game.controlsState.vrTriggered = this.triggered;
+        if (this.skipping) {
+            if (controlsState.action === 0) {
+                this.skipping = false;
+            } else {
+                controlsState.action = 0;
+            }
+        }
+        if (controlsState.skipListener) {
+            controlsState.action = 0;
+        }
+        controlsState.vrTriggerButton = this.triggered;
         this.triggered = false;
     }
 
@@ -57,17 +84,28 @@ export class VRControls {
         });
     }
 
+    updateMappings() {
+        const numControllers = size(this.controllers);
+        each(this.controllers, (controller) => {
+            const mappings = getControllerMappings(controller.info, numControllers);
+            controller.model.loadLabels(mappings);
+            controller.mappings = mappings;
+        });
+    }
+
     initializeVRController(index) {
         const vrControllerGrip = this.xr.getControllerGrip(index);
 
         vrControllerGrip.addEventListener('connected', async (event) => {
-            const specs = await createMotionController(event.data);
-            const model = await new ControllerModel(specs).load();
+            const info = await createMotionController(event.data);
+            const model = await new ControllerModel(info).load();
+
             vrControllerGrip.add(model.threeObject);
             this.controllers[index] = {
-                specs,
+                info,
                 model
             };
+            this.updateMappings();
         });
 
         vrControllerGrip.addEventListener('disconnected', () => {
@@ -109,6 +147,7 @@ export class VRControls {
         vrController.addEventListener('selectstart', () => {
             if (this.ctx.game.controlsState.skipListener) {
                 this.ctx.game.controlsState.skipListener();
+                this.skipping = true;
                 return;
             }
             if (this.activePointer === null) {

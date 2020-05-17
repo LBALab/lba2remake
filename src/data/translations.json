@@ -45,7 +45,12 @@
         "disclaimer3": "This demo website makes use of the original game's assets, with the kind authorization of Frédérick Raynal. The demo may become unavailable at any moment.",
         "1stPerson": "1st person",
         "3rdPerson": "3rd person",
-        "Camera": "Camera"
+        "Camera": "Camera",
+        "vrButton_action": "Action",
+        "vrButton_move": "Move",
+        "vrButton_fpMove": "Move",
+        "vrButton_fpTurn": "Turn",
+        "vrButton_centerCam": "Center Camera"
     },
     "FR": {
         "loading": "Chargement",
@@ -93,6 +98,11 @@
         "disclaimer3": "Ce site de démo utilise les données du jeu original, avec l'aimable autorisation de Frédérick Raynal. La démo est susceptible d'être rendue indisponible à n'importe quel moment.",
         "1stPerson": "1ère personne",
         "3rdPerson": "3ème personne",
-        "Camera": "Camera"
+        "Camera": "Camera",
+        "vrButton_action": "Action",
+        "vrButton_move": "Bouger",
+        "vrButton_fpMove": "Avancer / reculer",
+        "vrButton_fpTurn": "Tourner",
+        "vrButton_centerCam": "Centrer Camera"
     }
 }

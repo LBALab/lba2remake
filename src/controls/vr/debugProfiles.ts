@@ -37,7 +37,7 @@ interface Context {
     xr: WebXRManager;
     controllers: {
         [key: number]: {
-            specs: MotionController;
+            info: MotionController;
             model: ControllerModel;
         }
     };
@@ -59,17 +59,17 @@ function switchProfile(ctx: Context) {
     each(ctx.controllers, async (controller, idx) => {
         const index = Number(idx);
         const controllerGrip = ctx.xr.getControllerGrip(index);
-        const xrInputSource = controller.specs.xrInputSource as any;
+        const xrInputSource = controller.info.xrInputSource as any;
         const inputSource = new MockXRInputSource(
             [vrProfiles[selectedProfile]],
             xrInputSource.gamepad,
             xrInputSource.handedness
         );
-        const specs = await createMotionController(inputSource);
-        const model = await new ControllerModel(specs).load();
+        const info = await createMotionController(inputSource);
+        const model = await new ControllerModel(info).load();
         controllerGrip.remove(controller.model.threeObject);
         controllerGrip.add(model.threeObject);
         controller.model = model;
-        controller.specs = specs;
+        controller.info = info;
     });
 }
