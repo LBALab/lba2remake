@@ -9,6 +9,9 @@ import {
 } from '../../../../../utils/lut';
 import { editor, fullscreen } from '../../../../styles';
 import { loadResource, ResourceType } from '../../../../../resources';
+import FrameListener from '../../../../utils/FrameListener';
+import { TickerProps } from '../../../../utils/Ticker';
+import DebugData from '../../../DebugData';
 
 const style = extend({
     overflowY: 'auto',
@@ -30,10 +33,6 @@ declare global {
     }
 }
 
-interface Props {
-
-}
-
 interface State {
     generating: boolean;
     progress: string;
@@ -45,7 +44,7 @@ interface State {
     lutBuffer?: ArrayBuffer;
 }
 
-export default class PaletteAreaContent extends React.Component<Props, State> {
+export default class PaletteAreaContent extends FrameListener<TickerProps, State> {
     ramp: number;
     palette: Uint8Array;
     lutTexture: THREE.DataTexture;
@@ -60,6 +59,7 @@ export default class PaletteAreaContent extends React.Component<Props, State> {
     ctxLUT: CanvasRenderingContext2D;
     ctxCurves: CanvasRenderingContext2D;
     dragging: boolean;
+    waitForLoading: boolean;
 
     constructor(props) {
         super(props);
@@ -87,18 +87,7 @@ export default class PaletteAreaContent extends React.Component<Props, State> {
 
         this.ramp = 0;
         this.dragging = false;
-
-        loadResource(ResourceType.RESS).then((ress) => {
-            this.palette = new Uint8Array(ress.getEntry(0));
-            this.draw();
-            this.drawLUT();
-            this.drawCurves();
-        });
-
-        loadLUTTexture().then((lutTexture) => {
-            this.lutTexture = lutTexture;
-            this.drawLUT();
-        });
+        this.waitForLoading = true;
 
         this.bbs = [
             {
@@ -108,6 +97,24 @@ export default class PaletteAreaContent extends React.Component<Props, State> {
                 yMax: 14
             }
         ];
+    }
+
+    async load() {
+        const pal = await loadResource(ResourceType.PALETTE);
+        this.palette = pal.getBufferUint8();
+        this.draw();
+        this.lutTexture = await loadLUTTexture();
+        this.drawLUT();
+        this.drawCurves();
+    }
+
+    frame() {
+        if (this.waitForLoading) {
+            if (DebugData.scope.game && !DebugData.scope.game.getUiState().loading) {
+                this.waitForLoading = false;
+                this.load();
+            }
+        }
     }
 
     render() {
