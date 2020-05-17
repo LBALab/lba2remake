@@ -40,7 +40,7 @@ export default class ControllerModel {
                 resolve(m.scene.getObjectByName(`${side}_hand`));
             });
         });
-        // this.threeObject.add(this.handMesh);
+        this.threeObject.add(this.handMesh);
         this.threeObject.add(this.vrControllerMesh);
         this.addTouchPoints();
         // Update all matrices for correct label placement
@@ -53,10 +53,12 @@ export default class ControllerModel {
     }
 
     update(ctx) {
-        const { game } = ctx;
+        const { game, showController } = ctx;
         const { controlsState } = game;
         this.labels1stPerson.visible = !!controlsState.firstPerson;
         this.labels3rdPerson.visible = !controlsState.firstPerson;
+        this.vrControllerMesh.visible = showController;
+        this.handMesh.visible = !showController && !!controlsState.firstPerson;
         each(this.motionController.components, (component: any) => {
             each(component.visualResponses, (visualResponse) => {
                 // Find the topmost node in the visualization
