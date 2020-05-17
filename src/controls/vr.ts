@@ -17,7 +17,7 @@ export class VRControls {
             mappings?: Mappings;
         }
     };
-    pointers: any[];
+    pointers: THREE.Mesh[];
     activePointer: number;
     triggered: boolean;
     skipping: boolean;
@@ -46,11 +46,14 @@ export class VRControls {
 
     update() {
         const { controlsState } = this.ctx.game;
+        const { showMenu, video } = this.ctx.game.getUiState();
+        const showController = showMenu || !!video;
         const scene = this.ctx.sceneManager.getScene();
         const ctx = {
             ...this.ctx,
             scene,
-            camera: scene && scene.camera
+            camera: scene && scene.camera,
+            showController
         };
         controlsState.action = 0;
         each(this.controllers, (controller) => {
@@ -59,6 +62,9 @@ export class VRControls {
             applyMappings(controller.info, controller.mappings, ctx);
         });
         for (let i = 0; i < 2; i += 1) {
+            if (this.pointers[i]) {
+                this.pointers[i].visible = showController && this.activePointer === i;
+            }
             if (this.activePointer === i) {
                 const vrController = this.xr.getController(i);
                 this.ctx.game.controlsState.vrPointerTransform.copy(vrController.matrixWorld);
@@ -129,12 +135,11 @@ export class VRControls {
             pointer.position.set(0, 0, -0.2);
             pointer.rotation.x = -Math.PI / 2;
             pointer.rotation.y = Math.PI / 4;
-            pointer.visible = false;
 
             vrController.add(pointer);
             this.pointers[index] = pointer;
             if (this.activePointer === null) {
-                this.activatePointer(index);
+                this.activePointer = index;
             }
         });
 
@@ -151,21 +156,13 @@ export class VRControls {
                 return;
             }
             if (this.activePointer === null) {
-                this.activatePointer(index);
+                this.activePointer = index;
             }
             if (this.activePointer !== index) {
-                this.activatePointer(index);
+                this.activePointer = index;
             } else {
                 this.triggered = true;
             }
         });
-    }
-
-    activatePointer(idx) {
-        this.activePointer = idx;
-        if (this.pointers[1 - idx]) {
-            this.pointers[1 - idx].visible = false;
-        }
-        this.pointers[idx].visible = true;
     }
 }
