@@ -10,12 +10,18 @@ const loader = new GLTFLoader();
 const CENTER = new THREE.Vector3(0, -0.03, -0.02);
 const RADIUS = 0.08;
 
+const keys1stPerson = ['fpMove', 'fpTurn'];
+const keys3rdPerson = ['move', 'centerCam'];
+
 export default class ControllerModel {
     motionController: MotionController;
     threeObject: THREE.Object3D;
     vrControllerMesh: THREE.Object3D;
     handMesh: THREE.Object3D;
     labels: THREE.Object3D;
+    labels1stPerson: THREE.Object3D;
+    labels3rdPerson: THREE.Object3D;
+    labelsCommon: THREE.Object3D;
 
     constructor(motionController) {
         this.motionController = motionController;
@@ -46,7 +52,11 @@ export default class ControllerModel {
         return this;
     }
 
-    update() {
+    update(ctx) {
+        const { game } = ctx;
+        const { controlsState } = game;
+        this.labels1stPerson.visible = !!controlsState.firstPerson;
+        this.labels3rdPerson.visible = !controlsState.firstPerson;
         each(this.motionController.components, (component: any) => {
             each(component.visualResponses, (visualResponse) => {
                 // Find the topmost node in the visualization
@@ -97,6 +107,12 @@ export default class ControllerModel {
             this.vrControllerMesh.remove(this.labels);
         }
         this.labels = new THREE.Object3D();
+        this.labels1stPerson = new THREE.Object3D();
+        this.labels3rdPerson = new THREE.Object3D();
+        this.labelsCommon = new THREE.Object3D();
+        this.labels.add(this.labels1stPerson);
+        this.labels.add(this.labels3rdPerson);
+        this.labels.add(this.labelsCommon);
         this.vrControllerMesh.add(this.labels);
         const { components } = this.motionController;
         each(mappings, (mapping, key) => {
@@ -114,7 +130,13 @@ export default class ControllerModel {
                 const position = new THREE.Vector3();
                 position.applyMatrix4(cmpModel.matrixWorld);
                 const label = makeLabel(CENTER, position, RADIUS, tr(`vrButton_${key}`));
-                this.labels.add(label);
+                if (keys1stPerson.includes(key)) {
+                    this.labels1stPerson.add(label);
+                } else if (keys3rdPerson.includes(key)) {
+                    this.labels3rdPerson.add(label);
+                } else {
+                    this.labelsCommon.add(label);
+                }
             }
         });
     }

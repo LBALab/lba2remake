@@ -55,7 +55,7 @@ export class VRControls {
         controlsState.action = 0;
         each(this.controllers, (controller) => {
             controller.info.updateFromGamepad();
-            controller.model.update();
+            controller.model.update(ctx);
             applyMappings(controller.info, controller.mappings, ctx);
         });
         for (let i = 0; i < 2; i += 1) {
