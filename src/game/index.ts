@@ -35,7 +35,7 @@ export function createGame(
             cameraOrientation: new THREE.Quaternion(),
             cameraHeadOrientation: new THREE.Quaternion(),
             freeCamera: false,
-            relativeToCam: false,
+            relativeToCam: vr,
             firstPerson: vr && getSavedVRFirstPersonMode(),
             action: 0,
             jump: 0,
