@@ -224,7 +224,7 @@ function handleGroundIntersection(intersect, triggered, {game, sceneManager}) {
                     newHero.threeObject.position.copy(POS);
                 });
             game.setUiState({teleportMenu: false});
-            history.pushState({id: 'game'}, '');
+            history.replaceState({id: 'game'}, '');
         }
     }
 }
