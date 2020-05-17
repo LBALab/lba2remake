@@ -70,6 +70,7 @@ function menuHandler(intersect, triggered, ctx) {
     if (triggered) {
         if (object.userData && object.userData.callback) {
             object.userData.callback(ctx);
+            object.userData.onLeave();
         }
     }
     if (!hovering.has(object.uuid)) {
