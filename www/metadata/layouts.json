@@ -439,11 +439,41 @@
       "file": "117_paper_rolls_container.glb",
       "orientation": 0
     },
+    "119": {
+      "replace": true,
+      "file": "119_127_128_book_glass_cabinet.glb",
+      "orientation": 0
+    },
+    "120": {
+      "replace": true,
+      "file": "120_tunic_glass_cabinet_bottom.glb",
+      "orientation": 0
+    },
+    "121": {
+      "replace": true,
+      "file": "121_tunic_glass_cabinet_top.glb",
+      "orientation": 0
+    },
     "122": {
       "mirror": true
     },
+    "123": {
+      "replace": true,
+      "file": "123_bloop_boxes.glb",
+      "orientation": 0
+    },
     "126": {
       "mirror": true
+    },
+    "127": {
+      "replace": true,
+      "file": "119_127_128_book_glass_cabinet.glb",
+      "orientation": 1
+    },
+    "128": {
+      "replace": true,
+      "file": "119_127_128_book_glass_cabinet.glb",
+      "orientation": 2
     },
     "142": {
       "mirror": true
