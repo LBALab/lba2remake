@@ -48,6 +48,9 @@ function toggleJump(hero, value) {
 }
 
 let turnReset = true;
+const BASE_ANGLE = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+const Q = new THREE.Quaternion();
+const EULER = new THREE.Euler();
 
 function processFirstPersonsMovement(controlsState, scene, hero) {
     let animIndex = hero.props.animIndex;
@@ -86,13 +89,13 @@ function processFirstPersonsMovement(controlsState, scene, hero) {
         }
     }
     if (!hero.props.runtimeFlags.isJumping) {
-        const orientation = onlyY(scene.camera.threeCamera.quaternion);
-        const euler = new THREE.Euler();
-        euler.setFromQuaternion(orientation, 'YXZ');
-        hero.physics.orientation.setFromEuler(euler);
-        const baseEuler = new THREE.Euler();
-        baseEuler.setFromQuaternion(scene.camera.controlNode.quaternion, 'YXZ');
-        hero.physics.temp.angle = baseEuler.y + euler.y;
+        const threeCamera = scene.camera.threeCamera;
+        Q.setFromRotationMatrix(threeCamera.matrixWorld);
+        Q.multiply(BASE_ANGLE);
+        const orientation = onlyY(Q);
+        EULER.setFromQuaternion(orientation, 'YXZ');
+        hero.physics.orientation.setFromEuler(EULER);
+        hero.physics.temp.angle = EULER.y;
     }
     if (hero.props.animIndex !== animIndex) {
         hero.props.animIndex = animIndex;
@@ -225,7 +228,6 @@ const FLAT_CAM = new THREE.Object3D();
 const HERO_POS = new THREE.Vector3();
 const UP = new THREE.Vector3(0, 1, 0);
 const QUAT = new THREE.Quaternion();
-const EULER = new THREE.Euler();
 
 function processCamRelativeMovement(controlsState, scene, hero, animIndex) {
     if (controlsState.relativeToCam) {
