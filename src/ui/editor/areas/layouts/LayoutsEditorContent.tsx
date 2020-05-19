@@ -661,7 +661,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         const area = await findAllVariants({
             index,
             library,
-            blocks: layout.props.blocks
+            props: layout.props
         }, (variant) => {
             LayoutsEditorContent.instance.loadLayout(library, index, variant);
         });

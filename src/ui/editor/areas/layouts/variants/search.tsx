@@ -1,4 +1,17 @@
-import { map, times, flatten, find, reduce, each, uniqBy } from 'lodash';
+import * as React from 'react';
+import {
+    map,
+    filter,
+    times,
+    flatten,
+    find,
+    reduce,
+    each,
+    uniqBy,
+    mapValues,
+    groupBy,
+    uniq
+} from 'lodash';
 import { makeOutlinerArea } from '../../utils/outliner';
 import { loadSceneMapData } from '../../../../../scene/map';
 import { bits } from '../../../../../utils';
@@ -39,9 +52,16 @@ async function findAllVariantsInSceneList(lDef, select) {
         })
     );
     const allVariants = flatten(variantsByScenes);
-    const variants = uniqBy(allVariants, 'key');
+    const scenesByKey = mapValues(
+        groupBy(allVariants, 'key'),
+        v => uniq(map(v, 'scene.index'))
+    );
+    const variants = filter(
+        uniqBy(allVariants, 'key'),
+        v => !matchesDefaultLayout(v, lDef.props)
+    );
     return map(variants, (variant, idx) => {
-        const { nX, nY, nZ, blocks } = variant;
+        const { nX, nY, nZ, key, blocks } = variant;
         return {
             name: `Variant ${idx + 1} (${nX}x${nY}x${nZ})`,
             onClick: () => {
@@ -53,6 +73,20 @@ async function findAllVariantsInSceneList(lDef, select) {
                     blocks
                 });
             },
+            props: [
+                {
+                    id: 'index',
+                    value: scenesByKey[key],
+                    render: scenes => <React.Fragment>
+                        {map(scenes, scene => <React.Fragment key={scene}>
+                            <span>
+                                {scene}
+                            </span>
+                            &nbsp;
+                        </React.Fragment>
+                        )}</React.Fragment>
+                }
+            ],
             children: []
         };
     });
@@ -76,7 +110,7 @@ async function findAllVariantsInScene(bkg, lDef, layout, indexInfo) {
             const blocks = isoScenery[c];
             for (let y = 0; y < blocks.length; y += 1) {
                 if (blocks[y] !== -1) {
-                    const block = lDef.blocks[blocks[y]];
+                    const block = lDef.props.blocks[blocks[y]];
                     const brick = block && block.brick;
                     const cell = {x, y, z, brick};
                     const variant = find(
@@ -194,6 +228,27 @@ async function loadIsometricSceneryForSearch(bkg, libraryIdx, entry, tgtLayout) 
         });
     }
     return null;
+}
+
+function matchesDefaultLayout(variant, layout) {
+    const {nX, nY, nZ} = layout;
+    if (nX !== variant.nX || nY !== variant.nY || nZ !== variant.nZ) {
+        return false;
+    }
+    let c = 0;
+    for (let z = 0; z < nZ; z += 1) {
+        for (let y = 0; y < nY; y += 1) {
+            for (let x = 0; x < nX; x += 1, c += 1) {
+                if (!variant.blocks[c]) {
+                    continue;
+                }
+                if (variant.blocks[c].brick !== layout.blocks[c].brick) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 function loadLayout(bkg, layout) {
