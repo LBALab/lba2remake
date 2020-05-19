@@ -31,6 +31,8 @@ import {
     preloadResources,
     registerResources
 } from '../../../../resources';
+import { findAllVariants } from './variants/search';
+import { Orientation } from '../../layout';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -44,11 +46,13 @@ interface Props extends TickerProps {
         grid: boolean;
     };
     stateHandler: any;
+    split: (orientation: number, newContent: any) => void;
 }
 
 interface State {
     layout?: any;
     library?: any;
+    variant?: any;
     renderer?: any;
     scene: any;
     clock: THREE.Clock;
@@ -82,7 +86,8 @@ const infoStyle = {
     left: 0,
     right: 0,
     bottom: 0,
-    height: 100
+    height: 100,
+    borderTop: '1px solid white'
 };
 
 const applyChangesStyle = {
@@ -91,9 +96,22 @@ const applyChangesStyle = {
     bottom: 100
 };
 
+const findVariantsStyle = {
+    position: 'absolute' as const,
+    right: 0,
+    bottom: 100
+};
+
 const infoButton = {
     margin: '2px 4px',
     padding: '5px 10px'
+};
+
+const mainInfoButton = {
+    margin: '4px',
+    padding: '5px 10px',
+    color: 'white',
+    background: 'rgb(45, 45, 48)'
 };
 
 const fileSelectorWrapper = Object.assign({}, fullscreen, {
@@ -140,6 +158,8 @@ const loader = new GLTFLoader();
 let layoutsMetadata = null;
 
 export default class LayoutsEditorContent extends FrameListener<Props, State> {
+    static instance = null;
+
     mouseSpeed: {
         x: number;
         y: number;
@@ -175,6 +195,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.setMirror = this.setMirror.bind(this);
         this.setShowOriginal = this.setShowOriginal.bind(this);
         this.applyChanges = this.applyChanges.bind(this);
+        this.findVariants = this.findVariants.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -186,6 +207,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
 
         if (props.mainData) {
             this.state = props.mainData.state;
+            this.library = props.mainData.library;
+            this.layout = props.mainData.layout;
         } else {
             const camera = getIsometricCamera();
             const scene = {
@@ -230,6 +253,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         if (this.props.saveMainData) {
             DebugData.scope = this.state;
             this.props.saveMainData({
+                library: this.library,
+                layout: this.layout,
                 state: this.state,
                 canvas: this.canvas
             });
@@ -268,6 +293,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     componentWillMount() {
         super.componentWillMount();
         window.addEventListener('keydown', this.listener);
+        LayoutsEditorContent.instance = this;
     }
 
     componentWillUnmount() {
@@ -310,7 +336,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    async loadLayout(libraryIdx, layoutIdx) {
+    async loadLayout(libraryIdx, layoutIdx, variant = null) {
         if (this.loading) {
             return;
         }
@@ -332,11 +358,14 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         const bricks = loadBricks(bkg);
         const library = loadLibrary(bkg, bricks, this.mask, palette, libraryIdx);
         const layoutProps = library.layouts[layoutIdx];
-        const layoutMesh = await loadLayoutMesh(library, layoutIdx);
+        const layoutMesh = variant
+            ? await loadVariantMesh(library, variant)
+            : await loadLayoutMesh(library, layoutIdx);
         const layoutObj = {
             index: layoutIdx,
             props: layoutProps,
-            threeObject: layoutMesh
+            threeObject: layoutMesh,
+            variant
         };
         const {
             layout: oldLayout,
@@ -354,7 +383,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             DebugData.scope.layoutsMetadata = layoutsMetadata;
         }
         let lSettings = null;
-        if (libraryIdx in layoutsMetadata
+        if (variant === null
+            && libraryIdx in layoutsMetadata
             && layoutIdx in layoutsMetadata[libraryIdx]) {
             lSettings = cloneDeep(layoutsMetadata[libraryIdx][layoutIdx]);
         }
@@ -552,6 +582,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             {this.renderInfo()}
             {this.renderFileSelector()}
             {this.renderApplyButton()}
+            {this.renderFindVariantsButton()}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
         </div>;
     }
@@ -602,11 +633,39 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         return <div style={applyChangesStyle}>
             {this.state.updateProgress
                 ? <div style={progressStyle}>{this.state.updateProgress}</div>
-                : <button style={infoButton} onClick={this.applyChanges}>
+                : <button style={mainInfoButton} onClick={this.applyChanges}>
                     Apply changes
                 </button>
             }
         </div>;
+    }
+
+    renderFindVariantsButton() {
+        const {layout} = this.state;
+        if (!layout) {
+            return null;
+        }
+        return <div style={findVariantsStyle}>
+            <button style={mainInfoButton} onClick={this.findVariants}>
+                Find variants
+            </button>
+        </div>;
+    }
+
+    async findVariants() {
+        const { layout: index, library } = this;
+        const { layout } = this.state;
+        if (!layout) {
+            return null;
+        }
+        const area = await findAllVariants({
+            index,
+            library,
+            blocks: layout.props.blocks
+        }, (variant) => {
+            LayoutsEditorContent.instance.loadLayout(library, index, variant);
+        });
+        this.props.split(Orientation.HORIZONTAL, area);
     }
 
     async applyChanges() {
@@ -738,11 +797,19 @@ async function loadModel(file) : Promise<GLTF> {
 }
 
 async function loadLayoutMesh(library, layoutIdx, loadForExporting = false) {
+    const defaultVariant = {
+        id: layoutIdx,
+        ...library.layouts[layoutIdx]
+    };
+    return loadVariantMesh(library, defaultVariant, loadForExporting);
+}
+
+async function loadVariantMesh(library, group, loadForExporting = false) {
     const h = 0.5;
     const positions = [];
     const uvs = [];
     const {width, height} = library.texture.image;
-    const {nX, nY, nZ, blocks} = library.layouts[layoutIdx];
+    const {id, nX, nY, nZ, blocks} = group;
     let idx = 0;
     for (let z = 0; z < nZ; z += 1) {
         for (let y = 0; y < nY; y += 1) {
@@ -833,7 +900,7 @@ async function loadLayoutMesh(library, layoutIdx, loadForExporting = false) {
     mesh.position.set(nZ * 0.5 * scale, 0, -nX * 0.5 * scale);
     mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
     mesh.frustumCulled = false;
-    mesh.name = `layout_${layoutIdx}`;
+    mesh.name = `layout_${id}`;
 
     return mesh;
 }

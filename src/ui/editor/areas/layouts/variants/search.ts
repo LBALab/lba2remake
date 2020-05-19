@@ -1,0 +1,228 @@
+import { map, times, flatten, find, reduce, each, uniqBy } from 'lodash';
+import { makeOutlinerArea } from '../../utils/outliner';
+import { loadSceneMapData } from '../../../../../scene/map';
+import { bits } from '../../../../../utils';
+import { loadResource, ResourceType } from '../../../../../resources';
+
+export async function findAllVariants(layoutDef, select) {
+    const scenesWithVariants = await findAllVariantsInSceneList(layoutDef, select);
+    return makeOutlinerArea(
+        `variants_of_layout${layoutDef.index}`,
+        `Variants of layout ${layoutDef.index}`,
+        {
+            name: `Variants of layout ${layoutDef.index}`,
+            children: scenesWithVariants
+        },
+        {
+            icon: 'ref.png'
+        }
+    );
+}
+
+async function findAllVariantsInSceneList(lDef, select) {
+    const sceneList = times(222);
+    const sceneMap = await loadSceneMapData();
+    const bkg = await loadResource(ResourceType.BRICKS);
+    const layout = loadLayout(bkg, lDef);
+    const variantsByScenes = await Promise.all(
+        map(sceneList, async (scene) => {
+            const indexInfo = sceneMap[scene];
+            if (indexInfo.isIsland) {
+                return [];
+            }
+            return findAllVariantsInScene(
+                bkg,
+                lDef,
+                layout,
+                indexInfo
+            );
+        })
+    );
+    const allVariants = flatten(variantsByScenes);
+    const variants = uniqBy(allVariants, 'key');
+    return map(variants, (variant, idx) => {
+        const { nX, nY, nZ, blocks } = variant;
+        return {
+            name: `Variant ${idx + 1} (${nX}x${nY}x${nZ})`,
+            onClick: () => {
+                select({
+                    id: `variant_${idx}`,
+                    nX,
+                    nY,
+                    nZ,
+                    blocks
+                });
+            },
+            children: []
+        };
+    });
+}
+
+async function findAllVariantsInScene(bkg, lDef, layout, indexInfo) {
+    const isoScenery = await loadIsometricSceneryForSearch(
+        bkg,
+        lDef.library,
+        indexInfo.index,
+        layout
+    );
+    if (!isoScenery) {
+        return [];
+    }
+
+    let c = 0;
+    const variants = [];
+    for (let z = 0; z < 64; z += 1) {
+        for (let x = 0; x < 64; x += 1) {
+            const blocks = isoScenery[c];
+            for (let y = 0; y < blocks.length; y += 1) {
+                if (blocks[y] !== -1) {
+                    const block = lDef.blocks[blocks[y]];
+                    const brick = block && block.brick;
+                    const cell = {x, y, z, brick};
+                    const variant = find(
+                        variants,
+                        v => find(
+                            v,
+                            ({x: ix, y: iy, z: iz}) =>
+                                Math.abs(x - ix) <= 1
+                                && Math.abs(y - iy) <= 1
+                                && Math.abs(z - iz) <= 1
+                        )
+                    );
+                    if (variant) {
+                        variant.push(cell);
+                    } else {
+                        variants.push([cell]);
+                    }
+                }
+            }
+            c += 1;
+        }
+    }
+    const getRange = (variant, prop) => reduce(variant, (r, cell) => {
+        return {
+            min: Math.min(cell[prop], r.min),
+            max: Math.max(cell[prop], r.max),
+        };
+    }, {
+        min: Infinity,
+        max: -Infinity
+    });
+    const dim = r => (r.max - r.min) + 1;
+    return map(variants, (variant) => {
+        const xRange = getRange(variant, 'x');
+        const yRange = getRange(variant, 'y');
+        const zRange = getRange(variant, 'z');
+        const nX = dim(xRange);
+        const nY = dim(yRange);
+        const nZ = dim(zRange);
+        const blocks = [];
+        each(variant, (cell) => {
+            const x = cell.x - xRange.min;
+            const y = cell.y - yRange.min;
+            const z = cell.z - zRange.min;
+            const idx = x + y * nX + z * nX * nY;
+            blocks[idx] = { brick: cell.brick };
+        });
+        return {
+            nX,
+            nY,
+            nZ,
+            key: `${nX}x${nY}x${nZ}:${map(blocks, b => b ? b.brick : -1).join(',')}`,
+            blocks,
+            scene: indexInfo
+        };
+    });
+}
+
+async function loadIsometricSceneryForSearch(bkg, libraryIdx, entry, tgtLayout) {
+    const gridData = new DataView(bkg.getEntry(entry + 1));
+    const libIndex = gridData.getUint8(0);
+    if (libIndex === libraryIdx) {
+        const maxOffset = 34 + (4096 * 2);
+        const offsets = [];
+        for (let i = 34; i < maxOffset; i += 2) {
+            offsets.push(gridData.getUint16(i, true) + 34);
+        }
+        return map(offsets, (offset) => {
+            const blocks = [];
+            const numColumns = gridData.getUint8(offset);
+            offset += 1;
+            for (let i = 0; i < numColumns; i += 1) {
+                const flags = gridData.getUint8(offset);
+                offset += 1;
+                const type = bits(flags, 6, 2);
+                const height = bits(flags, 0, 5) + 1;
+
+                const block = type === 2 ? {
+                    layout: gridData.getUint8(offset) - 1,
+                    block: gridData.getUint8(offset + 1)
+                } : null;
+
+                if (block)
+                    offset += 2;
+
+                for (let j = 0; j < height; j += 1) {
+                    switch (type) {
+                        case 0:
+                            blocks.push(-1);
+                            break;
+                        case 1: {
+                            const layout = gridData.getUint8(offset) - 1;
+                            if (layout === tgtLayout.index) {
+                                blocks.push(gridData.getUint8(offset + 1));
+                            } else {
+                                blocks.push(-1);
+                            }
+
+                            offset += 2;
+                            break;
+                        }
+                        case 2:
+                            if (block && block.layout === tgtLayout.index) {
+                                blocks.push(block.block);
+                            } else {
+                                blocks.push(-1);
+                            }
+                            break;
+                        case 3:
+                            throw new Error('Unsupported block type');
+                    }
+                }
+            }
+            return blocks;
+        });
+    }
+    return null;
+}
+
+function loadLayout(bkg, layout) {
+    const buffer = bkg.getEntry(179 + layout.library);
+
+    const dataView = new DataView(buffer);
+    const numLayouts = dataView.getUint32(0, true) / 4;
+    const { index } = layout;
+
+    const offset = dataView.getUint32(index * 4, true);
+    const nextOffset = index === numLayouts - 1 ?
+        dataView.byteLength
+        : dataView.getUint32((index + 1) * 4, true);
+
+    const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
+    const nX = layoutDataView.getUint8(0);
+    const nY = layoutDataView.getUint8(1);
+    const nZ = layoutDataView.getUint8(2);
+    const numBricks = nX * nY * nZ;
+    const bricks = [];
+    const lOffset = 3;
+    for (let i = 0; i < numBricks; i += 1) {
+        bricks.push(layoutDataView.getUint16(lOffset + (i * 4) + 2, true));
+    }
+    return {
+        index,
+        nX,
+        nY,
+        nZ,
+        bricks
+    };
+}
