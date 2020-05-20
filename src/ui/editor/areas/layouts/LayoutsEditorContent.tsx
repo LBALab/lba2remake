@@ -471,11 +471,17 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
 
     async export() {
         const { layout, library } = this.state;
+        const { variant } = this.props.sharedState;
         if (library && layout) {
-            const meshToExport = await loadLayoutMesh(library, layout.index, true);
+            const meshToExport = variant
+                ? await loadVariantMesh(library, variant, true)
+                : await loadLayoutMesh(library, layout.index, true);
             exporter.parse(meshToExport, (dae) => {
                 const blob = new Blob([dae.data], {type: 'application/xml;charset=utf-8'});
-                saveAs(blob, `layout_${library.index}_${layout.index}.dae`);
+                const suffix = variant
+                    ? `_variant${variant.id}`
+                    : '';
+                saveAs(blob, `layout_${library.index}_${layout.index}${suffix}.dae`);
             }, {});
         }
     }
@@ -572,9 +578,9 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         >
             <div ref={this.onLoad} style={canvasStyle}/>
             {this.renderInfo()}
-            {this.renderFileSelector()}
             {this.renderApplyButton()}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
+            {this.renderFileSelector()}
         </div>;
     }
 
@@ -598,7 +604,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                 {this.renderReplacementData()}
                 <div style={{position: 'absolute', right: 0, top: 2, textAlign: 'right'}}>
                     <button style={infoButton} onClick={this.export}>
-                        Download layout
+                        Download {variant ? 'variant' : 'layout'}
                     </button>
                     <br/>
                     <button style={infoButton} onClick={this.exportTexture}>
