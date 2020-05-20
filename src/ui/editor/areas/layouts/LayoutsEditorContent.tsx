@@ -77,7 +77,8 @@ const canvasStyle = {
     top: 0,
     left: 0,
     right: 0,
-    bottom: 100
+    bottom: 100,
+    background: 'black'
 };
 
 const infoStyle = {
@@ -125,8 +126,8 @@ const fileInnerWrapper = {
 
 const fileStyle = {
     cursor: 'pointer' as const,
-    fontSize: 24,
-    lineHeight: '32px',
+    fontSize: 16,
+    lineHeight: '20px',
 };
 
 const dataBlock = {
