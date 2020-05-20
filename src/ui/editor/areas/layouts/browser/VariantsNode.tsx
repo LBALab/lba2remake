@@ -5,12 +5,13 @@ import { findAllVariants } from '../variants/search';
 
 const scenesStyle = {
     position: 'absolute' as const,
-    bottom: 2,
-    right: 2,
-    color: 'rgba(200, 255, 255, 0.8)',
+    bottom: 1,
+    left: 60,
+    color: 'rgb(255, 200, 200)',
     fontSize: '12px',
-    background: 'rgba(0, 0, 0, 0.2)',
-    padding: '0 2px'
+    borderRadius: 2,
+    background: 'rgba(0, 0, 0, 0.8)',
+    padding: '2px 4px'
 };
 
 const sizeStyle = {
@@ -83,8 +84,8 @@ const VariantNode = {
         {
             id: 'scenes',
             value: data.scenes,
-            render: scenes => <div style={scenesStyle}>
-                {scenes && scenes.length && 'Scenes:'}
+            render: scenes => scenes && scenes.length && <div style={scenesStyle}>
+                Scenes:
                 {map(scenes, scene => <React.Fragment key={scene}>
                     &nbsp;
                     <span>
