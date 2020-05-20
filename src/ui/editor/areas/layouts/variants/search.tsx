@@ -16,6 +16,10 @@ import { bits } from '../../../../../utils';
 import { loadResource, ResourceType } from '../../../../../resources';
 
 export async function findAllVariants(lDef) {
+    const { nX, nY, nZ } = lDef.props;
+    if (nX === 1 && nY === 1 && nZ === 1) {
+        return [];
+    }
     const sceneList = times(222);
     const sceneMap = await loadSceneMapData();
     const bkg = await loadResource(ResourceType.BRICKS);
