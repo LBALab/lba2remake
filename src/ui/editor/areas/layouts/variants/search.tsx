@@ -101,6 +101,7 @@ async function findAllVariantsInScene(bkg, lDef, layout, indexInfo) {
             c += 1;
         }
     }
+    mergeTouchingVariants(variants);
     const getRange = (variant, prop) => reduce(variant, (r, cell) => {
         return {
             min: Math.min(cell[prop], r.min),
@@ -135,6 +136,44 @@ async function findAllVariantsInScene(bkg, lDef, layout, indexInfo) {
             scene: indexInfo
         };
     });
+}
+
+function mergeTouchingVariants(variants) {
+    for (let i = 0; i < variants.length; i += 1) {
+        const variant = variants[i];
+        const mergeWith = [];
+        for (let j = 0; j < variants.length; j += 1) {
+            if (j === i) {
+                continue;
+            }
+            let needsMerge = true;
+            const otherVariant = variants[j];
+            for (let k = 0; k < variant.length; k += 1) {
+                const {x, y, z} = variant[k];
+                const match = find(
+                    otherVariant,
+                    ({x: ix, y: iy, z: iz}) =>
+                        Math.abs(x - ix) <= 1
+                        && Math.abs(y - iy) <= 1
+                        && Math.abs(z - iz) <= 1
+                );
+                if (!match) {
+                    needsMerge = false;
+                    break;
+                }
+            }
+            if (needsMerge) {
+                mergeWith.push(j);
+            }
+        }
+        each(mergeWith, (tgt) => {
+            variants[tgt].push.apply(variants[tgt], variant);
+        });
+        if (mergeWith.length > 0) {
+            variants.splice(i, 1);
+            i -= 1;
+        }
+    }
 }
 
 async function loadIsometricSceneryForSearch(bkg, libraryIdx, entry, tgtLayout) {
