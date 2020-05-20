@@ -375,10 +375,13 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             DebugData.scope.layoutsMetadata = layoutsMetadata;
         }
         let lSettings = null;
-        if (variant === null
-            && libraryIdx in layoutsMetadata
-            && layoutIdx in layoutsMetadata[libraryIdx]) {
-            lSettings = cloneDeep(layoutsMetadata[libraryIdx][layoutIdx]);
+        if (libraryIdx in layoutsMetadata) {
+            if (variant) {
+                const key = `${layoutIdx}:${variant.key}`;
+                lSettings = cloneDeep(layoutsMetadata[libraryIdx][key]);
+            } else if (layoutIdx in layoutsMetadata[libraryIdx]) {
+                lSettings = cloneDeep(layoutsMetadata[libraryIdx][layoutIdx]);
+            }
         }
         if (lSettings && lSettings.replace) {
             const model = await loadModel(lSettings.file);
@@ -508,8 +511,11 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             threeScene.remove(oldSettings.threeObject);
         }
         this.state.layout.threeObject.visible = true;
-        const { library, layout } = this.props.sharedState;
-        delete layoutsMetadata[library][layout];
+        const { library, layout, variant } = this.props.sharedState;
+        const key = variant
+            ? `${layout}:${variant.key}`
+            : layout;
+        delete layoutsMetadata[library][key];
         await this.saveMetadata();
         this.setState({ lSettings: null , showOriginal: true });
     }
@@ -521,6 +527,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     async useFile(file) {
         this.setState({ replacementFiles: null });
         const model = await loadModel(file);
+        const { variant } = this.props.sharedState;
         const { threeScene } = this.state.scene;
         const oldSettings = this.state.lSettings;
         if (oldSettings) {
@@ -547,7 +554,10 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         if (!(library in layoutsMetadata)) {
             layoutsMetadata[library] = {};
         }
-        layoutsMetadata[library][layout] = omit(lSettings, 'threeObject');
+        const key = variant
+            ? `${layout}:${variant.key}`
+            : layout;
+        layoutsMetadata[library][key] = omit(lSettings, 'threeObject');
         await this.saveMetadata();
         threeScene.add(lSettings.threeObject);
         this.setState({ lSettings, showOriginal: false });
@@ -661,7 +671,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         if (!lSettings || !lSettings.replace) {
             return;
         }
-        const { library, layout } = this.props.sharedState;
+        const { library, layout, variant } = this.props.sharedState;
         lSettings.orientation = Number(e.target.value);
         lSettings.threeObject.quaternion.setFromAxisAngle(
             new THREE.Vector3(0, 1, 0),
@@ -676,28 +686,37 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             }
         });
         this.setState({lSettings});
-        layoutsMetadata[library][layout].orientation = lSettings.orientation;
+        const key = variant
+            ? `${layout}:${variant.key}`
+            : layout;
+        layoutsMetadata[library][key].orientation = lSettings.orientation;
         await this.saveMetadata();
     }
 
     async setMirror(e) {
-        const { library, layout } = this.props.sharedState;
+        const { library, layout, variant } = this.props.sharedState;
         this.setState({lSettings: { mirror: e.target.checked }});
         if (!(library in layoutsMetadata)) {
             layoutsMetadata[library] = {};
         }
-        layoutsMetadata[library][layout] = { mirror: e.target.checked };
+        const key = variant
+            ? `${layout}:${variant.key}`
+            : layout;
+        layoutsMetadata[library][key] = { mirror: e.target.checked };
         await this.saveMetadata();
     }
 
     async toggleMirror() {
-        const { library, layout } = this.props.sharedState;
+        const { library, layout, variant } = this.props.sharedState;
         const mirror = this.state.lSettings ? !this.state.lSettings.mirror : true;
         this.setState({lSettings: { mirror }});
         if (!(library in layoutsMetadata)) {
             layoutsMetadata[library] = {};
         }
-        layoutsMetadata[library][layout] = { mirror };
+        const key = variant
+            ? `${layout}:${variant.key}`
+            : layout;
+        layoutsMetadata[library][key] = { mirror };
         await this.saveMetadata();
     }
 
