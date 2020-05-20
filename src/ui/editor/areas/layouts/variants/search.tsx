@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
     map,
     filter,
@@ -12,27 +11,11 @@ import {
     groupBy,
     uniq
 } from 'lodash';
-import { makeOutlinerArea } from '../../utils/outliner';
 import { loadSceneMapData } from '../../../../../scene/map';
 import { bits } from '../../../../../utils';
 import { loadResource, ResourceType } from '../../../../../resources';
 
-export async function findAllVariants(layoutDef, select) {
-    const scenesWithVariants = await findAllVariantsInSceneList(layoutDef, select);
-    return makeOutlinerArea(
-        `variants_of_layout${layoutDef.index}`,
-        `Variants of layout ${layoutDef.index}`,
-        {
-            name: `Variants of layout ${layoutDef.index}`,
-            children: scenesWithVariants
-        },
-        {
-            icon: 'ref.png'
-        }
-    );
-}
-
-async function findAllVariantsInSceneList(lDef, select) {
+export async function findAllVariants(lDef) {
     const sceneList = times(222);
     const sceneMap = await loadSceneMapData();
     const bkg = await loadResource(ResourceType.BRICKS);
@@ -60,36 +43,7 @@ async function findAllVariantsInSceneList(lDef, select) {
         uniqBy(allVariants, 'key'),
         v => !matchesDefaultLayout(v, lDef.props)
     );
-    return map(variants, (variant, idx) => {
-        const { nX, nY, nZ, key, blocks } = variant;
-        return {
-            name: `Variant ${idx + 1} (${nX}x${nY}x${nZ})`,
-            onClick: () => {
-                select({
-                    id: `variant_${idx}`,
-                    nX,
-                    nY,
-                    nZ,
-                    blocks
-                });
-            },
-            props: [
-                {
-                    id: 'index',
-                    value: scenesByKey[key],
-                    render: scenes => <React.Fragment>
-                        {map(scenes, scene => <React.Fragment key={scene}>
-                            <span>
-                                {scene}
-                            </span>
-                            &nbsp;
-                        </React.Fragment>
-                        )}</React.Fragment>
-                }
-            ],
-            children: []
-        };
-    });
+    return map(variants, (v, idx) => ({id: idx + 1, ...v, scenes: scenesByKey[v.key]}));
 }
 
 async function findAllVariantsInScene(bkg, lDef, layout, indexInfo) {

@@ -31,8 +31,6 @@ import {
     preloadResources,
     registerResources
 } from '../../../../resources';
-import { findAllVariants } from './variants/search';
-import { Orientation } from '../../layout';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -44,6 +42,7 @@ interface Props extends TickerProps {
         rotateView: boolean;
         wireframe: boolean;
         grid: boolean;
+        variant?: any;
     };
     stateHandler: any;
     split: (orientation: number, newContent: any) => void;
@@ -93,12 +92,6 @@ const infoStyle = {
 const applyChangesStyle = {
     position: 'absolute' as const,
     left: 0,
-    bottom: 100
-};
-
-const findVariantsStyle = {
-    position: 'absolute' as const,
-    right: 0,
     bottom: 100
 };
 
@@ -158,8 +151,6 @@ const loader = new GLTFLoader();
 let layoutsMetadata = null;
 
 export default class LayoutsEditorContent extends FrameListener<Props, State> {
-    static instance = null;
-
     mouseSpeed: {
         x: number;
         y: number;
@@ -169,6 +160,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     canvas: HTMLCanvasElement;
     library: number;
     layout: number;
+    variant: any;
     wireframe: boolean;
     moving: boolean;
     moved: boolean;
@@ -195,7 +187,6 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.setMirror = this.setMirror.bind(this);
         this.setShowOriginal = this.setShowOriginal.bind(this);
         this.applyChanges = this.applyChanges.bind(this);
-        this.findVariants = this.findVariants.bind(this);
 
         this.mouseSpeed = {
             x: 0,
@@ -293,7 +284,6 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     componentWillMount() {
         super.componentWillMount();
         window.addEventListener('keydown', this.listener);
-        LayoutsEditorContent.instance = this;
     }
 
     componentWillUnmount() {
@@ -343,6 +333,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.loading = true;
         this.layout = layoutIdx;
         this.library = libraryIdx;
+        this.variant = variant;
         const [pal, bkg, lutTexture] = await Promise.all([
             loadResource(ResourceType.PALETTE),
             loadResource(ResourceType.BRICKS),
@@ -439,9 +430,9 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
 
     frame() {
         const { layout: layoutObj, renderer, clock, scene, grid } = this.state;
-        const { layout, library, wireframe } = this.props.sharedState;
-        if (this.library !== library || this.layout !== layout) {
-            this.loadLayout(library, layout);
+        const { layout, library, variant, wireframe } = this.props.sharedState;
+        if (this.library !== library || this.layout !== layout || this.variant !== variant) {
+            this.loadLayout(library, layout, variant);
         }
         if (this.wireframe !== wireframe && layoutObj) {
             layoutObj.threeObject.traverse((obj) => {
@@ -582,7 +573,6 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             {this.renderInfo()}
             {this.renderFileSelector()}
             {this.renderApplyButton()}
-            {this.renderFindVariantsButton()}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
         </div>;
     }
@@ -590,12 +580,18 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     renderInfo() {
         const {layout, lSettings} = this.state;
         if (layout) {
+            const {variant} = this.props.sharedState;
+            const info = variant ? variant : layout.props;
             return <div style={infoStyle}>
                 <div style={dataBlock}>
-                    Layout {layout.index}<br/><br/>
-                    Width (x): {layout.props.nX}<br/>
-                    Height (x): {layout.props.nY}<br/>
-                    Depth (z): {layout.props.nZ}
+                    Layout {layout.index}<br/>
+                    {variant &&
+                        <span style={{color: 'rgb(0, 200, 255)'}}>
+                            &nbsp;&nbsp;Variant {variant.id}
+                        </span>}<br/>
+                    Width (x): {info.nX}<br/>
+                    Height (x): {info.nY}<br/>
+                    Depth (z): {info.nZ}
                 </div>
                 {this.renderLayoutOptions()}
                 {this.renderReplacementData()}
@@ -638,34 +634,6 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                 </button>
             }
         </div>;
-    }
-
-    renderFindVariantsButton() {
-        const {layout} = this.state;
-        if (!layout) {
-            return null;
-        }
-        return <div style={findVariantsStyle}>
-            <button style={mainInfoButton} onClick={this.findVariants}>
-                Find variants
-            </button>
-        </div>;
-    }
-
-    async findVariants() {
-        const { layout: index, library } = this;
-        const { layout } = this.state;
-        if (!layout) {
-            return null;
-        }
-        const area = await findAllVariants({
-            index,
-            library,
-            props: layout.props
-        }, (variant) => {
-            LayoutsEditorContent.instance.loadLayout(library, index, variant);
-        });
-        this.props.split(Orientation.HORIZONTAL, area);
     }
 
     async applyChanges() {
