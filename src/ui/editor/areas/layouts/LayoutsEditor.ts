@@ -4,6 +4,7 @@ import {Orientation, Type} from '../../layout';
 import LibrariesBrowserArea from './browser/LibrariesBrowserArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 import LayoutsBrowserArea from './browser/LayoutsBrowserArea';
+import VariantsBrowserArea from './browser/VariantsBrowserArea';
 
 const LayoutsEditor = {
     id: 'layouts',
@@ -20,10 +21,13 @@ const LayoutsEditor = {
     }),
     stateHandler: {
         setLibrary(library) {
-            this.setState({ library, layout: 0 });
+            this.setState({ library, layout: 0, variant: null });
         },
         setLayout(layout) {
-            this.setState({ layout });
+            this.setState({ layout, variant: null });
+        },
+        setVariant(variant) {
+            this.setState({ variant });
         },
         setWireframe(wireframe) {
             this.setState({ wireframe });
@@ -35,6 +39,7 @@ const LayoutsEditor = {
     toolAreas: [
         LibrariesBrowserArea,
         LayoutsBrowserArea,
+        VariantsBrowserArea,
         InspectorArea
     ],
     defaultLayout: {
@@ -46,10 +51,18 @@ const LayoutsEditor = {
             {
                 type: Type.LAYOUT,
                 orientation: Orientation.VERTICAL,
-                splitAt: 50,
+                splitAt: 33,
                 children: [
                     { type: Type.AREA, content_id: 'libraries_browser' },
-                    { type: Type.AREA, content_id: 'layouts_browser' }
+                    {
+                        type: Type.LAYOUT,
+                        orientation: Orientation.VERTICAL,
+                        splitAt: 50,
+                        children: [
+                            { type: Type.AREA, content_id: 'layouts_browser' },
+                            { type: Type.AREA, content_id: 'variants_browser' }
+                        ]
+                    }
                 ]
             }
         ]
