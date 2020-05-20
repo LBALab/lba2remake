@@ -27,7 +27,7 @@ const sizeStyle = {
 
 const VariantNode = {
     dynamic: true,
-    key: ({key}) => key,
+    key: ({key, library, layout}) => `${library}_${layout}_${key}`,
     name: ({id}) => id === 'default' ? 'Default' : `Variant ${id}`,
     numChildren: () => 0,
     allowRenaming: () => false,
@@ -114,6 +114,15 @@ function getVariants() {
     if (key in variantsCache) {
         return variantsCache[key];
     }
+    const defaultVariant = {
+        id: 'default',
+        key: 'default',
+        library: library.index,
+        layout: layout.index,
+        nX: layout.props.nX,
+        nY: layout.props.nY,
+        nZ: layout.props.nZ
+    };
     if (!(key in loading)) {
         loading[key] = true;
         const lDef = {
@@ -123,18 +132,13 @@ function getVariants() {
         };
         findAllVariants(lDef).then((variants) => {
             variantsCache[key] = [
-                {
-                    id: 'default',
-                    nX: layout.props.nX,
-                    nY: layout.props.nY,
-                    nZ: layout.props.nZ
-                },
+                defaultVariant,
                 ...variants
             ];
             loading[key] = false;
         });
     }
-    return [];
+    return [defaultVariant];
 }
 
 const VariantsNode = {
@@ -142,7 +146,13 @@ const VariantsNode = {
     name: () => 'Layouts',
     numChildren: () => getVariants().length,
     child: () => VariantNode,
-    childData: (_data, idx) => getVariants()[idx] || { id: idx },
+    childData: (_data, idx) => getVariants()[idx] || {
+        id: idx,
+        key: idx,
+        nX: 0,
+        nY: 0,
+        nZ: 0
+    },
     up: (_data, _collapsed, component) => {
         const {variant} = component.props.rootState;
         const {setVariant} = component.props.rootStateHandler;

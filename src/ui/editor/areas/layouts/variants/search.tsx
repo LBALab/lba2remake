@@ -47,7 +47,17 @@ export async function findAllVariants(lDef) {
         uniqBy(allVariants, 'key'),
         v => !matchesDefaultLayout(v, lDef.props)
     );
-    return map(variants, (v, idx) => ({id: idx + 1, ...v, scenes: scenesByKey[v.key]}));
+    return map(variants, (v, idx) => ({
+        id: idx + 1,
+        key: v.key,
+        nX: v.nX,
+        nY: v.nY,
+        nZ: v.nZ,
+        blocks: v.blocks,
+        library: lDef.library,
+        layout: lDef.layout,
+        scenes: scenesByKey[v.key]
+    }));
 }
 
 async function findAllVariantsInScene(bkg, lDef, layout, indexInfo) {
