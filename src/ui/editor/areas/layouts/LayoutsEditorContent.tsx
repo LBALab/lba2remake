@@ -166,6 +166,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     moving: boolean;
     moved: boolean;
     mask: ImageData;
+    mixer: THREE.AnimationMixer;
     loading: boolean = false;
 
     constructor(props) {
@@ -385,6 +386,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }
         if (lSettings && lSettings.replace) {
             const model = await loadModel(lSettings.file);
+            this.animateModel(model);
             const angle = (Math.PI / 2.0) * lSettings.orientation;
             model.scene.quaternion.setFromAxisAngle(
                 new THREE.Vector3(0, 1, 0),
@@ -404,6 +406,13 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }, this.saveData);
         this.wireframe = false;
         this.loading = false;
+    }
+
+    animateModel(model) {
+        this.mixer = new THREE.AnimationMixer(model.scene);
+        each(model.animations, (clip) => {
+            this.mixer.clipAction(clip).play();
+        });
     }
 
     onMouseDown() {
@@ -454,6 +463,9 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         };
         renderer.stats.begin();
         scene.camera.update(scene, this.state.controlsState, time);
+        if (this.mixer) {
+            this.mixer.update(time.delta);
+        }
         renderer.render(scene);
         renderer.stats.end();
     }
@@ -527,6 +539,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     async useFile(file) {
         this.setState({ replacementFiles: null });
         const model = await loadModel(file);
+        this.animateModel(model);
         const { variant } = this.props.sharedState;
         const { threeScene } = this.state.scene;
         const oldSettings = this.state.lSettings;
