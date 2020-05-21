@@ -10,6 +10,7 @@ import { loadGrid } from '../grid';
 import { loadImageData } from '..';
 import { loadBricks } from '../bricks';
 import { loadResource, ResourceType } from '../../resources';
+import { processVariants } from './variants';
 
 export async function extractGridMetadata(grid, entry, ambience, is3D) {
     if (!is3D) {
@@ -24,10 +25,14 @@ export async function extractGridMetadata(grid, entry, ambience, is3D) {
     const mirrorGroups = {};
 
     forEachCell(grid, metadata, (cellInfo) => {
-        if (cellInfo.replace) {
+        const { variants, replace, mirror } = cellInfo;
+        if (variants) {
+            processVariants(grid, cellInfo, replacements);
+        }
+        if (replace) {
             processLayoutReplacement(grid, cellInfo, replacements);
         }
-        if (cellInfo.mirror) {
+        if (mirror) {
             processLayoutMirror(cellInfo, mirrorGroups);
         }
     });
@@ -56,7 +61,11 @@ export async function saveSceneReplacementModel(entry, ambience) {
     const replacements = await initReplacements(entry, metadata, ambience);
 
     forEachCell(grid, metadata, (cellInfo) => {
-        if (cellInfo.replace) {
+        const { variants, replace } = cellInfo;
+        if (variants) {
+            processVariants(grid, cellInfo, replacements);
+        }
+        if (replace) {
             processLayoutReplacement(grid, cellInfo, replacements);
         }
     });

@@ -58,14 +58,15 @@ export function processLayoutReplacement(grid, cellInfo, replacements) {
     const xb = idx % nX;
     // Check brick at the bottom corner of layout
     if (yb === 0 && xb === nX - 1 && zb === nZ - 1) {
-        if (checkMatch(grid, cellInfo.layout, x, y, realZ)) {
+        if (checkMatch(grid, cellInfo, replacements)) {
             suppressBricks(replacements, cellInfo.layout, x, y, z);
             if (!replacements.threeObject) {
                 addReplacementObject(
                     cellInfo,
                     replacements,
-                    replacements.data,
-                    x - (nX * 0.5) + 1, realY - 0.5, realZ - (nZ * 0.5) + 1
+                    x - (nX * 0.5) + 1,
+                    realY - 0.5,
+                    realZ - (nZ * 0.5) + 1
                 );
             }
         } else {
@@ -111,22 +112,36 @@ export function buildReplacementMeshes(entry, replacements) {
     return threeObject;
 }
 
-function checkMatch(grid, layout, x, y, z) {
-    const {nX, nY, nZ} = layout;
-    for (let zL = 0; zL < nZ; zL += 1) {
-        for (let yL = 0; yL < nY; yL += 1) {
-            for (let xL = 0; xL < nX; xL += 1) {
-                const zT = z - zL;
-                const yT = y + yL;
-                const xT = x - xL;
-                const c = (zT + 1) * 64 + xT;
-                const cell = grid.cells[c];
-                const blocks = cell.blocks;
-                if (!blocks[yT]) {
+function checkMatch(grid, cellInfo, replacements) {
+    const {
+        layout: {
+            index: layout,
+            nX,
+            nY,
+            nZ
+        },
+        pos: {
+            x: xStart,
+            y: yStart,
+            z: zStart
+        }
+    } = cellInfo;
+    for (let z = 0; z < nZ; z += 1) {
+        const zGrid = zStart - z;
+        for (let y = 0; y < nY; y += 1) {
+            const yGrid = yStart + y;
+            for (let x = 0; x < nX; x += 1) {
+                const xGrid = xStart - x;
+                const idxGrid = zGrid * 64 + xGrid;
+                const column = grid.cells[idxGrid].blocks;
+                if (!column[yGrid]) {
                     continue;
                 }
-                const layout2 = grid.library.layouts[blocks[yT].layout];
-                if (!layout2 || layout2.index !== layout.index) {
+                const gridLayoutInfo = grid.library.layouts[column[yGrid].layout];
+                if (!gridLayoutInfo || gridLayoutInfo.index !== layout) {
+                    return false;
+                }
+                if (replacements.bricks.has(`${xGrid},${yGrid},${zGrid}`)) {
                     return false;
                 }
             }
@@ -156,10 +171,9 @@ const angleMapping = [
     0,
 ];
 
-async function addReplacementObject(cellInfo, replacements, replacementData, gx, gy, gz) {
-    const threeObject = cellInfo.threeObject;
+export async function addReplacementObject(info, replacements, gx, gy, gz) {
+    const { threeObject, orientation } = info;
     const scale = 1 / 0.75;
-    const orientation = cellInfo.orientation;
     const angle = angleMapping[orientation];
     const gTransform = new THREE.Matrix4();
     gTransform.compose(
@@ -229,9 +243,9 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
                                 fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
                                 uniforms: {
                                     uTexture: {value: baseMaterial.map},
-                                    lutTexture: {value: replacementData.lutTexture},
-                                    palette: {value: replacementData.paletteTexture},
-                                    light: {value: replacementData.light}
+                                    lutTexture: {value: replacements.data.lutTexture},
+                                    palette: {value: replacements.data.paletteTexture},
+                                    light: {value: replacements.data.light}
                                 }
                             })
                         };
@@ -246,9 +260,9 @@ async function addReplacementObject(cellInfo, replacements, replacementData, gx,
                                 vertexShader: compile('vert', VERT_OBJECTS_COLORED),
                                 fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
                                 uniforms: {
-                                    lutTexture: {value: replacementData.lutTexture},
-                                    palette: {value: replacementData.paletteTexture},
-                                    light: {value: replacementData.light}
+                                    lutTexture: {value: replacements.data.lutTexture},
+                                    palette: {value: replacements.data.paletteTexture},
+                                    light: {value: replacements.data.light}
                                 }
                             })
                         };
