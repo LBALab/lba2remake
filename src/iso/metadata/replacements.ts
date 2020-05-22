@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { each } from 'lodash';
+import { each, last } from 'lodash';
 import XXH from 'xxhashjs';
 
 import { loadLUTTexture } from '../../utils/lut';
@@ -15,34 +15,34 @@ import { loadResource, ResourceType } from '../../resources';
 export async function initReplacements(entry, metadata, ambience) {
     const data = await loadReplacementData(ambience);
     if (metadata.hasFullReplacement) {
+        const { threeObject, mixer } = await loadFullSceneModel(entry, data);
         return {
-            threeObject: await loadFullSceneModel(entry, data),
+            threeObject,
+            mixer,
+            geometries: null,
+            bricks: new Set()
+        };
+    }
+    if (!metadata.mergeReplacements) {
+        return {
+            threeObject: null,
+            mixer: null,
+            geometries: null,
             bricks: new Set()
         };
     }
     return {
-        threeObject: null,
-        geometries: {
-            colored: {
-                index: [],
-                positions: [],
-                normals: [],
-                colors: [],
-                uvs: null,
-                material: new THREE.RawShaderMaterial({
-                    vertexShader: compile('vert', VERT_OBJECTS_COLORED),
-                    fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
-                    uniforms: {
-                        lutTexture: {value: data.lutTexture},
-                        palette: {value: data.paletteTexture},
-                        light: {value: data.light}
-                    }
-                })
-            }
-        },
+        threeObject: initReplacementObject(entry),
+        mixer: null,
+        mergeReplacements: true,
+        animations: [],
+        geometries: makeReplacementGeometries(data),
         data,
-        originalGeomId: 0,
-        transparentGeomId: 0,
+        idCounters: {
+            animId: 0,
+            originalGeomId: 0,
+            transparentGeomId: 0
+        },
         bricks: new Set()
     };
 }
@@ -60,7 +60,7 @@ export function processLayoutReplacement(grid, cellInfo, replacements) {
     if (yb === 0 && xb === nX - 1 && zb === nZ - 1) {
         if (checkMatch(grid, cellInfo, replacements)) {
             suppressBricks(replacements, cellInfo.layout, x, y, z);
-            if (!replacements.threeObject) {
+            if (replacements.mergeReplacements) {
                 addReplacementObject(
                     cellInfo,
                     replacements,
@@ -69,17 +69,12 @@ export function processLayoutReplacement(grid, cellInfo, replacements) {
                     realZ - (nZ * 0.5) + 1
                 );
             }
-        } else {
-            // Log when missing match
-            // console.log(replacement.file, xb, yb, zb);
         }
     }
 }
 
-export function buildReplacementMeshes(entry, replacements) {
-    const threeObject = new THREE.Object3D();
-    threeObject.name = `replacements_${entry}`;
-    each(replacements.geometries, (geom, key) => {
+export function buildReplacementMeshes({ geometries, threeObject }) {
+    each(geometries, (geom, key) => {
         if (geom.positions.length > 0) {
             const bufferGeometry = new THREE.BufferGeometry();
             bufferGeometry.setIndex(new THREE.BufferAttribute(
@@ -109,7 +104,33 @@ export function buildReplacementMeshes(entry, replacements) {
             threeObject.add(mesh);
         }
     });
+}
+
+function initReplacementObject(entry) {
+    const threeObject = new THREE.Object3D();
+    threeObject.name = `replacements_for_iso_${entry}`;
     return threeObject;
+}
+
+function makeReplacementGeometries(data) {
+    return {
+        colored: {
+            index: [],
+            positions: [],
+            normals: [],
+            colors: [],
+            uvs: null,
+            material: new THREE.RawShaderMaterial({
+                vertexShader: compile('vert', VERT_OBJECTS_COLORED),
+                fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
+                uniforms: {
+                    lutTexture: {value: data.lutTexture},
+                    palette: {value: data.paletteTexture},
+                    light: {value: data.light}
+                }
+            })
+        }
+    };
 }
 
 function checkMatch(grid, cellInfo, replacements) {
@@ -171,8 +192,10 @@ const angleMapping = [
     0,
 ];
 
+const identityMatrix = new THREE.Matrix4();
+
 export async function addReplacementObject(info, replacements, gx, gy, gz) {
-    const { threeObject, orientation } = info;
+    const { threeObject, animations, orientation } = info;
     const scale = 1 / 0.75;
     const angle = angleMapping[orientation];
     const gTransform = new THREE.Matrix4();
@@ -185,140 +208,239 @@ export async function addReplacementObject(info, replacements, gx, gy, gz) {
         new THREE.Vector3(scale, scale, scale)
     );
 
-    const POS = new THREE.Vector3();
-    const NORM = new THREE.Vector3();
+    const bindings = [];
+    if (animations && animations.length) {
+        each(animations, (animationBase) => {
+            const animation = animationBase.clone(true);
+            const {tracks} = animation;
+            each(tracks, (track) => {
+                bindings.push({
+                    track,
+                    binding: new THREE.PropertyBinding(threeObject, track.name)
+                });
+            });
+            replacements.animations.push(animation);
+        });
+    }
+
+    const skip = new Set();
+    const animNodes = [];
+    const animRoot = new THREE.Object3D();
+    animRoot.name = threeObject.name.replace(/\./g, '_');
+    animRoot.position.set(gx, gy, gz);
+    animRoot.quaternion.setFromAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        angle
+    );
+    animRoot.scale.set(scale, scale, scale);
+    animRoot.updateMatrix();
+    animRoot.updateMatrixWorld(true);
 
     threeObject.traverse((node) => {
         node.updateMatrix();
         node.updateMatrixWorld(true);
+        each(bindings, ({binding, track}) => {
+            if (binding.node === node) {
+                if (node.parent !== threeObject) {
+                    // tslint:disable-next-line: no-console
+                    console.warn('Animations must only apply to direct children', binding);
+                }
+                const group = new THREE.Object3D();
+                group.name = `${node.name}_${replacements.idCounters.animId}`;
+                replacements.idCounters.animId += 1;
+                group.position.copy(node.position);
+                group.quaternion.copy(node.quaternion);
+                group.scale.copy(node.scale);
+                group.updateMatrix();
+                group.updateMatrixWorld(true);
+                track.name = `${group.uuid}.${binding.parsedPath.propertyName}`;
+                animRoot.add(group);
+                skip.add(node);
+                animNodes.push({
+                    group,
+                    node,
+                    data: {
+                        idCounters: replacements.idCounters,
+                        data: replacements.data,
+                        geometries: makeReplacementGeometries(replacements.data)
+                    }
+                });
+                return;
+            }
+        });
+        if (skip.has(node.parent)) {
+            skip.add(node);
+            if (node instanceof THREE.Mesh) {
+                const matrixWorld = getPartialMatrixWorld(node, last(animNodes).node);
+                appendMeshGeometry(last(animNodes).data, identityMatrix, node, angle, matrixWorld);
+            }
+            return;
+        }
         if (node instanceof THREE.Mesh) {
-            const transform = gTransform.clone();
-            transform.multiply(node.matrixWorld);
-
-            const geom = node.geometry as THREE.BufferGeometry;
-            const pos_attr = geom.attributes.position;
-            const normal_attr = geom.attributes.normal;
-            const uv_attr = geom.attributes.uv;
-            const index_attr = geom.index;
-
-            const rotation = new THREE.Matrix4().makeRotationY(angle - Math.PI / 2);
-            rotation.multiply(node.matrixWorld);
-            const normalMatrix = new THREE.Matrix3();
-            normalMatrix.setFromMatrix4(rotation);
-            const baseMaterial = node.material as THREE.MeshStandardMaterial;
-            let color = null;
-            let geomGroup = 'colored';
-            let groupType = null;
-            if (baseMaterial.name.substring(0, 8) === 'keepMat_') {
-                geomGroup = `original_${replacements.originalGeomId}`;
-                groupType = 'original';
-                replacements.originalGeomId += 1;
-            } else if (baseMaterial.map) {
-                const image = baseMaterial.map.image;
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.width = image.width;
-                canvas.height = image.height;
-                context.drawImage(image, 0, 0);
-                const imageData = context.getImageData(0, 0, image.width, image.height);
-                const textureId = XXH.h32(imageData.data, 0).toString(16);
-                geomGroup = `textured_${textureId}`;
-                groupType = 'textured';
-            } else if (baseMaterial.opacity < 1) {
-                geomGroup = `transparent_${replacements.transparentGeomId}`;
-                groupType = 'transparent';
-                replacements.transparentGeomId += 1;
-            }
-            if (!(geomGroup in replacements.geometries)) {
-                switch (groupType) {
-                    case 'textured':
-                        replacements.geometries[geomGroup] = {
-                            index: [],
-                            positions: [],
-                            normals: [],
-                            colors: null,
-                            uvs: [],
-                            material: new THREE.RawShaderMaterial({
-                                vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
-                                fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
-                                uniforms: {
-                                    uTexture: {value: baseMaterial.map},
-                                    lutTexture: {value: replacements.data.lutTexture},
-                                    palette: {value: replacements.data.paletteTexture},
-                                    light: {value: replacements.data.light}
-                                }
-                            })
-                        };
-                        break;
-                    case 'transparent':
-                        replacements.geometries[geomGroup] = {
-                            index: [],
-                            positions: [],
-                            normals: [],
-                            colors: [],
-                            material: new THREE.RawShaderMaterial({
-                                vertexShader: compile('vert', VERT_OBJECTS_COLORED),
-                                fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
-                                uniforms: {
-                                    lutTexture: {value: replacements.data.lutTexture},
-                                    palette: {value: replacements.data.paletteTexture},
-                                    light: {value: replacements.data.light}
-                                }
-                            })
-                        };
-                        break;
-                    case 'original':
-                        replacements.geometries[geomGroup] = {
-                            index: [],
-                            positions: [],
-                            normals: [],
-                            uvs: baseMaterial.map ? [] : null,
-                            colors: null,
-                            material: baseMaterial
-                        };
-                        break;
-                }
-            }
-            const {
-                index,
-                positions,
-                normals,
-                colors,
-                uvs
-            } = replacements.geometries[geomGroup];
-            if (!baseMaterial.map) {
-                const mColor = baseMaterial.color.clone().convertLinearToGamma();
-                color = new THREE.Vector4().fromArray(
-                    [...mColor.toArray(), baseMaterial.opacity]
-                );
-            }
-            const offset = positions.length / 3;
-            for (let i = 0; i < index_attr.count; i += 1) {
-                index.push(offset + index_attr.array[i]);
-            }
-            for (let i = 0; i < pos_attr.count; i += 1) {
-                const x = pos_attr.getX(i);
-                const y = pos_attr.getY(i);
-                const z = pos_attr.getZ(i);
-                POS.set(x, y, z);
-                POS.applyMatrix4(transform);
-                positions.push(POS.x, POS.y, POS.z);
-                const nx = normal_attr.getX(i);
-                const ny = normal_attr.getY(i);
-                const nz = normal_attr.getZ(i);
-                NORM.set(nx, ny, nz);
-                NORM.applyMatrix3(normalMatrix);
-                NORM.normalize();
-                normals.push(NORM.x, NORM.y, NORM.z);
-                if (colors) {
-                    colors.push(color.x * 255, color.y * 255, color.z * 255, color.w * 255);
-                }
-                if (uvs) {
-                    uvs.push(uv_attr.getX(i), uv_attr.getY(i));
-                }
-            }
+            appendMeshGeometry(replacements, gTransform, node, angle);
         }
     });
+    each(animNodes, ({group, data}) => {
+        buildReplacementMeshes({
+            geometries: data.geometries,
+            threeObject: group
+        });
+    });
+    if (animRoot.children.length > 0) {
+        replacements.threeObject.add(animRoot);
+    }
+}
+
+function getPartialMatrixWorld(node, root) {
+    const matrixWorld = new THREE.Matrix4();
+    const path = [];
+    let next = node;
+    while (next && next !== root) {
+        path.push(next);
+        next = next.parent;
+    }
+    path.reverse();
+    each(path, (obj) => {
+        matrixWorld.multiply(obj.matrix);
+    });
+    return matrixWorld;
+}
+
+const POS = new THREE.Vector3();
+const NORM = new THREE.Vector3();
+
+function appendMeshGeometry(
+    {idCounters, geometries, data},
+    gTransform,
+    node,
+    angle,
+    matrixWorld = node.matrixWorld
+) {
+    const transform = gTransform.clone();
+    transform.multiply(matrixWorld);
+
+    const geom = node.geometry as THREE.BufferGeometry;
+    const pos_attr = geom.attributes.position;
+    const normal_attr = geom.attributes.normal;
+    const uv_attr = geom.attributes.uv;
+    const index_attr = geom.index;
+
+    const rotation = new THREE.Matrix4().makeRotationY(angle - Math.PI / 2);
+    rotation.multiply(matrixWorld);
+    const normalMatrix = new THREE.Matrix3();
+    normalMatrix.setFromMatrix4(rotation);
+    const baseMaterial = node.material as THREE.MeshStandardMaterial;
+    let color = null;
+    let geomGroup = 'colored';
+    let groupType = null;
+    if (baseMaterial.name.substring(0, 8) === 'keepMat_') {
+        geomGroup = `original_${idCounters.originalGeomId}`;
+        groupType = 'original';
+        idCounters.originalGeomId += 1;
+    } else if (baseMaterial.map) {
+        const image = baseMaterial.map.image;
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = image.width;
+        canvas.height = image.height;
+        context.drawImage(image, 0, 0);
+        const imageData = context.getImageData(0, 0, image.width, image.height);
+        const textureId = XXH.h32(imageData.data, 0).toString(16);
+        geomGroup = `textured_${textureId}`;
+        groupType = 'textured';
+    } else if (baseMaterial.opacity < 1) {
+        geomGroup = `transparent_${idCounters.transparentGeomId}`;
+        groupType = 'transparent';
+        idCounters.transparentGeomId += 1;
+    }
+    if (!(geomGroup in geometries)) {
+        switch (groupType) {
+            case 'textured':
+                geometries[geomGroup] = {
+                    index: [],
+                    positions: [],
+                    normals: [],
+                    colors: null,
+                    uvs: [],
+                    material: new THREE.RawShaderMaterial({
+                        vertexShader: compile('vert', VERT_OBJECTS_TEXTURED),
+                        fragmentShader: compile('frag', FRAG_OBJECTS_TEXTURED),
+                        uniforms: {
+                            uTexture: {value: baseMaterial.map},
+                            lutTexture: {value: data.lutTexture},
+                            palette: {value: data.paletteTexture},
+                            light: {value: data.light}
+                        }
+                    })
+                };
+                break;
+            case 'transparent':
+                geometries[geomGroup] = {
+                    index: [],
+                    positions: [],
+                    normals: [],
+                    colors: [],
+                    material: new THREE.RawShaderMaterial({
+                        vertexShader: compile('vert', VERT_OBJECTS_COLORED),
+                        fragmentShader: compile('frag', FRAG_OBJECTS_COLORED),
+                        uniforms: {
+                            lutTexture: {value: data.lutTexture},
+                            palette: {value: data.paletteTexture},
+                            light: {value: data.light}
+                        }
+                    })
+                };
+                break;
+            case 'original':
+                geometries[geomGroup] = {
+                    index: [],
+                    positions: [],
+                    normals: [],
+                    uvs: baseMaterial.map ? [] : null,
+                    colors: null,
+                    material: baseMaterial
+                };
+                break;
+        }
+    }
+    const {
+        index,
+        positions,
+        normals,
+        colors,
+        uvs
+    } = geometries[geomGroup];
+    if (!baseMaterial.map) {
+        const mColor = baseMaterial.color.clone().convertLinearToGamma();
+        color = new THREE.Vector4().fromArray(
+            [...mColor.toArray(), baseMaterial.opacity]
+        );
+    }
+    const offset = positions.length / 3;
+    for (let i = 0; i < index_attr.count; i += 1) {
+        index.push(offset + index_attr.array[i]);
+    }
+    for (let i = 0; i < pos_attr.count; i += 1) {
+        const x = pos_attr.getX(i);
+        const y = pos_attr.getY(i);
+        const z = pos_attr.getZ(i);
+        POS.set(x, y, z);
+        POS.applyMatrix4(transform);
+        positions.push(POS.x, POS.y, POS.z);
+        const nx = normal_attr.getX(i);
+        const ny = normal_attr.getY(i);
+        const nz = normal_attr.getZ(i);
+        NORM.set(nx, ny, nz);
+        NORM.applyMatrix3(normalMatrix);
+        NORM.normalize();
+        normals.push(NORM.x, NORM.y, NORM.z);
+        if (colors) {
+            colors.push(color.x * 255, color.y * 255, color.z * 255, color.w * 255);
+        }
+        if (uvs) {
+            uvs.push(uv_attr.getX(i), uv_attr.getY(i));
+        }
+    }
 }
 
 async function loadReplacementData(ambience) {

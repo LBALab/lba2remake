@@ -15,7 +15,7 @@ import { processVariants } from './variants';
 export async function extractGridMetadata(grid, entry, ambience, is3D) {
     if (!is3D) {
         return {
-            replacements: { threeObject: null },
+            replacements: { threeObject: null, mixer: null },
             mirrors: null
         };
     }
@@ -36,10 +36,6 @@ export async function extractGridMetadata(grid, entry, ambience, is3D) {
             processLayoutMirror(cellInfo, mirrorGroups);
         }
     });
-
-    if (!replacements.threeObject) {
-        replacements.threeObject = buildReplacementMeshes(entry, replacements);
-    }
 
     return {
         replacements,
@@ -70,10 +66,8 @@ export async function saveSceneReplacementModel(entry, ambience) {
         }
     });
 
-    if (!replacements.threeObject) {
-        replacements.threeObject = buildReplacementMeshes(entry, replacements);
-        saveFullSceneModel(replacements.threeObject, entry);
-    }
+    buildReplacementMeshes(replacements);
+    saveFullSceneModel(replacements, entry);
 }
 
 function forEachCell(grid, metadata, handler) {

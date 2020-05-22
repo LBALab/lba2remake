@@ -11,7 +11,7 @@ export function processVariants(grid, cellInfo, replacements) {
         if (checkVariantMatch(grid, cellInfo, variant.props)) {
             // console.log('matched', variant, 'at', x, y, z);
             suppressVariantBricks(replacements, variant.props, cellInfo);
-            if (!replacements.threeObject) {
+            if (replacements.mergeReplacements) {
                 const realY = (y * 0.5) + 0.5;
                 const realZ = z - 1;
                 addReplacementObject(
@@ -22,10 +22,8 @@ export function processVariants(grid, cellInfo, replacements) {
                     realZ - (variant.props.nZ * 0.5) + 1
                 );
             }
-            return true;
         }
     }
-    return false;
 }
 
 function checkVariantMatch(grid, cellInfo, variant) {

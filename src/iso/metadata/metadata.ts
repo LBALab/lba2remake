@@ -1,12 +1,12 @@
 import { map } from 'lodash';
 import { loadModel } from './models';
 
-export async function loadMetadata(entry, library, forceReplacements = false) {
+export async function loadMetadata(entry, library, mergeReplacements = false) {
     const layoutsReq = await fetch('/metadata/layouts.json');
     const layoutsMetadata = await layoutsReq.json();
     const isoScenesReq = await fetch('/metadata/iso_scenes.json');
     const isoScenesMetadata = await isoScenesReq.json();
-    const hasFullReplacement = !forceReplacements && isoScenesMetadata.includes(entry);
+    const hasFullReplacement = !mergeReplacements && isoScenesMetadata.includes(entry);
     const libMetadata = layoutsMetadata[library.index];
     const layouts = {};
     await Promise.all(map(libMetadata, async (data, idx) => {
@@ -15,10 +15,12 @@ export async function loadMetadata(entry, library, forceReplacements = false) {
             if (hasFullReplacement) {
                 info = {...data};
             } else {
-                const threeObject = await loadModel(`/models/layouts/${data.file}`, true);
+                const model = await loadModel(`/models/layouts/${data.file}`, true);
+                model.scene.name = data.file;
                 info = {
                     ...data,
-                    threeObject
+                    threeObject: model.scene,
+                    animations: model.animations
                 };
             }
         } else if (data.mirror) {
@@ -52,5 +54,5 @@ export async function loadMetadata(entry, library, forceReplacements = false) {
             }
         }
     }));
-    return { hasFullReplacement, layouts };
+    return { hasFullReplacement, mergeReplacements, layouts };
 }

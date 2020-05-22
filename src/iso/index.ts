@@ -35,6 +35,7 @@ export async function loadIsometricScenery(entry, ambience, is3D) {
     const palette = pal.getBufferUint8();
     const bricks = loadBricks(bkg);
     const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
+    const { threeObject, mixer } = await loadMesh(grid, entry, ambience, is3D);
 
     return {
         props: {
@@ -43,18 +44,22 @@ export async function loadIsometricScenery(entry, ambience, is3D) {
                 skyColor: [0, 0, 0]
             }
         },
-        threeObject: await loadMesh(grid, entry, ambience, is3D),
+        threeObject,
         physics: {
             processCollisions: processCollisions.bind(null, grid),
             processCameraCollisions: () => null
         },
 
-        update: () => {}
+        update: (_game, _scene, time) => {
+            if (mixer) {
+                mixer.update(time.delta);
+            }
+        }
     };
 }
 
 async function loadMesh(grid, entry, ambience, is3D) {
-    const scene = new THREE.Object3D();
+    const threeObject = new THREE.Object3D();
     const geometries = {
         positions: [],
         uvs: []
@@ -62,7 +67,7 @@ async function loadMesh(grid, entry, ambience, is3D) {
     const {library, cells} = grid;
     const gridMetadata = await extractGridMetadata(grid, entry, ambience, is3D);
     if (gridMetadata.replacements.threeObject) {
-        scene.add(gridMetadata.replacements.threeObject);
+        threeObject.add(gridMetadata.replacements.threeObject);
     }
 
     for (let z = 0; z < 64; z += 1) {
@@ -100,14 +105,17 @@ async function loadMesh(grid, entry, ambience, is3D) {
     mesh.frustumCulled = false;
     mesh.name = 'iso_grid';
 
-    scene.add(mesh);
+    threeObject.add(mesh);
 
-    scene.name = `scenery_iso_${entry}`;
-    scene.scale.set(WORLD_SCALE_B, WORLD_SCALE_B, WORLD_SCALE_B);
-    scene.position.set(WORLD_SIZE * 2, 0, 0);
-    scene.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
+    threeObject.name = `scenery_iso_${entry}`;
+    threeObject.scale.set(WORLD_SCALE_B, WORLD_SCALE_B, WORLD_SCALE_B);
+    threeObject.position.set(WORLD_SIZE * 2, 0, 0);
+    threeObject.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
 
-    return scene;
+    return {
+        threeObject,
+        mixer: gridMetadata.replacements.mixer
+    };
 }
 
 function buildColumn(library, cells, geometries, x, z, gridMetadata) {
