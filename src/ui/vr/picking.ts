@@ -8,7 +8,9 @@ export function getPickingTarget() {
         transparent: true,
         opacity: 0.8
     });
-    return new THREE.Mesh(geom, mat);
+    const mesh = new THREE.Mesh(geom, mat);
+    mesh.renderOrder = 100;
+    return mesh;
 }
 
 const hovering = new Set();

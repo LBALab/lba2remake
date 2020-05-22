@@ -46,8 +46,9 @@ export class VRControls {
 
     update() {
         const { controlsState } = this.ctx.game;
-        const { showMenu, video } = this.ctx.game.getUiState();
+        const { showMenu, video, ask } = this.ctx.game.getUiState();
         const showController = showMenu || !!video;
+        const showPointer = showController || !!ask.text;
         const scene = this.ctx.sceneManager.getScene();
         const ctx = {
             ...this.ctx,
@@ -63,7 +64,7 @@ export class VRControls {
         });
         for (let i = 0; i < 2; i += 1) {
             if (this.pointers[i]) {
-                this.pointers[i].visible = showController && this.activePointer === i;
+                this.pointers[i].visible = showPointer && this.activePointer === i;
             }
             if (this.activePointer === i) {
                 const vrController = this.xr.getController(i);
@@ -105,6 +106,7 @@ export class VRControls {
         vrControllerGrip.addEventListener('connected', async (event) => {
             const info = await createMotionController(event.data);
             const model = await new ControllerModel(info).load();
+            model.threeObject.renderOrder = 100;
 
             vrControllerGrip.add(model.threeObject);
             this.controllers[index] = {
@@ -135,6 +137,7 @@ export class VRControls {
             pointer.position.set(0, 0, -0.2);
             pointer.rotation.x = -Math.PI / 2;
             pointer.rotation.y = Math.PI / 4;
+            pointer.renderOrder = 100;
 
             vrController.add(pointer);
             this.pointers[index] = pointer;
@@ -150,10 +153,13 @@ export class VRControls {
         });
 
         vrController.addEventListener('selectstart', () => {
+            const { ask } = this.ctx.game.getUiState();
             if (this.ctx.game.controlsState.skipListener) {
-                this.ctx.game.controlsState.skipListener();
                 this.skipping = true;
-                return;
+                if (!ask.text) {
+                    this.ctx.game.controlsState.skipListener();
+                    return;
+                }
             }
             if (this.activePointer === null) {
                 this.activePointer = index;

@@ -8,6 +8,7 @@ let choice = null;
 
 export function createVRGUI() {
     const vrGUI = new THREE.Object3D();
+    vrGUI.renderOrder = 1;
     vrGUI.add(getPickingTarget());
     return vrGUI;
 }
@@ -60,7 +61,8 @@ function createItem({x, y, text, callback}) {
         width,
         height,
         x,
-        y
+        y,
+        noDepth: true
     });
     const draw = (hovering = false) => {
         drawFrame(ctx, 0, 0, width, height, hovering);
