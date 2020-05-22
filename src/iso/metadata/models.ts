@@ -8,6 +8,7 @@ import FRAG_OBJECTS_COLORED from '../shaders/objects/colored.frag.glsl';
 import VERT_OBJECTS_TEXTURED from '../shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
 import { compile } from '../../utils/shaders';
+import { applyAnimationUpdaters } from './animations';
 
 const loader = new GLTFLoader();
 const exporter = new GLTFExporter();
@@ -60,7 +61,8 @@ export async function loadFullSceneModel(entry: number, replacementData) : Promi
                     uTexture: texture && { value: texture },
                     lutTexture: {value: replacementData.lutTexture},
                     palette: {value: replacementData.paletteTexture},
-                    light: {value: replacementData.light}
+                    light: {value: replacementData.light},
+                    uNormalMatrix: {value: new THREE.Matrix3()}
                 }
             });
             if (node.material.transparent) {
@@ -69,6 +71,7 @@ export async function loadFullSceneModel(entry: number, replacementData) : Promi
         }
     });
     const mixer = new THREE.AnimationMixer(threeObject);
+    applyAnimationUpdaters(threeObject, model.animations);
     each(model.animations, (clip) => {
         mixer.clipAction(clip).play();
     });
