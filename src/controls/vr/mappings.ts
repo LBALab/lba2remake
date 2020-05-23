@@ -6,12 +6,15 @@ interface BtnMapping {
 }
 
 interface MainGameControls {
-    action?: BtnMapping;
+    action: BtnMapping;
+    behaviourAction: BtnMapping;
     move: BtnMapping;
+    prevBehaviour: BtnMapping;
+    nextBehaviour: BtnMapping;
 }
 
 interface ExtraControls {
-    centerCam?: BtnMapping;
+    centerCam: BtnMapping;
 }
 
 interface FirstPersonMappings {
@@ -54,11 +57,44 @@ export function applyMappings(
         return;
     }
 
-    const { game: { controlsState }, camera, scene } = ctx;
+    const { game, camera, scene } = ctx;
+    const { controlsState } = game;
     const { components } = motionController;
     applyMapping(components, mappings, 'action', (enabled) => {
         if (enabled) {
             controlsState.action = 1;
+        }
+    });
+    applyMapping(components, mappings, 'behaviourAction', (enabled) => {
+        if (enabled) {
+            switch (game.getState().hero.behaviour) {
+                case 0:
+                    controlsState.action = 1;
+                    break;
+                case 1:
+                    controlsState.jump = 1;
+                    break;
+                case 2:
+                    controlsState.fight = 1;
+                    break;
+                case 3:
+                    controlsState.crouch = 1;
+                    break;
+            }
+        } else {
+            controlsState.jump = 0;
+            controlsState.fight = 0;
+            controlsState.crouch = 0;
+        }
+    });
+    applyMapping(components, mappings, 'prevBehaviour', (enabled) => {
+        if (enabled) {
+            setBehaviour(game, game.getState().hero.behaviour - 1);
+        }
+    });
+    applyMapping(components, mappings, 'nextBehaviour', (enabled) => {
+        if (enabled) {
+            setBehaviour(game, game.getState().hero.behaviour + 1);
         }
     });
     if (controlsState.firstPerson) {
@@ -96,6 +132,22 @@ function applyMapping(
     }
 }
 
+let bubbleTimeout = null;
+
+function setBehaviour(game, behaviour) {
+    const newBehaviour = Math.max(Math.min(behaviour, 3), 0);
+    game.getState().hero.behaviour = newBehaviour;
+    game.setUiState({
+        infoBubble: game.menuTexts[80 + newBehaviour].value
+    });
+    if (bubbleTimeout) {
+        clearTimeout(bubbleTimeout);
+    }
+    bubbleTimeout = setTimeout(() => {
+        game.setUiState({ infoBubble: null });
+    }, 1000);
+}
+
 const handlePressed = component => component.values.state === 'pressed';
 
 function stickHandler({values}) {
@@ -119,13 +171,36 @@ function mapMainGameControls(
 ) : MainGameControls {
     const { components, xrInputSource } = motionController;
     const handedness = (xrInputSource as any).handedness;
+    let behaviourAction: BtnMapping = null;
     let action: BtnMapping = null;
     let move: BtnMapping = null;
+    let prevBehaviour: BtnMapping = null;
+    let nextBehaviour: BtnMapping = null;
     if ('xr-standard-trigger' in components) {
-        action = {
-            btn: 'xr-standard-trigger',
-            handler: handlePressed
-        };
+        if (numControllers === 1 || handedness === 'right') {
+            behaviourAction = {
+                btn: 'xr-standard-trigger',
+                handler: handlePressed
+            };
+        } else if (handedness === 'left') {
+            action = {
+                btn: 'xr-standard-trigger',
+                handler: handlePressed
+            };
+        }
+    }
+    if ('xr-standard-squeeze') {
+        if (numControllers === 1 || handedness === 'right') {
+            nextBehaviour = {
+                btn: 'xr-standard-squeeze',
+                handler: handleTapped
+            };
+        } else if (handedness === 'left') {
+            prevBehaviour = {
+                btn: 'xr-standard-squeeze',
+                handler: handleTapped
+            };
+        }
     }
     const useForMove = numControllers === 1 || handedness === 'left';
     if (useForMove && 'xr-standard-thumbstick' in components) {
@@ -135,8 +210,11 @@ function mapMainGameControls(
         };
     }
     return {
+        behaviourAction,
         action,
-        move
+        move,
+        prevBehaviour,
+        nextBehaviour
     };
 }
 
