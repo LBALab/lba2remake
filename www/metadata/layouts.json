@@ -475,6 +475,16 @@
       "file": "119_127_128_book_glass_cabinet.glb",
       "orientation": 2
     },
+    "133": {
+      "replace": true,
+      "file": "133_desk_bell.glb",
+      "orientation": 0
+    },
+    "134": {
+      "replace": true,
+      "file": "134_cash_register.glb",
+      "orientation": 0
+    },
     "142": {
       "mirror": true
     },
