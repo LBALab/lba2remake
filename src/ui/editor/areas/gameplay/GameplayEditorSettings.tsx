@@ -8,6 +8,7 @@ const inputStyle = {
 };
 
 const headerStyle = {
+    marginTop: '1ch',
     marginBottom: '1ch',
     marginRight: '2ch',
     fontSize: 16,
@@ -30,10 +31,20 @@ export default function GameplayEditorSettings(props) {
     const changeLabel = (type, e) => {
         props.stateHandler.setLabel(type, e.target.checked);
     };
+    const setFog = (e) => {
+        props.stateHandler.setFog(e.target.checked);
+    };
 
     const l = props.sharedState.labels;
+    const fog = props.sharedState.fog;
 
     return <div>
+        <div style={lineStyle}>
+            <label style={{cursor: 'pointer'}}>
+                <input type="checkbox" onChange={setFog} checked={fog} style={inputStyle}/>
+                Fog
+            </label>
+        </div>
         <div style={headerStyle}>Display labels:</div>
         <div style={lineStyle}>
             <label>

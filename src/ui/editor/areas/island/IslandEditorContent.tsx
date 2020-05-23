@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
-import { loadIslandScenery } from '../../../../island';
+import { loadIslandScenery, getEnvInfo } from '../../../../island';
 import DebugData from '../../DebugData';
 import {get3DFreeCamera} from './utils/freeCamera';
 import IslandAmbience from './browser/ambience';
@@ -14,6 +14,7 @@ import {
     preloadResources,
 } from '../../../../resources';
 import islandOffsets from './data/islandOffsets';
+import { setCurrentFog } from '../../fog';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -22,6 +23,7 @@ interface Props extends TickerProps {
     sharedState: {
         name: string;
         wireframe: boolean;
+        fog: boolean;
     };
     stateHandler: any;
 }
@@ -49,6 +51,7 @@ export default class Island extends FrameListener<Props, State> {
     mouseEnabled: boolean;
     name: string;
     wireframe: boolean;
+    fog: boolean;
 
     constructor(props) {
         super(props);
@@ -177,6 +180,7 @@ export default class Island extends FrameListener<Props, State> {
         this.state.scene.threeScene.add(island.threeObject);
         this.setState({ island }, this.saveData);
         this.wireframe = false;
+        this.fog = true;
     }
 
     handleClick() {
@@ -256,9 +260,24 @@ export default class Island extends FrameListener<Props, State> {
         this.setState({ cameraSpeed }, this.saveData);
     }
 
+    setFog(fog: boolean) {
+        const { island } = this.state;
+        if (this.fog !== fog && island && island.threeObject) {
+            island.threeObject.traverse((obj) => {
+                if (obj && obj.material && obj instanceof THREE.Mesh &&
+                    (obj.material as THREE.RawShaderMaterial).uniforms) {
+                    (obj.material as THREE.RawShaderMaterial).uniforms.fogDensity.value =
+                        fog ? getEnvInfo(this.name).fogDensity : 0;
+                }
+            });
+            this.fog = fog;
+            setCurrentFog(fog);
+        }
+    }
+
     frame() {
         const { renderer, clock, island, scene } = this.state;
-        const { name, wireframe } = this.props.sharedState;
+        const { name, wireframe, fog } = this.props.sharedState;
         if (this.name !== name) {
             this.loadIsland();
         }
@@ -270,6 +289,7 @@ export default class Island extends FrameListener<Props, State> {
             });
             this.wireframe = wireframe;
         }
+        this.setFog(fog);
         this.checkResize();
         const time = {
             delta: Math.min(clock.getDelta(), 0.05),

@@ -82,10 +82,6 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
         lutTexture
     };
 
-    if (params.editor) {
-        props.envInfo.fogDensity = 0.1;
-    }
-
     const {geometries, usedTiles} = await loadGeometries(props, data, ambience);
     const matByName = {};
     each(geometries, (geom: IslandGeometry, name) => {
@@ -179,7 +175,7 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
     groundClouds && islandObject.add(groundClouds.threeObject);
 
     let updateEnv = null;
-    if (!params.preview && !params.editor) {
+    if (!params.preview) {
         const clouds = envInfo.clouds
             && await loadClouds(envInfo.clouds, {
                 envInfo,

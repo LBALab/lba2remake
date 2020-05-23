@@ -24,7 +24,8 @@ const GameplayEditor = {
             zone: false,
             point: false,
             zoneTypes: clone(ZONE_TYPE)
-        }
+        },
+        fog: true,
     }),
     stateHandler: {
         setLabel(type, value) {
@@ -45,7 +46,10 @@ const GameplayEditor = {
                     zoneTypes: Array.from(zoneTypes)
                 }
             });
-        }
+        },
+        setFog(fog) {
+            this.setState({ fog });
+        },
     },
     toolAreas: [
         SceneArea,

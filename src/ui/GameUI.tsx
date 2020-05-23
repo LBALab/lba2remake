@@ -24,8 +24,9 @@ import TeleportMenu from './game/TeleportMenu';
 import Ribbon from './game/Ribbon';
 import {KeyHelpIcon, KeyHelpScreen} from './game/KeyboardHelp';
 import {sBind} from '../utils';
-import {TickerProps} from './utils/Ticker';
+import {TickerProps } from './utils/Ticker';
 import {updateLabels} from './editor/labels';
+import { setFog } from './editor/fog';
 import { pure } from '../utils/decorators';
 import { getResourcePath, ResourceType } from '../resources';
 
@@ -451,6 +452,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 };
                 DebugData.sceneManager = sceneManager;
                 updateLabels(scene, this.props.sharedState.labels);
+                setFog(scene, this.props.sharedState.fog);
             }
         }
     }

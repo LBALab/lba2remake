@@ -16,10 +16,14 @@ const IslandEditor = {
     getInitialState: () => ({
         island: 'CITADEL',
         wireframe: false,
+        fog: false,
     }),
     stateHandler: {
         setWireframe(wireframe) {
             this.setState({ wireframe });
+        },
+        setFog(fog) {
+            this.setState({ fog });
         },
         setName(name) {
             this.setState({
