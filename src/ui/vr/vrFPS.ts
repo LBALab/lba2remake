@@ -9,6 +9,7 @@ export function createFPSCounter(renderer) {
         y: -200,
         noDepth: true
     });
+    mesh.renderOrder = 1;
 
     ctx.font = '25px LBA';
     ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';

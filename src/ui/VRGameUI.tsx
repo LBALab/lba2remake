@@ -48,6 +48,7 @@ interface VRGameUIState {
     teleportMenu: boolean;
     enteredVR: boolean;
     vrScene?: any;
+    infoBubble?: string;
 }
 
 export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState> {

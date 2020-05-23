@@ -82,11 +82,18 @@ const fastMove = {
     [AnimType.DODGE_RIGHT]: {x: -2, z: 0},
 };
 
+const superSlowMove = {
+    [AnimType.FORWARD]: {x: 0, z: 1.5},
+    [AnimType.BACKWARD]: {x: 0, z: -0.75},
+    [AnimType.DODGE_LEFT]: {x: 0.75, z: 0},
+    [AnimType.DODGE_RIGHT]: {x: -0.75, z: 0},
+};
+
 const vrFPsteps = [
     slowMove,
     fastMove,
     slowMove,
-    slowMove
+    superSlowMove
 ];
 
 function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, time: any) {

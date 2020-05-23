@@ -40,6 +40,11 @@ export default class ControllerModel {
                 resolve(m.scene.getObjectByName(`${side}_hand`));
             });
         });
+        this.handMesh.traverse((node) => {
+            if (node instanceof THREE.Mesh) {
+                (node.material as any).transparent = true;
+            }
+        });
         this.threeObject.add(this.handMesh);
         this.threeObject.add(this.vrControllerMesh);
         this.addTouchPoints();

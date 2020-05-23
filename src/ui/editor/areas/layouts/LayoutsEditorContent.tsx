@@ -31,6 +31,7 @@ import {
     preloadResources,
     registerResources
 } from '../../../../resources';
+import { applyAnimationUpdaters } from '../../../../iso/metadata/animations';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -386,7 +387,6 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }
         if (lSettings && lSettings.replace) {
             const model = await loadModel(lSettings.file);
-            this.animateModel(model);
             const angle = (Math.PI / 2.0) * lSettings.orientation;
             model.scene.quaternion.setFromAxisAngle(
                 new THREE.Vector3(0, 1, 0),
@@ -394,6 +394,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             );
             lSettings.threeObject = model.scene;
             replaceMaterialsForPreview(lSettings.threeObject, shaderData);
+            this.animateModel(model);
             this.state.scene.threeScene.add(lSettings.threeObject);
             layoutObj.threeObject.visible = false;
         }
@@ -410,6 +411,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
 
     animateModel(model) {
         this.mixer = new THREE.AnimationMixer(model.scene);
+        applyAnimationUpdaters(model.scene, model.animations);
         each(model.animations, (clip) => {
             this.mixer.clipAction(clip).play();
         });
@@ -539,7 +541,6 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     async useFile(file) {
         this.setState({ replacementFiles: null });
         const model = await loadModel(file);
-        this.animateModel(model);
         const { variant } = this.props.sharedState;
         const { threeScene } = this.state.scene;
         const oldSettings = this.state.lSettings;
@@ -563,6 +564,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         const light = getLightVector();
         const shaderData = {lutTexture, paletteTexture, light};
         replaceMaterialsForPreview(lSettings.threeObject, shaderData);
+        this.animateModel(model);
         const { library, layout } = this.props.sharedState;
         if (!(library in layoutsMetadata)) {
             layoutsMetadata[library] = {};

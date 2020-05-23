@@ -314,10 +314,10 @@ function appendMeshGeometry(
     gTransform,
     node,
     angle,
-    matrixWorld = node.matrixWorld
+    matrixWorld = null
 ) {
     const transform = gTransform.clone();
-    transform.multiply(matrixWorld);
+    transform.multiply(matrixWorld || node.matrixWorld);
 
     const geom = node.geometry as THREE.BufferGeometry;
     const pos_attr = geom.attributes.position;
@@ -325,8 +325,11 @@ function appendMeshGeometry(
     const uv_attr = geom.attributes.uv;
     const index_attr = geom.index;
 
-    const rotation = new THREE.Matrix4().makeRotationY(angle - Math.PI / 2);
-    rotation.multiply(matrixWorld);
+    const rotation = new THREE.Matrix4();
+    if (!matrixWorld) {
+        rotation.makeRotationY(angle - Math.PI / 2);
+        rotation.multiply(node.matrixWorld);
+    }
     const normalMatrix = new THREE.Matrix3();
     normalMatrix.setFromMatrix4(rotation);
     const baseMaterial = node.material as THREE.MeshStandardMaterial;
