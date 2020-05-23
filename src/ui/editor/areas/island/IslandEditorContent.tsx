@@ -13,6 +13,7 @@ import {
     registerResources,
     preloadResources,
 } from '../../../../resources';
+import islandOffsets from './data/islandOffsets';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -155,6 +156,24 @@ export default class Island extends FrameListener<Props, State> {
         island.name = this.name;
         this.state.renderer.applySceneryProps(island.props);
 
+        const offset = islandOffsets[island.name];
+        this.state.scene.camera.controlNode.position.set(
+            offset.position.x, offset.position.y, offset.position.z
+        );
+
+        this.state.cameraOrientation.set(
+            offset.quartenion.x,
+            offset.quartenion.y,
+            offset.quartenion.z,
+            offset.quartenion.w,
+        );
+        this.state.cameraHeadOrientation.set(
+            offset.headQuartenion.x,
+            offset.headQuartenion.y,
+            offset.headQuartenion.z,
+            offset.headQuartenion.w,
+        );
+
         this.state.scene.threeScene.add(island.threeObject);
         this.setState({ island }, this.saveData);
         this.wireframe = false;
@@ -258,9 +277,6 @@ export default class Island extends FrameListener<Props, State> {
         };
         renderer.stats.begin();
         scene.camera.update(island, this.state, time);
-        // if (island) {
-        //     island.updateSeaTime(time); // FIXME looks like it does not exist anymore
-        // }
         renderer.render(scene);
         renderer.stats.end();
     }
