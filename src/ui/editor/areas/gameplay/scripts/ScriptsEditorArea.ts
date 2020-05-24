@@ -11,6 +11,9 @@ const ScriptsEditorArea = {
         mode: 'blocks'
     }),
     stateHandler: {
+        splitAt(splitAt) {
+            this.setState({splitAt});
+        },
         setActor(actorIndex) {
             this.setState({actorIndex});
         },
