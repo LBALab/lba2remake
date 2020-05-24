@@ -82,6 +82,7 @@ export default class ScriptsEditorContent extends React.Component<Props, State> 
                         ticker={this.props.ticker}
                         sharedState={this.props.sharedState}
                         stateHandler={this.props.stateHandler}
+                        hideVariablesPanel={() => this.setState({ showVariables: false })}
                         renderToolbar={this.renderToolbar} />;
         }
         return <BlocksEditor

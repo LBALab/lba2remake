@@ -30,6 +30,7 @@ interface Props extends TickerProps {
     stateHandler: any;
     editor: boolean;
     renderToolbar: (props: any) => React.ReactElement;
+    hideVariablesPanel: () => void;
 }
 
 interface State {
@@ -67,6 +68,7 @@ export default class TextEditor extends FrameListener<Props, State> {
             actorIndex: props.sharedState.actorIndex
         };
 
+        this.onRef = this.onRef.bind(this);
         this.updateSeparator = this.updateSeparator.bind(this);
         this.enableSeparator = this.enableSeparator.bind(this);
         this.disableSeparator = this.disableSeparator.bind(this);
@@ -239,6 +241,17 @@ export default class TextEditor extends FrameListener<Props, State> {
         }
     }
 
+    onRef(ref) {
+        if (ref !== this.rootRef) {
+            this.rootRef = ref;
+            if (this.rootRef) {
+                this.rootRef.addEventListener('click', () => {
+                    this.props.hideVariablesPanel();
+                });
+            }
+        }
+    }
+
     render() {
         const splitAt = this.props.sharedState.splitAt
             || this.state.splitAt
@@ -270,7 +283,7 @@ export default class TextEditor extends FrameListener<Props, State> {
         });
 
         return <React.Fragment>
-            <div style={contentStyle} ref={(ref) => { this.rootRef = ref; }}>
+            <div style={contentStyle} ref={this.onRef}>
                 {this.renderListing('life', splitAt)}
                 {this.renderListing('move', splitAt)}
             </div>
