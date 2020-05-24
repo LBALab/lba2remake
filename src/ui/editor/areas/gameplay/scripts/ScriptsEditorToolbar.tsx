@@ -144,10 +144,10 @@ export default class ScriptsEditorToolbar extends FrameListener<Props, State> {
             {this.renderCompileButton()}
             {this.renderClearWorkspaceButton()}
             <span style={switchButtonStyle} onClick={this.props.stateHandler.switchMode}>
-                <img style={iconStyle} src={`editor/icons/${mode === 'text' ? 'script.png' : 'blockly.svg'}`}/>
+                <img style={iconStyle} src={`editor/icons/${mode !== 'text' ? 'script.png' : 'blockly.svg'}`}/>
                 {mode === 'text'
-                    ? 'text'
-                    : 'blocks'}
+                    ? 'blocks'
+                    : 'text'}
             </span>
         </React.Fragment>;
     }
