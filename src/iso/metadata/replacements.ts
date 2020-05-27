@@ -348,7 +348,7 @@ function appendMeshGeometry(
         canvas.height = image.height;
         context.drawImage(image, 0, 0);
         const imageData = context.getImageData(0, 0, image.width, image.height);
-        const textureId = XXH.h32(imageData.data, 0).toString(16);
+        const textureId = XXH.h32(imageData.data.buffer, 0).toString(16);
         geomGroup = `textured_${textureId}`;
         groupType = 'textured';
     } else if (baseMaterial.opacity < 1) {
