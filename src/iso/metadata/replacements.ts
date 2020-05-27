@@ -11,6 +11,7 @@ import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
 import { compile } from '../../utils/shaders';
 import { loadFullSceneModel } from './models';
 import { loadResource, ResourceType } from '../../resources';
+import { getPartialMatrixWorld } from '../../utils/math';
 
 export async function initReplacements(entry, metadata, ambience) {
     const data = await loadReplacementData(ambience);
@@ -289,21 +290,6 @@ export async function addReplacementObject(info, replacements, gx, gy, gz) {
     if (animRoot.children.length > 0) {
         replacements.threeObject.add(animRoot);
     }
-}
-
-function getPartialMatrixWorld(node, root) {
-    const matrixWorld = new THREE.Matrix4();
-    const path = [];
-    let next = node;
-    while (next && next !== root) {
-        path.push(next);
-        next = next.parent;
-    }
-    path.reverse();
-    each(path, (obj) => {
-        matrixWorld.multiply(obj.matrix);
-    });
-    return matrixWorld;
 }
 
 const POS = new THREE.Vector3();

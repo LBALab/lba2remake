@@ -4,7 +4,7 @@ import { WebXRManager } from 'three/src/renderers/webxr/WebXRManager';
 import { MotionController } from '@webxr-input-profiles/motion-controllers';
 import ControllerModel from './vr/ControllerModel';
 import { createMotionController } from './vr/utils';
-import { debugProfiles } from './vr/debugProfiles';
+import { debugProfiles, updateDebug } from './vr/debugProfiles';
 import { getControllerMappings, applyMappings, Mappings } from './vr/mappings';
 
 export class VRControls {
@@ -27,6 +27,7 @@ export class VRControls {
         this.ctx = {
             sceneManager,
             game,
+            params,
             state: {}
         };
         this.controllers = {};
@@ -83,6 +84,9 @@ export class VRControls {
         }
         controlsState.vrTriggerButton = this.triggered;
         this.triggered = false;
+        if (this.ctx.params.vrCtrlDBG) {
+            updateDebug(this);
+        }
     }
 
     onInputSourcesChange(event) {
@@ -95,7 +99,7 @@ export class VRControls {
         const numControllers = size(this.controllers);
         each(this.controllers, (controller) => {
             const mappings = getControllerMappings(controller.info, numControllers);
-            controller.model.loadLabels(mappings);
+            controller.model.loadLabels(mappings, this.ctx.params.vrCtrlDBG);
             controller.mappings = mappings;
         });
     }

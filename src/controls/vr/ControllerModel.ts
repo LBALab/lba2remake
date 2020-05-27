@@ -4,11 +4,20 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MotionController } from '@webxr-input-profiles/motion-controllers';
 import { drawFrame } from '../../ui/vr/vrUtils';
 import { tr } from '../../lang';
+import { getPartialMatrixWorld } from '../../utils/math';
 
 const loader = new GLTFLoader();
 
-const CENTER = new THREE.Vector3(0, -0.03, -0.02);
-const RADIUS = 0.08;
+export const LabelParams = {
+    default: {
+        center: new THREE.Vector3(0, -0.03, -0.02),
+        radius: 0.08
+    },
+    'oculus-touch-v2': {
+        center: new THREE.Vector3(-0.01164, -0.01887, -0.02117),
+        radius: 0.0624,
+    }
+};
 
 const keys1stPerson = ['fpMove', 'fpTurn'];
 const keys3rdPerson = ['move', 'centerCam'];
@@ -22,9 +31,11 @@ export default class ControllerModel {
     labels1stPerson: THREE.Object3D;
     labels3rdPerson: THREE.Object3D;
     labelsCommon: THREE.Object3D;
+    handedness: string;
 
     constructor(motionController) {
         this.motionController = motionController;
+        this.handedness = (motionController.xrInputSource as any).handedness || 'right';
     }
 
     async load() {
@@ -34,10 +45,9 @@ export default class ControllerModel {
                 resolve(m.scene);
             });
         });
-        const side = (this.motionController.xrInputSource as any).handedness || 'right';
         this.handMesh = await new Promise<THREE.Object3D>((resolve) => {
             loader.load('models/hands.glb', (m) => {
-                resolve(m.scene.getObjectByName(`${side}_hand`));
+                resolve(m.scene.getObjectByName(`${this.handedness}_hand`));
             });
         });
         this.handMesh.traverse((node) => {
@@ -109,7 +119,7 @@ export default class ControllerModel {
         });
     }
 
-    loadLabels(mappings) {
+    loadLabels(mappings, debug = false) {
         if (this.labels) {
             this.vrControllerMesh.remove(this.labels);
         }
@@ -117,6 +127,25 @@ export default class ControllerModel {
         this.labels1stPerson = new THREE.Object3D();
         this.labels3rdPerson = new THREE.Object3D();
         this.labelsCommon = new THREE.Object3D();
+        const id = this.motionController.id;
+        const params = id in LabelParams
+            ? LabelParams[id]
+            : LabelParams.default;
+        if (debug) {
+            const geometry = new THREE.SphereGeometry(0.025, 32, 32);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0xff0000,
+                transparent: true,
+                opacity: 0.6
+            });
+            const sphere = new THREE.Mesh(geometry, material);
+            sphere.position.copy(params.center);
+            if (this.handedness === 'right') {
+                sphere.position.x = -sphere.position.x;
+            }
+            this.labels.add(sphere);
+        }
+
         this.labels.add(this.labels1stPerson);
         this.labels.add(this.labels3rdPerson);
         this.labels.add(this.labelsCommon);
@@ -135,8 +164,17 @@ export default class ControllerModel {
             }
             if (cmpModel) {
                 const position = new THREE.Vector3();
-                position.applyMatrix4(cmpModel.matrixWorld);
-                const label = makeLabel(CENTER, position, RADIUS, tr(`vrButton_${key}`));
+                position.applyMatrix4(getPartialMatrixWorld(cmpModel, this.vrControllerMesh));
+                const localCenter = new THREE.Vector3().copy(params.center);
+                if (this.handedness === 'right') {
+                    localCenter.x = -localCenter.x;
+                }
+                const label = makeLabel(
+                    localCenter,
+                    position,
+                    params.radius,
+                    tr(`vrButton_${key}`)
+                );
                 if (keys1stPerson.includes(key)) {
                     this.labels1stPerson.add(label);
                 } else if (keys3rdPerson.includes(key)) {
