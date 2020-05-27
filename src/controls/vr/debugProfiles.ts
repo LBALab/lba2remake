@@ -41,6 +41,7 @@ interface Context {
             model: ControllerModel;
         }
     };
+    updateMappings: () => void;
 }
 
 export function debugProfiles(ctx: Context) {
@@ -71,5 +72,6 @@ function switchProfile(ctx: Context) {
         controllerGrip.add(model.threeObject);
         controller.model = model;
         controller.info = info;
+        ctx.updateMappings();
     });
 }
