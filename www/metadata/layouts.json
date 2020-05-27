@@ -600,6 +600,31 @@
       "replace": true,
       "file": "079_huge_cupboard_var3.glb",
       "orientation": 0
+    },
+    "105:1x1x2:542,544": {
+      "replace": true,
+      "file": "105_shelf_var1.glb",
+      "orientation": 0
+    },
+    "65:1x2x2:496,497,496,497": {
+      "replace": true,
+      "file": "065_books_var1.glb",
+      "orientation": 0
+    },
+    "106:4x1x1:349,350,350,351": {
+      "replace": true,
+      "file": "106_shelf_long_var1.glb",
+      "orientation": 0
+    },
+    "73:1x2x1:267,269": {
+      "replace": true,
+      "file": "073_books_var1.glb",
+      "orientation": 0
+    },
+    "74:1x2x1:272,275": {
+      "replace": true,
+      "file": "074_books_var1.glb",
+      "orientation": 0
     }
   },
   "1": {
