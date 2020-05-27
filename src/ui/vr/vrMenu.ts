@@ -1,9 +1,7 @@
 import * as THREE from 'three';
-import { each } from 'lodash';
 import { createScreen } from './vrScreen';
 import { getPickingTarget, handlePicking } from './picking';
 import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
-import controllerScreens from './data/controllerScreens';
 import { drawFrame } from './vrUtils';
 import { tr } from '../../lang';
 import { getResourcePath, ResourceType } from '../../resources';
@@ -12,7 +10,6 @@ let menuNode = null;
 let pickingTarget = null;
 let teleportMenu = null;
 let mainMenu = null;
-let controllerInfo = null;
 let resume = null;
 
 export function createMenu(game, sceneManager, light) {
@@ -140,7 +137,6 @@ export function createMenu(game, sceneManager, light) {
 }
 
 export function updateMenu(game, sceneManager) {
-    const { controlsState } = game;
     const { showMenu, teleportMenu: showTeleportMenu, inGameMenu } = game.getUiState();
     menuNode.visible = showMenu;
     mainMenu.visible = !showTeleportMenu;
@@ -156,10 +152,6 @@ export function updateMenu(game, sceneManager) {
                 pickingTarget
             });
         }
-    }
-    if (!controllerInfo && controlsState.controllerType) {
-        controllerInfo = createControllerInfo(controlsState.controllerType);
-        menuNode.add(controllerInfo);
     }
 }
 
@@ -246,41 +238,4 @@ function createOptionMenuItem({y, text, title, callback, selected}: OptionsMenuI
     }
 
     return {mesh, draw};
-}
-
-function createControllerInfo(type) {
-    const info = controllerScreens(type);
-    const {ctx, mesh} = createScreen({
-        width: info.width,
-        height: info.height,
-        angle: info.angle,
-        x: info.x,
-        z: info.z
-    });
-
-    const icon = new Image(info.width, info.height);
-    icon.src = `images/vr_controllers/${type}.png`;
-
-    function draw() {
-        drawFrame(ctx, 0, 0, info.width, info.height, false);
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = 'white';
-        ctx.shadowColor = 'black';
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
-        ctx.drawImage(icon, 0, 0, info.width, info.height);
-        each(info.labels, (label) => {
-            ctx.textAlign = label.textAlign;
-            ctx.font = `${label.fontSize}px LBA`;
-            const lines = label.text.split('\n');
-            each(lines, (line, idx: number) => {
-                ctx.fillText(line, label.x, label.y + (idx * label.fontSize));
-            });
-        });
-        (mesh.material as THREE.MeshBasicMaterial).map.needsUpdate = true;
-    }
-
-    icon.onload = () => draw();
-
-    return mesh;
 }
