@@ -177,12 +177,12 @@ function mapMainGameControls(
     let prevBehaviour: BtnMapping = null;
     let nextBehaviour: BtnMapping = null;
     if ('xr-standard-trigger' in components) {
-        if (numControllers === 1 || handedness === 'right') {
+        if (numControllers === 1 || handedness === 'left') {
             behaviourAction = {
                 btn: 'xr-standard-trigger',
                 handler: handlePressed
             };
-        } else if (handedness === 'left') {
+        } else if (handedness === 'right') {
             action = {
                 btn: 'xr-standard-trigger',
                 handler: handlePressed
@@ -203,11 +203,23 @@ function mapMainGameControls(
         }
     }
     const useForMove = numControllers === 1 || handedness === 'left';
-    if (useForMove && 'xr-standard-thumbstick' in components) {
-        move = {
-            btn: 'xr-standard-thumbstick',
-            handler: stickHandler.bind({})
-        };
+    if (useForMove) {
+        if ('xr-standard-thumbstick' in components) {
+            move = {
+                btn: 'xr-standard-thumbstick',
+                handler: stickHandler.bind({})
+            };
+        } else if ('xr-standard-touchpad' in components) {
+            move = {
+                btn: 'xr-standard-touchpad',
+                handler: stickHandler.bind({})
+            };
+        } else if ('touchpad' in components) {
+            move = {
+                btn: 'touchpad',
+                handler: stickHandler.bind({})
+            };
+        }
     }
     return {
         behaviourAction,
@@ -249,11 +261,31 @@ function mapFirstPersonMovements(
                 btn: 'xr-standard-thumbstick',
                 handler: component => -component.values.yAxis
             };
+        } else if ('xr-standard-touchpad' in components) {
+            fpMove = {
+                btn: 'xr-standard-touchpad',
+                handler: component => -component.values.yAxis
+            };
+        } else if ('touchpad' in components) {
+            fpMove = {
+                btn: 'touchpad',
+                handler: component => -component.values.yAxis
+            };
         }
     } else if (handedness === 'right') {
         if ('xr-standard-thumbstick' in components) {
             fpTurn = {
                 btn: 'xr-standard-thumbstick',
+                handler: component => component.values.xAxis
+            };
+        } else if ('xr-standard-touchpad' in components) {
+            fpTurn = {
+                btn: 'xr-standard-touchpad',
+                handler: component => component.values.xAxis
+            };
+        } else if ('touchpad' in components) {
+            fpTurn = {
+                btn: 'touchpad',
                 handler: component => component.values.xAxis
             };
         }
