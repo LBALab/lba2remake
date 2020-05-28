@@ -1,19 +1,64 @@
 # Version history
 
+## [v0.2.0](https://github.com/agrande/lba2remake/compare/v0.1.2...v0.2.0) Big update!
+_May 29th, 2020_
+
+#### Isometric 3D perspective
+
+A new mode has been added to display isometric scenes as 3D scenes, with a perspective camera.
+It is disabled by default, except in VR. In fact, the option existed before this release, but wasn't working well enough to mention. To enable it, add `iso3d=true` to the url.
+
+Example usage: https://www.lba2remake.net/#iso3d=true
+
+The isometric tiles will appear distorted by the perspective, so don't be surprised if the graphics look glitchy with this option.
+
+#### Replacement 3D models
+
+We're working on some replacement 3D models to show instead of the "flat" isometric bricks when isometric scenes are displayed in `iso3d` mode. An example of this being used is in Twinsen's house. We'll work on adding more of those to replace the whole game's isometric scenes.
+
+#### Isometric Layouts Editor
+
+To allow replacing isometric layouts with 3D models, we've created 2 new sections in the editor:
+- Iso Grids Editor
+- Iso Layouts Editor
+
+#### Weather FX
+
+Citadel island now has rain and lightning.
+Clouds and the gas layer on Zeelish are now dynamic.
+There are stars around the moon.
+The sea and lava have been improved a little bit.
+
+#### Blockly Scripting
+
+The script editor has a new mode for displaying the scripts as visual blocks that can be edited. This allows changing the scripts and thus making modifications to gameplay. Changes cannot be saved at this point.
+
+#### VR
+
+Completely reworked VR implementation to use WebXR instead of the deprecated WebVR API.
+This will make the game available to all VR-capable browsers and devices out of the box.
+It was only tested on an Oculus Quest, but it should work accross a wide variety of devices.
+
+-----------------------------
+
 ### [v0.1.2](https://github.com/agrande/lba2remake/compare/v0.1.1...v0.1.2) Bugfixes
 _November 9th, 2019_
 
 Fix for a crash when setting up VR renderer
+
+-----------------------------
 
 ### [v0.1.1](https://github.com/agrande/lba2remake/compare/v0.1.0...v0.1.1) Bugfixes
 _November 9th, 2019_
 
 Add Y as back button on Oculus Touch controller
 
-## [v0.1.0](https://github.com/agrande/lba2remake/compare/v0.0.15...v0.1.0) Major release
+-----------------------------
+
+## [v0.1.0](https://github.com/agrande/lba2remake/compare/v0.0.15...v0.1.0) Big update (VR!)
 _November 9th, 2019_
 
-This is a major release, but there is still a lot of work to do!
+This is an important release, but there is still a lot of work to do!
 
 #### VR
 
