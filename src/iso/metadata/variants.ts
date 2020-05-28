@@ -59,10 +59,10 @@ function checkVariantMatch(grid, cellInfo, variant, replacements) {
                 if (!column[yGrid]) {
                     return false;
                 }
-                const gridLayoutInfo = grid.library.layouts[column[yGrid].layout];
-                if (!gridLayoutInfo || gridLayoutInfo.index !== layout) {
+                if (column[yGrid].layout !== layout) {
                     return false;
                 }
+                const gridLayoutInfo = grid.library.layouts[column[yGrid].layout];
                 const brick = gridLayoutInfo.blocks[column[yGrid].block].brick;
                 if (brick !== brickVariant) {
                     return false;

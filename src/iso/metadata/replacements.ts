@@ -137,6 +137,7 @@ function makeReplacementGeometries(data) {
 function checkMatch(grid, cellInfo, replacements) {
     const {
         layout: {
+            blocks,
             index: layout,
             nX,
             nY,
@@ -150,18 +151,29 @@ function checkMatch(grid, cellInfo, replacements) {
     } = cellInfo;
     for (let z = 0; z < nZ; z += 1) {
         const zGrid = zStart - z;
-        for (let y = 0; y < nY; y += 1) {
-            const yGrid = yStart + y;
-            for (let x = 0; x < nX; x += 1) {
-                const xGrid = xStart - x;
-                const idxGrid = zGrid * 64 + xGrid;
-                const column = grid.cells[idxGrid].blocks;
+        for (let x = 0; x < nX; x += 1) {
+            const xGrid = xStart - x;
+            const idxGrid = zGrid * 64 + xGrid;
+            const column = grid.cells[idxGrid].blocks;
+            for (let y = 0; y < nY; y += 1) {
+                const yGrid = yStart + y;
                 if (!column[yGrid]) {
                     continue;
                 }
-                const gridLayoutInfo = grid.library.layouts[column[yGrid].layout];
-                if (!gridLayoutInfo || gridLayoutInfo.index !== layout) {
-                    return false;
+                if (column[yGrid].layout !== layout) {
+                    const gridLayoutInfo = grid.library.layouts[column[yGrid].layout];
+                    let skip = false;
+                    if (gridLayoutInfo) {
+                        const brick = gridLayoutInfo.blocks[column[yGrid].block].brick;
+                        const idx = (nX - x - 1) + y * nX + (nZ - z - 1) * nX * nY;
+                        const brickLayout = blocks[idx];
+                        if (brick !== brickLayout) {
+                            skip = true;
+                        }
+                    }
+                    if (!skip) {
+                        return false;
+                    }
                 }
                 if (replacements.bricks.has(`${xGrid},${yGrid},${zGrid}`)) {
                     return false;
