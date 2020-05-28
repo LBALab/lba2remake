@@ -8,7 +8,7 @@ export function processVariants(grid, cellInfo, replacements) {
 
     for (let i = 0; i < variants.length; i += 1) {
         const variant = variants[i];
-        if (checkVariantMatch(grid, cellInfo, variant.props)) {
+        if (checkVariantMatch(grid, cellInfo, variant.props, replacements)) {
             // console.log('matched', variant, 'at', x, y, z);
             suppressVariantBricks(replacements, variant.props, cellInfo);
             if (replacements.mergeReplacements) {
@@ -22,11 +22,12 @@ export function processVariants(grid, cellInfo, replacements) {
                     realZ - (variant.props.nZ * 0.5) + 1
                 );
             }
+            break;
         }
     }
 }
 
-function checkVariantMatch(grid, cellInfo, variant) {
+function checkVariantMatch(grid, cellInfo, variant, replacements) {
     const {
         x: xStart,
         y: yStart,
@@ -51,6 +52,9 @@ function checkVariantMatch(grid, cellInfo, variant) {
                 const brickVariant = blocksVariant[idxVariant];
                 if (brickVariant === -1) {
                     continue;
+                }
+                if (replacements.bricks.has(`${xGrid},${yGrid},${zGrid}`)) {
+                    return false;
                 }
                 if (!column[yGrid]) {
                     return false;
