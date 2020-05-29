@@ -1,7 +1,7 @@
 # Version history
 
 ## [v0.2.0](https://github.com/agrande/lba2remake/compare/v0.1.2...v0.2.0) Big update!
-_May 29th, 2020_
+_May 30th, 2020_
 
 #### Isometric 3D perspective
 

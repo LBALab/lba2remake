@@ -1,6 +1,6 @@
 {
   "name": "lba2remake",
-  "version": "0.2.0-WIP",
+  "version": "0.2.0",
   "description": "Little Big Adventure 2 HD version for the web",
   "scripts": {
     "start": "npm run dev",
