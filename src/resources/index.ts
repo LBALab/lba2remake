@@ -52,6 +52,7 @@ interface Resource {
     getEntry: Function;
     getEntryAsync: Function;
     hasHiddenEntries: Function;
+    getNextHiddenEntry: Function;
     load: Function;
     entries: [];
 }
@@ -124,6 +125,7 @@ const register = (
         load: null,
         length: 0,
         hasHiddenEntries: null,
+        getNextHiddenEntry: null,
         ref: null,
         buffer: null,
         entries: [],
@@ -181,6 +183,10 @@ const register = (
 
     resource.hasHiddenEntries = (index: number) => {
         return resource.hqr.hasHiddenEntries(index);
+    };
+
+    resource.getNextHiddenEntry = (index: number) => {
+        return resource.hqr.getNextHiddenEntry(index);
     };
 
     resource.getEntryAsync = async (index: number) => {
