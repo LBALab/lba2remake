@@ -1,5 +1,12 @@
 # Version history
 
+### [v0.2.1](https://github.com/agrande/lba2remake/compare/v0.2.0...v0.2.1) Bugfixes
+_May 30th, 2020_
+
+Fix for a crash in audio playback
+
+-----------------------------
+
 ## [v0.2.0](https://github.com/agrande/lba2remake/compare/v0.1.2...v0.2.0) Big update!
 _May 30th, 2020_
 
