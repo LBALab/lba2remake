@@ -164,12 +164,22 @@ export function updateExtra(game, scene, extra, time) {
     }
 
     if (hitActor && hitActor.index === 0) {
+        const { hero } = game.getState();
         switch (extra.spriteIndex) {
+            case SpriteType.LIFE:
+                hero.life += extra.info;
+                break;
+            case SpriteType.MAGIC:
+                hero.magic += extra.info;
+                if (hero.magic > (hero.magicball.level + 1) * 20) {
+                    hero.magic = (hero.magicball.level + 1) * 20;
+                }
+                break;
             case SpriteType.KEY:
-                game.getState().hero.keys += 1;
+                hero.keys += 1;
                 break;
             case SpriteType.KASHES:
-                game.getState().hero.money += extra.info;
+                hero.money += extra.info;
                 break;
         }
         removeExtraFromScene(scene, extra);

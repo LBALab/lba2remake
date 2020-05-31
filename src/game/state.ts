@@ -12,7 +12,7 @@ export function createState() {
         hero: {
             behaviour: 0,
             prevBehaviour: 0,
-            life: 50,
+            life: 200,
             money: 0,
             magic: 0,
             keys: 0,
