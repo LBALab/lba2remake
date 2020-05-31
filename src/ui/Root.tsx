@@ -50,7 +50,8 @@ export default class Root extends React.Component<RootProps> {
 
         // If WebXR is not supported, try loading the Polyfill.
         if (!('xr' in navigator)) {
-          new WebXRPolyfill();
+          // Don't support mobile devices without controllers i.e. cardboard.
+          new WebXRPolyfill({cardboard: false});
         }
 
         if ('xr' in navigator) {
