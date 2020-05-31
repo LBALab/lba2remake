@@ -48,6 +48,16 @@ export default class Root extends React.Component<RootProps> {
         window.addEventListener('hashchange', this.onHashChange);
         document.addEventListener('displaychangelog', this.openChangeLog);
 
+        // If the device is a mobile don't suggest playing in VR. Whilst Chrome
+        // can technically support "immersive-vr" via Cardboard etc. given no
+        // controllers will be present we don't consider that supported.
+        if (/Mobi|Android/i.test(navigator.userAgent)) {
+            this.setState({
+                loading: false
+            });
+            return;
+        }
+
         // If WebXR is not supported, try loading the Polyfill.
         if (!('xr' in navigator)) {
           new WebXRPolyfill();
