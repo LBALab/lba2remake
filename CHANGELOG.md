@@ -5,6 +5,8 @@ _May 31th, 2020_
 
 Improve VR support and fix main them audio quality
 
+-----------------------------
+
 ### [v0.2.1](https://github.com/agrande/lba2remake/compare/v0.2.0...v0.2.1) Bugfixes
 _May 30th, 2020_
 
