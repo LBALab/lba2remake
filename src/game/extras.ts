@@ -4,6 +4,7 @@ import { getRandom } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
 import { loadSprite } from '../iso/sprites';
 import { addExtraToScene, removeExtraFromScene } from './scenes';
+// import { createBoundingBox } from '../utils/rendering';
 
 export const ExtraFlag = {
     TIME_OUT: 1 << 0,
@@ -76,7 +77,7 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
         ),
         spriteIndex,
         spawnTime: 0,
-        lifeTime: 20 * 1000, // 20 seconds
+        lifeTime: 20, // 20 seconds
         info: bonus,
         hitStrength: 0,
         time,
@@ -85,14 +86,14 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
             this.threeObject = new THREE.Object3D();
             this.threeObject.position.copy(this.physics.position);
             const sprite = await loadSprite(spriteIndex, false, true, scene.is3DCam);
-            /*
-            sprite.boundingBoxDebugMesh = createBoundingBox(
-                sprite.boundingBox,
-                new THREE.Vector3(1, 0, 0)
-            );
-            sprite.boundingBoxDebugMesh.name = 'BoundingBox';
-            this.threeObject.add(sprite.boundingBoxDebugMesh);
-            */
+
+            // sprite.boundingBoxDebugMesh = createBoundingBox(
+            //     sprite.boundingBox,
+            //     new THREE.Vector3(1, 0, 0)
+            // );
+            // sprite.boundingBoxDebugMesh.name = 'BoundingBox';
+            // this.threeObject.add(sprite.boundingBoxDebugMesh);
+
             this.threeObject.add(sprite.threeObject);
             this.threeObject.name = `extra_${bonus}`;
             this.threeObject.visible = this.isVisible;
@@ -106,13 +107,10 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
         },
     };
 
-    if (spriteIndex !== SpriteType.KEY) {
-        extra.flags += ExtraFlag.TIME_OUT + ExtraFlag.FLASH;
-    }
-
     extra.init(angle, 40, 15);
 
     extra.spawnTime = time.elapsed;
+    extra.flags |= ExtraFlag.TIME_IN;
 
     const euler = new THREE.Euler(0, angle, 0, 'XZY');
     extra.physics.orientation.setFromEuler(euler);
@@ -133,6 +131,11 @@ export function updateExtra(game, scene, extra, time) {
         return;
 
     let hitActor = null;
+
+    if (time.elapsed - extra.spawnTime > extra.lifeTime &&
+        extra.spriteType !== SpriteType.KEY) {
+        extra.flags |= ExtraFlag.TIME_OUT;
+    }
 
     if (time.elapsed - extra.spawnTime > 1) {
         EXTRA_BOX.copy(extra.sprite.boundingBox);
@@ -182,6 +185,10 @@ export function updateExtra(game, scene, extra, time) {
                 hero.money += extra.info;
                 break;
         }
+    }
+
+    if ((extra.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT ||
+        (hitActor && hitActor.index === 0)) {
         removeExtraFromScene(scene, extra);
     }
 }
