@@ -13,6 +13,7 @@ import {
 import ChangeLog from './ChangeLog';
 import Disclaimer from './Disclaimer';
 import Ticker from './utils/Ticker';
+import WebXRPolyfill from 'webxr-polyfill';
 
 interface RootProps {
     ticker: Ticker;
@@ -46,6 +47,12 @@ export default class Root extends React.Component<RootProps> {
     componentWillMount() {
         window.addEventListener('hashchange', this.onHashChange);
         document.addEventListener('displaychangelog', this.openChangeLog);
+
+        // If WebXR is not supported, try loading the Polyfill.
+        if (!('xr' in navigator)) {
+          new WebXRPolyfill();
+        }
+
         if ('xr' in navigator) {
             (navigator as any).xr.isSessionSupported('immersive-vr')
                 .then((supported) => {
