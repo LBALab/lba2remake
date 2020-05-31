@@ -3,7 +3,7 @@
 ### [v0.2.2](https://github.com/agrande/lba2remake/compare/v0.2.1...v0.2.2) Bugfixes
 _May 31th, 2020_
 
-Improve VR support and fix main them audio quality
+Improve VR support and fix main theme audio quality
 
 -----------------------------
 
