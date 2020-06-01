@@ -19,7 +19,7 @@ import { VRControls } from '../controls/vr';
 
 interface VRGameUIProps extends TickerProps {
     params: any;
-    exitVR: (any) => any;
+    exitVR: () => any;
 }
 
 interface VRGameUIState {
@@ -255,6 +255,11 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         this.forceUpdate();
     }
 
+    exitVR() {
+        this.state.game.getAudioMenuManager().getMusicSource().stop();
+        this.props.exitVR();
+    }
+
     renderVRSelector() {
         if (!this.state.renderer) {
             return null;
@@ -298,7 +303,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
                     {this.state.enteredVR ? tr('ReturnToVR') : tr('PlayInVR')}
                 </div>
                 <br/><br/>
-                {!this.state.enteredVR && <div style={buttonStyle2} onClick={this.props.exitVR}>
+                {!this.state.enteredVR && <div style={buttonStyle2} onClick={this.exitVR.bind(this)}>
                     {tr('PlayOnScreen')}
                 </div>}
             </div>
