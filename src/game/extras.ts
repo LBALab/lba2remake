@@ -17,6 +17,8 @@ export const ExtraFlag = {
     BONUS: 1 << 14,
 };
 
+const GRAVITY = 40000;
+
 interface ExtraPhysics {
     position: THREE.Vector3;
     orientation: THREE.Quaternion;
@@ -24,6 +26,8 @@ interface ExtraPhysics {
         position: THREE.Vector3,
         angle: number,
         destAngle: number
+        direction: THREE.Vector3,
+        velocity: THREE.Vector3,
     };
 }
 
@@ -38,6 +42,8 @@ export interface Extra {
     time: any;
     spawnTime: number;
     spriteIndex: number;
+    speed: number;
+    weight: number;
 
     isVisible: boolean;
     isSprite: boolean;
@@ -53,10 +59,11 @@ function initPhysics(position, angle) {
         position,
         orientation: new THREE.Quaternion(),
         temp: {
-            destination: new THREE.Vector3(0, 0, 0),
             position: new THREE.Vector3(0, 0, 0),
             angle,
             destAngle: angle,
+            direction: new THREE.Vector3(0, 0, 0),
+            velocity: new THREE.Vector3(0, 0, 0),
         }
     };
 }
@@ -81,6 +88,8 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
         info: bonus,
         hitStrength: 0,
         time,
+        speed: 0,
+        weight: 0,
 
         async loadMesh() {
             this.threeObject = new THREE.Object3D();
@@ -104,6 +113,8 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
             this.flags |= ExtraFlag.FLY;
             // TODO set speed
             this.time = time;
+            this.speed = _speed;
+            this.weight = _weight;
         },
     };
 
@@ -114,6 +125,12 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
 
     const euler = new THREE.Euler(0, angle, 0, 'XZY');
     extra.physics.orientation.setFromEuler(euler);
+
+    extra.physics.temp.direction = extra.physics.position.clone();
+    // extra.physics.temp.direction.applyQuaternion(extra.physics.orientation);
+
+    extra.physics.temp.velocity = extra.physics.temp.direction.clone();
+    // extra.physics.temp.velocity.addScalar(extra.speed);
 
     await extra.loadMesh();
     addExtraToScene(scene, extra);
@@ -137,7 +154,21 @@ export function updateExtra(game, scene, extra, time) {
         extra.flags |= ExtraFlag.TIME_OUT;
     }
 
-    if (time.elapsed - extra.spawnTime > 1) {
+    const ts = (time.elapsed - extra.spawnTime) / 200;
+
+    const x = extra.speed * ts
+        * Math.cos(45);
+    const y = extra.speed * ts
+        * Math.sin(45) - (0.5 * GRAVITY * ts * ts);
+    const trajectory = new THREE.Vector3(x, y, 0);
+    trajectory.applyEuler(new THREE.Euler(0, extra.physics.temp.angle, 0, 'XZY'));
+
+    extra.physics.position.add(
+        trajectory
+    );
+    extra.threeObject.position.copy(extra.physics.position);
+
+    if (false && time.elapsed - extra.spawnTime > 1) {
         EXTRA_BOX.copy(extra.sprite.boundingBox);
         EXTRA_BOX.translate(extra.physics.position);
         DIFF.set(0, 1 / 128, 0);
@@ -187,7 +218,7 @@ export function updateExtra(game, scene, extra, time) {
         }
     }
 
-    if ((extra.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT ||
+    if (false && (extra.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT ||
         (hitActor && hitActor.index === 0)) {
         removeExtraFromScene(scene, extra);
     }

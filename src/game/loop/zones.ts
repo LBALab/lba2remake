@@ -170,7 +170,7 @@ function BONUS(game, scene, zone, hero) {
         destAngle += angleToRad(getRandom(0, 300) - 150);
 
         const position = zone.physics.position.clone();
-        const offset = new THREE.Vector3(0.75, 0, 0);
+        const offset = new THREE.Vector3(0, 0, 0);
         offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
         position.add(offset);
 
