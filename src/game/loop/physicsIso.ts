@@ -3,23 +3,28 @@ import { WORLD_SIZE } from '../../utils/lba';
 
 const STEP = 1 / WORLD_SIZE;
 
-export function processCollisions(grid, _scene, actor) {
-    const basePos = actor.threeObject.position.clone();
-    const position = actor.physics.position.clone();
+export function processCollisions(grid, _scene, obj) {
+    let isTouchingGroud = false;
+    const basePos = obj.threeObject.position.clone();
+    const position = obj.physics.position.clone();
     basePos.multiplyScalar(STEP);
     position.multiplyScalar(STEP);
     const dx = 64 - Math.floor(position.x * 32);
     const dz = Math.floor(position.z * 32);
     const cell = grid.cells[(dx * 64) + dz];
-    actor.floorSound = -1;
+    if (obj.animState) { // if it's an actor
+        obj.floorSound = -1;
+    }
     if (cell
-        && (actor.props.flags.hasCollisionFloor
-            || actor.props.flags.canFall)) {
+        && (obj.props.flags.hasCollisionFloor
+            || obj.props.flags.canFall)) {
         for (let i = cell.columns.length - 1; i >= 0; i -= 1) {
             const column = cell.columns[i];
             const bb = column.box;
             let y;
-            actor.animState.floorSound = column.sound;
+            if (obj.animState) { // if it's an actor
+                obj.animState.floorSound = column.sound;
+            }
             switch (column.shape) {
                 case 2:
                     y = bb.max.y - ((1 - ((position.z * 32) % 1)) / 64);
@@ -43,17 +48,20 @@ export function processCollisions(grid, _scene, actor) {
                 const newY = Math.max(y, position.y);
                 if (newY - position.y < 0.12) {
                     position.y = newY;
+                    isTouchingGroud = true;
                 }
                 break;
             }
         }
     }
     position.y = Math.max(0, position.y);
-    if (actor.props.flags.hasCollisionBricks) {
-        processBoxIntersections(grid, actor, position, dx, dz);
+    if (obj.props.flags.hasCollisionBricks) {
+        isTouchingGroud = processBoxIntersections(grid, obj, position, dx, dz, isTouchingGroud);
     }
     position.multiplyScalar(WORLD_SIZE);
-    actor.physics.position.copy(position);
+    obj.physics.position.copy(position);
+
+    return isTouchingGroud;
 }
 
 const ACTOR_BOX = new THREE.Box3();
@@ -64,7 +72,7 @@ const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
 const BB = new THREE.Box3();
 
-function processBoxIntersections(grid, actor, position, dx, dz) {
+function processBoxIntersections(grid, actor, position, dx, dz, isTouchingGroud) {
     const boundingBox = actor.model.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.min.multiplyScalar(STEP);
@@ -88,9 +96,11 @@ function processBoxIntersections(grid, actor, position, dx, dz) {
                 BB.min.set((64 - (dx + ox)) / 32, -Infinity, (dz + oz) / 32);
                 BB.max.set((65 - (dx + ox)) / 32, Infinity, (dz + oz + 1) / 32);
                 intersectBox(actor, position);
+                isTouchingGroud = false;
             }
         }
     }
+    return isTouchingGroud;
 }
 
 function intersectBox(actor, position) {

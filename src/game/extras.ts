@@ -36,6 +36,7 @@ export interface Extra {
     physics: ExtraPhysics;
 
     flags: number;
+    props: any;
     lifeTime: number;
     info: number;
     hitStrength: number;
@@ -82,6 +83,15 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
             | ExtraFlag.BONUS
             | ExtraFlag.TAKABLE
         ),
+        props: {
+            flags: {
+                hasCollisions: true,
+                hasCollisionFloor: true,
+                canFall: true,
+                isVisible: true,
+                isSprite: true,
+            },
+        },
         spriteIndex,
         spawnTime: 0,
         lifeTime: 20, // 20 seconds
@@ -154,21 +164,33 @@ export function updateExtra(game, scene, extra, time) {
         extra.flags |= ExtraFlag.TIME_OUT;
     }
 
-    const ts = (time.elapsed - extra.spawnTime) / 200;
+    if ((extra.flags & ExtraFlag.FLY) === ExtraFlag.FLY) {
+        const ts = (time.elapsed - extra.spawnTime) / 200;
 
-    const x = extra.speed * ts
-        * Math.cos(45);
-    const y = extra.speed * ts
-        * Math.sin(45) - (0.5 * GRAVITY * ts * ts);
-    const trajectory = new THREE.Vector3(x, y, 0);
-    trajectory.applyEuler(new THREE.Euler(0, extra.physics.temp.angle, 0, 'XZY'));
+        const x = extra.speed * ts
+            * Math.cos(45);
+        const y = extra.speed * ts
+            * Math.sin(45) - (0.5 * GRAVITY * ts * ts);
+        const trajectory = new THREE.Vector3(x, y, 0);
+        trajectory.applyEuler(new THREE.Euler(0, extra.physics.temp.angle, 0, 'XZY'));
 
-    extra.physics.position.add(
-        trajectory
-    );
-    extra.threeObject.position.copy(extra.physics.position);
+        extra.physics.position.add(
+            trajectory
+        );
+        extra.threeObject.position.copy(extra.physics.position);
+    }
 
-    if (false && time.elapsed - extra.spawnTime > 1) {
+    if (extra.props.flags.hasCollisions &&
+        time.elapsed - extra.spawnTime > 0.5) {
+        const isTouchingGroud = scene.scenery.physics.processCollisions(scene, extra);
+        if (isTouchingGroud) {
+            extra.physics.position.add(new THREE.Vector3(0, 0.1, 0));
+            extra.threeObject.position.copy(extra.physics.position);
+            extra.flags &= ~ExtraFlag.FLY;
+        }
+    }
+
+    if (!((extra.flags & ExtraFlag.FLY) === ExtraFlag.FLY)) {
         EXTRA_BOX.copy(extra.sprite.boundingBox);
         EXTRA_BOX.translate(extra.physics.position);
         DIFF.set(0, 1 / 128, 0);
@@ -218,7 +240,7 @@ export function updateExtra(game, scene, extra, time) {
         }
     }
 
-    if (false && (extra.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT ||
+    if ((extra.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT ||
         (hitActor && hitActor.index === 0)) {
         removeExtraFromScene(scene, extra);
     }

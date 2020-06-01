@@ -30,8 +30,8 @@ function processCameraCollisions(sections, camPosition, groundOffset = 0.15, obj
     }
 }
 
-function processCollisions(sections, scene, actor) {
-    POSITION.copy(actor.physics.position);
+function processCollisions(sections, scene, obj) {
+    POSITION.copy(obj.physics.position);
     POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
 
     const section = findSection(sections, POSITION);
@@ -41,33 +41,40 @@ function processCollisions(sections, scene, actor) {
     const height = ground.height;
 
     let isTouchingGround = true;
-    if (actor.physics.position.y > height) {
+    if (obj.physics.position.y > height) {
         isTouchingGround = false;
     }
-    actor.physics.position.y = Math.max(height, actor.physics.position.y);
-    POSITION.y = actor.physics.position.y;
-    actor.animState.floorSound = -1;
+    obj.physics.position.y = Math.max(height, obj.physics.position.y);
+    POSITION.y = obj.physics.position.y;
+
+    if (obj.animState) { // if it's an actor
+        obj.animState.floorSound = -1;
+    }
 
     if (section) {
-        actor.animState.floorSound = ground.sound;
+        if (obj.animState) { // if it's an actor
+            obj.animState.floorSound = ground.sound;
+        }
 
-        isTouchingGround = processBoxIntersections(section, actor, POSITION, isTouchingGround);
+        isTouchingGround = processBoxIntersections(section, obj, POSITION, isTouchingGround);
         if (!FLAGS.hitObject) {
-            TGT.copy(actor.physics.position);
-            TGT.sub(actor.threeObject.position);
+            TGT.copy(obj.physics.position);
+            TGT.sub(obj.threeObject.position);
             TGT.setY(0);
             if (TGT.lengthSq() !== 0) {
                 TGT.normalize();
                 TGT.multiplyScalar(0.005 * WORLD_SIZE);
-                TGT.add(actor.threeObject.position);
+                TGT.add(obj.threeObject.position);
                 TGT.applyMatrix4(scene.sceneNode.matrixWorld);
                 const gInfo = getGroundInfo(section, TGT);
                 if (gInfo && gInfo.collision && isTouchingGround) {
-                    actor.physics.position.copy(actor.threeObject.position);
+                    obj.physics.position.copy(obj.threeObject.position);
                 }
             }
         }
     }
+
+    return isTouchingGround;
 }
 
 const DEFAULT_GROUND = {
@@ -119,12 +126,13 @@ const DIFF = new THREE.Vector3();
 const H_THRESHOLD = 0.007 * WORLD_SIZE;
 
 function processBoxIntersections(section, actor, position, isTouchingGround) {
-    const boundingBox = actor.model.boundingBox;
+    const boundingBox = actor.model ? actor.model.boundingBox : actor.sprite.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.translate(position);
     for (let i = 0; i < section.boundingBoxes.length; i += 1) {
         const bb = section.boundingBoxes[i];
         if (ACTOR_BOX.intersectsBox(bb)) {
+            isTouchingGround = true;
             INTERSECTION.copy(ACTOR_BOX);
             INTERSECTION.intersect(bb);
             INTERSECTION.getSize(ITRS_SIZE);
