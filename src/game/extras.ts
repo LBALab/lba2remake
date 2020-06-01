@@ -117,6 +117,7 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
             this.threeObject.position.copy(this.physics.position);
             const sprite = await loadSprite(spriteIndex, false, true, scene.is3DCam);
 
+            // // Debug Bounding Box
             // sprite.boundingBoxDebugMesh = createBoundingBox(
             //     sprite.boundingBox,
             //     new THREE.Vector3(1, 0, 0)
@@ -132,7 +133,6 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
 
         init(_angle, _speed, _weight) {
             this.flags |= ExtraFlag.FLY;
-            // TODO set speed
             this.time = time;
             this.speed = _speed * 0.9;
             this.weight = _weight;
@@ -148,10 +148,8 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
     extra.physics.orientation.setFromEuler(euler);
 
     extra.physics.temp.direction = extra.physics.position.clone();
-    // extra.physics.temp.direction.applyQuaternion(extra.physics.orientation);
 
     extra.physics.temp.velocity = extra.physics.temp.direction.clone();
-    // extra.physics.temp.velocity.addScalar(extra.speed);
 
     await extra.loadMesh();
     addExtraToScene(scene, extra);
