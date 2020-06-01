@@ -4,6 +4,8 @@ import { getRandom } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
 import { loadSprite } from '../iso/sprites';
 import { addExtraToScene, removeExtraFromScene } from './scenes';
+import { clone } from 'lodash';
+import { getHtmlColor } from '../scene';
 // import { createBoundingBox } from '../utils/rendering';
 
 export const ExtraFlag = {
@@ -134,7 +136,7 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
         init(_angle, _speed, _weight) {
             this.flags |= ExtraFlag.FLY;
             this.time = time;
-            this.speed = _speed * 0.9;
+            this.speed = _speed * 0.8;
             this.weight = _weight;
         },
     };
@@ -254,6 +256,25 @@ export function updateExtra(game, scene, extra, time) {
 
     if ((extra.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT ||
         (hitActor && hitActor.index === 0)) {
+
+        if (extra.info && (hitActor && hitActor.index === 0)) {
+            const itrjId = `extra_${extra.index}_${extra.info}`;
+            const interjections = clone(game.getUiState().interjections);
+
+            interjections[itrjId] = {
+                scene: scene.index,
+                obj: extra,
+                color: getHtmlColor(scene.data.palette, (10 * 16) + 12),
+                value: extra.info,
+            };
+            game.setUiState({interjections});
+            setTimeout(() => {
+                const interjectionsCopy = clone(game.getUiState().interjections);
+                delete interjectionsCopy[itrjId];
+                game.setUiState({interjections: interjectionsCopy});
+            }, 1000);
+        }
+
         removeExtraFromScene(scene, extra);
     }
 }

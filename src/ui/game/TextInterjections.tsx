@@ -19,11 +19,10 @@ export default function TextInterjections(props) {
                 return null;
             }
             const renderer = props.renderer;
-            const actor = props.scene.actors[itrj.actor];
             const widthHalf = 0.5 * renderer.canvas.clientWidth;
             const heightHalf = 0.5 * renderer.canvas.clientHeight;
 
-            POS.setFromMatrixPosition(actor.threeObject.matrixWorld);
+            POS.setFromMatrixPosition(itrj.obj.threeObject.matrixWorld);
             POS.y += 0.1;
             POS.project(props.scene.camera.threeCamera);
             POS.x = (POS.x * widthHalf) + widthHalf;
