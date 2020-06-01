@@ -19,6 +19,9 @@ export const ExtraFlag = {
 
 const GRAVITY = 40000;
 
+const SAMPLE_BONUS = 3;
+const SAMPLE_BONUS_FOUND = 2;
+
 interface ExtraPhysics {
     position: THREE.Vector3;
     orientation: THREE.Quaternion;
@@ -55,6 +58,13 @@ export interface Extra {
     init: Function;
 }
 
+const playSoundFx = (game, sampleIndex) => {
+    const soundFxSource = game.getAudioManager().getSoundFxSource();
+    soundFxSource.load(sampleIndex, () => {
+        soundFxSource.play();
+    });
+};
+
 function initPhysics(position, angle) {
     return {
         position,
@@ -69,7 +79,8 @@ function initPhysics(position, angle) {
     };
 }
 
-export async function addExtra(scene, position, angle, spriteIndex, bonus, time) : Promise<Extra> {
+export async function addExtra(game, scene, position, angle, spriteIndex, bonus, time)
+    : Promise<Extra> {
     const extra: Extra = {
         type: 'extra',
         physics: initPhysics(position, angle),
@@ -123,7 +134,7 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
             this.flags |= ExtraFlag.FLY;
             // TODO set speed
             this.time = time;
-            this.speed = _speed;
+            this.speed = _speed * 0.9;
             this.weight = _weight;
         },
     };
@@ -144,6 +155,8 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
 
     await extra.loadMesh();
     addExtraToScene(scene, extra);
+
+    playSoundFx(game, SAMPLE_BONUS);
 
     return extra;
 }
@@ -238,6 +251,7 @@ export function updateExtra(game, scene, extra, time) {
                 hero.money += extra.info;
                 break;
         }
+        playSoundFx(game, SAMPLE_BONUS_FOUND);
     }
 
     if ((extra.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT ||

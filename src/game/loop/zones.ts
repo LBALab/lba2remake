@@ -175,6 +175,7 @@ function BONUS(game, scene, zone, hero) {
         position.add(offset);
 
         addExtra(
+            game,
             scene,
             position,
             destAngle,
