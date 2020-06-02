@@ -69,6 +69,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         this.getUiState = sBind(this.getUiState, this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
+        this.exitVR = this.exitVR.bind(this);
 
         this.session = null;
 
@@ -303,7 +304,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
                     {this.state.enteredVR ? tr('ReturnToVR') : tr('PlayInVR')}
                 </div>
                 <br/><br/>
-                {!this.state.enteredVR && <div style={buttonStyle2} onClick={this.exitVR.bind(this)}>
+                {!this.state.enteredVR && <div style={buttonStyle2} onClick={this.exitVR}>
                     {tr('PlayOnScreen')}
                 </div>}
             </div>
