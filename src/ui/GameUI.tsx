@@ -29,6 +29,7 @@ import {updateLabels} from './editor/labels';
 import { setFog } from './editor/fog';
 import { pure } from '../utils/decorators';
 import { getResourcePath, ResourceType } from '../resources';
+import BehaviourMenu from './game/BehaviourMenu';
 
 interface GameUIProps extends TickerProps {
     saveMainData?: Function;
@@ -498,6 +499,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 interjections={this.state.interjections}
             />
             <Video video={this.state.video} renderer={this.state.renderer} />
+            <BehaviourMenu {...this.state.game.hero} />
             <Menu
                 params={this.props.params}
                 showMenu={this.state.showMenu && !this.state.teleportMenu}

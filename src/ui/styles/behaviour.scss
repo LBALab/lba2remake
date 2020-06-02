@@ -1,0 +1,70 @@
+@import './_media.scss';
+@import './main.scss';
+
+.behaviourMenu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    list-style: none;
+}
+
+.behaviourContainer {
+    user-select: none;
+    position: relative;
+    margin: 15px;
+    border: 2px outset #61cece;
+    border-radius: 15px;
+    font-size: 2em;
+    width: 700px;
+    background: rgba(0, 0, 0, 0.5);
+
+    @include media("<desktop") {
+        font-size: 1.5em;
+        border-radius: 10px;
+        text-shadow: black 3px 3px;
+    }
+
+    @include media("<tablet","portrait") {
+        font-size: 1em;
+        border-radius: 8px;
+        text-shadow: black 2px 2px;
+    }
+
+    &.points {
+        height: 130px;
+        background: rgba(0, 0, 0, 0.8);
+    }
+}
+
+.behaviourMode {
+    color: white;
+    user-select: none;
+    position: relative;
+    font-family: LBA;
+    text-shadow: black 4px 4px;
+    margin: 15px;
+    padding-bottom: 5px;
+    border: 2px outset #61cece;
+    border-radius: 15px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.behaviourItemContainer {
+    display: flex;
+    margin: 15px;
+}
+
+.behaviourItem {
+    flex-grow: 1;
+    user-select: none;
+    position: relative;
+    margin-right: 15px;
+    padding-bottom: 5px;
+    border: 2px outset #61cece;
+    border-radius: 15px;
+    width: 150;
+    height: 180;
+    background: rgba(0, 0, 0, 0.6);
+}
