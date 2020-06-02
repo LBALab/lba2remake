@@ -253,7 +253,7 @@ function mapExtraControls(
         menu = {
             btn: 'b-button',
             handler: handleTapped.bind({})
-        }
+        };
     }
     return {
         centerCam,
