@@ -15,6 +15,7 @@ interface MainGameControls {
 
 interface ExtraControls {
     centerCam: BtnMapping;
+    menu: BtnMapping;
 }
 
 interface FirstPersonMappings {
@@ -114,6 +115,11 @@ export function applyMappings(
             camera.center(scene);
         }
     });
+    applyMapping(components, mappings, 'menu', (enabled) => {
+        if (enabled) {
+           history.back();
+        }
+    });
 }
 
 function applyMapping(
@@ -193,12 +199,12 @@ function mapMainGameControls(
         if (numControllers === 1 || handedness === 'right') {
             nextBehaviour = {
                 btn: 'xr-standard-squeeze',
-                handler: handleTapped
+                handler: handleTapped.bind({})
             };
         } else if (handedness === 'left') {
             prevBehaviour = {
                 btn: 'xr-standard-squeeze',
-                handler: handleTapped
+                handler: handleTapped.bind({})
             };
         }
     }
@@ -236,14 +242,22 @@ function mapExtraControls(
 ) : ExtraControls {
     const { components } = motionController;
     let centerCam: BtnMapping = null;
+    let menu: BtnMapping = null;
     if ('a-button' in components) {
         centerCam = {
             btn: 'a-button',
             handler: handleTapped.bind({})
         };
     }
+    if ('b-button' in components) {
+        menu = {
+            btn: 'b-button',
+            handler: handleTapped.bind({})
+        }
+    }
     return {
-        centerCam
+        centerCam,
+        menu,
     };
 }
 
