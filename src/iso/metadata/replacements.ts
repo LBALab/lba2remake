@@ -48,11 +48,9 @@ export async function initReplacements(entry, metadata, ambience) {
     };
 }
 
-export function processLayoutReplacement(grid, cellInfo, replacements) {
-    const {x, y, z} = cellInfo.pos;
+export function processLayoutReplacement(grid, cellInfo, replacements, candidates) {
+    const {y} = cellInfo.pos;
     const {nX, nY, nZ} = cellInfo.layout;
-    const realY = (y * 0.5) + 0.5;
-    const realZ = z - 1;
     const idx = cellInfo.blocks[y].block;
     const zb = Math.floor(idx / (nY * nX));
     const yb = Math.floor(idx / nX) - (zb * nY);
@@ -60,16 +58,11 @@ export function processLayoutReplacement(grid, cellInfo, replacements) {
     // Check brick at the bottom corner of layout
     if (yb === 0 && xb === nX - 1 && zb === nZ - 1) {
         if (checkMatch(grid, cellInfo, replacements)) {
-            suppressBricks(replacements, cellInfo.layout, x, y, z);
-            if (replacements.mergeReplacements) {
-                addReplacementObject(
-                    cellInfo,
-                    replacements,
-                    x - (nX * 0.5) + 1,
-                    realY - 0.5,
-                    realZ - (nZ * 0.5) + 1
-                );
-            }
+            candidates.push({
+                type: 'layout',
+                data: cellInfo.layout,
+                replacementData: cellInfo
+            });
         }
     }
 }
@@ -182,20 +175,6 @@ function checkMatch(grid, cellInfo, replacements) {
         }
     }
     return true;
-}
-
-function suppressBricks(gridReps, layout, x, y, z) {
-    const {nX, nY, nZ} = layout;
-    for (let zL = 0; zL < nZ; zL += 1) {
-        for (let yL = 0; yL < nY; yL += 1) {
-            for (let xL = 0; xL < nX; xL += 1) {
-                const zT = z - zL;
-                const yT = y + yL;
-                const xT = x - xL;
-                gridReps.bricks.add(`${xT},${yT},${zT}`);
-            }
-        }
-    }
 }
 
 const angleMapping = [

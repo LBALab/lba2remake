@@ -1,28 +1,15 @@
-import { addReplacementObject } from './replacements';
-
-export function processVariants(grid, cellInfo, replacements) {
-    const {
-        variants,
-        pos: { x, y, z }
-    } = cellInfo;
+export function processVariants(grid, cellInfo, replacements, candidates) {
+    const { variants } = cellInfo;
 
     for (let i = 0; i < variants.length; i += 1) {
         const variant = variants[i];
         if (checkVariantMatch(grid, cellInfo, variant.props, replacements)) {
-            // console.log('matched', variant, 'at', x, y, z);
-            suppressVariantBricks(replacements, variant.props, cellInfo);
-            if (replacements.mergeReplacements) {
-                const realY = (y * 0.5) + 0.5;
-                const realZ = z - 1;
-                addReplacementObject(
-                    variant,
-                    replacements,
-                    x - (variant.props.nX * 0.5) + 1,
-                    realY - 0.5,
-                    realZ - (variant.props.nZ * 0.5) + 1
-                );
-            }
-            break;
+            // suppressVariantBricks(replacements, variant.props, cellInfo);
+            candidates.push({
+                type: 'variant',
+                data: variant.props,
+                replacementData: variant
+            });
         }
     }
 }
@@ -73,7 +60,7 @@ function checkVariantMatch(grid, cellInfo, variant, replacements) {
     return true;
 }
 
-function suppressVariantBricks(replacements, variant, cellInfo) {
+export function suppressVariantBricks(replacements, variant, cellInfo) {
     const {
         x: xStart,
         y: yStart,
