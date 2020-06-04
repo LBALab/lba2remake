@@ -54,7 +54,7 @@ export async function saveSceneReplacementModel(entry, ambience) {
     ]);
     const palette = pal.getBufferUint8();
     const bricks = loadBricks(bkg);
-    const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
+    const grid = await loadGrid(bkg, bricks, mask, palette, entry + 1);
 
     const metadata = await loadMetadata(entry, grid.library, true);
     const replacements = await initReplacements(entry, metadata, ambience);
