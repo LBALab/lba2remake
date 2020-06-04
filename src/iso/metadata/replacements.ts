@@ -150,26 +150,27 @@ function checkMatch(grid, cellInfo, replacements) {
             const column = grid.cells[idxGrid].blocks;
             for (let y = 0; y < nY; y += 1) {
                 const yGrid = yStart + y;
+                if (replacements.bricks.has(`${xGrid},${yGrid},${zGrid}`)) {
+                    return false;
+                }
                 if (!column[yGrid]) {
+                    if (cellInfo.variants) {
+                        return false;
+                    }
                     continue;
                 }
                 if (column[yGrid].layout !== layout) {
                     const gridLayoutInfo = grid.library.layouts[column[yGrid].layout];
-                    let skip = false;
                     if (gridLayoutInfo) {
                         const brick = gridLayoutInfo.blocks[column[yGrid].block].brick;
                         const idx = (nX - x - 1) + y * nX + (nZ - z - 1) * nX * nY;
-                        const brickLayout = blocks[idx];
+                        const brickLayout = blocks[idx].brick;
                         if (brick !== brickLayout) {
-                            skip = true;
+                            return false;
                         }
-                    }
-                    if (!skip) {
+                    } else {
                         return false;
                     }
-                }
-                if (replacements.bricks.has(`${xGrid},${yGrid},${zGrid}`)) {
-                    return false;
                 }
             }
         }
