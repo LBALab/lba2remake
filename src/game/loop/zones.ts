@@ -30,7 +30,7 @@ const SCENE_ID_TO_NAME = {
     109: 'FRANCO_VILLAGE',
     174: 'FRANCO_NURSERY',
     175: 'FRANCO_ROGER_HOUSE',
-}
+};
 
 // Map from (previous zone, target zone) to offset in bricks.
 // E.g. ZONE_OFFSET_OVERRIDES[CELLAR][TWINSENS_HOUSE] is the offset we should
@@ -38,17 +38,17 @@ const SCENE_ID_TO_NAME = {
 // from the CELLAR.
 // TODO: There are likely more of these needed.
 const ZONE_OFFSET_OVERRIDES = {
-    'TWINSENS_HOUSE': {
-        'CELLAR': 1.25,
+    TWINSENS_HOUSE: {
+        CELLAR: 1.25,
     },
-    'DESERT_ISLAND_TOWN_SQUARE': {
-        'DESERT_ISLAND_TICKET_SHOP': -1.25,
+    DESERT_ISLAND_TOWN_SQUARE: {
+        DESERT_ISLAND_TICKET_SHOP: -1.25,
     },
-    'FRANCO_VILLAGE': {
-        'FRANCO_NURSERY': -1.25,
-        'FRANCO_ROGER_HOUSE': -1.25,
+    FRANCO_VILLAGE: {
+        FRANCO_NURSERY: -1.25,
+        FRANCO_ROGER_HOUSE: -1.25,
     }
-}
+};
 
 export function processZones(game, scene) {
     const hero = scene.actors[0];
@@ -90,8 +90,8 @@ function debugZoneTargetPos(newScene, pos, color) {
 
 function getDistance(pos1, pos2) {
     return Math.sqrt(
-        Math.pow(pos1.x - pos2.x, 2) + 
-        Math.pow(pos1.y - pos2.y, 2) + 
+        Math.pow(pos1.x - pos2.x, 2) +
+        Math.pow(pos1.y - pos2.y, 2) +
         Math.pow(pos1.z - pos2.z, 2)
     );
 }
@@ -103,21 +103,21 @@ function GOTO_SCENE(game, scene, zone, hero) {
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
         scene.goto(zone.props.snap).then((newScene) => {
             // Where the zone props put us by default.
-            let initialTargetPos = {
+            const initialTargetPos = {
                 x:  (((0x8000 - zone.props.info2)) * WORLD_SCALE),
                 y:  zone.props.info1 * WORLD_SCALE,
                 z:  (zone.props.info0) * WORLD_SCALE,
             };
 
-            //debugZoneTargetPos(newScene, initialTargetPos, 0x0000ff);
-           
+            // debugZoneTargetPos(newScene, initialTargetPos, 0x0000ff);
+
             // MAX_ZONE_DIST is the farthest away we would consider a TELEPORT
-            // zone "the" matching zone we're looking for. 
-            const MAX_ZONE_DIST = 5*BRICK_SIZE*WORLD_SCALE;
+            // zone "the" matching zone we're looking for.
+            const MAX_ZONE_DIST = 5 * BRICK_SIZE * WORLD_SCALE;
             // DEFAULT_OFFSET is the default offset we "push" Twinsen into the
             // scene to ensure he doesn't clip back into the zone we're close
             // to and immediately re-enter back into the previous scene.
-            const DEFAULT_OFFSET = 0.5*BRICK_SIZE*WORLD_SCALE;
+            const DEFAULT_OFFSET = 0.5 * BRICK_SIZE * WORLD_SCALE;
 
             // Iterate over all of the zones in the new scene to find the
             // matching zone which we want to be placed at. We do this by
@@ -129,11 +129,11 @@ function GOTO_SCENE(game, scene, zone, hero) {
             let closestZone = null;
             let smallestDistance = Number.MAX_SAFE_INTEGER;
             for (const newZone of newScene.zones) {
-                if (newZone.zoneType != "TELEPORT") {
+                if (newZone.zoneType !== 'TELEPORT') {
                     continue;
                 }
 
-                let newZonePos = {
+                const newZonePos = {
                     x: newZone.props.pos[0],
                     y: newZone.props.pos[1],
                     z: newZone.props.pos[2]
@@ -144,7 +144,7 @@ function GOTO_SCENE(game, scene, zone, hero) {
                     closestZone = newZone;
                 }
             }
-            
+
             // delta represents Twinsens position along the zone. E.g. if
             // Twinsen enters a door on one side, we want the position we place
             // him in the new scene to also be on the same side and "line up".
@@ -154,18 +154,18 @@ function GOTO_SCENE(game, scene, zone, hero) {
             let delta = 0.0;
             // Work out which orientation the zone is, depending on this we can
             // determine which axis should be used to work out how far "along
-            // the zone" Twinsen is. 
+            // the zone" Twinsen is.
             const lenX = zone.props.box.xMax - zone.props.box.xMin;
             const lenZ = zone.props.box.zMax - zone.props.box.zMin;
             if (lenX > lenZ) {
-                delta = (hero.physics.position.x - zone.props.box.xMin)/lenX;
+                delta = (hero.physics.position.x - zone.props.box.xMin) / lenX;
             } else {
-                delta = (hero.physics.position.z - zone.props.box.zMin)/lenZ;
+                delta = (hero.physics.position.z - zone.props.box.zMin) / lenZ;
             }
 
             const newHero = newScene.actors[0];
             if (closestZone) {
-                //console.log("Current scene ID: " + closestZone.props.snap +
+                // console.log("Current scene ID: " + closestZone.props.snap +
                 // " Target scene ID: " + zone.props.snap);
 
                 // offset is how far we push Twinsen into the scene to ensure we
@@ -176,15 +176,15 @@ function GOTO_SCENE(game, scene, zone, hero) {
                 // use that instead.
                 const currentScene = SCENE_ID_TO_NAME[closestZone.props.snap];
                 const targetScene = SCENE_ID_TO_NAME[zone.props.snap];
-                if (ZONE_OFFSET_OVERRIDES[currentScene] && 
+                if (ZONE_OFFSET_OVERRIDES[currentScene] &&
                     ZONE_OFFSET_OVERRIDES[currentScene][targetScene]) {
                     // tslint:disable-next-line:max-line-length
-                    offset = ZONE_OFFSET_OVERRIDES[currentScene][targetScene]*BRICK_SIZE*WORLD_SCALE;
+                    offset = ZONE_OFFSET_OVERRIDES[currentScene][targetScene] * BRICK_SIZE * WORLD_SCALE;
                 }
 
                 // Again work out which orientation the zone is in the new scene
                 // allowing us to know which axis to apply the delta to.
-                const newBox = closestZone.props.box;                
+                const newBox = closestZone.props.box;
                 const newLenX = newBox.xMax - newBox.xMin;
                 const newLenZ = newBox.zMax - newBox.zMin;
                 if (newLenX > newLenZ) {
@@ -193,14 +193,14 @@ function GOTO_SCENE(game, scene, zone, hero) {
                     } else {
                         newHero.physics.position.z = offset + newBox.zMax;
                     }
-                    newHero.physics.position.x = delta*newLenX + newBox.xMin;
+                    newHero.physics.position.x = delta * newLenX + newBox.xMin;
                 } else {
                     if (initialTargetPos.x <= closestZone.props.box.xMin) {
                         newHero.physics.position.x = (-offset) + newBox.xMin;
                     } else {
                         newHero.physics.position.x = offset + newBox.xMax;
                     }
-                    newHero.physics.position.z = delta*newLenZ + newBox.zMin;
+                    newHero.physics.position.z = delta * newLenZ + newBox.zMin;
                 }
 
                 // We find that the Y position given in the zone props is much
@@ -212,9 +212,9 @@ function GOTO_SCENE(game, scene, zone, hero) {
                 newHero.physics.position.y = initialTargetPos.y;
                 newHero.physics.position.z = initialTargetPos.z;
             }
-            
+
             newHero.threeObject.position.copy(newHero.physics.position);
-            //debugZoneTargetPos(newScene, newHero.physics.position, 0xffff00);
+            // debugZoneTargetPos(newScene, newHero.physics.position, 0xffff00);
 
             const dAngle = -zone.props.info3 * (Math.PI / 2);
             if (game.controlsState.firstPerson) {
