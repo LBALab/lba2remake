@@ -622,7 +622,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                             &nbsp;&nbsp;Variant {variant.id}
                         </span>}<br/>
                     Width (x): {info.nX}<br/>
-                    Height (x): {info.nY}<br/>
+                    Height (y): {info.nY}<br/>
                     Depth (z): {info.nZ}
                 </div>
                 {this.renderLayoutOptions()}

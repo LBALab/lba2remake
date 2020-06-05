@@ -53,7 +53,8 @@
         "vrButton_move": "Move",
         "vrButton_fpMove": "Move",
         "vrButton_fpTurn": "Turn",
-        "vrButton_centerCam": "Center Camera"
+        "vrButton_centerCam": "Center Camera",
+        "vrButton_menu": "Menu"
     },
     "FR": {
         "loading": "Chargement",
@@ -109,6 +110,7 @@
         "vrButton_move": "Bouger",
         "vrButton_fpMove": "Avancer / reculer",
         "vrButton_fpTurn": "Tourner",
-        "vrButton_centerCam": "Centrer Camera"
+        "vrButton_centerCam": "Centrer Camera",
+        "vrButton_menu": "Menu"
     }
 }

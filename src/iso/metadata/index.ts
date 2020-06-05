@@ -2,7 +2,8 @@ import { loadMetadata } from './metadata';
 import {
     initReplacements,
     processLayoutReplacement,
-    buildReplacementMeshes
+    buildReplacementMeshes,
+    addReplacementObject
 } from './replacements';
 import { processLayoutMirror, buildMirrors } from './mirrors';
 import { saveFullSceneModel } from './models';
@@ -10,7 +11,7 @@ import { loadGrid } from '../grid';
 import { loadImageData } from '..';
 import { loadBricks } from '../bricks';
 import { loadResource, ResourceType } from '../../resources';
-import { processVariants } from './variants';
+import { processVariants, suppressVariantBricks } from './variants';
 
 export async function extractGridMetadata(grid, entry, ambience, is3D) {
     if (!is3D) {
@@ -26,12 +27,14 @@ export async function extractGridMetadata(grid, entry, ambience, is3D) {
 
     forEachCell(grid, metadata, (cellInfo) => {
         const { variants, replace, mirror } = cellInfo;
+        const candidates = [];
         if (variants) {
-            processVariants(grid, cellInfo, replacements);
+            processVariants(grid, cellInfo, replacements, candidates);
         }
         if (replace) {
-            processLayoutReplacement(grid, cellInfo, replacements);
+            processLayoutReplacement(grid, cellInfo, replacements, candidates);
         }
+        processCandidates(replacements, cellInfo, candidates);
         if (mirror) {
             processLayoutMirror(cellInfo, mirrorGroups);
         }
@@ -51,23 +54,48 @@ export async function saveSceneReplacementModel(entry, ambience) {
     ]);
     const palette = pal.getBufferUint8();
     const bricks = loadBricks(bkg);
-    const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
+    const grid = await loadGrid(bkg, bricks, mask, palette, entry + 1);
 
     const metadata = await loadMetadata(entry, grid.library, true);
     const replacements = await initReplacements(entry, metadata, ambience);
 
     forEachCell(grid, metadata, (cellInfo) => {
         const { variants, replace } = cellInfo;
+        const candidates = [];
         if (variants) {
-            processVariants(grid, cellInfo, replacements);
+            processVariants(grid, cellInfo, replacements, candidates);
         }
         if (replace) {
-            processLayoutReplacement(grid, cellInfo, replacements);
+            processLayoutReplacement(grid, cellInfo, replacements, candidates);
         }
+        processCandidates(replacements, cellInfo, candidates);
     });
 
     buildReplacementMeshes(replacements);
     saveFullSceneModel(replacements, entry);
+}
+
+const volume = ({data}) => data.nX * data.nY * data.nZ;
+
+function processCandidates(replacements, cellInfo, candidates) {
+    if (candidates.length > 0) {
+        candidates.sort((a, b) => volume(b) - volume(a));
+        const candidate = candidates[0];
+        const { x, y, z } = cellInfo.pos;
+        const { nX, nZ } = candidate.data;
+        const realY = (y * 0.5) + 0.5;
+        const realZ = z - 1;
+        suppressVariantBricks(replacements, candidate.data, cellInfo);
+        if (replacements.mergeReplacements) {
+            addReplacementObject(
+                candidate.replacementData,
+                replacements,
+                x - (nX * 0.5) + 1,
+                realY - 0.5,
+                realZ - (nZ * 0.5) + 1
+            );
+        }
+    }
 }
 
 function forEachCell(grid, metadata, handler) {
