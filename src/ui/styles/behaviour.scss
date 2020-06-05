@@ -23,17 +23,28 @@
         font-size: 1.5em;
         border-radius: 10px;
         text-shadow: black 3px 3px;
+        width: 600px;
     }
 
     @include media("<tablet","portrait") {
         font-size: 1em;
         border-radius: 8px;
         text-shadow: black 2px 2px;
+        width: 300px;
+        margin: 10px;
     }
 
     &.points {
         height: 130px;
         background: rgba(0, 0, 0, 0.8);
+
+        @include media("<desktop") {
+            height: 110px;
+        }
+
+        @include media("<tablet","portrait") {
+            height: 80px;
+        }
     }
 }
 
@@ -49,11 +60,19 @@
     border-radius: 15px;
     text-align: center;
     background: rgba(0, 0, 0, 0.6);
+
+    @include media("<tablet","portrait") {
+        margin: 10px;
+    }
 }
 
 .behaviourItemContainer {
     display: flex;
     margin: 15px;
+
+    @include media("<tablet","portrait") {
+        margin: 10px;
+    }
 }
 
 .behaviourItem {
@@ -67,4 +86,16 @@
     width: 150;
     height: 180;
     background: rgba(0, 0, 0, 0.6);
+
+    @include media("<desktop") {
+        width: 120;
+        height: 160;
+    }
+
+    @include media("<tablet","portrait") {
+        width: 80;
+        height: 80;
+        margin-right: 10px;
+        border-radius: 10px;
+    }
 }
