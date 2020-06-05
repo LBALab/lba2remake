@@ -98,4 +98,25 @@
         margin-right: 10px;
         border-radius: 10px;
     }
+
+    &.selected {
+        background: rgba(32, 162, 255, 0.5);
+    }
+}
+
+.count {
+    font-family: LBA;
+    font-size: 48px;
+    color: rgba(99, 173, 177, 0.8);
+
+    &.money {
+        position: absolute;
+        right: 80;
+    }
+
+    &.keys {
+        position: absolute;
+        right: 80;
+        bottom: 0;
+    }
 }
