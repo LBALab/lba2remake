@@ -111,9 +111,9 @@ function GOTO_SCENE(game, scene, zone, hero) {
 
             //debugZoneTargetPos(newScene, initialTargetPos, 0x0000ff);
            
-            // MIN_ZONE_DIST is the farthest away we would consider a TELEPORT
+            // MAX_ZONE_DIST is the farthest away we would consider a TELEPORT
             // zone "the" matching zone we're looking for. 
-            const MIN_DIST = 5*BRICK_SIZE*WORLD_SCALE;
+            const MAX_ZONE_DIST = 5*BRICK_SIZE*WORLD_SCALE;
             // DEFAULT_OFFSET is the default offset we "push" Twinsen into the
             // scene to ensure he doesn't clip back into the zone we're close
             // to and immediately re-enter back into the previous scene.
@@ -139,7 +139,7 @@ function GOTO_SCENE(game, scene, zone, hero) {
                     z: newZone.props.pos[2]
                 };
                 const distance = getDistance(initialTargetPos, newZonePos);
-                if (distance < MIN_DIST && distance < smallestDistance) {
+                if (distance < MAX_ZONE_DIST && distance < smallestDistance) {
                     smallestDistance = distance;
                     closestZone = newZone;
                 }
