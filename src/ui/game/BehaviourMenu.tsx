@@ -58,15 +58,28 @@ const BehavourPointProgress = ({ type, value, maxValue, size }
         const width = (value * maxWidth) / maxValue;
     return (
         maxValue > 0 ?
-            <div className="pointsProgress" style={{
-                    width: maxWidth,
-                }}
-            >
-                <div className={`progress ${type}`} style={{
-                    borderTopRightRadius: value === maxValue ? 15 : 0,
-                    borderBottomRightRadius: value === maxValue ? 15 : 0,
-                    width,
-                }}>
+            <div style={{ display: 'flex', marginTop: type === 'life' ? 15 : 10, }}>
+                <img
+                    width="20"
+                    height="20"
+                    src={`images/${type}.png`}
+                    style={{
+                        marginRight: 0,
+                        marginTop: 5,
+                        marginLeft: 15,
+                    }}
+                />
+                <div className="pointsProgress" style={{
+                        width: maxWidth,
+                        marginLeft: 10,
+                    }}
+                >
+                    <div className={`progress ${type}`} style={{
+                        borderTopRightRadius: value === maxValue ? 15 : 0,
+                        borderBottomRightRadius: value === maxValue ? 15 : 0,
+                        width,
+                    }}>
+                    </div>
                 </div>
             </div>
         : null
@@ -114,8 +127,8 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
                 <BehavourPointProgress
                     type="magic"
                     value={magic}
-                    maxValue={(magicball.level) * 20}
-                    size={magicball.level}
+                    maxValue={(magicball.level + 1) * 20}
+                    size={magicball.level + 1}
                 />
                 <BehaviourClovers boxes={clover.boxes} leafs={clover.leafs} />
             </div>
