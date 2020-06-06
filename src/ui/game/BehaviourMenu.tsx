@@ -44,8 +44,23 @@ const BehaviourMode = ({ game, behaviour }) => {
 };
 
 const BehaviourCount = ({ type, value }: { type: 'keys' | 'money', value: number}) => {
+    // TODO zlitos
+    const imgType = type === 'keys' ? 'keys' : 'kashes';
     return (
-        <div className={`count ${type}`}>{value}</div>
+        <div
+            className={`count ${type}`}
+            style={{ display: 'flex' }}
+        >
+            <img
+                height="20"
+                src={`images/${imgType}.png`}
+                style={{
+                    marginTop: 25,
+                    marginRight: type === 'keys' ? 10 : 25,
+                }}
+            />
+            <div>{value}</div>
+        </div>
     );
 };
 
@@ -99,6 +114,8 @@ const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
         <div
             style={{
                 marginLeft: 35,
+                position: 'absolute',
+                bottom: 15,
             }}
         >
             {clovers.map(type => (
