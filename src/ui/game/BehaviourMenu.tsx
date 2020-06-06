@@ -98,7 +98,7 @@ const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
     return (
         <div
             style={{
-
+                marginLeft: 35,
             }}
         >
             {clovers.map(type => (
@@ -108,7 +108,7 @@ const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
                     src={`images/${type}.png`}
                     style={{
                         marginRight: 0,
-                        marginTop: 10,
+                        marginTop: 12,
                         marginLeft: 15,
                     }}
                 />
@@ -152,8 +152,8 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
                 <BehavourPointProgress
                     type="magic"
                     value={magic}
-                    maxValue={(magicball.level + 1) * 20}
-                    size={magicball.level + 1}
+                    maxValue={magicball.level * 20}
+                    size={magicball.level}
                 />
                 <BehaviourClovers boxes={clover.boxes} leafs={clover.leafs} />
             </div>
