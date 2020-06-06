@@ -111,12 +111,63 @@
 
     &.money {
         position: absolute;
-        right: 80;
+        left: 590;
     }
 
     &.keys {
         position: absolute;
-        right: 80;
+        left: 590;
         bottom: 0;
+    }
+}
+
+.pointsProgress {
+    color: white;
+    user-select: none;
+    position: relative;
+    font-family: LBA;
+    text-shadow: black 4px 4px;
+    margin: 15px;
+    padding-bottom: 5px;
+    border: 2px outset #61cece;
+    border-radius: 15px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.6);
+    width: 480;
+    height: 20;
+
+    @include media("<desktop") {
+    }
+
+    @include media("<tablet","portrait") {
+    }
+}
+
+
+.progress {
+    color: white;
+    user-select: none;
+    position: relative;
+    font-family: LBA;
+    text-shadow: black 4px 4px;
+    padding-bottom: 5px;
+    border-radius: 15px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.6);
+    width: 480;
+    height: 20;
+
+    @include media("<desktop") {
+    }
+
+    @include media("<tablet","portrait") {
+    }
+
+    &.life {
+        background: rgba(255, 0, 0, 0.5);
+    }
+
+    &.magic {
+        background: rgba(0, 0, 255, 0.5);
     }
 }
