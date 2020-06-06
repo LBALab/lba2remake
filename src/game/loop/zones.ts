@@ -155,7 +155,6 @@ function calculateTagetPosition(hero, zone, newScene) {
         delta = (hero.physics.position.z - zone.props.box.zMin) / lenZ;
     }
 
-    
     if (closestZone) {
         // console.log("Current scene ID: " + closestZone.props.snap +
         // " Target scene ID: " + zone.props.snap);
