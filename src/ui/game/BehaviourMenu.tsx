@@ -87,8 +87,33 @@ const BehavourPointProgress = ({ type, value, maxValue, size }
 };
 
 const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
+    const clovers = [];
+    for (let b = 0; b < boxes; b += 1) {
+        if (leafs > b) {
+            clovers.push('cloverboxleaf');
+        } else {
+            clovers.push('cloverbox');
+        }
+    }
     return (
-        <div>{boxes}{leafs}</div>
+        <div
+            style={{
+
+            }}
+        >
+            {clovers.map(type => (
+                <img
+                    width="20"
+                    height="20"
+                    src={`images/${type}.png`}
+                    style={{
+                        marginRight: 0,
+                        marginTop: 10,
+                        marginLeft: 15,
+                    }}
+                />
+            ))}
+        </div>
     );
 };
 

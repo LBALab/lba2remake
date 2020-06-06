@@ -18,7 +18,7 @@ export function createState() {
             keys: 0,
             fuel: 0,
             pinguin: 0,
-            clover: { boxes: 2, leafs: 0 },
+            clover: { boxes: 2, leafs: 1 },
             magicball: { level: 0, strength: 0, bounce: 0 }
         },
         chapter: 0,
