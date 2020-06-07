@@ -7,11 +7,11 @@ const push = Array.prototype.push;
 
 // Offset amount per island to offset any transparent objects to be closer to
 // the object they're supposed to be attached to. This offset is unfortunately
-// not consistent between islands, although appears to be consistent within a 
+// not consistent between islands, although appears to be consistent within a
 // given island.
 const TransparentObjectOffset = {
-    'CITADEL': 0.05,
-}
+    CITADEL: 0.05,
+};
 
 export function loadObjects(section, geometries, models, atlas, island) {
     const numObjects = section.objInfo.numObjects;
@@ -171,7 +171,7 @@ function getPosition(object, info, index) {
         object.vertices[index * 4] * WORLD_SCALE,
         object.vertices[(index * 4) + 1] * WORLD_SCALE,
         object.vertices[(index * 4) + 2] * WORLD_SCALE
-    ], info.angle);    
+    ], info.angle);
     return [
         pos[0] + info.x,
         pos[1] + info.y,
