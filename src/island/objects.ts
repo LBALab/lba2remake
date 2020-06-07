@@ -75,6 +75,11 @@ function loadSection(geometries, object, info, section, boundingBoxes, atlas, is
     for (let i = 0; i < section.numFaces; i += 1) {
         const uvGroup = getUVGroup(object, section, i, atlas);
         const faceNormal = getFaceNormal(object, section, info, i);
+        const normalVec = new THREE.Vector3(
+            faceNormal[0],
+            faceNormal[1],
+            faceNormal[2]
+        ).normalize();
         const addVertex = (j) => {
             const index = section.data.getUint16((i * section.blockSize) + (j * 2), true);
             const x = object.vertices[index * 4];
@@ -97,12 +102,7 @@ function loadSection(geometries, object, info, section, boundingBoxes, atlas, is
                 geometries.objects_colored.colors.push(getColor(section, i));
             } else {
                 const pos = getPosition(object, info, index);
-                if (section.isTransparent && TransparentObjectOffset[island.name]) {
-                    const normalVec = new THREE.Vector3(
-                        faceNormal[0],
-                        faceNormal[1],
-                        faceNormal[2]
-                    ).normalize();
+                if (section.isTransparent && TransparentObjectOffset[island.name]) {                    
                     pos[0] -= TransparentObjectOffset[island.name] * normalVec.x;
                     pos[1] -= TransparentObjectOffset[island.name] * normalVec.y;
                     pos[2] -= TransparentObjectOffset[island.name] * normalVec.z;
