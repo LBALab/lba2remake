@@ -38,8 +38,8 @@ const SCENE_ID_TO_NAME = {
 // from the CELLAR.
 // TODO: There are likely more of these needed.
 const ZONE_OFFSET_OVERRIDES = {
-    TWINSENS_HOUSE: {
-        CELLAR: 1.25,
+    CELLAR: {
+        TWINSENS_HOUSE: 1,
     },
     DESERT_ISLAND_TOWN_SQUARE: {
         DESERT_ISLAND_TICKET_SHOP: -1.25,
