@@ -102,7 +102,7 @@ function loadSection(geometries, object, info, section, boundingBoxes, atlas, is
                 geometries.objects_colored.colors.push(getColor(section, i));
             } else {
                 const pos = getPosition(object, info, index);
-                if (section.isTransparent && TransparentObjectOffset[island.name]) {                    
+                if (section.isTransparent && TransparentObjectOffset[island.name]) {
                     pos[0] -= TransparentObjectOffset[island.name] * normalVec.x;
                     pos[1] -= TransparentObjectOffset[island.name] * normalVec.y;
                     pos[2] -= TransparentObjectOffset[island.name] * normalVec.z;
