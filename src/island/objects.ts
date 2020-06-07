@@ -5,13 +5,21 @@ import {WORLD_SCALE, WORLD_SIZE} from '../utils/lba';
 
 const push = Array.prototype.push;
 
-export function loadObjects(section, geometries, models, atlas) {
+// Offset amount per island to offset any transparent objects to be closer to
+// the object they're supposed to be attached to. This offset is unfortunately
+// not consistent between islands, although appears to be consistent within a 
+// given island.
+const TransparentObjectOffset = {
+    'CITADEL': 0.05,
+}
+
+export function loadObjects(section, geometries, models, atlas, island) {
     const numObjects = section.objInfo.numObjects;
     const boundingBoxes = [];
     for (let i = 0; i < numObjects; i += 1) {
         const info = loadObjectInfo(section.objects, section, i);
         const model = models[info.index];
-        loadFaces(geometries, model, info, boundingBoxes, atlas);
+        loadFaces(geometries, model, info, boundingBoxes, atlas, island);
     }
     section.boundingBoxes = boundingBoxes;
 }
@@ -32,7 +40,7 @@ function loadObjectInfo(objects, section, index) {
     };
 }
 
-function loadFaces(geometries, model, info, boundingBoxes, atlas) {
+function loadFaces(geometries, model, info, boundingBoxes, atlas, island) {
     const data = new DataView(
         model.buffer,
         model.faceSectionOffset,
@@ -41,7 +49,7 @@ function loadFaces(geometries, model, info, boundingBoxes, atlas) {
     let offset = 0;
     while (offset < data.byteLength) {
         const section = parseSectionHeader(data, model, offset);
-        loadSection(geometries, model, info, section, boundingBoxes, atlas);
+        loadSection(geometries, model, info, section, boundingBoxes, atlas, island);
         offset += section.size + 8;
     }
 }
@@ -62,7 +70,7 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
-function loadSection(geometries, object, info, section, boundingBoxes, atlas) {
+function loadSection(geometries, object, info, section, boundingBoxes, atlas, island) {
     const bb = new THREE.Box3();
     for (let i = 0; i < section.numFaces; i += 1) {
         const uvGroup = getUVGroup(object, section, i, atlas);
@@ -88,10 +96,21 @@ function loadSection(geometries, object, info, section, boundingBoxes, atlas) {
                 );
                 geometries.objects_colored.colors.push(getColor(section, i));
             } else {
+                const pos = getPosition(object, info, index);
+                if (section.isTransparent && TransparentObjectOffset[island.name]) {
+                    const normalVec = new THREE.Vector3(
+                        faceNormal[0],
+                        faceNormal[1],
+                        faceNormal[2]
+                    ).normalize();
+                    pos[0] -= TransparentObjectOffset[island.name] * normalVec.x;
+                    pos[1] -= TransparentObjectOffset[island.name] * normalVec.y;
+                    pos[2] -= TransparentObjectOffset[island.name] * normalVec.z;
+                }
                 const group = section.isTransparent
                     ? 'objects_textured_transparent'
                     : 'objects_textured';
-                push.apply(geometries[group].positions, getPosition(object, info, index));
+                push.apply(geometries[group].positions, pos);
                 push.apply(
                     geometries[group].normals,
                     section.type !== 10 ? faceNormal : getVertexNormal(object, info, index)
@@ -152,7 +171,7 @@ function getPosition(object, info, index) {
         object.vertices[index * 4] * WORLD_SCALE,
         object.vertices[(index * 4) + 1] * WORLD_SCALE,
         object.vertices[(index * 4) + 2] * WORLD_SCALE
-    ], info.angle);
+    ], info.angle);    
     return [
         pos[0] + info.x,
         pos[1] + info.y,

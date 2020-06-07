@@ -256,7 +256,6 @@ function loadSectionPlanes(islandObject, data) {
 
 async function loadGeometries(island, data, ambience) {
     const usedTiles = {};
-
     const models = [];
     const uvGroupsS : Set<string> = new Set();
     const obl = data.files.obl;
@@ -278,7 +277,7 @@ async function loadGeometries(island, data, ambience) {
         const tilesKey = [section.x, section.z].join(',');
         usedTiles[tilesKey] = [];
         loadGround(section, geometries, usedTiles[tilesKey]);
-        loadObjects(section, geometries, models, atlas);
+        loadObjects(section, geometries, models, atlas, island);
     });
 
     return { geometries, usedTiles };
