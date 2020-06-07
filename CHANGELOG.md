@@ -24,6 +24,7 @@ _June 7th, 2020_
 
 - Fixed music playing twice in VR
 - Fixed Editor SVG sizes
+- Fixed outdoor object decorations placement (e.g. textures on doors)
 
 -----------------------------
 
