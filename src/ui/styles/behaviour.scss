@@ -19,14 +19,14 @@
     width: 700px;
     background: rgba(0, 0, 0, 0.5);
 
-    @include media("<desktop") {
+    @include media("<=desktop") {
         font-size: 1.5em;
         border-radius: 10px;
         text-shadow: black 3px 3px;
         width: 600px;
     }
 
-    @include media("<tablet","portrait") {
+    @include media("<=tablet","portrait") {
         font-size: 1em;
         border-radius: 8px;
         text-shadow: black 2px 2px;
@@ -38,11 +38,11 @@
         height: 130px;
         background: rgba(0, 0, 0, 0.8);
 
-        @include media("<desktop") {
+        @include media("<=desktop") {
             height: 110px;
         }
 
-        @include media("<tablet","portrait") {
+        @include media("<=tablet","portrait") {
             height: 80px;
         }
     }
@@ -55,13 +55,12 @@
     font-family: LBA;
     text-shadow: black 4px 4px;
     margin: 15px;
-    padding-bottom: 5px;
     border: 2px outset #61cece;
     border-radius: 15px;
     text-align: center;
     background: rgba(0, 0, 0, 0.6);
 
-    @include media("<tablet","portrait") {
+    @include media("<=tablet","portrait") {
         margin: 10px;
     }
 }
@@ -70,7 +69,7 @@
     display: flex;
     margin: 15px;
 
-    @include media("<tablet","portrait") {
+    @include media("<=tablet","portrait") {
         margin: 10px;
     }
 }
@@ -87,12 +86,12 @@
     height: 180;
     background: rgba(0, 0, 0, 0.6);
 
-    @include media("<desktop") {
+    @include media("<=desktop") {
         width: 120;
         height: 160;
     }
 
-    @include media("<tablet","portrait") {
+    @include media("<=tablet","portrait") {
         width: 80;
         height: 80;
         margin-right: 10px;
@@ -108,16 +107,136 @@
     font-family: LBA;
     font-size: 48px;
     color: rgba(99, 173, 177, 0.8);
+    display: flex;
+
+    img {
+        height: 20;
+        margin-top: 25;
+    }
 
     &.money {
         position: absolute;
         left: 545;
+        img {
+            margin-right: 26;
+        }
     }
 
     &.keys {
         position: absolute;
         left: 545;
         bottom: 0;
+        img {
+            margin-right: 10;
+        }
+    }
+
+    @include media("<=desktop") {
+        font-size: 40px;
+
+        img {
+            margin-top: 20;
+        }
+
+        &.money {
+            left: 470;
+            img {
+                margin-right: 24;
+            }
+        }
+
+        &.keys {
+            position: absolute;
+            left: 470;
+            img {
+                margin-right: 8;
+            }
+        }
+    }
+
+    @include media("<=tablet","portrait") {
+        font-size: 16px;
+        img {
+            height: 15;
+            margin-top: 5;
+        }
+        &.money {
+            left: 240;
+            margin-right: 20;
+            margin-top: 10;
+            img {
+                margin-right: 5;
+            }
+        }
+
+        &.keys {
+            position: absolute;
+            left: 224;
+            margin-right: 5;
+            bottom: 10;
+        }
+    }
+}
+
+.pointsProgressContainer {
+    display: flex;
+
+    img {
+        height: 20;
+        margin-left: 15;
+        &.life {
+            margin-top: 20;
+        }
+        &.magic {
+            margin-top: 10;
+        }
+    }
+
+    &.life {
+        margin-top: 15;
+        img {
+            margin-top: 5;
+        }
+    }
+    &.magic {
+        margin-top: 10;
+        img {
+            margin-top: 5;
+        }
+    }
+    @include media("<=desktop") {
+        &.life {
+            margin-top: 10;
+            img {
+                margin-top: 2;
+            }
+        }
+        &.magic {
+            margin-top: 10;
+            img {
+                margin-top: 2;
+                margin-right: 2;
+            }
+        }
+    }
+
+    @include media("<=tablet","portrait") {
+        img {
+            height: 15;
+            margin-left: 10;
+            &.life {
+                margin-top: 10;
+            }
+            &.magic {
+                margin-top: 5;
+            }
+        }
+        &.life {
+            margin-top: 10;
+        }
+        &.magic {
+            margin-top: 5;
+        }
     }
 }
 
@@ -127,22 +246,26 @@
     position: relative;
     font-family: LBA;
     text-shadow: black 4px 4px;
-    // margin: 15px;
     padding-bottom: 5px;
     border: 2px outset #61cece;
     border-radius: 15px;
     text-align: center;
     background: rgba(0, 0, 0, 0.6);
-    width: 480;
+    width: 470;
     height: 20;
+    margin-left: 10;
 
-    @include media("<desktop") {
+    @include media("<=desktop") {
+        width: 400;
+        height: 15;
     }
 
-    @include media("<tablet","portrait") {
+    @include media("<=tablet","portrait") {
+        width: 200;
+        height: 5;
+        margin-left: 5;
     }
 }
-
 
 .progress {
     color: white;
@@ -154,14 +277,8 @@
     border-radius: 15px;
     text-align: center;
     background: rgba(0, 0, 0, 0.6);
-    width: 480;
+    width: 470;
     height: 20;
-
-    @include media("<desktop") {
-    }
-
-    @include media("<tablet","portrait") {
-    }
 
     &.life {
         background: rgba(255, 0, 0, 0.5);
@@ -169,5 +286,56 @@
 
     &.magic {
         background: rgba(0, 0, 255, 0.5);
+    }
+
+    img {
+        height: 20;
+        margin-right: 0;
+        margin-top: 5;
+        margin-left: 15;
+    }
+
+    @include media("<=desktop") {
+        height: 15;
+    }
+
+    @include media("<=tablet","portrait") {
+        width: 200;
+        height: 5;
+        img {
+            width: 15;
+            height: 10;
+            margin-top: 2;
+            margin-left: 8;
+        }
+    }
+}
+
+.clovers {
+    position: absolute;
+    margin-left: 30;
+    bottom: 15;
+
+    img {
+        width: 20;
+        height: 20;
+        margin-right: 0;
+        margin-top: 12;
+        margin-left: 15;
+    }
+
+    @include media("<=desktop") {
+        bottom: 10;
+    }
+
+    @include media("<=tablet","portrait") {
+        margin-left: 21;
+        bottom: 10;
+        img {
+            width: 15;
+            height: 15;
+            margin-top: 8;
+            margin-left: 10;
+        }
     }
 }

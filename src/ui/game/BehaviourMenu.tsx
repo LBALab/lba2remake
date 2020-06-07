@@ -1,6 +1,7 @@
 import React from 'react';
 
 import '../styles/behaviour.scss';
+import useMedia from '../hooks/useMedia';
 
 interface IBehaviourMenuClover {
     boxes: number;
@@ -47,18 +48,8 @@ const BehaviourCount = ({ type, value }: { type: 'keys' | 'money', value: number
     // TODO zlitos
     const imgType = type === 'keys' ? 'keys' : 'kashes';
     return (
-        <div
-            className={`count ${type}`}
-            style={{ display: 'flex' }}
-        >
-            <img
-                height="20"
-                src={`images/${imgType}.png`}
-                style={{
-                    marginTop: 25,
-                    marginRight: type === 'keys' ? 10 : 25,
-                }}
-            />
+        <div className={`count ${type}`}>
+            <img src={`images/${imgType}.png`} />
             <div>{value}</div>
         </div>
     );
@@ -66,27 +57,21 @@ const BehaviourCount = ({ type, value }: { type: 'keys' | 'money', value: number
 
 const BehavourPointProgress = ({ type, value, maxValue, size }
     : { type: 'magic' | 'life', value: number, maxValue: number, size?: number }) => {
-        let maxWidth = 480;
+        let maxWidth = useMedia(
+            ['(max-width: 768px)', '(max-width: 1024px)'],
+            [200, 400],
+            470,
+        );
         if (type === 'magic') {
             maxWidth = Math.floor(maxWidth / (4 - size));
         }
         const width = (value * maxWidth) / maxValue;
     return (
         maxValue > 0 ?
-            <div style={{ display: 'flex', marginTop: type === 'life' ? 15 : 10, }}>
-                <img
-                    width="20"
-                    height="20"
-                    src={`images/${type}.png`}
-                    style={{
-                        marginRight: 0,
-                        marginTop: 5,
-                        marginLeft: 15,
-                    }}
-                />
+            <div className={`pointsProgressContainer ${type}`}>
+                <img src={`images/${type}.png`} />
                 <div className="pointsProgress" style={{
                         width: maxWidth,
-                        marginLeft: 10,
                     }}
                 >
                     <div className={`progress ${type}`} style={{
@@ -111,23 +96,11 @@ const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
         }
     }
     return (
-        <div
-            style={{
-                marginLeft: 35,
-                position: 'absolute',
-                bottom: 15,
-            }}
-        >
+        <div className="clovers">
             {clovers.map(type => (
                 <img
-                    width="20"
-                    height="20"
+                    key={type}
                     src={`images/${type}.png`}
-                    style={{
-                        marginRight: 0,
-                        marginTop: 12,
-                        marginLeft: 15,
-                    }}
                 />
             ))}
         </div>
