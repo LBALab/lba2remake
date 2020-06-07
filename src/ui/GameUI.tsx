@@ -533,7 +533,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 interjections={interjections}
             />
             <Video video={video} renderer={renderer} />
-            {behaviourMenu ?
+            {!showMenu && behaviourMenu ?
                 <BehaviourMenu
                     game={game}
                 />
