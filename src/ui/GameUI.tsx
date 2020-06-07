@@ -291,6 +291,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             }
             if (key === 'ControlLeft' || key === 'ControlRight' || key === 17) {
                 this.setState({ behaviourMenu: true });
+                this.state.game.pause();
             }
         }
     }
@@ -299,6 +300,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         const key = event.code || event.which || event.keyCode;
         if (key === 'ControlLeft' || key === 'ControlRight' || key === 17) {
             this.setState({ behaviourMenu: false });
+            this.state.game.resume();
         }
     }
 
