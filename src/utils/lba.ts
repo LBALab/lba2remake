@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 
-export const WORLD_SIZE = 20; // the length of half an outdoors section in meters
+// Number of game units equal to a single game brick.
+export const BRICK_SIZE = 512;
+// The length of half an outdoors section in meters.
+export const WORLD_SIZE = 20;
 export const WORLD_SCALE = WORLD_SIZE / 0x4000;
 export const WORLD_SCALE_B = 0.03125 * WORLD_SIZE;
 
