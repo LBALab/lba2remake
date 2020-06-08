@@ -15,13 +15,21 @@ const TransparentObjectOffset = {
 
 export function loadObjects(section, geometries, models, atlas, island) {
     const numObjects = section.objInfo.numObjects;
-    const boundingBoxes = [];
+    section.boundingBoxes = [];
     for (let i = 0; i < numObjects; i += 1) {
         const info = loadObjectInfo(section.objects, section, i);
         const model = models[info.index];
-        loadFaces(geometries, model, info, boundingBoxes, atlas, island);
+        loadFaces(geometries, model, info, atlas, island);
+        const bb = new THREE.Box3(
+            new THREE.Vector3(model.bbXMin, model.bbYMin, model.bbZMin),
+            new THREE.Vector3(model.bbXMax, model.bbYMax, model.bbZMax),
+        );
+        bb.min.multiplyScalar(WORLD_SCALE);
+        bb.max.multiplyScalar(WORLD_SCALE);
+        bb.applyMatrix4(angleMatrix[(info.angle + 3) % 4]);
+        bb.translate(new THREE.Vector3(info.x, info.y, info.z));
+        section.boundingBoxes.push(bb);
     }
-    section.boundingBoxes = boundingBoxes;
 }
 
 function loadObjectInfo(objects, section, index) {
@@ -40,7 +48,7 @@ function loadObjectInfo(objects, section, index) {
     };
 }
 
-function loadFaces(geometries, model, info, boundingBoxes, atlas, island) {
+function loadFaces(geometries, model, info, atlas, island) {
     const data = new DataView(
         model.buffer,
         model.faceSectionOffset,
@@ -49,7 +57,7 @@ function loadFaces(geometries, model, info, boundingBoxes, atlas, island) {
     let offset = 0;
     while (offset < data.byteLength) {
         const section = parseSectionHeader(data, model, offset);
-        loadSection(geometries, model, info, section, boundingBoxes, atlas, island);
+        loadSection(geometries, model, info, section, atlas, island);
         offset += section.size + 8;
     }
 }
@@ -70,8 +78,7 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
-function loadSection(geometries, object, info, section, boundingBoxes, atlas, island) {
-    const bb = new THREE.Box3();
+function loadSection(geometries, object, info, section, atlas, island) {
     for (let i = 0; i < section.numFaces; i += 1) {
         const uvGroup = getUVGroup(object, section, i, atlas);
         const faceNormal = getFaceNormal(object, section, info, i);
@@ -82,17 +89,6 @@ function loadSection(geometries, object, info, section, boundingBoxes, atlas, is
         ).normalize();
         const addVertex = (j) => {
             const index = section.data.getUint16((i * section.blockSize) + (j * 2), true);
-            const x = object.vertices[index * 4];
-            const y = object.vertices[(index * 4) + 1];
-            const z = object.vertices[(index * 4) + 2];
-
-            bb.min.x = Math.min(x, bb.min.x);
-            bb.min.y = Math.min(y, bb.min.y);
-            bb.min.z = Math.min(z, bb.min.z);
-
-            bb.max.x = Math.max(x, bb.max.x);
-            bb.max.y = Math.max(y, bb.max.y);
-            bb.max.z = Math.max(z, bb.max.z);
             if (section.blockSize === 12 || section.blockSize === 16) {
                 push.apply(geometries.objects_colored.positions, getPosition(object, info, index));
                 push.apply(
@@ -128,11 +124,6 @@ function loadSection(geometries, object, info, section, boundingBoxes, atlas, is
             });
         }
     }
-    bb.min.multiplyScalar(WORLD_SCALE);
-    bb.max.multiplyScalar(WORLD_SCALE);
-    bb.applyMatrix4(angleMatrix[(info.angle + 3) % 4]);
-    bb.translate(new THREE.Vector3(info.x, info.y, info.z));
-    boundingBoxes.push(bb);
 }
 
 function getFaceNormal(object, section, info, i) {

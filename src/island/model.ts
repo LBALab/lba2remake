@@ -1,6 +1,12 @@
 export function loadModel(buffer) {
     const data = new DataView(buffer);
     const model = {
+        bbXMin: data.getInt32(8, true),
+        bbXMax: data.getInt32(12, true),
+        bbYMin: data.getInt32(16, true),
+        bbYMax: data.getInt32(20, true),
+        bbZMin: data.getInt32(24, true),
+        bbZMax: data.getInt32(28, true),
         verticesOffset: data.getUint32(44, true),
         normalsOffset: data.getUint32(52, true),
         faceSectionOffset: data.getUint32(68, true),
