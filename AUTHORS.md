@@ -7,6 +7,7 @@
 ## Contributions
 ### Development
 * Jeffrey Veenhuis (@Jeffroiscool)
+* Scott Williams (@slwilliams)
 
 ### DevOps
 * @chucksellick
