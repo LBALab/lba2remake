@@ -6,15 +6,19 @@
 
 ## Contributions
 ### Development
-* Jeffrey Veenhuis (@Jeffroiscool)
 * Scott Williams (@slwilliams)
+* Andriy Tevelyev (@pleasenophp)
+* Jeffrey Veenhuis (@Jeffroiscool)
 
-### DevOps
-* @chucksellick
+### 3D Models
+* Sara González Ramajo (@SendellX)
 
 ### Metadata
 * Sara González Ramajo (@SendellX)
 * Jeffrey Veenhuis (@Jeffroiscool)
+
+### DevOps
+* @chucksellick
 
 ### Bug Reports & Feature Suggestions
 * Felipe Corrêa da Silva Sanches
