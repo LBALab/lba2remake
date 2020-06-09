@@ -1,30 +1,27 @@
 # Version history
 
-### [v0.2.3](https://github.com/agrande/lba2remake/compare/v0.2.2...v0.2.3) Bugfixes
-_June 7th, 2020_
+### [v0.3.0-alpha.0]
+_June 9th, 2020_
 
 #### Gameplay
 
 - Added extra bonus projectile motion with gravity
-- Added life and magic points bonus
-- Added Behaviour Menu with responsiveness
-- Improve logic for Twinsen placement during scene transition
+- Added Zone life and magic points bonus
+- Added Behaviour Menu
 
 #### VR
 
-- Adding B button to open menu
+- Fixes to make the game work on Valve Index Controller
+- Fixed music playing twice in VR
 
 #### Replacement 3D models
 
 - Various 3D models added to replace the original brick layouts.
-- Improved model replacement matching
 - Allow to replace individual bricks
 
 #### Bug fixes
 
-- Fixed music playing twice in VR
-- Fixed Editor SVG sizes
-- Fixed outdoor object decorations placement (e.g. textures on doors)
+- Various fixes object placemnt and zone transition
 
 -----------------------------
 
