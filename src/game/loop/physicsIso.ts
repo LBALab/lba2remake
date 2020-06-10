@@ -50,6 +50,7 @@ export function processCollisions(grid, _scene, obj) {
                     position.y = newY;
                     isTouchingGroud = true;
                 }
+                processEscalator(column, position);
                 break;
             }
         }
@@ -119,5 +120,24 @@ function intersectBox(actor, position) {
         actor.physics.position.add(DIFF);
         position.add(DIFF);
         ACTOR_BOX.translate(DIFF);
+    }
+}
+
+const ESCALATOR_SPEED = 0.001;
+
+function processEscalator(column, position) {
+    switch (column.groundType) {
+        case 3: // bottom-right -> top-left
+            position.z -= ESCALATOR_SPEED;
+            break;
+        case 4: // top-left -> bottom-right
+            position.z += ESCALATOR_SPEED;
+            break;
+        case 5: // bottom-left -> top-right
+            position.x += ESCALATOR_SPEED;
+            break;
+        case 6: // top-right -> bottom-left
+            position.x -= ESCALATOR_SPEED;
+            break;
     }
 }
