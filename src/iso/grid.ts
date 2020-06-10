@@ -3,6 +3,25 @@ import {map, last} from 'lodash';
 import {bits} from '../utils';
 import {loadBricksMapping} from './mapping';
 
+export enum GROUND_TYPES {
+    NORMAL_FLOOR,
+    WATER,
+    UNUSED,
+    ESCALATOR_BOTTOM_RIGHT_TOP_LEFT,
+    ESCALATOR_TOP_LEFT_BOTTOM_RIGHT,
+    ESCALATOR_BOTTOM_LEFT_TOP_RIGHT,
+    ESCALATOR_TOP_RIGHT_BOTTOM_LEFT,
+    DOME_OF_THE_SLATE_FLOOR,
+    CAVE_SPIKES,
+    LAVA,
+    NORMAL_FLOOR2,
+    GAS,
+    UNUSED2,
+    LAVA2,
+    GAS2,
+    WATER2,
+};
+
 export async function loadGrid(bkg, bricks, mask, palette, entry) {
     const gridData = new DataView(bkg.getEntry(entry));
     const libIndex = gridData.getUint8(0);

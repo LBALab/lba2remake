@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../../utils/lba';
+import { GROUND_TYPES } from '../../iso/grid';
 
 const STEP = 1 / WORLD_SIZE;
 const ESCALATOR_SPEED = 0.001;
@@ -126,16 +127,16 @@ function intersectBox(actor, position) {
 
 function processEscalator(column, position) {
     switch (column.groundType) {
-        case 3: // bottom-right -> top-left
+        case GROUND_TYPES.ESCALATOR_BOTTOM_RIGHT_TOP_LEFT:
             position.z -= ESCALATOR_SPEED;
             break;
-        case 4: // top-left -> bottom-right
+        case GROUND_TYPES.ESCALATOR_TOP_LEFT_BOTTOM_RIGHT:
             position.z += ESCALATOR_SPEED;
             break;
-        case 5: // bottom-left -> top-right
+        case GROUND_TYPES.ESCALATOR_BOTTOM_LEFT_TOP_RIGHT:
             position.x += ESCALATOR_SPEED;
             break;
-        case 6: // top-right -> bottom-left
+        case GROUND_TYPES.ESCALATOR_TOP_RIGHT_BOTTOM_LEFT:
             position.x -= ESCALATOR_SPEED;
             break;
     }
