@@ -195,7 +195,7 @@ export function updateExtra(game, scene, extra, time) {
 
     if (extra.props.flags.hasCollisions &&
         time.elapsed - extra.spawnTime > 0.5) {
-        const isTouchingGroud = scene.scenery.physics.processCollisions(scene, extra);
+        const isTouchingGroud = scene.scenery.physics.processCollisions(scene, extra, time);
         if (isTouchingGroud) {
             extra.physics.position.add(new THREE.Vector3(0, 0.1, 0));
             extra.threeObject.position.copy(extra.physics.position);

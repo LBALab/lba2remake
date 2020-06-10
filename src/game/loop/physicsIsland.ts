@@ -30,7 +30,7 @@ function processCameraCollisions(sections, camPosition, groundOffset = 0.15, obj
     }
 }
 
-function processCollisions(sections, scene, obj) {
+function processCollisions(sections, scene, obj, _time) {
     POSITION.copy(obj.physics.position);
     POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
 

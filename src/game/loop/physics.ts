@@ -25,7 +25,7 @@ function processActorPhysics(scene, actor, time) {
             // Max falling speed: 0.15m per frame
             actor.physics.position.y -= 0.25 * WORLD_SIZE * time.delta;
         }
-        scene.scenery.physics.processCollisions(scene, actor);
+        scene.scenery.physics.processCollisions(scene, actor, time);
         processCollisionsWithActors(scene, actor);
     }
     actor.model.mesh.quaternion.copy(actor.physics.orientation);
