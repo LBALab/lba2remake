@@ -20,7 +20,7 @@ export enum GROUND_TYPES {
     LAVA2,
     GAS2,
     WATER2,
-};
+}
 
 export async function loadGrid(bkg, bricks, mask, palette, entry) {
     const gridData = new DataView(bkg.getEntry(entry));
