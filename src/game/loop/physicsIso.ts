@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../../utils/lba';
+import { GROUND_TYPES } from '../../iso/grid';
 
 const STEP = 1 / WORLD_SIZE;
+const ESCALATOR_SPEED = 0.05;
 
-export function processCollisions(grid, _scene, obj) {
+export function processCollisions(grid, _scene, obj, time) {
     let isTouchingGroud = false;
     const basePos = obj.threeObject.position.clone();
     const position = obj.physics.position.clone();
@@ -50,6 +52,7 @@ export function processCollisions(grid, _scene, obj) {
                     position.y = newY;
                     isTouchingGroud = true;
                 }
+                processEscalator(column, position, time);
                 break;
             }
         }
@@ -119,5 +122,22 @@ function intersectBox(actor, position) {
         actor.physics.position.add(DIFF);
         position.add(DIFF);
         ACTOR_BOX.translate(DIFF);
+    }
+}
+
+function processEscalator(column, position, time) {
+    switch (column.groundType) {
+        case GROUND_TYPES.ESCALATOR_BOTTOM_RIGHT_TOP_LEFT:
+            position.z -= ESCALATOR_SPEED * time.delta;
+            break;
+        case GROUND_TYPES.ESCALATOR_TOP_LEFT_BOTTOM_RIGHT:
+            position.z += ESCALATOR_SPEED * time.delta;
+            break;
+        case GROUND_TYPES.ESCALATOR_BOTTOM_LEFT_TOP_RIGHT:
+            position.x += ESCALATOR_SPEED * time.delta;
+            break;
+        case GROUND_TYPES.ESCALATOR_TOP_RIGHT_BOTTOM_LEFT:
+            position.x -= ESCALATOR_SPEED * time.delta;
+            break;
     }
 }
