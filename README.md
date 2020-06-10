@@ -15,30 +15,25 @@ A Little Big Adventure 2 / Twinsen's Odyssey reimplementation in JavaScript / Th
   * Should look and play like the original
   * Full re-engineering instead of dissassembly-based approach
   * Focus on code quality, make it easy to read and modify
-  * __Milestones: [Gameplay 1](https://github.com/agrande/lba2remake/milestone/3), [Gameplay 2](https://github.com/agrande/lba2remake/milestone/5), [Gameplay 3](https://github.com/agrande/lba2remake/milestone/1), [Gameplay 4](https://github.com/agrande/lba2remake/milestone/4)__
 
 #### Phase 2: Make a HD version of the game
   * Improve graphics and gameplay in a way that preserves the original look & feel
   * More of a remastered version than a remake
-  * Support more platforms and ways of playing
-  * __Milestones: [HD Version](https://github.com/agrande/lba2remake/milestone/9), [Social gaming](https://github.com/agrande/lba2remake/milestone/12), [Virtual Reality](https://github.com/agrande/lba2remake/milestone/7), [Alternative versions](https://github.com/agrande/lba2remake/milestone/8)__
+  * Support more platforms and ways of playing (ex: VR & Mobile)
 
 #### Phase 3: Become a platform for modding and action/adventure game development
   * Progressively add tools to the editor to support mods
   * Have all tools grouped in a single integrated platform
-  * __Milestones: [Modding 1](https://github.com/agrande/lba2remake/milestone/6), [Modding 2](https://github.com/agrande/lba2remake/milestone/11), [Modding 3](https://github.com/agrande/lba2remake/milestone/10)__
 
 
 ## Status
 
 Currently you can walk around every island and buildings of the original game.
 Most of the graphic elements are implemented and part of the gameplay. It is not however completable at this point.
-Check out the *gameplay* [milestones](https://github.com/agrande/lba2remake/milestones) to see what needs to be done before the game becomes playable from start to end.
 
 ![Game screenshot](doc/images/screenshot_game.jpeg)
 
 The editor mode allows navigating around the game scenes, inspecting scene content and variables, inspecting the game engine internal variables and debugging scripts (you can set breakpoints on actor scripts).
-Progress on the editor is tracked by the *modding* [milestones](https://github.com/agrande/lba2remake/milestones).
 
 ![Editor screenshot](doc/images/screenshot_editor.jpeg)
 

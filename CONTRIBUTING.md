@@ -26,8 +26,6 @@ If you observe a bug you can report it [here](https://github.com/agrande/lba2rem
 
 If you have an idea that is not already listed there, you can [open an issue](https://github.com/agrande/lba2remake/issues/new) to suggest a new feature.
 
-You can also discuss and vote for the various [proposed evolutions](https://github.com/agrande/lba2remake/issues?q=is%3Aopen+is%3Aissue+label%3A%22%5Ba%5D+PROPOSAL%22) to the project.
-
 
 ## Contributing as a developer
 
@@ -38,10 +36,3 @@ Or you can fork the project and work on whatever you want!
 ### How to get started?
 
 [Here](doc/getting_started.md) is a guide to help you setup your local development environment, and this [document](doc/architecture.md) describes the project architecture.
-
-### Find an issue to work on
-
-You can find a list of [milestones](https://github.com/agrande/lba2remake/milestones) and a description of what we want to do with them in the [readme](README.md).
-
-We also have [projects](https://github.com/agrande/lba2remake/projects) describing or current plans (short and mid-term).
-
