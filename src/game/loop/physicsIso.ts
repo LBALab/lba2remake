@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { WORLD_SIZE } from '../../utils/lba';
 
 const STEP = 1 / WORLD_SIZE;
+const ESCALATOR_SPEED = 0.001;
 
 export function processCollisions(grid, _scene, obj) {
     let isTouchingGroud = false;
@@ -122,8 +123,6 @@ function intersectBox(actor, position) {
         ACTOR_BOX.translate(DIFF);
     }
 }
-
-const ESCALATOR_SPEED = 0.001;
 
 function processEscalator(column, position) {
     switch (column.groundType) {
