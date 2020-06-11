@@ -48,6 +48,11 @@ jobs:
           name: Build
           command: npm run -s build
 
+      # copy webxr assets
+      - run:
+          name: Copy WebXR assets
+          command: cp -r ./node_modules/@webxr-input-profiles/assets/dist/profiles ./www/webxr-assets
+
       # Copy files over
       - run:
           name: Build archive
