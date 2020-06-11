@@ -1,7 +1,7 @@
 # Version history
 
 ### [v0.2.3](https://github.com/agrande/lba2remake/compare/v0.2.2...v0.2.3) Bugfixes
-June 12th, 2020_
+_June 12th, 2020_
 
 Remove ability to edit metadata on main server
 
