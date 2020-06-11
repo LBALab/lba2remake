@@ -245,6 +245,9 @@ export async function loadSceneMetaData(sceneIndex) {
 }
 
 export async function saveMetaData(metadata) {
+    if (!window.isLocalServer) {
+        return;
+    }
     const request = new XMLHttpRequest();
     request.open('POST', 'metadata', true);
     request.onload = function onload() {
