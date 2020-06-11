@@ -1,6 +1,4 @@
-import {extend} from 'lodash';
 import * as THREE from 'three';
-import {checkAuth, getAuthQueryString} from './auth';
 
 const DebugData = {
     scope: <any> {},
@@ -194,7 +192,7 @@ function resetCameraOrientation(controlsState, scene) {
 export async function loadModelsMetaData() {
     return new Promise((resolve) => {
         const request = new XMLHttpRequest();
-        request.open('GET', `metadata/models.json${getAuthQueryString()}`, true);
+        request.open('GET', 'metadata/models.json', true);
 
         request.onload = function onload() {
             if (this.status === 200) {
@@ -225,7 +223,7 @@ export async function loadSceneMetaData(sceneIndex) {
 
     return new Promise((resolve) => {
         const request = new XMLHttpRequest();
-        request.open('GET', `metadata/scene_${sceneIndex}.json${getAuthQueryString()}`, true);
+        request.open('GET', `metadata/scene_${sceneIndex}.json`, true);
 
         request.onload = function onload() {
             if (this.status === 200) {
@@ -247,28 +245,24 @@ export async function loadSceneMetaData(sceneIndex) {
 }
 
 export async function saveMetaData(metadata) {
-    const authData = await checkAuth();
-    if (authData) {
-        const content = extend({}, metadata, {auth: authData});
-        const request = new XMLHttpRequest();
-        request.open('POST', 'metadata', true);
-        request.onload = function onload() {
-            if (this.status === 200) {
-                // tslint:disable-next-line:no-console
-                console.log('Saved metadata:', content);
-            } else {
-                // tslint:disable-next-line:no-console
-                console.error('Failed to save metadata');
-            }
-        };
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.send(JSON.stringify(content));
-    }
+    const request = new XMLHttpRequest();
+    request.open('POST', 'metadata', true);
+    request.onload = function onload() {
+        if (this.status === 200) {
+            // tslint:disable-next-line:no-console
+            console.log('Saved metadata:', metadata);
+        } else {
+            // tslint:disable-next-line:no-console
+            console.error('Failed to save metadata');
+        }
+    };
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.send(JSON.stringify(metadata));
 }
 
 export function loadGameMetaData() {
     const request = new XMLHttpRequest();
-    request.open('GET', `metadata/game.json${getAuthQueryString()}`, true);
+    request.open('GET', 'metadata/game.json', true);
 
     request.onload = function onload() {
         if (this.status === 200) {
@@ -286,7 +280,7 @@ export function loadGameMetaData() {
 export async function loadIslandsMetaData() {
     return new Promise((resolve) => {
         const request = new XMLHttpRequest();
-        request.open('GET', `metadata/islands.json${getAuthQueryString()}`, true);
+        request.open('GET', 'metadata/islands.json', true);
 
         request.onload = function onload() {
             if (this.status === 200) {

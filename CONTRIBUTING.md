@@ -11,9 +11,6 @@ We'd like to get in touch with you over [Slack](https://join.slack.com/t/lba2rem
 ### Completing the metadata
 
 We are building a list of actor, zone, checkpoint and variable names for the game scenes.
-
-It is not required to be a programmer to help. You can do it right in the [editor](https://www.lba2remake.net/#editor=true).
-
 For more details, check [how to contribute metadata](doc/how_to_metadata.md).
 
 ### Reporting crashes and bugs
