@@ -34,7 +34,7 @@ export async function loadIsometricScenery(entry, ambience, is3D) {
     ]);
     const palette = pal.getBufferUint8();
     const bricks = loadBricks(bkg);
-    const grid = loadGrid(bkg, bricks, mask, palette, entry + 1);
+    const grid = await loadGrid(bkg, bricks, mask, palette, entry + 1);
     const { threeObject, mixer } = await loadMesh(grid, entry, ambience, is3D);
 
     return {

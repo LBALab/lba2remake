@@ -176,6 +176,14 @@ const labels = () => [
         fontSize: 22,
         textAlign: 'right',
         text: tr('Action')
+    },
+    {
+        name: 'Ctrl',
+        x: 352,
+        y: 604,
+        fontSize: 22,
+        textAlign: 'left',
+        text: tr('BehaviourMenu')
     }
 ];
 

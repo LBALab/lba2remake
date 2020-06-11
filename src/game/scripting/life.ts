@@ -37,13 +37,13 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
             }
-            const itrjId = `${actor.index}_${id}`;
+            const itrjId = `actor_${actor.index}_${id}`;
             const interjections = clone(this.game.getUiState().interjections);
             interjections[itrjId] = {
                 scene: this.scene.index,
-                actor: actor.index,
+                obj: actor,
                 color: actor.props.textColor,
-                value: text.value
+                value: text.value,
             };
             this.game.setUiState({interjections});
             cmdState.skipListener = function skipListener() { };

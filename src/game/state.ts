@@ -12,13 +12,13 @@ export function createState() {
         hero: {
             behaviour: 0,
             prevBehaviour: 0,
-            life: 50,
+            life: 200,
             money: 0,
             magic: 0,
             keys: 0,
             fuel: 0,
             pinguin: 0,
-            clover: { boxes: 2, leafs: 0 },
+            clover: { boxes: 2, leafs: 1 },
             magicball: { level: 0, strength: 0, bounce: 0 }
         },
         chapter: 0,
