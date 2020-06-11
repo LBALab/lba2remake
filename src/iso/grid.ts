@@ -114,7 +114,7 @@ export async function loadGrid(bkg, bricks, mask, palette, entry) {
                                 (z + 1) / 32
                             )
                         ),
-                        groundType: blockData.groundType,
+                        groundType: (blockData && blockData.groundType),
                         sound: (blockData && blockData.sound) || -1
                     });
                 }
