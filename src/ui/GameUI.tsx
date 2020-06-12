@@ -256,7 +256,11 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     showMenu(inGameMenu = false) {
         this.state.game.pause();
         const audioMenuManager = this.state.game.getAudioMenuManager();
-        audioMenuManager.getMusicSource().loadAndPlay(6);
+        audioMenuManager.getMusicSource().load(6, () => {
+            if (this.state.showMenu) {
+                audioMenuManager.getMusicSource().play();
+            }
+        });
         this.setState({showMenu: true, inGameMenu}, this.saveData);
     }
 
