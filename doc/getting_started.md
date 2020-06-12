@@ -19,8 +19,9 @@ For obvious legal reasons we can't include those in the repository.
 You can obtain an original copy of the game from [GOG](https://www.gog.com/game/little_big_adventure_2) or [Steam](http://store.steampowered.com/app/398000/Little_Big_Adventure_2/).
 If you own it already, make sure you updated your game installation to the latest.
 
-#### Clone the project from GitHub
-- Use `git clone` or your favorite git client
+#### Get a copy of the project
+- [Fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the [project](https://github.com/agrande/lba2remake) on github
+- `git clone` your forked version of the project to get the code on your computer
 
 #### Open the command shell
 - Next commands are performed from your local copy's root folder.

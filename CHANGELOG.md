@@ -25,6 +25,13 @@ _June 9th, 2020_
 
 -----------------------------
 
+### [v0.2.3](https://github.com/agrande/lba2remake/compare/v0.2.2...v0.2.3) Bugfixes
+_June 12th, 2020_
+
+Remove ability to edit metadata on main server
+
+-----------------------------
+
 ### [v0.2.2](https://github.com/agrande/lba2remake/compare/v0.2.1...v0.2.2) Bugfixes
 _May 31th, 2020_
 
@@ -151,8 +158,6 @@ _May 3rd, 2018_
 _May 1st, 2018_
 
 The inspector area lets you take a look at the remake's game engine internals, this is a useful feature for debugging or learning how the engine works.
-
-![Inspector](doc/images/inspector.png)
 
 A video tutorial is available [here](https://youtu.be/qgCQObDvZbI) (for developpers)
 

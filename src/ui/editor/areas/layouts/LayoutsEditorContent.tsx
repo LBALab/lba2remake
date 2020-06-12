@@ -579,6 +579,9 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     async saveMetadata() {
+        if (!window.isLocalServer) {
+            return;
+        }
         return fetch('/metadata', {
             method: 'POST',
             headers: {
@@ -653,6 +656,9 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     renderApplyButton() {
+        if (!window.isLocalServer) {
+            return null;
+        }
         const progressStyle = {
             background: '#222222',
             color: 'red',
@@ -669,6 +675,9 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     async applyChanges() {
+        if (!window.isLocalServer) {
+            return;
+        }
         const { library } = this.props.sharedState;
         const scenes = await findScenesUsingLibrary(library);
         for (let i = 0; i < scenes.length; i += 1) {
