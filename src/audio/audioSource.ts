@@ -40,7 +40,7 @@ const createSource = (context: any): AudioSource => {
         source.volume = newVolume;
     };
 
-    source.play = (frequency: number = 0) => {
+    source.play = (frequency: number = null) => {
         if (frequency) {
             source.lowPassFilter.frequency.value = getFrequency(frequency);
         }

@@ -199,10 +199,7 @@ export function FOUND_OBJECT(cmdState, id) {
         hero.props.entityIndex = 0;
         hero.props.animIndex = AnimType.NONE;
         this.game.getState().flags.quest[id] = 1;
-        const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-        soundFxSource.load(6, () => {
-            soundFxSource.play();
-        });
+        audio.playSample(6);
         const text = this.game.texts[id];
         this.game.setUiState({
             text: {
@@ -573,24 +570,20 @@ export const STATE_INVENTORY = unimplemented();
 export const SET_HIT_ZONE = unimplemented();
 
 export function SAMPLE(index) {
-    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(index, () => {
-        soundFxSource.play();
-    });
+    const audio = this.game.getAudioManager();
+    audio.playSample(index);
 }
 
 export function SAMPLE_RND(index) {
-    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(index, () => {
-        soundFxSource.play();
-    });
+    // FIXME
+    const audio = this.game.getAudioManager();
+    audio.playSample(index);
 }
 
 export function SAMPLE_ALWAYS(index) {
-    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(index, () => {
-        soundFxSource.play();
-    });
+    // FIXME
+    const audio = this.game.getAudioManager();
+    audio.playSample(index);
 }
 
 export const SAMPLE_STOP = unimplemented();

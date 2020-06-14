@@ -54,10 +54,8 @@ export function WAIT_NUM_ANIM(repeats) {
 }
 
 export function SAMPLE(index) {
-    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(index, () => {
-        soundFxSource.play();
-    });
+    const audio = this.game.getAudioManager();
+    audio.playSample(index);
 }
 
 export const GOTO_POINT_3D = unimplemented();
@@ -141,17 +139,15 @@ export function CLOSE(time) {
 export const WAIT_DOOR = unimplemented();
 
 export function SAMPLE_RND(index) {
-    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(index, () => {
-        soundFxSource.play();
-    });
+    // FIXME
+    const audio = this.game.getAudioManager();
+    audio.playSample(index);
 }
 
 export function SAMPLE_ALWAYS(index) {
-    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(index, () => {
-        soundFxSource.play();
-    });
+    // FIXME
+    const audio = this.game.getAudioManager();
+    audio.playSample(index);
 }
 
 export const SAMPLE_STOP = unimplemented();
@@ -164,10 +160,8 @@ export function SIMPLE_SAMPLE(index) {
     if (index === 381 || index === 385) {
         return; // Skip thunder sounds
     }
-    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(index, () => {
-        soundFxSource.play();
-    });
+    const audio = this.game.getAudioManager();
+    audio.playSample(index);
 }
 
 export function FACE_HERO() {

@@ -3,7 +3,7 @@ import { loadResource } from '../resources';
 
 const createVoiceSource = (context: any) => {
     const source = createSource(context);
-    const loadPlay = (index: number, textBankId: number, onEndedCallback: any = null) => {
+    const loadPlay = async (index: number, textBankId: number, onEndedCallback: any = null) => {
         if (!source.volume) {
             return;
         }
@@ -13,23 +13,22 @@ const createVoiceSource = (context: any) => {
         if (textBankId === -1) {
             resId = 'VOICES_GAM';
         }
-        loadResource(resId).then(async (resource) => {
-            if (!resource) {
-                return;
-            }
-            const entryBuffer = await resource.getEntryAsync(index);
-            source.decode(entryBuffer.slice(0), (buffer: any) => {
-                source.load(buffer, () => {
-                    if (source.isPlaying && resource.hasHiddenEntries(index)) {
-                        loadPlay(resource.getNextHiddenEntry(index), textBankId);
-                    }
-                    source.isPlaying = false;
-                    if (onEndedCallback) {
-                        onEndedCallback.call();
-                    }
-                });
-                source.play();
+        const resource = await loadResource(resId);
+        if (!resource) {
+            return;
+        }
+        const entryBuffer = await resource.getEntryAsync(index);
+        source.decode(entryBuffer.slice(0), (buffer: any) => {
+            source.load(buffer, () => {
+                if (source.isPlaying && resource.hasHiddenEntries(index)) {
+                    loadPlay(resource.getNextHiddenEntry(index), textBankId);
+                }
+                source.isPlaying = false;
+                if (onEndedCallback) {
+                    onEndedCallback.call();
+                }
             });
+            source.play();
         });
     };
     return {

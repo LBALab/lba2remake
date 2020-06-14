@@ -16,10 +16,8 @@ export const ANIP = unimplemented();
 export const HIT = unimplemented();
 
 export const SAMPLE = (action, { game }) => {
-    const soundFxSource = game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(action.sampleIndex, () => {
-        soundFxSource.play();
-    });
+    const audio = game.getAudioManager();
+    audio.playSample(action.sampleIndex);
 };
 
 export const SAMPLE_RND = (action, { game }) => {
@@ -27,10 +25,8 @@ export const SAMPLE_RND = (action, { game }) => {
     if (frequency < 0 || frequency > 24000) {
         frequency = 0;
     }
-    const soundFxSource = game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(action.sampleIndex, () => {
-        soundFxSource.play(frequency);
-    });
+    const audio = game.getAudioManager();
+    audio.playSample(action.sampleIndex, frequency);
 };
 
 export const THROW = unimplemented();
@@ -52,10 +48,8 @@ export const LEFT_STEP = (_action, { game, animState }) => {
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
         // const frequency = getRandom(0, 0x1000) + 3596;
-        const soundFxSource = game.getAudioManager().getSoundFxSource();
-        soundFxSource.load(sampleIndex, () => {
-            soundFxSource.play(/* frequency */);
-        });
+        const audio = game.getAudioManager();
+        audio.playSample(sampleIndex, /*frequency*/);
     }
 };
 
@@ -64,10 +58,8 @@ export const RIGHT_STEP = (_action, { game, animState }) => {
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
         // const frequency = getRandom(0, 0x1000) + 3596;
-        const soundFxSource = game.getAudioManager().getSoundFxSource();
-        soundFxSource.load(sampleIndex, () => {
-            soundFxSource.play(/* frequency */);
-        });
+        const audio = game.getAudioManager();
+        audio.playSample(sampleIndex, /*frequency*/);
     }
 };
 
@@ -116,10 +108,8 @@ export const LEFT_JUMP = unimplemented();
 export const RIGHT_JUMP = unimplemented();
 
 export const NEW_SAMPLE = (action, { game }) => {
-    const soundFxSource = game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(action.sampleIndex, () => {
-        soundFxSource.play();
-    });
+    const audio = game.getAudioManager();
+    audio.playSample(action.sampleIndex);
 };
 
 export const IMPACT_3D = unimplemented();
