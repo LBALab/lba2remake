@@ -49,7 +49,7 @@ export const LEFT_STEP = (_action, { game, animState }) => {
         sampleIndex += 30;
         // const frequency = getRandom(0, 0x1000) + 3596;
         const audio = game.getAudioManager();
-        audio.playSample(sampleIndex, /*frequency*/);
+        audio.playSample(sampleIndex); // frequency
     }
 };
 
@@ -59,7 +59,7 @@ export const RIGHT_STEP = (_action, { game, animState }) => {
         sampleIndex += 30;
         // const frequency = getRandom(0, 0x1000) + 3596;
         const audio = game.getAudioManager();
-        audio.playSample(sampleIndex, /*frequency*/);
+        audio.playSample(sampleIndex); // frequency
     }
 };
 

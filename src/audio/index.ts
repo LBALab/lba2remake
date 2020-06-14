@@ -10,7 +10,7 @@ declare global {
 }
 
 const MUSIC_THEME = 6;
-const samples = [];
+const samples = {};
 
 function createAudioContext() {
     window.AudioContext = window.AudioContext || window.webkitAudioContext; // needed for Safari
@@ -24,13 +24,11 @@ export function createAudioManager(state) {
     const musicSource = createMusicSource(context);
     const menuMusicSource = createMusicSource(menuContext);
     const voiceSource = createVoiceSource(context);
-    const sampleSource = createSampleSource(context);
 
     // tune volumes
     musicSource.setVolume(state.config.musicVolume);
     menuMusicSource.setVolume(state.config.musicVolume);
     voiceSource.setVolume(state.config.voiceVolume);
-    sampleSource.setVolume(state.config.soundFxVolume);
 
     return {
         // music
@@ -64,32 +62,54 @@ export function createAudioManager(state) {
 
         // samples
         playSample: (index: number) => {
+            const sampleSource = createSampleSource(context);
+            sampleSource.setVolume(state.config.soundFxVolume);
             sampleSource.play(index);
-            samples.push(index);
+            samples[index] = sampleSource;
+            return sampleSource;
         },
-        isPlayingSample: () => { // index: number
-            return sampleSource.isPlaying();
+        isPlayingSample: (index: number) => {
+            const sampleSource = samples[index];
+            if (sampleSource) {
+                return sampleSource.isPlaying();
+            }
+            return false;
         },
-        stopSample: () => { // index: number
-            sampleSource.stop();
+        stopSample: (index: number) => {
+            const sampleSource = samples[index];
+            if (sampleSource) {
+                sampleSource.stop();
+            }
         },
         stopSamples: () => {
-            sampleSource.stop();
-        },
-        setVolumeSample: (vol: number) => {
-            sampleSource.setVolume(vol);
+            Object.keys(samples).forEach((index: string) => {
+                const sampleSource = samples[index];
+                if (sampleSource) {
+                    sampleSource.stop();
+                }
+            });
         },
 
         // shared
         pause: () => {
-            sampleSource.pause();
+            Object.keys(samples).forEach((index: string) => {
+                const sampleSource = samples[index];
+                if (sampleSource) {
+                    sampleSource.pause();
+                }
+            });
             voiceSource.pause();
             musicSource.pause();
         },
         resume: () => {
             musicSource.resume();
             voiceSource.resume();
-            sampleSource.resume();
+            Object.keys(samples).forEach((index: string) => {
+                const sampleSource = samples[index];
+                if (sampleSource) {
+                    sampleSource.resume();
+                }
+            });
         },
     };
 }
