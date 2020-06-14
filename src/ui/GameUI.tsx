@@ -257,6 +257,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         this.state.game.pause();
         const audioMenuManager = this.state.game.getAudioMenuManager();
         audioMenuManager.getMusicSource().load(6, () => {
+            // due to delayed load we may be playing after menu has been closed
             if (this.state.showMenu) {
                 audioMenuManager.getMusicSource().play();
             }
