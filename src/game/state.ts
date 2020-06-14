@@ -1,7 +1,23 @@
 import { omit } from 'lodash';
 import { getLanguageConfig } from '../lang';
 
-export function createState() {
+export interface GameConfig {
+    displayText: boolean;
+    musicVolume: number;
+    soundFxVolume: number;
+    voiceVolume: number;
+}
+
+export interface GameState {
+    config: GameConfig;
+    hero: any;
+    chapter: number;
+    flags: any;
+    save: Function;
+    load: Function;
+}
+
+export function createState(): GameState {
     return {
         config: Object.assign({
             displayText: true,

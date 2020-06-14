@@ -111,7 +111,7 @@ export function createGame(
             const voiceSource = audio.getVoiceSource();
             voiceSource.suspend();
             const musicSource = audio.getMusicSource();
-            musicSource.suspend();
+            musicSource.pause();
             // tslint:disable-next-line:no-console
             console.log('Pause');
         },

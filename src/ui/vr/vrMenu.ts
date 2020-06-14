@@ -114,7 +114,7 @@ export function createMenu(game, sceneManager, light) {
         if (!showMenu) {
             game.pause();
             const audioMenuManager = game.getAudioMenuManager();
-            audioMenuManager.getMusicSource().loadAndPlay(6);
+            audioMenuManager.getMusicSource().play(6);
             game.setUiState({inGameMenu: true, video: null});
         }
         game.setUiState({
