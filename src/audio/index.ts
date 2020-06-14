@@ -12,6 +12,8 @@ declare global {
     }
 }
 
+const MUSIC_THEME = 6;
+
 const soundFxDecodedAudioCache = [];
 
 function createAudioContext() {
@@ -27,23 +29,46 @@ export function createAudioManager(state) {
     const musicSource = createMusicSource(context);
     musicSource.setVolume(state.config.musicVolume);
 
+    const contextMenu = createAudioContext();
+    const musicMenuSource = createMusicSource(contextMenu);
+    musicMenuSource.setVolume(state.config.musicVolume);
+
     return {
-        context,
-        getMusicSource: () => musicSource,
+        // context,
+        // getMusicSource: () => musicSource,
         getSoundFxSource: () => sfxSource,
-        getVoiceSource: () => voiceSource
-    };
-}
+        getVoiceSource: () => voiceSource,
 
-export function createMusicManager(state) {
-    const context = createAudioContext();
+        playMusic: (index: number) => {
+            if (!musicSource.isPlaying()) {
+                musicSource.play(index);
+            }
+        },
+        playMusicTheme: () => {
+            if (!musicMenuSource.isPlaying()) {
+                musicMenuSource.play(MUSIC_THEME);
+            }
+        },
+        isPlayingMusic: () => {
+            return musicSource.isPlaying();
+        },
+        stopMusic: () => {
+            musicSource.stop();
+        },
+        stopMusicTheme: () => {
+            musicMenuSource.stop();
+        },
 
-    const musicSource = createMusicSource(context);
-    musicSource.setVolume(state.config.musicVolume);
-
-    return {
-        context,
-        getMusicSource: () => musicSource,
+        pause: () => {
+            musicSource.pause();
+            sfxSource.suspend();
+            voiceSource.suspend();
+        },
+        resume: () => {
+            musicSource.resume();
+            sfxSource.resume();
+            voiceSource.resume();
+        },
     };
 }
 

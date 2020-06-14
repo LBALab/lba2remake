@@ -28,8 +28,14 @@ const createMusicSource = (context: any) => {
         });
     };
     return {
+        isPlaying: () => {
+            return source.isPlaying;
+        },
         play: (index: number) => {
             loadPlay(index);
+        },
+        stop: () => {
+            source.stop();
         },
         setVolume: (vol: number) => {
             source.setVolume(vol);

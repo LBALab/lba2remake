@@ -255,14 +255,14 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
 
     showMenu(inGameMenu = false) {
         this.state.game.pause();
-        const audioMenuManager = this.state.game.getAudioMenuManager();
-        audioMenuManager.getMusicSource().play(6);
+        const audio = this.state.game.getAudioManager();
+        audio.playMusicTheme();
         this.setState({showMenu: true, inGameMenu}, this.saveData);
     }
 
     hideMenu(wasPaused = false) {
-        const audioMenuManager = this.state.game.getAudioMenuManager();
-        audioMenuManager.getMusicSource().stop();
+        const audio = this.state.game.getAudioManager();
+        audio.stopMusicTheme();
         if (!wasPaused)
             this.state.game.resume();
         this.setState({showMenu: false, inGameMenu: false}, this.saveData);
@@ -400,8 +400,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 }
                 const game = this.state.game;
                 if (game) {
-                    const audioMenuManager = game.getAudioMenuManager();
-                    audioMenuManager.getMusicSource().stop();
+                    const audio = game.getAudioManager();
+                    audio.stopMusicTheme();
                 }
                 if ('exitPointerLock' in document) {
                     document.exitPointerLock();
@@ -420,8 +420,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 }
                 const game = this.state.game;
                 if (game) {
-                    const audioMenuManager = game.getAudioMenuManager();
-                    audioMenuManager.getMusicSource().stop();
+                    const audio = game.getAudioManager();
+                    audio.stopMusicTheme();
                 }
                 if ('exitPointerLock' in document) {
                     document.exitPointerLock();

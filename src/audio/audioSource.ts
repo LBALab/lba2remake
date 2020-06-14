@@ -44,9 +44,9 @@ const createSource = (context: any): AudioSource => {
         if (frequency) {
             source.lowPassFilter.frequency.value = getFrequency(frequency);
         }
-        source.isPlaying = true;
         if (source.bufferSource) {
             source.bufferSource.start();
+            source.isPlaying = true;
         }
     };
 

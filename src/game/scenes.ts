@@ -67,8 +67,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 window.location.hash = hash.replace(/scene=\d+/, `scene=${index}`);
             }
 
-            const musicSource = game.getAudioManager().getMusicSource();
-            const menuMusicSource = game.getAudioMenuManager().getMusicSource();
+            const audio = game.getAudioManager();
             if (scene && scene.sideScenes && index in scene.sideScenes) {
                 killActor(scene.actors[0]);
                 const sideScene = scene.sideScenes[index];
@@ -80,12 +79,8 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
                 scene = sideScene;
                 reviveActor(scene.actors[0], game); // Awake twinsen
                 scene.isActive = true;
-                if (!musicSource.isPlaying) {
-                    musicSource.load(scene.data.ambience.musicIndex, () => {
-                        menuMusicSource.stop(); // if menu music is start playing during load
-                        musicSource.play();
-                    });
-                }
+                audio.stopMusicTheme();
+                audio.playMusic(scene.data.ambience.musicIndex);
                 initSceneDebugData();
                 return scene;
             }
@@ -105,13 +100,8 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             );
             renderer.applySceneryProps(scene.scenery.props);
             scene.isActive = true;
-            if (!musicSource.isPlaying) {
-                musicSource.load(scene.data.ambience.musicIndex, () => {
-                    // if menu music has started playing during load
-                    menuMusicSource.stop();
-                    musicSource.play();
-                });
-            }
+            audio.stopMusicTheme();
+            audio.playMusic(scene.data.ambience.musicIndex);
             initSceneDebugData();
             scene.firstFrame = true;
             if (params.editor) {
