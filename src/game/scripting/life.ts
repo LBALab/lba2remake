@@ -25,14 +25,19 @@ export function MESSAGE(cmdState, id) {
 }
 
 export function MESSAGE_OBJ(cmdState, actor, id) {
-    const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
         const text = this.scene.data.texts[id];
-        voiceSource.load(text.index, this.scene.data.textBankId, () => {
-            voiceSource.play();
-            cmdState.playing = true;
-        });
+        let onVoiceEndedCallback = null;
+        if (this.scene.vr) {
+            onVoiceEndedCallback = () => {
+                if (cmdState.playing) {
+                    cmdState.ended = true;
+                }
+            };
+        }
+        audio.playVoice(text.index, this.scene.data.textBankId, onVoiceEndedCallback);
         if (text.type === 9) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
@@ -87,17 +92,10 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         if (text.type !== 9) {
             this.game.controlsState.skipListener = cmdState.skipListener;
         }
-        if (this.scene.vr) {
-            voiceSource.ended = () => {
-                if (cmdState.playing) {
-                    cmdState.ended = true;
-                }
-            };
-        }
     }
 
     if (cmdState.ended) {
-        voiceSource.stop();
+        audio.stopVoice();
         const text = this.scene.data.texts[id];
         if (text.type !== 9) {
             this.game.setUiState({ text: null, skip: false, });
@@ -192,7 +190,7 @@ export function INC_CHAPTER() {
 }
 
 export function FOUND_OBJECT(cmdState, id) {
-    const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
         hero.props.dirMode = DirMode.NO_MOVE;
@@ -231,14 +229,12 @@ export function FOUND_OBJECT(cmdState, id) {
                 cmdState.skipListener();
             }, 6500);
         }
-        voiceSource.load(text.index, -1, () => {
-            voiceSource.play();
-        });
+        audio.playVoice(text.index, -1);
 
         this.game.setUiState({foundObject: id});
     }
     if (cmdState.ended) {
-        voiceSource.stop();
+        audio.stopVoice();
         this.game.setUiState({ skip: false, text: null, foundObject: null });
         this.game.controlsState.skipListener = null;
         hero.props.dirMode = DirMode.MANUAL;
@@ -398,7 +394,7 @@ export function ASK_CHOICE(cmdState, index) {
 }
 
 export function ASK_CHOICE_OBJ(cmdState, actor, index) {
-    const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
         const text = this.scene.data.texts[index];
@@ -424,12 +420,10 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
         };
         this.game.controlsState.skipListener = cmdState.skipListener;
 
-        voiceSource.load(text.index, this.scene.data.textBankId, () => {
-            voiceSource.play();
-        });
+        audio.playVoice(text.index, this.scene.data.textBankId);
     }
     if (cmdState.ended) {
-        voiceSource.stop();
+        audio.stopVoice();
         const uiState = this.game.getUiState();
         this.state.choice = uiState.choice;
         this.game.setUiState({ ask: {choices: []}, choice: null });

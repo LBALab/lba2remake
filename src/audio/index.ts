@@ -4,6 +4,7 @@ import {
     loadResource,
 } from '../resources';
 import { createMusicSource } from './music';
+import { createVoiceSource } from './voice';
 
 declare global {
     interface Window {
@@ -23,30 +24,30 @@ function createAudioContext() {
 
 export function createAudioManager(state) {
     const context = createAudioContext();
-    const sfxSource = getSoundFxSource(state, context);
-    const voiceSource = getVoiceSource(state, context);
+    const menuContext = createAudioContext();
 
     const musicSource = createMusicSource(context);
-    musicSource.setVolume(state.config.musicVolume);
+    const menuMusicSource = createMusicSource(menuContext);
+    const voiceSource = createVoiceSource(context);
 
-    const contextMenu = createAudioContext();
-    const musicMenuSource = createMusicSource(contextMenu);
-    musicMenuSource.setVolume(state.config.musicVolume);
+    musicSource.setVolume(state.config.musicVolume);
+    menuMusicSource.setVolume(state.config.musicVolume);
+    voiceSource.setVolume(state.config.voiceVolume);
+
+    const sfxSource = getSoundFxSource(state, context);
 
     return {
-        // context,
-        // getMusicSource: () => musicSource,
         getSoundFxSource: () => sfxSource,
-        getVoiceSource: () => voiceSource,
 
+        // music
         playMusic: (index: number) => {
             if (!musicSource.isPlaying()) {
                 musicSource.play(index);
             }
         },
         playMusicTheme: () => {
-            if (!musicMenuSource.isPlaying()) {
-                musicMenuSource.play(MUSIC_THEME);
+            if (!menuMusicSource.isPlaying()) {
+                menuMusicSource.play(MUSIC_THEME);
             }
         },
         isPlayingMusic: () => {
@@ -56,18 +57,27 @@ export function createAudioManager(state) {
             musicSource.stop();
         },
         stopMusicTheme: () => {
-            musicMenuSource.stop();
+            menuMusicSource.stop();
         },
 
+        // voice
+        playVoice: (index: number, textBankId: number, onEndedCallback = null) => {
+            voiceSource.play(index, textBankId, onEndedCallback);
+        },
+        stopVoice: () => {
+            voiceSource.stop();
+        },
+
+        // shared
         pause: () => {
-            musicSource.pause();
             sfxSource.suspend();
-            voiceSource.suspend();
+            voiceSource.pause();
+            musicSource.pause();
         },
         resume: () => {
             musicSource.resume();
-            sfxSource.resume();
             voiceSource.resume();
+            sfxSource.resume();
         },
     };
 }
@@ -166,106 +176,6 @@ function getSoundFxSource(state, context, data = null) {
         source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
         source.gainNode.connect(source.lowPassFilter);
         source.lowPassFilter.connect(context.destination);
-    };
-
-    return source;
-}
-
-function getVoiceSource(state, context, data = null) {
-    const source = {
-        volume: state.config.voiceVolume,
-        isPlaying: false,
-        loop: false,
-        currentIndex: -1,
-        bufferSource: null,
-        gainNode: context.createGain(),
-        play: null,
-        stop: null,
-        suspend: null,
-        resume: null,
-        load: null,
-        loadAndPlay: null,
-        connect: null,
-        ended: null,
-        pause: () => {},
-        data
-    };
-    // source.lowPassFilter.type = 'allpass';
-
-    source.play = () => {
-        source.isPlaying = true;
-        source.bufferSource.start();
-    };
-    source.stop = () => {
-        try {
-            if (source.bufferSource) {
-                source.bufferSource.stop();
-            }
-        } catch (error) {
-            // tslint:disable-next-line:no-console
-            console.debug(error);
-        }
-        source.isPlaying = false;
-    };
-    source.suspend = () => {
-        context.suspend();
-    };
-    source.resume = () => {
-        context.resume();
-    };
-    source.loadAndPlay = (index) => {
-        source.load(index, () => {
-            source.play();
-        });
-    };
-    source.load = (index, textBankId, callback) => {
-        const textBank = `${textBankId}`;
-        let resType = `VOICES_${(`000${textBank}`)
-            .substring(0, 3 - textBank.length) + textBank}`;
-        if (textBankId === -1) {
-            resType = 'VOICES_GAM';
-        }
-        loadResource(resType).then(async (resource) => {
-            if (!resource) {
-                return;
-            }
-            if (index === -1 || (source.currentIndex === index && source.isPlaying)) {
-                return;
-            }
-            if (source.isPlaying) {
-                source.stop();
-            }
-            source.currentIndex = index;
-            source.bufferSource = context.createBufferSource();
-
-            source.bufferSource.onended = () => {
-                if (source.isPlaying && resource.hasHiddenEntries(index)) {
-                    source.load(resource.getNextHiddenEntry(index), textBankId, callback);
-                }
-                source.isPlaying = false;
-                if (source.ended) {
-                    source.ended();
-                }
-            };
-
-            const entryBuffer = await resource.getEntryAsync(index);
-            context.decodeAudioData(entryBuffer.slice(0), (buffer) => {
-                if (!source.bufferSource.buffer) {
-                    source.bufferSource.buffer = buffer;
-                    source.connect();
-                    callback.call();
-                }
-            }, (decodeErr) => {
-                throw new Error(decodeErr);
-            });
-        });
-    };
-
-    source.connect = () => {
-        // source->gain->context
-        source.bufferSource.connect(source.gainNode);
-        source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
-        source.gainNode.connect(context.destination);
     };
 
     return source;

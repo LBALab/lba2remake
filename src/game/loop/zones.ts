@@ -247,7 +247,7 @@ function GOTO_SCENE(game, scene, zone, hero) {
 }
 
 function TEXT(game, scene, zone, hero) {
-    const voiceSource = game.getAudioManager().getVoiceSource();
+    const audio = game.getAudioManager();
     if (game.controlsState.action === 1) {
         if (!scene.zoneState.skipListener) {
             scene.actors[0].props.dirMode = DirMode.NO_MOVE;
@@ -279,16 +279,14 @@ function TEXT(game, scene, zone, hero) {
 
             game.controlsState.skipListener = scene.zoneState.skipListener;
 
-            voiceSource.load(text.index, scene.data.textBankId, () => {
-                voiceSource.play();
-            });
+            audio.playVoice(text.index, scene.data.textBankId);
         }
     }
     if (scene.zoneState.ended) {
         scene.actors[0].props.dirMode = DirMode.MANUAL;
         hero.props.entityIndex = hero.props.prevEntityIndex;
         hero.props.animIndex = hero.props.prevAnimIndex;
-        voiceSource.stop();
+        audio.stopVoice();
         game.setUiState({ text: null, skip: false });
         game.controlsState.skipListener = null;
         delete scene.zoneState.skipListener;

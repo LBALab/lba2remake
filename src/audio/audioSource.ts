@@ -77,11 +77,14 @@ const createSource = (context: any): AudioSource => {
         source.lowPassFilter.connect(context.destination);
     };
 
-    source.load = (buffer) => {
+    source.load = (buffer, onEndedCallback = null) => {
         source.bufferSource = context.createBufferSource();
         source.bufferSource.loop = source.loop;
         source.bufferSource.buffer = buffer;
         source.bufferSource.onended = () => {
+            if (onEndedCallback) {
+                onEndedCallback.call();
+            }
             source.isPlaying = false;
         };
         source.connect();
