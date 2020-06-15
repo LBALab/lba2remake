@@ -6,6 +6,7 @@ import {processPhysicsFrame} from './physics';
 import DebugData from '../../ui/editor/DebugData';
 import { updateExtra } from '../extras';
 import { updateVRGUI } from '../../ui/vr/vrGUI';
+import { getRandom } from '../../utils/lba';
 
 const dbgClock = new THREE.Clock(false);
 dbgClock.start();
@@ -33,6 +34,7 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls, vrS
                 clock.elapsedTime += 0.05;
             }
             scene.scenery.update(game, scene, time);
+            playAmbience(game, scene, time);
             updateScene(params, game, scene, time);
             processPhysicsFrame(game, scene, time);
             each(scene.sideScenes, (sideScene) => {
@@ -68,7 +70,6 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls, vrS
 }
 
 function updateScene(params, game, scene, time) {
-    // playAmbience(game, scene, time);
     if (scene.firstFrame) {
         scene.sceneNode.updateMatrixWorld();
     }
@@ -104,10 +105,9 @@ function updateScene(params, game, scene, time) {
     }
 }
 
-/*
 function playAmbience(game, scene, time) {
-    const soundFxSource = game.getAudioManager().getSoundFxSource();
     let samplePlayed = 0;
+    const audio = game.getAudioManager();
 
     if (time.elapsed >= scene.data.ambience.sampleElapsedTime) {
         let currentAmb = getRandom(1, 4);
@@ -120,10 +120,9 @@ function playAmbience(game, scene, time) {
                 }
                 const sample = scene.data.ambience.samples[currentAmb];
                 if (sample.ambience !== -1 && sample.repeat !== 0) {
-                    soundFxSource.load(sample.ambience, () => {
-                        soundFxSource.play(sample.frequency);
-                    });
-
+                    if (!audio.isPlayingSample(sample.ambience)) {
+                        audio.playSample(sample.ambience, sample.frequency);
+                    }
                     break;
                 }
             }
@@ -132,10 +131,9 @@ function playAmbience(game, scene, time) {
         }
         const {sampleMinDelay, sampleMinDelayRnd} = scene.data.ambience;
         scene.data.ambience.sampleElapsedTime =
-            time.elapsed + (getRandom(sampleMinDelay, sampleMinDelayRnd) * 1000);
+            time.elapsed + (getRandom(0, sampleMinDelayRnd) + sampleMinDelay);
     }
     if (scene.data.ambience.sampleMinDelay < 0) {
         scene.data.ambience.sampleElapsedTime = time.elapsed + 200000;
     }
 }
-*/
