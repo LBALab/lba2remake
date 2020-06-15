@@ -4,7 +4,9 @@ interface AudioSource {
     volume: number;
     isPlaying: boolean;
     loop: boolean;
+    loopCount: number;
     setVolume: Function;
+    setLoopCount: Function;
     play: Function;
     stop: Function;
     suspend: Function;
@@ -24,7 +26,9 @@ const createSource = (context: any): AudioSource => {
         volume: 0,
         isPlaying: false,
         loop: false,
+        loopCount: 0,
         setVolume: null,
+        setLoopCount: null,
         bufferSource: null,
         play: null,
         stop: null,
@@ -38,6 +42,16 @@ const createSource = (context: any): AudioSource => {
 
     source.setVolume = (newVolume: number) => {
         source.volume = newVolume;
+    };
+
+    source.setLoopCount = (loopCount: number) => {
+        source.loop = false;
+        if (loopCount > 0) {
+            source.loopCount = loopCount;
+        }
+        if (loopCount !== 0) { // -1 (always loop) | > 0 (loopCount)
+            source.loop = true;
+        }
     };
 
     source.play = (frequency: number = null) => {
@@ -82,6 +96,13 @@ const createSource = (context: any): AudioSource => {
         source.bufferSource.loop = source.loop;
         source.bufferSource.buffer = buffer;
         source.bufferSource.onended = () => {
+            if (source.loop) {
+                source.loopCount = source.loopCount - 1;
+                if (source.loopCount === 0) {
+                    source.loop = false;
+                    source.bufferSource.loop = false;
+                }
+            }
             if (onEndedCallback) {
                 onEndedCallback.call();
             }
