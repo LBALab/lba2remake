@@ -5,11 +5,12 @@ const sampleDecodedAudioCache = [];
 
 const createSampleSource = (context: any) => {
     const source = createSource(context);
-    const loadPlay = async (index: number, frequency: number = null) => {
+    const loadPlay = async (index: number, frequency: number = 0x1000, loopCount: number = 0) => {
         if (!source.volume) {
             return;
         }
         if (sampleDecodedAudioCache[index]) {
+            source.setLoopCount(loopCount);
             source.load(sampleDecodedAudioCache[index]);
             source.play(frequency);
             return;
@@ -21,6 +22,7 @@ const createSampleSource = (context: any) => {
         const entryBuffer = await resource.getEntryAsync(index);
         source.decode(entryBuffer.slice(0), (buffer: any) => {
             sampleDecodedAudioCache[index] = buffer;
+            source.setLoopCount(loopCount);
             source.load(buffer);
             source.play(frequency);
         });
@@ -29,8 +31,8 @@ const createSampleSource = (context: any) => {
         isPlaying: () => {
             return source.isPlaying;
         },
-        play: (index: number, frequency: number = null) => {
-            loadPlay(index, frequency);
+        play: (index: number, frequency: number = 0x1000, loopCount: number = 0) => {
+            loadPlay(index, frequency, loopCount);
         },
         stop: () => {
             source.stop();
