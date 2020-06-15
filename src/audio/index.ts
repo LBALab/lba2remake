@@ -51,6 +51,9 @@ export function createAudioManager(state) {
         stopMusicTheme: () => {
             menuMusicSource.stop();
         },
+        preloadMusicTheme: async () => {
+            await menuMusicSource.preload(MUSIC_THEME);
+        },
 
         // voice
         playVoice: (index: number, textBankId: number, onEndedCallback = null) => {

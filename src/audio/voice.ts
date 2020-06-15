@@ -18,18 +18,17 @@ const createVoiceSource = (context: any) => {
             return;
         }
         const entryBuffer = await resource.getEntryAsync(index);
-        source.decode(entryBuffer.slice(0), (buffer: any) => {
-            source.load(buffer, () => {
-                if (source.isPlaying && resource.hasHiddenEntries(index)) {
-                    loadPlay(resource.getNextHiddenEntry(index), textBankId);
-                }
-                source.isPlaying = false;
-                if (onEndedCallback) {
-                    onEndedCallback.call();
-                }
-            });
-            source.play();
+        const buffer = await source.decode(entryBuffer.slice(0));
+        source.load(buffer, () => {
+            if (source.isPlaying && resource.hasHiddenEntries(index)) {
+                loadPlay(resource.getNextHiddenEntry(index), textBankId);
+            }
+            source.isPlaying = false;
+            if (onEndedCallback) {
+                onEndedCallback.call();
+            }
         });
+        source.play();
     };
     return {
         isPlaying: () => {

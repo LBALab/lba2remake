@@ -129,7 +129,7 @@ function playAmbience(game, scene, time) {
             currentAmb += 1;
             currentAmb &= 3;
         }
-        const {sampleMinDelay, sampleMinDelayRnd} = scene.data.ambience;
+        const { sampleMinDelay, sampleMinDelayRnd } = scene.data.ambience;
         scene.data.ambience.sampleElapsedTime =
             time.elapsed + (getRandom(0, sampleMinDelayRnd) + sampleMinDelay);
     }

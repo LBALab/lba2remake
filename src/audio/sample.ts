@@ -20,12 +20,11 @@ const createSampleSource = (context: any) => {
             return;
         }
         const entryBuffer = await resource.getEntryAsync(index);
-        source.decode(entryBuffer.slice(0), (buffer: any) => {
-            sampleDecodedAudioCache[index] = buffer;
-            source.setLoopCount(loopCount);
-            source.load(buffer);
-            source.play(frequency);
-        });
+        const buffer = await source.decode(entryBuffer.slice(0));
+        sampleDecodedAudioCache[index] = buffer;
+        source.setLoopCount(loopCount);
+        source.load(buffer);
+        source.play(frequency);
     };
     return {
         isPlaying: () => {

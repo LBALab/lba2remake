@@ -20,11 +20,10 @@ const createMusicSource = (context: any) => {
             return;
         }
         const entryBuffer = resource.getBuffer();
-        source.decode(entryBuffer.slice(0), (buffer: any) => {
-            musicDecodedAudioCache[index] = buffer;
-            source.load(buffer);
-            source.play();
-        });
+        const buffer = await source.decode(entryBuffer.slice(0));
+        musicDecodedAudioCache[index] = buffer;
+        source.load(buffer);
+        source.play();
     };
     return {
         isPlaying: () => {
@@ -44,7 +43,16 @@ const createMusicSource = (context: any) => {
         },
         resume: () => {
             source.resume();
-        }
+        },
+        preload: async (index: number) => {
+            const resId = `MUSIC_SCENE_${index}`;
+            const resource = await loadResource(resId);
+            if (!resource) {
+                return;
+            }
+            const entryBuffer = resource.getBuffer();
+            musicDecodedAudioCache[index] = await source.decode(entryBuffer.slice(0));
+        },
     };
 };
 

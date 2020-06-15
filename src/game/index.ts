@@ -122,6 +122,7 @@ export function createGame(
 
         async preload() {
             await preloadResources();
+            await audio.preloadMusicTheme();
 
             const { language } = getLanguageConfig();
             const [menuTexts, gameTexts] = await Promise.all([
