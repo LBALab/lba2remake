@@ -3,7 +3,7 @@ import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
 import { setMagicBallLevel } from '../../game/state';
 import { unimplemented } from './utils';
-import { WORLD_SCALE } from '../../utils/lba';
+import { WORLD_SCALE, getRandom } from '../../utils/lba';
 import { getResourcePath } from '../../resources';
 
 export const PALETTE = unimplemented();
@@ -575,20 +575,26 @@ export function SAMPLE(index) {
 }
 
 export function SAMPLE_RND(index) {
-    // FIXME
+    const frequency = getRandom(0x800, 0x1000);
     const audio = this.game.getAudioManager();
-    audio.playSample(index);
+    audio.playSample(index, frequency);
 }
 
 export function SAMPLE_ALWAYS(index) {
-    // FIXME
     const audio = this.game.getAudioManager();
-    audio.playSample(index);
+    audio.stopSample(index);
+    audio.playSample(index, 0x1000, -1);
 }
 
-export const SAMPLE_STOP = unimplemented();
+export function SAMPLE_STOP(index) {
+    const audio = this.game.getAudioManager();
+    audio.stopSample(index);
+}
 
-export const REPEAT_SAMPLE = unimplemented();
+export function REPEAT_SAMPLE(index, loopCount) {
+    const audio = this.game.getAudioManager();
+    audio.playSample(index, 0x1000, loopCount - 1);
+}
 
 export const BACKGROUND = unimplemented();
 
@@ -625,7 +631,11 @@ export const END_MESSAGE_OBJ = unimplemented();
 
 export const PARM_SAMPLE = unimplemented();
 
-export const NEW_SAMPLE = unimplemented();
+export function NEW_SAMPLE(index, _, volume, frequency) {
+    const audio = this.game.getAudioManager();
+    const sample = audio.playSample(index, frequency);
+    sample.setVolume(volume / 100);
+}
 
 export const POS_OBJ_AROUND = unimplemented();
 

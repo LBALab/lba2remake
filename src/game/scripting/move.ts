@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { unimplemented } from './utils';
-import { WORLD_SCALE } from '../../utils/lba';
+import { WORLD_SCALE, getRandom } from '../../utils/lba';
 
 export function GOTO_POINT(point) {
     if (this.actor.index === 0 && this.game.controlsState.firstPerson) {
@@ -139,29 +139,35 @@ export function CLOSE(time) {
 export const WAIT_DOOR = unimplemented();
 
 export function SAMPLE_RND(index) {
-    // FIXME
+    const frequency = getRandom(0x800, 0x1000);
     const audio = this.game.getAudioManager();
-    audio.playSample(index);
+    audio.playSample(index, frequency);
 }
 
 export function SAMPLE_ALWAYS(index) {
-    // FIXME
     const audio = this.game.getAudioManager();
-    audio.playSample(index);
+    audio.stopSample(index);
+    audio.playSample(index, 0x1000, -1);
 }
 
-export const SAMPLE_STOP = unimplemented();
+export function SAMPLE_STOP(index) {
+    const audio = this.game.getAudioManager();
+    audio.stopSample(index);
+}
 
 export const PLAY_ACF = unimplemented();
 
-export const REPEAT_SAMPLE = unimplemented();
+export function REPEAT_SAMPLE(loopCount) {
+    this.state.sampleLoopCount = loopCount;
+}
 
 export function SIMPLE_SAMPLE(index) {
     if (index === 381 || index === 385) {
         return; // Skip thunder sounds
     }
     const audio = this.game.getAudioManager();
-    audio.playSample(index);
+    audio.playSample(index, 0x1000, this.state.sampleLoopCount);
+    this.state.sampleLoopCount = 0;
 }
 
 export function FACE_HERO() {
