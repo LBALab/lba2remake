@@ -42,6 +42,7 @@ const createSource = (context: any): AudioSource => {
 
     source.setVolume = (newVolume: number) => {
         source.volume = newVolume;
+        source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
     };
 
     source.setLoopCount = (loopCount: number) => {
@@ -79,8 +80,8 @@ const createSource = (context: any): AudioSource => {
         context.resume();
     };
 
-    source.decode = (buffer, setBufferCallback) => {
-        context.decodeAudioData(buffer, setBufferCallback);
+    source.decode = async (buffer) => {
+        return await context.decodeAudioData(buffer);
     };
 
     source.connect = () => {
