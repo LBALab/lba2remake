@@ -3,7 +3,7 @@ import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
 import { setMagicBallLevel } from '../../game/state';
 import { unimplemented } from './utils';
-import { WORLD_SCALE } from '../../utils/lba';
+import { WORLD_SCALE, getRandom } from '../../utils/lba';
 import { getResourcePath } from '../../resources';
 
 export const PALETTE = unimplemented();
@@ -25,14 +25,19 @@ export function MESSAGE(cmdState, id) {
 }
 
 export function MESSAGE_OBJ(cmdState, actor, id) {
-    const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
         const text = this.scene.data.texts[id];
-        voiceSource.load(text.index, this.scene.data.textBankId, () => {
-            voiceSource.play();
-            cmdState.playing = true;
-        });
+        let onVoiceEndedCallback = null;
+        if (this.scene.vr) {
+            onVoiceEndedCallback = () => {
+                if (cmdState.playing) {
+                    cmdState.ended = true;
+                }
+            };
+        }
+        audio.playVoice(text.index, this.scene.data.textBankId, onVoiceEndedCallback);
         if (text.type === 9) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
@@ -87,17 +92,10 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         if (text.type !== 9) {
             this.game.controlsState.skipListener = cmdState.skipListener;
         }
-        if (this.scene.vr) {
-            voiceSource.ended = () => {
-                if (cmdState.playing) {
-                    cmdState.ended = true;
-                }
-            };
-        }
     }
 
     if (cmdState.ended) {
-        voiceSource.stop();
+        audio.stopVoice();
         const text = this.scene.data.texts[id];
         if (text.type !== 9) {
             this.game.setUiState({ text: null, skip: false, });
@@ -192,7 +190,7 @@ export function INC_CHAPTER() {
 }
 
 export function FOUND_OBJECT(cmdState, id) {
-    const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
         hero.props.dirMode = DirMode.NO_MOVE;
@@ -201,10 +199,7 @@ export function FOUND_OBJECT(cmdState, id) {
         hero.props.entityIndex = 0;
         hero.props.animIndex = AnimType.NONE;
         this.game.getState().flags.quest[id] = 1;
-        const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-        soundFxSource.load(6, () => {
-            soundFxSource.play();
-        });
+        audio.playSample(6);
         const text = this.game.texts[id];
         this.game.setUiState({
             text: {
@@ -231,14 +226,12 @@ export function FOUND_OBJECT(cmdState, id) {
                 cmdState.skipListener();
             }, 6500);
         }
-        voiceSource.load(text.index, -1, () => {
-            voiceSource.play();
-        });
+        audio.playVoice(text.index, -1);
 
         this.game.setUiState({foundObject: id});
     }
     if (cmdState.ended) {
-        voiceSource.stop();
+        audio.stopVoice();
         this.game.setUiState({ skip: false, text: null, foundObject: null });
         this.game.controlsState.skipListener = null;
         hero.props.dirMode = DirMode.MANUAL;
@@ -398,7 +391,7 @@ export function ASK_CHOICE(cmdState, index) {
 }
 
 export function ASK_CHOICE_OBJ(cmdState, actor, index) {
-    const voiceSource = this.game.getAudioManager().getVoiceSource();
+    const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
         const text = this.scene.data.texts[index];
@@ -424,12 +417,10 @@ export function ASK_CHOICE_OBJ(cmdState, actor, index) {
         };
         this.game.controlsState.skipListener = cmdState.skipListener;
 
-        voiceSource.load(text.index, this.scene.data.textBankId, () => {
-            voiceSource.play();
-        });
+        audio.playVoice(text.index, this.scene.data.textBankId);
     }
     if (cmdState.ended) {
-        voiceSource.stop();
+        audio.stopVoice();
         const uiState = this.game.getUiState();
         this.state.choice = uiState.choice;
         this.game.setUiState({ ask: {choices: []}, choice: null });
@@ -579,29 +570,31 @@ export const STATE_INVENTORY = unimplemented();
 export const SET_HIT_ZONE = unimplemented();
 
 export function SAMPLE(index) {
-    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(index, () => {
-        soundFxSource.play();
-    });
+    const audio = this.game.getAudioManager();
+    audio.playSample(index);
 }
 
 export function SAMPLE_RND(index) {
-    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(index, () => {
-        soundFxSource.play();
-    });
+    const frequency = getRandom(0x800, 0x1000);
+    const audio = this.game.getAudioManager();
+    audio.playSample(index, frequency);
 }
 
 export function SAMPLE_ALWAYS(index) {
-    const soundFxSource = this.game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(index, () => {
-        soundFxSource.play();
-    });
+    const audio = this.game.getAudioManager();
+    audio.stopSample(index);
+    audio.playSample(index, 0x1000, -1);
 }
 
-export const SAMPLE_STOP = unimplemented();
+export function SAMPLE_STOP(index) {
+    const audio = this.game.getAudioManager();
+    audio.stopSample(index);
+}
 
-export const REPEAT_SAMPLE = unimplemented();
+export function REPEAT_SAMPLE(index, loopCount) {
+    const audio = this.game.getAudioManager();
+    audio.playSample(index, 0x1000, loopCount - 1);
+}
 
 export const BACKGROUND = unimplemented();
 
@@ -638,7 +631,11 @@ export const END_MESSAGE_OBJ = unimplemented();
 
 export const PARM_SAMPLE = unimplemented();
 
-export const NEW_SAMPLE = unimplemented();
+export function NEW_SAMPLE(index, _, volume, frequency) {
+    const audio = this.game.getAudioManager();
+    const sample = audio.playSample(index, frequency);
+    sample.setVolume(volume / 100);
+}
 
 export const POS_OBJ_AROUND = unimplemented();
 

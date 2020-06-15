@@ -1,8 +1,6 @@
-import { getFrequency } from '../utils/lba';
-import {
-    ResourceType,
-    loadResource,
-} from '../resources';
+import { createMusicSource } from './music';
+import { createVoiceSource } from './voice';
+import { createSampleSource } from './sample';
 
 declare global {
     interface Window {
@@ -11,8 +9,8 @@ declare global {
     }
 }
 
-const musicDecodedAudioCache = [];
-const soundFxDecodedAudioCache = [];
+const MUSIC_THEME = 6;
+const samples = {};
 
 function createAudioContext() {
     window.AudioContext = window.AudioContext || window.webkitAudioContext; // needed for Safari
@@ -21,311 +19,100 @@ function createAudioContext() {
 
 export function createAudioManager(state) {
     const context = createAudioContext();
-    const musicSource = getMusicSource(state, context);
-    const sfxSource = getSoundFxSource(state, context);
-    const voiceSource = getVoiceSource(state, context);
+    const menuContext = createAudioContext();
+
+    const musicSource = createMusicSource(context);
+    const menuMusicSource = createMusicSource(menuContext);
+    const voiceSource = createVoiceSource(context);
+
+    // tune volumes
+    musicSource.setVolume(state.config.musicVolume);
+    menuMusicSource.setVolume(state.config.musicVolume);
+    voiceSource.setVolume(state.config.voiceVolume);
+
     return {
-        context,
-        getMusicSource: () => musicSource,
-        getSoundFxSource: () => sfxSource,
-        getVoiceSource: () => voiceSource
-    };
-}
-
-export function createMusicManager(state) {
-    const context = createAudioContext();
-    const musicSource = getMusicSource(state, context);
-    return {
-        context,
-        getMusicSource: () => musicSource
-    };
-}
-
-function getMusicSource(state, context) {
-    const source = {
-        volume: state.config.musicVolume,
-        isPlaying: false,
-        loop: false,
-        currentIndex: -1,
-        bufferSource: null,
-        gainNode: context.createGain(),
-        play: null,
-        stop: null,
-        suspend: null,
-        resume: null,
-        load: null,
-        loadAndPlay: null,
-        connect: null,
-        pause: () => {},
-    };
-
-    source.play = () => {
-        source.bufferSource.start();
-        source.isPlaying = true;
-    };
-    source.stop = () => {
-        try {
-            if (source.bufferSource) {
-                source.bufferSource.stop();
+        // music
+        playMusic: (index: number) => {
+            if (!musicSource.isPlaying()) {
+                musicSource.play(index);
             }
-        } catch (error) {
-            // tslint:disable-next-line:no-console
-            console.debug(error);
-        }
-        source.isPlaying = false;
-    };
-    source.suspend = () => {
-        context.suspend();
-    };
-    source.resume = () => {
-        context.resume();
-    };
-    source.loadAndPlay = (index) => {
-        source.load(index, () => {
-            source.play();
-        });
-    };
-    source.load = (index, callback) => {
-        if (index === -1 || (source.currentIndex === index && source.isPlaying)) {
-            return;
-        }
-        if (source.isPlaying) {
-            source.stop();
-        }
-        source.currentIndex = index;
-        source.bufferSource = context.createBufferSource();
-        source.bufferSource.loop = source.loop;
-        source.bufferSource.onended = () => {
-            source.isPlaying = false;
-        };
-
-        const setBuffer = (buffer) => {
-            if (!source.bufferSource.buffer) {
-                source.bufferSource.buffer = buffer;
-                musicDecodedAudioCache[index] = buffer;
-                source.connect();
-                callback.call();
+        },
+        playMusicTheme: () => {
+            if (!menuMusicSource.isPlaying()) {
+                menuMusicSource.play(MUSIC_THEME);
             }
-        };
+        },
+        isPlayingMusic: () => {
+            return musicSource.isPlaying();
+        },
+        stopMusic: () => {
+            musicSource.stop();
+        },
+        stopMusicTheme: () => {
+            menuMusicSource.stop();
+        },
+        preloadMusicTheme: async () => {
+            await menuMusicSource.preload(MUSIC_THEME);
+        },
 
-        const resId = `MUSIC_SCENE_${index}`;
-        if (musicDecodedAudioCache[index]) {
-            setBuffer(musicDecodedAudioCache[index]);
-            return;
-        }
-        loadResource(resId).then((resource) => {
-            if (!resource) {
-                return;
+        // voice
+        playVoice: (index: number, textBankId: number, onEndedCallback = null) => {
+            voiceSource.play(index, textBankId, onEndedCallback);
+        },
+        stopVoice: () => {
+            voiceSource.stop();
+        },
+
+        // samples
+        playSample: (index: number) => {
+            const sampleSource = createSampleSource(context);
+            sampleSource.setVolume(state.config.soundFxVolume);
+            sampleSource.play(index);
+            samples[index] = sampleSource;
+            return sampleSource;
+        },
+        isPlayingSample: (index: number) => {
+            const sampleSource = samples[index];
+            if (sampleSource) {
+                return sampleSource.isPlaying();
             }
-            const entryBuffer = resource.getBuffer();
-            context.decodeAudioData(entryBuffer.slice(0), setBuffer);
-        });
-    };
-    source.connect = () => {
-        // source->gain->context
-        source.bufferSource.connect(source.gainNode);
-        source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
-        source.gainNode.connect(context.destination);
-    };
-
-    return source;
-}
-
-function getSoundFxSource(state, context, data = null) {
-    const source = {
-        volume: state.config.soundFxVolume,
-        isPlaying: false,
-        loop: false,
-        currentIndex: -1,
-        bufferSource: null,
-        gainNode: context.createGain(),
-        lowPassFilter: context.createBiquadFilter(),
-        play: null,
-        stop: null,
-        suspend: null,
-        resume: null,
-        load: null,
-        loadAndPlay: null,
-        connect: null,
-        pause: () => {},
-        data
-    };
-    source.lowPassFilter.type = 'allpass';
-
-    source.play = (frequency) => {
-        if (frequency) {
-            source.lowPassFilter.frequency.value = getFrequency(frequency);
-        }
-        source.isPlaying = true;
-        source.bufferSource.start();
-    };
-    source.stop = () => {
-        try {
-            if (source.bufferSource) {
-                source.bufferSource.stop();
+            return false;
+        },
+        stopSample: (index: number) => {
+            const sampleSource = samples[index];
+            if (sampleSource) {
+                sampleSource.stop();
             }
-        } catch (error) {
-            // tslint:disable-next-line:no-console
-            console.debug(error);
-        }
-        source.isPlaying = false;
-    };
-    source.suspend = () => {
-        context.suspend();
-    };
-    source.resume = () => {
-        context.resume();
-    };
-    source.loadAndPlay = (index) => {
-        source.load(index, () => {
-            source.play();
-        });
-    };
-    source.load = (index, callback) => {
-        if (index <= -1 || (source.currentIndex === index && source.isPlaying)) {
-            return;
-        }
-        if (source.isPlaying) {
-            source.stop();
-        }
-        if (index & 0xFF000000) {
-            index = (index >> 8) & 0xFFFF;
-        }
-        source.currentIndex = index;
-        source.bufferSource = context.createBufferSource();
-        source.bufferSource.onended = () => {
-            source.isPlaying = false;
-        };
-
-        const setBuffer = (buffer) => {
-            if (!source.bufferSource.buffer) {
-                source.bufferSource.buffer = buffer;
-                soundFxDecodedAudioCache[index] = buffer;
-                source.connect();
-                callback.call();
-            }
-        };
-
-        if (soundFxDecodedAudioCache[index]) {
-            setBuffer(soundFxDecodedAudioCache[index]);
-            return;
-        }
-        loadResource(ResourceType.SAMPLES).then(async (resource) => {
-            if (!resource) {
-                return;
-            }
-            const entryBuffer = await resource.getEntryAsync(index);
-            context.decodeAudioData(entryBuffer.slice(0), setBuffer);
-        });
-    };
-
-    source.connect = () => {
-        // source->gain->context
-        source.bufferSource.connect(source.gainNode);
-        source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
-        source.gainNode.connect(source.lowPassFilter);
-        source.lowPassFilter.connect(context.destination);
-    };
-
-    return source;
-}
-
-function getVoiceSource(state, context, data = null) {
-    const source = {
-        volume: state.config.voiceVolume,
-        isPlaying: false,
-        loop: false,
-        currentIndex: -1,
-        bufferSource: null,
-        gainNode: context.createGain(),
-        play: null,
-        stop: null,
-        suspend: null,
-        resume: null,
-        load: null,
-        loadAndPlay: null,
-        connect: null,
-        ended: null,
-        pause: () => {},
-        data
-    };
-    // source.lowPassFilter.type = 'allpass';
-
-    source.play = () => {
-        source.isPlaying = true;
-        source.bufferSource.start();
-    };
-    source.stop = () => {
-        try {
-            if (source.bufferSource) {
-                source.bufferSource.stop();
-            }
-        } catch (error) {
-            // tslint:disable-next-line:no-console
-            console.debug(error);
-        }
-        source.isPlaying = false;
-    };
-    source.suspend = () => {
-        context.suspend();
-    };
-    source.resume = () => {
-        context.resume();
-    };
-    source.loadAndPlay = (index) => {
-        source.load(index, () => {
-            source.play();
-        });
-    };
-    source.load = (index, textBankId, callback) => {
-        const textBank = `${textBankId}`;
-        let resType = `VOICES_${(`000${textBank}`)
-            .substring(0, 3 - textBank.length) + textBank}`;
-        if (textBankId === -1) {
-            resType = 'VOICES_GAM';
-        }
-        loadResource(resType).then(async (resource) => {
-            if (!resource) {
-                return;
-            }
-            if (index === -1 || (source.currentIndex === index && source.isPlaying)) {
-                return;
-            }
-            if (source.isPlaying) {
-                source.stop();
-            }
-            source.currentIndex = index;
-            source.bufferSource = context.createBufferSource();
-
-            source.bufferSource.onended = () => {
-                if (source.isPlaying && resource.hasHiddenEntries(index)) {
-                    source.load(resource.getNextHiddenEntry(index), textBankId, callback);
+        },
+        stopSamples: () => {
+            Object.keys(samples).forEach((index: string) => {
+                const sampleSource = samples[index];
+                if (sampleSource) {
+                    sampleSource.stop();
                 }
-                source.isPlaying = false;
-                if (source.ended) {
-                    source.ended();
-                }
-            };
-
-            const entryBuffer = await resource.getEntryAsync(index);
-            context.decodeAudioData(entryBuffer.slice(0), (buffer) => {
-                if (!source.bufferSource.buffer) {
-                    source.bufferSource.buffer = buffer;
-                    source.connect();
-                    callback.call();
-                }
-            }, (decodeErr) => {
-                throw new Error(decodeErr);
             });
-        });
-    };
+        },
 
-    source.connect = () => {
-        // source->gain->context
-        source.bufferSource.connect(source.gainNode);
-        source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
-        source.gainNode.connect(context.destination);
+        // shared
+        pause: () => {
+            Object.keys(samples).forEach((index: string) => {
+                const sampleSource = samples[index];
+                if (sampleSource) {
+                    sampleSource.pause();
+                }
+            });
+            voiceSource.pause();
+            musicSource.pause();
+        },
+        resume: () => {
+            musicSource.resume();
+            voiceSource.resume();
+            Object.keys(samples).forEach((index: string) => {
+                const sampleSource = samples[index];
+                if (sampleSource) {
+                    sampleSource.resume();
+                }
+            });
+        },
     };
-
-    return source;
 }

@@ -16,10 +16,8 @@ export const ANIP = unimplemented();
 export const HIT = unimplemented();
 
 export const SAMPLE = (action, { game }) => {
-    const soundFxSource = game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(action.sampleIndex, () => {
-        soundFxSource.play();
-    });
+    const audio = game.getAudioManager();
+    audio.playSample(action.sampleIndex, action.frequency);
 };
 
 export const SAMPLE_RND = (action, { game }) => {
@@ -27,23 +25,27 @@ export const SAMPLE_RND = (action, { game }) => {
     if (frequency < 0 || frequency > 24000) {
         frequency = 0;
     }
-    const soundFxSource = game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(action.sampleIndex, () => {
-        soundFxSource.play(frequency);
-    });
+    const audio = game.getAudioManager();
+    audio.playSample(action.sampleIndex, frequency);
 };
 
 export const THROW = unimplemented();
 
 export const THROW_MAGIC = unimplemented();
 
-export const SAMPLE_REPEAT = unimplemented();
+export const SAMPLE_REPEAT = (action, { game }) => {
+    const audio = game.getAudioManager();
+    audio.playSample(action.sampleIndex, 0x1000, action.repeat);
+};
 
 export const THROW_SEARCH = unimplemented();
 
 export const THROW_ALPHA = unimplemented();
 
-export const SAMPLE_STOP = unimplemented();
+export const SAMPLE_STOP = (action, { game }) => {
+    const audio = game.getAudioManager();
+    audio.stopSample(action.sampleIndex);
+};
 
 export const ZV = unimplemented();
 
@@ -52,10 +54,8 @@ export const LEFT_STEP = (_action, { game, animState }) => {
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
         // const frequency = getRandom(0, 0x1000) + 3596;
-        const soundFxSource = game.getAudioManager().getSoundFxSource();
-        soundFxSource.load(sampleIndex, () => {
-            soundFxSource.play(/* frequency */);
-        });
+        const audio = game.getAudioManager();
+        audio.playSample(sampleIndex); // frequency
     }
 };
 
@@ -64,10 +64,8 @@ export const RIGHT_STEP = (_action, { game, animState }) => {
     if (sampleIndex !== undefined && sampleIndex !== -1) {
         sampleIndex += 30;
         // const frequency = getRandom(0, 0x1000) + 3596;
-        const soundFxSource = game.getAudioManager().getSoundFxSource();
-        soundFxSource.load(sampleIndex, () => {
-            soundFxSource.play(/* frequency */);
-        });
+        const audio = game.getAudioManager();
+        audio.playSample(sampleIndex); // frequency
     }
 };
 
@@ -95,7 +93,15 @@ export const THROW_DART = unimplemented();
 
 export const SHIELD = unimplemented();
 
-export const SAMPLE_MAGIC = unimplemented();
+export const SAMPLE_MAGIC = (_, { game }) => {
+    const hero = game.getState();
+    let index = 0;
+    if (hero.magicball.level === 4) {
+        index = 1;
+    }
+    const audio = game.getAudioManager();
+    audio.playSample(index);
+};
 
 export const THROW_3D_CONQUE = unimplemented();
 
@@ -116,10 +122,8 @@ export const LEFT_JUMP = unimplemented();
 export const RIGHT_JUMP = unimplemented();
 
 export const NEW_SAMPLE = (action, { game }) => {
-    const soundFxSource = game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(action.sampleIndex, () => {
-        soundFxSource.play();
-    });
+    const audio = game.getAudioManager();
+    audio.playSample(action.sampleIndex, action.frequency);
 };
 
 export const IMPACT_3D = unimplemented();

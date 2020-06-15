@@ -275,10 +275,9 @@ export default class Area extends React.Component<AreaProps, AreaState> {
                     renderer.dispose();
                 }
                 if (game) {
-                    const audioMenuManager = game.getAudioMenuManager();
-                    audioMenuManager.getMusicSource().stop();
-                    const audioManager = game.getAudioManager();
-                    audioManager.getMusicSource().stop();
+                    const audio = game.getAudioManager();
+                    audio.stopMusic();
+                    audio.stopMusicTheme();
                 }
                 if ('exitPointerLock' in document) {
                     document.exitPointerLock();

@@ -61,10 +61,8 @@ export interface Extra {
 }
 
 const playSoundFx = (game, sampleIndex) => {
-    const soundFxSource = game.getAudioManager().getSoundFxSource();
-    soundFxSource.load(sampleIndex, () => {
-        soundFxSource.play();
-    });
+    const audio = game.getAudioManager();
+    audio.playSample(sampleIndex);
 };
 
 function initPhysics(position, angle) {

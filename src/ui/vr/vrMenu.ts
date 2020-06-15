@@ -22,8 +22,8 @@ export function createMenu(game, sceneManager, light) {
         text: game.menuTexts[70].value,
         y: 150,
         callback: () => {
-            const audioMenuManager = game.getAudioMenuManager();
-            audioMenuManager.getMusicSource().stop();
+            const audio = game.getAudioManager();
+            audio.stopMusicTheme();
             game.resume();
             game.setUiState({ showMenu: false });
             history.pushState({id: 'game'}, '');
@@ -35,8 +35,8 @@ export function createMenu(game, sceneManager, light) {
         text: game.menuTexts[71].value,
         y: 0,
         callback: () => {
-            const audioMenuManager = game.getAudioMenuManager();
-            audioMenuManager.getMusicSource().stop();
+            const audio = game.getAudioManager();
+            audio.stopMusicTheme();
 
             const onEnded = async () => {
                 game.setUiState({video: null});
@@ -113,8 +113,8 @@ export function createMenu(game, sceneManager, light) {
         const {showMenu} = game.getUiState();
         if (!showMenu) {
             game.pause();
-            const audioMenuManager = game.getAudioMenuManager();
-            audioMenuManager.getMusicSource().loadAndPlay(6);
+            const audio = game.getAudioManager();
+            audio.playMusicTheme();
             game.setUiState({inGameMenu: true, video: null});
         }
         game.setUiState({
