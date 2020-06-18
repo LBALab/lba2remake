@@ -17,6 +17,7 @@
         "MenuMusic": "Menu Music",
         "MoveCameraEditor": "Move camera\n(Editor)",
         "SelectBehaviour": "Select Behaviour",
+        "BehaviourMenu": "Behaviour Menu",
         "ShowFPS": "Show FPS",
         "Pause": "Pause",
         "SkipDialogs": "Skip dialogs",
@@ -53,7 +54,8 @@
         "vrButton_move": "Move",
         "vrButton_fpMove": "Move",
         "vrButton_fpTurn": "Turn",
-        "vrButton_centerCam": "Center Camera"
+        "vrButton_centerCam": "Center Camera",
+        "vrButton_menu": "Menu"
     },
     "FR": {
         "loading": "Chargement",
@@ -73,6 +75,7 @@
         "MenuMusic": "Musique du Menu",
         "MoveCameraEditor": "Déplacer\ncamera\n(Editeur)",
         "SelectBehaviour": "Choisir Comportement",
+        "BehaviourMenu": "Menu Comportement",
         "ShowFPS": "Afficher FPS",
         "Pause": "Pause",
         "SkipDialogs": "Passer les dialogues",
@@ -109,6 +112,7 @@
         "vrButton_move": "Bouger",
         "vrButton_fpMove": "Avancer / reculer",
         "vrButton_fpTurn": "Tourner",
-        "vrButton_centerCam": "Centrer Camera"
+        "vrButton_centerCam": "Centrer Camera",
+        "vrButton_menu": "Menu"
     }
 }

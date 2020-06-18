@@ -16,7 +16,8 @@ function compileScript(type, game, scene, actor) {
         : {
             reentryOffset: 0,
             stopped: true,
-            trackIndex: -1
+            trackIndex: -1,
+            sampleLoopCount: 0,
         };
     const compileState = { section: -1 };
     script.context = {game, scene, actor, state, type};

@@ -3,7 +3,26 @@ import {map, last} from 'lodash';
 import {bits} from '../utils';
 import {loadBricksMapping} from './mapping';
 
-export function loadGrid(bkg, bricks, mask, palette, entry) {
+export enum GROUND_TYPES {
+    NORMAL_FLOOR,
+    WATER,
+    UNUSED,
+    ESCALATOR_BOTTOM_RIGHT_TOP_LEFT,
+    ESCALATOR_TOP_LEFT_BOTTOM_RIGHT,
+    ESCALATOR_BOTTOM_LEFT_TOP_RIGHT,
+    ESCALATOR_TOP_RIGHT_BOTTOM_LEFT,
+    DOME_OF_THE_SLATE_FLOOR,
+    CAVE_SPIKES,
+    LAVA,
+    NORMAL_FLOOR2,
+    GAS,
+    UNUSED2,
+    LAVA2,
+    GAS2,
+    WATER2,
+}
+
+export async function loadGrid(bkg, bricks, mask, palette, entry) {
     const gridData = new DataView(bkg.getEntry(entry));
     const libIndex = gridData.getUint8(0);
     const maxOffset = 34 + (4096 * 2);
@@ -12,6 +31,7 @@ export function loadGrid(bkg, bricks, mask, palette, entry) {
         offsets.push(gridData.getUint16(i, true) + 34);
     }
     const library = loadLibrary(bkg, bricks, mask, palette, libIndex);
+    const gridMetadata = await getGridMetadata(entry);
     return {
         library,
         cells: map(offsets, (offset, idx) => {
@@ -37,6 +57,7 @@ export function loadGrid(bkg, bricks, mask, palette, entry) {
                 let isValid = false;
 
                 for (let j = 0; j < height; j += 1) {
+                    const yGrid = baseHeight + j;
                     switch (type) {
                         case 0:
                             blocks.push(null);
@@ -67,6 +88,12 @@ export function loadGrid(bkg, bricks, mask, palette, entry) {
                         case 3:
                             throw new Error('Unsupported block type');
                     }
+                    if (gridMetadata
+                        && idx in gridMetadata
+                        && yGrid in gridMetadata[idx]) {
+                        blocks[blocks.length - 1] = gridMetadata[idx][yGrid];
+                        isValid = true;
+                    }
                 }
                 if (type !== 0 && isValid) {
                     const x = Math.floor(idx / 64) - 1;
@@ -87,6 +114,7 @@ export function loadGrid(bkg, bricks, mask, palette, entry) {
                                 (z + 1) / 32
                             )
                         ),
+                        groundType: (blockData && blockData.groundType),
                         sound: (blockData && blockData.sound) || -1
                     });
                 }
@@ -98,6 +126,16 @@ export function loadGrid(bkg, bricks, mask, palette, entry) {
             };
         })
     };
+}
+
+let globalGridMetadata = null;
+
+async function getGridMetadata(entry) {
+    if (!globalGridMetadata) {
+        const metadataReq = await fetch('/metadata/grids.json');
+        globalGridMetadata = await metadataReq.json();
+    }
+    return globalGridMetadata[entry];
 }
 
 function getBlockData(library, block) {

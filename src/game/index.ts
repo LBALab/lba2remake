@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { createState } from './state';
-import { createAudioManager, createMusicManager } from '../audio';
+import { createAudioManager } from '../audio';
 import { loadTexts } from '../text';
 import { getLanguageConfig } from '../lang';
 import DebugData from '../ui/editor/DebugData';
@@ -21,7 +21,6 @@ export function createGame(
     let state = createState();
 
     const audio = createAudioManager(state);
-    const audioMenu = createMusicManager(state);
 
     const game = {
         setUiState,
@@ -86,7 +85,6 @@ export function createGame(
         isLoading: () => isLoading,
         getState: () => state,
         getAudioManager: () => audio,
-        getAudioMenuManager: () => audioMenu,
 
         togglePause() {
             if (isPaused) {
@@ -106,28 +104,14 @@ export function createGame(
         pause: () => {
             isPaused = true;
             clock.stop();
-            const sfxSource = audio.getSoundFxSource();
-            sfxSource.suspend();
-            const voiceSource = audio.getVoiceSource();
-            voiceSource.suspend();
-            const musicSource = audio.getMusicSource();
-            musicSource.suspend();
-            // tslint:disable-next-line:no-console
-            console.log('Pause');
+            audio.pause();
         },
 
         resume: () => {
             if (isPaused) {
-                const musicSource = audio.getMusicSource();
-                musicSource.resume();
-                const voiceSource = audio.getVoiceSource();
-                voiceSource.resume();
-                const sfxSource = audio.getSoundFxSource();
-                sfxSource.resume();
+                audio.resume();
                 isPaused = false;
                 clock.start();
-                // tslint:disable-next-line:no-console
-                console.log('Resume');
             }
         },
 
@@ -138,6 +122,7 @@ export function createGame(
 
         async preload() {
             await preloadResources();
+            await audio.preloadMusicTheme();
 
             const { language } = getLanguageConfig();
             const [menuTexts, gameTexts] = await Promise.all([
@@ -153,7 +138,6 @@ export function createGame(
     makePure(game.isLoading);
     makePure(game.getState);
     makePure(game.getAudioManager);
-    makePure(game.getAudioMenuManager);
 
     return game;
 }

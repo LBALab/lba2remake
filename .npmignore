@@ -4,4 +4,11 @@ doc
 src
 utils
 www/data
-www/metadata
+AUTHORS.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+devserver.js
+package-lock.json
+tsconfig.json
+tslint.yaml
+webpack.config.js

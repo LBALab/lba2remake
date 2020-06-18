@@ -110,14 +110,12 @@ function initNewStrike(lightning, islandSections, game, objPositions) {
     findLightningPosition(lightning, islandSections, objPositions);
     const camDist = objPositions.camera.distanceTo(lightning.position);
     const volume = Math.min(1, Math.max(0, 1 - (camDist / 200)));
-    const soundFxSource = game.getAudioManager().getSoundFxSource();
-    soundFxSource.volume = volume;
+    const audio = game.getAudioManager();
     const index = (lightning.intensity < 0.1 || camDist > 40)
-        ? 385
-        : 381;
-    soundFxSource.load(index, () => {
-        soundFxSource.play();
-    });
+    ? 385
+    : 381;
+    const sample = audio.playSample(index);
+    sample.setVolume(volume);
     const params = lightning.params;
     params.sourceOffset.copy(lightning.position);
     params.sourceOffset.y = WORLD_SIZE * 2 + Math.random() * 5 - 20;

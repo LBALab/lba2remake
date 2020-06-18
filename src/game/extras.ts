@@ -4,6 +4,9 @@ import { getRandom } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
 import { loadSprite } from '../iso/sprites';
 import { addExtraToScene, removeExtraFromScene } from './scenes';
+import { clone } from 'lodash';
+import { getHtmlColor } from '../scene';
+// import { createBoundingBox } from '../utils/rendering';
 
 export const ExtraFlag = {
     TIME_OUT: 1 << 0,
@@ -16,6 +19,11 @@ export const ExtraFlag = {
     BONUS: 1 << 14,
 };
 
+const GRAVITY = 40000;
+
+const SAMPLE_BONUS = 3;
+const SAMPLE_BONUS_FOUND = 2;
+
 interface ExtraPhysics {
     position: THREE.Vector3;
     orientation: THREE.Quaternion;
@@ -23,6 +31,8 @@ interface ExtraPhysics {
         position: THREE.Vector3,
         angle: number,
         destAngle: number
+        direction: THREE.Vector3,
+        velocity: THREE.Vector3,
     };
 }
 
@@ -31,12 +41,15 @@ export interface Extra {
     physics: ExtraPhysics;
 
     flags: number;
+    props: any;
     lifeTime: number;
     info: number;
     hitStrength: number;
     time: any;
     spawnTime: number;
     spriteIndex: number;
+    speed: number;
+    weight: number;
 
     isVisible: boolean;
     isSprite: boolean;
@@ -47,20 +60,27 @@ export interface Extra {
     init: Function;
 }
 
+const playSoundFx = (game, sampleIndex) => {
+    const audio = game.getAudioManager();
+    audio.playSample(sampleIndex);
+};
+
 function initPhysics(position, angle) {
     return {
         position,
         orientation: new THREE.Quaternion(),
         temp: {
-            destination: new THREE.Vector3(0, 0, 0),
             position: new THREE.Vector3(0, 0, 0),
             angle,
             destAngle: angle,
+            direction: new THREE.Vector3(0, 0, 0),
+            velocity: new THREE.Vector3(0, 0, 0),
         }
     };
 }
 
-export async function addExtra(scene, position, angle, spriteIndex, bonus, time) : Promise<Extra> {
+export async function addExtra(game, scene, position, angle, spriteIndex, bonus, time)
+    : Promise<Extra> {
     const extra: Extra = {
         type: 'extra',
         physics: initPhysics(position, angle),
@@ -74,25 +94,37 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
             | ExtraFlag.BONUS
             | ExtraFlag.TAKABLE
         ),
+        props: {
+            flags: {
+                hasCollisions: true,
+                hasCollisionFloor: true,
+                canFall: true,
+                isVisible: true,
+                isSprite: true,
+            },
+        },
         spriteIndex,
         spawnTime: 0,
-        lifeTime: 20 * 1000, // 20 seconds
+        lifeTime: 20, // 20 seconds
         info: bonus,
         hitStrength: 0,
         time,
+        speed: 0,
+        weight: 0,
 
         async loadMesh() {
             this.threeObject = new THREE.Object3D();
             this.threeObject.position.copy(this.physics.position);
             const sprite = await loadSprite(spriteIndex, false, true, scene.is3DCam);
-            /*
-            sprite.boundingBoxDebugMesh = createBoundingBox(
-                sprite.boundingBox,
-                new THREE.Vector3(1, 0, 0)
-            );
-            sprite.boundingBoxDebugMesh.name = 'BoundingBox';
-            this.threeObject.add(sprite.boundingBoxDebugMesh);
-            */
+
+            // // Debug Bounding Box
+            // sprite.boundingBoxDebugMesh = createBoundingBox(
+            //     sprite.boundingBox,
+            //     new THREE.Vector3(1, 0, 0)
+            // );
+            // sprite.boundingBoxDebugMesh.name = 'BoundingBox';
+            // this.threeObject.add(sprite.boundingBoxDebugMesh);
+
             this.threeObject.add(sprite.threeObject);
             this.threeObject.name = `extra_${bonus}`;
             this.threeObject.visible = this.isVisible;
@@ -101,24 +133,28 @@ export async function addExtra(scene, position, angle, spriteIndex, bonus, time)
 
         init(_angle, _speed, _weight) {
             this.flags |= ExtraFlag.FLY;
-            // TODO set speed
             this.time = time;
+            this.speed = _speed * 0.8;
+            this.weight = _weight;
         },
     };
-
-    if (spriteIndex !== SpriteType.KEY) {
-        extra.flags += ExtraFlag.TIME_OUT + ExtraFlag.FLASH;
-    }
 
     extra.init(angle, 40, 15);
 
     extra.spawnTime = time.elapsed;
+    extra.flags |= ExtraFlag.TIME_IN;
 
     const euler = new THREE.Euler(0, angle, 0, 'XZY');
     extra.physics.orientation.setFromEuler(euler);
 
+    extra.physics.temp.direction = extra.physics.position.clone();
+
+    extra.physics.temp.velocity = extra.physics.temp.direction.clone();
+
     await extra.loadMesh();
     addExtraToScene(scene, extra);
+
+    playSoundFx(game, SAMPLE_BONUS);
 
     return extra;
 }
@@ -134,7 +170,38 @@ export function updateExtra(game, scene, extra, time) {
 
     let hitActor = null;
 
-    if (time.elapsed - extra.spawnTime > 1) {
+    if (time.elapsed - extra.spawnTime > extra.lifeTime &&
+        extra.spriteType !== SpriteType.KEY) {
+        extra.flags |= ExtraFlag.TIME_OUT;
+    }
+
+    if ((extra.flags & ExtraFlag.FLY) === ExtraFlag.FLY) {
+        const ts = (time.elapsed - extra.spawnTime) / 200;
+
+        const x = extra.speed * ts
+            * Math.cos(45);
+        const y = extra.speed * ts
+            * Math.sin(45) - (0.5 * GRAVITY * ts * ts);
+        const trajectory = new THREE.Vector3(x, y, 0);
+        trajectory.applyEuler(new THREE.Euler(0, extra.physics.temp.angle, 0, 'XZY'));
+
+        extra.physics.position.add(
+            trajectory
+        );
+        extra.threeObject.position.copy(extra.physics.position);
+    }
+
+    if (extra.props.flags.hasCollisions &&
+        time.elapsed - extra.spawnTime > 0.5) {
+        const isTouchingGroud = scene.scenery.physics.processCollisions(scene, extra, time);
+        if (isTouchingGroud) {
+            extra.physics.position.add(new THREE.Vector3(0, 0.1, 0));
+            extra.threeObject.position.copy(extra.physics.position);
+            extra.flags &= ~ExtraFlag.FLY;
+        }
+    }
+
+    if (!((extra.flags & ExtraFlag.FLY) === ExtraFlag.FLY)) {
         EXTRA_BOX.copy(extra.sprite.boundingBox);
         EXTRA_BOX.translate(extra.physics.position);
         DIFF.set(0, 1 / 128, 0);
@@ -164,14 +231,48 @@ export function updateExtra(game, scene, extra, time) {
     }
 
     if (hitActor && hitActor.index === 0) {
+        const { hero } = game.getState();
         switch (extra.spriteIndex) {
+            case SpriteType.LIFE:
+                hero.life += extra.info;
+                break;
+            case SpriteType.MAGIC:
+                hero.magic += extra.info;
+                if (hero.magic > (hero.magicball.level + 1) * 20) {
+                    hero.magic = (hero.magicball.level + 1) * 20;
+                }
+                break;
             case SpriteType.KEY:
-                game.getState().hero.keys += 1;
+                hero.keys += 1;
                 break;
             case SpriteType.KASHES:
-                game.getState().hero.money += extra.info;
+                hero.money += extra.info;
                 break;
         }
+        playSoundFx(game, SAMPLE_BONUS_FOUND);
+    }
+
+    if ((extra.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT ||
+        (hitActor && hitActor.index === 0)) {
+
+        if (extra.info && (hitActor && hitActor.index === 0)) {
+            const itrjId = `extra_${extra.index}_${extra.info}`;
+            const interjections = clone(game.getUiState().interjections);
+
+            interjections[itrjId] = {
+                scene: scene.index,
+                obj: extra,
+                color: getHtmlColor(scene.data.palette, (10 * 16) + 12),
+                value: extra.info,
+            };
+            game.setUiState({interjections});
+            setTimeout(() => {
+                const interjectionsCopy = clone(game.getUiState().interjections);
+                delete interjectionsCopy[itrjId];
+                game.setUiState({interjections: interjectionsCopy});
+            }, 1000);
+        }
+
         removeExtraFromScene(scene, extra);
     }
 }

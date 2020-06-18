@@ -19,7 +19,7 @@ import { VRControls } from '../controls/vr';
 
 interface VRGameUIProps extends TickerProps {
     params: any;
-    exitVR: (any) => any;
+    exitVR: () => any;
 }
 
 interface VRGameUIState {
@@ -69,6 +69,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         this.getUiState = sBind(this.getUiState, this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
+        this.exitVR = this.exitVR.bind(this);
 
         this.session = null;
 
@@ -165,14 +166,14 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
 
     showMenu(inGameMenu = false) {
         this.state.game.pause();
-        const audioMenuManager = this.state.game.getAudioMenuManager();
-        audioMenuManager.getMusicSource().loadAndPlay(6);
+        const audio = this.state.game.getAudioManager();
+        audio.playMusicTheme();
         this.setState({showMenu: true, inGameMenu});
     }
 
     hideMenu(wasPaused = false) {
-        const audioMenuManager = this.state.game.getAudioMenuManager();
-        audioMenuManager.getMusicSource().stop();
+        const audio = this.state.game.getAudioManager();
+        audio.stopMusicTheme();
         if (!wasPaused)
             this.state.game.resume();
         this.setState({showMenu: false, inGameMenu: false});
@@ -255,6 +256,11 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         this.forceUpdate();
     }
 
+    exitVR() {
+        this.state.game.getAudioManager().stopMusicTheme();
+        this.props.exitVR();
+    }
+
     renderVRSelector() {
         if (!this.state.renderer) {
             return null;
@@ -298,7 +304,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
                     {this.state.enteredVR ? tr('ReturnToVR') : tr('PlayInVR')}
                 </div>
                 <br/><br/>
-                {!this.state.enteredVR && <div style={buttonStyle2} onClick={this.props.exitVR}>
+                {!this.state.enteredVR && <div style={buttonStyle2} onClick={this.exitVR}>
                     {tr('PlayOnScreen')}
                 </div>}
             </div>

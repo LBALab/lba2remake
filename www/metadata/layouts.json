@@ -462,6 +462,11 @@
       "file": "123_bloop_boxes.glb",
       "orientation": 0
     },
+    "124": {
+      "replace": true,
+      "file": "124_arrow_sign.glb",
+      "orientation": 0
+    },
     "126": {
       "mirror": true
     },
@@ -485,11 +490,41 @@
       "file": "134_cash_register.glb",
       "orientation": 0
     },
+    "136": {
+      "replace": true,
+      "file": "136_surveillance_system.glb",
+      "orientation": 0
+    },
+    "137": {
+      "replace": true,
+      "file": "137_swivel_chair.glb",
+      "orientation": 0
+    },
+    "138": {
+      "replace": true,
+      "file": "138_cables.glb",
+      "orientation": 0
+    },
+    "139": {
+      "replace": true,
+      "file": "139_cables.glb",
+      "orientation": 0
+    },
     "142": {
       "mirror": true
     },
     "143": {
       "mirror": true
+    },
+    "146": {
+      "replace": true,
+      "file": "146_padded_stool.glb",
+      "orientation": 0
+    },
+    "147": {
+      "replace": true,
+      "file": "147_round_table.glb",
+      "orientation": 0
     },
     "148": {
       "mirror": false
@@ -555,6 +590,11 @@
     },
     "171": {
       "mirror": true
+    },
+    "173": {
+      "replace": true,
+      "file": "173_surveillance_system_control.glb",
+      "orientation": 0
     },
     "22:1x1x1:74": {
       "replace": true,
@@ -640,6 +680,21 @@
     "3": {
       "mirror": true
     },
+    "7": {
+      "replace": true,
+      "file": "007_crystal_ball_pillar.glb",
+      "orientation": 0
+    },
+    "8": {
+      "replace": true,
+      "file": "008_pillar.glb",
+      "orientation": 0
+    },
+    "9": {
+      "replace": true,
+      "file": "102_barrel.glb",
+      "orientation": 0
+    },
     "11": {
       "mirror": true
     },
@@ -660,6 +715,51 @@
     },
     "20": {
       "mirror": true
+    },
+    "21": {
+      "replace": true,
+      "file": "021_pillar_capital.glb",
+      "orientation": 0
+    },
+    "22": {
+      "replace": true,
+      "file": "022_pillar_capital.glb",
+      "orientation": 0
+    },
+    "23": {
+      "replace": true,
+      "file": "023_skull.glb",
+      "orientation": 0
+    },
+    "24": {
+      "replace": true,
+      "file": "024_026_027_029_prison_bars.glb",
+      "orientation": 0
+    },
+    "25": {
+      "replace": true,
+      "file": "025_028_prison_bars_wall.glb",
+      "orientation": 0
+    },
+    "26": {
+      "replace": true,
+      "file": "024_026_027_029_prison_bars.glb",
+      "orientation": 2
+    },
+    "27": {
+      "replace": true,
+      "file": "024_026_027_029_prison_bars.glb",
+      "orientation": 1
+    },
+    "28": {
+      "replace": true,
+      "file": "025_028_prison_bars_wall.glb",
+      "orientation": 1
+    },
+    "29": {
+      "replace": true,
+      "file": "024_026_027_029_prison_bars.glb",
+      "orientation": 3
     },
     "54": {
       "mirror": true
@@ -685,11 +785,61 @@
     "148": {
       "mirror": true
     },
+    "166": {
+      "replace": true,
+      "file": "166_167_small_bars.glb",
+      "orientation": 1
+    },
+    "167": {
+      "replace": true,
+      "file": "166_167_small_bars.glb",
+      "orientation": 0
+    },
     "198": {
       "mirror": true
     },
     "199": {
       "mirror": true
+    },
+    "8:1x3x1:649,653,654": {
+      "replace": true,
+      "file": "008_pillar_var1.glb",
+      "orientation": 0
+    },
+    "8:1x7x1:649,650,651,652,652,653,654": {
+      "replace": true,
+      "file": "008_pillar_var3.glb",
+      "orientation": 0
+    },
+    "8:1x4x1:650,651,653,654": {
+      "replace": true,
+      "file": "008_pillar_var4.glb",
+      "orientation": 0
+    },
+    "8:1x5x1:650,651,652,653,654": {
+      "replace": true,
+      "file": "008_pillar_var5.glb",
+      "orientation": 0
+    },
+    "8:1x6x2:650,651,652,652,653,-1,650,651,652,652,653,654": {
+      "replace": true,
+      "file": "008_pillar_var6.glb",
+      "orientation": 0
+    },
+    "8:1x2x1:649,654": {
+      "replace": true,
+      "file": "008_pillar_var8.glb",
+      "orientation": 0
+    },
+    "8:1x5x1:649,650,651,652,654": {
+      "replace": true,
+      "file": "008_pillar_var9_10.glb",
+      "orientation": 0
+    },
+    "8:1x5x1:649,650,651,653,654": {
+      "replace": true,
+      "file": "008_pillar_var9_10.glb",
+      "orientation": 0
     }
   },
   "2": {

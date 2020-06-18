@@ -29,6 +29,7 @@ import {updateLabels} from './editor/labels';
 import { setFog } from './editor/fog';
 import { pure } from '../utils/decorators';
 import { getResourcePath, ResourceType } from '../resources';
+import BehaviourMenu from './game/BehaviourMenu';
 
 interface GameUIProps extends TickerProps {
     saveMainData?: Function;
@@ -71,6 +72,7 @@ interface GameUIState {
     inGameMenu: boolean;
     teleportMenu: boolean;
     keyHelp: boolean;
+    behaviourMenu: boolean;
 }
 
 export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
@@ -92,7 +94,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         this.onMenuItemChanged = this.onMenuItemChanged.bind(this);
         this.setUiState = sBind(this.setUiState, this);
         this.getUiState = sBind(this.getUiState, this);
-        this.listener = this.listener.bind(this);
+        this.listenerKeyDown = this.listenerKeyDown.bind(this);
+        this.listenerKeyUp = this.listenerKeyUp.bind(this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
         this.openKeyHelp = this.openKeyHelp.bind(this);
@@ -131,7 +134,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 showMenu: false,
                 inGameMenu: false,
                 teleportMenu: false,
-                keyHelp: false
+                keyHelp: false,
+                behaviourMenu: false,
             };
 
             clock.start();
@@ -221,11 +225,13 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
 
     componentWillMount() {
         super.componentWillMount();
-        window.addEventListener('keydown', this.listener);
+        window.addEventListener('keydown', this.listenerKeyDown);
+        window.addEventListener('keyup', this.listenerKeyUp);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('keydown', this.listener);
+        window.removeEventListener('keyup', this.listenerKeyUp);
+        window.removeEventListener('keydown', this.listenerKeyDown);
         super.componentWillUnmount();
     }
 
@@ -249,14 +255,14 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
 
     showMenu(inGameMenu = false) {
         this.state.game.pause();
-        const audioMenuManager = this.state.game.getAudioMenuManager();
-        audioMenuManager.getMusicSource().loadAndPlay(6);
+        const audio = this.state.game.getAudioManager();
+        audio.playMusicTheme();
         this.setState({showMenu: true, inGameMenu}, this.saveData);
     }
 
     hideMenu(wasPaused = false) {
-        const audioMenuManager = this.state.game.getAudioMenuManager();
-        audioMenuManager.getMusicSource().stop();
+        const audio = this.state.game.getAudioManager();
+        audio.stopMusicTheme();
         if (!wasPaused)
             this.state.game.resume();
         this.setState({showMenu: false, inGameMenu: false}, this.saveData);
@@ -271,7 +277,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         this.setState({keyHelp: false}, this.saveData);
     }
 
-    listener(event) {
+    listenerKeyDown(event) {
         const key = event.code || event.which || event.keyCode;
         if (!this.state.video) {
             if (key === 'Escape' || key === 27) {
@@ -283,6 +289,18 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                     this.hideMenu();
                 }
             }
+            if (key === 'ControlLeft' || key === 'ControlRight' || key === 17) {
+                this.setState({ behaviourMenu: true });
+                this.state.game.pause();
+            }
+        }
+    }
+
+    listenerKeyUp(event) {
+        const key = event.code || event.which || event.keyCode;
+        if (key === 'ControlLeft' || key === 'ControlRight' || key === 17) {
+            this.setState({ behaviourMenu: false });
+            this.state.game.resume();
         }
     }
 
@@ -382,8 +400,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 }
                 const game = this.state.game;
                 if (game) {
-                    const audioMenuManager = game.getAudioMenuManager();
-                    audioMenuManager.getMusicSource().stop();
+                    const audio = game.getAudioManager();
+                    audio.stopMusicTheme();
                 }
                 if ('exitPointerLock' in document) {
                     document.exitPointerLock();
@@ -402,8 +420,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 }
                 const game = this.state.game;
                 if (game) {
-                    const audioMenuManager = game.getAudioMenuManager();
-                    audioMenuManager.getMusicSource().stop();
+                    const audio = game.getAudioManager();
+                    audio.stopMusicTheme();
                 }
                 if ('exitPointerLock' in document) {
                     document.exitPointerLock();
@@ -490,29 +508,53 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     }
 
     renderGUI() {
+        const {
+            cinema,
+            scene,
+            renderer,
+            interjections,
+            video,
+            behaviourMenu,
+            game,
+            showMenu,
+            teleportMenu,
+            inGameMenu,
+            sceneManager,
+            loading,
+            text,
+            skip,
+            foundObject,
+            keyHelp,
+            ask,
+        } = this.state;
         return <React.Fragment>
-            <CinemaEffect enabled={this.state.cinema} />
+            <CinemaEffect enabled={cinema} />
             <TextInterjections
-                scene={this.state.scene}
-                renderer={this.state.renderer}
-                interjections={this.state.interjections}
+                scene={scene}
+                renderer={renderer}
+                interjections={interjections}
             />
-            <Video video={this.state.video} renderer={this.state.renderer} />
+            <Video video={video} renderer={renderer} />
+            {!showMenu && behaviourMenu ?
+                <BehaviourMenu
+                    game={game}
+                />
+            : null }
             <Menu
                 params={this.props.params}
-                showMenu={this.state.showMenu && !this.state.teleportMenu}
-                texts={this.state.game.menuTexts}
-                inGameMenu={this.state.inGameMenu}
+                showMenu={showMenu && !teleportMenu}
+                texts={game.menuTexts}
+                inGameMenu={inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />
-            {this.state.showMenu && !this.state.teleportMenu
+            {showMenu && !teleportMenu
                 && <KeyHelpIcon open={this.openKeyHelp}/>}
-            <Ribbon mode={this.state.showMenu ? 'menu' : 'game'} />
-            {this.state.teleportMenu
+            <Ribbon mode={showMenu ? 'menu' : 'game'} />
+            {teleportMenu
                 && <TeleportMenu
-                    inGameMenu={this.state.inGameMenu}
-                    game={this.state.game}
-                    sceneManager={this.state.sceneManager}
+                    inGameMenu={inGameMenu}
+                    game={game}
+                    sceneManager={sceneManager}
                     exit={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -520,18 +562,18 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                     }}
                 />}
             <div id="stats" style={{position: 'absolute', top: 0, left: 0, width: '50%'}}/>
-            {this.state.loading ? <Loader/> : null}
-            {!this.state.showMenu ? <TextBox
-                text={this.state.text}
-                skip={this.state.skip}
+            {loading ? <Loader/> : null}
+            {!showMenu ? <TextBox
+                text={text}
+                skip={skip}
                 textAnimEnded={this.textAnimEndedHandler}
             /> : null}
-            {!this.state.showMenu ? <AskChoice
-                ask={this.state.ask}
+            {!showMenu ? <AskChoice
+                ask={ask}
                 onChoiceChanged={this.onAskChoiceChanged}
             /> : null}
-            {!this.state.showMenu ? <FoundObject foundObject={this.state.foundObject} /> : null}
-            {this.state.keyHelp && <KeyHelpScreen close={this.closeKeyHelp}/>}
+            {!showMenu ? <FoundObject foundObject={foundObject} /> : null}
+            {keyHelp && <KeyHelpScreen close={this.closeKeyHelp}/>}
         </React.Fragment>;
     }
 }

@@ -3,7 +3,7 @@
 If you'd like to contribute to the project, there are several ways you can help.
 Any kind of contribution is very much welcome, you don't necessarily need to know how to write code.
 
-We'd like to get in touch with you over [Slack](https://join.slack.com/t/lba2remake/shared_invite/enQtMzIyNzIwNDMzNTIxLTc5OGVkNjI3NGE4YjM5ZTE5YmRkODBjMzNjOTk5NGM1NGIyMTI2N2FlOTYzYjBlZjE4NzIzYWI3ZWI0YmViMmI) if you plan on giving us a hand, we can provide directions to help you get started.
+We'd like to get in touch with you over [Slack](https://join.slack.com/t/lba2remake/shared_invite/enQtMzIyNzIwNDMzNTIxLTM3MTk2NjFlODAxNmI0NmVhNTVjMzFiZDk1NmQwZDMwZTA5MWVhNDQ2ZGNmMjQ3N2ZiYTVjODZlODMyNjc2NDI) if you plan on giving us a hand, we can provide directions to help you get started.
 
 
 ## Contributing without writing code
@@ -11,9 +11,6 @@ We'd like to get in touch with you over [Slack](https://join.slack.com/t/lba2rem
 ### Completing the metadata
 
 We are building a list of actor, zone, checkpoint and variable names for the game scenes.
-
-It is not required to be a programmer to help. You can do it right in the [editor](https://www.lba2remake.net/#editor=true).
-
 For more details, check [how to contribute metadata](doc/how_to_metadata.md).
 
 ### Reporting crashes and bugs
@@ -26,8 +23,6 @@ If you observe a bug you can report it [here](https://github.com/agrande/lba2rem
 
 If you have an idea that is not already listed there, you can [open an issue](https://github.com/agrande/lba2remake/issues/new) to suggest a new feature.
 
-You can also discuss and vote for the various [proposed evolutions](https://github.com/agrande/lba2remake/issues?q=is%3Aopen+is%3Aissue+label%3A%22%5Ba%5D+PROPOSAL%22) to the project.
-
 
 ## Contributing as a developer
 
@@ -38,10 +33,3 @@ Or you can fork the project and work on whatever you want!
 ### How to get started?
 
 [Here](doc/getting_started.md) is a guide to help you setup your local development environment, and this [document](doc/architecture.md) describes the project architecture.
-
-### Find an issue to work on
-
-You can find a list of [milestones](https://github.com/agrande/lba2remake/milestones) and a description of what we want to do with them in the [readme](README.md).
-
-We also have [projects](https://github.com/agrande/lba2remake/projects) describing or current plans (short and mid-term).
-

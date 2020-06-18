@@ -336,10 +336,9 @@ export default class Editor extends React.Component<EditorProps, EditorState> {
                 renderer.dispose();
             }
             if (game) {
-                const audioMenuManager = game.getAudioMenuManager();
-                audioMenuManager.getMusicSource().stop();
-                const audioManager = game.getAudioManager();
-                audioManager.getMusicSource().stop();
+                const audio = game.getAudioManager();
+                audio.stopMusic();
+                audio.stopMusicTheme();
             }
         }
         this.setState({
