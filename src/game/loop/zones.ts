@@ -104,8 +104,7 @@ function LADDER(game, scene, zone, hero) {
 
             // Wait until the animation actually starts climbing until we move
             // Twinsen up.
-            if (hero.props.animIndex === 30 &&
-                hero.animState.loopCount === 0 &&
+            if (hero.animState.loopCount === 0 &&
                 hero.animState.currentFrame === 0) {
                 return false;
             }
