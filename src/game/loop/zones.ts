@@ -14,7 +14,7 @@ export const ZoneOpcode = [
     { opcode: 3, command: 'FRAGMENT', handler: NOP },
     { opcode: 4, command: 'BONUS', handler: BONUS },
     { opcode: 5, command: 'TEXT', handler: TEXT },
-    { opcode: 6, command: 'LADDER', handler: NOP },
+    { opcode: 6, command: 'LADDER', handler: LADDER },
     { opcode: 7, command: 'CONVEYOR', handler: NOP },
     { opcode: 8, command: 'SPIKE', handler: NOP },
     { opcode: 9, command: 'RAIL', handler: NOP }
@@ -70,6 +70,65 @@ export function processZones(game, scene) {
             }
         }
     }
+}
+
+// Returns true iff the angle provided is "facing" an isometric ladder. We only
+// consider ladders which are in the north or east direction (because only those
+// exist in the game).
+function isFacingLadder(angle) {
+    return (angle < 0.65 * Math.PI && angle > 0.35 * Math.PI) ||
+     (angle > 0.75 * Math.PI || angle < -0.9 * Math.PI);
+}
+
+const LADDER_CLIMB_SPEED = 0.022;
+const LADDER_TOP_OUT_DELTA = 1.1;
+
+function LADDER(game, scene, zone, hero) {
+    if (hero.props.runtimeFlags.isToppingOutUp) {
+        return false;
+    }
+
+    // Only allow Twinsen to climb the ladder if he is walking into it.
+    if (!hero.props.runtimeFlags.isColliding) {
+        return false;
+    }
+
+    // TODO(scottwilliams): work out how to tell if Twinsen is facing ladders
+    // at arbitrary angles as happens on islands (vs isometric).
+    const facing = isFacingLadder(hero.physics.temp.angle) || scene.isIsland;
+    if (zone.props.info1 && facing) {
+        // Is UP being pressed?
+        if (game.controlsState.controlVector.y === 1) {
+            hero.props.runtimeFlags.isClimbing = true;
+            hero.setAnim(AnimType.CLIMB_UP);
+
+            // Wait until the animation actually starts climbing until we move
+            // Twinsen up.
+            if (hero.animState.loopCount === 0 &&
+                hero.animState.currentFrame === 0) {
+                return false;
+            }
+
+            hero.physics.position.y += LADDER_CLIMB_SPEED;
+
+            const distFromTop = zone.props.box.yMax - hero.physics.position.y;
+            if (distFromTop <= LADDER_TOP_OUT_DELTA) {
+                hero.props.runtimeFlags.isToppingOutUp = true;
+
+                hero.setAnimWithCallback(AnimType.LADDER_TOP_OUT_UP, () => {
+                    hero.props.runtimeFlags.isClimbing = false;
+                    hero.props.runtimeFlags.isToppingOutUp = false;
+                });
+                // The topout animation doesn't require any interpolation, we're
+                // already in the exact correct position.
+                hero.animState.noInterpolate = true;
+                return false;
+            }
+        } else {
+            hero.props.runtimeFlags.isClimbing = false;
+        }
+    }
+    return false;
 }
 
 // This is used to show a visual indicator of the target

@@ -53,6 +53,9 @@ const Q = new THREE.Quaternion();
 const EULER = new THREE.Euler();
 
 function processFirstPersonsMovement(controlsState, scene, hero) {
+    if (hero.props.runtimeFlags.isClimbing) {
+        return;
+    }
     let animIndex = hero.props.animIndex;
     if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
         toggleJump(hero, false);
@@ -104,6 +107,9 @@ function processFirstPersonsMovement(controlsState, scene, hero) {
 }
 
 function processActorMovement(controlsState, scene, hero, time, behaviour) {
+    if (hero.props.runtimeFlags.isClimbing) {
+        return;
+    }
     let animIndex = hero.props.animIndex;
     if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
         toggleJump(hero, false);

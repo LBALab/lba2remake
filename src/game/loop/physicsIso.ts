@@ -83,6 +83,7 @@ function processBoxIntersections(grid, actor, position, dx, dz, isTouchingGroud)
     ACTOR_BOX.translate(position);
     DIFF.set(0, 1 / 128, 0);
     ACTOR_BOX.translate(DIFF);
+    let collision = false;
     for (let ox = -1; ox < 2; ox += 1) {
         for (let oz = -1; oz < 2; oz += 1) {
             const cell = grid.cells[((dx + ox) * 64) + (dz + oz)];
@@ -93,16 +94,21 @@ function processBoxIntersections(grid, actor, position, dx, dz, isTouchingGroud)
                     if (column.shape !== 1) {
                         BB.max.y -= STEP;
                     }
-                    intersectBox(actor, position);
+                    if (intersectBox(actor, position)) {
+                        collision = true;
+                    }
                 }
             } else {
                 BB.min.set((64 - (dx + ox)) / 32, -Infinity, (dz + oz) / 32);
                 BB.max.set((65 - (dx + ox)) / 32, Infinity, (dz + oz + 1) / 32);
-                intersectBox(actor, position);
+                if (intersectBox(actor, position)) {
+                    collision = true;
+                }
                 isTouchingGroud = false;
             }
         }
     }
+    actor.props.runtimeFlags.isColliding = collision;
     return isTouchingGroud;
 }
 
@@ -122,7 +128,9 @@ function intersectBox(actor, position) {
         actor.physics.position.add(DIFF);
         position.add(DIFF);
         ACTOR_BOX.translate(DIFF);
+        return true;
     }
+    return false;
 }
 
 function processEscalator(column, position, time) {
