@@ -1,6 +1,6 @@
 # Version history
 
-### [v0.3.0-alpha.0]
+### [v0.3.0-beta]
 _June 9th, 2020_
 
 #### Gameplay
