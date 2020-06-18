@@ -27,7 +27,6 @@ export function loadAnimState() {
         prevRealAnimIdx: -1,
         currentKeyframe: null,
         keyframeChanged: false,
-        oneShot: false,
         callback: null,
     };
 }
@@ -46,7 +45,6 @@ export function resetAnimState(state) {
     state.keyframeLength = 0;
     state.floorSound = -1;
     state.noInterpolate = false;
-    state.oneShot = false;
     state.callback = null;
 }
 
@@ -124,10 +122,9 @@ export function updateKeyframe(anim, state, time, realAnimIdx) {
     let keyframe = anim.keyframes[state.currentFrame];
 
     if (state.currentFrame === state.loopFrame) {
-        if (state.oneShot && state.callback) {
+        if (state.callback) {
             state.callback();
             state.callback = null;
-            state.oneShot = false;
             return;
         }
     }

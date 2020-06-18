@@ -286,7 +286,6 @@ export async function loadActor(
             }
             this.props.animIndex = index;
             this.resetAnimState();
-            this.animState.oneShot = true;
             this.animState.callback = callback;
         },
 
