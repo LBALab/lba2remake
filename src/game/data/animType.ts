@@ -13,7 +13,7 @@ export const AnimType = {
     PUNCH_1: 17,
     RUNNING_JUMP: 25,
     TALK: 28,
-    CLIMB_UP: 30,
+    CLIMB_UP: 12,
     DODGE_RIGHT: 40,
     DODGE_LEFT: 41,
     DODGE_FORWARD: 42,
