@@ -116,7 +116,6 @@ export function updateKeyframe(anim, state, time, realAnimIdx) {
     if (!state) return;
     if (!state.isPlaying) return;
 
-
     state.prevRealAnimIdx = realAnimIdx;
     state.realAnimIdx = realAnimIdx;
 
@@ -124,7 +123,7 @@ export function updateKeyframe(anim, state, time, realAnimIdx) {
 
     let keyframe = anim.keyframes[state.currentFrame];
 
-    if (state.currentFrame == state.loopFrame) {
+    if (state.currentFrame === state.loopFrame) {
         if (state.oneShot && state.callback) {
             state.callback();
             state.callback = null;
@@ -147,10 +146,10 @@ export function updateKeyframe(anim, state, time, realAnimIdx) {
         if (state.currentFrame >= anim.numKeyframes) {
             state.currentFrame = state.loopFrame;
             if (state.currentFrame >= anim.numKeyframes - 1) {
-                state.currentFrame = 0;                
+                state.currentFrame = 0;
             }
             state.hasEnded = true;
-            state.loopCount++;
+            state.loopCount += 1;
         }
         keyframe = anim.keyframes[state.currentFrame];
     }
@@ -159,9 +158,9 @@ export function updateKeyframe(anim, state, time, realAnimIdx) {
     if (nextFrame >= anim.numKeyframes) {
         nextFrame = state.loopFrame;
         if (nextFrame >= anim.numKeyframes - 1) {
-            nextFrame = 0;            
+            nextFrame = 0;
         }
-        state.loopCount++;
+        state.loopCount += 1;
     }
     const nextkeyframe = anim.keyframes[nextFrame];
 

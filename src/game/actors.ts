@@ -75,7 +75,7 @@ export interface Actor {
     stop: Function;
     setBody: Function;
     setAnim: Function;
-    oneShot: Function;
+    setAnimWithCallback: Function;
 }
 
 export const DirMode = {
@@ -280,7 +280,7 @@ export async function loadActor(
             this.resetAnimState();
         },
 
-        oneShot(index, callback) {
+        setAnimWithCallback(index, callback) {
             if (this.props.animIndex === index) {
                 return;
             }

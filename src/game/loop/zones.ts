@@ -46,8 +46,8 @@ export function processZones(game, scene) {
 // consider ladders which are in the north or east direction (because only those
 // exist in the game).
 function isFacingLadder(angle) {
-    return (angle < 0.65*Math.PI && angle > 0.35*Math.PI) ||
-     (angle > 0.75*Math.PI || angle < -0.9*Math.PI);
+    return (angle < 0.65 * Math.PI && angle > 0.35 * Math.PI) ||
+     (angle > 0.75 * Math.PI || angle < -0.9 * Math.PI);
 }
 
 const LADDER_CLIMB_SPEED = 0.022;
@@ -68,15 +68,15 @@ function LADDER(game, scene, zone, hero) {
     const facing = isFacingLadder(hero.physics.temp.angle) || scene.isIsland;
     if (zone.props.info1 && facing) {
         // Is UP being pressed?
-        if (game.controlsState.controlVector.y == 1) {
+        if (game.controlsState.controlVector.y === 1) {
             hero.props.runtimeFlags.isClimbing = true;
             hero.setAnim(AnimType.CLIMB_UP);
 
             // Wait until the animation actually starts climbing until we move
             // Twinsen up.
-            if (hero.props.animIndex == 30 && 
-                hero.animState.loopCount == 0 && 
-                hero.animState.currentFrame == 0) {
+            if (hero.props.animIndex === 30 &&
+                hero.animState.loopCount === 0 &&
+                hero.animState.currentFrame === 0) {
                 return false;
             }
 
@@ -85,8 +85,8 @@ function LADDER(game, scene, zone, hero) {
             const distFromTop = zone.props.box.yMax - hero.physics.position.y;
             if (distFromTop <= LADDER_TOP_OUT_DELTA) {
                 hero.props.runtimeFlags.isToppingOutUp = true;
-                
-                hero.oneShot(AnimType.LADDER_TOP_OUT_UP, function() {
+
+                hero.setAnimWithCallback(AnimType.LADDER_TOP_OUT_UP, () => {
                     hero.props.runtimeFlags.isClimbing = false;
                     hero.props.runtimeFlags.isToppingOutUp = false;
                 });
