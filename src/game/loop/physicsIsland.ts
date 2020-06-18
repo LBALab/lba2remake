@@ -122,9 +122,11 @@ function processBoxIntersections(section, actor, position, isTouchingGround) {
     const boundingBox = actor.model.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.translate(position);
+    let collision = false;
     for (let i = 0; i < section.boundingBoxes.length; i += 1) {
         const bb = section.boundingBoxes[i];
         if (ACTOR_BOX.intersectsBox(bb)) {
+            collision = true;
             INTERSECTION.copy(ACTOR_BOX);
             INTERSECTION.intersect(bb);
             INTERSECTION.getSize(ITRS_SIZE);
@@ -146,6 +148,7 @@ function processBoxIntersections(section, actor, position, isTouchingGround) {
             ACTOR_BOX.translate(DIFF);
         }
     }
+    actor.props.runtimeFlags.isColliding = collision;
     return isTouchingGround;
 }
 
