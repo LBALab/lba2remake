@@ -8,10 +8,11 @@ _June 9th, 2020_
 - Added extra bonus projectile motion with gravity
 - Added Zone life and magic points bonus
 - Added Behaviour Menu
+- Implemented escalators / conveyors
 
 #### VR
 
-- Fixes to make the game work on Valve Index Controller
+- Added support for Firefox.
 - Fixed music playing twice in VR
 
 #### Replacement 3D models
@@ -21,7 +22,7 @@ _June 9th, 2020_
 
 #### Bug fixes
 
-- Various fixes object placemnt and zone transition
+- Various fixes: object sprite placements, zone scene transitions and 3D object bounding boxes
 
 -----------------------------
 
