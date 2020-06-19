@@ -101,13 +101,6 @@ function LADDER(game, scene, zone, hero) {
             hero.props.runtimeFlags.isClimbing = true;
             hero.setAnim(AnimType.CLIMB_UP);
 
-            // Wait until the animation actually starts climbing until we move
-            // Twinsen up.
-            if (hero.animState.loopCount === 0 &&
-                hero.animState.currentFrame === 0) {
-                return false;
-            }
-
             const distFromTop = zone.props.box.yMax - hero.physics.position.y;
             if (distFromTop <= LADDER_TOP_OUT_DELTA) {
                 hero.props.runtimeFlags.isToppingOutUp = true;
