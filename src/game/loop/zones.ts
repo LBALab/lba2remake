@@ -80,7 +80,6 @@ function isFacingLadder(angle) {
      (angle > 0.75 * Math.PI || angle < -0.9 * Math.PI);
 }
 
-const LADDER_CLIMB_SPEED = 0.022;
 const LADDER_TOP_OUT_DELTA = 1.1;
 
 function LADDER(game, scene, zone, hero) {
@@ -101,15 +100,6 @@ function LADDER(game, scene, zone, hero) {
         if (game.controlsState.controlVector.y === 1) {
             hero.props.runtimeFlags.isClimbing = true;
             hero.setAnim(AnimType.CLIMB_UP);
-
-            // Wait until the animation actually starts climbing until we move
-            // Twinsen up.
-            if (hero.animState.loopCount === 0 &&
-                hero.animState.currentFrame === 0) {
-                return false;
-            }
-
-            hero.physics.position.y += LADDER_CLIMB_SPEED;
 
             const distFromTop = zone.props.box.yMax - hero.physics.position.y;
             if (distFromTop <= LADDER_TOP_OUT_DELTA) {
