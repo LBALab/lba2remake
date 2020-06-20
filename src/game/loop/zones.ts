@@ -99,6 +99,9 @@ function LADDER(game, scene, zone, hero) {
         // Is UP being pressed?
         if (game.controlsState.controlVector.y === 1) {
             hero.props.runtimeFlags.isClimbing = true;
+            // Ensure that if Twinsen jumped into the ladder we stop jumping now
+            // that we're climbing.
+            hero.props.runtimeFlags.isJumping = false;
             hero.setAnim(AnimType.CLIMB_UP);
 
             const distFromTop = zone.props.box.yMax - hero.physics.position.y;
