@@ -102,6 +102,9 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
                 isVisible: true,
                 isSprite: true,
             },
+            runtimeFlags: {
+                isTouchingGround: false,
+            }
         },
         spriteIndex,
         spawnTime: 0,
