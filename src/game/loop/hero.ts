@@ -106,8 +106,48 @@ function processFirstPersonsMovement(controlsState, scene, hero) {
     }
 }
 
+// From this height Twinsen dies.
+const BIG_FALL_HEIGHT = 3;
+// From this height Twinsen hits his head on the floor.
+const MEDIUM_FALL_HEIGHT = 2;
+// From this height Twinsen just stumbles a bit.
+const SMALL_FALL_HEIGHT = 0.3;
+
+function processFall(scene, hero) {
+    let distFromFloor = hero.props.distFromGround;
+    if (scene.isIsland) {
+        distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
+    }
+    if (distFromFloor < 0.001) {
+        let animIndex = 0;
+        if (hero.props.fallDistance >= SMALL_FALL_HEIGHT
+         && hero.props.fallDistance < MEDIUM_FALL_HEIGHT) {
+            animIndex = AnimType.FALL_LANDING_STUMBLE;
+        }
+
+        if (hero.props.fallDistance >= MEDIUM_FALL_HEIGHT
+         && hero.props.fallDistance < BIG_FALL_HEIGHT) {
+            // TODO(scottwilliams): Do some damage to Twinsen.
+            animIndex = AnimType.FALL_LANDING_HEAD_HIT;
+        }
+        if (hero.props.fallDistance >= BIG_FALL_HEIGHT) {
+            // TODO(scottwilliams): Replace this with the dying animation once
+            // we have the ability to die properly.
+            animIndex = AnimType.FALL_LANDING_HEAD_HIT;
+        }
+        hero.setAnimWithCallback(animIndex, () => {
+            hero.props.runtimeFlags.isFalling = false;
+            hero.props.fallDistance = 0;
+            hero.props.noInterpolateNext = true;
+        });
+        hero.animState.noInterpolate = true;
+    }
+}
+
 function processActorMovement(controlsState, scene, hero, time, behaviour) {
     if (hero.props.runtimeFlags.isClimbing) {
+        // Climbing logic is handled in the zone.ts implementation for LADDER
+        // zone types.
         return;
     }
     let animIndex = hero.props.animIndex;
@@ -116,6 +156,20 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
     }
     if (!hero.props.runtimeFlags.isJumping) {
         toggleJump(hero, false);
+        if (hero.props.runtimeFlags.isFalling) {
+            processFall(scene, hero);
+            return;
+        }
+        let distFromFloor = hero.props.distFromGround;
+        if (scene.isIsland) {
+            distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
+        }
+        if (distFromFloor >= SMALL_FALL_HEIGHT) {
+            hero.props.runtimeFlags.isFalling = true;
+            hero.props.fallDistance = distFromFloor;
+            hero.setAnim(AnimType.FALLING);
+            return;
+        }
         animIndex = AnimType.NONE;
         if (!controlsState.relativeToCam && controlsState.controlVector.y !== 0) {
             hero.props.runtimeFlags.isWalking = true;
@@ -216,9 +270,10 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
     if (!hero.props.runtimeFlags.isJumping) {
         animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex);
     }
-    if (hero.props.animIndex !== animIndex) {
-        hero.props.animIndex = animIndex;
-        hero.resetAnimState();
+    hero.setAnim(animIndex);
+    if (hero.props.noInterpolateNext) {
+        hero.animState.noInterpolate = true;
+        hero.props.noInterpolateNext = false;
     }
 }
 
