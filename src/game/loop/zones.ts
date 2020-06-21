@@ -80,7 +80,7 @@ function isFacingLadder(angle) {
      (angle > 0.75 * Math.PI || angle < -0.9 * Math.PI);
 }
 
-const LADDER_TOP_OUT_DELTA = 1.1;
+const LADDER_TOP_OUT_DELTA = 1.35;
 
 function LADDER(game, scene, zone, hero) {
     if (hero.props.runtimeFlags.isToppingOutUp) {
@@ -114,7 +114,7 @@ function LADDER(game, scene, zone, hero) {
                 });
                 // The topout animation doesn't require any interpolation, we're
                 // already in the exact correct position.
-                hero.animState.noInterpolate = true;
+                hero.animState.interpolationFrame = 0;
                 return false;
             }
         } else {

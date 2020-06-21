@@ -15,6 +15,7 @@ export function loadAnimState() {
         loopFrame: 0,
         loopCount: 0,
         noInterpolate: false,
+        interpolationFrame: -1,
         currentTime: 0,
         isPlaying: true,
         isWaiting: false,
@@ -45,6 +46,7 @@ export function resetAnimState(state) {
     state.keyframeLength = 0;
     state.floorSound = -1;
     state.noInterpolate = false;
+    state.interpolationFrame = -1;
     state.callback = null;
 }
 
@@ -120,8 +122,7 @@ export function updateKeyframe(anim, state, time, realAnimIdx) {
     state.currentTime += time.delta * 1000;
 
     let keyframe = anim.keyframes[state.currentFrame];
-
-    if (state.currentFrame === state.loopFrame) {
+    if (state.currentFrame === anim.numKeyframes - 1) {
         if (state.callback) {
             state.callback();
             state.callback = null;
@@ -176,8 +177,13 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
     if (!state.isPlaying) return;
 
     let nextFrame = state.loopFrame;
-    if (state.noInterpolate) {
+    if (state.interpolationFrame >= 0) {
         nextFrame = 0;
+    }
+    if (state.noInterpolate) {
+        state.realAnimIdx = realAnimIdx;
+        state.prevRealAnimIdx = realAnimIdx;
+        return;
     }
 
     state.prevRealAnimIdx = state.realAnimIdx;

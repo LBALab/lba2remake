@@ -6,7 +6,7 @@ const STEP = 1 / WORLD_SIZE;
 const ESCALATOR_SPEED = 0.05;
 
 export function processCollisions(grid, _scene, obj, time) {
-    let isTouchingGroud = false;
+    let isTouchingGround = false;
     const basePos = obj.threeObject.position.clone();
     const position = obj.physics.position.clone();
     basePos.multiplyScalar(STEP);
@@ -46,11 +46,12 @@ export function processCollisions(grid, _scene, obj, time) {
                     break;
             }
             const minY = i > 0 ? bb.min.y - (2 * STEP) : -Infinity;
+            obj.props.distFromFloor = Math.max(position.y - y, 0) * WORLD_SIZE;
             if (basePos.y >= minY && position.y < y) {
                 const newY = Math.max(y, position.y);
                 if (newY - position.y < 0.12) {
                     position.y = newY;
-                    isTouchingGroud = true;
+                    isTouchingGround = true;
                 }
                 processEscalator(column, position, time);
                 break;
@@ -59,12 +60,13 @@ export function processCollisions(grid, _scene, obj, time) {
     }
     position.y = Math.max(0, position.y);
     if (obj.props.flags.hasCollisionBricks) {
-        isTouchingGroud = processBoxIntersections(grid, obj, position, dx, dz, isTouchingGroud);
+        isTouchingGround = processBoxIntersections(grid, obj, position, dx, dz, isTouchingGround);
     }
     position.multiplyScalar(WORLD_SIZE);
     obj.physics.position.copy(position);
+    obj.props.runtimeFlags.isTouchingGround = isTouchingGround;
 
-    return isTouchingGroud;
+    return isTouchingGround;
 }
 
 const ACTOR_BOX = new THREE.Box3();
@@ -75,7 +77,7 @@ const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
 const BB = new THREE.Box3();
 
-function processBoxIntersections(grid, actor, position, dx, dz, isTouchingGroud) {
+function processBoxIntersections(grid, actor, position, dx, dz, isTouchingGround) {
     const boundingBox = actor.model.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.min.multiplyScalar(STEP);
@@ -104,12 +106,12 @@ function processBoxIntersections(grid, actor, position, dx, dz, isTouchingGroud)
                 if (intersectBox(actor, position)) {
                     collision = true;
                 }
-                isTouchingGroud = false;
+                isTouchingGround = false;
             }
         }
     }
     actor.props.runtimeFlags.isColliding = collision;
-    return isTouchingGroud;
+    return isTouchingGround;
 }
 
 function intersectBox(actor, position) {

@@ -6,7 +6,8 @@ export function loadIslandPhysics(sections) {
     return {
         processCollisions: processCollisions.bind(null, sections),
         processCameraCollisions: processCameraCollisions.bind(null, sections),
-        getGroundInfo: position => getGroundInfo(findSection(sections, position), position)
+        getGroundInfo: position => getGroundInfo(findSection(sections, position), position),
+        getDistFromFloor: getDistFromFloor.bind(null, sections),
     };
 }
 
@@ -30,6 +31,61 @@ function processCameraCollisions(sections, camPosition, groundOffset = 0.15, obj
     }
 }
 
+// getPositions returns the 4 points that form the bottom face of the provided
+// bounding box.
+function getPositions(bb) {
+    const positions = [];
+    positions.push(bb.min);
+    positions.push(bb.min.x, bb.min.y, bb.max.z);
+    positions.push(bb.max.x, bb.min.y, bb.min.z);
+    positions.push(bb.max.x, bb.min.y, bb.max.z);
+    return positions;
+}
+
+// getDistFromFloor returns the distance Twinsen is from the "floor" where floor
+// means any object which Twinsen could stand on between him and the ground, or
+// the ground if none exist.
+function getDistFromFloor(sections, scene, obj) {
+    POSITION.copy(obj.physics.position);
+    POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
+    while (true) {
+        const boundingBox = obj.model.boundingBox;
+        ACTOR_BOX.copy(boundingBox);
+        ACTOR_BOX.translate(POSITION);
+        // It's not enough to just check for the exact position Twinsen is at.
+        // There are cases where we run over a gap in the geometry so we need
+        // to check all 4 points of Twinsens bounding box and take the max. I.e.
+        // if any point is touching the floor we consider Twinsen touching the
+        // floor.
+        let maxHeight = -1;
+        let maxSection = null;
+        for (const pos of getPositions(ACTOR_BOX)) {
+            const section = findSection(sections, pos);
+            const ground = getGround(section, pos);
+            if (ground.height > maxHeight) {
+                maxHeight = ground.height;
+                maxSection = section;
+            }
+        }
+        // If Twinsen is touching the ground we don't need to check if any
+        // objects are under him.
+        if (POSITION.y - maxHeight < 0.001) {
+            return obj.physics.position.y - maxHeight;
+        }
+        // Check to see if there are any objects under Twinsen which would be
+        // considered the floor.
+        for (let i = 0; i < maxSection.boundingBoxes.length; i += 1) {
+            const bb = maxSection.boundingBoxes[i];
+            if (ACTOR_BOX.intersectsBox(bb)) {
+                return obj.physics.position.y - bb.max.y;
+            }
+        }
+        POSITION.y -= 0.1;
+    }
+    // Should never get here.
+    return -1;
+}
+
 function processCollisions(sections, scene, obj, _time) {
     POSITION.copy(obj.physics.position);
     POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
@@ -44,6 +100,7 @@ function processCollisions(sections, scene, obj, _time) {
     if (obj.physics.position.y > height) {
         isTouchingGround = false;
     }
+    obj.props.distFromFloor = Math.max(obj.physics.position.y - height, 0);
     obj.physics.position.y = Math.max(height, obj.physics.position.y);
     POSITION.y = obj.physics.position.y;
 
@@ -73,7 +130,7 @@ function processCollisions(sections, scene, obj, _time) {
             }
         }
     }
-
+    obj.props.runtimeFlags.isTouchingGround = isTouchingGround;
     return isTouchingGround;
 }
 
