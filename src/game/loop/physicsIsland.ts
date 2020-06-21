@@ -82,8 +82,6 @@ function getDistFromFloor(sections, scene, obj) {
         }
         POSITION.y -= 0.1;
     }
-    // Should never get here.
-    return -1;
 }
 
 function processCollisions(sections, scene, obj, _time) {
