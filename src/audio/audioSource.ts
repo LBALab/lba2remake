@@ -81,7 +81,9 @@ const createSource = (context: any): AudioSource => {
     };
 
     source.decode = async (buffer) => {
-        return await context.decodeAudioData(buffer);
+        return new Promise((resolve, reject) => {
+            context.decodeAudioData(buffer, resolve, reject);
+        });
     };
 
     source.connect = () => {
