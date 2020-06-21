@@ -114,7 +114,7 @@ const MEDIUM_FALL_HEIGHT = 2;
 const SMALL_FALL_HEIGHT = 0.3;
 
 function processFall(scene, hero) {
-    let distFromFloor = hero.props.distFromFloor;
+    let distFromFloor = hero.props.distFromGround;
     if (scene.isIsland) {
         distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
     }
@@ -127,6 +127,7 @@ function processFall(scene, hero) {
 
         if (hero.props.fallDistance >= MEDIUM_FALL_HEIGHT
          && hero.props.fallDistance < BIG_FALL_HEIGHT) {
+            // TODO(scottwilliams): Do some damage to Twinsen.
             animIndex = AnimType.FALL_LANDING_HEAD_HIT;
         }
         if (hero.props.fallDistance >= BIG_FALL_HEIGHT) {
@@ -159,7 +160,7 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
             processFall(scene, hero);
             return;
         }
-        let distFromFloor = hero.props.distFromFloor;
+        let distFromFloor = hero.props.distFromGround;
         if (scene.isIsland) {
             distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
         }

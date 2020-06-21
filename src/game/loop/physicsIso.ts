@@ -46,7 +46,7 @@ export function processCollisions(grid, _scene, obj, time) {
                     break;
             }
             const minY = i > 0 ? bb.min.y - (2 * STEP) : -Infinity;
-            obj.props.distFromFloor = Math.max(position.y - y, 0) * WORLD_SIZE;
+            obj.props.distFromGround = Math.max(position.y - y, 0) * WORLD_SIZE;
             if (basePos.y >= minY && position.y < y) {
                 const newY = Math.max(y, position.y);
                 if (newY - position.y < 0.12) {

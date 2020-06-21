@@ -100,7 +100,7 @@ function processCollisions(sections, scene, obj, _time) {
     if (obj.physics.position.y > height) {
         isTouchingGround = false;
     }
-    obj.props.distFromFloor = Math.max(obj.physics.position.y - height, 0);
+    obj.props.distFromGround = Math.max(obj.physics.position.y - height, 0);
     obj.physics.position.y = Math.max(height, obj.physics.position.y);
     POSITION.y = obj.physics.position.y;
 
