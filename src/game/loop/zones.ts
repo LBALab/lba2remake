@@ -97,7 +97,7 @@ function LADDER(game, scene, zone, hero) {
     const facing = isFacingLadder(hero.physics.temp.angle) || scene.isIsland;
     if (zone.props.info1 && facing) {
         // Is UP being pressed?
-        if (game.controlsState.controlVector.y === 1) {
+        if (game.controlsState.controlVector.y > 0.6) {
             hero.props.runtimeFlags.isClimbing = true;
             // Ensure that if Twinsen jumped into the ladder we stop jumping now
             // that we're climbing.
