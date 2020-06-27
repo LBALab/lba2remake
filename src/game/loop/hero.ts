@@ -62,6 +62,20 @@ function processFirstPersonsMovement(controlsState, scene, hero) {
     }
     if (!hero.props.runtimeFlags.isJumping) {
         toggleJump(hero, false);
+        if (hero.props.runtimeFlags.isFalling) {
+            processFall(scene, hero);
+            return;
+        }
+        let distFromFloor = hero.props.distFromGround;
+        if (scene.isIsland) {
+            distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
+        }
+        if (distFromFloor >= SMALL_FALL_HEIGHT) {
+            hero.props.runtimeFlags.isFalling = true;
+            hero.props.fallDistance = distFromFloor;
+            hero.setAnim(AnimType.FALLING);
+            return;
+        }
         animIndex = AnimType.NONE;
         if (Math.abs(controlsState.controlVector.y) > 0.6) {
             hero.props.runtimeFlags.isWalking = true;
