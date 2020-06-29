@@ -1,7 +1,7 @@
 # Version history
 
-### [v0.3.0-beta]
-_June 9th, 2020_
+### [v0.3.0](https://github.com/agrande/lba2remake/compare/v0.2.3...v0.3.0) Big update!
+_June 29th, 2020_
 
 #### Gameplay
 
