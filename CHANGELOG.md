@@ -9,15 +9,17 @@ _June 9th, 2020_
 - Added Zone life and magic points bonus
 - Added Behaviour Menu
 - Implemented escalators / conveyors
+- Implemented climbing up ladders
+- Implemented falling
 
 #### VR
 
-- Added support for Firefox.
+- Added support for Firefox
 - Fixed music playing twice in VR
 
 #### Replacement 3D models
 
-- Various 3D models added to replace the original brick layouts.
+- Various 3D models added to replace the original brick layouts
 - Allow to replace individual bricks
 
 #### Bug fixes
