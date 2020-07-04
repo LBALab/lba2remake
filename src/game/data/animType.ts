@@ -15,6 +15,7 @@ export const AnimType = {
     THROW: 15,
     CROUCH: 16,
     PUNCH_1: 17,
+    DROWNING: 21,
     RUNNING_JUMP: 25,
     TALK: 28,
     DODGE_RIGHT: 40,

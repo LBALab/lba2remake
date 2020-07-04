@@ -23,12 +23,17 @@ export const BehaviourMode = {
 export function updateHero(game, scene, hero, time) {
     if (hero.props.dirMode !== DirMode.MANUAL)
         return;
+
     const behaviour = game.getState().hero.behaviour;
     handleBehaviourChanges(hero, behaviour);
     if (game.controlsState.firstPerson) {
-        processFirstPersonsMovement(game.controlsState, scene, hero);
+        processFirstPersonsMovement(game, scene, hero);
     } else {
-        processActorMovement(game.controlsState, scene, hero, time, behaviour);
+        processActorMovement(game, scene, hero, time, behaviour);
+    }
+
+    if (validPosition(hero.props.runtimeFlags)) {
+        scene.savedState = game.getState().save(hero);
     }
 }
 
@@ -36,8 +41,20 @@ function handleBehaviourChanges(hero, behaviour) {
     if (hero.props.entityIndex !== behaviour) {
         hero.props.entityIndex = behaviour;
         toggleJump(hero, false);
+        // TODO(scottwilliams): this nulls any existing callbacks, meaning e.g.
+        // we don't reset falling flag etc. work out what to do here.
         hero.resetAnimState();
     }
+}
+
+// validPosition returns true iff Twinsen is in a position we consider "valid",
+// that is one where he's stood on ground and not doing anything interesting
+// (e.g. climbing or jumping).
+function validPosition(runtimeFlags) {
+    const onFloor = runtimeFlags.isTouchingGround ||
+                    runtimeFlags.isTouchingFloor;
+    return onFloor && !runtimeFlags.isDrowning && !runtimeFlags.isJumping &&
+    !runtimeFlags.isFalling && !runtimeFlags.isClimbing;
 }
 
 function toggleJump(hero, value) {
@@ -52,7 +69,8 @@ const BASE_ANGLE = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 
 const Q = new THREE.Quaternion();
 const EULER = new THREE.Euler();
 
-function processFirstPersonsMovement(controlsState, scene, hero) {
+function processFirstPersonsMovement(game, scene, hero) {
+    const controlsState = game.controlsState;
     if (hero.props.runtimeFlags.isClimbing) {
         return;
     }
@@ -74,6 +92,15 @@ function processFirstPersonsMovement(controlsState, scene, hero) {
             hero.props.runtimeFlags.isFalling = true;
             hero.props.fallDistance = distFromFloor;
             hero.setAnim(AnimType.FALLING);
+            return;
+        }
+        if (hero.props.runtimeFlags.isDrowning) {
+            hero.setAnimWithCallback(AnimType.DROWNING, () => {
+                game.getState().load(scene.savedState, hero);
+                hero.setAnim(AnimType.NONE);
+                hero.props.runtimeFlags.isDrowning = false;
+            });
+            hero.animState.noInterpolate = true;
             return;
         }
         animIndex = AnimType.NONE;
@@ -133,6 +160,12 @@ function processFall(scene, hero) {
         distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
     }
     if (distFromFloor < 0.001) {
+        // If we've jumped into water, don't play the landing animation.
+        if (hero.props.runtimeFlags.isDrowning) {
+            hero.props.runtimeFlags.isFalling = false;
+            hero.props.fallDistance = 0;
+            return;
+        }
         let animIndex = 0;
         if (hero.props.fallDistance >= SMALL_FALL_HEIGHT
          && hero.props.fallDistance < MEDIUM_FALL_HEIGHT) {
@@ -158,7 +191,8 @@ function processFall(scene, hero) {
     }
 }
 
-function processActorMovement(controlsState, scene, hero, time, behaviour) {
+function processActorMovement(game, scene, hero, time, behaviour) {
+    const controlsState = game.controlsState;
     if (hero.props.runtimeFlags.isClimbing) {
         // Climbing logic is handled in the zone.ts implementation for LADDER
         // zone types.
@@ -182,6 +216,15 @@ function processActorMovement(controlsState, scene, hero, time, behaviour) {
             hero.props.runtimeFlags.isFalling = true;
             hero.props.fallDistance = distFromFloor;
             hero.setAnim(AnimType.FALLING);
+            return;
+        }
+        if (hero.props.runtimeFlags.isDrowning) {
+            hero.setAnimWithCallback(AnimType.DROWNING, () => {
+                game.getState().load(scene.savedState, hero);
+                hero.setAnim(AnimType.NONE);
+                hero.props.runtimeFlags.isDrowning = false;
+            });
+            hero.animState.noInterpolate = true;
             return;
         }
         animIndex = AnimType.NONE;

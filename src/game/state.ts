@@ -35,18 +35,23 @@ export function createState(): GameState {
             fuel: 0,
             pinguin: 0,
             clover: { boxes: 2, leafs: 1 },
-            magicball: { level: 0, strength: 0, bounce: 0 }
+            magicball: { level: 0, strength: 0, bounce: 0 },
+            position: null,
         },
         chapter: 0,
         flags: {
             quest: createQuestFlags(),
             holomap: createHolomapFlags()
         },
-        save() {
+        save(hero) {
+            this.hero.position = hero.physics.position;
             return JSON.stringify(omit(this, ['save', 'load', 'config']));
         },
-        load(savedState) {
+        load(savedState, hero) {
             const state = JSON.parse(savedState);
+            hero.physics.position.x = state.hero.position.x;
+            hero.physics.position.y = state.hero.position.y;
+            hero.physics.position.z = state.hero.position.z;
             Object.assign(this, state);
         }
     };
