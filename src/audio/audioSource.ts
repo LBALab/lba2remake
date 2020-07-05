@@ -66,7 +66,7 @@ const createSource = (context: any): AudioSource => {
     };
 
     source.stop = () => {
-        if (source.bufferSource) {
+        if (source.isPlaying && source.bufferSource) {
             source.bufferSource.stop();
         }
         source.isPlaying = false;
