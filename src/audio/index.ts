@@ -70,10 +70,10 @@ export function createAudioManager(state) {
         },
 
         // samples
-        playSample: (index: number) => {
+        playSample: (index: number, frequency: number = 0x1000, loopCount: number = 0) => {
             const sampleSource = createSampleSource(context);
             sampleSource.setVolume(state.config.soundFxVolume);
-            sampleSource.play(index);
+            sampleSource.play(index, frequency, loopCount);
             samples[index] = sampleSource;
             return sampleSource;
         },
