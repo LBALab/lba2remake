@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import '../styles/behaviour.scss';
 import useMedia from '../hooks/useMedia';
+import { BehaviourMode as BehaviourModeType } from '../../game/loop/hero';
 
 interface IBehaviourMenuClover {
     boxes: number;
@@ -110,7 +111,6 @@ const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
 // @ts-ignore
 const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
     const {
-        behaviour,
         life,
         money,
         magic,
@@ -118,6 +118,39 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
         clover,
         magicball
     }: IBehaviourMenu = game.getState().hero;
+
+    const [behaviour, setBehaviour] = useState(game.getState().hero.behaviour);
+
+    const listener = (event) => {
+        let behav = behaviour;
+        const key = event.code || event.which || event.keyCode;
+        switch (key) {
+            case 37:
+            case 'ArrowLeft':
+                behav -= 1;
+                if (behav < BehaviourModeType.NORMAL) {
+                    behav = BehaviourModeType.DISCRETE;
+                }
+                break;
+            case 39:
+            case 'ArrowRight':
+                behav += 1;
+                if (behav > BehaviourModeType.DISCRETE) {
+                    behav = BehaviourModeType.NORMAL;
+                }
+                break;
+        }
+        setBehaviour(behav);
+        game.getState().hero.behaviour = behav;
+    };
+
+    useEffect(() => {
+        window.addEventListener('keydown', listener);
+        return () => {
+            window.removeEventListener('keydown', listener);
+        };
+    });
+
     return (
         <div className="behaviourMenu">
             <div className="behaviourContainer">

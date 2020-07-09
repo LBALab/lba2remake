@@ -21,6 +21,9 @@ export function createAudioManager(state) {
     const context = createAudioContext();
     const menuContext = createAudioContext();
 
+    let contextActive = context.state === 'running';
+    let menuContextActive = menuContext.state === 'running';
+
     const musicSource = createMusicSource(context);
     const menuMusicSource = createMusicSource(menuContext);
     const voiceSource = createVoiceSource(context);
@@ -54,6 +57,9 @@ export function createAudioManager(state) {
         preloadMusicTheme: async () => {
             await menuMusicSource.preload(MUSIC_THEME);
         },
+        resumeMusicTheme: () => {
+            menuMusicSource.resume();
+        },
 
         // voice
         playVoice: (index: number, textBankId: number, onEndedCallback = null) => {
@@ -64,10 +70,10 @@ export function createAudioManager(state) {
         },
 
         // samples
-        playSample: (index: number) => {
+        playSample: (index: number, frequency: number = 0x1000, loopCount: number = 0) => {
             const sampleSource = createSampleSource(context);
             sampleSource.setVolume(state.config.soundFxVolume);
-            sampleSource.play(index);
+            sampleSource.play(index, frequency, loopCount);
             samples[index] = sampleSource;
             return sampleSource;
         },
@@ -114,5 +120,16 @@ export function createAudioManager(state) {
                 }
             });
         },
+        resumeContext: () => {
+            context.resume().then(() => {
+                contextActive = context.state === 'running';
+            });
+            menuContext.resume().then(() => {
+                menuContextActive = menuContext.state === 'running';
+            });
+        },
+        isContextActive: () => {
+            return contextActive && menuContextActive;
+        }
     };
 }
