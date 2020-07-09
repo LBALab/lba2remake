@@ -30,6 +30,7 @@ import { setFog } from './editor/fog';
 import { pure } from '../utils/decorators';
 import { getResourcePath, ResourceType } from '../resources';
 import BehaviourMenu from './game/BehaviourMenu';
+import NoAudio from './game/NoAudio';
 
 interface GameUIProps extends TickerProps {
     saveMainData?: Function;
@@ -73,6 +74,7 @@ interface GameUIState {
     teleportMenu: boolean;
     keyHelp: boolean;
     behaviourMenu: boolean;
+    noAudio: boolean;
 }
 
 export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
@@ -103,6 +105,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         this.pick = this.pick.bind(this);
         this.startNewGameScene = this.startNewGameScene.bind(this);
         this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
+        this.noAudioClick = this.noAudioClick.bind(this);
 
         if (props.mainData) {
             const state = props.mainData.state;
@@ -136,6 +139,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 teleportMenu: false,
                 keyHelp: false,
                 behaviourMenu: false,
+                noAudio: !game.getAudioManager().isContextActive(),
             };
 
             clock.start();
@@ -367,6 +371,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     }
 
     onMenuItemChanged(item) {
+        this.noAudioClick();
         switch (item) {
             case 70: { // Resume
                 this.hideMenu();
@@ -500,6 +505,18 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         this.setUiState({ skip: true });
     }
 
+    async noAudioClick() {
+        const audio = this.state.game.getAudioManager();
+        audio.resumeContext();
+        this.setState({ noAudio: false }, () => {
+            audio.resume();
+            audio.resumeMusicTheme();
+            if (this.state.showMenu) {
+                audio.playMusicTheme();
+            }
+        });
+    }
+
     render() {
         return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex={0}>
             <div ref={this.onCanvasWrapperRef} style={fullscreen} onClick={this.pick}/>
@@ -526,6 +543,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             foundObject,
             keyHelp,
             ask,
+            noAudio,
         } = this.state;
         return <React.Fragment>
             <CinemaEffect enabled={cinema} />
@@ -574,6 +592,9 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             /> : null}
             {!showMenu ? <FoundObject foundObject={foundObject} /> : null}
             {keyHelp && <KeyHelpScreen close={this.closeKeyHelp}/>}
+            {noAudio && (
+                <NoAudio onClick={this.noAudioClick} />
+            )}
         </React.Fragment>;
     }
 }

@@ -6,6 +6,15 @@ _Unknown date_
 #### TODO: Fill in the changelog as we go
 
 -----------------------------
+### [v0.3.1](https://github.com/agrande/lba2remake/compare/v0.3.0...v0.3.1) Bugfixes
+_July 5th, 2020_
+
+#### UI
+- Allow User to enable Audio when context is suspended by the browser
+- Allow behaviour selection within Behaviour Menu
+
+#### Bug fixes
+- Fixed Audio Source Exception
 
 ### [v0.3.0](https://github.com/agrande/lba2remake/compare/v0.2.3...v0.3.0) Big update!
 _June 29th, 2020_
