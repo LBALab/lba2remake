@@ -20,12 +20,22 @@ export const BehaviourMode = {
     SKELETON: 13
 };
 
+// Behaviour modes which don't work with the default bodyIndex. If we force
+// Twinsen into one of these mode when he doesn't have the tunic we need to swap
+// to the tunic body.
+const BehaviourRequiresTunic = {
+    4: true, // PROTOPACK
+    5: true, // ZOE
+    6: true, // HORN
+    8: true, // JETPACK
+};
+
 export function updateHero(game, scene, hero, time) {
     if (hero.props.dirMode !== DirMode.MANUAL)
         return;
 
     const behaviour = game.getState().hero.behaviour;
-    handleBehaviourChanges(hero, behaviour);
+    handleBehaviourChanges(scene, hero, behaviour);
     if (game.controlsState.firstPerson) {
         processFirstPersonsMovement(game, scene, hero);
     } else {
@@ -37,9 +47,13 @@ export function updateHero(game, scene, hero, time) {
     }
 }
 
-function handleBehaviourChanges(hero, behaviour) {
+function handleBehaviourChanges(scene, hero, behaviour) {
     if (hero.props.entityIndex !== behaviour) {
         hero.props.entityIndex = behaviour;
+        if (BehaviourRequiresTunic[behaviour]) {
+            hero.props.bodyIndex = 1;
+        }
+        hero.reloadModel(scene);
         toggleJump(hero, false);
         // TODO(scottwilliams): this nulls any existing callbacks, meaning e.g.
         // we don't reset falling flag etc. work out what to do here.
@@ -88,7 +102,11 @@ function processFirstPersonsMovement(game, scene, hero) {
         if (scene.isIsland) {
             distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
         }
-        if (distFromFloor >= SMALL_FALL_HEIGHT) {
+        // We don't trigger a fall if Twinsen is using the Jetpack, (but we do
+        // for the protopack).
+        const usingJetpack = hero.props.entityIndex === BehaviourMode.JETPACK &&
+                             hero.props.animIndex === AnimType.FORWARD;
+        if (distFromFloor >= SMALL_FALL_HEIGHT && !usingJetpack) {
             hero.props.runtimeFlags.isFalling = true;
             hero.props.fallDistance = distFromFloor;
             hero.setAnim(AnimType.FALLING);
@@ -212,7 +230,11 @@ function processActorMovement(game, scene, hero, time, behaviour) {
         if (scene.isIsland) {
             distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
         }
-        if (distFromFloor >= SMALL_FALL_HEIGHT) {
+        // We don't trigger a fall if Twinsen is using the Jetpack, (but we do
+        // for the protopack).
+        const usingJetpack = hero.props.entityIndex === BehaviourMode.JETPACK &&
+                             hero.props.animIndex === AnimType.FORWARD;
+        if (distFromFloor >= SMALL_FALL_HEIGHT && !usingJetpack) {
             hero.props.runtimeFlags.isFalling = true;
             hero.props.fallDistance = distFromFloor;
             hero.setAnim(AnimType.FALLING);

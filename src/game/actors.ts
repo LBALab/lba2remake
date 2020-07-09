@@ -218,7 +218,7 @@ export async function loadActor(
                     entityIndex,
                     bodyIndex,
                     animIndex,
-                    animState,
+                    this.animState,
                     envInfo,
                     ambience
                 );
@@ -292,11 +292,11 @@ export async function loadActor(
         reloadModel(scene) {
             const oldObject = this.threeObject;
             this.loadMesh().then(() => {
+                scene.addMesh(this.threeObject);
                 if (oldObject) {
                     scene.removeMesh(oldObject);
                 }
                 this.threeObject.updateMatrixWorld();
-                scene.addMesh(this.threeObject);
             });
         }
     };

@@ -59,6 +59,14 @@ function keyDownHandler(params, game, sceneManager, event) {
         case 'Digit4':
             game.getState().hero.behaviour = BehaviourMode.DISCRETE;
             break;
+        case 53:
+        case 'Digit5':
+            game.getState().hero.behaviour = BehaviourMode.PROTOPACK;
+            break;
+        case 54:
+        case 'Digit6':
+            game.getState().hero.behaviour = BehaviourMode.JETPACK;
+            break;
         case 32:
         case 'Space':
             switch (game.getState().hero.behaviour) {

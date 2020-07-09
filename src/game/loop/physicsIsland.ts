@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import {getTriangleFromPos} from '../../island/ground';
 import { WORLD_SIZE } from '../../utils/lba';
+import { BehaviourMode } from './hero';
+import { AnimType } from '../data/animType';
 
 export function loadIslandPhysics(sections) {
     return {
@@ -31,6 +33,17 @@ function processCameraCollisions(sections, camPosition, groundOffset = 0.15, obj
     }
 }
 
+const DEFAULT_FLOOR_THRESHOLD = 0.001;
+
+function getDistFromFloor(sections, scene, obj) {
+    const originalPos = new THREE.Vector3();
+    originalPos.copy(obj.physics.position);
+    originalPos.applyMatrix4(scene.sceneNode.matrixWorld);
+    const minFunc = (a, b) => a > b;
+    const floorHeight = getFloorHeight(sections, scene, obj, minFunc, DEFAULT_FLOOR_THRESHOLD);
+    return originalPos.y - floorHeight;
+}
+
 // getPositions returns the 4 points that form the bottom face of the provided
 // bounding box.
 function getPositions(bb) {
@@ -42,10 +55,10 @@ function getPositions(bb) {
     return positions;
 }
 
-// getDistFromFloor returns the distance Twinsen is from the "floor" where floor
+// getFloorHeight returns the distance Twinsen is from the "floor" where floor
 // means any object which Twinsen could stand on between him and the ground, or
 // the ground if none exist.
-function getDistFromFloor(sections, scene, obj) {
+function getFloorHeight(sections, scene, obj, minFunc, floorThreshold) {
     const originalPos = new THREE.Vector3();
     originalPos.copy(obj.physics.position);
     originalPos.applyMatrix4(scene.sceneNode.matrixWorld);
@@ -57,18 +70,18 @@ function getDistFromFloor(sections, scene, obj) {
     // to check all 4 points of Twinsens bounding box and take the max. I.e.
     // if any point is touching the floor we consider Twinsen touching the
     // floor.
-    let maxHeight = -1;
+    let overallHeight = -1;
     for (const pos of getPositions(ACTOR_BOX)) {
         const section = findSection(sections, pos);
         const ground = getGround(section, pos);
-        if (ground.height > maxHeight) {
-            maxHeight = ground.height;
+        if (minFunc(ground.height, overallHeight) || overallHeight === -1) {
+            overallHeight = ground.height;
         }
     }
     // If Twinsen is touching the ground we don't need to check if any
     // objects are under him.
-    if (originalPos.y - maxHeight < 0.001) {
-        return originalPos.y - maxHeight;
+    if (originalPos.y - overallHeight <= floorThreshold) {
+        return overallHeight;
     }
 
     // Otherwise, check to see if there are any objects under Twinsen which
@@ -86,17 +99,23 @@ function getDistFromFloor(sections, scene, obj) {
         for (let i = 0; i < section.boundingBoxes.length; i += 1) {
             const bb = section.boundingBoxes[i];
             if (ACTOR_BOX.intersectsBox(bb)) {
-                return originalPos.y - bb.max.y;
+                return bb.max.y;
             }
         }
         POSITION.y -= 0.1;
     }
 
     // No objects were under Twinsen, return distance from the ground.
-    return originalPos.y - maxHeight;
+    return overallHeight;
 }
 
-function processCollisions(sections, scene, obj, _time) {
+// Vertical height offsets for the jet/protopack.
+const JETPACK_OFFSET = 0.5;
+const PROTOPACK_OFFSET = 0.1;
+// How fast we reach top vertical height when starting to jetpack.
+const JETPACK_VERTICAL_SPEED = 7.5;
+
+function processCollisions(sections, scene, obj, time) {
     POSITION.copy(obj.physics.position);
     POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
 
@@ -104,14 +123,45 @@ function processCollisions(sections, scene, obj, _time) {
 
     FLAGS.hitObject = false;
     const ground = getGround(section, POSITION);
-    const height = ground.height;
+    let height = ground.height;
+    obj.props.distFromGround = Math.max(obj.physics.position.y - height, 0);
 
     let isTouchingGround = true;
     if (obj.physics.position.y > height) {
         isTouchingGround = false;
     }
-    obj.props.distFromGround = Math.max(obj.physics.position.y - height, 0);
-    obj.physics.position.y = Math.max(height, obj.physics.position.y);
+
+    const isUsingProtoOrJetpack = (obj.props.entityIndex === BehaviourMode.JETPACK ||
+                                   obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
+                                   obj.props.animIndex === AnimType.FORWARD;
+    if (isUsingProtoOrJetpack) {
+        let heightOffset = PROTOPACK_OFFSET;
+        if (obj.props.entityIndex === BehaviourMode.JETPACK) {
+            heightOffset = JETPACK_OFFSET;
+        }
+        const minFunc = (a, b) => a < b;
+        const floorHeight = getFloorHeight(sections, scene, obj, minFunc, heightOffset);
+
+        // Only let Twinsen Jetpack over small objects.
+        if (floorHeight - obj.physics.position.y < heightOffset) {
+            height = floorHeight + heightOffset;
+            // Gradually converge on the desired value of height. This means we
+            // don't immediately jump to `height` but rather "fly" up to it.
+            const diff = height - obj.physics.position.y;
+            if (diff <= 0) {
+                // We just let the gravity physics apply here.
+                obj.physics.position.y = Math.max(height, obj.physics.position.y);
+            } else {
+                obj.physics.position.y += JETPACK_VERTICAL_SPEED * time.delta;
+                obj.physics.position.y = Math.min(height, obj.physics.position.y);
+            }
+        }  else {
+            obj.physics.position.y = Math.max(height, obj.physics.position.y);
+        }
+    } else {
+        obj.physics.position.y = Math.max(height, obj.physics.position.y);
+    }
+
     POSITION.y = obj.physics.position.y;
 
     if (obj.animState) { // if it's an actor
@@ -142,6 +192,7 @@ function processCollisions(sections, scene, obj, _time) {
     }
     obj.props.runtimeFlags.isTouchingGround = isTouchingGround;
     obj.props.runtimeFlags.isTouchingFloor = getDistFromFloor(sections, scene, obj) < 0.001;
+
     if (isTouchingGround && ground.liquid > 0) {
         obj.props.runtimeFlags.isDrowning = true;
     }

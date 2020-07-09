@@ -35,7 +35,9 @@ export const THROW_MAGIC = unimplemented();
 
 export const SAMPLE_REPEAT = (action, { game }) => {
     const audio = game.getAudioManager();
-    audio.playSample(action.sampleIndex, 0x1000, action.repeat);
+    if (!audio.isPlayingSample(action.sampleIndex)) {
+        audio.playSample(action.sampleIndex, 0x1000, action.repeat);
+    }
 };
 
 export const THROW_SEARCH = unimplemented();
