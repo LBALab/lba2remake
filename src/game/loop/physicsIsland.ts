@@ -35,6 +35,9 @@ function processCameraCollisions(sections, camPosition, groundOffset = 0.15, obj
 
 const DEFAULT_FLOOR_THRESHOLD = 0.001;
 
+// getDistFromFloor returns the distance Twinsen is from the "floor" where floor
+// means any object which Twinsen could stand on between him and the ground, or
+// the ground if none exist.
 function getDistFromFloor(sections, scene, obj) {
     const originalPos = new THREE.Vector3();
     originalPos.copy(obj.physics.position);
@@ -55,9 +58,10 @@ function getPositions(bb) {
     return positions;
 }
 
-// getFloorHeight returns the distance Twinsen is from the "floor" where floor
-// means any object which Twinsen could stand on between him and the ground, or
-// the ground if none exist.
+// getFloorHeight returns the height of the floor below Twinsen. Note that this
+// may be the height of the ground, or an object Twinsen is stood on. minFunc
+// determines which of the 4 points of the base bounding box we should use and
+// is intended to be either a < or > function of two arguments.
 function getFloorHeight(sections, scene, obj, minFunc, floorThreshold) {
     const originalPos = new THREE.Vector3();
     originalPos.copy(obj.physics.position);
