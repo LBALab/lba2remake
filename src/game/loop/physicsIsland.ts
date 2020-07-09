@@ -141,13 +141,18 @@ function processCollisions(sections, scene, obj, _time) {
         }
     }
     obj.props.runtimeFlags.isTouchingGround = isTouchingGround;
+    obj.props.runtimeFlags.isTouchingFloor = getDistFromFloor(sections, scene, obj) < 0.001;
+    if (isTouchingGround && ground.liquid > 0) {
+        obj.props.runtimeFlags.isDrowning = true;
+    }
     return isTouchingGround;
 }
 
 const DEFAULT_GROUND = {
     height: 0,
     sound: null,
-    collision: null
+    collision: null,
+    liquid: 0
 };
 
 const Y_THRESHOLD = WORLD_SIZE / 1600;
@@ -165,7 +170,8 @@ function getGround(section, position) {
             return {
                 height: bb.max.y,
                 sound: null,
-                collision: null
+                collision: null,
+                liquid: 0,
             };
         }
     }

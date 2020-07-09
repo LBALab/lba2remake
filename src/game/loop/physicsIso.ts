@@ -52,6 +52,9 @@ export function processCollisions(grid, _scene, obj, time) {
                 if (newY - position.y < 0.12) {
                     position.y = newY;
                     isTouchingGround = true;
+                    if (column.groundType === GROUND_TYPES.WATER) {
+                        obj.props.runtimeFlags.isDrowning = true;
+                    }
                 }
                 processEscalator(column, position, time);
                 break;

@@ -127,11 +127,11 @@ function loadTriangleForPhysics(section, x, z, xTgt, zTgt, idx) {
 
     RAY.origin.set(xTgt, 5 * 24, zTgt);
     const tgt = RAY.intersectTriangle(PTS[0], PTS[2], PTS[1], true, TGT);
-
     return {
         sound: bits(flags, 8, 4),
         collision: bits(flags, 17, 1),
-        height: tgt && tgt.y
+        liquid: bits(flags, 12, 4),
+        height: tgt && tgt.y,
     };
 }
 

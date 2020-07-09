@@ -438,7 +438,10 @@ function createRuntimeFlags() {
         isSwitchingHit: false,
         isCrouching: false,
         isClimbing: false,
-        isColliding: false
+        isColliding: false,
+        isDrowning: false,
+        isTouchingGround: false,
+        isTouchingFloor: false,
     };
 }
 
