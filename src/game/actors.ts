@@ -76,6 +76,7 @@ export interface Actor {
     setBody: Function;
     setAnim: Function;
     setAnimWithCallback: Function;
+    cancelAnims: Function;
 }
 
 export const DirMode = {
@@ -278,6 +279,17 @@ export async function loadActor(
             }
             this.props.animIndex = index;
             this.resetAnimState();
+        },
+
+        cancelAnims() {
+            if (this.props.runtimeFlags.isDrowning) {
+                return;
+            }
+            this.setAnim(0);
+            this.props.runtimeFlags.isJumping = false;
+            this.props.runtimeFlags.isWalking = false;
+            this.props.runtimeFlags.isFalling = false;
+            this.props.runtimeFlags.isClimbing = false;
         },
 
         setAnimWithCallback(index, callback) {

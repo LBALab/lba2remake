@@ -47,6 +47,9 @@ export function resetAnimState(state) {
     state.floorSound = -1;
     state.noInterpolate = false;
     state.interpolationFrame = -1;
+    if (state.callback) {
+        state.callback();
+    }
     state.callback = null;
 }
 
