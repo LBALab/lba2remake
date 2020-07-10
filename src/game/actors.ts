@@ -282,6 +282,9 @@ export async function loadActor(
         },
 
         cancelAnims() {
+            // TODO(scottwilliams): There are likely other cases where we should
+            // also not cancel the animations e.g. when Twinsen is crawling. Add
+            // them here when we've implemented them.
             if (this.props.runtimeFlags.isDrowning) {
                 return;
             }
