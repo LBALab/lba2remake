@@ -1,4 +1,5 @@
 import { MotionController } from '@webxr-input-profiles/motion-controllers';
+import { BehaviourMode } from '../../game/loop/hero';
 
 interface BtnMapping {
     btn: string;
@@ -90,12 +91,21 @@ export function applyMappings(
     });
     applyMapping(components, mappings, 'prevBehaviour', (enabled) => {
         if (enabled) {
-            setBehaviour(game, game.getState().hero.behaviour - 1);
+            let newBehaviour = Math.max(game.getState().hero.behaviour - 1, 0);
+            if (game.getState().hero.behaviour === BehaviourMode.JETPACK) {
+                newBehaviour = BehaviourMode.PROTOPACK;
+            }
+            setBehaviour(game, newBehaviour);
         }
     });
     applyMapping(components, mappings, 'nextBehaviour', (enabled) => {
         if (enabled) {
-            setBehaviour(game, game.getState().hero.behaviour + 1);
+            if (game.getState().hero.behaviour === BehaviourMode.PROTOPACK ||
+                game.getState().hero.behaviour === BehaviourMode.JETPACK) {
+                setBehaviour(game, BehaviourMode.JETPACK);
+            } else {
+                setBehaviour(game, Math.min(game.getState().hero.behaviour + 1, 4));
+            }
         }
     });
     if (controlsState.firstPerson) {
@@ -141,10 +151,9 @@ function applyMapping(
 let bubbleTimeout = null;
 
 function setBehaviour(game, behaviour) {
-    const newBehaviour = Math.max(Math.min(behaviour, 3), 0);
-    game.getState().hero.behaviour = newBehaviour;
+    game.getState().hero.behaviour = behaviour;
     game.setUiState({
-        infoBubble: game.menuTexts[80 + newBehaviour].value
+        infoBubble: game.menuTexts[80 + behaviour].value
     });
     if (bubbleTimeout) {
         clearTimeout(bubbleTimeout);
