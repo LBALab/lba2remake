@@ -37,6 +37,7 @@ export function createState(): GameState {
             clover: { boxes: 2, leafs: 1 },
             magicball: { level: 0, strength: 0, bounce: 0 },
             position: null,
+            lastValidPosTime: 0,
         },
         chapter: 0,
         flags: {
