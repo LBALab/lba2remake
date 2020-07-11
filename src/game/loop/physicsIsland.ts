@@ -198,6 +198,9 @@ function processCollisions(sections, scene, obj, time) {
     obj.props.runtimeFlags.isTouchingFloor = getDistFromFloor(sections, scene, obj) < 0.001;
 
     if (isTouchingGround && ground.liquid > 0) {
+        if (obj.index == 0) {
+            console.log(ground.liquid);
+        }
         obj.props.runtimeFlags.isDrowning = true;
     }
     return isTouchingGround;

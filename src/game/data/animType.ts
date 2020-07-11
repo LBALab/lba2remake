@@ -22,4 +22,5 @@ export const AnimType = {
     DODGE_LEFT: 41,
     DODGE_FORWARD: 42,
     DODGE_BACKWARD: 43,
+    DROWNING_LAVA: 44,
 };
