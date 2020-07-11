@@ -31,9 +31,12 @@ export function updateHero(game, scene, hero, time) {
     } else {
         processActorMovement(game, scene, hero, time, behaviour);
     }
-
-    if (validPosition(hero.props.runtimeFlags)) {
+    
+    // Only save a valid position at most once every 500ms.
+    const timeSinceLastPosSave = performance.now() - game.getState().hero.lastValidPosTime;
+    if (validPosition(hero.props.runtimeFlags) && timeSinceLastPosSave > 500) {
         scene.savedState = game.getState().save(hero);
+        game.getState().hero.lastValidPosTime = performance.now();
     }
 }
 
