@@ -98,8 +98,8 @@ const applyChangesStyle = {
 };
 
 const infoButton = {
-    margin: '2px',
-    padding: '0.2em 0.4em'
+    margin: '1px',
+    padding: '0em'
 };
 
 const mainInfoButton = {
