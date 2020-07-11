@@ -57,8 +57,8 @@ function handleBehaviourChanges(scene, hero, behaviour) {
 function validPosition(runtimeFlags) {
     const onFloor = runtimeFlags.isTouchingGround ||
                     runtimeFlags.isTouchingFloor;
-    return onFloor && !runtimeFlags.isDrowning && !runtimeFlags.isJumping &&
-    !runtimeFlags.isFalling && !runtimeFlags.isClimbing;
+    return onFloor && !runtimeFlags.isDrowning && !runtimeFlags.isDrowningLava &&
+    !runtimeFlags.isJumping && !runtimeFlags.isFalling && !runtimeFlags.isClimbing;
 }
 
 function toggleJump(hero, value) {
@@ -111,6 +111,16 @@ function processFirstPersonsMovement(game, scene, hero) {
             hero.animState.noInterpolate = true;
             return;
         }
+        if (hero.props.runtimeFlags.isDrowningLava) {
+            hero.setAnimWithCallback(AnimType.DROWNING_LAVA, () => {
+                game.getState().load(scene.savedState, hero);
+                hero.setAnim(AnimType.NONE);
+                hero.props.runtimeFlags.isDrowningLava = false;
+            });
+            hero.animState.noInterpolate = true;
+            return;
+        }
+
         animIndex = AnimType.NONE;
         if (Math.abs(controlsState.controlVector.y) > 0.6) {
             hero.props.runtimeFlags.isWalking = true;
@@ -169,7 +179,7 @@ function processFall(scene, hero) {
     }
     if (distFromFloor < 0.001) {
         // If we've jumped into water, don't play the landing animation.
-        if (hero.props.runtimeFlags.isDrowning) {
+        if (hero.props.runtimeFlags.isDrowning || hero.props.runtimeFlags.isDrowningLava) {
             hero.props.runtimeFlags.isFalling = false;
             hero.props.fallDistance = 0;
             return;
@@ -239,6 +249,16 @@ function processActorMovement(game, scene, hero, time, behaviour) {
             hero.animState.noInterpolate = true;
             return;
         }
+        if (hero.props.runtimeFlags.isDrowningLava) {
+            hero.setAnimWithCallback(AnimType.DROWNING_LAVA, () => {
+                game.getState().load(scene.savedState, hero);
+                hero.setAnim(AnimType.NONE);
+                hero.props.runtimeFlags.isDrowningLava = false;
+            });
+            hero.animState.noInterpolate = true;
+            return;
+        }
+
         animIndex = AnimType.NONE;
         if (!controlsState.relativeToCam && controlsState.controlVector.y !== 0) {
             hero.props.runtimeFlags.isWalking = true;

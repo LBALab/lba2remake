@@ -440,6 +440,7 @@ function createRuntimeFlags() {
         isClimbing: false,
         isColliding: false,
         isDrowning: false,
+        isDrowningInLava: false,
         isTouchingGround: false,
         isTouchingFloor: false,
     };
