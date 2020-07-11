@@ -108,15 +108,16 @@ function processFirstPersonsMovement(game, scene, hero) {
             hero.animState.noInterpolate = true;
             return;
         }
-        if (hero.props.runtimeFlags.isDrowningInLava) {
+        if (hero.props.runtimeFlags.isDrowningLava) {
             hero.setAnimWithCallback(AnimType.DROWNING_LAVA, () => {
                 game.getState().load(scene.savedState, hero);
                 hero.setAnim(AnimType.NONE);
-                hero.props.runtimeFlags.isDrowning = false;
+                hero.props.runtimeFlags.isDrowningLava = false;
             });
             hero.animState.noInterpolate = true;
             return;
         }
+
         animIndex = AnimType.NONE;
         if (Math.abs(controlsState.controlVector.y) > 0.6) {
             hero.props.runtimeFlags.isWalking = true;
