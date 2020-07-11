@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {getTriangleFromPos} from '../../island/ground';
+import { LIQUID_TYPES, getTriangleFromPos} from '../../island/ground';
 import { WORLD_SIZE } from '../../utils/lba';
 import { BehaviourMode } from './hero';
 import { AnimType } from '../data/animType';
@@ -198,10 +198,17 @@ function processCollisions(sections, scene, obj, time) {
     obj.props.runtimeFlags.isTouchingFloor = getDistFromFloor(sections, scene, obj) < 0.001;
 
     if (isTouchingGround && ground.liquid > 0) {
-        if (obj.index == 0) {
-            console.log(ground.liquid);
+        switch (ground.liquid) {
+            case LIQUID_TYPES.WATER:
+                obj.props.runtimeFlags.isDrowning = true;
+                break;
+            case LIQUID_TYPES.LAVA:
+                obj.props.runtimeFlags.isDrowningLava = true;
+                break;
+            default:
+                obj.props.runtimeFlags.isDrowning = true;
+                break;
         }
-        obj.props.runtimeFlags.isDrowning = true;
     }
     return isTouchingGround;
 }

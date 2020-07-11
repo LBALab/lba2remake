@@ -3,6 +3,11 @@ import * as THREE from 'three';
 import {bits} from '../utils';
 import {WORLD_SCALE, WORLD_SCALE_B} from '../utils/lba';
 
+export const LIQUID_TYPES = {
+    WATER: 12,
+    LAVA: 9,
+};
+
 const push = Array.prototype.push;
 
 export function loadGround(section, geometries, usedTiles) {
