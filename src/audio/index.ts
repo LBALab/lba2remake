@@ -21,8 +21,7 @@ export function createAudioManager(state) {
     const context = createAudioContext();
     const menuContext = createAudioContext();
 
-    let contextActive = context.state === 'running';
-    let menuContextActive = menuContext.state === 'running';
+    const isActive = (ctx: AudioContext) => ctx.state === 'running';
 
     const musicSource = createMusicSource(context);
     const menuMusicSource = createMusicSource(menuContext);
@@ -121,15 +120,11 @@ export function createAudioManager(state) {
             });
         },
         resumeContext: () => {
-            context.resume().then(() => {
-                contextActive = context.state === 'running';
-            });
-            menuContext.resume().then(() => {
-                menuContextActive = menuContext.state === 'running';
-            });
+            context.resume();
+            menuContext.resume();
         },
         isContextActive: () => {
-            return contextActive && menuContextActive;
+            return isActive(context) && isActive(menuContext);
         }
     };
 }
