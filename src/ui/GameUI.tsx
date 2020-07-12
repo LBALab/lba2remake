@@ -295,7 +295,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             }
             if (key === 'ControlLeft' || key === 'ControlRight' || key === 17) {
                 this.setState({ behaviourMenu: true });
-                if (!this.state.cinema && this.state.scene.actors[0]) {
+                if (!this.state.cinema && this.state.scene && this.state.scene.actors[0]) {
                     this.state.scene.actors[0].cancelAnims();
                 }
                 this.state.game.pause();
