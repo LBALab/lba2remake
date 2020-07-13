@@ -10,7 +10,7 @@ module.exports = ({script, buildNumber}) => (<html lang="en">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
         <link rel="manifest" href="manifest.json"/>
         <link rel="stylesheet" href="layout.css"/>
-        <title>LBA2</title>
+        <title>LBA2 Test Test</title>
         {buildNumber && <script dangerouslySetInnerHTML={{__html: `window.buildNumber=${buildNumber};`}} />}
         <script dangerouslySetInnerHTML={{__html: script || 'window.ga=function(){}'}} />
     </head>
