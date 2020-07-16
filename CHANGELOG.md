@@ -1,6 +1,6 @@
 # Version history
 
-### [v0.4.0](https://github.com/agrande/lba2remake/compare/v0.3.0...v0.4.0) [Pending] Big update!
+## [v0.4.0](https://github.com/agrande/lba2remake/compare/v0.3.0...v0.4.0) [Pending] Big update!
 _Unknown date_
 
 #### TODO: Fill in the changelog as we go
@@ -16,7 +16,7 @@ _July 5th, 2020_
 #### Bug fixes
 - Fixed Audio Source Exception
 
-### [v0.3.0](https://github.com/agrande/lba2remake/compare/v0.2.3...v0.3.0) Big update!
+## [v0.3.0](https://github.com/agrande/lba2remake/compare/v0.2.3...v0.3.0) Big update!
 _June 29th, 2020_
 
 #### Gameplay
