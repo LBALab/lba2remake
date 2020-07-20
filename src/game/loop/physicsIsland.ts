@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { LIQUID_TYPES, getTriangleFromPos} from '../../island/ground';
-import { WORLD_SIZE } from '../../utils/lba';
+import { WORLD_SIZE, getPositions } from '../../utils/lba';
 import { BehaviourMode } from './hero';
 import { AnimType } from '../data/animType';
 
@@ -39,23 +39,16 @@ const DEFAULT_FLOOR_THRESHOLD = 0.001;
 // means any object which Twinsen could stand on between him and the ground, or
 // the ground if none exist.
 function getDistFromFloor(sections, scene, obj) {
+    if (!obj.model) {
+        return;
+    }
+
     const originalPos = new THREE.Vector3();
     originalPos.copy(obj.physics.position);
     originalPos.applyMatrix4(scene.sceneNode.matrixWorld);
     const minFunc = (a, b) => a > b;
     const floorHeight = getFloorHeight(sections, scene, obj, minFunc, DEFAULT_FLOOR_THRESHOLD);
     return originalPos.y - floorHeight;
-}
-
-// getPositions returns the 4 points that form the bottom face of the provided
-// bounding box.
-function getPositions(bb) {
-    const positions = [];
-    positions.push(bb.min);
-    positions.push(new THREE.Vector3(bb.min.x, bb.min.y, bb.max.z));
-    positions.push(new THREE.Vector3(bb.max.x, bb.min.y, bb.min.z));
-    positions.push(new THREE.Vector3(bb.max.x, bb.min.y, bb.max.z));
-    return positions;
 }
 
 // getFloorHeight returns the height of the floor below Twinsen. Note that this
@@ -128,7 +121,10 @@ function processCollisions(sections, scene, obj, time) {
     FLAGS.hitObject = false;
     const ground = getGround(section, POSITION);
     let height = ground.height;
+
     obj.props.distFromGround = Math.max(obj.physics.position.y - height, 0);
+    const distFromFloor = getDistFromFloor(sections, scene, obj);
+    obj.props.distFromFloor = distFromFloor;
 
     let isTouchingGround = true;
     if (obj.physics.position.y > height) {
@@ -138,6 +134,7 @@ function processCollisions(sections, scene, obj, time) {
     const isUsingProtoOrJetpack = (obj.props.entityIndex === BehaviourMode.JETPACK ||
                                    obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
                                    obj.props.animIndex === AnimType.FORWARD;
+    obj.props.runtimeFlags.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
     if (isUsingProtoOrJetpack) {
         let heightOffset = PROTOPACK_OFFSET;
         if (obj.props.entityIndex === BehaviourMode.JETPACK) {
@@ -153,7 +150,7 @@ function processCollisions(sections, scene, obj, time) {
             // don't immediately jump to `height` but rather "fly" up to it.
             const diff = height - obj.physics.position.y;
             if (diff <= 0) {
-                // We just let the gravity physics apply here.
+                obj.physics.position.y -= JETPACK_VERTICAL_SPEED * time.delta;
                 obj.physics.position.y = Math.max(height, obj.physics.position.y);
             } else {
                 obj.physics.position.y += JETPACK_VERTICAL_SPEED * time.delta;
@@ -195,7 +192,7 @@ function processCollisions(sections, scene, obj, time) {
         }
     }
     obj.props.runtimeFlags.isTouchingGround = isTouchingGround;
-    obj.props.runtimeFlags.isTouchingFloor = getDistFromFloor(sections, scene, obj) < 0.001;
+    obj.props.runtimeFlags.isTouchingFloor = distFromFloor < 0.001;
 
     if (isTouchingGround && ground.liquid > 0) {
         switch (ground.liquid) {

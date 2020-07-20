@@ -92,6 +92,10 @@ function LADDER(game, scene, zone, hero) {
         return false;
     }
 
+    if (hero.props.runtimeFlags.isUsingProtoOrJetpack) {
+        return false;
+    }
+
     // TODO(scottwilliams): work out how to tell if Twinsen is facing ladders
     // at arbitrary angles as happens on islands (vs isometric).
     const facing = isFacingLadder(hero.physics.temp.angle) || scene.isIsland;
@@ -206,6 +210,8 @@ function calculateTagetPosition(hero, zone, newScene) {
     } else {
         delta = (hero.physics.position.z - zone.props.box.zMin) / lenZ;
     }
+    const lenY = zone.props.box.yMax - zone.props.box.yMin;
+    const deltaY = (hero.physics.position.y - zone.props.box.yMin) / lenY;
 
     if (closestZone) {
         // console.log("Current scene ID: " + closestZone.props.snap +
@@ -248,10 +254,8 @@ function calculateTagetPosition(hero, zone, newScene) {
             position.z = delta * newLenZ + newBox.zMin;
         }
 
-        // We find that the Y position given in the zone props is much
-        // more accurate that the X and Z positions and so we can just
-        // use that here.
-        position.y = initialTargetPos.y;
+        const newLenY = newBox.yMax - newBox.yMin;
+        position.y = deltaY * newLenY + newBox.yMin;
     } else {
         position.x = initialTargetPos.x;
         position.y = initialTargetPos.y;
@@ -292,6 +296,17 @@ function GOTO_SCENE(game, scene, zone, hero) {
                 newHero.physics.orientation.setFromEuler(euler);
                 newHero.threeObject.quaternion.copy(newHero.physics.orientation);
             }
+
+            // Preserve animation state and flags this ensures e.g. if we
+            // jetpack across a scene change we continue without the animation
+            // resetting.
+            Object.keys(hero.props.runtimeFlags).forEach((k) => {
+                newHero.props.runtimeFlags[k] = hero.props.runtimeFlags[k];
+            });
+            newHero.animState = hero.animState;
+            newHero.props.animIndex = hero.props.animIndex;
+            newHero.props.entityIndex = hero.props.entityIndex;
+            newHero.reloadModel(newScene);
         });
         return true;
     }

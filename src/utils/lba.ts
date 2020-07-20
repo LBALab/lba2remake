@@ -95,3 +95,14 @@ export function getRandom(min, max) {
 export function getFrequency(frequency) {
     return (frequency * 2) / 100;
 }
+
+// getPositions returns the 4 points that form the bottom face of the provided
+// bounding box.
+export function getPositions(bb) {
+    const positions = [];
+    positions.push(bb.min);
+    positions.push(new THREE.Vector3(bb.min.x, bb.min.y, bb.max.z));
+    positions.push(new THREE.Vector3(bb.max.x, bb.min.y, bb.min.z));
+    positions.push(new THREE.Vector3(bb.max.x, bb.min.y, bb.max.z));
+    return positions;
+}
