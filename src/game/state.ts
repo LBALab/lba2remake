@@ -50,6 +50,9 @@ export function createState(): GameState {
         },
         load(savedState, hero) {
             const state = JSON.parse(savedState);
+            if (!state) {
+                return;
+            }
             hero.physics.position.x = state.hero.position.x;
             hero.physics.position.y = state.hero.position.y;
             hero.physics.position.z = state.hero.position.z;

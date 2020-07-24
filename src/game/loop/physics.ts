@@ -20,8 +20,9 @@ function processActorPhysics(scene, actor, time) {
 
     actor.physics.position.add(actor.physics.temp.position);
     if (actor.props.flags.hasCollisions) {
-        if (!actor.props.runtimeFlags.hasGravityByAnim
-            && actor.props.flags.canFall && !actor.props.runtimeFlags.isClimbing) {
+        if (!actor.props.runtimeFlags.hasGravityByAnim &&
+            actor.props.flags.canFall && !actor.props.runtimeFlags.isClimbing &&
+            !actor.props.runtimeFlags.isUsingProtoOrJetpack) {
             // Max falling speed: 0.15m per frame
             actor.physics.position.y -= 0.25 * WORLD_SIZE * time.delta;
         }

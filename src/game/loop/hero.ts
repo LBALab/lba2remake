@@ -41,12 +41,13 @@ export function updateHero(game, scene, hero, time) {
 }
 
 function handleBehaviourChanges(scene, hero, behaviour) {
+    if (hero.props.runtimeFlags.isDrowning) {
+        return;
+    }
     if (hero.props.entityIndex !== behaviour) {
         hero.props.entityIndex = behaviour;
         hero.reloadModel(scene);
         toggleJump(hero, false);
-        // TODO(scottwilliams): this nulls any existing callbacks, meaning e.g.
-        // we don't reset falling flag etc. work out what to do here.
         hero.resetAnimState();
     }
 }
@@ -107,6 +108,7 @@ function processFirstPersonsMovement(game, scene, hero) {
                 game.getState().load(scene.savedState, hero);
                 hero.setAnim(AnimType.NONE);
                 hero.props.runtimeFlags.isDrowning = false;
+                hero.props.noInterpolateNext = true;
             });
             hero.animState.noInterpolate = true;
             return;
@@ -116,6 +118,7 @@ function processFirstPersonsMovement(game, scene, hero) {
                 game.getState().load(scene.savedState, hero);
                 hero.setAnim(AnimType.NONE);
                 hero.props.runtimeFlags.isDrowningLava = false;
+                hero.props.noInterpolateNext = true;
             });
             hero.animState.noInterpolate = true;
             return;
@@ -226,17 +229,21 @@ function processActorMovement(game, scene, hero, time, behaviour) {
             processFall(scene, hero);
             return;
         }
-        let distFromFloor = hero.props.distFromGround;
-        if (scene.isIsland) {
-            distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
-        }
-        // We don't trigger a fall if Twinsen is using the Jetpack, (but we do
-        // for the protopack).
+
         const usingJetpack = hero.props.entityIndex === BehaviourMode.JETPACK &&
                              hero.props.animIndex === AnimType.FORWARD;
-        if (distFromFloor >= SMALL_FALL_HEIGHT && !usingJetpack) {
+        const usingProtopack = hero.props.entityIndex === BehaviourMode.PROTOPACK &&
+                             hero.props.animIndex === AnimType.FORWARD;
+        let fallThreshold = SMALL_FALL_HEIGHT;
+        if (usingProtopack && !scene.isIsland) {
+            fallThreshold = 0.5;
+        }
+        if (usingJetpack) {
+            fallThreshold = Infinity;
+        }
+        if (hero.props.distFromFloor >= fallThreshold) {
             hero.props.runtimeFlags.isFalling = true;
-            hero.props.fallDistance = distFromFloor;
+            hero.props.fallDistance = hero.props.distFromFloor;
             hero.setAnim(AnimType.FALLING);
             return;
         }
@@ -245,6 +252,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
                 game.getState().load(scene.savedState, hero);
                 hero.setAnim(AnimType.NONE);
                 hero.props.runtimeFlags.isDrowning = false;
+                hero.props.noInterpolateNext = true;
             });
             hero.animState.noInterpolate = true;
             return;
@@ -254,6 +262,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
                 game.getState().load(scene.savedState, hero);
                 hero.setAnim(AnimType.NONE);
                 hero.props.runtimeFlags.isDrowningLava = false;
+                hero.props.noInterpolateNext = true;
             });
             hero.animState.noInterpolate = true;
             return;

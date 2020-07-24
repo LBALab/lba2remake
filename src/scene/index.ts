@@ -443,6 +443,7 @@ function createRuntimeFlags() {
         isDrowningInLava: false,
         isTouchingGround: false,
         isTouchingFloor: false,
+        isUsingProtoOrJetpack: false,
     };
 }
 
