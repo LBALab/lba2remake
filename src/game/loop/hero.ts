@@ -41,6 +41,9 @@ export function updateHero(game, scene, hero, time) {
 }
 
 function handleBehaviourChanges(scene, hero, behaviour) {
+    if (hero.props.runtimeFlags.isDrowning) {
+        return;
+    }
     if (hero.props.entityIndex !== behaviour) {
         hero.props.entityIndex = behaviour;
         hero.reloadModel(scene);
@@ -105,6 +108,7 @@ function processFirstPersonsMovement(game, scene, hero) {
                 game.getState().load(scene.savedState, hero);
                 hero.setAnim(AnimType.NONE);
                 hero.props.runtimeFlags.isDrowning = false;
+                hero.props.noInterpolateNext = true;
             });
             hero.animState.noInterpolate = true;
             return;
@@ -114,6 +118,7 @@ function processFirstPersonsMovement(game, scene, hero) {
                 game.getState().load(scene.savedState, hero);
                 hero.setAnim(AnimType.NONE);
                 hero.props.runtimeFlags.isDrowningLava = false;
+                hero.props.noInterpolateNext = true;
             });
             hero.animState.noInterpolate = true;
             return;
@@ -246,7 +251,8 @@ function processActorMovement(game, scene, hero, time, behaviour) {
             hero.setAnimWithCallback(AnimType.DROWNING, () => {
                 game.getState().load(scene.savedState, hero);
                 hero.setAnim(AnimType.NONE);
-                hero.props.runtimeFlags.isDrowning = false;
+                hero.props.runtimeFlags.isDrowning = false;     
+                hero.props.noInterpolateNext = true;
             });
             hero.animState.noInterpolate = true;
             return;
@@ -256,6 +262,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
                 game.getState().load(scene.savedState, hero);
                 hero.setAnim(AnimType.NONE);
                 hero.props.runtimeFlags.isDrowningLava = false;
+                hero.props.noInterpolateNext = true;
             });
             hero.animState.noInterpolate = true;
             return;
