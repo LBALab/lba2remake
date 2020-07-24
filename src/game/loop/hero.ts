@@ -251,7 +251,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
             hero.setAnimWithCallback(AnimType.DROWNING, () => {
                 game.getState().load(scene.savedState, hero);
                 hero.setAnim(AnimType.NONE);
-                hero.props.runtimeFlags.isDrowning = false;     
+                hero.props.runtimeFlags.isDrowning = false;
                 hero.props.noInterpolateNext = true;
             });
             hero.animState.noInterpolate = true;
