@@ -38,6 +38,7 @@ export function createState(): GameState {
             magicball: { level: 0, strength: 0, bounce: 0 },
             position: null,
             lastValidPosTime: 0,
+            animState: null,
         },
         chapter: 0,
         flags: {
@@ -46,6 +47,7 @@ export function createState(): GameState {
         },
         save(hero) {
             this.hero.position = hero.physics.position;
+            this.hero.animState = hero.animState;
             return JSON.stringify(omit(this, ['save', 'load', 'config']));
         },
         load(savedState, hero) {
@@ -56,6 +58,30 @@ export function createState(): GameState {
             hero.physics.position.x = state.hero.position.x;
             hero.physics.position.y = state.hero.position.y;
             hero.physics.position.z = state.hero.position.z;
+            // Merge the current animState with the saved one, overwritting
+            // things like the currentFrame etc. to ensure we e.g. continue to
+            // fly the jetpack if we drown whilst using it.
+            hero.animState = {
+                ...hero.animState,
+                // Obmit any objects with functions since they aren't preserved
+                // through the stringify process.
+                ...omit(state.hero.animState, [
+                    'skeleton',
+                    'bones',
+                    'matrixRotation',
+                    'step',
+                    'rotation',
+                ]),
+            };
+
+            hero.animState.matrixRotation.fromArray(state.hero.animState.matrixRotation.elements);
+            hero.animState.step.x = state.hero.animState.step.x;
+            hero.animState.step.y = state.hero.animState.step.y;
+            hero.animState.step.z = state.hero.animState.step.z;
+            hero.animState.rotation.x = state.hero.animState.rotation.x;
+            hero.animState.rotation.y = state.hero.animState.rotation.y;
+            hero.animState.rotation.z = state.hero.animState.rotation.z;
+
             Object.assign(this, state);
         }
     };

@@ -307,6 +307,8 @@ function GOTO_SCENE(game, scene, zone, hero) {
             newHero.props.animIndex = hero.props.animIndex;
             newHero.props.entityIndex = hero.props.entityIndex;
             newHero.reloadModel(newScene);
+
+            newScene.savedState = game.getState().save(newHero);
         });
         return true;
     }
