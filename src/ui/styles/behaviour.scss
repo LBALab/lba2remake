@@ -67,6 +67,8 @@
 
 .behaviourItemContainer {
     display: flex;
+    justify-content: center;
+    flex-grow: 1;
     margin: 15px;
 
     @include media("<=tablet","portrait") {
@@ -75,7 +77,6 @@
 }
 
 .behaviourItem {
-    flex-grow: 1;
     user-select: none;
     position: relative;
     margin-right: 15px;

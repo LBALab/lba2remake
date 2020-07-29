@@ -127,16 +127,70 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
         switch (key) {
             case 37:
             case 'ArrowLeft':
-                behav -= 1;
-                if (behav < BehaviourModeType.NORMAL) {
-                    behav = BehaviourModeType.DISCRETE;
+                 switch (true) {
+                    // Normal 4 behaviour modes.
+                    case behav <= BehaviourModeType.DISCRETE:
+                        behav -= 1;
+                        if (behav < BehaviourModeType.NORMAL) {
+                            behav = BehaviourModeType.DISCRETE;
+                        }
+                        break;
+                    case behav === BehaviourModeType.PROTOPACK:
+                        behav = BehaviourModeType.JETPACK;
+                        break;
+                    case behav === BehaviourModeType.JETPACK:
+                        behav = BehaviourModeType.PROTOPACK;
+                        break;
                 }
                 break;
             case 39:
             case 'ArrowRight':
-                behav += 1;
-                if (behav > BehaviourModeType.DISCRETE) {
-                    behav = BehaviourModeType.NORMAL;
+                switch (true) {
+                    // Normal 4 behaviour modes.
+                    case behav <= BehaviourModeType.DISCRETE:
+                        behav += 1;
+                        if (behav > BehaviourModeType.DISCRETE) {
+                            behav = BehaviourModeType.NORMAL;
+                        }
+                        break;
+                    case behav === BehaviourModeType.PROTOPACK:
+                        behav = BehaviourModeType.JETPACK;
+                        break;
+                    case behav === BehaviourModeType.JETPACK:
+                        behav = BehaviourModeType.PROTOPACK;
+                        break;
+                }
+                break;
+            case 38:
+            case 'ArrowUp':
+                switch (true) {
+                    // Normal 4 behaviour modes.
+                    case behav <= BehaviourModeType.DISCRETE:
+                        behav = BehaviourModeType.HORN;
+                        break;
+                    case behav === BehaviourModeType.HORN:
+                        behav = BehaviourModeType.PROTOPACK;
+                        break;
+                    case behav === BehaviourModeType.PROTOPACK ||
+                         behav === BehaviourModeType.JETPACK:
+                        behav = BehaviourModeType.NORMAL;
+                        break;
+                }
+                break;
+            case 40:
+            case 'ArrowDown':
+                switch (true) {
+                    // Normal 4 behaviour modes.
+                    case behav <= BehaviourModeType.DISCRETE:
+                        behav = BehaviourModeType.PROTOPACK;
+                        break;
+                    case behav === BehaviourModeType.PROTOPACK ||
+                         behav === BehaviourModeType.JETPACK:
+                        behav = BehaviourModeType.HORN;
+                        break;
+                    case behav === BehaviourModeType.HORN:
+                        behav = BehaviourModeType.NORMAL;
+                        break;
                 }
                 break;
         }
@@ -151,17 +205,38 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
         };
     });
 
+    let behaviourModeItems;
+    if (behaviour <= BehaviourModeType.DISCRETE) {
+        behaviourModeItems = (
+            <div className="behaviourItemContainer">
+                <BehaviourModeItem selected={behaviour === 0} />
+                <BehaviourModeItem selected={behaviour === 1} />
+                <BehaviourModeItem selected={behaviour === 2} />
+                <BehaviourModeItem selected={behaviour === 3} style={{
+                    marginRight: '0px'
+                }} />
+            </div>
+        );
+    } else if (behaviour === BehaviourModeType.HORN) {
+        behaviourModeItems = (
+            <div className="behaviourItemContainer">
+                <BehaviourModeItem selected={behaviour === 6} />
+            </div>
+        );
+    } else if (behaviour === BehaviourModeType.PROTOPACK ||
+               behaviour === BehaviourModeType.JETPACK) {
+        behaviourModeItems = (
+            <div className="behaviourItemContainer">
+                <BehaviourModeItem selected={behaviour === 4} />
+                <BehaviourModeItem selected={behaviour === 8} />
+            </div>
+        );
+    }
+
     return (
         <div className="behaviourMenu">
             <div className="behaviourContainer">
-                <div className="behaviourItemContainer">
-                    <BehaviourModeItem selected={behaviour === 0} />
-                    <BehaviourModeItem selected={behaviour === 1} />
-                    <BehaviourModeItem selected={behaviour === 2} />
-                    <BehaviourModeItem selected={behaviour === 3} style={{
-                        marginRight: '0px'
-                    }} />
-                </div>
+                {behaviourModeItems}
                 <BehaviourMode game={game} behaviour={behaviour} />
             </div>
             <div className="behaviourContainer points">
