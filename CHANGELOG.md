@@ -3,7 +3,14 @@
 ## [v0.4.0](https://github.com/agrande/lba2remake/compare/v0.3.0...v0.4.0) [Pending] Big update!
 _Unknown date_
 
-#### TODO: Fill in the changelog as we go
+#### UI
+
+- Add additional behaviours (jetpack/horn etc.) to Behaviour Menu.
+
+#### Gameplay
+
+- Implemented Jetpack / protopack.
+- Implemented drowning in water and lava.
 
 -----------------------------
 ### [v0.3.1](https://github.com/agrande/lba2remake/compare/v0.3.0...v0.3.1) Bugfixes
