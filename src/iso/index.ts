@@ -145,11 +145,10 @@ async function loadMesh(grid, entry, ambience, is3D) {
                 mixer.update(time.delta);
             }
             const hero = scene.actors[0];
-            if (!hero.threeObject)
-                return;
-
-            slateUniforms.heroPos.value.set(0, 0, 0);
-            slateUniforms.heroPos.value.applyMatrix4(hero.threeObject.matrixWorld);
+            if (hero.threeObject && geometries.slate_ground.positions.length > 0) {
+                slateUniforms.heroPos.value.set(0, 0, 0);
+                slateUniforms.heroPos.value.applyMatrix4(hero.threeObject.matrixWorld);
+            }
         }
     };
 }
