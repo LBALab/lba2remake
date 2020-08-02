@@ -785,6 +785,21 @@
     "148": {
       "mirror": true
     },
+    "149": {
+      "replace": true,
+      "file": "149_tile.glb",
+      "orientation": 0
+    },
+    "153": {
+      "replace": true,
+      "file": "153_154_dome_tile.glb",
+      "orientation": 0
+    },
+    "154": {
+      "replace": true,
+      "file": "153_154_dome_tile.glb",
+      "orientation": 0
+    },
     "166": {
       "replace": true,
       "file": "166_167_small_bars.glb",
