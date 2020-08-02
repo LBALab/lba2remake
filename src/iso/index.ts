@@ -155,7 +155,7 @@ async function loadMesh(grid, entry, ambience, is3D) {
 }
 
 function getGeometryType(block) {
-    switch (block.groundType) {
+    switch (block && block.groundType) {
         case GROUND_TYPES.DOME_OF_THE_SLATE_FLOOR:
             return 'slate_ground';
     }
