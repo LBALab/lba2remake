@@ -52,6 +52,8 @@ export async function loadIsometricScenery(entry, ambience, is3D) {
 
         pickBrick: pickBrick.bind(null, grid),
 
+        getBrickInfo: getBrickInfo.bind(null, grid),
+
         update: (_game, _scene, time) => {
             if (mixer) {
                 mixer.update(time.delta);
@@ -74,7 +76,6 @@ function pickBrick(grid, raycaster: THREE.Raycaster) {
                     if (blocks[y]) {
                         const layout = library.layouts[blocks[y].layout];
                         if (layout) {
-                            const key = `${x},${y},${z}`;
                             BB.min.set((64 - x) / 32, y / 64, z / 32);
                             BB.max.set((65 - x) / 32, (y + 1) / 64, (z + 1) / 32);
                             BB.min.multiplyScalar(WORLD_SIZE);
@@ -85,7 +86,6 @@ function pickBrick(grid, raycaster: THREE.Raycaster) {
                                     const distSq = tgt.distanceToSquared(raycaster.ray.origin);
                                     if (!result || result.distSq > distSq) {
                                         result = {
-                                            key,
                                             x,
                                             y,
                                             z,
@@ -104,6 +104,30 @@ function pickBrick(grid, raycaster: THREE.Raycaster) {
         }
     }
     return result;
+}
+
+function getBrickInfo(grid, {x, y, z}) {
+    const { library, cells } = grid;
+    const cell = cells[(x * 64) + z];
+    if (cell) {
+        const blocks = cell.blocks;
+        if (blocks[y]) {
+            const layout = library.layouts[blocks[y].layout];
+            if (layout) {
+                const block = layout.blocks[blocks[y].block];
+                if (block && block.brick in library.bricksMap) {
+                    return {
+                        x,
+                        y,
+                        z,
+                        block: blocks[y],
+                        blockInfo: block,
+                    };
+                }
+            }
+        }
+    }
+    return null;
 }
 
 async function loadMesh(grid, entry, ambience, is3D) {

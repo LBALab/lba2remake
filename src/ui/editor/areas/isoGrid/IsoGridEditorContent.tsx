@@ -223,6 +223,30 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 }
                 break;
             }
+            case 38: // up
+            case 'ArrowUp': {
+                const { selectionData, isoGrid } = this.state;
+                if (selectionData && isoGrid) {
+                    const { x, y, z } = selectionData;
+                    const newSelection = isoGrid.getBrickInfo({ x, y: y + 1, z });
+                    if (newSelection) {
+                        this.select(newSelection);
+                    }
+                }
+                break;
+            }
+            case 40: // down
+            case 'ArrowDown': {
+                const { selectionData, isoGrid } = this.state;
+                if (selectionData && isoGrid) {
+                    const { x, y, z } = selectionData;
+                    const newSelection = isoGrid.getBrickInfo({ x, y: y - 1, z });
+                    if (newSelection) {
+                        this.select(newSelection);
+                    }
+                }
+                break;
+            }
             case 27: // escape
             case 'Escape': {
                 break;
@@ -252,21 +276,25 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             );
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, scene.camera.threeCamera);
-            const result = isoGrid.pickBrick(raycaster);
-            if (result) {
-                const { x, y, z } = result;
-                this.state.selectionObj.visible = true;
-                this.state.selectionObj.position.set(
-                    (64.5 - x) / 32,
-                    (y + 0.5) / 64,
-                    (z + 0.5) / 32
-                );
-                this.state.selectionObj.position.multiplyScalar(WORLD_SIZE);
-                this.setState({ selectionData: result }, this.saveData);
-            } else {
-                this.state.selectionObj.visible = false;
-                this.setState({ selectionData: null }, this.saveData);
-            }
+            const selectionData = isoGrid.pickBrick(raycaster);
+            this.select(selectionData);
+        }
+    }
+
+    select(selectionData) {
+        if (selectionData) {
+            const { x, y, z } = selectionData;
+            this.state.selectionObj.visible = true;
+            this.state.selectionObj.position.set(
+                (64.5 - x) / 32,
+                (y + 0.5) / 64,
+                (z + 0.5) / 32
+            );
+            this.state.selectionObj.position.multiplyScalar(WORLD_SIZE);
+            this.setState({ selectionData }, this.saveData);
+        } else {
+            this.state.selectionObj.visible = false;
+            this.setState({ selectionData: null }, this.saveData);
         }
     }
 
