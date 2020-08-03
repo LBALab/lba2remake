@@ -825,6 +825,21 @@
       "file": "149_tile.glb",
       "orientation": 0
     },
+    "150": {
+      "replace": true,
+      "file": "150_152_178_179_baseboard.glb",
+      "orientation": 0
+    },
+    "151": {
+      "replace": true,
+      "file": "151_dome_column.glb",
+      "orientation": 0
+    },
+    "152": {
+      "replace": true,
+      "file": "150_152_178_179_baseboard.glb",
+      "orientation": 1
+    },
     "153": {
       "replace": true,
       "file": "153_154_dome_tile.glb",
@@ -855,6 +870,16 @@
       "file": "155_156_158_159_dome_tile_slope.glb",
       "orientation": 3
     },
+    "160": {
+      "replace": true,
+      "file": "160_180_181_184_baseboard_corner.glb",
+      "orientation": 0
+    },
+    "161": {
+      "replace": true,
+      "file": "161_182_183_185_baseboard_corner.glb",
+      "orientation": 0
+    },
     "166": {
       "replace": true,
       "file": "166_167_small_bars.glb",
@@ -864,6 +889,46 @@
       "replace": true,
       "file": "166_167_small_bars.glb",
       "orientation": 0
+    },
+    "178": {
+      "replace": true,
+      "file": "150_152_178_179_baseboard.glb",
+      "orientation": 3
+    },
+    "179": {
+      "replace": true,
+      "file": "150_152_178_179_baseboard.glb",
+      "orientation": 2
+    },
+    "180": {
+      "replace": true,
+      "file": "160_180_181_184_baseboard_corner.glb",
+      "orientation": 1
+    },
+    "181": {
+      "replace": true,
+      "file": "160_180_181_184_baseboard_corner.glb",
+      "orientation": 3
+    },
+    "182": {
+      "replace": true,
+      "file": "161_182_183_185_baseboard_corner.glb",
+      "orientation": 1
+    },
+    "183": {
+      "replace": true,
+      "file": "161_182_183_185_baseboard_corner.glb",
+      "orientation": 3
+    },
+    "184": {
+      "replace": true,
+      "file": "160_180_181_184_baseboard_corner.glb",
+      "orientation": 2
+    },
+    "185": {
+      "replace": true,
+      "file": "161_182_183_185_baseboard_corner.glb",
+      "orientation": 2
     },
     "198": {
       "mirror": true
@@ -909,6 +974,31 @@
     "8:1x5x1:649,650,651,653,654": {
       "replace": true,
       "file": "008_pillar_var9_10.glb",
+      "orientation": 0
+    },
+    "151:2x11x2:0,4619,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,4624,4625,4626,4627,127,4629,127,4630,127,4630,127,4631,127,4632,127,4633,127,4634,4635,4636,4637,4638": {
+      "replace": true,
+      "file": "151_dome_column.glb",
+      "orientation": 0
+    },
+    "151:2x13x2:0,4619,0,4620,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,4621,4622,4623,4624,4625,4626,4627,127,4628,127,4631,127,4632,127,4631,127,4632,127,4631,127,4632,127,4633,127,4634,4635,4636,4637,4638": {
+      "replace": true,
+      "file": "151_dome_column_var3.glb",
+      "orientation": 0
+    },
+    "151:2x23x2:0,4619,0,4620,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,4621,4622,4623,4624,4625,4626,4627,127,4628,127,4629,127,4630,127,4631,127,4632,127,4629,127,4630,127,4631,127,4632,127,4631,127,4632,127,4631,127,4632,127,4631,127,4632,127,4631,127,4632,127,4633,127,4634,4635,4636,4637,4638": {
+      "replace": true,
+      "file": "151_dome_column_var1.glb",
+      "orientation": 0
+    },
+    "151:2x9x2:0,4619,0,4620,0,127,0,127,0,127,0,127,0,127,0,4621,4622,4623,4624,4625,4626,4627,127,4628,127,4631,127,4632,127,4633,127,4634,4635,4636,4637,4638": {
+      "replace": true,
+      "file": "151_dome_column_var2.glb",
+      "orientation": 0
+    },
+    "151:2x11x2:0,4619,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,4622,-1,4624,4625,4626,4627,127,4629,127,4630,127,4630,127,4631,127,4632,127,4633,127,4634,4635,4636,4637,4638": {
+      "replace": true,
+      "file": "151_dome_column.glb",
       "orientation": 0
     }
   },
