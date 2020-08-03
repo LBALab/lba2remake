@@ -56,10 +56,82 @@ export async function loadIsometricScenery(entry, ambience, is3D, isEditor = fal
             processCameraCollisions: () => null
         },
 
+        pickBrick: pickBrick.bind(null, grid),
+
+        getBrickInfo: getBrickInfo.bind(null, grid),
+
         update: (game, scene, time) => {
             updateMesh(game, scene, time);
         }
     };
+}
+
+function pickBrick(grid, raycaster: THREE.Raycaster) {
+    const tgt = new THREE.Vector3();
+    const BB = new THREE.Box3();
+    let result = null;
+    const { library, cells } = grid;
+    for (let x = 63; x >= 0; x -= 1) {
+        for (let z = 63; z >= 0; z -= 1) {
+            const cell = cells[(x * 64) + z];
+            if (cell) {
+                const blocks = cell.blocks;
+                for (let y = 0; y < blocks.length; y += 1) {
+                    if (blocks[y]) {
+                        const layout = library.layouts[blocks[y].layout];
+                        if (layout) {
+                            BB.min.set((64 - x) / 32, y / 64, z / 32);
+                            BB.max.set((65 - x) / 32, (y + 1) / 64, (z + 1) / 32);
+                            BB.min.multiplyScalar(WORLD_SIZE);
+                            BB.max.multiplyScalar(WORLD_SIZE);
+                            const block = layout.blocks[blocks[y].block];
+                            if (block && block.brick in library.bricksMap) {
+                                if (raycaster.ray.intersectBox(BB, tgt)) {
+                                    const distSq = tgt.distanceToSquared(raycaster.ray.origin);
+                                    if (!result || result.distSq > distSq) {
+                                        result = {
+                                            x,
+                                            y,
+                                            z,
+                                            block: blocks[y],
+                                            blockInfo: block,
+                                            distSq,
+                                            tgt
+                                        };
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return result;
+}
+
+function getBrickInfo(grid, {x, y, z}) {
+    const { library, cells } = grid;
+    const cell = cells[(x * 64) + z];
+    if (cell) {
+        const blocks = cell.blocks;
+        if (blocks[y]) {
+            const layout = library.layouts[blocks[y].layout];
+            if (layout) {
+                const block = layout.blocks[blocks[y].block];
+                if (block && block.brick in library.bricksMap) {
+                    return {
+                        x,
+                        y,
+                        z,
+                        block: blocks[y],
+                        blockInfo: block,
+                    };
+                }
+            }
+        }
+    }
+    return null;
 }
 
 async function loadMesh(grid, entry, ambience, is3D, isEditor) {
