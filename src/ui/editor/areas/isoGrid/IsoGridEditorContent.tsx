@@ -15,6 +15,7 @@ import {
     registerResources,
     preloadResources,
 } from '../../../../resources';
+import { WORLD_SCALE_B, WORLD_SIZE } from '../../../../utils/lba';
 
 interface Props extends TickerProps {
     mainData: any;
@@ -38,6 +39,8 @@ interface State {
         cameraLerp: THREE.Vector3;
         cameraLookAtLerp: THREE.Vector3;
     };
+    selectionObj: THREE.Object3D;
+    selectionData?: any;
 }
 
 const canvasStyle = {
@@ -57,17 +60,17 @@ const infoStyle = {
     height: 100
 };
 
-/*
-const infoButton = {
-    margin: '2px 4px',
-    padding: '5px 10px'
-};
-
 const dataBlock = {
     display: 'inline-block' as const,
     borderRight: '1px dashed black',
     padding: '5px 10px',
     height: '100%'
+};
+
+/*
+const infoButton = {
+    margin: '2px 4px',
+    padding: '5px 10px'
 };
 
 const closeStyle = {
@@ -88,6 +91,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     moving: boolean = false;
     isoGridIdx: number = -1;
     loading: boolean = false;
+    clickStart: number = 0;
     zoom: number = 1;
     lastTick = 0;
     angle = 0;
@@ -126,11 +130,15 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             };
             scene.threeScene.add(isoCamera.threeCamera);
             scene.threeScene.add(iso3DCamera.controlNode);
+            const selectionObj = makeSelectionObject();
+            selectionObj.visible = false;
+            scene.threeScene.add(selectionObj);
             const clock = new THREE.Clock(false);
             this.state = {
                 scene,
                 clock,
                 controlsState,
+                selectionObj,
                 isoGridIdx: 0,
                 cameras
             };
@@ -215,6 +223,30 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 }
                 break;
             }
+            case 38: // up
+            case 'ArrowUp': {
+                const { selectionData, isoGrid } = this.state;
+                if (selectionData && isoGrid) {
+                    const { x, y, z } = selectionData;
+                    const newSelection = isoGrid.getBrickInfo({ x, y: y + 1, z });
+                    if (newSelection) {
+                        this.select(newSelection);
+                    }
+                }
+                break;
+            }
+            case 40: // down
+            case 'ArrowDown': {
+                const { selectionData, isoGrid } = this.state;
+                if (selectionData && isoGrid) {
+                    const { x, y, z } = selectionData;
+                    const newSelection = isoGrid.getBrickInfo({ x, y: y - 1, z });
+                    if (newSelection) {
+                        this.select(newSelection);
+                    }
+                }
+                break;
+            }
             case 27: // escape
             case 'Escape': {
                 break;
@@ -231,6 +263,38 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             case 'ArrowRight': {
                 this.lastTick = 0;
             }
+        }
+    }
+
+    pick(event) {
+        const { scene, isoGrid } = this.state;
+        if (scene && isoGrid && this.canvas) {
+            const { clientWidth, clientHeight } = this.canvas;
+            const mouse = new THREE.Vector2(
+                ((event.clientX / clientWidth) * 2) - 1,
+                -((event.clientY / clientHeight) * 2) + 1
+            );
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, scene.camera.threeCamera);
+            const selectionData = isoGrid.pickBrick(raycaster);
+            this.select(selectionData);
+        }
+    }
+
+    select(selectionData) {
+        if (selectionData) {
+            const { x, y, z } = selectionData;
+            this.state.selectionObj.visible = true;
+            this.state.selectionObj.position.set(
+                (64.5 - x) / 32,
+                (y + 0.5) / 64,
+                (z + 0.5) / 32
+            );
+            this.state.selectionObj.position.multiplyScalar(WORLD_SIZE);
+            this.setState({ selectionData }, this.saveData);
+        } else {
+            this.state.selectionObj.visible = false;
+            this.setState({ selectionData: null }, this.saveData);
         }
     }
 
@@ -305,6 +369,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
 
     onMouseDown() {
         this.moving = true;
+        this.clickStart = Date.now();
     }
 
     INFO = [
@@ -338,8 +403,11 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         }
     }
 
-    onMouseUp() {
+    onMouseUp(event) {
         this.moving = false;
+        if (Date.now() - this.clickStart < 150) {
+            this.pick(event);
+        }
     }
 
     onWheel(e) {
@@ -365,12 +433,30 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     renderInfo() {
-        const {isoGrid} = this.state;
-        if (isoGrid) {
+        const { selectionData } = this.state;
+        if (selectionData) {
             return <div style={infoStyle}>
-
+                <div style={dataBlock}>
+                    <div>Selection:</div><br/>
+                    <div>X: {selectionData.x}</div>
+                    <div>Y: {selectionData.y}</div>
+                    <div>Z: {selectionData.z}</div>
+                </div>
+                <div style={dataBlock}>
+                    <div>Layout: {selectionData.block.layout}</div>
+                    <div>Block (in layout): {selectionData.block.block}</div>
+                </div>
             </div>;
         }
         return null;
     }
+}
+
+function makeSelectionObject() {
+    const geometry = new THREE.BoxBufferGeometry(WORLD_SCALE_B, WORLD_SCALE_B * 0.5, WORLD_SCALE_B);
+    const edges = new THREE.EdgesGeometry(geometry);
+    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({
+        color: 0xff0000
+    }));
+    return line;
 }
