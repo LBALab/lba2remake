@@ -5,6 +5,8 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
 import VERT_OBJECTS_COLORED from '../shaders/objects/colored.vert.glsl';
 import FRAG_OBJECTS_COLORED from '../shaders/objects/colored.frag.glsl';
+import VERT_OBJECTS_DOME from '../shaders/objects/dome.vert.glsl';
+import FRAG_OBJECTS_DOME from '../shaders/objects/dome.frag.glsl';
 import VERT_OBJECTS_TEXTURED from '../shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
 import { compile } from '../../utils/shaders';
@@ -32,12 +34,13 @@ export async function loadModel(file: string, useCache: boolean = false) : Promi
 
 interface FullSceneModel {
     threeObject: THREE.Object3D;
-    mixer: THREE.AnimationMixer;
+    update: Function;
 }
 
 export async function loadFullSceneModel(entry: number, replacementData) : Promise<FullSceneModel> {
     const model = await loadModel(`/models/iso_scenes/${entry}.glb`);
     const threeObject = model.scene.children[0];
+    const heroPos = { value: new THREE.Vector3() };
     threeObject.traverse((node) => {
         if (node instanceof THREE.Mesh) {
             const color_attr = (node.geometry as THREE.BufferGeometry).attributes.color;
@@ -49,22 +52,33 @@ export async function loadFullSceneModel(entry: number, replacementData) : Promi
                 return;
             }
             const texture = material.map;
-            node.material = new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', texture
-                    ? VERT_OBJECTS_TEXTURED
-                    : VERT_OBJECTS_COLORED),
-                fragmentShader: compile('frag', texture
-                    ? FRAG_OBJECTS_TEXTURED
-                    : FRAG_OBJECTS_COLORED),
-                transparent: node.name.substring(0, 12) === 'transparent_',
-                uniforms: {
-                    uTexture: texture && { value: texture },
-                    lutTexture: {value: replacementData.lutTexture},
-                    palette: {value: replacementData.paletteTexture},
-                    light: {value: replacementData.light},
-                    uNormalMatrix: {value: new THREE.Matrix3()}
-                }
-            });
+            if (node.name === 'dome_floor') {
+                node.material = new THREE.RawShaderMaterial({
+                    vertexShader: compile('vert', VERT_OBJECTS_DOME),
+                    fragmentShader: compile('frag', FRAG_OBJECTS_DOME),
+                    transparent: true,
+                    uniforms: {
+                        heroPos
+                    }
+                });
+            } else {
+                node.material = new THREE.RawShaderMaterial({
+                    vertexShader: compile('vert', texture
+                        ? VERT_OBJECTS_TEXTURED
+                        : VERT_OBJECTS_COLORED),
+                    fragmentShader: compile('frag', texture
+                        ? FRAG_OBJECTS_TEXTURED
+                        : FRAG_OBJECTS_COLORED),
+                    transparent: node.name.substring(0, 12) === 'transparent_',
+                    uniforms: {
+                        uTexture: texture && { value: texture },
+                        lutTexture: {value: replacementData.lutTexture},
+                        palette: {value: replacementData.paletteTexture},
+                        light: {value: replacementData.light},
+                        uNormalMatrix: {value: new THREE.Matrix3()}
+                    }
+                });
+            }
             if (node.material.transparent) {
                 node.renderOrder = 1;
             }
@@ -77,7 +91,14 @@ export async function loadFullSceneModel(entry: number, replacementData) : Promi
     });
     return {
         threeObject,
-        mixer
+        update: (_game, scene, time) => {
+            mixer.update(time.delta);
+            const hero = scene.actors[0];
+            if (hero.threeObject) {
+                heroPos.value.set(0, 0, 0);
+                heroPos.value.applyMatrix4(hero.threeObject.matrixWorld);
+            }
+        }
     };
 }
 

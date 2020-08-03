@@ -139,10 +139,10 @@ async function loadMesh(grid, entry, ambience, is3D) {
 
     return {
         threeObject,
-        update: (_game, scene, time) => {
-            const { mixer } = gridMetadata.replacements;
-            if (mixer) {
-                mixer.update(time.delta);
+        update: (game, scene, time) => {
+            const { update } = gridMetadata.replacements;
+            if (update) {
+                update(game, scene, time);
             }
             const hero = scene.actors[0];
             if (hero.threeObject && geometries.slate_ground.positions.length > 0) {

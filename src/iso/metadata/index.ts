@@ -16,7 +16,7 @@ import { processVariants, suppressVariantBricks } from './variants';
 export async function extractGridMetadata(grid, entry, ambience, is3D) {
     if (!is3D) {
         return {
-            replacements: { threeObject: null, mixer: null },
+            replacements: { threeObject: null, update: null },
             mirrors: null
         };
     }

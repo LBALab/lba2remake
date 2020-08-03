@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { each, last } from 'lodash';
+import { each, last, find } from 'lodash';
 import XXH from 'xxhashjs';
 
 import { loadLUTTexture } from '../../utils/lut';
@@ -8,18 +8,21 @@ import VERT_OBJECTS_COLORED from '../shaders/objects/colored.vert.glsl';
 import FRAG_OBJECTS_COLORED from '../shaders/objects/colored.frag.glsl';
 import VERT_OBJECTS_TEXTURED from '../shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
+import VERT_OBJECTS_DOME from '../shaders/objects/dome.vert.glsl';
+import FRAG_OBJECTS_DOME from '../shaders/objects/dome.frag.glsl';
 import { compile } from '../../utils/shaders';
 import { loadFullSceneModel } from './models';
 import { loadResource, ResourceType } from '../../resources';
 import { getPartialMatrixWorld } from '../../utils/math';
+import { GROUND_TYPES } from '../grid';
 
 export async function initReplacements(entry, metadata, ambience) {
     const data = await loadReplacementData(ambience);
     if (metadata.hasFullReplacement) {
-        const { threeObject, mixer } = await loadFullSceneModel(entry, data);
+        const { threeObject, update } = await loadFullSceneModel(entry, data);
         return {
             threeObject,
-            mixer,
+            update,
             geometries: null,
             bricks: new Set()
         };
@@ -27,14 +30,14 @@ export async function initReplacements(entry, metadata, ambience) {
     if (!metadata.mergeReplacements) {
         return {
             threeObject: null,
-            mixer: null,
+            update: null,
             geometries: null,
             bricks: new Set()
         };
     }
     return {
         threeObject: initReplacementObject(entry),
-        mixer: null,
+        update: null,
         mergeReplacements: true,
         animations: [],
         geometries: makeReplacementGeometries(data),
@@ -265,12 +268,14 @@ export async function addReplacementObject(info, replacements, gx, gy, gz) {
             skip.add(node);
             if (node instanceof THREE.Mesh) {
                 const matrixWorld = getPartialMatrixWorld(node, last(animNodes).node);
-                appendMeshGeometry(last(animNodes).data, identityMatrix, node, angle, matrixWorld);
+                appendMeshGeometry(
+                    last(animNodes).data, identityMatrix, node, info, angle, matrixWorld
+                );
             }
             return;
         }
         if (node instanceof THREE.Mesh) {
-            appendMeshGeometry(replacements, gTransform, node, angle);
+            appendMeshGeometry(replacements, gTransform, node, info, angle);
         }
     });
     each(animNodes, ({group, data}) => {
@@ -291,9 +296,14 @@ function appendMeshGeometry(
     {idCounters, geometries, data},
     gTransform,
     node,
+    info,
     angle,
     matrixWorld = null
 ) {
+    const isDomeFloor = !!find(
+        info && info.layout && info.layout.blocks,
+        b => b.groundType === GROUND_TYPES.DOME_OF_THE_SLATE_FLOOR
+    );
     const transform = gTransform.clone();
     transform.multiply(matrixWorld || node.matrixWorld);
 
@@ -314,7 +324,10 @@ function appendMeshGeometry(
     let color = null;
     let geomGroup = 'colored';
     let groupType = null;
-    if (baseMaterial.name.substring(0, 8) === 'keepMat_') {
+    if (isDomeFloor) {
+        geomGroup = 'dome_floor';
+        groupType = 'dome_floor';
+    } else if (baseMaterial.name.substring(0, 8) === 'keepMat_') {
         geomGroup = `original_${idCounters.originalGeomId}`;
         groupType = 'original';
         idCounters.originalGeomId += 1;
@@ -368,6 +381,21 @@ function appendMeshGeometry(
                             lutTexture: {value: data.lutTexture},
                             palette: {value: data.paletteTexture},
                             light: {value: data.light}
+                        }
+                    })
+                };
+                break;
+            case 'dome_floor':
+                geometries[geomGroup] = {
+                    index: [],
+                    positions: [],
+                    normals: [],
+                    colors: [],
+                    material: new THREE.RawShaderMaterial({
+                        vertexShader: compile('vert', VERT_OBJECTS_DOME),
+                        fragmentShader: compile('frag', FRAG_OBJECTS_DOME),
+                        uniforms: {
+                            heroPos: { value: new THREE.Vector3() }
                         }
                     })
                 };
