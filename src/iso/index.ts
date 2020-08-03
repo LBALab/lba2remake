@@ -7,8 +7,8 @@ import { processCollisions } from '../game/loop/physicsIso';
 import { compile } from '../utils/shaders';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
-import slate_brick_vertex from './shaders/slate_brick.vert.glsl';
-import slate_brick_fragment from './shaders/slate_brick.frag.glsl';
+import dome_brick_vertex from './shaders/dome_brick.vert.glsl';
+import dome_brick_fragment from './shaders/dome_brick.frag.glsl';
 import { extractGridMetadata } from './metadata';
 import { Side, OffsetBySide } from './mapping';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../utils/lba';
@@ -75,12 +75,12 @@ async function loadMesh(grid, entry, ambience, is3D) {
                 side: THREE.DoubleSide
             })
         },
-        slate_ground: {
+        dome_ground: {
             positions: [],
             uvs: [],
             material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', slate_brick_vertex),
-                fragmentShader: compile('frag', slate_brick_fragment),
+                vertexShader: compile('vert', dome_brick_vertex),
+                fragmentShader: compile('frag', dome_brick_fragment),
                 transparent: true,
                 uniforms: {
                     library: { value: grid.library.texture },
@@ -135,7 +135,7 @@ async function loadMesh(grid, entry, ambience, is3D) {
     threeObject.position.set(WORLD_SIZE * 2, 0, 0);
     threeObject.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
 
-    const slateUniforms = geometries.slate_ground.material.uniforms;
+    const slateUniforms = geometries.dome_ground.material.uniforms;
 
     return {
         threeObject,
@@ -145,7 +145,7 @@ async function loadMesh(grid, entry, ambience, is3D) {
                 update(game, scene, time);
             }
             const hero = scene.actors[0];
-            if (hero.threeObject && geometries.slate_ground.positions.length > 0) {
+            if (hero.threeObject && geometries.dome_ground.positions.length > 0) {
                 slateUniforms.heroPos.value.set(0, 0, 0);
                 slateUniforms.heroPos.value.applyMatrix4(hero.threeObject.matrixWorld);
             }
@@ -156,7 +156,7 @@ async function loadMesh(grid, entry, ambience, is3D) {
 function getGeometryType(block) {
     switch (block && block.groundType) {
         case GROUND_TYPES.DOME_OF_THE_SLATE_FLOOR:
-            return 'slate_ground';
+            return 'dome_ground';
     }
     return 'standard';
 }

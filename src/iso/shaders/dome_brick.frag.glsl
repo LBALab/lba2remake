@@ -9,10 +9,11 @@ in vec3 vPos;
 
 out vec4 fragColor;
 
+#require "./dome_floor_effect.frag"
+
 void main() {
     fragColor = texture(library, vUv);
-    float opacity = 1.0 - clamp(length(vPos - heroPos) - 0.38, 0.0, 1.0);
-    fragColor.a = fragColor.a * opacity;
+    fragColor.a = fragColor.a * getFloorOpacity();
     if (fragColor.a < 0.005) {
         discard;
     }
