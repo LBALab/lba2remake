@@ -773,6 +773,41 @@
     "57": {
       "mirror": true
     },
+    "84": {
+      "replace": true,
+      "file": "084_round_stones.glb",
+      "orientation": 0
+    },
+    "85": {
+      "replace": true,
+      "file": "085_round_stones.glb",
+      "orientation": 0
+    },
+    "86": {
+      "replace": true,
+      "file": "086_round_stone.glb",
+      "orientation": 0
+    },
+    "87": {
+      "replace": true,
+      "file": "087_round_stones.glb",
+      "orientation": 0
+    },
+    "88": {
+      "replace": true,
+      "file": "088_round_stone.glb",
+      "orientation": 0
+    },
+    "89": {
+      "replace": true,
+      "file": "089_round_stones.glb",
+      "orientation": 0
+    },
+    "90": {
+      "replace": true,
+      "file": "090_round_stones.glb",
+      "orientation": 0
+    },
     "113": {
       "mirror": true
     },
@@ -799,6 +834,26 @@
       "replace": true,
       "file": "153_154_dome_tile.glb",
       "orientation": 0
+    },
+    "155": {
+      "replace": true,
+      "file": "155_156_158_159_dome_tile_slope.glb",
+      "orientation": 0
+    },
+    "156": {
+      "replace": true,
+      "file": "155_156_158_159_dome_tile_slope.glb",
+      "orientation": 1
+    },
+    "158": {
+      "replace": true,
+      "file": "155_156_158_159_dome_tile_slope.glb",
+      "orientation": 2
+    },
+    "159": {
+      "replace": true,
+      "file": "155_156_158_159_dome_tile_slope.glb",
+      "orientation": 3
     },
     "166": {
       "replace": true,
