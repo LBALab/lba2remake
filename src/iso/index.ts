@@ -29,7 +29,7 @@ export async function loadImageData(src) : Promise<ImageData> {
     });
 }
 
-export async function loadIsometricScenery(entry, ambience, is3D) {
+export async function loadIsometricScenery(entry, ambience, is3D, isEditor = false) {
     const [pal, bkg, mask] = await Promise.all([
         loadResource(ResourceType.PALETTE),
         loadResource(ResourceType.BRICKS),
@@ -38,7 +38,10 @@ export async function loadIsometricScenery(entry, ambience, is3D) {
     const palette = pal.getBufferUint8();
     const bricks = loadBricks(bkg);
     const grid = await loadGrid(bkg, bricks, mask, palette, entry + 1);
-    const { threeObject, update: updateMesh } = await loadMesh(grid, entry, ambience, is3D);
+    const {
+        threeObject,
+        update: updateMesh
+    } = await loadMesh(grid, entry, ambience, is3D, isEditor);
 
     return {
         props: {
@@ -59,7 +62,7 @@ export async function loadIsometricScenery(entry, ambience, is3D) {
     };
 }
 
-async function loadMesh(grid, entry, ambience, is3D) {
+async function loadMesh(grid, entry, ambience, is3D, isEditor) {
     const threeObject = new THREE.Object3D();
     const geometries = {
         standard: {
@@ -84,14 +87,15 @@ async function loadMesh(grid, entry, ambience, is3D) {
                 transparent: true,
                 uniforms: {
                     library: { value: grid.library.texture },
-                    heroPos: { value: new THREE.Vector3() }
+                    heroPos: { value: new THREE.Vector3() },
+                    distThreshold: { value: isEditor ? 0 : 1000 }
                 },
                 side: THREE.DoubleSide
             })
         }
     };
     const {library, cells} = grid;
-    const gridMetadata = await extractGridMetadata(grid, entry, ambience, is3D);
+    const gridMetadata = await extractGridMetadata(grid, entry, ambience, is3D, isEditor);
     if (gridMetadata.replacements.threeObject) {
         threeObject.add(gridMetadata.replacements.threeObject);
     }

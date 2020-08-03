@@ -37,7 +37,8 @@ interface FullSceneModel {
     update: Function;
 }
 
-export async function loadFullSceneModel(entry: number, replacementData) : Promise<FullSceneModel> {
+export async function loadFullSceneModel(entry: number, replacementData, isEditor: boolean)
+    : Promise<FullSceneModel> {
     const model = await loadModel(`/models/iso_scenes/${entry}.glb`);
     const threeObject = model.scene.children[0];
     const heroPos = { value: new THREE.Vector3() };
@@ -58,7 +59,8 @@ export async function loadFullSceneModel(entry: number, replacementData) : Promi
                     fragmentShader: compile('frag', FRAG_OBJECTS_DOME),
                     transparent: true,
                     uniforms: {
-                        heroPos
+                        heroPos,
+                        distThreshold: { value: isEditor ? 0 : 1000 }
                     }
                 });
             } else {
