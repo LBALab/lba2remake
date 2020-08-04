@@ -301,7 +301,7 @@ function appendMeshGeometry(
     matrixWorld = null
 ) {
     const isDomeFloor = !!find(
-        info && info.layout && info.layout.blocks,
+        info.layout ? info.layout.blocks : info.parent.layout.blocks,
         b => b.groundType === GROUND_TYPES.DOME_OF_THE_SLATE_FLOOR
     );
     const transform = gTransform.clone();
