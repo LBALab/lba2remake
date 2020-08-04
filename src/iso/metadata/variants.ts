@@ -8,7 +8,10 @@ export function processVariants(grid, cellInfo, replacements, candidates) {
             candidates.push({
                 type: 'variant',
                 data: variant.props,
-                replacementData: variant
+                replacementData: {
+                    ...variant,
+                    parent: cellInfo
+                }
             });
         }
     }

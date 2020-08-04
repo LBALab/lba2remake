@@ -13,16 +13,16 @@ import { loadBricks } from '../bricks';
 import { loadResource, ResourceType } from '../../resources';
 import { processVariants, suppressVariantBricks } from './variants';
 
-export async function extractGridMetadata(grid, entry, ambience, is3D) {
+export async function extractGridMetadata(grid, entry, ambience, is3D, isEditor) {
     if (!is3D) {
         return {
-            replacements: { threeObject: null, mixer: null },
+            replacements: { threeObject: null, update: null },
             mirrors: null
         };
     }
     const metadata = await loadMetadata(entry, grid.library);
 
-    const replacements = await initReplacements(entry, metadata, ambience);
+    const replacements = await initReplacements(entry, metadata, ambience, isEditor);
     const mirrorGroups = {};
 
     forEachCell(grid, metadata, (cellInfo) => {
