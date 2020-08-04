@@ -26,7 +26,7 @@ export async function extractGridMetadata(grid, entry, ambience, is3D, isEditor)
     const mirrorGroups = {};
 
     forEachCell(grid, metadata, (cellInfo) => {
-        const { variants, replace, mirror } = cellInfo;
+        const { variants, replace, mirror, suppress } = cellInfo;
         const candidates = [];
         if (variants) {
             processVariants(grid, cellInfo, replacements, candidates);
@@ -37,6 +37,10 @@ export async function extractGridMetadata(grid, entry, ambience, is3D, isEditor)
         processCandidates(replacements, cellInfo, candidates);
         if (mirror) {
             processLayoutMirror(cellInfo, mirrorGroups);
+        }
+        if (suppress) {
+            const { x, y, z } = cellInfo.pos;
+            replacements.bricks.add(`${x},${y},${z}`);
         }
     });
 

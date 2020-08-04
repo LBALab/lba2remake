@@ -25,6 +25,8 @@ export async function loadMetadata(entry, library, mergeReplacements = false) {
             }
         } else if (data.mirror) {
             info = {...data};
+        } else if (data.suppress) {
+            info = {...data};
         }
 
         if (info) {
