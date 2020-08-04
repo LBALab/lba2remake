@@ -855,9 +855,24 @@
       "file": "155_156_158_159_dome_tile_slope.glb",
       "orientation": 0
     },
+    "155:2x2x1:4647,4648,4649,4650": {
+      "replace": true,
+      "file": "155_156_158_159_dome_tile_slope_var1.glb",
+      "orientation": 0
+    },
+    "155:2x1x1:4649,4650": {
+      "replace": true,
+      "file": "155_156_158_159_dome_tile_slope_var2.glb",
+      "orientation": 0
+    },
     "156": {
       "replace": true,
       "file": "155_156_158_159_dome_tile_slope.glb",
+      "orientation": 1
+    },
+    "156:1x2x2:4651,4652,4653,4654": {
+      "replace": true,
+      "file": "155_156_158_159_dome_tile_slope_var1.glb",
       "orientation": 1
     },
     "158": {
