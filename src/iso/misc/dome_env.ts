@@ -22,20 +22,37 @@ export function loadDomeEnv() {
     const sizes = [];
     const tints = [];
     const intensities = [];
-    const count = 2000;
+    const count = 2500;
+    const indices = [];
+    const len2 = (x, y, z) => x * x + y * y + z * z;
+    const len2Pos = idx => len2(
+        positions[idx * 3],
+        positions[idx * 3 + 1],
+        positions[idx * 3 + 2]
+    );
     for (let i = 0; i < count; i += 1) {
-        const x = Math.random() * 500 - 250;
-        const y = (i / count) * 300 - 320;
-        const z = Math.random() * 500 - 250;
+        let x;
+        let y;
+        let z;
+        let l2;
+        do {
+            x = Math.random() * 500 - 250;
+            y = Math.random() * 250 - 250;
+            z = Math.random() * 500 - 250;
+            l2 = len2(x, y, z);
+        } while (l2 > 250 * 250 && l2 > 10 * 10)
         positions.push(x);
         positions.push(y);
         positions.push(z);
         const intensity = noiseGen.noise3D(x, y, z) * 0.2 + 0.8;
         intensities.push(intensity);
         const sz = Math.random();
-        sizes.push(0.8 + sz * 0.2);
+        sizes.push(0.6 + sz * 0.4);
         tints.push(Math.random());
+        indices.push(i);
     }
+    indices.sort((a, b) => len2Pos(b) - len2Pos(a));
+    starsGeo.setIndex(indices);
     const posArray = new Float32Array(positions);
     const posAttr = new THREE.BufferAttribute(posArray, 3);
     starsGeo.setAttribute('position', posAttr);
