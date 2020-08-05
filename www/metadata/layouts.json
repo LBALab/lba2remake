@@ -1015,6 +1015,9 @@
       "replace": true,
       "file": "151_dome_column.glb",
       "orientation": 0
+    },
+    "217": {
+      "suppress": true
     }
   },
   "2": {

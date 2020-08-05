@@ -13,6 +13,7 @@ import { extractGridMetadata } from './metadata';
 import { Side, OffsetBySide } from './mapping';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../utils/lba';
 import { loadResource, ResourceType } from '../resources';
+import { loadDomeEnv } from './misc/dome_env';
 
 export async function loadImageData(src) : Promise<ImageData> {
     return new Promise((resolve) => {
@@ -43,6 +44,13 @@ export async function loadIsometricScenery(entry, ambience, is3D, isEditor = fal
         update: updateMesh
     } = await loadMesh(grid, entry, ambience, is3D, isEditor);
 
+    // Dome of the slate
+    let domeEnv = null;
+    if (entry === 26) {
+        domeEnv = loadDomeEnv();
+        threeObject.add(domeEnv.threeObject);
+    }
+
     return {
         props: {
             startPosition: [0, 0],
@@ -62,6 +70,9 @@ export async function loadIsometricScenery(entry, ambience, is3D, isEditor = fal
 
         update: (game, scene, time) => {
             updateMesh(game, scene, time);
+            if (domeEnv) {
+                domeEnv.update(time);
+            }
         }
     };
 }
