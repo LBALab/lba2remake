@@ -40,7 +40,7 @@ export function loadDomeEnv() {
             y = Math.random() * 250 - 250;
             z = Math.random() * 500 - 250;
             l2 = len2(x, y, z);
-        } while (l2 > 250 * 250 && l2 > 10 * 10)
+        } while (l2 > 250 * 250 || l2 < 40 * 40);
         positions.push(x);
         positions.push(y);
         positions.push(z);
