@@ -773,6 +773,26 @@
     "57": {
       "mirror": true
     },
+    "77": {
+      "replace": true,
+      "file": "077_spiral_stalagmites.glb",
+      "orientation": 0
+    },
+    "78": {
+      "replace": true,
+      "file": "078_spiral_stalagmites.glb",
+      "orientation": 1
+    },
+    "79": {
+      "replace": true,
+      "file": "079_spiral_stalagmite.glb",
+      "orientation": 0
+    },
+    "80": {
+      "replace": true,
+      "file": "080_spiral_stalagmite_small.glb",
+      "orientation": 0
+    },
     "84": {
       "replace": true,
       "file": "084_round_stones.glb",
@@ -855,24 +875,9 @@
       "file": "155_156_158_159_dome_tile_slope.glb",
       "orientation": 0
     },
-    "155:2x2x1:4647,4648,4649,4650": {
-      "replace": true,
-      "file": "155_156_158_159_dome_tile_slope_var1.glb",
-      "orientation": 0
-    },
-    "155:2x1x1:4649,4650": {
-      "replace": true,
-      "file": "155_156_158_159_dome_tile_slope_var2.glb",
-      "orientation": 0
-    },
     "156": {
       "replace": true,
       "file": "155_156_158_159_dome_tile_slope.glb",
-      "orientation": 1
-    },
-    "156:1x2x2:4651,4652,4653,4654": {
-      "replace": true,
-      "file": "155_156_158_159_dome_tile_slope_var1.glb",
       "orientation": 1
     },
     "158": {
@@ -951,6 +956,24 @@
     "199": {
       "mirror": true
     },
+    "217": {
+      "suppress": true
+    },
+    "155:2x2x1:4647,4648,4649,4650": {
+      "replace": true,
+      "file": "155_156_158_159_dome_tile_slope_var1.glb",
+      "orientation": 0
+    },
+    "155:2x1x1:4649,4650": {
+      "replace": true,
+      "file": "155_156_158_159_dome_tile_slope_var2.glb",
+      "orientation": 0
+    },
+    "156:1x2x2:4651,4652,4653,4654": {
+      "replace": true,
+      "file": "155_156_158_159_dome_tile_slope_var1.glb",
+      "orientation": 1
+    },
     "8:1x3x1:649,653,654": {
       "replace": true,
       "file": "008_pillar_var1.glb",
@@ -1016,8 +1039,20 @@
       "file": "151_dome_column.glb",
       "orientation": 0
     },
-    "217": {
-      "suppress": true
+    "80:2x3x1:1059,1059,1060,1060,1061,1061": {
+      "replace": true,
+      "file": "080_spiral_stalagmite_small_var1.glb",
+      "orientation": 0
+    },
+    "79:2x4x2:-1,1055,-1,1056,-1,1057,-1,1058,1055,-1,1056,-1,1057,-1,1058": {
+      "replace": true,
+      "file": "079_spiral_stalagmite_var1.glb",
+      "orientation": 0
+    },
+    "78:1x4x1:1050,1051,1052,1053": {
+      "replace": true,
+      "file": "078_spiral_stalagmites.glb",
+      "orientation": 3
     }
   },
   "2": {
