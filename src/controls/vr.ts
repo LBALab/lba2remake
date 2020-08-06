@@ -59,6 +59,9 @@ export class VRControls {
         };
         controlsState.action = 0;
         each(this.controllers, (controller) => {
+            if (!(controller.info.xrInputSource as any).gamepad) {
+                return;
+            }
             controller.info.updateFromGamepad();
             controller.model.update(ctx);
             applyMappings(controller.info, controller.mappings, ctx);
@@ -91,7 +94,9 @@ export class VRControls {
 
     onInputSourcesChange(event) {
         event.added.forEach((xrInputSource) => {
-            createMotionController(xrInputSource);
+            if ((xrInputSource as any).gamepad) {
+                createMotionController(xrInputSource);
+            }
         });
     }
 
@@ -108,6 +113,9 @@ export class VRControls {
         const vrControllerGrip = this.xr.getControllerGrip(index);
 
         vrControllerGrip.addEventListener('connected', async (event) => {
+            if (!event.data.gamepad) {
+                return;
+            }
             const info = await createMotionController(event.data);
             const model = await new ControllerModel(info).load();
             model.threeObject.renderOrder = 100;
