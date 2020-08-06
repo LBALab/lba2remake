@@ -5,22 +5,28 @@ import STARS_VERT from './shaders/dome_stars.vert.glsl';
 import STARS_FRAG from './shaders/dome_stars.frag.glsl';
 import { WORLD_SCALE_B } from '../../utils/lba';
 
-const starsMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-        color: { value: new THREE.Color(0xFFFFFF) },
-    },
-    transparent: true,
-    vertexShader: STARS_VERT,
-    fragmentShader: STARS_FRAG,
-});
+const loader = new THREE.TextureLoader();
 
 const noiseGen = new SimplexNoise('LBA');
 
-export function loadDomeEnv() {
+export async function loadDomeEnv() {
+    const starTexture = await new Promise(resolve =>
+        loader.load('images/stars/B_OPC3.png', resolve)
+    );
+    const starsMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            starTex: { value: starTexture },
+            color: { value: new THREE.Color(0xFFFFFF) }
+        },
+        transparent: true,
+        vertexShader: STARS_VERT,
+        fragmentShader: STARS_FRAG,
+    });
     const starsGeo = new THREE.BufferGeometry();
     const positions = [];
     const sizes = [];
     const tints = [];
+    const sparkle = [];
     const intensities = [];
     const count = 2500;
     const indices = [];
@@ -49,6 +55,7 @@ export function loadDomeEnv() {
         const sz = Math.random();
         sizes.push(0.6 + sz * 0.4);
         tints.push(Math.random());
+        sparkle.push(Math.random());
         indices.push(i);
     }
     indices.sort((a, b) => len2Pos(b) - len2Pos(a));
@@ -62,6 +69,9 @@ export function loadDomeEnv() {
     const tintArray = new Float32Array(tints);
     const tintAttr = new THREE.BufferAttribute(tintArray, 1);
     starsGeo.setAttribute('tint', tintAttr);
+    const sparkleArray = new Float32Array(sparkle);
+    const sparkleAttr = new THREE.BufferAttribute(sparkleArray, 1);
+    starsGeo.setAttribute('sparkle', sparkleAttr);
     const intensitiesArray = new Float32Array(intensities);
     const intensitiesAttr = new THREE.BufferAttribute(intensitiesArray, 1);
     starsGeo.setAttribute('intensity', intensitiesAttr);
