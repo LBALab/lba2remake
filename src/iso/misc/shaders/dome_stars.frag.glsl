@@ -11,6 +11,6 @@ void main() {
     vec3 color = mix(blue, vec3(1.0), vTint);
     float t = texture(starTex, vUv).a;
     float a = l * l * l * vIntensity;
-    float b = mix(a, t, vSparkle * 0.6);
+    float b = mix(a, t, vSparkle * 0.62);
     gl_FragColor = vec4(color * b * 8.0, b);
 }
