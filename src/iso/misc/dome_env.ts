@@ -16,7 +16,8 @@ export async function loadDomeEnv() {
     const starsMaterial = new THREE.ShaderMaterial({
         uniforms: {
             starTex: { value: starTexture },
-            color: { value: new THREE.Color(0xFFFFFF) }
+            color: { value: new THREE.Color(0xFFFFFF) },
+            time: { value: 0 }
         },
         transparent: true,
         vertexShader: STARS_VERT,
@@ -108,8 +109,8 @@ export async function loadDomeEnv() {
 
     return {
         threeObject,
-        update: (_time) => {
-            // stars.rotation.y = time.elapsed * 0.01;
+        update: (time) => {
+            starsMaterial.uniforms.time.value = time.elapsed;
         }
     };
 }

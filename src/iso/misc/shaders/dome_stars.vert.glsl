@@ -7,6 +7,7 @@ varying float vTint;
 varying float vIntensity;
 varying float vSparkle;
 varying vec2 vUv;
+varying float vDist;
 
 #include <common>
 
@@ -24,4 +25,5 @@ void main() {
     vIntensity = intensity;
     vSparkle = sparkle;
     vUv = uv;
+    vDist = clamp(distToCamera * 0.005, 0.0, 1.0);
 }
