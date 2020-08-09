@@ -244,6 +244,7 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         if (!this.state.renderer) {
             return;
         }
+        this.state.game.getAudioManager().resumeContext();
         this.session = await (navigator as any).xr.requestSession('immersive-vr');
         this.session.addEventListener('end', this.onSessionEnd);
         this.state.renderer.threeRenderer.xr.setSession(this.session);
