@@ -261,7 +261,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         this.state.game.pause();
         const audio = this.state.game.getAudioManager();
         audio.playMusicTheme();
-        this.setState({ noAudio: !this.state.game.getAudioManager().isContextActive() });
         this.setState({showMenu: true, inGameMenu}, this.saveData);
     }
 
@@ -294,7 +293,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                     this.hideMenu();
                 }
             }
-            if (key === 'ControlLeft' || key === 'ControlRight' || key === 17) {
+            if ((!this.state.showMenu || !this.state.inGameMenu) &&
+                (key === 'ControlLeft' || key === 'ControlRight' || key === 17)) {
                 this.setState({ behaviourMenu: true });
                 if (!this.state.cinema && this.state.scene && this.state.scene.actors[0]) {
                     this.state.scene.actors[0].cancelAnims();
@@ -306,7 +306,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
 
     listenerKeyUp(event) {
         const key = event.code || event.which || event.keyCode;
-        if (key === 'ControlLeft' || key === 'ControlRight' || key === 17) {
+        if ((!this.state.showMenu || !this.state.inGameMenu) &&
+            (key === 'ControlLeft' || key === 'ControlRight' || key === 17)) {
             this.setState({ behaviourMenu: false });
             this.state.game.resume();
         }
@@ -375,7 +376,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     }
 
     onMenuItemChanged(item) {
-        this.noAudioClick();
         switch (item) {
             case 70: { // Resume
                 this.hideMenu();
@@ -513,8 +513,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         const audio = this.state.game.getAudioManager();
         audio.resumeContext();
         this.setState({ noAudio: false }, () => {
-            audio.resume();
-            audio.resumeMusicTheme();
             if (this.state.showMenu) {
                 audio.playMusicTheme();
             }
