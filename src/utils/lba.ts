@@ -71,11 +71,17 @@ export function getDistance(value) {
 export function getDistanceLba(value) {
     return (value * 500) / distanceThreeJs;
 }
+
 export function angleTo(v1, v2) {
     const xdiff = v2.x - v1.x;
     const zdiff = v2.z - v1.z;
 
     return Math.atan2(xdiff, zdiff);
+}
+
+export function distAngle(angle1, angle2) {
+    const clockwiseDist = Math.abs(angle1 - angle2);
+    return Math.min(clockwiseDist, 2 * Math.PI - clockwiseDist);
 }
 
 export function normalizeAngle(angle) {

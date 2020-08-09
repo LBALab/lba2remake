@@ -14,6 +14,7 @@ export function BODY_OBJ(actor, bodyIndex) {
 
 export function ANIM_OBJ(actor, animIndex) {
     actor.setAnim(animIndex);
+    actor.animState.interpolationFrame = 0;
 }
 
 export const SET_CAMERA = unimplemented();
