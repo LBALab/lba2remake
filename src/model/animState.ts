@@ -181,7 +181,7 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
 
     let nextFrame = state.loopFrame;
     if (state.interpolationFrame >= 0) {
-        nextFrame = 0;
+        nextFrame = state.interpolationFrame;
     }
     if (state.noInterpolate) {
         state.realAnimIdx = realAnimIdx;
