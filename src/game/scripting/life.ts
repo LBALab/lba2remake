@@ -32,9 +32,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         let onVoiceEndedCallback = null;
         if (this.scene.vr) {
             onVoiceEndedCallback = () => {
-                if (cmdState.playing) {
-                    cmdState.ended = true;
-                }
+                cmdState.ended = true;
             };
         }
         audio.playVoice(text.index, this.scene.data.textBankId, onVoiceEndedCallback);
