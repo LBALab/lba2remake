@@ -99,14 +99,16 @@ const vrFPsteps = [
 function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, time: any) {
     const deltaMS = time.delta * 1000;
     if (actor.props.runtimeFlags.isTurning) {
-        const baseAngle = Math.abs((actor.physics.temp.destAngle - actor.physics.temp.angle) * deltaMS);
-        let angle = baseAngle / (actor.props.speed * 10);
+        const baseAngle = Math.abs(actor.physics.temp.destAngle -
+                                   actor.physics.temp.angle) * deltaMS;
+        const angle = baseAngle / (actor.props.speed * 10);
         // We want to rotate in the most efficient way possible, i.e. we rotate
         // either clockwise or anticlockwise depening on which one is fastest.
         let distanceAnticlockwise;
         let distanceClockwise;
         if (actor.physics.temp.destAngle > actor.physics.temp.angle) {
-            distanceAnticlockwise = Math.abs(actor.physics.temp.destAngle - actor.physics.temp.angle);
+            distanceAnticlockwise = Math.abs(actor.physics.temp.destAngle -
+                                             actor.physics.temp.angle);
             distanceClockwise = 2 * Math.PI - distanceAnticlockwise;
         } else {
             distanceClockwise = Math.abs(actor.physics.temp.destAngle - actor.physics.temp.angle);
