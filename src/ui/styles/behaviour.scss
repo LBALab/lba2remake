@@ -76,6 +76,14 @@
     }
 }
 
+.behaviour-canvas {
+    border-radius: 15px;
+
+    @include media("<=tablet","portrait") {
+        border-radius: 10px;
+    }
+}
+
 .behaviourItem {
     user-select: none;
     position: relative;

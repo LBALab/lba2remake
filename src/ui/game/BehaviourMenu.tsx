@@ -1,8 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import * as THREE from 'three';
 
 import '../styles/behaviour.scss';
 import useMedia from '../hooks/useMedia';
 import { BehaviourMode as BehaviourModeType } from '../../game/loop/hero';
+
+import Renderer from '../../renderer';
+import { get3DOrbitCamera } from '../editor/areas/model/utils/orbitCamera';
+
+import { loadModel } from '../../model';
+import { loadAnim } from '../../model/anim';
+import { loadAnimState, updateKeyframeInterpolation, updateKeyframe } from '../../model/animState';
+import { getAnim } from '../../model/entity';
 
 interface IBehaviourMenuClover {
     boxes: number;
@@ -17,6 +26,7 @@ interface IBehaviourMenuMagicBall {
 
 interface IBehaviourMenuProps {
     game: any;
+    sceneManager: any;
 }
 
 interface IBehaviourMenu {
@@ -29,13 +39,33 @@ interface IBehaviourMenu {
     magicball: IBehaviourMenuMagicBall;
 }
 
-const BehaviourModeItem = (props: any) => (
-    <div
-        className={`behaviourItem${props.selected ? ' selected' : ''}`}
-        {...props}
-    >
-    </div>
-);
+let scene = null;
+let clock = null;
+let canvas = null;
+let renderer = null;
+let model = null;
+let animState = null;
+
+const BehaviourModeItem = (props: any) => {
+    const itemRef = useRef(null);
+    useEffect(() => {
+        if (props.selected && canvas) {
+            canvas.width = canvas.style.width = itemRef.current.offsetWidth - 2;
+            canvas.height = canvas.style.height = itemRef.current.offsetHeight - 2;
+            renderer.resize(canvas.width, canvas.height);
+            itemRef.current.appendChild(canvas);
+        }
+    }, [props.selected]);
+
+    return (
+        <div
+            ref={itemRef}
+            className={`behaviourItem${props.selected ? ' selected' : ''}`}
+            {...props}
+        >
+        </div>
+    );
+};
 
 const BehaviourMode = ({ game, behaviour }) => {
     const behaviourText = (game.menuTexts)
@@ -108,16 +138,16 @@ const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
     );
 };
 
-// @ts-ignore
-const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
+const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
     const {
         life,
         money,
         magic,
         keys,
         clover,
-        magicball
+        magicball,
     }: IBehaviourMenu = game.getState().hero;
+    const { props } = sceneManager.actors[0];
 
     const [behaviour, setBehaviour] = useState(game.getState().hero.behaviour);
 
@@ -205,14 +235,138 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
         };
     });
 
+    const load = async () => {
+        animState = loadAnimState();
+
+        const envInfo = {
+            skyColor: [0, 0, 0]
+        };
+        const ambience = {
+            lightingAlpha: 309,
+            lightingBeta: 2500
+        };
+        model = await loadModel(
+            {},
+            behaviour,
+            props.bodyIndex,
+            props.animIndex,
+            animState,
+            envInfo,
+            ambience
+        );
+
+        if (scene &&
+            scene.threeScene &&
+            scene.threeScene.children &&
+            scene.threeScene.children.length > 1) {
+            scene.threeScene.remove(scene.threeScene.children[1]);
+        }
+
+        scene.threeScene.add(model.mesh);
+    };
+
+    const updateModel = (m, anims, entityIdx, animIdx, time) => {
+        const entity = m.entities[entityIdx];
+        const entityAnim = getAnim(entity, animIdx);
+        let interpolate = false;
+        if (entityAnim !== null) {
+            const realAnimIdx = entityAnim.animIndex;
+            const anim = loadAnim(m, m.anims, realAnimIdx);
+            anims.loopFrame = anim.loopFrame;
+            if (anims.prevRealAnimIdx !== -1 && realAnimIdx !== anims.prevRealAnimIdx) {
+                updateKeyframeInterpolation(anim, anims, time, realAnimIdx);
+                interpolate = true;
+            }
+            if (realAnimIdx === anims.realAnimIdx || anims.realAnimIdx === -1) {
+                updateKeyframe(anim, anims, time, realAnimIdx);
+            }
+            const q = new THREE.Quaternion();
+            const delta = time.delta * 1000;
+            let angle = 0;
+            if (anims.keyframeLength > 0) {
+                angle = (anims.rotation.y * delta) / anims.keyframeLength;
+            }
+            q.setFromAxisAngle(
+                new THREE.Vector3(0, 1, 0),
+                angle
+            );
+            m.mesh.quaternion.multiply(q);
+        }
+        return interpolate;
+    };
+
+    useEffect(() => {
+        const onload = async () => {
+            if (!scene) {
+                const camera = get3DOrbitCamera(0.3);
+                scene = {
+                    camera,
+                    threeScene: new THREE.Scene()
+                };
+                scene.threeScene.add(camera.controlNode);
+            }
+
+            if (!clock) {
+                clock = new THREE.Clock(false);
+                clock.start();
+            }
+
+            if (!canvas) {
+                canvas = document.createElement('canvas');
+                canvas.tabIndex = 0;
+                canvas.className = 'behaviour-canvas';
+            }
+
+            if (!renderer) {
+                renderer = new Renderer(
+                    { webgl2: true },
+                    canvas,
+                    {},
+                    'behaviour-menu'
+                );
+                renderer.setClearColor(0x409da0);
+            }
+        };
+        onload();
+        return () => {
+            renderer.threeRenderer.setAnimationLoop(null);
+        };
+    }, []);
+
+    useEffect(() => {
+        const asyncLoad = async () => {
+            if (scene) {
+                await load();
+                renderer.threeRenderer.setAnimationLoop(() => {
+                    const time = {
+                        delta: Math.min(clock.getDelta(), 0.05),
+                        elapsed: clock.getElapsedTime()
+                    };
+                    renderer.stats.begin();
+                    updateModel(
+                        model,
+                        animState,
+                        behaviour,
+                        props.animIndex,
+                        time
+                    );
+                    scene.camera.update(model, true, { x: 0, y: 0}, -0.9, time);
+                    renderer.render(scene);
+                    renderer.stats.end();
+                });
+            }
+        };
+        asyncLoad();
+    }, [behaviour]);
+
     let behaviourModeItems;
     if (behaviour <= BehaviourModeType.DISCRETE) {
         behaviourModeItems = (
             <div className="behaviourItemContainer">
-                <BehaviourModeItem selected={behaviour === 0} />
-                <BehaviourModeItem selected={behaviour === 1} />
-                <BehaviourModeItem selected={behaviour === 2} />
-                <BehaviourModeItem selected={behaviour === 3} style={{
+                <BehaviourModeItem behaviour={behaviour} selected={behaviour === 0} />
+                <BehaviourModeItem behaviour={behaviour} selected={behaviour === 1} />
+                <BehaviourModeItem behaviour={behaviour} selected={behaviour === 2} />
+                <BehaviourModeItem behaviour={behaviour} selected={behaviour === 3} style={{
                     marginRight: '0px'
                 }} />
             </div>
@@ -220,15 +374,15 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
     } else if (behaviour === BehaviourModeType.HORN) {
         behaviourModeItems = (
             <div className="behaviourItemContainer">
-                <BehaviourModeItem selected={behaviour === 6} />
+                <BehaviourModeItem behaviour={behaviour} selected={behaviour === 6} />
             </div>
         );
     } else if (behaviour === BehaviourModeType.PROTOPACK ||
                behaviour === BehaviourModeType.JETPACK) {
         behaviourModeItems = (
             <div className="behaviourItemContainer">
-                <BehaviourModeItem selected={behaviour === 4} />
-                <BehaviourModeItem selected={behaviour === 8} />
+                <BehaviourModeItem behaviour={behaviour} selected={behaviour === 4} />
+                <BehaviourModeItem behaviour={behaviour} selected={behaviour === 8} />
             </div>
         );
     }

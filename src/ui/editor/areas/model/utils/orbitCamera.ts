@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export function get3DOrbitCamera() {
+export function get3DOrbitCamera(vang = 0.6) {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
@@ -8,7 +8,7 @@ export function get3DOrbitCamera() {
         1000
     ); // 1m = 0.0625 units
     let angle = 0.8;
-    let vAngle = 0.6;
+    let vAngle = vang;
     const controlNode = new THREE.Object3D();
     const orientation = new THREE.Object3D();
     orientation.rotation.set(0, Math.PI, 0);

@@ -558,6 +558,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             {!showMenu && behaviourMenu ?
                 <BehaviourMenu
                     game={game}
+                    sceneManager={scene}
                 />
             : null }
             <Menu
