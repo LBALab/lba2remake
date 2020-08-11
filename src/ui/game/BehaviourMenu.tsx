@@ -124,6 +124,8 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
     const listener = (event) => {
         let behav = behaviour;
         const key = event.code || event.which || event.keyCode;
+        event.preventDefault();
+        event.stopPropagation();
         switch (key) {
             case 37:
             case 'ArrowLeft':
