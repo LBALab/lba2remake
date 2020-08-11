@@ -3,6 +3,8 @@ import SimplexNoise from 'simplex-noise';
 
 import STARS_VERT from './shaders/dome_stars.vert.glsl';
 import STARS_FRAG from './shaders/dome_stars.frag.glsl';
+import WALLS_VERT from './shaders/dome_walls.vert.glsl';
+import WALLS_FRAG from './shaders/dome_walls.frag.glsl';
 import { WORLD_SCALE_B } from '../../utils/lba';
 
 const loader = new THREE.TextureLoader();
@@ -107,10 +109,13 @@ export async function loadDomeEnv() {
     const walls = createWalls();
     threeObject.add(walls);
 
+    const wallsMaterial = walls.material as THREE.RawShaderMaterial;
+
     return {
         threeObject,
         update: (time) => {
             starsMaterial.uniforms.time.value = time.elapsed;
+            wallsMaterial.uniforms.time.value = time.elapsed;
         }
     };
 }
@@ -151,14 +156,55 @@ function createWalls() {
         x1, y0, z1,
         x1, y1, z1,
     ];
+
+    const dist = [
+        44,
+        44,
+        74,
+        44,
+        74,
+        74,
+
+        0,
+        0,
+        44,
+        0,
+        44,
+        44,
+
+        148,
+        118,
+        148,
+        148,
+        118,
+        118,
+
+        118,
+        74,
+        118,
+        118,
+        74,
+        74,
+    ];
+
     const bufferGeometry = new THREE.BufferGeometry();
     bufferGeometry.setAttribute(
         'position',
         new THREE.BufferAttribute(new Float32Array(positions), 3)
     );
 
-    const mesh = new THREE.Mesh(bufferGeometry, new THREE.MeshBasicMaterial({
-        color: 0x0
+    bufferGeometry.setAttribute(
+        'dist',
+        new THREE.BufferAttribute(new Float32Array(dist), 1)
+    );
+
+    const mesh = new THREE.Mesh(bufferGeometry, new THREE.RawShaderMaterial({
+        uniforms: {
+            time: { value: 0 }
+        },
+        transparent: true,
+        vertexShader: WALLS_VERT,
+        fragmentShader: WALLS_FRAG,
     }));
 
     mesh.frustumCulled = false;
