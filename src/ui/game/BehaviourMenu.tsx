@@ -46,194 +46,16 @@ let renderer = null;
 let model = null;
 let animState = null;
 
-const BehaviourModeItem = (props: any) => {
+const BehaviourModeItem = ({ selected, behaviour, ...rest }) => {
     const itemRef = useRef(null);
     useEffect(() => {
-        if (props.selected && canvas) {
+        if (selected && canvas) {
             canvas.width = canvas.style.width = itemRef.current.offsetWidth - 2;
             canvas.height = canvas.style.height = itemRef.current.offsetHeight - 2;
             renderer.resize(canvas.width, canvas.height);
             itemRef.current.appendChild(canvas);
         }
-    }, [props.selected]);
-
-    return (
-        <div
-            ref={itemRef}
-            className={`behaviourItem${props.selected ? ' selected' : ''}`}
-            {...props}
-        >
-        </div>
-    );
-};
-
-const BehaviourMode = ({ game, behaviour }) => {
-    const behaviourText = (game.menuTexts)
-    ? game.menuTexts[80 + behaviour].value : '';
-    return (
-        <div className="behaviourMode">{behaviourText}</div>
-    );
-};
-
-const BehaviourCount = ({ type, value }: { type: 'keys' | 'money', value: number}) => {
-    // TODO zlitos
-    const imgType = type === 'keys' ? 'keys' : 'kashes';
-    return (
-        <div className={`count ${type}`}>
-            <img src={`images/${imgType}.png`} />
-            <div>{value}</div>
-        </div>
-    );
-};
-
-const BehavourPointProgress = ({ type, value, maxValue, size }
-    : { type: 'magic' | 'life', value: number, maxValue: number, size?: number }) => {
-        let maxWidth = useMedia(
-            ['(max-width: 768px)', '(max-width: 1024px)'],
-            [200, 400],
-            470,
-        );
-        if (type === 'magic') {
-            maxWidth = Math.floor(maxWidth / (4 - size));
-        }
-        const width = (value * maxWidth) / maxValue;
-    return (
-        maxValue > 0 ?
-            <div className={`pointsProgressContainer ${type}`}>
-                <img src={`images/${type}.png`} />
-                <div className="pointsProgress" style={{
-                        width: maxWidth,
-                    }}
-                >
-                    <div className={`progress ${type}`} style={{
-                        borderTopRightRadius: value === maxValue ? 15 : 0,
-                        borderBottomRightRadius: value === maxValue ? 15 : 0,
-                        width,
-                    }}>
-                    </div>
-                </div>
-            </div>
-        : null
-    );
-};
-
-const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
-    const clovers = [];
-    for (let b = 0; b < boxes; b += 1) {
-        if (leafs > b) {
-            clovers.push('cloverboxleaf');
-        } else {
-            clovers.push('cloverbox');
-        }
-    }
-    return (
-        <div className="clovers">
-            {clovers.map(type => (
-                <img
-                    key={type}
-                    src={`images/${type}.png`}
-                />
-            ))}
-        </div>
-    );
-};
-
-const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
-    const {
-        life,
-        money,
-        magic,
-        keys,
-        clover,
-        magicball,
-    }: IBehaviourMenu = game.getState().hero;
-    const { props } = sceneManager.actors[0];
-
-    const [behaviour, setBehaviour] = useState(game.getState().hero.behaviour);
-
-    const listener = (event) => {
-        let behav = behaviour;
-        const key = event.code || event.which || event.keyCode;
-        switch (key) {
-            case 37:
-            case 'ArrowLeft':
-                 switch (true) {
-                    // Normal 4 behaviour modes.
-                    case behav <= BehaviourModeType.DISCRETE:
-                        behav -= 1;
-                        if (behav < BehaviourModeType.NORMAL) {
-                            behav = BehaviourModeType.DISCRETE;
-                        }
-                        break;
-                    case behav === BehaviourModeType.PROTOPACK:
-                        behav = BehaviourModeType.JETPACK;
-                        break;
-                    case behav === BehaviourModeType.JETPACK:
-                        behav = BehaviourModeType.PROTOPACK;
-                        break;
-                }
-                break;
-            case 39:
-            case 'ArrowRight':
-                switch (true) {
-                    // Normal 4 behaviour modes.
-                    case behav <= BehaviourModeType.DISCRETE:
-                        behav += 1;
-                        if (behav > BehaviourModeType.DISCRETE) {
-                            behav = BehaviourModeType.NORMAL;
-                        }
-                        break;
-                    case behav === BehaviourModeType.PROTOPACK:
-                        behav = BehaviourModeType.JETPACK;
-                        break;
-                    case behav === BehaviourModeType.JETPACK:
-                        behav = BehaviourModeType.PROTOPACK;
-                        break;
-                }
-                break;
-            case 38:
-            case 'ArrowUp':
-                switch (true) {
-                    // Normal 4 behaviour modes.
-                    case behav <= BehaviourModeType.DISCRETE:
-                        behav = BehaviourModeType.HORN;
-                        break;
-                    case behav === BehaviourModeType.HORN:
-                        behav = BehaviourModeType.PROTOPACK;
-                        break;
-                    case behav === BehaviourModeType.PROTOPACK ||
-                         behav === BehaviourModeType.JETPACK:
-                        behav = BehaviourModeType.NORMAL;
-                        break;
-                }
-                break;
-            case 40:
-            case 'ArrowDown':
-                switch (true) {
-                    // Normal 4 behaviour modes.
-                    case behav <= BehaviourModeType.DISCRETE:
-                        behav = BehaviourModeType.PROTOPACK;
-                        break;
-                    case behav === BehaviourModeType.PROTOPACK ||
-                         behav === BehaviourModeType.JETPACK:
-                        behav = BehaviourModeType.HORN;
-                        break;
-                    case behav === BehaviourModeType.HORN:
-                        behav = BehaviourModeType.NORMAL;
-                        break;
-                }
-                break;
-        }
-        setBehaviour(behav);
-        game.getState().hero.behaviour = behav;
-    };
-
-    useEffect(() => {
-        window.addEventListener('keydown', listener);
-        return () => {
-            window.removeEventListener('keydown', listener);
-        };
-    });
+    }, [selected]);
 
     const load = async () => {
         animState = loadAnimState();
@@ -248,8 +70,10 @@ const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
         model = await loadModel(
             {},
             behaviour,
-            props.bodyIndex,
-            props.animIndex,
+            // props.bodyIndex,
+            // props.animIndex,
+            0,
+            0,
             animState,
             envInfo,
             ambience
@@ -347,7 +171,8 @@ const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
                         model,
                         animState,
                         behaviour,
-                        props.animIndex,
+                        // props.animIndex,
+                        0,
                         time
                     );
                     scene.camera.update(model, true, { x: 0, y: 0}, -0.9, time);
@@ -358,6 +183,182 @@ const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
         };
         asyncLoad();
     }, [behaviour]);
+
+    return (
+        <div
+            ref={itemRef}
+            className={`behaviourItem${selected ? ' selected' : ''}`}
+            {...rest}
+        >
+        </div>
+    );
+};
+
+const BehaviourMode = ({ game, behaviour }) => {
+    const behaviourText = (game.menuTexts)
+    ? game.menuTexts[80 + behaviour].value : '';
+    return (
+        <div className="behaviourMode">{behaviourText}</div>
+    );
+};
+
+const BehaviourCount = ({ type, value }: { type: 'keys' | 'money', value: number}) => {
+    // TODO zlitos
+    const imgType = type === 'keys' ? 'keys' : 'kashes';
+    return (
+        <div className={`count ${type}`}>
+            <img src={`images/${imgType}.png`} />
+            <div>{value}</div>
+        </div>
+    );
+};
+
+const BehavourPointProgress = ({ type, value, maxValue, size }
+    : { type: 'magic' | 'life', value: number, maxValue: number, size?: number }) => {
+        let maxWidth = useMedia(
+            ['(max-width: 768px)', '(max-width: 1024px)'],
+            [200, 400],
+            470,
+        );
+        if (type === 'magic') {
+            maxWidth = Math.floor(maxWidth / (4 - size));
+        }
+        const width = (value * maxWidth) / maxValue;
+    return (
+        maxValue > 0 ?
+            <div className={`pointsProgressContainer ${type}`}>
+                <img src={`images/${type}.png`} />
+                <div className="pointsProgress" style={{
+                        width: maxWidth,
+                    }}
+                >
+                    <div className={`progress ${type}`} style={{
+                        borderTopRightRadius: value === maxValue ? 15 : 0,
+                        borderBottomRightRadius: value === maxValue ? 15 : 0,
+                        width,
+                    }}>
+                    </div>
+                </div>
+            </div>
+        : null
+    );
+};
+
+const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
+    const clovers = [];
+    for (let b = 0; b < boxes; b += 1) {
+        if (leafs > b) {
+            clovers.push('cloverboxleaf');
+        } else {
+            clovers.push('cloverbox');
+        }
+    }
+    return (
+        <div className="clovers">
+            {clovers.map(type => (
+                <img
+                    key={type}
+                    src={`images/${type}.png`}
+                />
+            ))}
+        </div>
+    );
+};
+
+const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
+    const {
+        life,
+        money,
+        magic,
+        keys,
+        clover,
+        magicball,
+    }: IBehaviourMenu = game.getState().hero;
+    const [behaviour, setBehaviour] = useState(game.getState().hero.behaviour);
+
+    const listener = (event) => {
+        let behav = behaviour;
+        const key = event.code || event.which || event.keyCode;
+        switch (key) {
+            case 37:
+            case 'ArrowLeft':
+                 switch (true) {
+                    // Normal 4 behaviour modes.
+                    case behav <= BehaviourModeType.DISCRETE:
+                        behav -= 1;
+                        if (behav < BehaviourModeType.NORMAL) {
+                            behav = BehaviourModeType.DISCRETE;
+                        }
+                        break;
+                    case behav === BehaviourModeType.PROTOPACK:
+                        behav = BehaviourModeType.JETPACK;
+                        break;
+                    case behav === BehaviourModeType.JETPACK:
+                        behav = BehaviourModeType.PROTOPACK;
+                        break;
+                }
+                break;
+            case 39:
+            case 'ArrowRight':
+                switch (true) {
+                    // Normal 4 behaviour modes.
+                    case behav <= BehaviourModeType.DISCRETE:
+                        behav += 1;
+                        if (behav > BehaviourModeType.DISCRETE) {
+                            behav = BehaviourModeType.NORMAL;
+                        }
+                        break;
+                    case behav === BehaviourModeType.PROTOPACK:
+                        behav = BehaviourModeType.JETPACK;
+                        break;
+                    case behav === BehaviourModeType.JETPACK:
+                        behav = BehaviourModeType.PROTOPACK;
+                        break;
+                }
+                break;
+            case 38:
+            case 'ArrowUp':
+                switch (true) {
+                    // Normal 4 behaviour modes.
+                    case behav <= BehaviourModeType.DISCRETE:
+                        behav = BehaviourModeType.HORN;
+                        break;
+                    case behav === BehaviourModeType.HORN:
+                        behav = BehaviourModeType.PROTOPACK;
+                        break;
+                    case behav === BehaviourModeType.PROTOPACK ||
+                         behav === BehaviourModeType.JETPACK:
+                        behav = BehaviourModeType.NORMAL;
+                        break;
+                }
+                break;
+            case 40:
+            case 'ArrowDown':
+                switch (true) {
+                    // Normal 4 behaviour modes.
+                    case behav <= BehaviourModeType.DISCRETE:
+                        behav = BehaviourModeType.PROTOPACK;
+                        break;
+                    case behav === BehaviourModeType.PROTOPACK ||
+                         behav === BehaviourModeType.JETPACK:
+                        behav = BehaviourModeType.HORN;
+                        break;
+                    case behav === BehaviourModeType.HORN:
+                        behav = BehaviourModeType.NORMAL;
+                        break;
+                }
+                break;
+        }
+        setBehaviour(behav);
+        game.getState().hero.behaviour = behav;
+    };
+
+    useEffect(() => {
+        window.addEventListener('keydown', listener);
+        return () => {
+            window.removeEventListener('keydown', listener);
+        };
+    });
 
     let behaviourModeItems;
     if (behaviour <= BehaviourModeType.DISCRETE) {
