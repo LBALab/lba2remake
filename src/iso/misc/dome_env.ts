@@ -1,11 +1,12 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import SimplexNoise from 'simplex-noise';
 
 import STARS_VERT from './shaders/dome_stars.vert.glsl';
 import STARS_FRAG from './shaders/dome_stars.frag.glsl';
-import { WORLD_SCALE_B } from '../../utils/lba';
 
 const loader = new THREE.TextureLoader();
+const gltfLoader = new GLTFLoader();
 
 const noiseGen = new SimplexNoise('LBA');
 
@@ -104,8 +105,12 @@ export async function loadDomeEnv() {
     threeObject.name = 'dome_env';
     threeObject.add(stars);
 
-    const walls = createWalls();
-    threeObject.add(walls);
+    const dome = await new Promise<THREE.Object3D>((resolve) => {
+        gltfLoader.load('models/dome.glb', (m) => {
+            resolve(m.scene);
+        });
+    });
+    threeObject.add(dome);
 
     return {
         threeObject,
@@ -113,55 +118,4 @@ export async function loadDomeEnv() {
             starsMaterial.uniforms.time.value = time.elapsed;
         }
     };
-}
-
-function createWalls() {
-    const x0 = -15;
-    const x1 = 15;
-    const z0 = -22;
-    const z1 = 22;
-    const y0 = WORLD_SCALE_B;
-    const y1 = WORLD_SCALE_B * 20;
-    const positions = [
-        x0, y0, z1,
-        x0, y1, z1,
-        x1, y1, z1,
-        x0, y0, z1,
-        x1, y1, z1,
-        x1, y0, z1,
-
-        x0, y0, z0,
-        x0, y1, z0,
-        x0, y1, z1,
-        x0, y0, z0,
-        x0, y1, z1,
-        x0, y0, z1,
-
-        x0, y0, z0,
-        x1, y1, z0,
-        x0, y1, z0,
-        x0, y0, z0,
-        x1, y0, z0,
-        x1, y1, z0,
-
-        x1, y0, z0,
-        x1, y1, z1,
-        x1, y1, z0,
-        x1, y0, z0,
-        x1, y0, z1,
-        x1, y1, z1,
-    ];
-    const bufferGeometry = new THREE.BufferGeometry();
-    bufferGeometry.setAttribute(
-        'position',
-        new THREE.BufferAttribute(new Float32Array(positions), 3)
-    );
-
-    const mesh = new THREE.Mesh(bufferGeometry, new THREE.MeshBasicMaterial({
-        color: 0x0
-    }));
-
-    mesh.frustumCulled = false;
-    mesh.name = 'walls';
-    return mesh;
 }
