@@ -9,6 +9,7 @@ import { getResourcePath } from '../../resources';
 export const PALETTE = unimplemented();
 
 export function BODY_OBJ(actor, bodyIndex) {
+    actor.isVisible = true;
     actor.setBody(this.scene, bodyIndex);
 }
 
