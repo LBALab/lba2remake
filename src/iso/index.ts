@@ -47,7 +47,7 @@ export async function loadIsometricScenery(entry, ambience, is3D, isEditor = fal
     // Dome of the slate
     let domeEnv = null;
     if (entry === 26) {
-        domeEnv = loadDomeEnv();
+        domeEnv = await loadDomeEnv();
         threeObject.add(domeEnv.threeObject);
     }
 
