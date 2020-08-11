@@ -14,7 +14,7 @@ export function BETA(angle) {
 
 export function NO_BODY() {
     this.actor.props.bodyIndex = -1;
-    this.actor.props.flags.isVisible = false;
+    this.actor.isVisible = false;
     if (this.actor.threeObject) {
         this.actor.threeObject.visible = false;
     }
