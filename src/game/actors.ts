@@ -3,7 +3,7 @@ import {cloneDeep} from 'lodash';
 
 import { loadModel, Model } from '../model';
 import { loadAnimState, resetAnimState } from '../model/animState';
-import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
+import { angleToRad, distance2D, angleTo, getDistanceLba, getPositions } from '../utils/lba';
 import {createBoundingBox} from '../utils/rendering';
 import { loadSprite } from '../iso/sprites';
 
@@ -96,6 +96,8 @@ export const DirMode = {
     MOVE_BUGGY_MANUAL: 13
 };
 
+const ACTOR_BOX = new THREE.Box3();
+
 // TODO: move section offset to container THREE.Object3D
 export async function loadActor(
     game: any,
@@ -181,6 +183,18 @@ export async function loadActor(
         },
 
         getDistance(pos) {
+            if (this.model) {
+                ACTOR_BOX.copy(this.model.boundingBox);
+                ACTOR_BOX.translate(this.physics.position);
+                let minDist = Infinity;
+                for (const bbPos of getPositions(ACTOR_BOX)) {
+                    const dist = distance2D(bbPos, pos);
+                    if (dist < minDist) {
+                        minDist = dist;
+                    }
+                }
+                return minDist;
+            }
             return distance2D(this.physics.position, pos);
         },
 
