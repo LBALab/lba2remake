@@ -24,6 +24,10 @@ export function makeKeyboardControls(params: any,
 
 function keyDownHandler(params, game, sceneManager, event) {
     const key = event.code || event.which || event.keyCode;
+    const { behaviourMenu } = game.getUiState();
+    if (behaviourMenu) {
+        return;
+    }
     // console.log(event.code, event.which, event.keyCode);
     switch (key) {
         case 38: // up
