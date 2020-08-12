@@ -5,51 +5,97 @@ import STARS_VERT from './shaders/dome_stars.vert.glsl';
 import STARS_FRAG from './shaders/dome_stars.frag.glsl';
 import { WORLD_SCALE_B } from '../../utils/lba';
 
-const starsMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-        color: { value: new THREE.Color(0xFFFFFF) },
-    },
-    transparent: true,
-    vertexShader: STARS_VERT,
-    fragmentShader: STARS_FRAG,
-});
+const loader = new THREE.TextureLoader();
 
 const noiseGen = new SimplexNoise('LBA');
 
-export function loadDomeEnv() {
+export async function loadDomeEnv() {
+    const starTexture = await new Promise(resolve =>
+        loader.load('images/stars/B_OPC3.png', resolve)
+    );
+    const starsMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            starTex: { value: starTexture },
+            color: { value: new THREE.Color(0xFFFFFF) },
+            time: { value: 0 }
+        },
+        transparent: true,
+        vertexShader: STARS_VERT,
+        fragmentShader: STARS_FRAG,
+    });
     const starsGeo = new THREE.BufferGeometry();
     const positions = [];
+    const uvs = [];
     const sizes = [];
     const tints = [];
+    const sparkles = [];
     const intensities = [];
-    const count = 2000;
+    const count = 2500;
+    const indices = [];
+    const len2 = (x, y, z) => x * x + y * y + z * z;
+    const len2Pos = idx => len2(
+        positions[idx * 3],
+        positions[idx * 3 + 1],
+        positions[idx * 3 + 2]
+    );
     for (let i = 0; i < count; i += 1) {
-        const x = Math.random() * 500 - 250;
-        const y = (i / count) * 300 - 320;
-        const z = Math.random() * 500 - 250;
-        positions.push(x);
-        positions.push(y);
-        positions.push(z);
+        let x;
+        let y;
+        let z;
+        let l2;
+        do {
+            x = Math.random() * 500 - 250;
+            y = Math.random() * 250 - 250;
+            z = Math.random() * 500 - 250;
+            l2 = len2(x, y, z);
+        } while (l2 > 250 * 250 || l2 < 40 * 40);
         const intensity = noiseGen.noise3D(x, y, z) * 0.2 + 0.8;
-        intensities.push(intensity);
-        const sz = Math.random();
-        sizes.push(0.8 + sz * 0.2);
-        tints.push(Math.random());
+        const sz = 0.6 + Math.random() * 0.4;
+        const tint = Math.random();
+        const sparkle = Math.random();
+        for (let j = 0; j < 6; j += 1) {
+            positions.push(x);
+            positions.push(y);
+            positions.push(z);
+            intensities.push(intensity);
+            sizes.push(sz);
+            tints.push(tint);
+            sparkles.push(sparkle);
+        }
+        uvs.push(
+            0, 0,
+            0, 1,
+            1, 0,
+            1, 1,
+            1, 0,
+            0, 1
+        );
+        indices.push(i * 6);
     }
+    indices.sort((a, b) => len2Pos(b) - len2Pos(a));
+    const realIndices = [];
+    indices.forEach(idx => realIndices.push(idx, idx + 1, idx + 2, idx + 3, idx + 4, idx + 5));
+    starsGeo.setIndex(realIndices);
     const posArray = new Float32Array(positions);
     const posAttr = new THREE.BufferAttribute(posArray, 3);
     starsGeo.setAttribute('position', posAttr);
+    const uvArray = new Float32Array(uvs);
+    const uvAttr = new THREE.BufferAttribute(uvArray, 2);
+    starsGeo.setAttribute('uv', uvAttr);
     const sizeArray = new Float32Array(sizes);
     const sizeAttr = new THREE.BufferAttribute(sizeArray, 1);
     starsGeo.setAttribute('size', sizeAttr);
     const tintArray = new Float32Array(tints);
     const tintAttr = new THREE.BufferAttribute(tintArray, 1);
     starsGeo.setAttribute('tint', tintAttr);
+    const sparkleArray = new Float32Array(sparkles);
+    const sparkleAttr = new THREE.BufferAttribute(sparkleArray, 1);
+    starsGeo.setAttribute('sparkle', sparkleAttr);
     const intensitiesArray = new Float32Array(intensities);
     const intensitiesAttr = new THREE.BufferAttribute(intensitiesArray, 1);
     starsGeo.setAttribute('intensity', intensitiesAttr);
 
-    const stars = new THREE.Points(starsGeo, starsMaterial);
+    const stars = new THREE.Mesh(starsGeo, starsMaterial);
     stars.name = 'dome_env';
     stars.frustumCulled = false;
 
@@ -63,8 +109,8 @@ export function loadDomeEnv() {
 
     return {
         threeObject,
-        update: (_time) => {
-            // stars.rotation.y = time.elapsed * 0.01;
+        update: (time) => {
+            starsMaterial.uniforms.time.value = time.elapsed;
         }
     };
 }
