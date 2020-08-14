@@ -293,8 +293,10 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                     this.hideMenu();
                 }
             }
+            const isMac = /^Mac/.test(navigator && navigator.platform);
             if ((!this.state.showMenu || !this.state.inGameMenu) &&
-                (key === 'ControlLeft' || key === 'ControlRight' || key === 17)) {
+                ((!isMac && (key === 'ControlLeft' || key === 'ControlRight' || key === 17))
+                || (isMac && (key === 'MetaLeft' || key === 'MetaRight' || key === 91)))) {
                 this.setState({ behaviourMenu: true });
                 if (!this.state.cinema && this.state.scene && this.state.scene.actors[0]) {
                     this.state.scene.actors[0].cancelAnims();
@@ -306,8 +308,10 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
 
     listenerKeyUp(event) {
         const key = event.code || event.which || event.keyCode;
+        const isMac = /^Mac/.test(navigator && navigator.platform);
         if ((!this.state.showMenu || !this.state.inGameMenu) &&
-            (key === 'ControlLeft' || key === 'ControlRight' || key === 17)) {
+            ((!isMac && (key === 'ControlLeft' || key === 'ControlRight' || key === 17))
+            || (isMac && (key === 'MetaLeft' || key === 'MetaRight' || key === 91)))) {
             this.setState({ behaviourMenu: false });
             this.state.game.resume();
         }
