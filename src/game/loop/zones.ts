@@ -271,6 +271,9 @@ function calculateTagetPosition(hero, zone, newScene) {
  * @return {boolean}
  */
 function GOTO_SCENE(game, scene, zone, hero) {
+    hero.props.runtimeFlags.isClimbing = false;
+    hero.props.runtimeFlags.isToppingOutUp = false;
+
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
         scene.goto(zone.props.snap).then((newScene) => {
             const newPosition = calculateTagetPosition(hero, zone, newScene);

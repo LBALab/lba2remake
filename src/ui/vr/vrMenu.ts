@@ -14,7 +14,6 @@ let resume = null;
 
 export function createMenu(game, sceneManager, light) {
     menuNode = new THREE.Object3D();
-
     mainMenu = new THREE.Object3D();
     menuNode.add(mainMenu);
     resume = createMenuItem({
@@ -41,6 +40,7 @@ export function createMenu(game, sceneManager, light) {
             const onEnded = async () => {
                 game.setUiState({video: null});
                 game.controlsState.skipListener = null;
+                audio.stopMusicTheme();
                 game.resume();
                 game.resetState();
                 const scene = await sceneManager.goto(0, false);

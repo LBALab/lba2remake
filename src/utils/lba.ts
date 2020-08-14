@@ -71,6 +71,7 @@ export function getDistance(value) {
 export function getDistanceLba(value) {
     return (value * 500) / distanceThreeJs;
 }
+
 export function angleTo(v1, v2) {
     const xdiff = v2.x - v1.x;
     const zdiff = v2.z - v1.z;
@@ -78,12 +79,21 @@ export function angleTo(v1, v2) {
     return Math.atan2(xdiff, zdiff);
 }
 
+export function distAngle(angle1, angle2) {
+    const clockwiseDist = Math.abs(angle1 - angle2);
+    return Math.min(clockwiseDist, 2 * Math.PI - clockwiseDist);
+}
+
 export function normalizeAngle(angle) {
     return Math.atan2(Math.sin(angle), Math.cos(angle));
 }
 
 export function angleToRad(angle) {
-    return normalizeAngle(THREE.MathUtils.degToRad(getRotation(angle, 0, 1) - 90));
+    let rads = THREE.MathUtils.degToRad(getRotation(angle, 0, 1) - 90);
+    if (rads < 0) {
+        rads += Math.PI * 2;
+    }
+    return rads;
 }
 
 export function getRandom(min, max) {

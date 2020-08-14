@@ -150,14 +150,8 @@ export async function loadActor(
         goto(point) {
             this.physics.temp.destination = point;
             let destAngle = angleTo(this.physics.position, point);
-            const signCurr = this.physics.temp.destAngle > 0 ? 1 : -1;
-            const signTgt = destAngle > 0 ? 1 : -1;
-            if (signCurr !== signTgt && Math.abs(destAngle) > Math.PI / 4) {
-                if (signCurr === -1) {
-                    destAngle -= 2 * Math.PI;
-                } else {
-                    destAngle += 2 * Math.PI;
-                }
+            if (destAngle < 0) {
+                destAngle += Math.PI * 2;
             }
             this.physics.temp.destAngle = destAngle;
             this.props.runtimeFlags.isWalking = true;
@@ -173,21 +167,15 @@ export async function loadActor(
 
         facePoint(point) {
             let destAngle = angleTo(this.physics.position, point);
-            const signCurr = this.physics.temp.destAngle > 0 ? 1 : -1;
-            const signTgt = destAngle > 0 ? 1 : -1;
-            if (signCurr !== signTgt && Math.abs(destAngle) > Math.PI / 4) {
-                if (signCurr === -1) {
-                    destAngle -= 2 * Math.PI;
-                } else {
-                    destAngle += 2 * Math.PI;
-                }
+            if (destAngle < 0) {
+                destAngle += Math.PI * 2;
             }
             this.physics.temp.destAngle = destAngle;
             this.props.runtimeFlags.isTurning = true;
         },
 
         setAngle(angle) {
-            // this.props.runtimeFlags.isTurning = true;
+            this.props.runtimeFlags.isTurning = true;
             this.props.angle = angle;
             this.physics.temp.destAngle = angleToRad(angle);
         },

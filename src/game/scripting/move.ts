@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { unimplemented } from './utils';
-import { WORLD_SCALE, getRandom } from '../../utils/lba';
+import { WORLD_SCALE, getRandom, distAngle } from '../../utils/lba';
 
 export function GOTO_POINT(point) {
     if (this.actor.index === 0 && this.game.controlsState.firstPerson) {
@@ -9,8 +9,7 @@ export function GOTO_POINT(point) {
         return;
     }
     const distance = this.actor.goto(point.physics.position);
-
-    if (distance > 0.5) {
+    if (distance > 0.55) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     } else {
@@ -29,6 +28,12 @@ export function WAIT_ANIM() {
 
 export function ANGLE(angle) {
     this.actor.setAngle(angle);
+    if (distAngle(this.actor.physics.temp.destAngle, this.actor.physics.temp.angle) > Math.PI / 8) {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+    } else {
+        this.actor.stop();
+    }
 }
 
 export const GOTO_SYM_POINT = unimplemented();
@@ -173,10 +178,7 @@ export function SIMPLE_SAMPLE(index) {
 export function FACE_HERO() {
     const hero = this.scene.actors[0];
     this.actor.facePoint(hero.physics.position);
-
-    const distAngle = Math.abs(this.actor.physics.temp.destAngle - this.actor.physics.temp.angle);
-
-    if (distAngle > Math.PI / 8) {
+    if (distAngle(this.actor.physics.temp.destAngle, this.actor.physics.temp.angle) > Math.PI / 8) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     } else {

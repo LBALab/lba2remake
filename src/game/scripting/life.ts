@@ -9,11 +9,13 @@ import { getResourcePath } from '../../resources';
 export const PALETTE = unimplemented();
 
 export function BODY_OBJ(actor, bodyIndex) {
+    actor.isVisible = true;
     actor.setBody(this.scene, bodyIndex);
 }
 
 export function ANIM_OBJ(actor, animIndex) {
     actor.setAnim(animIndex);
+    actor.animState.interpolationFrame = 0;
 }
 
 export const SET_CAMERA = unimplemented();
@@ -32,9 +34,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         let onVoiceEndedCallback = null;
         if (this.scene.vr) {
             onVoiceEndedCallback = () => {
-                if (cmdState.playing) {
-                    cmdState.ended = true;
-                }
+                cmdState.ended = true;
             };
         }
         audio.playVoice(text.index, this.scene.data.textBankId, onVoiceEndedCallback);

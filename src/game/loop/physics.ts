@@ -86,9 +86,11 @@ function processCollisionsWithActors(scene, actor) {
         if ((a.model === null && a.sprite === null)
             || a.index === actor.index
             || a.isKilled
+            || !a.isVisible
             || !(a.props.flags.hasCollisions || a.props.flags.isSprite)) {
             continue;
         }
+
         const boundingBox = a.model ? a.model.boundingBox : a.sprite.boundingBox;
         INTERSECTION.copy(boundingBox);
         if (a.model) {

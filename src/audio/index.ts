@@ -35,6 +35,7 @@ export function createAudioManager(state) {
     return {
         // music
         playMusic: (index: number) => {
+            menuMusicSource.stop();
             if (!musicSource.isPlaying()) {
                 musicSource.play(index);
             }
@@ -100,31 +101,21 @@ export function createAudioManager(state) {
 
         // shared
         pause: () => {
-            Object.keys(samples).forEach((index: string) => {
-                const sampleSource = samples[index];
-                if (sampleSource) {
-                    sampleSource.pause();
-                }
-            });
-            voiceSource.pause();
-            musicSource.pause();
+            context.suspend();
         },
         resume: () => {
-            musicSource.resume();
-            voiceSource.resume();
-            Object.keys(samples).forEach((index: string) => {
-                const sampleSource = samples[index];
-                if (sampleSource) {
-                    sampleSource.resume();
-                }
-            });
+            context.resume();
         },
         resumeContext: () => {
-            context.resume();
-            menuContext.resume();
+            if (!isActive(context)) {
+                context.resume();
+            }
+            if (!isActive(menuContext)) {
+                menuContext.resume();
+            }
         },
         isContextActive: () => {
-            return isActive(context) && isActive(menuContext);
+            return isActive(context) || isActive(menuContext);
         }
     };
 }

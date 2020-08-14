@@ -327,6 +327,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
             animIndex = AnimType.THROW;
         }
     }
+
     if (!controlsState.relativeToCam && !hero.props.runtimeFlags.isJumping) {
         if (controlsState.controlVector.x !== 0 && !controlsState.crouch) {
             hero.props.runtimeFlags.isCrouching = false;

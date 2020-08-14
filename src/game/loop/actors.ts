@@ -99,12 +99,39 @@ const vrFPsteps = [
 function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, time: any) {
     const deltaMS = time.delta * 1000;
     if (actor.props.runtimeFlags.isTurning) {
-        const baseAngle = ((actor.physics.temp.destAngle - actor.physics.temp.angle) * deltaMS);
-        let angle = baseAngle / (actor.props.speed * 10);
-        angle = Math.atan2(Math.sin(angle), Math.cos(angle));
-        actor.physics.temp.angle += angle;
+        // We want to rotate in the most efficient way possible, i.e. we rotate
+        // either clockwise or anticlockwise depening on which one is fastest.
+        let distanceAnticlockwise;
+        let distanceClockwise;
+        if (actor.physics.temp.destAngle > actor.physics.temp.angle) {
+            distanceAnticlockwise = Math.abs(actor.physics.temp.destAngle -
+                                             actor.physics.temp.angle);
+            distanceClockwise = 2 * Math.PI - distanceAnticlockwise;
+        } else {
+            distanceClockwise = Math.abs(actor.physics.temp.destAngle -
+                                         actor.physics.temp.angle);
+            distanceAnticlockwise =  2 * Math.PI - distanceClockwise;
+        }
+        const baseAngle = Math.min(distanceAnticlockwise,
+                                 distanceClockwise) * deltaMS;
+        const angle = baseAngle / (actor.props.speed * 10);
+        const sign = distanceAnticlockwise < distanceClockwise ? 1 : -1;
+        actor.physics.temp.angle += sign * angle;
+
+        if (actor.physics.temp.angle < 0) {
+            actor.physics.temp.angle += 2 * Math.PI;
+        }
+        if (actor.physics.temp.angle > 2 * Math.PI) {
+            actor.physics.temp.angle -= 2 * Math.PI;
+        }
+
         wEuler.set(0, actor.physics.temp.angle, 0, 'XZY');
         actor.physics.orientation.setFromEuler(wEuler);
+
+        if (Math.min(distanceAnticlockwise, distanceClockwise) < 0.05) {
+          actor.props.runtimeFlags.isTurning = false;
+          actor.physics.temp.destAngle = actor.physics.temp.angle;
+        }
     }
     if (actor.props.runtimeFlags.isWalking) {
         actor.physics.temp.position.set(0, 0, 0);
@@ -133,12 +160,12 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
 }
 
 function updateModel(game: any,
-                        sceneIsActive: any,
-                        model: any,
-                        animState: any,
-                        entityIdx: number,
-                        animIdx: number,
-                        time: Time) {
+                     sceneIsActive: any,
+                     model: any,
+                     animState: any,
+                     entityIdx: number,
+                     animIdx: number,
+                     time: Time) {
     const entity = model.entities[entityIdx];
     const entityAnim = getAnim(entity, animIdx);
     if (entityAnim !== null) {
