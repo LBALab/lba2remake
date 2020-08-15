@@ -43,6 +43,12 @@ export function updateActor(
     }
     actor.runScripts(time);
 
+    // Don't update the actor if someone else is talking.
+    const currentTalkingActor = game.getState().actorTalking;
+    if (currentTalkingActor > -1 && currentTalkingActor !== actor.index) {
+        return;
+    }
+
     if (actor.model !== null
         && actor.threeObject
         && (actor.threeObject.visible || actor.index === 0)) {
@@ -113,7 +119,7 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
             distanceAnticlockwise =  2 * Math.PI - distanceClockwise;
         }
         const baseAngle = Math.min(distanceAnticlockwise,
-                                 distanceClockwise) * deltaMS;
+                                   distanceClockwise) * deltaMS;
         const angle = baseAngle / (actor.props.speed * 10);
         const sign = distanceAnticlockwise < distanceClockwise ? 1 : -1;
         actor.physics.temp.angle += sign * angle;
