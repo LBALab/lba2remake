@@ -12,6 +12,8 @@ export interface GameState {
     config: GameConfig;
     hero: any;
     chapter: number;
+    // The actor index who is currently talking.
+    actorTalking: number;
     flags: any;
     save: Function;
     load: Function;
@@ -41,6 +43,7 @@ export function createState(): GameState {
             animState: null,
         },
         chapter: 0,
+        actorTalking: -1,
         flags: {
             quest: createQuestFlags(),
             holomap: createHolomapFlags()

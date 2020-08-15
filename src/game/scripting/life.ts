@@ -27,10 +27,18 @@ export function MESSAGE(cmdState, id) {
 }
 
 export function MESSAGE_OBJ(cmdState, actor, id) {
+    // If someone else is already talking, we wait for them to finish first.
+    if (this.game.getState().actorTalking > -1 &&
+        this.game.getState().actorTalking !== actor.index) {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+        return;
+    }
+
     const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
+    const text = this.scene.data.texts[id];
     if (!cmdState.skipListener) {
-        const text = this.scene.data.texts[id];
         let onVoiceEndedCallback = null;
         if (this.scene.vr) {
             onVoiceEndedCallback = () => {
@@ -56,13 +64,21 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
                 const interjectionsCopy = clone(this.game.getUiState().interjections);
                 delete interjectionsCopy[itrjId];
                 this.game.setUiState({interjections: interjectionsCopy});
-                cmdState.ended = true;
+
+                audio.stopVoice();
+                this.game.getState().actorTalking = -1;
+                delete cmdState.skipListener;
+                delete cmdState.ended;
+                if (cmdState.startTime) {
+                    delete cmdState.startTime;
+                }
             }, 4500);
         } else {
             hero.props.dirMode = DirMode.NO_MOVE;
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
+            this.game.getState().actorTalking = actor.index;
             if (actor.index === 0)
                 hero.props.animIndex = AnimType.TALK;
             else
@@ -96,7 +112,7 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
 
     if (cmdState.ended) {
         audio.stopVoice();
-        const text = this.scene.data.texts[id];
+        this.game.getState().actorTalking = -1;
         if (text.type !== 9) {
             this.game.setUiState({ text: null, skip: false, });
             this.game.controlsState.skipListener = null;
@@ -107,7 +123,13 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
         if (cmdState.startTime) {
             delete cmdState.startTime;
         }
-    } else {
+        return;
+    }
+
+    // We want to immediately continue executing the rest of the script for the
+    // floating text since it doesn't require any interaction from the user.
+    // Only re-enter for other text types.
+    if (text.type !== 9) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     }
