@@ -113,7 +113,6 @@ export function MESSAGE_OBJ(cmdState, actor, id) {
     if (cmdState.ended) {
         audio.stopVoice();
         this.game.getState().actorTalking = -1;
-        const text = this.scene.data.texts[id];
         if (text.type !== 9) {
             this.game.setUiState({ text: null, skip: false, });
             this.game.controlsState.skipListener = null;
