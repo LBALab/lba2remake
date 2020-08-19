@@ -107,7 +107,6 @@ export async function loadDomeEnv() {
 
     const dome = await new Promise<THREE.Object3D>((resolve) => {
         gltfLoader.load('models/dome.glb', (m) => {
-            resolve(m.scene);
             m.scene.traverse((node) => {
                 if (node instanceof THREE.Mesh) {
                     const material = (node.material as THREE.MeshStandardMaterial);
@@ -116,6 +115,7 @@ export async function loadDomeEnv() {
                     });
                 }
             });
+            resolve(m.scene);
         });
     });
     threeObject.add(dome);
