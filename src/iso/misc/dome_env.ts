@@ -4,6 +4,8 @@ import SimplexNoise from 'simplex-noise';
 
 import STARS_VERT from './shaders/dome_stars.vert.glsl';
 import STARS_FRAG from './shaders/dome_stars.frag.glsl';
+import WALLS_VERT from './shaders/dome_walls.vert.glsl';
+import WALLS_FRAG from './shaders/dome_walls.frag.glsl';
 
 const loader = new THREE.TextureLoader();
 const gltfLoader = new GLTFLoader();
@@ -31,7 +33,7 @@ export async function loadDomeEnv() {
     const tints = [];
     const sparkles = [];
     const intensities = [];
-    const count = 2500;
+    const count = 5000;
     const indices = [];
     const len2 = (x, y, z) => x * x + y * y + z * z;
     const len2Pos = idx => len2(
@@ -46,7 +48,7 @@ export async function loadDomeEnv() {
         let l2;
         do {
             x = Math.random() * 500 - 250;
-            y = Math.random() * 250 - 250;
+            y = Math.random() * 500 - 250;
             z = Math.random() * 500 - 250;
             l2 = len2(x, y, z);
         } while (l2 > 250 * 250 || l2 < 40 * 40);
@@ -99,19 +101,28 @@ export async function loadDomeEnv() {
     const stars = new THREE.Mesh(starsGeo, starsMaterial);
     stars.name = 'dome_env';
     stars.frustumCulled = false;
+    stars.renderOrder = -1;
 
     const threeObject = new THREE.Object3D();
     threeObject.position.set(39, 0, 21);
     threeObject.name = 'dome_env';
     threeObject.add(stars);
 
+    const basePos = new THREE.Vector3(26.875, 0, 24.375);
     const dome = await new Promise<THREE.Object3D>((resolve) => {
         gltfLoader.load('models/dome.glb', (m) => {
             m.scene.traverse((node) => {
                 if (node instanceof THREE.Mesh) {
                     const material = (node.material as THREE.MeshStandardMaterial);
-                    node.material = new THREE.MeshBasicMaterial({
-                        map: material.map
+                    node.material = new THREE.ShaderMaterial({
+                        uniforms: {
+                            color: { value: material.color },
+                            map: { value: material.map },
+                            offset: { value: basePos }
+                        },
+                        transparent: true,
+                        vertexShader: WALLS_VERT,
+                        fragmentShader: WALLS_FRAG,
                     });
                 }
             });
