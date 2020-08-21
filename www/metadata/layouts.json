@@ -773,6 +773,11 @@
     "57": {
       "mirror": true
     },
+    "74": {
+      "replace": true,
+      "file": "074_chain.glb",
+      "orientation": 0
+    },
     "76": {
       "replace": true,
       "file": "076_spiral_stalagmites.glb",
@@ -797,6 +802,16 @@
       "replace": true,
       "file": "080_spiral_stalagmite_small.glb",
       "orientation": 0
+    },
+    "82": {
+      "replace": true,
+      "file": "082_083_wall_spiral_stalagmites.glb",
+      "orientation": 0
+    },
+    "83": {
+      "replace": true,
+      "file": "082_083_wall_spiral_stalagmites.glb",
+      "orientation": 3
     },
     "84": {
       "replace": true,
@@ -1097,6 +1112,11 @@
     "76:3x4x3:-1,1038,1039,-1,1040,1041,-1,1042,1043,-1,1044,1045,-1,1038,1039,-1,1040,1041,-1,1042,1043,-1,1044,1045,1038,1039,-1,1040,1041,-1,1042,1043,-1,1044,1045": {
       "replace": true,
       "file": "076_spiral_stalagmites_var5.glb",
+      "orientation": 0
+    },
+    "77:1x6x1:1046,1047,1046,1047,1048,1049": {
+      "replace": true,
+      "file": "077_spiral_stalagmites_var4.glb",
       "orientation": 0
     }
   },
