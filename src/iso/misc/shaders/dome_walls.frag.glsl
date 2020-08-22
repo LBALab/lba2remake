@@ -7,7 +7,7 @@ varying vec2 vUv;
 varying vec3 vPos;
 
 void main() {
-    vec3 pt = normalize(spot.xyz) * 20.0 + offset;
+    vec3 pt = normalize(spot.xyz) * 17.125 + offset;
     float s = mix(0.001, 5.0, spot.w);
     float d = 1.0 - clamp(length(vPos - pt) / s, 0.0, 1.0);
     float cf = d * 0.95 + 0.05;

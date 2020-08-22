@@ -108,7 +108,7 @@ export async function loadDomeEnv() {
     threeObject.name = 'dome_env';
     threeObject.add(stars);
 
-    const basePos = new THREE.Vector3(26.875, 3.889, 24.375);
+    const basePos = new THREE.Vector3(26.875, 3.85, 24.375);
     const spot = new THREE.Vector4(1, 1, 0, 0);
     let lastTime = -Infinity;
     const dome = await new Promise<THREE.Object3D>((resolve) => {
