@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { times } from 'lodash';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import SimplexNoise from 'simplex-noise';
 
@@ -109,19 +110,23 @@ export async function loadDomeEnv() {
     threeObject.add(stars);
 
     const basePos = new THREE.Vector3(26.875, 3.85, 24.375);
-    const spot = new THREE.Vector4(1, 1, 0, 0);
-    let lastTime = -Infinity;
+    const NUM_SPOTS = 4;
+    const spots = times(NUM_SPOTS, () => new THREE.Vector4(0, 1, 0, 0));
+    const spotsTransitionTime = times(NUM_SPOTS, () => -Infinity);
     const dome = await new Promise<THREE.Object3D>((resolve) => {
         gltfLoader.load('models/dome.glb', (m) => {
             m.scene.traverse((node) => {
                 if (node instanceof THREE.Mesh) {
                     const material = (node.material as THREE.MeshStandardMaterial);
                     node.material = new THREE.ShaderMaterial({
+                        defines: {
+                            NUM_SPOTS
+                        },
                         uniforms: {
                             color: { value: material.color },
                             map: { value: material.map },
                             offset: { value: basePos },
-                            spot: { value: spot },
+                            spots: { value: spots },
                         },
                         transparent: true,
                         vertexShader: WALLS_VERT,
@@ -136,28 +141,34 @@ export async function loadDomeEnv() {
 
     const duration = 20;
     const transition = 2;
+
+    const updateSpot = (spot, idx, time) => {
+        const transitionTime = spotsTransitionTime[idx];
+        if (time.elapsed > transitionTime + duration) {
+            spot.set(
+                Math.random() * 2 - 1,
+                Math.random(),
+                Math.random() * 2 - 1,
+                0
+            );
+            spotsTransitionTime[idx] = time.elapsed;
+        }
+        const v = time.elapsed - transitionTime;
+        let d = 1;
+        if (v < transition) {
+            d = v / transition;
+        }
+        if (duration - v < transition) {
+            d = (duration - v) / transition;
+        }
+        spot.w = d * 0.9 + Math.sin(time.elapsed) * 0.05 + 0.05;
+    };
+
     return {
         threeObject,
         update: (time) => {
             starsMaterial.uniforms.time.value = time.elapsed;
-            if (time.elapsed > lastTime + duration) {
-                spot.set(
-                    Math.random() * 2 - 1,
-                    Math.random(),
-                    Math.random() * 2 - 1,
-                    0
-                );
-                lastTime = time.elapsed;
-            }
-            const v = time.elapsed - lastTime;
-            let d = 1;
-            if (v < transition) {
-                d = v / transition;
-            }
-            if (duration - v < transition) {
-                d = (duration - v) / transition;
-            }
-            spot.w = d * 0.9 + Math.sin(time.elapsed) * 0.05 + 0.05;
+            spots.forEach((spot, idx) => updateSpot(spot, idx, time));
         }
     };
 }
