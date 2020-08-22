@@ -23,59 +23,37 @@ export async function loadDomeEnv() {
     const starCages = [];
     const dome = await new Promise<THREE.Object3D>((resolve) => {
         gltfLoader.load('models/dome.glb', (m) => {
-            m.scene.traverse((node) => {
-                if (node instanceof THREE.Mesh) {
-                    const material = (node.material as THREE.MeshStandardMaterial);
-                    if (material.name.substring(0, 4) === 'star') {
-                        material.side = THREE.FrontSide;
-                        starCages.push(node);
-                    } else {
-                        node.material = new THREE.ShaderMaterial({
-                            defines: {
-                                NUM_SPOTS
-                            },
-                            uniforms: {
-                                color: { value: material.color },
-                                spotsPos: { value: spotsPos },
-                                spotsIntensity: { value: spotsIntensity },
-                                spotsSize: { value: spotsSize },
-                            },
-                            transparent: true,
-                            vertexShader: WALLS_VERT,
-                            fragmentShader: WALLS_FRAG,
-                        });
-                    }
-                }
-            });
             resolve(m.scene);
         });
+    });
+    dome.traverse((node) => {
+        if (node instanceof THREE.Mesh) {
+            const material = (node.material as THREE.MeshStandardMaterial);
+            if (material.name.substring(0, 4) === 'star') {
+                material.side = THREE.FrontSide;
+                starCages.push(node);
+            } else {
+                node.material = new THREE.ShaderMaterial({
+                    defines: {
+                        NUM_SPOTS
+                    },
+                    uniforms: {
+                        color: { value: material.color },
+                        spotsPos: { value: spotsPos },
+                        spotsIntensity: { value: spotsIntensity },
+                        spotsSize: { value: spotsSize },
+                    },
+                    transparent: true,
+                    vertexShader: WALLS_VERT,
+                    fragmentShader: WALLS_FRAG,
+                });
+            }
+        }
     });
 
     const starsMaterial = await makeStarsMaterial();
 
-    const starPos = new THREE.Vector3();
-    const stars = makeStars(times(5000, () => {
-        let l2;
-        do {
-            starPos.set(
-                Math.random() * 500 - 250,
-                Math.random() * 500 - 250,
-                Math.random() * 500 - 250
-            );
-            l2 = starPos.lengthSq();
-        } while (l2 > 250 * 250 || l2 < 40 * 40);
-        const intensity = noiseGen.noise3D(starPos.x, starPos.y, starPos.z) * 0.2 + 0.8;
-        const size = 0.6 + Math.random() * 0.4;
-        const tint = Math.random();
-        const sparkle = Math.random();
-        return {
-            pos: starPos.clone(),
-            intensity,
-            size,
-            tint,
-            sparkle
-        };
-    }), starsMaterial);
+    const stars = makeStars(makeStarDefinitions(5000), starsMaterial);
     stars.name = 'stars';
     stars.renderOrder = -1;
 
@@ -267,4 +245,30 @@ function makeStars(starDefs, starsMaterial) {
     const stars = new THREE.Mesh(starsGeo, starsMaterial);
     stars.frustumCulled = false;
     return stars;
+}
+
+function makeStarDefinitions(count) {
+    const starPos = new THREE.Vector3();
+    return times(count, () => {
+        let l2;
+        do {
+            starPos.set(
+                Math.random() * 500 - 250,
+                Math.random() * 500 - 250,
+                Math.random() * 500 - 250
+            );
+            l2 = starPos.lengthSq();
+        } while (l2 > 250 * 250 || l2 < 40 * 40);
+        const intensity = noiseGen.noise3D(starPos.x, starPos.y, starPos.z) * 0.2 + 0.8;
+        const size = 0.6 + Math.random() * 0.4;
+        const tint = Math.random();
+        const sparkle = Math.random();
+        return {
+            pos: starPos.clone(),
+            intensity,
+            size,
+            tint,
+            sparkle
+        };
+    });
 }
