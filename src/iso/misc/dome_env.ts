@@ -83,6 +83,8 @@ export async function loadDomeEnv() {
     threeObject.position.set(39, 0, 21);
     threeObject.name = 'dome_env';
 
+    const starsHighresMaterial = await makeStarsMaterial('B_OPC3_HD');
+
     starCages.forEach(async (node) => {
         const big = node.name.substr(0, 3) === 'big';
         const size = big ? 1.2 : 0.8;
@@ -90,15 +92,16 @@ export async function loadDomeEnv() {
         const tint = big ? 0.2 : 0;
         const intensity = big ? 1 : 0.5;
         const star = makeStars([{
-            pos: node.position,
+            pos: new THREE.Vector3(),
             intensity,
             tint,
             size,
             sparkle
-        }], starsMaterial);
+        }], starsHighresMaterial);
         star.name = `${node.name}_light`;
         star.renderOrder = 1;
-        threeObject.add(star);
+        node.add(star);
+        node.userData.baseY = node.position.y;
     });
 
     threeObject.add(stars);
@@ -158,6 +161,7 @@ export async function loadDomeEnv() {
         threeObject,
         update: (game, time) => {
             starsMaterial.uniforms.time.value = time.elapsed;
+            starsHighresMaterial.uniforms.time.value = time.elapsed;
             if (game.isPaused()) {
                 init = true;
                 nextSpot = 0;
@@ -170,16 +174,21 @@ export async function loadDomeEnv() {
                 }
             }
             starCages.forEach((node, idx) => {
+                const big = node.name.substr(0, 3) === 'big';
                 const sign = idx % 2 === 0 ? 1 : -1;
                 node.rotation.y = time.elapsed * 0.15 * sign;
+                if (!big) {
+                    const tm = time.elapsed + (idx * Math.PI * 0.5);
+                    node.position.y = node.userData.baseY + Math.sin(tm) * 0.2 + 0.1;
+                }
             });
         }
     };
 }
 
-async function makeStarsMaterial() {
+async function makeStarsMaterial(texture = 'B_OPC3') {
     const starTexture = await new Promise(resolve =>
-        loader.load('images/stars/B_OPC3.png', resolve)
+        loader.load(`images/stars/${texture}.png`, resolve)
     );
 
     const starsMaterial = new THREE.ShaderMaterial({
