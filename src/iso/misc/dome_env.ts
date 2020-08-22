@@ -14,9 +14,47 @@ const gltfLoader = new GLTFLoader();
 const noiseGen = new SimplexNoise('LBA');
 
 export async function loadDomeEnv() {
+    const basePos = new THREE.Vector3(26.875, 3.85, 24.375);
+    const NUM_SPOTS = 4;
+    const spotsPos = times(NUM_SPOTS, () => new THREE.Vector3(0, 1, 0));
+    const spotsIntensity = times(NUM_SPOTS, () => 0);
+    const spotsSize = times(NUM_SPOTS, () => 0);
+    const spotsTransitionTime = times(NUM_SPOTS, () => 0);
+    const starCages = [];
+    const dome = await new Promise<THREE.Object3D>((resolve) => {
+        gltfLoader.load('models/dome.glb', (m) => {
+            m.scene.traverse((node) => {
+                if (node instanceof THREE.Mesh) {
+                    const material = (node.material as THREE.MeshStandardMaterial);
+                    if (material.name.substring(0, 4) === 'star') {
+                        material.side = THREE.FrontSide;
+                        starCages.push(node);
+                    } else {
+                        node.material = new THREE.ShaderMaterial({
+                            defines: {
+                                NUM_SPOTS
+                            },
+                            uniforms: {
+                                color: { value: material.color },
+                                spotsPos: { value: spotsPos },
+                                spotsIntensity: { value: spotsIntensity },
+                                spotsSize: { value: spotsSize },
+                            },
+                            transparent: true,
+                            vertexShader: WALLS_VERT,
+                            fragmentShader: WALLS_FRAG,
+                        });
+                    }
+                }
+            });
+            resolve(m.scene);
+        });
+    });
+
     const starTexture = await new Promise(resolve =>
         loader.load('images/stars/B_OPC3.png', resolve)
     );
+
     const starsMaterial = new THREE.ShaderMaterial({
         uniforms: {
             starTex: { value: starTexture },
@@ -42,25 +80,19 @@ export async function loadDomeEnv() {
         positions[idx * 3 + 1],
         positions[idx * 3 + 2]
     );
-    for (let i = 0; i < count; i += 1) {
-        let x;
-        let y;
-        let z;
-        let l2;
-        do {
-            x = Math.random() * 500 - 250;
-            y = Math.random() * 500 - 250;
-            z = Math.random() * 500 - 250;
-            l2 = len2(x, y, z);
-        } while (l2 > 250 * 250 || l2 < 40 * 40);
-        const intensity = noiseGen.noise3D(x, y, z) * 0.2 + 0.8;
-        const sz = 0.6 + Math.random() * 0.4;
-        const tint = Math.random();
-        const sparkle = Math.random();
+
+    let starIdx = 0;
+    const addStar = ({
+        pos,
+        intensity,
+        sz,
+        tint,
+        sparkle
+    }) => {
         for (let j = 0; j < 6; j += 1) {
-            positions.push(x);
-            positions.push(y);
-            positions.push(z);
+            positions.push(pos.x);
+            positions.push(pos.y);
+            positions.push(pos.z);
             intensities.push(intensity);
             sizes.push(sz);
             tints.push(tint);
@@ -74,9 +106,37 @@ export async function loadDomeEnv() {
             1, 0,
             0, 1
         );
-        indices.push(i * 6);
+        indices.push(starIdx * 6);
+        starIdx += 1;
+    };
+
+    const starPos = new THREE.Vector3();
+    while (starIdx < count) {
+        let l2;
+        do {
+            starPos.set(
+                Math.random() * 500 - 250,
+                Math.random() * 500 - 250,
+                Math.random() * 500 - 250
+            );
+            l2 = starPos.lengthSq();
+        } while (l2 > 250 * 250 || l2 < 40 * 40);
+        const intensity = noiseGen.noise3D(starPos.x, starPos.y, starPos.z) * 0.2 + 0.8;
+        const sz = 0.6 + Math.random() * 0.4;
+        const tint = Math.random();
+        const sparkle = Math.random();
+        addStar({pos: starPos, intensity, sz, tint, sparkle});
     }
     indices.sort((a, b) => len2Pos(b) - len2Pos(a));
+    starCages.forEach((node) => {
+        addStar({
+            pos: node.position,
+            intensity: 1,
+            tint: 0,
+            sz: 1,
+            sparkle: 0.4
+        });
+    });
     const realIndices = [];
     indices.forEach(idx => realIndices.push(idx, idx + 1, idx + 2, idx + 3, idx + 4, idx + 5));
     starsGeo.setIndex(realIndices);
@@ -109,36 +169,6 @@ export async function loadDomeEnv() {
     threeObject.name = 'dome_env';
     threeObject.add(stars);
 
-    const basePos = new THREE.Vector3(26.875, 3.85, 24.375);
-    const NUM_SPOTS = 4;
-    const spotsPos = times(NUM_SPOTS, () => new THREE.Vector3(0, 1, 0));
-    const spotsIntensity = times(NUM_SPOTS, () => 0);
-    const spotsSize = times(NUM_SPOTS, () => 0);
-    const spotsTransitionTime = times(NUM_SPOTS, () => 0);
-    const dome = await new Promise<THREE.Object3D>((resolve) => {
-        gltfLoader.load('models/dome.glb', (m) => {
-            m.scene.traverse((node) => {
-                if (node instanceof THREE.Mesh) {
-                    const material = (node.material as THREE.MeshStandardMaterial);
-                    node.material = new THREE.ShaderMaterial({
-                        defines: {
-                            NUM_SPOTS
-                        },
-                        uniforms: {
-                            color: { value: material.color },
-                            spotsPos: { value: spotsPos },
-                            spotsIntensity: { value: spotsIntensity },
-                            spotsSize: { value: spotsSize },
-                        },
-                        transparent: true,
-                        vertexShader: WALLS_VERT,
-                        fragmentShader: WALLS_FRAG,
-                    });
-                }
-            });
-            resolve(m.scene);
-        });
-    });
     threeObject.add(dome);
 
     const duration = 20;
@@ -206,6 +236,9 @@ export async function loadDomeEnv() {
                     init = false;
                 }
             }
+            starCages.forEach((node) => {
+                node.rotation.y = time.elapsed * 0.2;
+            });
         }
     };
 }
