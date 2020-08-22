@@ -243,7 +243,7 @@ export async function loadDomeEnv() {
             }
             starCages.forEach((node, idx) => {
                 const sign = idx % 2 === 0 ? 1 : -1;
-                node.rotation.y = time.elapsed * 0.2 * sign;
+                node.rotation.y = time.elapsed * 0.15 * sign;
             });
         }
     };
