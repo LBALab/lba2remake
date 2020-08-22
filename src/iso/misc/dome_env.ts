@@ -129,12 +129,17 @@ export async function loadDomeEnv() {
     }
     indices.sort((a, b) => len2Pos(b) - len2Pos(a));
     starCages.forEach((node) => {
+        const big = node.name.substr(0, 3) === 'big';
+        const sz = big ? 1.2 : 0.8;
+        const sparkle = big ? 0.4 : 0.05;
+        const tint = big ? 0.2 : 0;
+        const intensity = big ? 1 : 0.5;
         addStar({
             pos: node.position,
-            intensity: 1,
-            tint: 0,
-            sz: 1,
-            sparkle: 0.4
+            intensity,
+            tint,
+            sz,
+            sparkle
         });
     });
     const realIndices = [];
@@ -236,8 +241,9 @@ export async function loadDomeEnv() {
                     init = false;
                 }
             }
-            starCages.forEach((node) => {
-                node.rotation.y = time.elapsed * 0.2;
+            starCages.forEach((node, idx) => {
+                const sign = idx % 2 === 0 ? 1 : -1;
+                node.rotation.y = time.elapsed * 0.2 * sign;
             });
         }
     };
