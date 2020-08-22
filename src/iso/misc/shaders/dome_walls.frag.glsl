@@ -14,7 +14,7 @@ void main() {
         float nd = 1.0 - clamp(length(vPos - pt) / s, 0.0, 1.0);
         d = max(d, nd);
     }
-    float cf = d * 0.95 + 0.05;
+    float cf = d * 0.9 + 0.1;
     float alpha = 1.0;
     if (color.r < 0.001) {
         alpha = 1.0 - d;
