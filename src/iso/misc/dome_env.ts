@@ -108,7 +108,9 @@ export async function loadDomeEnv() {
     threeObject.name = 'dome_env';
     threeObject.add(stars);
 
-    const basePos = new THREE.Vector3(26.875, 0, 24.375);
+    const basePos = new THREE.Vector3(26.875, 3.889, 24.375);
+    const spot = new THREE.Vector4(1, 1, 0, 0);
+    let lastTime = -Infinity;
     const dome = await new Promise<THREE.Object3D>((resolve) => {
         gltfLoader.load('models/dome.glb', (m) => {
             m.scene.traverse((node) => {
@@ -118,7 +120,8 @@ export async function loadDomeEnv() {
                         uniforms: {
                             color: { value: material.color },
                             map: { value: material.map },
-                            offset: { value: basePos }
+                            offset: { value: basePos },
+                            spot: { value: spot },
                         },
                         transparent: true,
                         vertexShader: WALLS_VERT,
@@ -131,10 +134,30 @@ export async function loadDomeEnv() {
     });
     threeObject.add(dome);
 
+    const duration = 20;
+    const transition = 2;
     return {
         threeObject,
         update: (time) => {
             starsMaterial.uniforms.time.value = time.elapsed;
+            if (time.elapsed > lastTime + duration) {
+                spot.set(
+                    Math.random() * 2 - 1,
+                    Math.random(),
+                    Math.random() * 2 - 1,
+                    0
+                );
+                lastTime = time.elapsed;
+            }
+            const v = time.elapsed - lastTime;
+            let d = 1;
+            if (v < transition) {
+                d = v / transition;
+            }
+            if (duration - v < transition) {
+                d = (duration - v) / transition;
+            }
+            spot.w = d * 0.9 + Math.sin(time.elapsed) * 0.05 + 0.05;
         }
     };
 }
