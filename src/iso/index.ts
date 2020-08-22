@@ -71,7 +71,7 @@ export async function loadIsometricScenery(entry, ambience, is3D, isEditor = fal
         update: (game, scene, time) => {
             updateMesh(game, scene, time);
             if (domeEnv) {
-                domeEnv.update(time);
+                domeEnv.update(game, time);
             }
         }
     };

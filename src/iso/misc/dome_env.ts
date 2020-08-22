@@ -111,8 +111,10 @@ export async function loadDomeEnv() {
 
     const basePos = new THREE.Vector3(26.875, 3.85, 24.375);
     const NUM_SPOTS = 4;
-    const spots = times(NUM_SPOTS, () => new THREE.Vector4(0, 1, 0, 0));
-    const spotsTransitionTime = times(NUM_SPOTS, () => -Infinity);
+    const spotsPos = times(NUM_SPOTS, () => new THREE.Vector3(0, 1, 0));
+    const spotsIntensity = times(NUM_SPOTS, () => 0);
+    const spotsSize = times(NUM_SPOTS, () => 0);
+    const spotsTransitionTime = times(NUM_SPOTS, () => 0);
     const dome = await new Promise<THREE.Object3D>((resolve) => {
         gltfLoader.load('models/dome.glb', (m) => {
             m.scene.traverse((node) => {
@@ -124,9 +126,9 @@ export async function loadDomeEnv() {
                         },
                         uniforms: {
                             color: { value: material.color },
-                            map: { value: material.map },
-                            offset: { value: basePos },
-                            spots: { value: spots },
+                            spotsPos: { value: spotsPos },
+                            spotsIntensity: { value: spotsIntensity },
+                            spotsSize: { value: spotsSize },
                         },
                         transparent: true,
                         vertexShader: WALLS_VERT,
@@ -140,35 +142,70 @@ export async function loadDomeEnv() {
     threeObject.add(dome);
 
     const duration = 20;
+    const transitionDelay = duration / NUM_SPOTS;
     const transition = 2;
+    let lastTransition = 0;
+    let nextSpot = 0;
+    let init = true;
 
-    const updateSpot = (spot, idx, time) => {
-        const transitionTime = spotsTransitionTime[idx];
-        if (time.elapsed > transitionTime + duration) {
-            spot.set(
-                Math.random() * 2 - 1,
-                Math.random(),
-                Math.random() * 2 - 1,
-                0
-            );
-            spotsTransitionTime[idx] = time.elapsed;
+    const updateSpot = (idx, time) => {
+        if (init || (idx === nextSpot && time.elapsed > lastTransition + transitionDelay)) {
+            let minDistance = Infinity;
+            do {
+                spotsPos[idx].set(
+                    Math.random() * 2 - 1,
+                    Math.random(),
+                    Math.random() * 2 - 1,
+                );
+                spotsPos[idx].normalize();
+                spotsPos[idx].multiplyScalar(17.125);
+                spotsPos[idx].add(basePos);
+                minDistance = Infinity;
+                for (let i = 0; i < NUM_SPOTS; i += 1) {
+                    if (i !== idx) {
+                        const dist = spotsPos[i].distanceTo(spotsPos[idx]);
+                        minDistance = Math.min(dist, minDistance);
+                    }
+                }
+            } while (minDistance < 10);
+            spotsSize[idx] = 3 + Math.random() * 2;
+            if (init) {
+                spotsTransitionTime[idx] = time.elapsed - transitionDelay * (NUM_SPOTS - idx - 1);
+            } else {
+                spotsTransitionTime[idx] = time.elapsed;
+            }
+            lastTransition = time.elapsed;
+            if (!init) {
+                nextSpot = (nextSpot + 1) % NUM_SPOTS;
+            }
         }
-        const v = time.elapsed - transitionTime;
+        const v = time.elapsed - spotsTransitionTime[idx];
         let d = 1;
         if (v < transition) {
-            d = v / transition;
+            d = THREE.MathUtils.clamp(v / transition, 0, 1);
+        } else if (v < duration && duration - v < transition) {
+            d = THREE.MathUtils.clamp((duration - v) / transition, 0, 1);
+        } else if (v >= duration) {
+            d = 0;
         }
-        if (duration - v < transition) {
-            d = (duration - v) / transition;
-        }
-        spot.w = d * 0.9 + Math.sin(time.elapsed) * 0.05 + 0.05;
+        spotsIntensity[idx] = d * 0.9 + Math.sin(time.elapsed) * 0.05 + 0.05;
     };
 
     return {
         threeObject,
-        update: (time) => {
+        update: (game, time) => {
             starsMaterial.uniforms.time.value = time.elapsed;
-            spots.forEach((spot, idx) => updateSpot(spot, idx, time));
+            if (game.isPaused()) {
+                init = true;
+                nextSpot = 0;
+            } else {
+                for (let i = 0; i < NUM_SPOTS; i += 1) {
+                    updateSpot(i, time);
+                }
+                if (init) {
+                    init = false;
+                }
+            }
         }
     };
 }
