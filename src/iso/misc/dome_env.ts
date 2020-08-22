@@ -51,67 +51,10 @@ export async function loadDomeEnv() {
         });
     });
 
-    const starTexture = await new Promise(resolve =>
-        loader.load('images/stars/B_OPC3.png', resolve)
-    );
-
-    const starsMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            starTex: { value: starTexture },
-            color: { value: new THREE.Color(0xFFFFFF) },
-            time: { value: 0 }
-        },
-        transparent: true,
-        vertexShader: STARS_VERT,
-        fragmentShader: STARS_FRAG,
-    });
-    const starsGeo = new THREE.BufferGeometry();
-    const positions = [];
-    const uvs = [];
-    const sizes = [];
-    const tints = [];
-    const sparkles = [];
-    const intensities = [];
-    const count = 5000;
-    const indices = [];
-    const len2 = (x, y, z) => x * x + y * y + z * z;
-    const len2Pos = idx => len2(
-        positions[idx * 3],
-        positions[idx * 3 + 1],
-        positions[idx * 3 + 2]
-    );
-
-    let starIdx = 0;
-    const addStar = ({
-        pos,
-        intensity,
-        sz,
-        tint,
-        sparkle
-    }) => {
-        for (let j = 0; j < 6; j += 1) {
-            positions.push(pos.x);
-            positions.push(pos.y);
-            positions.push(pos.z);
-            intensities.push(intensity);
-            sizes.push(sz);
-            tints.push(tint);
-            sparkles.push(sparkle);
-        }
-        uvs.push(
-            0, 0,
-            0, 1,
-            1, 0,
-            1, 1,
-            1, 0,
-            0, 1
-        );
-        indices.push(starIdx * 6);
-        starIdx += 1;
-    };
+    const starsMaterial = await makeStarsMaterial();
 
     const starPos = new THREE.Vector3();
-    while (starIdx < count) {
+    const stars = makeStars(times(5000, () => {
         let l2;
         do {
             starPos.set(
@@ -122,58 +65,43 @@ export async function loadDomeEnv() {
             l2 = starPos.lengthSq();
         } while (l2 > 250 * 250 || l2 < 40 * 40);
         const intensity = noiseGen.noise3D(starPos.x, starPos.y, starPos.z) * 0.2 + 0.8;
-        const sz = 0.6 + Math.random() * 0.4;
+        const size = 0.6 + Math.random() * 0.4;
         const tint = Math.random();
         const sparkle = Math.random();
-        addStar({pos: starPos, intensity, sz, tint, sparkle});
-    }
-    indices.sort((a, b) => len2Pos(b) - len2Pos(a));
-    starCages.forEach((node) => {
-        const big = node.name.substr(0, 3) === 'big';
-        const sz = big ? 1.2 : 0.8;
-        const sparkle = big ? 0.4 : 0.05;
-        const tint = big ? 0.2 : 0;
-        const intensity = big ? 1 : 0.5;
-        addStar({
-            pos: node.position,
+        return {
+            pos: starPos.clone(),
             intensity,
+            size,
             tint,
-            sz,
             sparkle
-        });
-    });
-    const realIndices = [];
-    indices.forEach(idx => realIndices.push(idx, idx + 1, idx + 2, idx + 3, idx + 4, idx + 5));
-    starsGeo.setIndex(realIndices);
-    const posArray = new Float32Array(positions);
-    const posAttr = new THREE.BufferAttribute(posArray, 3);
-    starsGeo.setAttribute('position', posAttr);
-    const uvArray = new Float32Array(uvs);
-    const uvAttr = new THREE.BufferAttribute(uvArray, 2);
-    starsGeo.setAttribute('uv', uvAttr);
-    const sizeArray = new Float32Array(sizes);
-    const sizeAttr = new THREE.BufferAttribute(sizeArray, 1);
-    starsGeo.setAttribute('size', sizeAttr);
-    const tintArray = new Float32Array(tints);
-    const tintAttr = new THREE.BufferAttribute(tintArray, 1);
-    starsGeo.setAttribute('tint', tintAttr);
-    const sparkleArray = new Float32Array(sparkles);
-    const sparkleAttr = new THREE.BufferAttribute(sparkleArray, 1);
-    starsGeo.setAttribute('sparkle', sparkleAttr);
-    const intensitiesArray = new Float32Array(intensities);
-    const intensitiesAttr = new THREE.BufferAttribute(intensitiesArray, 1);
-    starsGeo.setAttribute('intensity', intensitiesAttr);
-
-    const stars = new THREE.Mesh(starsGeo, starsMaterial);
-    stars.name = 'dome_env';
-    stars.frustumCulled = false;
+        };
+    }), starsMaterial);
+    stars.name = 'stars';
     stars.renderOrder = -1;
 
     const threeObject = new THREE.Object3D();
     threeObject.position.set(39, 0, 21);
     threeObject.name = 'dome_env';
-    threeObject.add(stars);
 
+    starCages.forEach(async (node) => {
+        const big = node.name.substr(0, 3) === 'big';
+        const size = big ? 1.2 : 0.8;
+        const sparkle = big ? 0.4 : 0.05;
+        const tint = big ? 0.2 : 0;
+        const intensity = big ? 1 : 0.5;
+        const star = makeStars([{
+            pos: node.position,
+            intensity,
+            tint,
+            size,
+            sparkle
+        }], starsMaterial);
+        star.name = `${node.name}_light`;
+        star.renderOrder = 1;
+        threeObject.add(star);
+    });
+
+    threeObject.add(stars);
     threeObject.add(dome);
 
     const duration = 20;
@@ -247,4 +175,87 @@ export async function loadDomeEnv() {
             });
         }
     };
+}
+
+async function makeStarsMaterial() {
+    const starTexture = await new Promise(resolve =>
+        loader.load('images/stars/B_OPC3.png', resolve)
+    );
+
+    const starsMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            starTex: { value: starTexture },
+            time: { value: 0 }
+        },
+        transparent: true,
+        vertexShader: STARS_VERT,
+        fragmentShader: STARS_FRAG,
+    });
+
+    return starsMaterial;
+}
+
+function makeStars(starDefs, starsMaterial) {
+    const starsGeo = new THREE.BufferGeometry();
+    const positions = [];
+    const uvs = [];
+    const sizes = [];
+    const tints = [];
+    const sparkles = [];
+    const intensities = [];
+    const indices = [];
+    const len2 = (x, y, z) => x * x + y * y + z * z;
+    const len2Pos = idx => len2(
+        positions[idx * 3],
+        positions[idx * 3 + 1],
+        positions[idx * 3 + 2]
+    );
+
+    starDefs.forEach((props, idx) => {
+        const { pos, intensity, size, tint, sparkle } = props;
+        for (let j = 0; j < 6; j += 1) {
+            positions.push(pos.x);
+            positions.push(pos.y);
+            positions.push(pos.z);
+            intensities.push(intensity);
+            sizes.push(size);
+            tints.push(tint);
+            sparkles.push(sparkle);
+        }
+        uvs.push(
+            0, 0,
+            0, 1,
+            1, 0,
+            1, 1,
+            1, 0,
+            0, 1
+        );
+        indices.push(idx * 6);
+    });
+    indices.sort((a, b) => len2Pos(b) - len2Pos(a));
+    const realIndices = [];
+    indices.forEach(idx => realIndices.push(idx, idx + 1, idx + 2, idx + 3, idx + 4, idx + 5));
+    starsGeo.setIndex(realIndices);
+    const posArray = new Float32Array(positions);
+    const posAttr = new THREE.BufferAttribute(posArray, 3);
+    starsGeo.setAttribute('position', posAttr);
+    const uvArray = new Float32Array(uvs);
+    const uvAttr = new THREE.BufferAttribute(uvArray, 2);
+    starsGeo.setAttribute('uv', uvAttr);
+    const sizeArray = new Float32Array(sizes);
+    const sizeAttr = new THREE.BufferAttribute(sizeArray, 1);
+    starsGeo.setAttribute('size', sizeAttr);
+    const tintArray = new Float32Array(tints);
+    const tintAttr = new THREE.BufferAttribute(tintArray, 1);
+    starsGeo.setAttribute('tint', tintAttr);
+    const sparkleArray = new Float32Array(sparkles);
+    const sparkleAttr = new THREE.BufferAttribute(sparkleArray, 1);
+    starsGeo.setAttribute('sparkle', sparkleAttr);
+    const intensitiesArray = new Float32Array(intensities);
+    const intensitiesAttr = new THREE.BufferAttribute(intensitiesArray, 1);
+    starsGeo.setAttribute('intensity', intensitiesAttr);
+
+    const stars = new THREE.Mesh(starsGeo, starsMaterial);
+    stars.frustumCulled = false;
+    return stars;
 }
