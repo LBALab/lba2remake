@@ -278,11 +278,13 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
 
     const listener = (event) => {
         let behav = behaviour;
+        let action = false;
         const key = event.code || event.which || event.keyCode;
         switch (key) {
             case 37:
             case 'ArrowLeft':
-                 switch (true) {
+                action = true;
+                switch (true) {
                     // Normal 4 behaviour modes.
                     case behav <= BehaviourModeType.DISCRETE:
                         behav -= 1;
@@ -300,6 +302,7 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
                 break;
             case 39:
             case 'ArrowRight':
+                action = true;
                 switch (true) {
                     // Normal 4 behaviour modes.
                     case behav <= BehaviourModeType.DISCRETE:
@@ -318,6 +321,7 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
                 break;
             case 38:
             case 'ArrowUp':
+                action = true;
                 switch (true) {
                     // Normal 4 behaviour modes.
                     case behav <= BehaviourModeType.DISCRETE:
@@ -334,6 +338,7 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
                 break;
             case 40:
             case 'ArrowDown':
+                action = true;
                 switch (true) {
                     // Normal 4 behaviour modes.
                     case behav <= BehaviourModeType.DISCRETE:
@@ -349,6 +354,11 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
                 }
                 break;
         }
+        if (action) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
         setBehaviour(behav);
         game.getState().hero.behaviour = behav;
     };
