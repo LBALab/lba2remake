@@ -210,7 +210,7 @@ function makeShootingStar(starsMaterial) {
         fragmentShader: SHOOTING_STAR_FRAG,
     });
     const starGeo = new THREE.BufferGeometry();
-    const uvArray = new Float32Array([
+    const posArray = new Float32Array([
         0, 0, 0,
         0, 1, 0,
         1, 0, 0,
@@ -218,7 +218,7 @@ function makeShootingStar(starsMaterial) {
         1, 0, 0,
         0, 1, 0
     ]);
-    const positionAttr = new THREE.BufferAttribute(uvArray, 3);
+    const positionAttr = new THREE.BufferAttribute(posArray, 3);
     starGeo.setAttribute('position', positionAttr);
 
     const star = new THREE.Mesh(starGeo, stStarsMaterial);
