@@ -85,7 +85,7 @@ export function buildReplacementMeshes({ geometries, threeObject }) {
                 'normal',
                 new THREE.BufferAttribute(new Float32Array(geom.normals), 3)
             );
-            if (key.substring(0, 9) === 'textured_') {
+            if (key.substring(0, 9) === 'textured_' || (geom.uvs && geom.uvs.length > 0)) {
                 bufferGeometry.setAttribute(
                     'uv',
                     new THREE.BufferAttribute(new Float32Array(geom.uvs), 2)
