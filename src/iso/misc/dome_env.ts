@@ -5,6 +5,8 @@ import SimplexNoise from 'simplex-noise';
 
 import STARS_VERT from './shaders/dome_stars.vert.glsl';
 import STARS_FRAG from './shaders/dome_stars.frag.glsl';
+import SHOOTING_STAR_VERT from './shaders/dome_shooting_star.vert.glsl';
+import SHOOTING_STAR_FRAG from './shaders/dome_shooting_star.frag.glsl';
 import WALLS_VERT from './shaders/dome_walls.vert.glsl';
 import WALLS_FRAG from './shaders/dome_walls.frag.glsl';
 
@@ -83,6 +85,12 @@ export async function loadDomeEnv() {
     });
 
     threeObject.add(stars);
+    const shootingStars = times(2, () => {
+        const shootingStar = makeShootingStar(starsMaterial);
+        threeObject.add(shootingStar.mesh);
+        return shootingStar;
+    });
+
     threeObject.add(dome);
 
     const duration = 20;
@@ -137,19 +145,17 @@ export async function loadDomeEnv() {
 
     return {
         threeObject,
-        update: (game, time) => {
+        update: (time) => {
             starsMaterial.uniforms.time.value = time.elapsed;
             starsHighresMaterial.uniforms.time.value = time.elapsed;
-            if (game.isPaused()) {
-                init = true;
-                nextSpot = 0;
-            } else {
-                for (let i = 0; i < NUM_SPOTS; i += 1) {
-                    updateSpot(i, time);
-                }
-                if (init) {
-                    init = false;
-                }
+            if (time.elapsed < lastTransition) {
+                lastTransition = time.elapsed;
+            }
+            for (let i = 0; i < NUM_SPOTS; i += 1) {
+                updateSpot(i, time);
+            }
+            if (init) {
+                init = false;
             }
             starCages.forEach((node, idx) => {
                 const big = node.name.substr(0, 3) === 'big';
@@ -160,6 +166,7 @@ export async function loadDomeEnv() {
                     node.position.y = node.userData.baseY + Math.sin(tm) * 0.2 + 0.1;
                 }
             });
+            shootingStars.forEach(star => star.update(time));
         }
     };
 }
@@ -180,6 +187,88 @@ async function makeStarsMaterial(texture = 'B_OPC3') {
     });
 
     return starsMaterial;
+}
+
+function makeShootingStar(starsMaterial) {
+    const speed = new THREE.Vector3();
+    const uTint = { value: 1 };
+    const uIntensity = { value: 1 };
+    const uSparkle = { value: 0.3 };
+    const uAlpha = { value: 0.0 };
+    const stStarsMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            starTex: { value: starsMaterial.uniforms.starTex },
+            time: { value: 0 },
+            speed: { value: speed },
+            uTint,
+            uIntensity,
+            uSparkle,
+            uAlpha
+        },
+        transparent: true,
+        vertexShader: SHOOTING_STAR_VERT,
+        fragmentShader: SHOOTING_STAR_FRAG,
+    });
+    const starGeo = new THREE.BufferGeometry();
+    const uvArray = new Float32Array([
+        0, 0, 0,
+        0, 1, 0,
+        1, 0, 0,
+        1, 1, 0,
+        1, 0, 0,
+        0, 1, 0
+    ]);
+    const positionAttr = new THREE.BufferAttribute(uvArray, 3);
+    starGeo.setAttribute('position', positionAttr);
+
+    const star = new THREE.Mesh(starGeo, stStarsMaterial);
+    const ray = new THREE.Ray();
+    const sphere = new THREE.Sphere(
+        new THREE.Vector3(),
+        40
+    );
+    star.frustumCulled = false;
+    star.name = 'shootingStar';
+    star.renderOrder = -1;
+    let start = getRandomStarPos();
+    let end = getRandomStarPos();
+    let lastTime = -Math.random();
+    return {
+        mesh: star,
+        update: (time) => {
+            if (time.elapsed < lastTime) {
+                lastTime = time.elapsed - (1 + Math.random());
+            }
+            let dt = time.elapsed - lastTime;
+            if (dt > 1) {
+                lastTime = time.elapsed;
+                dt = 0;
+                do {
+                    start = getRandomStarPos();
+                    end = getRandomStarPos();
+                    ray.origin.copy(start);
+                    ray.direction.copy(end);
+                    ray.direction.sub(start);
+                    ray.direction.normalize();
+                } while (ray.intersectsSphere(sphere));
+                speed.copy(end);
+                speed.sub(start);
+                speed.multiplyScalar(0.08);
+                uIntensity.value = Math.random() * 0.2 + 0.8;
+                uTint.value = Math.random();
+                uSparkle.value = Math.random();
+            }
+            stStarsMaterial.uniforms.time.value = time.elapsed;
+            star.position.lerpVectors(start, end, dt);
+            if (dt < 0.2) {
+                uAlpha.value = Math.max(dt, 0) * 5;
+            } else if (dt > 0.8) {
+                uAlpha.value = Math.max((1.0 - dt), 0) * 5;
+            } else {
+                uAlpha.value = 1;
+            }
+        }
+    };
 }
 
 function makeStars(starDefs, starsMaterial) {
@@ -248,27 +337,33 @@ function makeStars(starDefs, starsMaterial) {
 }
 
 function makeStarDefinitions(count) {
-    const starPos = new THREE.Vector3();
     return times(count, () => {
-        let l2;
-        do {
-            starPos.set(
-                Math.random() * 500 - 250,
-                Math.random() * 500 - 250,
-                Math.random() * 500 - 250
-            );
-            l2 = starPos.lengthSq();
-        } while (l2 > 250 * 250 || l2 < 40 * 40);
-        const intensity = noiseGen.noise3D(starPos.x, starPos.y, starPos.z) * 0.2 + 0.8;
+        const pos = getRandomStarPos();
+        const intensity = noiseGen.noise3D(pos.x, pos.y, pos.z) * 0.2 + 0.8;
         const size = 0.6 + Math.random() * 0.4;
         const tint = Math.random();
         const sparkle = Math.random();
         return {
-            pos: starPos.clone(),
+            pos,
             intensity,
             size,
             tint,
             sparkle
         };
     });
+}
+
+function getRandomStarPos() {
+    const starPos = new THREE.Vector3();
+    let lenSq;
+    do {
+        starPos.set(
+            Math.random() * 500 - 250,
+            Math.random() * 500 - 250,
+            Math.random() * 500 - 250
+        );
+        lenSq = starPos.lengthSq();
+    } while (lenSq > 250 * 250 || lenSq < 40 * 40);
+
+    return starPos;
 }
