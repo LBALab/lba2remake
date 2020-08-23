@@ -262,7 +262,7 @@ function makeShootingStar(starsMaterial) {
     const ray = new THREE.Ray();
     const sphere = new THREE.Sphere(
         new THREE.Vector3(),
-        40
+        80
     );
     star.frustumCulled = false;
     star.name = 'shootingStar';
