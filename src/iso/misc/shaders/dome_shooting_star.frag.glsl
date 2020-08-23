@@ -10,11 +10,16 @@ varying float vDist;
 
 const float PI = 3.14159265359;
 
+float quarticIn(float t) {
+  return pow(t, 4.0);
+}
+
 void main() {
-    float l = 1.0 - min(length(vUv - 0.5), 1.0);
+    vec2 uv = vec2(quarticIn(vUv.x), vUv.y);
+    float l = 1.0 - min(length(uv - 0.5), 1.0);
     vec3 blue = vec3(0.063, 0.429, 0.451);
     vec3 color = mix(blue, vec3(1.0), uTint);
-    float t = texture(starTex, vUv).a;
+    float t = texture(starTex, uv).a;
     float a = l * l * l * uIntensity;
     float b = mix(a, t, uSparkle * 0.62);
     float ts = time * 2.0 + uSparkle * PI;
