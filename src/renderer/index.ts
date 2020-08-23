@@ -8,6 +8,7 @@ const PIXEL_RATIOS = [0.25, 0.5, 1, 2];
 interface RendererOptions {
     vr?: boolean;
     preserveDrawingBuffer?: boolean;
+    alpha?: boolean;
 }
 
 export default class Renderer {
@@ -108,7 +109,7 @@ function keyListener(event) {
 
 function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
     const options = {
-        alpha: false,
+        alpha: rendererOptions.alpha || false,
         canvas,
         preserveDrawingBuffer: rendererOptions.preserveDrawingBuffer,
         antialias: true,
@@ -127,7 +128,11 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
 
     (renderer as any).outputEncoding = THREE.GammaEncoding;
     renderer.gammaFactor = 2.2;
-    renderer.setClearColor(0x000000);
+    if (rendererOptions.alpha) {
+        renderer.setClearColor(0x000000, 0);
+    } else {
+        renderer.setClearColor(0x000000);
+    }
     renderer.setPixelRatio(pixelRatio);
     renderer.setSize(0, 0);
     renderer.autoClear = true;
