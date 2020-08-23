@@ -239,7 +239,7 @@ function makeShootingStar(starsMaterial) {
             if (time.elapsed < lastTime) {
                 lastTime = time.elapsed - (1 + Math.random());
             }
-            let dt = time.elapsed - lastTime;
+            let dt = (time.elapsed - lastTime) * 0.5;
             if (dt > 1) {
                 lastTime = time.elapsed;
                 dt = 0;
