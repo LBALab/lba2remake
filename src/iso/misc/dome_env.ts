@@ -85,7 +85,7 @@ export async function loadDomeEnv() {
     });
 
     threeObject.add(stars);
-    const shootingStars = times(2, () => {
+    const shootingStars = times(4, () => {
         const shootingStar = makeShootingStar(starsMaterial);
         threeObject.add(shootingStar.mesh);
         return shootingStar;
