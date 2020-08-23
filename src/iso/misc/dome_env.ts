@@ -205,6 +205,7 @@ function makeShootingStar(starsMaterial) {
             uSparkle,
             uAlpha
         },
+        side: THREE.DoubleSide,
         transparent: true,
         vertexShader: SHOOTING_STAR_VERT,
         fragmentShader: SHOOTING_STAR_FRAG,
