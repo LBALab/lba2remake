@@ -269,12 +269,12 @@ function makeShootingStar(starsMaterial) {
     star.renderOrder = -1;
     let start = getRandomStarPos();
     let end = getRandomStarPos();
-    let lastTime = -Math.random();
+    let lastTime = Infinity;
     return {
         mesh: star,
         update: (time) => {
             if (time.elapsed < lastTime) {
-                lastTime = time.elapsed - (1 + Math.random());
+                lastTime = time.elapsed - Math.random() * 2;
             }
             let dt = (time.elapsed - lastTime) * 0.5;
             if (dt > 1) {
