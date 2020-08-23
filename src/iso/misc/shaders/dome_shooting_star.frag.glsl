@@ -7,6 +7,8 @@ uniform float time;
 
 varying vec2 vUv;
 varying float vDist;
+varying float vTa;
+varying float vSpos;
 
 const float PI = 3.14159265359;
 
@@ -24,5 +26,6 @@ void main() {
     float b = mix(a, t, uSparkle * 0.62);
     float ts = time * 2.0 + uSparkle * PI;
     float twinkle = mix((4.25 + sin(ts) * 3.75), 8.0, vDist);
-    gl_FragColor = vec4(color * b * twinkle, b * uAlpha);
+    float activ = mix(uAlpha, uAlpha * (sin(time * vSpos + vSpos * 4.0) * 0.5 + 0.5), vTa);
+    gl_FragColor = vec4(color * b * twinkle, b * activ);
 }

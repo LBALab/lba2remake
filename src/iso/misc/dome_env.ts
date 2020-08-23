@@ -211,16 +211,52 @@ function makeShootingStar(starsMaterial) {
         fragmentShader: SHOOTING_STAR_FRAG,
     });
     const starGeo = new THREE.BufferGeometry();
-    const posArray = new Float32Array([
-        0, 0, 0,
-        0, 1, 0,
-        1, 0, 0,
-        1, 1, 0,
-        1, 0, 0,
-        0, 1, 0
-    ]);
+    const positions = [];
+    const tp = [];
+    const spos = [];
+    const posRnd = [];
+    for (let i = 0; i < 50; i += 1) {
+        positions.push(
+            0, 0, 0,
+            0, 1, 0,
+            1, 0, 0,
+            1, 1, 0,
+            1, 0, 0,
+            0, 1, 0
+        );
+        if (i === 0) {
+            tp.push(1, 1, 1, 1, 1, 1);
+        } else {
+            tp.push(0, 0, 0, 0, 0, 0);
+        }
+        spos.push(i, i, i, i, i, i);
+        const xRnd = (Math.random() - 0.5) * 2;
+        const yRnd = (Math.random() - 0.5) * 2;
+        const zRnd = (Math.random() - 0.5) * 2;
+        posRnd.push(
+            xRnd, yRnd, zRnd,
+            xRnd, yRnd, zRnd,
+            xRnd, yRnd, zRnd,
+            xRnd, yRnd, zRnd,
+            xRnd, yRnd, zRnd,
+            xRnd, yRnd, zRnd
+        );
+    }
+    const posArray = new Float32Array(positions);
     const positionAttr = new THREE.BufferAttribute(posArray, 3);
     starGeo.setAttribute('position', positionAttr);
+
+    const tpArray = new Float32Array(tp);
+    const tpAttr = new THREE.BufferAttribute(tpArray, 1);
+    starGeo.setAttribute('tp', tpAttr);
+
+    const sposArray = new Float32Array(spos);
+    const sposAttr = new THREE.BufferAttribute(sposArray, 1);
+    starGeo.setAttribute('spos', sposAttr);
+
+    const posRndArray = new Float32Array(posRnd);
+    const posRndAttr = new THREE.BufferAttribute(posRndArray, 3);
+    starGeo.setAttribute('posRnd', posRndAttr);
 
     const star = new THREE.Mesh(starGeo, stStarsMaterial);
     const ray = new THREE.Ray();
