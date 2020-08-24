@@ -55,7 +55,7 @@ export async function loadDomeEnv() {
 
     const starsMaterial = await makeStarsMaterial();
 
-    const stars = makeStars(makeStarDefinitions(5000), starsMaterial);
+    const stars = makeStars(generateStarsDefinitions(5000), starsMaterial);
     stars.name = 'stars';
     stars.renderOrder = -1;
 
@@ -260,9 +260,10 @@ function makeShootingStar(starsMaterial) {
 
     const star = new THREE.Mesh(starGeo, stStarsMaterial);
     const ray = new THREE.Ray();
+    const safetyRadius = 80;
     const sphere = new THREE.Sphere(
         new THREE.Vector3(),
-        80
+        safetyRadius
     );
     star.frustumCulled = false;
     star.name = 'shootingStar';
@@ -281,8 +282,8 @@ function makeShootingStar(starsMaterial) {
                 lastTime = time.elapsed;
                 dt = 0;
                 do {
-                    start = getRandomStarPos();
-                    end = getRandomStarPos();
+                    start = getRandomStarPos(safetyRadius);
+                    end = getRandomStarPos(safetyRadius);
                     ray.origin.copy(start);
                     ray.direction.copy(end);
                     ray.direction.sub(start);
@@ -373,7 +374,7 @@ function makeStars(starDefs, starsMaterial) {
     return stars;
 }
 
-function makeStarDefinitions(count) {
+function generateStarsDefinitions(count) {
     return times(count, () => {
         const pos = getRandomStarPos();
         const intensity = noiseGen.noise3D(pos.x, pos.y, pos.z) * 0.2 + 0.8;
@@ -390,7 +391,9 @@ function makeStarDefinitions(count) {
     });
 }
 
-function getRandomStarPos() {
+function getRandomStarPos(minDistance = 40, maxDistance = 250) {
+    const minDistSq = minDistance * minDistance;
+    const maxDistSq = maxDistance * maxDistance;
     const starPos = new THREE.Vector3();
     let lenSq;
     do {
@@ -400,7 +403,7 @@ function getRandomStarPos() {
             Math.random() * 500 - 250
         );
         lenSq = starPos.lengthSq();
-    } while (lenSq > 250 * 250 || lenSq < 40 * 40);
+    } while (lenSq > maxDistSq || lenSq < minDistSq);
 
     return starPos;
 }
