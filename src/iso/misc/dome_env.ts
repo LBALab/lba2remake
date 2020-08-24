@@ -261,6 +261,7 @@ function makeShootingStar(starsMaterial) {
     const star = new THREE.Mesh(starGeo, stStarsMaterial);
     const ray = new THREE.Ray();
     const safetyRadius = 80;
+    const minLengthSq = 200 * 200;
     const sphere = new THREE.Sphere(
         new THREE.Vector3(),
         safetyRadius
@@ -284,6 +285,9 @@ function makeShootingStar(starsMaterial) {
                 do {
                     start = getRandomStarPos(safetyRadius);
                     end = getRandomStarPos(safetyRadius);
+                    if (start.distanceToSquared(end) < minLengthSq) {
+                        continue;
+                    }
                     ray.origin.copy(start);
                     ray.direction.copy(end);
                     ray.direction.sub(start);
