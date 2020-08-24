@@ -309,6 +309,7 @@ function GOTO_SCENE(game, scene, zone, hero) {
             newHero.animState = hero.animState;
             newHero.props.animIndex = hero.props.animIndex;
             newHero.props.entityIndex = hero.props.entityIndex;
+            newHero.props.bodyIndex = hero.props.bodyIndex;
             newHero.reloadModel(newScene);
 
             newScene.savedState = game.getState().save(newHero);

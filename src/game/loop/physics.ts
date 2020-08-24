@@ -6,7 +6,7 @@ import { WORLD_SIZE } from '../../utils/lba';
 
 export function processPhysicsFrame(game, scene, time) {
     each(scene.actors, (actor) => {
-        processActorPhysics(scene, actor, time);
+        processActorPhysics(game, scene, actor, time);
     });
     if (scene.isActive) {
         processZones(game, scene);
@@ -14,9 +14,15 @@ export function processPhysicsFrame(game, scene, time) {
     }
 }
 
-function processActorPhysics(scene, actor, time) {
+function processActorPhysics(game, scene, actor, time) {
     if (!actor.model || actor.isKilled)
         return;
+
+    // If someone is talking who isn't this actor, don't process the physics.
+    const currentTalkingActor = game.getState().actorTalking;
+    if (currentTalkingActor > -1 && currentTalkingActor !== actor.index) {
+        return;
+    }
 
     actor.physics.position.add(actor.physics.temp.position);
     if (actor.props.flags.hasCollisions) {

@@ -43,6 +43,12 @@ export function updateActor(
     }
     actor.runScripts(time);
 
+    // Don't update the actor if someone else is talking.
+    const currentTalkingActor = game.getState().actorTalking;
+    if (currentTalkingActor > -1 && currentTalkingActor !== actor.index) {
+        return;
+    }
+
     if (actor.model !== null
         && actor.threeObject
         && (actor.threeObject.visible || actor.index === 0)) {
@@ -50,6 +56,7 @@ export function updateActor(
         actor.animState.matrixRotation.makeRotationFromQuaternion(actor.physics.orientation);
         updateModel(
             game,
+            scene,
             scene.isActive,
             model,
             actor.animState,
@@ -113,7 +120,7 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
             distanceAnticlockwise =  2 * Math.PI - distanceClockwise;
         }
         const baseAngle = Math.min(distanceAnticlockwise,
-                                 distanceClockwise) * deltaMS;
+                                   distanceClockwise) * deltaMS;
         const angle = baseAngle / (actor.props.speed * 10);
         const sign = distanceAnticlockwise < distanceClockwise ? 1 : -1;
         actor.physics.temp.angle += sign * angle;
@@ -160,6 +167,7 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
 }
 
 function updateModel(game: any,
+                     scene: any,
                      sceneIsActive: any,
                      model: any,
                      animState: any,
@@ -181,6 +189,7 @@ function updateModel(game: any,
         if (sceneIsActive) {
             processAnimAction({
                 game,
+                scene,
                 model,
                 entityAnim,
                 animState
