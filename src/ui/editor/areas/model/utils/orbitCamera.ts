@@ -15,6 +15,7 @@ export function get3DOrbitCamera(vang = 0.6) {
     controlNode.add(orientation);
     orientation.add(camera);
     return {
+        setAngle: (a: number) => angle = a,
         controlNode,
         threeCamera: camera,
         resize: (width, height) => {

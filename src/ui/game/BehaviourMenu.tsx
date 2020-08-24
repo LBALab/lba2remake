@@ -295,7 +295,7 @@ const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
     );
 };
 
-const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
+const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
     const {
         life,
         money,
@@ -434,6 +434,10 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
     }, [behaviour]);
 
     const loadUpdateModel = async (b) => {
+        // reset camera angle based on hero angle in the scene
+        const heroAngle = sceneManager.actors[0].physics.temp.angle;
+        scene[b].camera.setAngle(heroAngle + Math.PI - (Math.PI / 4));
+        // load models
         await load(b);
         updateModel(
             model[b],
