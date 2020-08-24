@@ -56,6 +56,7 @@ export function updateActor(
         actor.animState.matrixRotation.makeRotationFromQuaternion(actor.physics.orientation);
         updateModel(
             game,
+            scene,
             scene.isActive,
             model,
             actor.animState,
@@ -166,6 +167,7 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
 }
 
 function updateModel(game: any,
+                     scene: any,
                      sceneIsActive: any,
                      model: any,
                      animState: any,
@@ -187,6 +189,7 @@ function updateModel(game: any,
         if (sceneIsActive) {
             processAnimAction({
                 game,
+                scene,
                 model,
                 entityAnim,
                 animState
