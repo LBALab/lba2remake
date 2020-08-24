@@ -71,6 +71,18 @@ export default class Renderer {
         this.threeRenderer.setClearColor(color);
     }
 
+    setScissor(left: number, bottom: number, width: number, height: number) {
+        this.threeRenderer.setScissor(left, bottom, width, height);
+    }
+
+    setScissorTest(enable: boolean) {
+        this.threeRenderer.setScissorTest(enable);
+    }
+
+    setViewport(left: number, bottom: number, width: number, height: number) {
+        this.threeRenderer.setViewport(left, bottom, width, height);
+    }
+
     resize(width = 0, height = 0) {
         if (!width || !height) {
             this.threeRenderer.getSize(RSIZE);
