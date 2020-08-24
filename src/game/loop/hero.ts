@@ -58,8 +58,13 @@ function handleBehaviourChanges(scene, hero, behaviour) {
 function validPosition(runtimeFlags) {
     const onFloor = runtimeFlags.isTouchingGround ||
                     runtimeFlags.isTouchingFloor;
-    return onFloor && !runtimeFlags.isDrowning && !runtimeFlags.isDrowningLava &&
-    !runtimeFlags.isJumping && !runtimeFlags.isFalling && !runtimeFlags.isClimbing;
+    return onFloor
+        && !runtimeFlags.isDrowning
+        && !runtimeFlags.isDrowningLava
+        && !runtimeFlags.isDrowningStars
+        && !runtimeFlags.isJumping
+        && !runtimeFlags.isFalling
+        && !runtimeFlags.isClimbing;
 }
 
 function toggleJump(hero, value) {
@@ -103,24 +108,7 @@ function processFirstPersonsMovement(game, scene, hero) {
             hero.setAnim(AnimType.FALLING);
             return;
         }
-        if (hero.props.runtimeFlags.isDrowning) {
-            hero.setAnimWithCallback(AnimType.DROWNING, () => {
-                game.getState().load(scene.savedState, hero);
-                hero.setAnim(AnimType.NONE);
-                hero.props.runtimeFlags.isDrowning = false;
-                hero.props.noInterpolateNext = true;
-            });
-            hero.animState.noInterpolate = true;
-            return;
-        }
-        if (hero.props.runtimeFlags.isDrowningLava) {
-            hero.setAnimWithCallback(AnimType.DROWNING_LAVA, () => {
-                game.getState().load(scene.savedState, hero);
-                hero.setAnim(AnimType.NONE);
-                hero.props.runtimeFlags.isDrowningLava = false;
-                hero.props.noInterpolateNext = true;
-            });
-            hero.animState.noInterpolate = true;
+        if (checkDrowningAnim(game, scene, hero)) {
             return;
         }
 
@@ -182,7 +170,9 @@ function processFall(scene, hero) {
     }
     if (distFromFloor < 0.001) {
         // If we've jumped into water, don't play the landing animation.
-        if (hero.props.runtimeFlags.isDrowning || hero.props.runtimeFlags.isDrowningLava) {
+        if (hero.props.runtimeFlags.isDrowning
+            || hero.props.runtimeFlags.isDrowningLava
+            || hero.props.runtimeFlags.isDrowningStars) {
             hero.props.runtimeFlags.isFalling = false;
             hero.props.fallDistance = 0;
             return;
@@ -247,24 +237,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
             hero.setAnim(AnimType.FALLING);
             return;
         }
-        if (hero.props.runtimeFlags.isDrowning) {
-            hero.setAnimWithCallback(AnimType.DROWNING, () => {
-                game.getState().load(scene.savedState, hero);
-                hero.setAnim(AnimType.NONE);
-                hero.props.runtimeFlags.isDrowning = false;
-                hero.props.noInterpolateNext = true;
-            });
-            hero.animState.noInterpolate = true;
-            return;
-        }
-        if (hero.props.runtimeFlags.isDrowningLava) {
-            hero.setAnimWithCallback(AnimType.DROWNING_LAVA, () => {
-                game.getState().load(scene.savedState, hero);
-                hero.setAnim(AnimType.NONE);
-                hero.props.runtimeFlags.isDrowningLava = false;
-                hero.props.noInterpolateNext = true;
-            });
-            hero.animState.noInterpolate = true;
+        if (checkDrowningAnim(game, scene, hero)) {
             return;
         }
 
@@ -374,6 +347,30 @@ function processActorMovement(game, scene, hero, time, behaviour) {
         hero.animState.noInterpolate = true;
         hero.props.noInterpolateNext = false;
     }
+}
+
+function checkDrowningAnim(game, scene, hero) {
+    if (hero.props.runtimeFlags.isDrowning
+        || hero.props.runtimeFlags.isDrowningLava
+        || hero.props.runtimeFlags.isDrowningStars) {
+        let anim = AnimType.DROWNING;
+        if (hero.props.runtimeFlags.isDrowningLava) {
+            anim = AnimType.DROWNING_LAVA;
+        } else if (hero.props.runtimeFlags.isDrowningStars) {
+            anim = AnimType.DROWNING_STARS;
+        }
+        hero.setAnimWithCallback(anim, () => {
+            game.getState().load(scene.savedState, hero);
+            hero.setAnim(AnimType.NONE);
+            hero.props.runtimeFlags.isDrowning = false;
+            hero.props.runtimeFlags.isDrowningLava = false;
+            hero.props.runtimeFlags.isDrowningStars = false;
+            hero.props.noInterpolateNext = true;
+        });
+        hero.animState.noInterpolate = true;
+        return true;
+    }
+    return false;
 }
 
 function onlyY(src) {
