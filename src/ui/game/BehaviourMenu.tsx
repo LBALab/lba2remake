@@ -138,8 +138,7 @@ const renderLoop = (time, behaviour, selected, item) => {
     const s = scene[behaviour];
 
     const canvasClip = canvas.getBoundingClientRect();
-    // @ts-ignore
-    const { left, right, top, bottom, width, height } = item.current.getBoundingClientRect();
+    const { left, bottom, width, height } = item.current.getBoundingClientRect();
 
     // set canvas size once with same aspect ratio as the behaviour item area
     if (canvas.width === 0) {
