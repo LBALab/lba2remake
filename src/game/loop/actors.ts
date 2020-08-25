@@ -57,7 +57,6 @@ export function updateActor(
         updateModel(
             game,
             scene,
-            scene.isActive,
             model,
             actor.animState,
             actor.props.entityIndex,
@@ -168,7 +167,6 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
 
 function updateModel(game: any,
                      scene: any,
-                     sceneIsActive: any,
                      model: any,
                      animState: any,
                      entityIdx: number,
@@ -186,7 +184,7 @@ function updateModel(game: any,
         if (realAnimIdx === animState.realAnimIdx || animState.realAnimIdx === -1) {
             updateKeyframe(anim, animState, time, realAnimIdx);
         }
-        if (sceneIsActive) {
+        if (scene.isActive) {
             processAnimAction({
                 game,
                 scene,

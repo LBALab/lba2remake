@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import '../styles/behaviour.scss';
 import useMedia from '../hooks/useMedia';
 import { BehaviourMode as BehaviourModeType } from '../../game/loop/hero';
+import { MAX_LIFE } from '../../game/state';
 
 import Renderer from '../../renderer';
 import { get3DOrbitCamera } from '../editor/areas/model/utils/orbitCamera';
@@ -552,7 +553,7 @@ const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
                 <BehavourPointProgress
                     type="life"
                     value={life}
-                    maxValue={255}
+                    maxValue={MAX_LIFE}
                 />
                 <BehavourPointProgress
                     type="magic"

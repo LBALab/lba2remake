@@ -19,6 +19,9 @@ export interface GameState {
     load: Function;
 }
 
+export const MAX_LIFE = 255;
+const INITIAL_LIFE = 200;
+
 export function createState(): GameState {
     return {
         config: Object.assign({
@@ -30,7 +33,7 @@ export function createState(): GameState {
         hero: {
             behaviour: 0,
             prevBehaviour: 0,
-            life: 200,
+            life: INITIAL_LIFE,
             money: 0,
             magic: 0,
             keys: 0,
