@@ -9,13 +9,16 @@ import SHOOTING_STAR_VERT from './shaders/dome_shooting_star.vert.glsl';
 import SHOOTING_STAR_FRAG from './shaders/dome_shooting_star.frag.glsl';
 import WALLS_VERT from './shaders/dome_walls.vert.glsl';
 import WALLS_FRAG from './shaders/dome_walls.frag.glsl';
+import PLATFORM_VERT from './shaders/dome_platform.vert.glsl';
+import PLATFORM_FRAG from './shaders/dome_platform.frag.glsl';
+import { loadLUTTexture } from '../../utils/lut';
 
 const loader = new THREE.TextureLoader();
 const gltfLoader = new GLTFLoader();
 
 const noiseGen = new SimplexNoise('LBA');
 
-export async function loadDomeEnv() {
+export async function loadDomeEnv(ambience) {
     const basePos = new THREE.Vector3(26.875, 3.85, 24.375);
     const NUM_SPOTS = 4;
     const spotsPos = times(NUM_SPOTS, () => new THREE.Vector3(0, 1, 0));
@@ -28,12 +31,35 @@ export async function loadDomeEnv() {
             resolve(m.scene);
         });
     });
+    const lutTexture = await loadLUTTexture();
+    const light = getLightVector(ambience);
     dome.traverse((node) => {
         if (node instanceof THREE.Mesh) {
             const material = (node.material as THREE.MeshStandardMaterial);
             if (material.name.substring(0, 4) === 'star') {
                 material.side = THREE.FrontSide;
                 starCages.push(node);
+            } else if (material.name === 'platform_white') {
+                node.material = new THREE.ShaderMaterial({
+                    defines: {
+                        NUM_SPOTS
+                    },
+                    uniforms: {
+                        light: { value: light },
+                        lutTexture: { value: lutTexture },
+                        uNormalMatrix: { value: new THREE.Matrix3() },
+                        color: { value: material.color },
+                        spotsPos: { value: spotsPos },
+                        spotsIntensity: { value: spotsIntensity },
+                        spotsSize: { value: spotsSize },
+                    },
+                    vertexShader: PLATFORM_VERT,
+                    fragmentShader: PLATFORM_FRAG,
+                });
+                node.onBeforeRender = () => {
+                    const mat = node.material as THREE.ShaderMaterial;
+                    mat.uniforms.uNormalMatrix.value.setFromMatrix4(node.matrixWorld);
+                };
             } else {
                 node.material = new THREE.ShaderMaterial({
                     defines: {
@@ -410,4 +436,17 @@ function getRandomStarPos(minDistance = 40, maxDistance = 250) {
     } while (lenSq > maxDistSq || lenSq < minDistSq);
 
     return starPos;
+}
+
+function getLightVector(ambience) {
+    const lightVector = new THREE.Vector3(-1, 0, 0);
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 0, 1),
+        -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
+    );
+    lightVector.applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
+    );
+    return lightVector;
 }
