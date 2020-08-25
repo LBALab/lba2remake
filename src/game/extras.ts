@@ -272,8 +272,8 @@ export function updateExtra(game, scene, extra, time) {
 
     if (shouldCollect ||
         (extra.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT) {
-        playSoundFx(game, SAMPLE_BONUS_FOUND);
         if (extra.info && shouldCollect) {
+            playSoundFx(game, SAMPLE_BONUS_FOUND);
             const itrjId = `extra_${extra.index}_${extra.info}`;
             const interjections = clone(game.getUiState().interjections);
 
