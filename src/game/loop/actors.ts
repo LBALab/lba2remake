@@ -56,7 +56,7 @@ export function updateActor(
         actor.animState.matrixRotation.makeRotationFromQuaternion(actor.physics.orientation);
         updateModel(
             game,
-            scene.isActive,
+            scene,
             model,
             actor.animState,
             actor.props.entityIndex,
@@ -166,7 +166,7 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
 }
 
 function updateModel(game: any,
-                     sceneIsActive: any,
+                     scene: any,
                      model: any,
                      animState: any,
                      entityIdx: number,
@@ -184,9 +184,10 @@ function updateModel(game: any,
         if (realAnimIdx === animState.realAnimIdx || animState.realAnimIdx === -1) {
             updateKeyframe(anim, animState, time, realAnimIdx);
         }
-        if (sceneIsActive) {
+        if (scene.isActive) {
             processAnimAction({
                 game,
+                scene,
                 model,
                 entityAnim,
                 animState

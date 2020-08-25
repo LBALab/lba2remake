@@ -205,11 +205,10 @@ export function updateKeyframeInterpolation(anim, state, time, realAnimIdx) {
         state.currentFrame = nextFrame;
     }
 
-    let numBones = anim.numBoneframes;
-    if (state.skeleton.length < numBones) {
-        numBones = state.skeleton.length;
-    }
-
+    const numBones = Math.min(
+        anim.numBoneframes,
+        Math.min(state.skeleton.length, state.currentKeyframe.length)
+    );
     updateSkeletonAtKeyframe(
         state,
         state.currentKeyframe,

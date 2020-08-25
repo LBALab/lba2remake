@@ -6,6 +6,7 @@ import { loadSprite } from '../iso/sprites';
 import { addExtraToScene, removeExtraFromScene } from './scenes';
 import { clone } from 'lodash';
 import { getHtmlColor } from '../scene';
+import { MAX_LIFE } from './state';
 // import { createBoundingBox } from '../utils/rendering';
 
 export const ExtraFlag = {
@@ -233,11 +234,19 @@ export function updateExtra(game, scene, extra, time) {
         }
     }
 
+    // Only Twinsen can collect extras such as keys, but we allow other actors
+    // to collect extras like life points.
+    let shouldCollect = false;
+
     if (hitActor && hitActor.index === 0) {
+        shouldCollect = true;
         const { hero } = game.getState();
         switch (extra.spriteIndex) {
             case SpriteType.LIFE:
-                hero.life += extra.info;
+                hero.life += extra.info * 5;
+                if (hero.life > MAX_LIFE) {
+                    hero.life = MAX_LIFE;
+                }
                 break;
             case SpriteType.MAGIC:
                 hero.magic += extra.info;
@@ -253,12 +262,19 @@ export function updateExtra(game, scene, extra, time) {
                 break;
         }
         playSoundFx(game, SAMPLE_BONUS_FOUND);
+    } else if (hitActor) {
+        switch (extra.spriteIndex) {
+            case SpriteType.LIFE:
+                hitActor.props.life += extra.info * 5;
+                shouldCollect = true;
+                break;
+        }
     }
 
-    if ((extra.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT ||
-        (hitActor && hitActor.index === 0)) {
-
-        if (extra.info && (hitActor && hitActor.index === 0)) {
+    if (shouldCollect ||
+        (extra.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT) {
+        playSoundFx(game, SAMPLE_BONUS_FOUND);
+        if (extra.info && shouldCollect) {
             const itrjId = `extra_${extra.index}_${extra.info}`;
             const interjections = clone(game.getUiState().interjections);
 

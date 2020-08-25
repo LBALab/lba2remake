@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import '../styles/behaviour.scss';
 import useMedia from '../hooks/useMedia';
 import { BehaviourMode as BehaviourModeType } from '../../game/loop/hero';
+import { MAX_LIFE } from '../../game/state';
 
 interface IBehaviourMenuClover {
     boxes: number;
@@ -255,7 +256,7 @@ const BehaviourMenu = ({ game }: IBehaviourMenuProps) => {
                 <BehavourPointProgress
                     type="life"
                     value={life}
-                    maxValue={255}
+                    maxValue={MAX_LIFE}
                 />
                 <BehavourPointProgress
                     type="magic"

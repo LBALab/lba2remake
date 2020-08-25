@@ -1,7 +1,10 @@
+import * as THREE from 'three';
 import { each } from 'lodash';
 
 import { getRandom } from '../../utils/lba';
 import { unimplemented } from '../scripting/utils';
+import { addExtra, ExtraFlag } from '../extras';
+import { SpriteType } from '../data/spriteType';
 
 export const NOP = unimplemented();
 
@@ -105,7 +108,17 @@ export const SAMPLE_MAGIC = (_, { game }) => {
     audio.playSample(index);
 };
 
-export const THROW_3D_CONQUE = unimplemented();
+export const THROW_3D_CONQUE = (_action, { game, scene }) => {
+    const destAngle = scene.actors[0].physics.temp.angle - Math.PI / 2;
+    const position = scene.actors[0].physics.position.clone();
+    const offset = new THREE.Vector3(0.75, 0.5, 0);
+    offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
+    position.add(offset);
+    addExtra(game, scene, position, destAngle, SpriteType.LIFE, 5,
+             game.getTime()).then((extra) => {
+        extra.flags |= ExtraFlag.TIME_IN;
+    });
+};
 
 export const ZV_ANIMIT = unimplemented();
 
