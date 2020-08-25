@@ -178,12 +178,14 @@ const renderLoop = (time, behaviour, selected, item) => {
     renderer.stats.end();
 };
 
-const load = async (b) => {
-    if (model[b]) {
-        return;
-    }
+const load = async (b, bodyIndex) => {
+    // if (model[b]) {
+    //     return;
+    // }
 
-    animState[b] = loadAnimState();
+    if (!animState[b]) {
+        animState[b] = loadAnimState();
+    }
 
     const envInfo = {
         skyColor: [0, 0, 0]
@@ -195,13 +197,19 @@ const load = async (b) => {
     model[b] = await loadModel(
         {},
         b,
-        0,
+        bodyIndex,
         0,
         animState[b],
         envInfo,
         ambience
     );
 
+    if (scene[b] &&
+        scene[b].threeScene &&
+        scene[b].threeScene.children &&
+        scene[b].threeScene.children.length > 1) {
+        scene[b].threeScene.remove(scene[b].threeScene.children[1]);
+    }
     scene[b].threeScene.add(model[b].mesh);
 };
 
@@ -436,8 +444,9 @@ const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
         // reset camera angle based on hero angle in the scene
         const heroAngle = sceneManager.actors[0].physics.temp.angle;
         scene[b].camera.setAngle(heroAngle + Math.PI - (Math.PI / 4));
+        const bodyIndex = sceneManager.actors[0].props.bodyIndex;
         // load models
-        await load(b);
+        await load(b, bodyIndex);
         updateModel(
             model[b],
             animState[b],
