@@ -54,20 +54,22 @@ export const SAMPLE_STOP = (action, { game }) => {
 
 export const ZV = unimplemented();
 
-export const LEFT_STEP = (_action, { game, animState }) => {
-    let sampleIndex = animState.floorSound;
-    if (sampleIndex !== undefined && sampleIndex !== -1) {
-        sampleIndex += 30;
+export const LEFT_STEP = (_action, { game, scene, animState }) => {
+    const floorSound = animState.floorSound;
+    if (floorSound !== undefined && floorSound !== -1) {
+        const offset = scene.isIsland ? 30 : 60;
+        const sampleIndex = floorSound + offset;
         // const frequency = getRandom(0, 0x1000) + 3596;
         const audio = game.getAudioManager();
         audio.playSample(sampleIndex); // frequency
     }
 };
 
-export const RIGHT_STEP = (_action, { game, animState }) => {
-    let sampleIndex = animState.floorSound;
-    if (sampleIndex !== undefined && sampleIndex !== -1) {
-        sampleIndex += 30;
+export const RIGHT_STEP = (_action, { game, scene, animState }) => {
+    const floorSound = animState.floorSound;
+    if (floorSound !== undefined && floorSound !== -1) {
+        const offset = scene.isIsland ? 45 : 75;
+        const sampleIndex = floorSound + offset;
         // const frequency = getRandom(0, 0x1000) + 3596;
         const audio = game.getAudioManager();
         audio.playSample(sampleIndex); // frequency
