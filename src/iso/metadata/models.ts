@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { each } from 'lodash';
+import { each, times } from 'lodash';
 import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
@@ -41,7 +41,7 @@ export async function loadFullSceneModel(entry: number, replacementData, isEdito
     : Promise<FullSceneModel> {
     const model = await loadModel(`/models/iso_scenes/${entry}.glb`);
     const threeObject = model.scene.children[0];
-    const heroPos = { value: new THREE.Vector3() };
+    const actorPos = times(5, () => new THREE.Vector3());
     threeObject.traverse((node) => {
         if (node instanceof THREE.Mesh) {
             const color_attr = (node.geometry as THREE.BufferGeometry).attributes.color;
@@ -58,8 +58,9 @@ export async function loadFullSceneModel(entry: number, replacementData, isEdito
                     vertexShader: compile('vert', VERT_OBJECTS_DOME),
                     fragmentShader: compile('frag', FRAG_OBJECTS_DOME),
                     transparent: true,
+                    side: THREE.DoubleSide,
                     uniforms: {
-                        heroPos,
+                        actorPos: { value: actorPos },
                         distThreshold: { value: isEditor ? 0 : 1000 }
                     }
                 });
@@ -95,10 +96,17 @@ export async function loadFullSceneModel(entry: number, replacementData, isEdito
         threeObject,
         update: (_game, scene, time) => {
             mixer.update(time.delta);
-            const hero = scene.actors[0];
-            if (hero.threeObject) {
-                heroPos.value.set(0, 0, 0);
-                heroPos.value.applyMatrix4(hero.threeObject.matrixWorld);
+            if (scene.index === 26) { // dome
+                [0, 2, 3, 4, 5].forEach((aIdx, idx) => {
+                    const actor = scene.actors[aIdx];
+                    if (actor.threeObject && !actor.isKilled) {
+                        actorPos[idx].set(0, 0, 0);
+                        actorPos[idx].applyMatrix4(actor.threeObject.matrixWorld);
+                    } else {
+                        // Make it far
+                        actorPos[idx].set(-1000, -1000, -1000);
+                    }
+                });
             }
         }
     };

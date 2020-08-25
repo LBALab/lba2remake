@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { each } from 'lodash';
+import { each, times } from 'lodash';
 
 import { loadBricks } from './bricks';
 import { loadGrid, GROUND_TYPES } from './grid';
@@ -170,7 +170,7 @@ async function loadMesh(grid, entry, ambience, is3D, isEditor) {
                 transparent: true,
                 uniforms: {
                     library: { value: grid.library.texture },
-                    heroPos: { value: new THREE.Vector3() },
+                    actorPos: { value: times(5, () => new THREE.Vector3()) },
                     distThreshold: { value: isEditor ? 0 : 1000 }
                 },
                 side: THREE.DoubleSide
@@ -231,10 +231,18 @@ async function loadMesh(grid, entry, ambience, is3D, isEditor) {
             if (update) {
                 update(game, scene, time);
             }
-            const hero = scene.actors[0];
-            if (hero.threeObject && geometries.dome_ground.positions.length > 0) {
-                slateUniforms.heroPos.value.set(0, 0, 0);
-                slateUniforms.heroPos.value.applyMatrix4(hero.threeObject.matrixWorld);
+            if (scene.index === 26) { // dome
+                [0, 2, 3, 4, 5].forEach((aIdx, idx) => {
+                    const actor = scene.actors[aIdx];
+                    if (actor.threeObject && !actor.isKilled) {
+                        slateUniforms.actorPos.value[idx].set(0, 0, 0);
+                        slateUniforms.actorPos.value[idx]
+                            .applyMatrix4(actor.threeObject.matrixWorld);
+                    } else {
+                        // Make it far
+                        slateUniforms.actorPos.value[idx].set(-1000, -1000, -1000);
+                    }
+                });
             }
         }
     };
