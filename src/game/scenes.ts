@@ -139,6 +139,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
 
 async function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent) {
     const sceneData = await loadSceneData(getLanguageConfig().language, index);
+    const modelReplacements = await loadModelReplacements();
     if (params.editor) {
         await loadSceneMetaData(index);
     }
@@ -157,7 +158,16 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
     const is3DCam = indexInfo.isIsland || renderer.vr || params.iso3d;
     const actors = await Promise.all(map(
         sceneData.actors,
-        actor => loadActor(game, params, is3DCam, envInfo, sceneData.ambience, actor, parent)
+        actor => loadActor(
+            game,
+            params,
+            is3DCam,
+            envInfo,
+            sceneData.ambience,
+            actor,
+            parent,
+            modelReplacements
+        )
     ));
     const points = map(sceneData.points, props => loadPoint(props));
     const zones = map(sceneData.zones, props => loadZone(props, is3DCam));
@@ -404,6 +414,16 @@ function createSceneVariables(scene) {
         variables.push(0);
     }
     return variables;
+}
+
+let modelReplacementsCache = null;
+
+async function loadModelReplacements() {
+    if (!modelReplacementsCache) {
+        const file = await fetch('metadata/model_replacements.json');
+        modelReplacementsCache = file.json();
+    }
+    return modelReplacementsCache;
 }
 
 function findUsedVarGames(scene) {

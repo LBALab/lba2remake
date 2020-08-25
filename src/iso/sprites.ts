@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { each, orderBy } from 'lodash';
 import { bits } from '../utils';
 import { compile } from '../utils/shaders';
@@ -7,6 +7,8 @@ import { WORLD_SCALE } from '../utils/lba';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
 import { loadResource, ResourceType } from '../resources';
+
+const loader = new GLTFLoader();
 
 const push = Array.prototype.push;
 
@@ -17,7 +19,8 @@ export async function loadSprite(
     index,
     hasSpriteAnim3D = false,
     isBillboard = false,
-    is3DCam = false
+    is3DCam = false,
+    spriteReplacements = {}
 ) {
     const [ress, pal, spritesFile, spritesRaw] = await Promise.all([
         loadResource(ResourceType.RESS),
@@ -38,6 +41,14 @@ export async function loadSprite(
     const cache = (index < 100) ? spriteRawCache : spriteCache;
     const box = loadSpriteBB(ress, index, hasSpriteAnim3D);
     const {xMin, xMax, yMin, yMax, zMin, zMax} = box;
+    let threeObject;
+    if (index in spriteReplacements) {
+        threeObject = await loadSpriteReplacement(spriteReplacements[index]);
+    } else if (isBillboard) {
+        threeObject = loadBillboardSprite(index, cache, is3DCam);
+    } else {
+        threeObject = loadMesh(index, cache, box);
+    }
     return {
         box,
         boundingBox: new THREE.Box3(
@@ -47,9 +58,7 @@ export async function loadSprite(
         boundingBoxDebugMesh: null,
 
         props: cache.spritesMap[index],
-        threeObject: (isBillboard)
-            ? loadBillboardSprite(index, cache, is3DCam)
-            : loadMesh(index, cache, box),
+        threeObject
     };
 }
 
@@ -362,4 +371,12 @@ export function loadSpritesMapping(sprites, palette) {
         texture,
         spritesMap
     };
+}
+
+export async function loadSpriteReplacement(file) {
+    return new Promise<THREE.Object3D>((resolve) => {
+        loader.load(`models/sprites/${file}`, (m) => {
+            resolve(m.scene);
+        });
+    });
 }
