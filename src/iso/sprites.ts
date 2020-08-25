@@ -7,6 +7,7 @@ import { WORLD_SCALE } from '../utils/lba';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
 import { loadResource, ResourceType } from '../resources';
+import { makeStars, makeStarsMaterial } from './misc/dome_env';
 
 const loader = new GLTFLoader();
 
@@ -42,8 +43,11 @@ export async function loadSprite(
     const box = loadSpriteBB(ress, index, hasSpriteAnim3D);
     const {xMin, xMax, yMin, yMax, zMin, zMax} = box;
     let threeObject;
+    let update = (_time) => {};
     if (index in spriteReplacements) {
-        threeObject = await loadSpriteReplacement(spriteReplacements[index]);
+        const replacement = await loadSpriteReplacement(spriteReplacements[index]);
+        threeObject = replacement.threeObject;
+        update = replacement.update;
     } else if (isBillboard) {
         threeObject = loadBillboardSprite(index, cache, is3DCam);
     } else {
@@ -58,7 +62,8 @@ export async function loadSprite(
         boundingBoxDebugMesh: null,
 
         props: cache.spritesMap[index],
-        threeObject
+        threeObject,
+        update
     };
 }
 
@@ -373,10 +378,35 @@ export function loadSpritesMapping(sprites, palette) {
     };
 }
 
-export async function loadSpriteReplacement(file) {
-    return new Promise<THREE.Object3D>((resolve) => {
-        loader.load(`models/sprites/${file}`, (m) => {
-            resolve(m.scene);
+interface SpriteReplacement {
+    threeObject: THREE.Object3D;
+    update: (time: any) => void;
+}
+
+export async function loadSpriteReplacement({file, fx}) {
+    return new Promise<SpriteReplacement>((resolve) => {
+        loader.load(`models/sprites/${file}`, async (m) => {
+            let glow;
+            if (fx === 'glow') {
+                glow = makeStars([{
+                    pos: new THREE.Vector3(0, 0.18, 0),
+                    intensity: 0.65,
+                    tint: 0.5,
+                    size: 0.3,
+                    sparkle: 0
+                }], await makeStarsMaterial());
+                glow.renderOrder = 1;
+                m.scene.add(glow);
+            }
+            resolve({
+                threeObject: m.scene,
+                update: (time) => {
+                    if (glow) {
+                        const material = glow.material;
+                        material.uniforms.time.value = time.elapsed;
+                    }
+                }
+            });
         });
     });
 }

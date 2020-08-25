@@ -1,8 +1,19 @@
 {
     "sprites": {
-        "0": "clover_box.glb",
-        "422": "blue_star.glb",
-        "423": "blue_star.glb",
-        "424": "blue_star.glb"
+        "0": {
+            "file": "clover_box.glb"
+        },
+        "422": {
+            "file": "blue_star.glb",
+            "fx": "glow"
+        },
+        "423": {
+            "file": "blue_star.glb",
+            "fx": "glow"
+        },
+        "424": {
+            "file": "blue_star.glb",
+            "fx": "glow"
+        }
     }
 }

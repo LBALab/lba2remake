@@ -171,7 +171,7 @@ export async function loadDomeEnv() {
     };
 }
 
-async function makeStarsMaterial(texture = 'B_OPC3') {
+export async function makeStarsMaterial(texture = 'B_OPC3') {
     const starTexture = await new Promise(resolve =>
         loader.load(`images/stars/${texture}.png`, resolve)
     );
@@ -313,7 +313,7 @@ function makeShootingStar(starsMaterial) {
     };
 }
 
-function makeStars(starDefs, starsMaterial) {
+export function makeStars(starDefs, starsMaterial) {
     const starsGeo = new THREE.BufferGeometry();
     const positions = [];
     const uvs = [];
