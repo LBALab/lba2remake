@@ -236,7 +236,7 @@ const BehaviourCount = ({ type, value }: { type: 'keys' | 'money', value: number
     const imgType = type === 'keys' ? 'keys' : 'kashes';
     return (
         <div className={`count ${type}`}>
-            <img src={`images/${imgType}.png`} />
+            <img src={`images/${imgType}.svg`} />
             <div>{value}</div>
         </div>
     );
@@ -256,7 +256,7 @@ const BehavourPointProgress = ({ type, value, maxValue, size }
     return (
         maxValue > 0 ?
             <div className={`pointsProgressContainer ${type}`}>
-                <img src={`images/${type}.png`} />
+                <img src={`images/${type}.svg`} />
                 <div className="pointsProgress" style={{
                         width: maxWidth,
                     }}
@@ -287,7 +287,7 @@ const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
             {clovers.map(type => (
                 <img
                     key={type}
-                    src={`images/${type}.png`}
+                    src={`images/${type}.svg`}
                 />
             ))}
         </div>
