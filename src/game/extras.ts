@@ -261,7 +261,6 @@ export function updateExtra(game, scene, extra, time) {
                 hero.money += extra.info;
                 break;
         }
-        playSoundFx(game, SAMPLE_BONUS_FOUND);
     } else if (hitActor) {
         switch (extra.spriteIndex) {
             case SpriteType.LIFE:
