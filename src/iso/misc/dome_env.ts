@@ -11,6 +11,8 @@ import WALLS_VERT from './shaders/dome_walls.vert.glsl';
 import WALLS_FRAG from './shaders/dome_walls.frag.glsl';
 import PLATFORM_VERT from './shaders/dome_platform.vert.glsl';
 import PLATFORM_FRAG from './shaders/dome_platform.frag.glsl';
+import LBA_OBJECT_VERT from '../shaders/objects/colored.preview.vert.glsl';
+import LBA_OBJECT_FRAG from '../shaders/objects/colored.frag.glsl';
 import { loadLUTTexture } from '../../utils/lut';
 
 const loader = new THREE.TextureLoader();
@@ -26,11 +28,13 @@ export async function loadDomeEnv(ambience) {
     const spotsSize = times(NUM_SPOTS, () => 0);
     const spotsTransitionTime = times(NUM_SPOTS, () => 0);
     const starCages = [];
+    const archStars = [];
     const dome = await new Promise<THREE.Object3D>((resolve) => {
         gltfLoader.load('models/dome.glb', (m) => {
             resolve(m.scene);
         });
     });
+    const starsHighresMaterial = await makeStarsMaterial('B_OPC3_HD');
     const lutTexture = await loadLUTTexture();
     const light = getLightVector(ambience);
     dome.traverse((node) => {
@@ -55,6 +59,25 @@ export async function loadDomeEnv(ambience) {
                     },
                     vertexShader: PLATFORM_VERT,
                     fragmentShader: PLATFORM_FRAG,
+                });
+                node.onBeforeRender = () => {
+                    const mat = node.material as THREE.ShaderMaterial;
+                    mat.uniforms.uNormalMatrix.value.setFromMatrix4(node.matrixWorld);
+                };
+            } else if (material.name === 'arch_white' || material.name === 'deco_white') {
+                if (material.name === 'arch_white') {
+                    archStars.push(node);
+                }
+                const c = material.color;
+                node.material = new THREE.RawShaderMaterial({
+                    uniforms: {
+                        light: { value: light },
+                        lutTexture: { value: lutTexture },
+                        uNormalMatrix: { value: new THREE.Matrix3() },
+                        uColor: { value: new THREE.Vector4(c.r, c.g, c.b, 1) }
+                    },
+                    vertexShader: LBA_OBJECT_VERT,
+                    fragmentShader: LBA_OBJECT_FRAG,
                 });
                 node.onBeforeRender = () => {
                     const mat = node.material as THREE.ShaderMaterial;
@@ -89,22 +112,30 @@ export async function loadDomeEnv(ambience) {
     threeObject.position.set(39, 0, 21);
     threeObject.name = 'dome_env';
 
-    const starsHighresMaterial = await makeStarsMaterial('B_OPC3_HD');
-
     starCages.forEach(async (node) => {
-        const big = node.name.substr(0, 3) === 'big';
-        const size = big ? 1.2 : 0.8;
-        const sparkle = big ? 0.4 : 0.05;
-        const tint = big ? 0.2 : 0;
-        const intensity = big ? 1 : 0.5;
         const star = makeStars([{
             pos: new THREE.Vector3(),
-            intensity,
-            tint,
-            size,
-            sparkle
+            intensity: 0.5,
+            tint: 0,
+            size: 0.8,
+            sparkle: 0.05
         }], starsHighresMaterial);
         star.name = `${node.name}_light`;
+        star.renderOrder = 1;
+        node.add(star);
+        node.userData.baseY = node.position.y;
+    });
+
+    archStars.forEach(async (node) => {
+        const star = makeStars([{
+            pos: new THREE.Vector3(),
+            intensity: 0.9,
+            tint: 0.1,
+            size: 1.0,
+            sparkle: 0.03
+        }], starsHighresMaterial);
+        star.position.set(0, 1.6, 0);
+        star.name = `${node.name}_bell_star`;
         star.renderOrder = 1;
         node.add(star);
         node.userData.baseY = node.position.y;
@@ -184,13 +215,10 @@ export async function loadDomeEnv(ambience) {
                 init = false;
             }
             starCages.forEach((node, idx) => {
-                const big = node.name.substr(0, 3) === 'big';
                 const sign = idx % 2 === 0 ? 1 : -1;
                 node.rotation.y = time.elapsed * 0.15 * sign;
-                if (!big) {
-                    const tm = time.elapsed + (idx * Math.PI * 0.5);
-                    node.position.y = node.userData.baseY + Math.sin(tm) * 0.2 + 0.1;
-                }
+                const tm = time.elapsed + (idx * Math.PI * 0.5);
+                node.position.y = node.userData.baseY + Math.sin(tm) * 0.2 + 0.1;
             });
             shootingStars.forEach(star => star.update(time));
         }
