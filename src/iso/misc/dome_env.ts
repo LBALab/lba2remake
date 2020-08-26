@@ -159,7 +159,7 @@ export async function loadDomeEnv(ambience) {
 
     const updateSpot = (idx, time) => {
         if (init || (idx === nextSpot && time.elapsed > lastTransition + transitionDelay)) {
-            let minDistance = Infinity;
+            let minDistance;
             do {
                 spotsPos[idx].set(
                     Math.random() * 2 - 1,
