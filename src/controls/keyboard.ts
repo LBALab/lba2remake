@@ -158,6 +158,7 @@ function keyDownHandler(params, game, sceneManager, event) {
             }
             break;
     }
+    event.preventDefault();
 }
 
 function keyUpHandler(game, event) {

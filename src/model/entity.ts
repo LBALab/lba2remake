@@ -385,6 +385,7 @@ function loadEntityAnim(data, offset) {
                     innerOffset += 1;
                     break;
                 case ACTIONTYPE.THROW_3D_CONQUE:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     innerOffset += 7 + 1;
                     break;
                 case ACTIONTYPE.IMPACT:

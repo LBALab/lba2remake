@@ -76,6 +76,17 @@
     }
 }
 
+.behaviour-canvas {
+    position: absolute;
+    top: 0;
+    border-radius: 15px;
+    outline: 0px;
+
+    @include media("<=tablet","portrait") {
+        border-radius: 10px;
+    }
+}
+
 .behaviourItem {
     user-select: none;
     position: relative;
@@ -282,11 +293,11 @@
     height: 20;
 
     &.life {
-        background: rgba(255, 0, 0, 0.5);
+        background: #C64532;
     }
 
     &.magic {
-        background: rgba(0, 0, 255, 0.5);
+        background: #1A6E97;
     }
 
     img {

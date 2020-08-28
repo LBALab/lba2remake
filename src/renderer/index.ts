@@ -8,6 +8,7 @@ const PIXEL_RATIOS = [0.25, 0.5, 1, 2];
 interface RendererOptions {
     vr?: boolean;
     preserveDrawingBuffer?: boolean;
+    alpha?: boolean;
 }
 
 export default class Renderer {
@@ -70,6 +71,18 @@ export default class Renderer {
         this.threeRenderer.setClearColor(color);
     }
 
+    setScissor(left: number, bottom: number, width: number, height: number) {
+        this.threeRenderer.setScissor(left, bottom, width, height);
+    }
+
+    setScissorTest(enable: boolean) {
+        this.threeRenderer.setScissorTest(enable);
+    }
+
+    setViewport(left: number, bottom: number, width: number, height: number) {
+        this.threeRenderer.setViewport(left, bottom, width, height);
+    }
+
     resize(width = 0, height = 0) {
         if (!width || !height) {
             this.threeRenderer.getSize(RSIZE);
@@ -108,7 +121,7 @@ function keyListener(event) {
 
 function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
     const options = {
-        alpha: false,
+        alpha: rendererOptions.alpha || false,
         canvas,
         preserveDrawingBuffer: rendererOptions.preserveDrawingBuffer,
         antialias: true,
@@ -127,7 +140,11 @@ function setupThreeRenderer(pixelRatio, canvas, webgl2, rendererOptions) {
 
     (renderer as any).outputEncoding = THREE.GammaEncoding;
     renderer.gammaFactor = 2.2;
-    renderer.setClearColor(0x000000);
+    if (rendererOptions.alpha) {
+        renderer.setClearColor(0x000000, 0);
+    } else {
+        renderer.setClearColor(0x000000);
+    }
     renderer.setPixelRatio(pixelRatio);
     renderer.setSize(0, 0);
     renderer.autoClear = true;
