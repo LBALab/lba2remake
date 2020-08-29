@@ -181,6 +181,8 @@ export function SUB_VAR_GAME(index, value) {
 }
 
 export function KILL_OBJ(actor) {
+    actor.props.life = 0;
+    actor.props.runtimeFlags.isDead = true;
     actor.isKilled = true;
     actor.isVisible = false;
     if (actor.threeObject) {
@@ -189,6 +191,8 @@ export function KILL_OBJ(actor) {
 }
 
 export function SUICIDE() {
+    this.actor.props.life = 0;
+    this.actor.props.runtimeFlags.isDead = true;
     this.actor.isVisible = false;
     if (this.actor.threeObject) {
         this.actor.threeObject.visible = false;
@@ -338,6 +342,7 @@ export function SUB_MAGIC_POINT(points) {
 }
 
 export function SET_LIFE_POINT_OBJ(actor, value) {
+    actor.props.runtimeFlags.isDead = false;
     actor.props.life = value;
 }
 
@@ -583,6 +588,7 @@ export const SET_ARMOR_OBJ = unimplemented();
 export function ADD_LIFE_POINT_OBJ(index, points) {
     const actor = this.scene.actors[index];
     if (actor) {
+        actor.props.runtimeFlags.isDead = false;
         actor.props.life += points;
     }
 }
