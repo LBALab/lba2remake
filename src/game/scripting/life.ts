@@ -342,8 +342,10 @@ export function SUB_MAGIC_POINT(points) {
 }
 
 export function SET_LIFE_POINT_OBJ(actor, value) {
-    actor.props.runtimeFlags.isDead = false;
     actor.props.life = value;
+    if (actor.props.life > 0) {
+        actor.props.runtimeFlags.isDead = false;
+    }
 }
 
 export function SUB_LIFE_POINT_OBJ(actor, value) {
@@ -588,8 +590,10 @@ export const SET_ARMOR_OBJ = unimplemented();
 export function ADD_LIFE_POINT_OBJ(index, points) {
     const actor = this.scene.actors[index];
     if (actor) {
-        actor.props.runtimeFlags.isDead = false;
         actor.props.life += points;
+        if (actor.props.life > 0) {
+            actor.props.runtimeFlags.isDead = false;
+        }
     }
 }
 
