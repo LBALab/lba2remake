@@ -5,6 +5,7 @@ export const AnimType = {
     BACKWARD: 2,
     LEFT: 3,
     RIGHT: 4,
+    HIT: 6,
     FALLING: 7,
     FALL_LANDING_STUMBLE: 8,
     FALL_LANDING_HEAD_HIT: 9,

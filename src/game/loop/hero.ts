@@ -79,6 +79,12 @@ function processFirstPersonsMovement(game, scene, hero) {
     if (hero.props.runtimeFlags.isClimbing) {
         return;
     }
+    if (hero.props.runtimeFlags.isHit) {
+        // Ensure we fall backwards.
+        hero.props.runtimeFlags.isWalking = true;
+        return;
+    }
+
     let animIndex = hero.props.animIndex;
     if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
         toggleJump(hero, false);
@@ -219,6 +225,12 @@ function processActorMovement(game, scene, hero, time, behaviour) {
         // zone types.
         return;
     }
+    if (hero.props.runtimeFlags.isHit) {
+        // Ensure we fall backwards.
+        hero.props.runtimeFlags.isWalking = true;
+        return;
+    }
+
     let animIndex = hero.props.animIndex;
     if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
         toggleJump(hero, false);
