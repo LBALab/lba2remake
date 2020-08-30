@@ -20,6 +20,21 @@ export const BehaviourMode = {
     SKELETON: 13
 };
 
+export const HandsHitLevels = [
+    5, // LVL_0
+    8, // LVL_1
+    18, // LVL_2
+    28, // LVL_3
+    38, // LVL_4
+];
+
+export const MagicBallHitLevels = [
+    10, // LVL_1
+    20, // LVL_2
+    30, // LVL_3
+    40, // LVL_4
+];
+
 export function updateHero(game, scene, hero, time) {
     if (hero.props.dirMode !== DirMode.MANUAL)
         return;
@@ -79,6 +94,12 @@ function processFirstPersonsMovement(game, scene, hero) {
     if (hero.props.runtimeFlags.isClimbing) {
         return;
     }
+    if (hero.props.runtimeFlags.isHit) {
+        // Ensure we fall backwards.
+        hero.props.runtimeFlags.isWalking = true;
+        return;
+    }
+
     let animIndex = hero.props.animIndex;
     if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
         toggleJump(hero, false);
@@ -219,6 +240,12 @@ function processActorMovement(game, scene, hero, time, behaviour) {
         // zone types.
         return;
     }
+    if (hero.props.runtimeFlags.isHit) {
+        // Ensure we fall backwards.
+        hero.props.runtimeFlags.isWalking = true;
+        return;
+    }
+
     let animIndex = hero.props.animIndex;
     if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
         toggleJump(hero, false);

@@ -41,6 +41,13 @@ export function updateActor(
         actor.threeObject.matrixAutoUpdate = true;
         actor.threeObject.visible = actor.isVisible;
     }
+
+    if (actor.nextAnim) {
+        actor.setAnim(actor.nextAnim);
+        actor.animState.noInterpolate = true;
+        actor.nextAnim = null;
+    }
+
     actor.runScripts(time);
 
     // Don't update the actor if someone else is talking.
@@ -58,6 +65,7 @@ export function updateActor(
             game,
             scene,
             model,
+            actor,
             actor.animState,
             actor.props.entityIndex,
             actor.props.animIndex,
@@ -168,6 +176,7 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
 function updateModel(game: any,
                      scene: any,
                      model: any,
+                     actor: Actor,
                      animState: any,
                      entityIdx: number,
                      animIdx: number,
@@ -189,6 +198,7 @@ function updateModel(game: any,
                 game,
                 scene,
                 model,
+                actor,
                 entityAnim,
                 animState
             });
