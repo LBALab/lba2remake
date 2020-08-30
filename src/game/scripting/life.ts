@@ -326,9 +326,7 @@ export function INVISIBLE(hidden) {
 export const SHADOW_OBJ = unimplemented();
 
 export function SET_MAGIC_LEVEL(index) {
-    const magicball = setMagicBallLevel(index);
-    this.game.getState().hero.magicball = magicball;
-    this.game.getState().hero.magic = magicball.level * 20;
+    setMagicBallLevel(this.game.getState(), index);
 }
 
 export function SUB_MAGIC_POINT(points) {

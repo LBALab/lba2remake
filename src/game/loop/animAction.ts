@@ -5,7 +5,6 @@ import { getRandom, distance2D } from '../../utils/lba';
 import { unimplemented } from '../scripting/utils';
 import { addExtra, ExtraFlag } from '../extras';
 import { SpriteType } from '../data/spriteType';
-import { HandsHitLevels } from './hero';
 
 export const NOP = unimplemented();
 
@@ -37,8 +36,7 @@ export const HIT_HERO = (_action, { game, scene }) => {
         }
         // TODO(scottwilliams): This doesn't take into account the actor angles.
         if (distance2D(a.physics.position, hero.physics.position) < 1) {
-            const magicLevel = game.getState().hero.magicball.level;
-            a.hit(hero.index, HandsHitLevels[magicLevel]);
+            a.hit(hero.index, game.getState().hero.handStrength);
         }
     }
 };
