@@ -320,6 +320,7 @@ export async function loadActor(
                 // doesn't trigger the correct things e.g. bonuses etc.
                 this.props.life = 0;
                 this.isKilled = true;
+                this.props.runtimeFlags.isDead = true;
                 this.isVisible = false;
                 if (this.threeObject) {
                     this.threeObject.visible = false;
