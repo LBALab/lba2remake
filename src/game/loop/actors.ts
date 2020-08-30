@@ -42,7 +42,7 @@ export function updateActor(
         actor.threeObject.visible = actor.isVisible;
     }
 
-    if (actor.nextAnim) {
+    if (actor.nextAnim !== null) {
         actor.setAnim(actor.nextAnim);
         actor.animState.noInterpolate = true;
         actor.nextAnim = null;
