@@ -79,7 +79,7 @@ export interface Actor {
     setAnimWithCallback: Function;
     cancelAnims: Function;
     hit: Function;
-    nextAnim: number,
+    nextAnim: number;
 }
 
 export const DirMode = {
