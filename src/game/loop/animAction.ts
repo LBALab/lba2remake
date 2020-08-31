@@ -3,7 +3,7 @@ import { each } from 'lodash';
 
 import { getRandom, distance2D } from '../../utils/lba';
 import { unimplemented } from '../scripting/utils';
-import { addExtra, ExtraFlag } from '../extras';
+import { addExtra, ExtraFlag, getBonus } from '../extras';
 import { SpriteType } from '../data/spriteType';
 
 export const NOP = unimplemented();
@@ -16,29 +16,37 @@ export const ANIM = unimplemented();
 
 export const ANIP = unimplemented();
 
-export const HIT = (_action,  { actor, scene }) => {
+const DEATH_SAMPLE = 14;
+
+function processHit(actor, hitStrength, game, scene) {
     for (const a of scene.actors) {
-        if (a.index === actor.index) {
+        if (a.index === actor.index || a.isKilled || !a.isVisible) {
             continue;
         }
         // TODO(scottwilliams): This doesn't take into account the actor angles.
         if (distance2D(a.physics.position, actor.physics.position) < 1) {
-            a.hit(actor.index, 0);
+            a.hit(actor.index, hitStrength);
+            if (a.isKilled) {
+                game.getAudioManager().playSample(DEATH_SAMPLE);
+                const angle = a.physics.temp.angle - Math.PI / 2;
+                if (a.props.extraType !== undefined) {
+                    addExtra(game, scene, a.physics.position, angle,
+                             getBonus(a.props.extraType), a.props.extraAmount,
+                             game.getTime()).then((extra) => {
+                        extra.flags |= ExtraFlag.TIME_IN;
+                    });
+                }
+            }
         }
     }
+}
+
+export const HIT = (action,  { actor, scene, game }) => {
+    processHit(actor, action.strength, game, scene);
 };
 
 export const HIT_HERO = (_action, { game, scene }) => {
-    const hero = scene.actors[0];
-    for (const a of scene.actors) {
-        if (a.index === hero.index) {
-            continue;
-        }
-        // TODO(scottwilliams): This doesn't take into account the actor angles.
-        if (distance2D(a.physics.position, hero.physics.position) < 1) {
-            a.hit(hero.index, game.getState().hero.handStrength);
-        }
-    }
+    processHit(scene.actors[0], game.getState().hero.handStrength, game, scene);
 };
 
 export const SAMPLE = (action, { game }) => {

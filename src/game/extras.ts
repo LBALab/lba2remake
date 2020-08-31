@@ -295,7 +295,7 @@ export function updateExtra(game, scene, extra, time) {
     }
 }
 
-export function randomBonus(type) {
+export function getBonus(type) {
     let spriteIndex = 0;
     const bonus = [];
     for (let b = 0; b < 5; b += 1) {

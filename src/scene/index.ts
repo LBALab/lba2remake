@@ -214,6 +214,7 @@ function loadActors(scene, offset) {
         actor.hitStrength = data.getInt8(offset);
         offset += 1;
         actor.extraType = data.getInt16(offset, true);
+        actor.extraType &= ~1;
         offset += 2;
         actor.angle = data.getInt16(offset, true);
         offset += 2;

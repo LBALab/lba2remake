@@ -313,11 +313,19 @@ export async function loadActor(
                 return;
             }
 
+            let life = -1;
             // TODO(scottwilliams): This doesn't take into account actor armour.
-            this.props.life -= hitStrength;
-            if (this.props.life <= 0) {
-                // TODO(scottwilliams): This isn't how this should be done, and
-                // doesn't trigger the correct things e.g. bonuses etc.
+            if (this.index === 0) {
+                game.getState().hero.life -= hitStrength;
+                life = game.getState().hero.life;
+            } else {
+                this.props.life -= hitStrength;
+                life = this.props.life;
+            }
+
+            if (life <= 0) {
+                // TODO(scottwilliams): This doesn't do the right thing for
+                // Twinsen yet.
                 this.props.life = 0;
                 this.isKilled = true;
                 this.props.runtimeFlags.isDead = true;
