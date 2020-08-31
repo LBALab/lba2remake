@@ -28,8 +28,8 @@ function processHit(actor, hitStrength, game, scene) {
             a.hit(actor.index, hitStrength);
             if (a.isKilled) {
                 game.getAudioManager().playSample(DEATH_SAMPLE);
-                const angle = a.physics.temp.angle - Math.PI / 2;
                 if (a.props.extraType !== undefined) {
+                    const angle = a.physics.temp.angle - Math.PI / 2;
                     addExtra(game, scene, a.physics.position, angle,
                              getBonus(a.props.extraType), a.props.extraAmount,
                              game.getTime()).then((extra) => {
