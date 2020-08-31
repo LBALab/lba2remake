@@ -41,6 +41,7 @@ export function createState(): GameState {
             pinguin: 0,
             clover: { boxes: 2, leafs: 1 },
             magicball: { level: 0, strength: 0, bounce: 0 },
+            handStrength: 5, // LVL_0
             position: null,
             lastValidPosTime: 0,
             animState: null,
@@ -121,29 +122,37 @@ function createHolomapFlags() {
     return holomap;
 }
 
-export function setMagicBallLevel(index: number) {
+export function setMagicBallLevel(state: GameState, index: number) {
     const magicball = { level: 0, strength: 0, bounce: 0 };
 
     magicball.level = index;
-    magicball.strength = 4;
     magicball.bounce = ((index - 1) / 20) + 1;
 
+    let handStrength = 0;
     switch (index) {
         default:
         case 0:
+            magicball.strength = 10;
+            handStrength = 8;
+            break;
         case 1:
-            magicball.strength = 4;
+            magicball.strength = 10;
+            handStrength = 8;
             break;
         case 2:
-            magicball.strength = 6;
+            magicball.strength = 20;
+            handStrength = 18;
             break;
         case 3:
-            magicball.strength = 8;
+            magicball.strength = 30;
+            handStrength = 28;
             break;
         case 4:
-            magicball.strength = 10;
+            magicball.strength = 40;
+            handStrength = 38;
             break;
     }
 
-    return magicball;
+    state.hero.magicball = magicball;
+    state.hero.handStrength = handStrength;
 }

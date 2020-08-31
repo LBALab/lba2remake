@@ -18,6 +18,9 @@ export function COL_OBJ(actor) {
 export function DISTANCE(actor) {
     if (!this.scene.isActive && (actor.index === 0 || this.actor.index === 0))
         return Infinity;
+    if (actor.props.runtimeFlags.isDead) {
+        return Infinity;
+    }
     return this.actor.getDistanceLba(actor.physics.position);
 }
 
@@ -76,7 +79,10 @@ export function VAR_CUBE(index) {
     return this.scene.variables[index];
 }
 
-export function CONE_VIEW() {
+export function CONE_VIEW(actor) {
+    if (actor.props.runtimeFlags.isDead) {
+        return Infinity;
+    }
     return 10000;
 }
 
@@ -185,7 +191,10 @@ export function CARRIED_OBJ_BY() {
 
 CARRIED_OBJ_BY.unimplemented = true;
 
-export function ANGLE() {
+export function ANGLE(actor) {
+    if (actor.props.runtimeFlags.isDead) {
+        return Infinity;
+    }
     return -1;
 }
 
@@ -199,7 +208,10 @@ export function HIT_OBJ_BY(actor) {
     return actor.wasHitBy;
 }
 
-export function REAL_ANGLE() {
+export function REAL_ANGLE(actor) {
+    if (actor.props.runtimeFlags.isDead) {
+        return Infinity;
+    }
     return -1;
 }
 
@@ -233,7 +245,10 @@ export function OBJECT_DISPLAYED() {
 
 OBJECT_DISPLAYED.unimplemented = true;
 
-export function ANGLE_OBJ() {
+export function ANGLE_OBJ(actor) {
+    if (actor.props.runtimeFlags.isDead) {
+        return Infinity;
+    }
     return -1;
 }
 

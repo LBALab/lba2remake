@@ -3,6 +3,7 @@ import {cloneDeep} from 'lodash';
 
 import { loadModel, Model } from '../model';
 import { loadAnimState, resetAnimState } from '../model/animState';
+import { AnimType } from './data/animType';
 import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
 import {createBoundingBox} from '../utils/rendering';
 import { loadSprite } from '../iso/sprites';
@@ -77,6 +78,8 @@ export interface Actor {
     setAnim: Function;
     setAnimWithCallback: Function;
     cancelAnims: Function;
+    hit: Function;
+    nextAnim: number;
 }
 
 export const DirMode = {
@@ -122,6 +125,7 @@ export async function loadActor(
         model: null,
         sprite: null,
         threeObject: null,
+        nextAnim: null,
         animState,
 
         runScripts(time) {
@@ -301,7 +305,40 @@ export async function loadActor(
                 }
                 this.threeObject.updateMatrixWorld();
             });
-        }
+        },
+
+        hit(hitBy, hitStrength) {
+            // Ensure we don't repeatedly play the hit animation.
+            if (this.props.runtimeFlags.isHit) {
+                return;
+            }
+
+            // TODO(scottwilliams): This doesn't take into account actor armour.
+            this.props.life -= hitStrength;
+            if (this.props.life <= 0) {
+                // TODO(scottwilliams): This isn't how this should be done, and
+                // doesn't trigger the correct things e.g. bonuses etc.
+                this.props.life = 0;
+                this.isKilled = true;
+                this.props.runtimeFlags.isDead = true;
+                this.isVisible = false;
+                if (this.threeObject) {
+                    this.threeObject.visible = false;
+                }
+                return;
+            }
+
+            const currentAnim = this.props.animIndex;
+            this.setAnimWithCallback(AnimType.HIT, () => {
+                if (this.index !== 0 && this.props.animIndex === AnimType.HIT) {
+                    this.nextAnim = currentAnim;
+                }
+                this.props.runtimeFlags.isHit = false;
+                this.wasHitBy = hitBy;
+            });
+            this.animState.noInterpolate = true;
+            this.props.runtimeFlags.isHit = true;
+        },
     };
 
     makePure(actor.getDistance);
