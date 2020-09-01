@@ -11,7 +11,7 @@ import dome_brick_vertex from './shaders/dome_brick.vert.glsl';
 import dome_brick_fragment from './shaders/dome_brick.frag.glsl';
 import { extractGridMetadata } from './metadata';
 import { Side, OffsetBySide } from './mapping';
-import { WORLD_SCALE_B, WORLD_SIZE } from '../utils/lba';
+import { WORLD_SCALE_B, WORLD_SIZE, DOME_ENTRIES } from '../utils/lba';
 import { loadResource, ResourceType } from '../resources';
 import { loadDomeEnv } from './misc/dome_env';
 
@@ -30,7 +30,7 @@ export async function loadImageData(src) : Promise<ImageData> {
     });
 }
 
-export async function loadIsometricScenery(entry, ambience, is3D, isEditor = false) {
+export async function loadIsometricScenery(entry, ambience, is3D, numActors = 0) {
     const [pal, bkg, mask] = await Promise.all([
         loadResource(ResourceType.PALETTE),
         loadResource(ResourceType.BRICKS),
@@ -42,11 +42,11 @@ export async function loadIsometricScenery(entry, ambience, is3D, isEditor = fal
     const {
         threeObject,
         update: updateMesh
-    } = await loadMesh(grid, entry, ambience, is3D, isEditor);
+    } = await loadMesh(grid, entry, ambience, is3D, numActors);
 
     // Dome of the slate
     let domeEnv = null;
-    if (entry === 26 && is3D) {
+    if (DOME_ENTRIES.includes(entry) && is3D) {
         domeEnv = await loadDomeEnv(ambience);
         threeObject.add(domeEnv.threeObject);
     }
@@ -145,7 +145,7 @@ function getBrickInfo(grid, {x, y, z}) {
     return null;
 }
 
-async function loadMesh(grid, entry, ambience, is3D, isEditor) {
+async function loadMesh(grid, entry, ambience, is3D, numActors) {
     const threeObject = new THREE.Object3D();
     const geometries = {
         standard: {
@@ -161,24 +161,16 @@ async function loadMesh(grid, entry, ambience, is3D, isEditor) {
                 side: THREE.DoubleSide
             })
         },
-        dome_ground: {
-            positions: [],
-            uvs: [],
-            material: new THREE.RawShaderMaterial({
-                vertexShader: compile('vert', dome_brick_vertex),
-                fragmentShader: compile('frag', dome_brick_fragment),
-                transparent: true,
-                uniforms: {
-                    library: { value: grid.library.texture },
-                    actorPos: { value: times(5, () => new THREE.Vector3()) },
-                    distThreshold: { value: isEditor ? 0 : 1000 }
-                },
-                side: THREE.DoubleSide
-            })
-        }
+        dome_ground: null
     };
     const {library, cells} = grid;
-    const gridMetadata = await extractGridMetadata(grid, entry, ambience, is3D, isEditor);
+    const gridMetadata = await extractGridMetadata(
+        grid,
+        entry,
+        ambience,
+        is3D,
+        numActors
+    );
     if (gridMetadata.replacements.threeObject) {
         threeObject.add(gridMetadata.replacements.threeObject);
     }
@@ -186,17 +178,23 @@ async function loadMesh(grid, entry, ambience, is3D, isEditor) {
     for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
             buildColumn(
+                grid,
                 library,
                 cells,
                 geometries,
                 x,
                 z,
-                gridMetadata
+                gridMetadata,
+                numActors
             );
         }
     }
 
-    each(geometries, ({positions, uvs, material}, name) => {
+    each(geometries, (geom, name) => {
+        if (!geom) {
+            return;
+        }
+        const {positions, uvs, material} = geom;
         if (positions.length === 0) {
             return;
         }
@@ -222,8 +220,6 @@ async function loadMesh(grid, entry, ambience, is3D, isEditor) {
     threeObject.position.set(WORLD_SIZE * 2, 0, 0);
     threeObject.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2.0);
 
-    const slateUniforms = geometries.dome_ground.material.uniforms;
-
     return {
         threeObject,
         update: (game, scene, time) => {
@@ -231,9 +227,9 @@ async function loadMesh(grid, entry, ambience, is3D, isEditor) {
             if (update) {
                 update(game, scene, time);
             }
-            if (scene.index === 26) { // dome
-                [0, 2, 3, 4, 5].forEach((aIdx, idx) => {
-                    const actor = scene.actors[aIdx];
+            if (geometries.dome_ground) { // dome
+                const slateUniforms = geometries.dome_ground.material.uniforms;
+                scene.actors.forEach((actor, idx) => {
                     if (actor.threeObject && !actor.isKilled) {
                         slateUniforms.actorPos.value[idx].set(0, 0, 0);
                         slateUniforms.actorPos.value[idx]
@@ -256,7 +252,7 @@ function getGeometryType(block) {
     return 'standard';
 }
 
-function buildColumn(library, cells, geometries, x, z, gridMetadata) {
+function buildColumn(grid, library, cells, geometries, x, z, gridMetadata, numActors) {
     const h = 0.5;
     const {width, height} = library.texture.image;
     const {replacements, mirrors} = gridMetadata;
@@ -290,7 +286,27 @@ function buildColumn(library, cells, geometries, x, z, gridMetadata) {
                     continue;
 
                 const block = layout.blocks[blocks[y].block];
-                const { uvs, positions } = geometries[getGeometryType(block)];
+                const type = getGeometryType(block);
+                if (type === 'dome_ground' && !geometries.dome_ground) {
+                    geometries.dome_ground = {
+                        positions: [],
+                        uvs: [],
+                        material: new THREE.RawShaderMaterial({
+                            defines: {
+                                NUM_ACTORS: numActors
+                            },
+                            vertexShader: dome_brick_vertex,
+                            fragmentShader: dome_brick_fragment,
+                            transparent: true,
+                            uniforms: {
+                                library: { value: grid.library.texture },
+                                actorPos: { value: times(numActors, () => new THREE.Vector3()) },
+                            },
+                            side: THREE.DoubleSide
+                        })
+                    };
+                }
+                const { uvs, positions } = geometries[type];
                 if (block && block.brick in library.bricksMap) {
                     const {u, v} = library.bricksMap[block.brick];
                     const pushUv = (u0, v0, side) => {

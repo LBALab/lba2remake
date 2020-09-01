@@ -309,7 +309,6 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         const isoGrid = await loadIsometricScenery(
             sceneMap[isoGridIdx].index,
             sceneData.ambience,
-            true,
             true
         );
         const { isoGrid: oldIsoGrid } = this.state;

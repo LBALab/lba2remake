@@ -13,7 +13,7 @@ import { loadBricks } from '../bricks';
 import { loadResource, ResourceType } from '../../resources';
 import { processVariants, suppressVariantBricks } from './variants';
 
-export async function extractGridMetadata(grid, entry, ambience, is3D, isEditor) {
+export async function extractGridMetadata(grid, entry, ambience, is3D, numActors) {
     if (!is3D) {
         return {
             replacements: { threeObject: null, update: null },
@@ -22,7 +22,7 @@ export async function extractGridMetadata(grid, entry, ambience, is3D, isEditor)
     }
     const metadata = await loadMetadata(entry, grid.library);
 
-    const replacements = await initReplacements(entry, metadata, ambience, isEditor);
+    const replacements = await initReplacements(entry, metadata, ambience, numActors);
     const mirrorGroups = {};
 
     forEachCell(grid, metadata, (cellInfo) => {
@@ -61,7 +61,7 @@ export async function saveSceneReplacementModel(entry, ambience) {
     const grid = await loadGrid(bkg, bricks, mask, palette, entry + 1);
 
     const metadata = await loadMetadata(entry, grid.library, true);
-    const replacements = await initReplacements(entry, metadata, ambience);
+    const replacements = await initReplacements(entry, metadata, ambience, 0);
 
     forEachCell(grid, metadata, (cellInfo) => {
         const { variants, replace } = cellInfo;

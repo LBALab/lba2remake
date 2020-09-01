@@ -1,19 +1,16 @@
-#version 300 es
 precision highp float;
 
 uniform sampler2D library;
 
-in vec2 vUv;
-in vec3 vPos;
-
-out vec4 fragColor;
+varying vec2 vUv;
+varying vec3 vPos;
 
 #require "./dome_floor_effect.frag"
 
 void main() {
-    fragColor = texture(library, vUv);
-    fragColor.a = fragColor.a * getFloorOpacity(vPos);
-    if (fragColor.a < 0.005) {
+    gl_FragColor = texture2D(library, vUv);
+    gl_FragColor.a = gl_FragColor.a * getFloorOpacity(vPos);
+    if (gl_FragColor.a < 0.005) {
         discard;
     }
 }

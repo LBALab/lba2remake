@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { WORLD_SIZE, getPositions } from '../../utils/lba';
+import { WORLD_SIZE, getPositions, DOME_SCENES } from '../../utils/lba';
 import { GROUND_TYPES } from '../../iso/grid';
 import { BehaviourMode } from './hero';
 import { AnimType } from '../data/animType';
@@ -71,7 +71,7 @@ export function processCollisions(grid, scene, obj, time) {
                         isTouchingGround = true;
                         switch (column.groundType) {
                             case GROUND_TYPES.WATER:
-                                if (scene.index === 26) { // Dome of the slate
+                                if (DOME_SCENES.includes(scene.index)) { // Dome of the slate
                                     obj.props.runtimeFlags.isDrowningStars = true;
                                 } else {
                                     obj.props.runtimeFlags.isDrowning = true;

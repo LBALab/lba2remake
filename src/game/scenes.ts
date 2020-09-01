@@ -197,7 +197,8 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
             scenery = await loadIsometricScenery(
                 indexInfo.index,
                 sceneData.ambience,
-                useReplacements
+                useReplacements,
+                actors.length
             );
             threeScene.name = 'iso_scene';
             if (renderer.vr) {
