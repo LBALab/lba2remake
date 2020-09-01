@@ -718,12 +718,12 @@
     },
     "21": {
       "replace": true,
-      "file": "021_pillar_capital.glb",
+      "file": "021_022_pillar_capital.glb",
       "orientation": 0
     },
     "22": {
       "replace": true,
-      "file": "021_pillar_capital.glb",
+      "file": "021_022_pillar_capital.glb",
       "orientation": 1
     },
     "23": {
@@ -851,6 +851,11 @@
     "93": {
       "replace": true,
       "file": "093_wooden_table.glb",
+      "orientation": 0
+    },
+    "94": {
+      "replace": true,
+      "file": "094_candelabra.glb",
       "orientation": 0
     },
     "113": {
@@ -1146,6 +1151,21 @@
       "replace": true,
       "file": "008_pillar_var6.glb",
       "orientation": 1
+    },
+    "22:1x3x2:696,697,698,699,700,701": {
+      "replace": true,
+      "file": "022_pillar_capital_var2_var3.glb",
+      "orientation": 0
+    },
+    "22:1x3x2:696,697,-1,699,700,701": {
+      "replace": true,
+      "file": "022_pillar_capital_var2_var3.glb",
+      "orientation": 0
+    },
+    "22:1x3x4:696,697,698,699,700,701,127,694,695,696,697,698": {
+      "replace": true,
+      "file": "022_pillar_capital_var1.glb",
+      "orientation": 0
     }
   },
   "2": {
