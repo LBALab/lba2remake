@@ -1,17 +1,14 @@
-#version 300 es
 precision highp float;
 
-in vec4 vColor;
-in vec3 vPos;
-
-out vec4 fragColor;
+varying vec4 vColor;
+varying vec3 vPos;
 
 #require "../dome_floor_effect.frag"
 
 void main() {
-    fragColor = vColor;
-    fragColor.a = fragColor.a * getFloorOpacity(vPos);
-    if (fragColor.a < 0.005) {
+    gl_FragColor = vColor;
+    gl_FragColor.a = gl_FragColor.a * getFloorOpacity(vPos);
+    if (gl_FragColor.a < 0.005) {
         discard;
     }
 }

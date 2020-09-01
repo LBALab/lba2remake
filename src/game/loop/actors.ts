@@ -78,6 +78,9 @@ export function updateActor(
             updateMovements(actor, firstPerson, behaviour, time);
         }
     }
+    if (actor.sprite) {
+        actor.sprite.update(time);
+    }
 }
 
 const wEuler = new THREE.Euler();

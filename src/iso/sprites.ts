@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { each, orderBy } from 'lodash';
 import { bits } from '../utils';
 import { compile } from '../utils/shaders';
@@ -7,6 +7,9 @@ import { WORLD_SCALE } from '../utils/lba';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
 import { loadResource, ResourceType } from '../resources';
+import { makeStars, makeStarsMaterial } from './misc/dome_env';
+
+const loader = new GLTFLoader();
 
 const push = Array.prototype.push;
 
@@ -17,7 +20,8 @@ export async function loadSprite(
     index,
     hasSpriteAnim3D = false,
     isBillboard = false,
-    is3DCam = false
+    is3DCam = false,
+    spriteReplacements = {}
 ) {
     const [ress, pal, spritesFile, spritesRaw] = await Promise.all([
         loadResource(ResourceType.RESS),
@@ -38,6 +42,17 @@ export async function loadSprite(
     const cache = (index < 100) ? spriteRawCache : spriteCache;
     const box = loadSpriteBB(ress, index, hasSpriteAnim3D);
     const {xMin, xMax, yMin, yMax, zMin, zMax} = box;
+    let threeObject;
+    let update = (_time) => {};
+    if (index in spriteReplacements) {
+        const replacement = await loadSpriteReplacement(spriteReplacements[index]);
+        threeObject = replacement.threeObject;
+        update = replacement.update;
+    } else if (isBillboard) {
+        threeObject = loadBillboardSprite(index, cache, is3DCam);
+    } else {
+        threeObject = loadMesh(index, cache, box);
+    }
     return {
         box,
         boundingBox: new THREE.Box3(
@@ -47,9 +62,8 @@ export async function loadSprite(
         boundingBoxDebugMesh: null,
 
         props: cache.spritesMap[index],
-        threeObject: (isBillboard)
-            ? loadBillboardSprite(index, cache, is3DCam)
-            : loadMesh(index, cache, box),
+        threeObject,
+        update
     };
 }
 
@@ -362,4 +376,37 @@ export function loadSpritesMapping(sprites, palette) {
         texture,
         spritesMap
     };
+}
+
+interface SpriteReplacement {
+    threeObject: THREE.Object3D;
+    update: (time: any) => void;
+}
+
+export async function loadSpriteReplacement({file, fx}) {
+    return new Promise<SpriteReplacement>((resolve) => {
+        loader.load(`models/sprites/${file}`, async (m) => {
+            let glow;
+            if (fx === 'glow') {
+                glow = makeStars([{
+                    pos: new THREE.Vector3(0, 0.18, 0),
+                    intensity: 0.65,
+                    tint: 0.5,
+                    size: 0.3,
+                    sparkle: 0
+                }], await makeStarsMaterial());
+                glow.renderOrder = 1;
+                m.scene.add(glow);
+            }
+            resolve({
+                threeObject: m.scene,
+                update: (time) => {
+                    if (glow) {
+                        const material = glow.material;
+                        material.uniforms.time.value = time.elapsed;
+                    }
+                }
+            });
+        });
+    });
 }

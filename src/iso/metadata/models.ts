@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { each } from 'lodash';
+import { each, times } from 'lodash';
 import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
@@ -11,6 +11,7 @@ import VERT_OBJECTS_TEXTURED from '../shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
 import { compile } from '../../utils/shaders';
 import { applyAnimationUpdaters } from './animations';
+import { DOME_SCENES } from '../../utils/lba';
 
 const loader = new GLTFLoader();
 const exporter = new GLTFExporter();
@@ -37,11 +38,14 @@ interface FullSceneModel {
     update: Function;
 }
 
-export async function loadFullSceneModel(entry: number, replacementData, isEditor: boolean)
-    : Promise<FullSceneModel> {
+export async function loadFullSceneModel(
+    entry: number,
+    replacementData,
+    numActors: number
+) : Promise<FullSceneModel> {
     const model = await loadModel(`/models/iso_scenes/${entry}.glb`);
     const threeObject = model.scene.children[0];
-    const heroPos = { value: new THREE.Vector3() };
+    let actorPos = null;
     threeObject.traverse((node) => {
         if (node instanceof THREE.Mesh) {
             const color_attr = (node.geometry as THREE.BufferGeometry).attributes.color;
@@ -54,13 +58,19 @@ export async function loadFullSceneModel(entry: number, replacementData, isEdito
             }
             const texture = material.map;
             if (node.name === 'dome_floor') {
+                if (!actorPos) {
+                    actorPos = times(numActors, () => new THREE.Vector3());
+                }
                 node.material = new THREE.RawShaderMaterial({
-                    vertexShader: compile('vert', VERT_OBJECTS_DOME),
-                    fragmentShader: compile('frag', FRAG_OBJECTS_DOME),
+                    vertexShader: VERT_OBJECTS_DOME,
+                    fragmentShader: FRAG_OBJECTS_DOME,
                     transparent: true,
+                    side: THREE.DoubleSide,
+                    defines: {
+                        NUM_ACTORS: numActors
+                    },
                     uniforms: {
-                        heroPos,
-                        distThreshold: { value: isEditor ? 0 : 1000 }
+                        actorPos: { value: actorPos }
                     }
                 });
             } else {
@@ -95,10 +105,16 @@ export async function loadFullSceneModel(entry: number, replacementData, isEdito
         threeObject,
         update: (_game, scene, time) => {
             mixer.update(time.delta);
-            const hero = scene.actors[0];
-            if (hero.threeObject) {
-                heroPos.value.set(0, 0, 0);
-                heroPos.value.applyMatrix4(hero.threeObject.matrixWorld);
+            if (DOME_SCENES.includes(scene.index)) { // dome
+                scene.actors.forEach((actor, idx) => {
+                    if (actor.threeObject && !actor.isKilled) {
+                        actorPos[idx].set(0, 0, 0);
+                        actorPos[idx].applyMatrix4(actor.threeObject.matrixWorld);
+                    } else {
+                        // Make it far
+                        actorPos[idx].set(-1000, -1000, -1000);
+                    }
+                });
             }
         }
     };

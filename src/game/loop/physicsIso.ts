@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { WORLD_SIZE, getPositions } from '../../utils/lba';
+import { WORLD_SIZE, getPositions, DOME_SCENES } from '../../utils/lba';
 import { GROUND_TYPES } from '../../iso/grid';
 import { BehaviourMode } from './hero';
 import { AnimType } from '../data/animType';
@@ -30,7 +30,7 @@ function getColumnY(column, position) {
     }
 }
 
-export function processCollisions(grid, _scene, obj, time) {
+export function processCollisions(grid, scene, obj, time) {
     const isUsingProtoOrJetpack = (obj.props.entityIndex === BehaviourMode.JETPACK ||
         obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
         obj.props.animIndex === AnimType.FORWARD;
@@ -71,7 +71,11 @@ export function processCollisions(grid, _scene, obj, time) {
                         isTouchingGround = true;
                         switch (column.groundType) {
                             case GROUND_TYPES.WATER:
-                                obj.props.runtimeFlags.isDrowning = true;
+                                if (DOME_SCENES.includes(scene.index)) { // Dome of the slate
+                                    obj.props.runtimeFlags.isDrowningStars = true;
+                                } else {
+                                    obj.props.runtimeFlags.isDrowning = true;
+                                }
                                 break;
                             case GROUND_TYPES.LAVA:
                                 obj.props.runtimeFlags.isDrowningLava = true;

@@ -107,7 +107,8 @@ export async function loadActor(
     envInfo: any,
     ambience: any,
     props: ActorProps,
-    isSideScene: boolean) {
+    isSideScene: boolean,
+    modelReplacements: any) {
     const skipModel = isSideScene && props.index === 0;
     const animState = !skipModel ? loadAnimState() : null;
     const actor: Actor = {
@@ -238,7 +239,13 @@ export async function loadActor(
                 this.threeObject.quaternion.copy(this.physics.orientation);
                 if (this.isSprite) {
                     const {spriteIndex, flags: {hasSpriteAnim3D}} = this.props;
-                    const sprite = await loadSprite(spriteIndex, hasSpriteAnim3D, false);
+                    const sprite = await loadSprite(
+                        spriteIndex,
+                        hasSpriteAnim3D,
+                        false,
+                        false,
+                        modelReplacements.sprites
+                    );
                     this.threeObject.add(sprite.threeObject);
                     if (params.editor) {
                         sprite.boundingBoxDebugMesh = createBoundingBox(

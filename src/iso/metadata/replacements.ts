@@ -16,10 +16,10 @@ import { loadResource, ResourceType } from '../../resources';
 import { getPartialMatrixWorld } from '../../utils/math';
 import { GROUND_TYPES } from '../grid';
 
-export async function initReplacements(entry, metadata, ambience, isEditor = false) {
+export async function initReplacements(entry, metadata, ambience, numActors) {
     const data = await loadReplacementData(ambience);
     if (metadata.hasFullReplacement) {
-        const { threeObject, update } = await loadFullSceneModel(entry, data, isEditor);
+        const { threeObject, update } = await loadFullSceneModel(entry, data, numActors);
         return {
             threeObject,
             update,
@@ -85,7 +85,7 @@ export function buildReplacementMeshes({ geometries, threeObject }) {
                 'normal',
                 new THREE.BufferAttribute(new Float32Array(geom.normals), 3)
             );
-            if (key.substring(0, 9) === 'textured_') {
+            if (key.substring(0, 9) === 'textured_' || (geom.uvs && geom.uvs.length > 0)) {
                 bufferGeometry.setAttribute(
                     'uv',
                     new THREE.BufferAttribute(new Float32Array(geom.uvs), 2)
@@ -395,8 +395,7 @@ function appendMeshGeometry(
                         vertexShader: compile('vert', VERT_OBJECTS_DOME),
                         fragmentShader: compile('frag', FRAG_OBJECTS_DOME),
                         uniforms: {
-                            heroPos: { value: new THREE.Vector3() },
-                            distThreshold: { value: 1000 }
+                            heroPos: { value: new THREE.Vector3() }
                         }
                     })
                 };
