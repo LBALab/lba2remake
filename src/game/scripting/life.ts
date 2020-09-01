@@ -183,7 +183,6 @@ export function SUB_VAR_GAME(index, value) {
 export function KILL_OBJ(actor) {
     actor.props.life = 0;
     actor.props.runtimeFlags.isDead = true;
-    actor.isKilled = true;
     actor.isVisible = false;
     if (actor.threeObject) {
         actor.threeObject.visible = false;
@@ -573,7 +572,7 @@ export function BRUTAL_EXIT() {
     this.state.continue = false;
     this.state.terminated = true;
     this.moveState.terminated = true;
-    this.actor.isKilled = true;
+    this.actor.props.runtimeFlags.isDead = true;
     this.actor.isVisible = false;
 }
 

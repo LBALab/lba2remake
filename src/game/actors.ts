@@ -58,7 +58,6 @@ export interface Actor {
     animState: any;
     isVisible: boolean;
     isSprite: boolean;
-    isKilled: boolean;
     runScripts?: Function;
     loadMesh: Function;
     reloadModel: Function;
@@ -116,7 +115,6 @@ export async function loadActor(
         index: props.index,
         props: cloneDeep(props),
         physics: initPhysics(props),
-        isKilled: false,
         isVisible: props.flags.isVisible
             && (props.life > 0 || props.bodyIndex >= 0)
             && props.index !== 1,
@@ -140,7 +138,7 @@ export async function loadActor(
             this.resetAnimState();
             this.resetPhysics();
             compileScripts(game, scene, this);
-            this.isKilled = false;
+            this.props.runtimeFlags.isDead = false;
             this.floorSound = -1;
         },
 
@@ -320,13 +318,20 @@ export async function loadActor(
                 return;
             }
 
+            let life = -1;
             // TODO(scottwilliams): This doesn't take into account actor armour.
-            this.props.life -= hitStrength;
-            if (this.props.life <= 0) {
-                // TODO(scottwilliams): This isn't how this should be done, and
-                // doesn't trigger the correct things e.g. bonuses etc.
+            if (this.index === 0) {
+                game.getState().hero.life -= hitStrength;
+                life = game.getState().hero.life;
+            } else {
+                this.props.life -= hitStrength;
+                life = this.props.life;
+            }
+
+            if (life <= 0) {
+                // TODO(scottwilliams): This doesn't do the right thing for
+                // Twinsen yet.
                 this.props.life = 0;
-                this.isKilled = true;
                 this.props.runtimeFlags.isDead = true;
                 this.isVisible = false;
                 if (this.threeObject) {

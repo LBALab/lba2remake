@@ -3,7 +3,7 @@ import { getHtmlColor } from '../../scene';
 import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
 import { angleTo, angleToRad, getRandom, WORLD_SCALE, BRICK_SIZE } from '../../utils/lba';
-import { addExtra, ExtraFlag, randomBonus } from '../extras';
+import { addExtra, ExtraFlag, getBonus } from '../extras';
 
 function NOP() { }
 
@@ -384,7 +384,7 @@ function BONUS(game, scene, zone, hero) {
             return false;
         }
 
-        const bonusSprite = randomBonus(zone.props.info0);
+        const bonusSprite = getBonus(zone.props.info0);
 
         let destAngle = angleTo(zone.physics.position, hero.physics.position);
         destAngle += angleToRad(getRandom(0, 300) - 150);

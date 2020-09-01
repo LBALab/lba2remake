@@ -16,8 +16,9 @@ export function COL_OBJ(actor) {
 }
 
 export function DISTANCE(actor) {
-    if (!this.scene.isActive && (actor.index === 0 || this.actor.index === 0))
+    if (!this.scene.isActive && (actor.index === 0 || this.actor.index === 0)) {
         return Infinity;
+    }
     if (actor.props.runtimeFlags.isDead) {
         return Infinity;
     }
