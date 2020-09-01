@@ -58,7 +58,6 @@ export interface Actor {
     animState: any;
     isVisible: boolean;
     isSprite: boolean;
-    isKilled: boolean;
     runScripts?: Function;
     loadMesh: Function;
     reloadModel: Function;
@@ -115,7 +114,6 @@ export async function loadActor(
         index: props.index,
         props: cloneDeep(props),
         physics: initPhysics(props),
-        isKilled: false,
         isVisible: props.flags.isVisible
             && (props.life > 0 || props.bodyIndex >= 0)
             && props.index !== 1,
@@ -139,7 +137,7 @@ export async function loadActor(
             this.resetAnimState();
             this.resetPhysics();
             compileScripts(game, scene, this);
-            this.isKilled = false;
+            this.props.runtimeFlags.isDead = false;
             this.floorSound = -1;
         },
 
@@ -327,7 +325,6 @@ export async function loadActor(
                 // TODO(scottwilliams): This doesn't do the right thing for
                 // Twinsen yet.
                 this.props.life = 0;
-                this.isKilled = true;
                 this.props.runtimeFlags.isDead = true;
                 this.isVisible = false;
                 if (this.threeObject) {

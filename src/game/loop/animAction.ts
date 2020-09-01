@@ -20,15 +20,16 @@ const DEATH_SAMPLE = 14;
 
 function processHit(actor, hitStrength, game, scene) {
     for (const a of scene.actors) {
-        if (a.index === actor.index || a.isKilled || !a.isVisible) {
+        if (a.index === actor.index || !a.isVisible ||
+            a.props.runtimeFlags.isDead) {
             continue;
         }
         // TODO(scottwilliams): This doesn't take into account the actor angles.
         if (distance2D(a.physics.position, actor.physics.position) < 1) {
             a.hit(actor.index, hitStrength);
-            if (a.isKilled) {
+            if (a.props.runtimeFlags.isDead) {
                 game.getAudioManager().playSample(DEATH_SAMPLE);
-                if (a.props.extraType !== undefined) {
+                if (a.props.extraType) {
                     const angle = a.physics.temp.angle - Math.PI / 2;
                     addExtra(game, scene, a.physics.position, angle,
                              getBonus(a.props.extraType), a.props.extraAmount,

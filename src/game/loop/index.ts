@@ -88,7 +88,7 @@ function updateScene(params, game, scene, time) {
         }
     });
     each(scene.actors, (actor) => {
-        if (actor.isKilled)
+        if (actor.props.runtimeFlags.isDead)
             return;
         updateActor(params, game, scene, actor, time);
         if (scene.isActive) {

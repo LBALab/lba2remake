@@ -54,7 +54,6 @@ export interface Extra {
 
     isVisible: boolean;
     isSprite: boolean;
-    isKilled: boolean;
     hasCollidedWithActor: boolean;
 
     loadMesh: Function;
@@ -85,7 +84,6 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
     const extra: Extra = {
         type: 'extra',
         physics: initPhysics(position, angle),
-        isKilled: false,
         isVisible: true,
         isSprite: (spriteIndex) ? true : false,
         hasCollidedWithActor: false,
@@ -105,6 +103,7 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
             },
             runtimeFlags: {
                 isTouchingGround: false,
+                isDead: false,
             }
         },
         spriteIndex,
@@ -213,7 +212,7 @@ export function updateExtra(game, scene, extra, time) {
         for (let i = 0; i < scene.actors.length; i += 1) {
             const a = scene.actors[i];
             if ((a.model === null && a.sprite === null)
-                || a.isKilled
+                || a.props.runtimeFlags.isDead
                 || !(a.props.flags.hasCollisions || a.props.flags.isSprite)) {
                 continue;
             }

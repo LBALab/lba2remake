@@ -15,7 +15,7 @@ export function processPhysicsFrame(game, scene, time) {
 }
 
 function processActorPhysics(game, scene, actor, time) {
-    if (!actor.model || actor.isKilled)
+    if (!actor.model || actor.props.runtimeFlags.isDead)
         return;
 
     // If someone is talking who isn't this actor, don't process the physics.
@@ -80,7 +80,8 @@ const Y_THRESHOLD = WORLD_SIZE * 0.000625;
 
 function processCollisionsWithActors(scene, actor) {
     actor.hasCollidedWithActor = -1;
-    if (actor.model === null || actor.isKilled || !actor.props.flags.hasCollisions) {
+    if (actor.model === null || actor.props.runtimeFlags.isDead ||
+        !actor.props.flags.hasCollisions) {
         return;
     }
     ACTOR_BOX.copy(actor.model.boundingBox);
@@ -91,7 +92,7 @@ function processCollisionsWithActors(scene, actor) {
         const a = scene.actors[i];
         if ((a.model === null && a.sprite === null)
             || a.index === actor.index
-            || a.isKilled
+            || a.props.runtimeFlags.isDead
             || !a.isVisible
             || !(a.props.flags.hasCollisions || a.props.flags.isSprite)) {
             continue;

@@ -82,6 +82,5 @@ export function reviveActor(actor, game) {
     actor.scripts.move.context.state.reentryOffset = 0;
     actor.scripts.move.context.state.stopped = true;
     actor.scripts.move.context.state.trackIndex = -1;
-    actor.isKilled = false;
     actor.props.runtimeFlags.isDead = false;
 }
