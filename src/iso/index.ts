@@ -230,7 +230,7 @@ async function loadMesh(grid, entry, ambience, is3D, numActors) {
             if (geometries.dome_ground) { // dome
                 const slateUniforms = geometries.dome_ground.material.uniforms;
                 scene.actors.forEach((actor, idx) => {
-                    if (actor.threeObject && !actor.isKilled) {
+                    if (actor.threeObject && !actor.props.runtimeFlags.isDead) {
                         slateUniforms.actorPos.value[idx].set(0, 0, 0);
                         slateUniforms.actorPos.value[idx]
                             .applyMatrix4(actor.threeObject.matrixWorld);
