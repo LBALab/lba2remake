@@ -392,8 +392,8 @@ function appendMeshGeometry(
                     normals: [],
                     colors: [],
                     material: new THREE.RawShaderMaterial({
-                        vertexShader: compile('vert', VERT_OBJECTS_DOME),
-                        fragmentShader: compile('frag', FRAG_OBJECTS_DOME),
+                        vertexShader: VERT_OBJECTS_DOME,
+                        fragmentShader: FRAG_OBJECTS_DOME,
                         uniforms: {
                             heroPos: { value: new THREE.Vector3() }
                         }
