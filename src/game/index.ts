@@ -42,7 +42,8 @@ export function createGame(
             crunch: 0,
             weapon: 0,
             vrPointerTransform: new THREE.Matrix4(),
-            vrTriggerButton: false
+            vrTriggerButton: false,
+            vrControllerPositions: [],
         },
 
         resetState() {

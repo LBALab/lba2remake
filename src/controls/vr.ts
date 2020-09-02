@@ -67,6 +67,12 @@ export class VRControls {
             applyMappings(controller.info, controller.mappings, ctx);
         });
         for (let i = 0; i < 2; i += 1) {
+            const controller = this.xr.getController(i);
+
+            const controllerPos = this.ctx.game.controlsState.vrControllerPositions[i];
+            controllerPos.copy(controller.position);
+            controllerPos.applyMatrix4(controller.matrixWorld);
+
             if (this.pointers[i]) {
                 this.pointers[i].visible = showPointer && this.activePointer === i;
             }
@@ -111,6 +117,7 @@ export class VRControls {
 
     initializeVRController(index) {
         const vrControllerGrip = this.xr.getControllerGrip(index);
+        this.ctx.game.controlsState.vrControllerPositions[index] = new THREE.Vector3();
 
         vrControllerGrip.addEventListener('connected', async (event) => {
             if (!event.data.gamepad) {
