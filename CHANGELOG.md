@@ -9,7 +9,6 @@ _Unknown date_
 - Fully Complete Behaviour Menu with models overlay and selection via keyboard arrow keys.
 - Allow users to manually enable Audio. (note: theme music won't play until first browser interaction).
 
-
 #### Gameplay
 
 - Implemented Jetpack / protopack.
@@ -20,13 +19,19 @@ _Unknown date_
 
 #### VR
 
-- Special implemtation of the Dome of the Slate. You're going to be amused!!!
 - Various audio improvements.
+- Special implemtation of the Dome of the Slate. You're going to be amazed!!!
 - You can punch FunFrock!!
 
 #### Replacement 3D models
 
-- Various Dome of the Slate related models.
+- Dome of the Slate models.
+- Tralü’s Cave models.
+- School of Magic.
+
+#### Editor
+
+- Iso editor bricks selection and properties.
 
 #### Bug fixes
 
