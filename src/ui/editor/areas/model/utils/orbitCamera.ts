@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export function get3DOrbitCamera(vang = 0.6) {
+export function get3DOrbitCamera(vang = 0.6, rval = -1) {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
@@ -25,11 +25,13 @@ export function get3DOrbitCamera(vang = 0.6) {
         update: (model, rotateView, mouseSpeed, zoom, time) => {
             let height = 0;
             if (model) {
-                const bb = model.boundingBox;
-                height = bb.max.y - bb.min.y;
+                if (model.boundingBox) {
+                    const bb = model.boundingBox;
+                    height = bb.max.y - bb.min.y;
+                }
             }
             if (rotateView) {
-                angle -= time.delta * 0.5;
+                angle += (time.delta * 0.5 * rval);
             }
             angle += mouseSpeed.x * 0.005;
             vAngle += mouseSpeed.y * 0.005;

@@ -1,18 +1,19 @@
 import React, { useEffect, useState, useRef, Component } from 'react';
-import * as THREE from 'three';
 
 import '../styles/behaviour.scss';
 import useMedia from '../hooks/useMedia';
 import { BehaviourMode as BehaviourModeType } from '../../game/loop/hero';
 import { MAX_LIFE } from '../../game/state';
 
-import Renderer from '../../renderer';
-import { get3DOrbitCamera } from '../editor/areas/model/utils/orbitCamera';
-
-import { loadModel } from '../../model';
-import { loadAnim } from '../../model/anim';
-import { loadAnimState, updateKeyframeInterpolation, updateKeyframe } from '../../model/animState';
-import { getAnim } from '../../model/entity';
+import { loadAnimState } from '../../model/animState';
+import {
+    createOverlayScene,
+    createOverlayClock,
+    createOverlayCanvas,
+    createOverlayRenderer,
+    updateAnimModel,
+    loadSceneModel,
+} from './overlay';
 
 interface IBehaviourMenuClover {
     boxes: number;
@@ -48,6 +49,7 @@ interface IBehaviourItem {
     style?: any;
 }
 
+// fixme: remove global vars
 let clock = null;
 let canvas = null;
 let renderer = null;
@@ -55,78 +57,31 @@ const scene = [];
 const model = [];
 const animState = [];
 
-const createScene = () => {
-    const camera = get3DOrbitCamera(0.3);
-    const sce = {
-        camera,
-        threeScene: new THREE.Scene()
-    };
-    sce.threeScene.add(camera.controlNode);
-    return sce;
-};
-
 const initBehaviourRenderer = async () => {
-    scene.push(createScene());
-    scene.push(createScene());
-    scene.push(createScene());
-    scene.push(createScene());
-    scene.push(createScene());
+    scene.push(createOverlayScene());
+    scene.push(createOverlayScene());
+    scene.push(createOverlayScene());
+    scene.push(createOverlayScene());
+    scene.push(createOverlayScene());
     scene.push({}); // 5
-    scene.push(createScene());
+    scene.push(createOverlayScene());
     scene.push({}); // 7
-    scene.push(createScene());
+    scene.push(createOverlayScene());
 
     if (!clock) {
-        clock = new THREE.Clock(false);
+        clock = createOverlayClock();
     }
 
     if (!canvas) {
-        canvas = document.createElement('canvas');
-        canvas.tabIndex = 0;
-        canvas.className = 'behaviour-canvas';
+        canvas = createOverlayCanvas('behaviour-canvas');
     }
 
     if (!renderer) {
-        renderer = new Renderer(
-            { webgl2: true },
-            canvas,
-            { alpha: true },
-            'behaviour-menu'
-        );
+        renderer = createOverlayRenderer(canvas, 'behaviour-menu');
     }
 };
 
 initBehaviourRenderer();
-
-const updateModel = (m, anims, entityIdx, animIdx, time) => {
-    const entity = m.entities[entityIdx];
-    const entityAnim = getAnim(entity, animIdx);
-    let interpolate = false;
-    if (entityAnim !== null) {
-        const realAnimIdx = entityAnim.animIndex;
-        const anim = loadAnim(m, m.anims, realAnimIdx);
-        anims.loopFrame = anim.loopFrame;
-        if (anims.prevRealAnimIdx !== -1 && realAnimIdx !== anims.prevRealAnimIdx) {
-            updateKeyframeInterpolation(anim, anims, time, realAnimIdx);
-            interpolate = true;
-        }
-        if (realAnimIdx === anims.realAnimIdx || anims.realAnimIdx === -1) {
-            updateKeyframe(anim, anims, time, realAnimIdx);
-        }
-        const q = new THREE.Quaternion();
-        const delta = time.delta * 1000;
-        let angle = 0;
-        if (anims.keyframeLength > 0) {
-            angle = (anims.rotation.y * delta) / anims.keyframeLength;
-        }
-        q.setFromAxisAngle(
-            new THREE.Vector3(0, 1, 0),
-            angle
-        );
-        m.mesh.quaternion.multiply(q);
-    }
-    return interpolate;
-};
 
 const renderLoop = (time, behaviour, selected, item) => {
     const m = model[behaviour];
@@ -151,14 +106,8 @@ const renderLoop = (time, behaviour, selected, item) => {
     const itemLeft = left - canvasClip.left;
     const itemBottom = canvasClip.bottom - bottom - 10;
 
-    renderer.stats.begin();
-
-    renderer.setViewport(itemLeft, itemBottom, width, height);
-    renderer.setScissor(itemLeft, itemBottom, width, height);
-    renderer.setScissorTest(true);
-
     if (selected) {
-        updateModel(
+        updateAnimModel(
             m,
             anims,
             behaviour,
@@ -166,6 +115,12 @@ const renderLoop = (time, behaviour, selected, item) => {
             time
         );
     }
+    renderer.stats.begin();
+
+    renderer.setViewport(itemLeft, itemBottom, width, height);
+    renderer.setScissor(itemLeft, itemBottom, width, height);
+    renderer.setScissorTest(true);
+
     s.camera.update(
         m,
         selected,
@@ -175,43 +130,7 @@ const renderLoop = (time, behaviour, selected, item) => {
     );
 
     renderer.render(s);
-
     renderer.stats.end();
-};
-
-const load = async (b, bodyIndex) => {
-    // if (model[b]) {
-    //     return;
-    // }
-
-    if (!animState[b]) {
-        animState[b] = loadAnimState();
-    }
-
-    const envInfo = {
-        skyColor: [0, 0, 0]
-    };
-    const ambience = {
-        lightingAlpha: 309,
-        lightingBeta: 2500
-    };
-    model[b] = await loadModel(
-        {},
-        b,
-        bodyIndex,
-        0,
-        animState[b],
-        envInfo,
-        ambience
-    );
-
-    if (scene[b] &&
-        scene[b].threeScene &&
-        scene[b].threeScene.children &&
-        scene[b].threeScene.children.length > 1) {
-        scene[b].threeScene.remove(scene[b].threeScene.children[1]);
-    }
-    scene[b].threeScene.add(model[b].mesh);
 };
 
 class BehaviourModeItem extends Component<IBehaviourItem> {
@@ -447,8 +366,11 @@ const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
         scene[b].camera.setAngle(heroAngle + Math.PI - (Math.PI / 4));
         const bodyIndex = sceneManager.actors[0].props.bodyIndex;
         // load models
-        await load(b, bodyIndex);
-        updateModel(
+        if (!animState[b]) {
+            animState[b] = loadAnimState();
+        }
+        model[b] = await loadSceneModel(scene[b], b, bodyIndex, animState[b]);
+        updateAnimModel(
             model[b],
             animState[b],
             b,

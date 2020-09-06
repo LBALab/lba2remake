@@ -222,7 +222,7 @@ export function FOUND_OBJECT(cmdState, id) {
         hero.props.prevEntityIndex = hero.props.entityIndex;
         hero.props.prevAnimIndex = hero.props.animIndex;
         hero.props.entityIndex = 0;
-        hero.props.animIndex = AnimType.NONE;
+        hero.props.animIndex = AnimType.FOUND_OBJECT;
         this.game.getState().flags.quest[id] = 1;
         audio.playSample(6);
         const text = this.game.texts[id];
