@@ -306,7 +306,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 if (!this.state.cinema && this.state.scene && this.state.scene.actors[0]) {
                     this.state.scene.actors[0].cancelAnims();
                 }
-                this.state.game.pause();
+                this.state.game.pause(false);
             }
         }
     }
@@ -323,7 +323,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             ((!isMac && (key === 'ControlLeft' || key === 'ControlRight' || key === 17))
             || (isMac && (key === 'MetaLeft' || key === 'MetaRight' || key === 91)))) {
             this.setState({ behaviourMenu: false });
-            this.state.game.resume();
+            this.state.game.resume(false);
         }
     }
 

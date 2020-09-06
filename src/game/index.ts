@@ -101,15 +101,19 @@ export function createGame(
             };
         },
 
-        pause: () => {
+        pause: (pauseAudio = true) => {
             isPaused = true;
             clock.stop();
-            audio.pause();
+            if (pauseAudio) {
+                audio.pause();
+            }
         },
 
-        resume: () => {
+        resume: (pauseAudio = true) => {
             if (isPaused) {
-                audio.resume();
+                if (pauseAudio) {
+                    audio.resume();
+                }
                 isPaused = false;
                 clock.start();
             }
