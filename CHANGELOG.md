@@ -20,7 +20,7 @@ _Unknown date_
 #### VR
 
 - Various audio improvements.
-- Special implemtation of the Dome of the Slate. You're going to be amazed!!!
+- Special implememtation of the Dome of the Slate. You're going to be amazed!!!
 - You can punch FunFrock!!
 
 #### Replacement 3D models
