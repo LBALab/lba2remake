@@ -295,6 +295,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             }
             const isMac = /^Mac/.test(navigator && navigator.platform);
             const showBehaviourMenu =
+                !this.state.loading &&
                 this.state.ask.choices.length === 0 &&
                 this.state.text === null &&
                 this.state.foundObject === null &&
@@ -315,6 +316,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         const key = event.code || event.which || event.keyCode;
         const isMac = /^Mac/.test(navigator && navigator.platform);
         const hideBehaviourMenu =
+            !this.state.loading &&
             this.state.ask.choices.length === 0 &&
             this.state.text === null &&
             this.state.foundObject === null &&
