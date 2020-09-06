@@ -74,7 +74,7 @@ const FoundObject = ({ foundObject }) => {
                 clock.stop();
             }
         };
-    }), [clock];
+    }, [clock]);
 
     useEffect(() => {
         if (canvas) {
@@ -84,7 +84,7 @@ const FoundObject = ({ foundObject }) => {
             itemRef.current.appendChild(canvas);
         }
         return () => { };
-    }), [canvas];
+    }, [canvas]);
 
     useEffect(() => {
         if (renderer) {
