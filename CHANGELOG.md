@@ -6,11 +6,36 @@ _Unknown date_
 #### UI
 
 - Add additional behaviours (jetpack/horn etc.) to Behaviour Menu.
+- Fully Complete Behaviour Menu with models overlay and selection via keyboard arrow keys.
+- Allow users to manually enable Audio. (note: theme music won't play until first browser interaction).
 
 #### Gameplay
 
 - Implemented Jetpack / protopack.
+- Implemented Horn.
 - Implemented drowning in water and lava.
+- Implemented Combat.
+- Dome of the Slate fully playable.
+
+#### VR
+
+- Various audio improvements.
+- Special implememtation of the Dome of the Slate. You're going to be amazed!!!
+- You can punch FunFrock!!
+
+#### Replacement 3D models
+
+- Dome of the Slate models.
+- Tralü’s Cave models.
+- School of Magic.
+
+#### Editor
+
+- Iso editor bricks selection and properties.
+
+#### Bug fixes
+
+- Various gameplay fixes.
 
 -----------------------------
 ### [v0.3.1](https://github.com/agrande/lba2remake/compare/v0.3.0...v0.3.1) Bugfixes
