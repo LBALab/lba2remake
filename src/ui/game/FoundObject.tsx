@@ -25,7 +25,7 @@ const FoundObject = ({ foundObject }) => {
         const canvasClip = canvas.getBoundingClientRect();
         const { left, bottom, width, height } = item.current.getBoundingClientRect();
 
-        // set canvas size once with same aspect ratio as the behaviour item area
+        // set canvas size once with same aspect ratio as the found object item area
         if (canvas.width === 0) {
             canvas.width = canvas.style.width = width * 5;
             canvas.height = canvas.style.height = height * 5;

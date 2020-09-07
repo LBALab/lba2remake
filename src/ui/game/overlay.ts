@@ -8,6 +8,15 @@ import { updateKeyframeInterpolation, updateKeyframe } from '../../model/animSta
 import { loadModel } from '../../model';
 import { loadInventoryModel } from '../../model/inventory';
 
+const envInfo = {
+    skyColor: [0, 0, 0]
+};
+
+const ambience = {
+    lightingAlpha: 309,
+    lightingBeta: 2500
+};
+
 const createOverlayScene = (rval = -1) => {
     const camera = get3DOrbitCamera(0.3, rval);
     const scene = {
@@ -39,13 +48,6 @@ const createOverlayRenderer = (canvas: any, type: string) => {
 };
 
 const loadSceneModel = async (sce, b, bodyIndex, anims) => {
-    const envInfo = {
-        skyColor: [0, 0, 0]
-    };
-    const ambience = {
-        lightingAlpha: 309,
-        lightingBeta: 2500
-    };
     const m = await loadModel(
         {},
         b,
@@ -68,13 +70,6 @@ const loadSceneModel = async (sce, b, bodyIndex, anims) => {
 };
 
 const loadSceneInventoryModel = async (sce, b) => {
-    const envInfo = {
-        skyColor: [0, 0, 0]
-    };
-    const ambience = {
-        lightingAlpha: 309,
-        lightingBeta: 2500
-    };
     const m = await loadInventoryModel(
         {},
         b,
