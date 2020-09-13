@@ -294,14 +294,20 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 }
             }
             const isMac = /^Mac/.test(navigator && navigator.platform);
-            if ((!this.state.showMenu || !this.state.inGameMenu) &&
+            const showBehaviourMenu =
+                !this.state.loading &&
+                this.state.ask.choices.length === 0 &&
+                this.state.text === null &&
+                this.state.foundObject === null &&
+                (!this.state.showMenu || !this.state.inGameMenu);
+            if (showBehaviourMenu &&
                 ((!isMac && (key === 'ControlLeft' || key === 'ControlRight' || key === 17))
                 || (isMac && (key === 'MetaLeft' || key === 'MetaRight' || key === 91)))) {
                 this.setState({ behaviourMenu: true });
                 if (!this.state.cinema && this.state.scene && this.state.scene.actors[0]) {
                     this.state.scene.actors[0].cancelAnims();
                 }
-                this.state.game.pause();
+                this.state.game.pause(false);
             }
         }
     }
@@ -309,11 +315,17 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     listenerKeyUp(event) {
         const key = event.code || event.which || event.keyCode;
         const isMac = /^Mac/.test(navigator && navigator.platform);
-        if ((!this.state.showMenu || !this.state.inGameMenu) &&
+        const hideBehaviourMenu =
+            !this.state.loading &&
+            this.state.ask.choices.length === 0 &&
+            this.state.text === null &&
+            this.state.foundObject === null &&
+            (!this.state.showMenu || !this.state.inGameMenu);
+        if (hideBehaviourMenu &&
             ((!isMac && (key === 'ControlLeft' || key === 'ControlRight' || key === 17))
             || (isMac && (key === 'MetaLeft' || key === 'MetaRight' || key === 91)))) {
             this.setState({ behaviourMenu: false });
-            this.state.game.resume();
+            this.state.game.resume(false);
         }
     }
 
@@ -559,7 +571,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 interjections={interjections}
             />
             <Video video={video} renderer={renderer} />
-            {!showMenu && behaviourMenu ?
+            {behaviourMenu ?
                 <BehaviourMenu
                     game={game}
                     sceneManager={scene}
@@ -597,7 +609,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 ask={ask}
                 onChoiceChanged={this.onAskChoiceChanged}
             /> : null}
-            {!showMenu ? <FoundObject foundObject={foundObject} /> : null}
+            {foundObject !== null && !showMenu ? <FoundObject foundObject={foundObject} /> : null}
             {keyHelp && <KeyHelpScreen close={this.closeKeyHelp}/>}
             {noAudio && (
                 <NoAudio onClick={this.noAudioClick} />

@@ -1,0 +1,35 @@
+@import './_media.scss';
+@import './main.scss';
+
+.foundObject {
+    position: relative;
+    top: 75px;
+    width: 200px;
+    height: 200px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px outset #61cece;
+    border-radius: 15px;
+    margin: auto;
+
+    @include media("<=desktop") {
+        width: 150px;
+        height: 150px;
+    }
+
+    @include media("<=tablet","portrait") {
+        width: 100px;
+        height: 100px;
+        border-radius: 10px;
+    }
+}
+
+.foundObject-canvas {
+    position: absolute;
+    top: 0;
+    border-radius: 15px;
+    outline: 0px;
+
+    @include media("<=tablet","portrait") {
+        border-radius: 10px;
+    }
+}

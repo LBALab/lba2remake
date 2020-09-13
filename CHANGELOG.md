@@ -5,8 +5,9 @@ _Unknown date_
 
 #### UI
 
-- Add additional behaviours (jetpack/horn etc.) to Behaviour Menu.
 - Fully Complete Behaviour Menu with models overlay and selection via keyboard arrow keys.
+- Added (jetpack/horn etc.) to Behaviour Menu.
+- Found Inventory Objects Overlay.
 - Allow users to manually enable Audio. (note: theme music won't play until first browser interaction).
 
 #### Gameplay
