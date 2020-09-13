@@ -704,7 +704,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         lSettings.threeObject.traverse((node) => {
             node.updateMatrix();
             node.updateMatrixWorld(true);
-            if (node instanceof THREE.Mesh) {
+            if (node instanceof THREE.Mesh &&
+                node.material instanceof THREE.RawShaderMaterial) {
                 const material = node.material as THREE.RawShaderMaterial;
                 material.uniforms.uNormalMatrix.value.setFromMatrix4(node.matrixWorld);
             }
