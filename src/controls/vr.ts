@@ -58,21 +58,18 @@ export class VRControls {
             showController
         };
         controlsState.action = 0;
-        each(this.controllers, (controller) => {
+        each(this.controllers, (controller, i) => {
             if (!(controller.info.xrInputSource as any).gamepad) {
                 return;
             }
             controller.info.updateFromGamepad();
             controller.model.update(ctx);
             applyMappings(controller.info, controller.mappings, ctx);
+
+            controller.model.handMesh.getWorldPosition(
+                this.ctx.game.controlsState.vrControllerPositions[i]);
         });
         for (let i = 0; i < 2; i += 1) {
-            const controller = this.xr.getController(i);
-
-            const controllerPos = this.ctx.game.controlsState.vrControllerPositions[i];
-            controllerPos.copy(controller.position);
-            controllerPos.applyMatrix4(controller.matrixWorld);
-
             if (this.pointers[i]) {
                 this.pointers[i].visible = showPointer && this.activePointer === i;
             }
