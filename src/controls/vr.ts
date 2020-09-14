@@ -7,6 +7,9 @@ import { createMotionController } from './vr/utils';
 import { debugProfiles, updateDebug } from './vr/debugProfiles';
 import { getControllerMappings, applyMappings, Mappings } from './vr/mappings';
 
+// Time in ms we sample the change is position to determine controller velocity.
+const VELOCITY_UPDATE_TIME = 100;
+
 export class VRControls {
     xr: WebXRManager;
     ctx: any;
@@ -14,6 +17,8 @@ export class VRControls {
         [key: number]: {
             info: MotionController;
             model: ControllerModel;
+            lastPosition: THREE.Vector3;
+            lastUpdateTime: number;
             mappings?: Mappings;
         }
     };
@@ -68,6 +73,17 @@ export class VRControls {
 
             controller.model.handMesh.getWorldPosition(
                 this.ctx.game.controlsState.vrControllerPositions[i]);
+
+            if (performance.now() - controller.lastUpdateTime > VELOCITY_UPDATE_TIME) {
+                controller.lastUpdateTime = performance.now();
+                let velocity = controller.lastPosition.distanceToSquared(
+                    this.ctx.game.controlsState.vrControllerPositions[i]);
+                // Make the numbers slightly more manageable.
+                velocity *= 10000;
+                this.ctx.game.controlsState.vrControllerVelocities[i] = velocity;
+                controller.lastPosition.copy(
+                    this.ctx.game.controlsState.vrControllerPositions[i]);
+            }
         });
         for (let i = 0; i < 2; i += 1) {
             if (this.pointers[i]) {
@@ -127,7 +143,9 @@ export class VRControls {
             vrControllerGrip.add(model.threeObject);
             this.controllers[index] = {
                 info,
-                model
+                model,
+                lastPosition: new THREE.Vector3(),
+                lastUpdateTime: 0,
             };
             this.updateMappings();
         });

@@ -44,6 +44,7 @@ export function createGame(
             vrPointerTransform: new THREE.Matrix4(),
             vrTriggerButton: false,
             vrControllerPositions: [],
+            vrControllerVelocities: [],
         },
 
         resetState() {

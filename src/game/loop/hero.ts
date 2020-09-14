@@ -170,6 +170,7 @@ function processFirstPersonsMovement(game, scene, hero, time) {
 // hand back before we let them trigger another punch.
 const punched = {};
 const ACTOR_BOX = new THREE.Box3();
+const PUNCH_VELOCITY_THRESHOLD = 300;
 
 // firstPersonPunching checks to see if the player has punched an actor with
 // their fists (VR controller).
@@ -189,7 +190,8 @@ function firstPersonPunching(game, scene) {
         const handPositions = game.controlsState.vrControllerPositions;
         for (let i = 0; i < handPositions.length; i += 1) {
             const intersect = ACTOR_BOX.containsPoint(handPositions[i]);
-            if (intersect && !punched[a.index][i]) {
+            const velocity = game.controlsState.vrControllerVelocities[i];
+            if (intersect && velocity > PUNCH_VELOCITY_THRESHOLD && !punched[a.index][i]) {
                 a.hit(0, game.getState().hero.handStrength);
                 punched[a.index][i] = true;
             } else if (!intersect) {
