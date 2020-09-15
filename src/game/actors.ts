@@ -314,7 +314,8 @@ export async function loadActor(
 
         hit(hitBy, hitStrength) {
             // Ensure we don't repeatedly play the hit animation.
-            if (this.props.runtimeFlags.isHit) {
+            if (this.props.runtimeFlags.isHit &&
+                this.props.animIndex === AnimType.HIT) {
                 return;
             }
 

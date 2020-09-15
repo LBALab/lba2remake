@@ -118,6 +118,10 @@ function processFirstPersonsMovement(game, scene, hero, time) {
             return;
         }
 
+        if (hero.props.entityIndex === BehaviourMode.AGGRESSIVE) {
+            firstPersonPunching(game, scene);
+        }
+
         animIndex = AnimType.NONE;
         if (Math.abs(controlsState.controlVector.y) > 0.6) {
             hero.props.runtimeFlags.isWalking = true;
@@ -159,6 +163,41 @@ function processFirstPersonsMovement(game, scene, hero, time) {
     if (hero.props.animIndex !== animIndex) {
         hero.props.animIndex = animIndex;
         hero.resetAnimState();
+    }
+}
+
+// Keep track of who we've punched per hand to ensure the player pulls their
+// hand back before we let them trigger another punch.
+const punched = {};
+const ACTOR_BOX = new THREE.Box3();
+const PUNCH_VELOCITY_THRESHOLD = 300;
+
+// firstPersonPunching checks to see if the player has punched an actor with
+// their fists (VR controller).
+function firstPersonPunching(game, scene) {
+    for (const a of scene.actors) {
+        if (a.index === 0 || !a.model) {
+            continue;
+        }
+
+        if (!punched[a.index]) {
+            punched[a.index] = {};
+        }
+
+        ACTOR_BOX.copy(a.model.boundingBox);
+        ACTOR_BOX.translate(a.physics.position);
+        ACTOR_BOX.applyMatrix4(scene.sceneNode.matrixWorld);
+        const handPositions = game.controlsState.vrControllerPositions;
+        for (let i = 0; i < handPositions.length; i += 1) {
+            const intersect = ACTOR_BOX.containsPoint(handPositions[i]);
+            const velocity = game.controlsState.vrControllerVelocities[i];
+            if (intersect && velocity > PUNCH_VELOCITY_THRESHOLD && !punched[a.index][i]) {
+                a.hit(0, game.getState().hero.handStrength);
+                punched[a.index][i] = true;
+            } else if (!intersect) {
+                punched[a.index][i] = false;
+            }
+        }
     }
 }
 
