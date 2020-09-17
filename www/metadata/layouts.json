@@ -1,11 +1,5 @@
 {
   "0": {
-    "0": {
-      "mirror": true
-    },
-    "1": {
-      "mirror": true
-    },
     "2": {
       "mirror": true
     },
@@ -339,12 +333,6 @@
       "replace": true,
       "file": "086_candlestick.glb",
       "orientation": 0
-    },
-    "87": {
-      "mirror": true
-    },
-    "88": {
-      "mirror": true
     },
     "89": {
       "replace": true,
@@ -1175,17 +1163,212 @@
     "1": {
       "mirror": true
     },
+    "3": {
+      "replace": true,
+      "file": "GB_003_004_wall_top_rounded.glb",
+      "orientation": 0
+    },
+    "4": {
+      "replace": true,
+      "file": "GB_003_004_wall_top_rounded.glb",
+      "orientation": 1
+    },
+    "5": {
+      "replace": true,
+      "file": "GB_005_006_007_008_wall_top_rounded_corner.glb",
+      "orientation": 2
+    },
+    "6": {
+      "replace": true,
+      "file": "GB_005_006_007_008_wall_top_rounded_corner.glb",
+      "orientation": 0
+    },
+    "7": {
+      "replace": true,
+      "file": "GB_005_006_007_008_wall_top_rounded_corner.glb",
+      "orientation": 3
+    },
+    "8": {
+      "replace": true,
+      "file": "GB_005_006_007_008_wall_top_rounded_corner.glb",
+      "orientation": 1
+    },
+    "9": {
+      "replace": true,
+      "file": "GB_009_010_011_012_wall_side_rounded.glb",
+      "orientation": 3
+    },
+    "10": {
+      "replace": true,
+      "file": "GB_009_010_011_012_wall_side_rounded.glb",
+      "orientation": 2
+    },
+    "11": {
+      "replace": true,
+      "file": "GB_009_010_011_012_wall_side_rounded.glb",
+      "orientation": 1
+    },
+    "12": {
+      "replace": true,
+      "file": "GB_009_010_011_012_wall_side_rounded.glb",
+      "orientation": 0
+    },
+    "13": {
+      "replace": true,
+      "file": "GB_013_014_15_016_wall_side_rounded_corner.glb",
+      "orientation": 0
+    },
+    "14": {
+      "replace": true,
+      "file": "GB_013_014_15_016_wall_side_rounded_corner.glb",
+      "orientation": 1
+    },
+    "15": {
+      "replace": true,
+      "file": "GB_013_014_15_016_wall_side_rounded_corner.glb",
+      "orientation": 2
+    },
+    "16": {
+      "replace": true,
+      "file": "GB_013_014_15_016_wall_side_rounded_corner.glb",
+      "orientation": 3
+    },
+    "17": {
+      "replace": true,
+      "file": "GB_017_018_034_035_wall_top_rounded_corner.glb",
+      "orientation": 2
+    },
+    "18": {
+      "replace": true,
+      "file": "GB_017_018_034_035_wall_top_rounded_corner.glb",
+      "orientation": 3
+    },
+    "19": {
+      "replace": true,
+      "file": "GB_019_020_door_top.glb",
+      "orientation": 0
+    },
+    "20": {
+      "replace": true,
+      "file": "GB_019_020_door_top.glb",
+      "orientation": 1
+    },
+    "21": {
+      "replace": true,
+      "file": "GB_021_022_023_024_wall_side_rounded.glb",
+      "orientation": 2
+    },
+    "22": {
+      "replace": true,
+      "file": "GB_021_022_023_024_wall_side_rounded.glb",
+      "orientation": 3
+    },
+    "23": {
+      "replace": true,
+      "file": "GB_021_022_023_024_wall_side_rounded.glb",
+      "orientation": 0
+    },
+    "24": {
+      "replace": true,
+      "file": "GB_021_022_023_024_wall_side_rounded.glb",
+      "orientation": 1
+    },
     "32": {
       "mirror": true
     },
     "33": {
       "mirror": true
     },
+    "34": {
+      "replace": true,
+      "file": "GB_017_018_034_035_wall_top_rounded_corner.glb",
+      "orientation": 1
+    },
+    "35": {
+      "replace": true,
+      "file": "GB_017_018_034_035_wall_top_rounded_corner.glb",
+      "orientation": 0
+    },
     "37": {
       "mirror": true
     },
     "38": {
       "mirror": true
+    },
+    "39": {
+      "replace": true,
+      "file": "GB_039_040_041_042_wall_top_rounded_cornerround.glb",
+      "orientation": 0
+    },
+    "40": {
+      "replace": true,
+      "file": "GB_039_040_041_042_wall_top_rounded_cornerround.glb",
+      "orientation": 3
+    },
+    "41": {
+      "replace": true,
+      "file": "GB_039_040_041_042_wall_top_rounded_cornerround.glb",
+      "orientation": 1
+    },
+    "42": {
+      "replace": true,
+      "file": "GB_039_040_041_042_wall_top_rounded_cornerround.glb",
+      "orientation": 2
+    },
+    "45": {
+      "replace": true,
+      "file": "GB_045_046_047_chair.glb",
+      "orientation": 0
+    },
+    "46": {
+      "replace": true,
+      "file": "GB_045_046_047_chair.glb",
+      "orientation": 2
+    },
+    "47": {
+      "replace": true,
+      "file": "GB_045_046_047_chair.glb",
+      "orientation": 1
+    },
+    "48": {
+      "replace": true,
+      "file": "GB_048_stool.glb",
+      "orientation": 0
+    },
+    "49": {
+      "replace": true,
+      "file": "GB_049_050_high_chair.glb",
+      "orientation": 1
+    },
+    "50": {
+      "replace": true,
+      "file": "GB_049_050_high_chair.glb",
+      "orientation": 2
+    },
+    "51": {
+      "replace": true,
+      "file": "GB_051_high_stool.glb",
+      "orientation": 0
+    },
+    "52": {
+      "replace": true,
+      "file": "GB_052_high_round_table.glb",
+      "orientation": 0
+    },
+    "53": {
+      "replace": true,
+      "file": "GB_053_054_table_straight.glb",
+      "orientation": 0
+    },
+    "54": {
+      "replace": true,
+      "file": "GB_053_054_table_straight.glb",
+      "orientation": 1
+    },
+    "55": {
+      "replace": true,
+      "file": "GB_055_bench.glb",
+      "orientation": 3
     },
     "56": {
       "mirror": true
@@ -1204,6 +1387,11 @@
     },
     "67": {
       "mirror": true
+    },
+    "71": {
+      "replace": true,
+      "file": "GB_071_window.glb",
+      "orientation": 0
     },
     "73": {
       "mirror": true
@@ -1264,6 +1452,11 @@
     },
     "167": {
       "mirror": true
+    },
+    "54:2x3x2:0,1364,0,1365,1366,1368,1369,1370,1371,1372,1373,1375": {
+      "replace": true,
+      "file": "GB_053_054_table_straight_var01.glb",
+      "orientation": 0
     }
   },
   "3": {
