@@ -221,8 +221,10 @@ export function FOUND_OBJECT(cmdState, id) {
         hero.props.dirMode = DirMode.NO_MOVE;
         hero.props.prevEntityIndex = hero.props.entityIndex;
         hero.props.prevAnimIndex = hero.props.animIndex;
+        hero.props.previousAngle = hero.physics.temp.angle;
         hero.props.entityIndex = 0;
         hero.props.animIndex = AnimType.FOUND_OBJECT;
+        hero.setAngleRad(3*Math.PI/4 + Math.PI);
         this.game.getState().flags.quest[id] = 1;
         audio.playSample(6);
         const text = this.game.texts[id];
@@ -259,6 +261,7 @@ export function FOUND_OBJECT(cmdState, id) {
         audio.stopVoice();
         this.game.setUiState({ skip: false, text: null, foundObject: null });
         this.game.controlsState.skipListener = null;
+        hero.setAngleRad(hero.props.previousAngle);
         hero.props.dirMode = DirMode.MANUAL;
 
         delete cmdState.skipListener;
