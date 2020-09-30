@@ -3,7 +3,7 @@ import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
 import { setMagicBallLevel } from '../../game/state';
 import { unimplemented } from './utils';
-import { WORLD_SCALE, getRandom } from '../../utils/lba';
+import { WORLD_SCALE, getRandom, angleTo } from '../../utils/lba';
 import { getResourcePath } from '../../resources';
 
 export const PALETTE = unimplemented();
@@ -224,7 +224,12 @@ export function FOUND_OBJECT(cmdState, id) {
         hero.props.previousAngle = hero.physics.temp.angle;
         hero.props.entityIndex = 0;
         hero.props.animIndex = AnimType.FOUND_OBJECT;
-        hero.setAngleRad(3*Math.PI/4 + Math.PI);
+        if (this.scene.isIsland) {
+            hero.setAngleRad(hero.physics.temp.angle + Math.PI);
+        } else {
+            hero.setAngleRad(7 * Math.PI / 4);
+        }
+        
         this.game.getState().flags.quest[id] = 1;
         audio.playSample(6);
         const text = this.game.texts[id];
