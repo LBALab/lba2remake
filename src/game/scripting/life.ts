@@ -3,7 +3,7 @@ import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
 import { setMagicBallLevel } from '../../game/state';
 import { unimplemented } from './utils';
-import { WORLD_SCALE, getRandom, angleTo } from '../../utils/lba';
+import { WORLD_SCALE, getRandom } from '../../utils/lba';
 import { getResourcePath } from '../../resources';
 
 export const PALETTE = unimplemented();
