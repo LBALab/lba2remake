@@ -1376,6 +1376,11 @@
     "57": {
       "mirror": true
     },
+    "63": {
+      "replace": true,
+      "file": "GB_063_counter_round.glb",
+      "orientation": 0
+    },
     "64": {
       "mirror": true
     },
@@ -1388,9 +1393,19 @@
     "67": {
       "mirror": true
     },
+    "69": {
+      "replace": true,
+      "file": "GB_069_stairs.glb",
+      "orientation": 0
+    },
     "71": {
       "replace": true,
       "file": "GB_071_window.glb",
+      "orientation": 0
+    },
+    "72": {
+      "replace": true,
+      "file": "GB_072_plant.glb",
       "orientation": 0
     },
     "73": {
@@ -1398,6 +1413,76 @@
     },
     "74": {
       "mirror": true
+    },
+    "75": {
+      "replace": true,
+      "file": "GB_075_health.glb",
+      "orientation": 0
+    },
+    "77": {
+      "replace": true,
+      "file": "GB_077_bottle.glb",
+      "orientation": 0
+    },
+    "78": {
+      "replace": true,
+      "file": "GB_078_glass.glb",
+      "orientation": 0
+    },
+    "80": {
+      "replace": true,
+      "file": "GB_080_bottle_glass.glb",
+      "orientation": 0
+    },
+    "81": {
+      "replace": true,
+      "file": "GB_081_three_glasses.glb",
+      "orientation": 0
+    },
+    "82": {
+      "replace": true,
+      "file": "GB_082_088_wall_lamp.glb",
+      "orientation": 0
+    },
+    "83": {
+      "replace": true,
+      "file": "GB_083_jukebox.glb",
+      "orientation": 0
+    },
+    "84": {
+      "replace": true,
+      "file": "GB_084_barrel.glb",
+      "orientation": 0
+    },
+    "85": {
+      "replace": true,
+      "file": "GB_085_barrel_tap.glb",
+      "orientation": 0
+    },
+    "88": {
+      "replace": true,
+      "file": "GB_082_088_wall_lamp.glb",
+      "orientation": 1
+    },
+    "89": {
+      "replace": true,
+      "file": "GB_089_magic.glb",
+      "orientation": 0
+    },
+    "90": {
+      "replace": true,
+      "file": "GB_090_cash_register.glb",
+      "orientation": 0
+    },
+    "93": {
+      "replace": true,
+      "file": "GB_093_094_jars.glb",
+      "orientation": 0
+    },
+    "94": {
+      "replace": true,
+      "file": "GB_093_094_jars.glb",
+      "orientation": 3
     },
     "95": {
       "mirror": true
@@ -1411,8 +1496,43 @@
     "100": {
       "mirror": false
     },
+    "101": {
+      "replace": true,
+      "file": "GB_101_102_window.glb",
+      "orientation": 0
+    },
+    "102": {
+      "replace": true,
+      "file": "GB_101_102_window.glb",
+      "orientation": 1
+    },
     "120": {
       "mirror": true
+    },
+    "122": {
+      "replace": true,
+      "file": "GB_122_123_railing_straight.glb",
+      "orientation": 0
+    },
+    "123": {
+      "replace": true,
+      "file": "GB_122_123_railing_straight.glb",
+      "orientation": 1
+    },
+    "124": {
+      "replace": true,
+      "file": "GB_124_125_127_railing_corner.glb",
+      "orientation": 0
+    },
+    "125": {
+      "replace": true,
+      "file": "GB_124_125_127_railing_corner.glb",
+      "orientation": 2
+    },
+    "127": {
+      "replace": true,
+      "file": "GB_124_125_127_railing_corner.glb",
+      "orientation": 3
     },
     "132": {
       "mirror": true
@@ -1435,6 +1555,16 @@
     "141": {
       "mirror": true
     },
+    "144": {
+      "replace": true,
+      "file": "GB_144_railing_lamp.glb",
+      "orientation": 0
+    },
+    "146": {
+      "replace": true,
+      "file": "GB_146_railing_slope.glb",
+      "orientation": 0
+    },
     "152": {
       "mirror": true
     },
@@ -1453,10 +1583,25 @@
     "167": {
       "mirror": true
     },
+    "144:1x8x1:1512,1513,1513,1514,1515,1516,1517,1518": {
+      "replace": true,
+      "file": "GB_144_railing_lamp_var01.glb",
+      "orientation": 0
+    },
+    "69:10x10x3:-1,-1,-1,-1,-1,-1,-1,-1,-1,1440,-1,-1,-1,-1,-1,-1,-1,-1,1440,-1,-1,-1,-1,-1,-1,-1,-1,1440,-1,-1,-1,-1,-1,-1,-1,-1,1440,-1,-1,-1,-1,-1,-1,-1,-1,1440,-1,-1,-1,-1,-1,-1,-1,-1,1440,-1,-1,-1,-1,-1,-1,-1,-1,1440,-1,-1,-1,-1,-1,-1,-1,-1,1440,-1,-1,-1,-1,-1,-1,-1,-1,1440,-1,-1,-1,-1,-1,-1,-1,-1,1440,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441,-1,-1,-1,-1,-1,-1,-1,-1,1441": {
+      "replace": true,
+      "file": "GB_069_stairs_var01.glb",
+      "orientation": 0
+    },
+    "69:4x4x2:-1,-1,-1,1440,-1,-1,1440,-1,-1,1440,-1,-1,1440,-1,-1,-1,-1,-1,-1,1441,-1,-1,1441,-1,-1,1441,-1,-1,1441": {
+      "replace": true,
+      "file": "GB_069_stairs_var02.glb",
+      "orientation": 0
+    },
     "54:2x3x2:0,1364,0,1365,1366,1368,1369,1370,1371,1372,1373,1375": {
       "replace": true,
       "file": "GB_053_054_table_straight_var01.glb",
-      "orientation": 0
+      "orientation": 1
     }
   },
   "3": {
