@@ -9,6 +9,7 @@ export async function loadMetadata(entry, library, mergeReplacements = false) {
     const hasFullReplacement = !mergeReplacements && isoScenesMetadata.includes(entry);
     const libMetadata = layoutsMetadata[library.index];
     const layouts = {};
+    const variants = [];
     await Promise.all(map(libMetadata, async (data, idx) => {
         let info = null;
         if (data.replace) {
@@ -36,12 +37,9 @@ export async function loadMetadata(entry, library, mergeReplacements = false) {
                 layouts[key] = {};
             }
             if (m) {
-                if (!('variants' in layouts[key])) {
-                    layouts[key].variants = [];
-                }
                 const [szRaw, blocksRaw] = m[2].split(':');
                 const sz = szRaw.split('x');
-                layouts[key].variants.push({
+                variants.push({
                     props: {
                         nX: Number(sz[0]),
                         nY: Number(sz[1]),
@@ -56,5 +54,10 @@ export async function loadMetadata(entry, library, mergeReplacements = false) {
             }
         }
     }));
-    return { hasFullReplacement, mergeReplacements, layouts };
+    variants.sort((v0, v1) => {
+        const sz0 = v0.props.nX * v0.props.nY * v0.props.nZ;
+        const sz1 = v1.props.nX * v1.props.nY * v1.props.nZ;
+        return sz1 - sz0;
+    });
+    return { hasFullReplacement, mergeReplacements, layouts, variants };
 }

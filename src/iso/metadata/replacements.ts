@@ -51,21 +51,38 @@ export async function initReplacements(entry, metadata, ambience, numActors) {
     };
 }
 
-export function processLayoutReplacement(grid, cellInfo, replacements, candidates) {
-    const {y} = cellInfo.pos;
-    const {nX, nY, nZ} = cellInfo.layout;
-    const idx = cellInfo.blocks[y].block;
-    const zb = Math.floor(idx / (nY * nX));
-    const yb = Math.floor(idx / nX) - (zb * nY);
-    const xb = idx % nX;
-    // Check brick at the bottom corner of layout
-    if (yb === 0 && xb === nX - 1 && zb === nZ - 1) {
-        if (checkMatch(grid, cellInfo, replacements)) {
-            candidates.push({
-                type: 'layout',
-                data: cellInfo.layout,
-                replacementData: cellInfo
-            });
+export function applyReplacement(cellInfo, replacements, target) {
+    const { x, y, z } = cellInfo.pos;
+    const { nX, nZ } = target.data;
+    const realY = (y * 0.5) + 0.5;
+    const realZ = z - 1;
+    suppressTargetBricks(replacements, target.data, cellInfo);
+    if (replacements.mergeReplacements) {
+        addReplacementObject(
+            target.replacementData,
+            replacements,
+            x - (nX * 0.5) + 1,
+            realY - 0.5,
+            realZ - (nZ * 0.5) + 1
+        );
+    }
+}
+
+function suppressTargetBricks(replacements, targetData, cellInfo) {
+    const {
+        x: xStart,
+        y: yStart,
+        z: zStart
+    } = cellInfo.pos;
+    const { nX, nY, nZ } = targetData;
+    for (let z = 0; z < nZ; z += 1) {
+        const zGrid = zStart - z;
+        for (let y = 0; y < nY; y += 1) {
+            const yGrid = yStart + y;
+            for (let x = 0; x < nX; x += 1) {
+                const xGrid = xStart - x;
+                replacements.bricks.add(`${xGrid},${yGrid},${zGrid}`);
+            }
         }
     }
 }
@@ -130,57 +147,6 @@ function makeReplacementGeometries(data) {
     };
 }
 
-function checkMatch(grid, cellInfo, replacements) {
-    const {
-        layout: {
-            blocks,
-            index: layout,
-            nX,
-            nY,
-            nZ
-        },
-        pos: {
-            x: xStart,
-            y: yStart,
-            z: zStart
-        }
-    } = cellInfo;
-    for (let z = 0; z < nZ; z += 1) {
-        const zGrid = zStart - z;
-        for (let x = 0; x < nX; x += 1) {
-            const xGrid = xStart - x;
-            const idxGrid = zGrid * 64 + xGrid;
-            const column = grid.cells[idxGrid].blocks;
-            for (let y = 0; y < nY; y += 1) {
-                const yGrid = yStart + y;
-                if (replacements.bricks.has(`${xGrid},${yGrid},${zGrid}`)) {
-                    return false;
-                }
-                if (!column[yGrid]) {
-                    if (cellInfo.variants) {
-                        return false;
-                    }
-                    continue;
-                }
-                if (column[yGrid].layout !== layout) {
-                    const gridLayoutInfo = grid.library.layouts[column[yGrid].layout];
-                    if (gridLayoutInfo) {
-                        const brick = gridLayoutInfo.blocks[column[yGrid].block].brick;
-                        const idx = (nX - x - 1) + y * nX + (nZ - z - 1) * nX * nY;
-                        const brickLayout = blocks[idx].brick;
-                        if (brick !== brickLayout) {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-    return true;
-}
-
 const angleMapping = [
     Math.PI / 2.0,
     Math.PI,
@@ -190,7 +156,7 @@ const angleMapping = [
 
 const identityMatrix = new THREE.Matrix4();
 
-export async function addReplacementObject(info, replacements, gx, gy, gz) {
+async function addReplacementObject(info, replacements, gx, gy, gz) {
     const { threeObject, animations, orientation } = info;
     const scale = 1 / 0.75;
     const angle = angleMapping[orientation];
