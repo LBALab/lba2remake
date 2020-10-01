@@ -299,7 +299,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 this.state.ask.choices.length === 0 &&
                 this.state.text === null &&
                 this.state.foundObject === null &&
-                (!this.state.showMenu || !this.state.inGameMenu);
+                !(this.state.showMenu || this.state.inGameMenu);
             if (showBehaviourMenu &&
                 ((!isMac && (key === 'ControlLeft' || key === 'ControlRight' || key === 17))
                 || (isMac && (key === 'MetaLeft' || key === 'MetaRight' || key === 91)))) {
@@ -320,7 +320,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             this.state.ask.choices.length === 0 &&
             this.state.text === null &&
             this.state.foundObject === null &&
-            (!this.state.showMenu || !this.state.inGameMenu);
+            !(this.state.showMenu || this.state.inGameMenu);
         if (hideBehaviourMenu &&
             ((!isMac && (key === 'ControlLeft' || key === 'ControlRight' || key === 17))
             || (isMac && (key === 'MetaLeft' || key === 'MetaRight' || key === 91)))) {
