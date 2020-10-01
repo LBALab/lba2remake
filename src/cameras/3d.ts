@@ -77,7 +77,7 @@ function processFollow3DMovement(controlsState, controlNode, scene, time) {
     if (!hero.threeObject)
         return;
 
-    if (hero.props.animIndex == AnimType.FOUND_OBJECT) {
+    if (hero.props.animIndex === AnimType.FOUND_OBJECT) {
         return;
     }
 
