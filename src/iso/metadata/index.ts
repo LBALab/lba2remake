@@ -25,24 +25,7 @@ export async function extractGridMetadata(grid, entry, ambience, is3D, numActors
     const replacements = await initReplacements(entry, metadata, ambience, numActors);
     const mirrorGroups = {};
 
-    forEachCell(grid, metadata, (cellInfo) => {
-        const { variants, replace, mirror, suppress } = cellInfo;
-        const candidates = [];
-        if (variants) {
-            processVariants(grid, cellInfo, replacements, candidates);
-        }
-        if (replace) {
-            processLayoutReplacement(grid, cellInfo, replacements, candidates);
-        }
-        processCandidates(replacements, cellInfo, candidates);
-        if (mirror) {
-            processLayoutMirror(cellInfo, mirrorGroups);
-        }
-        if (suppress) {
-            const { x, y, z } = cellInfo.pos;
-            replacements.bricks.add(`${x},${y},${z}`);
-        }
-    });
+    computeReplacements({grid, metadata, replacements, mirrorGroups, apply: true });
 
     return {
         replacements,
@@ -63,6 +46,12 @@ export async function saveSceneReplacementModel(entry, ambience) {
     const metadata = await loadMetadata(entry, grid.library, true);
     const replacements = await initReplacements(entry, metadata, ambience, 0);
 
+    computeReplacements({grid, metadata, replacements});
+    buildReplacementMeshes(replacements);
+    saveFullSceneModel(replacements, entry);
+}
+
+function computeReplacements({ grid, metadata, replacements, mirrorGroups = null, apply = false }) {
     forEachCell(grid, metadata, (cellInfo) => {
         const { variants, replace } = cellInfo;
         const candidates = [];
@@ -73,10 +62,17 @@ export async function saveSceneReplacementModel(entry, ambience) {
             processLayoutReplacement(grid, cellInfo, replacements, candidates);
         }
         processCandidates(replacements, cellInfo, candidates);
+        if (apply) {
+            const { mirror, suppress } = cellInfo;
+            if (mirror) {
+                processLayoutMirror(cellInfo, mirrorGroups);
+            }
+            if (suppress) {
+                const { x, y, z } = cellInfo.pos;
+                replacements.bricks.add(`${x},${y},${z}`);
+            }
+        }
     });
-
-    buildReplacementMeshes(replacements);
-    saveFullSceneModel(replacements, entry);
 }
 
 const volume = ({data}) => data.nX * data.nY * data.nZ;
