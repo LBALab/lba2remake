@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../utils/lba';
+import { AnimType } from '../game/data/animType';
 
 const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
 CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
@@ -75,6 +76,10 @@ function processFollow3DMovement(controlsState, controlNode, scene, time) {
     const hero = scene.actors[0];
     if (!hero.threeObject)
         return;
+
+    if (hero.props.animIndex === AnimType.FOUND_OBJECT) {
+        return;
+    }
 
     const heroPos = HERO_TARGET_POS.clone();
     const cameraPos = CAMERA_HERO_OFFSET.clone();

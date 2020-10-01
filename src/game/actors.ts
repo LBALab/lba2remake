@@ -70,6 +70,7 @@ export interface Actor {
     gotoSprite: Function;
     facePoint: Function;
     setAngle: Function;
+    setAngleRad: Function;
     getDistance: Function;
     getDistanceLba: Function;
     stop: Function;
@@ -181,6 +182,12 @@ export async function loadActor(
             this.props.runtimeFlags.isTurning = true;
             this.props.angle = angle;
             this.physics.temp.destAngle = angleToRad(angle);
+        },
+
+        setAngleRad(angle) {
+            this.props.runtimeFlags.isTurning = true;
+            this.props.angle = angle;
+            this.physics.temp.destAngle = angle;
         },
 
         getDistance(pos) {
