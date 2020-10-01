@@ -12,11 +12,15 @@ const IsoGridEditor = {
     settings: IsoGridEditorSettings,
     mainArea: true,
     getInitialState: () => ({
-        cam: 0
+        cam: 0,
+        isoGridIdx: 0
     }),
     stateHandler: {
         setCam(cam) {
             this.setState({cam});
+        },
+        setIsoGridIdx(isoGridIdx) {
+            this.setState({isoGridIdx});
         }
     },
     toolAreas: [

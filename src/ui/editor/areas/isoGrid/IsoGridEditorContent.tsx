@@ -333,8 +333,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
 
     frame() {
         const { renderer, clock, scene, cameras, controlsState } = this.state;
-        const { cam } = this.props.sharedState;
-        const { isoGridIdx } = DebugData.scope;
+        const { cam, isoGridIdx } = this.props.sharedState;
         if (this.isoGridIdx !== isoGridIdx && isoGridIdx !== undefined) {
             this.loadIsoGrid(isoGridIdx);
         }
