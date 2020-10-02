@@ -81,7 +81,8 @@ const EULER = new THREE.Euler();
 
 function processFirstPersonsMovement(game, scene, hero, time) {
     const controlsState = game.controlsState;
-    if (hero.props.runtimeFlags.isClimbing) {
+    if (hero.props.runtimeFlags.isClimbing ||
+        hero.props.runtimeFlags.isSearching) {
         return;
     }
     if (hero.props.runtimeFlags.isHit) {
@@ -249,9 +250,8 @@ function processFall(scene, hero) {
 
 function processActorMovement(game, scene, hero, time, behaviour) {
     const controlsState = game.controlsState;
-    if (hero.props.runtimeFlags.isClimbing) {
-        // Climbing logic is handled in the zone.ts implementation for LADDER
-        // zone types.
+    if (hero.props.runtimeFlags.isClimbing ||
+        hero.props.runtimeFlags.isSearching) {
         return;
     }
     if (hero.props.runtimeFlags.isHit) {

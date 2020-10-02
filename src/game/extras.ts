@@ -255,6 +255,7 @@ export function updateExtra(game, scene, extra, time) {
                 break;
             case SpriteType.KEY:
                 hero.keys += 1;
+                extra.info = 1;
                 break;
             case SpriteType.KASHES:
                 hero.money += extra.info;

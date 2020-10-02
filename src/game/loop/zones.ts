@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { getHtmlColor } from '../../scene';
 import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
+import { SampleType } from '../data/sampleType';
 import { angleTo, angleToRad, getRandom, WORLD_SCALE, BRICK_SIZE } from '../../utils/lba';
 import { addExtra, ExtraFlag, getBonus } from '../extras';
 
@@ -375,39 +376,35 @@ function BONUS(game, scene, zone, hero) {
     if (game.controlsState.action === 1) {
         game.controlsState.action = 0;
 
-        hero.props.prevEntityIndex = hero.props.entityIndex;
-        hero.props.prevAnimIndex = hero.props.animIndex;
-        hero.props.entityIndex = 0;
-        hero.props.animIndex = AnimType.ACTION;
+        hero.props.runtimeFlags.isSearching = true;
+        hero.setAnimWithCallback(AnimType.ACTION, () => {
+            game.getAudioManager().playSample(SampleType.TWINSEN_LANDING);
+            hero.props.runtimeFlags.isSearching = false;
 
-        if (zone.props.info2) {
-            return false;
-        }
+            if (zone.props.info2) {
+                return false;
+            }
 
-        const bonusSprite = getBonus(zone.props.info0);
+            const bonusSprite = getBonus(zone.props.info0);
+            let destAngle = angleTo(zone.physics.position, hero.physics.position);
+            destAngle += angleToRad(getRandom(0, 300) - 150);
 
-        let destAngle = angleTo(zone.physics.position, hero.physics.position);
-        destAngle += angleToRad(getRandom(0, 300) - 150);
-
-        const position = zone.physics.position.clone();
-        const offset = new THREE.Vector3(0, 0.5, 0);
-        offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
-        position.add(offset);
-
-        addExtra(
-            game,
-            scene,
-            position,
-            destAngle,
-            bonusSprite,
-            zone.props.info1,
-            game.getTime(),
-        ).then((extra) => {
-            extra.flags |= ExtraFlag.TIME_IN;
-
-            hero.props.entityIndex = hero.props.prevEntityIndex;
-            hero.props.animIndex = hero.props.prevAnimIndex;
-            zone.props.info2 = 1;
+            const position = zone.physics.position.clone();
+            const offset = new THREE.Vector3(0, 0.5, 0);
+            offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
+            position.add(offset);
+            addExtra(
+                game,
+                scene,
+                position,
+                destAngle,
+                bonusSprite,
+                zone.props.info1,
+                game.getTime(),
+            ).then((extra) => {
+                extra.flags |= ExtraFlag.TIME_IN;
+                zone.props.info2 = 1;
+            });
         });
         return true;
     }

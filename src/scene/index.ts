@@ -446,6 +446,7 @@ function createRuntimeFlags() {
         isTouchingGround: false,
         isTouchingFloor: false,
         isUsingProtoOrJetpack: false,
+        isSearching: false,
     };
 }
 
