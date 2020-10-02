@@ -17,7 +17,7 @@ const Main = require('./main.jsx');
 
 const app = express();
 
-app.set('port', process.env.PORT || 1447);
+app.set('port', process.env.PORT || 8080);
 app.set('host', process.env.HOST || '0.0.0.0');
 
 app.use(bodyParser.json());
