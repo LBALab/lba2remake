@@ -16,7 +16,11 @@ export function checkVariantMatch(grid, cellInfo, variant, replacements) {
         for (let x = 0; x < nX; x += 1) {
             const xGrid = xStart - x;
             const idxGrid = zGrid * 64 + xGrid;
-            const column = grid.cells[idxGrid].blocks;
+            const columnData = grid.cells[idxGrid];
+            if (!columnData || !columnData.blocks) {
+                return false;
+            }
+            const column = columnData.blocks;
             for (let y = 0; y < nY; y += 1) {
                 const yGrid = yStart + y;
                 const idxVariant = (nX - x - 1) + y * nX + (nZ - z - 1) * nX * nY;
