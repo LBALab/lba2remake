@@ -29,6 +29,7 @@ _Unknown date_
 - Dome of the Slate models.
 - Tralü’s Cave models.
 - School of Magic.
+- Many replacements in 'Grey Building' set (Chez Luc, Bazoo's Shop, Pharmacy, Bagage Claim).
 
 #### Editor
 
