@@ -454,6 +454,20 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 window.location.hash = '';
                 break;
             }
+            case -4: { // Enable Iso 3d
+                if (window.location.hash) {
+                    window.location.hash = `${window.location.hash}&iso3d=true`;
+                } else {
+                    window.location.hash = 'iso3d=true';
+                }
+                location.reload();
+                break;
+            }
+            case -5: { // Disable Iso 3d
+                window.location.hash = window.location.hash.replace('iso3d=true', '');
+                location.reload();
+                break;
+            }
         }
     }
 

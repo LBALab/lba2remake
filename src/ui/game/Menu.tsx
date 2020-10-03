@@ -21,7 +21,9 @@ const menuItems: Item[] = [
     { item: 'Teleport', index: -1, isVisible: true, isEnabled: true, textId: 'teleport' },
     { item: 'Editor', index: -2, isVisible: true, isEnabled: true, textId: 'editor' },
     { item: 'ExitEditor', index: -3, isVisible: true, isEnabled: true, textId: 'exitEditor' },
-    { item: 'Options', index: 74, isVisible: true, isEnabled: false, textId: null },
+    { item: 'Iso3D', index: -4, isVisible: true, isEnabled: true, textId: 'iso3d' },
+    { item: 'Iso3DDisable', index: -5, isVisible: true, isEnabled: true, textId: 'iso3dDisable' },
+    // { item: 'Options', index: 74, isVisible: true, isEnabled: false, textId: null },
     { item: 'Quit', index: 75, isVisible: false, isEnabled: false, textId: null },
 ];
 
@@ -59,6 +61,8 @@ export default class Menu extends React.Component<MProps, MState> {
             menu[0].isVisible = newProps.inGameMenu;
             menu[5].isVisible = !newProps.params.editor;
             menu[6].isVisible = newProps.params.editor;
+            menu[7].isVisible = !newProps.params.iso3d;
+            menu[8].isVisible = newProps.params.iso3d;
             const items = filter(menu, 'isVisible');
             each(items, (i) => {
                 if (i.textId) {
