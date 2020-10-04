@@ -1,9 +1,9 @@
+import { each } from 'lodash';
 import { loadMetadata } from './metadata';
 import {
     initReplacements,
-    processLayoutReplacement,
+    applyReplacement,
     buildReplacementMeshes,
-    addReplacementObject
 } from './replacements';
 import { processLayoutMirror, buildMirrors } from './mirrors';
 import { saveFullSceneModel } from './models';
@@ -11,7 +11,8 @@ import { loadGrid } from '../grid';
 import { loadImageData } from '..';
 import { loadBricks } from '../bricks';
 import { loadResource, ResourceType } from '../../resources';
-import { processVariants, suppressVariantBricks } from './variants';
+import { checkVariantMatch } from './matchers/variants';
+import { checkBaseLayoutMatch } from './matchers/baseLayout';
 
 export async function extractGridMetadata(grid, entry, ambience, is3D, numActors) {
     if (!is3D) {
@@ -25,24 +26,7 @@ export async function extractGridMetadata(grid, entry, ambience, is3D, numActors
     const replacements = await initReplacements(entry, metadata, ambience, numActors);
     const mirrorGroups = {};
 
-    forEachCell(grid, metadata, (cellInfo) => {
-        const { variants, replace, mirror, suppress } = cellInfo;
-        const candidates = [];
-        if (variants) {
-            processVariants(grid, cellInfo, replacements, candidates);
-        }
-        if (replace) {
-            processLayoutReplacement(grid, cellInfo, replacements, candidates);
-        }
-        processCandidates(replacements, cellInfo, candidates);
-        if (mirror) {
-            processLayoutMirror(cellInfo, mirrorGroups);
-        }
-        if (suppress) {
-            const { x, y, z } = cellInfo.pos;
-            replacements.bricks.add(`${x},${y},${z}`);
-        }
-    });
+    computeReplacements({grid, metadata, replacements, mirrorGroups, apply: true });
 
     return {
         replacements,
@@ -63,41 +47,63 @@ export async function saveSceneReplacementModel(entry, ambience) {
     const metadata = await loadMetadata(entry, grid.library, true);
     const replacements = await initReplacements(entry, metadata, ambience, 0);
 
-    forEachCell(grid, metadata, (cellInfo) => {
-        const { variants, replace } = cellInfo;
-        const candidates = [];
-        if (variants) {
-            processVariants(grid, cellInfo, replacements, candidates);
-        }
-        if (replace) {
-            processLayoutReplacement(grid, cellInfo, replacements, candidates);
-        }
-        processCandidates(replacements, cellInfo, candidates);
-    });
-
+    computeReplacements({grid, metadata, replacements});
     buildReplacementMeshes(replacements);
     saveFullSceneModel(replacements, entry);
 }
 
-const volume = ({data}) => data.nX * data.nY * data.nZ;
+function computeReplacements({ grid, metadata, replacements, mirrorGroups = null, apply = false }) {
+    each(metadata.variants, (variant) => {
+        forEachCell(grid, metadata, (cellInfo) => {
+            checkVariant(grid, cellInfo, replacements, variant);
+        });
+    });
+    forEachCell(grid, metadata, (cellInfo) => {
+        const { replace, mirror, suppress } = cellInfo;
+        if (replace) {
+            checkBaseLayout(grid, cellInfo, replacements);
+        }
 
-function processCandidates(replacements, cellInfo, candidates) {
-    if (candidates.length > 0) {
-        candidates.sort((a, b) => volume(b) - volume(a));
-        const candidate = candidates[0];
-        const { x, y, z } = cellInfo.pos;
-        const { nX, nZ } = candidate.data;
-        const realY = (y * 0.5) + 0.5;
-        const realZ = z - 1;
-        suppressVariantBricks(replacements, candidate.data, cellInfo);
-        if (replacements.mergeReplacements) {
-            addReplacementObject(
-                candidate.replacementData,
-                replacements,
-                x - (nX * 0.5) + 1,
-                realY - 0.5,
-                realZ - (nZ * 0.5) + 1
-            );
+        if (apply) {
+            if (mirror) {
+                processLayoutMirror(cellInfo, mirrorGroups);
+            }
+            if (suppress) {
+                const { x, y, z } = cellInfo.pos;
+                replacements.bricks.add(`${x},${y},${z}`);
+            }
+        }
+    });
+}
+
+function checkVariant(grid, cellInfo, replacements, variant) {
+    if (checkVariantMatch(grid, cellInfo, variant.props, replacements)) {
+        applyReplacement(cellInfo, replacements, {
+            type: 'variant',
+            data: variant.props,
+            replacementData: {
+                ...variant,
+                parent: cellInfo
+            }
+        });
+    }
+}
+
+function checkBaseLayout(grid, cellInfo, replacements) {
+    const {y} = cellInfo.pos;
+    const {nX, nY, nZ} = cellInfo.layout;
+    const idx = cellInfo.blocks[y].block;
+    const zb = Math.floor(idx / (nY * nX));
+    const yb = Math.floor(idx / nX) - (zb * nY);
+    const xb = idx % nX;
+    // Check brick at the bottom corner of layout
+    if (yb === 0 && xb === nX - 1 && zb === nZ - 1) {
+        if (checkBaseLayoutMatch(grid, cellInfo, replacements)) {
+            applyReplacement(cellInfo, replacements, {
+                type: 'layout',
+                data: cellInfo.layout,
+                replacementData: cellInfo
+            });
         }
     }
 }

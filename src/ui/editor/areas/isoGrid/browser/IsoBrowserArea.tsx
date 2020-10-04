@@ -6,7 +6,6 @@ import findScenePath from '../../gameplay/locator/findScenePath';
 import { loadSceneMapData } from '../../../../../scene/map';
 import { makeOutlinerArea } from '../../utils/outliner';
 import { loadResource, ResourceType } from '../../../../../resources';
-import DebugData from '../../../DebugData';
 
 const IsoScenesNode = { children: [] };
 
@@ -62,11 +61,13 @@ async function collectIsoScenes(location, scenes, push = true) {
         const newLocation = {
             ...location,
             children,
-            onClick: () => {
-                DebugData.scope.isoGridIdx = location.props[0].value;
+            onClick: (_data, _setRoot, component) => {
+                const { setIsoGridIdx } = component.props.rootStateHandler;
+                setIsoGridIdx(location.props[0].value);
             },
-            selected: () => {
-                return DebugData.scope.isoGridIdx === location.props[0].value;
+            selected: (_data, _ignored, component) => {
+                const { isoGridIdx } = component.props.rootState;
+                return isoGridIdx === location.props[0].value;
             }
         };
         if (push && newLocation.props) {
@@ -94,10 +95,15 @@ async function collectIsoScenes(location, scenes, push = true) {
     return location;
 }
 
+let firstFrame = true;
+
 const IsoBrowserArea = makeOutlinerArea('iso_browser', 'Iso Grids', IsoScenesNode, {
     icon: 'folder.png',
     frame() {
-        const isoGridIdx = DebugData.scope.isoGridIdx;
+        const isoGridIdx = this.props.sharedState.isoGridIdx;
+        if (firstFrame && this.isoGridIdx === undefined) {
+            this.props.stateHandler.setLibraryFilter(-1);
+        }
         if (isoGridIdx !== this.isoGridIdx) {
             this.isoGridIdx = isoGridIdx;
             const path = findScenePath(IsoScenesNode, isoGridIdx);
@@ -109,6 +115,7 @@ const IsoBrowserArea = makeOutlinerArea('iso_browser', 'Iso Grids', IsoScenesNod
         if (filterLibrary === null) {
             filterNodes(this.props.sharedState.libraryFilter);
         }
+        firstFrame = false;
     },
     stateHandler: {
         setActivePath(activePath) {

@@ -286,9 +286,9 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             const { x, y, z } = selectionData;
             this.state.selectionObj.visible = true;
             this.state.selectionObj.position.set(
-                (64.5 - x) / 32,
+                (64.5 - z) / 32,
                 (y + 0.5) / 64,
-                (z + 0.5) / 32
+                (x + 0.5) / 32
             );
             this.state.selectionObj.position.multiplyScalar(WORLD_SIZE);
             this.setState({ selectionData }, this.saveData);
@@ -333,8 +333,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
 
     frame() {
         const { renderer, clock, scene, cameras, controlsState } = this.state;
-        const { cam } = this.props.sharedState;
-        const { isoGridIdx } = DebugData.scope;
+        const { cam, isoGridIdx } = this.props.sharedState;
         if (this.isoGridIdx !== isoGridIdx && isoGridIdx !== undefined) {
             this.loadIsoGrid(isoGridIdx);
         }

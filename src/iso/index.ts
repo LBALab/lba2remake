@@ -82,17 +82,17 @@ function pickBrick(grid, raycaster: THREE.Raycaster) {
     const BB = new THREE.Box3();
     let result = null;
     const { library, cells } = grid;
-    for (let x = 63; x >= 0; x -= 1) {
-        for (let z = 63; z >= 0; z -= 1) {
-            const cell = cells[(x * 64) + z];
+    for (let z = 63; z >= 0; z -= 1) {
+        for (let x = 63; x >= 0; x -= 1) {
+            const cell = cells[(z * 64) + x];
             if (cell) {
                 const blocks = cell.blocks;
                 for (let y = 0; y < blocks.length; y += 1) {
                     if (blocks[y]) {
                         const layout = library.layouts[blocks[y].layout];
                         if (layout) {
-                            BB.min.set((64 - x) / 32, y / 64, z / 32);
-                            BB.max.set((65 - x) / 32, (y + 1) / 64, (z + 1) / 32);
+                            BB.min.set((64 - z) / 32, y / 64, x / 32);
+                            BB.max.set((65 - z) / 32, (y + 1) / 64, (x + 1) / 32);
                             BB.min.multiplyScalar(WORLD_SIZE);
                             BB.max.multiplyScalar(WORLD_SIZE);
                             const block = layout.blocks[blocks[y].block];
