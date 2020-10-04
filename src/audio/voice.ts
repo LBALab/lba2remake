@@ -1,5 +1,5 @@
 import { createSource } from './audioSource';
-import { loadResource } from '../resources';
+import { getVoices } from '../resources';
 
 const createVoiceSource = (context: any) => {
     const source = createSource(context);
@@ -7,13 +7,7 @@ const createVoiceSource = (context: any) => {
         if (!source.volume) {
             return;
         }
-        const textBank = `${textBankId}`;
-        let resId = `VOICES_${(`000${textBank}`)
-            .substring(0, 3 - textBank.length) + textBank}`;
-        if (textBankId === -1) {
-            resId = 'VOICES_GAM';
-        }
-        const resource = await loadResource(resId);
+        const resource = await getVoices(textBankId);
         if (!resource) {
             return;
         }

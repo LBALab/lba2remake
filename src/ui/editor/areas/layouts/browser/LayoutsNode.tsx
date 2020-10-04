@@ -2,7 +2,7 @@ import * as React from 'react';
 import { map, times } from 'lodash';
 import DebugData from '../../../DebugData';
 import Renderer from '../../../../../renderer';
-import { loadResource, ResourceType } from '../../../../../resources';
+import { getBricks } from '../../../../../resources';
 
 const indexStyle = {
     position: 'absolute' as const,
@@ -207,7 +207,7 @@ const libraries = {};
 
 const getLayouts = () => {
     if (!bkg) {
-        loadResource(ResourceType.BRICKS).then((lBkg) => {
+        getBricks().then((lBkg) => {
             bkg = lBkg;
         });
     }

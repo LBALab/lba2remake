@@ -8,7 +8,7 @@ import {
     LUT_DIM
 } from '../../../../../utils/lut';
 import { editor, fullscreen } from '../../../../styles';
-import { loadResource, ResourceType } from '../../../../../resources';
+import { getPalette } from '../../../../../resources';
 import FrameListener from '../../../../utils/FrameListener';
 import { TickerProps } from '../../../../utils/Ticker';
 import DebugData from '../../../DebugData';
@@ -100,7 +100,7 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
     }
 
     async load() {
-        const pal = await loadResource(ResourceType.PALETTE);
+        const pal = await getPalette();
         this.palette = pal.getBufferUint8();
         this.draw();
         this.lutTexture = await loadLUTTexture();

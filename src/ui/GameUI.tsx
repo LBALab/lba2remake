@@ -28,7 +28,7 @@ import {TickerProps } from './utils/Ticker';
 import {updateLabels} from './editor/labels';
 import { setFog } from './editor/fog';
 import { pure } from '../utils/decorators';
-import { getResourcePath, ResourceType } from '../resources';
+import { getVideoPath } from '../resources';
 import BehaviourMenu from './game/BehaviourMenu';
 import NoAudio from './game/NoAudio';
 
@@ -408,7 +408,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 this.state.game.pause();
                 this.setState({
                     video: {
-                        path: getResourcePath(ResourceType.VIDEO_INTRO),
+                        path: getVideoPath('INTRO'),
                         onEnded
                     }
                 }, this.saveData);
