@@ -158,8 +158,8 @@ function findLightningPosition(lightning, islandSections, {hero, camera}) {
             const ground = getGroundInfo(section, position);
             position.y = ground.height;
             let hitObj = false;
-            for (let i = 0; i < section.boundingBoxes.length; i += 1) {
-                const bb = section.boundingBoxes[i];
+            for (let i = 0; i < section.objectInfo.length; i += 1) {
+                const bb = section.objectInfo[i].boundingBox;
                 if (bb.containsPoint(position)) {
                     position.y = bb.max.y;
                     hitObj = true;
