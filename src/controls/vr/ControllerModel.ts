@@ -5,6 +5,7 @@ import { MotionController } from '@webxr-input-profiles/motion-controllers';
 import { drawFrame } from '../../ui/vr/vrUtils';
 import { tr } from '../../lang';
 import { getPartialMatrixWorld } from '../../utils/math';
+import { BehaviourMode } from '../../game/loop/hero';
 
 const loader = new GLTFLoader();
 
@@ -27,6 +28,7 @@ export default class ControllerModel {
     threeObject: THREE.Object3D;
     vrControllerMesh: THREE.Object3D;
     handMesh: THREE.Object3D;
+    handFistsMesh: THREE.Object3D;
     labels: THREE.Object3D;
     labels1stPerson: THREE.Object3D;
     labels3rdPerson: THREE.Object3D;
@@ -55,7 +57,18 @@ export default class ControllerModel {
                 (node.material as any).transparent = true;
             }
         });
+        this.handFistsMesh = await new Promise<THREE.Object3D>((resolve) => {
+            loader.load('models/hands_fists.glb', (m) => {
+                resolve(m.scene.getObjectByName(`${this.handedness}_hand`));
+            });
+        });
+        this.handFistsMesh.traverse((node) => {
+            if (node instanceof THREE.Mesh) {
+                (node.material as any).transparent = true;
+            }
+        });
         this.threeObject.add(this.handMesh);
+        this.threeObject.add(this.handFistsMesh);
         this.threeObject.add(this.vrControllerMesh);
         this.addTouchPoints();
         // Update all matrices for correct label placement
@@ -68,12 +81,29 @@ export default class ControllerModel {
     }
 
     update(ctx) {
-        const { game, showController } = ctx;
+        const { game, scene, showController } = ctx;
         const { controlsState } = game;
         this.labels1stPerson.visible = !!controlsState.firstPerson;
         this.labels3rdPerson.visible = !controlsState.firstPerson;
         this.vrControllerMesh.visible = showController;
-        this.handMesh.visible = !showController && !!controlsState.firstPerson;
+
+        if (showController) {
+            this.handFistsMesh.visible = false;
+            this.handMesh.visible = false;
+        } else if (!!controlsState.firstPerson) {
+            // Swap to use fists if Twinsen is in agressive mode.
+            if (scene && scene.actors[0]) {
+                const hero = scene.actors[0];
+                this.handMesh.visible = (hero.props.entityIndex !== BehaviourMode.AGGRESSIVE);
+                this.handFistsMesh.visible = (hero.props.entityIndex === BehaviourMode.AGGRESSIVE);
+            } else {
+                // If we're not in a scene, default to showing the normal hands.
+                // This should never happen.
+                this.handMesh.visible = true;
+                this.handFistsMesh.visible = false;
+            }
+        }
+
         each(this.motionController.components, (component: any) => {
             each(component.visualResponses, (visualResponse) => {
                 // Find the topmost node in the visualization
