@@ -359,7 +359,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
             if (!controlsState.sideStep) {
                 const euler = new THREE.Euler();
                 euler.setFromQuaternion(hero.physics.orientation, 'YXZ');
-                if (euler.y < -1) {
+                if (euler.y < 0) {
                     euler.y += 2 * Math.PI;
                 }
                 hero.physics.temp.angle = euler.y;
