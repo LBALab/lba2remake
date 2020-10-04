@@ -15,7 +15,7 @@ const TransparentObjectOffset = {
 
 export function loadObjects(section, geometries, models, atlas, island) {
     const numObjects = section.objInfo.numObjects;
-    section.boundingBoxes = [];
+    section.objectInfo = [];
     for (let i = 0; i < numObjects; i += 1) {
         const info = loadObjectInfo(section.objects, section, i);
         const model = models[info.index];
@@ -28,7 +28,10 @@ export function loadObjects(section, geometries, models, atlas, island) {
         bb.max.multiplyScalar(WORLD_SCALE);
         bb.applyMatrix4(angleMatrix[(info.angle + 3) % 4]);
         bb.translate(new THREE.Vector3(info.x, info.y, info.z));
-        section.boundingBoxes.push(bb);
+        section.objectInfo.push({
+            boundingBox: bb,
+            info,
+        });
     }
 }
 
@@ -38,13 +41,15 @@ function loadObjectInfo(objects, section, index) {
     const oy = objects.getInt32(offset + 8, true);
     const oz = objects.getInt32(offset + 4, true);
     const angle = objects.getUint8(offset + 21) >> 2;
+    const soundType = objects.getInt16(offset + 16, true);
     return {
         index: objects.getUint32(offset, true),
         x: (((0x8000 - ox) + 512) * WORLD_SCALE) + (section.x * WORLD_SIZE * 2),
         y: oy * WORLD_SCALE,
         z: (oz * WORLD_SCALE) + (section.z * WORLD_SIZE * 2),
         angle,
-        iv: 1
+        iv: 1,
+        soundType,
     };
 }
 
@@ -57,7 +62,7 @@ function loadFaces(geometries, model, info, atlas, island) {
     let offset = 0;
     while (offset < data.byteLength) {
         const section = parseSectionHeader(data, model, offset);
-        loadSection(geometries, model, info, section, atlas, island);
+        loadFaceSection(geometries, model, info, section, atlas, island);
         offset += section.size + 8;
     }
 }
@@ -78,7 +83,7 @@ function parseSectionHeader(data, object, offset) {
     };
 }
 
-function loadSection(geometries, object, info, section, atlas, island) {
+function loadFaceSection(geometries, object, info, section, atlas, island) {
     for (let i = 0; i < section.numFaces; i += 1) {
         const uvGroup = getUVGroup(object, section, i, atlas);
         const faceNormal = getFaceNormal(object, section, info, i);
