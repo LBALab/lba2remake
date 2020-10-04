@@ -28,9 +28,9 @@ const ResourceTypes = {
     '3DE': { type: '3DE', description: 'LBA1 File 3D Entity', parser: NOP },
     F3D: { type: 'F3D', description: 'LBA2 Entity Information', parser: NOP },
     PAL: { type: 'PAL', description: 'LBA Palette', parser: parsePalette },
-    OBJ: { type: 'OBJ', description: 'LBA Unknown File', parser: NOP },
-    HQR: { type: 'HQR', description: 'LBA Unknown File', parser: NOP },
-    ILE: { type: 'ILE', description: 'LBA Unknown File', parser: NOP },
+    OBL: { type: 'OBL', description: 'LBA2 Island Object HQR File', parser: NOP },
+    HQR: { type: 'HQR', description: 'LBA High Quality Resource', parser: NOP },
+    ILE: { type: 'ILE', description: 'LBA2 Island HQR File', parser: NOP },
 };
 
 export { ResourceTypes };
