@@ -4,6 +4,8 @@ const bucketName = 'lba2remake';
 const filename = process.argv[2];
 const targetFilename = process.argv[3];
 
+console.log(`Uploading ${filename} to gs://${bucketName}/${targetFilename}...`);
+
 if (!process.env.GCS_SERVICE_ACCOUNT) {
     throw new Error('You need to define a GCS_SERVICE_ACCOUNT to upload files');
 }
