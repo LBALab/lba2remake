@@ -6,7 +6,7 @@ import { compile } from '../utils/shaders';
 import { WORLD_SCALE } from '../utils/lba';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
-import { loadResource, ResourceType } from '../resources';
+import { loadResource, ResourceName } from '../resources';
 import { makeStars, makeStarsMaterial } from './misc/dome_env';
 
 const loader = new GLTFLoader();
@@ -24,10 +24,10 @@ export async function loadSprite(
     spriteReplacements = {}
 ) {
     const [ress, pal, spritesFile, spritesRaw] = await Promise.all([
-        loadResource(ResourceType.RESS),
-        loadResource(ResourceType.PALETTE),
-        loadResource(ResourceType.SPRITES),
-        loadResource(ResourceType.SPRITERAW)
+        loadResource(ResourceName.RESS),
+        loadResource(ResourceName.PALETTE),
+        loadResource(ResourceName.SPRITES),
+        loadResource(ResourceName.SPRITERAW)
     ]);
     const palette = pal.getBufferUint8();
     // lets keep it with two separate textures for now

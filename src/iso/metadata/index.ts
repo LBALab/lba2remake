@@ -10,7 +10,7 @@ import { saveFullSceneModel } from './models';
 import { loadGrid } from '../grid';
 import { loadImageData } from '..';
 import { loadBricks } from '../bricks';
-import { loadResource, ResourceType } from '../../resources';
+import { loadResource, ResourceName } from '../../resources';
 import { checkVariantMatch } from './matchers/variants';
 import { checkBaseLayoutMatch } from './matchers/baseLayout';
 
@@ -36,8 +36,8 @@ export async function extractGridMetadata(grid, entry, ambience, is3D, numActors
 
 export async function saveSceneReplacementModel(entry, ambience) {
     const [pal, bkg, mask] = await Promise.all([
-        loadResource(ResourceType.PALETTE),
-        loadResource(ResourceType.BRICKS),
+        loadResource(ResourceName.PALETTE),
+        loadResource(ResourceName.BRICKS),
         loadImageData('images/brick_mask.png')
     ]);
     const palette = pal.getBufferUint8();

@@ -2,7 +2,7 @@
 import HQR, { loadHqr } from '../hqr';
 import WebApi from '../webapi';
 
-const ResourceStrategyType = {
+const ResourceStrategy = {
     TRANSIENT: 0,
     STATIC: 1,
 };
@@ -15,7 +15,7 @@ const HQRExtensions = [
     '.zip',
 ];
 
-const ResourceType = {
+const ResourceName = {
     NONE: 'NONE',
     ANIM: 'ANIM',
     BODY: 'BODY',
@@ -38,8 +38,8 @@ const ResourceType = {
 interface Resource {
     id: number;
     ref: Resource;
-    type: number;
-    name: string;
+    strategy: number;
+    description: string;
     path: string;
     length: number;
     index: number;
@@ -57,16 +57,16 @@ interface Resource {
     entries: [];
 }
 
-let Resources: Resource | {} = { };
+const Resources = {};
 
 const requestResource = async (
     url,
-    name = null,
+    description = null,
     mandatory = true,
 ) => {
     const send = (eventName, progress?) => {
-        if (name) {
-            document.dispatchEvent(new CustomEvent(eventName, {detail: {name, progress}}));
+        if (description) {
+            document.dispatchEvent(new CustomEvent(eventName, {detail: {description, progress}}));
         }
     };
     return new Promise((resolve: Function, reject: Function) => {
@@ -98,9 +98,9 @@ const requestResource = async (
 
 /** Add Resource */
 const register = (
-    type: number,
+    strategy: number,
     id: string,
-    name: string,
+    description: string,
     path: string,
     entryIndex: number,
 ) => {
@@ -110,8 +110,8 @@ const register = (
 
     const resource = {
         id,
-        type,
-        name,
+        strategy,
+        description,
         path,
         index: entryIndex,
         loaded: false,
@@ -134,7 +134,7 @@ const register = (
     // check if we have already a resource with same file
     // reuse the file to have a single file loaded in memory
     // but keep reference to this resource
-    for (const res of Object.values(Resources)) {
+    for (const res of Object.values<Resource>(Resources)) {
         if (res.path === path) {
             resource.ref = res;
             break;
@@ -224,38 +224,38 @@ const register = (
     Resources[id] = resource;
 };
 
-const releaseAllResources = () => {
-    Resources = {};
-};
+// const releaseAllResources = () => {
+//     Resources = {};
+// };
 
-const releaseTransientResources = () => {
-    for (const res of Object.values(Resources)) {
-        if (res.type === ResourceStrategyType.TRANSIENT) {
-            releaseResource(res.id);
-        }
-    }
-};
+// const releaseTransientResources = () => {
+//     for (const res of Object.values(Resources)) {
+//         if (res.strategy === ResourceStrategy.TRANSIENT) {
+//             releaseResource(res.id);
+//         }
+//     }
+// };
 
-const releaseResource = (id: string) => {
-    const res = Resources[id];
-    if (res) {
-        delete res.hqr;
-        res.loaded = false;
-        res.length = 0;
-    }
-};
+// const releaseResource = (id: string) => {
+//     const res = Resources[id];
+//     if (res) {
+//         delete res.hqr;
+//         res.loaded = false;
+//         res.length = 0;
+//     }
+// };
 
 const preloadResources = async () => {
     const preload = [];
     const resPreload = [];
-    for (const res of Object.values(Resources)) {
-        if (!res.loaded && res.type === ResourceStrategyType.STATIC) {
-            preload.push(requestResource(res.path, res.name));
+    for (const res of Object.values<Resource>(Resources)) {
+        if (!res.loaded && res.strategy === ResourceStrategy.STATIC) {
+            preload.push(requestResource(res.path, res.description));
         }
     }
     await Promise.all(preload);
-    for (const res of Object.values(Resources)) {
-        if (!res.loaded && res.type === ResourceStrategyType.STATIC) {
+    for (const res of Object.values<Resource>(Resources)) {
+        if (!res.loaded && res.strategy === ResourceStrategy.STATIC) {
             resPreload.push(res.load());
         }
     }
@@ -270,9 +270,9 @@ const loadResource = async (id: string) => {
     return resource;
 };
 
-const getResource = (id: string) => {
-    return Resources[id];
-};
+// const getResource = (id: string) => {
+//     return Resources[id];
+// };
 
 const getResourcePath = (id: string) => {
     return Resources[id].path;
@@ -289,19 +289,15 @@ const registerResources = async (game, language, languageVoice) => {
             const r = res.entries[e];
             let path = r.path.replace('%LANGCODE%', language);
             path = path.replace('%LANGVOICECODE%', languageVoice);
-            register(ResourceStrategyType[r.strategy], r.type, r.name, path, r.index);
+            register(ResourceStrategy[r.strategy], r.id, r.description, path, r.index);
         }
     }
 };
 
 export {
-    ResourceType,
-    releaseAllResources,
-    releaseTransientResources,
-    releaseResource,
+    ResourceName,
     preloadResources,
     loadResource,
-    getResource,
     getResourcePath,
     registerResources,
 };

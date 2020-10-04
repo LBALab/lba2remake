@@ -27,7 +27,7 @@ import { getLanguageConfig } from '../../../../lang';
 import { saveSceneReplacementModel } from '../../../../iso/metadata';
 import {
     loadResource,
-    ResourceType,
+    ResourceName,
     preloadResources,
     registerResources
 } from '../../../../resources';
@@ -338,8 +338,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.library = libraryIdx;
         this.variant = variant;
         const [pal, bkg, lutTexture] = await Promise.all([
-            loadResource(ResourceType.PALETTE),
-            loadResource(ResourceType.BRICKS),
+            loadResource(ResourceName.PALETTE),
+            loadResource(ResourceName.BRICKS),
             await loadLUTTexture(),
         ]);
         const palette = pal.getBufferUint8();
@@ -556,7 +556,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             orientation: 0
         };
         const [pal, lutTexture] = await Promise.all([
-            loadResource(ResourceType.PALETTE),
+            loadResource(ResourceName.PALETTE),
             await loadLUTTexture(),
         ]);
         const palette = pal.getBufferUint8();
@@ -996,7 +996,7 @@ function getLightVector() {
 }
 
 async function findScenesUsingLibrary(library) {
-    const bkg = await loadResource(ResourceType.BRICKS);
+    const bkg = await loadResource(ResourceName.BRICKS);
     const sceneMap = await loadSceneMapData();
     const scenes = [];
     each(times(222), async (scene) => {
