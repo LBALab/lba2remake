@@ -1,6 +1,7 @@
 import { clone } from 'lodash';
 import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
+import { SampleType } from '../data/sampleType';
 import { setMagicBallLevel } from '../../game/state';
 import { unimplemented } from './utils';
 import { WORLD_SCALE, getRandom } from '../../utils/lba';
@@ -232,7 +233,7 @@ export function FOUND_OBJECT(cmdState, id) {
         }
 
         this.game.getState().flags.quest[id] = 1;
-        audio.playSample(6);
+        audio.playSample(SampleType.OBJECT_FOUND);
         const text = this.game.texts[id];
         this.game.setUiState({
             text: {

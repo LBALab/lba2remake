@@ -5,6 +5,7 @@ import { getRandom, distance2D } from '../../utils/lba';
 import { unimplemented } from '../scripting/utils';
 import { addExtra, ExtraFlag, getBonus } from '../extras';
 import { SpriteType } from '../data/spriteType';
+import { SampleType } from '../data/sampleType';
 
 export const NOP = unimplemented();
 
@@ -16,8 +17,6 @@ export const ANIM = unimplemented();
 
 export const ANIP = unimplemented();
 
-const DEATH_SAMPLE = 14;
-
 function processHit(actor, hitStrength, game, scene) {
     for (const a of scene.actors) {
         if (a.index === actor.index || !a.isVisible ||
@@ -28,7 +27,7 @@ function processHit(actor, hitStrength, game, scene) {
         if (distance2D(a.physics.position, actor.physics.position) < 1) {
             a.hit(actor.index, hitStrength);
             if (a.props.runtimeFlags.isDead) {
-                game.getAudioManager().playSample(DEATH_SAMPLE);
+                game.getAudioManager().playSample(SampleType.ACTOR_DYING);
                 if (a.props.extraType) {
                     const angle = a.physics.temp.angle - Math.PI / 2;
                     addExtra(game, scene, a.physics.position, angle,
