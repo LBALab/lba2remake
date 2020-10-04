@@ -25,7 +25,6 @@ import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { createFPSCounter } from '../ui/vr/vrFPS';
 import { createVRGUI } from '../ui/vr/vrGUI';
 import { angleToRad, WORLD_SIZE } from '../utils/lba';
-import { getLanguageConfig } from '../lang';
 import { makePure } from '../utils/debug';
 import { getVrFirstPersonCamera } from '../cameras/vr/vrFirstPerson';
 
@@ -138,7 +137,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
 }
 
 async function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent) {
-    const sceneData = await loadSceneData(getLanguageConfig().language, index);
+    const sceneData = await loadSceneData(index);
     const modelReplacements = await loadModelReplacements();
     if (params.editor) {
         await loadSceneMetaData(index);

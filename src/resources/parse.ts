@@ -1,11 +1,9 @@
 import { Resource } from './load';
+import { parsePalette } from './parsers/palette';
+import { parseText } from './parsers/text';
 
 const NOP = (resource: Resource) => {
     return resource;
-};
-
-const parsePalette = async (resource: Resource) => {
-    return resource.getBufferUint8();
 };
 
 const ResourceTypes = {
@@ -21,7 +19,7 @@ const ResourceTypes = {
     LS2: { type: 'LS2', description: 'LBA2 Scene', parser: NOP },
     LSP: { type: 'LSP', description: 'LBA Sprite', parser: NOP },
     LSR: { type: 'LSR', description: 'LBA2 Sprite Raw', parser: NOP },
-    LBT: { type: 'LBT', description: 'LBA Text Dialog', parser: NOP },
+    LBT: { type: 'LBT', description: 'LBA Text Dialog', parser: parseText },
     BL1: { type: 'BL1', description: 'LBA1 Brick Layout', parser: NOP },
     BL2: { type: 'BL2', description: 'LBA2 Brick Layout', parser: NOP },
     BRK: { type: 'BRK', description: 'LBA Brick Sprite', parser: NOP },

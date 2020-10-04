@@ -8,7 +8,6 @@ import { TickerProps } from '../../../utils/Ticker';
 import { getIsometricCamera } from '../../../../cameras/iso';
 import { loadIsometricScenery } from '../../../../iso';
 import { loadSceneMapData } from '../../../../scene/map';
-import { getLanguageConfig } from '../../../../lang';
 import { loadSceneData } from '../../../../scene';
 import { getIso3DCamera } from '../../../../cameras/iso3d';
 import {
@@ -304,7 +303,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         }
         this.loading = true;
         this.isoGridIdx = isoGridIdx;
-        const sceneData = await loadSceneData(getLanguageConfig().language, isoGridIdx);
+        const sceneData = await loadSceneData(isoGridIdx);
         const sceneMap = await loadSceneMapData();
         const isoGrid = await loadIsometricScenery(
             sceneMap[isoGridIdx].index,

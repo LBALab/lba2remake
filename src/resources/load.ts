@@ -227,8 +227,8 @@ const register = (
         resource.loaded = true;
     };
 
-    resource.parse = async () => {
-        return await ResourceTypes[resource.type].parser(resource);
+    resource.parse = async (index?: number, language?: any) => {
+        return await ResourceTypes[resource.type].parser(resource, index, language);
     };
 
     Resources[id] = resource;
@@ -272,12 +272,12 @@ const preloadResources = async () => {
     await Promise.all(resPreload);
 };
 
-const loadResource = async (id: string) => {
+const loadResource = async (id: string, index?: number, language?: any) => {
     const resource = Resources[id];
     if (resource && !resource.loaded) {
         await resource.load();
     }
-    return resource.parse();
+    return await resource.parse(index, language);
 };
 
 // const getResource = (id: string) => {

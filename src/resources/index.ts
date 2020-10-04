@@ -5,6 +5,7 @@ import {
     getResourcePath,
     registerResources,
 }  from './load';
+import { getLanguageConfig } from '../lang';
 
 const getVideoPath = (video: string) => {
     return getResourcePath(`VIDEO_${video}`);
@@ -50,8 +51,9 @@ const getIslandObjects = async (name: string) => {
     return await loadResource(`${name}_OBL`);
 };
 
-const getText = async () => {
-    return await loadResource(ResourceName.TEXT);
+const getText = async (index: number) => {
+    const { language } = getLanguageConfig();
+    return await loadResource(ResourceName.TEXT, index, language);
 };
 
 const getScene = async () => {

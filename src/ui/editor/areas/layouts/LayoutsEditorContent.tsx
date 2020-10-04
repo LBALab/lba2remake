@@ -23,7 +23,6 @@ import { loadPaletteTexture } from '../../../../texture';
 import { replaceMaterialsForPreview } from '../../../../iso/metadata/preview';
 import { loadSceneMapData } from '../../../../scene/map';
 import { loadSceneData } from '../../../../scene';
-import { getLanguageConfig } from '../../../../lang';
 import { saveSceneReplacementModel } from '../../../../iso/metadata';
 import {
     registerResources,
@@ -681,7 +680,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         for (let i = 0; i < scenes.length; i += 1) {
             const scene = scenes[i];
             this.setState({ updateProgress: `Updating scene ${i + 1} / ${scenes.length}` });
-            const sceneData = await loadSceneData(getLanguageConfig().language, scene);
+            const sceneData = await loadSceneData(scene);
             const sceneMap = await loadSceneMapData();
             await saveSceneReplacementModel(sceneMap[scene].index, sceneData.ambience);
         }

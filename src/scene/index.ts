@@ -2,24 +2,22 @@ import * as THREE from 'three';
 
 import { DirMode } from '../game/actors';
 import { bits } from '../utils';
-import { loadTextData } from '../text';
 import  {WORLD_SCALE } from '../utils/lba';
 import { getCommonResource, getPalette, getScene, getText } from '../resources';
 
-export async function loadSceneData(language, index) {
-    const [scene, text, ress, pal] = await Promise.all([
+export async function loadSceneData(index) {
+    const [scene, ress, pal] = await Promise.all([
         getScene(),
-        getText(),
         getCommonResource(),
         getPalette(),
     ]);
-    const files = {scene, text, ress, pal};
-    return loadSceneDataSync(files, language, index);
+    const files = {scene, ress, pal};
+    return await loadSceneDataSync(files, index);
 }
 
 const cachedSceneData = [];
 
-function loadSceneDataSync(files, language, index) {
+async function loadSceneDataSync(files, index) {
     if (cachedSceneData[index]) {
         return cachedSceneData[index];
     }
@@ -29,7 +27,7 @@ function loadSceneDataSync(files, language, index) {
     const sceneData = {
         index,
         textBankId,
-        textIndex: (textBankId * 2) + 6 + (language.index * 30),
+        textIndex: (textBankId * 2) + 6,
         gameOverScene: data.getInt8(1),
         unknown1: data.getUint16(2, true),
         unknown2: data.getUint16(4, true),
@@ -48,7 +46,7 @@ function loadSceneDataSync(files, language, index) {
     offset = loadPoints(sceneData, offset);
     loadPatches(sceneData, offset);
 
-    sceneData.texts = loadTextData(files.text, {data: language, index: sceneData.textIndex});
+    sceneData.texts = await getText(sceneData.textIndex);
 
     cachedSceneData[index] = sceneData;
     return sceneData;
