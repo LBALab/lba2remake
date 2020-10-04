@@ -24,8 +24,8 @@ function processCameraCollisions(sections, camPosition, groundOffset = 0.15, obj
     const ground = getGroundInfo(section, camPosition);
     camPosition.y = Math.max(ground.height + groundOffset * WORLD_SIZE, camPosition.y);
     if (section) {
-        for (let i = 0; i < section.boundingBoxes.length; i += 1) {
-            const bb = section.boundingBoxes[i];
+        for (let i = 0; i < section.objectInfo.length; i += 1) {
+            const bb = section.objectInfo[i].boundingBox;
             if (bb.containsPoint(camPosition)) {
                 camPosition.y = bb.max.y + objOffset * WORLD_SIZE;
             }
@@ -93,8 +93,8 @@ function getFloorHeight(sections, scene, obj, minFunc, floorThreshold) {
         ACTOR_BOX.copy(obj.model.boundingBox);
         ACTOR_BOX.translate(POSITION);
         const section = findSection(sections, POSITION);
-        for (let i = 0; i < section.boundingBoxes.length; i += 1) {
-            const bb = section.boundingBoxes[i];
+        for (let i = 0; i < section.objectInfo.length; i += 1) {
+            const bb = section.objectInfo[i].boundingBox;
             if (ACTOR_BOX.intersectsBox(bb)) {
                 return bb.max.y;
             }
@@ -223,15 +223,15 @@ function getGround(section, position) {
     if (!section)
         return DEFAULT_GROUND;
 
-    for (let i = 0; i < section.boundingBoxes.length; i += 1) {
-        const bb = section.boundingBoxes[i];
+    for (let i = 0; i < section.objectInfo.length; i += 1) {
+        const bb = section.objectInfo[i].boundingBox;
         if (position.x >= bb.min.x && position.x <= bb.max.x
             && position.z >= bb.min.z && position.z <= bb.max.z
-            && position.y <= bb.max.y && position.y > bb.max.y - Y_THRESHOLD) {
+            && position.y >= bb.min.y && position.y < bb.max.y + Y_THRESHOLD) {
             FLAGS.hitObject = true;
             return {
                 height: bb.max.y,
-                sound: null,
+                sound: section.objectInfo[i].info.soundType,
                 collision: null,
                 liquid: 0,
             };
@@ -265,8 +265,8 @@ function processBoxIntersections(section, actor, position, isTouchingGround) {
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.translate(position);
     let collision = false;
-    for (let i = 0; i < section.boundingBoxes.length; i += 1) {
-        const bb = section.boundingBoxes[i];
+    for (let i = 0; i < section.objectInfo.length; i += 1) {
+        const bb = section.objectInfo[i].boundingBox;
         if (ACTOR_BOX.intersectsBox(bb)) {
             collision = true;
             isTouchingGround = true;

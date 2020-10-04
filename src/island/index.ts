@@ -146,8 +146,8 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
     each(data.layout.groundSections, (section) => {
         sections[`${section.x},${section.z}`] = section;
         if (params.editor) {
-            each(section.boundingBoxes, (bb, idx) => {
-                const box = createBoundingBox(bb, new THREE.Vector3(0.9, 0.9, 0.9));
+            each(section.objectInfo, (info, idx) => {
+                const box = createBoundingBox(info.boundingBox, new THREE.Vector3(0.9, 0.9, 0.9));
                 box.name = `[${section.x},${section.z}]:${idx}`;
                 boundingBoxes.add(box);
             });
@@ -213,7 +213,7 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
     return {
         props,
         sections: map(layout.groundSections,
-            section => ({x: section.x, z: section.z, boundingBoxes: section.boundingBoxes })),
+            section => ({x: section.x, z: section.z, objectInfo: section.objectInfo })),
         threeObject: islandObject,
         physics: loadIslandPhysics(sections),
 

@@ -61,7 +61,7 @@ export function processCollisions(grid, scene, obj, time) {
             if (obj.animState) { // if it's an actor
                 obj.animState.floorSound = column.sound;
             }
-            const minY = i > 0 ? bb.min.y - (2 * STEP) : -Infinity;
+            const minY = i > 0 ? bb.min.y : -Infinity;
             if (basePos.y >= minY) {
                 groundHeight = y;
                 if (position.y < y) {
@@ -164,7 +164,7 @@ function getFloorHeight(grid, actor, position) {
             const column = groundCell.columns[i];
             const bb = column.box;
             const y = getColumnY(column, POSITION);
-            const minY = i > 0 ? bb.min.y - (2 * STEP) : -Infinity;
+            const minY = i > 0 ? bb.min.y : -Infinity;
             if (POSITION.y >= minY && POSITION.y < y) {
                 if (Math.max(y, POSITION.y) - POSITION.y < 0.12) {
                     return y;
