@@ -83,6 +83,9 @@ const getVoices = async (textBankId) => {
 };
 
 const getMusic = async (index: number) => {
+    if (index < 0) {
+        return null;
+    }
     return await loadResource(`MUSIC_SCENE_${index}`);
 };
 
