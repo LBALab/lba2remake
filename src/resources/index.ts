@@ -39,6 +39,10 @@ const getModels = async () => {
     return await loadResource(ResourceName.BODY);
 };
 
+const getModelsTexture = async () => {
+    return await loadResource(ResourceName.BODY_TEXTURE);
+};
+
 const getBricks = async () => {
     return await loadResource(ResourceName.BRICKS);
 };
@@ -94,6 +98,7 @@ export {
     getEntities,
     getAnimations,
     getModels,
+    getModelsTexture,
     getBricks,
     getIsland,
     getIslandObjects,

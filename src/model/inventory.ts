@@ -7,10 +7,9 @@ import {
     loadAnimState,
 } from './animState';
 import { loadMesh } from './geometries';
-import { loadTextureRGBA } from '../texture';
 import { createBoundingBox } from '../utils/rendering';
 import { loadLUTTexture } from '../utils/lut';
-import { getCommonResource, getPalette, getInventoryObjects } from '../resources';
+import { getCommonResource, getPalette, getInventoryObjects, getModelsTexture } from '../resources';
 
 export interface Model {
     state: any;
@@ -22,16 +21,17 @@ export async function loadInventoryModel(params: any,
                           invIdx: number,
                           envInfo: any,
                           ambience: any) {
-    const [ress, pal, body, lutTexture] = await Promise.all([
+    const [ress, pal, body, texture, lutTexture] = await Promise.all([
         getCommonResource(),
         getPalette(),
         getInventoryObjects(),
+        getModelsTexture(),
         loadLUTTexture()
     ]);
-    const files = { ress, pal, body };
+    const resources = { ress, pal, body, texture };
     return loadInventoryModelData(
         params,
-        files,
+        resources,
         invIdx,
         envInfo,
         ambience,
@@ -45,7 +45,7 @@ export async function loadInventoryModel(params: any,
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
 function loadInventoryModelData(params: any,
-                       files,
+                       resources,
                        invIdx,
                        envInfo: any,
                        ambience: any,
@@ -53,14 +53,15 @@ function loadInventoryModelData(params: any,
     if (invIdx === -1)
         return null;
 
-    const palette = files.pal;
+    const palette = resources.pal;
+    const texture = resources.texture;
 
     const model = {
         palette,
         lutTexture,
-        files,
+        files: resources,
         bodies: [],
-        texture: loadTextureRGBA(files.ress.getEntry(6), palette),
+        texture,
         mesh: null,
         boundingBox: null,
         boundingBoxDebugMesh: null,

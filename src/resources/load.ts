@@ -20,6 +20,7 @@ const ResourceName = {
     NONE: 'NONE',
     ANIM: 'ANIM',
     BODY: 'BODY',
+    BODY_TEXTURE: 'BODY_TEXTURE',
     RESS: 'RESS',
     SAMPLES: 'SAMPLES',
     SCENE: 'SCENE',

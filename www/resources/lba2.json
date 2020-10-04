@@ -7,6 +7,7 @@
         { "strategy": "STATIC", "type": "LM2", "id": "BODY",             "description": "3d Models",             "path": "LBA2/BODY.HQR" },
         { "strategy": "STATIC", "type": "HQR", "id": "RESS",             "description": "Global Resources",      "path": "LBA2/RESS.HQR" },
         { "strategy": "STATIC", "type": "PAL", "id": "PALETTE",          "description": "Main Palette",          "path": "LBA2/RESS.HQR", "index": 0 },
+        { "strategy": "STATIC", "type": "TXR", "id": "BODY_TEXTURE",     "description": "3d Models Texture",     "path": "LBA2/RESS.HQR", "index": 6 },
         { "strategy": "STATIC", "type": "F3D", "id": "ENTITIES",         "description": "Model/Anim Entities",   "path": "LBA2/RESS.HQR", "index": 44 },
         { "strategy": "STATIC", "type": "M4A", "id": "SAMPLES",          "description": "Samples",               "path": "LBA2/SAMPLES_AAC.HQR.zip" },
         { "strategy": "STATIC", "type": "LSP", "id": "SPRITES",          "description": "Sprites",               "path": "LBA2/SPRITES.HQR" },
