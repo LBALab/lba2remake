@@ -65,7 +65,9 @@ const requestResource = async (
 ) => {
     const send = (eventName, progress?) => {
         if (description) {
-            document.dispatchEvent(new CustomEvent(eventName, {detail: {description, progress}}));
+            document.dispatchEvent(new CustomEvent(eventName, {
+                detail: { name: description, progress }
+            }));
         }
     };
     return new Promise((resolve: Function, reject: Function) => {
