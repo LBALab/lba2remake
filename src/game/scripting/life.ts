@@ -564,10 +564,9 @@ export function THE_END() {
 export const ESCALATOR = unimplemented();
 
 export function PLAY_MUSIC(index) {
-    const musicSource = this.game.getAudioManager().getMusicSource();
-    musicSource.load(index, () => {
-        musicSource.play();
-    });
+    const audio = this.game.getAudioManager();
+    audio.stopMusic();
+    audio.playMusic(index);
 }
 
 export const TRACK_TO_VAR_GAME = unimplemented();
