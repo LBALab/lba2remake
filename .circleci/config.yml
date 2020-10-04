@@ -54,5 +54,6 @@ jobs:
           command: npm pack && mv lba2remake-`node -p "require('./package.json').version"`.tgz /tmp/lba2remake.tgz
 
       # Store artifacts
-      - store_artifacts:
-          path: /tmp/lba2remake.tgz
+      - run:
+          name: Store artifact
+          command: node utils/upload-build.js /tmp/lba2remake.tgz ${CIRCLE_BUILD_NUM}.tgz
