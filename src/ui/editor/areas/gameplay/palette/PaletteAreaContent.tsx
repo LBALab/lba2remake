@@ -100,8 +100,7 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
     }
 
     async load() {
-        const pal = await getPalette();
-        this.palette = pal.getBufferUint8();
+        this.palette = await getPalette();
         this.draw();
         this.lutTexture = await loadLUTTexture();
         this.drawLUT();

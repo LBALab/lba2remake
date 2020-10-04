@@ -31,12 +31,11 @@ export async function loadImageData(src) : Promise<ImageData> {
 }
 
 export async function loadIsometricScenery(entry, ambience, is3D, numActors = 0) {
-    const [pal, bkg, mask] = await Promise.all([
+    const [palette, bkg, mask] = await Promise.all([
         getPalette(),
         getBricks(),
         loadImageData('images/brick_mask.png')
     ]);
-    const palette = pal.getBufferUint8();
     const bricks = loadBricks(bkg);
     const grid = await loadGrid(bkg, bricks, mask, palette, entry + 1);
     const {

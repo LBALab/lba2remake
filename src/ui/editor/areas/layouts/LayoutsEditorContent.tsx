@@ -337,12 +337,11 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.layout = layoutIdx;
         this.library = libraryIdx;
         this.variant = variant;
-        const [pal, bkg, lutTexture] = await Promise.all([
+        const [palette, bkg, lutTexture] = await Promise.all([
             getPalette(),
             getBricks(),
             await loadLUTTexture(),
         ]);
-        const palette = pal.getBufferUint8();
         const paletteTexture = loadPaletteTexture(palette);
         const light = getLightVector();
         if (!this.mask) {
@@ -555,11 +554,10 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             file,
             orientation: 0
         };
-        const [pal, lutTexture] = await Promise.all([
+        const [palette, lutTexture] = await Promise.all([
             getPalette(),
             await loadLUTTexture(),
         ]);
-        const palette = pal.getBufferUint8();
         const paletteTexture = loadPaletteTexture(palette);
         const light = getLightVector();
         const shaderData = {lutTexture, paletteTexture, light};

@@ -23,13 +23,12 @@ export async function loadSprite(
     is3DCam = false,
     spriteReplacements = {}
 ) {
-    const [ress, pal, spritesFile, spritesRaw] = await Promise.all([
+    const [ress, palette, spritesFile, spritesRaw] = await Promise.all([
         getCommonResource(),
         getPalette(),
         getSprites(),
         getSpritesRaw()
     ]);
-    const palette = pal.getBufferUint8();
     // lets keep it with two separate textures for now
     if (!spriteCache) {
         const sprites = loadAllSprites(spritesFile);

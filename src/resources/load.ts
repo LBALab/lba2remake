@@ -1,6 +1,7 @@
 
 import HQR, { loadHqr } from '../hqr';
 import WebApi from '../webapi';
+import { ResourceTypes } from './parse';
 
 const ResourceStrategy = {
     TRANSIENT: 0,
@@ -53,6 +54,7 @@ interface Resource {
     hasHiddenEntries: Function;
     getNextHiddenEntry: Function;
     load: Function;
+    parse: Function;
     entries: [];
 }
 
@@ -100,6 +102,7 @@ const requestResource = async (
 /** Add Resource */
 const register = (
     strategy: number,
+    type: string,
     id: string,
     description: string,
     path: string,
@@ -111,6 +114,7 @@ const register = (
 
     const resource = {
         id,
+        type,
         strategy,
         description,
         path,
@@ -130,6 +134,7 @@ const register = (
         ref: null,
         buffer: null,
         entries: [],
+        parse: null,
     };
 
     // check if we have already a resource with same file
@@ -222,6 +227,10 @@ const register = (
         resource.loaded = true;
     };
 
+    resource.parse = async () => {
+        return await ResourceTypes[resource.type].parser(resource);
+    };
+
     Resources[id] = resource;
 };
 
@@ -268,7 +277,7 @@ const loadResource = async (id: string) => {
     if (resource && !resource.loaded) {
         await resource.load();
     }
-    return resource;
+    return resource.parse();
 };
 
 // const getResource = (id: string) => {
@@ -290,12 +299,13 @@ const registerResources = async (game, language, languageVoice) => {
             const r = res.entries[e];
             let path = r.path.replace('%LANGCODE%', language);
             path = path.replace('%LANGVOICECODE%', languageVoice);
-            register(ResourceStrategy[r.strategy], r.id, r.description, path, r.index);
+            register(ResourceStrategy[r.strategy], r.type, r.id, r.description, path, r.index);
         }
     }
 };
 
 export {
+    Resource,
     ResourceName,
     preloadResources,
     loadResource,

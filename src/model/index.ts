@@ -67,7 +67,7 @@ function loadModelData(params: any,
     if (entityIdx === -1 || bodyIdx === -1 || animIdx === -1)
         return null;
 
-    const palette = files.pal.getBufferUint8();
+    const palette = files.pal;
     const entityInfo = files.entities.getBuffer();
     const entities = loadEntity(entityInfo);
 

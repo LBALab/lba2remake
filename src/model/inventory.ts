@@ -53,7 +53,7 @@ function loadInventoryModelData(params: any,
     if (invIdx === -1)
         return null;
 
-    const palette = files.pal.getBufferUint8();
+    const palette = files.pal;
 
     const model = {
         palette,

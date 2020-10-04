@@ -35,7 +35,7 @@ function loadSceneDataSync(files, language, index) {
         unknown2: data.getUint16(4, true),
         isOutsideScene: data.getInt8(6) === 1,
         buffer,
-        palette: files.pal.getBufferUint8(),
+        palette: files.pal,
         actors: [],
         texts: null
     };
