@@ -4,7 +4,7 @@ import { getPickingTarget, handlePicking } from './picking';
 import { createTeleportMenu, updateTeleportMenu } from './vrTeleportMenu';
 import { drawFrame } from './vrUtils';
 import { tr } from '../../lang';
-import { getResourcePath, ResourceName } from '../../resources';
+import { getVideoPath } from '../../resources';
 
 let menuNode = null;
 let pickingTarget = null;
@@ -55,7 +55,7 @@ export function createMenu(game, sceneManager, light) {
             game.setUiState({
                 showMenu: false,
                 video: {
-                    path: getResourcePath(ResourceName.VIDEO_INTRO),
+                    path: getVideoPath('INTRO'),
                     onEnded
                 }
             });
