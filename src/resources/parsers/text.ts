@@ -1,6 +1,7 @@
 import charmaps from '../../data/charmaps.json';
+import { Resource } from '../load';
 
-const parseText = (resource, index, language) => {
+const parseText = (resource: Resource, index: number, language: any) => {
     const languageIndex = index + (30 * language.index);
     const mapData = new Uint16Array(resource.getEntry(languageIndex));
     const data = new DataView(resource.getEntry(languageIndex + 1));

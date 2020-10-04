@@ -135,6 +135,7 @@ const register = (
         buffer: null,
         entries: [],
         parse: null,
+        parsedEntries: [],
     };
 
     // check if we have already a resource with same file
@@ -228,7 +229,12 @@ const register = (
     };
 
     resource.parse = async (index?: number, language?: any) => {
-        return await ResourceTypes[resource.type].parser(resource, index, language);
+        if (resource.parsedEntries[index]) {
+            return resource.parsedEntries[index];
+        }
+        const data = await ResourceTypes[resource.type].parser(resource, index, language);
+        resource.parsedEntries[index] = data;
+        return resource.parsedEntries[index];
     };
 
     Resources[id] = resource;

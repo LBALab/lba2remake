@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { loadEntity, getBodyIndex, getAnimIndex, Entity } from './entity';
+import { getBodyIndex, getAnimIndex, Entity } from './entity';
 import { loadBody } from './body';
 import { loadAnim } from './anim';
 import {
@@ -68,8 +68,7 @@ function loadModelData(params: any,
         return null;
 
     const palette = files.pal;
-    const entityInfo = files.entities.getBuffer();
-    const entities = loadEntity(entityInfo);
+    const entities = files.entities;
 
     const model = {
         palette,

@@ -1,6 +1,8 @@
 import { Resource } from './load';
+
 import { parsePalette } from './parsers/palette';
 import { parseText } from './parsers/text';
+import { parseEntity } from './parsers/entity';
 
 const NOP = (resource: Resource) => {
     return resource;
@@ -26,7 +28,7 @@ const ResourceTypes = {
     GR1: { type: 'GR1', description: 'LBA1 Grids', parser: NOP },
     GR2: { type: 'GR2', description: 'LBA2 Grids', parser: NOP },
     '3DE': { type: '3DE', description: 'LBA1 File 3D Entity', parser: NOP },
-    F3D: { type: 'F3D', description: 'LBA2 Entity Information', parser: NOP },
+    F3D: { type: 'F3D', description: 'LBA2 Entity Information', parser: parseEntity },
     PAL: { type: 'PAL', description: 'LBA Palette', parser: parsePalette },
     OBL: { type: 'OBL', description: 'LBA2 Island Object HQR File', parser: NOP },
     HQR: { type: 'HQR', description: 'LBA High Quality Resource', parser: NOP },

@@ -1,13 +1,11 @@
-import {loadEntity} from '../../../../../model/entity';
-import {loadModelsMetaData} from '../../../DebugData';
+import { loadModelsMetaData } from '../../../DebugData';
 import { getEntities as getResourceEntities } from '../../../../../resources';
 
 let entities = [];
 
 export async function loadEntities() {
-    const entityInfo = await getResourceEntities();
     await loadModelsMetaData();
-    entities = loadEntity(entityInfo.getBuffer());
+    entities = await getResourceEntities();
 }
 
 export function getEntities() {
