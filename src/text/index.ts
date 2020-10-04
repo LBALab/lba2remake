@@ -1,6 +1,6 @@
 import charmaps from '../data/charmaps.json';
 
-import { loadResource, ResourceName } from '../resources';
+import { getText } from '../resources';
 
 export function getTextFile(language) {
     const fanSuffix = language.isFan ? `_${language.code}` : '';
@@ -8,7 +8,7 @@ export function getTextFile(language) {
 }
 
 export async function loadTexts(language, index) {
-    const resource = await loadResource(ResourceName.TEXT);
+    const resource = await getText();
     return loadTextData(resource, getLanguageTextIndex(language, index));
 }
 

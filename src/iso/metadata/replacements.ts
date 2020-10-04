@@ -12,7 +12,7 @@ import VERT_OBJECTS_DOME from '../shaders/objects/dome.vert.glsl';
 import FRAG_OBJECTS_DOME from '../shaders/objects/dome.frag.glsl';
 import { compile } from '../../utils/shaders';
 import { loadFullSceneModel } from './models';
-import { loadResource, ResourceName } from '../../resources';
+import { getCommonResource } from '../../resources';
 import { getPartialMatrixWorld } from '../../utils/math';
 import { GROUND_TYPES } from '../grid';
 
@@ -421,7 +421,7 @@ function appendMeshGeometry(
 async function loadReplacementData(ambience) {
     const [lutTexture, ress] = await Promise.all([
         await loadLUTTexture(),
-        await loadResource(ResourceName.RESS)
+        await getCommonResource()
     ]);
     const palette = new Uint8Array(ress.getEntry(0));
     const paletteTexture = loadPaletteTexture(palette);

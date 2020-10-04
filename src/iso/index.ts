@@ -12,7 +12,7 @@ import dome_brick_fragment from './shaders/dome_brick.frag.glsl';
 import { extractGridMetadata } from './metadata';
 import { Side, OffsetBySide } from './mapping';
 import { WORLD_SCALE_B, WORLD_SIZE, DOME_ENTRIES } from '../utils/lba';
-import { loadResource, ResourceName } from '../resources';
+import { getPalette, getBricks } from '../resources';
 import { loadDomeEnv } from './misc/dome_env';
 
 export async function loadImageData(src) : Promise<ImageData> {
@@ -32,8 +32,8 @@ export async function loadImageData(src) : Promise<ImageData> {
 
 export async function loadIsometricScenery(entry, ambience, is3D, numActors = 0) {
     const [pal, bkg, mask] = await Promise.all([
-        loadResource(ResourceName.PALETTE),
-        loadResource(ResourceName.BRICKS),
+        getPalette(),
+        getBricks(),
         loadImageData('images/brick_mask.png')
     ]);
     const palette = pal.getBufferUint8();

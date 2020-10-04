@@ -1,5 +1,5 @@
 import { createSource } from './audioSource';
-import { loadResource, ResourceName } from '../resources';
+import { getSamples } from '../resources';
 
 const sampleDecodedAudioCache = [];
 
@@ -15,7 +15,7 @@ const createSampleSource = (context: any) => {
             source.play(frequency);
             return;
         }
-        const resource = await loadResource(ResourceName.SAMPLES);
+        const resource = await getSamples();
         if (!resource) {
             return;
         }

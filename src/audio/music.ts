@@ -1,5 +1,5 @@
 import { createSource } from './audioSource';
-import { loadResource } from '../resources';
+import { getMusic } from '../resources';
 
 const musicDecodedAudioCache = [];
 
@@ -9,13 +9,12 @@ const createMusicSource = (context: any) => {
         if (!source.volume) {
             return;
         }
-        const resId = `MUSIC_SCENE_${index}`;
         if (musicDecodedAudioCache[index]) {
             source.load(musicDecodedAudioCache[index]);
             source.play();
             return;
         }
-        const resource = await loadResource(resId);
+        const resource = await getMusic(index);
         if (!resource) {
             return;
         }
@@ -45,8 +44,7 @@ const createMusicSource = (context: any) => {
             source.resume();
         },
         preload: async (index: number) => {
-            const resId = `MUSIC_SCENE_${index}`;
-            const resource = await loadResource(resId);
+            const resource = await getMusic(index);
             if (!resource) {
                 return;
             }
