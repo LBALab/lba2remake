@@ -22,7 +22,7 @@ export enum GROUND_TYPES {
     WATER2,
 }
 
-export async function loadGrid(bkg, bricks, mask, palette, entry) {
+export async function loadGrid(bkg, bricks, mask, palette, entry, is3D) {
     const gridData = new DataView(bkg.getEntry(entry));
     const libIndex = gridData.getUint8(0);
     const maxOffset = 34 + (4096 * 2);
@@ -92,7 +92,7 @@ export async function loadGrid(bkg, bricks, mask, palette, entry) {
                             throw new Error('Unsupported block type');
                     }
                     const key = `${x}x${yGrid}x${z}`;
-                    if (gridMetadata && key in gridMetadata) {
+                    if (is3D && gridMetadata && key in gridMetadata) {
                         const replacementBlock = gridMetadata[key];
                         if (replacementBlock.layout !== -1) {
                             blocks[blocks.length - 1] = replacementBlock;
