@@ -39,6 +39,8 @@ export async function loadGrid(bkg, bricks, mask, palette, entry) {
             const numColumns = gridData.getUint8(offset);
             offset += 1;
             const columns = [];
+            const x = idx % 64;
+            const z = Math.floor(idx / 64);
             let baseHeight = 0;
             for (let i = 0; i < numColumns; i += 1) {
                 const flags = gridData.getUint8(offset);
@@ -88,8 +90,6 @@ export async function loadGrid(bkg, bricks, mask, palette, entry) {
                         case 3:
                             throw new Error('Unsupported block type');
                     }
-                    const x = idx % 64;
-                    const z = Math.floor(idx / 64);
                     const key = `${x}x${yGrid}x${z}`;
                     if (gridMetadata && key in gridMetadata) {
                         blocks[blocks.length - 1] = gridMetadata[key];
@@ -97,22 +97,19 @@ export async function loadGrid(bkg, bricks, mask, palette, entry) {
                     }
                 }
                 if (type !== 0 && isValid) {
-                    const x = Math.floor(idx / 64) - 1;
-                    const z = idx % 64;
-
                     const blockData = getBlockData(library, last(blocks));
                     columns.push({
                         shape: (blockData && blockData.shape) || 1,
                         box: new THREE.Box3(
                             new THREE.Vector3(
-                                (63 - x) / 32,
+                                (64 - z) / 32,
                                 baseHeight / 64,
-                                z / 32
+                                x / 32
                             ),
                             new THREE.Vector3(
-                                (64 - x) / 32,
+                                (65 - z) / 32,
                                 (baseHeight + height) / 64,
-                                (z + 1) / 32
+                                (x + 1) / 32
                             )
                         ),
                         groundType: (blockData && blockData.groundType),
