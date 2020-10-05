@@ -9,6 +9,27 @@
         "29x17x30": {
             "layout": 23,
             "block": 1
+        },
+        "31x7x48": {
+            "layout": -1
+        },
+        "31x8x48": {
+            "layout": -1
+        },
+        "31x9x48": {
+            "layout": -1
+        },
+        "30x6x47": {
+            "layout": 28,
+            "block": 0
+        },
+        "30x7x47": {
+            "layout": 28,
+            "block": 1
+        },
+        "30x8x47": {
+            "layout": 28,
+            "block": 2
         }
     }
 }
