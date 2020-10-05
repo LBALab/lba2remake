@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-import { loadBody } from './body';
 import {
     initSkeleton,
     createSkeleton,
@@ -24,7 +23,7 @@ export async function loadInventoryModel(params: any,
     const [ress, pal, body, texture, lutTexture] = await Promise.all([
         getCommonResource(),
         getPalette(),
-        getInventoryObjects(),
+        getInventoryObjects(invIdx),
         getModelsTexture(),
         loadLUTTexture()
     ]);
@@ -55,6 +54,7 @@ function loadInventoryModelData(params: any,
 
     const palette = resources.pal;
     const texture = resources.texture;
+    const body = resources.body;
 
     const model = {
         palette,
@@ -68,11 +68,10 @@ function loadInventoryModelData(params: any,
         materials: []
     };
 
-    const body = loadBody(model, model.bodies, invIdx, null);
     const animState = loadAnimState();
-
     const skeleton = createSkeleton(body);
     initSkeleton(animState, skeleton, 0);
+
     const { object, materials } = loadMesh(
         body,
         model.texture,

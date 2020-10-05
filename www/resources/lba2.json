@@ -14,7 +14,7 @@
         { "strategy": "STATIC", "type": "LSR", "id": "SPRITERAW",        "description": "Raw Sprites",           "path": "LBA2/SPRIRAW.HQR" },
         { "strategy": "STATIC", "type": "LS2", "id": "SCENE",            "description": "Scenes",                "path": "LBA2/SCENE.HQR" },
         { "strategy": "STATIC", "type": "LBT", "id": "TEXT",             "description": "Text Dialogues",        "path": "LBA2/TEXT.HQR" },
-        { "strategy": "STATIC", "type": "LS2", "id": "OBJECTS",          "description": "Inventory Objects",     "path": "LBA2/OBJFIX.HQR" },
+        { "strategy": "STATIC", "type": "LM2", "id": "OBJECTS",          "description": "Inventory Objects",     "path": "LBA2/OBJFIX.HQR" },
         { "strategy": "STATIC", "type": "BRK", "id": "BRICKS",           "description": "Isometric Bricks",      "path": "LBA2/LBA_BKG.HQR" },
         { "strategy": "STATIC", "type": "BL2", "id": "LAYOUTS",          "description": "Isometric Layouts",     "path": "LBA2/LBA_BKG.HQR" },
         { "strategy": "STATIC", "type": "GR2", "id": "GRIDS",            "description": "Isometric Grids",       "path": "LBA2/LBA_BKG.HQR" },

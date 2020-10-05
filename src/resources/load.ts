@@ -279,12 +279,12 @@ const preloadResources = async () => {
     await Promise.all(resPreload);
 };
 
-const loadResource = async (id: string, index?: number, language?: any) => {
+const loadResource = async (id: string, index?: number, param?: any) => {
     const resource = Resources[id];
     if (resource && !resource.loaded) {
         await resource.load();
     }
-    return await resource.parse(index, language);
+    return await resource.parse(index, param);
 };
 
 // const getResource = (id: string) => {

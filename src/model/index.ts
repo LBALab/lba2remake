@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 
-import { getBodyIndex, getAnimIndex, Entity } from './entity';
-import { loadBody } from './body';
+import { getAnimIndex, Entity } from './entity';
 import { loadAnim } from './anim';
 import {
     initSkeleton,
@@ -38,7 +37,7 @@ export async function loadModel(params: any,
         getCommonResource(),
         getPalette(),
         getEntities(),
-        getModels(),
+        getModels(bodyIdx, entityIdx),
         getModelsTexture(),
         getAnimations(),
         loadLUTTexture()
@@ -77,6 +76,7 @@ function loadModelData(params: any,
     const palette = resources.pal;
     const entities = resources.entities;
     const texture = resources.texture;
+    const body = resources.body;
 
     const model = {
         palette,
@@ -94,10 +94,7 @@ function loadModelData(params: any,
         materials: []
     };
 
-    const realBodyIdx = getBodyIndex(model.entity, bodyIdx);
     const realAnimIdx = getAnimIndex(model.entity, animIdx);
-
-    const body = loadBody(model, model.bodies, realBodyIdx, model.entity.bodies[bodyIdx]);
     const anim = loadAnim(model, model.anims, realAnimIdx);
 
     const skeleton = createSkeleton(body);

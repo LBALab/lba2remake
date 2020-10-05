@@ -6,6 +6,7 @@ import {
     registerResources,
 }  from './load';
 import { getLanguageConfig } from '../lang';
+import { getBodyIndex } from '../model/entity';
 
 const getVideoPath = (video: string) => {
     return getResourcePath(`VIDEO_${video}`);
@@ -35,8 +36,18 @@ const getAnimations = async () => {
     return await loadResource(ResourceName.ANIM);
 };
 
-const getModels = async () => {
-    return await loadResource(ResourceName.BODY);
+const getModels = async (bodyIdx: number, entityIdx: number) => {
+    const entities = await getEntities();
+
+    const entity = entities[entityIdx];
+    const bodyProps = entity.bodies[bodyIdx];
+    const index = getBodyIndex(entity, bodyIdx);
+
+    return await loadResource(ResourceName.BODY, index, bodyProps);
+};
+
+const getInventoryObjects = async (invIdx: number) => {
+    return await loadResource(ResourceName.OBJECTS, invIdx);
 };
 
 const getModelsTexture = async () => {
@@ -62,10 +73,6 @@ const getText = async (index: number) => {
 
 const getScene = async () => {
     return await loadResource(ResourceName.SCENE);
-};
-
-const getInventoryObjects = async () => {
-    return await loadResource(ResourceName.OBJECTS);
 };
 
 const getSamples = async () => {

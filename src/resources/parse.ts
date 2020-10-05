@@ -4,6 +4,7 @@ import { parsePalette } from './parsers/palette';
 import { parseText } from './parsers/text';
 import { parseEntity } from './parsers/entity';
 import { parseTextureRGBA } from './parsers/texture';
+import { parseBody } from './parsers/body';
 
 const NOP = (resource: Resource) => {
     return resource;
@@ -16,7 +17,7 @@ const ResourceTypes = {
     LIM: { type: 'LIM', description: 'LBA Image', parser: NOP },
     ANM: { type: 'ANM', description: 'LBA Animation', parser: NOP },
     LM1: { type: 'LM1', description: 'LBA1 3D Model', parser: NOP },
-    LM2: { type: 'LM2', description: 'LBA2 3D Model', parser: NOP },
+    LM2: { type: 'LM2', description: 'LBA2 3D Model', parser: parseBody },
     TXR: { type: 'TXR', description: 'Texture RGBA', parser: parseTextureRGBA },
     M4A: { type: 'M4A', description: 'MPEG 4 Audio', parser: NOP },
     LS1: { type: 'LS1', description: 'LBA1 Scene', parser: NOP },
