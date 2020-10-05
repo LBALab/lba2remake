@@ -57,6 +57,7 @@ export async function loadGrid(bkg, bricks, mask, palette, entry) {
                     offset += 2;
 
                 let isValid = false;
+                let hasReplacement = false;
 
                 for (let j = 0; j < height; j += 1) {
                     const yGrid = baseHeight + j;
@@ -92,11 +93,17 @@ export async function loadGrid(bkg, bricks, mask, palette, entry) {
                     }
                     const key = `${x}x${yGrid}x${z}`;
                     if (gridMetadata && key in gridMetadata) {
-                        blocks[blocks.length - 1] = gridMetadata[key];
-                        isValid = true;
+                        const replacementBlock = gridMetadata[key];
+                        if (replacementBlock.layout !== -1) {
+                            blocks[blocks.length - 1] = replacementBlock;
+                        } else {
+                            blocks[blocks.length - 1] = null;
+                        }
+                        isValid = replacementBlock.layout !== -1;
+                        hasReplacement = hasReplacement || isValid;
                     }
                 }
-                if (type !== 0 && isValid) {
+                if ((type !== 0 || hasReplacement) && isValid) {
                     const blockData = getBlockData(library, last(blocks));
                     columns.push({
                         shape: (blockData && blockData.shape) || 1,
