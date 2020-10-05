@@ -88,10 +88,11 @@ export async function loadGrid(bkg, bricks, mask, palette, entry) {
                         case 3:
                             throw new Error('Unsupported block type');
                     }
-                    if (gridMetadata
-                        && idx in gridMetadata
-                        && yGrid in gridMetadata[idx]) {
-                        blocks[blocks.length - 1] = gridMetadata[idx][yGrid];
+                    const x = idx % 64;
+                    const z = Math.floor(idx / 64);
+                    const key = `${x}x${yGrid}x${z}`;
+                    if (gridMetadata && key in gridMetadata) {
+                        blocks[blocks.length - 1] = gridMetadata[key];
                         isValid = true;
                     }
                 }
@@ -135,7 +136,10 @@ async function getGridMetadata(entry) {
         const metadataReq = await fetch('/metadata/grids.json');
         globalGridMetadata = await metadataReq.json();
     }
-    return globalGridMetadata[entry];
+    // [entry - 1] is the scene index.
+    // It's easier for humans to deal with scene numbers than grid entry
+    // numbers when manually editing the grids.json file.
+    return globalGridMetadata[entry - 1];
 }
 
 function getBlockData(library, block) {
