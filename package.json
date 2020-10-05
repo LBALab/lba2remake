@@ -1,6 +1,6 @@
 {
   "name": "lba2remake",
-  "version": "0.4.0-alpha",
+  "version": "0.4.0-RC",
   "description": "Little Big Adventure 2 HD version for the web",
   "scripts": {
     "start": "npm run dev",
@@ -64,7 +64,8 @@
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.11",
     "webpack-dev-middleware": "^3.7.2",
-    "yml-loader": "^2.1.0"
+    "yml-loader": "^2.1.0",
+    "@google-cloud/storage": "^5.3.0"
   },
   "repository": "https://github.com/agrande/lba2remake.git",
   "author": "Adrien Grandemange",

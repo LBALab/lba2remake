@@ -1509,6 +1509,11 @@
       "file": "GB_090_cash_register.glb",
       "orientation": 0
     },
+    "91": {
+      "replace": true,
+      "file": "GB_091_bottles.glb",
+      "orientation": 0
+    },
     "93": {
       "replace": true,
       "file": "GB_093_094_jars.glb",
@@ -1569,6 +1574,16 @@
       "file": "GB_124_125_127_railing_corner.glb",
       "orientation": 3
     },
+    "128": {
+      "replace": true,
+      "file": "GB_128_129_142_143_ladder.glb",
+      "orientation": 0
+    },
+    "129": {
+      "replace": true,
+      "file": "GB_128_129_142_143_ladder.glb",
+      "orientation": 1
+    },
     "132": {
       "mirror": true
     },
@@ -1589,6 +1604,16 @@
     },
     "141": {
       "mirror": true
+    },
+    "142": {
+      "replace": true,
+      "file": "GB_128_129_142_143_ladder.glb",
+      "orientation": 2
+    },
+    "143": {
+      "replace": true,
+      "file": "GB_128_129_142_143_ladder.glb",
+      "orientation": 3
     },
     "144": {
       "replace": true,
@@ -1618,6 +1643,11 @@
     "167": {
       "mirror": true
     },
+    "172": {
+      "replace": true,
+      "file": "GB_172_vase.glb",
+      "orientation": 0
+    },
     "144:1x8x1:1512,1513,1513,1514,1515,1516,1517,1518": {
       "replace": true,
       "file": "GB_144_railing_lamp_var01.glb",
@@ -1637,6 +1667,51 @@
       "replace": true,
       "file": "GB_053_054_table_straight_var01.glb",
       "orientation": 1
+    },
+    "144:1x7x1:1515,1516,1516,1516,1516,1517,1518": {
+      "replace": true,
+      "file": "GB_144_railing_lamp_var02.glb",
+      "orientation": 0
+    },
+    "128:2x6x1:1633,1634,1635,1636,1637,1638,1635,1636,1637,1638,1639,1640": {
+      "replace": true,
+      "file": "GB_128_ladder_var01.glb",
+      "orientation": 0
+    },
+    "128:2x7x1:1633,1634,1635,1636,1635,1636,1637,1638,1635,1636,1637,1638,1639,1640": {
+      "replace": true,
+      "file": "GB_128_ladder_var02.glb",
+      "orientation": 0
+    },
+    "129:1x5x2:1641,1642,1642,1643,1644,1645,1646,1646,1647,1648": {
+      "replace": true,
+      "file": "GB_129_ladder_var02.glb",
+      "orientation": 1
+    },
+    "129:1x8x2:1641,1642,1643,1642,1643,1642,1643,1644,1645,1646,1647,1646,1647,1646,1647,1648": {
+      "replace": true,
+      "file": "GB_129_ladder_var01.glb",
+      "orientation": 1
+    },
+    "129:1x7x2:1641,1642,1642,1642,1642,1643,1644,1645,1646,1646,1646,1646,1647,1648": {
+      "replace": true,
+      "file": "GB_129_ladder_var03_var04.glb",
+      "orientation": 1
+    },
+    "129:1x7x2:1641,1642,1643,1642,1643,1643,1644,1645,1646,1647,1646,1647,1647,1648": {
+      "replace": true,
+      "file": "GB_129_ladder_var03_var04.glb",
+      "orientation": 1
+    },
+    "142:2x2x1:1683,1684,1689,1690": {
+      "replace": true,
+      "file": "GB_142_143_ladder_var01.glb",
+      "orientation": 2
+    },
+    "143:1x2x2:1691,1694,1695,1698": {
+      "replace": true,
+      "file": "GB_142_143_ladder_var01.glb",
+      "orientation": 3
     }
   },
   "3": {
