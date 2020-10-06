@@ -342,20 +342,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
 
             const tgt = new THREE.Vector3();
 
-            const foundPoint = scene.points.find((point) => {
-                if (point.threeObject.visible) {
-                    const bb = point.boundingBox.clone();
-                    bb.applyMatrix4(point.threeObject.matrixWorld);
-                    return raycaster.ray.intersectBox(bb, tgt);
-                }
-                return false;
-            });
-            if (foundPoint) {
-                DebugData.selection = {type: 'point', index: foundPoint.index};
-                event.stopPropagation();
-                return;
-            }
-
             const foundActor = scene.actors.find((actor) => {
                 if (actor.threeObject.visible && actor.model) {
                     const bb = actor.model.boundingBox.clone();
@@ -366,6 +352,20 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             });
             if (foundActor) {
                 DebugData.selection = {type: 'actor', index: foundActor.index};
+                event.stopPropagation();
+                return;
+            }
+
+            const foundPoint = scene.points.find((point) => {
+                if (point.threeObject.visible) {
+                    const bb = point.boundingBox.clone();
+                    bb.applyMatrix4(point.threeObject.matrixWorld);
+                    return raycaster.ray.intersectBox(bb, tgt);
+                }
+                return false;
+            });
+            if (foundPoint) {
+                DebugData.selection = {type: 'point', index: foundPoint.index};
                 event.stopPropagation();
                 return;
             }
