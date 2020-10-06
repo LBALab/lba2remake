@@ -71,8 +71,8 @@ const getText = async (index: number) => {
     return await loadResource(ResourceName.TEXT, index, language);
 };
 
-const getScene = async () => {
-    return await loadResource(ResourceName.SCENE);
+const getScene = async (index: number) => {
+    return await loadResource(ResourceName.SCENE, index);
 };
 
 const getSamples = async () => {
