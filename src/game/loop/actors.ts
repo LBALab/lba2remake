@@ -2,7 +2,6 @@ import * as THREE from 'three';
 
 import { Actor} from '../actors';
 import { getAnim } from '../../model/entity';
-import { loadAnim } from '../../model/anim';
 import {
     updateKeyframe,
     updateKeyframeInterpolation
@@ -10,12 +9,13 @@ import {
 import { processAnimAction } from './animAction';
 import { Time } from '../../datatypes';
 import { AnimType } from '../data/animType';
+import { getAnimations } from '../../resources';
 
 const ACTOR_POS = new THREE.Vector3();
 const HIDE_DISTANCE = 50;
 const HIDE_DISTANCE2 = HIDE_DISTANCE * HIDE_DISTANCE;
 
-export function updateActor(
+export async function updateActor(
     params: any,
     game: any,
     scene: any,
@@ -61,7 +61,7 @@ export function updateActor(
         && (actor.threeObject.visible || actor.index === 0)) {
         const model = actor.model;
         actor.animState.matrixRotation.makeRotationFromQuaternion(actor.physics.orientation);
-        updateModel(
+        await updateModel(
             game,
             scene,
             model,
@@ -176,7 +176,7 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
     }
 }
 
-function updateModel(game: any,
+async function updateModel(game: any,
                      scene: any,
                      model: any,
                      actor: Actor,
@@ -188,7 +188,7 @@ function updateModel(game: any,
     const entityAnim = getAnim(entity, animIdx);
     if (entityAnim !== null) {
         const realAnimIdx = entityAnim.animIndex;
-        const anim = loadAnim(model, model.anims, realAnimIdx);
+        const anim = await getAnimations(animIdx, entityIdx);
         animState.loopFrame = anim.loopFrame;
         if (animState.prevRealAnimIdx !== -1 && realAnimIdx !== animState.prevRealAnimIdx) {
             updateKeyframeInterpolation(anim, animState, time, realAnimIdx);

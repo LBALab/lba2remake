@@ -83,7 +83,7 @@ const initBehaviourRenderer = async () => {
 
 initBehaviourRenderer();
 
-const renderLoop = (time, behaviour, selected, item) => {
+const renderLoop = async (time, behaviour, selected, item) => {
     const m = model[behaviour];
 
     if (!item || !item.current || !m) {
@@ -107,7 +107,7 @@ const renderLoop = (time, behaviour, selected, item) => {
     const itemBottom = canvasClip.bottom - bottom - 10;
 
     if (selected) {
-        updateAnimModel(
+        await updateAnimModel(
             m,
             anims,
             behaviour,
@@ -370,7 +370,7 @@ const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
             animState[b] = loadAnimState();
         }
         model[b] = await loadSceneModel(scene[b], b, bodyIndex, animState[b]);
-        updateAnimModel(
+        await updateAnimModel(
             model[b],
             animState[b],
             b,

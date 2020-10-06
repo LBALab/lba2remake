@@ -2,11 +2,10 @@ import * as THREE from 'three';
 
 import { get3DOrbitCamera } from '../editor/areas/model/utils/orbitCamera';
 import Renderer from '../../renderer';
-import { getAnim } from '../../model/entity';
-import { loadAnim } from '../../model/anim';
 import { updateKeyframeInterpolation, updateKeyframe } from '../../model/animState';
 import { loadModel } from '../../model';
 import { loadInventoryModel } from '../../model/inventory';
+import { getAnimations } from '../../resources';
 
 const envInfo = {
     skyColor: [0, 0, 0]
@@ -87,33 +86,29 @@ const loadSceneInventoryModel = async (sce, b) => {
     return m;
 };
 
-const updateAnimModel = (m, anims, entityIdx, animIdx, time) => {
-    const entity = m.entities[entityIdx];
-    const entityAnim = getAnim(entity, animIdx);
+const updateAnimModel = async (m, anims, entityIdx, animIdx, time) => {
     let interpolate = false;
-    if (entityAnim !== null) {
-        const realAnimIdx = entityAnim.animIndex;
-        const anim = loadAnim(m, m.anims, realAnimIdx);
-        anims.loopFrame = anim.loopFrame;
-        if (anims.prevRealAnimIdx !== -1 && realAnimIdx !== anims.prevRealAnimIdx) {
-            updateKeyframeInterpolation(anim, anims, time, realAnimIdx);
-            interpolate = true;
-        }
-        if (realAnimIdx === anims.realAnimIdx || anims.realAnimIdx === -1) {
-            updateKeyframe(anim, anims, time, realAnimIdx);
-        }
-        const q = new THREE.Quaternion();
-        const delta = time.delta * 1000;
-        let angle = 0;
-        if (anims.keyframeLength > 0) {
-            angle = (anims.rotation.y * delta) / anims.keyframeLength;
-        }
-        q.setFromAxisAngle(
-            new THREE.Vector3(0, 1, 0),
-            angle
-        );
-        m.mesh.quaternion.multiply(q);
+    const anim = await getAnimations(animIdx, entityIdx);
+    anims.loopFrame = anim.loopFrame;
+    if (anims.prevRealAnimIdx !== -1 && animIdx !== anims.prevRealAnimIdx) {
+        updateKeyframeInterpolation(anim, anims, time, animIdx);
+        interpolate = true;
     }
+    if (animIdx === anims.realAnimIdx || anims.realAnimIdx === -1) {
+        updateKeyframe(anim, anims, time, animIdx);
+    }
+    const q = new THREE.Quaternion();
+    const delta = time.delta * 1000;
+    let angle = 0;
+    if (anims.keyframeLength > 0) {
+        angle = (anims.rotation.y * delta) / anims.keyframeLength;
+    }
+    q.setFromAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        angle
+    );
+    m.mesh.quaternion.multiply(q);
+
     return interpolate;
 };
 
