@@ -332,11 +332,11 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     pick(event) {
         const scene = this.state.scene;
         if (this.props.params.editor && scene && this.canvas) {
-            const { clientWidth, clientHeight } = this.canvas;
-            const mouse = new THREE.Vector2(
-                ((event.clientX / clientWidth) * 2) - 1,
-                -((event.clientY / clientHeight) * 2) + 1
-            );
+            const rect = this.canvas.getBoundingClientRect();
+            const mouse = new THREE.Vector2();
+            mouse.x = ((event.clientX - rect.left) / (rect.width - rect.left)) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, scene.camera.threeCamera);
 
