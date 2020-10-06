@@ -87,10 +87,10 @@ function updateScene(params, game, scene, time) {
             actor.hasSeenHit = true;
         }
     });
-    each(scene.actors, async (actor) => {
+    each(scene.actors, (actor) => {
         if (actor.props.runtimeFlags.isDead)
             return;
-        await updateActor(params, game, scene, actor, time);
+        updateActor(params, game, scene, actor, time);
         if (scene.isActive) {
             if (actor.index === 0) {
                 updateHero(game, scene, actor, time);

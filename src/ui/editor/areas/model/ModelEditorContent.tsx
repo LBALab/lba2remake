@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as THREE from 'three';
 import { each } from 'lodash';
-
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
@@ -12,6 +11,7 @@ import {
     updateKeyframeInterpolation
 } from '../../../../model/animState';
 import { getAnim } from '../../../../model/entity';
+import { loadAnim } from '../../../../model/anim';
 import DebugData from '../../DebugData';
 import fmod from './utils/fmod';
 import {get3DOrbitCamera} from './utils/orbitCamera';
@@ -19,7 +19,6 @@ import { TickerProps } from '../../../utils/Ticker';
 import {
     registerResources,
     preloadResources,
-    getAnimations,
 } from '../../../../resources';
 import { loadEntities } from './browser/entitities';
 
@@ -210,7 +209,7 @@ export default class Model extends FrameListener<Props, State> {
         this.zoom = Math.min(Math.max(-1, this.zoom), 8);
     }
 
-    async frame() {
+    frame() {
         const { renderer, animState, clock, model, scene, grid } = this.state;
         const { entity, body, anim, rotateView, wireframe } = this.props.sharedState;
         if (this.entity !== entity || this.body !== body) {
@@ -237,7 +236,7 @@ export default class Model extends FrameListener<Props, State> {
         };
         renderer.stats.begin();
         if (model) {
-            const interpolate = await this.updateModel(
+            const interpolate = this.updateModel(
                 model,
                 animState,
                 entity,
@@ -251,13 +250,13 @@ export default class Model extends FrameListener<Props, State> {
         renderer.stats.end();
     }
 
-    async updateModel(model, animState, entityIdx, animIdx, time) {
+    updateModel(model, animState, entityIdx, animIdx, time) {
         const entity = model.entities[entityIdx];
         const entityAnim = getAnim(entity, animIdx);
         let interpolate = false;
         if (entityAnim !== null) {
             const realAnimIdx = entityAnim.animIndex;
-            const anim = await getAnimations(animIdx, entityIdx);
+            const anim = loadAnim(model, model.anims, realAnimIdx);
             animState.loopFrame = anim.loopFrame;
             if (animState.prevRealAnimIdx !== -1 && realAnimIdx !== animState.prevRealAnimIdx) {
                 updateKeyframeInterpolation(anim, animState, time, realAnimIdx);

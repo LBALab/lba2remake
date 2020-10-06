@@ -6,7 +6,7 @@ import {
     registerResources,
 }  from './load';
 import { getLanguageConfig } from '../lang';
-import { getBodyIndex, getAnimIndex } from '../model/entity';
+import { getBodyIndex } from '../model/entity';
 
 const getVideoPath = (video: string) => {
     return getResourcePath(`VIDEO_${video}`);
@@ -32,13 +32,8 @@ const getEntities = async () => {
     return await loadResource(ResourceName.ENTITIES);
 };
 
-const getAnimations = async (animIdx: number, entityIdx: number) => {
-    const entities = await getEntities();
-
-    const entity = entities[entityIdx];
-    const realAnimIdx = getAnimIndex(entity, animIdx);
-
-    return await loadResource(ResourceName.ANIM, realAnimIdx);
+const getAnimations = async () => {
+    return await loadResource(ResourceName.ANIM);
 };
 
 const getModels = async (bodyIdx: number, entityIdx: number) => {
