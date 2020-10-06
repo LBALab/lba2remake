@@ -41,7 +41,7 @@ export async function saveSceneReplacementModel(entry, ambience) {
         loadImageData('images/brick_mask.png')
     ]);
     const bricks = loadBricks(bkg);
-    const grid = await loadGrid(bkg, bricks, mask, palette, entry + 1);
+    const grid = await loadGrid(bkg, bricks, mask, palette, entry + 1, true);
 
     const metadata = await loadMetadata(entry, grid.library, true);
     const replacements = await initReplacements(entry, metadata, ambience, 0);

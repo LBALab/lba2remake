@@ -22,7 +22,7 @@ export enum GROUND_TYPES {
     WATER2,
 }
 
-export async function loadGrid(bkg, bricks, mask, palette, entry) {
+export async function loadGrid(bkg, bricks, mask, palette, entry, is3D) {
     const gridData = new DataView(bkg.getEntry(entry));
     const libIndex = gridData.getUint8(0);
     const maxOffset = 34 + (4096 * 2);
@@ -39,6 +39,8 @@ export async function loadGrid(bkg, bricks, mask, palette, entry) {
             const numColumns = gridData.getUint8(offset);
             offset += 1;
             const columns = [];
+            const x = idx % 64;
+            const z = Math.floor(idx / 64);
             let baseHeight = 0;
             for (let i = 0; i < numColumns; i += 1) {
                 const flags = gridData.getUint8(offset);
@@ -55,6 +57,7 @@ export async function loadGrid(bkg, bricks, mask, palette, entry) {
                     offset += 2;
 
                 let isValid = false;
+                let hasReplacement = false;
 
                 for (let j = 0; j < height; j += 1) {
                     const yGrid = baseHeight + j;
@@ -88,30 +91,32 @@ export async function loadGrid(bkg, bricks, mask, palette, entry) {
                         case 3:
                             throw new Error('Unsupported block type');
                     }
-                    if (gridMetadata
-                        && idx in gridMetadata
-                        && yGrid in gridMetadata[idx]) {
-                        blocks[blocks.length - 1] = gridMetadata[idx][yGrid];
-                        isValid = true;
+                    const key = `${x}x${yGrid}x${z}`;
+                    if (is3D && gridMetadata && key in gridMetadata) {
+                        const replacementBlock = gridMetadata[key];
+                        if (replacementBlock.layout !== -1) {
+                            blocks[blocks.length - 1] = replacementBlock;
+                        } else {
+                            blocks[blocks.length - 1] = null;
+                        }
+                        isValid = replacementBlock.layout !== -1;
+                        hasReplacement = hasReplacement || isValid;
                     }
                 }
-                if (type !== 0 && isValid) {
-                    const x = Math.floor(idx / 64) - 1;
-                    const z = idx % 64;
-
+                if ((type !== 0 || hasReplacement) && isValid) {
                     const blockData = getBlockData(library, last(blocks));
                     columns.push({
                         shape: (blockData && blockData.shape) || 1,
                         box: new THREE.Box3(
                             new THREE.Vector3(
-                                (63 - x) / 32,
+                                (64 - z) / 32,
                                 baseHeight / 64,
-                                z / 32
+                                x / 32
                             ),
                             new THREE.Vector3(
-                                (64 - x) / 32,
+                                (65 - z) / 32,
                                 (baseHeight + height) / 64,
-                                (z + 1) / 32
+                                (x + 1) / 32
                             )
                         ),
                         groundType: (blockData && blockData.groundType),
@@ -135,7 +140,10 @@ async function getGridMetadata(entry) {
         const metadataReq = await fetch('/metadata/grids.json');
         globalGridMetadata = await metadataReq.json();
     }
-    return globalGridMetadata[entry];
+    // [entry - 1] is the scene index.
+    // It's easier for humans to deal with scene numbers than grid entry
+    // numbers when manually editing the grids.json file.
+    return globalGridMetadata[entry - 1];
 }
 
 function getBlockData(library, block) {
