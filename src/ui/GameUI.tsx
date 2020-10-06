@@ -31,6 +31,7 @@ import { pure } from '../utils/decorators';
 import { getVideoPath } from '../resources';
 import BehaviourMenu from './game/BehaviourMenu';
 import NoAudio from './game/NoAudio';
+import { loadPoint } from '../game/points';
 
 interface GameUIProps extends TickerProps {
     saveMainData?: Function;
@@ -39,6 +40,7 @@ interface GameUIProps extends TickerProps {
     };
     params: any;
     sharedState?: any;
+    stateHandler?: any;
 }
 
 interface GameUIState {
@@ -339,6 +341,23 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
 
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, scene.camera.threeCamera);
+
+            const { addingPoint } = this.props.sharedState;
+            if (addingPoint) {
+                const [result] = raycaster.intersectObject(scene.scenery.threeObject, true);
+                if (result) {
+                    const point = loadPoint({
+                        sceneIndex: scene.index,
+                        index: scene.points.length,
+                        pos: result.point.toArray()
+                    });
+                    point.threeObject.visible = true;
+                    scene.points.push(point);
+                    scene.sceneNode.add(point.threeObject);
+                    this.props.stateHandler.setAddingPoint(false);
+                }
+                return;
+            }
 
             const tgt = new THREE.Vector3();
 
