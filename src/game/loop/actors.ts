@@ -70,7 +70,7 @@ export async function updateActor(
             actor.props.entityIndex,
             actor.props.animIndex,
             time);
-        if (actor.animState.isPlaying) {
+        if (actor.animState?.isPlaying) {
             const firstPerson = game.controlsState.firstPerson
                 && scene.isActive
                 && actor.index === 0;
