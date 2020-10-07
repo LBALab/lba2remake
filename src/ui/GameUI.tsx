@@ -288,7 +288,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         const key = event.code || event.which || event.keyCode;
         if (!this.state.video) {
             if (key === 'Escape' || key === 27) {
-                if (this.props.sharedState.objectToAdd) {
+                if (this.props.sharedState && this.props.sharedState.objectToAdd) {
                     this.props.stateHandler.setAddingObject(null);
                 } else if (this.state.teleportMenu) {
                     this.setState({teleportMenu: false});
@@ -345,9 +345,9 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, scene.camera.threeCamera);
 
-            const { objectToAdd } = this.props.sharedState;
-            if (objectToAdd) {
-                return this.addNewObject(objectToAdd, raycaster);
+            const { sharedState } = this.props;
+            if (sharedState && sharedState.objectToAdd) {
+                return this.addNewObject(sharedState.objectToAdd, raycaster);
             }
 
             const tgt = new THREE.Vector3();
@@ -606,8 +606,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     }
 
     renderNewObjectPickerOverlay() {
-        const { objectToAdd } = this.props.sharedState;
-        if (objectToAdd) {
+        const { sharedState } = this.props;
+        if (sharedState && sharedState.objectToAdd) {
             const baseBannerStyle = {
                 ...fullscreen,
                 height: 30,
@@ -620,7 +620,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             const footerStyle = { ...baseBannerStyle, top: 'initial' };
             return <React.Fragment>
                 <div style={headerStyle}>
-                    Pick a location for the new {objectToAdd.type}...
+                    Pick a location for the new {sharedState.objectToAdd.type}...
                 </div>
                 <div style={footerStyle}/>
             </React.Fragment>;
