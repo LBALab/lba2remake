@@ -400,11 +400,15 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         const [result] = raycaster.intersectObject(scene.scenery.threeObject, true);
         if (result) {
             let obj = null;
+            const position = result.point.clone();
+            if (scene.isIsland) {
+                position.sub(scene.sceneNode.position);
+            }
             if (objectToAdd.type === 'point') {
                 obj = loadPoint({
                     sceneIndex: scene.index,
                     index: scene.points.length,
-                    pos: result.point.toArray()
+                    pos: position.toArray()
                 });
             }
             if (objectToAdd.type === 'actor') {
@@ -414,7 +418,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                     scene.is3DCam,
                     scene.envInfo,
                     scene.data.ambience,
-                    createNewActorProps(scene, result.point, objectToAdd.details),
+                    createNewActorProps(scene, position, objectToAdd.details),
                     !scene.isActive,
                     {}
                 );
