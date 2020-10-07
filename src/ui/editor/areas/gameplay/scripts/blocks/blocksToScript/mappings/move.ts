@@ -30,6 +30,7 @@ export default {
         code: 0x23,
         content: rootBlockContentHandler
     },
+    lba_move_goto: { code: 0x0A },
     lba_move_set_anim: { code: 0x03 },
     lba_move_wait_anim: { code: 0x05 },
     lba_move_wait_num_anim: { code: 0x0d },
