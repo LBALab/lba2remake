@@ -270,7 +270,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
 
         reset() {
             if (params.editor) {
-                game.getState().load(scene.savedState);
+                game.getState().load(scene.savedState, scene.actors[0]);
                 game.setUiState({ text: null, cinema: false });
                 scene.variables = createSceneVariables(scene);
                 each(this.actors, (actor) => {
