@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { DirMode } from '../actors';
 import { AnimType } from '../data/animType';
 import { WORLD_SIZE } from '../../utils/lba';
+import { processHit } from './animAction';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -193,7 +194,7 @@ function firstPersonPunching(game, scene) {
             const intersect = ACTOR_BOX.containsPoint(handPositions[i]);
             const velocity = game.controlsState.vrControllerVelocities[i];
             if (intersect && velocity > PUNCH_VELOCITY_THRESHOLD && !punched[a.index][i]) {
-                a.hit(0, game.getState().hero.handStrength);
+                processHit(scene.actors[0], game.getState().hero.handStrength, game, scene);
                 punched[a.index][i] = true;
             } else if (!intersect) {
                 punched[a.index][i] = false;

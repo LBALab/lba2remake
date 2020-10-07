@@ -17,7 +17,7 @@ export const ANIM = unimplemented();
 
 export const ANIP = unimplemented();
 
-function processHit(actor, hitStrength, game, scene) {
+export function processHit(actor, hitStrength, game, scene) {
     for (const a of scene.actors) {
         if (a.index === actor.index || !a.isVisible ||
             a.props.runtimeFlags.isDead) {
