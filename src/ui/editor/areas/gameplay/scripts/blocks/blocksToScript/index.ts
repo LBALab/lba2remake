@@ -175,6 +175,12 @@ function postProcess(script, scene, moveScript = null) {
                 cmd.args[1].value = Number(loc);
                 break;
             }
+            case 'GOTO': {
+                const track = Number(cmd.args[0].value);
+                const loc = findKey(script.tracksMap, c => c === track);
+                cmd.args[0].value = Number(loc);
+                break;
+            }
         }
     });
 }
