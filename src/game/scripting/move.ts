@@ -3,6 +3,9 @@ import { unimplemented } from './utils';
 import { WORLD_SCALE, getRandom, distAngle } from '../../utils/lba';
 
 export function GOTO_POINT(point) {
+    if (!point) {
+        return;
+    }
     if (this.actor.index === 0 && this.game.controlsState.firstPerson) {
         this.actor.physics.position.copy(point.physics.position);
         this.actor.stop();

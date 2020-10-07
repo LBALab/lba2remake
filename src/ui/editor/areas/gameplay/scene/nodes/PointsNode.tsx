@@ -52,6 +52,14 @@ export const PointsNode = makeObjectsNode('point', {
     needsData: true,
     name: () => 'Points',
     icon: () => 'editor/icons/point.svg',
+    ctxMenu: [
+        {
+            name: 'Add new point',
+            onClick: (component) => {
+                component.props.rootStateHandler.setAddingObject('point');
+            }
+        }
+    ],
     numChildren: scene => scene.points.length,
     child: () => Point,
     childData: (scene, idx) => scene.points[idx],

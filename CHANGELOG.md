@@ -33,6 +33,8 @@ _Unknown date_
 
 #### Editor
 
+- Gameplay editor: create new actors and points in scenes.
+- Scripts editor: now automatically compiles scripts on changes.
 - Iso editor bricks selection and properties.
 
 #### Bug fixes

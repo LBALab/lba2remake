@@ -310,7 +310,8 @@ export default class Area extends React.Component<AreaProps, AreaState> {
             split: this.props.split,
             rootStateHandler: this.props.rootStateHandler,
             rootState: this.props.rootStateHandler && this.props.rootStateHandler.state,
-            editor: this.props.editor
+            editor: this.props.editor,
+            area: this
         };
         if (this.props.mainArea) {
             extend(props, {

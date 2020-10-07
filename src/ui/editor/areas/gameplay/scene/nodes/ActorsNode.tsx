@@ -8,6 +8,7 @@ import DebugData, {
 import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {mapComportementArg} from '../../scripts/text/listing';
 import {makeObjectsNode} from '../node_factories/objects';
+import { getEntities, loadEntities } from '../../../model/browser/entitities';
 
 const Actor = {
     dynamic: true,
@@ -184,6 +185,12 @@ export const ActorsNode = makeObjectsNode('actor', {
     needsData: true,
     name: () => 'Actors',
     icon: () => 'editor/icons/actor.svg',
+    ctxMenu: [
+        {
+            name: 'Add new actor',
+            onClick: component => createNewActor(component)
+        }
+    ],
     numChildren: scene => scene.actors.length,
     child: () => Actor,
     childData: (scene, idx) => scene.actors[idx],
@@ -253,4 +260,115 @@ function getMoveAction(actor) {
         }
     }
     return null;
+}
+
+const icons = {};
+
+function getEntityIcon(entity) {
+    if (entity.index in icons) {
+        return icons[entity.index];
+    }
+    const savedIcon = localStorage.getItem(`icon_model_entity_${entity.index}`);
+    if (savedIcon) {
+        icons[entity.index] = savedIcon;
+        return savedIcon;
+    }
+    return 'editor/icons/entity.svg';
+}
+
+async function createNewActor(component) {
+    const entity = await selectEntity(component);
+    const body = await selectBody(component, entity);
+    const anim = await selectAnim(component, entity);
+    component.props.area.setState({ popup: null });
+    component.props.rootStateHandler.setAddingObject('actor', {
+        entityIndex: entity.index,
+        bodyIndex: body.index,
+        animIndex: anim.index
+    });
+}
+
+const popupStyle = {
+    height: '90%',
+    overflowY: 'auto' as const
+};
+
+const itemStyle = {
+    position: 'relative' as const,
+    paddingLeft: '30px',
+    cursor: 'pointer',
+    lineHeight: '30px'
+};
+
+const iconStyle = {
+    position: 'absolute' as const,
+    left: 0,
+    right: 0,
+    top: 0,
+    height: '20px',
+    width: '20px',
+    padding: 5,
+    margin: 0
+};
+
+async function selectEntity(component): Promise<any> {
+    await loadEntities();
+    const entities = getEntities();
+    return new Promise((resolve) => {
+        component.props.area.confirmPopup(
+            <div style={popupStyle}>
+                <h2>Pick an entity:</h2>
+                {map(entities, entity =>
+                <div
+                    key={entity.index}
+                    style={itemStyle}
+                    onClick={() => resolve(entity)}>
+                    <img style={iconStyle} src={getEntityIcon(entity)} />
+                    {DebugData.metadata.entities[entity.index] || `entity_${entity.index}`}
+                </div>)}
+            </div>,
+            null,
+            'Cancel'
+        );
+    });
+}
+
+async function selectBody(component, entity): Promise<any> {
+    return new Promise((resolve) => {
+        component.props.area.confirmPopup(
+            <div style={popupStyle}>
+                <h2>Pick a body:</h2>
+                {map(entity.bodies, body =>
+                <div
+                    key={body.index}
+                    style={itemStyle}
+                    onClick={() => resolve(body)}>
+                    <img style={iconStyle} src="editor/icons/body.svg" />
+                    {DebugData.metadata.bodies[body.index] || `body_${body.index}`}
+                </div>)}
+            </div>,
+            null,
+            'Cancel'
+        );
+    });
+}
+
+async function selectAnim(component, entity): Promise<any> {
+    return new Promise((resolve) => {
+        component.props.area.confirmPopup(
+            <div style={popupStyle}>
+                <h2>Pick an anim:</h2>
+                {map(entity.anims, anim =>
+                <div
+                    key={anim.index}
+                    style={itemStyle}
+                    onClick={() => resolve(anim)}>
+                    <img style={iconStyle} src="editor/icons/anim.svg" />
+                    {DebugData.metadata.anims[anim.index] || `anim_${anim.index}`}
+                </div>)}
+            </div>,
+            null,
+            'Cancel'
+        );
+    });
 }

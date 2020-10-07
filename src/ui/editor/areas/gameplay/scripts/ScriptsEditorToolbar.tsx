@@ -141,7 +141,7 @@ export default class ScriptsEditorToolbar extends FrameListener<Props, State> {
                     onClick={togglePause}
                     src={`editor/icons/${paused ? 'play' : 'pause'}.svg`}/>
             &nbsp;
-            {this.renderCompileButton()}
+            {/* {this.renderCompileButton()} */}
             {this.renderClearWorkspaceButton()}
             <span style={switchButtonStyle} onClick={this.props.stateHandler.switchMode}>
                 <img style={iconStyle} src={`editor/icons/${mode !== 'text' ? 'script.png' : 'blockly.svg'}`}/>

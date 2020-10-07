@@ -10,11 +10,17 @@ import { getVideoPath } from '../../resources';
 export const PALETTE = unimplemented();
 
 export function BODY_OBJ(actor, bodyIndex) {
+    if (bodyIndex === -1) {
+        return;
+    }
     actor.isVisible = true;
     actor.setBody(this.scene, bodyIndex);
 }
 
 export function ANIM_OBJ(actor, animIndex) {
+    if (animIndex === -1) {
+        return;
+    }
     actor.setAnim(animIndex);
     actor.animState.interpolationFrame = 0;
 }

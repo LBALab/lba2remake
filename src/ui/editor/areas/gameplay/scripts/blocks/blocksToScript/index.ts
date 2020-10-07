@@ -7,12 +7,14 @@ import moveMappings from './mappings/move';
 import { compileScripts } from '../../../../../../../scripting/compiler';
 import DebugData from '../../../../../DebugData';
 import { mapValue } from './mappings/utils';
+import { DirMode } from '../../../../../../../game/actors';
 
 const lifeRootTypes = ['lba_behaviour', 'lba_behaviour_init'];
 const moveRootTypes = ['lba_move_track', 'lba_move_replace'];
 
 export function compile(workspace) {
-    console.time('Compile time');
+    // const label = `Compiled actor ${workspace.actor.index} script`;
+    // console.time(label);
     const topBlocks = workspace.getTopBlocks(false);
 
     const lifeScript = compileRootBlocks('life', topBlocks, lifeRootTypes);
@@ -23,10 +25,20 @@ export function compile(workspace) {
 
     // console.log(jDiff(workspace.actor.scripts.move.commands, moveScript.commands));
 
+    const { game, hero } = DebugData.scope;
+    if (game.getUiState().text) {
+        game.setUiState({ text: null, skip: false, });
+        game.controlsState.skipListener = null;
+        const audio = game.getAudioManager();
+        audio.stopVoice();
+        game.getState().actorTalking = -1;
+    }
+    hero.props.dirMode = DirMode.MANUAL;
+
     workspace.actor.scripts.life = lifeScript;
     workspace.actor.scripts.move = moveScript;
     compileScripts(DebugData.scope.game, workspace.scene, workspace.actor);
-    console.timeEnd('Compile time');
+    // console.timeEnd(label);
 }
 
 function compileRootBlocks(type, topBlocks, rootTypes) {
