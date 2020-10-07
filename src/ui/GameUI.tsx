@@ -288,7 +288,9 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         const key = event.code || event.which || event.keyCode;
         if (!this.state.video) {
             if (key === 'Escape' || key === 27) {
-                if (this.state.teleportMenu) {
+                if (this.props.sharedState.objectToAdd) {
+                    this.props.stateHandler.setAddingObject(null);
+                } else if (this.state.teleportMenu) {
                     this.setState({teleportMenu: false});
                 } else if (!this.state.game.isPaused()) {
                     this.showMenu(true);
