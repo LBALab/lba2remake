@@ -184,6 +184,14 @@ export const ActorsNode = makeObjectsNode('actor', {
     needsData: true,
     name: () => 'Actors',
     icon: () => 'editor/icons/actor.svg',
+    ctxMenu: [
+        {
+            name: 'Add new actor',
+            onClick: (component) => {
+                component.props.rootStateHandler.setAddingObject('actor');
+            }
+        }
+    ],
     numChildren: scene => scene.actors.length,
     child: () => Actor,
     childData: (scene, idx) => scene.actors[idx],

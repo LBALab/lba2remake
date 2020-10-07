@@ -32,6 +32,7 @@ import { getVideoPath } from '../resources';
 import BehaviourMenu from './game/BehaviourMenu';
 import NoAudio from './game/NoAudio';
 import { loadPoint } from '../game/points';
+import { loadActor, createNewActorProps, initDynamicNewActor } from '../game/actors';
 
 interface GameUIProps extends TickerProps {
     saveMainData?: Function;
@@ -331,8 +332,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         }
     }
 
-    pick(event) {
-        const scene = this.state.scene;
+    async pick(event) {
+        const { scene } = this.state;
         if (this.props.params.editor && scene && this.canvas) {
             const rect = this.canvas.getBoundingClientRect();
             const mouse = new THREE.Vector2();
@@ -342,21 +343,9 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, scene.camera.threeCamera);
 
-            const { addingPoint } = this.props.sharedState;
-            if (addingPoint) {
-                const [result] = raycaster.intersectObject(scene.scenery.threeObject, true);
-                if (result) {
-                    const point = loadPoint({
-                        sceneIndex: scene.index,
-                        index: scene.points.length,
-                        pos: result.point.toArray()
-                    });
-                    point.threeObject.visible = true;
-                    scene.points.push(point);
-                    scene.sceneNode.add(point.threeObject);
-                    this.props.stateHandler.setAddingPoint(false);
-                }
-                return;
+            const { objectToAdd } = this.props.sharedState;
+            if (objectToAdd) {
+                return this.addNewObject(objectToAdd, raycaster);
             }
 
             const tgt = new THREE.Vector3();
@@ -400,6 +389,41 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             if (foundZone) {
                 DebugData.selection = {type: 'zone', index: foundZone.index};
                 event.stopPropagation();
+            }
+        }
+    }
+
+    async addNewObject(objectToAdd, raycaster) {
+        const { scene, game } = this.state;
+        const [result] = raycaster.intersectObject(scene.scenery.threeObject, true);
+        if (result) {
+            let obj = null;
+            if (objectToAdd === 'point') {
+                obj = loadPoint({
+                    sceneIndex: scene.index,
+                    index: scene.points.length,
+                    pos: result.point.toArray()
+                });
+            }
+            if (objectToAdd === 'actor') {
+                const actor = await loadActor(
+                    game,
+                    this.props.params,
+                    scene.is3DCam,
+                    scene.envInfo,
+                    scene.data.ambience,
+                    createNewActorProps(scene, result.point),
+                    !scene.isActive,
+                    {}
+                );
+                initDynamicNewActor(game, scene, actor);
+                obj = actor;
+            }
+            if (obj) {
+                obj.threeObject.visible = true;
+                scene[`${objectToAdd}s`].push(obj);
+                scene.sceneNode.add(obj.threeObject);
+                this.props.stateHandler.setAddingObject(null);
             }
         }
     }

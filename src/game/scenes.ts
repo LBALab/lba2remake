@@ -268,6 +268,7 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         vrGUI,
         is3DCam,
         savedState: null,
+        envInfo,
 
         reset() {
             if (params.editor) {

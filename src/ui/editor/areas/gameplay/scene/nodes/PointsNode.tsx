@@ -56,7 +56,7 @@ export const PointsNode = makeObjectsNode('point', {
         {
             name: 'Add new point',
             onClick: (component) => {
-                component.props.rootStateHandler.setAddingPoint(true);
+                component.props.rootStateHandler.setAddingObject('point');
             }
         }
     ],

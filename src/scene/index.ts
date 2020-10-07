@@ -404,7 +404,7 @@ function parseStaticFlags(staticFlags) {
     };
 }
 
-function createRuntimeFlags() {
+export function createRuntimeFlags() {
     return {
         waitHitFrame: false,
         isHitting: false,
