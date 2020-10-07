@@ -599,22 +599,25 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         </div>;
     }
 
-    renderNewObjectTooltip() {
+    renderNewObjectPickerOverlay() {
         const { objectToAdd } = this.props.sharedState;
-        const style = {
-            position: 'absolute' as const,
-            top: 0,
-            height: 30,
-            lineHeight: '30px',
-            left: 0,
-            right: 0,
-            fontSize: 16,
-            background: 'rgba(0, 0, 128, 0.5)'
-        };
         if (objectToAdd) {
-            return <div style={style}>
-                Pick a location for the new {objectToAdd}...
-            </div>;
+            const baseBannerStyle = {
+                ...fullscreen,
+                height: 30,
+                lineHeight: '30px',
+                fontSize: 16,
+                background: 'rgba(0, 0, 128, 0.5)',
+                color: 'white'
+            };
+            const headerStyle = { ...baseBannerStyle, bottom: 'initial' };
+            const footerStyle = { ...baseBannerStyle, top: 'initial' };
+            return <React.Fragment>
+                <div style={headerStyle}>
+                    Pick a location for the new {objectToAdd}...
+                </div>
+                <div style={footerStyle}/>
+            </React.Fragment>;
         }
     }
 
@@ -686,7 +689,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 onChoiceChanged={this.onAskChoiceChanged}
             /> : null}
             {foundObject !== null && !showMenu ? <FoundObject foundObject={foundObject} /> : null}
-            {this.renderNewObjectTooltip()}
+            {this.renderNewObjectPickerOverlay()}
             {keyHelp && <KeyHelpScreen close={this.closeKeyHelp}/>}
             {noAudio && (
                 <NoAudio onClick={this.noAudioClick} />
