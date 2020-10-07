@@ -1,17 +1,21 @@
 # Project Authors
-## Team members
+## Core Team
 ### Lead Developers
 * Adrien Grandemange (@agrande)
 * Alexandre Fontoura (@xesf)
-
-## Contributions
-### Development
 * Scott Williams (@slwilliams)
-* Andriy Tevelyev (@pleasenophp)
-* Jeffrey Veenhuis (@Jeffroiscool)
 
 ### 3D Models
 * Sara González Ramajo (@SendellX)
+* Peter de Vos (@Bot13)
+
+### Metadata
+* Sara González Ramajo (@SendellX)
+
+## Contributions
+### Development
+* Andriy Tevelyev (@pleasenophp)
+* Jeffrey Veenhuis (@Jeffroiscool)
 
 ### Metadata
 * Sara González Ramajo (@SendellX)
@@ -25,7 +29,6 @@
 * Michel Sterenberg (via Facebook)
 * João Paulo Tiz (via Facebook)
 * Jeffrey Veenhuis (@Jeffroiscool)
-* Sara González Ramajo (@SendellX)
 
 ## Special Thanks
 * Frédérick Raynal for supporting this project from its early stages
