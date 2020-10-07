@@ -403,6 +403,7 @@ export function createNewActorProps(scene, pos) {
         life: 255,
         flags: {
             hasCollisions: true,
+            canFall: true,
             isVisible: true,
             isSprite: false,
             spriteAnim3DNumber: false
