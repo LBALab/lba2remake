@@ -51,8 +51,12 @@ const GameplayEditor = {
         setFog(fog) {
             this.setState({ fog });
         },
-        setAddingObject(value) {
-            this.setState({ objectToAdd: value });
+        setAddingObject(type, details) {
+            if (type) {
+                this.setState({ objectToAdd: { type, details } });
+            } else {
+                this.setState({ objectToAdd: null });
+            }
         }
     },
     toolAreas: [

@@ -400,21 +400,21 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         const [result] = raycaster.intersectObject(scene.scenery.threeObject, true);
         if (result) {
             let obj = null;
-            if (objectToAdd === 'point') {
+            if (objectToAdd.type === 'point') {
                 obj = loadPoint({
                     sceneIndex: scene.index,
                     index: scene.points.length,
                     pos: result.point.toArray()
                 });
             }
-            if (objectToAdd === 'actor') {
+            if (objectToAdd.type === 'actor') {
                 const actor = await loadActor(
                     game,
                     this.props.params,
                     scene.is3DCam,
                     scene.envInfo,
                     scene.data.ambience,
-                    createNewActorProps(scene, result.point),
+                    createNewActorProps(scene, result.point, objectToAdd.details),
                     !scene.isActive,
                     {}
                 );
@@ -423,7 +423,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             }
             if (obj) {
                 obj.threeObject.visible = true;
-                scene[`${objectToAdd}s`].push(obj);
+                scene[`${objectToAdd.type}s`].push(obj);
                 scene.sceneNode.add(obj.threeObject);
                 this.props.stateHandler.setAddingObject(null);
             }
@@ -616,7 +616,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             const footerStyle = { ...baseBannerStyle, top: 'initial' };
             return <React.Fragment>
                 <div style={headerStyle}>
-                    Pick a location for the new {objectToAdd}...
+                    Pick a location for the new {objectToAdd.type}...
                 </div>
                 <div style={footerStyle}/>
             </React.Fragment>;

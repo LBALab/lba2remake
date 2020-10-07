@@ -395,7 +395,7 @@ function initPhysics({pos, angle}) {
     };
 }
 
-export function createNewActorProps(scene, pos) {
+export function createNewActorProps(scene, pos, props) {
     return {
         sceneIndex: scene.index,
         index: scene.actors.length,
@@ -409,8 +409,8 @@ export function createNewActorProps(scene, pos) {
             spriteAnim3DNumber: false
         },
         runtimeFlags: createRuntimeFlags(),
-        entityIndex: 217,
-        bodyIndex: 154,
+        entityIndex: 0,
+        bodyIndex: 0,
         animIndex: 0,
         angle: 0,
         speed: 35,
@@ -420,6 +420,7 @@ export function createNewActorProps(scene, pos) {
         lifeScript: new DataView(new ArrayBuffer(1)),
         moveScriptSize: 1,
         moveScript: new DataView(new ArrayBuffer(1)),
+        ...props
     };
 }
 

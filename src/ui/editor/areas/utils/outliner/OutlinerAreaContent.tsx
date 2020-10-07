@@ -29,12 +29,13 @@ const hrStyle = {
 
 interface Props extends TickerProps {
     sharedState: any;
+    stateHandler: any;
     split: boolean;
     userData: any;
     rootStateHandler: any;
     rootState: any;
     editor: any;
-    stateHandler: any;
+    area: any;
 }
 
 interface State {
@@ -106,6 +107,7 @@ export function makeContentComponent(tree, frame, ownStyle, sep = 'normal', hide
                         rootStateHandler={this.props.rootStateHandler}
                         rootState={this.props.rootState}
                         editor={this.props.editor}
+                        area={this.props.area}
                     />}
                 </WithShortcuts>;
             }
