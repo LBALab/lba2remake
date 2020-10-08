@@ -13,6 +13,9 @@ import { createActorLabel } from '../ui/editor/labels';
 import { runScript } from './scripting';
 import { makePure } from '../utils/debug';
 import { compileScripts } from '../scripting/compiler';
+import { createRuntimeFlags } from '../scene';
+import { parseScripts } from '../scripting/parser';
+import { postProcessScripts, cleanUpScripts } from '../scripting/postprocess';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -35,6 +38,10 @@ interface ActorProps {
     speed: number;
     spriteIndex: number;
     hasSpriteAnim3D: number;
+    lifeScriptSize: number;
+    lifeScript: DataView;
+    moveScriptSize: number;
+    moveScript: DataView;
 }
 
 interface ActorPhysics {
@@ -80,6 +87,7 @@ export interface Actor {
     cancelAnims: Function;
     hit: Function;
     nextAnim: number;
+    scripts: any;
 }
 
 export const DirMode = {
@@ -126,6 +134,7 @@ export async function loadActor(
         sprite: null,
         threeObject: null,
         nextAnim: null,
+        scripts: null,
         animState,
 
         runScripts(time) {
@@ -384,4 +393,47 @@ function initPhysics({pos, angle}) {
             destAngle: angleToRad(angle),
         }
     };
+}
+
+export function createNewActorProps(scene, pos, props) {
+    return {
+        sceneIndex: scene.index,
+        index: scene.actors.length,
+        pos: pos.toArray() as any,
+        life: 255,
+        flags: {
+            hasCollisions: true,
+            canFall: true,
+            isVisible: true,
+            isSprite: false,
+            spriteAnim3DNumber: false
+        },
+        runtimeFlags: createRuntimeFlags(),
+        entityIndex: 0,
+        bodyIndex: 0,
+        animIndex: 0,
+        angle: 0,
+        speed: 35,
+        spriteIndex: 0,
+        hasSpriteAnim3D: 0,
+        lifeScriptSize: 1,
+        lifeScript: new DataView(new ArrayBuffer(1)),
+        moveScriptSize: 1,
+        moveScript: new DataView(new ArrayBuffer(1)),
+        ...props
+    };
+}
+
+/*
+** This is used only for actors that are created dynamically
+** because those functions are supposed to be called in phases
+** for all existing actors in the scene.
+** See loadScripts() function for details of the
+** regular way this is called.
+*/
+export function initDynamicNewActor(game, scene, actor) {
+    actor.scripts = parseScripts(actor);
+    postProcessScripts(scene, actor);
+    cleanUpScripts(actor);
+    compileScripts(game, scene, actor);
 }

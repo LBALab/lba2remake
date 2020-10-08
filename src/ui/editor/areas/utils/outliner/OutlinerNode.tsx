@@ -55,6 +55,7 @@ interface Props {
     rootStateHandler: any;
     rootState: any;
     editor: any;
+    area: any;
 }
 
 interface State {
@@ -487,6 +488,7 @@ export default class OutlinerNode extends React.Component<Props, State> {
             rootStateHandler={this.props.rootStateHandler}
             rootState={this.props.rootState}
             editor={this.props.editor}
+            area={this.props.area}
         />;
     }
 

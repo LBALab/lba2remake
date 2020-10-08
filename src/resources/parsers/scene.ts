@@ -3,7 +3,7 @@ import { bits } from '../../utils';
 import  {WORLD_SCALE } from '../../utils/lba';
 import { Resource } from '../load';
 import { getPalette, getText } from '..';
-import { getHtmlColor } from '../../scene';
+import { getHtmlColor, createRuntimeFlags } from '../../scene';
 
 const parseScene = async (resource: Resource, index) => {
     const buffer = resource.getEntry(index + 1); // first entry is not a scene
@@ -390,52 +390,6 @@ function parseStaticFlags(staticFlags) {
         noShadow: bits(staticFlags, 12, 1) === 1,
         noElectricShock: bits(staticFlags, 17, 1) === 1,
         noPreClipping: bits(staticFlags, 19, 1) === 1,
-    };
-}
-
-function createRuntimeFlags() {
-    return {
-        waitHitFrame: false,
-        isHitting: false,
-        hasAnimEnded: false,
-        hasNewFrame: false,
-        wasDrawn: false,
-        isDead: false,
-        isSpriteMoving: false,
-        hasRotationByAnim: false,
-        isFalling: false,
-        isSuperHitting: false,
-        hasFrameShield: false,
-        canDrawShadow: false,
-        hasGravityByAnim: false,
-        isSkating: false,
-        canThrowProjectile: false,
-        canLeftJump: false,
-        canRightJump: false,
-        waitSuperHit: false,
-        hasRotationByTrack: false,
-        canFlyJetPack: false,
-        unknown20: false,
-        hasManualFrame: false,
-        waitPosition: false,
-        forceFalling: false,
-        // not from original from this point
-        isJumping: false,
-        isWalking: false,
-        isTurning: false,
-        isFighting: false,
-        repeatHit: 0,
-        isSwitchingHit: false,
-        isCrouching: false,
-        isClimbing: false,
-        isColliding: false,
-        isDrowning: false,
-        isDrowningLava: false,
-        isDrowningStars: false,
-        isTouchingGround: false,
-        isTouchingFloor: false,
-        isUsingProtoOrJetpack: false,
-        isSearching: false,
     };
 }
 

@@ -31,6 +31,8 @@ import { pure } from '../utils/decorators';
 import { getVideoPath } from '../resources';
 import BehaviourMenu from './game/BehaviourMenu';
 import NoAudio from './game/NoAudio';
+import { loadPoint } from '../game/points';
+import { loadActor, createNewActorProps, initDynamicNewActor } from '../game/actors';
 
 interface GameUIProps extends TickerProps {
     saveMainData?: Function;
@@ -39,6 +41,7 @@ interface GameUIProps extends TickerProps {
     };
     params: any;
     sharedState?: any;
+    stateHandler?: any;
 }
 
 interface GameUIState {
@@ -285,7 +288,9 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         const key = event.code || event.which || event.keyCode;
         if (!this.state.video) {
             if (key === 'Escape' || key === 27) {
-                if (this.state.teleportMenu) {
+                if (this.props.sharedState && this.props.sharedState.objectToAdd) {
+                    this.props.stateHandler.setAddingObject(null);
+                } else if (this.state.teleportMenu) {
                     this.setState({teleportMenu: false});
                 } else if (!this.state.game.isPaused()) {
                     this.showMenu(true);
@@ -329,32 +334,23 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         }
     }
 
-    pick(event) {
-        const scene = this.state.scene;
+    async pick(event) {
+        const { scene } = this.state;
         if (this.props.params.editor && scene && this.canvas) {
-            const { clientWidth, clientHeight } = this.canvas;
-            const mouse = new THREE.Vector2(
-                ((event.clientX / clientWidth) * 2) - 1,
-                -((event.clientY / clientHeight) * 2) + 1
-            );
+            const rect = this.canvas.getBoundingClientRect();
+            const mouse = new THREE.Vector2();
+            mouse.x = ((event.clientX - rect.left) / (rect.width - rect.left)) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, scene.camera.threeCamera);
 
-            const tgt = new THREE.Vector3();
-
-            const foundPoint = scene.points.find((point) => {
-                if (point.threeObject.visible) {
-                    const bb = point.boundingBox.clone();
-                    bb.applyMatrix4(point.threeObject.matrixWorld);
-                    return raycaster.ray.intersectBox(bb, tgt);
-                }
-                return false;
-            });
-            if (foundPoint) {
-                DebugData.selection = {type: 'point', index: foundPoint.index};
-                event.stopPropagation();
-                return;
+            const { sharedState } = this.props;
+            if (sharedState && sharedState.objectToAdd) {
+                return this.addNewObject(sharedState.objectToAdd, raycaster);
             }
+
+            const tgt = new THREE.Vector3();
 
             const foundActor = scene.actors.find((actor) => {
                 if (actor.threeObject.visible && actor.model) {
@@ -370,6 +366,20 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 return;
             }
 
+            const foundPoint = scene.points.find((point) => {
+                if (point.threeObject.visible) {
+                    const bb = point.boundingBox.clone();
+                    bb.applyMatrix4(point.threeObject.matrixWorld);
+                    return raycaster.ray.intersectBox(bb, tgt);
+                }
+                return false;
+            });
+            if (foundPoint) {
+                DebugData.selection = {type: 'point', index: foundPoint.index};
+                event.stopPropagation();
+                return;
+            }
+
             const foundZone = scene.zones.find((zone) => {
                 if (zone.threeObject.visible) {
                     const bb = zone.boundingBox.clone();
@@ -381,6 +391,45 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             if (foundZone) {
                 DebugData.selection = {type: 'zone', index: foundZone.index};
                 event.stopPropagation();
+            }
+        }
+    }
+
+    async addNewObject(objectToAdd, raycaster) {
+        const { scene, game } = this.state;
+        const [result] = raycaster.intersectObject(scene.scenery.threeObject, true);
+        if (result) {
+            let obj = null;
+            const position = result.point.clone();
+            if (scene.isIsland) {
+                position.sub(scene.sceneNode.position);
+            }
+            if (objectToAdd.type === 'point') {
+                obj = loadPoint({
+                    sceneIndex: scene.index,
+                    index: scene.points.length,
+                    pos: position.toArray()
+                });
+            }
+            if (objectToAdd.type === 'actor') {
+                const actor = await loadActor(
+                    game,
+                    this.props.params,
+                    scene.is3DCam,
+                    scene.envInfo,
+                    scene.data.ambience,
+                    createNewActorProps(scene, position, objectToAdd.details),
+                    !scene.isActive,
+                    {}
+                );
+                initDynamicNewActor(game, scene, actor);
+                obj = actor;
+            }
+            if (obj) {
+                obj.threeObject.visible = true;
+                scene[`${objectToAdd.type}s`].push(obj);
+                scene.sceneNode.add(obj.threeObject);
+                this.props.stateHandler.setAddingObject(null);
             }
         }
     }
@@ -556,6 +605,28 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         </div>;
     }
 
+    renderNewObjectPickerOverlay() {
+        const { sharedState } = this.props;
+        if (sharedState && sharedState.objectToAdd) {
+            const baseBannerStyle = {
+                ...fullscreen,
+                height: 30,
+                lineHeight: '30px',
+                fontSize: 16,
+                background: 'rgba(0, 0, 128, 0.5)',
+                color: 'white'
+            };
+            const headerStyle = { ...baseBannerStyle, bottom: 'initial' };
+            const footerStyle = { ...baseBannerStyle, top: 'initial' };
+            return <React.Fragment>
+                <div style={headerStyle}>
+                    Pick a location for the new {sharedState.objectToAdd.type}...
+                </div>
+                <div style={footerStyle}/>
+            </React.Fragment>;
+        }
+    }
+
     renderGUI() {
         const {
             cinema,
@@ -624,6 +695,7 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
                 onChoiceChanged={this.onAskChoiceChanged}
             /> : null}
             {foundObject !== null && !showMenu ? <FoundObject foundObject={foundObject} /> : null}
+            {this.renderNewObjectPickerOverlay()}
             {keyHelp && <KeyHelpScreen close={this.closeKeyHelp}/>}
             {noAudio && (
                 <NoAudio onClick={this.noAudioClick} />

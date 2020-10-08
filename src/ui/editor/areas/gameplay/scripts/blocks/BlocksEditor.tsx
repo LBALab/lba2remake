@@ -48,6 +48,7 @@ export default class BlocksEditor extends FrameListener<Props, State> {
     toolboxElem: HTMLElement;
     initBehaviourId?: string;
     isPaused: boolean;
+    isRebuilding: boolean;
 
     constructor(props) {
         super(props);
@@ -61,6 +62,7 @@ export default class BlocksEditor extends FrameListener<Props, State> {
         };
         this.id = idCount;
         this.isPaused = false;
+        this.isRebuilding = false;
         idCount += 1;
     }
 
@@ -166,6 +168,23 @@ export default class BlocksEditor extends FrameListener<Props, State> {
                             this.initBehaviourId = null;
                         }
                     }
+                    if (e.workspaceId === this.workspace.id && !this.isRebuilding) {
+                        let updated = false;
+                        if (e instanceof Blockly.Events.Delete ||
+                            e instanceof Blockly.Events.Change ||
+                            e instanceof Blockly.Events.Create) {
+                            updated = true;
+                        }
+                        if (e instanceof Blockly.Events.Move) {
+                            const m = e as any;
+                            if (m.newParentId !== m.oldParentId) {
+                                updated = true;
+                            }
+                        }
+                        if (updated) {
+                            this.compile();
+                        }
+                    }
                 });
                 this.rebuildWorkspace();
             }
@@ -253,11 +272,15 @@ export default class BlocksEditor extends FrameListener<Props, State> {
 
     rebuildWorkspace() {
         if (this.scene && this.actor && this.workspace) {
+            this.isRebuilding = true;
             this.workspace.clear();
             this.workspace.actor = this.actor;
             this.workspace.scene = this.scene;
             fillWorkspace(this.workspace);
             this.reorganize();
+            setTimeout(() => {
+                this.isRebuilding = false;
+            }, 100);
         }
     }
 
@@ -297,7 +320,12 @@ export default class BlocksEditor extends FrameListener<Props, State> {
     }
 
     clearWorkspace() {
+        this.isRebuilding = true;
         this.workspace.clear();
+        setTimeout(() => {
+            this.isRebuilding = false;
+            this.compile();
+        }, 100);
     }
 
     expandToolbox() {

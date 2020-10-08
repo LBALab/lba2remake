@@ -26,6 +26,7 @@ const GameplayEditor = {
             zoneTypes: clone(ZONE_TYPE)
         },
         fog: true,
+        objectToAdd: null,
     }),
     stateHandler: {
         setLabel(type, value) {
@@ -50,6 +51,13 @@ const GameplayEditor = {
         setFog(fog) {
             this.setState({ fog });
         },
+        setAddingObject(type, details) {
+            if (type) {
+                this.setState({ objectToAdd: { type, details } });
+            } else {
+                this.setState({ objectToAdd: null });
+            }
+        }
     },
     toolAreas: [
         SceneArea,

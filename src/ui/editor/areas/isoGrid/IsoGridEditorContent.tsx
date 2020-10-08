@@ -268,11 +268,10 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     pick(event) {
         const { scene, isoGrid } = this.state;
         if (scene && isoGrid && this.canvas) {
-            const { clientWidth, clientHeight } = this.canvas;
-            const mouse = new THREE.Vector2(
-                ((event.clientX / clientWidth) * 2) - 1,
-                -((event.clientY / clientHeight) * 2) + 1
-            );
+            const rect = this.canvas.getBoundingClientRect();
+            const mouse = new THREE.Vector2();
+            mouse.x = ((event.clientX - rect.left) / (rect.width - rect.left)) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, scene.camera.threeCamera);
             const selectionData = isoGrid.pickBrick(raycaster);
