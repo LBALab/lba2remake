@@ -1,7 +1,7 @@
 # Version history
 
-## [v0.4.0](https://github.com/agrande/lba2remake/compare/v0.3.0...v0.4.0) [Pending] Big update!
-_Unknown date_
+## [v0.4.0](https://github.com/agrande/lba2remake/compare/v0.3.0...v0.4.0) Big update!
+_October 10th, 2020_
 
 #### UI
 
