@@ -11,7 +11,7 @@ import { editor, fullscreen } from '../../../../styles';
 import { getPalette } from '../../../../../resources';
 import FrameListener from '../../../../utils/FrameListener';
 import { TickerProps } from '../../../../utils/Ticker';
-import DebugData from '../../../DebugData';
+import { areResourcesPreloaded } from '../../../../../resources/load';
 
 const style = extend({
     overflowY: 'auto',
@@ -110,7 +110,7 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
 
     frame() {
         if (this.waitForLoading) {
-            if (DebugData.scope.game && !DebugData.scope.game.getUiState().loading) {
+            if (areResourcesPreloaded()) {
                 this.waitForLoading = false;
                 this.load();
             }
