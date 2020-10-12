@@ -8,6 +8,7 @@ import {
 } from './browser/ModelsBrowserArea';
 import TimelineArea from './timeline/TimelineArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
+import PaletteArea from '../gameplay/palette/PaletteArea';
 
 const ModelEditor = {
     id: 'model',
@@ -53,7 +54,8 @@ const ModelEditor = {
         BodyBrowserArea,
         AnimBrowserArea,
         TimelineArea,
-        InspectorArea
+        InspectorArea,
+        PaletteArea
     ],
     defaultLayout: {
         type: Type.LAYOUT,
