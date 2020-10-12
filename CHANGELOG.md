@@ -1,6 +1,6 @@
 # Version history
 
-## [v0.4.0](https://github.com/agrande/lba2remake/compare/v0.3.0...v0.4.0) Big update!
+## [v0.5.0](https://github.com/agrande/lba2remake/compare/v0.4.0...v0.5.0) Big update!
 _Unreleased_
 
 TODO: Fill this
