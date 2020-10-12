@@ -881,6 +881,26 @@
       "file": "SE_104_bottle.glb",
       "orientation": 0
     },
+    "105": {
+      "replace": true,
+      "file": "SE_105_flask.glb",
+      "orientation": 0
+    },
+    "106": {
+      "replace": true,
+      "file": "SE_106_small_bottle.glb",
+      "orientation": 0
+    },
+    "107": {
+      "replace": true,
+      "file": "SE_107_plate.glb",
+      "orientation": 0
+    },
+    "108": {
+      "replace": true,
+      "file": "SE_108_big_plate.glb",
+      "orientation": 0
+    },
     "113": {
       "mirror": true
     },
