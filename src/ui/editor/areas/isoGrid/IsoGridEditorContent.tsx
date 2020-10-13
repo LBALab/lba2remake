@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as THREE from 'three';
+
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
@@ -8,11 +9,11 @@ import { TickerProps } from '../../../utils/Ticker';
 import { getIsometricCamera } from '../../../../cameras/iso';
 import { loadIsometricScenery } from '../../../../iso';
 import { loadSceneMapData } from '../../../../scene/map';
-import { loadSceneData } from '../../../../scene';
 import { getIso3DCamera } from '../../../../cameras/iso3d';
 import {
     registerResources,
     preloadResources,
+    getScene,
 } from '../../../../resources';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../../../utils/lba';
 
@@ -302,7 +303,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         }
         this.loading = true;
         this.isoGridIdx = isoGridIdx;
-        const sceneData = await loadSceneData(isoGridIdx);
+        const sceneData = await getScene(isoGridIdx);
         const sceneMap = await loadSceneMapData();
         const isoGrid = await loadIsometricScenery(
             sceneMap[isoGridIdx].index,

@@ -22,13 +22,13 @@ import { loadLUTTexture } from '../../../../utils/lut';
 import { loadPaletteTexture } from '../../../../texture';
 import { replaceMaterialsForPreview } from '../../../../iso/metadata/preview';
 import { loadSceneMapData } from '../../../../scene/map';
-import { loadSceneData } from '../../../../scene';
 import { saveSceneReplacementModel } from '../../../../iso/metadata';
 import {
     registerResources,
     preloadResources,
     getPalette,
     getBricks,
+    getScene,
 } from '../../../../resources';
 import { applyAnimationUpdaters } from '../../../../iso/metadata/animations';
 
@@ -680,7 +680,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         for (let i = 0; i < scenes.length; i += 1) {
             const scene = scenes[i];
             this.setState({ updateProgress: `Updating scene ${i + 1} / ${scenes.length}` });
-            const sceneData = await loadSceneData(scene);
+            const sceneData = await getScene(scene);
             const sceneMap = await loadSceneMapData();
             await saveSceneReplacementModel(sceneMap[scene].index, sceneData.ambience);
         }

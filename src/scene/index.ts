@@ -1,11 +1,5 @@
 import * as THREE from 'three';
 
-import { getScene } from '../resources';
-
-export async function loadSceneData(index) {
-    return await getScene(index);
-}
-
 export function createRuntimeFlags() {
     return {
         waitHitFrame: false,
