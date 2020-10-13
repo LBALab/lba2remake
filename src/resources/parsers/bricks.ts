@@ -1,19 +1,14 @@
-import { getBricks } from '../resources';
+import { Resource } from '../load';
 
-export async function loadSceneMapData() {
-    const bkg = await getBricks();
-    return loadSceneMap(bkg);
-}
-
-function loadSceneMap(bkg) {
-    const buffer = bkg.getEntry(18100); // last entry
+const parseSceneMap = (resource: Resource, index: number) => {
+    const buffer = resource.getEntry(index);
     const data = new DataView(buffer);
     let offset = 0;
     const map = [];
 
     while (true) {
         const opcode = data.getUint8(offset);
-        const index = data.getUint8(offset + 1);
+        const sceneIndex = data.getUint8(offset + 1);
         offset += 2;
         if (opcode === 0) {
             break;
@@ -21,8 +16,10 @@ function loadSceneMap(bkg) {
 
         map.push({
             isIsland: opcode === 2,
-            index
+            index: sceneIndex,
         });
     }
     return map;
-}
+};
+
+export { parseSceneMap };

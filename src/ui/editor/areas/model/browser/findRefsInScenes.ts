@@ -1,19 +1,20 @@
 import { map, each, filter, times, clone, concat, find } from 'lodash';
+
 import DebugData, {
     loadSceneMetaData,
     getObjectName
 } from '../../../DebugData';
 import LocationsNode from '../../gameplay/locator/LocationsNode';
-import {loadSceneData} from '../../../../../scene';
 import {makeOutlinerArea} from '../../utils/outliner';
 import {parseScript} from '../../../../../scripting/parser';
+import { getScene } from '../../../../../resources';
 
 export async function findRefsInScenes(type, value) {
     const sceneList = times(222);
     const results = await Promise.all(
         map(sceneList, async (idx) => {
             const [sceneData] = await Promise.all([
-                loadSceneData(idx),
+                getScene(idx),
                 loadSceneMetaData(idx)
             ]);
             const foundResults = findRefsInScene(sceneData, type, value);

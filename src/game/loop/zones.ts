@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { getHtmlColor } from '../../scene';
+
 import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
-import { angleTo, angleToRad, getRandom, WORLD_SCALE, BRICK_SIZE } from '../../utils/lba';
+import { angleTo, angleToRad, getRandom, WORLD_SCALE, BRICK_SIZE, getHtmlColor } from '../../utils/lba';
 import { addExtra, ExtraFlag, getBonus } from '../extras';
 
 function NOP() { }

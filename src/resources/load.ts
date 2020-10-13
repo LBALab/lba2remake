@@ -37,6 +37,7 @@ const ResourceName = {
     SPRITES_CLIP: 'SPRITES_CLIP',
     SPRITESRAW_CLIP: 'SPRITESRAW_CLIP',
     ANIM3DS_CLIP: 'ANIM3DS_CLIP',
+    SCENE_MAP: 'SCENE_MAP',
 };
 
 interface Resource {
@@ -272,10 +273,11 @@ const preloadResources = async () => {
 
 const loadResource = async (id: string, index?: number, param?: any) => {
     const resource = Resources[id];
+    index = index ?? resource.index;
     if (resource && !resource.loaded) {
         await resource.load();
     }
-    if (index !== undefined || resource.index !== undefined) {
+    if (index !== undefined) {
         return await resource.parse(index, param);
     }
     return resource;

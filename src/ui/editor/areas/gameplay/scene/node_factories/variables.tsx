@@ -8,14 +8,15 @@ import {
     clone,
     concat
 } from 'lodash';
+
 import DebugData, * as DBG from '../../../../DebugData';
-import {loadSceneData} from '../../../../../../scene';
 import {parseScript} from '../../../../../../scripting/parser';
 import {Orientation} from '../../../../layout';
 import {makeOutlinerArea} from '../../../utils/outliner';
 import LocationsNode from '../../locator/LocationsNode';
 import {formatVar} from '../../scripts/text/format';
 import {editor as editorStyle} from '../../../../../styles';
+import { getScene } from '../../../../../../resources';
 
 const {
     getObjectName,
@@ -253,7 +254,7 @@ async function findAllRefsInSceneList(varDef, sceneList) {
     const results = await Promise.all(
         map(sceneList, async (idx) => {
             const [sceneData] = await Promise.all([
-                loadSceneData(idx),
+                getScene(idx),
                 loadSceneMetaData(idx)
             ]);
             const foundResults = findAllRefsInScene(varDef, sceneData);

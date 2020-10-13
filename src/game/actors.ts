@@ -13,7 +13,6 @@ import { createActorLabel } from '../ui/editor/labels';
 import { runScript } from './scripting';
 import { makePure } from '../utils/debug';
 import { compileScripts } from '../scripting/compiler';
-import { createRuntimeFlags } from '../scene';
 import { parseScripts } from '../scripting/parser';
 import { postProcessScripts, cleanUpScripts } from '../scripting/postprocess';
 
@@ -436,4 +435,50 @@ export function initDynamicNewActor(game, scene, actor) {
     postProcessScripts(scene, actor);
     cleanUpScripts(actor);
     compileScripts(game, scene, actor);
+}
+
+export function createRuntimeFlags() {
+    return {
+        waitHitFrame: false,
+        isHitting: false,
+        hasAnimEnded: false,
+        hasNewFrame: false,
+        wasDrawn: false,
+        isDead: false,
+        isSpriteMoving: false,
+        hasRotationByAnim: false,
+        isFalling: false,
+        isSuperHitting: false,
+        hasFrameShield: false,
+        canDrawShadow: false,
+        hasGravityByAnim: false,
+        isSkating: false,
+        canThrowProjectile: false,
+        canLeftJump: false,
+        canRightJump: false,
+        waitSuperHit: false,
+        hasRotationByTrack: false,
+        canFlyJetPack: false,
+        unknown20: false,
+        hasManualFrame: false,
+        waitPosition: false,
+        forceFalling: false,
+        // not from original from this point
+        isJumping: false,
+        isWalking: false,
+        isTurning: false,
+        isFighting: false,
+        repeatHit: 0,
+        isSwitchingHit: false,
+        isCrouching: false,
+        isClimbing: false,
+        isColliding: false,
+        isDrowning: false,
+        isDrowningLava: false,
+        isDrowningStars: false,
+        isTouchingGround: false,
+        isTouchingFloor: false,
+        isUsingProtoOrJetpack: false,
+        isSearching: false,
+    };
 }
