@@ -6,6 +6,7 @@ import { parseEntity } from './parsers/entity';
 import { parseTextureRGBA } from './parsers/texture';
 import { parseBody } from './parsers/body';
 import { parseScene } from './parsers/scene';
+import { parseSpriteClipInfo, parseSprite, parseSpriteRaw } from './parsers/sprite';
 
 const NOP = (resource: Resource) => {
     return resource;
@@ -23,8 +24,9 @@ const ResourceTypes = {
     M4A: { type: 'M4A', description: 'MPEG 4 Audio', parser: NOP },
     LS1: { type: 'LS1', description: 'LBA1 Scene', parser: NOP },
     LS2: { type: 'LS2', description: 'LBA2 Scene', parser: parseScene },
-    LSP: { type: 'LSP', description: 'LBA Sprite', parser: NOP },
-    LSR: { type: 'LSR', description: 'LBA2 Sprite Raw', parser: NOP },
+    LSP: { type: 'LSP', description: 'LBA Sprite', parser: parseSprite },
+    LSR: { type: 'LSR', description: 'LBA2 Sprite Raw', parser: parseSpriteRaw },
+    SAD: { type: 'SAD', description: 'Sprites Clip Info', parser: parseSpriteClipInfo },
     LBT: { type: 'LBT', description: 'LBA Text Dialog', parser: parseText },
     BL1: { type: 'BL1', description: 'LBA1 Brick Layout', parser: NOP },
     BL2: { type: 'BL2', description: 'LBA2 Brick Layout', parser: NOP },

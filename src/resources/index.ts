@@ -21,11 +21,35 @@ const getPalette = async() => {
 };
 
 const getSprites = async () => {
-    return await loadResource(ResourceName.SPRITES);
+    const resource = await loadResource(ResourceName.SPRITES);
+    const entriesPromise = [];
+    for (let i = 0; i < resource.length; i += 1) {
+        entriesPromise.push(loadResource(ResourceName.SPRITES, i));
+    }
+    const entries = Promise.all(entriesPromise);
+    return entries;
+};
+
+const getSpritesClipInfo = async () => {
+    return await loadResource(ResourceName.SPRITES_CLIP);
 };
 
 const getSpritesRaw = async () => {
-    return await loadResource(ResourceName.SPRITERAW);
+    const resource = await loadResource(ResourceName.SPRITERAW);
+    const entriesPromise = [];
+    for (let i = 0; i < resource.length; i += 1) {
+        entriesPromise.push(loadResource(ResourceName.SPRITERAW, i));
+    }
+    const entries = Promise.all(entriesPromise);
+    return entries;
+};
+
+const getSpritesRawClipInfo = async () => {
+    return await loadResource(ResourceName.SPRITESRAW_CLIP);
+};
+
+const getSpritesAnim3DSClipInfo = async () => {
+    return await loadResource(ResourceName.ANIM3DS_CLIP);
 };
 
 const getEntities = async () => {
@@ -104,7 +128,10 @@ export {
     getCommonResource,
     getPalette,
     getSprites,
+    getSpritesClipInfo,
     getSpritesRaw,
+    getSpritesRawClipInfo,
+    getSpritesAnim3DSClipInfo,
     getEntities,
     getAnimations,
     getModels,

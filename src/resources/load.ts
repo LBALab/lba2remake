@@ -34,6 +34,9 @@ const ResourceName = {
     MUSIC: 'MUSIC',
     ENTITIES: 'ENTITIES',
     PALETTE: 'PALETTE',
+    SPRITES_CLIP: 'SPRITES_CLIP',
+    SPRITESRAW_CLIP: 'SPRITESRAW_CLIP',
+    ANIM3DS_CLIP: 'ANIM3DS_CLIP',
 };
 
 interface Resource {
@@ -233,6 +236,9 @@ const register = (
         if (resource.parsedEntries[index]) {
             return resource.parsedEntries[index];
         }
+        if (!ResourceTypes[resource.type].parser) {
+            return null;
+        }
         const data = await ResourceTypes[resource.type].parser(resource, index, language);
         resource.parsedEntries[index] = data;
         return resource.parsedEntries[index];
@@ -240,27 +246,6 @@ const register = (
 
     Resources[id] = resource;
 };
-
-// const releaseAllResources = () => {
-//     Resources = {};
-// };
-
-// const releaseTransientResources = () => {
-//     for (const res of Object.values(Resources)) {
-//         if (res.strategy === ResourceStrategy.TRANSIENT) {
-//             releaseResource(res.id);
-//         }
-//     }
-// };
-
-// const releaseResource = (id: string) => {
-//     const res = Resources[id];
-//     if (res) {
-//         delete res.hqr;
-//         res.loaded = false;
-//         res.length = 0;
-//     }
-// };
 
 let preloaded = false;
 
@@ -290,12 +275,11 @@ const loadResource = async (id: string, index?: number, param?: any) => {
     if (resource && !resource.loaded) {
         await resource.load();
     }
-    return await resource.parse(index, param);
+    if (index !== undefined || resource.index !== undefined) {
+        return await resource.parse(index, param);
+    }
+    return resource;
 };
-
-// const getResource = (id: string) => {
-//     return Resources[id];
-// };
 
 const getResourcePath = (id: string) => {
     return Resources[id].path;

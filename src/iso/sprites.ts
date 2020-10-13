@@ -1,20 +1,26 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { each, orderBy } from 'lodash';
-import { bits } from '../utils';
+
 import { compile } from '../utils/shaders';
 import { WORLD_SCALE } from '../utils/lba';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
-import { getCommonResource, getPalette, getSprites, getSpritesRaw } from '../resources';
 import { makeStars, makeStarsMaterial } from './misc/dome_env';
+import {
+    getPalette,
+    getSprites,
+    getSpritesRaw,
+    getSpritesClipInfo,
+    getSpritesRawClipInfo,
+    getSpritesAnim3DSClipInfo
+} from '../resources';
 
 const loader = new GLTFLoader();
 
-const push = Array.prototype.push;
-
 let spriteCache = null;
 let spriteRawCache = null;
+const push = Array.prototype.push;
 
 export async function loadSprite(
     index,
@@ -23,24 +29,24 @@ export async function loadSprite(
     is3DCam = false,
     spriteReplacements = {}
 ) {
-    const [ress, palette, spritesFile, spritesRaw] = await Promise.all([
-        getCommonResource(),
-        getPalette(),
-        getSprites(),
-        getSpritesRaw()
-    ]);
-    // lets keep it with two separate textures for now
+    const palette = await getPalette();
+    // // lets keep it with two separate textures for now
     if (!spriteCache) {
-        const sprites = loadAllSprites(spritesFile);
+        const sprites = await getSprites();
         spriteCache = loadSpritesMapping(sprites, palette);
     }
     if (!spriteRawCache) {
-        const sprites = loadAllSpritesRaw(spritesRaw);
+        const sprites = await getSpritesRaw();
         spriteRawCache = loadSpritesMapping(sprites, palette);
     }
     const cache = (index < 100) ? spriteRawCache : spriteCache;
-    const box = loadSpriteBB(ress, index, hasSpriteAnim3D);
+
+    const clipInfo = hasSpriteAnim3D ?
+        await getSpritesAnim3DSClipInfo() :
+        (index < 100 ? await getSpritesRawClipInfo() : await getSpritesClipInfo());
+    const box = clipInfo[index];
     const {xMin, xMax, yMin, yMax, zMin, zMax} = box;
+
     let threeObject;
     let update = (_time) => {};
     if (index in spriteReplacements) {
@@ -63,20 +69,6 @@ export async function loadSprite(
         props: cache.spritesMap[index],
         threeObject,
         update
-    };
-}
-
-function loadSpriteBB(ress, entry, hasSpriteAnim3D) {
-    const ressEntry = hasSpriteAnim3D ? 43 : (entry < 100 ? 8 : 5);
-    const rDataView = new DataView(ress.getEntry(ressEntry));
-    const rOffset = (entry * 16) + 4;
-    return {
-        xMin: rDataView.getInt16(rOffset, true),
-        xMax: rDataView.getInt16(rOffset + 2, true),
-        yMin: rDataView.getInt16(rOffset + 4, true),
-        yMax: rDataView.getInt16(rOffset + 6, true),
-        zMin: rDataView.getInt16(rOffset + 8, true),
-        zMax: rDataView.getInt16(rOffset + 10, true),
     };
 }
 
@@ -225,95 +217,6 @@ function loadBillboardSprite(index, sprite, is3DCam) {
     threeSprite.name = 'Sprite';
 
     return threeSprite;
-}
-
-export function loadAllSprites(spriteFile) {
-    const sprites = [];
-    for (let i = 0; i < 425; i += 1) {
-        sprites.push(loadSpriteData(spriteFile, i));
-    }
-    return sprites;
-}
-
-export function loadAllSpritesRaw(spriteFile) {
-    const sprites = [];
-    for (let i = 0; i < 111; i += 1) {
-        sprites.push(loadSpriteRawData(spriteFile, i));
-    }
-    return sprites;
-}
-
-function loadSpriteData(sprites, entry) {
-    const dataView = new DataView(sprites.getEntry(entry));
-    const width = dataView.getUint8(8);
-    const height = dataView.getUint8(9);
-    const offsetX = dataView.getUint8(10);
-    const offsetY = dataView.getUint8(11);
-    const buffer = new ArrayBuffer(width * height);
-    const pixels = new Uint8Array(buffer);
-    let ptr = 12;
-    for (let y = 0; y < height; y += 1) {
-        const numRuns = dataView.getUint8(ptr);
-        ptr += 1;
-        let x = 0;
-        const offset = () => ((y + offsetY) * width) + x + offsetX;
-        for (let run = 0; run < numRuns; run += 1) {
-            const runSpec = dataView.getUint8(ptr);
-            ptr += 1;
-            const runLength = bits(runSpec, 0, 6) + 1;
-            const type = bits(runSpec, 6, 2);
-            if (type === 2) {
-                const color = dataView.getUint8(ptr);
-                ptr += 1;
-                for (let i = 0; i < runLength; i += 1) {
-                    pixels[offset()] = color;
-                    x += 1;
-                }
-            } else if (type === 1 || type === 3) {
-                for (let i = 0; i < runLength; i += 1) {
-                    pixels[offset()] = dataView.getUint8(ptr);
-                    ptr += 1;
-                    x += 1;
-                }
-            } else {
-                x += runLength;
-            }
-        }
-    }
-    return {
-        width,
-        height,
-        offsetX,
-        offsetY,
-        pixels,
-        index: entry
-    };
-}
-
-function loadSpriteRawData(sprites, entry) {
-    const dataView = new DataView(sprites.getEntry(entry));
-    const width = dataView.getUint8(8);
-    const height = dataView.getUint8(9);
-    const buffer = new ArrayBuffer(width * height);
-    const pixels = new Uint8Array(buffer);
-    let ptr = 12;
-    for (let y = 0; y < height; y += 1) {
-        let x = 0;
-        const offset = () => (y * width) + x;
-        for (let run = 0; run < width; run += 1) {
-            pixels[offset()] = dataView.getUint8(ptr);
-            ptr += 1;
-            x += 1;
-        }
-    }
-    return {
-        width,
-        height,
-        offsetX: 0,
-        offsetY: 0,
-        pixels,
-        index: entry
-    };
 }
 
 export function loadSpritesMapping(sprites, palette) {
