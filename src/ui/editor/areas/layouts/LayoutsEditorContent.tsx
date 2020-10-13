@@ -33,8 +33,6 @@ import {
 import { applyAnimationUpdaters } from '../../../../iso/metadata/animations';
 
 interface Props extends TickerProps {
-    mainData: any;
-    saveMainData: Function;
     params: any;
     sharedState: {
         library: number;
@@ -174,7 +172,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
 
         this.onLoad = this.onLoad.bind(this);
         this.frame = this.frame.bind(this);
-        this.saveData = this.saveData.bind(this);
+        this.saveDebugScope = this.saveDebugScope.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
@@ -198,60 +196,46 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.zoom = 0;
         this.layout = -1;
 
-        if (props.mainData) {
-            this.state = props.mainData.state;
-            this.library = props.mainData.library;
-            this.layout = props.mainData.layout;
-        } else {
-            const camera = getIsometricCamera();
-            const scene = {
-                camera,
-                threeScene: new THREE.Scene(),
-                target: {
-                    threeObject: new THREE.Object3D()
-                }
-            };
-            const controlsState = {
-                cameraLerp: new THREE.Vector3(),
-                cameraLookAtLerp: new THREE.Vector3()
-            };
-            const gridScale = 0.75;
-            const grid = new THREE.Object3D();
-            for (let x = -4; x <= 4; x += 1) {
-                for (let z = -4; z <= 4; z += 1) {
-                    const tile = new THREE.GridHelper(gridScale, 2);
-                    tile.position.x = x * gridScale;
-                    tile.position.z = z * gridScale;
-                    (tile.material as THREE.LineBasicMaterial).transparent = true;
-                    (tile.material as THREE.LineBasicMaterial).opacity = 1;
-                    grid.add(tile);
-                }
+        const camera = getIsometricCamera();
+        const scene = {
+            camera,
+            threeScene: new THREE.Scene(),
+            target: {
+                threeObject: new THREE.Object3D()
             }
-            scene.threeScene.add(grid);
-            scene.threeScene.add(camera.threeCamera);
-            const clock = new THREE.Clock(false);
-            this.state = {
-                scene,
-                clock,
-                grid,
-                controlsState,
-                showOriginal: false,
-                updateProgress: null
-            };
-            clock.start();
+        };
+        const controlsState = {
+            cameraLerp: new THREE.Vector3(),
+            cameraLookAtLerp: new THREE.Vector3()
+        };
+        const gridScale = 0.75;
+        const grid = new THREE.Object3D();
+        for (let x = -4; x <= 4; x += 1) {
+            for (let z = -4; z <= 4; z += 1) {
+                const tile = new THREE.GridHelper(gridScale, 2);
+                tile.position.x = x * gridScale;
+                tile.position.z = z * gridScale;
+                (tile.material as THREE.LineBasicMaterial).transparent = true;
+                (tile.material as THREE.LineBasicMaterial).opacity = 1;
+                grid.add(tile);
+            }
         }
+        scene.threeScene.add(grid);
+        scene.threeScene.add(camera.threeCamera);
+        const clock = new THREE.Clock(false);
+        this.state = {
+            scene,
+            clock,
+            grid,
+            controlsState,
+            showOriginal: false,
+            updateProgress: null
+        };
+        clock.start();
     }
 
-    saveData() {
-        if (this.props.saveMainData) {
-            DebugData.scope = this.state;
-            this.props.saveMainData({
-                library: this.library,
-                layout: this.layout,
-                state: this.state,
-                canvas: this.canvas
-            });
-        }
+    saveDebugScope() {
+        DebugData.scope = this.state;
     }
 
     async preload() {
@@ -260,24 +244,20 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     async onLoad(root) {
-        await this.preload();
-        if (!this.root) {
-            if (this.props.mainData) {
-                this.canvas = this.props.mainData.canvas;
-            } else {
-                this.canvas = document.createElement('canvas');
-                this.canvas.tabIndex = 0;
-                const renderer = new Renderer(
-                    this.props.params,
-                    this.canvas,
-                    {},
-                    'layouts_editor'
-                );
-                renderer.threeRenderer.setAnimationLoop(() => {
-                    this.props.ticker.frame();
-                });
-                this.setState({ renderer }, this.saveData);
-            }
+        if (!this.root && root) {
+            await this.preload();
+            this.canvas = document.createElement('canvas');
+            this.canvas.tabIndex = 0;
+            const renderer = new Renderer(
+                this.props.params,
+                this.canvas,
+                {},
+                'layouts_editor'
+            );
+            renderer.threeRenderer.setAnimationLoop(() => {
+                this.props.ticker.frame();
+            });
+            this.setState({ renderer }, this.saveDebugScope);
             this.root = root;
             this.root.appendChild(this.canvas);
         }
@@ -402,7 +382,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             library,
             layout: layoutObj,
             lSettings
-        }, this.saveData);
+        }, this.saveDebugScope);
+        DebugData.scope = this.state;
         this.wireframe = false;
         this.loading = false;
     }
@@ -513,7 +494,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     async replaceByModel() {
         const data = await fetch('/layout_models');
         const files = await data.json();
-        this.setState({ replacementFiles: files });
+        this.setState({ replacementFiles: files }, this.saveDebugScope);
     }
 
     async resetToIso() {
@@ -529,15 +510,15 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             : layout;
         delete layoutsMetadata[library][key];
         await this.saveMetadata();
-        this.setState({ lSettings: null , showOriginal: true });
+        this.setState({ lSettings: null , showOriginal: true }, this.saveDebugScope);
     }
 
     closeReplacement() {
-        this.setState({ replacementFiles: null });
+        this.setState({ replacementFiles: null }, this.saveDebugScope);
     }
 
     async useFile(file) {
-        this.setState({ replacementFiles: null });
+        this.setState({ replacementFiles: null }, this.saveDebugScope);
         const model = await loadModel(file);
         const { variant } = this.props.sharedState;
         const { threeScene } = this.state.scene;
@@ -572,7 +553,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         layoutsMetadata[library][key] = omit(lSettings, 'threeObject');
         await this.saveMetadata();
         threeScene.add(lSettings.threeObject);
-        this.setState({ lSettings, showOriginal: false });
+        this.setState({ lSettings, showOriginal: false }, this.saveDebugScope);
     }
 
     async saveMetadata() {
@@ -679,12 +660,14 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         const scenes = await findScenesUsingLibrary(library);
         for (let i = 0; i < scenes.length; i += 1) {
             const scene = scenes[i];
-            this.setState({ updateProgress: `Updating scene ${i + 1} / ${scenes.length}` });
+            this.setState({
+                updateProgress: `Updating scene ${i + 1} / ${scenes.length}`
+            }, this.saveDebugScope);
             const sceneData = await getScene(scene);
             const sceneMap = await getSceneMap();
             await saveSceneReplacementModel(sceneMap[scene].index, sceneData.ambience);
         }
-        this.setState({ updateProgress: null });
+        this.setState({ updateProgress: null }, this.saveDebugScope);
     }
 
     async changeAngle(e) {
@@ -707,7 +690,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
                 material.uniforms.uNormalMatrix.value.setFromMatrix4(node.matrixWorld);
             }
         });
-        this.setState({lSettings});
+        this.setState({lSettings}, this.saveDebugScope);
         const key = variant
             ? `${layout}:${variant.key}`
             : layout;
@@ -717,7 +700,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
 
     async setMirror(e) {
         const { library, layout, variant } = this.props.sharedState;
-        this.setState({lSettings: { mirror: e.target.checked }});
+        this.setState({lSettings: { mirror: e.target.checked }}, this.saveDebugScope);
         if (!(library in layoutsMetadata)) {
             layoutsMetadata[library] = {};
         }
@@ -731,7 +714,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     async toggleMirror() {
         const { library, layout, variant } = this.props.sharedState;
         const mirror = this.state.lSettings ? !this.state.lSettings.mirror : true;
-        this.setState({lSettings: { mirror }});
+        this.setState({lSettings: { mirror }}, this.saveDebugScope);
         if (!(library in layoutsMetadata)) {
             layoutsMetadata[library] = {};
         }
@@ -744,7 +727,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
 
     async setShowOriginal(e) {
         this.state.layout.threeObject.visible = e.target.checked;
-        this.setState({showOriginal: e.target.checked});
+        this.setState({showOriginal: e.target.checked}, this.saveDebugScope);
     }
 
     renderLayoutOptions() {

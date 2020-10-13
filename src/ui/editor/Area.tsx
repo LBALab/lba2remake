@@ -103,8 +103,6 @@ interface AreaProps {
     availableAreas: AreaDefinition[];
     selectAreaContent: (content: AreaDefinition) => void;
     editor: any;
-    saveMainData: Function;
-    mainData: Object;
 }
 
 interface AreaState {
@@ -313,12 +311,6 @@ export default class Area extends React.Component<AreaProps, AreaState> {
             editor: this.props.editor,
             area: this
         };
-        if (this.props.mainArea) {
-            extend(props, {
-                saveMainData: this.props.saveMainData,
-                mainData: this.props.mainData
-            });
-        }
         return <div style={extend({}, contentStyle, this.props.area.style)}>
             {React.createElement(this.props.area.content, props)}
             {this.renderPopup()}
