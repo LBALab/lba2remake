@@ -23,6 +23,7 @@
         { "strategy": "STATIC", "type": "BRK", "id": "BRICKS",           "description": "Isometric Bricks",         "path": "LBA2/LBA_BKG.HQR" },
         { "strategy": "STATIC", "type": "BL2", "id": "LAYOUTS",          "description": "Isometric Layouts",        "path": "LBA2/LBA_BKG.HQR" },
         { "strategy": "STATIC", "type": "GR2", "id": "GRIDS",            "description": "Isometric Grids",          "path": "LBA2/LBA_BKG.HQR" },
+        { "strategy": "STATIC", "type": "LSM", "id": "SCENE_MAP",        "description": "Isometric Scene Map",      "path": "LBA2/LBA_BKG.HQR", "index": 18100 },
         { "strategy": "STATIC", "type": "M4A", "id": "THEME_ADELINE",    "description": "Adeline Theme",            "path": "LBA2/MUSIC/LOGADPCM.m4a" },
         { "strategy": "STATIC", "type": "M4A", "id": "THEME_MAIN",       "description": "Adeline Theme",            "path": "LBA2/MUSIC/JADPCM15.m4a" },
         { "strategy": "STATIC", "type": "M4A", "id": "THEME_MENU",       "description": "Adeline Theme",            "path": "LBA2/MUSIC/TADPCM6.m4a" },

@@ -99,6 +99,10 @@ const getScene = async (index: number) => {
     return await loadResource(ResourceName.SCENE, index);
 };
 
+const getSceneMap = async () => {
+    return await loadResource(ResourceName.SCENE_MAP);
+};
+
 const getSamples = async () => {
     return await loadResource(ResourceName.SAMPLES);
 };
@@ -141,6 +145,7 @@ export {
     getIslandObjects,
     getText,
     getScene,
+    getSceneMap,
     getInventoryObjects,
     getSamples,
     getVoices,

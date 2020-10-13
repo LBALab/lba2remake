@@ -8,7 +8,6 @@ import {
 import islandSceneMapping from '../island/data/sceneMapping';
 import { loadIslandScenery, getEnvInfo } from '../island';
 import { loadIsometricScenery } from '../iso';
-import { loadSceneMapData } from '../scene/map';
 import { loadActor, DirMode } from './actors';
 import { loadPoint } from './points';
 import { loadZone } from './zones';
@@ -26,7 +25,7 @@ import { createVRGUI } from '../ui/vr/vrGUI';
 import { angleToRad, WORLD_SIZE } from '../utils/lba';
 import { makePure } from '../utils/debug';
 import { getVrFirstPersonCamera } from '../cameras/vr/vrFirstPerson';
-import { getScene } from '../resources';
+import { getScene, getSceneMap } from '../resources';
 
 declare global {
     var ga: Function;
@@ -86,7 +85,7 @@ export async function createSceneManager(params, game, renderer, hideMenu: Funct
             game.loading(index);
             renderer.setClearColor(0x000000);
             if (!this.sceneMap) {
-                this.sceneMap = await loadSceneMapData();
+                this.sceneMap = await getSceneMap();
             }
             scene = await loadScene(
                 this,
