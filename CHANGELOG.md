@@ -3,6 +3,10 @@
 ## [v0.5.0](https://github.com/agrande/lba2remake/compare/v0.4.0...v0.5.0) Big update!
 _Unreleased_
 
+#### Gameplay
+
+- Tweaked rotation speed
+
 #### Editor
 
 - Palette: Eye drop colors from any editor's main view.
