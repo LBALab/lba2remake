@@ -262,7 +262,12 @@ const register = (
 //     }
 // };
 
+let preloaded = false;
+
 const preloadResources = async () => {
+    if (preloaded) {
+        return;
+    }
     const preload = [];
     const resPreload = [];
     for (const res of Object.values<Resource>(Resources)) {
@@ -277,6 +282,7 @@ const preloadResources = async () => {
         }
     }
     await Promise.all(resPreload);
+    preloaded = true;
 };
 
 const loadResource = async (id: string, index?: number, param?: any) => {
@@ -295,7 +301,12 @@ const getResourcePath = (id: string) => {
     return Resources[id].path;
 };
 
+let registered = false;
+
 const registerResources = async (game, language, languageVoice) => {
+    if (registered) {
+        return;
+    }
     const api = new WebApi();
     const response = await api.request(`resources/${game}.json`, 'GET', 'json');
     if (response && response.body) {
@@ -309,11 +320,15 @@ const registerResources = async (game, language, languageVoice) => {
             register(ResourceStrategy[r.strategy], r.type, r.id, r.description, path, r.index);
         }
     }
+    registered = true;
 };
+
+const areResourcesPreloaded = () => preloaded;
 
 export {
     Resource,
     ResourceName,
+    areResourcesPreloaded,
     preloadResources,
     loadResource,
     getResourcePath,

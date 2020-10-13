@@ -5,6 +5,7 @@ import LibrariesBrowserArea from './browser/LibrariesBrowserArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 import LayoutsBrowserArea from './browser/LayoutsBrowserArea';
 import VariantsBrowserArea from './browser/VariantsBrowserArea';
+import PaletteArea from '../gameplay/palette/PaletteArea';
 
 const LayoutsEditor = {
     id: 'layouts',
@@ -40,7 +41,8 @@ const LayoutsEditor = {
         LibrariesBrowserArea,
         LayoutsBrowserArea,
         VariantsBrowserArea,
-        InspectorArea
+        InspectorArea,
+        PaletteArea
     ],
     defaultLayout: {
         type: Type.LAYOUT,

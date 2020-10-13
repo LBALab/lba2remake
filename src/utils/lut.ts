@@ -166,7 +166,7 @@ function decompose(color, p, bbs) {
     return distribution.map(w => w / wTotal);
 }
 
-function distSq(c0, c1) {
+export function distSq(c0, c1) {
     const dr = c1[0] - c0[0];
     const dg = c1[1] - c0[1];
     const db = c1[2] - c0[2];
