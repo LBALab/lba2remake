@@ -5,6 +5,7 @@ import {
     IslandsBrowserArea,
 } from './browser/IslandsBrowserArea';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
+import PaletteArea from '../gameplay/palette/PaletteArea';
 
 const IslandEditor = {
     id: 'island',
@@ -34,6 +35,7 @@ const IslandEditor = {
     toolAreas: [
         IslandsBrowserArea,
         InspectorArea,
+        PaletteArea,
     ],
     defaultLayout: {
         type: Type.LAYOUT,

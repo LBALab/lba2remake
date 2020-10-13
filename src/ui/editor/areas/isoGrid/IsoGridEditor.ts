@@ -3,6 +3,7 @@ import IsoGridEditorSettings from './IsoGridEditorSettings';
 import {Orientation, Type} from '../../layout';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 import IsoBrowserArea from './browser/IsoBrowserArea';
+import PaletteArea from '../gameplay/palette/PaletteArea';
 
 const IsoGridEditor = {
     id: 'iso_grid',
@@ -25,7 +26,8 @@ const IsoGridEditor = {
     },
     toolAreas: [
         IsoBrowserArea,
-        InspectorArea
+        InspectorArea,
+        PaletteArea
     ],
     defaultLayout: {
         type: Type.LAYOUT,
