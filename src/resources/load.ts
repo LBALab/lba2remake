@@ -1,6 +1,7 @@
 
 import HQR, { loadHqr } from '../hqr';
 import WebApi from '../webapi';
+import { ResourceTypes } from './parse';
 
 const ResourceStrategy = {
     TRANSIENT: 0,
@@ -19,6 +20,7 @@ const ResourceName = {
     NONE: 'NONE',
     ANIM: 'ANIM',
     BODY: 'BODY',
+    BODY_TEXTURE: 'BODY_TEXTURE',
     RESS: 'RESS',
     SAMPLES: 'SAMPLES',
     SCENE: 'SCENE',
@@ -32,6 +34,9 @@ const ResourceName = {
     MUSIC: 'MUSIC',
     ENTITIES: 'ENTITIES',
     PALETTE: 'PALETTE',
+    SPRITES_CLIP: 'SPRITES_CLIP',
+    SPRITESRAW_CLIP: 'SPRITESRAW_CLIP',
+    ANIM3DS_CLIP: 'ANIM3DS_CLIP',
 };
 
 interface Resource {
@@ -53,6 +58,7 @@ interface Resource {
     hasHiddenEntries: Function;
     getNextHiddenEntry: Function;
     load: Function;
+    parse: Function;
     entries: [];
 }
 
@@ -100,6 +106,7 @@ const requestResource = async (
 /** Add Resource */
 const register = (
     strategy: number,
+    type: string,
     id: string,
     description: string,
     path: string,
@@ -111,6 +118,7 @@ const register = (
 
     const resource = {
         id,
+        type,
         strategy,
         description,
         path,
@@ -130,6 +138,8 @@ const register = (
         ref: null,
         buffer: null,
         entries: [],
+        parse: null,
+        parsedEntries: [],
     };
 
     // check if we have already a resource with same file
@@ -222,29 +232,20 @@ const register = (
         resource.loaded = true;
     };
 
+    resource.parse = async (index?: number, language?: any) => {
+        if (resource.parsedEntries[index]) {
+            return resource.parsedEntries[index];
+        }
+        if (!ResourceTypes[resource.type].parser) {
+            return null;
+        }
+        const data = await ResourceTypes[resource.type].parser(resource, index, language);
+        resource.parsedEntries[index] = data;
+        return resource.parsedEntries[index];
+    };
+
     Resources[id] = resource;
 };
-
-// const releaseAllResources = () => {
-//     Resources = {};
-// };
-
-// const releaseTransientResources = () => {
-//     for (const res of Object.values(Resources)) {
-//         if (res.strategy === ResourceStrategy.TRANSIENT) {
-//             releaseResource(res.id);
-//         }
-//     }
-// };
-
-// const releaseResource = (id: string) => {
-//     const res = Resources[id];
-//     if (res) {
-//         delete res.hqr;
-//         res.loaded = false;
-//         res.length = 0;
-//     }
-// };
 
 let preloaded = false;
 
@@ -269,17 +270,16 @@ const preloadResources = async () => {
     preloaded = true;
 };
 
-const loadResource = async (id: string) => {
+const loadResource = async (id: string, index?: number, param?: any) => {
     const resource = Resources[id];
     if (resource && !resource.loaded) {
         await resource.load();
     }
+    if (index !== undefined || resource.index !== undefined) {
+        return await resource.parse(index, param);
+    }
     return resource;
 };
-
-// const getResource = (id: string) => {
-//     return Resources[id];
-// };
 
 const getResourcePath = (id: string) => {
     return Resources[id].path;
@@ -301,7 +301,7 @@ const registerResources = async (game, language, languageVoice) => {
             const r = res.entries[e];
             let path = r.path.replace('%LANGCODE%', language);
             path = path.replace('%LANGVOICECODE%', languageVoice);
-            register(ResourceStrategy[r.strategy], r.id, r.description, path, r.index);
+            register(ResourceStrategy[r.strategy], r.type, r.id, r.description, path, r.index);
         }
     }
     registered = true;
@@ -310,6 +310,7 @@ const registerResources = async (game, language, languageVoice) => {
 const areResourcesPreloaded = () => preloaded;
 
 export {
+    Resource,
     ResourceName,
     areResourcesPreloaded,
     preloadResources,

@@ -2,11 +2,10 @@ import * as THREE from 'three';
 
 import { createState } from './state';
 import { createAudioManager } from '../audio';
-import { loadTexts } from '../text';
 import { getLanguageConfig } from '../lang';
 import DebugData from '../ui/editor/DebugData';
 import { makePure } from '../utils/debug';
-import { registerResources, preloadResources } from '../resources';
+import { registerResources, preloadResources, getText } from '../resources';
 
 export function createGame(
     clock: any,
@@ -130,10 +129,9 @@ export function createGame(
             await preloadResources();
             await audio.preloadMusicTheme();
 
-            const { language } = getLanguageConfig();
             const [menuTexts, gameTexts] = await Promise.all([
-                loadTexts(language, 0),
-                loadTexts(language, 4)
+                getText(0),
+                getText(4)
             ]);
             this.menuTexts = menuTexts;
             this.texts = gameTexts;

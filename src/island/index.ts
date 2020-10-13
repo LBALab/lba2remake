@@ -77,7 +77,7 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
     const layout = loadLayout(files.ile);
     const data = {
         files,
-        palette: files.pal.getBufferUint8(),
+        palette: files.pal,
         layout,
         lutTexture
     };

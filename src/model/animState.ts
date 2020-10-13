@@ -62,36 +62,39 @@ export function initSkeleton(state, skeleton, loopFrame) {
 
 export function createSkeleton(body) {
     const skeleton = [];
-    for (let i = 0; i < body.bonesSize; i += 1) {
-        const bone = body.bones[i];
-        const boneVertex = body.vertices[bone.vertex];
 
-        const skeletonBone = {
-            boneIndex: i,
-            parent: bone.parent,
-            vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
-            pos: new THREE.Vector3(0, 0, 0),
-            p: new THREE.Vector3(0, 0, 0),
-            r: new THREE.Vector4(0, 0, 0, 0),
-            m: new THREE.Matrix4(),
-            type: 1, // translation by default
-            euler: new THREE.Vector3(),
-            children: []
-        };
+    if (body.bonesSize) {
+        for (let i = 0; i < body.bonesSize; i += 1) {
+            const bone = body.bones[i];
+            const boneVertex = body.vertices[bone.vertex];
 
-        skeleton.push(skeletonBone);
-    }
+            const skeletonBone = {
+                boneIndex: i,
+                parent: bone.parent,
+                vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
+                pos: new THREE.Vector3(0, 0, 0),
+                p: new THREE.Vector3(0, 0, 0),
+                r: new THREE.Vector4(0, 0, 0, 0),
+                m: new THREE.Matrix4(),
+                type: 1, // translation by default
+                euler: new THREE.Vector3(),
+                children: []
+            };
 
-    for (let i = 0; i < skeleton.length; i += 1) {
-        const bone = skeleton[i];
-        if (bone.parent === 0xFFFF) {
-            continue;
+            skeleton.push(skeletonBone);
         }
-        const s = skeleton[bone.parent];
-        s.children.push(bone);
-    }
 
-    updateSkeletonHierarchy(skeleton, 0);
+        for (let i = 0; i < skeleton.length; i += 1) {
+            const bone = skeleton[i];
+            if (bone.parent === 0xFFFF) {
+                continue;
+            }
+            const s = skeleton[bone.parent];
+            s.children.push(bone);
+        }
+
+        updateSkeletonHierarchy(skeleton, 0);
+    }
 
     return skeleton;
 }

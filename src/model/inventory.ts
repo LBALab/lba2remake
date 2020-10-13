@@ -1,16 +1,14 @@
 import * as THREE from 'three';
 
-import { loadBody } from './body';
 import {
     initSkeleton,
     createSkeleton,
     loadAnimState,
 } from './animState';
 import { loadMesh } from './geometries';
-import { loadTextureRGBA } from '../texture';
 import { createBoundingBox } from '../utils/rendering';
 import { loadLUTTexture } from '../utils/lut';
-import { getCommonResource, getPalette, getInventoryObjects } from '../resources';
+import { getCommonResource, getPalette, getInventoryObjects, getModelsTexture } from '../resources';
 
 export interface Model {
     state: any;
@@ -22,16 +20,17 @@ export async function loadInventoryModel(params: any,
                           invIdx: number,
                           envInfo: any,
                           ambience: any) {
-    const [ress, pal, body, lutTexture] = await Promise.all([
+    const [ress, pal, body, texture, lutTexture] = await Promise.all([
         getCommonResource(),
         getPalette(),
-        getInventoryObjects(),
+        getInventoryObjects(invIdx),
+        getModelsTexture(),
         loadLUTTexture()
     ]);
-    const files = { ress, pal, body };
+    const resources = { ress, pal, body, texture };
     return loadInventoryModelData(
         params,
-        files,
+        resources,
         invIdx,
         envInfo,
         ambience,
@@ -45,7 +44,7 @@ export async function loadInventoryModel(params: any,
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
 function loadInventoryModelData(params: any,
-                       files,
+                       resources,
                        invIdx,
                        envInfo: any,
                        ambience: any,
@@ -53,25 +52,26 @@ function loadInventoryModelData(params: any,
     if (invIdx === -1)
         return null;
 
-    const palette = files.pal.getBufferUint8();
+    const palette = resources.pal;
+    const texture = resources.texture;
+    const body = resources.body;
 
     const model = {
         palette,
         lutTexture,
-        files,
+        files: resources,
         bodies: [],
-        texture: loadTextureRGBA(files.ress.getEntry(6), palette),
+        texture,
         mesh: null,
         boundingBox: null,
         boundingBoxDebugMesh: null,
         materials: []
     };
 
-    const body = loadBody(model, model.bodies, invIdx, null);
     const animState = loadAnimState();
-
     const skeleton = createSkeleton(body);
     initSkeleton(animState, skeleton, 0);
+
     const { object, materials } = loadMesh(
         body,
         model.texture,
