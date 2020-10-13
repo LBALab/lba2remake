@@ -1,9 +1,8 @@
-import { DirMode } from '../../game/actors';
+import { DirMode, createRuntimeFlags } from '../../game/actors';
 import { bits } from '../../utils';
-import  {WORLD_SCALE } from '../../utils/lba';
+import  {WORLD_SCALE, getHtmlColor } from '../../utils/lba';
 import { Resource } from '../load';
 import { getPalette, getText } from '..';
-import { getHtmlColor, createRuntimeFlags } from '../../scene';
 
 const parseScene = async (resource: Resource, index) => {
     const buffer = resource.getEntry(index + 1); // first entry is not a scene
