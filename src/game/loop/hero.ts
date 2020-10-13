@@ -375,7 +375,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
                     }
                     euler.y += dy;
                 } else {
-                    euler.y -= controlsState.controlVector.x * time.delta * 1.2;
+                    euler.y -= controlsState.controlVector.x * time.delta * 2.0;
                 }
                 hero.physics.orientation.setFromEuler(euler);
                 // hero.props.runtimeFlags.isTurning = true;
