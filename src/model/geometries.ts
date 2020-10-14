@@ -270,12 +270,12 @@ function loadGeometry(
 
 function loadFaceGeometry(geometries, body) {
     each(body.polygons, (p) => {
+        const uvGroup = getUVGroup(body, p);
+        const baseGroup = p.hasTransparency ? 'textured_transparent' : 'textured';
+        const group = uvGroup ? `${baseGroup}_${uvGroup.join(',')}` : baseGroup;
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
             if (p.hasTransparency || p.hasTex) {
-                const uvGroup = getUVGroup(body, p);
-                const baseGroup = p.hasTransparency ? 'textured_transparent' : 'textured';
-                const group = uvGroup ? `${baseGroup}_${uvGroup.join(',')}` : baseGroup;
                 createSubgroupGeometry(geometries, group, baseGroup, uvGroup);
                 push.apply(geometries[group].positions, getPosition(body, vertexIndex));
                 push.apply(geometries[group].normals, getNormal(body, vertexIndex));
