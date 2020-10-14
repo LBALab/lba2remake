@@ -175,6 +175,7 @@ export default class Area extends React.Component<AreaProps, AreaState> {
 
     render() {
         return <div
+            className="editor_area"
             style={this.props.style}
             onKeyDown={this.keyDown}
             tabIndex={0}

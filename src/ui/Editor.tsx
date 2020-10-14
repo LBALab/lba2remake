@@ -1,26 +1,23 @@
 import * as React from 'react';
 import {extend, each, concat, mapValues, cloneDeep} from 'lodash';
 import Area, {AreaDefinition} from './editor/Area';
-import {fullscreen} from './styles';
 import NewArea from './editor/areas/utils/NewArea';
 import {Type, Orientation} from './editor/layout';
 import {findAreaContentById, findMainAreas} from './editor/areas';
 import DebugData from './editor/DebugData';
 import Ticker from './utils/Ticker';
 
-const baseStyle = extend({overflow: 'hidden'}, fullscreen);
+const baseStyle = {
+    position: 'absolute' as const,
+    overflow: 'hidden' as const
+};
 
-const separatorStyle = {
-    [Orientation.HORIZONTAL]: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0
-    },
-    [Orientation.VERTICAL]: {
-        position: 'absolute',
-        left: 0,
-        right: 0
-    }
+const editor_style = {
+    position: 'fixed' as const,
+    top: 2,
+    bottom: 2,
+    left: 2,
+    right: 2
 };
 
 interface BaseNode {
@@ -61,7 +58,16 @@ interface EditorState {
     };
 }
 
+let gId = 0;
+
+const getId = () => {
+    gId += 1;
+    return gId;
+};
+
 export default class Editor extends React.Component<EditorProps, EditorState> {
+    rootRef: HTMLDivElement;
+
     constructor(props) {
         super(props);
 
@@ -122,14 +128,15 @@ export default class Editor extends React.Component<EditorProps, EditorState> {
             return null;
         }
         if (node.type === Type.LAYOUT) {
-            if (node.rootRef && node.separatorRef && path.indexOf(node.separatorRef) !== -1) {
+            if (this.rootRef && node.separatorRef && path.indexOf(node.separatorRef) !== -1) {
                 const horizontal = node.orientation === Orientation.HORIZONTAL;
-                const bb = node.rootRef.getBoundingClientRect();
+                const frame = node.frame;
+                const length = this.rootRef[horizontal ? 'clientWidth' : 'clientHeight'];
                 return {
                     prop: horizontal ? 'clientX' : 'clientY',
-                    min: bb[horizontal ? 'left' : 'top'],
-                    max: node.rootRef[horizontal ? 'clientWidth' : 'clientHeight'],
-                    node: node as LayoutNode
+                    min: length * frame[0] * 0.01,
+                    max: length * frame[1] * 0.01,
+                    node
                 };
             }
             return this.findSeparator(path, node.children[0], concat(sepPath, 0))
@@ -162,6 +169,8 @@ export default class Editor extends React.Component<EditorProps, EditorState> {
                 separator.node.splitAt = Math.min(Math.max(splitAt, 5), 95);
                 this.setState({layout});
             }
+            e.preventDefault();
+            e.stopPropagation();
         }
     }
 
@@ -174,65 +183,83 @@ export default class Editor extends React.Component<EditorProps, EditorState> {
     }
 
     render() {
-        const root = findRootNode(this.state.layout);
-        return this.renderLayout(this.state.layout, baseStyle, [], root);
+        const { layout } = this.state;
+        const root = findRootNode(layout);
+        const elems = {
+            areas: [],
+            separators: []
+        };
+        this.collectAreas(elems, layout, []);
+        return <div style={editor_style} ref={rootRef => this.rootRef = rootRef}>
+            {elems.areas.map(area => this.renderArea(area, root))}
+            {elems.separators.map((sep, key) => this.renderSeparator(sep, key))}
+        </div>;
     }
 
-    renderLayout(node, style, path, root) {
+    collectAreas(elems, node, path, frame = [0, 0, 100, 100]) {
         if (!node) {
-            return null;
+            return;
         }
         if (node.type === Type.LAYOUT) {
-            const p = node.orientation === Orientation.HORIZONTAL
-                ? ['right', 'left', 'width', 'col-resize']
-                : ['bottom', 'top', 'height', 'row-resize'];
+            const { splitAt } = node;
+            const start = node.orientation === Orientation.HORIZONTAL
+                    ? 0
+                    : 1;
+            const length = node.orientation === Orientation.HORIZONTAL
+                ? 2
+                : 3;
+            for (let idx = 0; idx < 2; idx += 1) {
+                const tgtFrame = [frame[0], frame[1], frame[2], frame[3]];
+                tgtFrame[length] = idx === 0
+                    ? frame[length] * splitAt * 0.01
+                    : frame[length] * (100 - splitAt) * 0.01;
+                tgtFrame[start] = idx === 0
+                    ? frame[start]
+                    : frame[start] + splitAt * frame[length] * 0.01;
 
-            const styles = [
-                extend({}, baseStyle, {[p[0]]: `${100 - node.splitAt}%`}),
-                extend({}, baseStyle, {[p[1]]: `${node.splitAt}%`})
-            ];
-
-            const separator = extend({
-                [p[1]]: `${node.splitAt}%`,
-                [p[2]]: 12,
-                transform: node.orientation === Orientation.HORIZONTAL
-                    ? 'translate(-6px, 0)'
-                    : 'translate(0, -6px)',
-                background: 'rgba(0,0,0,0)',
-                cursor: p[3]
-            }, separatorStyle[node.orientation]);
-
-            const sepInnerLine = extend({
-                [p[1]]: 5,
-                [p[2]]: 1,
-                background: 'rgb(0,122,204)',
-                opacity: 1,
-            }, separatorStyle[node.orientation]);
-
-            const setSeparatorRef = (ref) => {
-                node.separatorRef = ref;
-            };
-
-            const setRootRef = (ref) => {
-                node.rootRef = ref;
-            };
-
-            if (!node.children[1]) {
-                return <div ref={setRootRef} style={style}>
-                    {this.renderLayout(node.children[0], styles[0], concat(path, 0), root)}
-                </div>;
+                this.collectAreas(
+                    elems,
+                    node.children[idx],
+                    concat(path, idx),
+                    tgtFrame
+                );
             }
-            return <div ref={setRootRef} style={style}>
-                {this.renderLayout(node.children[0], styles[0], concat(path, 0), root)}
-                {this.renderLayout(node.children[1], styles[1], concat(path, 1), root)}
-                <div ref={setSeparatorRef} style={separator}>
-                    <div style={sepInnerLine}/>
-                </div>
-            </div>;
+            const sStart = 1 - start;
+            const sLength = node.orientation === Orientation.HORIZONTAL
+                ? 3
+                : 2;
+            const sepFrame = [
+                frame[start] + splitAt * frame[length] * 0.01,
+                frame[sStart],
+                frame[sLength]
+            ];
+            node.frame = [frame[start], frame[length]];
+            elems.separators.push({
+                frame: sepFrame,
+                node
+            });
+        } else {
+            elems.areas.push({
+                frame,
+                path,
+                node
+            });
         }
-        const availableAreas = node.content.mainArea ? findMainAreas() : this.state.root.toolAreas;
+    }
+
+    renderArea({ node, path, frame }, root) {
+        const availableAreas = node.content.mainArea
+            ? findMainAreas()
+            : this.state.root.toolAreas;
+        const style = {
+            ...baseStyle,
+            left: `${frame[0]}%`,
+            top: `${frame[1]}%`,
+            width: `${frame[2]}%`,
+            height: `${frame[3]}%`,
+        };
         return <Area
-            key={`${path.join('/')}/${node.content.name}`}
+            key={node.id}
             area={node.content}
             stateHandler={node.stateHandler}
             mainArea={node.content.mainArea}
@@ -246,6 +273,41 @@ export default class Editor extends React.Component<EditorProps, EditorState> {
             rootStateHandler={root.stateHandler}
             editor={this}
         />;
+    }
+
+    renderSeparator({ node, frame }, key) {
+        const p = node.orientation === Orientation.HORIZONTAL
+            ? ['left', 'top', 'height', 'width', 'col-resize']
+            : ['top', 'left', 'width', 'height', 'row-resize'];
+
+        const separator = {
+            position: 'absolute' as const,
+            [p[0]]: `${frame[0]}%`,
+            [p[1]]: `${frame[1]}%`,
+            [p[2]]: `${frame[2]}%`,
+            [p[3]]: 12,
+            transform: node.orientation === Orientation.HORIZONTAL
+                ? 'translate(-6px, 0)'
+                : 'translate(0, -6px)',
+            background: 'transparent',
+            cursor: p[4]
+        };
+
+        const innerStyle = {
+            position: 'absolute' as const,
+            [p[0]]: '5.5px',
+            [p[2]]: '100%',
+            [p[3]]: 1,
+            background: 'rgb(0, 122, 204)'
+        };
+
+        const setSeparatorRef = (ref) => {
+            node.separatorRef = ref;
+        };
+
+        return <div key={`sep_${key}`} ref={setSeparatorRef} style={separator}>
+            <div style={innerStyle}/>
+        </div>;
     }
 
     split(path, orientation, content) {
@@ -317,6 +379,7 @@ export default class Editor extends React.Component<EditorProps, EditorState> {
         if (node.root) {
             this.selectMainAreaContent(area);
         } else {
+            node.id = getId();
             node.content = area;
             initStateHandler(this, node);
             this.setState({layout});
@@ -335,6 +398,7 @@ export default class Editor extends React.Component<EditorProps, EditorState> {
 
     createNewArea(content) {
         const node = {
+            id: getId(),
             type: Type.AREA,
             content
         };
@@ -431,6 +495,7 @@ function loadNode(editor, node, options: NodeOptions = {}) {
     }
     if (node.root && options.injectArea) {
         return {
+            id: getId(),
             type: Type.LAYOUT,
             orientation: options.injectOrientation !== undefined
                 ? options.injectOrientation
@@ -444,6 +509,7 @@ function loadNode(editor, node, options: NodeOptions = {}) {
     }
 
     const tgtNode = {
+        id: getId(),
         type: Type.AREA,
         root: node.root,
         content: null
