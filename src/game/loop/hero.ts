@@ -3,6 +3,7 @@ import { DirMode } from '../actors';
 import { AnimType } from '../data/animType';
 import { WORLD_SIZE } from '../../utils/lba';
 import { processHit } from './animAction';
+import { ELSE } from '../scripting/structural';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -370,8 +371,14 @@ function processActorMovement(game, scene, hero, time, behaviour) {
                         : AnimType.LEFT;
                     let dy = 0;
                     if (hero.animState.keyframeLength) {
-                        const rotY = (hero.animState.rotation.y * 24) / WORLD_SIZE;
-                        dy = (rotY * time.delta * 1000) / hero.animState.keyframeLength;
+                        if (hero.props.entityIndex === BehaviourMode.DISCRETE) {
+                            const rotY = (hero.animState.rotation.y * 65) / WORLD_SIZE;
+                            dy = (rotY * time.delta * 1000) / hero.animState.keyframeLength;
+                        }
+                        else {
+                            const rotY = (hero.animState.rotation.y * 24) / WORLD_SIZE;
+                            dy = (rotY * time.delta * 1000) / hero.animState.keyframeLength;
+                        }
                     }
                     euler.y += dy;
                 } else {
