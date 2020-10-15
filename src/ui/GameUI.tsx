@@ -498,12 +498,10 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     frame() {
         const {game, clock, renderer, sceneManager, controls} = this.state;
         if (renderer && sceneManager) {
+            this.checkResize();
             const scene = sceneManager.getScene();
             if (this.state.scene !== scene) {
                 this.setState({scene});
-            }
-            if (scene) {
-                this.checkResize();
             }
             mainGameLoop(
                 this.props.params,
