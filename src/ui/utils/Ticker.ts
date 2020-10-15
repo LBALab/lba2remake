@@ -1,4 +1,3 @@
-import {each} from 'lodash';
 import FrameListener from './FrameListener';
 
 export default class Ticker {
@@ -20,11 +19,11 @@ export default class Ticker {
     }
 
     frame() {
-        each(this.listeners, (component) => {
+        for (const component of this.listeners) {
             if (component) {
                 component.frame();
             }
-        });
+        }
     }
 }
 

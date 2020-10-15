@@ -301,7 +301,7 @@ function updateSkeletonHierarchy(skeleton, index) {
     } else {
         p.m.identity();
     }
-    for (let i = 0; i < s.children.length; i += 1) {
-        updateSkeletonHierarchy(skeleton, s.children[i].boneIndex);
+    for (const child of s.children) {
+        updateSkeletonHierarchy(skeleton, child.boneIndex);
     }
 }
