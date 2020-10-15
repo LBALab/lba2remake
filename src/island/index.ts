@@ -315,7 +315,9 @@ function updateShadows(baseScene, matByName) {
     computeShadow(baseScene, baseScene.actors[0]);
     HERO_POS.copy(POSITION);
     for (const actor of baseScene.actors) {
-        computeShadow(baseScene, actor);
+        if (actor.index !== 0) {
+            computeShadow(baseScene, actor);
+        }
     }
     if (baseScene.sideScenes) {
         for (const sideScene of Object.values(baseScene.sideScenes) as any) {
