@@ -11,9 +11,8 @@ import FrameListener from '../../../utils/FrameListener';
 import DebugData from '../../DebugData';
 import { TickerProps } from '../../../utils/Ticker';
 import { getIsometricCamera } from '../../../../cameras/iso';
-import { loadImageData } from '../../../../iso';
+import { loadImageData, loadBricks } from '../../../../iso';
 import { loadLibrary } from '../../../../iso/grid';
-import { loadBricks } from '../../../../iso/bricks';
 import { OffsetBySide, Side } from '../../../../iso/mapping';
 import { compile } from '../../../../utils/shaders';
 import brick_vertex from '../../../../iso/shaders/brick.vert.glsl';
@@ -26,9 +25,9 @@ import {
     registerResources,
     preloadResources,
     getPalette,
-    getBricks,
     getScene,
     getSceneMap,
+    getLayouts,
 } from '../../../../resources';
 import { applyAnimationUpdaters } from '../../../../iso/metadata/animations';
 
@@ -336,9 +335,10 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.layout = layoutIdx;
         this.library = libraryIdx;
         this.variant = variant;
-        const [palette, bkg, lutTexture] = await Promise.all([
+        const [palette, bkg, bricks, lutTexture] = await Promise.all([
             getPalette(),
-            getBricks(),
+            getLayouts(),
+            loadBricks(),
             await loadLUTTexture(),
         ]);
         const paletteTexture = loadPaletteTexture(palette);
@@ -347,7 +347,6 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             this.mask = await loadImageData('images/brick_mask.png');
         }
         const shaderData = {lutTexture, paletteTexture, light};
-        const bricks = loadBricks(bkg);
         const library = loadLibrary(bkg, bricks, this.mask, palette, libraryIdx);
         const layoutProps = library.layouts[layoutIdx];
         const layoutMesh = variant
@@ -993,7 +992,7 @@ function getLightVector() {
 }
 
 async function findScenesUsingLibrary(library) {
-    const bkg = await getBricks();
+    const bkg = await getLayouts();
     const sceneMap = await getSceneMap();
     const scenes = [];
     each(times(222), async (scene) => {

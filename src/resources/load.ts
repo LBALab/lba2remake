@@ -41,13 +41,16 @@ const ResourceName = {
 };
 
 interface Resource {
-    id: number;
+    id: string;
+    type: string;
     ref: Resource;
     strategy: number;
     description: string;
     path: string;
     length: number;
     index: number;
+    first: number;
+    last: number;
     loaded: boolean;
     isHQR: boolean;
     hqr: HQR;
@@ -112,6 +115,8 @@ const register = (
     description: string,
     path: string,
     entryIndex: number,
+    first: number,
+    last: number,
 ) => {
     if (Resources[id]) {
         return;
@@ -124,6 +129,8 @@ const register = (
         description,
         path,
         index: entryIndex,
+        first,
+        last,
         loaded: false,
         // HQR, VOX, ILE, OBL, ZIP (OpenHQR)
         isHQR: new RegExp(HQRExtensions.join('|')).test(path),
@@ -300,10 +307,19 @@ const registerResources = async (game, language, languageVoice) => {
         // @ts-ignore
         for (let e = 0; e < res.entries.length; e += 1) {
             // @ts-ignore
-            const r = res.entries[e];
+            const r: Resource = res.entries[e];
             let path = r.path.replace('%LANGCODE%', language);
             path = path.replace('%LANGVOICECODE%', languageVoice);
-            register(ResourceStrategy[r.strategy], r.type, r.id, r.description, path, r.index);
+            register(
+                ResourceStrategy[r.strategy],
+                r.type,
+                r.id,
+                r.description,
+                path,
+                r.index,
+                r.first,
+                r.last
+            );
         }
     }
     registered = true;

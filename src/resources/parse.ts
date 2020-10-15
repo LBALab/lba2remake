@@ -7,7 +7,7 @@ import { parseTextureRGBA } from './parsers/texture';
 import { parseBody } from './parsers/body';
 import { parseScene } from './parsers/scene';
 import { parseSpriteClipInfo, parseSprite, parseSpriteRaw } from './parsers/sprite';
-import { parseSceneMap } from './parsers/bricks';
+import { parseSceneMap, parseBrick } from './parsers/bricks';
 
 const NOP = (resource: Resource) => {
     return resource;
@@ -32,7 +32,7 @@ const ResourceTypes = {
     LBT: { type: 'LBT', description: 'LBA Text Dialog', parser: parseText },
     BL1: { type: 'BL1', description: 'LBA1 Brick Layout', parser: NOP },
     BL2: { type: 'BL2', description: 'LBA2 Brick Layout', parser: NOP },
-    BRK: { type: 'BRK', description: 'LBA Brick Sprite', parser: NOP },
+    BRK: { type: 'BRK', description: 'LBA Brick Sprite', parser: parseBrick },
     GR1: { type: 'GR1', description: 'LBA1 Grids', parser: NOP },
     GR2: { type: 'GR2', description: 'LBA2 Grids', parser: NOP },
     '3DE': { type: '3DE', description: 'LBA1 File 3D Entity', parser: NOP },
