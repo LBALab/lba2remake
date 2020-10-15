@@ -2,7 +2,7 @@ import * as React from 'react';
 import { map, times } from 'lodash';
 import DebugData from '../../../DebugData';
 import Renderer from '../../../../../renderer';
-import { getLayouts as getResourceLayouts } from '../../../../../resources';
+import { getBricksHQR } from '../../../../../resources';
 import { areResourcesPreloaded } from '../../../../../resources/load';
 
 const indexStyle = {
@@ -210,7 +210,7 @@ const libraries = {};
 const getLayouts = () => {
     if (!bkg && areResourcesPreloaded() && !loading) {
         loading = true;
-        getResourceLayouts().then((lBkg) => {
+        getBricksHQR().then((lBkg) => {
             bkg = lBkg;
         });
     }

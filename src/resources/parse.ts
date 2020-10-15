@@ -8,6 +8,7 @@ import { parseBody } from './parsers/body';
 import { parseScene } from './parsers/scene';
 import { parseSpriteClipInfo, parseSprite, parseSpriteRaw } from './parsers/sprite';
 import { parseSceneMap, parseBrick } from './parsers/bricks';
+import { parseLibrary } from './parsers/libraries';
 
 const NOP = (resource: Resource) => {
     return resource;
@@ -30,8 +31,8 @@ const ResourceTypes = {
     LSR: { type: 'LSR', description: 'LBA2 Sprite Raw', parser: parseSpriteRaw },
     SAD: { type: 'SAD', description: 'Sprites Clip Info', parser: parseSpriteClipInfo },
     LBT: { type: 'LBT', description: 'LBA Text Dialog', parser: parseText },
-    BL1: { type: 'BL1', description: 'LBA1 Brick Layout', parser: NOP },
-    BL2: { type: 'BL2', description: 'LBA2 Brick Layout', parser: NOP },
+    BL1: { type: 'BL1', description: 'LBA1 Layout Library', parser: NOP },
+    BL2: { type: 'BL2', description: 'LBA2 Layout Library', parser: parseLibrary },
     BRK: { type: 'BRK', description: 'LBA Brick Sprite', parser: parseBrick },
     GR1: { type: 'GR1', description: 'LBA1 Grids', parser: NOP },
     GR2: { type: 'GR2', description: 'LBA2 Grids', parser: NOP },

@@ -76,6 +76,12 @@ const getModelsTexture = async () => {
     return await loadResource(ResourceName.BODY_TEXTURE);
 };
 
+// for ad-hoc usage only
+// currently used in some Editor custom parsing
+const getBricksHQR = async () => {
+    return await loadResource(ResourceName.BRICKS);
+};
+
 const getBricks = async () => {
     const resource = await loadResource(ResourceName.BRICKS);
     const entriesPromise = [];
@@ -89,8 +95,8 @@ const getGrids = async () => {
     return await loadResource(ResourceName.GRIDS);
 };
 
-const getLayouts = async () => {
-    return await loadResource(ResourceName.LAYOUTS);
+const getLibraries = async (index: number) => {
+    return await loadResource(ResourceName.LIBRARIES, index);
 };
 
 const getIsland = async (name: string) => {
@@ -152,8 +158,9 @@ export {
     getModels,
     getModelsTexture,
     getBricks,
+    getBricksHQR,
     getGrids,
-    getLayouts,
+    getLibraries,
     getIsland,
     getIslandObjects,
     getText,
