@@ -125,6 +125,7 @@ const register = (
         path,
         index: entryIndex,
         loaded: false,
+        loading: null,
         // HQR, VOX, ILE, OBL, ZIP (OpenHQR)
         isHQR: new RegExp(HQRExtensions.join('|')).test(path),
         hqr: null,
@@ -212,25 +213,27 @@ const register = (
         if (resource.loaded) {
             return;
         }
-        if (!resource.isHQR) {
-            resource.buffer = await requestResource(resource.path);
-            resource.loaded = true;
-            return;
+        if (!resource.loading) {
+            resource.loading = new Promise(async (resolve) => {
+                if (resource.ref) {
+                    await resource.ref.load();
+                    resource.length = resource.ref.length;
+                    if (resource.ref.buffer) {
+                        resource.buffer = resource.ref.buffer;
+                    } else if (resource.ref.hqr) {
+                        resource.hqr = resource.ref.hqr;
+                    }
+                } else if (resource.isHQR) {
+                    resource.hqr = await loadHqr(resource.path);
+                    resource.length = resource.hqr.length;
+                } else {
+                    resource.buffer = await requestResource(resource.path);
+                }
+                resource.loaded = true;
+                resolve();
+            });
         }
-        if (resource.ref) {
-            // if for some reason the referenced resource is not loaded
-            // for the load of that resource. It can happen for transient resources
-            // or non-preloaded static resources
-            if (!resource.ref.loaded) {
-                resource.ref.hqr = await loadHqr(resource.ref.path);
-            }
-            resource.length = resource.ref.length;
-            resource.loaded = resource.ref.loaded;
-            return;
-        }
-        resource.hqr = await loadHqr(resource.path);
-        resource.length = resource.hqr.length;
-        resource.loaded = true;
+        await resource.loading;
     };
 
     resource.parse = async (index?: number, language?: any) => {
@@ -255,19 +258,11 @@ const preloadResources = async () => {
         return;
     }
     const preload = [];
-    const resPreload = [];
     for (const res of Object.values<Resource>(Resources)) {
-        if (!res.loaded && res.strategy === ResourceStrategy.STATIC) {
-            preload.push(requestResource(res.path, res.description));
+        if (res.strategy === ResourceStrategy.STATIC) {
+            preload.push(res.load());
         }
     }
-    await Promise.all(preload);
-    for (const res of Object.values<Resource>(Resources)) {
-        if (!res.loaded && res.strategy === ResourceStrategy.STATIC) {
-            resPreload.push(res.load());
-        }
-    }
-    await Promise.all(resPreload);
     preloaded = true;
 };
 

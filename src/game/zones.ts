@@ -30,7 +30,7 @@ const ZONE_TYPE_MATERIAL_COLOR = [
     '#008000', // RAIL
 ];
 
-export function loadZone(props, is3DCam) {
+export function loadZone(props, is3DCam, isEditor) {
     const pos = props.pos;
     const zone = {
         type: 'zone',
@@ -50,21 +50,27 @@ export function loadZone(props, is3DCam) {
         new THREE.Vector3(xMin, yMin, zMin),
         new THREE.Vector3(xMax, yMax, zMax)
     );
-    const bbGeom = createBoundingBox(bb, zone.color);
-    const name = getObjectName('zone', props.sceneIndex, props.index);
-    bbGeom.name = `zone:${name}`;
-    bbGeom.visible = false;
-    bbGeom.position.set(zone.physics.position.x, zone.physics.position.y, zone.physics.position.z);
-    bbGeom.matrixAutoUpdate = false;
-    zone.threeObject = bbGeom;
-    const width = bb.max.x - bb.min.x;
-    const height = bb.max.y - bb.min.y;
-    const depth = bb.max.z - bb.min.z;
-    zone.boundingBox = new THREE.Box3(
-        new THREE.Vector3(-width * 0.5, -height * 0.5, -depth * 0.5),
-        new THREE.Vector3(width * 0.5, height * 0.5, depth * 0.5)
-    );
-    createZoneLabel(zone, name, is3DCam);
+    if (isEditor) {
+        const bbGeom = createBoundingBox(bb, zone.color);
+        const name = getObjectName('zone', props.sceneIndex, props.index);
+        bbGeom.name = `zone:${name}`;
+        bbGeom.visible = false;
+        bbGeom.position.set(
+            zone.physics.position.x,
+            zone.physics.position.y,
+            zone.physics.position.z
+        );
+        bbGeom.matrixAutoUpdate = false;
+        zone.threeObject = bbGeom;
+        const width = bb.max.x - bb.min.x;
+        const height = bb.max.y - bb.min.y;
+        const depth = bb.max.z - bb.min.z;
+        zone.boundingBox = new THREE.Box3(
+            new THREE.Vector3(-width * 0.5, -height * 0.5, -depth * 0.5),
+            new THREE.Vector3(width * 0.5, height * 0.5, depth * 0.5)
+        );
+        createZoneLabel(zone, name, is3DCam);
+    }
 
     return zone;
 }
