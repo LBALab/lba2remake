@@ -99,8 +99,10 @@ function updateScene(params, game, scene, time) {
             }
         }
     }
-    for (const extra of scene.extras) {
-        updateExtra(game, scene, extra, time);
+    if (scene.extras) {
+        for (const extra of scene.extras) {
+            updateExtra(game, scene, extra, time);
+        }
     }
     if (scene.isActive && params.editor) {
         for (const point of scene.points) {
