@@ -13,7 +13,7 @@ import {
 } from 'lodash';
 
 import { bits } from '../../../../../utils';
-import { getBricks, getSceneMap } from '../../../../../resources';
+import { getLayouts as getResourceLayouts, getSceneMap } from '../../../../../resources';
 
 export async function findAllVariants(lDef) {
     const { nX, nY, nZ } = lDef.props;
@@ -22,7 +22,7 @@ export async function findAllVariants(lDef) {
     }
     const sceneList = times(222);
     const sceneMap = await getSceneMap();
-    const bkg = await getBricks();
+    const bkg = await getResourceLayouts();
     const layout = loadLayout(bkg, lDef);
     const variantsByScenes = await Promise.all(
         map(sceneList, async (scene) => {
