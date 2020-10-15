@@ -26,8 +26,7 @@ const getSprites = async () => {
     for (let i = 0; i < resource.length; i += 1) {
         entriesPromise.push(loadResource(ResourceName.SPRITES, i));
     }
-    const entries = Promise.all(entriesPromise);
-    return entries;
+    return await Promise.all(entriesPromise);
 };
 
 const getSpritesClipInfo = async () => {
@@ -40,8 +39,7 @@ const getSpritesRaw = async () => {
     for (let i = 0; i < resource.length; i += 1) {
         entriesPromise.push(loadResource(ResourceName.SPRITERAW, i));
     }
-    const entries = Promise.all(entriesPromise);
-    return entries;
+    return await Promise.all(entriesPromise);
 };
 
 const getSpritesRawClipInfo = async () => {
@@ -79,7 +77,20 @@ const getModelsTexture = async () => {
 };
 
 const getBricks = async () => {
-    return await loadResource(ResourceName.BRICKS);
+    const resource = await loadResource(ResourceName.BRICKS);
+    const entriesPromise = [];
+    for (let i = resource.first; i <= resource.last; i += 1) {
+        entriesPromise.push(loadResource(ResourceName.BRICKS, i));
+    }
+    return await Promise.all(entriesPromise);
+};
+
+const getGrids = async () => {
+    return await loadResource(ResourceName.GRIDS);
+};
+
+const getLayouts = async () => {
+    return await loadResource(ResourceName.LAYOUTS);
 };
 
 const getIsland = async (name: string) => {
@@ -141,6 +152,8 @@ export {
     getModels,
     getModelsTexture,
     getBricks,
+    getGrids,
+    getLayouts,
     getIsland,
     getIslandObjects,
     getText,
