@@ -242,6 +242,19 @@ select:focus {
     outline:0;
 }
 
+canvas:focus {
+    outline:0;
+}
+
+*:focus {
+    outline: 2px solid rgb(114, 166, 200);
+}
+
+.editor_area:focus-within {
+    outline: 2px solid rgb(114, 166, 200);
+    z-index: 100;
+}
+
 *::-webkit-scrollbar-track
 {
     -webkit-box-shadow: inset 0 0 0px rgba(0,0,0,0.3);
