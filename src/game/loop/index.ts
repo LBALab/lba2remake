@@ -103,9 +103,9 @@ function updateScene(params, game, scene, time) {
         updateExtra(game, scene, extra, time);
     }
     if (scene.isActive && params.editor) {
-        each(scene.points, (point) => {
+        for (const point of scene.points) {
             point.update(scene.camera);
-        });
+        }
     }
     if (scene.vrGUI) {
         updateVRGUI(game, scene, scene.vrGUI);

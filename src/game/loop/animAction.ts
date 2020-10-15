@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { each } from 'lodash';
 
 import { getRandom, distance2D } from '../../utils/lba';
 import { unimplemented } from '../scripting/utils';
@@ -228,12 +227,12 @@ export const processAnimAction = (ctx) => {
     const {entityAnim, animState} = ctx;
     const actions = entityAnim.actions;
     const animFrame = animState.currentFrame;
-    each(actions, (action) => {
+    for (const action of actions) {
         if (action.animFrame === animFrame && animState.keyframeChanged) {
             const actionType = AnimActionOpcode[action.type];
             if (actionType !== undefined && actionType.handler !== undefined) {
                 actionType.handler(action, ctx);
             }
         }
-    });
+    }
 };
