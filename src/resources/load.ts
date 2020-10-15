@@ -28,7 +28,7 @@ const ResourceName = {
     SPRITERAW: 'SPRITERAW',
     TEXT: 'TEXT',
     OBJECTS: 'OBJECTS',
-    LAYOUTS: 'LAYOUTS',
+    LIBRARIES: 'LIBRARIES',
     BRICKS: 'BRICKS',
     GRIDS: 'GRIDS',
     MUSIC: 'MUSIC',

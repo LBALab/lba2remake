@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {map, last} from 'lodash';
 import {bits} from '../utils';
 import {loadBricksMapping} from './mapping';
+import { getLibraries } from '../resources';
 
 export enum GROUND_TYPES {
     NORMAL_FLOOR,
@@ -30,7 +31,7 @@ export async function loadGrid(bkg, bricks, mask, palette, entry, is3D) {
     for (let i = 34; i < maxOffset; i += 2) {
         offsets.push(gridData.getUint16(i, true) + 34);
     }
-    const library = loadLibrary(bkg, bricks, mask, palette, libIndex);
+    const library = await loadLibrary(bricks, mask, palette, libIndex);
     const gridMetadata = await getGridMetadata(entry);
     return {
         library,
@@ -159,22 +160,11 @@ function getBlockData(library, block) {
 
 const libraries = [];
 
-export function loadLibrary(bkg, bricks, mask, palette, entry) {
+export async function loadLibrary(bricks, mask, palette, entry) {
     if (libraries[entry]) {
         return libraries[entry];
     }
-    const buffer = bkg.getEntry(179 + entry);
-    const dataView = new DataView(buffer);
-    const numLayouts = dataView.getUint32(0, true) / 4;
-    const layouts = [];
-    for (let i = 0; i < numLayouts; i += 1) {
-        const offset = dataView.getUint32(i * 4, true);
-        const nextOffset = i === numLayouts - 1 ?
-            dataView.byteLength
-            : dataView.getUint32((i + 1) * 4, true);
-        const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
-        layouts.push(loadLayout(layoutDataView, i));
-    }
+    const layouts = await getLibraries(entry);
     const mapping = loadBricksMapping(layouts, bricks, mask, palette);
     const library = {
         index: entry,
@@ -184,29 +174,4 @@ export function loadLibrary(bkg, bricks, mask, palette, entry) {
     };
     libraries[entry] = library;
     return library;
-}
-
-function loadLayout(dataView, index) {
-    const nX = dataView.getUint8(0);
-    const nY = dataView.getUint8(1);
-    const nZ = dataView.getUint8(2);
-    const numBricks = nX * nY * nZ;
-    const blocks = [];
-    const offset = 3;
-    for (let i = 0; i < numBricks; i += 1) {
-        const type = dataView.getUint8(offset + (i * 4) + 1);
-        blocks.push({
-            shape: dataView.getUint8(offset + (i * 4)),
-            sound: bits(type, 0, 4),
-            groundType: bits(type, 4, 4),
-            brick: dataView.getUint16(offset + (i * 4) + 2, true)
-        });
-    }
-    return {
-        index,
-        nX,
-        nY,
-        nZ,
-        blocks
-    };
 }

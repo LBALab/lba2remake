@@ -27,7 +27,7 @@ import {
     getPalette,
     getScene,
     getSceneMap,
-    getLayouts,
+    getBricksHQR,
 } from '../../../../resources';
 import { applyAnimationUpdaters } from '../../../../iso/metadata/animations';
 
@@ -315,9 +315,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.layout = layoutIdx;
         this.library = libraryIdx;
         this.variant = variant;
-        const [palette, bkg, bricks, lutTexture] = await Promise.all([
+        const [palette, bricks, lutTexture] = await Promise.all([
             getPalette(),
-            getLayouts(),
             loadBricks(),
             await loadLUTTexture(),
         ]);
@@ -327,7 +326,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             this.mask = await loadImageData('images/brick_mask.png');
         }
         const shaderData = {lutTexture, paletteTexture, light};
-        const library = loadLibrary(bkg, bricks, this.mask, palette, libraryIdx);
+        const library = await loadLibrary(bricks, this.mask, palette, libraryIdx);
         const layoutProps = library.layouts[layoutIdx];
         const layoutMesh = variant
             ? await loadVariantMesh(library, variant)
@@ -975,7 +974,7 @@ function getLightVector() {
 }
 
 async function findScenesUsingLibrary(library) {
-    const bkg = await getLayouts();
+    const bkg = await getBricksHQR();
     const sceneMap = await getSceneMap();
     const scenes = [];
     each(times(222), async (scene) => {
