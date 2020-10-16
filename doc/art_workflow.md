@@ -73,7 +73,7 @@ For new 3D layout exports, the name should look something like this:
 - **IH** - Imperial Hotel
 - **EP** - Emperor's Palace
 - **DM** - Dark Monk Statue
-- **UN** - Undergas
+- **UG** - Undergas
 - **MO** - Mosquibees
 - **OT** - Otringal
 - **GA** - Gazogem Refinery
