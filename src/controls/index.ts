@@ -1,8 +1,10 @@
 import {makeFirstPersonMouseControls} from './mouse';
 import {makeKeyboardControls} from './keyboard';
 import {makeFirstPersonTouchControls} from './touch';
+import { getParams } from '../params';
 
-export function createControls(params, game, elem, sceneManager) {
+export function createControls(game, elem, sceneManager) {
+    const params = getParams();
     let controls;
     if (params.mobile) {
         controls = [

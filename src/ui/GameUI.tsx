@@ -5,7 +5,7 @@ import {clone, omit} from 'lodash';
 import Renderer from '../renderer';
 import {createGame} from '../game/index';
 import {mainGameLoop} from '../game/loop';
-import {createSceneManager} from '../game/scenes';
+import { SceneManager } from '../game/scenes';
 import {createControls} from '../controls/index';
 
 import {fullscreen} from './styles/index';
@@ -44,8 +44,8 @@ interface GameUIState {
     clock: THREE.Clock;
     game: any;
     scene?: any;
-    renderer?: any;
-    sceneManager?: any;
+    renderer: any;
+    sceneManager: any;
     controls?: any;
     cinema: boolean;
     text?: {
@@ -78,15 +78,13 @@ interface GameUIState {
 
 export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     canvas: HTMLCanvasElement;
-    renderZoneElem: HTMLElement;
-    canvasWrapperElem: HTMLElement;
+    wrapperElem: HTMLDivElement;
     preloadPromise: Promise<void>;
 
     constructor(props) {
         super(props);
 
-        this.onRenderZoneRef = this.onRenderZoneRef.bind(this);
-        this.onCanvasWrapperRef = this.onCanvasWrapperRef.bind(this);
+        this.onWrapperElem = this.onWrapperElem.bind(this);
         this.frame = this.frame.bind(this);
         this.onSceneManagerReady = this.onSceneManagerReady.bind(this);
         this.onGameReady = this.onGameReady.bind(this);
@@ -113,9 +111,19 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             props.params,
         );
 
+        this.canvas = document.createElement('canvas');
+        const renderer = new Renderer(this.canvas, 'game');
+        const sceneManager = new SceneManager(
+            game,
+            renderer,
+            this.hideMenu.bind(this)
+        );
+
         this.state = {
             clock,
             game,
+            renderer,
+            sceneManager,
             cinema: false,
             text: null,
             skip: false,
@@ -153,48 +161,20 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
         return this.state;
     }
 
-    async onRenderZoneRef(renderZoneElem) {
-        if (!this.renderZoneElem && renderZoneElem) {
-            this.renderZoneElem = renderZoneElem;
-            if (this.state.renderer && this.state.sceneManager) {
-                const controls = createControls(
-                    this.props.params,
-                    this.state.game,
-                    renderZoneElem,
-                    this.state.sceneManager
-                );
-                this.setState({ controls });
-            }
-        }
-    }
-
-    async onCanvasWrapperRef(canvasWrapperElem) {
-        if (!this.canvasWrapperElem && canvasWrapperElem) {
-            this.canvas = document.createElement('canvas');
-            const game = this.state.game;
-            const renderer = new Renderer(this.props.params, this.canvas, {}, 'game');
-            const sceneManager = await createSceneManager(
-                this.props.params,
-                game,
-                renderer,
-                this.hideMenu.bind(this)
-            );
-            renderer.threeRenderer.setAnimationLoop(() => {
+    async onWrapperElem(wrapperElem) {
+        if (!this.wrapperElem && wrapperElem) {
+            this.state.renderer.threeRenderer.setAnimationLoop(() => {
                 this.props.ticker.frame();
             });
-            this.onSceneManagerReady(sceneManager);
-            let controls;
-            if (this.renderZoneElem) {
-                controls = createControls(
-                    this.props.params,
-                    game,
-                    this.renderZoneElem,
-                    sceneManager
-                );
-            }
-            this.setState({ renderer, sceneManager, controls });
-            this.canvasWrapperElem = canvasWrapperElem;
-            this.canvasWrapperElem.appendChild(this.canvas);
+            this.onSceneManagerReady(this.state.sceneManager);
+            const controls = createControls(
+                this.state.game,
+                wrapperElem,
+                this.state.sceneManager
+            );
+            this.setState({ controls });
+            this.wrapperElem = wrapperElem;
+            this.wrapperElem.querySelector('.canvasWrapper').appendChild(this.canvas);
         }
     }
 
@@ -389,7 +369,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             if (objectToAdd.type === 'actor') {
                 const actor = await loadActor(
                     game,
-                    this.props.params,
                     scene.is3DCam,
                     scene.envInfo,
                     scene.data.ambience,
@@ -539,8 +518,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     }
 
     checkResize() {
-        if (this.canvasWrapperElem && this.canvas && this.state.renderer) {
-            const { clientWidth, clientHeight } = this.canvasWrapperElem;
+        if (this.wrapperElem) {
+            const { clientWidth, clientHeight } = this.wrapperElem;
             const rWidth = `${clientWidth}px`;
             const rHeight = `${clientHeight}px`;
             const style = this.canvas.style;
@@ -574,8 +553,8 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
     }
 
     render() {
-        return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen} tabIndex={0}>
-            <div ref={this.onCanvasWrapperRef} style={fullscreen} onClick={this.pick}/>
+        return <div ref={this.onWrapperElem} style={fullscreen} tabIndex={0}>
+            <div className="canvasWrapper" style={fullscreen} onClick={this.pick}/>
             {this.renderGUI()}
         </div>;
     }

@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import Renderer from '../renderer';
 import {createGame} from '../game/index';
 import {mainGameLoop} from '../game/loop';
-import {createSceneManager} from '../game/scenes';
+import {SceneManager} from '../game/scenes';
 
 import {fullscreen} from './styles/index';
 
@@ -26,8 +26,8 @@ interface VRGameUIState {
     clock: THREE.Clock;
     game: any;
     scene?: any;
-    renderer?: Renderer;
-    sceneManager?: any;
+    renderer: Renderer;
+    sceneManager: any;
     controls?: any;
     cinema: boolean;
     text?: {
@@ -53,15 +53,14 @@ interface VRGameUIState {
 
 export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState> {
     canvas: HTMLCanvasElement;
-    canvasWrapperElem: HTMLElement;
-    renderZoneElem: HTMLElement;
+    wrapperElem: HTMLElement;
+    preloadPromise: Promise<void>;
     session?: any;
 
     constructor(props) {
         super(props);
 
-        this.onRenderZoneRef = this.onRenderZoneRef.bind(this);
-        this.onCanvasWrapperRef = this.onCanvasWrapperRef.bind(this);
+        this.onWrapperRef = this.onWrapperRef.bind(this);
         this.frame = this.frame.bind(this);
         this.onSessionEnd = this.onSessionEnd.bind(this);
         this.requestPresence = this.requestPresence.bind(this);
@@ -82,9 +81,19 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
             true
         );
 
+        this.canvas = document.createElement('canvas');
+        const renderer = new Renderer(this.canvas, 'game', {vr: true});
+        const sceneManager = new SceneManager(
+            game,
+            renderer,
+            this.hideMenu.bind(this)
+        );
+
         this.state = {
             clock,
             game,
+            renderer,
+            sceneManager,
             cinema: false,
             text: null,
             skip: false,
@@ -102,6 +111,15 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         };
 
         clock.start();
+        this.preloadPromise = this.preload(game);
+    }
+
+    async preload(game) {
+        await game.registerResources();
+        await game.preload();
+        const vrScene = loadVRScene(game, this.state.sceneManager, this.state.renderer);
+        this.setState({ vrScene });
+        this.onGameReady();
     }
 
     setUiState(state, callback) {
@@ -117,42 +135,26 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
         return this.state;
     }
 
-    onRenderZoneRef(renderZoneElem) {
-        if (!this.renderZoneElem && renderZoneElem) {
-            this.renderZoneElem = renderZoneElem;
-        }
-    }
-
-    async onCanvasWrapperRef(canvasWrapperElem) {
-        if (!this.canvasWrapperElem && canvasWrapperElem) {
-            this.canvas = document.createElement('canvas');
-            const game = this.state.game;
-            await game.registerResources();
-            await game.preload();
-            game.loaded('game');
-            if (this.props.params.scene === -1) {
-                this.showMenu();
-            }
-            const renderer = new Renderer(this.props.params, this.canvas, {vr: true}, 'game');
-            const sceneManager = await createSceneManager(
-                this.props.params,
-                game,
-                renderer,
-                this.hideMenu.bind(this)
-            );
-            renderer.threeRenderer.setAnimationLoop(() => {
+    async onWrapperRef(wrapperElem) {
+        if (!this.wrapperElem && wrapperElem) {
+            this.state.renderer.threeRenderer.setAnimationLoop(() => {
                 this.props.ticker.frame();
             });
-            if (this.props.params.scene >= 0) {
-                sceneManager.hideMenuAndGoto(this.props.params.scene);
-            }
-            const vrScene = loadVRScene(game, sceneManager, renderer);
+            this.onSceneManagerReady(this.state.sceneManager);
+            const { sceneManager, game, renderer } = this.state;
             const controls = [
                 new VRControls(this.props.params, sceneManager, game, renderer)
             ];
-            this.setState({ renderer, sceneManager, controls, vrScene });
-            this.canvasWrapperElem = canvasWrapperElem;
-            this.canvasWrapperElem.appendChild(this.canvas);
+            this.setState({ controls });
+            this.wrapperElem = wrapperElem;
+            this.wrapperElem.appendChild(this.canvas);
+        }
+    }
+
+    async onSceneManagerReady(sceneManager) {
+        if (this.props.params.scene >= 0) {
+            await this.preloadPromise;
+            sceneManager.hideMenuAndGoto(this.props.params.scene);
         }
     }
 
@@ -162,6 +164,13 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
 
     componentWillUnmount() {
         super.componentWillUnmount();
+    }
+
+    onGameReady() {
+        this.state.game.loaded('game');
+        if (this.props.params.scene === -1) {
+            this.showMenu();
+        }
     }
 
     showMenu(inGameMenu = false) {
@@ -212,8 +221,8 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
     }
 
     checkResizeForVREmulator() {
-        if (this.canvasWrapperElem && this.canvas && this.state.renderer) {
-            const { clientWidth, clientHeight } = this.canvasWrapperElem;
+        if (this.wrapperElem && this.canvas && this.state.renderer) {
+            const { clientWidth, clientHeight } = this.wrapperElem;
             const rWidth = `${clientWidth}px`;
             const rHeight = `${clientHeight}px`;
             const style = this.canvas.style;
@@ -224,8 +233,8 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
     }
 
     render() {
-        return <div ref={this.onRenderZoneRef} id="renderZone" style={fullscreen}>
-            <div ref={this.onCanvasWrapperRef} style={fullscreen}/>
+        return <div ref={this.onWrapperRef} style={fullscreen}>
+            <div className="canvasWrapper" style={fullscreen}/>
             {this.renderGUI()}
         </div>;
     }

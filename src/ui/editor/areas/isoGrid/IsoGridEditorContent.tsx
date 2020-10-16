@@ -154,12 +154,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             await this.preload();
             this.canvas = document.createElement('canvas');
             this.canvas.tabIndex = 0;
-            const renderer = new Renderer(
-                this.props.params,
-                this.canvas,
-                {},
-                'iso_grids_editor'
-            );
+            const renderer = new Renderer(this.canvas, 'iso_grids_editor');
             renderer.threeRenderer.setAnimationLoop(() => {
                 this.props.ticker.frame();
             });

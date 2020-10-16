@@ -38,12 +38,7 @@ const createOverlayCanvas = (className: string) => {
 };
 
 const createOverlayRenderer = (canvas: any, type: string) => {
-    return new Renderer(
-        { webgl2: true },
-        canvas,
-        { alpha: true },
-        type,
-    );
+    return new Renderer(canvas, type, { alpha: true });
 };
 
 const loadSceneModel = async (sce, b, bodyIndex, anims) => {

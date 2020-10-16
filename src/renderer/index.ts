@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import StatsHandler from './stats';
 import { pure } from '../utils/decorators';
+import { getParams } from '../params';
 
 const RSIZE = new THREE.Vector2();
 const PIXEL_RATIOS = [0.25, 0.5, 1, 2];
@@ -21,11 +22,11 @@ export default class Renderer {
     private keyListener: EventListenerObject;
 
     constructor(
-        params,
         canvas,
+        type: string,
         rendererOptions: RendererOptions = {},
-        type = 'unknown'
     ) {
+        const params = getParams();
         this.type = type;
         this.pixelRatio = 1;
         this.threeRenderer = setupThreeRenderer(

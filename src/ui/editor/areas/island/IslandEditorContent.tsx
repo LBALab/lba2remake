@@ -113,12 +113,7 @@ export default class Island extends FrameListener<Props, State> {
             await this.preload();
             this.canvas = document.createElement('canvas');
             this.canvas.tabIndex = 0;
-            const renderer = new Renderer(
-                this.props.params,
-                this.canvas,
-                {},
-                'islands_editor'
-            );
+            const renderer = new Renderer(this.canvas, 'islands_editor');
             renderer.threeRenderer.setAnimationLoop(() => {
                 this.props.ticker.frame();
             });
