@@ -1,18 +1,18 @@
 {
     "entries": [
-        { "strategy": "STATIC", "id": "ANIM",     "description": "Animations",            "path": "LBA1/ANIM.HQR" },
-        { "strategy": "STATIC", "id": "BODY",     "description": "3d Models",             "path": "LBA1/BODY.HQR" },
-        { "strategy": "STATIC", "id": "RESS",     "description": "Global Resources",      "path": "LBA1/RESS.HQR" },
-        { "strategy": "STATIC", "id": "PALETTE",  "description": "Main Palette",          "path": "LBA1/RESS.HQR", "index": 0 },
-        { "strategy": "STATIC", "id": "ENTITIES", "description": "Model/Anim Entities",   "path": "LBA1/FILE3D.HQR" },
-        { "strategy": "STATIC", "id": "SAMPLES",  "description": "Samples",               "path": "LBA1/SAMPLES.HQR" },
-        { "strategy": "STATIC", "id": "SPRITES",  "description": "Sprites",               "path": "LBA1/SPRITES.HQR" },
-        { "strategy": "STATIC", "id": "SCENE",    "description": "Scenes",                "path": "LBA1/SCENE.HQR" },
-        { "strategy": "STATIC", "id": "TEXT",     "description": "Text Dialogues",        "path": "LBA1/TEXT.HQR" },
-        { "strategy": "STATIC", "id": "OBJECTS",  "description": "Inventory Objects",     "path": "LBA1/INVOBJ.HQR" },
-        { "strategy": "STATIC", "id": "BRICKS",   "description": "Isometric Bricks",      "path": "LBA1/LBA_BRK.HQR" },
-        { "strategy": "STATIC", "id": "LAYOUTS",  "description": "Isometric Layouts",     "path": "LBA1/LBA_BLL.HQR" },
-        { "strategy": "STATIC", "id": "GRIDS",    "description": "Isometric Grids",       "path": "LBA1/LBA_GRI.HQR" },
-        { "strategy": "STATIC", "id": "MUSIC",    "description": "Music",                 "path": "LBA1/MIDI_MI_WIN.HQR" }
+        { "strategy": "STATIC", "type": "ANM", "id": "ANIM",        "description": "Animations",            "path": "LBA1/ANIM.HQR" },
+        { "strategy": "STATIC", "type": "LM1", "id": "BODY",        "description": "3d Models",             "path": "LBA1/BODY.HQR" },
+        { "strategy": "STATIC", "type": "HQR", "id": "RESS",        "description": "Global Resources",      "path": "LBA1/RESS.HQR" },
+        { "strategy": "STATIC", "type": "PAL", "id": "PALETTE",     "description": "Main Palette",          "path": "LBA1/RESS.HQR", "index": 0 },
+        { "strategy": "STATIC", "type": "3DE", "id": "ENTITIES",    "description": "Model/Anim Entities",   "path": "LBA1/FILE3D.HQR" },
+        { "strategy": "STATIC", "type": "M4A", "id": "SAMPLES",     "description": "Samples",               "path": "LBA1/SAMPLES.HQR" },
+        { "strategy": "STATIC", "type": "LSP", "id": "SPRITES",     "description": "Sprites",               "path": "LBA1/SPRITES.HQR" },
+        { "strategy": "STATIC", "type": "LS1", "id": "SCENE",       "description": "Scenes",                "path": "LBA1/SCENE.HQR" },
+        { "strategy": "STATIC", "type": "LBT", "id": "TEXT",        "description": "Text Dialogues",        "path": "LBA1/TEXT.HQR" },
+        { "strategy": "STATIC", "type": "LM1", "id": "OBJECTS",     "description": "Inventory Objects",     "path": "LBA1/INVOBJ.HQR" },
+        { "strategy": "STATIC", "type": "BRK", "id": "BRICKS",      "description": "Isometric Bricks",      "path": "LBA1/LBA_BRK.HQR" },
+        { "strategy": "STATIC", "type": "BL1", "id": "LIBRARIES",   "description": "Isometric Libraries",     "path": "LBA1/LBA_BLL.HQR" },
+        { "strategy": "STATIC", "type": "GR1", "id": "GRIDS",       "description": "Isometric Grids",       "path": "LBA1/LBA_GRI.HQR" },
+        { "strategy": "STATIC", "type": "M4A", "id": "MUSIC",       "description": "Music",                 "path": "LBA1/MIDI_MI_WIN.HQR" }
     ]
 }

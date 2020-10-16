@@ -1,44 +1,35 @@
-import * as THREE from 'three';
+import { DirMode, createRuntimeFlags } from '../../game/actors';
+import { bits } from '../../utils';
+import  {WORLD_SCALE, getHtmlColor } from '../../utils/lba';
+import { Resource } from '../load';
+import { getPalette, getText } from '..';
 
-import { DirMode } from '../game/actors';
-import { bits } from '../utils';
-import { loadTextData } from '../text';
-import  {WORLD_SCALE } from '../utils/lba';
-import { getCommonResource, getPalette, getScene, getText } from '../resources';
+const parseScene = async (resource: Resource, index) => {
+    const buffer = resource.getEntry(index + 1); // first entry is not a scene
 
-export async function loadSceneData(language, index) {
-    const [scene, text, ress, pal] = await Promise.all([
-        getScene(),
-        getText(),
-        getCommonResource(),
-        getPalette(),
-    ]);
-    const files = {scene, text, ress, pal};
-    return loadSceneDataSync(files, language, index);
-}
-
-const cachedSceneData = [];
-
-function loadSceneDataSync(files, language, index) {
-    if (cachedSceneData[index]) {
-        return cachedSceneData[index];
-    }
-    const buffer = files.scene.getEntry(index + 1); // first entry is not a scene
     const data = new DataView(buffer);
     const textBankId = data.getInt8(0);
+
     const sceneData = {
         index,
         textBankId,
-        textIndex: (textBankId * 2) + 6 + (language.index * 30),
+        textIndex: (textBankId * 2) + 6,
         gameOverScene: data.getInt8(1),
         unknown1: data.getUint16(2, true),
         unknown2: data.getUint16(4, true),
         isOutsideScene: data.getInt8(6) === 1,
         buffer,
-        palette: files.pal.getBufferUint8(),
         actors: [],
-        texts: null
+        palette: null,
+        texts: null,
     };
+
+    const [palette, texts] = await Promise.all([
+        getPalette(),
+        getText(sceneData.textIndex),
+    ]);
+    sceneData.palette = palette;
+    sceneData.texts = texts;
 
     let offset = 7;
     offset = loadAmbience(sceneData, offset);
@@ -48,11 +39,8 @@ function loadSceneDataSync(files, language, index) {
     offset = loadPoints(sceneData, offset);
     loadPatches(sceneData, offset);
 
-    sceneData.texts = loadTextData(files.text, {data: language, index: sceneData.textIndex});
-
-    cachedSceneData[index] = sceneData;
     return sceneData;
-}
+};
 
 function loadAmbience(scene, offset) {
     const data = new DataView(scene.buffer, offset, offset + 49);
@@ -404,56 +392,4 @@ function parseStaticFlags(staticFlags) {
     };
 }
 
-export function createRuntimeFlags() {
-    return {
-        waitHitFrame: false,
-        isHitting: false,
-        hasAnimEnded: false,
-        hasNewFrame: false,
-        wasDrawn: false,
-        isDead: false,
-        isSpriteMoving: false,
-        hasRotationByAnim: false,
-        isFalling: false,
-        isSuperHitting: false,
-        hasFrameShield: false,
-        canDrawShadow: false,
-        hasGravityByAnim: false,
-        isSkating: false,
-        canThrowProjectile: false,
-        canLeftJump: false,
-        canRightJump: false,
-        waitSuperHit: false,
-        hasRotationByTrack: false,
-        canFlyJetPack: false,
-        unknown20: false,
-        hasManualFrame: false,
-        waitPosition: false,
-        forceFalling: false,
-        // not from original from this point
-        isJumping: false,
-        isWalking: false,
-        isTurning: false,
-        isFighting: false,
-        repeatHit: 0,
-        isSwitchingHit: false,
-        isCrouching: false,
-        isClimbing: false,
-        isColliding: false,
-        isDrowning: false,
-        isDrowningLava: false,
-        isDrowningStars: false,
-        isTouchingGround: false,
-        isTouchingFloor: false,
-        isUsingProtoOrJetpack: false,
-        isSearching: false,
-    };
-}
-
-export function getHtmlColor(palette, index) {
-    return `#${new THREE.Color(
-        palette[index * 3] / 255,
-        palette[(index * 3) + 1] / 255,
-        palette[(index * 3) + 2] / 255
-    ).getHexString()}`;
-}
+export { parseScene };

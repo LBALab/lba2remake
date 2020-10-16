@@ -1,11 +1,8 @@
 import * as THREE from 'three';
-import {WORLD_SCALE} from '../utils/lba';
+import {WORLD_SCALE} from '../../utils/lba';
 
-export function loadBody(model, bodies, index, bodyProps) {
-    if (bodies[index]) {
-        return bodies[index];
-    }
-    const buffer = model.files.body.getEntry(index);
+const parseBody = async (resource, index, bodyProps) => {
+    const buffer = resource.getEntry(index);
     const data = new DataView(buffer);
     const bodyFlag = data.getInt32(0x00, true);
     const obj = {
@@ -48,9 +45,8 @@ export function loadBody(model, bodies, index, bodyProps) {
     loadUVGroups(obj);
     computeBoundingBox(obj, bodyProps);
 
-    bodies[index] = obj;
     return obj;
-}
+};
 
 function loadBones(object) {
     object.bones = [];
@@ -275,3 +271,5 @@ function computeBoundingBox(object, bodyProps) {
         );
     }
 }
+
+export { parseBody };

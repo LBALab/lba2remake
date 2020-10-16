@@ -16,6 +16,7 @@
 ### Development
 * Andriy Tevelyev (@pleasenophp)
 * Jeffrey Veenhuis (@Jeffroiscool)
+* Jesse Gorter (@Neko)
 
 ### Metadata
 * Sara González Ramajo (@SendellX)

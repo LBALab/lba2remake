@@ -1,13 +1,13 @@
 import * as THREE from 'three';
-import {each, find} from 'lodash';
+import {find} from 'lodash';
 
 import {processZones} from './zones';
 import { WORLD_SIZE } from '../../utils/lba';
 
 export function processPhysicsFrame(game, scene, time) {
-    each(scene.actors, (actor) => {
+    for (const actor of scene.actors) {
         processActorPhysics(game, scene, actor, time);
-    });
+    }
     if (scene.isActive) {
         processZones(game, scene);
         processSidesceneTransitions(scene);
@@ -88,22 +88,23 @@ function processCollisionsWithActors(scene, actor) {
     ACTOR_BOX.translate(actor.physics.position);
     DIFF.set(0, YSTEP, 0);
     ACTOR_BOX.translate(DIFF);
-    for (let i = 0; i < scene.actors.length; i += 1) {
-        const a = scene.actors[i];
-        if ((a.model === null && a.sprite === null)
-            || a.index === actor.index
-            || a.props.runtimeFlags.isDead
-            || !a.isVisible
-            || !(a.props.flags.hasCollisions || a.props.flags.isSprite)) {
+    for (const otherActor of scene.actors) {
+        if ((otherActor.model === null && otherActor.sprite === null)
+            || otherActor.index === actor.index
+            || otherActor.props.runtimeFlags.isDead
+            || !otherActor.isVisible
+            || !(otherActor.props.flags.hasCollisions || otherActor.props.flags.isSprite)) {
             continue;
         }
 
-        const boundingBox = a.model ? a.model.boundingBox : a.sprite.boundingBox;
+        const boundingBox = otherActor.model
+            ? otherActor.model.boundingBox
+            : otherActor.sprite.boundingBox;
         INTERSECTION.copy(boundingBox);
-        if (a.model) {
-            INTERSECTION.translate(a.physics.position);
+        if (otherActor.model) {
+            INTERSECTION.translate(otherActor.physics.position);
         } else {
-            INTERSECTION.applyMatrix4(a.threeObject.matrixWorld);
+            INTERSECTION.applyMatrix4(otherActor.threeObject.matrixWorld);
         }
         DIFF.set(0, YSTEP, 0);
         INTERSECTION.translate(DIFF);
@@ -123,7 +124,7 @@ function processCollisionsWithActors(scene, actor) {
             }
             actor.physics.position.add(DIFF);
             ACTOR_BOX.translate(DIFF);
-            actor.hasCollidedWithActor = a.index;
+            actor.hasCollidedWithActor = otherActor.index;
         }
     }
 }

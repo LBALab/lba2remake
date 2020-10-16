@@ -1,14 +1,13 @@
 import { each } from 'lodash';
-import { loadSceneData } from '../../../../../../scene';
+
 import { loadSceneMetaData, getObjectName } from '../../../../DebugData';
-import { getLanguageConfig } from '../../../../../../lang';
 import { parseScript } from '../../../../../../scripting/parser';
+import { getScene } from '../../../../../../resources';
 
 export async function forEachScene(callback) {
-    const {language} = getLanguageConfig();
     for (let idx = 0; idx < 222; idx += 1) {
         const [scene] = await Promise.all([
-            loadSceneData(language, idx),
+            getScene(idx),
             loadSceneMetaData(idx)
         ]);
         callback(scene);

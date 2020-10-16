@@ -5,6 +5,29 @@
             "block": 0
         }
     },
+    "7": {
+        "9x7x8": {
+            "layout": -1
+        },
+        "9x8x8": {
+            "layout": -1
+        },
+        "9x9x8": {
+            "layout": -1
+        },
+        "8x6x7": {
+            "layout": 28,
+            "block": 0
+        },
+        "8x7x7": {
+            "layout": 28,
+            "block": 1
+        },
+        "8x8x7": {
+            "layout": 28,
+            "block": 2
+        }
+    },
     "15": {
         "29x17x30": {
             "layout": 23,

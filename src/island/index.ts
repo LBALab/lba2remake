@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { map, each, assign, tail} from 'lodash';
+import { map, each, assign } from 'lodash';
 
 import { prepareGeometries } from './geometries';
 import { loadLayout } from './layout';
@@ -77,7 +77,7 @@ async function loadIslandNode(params, props, files, lutTexture, ambience) {
     const layout = loadLayout(files.ile);
     const data = {
         files,
-        palette: files.pal.getBufferUint8(),
+        palette: files.pal,
         layout,
         lutTexture
     };
@@ -314,10 +314,18 @@ function updateShadows(baseScene, matByName) {
 
     computeShadow(baseScene, baseScene.actors[0]);
     HERO_POS.copy(POSITION);
-    each(tail(baseScene.actors), computeShadow.bind(null, baseScene));
-    each(baseScene.sideScenes, (sideScene) => {
-        each(sideScene.actors, computeShadow.bind(null, sideScene));
-    });
+    for (const actor of baseScene.actors) {
+        if (actor.index !== 0) {
+            computeShadow(baseScene, actor);
+        }
+    }
+    if (baseScene.sideScenes) {
+        for (const sideScene of Object.values(baseScene.sideScenes) as any) {
+            for (const actor of sideScene.actors) {
+                computeShadow(sideScene, actor);
+            }
+        }
+    }
     shadows.sort((a, b) => a.distToHero - b.distToHero);
     for (let i = 0; i < 10; i += 1) {
         const shadow = shadows[i];

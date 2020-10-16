@@ -1,25 +1,23 @@
 import * as React from 'react';
 import * as THREE from 'three';
+
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
-import DebugData from '../../DebugData';
 import { TickerProps } from '../../../utils/Ticker';
 import { getIsometricCamera } from '../../../../cameras/iso';
 import { loadIsometricScenery } from '../../../../iso';
-import { loadSceneMapData } from '../../../../scene/map';
-import { getLanguageConfig } from '../../../../lang';
-import { loadSceneData } from '../../../../scene';
 import { getIso3DCamera } from '../../../../cameras/iso3d';
 import {
     registerResources,
     preloadResources,
+    getScene,
+    getSceneMap,
 } from '../../../../resources';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../../../utils/lba';
+import DebugData from '../../DebugData';
 
 interface Props extends TickerProps {
-    mainData: any;
-    saveMainData: Function;
     params: any;
     sharedState: {
         isoGridIdx: number;
@@ -102,7 +100,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
 
         this.onLoad = this.onLoad.bind(this);
         this.frame = this.frame.bind(this);
-        this.saveData = this.saveData.bind(this);
+        this.saveDebugScope = this.saveDebugScope.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
@@ -110,50 +108,40 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onWheel = this.onWheel.bind(this);
 
-        if (props.mainData) {
-            this.state = props.mainData.state;
-        } else {
-            const isoCamera = getIsometricCamera();
-            const iso3DCamera = getIso3DCamera();
-            const cameras = [isoCamera, iso3DCamera];
-            const camera = cameras[this.cam];
-            const scene = {
-                camera,
-                threeScene: new THREE.Scene(),
-                target: {
-                    threeObject: new THREE.Object3D()
-                }
-            };
-            const controlsState = {
-                cameraLerp: new THREE.Vector3(),
-                cameraLookAtLerp: new THREE.Vector3()
-            };
-            scene.threeScene.add(isoCamera.threeCamera);
-            scene.threeScene.add(iso3DCamera.controlNode);
-            const selectionObj = makeSelectionObject();
-            selectionObj.visible = false;
-            scene.threeScene.add(selectionObj);
-            const clock = new THREE.Clock(false);
-            this.state = {
-                scene,
-                clock,
-                controlsState,
-                selectionObj,
-                isoGridIdx: 0,
-                cameras
-            };
-            clock.start();
-        }
+        const isoCamera = getIsometricCamera();
+        const iso3DCamera = getIso3DCamera();
+        const cameras = [isoCamera, iso3DCamera];
+        const camera = cameras[this.cam];
+        const scene = {
+            camera,
+            threeScene: new THREE.Scene(),
+            target: {
+                threeObject: new THREE.Object3D()
+            }
+        };
+        const controlsState = {
+            cameraLerp: new THREE.Vector3(),
+            cameraLookAtLerp: new THREE.Vector3()
+        };
+        scene.threeScene.add(isoCamera.threeCamera);
+        scene.threeScene.add(iso3DCamera.controlNode);
+        const selectionObj = makeSelectionObject();
+        selectionObj.visible = false;
+        scene.threeScene.add(selectionObj);
+        const clock = new THREE.Clock(false);
+        this.state = {
+            scene,
+            clock,
+            controlsState,
+            selectionObj,
+            isoGridIdx: 0,
+            cameras
+        };
+        clock.start();
     }
 
-    saveData() {
-        if (this.props.saveMainData) {
-            DebugData.scope = this.state;
-            this.props.saveMainData({
-                state: this.state,
-                canvas: this.canvas
-            });
-        }
+    saveDebugScope() {
+        DebugData.scope = this.state;
     }
 
     async preload() {
@@ -162,24 +150,20 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     async onLoad(root) {
-        await this.preload();
-        if (!this.root) {
-            if (this.props.mainData) {
-                this.canvas = this.props.mainData.canvas;
-            } else {
-                this.canvas = document.createElement('canvas');
-                this.canvas.tabIndex = 0;
-                const renderer = new Renderer(
-                    this.props.params,
-                    this.canvas,
-                    {},
-                    'iso_grids_editor'
-                );
-                renderer.threeRenderer.setAnimationLoop(() => {
-                    this.props.ticker.frame();
-                });
-                this.setState({ renderer }, this.saveData);
-            }
+        if (!this.root && root) {
+            await this.preload();
+            this.canvas = document.createElement('canvas');
+            this.canvas.tabIndex = 0;
+            const renderer = new Renderer(
+                this.props.params,
+                this.canvas,
+                {},
+                'iso_grids_editor'
+            );
+            renderer.threeRenderer.setAnimationLoop(() => {
+                this.props.ticker.frame();
+            });
+            this.setState({ renderer }, this.saveDebugScope);
             this.root = root;
             this.root.appendChild(this.canvas);
         }
@@ -290,10 +274,10 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
                 (x + 0.5) / 32
             );
             this.state.selectionObj.position.multiplyScalar(WORLD_SIZE);
-            this.setState({ selectionData }, this.saveData);
+            this.setState({ selectionData }, this.saveDebugScope);
         } else {
             this.state.selectionObj.visible = false;
-            this.setState({ selectionData: null }, this.saveData);
+            this.setState({ selectionData: null }, this.saveDebugScope);
         }
     }
 
@@ -303,8 +287,8 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
         }
         this.loading = true;
         this.isoGridIdx = isoGridIdx;
-        const sceneData = await loadSceneData(getLanguageConfig().language, isoGridIdx);
-        const sceneMap = await loadSceneMapData();
+        const sceneData = await getScene(isoGridIdx);
+        const sceneMap = await getSceneMap();
         const isoGrid = await loadIsometricScenery(
             sceneMap[isoGridIdx].index,
             sceneData.ambience,
@@ -326,7 +310,7 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
             this.state.scene.target.threeObject.updateWorldMatrix();
         }
         this.loading = false;
-        this.setState({isoGrid, isoGridIdx});
+        this.setState({isoGrid, isoGridIdx}, this.saveDebugScope);
         return isoGrid;
     }
 

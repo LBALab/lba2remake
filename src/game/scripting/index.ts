@@ -46,7 +46,7 @@ export function runScript(params, script, time) {
                     }
                 }
             }
-            if (!(next.skipSideScenes && !script.context.scene.isActive)) {
+            if (!(next.skipSideScenes && !context.scene.isActive)) {
                 next(time);
             }
         } catch (e) {

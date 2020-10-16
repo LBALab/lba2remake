@@ -122,11 +122,11 @@ export default class Root extends React.Component<RootProps> {
                 content = <GameUI params={this.state.params} ticker={this.props.ticker} />;
             }
         }
-        return <div>
+        return <React.Fragment>
             {content}
             <Popup/>
             {this.state.changelog ?
                 <ChangeLog fullscreen title close={this.closeChangeLog}/> : null}
-        </div>;
+        </React.Fragment>;
     }
 }

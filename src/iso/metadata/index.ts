@@ -7,10 +7,9 @@ import {
 } from './replacements';
 import { processLayoutMirror, buildMirrors } from './mirrors';
 import { saveFullSceneModel } from './models';
-import { loadGrid } from '../grid';
-import { loadImageData } from '..';
-import { loadBricks } from '../bricks';
-import { getPalette, getBricks } from '../../resources';
+import { getGridMetadata } from '../grid';
+import { loadImageData, loadBricks } from '..';
+import { getPalette, getGrids } from '../../resources';
 import { checkVariantMatch } from './matchers/variants';
 import { checkBaseLayoutMatch } from './matchers/baseLayout';
 
@@ -35,14 +34,14 @@ export async function extractGridMetadata(grid, entry, ambience, is3D, numActors
 }
 
 export async function saveSceneReplacementModel(entry, ambience) {
-    const [pal, bkg, mask] = await Promise.all([
+    const [palette, bricks, gridMetadata, mask] = await Promise.all([
         getPalette(),
-        getBricks(),
+        loadBricks(),
+        getGridMetadata(entry + 1),
         loadImageData('images/brick_mask.png')
     ]);
-    const palette = pal.getBufferUint8();
-    const bricks = loadBricks(bkg);
-    const grid = await loadGrid(bkg, bricks, mask, palette, entry + 1, true);
+
+    const grid = await getGrids(entry + 1, { bricks, mask, palette, is3D: true, gridMetadata });
 
     const metadata = await loadMetadata(entry, grid.library, true);
     const replacements = await initReplacements(entry, metadata, ambience, 0);

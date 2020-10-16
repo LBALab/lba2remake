@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { each, times } from 'lodash';
 
-import { loadBricks } from './bricks';
-import { loadGrid, GROUND_TYPES } from './grid';
+import { GROUND_TYPES, getGridMetadata } from './grid';
 import { processCollisions } from '../game/loop/physicsIso';
 import { compile } from '../utils/shaders';
 import brick_vertex from './shaders/brick.vert.glsl';
@@ -12,8 +11,17 @@ import dome_brick_fragment from './shaders/dome_brick.frag.glsl';
 import { extractGridMetadata } from './metadata';
 import { Side, OffsetBySide } from './mapping';
 import { WORLD_SCALE_B, WORLD_SIZE, DOME_ENTRIES } from '../utils/lba';
-import { getPalette, getBricks } from '../resources';
+import { getPalette, getBricks, getGrids } from '../resources';
 import { loadDomeEnv } from './misc/dome_env';
+
+let bricksCache = null;
+
+export async function loadBricks() {
+    if (!bricksCache) {
+        bricksCache = await getBricks();
+    }
+    return bricksCache;
+}
 
 export async function loadImageData(src) : Promise<ImageData> {
     return new Promise((resolve) => {
@@ -31,14 +39,15 @@ export async function loadImageData(src) : Promise<ImageData> {
 }
 
 export async function loadIsometricScenery(entry, ambience, is3D, numActors = 0) {
-    const [pal, bkg, mask] = await Promise.all([
+    const [palette, bricks, gridMetadata, mask] = await Promise.all([
         getPalette(),
-        getBricks(),
+        loadBricks(),
+        getGridMetadata(entry + 1),
         loadImageData('images/brick_mask.png')
     ]);
-    const palette = pal.getBufferUint8();
-    const bricks = loadBricks(bkg);
-    const grid = await loadGrid(bkg, bricks, mask, palette, entry + 1, is3D);
+
+    const grid = await getGrids(entry + 1, { bricks, mask, palette, is3D, gridMetadata });
+
     const {
         threeObject,
         update: updateMesh

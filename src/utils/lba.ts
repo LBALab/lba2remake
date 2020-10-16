@@ -119,3 +119,11 @@ export function getPositions(bb) {
     positions.push(new THREE.Vector3(bb.max.x, bb.min.y, bb.max.z));
     return positions;
 }
+
+export function getHtmlColor(palette, index) {
+    return `#${new THREE.Color(
+        palette[index * 3] / 255,
+        palette[(index * 3) + 1] / 255,
+        palette[(index * 3) + 2] / 255
+    ).getHexString()}`;
+}

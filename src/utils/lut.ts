@@ -78,8 +78,7 @@ async function loadLUTData() : Promise<ArrayBuffer> {
 }
 
 export async function generateLUTTexture({onProgress, bbs, useLabColors}) {
-    const pal = await getPalette();
-    const palette = pal.getBufferUint8();
+    const palette = await getPalette();
     const compPalette = useLabColors ? buildLabPalette(palette) : palette;
     const buffer = new ArrayBuffer(LUT_DIM * LUT_DIM * LUT_DIM * 16 * 4);
     const image_data = new Uint8Array(buffer);
@@ -167,7 +166,7 @@ function decompose(color, p, bbs) {
     return distribution.map(w => w / wTotal);
 }
 
-function distSq(c0, c1) {
+export function distSq(c0, c1) {
     const dr = c1[0] - c0[0];
     const dg = c1[1] - c0[1];
     const db = c1[2] - c0[2];

@@ -62,36 +62,39 @@ export function initSkeleton(state, skeleton, loopFrame) {
 
 export function createSkeleton(body) {
     const skeleton = [];
-    for (let i = 0; i < body.bonesSize; i += 1) {
-        const bone = body.bones[i];
-        const boneVertex = body.vertices[bone.vertex];
 
-        const skeletonBone = {
-            boneIndex: i,
-            parent: bone.parent,
-            vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
-            pos: new THREE.Vector3(0, 0, 0),
-            p: new THREE.Vector3(0, 0, 0),
-            r: new THREE.Vector4(0, 0, 0, 0),
-            m: new THREE.Matrix4(),
-            type: 1, // translation by default
-            euler: new THREE.Vector3(),
-            children: []
-        };
+    if (body.bonesSize) {
+        for (let i = 0; i < body.bonesSize; i += 1) {
+            const bone = body.bones[i];
+            const boneVertex = body.vertices[bone.vertex];
 
-        skeleton.push(skeletonBone);
-    }
+            const skeletonBone = {
+                boneIndex: i,
+                parent: bone.parent,
+                vertex: new THREE.Vector3(boneVertex.x, boneVertex.y, boneVertex.z),
+                pos: new THREE.Vector3(0, 0, 0),
+                p: new THREE.Vector3(0, 0, 0),
+                r: new THREE.Vector4(0, 0, 0, 0),
+                m: new THREE.Matrix4(),
+                type: 1, // translation by default
+                euler: new THREE.Vector3(),
+                children: []
+            };
 
-    for (let i = 0; i < skeleton.length; i += 1) {
-        const bone = skeleton[i];
-        if (bone.parent === 0xFFFF) {
-            continue;
+            skeleton.push(skeletonBone);
         }
-        const s = skeleton[bone.parent];
-        s.children.push(bone);
-    }
 
-    updateSkeletonHierarchy(skeleton, 0);
+        for (let i = 0; i < skeleton.length; i += 1) {
+            const bone = skeleton[i];
+            if (bone.parent === 0xFFFF) {
+                continue;
+            }
+            const s = skeleton[bone.parent];
+            s.children.push(bone);
+        }
+
+        updateSkeletonHierarchy(skeleton, 0);
+    }
 
     return skeleton;
 }
@@ -264,13 +267,14 @@ function updateSkeletonAtKeyframe(state,
 const tmpM = new THREE.Matrix4();
 const tmpQ = new THREE.Quaternion();
 const tmpEuler = new THREE.Euler();
+const tmpPos = new THREE.Vector3();
 
 function updateSkeletonHierarchy(skeleton, index) {
     const s = skeleton[index];
     const p = skeleton[index === 0 ? 0 : s.parent];
     if (s.parent !== 0xFFFF) { // skip root
         s.m.identity();
-        const pos = s.vertex.clone();
+        tmpPos.copy(s.vertex);
 
         if (s.type === 0) { // rotation
             tmpEuler.set(
@@ -281,12 +285,12 @@ function updateSkeletonHierarchy(skeleton, index) {
             );
             s.m.makeRotationFromEuler(tmpEuler);
         } else { // translation
-            pos.x += s.pos.x;
-            pos.y += s.pos.y;
-            pos.z += s.pos.z;
+            tmpPos.x += s.pos.x;
+            tmpPos.y += s.pos.y;
+            tmpPos.z += s.pos.z;
         }
 
-        s.m.setPosition(pos);
+        s.m.setPosition(tmpPos);
 
         tmpM.copy(p.m);
         tmpM.multiply(s.m);
@@ -298,7 +302,7 @@ function updateSkeletonHierarchy(skeleton, index) {
     } else {
         p.m.identity();
     }
-    for (let i = 0; i < s.children.length; i += 1) {
-        updateSkeletonHierarchy(skeleton, s.children[i].boneIndex);
+    for (const child of s.children) {
+        updateSkeletonHierarchy(skeleton, child.boneIndex);
     }
 }

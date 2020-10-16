@@ -5,132 +5,132 @@
     },
     "3": {
       "replace": true,
-      "file": "003_004_wall_deco_2_joins.glb",
+      "file": "CI_003_004_wall_deco_2_joins.glb",
       "orientation": 0
     },
     "4": {
       "replace": true,
-      "file": "003_004_wall_deco_2_joins.glb",
+      "file": "CI_003_004_wall_deco_2_joins.glb",
       "orientation": 1
     },
     "5": {
       "replace": true,
-      "file": "005_006_007_008_wall_deco_1_join.glb",
+      "file": "CI_005_006_007_008_wall_deco_1_join.glb",
       "orientation": 1
     },
     "6": {
       "replace": true,
-      "file": "005_006_007_008_wall_deco_1_join.glb",
+      "file": "CI_005_006_007_008_wall_deco_1_join.glb",
       "orientation": 3
     },
     "7": {
       "replace": true,
-      "file": "005_006_007_008_wall_deco_1_join.glb",
+      "file": "CI_005_006_007_008_wall_deco_1_join.glb",
       "orientation": 2
     },
     "8": {
       "replace": true,
-      "file": "005_006_007_008_wall_deco_1_join.glb",
+      "file": "CI_005_006_007_008_wall_deco_1_join.glb",
       "orientation": 0
     },
     "9": {
       "replace": true,
-      "file": "009_010_011_012_wall_deco_L_join.glb",
+      "file": "CI_009_010_011_012_wall_deco_L_join.glb",
       "orientation": 1
     },
     "10": {
       "replace": true,
-      "file": "009_010_011_012_wall_deco_L_join.glb",
+      "file": "CI_009_010_011_012_wall_deco_L_join.glb",
       "orientation": 3
     },
     "11": {
       "replace": true,
-      "file": "009_010_011_012_wall_deco_L_join.glb",
+      "file": "CI_009_010_011_012_wall_deco_L_join.glb",
       "orientation": 0
     },
     "12": {
       "replace": true,
-      "file": "009_010_011_012_wall_deco_L_join.glb",
+      "file": "CI_009_010_011_012_wall_deco_L_join.glb",
       "orientation": 2
     },
     "13": {
       "replace": true,
-      "file": "013_wall_deco_4_joins.glb",
+      "file": "CI_013_wall_deco_4_joins.glb",
       "orientation": 0
     },
     "14": {
       "replace": true,
-      "file": "014_016_017_wall_deco_3_joins.glb",
+      "file": "CI_014_016_017_wall_deco_3_joins.glb",
       "orientation": 0
     },
     "16": {
       "replace": true,
-      "file": "014_016_017_wall_deco_3_joins.glb",
+      "file": "CI_014_016_017_wall_deco_3_joins.glb",
       "orientation": 3
     },
     "17": {
       "replace": true,
-      "file": "014_016_017_wall_deco_3_joins.glb",
+      "file": "CI_014_016_017_wall_deco_3_joins.glb",
       "orientation": 1
     },
     "18": {
       "replace": true,
-      "file": "018_019_wall_deco_vert_2_joins.glb",
+      "file": "CI_018_019_wall_deco_vert_2_joins.glb",
       "orientation": 0
     },
     "19": {
       "replace": true,
-      "file": "018_019_wall_deco_vert_2_joins.glb",
+      "file": "CI_018_019_wall_deco_vert_2_joins.glb",
       "orientation": 1
     },
     "20": {
       "replace": true,
-      "file": "020_021_022_023_wall_deco_vert_1_join.glb",
+      "file": "CI_020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 3
     },
     "21": {
       "replace": true,
-      "file": "020_021_022_023_wall_deco_vert_1_join.glb",
+      "file": "CI_020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 2
     },
     "22": {
       "replace": true,
-      "file": "020_021_022_023_wall_deco_vert_1_join.glb",
+      "file": "CI_020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 1
     },
     "23": {
       "replace": true,
-      "file": "020_021_022_023_wall_deco_vert_1_join.glb",
+      "file": "CI_020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 0
     },
     "24": {
       "replace": true,
-      "file": "024_025_026_027_wall_deco_round_corner_L_blue.glb",
+      "file": "CI_024_025_026_027_wall_deco_round_corner_L_blue.glb",
       "orientation": 1
     },
     "25": {
       "replace": true,
-      "file": "024_025_026_027_wall_deco_round_corner_L_blue.glb",
+      "file": "CI_024_025_026_027_wall_deco_round_corner_L_blue.glb",
       "orientation": 3
     },
     "26": {
       "replace": true,
-      "file": "024_025_026_027_wall_deco_round_corner_L_blue.glb",
+      "file": "CI_024_025_026_027_wall_deco_round_corner_L_blue.glb",
       "orientation": 0
     },
     "27": {
       "replace": true,
-      "file": "024_025_026_027_wall_deco_round_corner_L_blue.glb",
+      "file": "CI_024_025_026_027_wall_deco_round_corner_L_blue.glb",
       "orientation": 2
     },
     "28": {
       "replace": true,
-      "file": "028_flower_vase.glb",
+      "file": "CI_028_flower_vase.glb",
       "orientation": 0
     },
     "29": {
       "replace": true,
-      "file": "029_tall_lamp.glb",
+      "file": "CI_029_tall_lamp.glb",
       "orientation": 0
     },
     "30": {
@@ -139,7 +139,7 @@
     },
     "31": {
       "replace": true,
-      "file": "031_tomatoes.glb",
+      "file": "CI_031_tomatoes.glb",
       "orientation": 0
     },
     "32": {
@@ -156,37 +156,37 @@
     },
     "36": {
       "replace": true,
-      "file": "036_038_040_wall_deco_round_corner_no_wood_gray.glb",
+      "file": "CI_036_038_040_wall_deco_round_corner_no_wood_gray.glb",
       "orientation": 1
     },
     "37": {
       "replace": true,
-      "file": "037_039_041_043_wall_deco_round_corner_I_gray.glb",
+      "file": "CI_037_039_041_043_wall_deco_round_corner_I_gray.glb",
       "orientation": 1
     },
     "38": {
       "replace": true,
-      "file": "036_038_040_wall_deco_round_corner_no_wood_gray.glb",
+      "file": "CI_036_038_040_wall_deco_round_corner_no_wood_gray.glb",
       "orientation": 3
     },
     "39": {
       "replace": true,
-      "file": "037_039_041_043_wall_deco_round_corner_I_gray.glb",
+      "file": "CI_037_039_041_043_wall_deco_round_corner_I_gray.glb",
       "orientation": 3
     },
     "40": {
       "replace": true,
-      "file": "036_038_040_wall_deco_round_corner_no_wood_gray.glb",
+      "file": "CI_036_038_040_wall_deco_round_corner_no_wood_gray.glb",
       "orientation": 0
     },
     "41": {
       "replace": true,
-      "file": "037_039_041_043_wall_deco_round_corner_I_gray.glb",
+      "file": "CI_037_039_041_043_wall_deco_round_corner_I_gray.glb",
       "orientation": 0
     },
     "43": {
       "replace": true,
-      "file": "037_039_041_043_wall_deco_round_corner_I_gray.glb",
+      "file": "CI_037_039_041_043_wall_deco_round_corner_I_gray.glb",
       "orientation": 2
     },
     "45": {
@@ -194,57 +194,57 @@
     },
     "47": {
       "replace": true,
-      "file": "047_048_chair.glb",
+      "file": "CI_047_048_chair.glb",
       "orientation": 0
     },
     "48": {
       "replace": true,
-      "file": "047_048_chair.glb",
+      "file": "CI_047_048_chair.glb",
       "orientation": 3
     },
     "49": {
       "replace": true,
-      "file": "047_048_chair.glb",
+      "file": "CI_047_048_chair.glb",
       "orientation": 1
     },
     "50": {
       "replace": true,
-      "file": "047_048_chair.glb",
+      "file": "CI_047_048_chair.glb",
       "orientation": 2
     },
     "51": {
       "replace": true,
-      "file": "051_table.glb",
+      "file": "CI_051_table.glb",
       "orientation": 0
     },
     "53": {
       "replace": true,
-      "file": "053_054_bed.glb",
+      "file": "CI_053_054_bed.glb",
       "orientation": 3
     },
     "54": {
       "replace": true,
-      "file": "053_054_bed.glb",
+      "file": "CI_053_054_bed.glb",
       "orientation": 0
     },
     "55": {
       "replace": true,
-      "file": "055_056_armchair.glb",
+      "file": "CI_055_056_armchair.glb",
       "orientation": 0
     },
     "56": {
       "replace": true,
-      "file": "055_056_armchair.glb",
+      "file": "CI_055_056_armchair.glb",
       "orientation": 1
     },
     "57": {
       "replace": true,
-      "file": "055_056_armchair.glb",
+      "file": "CI_055_056_armchair.glb",
       "orientation": 2
     },
     "58": {
       "replace": true,
-      "file": "055_056_armchair.glb",
+      "file": "CI_055_056_armchair.glb",
       "orientation": 3
     },
     "59": {
@@ -255,62 +255,62 @@
     },
     "65": {
       "replace": true,
-      "file": "065_books.glb",
+      "file": "CI_065_books.glb",
       "orientation": 0
     },
     "67": {
       "replace": true,
-      "file": "067_books_long.glb",
+      "file": "CI_067_books_long.glb",
       "orientation": 0
     },
     "68": {
       "replace": true,
-      "file": "068_books_horizontal_reversed.glb",
+      "file": "CI_068_books_horizontal_reversed.glb",
       "orientation": 3
     },
     "69": {
       "replace": true,
-      "file": "069_books_horizontal.glb",
+      "file": "CI_069_books_horizontal.glb",
       "orientation": 0
     },
     "70": {
       "replace": true,
-      "file": "070_books_tilted.glb",
+      "file": "CI_070_books_tilted.glb",
       "orientation": 3
     },
     "71": {
       "replace": true,
-      "file": "071_books_tilted_reversed.glb",
+      "file": "CI_071_books_tilted_reversed.glb",
       "orientation": 0
     },
     "72": {
       "replace": true,
-      "file": "072_books_reversed.glb",
+      "file": "CI_072_books_reversed.glb",
       "orientation": 3
     },
     "73": {
       "replace": true,
-      "file": "073_books_medium.glb",
+      "file": "CI_073_books_medium.glb",
       "orientation": 3
     },
     "74": {
       "replace": true,
-      "file": "074_books_long_reversed.glb",
+      "file": "CI_074_books_long_reversed.glb",
       "orientation": 3
     },
     "76": {
       "replace": true,
-      "file": "076_boat_mockup.glb",
+      "file": "CI_076_boat_mockup.glb",
       "orientation": 0
     },
     "78": {
       "replace": true,
-      "file": "078_079_bedside_table_long.glb",
+      "file": "CI_078_079_bedside_table_long.glb",
       "orientation": 1
     },
     "79": {
       "replace": true,
-      "file": "078_079_bedside_table_long.glb",
+      "file": "CI_078_079_bedside_table_long.glb",
       "orientation": 0
     },
     "80": {
@@ -321,32 +321,32 @@
     },
     "84": {
       "replace": true,
-      "file": "084_plate_stack.glb",
+      "file": "CI_084_plate_stack.glb",
       "orientation": 0
     },
     "85": {
       "replace": true,
-      "file": "085_single_plate.glb",
+      "file": "CI_085_single_plate.glb",
       "orientation": 0
     },
     "86": {
       "replace": true,
-      "file": "086_candlestick.glb",
+      "file": "CI_086_candlestick.glb",
       "orientation": 0
     },
     "89": {
       "replace": true,
-      "file": "089_090_small_wall_lamp.glb",
+      "file": "CI_089_090_small_wall_lamp.glb",
       "orientation": 0
     },
     "90": {
       "replace": true,
-      "file": "089_090_small_wall_lamp.glb",
+      "file": "CI_089_090_small_wall_lamp.glb",
       "orientation": 3
     },
     "91": {
       "replace": true,
-      "file": "091_stool.glb",
+      "file": "CI_091_stool.glb",
       "orientation": 0
     },
     "93": {
@@ -354,92 +354,92 @@
     },
     "96": {
       "replace": true,
-      "file": "096_097_098_099_stairs.glb",
+      "file": "CI_096_097_098_099_stairs.glb",
       "orientation": 0
     },
     "97": {
       "replace": true,
-      "file": "096_097_098_099_stairs.glb",
+      "file": "CI_096_097_098_099_stairs.glb",
       "orientation": 3
     },
     "98": {
       "replace": true,
-      "file": "096_097_098_099_stairs.glb",
+      "file": "CI_096_097_098_099_stairs.glb",
       "orientation": 1
     },
     "99": {
       "replace": true,
-      "file": "096_097_098_099_stairs.glb",
+      "file": "CI_096_097_098_099_stairs.glb",
       "orientation": 2
     },
     "101": {
       "replace": true,
-      "file": "101_funfrock_statue.glb",
+      "file": "CI_101_funfrock_statue.glb",
       "orientation": 0
     },
     "102": {
       "replace": true,
-      "file": "102_barrel.glb",
+      "file": "CI_102_barrel.glb",
       "orientation": 0
     },
     "104": {
       "replace": true,
-      "file": "104_open_book.glb",
+      "file": "CI_104_open_book.glb",
       "orientation": 0
     },
     "105": {
       "replace": true,
-      "file": "105_106_shelf.glb",
+      "file": "CI_105_106_shelf.glb",
       "orientation": 0
     },
     "106": {
       "replace": true,
-      "file": "105_106_shelf.glb",
+      "file": "CI_105_106_shelf.glb",
       "orientation": 3
     },
     "109": {
       "replace": true,
-      "file": "109_classic_wall_lamp.glb",
+      "file": "CI_109_classic_wall_lamp.glb",
       "orientation": 0
     },
     "111": {
       "replace": true,
-      "file": "111_box.glb",
+      "file": "CI_111_box.glb",
       "orientation": 0
     },
     "112": {
       "replace": true,
-      "file": "112_desk.glb",
+      "file": "CI_112_desk.glb",
       "orientation": 0
     },
     "113": {
       "replace": true,
-      "file": "113_cloth_bench.glb",
+      "file": "CI_113_cloth_bench.glb",
       "orientation": 0
     },
     "114": {
       "replace": true,
-      "file": "114_radio_broadcaster.glb",
+      "file": "CI_114_radio_broadcaster.glb",
       "orientation": 0
     },
     "117": {
       "replace": true,
-      "file": "117_paper_rolls_container.glb",
+      "file": "CI_117_paper_rolls_container.glb",
       "orientation": 0
     },
     "119": {
       "replace": true,
-      "file": "119_127_128_book_glass_cabinet.glb",
+      "file": "CI_119_127_128_book_glass_cabinet.glb",
       "orientation": 0
     },
     "120": {
       "replace": true,
-      "file": "120_tunic_glass_cabinet_bottom.glb",
+      "file": "CI_120_tunic_glass_cabinet_bottom.glb",
       "orientation": 0
     },
     "121": {
       "replace": true,
-      "file": "121_tunic_glass_cabinet_top.glb",
+      "file": "CI_121_tunic_glass_cabinet_top.glb",
       "orientation": 0
     },
     "122": {
@@ -447,12 +447,12 @@
     },
     "123": {
       "replace": true,
-      "file": "123_bloop_boxes.glb",
+      "file": "CI_123_bloop_boxes.glb",
       "orientation": 0
     },
     "124": {
       "replace": true,
-      "file": "124_arrow_sign.glb",
+      "file": "CI_124_arrow_sign.glb",
       "orientation": 0
     },
     "126": {
@@ -460,42 +460,42 @@
     },
     "127": {
       "replace": true,
-      "file": "119_127_128_book_glass_cabinet.glb",
+      "file": "CI_119_127_128_book_glass_cabinet.glb",
       "orientation": 1
     },
     "128": {
       "replace": true,
-      "file": "119_127_128_book_glass_cabinet.glb",
+      "file": "CI_119_127_128_book_glass_cabinet.glb",
       "orientation": 2
     },
     "133": {
       "replace": true,
-      "file": "133_desk_bell.glb",
+      "file": "CI_133_desk_bell.glb",
       "orientation": 0
     },
     "134": {
       "replace": true,
-      "file": "134_cash_register.glb",
+      "file": "CI_134_cash_register.glb",
       "orientation": 0
     },
     "136": {
       "replace": true,
-      "file": "136_surveillance_system.glb",
+      "file": "CI_136_surveillance_system.glb",
       "orientation": 0
     },
     "137": {
       "replace": true,
-      "file": "137_swivel_chair.glb",
+      "file": "CI_137_swivel_chair.glb",
       "orientation": 0
     },
     "138": {
       "replace": true,
-      "file": "138_cables.glb",
+      "file": "CI_138_cables.glb",
       "orientation": 0
     },
     "139": {
       "replace": true,
-      "file": "139_cables.glb",
+      "file": "CI_139_cables.glb",
       "orientation": 0
     },
     "142": {
@@ -506,12 +506,12 @@
     },
     "146": {
       "replace": true,
-      "file": "146_padded_stool.glb",
+      "file": "CI_146_padded_stool.glb",
       "orientation": 0
     },
     "147": {
       "replace": true,
-      "file": "147_round_table.glb",
+      "file": "CI_147_round_table.glb",
       "orientation": 0
     },
     "148": {
@@ -531,22 +531,22 @@
     },
     "155": {
       "replace": true,
-      "file": "155_unrolled_paper.glb",
+      "file": "CI_155_unrolled_paper.glb",
       "orientation": 0
     },
     "156": {
       "replace": true,
-      "file": "156_three_paper_rolls.glb",
+      "file": "CI_156_three_paper_rolls.glb",
       "orientation": 0
     },
     "157": {
       "replace": true,
-      "file": "157_paper_roll.glb",
+      "file": "CI_157_paper_roll.glb",
       "orientation": 0
     },
     "158": {
       "replace": true,
-      "file": "158_wall_deco_round_corner_no_wood_blue.glb",
+      "file": "CI_158_wall_deco_round_corner_no_wood_blue.glb",
       "orientation": 0
     },
     "159": {
@@ -560,17 +560,17 @@
     },
     "163": {
       "replace": true,
-      "file": "163_paint_bucket.glb",
+      "file": "CI_163_paint_bucket.glb",
       "orientation": 3
     },
     "164": {
       "replace": true,
-      "file": "164_wood_stairs.glb",
+      "file": "CI_164_wood_stairs.glb",
       "orientation": 0
     },
     "165": {
       "replace": true,
-      "file": "165_pencil_jar.glb",
+      "file": "CI_165_pencil_jar.glb",
       "orientation": 0
     },
     "170": {
@@ -581,77 +581,77 @@
     },
     "173": {
       "replace": true,
-      "file": "173_surveillance_system_control.glb",
+      "file": "CI_173_surveillance_system_control.glb",
       "orientation": 0
     },
     "22:1x1x1:74": {
       "replace": true,
-      "file": "020_021_022_023_wall_deco_vert_1_join.glb",
+      "file": "CI_020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 1
     },
     "22:1x3x1:73,73,74": {
       "replace": true,
-      "file": "020_021_022_023_wall_deco_vert_1_join_var3.glb",
+      "file": "CI_020_021_022_023_wall_deco_vert_1_join_var3.glb",
       "orientation": 3
     },
     "23:1x1x1:1873": {
       "replace": true,
-      "file": "020_021_022_023_wall_deco_vert_1_join.glb",
+      "file": "CI_020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 0
     },
     "22:1x1x1:73": {
       "replace": true,
-      "file": "020_021_022_023_wall_deco_vert_1_join.glb",
+      "file": "CI_020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 1
     },
     "78:1x2x3:276,278,279,281,282,284": {
       "replace": true,
-      "file": "078_079_cupboard_var1.glb",
+      "file": "CI_078_079_cupboard_var1.glb",
       "orientation": 0
     },
     "79:3x2x1:285,286,287,291,292,293": {
       "replace": true,
-      "file": "078_079_cupboard_var1.glb",
+      "file": "CI_078_079_cupboard_var1.glb",
       "orientation": 3
     },
     "79:2x3x1:285,287,288,290,291,293": {
       "replace": true,
-      "file": "079_cupboard_var1.glb",
+      "file": "CI_079_cupboard_var1.glb",
       "orientation": 0
     },
     "79:4x3x1:285,286,286,287,288,289,289,290,291,292,292,293": {
       "replace": true,
-      "file": "079_cupboard_var2.glb",
+      "file": "CI_079_cupboard_var2.glb",
       "orientation": 0
     },
     "79:5x3x2:-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,291,292,292,292,293,285,286,286,286,287,288,289,289,289,290,291,292,292,292,293": {
       "replace": true,
-      "file": "079_huge_cupboard_var3.glb",
+      "file": "CI_079_huge_cupboard_var3.glb",
       "orientation": 0
     },
     "105:1x1x2:542,544": {
       "replace": true,
-      "file": "105_shelf_var1.glb",
+      "file": "CI_105_shelf_var1.glb",
       "orientation": 0
     },
     "65:1x2x2:496,497,496,497": {
       "replace": true,
-      "file": "065_books_var1.glb",
+      "file": "CI_065_books_var1.glb",
       "orientation": 0
     },
     "106:4x1x1:349,350,350,351": {
       "replace": true,
-      "file": "106_shelf_long_var1.glb",
+      "file": "CI_106_shelf_long_var1.glb",
       "orientation": 0
     },
     "73:1x2x1:267,269": {
       "replace": true,
-      "file": "073_books_var1.glb",
+      "file": "CI_073_books_var1.glb",
       "orientation": 0
     },
     "74:1x2x1:272,275": {
       "replace": true,
-      "file": "074_books_var1.glb",
+      "file": "CI_074_books_var1.glb",
       "orientation": 0
     }
   },
@@ -670,17 +670,17 @@
     },
     "7": {
       "replace": true,
-      "file": "007_crystal_ball_pillar.glb",
+      "file": "SE_007_crystal_ball_pillar.glb",
       "orientation": 0
     },
     "8": {
       "replace": true,
-      "file": "008_pillar.glb",
+      "file": "SE_008_pillar.glb",
       "orientation": 0
     },
     "9": {
       "replace": true,
-      "file": "102_barrel.glb",
+      "file": "SE_009_barrel.glb",
       "orientation": 0
     },
     "11": {
@@ -706,47 +706,47 @@
     },
     "21": {
       "replace": true,
-      "file": "021_022_pillar_capital.glb",
+      "file": "SE_021_022_pillar_capital.glb",
       "orientation": 0
     },
     "22": {
       "replace": true,
-      "file": "021_022_pillar_capital.glb",
+      "file": "SE_021_022_pillar_capital.glb",
       "orientation": 1
     },
     "23": {
       "replace": true,
-      "file": "023_skull.glb",
+      "file": "SE_023_skull.glb",
       "orientation": 0
     },
     "24": {
       "replace": true,
-      "file": "024_026_027_029_prison_bars.glb",
+      "file": "SE_024_026_027_029_prison_bars.glb",
       "orientation": 0
     },
     "25": {
       "replace": true,
-      "file": "025_028_prison_bars_wall.glb",
+      "file": "SE_025_028_prison_bars_wall.glb",
       "orientation": 0
     },
     "26": {
       "replace": true,
-      "file": "024_026_027_029_prison_bars.glb",
+      "file": "SE_024_026_027_029_prison_bars.glb",
       "orientation": 2
     },
     "27": {
       "replace": true,
-      "file": "024_026_027_029_prison_bars.glb",
+      "file": "SE_024_026_027_029_prison_bars.glb",
       "orientation": 1
     },
     "28": {
       "replace": true,
-      "file": "025_028_prison_bars_wall.glb",
+      "file": "SE_025_028_prison_bars_wall.glb",
       "orientation": 1
     },
     "29": {
       "replace": true,
-      "file": "024_026_027_029_prison_bars.glb",
+      "file": "SE_024_026_027_029_prison_bars.glb",
       "orientation": 3
     },
     "54": {
@@ -763,77 +763,77 @@
     },
     "74": {
       "replace": true,
-      "file": "074_chain.glb",
+      "file": "SE_074_chain.glb",
       "orientation": 0
     },
     "76": {
       "replace": true,
-      "file": "076_spiral_stalagmites.glb",
+      "file": "SE_076_spiral_stalagmites.glb",
       "orientation": 0
     },
     "77": {
       "replace": true,
-      "file": "077_spiral_stalagmites.glb",
+      "file": "SE_077_spiral_stalagmites.glb",
       "orientation": 0
     },
     "78": {
       "replace": true,
-      "file": "078_spiral_stalagmites.glb",
+      "file": "SE_078_spiral_stalagmites.glb",
       "orientation": 1
     },
     "79": {
       "replace": true,
-      "file": "079_spiral_stalagmite.glb",
+      "file": "SE_079_spiral_stalagmite.glb",
       "orientation": 0
     },
     "80": {
       "replace": true,
-      "file": "080_spiral_stalagmite_small.glb",
+      "file": "SE_080_spiral_stalagmite_small.glb",
       "orientation": 0
     },
     "82": {
       "replace": true,
-      "file": "082_083_wall_spiral_stalagmites.glb",
+      "file": "SE_082_083_wall_spiral_stalagmites.glb",
       "orientation": 0
     },
     "83": {
       "replace": true,
-      "file": "082_083_wall_spiral_stalagmites.glb",
+      "file": "SE_082_083_wall_spiral_stalagmites.glb",
       "orientation": 3
     },
     "84": {
       "replace": true,
-      "file": "084_round_stones.glb",
+      "file": "SE_084_round_stones.glb",
       "orientation": 0
     },
     "85": {
       "replace": true,
-      "file": "085_round_stones.glb",
+      "file": "SE_085_round_stones.glb",
       "orientation": 0
     },
     "86": {
       "replace": true,
-      "file": "086_round_stone.glb",
+      "file": "SE_086_round_stone.glb",
       "orientation": 0
     },
     "87": {
       "replace": true,
-      "file": "087_round_stones.glb",
+      "file": "SE_087_round_stones.glb",
       "orientation": 0
     },
     "88": {
       "replace": true,
-      "file": "088_round_stone.glb",
+      "file": "SE_088_round_stone.glb",
       "orientation": 0
     },
     "89": {
       "replace": true,
-      "file": "089_round_stones.glb",
+      "file": "SE_089_round_stones.glb",
       "orientation": 0
     },
     "90": {
       "replace": true,
-      "file": "090_round_stones.glb",
+      "file": "SE_090_round_stones.glb",
       "orientation": 0
     },
     "93": {
@@ -843,7 +843,7 @@
     },
     "94": {
       "replace": true,
-      "file": "094_candelabra.glb",
+      "file": "SE_094_candelabra.glb",
       "orientation": 0
     },
     "98": {
@@ -876,6 +876,31 @@
       "file": "SE_103_mortar.glb",
       "orientation": 0
     },
+    "104": {
+      "replace": true,
+      "file": "SE_104_bottle.glb",
+      "orientation": 0
+    },
+    "105": {
+      "replace": true,
+      "file": "SE_105_flask.glb",
+      "orientation": 0
+    },
+    "106": {
+      "replace": true,
+      "file": "SE_106_small_bottle.glb",
+      "orientation": 0
+    },
+    "107": {
+      "replace": true,
+      "file": "SE_107_plate.glb",
+      "orientation": 0
+    },
+    "108": {
+      "replace": true,
+      "file": "SE_108_big_plate.glb",
+      "orientation": 0
+    },
     "113": {
       "mirror": true
     },
@@ -890,112 +915,112 @@
     },
     "149": {
       "replace": true,
-      "file": "149_tile.glb",
+      "file": "SE_149_tile.glb",
       "orientation": 0
     },
     "150": {
       "replace": true,
-      "file": "150_152_178_179_baseboard.glb",
+      "file": "SE_150_152_178_179_baseboard.glb",
       "orientation": 0
     },
     "151": {
       "replace": true,
-      "file": "151_dome_column.glb",
+      "file": "SE_151_dome_column.glb",
       "orientation": 0
     },
     "152": {
       "replace": true,
-      "file": "150_152_178_179_baseboard.glb",
+      "file": "SE_150_152_178_179_baseboard.glb",
       "orientation": 1
     },
     "153": {
       "replace": true,
-      "file": "153_154_dome_tile.glb",
+      "file": "SE_153_154_dome_tile.glb",
       "orientation": 0
     },
     "154": {
       "replace": true,
-      "file": "153_154_dome_tile.glb",
+      "file": "SE_153_154_dome_tile.glb",
       "orientation": 0
     },
     "155": {
       "replace": true,
-      "file": "155_156_158_159_dome_tile_slope.glb",
+      "file": "SE_155_156_158_159_dome_tile_slope.glb",
       "orientation": 0
     },
     "156": {
       "replace": true,
-      "file": "155_156_158_159_dome_tile_slope.glb",
+      "file": "SE_155_156_158_159_dome_tile_slope.glb",
       "orientation": 1
     },
     "158": {
       "replace": true,
-      "file": "155_156_158_159_dome_tile_slope.glb",
+      "file": "SE_155_156_158_159_dome_tile_slope.glb",
       "orientation": 2
     },
     "159": {
       "replace": true,
-      "file": "155_156_158_159_dome_tile_slope.glb",
+      "file": "SE_155_156_158_159_dome_tile_slope.glb",
       "orientation": 3
     },
     "160": {
       "replace": true,
-      "file": "160_180_181_184_baseboard_corner.glb",
+      "file": "SE_160_180_181_184_baseboard_corner.glb",
       "orientation": 0
     },
     "161": {
       "replace": true,
-      "file": "161_182_183_185_baseboard_corner.glb",
+      "file": "SE_161_182_183_185_baseboard_corner.glb",
       "orientation": 0
     },
     "166": {
       "replace": true,
-      "file": "166_167_small_bars.glb",
+      "file": "SE_166_167_small_bars.glb",
       "orientation": 1
     },
     "167": {
       "replace": true,
-      "file": "166_167_small_bars.glb",
+      "file": "SE_166_167_small_bars.glb",
       "orientation": 0
     },
     "178": {
       "replace": true,
-      "file": "150_152_178_179_baseboard.glb",
+      "file": "SE_150_152_178_179_baseboard.glb",
       "orientation": 3
     },
     "179": {
       "replace": true,
-      "file": "150_152_178_179_baseboard.glb",
+      "file": "SE_150_152_178_179_baseboard.glb",
       "orientation": 2
     },
     "180": {
       "replace": true,
-      "file": "160_180_181_184_baseboard_corner.glb",
+      "file": "SE_160_180_181_184_baseboard_corner.glb",
       "orientation": 1
     },
     "181": {
       "replace": true,
-      "file": "160_180_181_184_baseboard_corner.glb",
+      "file": "SE_160_180_181_184_baseboard_corner.glb",
       "orientation": 3
     },
     "182": {
       "replace": true,
-      "file": "161_182_183_185_baseboard_corner.glb",
+      "file": "SE_161_182_183_185_baseboard_corner.glb",
       "orientation": 1
     },
     "183": {
       "replace": true,
-      "file": "161_182_183_185_baseboard_corner.glb",
+      "file": "SE_161_182_183_185_baseboard_corner.glb",
       "orientation": 3
     },
     "184": {
       "replace": true,
-      "file": "160_180_181_184_baseboard_corner.glb",
+      "file": "SE_160_180_181_184_baseboard_corner.glb",
       "orientation": 2
     },
     "185": {
       "replace": true,
-      "file": "161_182_183_185_baseboard_corner.glb",
+      "file": "SE_161_182_183_185_baseboard_corner.glb",
       "orientation": 2
     },
     "198": {
@@ -1012,162 +1037,162 @@
     },
     "155:2x2x1:4647,4648,4649,4650": {
       "replace": true,
-      "file": "155_156_158_159_dome_tile_slope_var1.glb",
+      "file": "SE_155_156_158_159_dome_tile_slope_var1.glb",
       "orientation": 0
     },
     "155:2x1x1:4649,4650": {
       "replace": true,
-      "file": "155_156_158_159_dome_tile_slope_var2.glb",
+      "file": "SE_155_156_158_159_dome_tile_slope_var2.glb",
       "orientation": 0
     },
     "156:1x2x2:4651,4652,4653,4654": {
       "replace": true,
-      "file": "155_156_158_159_dome_tile_slope_var1.glb",
+      "file": "SE_155_156_158_159_dome_tile_slope_var1.glb",
       "orientation": 1
     },
     "8:1x3x1:649,653,654": {
       "replace": true,
-      "file": "008_pillar_var1.glb",
+      "file": "SE_008_pillar_var1.glb",
       "orientation": 0
     },
     "8:1x7x1:649,650,651,652,652,653,654": {
       "replace": true,
-      "file": "008_pillar_var3.glb",
+      "file": "SE_008_pillar_var3.glb",
       "orientation": 0
     },
     "8:1x4x1:650,651,653,654": {
       "replace": true,
-      "file": "008_pillar_var4.glb",
+      "file": "SE_008_pillar_var4.glb",
       "orientation": 0
     },
     "8:1x5x1:650,651,652,653,654": {
       "replace": true,
-      "file": "008_pillar_var5.glb",
+      "file": "SE_008_pillar_var5.glb",
       "orientation": 0
     },
     "8:1x6x2:650,651,652,652,653,-1,650,651,652,652,653,654": {
       "replace": true,
-      "file": "008_pillar_var6.glb",
+      "file": "SE_008_pillar_var6.glb",
       "orientation": 0
     },
     "8:1x2x1:649,654": {
       "replace": true,
-      "file": "008_pillar_var8.glb",
+      "file": "SE_008_pillar_var8.glb",
       "orientation": 0
     },
     "8:1x5x1:649,650,651,652,654": {
       "replace": true,
-      "file": "008_pillar_var9_10.glb",
+      "file": "SE_008_pillar_var9_10.glb",
       "orientation": 0
     },
     "8:1x5x1:649,650,651,653,654": {
       "replace": true,
-      "file": "008_pillar_var9_10.glb",
+      "file": "SE_008_pillar_var9_10.glb",
       "orientation": 1
     },
     "151:2x11x2:0,4619,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,4624,4625,4626,4627,127,4629,127,4630,127,4630,127,4631,127,4632,127,4633,127,4634,4635,4636,4637,4638": {
       "replace": true,
-      "file": "151_dome_column.glb",
+      "file": "SE_151_dome_column.glb",
       "orientation": 0
     },
     "151:2x13x2:0,4619,0,4620,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,4621,4622,4623,4624,4625,4626,4627,127,4628,127,4631,127,4632,127,4631,127,4632,127,4631,127,4632,127,4633,127,4634,4635,4636,4637,4638": {
       "replace": true,
-      "file": "151_dome_column_var3.glb",
+      "file": "SE_151_dome_column_var3.glb",
       "orientation": 0
     },
     "151:2x9x2:0,4619,0,4620,0,127,0,127,0,127,0,127,0,127,0,4621,4622,4623,4624,4625,4626,4627,127,4628,127,4631,127,4632,127,4633,127,4634,4635,4636,4637,4638": {
       "replace": true,
-      "file": "151_dome_column_var2.glb",
+      "file": "SE_151_dome_column_var2.glb",
       "orientation": 0
     },
     "151:2x11x2:0,4619,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,4622,-1,4624,4625,4626,4627,127,4629,127,4630,127,4630,127,4631,127,4632,127,4633,127,4634,4635,4636,4637,4638": {
       "replace": true,
-      "file": "151_dome_column.glb",
+      "file": "SE_151_dome_column.glb",
       "orientation": 0
     },
     "80:2x3x1:1059,1059,1060,1060,1061,1061": {
       "replace": true,
-      "file": "080_spiral_stalagmite_small_var1.glb",
+      "file": "SE_080_spiral_stalagmite_small_var1.glb",
       "orientation": 0
     },
     "79:2x4x2:-1,1055,-1,1056,-1,1057,-1,1058,1055,-1,1056,-1,1057,-1,1058": {
       "replace": true,
-      "file": "079_spiral_stalagmite_var1.glb",
+      "file": "SE_079_spiral_stalagmite_var1.glb",
       "orientation": 0
     },
     "78:1x4x1:1050,1051,1052,1053": {
       "replace": true,
-      "file": "078_spiral_stalagmites.glb",
+      "file": "SE_078_spiral_stalagmites.glb",
       "orientation": 3
     },
     "77:1x4x3:1046,1047,1048,1049,1046,1047,1048,1049,1046,1047,1048,1049": {
       "replace": true,
-      "file": "077_spiral_stalagmites_var1.glb",
+      "file": "SE_077_spiral_stalagmites_var1.glb",
       "orientation": 0
     },
     "77:2x4x2:-1,1046,-1,1047,-1,1048,-1,1049,1046,-1,1047,-1,1048,-1,1049": {
       "replace": true,
-      "file": "077_spiral_stalagmites_var2.glb",
+      "file": "SE_077_spiral_stalagmites_var2.glb",
       "orientation": 0
     },
     "77:3x4x2:1046,1046,-1,1047,1047,-1,1048,1048,-1,1049,1049,-1,-1,-1,1046,-1,-1,1047,-1,-1,1048,-1,-1,1049": {
       "replace": true,
-      "file": "077_spiral_stalagmites_var3.glb",
+      "file": "SE_077_spiral_stalagmites_var3.glb",
       "orientation": 0
     },
     "76:4x4x3:-1,-1,1038,1039,-1,-1,1040,1041,-1,-1,1042,1043,-1,-1,1044,1045,-1,1039,-1,-1,-1,1041,-1,-1,-1,1043,-1,-1,-1,1045,-1,-1,1039,-1,-1,-1,1041,-1,-1,-1,1043,-1,-1,-1,1045": {
       "replace": true,
-      "file": "076_spiral_stalagmites_var1.glb",
+      "file": "SE_076_spiral_stalagmites_var1.glb",
       "orientation": 0
     },
     "76:4x4x3:-1,1038,1039,1038,-1,1040,1041,1040,-1,1042,1043,1042,-1,1044,1045,1044,-1,-1,1038,-1,-1,-1,1040,-1,-1,-1,1042,-1,-1,-1,1044,-1,1038,1039,-1,-1,1040,1041,-1,-1,1042,1043,-1,-1,1044,1045": {
       "replace": true,
-      "file": "076_spiral_stalagmites_var2.glb",
+      "file": "SE_076_spiral_stalagmites_var2.glb",
       "orientation": 0
     },
     "76:2x4x3:1038,1039,1040,1041,1042,1043,1044,1045,1038,1039,1040,1041,1042,1043,1044,1045,1038,1039,1040,1041,1042,1043,1044,1045": {
       "replace": true,
-      "file": "076_spiral_stalagmites_var3.glb",
+      "file": "SE_076_spiral_stalagmites_var3.glb",
       "orientation": 0
     },
     "76:4x4x1:1038,1039,1038,1039,1040,1041,1040,1041,1042,1043,1042,1043,1044,1045,1044,1045": {
       "replace": true,
-      "file": "076_spiral_stalagmites_var4.glb",
+      "file": "SE_076_spiral_stalagmites_var4.glb",
       "orientation": 0
     },
     "76:3x4x3:-1,1038,1039,-1,1040,1041,-1,1042,1043,-1,1044,1045,-1,1038,1039,-1,1040,1041,-1,1042,1043,-1,1044,1045,1038,1039,-1,1040,1041,-1,1042,1043,-1,1044,1045": {
       "replace": true,
-      "file": "076_spiral_stalagmites_var5.glb",
+      "file": "SE_076_spiral_stalagmites_var5.glb",
       "orientation": 0
     },
     "77:1x6x1:1046,1047,1046,1047,1048,1049": {
       "replace": true,
-      "file": "077_spiral_stalagmites_var4.glb",
+      "file": "SE_077_spiral_stalagmites_var4.glb",
       "orientation": 0
     },
     "151:2x23x2:0,4619,0,4620,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,127,0,4621,4622,4623,4624,4625,4626,4627,127,4628,127,4629,127,4630,127,4631,127,4632,127,4629,127,4630,127,4631,127,4632,127,4631,127,4632,127,4631,127,4632,127,4631,127,4632,127,4631,127,4632,127,4633,127,4634,4635,4636,4637,4638": {
       "replace": true,
-      "file": "151_dome_column_var1.glb",
+      "file": "SE_151_dome_column_var1.glb",
       "orientation": 0
     },
     "8:2x6x1:649,649,650,650,651,651,652,652,653,653,654,654": {
       "replace": true,
-      "file": "008_pillar_var6.glb",
+      "file": "SE_008_pillar_var6.glb",
       "orientation": 1
     },
     "22:1x3x2:696,697,698,699,700,701": {
       "replace": true,
-      "file": "022_pillar_capital_var2_var3.glb",
+      "file": "SE_022_pillar_capital_var2_var3.glb",
       "orientation": 0
     },
     "22:1x3x2:696,697,-1,699,700,701": {
       "replace": true,
-      "file": "022_pillar_capital_var2_var3.glb",
+      "file": "SE_022_pillar_capital_var2_var3.glb",
       "orientation": 0
     },
     "22:1x3x4:696,697,698,699,700,701,127,694,695,696,697,698": {
       "replace": true,
-      "file": "022_pillar_capital_var1.glb",
+      "file": "SE_022_pillar_capital_var1.glb",
       "orientation": 0
     },
     "99:6x3x4:0,127,0,127,0,127,0,127,0,127,0,127,1113,1114,1113,1114,1113,1114,0,1115,0,1115,0,1115,0,1116,0,1116,0,1116,1117,1118,1117,1118,1117,1118,0,127,0,127,0,127,0,127,0,127,0,127,1119,1120,1119,1120,1119,1120,127,1121,127,1121,127,1121,1122,1123,1122,1123,1122,1123,1124,1125,1124,1125,1124,1125": {

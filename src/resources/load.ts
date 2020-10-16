@@ -1,6 +1,7 @@
 
 import HQR, { loadHqr } from '../hqr';
 import WebApi from '../webapi';
+import { ResourceTypes } from './parse';
 
 const ResourceStrategy = {
     TRANSIENT: 0,
@@ -19,6 +20,7 @@ const ResourceName = {
     NONE: 'NONE',
     ANIM: 'ANIM',
     BODY: 'BODY',
+    BODY_TEXTURE: 'BODY_TEXTURE',
     RESS: 'RESS',
     SAMPLES: 'SAMPLES',
     SCENE: 'SCENE',
@@ -26,22 +28,29 @@ const ResourceName = {
     SPRITERAW: 'SPRITERAW',
     TEXT: 'TEXT',
     OBJECTS: 'OBJECTS',
-    LAYOUTS: 'LAYOUTS',
+    LIBRARIES: 'LIBRARIES',
     BRICKS: 'BRICKS',
     GRIDS: 'GRIDS',
     MUSIC: 'MUSIC',
     ENTITIES: 'ENTITIES',
     PALETTE: 'PALETTE',
+    SPRITES_CLIP: 'SPRITES_CLIP',
+    SPRITESRAW_CLIP: 'SPRITESRAW_CLIP',
+    ANIM3DS_CLIP: 'ANIM3DS_CLIP',
+    SCENE_MAP: 'SCENE_MAP',
 };
 
 interface Resource {
-    id: number;
+    id: string;
+    type: string;
     ref: Resource;
     strategy: number;
     description: string;
     path: string;
     length: number;
     index: number;
+    first: number;
+    last: number;
     loaded: boolean;
     isHQR: boolean;
     hqr: HQR;
@@ -53,6 +62,7 @@ interface Resource {
     hasHiddenEntries: Function;
     getNextHiddenEntry: Function;
     load: Function;
+    parse: Function;
     entries: [];
 }
 
@@ -100,10 +110,13 @@ const requestResource = async (
 /** Add Resource */
 const register = (
     strategy: number,
+    type: string,
     id: string,
     description: string,
     path: string,
     entryIndex: number,
+    first: number,
+    last: number,
 ) => {
     if (Resources[id]) {
         return;
@@ -111,11 +124,15 @@ const register = (
 
     const resource = {
         id,
+        type,
         strategy,
         description,
         path,
         index: entryIndex,
+        first,
+        last,
         loaded: false,
+        loading: null,
         // HQR, VOX, ILE, OBL, ZIP (OpenHQR)
         isHQR: new RegExp(HQRExtensions.join('|')).test(path),
         hqr: null,
@@ -130,6 +147,8 @@ const register = (
         ref: null,
         buffer: null,
         entries: [],
+        parse: null,
+        parsedEntries: [],
     };
 
     // check if we have already a resource with same file
@@ -201,85 +220,81 @@ const register = (
         if (resource.loaded) {
             return;
         }
-        if (!resource.isHQR) {
-            resource.buffer = await requestResource(resource.path);
-            resource.loaded = true;
-            return;
+        if (!resource.loading) {
+            resource.loading = new Promise(async (resolve) => {
+                if (resource.ref) {
+                    await resource.ref.load();
+                    resource.length = resource.ref.length;
+                    if (resource.ref.buffer) {
+                        resource.buffer = resource.ref.buffer;
+                    } else if (resource.ref.hqr) {
+                        resource.hqr = resource.ref.hqr;
+                    }
+                } else if (resource.isHQR) {
+                    resource.hqr = await loadHqr(resource.path);
+                    resource.length = resource.hqr.length;
+                } else {
+                    resource.buffer = await requestResource(resource.path);
+                }
+                resource.loaded = true;
+                resolve();
+            });
         }
-        if (resource.ref) {
-            // if for some reason the referenced resource is not loaded
-            // for the load of that resource. It can happen for transient resources
-            // or non-preloaded static resources
-            if (!resource.ref.loaded) {
-                resource.ref.hqr = await loadHqr(resource.ref.path);
-            }
-            resource.length = resource.ref.length;
-            resource.loaded = resource.ref.loaded;
-            return;
+        await resource.loading;
+    };
+
+    resource.parse = async (index?: number, language?: any) => {
+        if (resource.parsedEntries[index]) {
+            return resource.parsedEntries[index];
         }
-        resource.hqr = await loadHqr(resource.path);
-        resource.length = resource.hqr.length;
-        resource.loaded = true;
+        if (!ResourceTypes[resource.type].parser) {
+            return null;
+        }
+        const data = await ResourceTypes[resource.type].parser(resource, index, language);
+        resource.parsedEntries[index] = data;
+        return resource.parsedEntries[index];
     };
 
     Resources[id] = resource;
 };
 
-// const releaseAllResources = () => {
-//     Resources = {};
-// };
-
-// const releaseTransientResources = () => {
-//     for (const res of Object.values(Resources)) {
-//         if (res.strategy === ResourceStrategy.TRANSIENT) {
-//             releaseResource(res.id);
-//         }
-//     }
-// };
-
-// const releaseResource = (id: string) => {
-//     const res = Resources[id];
-//     if (res) {
-//         delete res.hqr;
-//         res.loaded = false;
-//         res.length = 0;
-//     }
-// };
+let preloaded = false;
 
 const preloadResources = async () => {
+    if (preloaded) {
+        return;
+    }
     const preload = [];
-    const resPreload = [];
     for (const res of Object.values<Resource>(Resources)) {
-        if (!res.loaded && res.strategy === ResourceStrategy.STATIC) {
-            preload.push(requestResource(res.path, res.description));
+        if (res.strategy === ResourceStrategy.STATIC) {
+            preload.push(res.load());
         }
     }
-    await Promise.all(preload);
-    for (const res of Object.values<Resource>(Resources)) {
-        if (!res.loaded && res.strategy === ResourceStrategy.STATIC) {
-            resPreload.push(res.load());
-        }
-    }
-    await Promise.all(resPreload);
+    preloaded = true;
 };
 
-const loadResource = async (id: string) => {
+const loadResource = async (id: string, index?: number, param?: any) => {
     const resource = Resources[id];
+    index = index ?? resource.index;
     if (resource && !resource.loaded) {
         await resource.load();
     }
+    if (index !== undefined) {
+        return await resource.parse(index, param);
+    }
     return resource;
 };
-
-// const getResource = (id: string) => {
-//     return Resources[id];
-// };
 
 const getResourcePath = (id: string) => {
     return Resources[id].path;
 };
 
+let registered = false;
+
 const registerResources = async (game, language, languageVoice) => {
+    if (registered) {
+        return;
+    }
     const api = new WebApi();
     const response = await api.request(`resources/${game}.json`, 'GET', 'json');
     if (response && response.body) {
@@ -287,16 +302,30 @@ const registerResources = async (game, language, languageVoice) => {
         // @ts-ignore
         for (let e = 0; e < res.entries.length; e += 1) {
             // @ts-ignore
-            const r = res.entries[e];
+            const r: Resource = res.entries[e];
             let path = r.path.replace('%LANGCODE%', language);
             path = path.replace('%LANGVOICECODE%', languageVoice);
-            register(ResourceStrategy[r.strategy], r.id, r.description, path, r.index);
+            register(
+                ResourceStrategy[r.strategy],
+                r.type,
+                r.id,
+                r.description,
+                path,
+                r.index,
+                r.first,
+                r.last
+            );
         }
     }
+    registered = true;
 };
 
+const areResourcesPreloaded = () => preloaded;
+
 export {
+    Resource,
     ResourceName,
+    areResourcesPreloaded,
     preloadResources,
     loadResource,
     getResourcePath,

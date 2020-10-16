@@ -1,17 +1,22 @@
 import * as THREE from 'three';
 
-import { loadEntity, getBodyIndex, getAnimIndex, Entity } from './entity';
-import { loadBody } from './body';
+import { getAnimIndex, Entity } from './entity';
 import { loadAnim } from './anim';
 import {
     initSkeleton,
     createSkeleton,
 } from './animState';
 import { loadMesh } from './geometries';
-import { loadTextureRGBA } from '../texture';
 import { createBoundingBox } from '../utils/rendering';
 import { loadLUTTexture } from '../utils/lut';
-import { getCommonResource, getPalette, getEntities, getModels, getAnimations } from '../resources';
+import {
+    getCommonResource,
+    getPalette,
+    getEntities,
+    getModels,
+    getAnimations,
+    getModelsTexture
+} from '../resources';
 
 export interface Model {
     state: any;
@@ -28,18 +33,19 @@ export async function loadModel(params: any,
                           animState: any,
                           envInfo: any,
                           ambience: any) {
-    const [ress, pal, entities, body, anim, lutTexture] = await Promise.all([
+    const [ress, pal, entities, body, texture, anim, lutTexture] = await Promise.all([
         getCommonResource(),
         getPalette(),
         getEntities(),
-        getModels(),
+        getModels(bodyIdx, entityIdx),
+        getModelsTexture(),
         getAnimations(),
         loadLUTTexture()
     ]);
-    const files = { ress, pal, entities, body, anim };
+    const resources = { ress, pal, entities, body, texture, anim };
     return loadModelData(
         params,
-        files,
+        resources,
         entityIdx,
         bodyIdx,
         animIdx,
@@ -56,7 +62,7 @@ export async function loadModel(params: any,
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
 function loadModelData(params: any,
-                       files,
+                       resources,
                        entityIdx,
                        bodyIdx,
                        animIdx,
@@ -67,17 +73,18 @@ function loadModelData(params: any,
     if (entityIdx === -1 || bodyIdx === -1 || animIdx === -1)
         return null;
 
-    const palette = files.pal.getBufferUint8();
-    const entityInfo = files.entities.getBuffer();
-    const entities = loadEntity(entityInfo);
+    const palette = resources.pal;
+    const entities = resources.entities;
+    const texture = resources.texture;
+    const body = resources.body;
 
     const model = {
         palette,
         lutTexture,
-        files,
+        files: resources,
         bodies: [],
         anims: [],
-        texture: loadTextureRGBA(files.ress.getEntry(6), palette),
+        texture,
         state: null,
         mesh: null,
         entities,
@@ -87,10 +94,7 @@ function loadModelData(params: any,
         materials: []
     };
 
-    const realBodyIdx = getBodyIndex(model.entity, bodyIdx);
     const realAnimIdx = getAnimIndex(model.entity, animIdx);
-
-    const body = loadBody(model, model.bodies, realBodyIdx, model.entity.bodies[bodyIdx]);
     const anim = loadAnim(model, model.anims, realAnimIdx);
 
     const skeleton = createSkeleton(body);

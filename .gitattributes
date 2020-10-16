@@ -1,0 +1,5 @@
+assetsSource/**.blend filter=lfs diff=lfs merge=lfs -text
+assetsSource/**.png filter=lfs diff=lfs merge=lfs -text
+assetsSource/**.psd filter=lfs diff=lfs merge=lfs -text
+assetsSource/**.ai filter=lfs diff=lfs merge=lfs -text
+assetsSource/**.sbs filter=lfs diff=lfs merge=lfs -text

@@ -1,17 +1,21 @@
 import * as React from 'react';
+import * as THREE from 'three';
 import { extend } from 'lodash';
 
 import {
     generateLUTTexture,
     resetLUTTexture,
     loadLUTTexture,
-    LUT_DIM
+    LUT_DIM,
+    distSq
 } from '../../../../../utils/lut';
 import { editor, fullscreen } from '../../../../styles';
 import { getPalette } from '../../../../../resources';
 import FrameListener from '../../../../utils/FrameListener';
 import { TickerProps } from '../../../../utils/Ticker';
+import { areResourcesPreloaded } from '../../../../../resources/load';
 import DebugData from '../../../DebugData';
+import Renderer from '../../../../../renderer';
 
 const style = extend({
     overflowY: 'auto',
@@ -41,7 +45,9 @@ interface State {
     slice: number;
     intensity: number;
     activeColor: string;
+    selectedColor: string;
     lutBuffer?: ArrayBuffer;
+    eyeDropping: boolean;
 }
 
 export default class PaletteAreaContent extends FrameListener<TickerProps, State> {
@@ -70,6 +76,7 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
         this.onCanvasCurvesRef = this.onCanvasCurvesRef.bind(this);
         this.saveLUT = this.saveLUT.bind(this);
         this.reset = this.reset.bind(this);
+        this.eyeDrop = this.eyeDrop.bind(this);
 
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
@@ -82,7 +89,9 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
             saving: false,
             slice: 0,
             intensity: 0,
-            activeColor: '<no-color>'
+            activeColor: null,
+            selectedColor: null,
+            eyeDropping: false
         };
 
         this.ramp = 0;
@@ -100,8 +109,7 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
     }
 
     async load() {
-        const pal = await getPalette();
-        this.palette = pal.getBufferUint8();
+        this.palette = await getPalette();
         this.draw();
         this.lutTexture = await loadLUTTexture();
         this.drawLUT();
@@ -110,7 +118,7 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
 
     frame() {
         if (this.waitForLoading) {
-            if (DebugData.scope.game && !DebugData.scope.game.getUiState().loading) {
+            if (areResourcesPreloaded()) {
                 this.waitForLoading = false;
                 this.load();
             }
@@ -151,6 +159,10 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
             <button style={buttonStyle} onClick={this.generate}>
                 Generate Look-Up Table
             </button>
+            {!this.state.eyeDropping && <button style={buttonStyle} onClick={this.eyeDrop}>
+                <img src="editor/eyedropper.svg" style={{width: 12, height: 12, marginRight: 4}}/>
+                Eye dropper
+            </button>}
             <div>
                 {saveButton}
                 {resetButton}
@@ -218,13 +230,19 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
             lineHeight: '1em',
             whiteSpace: 'nowrap' as const,
             overflow: 'hidden' as const,
-            color: '#BBBBBB'
+            color: '#BBBBBB',
+            userSelect: 'text' as const,
+            cursor: 'text'
         };
+
+        const { activeColor, selectedColor } = this.state;
+
+        const color = activeColor || selectedColor;
 
         return <div>
             <div style={wrapperStyle}>
                 <b>Palette</b><hr/>
-                <div style={colStyle}>{this.state.activeColor}</div>
+                <div style={colStyle}>{color}</div>
                 <canvas
                     style={canvasStyle}
                     ref={this.onCanvasRef}
@@ -265,6 +283,94 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
                 />
             </div>
         </div>;
+    }
+
+    eyeDrop() {
+        const { renderer, scene } = DebugData.scope as { renderer: Renderer; scene: any; };
+        if (renderer && scene) {
+            this.setState({ eyeDropping: true });
+            renderer.canvas.style.cursor = 'crosshair';
+            const that = this;
+            function eventListener(event) {
+                renderer.canvas.removeEventListener('click', eventListener);
+                renderer.canvas.style.cursor = 'default';
+
+                const { threeRenderer } = renderer;
+
+                const rect = renderer.canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                const color = new Uint8Array(4);
+
+                const pickingTexture = new THREE.WebGLRenderTarget(1, 1);
+
+                const { threeCamera } = scene.camera;
+                const size = threeRenderer.getSize(new THREE.Vector2());
+                threeCamera.setViewOffset(
+                    size.x,
+                    size.y,
+                    x,
+                    y,
+                    1,
+                    1
+                );
+
+                threeRenderer.setRenderTarget(pickingTexture);
+
+                renderer.render(scene);
+
+                threeRenderer.readRenderTargetPixels(
+                    pickingTexture,
+                    0,
+                    0,
+                    1,
+                    1,
+                    color
+                );
+
+                const p = that.palette;
+                const closest = {
+                    dist: Infinity,
+                    idx: -1,
+                    color: null,
+                    x: -1,
+                    y: -1
+                };
+                for (let i = 0; i < 256; i += 1) {
+                    const pColor = [
+                        p[i * 3],
+                        p[(i * 3) + 1],
+                        p[(i * 3) + 2]
+                    ];
+                    const dist = distSq(color, pColor);
+                    if (dist < closest.dist) {
+                        closest.idx = i;
+                        closest.dist = dist;
+                        closest.color = `rgb(${pColor})`;
+                        closest.x = i % 16;
+                        closest.y = Math.floor(i / 16);
+                    }
+                }
+                that.bbs = [
+                    {
+                        xMin: closest.x,
+                        xMax: closest.x,
+                        yMin: closest.y,
+                        yMax: closest.y
+                    }
+                ];
+                that.setState({selectedColor: `[${closest.x},${closest.y}] = ${closest.color}`});
+                that.draw();
+
+                threeCamera.clearViewOffset();
+                threeRenderer.setRenderTarget(null);
+
+                that.setState({ eyeDropping: false });
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            renderer.canvas.addEventListener('click', eventListener);
+        }
     }
 
     async generate() {
@@ -477,8 +583,24 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
             this.draw();
             this.dragging = false;
             delete this.bbIndex;
+            let singleColor = false;
+            if (this.bbs.length === 1) {
+                const [bbs] = this.bbs;
+                if (bbs.xMin === bbs.xMax &&
+                    bbs.yMin === bbs.yMax) {
+                    singleColor = true;
+                    const { xMin: x, yMin: y } = bbs;
+                    const idx = (y * 16) + x;
+                    const p = this.palette;
+                    const color = `rgb(${p[idx * 3]},${p[(idx * 3) + 1]},${p[(idx * 3) + 2]})`;
+                    this.setState({selectedColor: `[${x},${y}] ${color}`});
+                }
+            }
+            if (!singleColor) {
+                this.setState({selectedColor: null});
+            }
         }
-        this.setState({activeColor: '<no-color>'});
+        this.setState({activeColor: null});
     }
 
     getCoords(e) {

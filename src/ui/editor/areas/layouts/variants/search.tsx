@@ -11,9 +11,9 @@ import {
     groupBy,
     uniq
 } from 'lodash';
-import { loadSceneMapData } from '../../../../../scene/map';
+
 import { bits } from '../../../../../utils';
-import { getBricks } from '../../../../../resources';
+import { getBricksHQR, getSceneMap } from '../../../../../resources';
 
 export async function findAllVariants(lDef) {
     const { nX, nY, nZ } = lDef.props;
@@ -21,8 +21,8 @@ export async function findAllVariants(lDef) {
         return [];
     }
     const sceneList = times(222);
-    const sceneMap = await loadSceneMapData();
-    const bkg = await getBricks();
+    const sceneMap = await getSceneMap();
+    const bkg = await getBricksHQR();
     const layout = loadLayout(bkg, lDef);
     const variantsByScenes = await Promise.all(
         map(sceneList, async (scene) => {

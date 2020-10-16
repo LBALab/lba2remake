@@ -1,18 +1,30 @@
-import {bits} from '../utils';
+import { Resource } from '../load';
+import { bits } from '../../utils';
 
-const bricks = [];
+const parseSceneMap = (resource: Resource, index: number) => {
+    const buffer = resource.getEntry(index);
+    const data = new DataView(buffer);
+    let offset = 0;
+    const map = [];
 
-export function loadBricks(bkg) {
-    if (bricks.length === 0) {
-        for (let i = 197; i <= 18099; i += 1) {
-            bricks.push(loadBrick(bkg, i));
+    while (true) {
+        const opcode = data.getUint8(offset);
+        const sceneIndex = data.getUint8(offset + 1);
+        offset += 2;
+        if (opcode === 0) {
+            break;
         }
-    }
-    return bricks;
-}
 
-function loadBrick(bkg, entry) {
-    const dataView = new DataView(bkg.getEntry(entry));
+        map.push({
+            isIsland: opcode === 2,
+            index: sceneIndex,
+        });
+    }
+    return map;
+};
+
+const parseBrick = (resource: Resource, index: number) => {
+    const dataView = new DataView(resource.getEntry(index));
     const height = dataView.getUint8(1);
     const offsetX = dataView.getUint8(2);
     const offsetY = dataView.getUint8(3);
@@ -48,4 +60,6 @@ function loadBrick(bkg, entry) {
         }
     }
     return pixels;
-}
+};
+
+export { parseSceneMap, parseBrick };
