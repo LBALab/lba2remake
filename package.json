@@ -32,7 +32,6 @@
     "react-dom": "16.8.6",
     "react-markdown": "^4.3.1",
     "simplex-noise": "^2.4.0",
-    "synth-js": "^0.1.2",
     "three": "^0.116.0",
     "webxr-polyfill": "^2.0.3",
     "xxhashjs": "^0.2.2"
@@ -56,6 +55,7 @@
     "sass-loader": "^7.3.1",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
+    "synth-js": "^0.1.2",
     "ts-loader": "^6.2.2",
     "ts-node": "^8.9.1",
     "tslint": "^5.20.1",
