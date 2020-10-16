@@ -63,6 +63,16 @@ const parseEntity = (resource: Resource) => {
     return entities;
 };
 
+const parseEntityLBA1 = (resource: Resource, index: number) => {
+    const entities = [];
+    for (let i = 0; i < resource.length; i += 1) {
+        const buffer = resource.getEntry(index);
+        const entity = loadEntityEntry(buffer, 0, i);
+        entities.push(entity);
+    }
+    return entities;
+};
+
 const loadEntityEntry = (buffer, dataOffset, index) => {
     const data = new DataView(buffer, dataOffset);
     let offset = 0;
@@ -385,4 +395,4 @@ const makeNewBox = () => ({
     zMax: -1
 });
 
-export { parseEntity };
+export { parseEntity, parseEntityLBA1 };

@@ -2,7 +2,7 @@ import { Resource } from './load';
 
 import { parsePalette } from './parsers/palette';
 import { parseText } from './parsers/text';
-import { parseEntity } from './parsers/entity';
+import { parseEntity, parseEntityLBA1 } from './parsers/entity';
 import { parseTextureRGBA } from './parsers/texture';
 import { parseBody } from './parsers/body';
 import { parseScene } from './parsers/scene';
@@ -33,12 +33,12 @@ const ResourceTypes = {
     LSR: { type: 'LSR', description: 'LBA2 Sprite Raw', parser: parseSpriteRaw },
     SAD: { type: 'SAD', description: 'Sprites Clip Info', parser: parseSpriteClipInfo },
     LBT: { type: 'LBT', description: 'LBA Text Dialog', parser: parseText },
-    BL1: { type: 'BL1', description: 'LBA1 Layout Library', parser: NOP },
+    BL1: { type: 'BL1', description: 'LBA1 Layout Library', parser: parseLibrary },
     BL2: { type: 'BL2', description: 'LBA2 Layout Library', parser: parseLibrary },
     BRK: { type: 'BRK', description: 'LBA Brick Sprite', parser: parseBrick },
-    GR1: { type: 'GR1', description: 'LBA1 Grids', parser: NOP },
+    GR1: { type: 'GR1', description: 'LBA1 Grids', parser: parseGrid },
     GR2: { type: 'GR2', description: 'LBA2 Grids', parser: parseGrid },
-    '3DE': { type: '3DE', description: 'LBA1 File 3D Entity', parser: NOP },
+    '3DE': { type: '3DE', description: 'LBA1 File 3D Entity', parser: parseEntityLBA1 },
     F3D: { type: 'F3D', description: 'LBA2 Entity Information', parser: parseEntity },
     PAL: { type: 'PAL', description: 'LBA Palette', parser: parsePalette },
     OBL: { type: 'OBL', description: 'LBA2 Island Object HQR File', parser: NOP },
