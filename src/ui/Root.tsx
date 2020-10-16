@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import GameUI from './GameUI';
+import Game from './Game';
 import VRGameUI from './VRGameUI';
 import Editor from './Editor';
 import Popup from './Popup';
@@ -119,7 +119,7 @@ export default class Root extends React.Component<RootProps> {
                     exitVR={this.exitVR}
                 />;
             } else if (this.state.vr === false) {
-                content = <GameUI params={this.state.params} ticker={this.props.ticker} />;
+                content = <Game ticker={this.props.ticker} />;
             }
         }
         return <React.Fragment>

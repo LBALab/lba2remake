@@ -6,12 +6,12 @@ import { getLanguageConfig } from '../lang';
 import DebugData from '../ui/editor/DebugData';
 import { makePure } from '../utils/debug';
 import { registerResources, preloadResources, getText } from '../resources';
+import { getParams } from '../params';
 
 export function createGame(
     clock: any,
     setUiState: Function,
     getUiState: Function,
-    params: any,
     vr: boolean = false
 ) {
     let isPaused = false;
@@ -122,7 +122,7 @@ export function createGame(
 
         registerResources: async () => {
             const { language, languageVoice } = getLanguageConfig();
-            await registerResources(params.game, language.code, languageVoice.code);
+            await registerResources(getParams().game, language.code, languageVoice.code);
         },
 
         async preload() {

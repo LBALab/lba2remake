@@ -1,5 +1,5 @@
 import {clone} from 'lodash';
-import GameUI from '../../../GameUI';
+import GameUI from '../../../Game';
 import InspectorArea from '../shared/InspectorArea/InspectorArea';
 import DevToolsArea from '../shared/DevToolsArea/DevToolsArea';
 import SceneArea from './scene/SceneArea';

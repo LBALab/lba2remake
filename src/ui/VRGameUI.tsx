@@ -77,7 +77,6 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
             clock,
             this.setUiState,
             this.getUiState,
-            props.params,
             true
         );
 
@@ -201,7 +200,6 @@ export default class VRGameUI extends FrameListener<VRGameUIProps, VRGameUIState
                 this.setState({scene});
             }
             mainGameLoop(
-                this.props.params,
                 game,
                 clock,
                 renderer,

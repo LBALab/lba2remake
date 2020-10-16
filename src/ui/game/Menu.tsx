@@ -3,6 +3,7 @@ import { map, each, filter } from 'lodash';
 import {tr} from '../../lang';
 
 import '../styles/menu.scss';
+import { getParams } from '../../params';
 
 interface Item {
     item: string;
@@ -31,7 +32,6 @@ interface MProps {
     showMenu: boolean;
     inGameMenu: boolean;
     texts?: any[];
-    params?: any;
     onItemChanged: (id: number) => void;
 }
 
@@ -58,11 +58,12 @@ export default class Menu extends React.Component<MProps, MState> {
     componentWillReceiveProps(newProps) {
         if (newProps.texts) {
             const menu = menuItems;
+            const params = getParams();
             menu[0].isVisible = newProps.inGameMenu;
-            menu[5].isVisible = !newProps.params.editor;
-            menu[6].isVisible = newProps.params.editor;
-            menu[7].isVisible = !newProps.params.iso3d;
-            menu[8].isVisible = newProps.params.iso3d;
+            menu[5].isVisible = !params.editor;
+            menu[6].isVisible = params.editor;
+            menu[7].isVisible = !params.iso3d;
+            menu[8].isVisible = params.iso3d;
             const items = filter(menu, 'isVisible');
             each(items, (i) => {
                 if (i.textId) {

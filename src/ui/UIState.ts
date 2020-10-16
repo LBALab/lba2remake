@@ -23,4 +23,26 @@ export default interface UIState {
     showMenu: boolean;
     inGameMenu: boolean;
     teleportMenu: boolean;
+    behaviourMenu: boolean;
+    noAudio: boolean;
+}
+
+export function initUIState(game: any): UIState {
+    return {
+        cinema: false,
+        text: null,
+        skip: false,
+        ask: {choices: []},
+        interjections: {},
+        foundObject: null,
+        loading: true,
+        video: null,
+        choice: null,
+        menuTexts: null,
+        showMenu: false,
+        inGameMenu: false,
+        teleportMenu: false,
+        behaviourMenu: false,
+        noAudio: !game.getAudioManager().isContextActive()
+    };
 }
