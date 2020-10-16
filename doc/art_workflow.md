@@ -1,6 +1,8 @@
 # Art workflow
 
-These instructions describes the art workflow. It will explain how to properly create art assets, provide some technical details for how and why we do things, and describe best practices.
+In case you're new to this project, welcome!
+
+These instructions describe the art workflow. They will explain how to properly create art assets, provide some technical details for how and why we do things, and describe best practices.
 
 ## Artistic goal
 
@@ -8,7 +10,7 @@ The goal is to adhere to the original art style of LBA as much as possible. Some
 
 ## Software
 
-The modelling software we use is [Blender](https://www.blender.org/download/). 
+The modelling software we use is [Blender](https://www.blender.org/download/). (Note: at the time of writing, Blender v2.83 seems to have issues importing .dae files, so we're avoiding using that specific version.)
 
 In the current phase of the project, textures are seldom applied, so texturing software has low relevance.
 
@@ -17,11 +19,11 @@ If you're using any kind of proprietary software, please make sure your copy has
 
 ## Replacing 3D isometric layouts
 
-#### ![LayoutEditorFull](C:\Users\pvand\Desktop\LBA2Remake Workfiles\LayoutEditorFull.png)
+#### ![LayoutEditorFull](images\LayoutEditorFull.png)
 
 ##### 3D isometric layouts
 
-When enabling the "3D Isometric" view mode in this project, the game shows the original flat-image LBA 'Layouts' (the name for a prop or object) projected onto generated 3D meshes. 
+When enabling the '3D Isometric' view mode in this project, the game shows the original flat-image LBA 'Layouts' (the name for a prop or object) projected onto generated 3D meshes. 
 
 ##### Why do we want to replace them?
 
@@ -29,17 +31,23 @@ Because of the lack of actual 3D information in the original layout bitmaps, the
 
 ##### Downloading an original 3D isometric layout as reference for creating the replacement
 
-These layouts can be downloaded from the Layout Editor by pressing "Download Layout" when selecting a Layout in the Iso Layout Editor. They will download as *.dae format files. 
+These layouts can be downloaded from the Layout Editor by pressing the "Download Layout" button when having a Layout selected in the Iso Layout Editor. They will download as *.dae format files. 
 
 After importing them into Blender, they can serve as a basis/reference for modelling the replacing asset in terms of shape, size and dimensions. 
 
-Also note, that as the *.dae files do not self-contain textures, which will have to be downloaded by pressing the "Download Library Texture" button. This will download a shared texture atlas image which will correctly map to all Layouts that are downloaded from that Library.
+Also note, that the *.dae files do not self-contain textures, which will have to be downloaded separately by pressing the "Download Library Texture" button. This will download a shared texture atlas image which will correctly map to all Layouts that are downloaded from that Library.
 
 ##### Creating the replacement 3D layout
 
 A replacement 3D layout should be exported as a GLB file and placed inside the `www\models\layouts\` folder in the project repository. It can then be applied by pressing the "Replace by 3D model" button, and selecting the export in the drop down menu. By pressing the "Apply Changes" button, we ensure the environments are correctly optimized to make use of this asset.
 
 The end goal is to replace all of the projected 3D isometric assets with newly made 'true 3D' versions, so they look complete and correct from all perspectives.
+
+##### Source files folder
+
+We store our 'source files', such as Blender scenes (and possibly other types of source files in the future), in a specific folder called AssetsSource.
+
+- TBD: define clear best-practices on internal folder structure, Blender file naming and Blender scene setup.
 
 ## Naming convention
 
@@ -57,17 +65,21 @@ For new 3D layout exports, the name should look something like this:
 - **CI** - Citadel Island
 - **SW** - Sewers
 - **GB** - Gray Buildings
+- **CA** - Caves
 - **EM** - Emerald Moon
 - **DI** - Desert Island
 - **ES** - Esmer Shuttle
 - **ZF** - Zeelich Factories
 - **IH** - Imperial Hotel
 - **EP** - Emperor's Palace
-- **DMS** - Dark Monk Statue
-- **UG** - Undergas
+- **DM** - Dark Monk Statue
+- **UN** - Undergas
+- **MO** - Mosquibees
 - **OT** - Otringal
+- **GA** - Gazogem Refinery
+- **FI** - Francos Island
 - **SP** - Spaceport
-- **ICX** - Island CX
+- **CX** - Island CX
 
 ## Color palettes
 
