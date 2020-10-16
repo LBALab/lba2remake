@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { each, times } from 'lodash';
 
-import { loadGrid, GROUND_TYPES } from './grid';
+import { GROUND_TYPES, getGridMetadata } from './grid';
 import { processCollisions } from '../game/loop/physicsIso';
 import { compile } from '../utils/shaders';
 import brick_vertex from './shaders/brick.vert.glsl';
@@ -39,13 +39,15 @@ export async function loadImageData(src) : Promise<ImageData> {
 }
 
 export async function loadIsometricScenery(entry, ambience, is3D, numActors = 0) {
-    const [palette, bkg, bricks, mask] = await Promise.all([
+    const [palette, bricks, gridMetadata, mask] = await Promise.all([
         getPalette(),
-        getGrids(),
         loadBricks(),
+        getGridMetadata(entry + 1),
         loadImageData('images/brick_mask.png')
     ]);
-    const grid = await loadGrid(bkg, bricks, mask, palette, entry + 1, is3D);
+
+    const grid = await getGrids(entry + 1, { bricks, mask, palette, is3D, gridMetadata });
+
     const {
         threeObject,
         update: updateMesh
