@@ -223,15 +223,18 @@ function getGround(section, position) {
     if (!section)
         return DEFAULT_GROUND;
 
-    for (let i = 0; i < section.objectInfo.length; i += 1) {
-        const bb = section.objectInfo[i].boundingBox;
-        if (position.x >= bb.min.x && position.x <= bb.max.x
-            && position.z >= bb.min.z && position.z <= bb.max.z
-            && position.y >= bb.min.y && position.y < bb.max.y + Y_THRESHOLD) {
+    const { x, y, z } = position;
+    const yMinusThreshold = y - Y_THRESHOLD;
+
+    for (const obj of section.objectInfo) {
+        const bb = obj.boundingBox;
+        if (x >= bb.min.x && x <= bb.max.x
+            && z >= bb.min.z && z <= bb.max.z
+            && y >= bb.min.y && yMinusThreshold < bb.max.y) {
             FLAGS.hitObject = true;
             return {
                 height: bb.max.y,
-                sound: section.objectInfo[i].info.soundType,
+                sound: obj.info.soundType,
                 collision: null,
                 liquid: 0,
             };

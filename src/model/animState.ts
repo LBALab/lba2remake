@@ -267,13 +267,14 @@ function updateSkeletonAtKeyframe(state,
 const tmpM = new THREE.Matrix4();
 const tmpQ = new THREE.Quaternion();
 const tmpEuler = new THREE.Euler();
+const tmpPos = new THREE.Vector3();
 
 function updateSkeletonHierarchy(skeleton, index) {
     const s = skeleton[index];
     const p = skeleton[index === 0 ? 0 : s.parent];
     if (s.parent !== 0xFFFF) { // skip root
         s.m.identity();
-        const pos = s.vertex.clone();
+        tmpPos.copy(s.vertex);
 
         if (s.type === 0) { // rotation
             tmpEuler.set(
@@ -284,12 +285,12 @@ function updateSkeletonHierarchy(skeleton, index) {
             );
             s.m.makeRotationFromEuler(tmpEuler);
         } else { // translation
-            pos.x += s.pos.x;
-            pos.y += s.pos.y;
-            pos.z += s.pos.z;
+            tmpPos.x += s.pos.x;
+            tmpPos.y += s.pos.y;
+            tmpPos.z += s.pos.z;
         }
 
-        s.m.setPosition(pos);
+        s.m.setPosition(tmpPos);
 
         tmpM.copy(p.m);
         tmpM.multiply(s.m);
@@ -301,7 +302,7 @@ function updateSkeletonHierarchy(skeleton, index) {
     } else {
         p.m.identity();
     }
-    for (let i = 0; i < s.children.length; i += 1) {
-        updateSkeletonHierarchy(skeleton, s.children[i].boneIndex);
+    for (const child of s.children) {
+        updateSkeletonHierarchy(skeleton, child.boneIndex);
     }
 }
