@@ -22,13 +22,22 @@ import GUI from './GUI';
 import DebugData from './editor/DebugData';
 import { getParams } from '../params';
 import UIState, { initUIState } from './UIState';
+import { tr } from '../lang';
+import Loader from './game/Loader';
+import { updateVRScene, loadVRScene } from './vr/vrScene';
 
 interface GameProps extends TickerProps {
     sharedState?: any;
     stateHandler?: any;
+    exitVR?: () => any;
+    vr: boolean;
 }
 
-export default class Game extends FrameListener<GameProps, UIState> {
+interface GameState extends UIState {
+    enteredVR: boolean;
+}
+
+export default class Game extends FrameListener<GameProps, GameState> {
     readonly canvas: HTMLCanvasElement;
     readonly clock: THREE.Clock;
     readonly game: any;
@@ -37,6 +46,8 @@ export default class Game extends FrameListener<GameProps, UIState> {
     readonly preloadPromise: Promise<void>;
     controls?: [any];
     wrapperElem: HTMLDivElement;
+    vrScene?: any;
+    vrSession?: any;
 
     constructor(props) {
         super(props);
@@ -50,6 +61,9 @@ export default class Game extends FrameListener<GameProps, UIState> {
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
         this.pick = this.pick.bind(this);
+        this.onSessionEnd = this.onSessionEnd.bind(this);
+        this.requestPresence = this.requestPresence.bind(this);
+        this.exitVR = this.exitVR.bind(this);
 
         this.clock = new THREE.Clock(false);
         this.game = createGame(
@@ -59,15 +73,17 @@ export default class Game extends FrameListener<GameProps, UIState> {
         );
 
         this.canvas = document.createElement('canvas');
-        this.renderer = new Renderer(this.canvas, 'game');
+        this.renderer = new Renderer(this.canvas, 'game', { vr: this.props.vr });
         this.sceneManager = new SceneManager(
             this.game,
             this.renderer,
             this.hideMenu.bind(this)
         );
+        this.vrSession = null;
 
         this.state = {
             ...initUIState(this.game),
+            enteredVR: false
         };
 
         this.preloadPromise = this.preload(this.game);
@@ -95,9 +111,11 @@ export default class Game extends FrameListener<GameProps, UIState> {
             });
             this.onSceneManagerReady(this.sceneManager);
             this.controls = createControls(
+                this.props.vr,
                 this.game,
                 wrapperElem,
-                this.sceneManager
+                this.sceneManager,
+                this.renderer
             );
             this.wrapperElem = wrapperElem;
             this.wrapperElem.querySelector('.canvasWrapper').appendChild(this.canvas);
@@ -124,6 +142,9 @@ export default class Game extends FrameListener<GameProps, UIState> {
         this.clock.start();
         if (getParams().scene === -1) {
             this.showMenu();
+        }
+        if (this.props.vr) {
+            this.vrScene = loadVRScene(this.game, this.sceneManager, this.renderer);
         }
     }
 
@@ -243,17 +264,21 @@ export default class Game extends FrameListener<GameProps, UIState> {
     }
 
     frame() {
+        const params = getParams();
         this.checkSceneChange();
-        this.checkResize();
+        if (!this.props.vr || params.vrEmulator) {
+            this.checkResize();
+        }
         const scene = this.sceneManager.getScene();
         mainGameLoop(
             this.game,
             this.clock,
             this.renderer,
             scene,
-            this.controls
+            this.controls,
+            this.vrScene
         );
-        if (getParams().editor) {
+        if (params.editor) {
             DebugData.scope = {
                 params: getParams(),
                 game: this.game,
@@ -268,6 +293,15 @@ export default class Game extends FrameListener<GameProps, UIState> {
             DebugData.sceneManager = this.sceneManager;
             updateLabels(scene, this.props.sharedState.labels);
             setFog(scene, this.props.sharedState.fog);
+        }
+        if (this.vrScene) {
+            const presenting = this.renderer.isPresenting();
+            updateVRScene(
+                this.vrScene,
+                presenting,
+                this.game,
+                this.sceneManager
+            );
         }
     }
 
@@ -291,7 +325,10 @@ export default class Game extends FrameListener<GameProps, UIState> {
     render() {
         return <div ref={this.onWrapperElem} style={fullscreen} tabIndex={0}>
             <div className="canvasWrapper" style={fullscreen} onClick={this.pick}/>
-            {this.renderGUI()}
+            {this.props.vr
+                ? this.renderVRGUI()
+                : this.renderGUI()
+            }
         </div>;
     }
 
@@ -307,5 +344,82 @@ export default class Game extends FrameListener<GameProps, UIState> {
             sharedState={this.props.sharedState}
             stateHandler={this.props.stateHandler}
         />;
+    }
+
+    /* VR */
+    renderVRGUI() {
+        if (this.vrSession && this.vrSession.visibilityState !== 'hidden')
+            return null;
+
+        return <React.Fragment>
+            {this.renderVRSelector()}
+            {this.state.loading ? <Loader/> : null}
+        </React.Fragment>;
+    }
+
+    async requestPresence() {
+        this.game.getAudioManager().resumeContext();
+        this.vrSession = await (navigator as any).xr.requestSession('immersive-vr');
+        this.vrSession.addEventListener('end', this.onSessionEnd);
+        this.renderer.threeRenderer.xr.setSession(this.vrSession);
+        this.setState({ enteredVR: true });
+    }
+
+    onSessionEnd() {
+        this.vrSession.removeEventListener('end', this.onSessionEnd);
+        this.vrSession = null;
+        this.forceUpdate();
+    }
+
+    exitVR() {
+        this.game.getAudioManager().stopMusicTheme();
+        this.props.exitVR();
+    }
+
+    renderVRSelector() {
+        const buttonWrapperStyle = {
+            position: 'absolute' as const,
+            left: 0,
+            right: 0,
+            bottom: 20,
+            textAlign: 'center' as const,
+            verticalAlign: 'middle' as const
+        };
+        const imgStyle = {
+            width: 200,
+            height: 200
+        };
+        const buttonStyle = {
+            color: 'white',
+            background: 'rgba(32, 162, 255, 0.5)',
+            userSelect: 'none' as const,
+            cursor: 'pointer' as const,
+            display: 'inline-block' as const,
+            fontFamily: 'LBA',
+            padding: 20,
+            textShadow: 'black 3px 3px',
+            border: '2px outset #61cece',
+            borderRadius: '15px',
+            fontSize: '30px',
+            textAlign: 'center' as const,
+            verticalAlign: 'middle' as const
+        };
+        const buttonStyle2 = Object.assign({}, buttonStyle, {
+            padding: 10,
+            fontSize: '20px'
+        });
+        return <div className="bgMenu fullscreen">
+            <div style={buttonWrapperStyle}>
+                <div style={buttonStyle} onClick={this.requestPresence}>
+                    <img style={imgStyle} src="images/vr_goggles.png"/>
+                    <br/>
+                    {this.state.enteredVR ? tr('ReturnToVR') : tr('PlayInVR')}
+                </div>
+                <br/><br/>
+                {!this.state.enteredVR && <div style={buttonStyle2} onClick={this.exitVR}>
+                    {tr('PlayOnScreen')}
+                </div>}
+            </div>
+        </div>;
     }
 }
