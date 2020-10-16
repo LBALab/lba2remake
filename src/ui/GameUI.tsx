@@ -20,7 +20,7 @@ import UIState from './UIState';
 import { SceneManager } from '../game/scenes';
 import Renderer from '../renderer';
 
-interface GUIProps {
+interface GameUIProps {
     uiState: UIState;
     game: any;
     renderer: Renderer;
@@ -32,11 +32,11 @@ interface GUIProps {
     hideMenu: (boolean?) => void;
 }
 
-interface GUIState {
+interface GameUIState {
     keyHelp: boolean;
 }
 
-export default class GUI extends React.Component<GUIProps, GUIState> {
+export default class GameUI extends React.Component<GameUIProps, GameUIState> {
     constructor(props) {
         super(props);
 

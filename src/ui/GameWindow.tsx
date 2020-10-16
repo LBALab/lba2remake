@@ -18,7 +18,7 @@ import { setFog } from './editor/fog';
 import { pure } from '../utils/decorators';
 import { loadPoint } from '../game/points';
 import { loadActor, createNewActorProps, initDynamicNewActor } from '../game/actors';
-import GUI from './GUI';
+import GameUI from './GameUI';
 import DebugData from './editor/DebugData';
 import { getParams } from '../params';
 import UIState, { initUIState } from './UIState';
@@ -26,18 +26,18 @@ import { tr } from '../lang';
 import Loader from './game/Loader';
 import { updateVRScene, loadVRScene } from './vr/vrScene';
 
-interface GameProps extends TickerProps {
+interface GameWindowProps extends TickerProps {
     sharedState?: any;
     stateHandler?: any;
     exitVR?: () => any;
     vr: boolean;
 }
 
-interface GameState extends UIState {
+interface GameWindowState extends UIState {
     enteredVR: boolean;
 }
 
-export default class Game extends FrameListener<GameProps, GameState> {
+export default class GameWindow extends FrameListener<GameWindowProps, GameWindowState> {
     readonly canvas: HTMLCanvasElement;
     readonly clock: THREE.Clock;
     readonly game: any;
@@ -333,7 +333,7 @@ export default class Game extends FrameListener<GameProps, GameState> {
     }
 
     renderGUI() {
-        return <GUI
+        return <GameUI
             game={this.game}
             renderer={this.renderer}
             sceneManager={this.sceneManager}
