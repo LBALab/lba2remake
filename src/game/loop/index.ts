@@ -37,11 +37,13 @@ export function mainGameLoop(params, game, clock, renderer, scene, controls, vrS
             playAmbience(game, scene, time);
             updateScene(params, game, scene, time);
             processPhysicsFrame(game, scene, time);
-            each(scene.sideScenes, (sideScene) => {
-                sideScene.firstFrame = scene.firstFrame;
-                updateScene(params, game, sideScene, time);
-                processPhysicsFrame(game, sideScene, time);
-            });
+            if (scene.sideScenes) {
+                for (const sideScene of Object.values(scene.sideScenes) as any) {
+                    sideScene.firstFrame = scene.firstFrame;
+                    updateScene(params, game, sideScene, time);
+                    processPhysicsFrame(game, sideScene, time);
+                }
+            }
             if (scene.firstFrame) {
                 scene.camera.init(scene, game.controlsState);
             }
@@ -73,9 +75,9 @@ function updateScene(params, game, scene, time) {
     if (scene.firstFrame) {
         scene.sceneNode.updateMatrixWorld();
     }
-    each(scene.actors, (actor) => {
+    for (const actor of scene.actors) {
         if (actor.wasHitBy === -1) {
-            return;
+            continue;
         }
         // We allow wasHitBy to persist a second frame update because it is set
         // asynchronously (potentially outside of the game loop). This ensures
@@ -86,24 +88,26 @@ function updateScene(params, game, scene, time) {
         } else {
             actor.hasSeenHit = true;
         }
-    });
-    each(scene.actors, (actor) => {
+    }
+    for (const actor of scene.actors) {
         if (actor.props.runtimeFlags.isDead)
-            return;
+            continue;
         updateActor(params, game, scene, actor, time);
         if (scene.isActive) {
             if (actor.index === 0) {
                 updateHero(game, scene, actor, time);
             }
         }
-    });
-    each(scene.extras, (extra) => {
-        updateExtra(game, scene, extra, time);
-    });
+    }
+    if (scene.extras) {
+        for (const extra of scene.extras) {
+            updateExtra(game, scene, extra, time);
+        }
+    }
     if (scene.isActive && params.editor) {
-        each(scene.points, (point) => {
+        for (const point of scene.points) {
             point.update(scene.camera);
-        });
+        }
     }
     if (scene.vrGUI) {
         updateVRGUI(game, scene, scene.vrGUI);
