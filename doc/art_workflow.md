@@ -10,7 +10,7 @@ The goal is to adhere to the original art style of LBA as much as possible. Some
 
 ## Software
 
-The modelling software we use is [Blender](https://www.blender.org/download/). (Note: at the time of writing, Blender v2.83 seems to have issues importing .dae files, so we're avoiding using that specific version.)
+The modelling software we use is [Blender](https://www.blender.org/download/). (Note: if you're experiencing issues with importing .dae files, Blender v2.82 is a known version to *not* have issues with that.)
 
 In the current phase of the project, textures are seldom applied, so texturing software has low relevance.
 
@@ -19,7 +19,7 @@ If you're using any kind of proprietary software, please make sure your copy has
 
 ## Replacing 3D isometric layouts
 
-#### ![LayoutEditorFull](images\LayoutEditorFull.png)
+#### ![LayoutEditorFull](images/LayoutEditorFull.png)
 
 ##### 3D isometric layouts
 
@@ -45,7 +45,7 @@ The end goal is to replace all of the projected 3D isometric assets with newly m
 
 ##### Source files folder
 
-We store our 'source files', such as Blender scenes (and possibly other types of source files in the future), in a specific folder called AssetsSource.
+We store our 'source files', such as Blender scenes (and possibly other types of source files in the future), in a specific folder called assetsSource, which can be found in the root of the project repository.
 
 - TBD: define clear best-practices on internal folder structure, Blender file naming and Blender scene setup.
 
@@ -63,7 +63,7 @@ For new 3D layout exports, the name should look something like this:
 ##### Layout Library prefixes
 
 - **CI** - Citadel Island
-- **SW** - Sewers
+- **SE** - Sewers
 - **GB** - Gray Buildings
 - **CA** - Caves
 - **EM** - Emerald Moon
@@ -76,7 +76,7 @@ For new 3D layout exports, the name should look something like this:
 - **UG** - Undergas
 - **MO** - Mosquibees
 - **OT** - Otringal
-- **GA** - Gazogem Refinery
+- **GR** - Gazogem Refinery
 - **FI** - Francos Island
 - **SP** - Spaceport
 - **CX** - Island CX
