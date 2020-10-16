@@ -1,6 +1,6 @@
 import { Resource } from '../load';
 
-const parsePalette = async (resource: Resource) => {
+const parsePalette = (resource: Resource) => {
     return resource.getBufferUint8();
 };
 

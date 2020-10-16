@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {WORLD_SCALE} from '../../utils/lba';
 
-const parseBody = async (resource, index, bodyProps) => {
+const parseBody = (resource, index, bodyProps) => {
     const buffer = resource.getEntry(index);
     const data = new DataView(buffer);
     const bodyFlag = data.getInt32(0x00, true);

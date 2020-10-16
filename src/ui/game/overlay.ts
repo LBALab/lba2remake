@@ -2,11 +2,10 @@ import * as THREE from 'three';
 
 import { get3DOrbitCamera } from '../editor/areas/model/utils/orbitCamera';
 import Renderer from '../../renderer';
-import { getAnim } from '../../model/entity';
-import { loadAnim } from '../../model/anim';
 import { updateKeyframeInterpolation, updateKeyframe } from '../../model/animState';
 import { loadModel } from '../../model';
 import { loadInventoryModel } from '../../model/inventory';
+import { getAnimationsSync } from '../../resources';
 
 const envInfo = {
     skyColor: [0, 0, 0]
@@ -88,32 +87,27 @@ const loadSceneInventoryModel = async (sce, b) => {
 };
 
 const updateAnimModel = (m, anims, entityIdx, animIdx, time) => {
-    const entity = m.entities[entityIdx];
-    const entityAnim = getAnim(entity, animIdx);
     let interpolate = false;
-    if (entityAnim !== null) {
-        const realAnimIdx = entityAnim.animIndex;
-        const anim = loadAnim(m, m.anims, realAnimIdx);
-        anims.loopFrame = anim.loopFrame;
-        if (anims.prevRealAnimIdx !== -1 && realAnimIdx !== anims.prevRealAnimIdx) {
-            updateKeyframeInterpolation(anim, anims, time, realAnimIdx);
-            interpolate = true;
-        }
-        if (realAnimIdx === anims.realAnimIdx || anims.realAnimIdx === -1) {
-            updateKeyframe(anim, anims, time, realAnimIdx);
-        }
-        const q = new THREE.Quaternion();
-        const delta = time.delta * 1000;
-        let angle = 0;
-        if (anims.keyframeLength > 0) {
-            angle = (anims.rotation.y * delta) / anims.keyframeLength;
-        }
-        q.setFromAxisAngle(
-            new THREE.Vector3(0, 1, 0),
-            angle
-        );
-        m.mesh.quaternion.multiply(q);
+    const anim = getAnimationsSync(animIdx, entityIdx);
+    anims.loopFrame = anim.loopFrame;
+    if (anims.prevRealAnimIdx !== -1 && anim.index !== anims.prevRealAnimIdx) {
+        updateKeyframeInterpolation(anim, anims, time, anim.index);
+        interpolate = true;
     }
+    if (anim.index === anims.realAnimIdx || anims.realAnimIdx === -1) {
+        updateKeyframe(anim, anims, time, anim.index);
+    }
+    const q = new THREE.Quaternion();
+    const delta = time.delta * 1000;
+    let angle = 0;
+    if (anims.keyframeLength > 0) {
+        angle = (anims.rotation.y * delta) / anims.keyframeLength;
+    }
+    q.setFromAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        angle
+    );
+    m.mesh.quaternion.multiply(q);
     return interpolate;
 };
 

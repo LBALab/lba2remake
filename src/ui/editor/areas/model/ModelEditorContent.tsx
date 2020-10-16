@@ -10,14 +10,13 @@ import {
     updateKeyframe,
     updateKeyframeInterpolation
 } from '../../../../model/animState';
-import { getAnim } from '../../../../model/entity';
-import { loadAnim } from '../../../../model/anim';
 import fmod from './utils/fmod';
 import {get3DOrbitCamera} from './utils/orbitCamera';
 import { TickerProps } from '../../../utils/Ticker';
 import {
     registerResources,
     preloadResources,
+    getAnimationsSync,
 } from '../../../../resources';
 import { loadEntities } from './browser/entitities';
 import DebugData from '../../DebugData';
@@ -235,32 +234,27 @@ export default class Model extends FrameListener<Props, State> {
     }
 
     updateModel(model, animState, entityIdx, animIdx, time) {
-        const entity = model.entities[entityIdx];
-        const entityAnim = getAnim(entity, animIdx);
         let interpolate = false;
-        if (entityAnim !== null) {
-            const realAnimIdx = entityAnim.animIndex;
-            const anim = loadAnim(model, model.anims, realAnimIdx);
-            animState.loopFrame = anim.loopFrame;
-            if (animState.prevRealAnimIdx !== -1 && realAnimIdx !== animState.prevRealAnimIdx) {
-                updateKeyframeInterpolation(anim, animState, time, realAnimIdx);
-                interpolate = true;
-            }
-            if (realAnimIdx === animState.realAnimIdx || animState.realAnimIdx === -1) {
-                updateKeyframe(anim, animState, time, realAnimIdx);
-            }
-            const q = new THREE.Quaternion();
-            const delta = time.delta * 1000;
-            let angle = 0;
-            if (animState.keyframeLength > 0) {
-                angle = (animState.rotation.y * delta) / animState.keyframeLength;
-            }
-            q.setFromAxisAngle(
-                new THREE.Vector3(0, 1, 0),
-                angle
-            );
-            model.mesh.quaternion.multiply(q);
+        const anim = getAnimationsSync(animIdx, entityIdx);
+        animState.loopFrame = anim.loopFrame;
+        if (animState.prevRealAnimIdx !== -1 && anim.index !== animState.prevRealAnimIdx) {
+            updateKeyframeInterpolation(anim, animState, time, anim.index);
+            interpolate = true;
         }
+        if (anim.index === animState.realAnimIdx || animState.realAnimIdx === -1) {
+            updateKeyframe(anim, animState, time, anim.index);
+        }
+        const q = new THREE.Quaternion();
+        const delta = time.delta * 1000;
+        let angle = 0;
+        if (animState.keyframeLength > 0) {
+            angle = (animState.rotation.y * delta) / animState.keyframeLength;
+        }
+        q.setFromAxisAngle(
+            new THREE.Vector3(0, 1, 0),
+            angle
+        );
+        model.mesh.quaternion.multiply(q);
         return interpolate;
     }
 
