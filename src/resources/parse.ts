@@ -10,6 +10,7 @@ import { parseSpriteClipInfo, parseSprite, parseSpriteRaw } from './parsers/spri
 import { parseSceneMap, parseBrick } from './parsers/bricks';
 import { parseLibrary } from './parsers/libraries';
 import { parseGrid } from './parsers/grids';
+import { parseAnim } from './parsers/anim';
 
 const NOP = (resource: Resource) => {
     return resource;
@@ -20,7 +21,7 @@ const ResourceTypes = {
     PNG: { type: 'PNG', description: 'Portable Network Graphics', parser: NOP },
     GIF: { type: 'GIF', description: 'LBA1 GIF Image', parser: NOP },
     LIM: { type: 'LIM', description: 'LBA Image', parser: NOP },
-    ANM: { type: 'ANM', description: 'LBA Animation', parser: NOP },
+    ANM: { type: 'ANM', description: 'LBA Animation', parser: parseAnim },
     LM1: { type: 'LM1', description: 'LBA1 3D Model', parser: NOP },
     LM2: { type: 'LM2', description: 'LBA2 3D Model', parser: parseBody },
     TXR: { type: 'TXR', description: 'Texture RGBA', parser: parseTextureRGBA },

@@ -2,7 +2,6 @@ import * as THREE from 'three';
 
 import { Actor} from '../actors';
 import { getAnim } from '../../model/entity';
-import { loadAnim } from '../../model/anim';
 import {
     updateKeyframe,
     updateKeyframeInterpolation
@@ -10,6 +9,7 @@ import {
 import { processAnimAction } from './animAction';
 import { Time } from '../../datatypes';
 import { AnimType } from '../data/animType';
+import { getAnimationsSync } from '../../resources';
 
 const ACTOR_POS = new THREE.Vector3();
 const HIDE_DISTANCE = 50;
@@ -184,19 +184,18 @@ function updateModel(game: any,
                      entityIdx: number,
                      animIdx: number,
                      time: Time) {
-    const entity = model.entities[entityIdx];
-    const entityAnim = getAnim(entity, animIdx);
-    if (entityAnim !== null) {
-        const realAnimIdx = entityAnim.animIndex;
-        const anim = loadAnim(model, model.anims, realAnimIdx);
-        animState.loopFrame = anim.loopFrame;
-        if (animState.prevRealAnimIdx !== -1 && realAnimIdx !== animState.prevRealAnimIdx) {
-            updateKeyframeInterpolation(anim, animState, time, realAnimIdx);
-        }
-        if (realAnimIdx === animState.realAnimIdx || animState.realAnimIdx === -1) {
-            updateKeyframe(anim, animState, time, realAnimIdx);
-        }
-        if (scene.isActive) {
+    const anim = getAnimationsSync(animIdx, entityIdx);
+    animState.loopFrame = anim.loopFrame;
+    if (animState.prevRealAnimIdx !== -1 && anim.index !== animState.prevRealAnimIdx) {
+        updateKeyframeInterpolation(anim, animState, time, anim.index);
+    }
+    if (anim.index === animState.realAnimIdx || animState.realAnimIdx === -1) {
+        updateKeyframe(anim, animState, time, anim.index);
+    }
+    if (scene.isActive) {
+        const entity = model.entities[entityIdx];
+        const entityAnim = getAnim(entity, animIdx);
+        if (entityAnim !== null) {
             processAnimAction({
                 game,
                 scene,
