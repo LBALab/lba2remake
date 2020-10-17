@@ -4,18 +4,6 @@ import  {WORLD_SCALE, getHtmlColor } from '../../utils/lba';
 import { Resource } from '../load';
 import { getPalette, getText } from '..';
 
-// LBA1 does not have a scene map, so lets fake one
-export const parseSceneMapLBA1 = () => {
-    const map = [];
-    for (let i = 0; i < 120; i += 1) {
-        map.push({
-            isIsland: false,
-            index: i,
-        });
-    }
-    return map;
-};
-
 export const parseSceneMapLBA2 = (resource: Resource, index: number) => {
     const buffer = resource.getEntry(index);
     const data = new DataView(buffer);
@@ -38,7 +26,7 @@ export const parseSceneMapLBA2 = (resource: Resource, index: number) => {
     return map;
 };
 
-export const parseScene = async (resource: Resource, index) => {
+export const parseSceneLBA2 = async (resource: Resource, index) => {
     const buffer = resource.getEntry(index + 1); // first entry is not a scene
 
     const data = new DataView(buffer);
@@ -122,32 +110,7 @@ function loadHero(scene, offset) {
         speed: 5,
         dirMode: DirMode.MANUAL,
         runtimeFlags: createRuntimeFlags(),
-        flags: {
-            hasCollisions: true,
-            hasCollisionBricks: true,
-            hasCollisionZone: true,
-            hasSpriteClipping: false,
-            hasCollisionLow: false,
-            hasCollisionFloor: true,
-            hasMiniZV: false,
-            hasInvalidPosition: false,
-            hasSpriteAnim3D: false,
-            hasZBuffer: false,
-            hasZBufferInWater: false,
-
-            canBePunched: true,
-            canDrown: true,
-            canFall: true,
-            canCarrierActor: false,
-
-            isVisible: true,
-            isSprite: false,
-            isBackgrounded: false,
-
-            noShadow: false,
-            noElectricShock: false,
-            noPreClipping: false,
-        },
+        flags: initHeroFlags,
         moveScriptSize: 0,
         moveScript: null,
         lifeScriptSize: 0,
@@ -172,6 +135,35 @@ function loadHero(scene, offset) {
     scene.actors.push(hero);
 
     return offset;
+}
+
+export function initHeroFlags() {
+    return {
+        hasCollisions: true,
+        hasCollisionBricks: true,
+        hasCollisionZone: true,
+        hasSpriteClipping: false,
+        hasCollisionLow: false,
+        hasCollisionFloor: true,
+        hasMiniZV: false,
+        hasInvalidPosition: false,
+        hasSpriteAnim3D: false,
+        hasZBuffer: false,
+        hasZBufferInWater: false,
+
+        canBePunched: true,
+        canDrown: true,
+        canFall: true,
+        canCarrierActor: false,
+
+        isVisible: true,
+        isSprite: false,
+        isBackgrounded: false,
+
+        noShadow: false,
+        noElectricShock: false,
+        noPreClipping: false,
+    };
 }
 
 function loadActors(scene, offset) {
@@ -397,7 +389,7 @@ function loadPatches(scene, offset) {
     return offset;
 }
 
-function parseStaticFlags(staticFlags) {
+export function parseStaticFlags(staticFlags) {
     return {
         hasCollisions: bits(staticFlags, 0, 1) === 1,
         hasCollisionBricks: bits(staticFlags, 1, 1) === 1,

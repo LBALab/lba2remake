@@ -5,7 +5,8 @@ import { parseText } from './parsers/text';
 import { parseEntity, parseEntityLBA1 } from './parsers/entity';
 import { parseTextureRGBA } from './parsers/texture';
 import { parseBody } from './parsers/body';
-import { parseSceneMapLBA1, parseSceneMapLBA2, parseScene } from './parsers/scene';
+import { parseSceneMapLBA1, parseSceneLBA1 } from './parsers/scene1';
+import { parseSceneMapLBA2, parseSceneLBA2 } from './parsers/scene2';
 import { parseSpriteClipInfo, parseSprite, parseSpriteRaw } from './parsers/sprite';
 import { parseBrick } from './parsers/bricks';
 import { parseLibrary } from './parsers/libraries';
@@ -26,8 +27,8 @@ const ResourceTypes = {
     LM2: { type: 'LM2', description: 'LBA2 3D Model', parser: parseBody },
     TXR: { type: 'TXR', description: 'Texture RGBA', parser: parseTextureRGBA },
     M4A: { type: 'M4A', description: 'MPEG 4 Audio', parser: NOP },
-    LS1: { type: 'LS1', description: 'LBA1 Scene', parser: NOP },
-    LS2: { type: 'LS2', description: 'LBA2 Scene', parser: parseScene },
+    LS1: { type: 'LS1', description: 'LBA1 Scene', parser: parseSceneLBA1 },
+    LS2: { type: 'LS2', description: 'LBA2 Scene', parser: parseSceneLBA2 },
     SM1: { type: 'SM1', description: 'LBA1 Scene Map', parser: parseSceneMapLBA1 },
     SM2: { type: 'SM2', description: 'LBA2 Scene Map', parser: parseSceneMapLBA2 },
     LSP: { type: 'LSP', description: 'LBA Sprite', parser: parseSprite },
