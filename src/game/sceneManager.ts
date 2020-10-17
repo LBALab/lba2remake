@@ -27,7 +27,7 @@ import { getVrFirstPersonCamera } from '../cameras/vr/vrFirstPerson';
 import { getScene, getSceneMap } from '../resources';
 import { pure } from '../utils/decorators';
 import { getParams } from '../params';
-import { Game } from './game';
+import { Game } from './Game';
 
 declare global {
     var ga: Function;

@@ -10,7 +10,7 @@ import { processAnimAction } from './animAction';
 import { Time } from '../../datatypes';
 import { AnimType } from '../data/animType';
 import { getAnimationsSync } from '../../resources';
-import { Game } from '../game';
+import { Game } from '../Game';
 
 const ACTOR_POS = new THREE.Vector3();
 const HIDE_DISTANCE = 50;

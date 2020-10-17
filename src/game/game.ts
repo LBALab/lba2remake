@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-import { initControlsState, ControlsState } from './controlsState';
-import { createGameState, GameState } from './gameState';
+import { initControlsState, ControlsState } from './ControlsState';
+import { createGameState, GameState } from './GameState';
 import { createAudioManager } from '../audio';
 import { getLanguageConfig } from '../lang';
 import DebugData from '../ui/editor/DebugData';

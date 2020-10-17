@@ -16,7 +16,7 @@ import { compileScripts } from '../scripting/compiler';
 import { parseScripts } from '../scripting/parser';
 import { postProcessScripts, cleanUpScripts } from '../scripting/postprocess';
 import { getParams } from '../params';
-import { Game } from './game';
+import { Game } from './Game';
 
 interface ActorFlags {
     hasCollisions: boolean;

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {map, filter} from 'lodash';
 import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
-import { SceneManager } from '../../game/sceneManager';
-import { Game } from '../../game/game';
+import { SceneManager } from '../../game/SceneManager';
+import { Game } from '../../game/Game';
 
 const style = {
     position: 'absolute' as const,

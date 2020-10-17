@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Game } from '../game/game';
+import { Game } from '../game/Game';
 
 declare global {
     interface Document {

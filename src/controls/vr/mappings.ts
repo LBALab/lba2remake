@@ -1,6 +1,6 @@
 import { MotionController } from '@webxr-input-profiles/motion-controllers';
 import { BehaviourMode } from '../../game/loop/hero';
-import { Game } from '../../game/game';
+import { Game } from '../../game/Game';
 
 interface BtnMapping {
     btn: string;

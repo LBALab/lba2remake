@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef, Component } from 'react';
 import '../styles/behaviour.scss';
 import useMedia from '../hooks/useMedia';
 import { BehaviourMode as BehaviourModeType } from '../../game/loop/hero';
-import { MAX_LIFE } from '../../game/gameState';
+import { MAX_LIFE } from '../../game/GameState';
 
 import { loadAnimState } from '../../model/animState';
 import {
@@ -14,7 +14,7 @@ import {
     updateAnimModel,
     loadSceneModel,
 } from './overlay';
-import { Game } from '../../game/game';
+import { Game } from '../../game/Game';
 
 interface IBehaviourMenuClover {
     boxes: number;

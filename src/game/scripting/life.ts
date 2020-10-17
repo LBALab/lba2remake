@@ -2,7 +2,7 @@ import { clone } from 'lodash';
 import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
-import { setMagicBallLevel } from '../gameState';
+import { setMagicBallLevel } from '../GameState';
 import { unimplemented } from './utils';
 import { WORLD_SCALE, getRandom } from '../../utils/lba';
 import { getVideoPath } from '../../resources';
