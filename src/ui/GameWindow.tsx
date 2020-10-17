@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {clone} from 'lodash';
 
 import Renderer from '../renderer';
-import {createGame} from '../game/index';
+import { Game } from '../game/game';
 import {mainGameLoop} from '../game/loop';
 import { SceneManager } from '../game/scenes';
 import {createControls} from '../controls/index';
@@ -39,10 +39,9 @@ interface GameWindowState extends UIState {
 
 export default class GameWindow extends FrameListener<GameWindowProps, GameWindowState> {
     readonly canvas: HTMLCanvasElement;
-    readonly clock: THREE.Clock;
-    readonly game: any;
+    readonly game: Game;
     readonly renderer: any;
-    readonly sceneManager: any;
+    readonly sceneManager: SceneManager;
     readonly preloadPromise: Promise<void>;
     controls?: [any];
     wrapperElem: HTMLDivElement;
@@ -65,11 +64,10 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
         this.requestPresence = this.requestPresence.bind(this);
         this.exitVR = this.exitVR.bind(this);
 
-        this.clock = new THREE.Clock(false);
-        this.game = createGame(
-            this.clock,
+        this.game = new Game(
             this.setUiState,
             this.getUiState,
+            this.props.vr
         );
 
         this.canvas = document.createElement('canvas');
@@ -139,7 +137,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
 
     onGameReady() {
         this.game.loaded('game');
-        this.clock.start();
+        this.game.clock.start();
         if (getParams().scene === -1) {
             this.showMenu();
         }
@@ -272,7 +270,6 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
         const scene = this.sceneManager.getScene();
         mainGameLoop(
             this.game,
-            this.clock,
             this.renderer,
             scene,
             this.controls,
@@ -282,7 +279,6 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
             DebugData.scope = {
                 params: getParams(),
                 game: this.game,
-                clock: this.clock,
                 renderer: this.renderer,
                 scene,
                 sceneManager: this.sceneManager,

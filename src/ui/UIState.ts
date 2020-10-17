@@ -1,3 +1,5 @@
+import { Game } from '../game/game';
+
 export default interface UIState {
     cinema: boolean;
     text?: {
@@ -27,7 +29,7 @@ export default interface UIState {
     noAudio: boolean;
 }
 
-export function initUIState(game: any): UIState {
+export function initUIState(game: Game): UIState {
     return {
         cinema: false,
         text: null,

@@ -16,6 +16,7 @@ import { compileScripts } from '../scripting/compiler';
 import { parseScripts } from '../scripting/parser';
 import { postProcessScripts, cleanUpScripts } from '../scripting/postprocess';
 import { getParams } from '../params';
+import { Game } from './game';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -109,7 +110,7 @@ export const DirMode = {
 
 // TODO: move section offset to container THREE.Object3D
 export async function loadActor(
-    game: any,
+    game: Game,
     is3DCam: boolean,
     envInfo: any,
     ambience: any,

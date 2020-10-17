@@ -5,7 +5,7 @@ import { SpriteType } from './data/spriteType';
 import { loadSprite } from '../iso/sprites';
 import { addExtraToScene, removeExtraFromScene } from './scenes';
 import { clone } from 'lodash';
-import { MAX_LIFE } from './state';
+import { MAX_LIFE } from './gameState';
 // import { createBoundingBox } from '../utils/rendering';
 
 export const ExtraFlag = {

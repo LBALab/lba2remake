@@ -19,10 +19,11 @@ import NoAudio from './game/NoAudio';
 import UIState from './UIState';
 import { SceneManager } from '../game/scenes';
 import Renderer from '../renderer';
+import { Game } from '../game/game';
 
 interface GameUIProps {
     uiState: UIState;
-    game: any;
+    game: Game;
     renderer: Renderer;
     sceneManager: SceneManager;
     setUiState: (state: any, callback?: Function) => void;
@@ -267,7 +268,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
             {behaviourMenu ?
                 <BehaviourMenu
                     game={game}
-                    sceneManager={scene}
+                    scene={scene}
                 />
             : null }
             <Menu

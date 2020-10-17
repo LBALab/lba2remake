@@ -1,7 +1,8 @@
 import * as THREE from 'three';
+import { Game } from '../game/game';
 
 // Move pointerLock mechanics out of this
-export function makeFirstPersonTouchControls(game: any) {
+export function makeFirstPersonTouchControls(game: Game) {
     const controls = {
         enabled: true,
         prevPageX: 0,

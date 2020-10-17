@@ -1,11 +1,13 @@
 import * as THREE from 'three';
 import {switchStats} from '../renderer/stats';
 import {BehaviourMode} from '../game/loop/hero';
+import { SceneManager } from '../game/scenes';
+import { Game } from '../game/game';
 
 export function makeKeyboardControls(params: any,
                                      elem: any,
-                                     sceneManager: any,
-                                     game: any) {
+                                     sceneManager: SceneManager,
+                                     game: Game) {
     const onKeyDown = keyDownHandler.bind(null, params, game, sceneManager);
     const onKeyUp = keyUpHandler.bind(null, game);
     const onFocusOut = focusOutHandler.bind(null, game);
@@ -22,7 +24,7 @@ export function makeKeyboardControls(params: any,
     };
 }
 
-function keyDownHandler(params, game, sceneManager, event) {
+function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
     const key = event.code || event.which || event.keyCode;
     const { behaviourMenu } = game.getUiState();
     if (behaviourMenu) {

@@ -247,7 +247,7 @@ function getMoveAction(actor) {
                 case 'WAIT_NUM_SECOND_RND':
                 case 'WAIT_NUM_DECIMAL_RND': {
                     const timeLeft = Math.ceil(
-                        moveScript.context.state.waitUntil - DebugData.scope.clock.elapsedTime
+                        moveScript.context.state.waitUntil - DebugData.scope.game.clock.elapsedTime
                     );
                     extra = `[${timeLeft}″ left]`;
                     key += timeLeft;

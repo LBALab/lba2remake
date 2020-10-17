@@ -20,7 +20,7 @@ const emptyVRScene = {
     }
 };
 
-export function mainGameLoop(game, clock, renderer, scene, controls, vrScene = null) {
+export function mainGameLoop(game, renderer, scene, controls, vrScene = null) {
     const params = getParams();
     const time = game.getTime();
     const uiState = game.getUiState();
@@ -33,7 +33,7 @@ export function mainGameLoop(game, clock, renderer, scene, controls, vrScene = n
             if (step) {
                 time.delta = 0.05;
                 time.elapsed += 0.05;
-                clock.elapsedTime += 0.05;
+                game.clock.elapsedTime += 0.05;
             }
             scene.scenery.update(game, scene, time);
             playAmbience(game, scene, time);

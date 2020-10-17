@@ -27,6 +27,7 @@ import { getVrFirstPersonCamera } from '../cameras/vr/vrFirstPerson';
 import { getScene, getSceneMap } from '../resources';
 import { pure } from '../utils/decorators';
 import { getParams } from '../params';
+import { Game } from './game';
 
 declare global {
     var ga: Function;
@@ -37,7 +38,7 @@ const {initSceneDebugData, loadSceneMetaData} = DBG;
 export class SceneManager {
     private scene: any;
     private hideMenu: Function;
-    private game: any;
+    private game: Game;
     private renderer: any;
     private sceneMap: any;
 
