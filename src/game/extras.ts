@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { getRandom, getHtmlColor } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
 import { loadSprite } from '../iso/sprites';
-import { addExtraToScene, removeExtraFromScene } from './SceneManager';
+import { addExtraToScene, removeExtraFromScene } from './Scene';
 import { clone } from 'lodash';
 import { MAX_LIFE } from './GameState';
 // import { createBoundingBox } from '../utils/rendering';
