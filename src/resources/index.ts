@@ -155,7 +155,10 @@ const getVoices = async (textBankId) => {
     return await loadResource(resId);
 };
 
-const getMusic = async (index: number) => {
+const getMusic = async (index: number | string) => {
+    if (typeof(index) === 'string') {
+        return await loadResource(index);
+    }
     if (index < 0) {
         return null;
     }
