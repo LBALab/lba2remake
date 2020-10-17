@@ -23,30 +23,29 @@ import { createFPSCounter } from '../ui/vr/vrFPS';
 import { createVRGUI } from '../ui/vr/vrGUI';
 import { angleToRad, WORLD_SIZE } from '../utils/lba';
 import { getVrFirstPersonCamera } from '../cameras/vr/vrFirstPerson';
-import { getScene } from '../resources';
+import { getScene, getSceneMap } from '../resources';
 import { getParams } from '../params';
 import DebugData, { loadSceneMetaData } from '../ui/editor/DebugData';
 
-export async function loadScene(sceneManager, game, renderer, sceneMap, index, parent) {
+export async function loadScene(sceneManager, game, renderer, index, parent) {
     const sceneData = await getScene(index);
     const params = getParams();
     const modelReplacements = await loadModelReplacements();
     if (params.editor) {
         await loadSceneMetaData(index);
     }
-    const indexInfo = sceneMap[index];
     let islandName;
-    if (indexInfo.isIsland) {
+    if (sceneData.isIsland) {
         islandName = islandSceneMapping[index].island;
         if (game.getState().flags.quest[152] && islandName === 'CITABAU') {
             islandName = 'CITADEL';
         }
     }
-    const envInfo = indexInfo.isIsland ? getEnvInfo(islandName) : {
+    const envInfo = sceneData.isIsland ? getEnvInfo(islandName) : {
         skyColor: [0, 0, 0],
         fogDensity: 0,
     };
-    const is3DCam = indexInfo.isIsland || renderer.vr || params.iso3d;
+    const is3DCam = sceneData.isIsland || renderer.vr || params.iso3d;
     const actors = await Promise.all(map(
         sceneData.actors,
         actor => loadActor(
@@ -70,7 +69,7 @@ export async function loadScene(sceneManager, game, renderer, sceneMap, index, p
         threeScene = new THREE.Scene();
         threeScene.matrixAutoUpdate = false;
         makeLight(threeScene, sceneData.ambience);
-        if (indexInfo.isIsland) {
+        if (sceneData.isIsland) {
             scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
             threeScene.name = '3D_scene';
             if (renderer.vr) {
@@ -85,7 +84,7 @@ export async function loadScene(sceneManager, game, renderer, sceneMap, index, p
         } else {
             const useReplacements = renderer.vr || params.iso3d || params.isoCam3d;
             scenery = await loadIsometricScenery(
-                indexInfo.index,
+                sceneData.index,
                 sceneData.ambience,
                 useReplacements,
                 actors.length
@@ -123,8 +122,7 @@ export async function loadScene(sceneManager, game, renderer, sceneMap, index, p
     }
 
     const sceneNode = loadSceneNode(
-        index,
-        indexInfo,
+        sceneData,
         scenery,
         actors,
         zones,
@@ -135,8 +133,6 @@ export async function loadScene(sceneManager, game, renderer, sceneMap, index, p
     const scene = {
         index,
         data: sceneData,
-        sceneMap,
-        isIsland: indexInfo.isIsland,
         camera,
         threeScene,
         sceneNode,
@@ -176,7 +172,7 @@ export async function loadScene(sceneManager, game, renderer, sceneMap, index, p
         },
 
         resetCamera(newParams) {
-            if (!scene.isIsland) {
+            if (!scene.data.isIsland) {
                 if (!renderer.vr) {
                     if (newParams.iso3d) {
                         scene.camera = getIso3DCamera();
@@ -196,14 +192,13 @@ export async function loadScene(sceneManager, game, renderer, sceneMap, index, p
             sceneNode.add(threeObject);
         }
     };
-    if (scene.isIsland) {
+    if (scene.data.isIsland) {
         scene.section = islandSceneMapping[index].section;
         if (!parent) {
             scene.sideScenes = await loadSideScenes(
                 sceneManager,
                 game,
                 renderer,
-                sceneMap,
                 index,
                 scene
             );
@@ -219,12 +214,12 @@ export async function loadScene(sceneManager, game, renderer, sceneMap, index, p
     return scene;
 }
 
-function loadSceneNode(index, indexInfo, scenery, actors, zones, points, editor) {
-    const sceneNode = indexInfo.isIsland ? new THREE.Object3D() : new THREE.Scene();
-    sceneNode.name = `scene_${index}`;
+function loadSceneNode(sceneData, scenery, actors, zones, points, editor) {
+    const sceneNode = sceneData.isIsland ? new THREE.Object3D() : new THREE.Scene();
+    sceneNode.name = `scene_${sceneData.index}`;
     sceneNode.matrixAutoUpdate = false;
-    if (indexInfo.isIsland) {
-        const sectionIdx = islandSceneMapping[index].section;
+    if (sceneData.isIsland) {
+        const sectionIdx = islandSceneMapping[sceneData.index].section;
         const section = scenery.sections[sectionIdx];
         sceneNode.position.x = section.x * WORLD_SIZE * 2;
         sceneNode.position.z = section.z * WORLD_SIZE * 2;
@@ -247,9 +242,9 @@ function loadSceneNode(index, indexInfo, scenery, actors, zones, points, editor)
 async function loadSideScenes(sceneManager,
                                 game,
                                 renderer,
-                                sceneMap,
                                 index,
                                 parent) {
+    const sceneMap = await getSceneMap();
     const sideIndices = filter(
         map(sceneMap, (indexInfo, sideIndex) => {
             if (sideIndex !== index
@@ -273,7 +268,6 @@ async function loadSideScenes(sceneManager,
             sceneManager,
             game,
             renderer,
-            sceneMap,
             sideIndex,
             parent
         )

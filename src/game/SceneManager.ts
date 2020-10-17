@@ -4,7 +4,6 @@ import { getParams } from '../params';
 import { Game } from './Game';
 import * as DBG from '../ui/editor/DebugData';
 import { loadScene, relocateHero } from './Scene';
-import { getSceneMap } from '../resources';
 
 declare global {
     var ga: Function;
@@ -17,7 +16,6 @@ export class SceneManager {
     private hideMenu: Function;
     private game: Game;
     private renderer: any;
-    private sceneMap: any;
 
     constructor(game, renderer, hideMenu: Function) {
         this.game = game;
@@ -72,14 +70,10 @@ export class SceneManager {
         }
         this.game.loading(index);
         this.renderer.setClearColor(0x000000);
-        if (!this.sceneMap) {
-            this.sceneMap = await getSceneMap();
-        }
         this.scene = await loadScene(
             this,
             this.game,
             this.renderer,
-            this.sceneMap,
             index,
             null
         );

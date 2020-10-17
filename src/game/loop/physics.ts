@@ -51,7 +51,8 @@ function processSidesceneTransitions(scene) {
     const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
     pos.y += BOX_Y_OFFSET;
-    if (scene.isIsland && (pos.x < BB_MIN || pos.z < BB_MIN || pos.x > BB_MAX || pos.z > BB_MAX)) {
+    if (scene.data.isIsland
+        && (pos.x < BB_MIN || pos.z < BB_MIN || pos.x > BB_MAX || pos.z > BB_MAX)) {
         const globalPos = new THREE.Vector3();
         globalPos.applyMatrix4(hero.threeObject.matrixWorld);
         const foundSideScene = find(scene.sideScenes, (sideScene) => {

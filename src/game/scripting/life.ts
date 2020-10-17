@@ -232,7 +232,7 @@ export function FOUND_OBJECT(cmdState, id) {
         hero.props.entityIndex = 0;
         hero.props.animIndex = AnimType.FOUND_OBJECT;
 
-        if (this.scene.isIsland) {
+        if (this.scene.data.isIsland) {
             hero.setAngleRad(hero.physics.temp.angle + Math.PI);
         } else {
             hero.setAngleRad(7 * Math.PI / 4);

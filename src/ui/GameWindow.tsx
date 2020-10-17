@@ -229,7 +229,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
         if (result) {
             let obj = null;
             const position = result.point.clone();
-            if (scene.isIsland) {
+            if (scene.data.isIsland) {
                 position.sub(scene.sceneNode.position);
             }
             if (objectToAdd.type === 'point') {

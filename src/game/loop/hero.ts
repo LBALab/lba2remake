@@ -103,7 +103,7 @@ function processFirstPersonsMovement(game, scene, hero, time) {
             return;
         }
         let distFromFloor = hero.props.distFromGround;
-        if (scene.isIsland) {
+        if (scene.data.isIsland) {
             distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
         }
         // We don't trigger a fall if Twinsen is using the Jetpack, (but we do
@@ -212,7 +212,7 @@ const SMALL_FALL_HEIGHT = 0.3;
 
 function processFall(scene, hero) {
     let distFromFloor = hero.props.distFromGround;
-    if (scene.isIsland) {
+    if (scene.data.isIsland) {
         distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
     }
     if (distFromFloor < 0.001) {
@@ -277,7 +277,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
         const usingProtopack = hero.props.entityIndex === BehaviourMode.PROTOPACK &&
                              hero.props.animIndex === AnimType.FORWARD;
         let fallThreshold = SMALL_FALL_HEIGHT;
-        if (usingProtopack && !scene.isIsland) {
+        if (usingProtopack && !scene.data.isIsland) {
             fallThreshold = 0.5;
         }
         if (usingJetpack) {
