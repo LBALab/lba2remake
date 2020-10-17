@@ -22,7 +22,7 @@ export interface GameState {
 export const MAX_LIFE = 255;
 const INITIAL_LIFE = 200;
 
-export function createState(): GameState {
+export function createGameState(): GameState {
     return {
         config: Object.assign({
             displayText: true,

@@ -5,7 +5,7 @@ const musicDecodedAudioCache = [];
 
 const createMusicSource = (context: any) => {
     const source = createSource(context);
-    const loadPlay = async (index: number) => {
+    const loadPlay = async (index: number | string) => {
         if (!source.volume) {
             return;
         }
@@ -28,7 +28,7 @@ const createMusicSource = (context: any) => {
         isPlaying: () => {
             return source.isPlaying;
         },
-        play: (index: number) => {
+        play: (index: number | string) => {
             loadPlay(index);
         },
         stop: () => {
@@ -43,7 +43,7 @@ const createMusicSource = (context: any) => {
         resume: () => {
             source.resume();
         },
-        preload: async (index: number) => {
+        preload: async (index: number | string) => {
             const resource = await getMusic(index);
             if (!resource) {
                 return;

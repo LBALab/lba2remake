@@ -4,9 +4,10 @@ import {
     loadResource,
     getResourcePath,
     registerResources,
+    getResource,
 }  from './load';
 import { getLanguageConfig } from '../lang';
-import { getBodyIndex } from '../model/entity';
+import { getBodyIndex, getAnimIndex } from '../model/entity';
 
 const getVideoPath = (video: string) => {
     return getResourcePath(`VIDEO_${video}`);
@@ -54,8 +55,22 @@ const getEntities = async () => {
     return await loadResource(ResourceName.ENTITIES);
 };
 
-const getAnimations = async () => {
-    return await loadResource(ResourceName.ANIM);
+const getAnimations = async (animIdx: number, entityIdx: number) => {
+    const entities = await getEntities();
+
+    const entity = entities[entityIdx];
+    const realAnimIdx = getAnimIndex(entity, animIdx);
+
+    return await loadResource(ResourceName.ANIM, realAnimIdx);
+};
+
+const getAnimationsSync = (animIdx: number, entityIdx: number) => {
+    const entities = getResource(ResourceName.ENTITIES);
+
+    const entity = entities[entityIdx];
+    const realAnimIdx = getAnimIndex(entity, animIdx);
+
+    return getResource(ResourceName.ANIM, realAnimIdx);
 };
 
 const getModels = async (bodyIdx: number, entityIdx: number) => {
@@ -140,7 +155,10 @@ const getVoices = async (textBankId) => {
     return await loadResource(resId);
 };
 
-const getMusic = async (index: number) => {
+const getMusic = async (index: number | string) => {
+    if (typeof(index) === 'string') {
+        return await loadResource(index);
+    }
     if (index < 0) {
         return null;
     }
@@ -161,6 +179,7 @@ export {
     getSpritesAnim3DSClipInfo,
     getEntities,
     getAnimations,
+    getAnimationsSync,
     getModels,
     getModelsTexture,
     getBricks,

@@ -111,9 +111,9 @@ function saveIcon(data, component) {
             && DebugData.scope.island.name === name
             && DebugData.scope.island.threeObject) {
             if (!iconRenderer) {
-                iconRenderer = new Renderer({webgl2: true}, iconsCanvas, {
+                iconRenderer = new Renderer(iconsCanvas, 'thumbnails', {
                     preserveDrawingBuffer: true
-                }, 'thumbnails');
+                });
             }
             iconRenderer.applySceneryProps(DebugData.scope.island.props);
             iconRenderer.resize(50, 50);

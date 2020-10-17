@@ -1,5 +1,6 @@
 import { MotionController } from '@webxr-input-profiles/motion-controllers';
 import { BehaviourMode } from '../../game/loop/hero';
+import { Game } from '../../game/game';
 
 interface BtnMapping {
     btn: string;
@@ -45,7 +46,7 @@ export function getControllerMappings(
 }
 
 interface Context {
-    game: any;
+    game: Game;
     camera: any;
     scene: any;
 }

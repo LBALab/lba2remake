@@ -63,6 +63,7 @@ interface Resource {
     getNextHiddenEntry: Function;
     load: Function;
     parse: Function;
+    parseSync: Function;
     entries: [];
 }
 
@@ -148,6 +149,7 @@ const register = (
         buffer: null,
         entries: [],
         parse: null,
+        parseSync: null,
         parsedEntries: [],
     };
 
@@ -220,6 +222,10 @@ const register = (
         if (resource.loaded) {
             return;
         }
+        if (resource.path === undefined) {
+            resource.loaded = true;
+            return;
+        }
         if (!resource.loading) {
             resource.loading = new Promise(async (resolve) => {
                 if (resource.ref) {
@@ -241,6 +247,18 @@ const register = (
             });
         }
         await resource.loading;
+    };
+
+    resource.parseSync = (index?: number, language?: any) => {
+        if (resource.parsedEntries[index]) {
+            return resource.parsedEntries[index];
+        }
+        if (!ResourceTypes[resource.type].parser) {
+            return null;
+        }
+        const data = ResourceTypes[resource.type].parser(resource, index, language);
+        resource.parsedEntries[index] = data;
+        return resource.parsedEntries[index];
     };
 
     resource.parse = async (index?: number, language?: any) => {
@@ -266,7 +284,7 @@ const preloadResources = async () => {
     }
     const preload = [];
     for (const res of Object.values<Resource>(Resources)) {
-        if (res.strategy === ResourceStrategy.STATIC) {
+        if (res.path && res.strategy === ResourceStrategy.STATIC) {
             preload.push(res.load());
         }
     }
@@ -281,6 +299,18 @@ const loadResource = async (id: string, index?: number, param?: any) => {
     }
     if (index !== undefined) {
         return await resource.parse(index, param);
+    }
+    return resource;
+};
+
+const getResource = (id: string, index?: number, param?: any) => {
+    const resource = Resources[id];
+    index = index ?? resource.index;
+    if (resource && !resource.loaded) {
+        return null;
+    }
+    if (index !== undefined) {
+        return resource.parseSync(index, param);
     }
     return resource;
 };
@@ -303,8 +333,8 @@ const registerResources = async (game, language, languageVoice) => {
         for (let e = 0; e < res.entries.length; e += 1) {
             // @ts-ignore
             const r: Resource = res.entries[e];
-            let path = r.path.replace('%LANGCODE%', language);
-            path = path.replace('%LANGVOICECODE%', languageVoice);
+            let path = r.path?.replace('%LANGCODE%', language);
+            path = path?.replace('%LANGVOICECODE%', languageVoice);
             register(
                 ResourceStrategy[r.strategy],
                 r.type,
@@ -328,6 +358,7 @@ export {
     areResourcesPreloaded,
     preloadResources,
     loadResource,
+    getResource,
     getResourcePath,
     registerResources,
 };

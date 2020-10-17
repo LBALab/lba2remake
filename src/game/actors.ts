@@ -15,6 +15,8 @@ import { makePure } from '../utils/debug';
 import { compileScripts } from '../scripting/compiler';
 import { parseScripts } from '../scripting/parser';
 import { postProcessScripts, cleanUpScripts } from '../scripting/postprocess';
+import { getParams } from '../params';
+import { Game } from './game';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -108,14 +110,14 @@ export const DirMode = {
 
 // TODO: move section offset to container THREE.Object3D
 export async function loadActor(
-    game: any,
-    params: any,
+    game: Game,
     is3DCam: boolean,
     envInfo: any,
     ambience: any,
     props: ActorProps,
     isSideScene: boolean,
     modelReplacements: any) {
+    const params = getParams();
     const skipModel = isSideScene && props.index === 0;
     const animState = !skipModel ? loadAnimState() : null;
     const actor: Actor = {

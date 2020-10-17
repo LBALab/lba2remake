@@ -9,7 +9,7 @@ declare global {
     }
 }
 
-const MUSIC_THEME = 6;
+const THEME_MENU = 'THEME_MENU';
 const samples = {};
 
 function createAudioContext() {
@@ -42,7 +42,7 @@ export function createAudioManager(state) {
         },
         playMusicTheme: () => {
             if (!menuMusicSource.isPlaying()) {
-                menuMusicSource.play(MUSIC_THEME);
+                menuMusicSource.play(THEME_MENU);
             }
         },
         isPlayingMusic: () => {
@@ -55,7 +55,7 @@ export function createAudioManager(state) {
             menuMusicSource.stop();
         },
         preloadMusicTheme: async () => {
-            await menuMusicSource.preload(MUSIC_THEME);
+            await menuMusicSource.preload(THEME_MENU);
         },
         resumeMusicTheme: () => {
             menuMusicSource.resume();
