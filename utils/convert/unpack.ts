@@ -6,7 +6,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { createFolderIfNotExists, executeCommand, removeDirectoryRecursive } from '../../src/utils/fsutils';
+import { createFolderIfNotExists, executeCommand, removeDirectoryRecursive, copyFolderSync } from '../../src/utils/fsutils';
 
 interface Paths {
     image: string;
@@ -15,37 +15,76 @@ interface Paths {
     unpack: string;
 }
 
-const SupportedVersions = ['GogWin', 'SteamWin', 'GogMac', 'GogMacStandalone'];
+const SupportedVersions = ['GogWin', 'SteamWin', 'GogMac', 'GogMacStandalone', 'GogWinLBA1', 'SteamWinLBA1', 'GogMacLBA1', 'GogMacStandaloneLBA1'];
 
-const PathDefinitions = {
+export const PathDefinitions = {
+    // LBA2
     GogWin: {
+        game: 'LBA2',
         image: 'LBA2.GOG',
         track: 'LBA2.OGG',
         dosbox: ['DOSBOX/DOSBox.exe', 'DOSBOX/SDL.dll', 'DOSBOX/SDL_net.dll']
     },
     SteamWin: {
+        game: 'LBA2',
         image: 'LBA2.DOT',
         track: 'LBA2.OGG',
         dosbox: ['DOSBOX/DOSBox.exe', 'DOSBOX/SDL.dll', 'DOSBOX/SDL_net.dll']
     },
     GogMac: {
+        game: 'LBA2',
         image: 'Contents/Resources/game/LBA2.GOG',
         track: 'Contents/Resources/game/LBA2.OGG',
         dosbox: ['Contents/Resources/dosbox/dosbox']
     },
     GogMacStandalone: {
+        game: 'LBA2',
         image: 'Contents/Resources/Little Big Adventure 2.boxer/D.cdmedia/LBA2.GOG',
         track: 'Contents/Resources/Little Big Adventure 2.boxer/D.cdmedia/LBA2.OGG',
+        dosbox: ['Contents/MacOS/DOSBox'],
+        externalDosbox: true
+    },
+    // LBA1
+    GogWinLBA1: {
+        game: 'LBA',
+        image: 'LBA.GOG',
+        track: null,
+        vox: 'VOX',
+        dosbox: ['DOSBOX/DOSBox.exe', 'DOSBOX/SDL.dll', 'DOSBOX/SDL_net.dll']
+    },
+    SteamWinLBA1: {
+        game: 'LBA',
+        image: 'LBA.DOT',
+        track: null,
+        vox: 'VOX',
+        dosbox: ['DOSBOX/DOSBox.exe', 'DOSBOX/SDL.dll', 'DOSBOX/SDL_net.dll']
+    },
+    GogMacLBA1: {
+        game: 'LBA',
+        image: 'Contents/Resources/game/LBA.GOG',
+        track: null,
+        vox: 'Contents/Resources/game/VOX',
+        dosbox: ['Contents/Resources/dosbox/dosbox']
+    },
+    GogMacStandaloneLBA1: {
+        game: 'LBA',
+        image: 'Contents/Resources/Little Big Adventure.boxer/D.cdmedia/LBA.GOG',
+        track: null,
+        vox: 'Contents/Resources/Little Big Adventure.boxer/D.cdmedia/VOX',
         dosbox: ['Contents/MacOS/DOSBox'],
         externalDosbox: true
     }
 };
 
 const UnpackCommands = {
-    GogWin: 'powershell -File utils/convert/unpack.ps1',
-    SteamWin: 'powershell -File utils/convert/unpack.ps1',
-    GogMac: 'cd www/data/LBA2/_unpack && ./dosbox unpack.bat -exit',
-    GogMacStandalone: 'cd www/data/LBA2/_unpack && ./dosbox unpack.bat -exit'
+    GogWin: 'powershell -File utils/convert/unpkLBA2.ps1',
+    SteamWin: 'powershell -File utils/convert/unpkLBA2.ps1',
+    GogMac: 'cd www/data/LBA2/_unpack && ./dosbox unpkLBA2.bat -exit',
+    GogMacStandalone: 'cd www/data/LBA2/_unpack && ./dosbox unpkLBA2.bat -exit',
+    GogWinLBA1: 'powershell -File utils/convert/unpkLBA.ps1',
+    SteamWinLBA1: 'powershell -File utils/convert/unpkLBA.ps1',
+    GogMacLBA1: 'cd www/data/LBA/_unpack && ./dosbox unpkLBA.bat -exit',
+    GogMacStandaloneLB1: 'cd www/data/LBA/_unpack && ./dosbox unpkLBA.bat -exit'
 };
 
 interface UnpackOptions {
@@ -55,33 +94,45 @@ interface UnpackOptions {
 
 const unpack = async ({gameFolder, dosboxFolder}: UnpackOptions) => {
     const version = detectVersion(gameFolder, dosboxFolder);
+    const { game, vox } = PathDefinitions[version];
     const paths: Paths = findFiles(gameFolder, dosboxFolder, version);
     if (!paths) {
         return;
     }
 
-    createFolderIfNotExists(path.normalize('./www/data/LBA2'));
-    const workDir = path.normalize('./www/data/LBA2/_unpack/');
+    createFolderIfNotExists(path.normalize(`./www/data/${game}`));
+    const workDir = path.normalize(`./www/data/${game}/_unpack/`);
+    createFolderIfNotExists(workDir);
+    // createFolderIfNotExists(path.normalize(`${workDir}/VOX`));
     const localPaths = copyInputFiles(workDir, paths);
     console.log('Extracting image. Do not close the dosbox window.');
     await extractImage(version);
-    fs.copyFileSync(localPaths.track[0], path.normalize('./www/data/LBA2/MUSIC/LBA2.OGG'));
+    if (localPaths.track) {
+        fs.copyFileSync(localPaths.track[0], path.normalize(`./www/data/${game}/MUSIC/${game}.OGG`));
+    }
+    if (vox) {
+        copyFolderSync(
+            path.normalize(`${gameFolder}/${vox}`),
+            path.normalize(`./www/data/${game}/VOX`),
+        );
+    }
     removeDirectoryRecursive(workDir);
 };
 
 const findFiles = (gameFolder: string, dosboxFolder: string, version: string) => {
+    const versionGame = PathDefinitions[version];
     const result = {
-        image: path.join(gameFolder, PathDefinitions[version].image),
-        track: path.join(gameFolder, PathDefinitions[version].track),
-        dosbox: PathDefinitions[version].externalDosbox
-            ? PathDefinitions[version].dosbox.map((dbp: string) => path.join(dosboxFolder, dbp))
-            : PathDefinitions[version].dosbox.map((dbp: string) => path.join(gameFolder, dbp)),
-        unpack: path.join(__dirname, 'unpack.bat')
+        image: path.join(gameFolder, versionGame.image),
+        track: versionGame.track !== null ? path.join(gameFolder, versionGame.track) : null,
+        dosbox: versionGame.externalDosbox
+            ? versionGame.dosbox.map((dbp: string) => path.join(dosboxFolder, dbp))
+            : versionGame.dosbox.map((dbp: string) => path.join(gameFolder, dbp)),
+        unpack: path.join(__dirname, `unpk${versionGame.game}.bat`)
     };
     return verifyPaths(result);
 };
 
-const detectVersion = (gameFolder: string, dosboxFolder: string) => {
+export const detectVersion = (gameFolder: string, dosboxFolder: string) => {
     for (let i = 0; i < SupportedVersions.length; i += 1) {
         const version = SupportedVersions[i];
         const imagePath = path.join(gameFolder, PathDefinitions[version].image);
@@ -106,7 +157,7 @@ const verifyPaths = (paths: Paths) => {
         const inputPaths = Array.isArray(paths[item]) ? paths[item] : [paths[item]];
         for (let i = 0; i < inputPaths.length; i += 1) {
             const currentPath = inputPaths[i];
-            if (!fs.existsSync(currentPath)) {
+            if (currentPath && !fs.existsSync(currentPath)) {
                 console.error(`Cannot find part of ${item} path: ${path}`);
                 result = null;
                 return;
