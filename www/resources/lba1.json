@@ -14,9 +14,9 @@
         { "strategy": "STATIC", "type": "LS1", "id": "SCENE",       "description": "Scenes",                "path": "LBA/SCENE.HQR" },
         { "strategy": "STATIC", "type": "LBT", "id": "TEXT",        "description": "Text Dialogues",        "path": "LBA/TEXT.HQR" },
         { "strategy": "STATIC", "type": "LM1", "id": "OBJECTS",     "description": "Inventory Objects",     "path": "LBA/INVOBJ.HQR" },
-        { "strategy": "STATIC", "type": "BRK", "id": "BRICKS",      "description": "Isometric Bricks",      "path": "LBA/LBA_BRK.HQR" },
-        { "strategy": "STATIC", "type": "BL1", "id": "LIBRARIES",   "description": "Isometric Libraries",   "path": "LBA/LBA_BLL.HQR" },
-        { "strategy": "STATIC", "type": "GR1", "id": "GRIDS",       "description": "Isometric Grids",       "path": "LBA/LBA_GRI.HQR" },
+        { "strategy": "STATIC", "type": "BRK", "id": "BRICKS",      "description": "Isometric Bricks",      "path": "LBA/LBA_BRK.HQR", "first": 0 },
+        { "strategy": "STATIC", "type": "BL1", "id": "LIBRARIES",   "description": "Isometric Libraries",   "path": "LBA/LBA_BLL.HQR", "first": 0 },
+        { "strategy": "STATIC", "type": "GR1", "id": "GRIDS",       "description": "Isometric Grids",       "path": "LBA/LBA_GRI.HQR", "first": 0 },
         { "strategy": "STATIC", "type": "SM1", "id": "SCENE_MAP",   "description": "Isometric Scene Map",   "index": 0 },
 
         { "strategy": "STATIC", "type": "TXR", "id": "BODY_TEXTURE",     "description": "3d Models Texture" },
