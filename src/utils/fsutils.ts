@@ -3,13 +3,13 @@ import fs from 'fs';
 import path from 'path';
 import { exec } from 'child_process';
 
-const createFolderIfNotExists = (folderPath: string) => {
+export const createFolderIfNotExists = (folderPath: string) => {
     if (!fs.existsSync(folderPath)) {
         fs.mkdirSync(folderPath);
     }
 };
 
-const executeCommand = async (cmd: string) => {
+export const executeCommand = async (cmd: string) => {
     return new Promise((resolve) => {
         exec(cmd, (error, _stdout, stderr) => {
             if (error) {
@@ -23,13 +23,13 @@ const executeCommand = async (cmd: string) => {
     });
 };
 
-const removeFile = (filename) => {
+export const removeFile = (filename) => {
     if (fs.existsSync(filename)) {
         fs.unlinkSync(filename);
     }
 };
 
-const removeDirectoryRecursive = async (workDir) => {
+export const removeDirectoryRecursive = async (workDir) => {
     let rmCommand = 'rm -rf';
     if (process.platform === 'win32') {
         rmCommand = 'rmdir /s /q';
@@ -37,7 +37,7 @@ const removeDirectoryRecursive = async (workDir) => {
     await executeCommand(`${rmCommand} "${workDir}"`);
 };
 
-const copyFolderSync = (from, to) => {
+export const copyFolderSync = (from, to) => {
     createFolderIfNotExists(to);
     fs.readdirSync(from).forEach((file) => {
         if (fs.lstatSync(path.join(from, file)).isFile()) {
@@ -46,12 +46,4 @@ const copyFolderSync = (from, to) => {
             copyFolderSync(path.join(from, file), path.join(to, file));
         }
     });
-};
-
-export {
-    createFolderIfNotExists,
-    executeCommand,
-    removeFile,
-    removeDirectoryRecursive,
-    copyFolderSync,
 };
