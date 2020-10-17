@@ -29,8 +29,8 @@ interface GameUIProps {
     setUiState: (state: any, callback?: Function) => void;
     sharedState?: any;
     stateHandler?: any;
-    showMenu: (boolean?) => void;
-    hideMenu: (boolean?) => void;
+    showMenu: (inGameMenu?: boolean) => void;
+    hideMenu: (wasPaused?: boolean) => void;
 }
 
 interface GameUIState {
