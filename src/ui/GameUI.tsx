@@ -49,6 +49,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
         this.onMenuItemChanged = this.onMenuItemChanged.bind(this);
         this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
         this.noAudioClick = this.noAudioClick.bind(this);
+        this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
 
         this.state = {
             keyHelp: false
