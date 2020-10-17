@@ -16,7 +16,8 @@
         { "strategy": "STATIC", "type": "BRK", "id": "BRICKS",      "description": "Isometric Bricks",      "path": "LBA/LBA_BRK.HQR" },
         { "strategy": "STATIC", "type": "BL1", "id": "LIBRARIES",   "description": "Isometric Libraries",   "path": "LBA/LBA_BLL.HQR" },
         { "strategy": "STATIC", "type": "GR1", "id": "GRIDS",       "description": "Isometric Grids",       "path": "LBA/LBA_GRI.HQR" },
-        { "strategy": "STATIC", "type": "M4A", "id": "MUSIC",       "description": "Music",                 "path": "LBA/MIDI_MI_WIN.HQR.zip" },
+
+        { "strategy": "STATIC", "type": "M4A", "id": "THEME_MENU",       "description": "Adeline Theme",    "path": "LBA/MUSIC/mus_32.m4a" },
 
         { "strategy": "STATIC", "type": "M4A", "id": "VOICES_GAM",       "description": "Main Voices",  "path": "LBA/VOX/%LANGVOICECODE%_GAM_AAC.VOX.zip" },
         { "strategy": "STATIC", "type": "M4A", "id": "VOICES_000",       "description": "Voices 0",     "path": "LBA/VOX/%LANGVOICECODE%_000_AAC.VOX.zip" },
@@ -32,6 +33,8 @@
         { "strategy": "TRANSIENT", "type": "M4A", "id": "VOICES_009",    "description": "Voices 9",     "path": "LBA/VOX/%LANGVOICECODE%_009_AAC.VOX.zip" },
         { "strategy": "TRANSIENT", "type": "M4A", "id": "VOICES_010",    "description": "Voices 10",    "path": "LBA/VOX/%LANGVOICECODE%_010_AAC.VOX.zip" },
         { "strategy": "TRANSIENT", "type": "M4A", "id": "VOICES_011",    "description": "Voices 11",    "path": "LBA/VOX/%LANGVOICECODE%_011_AAC.VOX.zip" },
+
+        { "strategy": "TRANSIENT", "type": "MP4", "id": "VIDEO_INTRO",      "description": "Intro Sequence",           "path": "" },
 
         { "strategy": "TRANSIENT", "type": "M4A", "id": "MUSIC_SCENE_0",    "description": "Music Scene 0",     "path": "LBA/MUSIC/mus_00.m4a" },
         { "strategy": "TRANSIENT", "type": "M4A", "id": "MUSIC_SCENE_1",    "description": "Music Scene 1",     "path": "LBA/MUSIC/mus_01.m4a" },
