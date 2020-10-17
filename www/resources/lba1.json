@@ -7,7 +7,7 @@
         { "strategy": "STATIC", "type": "LM1", "id": "BODY",        "description": "3d Models",             "path": "LBA/BODY.HQR" },
         { "strategy": "STATIC", "type": "HQR", "id": "RESS",        "description": "Global Resources",      "path": "LBA/RESS.HQR" },
         { "strategy": "STATIC", "type": "PAL", "id": "PALETTE",     "description": "Main Palette",          "path": "LBA/RESS.HQR", "index": 0 },
-        { "strategy": "STATIC", "type": "3DE", "id": "ENTITIES",    "description": "Model/Anim Entities",   "path": "LBA/FILE3D.HQR" },
+        { "strategy": "STATIC", "type": "3DE", "id": "ENTITIES",    "description": "Model/Anim Entities",   "path": "LBA/FILE3D.HQR", "index": 0 },
         { "strategy": "STATIC", "type": "M4A", "id": "SAMPLES",     "description": "Samples",               "path": "LBA/SAMPLES_AAC.HQR.zip" },
         { "strategy": "STATIC", "type": "LSP", "id": "SPRITES",     "description": "Sprites",               "path": "LBA/SPRITES.HQR" },
         { "strategy": "STATIC", "type": "LS1", "id": "SCENE",       "description": "Scenes",                "path": "LBA/SCENE.HQR" },
@@ -17,6 +17,8 @@
         { "strategy": "STATIC", "type": "BL1", "id": "LIBRARIES",   "description": "Isometric Libraries",   "path": "LBA/LBA_BLL.HQR" },
         { "strategy": "STATIC", "type": "GR1", "id": "GRIDS",       "description": "Isometric Grids",       "path": "LBA/LBA_GRI.HQR" },
         { "strategy": "STATIC", "type": "SM1", "id": "SCENE_MAP",   "description": "Isometric Scene Map",   "index": 0 },
+
+        { "strategy": "STATIC", "type": "TXR", "id": "BODY_TEXTURE",     "description": "3d Models Texture" },
 
         { "strategy": "STATIC", "type": "M4A", "id": "THEME_MENU",       "description": "Adeline Theme",    "path": "LBA/MUSIC/mus_32.m4a" },
 

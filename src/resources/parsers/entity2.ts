@@ -46,7 +46,7 @@ const ACTIONTYPE = {
     THROW_FOUDRE        : 42,
 };
 
-const parseEntity = (resource: Resource) => {
+export const parseEntity = (resource: Resource) => {
     const entities = [];
     const buffer = resource.getBuffer();
     const data = new DataView(buffer);
@@ -58,16 +58,6 @@ const parseEntity = (resource: Resource) => {
     }
     for (let i = 0; i < numEntries; i += 1) {
         const entity = loadEntityEntry(buffer, offsets[i], i);
-        entities.push(entity);
-    }
-    return entities;
-};
-
-const parseEntityLBA1 = (resource: Resource) => {
-    const entities = [];
-    for (let i = 0; i < resource.length; i += 1) {
-        const buffer = resource.getEntry(i);
-        const entity = loadEntityEntry(buffer, 0, i);
         entities.push(entity);
     }
     return entities;
@@ -386,7 +376,7 @@ const loadEntityAnim = (data, offset) => {
     return anim;
 };
 
-const makeNewBox = () => ({
+export const makeNewBox = () => ({
     xMin: -1,
     yMin: -1,
     zMin: -1,
@@ -394,5 +384,3 @@ const makeNewBox = () => ({
     yMax: -1,
     zMax: -1
 });
-
-export { parseEntity, parseEntityLBA1 };

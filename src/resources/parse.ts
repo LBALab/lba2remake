@@ -2,7 +2,8 @@ import { Resource } from './load';
 
 import { parsePalette } from './parsers/palette';
 import { parseText } from './parsers/text';
-import { parseEntity, parseEntityLBA1 } from './parsers/entity';
+import { parseEntityLBA1 } from './parsers/entity1';
+import { parseEntity } from './parsers/entity2';
 import { parseTextureRGBA } from './parsers/texture';
 import { parseBody } from './parsers/body';
 import { parseSceneMapLBA1, parseSceneLBA1 } from './parsers/scene1';
