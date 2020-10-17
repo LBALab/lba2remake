@@ -1333,6 +1333,11 @@
       "file": "GB_021_022_023_024_wall_side_rounded.glb",
       "orientation": 1
     },
+    "29": {
+      "replace": true,
+      "file": "GB_029_lamp.glb",
+      "orientation": 0
+    },
     "32": {
       "mirror": true
     },
@@ -1519,6 +1524,16 @@
       "file": "GB_085_barrel_tap.glb",
       "orientation": 0
     },
+    "86": {
+      "replace": true,
+      "file": "GB_086_087_shelf.glb",
+      "orientation": 0
+    },
+    "87": {
+      "replace": true,
+      "file": "GB_086_087_shelf.glb",
+      "orientation": 3
+    },
     "88": {
       "replace": true,
       "file": "GB_082_088_wall_lamp.glb",
@@ -1559,7 +1574,9 @@
       "mirror": true
     },
     "100": {
-      "mirror": false
+      "replace": true,
+      "file": "GB_100_crate.glb",
+      "orientation": 0
     },
     "101": {
       "replace": true,
