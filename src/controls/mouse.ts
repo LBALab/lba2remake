@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Game } from '../game/game';
 
 declare global {
     interface Document {
@@ -11,7 +12,7 @@ declare global {
 }
 
 // Move pointerLock mechanics out of this
-export function makeFirstPersonMouseControls(params: any, domElement: HTMLElement, game: any) {
+export function makeFirstPersonMouseControls(params: any, domElement: HTMLElement, game: Game) {
     const controls = {
         enabled: false
     };

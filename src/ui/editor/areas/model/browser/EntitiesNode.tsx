@@ -111,9 +111,9 @@ function saveIcon(data, component) {
             && DebugData.scope.model.mesh) {
             DebugData.scope.grid.visible = false;
             if (!iconRenderer) {
-                iconRenderer = new Renderer({webgl2: true}, iconsCanvas, {
+                iconRenderer = new Renderer(iconsCanvas, 'thumbnails', {
                     preserveDrawingBuffer: true
-                }, 'thumbnails');
+                });
                 iconRenderer.applySceneryProps({
                     opacity: 0,
                     envInfo: { skyColor: [0, 0, 0] }
