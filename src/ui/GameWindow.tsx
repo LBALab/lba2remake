@@ -5,7 +5,7 @@ import {clone} from 'lodash';
 import Renderer from '../renderer';
 import { Game } from '../game/game';
 import {mainGameLoop} from '../game/loop';
-import { SceneManager } from '../game/scenes';
+import { SceneManager } from '../game/sceneManager';
 import {createControls} from '../controls/index';
 
 import {fullscreen} from './styles/index';

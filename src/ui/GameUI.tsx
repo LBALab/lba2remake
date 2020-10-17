@@ -17,7 +17,7 @@ import { getVideoPath } from '../resources';
 import BehaviourMenu from './game/BehaviourMenu';
 import NoAudio from './game/NoAudio';
 import UIState from './UIState';
-import { SceneManager } from '../game/scenes';
+import { SceneManager } from '../game/sceneManager';
 import Renderer from '../renderer';
 import { Game } from '../game/game';
 

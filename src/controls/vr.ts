@@ -7,7 +7,7 @@ import { createMotionController } from './vr/utils';
 import { debugProfiles, updateDebug } from './vr/debugProfiles';
 import { getControllerMappings, applyMappings, Mappings } from './vr/mappings';
 import { getParams } from '../params';
-import { SceneManager } from '../game/scenes';
+import { SceneManager } from '../game/sceneManager';
 import { Game } from '../game/game';
 
 // Time in ms we sample the change is position to determine controller velocity.

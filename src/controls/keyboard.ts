@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {switchStats} from '../renderer/stats';
 import {BehaviourMode} from '../game/loop/hero';
-import { SceneManager } from '../game/scenes';
+import { SceneManager } from '../game/sceneManager';
 import { Game } from '../game/game';
 
 export function makeKeyboardControls(params: any,
