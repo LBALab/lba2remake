@@ -161,12 +161,17 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
                 };
                 game.controlsState.skipListener = onEnded;
                 game.pause();
-                this.props.setUiState({
-                    video: {
-                        path: getVideoPath('INTRO'),
-                        onEnded
-                    }
-                });
+                const videoPath = getVideoPath('INTRO');
+                if (videoPath !== undefined) {
+                    this.props.setUiState({
+                        video: {
+                            path: videoPath,
+                            onEnded
+                        }
+                    });
+                } else {
+                    onEnded();
+                }
                 break;
             }
             case -1: { // Teleport
@@ -274,7 +279,6 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
             : null }
             <Menu
                 showMenu={showMenu && !teleportMenu}
-                texts={game.menuTexts}
                 inGameMenu={inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />

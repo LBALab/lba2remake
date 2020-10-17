@@ -222,6 +222,10 @@ const register = (
         if (resource.loaded) {
             return;
         }
+        if (resource.path === undefined) {
+            resource.loaded = true;
+            return;
+        }
         if (!resource.loading) {
             resource.loading = new Promise(async (resolve) => {
                 if (resource.ref) {
@@ -280,7 +284,7 @@ const preloadResources = async () => {
     }
     const preload = [];
     for (const res of Object.values<Resource>(Resources)) {
-        if (res.strategy === ResourceStrategy.STATIC) {
+        if (res.path && res.strategy === ResourceStrategy.STATIC) {
             preload.push(res.load());
         }
     }
@@ -329,8 +333,8 @@ const registerResources = async (game, language, languageVoice) => {
         for (let e = 0; e < res.entries.length; e += 1) {
             // @ts-ignore
             const r: Resource = res.entries[e];
-            let path = r.path.replace('%LANGCODE%', language);
-            path = path.replace('%LANGVOICECODE%', languageVoice);
+            let path = r.path?.replace('%LANGCODE%', language);
+            path = path?.replace('%LANGVOICECODE%', languageVoice);
             register(
                 ResourceStrategy[r.strategy],
                 r.type,

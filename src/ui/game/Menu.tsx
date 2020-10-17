@@ -15,23 +15,22 @@ interface Item {
 }
 
 const menuItems: Item[] = [
-    { item: 'ResumeGame', index: 70, isVisible: false, isEnabled: true, textId: null },
-    { item: 'NewGame', index: 71, isVisible: true, isEnabled: true, textId: null },
-    { item: 'LoadGame', index: 72, isVisible: false, isEnabled: false, textId: null },
-    { item: 'SaveGame', index: 73, isVisible: false, isEnabled: false, textId: null },
+    { item: 'ResumeGame', index: 70, isVisible: false, isEnabled: true, textId: 'resumeGame' },
+    { item: 'NewGame', index: 71, isVisible: true, isEnabled: true, textId: 'newGame' },
+    { item: 'LoadGame', index: 72, isVisible: false, isEnabled: false, textId: 'loadGame' },
+    { item: 'SaveGame', index: 73, isVisible: false, isEnabled: false, textId: 'saveGame' },
     { item: 'Teleport', index: -1, isVisible: true, isEnabled: true, textId: 'teleport' },
     { item: 'Editor', index: -2, isVisible: true, isEnabled: true, textId: 'editor' },
     { item: 'ExitEditor', index: -3, isVisible: true, isEnabled: true, textId: 'exitEditor' },
     { item: 'Iso3D', index: -4, isVisible: true, isEnabled: true, textId: 'iso3d' },
     { item: 'Iso3DDisable', index: -5, isVisible: true, isEnabled: true, textId: 'iso3dDisable' },
-    // { item: 'Options', index: 74, isVisible: true, isEnabled: false, textId: null },
-    { item: 'Quit', index: 75, isVisible: false, isEnabled: false, textId: null },
+    // { item: 'Options', index: 74, isVisible: true, isEnabled: false, textId: 'options' },
+    { item: 'Quit', index: 75, isVisible: false, isEnabled: false, textId: 'quit' },
 ];
 
 interface MProps {
     showMenu: boolean;
     inGameMenu: boolean;
-    texts?: any[];
     onItemChanged: (id: number) => void;
 }
 
@@ -47,7 +46,7 @@ export default class Menu extends React.Component<MProps, MState> {
         this.listener = this.listener.bind(this);
         this.state = {
             selectedIndex: 0,
-            items: null
+            items: menuItems,
         };
     }
 
@@ -56,24 +55,18 @@ export default class Menu extends React.Component<MProps, MState> {
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.texts) {
-            const menu = menuItems;
-            const params = getParams();
-            menu[0].isVisible = newProps.inGameMenu;
-            menu[5].isVisible = !params.editor;
-            menu[6].isVisible = params.editor;
-            menu[7].isVisible = !params.iso3d;
-            menu[8].isVisible = params.iso3d;
-            const items = filter(menu, 'isVisible');
-            each(items, (i) => {
-                if (i.textId) {
-                    i.text = tr(i.textId);
-                } else {
-                    i.text = newProps.texts[i.index].value;
-                }
-            });
-            this.setState({items, selectedIndex: 0});
-        }
+        const menu = menuItems;
+        const params = getParams();
+        menu[0].isVisible = newProps.inGameMenu;
+        menu[5].isVisible = !params.editor;
+        menu[6].isVisible = params.editor;
+        menu[7].isVisible = !params.iso3d;
+        menu[8].isVisible = params.iso3d;
+        const items = filter(menu, 'isVisible');
+        each(items, (i) => {
+            i.text = tr(i.textId);
+        });
+        this.setState({items, selectedIndex: 0});
     }
 
     componentWillUnmount() {

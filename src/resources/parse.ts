@@ -2,12 +2,14 @@ import { Resource } from './load';
 
 import { parsePalette } from './parsers/palette';
 import { parseText } from './parsers/text';
-import { parseEntity } from './parsers/entity';
+import { parseEntityLBA1 } from './parsers/entity1';
+import { parseEntity } from './parsers/entity2';
 import { parseTextureRGBA } from './parsers/texture';
 import { parseBody } from './parsers/body';
-import { parseScene } from './parsers/scene';
+import { parseSceneMapLBA1, parseSceneLBA1 } from './parsers/scene1';
+import { parseSceneMapLBA2, parseSceneLBA2 } from './parsers/scene2';
 import { parseSpriteClipInfo, parseSprite, parseSpriteRaw } from './parsers/sprite';
-import { parseSceneMap, parseBrick } from './parsers/bricks';
+import { parseBrick } from './parsers/bricks';
 import { parseLibrary } from './parsers/libraries';
 import { parseGrid } from './parsers/grids';
 import { parseAnim } from './parsers/anim';
@@ -26,19 +28,20 @@ const ResourceTypes = {
     LM2: { type: 'LM2', description: 'LBA2 3D Model', parser: parseBody },
     TXR: { type: 'TXR', description: 'Texture RGBA', parser: parseTextureRGBA },
     M4A: { type: 'M4A', description: 'MPEG 4 Audio', parser: NOP },
-    LS1: { type: 'LS1', description: 'LBA1 Scene', parser: NOP },
-    LS2: { type: 'LS2', description: 'LBA2 Scene', parser: parseScene },
-    LSM: { type: 'LSM', description: 'LBA2 Scene Map', parser: parseSceneMap },
+    LS1: { type: 'LS1', description: 'LBA1 Scene', parser: parseSceneLBA1 },
+    LS2: { type: 'LS2', description: 'LBA2 Scene', parser: parseSceneLBA2 },
+    SM1: { type: 'SM1', description: 'LBA1 Scene Map', parser: parseSceneMapLBA1 },
+    SM2: { type: 'SM2', description: 'LBA2 Scene Map', parser: parseSceneMapLBA2 },
     LSP: { type: 'LSP', description: 'LBA Sprite', parser: parseSprite },
     LSR: { type: 'LSR', description: 'LBA2 Sprite Raw', parser: parseSpriteRaw },
     SAD: { type: 'SAD', description: 'Sprites Clip Info', parser: parseSpriteClipInfo },
     LBT: { type: 'LBT', description: 'LBA Text Dialog', parser: parseText },
-    BL1: { type: 'BL1', description: 'LBA1 Layout Library', parser: NOP },
+    BL1: { type: 'BL1', description: 'LBA1 Layout Library', parser: parseLibrary },
     BL2: { type: 'BL2', description: 'LBA2 Layout Library', parser: parseLibrary },
     BRK: { type: 'BRK', description: 'LBA Brick Sprite', parser: parseBrick },
-    GR1: { type: 'GR1', description: 'LBA1 Grids', parser: NOP },
+    GR1: { type: 'GR1', description: 'LBA1 Grids', parser: parseGrid },
     GR2: { type: 'GR2', description: 'LBA2 Grids', parser: parseGrid },
-    '3DE': { type: '3DE', description: 'LBA1 File 3D Entity', parser: NOP },
+    '3DE': { type: '3DE', description: 'LBA1 File 3D Entity', parser: parseEntityLBA1 },
     F3D: { type: 'F3D', description: 'LBA2 Entity Information', parser: parseEntity },
     PAL: { type: 'PAL', description: 'LBA Palette', parser: parsePalette },
     OBL: { type: 'OBL', description: 'LBA2 Island Object HQR File', parser: NOP },
