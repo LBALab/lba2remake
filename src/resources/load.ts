@@ -329,8 +329,8 @@ const registerResources = async (game, language, languageVoice) => {
         for (let e = 0; e < res.entries.length; e += 1) {
             // @ts-ignore
             const r: Resource = res.entries[e];
-            let path = r.path.replace('%LANGCODE%', language);
-            path = path.replace('%LANGVOICECODE%', languageVoice);
+            let path = r.path?.replace('%LANGCODE%', language);
+            path = path?.replace('%LANGVOICECODE%', languageVoice);
             register(
                 ResourceStrategy[r.strategy],
                 r.type,

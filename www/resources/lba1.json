@@ -34,7 +34,7 @@
         { "strategy": "TRANSIENT", "type": "M4A", "id": "VOICES_010",    "description": "Voices 10",    "path": "LBA/VOX/%LANGVOICECODE%_010_AAC.VOX.zip" },
         { "strategy": "TRANSIENT", "type": "M4A", "id": "VOICES_011",    "description": "Voices 11",    "path": "LBA/VOX/%LANGVOICECODE%_011_AAC.VOX.zip" },
 
-        { "strategy": "TRANSIENT", "type": "MP4", "id": "VIDEO_INTRO",      "description": "Intro Sequence",           "path": "" },
+        { "strategy": "TRANSIENT", "type": "MP4", "id": "VIDEO_INTRO",      "description": "Intro Sequence" },
 
         { "strategy": "TRANSIENT", "type": "M4A", "id": "MUSIC_SCENE_0",    "description": "Music Scene 0",     "path": "LBA/MUSIC/mus_00.m4a" },
         { "strategy": "TRANSIENT", "type": "M4A", "id": "MUSIC_SCENE_1",    "description": "Music Scene 1",     "path": "LBA/MUSIC/mus_01.m4a" },
