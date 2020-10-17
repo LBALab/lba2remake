@@ -5,9 +5,9 @@ import { parseText } from './parsers/text';
 import { parseEntity, parseEntityLBA1 } from './parsers/entity';
 import { parseTextureRGBA } from './parsers/texture';
 import { parseBody } from './parsers/body';
-import { parseScene } from './parsers/scene';
+import { parseSceneMapLBA1, parseSceneMapLBA2, parseScene } from './parsers/scene';
 import { parseSpriteClipInfo, parseSprite, parseSpriteRaw } from './parsers/sprite';
-import { parseSceneMap, parseBrick } from './parsers/bricks';
+import { parseBrick } from './parsers/bricks';
 import { parseLibrary } from './parsers/libraries';
 import { parseGrid } from './parsers/grids';
 import { parseAnim } from './parsers/anim';
@@ -28,7 +28,8 @@ const ResourceTypes = {
     M4A: { type: 'M4A', description: 'MPEG 4 Audio', parser: NOP },
     LS1: { type: 'LS1', description: 'LBA1 Scene', parser: NOP },
     LS2: { type: 'LS2', description: 'LBA2 Scene', parser: parseScene },
-    LSM: { type: 'LSM', description: 'LBA2 Scene Map', parser: parseSceneMap },
+    SM1: { type: 'SM1', description: 'LBA1 Scene Map', parser: parseSceneMapLBA1 },
+    SM2: { type: 'SM2', description: 'LBA2 Scene Map', parser: parseSceneMapLBA2 },
     LSP: { type: 'LSP', description: 'LBA Sprite', parser: parseSprite },
     LSR: { type: 'LSR', description: 'LBA2 Sprite Raw', parser: parseSpriteRaw },
     SAD: { type: 'SAD', description: 'Sprites Clip Info', parser: parseSpriteClipInfo },

@@ -222,6 +222,10 @@ const register = (
         if (resource.loaded) {
             return;
         }
+        if (resource.path === undefined) {
+            resource.loaded = true;
+            return;
+        }
         if (!resource.loading) {
             resource.loading = new Promise(async (resolve) => {
                 if (resource.ref) {
@@ -280,7 +284,7 @@ const preloadResources = async () => {
     }
     const preload = [];
     for (const res of Object.values<Resource>(Resources)) {
-        if (res.strategy === ResourceStrategy.STATIC) {
+        if (res.path && res.strategy === ResourceStrategy.STATIC) {
             preload.push(res.load());
         }
     }

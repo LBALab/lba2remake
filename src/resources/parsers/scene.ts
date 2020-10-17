@@ -4,7 +4,41 @@ import  {WORLD_SCALE, getHtmlColor } from '../../utils/lba';
 import { Resource } from '../load';
 import { getPalette, getText } from '..';
 
-const parseScene = async (resource: Resource, index) => {
+// LBA1 does not have a scene map, so lets fake one
+export const parseSceneMapLBA1 = () => {
+    const map = [];
+    for (let i = 0; i < 120; i += 1) {
+        map.push({
+            isIsland: false,
+            index: i,
+        });
+    }
+    return map;
+};
+
+export const parseSceneMapLBA2 = (resource: Resource, index: number) => {
+    const buffer = resource.getEntry(index);
+    const data = new DataView(buffer);
+    let offset = 0;
+    const map = [];
+
+    while (true) {
+        const opcode = data.getUint8(offset);
+        const sceneIndex = data.getUint8(offset + 1);
+        offset += 2;
+        if (opcode === 0) {
+            break;
+        }
+
+        map.push({
+            isIsland: opcode === 2,
+            index: sceneIndex,
+        });
+    }
+    return map;
+};
+
+export const parseScene = async (resource: Resource, index) => {
     const buffer = resource.getEntry(index + 1); // first entry is not a scene
 
     const data = new DataView(buffer);
@@ -391,5 +425,3 @@ function parseStaticFlags(staticFlags) {
         noPreClipping: bits(staticFlags, 19, 1) === 1,
     };
 }
-
-export { parseScene };
