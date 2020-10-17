@@ -23,9 +23,11 @@ import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { createFPSCounter } from '../ui/vr/vrFPS';
 import { createVRGUI } from '../ui/vr/vrGUI';
 import { angleToRad, WORLD_SIZE } from '../utils/lba';
-import { makePure } from '../utils/debug';
 import { getVrFirstPersonCamera } from '../cameras/vr/vrFirstPerson';
 import { getScene, getSceneMap } from '../resources';
+import { pure } from '../utils/decorators';
+import { getParams } from '../params';
+import { Game } from './game';
 
 declare global {
     var ga: Function;
@@ -33,108 +35,114 @@ declare global {
 
 const {initSceneDebugData, loadSceneMetaData} = DBG;
 
-export async function createSceneManager(params, game, renderer, hideMenu: Function) {
-    let scene = null;
-    const sceneManager = {
-        sceneMap: null,
+export class SceneManager {
+    private scene: any;
+    private hideMenu: Function;
+    private game: Game;
+    private renderer: any;
+    private sceneMap: any;
 
-        getScene() {
-            return scene;
-        },
+    constructor(game, renderer, hideMenu: Function) {
+        this.game = game;
+        this.renderer = renderer;
+        this.hideMenu = hideMenu;
+    }
 
-        hideMenuAndGoto(index, wasPaused = false) {
-            hideMenu(wasPaused);
-            return this.goto(index, false, wasPaused);
-        },
+    @pure()
+    getScene() {
+        return this.scene;
+    }
 
-        async goto(index, force = false, wasPaused = false, teleport = true) {
-            if ((!force && scene && index === scene.index) || game.isLoading())
-                return scene;
+    hideMenuAndGoto(index, wasPaused = false) {
+        this.hideMenu(wasPaused);
+        return this.goto(index, false, wasPaused);
+    }
 
-            ga('set', 'page', `/scene/${index}`);
-            ga('send', 'pageview');
+    async goto(index, force = false, wasPaused = false, teleport = true) {
+        if ((!force && this.scene && index === this.scene.index) || this.game.isLoading())
+            return this.scene;
 
-            if (scene)
-                scene.isActive = false;
+        ga('set', 'page', `/scene/${index}`);
+        ga('send', 'pageview');
 
-            game.setUiState({ text: null, cinema: false });
-            game.controlsState.skipListener = null;
+        if (this.scene)
+            this.scene.isActive = false;
 
-            const hash = window.location.hash;
-            if (hash.match(/scene=\d+/)) {
-                window.location.hash = hash.replace(/scene=\d+/, `scene=${index}`);
-            }
+        this.game.setUiState({ text: null, cinema: false });
+        this.game.controlsState.skipListener = null;
 
-            const audio = game.getAudioManager();
-            if (scene && scene.sideScenes && index in scene.sideScenes) {
-                killActor(scene.actors[0]);
-                const sideScene = scene.sideScenes[index];
-                sideScene.sideScenes = scene.sideScenes;
-                delete sideScene.sideScenes[index];
-                delete scene.sideScenes;
-                sideScene.sideScenes[scene.index] = scene;
-                relocateHero(scene.actors[0], sideScene.actors[0], sideScene, teleport);
-                scene = sideScene;
-                reviveActor(scene.actors[0], game); // Awake twinsen
-                scene.isActive = true;
-                audio.stopMusicTheme();
-                audio.playMusic(scene.data.ambience.musicIndex);
-                initSceneDebugData();
-                return scene;
-            }
-            game.loading(index);
-            renderer.setClearColor(0x000000);
-            if (!this.sceneMap) {
-                this.sceneMap = await getSceneMap();
-            }
-            scene = await loadScene(
-                this,
-                params,
-                game,
-                renderer,
-                this.sceneMap,
-                index,
-                null
-            );
-            renderer.applySceneryProps(scene.scenery.props);
-            scene.isActive = true;
-            audio.stopMusicTheme();
-            audio.playMusic(scene.data.ambience.musicIndex);
-            initSceneDebugData();
-            scene.firstFrame = true;
-            if (params.editor) {
-                scene.savedState = game.getState().save(scene.actors[0]);
-            }
-            game.loaded(`scene #${index}`, wasPaused);
-            return scene;
-        },
-
-        async next() {
-            if (scene) {
-                const nextIdx = (scene.index + 1) % this.sceneMap.length;
-                return this.goto(nextIdx);
-            }
-        },
-
-        async previous() {
-            if (scene) {
-                const previousIdx = scene.index > 0 ? scene.index - 1 : this.sceneMap.length - 1;
-                return this.goto(previousIdx);
-            }
-        },
-
-        unloadScene() {
-            scene = null;
+        const hash = window.location.hash;
+        if (hash.match(/scene=\d+/)) {
+            window.location.hash = hash.replace(/scene=\d+/, `scene=${index}`);
         }
-    };
 
-    makePure(sceneManager.getScene);
+        const audio = this.game.getAudioManager();
+        if (this.scene && this.scene.sideScenes && index in this.scene.sideScenes) {
+            killActor(this.scene.actors[0]);
+            const sideScene = this.scene.sideScenes[index];
+            sideScene.sideScenes = this.scene.sideScenes;
+            delete sideScene.sideScenes[index];
+            delete this.scene.sideScenes;
+            sideScene.sideScenes[this.scene.index] = this.scene;
+            relocateHero(this.scene.actors[0], sideScene.actors[0], sideScene, teleport);
+            this.scene = sideScene;
+            reviveActor(this.scene.actors[0], this.game); // Awake twinsen
+            this.scene.isActive = true;
+            audio.stopMusicTheme();
+            audio.playMusic(this.scene.data.ambience.musicIndex);
+            initSceneDebugData();
+            return this.scene;
+        }
+        this.game.loading(index);
+        this.renderer.setClearColor(0x000000);
+        if (!this.sceneMap) {
+            this.sceneMap = await getSceneMap();
+        }
+        this.scene = await loadScene(
+            this,
+            this.game,
+            this.renderer,
+            this.sceneMap,
+            index,
+            null
+        );
+        this.renderer.applySceneryProps(this.scene.scenery.props);
+        this.scene.isActive = true;
+        audio.stopMusicTheme();
+        audio.playMusic(this.scene.data.ambience.musicIndex);
+        initSceneDebugData();
+        this.scene.firstFrame = true;
+        if (getParams().editor) {
+            this.scene.savedState = this.game.getState().save(this.scene.actors[0]);
+        }
+        this.game.loaded(`scene #${index}`, wasPaused);
+        return this.scene;
+    }
 
-    return sceneManager;
+    async next() {
+        if (this.scene) {
+            const nextIdx = (this.scene.index + 1) % this.sceneMap.length;
+            return this.goto(nextIdx);
+        }
+    }
+
+    async previous() {
+        if (this.scene) {
+            const previousIdx = this.scene.index > 0
+                ? this.scene.index - 1
+                : this.sceneMap.length - 1;
+            return this.goto(previousIdx);
+        }
+    }
+
+    unloadScene() {
+        this.scene = null;
+    }
 }
 
-async function loadScene(sceneManager, params, game, renderer, sceneMap, index, parent) {
+async function loadScene(sceneManager, game, renderer, sceneMap, index, parent) {
     const sceneData = await getScene(index);
+    const params = getParams();
     const modelReplacements = await loadModelReplacements();
     if (params.editor) {
         await loadSceneMetaData(index);
@@ -156,7 +164,6 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         sceneData.actors,
         actor => loadActor(
             game,
-            params,
             is3DCam,
             envInfo,
             sceneData.ambience,
@@ -307,7 +314,6 @@ async function loadScene(sceneManager, params, game, renderer, sceneMap, index, 
         if (!parent) {
             scene.sideScenes = await loadSideScenes(
                 sceneManager,
-                params,
                 game,
                 renderer,
                 sceneMap,
@@ -352,7 +358,6 @@ function loadSceneNode(index, indexInfo, scenery, actors, zones, points, editor)
 }
 
 async function loadSideScenes(sceneManager,
-                                params,
                                 game,
                                 renderer,
                                 sceneMap,
@@ -379,7 +384,6 @@ async function loadSideScenes(sceneManager,
         sideIndices,
         async sideIndex => loadScene(
             sceneManager,
-            params,
             game,
             renderer,
             sceneMap,

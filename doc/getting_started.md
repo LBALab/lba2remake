@@ -60,6 +60,8 @@ You can now start editing the code and refresh the page to see the result (the d
 
 Once your development environment is up and running, you can check the [architecture](architecture.md) guide to learn more about how the project is organized.
 
+If you want to contribute to the project as an artist, you can check the [art workflow](art_workflow.md) document to learn about the art workflow.
+
 ## Manual Import
 
 Only do this step if the import script failed (that means you have some other version than Steam or GoG. But if you have Steam or GoG version, make sure to update it to the latest before runing the import script, as it usually helps)

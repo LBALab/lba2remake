@@ -3,11 +3,13 @@
 import fs from 'fs';
 import path from 'path';
 import FFmpeg from 'ffmpeg-cli';
+import synth from 'synth-js';
 
 import { readHqrHeader, readHqrEntry } from '../../src/utils/hqr/hqr_reader';
 import { readFromFile, writeToFile } from '../../src/utils/hqr/array_buffer_fs';
 import { writeOpenHqr } from '../../src/utils/hqr/open_hqr_writer';
-import { removeFile } from '../../src/utils/fsutils';
+import { removeFile, createFolderIfNotExists } from '../../src/utils/fsutils';
+import { detectVersion, PathDefinitions } from './unpack';
 
 const introVideoIndex = 17;
 const videoLanguageTracks = {
@@ -17,7 +19,12 @@ const videoLanguageTracks = {
     music: 1
 };
 
-const videoConvertor = async () => {
+const videoConvertor = async (game) => {
+    if (game === 'LBA') {
+        // TODO FLA converter
+        return;
+    }
+
     const videoFolderPath = path.normalize('./www/data/LBA2/VIDEO/');
     const videoHqrPath = `${videoFolderPath}VIDEO.HQR`;
 
@@ -65,14 +72,14 @@ const readBitrateArguments = () => {
         console.warn('Not specified bitrate. Will use 128k');
         return 128;
     }
-    return parseInt(process.argv[3], 10);
+    return parseInt(process.argv[4], 10);
 };
 
 const readFilePathFromArguments = () => {
     if (process.argv.length < 4) {
         throw 'Not specified file path';
     }
-    return process.argv[3];
+    return process.argv[4];
 };
 
 const convertToMp4 = async (languageTrack: number, inputFilePath: string, outputFilePath: string) => {
@@ -89,8 +96,13 @@ const convertToMp4 = async (languageTrack: number, inputFilePath: string, output
     }
 };
 
-const musicConvertor = async () => {
-    const folderPath = path.normalize('./www/data/LBA2/MUSIC/');
+const musicConvertor = async (game) => {
+    if (game === 'LBA') {
+        midiConvertor(game);
+        return;
+    }
+
+    const folderPath = path.normalize(`./www/data/${game}/MUSIC/`);
     const files = fs.readdirSync(folderPath);
     const extensions = {'.wav': 1, '.ogg': 1};
     const filesToConvert = files.filter(file => path.extname(file).toLowerCase() in extensions);
@@ -102,21 +114,52 @@ const musicConvertor = async () => {
         const outputFileName = getOutputMusicFileName(file);
         const outputFilePath = `${folderPath}${outputFileName}`;
 
-        if (file.toLowerCase().endsWith("ogg")) {
+        if (file.toLowerCase().endsWith('ogg')) {
             // For some reason using FFMPEG to directly convert from ogg to aac
             // causes the web audio API implementation in Chrome to stutter
             // when playing back the audio. To get around this, first convert
             // the ogg to a wav, and then run the usual m4a conversion on that
             // resulting wav file...
-            const wavOutputFile = outputFileName.replace("m4a", "wav");
+            const wavOutputFile = outputFileName.replace('m4a', 'wav');
             await convertToWavAudio(inputFile, wavOutputFile);
             await convertToM4aAudio(wavOutputFile, outputFilePath, bitrate);
             removeFile(wavOutputFile);
             continue;
         }
-        
+
         await convertToM4aAudio(inputFile, outputFilePath, bitrate);
     }
+};
+
+const midiConvertor = async (game) => {
+    // mi_win for now until we find a way to convert xmidi to midi
+    const filePath = path.normalize(`./www/data/${game}/Midi_mi_win.hqr`);
+    if (!fs.existsSync(filePath)) {
+        return;
+    }
+    const outputFile = path.normalize(`./www/data/${game}/MIDI_AAC.HQR.zip`);
+    const outputMusicFolder = path.normalize(`./www/data/${game}/MUSIC`);
+    createFolderIfNotExists(outputMusicFolder);
+    const bitrate = readBitrateArguments();
+    await writeOpenHqr(filePath, outputFile, false, async (index, folder, entry, buffer) => {
+        const baseFileName = `mus_${(index).toString().padStart(2, '0')}`;
+        const originalFileName = `${baseFileName}.wav`;
+        const originalFilePath = `${folder}${originalFileName}`;
+        const wavBuffer = synth.midiToWav(buffer).toBuffer();
+        writeToFile(originalFilePath, wavBuffer);
+
+        const outputFileName =  `${baseFileName}.m4a`;
+        const outputFilePath = `${folder}${outputFileName}`;
+
+        console.log('Processing HQR entry ', entry);
+
+        await convertToM4aAudio(originalFilePath, outputFilePath, bitrate);
+        fs.copyFileSync(outputFilePath, path.normalize(`${outputMusicFolder}/${outputFileName}`));
+        if (fs.existsSync(outputFilePath)) {
+            fs.unlinkSync(originalFilePath);
+        }
+        return outputFileName;
+    });
 };
 
 const getBaseName = (fileName: string) => {
@@ -130,8 +173,8 @@ const getOutputMusicFileName = (fileName: string) => {
     return `${getBaseName(fileName)}.m4a`;
 };
 
-const voiceConvertor = async () => {
-    const folderPath = path.normalize('./www/data/LBA2/VOX/');
+const voiceConvertor = async (game) => {
+    const folderPath = path.normalize(`./www/data/${game}/VOX/`);
     const files = fs.readdirSync(folderPath);
     const bitrate = readBitrateArguments();
     const filesToConvert = files.filter(file =>
@@ -146,10 +189,16 @@ const voiceConvertor = async () => {
         const outputFile = `${folderPath}${nameOnly}_AAC.VOX.zip`;
         await writeOpenHqr(inputFile, outputFile, true, async (index, folder, entry, buffer) => {
             // Restoring RIFF in header because LBA format has 0 instead of first R
-            new Uint8Array(buffer)[0] = 0x52;
+            if (game === 'LBA2') {
+                new Uint8Array(buffer)[0] = 0x52;
+            }
+            // Fixed VOC first byte
+            if (game === 'LBA') {
+                new Uint8Array(buffer)[0] = 0x43;
+            }
 
             const baseFileName = `voice_${(index + 1).toString().padStart(3, '0')}`;
-            const originalFileName = `${baseFileName}.wav`;
+            const originalFileName = game === 'LBA' ? `${baseFileName}.voc` : `${baseFileName}.wav`;
             const originalFilePath = `${folder}${originalFileName}`;
             writeToFile(originalFilePath, buffer);
 
@@ -167,16 +216,18 @@ const voiceConvertor = async () => {
     }
 };
 
-const samplesConvertor = async () => {
-    const filePath = path.normalize('./www/data/LBA2/SAMPLES.HQR');
-    const outputFile = path.normalize('./www/data/LBA2/SAMPLES_AAC.HQR.zip');
+const samplesConvertor = async (game) => {
+    const filePath = path.normalize(`./www/data/${game}/SAMPLES.HQR`);
+    const outputFile = path.normalize(`./www/data/${game}/SAMPLES_AAC.HQR.zip`);
     const bitrate = readBitrateArguments();
     await writeOpenHqr(filePath, outputFile, false, async (index, folder, entry, buffer) => {
         // Restoring RIFF in header because LBA format has 0 instead of first R
-        new Uint8Array(buffer)[0] = 0x52;
+        if (game === 'LBA2') {
+            new Uint8Array(buffer)[0] = 0x52;
+        }
 
         const baseFileName = `sfx_${(index + 1).toString().padStart(3, '0')}`;
-        const originalFileName = `${baseFileName}.wav`;
+        const originalFileName = game === 'LBA' ? `${baseFileName}.voc` : `${baseFileName}.wav`;
         const originalFilePath = `${folder}${originalFileName}`;
         writeToFile(originalFilePath, buffer);
 
@@ -225,7 +276,10 @@ const convertors = {
 };
 
 const convert = () => {
-    const convertorName = process.argv[2];
+    const gameFolder = process.argv[2];
+    const version = detectVersion(gameFolder, null);
+    const { game } = PathDefinitions[version];
+    const convertorName = process.argv[3];
     if (!convertorName) {
         console.error(`Please provide argument for convertor. Supported: ${Object.keys(convertors)}`);
         return;
@@ -235,7 +289,7 @@ const convert = () => {
         console.error(`Not supported convertor type: ${convertorName}; Supported: ${Object.keys(convertors)}`);
         return;
     }
-    convertor();
+    convertor(game);
 };
 
 convert();

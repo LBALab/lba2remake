@@ -10,6 +10,7 @@ import { processAnimAction } from './animAction';
 import { Time } from '../../datatypes';
 import { AnimType } from '../data/animType';
 import { getAnimationsSync } from '../../resources';
+import { Game } from '../game';
 
 const ACTOR_POS = new THREE.Vector3();
 const HIDE_DISTANCE = 50;
@@ -17,7 +18,7 @@ const HIDE_DISTANCE2 = HIDE_DISTANCE * HIDE_DISTANCE;
 
 export function updateActor(
     params: any,
-    game: any,
+    game: Game,
     scene: any,
     actor: Actor,
     time: any
@@ -176,7 +177,7 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
     }
 }
 
-function updateModel(game: any,
+function updateModel(game: Game,
                      scene: any,
                      model: any,
                      actor: Actor,

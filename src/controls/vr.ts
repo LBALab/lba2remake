@@ -6,6 +6,9 @@ import ControllerModel from './vr/ControllerModel';
 import { createMotionController } from './vr/utils';
 import { debugProfiles, updateDebug } from './vr/debugProfiles';
 import { getControllerMappings, applyMappings, Mappings } from './vr/mappings';
+import { getParams } from '../params';
+import { SceneManager } from '../game/sceneManager';
+import { Game } from '../game/game';
 
 // Time in ms we sample the change is position to determine controller velocity.
 const VELOCITY_UPDATE_TIME = 100;
@@ -27,12 +30,12 @@ export class VRControls {
     triggered: boolean;
     skipping: boolean;
 
-    constructor(params: any, sceneManager: any, game: any, renderer: any) {
+    constructor(sceneManager: SceneManager, game: Game, renderer: any) {
         this.xr = renderer.threeRenderer.xr;
         this.ctx = {
             sceneManager,
             game,
-            params,
+            params: getParams(),
             state: {}
         };
         this.controllers = {};
@@ -43,7 +46,7 @@ export class VRControls {
         this.onInputSourcesChange = this.onInputSourcesChange.bind(this);
         this.initializeVRController(0);
         this.initializeVRController(1);
-        if (params.vrCtrlDBG) {
+        if (this.ctx.params.vrCtrlDBG) {
             debugProfiles(this);
         }
     }

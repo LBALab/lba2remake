@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef, Component } from 'react';
 import '../styles/behaviour.scss';
 import useMedia from '../hooks/useMedia';
 import { BehaviourMode as BehaviourModeType } from '../../game/loop/hero';
-import { MAX_LIFE } from '../../game/state';
+import { MAX_LIFE } from '../../game/gameState';
 
 import { loadAnimState } from '../../model/animState';
 import {
@@ -14,6 +14,7 @@ import {
     updateAnimModel,
     loadSceneModel,
 } from './overlay';
+import { Game } from '../../game/game';
 
 interface IBehaviourMenuClover {
     boxes: number;
@@ -27,8 +28,8 @@ interface IBehaviourMenuMagicBall {
 }
 
 interface IBehaviourMenuProps {
-    game: any;
-    sceneManager: any;
+    game: Game;
+    scene: any;
 }
 
 interface IBehaviourMenu {
@@ -53,20 +54,20 @@ interface IBehaviourItem {
 let clock = null;
 let canvas = null;
 let renderer = null;
-const scene = [];
+const bScenes = [];
 const model = [];
 const animState = [];
 
 const initBehaviourRenderer = async () => {
-    scene.push(createOverlayScene());
-    scene.push(createOverlayScene());
-    scene.push(createOverlayScene());
-    scene.push(createOverlayScene());
-    scene.push(createOverlayScene());
-    scene.push({}); // 5
-    scene.push(createOverlayScene());
-    scene.push({}); // 7
-    scene.push(createOverlayScene());
+    bScenes.push(createOverlayScene());
+    bScenes.push(createOverlayScene());
+    bScenes.push(createOverlayScene());
+    bScenes.push(createOverlayScene());
+    bScenes.push(createOverlayScene());
+    bScenes.push({}); // 5
+    bScenes.push(createOverlayScene());
+    bScenes.push({}); // 7
+    bScenes.push(createOverlayScene());
 
     if (!clock) {
         clock = createOverlayClock();
@@ -91,7 +92,7 @@ const renderLoop = (time, behaviour, selected, item) => {
     }
 
     const anims = animState[behaviour];
-    const s = scene[behaviour];
+    const s = bScenes[behaviour];
 
     const canvasClip = canvas.getBoundingClientRect();
     const { left, bottom, width, height } = item.current.getBoundingClientRect();
@@ -222,7 +223,7 @@ const BehaviourClovers = ({ boxes, leafs}: IBehaviourMenuClover) => {
     );
 };
 
-const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
+const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
     const {
         life,
         money,
@@ -362,14 +363,14 @@ const BehaviourMenu = ({ game, sceneManager }: IBehaviourMenuProps) => {
 
     const loadUpdateModel = async (b) => {
         // reset camera angle based on hero angle in the scene
-        const heroAngle = sceneManager.actors[0].physics.temp.angle;
-        scene[b].camera.setAngle(heroAngle + Math.PI - (Math.PI / 4));
-        const bodyIndex = sceneManager.actors[0].props.bodyIndex;
+        const heroAngle = scene.actors[0].physics.temp.angle;
+        bScenes[b].camera.setAngle(heroAngle + Math.PI - (Math.PI / 4));
+        const bodyIndex = scene.actors[0].props.bodyIndex;
         // load models
         if (!animState[b]) {
             animState[b] = loadAnimState();
         }
-        model[b] = await loadSceneModel(scene[b], b, bodyIndex, animState[b]);
+        model[b] = await loadSceneModel(bScenes[b], b, bodyIndex, animState[b]);
         updateAnimModel(
             model[b],
             animState[b],
