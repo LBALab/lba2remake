@@ -63,10 +63,10 @@ const parseEntity = (resource: Resource) => {
     return entities;
 };
 
-const parseEntityLBA1 = (resource: Resource, index: number) => {
+const parseEntityLBA1 = (resource: Resource) => {
     const entities = [];
     for (let i = 0; i < resource.length; i += 1) {
-        const buffer = resource.getEntry(index);
+        const buffer = resource.getEntry(i);
         const entity = loadEntityEntry(buffer, 0, i);
         entities.push(entity);
     }
