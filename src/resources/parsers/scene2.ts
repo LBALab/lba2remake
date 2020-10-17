@@ -110,7 +110,7 @@ function loadHero(scene, offset) {
         speed: 5,
         dirMode: DirMode.MANUAL,
         runtimeFlags: createRuntimeFlags(),
-        flags: initHeroFlags,
+        flags: initHeroFlags(),
         moveScriptSize: 0,
         moveScript: null,
         lifeScriptSize: 0,
