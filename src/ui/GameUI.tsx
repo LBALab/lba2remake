@@ -640,7 +640,6 @@ export default class GameUI extends FrameListener<GameUIProps, GameUIState> {
             <Menu
                 params={this.props.params}
                 showMenu={showMenu && !teleportMenu}
-                texts={game.menuTexts}
                 inGameMenu={inGameMenu}
                 onItemChanged={this.onMenuItemChanged}
             />

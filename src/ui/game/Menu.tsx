@@ -14,23 +14,22 @@ interface Item {
 }
 
 const menuItems: Item[] = [
-    { item: 'ResumeGame', index: 70, isVisible: false, isEnabled: true, textId: null },
-    { item: 'NewGame', index: 71, isVisible: true, isEnabled: true, textId: null },
-    { item: 'LoadGame', index: 72, isVisible: false, isEnabled: false, textId: null },
-    { item: 'SaveGame', index: 73, isVisible: false, isEnabled: false, textId: null },
+    { item: 'ResumeGame', index: 70, isVisible: false, isEnabled: true, textId: 'resumeGame' },
+    { item: 'NewGame', index: 71, isVisible: true, isEnabled: true, textId: 'newGame' },
+    { item: 'LoadGame', index: 72, isVisible: false, isEnabled: false, textId: 'loadGame' },
+    { item: 'SaveGame', index: 73, isVisible: false, isEnabled: false, textId: 'saveGame' },
     { item: 'Teleport', index: -1, isVisible: true, isEnabled: true, textId: 'teleport' },
     { item: 'Editor', index: -2, isVisible: true, isEnabled: true, textId: 'editor' },
     { item: 'ExitEditor', index: -3, isVisible: true, isEnabled: true, textId: 'exitEditor' },
     { item: 'Iso3D', index: -4, isVisible: true, isEnabled: true, textId: 'iso3d' },
     { item: 'Iso3DDisable', index: -5, isVisible: true, isEnabled: true, textId: 'iso3dDisable' },
-    // { item: 'Options', index: 74, isVisible: true, isEnabled: false, textId: null },
-    { item: 'Quit', index: 75, isVisible: false, isEnabled: false, textId: null },
+    // { item: 'Options', index: 74, isVisible: true, isEnabled: false, textId: 'options' },
+    { item: 'Quit', index: 75, isVisible: false, isEnabled: false, textId: 'quit' },
 ];
 
 interface MProps {
     showMenu: boolean;
     inGameMenu: boolean;
-    texts?: any[];
     params?: any;
     onItemChanged: (id: number) => void;
 }
@@ -65,11 +64,7 @@ export default class Menu extends React.Component<MProps, MState> {
             menu[8].isVisible = newProps.params.iso3d;
             const items = filter(menu, 'isVisible');
             each(items, (i) => {
-                if (i.textId) {
-                    i.text = tr(i.textId);
-                } else {
-                    i.text = newProps.texts[i.index].value;
-                }
+                i.text = tr(i.textId);
             });
             this.setState({items, selectedIndex: 0});
         }
