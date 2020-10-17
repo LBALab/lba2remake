@@ -96,22 +96,6 @@ export class SceneManager {
         return this.scene;
     }
 
-    async next() {
-        if (this.scene) {
-            const nextIdx = (this.scene.index + 1) % this.sceneMap.length;
-            return this.goto(nextIdx);
-        }
-    }
-
-    async previous() {
-        if (this.scene) {
-            const previousIdx = this.scene.index > 0
-                ? this.scene.index - 1
-                : this.sceneMap.length - 1;
-            return this.goto(previousIdx);
-        }
-    }
-
     unloadScene() {
         this.scene = null;
     }

@@ -121,19 +121,6 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
             game.controlsState.cameraSpeed.x = -1;
             break;
 
-        case 34: // pagedown
-        case 'PageDown':
-            if (params.editor) {
-                sceneManager.next();
-            }
-            break;
-        case 33: // pageup
-        case 'PageUp':
-            if (params.editor) {
-                sceneManager.previous();
-            }
-            break;
-
         case 70: // f
         case 'KeyF':
             switchStats();
