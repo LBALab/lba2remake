@@ -4,6 +4,7 @@ import { getParams } from '../params';
 import { Game } from './Game';
 import * as DBG from '../ui/editor/DebugData';
 import { Scene, relocateHero } from './Scene';
+import Renderer from '../renderer';
 
 declare global {
     var ga: Function;
@@ -12,10 +13,10 @@ declare global {
 const { initSceneDebugData } = DBG;
 
 export class SceneManager {
-    private scene: any;
+    private scene: Scene;
     private hideMenu: Function;
     private game: Game;
-    private renderer: any;
+    private renderer: Renderer;
 
     constructor(game, renderer, hideMenu: Function) {
         this.game = game;
@@ -54,7 +55,7 @@ export class SceneManager {
         const audio = this.game.getAudioManager();
         if (this.scene && this.scene.sideScenes && index in this.scene.sideScenes) {
             killActor(this.scene.actors[0]);
-            const sideScene = this.scene.sideScenes[index];
+            const sideScene = this.scene.sideScenes[index] as Scene;
             sideScene.sideScenes = this.scene.sideScenes;
             delete sideScene.sideScenes[index];
             delete this.scene.sideScenes;

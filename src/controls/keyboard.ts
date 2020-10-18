@@ -3,9 +3,10 @@ import {switchStats} from '../renderer/stats';
 import {BehaviourMode} from '../game/loop/hero';
 import { SceneManager } from '../game/SceneManager';
 import { Game } from '../game/Game';
+import { Params } from '../params';
 
-export function makeKeyboardControls(params: any,
-                                     elem: any,
+export function makeKeyboardControls(params: Params,
+                                     elem: HTMLElement,
                                      sceneManager: SceneManager,
                                      game: Game) {
     const onKeyDown = keyDownHandler.bind(null, params, game, sceneManager);

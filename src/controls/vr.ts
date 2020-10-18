@@ -9,6 +9,7 @@ import { getControllerMappings, applyMappings, Mappings } from './vr/mappings';
 import { getParams } from '../params';
 import { SceneManager } from '../game/SceneManager';
 import { Game } from '../game/Game';
+import Renderer from '../renderer';
 
 // Time in ms we sample the change is position to determine controller velocity.
 const VELOCITY_UPDATE_TIME = 100;
@@ -30,7 +31,7 @@ export class VRControls {
     triggered: boolean;
     skipping: boolean;
 
-    constructor(sceneManager: SceneManager, game: Game, renderer: any) {
+    constructor(sceneManager: SceneManager, game: Game, renderer: Renderer) {
         this.xr = renderer.threeRenderer.xr;
         this.ctx = {
             sceneManager,
