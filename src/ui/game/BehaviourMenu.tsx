@@ -15,6 +15,7 @@ import {
     loadSceneModel,
 } from './overlay';
 import { Game } from '../../game/Game';
+import Scene from '../../game/Scene';
 
 interface IBehaviourMenuClover {
     boxes: number;
@@ -29,7 +30,7 @@ interface IBehaviourMenuMagicBall {
 
 interface IBehaviourMenuProps {
     game: Game;
-    scene: any;
+    scene: Scene;
 }
 
 interface IBehaviourMenu {

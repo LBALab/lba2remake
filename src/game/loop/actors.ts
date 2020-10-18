@@ -11,6 +11,7 @@ import { Time } from '../../datatypes';
 import { AnimType } from '../data/animType';
 import { getAnimationsSync } from '../../resources';
 import { Game } from '../Game';
+import Scene from '../Scene';
 
 const ACTOR_POS = new THREE.Vector3();
 const HIDE_DISTANCE = 50;
@@ -19,7 +20,7 @@ const HIDE_DISTANCE2 = HIDE_DISTANCE * HIDE_DISTANCE;
 export function updateActor(
     params: any,
     game: Game,
-    scene: any,
+    scene: Scene,
     actor: Actor,
     time: any
 ) {
@@ -178,7 +179,7 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
 }
 
 function updateModel(game: Game,
-                     scene: any,
+                     scene: Scene,
                      model: any,
                      actor: Actor,
                      animState: any,

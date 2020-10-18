@@ -3,6 +3,7 @@ import { each } from 'lodash';
 import { loadSceneMetaData, getObjectName } from '../../../../DebugData';
 import { parseScript } from '../../../../../../scripting/parser';
 import { getScene } from '../../../../../../resources';
+import Scene from '../../../../../../game/Scene';
 
 export async function forEachScene(callback) {
     for (let idx = 0; idx < 222; idx += 1) {
@@ -15,7 +16,7 @@ export async function forEachScene(callback) {
 }
 
 interface ScriptCallback {
-    (script: any, actor: any, scene: any, type: string): void;
+    (script: any, actor: any, scene: Scene, type: string): void;
 }
 
 export async function forEachScript(callback: ScriptCallback, type = null) {

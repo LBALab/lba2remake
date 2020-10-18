@@ -6,6 +6,7 @@ import {getDebugListing} from './listing';
 import DebugData from '../../../../DebugData';
 import { TickerProps } from '../../../../../utils/Ticker';
 import { scopeColors } from '../blocks/blocksLibrary/utils';
+import Scene from '../../../../../../game/Scene';
 
 const defaultSplitDistance = 60;
 
@@ -56,7 +57,7 @@ export default class TextEditor extends FrameListener<Props, State> {
     };
     separatorRef: HTMLElement;
     rootRef: HTMLElement;
-    scene: any;
+    scene: Scene;
     actor: any;
     scrollElem: HTMLElement;
 
