@@ -112,7 +112,7 @@ export const DirMode = {
 export async function loadActor(
     game: Game,
     is3DCam: boolean,
-    envInfo: any,
+    scenery: any,
     ambience: any,
     props: ActorProps,
     isSideScene: boolean,
@@ -228,7 +228,7 @@ export async function loadActor(
                     bodyIndex,
                     animIndex,
                     this.animState,
-                    envInfo,
+                    scenery.props.envInfo,
                     ambience
                 );
                 if (model !== null) {

@@ -6,282 +6,285 @@ import {
 } from 'lodash';
 
 import islandSceneMapping from '../island/data/sceneMapping';
-import { loadIslandScenery, getEnvInfo } from '../island';
-import { loadIsometricScenery } from '../iso';
 import { loadActor, DirMode } from './actors';
 import { loadPoint } from './points';
 import { loadZone } from './zones';
 import { loadScripts } from '../scripting';
 import { killActor } from './scripting';
-import { sBind } from '../utils';
-import { get3DCamera } from '../cameras/3d';
-import { getIsometricCamera } from '../cameras/iso';
-import { getIso3DCamera } from '../cameras/iso3d';
-import { getVR3DCamera } from '../cameras/vr/vr3d';
-import { getVRIsoCamera } from '../cameras/vr/vrIso';
 import { createFPSCounter } from '../ui/vr/vrFPS';
 import { createVRGUI } from '../ui/vr/vrGUI';
 import { angleToRad, WORLD_SIZE } from '../utils/lba';
-import { getVrFirstPersonCamera } from '../cameras/vr/vrFirstPerson';
 import { getScene, getSceneMap } from '../resources';
 import { getParams } from '../params';
 import DebugData, { loadSceneMetaData } from '../ui/editor/DebugData';
+import { Game } from './Game';
+import Renderer from '../renderer';
+import { selectCamera } from './scene/camera';
+import { loadScenery } from './scene/scenery';
+import { SceneManager } from './SceneManager';
 
-export async function loadScene(sceneManager, game, renderer, index, parent) {
-    const sceneData = await getScene(index);
-    const params = getParams();
-    const modelReplacements = await loadModelReplacements();
-    if (params.editor) {
-        await loadSceneMetaData(index);
-    }
-    let islandName;
-    if (sceneData.isIsland) {
-        islandName = islandSceneMapping[index].island;
-        if (game.getState().flags.quest[152] && islandName === 'CITABAU') {
-            islandName = 'CITADEL';
-        }
-    }
-    const envInfo = sceneData.isIsland ? getEnvInfo(islandName) : {
-        skyColor: [0, 0, 0],
-        fogDensity: 0,
+interface Entities {
+    readonly actors: any[];
+    readonly zones: any[];
+    readonly points: any[];
+}
+
+export class Scene {
+    readonly index: number;
+    readonly data: any;
+    readonly game: Game;
+    readonly renderer: Renderer;
+    readonly camera: any;
+    readonly actors: any[];
+    readonly zones: any[];
+    readonly points: any[];
+    readonly sceneNode: THREE.Object3D;
+    vrGUI?: THREE.Object3D;
+    readonly threeScene: THREE.Scene;
+    private savedState: string;
+    private sceneManager: SceneManager;
+    firstFrame: boolean;
+    variables: number[];
+    usedVarGames: number[];
+    readonly scenery: any;
+    sideScenes: Map<number, Scene>;
+    extras: any[];
+    isActive: boolean;
+    zoneState: {
+        listener?: Function;
+        ended: boolean;
     };
-    const is3DCam = sceneData.isIsland || renderer.vr || params.iso3d;
-    const actors = await Promise.all(map(
-        sceneData.actors,
-        actor => loadActor(
-            game,
-            is3DCam,
-            envInfo,
-            sceneData.ambience,
-            actor,
-            parent,
-            modelReplacements
-        )
-    ));
-    const points = map(sceneData.points, props => loadPoint(props));
-    const zones = map(sceneData.zones, props => loadZone(props, is3DCam, params.editor));
+    vr: boolean;
+    is3DCam: boolean;
 
-    let scenery = null;
-    let threeScene = null;
-    let camera = null;
-    let vrGUI = null;
-    if (!parent) {
-        threeScene = new THREE.Scene();
-        threeScene.matrixAutoUpdate = false;
-        makeLight(threeScene, sceneData.ambience);
-        if (sceneData.isIsland) {
-            scenery = await loadIslandScenery(params, islandName, sceneData.ambience);
-            threeScene.name = '3D_scene';
-            if (renderer.vr) {
-                if (game.controlsState.firstPerson) {
-                    camera = getVrFirstPersonCamera(renderer);
-                } else {
-                    camera = getVR3DCamera(renderer);
-                }
-            } else {
-                camera = get3DCamera();
-            }
-        } else {
-            const useReplacements = renderer.vr || params.iso3d || params.isoCam3d;
-            scenery = await loadIsometricScenery(
-                sceneData.index,
-                sceneData.ambience,
-                useReplacements,
-                actors.length
-            );
-            threeScene.name = 'iso_scene';
-            if (renderer.vr) {
-                if (game.controlsState.firstPerson) {
-                    camera = getVrFirstPersonCamera(renderer);
-                } else {
-                    camera = getVRIsoCamera(renderer);
-                }
-            } else if (params.iso3d || params.isoCam3d) {
-                camera = params.isoCam3d
-                    ? get3DCamera()
-                    : getIso3DCamera();
-            } else {
-                camera = getIsometricCamera();
-            }
+    static async load(
+        game: Game,
+        renderer: Renderer,
+        sceneManager: SceneManager,
+        index: number,
+        parent: Scene = null
+    ): Promise<Scene> {
+        const data = await getScene(index);
+        const params = getParams();
+        const modelReplacements = await loadModelReplacements();
+        if (params.editor) {
+            await loadSceneMetaData(index);
         }
-        if (camera.controlNode) {
-            threeScene.add(camera.controlNode);
-            if (renderer.vr) {
-                const fps = createFPSCounter(renderer);
-                fps.visible = false;
-                camera.controlNode.add(fps);
-                vrGUI = createVRGUI();
-                camera.controlNode.add(vrGUI);
-            }
-        }
-        threeScene.add(scenery.threeObject);
-    } else {
-        scenery = parent.scenery;
-        threeScene = parent.threeScene;
-        camera = parent.camera;
-    }
+        const scenery = parent
+            ? parent.scenery
+            : await loadScenery(game, renderer, data);
+        const is3DCam = data.isIsland || renderer.vr || params.iso3d;
+        const entities = {
+            actors: await Promise.all(map(
+                data.actors,
+                actor => loadActor(
+                    game,
+                    is3DCam,
+                    scenery,
+                    data.ambience,
+                    actor,
+                    !!parent,
+                    modelReplacements
+                )
+            )),
+            zones: map(data.zones, props => loadZone(props, is3DCam, params.editor)),
+            points: map(data.points, props => loadPoint(props)),
+        };
 
-    const sceneNode = loadSceneNode(
-        sceneData,
-        scenery,
-        actors,
-        zones,
-        points,
-        params.editor
-    );
-    threeScene.add(sceneNode);
-    const scene = {
-        index,
-        data: sceneData,
-        camera,
-        threeScene,
-        sceneNode,
-        scenery,
-        parentScene: parent,
-        sideScenes: null,
-        actors,
-        points,
-        zones,
-        extras: [],
-        isActive: false,
-        firstFrame: false,
-        variables: null,
-        section: null,
-        usedVarGames: null,
-        zoneState: { listener: null, ended: false },
-        goto: sBind(sceneManager.goto, sceneManager),
-        vr: renderer.vr,
-        vrGUI,
-        is3DCam,
-        savedState: null,
-        envInfo,
+        const scene = new Scene(game, renderer, sceneManager, data, scenery, entities, parent);
 
-        reset() {
-            if (params.editor) {
-                game.getState().load(scene.savedState, scene.actors[0]);
-                game.setUiState({ text: null, cinema: false });
-                scene.variables = createSceneVariables(scene);
-                each(this.actors, (actor) => {
-                    actor.reset(this);
-                });
-                scene.firstFrame = true;
-                if (game.isPaused()) {
-                    DebugData.step = true;
-                }
-            }
-        },
-
-        resetCamera(newParams) {
-            if (!scene.data.isIsland) {
-                if (!renderer.vr) {
-                    if (newParams.iso3d) {
-                        scene.camera = getIso3DCamera();
-                    } else {
-                        scene.camera = getIsometricCamera();
-                    }
-                }
-                scene.camera.init(scene, game.controlsState);
-            }
-        },
-
-        removeMesh(threeObject) {
-            sceneNode.remove(threeObject);
-        },
-
-        addMesh(threeObject) {
-            sceneNode.add(threeObject);
-        }
-    };
-    if (scene.data.isIsland) {
-        scene.section = islandSceneMapping[index].section;
-        if (!parent) {
-            scene.sideScenes = await loadSideScenes(
-                sceneManager,
+        if (data.isIsland && !parent) {
+            scene.sideScenes = await Scene.loadSideScenes(
                 game,
                 renderer,
+                sceneManager,
                 index,
                 scene
             );
         }
+        return scene;
     }
-    loadScripts(game, scene);
-    scene.variables = createSceneVariables(scene);
-    scene.usedVarGames = findUsedVarGames(scene);
-    // Kill twinsen if side scene
-    if (parent) {
-        killActor(scene.actors[0]);
-    }
-    return scene;
-}
 
-function loadSceneNode(sceneData, scenery, actors, zones, points, editor) {
-    const sceneNode = sceneData.isIsland ? new THREE.Object3D() : new THREE.Scene();
-    sceneNode.name = `scene_${sceneData.index}`;
-    sceneNode.matrixAutoUpdate = false;
-    if (sceneData.isIsland) {
-        const sectionIdx = islandSceneMapping[sceneData.index].section;
-        const section = scenery.sections[sectionIdx];
-        sceneNode.position.x = section.x * WORLD_SIZE * 2;
-        sceneNode.position.z = section.z * WORLD_SIZE * 2;
-        sceneNode.updateMatrix();
-    }
-    const addToSceneNode = (obj) => {
-        if (obj.threeObject !== null) { // because of the sprite actors
-            sceneNode.add(obj.threeObject);
-        }
-    };
+    private static async loadSideScenes(
+        game: Game,
+        renderer: Renderer,
+        sceneManager: SceneManager,
+        index: number,
+        parent: Scene
+    ) {
+        const sceneMap = await getSceneMap();
+        const sideIndices = filter(
+            map(sceneMap, (indexInfo, sideIndex: number) => {
+                if (sideIndex !== index
+                    && indexInfo.isIsland
+                    && sideIndex in islandSceneMapping) {
+                    const sideMapping = islandSceneMapping[sideIndex];
+                    const mainMapping = islandSceneMapping[index];
+                    if (sideMapping.island === mainMapping.island
+                        && sideMapping.variant === mainMapping.variant) {
+                        return sideIndex;
+                    }
+                }
+                return null;
+            }),
+            id => id !== null
+        );
 
-    each(actors, addToSceneNode);
-    if (editor) {
-        each(zones, addToSceneNode);
-        each(points, addToSceneNode);
+        const sideScenes = await Promise.all(map(
+            sideIndices,
+            async sideIndex => Scene.load(game, renderer, sceneManager, sideIndex, parent)
+        ));
+        const sideScenesMap = new Map<number, Scene>();
+        each(sideScenes, (sideScene: Scene) => {
+            sideScenesMap[sideScene.index] = sideScene;
+        });
+        return sideScenesMap;
     }
-    return sceneNode;
-}
 
-async function loadSideScenes(sceneManager,
-                                game,
-                                renderer,
-                                index,
-                                parent) {
-    const sceneMap = await getSceneMap();
-    const sideIndices = filter(
-        map(sceneMap, (indexInfo, sideIndex) => {
-            if (sideIndex !== index
-                && indexInfo.isIsland
-                && sideIndex in islandSceneMapping) {
-                const sideMapping = islandSceneMapping[sideIndex];
-                const mainMapping = islandSceneMapping[index];
-                if (sideMapping.island === mainMapping.island
-                    && sideMapping.variant === mainMapping.variant) {
-                    return sideIndex;
+    private constructor(
+        game: Game,
+        renderer: Renderer,
+        sceneManager: SceneManager,
+        data,
+        scenery: any,
+        entities: Entities,
+        parent: Scene
+    ) {
+        const params = getParams();
+        this.index = data.index;
+        this.game = game;
+        this.renderer = renderer;
+        this.data = data;
+        this.actors = entities.actors;
+        this.zones = entities.zones;
+        this.points = entities.points;
+        this.isActive = false;
+
+        loadScripts(game, this);
+
+        this.variables = createSceneVariables(entities.actors);
+        this.usedVarGames = findUsedVarGames(this);
+        this.firstFrame = false;
+        this.zoneState = { listener: null, ended: false };
+        this.vr = renderer.vr;
+        this.is3DCam = data.isIsland || renderer.vr || params.iso3d;
+        this.savedState = null;
+        this.sceneManager = sceneManager;
+        this.extras = [];
+
+        if (parent) {
+            this.threeScene = parent.threeScene;
+            this.camera = parent.camera;
+            this.scenery = parent.scenery;
+            killActor(this.actors[0]);
+        } else {
+            this.threeScene = new THREE.Scene();
+            this.threeScene.matrixAutoUpdate = false;
+            this.threeScene.add(scenery.threeObject);
+            this.threeScene.name = data.isIsland ? 'scene_island' : 'scene_iso';
+            this.camera = selectCamera(game, renderer, data.isIsland);
+            if (this.camera.controlNode) {
+                this.threeScene.add(this.camera.controlNode);
+                if (renderer.vr) {
+                    this.addVRGUI();
                 }
             }
-            return null;
-        }),
-        id => id !== null
-    );
+            this.addLight();
+            this.scenery = scenery;
+        }
 
-    const sideScenes = await Promise.all(map(
-        sideIndices,
-        async sideIndex => loadScene(
-            sceneManager,
-            game,
-            renderer,
-            sideIndex,
-            parent
-        )
-    ));
-    const sideScenesMap = {};
-    each(sideScenes, (sideScene: any) => {
-        sideScenesMap[sideScene.index] = sideScene;
-    });
-    return sideScenesMap;
+        this.sceneNode = this.loadSceneNode();
+        this.sceneManager = sceneManager;
+    }
+
+    private addVRGUI() {
+        const fps = createFPSCounter(this.renderer);
+        fps.visible = false;
+        this.camera.controlNode.add(fps);
+        this.vrGUI = createVRGUI();
+        this.camera.controlNode.add(this.vrGUI);
+    }
+
+    private addLight() {
+        const { ambience } = this.data;
+        const light = new THREE.DirectionalLight();
+        light.name = 'DirectionalLight';
+        light.position.set(-1000, 0, 0);
+        light.position.applyAxisAngle(
+            new THREE.Vector3(0, 0, 1),
+            -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
+        );
+        light.position.applyAxisAngle(
+            new THREE.Vector3(0, 1, 0),
+            -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
+        );
+        light.updateMatrix();
+        light.matrixAutoUpdate = false;
+        this.threeScene.add(light);
+        const ambient = new THREE.AmbientLight(0xFFFFFF, 0.08);
+        ambient.name = 'AmbientLight';
+        this.threeScene.add(ambient);
+    }
+
+    private loadSceneNode() {
+        const { editor } = getParams();
+        const sceneNode = this.data.isIsland ? new THREE.Object3D() : new THREE.Scene();
+        sceneNode.name = `scene_${this.data.index}`;
+        sceneNode.matrixAutoUpdate = false;
+        if (this.data.isIsland) {
+            const sectionIdx = islandSceneMapping[this.data.index].section;
+            const section = this.scenery.sections[sectionIdx];
+            sceneNode.position.x = section.x * WORLD_SIZE * 2;
+            sceneNode.position.z = section.z * WORLD_SIZE * 2;
+            sceneNode.updateMatrix();
+        }
+        const addToSceneNode = (obj) => {
+            if (obj.threeObject !== null) { // because of the sprite actors
+                sceneNode.add(obj.threeObject);
+            }
+        };
+
+        each(this.actors, addToSceneNode);
+        if (editor) {
+            each(this.zones, addToSceneNode);
+            each(this.points, addToSceneNode);
+        }
+        this.threeScene.add(sceneNode);
+        return sceneNode;
+    }
+
+    async goto(index, force = false, wasPaused = false, teleport = true) {
+        return this.sceneManager.goto(index, force, wasPaused, teleport);
+    }
+
+    reset() {
+        const params = getParams();
+        if (params.editor) {
+            this.game.getState().load(this.savedState, this.actors[0]);
+            this.game.setUiState({ text: null, cinema: false });
+            this.variables = createSceneVariables(this.actors);
+            each(this.actors, (actor) => {
+                actor.reset(this);
+            });
+            this.firstFrame = true;
+            if (this.game.isPaused()) {
+                DebugData.step = true;
+            }
+        }
+    }
+
+    removeMesh(threeObject) {
+        this.sceneNode.remove(threeObject);
+    }
+
+    addMesh(threeObject) {
+        this.sceneNode.add(threeObject);
+    }
 }
 
-function createSceneVariables(scene) {
+function createSceneVariables(actors) {
     let maxVarCubeIndex = -1;
-    each(scene.actors, (actor) => {
+    each(actors, (actor) => {
         const commands = actor.scripts.life.commands;
         each(commands, (cmd) => {
             if (cmd.op.command === 'SET_VAR_CUBE') {
@@ -395,24 +398,4 @@ export function relocateHero(hero, newHero, newScene, teleport) {
     hero.animState = null;
     hero.model = null;
     hero.threeObject = null;
-}
-
-function makeLight(threeScene, ambience) {
-    const light = new THREE.DirectionalLight();
-    light.name = 'DirectionalLight';
-    light.position.set(-1000, 0, 0);
-    light.position.applyAxisAngle(
-        new THREE.Vector3(0, 0, 1),
-        -(ambience.lightingAlpha * 2 * Math.PI) / 0x1000
-    );
-    light.position.applyAxisAngle(
-        new THREE.Vector3(0, 1, 0),
-        -(ambience.lightingBeta * 2 * Math.PI) / 0x1000
-    );
-    light.updateMatrix();
-    light.matrixAutoUpdate = false;
-    threeScene.add(light);
-    const ambient = new THREE.AmbientLight(0xFFFFFF, 0.08);
-    ambient.name = 'AmbientLight';
-    threeScene.add(ambient);
 }

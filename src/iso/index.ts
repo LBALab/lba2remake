@@ -64,7 +64,8 @@ export async function loadIsometricScenery(entry, ambience, is3D, numActors = 0)
         props: {
             startPosition: [0, 0],
             envInfo: {
-                skyColor: [0, 0, 0]
+                skyColor: [0, 0, 0],
+                fogDensity: 0
             }
         },
         threeObject,

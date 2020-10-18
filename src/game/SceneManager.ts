@@ -3,7 +3,7 @@ import { pure } from '../utils/decorators';
 import { getParams } from '../params';
 import { Game } from './Game';
 import * as DBG from '../ui/editor/DebugData';
-import { loadScene, relocateHero } from './Scene';
+import { Scene, relocateHero } from './Scene';
 
 declare global {
     var ga: Function;
@@ -70,13 +70,7 @@ export class SceneManager {
         }
         this.game.loading(index);
         this.renderer.setClearColor(0x000000);
-        this.scene = await loadScene(
-            this,
-            this.game,
-            this.renderer,
-            index,
-            null
-        );
+        this.scene = await Scene.load(this.game, this.renderer, this, index);
         this.renderer.applySceneryProps(this.scene.scenery.props);
         this.scene.isActive = true;
         audio.stopMusicTheme();
