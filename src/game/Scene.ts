@@ -30,7 +30,7 @@ interface Entities {
     readonly points: any[];
 }
 
-export class Scene {
+export default class Scene {
     readonly index: number;
     readonly data: any;
     readonly game: Game;
