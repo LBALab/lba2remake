@@ -3,7 +3,7 @@ import { pure } from '../utils/decorators';
 import { getParams } from '../params';
 import { Game } from './Game';
 import * as DBG from '../ui/editor/DebugData';
-import { Scene, relocateHero } from './Scene';
+import { Scene } from './Scene';
 import Renderer from '../renderer';
 
 declare global {
@@ -60,7 +60,7 @@ export class SceneManager {
             delete sideScene.sideScenes[index];
             delete this.scene.sideScenes;
             sideScene.sideScenes[this.scene.index] = this.scene;
-            relocateHero(this.scene.actors[0], sideScene.actors[0], sideScene, teleport);
+            sideScene.relocateHeroFrom(this.scene, teleport);
             this.scene = sideScene;
             reviveActor(this.scene.actors[0], this.game); // Awake twinsen
             this.scene.isActive = true;
