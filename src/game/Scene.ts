@@ -66,7 +66,6 @@ export class Scene {
     ): Promise<Scene> {
         const data = await getScene(index);
         const params = getParams();
-        const modelReplacements = await loadModelReplacements();
         if (params.editor) {
             await loadSceneMetaData(index);
         }
@@ -83,8 +82,7 @@ export class Scene {
                     scenery,
                     data.ambience,
                     actor,
-                    !!parent,
-                    modelReplacements
+                    !!parent
                 )
             )),
             zones: map(data.zones, props => loadZone(props, is3DCam, params.editor)),
@@ -300,16 +298,6 @@ function createSceneVariables(actors) {
         variables.push(0);
     }
     return variables;
-}
-
-let modelReplacementsCache = null;
-
-async function loadModelReplacements() {
-    if (!modelReplacementsCache) {
-        const file = await fetch('metadata/model_replacements.json');
-        modelReplacementsCache = file.json();
-    }
-    return modelReplacementsCache;
 }
 
 function findUsedVarGames(scene) {

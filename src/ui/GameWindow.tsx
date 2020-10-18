@@ -246,8 +246,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
                     scene.scenery,
                     scene.data.ambience,
                     createNewActorProps(scene, position, objectToAdd.details),
-                    !scene.isActive,
-                    {}
+                    !scene.isActive
                 );
                 initDynamicNewActor(this.game, scene, actor);
                 obj = actor;

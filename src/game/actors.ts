@@ -115,8 +115,8 @@ export async function loadActor(
     scenery: any,
     ambience: any,
     props: ActorProps,
-    isSideScene: boolean,
-    modelReplacements: any) {
+    isSideScene: boolean
+) {
     const params = getParams();
     const skipModel = isSideScene && props.index === 0;
     const animState = !skipModel ? loadAnimState() : null;
@@ -258,8 +258,7 @@ export async function loadActor(
                         spriteIndex,
                         hasSpriteAnim3D,
                         false,
-                        false,
-                        modelReplacements.sprites
+                        false
                     );
                     this.threeObject.add(sprite.threeObject);
                     if (params.editor) {
@@ -322,9 +321,7 @@ export async function loadActor(
             const oldObject = this.threeObject;
             this.loadMesh().then(() => {
                 scene.addMesh(this.threeObject);
-                if (oldObject) {
-                    scene.removeMesh(oldObject);
-                }
+                scene.removeMesh(oldObject);
                 this.threeObject.updateMatrixWorld();
             });
         },
