@@ -243,7 +243,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
                 const actor = await loadActor(
                     this.game,
                     scene.is3DCam,
-                    scene.envInfo,
+                    scene.scenery,
                     scene.data.ambience,
                     createNewActorProps(scene, position, objectToAdd.details),
                     !scene.isActive,
