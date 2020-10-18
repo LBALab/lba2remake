@@ -12,7 +12,7 @@ export function GOTO_POINT(point) {
         return;
     }
     const distance = this.actor.goto(point.physics.position);
-    if (distance > 0.65) {
+    if (distance > 0.55) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     } else {
