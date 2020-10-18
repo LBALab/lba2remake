@@ -1,5 +1,5 @@
 import { DirMode, createRuntimeFlags } from '../../game/actors';
-import  {WORLD_SCALE, getHtmlColor } from '../../utils/lba';
+import  {WORLD_SCALE, getHtmlColor, SPEED_ADJUSTMENT } from '../../utils/lba';
 import { Resource } from '../load';
 import { getPalette, getText } from '..';
 import { initHeroFlags, parseStaticFlags } from './scene2';
@@ -96,7 +96,7 @@ function loadHero(scene, offset) {
         index: 0,
         textColor: getHtmlColor(scene.palette, (12 * 16) + 12),
         angle: 0,
-        speed: 5,
+        speed: 30 * SPEED_ADJUSTMENT,
         dirMode: DirMode.MANUAL,
         runtimeFlags: createRuntimeFlags(),
         flags: initHeroFlags(),
@@ -192,7 +192,7 @@ function loadActors(scene, offset) {
         offset += 2;
         actor.angle = data.getInt16(offset, true);
         offset += 2;
-        actor.speed = data.getInt16(offset, true);
+        actor.speed = data.getInt16(offset, true) * SPEED_ADJUSTMENT;
         offset += 2;
         actor.controlMode = data.getInt16(offset);
         offset += 2;
