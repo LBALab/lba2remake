@@ -9,7 +9,7 @@ import { registerResources, preloadResources, getText } from '../resources';
 import { getParams } from '../params';
 import { pure } from '../utils/decorators';
 
-export class Game {
+export default class Game {
     readonly setUiState: Function;
     readonly getUiState: Function;
     readonly vr: boolean;

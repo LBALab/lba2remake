@@ -10,7 +10,7 @@ import { processAnimAction } from './animAction';
 import { Time } from '../../datatypes';
 import { AnimType } from '../data/animType';
 import { getAnimationsSync } from '../../resources';
-import { Game } from '../Game';
+import Game from '../Game';
 import Scene from '../Scene';
 
 const ACTOR_POS = new THREE.Vector3();

@@ -1,7 +1,7 @@
 import { loadIslandScenery } from '../../island';
 import { loadIsometricScenery } from '../../iso';
 import { getParams } from '../../params';
-import { Game } from '../Game';
+import Game from '../Game';
 import Renderer from '../../renderer';
 import islandSceneMapping from '../../island/data/sceneMapping';
 

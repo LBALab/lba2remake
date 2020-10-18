@@ -8,7 +8,7 @@ import { debugProfiles, updateDebug } from './vr/debugProfiles';
 import { getControllerMappings, applyMappings, Mappings } from './vr/mappings';
 import { getParams } from '../params';
 import { SceneManager } from '../game/SceneManager';
-import { Game } from '../game/Game';
+import Game from '../game/Game';
 import Renderer from '../renderer';
 
 // Time in ms we sample the change is position to determine controller velocity.

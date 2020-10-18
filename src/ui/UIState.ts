@@ -1,4 +1,4 @@
-import { Game } from '../game/Game';
+import Game from '../game/Game';
 
 export default interface UIState {
     cinema: boolean;

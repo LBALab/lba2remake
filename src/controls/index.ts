@@ -5,7 +5,7 @@ import { getParams } from '../params';
 import { VRControls } from './vr';
 import { SceneManager } from '../game/SceneManager';
 import Renderer from '../renderer';
-import { Game } from '../game/Game';
+import Game from '../game/Game';
 
 export function createControls(
     vr: boolean,

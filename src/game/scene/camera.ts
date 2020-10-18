@@ -6,7 +6,7 @@ import { getIso3DCamera } from '../../cameras/iso3d';
 import { getIsometricCamera } from '../../cameras/iso';
 import Renderer from '../../renderer';
 import { getParams } from '../../params';
-import { Game } from '../Game';
+import Game from '../Game';
 
 export function selectCamera(game: Game, renderer: Renderer, isIsland: boolean) {
     const params = getParams();

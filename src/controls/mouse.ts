@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Game } from '../game/Game';
+import Game from '../game/Game';
 import { Params } from '../params';
 
 declare global {

@@ -1,7 +1,7 @@
 import { killActor, reviveActor } from './scripting';
 import { pure } from '../utils/decorators';
 import { getParams } from '../params';
-import { Game } from './Game';
+import Game from './Game';
 import * as DBG from '../ui/editor/DebugData';
 import Scene from './Scene';
 import Renderer from '../renderer';

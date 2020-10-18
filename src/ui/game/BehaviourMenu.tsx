@@ -14,7 +14,7 @@ import {
     updateAnimModel,
     loadSceneModel,
 } from './overlay';
-import { Game } from '../../game/Game';
+import Game from '../../game/Game';
 import Scene from '../../game/Scene';
 
 interface IBehaviourMenuClover {

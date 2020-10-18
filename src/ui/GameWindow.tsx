@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {clone} from 'lodash';
 
 import Renderer from '../renderer';
-import { Game } from '../game/Game';
+import Game from '../game/Game';
 import {mainGameLoop} from '../game/loop';
 import { SceneManager } from '../game/SceneManager';
 import {createControls} from '../controls/index';

@@ -17,7 +17,7 @@ import { angleToRad, WORLD_SIZE } from '../utils/lba';
 import { getScene, getSceneMap } from '../resources';
 import { getParams } from '../params';
 import DebugData, { loadSceneMetaData } from '../ui/editor/DebugData';
-import { Game } from './Game';
+import Game from './Game';
 import Renderer from '../renderer';
 import { selectCamera } from './scene/camera';
 import { loadScenery } from './scene/scenery';

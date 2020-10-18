@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Game } from '../game/Game';
+import Game from '../game/Game';
 
 // Move pointerLock mechanics out of this
 export function makeFirstPersonTouchControls(game: Game) {
