@@ -99,7 +99,7 @@ function LADDER(game, scene, zone, hero) {
 
     // TODO(scottwilliams): work out how to tell if Twinsen is facing ladders
     // at arbitrary angles as happens on islands (vs isometric).
-    const facing = isFacingLadder(hero.physics.temp.angle) || scene.isIsland;
+    const facing = isFacingLadder(hero.physics.temp.angle) || scene.data.isIsland;
     if (zone.props.info1 && facing) {
         // Is UP being pressed?
         if (game.controlsState.controlVector.y > 0.6) {

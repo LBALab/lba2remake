@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
-import { loadIslandScenery, getEnvInfo } from '../../../../island';
+import { loadIslandScenery } from '../../../../island';
 import {get3DFreeCamera} from './utils/freeCamera';
 import IslandAmbience from './browser/ambience';
 import { TickerProps } from '../../../utils/Ticker';
@@ -246,7 +246,7 @@ export default class Island extends FrameListener<Props, State> {
                 if (obj && obj.material && obj instanceof THREE.Mesh &&
                     (obj.material as THREE.RawShaderMaterial).uniforms) {
                     (obj.material as THREE.RawShaderMaterial).uniforms.fogDensity.value =
-                        fog ? getEnvInfo(this.name).fogDensity : 0;
+                        fog ? island.props.envInfo.fogDensity : 0;
                 }
             });
             this.fog = fog;

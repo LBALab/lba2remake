@@ -40,10 +40,6 @@ interface IslandGeometry {
     material: THREE.Material;
 }
 
-export function getEnvInfo(name) {
-    return islandProps[name].envInfo;
-}
-
 export async function loadIslandScenery(params, name, ambience) {
     if (params.preview) {
         if (name in islandPreviews) {

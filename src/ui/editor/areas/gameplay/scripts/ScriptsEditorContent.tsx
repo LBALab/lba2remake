@@ -5,6 +5,7 @@ import ScriptsEditorToolbar from './ScriptsEditorToolbar';
 import BlocksEditor from './blocks/BlocksEditor';
 import TextEditor from './text/TextEditor';
 import VariablesPanel from './VariablesPanel';
+import Scene from '../../../../../game/Scene';
 
 interface Props extends TickerProps {
     editor: any;
@@ -14,7 +15,7 @@ interface Props extends TickerProps {
 
 interface State {
     showVariables: boolean;
-    scene: any;
+    scene: Scene;
 }
 
 const expandPanelStyle = {

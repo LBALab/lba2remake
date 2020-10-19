@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import {switchStats} from '../renderer/stats';
 import {BehaviourMode} from '../game/loop/hero';
-import { SceneManager } from '../game/sceneManager';
-import { Game } from '../game/game';
+import { SceneManager } from '../game/SceneManager';
+import Game from '../game/Game';
+import { Params } from '../params';
 
-export function makeKeyboardControls(params: any,
-                                     elem: any,
+export function makeKeyboardControls(params: Params,
+                                     elem: HTMLElement,
                                      sceneManager: SceneManager,
                                      game: Game) {
     const onKeyDown = keyDownHandler.bind(null, params, game, sceneManager);
@@ -119,19 +120,6 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
         case 68: // d
         case 'KeyD':
             game.controlsState.cameraSpeed.x = -1;
-            break;
-
-        case 34: // pagedown
-        case 'PageDown':
-            if (params.editor) {
-                sceneManager.next();
-            }
-            break;
-        case 33: // pageup
-        case 'PageUp':
-            if (params.editor) {
-                sceneManager.previous();
-            }
             break;
 
         case 70: // f

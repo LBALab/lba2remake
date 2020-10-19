@@ -2,7 +2,7 @@ import { DirMode, createRuntimeFlags } from '../../game/actors';
 import { bits } from '../../utils';
 import  {WORLD_SCALE, getHtmlColor, SPEED_ADJUSTMENT } from '../../utils/lba';
 import { Resource } from '../load';
-import { getPalette, getText } from '..';
+import { getPalette, getText, getSceneMap } from '..';
 
 export const parseSceneMapLBA2 = (resource: Resource, index: number) => {
     const buffer = resource.getEntry(index);
@@ -12,7 +12,7 @@ export const parseSceneMapLBA2 = (resource: Resource, index: number) => {
 
     while (true) {
         const opcode = data.getUint8(offset);
-        const sceneIndex = data.getUint8(offset + 1);
+        const sceneryIndex = data.getUint8(offset + 1);
         offset += 2;
         if (opcode === 0) {
             break;
@@ -20,13 +20,14 @@ export const parseSceneMapLBA2 = (resource: Resource, index: number) => {
 
         map.push({
             isIsland: opcode === 2,
-            index: sceneIndex,
+            sceneryIndex,
         });
     }
     return map;
 };
 
 export const parseSceneLBA2 = async (resource: Resource, index) => {
+    const sceneMap = await getSceneMap();
     const buffer = resource.getEntry(index + 1); // first entry is not a scene
 
     const data = new DataView(buffer);
@@ -44,6 +45,7 @@ export const parseSceneLBA2 = async (resource: Resource, index) => {
         actors: [],
         palette: null,
         texts: null,
+        ...sceneMap[index]
     };
 
     const [palette, texts] = await Promise.all([

@@ -102,7 +102,7 @@ function processFollow3DMovement(controlsState, controlNode, scene, time) {
 export function processFree3DMovement(controlsState, controlNode, scene, time) {
     let speedFactor = 0;
     let height = 0;
-    if (scene.isIsland) {
+    if (scene.data.isIsland) {
         const groundInfo = scene.scenery.physics.getGroundInfo(controlNode.position);
         height = groundInfo.height;
         speedFactor = Math.max(

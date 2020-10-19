@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-import { initControlsState, ControlsState } from './controlsState';
-import { createGameState, GameState } from './gameState';
+import { initControlsState, ControlsState } from './ControlsState';
+import { createGameState, GameState } from './GameState';
 import { createAudioManager } from '../audio';
 import { getLanguageConfig } from '../lang';
 import DebugData from '../ui/editor/DebugData';
@@ -9,7 +9,7 @@ import { registerResources, preloadResources, getText } from '../resources';
 import { getParams } from '../params';
 import { pure } from '../utils/decorators';
 
-export class Game {
+export default class Game {
     readonly setUiState: Function;
     readonly getUiState: Function;
     readonly vr: boolean;

@@ -3,9 +3,9 @@ import * as THREE from 'three';
 import {clone} from 'lodash';
 
 import Renderer from '../renderer';
-import { Game } from '../game/game';
+import Game from '../game/Game';
 import {mainGameLoop} from '../game/loop';
-import { SceneManager } from '../game/sceneManager';
+import { SceneManager } from '../game/SceneManager';
 import {createControls} from '../controls/index';
 
 import {fullscreen} from './styles/index';
@@ -229,7 +229,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
         if (result) {
             let obj = null;
             const position = result.point.clone();
-            if (scene.isIsland) {
+            if (scene.data.isIsland) {
                 position.sub(scene.sceneNode.position);
             }
             if (objectToAdd.type === 'point') {
@@ -243,11 +243,10 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
                 const actor = await loadActor(
                     this.game,
                     scene.is3DCam,
-                    scene.envInfo,
+                    scene.scenery,
                     scene.data.ambience,
                     createNewActorProps(scene, position, objectToAdd.details),
-                    !scene.isActive,
-                    {}
+                    !scene.isActive
                 );
                 initDynamicNewActor(this.game, scene, actor);
                 obj = actor;

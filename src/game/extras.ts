@@ -3,9 +3,8 @@ import * as THREE from 'three';
 import { getRandom, getHtmlColor } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
 import { loadSprite } from '../iso/sprites';
-import { addExtraToScene, removeExtraFromScene } from './sceneManager';
 import { clone } from 'lodash';
-import { MAX_LIFE } from './gameState';
+import { MAX_LIFE } from './GameState';
 // import { createBoundingBox } from '../utils/rendering';
 
 export const ExtraFlag = {
@@ -154,7 +153,7 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
     extra.physics.temp.velocity = extra.physics.temp.direction.clone();
 
     await extra.loadMesh();
-    addExtraToScene(scene, extra);
+    scene.addExtra(extra);
 
     playSoundFx(game, SAMPLE_BONUS);
 
@@ -290,7 +289,7 @@ export function updateExtra(game, scene, extra, time) {
             }, 1000);
         }
 
-        removeExtraFromScene(scene, extra);
+        scene.removeExtra(extra);
     }
 }
 

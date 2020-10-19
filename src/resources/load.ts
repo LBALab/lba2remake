@@ -38,6 +38,7 @@ const ResourceName = {
     SPRITESRAW_CLIP: 'SPRITESRAW_CLIP',
     ANIM3DS_CLIP: 'ANIM3DS_CLIP',
     SCENE_MAP: 'SCENE_MAP',
+    MODEL_REPLACEMENTS: 'MODEL_REPLACEMENTS'
 };
 
 interface Resource {
@@ -147,6 +148,7 @@ const register = (
         getNextHiddenEntry: null,
         ref: null,
         buffer: null,
+        json: null,
         entries: [],
         parse: null,
         parseSync: null,
@@ -239,6 +241,9 @@ const register = (
                 } else if (resource.isHQR) {
                     resource.hqr = await loadHqr(resource.path);
                     resource.length = resource.hqr.length;
+                } else if (resource.type === 'JSON') {
+                    const res = await fetch(resource.path);
+                    resource.json = await res.json();
                 } else {
                     resource.buffer = await requestResource(resource.path);
                 }
@@ -299,6 +304,9 @@ const loadResource = async (id: string, index?: number, param?: any) => {
     }
     if (index !== undefined) {
         return await resource.parse(index, param);
+    }
+    if (resource.type === 'JSON') {
+        return resource.json;
     }
     return resource;
 };

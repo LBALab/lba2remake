@@ -1,7 +1,7 @@
 import { DirMode, createRuntimeFlags } from '../../game/actors';
 import  {WORLD_SCALE, getHtmlColor, SPEED_ADJUSTMENT } from '../../utils/lba';
 import { Resource } from '../load';
-import { getPalette, getText } from '..';
+import { getPalette, getText, getSceneMap } from '..';
 import { initHeroFlags, parseStaticFlags } from './scene2';
 
 // LBA1 does not have a scene map, so lets fake one
@@ -17,6 +17,7 @@ export const parseSceneMapLBA1 = () => {
 };
 
 export const parseSceneLBA1 = async (resource: Resource, index) => {
+    const sceneMap = await getSceneMap();
     const buffer = resource.getEntry(index);
 
     const data = new DataView(buffer);
@@ -34,6 +35,7 @@ export const parseSceneLBA1 = async (resource: Resource, index) => {
         actors: [],
         palette: null,
         texts: null,
+        ...sceneMap[index]
     };
 
     const [palette, texts] = await Promise.all([

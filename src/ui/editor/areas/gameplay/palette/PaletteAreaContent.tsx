@@ -16,6 +16,7 @@ import { TickerProps } from '../../../../utils/Ticker';
 import { areResourcesPreloaded } from '../../../../../resources/load';
 import DebugData from '../../../DebugData';
 import Renderer from '../../../../../renderer';
+import Scene from '../../../../../game/Scene';
 
 const style = extend({
     overflowY: 'auto',
@@ -286,7 +287,7 @@ export default class PaletteAreaContent extends FrameListener<TickerProps, State
     }
 
     eyeDrop() {
-        const { renderer, scene } = DebugData.scope as { renderer: Renderer; scene: any; };
+        const { renderer, scene } = DebugData.scope as { renderer: Renderer; scene: Scene; };
         if (renderer && scene) {
             this.setState({ eyeDropping: true });
             renderer.canvas.style.cursor = 'crosshair';

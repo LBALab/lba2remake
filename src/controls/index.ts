@@ -3,8 +3,17 @@ import {makeKeyboardControls} from './keyboard';
 import {makeFirstPersonTouchControls} from './touch';
 import { getParams } from '../params';
 import { VRControls } from './vr';
+import { SceneManager } from '../game/SceneManager';
+import Renderer from '../renderer';
+import Game from '../game/Game';
 
-export function createControls(vr, game, elem, sceneManager, renderer) {
+export function createControls(
+    vr: boolean,
+    game: Game,
+    elem: HTMLElement,
+    sceneManager: SceneManager,
+    renderer: Renderer
+) {
     const params = getParams();
     let controls;
     if (vr) {

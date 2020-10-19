@@ -13,7 +13,8 @@ import {
     getSpritesRaw,
     getSpritesClipInfo,
     getSpritesRawClipInfo,
-    getSpritesAnim3DSClipInfo
+    getSpritesAnim3DSClipInfo,
+    getModelReplacements
 } from '../resources';
 
 const loader = new GLTFLoader();
@@ -27,7 +28,6 @@ export async function loadSprite(
     hasSpriteAnim3D = false,
     isBillboard = false,
     is3DCam = false,
-    spriteReplacements = {}
 ) {
     const palette = await getPalette();
     // // lets keep it with two separate textures for now
@@ -55,8 +55,9 @@ export async function loadSprite(
 
     let threeObject;
     let update = (_time) => {};
-    if (index in spriteReplacements) {
-        const replacement = await loadSpriteReplacement(spriteReplacements[index]);
+    const { sprites: replacements } = await getModelReplacements();
+    if (replacements && index in replacements) {
+        const replacement = await loadSpriteReplacement(replacements[index]);
         threeObject = replacement.threeObject;
         update = replacement.update;
     } else if (isBillboard) {

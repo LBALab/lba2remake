@@ -17,9 +17,9 @@ import { getVideoPath } from '../resources';
 import BehaviourMenu from './game/BehaviourMenu';
 import NoAudio from './game/NoAudio';
 import UIState from './UIState';
-import { SceneManager } from '../game/sceneManager';
+import { SceneManager } from '../game/SceneManager';
 import Renderer from '../renderer';
-import { Game } from '../game/game';
+import Game from '../game/Game';
 
 interface GameUIProps {
     uiState: UIState;
