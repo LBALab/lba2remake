@@ -12,7 +12,7 @@ export const parseSceneMapLBA2 = (resource: Resource, index: number) => {
 
     while (true) {
         const opcode = data.getUint8(offset);
-        const sceneIndex = data.getUint8(offset + 1);
+        const sceneryIndex = data.getUint8(offset + 1);
         offset += 2;
         if (opcode === 0) {
             break;
@@ -20,7 +20,7 @@ export const parseSceneMapLBA2 = (resource: Resource, index: number) => {
 
         map.push({
             isIsland: opcode === 2,
-            index: sceneIndex,
+            sceneryIndex,
         });
     }
     return map;
@@ -32,7 +32,6 @@ export const parseSceneLBA2 = async (resource: Resource, index) => {
 
     const data = new DataView(buffer);
     const textBankId = data.getInt8(0);
-    const { isIsland } = sceneMap[index];
 
     const sceneData = {
         index,
@@ -46,7 +45,7 @@ export const parseSceneLBA2 = async (resource: Resource, index) => {
         actors: [],
         palette: null,
         texts: null,
-        isIsland
+        ...sceneMap[index]
     };
 
     const [palette, texts] = await Promise.all([

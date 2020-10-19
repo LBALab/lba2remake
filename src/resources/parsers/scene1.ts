@@ -22,7 +22,6 @@ export const parseSceneLBA1 = async (resource: Resource, index) => {
 
     const data = new DataView(buffer);
     const textBankId = data.getInt8(0);
-    const { isIsland } = sceneMap[index];
 
     const sceneData = {
         index,
@@ -36,7 +35,7 @@ export const parseSceneLBA1 = async (resource: Resource, index) => {
         actors: [],
         palette: null,
         texts: null,
-        isIsland
+        ...sceneMap[index]
     };
 
     const [palette, texts] = await Promise.all([

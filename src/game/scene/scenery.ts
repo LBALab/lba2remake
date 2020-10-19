@@ -12,7 +12,7 @@ export async function loadScenery(game: Game, renderer: Renderer, sceneData) {
     }
     const useReplacements = renderer.vr || params.iso3d || params.isoCam3d;
     return await loadIsometricScenery(
-        sceneData.index,
+        sceneData.sceneryIndex,
         sceneData.ambience,
         useReplacements,
         sceneData.actors.length
