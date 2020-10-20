@@ -3,7 +3,7 @@ import VERT_OBJECTS_COLORED_PREVIEW from '../shaders/objects/colored.preview.ver
 import FRAG_OBJECTS_COLORED from '../shaders/objects/colored.frag.glsl';
 import VERT_OBJECTS_TEXTURED_PREVIEW from '../shaders/objects/textured.preview.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
-import { compile } from '../../utils/shaders';
+import { compile } from '../../../../utils/shaders';
 
 export async function replaceMaterialsForPreview(threeObject, shaderData) {
     const {lutTexture, paletteTexture, light} = shaderData;

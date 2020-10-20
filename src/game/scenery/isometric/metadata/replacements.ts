@@ -2,18 +2,18 @@ import * as THREE from 'three';
 import { each, last, find } from 'lodash';
 import XXH from 'xxhashjs';
 
-import { loadLUTTexture } from '../../utils/lut';
-import { loadPaletteTexture } from '../../texture';
+import { loadLUTTexture } from '../../../../utils/lut';
+import { loadPaletteTexture } from '../../../../texture';
 import VERT_OBJECTS_COLORED from '../shaders/objects/colored.vert.glsl';
 import FRAG_OBJECTS_COLORED from '../shaders/objects/colored.frag.glsl';
 import VERT_OBJECTS_TEXTURED from '../shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
 import VERT_OBJECTS_DOME from '../shaders/objects/dome.vert.glsl';
 import FRAG_OBJECTS_DOME from '../shaders/objects/dome.frag.glsl';
-import { compile } from '../../utils/shaders';
+import { compile } from '../../../../utils/shaders';
 import { loadFullSceneModel } from './models';
-import { getCommonResource } from '../../resources';
-import { getPartialMatrixWorld } from '../../utils/math';
+import { getCommonResource } from '../../../../resources';
+import { getPartialMatrixWorld } from '../../../../utils/math';
 import { GROUND_TYPES } from '../grid';
 
 export async function initReplacements(entry, metadata, ambience, numActors) {

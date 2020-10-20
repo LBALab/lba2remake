@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { map, last } from 'lodash';
 
 import { bits } from '../../utils';
-import { loadLibrary } from '../../iso/grid';
+import { loadLibrary } from '../../game/scenery/isometric/grid';
 
 const parseGrid = async (resource, index, param) => {
     // this dependency shouldn't be here

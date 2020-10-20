@@ -1,161 +1,17 @@
 import * as THREE from 'three';
 import { each, times } from 'lodash';
 
-import { GROUND_TYPES, getGridMetadata } from './grid';
-import { processCollisions } from '../game/loop/physicsIso';
-import { compile } from '../utils/shaders';
+import { GROUND_TYPES } from './grid';
+import { compile } from '../../../utils/shaders';
 import brick_vertex from './shaders/brick.vert.glsl';
 import brick_fragment from './shaders/brick.frag.glsl';
 import dome_brick_vertex from './shaders/dome_brick.vert.glsl';
 import dome_brick_fragment from './shaders/dome_brick.frag.glsl';
 import { extractGridMetadata } from './metadata';
 import { Side, OffsetBySide } from './mapping';
-import { WORLD_SCALE_B, WORLD_SIZE, DOME_ENTRIES } from '../utils/lba';
-import { getPalette, getBricks, getGrids } from '../resources';
-import { loadDomeEnv } from './misc/dome_env';
+import { WORLD_SCALE_B, WORLD_SIZE } from '../../../utils/lba';
 
-let bricksCache = null;
-
-export async function loadBricks() {
-    if (!bricksCache) {
-        bricksCache = await getBricks();
-    }
-    return bricksCache;
-}
-
-export async function loadImageData(src) : Promise<ImageData> {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = function onload() {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            context.drawImage(img, 0, 0);
-            resolve(context.getImageData(0, 0, img.width, img.height));
-        };
-        img.src = src;
-    });
-}
-
-export async function loadIsometricScenery(entry, ambience, is3D, numActors = 0) {
-    const [palette, bricks, gridMetadata, mask] = await Promise.all([
-        getPalette(),
-        loadBricks(),
-        getGridMetadata(entry + 1),
-        loadImageData('images/brick_mask.png')
-    ]);
-
-    const grid = await getGrids(entry + 1, { bricks, mask, palette, is3D, gridMetadata });
-
-    const {
-        threeObject,
-        update: updateMesh
-    } = await loadMesh(grid, entry, ambience, is3D, numActors);
-
-    // Dome of the slate
-    let domeEnv = null;
-    if (DOME_ENTRIES.includes(entry) && is3D) {
-        domeEnv = await loadDomeEnv(ambience);
-        threeObject.add(domeEnv.threeObject);
-    }
-
-    return {
-        props: {
-            startPosition: [0, 0],
-            envInfo: {
-                skyColor: [0, 0, 0],
-                fogDensity: 0
-            }
-        },
-        threeObject,
-        physics: {
-            processCollisions: processCollisions.bind(null, grid),
-            processCameraCollisions: () => null
-        },
-
-        pickBrick: pickBrick.bind(null, grid),
-
-        getBrickInfo: getBrickInfo.bind(null, grid),
-
-        update: (game, scene, time) => {
-            updateMesh(game, scene, time);
-            if (domeEnv) {
-                domeEnv.update(time);
-            }
-        }
-    };
-}
-
-function pickBrick(grid, raycaster: THREE.Raycaster) {
-    const tgt = new THREE.Vector3();
-    const BB = new THREE.Box3();
-    let result = null;
-    const { library, cells } = grid;
-    for (let z = 63; z >= 0; z -= 1) {
-        for (let x = 63; x >= 0; x -= 1) {
-            const cell = cells[(z * 64) + x];
-            if (cell) {
-                const blocks = cell.blocks;
-                for (let y = 0; y < blocks.length; y += 1) {
-                    if (blocks[y]) {
-                        const layout = library.layouts[blocks[y].layout];
-                        if (layout) {
-                            BB.min.set((64 - z) / 32, y / 64, x / 32);
-                            BB.max.set((65 - z) / 32, (y + 1) / 64, (x + 1) / 32);
-                            BB.min.multiplyScalar(WORLD_SIZE);
-                            BB.max.multiplyScalar(WORLD_SIZE);
-                            const block = layout.blocks[blocks[y].block];
-                            if (block && block.brick in library.bricksMap) {
-                                if (raycaster.ray.intersectBox(BB, tgt)) {
-                                    const distSq = tgt.distanceToSquared(raycaster.ray.origin);
-                                    if (!result || result.distSq > distSq) {
-                                        result = {
-                                            x,
-                                            y,
-                                            z,
-                                            block: blocks[y],
-                                            blockInfo: block,
-                                            distSq,
-                                            tgt
-                                        };
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return result;
-}
-
-function getBrickInfo(grid, {x, y, z}) {
-    const { library, cells } = grid;
-    const cell = cells[(x * 64) + z];
-    if (cell) {
-        const blocks = cell.blocks;
-        if (blocks[y]) {
-            const layout = library.layouts[blocks[y].layout];
-            if (layout) {
-                const block = layout.blocks[blocks[y].block];
-                if (block && block.brick in library.bricksMap) {
-                    return {
-                        x,
-                        y,
-                        z,
-                        block: blocks[y],
-                        blockInfo: block,
-                    };
-                }
-            }
-        }
-    }
-    return null;
-}
-
-async function loadMesh(grid, entry, ambience, is3D, numActors) {
+export async function loadMesh(grid, entry, ambience, is3D, numActors) {
     const threeObject = new THREE.Object3D();
     const geometries = {
         standard: {
@@ -252,14 +108,6 @@ async function loadMesh(grid, entry, ambience, is3D, numActors) {
             }
         }
     };
-}
-
-function getGeometryType(block) {
-    switch (block && block.groundType) {
-        case GROUND_TYPES.DOME_OF_THE_SLATE_FLOOR:
-            return 'dome_ground';
-    }
-    return 'standard';
 }
 
 function buildColumn(grid, library, cells, geometries, x, z, gridMetadata, numActors) {
@@ -420,4 +268,12 @@ function buildColumn(grid, library, cells, geometries, x, z, gridMetadata, numAc
             }
         }
     }
+}
+
+function getGeometryType(block) {
+    switch (block && block.groundType) {
+        case GROUND_TYPES.DOME_OF_THE_SLATE_FLOOR:
+            return 'dome_ground';
+    }
+    return 'standard';
 }

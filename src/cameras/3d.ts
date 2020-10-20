@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../utils/lba';
 import { AnimType } from '../game/data/animType';
+import Scene from '../game/Scene';
 
 const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
 CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
@@ -72,7 +73,7 @@ export function get3DCamera() {
     };
 }
 
-function processFollow3DMovement(controlsState, controlNode, scene, time) {
+function processFollow3DMovement(controlsState, controlNode, scene: Scene, time) {
     const hero = scene.actors[0];
     if (!hero.threeObject)
         return;
@@ -102,8 +103,9 @@ function processFollow3DMovement(controlsState, controlNode, scene, time) {
 export function processFree3DMovement(controlsState, controlNode, scene, time) {
     let speedFactor = 0;
     let height = 0;
-    if (scene.data.isIsland) {
-        const groundInfo = scene.scenery.physics.getGroundInfo(controlNode.position);
+    const { physics } = scene.scenery;
+    if (physics.getHeightmapGround) {
+        const groundInfo = physics.getHeightmapGround(controlNode.position);
         height = groundInfo.height;
         speedFactor = Math.max(
             0.0,

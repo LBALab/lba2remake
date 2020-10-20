@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { each, orderBy } from 'lodash';
 
-import { compile } from '../utils/shaders';
-import { WORLD_SCALE } from '../utils/lba';
+import { compile } from '../../../utils/shaders';
+import { WORLD_SCALE } from '../../../utils/lba';
 import sprite_vertex from './shaders/sprite.vert.glsl';
 import sprite_fragment from './shaders/sprite.frag.glsl';
 import { makeStars, makeStarsMaterial } from './misc/dome_env';
@@ -15,7 +15,7 @@ import {
     getSpritesRawClipInfo,
     getSpritesAnim3DSClipInfo,
     getModelReplacements
-} from '../resources';
+} from '../../../resources';
 
 const loader = new GLTFLoader();
 

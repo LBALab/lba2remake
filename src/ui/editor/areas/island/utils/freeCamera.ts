@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import Island from '../../../../../game/scenery/island/Island';
 
 export function get3DFreeCamera() {
     const camera = new THREE.PerspectiveCamera(
@@ -34,11 +35,11 @@ export function get3DFreeCamera() {
     };
 }
 
-function processFree3DMovement(controlsState, controlNode, island, time) {
+function processFree3DMovement(controlsState, controlNode, island: Island, time) {
     let speedFactor = 0;
     let height = 0;
     if (island) {
-        const groundInfo = island.physics.getGroundInfo(controlNode.position);
+        const groundInfo = island.physics.getHeightmapGround(controlNode.position);
         height = groundInfo.height;
         speedFactor = Math.max(
             0.0,

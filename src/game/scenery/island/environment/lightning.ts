@@ -1,12 +1,12 @@
 import { LightningStrike } from 'three/examples/jsm/geometries/LightningStrike.js';
 import * as THREE from 'three';
 
-import { WORLD_SIZE } from '../../utils/lba';
-import { findSection, getGroundInfo } from '../../game/loop/physicsIsland';
+import { WORLD_SIZE } from '../../../../utils/lba';
+import IslandPhysics from '../IslandPhysics';
 
 let currentLightning = null;
 
-export function loadLightning(props, islandSections) {
+export function loadLightning(props, physics: IslandPhysics, meshes: THREE.Mesh[]) {
     const params = {
         sourceOffset: new THREE.Vector3(),
         destOffset: new THREE.Vector3(),
@@ -57,9 +57,13 @@ export function loadLightning(props, islandSections) {
 
     currentLightning = lightning;
 
+    for (const mesh of meshes) {
+        mesh.onBeforeRender = applyLightningUniforms;
+    }
+
     return {
         threeObject: lightningStrikeMesh,
-        update: updateLightning.bind(null, lightning, islandSections)
+        update: updateLightning.bind(null, lightning, physics)
     };
 }
 
@@ -77,13 +81,13 @@ export function applyLightningUniforms(_renderer, _scene, _camera, _geometry, ma
     }
 }
 
-function updateLightning(lightning, islandSections, game, scene, time) {
+function updateLightning(lightning, physics, game, scene, time) {
     const objPositions = getObjectPositions(scene);
     if (time.elapsed > lightning.nextTime + lightning.duration) {
         planNextStrike(lightning, time);
     } else if (time.elapsed > lightning.nextTime && lightning.duration > 0) {
         if (lightning.newStrike) {
-            initNewStrike(lightning, islandSections, game, objPositions);
+            initNewStrike(lightning, physics, game, objPositions);
             lightning.newStrike = false;
         }
         updateStrike(lightning, objPositions, time);
@@ -106,8 +110,8 @@ function planNextStrike(lightning, time) {
     lightning.newStrike = true;
 }
 
-function initNewStrike(lightning, islandSections, game, objPositions) {
-    findLightningPosition(lightning, islandSections, objPositions);
+function initNewStrike(lightning, physics, game, objPositions) {
+    findLightningPosition(lightning, physics, objPositions);
     const camDist = objPositions.camera.distanceTo(lightning.position);
     const volume = Math.min(1, Math.max(0, 1 - (camDist / 200)));
     const audio = game.getAudioManager();
@@ -144,7 +148,7 @@ function updateStrike(lightning, objPositions, time) {
     lightningStrikeMesh.visible = true;
 }
 
-function findLightningPosition(lightning, islandSections, {hero, camera}) {
+function findLightningPosition(lightning, physics, {hero, camera}) {
     const {position} = lightning;
 
     while (true) {
@@ -153,9 +157,9 @@ function findLightningPosition(lightning, islandSections, {hero, camera}) {
             0,
             Math.random() * 400 - 200
         );
-        const section = findSection(islandSections, position);
+        const section = physics.findSection(position);
         if (section) {
-            const ground = getGroundInfo(section, position);
+            const ground = physics.getHeightmapGround(position);
             position.y = ground.height;
             let hitObj = false;
             for (let i = 0; i < section.objectInfo.length; i += 1) {

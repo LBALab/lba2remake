@@ -1,5 +1,5 @@
 import {loadBricksMapping} from './mapping';
-import { getLibraries } from '../resources';
+import { getLibraries } from '../../../resources';
 
 export enum GROUND_TYPES {
     NORMAL_FLOOR,

@@ -9,9 +9,9 @@ import VERT_OBJECTS_DOME from '../shaders/objects/dome.vert.glsl';
 import FRAG_OBJECTS_DOME from '../shaders/objects/dome.frag.glsl';
 import VERT_OBJECTS_TEXTURED from '../shaders/objects/textured.vert.glsl';
 import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
-import { compile } from '../../utils/shaders';
+import { compile } from '../../../../utils/shaders';
 import { applyAnimationUpdaters } from './animations';
-import { DOME_SCENES } from '../../utils/lba';
+import { DOME_SCENES } from '../../../../utils/lba';
 
 const loader = new GLTFLoader();
 const exporter = new GLTFExporter();

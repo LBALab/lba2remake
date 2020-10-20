@@ -13,7 +13,7 @@ import PLATFORM_VERT from './shaders/dome_platform.vert.glsl';
 import PLATFORM_FRAG from './shaders/dome_platform.frag.glsl';
 import LBA_OBJECT_VERT from '../shaders/objects/colored.preview.vert.glsl';
 import LBA_OBJECT_FRAG from '../shaders/objects/colored.frag.glsl';
-import { loadLUTTexture } from '../../utils/lut';
+import { loadLUTTexture } from '../../../../utils/lut';
 
 const loader = new THREE.TextureLoader();
 const gltfLoader = new GLTFLoader();

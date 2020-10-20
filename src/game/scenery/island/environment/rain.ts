@@ -51,7 +51,7 @@ export function loadRain(props) {
         }
     }
 
-    const update = (scene, time) => {
+    const update = (_game, scene, time) => {
         const camPos = scene.camera.controlNode.position;
         const wind = rainMaterial.uniforms.wind.value;
         wind.x = noiseGen.noise2D(time.elapsed * 0.05, 0) * 20 + 10;

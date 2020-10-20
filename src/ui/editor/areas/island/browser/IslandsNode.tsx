@@ -1,5 +1,5 @@
 import * as React from 'react';
-import islandsInfo from '../../../../../island/data/islands';
+import islandsInfo from '../../../../../game/scenery/island/data/islands';
 import DebugData, { saveMetaData } from '../../../DebugData';
 import Renderer from '../../../../../renderer';
 
@@ -14,10 +14,19 @@ const indexStyle = {
     padding: '0 2px'
 };
 
+const islandList = [];
+
+for (const [name, island] of Object.entries(islandsInfo)) {
+    islandList.push({
+        name,
+        ...island
+    });
+}
+
 const IslandNode = {
     dynamic: true,
     name: (island) => {
-        const index = islandsInfo.findIndex(i => i.name === island.name);
+        const index = islandList.findIndex(i => i.name === island.name);
         return DebugData.metadata.islands[index] || island.name;
     },
     numChildren: () => 0,
@@ -66,7 +75,7 @@ const IslandNode = {
         };
     },
     rename: (name, newName) => {
-        const index = islandsInfo.findIndex(i => i.name === name);
+        const index = islandList.findIndex(i => i.name === name);
         DebugData.metadata.islands[index] = newName;
         saveMetaData({
             type: 'islands',
@@ -145,24 +154,24 @@ function getIcon(data, component) {
 const IslandsNode = {
     dynamic: true,
     name: () => 'Islands',
-    numChildren: () => islandsInfo.length,
+    numChildren: () => islandList.length,
     child: () => IslandNode,
-    childData: (_data, idx) => islandsInfo[idx],
+    childData: (_data, idx) => islandList[idx],
     up: (_data, _collapsed, component) => {
         const {name} = component.props.rootState;
         const {setName} = component.props.rootStateHandler;
-        const currentIndex = islandsInfo.findIndex(i => i.name === name);
+        const currentIndex = islandList.findIndex(i => i.name === name);
         const index = Math.max(currentIndex - 1, 0);
-        const newName = islandsInfo[index].name;
+        const newName = islandList[index].name;
         setName(newName);
         centerView(newName);
     },
     down: (_data, _collapsed, component) => {
         const {name} = component.props.rootState;
         const {setName} = component.props.rootStateHandler;
-        const currentIndex = islandsInfo.findIndex(i => i.name === name);
-        const index = Math.min(currentIndex + 1, islandsInfo.length - 1);
-        const newName = islandsInfo[index].name;
+        const currentIndex = islandList.findIndex(i => i.name === name);
+        const index = Math.min(currentIndex + 1, islandList.length - 1);
+        const newName = islandList[index].name;
         setName(newName);
         centerView(newName);
     }

@@ -1,106 +1,95 @@
-export default [
-    {
-        name: 'CITADEL',
-        env: 'TWINSUN_RAIN',
+import environments from './environments';
+
+export default {
+    CITADEL: {
+        envInfo: environments.TWINSUN_RAIN,
         startPosition: [
             0,
             1
         ]
     },
-    {
-        name: 'CITABAU',
-        env: 'TWINSUN_SUNNY',
+    CITABAU: {
+        envInfo: environments.TWINSUN_SUNNY,
         startPosition: [
             0,
             1
         ]
     },
-    {
-        name: 'DESERT',
-        env: 'TWINSUN_SUNNY',
+    DESERT: {
+        envInfo: environments.TWINSUN_SUNNY,
         startPosition: [
             0.8,
             1.7
         ]
     },
-    {
-        name: 'EMERAUDE',
-        env: 'MOON',
+    EMERAUDE: {
+        envInfo: environments.MOON,
         startPosition: [
             1.4,
             0.5
         ]
     },
-    {
-        name: 'OTRINGAL',
-        env: 'ZEELISH',
+    OTRINGAL: {
+        envInfo: environments.ZEELISH,
         startPosition: [
             0.8,
             -1.2
         ]
     },
-    {
-        name: 'KNARTAS',
-        env: 'ZEELISH',
+    KNARTAS: {
+        envInfo: environments.ZEELISH,
         startPosition: [
             1,
             0.8
         ]
     },
-    {
-        name: 'ILOTCX',
-        env: 'ZEELISH',
+    ILOTCX: {
+        envInfo: environments.ZEELISH,
         startPosition: [
             3.3,
             -1.2
         ]
     },
-    {
-        name: 'CELEBRAT',
-        env: 'ZEELISH',
+    CELEBRAT: {
+        envInfo: environments.ZEELISH,
         startPosition: [
             3.1,
             -1.4
         ]
     },
-    {
-        name: 'CELEBRA2',
-        env: 'ZEELISH',
+    CELEBRA2: {
+        envInfo: environments.ZEELISH,
         startPosition: [
             3.1,
             -1.4
         ]
     },
-    {
-        name: 'ASCENCE',
-        env: 'ZEELISH',
+    ASCENCE: {
+        envInfo: environments.ZEELISH,
         startPosition: [
             2.5,
             -1.1
         ]
     },
-    {
-        name: 'MOSQUIBE',
-        env: 'UNDERGAS',
+    MOSQUIBE: {
+        envInfo: environments.UNDERGAS,
         startPosition: [
             0.75,
             1.24
         ]
     },
-    {
-        name: 'PLATFORM',
-        env: 'UNDERGAS',
+    PLATFORM: {
+        envInfo: environments.UNDERGAS,
         startPosition: [
             1.78,
             1.47
         ]
     },
-    {
-        name: 'SOUSCELB',
-        env: 'UNDERGAS',
+    SOUSCELB: {
+        envInfo: environments.UNDERGAS,
         startPosition: [
             1.39,
             1.1
         ]
     }
-];
+};

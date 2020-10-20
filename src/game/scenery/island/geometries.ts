@@ -4,8 +4,12 @@ import {
     loadPaletteTexture,
     loadTextureRGBA,
     makeNoiseTexture
-} from '../texture';
-import {compile} from '../utils/shaders';
+} from '../../../texture';
+import {compile} from '../../../utils/shaders';
+import { loadGround } from './ground';
+import { loadObjects } from './objects';
+import { loadModel } from './model';
+import { createTextureAtlas } from './atlas';
 
 import GROUND_COLORED__VERT from './shaders/ground/colored.vert.glsl';
 import GROUND_COLORED__FRAG from './shaders/ground/colored.frag.glsl';
@@ -19,7 +23,7 @@ import OBJECTS_COLORED__FRAG from './shaders/objects/colored.frag.glsl';
 import OBJECTS_TEXTURED__VERT from './shaders/objects/textured.vert.glsl';
 import OBJECTS_TEXTURED__FRAG from './shaders/objects/textured.frag.glsl';
 
-import { WORLD_SIZE } from '../utils/lba';
+import { WORLD_SIZE } from '../../../utils/lba';
 
 const fakeNoiseBuffer = new Uint8Array(1);
 fakeNoiseBuffer[0] = 128;
@@ -31,9 +35,86 @@ const fakeNoise = new THREE.DataTexture(
     THREE.UnsignedByteType
 );
 
-export async function prepareGeometries(island, data, ambience) {
+export function loadGeometries(props, data, layout) {
+    const usedTiles = {};
+    const models = [];
+    const uvGroupsS : Set<string> = new Set();
+    const { obl } = data;
+    for (let i = 0; i < obl.length; i += 1) {
+        const model = loadModel(obl.getEntry(i));
+        models.push(model);
+        for (const group of model.uvGroups) {
+            uvGroupsS.add(group.join(','));
+        }
+    }
+    const allUvGroups = [...uvGroupsS]
+        .map(g => g.split(',').map(v => Number(v)))
+        .sort((g1, g2) => (g2[2] * g2[3]) - (g1[2] * g1[3]));
+    const atlas = createTextureAtlas(data, allUvGroups);
+
+    const geometries = prepareGeometries(props, data, atlas);
+
+    for (const section of layout.groundSections) {
+        const tilesKey = [section.x, section.z].join(',');
+        usedTiles[tilesKey] = [];
+        loadGround(section, geometries, usedTiles[tilesKey]);
+        loadObjects(section, geometries, models, atlas, props);
+    }
+
+    const matByName = {};
+    const meshes = [];
+    for (const [name, geom] of Object.entries(geometries)) {
+        const {positions, uvs, colors, intensities, normals, uvGroups, material} = geom;
+        if (positions && positions.length > 0) {
+            const bufferGeometry = new THREE.BufferGeometry();
+            bufferGeometry.setAttribute(
+                'position',
+                new THREE.BufferAttribute(new Float32Array(positions), 3)
+            );
+            if (uvs) {
+                bufferGeometry.setAttribute(
+                    'uv',
+                    new THREE.BufferAttribute(new Uint8Array(uvs), 2, false)
+                );
+            }
+            if (colors) {
+                bufferGeometry.setAttribute(
+                    'color',
+                    new THREE.BufferAttribute(new Uint8Array(colors), 1, false)
+                );
+            }
+            if (intensities) {
+                bufferGeometry.setAttribute(
+                    'intensity',
+                    new THREE.BufferAttribute(new Uint8Array(intensities), 1, false)
+                );
+            }
+            if (normals) {
+                bufferGeometry.setAttribute(
+                    'normal',
+                    new THREE.BufferAttribute(new Float32Array(normals), 3)
+                );
+            }
+            if (uvGroups) {
+                bufferGeometry.setAttribute(
+                    'uvGroup',
+                    new THREE.BufferAttribute(new Uint16Array(uvGroups), 4, false)
+                );
+            }
+            const mesh = new THREE.Mesh(bufferGeometry, material);
+            mesh.matrixAutoUpdate = false;
+            mesh.name = name;
+            matByName[name] = material;
+            meshes.push(mesh);
+        }
+    }
+
+    return { matByName, usedTiles, meshes };
+}
+
+function prepareGeometries(island, data, atlas) {
     const {envInfo} = island;
-    const {files: {ile}, palette, lutTexture, atlas} = data;
+    const {ile, palette, lutTexture, ambience} = data;
     const paletteTexture = loadPaletteTexture(palette);
     const groundTexture = loadTextureRGBA(ile.getEntry(1), palette);
     const noiseTexture = makeNoiseTexture();
@@ -42,7 +123,9 @@ export async function prepareGeometries(island, data, ambience) {
     return {
         ground_colored: {
             positions: [],
-            normals: [],
+            normals: null,
+            uvs: null,
+            uvGroups: null,
             colors: [],
             intensities: [],
             material: new THREE.RawShaderMaterial({
@@ -60,7 +143,9 @@ export async function prepareGeometries(island, data, ambience) {
         },
         ground_textured: {
             positions: [],
+            normals: null,
             uvs: [],
+            uvGroups: null,
             colors: [],
             intensities: [],
             material: new THREE.RawShaderMaterial({
@@ -81,7 +166,10 @@ export async function prepareGeometries(island, data, ambience) {
         objects_colored: {
             positions: [],
             normals: [],
+            uvs: null,
+            uvGroups: null,
             colors: [],
+            intensities: null,
             material: new THREE.RawShaderMaterial({
                 vertexShader: compile('vert', OBJECTS_COLORED__VERT),
                 fragmentShader: compile('frag', OBJECTS_COLORED__FRAG),
@@ -100,6 +188,8 @@ export async function prepareGeometries(island, data, ambience) {
             normals: [],
             uvs: [],
             uvGroups: [],
+            colors: null,
+            intensities: null,
             material: new THREE.RawShaderMaterial({
                 vertexShader: compile('vert', OBJECTS_TEXTURED__VERT),
                 fragmentShader: compile('frag', OBJECTS_TEXTURED__FRAG),
@@ -120,6 +210,8 @@ export async function prepareGeometries(island, data, ambience) {
             normals: [],
             uvs: [],
             uvGroups: [],
+            colors: null,
+            intensities: null,
             material: new THREE.RawShaderMaterial({
                 transparent: true,
                 vertexShader: compile('vert', OBJECTS_TEXTURED__VERT),

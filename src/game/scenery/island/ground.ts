@@ -1,7 +1,7 @@
 import {map} from 'lodash';
 import * as THREE from 'three';
-import {bits} from '../utils';
-import {WORLD_SCALE, WORLD_SCALE_B} from '../utils/lba';
+import {bits} from '../../../utils';
+import {WORLD_SCALE, WORLD_SCALE_B} from '../../../utils/lba';
 
 export const LIQUID_TYPES = {
     WATER: 12,

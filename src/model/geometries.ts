@@ -9,7 +9,7 @@ import FRAG_TEXTURED from './shaders/textured.frag.glsl';
 import {loadPaletteTexture, loadSubTextureRGBA} from '../texture';
 import {compile} from '../utils/shaders';
 import { WORLD_SIZE } from '../utils/lba';
-import { applyLightningUniforms } from '../island/environment/lightning';
+import { applyLightningUniforms } from '../game/scenery/island/environment/lightning';
 
 const push = Array.prototype.push;
 

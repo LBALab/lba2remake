@@ -8,6 +8,9 @@ import { updateExtra } from '../extras';
 import { updateVRGUI } from '../../ui/vr/vrGUI';
 import { getRandom } from '../../utils/lba';
 import { getParams } from '../../params';
+import Game from '../Game';
+import Renderer from '../../renderer';
+import Scene from '../Scene';
 
 const dbgClock = new THREE.Clock(false);
 dbgClock.start();
@@ -20,7 +23,13 @@ const emptyVRScene = {
     }
 };
 
-export function mainGameLoop(game, renderer, scene, controls, vrScene = null) {
+export function mainGameLoop(
+    game: Game,
+    renderer: Renderer,
+    scene: Scene,
+    controls: any[],
+    vrScene = null
+) {
     const params = getParams();
     const time = game.getTime();
     const uiState = game.getUiState();

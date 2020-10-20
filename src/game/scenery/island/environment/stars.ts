@@ -56,7 +56,7 @@ export function loadStars(props) {
 
     return {
         threeObject: stars,
-        update: (time) => {
+        update: (_game, _scene, time) => {
             stars.rotation.x = time.elapsed * 0.003;
         }
     };

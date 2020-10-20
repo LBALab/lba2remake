@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {each} from 'lodash';
-import {bits} from '../utils';
-import {WORLD_SCALE, WORLD_SIZE} from '../utils/lba';
+import {bits} from '../../../utils';
+import {WORLD_SCALE, WORLD_SIZE} from '../../../utils/lba';
 
 const push = Array.prototype.push;
 

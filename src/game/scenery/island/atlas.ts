@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {each, find} from 'lodash';
 
-export function createTextureAtlas({files: {ile}, palette}, uvGroups) {
+export function createTextureAtlas({ile, palette}, uvGroups) {
     const rawTexture = new Uint8Array(ile.getEntry(2));
 
     const fittedGroups = {

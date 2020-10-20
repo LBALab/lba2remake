@@ -1,11 +1,11 @@
 import {each, every} from 'lodash';
-import { WORLD_SIZE } from '../../utils/lba';
+import { WORLD_SIZE } from '../../../../utils/lba';
 import { applyLightningUniforms } from './lightning';
 import * as THREE from 'three';
-import { compile } from '../../utils/shaders';
+import { compile } from '../../../../utils/shaders';
 import VERT_SEA from './shaders/sea.vert.glsl';
 import FRAG_SEA from './shaders/sea.frag.glsl';
-import { loadSubTexture, makeNoiseTexture } from '../../texture';
+import { loadSubTexture, makeNoiseTexture } from '../../../../texture';
 import { getLightVector } from '../geometries';
 
 const push = Array.prototype.push;
@@ -121,7 +121,7 @@ export function loadSea(props, {layout, usedTiles, envInfo, ress, palette, ambie
 
     return {
         threeObject: seaMesh,
-        update: (time) => {
+        update: (_game, _scene, time) => {
             uniforms.time.value = time.elapsed;
         },
     };

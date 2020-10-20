@@ -5,7 +5,7 @@ import {
     each
 } from 'lodash';
 
-import islandSceneMapping from '../island/data/sceneMapping';
+import islandSceneMapping from './scenery/island/data/sceneMapping';
 import { loadActor, DirMode } from './actors';
 import { loadPoint } from './points';
 import { loadZone } from './zones';
@@ -20,9 +20,10 @@ import DebugData, { loadSceneMetaData } from '../ui/editor/DebugData';
 import Game from './Game';
 import Renderer from '../renderer';
 import { selectCamera } from './scene/camera';
-import { loadScenery } from './scene/scenery';
+import { loadScenery, Scenery } from './scenery';
 import { SceneManager } from './SceneManager';
 import { createSceneVariables, findUsedVarGames } from './scene/variables';
+import Island from './scenery/island/Island';
 
 interface Entities {
     readonly actors: any[];
@@ -47,7 +48,7 @@ export default class Scene {
     firstFrame: boolean;
     variables: number[];
     usedVarGames: number[];
-    readonly scenery: any;
+    readonly scenery: Scenery;
     sideScenes: Map<number, Scene>;
     extras: any[];
     isActive: boolean;
@@ -70,9 +71,7 @@ export default class Scene {
         if (params.editor) {
             await loadSceneMetaData(index);
         }
-        const scenery = parent
-            ? parent.scenery
-            : await loadScenery(game, renderer, data);
+        const scenery = parent ? parent.scenery : await loadScenery(game, data);
         const is3DCam = data.isIsland || renderer.vr || params.iso3d;
         const entities = {
             actors: await Promise.all(map(
@@ -103,7 +102,7 @@ export default class Scene {
         renderer: Renderer,
         sceneManager: SceneManager,
         data,
-        scenery: any,
+        scenery: Scenery,
         entities: Entities,
         parent: Scene
     ) {
@@ -222,7 +221,7 @@ export default class Scene {
     private initSceneNode() {
         const { editor } = getParams();
         this.sceneNode.matrixAutoUpdate = false;
-        if (this.data.isIsland) {
+        if (this.scenery instanceof Island) {
             const sectionIdx = islandSceneMapping[this.data.index].section;
             const section = this.scenery.sections[sectionIdx];
             this.sceneNode.name = `island_section_${sectionIdx}`;

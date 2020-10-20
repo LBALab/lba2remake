@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
-import { WORLD_SIZE } from '../../utils/lba';
-import { loadSubTexture } from '../../texture';
-import { compile } from '../../utils/shaders';
+import { WORLD_SIZE } from '../../../../utils/lba';
+import { loadSubTexture } from '../../../../texture';
+import { compile } from '../../../../utils/shaders';
 
 import { applyLightningUniforms } from './lightning';
 import VERT_CLOUDS from './shaders/clouds.vert.glsl';
@@ -10,12 +10,7 @@ import FRAG_CLOUDS from './shaders/clouds.frag.glsl';
 
 const worldScale = 1 / (WORLD_SIZE * 0.04);
 
-const loader = new THREE.TextureLoader();
-
-export async function loadClouds(props, {envInfo, ress, palette}) {
-    const smokeTexture = await new Promise(resolve =>
-        loader.load('images/smoke.png', resolve)
-    );
+export function loadClouds(props, {envInfo, ress, palette, smokeTexture}) {
     const material = new THREE.RawShaderMaterial({
         vertexShader: compile('vert', VERT_CLOUDS),
         fragmentShader: compile('frag', FRAG_CLOUDS),
@@ -93,7 +88,7 @@ export async function loadClouds(props, {envInfo, ress, palette}) {
     const clouds = new THREE.Mesh(bufferGeometry, material);
     clouds.onBeforeRender = applyLightningUniforms;
 
-    const update = (time) => {
+    const update = (_game, _scene, time) => {
         material.uniforms.time.value = time.elapsed * props.speed;
     };
     return {threeObject: clouds, update};

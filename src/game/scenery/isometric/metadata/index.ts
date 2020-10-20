@@ -8,10 +8,10 @@ import {
 import { processLayoutMirror, buildMirrors } from './mirrors';
 import { saveFullSceneModel } from './models';
 import { getGridMetadata } from '../grid';
-import { loadImageData, loadBricks } from '..';
-import { getPalette, getGrids } from '../../resources';
+import { getPalette, getGrids, getBricks } from '../../../../resources';
 import { checkVariantMatch } from './matchers/variants';
 import { checkBaseLayoutMatch } from './matchers/baseLayout';
+import { loadBrickMask } from '../mask';
 
 export async function extractGridMetadata(grid, entry, ambience, is3D, numActors) {
     if (!is3D) {
@@ -36,9 +36,9 @@ export async function extractGridMetadata(grid, entry, ambience, is3D, numActors
 export async function saveSceneReplacementModel(entry, ambience) {
     const [palette, bricks, gridMetadata, mask] = await Promise.all([
         getPalette(),
-        loadBricks(),
+        getBricks(),
         getGridMetadata(entry + 1),
-        loadImageData('images/brick_mask.png')
+        loadBrickMask()
     ]);
 
     const grid = await getGrids(entry + 1, { bricks, mask, palette, is3D: true, gridMetadata });
