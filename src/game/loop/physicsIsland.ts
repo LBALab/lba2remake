@@ -93,10 +93,12 @@ function getFloorHeight(sections, scene, obj, minFunc, floorThreshold) {
         ACTOR_BOX.copy(obj.model.boundingBox);
         ACTOR_BOX.translate(POSITION);
         const section = findSection(sections, POSITION);
-        for (let i = 0; i < section.objectInfo.length; i += 1) {
-            const bb = section.objectInfo[i].boundingBox;
-            if (ACTOR_BOX.intersectsBox(bb)) {
-                return bb.max.y;
+        if (section) {
+            for (let i = 0; i < section.objectInfo.length; i += 1) {
+                const bb = section.objectInfo[i].boundingBox;
+                if (ACTOR_BOX.intersectsBox(bb)) {
+                    return bb.max.y;
+                }
             }
         }
         POSITION.y -= 0.1;
