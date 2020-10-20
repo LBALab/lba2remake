@@ -3,6 +3,9 @@ import { LIQUID_TYPES, getTriangleFromPos} from './ground';
 import { WORLD_SIZE, getPositions } from '../../../utils/lba';
 import { BehaviourMode } from '../../loop/hero';
 import { AnimType } from '../../data/animType';
+import { IslandSection } from './IslandLayout';
+import Scene from '../../Scene';
+import { Time } from '../../../datatypes';
 
 const TGT = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
@@ -32,16 +35,16 @@ const GRID_UNIT = 1 / 64;
 const Y_THRESHOLD = WORLD_SIZE / 1600;
 
 export default class IslandPhysics {
-    private sections: any;
+    private sections: Map<string, IslandSection>;
 
     constructor(layout) {
-        this.sections = {};
+        this.sections = new Map<string, IslandSection>();
         for (const section of layout.groundSections) {
-            this.sections[`${section.x},${section.z}`] = section;
+            this.sections.set(`${section.x},${section.z}`, section);
         }
     }
 
-    processCollisions(scene, obj, time) {
+    processCollisions(scene: Scene, obj, time: Time) {
         POSITION.copy(obj.physics.position);
         POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
 
@@ -147,13 +150,13 @@ export default class IslandPhysics {
         return this.getGroundInfo(section, position);
     }
 
-    processCameraCollisions(camPosition, groundOffset = 0.15, objOffset = 0.2) {
+    processCameraCollisions(camPosition: THREE.Vector3, groundOffset = 0.15, objOffset = 0.2) {
         const section = this.findSection(camPosition);
         const ground = this.getGroundInfo(section, camPosition);
         camPosition.y = Math.max(ground.height + groundOffset * WORLD_SIZE, camPosition.y);
         if (section) {
-            for (let i = 0; i < section.objectInfo.length; i += 1) {
-                const bb = section.objectInfo[i].boundingBox;
+            for (const obj of section.objects) {
+                const bb = obj.boundingBox;
                 if (bb.containsPoint(camPosition)) {
                     camPosition.y = bb.max.y + objOffset * WORLD_SIZE;
                 }
@@ -164,7 +167,7 @@ export default class IslandPhysics {
     // getDistFromFloor returns the distance Twinsen is from the "floor" where floor
     // means any object which Twinsen could stand on between him and the ground, or
     // the ground if none exist.
-    getDistFromFloor(scene, obj) {
+    getDistFromFloor(scene: Scene, obj) {
         if (!obj.model) {
             return;
         }
@@ -177,14 +180,14 @@ export default class IslandPhysics {
         return originalPos.y - floorHeight;
     }
 
-    private getGround(section, position) {
+    private getGround(section: IslandSection, position: THREE.Vector3) {
         if (!section)
             return DEFAULT_GROUND;
 
         const { x, y, z } = position;
         const yMinusThreshold = y - Y_THRESHOLD;
 
-        for (const obj of section.objectInfo) {
+        for (const obj of section.objects) {
             const bb = obj.boundingBox;
             if (x >= bb.min.x && x <= bb.max.x
                 && z >= bb.min.z && z <= bb.max.z
@@ -192,7 +195,7 @@ export default class IslandPhysics {
                 FLAGS.hitObject = true;
                 return {
                     height: bb.max.y,
-                    sound: obj.info.soundType,
+                    sound: obj.soundType,
                     collision: null,
                     liquid: 0,
                 };
@@ -201,7 +204,11 @@ export default class IslandPhysics {
         return this.getGroundInfo(section, position);
     }
 
-    private getGroundInfo(section, position) {
+    private getGroundInfo(section: IslandSection, position: THREE.Vector3) {
+        if (!section) {
+            return DEFAULT_GROUND;
+        }
+
         const xLocalUnscaled = (WORLD_SIZE_M2 - (position.x - (section.x * WORLD_SIZE_M2)));
         const xLocal = (xLocalUnscaled * GRID_SCALE) + 1;
         const zLocal = (position.z - (section.z * WORLD_SIZE_M2)) * GRID_SCALE;
@@ -212,7 +219,7 @@ export default class IslandPhysics {
     // may be the height of the ground, or an object Twinsen is stood on. minFunc
     // determines which of the 4 points of the base bounding box we should use and
     // is intended to be either a < or > function of two arguments.
-    private getFloorHeight(scene, obj, minFunc, floorThreshold) {
+    private getFloorHeight(scene: Scene, obj, minFunc, floorThreshold) {
         const originalPos = new THREE.Vector3();
         originalPos.copy(obj.physics.position);
         originalPos.applyMatrix4(scene.sceneNode.matrixWorld);
@@ -251,8 +258,8 @@ export default class IslandPhysics {
             ACTOR_BOX.translate(POSITION);
             const section = this.findSection(POSITION);
             if (section) {
-                for (let i = 0; i < section.objectInfo.length; i += 1) {
-                    const bb = section.objectInfo[i].boundingBox;
+                for (const iObj of section.objects) {
+                    const bb = iObj.boundingBox;
                     if (ACTOR_BOX.intersectsBox(bb)) {
                         return bb.max.y;
                     }
@@ -265,10 +272,10 @@ export default class IslandPhysics {
         return overallHeight;
     }
 
-    findSection(position) {
+    findSection(position): IslandSection {
         const x = Math.floor((position.x / WORLD_SIZE_M2) - GRID_UNIT);
         const z = Math.floor(position.z / WORLD_SIZE_M2);
-        return this.sections[`${x},${z}`];
+        return this.sections.get(`${x},${z}`);
     }
 }
 
@@ -280,13 +287,13 @@ const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
 const H_THRESHOLD = 0.007 * WORLD_SIZE;
 
-function processBoxIntersections(section, actor, position, isTouchingGround) {
+function processBoxIntersections(section: IslandSection, actor, position, isTouchingGround) {
     const boundingBox = actor.model ? actor.model.boundingBox : actor.sprite.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.translate(position);
     let collision = false;
-    for (let i = 0; i < section.objectInfo.length; i += 1) {
-        const bb = section.objectInfo[i].boundingBox;
+    for (const obj of section.objects) {
+        const bb = obj.boundingBox;
         if (ACTOR_BOX.intersectsBox(bb)) {
             collision = true;
             isTouchingGround = true;

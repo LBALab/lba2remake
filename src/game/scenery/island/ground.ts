@@ -2,6 +2,7 @@ import {map} from 'lodash';
 import * as THREE from 'three';
 import {bits} from '../../../utils';
 import {WORLD_SCALE, WORLD_SCALE_B} from '../../../utils/lba';
+import { IslandSection } from './IslandLayout';
 
 export const LIQUID_TYPES = {
     WATER: 12,
@@ -10,16 +11,17 @@ export const LIQUID_TYPES = {
 
 const push = Array.prototype.push;
 
-export function loadGround(section, geometries, usedTiles) {
+export function loadGround(section: IslandSection, geometries, usedTiles) {
+    const { groundMesh } = section;
     for (let x = 0; x < 64; x += 1) {
         for (let z = 0; z < 64; z += 1) {
-            const t0 = loadTriangle(section, x, z, 0);
-            const t1 = loadTriangle(section, x, z, 1);
+            const t0 = loadTriangle(groundMesh, x, z, 0);
+            const t1 = loadTriangle(groundMesh, x, z, 1);
 
             const isSeaLevelLiquid = (t, p) => {
-                const seaLevel = section.heightmap[p[0]] === 0
-                    && section.heightmap[p[1]] === 0
-                    && section.heightmap[p[2]] === 0;
+                const seaLevel = groundMesh.heightmap[p[0]] === 0
+                    && groundMesh.heightmap[p[1]] === 0
+                    && groundMesh.heightmap[p[2]] === 0;
                 return seaLevel && t.liquid !== 0;
             };
 
@@ -42,7 +44,7 @@ export function loadGround(section, geometries, usedTiles) {
                         );
                         push.apply(
                             geometries.ground_textured.intensities,
-                            getIntensities(section.intensity, pts)
+                            getIntensities(groundMesh.intensity, pts)
                         );
                     } else {
                         push.apply(
@@ -55,7 +57,7 @@ export function loadGround(section, geometries, usedTiles) {
                         );
                         push.apply(
                             geometries.ground_colored.intensities,
-                            getIntensities(section.intensity, pts)
+                            getIntensities(groundMesh.intensity, pts)
                         );
                     }
                 }
@@ -67,7 +69,7 @@ export function loadGround(section, geometries, usedTiles) {
     }
 }
 
-export function getTriangleFromPos(section, x, z) {
+export function getTriangleFromPos(section: IslandSection, x, z) {
     const xFloor = Math.floor(x);
     const zFloor = Math.floor(z);
     const t0 = loadTriangleForPhysics(section, xFloor, zFloor, x, z, 0);
@@ -85,9 +87,9 @@ const TRIANGLE_POINTS = [
     ]
 ];
 
-function loadTriangle(section, x, z, idx) {
-    const flags = section.triangles[(((x * 64) + z) * 2) + idx];
-    const orientation = bits(section.triangles[((x * 64) + z) * 2], 16, 1);
+function loadTriangle(groundMesh, x, z, idx) {
+    const flags = groundMesh.triangles[(((x * 64) + z) * 2) + idx];
+    const orientation = bits(groundMesh.triangles[((x * 64) + z) * 2], 16, 1);
     return {
         index: idx,
         color: bits(flags, 0, 4),
@@ -114,9 +116,9 @@ const PTS = [
     new THREE.Vector3()
 ];
 
-function loadTriangleForPhysics(section, x, z, xTgt, zTgt, idx) {
-    const flags = section.triangles[(((x * 64) + z) * 2) + idx];
-    const baseFlags = idx ? section.triangles[((x * 64) + z) * 2] : flags;
+function loadTriangleForPhysics(section: IslandSection, x, z, xTgt, zTgt, idx) {
+    const flags = section.groundMesh.triangles[(((x * 64) + z) * 2) + idx];
+    const baseFlags = idx ? section.groundMesh.triangles[((x * 64) + z) * 2] : flags;
     const orientation = bits(baseFlags, 16, 1);
     const src_pts = TRIANGLE_POINTS[orientation][idx];
 
@@ -125,7 +127,7 @@ function loadTriangleForPhysics(section, x, z, xTgt, zTgt, idx) {
         const ptIdx = ((x + pt.x) * 65) + z + pt.z;
         PTS[i].set(
             x + pt.x,
-            section.heightmap[ptIdx] * WORLD_SCALE,
+            section.groundMesh.heightmap[ptIdx] * WORLD_SCALE,
             z + pt.z
         );
     }
@@ -159,7 +161,7 @@ function getPositions(section, points) {
     for (let i = 0; i < 3; i += 1) {
         const idx = points[i];
         const x = (section.x * 64) + (65 - Math.floor(idx / 65));
-        const y = section.heightmap[idx];
+        const y = section.groundMesh.heightmap[idx];
         const z = (section.z * 64) + (idx % 65);
         positions.push(
             x * WORLD_SCALE_B,

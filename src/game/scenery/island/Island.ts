@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 
-import { loadLayout } from './layout';
-
+import IslandLayout from './IslandLayout';
 import IslandPhysics from './IslandPhysics';
 import { createBoundingBox } from '../../../utils/rendering';
 import { loadLUTTexture } from '../../../utils/lut';
@@ -15,6 +14,7 @@ import IslandShadows from './IslandShadows';
 import { loadEnvironmentComponents } from './environment';
 import { loadGeometries } from './geometries';
 import { loadPickingPlanes } from './preview';
+import { getParams } from '../../../params';
 
 const textureLoader = new THREE.TextureLoader();
 
@@ -123,11 +123,11 @@ export default class Island {
         this.threeObject = new THREE.Object3D();
         this.threeObject.name = `island_${data.name}`;
         this.threeObject.matrixAutoUpdate = false;
-        const layout = loadLayout(data.ile);
+        const layout = new IslandLayout(data.ile);
 
         const geometries = loadGeometries(this.threeObject, this.props, data, layout);
 
-        this.addObjectBoundingBoxes(layout, options);
+        this.addObjectBoundingBoxes(layout);
         if (options.preview) {
             loadPickingPlanes(this.threeObject, layout);
         }
@@ -162,8 +162,9 @@ export default class Island {
         }
     }
 
-    private addObjectBoundingBoxes(layout, options: IslandOptions) {
-        if (!options.editor) {
+    private addObjectBoundingBoxes(layout: IslandLayout) {
+        const params = getParams();
+        if (!params.editor) {
             return;
         }
 
@@ -172,11 +173,9 @@ export default class Island {
         boundingBoxes.visible = false;
         boundingBoxes.matrixAutoUpdate = false;
         for (const section of layout.groundSections) {
-            const { objectInfo } = section;
-            for (let idx = 0; idx < objectInfo.length; idx += 1) {
-                const info = objectInfo[idx];
-                const box = createBoundingBox(info.boundingBox, new THREE.Vector3(0.9, 0.9, 0.9));
-                box.name = `[${section.x},${section.z}]:${idx}`;
+            for (const obj of section.objects) {
+                const box = createBoundingBox(obj.boundingBox, new THREE.Vector3(0.9, 0.9, 0.9));
+                box.name = `[${section.x},${section.z}]:${obj.index}`;
                 boundingBoxes.add(box);
             }
         }

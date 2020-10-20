@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import {each} from 'lodash';
 import {bits} from '../../../utils';
-import {WORLD_SCALE, WORLD_SIZE} from '../../../utils/lba';
+import {WORLD_SCALE} from '../../../utils/lba';
+import { IslandSection } from './IslandLayout';
 
 const push = Array.prototype.push;
 
@@ -13,44 +14,20 @@ const TransparentObjectOffset = {
     CITADEL: 0.05,
 };
 
-export function loadObjects(section, geometries, models, atlas, island) {
-    const numObjects = section.objInfo.numObjects;
-    section.objectInfo = [];
-    for (let i = 0; i < numObjects; i += 1) {
-        const info = loadObjectInfo(section.objects, section, i);
-        const model = models[info.index];
-        loadFaces(geometries, model, info, atlas, island);
+export function loadObjects(section: IslandSection, geometries, models, atlas, island) {
+    for (const objInfo of section.objects) {
+        const model = models[objInfo.index];
+        loadFaces(geometries, model, objInfo, atlas, island);
         const bb = new THREE.Box3(
             new THREE.Vector3(model.bbXMin, model.bbYMin, model.bbZMin),
             new THREE.Vector3(model.bbXMax, model.bbYMax, model.bbZMax),
         );
         bb.min.multiplyScalar(WORLD_SCALE);
         bb.max.multiplyScalar(WORLD_SCALE);
-        bb.applyMatrix4(angleMatrix[(info.angle + 3) % 4]);
-        bb.translate(new THREE.Vector3(info.x, info.y, info.z));
-        section.objectInfo.push({
-            boundingBox: bb,
-            info,
-        });
+        bb.applyMatrix4(angleMatrix[(objInfo.angle + 3) % 4]);
+        bb.translate(new THREE.Vector3(objInfo.x, objInfo.y, objInfo.z));
+        objInfo.boundingBox = bb;
     }
-}
-
-function loadObjectInfo(objects, section, index) {
-    const offset = index * 48;
-    const ox = objects.getInt32(offset + 12, true);
-    const oy = objects.getInt32(offset + 8, true);
-    const oz = objects.getInt32(offset + 4, true);
-    const angle = objects.getUint8(offset + 21) >> 2;
-    const soundType = objects.getInt16(offset + 16, true);
-    return {
-        index: objects.getUint32(offset, true),
-        x: (((0x8000 - ox) + 512) * WORLD_SCALE) + (section.x * WORLD_SIZE * 2),
-        y: oy * WORLD_SCALE,
-        z: (oz * WORLD_SCALE) + (section.z * WORLD_SIZE * 2),
-        angle,
-        iv: 1,
-        soundType,
-    };
 }
 
 function loadFaces(geometries, model, info, atlas, island) {

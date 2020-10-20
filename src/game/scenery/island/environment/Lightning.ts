@@ -143,8 +143,8 @@ export default class Lightning {
                 const ground = this.physics.getHeightmapGround(position);
                 position.y = ground.height;
                 let hitObj = false;
-                for (let i = 0; i < section.objectInfo.length; i += 1) {
-                    const bb = section.objectInfo[i].boundingBox;
+                for (const obj of section.objects) {
+                    const bb = obj.boundingBox;
                     if (bb.containsPoint(position)) {
                         position.y = bb.max.y;
                         hitObj = true;
