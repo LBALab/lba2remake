@@ -11,7 +11,7 @@ import FRAG_CLOUDS from './shaders/clouds.frag.glsl';
 const WORLD_SCALE = 1 / (WORLD_SIZE * 0.04);
 
 export default class Clouds {
-    threeObject: THREE.Object3D;
+    readonly threeObject: THREE.Object3D;
     private material: THREE.RawShaderMaterial;
     private props: any;
 
@@ -92,6 +92,7 @@ export default class Clouds {
             new THREE.BufferAttribute(new Float32Array(angles), 1, false)
         );
         this.threeObject = new THREE.Mesh(bufferGeometry, this.material);
+        this.threeObject.name = `Clouds${props.ground ? ' (Ground)' : ''}`;
         this.threeObject.onBeforeRender = Lightning.applyUniforms;
     }
 

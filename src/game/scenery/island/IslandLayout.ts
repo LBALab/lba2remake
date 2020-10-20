@@ -35,8 +35,8 @@ export interface SeaSection {
 }
 
 export default class IslandLayout {
-    groundSections: IslandSection[];
-    seaSections: SeaSection[];
+    readonly groundSections: IslandSection[];
+    readonly seaSections: SeaSection[];
 
     constructor(ile) {
         this.groundSections = this.loadGroundSections(ile);

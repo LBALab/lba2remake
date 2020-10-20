@@ -18,7 +18,7 @@ const rainMaterial = new THREE.ShaderMaterial({
 const noiseGen = new SimplexNoise('LBA');
 
 export default class Rain {
-    threeObject: THREE.Object3D;
+    readonly threeObject: THREE.Object3D;
     private sections: THREE.LineSegments[];
 
     constructor(props) {
@@ -40,10 +40,12 @@ export default class Rain {
         rainGeo.setAttribute('position', posAttr);
 
         this.threeObject = new THREE.Object3D();
+        this.threeObject.name = 'Rain';
         this.sections = [];
         for (let x = 0; x < 3; x += 1) {
             for (let z = 0; z < 3; z += 1) {
                 const section = new THREE.LineSegments(rainGeo, rainMaterial);
+                section.name = `Section: ${x - 1}, ${z - 1}`;
                 section.onBeforeRender = Lightning.applyUniforms;
                 section.renderOrder = 200;
                 section.frustumCulled = false;

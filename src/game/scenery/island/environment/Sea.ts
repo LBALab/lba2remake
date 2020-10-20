@@ -11,7 +11,7 @@ import Lightning from './Lightning';
 const worldScale = 1 / (WORLD_SIZE * 0.04);
 
 export default class Sea {
-    threeObject: THREE.Object3D;
+    readonly threeObject: THREE.Object3D;
     private uniforms: any;
 
     constructor(props, data, envInfo, usedTiles, layout) {
@@ -70,7 +70,7 @@ export default class Sea {
         );
         this.threeObject = new THREE.Mesh(bufferGeometry, material);
         this.threeObject.matrixAutoUpdate = false;
-        this.threeObject.name = name;
+        this.threeObject.name = 'Sea';
         this.threeObject.onBeforeRender = Lightning.applyUniforms;
     }
 

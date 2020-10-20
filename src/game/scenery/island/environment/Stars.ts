@@ -17,7 +17,7 @@ const pt = new THREE.Vector3();
 const noiseGen = new SimplexNoise('LBA');
 
 export default class Stars {
-    threeObject: THREE.Points;
+    readonly threeObject: THREE.Points;
 
     constructor(props) {
         const starsCount = props.count;
@@ -54,6 +54,7 @@ export default class Stars {
         starsGeo.setAttribute('intensity', intensitiesAttr);
 
         this.threeObject = new THREE.Points(starsGeo, starsMaterial);
+        this.threeObject.name = 'Stars';
         this.threeObject.renderOrder = 1;
         this.threeObject.frustumCulled = false;
     }

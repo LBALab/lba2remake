@@ -8,7 +8,7 @@ import Scene from '../../../Scene';
 import { Time } from '../../../../datatypes';
 
 export default class Lightning {
-    threeObject: THREE.Mesh;
+    readonly threeObject: THREE.Mesh;
     private physics: IslandPhysics;
     private lightning: LightningInfo;
     private static currentLightning: LightningInfo = null;
@@ -45,6 +45,7 @@ export default class Lightning {
             lightningStrike as unknown as THREE.BufferGeometry,
             lightningMaterial
         );
+        this.threeObject.name = 'Lightning';
         this.threeObject.frustumCulled = false;
         this.threeObject.renderOrder = 100;
 
