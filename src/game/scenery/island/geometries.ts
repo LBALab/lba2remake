@@ -9,7 +9,7 @@ import {compile} from '../../../utils/shaders';
 import { loadGround } from './ground';
 import { loadObjects } from './objects';
 import { loadModel } from './model';
-import { createTextureAtlas } from './atlas';
+import TextureAtlas from './TextureAtlas';
 import Lightning from './environment/Lightning';
 
 import GROUND_COLORED__VERT from './shaders/ground/colored.vert.glsl';
@@ -51,7 +51,7 @@ export function loadGeometries(threeObject, props, data, layout) {
     const allUvGroups = [...uvGroupsS]
         .map(g => g.split(',').map(v => Number(v)))
         .sort((g1, g2) => (g2[2] * g2[3]) - (g1[2] * g1[3]));
-    const atlas = createTextureAtlas(data, allUvGroups);
+    const atlas = new TextureAtlas(data, allUvGroups);
 
     const geometries = prepareGeometries(props, data, atlas);
 
