@@ -1,6 +1,6 @@
 import { WORLD_SCALE, WORLD_SIZE } from '../../../utils/lba';
 
-interface ObjectInfo {
+export interface IslandObjectInfo {
     index: number;
     x: number;
     y: number;
@@ -11,7 +11,7 @@ interface ObjectInfo {
     boundingBox?: THREE.Box3;
 }
 
-interface RawGroundMesh {
+export interface RawGroundMesh {
     triangles: Uint32Array;
     heightmap: Uint16Array;
     intensity: Uint8Array;
@@ -22,7 +22,7 @@ export interface IslandSection {
     index: number;
     x: number;
     z: number;
-    objects: ObjectInfo[];
+    objects: IslandObjectInfo[];
     groundMesh: RawGroundMesh;
     textureInfo: Uint8Array;
 }
@@ -57,7 +57,7 @@ export default class IslandLayout {
                 const numObjects = objInfoDV.getUint32(8, true);
                 const x = (16 - sX) - 8;
                 const z = sZ - 8;
-                const objects: ObjectInfo[] = [];
+                const objects: IslandObjectInfo[] = [];
                 for (let j = 0; j < numObjects; j += 1) {
                     objects.push(this.loadObjectInfo(objectsDV, x, z, j));
                 }
@@ -80,7 +80,7 @@ export default class IslandLayout {
         return groundSections;
     }
 
-    private loadObjectInfo(objectsDV, x, z, index): ObjectInfo {
+    private loadObjectInfo(objectsDV, x, z, index): IslandObjectInfo {
         const offset = index * 48;
         const ox = objectsDV.getInt32(offset + 12, true);
         const oy = objectsDV.getInt32(offset + 8, true);

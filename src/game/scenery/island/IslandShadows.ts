@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import Scene from '../../Scene';
 import Game from '../../Game';
 import { Time } from '../../../datatypes';
+import { IslandGeometryInfo } from './geometries';
 
 const DIFF = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
@@ -13,7 +14,7 @@ const SHADOW_MAX_DIST_SQ = SHADOW_MAX_DIST * SHADOW_MAX_DIST;
 export default class IslandShadows {
     materials: any;
 
-    constructor({ matByName }) {
+    constructor({ matByName }: IslandGeometryInfo) {
         this.materials = matByName;
     }
 

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {each} from 'lodash';
 import {bits} from '../../../utils';
 import {WORLD_SCALE} from '../../../utils/lba';
-import { IslandSection } from './IslandLayout';
+import { IslandSection, IslandObjectInfo } from './IslandLayout';
 
 const push = Array.prototype.push;
 
@@ -14,20 +14,24 @@ const TransparentObjectOffset = {
     CITADEL: 0.05,
 };
 
-export function loadObjects(section: IslandSection, geometries, models, atlas, island) {
-    for (const objInfo of section.objects) {
-        const model = models[objInfo.index];
-        loadFaces(geometries, model, objInfo, atlas, island);
-        const bb = new THREE.Box3(
-            new THREE.Vector3(model.bbXMin, model.bbYMin, model.bbZMin),
-            new THREE.Vector3(model.bbXMax, model.bbYMax, model.bbZMax),
-        );
-        bb.min.multiplyScalar(WORLD_SCALE);
-        bb.max.multiplyScalar(WORLD_SCALE);
-        bb.applyMatrix4(angleMatrix[(objInfo.angle + 3) % 4]);
-        bb.translate(new THREE.Vector3(objInfo.x, objInfo.y, objInfo.z));
-        objInfo.boundingBox = bb;
+export function loadObjectGeometries(section: IslandSection, geometries, models, atlas, island) {
+    for (const obj of section.objects) {
+        const model = models[obj.index];
+        loadFaces(geometries, model, obj, atlas, island);
+        loadBoundingBox(obj, model);
     }
+}
+
+function loadBoundingBox(obj: IslandObjectInfo, model) {
+    const bb = new THREE.Box3(
+        new THREE.Vector3(model.bbXMin, model.bbYMin, model.bbZMin),
+        new THREE.Vector3(model.bbXMax, model.bbYMax, model.bbZMax),
+    );
+    bb.min.multiplyScalar(WORLD_SCALE);
+    bb.max.multiplyScalar(WORLD_SCALE);
+    bb.applyMatrix4(angleMatrix[(obj.angle + 3) % 4]);
+    bb.translate(new THREE.Vector3(obj.x, obj.y, obj.z));
+    obj.boundingBox = bb;
 }
 
 function loadFaces(geometries, model, info, atlas, island) {

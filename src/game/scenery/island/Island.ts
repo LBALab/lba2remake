@@ -125,7 +125,7 @@ export default class Island {
         this.threeObject.matrixAutoUpdate = false;
         const layout = new IslandLayout(data.ile);
 
-        const geometries = loadGeometries(this.threeObject, this.props, data, layout);
+        const geomInfo = loadGeometries(this.threeObject, this.props, data, layout);
 
         this.addObjectBoundingBoxes(layout);
         if (options.preview) {
@@ -133,14 +133,14 @@ export default class Island {
         }
 
         this.physics = new IslandPhysics(layout);
-        this.components.push(new IslandShadows(geometries));
+        this.components.push(new IslandShadows(geomInfo));
         this.components.push(
             ...loadEnvironmentComponents(
                 data,
                 this.props.envInfo,
                 this.physics,
                 layout,
-                geometries,
+                geomInfo,
                 options
             )
         );

@@ -1,12 +1,13 @@
-import {each, every} from 'lodash';
+import {every} from 'lodash';
 import { WORLD_SIZE } from '../../../../utils/lba';
 import * as THREE from 'three';
 import { compile } from '../../../../utils/shaders';
 import VERT_SEA from './shaders/sea.vert.glsl';
 import FRAG_SEA from './shaders/sea.frag.glsl';
 import { loadSubTexture, makeNoiseTexture } from '../../../../texture';
-import { getLightVector } from '../geometries';
 import Lightning from './Lightning';
+import { IslandGeometryInfo } from '../geometries';
+import IslandLayout from '../IslandLayout';
 
 const worldScale = 1 / (WORLD_SIZE * 0.04);
 
@@ -14,9 +15,16 @@ export default class Sea {
     readonly threeObject: THREE.Object3D;
     private uniforms: any;
 
-    constructor(props, data, envInfo, usedTiles, layout) {
+    constructor(
+        props,
+        data,
+        envInfo,
+        geomInfo: IslandGeometryInfo,
+        layout: IslandLayout
+    ) {
         const positions = [];
-        each(layout.seaSections, (section) => {
+        const { usedTiles, light } = geomInfo;
+        for (const section of layout.seaSections) {
             const xd = Math.floor(section.x / 2);
             const zd = Math.floor(section.z / 2);
             const offsetX = 1 - Math.abs(section.x % 2);
@@ -25,14 +33,13 @@ export default class Sea {
             loadSeaGeometry(
                 section,
                 positions,
-                usedTiles[tilesKey],
+                usedTiles.get(tilesKey),
                 offsetX,
                 offsetZ,
                 envInfo.index
             );
-        });
+        }
 
-        const light = getLightVector(data.ambience);
         const noiseTexture = makeNoiseTexture('LBA_SEA');
 
         this.uniforms = {
@@ -150,7 +157,7 @@ function loadSeaGeometry(section, positions, usedTile, offsetX, offsetZ, skyInde
                 const isEdge = ([xi, zi]) =>
                     skyIndex === 14 || (isShore && !isInBetween(usedTile, tx, tz, xi, zi));
                 const type = getTriangleType(section, isShore, usedTile, x, z, tx, tz, n);
-                each(triangles[type], (tris) => {
+                for (const tris of triangles[type]) {
                     push.apply(
                         positions,
                         getSeaPositions(
@@ -159,7 +166,7 @@ function loadSeaGeometry(section, positions, usedTile, offsetX, offsetZ, skyInde
                             [isEdge(tris[0]), isEdge(tris[1]), isEdge(tris[2])]
                         )
                     );
-                });
+                }
             }
         }
     }

@@ -7,7 +7,7 @@ import {
 } from '../../../texture';
 import {compile} from '../../../utils/shaders';
 import { loadGround } from './ground';
-import { loadObjects } from './objects';
+import { loadObjectGeometries } from './objects';
 import { loadModel } from './model';
 import TextureAtlas from './TextureAtlas';
 import Lightning from './environment/Lightning';
@@ -36,8 +36,22 @@ const fakeNoise = new THREE.DataTexture(
     THREE.UnsignedByteType
 );
 
-export function loadGeometries(threeObject, props, data, layout) {
-    const usedTiles = {};
+export type TileUsage = Map<string, number[]>;
+
+export interface IslandGeometryInfo {
+    matByName: {
+        ground_colored?: THREE.RawShaderMaterial;
+        ground_textured?: THREE.RawShaderMaterial;
+        objects_colored?: THREE.RawShaderMaterial;
+        objects_textured?: THREE.RawShaderMaterial;
+        objects_textured_transparent?: THREE.RawShaderMaterial;
+    };
+    usedTiles: TileUsage;
+    light: THREE.Vector3;
+}
+
+export function loadGeometries(threeObject, props, data, layout): IslandGeometryInfo {
+    const usedTiles = new Map<string, number[]>();
     const models = [];
     const uvGroupsS : Set<string> = new Set();
     const { obl } = data;
@@ -53,13 +67,15 @@ export function loadGeometries(threeObject, props, data, layout) {
         .sort((g1, g2) => (g2[2] * g2[3]) - (g1[2] * g1[3]));
     const atlas = new TextureAtlas(data, allUvGroups);
 
-    const geometries = prepareGeometries(props, data, atlas);
+    const light = getLightVector(data.ambience);
+    const geometries = prepareGeometries(props, data, atlas, light);
 
     for (const section of layout.groundSections) {
         const tilesKey = [section.x, section.z].join(',');
-        usedTiles[tilesKey] = [];
-        loadGround(section, geometries, usedTiles[tilesKey]);
-        loadObjects(section, geometries, models, atlas, props);
+        const tileUsageInfo = [];
+        loadGround(section, geometries, tileUsageInfo);
+        loadObjectGeometries(section, geometries, models, atlas, props);
+        usedTiles.set(tilesKey, tileUsageInfo);
     }
 
     const matByName = {};
@@ -110,16 +126,15 @@ export function loadGeometries(threeObject, props, data, layout) {
         }
     }
 
-    return { matByName, usedTiles };
+    return { matByName, usedTiles, light };
 }
 
-function prepareGeometries(island, data, atlas) {
+function prepareGeometries(island, data, atlas, light) {
     const {envInfo} = island;
-    const {ile, palette, lutTexture, ambience} = data;
+    const {ile, palette, lutTexture} = data;
     const paletteTexture = loadPaletteTexture(palette);
     const groundTexture = loadTextureRGBA(ile.getEntry(1), palette);
     const noiseTexture = makeNoiseTexture();
-    const light = getLightVector(ambience);
     const worldScale = 1 / (WORLD_SIZE * 0.04);
     return {
         ground_colored: {
@@ -232,7 +247,7 @@ function prepareGeometries(island, data, atlas) {
     };
 }
 
-export function getLightVector(ambience) {
+function getLightVector(ambience) {
     const lightVector = new THREE.Vector3(-1, 0, 0);
     lightVector.applyAxisAngle(
         new THREE.Vector3(0, 0, 1),

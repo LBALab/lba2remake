@@ -3,13 +3,15 @@ import Clouds from './Clouds';
 import Rain from './Rain';
 import Lightning from './Lightning';
 import Stars from './Stars';
+import { IslandGeometryInfo } from '../geometries';
+import IslandPhysics from '../IslandPhysics';
 
 export function loadEnvironmentComponents(
     data,
     envInfo,
-    physics,
+    physics: IslandPhysics,
     layout,
-    { usedTiles },
+    geomInfo: IslandGeometryInfo,
     options
 ) {
     const components = [];
@@ -23,7 +25,7 @@ export function loadEnvironmentComponents(
     } = envInfo;
 
     if (sea) {
-        components.push(new Sea(sea, data, envInfo, usedTiles, layout));
+        components.push(new Sea(sea, data, envInfo, geomInfo, layout));
     }
     if (groundClouds) {
         components.push(new Clouds(groundClouds, data, envInfo));

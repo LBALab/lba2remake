@@ -11,7 +11,7 @@ export const LIQUID_TYPES = {
 
 const push = Array.prototype.push;
 
-export function loadGround(section: IslandSection, geometries, usedTiles) {
+export function loadGround(section: IslandSection, geometries, tileUsageInfo) {
     const { groundMesh } = section;
     for (let x = 0; x < 64; x += 1) {
         for (let z = 0; z < 64; z += 1) {
@@ -28,7 +28,7 @@ export function loadGround(section: IslandSection, geometries, usedTiles) {
             const triangle = (t) => {
                 const pts = map(t.points, pt => ((x + pt.x) * 65) + z + pt.z);
                 if (!isSeaLevelLiquid(t, pts) && (t.useColor || t.useTexture || t.unk0)) {
-                    usedTiles[(x * 64) + z] = t0.orientation;
+                    tileUsageInfo[(x * 64) + z] = t0.orientation;
                     if (t.useTexture || (!t.useTexture && !t.useColor)) {
                         push.apply(
                             geometries.ground_textured.positions,
