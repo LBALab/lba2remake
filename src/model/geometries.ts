@@ -9,7 +9,7 @@ import FRAG_TEXTURED from './shaders/textured.frag.glsl';
 import {loadPaletteTexture, loadSubTextureRGBA} from '../texture';
 import {compile} from '../utils/shaders';
 import { WORLD_SIZE } from '../utils/lba';
-import { applyLightningUniforms } from '../game/scenery/island/environment/lightning';
+import Lightning from '../game/scenery/island/environment/Lightning';
 
 const push = Array.prototype.push;
 
@@ -203,7 +203,7 @@ export function loadMesh(
             }
 
             const modelMesh = new THREE.Mesh(bufferGeometry, material);
-            modelMesh.onBeforeRender = applyLightningUniforms;
+            modelMesh.onBeforeRender = Lightning.applyUniforms;
             modelMesh.name = name;
             modelMesh.matrixAutoUpdate = false;
             object.add(modelMesh);
@@ -230,7 +230,7 @@ export function loadMesh(
             );
 
             const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
-            lineSegments.onBeforeRender = applyLightningUniforms;
+            lineSegments.onBeforeRender = Lightning.applyUniforms;
             lineSegments.name = 'lines';
             lineSegments.matrixAutoUpdate = false;
             object.add(lineSegments);

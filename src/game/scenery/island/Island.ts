@@ -125,11 +125,7 @@ export default class Island {
         this.threeObject.matrixAutoUpdate = false;
         const layout = loadLayout(data.ile);
 
-        const geometries = loadGeometries(this.props, data, layout);
-
-        for (const mesh of geometries.meshes) {
-            this.threeObject.add(mesh);
-        }
+        const geometries = loadGeometries(this.threeObject, this.props, data, layout);
 
         this.addObjectBoundingBoxes(layout, options);
         if (options.preview) {

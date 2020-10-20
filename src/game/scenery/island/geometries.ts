@@ -10,6 +10,7 @@ import { loadGround } from './ground';
 import { loadObjects } from './objects';
 import { loadModel } from './model';
 import { createTextureAtlas } from './atlas';
+import Lightning from './environment/Lightning';
 
 import GROUND_COLORED__VERT from './shaders/ground/colored.vert.glsl';
 import GROUND_COLORED__FRAG from './shaders/ground/colored.frag.glsl';
@@ -35,7 +36,7 @@ const fakeNoise = new THREE.DataTexture(
     THREE.UnsignedByteType
 );
 
-export function loadGeometries(props, data, layout) {
+export function loadGeometries(threeObject, props, data, layout) {
     const usedTiles = {};
     const models = [];
     const uvGroupsS : Set<string> = new Set();
@@ -62,7 +63,6 @@ export function loadGeometries(props, data, layout) {
     }
 
     const matByName = {};
-    const meshes = [];
     for (const [name, geom] of Object.entries(geometries)) {
         const {positions, uvs, colors, intensities, normals, uvGroups, material} = geom;
         if (positions && positions.length > 0) {
@@ -105,11 +105,12 @@ export function loadGeometries(props, data, layout) {
             mesh.matrixAutoUpdate = false;
             mesh.name = name;
             matByName[name] = material;
-            meshes.push(mesh);
+            threeObject.add(mesh);
+            mesh.onBeforeRender = Lightning.applyUniforms;
         }
     }
 
-    return { matByName, usedTiles, meshes };
+    return { matByName, usedTiles };
 }
 
 function prepareGeometries(island, data, atlas) {

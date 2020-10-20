@@ -1,15 +1,15 @@
-import { loadSea } from './sea';
-import { loadClouds } from './clouds';
-import { loadRain } from './rain';
-import { loadLightning } from './lightning';
-import { loadStars } from './stars';
+import Sea from './Sea';
+import Clouds from './Clouds';
+import Rain from './Rain';
+import Lightning from './Lightning';
+import Stars from './Stars';
 
 export function loadEnvironmentComponents(
     data,
     envInfo,
     physics,
     layout,
-    { usedTiles, meshes },
+    { usedTiles },
     options
 ) {
     const components = [];
@@ -23,41 +23,22 @@ export function loadEnvironmentComponents(
     } = envInfo;
 
     if (sea) {
-        components.push(loadSea(sea, {
-            layout,
-            usedTiles,
-            envInfo,
-            ress: data.ress,
-            palette: data.palette,
-            ambience: data.ambience
-        }));
+        components.push(new Sea(sea, data, envInfo, usedTiles, layout));
     }
     if (groundClouds) {
-        components.push(loadClouds(groundClouds, {
-            envInfo,
-            ress: data.ress,
-            palette: data.palette,
-            smokeTexture: data.smokeTexture
-        }));
+        components.push(new Clouds(groundClouds, data, envInfo));
     }
-
     if (clouds && !options.preview) {
-        components.push(loadClouds(envInfo.clouds, {
-            envInfo,
-            ress: data.ress,
-            palette: data.palette,
-            smokeTexture: data.smokeTexture
-        }));
+        components.push(new Clouds(clouds, data, envInfo));
     }
-
     if (rain && !options.preview) {
-        components.push(loadRain(envInfo.rain));
+        components.push(new Rain(rain));
     }
     if (lightning && !options.preview) {
-        components.push(loadLightning(envInfo.lightning, physics, meshes));
+        components.push(new Lightning(lightning, physics));
     }
     if (stars && !options.preview) {
-        components.push(loadStars(envInfo.stars));
+        components.push(new Stars(stars));
     }
     return components;
 }
