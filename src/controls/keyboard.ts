@@ -133,7 +133,8 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
                 // tslint:disable-next-line:no-console
                 console.log('Free camera: ', game.controlsState.freeCamera);
                 if (game.controlsState.freeCamera) {
-                    resetCameraOrientation(game, sceneManager);
+                    const scene = sceneManager.getScene();
+                    resetCameraOrientation(game, scene);
                 }
             }
             break;
@@ -224,8 +225,7 @@ function focusOutHandler(game) {
     game.resetControlsState();
 }
 
-function resetCameraOrientation(game, sceneManager) {
-    const scene = sceneManager.getScene();
+export function resetCameraOrientation(game, scene) {
     if (!scene)
         return;
 
