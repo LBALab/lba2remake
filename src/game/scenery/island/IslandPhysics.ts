@@ -6,6 +6,7 @@ import { AnimType } from '../../data/animType';
 import { IslandSection } from './IslandLayout';
 import Scene from '../../Scene';
 import { Time } from '../../../datatypes';
+import Actor from '../../Actor';
 
 const TGT = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
@@ -287,7 +288,12 @@ const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
 const H_THRESHOLD = 0.007 * WORLD_SIZE;
 
-function processBoxIntersections(section: IslandSection, actor, position, isTouchingGround) {
+function processBoxIntersections(
+    section: IslandSection,
+    actor: Actor,
+    position: THREE.Vector3,
+    isTouchingGround: boolean
+) {
     const boundingBox = actor.model ? actor.model.boundingBox : actor.sprite.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.translate(position);

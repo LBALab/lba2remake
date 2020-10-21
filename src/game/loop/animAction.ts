@@ -5,6 +5,7 @@ import { unimplemented } from '../scripting/utils';
 import { addExtra, ExtraFlag, getBonus } from '../extras';
 import { SpriteType } from '../data/spriteType';
 import { SampleType } from '../data/sampleType';
+import Actor from '../Actor';
 
 export const NOP = unimplemented();
 
@@ -16,7 +17,7 @@ export const ANIM = unimplemented();
 
 export const ANIP = unimplemented();
 
-export function processHit(actor, hitStrength, game, scene) {
+export function processHit(actor: Actor, hitStrength, game, scene) {
     for (const a of scene.actors) {
         if (a.index === actor.index || !a.isVisible ||
             a.state.isDead) {

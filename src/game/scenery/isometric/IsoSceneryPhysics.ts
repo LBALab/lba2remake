@@ -3,6 +3,9 @@ import { WORLD_SIZE, getPositions, DOME_SCENES } from '../../../utils/lba';
 import { GROUND_TYPES } from './grid';
 import { BehaviourMode } from '../../loop/hero';
 import { AnimType } from '../../data/animType';
+import Actor from '../../Actor';
+import { Time } from '../../../datatypes';
+import Scene from '../../Scene';
 
 const STEP = 1 / WORLD_SIZE;
 const ESCALATOR_SPEED = 0.05;
@@ -20,7 +23,7 @@ export default class IsoSceneryPhysics {
         this.grid = grid;
     }
 
-    processCollisions(scene, obj, time) {
+    processCollisions(scene: Scene, obj, time: Time) {
         const isUsingProtoOrJetpack = (obj.props.entityIndex === BehaviourMode.JETPACK ||
             obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
             obj.props.animIndex === AnimType.FORWARD;
@@ -141,7 +144,7 @@ export default class IsoSceneryPhysics {
     }
 }
 
-function getColumnY(column, position) {
+function getColumnY(column, position: THREE.Vector3) {
     const bb = column.box;
     switch (column.shape) {
         case 2:
@@ -167,7 +170,7 @@ const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
 const BB = new THREE.Box3();
 
-function getFloorHeight(grid, actor, position) {
+function getFloorHeight(grid, actor: Actor, position: THREE.Vector3) {
     POSITION.copy(position);
 
     const dx = 64 - Math.floor(position.x * 32);
@@ -218,7 +221,14 @@ function getFloorHeight(grid, actor, position) {
     }
 }
 
-function processBoxIntersections(grid, actor, position, dx, dz, isTouchingGround) {
+function processBoxIntersections(
+    grid,
+    actor: Actor,
+    position: THREE.Vector3,
+    dx: number,
+    dz: number,
+    isTouchingGround: boolean
+) {
     const boundingBox = actor.model.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.min.multiplyScalar(STEP);
@@ -255,7 +265,7 @@ function processBoxIntersections(grid, actor, position, dx, dz, isTouchingGround
     return isTouchingGround;
 }
 
-function intersectBox(actor, position) {
+function intersectBox(actor: Actor, position: THREE.Vector3) {
     if (ACTOR_BOX.intersectsBox(BB)) {
         INTERSECTION.copy(ACTOR_BOX);
         INTERSECTION.intersect(BB);
@@ -276,7 +286,7 @@ function intersectBox(actor, position) {
     return false;
 }
 
-function processEscalator(column, position, time) {
+function processEscalator(column, position: THREE.Vector3, time: Time) {
     switch (column.groundType) {
         case GROUND_TYPES.ESCALATOR_BOTTOM_RIGHT_TOP_LEFT:
             position.z -= ESCALATOR_SPEED * time.delta;

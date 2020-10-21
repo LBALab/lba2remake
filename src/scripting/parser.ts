@@ -13,7 +13,7 @@ const TypeSize = {
     Uint32: 4,
 };
 
-export function parseScript(actor, type, script) {
+export function parseScript(actor: number, type: 'life' | 'move', script: DataView) {
     const state = {
         type,
         actor,

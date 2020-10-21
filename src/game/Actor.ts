@@ -25,6 +25,7 @@ interface ActorFlags {
     isVisible: boolean;
     isSprite: boolean;
     canFall: boolean;
+    noShadow: boolean;
 }
 
 interface ActorProps {
@@ -36,6 +37,7 @@ interface ActorProps {
     entityIndex: number;
     bodyIndex: number;
     animIndex: number;
+    dirMode: number;
     angle: number;
     speed: number;
     spriteIndex: number;
@@ -62,7 +64,7 @@ interface ActorPhysics {
     };
 }
 
-interface ActorState {
+export interface ActorState {
     waitHitFrame: boolean;
     isHitting: boolean;
     hasAnimEnded: boolean;
@@ -105,6 +107,7 @@ interface ActorState {
     isTouchingFloor: boolean;
     isUsingProtoOrJetpack: boolean;
     isSearching: boolean;
+    noInterpolateNext: boolean;
 }
 
 interface ActorScripts {
@@ -144,20 +147,27 @@ export default class Actor {
     readonly props: ActorProps;
     readonly state: ActorState;
     readonly isSprite: boolean;
-    readonly animState: any = null;
     private readonly game: Game;
     private readonly scene: Scene;
     private readonly options: ActorOptions;
+    animState: any = null;
     threeObject?: THREE.Object3D = null;
     model?: Model = null;
     sprite?: any = null;
     physics: ActorPhysics = null;
+    scripts: ActorScripts;
+    // Maybe the following properties should
+    // be moved to the actor state.
     isVisible: boolean = false;
     hasCollidedWithActor: number = -1;
     floorSound: number = -1;
     nextAnim: number = null;
-    scripts: ActorScripts;
     wasHitBy: number = -1;
+    hasSeenHit: boolean = false;
+    // Those properties are used by the editor.
+    // We should move them somewhere else.
+    label?: any;
+    refreshLabel?: Function;
 
     static async load(
         game: Game,
@@ -496,6 +506,7 @@ export default class Actor {
             isTouchingFloor: false,
             isUsingProtoOrJetpack: false,
             isSearching: false,
+            noInterpolateNext: false
         };
     }
 }
@@ -533,7 +544,9 @@ export function createNewActorProps(
             canFall: true,
             isVisible: true,
             isSprite: false,
+            noShadow: false
         },
+        dirMode: DirMode.NO_MOVE,
         angle: 0,
         speed: 35,
         spriteIndex: 0,

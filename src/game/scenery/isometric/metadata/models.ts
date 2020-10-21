@@ -12,6 +12,8 @@ import FRAG_OBJECTS_TEXTURED from '../shaders/objects/textured.frag.glsl';
 import { compile } from '../../../../utils/shaders';
 import { applyAnimationUpdaters } from './animations';
 import { DOME_SCENES } from '../../../../utils/lba';
+import Scene from '../../../Scene';
+import { Time } from '../../../../datatypes';
 
 const loader = new GLTFLoader();
 const exporter = new GLTFExporter();
@@ -103,7 +105,7 @@ export async function loadFullSceneModel(
     });
     return {
         threeObject,
-        update: (_game, scene, time) => {
+        update: (_game, scene: Scene, time: Time) => {
             mixer.update(time.delta);
             if (DOME_SCENES.includes(scene.index)) { // dome
                 scene.actors.forEach((actor, idx) => {

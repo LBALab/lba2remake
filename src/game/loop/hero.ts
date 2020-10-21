@@ -1,10 +1,13 @@
 import * as THREE from 'three';
-import { DirMode } from '../Actor';
+import Actor, { DirMode, ActorState } from '../Actor';
 import { AnimType } from '../data/animType';
 import { WORLD_SIZE } from '../../utils/lba';
 import { processHit } from './animAction';
 import Scene from '../Scene';
 import Island from '../scenery/island/Island';
+import Game from '../Game';
+import { Time } from '../../datatypes';
+import { ControlsState } from '../ControlsState';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -23,7 +26,7 @@ export const BehaviourMode = {
     SKELETON: 13
 };
 
-export function updateHero(game, scene, hero, time) {
+export function updateHero(game: Game, scene: Scene, hero: Actor, time: Time) {
     if (hero.props.dirMode !== DirMode.MANUAL)
         return;
 
@@ -43,7 +46,7 @@ export function updateHero(game, scene, hero, time) {
     }
 }
 
-function handleBehaviourChanges(scene, hero, behaviour) {
+function handleBehaviourChanges(scene: Scene, hero: Actor, behaviour: number) {
     if (hero.state.isDrowning) {
         return;
     }
@@ -58,7 +61,7 @@ function handleBehaviourChanges(scene, hero, behaviour) {
 // validPosition returns true iff Twinsen is in a position we consider "valid",
 // that is one where he's stood on ground and not doing anything interesting
 // (e.g. climbing or jumping).
-function validPosition(state) {
+function validPosition(state: ActorState) {
     const onFloor = state.isTouchingGround ||
                     state.isTouchingFloor;
     return onFloor
@@ -70,7 +73,7 @@ function validPosition(state) {
         && !state.isClimbing;
 }
 
-function toggleJump(hero, value) {
+function toggleJump(hero: Actor, value: boolean) {
     hero.state.isJumping = value;
     hero.state.isWalking = value;
     // check in the original game how this is actually set
@@ -82,7 +85,7 @@ const BASE_ANGLE = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 
 const Q = new THREE.Quaternion();
 const EULER = new THREE.Euler();
 
-function processFirstPersonsMovement(game, scene: Scene, hero, time) {
+function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time: Time) {
     const controlsState = game.controlsState;
     if (hero.state.isClimbing ||
         hero.state.isSearching) {
@@ -178,7 +181,7 @@ const PUNCH_VELOCITY_THRESHOLD = 300;
 
 // firstPersonPunching checks to see if the player has punched an actor with
 // their fists (VR controller).
-function firstPersonPunching(game, scene) {
+function firstPersonPunching(game: Game, scene: Scene) {
     for (const a of scene.actors) {
         if (a.index === 0 || !a.model) {
             continue;
@@ -212,7 +215,7 @@ const MEDIUM_FALL_HEIGHT = 2;
 // From this height Twinsen just stumbles a bit.
 const SMALL_FALL_HEIGHT = 0.3;
 
-function processFall(scene: Scene, hero) {
+function processFall(scene: Scene, hero: Actor) {
     let distFromFloor = hero.props.distFromGround;
     if (scene.scenery instanceof Island) {
         distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
@@ -245,13 +248,19 @@ function processFall(scene: Scene, hero) {
         hero.setAnimWithCallback(animIndex, () => {
             hero.state.isFalling = false;
             hero.props.fallDistance = 0;
-            hero.props.noInterpolateNext = true;
+            hero.state.noInterpolateNext = true;
         });
         hero.animState.noInterpolate = true;
     }
 }
 
-function processActorMovement(game, scene, hero, time, behaviour) {
+function processActorMovement(
+    game: Game,
+    scene: Scene,
+    hero: Actor,
+    time: Time,
+    behaviour: number
+) {
     const controlsState = game.controlsState;
     if (hero.state.isClimbing ||
         hero.state.isSearching) {
@@ -403,13 +412,13 @@ function processActorMovement(game, scene, hero, time, behaviour) {
         animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex);
     }
     hero.setAnim(animIndex);
-    if (hero.props.noInterpolateNext) {
+    if (hero.state.noInterpolateNext) {
         hero.animState.noInterpolate = true;
-        hero.props.noInterpolateNext = false;
+        hero.state.noInterpolateNext = false;
     }
 }
 
-function checkDrowningAnim(game, scene, hero, time) {
+function checkDrowningAnim(game: Game, scene: Scene, hero: Actor, time: Time) {
     if (!hero.state.isDrowning &&
         !hero.state.isDrowningLava &&
         !hero.state.isDrowningStars) {
@@ -448,7 +457,7 @@ function checkDrowningAnim(game, scene, hero, time) {
         hero.state.isDrowning = false;
         hero.state.isDrowningLava = false;
         hero.state.isDrowningStars = false;
-        hero.props.noInterpolateNext = true;
+        hero.state.noInterpolateNext = true;
     });
     hero.animState.noInterpolate = true;
     return true;
@@ -467,7 +476,12 @@ const HERO_POS = new THREE.Vector3();
 const UP = new THREE.Vector3(0, 1, 0);
 const QUAT = new THREE.Quaternion();
 
-function processCamRelativeMovement(controlsState, scene, hero, animIndex) {
+function processCamRelativeMovement(
+    controlsState: ControlsState,
+    scene: Scene,
+    hero: Actor,
+    animIndex: number
+) {
     if (controlsState.relativeToCam) {
         const camera = scene.camera.controlNode;
         if (!camera || !hero.threeObject)

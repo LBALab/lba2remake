@@ -31,7 +31,7 @@ export default class Scene {
     readonly game: Game;
     readonly renderer: Renderer;
     readonly camera: any;
-    readonly actors: any[];
+    readonly actors: Actor[];
     readonly zones: any[];
     readonly points: any[];
     readonly sceneNode: THREE.Object3D;
@@ -137,7 +137,7 @@ export default class Scene {
     }
 
     async loadObjects(isSideScene) {
-        const actors = await Promise.all(
+        const actors = await Promise.all<Actor>(
             this.data.actors.map(
                 actor => Actor.load(
                     this.game,
@@ -157,11 +157,11 @@ export default class Scene {
         this.zones.push(...zones);
         this.points.push(...points);
 
-        const objects = [...actors];
+        const objects: any[] = [...actors];
         if (getParams().editor) {
             objects.push(...zones, ...points);
         }
-        for (const obj of objects as any) {
+        for (const obj of objects) {
             this.addMesh(obj.threeObject);
         }
 
@@ -260,9 +260,9 @@ export default class Scene {
             this.game.getState().load(this.savedState, this.actors[0]);
             this.game.setUiState({ text: null, cinema: false });
             this.variables = createSceneVariables(this.actors);
-            each(this.actors, (actor) => {
+            for (const actor of this.actors) {
                 actor.reset(this);
-            });
+            }
             this.firstFrame = true;
             if (this.game.isPaused()) {
                 DebugData.step = true;

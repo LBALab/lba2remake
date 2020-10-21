@@ -24,6 +24,8 @@ export interface Model {
     files?: any;
     entities: Entity[];
     mesh: THREE.Object3D;
+    boundingBox?: THREE.Box3;
+    boundingBoxDebugMesh?: THREE.Object3D;
 }
 
 export async function loadModel(

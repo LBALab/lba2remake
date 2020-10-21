@@ -7,10 +7,11 @@ import DebugData from '../../ui/editor/DebugData';
 import { updateExtra } from '../extras';
 import { updateVRGUI } from '../../ui/vr/vrGUI';
 import { getRandom } from '../../utils/lba';
-import { getParams } from '../../params';
+import { getParams, Params } from '../../params';
 import Game from '../Game';
 import Renderer from '../../renderer';
 import Scene from '../Scene';
+import { Time } from '../../datatypes';
 
 const dbgClock = new THREE.Clock(false);
 dbgClock.start();
@@ -82,7 +83,7 @@ export function mainGameLoop(
     renderer.stats.end();
 }
 
-function updateScene(params, game, scene, time) {
+function updateScene(params: Params, game: Game, scene: Scene, time: Time) {
     if (scene.firstFrame) {
         scene.sceneNode.updateMatrixWorld();
     }
@@ -131,7 +132,7 @@ function updateScene(params, game, scene, time) {
     }
 }
 
-function playAmbience(game, scene, time) {
+function playAmbience(game: Game, scene: Scene, time: Time) {
     let samplePlayed = 0;
     const audio = game.getAudioManager();
 

@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { WORLD_SIZE } from '../utils/lba';
 import { AnimType } from '../game/data/animType';
 import Scene from '../game/Scene';
+import { ControlsState } from '../game/ControlsState';
+import { Time } from '../datatypes';
+import IslandPhysics from '../game/scenery/island/IslandPhysics';
 
 const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
 CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
@@ -36,7 +39,7 @@ export function get3DCamera() {
                 camera.updateProjectionMatrix();
             }
         },
-        init: (scene, controlsState) => {
+        init: (scene: Scene, controlsState: ControlsState) => {
             if (!controlsState.freeCamera) {
                 const hero = scene.actors[0];
                 if (!hero.threeObject)
@@ -52,7 +55,7 @@ export function get3DCamera() {
                 controlNode.lookAt(controlsState.cameraLookAtLerp);
             }
         },
-        update: (scene, controlsState, time) => {
+        update: (scene: Scene, controlsState: ControlsState, time: Time) => {
             if (controlsState.freeCamera) {
                 processFree3DMovement(controlsState, controlNode, scene, time);
             } else {
@@ -73,7 +76,12 @@ export function get3DCamera() {
     };
 }
 
-function processFollow3DMovement(controlsState, controlNode, scene: Scene, time) {
+function processFollow3DMovement(
+    controlsState: ControlsState,
+    controlNode: THREE.Object3D,
+    scene: Scene,
+    time: Time
+) {
     const hero = scene.actors[0];
     if (!hero.threeObject)
         return;
@@ -100,11 +108,16 @@ function processFollow3DMovement(controlsState, controlNode, scene: Scene, time)
     controlNode.lookAt(controlsState.cameraLookAtLerp);
 }
 
-export function processFree3DMovement(controlsState, controlNode, scene, time) {
+export function processFree3DMovement(
+    controlsState: ControlsState,
+    controlNode: THREE.Object3D,
+    scene: Scene,
+    time: Time
+) {
     let speedFactor = 0;
     let height = 0;
     const { physics } = scene.scenery;
-    if (physics.getHeightmapGround) {
+    if (physics instanceof IslandPhysics) {
         const groundInfo = physics.getHeightmapGround(controlNode.position);
         height = groundInfo.height;
         speedFactor = Math.max(

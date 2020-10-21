@@ -60,7 +60,7 @@ function findRefsInScene(scene, type, value) {
     return results;
 }
 
-function findInScript(scriptType, actor, idx, type, value) {
+function findInScript(scriptType: 'life' | 'move', actor, idx, type, value) {
     const results = [];
     const script = parseScript(idx, scriptType, actor[`${scriptType}Script`]);
     each(script.commands, (cmd, cmdIdx) => {

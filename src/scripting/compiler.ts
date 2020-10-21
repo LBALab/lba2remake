@@ -1,13 +1,16 @@
-import {each, map} from 'lodash';
+import {map} from 'lodash';
+import Game from '../game/Game';
+import Scene from '../game/Scene';
+import Actor from '../game/Actor';
 
-export function compileScripts(game, scene, actor) {
+export function compileScripts(game: Game, scene: Scene, actor: Actor) {
     compileScript('life', game, scene, actor);
     compileScript('move', game, scene, actor);
     actor.scripts.life.context.moveState = actor.scripts.move.context.state;
     actor.scripts.move.context.lifeState = actor.scripts.life.context.state;
 }
 
-function compileScript(type, game, scene, actor) {
+function compileScript(type: 'life' | 'move', game: Game, scene: Scene, actor: Actor) {
     const script = actor.scripts[type];
     const state = type === 'life'
         ? {
@@ -46,9 +49,11 @@ function compileInstruction(script, cmd, cmdOffset, compileState) {
         args.push(compileOperator(cmd));
     }
 
-    each(cmd.args, (arg) => {
-        args.push(compileValue(script, arg));
-    });
+    if (cmd.args) {
+        for (const arg of cmd.args) {
+            args.push(compileValue(script, arg));
+        }
+    }
 
     const handler = cmd.op.handler;
     const instruction = handler.bind(...args);
