@@ -20,8 +20,6 @@ const Inventory = ({ game }: any) => {
                 } else {
                     newSlot = selectedSlot - 1;
                 }
-                setSelectedSlot(newSlot);
-                game.getState().hero.inventorySlot = newSlot;
                 action = true;
                 break;
             case 39:
@@ -31,8 +29,6 @@ const Inventory = ({ game }: any) => {
                 } else {
                     newSlot = selectedSlot + 1;
                 }
-                setSelectedSlot(newSlot);
-                game.getState().hero.inventorySlot = newSlot;
                 action = true;
                 break;
             case 38:
@@ -42,8 +38,6 @@ const Inventory = ({ game }: any) => {
                 } else {
                     newSlot = selectedSlot - inventoryColumns;
                 }
-                setSelectedSlot(newSlot);
-                game.getState().hero.inventorySlot = newSlot;
                 action = true;
                 break;
             case 40:
@@ -53,12 +47,12 @@ const Inventory = ({ game }: any) => {
                 } else {
                     newSlot = selectedSlot + inventoryColumns;
                 }
-                setSelectedSlot(newSlot);
-                game.getState().hero.inventorySlot = newSlot;
                 action = true;
                 break;
         }
         if (action) {
+            setSelectedSlot(newSlot);
+            game.getState().hero.inventorySlot = newSlot;
             event.preventDefault();
             event.stopPropagation();
         }
@@ -77,7 +71,7 @@ const Inventory = ({ game }: any) => {
             const slot = i * inventoryColumns + j;
             inventorySlots.push(
                 <div
-                  key={String(slot)}
+                  key={slot}
                   id={String(slot)}
                   className={`inventoryItem ${selectedSlot === slot ? 'selected' : ''}`}>
                 </div>
