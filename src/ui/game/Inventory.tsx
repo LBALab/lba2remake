@@ -72,7 +72,6 @@ const Inventory = ({ game }: any) => {
             inventorySlots.push(
                 <div
                   key={slot}
-                  id={String(slot)}
                   className={`inventoryItem ${selectedSlot === slot ? 'selected' : ''}`}>
                 </div>
             );
