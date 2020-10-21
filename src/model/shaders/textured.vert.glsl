@@ -21,7 +21,7 @@ out vec3 vNormal;
 out vec3 vMVPos;
 out float vDistLightning;
 
-#require "../../island/shaders/common/lightning.vert"
+#require "../../game/scenery/island/shaders/common/lightning.vert"
 
 void main() {
     int idx = int(boneIndex);

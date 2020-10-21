@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import Renderer from '../../../../renderer';
 import { fullscreen } from '../../../styles/index';
 import FrameListener from '../../../utils/FrameListener';
-import { loadIslandScenery } from '../../../../island';
+import Island from '../../../../game/scenery/island/Island';
 import {get3DFreeCamera} from './utils/freeCamera';
 import IslandAmbience from './browser/ambience';
 import { TickerProps } from '../../../utils/Ticker';
@@ -38,7 +38,7 @@ interface State {
         z: number;
     };
 }
-export default class Island extends FrameListener<Props, State> {
+export default class IslandEditorContent extends FrameListener<Props, State> {
     mouseSpeed: {
         x: number;
         y: number;
@@ -130,15 +130,10 @@ export default class Island extends FrameListener<Props, State> {
         }
         this.name = this.props.sharedState.name;
         const ambience = IslandAmbience[this.props.sharedState.name];
-        const island = await loadIslandScenery(
-            { editor: true },
-            this.props.sharedState.name,
-            ambience,
-        );
-        island.name = this.name;
+        const island = await Island.loadForEditor(this.props.sharedState.name, ambience);
         this.state.renderer.applySceneryProps(island.props);
 
-        const offset = islandOffsets[island.name];
+        const offset = islandOffsets[this.name];
         this.state.scene.camera.controlNode.position.set(
             offset.position.x, offset.position.y, offset.position.z
         );

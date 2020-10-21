@@ -64,7 +64,7 @@ async function findAllVariantsInScene(bkg, lDef, layout, indexInfo) {
     const isoScenery = await loadIsometricSceneryForSearch(
         bkg,
         lDef.library,
-        indexInfo.index,
+        indexInfo.sceneryIndex,
         layout
     );
     if (!isoScenery) {

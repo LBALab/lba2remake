@@ -6,7 +6,7 @@ import { loadAnimState, resetAnimState } from '../model/animState';
 import { AnimType } from './data/animType';
 import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
 import {createBoundingBox} from '../utils/rendering';
-import { loadSprite } from '../iso/sprites';
+import { loadSprite } from './scenery/isometric/sprites';
 
 import { getObjectName } from '../ui/editor/DebugData';
 import { createActorLabel } from '../ui/editor/labels';
@@ -17,6 +17,7 @@ import { parseScripts } from '../scripting/parser';
 import { postProcessScripts, cleanUpScripts } from '../scripting/postprocess';
 import { getParams } from '../params';
 import Game from './Game';
+import { Scenery } from './scenery';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -112,7 +113,7 @@ export const DirMode = {
 export async function loadActor(
     game: Game,
     is3DCam: boolean,
-    scenery: any,
+    scenery: Scenery,
     ambience: any,
     props: ActorProps,
     isSideScene: boolean

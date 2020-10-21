@@ -2,9 +2,10 @@ import * as THREE from 'three';
 
 import { getRandom, getHtmlColor } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
-import { loadSprite } from '../iso/sprites';
+import { loadSprite } from './scenery/isometric/sprites';
 import { clone } from 'lodash';
 import { MAX_LIFE } from './GameState';
+import Scene from './Scene';
 // import { createBoundingBox } from '../utils/rendering';
 
 export const ExtraFlag = {
@@ -165,7 +166,7 @@ const EXTRA_BOX = new THREE.Box3();
 const INTERSECTION = new THREE.Box3();
 const DIFF = new THREE.Vector3();
 
-export function updateExtra(game, scene, extra, time) {
+export function updateExtra(game, scene: Scene, extra, time) {
     if (!extra)
         return;
 
