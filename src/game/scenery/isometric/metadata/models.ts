@@ -107,7 +107,7 @@ export async function loadFullSceneModel(
             mixer.update(time.delta);
             if (DOME_SCENES.includes(scene.index)) { // dome
                 scene.actors.forEach((actor, idx) => {
-                    if (actor.threeObject && !actor.props.runtimeFlags.isDead) {
+                    if (actor.threeObject && !actor.state.isDead) {
                         actorPos[idx].set(0, 0, 0);
                         actorPos[idx].applyMatrix4(actor.threeObject.matrixWorld);
                     } else {

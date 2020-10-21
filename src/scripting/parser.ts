@@ -13,13 +13,6 @@ const TypeSize = {
     Uint32: 4,
 };
 
-export function parseScripts(actor) {
-    return {
-        life: parseScript(actor.index, 'life', actor.props.lifeScript),
-        move: parseScript(actor.index, 'move', actor.props.moveScript)
-    };
-}
-
 export function parseScript(actor, type, script) {
     const state = {
         type,

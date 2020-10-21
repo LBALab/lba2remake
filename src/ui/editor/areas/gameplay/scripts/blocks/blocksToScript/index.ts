@@ -7,7 +7,7 @@ import moveMappings from './mappings/move';
 import { compileScripts } from '../../../../../../../scripting/compiler';
 import DebugData from '../../../../../DebugData';
 import { mapValue } from './mappings/utils';
-import { DirMode } from '../../../../../../../game/actors';
+import { DirMode } from '../../../../../../../game/Actor';
 
 const lifeRootTypes = ['lba_behaviour', 'lba_behaviour_init'];
 const moveRootTypes = ['lba_move_track', 'lba_move_replace'];

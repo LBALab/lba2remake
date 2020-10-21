@@ -17,7 +17,7 @@ export function processPhysicsFrame(game, scene, time) {
 }
 
 function processActorPhysics(game: Game, scene: Scene, actor, time) {
-    if (!actor.model || actor.props.runtimeFlags.isDead)
+    if (!actor.model || actor.state.isDead)
         return;
 
     // If someone is talking who isn't this actor, don't process the physics.
@@ -28,9 +28,9 @@ function processActorPhysics(game: Game, scene: Scene, actor, time) {
 
     actor.physics.position.add(actor.physics.temp.position);
     if (actor.props.flags.hasCollisions) {
-        if (!actor.props.runtimeFlags.hasGravityByAnim &&
-            actor.props.flags.canFall && !actor.props.runtimeFlags.isClimbing &&
-            !actor.props.runtimeFlags.isUsingProtoOrJetpack) {
+        if (!actor.state.hasGravityByAnim &&
+            actor.props.flags.canFall && !actor.state.isClimbing &&
+            !actor.state.isUsingProtoOrJetpack) {
             // Max falling speed: 0.15m per frame
             actor.physics.position.y -= 0.25 * WORLD_SIZE * time.delta;
         }
@@ -83,7 +83,7 @@ const Y_THRESHOLD = WORLD_SIZE * 0.000625;
 
 function processCollisionsWithActors(scene, actor) {
     actor.hasCollidedWithActor = -1;
-    if (actor.model === null || actor.props.runtimeFlags.isDead ||
+    if (actor.model === null || actor.state.isDead ||
         !actor.props.flags.hasCollisions) {
         return;
     }
@@ -94,7 +94,7 @@ function processCollisionsWithActors(scene, actor) {
     for (const otherActor of scene.actors) {
         if ((otherActor.model === null && otherActor.sprite === null)
             || otherActor.index === actor.index
-            || otherActor.props.runtimeFlags.isDead
+            || otherActor.state.isDead
             || !otherActor.isVisible
             || !(otherActor.props.flags.hasCollisions || otherActor.props.flags.isSprite)) {
             continue;

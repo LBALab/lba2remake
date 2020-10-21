@@ -42,6 +42,7 @@ export interface Extra {
 
     flags: number;
     props: any;
+    state: any;
     lifeTime: number;
     info: number;
     hitStrength: number;
@@ -99,11 +100,11 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
                 canFall: true,
                 isVisible: true,
                 isSprite: true,
-            },
-            runtimeFlags: {
-                isTouchingGround: false,
-                isDead: false,
             }
+        },
+        state: {
+            isTouchingGround: false,
+            isDead: false,
         },
         spriteIndex,
         spawnTime: 0,
@@ -211,7 +212,7 @@ export function updateExtra(game, scene: Scene, extra, time) {
         for (let i = 0; i < scene.actors.length; i += 1) {
             const a = scene.actors[i];
             if ((a.model === null && a.sprite === null)
-                || a.props.runtimeFlags.isDead
+                || a.state.isDead
                 || !(a.props.flags.hasCollisions || a.props.flags.isSprite)) {
                 continue;
             }

@@ -6,7 +6,7 @@ import {
 } from 'lodash';
 
 import islandSceneMapping from './scenery/island/data/sceneMapping';
-import { loadActor, DirMode } from './actors';
+import Actor, { DirMode } from './Actor';
 import { loadPoint } from './points';
 import { loadZone } from './zones';
 import { loadScripts } from '../scripting';
@@ -24,12 +24,6 @@ import { loadScenery, Scenery } from './scenery';
 import { SceneManager } from './SceneManager';
 import { createSceneVariables, findUsedVarGames } from './scene/variables';
 import Island from './scenery/island/Island';
-
-interface Entities {
-    readonly actors: any[];
-    readonly zones: any[];
-    readonly points: any[];
-}
 
 export default class Scene {
     readonly index: number;
@@ -66,33 +60,28 @@ export default class Scene {
         index: number,
         parent: Scene = null
     ): Promise<Scene> {
+        const isSideScene = !!parent;
         const data = await getScene(index);
-        const params = getParams();
-        if (params.editor) {
+        if (getParams().editor) {
             await loadSceneMetaData(index);
         }
-        const scenery = parent ? parent.scenery : await loadScenery(game, data);
-        const is3DCam = data.isIsland || renderer.vr || params.iso3d;
-        const entities = {
-            actors: await Promise.all(map(
-                data.actors,
-                actor => loadActor(
-                    game,
-                    is3DCam,
-                    scenery,
-                    data.ambience,
-                    actor,
-                    !!parent
-                )
-            )),
-            zones: map(data.zones, props => loadZone(props, is3DCam, params.editor)),
-            points: map(data.points, props => loadPoint(props)),
-        };
+        const scenery = isSideScene ? parent.scenery : await loadScenery(game, data);
+        const scene: Scene = new Scene(
+            game,
+            renderer,
+            sceneManager,
+            data,
+            scenery,
+            parent
+        );
+        await scene.loadObjects(!!parent);
 
-        const scene = new Scene(game, renderer, sceneManager, data, scenery, entities, parent);
-
-        if (data.isIsland && !parent) {
-            scene.loadSideScenes();
+        if (data.isIsland) {
+            if (isSideScene) {
+                killActor(scene.actors[0]);
+            } else {
+                await scene.loadSideScenes();
+            }
         }
         return scene;
     }
@@ -103,7 +92,6 @@ export default class Scene {
         sceneManager: SceneManager,
         data,
         scenery: Scenery,
-        entities: Entities,
         parent: Scene
     ) {
         const params = getParams();
@@ -112,21 +100,16 @@ export default class Scene {
         this.renderer = renderer;
         this.sceneManager = sceneManager;
         this.data = data;
-        this.actors = entities.actors;
-        this.zones = entities.zones;
-        this.points = entities.points;
         this.isActive = false;
-
-        loadScripts(game, this);
-
-        this.variables = createSceneVariables(entities.actors);
-        this.usedVarGames = findUsedVarGames(entities.actors);
         this.firstFrame = false;
         this.zoneState = { listener: null, ended: false };
         this.vr = renderer.vr;
         this.is3DCam = data.isIsland || renderer.vr || params.iso3d;
         this.savedState = null;
         this.sceneManager = sceneManager;
+        this.actors = [];
+        this.zones = [];
+        this.points = [];
         this.extras = [];
         this.sceneNode = new THREE.Object3D();
 
@@ -134,7 +117,6 @@ export default class Scene {
             this.threeScene = parent.threeScene;
             this.camera = parent.camera;
             this.scenery = parent.scenery;
-            killActor(this.actors[0]);
         } else {
             this.threeScene = new THREE.Scene();
             this.threeScene.matrixAutoUpdate = false;
@@ -152,6 +134,41 @@ export default class Scene {
         }
 
         this.initSceneNode();
+    }
+
+    async loadObjects(isSideScene) {
+        const actors = await Promise.all(
+            this.data.actors.map(
+                actor => Actor.load(
+                    this.game,
+                    this,
+                    actor,
+                    {
+                        has3DCam: this.is3DCam,
+                        isSideScene
+                    }
+                )
+            )
+        );
+        const zones = this.data.zones.map(props => loadZone(props, this.is3DCam));
+        const points = this.data.points.map(props => loadPoint(props));
+
+        this.actors.push(...actors);
+        this.zones.push(...zones);
+        this.points.push(...points);
+
+        const objects = [...actors];
+        if (getParams().editor) {
+            objects.push(...zones, ...points);
+        }
+        for (const obj of objects as any) {
+            this.addMesh(obj.threeObject);
+        }
+
+        this.variables = createSceneVariables(this.actors);
+        this.usedVarGames = findUsedVarGames(this.actors);
+
+        loadScripts(this.game, this);
     }
 
     private async loadSideScenes() {
@@ -219,7 +236,6 @@ export default class Scene {
     }
 
     private initSceneNode() {
-        const { editor } = getParams();
         this.sceneNode.matrixAutoUpdate = false;
         if (this.scenery instanceof Island) {
             const sectionIdx = islandSceneMapping[this.data.index].section;
@@ -230,18 +246,6 @@ export default class Scene {
             this.sceneNode.updateMatrix();
         } else {
             this.sceneNode.name = `iso_scene_${this.index}`;
-        }
-
-        for (const actor of this.actors) {
-            this.addMesh(actor.threeObject);
-        }
-        if (editor) {
-            for (const zone of this.zones) {
-                this.addMesh(zone.threeObject);
-            }
-            for (const point of this.points) {
-                this.addMesh(point.threeObject);
-            }
         }
         this.threeScene.add(this.sceneNode);
     }
@@ -336,8 +340,8 @@ export default class Scene {
         }
 
         newHero.animState = hero.animState;
-        Object.keys(hero.props.runtimeFlags).forEach((k) => {
-            newHero.props.runtimeFlags[k] = hero.props.runtimeFlags[k];
+        Object.keys(hero.state).forEach((k) => {
+            newHero.state[k] = hero.state[k];
         });
         hero.animState = null;
         hero.model = null;

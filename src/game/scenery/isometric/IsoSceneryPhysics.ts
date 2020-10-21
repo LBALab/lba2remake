@@ -62,13 +62,13 @@ export default class IsoSceneryPhysics {
                             switch (column.groundType) {
                                 case GROUND_TYPES.WATER:
                                     if (DOME_SCENES.includes(scene.index)) { // Dome of the slate
-                                        obj.props.runtimeFlags.isDrowningStars = true;
+                                        obj.state.isDrowningStars = true;
                                     } else {
-                                        obj.props.runtimeFlags.isDrowning = true;
+                                        obj.state.isDrowning = true;
                                     }
                                     break;
                                 case GROUND_TYPES.LAVA:
-                                    obj.props.runtimeFlags.isDrowningLava = true;
+                                    obj.state.isDrowningLava = true;
                                     break;
                             }
                         }
@@ -98,8 +98,8 @@ export default class IsoSceneryPhysics {
         }
         obj.props.distFromGround = Math.max(position.y - groundHeight, 0) * WORLD_SIZE;
         obj.props.distFromFloor = Math.max(position.y - height, 0) * WORLD_SIZE;
-        obj.props.runtimeFlags.isTouchingGround = isTouchingGround;
-        obj.props.runtimeFlags.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
+        obj.state.isTouchingGround = isTouchingGround;
+        obj.state.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
 
         if (isUsingProtoOrJetpack) {
             let heightOffset = PROTOPACK_OFFSET;
@@ -251,7 +251,7 @@ function processBoxIntersections(grid, actor, position, dx, dz, isTouchingGround
             }
         }
     }
-    actor.props.runtimeFlags.isColliding = collision;
+    actor.state.isColliding = collision;
     return isTouchingGround;
 }
 

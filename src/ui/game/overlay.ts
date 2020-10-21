@@ -43,7 +43,6 @@ const createOverlayRenderer = (canvas: any, type: string) => {
 
 const loadSceneModel = async (sce, b, bodyIndex, anims) => {
     const m = await loadModel(
-        {},
         b,
         bodyIndex,
         0,

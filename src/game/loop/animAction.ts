@@ -19,13 +19,13 @@ export const ANIP = unimplemented();
 export function processHit(actor, hitStrength, game, scene) {
     for (const a of scene.actors) {
         if (a.index === actor.index || !a.isVisible ||
-            a.props.runtimeFlags.isDead) {
+            a.state.isDead) {
             continue;
         }
         // TODO(scottwilliams): This doesn't take into account the actor angles.
         if (distance2D(a.physics.position, actor.physics.position) < 1) {
             a.hit(actor.index, hitStrength);
-            if (a.props.runtimeFlags.isDead) {
+            if (a.state.isDead) {
                 game.getAudioManager().playSample(SampleType.ACTOR_DYING);
                 if (a.props.extraType) {
                     const angle = a.physics.temp.angle - Math.PI / 2;

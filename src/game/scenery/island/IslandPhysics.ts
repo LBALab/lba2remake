@@ -66,7 +66,7 @@ export default class IslandPhysics {
         const isUsingProtoOrJetpack = (obj.props.entityIndex === BehaviourMode.JETPACK ||
                                        obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
                                        obj.props.animIndex === AnimType.FORWARD;
-        obj.props.runtimeFlags.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
+        obj.state.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
         if (isUsingProtoOrJetpack) {
             let heightOffset = PROTOPACK_OFFSET;
             if (obj.props.entityIndex === BehaviourMode.JETPACK) {
@@ -123,19 +123,19 @@ export default class IslandPhysics {
                 }
             }
         }
-        obj.props.runtimeFlags.isTouchingGround = isTouchingGround;
-        obj.props.runtimeFlags.isTouchingFloor = distFromFloor < 0.001;
+        obj.state.isTouchingGround = isTouchingGround;
+        obj.state.isTouchingFloor = distFromFloor < 0.001;
 
         if (isTouchingGround && ground.liquid > 0) {
             switch (ground.liquid) {
                 case LIQUID_TYPES.WATER:
-                    obj.props.runtimeFlags.isDrowning = true;
+                    obj.state.isDrowning = true;
                     break;
                 case LIQUID_TYPES.LAVA:
-                    obj.props.runtimeFlags.isDrowningLava = true;
+                    obj.state.isDrowningLava = true;
                     break;
                 default:
-                    obj.props.runtimeFlags.isDrowning = true;
+                    obj.state.isDrowning = true;
                     break;
             }
         }
@@ -318,6 +318,6 @@ function processBoxIntersections(section: IslandSection, actor, position, isTouc
             ACTOR_BOX.translate(DIFF);
         }
     }
-    actor.props.runtimeFlags.isColliding = collision;
+    actor.state.isColliding = collision;
     return isTouchingGround;
 }

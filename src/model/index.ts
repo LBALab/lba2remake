@@ -16,6 +16,7 @@ import {
     getAnimations,
     getModelsTexture
 } from '../resources';
+import { getParams } from '../params';
 
 export interface Model {
     state: any;
@@ -25,13 +26,14 @@ export interface Model {
     mesh: THREE.Object3D;
 }
 
-export async function loadModel(params: any,
-                          entityIdx: number,
-                          bodyIdx: number,
-                          animIdx: number,
-                          animState: any,
-                          envInfo: any,
-                          ambience: any) {
+export async function loadModel(
+    entityIdx: number,
+    bodyIdx: number,
+    animIdx: number,
+    animState: any,
+    envInfo: any,
+    ambience: any
+) {
     const [ress, pal, entities, body, texture, anim, lutTexture] = await Promise.all([
         getCommonResource(),
         getPalette(),
@@ -43,7 +45,6 @@ export async function loadModel(params: any,
     ]);
     const resources = { ress, pal, entities, body, texture, anim };
     return loadModelData(
-        params,
         resources,
         entityIdx,
         bodyIdx,
@@ -60,15 +61,16 @@ export async function loadModel(params: any,
  *  This will allow to mantain different states for body animations.
  *  This module will still kept data reloaded to avoid reload twice for now.
  */
-function loadModelData(params: any,
-                       resources,
-                       entityIdx,
-                       bodyIdx,
-                       animIdx,
-                       animState: any,
-                       envInfo: any,
-                       ambience: any,
-                       lutTexture: THREE.Texture) {
+function loadModelData(
+    resources,
+    entityIdx,
+    bodyIdx,
+    animIdx,
+    animState: any,
+    envInfo: any,
+    ambience: any,
+    lutTexture: THREE.Texture
+) {
     if (entityIdx === -1 || bodyIdx === -1 || animIdx === -1)
         return null;
 
@@ -111,7 +113,7 @@ function loadModelData(params: any,
 
     if (model.mesh) {
         model.boundingBox = body.boundingBox;
-        if (params.editor) {
+        if (getParams().editor) {
             model.boundingBoxDebugMesh = createBoundingBox(
                 body.boundingBox,
                 new THREE.Vector3(1, 0, 0)

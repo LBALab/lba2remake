@@ -1,5 +1,5 @@
 import { clone } from 'lodash';
-import { DirMode } from '../../game/actors';
+import { DirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
 import { setMagicBallLevel } from '../GameState';
@@ -153,7 +153,7 @@ export function SET_DIRMODE(dirMode) {
 export function SET_DIRMODE_OBJ(actor, dirMode) {
     actor.props.dirMode = dirMode;
     if (dirMode === DirMode.MANUAL) {
-        actor.props.runtimeFlags.isTurning = false;
+        actor.state.isTurning = false;
     }
 }
 
@@ -189,7 +189,7 @@ export function SUB_VAR_GAME(index, value) {
 
 export function KILL_OBJ(actor) {
     actor.props.life = 0;
-    actor.props.runtimeFlags.isDead = true;
+    actor.state.isDead = true;
     actor.isVisible = false;
     if (actor.threeObject) {
         actor.threeObject.visible = false;
@@ -198,7 +198,7 @@ export function KILL_OBJ(actor) {
 
 export function SUICIDE() {
     this.actor.props.life = 0;
-    this.actor.props.runtimeFlags.isDead = true;
+    this.actor.state.isDead = true;
     this.actor.isVisible = false;
     if (this.actor.threeObject) {
         this.actor.threeObject.visible = false;
@@ -357,7 +357,7 @@ export function SUB_MAGIC_POINT(points) {
 export function SET_LIFE_POINT_OBJ(actor, value) {
     actor.props.life = value;
     if (actor.props.life > 0) {
-        actor.props.runtimeFlags.isDead = false;
+        actor.state.isDead = false;
     }
 }
 
@@ -587,7 +587,7 @@ export function BRUTAL_EXIT() {
     this.state.continue = false;
     this.state.terminated = true;
     this.moveState.terminated = true;
-    this.actor.props.runtimeFlags.isDead = true;
+    this.actor.state.isDead = true;
     this.actor.isVisible = false;
 }
 
@@ -604,7 +604,7 @@ export function ADD_LIFE_POINT_OBJ(index, points) {
     if (actor) {
         actor.props.life += points;
         if (actor.props.life > 0) {
-            actor.props.runtimeFlags.isDead = false;
+            actor.state.isDead = false;
         }
     }
 }

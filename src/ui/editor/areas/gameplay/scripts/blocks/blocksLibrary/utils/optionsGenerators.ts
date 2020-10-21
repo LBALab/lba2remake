@@ -1,7 +1,7 @@
 import { map, filter, take, drop, each, sortBy } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../../DebugData';
 import LocationsNode from '../../../../locator/LocationsNode';
-import { DirMode } from '../../../../../../../../game/actors';
+import { DirMode } from '../../../../../../../../game/Actor';
 
 function getActor(field) {
     const block = field.getSourceBlock();

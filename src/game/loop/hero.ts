@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { DirMode } from '../actors';
+import { DirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { WORLD_SIZE } from '../../utils/lba';
 import { processHit } from './animAction';
@@ -37,14 +37,14 @@ export function updateHero(game, scene, hero, time) {
 
     // Only save a valid position at most once every 500ms.
     const timeSinceLastPosSave = performance.now() - game.getState().hero.lastValidPosTime;
-    if (validPosition(hero.props.runtimeFlags) && timeSinceLastPosSave > 500) {
+    if (validPosition(hero.state) && timeSinceLastPosSave > 500) {
         scene.savedState = game.getState().save(hero);
         game.getState().hero.lastValidPosTime = performance.now();
     }
 }
 
 function handleBehaviourChanges(scene, hero, behaviour) {
-    if (hero.props.runtimeFlags.isDrowning) {
+    if (hero.state.isDrowning) {
         return;
     }
     if (hero.props.entityIndex !== behaviour) {
@@ -58,23 +58,23 @@ function handleBehaviourChanges(scene, hero, behaviour) {
 // validPosition returns true iff Twinsen is in a position we consider "valid",
 // that is one where he's stood on ground and not doing anything interesting
 // (e.g. climbing or jumping).
-function validPosition(runtimeFlags) {
-    const onFloor = runtimeFlags.isTouchingGround ||
-                    runtimeFlags.isTouchingFloor;
+function validPosition(state) {
+    const onFloor = state.isTouchingGround ||
+                    state.isTouchingFloor;
     return onFloor
-        && !runtimeFlags.isDrowning
-        && !runtimeFlags.isDrowningLava
-        && !runtimeFlags.isDrowningStars
-        && !runtimeFlags.isJumping
-        && !runtimeFlags.isFalling
-        && !runtimeFlags.isClimbing;
+        && !state.isDrowning
+        && !state.isDrowningLava
+        && !state.isDrowningStars
+        && !state.isJumping
+        && !state.isFalling
+        && !state.isClimbing;
 }
 
 function toggleJump(hero, value) {
-    hero.props.runtimeFlags.isJumping = value;
-    hero.props.runtimeFlags.isWalking = value;
+    hero.state.isJumping = value;
+    hero.state.isWalking = value;
     // check in the original game how this is actually set
-    hero.props.runtimeFlags.hasGravityByAnim = value;
+    hero.state.hasGravityByAnim = value;
 }
 
 let turnReset = true;
@@ -84,23 +84,23 @@ const EULER = new THREE.Euler();
 
 function processFirstPersonsMovement(game, scene: Scene, hero, time) {
     const controlsState = game.controlsState;
-    if (hero.props.runtimeFlags.isClimbing ||
-        hero.props.runtimeFlags.isSearching) {
+    if (hero.state.isClimbing ||
+        hero.state.isSearching) {
         return;
     }
-    if (hero.props.runtimeFlags.isHit) {
+    if (hero.state.isHit) {
         // Ensure we fall backwards.
-        hero.props.runtimeFlags.isWalking = true;
+        hero.state.isWalking = true;
         return;
     }
 
     let animIndex = hero.props.animIndex;
-    if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
+    if (hero.state.isJumping && hero.animState.hasEnded) {
         toggleJump(hero, false);
     }
-    if (!hero.props.runtimeFlags.isJumping) {
+    if (!hero.state.isJumping) {
         toggleJump(hero, false);
-        if (hero.props.runtimeFlags.isFalling) {
+        if (hero.state.isFalling) {
             processFall(scene, hero);
             return;
         }
@@ -113,7 +113,7 @@ function processFirstPersonsMovement(game, scene: Scene, hero, time) {
         const usingJetpack = hero.props.entityIndex === BehaviourMode.JETPACK &&
                              hero.props.animIndex === AnimType.FORWARD;
         if (distFromFloor >= SMALL_FALL_HEIGHT && !usingJetpack) {
-            hero.props.runtimeFlags.isFalling = true;
+            hero.state.isFalling = true;
             hero.props.fallDistance = distFromFloor;
             hero.setAnim(AnimType.FALLING);
             return;
@@ -128,15 +128,15 @@ function processFirstPersonsMovement(game, scene: Scene, hero, time) {
 
         animIndex = AnimType.NONE;
         if (Math.abs(controlsState.controlVector.y) > 0.6) {
-            hero.props.runtimeFlags.isWalking = true;
+            hero.state.isWalking = true;
             animIndex = controlsState.controlVector.y > 0 ? AnimType.FORWARD : AnimType.BACKWARD;
         } else if (Math.abs(controlsState.controlVector.x) > 0.7) {
-            hero.props.runtimeFlags.isWalking = true;
+            hero.state.isWalking = true;
             animIndex = controlsState.controlVector.x > 0
                 ? AnimType.DODGE_LEFT
                 : AnimType.DODGE_RIGHT;
         } else {
-            hero.props.runtimeFlags.isWalking = false;
+            hero.state.isWalking = false;
         }
         if (Math.abs(controlsState.altControlVector.x) > 0.6 && turnReset) {
             const euler = new THREE.Euler();
@@ -155,7 +155,7 @@ function processFirstPersonsMovement(game, scene: Scene, hero, time) {
             }
         }
     }
-    if (!hero.props.runtimeFlags.isJumping) {
+    if (!hero.state.isJumping) {
         const threeCamera = scene.camera.threeCamera;
         Q.setFromRotationMatrix(threeCamera.matrixWorld);
         Q.multiply(BASE_ANGLE);
@@ -219,10 +219,10 @@ function processFall(scene: Scene, hero) {
     }
     if (distFromFloor < 0.001) {
         // If we've jumped into water, don't play the landing animation.
-        if (hero.props.runtimeFlags.isDrowning
-            || hero.props.runtimeFlags.isDrowningLava
-            || hero.props.runtimeFlags.isDrowningStars) {
-            hero.props.runtimeFlags.isFalling = false;
+        if (hero.state.isDrowning
+            || hero.state.isDrowningLava
+            || hero.state.isDrowningStars) {
+            hero.state.isFalling = false;
             hero.props.fallDistance = 0;
             return;
         }
@@ -243,7 +243,7 @@ function processFall(scene: Scene, hero) {
             animIndex = AnimType.FALL_LANDING_HEAD_HIT;
         }
         hero.setAnimWithCallback(animIndex, () => {
-            hero.props.runtimeFlags.isFalling = false;
+            hero.state.isFalling = false;
             hero.props.fallDistance = 0;
             hero.props.noInterpolateNext = true;
         });
@@ -253,23 +253,23 @@ function processFall(scene: Scene, hero) {
 
 function processActorMovement(game, scene, hero, time, behaviour) {
     const controlsState = game.controlsState;
-    if (hero.props.runtimeFlags.isClimbing ||
-        hero.props.runtimeFlags.isSearching) {
+    if (hero.state.isClimbing ||
+        hero.state.isSearching) {
         return;
     }
-    if (hero.props.runtimeFlags.isHit) {
+    if (hero.state.isHit) {
         // Ensure we fall backwards.
-        hero.props.runtimeFlags.isWalking = true;
+        hero.state.isWalking = true;
         return;
     }
 
     let animIndex = hero.props.animIndex;
-    if (hero.props.runtimeFlags.isJumping && hero.animState.hasEnded) {
+    if (hero.state.isJumping && hero.animState.hasEnded) {
         toggleJump(hero, false);
     }
-    if (!hero.props.runtimeFlags.isJumping) {
+    if (!hero.state.isJumping) {
         toggleJump(hero, false);
-        if (hero.props.runtimeFlags.isFalling) {
+        if (hero.state.isFalling) {
             processFall(scene, hero);
             return;
         }
@@ -286,7 +286,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
             fallThreshold = Infinity;
         }
         if (hero.props.distFromFloor >= fallThreshold) {
-            hero.props.runtimeFlags.isFalling = true;
+            hero.state.isFalling = true;
             hero.props.fallDistance = hero.props.distFromFloor;
             hero.setAnim(AnimType.FALLING);
             return;
@@ -297,7 +297,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
 
         animIndex = AnimType.NONE;
         if (!controlsState.relativeToCam && controlsState.controlVector.y !== 0) {
-            hero.props.runtimeFlags.isWalking = true;
+            hero.state.isWalking = true;
             animIndex = controlsState.controlVector.y === 1 ? AnimType.FORWARD : AnimType.BACKWARD;
             if (controlsState.sideStep === 1) {
                 animIndex = controlsState.controlVector.y === 1 ?
@@ -312,42 +312,42 @@ function processActorMovement(game, scene, hero, time, behaviour) {
             }
         }
         if (controlsState.fight === 1) {
-            hero.props.runtimeFlags.isWalking = true;
-            if (!hero.props.runtimeFlags.isFighting) {
+            hero.state.isWalking = true;
+            if (!hero.state.isFighting) {
                 animIndex = AnimType.PUNCH_1 + Math.floor(Math.random() * 3);
-                hero.props.runtimeFlags.repeatHit = Math.floor(Math.random() * 2);
-                hero.props.runtimeFlags.isFighting = true;
+                hero.state.repeatHit = Math.floor(Math.random() * 2);
+                hero.state.isFighting = true;
             } else {
                 if (hero.animState.hasEnded) {
-                    if (!hero.props.runtimeFlags.isSwitchingHit) {
-                        if (hero.props.runtimeFlags.repeatHit <= 0) {
+                    if (!hero.state.isSwitchingHit) {
+                        if (hero.state.repeatHit <= 0) {
                             animIndex = AnimType.PUNCH_1 + Math.floor(Math.random() * 3);
                             while (animIndex === hero.props.animIndex) {
                                 animIndex = AnimType.PUNCH_1 + Math.floor(Math.random() * 3);
                             }
-                            hero.props.runtimeFlags.repeatHit = Math.floor(Math.random() * 2);
+                            hero.state.repeatHit = Math.floor(Math.random() * 2);
                         } else {
-                            hero.props.runtimeFlags.repeatHit -= 1;
+                            hero.state.repeatHit -= 1;
                             animIndex = hero.props.animIndex;
                         }
-                        hero.props.runtimeFlags.isSwitchingHit = true;
+                        hero.state.isSwitchingHit = true;
                     } else {
                         animIndex = hero.props.animIndex;
                     }
                 } else {
                     animIndex = hero.props.animIndex;
-                    hero.props.runtimeFlags.isSwitchingHit = false;
+                    hero.state.isSwitchingHit = false;
                 }
             }
         } else {
-            hero.props.runtimeFlags.isFighting = false;
+            hero.state.isFighting = false;
         }
         if (controlsState.crouch === 1) {
-            hero.props.runtimeFlags.isCrouching = true;
+            hero.state.isCrouching = true;
         } else if (controlsState.controlVector.y !== 0 || controlsState.controlVector.x !== 0) {
-            hero.props.runtimeFlags.isCrouching = false;
+            hero.state.isCrouching = false;
         }
-        if (hero.props.runtimeFlags.isCrouching) {
+        if (hero.state.isCrouching) {
             animIndex = AnimType.CROUCH;
         }
         if (controlsState.weapon === 1) {
@@ -355,10 +355,10 @@ function processActorMovement(game, scene, hero, time, behaviour) {
         }
     }
 
-    if (!controlsState.relativeToCam && !hero.props.runtimeFlags.isJumping) {
+    if (!controlsState.relativeToCam && !hero.state.isJumping) {
         if (controlsState.controlVector.x !== 0 && !controlsState.crouch) {
-            hero.props.runtimeFlags.isCrouching = false;
-            hero.props.runtimeFlags.isWalking = true;
+            hero.state.isCrouching = false;
+            hero.state.isWalking = true;
             if (!controlsState.sideStep) {
                 const euler = new THREE.Euler();
                 euler.setFromQuaternion(hero.physics.orientation, 'YXZ');
@@ -383,7 +383,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
                     euler.y -= controlsState.controlVector.x * time.delta * 2.0;
                 }
                 hero.physics.orientation.setFromEuler(euler);
-                // hero.props.runtimeFlags.isTurning = true;
+                // hero.state.isTurning = true;
             } else {
                 animIndex = controlsState.controlVector.x === 1
                     ? AnimType.DODGE_LEFT
@@ -399,7 +399,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
             }
         }
     }
-    if (!hero.props.runtimeFlags.isJumping) {
+    if (!hero.state.isJumping) {
         animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex);
     }
     hero.setAnim(animIndex);
@@ -410,16 +410,16 @@ function processActorMovement(game, scene, hero, time, behaviour) {
 }
 
 function checkDrowningAnim(game, scene, hero, time) {
-    if (!hero.props.runtimeFlags.isDrowning &&
-        !hero.props.runtimeFlags.isDrowningLava &&
-        !hero.props.runtimeFlags.isDrowningStars) {
+    if (!hero.state.isDrowning &&
+        !hero.state.isDrowningLava &&
+        !hero.state.isDrowningStars) {
       return false;
     }
 
     let anim = AnimType.DROWNING;
-    if (hero.props.runtimeFlags.isDrowningLava) {
+    if (hero.state.isDrowningLava) {
         anim = AnimType.DROWNING_LAVA;
-    } else if (hero.props.runtimeFlags.isDrowningStars) {
+    } else if (hero.state.isDrowningStars) {
         if (game.controlsState.firstPerson) {
             hero.setAnim(AnimType.FALLING);
             if (hero.physics.position.y < 0) {
@@ -432,9 +432,9 @@ function checkDrowningAnim(game, scene, hero, time) {
                 game.getState().load(scene.savedState, hero);
                 hero.setAnim(AnimType.NONE);
                 hero.props.flags.hasCollisions = true;
-                hero.props.runtimeFlags.isDrowning = false;
-                hero.props.runtimeFlags.isDrowningLava = false;
-                hero.props.runtimeFlags.isDrowningStars = false;
+                hero.state.isDrowning = false;
+                hero.state.isDrowningLava = false;
+                hero.state.isDrowningStars = false;
             } else {
                 hero.props.flags.hasCollisions = false;
             }
@@ -445,9 +445,9 @@ function checkDrowningAnim(game, scene, hero, time) {
     hero.setAnimWithCallback(anim, () => {
         game.getState().load(scene.savedState, hero);
         hero.setAnim(AnimType.NONE);
-        hero.props.runtimeFlags.isDrowning = false;
-        hero.props.runtimeFlags.isDrowningLava = false;
-        hero.props.runtimeFlags.isDrowningStars = false;
+        hero.state.isDrowning = false;
+        hero.state.isDrowningLava = false;
+        hero.state.isDrowningStars = false;
         hero.props.noInterpolateNext = true;
     });
     hero.animState.noInterpolate = true;
@@ -489,7 +489,7 @@ function processCamRelativeMovement(controlsState, scene, hero, animIndex) {
             hero.physics.temp.angle = EULER.y;
             hero.physics.orientation.copy(FLAT_CAM.quaternion);
             animIndex = AnimType.FORWARD;
-            hero.props.runtimeFlags.isWalking = true;
+            hero.state.isWalking = true;
         }
     }
     return animIndex;
