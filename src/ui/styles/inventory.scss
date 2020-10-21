@@ -38,8 +38,6 @@
     user-select: none;
     list-style: none;
     font-size: 2em;
-    width: 98%;
-    height: 98%;
     position: absolute; 
     top: 50%;
     left: 50%;
@@ -48,6 +46,19 @@
     flex-direction: column;
     align-items: center;
 }
+
+@media screen and (orientation:landscape) { 
+    .inventory {
+        width: 115vh;
+        height: 98vh;
+    }
+}
+@media screen and (orientation:portrait) {
+    .inventory {
+        width: 98vw;
+        height: 115vw;
+    }
+ }
 
 .inventoryText {
     width: 99%;
@@ -74,7 +85,7 @@
 
 .inventoryItem {
     background: rgba(0, 0, 0, 1.0);
-    margin: 5px;
+    margin: 10px;
     border-radius: 15px;
     border: 2px outset #61cece;
 }
