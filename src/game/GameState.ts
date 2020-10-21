@@ -45,6 +45,7 @@ export function createGameState(): GameState {
             position: null,
             lastValidPosTime: 0,
             animState: null,
+            inventorySlot: 0,
         },
         chapter: 0,
         actorTalking: -1,
