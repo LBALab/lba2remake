@@ -42,7 +42,7 @@ const Inventory = ({ game }: any) => {
                 break;
             case 40:
             case 'ArrowDown':
-                if (selectedSlot > inventoryColumns * inventoryRows - inventoryColumns) {
+                if (selectedSlot >= inventoryColumns * inventoryRows - inventoryColumns) {
                     newSlot = selectedSlot - inventoryColumns * (inventoryRows - 1);
                 } else {
                     newSlot = selectedSlot + inventoryColumns;
