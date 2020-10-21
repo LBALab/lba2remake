@@ -2,7 +2,7 @@ import Game from '../game/Game';
 import { SceneManager } from '../game/SceneManager';
 import { Params } from '../params';
 import { BehaviourMode } from '../game/loop/hero';
-import { resetCameraOrientation } from './keyboard';
+// import { resetCameraOrientation } from './keyboard';
 
 const gamepadEventsFound = 'ongamepadconnected' in window;
 
@@ -43,11 +43,11 @@ export default class GamepadManager {
 
             const endTime = Date.now();
             const elapsed = endTime - state.startTime;
-            if (elapsed > 150) {
+            if (elapsed > 100) {
                 state.startTime = Date.now();
                 for (let i = 0; i < controller.buttons.length; i += 1) {
                     const button = controller.buttons[i];
-                    const pressed = button.pressed;
+                    const pressed = button.pressed || button.value > 0;
                     if (pressed) {
                         this.buttonMappings(i);
                     }
@@ -68,7 +68,7 @@ export default class GamepadManager {
     }
 
     buttonMappings(index: number) {
-        const { game, camera, sceneManager, params } = this.ctx;
+        const { game, camera, sceneManager } = this.ctx;
         const scene = sceneManager.getScene();
         const { controlsState } = game;
         switch (index) {
@@ -122,12 +122,12 @@ export default class GamepadManager {
             case 7: // Button 7 - Right Shoulder
                 break;
             case 8: // Button 8 - Left Select
-                if (params.editor) {
-                    game.controlsState.freeCamera = !game.controlsState.freeCamera;
-                    if (game.controlsState.freeCamera) {
-                        resetCameraOrientation(game, scene);
-                    }
-                }
+                // if (params.editor) {
+                //     game.controlsState.freeCamera = !game.controlsState.freeCamera;
+                //     if (game.controlsState.freeCamera) {
+                //         resetCameraOrientation(game, scene);
+                //     }
+                // }
                 break;
             case 9: // Button 9 - Right Select
                 game.togglePause();
@@ -169,14 +169,16 @@ export default class GamepadManager {
             }
         }
 
-        if (game.controlsState.freeCamera) {
-            if (axes[2] < 0.2 || axes[2] > 0.2) { // to avoid drifting
-                controlsState.cameraSpeed.x = axes[3];
-            }
-            if (axes[3] < 0.2 || axes[3] > 0.2) { // to avoid drifting
-                controlsState.cameraSpeed.z = -Math.floor(axes[3]);
-            }
-        }
+        // if (params.editor) {
+        //     if (game.controlsState.freeCamera) {
+        //         if (axes[2] < 0.2 || axes[2] > 0.2) { // to avoid drifting
+        //             controlsState.cameraSpeed.z = axes[3];
+        //         }
+        //         if (axes[3] < 0.2 || axes[3] > 0.2) { // to avoid drifting
+        //             controlsState.cameraSpeed.x = -Math.floor(axes[3]);
+        //         }
+        //     }
+        // }
     }
 
     pollGamepads() {
