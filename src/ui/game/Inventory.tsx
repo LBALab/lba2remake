@@ -17,7 +17,6 @@ const Inventory = ({ game }: any) => {
             case 'ArrowLeft':
                 if (selectedSlot % inventoryColumns === 0) {
                     newSlot = selectedSlot + inventoryColumns - 1;
-
                 } else {
                     newSlot = selectedSlot - 1;
                 }
