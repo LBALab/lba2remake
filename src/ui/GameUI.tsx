@@ -135,14 +135,14 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
             game,
         } = this.props;
 
-        if (this.isBehaviourKey(key)) {
+        if (this.props.uiState.behaviourMenu && this.isBehaviourKey(key)) {
             this.props.setUiState({ behaviourMenu: false });
             game.resume(false);
         }
     }
 
     isInventoryKey(key) {
-        return key === 'ShiftLeft';
+        return key === 'ShiftLeft' || key === 'ShiftRight';
     }
 
     isBehaviourKey(key) {
