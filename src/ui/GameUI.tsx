@@ -48,6 +48,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
         this.closeKeyHelp = this.closeKeyHelp.bind(this);
         this.startNewGameScene = this.startNewGameScene.bind(this);
         this.onMenuItemChanged = this.onMenuItemChanged.bind(this);
+        this.closeInventory = this.closeInventory.bind(this);
         this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
         this.noAudioClick = this.noAudioClick.bind(this);
         this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
@@ -73,6 +74,11 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
 
     closeKeyHelp() {
         this.setState({keyHelp: false});
+    }
+
+    closeInventory() {
+        this.props.setUiState({inventory: false});
+        this.props.game.resume(false);
     }
 
     listenerKeyDown(event) {
@@ -297,6 +303,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
                 <Inventory
                     game={game}
                     scene={scene}
+                    closeInventory={this.closeInventory}
                 />
             : null }
             <Menu
