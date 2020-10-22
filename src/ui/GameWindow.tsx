@@ -22,22 +22,15 @@ import GameUI from './GameUI';
 import DebugData from './editor/DebugData';
 import { getParams } from '../params';
 import UIState, { initUIState } from './UIState';
-import { tr } from '../lang';
-import Loader from './game/Loader';
 import { updateVRScene, loadVRScene } from './vr/vrScene';
 
 interface GameWindowProps extends TickerProps {
     sharedState?: any;
     stateHandler?: any;
-    exitVR?: () => any;
-    vr: boolean;
+    vrSession?: any;
 }
 
-interface GameWindowState extends UIState {
-    enteredVR: boolean;
-}
-
-export default class GameWindow extends FrameListener<GameWindowProps, GameWindowState> {
+export default class GameWindow extends FrameListener<GameWindowProps, UIState> {
     readonly canvas: HTMLCanvasElement;
     readonly game: Game;
     readonly renderer: any;
@@ -46,7 +39,6 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
     controls?: [any];
     wrapperElem: HTMLDivElement;
     vrScene?: any;
-    vrSession?: any;
 
     constructor(props) {
         super(props);
@@ -60,29 +52,25 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
         this.pick = this.pick.bind(this);
-        this.onSessionEnd = this.onSessionEnd.bind(this);
-        this.requestPresence = this.requestPresence.bind(this);
-        this.exitVR = this.exitVR.bind(this);
 
         this.game = new Game(
             this.setUiState,
             this.getUiState,
-            this.props.vr
+            !!this.props.vrSession
         );
 
         this.canvas = document.createElement('canvas');
-        this.renderer = new Renderer(this.canvas, 'game', { vr: this.props.vr });
+        this.renderer = new Renderer(this.canvas, 'game', { vr: !!this.props.vrSession });
+        if (this.props.vrSession && !getParams().vrEmulator) {
+            this.renderer.threeRenderer.xr.setSession(this.props.vrSession);
+        }
         this.sceneManager = new SceneManager(
             this.game,
             this.renderer,
             this.hideMenu.bind(this)
         );
-        this.vrSession = null;
 
-        this.state = {
-            ...initUIState(this.game),
-            enteredVR: false
-        };
+        this.state = initUIState(this.game);
 
         this.preloadPromise = this.preload(this.game);
     }
@@ -109,7 +97,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
             });
             this.onSceneManagerReady(this.sceneManager);
             this.controls = createControls(
-                this.props.vr,
+                !!this.props.vrSession,
                 this.game,
                 wrapperElem,
                 this.sceneManager,
@@ -117,6 +105,15 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
             );
             this.wrapperElem = wrapperElem;
             this.wrapperElem.querySelector('.canvasWrapper').appendChild(this.canvas);
+            if (this.props.vrSession && getParams().vrEmulator) {
+                // Wait a bit for the canvas to get its proper size
+                // before setting the vrSession when using the emulator
+                setTimeout(() => {
+                    if (this.props.vrSession) {
+                        this.renderer.threeRenderer.xr.setSession(this.props.vrSession);
+                    }
+                }, 100);
+            }
         }
     }
 
@@ -141,7 +138,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
         if (getParams().scene === -1) {
             this.showMenu();
         }
-        if (this.props.vr) {
+        if (this.props.vrSession) {
             this.vrScene = loadVRScene(this.game, this.sceneManager, this.renderer);
         }
     }
@@ -263,7 +260,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
     frame() {
         const params = getParams();
         this.checkSceneChange();
-        if (!this.props.vr || params.vrEmulator) {
+        if (!this.props.vrSession || params.vrEmulator) {
             this.checkResize();
         }
         const scene = this.sceneManager.getScene();
@@ -320,101 +317,17 @@ export default class GameWindow extends FrameListener<GameWindowProps, GameWindo
     render() {
         return <div ref={this.onWrapperElem} style={fullscreen} tabIndex={0}>
             <div className="canvasWrapper" style={fullscreen} onClick={this.pick}/>
-            {this.props.vr
-                ? this.renderVRGUI()
-                : this.renderGUI()
-            }
-        </div>;
-    }
-
-    renderGUI() {
-        return <GameUI
-            game={this.game}
-            renderer={this.renderer}
-            sceneManager={this.sceneManager}
-            showMenu={this.showMenu}
-            hideMenu={this.hideMenu}
-            setUiState={this.setUiState}
-            uiState={this.state}
-            sharedState={this.props.sharedState}
-            stateHandler={this.props.stateHandler}
-        />;
-    }
-
-    /* VR */
-    renderVRGUI() {
-        if (this.vrSession && this.vrSession.visibilityState !== 'hidden')
-            return null;
-
-        return <React.Fragment>
-            {this.renderVRSelector()}
-            {this.state.loading ? <Loader/> : null}
-        </React.Fragment>;
-    }
-
-    async requestPresence() {
-        this.game.getAudioManager().resumeContext();
-        this.vrSession = await (navigator as any).xr.requestSession('immersive-vr');
-        this.vrSession.addEventListener('end', this.onSessionEnd);
-        this.renderer.threeRenderer.xr.setSession(this.vrSession);
-        this.setState({ enteredVR: true });
-    }
-
-    onSessionEnd() {
-        this.vrSession.removeEventListener('end', this.onSessionEnd);
-        this.vrSession = null;
-        this.forceUpdate();
-    }
-
-    exitVR() {
-        this.game.getAudioManager().stopMusicTheme();
-        this.props.exitVR();
-    }
-
-    renderVRSelector() {
-        const buttonWrapperStyle = {
-            position: 'absolute' as const,
-            left: 0,
-            right: 0,
-            bottom: 20,
-            textAlign: 'center' as const,
-            verticalAlign: 'middle' as const
-        };
-        const imgStyle = {
-            width: 200,
-            height: 200
-        };
-        const buttonStyle = {
-            color: 'white',
-            background: 'rgba(32, 162, 255, 0.5)',
-            userSelect: 'none' as const,
-            cursor: 'pointer' as const,
-            display: 'inline-block' as const,
-            fontFamily: 'LBA',
-            padding: 20,
-            textShadow: 'black 3px 3px',
-            border: '2px outset #61cece',
-            borderRadius: '15px',
-            fontSize: '30px',
-            textAlign: 'center' as const,
-            verticalAlign: 'middle' as const
-        };
-        const buttonStyle2 = Object.assign({}, buttonStyle, {
-            padding: 10,
-            fontSize: '20px'
-        });
-        return <div className="bgMenu fullscreen">
-            <div style={buttonWrapperStyle}>
-                <div style={buttonStyle} onClick={this.requestPresence}>
-                    <img style={imgStyle} src="images/vr_goggles.png"/>
-                    <br/>
-                    {this.state.enteredVR ? tr('ReturnToVR') : tr('PlayInVR')}
-                </div>
-                <br/><br/>
-                {!this.state.enteredVR && <div style={buttonStyle2} onClick={this.exitVR}>
-                    {tr('PlayOnScreen')}
-                </div>}
-            </div>
+            {!this.props.vrSession && <GameUI
+                game={this.game}
+                renderer={this.renderer}
+                sceneManager={this.sceneManager}
+                showMenu={this.showMenu}
+                hideMenu={this.hideMenu}
+                setUiState={this.setUiState}
+                uiState={this.state}
+                sharedState={this.props.sharedState}
+                stateHandler={this.props.stateHandler}
+            />}
         </div>;
     }
 }

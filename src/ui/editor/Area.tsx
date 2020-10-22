@@ -6,6 +6,7 @@ import NewArea, {NewAreaContent} from './areas/utils/NewArea';
 import SettingsIcon from '../utils/SettingsIcon';
 import DebugData from './DebugData';
 import Ticker from '../utils/Ticker';
+import { getParams } from '../../params';
 
 const menuHeight = 26;
 
@@ -94,7 +95,6 @@ interface AreaProps {
     style: React.CSSProperties;
     area: AreaDefinition;
     mainArea: AreaDefinition;
-    params: any;
     ticker: Ticker;
     stateHandler: any;
     rootStateHandler: any;
@@ -299,7 +299,6 @@ export default class Area extends React.Component<AreaProps, AreaState> {
 
     renderContent() {
         const props = {
-            params: this.props.params,
             ticker: this.props.ticker,
             stateHandler: this.props.stateHandler,
             sharedState: this.props.stateHandler.state,
@@ -334,7 +333,7 @@ export default class Area extends React.Component<AreaProps, AreaState> {
             return <div style={settingsWrapper} onClick={close}>
                 <div style={settingsStyle} onClick={(e) => { e.stopPropagation(); }}>
                     {React.createElement(this.props.area.settings as any, {
-                        params: this.props.params,
+                        params: getParams(),
                         ticker: this.props.ticker,
                         stateHandler: this.props.stateHandler,
                         sharedState: this.props.stateHandler.state,
