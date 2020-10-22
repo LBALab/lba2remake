@@ -99,8 +99,8 @@ export default class IsoSceneryPhysics {
                 height = floorHeight;
             }
         }
-        obj.props.distFromGround = Math.max(position.y - groundHeight, 0) * WORLD_SIZE;
-        obj.props.distFromFloor = Math.max(position.y - height, 0) * WORLD_SIZE;
+        obj.state.distFromGround = Math.max(position.y - groundHeight, 0) * WORLD_SIZE;
+        obj.state.distFromFloor = Math.max(position.y - height, 0) * WORLD_SIZE;
         obj.state.isTouchingGround = isTouchingGround;
         obj.state.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
 

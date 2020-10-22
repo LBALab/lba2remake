@@ -108,6 +108,9 @@ export interface ActorState {
     isUsingProtoOrJetpack: boolean;
     isSearching: boolean;
     noInterpolateNext: boolean;
+    distFromGround: number;
+    distFromFloor: number;
+    fallDistance: number;
 }
 
 interface ActorScripts {
@@ -506,7 +509,10 @@ export default class Actor {
             isTouchingFloor: false,
             isUsingProtoOrJetpack: false,
             isSearching: false,
-            noInterpolateNext: false
+            noInterpolateNext: false,
+            distFromFloor: 0,
+            distFromGround: 0,
+            fallDistance: 0
         };
     }
 }

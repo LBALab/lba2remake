@@ -55,9 +55,9 @@ export default class IslandPhysics {
         const ground = this.getGround(section, POSITION);
         let height = ground.height;
 
-        obj.props.distFromGround = Math.max(obj.physics.position.y - height, 0);
+        obj.state.distFromGround = Math.max(obj.physics.position.y - height, 0);
         const distFromFloor = this.getDistFromFloor(scene, obj);
-        obj.props.distFromFloor = distFromFloor;
+        obj.state.distFromFloor = distFromFloor;
 
         let isTouchingGround = true;
         if (obj.physics.position.y > height) {

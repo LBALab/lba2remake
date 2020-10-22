@@ -107,7 +107,7 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
             processFall(scene, hero);
             return;
         }
-        let distFromFloor = hero.props.distFromGround;
+        let distFromFloor = hero.state.distFromGround;
         if (scene.scenery instanceof Island) {
             distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
         }
@@ -117,7 +117,7 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
                              hero.props.animIndex === AnimType.FORWARD;
         if (distFromFloor >= SMALL_FALL_HEIGHT && !usingJetpack) {
             hero.state.isFalling = true;
-            hero.props.fallDistance = distFromFloor;
+            hero.state.fallDistance = distFromFloor;
             hero.setAnim(AnimType.FALLING);
             return;
         }
@@ -197,7 +197,7 @@ function firstPersonPunching(game: Game, scene: Scene) {
         const handPositions = game.controlsState.vrControllerPositions;
         for (let i = 0; i < handPositions.length; i += 1) {
             const intersect = ACTOR_BOX.containsPoint(handPositions[i]);
-            const velocity = game.controlsState.vrControllerVelocities[i];
+            const velocity = game.controlsState.vrControllerVelocities[i].length();
             if (intersect && velocity > PUNCH_VELOCITY_THRESHOLD && !punched[a.index][i]) {
                 processHit(scene.actors[0], game.getState().hero.handStrength, game, scene);
                 punched[a.index][i] = true;
@@ -216,7 +216,7 @@ const MEDIUM_FALL_HEIGHT = 2;
 const SMALL_FALL_HEIGHT = 0.3;
 
 function processFall(scene: Scene, hero: Actor) {
-    let distFromFloor = hero.props.distFromGround;
+    let distFromFloor = hero.state.distFromGround;
     if (scene.scenery instanceof Island) {
         distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
     }
@@ -226,28 +226,28 @@ function processFall(scene: Scene, hero: Actor) {
             || hero.state.isDrowningLava
             || hero.state.isDrowningStars) {
             hero.state.isFalling = false;
-            hero.props.fallDistance = 0;
+            hero.state.fallDistance = 0;
             return;
         }
         let animIndex = 0;
-        if (hero.props.fallDistance >= SMALL_FALL_HEIGHT
-         && hero.props.fallDistance < MEDIUM_FALL_HEIGHT) {
+        if (hero.state.fallDistance >= SMALL_FALL_HEIGHT
+         && hero.state.fallDistance < MEDIUM_FALL_HEIGHT) {
             animIndex = AnimType.FALL_LANDING_STUMBLE;
         }
 
-        if (hero.props.fallDistance >= MEDIUM_FALL_HEIGHT
-         && hero.props.fallDistance < BIG_FALL_HEIGHT) {
+        if (hero.state.fallDistance >= MEDIUM_FALL_HEIGHT
+         && hero.state.fallDistance < BIG_FALL_HEIGHT) {
             // TODO(scottwilliams): Do some damage to Twinsen.
             animIndex = AnimType.FALL_LANDING_HEAD_HIT;
         }
-        if (hero.props.fallDistance >= BIG_FALL_HEIGHT) {
+        if (hero.state.fallDistance >= BIG_FALL_HEIGHT) {
             // TODO(scottwilliams): Replace this with the dying animation once
             // we have the ability to die properly.
             animIndex = AnimType.FALL_LANDING_HEAD_HIT;
         }
         hero.setAnimWithCallback(animIndex, () => {
             hero.state.isFalling = false;
-            hero.props.fallDistance = 0;
+            hero.state.fallDistance = 0;
             hero.state.noInterpolateNext = true;
         });
         hero.animState.noInterpolate = true;
@@ -294,9 +294,9 @@ function processActorMovement(
         if (usingJetpack) {
             fallThreshold = Infinity;
         }
-        if (hero.props.distFromFloor >= fallThreshold) {
+        if (hero.state.distFromFloor >= fallThreshold) {
             hero.state.isFalling = true;
-            hero.props.fallDistance = hero.props.distFromFloor;
+            hero.state.fallDistance = hero.state.distFromFloor;
             hero.setAnim(AnimType.FALLING);
             return;
         }
