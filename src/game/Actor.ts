@@ -65,31 +65,9 @@ interface ActorPhysics {
 }
 
 export interface ActorState {
-    waitHitFrame: boolean;
-    isHitting: boolean;
-    hasAnimEnded: boolean;
-    hasNewFrame: boolean;
-    wasDrawn: boolean;
     isDead: boolean;
-    isSpriteMoving: boolean;
-    hasRotationByAnim: boolean;
     isFalling: boolean;
-    isSuperHitting: boolean;
-    hasFrameShield: boolean;
-    canDrawShadow: boolean;
     hasGravityByAnim: boolean;
-    isSkating: boolean;
-    canThrowProjectile: boolean;
-    canLeftJump: boolean;
-    canRightJump: boolean;
-    waitSuperHit: boolean;
-    hasRotationByTrack: boolean;
-    canFlyJetPack: boolean;
-    unknown20: boolean;
-    hasManualFrame: boolean;
-    waitPosition: boolean;
-    forceFalling: boolean;
-    // not from original from this point
     isJumping: boolean;
     isWalking: boolean;
     isTurning: boolean;
@@ -467,31 +445,9 @@ export default class Actor {
 
     private static createState(): ActorState {
         return {
-            waitHitFrame: false,
-            isHitting: false,
-            hasAnimEnded: false,
-            hasNewFrame: false,
-            wasDrawn: false,
             isDead: false,
-            isSpriteMoving: false,
-            hasRotationByAnim: false,
             isFalling: false,
-            isSuperHitting: false,
-            hasFrameShield: false,
-            canDrawShadow: false,
             hasGravityByAnim: false,
-            isSkating: false,
-            canThrowProjectile: false,
-            canLeftJump: false,
-            canRightJump: false,
-            waitSuperHit: false,
-            hasRotationByTrack: false,
-            canFlyJetPack: false,
-            unknown20: false,
-            hasManualFrame: false,
-            waitPosition: false,
-            forceFalling: false,
-            // not from original from this point
             isJumping: false,
             isWalking: false,
             isTurning: false,
