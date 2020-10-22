@@ -88,17 +88,17 @@ function updateScene(params: Params, game: Game, scene: Scene, time: Time) {
         scene.sceneNode.updateMatrixWorld();
     }
     for (const actor of scene.actors) {
-        if (actor.wasHitBy === -1) {
+        if (actor.state.wasHitBy === -1) {
             continue;
         }
         // We allow wasHitBy to persist a second frame update because it is set
         // asynchronously (potentially outside of the game loop). This ensures
         // it's correctly read by the life scripts.
-        if (actor.hasSeenHit) {
-            actor.wasHitBy = -1;
-            actor.hasSeenHit = false;
+        if (actor.state.hasSeenHit) {
+            actor.state.wasHitBy = -1;
+            actor.state.hasSeenHit = false;
         } else {
-            actor.hasSeenHit = true;
+            actor.state.hasSeenHit = true;
         }
     }
     for (const actor of scene.actors) {

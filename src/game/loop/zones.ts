@@ -1,10 +1,12 @@
 import * as THREE from 'three';
 
-import { DirMode } from '../Actor';
+import Actor, { DirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
 import { angleTo, angleToRad, getRandom, WORLD_SCALE, BRICK_SIZE, getHtmlColor } from '../../utils/lba';
 import { addExtra, ExtraFlag, getBonus } from '../extras';
+import Game from '../Game';
+import Scene from '../Scene';
 
 function NOP() { }
 
@@ -51,7 +53,7 @@ const ZONE_OFFSET_OVERRIDES = {
     }
 };
 
-export function processZones(game, scene) {
+export function processZones(game: Game, scene: Scene) {
     const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
     pos.y += 0.005;
@@ -83,7 +85,7 @@ function isFacingLadder(angle) {
 
 const LADDER_TOP_OUT_DELTA = 1.35;
 
-function LADDER(game, scene, zone, hero) {
+function LADDER(game: Game, scene: Scene, zone, hero: Actor) {
     if (hero.state.isToppingOutUp) {
         return false;
     }
@@ -149,7 +151,7 @@ function debugZoneTargetPos(newScene, pos, color) {
 // in the new scene. This function attempts to work out the closest
 // corresponding "exit" zone in the newScene and snap the location to that. If
 // no such zone exists we fall back to the default location on the zone props.
-function calculateTagetPosition(hero, zone, newScene) {
+function calculateTagetPosition(hero: Actor, zone, newScene: Scene) {
     // MAX_ZONE_DIST is the farthest away we would consider a TELEPORT
     // zone "the" matching zone we're looking for.
     const MAX_ZONE_DIST = 5 * BRICK_SIZE * WORLD_SCALE;
@@ -271,7 +273,7 @@ function calculateTagetPosition(hero, zone, newScene) {
 /**
  * @return {boolean}
  */
-function GOTO_SCENE(game, scene, zone, hero) {
+function GOTO_SCENE(game: Game, scene: Scene, zone, hero: Actor) {
     hero.state.isClimbing = false;
     hero.state.isToppingOutUp = false;
 
@@ -320,7 +322,7 @@ function GOTO_SCENE(game, scene, zone, hero) {
     return false;
 }
 
-function TEXT(game, scene, zone, hero) {
+function TEXT(game: Game, scene: Scene, zone, hero: Actor) {
     const audio = game.getAudioManager();
     if (game.controlsState.action === 1) {
         if (!scene.zoneState.skipListener) {
@@ -372,7 +374,7 @@ function TEXT(game, scene, zone, hero) {
     return false;
 }
 
-function BONUS(game, scene, zone, hero) {
+function BONUS(game: Game, scene: Scene, zone, hero: Actor) {
     if (game.controlsState.action === 1) {
         game.controlsState.action = 0;
 

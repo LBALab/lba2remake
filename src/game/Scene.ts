@@ -47,7 +47,9 @@ export default class Scene {
     extras: any[];
     isActive: boolean;
     zoneState: {
-        listener?: Function;
+        skipListener?: Function;
+        currentChar?: number;
+        startTime?: number;
         ended: boolean;
     };
     vr: boolean;
@@ -102,7 +104,7 @@ export default class Scene {
         this.data = data;
         this.isActive = false;
         this.firstFrame = false;
-        this.zoneState = { listener: null, ended: false };
+        this.zoneState = { skipListener: null, ended: false };
         this.vr = renderer.vr;
         this.is3DCam = data.isIsland || renderer.vr || params.iso3d;
         this.savedState = null;

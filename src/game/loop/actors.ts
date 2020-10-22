@@ -41,13 +41,13 @@ export function updateActor(
             return;
         }
         actor.threeObject.matrixAutoUpdate = true;
-        actor.threeObject.visible = actor.isVisible;
+        actor.threeObject.visible = actor.state.isVisible;
     }
 
-    if (actor.nextAnim !== null) {
-        actor.setAnim(actor.nextAnim);
+    if (actor.state.nextAnim !== null) {
+        actor.setAnim(actor.state.nextAnim);
         actor.animState.noInterpolate = true;
-        actor.nextAnim = null;
+        actor.state.nextAnim = null;
     }
 
     actor.runScripts(time);

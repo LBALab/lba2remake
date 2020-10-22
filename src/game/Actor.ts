@@ -21,6 +21,8 @@ import { pure } from '../utils/decorators';
 
 interface ActorFlags {
     hasCollisions: boolean;
+    hasCollisionBricks: boolean;
+    hasCollisionBricksLow: boolean;
     hasSpriteAnim3D: boolean;
     isVisible: boolean;
     isSprite: boolean;
@@ -46,6 +48,10 @@ interface ActorProps {
     lifeScript: DataView;
     moveScriptSize: number;
     moveScript: DataView;
+    textColor: string;
+    prevEntityIndex?: number;
+    prevAnimIndex?: number;
+    prevAngle?: number;
 }
 
 interface ActorOptions {
@@ -65,6 +71,7 @@ interface ActorPhysics {
 }
 
 export interface ActorState {
+    isVisible: boolean;
     isDead: boolean;
     isFalling: boolean;
     hasGravityByAnim: boolean;
@@ -73,6 +80,8 @@ export interface ActorState {
     isTurning: boolean;
     isFighting: boolean;
     isHit: boolean;
+    wasHitBy: number;
+    hasSeenHit: boolean;
     repeatHit: number;
     isSwitchingHit: boolean;
     isCrouching: boolean;
@@ -85,10 +94,14 @@ export interface ActorState {
     isTouchingFloor: boolean;
     isUsingProtoOrJetpack: boolean;
     isSearching: boolean;
+    isToppingOutUp: boolean;
     noInterpolateNext: boolean;
     distFromGround: number;
     distFromFloor: number;
     fallDistance: number;
+    hasCollidedWithActor: number;
+    floorSound: number;
+    nextAnim: number;
 }
 
 interface ActorScripts {
@@ -123,7 +136,7 @@ export const DirMode = {
 };
 
 export default class Actor {
-    readonly type: 'actor';
+    readonly type: string = 'actor';
     readonly index: number;
     readonly props: ActorProps;
     readonly state: ActorState;
@@ -137,14 +150,6 @@ export default class Actor {
     sprite?: any = null;
     physics: ActorPhysics = null;
     scripts: ActorScripts;
-    // Maybe the following properties should
-    // be moved to the actor state.
-    isVisible: boolean = false;
-    hasCollidedWithActor: number = -1;
-    floorSound: number = -1;
-    nextAnim: number = null;
-    wasHitBy: number = -1;
-    hasSeenHit: boolean = false;
     // Those properties are used by the editor.
     // We should move them somewhere else.
     label?: any;
@@ -197,7 +202,7 @@ export default class Actor {
         this.props = cloneDeep(props);
         this.physics = initPhysics(props);
         this.state = Actor.createState();
-        this.isVisible = props.flags.isVisible
+        this.state.isVisible = props.flags.isVisible
             && (props.life > 0 || props.bodyIndex >= 0)
             && props.index !== 1; // 1 is always Nitro-mecapingouin
         this.isSprite = props.flags.isSprite;
@@ -224,7 +229,7 @@ export default class Actor {
         this.resetPhysics();
         compileScripts(this.game, scene, this);
         this.state.isDead = false;
-        this.floorSound = -1;
+        this.state.floorSound = -1;
     }
 
     resetAnimState() {
@@ -318,14 +323,14 @@ export default class Actor {
                     if (this.props.index === 0 && this.game.controlsState.firstPerson) {
                         this.threeObject.visible = false;
                     } else {
-                        this.threeObject.visible = this.isVisible;
+                        this.threeObject.visible = this.state.isVisible;
                     }
                 }
             }
         } else {
             this.threeObject = new THREE.Object3D();
             this.threeObject.name = `actor:${name}`;
-            this.threeObject.visible = this.isVisible;
+            this.threeObject.visible = this.state.isVisible;
             this.threeObject.position.copy(this.physics.position);
             this.threeObject.quaternion.copy(this.physics.orientation);
             if (this.isSprite) {
@@ -393,7 +398,7 @@ export default class Actor {
         this.animState.callback = callback;
     }
 
-    reloadModel(scene) {
+    reloadModel(scene: Scene) {
         const oldObject = this.threeObject;
         this.loadMesh().then(() => {
             scene.addMesh(this.threeObject);
@@ -424,7 +429,7 @@ export default class Actor {
             // Twinsen yet.
             this.props.life = 0;
             this.state.isDead = true;
-            this.isVisible = false;
+            this.state.isVisible = false;
             if (this.threeObject) {
                 this.threeObject.visible = false;
             }
@@ -434,10 +439,10 @@ export default class Actor {
         const currentAnim = this.props.animIndex;
         this.setAnimWithCallback(AnimType.HIT, () => {
             if (this.index !== 0 && this.props.animIndex === AnimType.HIT) {
-                this.nextAnim = currentAnim;
+                this.state.nextAnim = currentAnim;
             }
             this.state.isHit = false;
-            this.wasHitBy = hitBy;
+            this.state.wasHitBy = hitBy;
         });
         this.animState.noInterpolate = true;
         this.state.isHit = true;
@@ -445,6 +450,7 @@ export default class Actor {
 
     private static createState(): ActorState {
         return {
+            isVisible: false,
             isDead: false,
             isFalling: false,
             hasGravityByAnim: false,
@@ -453,6 +459,8 @@ export default class Actor {
             isTurning: false,
             isFighting: false,
             isHit: false,
+            wasHitBy: -1,
+            hasSeenHit: false,
             repeatHit: 0,
             isSwitchingHit: false,
             isCrouching: false,
@@ -465,10 +473,14 @@ export default class Actor {
             isTouchingFloor: false,
             isUsingProtoOrJetpack: false,
             isSearching: false,
+            isToppingOutUp: false,
             noInterpolateNext: false,
             distFromFloor: 0,
             distFromGround: 0,
-            fallDistance: 0
+            fallDistance: 0,
+            hasCollidedWithActor: -1,
+            floorSound: -1,
+            nextAnim: null,
         };
     }
 }
@@ -502,6 +514,8 @@ export function createNewActorProps(
         life: 255,
         flags: {
             hasCollisions: true,
+            hasCollisionBricks: true,
+            hasCollisionBricksLow: true,
             hasSpriteAnim3D: false,
             canFall: true,
             isVisible: true,
@@ -517,5 +531,6 @@ export function createNewActorProps(
         lifeScript: new DataView(new ArrayBuffer(1)),
         moveScriptSize: 1,
         moveScript: new DataView(new ArrayBuffer(1)),
+        textColor: 'white'
     };
 }

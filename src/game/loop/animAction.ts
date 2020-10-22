@@ -19,8 +19,7 @@ export const ANIP = unimplemented();
 
 export function processHit(actor: Actor, hitStrength, game, scene) {
     for (const a of scene.actors) {
-        if (a.index === actor.index || !a.isVisible ||
-            a.state.isDead) {
+        if (a.index === actor.index || !a.state.isVisible || a.state.isDead) {
             continue;
         }
         // TODO(scottwilliams): This doesn't take into account the actor angles.

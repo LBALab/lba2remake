@@ -1,9 +1,13 @@
 import {SUICIDE} from './life';
 import DebugData from '../../ui/editor/DebugData';
+import Actor from '../Actor';
+import Game from '../Game';
+import { Time } from '../../datatypes';
+import { ScriptContext } from './ScriptContext';
 
-export function runScript(params, script, time) {
+export function runScript(params, script, time: Time) {
     const instructions = script.instructions;
-    const context = script.context;
+    const context: ScriptContext = script.context;
     const state = context.state;
 
     if (!instructions)
@@ -62,13 +66,13 @@ export function runScript(params, script, time) {
     }
 }
 
-export function killActor(actor) {
-    actor.isVisible = false;
+export function killActor(actor: Actor) {
+    actor.state.isVisible = false;
     SUICIDE.call(actor.scripts.life.context);
 }
 
-export function reviveActor(actor, game) {
-    actor.isVisible = true;
+export function reviveActor(actor: Actor, game: Game) {
+    actor.state.isVisible = true;
     if (actor.threeObject) {
         if (actor.index === 0 && game.controlsState.firstPerson) {
             actor.threeObject.visible = false;

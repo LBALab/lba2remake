@@ -62,7 +62,7 @@ export default class IslandShadows {
         if (!actor.props.flags.isSprite
             && !actor.props.flags.noShadow
             && actor.model
-            && actor.isVisible
+            && actor.state.isVisible
             && actor.threeObject.visible) {
             const sz = actor.model.boundingBox.max.x - actor.model.boundingBox.min.x;
             POSITION.copy(actor.physics.position);

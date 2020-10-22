@@ -58,7 +58,8 @@ function processSidesceneTransitions(scene: Scene) {
         && (pos.x < BB_MIN || pos.z < BB_MIN || pos.x > BB_MAX || pos.z > BB_MAX)) {
         const globalPos = new THREE.Vector3();
         globalPos.applyMatrix4(hero.threeObject.matrixWorld);
-        for (const sideScene of scene.sideScenes.values()) {
+        for (const idx in scene.sideScenes) {
+            const sideScene = scene.sideScenes[idx];
             const nodePos = sideScene.sceneNode.position;
             if (globalPos.x > nodePos.x + BB_MIN
                 && globalPos.x < nodePos.x + BB_MAX
@@ -83,7 +84,7 @@ const YSTEP = WORLD_SIZE / 3072;
 const Y_THRESHOLD = WORLD_SIZE * 0.000625;
 
 function processCollisionsWithActors(scene: Scene, actor: Actor) {
-    actor.hasCollidedWithActor = -1;
+    actor.state.hasCollidedWithActor = -1;
     if (actor.model === null || actor.state.isDead ||
         !actor.props.flags.hasCollisions) {
         return;
@@ -96,7 +97,7 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
         if ((otherActor.model === null && otherActor.sprite === null)
             || otherActor.index === actor.index
             || otherActor.state.isDead
-            || !otherActor.isVisible
+            || !otherActor.state.isVisible
             || !(otherActor.props.flags.hasCollisions || otherActor.props.flags.isSprite)) {
             continue;
         }
@@ -128,7 +129,7 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
             }
             actor.physics.position.add(DIFF);
             ACTOR_BOX.translate(DIFF);
-            actor.hasCollidedWithActor = otherActor.index;
+            actor.state.hasCollidedWithActor = otherActor.index;
         }
     }
 }
