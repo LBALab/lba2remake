@@ -17,6 +17,11 @@ export interface ControlsState {
     crouch: number;
     sideStep: number;
     weapon: number;
+    up: number;
+    down: number;
+    left: number;
+    right: number;
+    control: number;
     vrPointerTransform: THREE.Matrix4;
     vrTriggerButton: boolean;
     vrControllerPositions: THREE.Vector3[];
@@ -42,6 +47,11 @@ export function initControlsState(vr: boolean): ControlsState {
         crouch: 0,
         weapon: 0,
         sideStep: 0,
+        up: 0,
+        down: 0,
+        left: 0,
+        right: 0,
+        control: 0,
         vrPointerTransform: new THREE.Matrix4(),
         vrTriggerButton: false,
         vrControllerPositions: [],

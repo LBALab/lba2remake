@@ -35,18 +35,22 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
     switch (key) {
         case 38: // up
         case 'ArrowUp':
+            game.controlsState.up = 1;
             game.controlsState.controlVector.y = 1;
             break;
         case 40: // down
         case 'ArrowDown':
+            game.controlsState.down = 1;
             game.controlsState.controlVector.y = -1;
             break;
         case 37: // left
         case 'ArrowLeft':
+            game.controlsState.left = 1;
             game.controlsState.controlVector.x = -1;
             break;
         case 39: // right
         case 'ArrowRight':
+            game.controlsState.right = 1;
             game.controlsState.controlVector.x = 1;
             break;
 
@@ -148,6 +152,15 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
                 game.controlsState.skipListener();
             }
             break;
+
+        case 91:
+        case 'MetaLeft':
+        case 'MetaRight':
+        case 17:
+        case 'ControlLeft':
+        case 'ControlRight':
+            game.controlsState.control = 1;
+            break;
     }
     event.preventDefault();
 }
@@ -157,21 +170,25 @@ function keyUpHandler(game, event) {
     switch (key) {
         case 38: // up
         case 'ArrowUp':
+            game.controlsState.up = 0;
             if (game.controlsState.controlVector.y === 1)
                 game.controlsState.controlVector.y = 0;
             break;
         case 40: // down
         case 'ArrowDown':
+            game.controlsState.down = 0;
             if (game.controlsState.controlVector.y === -1)
                 game.controlsState.controlVector.y = 0;
             break;
         case 37: // left
         case 'ArrowLeft':
+            game.controlsState.left = 0;
             if (game.controlsState.controlVector.x === -1)
                 game.controlsState.controlVector.x = 0;
             break;
         case 39: // right
         case 'ArrowRight':
+            game.controlsState.right = 0;
             if (game.controlsState.controlVector.x === 1)
                 game.controlsState.controlVector.x = 0;
             break;
@@ -217,6 +234,15 @@ function keyUpHandler(game, event) {
         case 'KeyD':
             if (game.controlsState.cameraSpeed.x === -1)
                 game.controlsState.cameraSpeed.x = 0;
+            break;
+
+        case 91:
+        case 'MetaLeft':
+        case 'MetaRight':
+        case 17:
+        case 'ControlLeft':
+        case 'ControlRight':
+            game.controlsState.control = 0;
             break;
     }
 }

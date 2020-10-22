@@ -2,9 +2,30 @@ import Game from '../game/Game';
 import { SceneManager } from '../game/SceneManager';
 import { Params } from '../params';
 import { BehaviourMode } from '../game/loop/hero';
+import { resetCameraOrientation } from './keyboard';
 // import { resetCameraOrientation } from './keyboard';
 
 const gamepadEventsFound = 'ongamepadconnected' in window;
+
+const enum Button {
+    A = 0,
+    B = 1,
+    X = 2,
+    Y = 3,
+    LeftTrigger = 4,
+    RightTrigger = 5,
+    LeftShoulder = 6,
+    RightShoulder = 7,
+    LeftSelect = 8,
+    RightSelect = 9,
+    LeftStick = 10,
+    RightStick = 11,
+    DpadUp = 12,
+    DpadDown = 13,
+    DpadLeft = 14,
+    DpadRight = 15,
+    Home = 16
+}
 
 export default class GamepadManager {
     ctx: any;
@@ -28,7 +49,7 @@ export default class GamepadManager {
     dispose() {}
 
     update() {
-        const { state } = this.ctx;
+        const { game, state } = this.ctx;
         if (!gamepadEventsFound) {
             this.pollGamepads();
         }
@@ -56,6 +77,8 @@ export default class GamepadManager {
 
             this.axesMappings(controller.axes);
         }
+
+        game.setUiState({ controlState: { ...game.controlState } });
     }
 
     resetButtonState() {
@@ -65,26 +88,33 @@ export default class GamepadManager {
         controlsState.jump = 0;
         controlsState.fight = 0;
         controlsState.crouch = 0;
+        controlsState.cameraSpeed.x = 0;
+        controlsState.cameraSpeed.z = 0;
+        controlsState.control = 0;
+        controlsState.up = 0;
+        controlsState.down = 0;
+        controlsState.left = 0;
+        controlsState.right = 0;
     }
 
     buttonMappings(index: number) {
-        const { game, camera, sceneManager } = this.ctx;
+        const { game, camera, sceneManager, params } = this.ctx;
         const scene = sceneManager.getScene();
         const { controlsState } = game;
         switch (index) {
-            case 0: // Button 0 - A
+            case Button.A:
                 if (controlsState.action === 0 && game.controlsState.skipListener) {
                     game.controlsState.skipListener();
                 } else {
                     controlsState.action = 1;
                 }
                 break;
-            case 1: // Button 1 - B
+            case Button.B:
                 if (game.controlsState.skipListener) {
                     game.controlsState.skipListener();
                 }
                 break;
-            case 2: // Button 2 - X
+            case Button.X:
                 switch (game.getState().hero.behaviour) {
                     case 0:
                         controlsState.action = 1;
@@ -100,15 +130,15 @@ export default class GamepadManager {
                         break;
                 }
                 break;
-            case 3: // Button 3 - Y
+            case Button.Y:
                 break;
-            case 4: // Button 4 - Left Trigger
-            case 5: // Button 5 - Right Trigger
+            case Button.LeftTrigger:
+            case Button.RightTrigger:
                 let newBehaviour = game.getState().hero.behaviour + ((index === 4) ? -1 : 1);
-                if (newBehaviour < 0)
-                    newBehaviour = 0;
-                if (newBehaviour > 4)
-                    newBehaviour = 4;
+                if (newBehaviour < BehaviourMode.NORMAL)
+                    newBehaviour = BehaviourMode.NORMAL;
+                if (newBehaviour > BehaviourMode.PROTOPACK)
+                    newBehaviour = BehaviourMode.PROTOPACK;
                 if (index === 4 && game.getState().hero.behaviour === BehaviourMode.JETPACK) {
                     newBehaviour = BehaviourMode.PROTOPACK;
                 }
@@ -117,44 +147,51 @@ export default class GamepadManager {
                 }
                 game.getState().hero.behaviour = newBehaviour;
                 break;
-            case 6: // Button 6 - Left Shoulder
+            case Button.LeftShoulder:
                 break;
-            case 7: // Button 7 - Right Shoulder
+            case Button.RightShoulder:
                 break;
-            case 8: // Button 8 - Left Select
-                // if (params.editor) {
-                //     game.controlsState.freeCamera = !game.controlsState.freeCamera;
-                //     if (game.controlsState.freeCamera) {
-                //         resetCameraOrientation(game, scene);
-                //     }
-                // }
+            case Button.LeftSelect:
+                controlsState.control = 1;
                 break;
-            case 9: // Button 9 - Right Select
+            case Button.RightSelect:
                 game.togglePause();
                 break;
-            case 10: // Button 10 - Left Stick Button
+            case Button.LeftStick:
+                if (params.editor) {
+                    controlsState.freeCamera = !controlsState.freeCamera;
+                    if (controlsState.freeCamera) {
+                        resetCameraOrientation(game, scene);
+                    }
+                } else {
+                    // open inventory
+                }
                 break;
-            case 11: // Button 11 - Right Stick Button
+            case Button.RightStick:
                 if (camera && camera.center && scene) {
                     camera.center(scene);
                 }
                 break;
-            case 12: // Button 12 - Dpad Up
+            case Button.DpadUp:
+                controlsState.up = 1;
                 break;
-            case 13: // Button 13 - Dpad Down
+            case Button.DpadDown:
+                controlsState.down = 1;
                 break;
-            case 14: // Button 14 - Dpad Left
+            case Button.DpadLeft:
+                controlsState.left = 1;
                 break;
-            case 15: // Button 15 - Dpad Right
+            case Button.DpadRight:
+                controlsState.right = 1;
                 break;
-            case 16: // Button 16 - Home Button
+            case Button.Home:
                 history.back();
                 break;
         }
     }
 
     axesMappings(axes: any) {
-        const { game } = this.ctx;
+        const { game, params } = this.ctx;
         const { controlsState } = game;
 
         if (controlsState.firstPerson) {
@@ -169,16 +206,14 @@ export default class GamepadManager {
             }
         }
 
-        // if (params.editor) {
-        //     if (game.controlsState.freeCamera) {
-        //         if (axes[2] < 0.2 || axes[2] > 0.2) { // to avoid drifting
-        //             controlsState.cameraSpeed.z = axes[3];
-        //         }
-        //         if (axes[3] < 0.2 || axes[3] > 0.2) { // to avoid drifting
-        //             controlsState.cameraSpeed.x = -Math.floor(axes[3]);
-        //         }
-        //     }
-        // }
+        if (params.editor && game.controlsState.freeCamera) {
+            if (axes[2] < 0.2 || axes[2] > 0.2) { // to avoid drifting
+                controlsState.cameraSpeed.z = axes[3];
+            }
+            if (axes[3] < 0.2 || axes[3] > 0.2) { // to avoid drifting
+                controlsState.cameraSpeed.x = -Math.floor(axes[3]);
+            }
+        }
     }
 
     pollGamepads() {
@@ -210,28 +245,3 @@ export default class GamepadManager {
         }
     }
 }
-
-/**
- * Kishi Controller
- * Axis 0 - Left Stick X
- * Axis 1 - Left Stick Y
- * Axis 2 - Right Stick X
- * Axis 3 - Right Stick Y
- * Button 0 - A
- * Button 1 - B
- * Button 2 - X
- * Button 3 - Y
- * Button 4 - Left Trigger
- * Button 5 - RIght Trigger
- * Button 6 - Left Shoulder
- * Button 7 - Right Shoulder
- * Button 8 - Left Select
- * Button 9 - Right Select
- * Button 10 - Left Stick Button
- * Button 11 - Right Stick Button
- * Button 12 - Dpad Up
- * Button 13 - Dpad Down
- * Button 14 - Dpad Left
- * Button 15 - Dpad Right
- * Button 16 - Home Button
- */
