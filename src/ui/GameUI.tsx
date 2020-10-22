@@ -15,6 +15,7 @@ import Ribbon from './game/Ribbon';
 import {KeyHelpIcon, KeyHelpScreen} from './game/KeyboardHelp';
 import { getVideoPath } from '../resources';
 import BehaviourMenu from './game/BehaviourMenu';
+import Inventory from './game/Inventory';
 import NoAudio from './game/NoAudio';
 import UIState from './UIState';
 import { SceneManager } from '../game/SceneManager';
@@ -78,6 +79,11 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
         this.setState({keyHelp: false});
     }
 
+    isInventoryKey(key: string | number, controlsState: ControlsState) {
+        return key === 'ShiftLeft' || key === 'ShiftRight' ||
+            controlsState?.shift === 1;
+    }
+
     isBehaviourKey(key: string | number, controlsState: ControlsState) {
         const isMac = /^Mac/.test(navigator && navigator.platform);
         if (isMac) {
@@ -92,6 +98,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
         const {
             uiState,
             game,
+            sceneManager,
             stateHandler,
             sharedState
         } = this.props;
@@ -107,28 +114,37 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
                     this.props.hideMenu();
                 }
             }
-        }
-    }
 
-    showBehaviourMenu(key: string | number, controlsState: ControlsState) {
-        const {
-            uiState,
-            game,
-            sceneManager,
-        } = this.props;
-        const showBehaviourMenu =
-            !uiState.loading &&
-            uiState.ask.choices.length === 0 &&
-            uiState.text === null &&
-            uiState.foundObject === null &&
-            !(uiState.showMenu || uiState.inGameMenu);
-        if (showBehaviourMenu && this.isBehaviourKey(key, controlsState)) {
-            this.props.setUiState({ behaviourMenu: true });
-            const scene = sceneManager.getScene();
-            if (!uiState.cinema && scene && scene.actors[0]) {
-                scene.actors[0].cancelAnims();
+            const showBehaviourMenu =
+                !uiState.loading &&
+                uiState.ask.choices.length === 0 &&
+                uiState.text === null &&
+                uiState.foundObject === null &&
+                !(uiState.showMenu || uiState.inGameMenu);
+            if (showBehaviourMenu && this.isBehaviourKey(key, controlsState)) {
+                this.props.setUiState({ behaviourMenu: true });
+                const scene = sceneManager.getScene();
+                if (!uiState.cinema && scene && scene.actors[0]) {
+                    scene.actors[0].cancelAnims();
+                }
+                game.pause(false);
             }
-            game.pause(false);
+
+            const showInventory =
+                !uiState.loading &&
+                uiState.ask.choices.length === 0 &&
+                uiState.text === null &&
+                uiState.foundObject === null &&
+                !(uiState.showMenu || uiState.inGameMenu) &&
+                !uiState.behaviourMenu;
+            if (showInventory && this.isInventoryKey(key, controlsState)) {
+                this.props.setUiState({ inventory: !this.props.uiState.inventory });
+                if (game.isPaused()) {
+                    game.resume(false);
+                } else {
+                    game.pause(false);
+                }
+            }
         }
     }
 
@@ -138,13 +154,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
             game,
         } = this.props;
         if (!uiState.video) {
-            const hideBehaviourMenu =
-                !uiState.loading &&
-                uiState.ask.choices.length === 0 &&
-                uiState.text === null &&
-                uiState.foundObject === null &&
-                !(uiState.showMenu || uiState.inGameMenu);
-            if (hideBehaviourMenu && this.isBehaviourKey(key, controlsState)) {
+            if (this.props.uiState.behaviourMenu && this.isBehaviourKey(key, controlsState)) {
                 this.props.setUiState({ behaviourMenu: false });
                 game.resume(false);
             }
@@ -154,7 +164,6 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
     listenerKeyDown(event) {
         const key = event.code || event.which || event.keyCode;
         this.showHideMenus(key, null);
-        this.showBehaviourMenu(key, null);
     }
 
     listenerKeyUp(event) {
@@ -165,7 +174,6 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
     gamepadListener(event) {
         const controlsState = event.detail as ControlsState;
         this.showHideMenus(null, controlsState);
-        this.showBehaviourMenu(null, controlsState);
         this.hideBehaviourMenu(null, controlsState);
     }
 
@@ -281,6 +289,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
             interjections,
             video,
             behaviourMenu,
+            inventory,
             showMenu,
             teleportMenu,
             inGameMenu,
@@ -304,6 +313,12 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
             <Video video={video} renderer={renderer} />
             {behaviourMenu ?
                 <BehaviourMenu
+                    game={game}
+                    scene={scene}
+                />
+            : null }
+            {inventory ?
+                <Inventory
                     game={game}
                     scene={scene}
                 />

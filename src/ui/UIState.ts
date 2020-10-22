@@ -26,6 +26,7 @@ export default interface UIState {
     inGameMenu: boolean;
     teleportMenu: boolean;
     behaviourMenu: boolean;
+    inventory: boolean;
     noAudio: boolean;
 }
 
@@ -45,6 +46,7 @@ export function initUIState(game: Game): UIState {
         inGameMenu: false,
         teleportMenu: false,
         behaviourMenu: false,
+        inventory: false,
         noAudio: !game.getAudioManager().isContextActive()
     };
 }
