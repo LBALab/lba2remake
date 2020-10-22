@@ -49,23 +49,24 @@ export default class GamepadControls {
     dispose() {}
 
     update() {
-        const { game, state } = this.ctx;
-        if (!gamepadEventsFound) {
-            this.pollGamepads();
-        }
-
-        for (const index in this.controllers) {
-            const controller = this.controllers[index];
-            if (!controller.connected) {
-                continue;
+        const { state } = this.ctx;
+        const endTime = Date.now();
+        const elapsed = endTime - state.startTime;
+        if (elapsed > 100) {
+            state.startTime = Date.now();
+            if (!gamepadEventsFound) {
+                this.pollGamepads();
             }
 
-            this.resetButtonState();
+            for (const index in this.controllers) {
+                const controller = this.controllers[index];
+                // console.log(controller);
+                if (!controller.connected) {
+                    continue;
+                }
 
-            const endTime = Date.now();
-            const elapsed = endTime - state.startTime;
-            if (elapsed > 100) {
-                state.startTime = Date.now();
+                this.resetButtonState();
+
                 for (let i = 0; i < controller.buttons.length; i += 1) {
                     const button = controller.buttons[i];
                     const pressed = button.pressed || button.value > 0;
@@ -73,12 +74,10 @@ export default class GamepadControls {
                         this.buttonMappings(i);
                     }
                 }
+
+                this.axesMappings(controller.axes);
             }
-
-            this.axesMappings(controller.axes);
         }
-
-        game.setUiState({ controlState: { ...game.controlState } });
     }
 
     resetButtonState() {
