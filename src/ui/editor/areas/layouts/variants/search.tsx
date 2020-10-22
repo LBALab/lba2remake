@@ -41,7 +41,7 @@ export async function findAllVariants(lDef) {
     const allVariants = flatten(variantsByScenes);
     const scenesByKey = mapValues(
         groupBy(allVariants, 'key'),
-        v => uniq(map(v, 'scene.index'))
+        v => uniq(map(v, 'scene.sceneryIndex'))
     );
     const variants = filter(
         uniqBy(allVariants, 'key'),
