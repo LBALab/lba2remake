@@ -20,6 +20,7 @@ import UIState from './UIState';
 import { SceneManager } from '../game/SceneManager';
 import Renderer from '../renderer';
 import Game from '../game/Game';
+import { ControlsState } from '../game/ControlsState';
 
 interface GameUIProps {
     uiState: UIState;
@@ -50,6 +51,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
         this.textAnimEndedHandler = this.textAnimEndedHandler.bind(this);
         this.noAudioClick = this.noAudioClick.bind(this);
         this.onAskChoiceChanged = this.onAskChoiceChanged.bind(this);
+        this.gamepadListener = this.gamepadListener.bind(this);
 
         this.state = {
             keyHelp: false
@@ -59,9 +61,11 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
     componentWillMount() {
         window.addEventListener('keydown', this.listenerKeyDown);
         window.addEventListener('keyup', this.listenerKeyUp);
+        window.addEventListener('lbagamepadchanged', this.gamepadListener);
     }
 
     componentWillUnmount() {
+        window.removeEventListener('lbagamepadchanged', this.gamepadListener);
         window.removeEventListener('keyup', this.listenerKeyUp);
         window.removeEventListener('keydown', this.listenerKeyDown);
     }
@@ -74,17 +78,25 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
         this.setState({keyHelp: false});
     }
 
-    listenerKeyDown(event) {
-        const key = event.code || event.which || event.keyCode;
+    isBehaviourKey(key: string | number, controlsState: ControlsState) {
+        const isMac = /^Mac/.test(navigator && navigator.platform);
+        if (isMac) {
+            return key === 'MetaLeft' || key === 'MetaRight' || key === 91 ||
+                controlsState?.control === 1;
+        }
+        return key === 'ControlLeft' || key === 'ControlRight' || key === 17 ||
+            controlsState?.control === 1;
+    }
+
+    showHideMenus(key: string | number, controlsState: ControlsState) {
         const {
             uiState,
             game,
-            sceneManager,
             stateHandler,
             sharedState
         } = this.props;
         if (!uiState.video) {
-            if (key === 'Escape' || key === 27) {
+            if (key === 'Escape' || key === 27 || controlsState?.home === 1) {
                 if (sharedState && sharedState.objectToAdd) {
                     stateHandler.setAddingObject(null);
                 } else if (uiState.teleportMenu) {
@@ -95,47 +107,66 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
                     this.props.hideMenu();
                 }
             }
-            const showBehaviourMenu =
-                !uiState.loading &&
-                uiState.ask.choices.length === 0 &&
-                uiState.text === null &&
-                uiState.foundObject === null &&
-                !(uiState.showMenu || uiState.inGameMenu);
-            if (showBehaviourMenu && this.isBehaviourKey(key)) {
-                this.props.setUiState({ behaviourMenu: true });
-                const scene = sceneManager.getScene();
-                if (!uiState.cinema && scene && scene.actors[0]) {
-                    scene.actors[0].cancelAnims();
-                }
-                game.pause(false);
-            }
         }
     }
 
-    listenerKeyUp(event) {
-        const key = event.code || event.which || event.keyCode;
+    showBehaviourMenu(key: string | number, controlsState: ControlsState) {
         const {
             uiState,
             game,
+            sceneManager,
         } = this.props;
-        const hideBehaviourMenu =
+        const showBehaviourMenu =
             !uiState.loading &&
             uiState.ask.choices.length === 0 &&
             uiState.text === null &&
             uiState.foundObject === null &&
             !(uiState.showMenu || uiState.inGameMenu);
-        if (hideBehaviourMenu && this.isBehaviourKey(key)) {
-            this.props.setUiState({ behaviourMenu: false });
-            game.resume(false);
+        if (showBehaviourMenu && this.isBehaviourKey(key, controlsState)) {
+            this.props.setUiState({ behaviourMenu: true });
+            const scene = sceneManager.getScene();
+            if (!uiState.cinema && scene && scene.actors[0]) {
+                scene.actors[0].cancelAnims();
+            }
+            game.pause(false);
         }
     }
 
-    isBehaviourKey(key) {
-        const isMac = /^Mac/.test(navigator && navigator.platform);
-        if (isMac) {
-            return key === 'MetaLeft' || key === 'MetaRight' || key === 91;
+    hideBehaviourMenu(key: string | number, controlsState: ControlsState) {
+        const {
+            uiState,
+            game,
+        } = this.props;
+        if (!uiState.video) {
+            const hideBehaviourMenu =
+                !uiState.loading &&
+                uiState.ask.choices.length === 0 &&
+                uiState.text === null &&
+                uiState.foundObject === null &&
+                !(uiState.showMenu || uiState.inGameMenu);
+            if (hideBehaviourMenu && this.isBehaviourKey(key, controlsState)) {
+                this.props.setUiState({ behaviourMenu: false });
+                game.resume(false);
+            }
         }
-        return key === 'ControlLeft' || key === 'ControlRight' || key === 17;
+    }
+
+    listenerKeyDown(event) {
+        const key = event.code || event.which || event.keyCode;
+        this.showHideMenus(key, null);
+        this.showBehaviourMenu(key, null);
+    }
+
+    listenerKeyUp(event) {
+        const key = event.code || event.which || event.keyCode;
+        this.hideBehaviourMenu(key, null);
+    }
+
+    gamepadListener(event) {
+        const controlsState = event.detail as ControlsState;
+        this.showHideMenus(null, controlsState);
+        this.showBehaviourMenu(null, controlsState);
+        this.hideBehaviourMenu(null, controlsState);
     }
 
     startNewGameScene() {

@@ -5,6 +5,7 @@ import { SceneManager } from '../game/SceneManager';
 import Game from '../game/Game';
 import { Params } from '../params';
 import Scene from '../game/Scene';
+import { ControlActiveType } from '../game/ControlsState';
 
 export function makeKeyboardControls(params: Params,
                                      elem: HTMLElement,
@@ -32,6 +33,7 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
     if (behaviourMenu) {
         return;
     }
+    game.controlsState.activeType = ControlActiveType.KEYBOARD;
     // console.log(event.code, event.which, event.keyCode);
     switch (key) {
         case 38: // up

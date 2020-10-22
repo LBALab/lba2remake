@@ -2,6 +2,7 @@ import * as React from 'react';
 import {extend, map} from 'lodash';
 
 import TextBox from './TextBox';
+import { ControlsState } from '../../game/ControlsState';
 
 const styleChoices = {
     position: 'absolute' as const,
@@ -38,11 +39,13 @@ export default class AskChoice extends React.Component<ACProps, ACState> {
         super(props);
         this.update = this.update.bind(this);
         this.listener = this.listener.bind(this);
+        this.gamepadListener = this.gamepadListener.bind(this);
         this.state = { selectedIndex: 0 };
     }
 
     componentWillMount() {
         window.addEventListener('keydown', this.listener);
+        window.addEventListener('lbagamepadchanged', this.gamepadListener);
     }
 
     componentWillReceiveProps(newProps) {
@@ -51,13 +54,13 @@ export default class AskChoice extends React.Component<ACProps, ACState> {
     }
 
     componentWillUnmount() {
+        window.removeEventListener('lbagamepadchanged', this.gamepadListener);
         window.removeEventListener('keydown', this.listener);
     }
 
-    listener(event) {
-        const key = event.code || event.which || event.keyCode;
+    interactMenu(key: string | number, controlsState: ControlsState) {
         let selectedIndex = this.state.selectedIndex;
-        if (key === 'ArrowUp' || key === 38) {
+        if (key === 'ArrowUp' || key === 38 || controlsState?.up === 1) {
             selectedIndex -= 1;
             if (selectedIndex < 0) {
                 selectedIndex = this.props.ask.choices.length - 1;
@@ -65,7 +68,7 @@ export default class AskChoice extends React.Component<ACProps, ACState> {
             this.choiceChanged(selectedIndex);
             this.setState({ selectedIndex });
         }
-        if (key === 'ArrowDown' || key === 40) {
+        if (key === 'ArrowDown' || key === 40 || controlsState?.down === 1) {
             selectedIndex += 1;
             if (selectedIndex > this.props.ask.choices.length - 1) {
                 selectedIndex = 0;
@@ -73,6 +76,15 @@ export default class AskChoice extends React.Component<ACProps, ACState> {
             this.choiceChanged(selectedIndex);
             this.setState({ selectedIndex });
         }
+    }
+
+    listener(event) {
+        const key = event.code || event.which || event.keyCode;
+        this.interactMenu(key, null);
+    }
+
+    gamepadListener(event) {
+        this.interactMenu(null, event.detail as ControlsState);
     }
 
     choiceChanged(selectedIndex) {

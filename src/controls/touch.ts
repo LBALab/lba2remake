@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import Game from '../game/Game';
+import { ControlActiveType } from '../game/ControlsState';
 
 // Move pointerLock mechanics out of this
 export function makeFirstPersonTouchControls(game: Game) {
@@ -34,6 +35,7 @@ const MAX_X_ANGLE = Math.PI / 2.5;
 
 function handleTouchEvent(controls, game, event: TouchEvent) {
     if (controls.enabled) {
+        game.controlsState.activeType = ControlActiveType.TOUCH;
         game.controlsState.freeCamera = true;
 
         // Not supported on IE / Safari

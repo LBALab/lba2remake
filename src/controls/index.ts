@@ -19,7 +19,8 @@ export function createControls(
     let controls;
     if (vr) {
         controls = [
-            new VRControls(sceneManager, game, renderer)
+            new VRControls(sceneManager, game, renderer),
+            new GamepadControls(params, sceneManager, game),
         ];
     } else if (params.mobile) {
         controls = [

@@ -3,6 +3,7 @@ import { SceneManager } from '../game/SceneManager';
 import { Params } from '../params';
 import { BehaviourMode } from '../game/loop/hero';
 import { resetCameraOrientation } from './keyboard';
+import { ControlsState, ControlActiveType } from '../game/ControlsState';
 // import { resetCameraOrientation } from './keyboard';
 
 const gamepadEventsFound = 'ongamepadconnected' in window;
@@ -49,10 +50,10 @@ export default class GamepadControls {
     dispose() {}
 
     update() {
-        const { state } = this.ctx;
+        const { game, state } = this.ctx;
         const endTime = Date.now();
         const elapsed = endTime - state.startTime;
-        if (elapsed > 100) {
+        if (elapsed > 150) {
             state.startTime = Date.now();
             if (!gamepadEventsFound) {
                 this.pollGamepads();
@@ -60,7 +61,7 @@ export default class GamepadControls {
 
             for (const index in this.controllers) {
                 const controller = this.controllers[index];
-                // console.log(controller);
+
                 if (!controller.connected) {
                     continue;
                 }
@@ -75,9 +76,21 @@ export default class GamepadControls {
                     }
                 }
 
-                this.axesMappings(controller.axes);
+                if (game.controlsState.activeType === ControlActiveType.GAMEPAD) {
+                    this.axesMappings(controller.axes);
+                }
+            }
+            if (game.controlsState.activeType === ControlActiveType.GAMEPAD) {
+                this.sendControlStateEvent(game.controlsState);
             }
         }
+    }
+
+    sendControlStateEvent(controlState: ControlsState) {
+        const event = new CustomEvent<ControlsState>('lbagamepadchanged', {
+            detail: controlState
+        });
+        window.dispatchEvent(event);
     }
 
     resetButtonState() {
@@ -87,19 +100,20 @@ export default class GamepadControls {
         controlsState.jump = 0;
         controlsState.fight = 0;
         controlsState.crouch = 0;
-        controlsState.cameraSpeed.x = 0;
-        controlsState.cameraSpeed.z = 0;
-        controlsState.control = 0;
         controlsState.up = 0;
         controlsState.down = 0;
         controlsState.left = 0;
         controlsState.right = 0;
+        controlsState.control = 0;
+        controlsState.shift = 0;
+        controlsState.home = 0;
     }
 
     buttonMappings(index: number) {
         const { game, camera, sceneManager, params } = this.ctx;
         const scene = sceneManager.getScene();
         const { controlsState } = game;
+        game.controlsState.activeType = ControlActiveType.GAMEPAD;
         switch (index) {
             case Button.A:
                 if (controlsState.action === 0 && game.controlsState.skipListener) {
@@ -151,10 +165,10 @@ export default class GamepadControls {
             case Button.RightShoulder:
                 break;
             case Button.LeftSelect:
-                controlsState.control = 1;
+                controlsState.shift = 1;
                 break;
             case Button.RightSelect:
-                game.togglePause();
+                controlsState.control = 1;
                 break;
             case Button.LeftStick:
                 if (params.editor) {
@@ -184,7 +198,7 @@ export default class GamepadControls {
                 controlsState.right = 1;
                 break;
             case Button.Home:
-                history.back();
+                controlsState.home = 1;
                 break;
         }
     }
