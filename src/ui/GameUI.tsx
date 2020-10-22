@@ -161,7 +161,7 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
     }
 
     onMenuItemChanged(item) {
-        const { game, renderer } = this.props;
+        const { game } = this.props;
         switch (item) {
             case 70: { // Resume
                 this.props.hideMenu();
@@ -194,7 +194,6 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
                 break;
             }
             case -2: { // Editor Mode
-                renderer.dispose();
                 const audio = game.getAudioManager();
                 audio.stopMusicTheme();
                 if ('exitPointerLock' in document) {
@@ -208,7 +207,6 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
                 break;
             }
             case -3: { // Exit editor
-                renderer.dispose();
                 const audio = game.getAudioManager();
                 audio.stopMusicTheme();
                 if ('exitPointerLock' in document) {

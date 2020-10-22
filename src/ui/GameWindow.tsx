@@ -75,6 +75,17 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
         this.preloadPromise = this.preload(this.game);
     }
 
+    componentWillUnmount() {
+        this.game.dispose();
+        this.renderer.dispose();
+        if (this.controls) {
+            for (const control of this.controls) {
+                control.dispose && control.dispose();
+            }
+        }
+        super.componentWillUnmount();
+    }
+
     async preload(game) {
         await game.registerResources();
         await game.preload();

@@ -34,6 +34,10 @@ export default class Game {
         this._audio = createAudioManager(this._gameState);
     }
 
+    dispose() {
+        this._audio.dispose();
+    }
+
     resetState() {
         this._gameState = createGameState();
         this.resetControlsState();

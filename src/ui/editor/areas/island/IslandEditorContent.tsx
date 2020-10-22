@@ -99,8 +99,12 @@ export default class IslandEditorContent extends FrameListener<Props, State> {
     }
 
     componentWillUnmount() {
+        if (this.state.renderer) {
+            this.state.renderer.dispose();
+        }
         document.removeEventListener('pointerlockchange', this.onPointerLockChange);
         document.removeEventListener('mousemove', this.onMouseMove);
+        super.componentWillUnmount();
     }
 
     async preload() {
