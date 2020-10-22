@@ -27,7 +27,7 @@ const enum Button {
     Home = 16
 }
 
-export default class GamepadManager {
+export default class GamepadControls {
     ctx: any;
     controllers: {
         [key: number]: Gamepad,

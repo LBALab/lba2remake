@@ -4,6 +4,7 @@ import {BehaviourMode} from '../game/loop/hero';
 import { SceneManager } from '../game/SceneManager';
 import Game from '../game/Game';
 import { Params } from '../params';
+import Scene from '../game/Scene';
 
 export function makeKeyboardControls(params: Params,
                                      elem: HTMLElement,
@@ -251,7 +252,7 @@ function focusOutHandler(game) {
     game.resetControlsState();
 }
 
-export function resetCameraOrientation(game, scene) {
+export function resetCameraOrientation(game: Game, scene: Scene) {
     if (!scene)
         return;
 
