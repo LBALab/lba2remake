@@ -12,7 +12,7 @@ import {
 import ChangeLog from './ChangeLog';
 import Disclaimer from './Disclaimer';
 import Ticker from './utils/Ticker';
-import WebXRPolyfill from 'webxr-polyfill';
+// import WebXRPolyfill from 'webxr-polyfill';
 
 interface RootProps {
     ticker: Ticker;
@@ -47,11 +47,11 @@ export default class Root extends React.Component<RootProps> {
         window.addEventListener('hashchange', this.onHashChange);
         document.addEventListener('displaychangelog', this.openChangeLog);
 
-        // If WebXR is not supported, try loading the Polyfill.
-        if (!('xr' in navigator)) {
-          // Don't support mobile devices without controllers i.e. cardboard.
-          new WebXRPolyfill({cardboard: false});
-        }
+        // // If WebXR is not supported, try loading the Polyfill.
+        // if (!('xr' in navigator)) {
+        //   // Don't support mobile devices without controllers i.e. cardboard.
+        //   new WebXRPolyfill({cardboard: false});
+        // }
 
         if ('xr' in navigator) {
             (navigator as any).xr.isSessionSupported('immersive-vr')
