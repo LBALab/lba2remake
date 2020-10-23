@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { unimplemented } from './utils';
 import { WORLD_SCALE, getRandom, distAngle } from '../../utils/lba';
+import { ScriptContext } from './ScriptContext';
 
-export function GOTO_POINT(point) {
+export function GOTO_POINT(this: ScriptContext, point) {
     if (!point) {
         return;
     }
@@ -20,7 +21,7 @@ export function GOTO_POINT(point) {
     }
 }
 
-export function WAIT_ANIM() {
+export function WAIT_ANIM(this: ScriptContext) {
     if (this.actor.animState.hasEnded) {
         this.actor.props.angle = 0;
     } else {
@@ -29,7 +30,7 @@ export function WAIT_ANIM() {
     }
 }
 
-export function ANGLE(angle) {
+export function ANGLE(this: ScriptContext, angle) {
     this.actor.setAngle(angle);
     if (distAngle(this.actor.physics.temp.destAngle, this.actor.physics.temp.angle) > Math.PI / 8) {
         this.state.reentryOffset = this.state.offset;
@@ -41,7 +42,7 @@ export function ANGLE(angle) {
 
 export const GOTO_SYM_POINT = unimplemented();
 
-export function WAIT_NUM_ANIM(repeats) {
+export function WAIT_NUM_ANIM(this: ScriptContext, repeats) {
     if (!this.state.animCount) {
         this.state.animCount = 0;
     }
@@ -61,20 +62,20 @@ export function WAIT_NUM_ANIM(repeats) {
     }
 }
 
-export function SAMPLE(index) {
+export function SAMPLE(this: ScriptContext, index) {
     const audio = this.game.getAudioManager();
     audio.playSample(index);
 }
 
 export const GOTO_POINT_3D = unimplemented();
 
-export function SPEED(speed) {
+export function SPEED(this: ScriptContext, speed) {
     this.actor.props.speed = speed;
 }
 
 export const BACKGROUND = unimplemented();
 
-export function WAIT_NUM_SECOND(numSeconds, _unknown, time) {
+export function WAIT_NUM_SECOND(this: ScriptContext, numSeconds, _unknown, time) {
     if (!this.state.waitUntil) {
         this.state.waitUntil = time.elapsed + numSeconds;
     }
@@ -86,39 +87,39 @@ export function WAIT_NUM_SECOND(numSeconds, _unknown, time) {
     }
 }
 
-export function WAIT_NUM_DSEC(numDsec, _unknown, time) {
+export function WAIT_NUM_DSEC(this: ScriptContext, numDsec, _unknown, time) {
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, null, time);
 }
 
-export function WAIT_NUM_SECOND_RND(maxNumSeconds, _unknown, time) {
+export function WAIT_NUM_SECOND_RND(this: ScriptContext, maxNumSeconds, _unknown, time) {
     const numSeconds = Math.floor(Math.random() * maxNumSeconds);
     WAIT_NUM_SECOND.call(this, numSeconds, null, time);
 }
 
-export function WAIT_NUM_DECIMAL_RND(maxNumDsec, _unknown, time) {
+export function WAIT_NUM_DECIMAL_RND(this: ScriptContext, maxNumDsec, _unknown, time) {
     const numDsec = Math.floor(Math.random() * maxNumDsec);
     WAIT_NUM_SECOND.call(this, numDsec * 0.1, null, time);
 }
 
-export function OPEN_LEFT(dist, time) {
+export function OPEN_LEFT(this: ScriptContext, dist, time) {
     openDoor.call(this, [0, 0, -dist * WORLD_SCALE], time);
 }
 
-export function OPEN_RIGHT(dist, time) {
+export function OPEN_RIGHT(this: ScriptContext, dist, time) {
     openDoor.call(this, [0, 0, dist * WORLD_SCALE], time);
 }
 
-export function OPEN_UP(dist, time) {
+export function OPEN_UP(this: ScriptContext, dist, time) {
     openDoor.call(this, [dist * WORLD_SCALE, 0, 0], time);
 }
 
-export function OPEN_DOWN(dist, time) {
+export function OPEN_DOWN(this: ScriptContext, dist, time) {
     openDoor.call(this, [-dist * WORLD_SCALE, 0, 0], time);
 }
 
 const TGT = new THREE.Vector3();
 
-function openDoor(tgt, time) {
+function openDoor(this: ScriptContext, tgt, time) {
     const {pos} = this.actor.props;
     TGT.set(pos[0] + tgt[0], pos[1] + tgt[1], pos[2] + tgt[2]);
     const distance = this.actor.gotoSprite(TGT, time.delta * 2);
@@ -131,7 +132,7 @@ function openDoor(tgt, time) {
     }
 }
 
-export function CLOSE(time) {
+export function CLOSE(this: ScriptContext, time) {
     const {pos} = this.actor.props;
     TGT.set(pos[0], pos[1], pos[2]);
     const distance = this.actor.gotoSprite(TGT, time.delta * 2);
@@ -146,30 +147,30 @@ export function CLOSE(time) {
 
 export const WAIT_DOOR = unimplemented();
 
-export function SAMPLE_RND(index) {
+export function SAMPLE_RND(this: ScriptContext, index) {
     const frequency = getRandom(0x800, 0x1000);
     const audio = this.game.getAudioManager();
     audio.playSample(index, frequency);
 }
 
-export function SAMPLE_ALWAYS(index) {
+export function SAMPLE_ALWAYS(this: ScriptContext, index) {
     const audio = this.game.getAudioManager();
     audio.stopSample(index);
     audio.playSample(index, 0x1000, -1);
 }
 
-export function SAMPLE_STOP(index) {
+export function SAMPLE_STOP(this: ScriptContext, index) {
     const audio = this.game.getAudioManager();
     audio.stopSample(index);
 }
 
 export const PLAY_ACF = unimplemented();
 
-export function REPEAT_SAMPLE(loopCount) {
+export function REPEAT_SAMPLE(this: ScriptContext, loopCount) {
     this.state.sampleLoopCount = loopCount;
 }
 
-export function SIMPLE_SAMPLE(index) {
+export function SIMPLE_SAMPLE(this: ScriptContext, index) {
     if (index === 381 || index === 385) {
         return; // Skip thunder sounds
     }
@@ -178,7 +179,7 @@ export function SIMPLE_SAMPLE(index) {
     this.state.sampleLoopCount = 0;
 }
 
-export function FACE_HERO() {
+export function FACE_HERO(this: ScriptContext) {
     const hero = this.scene.actors[0];
     this.actor.facePoint(hero.physics.position);
     if (distAngle(this.actor.physics.temp.destAngle, this.actor.physics.temp.angle) > Math.PI / 8) {

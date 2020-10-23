@@ -6,6 +6,8 @@ import { loadSprite } from './scenery/isometric/sprites';
 import { clone } from 'lodash';
 import { MAX_LIFE } from './GameState';
 import Scene from './Scene';
+import Game from './Game';
+import { Time } from '../datatypes';
 // import { createBoundingBox } from '../utils/rendering';
 
 export const ExtraFlag = {
@@ -38,10 +40,17 @@ interface ExtraPhysics {
 
 export interface Extra {
     type: 'extra';
+    index: number;
     physics: ExtraPhysics;
-
     flags: number;
     props: any;
+    state: {
+        isVisible: boolean;
+        isTouchingGround: boolean;
+        isDead: boolean;
+    };
+    threeObject?: THREE.Object3D;
+    sprite?: any;
     lifeTime: number;
     info: number;
     hitStrength: number;
@@ -50,11 +59,8 @@ export interface Extra {
     spriteIndex: number;
     speed: number;
     weight: number;
-
-    isVisible: boolean;
     isSprite: boolean;
     hasCollidedWithActor: boolean;
-
     loadMesh: Function;
     init: Function;
 }
@@ -78,12 +84,14 @@ function initPhysics(position, angle) {
     };
 }
 
+let indexCount = 0;
+
 export async function addExtra(game, scene, position, angle, spriteIndex, bonus, time)
     : Promise<Extra> {
     const extra: Extra = {
         type: 'extra',
+        index: indexCount,
         physics: initPhysics(position, angle),
-        isVisible: true,
         isSprite: (spriteIndex) ? true : false,
         hasCollidedWithActor: false,
         flags: (
@@ -99,11 +107,12 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
                 canFall: true,
                 isVisible: true,
                 isSprite: true,
-            },
-            runtimeFlags: {
-                isTouchingGround: false,
-                isDead: false,
             }
+        },
+        state: {
+            isVisible: true,
+            isTouchingGround: false,
+            isDead: false,
         },
         spriteIndex,
         spawnTime: 0,
@@ -129,7 +138,7 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
 
             this.threeObject.add(sprite.threeObject);
             this.threeObject.name = `extra_${bonus}`;
-            this.threeObject.visible = this.isVisible;
+            this.threeObject.visible = this.state.isVisible;
             this.sprite = sprite;
         },
 
@@ -140,6 +149,8 @@ export async function addExtra(game, scene, position, angle, spriteIndex, bonus,
             this.weight = _weight;
         },
     };
+
+    indexCount += 1;
 
     extra.init(angle, 40, 15);
 
@@ -166,14 +177,14 @@ const EXTRA_BOX = new THREE.Box3();
 const INTERSECTION = new THREE.Box3();
 const DIFF = new THREE.Vector3();
 
-export function updateExtra(game, scene: Scene, extra, time) {
+export function updateExtra(game: Game, scene: Scene, extra: Extra, time: Time) {
     if (!extra)
         return;
 
     let hitActor = null;
 
     if (time.elapsed - extra.spawnTime > extra.lifeTime &&
-        extra.spriteType !== SpriteType.KEY) {
+        extra.spriteIndex !== SpriteType.KEY) {
         extra.flags |= ExtraFlag.TIME_OUT;
     }
 
@@ -211,7 +222,7 @@ export function updateExtra(game, scene: Scene, extra, time) {
         for (let i = 0; i < scene.actors.length; i += 1) {
             const a = scene.actors[i];
             if ((a.model === null && a.sprite === null)
-                || a.props.runtimeFlags.isDead
+                || a.state.isDead
                 || !(a.props.flags.hasCollisions || a.props.flags.isSprite)) {
                 continue;
             }

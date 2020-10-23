@@ -21,7 +21,7 @@ interface ScriptCallback {
 
 export async function forEachScript(callback: ScriptCallback, type = null) {
     await forEachScene((scene) => {
-        each(scene.actors, (actor, idx) => {
+        each(scene.actors, (actor, idx: number) => {
             if (!type || type === 'life') {
                 const script = parseScript(idx, 'life', actor.lifeScript);
                 callback(script, actor, scene, type);

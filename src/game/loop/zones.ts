@@ -1,10 +1,12 @@
 import * as THREE from 'three';
 
-import { DirMode } from '../../game/actors';
+import Actor, { DirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
 import { angleTo, angleToRad, getRandom, WORLD_SCALE, BRICK_SIZE, getHtmlColor } from '../../utils/lba';
 import { addExtra, ExtraFlag, getBonus } from '../extras';
+import Game from '../Game';
+import Scene from '../Scene';
 
 function NOP() { }
 
@@ -51,7 +53,7 @@ const ZONE_OFFSET_OVERRIDES = {
     }
 };
 
-export function processZones(game, scene) {
+export function processZones(game: Game, scene: Scene) {
     const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
     pos.y += 0.005;
@@ -83,17 +85,17 @@ function isFacingLadder(angle) {
 
 const LADDER_TOP_OUT_DELTA = 1.35;
 
-function LADDER(game, scene, zone, hero) {
-    if (hero.props.runtimeFlags.isToppingOutUp) {
+function LADDER(game: Game, scene: Scene, zone, hero: Actor) {
+    if (hero.state.isToppingOutUp) {
         return false;
     }
 
     // Only allow Twinsen to climb the ladder if he is walking into it.
-    if (!hero.props.runtimeFlags.isColliding) {
+    if (!hero.state.isColliding) {
         return false;
     }
 
-    if (hero.props.runtimeFlags.isUsingProtoOrJetpack) {
+    if (hero.state.isUsingProtoOrJetpack) {
         return false;
     }
 
@@ -103,19 +105,19 @@ function LADDER(game, scene, zone, hero) {
     if (zone.props.info1 && facing) {
         // Is UP being pressed?
         if (game.controlsState.controlVector.y > 0.6) {
-            hero.props.runtimeFlags.isClimbing = true;
+            hero.state.isClimbing = true;
             // Ensure that if Twinsen jumped into the ladder we stop jumping now
             // that we're climbing.
-            hero.props.runtimeFlags.isJumping = false;
+            hero.state.isJumping = false;
             hero.setAnim(AnimType.CLIMB_UP);
 
             const distFromTop = zone.props.box.yMax - hero.physics.position.y;
             if (distFromTop <= LADDER_TOP_OUT_DELTA) {
-                hero.props.runtimeFlags.isToppingOutUp = true;
+                hero.state.isToppingOutUp = true;
 
                 hero.setAnimWithCallback(AnimType.LADDER_TOP_OUT_UP, () => {
-                    hero.props.runtimeFlags.isClimbing = false;
-                    hero.props.runtimeFlags.isToppingOutUp = false;
+                    hero.state.isClimbing = false;
+                    hero.state.isToppingOutUp = false;
                 });
                 // The topout animation doesn't require any interpolation, we're
                 // already in the exact correct position.
@@ -123,7 +125,7 @@ function LADDER(game, scene, zone, hero) {
                 return false;
             }
         } else {
-            hero.props.runtimeFlags.isClimbing = false;
+            hero.state.isClimbing = false;
         }
     }
     return false;
@@ -149,7 +151,7 @@ function debugZoneTargetPos(newScene, pos, color) {
 // in the new scene. This function attempts to work out the closest
 // corresponding "exit" zone in the newScene and snap the location to that. If
 // no such zone exists we fall back to the default location on the zone props.
-function calculateTagetPosition(hero, zone, newScene) {
+function calculateTagetPosition(hero: Actor, zone, newScene: Scene) {
     // MAX_ZONE_DIST is the farthest away we would consider a TELEPORT
     // zone "the" matching zone we're looking for.
     const MAX_ZONE_DIST = 5 * BRICK_SIZE * WORLD_SCALE;
@@ -271,9 +273,9 @@ function calculateTagetPosition(hero, zone, newScene) {
 /**
  * @return {boolean}
  */
-function GOTO_SCENE(game, scene, zone, hero) {
-    hero.props.runtimeFlags.isClimbing = false;
-    hero.props.runtimeFlags.isToppingOutUp = false;
+function GOTO_SCENE(game: Game, scene: Scene, zone, hero: Actor) {
+    hero.state.isClimbing = false;
+    hero.state.isToppingOutUp = false;
 
     if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
         scene.goto(zone.props.snap).then((newScene) => {
@@ -304,8 +306,8 @@ function GOTO_SCENE(game, scene, zone, hero) {
             // Preserve animation state and flags this ensures e.g. if we
             // jetpack across a scene change we continue without the animation
             // resetting.
-            Object.keys(hero.props.runtimeFlags).forEach((k) => {
-                newHero.props.runtimeFlags[k] = hero.props.runtimeFlags[k];
+            Object.keys(hero.state).forEach((k) => {
+                newHero.state[k] = hero.state[k];
             });
             newHero.animState = hero.animState;
             newHero.props.animIndex = hero.props.animIndex;
@@ -320,7 +322,7 @@ function GOTO_SCENE(game, scene, zone, hero) {
     return false;
 }
 
-function TEXT(game, scene, zone, hero) {
+function TEXT(game: Game, scene: Scene, zone, hero: Actor) {
     const audio = game.getAudioManager();
     if (game.controlsState.action === 1) {
         if (!scene.zoneState.skipListener) {
@@ -372,14 +374,14 @@ function TEXT(game, scene, zone, hero) {
     return false;
 }
 
-function BONUS(game, scene, zone, hero) {
+function BONUS(game: Game, scene: Scene, zone, hero: Actor) {
     if (game.controlsState.action === 1) {
         game.controlsState.action = 0;
 
-        hero.props.runtimeFlags.isSearching = true;
+        hero.state.isSearching = true;
         hero.setAnimWithCallback(AnimType.ACTION, () => {
             game.getAudioManager().playSample(SampleType.TWINSEN_LANDING);
-            hero.props.runtimeFlags.isSearching = false;
+            hero.state.isSearching = false;
 
             if (zone.props.info2) {
                 return false;
