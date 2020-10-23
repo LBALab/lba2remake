@@ -11,16 +11,15 @@ import FrameListener from '../../../utils/FrameListener';
 import DebugData from '../../DebugData';
 import { TickerProps } from '../../../utils/Ticker';
 import { getIsometricCamera } from '../../../../cameras/iso';
-import { loadImageData, loadBricks } from '../../../../iso';
-import { loadLibrary } from '../../../../iso/grid';
-import { OffsetBySide, Side } from '../../../../iso/mapping';
+import { loadLibrary } from '../../../../game/scenery/isometric/grid';
+import { OffsetBySide, Side } from '../../../../game/scenery/isometric/mapping';
 import { compile } from '../../../../utils/shaders';
-import brick_vertex from '../../../../iso/shaders/brick.vert.glsl';
-import brick_fragment from '../../../../iso/shaders/brick.frag.glsl';
+import brick_vertex from '../../../../game/scenery/isometric/shaders/brick.vert.glsl';
+import brick_fragment from '../../../../game/scenery/isometric/shaders/brick.frag.glsl';
 import { loadLUTTexture } from '../../../../utils/lut';
 import { loadPaletteTexture } from '../../../../texture';
-import { replaceMaterialsForPreview } from '../../../../iso/metadata/preview';
-import { saveSceneReplacementModel } from '../../../../iso/metadata';
+import { replaceMaterialsForPreview } from '../../../../game/scenery/isometric/metadata/preview';
+import { saveSceneReplacementModel } from '../../../../game/scenery/isometric/metadata';
 import {
     registerResources,
     preloadResources,
@@ -28,8 +27,10 @@ import {
     getScene,
     getSceneMap,
     getBricksHQR,
+    getBricks,
 } from '../../../../resources';
-import { applyAnimationUpdaters } from '../../../../iso/metadata/animations';
+import { applyAnimationUpdaters } from '../../../../game/scenery/isometric/metadata/animations';
+import { loadBrickMask } from '../../../../game/scenery/isometric/mask';
 
 interface Props extends TickerProps {
     params: any;
@@ -263,6 +264,9 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     componentWillUnmount() {
+        if (this.state.renderer) {
+            this.state.renderer.dispose();
+        }
         window.removeEventListener('keydown', this.listener);
         super.componentWillUnmount();
     }
@@ -312,13 +316,13 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         this.variant = variant;
         const [palette, bricks, lutTexture] = await Promise.all([
             getPalette(),
-            loadBricks(),
+            getBricks(),
             await loadLUTTexture(),
         ]);
         const paletteTexture = loadPaletteTexture(palette);
         const light = getLightVector();
         if (!this.mask) {
-            this.mask = await loadImageData('images/brick_mask.png');
+            this.mask = await loadBrickMask();
         }
         const shaderData = {lutTexture, paletteTexture, light};
         const library = await loadLibrary(bricks, this.mask, palette, libraryIdx);
@@ -658,7 +662,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             }, this.saveDebugScope);
             const sceneData = await getScene(scene);
             const sceneMap = await getSceneMap();
-            await saveSceneReplacementModel(sceneMap[scene].index, sceneData.ambience);
+            await saveSceneReplacementModel(sceneMap[scene].sceneryIndex, sceneData.ambience);
         }
         this.setState({ updateProgress: null }, this.saveDebugScope);
     }
@@ -977,7 +981,7 @@ async function findScenesUsingLibrary(library) {
         if (indexInfo.isIsland) {
             return;
         }
-        const gridData = new DataView(bkg.getEntry(indexInfo.index + 1));
+        const gridData = new DataView(bkg.getEntry(indexInfo.sceneryIndex + 1));
         const libIndex = gridData.getUint8(0);
         if (libIndex === library) {
             scenes.push(scene);

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import Game from '../game/Game';
 import { Params } from '../params';
+import { ControlActiveType } from '../game/ControlsState';
 
 declare global {
     interface Document {
@@ -41,6 +42,8 @@ const MAX_X_ANGLE = Math.PI / 2.5;
 
 function handleMouseEvent(controls, game, event: MouseEvent) {
     if (controls.enabled && game.controlsState.freeCamera) {
+        game.controlsState.activeType = ControlActiveType.KEYBOARD;
+
         // Not supported on IE / Safari
         const movementX = event.movementX || 0;
         const movementY = -event.movementY || 0;

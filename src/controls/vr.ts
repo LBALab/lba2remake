@@ -10,6 +10,7 @@ import { getParams } from '../params';
 import { SceneManager } from '../game/SceneManager';
 import Game from '../game/Game';
 import Renderer from '../renderer';
+import { ControlActiveType } from '../game/ControlsState';
 
 // Time in ms we sample the change is position to determine controller velocity.
 const VELOCITY_UPDATE_TIME = 100;
@@ -71,6 +72,7 @@ export class VRControls {
             if (!(controller.info.xrInputSource as any).gamepad) {
                 return;
             }
+            this.ctx.game.controlsState.activeType = ControlActiveType.VRCONTROLS;
             controller.info.updateFromGamepad();
             controller.model.update(ctx);
             applyMappings(controller.info, controller.mappings, ctx);

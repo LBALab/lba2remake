@@ -43,7 +43,6 @@ interface NodeOptions {
 }
 
 interface EditorProps {
-    params: any;
     ticker: Ticker;
 }
 
@@ -266,7 +265,6 @@ export default class Editor extends React.Component<EditorProps, EditorState> {
             availableAreas={availableAreas}
             selectAreaContent={this.selectAreaContent.bind(this, path)}
             style={style}
-            params={this.props.params}
             ticker={this.props.ticker}
             split={this.split.bind(this, path)}
             close={path.length > 0 && !node.root ? this.close.bind(this, path) : null}

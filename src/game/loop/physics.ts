@@ -3,6 +3,8 @@ import {find} from 'lodash';
 
 import {processZones} from './zones';
 import { WORLD_SIZE } from '../../utils/lba';
+import Game from '../Game';
+import Scene from '../Scene';
 
 export function processPhysicsFrame(game, scene, time) {
     for (const actor of scene.actors) {
@@ -14,7 +16,7 @@ export function processPhysicsFrame(game, scene, time) {
     }
 }
 
-function processActorPhysics(game, scene, actor, time) {
+function processActorPhysics(game: Game, scene: Scene, actor, time) {
     if (!actor.model || actor.props.runtimeFlags.isDead)
         return;
 

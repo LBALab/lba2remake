@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../../utils/lba';
 import sharedData from './sharedData';
+import Scene from '../../game/Scene';
 
 const ADJ_WORLD_SIZE = Math.max(WORLD_SIZE, 2);
 
@@ -72,7 +73,7 @@ const HERO_VECTOR = new THREE.Vector3();
 const MIN_DIST = 0.0625 * ADJ_WORLD_SIZE;
 const MAX_DIST = 0.625 * ADJ_WORLD_SIZE;
 
-function processFollow3DMovement(controlNode, scene, forceUpdate = false) {
+function processFollow3DMovement(controlNode, scene: Scene, forceUpdate = false) {
     const hero = scene.actors[0];
     if (!hero.threeObject)
         return;

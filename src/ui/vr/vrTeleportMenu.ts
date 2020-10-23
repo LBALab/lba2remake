@@ -2,17 +2,17 @@ import * as THREE from 'three';
 import {each, filter, findKey} from 'lodash';
 import IslandAmbience from '../editor/areas/island/browser/ambience';
 import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
-import { loadIslandScenery } from '../../island';
+import Island from '../../game/scenery/island/Island';
 import { createScreen } from './vrScreen';
 import { handlePicking, performRaycasting } from './picking';
 import { drawFrame } from './vrUtils';
-import sceneMapping from '../../island/data/sceneMapping';
+import sceneMapping from '../../game/scenery/island/data/sceneMapping';
 import islandOffsets from './data/islandOffsets';
 import {tr} from '../../lang';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../utils/lba';
 
 let islandWrapper = null;
-let activeIsland = null;
+let activeIsland: Island = null;
 let loading = false;
 let selectedPlanet = 0;
 let selectedIsland = 0;
@@ -123,8 +123,7 @@ function refreshIslandButtons(teleportMenu) {
 async function loadIsland(name) {
     loading = true;
     const ambience = IslandAmbience[name];
-    const island = await loadIslandScenery({preview: true}, name, ambience);
-    island.name = name;
+    const island = await Island.loadForPreview(name, ambience);
     if (activeIsland) {
         islandWrapper.remove(activeIsland.threeObject);
     }
@@ -201,7 +200,7 @@ function handleGroundIntersection(intersect, triggered, {game, sceneManager}) {
     arrow.position.copy(intersect.point);
     POS.copy(intersect.point);
     POS.applyMatrix4(invWorldMat);
-    const groundInfo = activeIsland.physics.getGroundInfo(POS);
+    const groundInfo = activeIsland.physics.getHeightmapGround(POS);
     arrow.position.y += groundInfo.height * (0.5 / WORLD_SIZE);
     POS.y = groundInfo.height;
     if (triggered) {

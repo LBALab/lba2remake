@@ -1,6 +1,14 @@
 import * as THREE from 'three';
 
+export enum ControlActiveType {
+    KEYBOARD = 0,
+    TOUCH = 1,
+    VRCONTROLS = 2,
+    GAMEPAD = 3,
+}
+
 export interface ControlsState {
+    activeType: number;
     controlVector: THREE.Vector2;
     altControlVector: THREE.Vector2;
     cameraSpeed: THREE.Vector3;
@@ -17,6 +25,13 @@ export interface ControlsState {
     crouch: number;
     sideStep: number;
     weapon: number;
+    up: number;
+    down: number;
+    left: number;
+    right: number;
+    control: number;
+    shift: number;
+    home: number;
     vrPointerTransform: THREE.Matrix4;
     vrTriggerButton: boolean;
     vrControllerPositions: THREE.Vector3[];
@@ -26,6 +41,7 @@ export interface ControlsState {
 
 export function initControlsState(vr: boolean): ControlsState {
     return {
+        activeType: ControlActiveType.KEYBOARD,
         controlVector: new THREE.Vector2(),
         altControlVector: new THREE.Vector2(),
         cameraSpeed: new THREE.Vector3(),
@@ -42,6 +58,13 @@ export function initControlsState(vr: boolean): ControlsState {
         crouch: 0,
         weapon: 0,
         sideStep: 0,
+        up: 0,
+        down: 0,
+        left: 0,
+        right: 0,
+        control: 0,
+        shift: 0,
+        home: 0,
         vrPointerTransform: new THREE.Matrix4(),
         vrTriggerButton: false,
         vrControllerPositions: [],

@@ -9,10 +9,10 @@ in float vDistLightning;
 
 out vec4 fragColor;
 
-#require "../../island/shaders/common/fog.frag"
-#require "../../island/shaders/common/dither.frag"
-#require "../../island/shaders/common/lightning.frag"
-#require "../../island/shaders/common/intensity.frag"
+#require "../../game/scenery/island/shaders/common/fog.frag"
+#require "../../game/scenery/island/shaders/common/dither.frag"
+#require "../../game/scenery/island/shaders/common/lightning.frag"
+#require "../../game/scenery/island/shaders/common/intensity.frag"
 
 void main() {
     vec3 colWithDither = dither(vColor, intensity()).rgb;
