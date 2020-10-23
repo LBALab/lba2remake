@@ -139,11 +139,12 @@ export function MAGIC_POINTS(this: ScriptContext) {
     return this.game.getState().hero.magicball.level;
 }
 
-export function USING_INVENTORY(this: ScriptContext) {
+export function USING_INVENTORY(this: ScriptContext, itemId) {
+    if (this.game.getState().hero.usingItemId === itemId) {
+        return 1;
+    }
     return 0;
 }
-
-USING_INVENTORY.unimplemented = true;
 
 export function CHOICE(this: ScriptContext) {
     return this.state.choice;

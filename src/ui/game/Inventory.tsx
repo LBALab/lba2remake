@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
+import { SampleType } from '../../game/data/sampleType';
+import { GetInventoryMapping, GetInventoryRows, GetInventoryColumns } from '../../game/data/inventory';
 import '../styles/inventory.scss';
 
 const inventoryColumns = 7;
 const inventoryRows = 5;
 
-const Inventory = ({ game }: any) => {
+const Inventory = ({ game, closeInventory }: any) => {
     const [selectedSlot, setSelectedSlot] = useState(game.getState().hero.inventorySlot);
 
     const listener = (event) => {
@@ -49,13 +51,27 @@ const Inventory = ({ game }: any) => {
                 }
                 action = true;
                 break;
+            case 13:
+            case 'Enter':
+                const itemId = GetInventoryMapping()[game.getState().hero.inventorySlot];
+                if (game.getState().flags.quest[itemId] === 1) {
+                    game.getState().hero.usingItemId = itemId;
+                    closeInventory();
+                } else {
+                    game.getAudioManager().playSample(SampleType.ERROR);
+                }
+                break;
+            case 27:
+            case 'Escape':
+                closeInventory();
+                break;
         }
         if (action) {
             setSelectedSlot(newSlot);
             game.getState().hero.inventorySlot = newSlot;
-            event.preventDefault();
-            event.stopPropagation();
         }
+        event.preventDefault();
+        event.stopPropagation();
     };
 
     useEffect(() => {
@@ -66,13 +82,14 @@ const Inventory = ({ game }: any) => {
     });
 
     const inventorySlots = [];
-    for (let i = 0; i < inventoryRows; i += 1) {
-        for (let j = 0; j < inventoryColumns; j += 1) {
-            const slot = i * inventoryColumns + j;
+    for (let i = 0; i < GetInventoryRows(); i += 1) {
+        for (let j = 0; j < GetInventoryColumns(); j += 1) {
+            const slot = i * GetInventoryColumns() + j;
+            const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
             inventorySlots.push(
                 <div
                   key={slot}
-                  className={`inventoryItem ${selectedSlot === slot ? 'selected' : ''}`}>
+                  className={`inventoryItem ${selectedSlot === slot ? 'selected' : ''} ${inInventory === true ? 'inInventory' : ''}`}>
                 </div>
             );
         }
