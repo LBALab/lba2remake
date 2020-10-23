@@ -17,7 +17,7 @@ import {updateLabels} from './editor/labels';
 import { setFog } from './editor/fog';
 import { pure } from '../utils/decorators';
 import { loadPoint } from '../game/points';
-import { loadActor, createNewActorProps, initDynamicNewActor } from '../game/actors';
+import Actor from '../game/Actor';
 import GameUI from './GameUI';
 import DebugData from './editor/DebugData';
 import { getParams } from '../params';
@@ -248,16 +248,14 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
                 });
             }
             if (objectToAdd.type === 'actor') {
-                const actor = await loadActor(
+                obj = await Actor.create(
                     this.game,
-                    scene.is3DCam,
-                    scene.scenery,
-                    scene.data.ambience,
-                    createNewActorProps(scene, position, objectToAdd.details),
-                    !scene.isActive
+                    scene,
+                    {
+                        position,
+                        props: objectToAdd.details
+                    }
                 );
-                initDynamicNewActor(this.game, scene, actor);
-                obj = actor;
             }
             if (obj) {
                 obj.threeObject.visible = true;

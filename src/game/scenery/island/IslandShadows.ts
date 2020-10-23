@@ -3,6 +3,7 @@ import Scene from '../../Scene';
 import Game from '../../Game';
 import { Time } from '../../../datatypes';
 import { IslandGeometryInfo } from './geometries';
+import Actor from '../../Actor';
 
 const DIFF = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
@@ -57,11 +58,11 @@ export default class IslandShadows {
         }
     }
 
-    computeShadow(scene, actor, shadows) {
+    computeShadow(scene: Scene, actor: Actor, shadows: any[]) {
         if (!actor.props.flags.isSprite
             && !actor.props.flags.noShadow
             && actor.model
-            && actor.isVisible
+            && actor.state.isVisible
             && actor.threeObject.visible) {
             const sz = actor.model.boundingBox.max.x - actor.model.boundingBox.min.x;
             POSITION.copy(actor.physics.position);

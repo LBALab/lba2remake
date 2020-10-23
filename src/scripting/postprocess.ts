@@ -1,16 +1,18 @@
 import { each } from 'lodash';
+import Scene from '../game/Scene';
+import Actor from '../game/Actor';
 
-export function postProcessScripts(scene, actor) {
+export function postProcessScripts(scene: Scene, actor: Actor) {
     postProcessScript('life', scene, actor);
     postProcessScript('move', scene, actor);
 }
 
-export function cleanUpScripts(actor) {
+export function cleanUpScripts(actor: Actor) {
     delete actor.scripts.life.opMap;
     delete actor.scripts.move.opMap;
 }
 
-function postProcessScript(type, scene, actor) {
+function postProcessScript(type: 'life' | 'move', scene: Scene, actor: Actor) {
     const script = actor.scripts[type];
     each(
         script.commands,
@@ -18,7 +20,7 @@ function postProcessScript(type, scene, actor) {
     );
 }
 
-function postProcessCmd(script, cmd, cmdOffset, scene, actor) {
+function postProcessCmd(script, cmd, cmdOffset, scene: Scene, actor: Actor) {
     const args = cmd.args || [];
     let opMap;
     for (let i = 0; i < args.length; i += 1) {

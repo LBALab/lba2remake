@@ -10,6 +10,9 @@ import dome_brick_fragment from './shaders/dome_brick.frag.glsl';
 import { extractGridMetadata } from './metadata';
 import { Side, OffsetBySide } from './mapping';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../../utils/lba';
+import Game from '../../Game';
+import Scene from '../../Scene';
+import { Time } from '../../../datatypes';
 
 export async function loadMesh(grid, entry, ambience, is3D, numActors) {
     const threeObject = new THREE.Object3D();
@@ -88,7 +91,7 @@ export async function loadMesh(grid, entry, ambience, is3D, numActors) {
 
     return {
         threeObject,
-        update: (game, scene, time) => {
+        update: (game: Game, scene: Scene, time: Time) => {
             const { update } = gridMetadata.replacements;
             if (update) {
                 update(game, scene, time);
@@ -96,7 +99,7 @@ export async function loadMesh(grid, entry, ambience, is3D, numActors) {
             if (geometries.dome_ground) { // dome
                 const slateUniforms = geometries.dome_ground.material.uniforms;
                 scene.actors.forEach((actor, idx) => {
-                    if (actor.threeObject && !actor.props.runtimeFlags.isDead) {
+                    if (actor.threeObject && !actor.state.isDead) {
                         slateUniforms.actorPos.value[idx].set(0, 0, 0);
                         slateUniforms.actorPos.value[idx]
                             .applyMatrix4(actor.threeObject.matrixWorld);

@@ -6,6 +6,7 @@ import { AnimType } from '../../data/animType';
 import { IslandSection } from './IslandLayout';
 import Scene from '../../Scene';
 import { Time } from '../../../datatypes';
+import Actor from '../../Actor';
 
 const TGT = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
@@ -54,9 +55,9 @@ export default class IslandPhysics {
         const ground = this.getGround(section, POSITION);
         let height = ground.height;
 
-        obj.props.distFromGround = Math.max(obj.physics.position.y - height, 0);
+        obj.state.distFromGround = Math.max(obj.physics.position.y - height, 0);
         const distFromFloor = this.getDistFromFloor(scene, obj);
-        obj.props.distFromFloor = distFromFloor;
+        obj.state.distFromFloor = distFromFloor;
 
         let isTouchingGround = true;
         if (obj.physics.position.y > height) {
@@ -66,7 +67,7 @@ export default class IslandPhysics {
         const isUsingProtoOrJetpack = (obj.props.entityIndex === BehaviourMode.JETPACK ||
                                        obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
                                        obj.props.animIndex === AnimType.FORWARD;
-        obj.props.runtimeFlags.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
+        obj.state.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
         if (isUsingProtoOrJetpack) {
             let heightOffset = PROTOPACK_OFFSET;
             if (obj.props.entityIndex === BehaviourMode.JETPACK) {
@@ -123,19 +124,19 @@ export default class IslandPhysics {
                 }
             }
         }
-        obj.props.runtimeFlags.isTouchingGround = isTouchingGround;
-        obj.props.runtimeFlags.isTouchingFloor = distFromFloor < 0.001;
+        obj.state.isTouchingGround = isTouchingGround;
+        obj.state.isTouchingFloor = distFromFloor < 0.001;
 
         if (isTouchingGround && ground.liquid > 0) {
             switch (ground.liquid) {
                 case LIQUID_TYPES.WATER:
-                    obj.props.runtimeFlags.isDrowning = true;
+                    obj.state.isDrowning = true;
                     break;
                 case LIQUID_TYPES.LAVA:
-                    obj.props.runtimeFlags.isDrowningLava = true;
+                    obj.state.isDrowningLava = true;
                     break;
                 default:
-                    obj.props.runtimeFlags.isDrowning = true;
+                    obj.state.isDrowning = true;
                     break;
             }
         }
@@ -287,7 +288,12 @@ const CENTER2 = new THREE.Vector3();
 const DIFF = new THREE.Vector3();
 const H_THRESHOLD = 0.007 * WORLD_SIZE;
 
-function processBoxIntersections(section: IslandSection, actor, position, isTouchingGround) {
+function processBoxIntersections(
+    section: IslandSection,
+    actor: Actor,
+    position: THREE.Vector3,
+    isTouchingGround: boolean
+) {
     const boundingBox = actor.model ? actor.model.boundingBox : actor.sprite.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.translate(position);
@@ -318,6 +324,6 @@ function processBoxIntersections(section: IslandSection, actor, position, isTouc
             ACTOR_BOX.translate(DIFF);
         }
     }
-    actor.props.runtimeFlags.isColliding = collision;
+    actor.state.isColliding = collision;
     return isTouchingGround;
 }

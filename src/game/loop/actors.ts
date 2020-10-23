@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { Actor} from '../actors';
+import Actor from '../Actor';
 import { getAnim } from '../../model/entity';
 import {
     updateKeyframe,
@@ -41,13 +41,13 @@ export function updateActor(
             return;
         }
         actor.threeObject.matrixAutoUpdate = true;
-        actor.threeObject.visible = actor.isVisible;
+        actor.threeObject.visible = actor.state.isVisible;
     }
 
-    if (actor.nextAnim !== null) {
-        actor.setAnim(actor.nextAnim);
+    if (actor.state.nextAnim !== null) {
+        actor.setAnim(actor.state.nextAnim);
         actor.animState.noInterpolate = true;
-        actor.nextAnim = null;
+        actor.state.nextAnim = null;
     }
 
     actor.runScripts(time);
@@ -117,7 +117,7 @@ const vrFPsteps = [
 
 function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, time: any) {
     const deltaMS = time.delta * 1000;
-    if (actor.props.runtimeFlags.isTurning) {
+    if (actor.state.isTurning) {
         // We want to rotate in the most efficient way possible, i.e. we rotate
         // either clockwise or anticlockwise depening on which one is fastest.
         let distanceAnticlockwise;
@@ -148,11 +148,11 @@ function updateMovements(actor: Actor, firstPerson: boolean, behaviour: number, 
         actor.physics.orientation.setFromEuler(wEuler);
 
         if (Math.min(distanceAnticlockwise, distanceClockwise) < 0.05) {
-          actor.props.runtimeFlags.isTurning = false;
+          actor.state.isTurning = false;
           actor.physics.temp.destAngle = actor.physics.temp.angle;
         }
     }
-    if (actor.props.runtimeFlags.isWalking) {
+    if (actor.state.isWalking) {
         actor.physics.temp.position.set(0, 0, 0);
 
         const animIndex = actor.props.animIndex;

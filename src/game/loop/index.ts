@@ -7,10 +7,11 @@ import DebugData from '../../ui/editor/DebugData';
 import { updateExtra } from '../extras';
 import { updateVRGUI } from '../../ui/vr/vrGUI';
 import { getRandom } from '../../utils/lba';
-import { getParams } from '../../params';
+import { getParams, Params } from '../../params';
 import Game from '../Game';
 import Renderer from '../../renderer';
 import Scene from '../Scene';
+import { Time } from '../../datatypes';
 
 const dbgClock = new THREE.Clock(false);
 dbgClock.start();
@@ -82,26 +83,26 @@ export function mainGameLoop(
     renderer.stats.end();
 }
 
-function updateScene(params, game, scene, time) {
+function updateScene(params: Params, game: Game, scene: Scene, time: Time) {
     if (scene.firstFrame) {
         scene.sceneNode.updateMatrixWorld();
     }
     for (const actor of scene.actors) {
-        if (actor.wasHitBy === -1) {
+        if (actor.state.wasHitBy === -1) {
             continue;
         }
         // We allow wasHitBy to persist a second frame update because it is set
         // asynchronously (potentially outside of the game loop). This ensures
         // it's correctly read by the life scripts.
-        if (actor.hasSeenHit) {
-            actor.wasHitBy = -1;
-            actor.hasSeenHit = false;
+        if (actor.state.hasSeenHit) {
+            actor.state.wasHitBy = -1;
+            actor.state.hasSeenHit = false;
         } else {
-            actor.hasSeenHit = true;
+            actor.state.hasSeenHit = true;
         }
     }
     for (const actor of scene.actors) {
-        if (actor.props.runtimeFlags.isDead)
+        if (actor.state.isDead)
             continue;
         updateActor(params, game, scene, actor, time);
         if (scene.isActive) {
@@ -131,7 +132,7 @@ function updateScene(params, game, scene, time) {
     }
 }
 
-function playAmbience(game, scene, time) {
+function playAmbience(game: Game, scene: Scene, time: Time) {
     let samplePlayed = 0;
     const audio = game.getAudioManager();
 

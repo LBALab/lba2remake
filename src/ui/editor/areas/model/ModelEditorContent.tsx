@@ -151,7 +151,6 @@ export default class Model extends FrameListener<Props, State> {
             lightingBeta: 2500
         };
         const model = await loadModel(
-            {},
             this.props.sharedState.entity,
             this.props.sharedState.body,
             this.props.sharedState.anim,

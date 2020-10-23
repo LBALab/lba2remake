@@ -272,7 +272,7 @@ async function findAllRefsInSceneList(varDef, sceneList) {
 
 function findAllRefsInScene(varDef, scene) {
     const foundResults = [];
-    map(scene.actors, (actor, idx) => {
+    map(scene.actors, (actor, idx: number) => {
         const script = parseScript(idx, 'life', actor.lifeScript);
         const actorResults = [];
         each(script.commands, (cmd, cmdIdx) => {

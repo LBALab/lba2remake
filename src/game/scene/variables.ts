@@ -1,4 +1,6 @@
-export function createSceneVariables(actors: any[]) {
+import Actor from '../Actor';
+
+export function createSceneVariables(actors: Actor[]) {
     let maxVarCubeIndex = -1;
     for (const actor of actors) {
         const commands = actor.scripts.life.commands;
@@ -18,7 +20,7 @@ export function createSceneVariables(actors: any[]) {
     return variables;
 }
 
-export function findUsedVarGames(actors: any[]) {
+export function findUsedVarGames(actors: Actor[]) {
     const usedVars = [];
     for (const actor of actors) {
         const commands = actor.scripts.life.commands;

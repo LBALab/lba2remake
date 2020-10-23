@@ -3,6 +3,7 @@ import {cloneDeep} from 'lodash';
 import {getObjectName} from '../ui/editor/DebugData';
 import {createBoundingBox} from '../utils/rendering';
 import {createZoneLabel} from '../ui/editor/labels';
+import { getParams } from '../params';
 
 export const ZONE_TYPE = [
     'TELEPORT',
@@ -30,7 +31,7 @@ const ZONE_TYPE_MATERIAL_COLOR = [
     '#008000', // RAIL
 ];
 
-export function loadZone(props, is3DCam, isEditor) {
+export function loadZone(props, is3DCam) {
     const pos = props.pos;
     const zone = {
         type: 'zone',
@@ -50,7 +51,7 @@ export function loadZone(props, is3DCam, isEditor) {
         new THREE.Vector3(xMin, yMin, zMin),
         new THREE.Vector3(xMax, yMax, zMax)
     );
-    if (isEditor) {
+    if (getParams().editor) {
         const bbGeom = createBoundingBox(bb, zone.color);
         const name = getObjectName('zone', props.sceneIndex, props.index);
         bbGeom.name = `zone:${name}`;

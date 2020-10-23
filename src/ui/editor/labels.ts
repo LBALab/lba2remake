@@ -1,7 +1,8 @@
 import * as THREE from 'three';
-import {each} from 'lodash';
 import DebugData from './DebugData';
 import { ZONE_TYPE } from '../../game/zones';
+import Scene from '../../game/Scene';
+import Actor from '../../game/Actor';
 
 let currentScene = null;
 const selection = {
@@ -15,7 +16,7 @@ const currentLabels = {
     zoneTypes: []
 };
 
-export function updateLabels(scene, labels) {
+export function updateLabels(scene: Scene, labels) {
     if (!scene)
         return;
 
@@ -61,7 +62,7 @@ export function updateLabels(scene, labels) {
     currentScene = scene;
 }
 
-function refreshSelection(scene, selected) {
+function refreshSelection(scene: Scene, selected) {
     if (selection.type !== null
         && selection.index !== -1
         && scene[`${selection.type}s`]
@@ -71,9 +72,9 @@ function refreshSelection(scene, selected) {
     }
 }
 
-function toggleActors(scene, enabled) {
+function toggleActors(scene: Scene, enabled) {
     if (scene) {
-        each(scene.actors, (actor) => {
+        for (const actor of scene.actors) {
             if (actor.model && actor.model.boundingBoxDebugMesh) {
                 actor.model.boundingBoxDebugMesh.visible = enabled;
             }
@@ -88,13 +89,13 @@ function toggleActors(scene, enabled) {
                     actor.refreshLabel(selected);
                 }
             }
-        });
+        }
     }
 }
 
-function toggleZones(scene, gEnabled, zoneTypes) {
+function toggleZones(scene: Scene, gEnabled, zoneTypes) {
     if (scene) {
-        each(scene.zones, (zone) => {
+        for (const zone of scene.zones) {
             const enabled = gEnabled && zoneTypes.includes(ZONE_TYPE[zone.props.type]);
             zone.threeObject.visible = enabled;
             if (enabled) {
@@ -103,13 +104,13 @@ function toggleZones(scene, gEnabled, zoneTypes) {
                     && selection.index === zone.index;
                 zone.refreshLabel(selected);
             }
-        });
+        }
     }
 }
 
-function togglePoints(scene, enabled) {
+function togglePoints(scene: Scene, enabled) {
     if (scene) {
-        each(scene.points, (point) => {
+        for (const point of scene.points) {
             point.threeObject.visible = enabled;
             if (enabled) {
                 point.threeObject.updateMatrix();
@@ -117,11 +118,11 @@ function togglePoints(scene, enabled) {
                     && selection.index === point.index;
                 point.refreshLabel(selected);
             }
-        });
+        }
     }
 }
 
-export function createActorLabel(actor, name, is3DCam) {
+export function createActorLabel(actor: Actor, name, is3DCam) {
     const canvas = document.createElement('canvas');
     canvas.width = 256;
     canvas.height = 64;

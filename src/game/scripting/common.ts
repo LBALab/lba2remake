@@ -1,26 +1,27 @@
 import { BODY_OBJ, ANIM_OBJ } from './life';
+import { ScriptContext } from './ScriptContext';
 
-export function BODY(bodyIndex) {
+export function BODY(this: ScriptContext, bodyIndex) {
     BODY_OBJ.call(this, this.actor, bodyIndex);
 }
 
-export function ANIM(animIndex) {
+export function ANIM(this: ScriptContext, animIndex) {
     ANIM_OBJ.call(this, this.actor, animIndex);
 }
 
-export function BETA(angle) {
+export function BETA(this: ScriptContext, angle) {
     this.actor.setAngle(angle);
 }
 
-export function NO_BODY() {
+export function NO_BODY(this: ScriptContext) {
     this.actor.props.bodyIndex = -1;
-    this.actor.isVisible = false;
+    this.actor.state.isVisible = false;
     if (this.actor.threeObject) {
         this.actor.threeObject.visible = false;
     }
 }
 
-export function POS_POINT(point) {
+export function POS_POINT(this: ScriptContext, point) {
     this.actor.physics.position.copy(point.physics.position);
     if (this.actor.model) {
         this.actor.model.mesh.position.copy(point.physics.position);

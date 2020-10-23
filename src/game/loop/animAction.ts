@@ -5,6 +5,7 @@ import { unimplemented } from '../scripting/utils';
 import { addExtra, ExtraFlag, getBonus } from '../extras';
 import { SpriteType } from '../data/spriteType';
 import { SampleType } from '../data/sampleType';
+import Actor from '../Actor';
 
 export const NOP = unimplemented();
 
@@ -16,16 +17,15 @@ export const ANIM = unimplemented();
 
 export const ANIP = unimplemented();
 
-export function processHit(actor, hitStrength, game, scene) {
+export function processHit(actor: Actor, hitStrength, game, scene) {
     for (const a of scene.actors) {
-        if (a.index === actor.index || !a.isVisible ||
-            a.props.runtimeFlags.isDead) {
+        if (a.index === actor.index || !a.state.isVisible || a.state.isDead) {
             continue;
         }
         // TODO(scottwilliams): This doesn't take into account the actor angles.
         if (distance2D(a.physics.position, actor.physics.position) < 1) {
             a.hit(actor.index, hitStrength);
-            if (a.props.runtimeFlags.isDead) {
+            if (a.state.isDead) {
                 game.getAudioManager().playSample(SampleType.ACTOR_DYING);
                 if (a.props.extraType) {
                     const angle = a.physics.temp.angle - Math.PI / 2;
