@@ -3,6 +3,8 @@ import { DirMode } from '../actors';
 import { AnimType } from '../data/animType';
 import { WORLD_SIZE } from '../../utils/lba';
 import { processHit } from './animAction';
+import Scene from '../Scene';
+import Island from '../scenery/island/Island';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -80,7 +82,7 @@ const BASE_ANGLE = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 
 const Q = new THREE.Quaternion();
 const EULER = new THREE.Euler();
 
-function processFirstPersonsMovement(game, scene, hero, time) {
+function processFirstPersonsMovement(game, scene: Scene, hero, time) {
     const controlsState = game.controlsState;
     if (hero.props.runtimeFlags.isClimbing ||
         hero.props.runtimeFlags.isSearching) {
@@ -103,7 +105,7 @@ function processFirstPersonsMovement(game, scene, hero, time) {
             return;
         }
         let distFromFloor = hero.props.distFromGround;
-        if (scene.isIsland) {
+        if (scene.scenery instanceof Island) {
             distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
         }
         // We don't trigger a fall if Twinsen is using the Jetpack, (but we do
@@ -210,9 +212,9 @@ const MEDIUM_FALL_HEIGHT = 2;
 // From this height Twinsen just stumbles a bit.
 const SMALL_FALL_HEIGHT = 0.3;
 
-function processFall(scene, hero) {
+function processFall(scene: Scene, hero) {
     let distFromFloor = hero.props.distFromGround;
-    if (scene.isIsland) {
+    if (scene.scenery instanceof Island) {
         distFromFloor = scene.scenery.physics.getDistFromFloor(scene, hero);
     }
     if (distFromFloor < 0.001) {
@@ -277,7 +279,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
         const usingProtopack = hero.props.entityIndex === BehaviourMode.PROTOPACK &&
                              hero.props.animIndex === AnimType.FORWARD;
         let fallThreshold = SMALL_FALL_HEIGHT;
-        if (usingProtopack && !scene.isIsland) {
+        if (usingProtopack && !scene.data.isIsland) {
             fallThreshold = 0.5;
         }
         if (usingJetpack) {
@@ -372,7 +374,7 @@ function processActorMovement(game, scene, hero, time, behaviour) {
                     if (hero.animState.keyframeLength) {
                         const rotationSpeed = hero.props.entityIndex === BehaviourMode.DISCRETE
                             ? 65
-                            : 24;
+                            : hero.props.speed;
                         const rotY = (hero.animState.rotation.y * rotationSpeed) / WORLD_SIZE;
                         dy = (rotY * time.delta * 1000) / hero.animState.keyframeLength;
                     }

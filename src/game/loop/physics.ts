@@ -3,6 +3,8 @@ import {find} from 'lodash';
 
 import {processZones} from './zones';
 import { WORLD_SIZE } from '../../utils/lba';
+import Game from '../Game';
+import Scene from '../Scene';
 
 export function processPhysicsFrame(game, scene, time) {
     for (const actor of scene.actors) {
@@ -14,7 +16,7 @@ export function processPhysicsFrame(game, scene, time) {
     }
 }
 
-function processActorPhysics(game, scene, actor, time) {
+function processActorPhysics(game: Game, scene: Scene, actor, time) {
     if (!actor.model || actor.props.runtimeFlags.isDead)
         return;
 
@@ -51,7 +53,8 @@ function processSidesceneTransitions(scene) {
     const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
     pos.y += BOX_Y_OFFSET;
-    if (scene.isIsland && (pos.x < BB_MIN || pos.z < BB_MIN || pos.x > BB_MAX || pos.z > BB_MAX)) {
+    if (scene.data.isIsland
+        && (pos.x < BB_MIN || pos.z < BB_MIN || pos.x > BB_MAX || pos.z > BB_MAX)) {
         const globalPos = new THREE.Vector3();
         globalPos.applyMatrix4(hero.threeObject.matrixWorld);
         const foundSideScene = find(scene.sideScenes, (sideScene) => {

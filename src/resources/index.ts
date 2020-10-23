@@ -165,6 +165,10 @@ const getMusic = async (index: number | string) => {
     return await loadResource(`MUSIC_SCENE_${index}`);
 };
 
+const getModelReplacements = async () => {
+    return await loadResource(ResourceName.MODEL_REPLACEMENTS);
+};
+
 export {
     registerResources,
     preloadResources,
@@ -196,4 +200,5 @@ export {
     getSamples,
     getVoices,
     getMusic,
+    getModelReplacements,
 };

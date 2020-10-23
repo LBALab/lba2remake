@@ -10,6 +10,8 @@ export const WORLD_SCALE_B = 0.03125 * WORLD_SIZE;
 export const DOME_SCENES = [26, 202]; // 202 = demo version
 export const DOME_ENTRIES = [26, 139]; // 139 = demo version
 
+export const SPEED_ADJUSTMENT = 0.8;
+
 export function getRotation(nextValue, currentValue, interpolation) {
     let angleDif = nextValue - currentValue;
     let computedAngle = 0;

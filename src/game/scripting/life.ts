@@ -2,7 +2,7 @@ import { clone } from 'lodash';
 import { DirMode } from '../../game/actors';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
-import { setMagicBallLevel } from '../gameState';
+import { setMagicBallLevel } from '../GameState';
 import { unimplemented } from './utils';
 import { WORLD_SCALE, getRandom } from '../../utils/lba';
 import { getVideoPath } from '../../resources';
@@ -232,7 +232,7 @@ export function FOUND_OBJECT(cmdState, id) {
         hero.props.entityIndex = 0;
         hero.props.animIndex = AnimType.FOUND_OBJECT;
 
-        if (this.scene.isIsland) {
+        if (this.scene.data.isIsland) {
             hero.setAngleRad(hero.physics.temp.angle + Math.PI);
         } else {
             hero.setAngleRad(7 * Math.PI / 4);

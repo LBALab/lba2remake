@@ -4,6 +4,7 @@ import convert from 'color-convert';
 import { scopeColors } from './blocks/blocksLibrary/utils';
 import { fullscreen } from '../../../../styles';
 import DebugData from '../../../DebugData';
+import Scene from '../../../../../game/Scene';
 
 const darker = (c) => {
     const hsl = convert.hex.hsl(c);
@@ -128,7 +129,7 @@ const scopes = [
 ];
 
 interface Props {
-    scene: any;
+    scene: Scene;
 }
 
 interface State {

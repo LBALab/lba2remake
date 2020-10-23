@@ -9,6 +9,7 @@ import blocksLibrary from './blocksLibrary';
 import { createToolboxTree } from './toolbox';
 import { fillWorkspace } from './scriptToBlocks';
 import { compile } from './blocksToScript';
+import Scene from '../../../../../../game/Scene';
 
 interface Props extends TickerProps {
     sharedState: any;
@@ -19,7 +20,7 @@ interface Props extends TickerProps {
 }
 
 interface State {
-    scene: any;
+    scene: Scene;
 }
 
 let idCount = 0;
@@ -38,7 +39,7 @@ const mainStyle = {
 
 export default class BlocksEditor extends FrameListener<Props, State> {
     rootRef: HTMLElement;
-    scene: any;
+    scene: Scene;
     actor: any;
     workspace: any;
     id: number;

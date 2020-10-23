@@ -41,7 +41,7 @@ export async function findAllVariants(lDef) {
     const allVariants = flatten(variantsByScenes);
     const scenesByKey = mapValues(
         groupBy(allVariants, 'key'),
-        v => uniq(map(v, 'scene.index'))
+        v => uniq(map(v, 'scene.sceneryIndex'))
     );
     const variants = filter(
         uniqBy(allVariants, 'key'),
@@ -64,7 +64,7 @@ async function findAllVariantsInScene(bkg, lDef, layout, indexInfo) {
     const isoScenery = await loadIsometricSceneryForSearch(
         bkg,
         lDef.library,
-        indexInfo.index,
+        indexInfo.sceneryIndex,
         layout
     );
     if (!isoScenery) {

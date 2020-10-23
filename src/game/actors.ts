@@ -6,7 +6,7 @@ import { loadAnimState, resetAnimState } from '../model/animState';
 import { AnimType } from './data/animType';
 import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
 import {createBoundingBox} from '../utils/rendering';
-import { loadSprite } from '../iso/sprites';
+import { loadSprite } from './scenery/isometric/sprites';
 
 import { getObjectName } from '../ui/editor/DebugData';
 import { createActorLabel } from '../ui/editor/labels';
@@ -16,7 +16,8 @@ import { compileScripts } from '../scripting/compiler';
 import { parseScripts } from '../scripting/parser';
 import { postProcessScripts, cleanUpScripts } from '../scripting/postprocess';
 import { getParams } from '../params';
-import { Game } from './game';
+import Game from './Game';
+import { Scenery } from './scenery';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -112,11 +113,11 @@ export const DirMode = {
 export async function loadActor(
     game: Game,
     is3DCam: boolean,
-    envInfo: any,
+    scenery: Scenery,
     ambience: any,
     props: ActorProps,
-    isSideScene: boolean,
-    modelReplacements: any) {
+    isSideScene: boolean
+) {
     const params = getParams();
     const skipModel = isSideScene && props.index === 0;
     const animState = !skipModel ? loadAnimState() : null;
@@ -228,7 +229,7 @@ export async function loadActor(
                     bodyIndex,
                     animIndex,
                     this.animState,
-                    envInfo,
+                    scenery.props.envInfo,
                     ambience
                 );
                 if (model !== null) {
@@ -258,8 +259,7 @@ export async function loadActor(
                         spriteIndex,
                         hasSpriteAnim3D,
                         false,
-                        false,
-                        modelReplacements.sprites
+                        false
                     );
                     this.threeObject.add(sprite.threeObject);
                     if (params.editor) {
@@ -322,9 +322,7 @@ export async function loadActor(
             const oldObject = this.threeObject;
             this.loadMesh().then(() => {
                 scene.addMesh(this.threeObject);
-                if (oldObject) {
-                    scene.removeMesh(oldObject);
-                }
+                scene.removeMesh(oldObject);
                 this.threeObject.updateMatrixWorld();
             });
         },

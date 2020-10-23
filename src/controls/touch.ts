@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import { Game } from '../game/game';
+import Game from '../game/Game';
+import { ControlActiveType } from '../game/ControlsState';
+import { getParams } from '../params';
 
 // Move pointerLock mechanics out of this
 export function makeFirstPersonTouchControls(game: Game) {
@@ -8,7 +10,7 @@ export function makeFirstPersonTouchControls(game: Game) {
         prevPageX: 0,
         prevPageY: 0,
         pageX: 0,
-        pageY: 0
+        pageY: 0,
     };
 
     const onTouchMove = handleTouchEvent.bind(null, controls, game);
@@ -33,8 +35,9 @@ const euler = new THREE.Euler(0.0, 0.0, 0.0, 'YXZ');
 const MAX_X_ANGLE = Math.PI / 2.5;
 
 function handleTouchEvent(controls, game, event: TouchEvent) {
-    if (controls.enabled) {
-        game.controlsState.freeCamera = true;
+    const { editor } = getParams();
+    if (controls.enabled && editor && game.controlsState.freeCamera) {
+        game.controlsState.activeType = ControlActiveType.TOUCH;
 
         // Not supported on IE / Safari
         controls.prevPageX = controls.pageX;

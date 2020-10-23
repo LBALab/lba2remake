@@ -33,6 +33,11 @@ export function createAudioManager(state) {
     voiceSource.setVolume(state.config.voiceVolume);
 
     return {
+        dispose: () => {
+            context.close();
+            menuContext.close();
+        },
+
         // music
         playMusic: (index: number) => {
             menuMusicSource.stop();

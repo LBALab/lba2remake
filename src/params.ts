@@ -51,7 +51,21 @@ const paramsDefinitions = {
     }
 };
 
-export function getParams(forceRefresh = false) : any {
+export interface Params {
+    mobile: boolean;
+    scene: number;
+    editor: boolean;
+    iso3d: boolean;
+    isoCam3d: boolean;
+    webgl2: boolean;
+    clipActors: boolean;
+    lang: string;
+    game: string;
+    vrEmulator: boolean;
+    vrCtrlDBG: boolean;
+}
+
+export function getParams(forceRefresh = false) : Params {
     if (params && !forceRefresh) {
         return params;
     }
