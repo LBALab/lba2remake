@@ -6,6 +6,7 @@ import { VRControls } from './vr';
 import { SceneManager } from '../game/SceneManager';
 import Renderer from '../renderer';
 import Game from '../game/Game';
+import GamepadControls from './GamepadControls';
 
 export function createControls(
     vr: boolean,
@@ -18,16 +19,18 @@ export function createControls(
     let controls;
     if (vr) {
         controls = [
-            new VRControls(sceneManager, game, renderer)
+            new VRControls(sceneManager, game, renderer),
         ];
     } else if (params.mobile) {
         controls = [
             makeFirstPersonTouchControls(game),
+            new GamepadControls(params, sceneManager, game),
         ];
     } else {
         controls = [
             makeFirstPersonMouseControls(params, elem, game),
             makeKeyboardControls(params, elem, sceneManager, game),
+            new GamepadControls(params, sceneManager, game),
         ];
     }
     return controls;

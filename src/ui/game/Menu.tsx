@@ -4,6 +4,7 @@ import {tr} from '../../lang';
 
 import '../styles/menu.scss';
 import { getParams } from '../../params';
+import { ControlsState } from '../../game/ControlsState';
 
 interface Item {
     item: string;
@@ -44,6 +45,7 @@ export default class Menu extends React.Component<MProps, MState> {
         super(props);
         this.update = this.update.bind(this);
         this.listener = this.listener.bind(this);
+        this.gamepadListener = this.gamepadListener.bind(this);
         this.state = {
             selectedIndex: 0,
             items: menuItems,
@@ -52,6 +54,7 @@ export default class Menu extends React.Component<MProps, MState> {
 
     componentWillMount() {
         window.addEventListener('keydown', this.listener);
+        window.addEventListener('lbagamepadchanged', this.gamepadListener);
     }
 
     componentWillReceiveProps(newProps) {
@@ -70,30 +73,41 @@ export default class Menu extends React.Component<MProps, MState> {
     }
 
     componentWillUnmount() {
+        window.removeEventListener('lbagamepadchanged', this.gamepadListener);
         window.removeEventListener('keydown', this.listener);
+    }
+
+    interactMenu(key: string | number, controlState: ControlsState) {
+        let selectedIndex = this.state.selectedIndex;
+        if (key === 'ArrowUp' || key === 38 || controlState?.up === 1) {
+            selectedIndex -= 1;
+            if (selectedIndex < 0) {
+                selectedIndex = this.state.items.length - 1;
+            }
+            this.setState({ selectedIndex });
+        }
+        if (key === 'ArrowDown' || key === 40 || controlState?.down === 1) {
+            selectedIndex += 1;
+            if (selectedIndex > this.state.items.length - 1) {
+                selectedIndex = 0;
+            }
+            this.setState({ selectedIndex });
+        }
+        if (key === 'Enter' || key === 13 || controlState?.action === 1) {
+            this.itemChanged(selectedIndex);
+        }
     }
 
     listener(event) {
         if (this.props.showMenu) {
             const key = event.code || event.which || event.keyCode;
-            let selectedIndex = this.state.selectedIndex;
-            if (key === 'ArrowUp' || key === 38) {
-                selectedIndex -= 1;
-                if (selectedIndex < 0) {
-                    selectedIndex = this.state.items.length - 1;
-                }
-                this.setState({ selectedIndex });
-            }
-            if (key === 'ArrowDown' || key === 40) {
-                selectedIndex += 1;
-                if (selectedIndex > this.state.items.length - 1) {
-                    selectedIndex = 0;
-                }
-                this.setState({ selectedIndex });
-            }
-            if (key === 'Enter' || key === 13) {
-                this.itemChanged(selectedIndex);
-            }
+            this.interactMenu(key, null);
+        }
+    }
+
+    gamepadListener(event) {
+        if (this.props.showMenu) {
+            this.interactMenu(null, event.detail as ControlsState);
         }
     }
 

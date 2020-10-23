@@ -4,6 +4,8 @@ import {BehaviourMode} from '../game/loop/hero';
 import { SceneManager } from '../game/SceneManager';
 import Game from '../game/Game';
 import { Params } from '../params';
+import Scene from '../game/Scene';
+import { ControlActiveType } from '../game/ControlsState';
 
 export function makeKeyboardControls(params: Params,
                                      elem: HTMLElement,
@@ -31,22 +33,27 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
     if (behaviourMenu) {
         return;
     }
+    game.controlsState.activeType = ControlActiveType.KEYBOARD;
     // console.log(event.code, event.which, event.keyCode);
     switch (key) {
         case 38: // up
         case 'ArrowUp':
+            game.controlsState.up = 1;
             game.controlsState.controlVector.y = 1;
             break;
         case 40: // down
         case 'ArrowDown':
+            game.controlsState.down = 1;
             game.controlsState.controlVector.y = -1;
             break;
         case 37: // left
         case 'ArrowLeft':
+            game.controlsState.left = 1;
             game.controlsState.controlVector.x = -1;
             break;
         case 39: // right
         case 'ArrowRight':
+            game.controlsState.right = 1;
             game.controlsState.controlVector.x = 1;
             break;
 
@@ -133,7 +140,8 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
                 // tslint:disable-next-line:no-console
                 console.log('Free camera: ', game.controlsState.freeCamera);
                 if (game.controlsState.freeCamera) {
-                    resetCameraOrientation(game, sceneManager);
+                    const scene = sceneManager.getScene();
+                    resetCameraOrientation(game, scene);
                 }
             }
             break;
@@ -147,6 +155,15 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
                 game.controlsState.skipListener();
             }
             break;
+
+        case 91:
+        case 'MetaLeft':
+        case 'MetaRight':
+        case 17:
+        case 'ControlLeft':
+        case 'ControlRight':
+            game.controlsState.control = 1;
+            break;
     }
     event.preventDefault();
 }
@@ -156,21 +173,25 @@ function keyUpHandler(game, event) {
     switch (key) {
         case 38: // up
         case 'ArrowUp':
+            game.controlsState.up = 0;
             if (game.controlsState.controlVector.y === 1)
                 game.controlsState.controlVector.y = 0;
             break;
         case 40: // down
         case 'ArrowDown':
+            game.controlsState.down = 0;
             if (game.controlsState.controlVector.y === -1)
                 game.controlsState.controlVector.y = 0;
             break;
         case 37: // left
         case 'ArrowLeft':
+            game.controlsState.left = 0;
             if (game.controlsState.controlVector.x === -1)
                 game.controlsState.controlVector.x = 0;
             break;
         case 39: // right
         case 'ArrowRight':
+            game.controlsState.right = 0;
             if (game.controlsState.controlVector.x === 1)
                 game.controlsState.controlVector.x = 0;
             break;
@@ -217,6 +238,15 @@ function keyUpHandler(game, event) {
             if (game.controlsState.cameraSpeed.x === -1)
                 game.controlsState.cameraSpeed.x = 0;
             break;
+
+        case 91:
+        case 'MetaLeft':
+        case 'MetaRight':
+        case 17:
+        case 'ControlLeft':
+        case 'ControlRight':
+            game.controlsState.control = 0;
+            break;
     }
 }
 
@@ -224,8 +254,7 @@ function focusOutHandler(game) {
     game.resetControlsState();
 }
 
-function resetCameraOrientation(game, sceneManager) {
-    const scene = sceneManager.getScene();
+export function resetCameraOrientation(game: Game, scene: Scene) {
     if (!scene)
         return;
 
