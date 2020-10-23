@@ -170,6 +170,9 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     componentWillUnmount() {
+        if (this.state.renderer) {
+            this.state.renderer.dispose();
+        }
         window.removeEventListener('keydown', this.onKeyDown);
         window.removeEventListener('keyup', this.onKeyUp);
         super.componentWillUnmount();

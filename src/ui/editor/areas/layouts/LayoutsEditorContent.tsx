@@ -264,6 +264,9 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     componentWillUnmount() {
+        if (this.state.renderer) {
+            this.state.renderer.dispose();
+        }
         window.removeEventListener('keydown', this.listener);
         super.componentWillUnmount();
     }
@@ -659,7 +662,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             }, this.saveDebugScope);
             const sceneData = await getScene(scene);
             const sceneMap = await getSceneMap();
-            await saveSceneReplacementModel(sceneMap[scene].index, sceneData.ambience);
+            await saveSceneReplacementModel(sceneMap[scene].sceneryIndex, sceneData.ambience);
         }
         this.setState({ updateProgress: null }, this.saveDebugScope);
     }
@@ -978,7 +981,7 @@ async function findScenesUsingLibrary(library) {
         if (indexInfo.isIsland) {
             return;
         }
-        const gridData = new DataView(bkg.getEntry(indexInfo.index + 1));
+        const gridData = new DataView(bkg.getEntry(indexInfo.sceneryIndex + 1));
         const libIndex = gridData.getUint8(0);
         if (libIndex === library) {
             scenes.push(scene);
