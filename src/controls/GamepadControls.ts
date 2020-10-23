@@ -4,7 +4,6 @@ import { Params } from '../params';
 import { BehaviourMode } from '../game/loop/hero';
 import { resetCameraOrientation } from './keyboard';
 import { ControlsState, ControlActiveType } from '../game/ControlsState';
-// import { resetCameraOrientation } from './keyboard';
 
 const gamepadEventsFound = 'ongamepadconnected' in window;
 
