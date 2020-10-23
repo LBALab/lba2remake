@@ -1333,6 +1333,11 @@
       "file": "GB_021_022_023_024_wall_side_rounded.glb",
       "orientation": 1
     },
+    "29": {
+      "replace": true,
+      "file": "GB_029_lamp.glb",
+      "orientation": 0
+    },
     "32": {
       "mirror": true
     },
@@ -1519,6 +1524,16 @@
       "file": "GB_085_barrel_tap.glb",
       "orientation": 0
     },
+    "86": {
+      "replace": true,
+      "file": "GB_086_087_shelf.glb",
+      "orientation": 0
+    },
+    "87": {
+      "replace": true,
+      "file": "GB_086_087_shelf.glb",
+      "orientation": 3
+    },
     "88": {
       "replace": true,
       "file": "GB_082_088_wall_lamp.glb",
@@ -1555,11 +1570,18 @@
     "96": {
       "mirror": true
     },
+    "97": {
+      "replace": true,
+      "file": "GB_097_jerry_can.glb",
+      "orientation": 0
+    },
     "99": {
       "mirror": true
     },
     "100": {
-      "mirror": false
+      "replace": true,
+      "file": "GB_100_crate.glb",
+      "orientation": 0
     },
     "101": {
       "replace": true,
@@ -1613,7 +1635,9 @@
       "mirror": true
     },
     "134": {
-      "mirror": false
+      "replace": true,
+      "file": "GB_134_crate.glb",
+      "orientation": 0
     },
     "135": {
       "mirror": true
@@ -1671,6 +1695,51 @@
     "172": {
       "replace": true,
       "file": "GB_172_vase.glb",
+      "orientation": 0
+    },
+    "174": {
+      "replace": true,
+      "file": "GB_174_177_shop_counter.glb",
+      "orientation": 0
+    },
+    "175": {
+      "replace": true,
+      "file": "GB_175_shop_counter.glb",
+      "orientation": 0
+    },
+    "176": {
+      "replace": true,
+      "file": "GB_176_shop_counter.glb",
+      "orientation": 0
+    },
+    "177": {
+      "replace": true,
+      "file": "GB_174_177_shop_counter.glb",
+      "orientation": 1
+    },
+    "178": {
+      "replace": true,
+      "file": "GB_178_shop_counter.glb",
+      "orientation": 0
+    },
+    "185": {
+      "replace": true,
+      "file": "GB_185_elephant_doll.glb",
+      "orientation": 0
+    },
+    "186": {
+      "replace": true,
+      "file": "GB_186_bunny_doll.glb",
+      "orientation": 0
+    },
+    "187": {
+      "replace": true,
+      "file": "GB_187_candle.glb",
+      "orientation": 0
+    },
+    "188": {
+      "replace": true,
+      "file": "GB_188_tomatoes.glb",
       "orientation": 0
     },
     "144:1x8x1:1512,1513,1513,1514,1515,1516,1517,1518": {
@@ -1734,6 +1803,36 @@
       "orientation": 2
     },
     "143:1x2x2:1691,1694,1695,1698": {
+      "replace": true,
+      "file": "GB_142_143_ladder_var01.glb",
+      "orientation": 3
+    },
+    "134:2x3x2:0,1655,0,1655,1656,1657,1658,1659,1658,1659,1660,1661": {
+      "replace": true,
+      "file": "GB_134_crate_var03.glb",
+      "orientation": 0
+    },
+    "53:2x3x2:0,1352,0,1353,1354,1355,0,127,0,127,1356,1357": {
+      "replace": true,
+      "file": "GB_053_054_table_straight_var01.glb",
+      "orientation": 0
+    },
+    "53:2x3x2:0,1364,0,1365,1366,1368,1369,1370,1371,1372,1373,1375": {
+      "replace": true,
+      "file": "GB_053_054_table_straight_var01.glb",
+      "orientation": 1
+    },
+    "54:2x3x2:0,1352,0,1353,1354,1355,0,127,0,127,1356,1357": {
+      "replace": true,
+      "file": "GB_053_054_table_straight_var01.glb",
+      "orientation": 0
+    },
+    "143:2x2x1:1683,1684,1689,1690": {
+      "replace": true,
+      "file": "GB_142_143_ladder_var01.glb",
+      "orientation": 2
+    },
+    "142:1x2x2:1691,1694,1695,1698": {
       "replace": true,
       "file": "GB_142_143_ladder_var01.glb",
       "orientation": 3
