@@ -35,7 +35,7 @@ export interface ControlsState {
     vrPointerTransform: THREE.Matrix4;
     vrTriggerButton: boolean;
     vrControllerPositions: THREE.Vector3[];
-    vrControllerVelocities: THREE.Vector3[];
+    vrControllerVelocities: number[];
     skipListener?: Function;
 }
 

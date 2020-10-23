@@ -197,7 +197,7 @@ function firstPersonPunching(game: Game, scene: Scene) {
         const handPositions = game.controlsState.vrControllerPositions;
         for (let i = 0; i < handPositions.length; i += 1) {
             const intersect = ACTOR_BOX.containsPoint(handPositions[i]);
-            const velocity = game.controlsState.vrControllerVelocities[i].length();
+            const velocity = game.controlsState.vrControllerVelocities[i];
             if (intersect && velocity > PUNCH_VELOCITY_THRESHOLD && !punched[a.index][i]) {
                 processHit(scene.actors[0], game.getState().hero.handStrength, game, scene);
                 punched[a.index][i] = true;
