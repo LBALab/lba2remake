@@ -103,6 +103,13 @@ export default class Model extends FrameListener<Props, State> {
         clock.start();
     }
 
+    componentWillUnmount() {
+        if (this.state.renderer) {
+            this.state.renderer.dispose();
+        }
+        super.componentWillUnmount();
+    }
+
     saveDebugScope() {
         DebugData.scope = this.state;
     }

@@ -264,6 +264,9 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     componentWillUnmount() {
+        if (this.state.renderer) {
+            this.state.renderer.dispose();
+        }
         window.removeEventListener('keydown', this.listener);
         super.componentWillUnmount();
     }
