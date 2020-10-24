@@ -37,11 +37,11 @@ export async function saveSceneReplacementModel(entry, ambience) {
     const [palette, bricks, gridMetadata, mask] = await Promise.all([
         getPalette(),
         getBricks(),
-        getGridMetadata(entry + 1),
+        getGridMetadata(entry),
         loadBrickMask()
     ]);
 
-    const grid = await getGrids(entry + 1, { bricks, mask, palette, is3D: true, gridMetadata });
+    const grid = await getGrids(entry, { bricks, mask, palette, is3D: true, gridMetadata });
 
     const metadata = await loadMetadata(entry, grid.library, true);
     const replacements = await initReplacements(entry, metadata, ambience, 0);

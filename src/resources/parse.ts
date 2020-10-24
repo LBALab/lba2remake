@@ -11,7 +11,8 @@ import { parseSceneMapLBA2, parseSceneLBA2 } from './parsers/scene2';
 import { parseSpriteClipInfo, parseSprite, parseSpriteRaw } from './parsers/sprite';
 import { parseBrick } from './parsers/bricks';
 import { parseLibrary } from './parsers/libraries';
-import { parseGrid } from './parsers/grids';
+import { parseGridLBA1 } from './parsers/grids1';
+import { parseGridLBA2 } from './parsers/grids2';
 import { parseAnim } from './parsers/anim';
 
 const NOP = (resource: Resource) => {
@@ -39,8 +40,8 @@ const ResourceTypes = {
     BL1: { type: 'BL1', description: 'LBA1 Layout Library', parser: parseLibrary },
     BL2: { type: 'BL2', description: 'LBA2 Layout Library', parser: parseLibrary },
     BRK: { type: 'BRK', description: 'LBA Brick Sprite', parser: parseBrick },
-    GR1: { type: 'GR1', description: 'LBA1 Grids', parser: parseGrid },
-    GR2: { type: 'GR2', description: 'LBA2 Grids', parser: parseGrid },
+    GR1: { type: 'GR1', description: 'LBA1 Grids', parser: parseGridLBA1 },
+    GR2: { type: 'GR2', description: 'LBA2 Grids', parser: parseGridLBA2 },
     '3DE': { type: '3DE', description: 'LBA1 File 3D Entity', parser: parseEntityLBA1 },
     F3D: { type: 'F3D', description: 'LBA2 Entity Information', parser: parseEntity },
     PAL: { type: 'PAL', description: 'LBA Palette', parser: parsePalette },

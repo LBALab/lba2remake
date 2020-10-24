@@ -40,11 +40,11 @@ export default class IsoScenery {
         const [palette, bricks, gridMetadata, mask] = await Promise.all([
             getPalette(),
             getBricks(),
-            getGridMetadata(sceneryIndex + 1),
+            getGridMetadata(sceneryIndex),
             loadBrickMask()
         ]);
 
-        const grid = await getGrids(sceneryIndex + 1, {
+        const grid = await getGrids(sceneryIndex, {
             bricks,
             mask,
             palette,
