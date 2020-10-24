@@ -77,7 +77,7 @@ async function collectIsoScenes(location, scenes, push = true) {
                 const sceneMap = await getSceneMap();
                 const gridData = new DataView(
                     bkg.getEntry(
-                        sceneMap[newLocation.props[0].value].index + 1
+                        sceneMap[newLocation.props[0].value].sceneryIndex + 1
                     )
                 );
                 const libIndex = gridData.getUint8(0);
