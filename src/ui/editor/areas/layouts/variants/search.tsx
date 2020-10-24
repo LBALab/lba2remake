@@ -14,6 +14,7 @@ import {
 
 import { bits } from '../../../../../utils';
 import { getBricksHQR, getSceneMap } from '../../../../../resources';
+import { loadLayout } from '../../../../../game/scenery/isometric/layouts';
 
 export async function findAllVariants(lDef) {
     const { nX, nY, nZ } = lDef.props;
@@ -256,35 +257,4 @@ function matchesDefaultLayout(variant, layout) {
         }
     }
     return true;
-}
-
-function loadLayout(bkg, layout) {
-    const buffer = bkg.getEntry(179 + layout.library);
-
-    const dataView = new DataView(buffer);
-    const numLayouts = dataView.getUint32(0, true) / 4;
-    const { index } = layout;
-
-    const offset = dataView.getUint32(index * 4, true);
-    const nextOffset = index === numLayouts - 1 ?
-        dataView.byteLength
-        : dataView.getUint32((index + 1) * 4, true);
-
-    const layoutDataView = new DataView(buffer, offset, nextOffset - offset);
-    const nX = layoutDataView.getUint8(0);
-    const nY = layoutDataView.getUint8(1);
-    const nZ = layoutDataView.getUint8(2);
-    const numBricks = nX * nY * nZ;
-    const bricks = [];
-    const lOffset = 3;
-    for (let i = 0; i < numBricks; i += 1) {
-        bricks.push(layoutDataView.getUint16(lOffset + (i * 4) + 2, true));
-    }
-    return {
-        index,
-        nX,
-        nY,
-        nZ,
-        bricks
-    };
 }

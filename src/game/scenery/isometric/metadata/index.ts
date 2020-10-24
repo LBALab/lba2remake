@@ -10,7 +10,6 @@ import { saveFullSceneModel } from './models';
 import { getGridMetadata } from '../grid';
 import { getPalette, getGrids, getBricks } from '../../../../resources';
 import { checkVariantMatch } from './matchers/variants';
-import { checkBaseLayoutMatch } from './matchers/baseLayout';
 import { loadBrickMask } from '../mask';
 
 export async function extractGridMetadata(grid, entry, ambience, is3D, numActors) {
@@ -58,10 +57,7 @@ function computeReplacements({ grid, metadata, replacements, mirrorGroups = null
         });
     });
     forEachCell(grid, metadata, (cellInfo) => {
-        const { replace, mirror, suppress } = cellInfo;
-        if (replace) {
-            checkBaseLayout(grid, cellInfo, replacements);
-        }
+        const { mirror, suppress } = cellInfo;
 
         if (apply) {
             if (mirror) {
@@ -85,25 +81,6 @@ function checkVariant(grid, cellInfo, replacements, variant) {
                 parent: cellInfo
             }
         });
-    }
-}
-
-function checkBaseLayout(grid, cellInfo, replacements) {
-    const {y} = cellInfo.pos;
-    const {nX, nY, nZ} = cellInfo.layout;
-    const idx = cellInfo.blocks[y].block;
-    const zb = Math.floor(idx / (nY * nX));
-    const yb = Math.floor(idx / nX) - (zb * nY);
-    const xb = idx % nX;
-    // Check brick at the bottom corner of layout
-    if (yb === 0 && xb === nX - 1 && zb === nZ - 1) {
-        if (checkBaseLayoutMatch(grid, cellInfo, replacements)) {
-            applyReplacement(cellInfo, replacements, {
-                type: 'layout',
-                data: cellInfo.layout,
-                replacementData: cellInfo
-            });
-        }
     }
 }
 
