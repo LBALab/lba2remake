@@ -27,10 +27,7 @@ export async function getGridMetadata(entry) {
         const metadataReq = await fetch('/metadata/grids.json');
         globalGridMetadata = await metadataReq.json();
     }
-    // [entry - 1] is the scene index.
-    // It's easier for humans to deal with scene numbers than grid entry
-    // numbers when manually editing the grids.json file.
-    return globalGridMetadata[entry - 1];
+    return globalGridMetadata[entry];
 }
 
 const libraries = [];

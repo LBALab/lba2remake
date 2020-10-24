@@ -7,7 +7,7 @@ import { loadLibrary } from '../../game/scenery/isometric/grid';
 const parseGrid = async (resource, index, param) => {
     // this dependency shouldn't be here
     const { bricks, mask, palette, is3D, gridMetadata } = param;
-    const gridData = new DataView(resource.getEntry(index));
+    const gridData = new DataView(resource.getEntry(index + 1)); // scene index plus 1
     const libIndex = gridData.getUint8(0);
     const library = await loadLibrary(bricks, mask, palette, libIndex);
     const maxOffset = 34 + (4096 * 2);
