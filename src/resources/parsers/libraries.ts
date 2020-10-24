@@ -17,7 +17,7 @@ const parseLibrary = (resource: Resource, index: number) => {
     return layouts;
 };
 
-const parseLayout = (dataView, index) => {
+const parseLayout = (dataView: DataView, index: number) => {
     const nX = dataView.getUint8(0);
     const nY = dataView.getUint8(1);
     const nZ = dataView.getUint8(2);

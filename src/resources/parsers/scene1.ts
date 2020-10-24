@@ -10,7 +10,7 @@ export const parseSceneMapLBA1 = () => {
     for (let i = 0; i < 120; i += 1) {
         map.push({
             isIsland: false,
-            index: i,
+            sceneryIndex: i,
         });
     }
     return map;
