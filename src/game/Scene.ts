@@ -25,7 +25,7 @@ import { SceneManager } from './SceneManager';
 import { createSceneVariables, findUsedVarGames } from './scene/variables';
 import Island from './scenery/island/Island';
 
-interface SceneProps {
+export interface SceneProps {
     index: number;
     isIsland: boolean;
     palette: Uint8Array;
