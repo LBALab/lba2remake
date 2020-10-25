@@ -1,7 +1,7 @@
 import { map, filter, take, drop, each, sortBy } from 'lodash';
 import DebugData, { getVarName, getObjectName } from '../../../../../../DebugData';
 import LocationsNode from '../../../../locator/LocationsNode';
-import { DirMode } from '../../../../../../../../game/Actor';
+import { ActorDirMode } from '../../../../../../../../game/Actor';
 
 function getActor(field) {
     const block = field.getSourceBlock();
@@ -263,7 +263,7 @@ export function generateScenes() {
 }
 
 const dirModes = map(
-    DirMode,
+    ActorDirMode,
     (idx, name) => ([name, `${idx}`])
 );
 

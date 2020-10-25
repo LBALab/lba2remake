@@ -113,7 +113,7 @@ interface NewActorDetails {
     };
 }
 
-export const DirMode = {
+export const ActorDirMode = {
     NO_MOVE: 0,
     MANUAL: 1,
     FOLLOW: 2,
@@ -509,7 +509,7 @@ export function createNewActorProps(
             isSprite: false,
             noShadow: false
         },
-        dirMode: DirMode.NO_MOVE,
+        dirMode: ActorDirMode.NO_MOVE,
         angle: 0,
         speed: 35,
         spriteIndex: 0,

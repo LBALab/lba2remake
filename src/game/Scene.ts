@@ -6,7 +6,7 @@ import {
 } from 'lodash';
 
 import islandSceneMapping from './scenery/island/data/sceneMapping';
-import Actor, { DirMode } from './Actor';
+import Actor, { ActorDirMode } from './Actor';
 import { loadPoint } from './points';
 import { loadZone } from './zones';
 import { loadScripts } from '../scripting';
@@ -314,7 +314,7 @@ export default class Scene {
         newHero.props.animIndex = hero.props.animIndex;
 
         if (teleport) {
-            newHero.props.dirMode = DirMode.MANUAL;
+            newHero.props.dirMode = ActorDirMode.MANUAL;
 
             const {pos, angle} = newHero.props;
             const position = new THREE.Vector3(pos[0], pos[1], pos[2]);
