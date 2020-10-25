@@ -26,7 +26,7 @@ window.onerror = (message, file, line, column, data) => {
 
 window.addEventListener('unhandledrejection', (event) => {
     const data = event.reason;
-    const message = data && data.message;
+    const message = (data && data.message) || data;
     const stack = data && data.stack;
     init({
         message: `Unhandled promise rejection: ${message}`,
