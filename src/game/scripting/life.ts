@@ -685,3 +685,61 @@ export function NEW_SAMPLE(this: ScriptContext, index, _, volume, frequency) {
 export const POS_OBJ_AROUND = unimplemented();
 
 export const PCX_MESS_OBJ = unimplemented();
+
+export const LABEL = unimplemented();
+
+export const ZOOM = unimplemented();
+
+export function BIG_MESSAGE(this: ScriptContext, cmdState, id) {
+    MESSAGE_OBJ.call(this, cmdState, this.actor, id);
+}
+
+export const INIT_PINGOUIN = unimplemented();
+
+export function SAY_MESSAGE(this: ScriptContext, cmdState, id) {
+    MESSAGE_OBJ.call(this, cmdState, this.actor, id);
+}
+
+export function SAY_MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
+    MESSAGE_OBJ.call(this, cmdState, actor, id);
+}
+
+export const GRM_OFF = unimplemented();
+
+export const FADE_PAL_RED = unimplemented();
+
+export const FADE_ALARM_RED = unimplemented();
+
+export const FADE_ALARM_PAL = unimplemented();
+
+export const FADE_RED_PAL = unimplemented();
+
+export const FADE_RED_ALARM = unimplemented();
+
+export const FADE_PAL_ALARM = unimplemented();
+
+export const EXPLODE_OBJ = unimplemented();
+
+export const BUBBLE_ON = unimplemented();
+
+export const BUBBLE_OFF = unimplemented();
+
+export const SET_DARK_PAL = unimplemented();
+
+export const SET_NORMAL_PAL = unimplemented();
+
+export const MESSAGE_SENDELL = unimplemented();
+
+export const HOLOMAP_TRAJ = unimplemented();
+
+export const MIDI_OFF = unimplemented();
+
+export const PROJ_ISO = unimplemented();
+
+export const PROJ_3D = unimplemented();
+
+export function TEXT(this: ScriptContext, cmdState, id) {
+    MESSAGE_OBJ.call(this, cmdState, this.actor, id);
+}
+
+export const CLEAR_TEXT = unimplemented();

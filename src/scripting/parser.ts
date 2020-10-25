@@ -1,8 +1,12 @@
 import { last, mapKeys } from 'lodash';
-import { LifeOpcode } from '../game/scripting/data/life';
-import { MoveOpcode } from '../game/scripting/data/move';
-import { ConditionOpcode } from '../game/scripting/data/condition';
+import { LifeOpcode as LifeOpcodeLBA1 } from '../game/scripting/data/lba1/life';
+import { MoveOpcode as MoveOpcodeLBA1 } from '../game/scripting/data/lba1/move';
+import { LifeOpcode as LifeOpcodeLBA2 } from '../game/scripting/data/lba2/life';
+import { MoveOpcode as MoveOpcodeLBA2 } from '../game/scripting/data/lba2/move';
+import { ConditionOpcode as ConditionOpcodeLBA1 } from '../game/scripting/data/lba1/condition';
+import { ConditionOpcode as ConditionOpcodeLBA2 } from '../game/scripting/data/lba2/condition';
 import { OperatorOpcode } from '../game/scripting/data/operator';
+import { getParams } from '../params';
 
 const TypeSize = {
     Int8: 1,
@@ -11,6 +15,42 @@ const TypeSize = {
     Uint16: 2,
     Int32: 4,
     Uint32: 4,
+};
+
+export const getLifeOpcodeTable: any = () => {
+    const { game } = getParams();
+    if (game === 'lba1') {
+        return LifeOpcodeLBA1;
+    }
+    return LifeOpcodeLBA2;
+};
+
+export const getMoveOpcodeTable: any = () => {
+    const { game } = getParams();
+    if (game === 'lba1') {
+        return MoveOpcodeLBA1;
+    }
+    return MoveOpcodeLBA2;
+};
+
+export const getConditionOpcodeTable: any = () => {
+    const { game } = getParams();
+    if (game === 'lba1') {
+        return ConditionOpcodeLBA1;
+    }
+    return ConditionOpcodeLBA2;
+};
+
+export const getLifeOpcode = (code: number) => {
+    return getLifeOpcodeTable()[code];
+};
+
+export const getMoveOpcode = (code: number) => {
+    return getMoveOpcodeTable()[code];
+};
+
+export const getConditionOpcode: any = (code: number) => {
+    return getConditionOpcodeTable()[code];
 };
 
 export function parseScript(actor: number, type: 'life' | 'move', script: DataView) {
@@ -33,7 +73,7 @@ export function parseScript(actor: number, type: 'life' | 'move', script: DataVi
         checkEndIf(state);
         state.opMap[state.offset] = state.commands.length;
         const code = script.getUint8(state.offset);
-        const op = type === 'life' ? LifeOpcode[code] : MoveOpcode[code];
+        const op = type === 'life' ? getLifeOpcode(code) : getMoveOpcode(code);
         checkEndSwitch(state, code);
         checkNewComportment(state, code);
         try {
@@ -56,7 +96,7 @@ export function parseScript(actor: number, type: 'life' | 'move', script: DataVi
 
 function checkEndIf(state) {
     while (state.ifStack.length > 0 && state.offset === last(state.ifStack)) {
-        state.commands.push({ op: LifeOpcode[0x10] });
+        state.commands.push({ op: getLifeOpcode(0x10) });
         state.ifStack.pop();
     }
 }
@@ -65,7 +105,7 @@ function checkEndSwitch(state, code) {
     while (code !== 0x76 && code !== 0x72 && code !== 0x73 && code !== 0x74
             && state.switchStack.length > 0
             && state.offset === last(state.switchStack)) {
-        state.commands.push({ op: LifeOpcode[0x76] });
+        state.commands.push({ op: getLifeOpcode(0x76) });
         state.switchStack.pop();
     }
 }
@@ -75,7 +115,7 @@ function checkNewComportment(state, code) {
         state.comportement += 1;
         state.comportementMap[state.offset] = state.comportement;
         state.commands.push({
-            op: LifeOpcode[0x20], // BEHAVIOUR
+            op: getLifeOpcode(0x20), // BEHAVIOUR
             args: [{hide: false, value: state.comportement, type: 'label'}],
         });
         state.newComportement = false;
@@ -130,7 +170,7 @@ function parseCondition(state, script, op, cmd) {
     let condition;
     if (op.condition) {
         const code = script.getUint8(state.offset);
-        condition = ConditionOpcode[code];
+        condition = getConditionOpcode(code);
         cmd.condition = {
             op: condition,
             operandType: getLbaType(condition.operand)

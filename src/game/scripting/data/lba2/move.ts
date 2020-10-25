@@ -1,6 +1,6 @@
-import * as mv from '../move';
-import * as cm from '../common';
-import * as st from '../structural';
+import * as mv from '../../move';
+import * as cm from '../../common';
+import * as st from '../../structural';
 
 export const MoveOpcode = [
     {
@@ -182,7 +182,7 @@ export const MoveOpcode = [
     {
         opcode: 0x1E,
         command: 'PLAY_VIDEO',
-        handler: mv.PLAY_ACF
+        handler: mv.PLAY_VIDEO
     },
     {
         opcode: 0x1F,

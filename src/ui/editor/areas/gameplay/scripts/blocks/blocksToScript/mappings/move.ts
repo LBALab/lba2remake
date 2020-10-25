@@ -1,4 +1,4 @@
-import { MoveOpcode } from '../../../../../../../../game/scripting/data/move';
+import { getMoveOpcode } from '../../../../../../../../scripting/parser';
 
 function rootBlockContentHandler(block, emit, ctx) {
     if (!ctx.inRootTrack) {
@@ -9,7 +9,7 @@ function rootBlockContentHandler(block, emit, ctx) {
             next = next.nextConnection.targetBlock();
         }
         ctx.commands.push({
-            op: MoveOpcode[0x0B] // STOP
+            op: getMoveOpcode(0x0B) // STOP
         });
         ctx.inRootTrack = false;
     }

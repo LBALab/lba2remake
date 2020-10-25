@@ -241,7 +241,7 @@ export function mapDataName(scene, data) {
     if (!data) {
         return null;
     }
-    if (data.type === 'text') {
+    if (data.type === 'text' && data.text) {
         const ellipsis = data.text.length > 50 ? '_[...]' : '';
         return ['`', data.text.substring(0, 50), ellipsis, '`'].join('');
     }

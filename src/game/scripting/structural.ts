@@ -16,6 +16,10 @@ export function NEVERIF(this: ScriptContext) {
     // Should never be called -- original game internal use only
 }
 
+export function NOIF(this: ScriptContext) {
+    // Should never be called -- original game internal use only
+}
+
 export function SWIF(this: ScriptContext, cmdState, condition, operator, offset) {
     const status = operator(condition());
     if (!(status && !cmdState.status)) {

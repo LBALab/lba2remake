@@ -1,6 +1,7 @@
 import {planet, island, section, iso} from './functions';
+import { getParams } from '../../../../../../params';
 
-const Twinsun = planet('Twinsun', 'twinsun', [
+const TwinsunLBA2 = planet('Twinsun', 'twinsun', [
     island(-1, 'Citadel island', 'CITABAU', [
         section(49, 'Twinsen\'s House Area', [
             iso(0, 'Twinsen\'s House', [
@@ -128,4 +129,169 @@ const Twinsun = planet('Twinsun', 'twinsun', [
     ])
 ]);
 
-export default Twinsun;
+const TwinsunLBA1 = planet('Twinsun', 'twinsun', [
+    island(-1, 'Citadel island', '', [
+        section(1, 'Outside the Citadel', [
+            iso(0, 'Prison'),
+            iso(16, 'Rabbibunny House'),
+        ]),
+        section(2, 'Lupin-Bourg', [
+            iso(14, 'Chez Luc', [
+                iso(33, 'Cellar'),
+            ]),
+            iso(117, 'End Sequence (2)'),
+        ]),
+        section(3, 'Lupin-Bourg (statue)', [
+            iso(7, 'Pharmacy'),
+            iso(34, 'Sewer'),
+            iso(55, 'Sewer (secret)'),
+            iso(116, 'End Sequence (1)'),
+        ]),
+        section(6, 'Harbor', [
+            iso(35, 'Warehouse'),
+            iso(104, 'Ticket Office'),
+        ]),
+        section(4, 'Twinsen\'s House Area', [
+            iso(5, 'Twinsen\'s House', [
+                iso(21, 'Secret Chamber'),
+            ]),
+            iso(118, 'Twinsen\'s House Destroyed'),
+            iso(20, 'Architects House')
+        ]),
+    ]),
+    island(-1, 'Desert island', '', [
+        section(39, 'Militairy Camp', [
+            iso(8, 'Temple of Bú (1)'),
+        ]),
+        section(36, 'Outside the Temple of Bú', [
+            iso(57, 'Maze'),
+            iso(8, 'Temple of Bú (1)'),
+            iso(40, 'Temple of Bú (2)'),
+            iso(41, 'Temple of Bú (3)'),
+        ]),
+    ]),
+    island(-1, 'Hamalayi Mountains', '', [
+        section(9, 'Landing Place', [
+            iso(15, 'Rabbibunny Village'),
+            iso(62, '1st Fighting'),
+            iso(63, '2nd Fighting'),
+            iso(64, 'Prison'),
+            iso(65, 'Outside the Transporter'),
+            iso(66, 'Inside the Transporter'),
+            iso(67, 'Mutation Centre (1)'),
+            iso(68, 'Mutation Centre (2)'),
+            iso(69, '3rd Fighting'),
+            iso(70, 'Entrance to the Prison'),
+            iso(71, 'Outside the Prison'),
+            iso(72, 'Catamaran Dock'),
+            iso(73, 'Bunker near Clear Water'),
+            iso(81, 'Sacret Carrot'),
+            iso(82, 'Backdoor of the Prison'),
+            iso(91, 'Behind the Sacret Carrot'),
+            iso(92, 'Clear Water Lake'),
+            iso(96, 'Ski Resort'),
+        ]),
+    ]),
+    island(-1, 'Principal Island', '', [
+        section(12, 'Outside the Fortress', [
+            iso(105, 'Inside the Fortress'),
+            iso(10, 'Library'),
+            iso(11, 'Harbor'),
+            iso(13, 'Old Burg'),
+            iso(17, 'Ruins'),
+            iso(18, 'Outside the Library'),
+            iso(19, 'Militairy Camp'),
+            iso(22, 'Ticket Office'),
+            iso(23, 'Prison'),
+            iso(24, 'Port Belooga'),
+            iso(25, 'Peg Leg Street'),
+            iso(26, 'Shop'),
+            iso(27, 'Locksmith'),
+            iso(28, 'Inside a Rabbibunny House'),
+            iso(29, 'Astronimers House'),
+            iso(30, 'Tavern'),
+            iso(31, 'Basement of the Astronomer'),
+            iso(32, 'Stables'),
+            iso(37, 'Outside the Water Tower'),
+            iso(38, 'Inside the Water Tower'),
+            iso(52, 'house at Peg Leg Street'),
+            iso(56, 'Sewer (secret)'),
+            iso(58, 'House with the TV'),
+            iso(102, 'House in Port Belooga'),
+            iso(61, 'Some room (cut-out ?)'),
+        ]),
+    ]),
+    island(-1, 'Proxima Island', '', [
+        section(42, 'Proxim City', [
+            iso(43, 'Museum'),
+            iso(44, 'Near the Inventors House'),
+            iso(45, 'Upper Rune Stone'),
+            iso(46, 'Lower Rune Stone'),
+            iso(47, 'Before the Upper Rune Stone'),
+            iso(48, 'Forgers House'),
+            iso(49, 'Prison'),
+            iso(50, 'Shop'),
+            iso(51, 'Sewer'),
+            iso(53, 'Grobo House'),
+            iso(54, 'Inventors House'),
+        ]),
+    ]),
+    island(-1, 'Rebellion Island', '', [
+        section(59, 'Harbor', [
+            iso(60, 'Rebel Camp'),
+        ]),
+    ]),
+    island(-1, 'Tippet Island', '', [
+        section(74, 'Village', [
+            iso(75, 'Secret Passage (2)'),
+            iso(76, 'near the bar'),
+            iso(77, 'Secret Passage (1)'),
+            iso(78, 'near the Dino-Fly'),
+            iso(79, 'Secret Passage (3)'),
+            iso(80, 'Twinsun Cafe'),
+            iso(101, 'Shop'),
+        ]),
+    ]),
+    island(-1, 'Fortress Island', '', [
+        section(84, 'Outside the Forstress', [
+            iso(83, 'Inside the Forstress'),
+            iso(85, 'Secret Passage Scene'),
+            iso(86, 'Secret in the Fortress'),
+            iso(87, 'Near Zoe\'s Cell'),
+            iso(88, 'Swimming Pool'),
+            iso(89, 'Cloning Centre'),
+            iso(90, 'Rune Stone'),
+            iso(93, 'Outside Fortress Destroyed'),
+            iso(100, 'Docks'),
+        ]),
+    ]),
+    island(-1, 'Brundle Island', '', [
+        section(94, 'Outside the Teleportation', [
+            iso(95, 'Inside the Teleportation'),
+            iso(97, 'Docks'),
+            iso(98, 'Secret Room'),
+            iso(99, 'Near the Telepods'),
+            iso(103, 'Painters House'),
+        ]),
+    ]),
+    island(-1, 'Pollar Island', '', [
+        section(115, '1st Scene', [
+            iso(106, '2nd Scene'),
+            iso(107, '3rd Scene'),
+            iso(108, 'Before the Rocky Peak'),
+            iso(109, '4th Scene'),
+            iso(110, 'The Rocky Peak'),
+            iso(111, 'On the Rocky Peak'),
+            iso(112, 'Before the End Room'),
+            iso(113, 'Final Battle'),
+            iso(114, 'End Scene'),
+        ]),
+    ]),
+    island(-1, 'Credits', '', [
+        section(119, 'Credits List Sequence'),
+    ]),
+]);
+
+const { game } = getParams();
+
+export default game === 'lba1' ? TwinsunLBA1 : TwinsunLBA2;

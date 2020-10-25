@@ -1,13 +1,12 @@
 import { map, filter, each, sortBy, invert, mapValues, findKey } from 'lodash';
 // import jDiff from 'jest-diff';
-import { LifeOpcode } from '../../../../../../../game/scripting/data/life';
-import { MoveOpcode } from '../../../../../../../game/scripting/data/move';
 import lifeMappings from './mappings/life';
 import moveMappings from './mappings/move';
 import { compileScripts } from '../../../../../../../scripting/compiler';
 import DebugData from '../../../../../DebugData';
 import { mapValue } from './mappings/utils';
 import { DirMode } from '../../../../../../../game/Actor';
+import { getLifeOpcode, getMoveOpcode } from '../../../../../../../scripting/parser';
 
 const lifeRootTypes = ['lba_behaviour', 'lba_behaviour_init'];
 const moveRootTypes = ['lba_move_track', 'lba_move_replace'];
@@ -70,8 +69,8 @@ function compileBlocks(blocks, type) {
     each(blocks, block => compileBlock(block, type, ctx));
     ctx.commands.push({
         op: type === 'life'
-            ? LifeOpcode[0]
-            : MoveOpcode[0]
+            ? getLifeOpcode(0)
+            : getMoveOpcode(0)
     });
     return {
         type,
@@ -92,8 +91,8 @@ function compileBlock(block, type, ctx) {
     const info = typeof(mapper) === 'function' ? mapper(block) : mapper;
     if (info) {
         const op = type === 'life'
-            ? LifeOpcode[info.code]
-            : MoveOpcode[info.code];
+            ? getLifeOpcode(info.code)
+            : getMoveOpcode(info.code);
         const cmd: Cmd = { op };
         const args = mapArgs(block, op, info.args);
         if (args) {
@@ -113,8 +112,8 @@ function compileBlock(block, type, ctx) {
             }
             if ('closeCode' in info) {
                 const closeOp = type === 'life'
-                    ? LifeOpcode[info.closeCode]
-                    : MoveOpcode[info.closeCode];
+                    ? getLifeOpcode(info.closeCode)
+                    : getMoveOpcode(info.closeCode);
                 ctx.commands.push({
                     op: closeOp
                 });
