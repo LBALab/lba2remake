@@ -39,6 +39,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
     controls?: [any];
     wrapperElem: HTMLDivElement;
     vrScene?: any;
+    private stopped = false;
 
     constructor(props) {
         super(props);
@@ -76,6 +77,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
     }
 
     componentWillUnmount() {
+        this.stopped = true;
         this.game.dispose();
         this.renderer.dispose();
         if (this.controls) {
@@ -93,7 +95,9 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
     }
 
     setUiState(state, callback) {
-        this.setState(state, callback);
+        if (!this.stopped) {
+            this.setState(state, callback);
+        }
     }
 
     @pure()
