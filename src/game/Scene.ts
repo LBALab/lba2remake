@@ -49,8 +49,6 @@ export default class Scene {
     isSideScene: boolean;
     zoneState: {
         skipListener?: Function;
-        currentChar?: number;
-        startTime?: number;
         ended: boolean;
     };
     vr: boolean;

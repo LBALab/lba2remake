@@ -332,7 +332,6 @@ function TEXT(game: Game, scene: Scene, zone, hero: Actor) {
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
             hero.props.animIndex = AnimType.TALK;
-            scene.zoneState.currentChar = 0;
 
             const text = scene.data.texts[zone.props.snap];
             game.setUiState({
@@ -367,9 +366,6 @@ function TEXT(game: Game, scene: Scene, zone, hero: Actor) {
         game.controlsState.skipListener = null;
         delete scene.zoneState.skipListener;
         delete scene.zoneState.ended;
-        if (scene.zoneState.startTime) {
-            delete scene.zoneState.startTime;
-        }
     }
     return false;
 }
