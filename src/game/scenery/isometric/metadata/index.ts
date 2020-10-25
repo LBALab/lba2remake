@@ -7,7 +7,7 @@ import {
 import { processLayoutMirror, buildMirrors } from './mirrors';
 import { saveFullSceneModel } from './models';
 import { getGridMetadata } from '../grid';
-import { getPalette, getGrids, getBricks } from '../../../../resources';
+import { getPalette, getGrid, getBricks } from '../../../../resources';
 import { checkVariantMatch } from './matchers/variants';
 import { loadBrickMask } from '../mask';
 
@@ -39,7 +39,7 @@ export async function saveSceneReplacementModel(entry, ambience) {
         loadBrickMask()
     ]);
 
-    const grid = await getGrids(entry, { bricks, mask, palette, is3D: true, gridMetadata });
+    const grid = await getGrid(entry, { bricks, mask, palette, is3D: true, gridMetadata });
 
     const metadata = await loadMetadata(entry, grid.library, true);
     const replacements = await initReplacements(entry, metadata, ambience, 0);

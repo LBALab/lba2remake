@@ -106,7 +106,7 @@ const getBricks = async () => {
     return await Promise.all(entriesPromise);
 };
 
-const getGrids = async (index: number, params: any) => {
+const getGrid = async (index: number, params: any) => {
     return await loadResource(ResourceName.GRIDS, index, params);
 };
 
@@ -182,7 +182,7 @@ export {
     getModelsTexture,
     getBricks,
     getBricksHQR,
-    getGrids,
+    getGrid,
     getLibraries,
     getIsland,
     getIslandObjects,
