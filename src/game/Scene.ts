@@ -46,6 +46,7 @@ export default class Scene {
     sideScenes: Map<number, Scene>;
     extras: any[];
     isActive: boolean;
+    isSideScene: boolean;
     zoneState: {
         skipListener?: Function;
         currentChar?: number;
@@ -62,12 +63,11 @@ export default class Scene {
         index: number,
         parent: Scene = null
     ): Promise<Scene> {
-        const isSideScene = !!parent;
         const data = await getScene(index);
         if (getParams().editor) {
             await loadSceneMetaData(index);
         }
-        const scenery = isSideScene ? parent.scenery : await loadScenery(game, data);
+        const scenery = !!parent ? parent.scenery : await loadScenery(game, data);
         const scene: Scene = new Scene(
             game,
             renderer,
@@ -76,10 +76,10 @@ export default class Scene {
             scenery,
             parent
         );
-        await scene.loadObjects(!!parent);
+        await scene.loadObjects();
 
         if (data.isIsland) {
-            if (isSideScene) {
+            if (!!parent) {
                 killActor(scene.actors[0]);
             } else {
                 await scene.loadSideScenes();
@@ -107,6 +107,7 @@ export default class Scene {
         this.zoneState = { skipListener: null, ended: false };
         this.vr = renderer.vr;
         this.is3DCam = data.isIsland || renderer.vr || params.iso3d;
+        this.isSideScene = !!parent;
         this.savedState = null;
         this.sceneManager = sceneManager;
         this.actors = [];
@@ -138,17 +139,13 @@ export default class Scene {
         this.initSceneNode();
     }
 
-    async loadObjects(isSideScene) {
+    async loadObjects() {
         const actors = await Promise.all<Actor>(
             this.data.actors.map(
                 actor => Actor.load(
                     this.game,
                     this,
-                    actor,
-                    {
-                        has3DCam: this.is3DCam,
-                        isSideScene
-                    }
+                    actor
                 )
             )
         );
