@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { getGridMetadata } from './grid';
 import IsoSceneryPhysics from './IsoSceneryPhysics';
 import { WORLD_SIZE, DOME_ENTRIES } from '../../../utils/lba';
-import { getPalette, getGrids, getBricks } from '../../../resources';
+import { getPalette, getGrid, getBricks } from '../../../resources';
 import { loadDomeEnv } from './misc/dome_env';
 import { getParams } from '../../../params';
 import Game from '../../Game';
@@ -44,7 +44,7 @@ export default class IsoScenery {
             loadBrickMask()
         ]);
 
-        const grid = await getGrids(sceneryIndex, {
+        const grid = await getGrid(sceneryIndex, {
             bricks,
             mask,
             palette,

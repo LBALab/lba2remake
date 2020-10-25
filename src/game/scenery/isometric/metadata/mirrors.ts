@@ -1,11 +1,10 @@
 import { find, each } from 'lodash';
 
-export function processLayoutMirror(cellInfo, mirrorGroups) {
-    const { layout, pos: {x, y, z} } = cellInfo;
-    let groups = mirrorGroups[layout.index];
+export function processLayoutMirror(layout, x, y, z, mirrorGroups) {
+    let groups = mirrorGroups[layout];
     if (!groups) {
         groups = [];
-        mirrorGroups[layout.index] = groups;
+        mirrorGroups[layout] = groups;
     }
     const fg = find(groups, (g) => {
         for (let dz = -1; dz <= 0; dz += 1) {

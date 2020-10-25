@@ -1,7 +1,10 @@
 import { map } from 'lodash';
 import { loadModel } from './models';
+import { getBricksHQR } from '../../../../resources';
+import { loadLayout } from '../layouts';
 
 export async function loadMetadata(entry, library, mergeReplacements = false) {
+    const bkg = await getBricksHQR();
     const layoutsReq = await fetch('/metadata/layouts.json');
     const layoutsMetadata = await layoutsReq.json();
     const isoScenesReq = await fetch('/metadata/iso_scenes.json');
@@ -50,6 +53,22 @@ export async function loadMetadata(entry, library, mergeReplacements = false) {
                     ...info
                 });
             } else {
+                const layoutInfo = loadLayout(bkg, {
+                    library: library.index,
+                    index: Number(key)
+                });
+                if (info.replace) {
+                    variants.push({
+                        props: {
+                            nX: layoutInfo.nX,
+                            nY: layoutInfo.nY,
+                            nZ: layoutInfo.nZ,
+                            layout: Number(key),
+                            blocks: layoutInfo.bricks
+                        },
+                        ...info
+                    });
+                }
                 Object.assign(layouts[key], info);
             }
         }

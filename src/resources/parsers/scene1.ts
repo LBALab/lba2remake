@@ -11,6 +11,7 @@ export const parseSceneMapLBA1 = () => {
         map.push({
             isIsland: false,
             sceneryIndex: i,
+            libraryIndex: i
         });
     }
     return map;

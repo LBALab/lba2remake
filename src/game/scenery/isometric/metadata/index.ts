@@ -1,4 +1,3 @@
-import { each } from 'lodash';
 import { loadMetadata } from './metadata';
 import {
     initReplacements,
@@ -8,9 +7,8 @@ import {
 import { processLayoutMirror, buildMirrors } from './mirrors';
 import { saveFullSceneModel } from './models';
 import { getGridMetadata } from '../grid';
-import { getPalette, getGrids, getBricks } from '../../../../resources';
+import { getPalette, getGrid, getBricks } from '../../../../resources';
 import { checkVariantMatch } from './matchers/variants';
-import { checkBaseLayoutMatch } from './matchers/baseLayout';
 import { loadBrickMask } from '../mask';
 
 export async function extractGridMetadata(grid, entry, ambience, is3D, numActors) {
@@ -41,7 +39,7 @@ export async function saveSceneReplacementModel(entry, ambience) {
         loadBrickMask()
     ]);
 
-    const grid = await getGrids(entry, { bricks, mask, palette, is3D: true, gridMetadata });
+    const grid = await getGrid(entry, { bricks, mask, palette, is3D: true, gridMetadata });
 
     const metadata = await loadMetadata(entry, grid.library, true);
     const replacements = await initReplacements(entry, metadata, ambience, 0);
@@ -52,77 +50,52 @@ export async function saveSceneReplacementModel(entry, ambience) {
 }
 
 function computeReplacements({ grid, metadata, replacements, mirrorGroups = null, apply = false }) {
-    each(metadata.variants, (variant) => {
-        forEachCell(grid, metadata, (cellInfo) => {
-            checkVariant(grid, cellInfo, replacements, variant);
+    for (const variant of metadata.variants) {
+        forEachCell(grid, metadata, (_layoutInfo, _layout, x, y, z, blocks) => {
+            checkVariant(grid, x, y, z, replacements, variant, blocks);
         });
-    });
-    forEachCell(grid, metadata, (cellInfo) => {
-        const { replace, mirror, suppress } = cellInfo;
-        if (replace) {
-            checkBaseLayout(grid, cellInfo, replacements);
-        }
+    }
+    forEachCell(grid, metadata, (layoutInfo, layout, x, y, z) => {
+        const { mirror, suppress } = layoutInfo;
 
         if (apply) {
             if (mirror) {
-                processLayoutMirror(cellInfo, mirrorGroups);
+                processLayoutMirror(layout, x, y, z, mirrorGroups);
             }
             if (suppress) {
-                const { x, y, z } = cellInfo.pos;
                 replacements.bricks.add(`${x},${y},${z}`);
             }
         }
     });
 }
 
-function checkVariant(grid, cellInfo, replacements, variant) {
-    if (checkVariantMatch(grid, cellInfo, variant.props, replacements)) {
-        applyReplacement(cellInfo, replacements, {
+function checkVariant(grid, xStart, yStart, zStart, replacements, variant, blocks) {
+    if (checkVariantMatch(grid, xStart, yStart, zStart, variant.props, replacements)) {
+        applyReplacement(xStart, yStart, zStart, replacements, {
             type: 'variant',
             data: variant.props,
             replacementData: {
-                ...variant,
-                parent: cellInfo
+                blocks,
+                ...variant
             }
         });
     }
 }
 
-function checkBaseLayout(grid, cellInfo, replacements) {
-    const {y} = cellInfo.pos;
-    const {nX, nY, nZ} = cellInfo.layout;
-    const idx = cellInfo.blocks[y].block;
-    const zb = Math.floor(idx / (nY * nX));
-    const yb = Math.floor(idx / nX) - (zb * nY);
-    const xb = idx % nX;
-    // Check brick at the bottom corner of layout
-    if (yb === 0 && xb === nX - 1 && zb === nZ - 1) {
-        if (checkBaseLayoutMatch(grid, cellInfo, replacements)) {
-            applyReplacement(cellInfo, replacements, {
-                type: 'layout',
-                data: cellInfo.layout,
-                replacementData: cellInfo
-            });
-        }
-    }
-}
-
 function forEachCell(grid, metadata, handler) {
     let c = 0;
+    const { layouts } = grid.library;
+    const mdLayouts = metadata.layouts;
     for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
             const cell = grid.cells[c];
             const blocks = cell.blocks;
             for (let y = 0; y < blocks.length; y += 1) {
-                if (blocks[y]) {
-                    const layout = grid.library.layouts[blocks[y].layout];
-                    if (layout && layout.index in metadata.layouts) {
-                        handler({
-                            ...metadata.layouts[layout.index],
-                            layout,
-                            pos: {x, y, z},
-                            blocks
-                        });
+                const bly = blocks[y];
+                if (bly) {
+                    const layout = layouts[bly.layout];
+                    if (layout && layout.index in mdLayouts) {
+                        handler(mdLayouts[layout.index], layout.index, x, y, z, blocks);
                     }
                 }
             }

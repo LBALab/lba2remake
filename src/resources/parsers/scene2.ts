@@ -18,9 +18,13 @@ export const parseSceneMapLBA2 = (resource: Resource, index: number) => {
             break;
         }
 
+        const gridData = new DataView(resource.getEntry(sceneryIndex + 1));
+        const libraryIndex = gridData.getUint8(0);
+
         map.push({
             isIsland: opcode === 2,
             sceneryIndex,
+            libraryIndex
         });
     }
     return map;
