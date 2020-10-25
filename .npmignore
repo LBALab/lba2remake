@@ -12,3 +12,4 @@ package-lock.json
 tsconfig.json
 tslint.yaml
 webpack.config.js
+assetsSource
