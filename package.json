@@ -47,7 +47,7 @@
     "cross-env": "^5.2.1",
     "css-loader": "^2.1.1",
     "express": "^4.17.1",
-    "ffmpeg-cli": "^2.4.2",
+    "ffmpeg-cli": "^2.7.1",
     "json-loader": "^0.5.7",
     "node-libs-browser": "^1.1.1",
     "node-sass": "^4.14.1",
