@@ -51,12 +51,11 @@ export async function initReplacements(entry, metadata, ambience, numActors) {
     };
 }
 
-export function applyReplacement(cellInfo, replacements, target) {
-    const { x, y, z } = cellInfo.pos;
+export function applyReplacement(x, y, z, replacements, target) {
     const { nX, nZ } = target.data;
     const realY = (y * 0.5) + 0.5;
     const realZ = z - 1;
-    suppressTargetBricks(replacements, target.data, cellInfo);
+    suppressTargetBricks(replacements, target.data, x, y, z);
     if (replacements.mergeReplacements) {
         addReplacementObject(
             target.replacementData,
@@ -68,12 +67,7 @@ export function applyReplacement(cellInfo, replacements, target) {
     }
 }
 
-function suppressTargetBricks(replacements, targetData, cellInfo) {
-    const {
-        x: xStart,
-        y: yStart,
-        z: zStart
-    } = cellInfo.pos;
+function suppressTargetBricks(replacements, targetData, xStart, yStart, zStart) {
     const { nX, nY, nZ } = targetData;
     for (let z = 0; z < nZ; z += 1) {
         const zGrid = zStart - z;
@@ -258,6 +252,10 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
 const POS = new THREE.Vector3();
 const NORM = new THREE.Vector3();
 
+const textureIdCache = {};
+const canvas = document.createElement('canvas');
+const context = canvas.getContext('2d');
+
 function appendMeshGeometry(
     {idCounters, geometries, data},
     gTransform,
@@ -267,8 +265,8 @@ function appendMeshGeometry(
     matrixWorld = null
 ) {
     const isDomeFloor = !!find(
-        info.layout ? info.layout.blocks : info.parent.layout.blocks,
-        b => b.groundType === GROUND_TYPES.DOME_OF_THE_SLATE_FLOOR
+        info.blocks,
+        b => b && b.groundType === GROUND_TYPES.DOME_OF_THE_SLATE_FLOOR
     );
     const transform = gTransform.clone();
     transform.multiply(matrixWorld || node.matrixWorld);
@@ -298,15 +296,19 @@ function appendMeshGeometry(
         groupType = 'original';
         idCounters.originalGeomId += 1;
     } else if (baseMaterial.map) {
-        const image = baseMaterial.map.image;
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.width = image.width;
-        canvas.height = image.height;
-        context.drawImage(image, 0, 0);
-        const imageData = context.getImageData(0, 0, image.width, image.height);
-        const textureId = XXH.h32(imageData.data.buffer, 0).toString(16);
-        geomGroup = `textured_${textureId}`;
+        const texture = baseMaterial.map;
+        if (texture.uuid in textureIdCache) {
+            geomGroup = `textured_${textureIdCache[texture.uuid]}`;
+        } else {
+            const image = texture.image;
+            canvas.width = image.width;
+            canvas.height = image.height;
+            context.drawImage(image, 0, 0);
+            const imageData = context.getImageData(0, 0, image.width, image.height);
+            const textureId = XXH.h32(imageData.data.buffer, 0).toString(16);
+            textureIdCache[texture.uuid] = textureId;
+            geomGroup = `textured_${textureId}`;
+        }
         groupType = 'textured';
     } else if (baseMaterial.opacity < 1) {
         geomGroup = `transparent_${idCounters.transparentGeomId}`;
