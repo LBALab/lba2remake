@@ -1,4 +1,3 @@
-import { each } from 'lodash';
 import { loadMetadata } from './metadata';
 import {
     initReplacements,
@@ -51,34 +50,33 @@ export async function saveSceneReplacementModel(entry, ambience) {
 }
 
 function computeReplacements({ grid, metadata, replacements, mirrorGroups = null, apply = false }) {
-    each(metadata.variants, (variant) => {
-        forEachCell(grid, metadata, (cellInfo) => {
-            checkVariant(grid, cellInfo, replacements, variant);
+    for (const variant of metadata.variants) {
+        forEachCell(grid, metadata, (_layoutInfo, _layout, x, y, z, blocks) => {
+            checkVariant(grid, x, y, z, replacements, variant, blocks);
         });
-    });
-    forEachCell(grid, metadata, (cellInfo) => {
-        const { mirror, suppress } = cellInfo;
+    }
+    forEachCell(grid, metadata, (layoutInfo, layout, x, y, z) => {
+        const { mirror, suppress } = layoutInfo;
 
         if (apply) {
             if (mirror) {
-                processLayoutMirror(cellInfo, mirrorGroups);
+                processLayoutMirror(layout, x, y, z, mirrorGroups);
             }
             if (suppress) {
-                const { x, y, z } = cellInfo.pos;
                 replacements.bricks.add(`${x},${y},${z}`);
             }
         }
     });
 }
 
-function checkVariant(grid, cellInfo, replacements, variant) {
-    if (checkVariantMatch(grid, cellInfo, variant.props, replacements)) {
-        applyReplacement(cellInfo, replacements, {
+function checkVariant(grid, xStart, yStart, zStart, replacements, variant, blocks) {
+    if (checkVariantMatch(grid, xStart, yStart, zStart, variant.props, replacements)) {
+        applyReplacement(xStart, yStart, zStart, replacements, {
             type: 'variant',
             data: variant.props,
             replacementData: {
-                ...variant,
-                parent: cellInfo
+                blocks,
+                ...variant
             }
         });
     }
@@ -86,20 +84,18 @@ function checkVariant(grid, cellInfo, replacements, variant) {
 
 function forEachCell(grid, metadata, handler) {
     let c = 0;
+    const { layouts } = grid.library;
+    const mdLayouts = metadata.layouts;
     for (let z = 0; z < 64; z += 1) {
         for (let x = 0; x < 64; x += 1) {
             const cell = grid.cells[c];
             const blocks = cell.blocks;
             for (let y = 0; y < blocks.length; y += 1) {
-                if (blocks[y]) {
-                    const layout = grid.library.layouts[blocks[y].layout];
-                    if (layout && layout.index in metadata.layouts) {
-                        handler({
-                            ...metadata.layouts[layout.index],
-                            layout,
-                            pos: {x, y, z},
-                            blocks
-                        });
+                const bly = blocks[y];
+                if (bly) {
+                    const layout = layouts[bly.layout];
+                    if (layout && layout.index in mdLayouts) {
+                        handler(mdLayouts[layout.index], layout.index, x, y, z, blocks);
                     }
                 }
             }

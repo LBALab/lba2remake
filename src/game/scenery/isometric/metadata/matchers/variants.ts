@@ -1,9 +1,4 @@
-export function checkVariantMatch(grid, cellInfo, variant, replacements) {
-    const {
-        x: xStart,
-        y: yStart,
-        z: zStart
-    } = cellInfo.pos;
+export function checkVariantMatch(grid, xStart, yStart, zStart, variant, replacements) {
     const {
         nX,
         nY,
