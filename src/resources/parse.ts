@@ -1,7 +1,8 @@
 import { Resource } from './load';
 
 import { parsePalette } from './parsers/palette';
-import { parseText } from './parsers/text';
+import { parseTextLBA1 } from './parsers/text1';
+import { parseTextLBA2 } from './parsers/text2';
 import { parseEntityLBA1 } from './parsers/entity1';
 import { parseEntity } from './parsers/entity2';
 import { parseTextureRGBA } from './parsers/texture';
@@ -36,7 +37,8 @@ const ResourceTypes = {
     LSP: { type: 'LSP', description: 'LBA Sprite', parser: parseSprite },
     LSR: { type: 'LSR', description: 'LBA2 Sprite Raw', parser: parseSpriteRaw },
     SAD: { type: 'SAD', description: 'Sprites Clip Info', parser: parseSpriteClipInfo },
-    LBT: { type: 'LBT', description: 'LBA Text Dialog', parser: parseText },
+    LT1: { type: 'LT1', description: 'LBA1 Text Dialog', parser: parseTextLBA1 },
+    LT2: { type: 'LT2', description: 'LBA2 Text Dialog', parser: parseTextLBA2 },
     BL1: { type: 'BL1', description: 'LBA1 Layout Library', parser: parseLibrary },
     BL2: { type: 'BL2', description: 'LBA2 Layout Library', parser: parseLibrary },
     BRK: { type: 'BRK', description: 'LBA Brick Sprite', parser: parseBrick },

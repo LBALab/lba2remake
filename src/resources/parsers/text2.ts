@@ -1,9 +1,8 @@
 import charmaps from '../../data/charmaps.json';
 import { Resource } from '../load';
 
-const parseText = (resource: Resource, index: number, language: any) => {
-    const size = resource.length === 140 ? 28 : 30; // lba1 vs lba2
-    const languageIndex = index + (size * language.index);
+export const parseTextLBA2 = (resource: Resource, index: number, language: any) => {
+    const languageIndex = index + (30 * language.index);
     const mapData = new Uint16Array(resource.getEntry(languageIndex));
     const data = new DataView(resource.getEntry(languageIndex + 1));
     const texts = {};
@@ -30,5 +29,3 @@ const parseText = (resource: Resource, index: number, language: any) => {
 
     return texts;
 };
-
-export { parseText };
