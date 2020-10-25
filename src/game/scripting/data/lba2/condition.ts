@@ -1,4 +1,4 @@
-import * as lc from '../condition';
+import * as lc from '../../condition';
 
 export const ConditionOpcode = [
     {

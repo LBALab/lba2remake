@@ -164,7 +164,7 @@ export function SAMPLE_STOP(this: ScriptContext, index) {
     audio.stopSample(index);
 }
 
-export const PLAY_ACF = unimplemented();
+export const PLAY_VIDEO = unimplemented();
 
 export function REPEAT_SAMPLE(this: ScriptContext, loopCount) {
     this.state.sampleLoopCount = loopCount;

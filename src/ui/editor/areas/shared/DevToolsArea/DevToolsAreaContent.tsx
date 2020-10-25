@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { map } from 'lodash';
 import { TickerProps } from '../../../../utils/Ticker';
-import { LifeOpcode } from '../../../../../game/scripting/data/life';
-import { MoveOpcode } from '../../../../../game/scripting/data/move';
 import { editor, fullscreen } from '../../../../styles';
 import {
     findCommand,
@@ -11,7 +9,7 @@ import {
     findMixedLogicSequence,
     findStuff
 } from './tools/scene_iterators';
-import { ConditionOpcode } from '../../../../../game/scripting/data/condition';
+import { getLifeOpcodeTable, getMoveOpcodeTable, getConditionOpcodeTable } from '../../../../../scripting/parser';
 
 const mainStyle = Object.assign({}, fullscreen, {
     padding: 4,
@@ -35,9 +33,9 @@ interface State {
     cond: string;
 }
 
-const LIFE_CMDS = map(LifeOpcode, op => op.command).sort();
-const MOVE_CMDS = map(MoveOpcode, op => op.command).sort();
-const CONDS = map(ConditionOpcode, op => op.command).sort();
+const LIFE_CMDS = map(getLifeOpcodeTable, op => op.command).sort();
+const MOVE_CMDS = map(getMoveOpcodeTable, op => op.command).sort();
+const CONDS = map(getConditionOpcodeTable, op => op.command).sort();
 
 export class DevToolsAreaContent extends React.Component<Props, State> {
     content: any;

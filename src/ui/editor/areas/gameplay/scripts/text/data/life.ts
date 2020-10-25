@@ -21,6 +21,10 @@ export default {
         type: 'control',
         indent: Indent.ADD
     },
+    NOIF: {
+        type: 'control',
+        indent: Indent.ADD
+    },
     'UNKNOWN(0x05)': {
         type: 'fct',
         indent: Indent.KEEP
@@ -642,6 +646,107 @@ export default {
         indent: Indent.KEEP
     },
     PCX_MESS_OBJ: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+
+    LABEL: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    ZOOM: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    BIG_MESSAGE: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    INIT_PINGOUIN: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    SAY_MESSAGE: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    SAY_MESSAGE_OBJ: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    GRM_OFF: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    FADE_PAL_RED: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    FADE_ALARM_RED: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    FADE_ALARM_PAL: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    FADE_RED_PAL: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    FADE_RED_ALARM: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    FADE_PAL_ALARM: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    EXPLODE_OBJ: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    BUBBLE_ON: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    BUBBLE_OFF: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    SET_DARK_PAL: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    SET_NORMAL_PAL: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    MESSAGE_SENDELL: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    HOLOMAP_TRAJ: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    MIDI_OFF: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    PROJ_ISO: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    PROJ_3D: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    TEXT: {
+        type: 'fct',
+        indent: Indent.KEEP
+    },
+    CLEAR_TEXT: {
         type: 'fct',
         indent: Indent.KEEP
     }

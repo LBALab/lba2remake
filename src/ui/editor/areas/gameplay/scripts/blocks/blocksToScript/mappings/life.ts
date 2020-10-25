@@ -1,9 +1,8 @@
 import { keyBy, last, each } from 'lodash';
-import { LifeOpcode } from '../../../../../../../../game/scripting/data/life';
 import { OperatorOpcode } from '../../../../../../../../game/scripting/data/operator';
 import condMappings from './conditions';
-import { ConditionOpcode } from '../../../../../../../../game/scripting/data/condition';
 import { mapValue } from './utils';
+import { getLifeOpcode, getConditionOpcode } from '../../../../../../../../scripting/parser';
 
 const operatorsByName = keyBy(OperatorOpcode, 'command');
 
@@ -38,8 +37,8 @@ function handleLogicGate(logicBlock, cmd, ctx) {
     }
     const gateCmd = {
         op: logicBlock.type === 'lba_or'
-            ? LifeOpcode[0x37]
-            : LifeOpcode[0x70],
+            ? getLifeOpcode(0x37)
+            : getLifeOpcode(0x70),
         args: [{
             type: 'offset',
             value: null,
@@ -87,7 +86,7 @@ function handleCondition(condBlock, cmd, ctx, usesOperand = true) {
         return handleLogicGate(condBlock, cmd, ctx);
     }
     const code = getCondOpCode(condBlock);
-    const op = ConditionOpcode[code];
+    const op = getConditionOpcode(code);
     if (!op) {
         return false;
     }
@@ -135,7 +134,7 @@ function ifContentHandler(block, emit, ctx, cmd) {
     const elseStatements = block.getInput('else_statements');
     if (elseStatements) {
         const elseCmd = {
-            op: LifeOpcode[0x0F],
+            op: getLifeOpcode(0x0F),
             args: [{
                 type: 'offset',
                 value: null,
@@ -179,7 +178,7 @@ function switchContentHandler(block, emit, ctx) {
     }
     const condBlock = conn.targetBlock();
     const code = getCondOpCode(condBlock);
-    const op = ConditionOpcode[code];
+    const op = getConditionOpcode(code);
     if (!op) {
         return;
     }
