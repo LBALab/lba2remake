@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {each} from 'lodash';
 
 import Ticker from './ui/utils/Ticker';
 import UIWrapper from './ui/UIWrapper';
@@ -11,20 +10,17 @@ window.onload = () => {
 };
 
 window.onerror = (message, file, line, column, data) => {
-    if ('getVRDisplays' in navigator) {
-        navigator.getVRDisplays().then((displays) => {
-            each(displays, (display) => {
-                if (display.isPresenting) {
-                    display.exitPresent();
-                }
-            });
-        });
+    if ('vrSession' in window && window.vrSession !== null) {
+        window.vrSession.end();
     }
     const stack = (data && data.stack) || undefined;
     init({message, file, line, column, stack, data});
 };
 
 window.addEventListener('unhandledrejection', (event) => {
+    if ('vrSession' in window && window.vrSession !== null) {
+        window.vrSession.end();
+    }
     const data = event.reason;
     const message = (data && data.message) || data;
     const stack = data && data.stack;
