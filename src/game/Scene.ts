@@ -6,7 +6,7 @@ import {
 } from 'lodash';
 
 import islandSceneMapping from './scenery/island/data/sceneMapping';
-import Actor, { DirMode } from './Actor';
+import Actor, { DirMode, ActorProps } from './Actor';
 import { loadPoint } from './points';
 import { loadZone } from './zones';
 import { loadScripts } from '../scripting';
@@ -25,9 +25,29 @@ import { SceneManager } from './SceneManager';
 import { createSceneVariables, findUsedVarGames } from './scene/variables';
 import Island from './scenery/island/Island';
 
+interface SceneProps {
+    index: number;
+    isIsland: boolean;
+    palette: Uint8Array;
+    ambience: {
+        lightingAlpha: number;
+        lightingBeta: number;
+        musicIndex: number;
+        samples: any[];
+        sampleMinDelay: number;
+        sampleMinDelayRnd: number;
+        sampleElapsedTime: number;
+    };
+    actors: ActorProps[];
+    zones: any[];
+    points: any[];
+    texts: any[];
+    textBankId: number;
+}
+
 export default class Scene {
     readonly index: number;
-    readonly data: any;
+    readonly props: SceneProps;
     readonly game: Game;
     readonly renderer: Renderer;
     readonly camera: any;
@@ -101,7 +121,7 @@ export default class Scene {
         this.game = game;
         this.renderer = renderer;
         this.sceneManager = sceneManager;
-        this.data = data;
+        this.props = data;
         this.isActive = false;
         this.firstFrame = false;
         this.zoneState = { skipListener: null, ended: false };
@@ -141,7 +161,7 @@ export default class Scene {
 
     async loadObjects() {
         const actors = await Promise.all<Actor>(
-            this.data.actors.map(
+            this.props.actors.map(
                 actor => Actor.load(
                     this.game,
                     this,
@@ -149,8 +169,8 @@ export default class Scene {
                 )
             )
         );
-        const zones = this.data.zones.map(props => loadZone(props, this.is3DCam));
-        const points = this.data.points.map(props => loadPoint(props));
+        const zones = this.props.zones.map(props => loadZone(props, this.is3DCam));
+        const points = this.props.points.map(props => loadPoint(props));
 
         this.actors.push(...actors);
         this.zones.push(...zones);
@@ -214,7 +234,7 @@ export default class Scene {
     }
 
     private addLight() {
-        const { ambience } = this.data;
+        const { ambience } = this.props;
         const light = new THREE.DirectionalLight();
         light.name = 'DirectionalLight';
         light.position.set(-1000, 0, 0);
@@ -237,7 +257,7 @@ export default class Scene {
     private initSceneNode() {
         this.sceneNode.matrixAutoUpdate = false;
         if (this.scenery instanceof Island) {
-            const sectionIdx = islandSceneMapping[this.data.index].section;
+            const sectionIdx = islandSceneMapping[this.props.index].section;
             const section = this.scenery.sections[sectionIdx];
             this.sceneNode.name = `island_section_${sectionIdx}`;
             this.sceneNode.position.x = section.x * WORLD_SIZE * 2;

@@ -224,7 +224,7 @@ export function generateTexts() {
         return [['<text>', '-1']];
     }
     return map(
-        scene.data.texts,
+        scene.props.texts,
         ({value}, idx) => {
             const text = value.replace(/@/g, '\\n');
             const ellipsis = text.length > 25 ? '(...)' : '';
