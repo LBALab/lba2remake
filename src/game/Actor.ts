@@ -54,11 +54,6 @@ interface ActorProps {
     prevAngle?: number;
 }
 
-interface ActorOptions {
-    isSideScene: boolean;
-    has3DCam: boolean;
-}
-
 interface ActorPhysics {
     position: THREE.Vector3;
     orientation: THREE.Quaternion;
@@ -143,7 +138,6 @@ export default class Actor {
     readonly isSprite: boolean;
     private readonly game: Game;
     private readonly scene: Scene;
-    private readonly options: ActorOptions;
     animState: any = null;
     threeObject?: THREE.Object3D = null;
     model?: Model = null;
@@ -159,9 +153,8 @@ export default class Actor {
         game: Game,
         scene: Scene,
         props: ActorProps,
-        options: ActorOptions
     ): Promise<Actor> {
-        const actor = new Actor(game, scene, props, options);
+        const actor = new Actor(game, scene, props);
         if (actor.animState) {
             await actor.loadMesh();
         }
@@ -175,12 +168,8 @@ export default class Actor {
         scene: Scene,
         details: NewActorDetails
     ): Promise<Actor> {
-        const options: ActorOptions = {
-            isSideScene: !scene.isActive,
-            has3DCam: scene.is3DCam
-        };
         const props = createNewActorProps(scene, details);
-        const actor = await Actor.load(game, scene, props, options);
+        const actor = await Actor.load(game, scene, props);
         // This is usually called in 3 phases on all actors
         // at scene load time. See loadScripts() function.
         postProcessScripts(scene, actor);
@@ -192,13 +181,11 @@ export default class Actor {
     private constructor(
         game: Game,
         scene: Scene,
-        props: ActorProps,
-        options: ActorOptions
+        props: ActorProps
     ) {
         this.index = props.index;
         this.game = game;
         this.scene = scene;
-        this.options = options;
         this.props = cloneDeep(props);
         this.physics = initPhysics(props);
         this.state = Actor.createState();
@@ -210,7 +197,7 @@ export default class Actor {
             life: parseScript(props.index, 'life', props.lifeScript),
             move: parseScript(props.index, 'move', props.moveScript)
         };
-        const skipModel = options.isSideScene && this.index === 0;
+        const skipModel = scene.isSideScene && this.index === 0;
         if (!skipModel) {
             this.animState = loadAnimState();
         }
@@ -355,7 +342,7 @@ export default class Actor {
             }
         }
         if (params.editor) {
-            createActorLabel(this, name, this.options.has3DCam);
+            createActorLabel(this, name, this.scene.is3DCam);
         }
     }
 
