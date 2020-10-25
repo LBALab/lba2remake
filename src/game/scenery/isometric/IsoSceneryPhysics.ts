@@ -83,7 +83,7 @@ export default class IsoSceneryPhysics {
         }
 
         let height = groundHeight;
-        if (!isTouchingGround && obj.index === 0) {
+        if (!isTouchingGround && obj instanceof Actor && obj.index === 0) {
             ACTOR_BOX.copy(obj.model.boundingBox);
             ACTOR_BOX.min.multiplyScalar(STEP);
             ACTOR_BOX.max.multiplyScalar(STEP);
