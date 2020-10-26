@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { getParams } from '../params';
 
 // Number of game units equal to a single game brick.
 export const BRICK_SIZE = 512;
@@ -12,32 +13,48 @@ export const DOME_ENTRIES = [26, 139]; // 139 = demo version
 
 export const SPEED_ADJUSTMENT = 0.8;
 
+const getAngleValues = () => {
+    let midValue = 0x800;
+    let maxValue = 0x1000;
+    const { game } = getParams();
+
+    if (game === 'lba1') {
+        midValue = 0x200;
+        maxValue = 0x400;
+    }
+
+    return { midValue, maxValue };
+};
+
 export function getRotation(nextValue, currentValue, interpolation) {
     let angleDif = nextValue - currentValue;
     let computedAngle = 0;
+    const { midValue, maxValue } = getAngleValues();
 
     if (angleDif) {
-        if (angleDif < -0x800) {
-            angleDif += 0x1000;
-        } else if (angleDif > 0x800) {
-            angleDif -= 0x1000;
+        if (angleDif < -midValue) {
+            angleDif += maxValue;
+        } else if (angleDif > midValue) {
+            angleDif -= maxValue;
         }
         computedAngle = currentValue + (angleDif * interpolation);
     } else {
         computedAngle = currentValue;
     }
 
-    computedAngle = (computedAngle * 360) / 0x1000;
+    computedAngle = (computedAngle * 360) / maxValue;
 
     return computedAngle;
 }
 
 export function lbaToDegrees(value) {
-    return Math.round(value * 360 / 0x1000);
+    const { maxValue } = getAngleValues();
+    return Math.round(value * 360 / maxValue);
 }
 
 export function degreesToLBA(value) {
-    return Math.round(value * 0x1000 / 360);
+    const { maxValue } = getAngleValues();
+    return Math.round(value * maxValue / 360);
 }
 
 export function getStep(nextValue, currentValue, interpolation) {
