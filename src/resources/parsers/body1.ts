@@ -27,7 +27,7 @@ export const parseModelLBA1 = (resource, index, bodyProps) => {
     offset = loadShades(obj, data, offset);
     offset = loadPolygons(obj, data, offset);
     offset = loadLines(obj, data, offset);
-    offset = loadSpheres(obj, data, offset);
+    loadSpheres(obj, data, offset);
 
     computeBoundingBox(obj, bodyProps);
 
