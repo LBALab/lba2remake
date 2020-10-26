@@ -1,5 +1,6 @@
 import { BODY_OBJ, ANIM_OBJ } from './life';
 import { ScriptContext } from './ScriptContext';
+import Point from '../Point';
 
 export function BODY(this: ScriptContext, bodyIndex) {
     BODY_OBJ.call(this, this.actor, bodyIndex);
@@ -21,7 +22,7 @@ export function NO_BODY(this: ScriptContext) {
     }
 }
 
-export function POS_POINT(this: ScriptContext, point) {
+export function POS_POINT(this: ScriptContext, point: Point) {
     this.actor.physics.position.copy(point.physics.position);
     if (this.actor.model) {
         this.actor.model.mesh.position.copy(point.physics.position);

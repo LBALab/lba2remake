@@ -13,16 +13,16 @@ const Point = {
             onClick: (_component, point) => locateObject(point)
         }
     ],
-    name: point => point.index,
+    name: point => point.props.index,
     icon: () => 'editor/icons/point2.svg',
     numChildren: point => (point.threeObject ? 1 : 0),
     child: () => SceneGraphNode,
     childData: point => point.threeObject,
     selected: (point) => {
         const selection = DebugData.selection;
-        return selection && selection.type === 'point' && selection.index === point.index;
+        return selection && selection.type === 'point' && selection.index === point.props.index;
     },
-    onClick: (point) => { DebugData.selection = {type: 'point', index: point.index}; },
+    onClick: (point) => { DebugData.selection = {type: 'point', index: point.props.index}; },
     onDoubleClick: (point) => {
         locateObject(point);
     },

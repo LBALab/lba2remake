@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { map, filter } from 'lodash';
 
 import islandSceneMapping from './scenery/island/data/sceneMapping';
-import Actor, { ActorDirMode, ActorProps } from './Actor';
-import { loadPoint } from './points';
+import Actor, { ActorProps, ActorDirMode } from './Actor';
+import Point, { PointProps } from './Point';
 import { loadZone } from './zones';
 import { loadScripts } from '../scripting';
 import { killActor } from './scripting';
@@ -36,7 +36,7 @@ export interface SceneProps {
     };
     actors: ActorProps[];
     zones: any[];
-    points: any[];
+    points: PointProps[];
     texts: any[];
     textBankId: number;
 }
@@ -49,7 +49,7 @@ export default class Scene {
     readonly camera: any;
     readonly actors: Actor[];
     readonly zones: any[];
-    readonly points: any[];
+    readonly points: Point[];
     readonly sceneNode: THREE.Object3D;
     vrGUI?: THREE.Object3D;
     readonly threeScene: THREE.Scene;
@@ -164,7 +164,7 @@ export default class Scene {
             )
         );
         const zones = this.props.zones.map(props => loadZone(props, this.is3DCam));
-        const points = this.props.points.map(props => loadPoint(props));
+        const points = this.props.points.map(props => new Point(props));
 
         this.actors.push(...actors);
         this.zones.push(...zones);
