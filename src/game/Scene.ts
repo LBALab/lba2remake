@@ -1,9 +1,5 @@
 import * as THREE from 'three';
-import {
-    map,
-    filter,
-    each
-} from 'lodash';
+import { map, filter } from 'lodash';
 
 import islandSceneMapping from './scenery/island/data/sceneMapping';
 import Actor, { DirMode } from './Actor';
@@ -200,9 +196,9 @@ export default class Scene {
             )
         ));
         this.sideScenes = new Map<number, Scene>();
-        each(sideScenesList, (sideScene: Scene) => {
-            this.sideScenes[sideScene.index] = sideScene;
-        });
+        for (const sideScene of sideScenesList) {
+            this.sideScenes.set(sideScene.index, sideScene);
+        }
     }
 
     private addVRGUI() {

@@ -53,13 +53,13 @@ export class SceneManager {
         }
 
         const audio = this.game.getAudioManager();
-        if (this.scene && this.scene.sideScenes && index in this.scene.sideScenes) {
+        if (this.scene && this.scene.sideScenes && this.scene.sideScenes.has(index)) {
             killActor(this.scene.actors[0]);
-            const sideScene = this.scene.sideScenes[index] as Scene;
+            const sideScene = this.scene.sideScenes.get(index);
             sideScene.sideScenes = this.scene.sideScenes;
-            delete sideScene.sideScenes[index];
+            sideScene.sideScenes.delete(index);
             delete this.scene.sideScenes;
-            sideScene.sideScenes[this.scene.index] = this.scene;
+            sideScene.sideScenes.set(this.scene.index, this.scene);
             sideScene.relocateHeroFrom(this.scene, teleport);
             this.scene = sideScene;
             reviveActor(this.scene.actors[0], this.game); // Awake twinsen

@@ -58,8 +58,7 @@ function processSidesceneTransitions(scene: Scene) {
         && (pos.x < BB_MIN || pos.z < BB_MIN || pos.x > BB_MAX || pos.z > BB_MAX)) {
         const globalPos = new THREE.Vector3();
         globalPos.applyMatrix4(hero.threeObject.matrixWorld);
-        for (const idx in scene.sideScenes) {
-            const sideScene = scene.sideScenes[idx];
+        for (const sideScene of scene.sideScenes.values()) {
             const nodePos = sideScene.sceneNode.position;
             if (globalPos.x > nodePos.x + BB_MIN
                 && globalPos.x < nodePos.x + BB_MAX

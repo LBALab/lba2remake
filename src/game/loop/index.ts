@@ -50,7 +50,7 @@ export function mainGameLoop(
             updateScene(params, game, scene, time);
             processPhysicsFrame(game, scene, time);
             if (scene.sideScenes) {
-                for (const sideScene of Object.values(scene.sideScenes) as any) {
+                for (const sideScene of scene.sideScenes.values()) {
                     sideScene.firstFrame = scene.firstFrame;
                     updateScene(params, game, sideScene, time);
                     processPhysicsFrame(game, sideScene, time);
