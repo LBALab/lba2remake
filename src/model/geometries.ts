@@ -383,6 +383,9 @@ function getPosition(body, index) {
 
 function getNormal(body, index) {
     const normal = body.normals[index];
+    if (!normal) {
+        return [0, 0, 0];
+    }
     return [
         normal.x,
         normal.y,

@@ -5,8 +5,8 @@ import { parseTextLBA1 } from './parsers/text1';
 import { parseTextLBA2 } from './parsers/text2';
 import { parseEntityLBA1 } from './parsers/entity1';
 import { parseEntity } from './parsers/entity2';
-import { parseTextureRGBA } from './parsers/texture';
-import { parseBody } from './parsers/body';
+import { parseModelLBA1 } from './parsers/body1';
+import { parseModelLBA2 } from './parsers/body2';
 import { parseSceneMapLBA1, parseSceneLBA1 } from './parsers/scene1';
 import { parseSceneMapLBA2, parseSceneLBA2 } from './parsers/scene2';
 import { parseSpriteClipInfo, parseSprite, parseSpriteRaw } from './parsers/sprite';
@@ -15,6 +15,7 @@ import { parseLibrary } from './parsers/libraries';
 import { parseGridLBA1 } from './parsers/grids1';
 import { parseGridLBA2 } from './parsers/grids2';
 import { parseAnim } from './parsers/anim';
+import { parseTextureRGBA } from './parsers/texture';
 
 const NOP = (resource: Resource) => {
     return resource;
@@ -26,8 +27,8 @@ const ResourceTypes = {
     GIF: { type: 'GIF', description: 'LBA1 GIF Image', parser: NOP },
     LIM: { type: 'LIM', description: 'LBA Image', parser: NOP },
     ANM: { type: 'ANM', description: 'LBA Animation', parser: parseAnim },
-    LM1: { type: 'LM1', description: 'LBA1 3D Model', parser: NOP },
-    LM2: { type: 'LM2', description: 'LBA2 3D Model', parser: parseBody },
+    LM1: { type: 'LM1', description: 'LBA1 3D Model', parser: parseModelLBA1 },
+    LM2: { type: 'LM2', description: 'LBA2 3D Model', parser: parseModelLBA2 },
     TXR: { type: 'TXR', description: 'Texture RGBA', parser: parseTextureRGBA },
     M4A: { type: 'M4A', description: 'MPEG 4 Audio', parser: NOP },
     LS1: { type: 'LS1', description: 'LBA1 Scene', parser: parseSceneLBA1 },
