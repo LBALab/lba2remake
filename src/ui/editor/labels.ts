@@ -115,8 +115,8 @@ function togglePoints(scene: Scene, enabled) {
             if (enabled) {
                 point.threeObject.updateMatrix();
                 const selected = selection.type === 'point'
-                    && selection.index === point.index;
-                point.refreshLabel(selected);
+                    && selection.index === point.props.index;
+                point.updateLabel(selected);
             }
         }
     }

@@ -16,7 +16,7 @@ import {TickerProps } from './utils/Ticker';
 import {updateLabels} from './editor/labels';
 import { setFog } from './editor/fog';
 import { pure } from '../utils/decorators';
-import { loadPoint } from '../game/points';
+import Point from '../game/Point';
 import Actor from '../game/Actor';
 import GameUI from './GameUI';
 import DebugData from './editor/DebugData';
@@ -226,7 +226,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
                 return false;
             });
             if (foundPoint) {
-                DebugData.selection = {type: 'point', index: foundPoint.index};
+                DebugData.selection = {type: 'point', index: foundPoint.props.index};
                 event.stopPropagation();
                 return;
             }
@@ -256,8 +256,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
                 position.sub(scene.sceneNode.position);
             }
             if (objectToAdd.type === 'point') {
-                obj = loadPoint({
-                    sceneIndex: scene.index,
+                obj = new Point({
                     index: scene.points.length,
                     pos: position.toArray()
                 });

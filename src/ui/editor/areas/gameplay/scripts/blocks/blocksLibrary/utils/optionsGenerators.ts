@@ -128,7 +128,7 @@ export function generatePoints() {
     return map(
         scene.points,
         (point) => {
-            return [`${point.index}`, `${point.index}`];
+            return [`${point.props.index}`, `${point.props.index}`];
         }
     );
 }

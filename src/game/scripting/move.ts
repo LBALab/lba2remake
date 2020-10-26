@@ -2,8 +2,9 @@ import * as THREE from 'three';
 import { unimplemented } from './utils';
 import { WORLD_SCALE, getRandom, distAngle } from '../../utils/lba';
 import { ScriptContext } from './ScriptContext';
+import Point from '../Point';
 
-export function GOTO_POINT(this: ScriptContext, point) {
+export function GOTO_POINT(this: ScriptContext, point: Point) {
     if (!point) {
         return;
     }

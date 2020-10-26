@@ -225,26 +225,26 @@ export default class Actor {
         this.physics = initPhysics(this.props);
     }
 
-    goto(point) {
-        this.physics.temp.destination = point;
-        let destAngle = angleTo(this.physics.position, point);
+    goto(position: THREE.Vector3) {
+        this.physics.temp.destination = position;
+        let destAngle = angleTo(this.physics.position, position);
         if (destAngle < 0) {
             destAngle += Math.PI * 2;
         }
         this.physics.temp.destAngle = destAngle;
         this.state.isWalking = true;
         this.state.isTurning = true;
-        return this.getDistance(point);
+        return this.getDistance(position);
     }
 
-    gotoSprite(point, delta) {
-        this.physics.position.lerp(point, delta);
+    gotoSprite(position: THREE.Vector3, delta: number) {
+        this.physics.position.lerp(position, delta);
         this.threeObject.position.copy(this.physics.position);
-        return this.getDistance(point);
+        return this.getDistance(position);
     }
 
-    facePoint(point) {
-        let destAngle = angleTo(this.physics.position, point);
+    facePoint(position: THREE.Vector3) {
+        let destAngle = angleTo(this.physics.position, position);
         if (destAngle < 0) {
             destAngle += Math.PI * 2;
         }
