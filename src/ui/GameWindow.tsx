@@ -241,7 +241,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
         if (result) {
             let obj = null;
             const position = result.point.clone();
-            if (scene.data.isIsland) {
+            if (scene.props.isIsland) {
                 position.sub(scene.sceneNode.position);
             }
             if (objectToAdd.type === 'point') {

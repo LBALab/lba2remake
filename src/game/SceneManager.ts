@@ -65,7 +65,7 @@ export class SceneManager {
             reviveActor(this.scene.actors[0], this.game); // Awake twinsen
             this.scene.isActive = true;
             audio.stopMusicTheme();
-            audio.playMusic(this.scene.data.ambience.musicIndex);
+            audio.playMusic(this.scene.props.ambience.musicIndex);
             initSceneDebugData();
             return this.scene;
         }
@@ -75,7 +75,7 @@ export class SceneManager {
         this.renderer.applySceneryProps(this.scene.scenery.props);
         this.scene.isActive = true;
         audio.stopMusicTheme();
-        audio.playMusic(this.scene.data.ambience.musicIndex);
+        audio.playMusic(this.scene.props.ambience.musicIndex);
         initSceneDebugData();
         this.scene.firstFrame = true;
         if (getParams().editor) {

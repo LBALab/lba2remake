@@ -290,7 +290,7 @@ export function updateExtra(game: Game, scene: Scene, extra: Extra, time: Time) 
             interjections[itrjId] = {
                 scene: scene.index,
                 obj: extra,
-                color: getHtmlColor(scene.data.palette, (10 * 16) + 12),
+                color: getHtmlColor(scene.props.palette, (10 * 16) + 12),
                 value: extra.info,
             };
             game.setUiState({interjections});
