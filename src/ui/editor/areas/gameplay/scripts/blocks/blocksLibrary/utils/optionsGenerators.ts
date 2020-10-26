@@ -113,7 +113,7 @@ export function generateZones() {
     return map(
         zones,
         (zone) => {
-            const name = getObjectName('zone', scene.index, zone.index);
+            const name = getObjectName('zone', scene.index, zone.props.index);
             return [name, `${zone.props.snap}`];
         }
     );

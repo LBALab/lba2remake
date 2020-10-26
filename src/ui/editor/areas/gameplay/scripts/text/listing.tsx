@@ -1,7 +1,8 @@
 import {cloneDeep, map, filter, each, find, isFinite, isInteger, extend, findKey} from 'lodash';
 import {lbaToDegrees, getDistance} from '../../../../../../utils/lba';
 import DebugData, {getObjectName, getVarName} from '../../../../DebugData';
-import { ActorDirMode } from '../../../../../../game/Actor';
+import Actor, { ActorDirMode } from '../../../../../../game/Actor';
+import Scene from '../../../../../../game/Scene';
 import Indent from './data/indent';
 import LifeProps from './data/life';
 import MoveProps from './data/move';
@@ -58,7 +59,7 @@ export function mapComportementArg(comportement) {
     }
 }
 
-function mapArguments(scene, actor, cmd) {
+function mapArguments(scene: Scene, actor: Actor, cmd) {
     const args = cloneDeep(cmd.args);
 
     const mapComportementSetterArg =
@@ -127,7 +128,7 @@ function mapArguments(scene, actor, cmd) {
     return args;
 }
 
-function mapCondition(scene, condition, state) {
+function mapCondition(scene: Scene, condition, state) {
     if (condition) {
         if (condition.param) {
             if (condition.param.type === 'vargame' || condition.param.type === 'varcube') {
@@ -148,7 +149,7 @@ function mapCondition(scene, condition, state) {
     return null;
 }
 
-function mapOperator(scene, condition, operator, state) {
+function mapOperator(scene: Scene, condition, operator, state) {
     if (operator) {
         let text = null;
         if (operator.operand.type === 'var_value') {
@@ -237,7 +238,7 @@ const BehaviourMap = {
     13: 'ELECTROCUTED'
 };
 
-export function mapDataName(scene, data) {
+export function mapDataName(scene: Scene, data) {
     if (!data) {
         return null;
     }
@@ -256,7 +257,7 @@ export function mapDataName(scene, data) {
         const foundZone = find(scene.zones, zone =>
             zone.props.type === 2 && zone.props.snap === data.value);
         if (foundZone) {
-            return getObjectName('zone', scene.index, foundZone.index);
+            return getObjectName('zone', scene.index, foundZone.props.index);
         }
         return 'none';
     }
