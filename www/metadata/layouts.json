@@ -589,11 +589,6 @@
       "file": "CI_020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 1
     },
-    "22:1x3x1:73,73,74": {
-      "replace": true,
-      "file": "CI_020_021_022_023_wall_deco_vert_1_join_var3.glb",
-      "orientation": 3
-    },
     "23:1x1x1:1873": {
       "replace": true,
       "file": "CI_020_021_022_023_wall_deco_vert_1_join.glb",
@@ -653,6 +648,11 @@
       "replace": true,
       "file": "CI_074_books_var1.glb",
       "orientation": 0
+    },
+    "22:1x3x1:73,73,74": {
+      "replace": true,
+      "file": "CI_022_wall_deco_vert_1_joint_var3.glb",
+      "orientation": 3
     }
   },
   "1": {
