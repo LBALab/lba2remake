@@ -3,7 +3,7 @@
         { "strategy": "STATIC", "type": "PNG", "id": "MENU_BACKGROUND",  "description": "Menu Background",  "path": "../../images/2_screen_menubg_extended.png" },
         { "strategy": "STATIC", "type": "PNG", "id": "LOGO",             "description": "Lba2 Logo",        "path": "../../images/remake_logo.png" },
 
-        { "strategy": "STATIC", "type": "ANM", "id": "ANIM",             "description": "Animations",               "path": "LBA2/ANIM.HQR" },
+        { "strategy": "STATIC", "type": "LA2", "id": "ANIM",             "description": "Animations",               "path": "LBA2/ANIM.HQR" },
         { "strategy": "STATIC", "type": "LM2", "id": "BODY",             "description": "3d Models",                "path": "LBA2/BODY.HQR" },
 
         { "strategy": "STATIC", "type": "HQR", "id": "RESS",             "description": "Global Resources",         "path": "LBA2/RESS.HQR" },

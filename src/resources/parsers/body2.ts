@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import {WORLD_SCALE} from '../../utils/lba';
+import { WORLD_SCALE } from '../../utils/lba';
 
-const parseBody = (resource, index, bodyProps) => {
+export const parseModelLBA2 = (resource, index, bodyProps) => {
     const buffer = resource.getEntry(index);
     const data = new DataView(buffer);
     const bodyFlag = data.getInt32(0x00, true);
@@ -238,7 +238,7 @@ function loadUVGroups(object) {
     }
 }
 
-function computeBoundingBox(object, bodyProps) {
+export function computeBoundingBox(object, bodyProps) {
     if (bodyProps && bodyProps.hasCollisionBox) {
         const {xMin, yMin, zMin, xMax, yMax, zMax} = bodyProps.box;
         object.boundingBox = new THREE.Box3(
@@ -271,5 +271,3 @@ function computeBoundingBox(object, bodyProps) {
         );
     }
 }
-
-export { parseBody };

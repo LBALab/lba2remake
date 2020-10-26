@@ -259,6 +259,28 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
                 location.reload();
                 break;
             }
+            case -6: { // Switch to LBA1
+                window.location.hash = window.location.hash.replace('&game=lba2', '');
+                window.location.hash = window.location.hash.replace('#game=lba2', '');
+                if (window.location.hash) {
+                    window.location.hash = `${window.location.hash}&game=lba1`;
+                } else {
+                    window.location.hash = 'game=lba1';
+                }
+                location.reload();
+                break;
+            }
+            case -7: { // Switch to LBA2
+                window.location.hash = window.location.hash.replace('&game=lba1', '');
+                window.location.hash = window.location.hash.replace('#game=lba1', '');
+                if (window.location.hash) {
+                    window.location.hash = `${window.location.hash}&game=lba2`;
+                } else {
+                    window.location.hash = 'game=lba2';
+                }
+                location.reload();
+                break;
+            }
         }
     }
 

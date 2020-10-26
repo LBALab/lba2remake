@@ -4,7 +4,7 @@ import { WORLD_SCALE } from '../../utils/lba';
 import { Resource } from '../load';
 import { Anim, Keyframe, Boneframe, BoneframeCanFall } from '../../model/anim';
 
-const parseAnim = (resource: Resource, index: number) => {
+export const parseAnim = (resource: Resource, index: number) => {
     const buffer = resource.getEntry(index);
     const data = new DataView(buffer);
     const obj : Anim = {
@@ -17,17 +17,17 @@ const parseAnim = (resource: Resource, index: number) => {
         buffer
     };
 
-    loadKeyframes(obj);
+    loadKeyframes(obj, resource.type === 'LA1');
 
     return obj;
 };
 
-const loadKeyframes = (anim) => {
+const loadKeyframes = (anim, isLBA1: boolean) => {
     const data = new DataView(anim.buffer, 0, anim.buffer.byteLength);
     let offset = 8;
     for (let i = 0; i < anim.numKeyframes; i += 1) {
         const keyframe : Keyframe = {
-            length: data.getUint16(offset, true),
+            length: data.getUint16(offset, true) * (isLBA1 ? 20 : 1),
             x: data.getInt16(offset + 2, true) * WORLD_SCALE,
             y: data.getInt16(offset + 4, true) * WORLD_SCALE,
             z: data.getInt16(offset + 6, true) * WORLD_SCALE,
@@ -74,5 +74,3 @@ const loadBoneframe = (data, offset) : BoneframeCanFall => {
     }
     return { boneframe, canFall };
 };
-
-export { parseAnim };
