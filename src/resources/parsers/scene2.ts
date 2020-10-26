@@ -1,4 +1,4 @@
-import { DirMode } from '../../game/Actor';
+import { ActorDirMode } from '../../game/Actor';
 import { bits } from '../../utils';
 import  {WORLD_SCALE, getHtmlColor, SPEED_ADJUSTMENT } from '../../utils/lba';
 import { Resource } from '../load';
@@ -114,7 +114,7 @@ function loadHero(scene, offset) {
         textColor: getHtmlColor(scene.palette, (12 * 16) + 12),
         angle: 0,
         speed: 30 * SPEED_ADJUSTMENT,
-        dirMode: DirMode.MANUAL,
+        dirMode: ActorDirMode.MANUAL,
         flags: initHeroFlags(),
         moveScriptSize: 0,
         moveScript: null,
@@ -181,7 +181,7 @@ function loadActors(scene, offset) {
         const actor = {
             sceneIndex: scene.index,
             index: i,
-            dirMode: DirMode.NO_MOVE,
+            dirMode: ActorDirMode.NO_MOVE,
             flags: null,
             entityIndex: -1,
             bodyIndex: -1,

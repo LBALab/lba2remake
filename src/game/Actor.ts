@@ -113,7 +113,7 @@ interface NewActorDetails {
     };
 }
 
-export const DirMode = {
+export const ActorDirMode = {
     NO_MOVE: 0,
     MANUAL: 1,
     FOLLOW: 2,
@@ -135,7 +135,6 @@ export default class Actor {
     readonly index: number;
     readonly props: ActorProps;
     readonly state: ActorState;
-    readonly isSprite: boolean;
     private readonly game: Game;
     private readonly scene: Scene;
     animState: any = null;
@@ -192,7 +191,6 @@ export default class Actor {
         this.state.isVisible = props.flags.isVisible
             && (props.life > 0 || props.bodyIndex >= 0)
             && props.index !== 1; // 1 is always Nitro-mecapingouin
-        this.isSprite = props.flags.isSprite;
         this.scripts = {
             life: parseScript(props.index, 'life', props.lifeScript),
             move: parseScript(props.index, 'move', props.moveScript)
@@ -289,7 +287,7 @@ export default class Actor {
                         this.props.sceneIndex,
                         this.props.index);
         // only if not sprite actor
-        if (!this.isSprite && this.props.bodyIndex !== 0xFF) {
+        if (!this.props.flags.isSprite && this.props.bodyIndex !== 0xFF) {
             const {entityIndex, bodyIndex, animIndex} = this.props;
             const model = await loadModel(
                 entityIndex,
@@ -320,7 +318,7 @@ export default class Actor {
             this.threeObject.visible = this.state.isVisible;
             this.threeObject.position.copy(this.physics.position);
             this.threeObject.quaternion.copy(this.physics.orientation);
-            if (this.isSprite) {
+            if (this.props.flags.isSprite) {
                 const {spriteIndex, flags: { hasSpriteAnim3D } } = this.props;
                 const sprite = await loadSprite(
                     spriteIndex,
@@ -509,7 +507,7 @@ export function createNewActorProps(
             isSprite: false,
             noShadow: false
         },
-        dirMode: DirMode.NO_MOVE,
+        dirMode: ActorDirMode.NO_MOVE,
         angle: 0,
         speed: 35,
         spriteIndex: 0,

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { map, filter } from 'lodash';
 
 import islandSceneMapping from './scenery/island/data/sceneMapping';
-import Actor, { DirMode, ActorProps } from './Actor';
+import Actor, { ActorDirMode, ActorProps } from './Actor';
 import { loadPoint } from './points';
 import { loadZone } from './zones';
 import { loadScripts } from '../scripting';
@@ -65,8 +65,6 @@ export default class Scene {
     isSideScene: boolean;
     zoneState: {
         skipListener?: Function;
-        currentChar?: number;
-        startTime?: number;
         ended: boolean;
     };
     vr: boolean;
@@ -330,7 +328,7 @@ export default class Scene {
         newHero.props.animIndex = hero.props.animIndex;
 
         if (teleport) {
-            newHero.props.dirMode = DirMode.MANUAL;
+            newHero.props.dirMode = ActorDirMode.MANUAL;
 
             const {pos, angle} = newHero.props;
             const position = new THREE.Vector3(pos[0], pos[1], pos[2]);

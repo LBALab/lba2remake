@@ -1,5 +1,5 @@
 import { clone } from 'lodash';
-import { DirMode } from '../Actor';
+import { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
 import { setMagicBallLevel } from '../GameState';
@@ -82,7 +82,7 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
                 }
             }, 4500);
         } else {
-            hero.props.dirMode = DirMode.NO_MOVE;
+            hero.props.dirMode = ActorDirMode.NO_MOVE;
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
@@ -124,7 +124,7 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
         if (text.type !== 9) {
             this.game.setUiState({ text: null, skip: false, });
             this.game.controlsState.skipListener = null;
-            hero.props.dirMode = DirMode.MANUAL;
+            hero.props.dirMode = ActorDirMode.MANUAL;
         }
         delete cmdState.skipListener;
         delete cmdState.ended;
@@ -153,7 +153,7 @@ export function SET_DIRMODE(this: ScriptContext, dirMode) {
 
 export function SET_DIRMODE_OBJ(this: ScriptContext, actor, dirMode) {
     actor.props.dirMode = dirMode;
-    if (dirMode === DirMode.MANUAL) {
+    if (dirMode === ActorDirMode.MANUAL) {
         actor.state.isTurning = false;
     }
 }
@@ -226,7 +226,7 @@ export function FOUND_OBJECT(this: ScriptContext, cmdState, id) {
     const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
-        hero.props.dirMode = DirMode.NO_MOVE;
+        hero.props.dirMode = ActorDirMode.NO_MOVE;
         hero.props.prevEntityIndex = hero.props.entityIndex;
         hero.props.prevAnimIndex = hero.props.animIndex;
         hero.props.prevAngle = hero.physics.temp.angle;
@@ -276,7 +276,7 @@ export function FOUND_OBJECT(this: ScriptContext, cmdState, id) {
         this.game.setUiState({ skip: false, text: null, foundObject: null });
         this.game.controlsState.skipListener = null;
         hero.setAngleRad(hero.props.prevAngle);
-        hero.props.dirMode = DirMode.MANUAL;
+        hero.props.dirMode = ActorDirMode.MANUAL;
 
         delete cmdState.skipListener;
         delete cmdState.ended;
@@ -438,7 +438,7 @@ export function ASK_CHOICE_OBJ(this: ScriptContext, cmdState, actor, index) {
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
         const text = this.scene.props.texts[index];
-        hero.props.dirMode = DirMode.NO_MOVE;
+        hero.props.dirMode = ActorDirMode.NO_MOVE;
         hero.props.prevEntityIndex = hero.props.entityIndex;
         hero.props.prevAnimIndex = hero.props.animIndex;
         hero.props.entityIndex = 0;
@@ -468,7 +468,7 @@ export function ASK_CHOICE_OBJ(this: ScriptContext, cmdState, actor, index) {
         this.state.choice = uiState.choice;
         this.game.setUiState({ ask: {choices: []}, choice: null });
         this.game.controlsState.skipListener = null;
-        hero.props.dirMode = DirMode.MANUAL;
+        hero.props.dirMode = ActorDirMode.MANUAL;
         delete cmdState.skipListener;
         delete cmdState.ended;
     } else {
@@ -541,10 +541,10 @@ export const NO_SHOCK = unimplemented();
 
 export function CINEMA_MODE(this: ScriptContext, mode) {
     if (mode === 1) {
-        this.actor.props.dirMode = DirMode.NO_MOVE;
+        this.actor.props.dirMode = ActorDirMode.NO_MOVE;
         this.game.setUiState({ cinema: true });
     } else {
-        this.actor.props.dirMode = DirMode.MANUAL;
+        this.actor.props.dirMode = ActorDirMode.MANUAL;
         this.game.setUiState({ cinema: false });
     }
 }

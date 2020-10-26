@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import Actor, { DirMode } from '../Actor';
+import Actor, { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
 import { angleTo, angleToRad, getRandom, WORLD_SCALE, BRICK_SIZE, getHtmlColor } from '../../utils/lba';
@@ -326,13 +326,12 @@ function TEXT(game: Game, scene: Scene, zone, hero: Actor) {
     const audio = game.getAudioManager();
     if (game.controlsState.action === 1) {
         if (!scene.zoneState.skipListener) {
-            scene.actors[0].props.dirMode = DirMode.NO_MOVE;
+            scene.actors[0].props.dirMode = ActorDirMode.NO_MOVE;
 
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
             hero.props.animIndex = AnimType.TALK;
-            scene.zoneState.currentChar = 0;
 
             const text = scene.props.texts[zone.props.snap];
             game.setUiState({
@@ -359,7 +358,7 @@ function TEXT(game: Game, scene: Scene, zone, hero: Actor) {
         }
     }
     if (scene.zoneState.ended) {
-        scene.actors[0].props.dirMode = DirMode.MANUAL;
+        scene.actors[0].props.dirMode = ActorDirMode.MANUAL;
         hero.props.entityIndex = hero.props.prevEntityIndex;
         hero.props.animIndex = hero.props.prevAnimIndex;
         audio.stopVoice();
@@ -367,9 +366,6 @@ function TEXT(game: Game, scene: Scene, zone, hero: Actor) {
         game.controlsState.skipListener = null;
         delete scene.zoneState.skipListener;
         delete scene.zoneState.ended;
-        if (scene.zoneState.startTime) {
-            delete scene.zoneState.startTime;
-        }
     }
     return false;
 }
