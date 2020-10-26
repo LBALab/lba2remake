@@ -101,7 +101,7 @@ function LADDER(game: Game, scene: Scene, zone, hero: Actor) {
 
     // TODO(scottwilliams): work out how to tell if Twinsen is facing ladders
     // at arbitrary angles as happens on islands (vs isometric).
-    const facing = isFacingLadder(hero.physics.temp.angle) || scene.data.isIsland;
+    const facing = isFacingLadder(hero.physics.temp.angle) || scene.props.isIsland;
     if (zone.props.info1 && facing) {
         // Is UP being pressed?
         if (game.controlsState.controlVector.y > 0.6) {
@@ -277,7 +277,7 @@ function GOTO_SCENE(game: Game, scene: Scene, zone, hero: Actor) {
     hero.state.isClimbing = false;
     hero.state.isToppingOutUp = false;
 
-    if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
+    if (!(scene.sideScenes && scene.sideScenes.has(zone.props.snap))) {
         scene.goto(zone.props.snap).then((newScene) => {
             const newPosition = calculateTagetPosition(hero, zone, newScene);
 
@@ -333,12 +333,12 @@ function TEXT(game: Game, scene: Scene, zone, hero: Actor) {
             hero.props.entityIndex = 0;
             hero.props.animIndex = AnimType.TALK;
 
-            const text = scene.data.texts[zone.props.snap];
+            const text = scene.props.texts[zone.props.snap];
             game.setUiState({
                 text: {
                     type: text.type === 3 ? 'big' : 'small',
                     value: text.value,
-                    color: getHtmlColor(scene.data.palette, (zone.props.info0 * 16) + 12)
+                    color: getHtmlColor(scene.props.palette, (zone.props.info0 * 16) + 12)
                 }
             });
             scene.zoneState.skipListener = () => {
@@ -354,7 +354,7 @@ function TEXT(game: Game, scene: Scene, zone, hero: Actor) {
 
             game.controlsState.skipListener = scene.zoneState.skipListener;
 
-            audio.playVoice(text.index, scene.data.textBankId);
+            audio.playVoice(text.index, scene.props.textBankId);
         }
     }
     if (scene.zoneState.ended) {

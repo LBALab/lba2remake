@@ -102,14 +102,14 @@ function mapArguments(scene, actor, cmd) {
         case 'MESSAGE_ZOE':
         case 'MESSAGE':
         case 'ADD_MESSAGE':
-            if (scene.data.texts[args[0].value]) {
-                args[0].text = scene.data.texts[args[0].value].value;
+            if (scene.props.texts[args[0].value]) {
+                args[0].text = scene.props.texts[args[0].value].value;
             }
             break;
         case 'ASK_CHOICE_OBJ':
         case 'MESSAGE_OBJ':
-            if (scene.data.texts[args[1].value]) {
-                args[1].text = scene.data.texts[args[1].value].value;
+            if (scene.props.texts[args[1].value]) {
+                args[1].text = scene.props.texts[args[1].value].value;
             }
             break;
         case 'SET_VAR_CUBE':
@@ -168,8 +168,8 @@ function mapOperator(scene, condition, operator, state) {
             };
         }
         if (operator.operand.type === 'choice_value') {
-            if (scene.data.texts[operator.operand.value]) {
-                text = scene.data.texts[operator.operand.value].value;
+            if (scene.props.texts[operator.operand.value]) {
+                text = scene.props.texts[operator.operand.value].value;
             }
         }
         return {

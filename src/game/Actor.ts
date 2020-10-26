@@ -30,7 +30,7 @@ interface ActorFlags {
     noShadow: boolean;
 }
 
-interface ActorProps {
+export interface ActorProps {
     index: number;
     sceneIndex: number;
     pos: [number, number, number];
@@ -295,7 +295,7 @@ export default class Actor {
                 animIndex,
                 this.animState,
                 this.scene.scenery.props.envInfo,
-                this.scene.data.ambience
+                this.scene.props.ambience
             );
             if (model !== null) {
                 // model.mesh.visible = actor.isVisible;

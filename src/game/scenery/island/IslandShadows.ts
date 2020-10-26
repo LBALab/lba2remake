@@ -34,7 +34,7 @@ export default class IslandShadows {
             }
         }
         if (baseScene.sideScenes) {
-            for (const sideScene of Object.values(baseScene.sideScenes) as any) {
+            for (const sideScene of baseScene.sideScenes.values()) {
                 for (const actor of sideScene.actors) {
                     this.computeShadow(sideScene, actor, shadows);
                 }

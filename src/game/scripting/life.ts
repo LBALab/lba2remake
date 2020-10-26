@@ -45,7 +45,7 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
 
     const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
-    const text = this.scene.data.texts[id];
+    const text = this.scene.props.texts[id];
     if (!cmdState.skipListener) {
         let onVoiceEndedCallback = null;
         if (this.scene.vr) {
@@ -53,7 +53,7 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
                 cmdState.ended = true;
             };
         }
-        audio.playVoice(text.index, this.scene.data.textBankId, onVoiceEndedCallback);
+        audio.playVoice(text.index, this.scene.props.textBankId, onVoiceEndedCallback);
         if (text.type === 9) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
@@ -233,7 +233,7 @@ export function FOUND_OBJECT(this: ScriptContext, cmdState, id) {
         hero.props.entityIndex = 0;
         hero.props.animIndex = AnimType.FOUND_OBJECT;
 
-        if (this.scene.data.isIsland) {
+        if (this.scene.props.isIsland) {
             hero.setAngleRad(hero.physics.temp.angle + Math.PI);
         } else {
             hero.setAngleRad(7 * Math.PI / 4);
@@ -423,7 +423,7 @@ export function SET_USED_INVENTORY(this: ScriptContext, item) {
 
 export function ADD_CHOICE(this: ScriptContext, index) {
     this.state.choice = null;
-    const text = this.scene.data.texts[index];
+    const text = this.scene.props.texts[index];
     const uiState = this.game.getUiState();
     uiState.ask.choices.push({ text, value: index, color: '#ffffff' });
     this.game.setUiState({ ask: uiState.ask });
@@ -437,7 +437,7 @@ export function ASK_CHOICE_OBJ(this: ScriptContext, cmdState, actor, index) {
     const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
-        const text = this.scene.data.texts[index];
+        const text = this.scene.props.texts[index];
         hero.props.dirMode = ActorDirMode.NO_MOVE;
         hero.props.prevEntityIndex = hero.props.entityIndex;
         hero.props.prevAnimIndex = hero.props.animIndex;
@@ -460,7 +460,7 @@ export function ASK_CHOICE_OBJ(this: ScriptContext, cmdState, actor, index) {
         };
         this.game.controlsState.skipListener = cmdState.skipListener;
 
-        audio.playVoice(text.index, this.scene.data.textBankId);
+        audio.playVoice(text.index, this.scene.props.textBankId);
     }
     if (cmdState.ended) {
         audio.stopVoice();

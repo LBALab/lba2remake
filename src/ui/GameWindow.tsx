@@ -73,6 +73,16 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
 
         this.state = initUIState(this.game);
 
+        DebugData.scope = {
+            params: getParams(),
+            game: this.game,
+            renderer: this.renderer,
+            sceneManager: this.sceneManager,
+            controls: this.controls,
+            uiState: this.state
+        };
+        DebugData.sceneManager = this.sceneManager;
+
         this.preloadPromise = this.preload(this.game);
     }
 
@@ -118,6 +128,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
                 this.sceneManager,
                 this.renderer
             );
+            DebugData.scope.controls = this.controls;
             this.wrapperElem = wrapperElem;
             this.wrapperElem.querySelector('.canvasWrapper').appendChild(this.canvas);
             if (this.props.vrSession && getParams().vrEmulator) {
@@ -241,7 +252,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
         if (result) {
             let obj = null;
             const position = result.point.clone();
-            if (scene.data.isIsland) {
+            if (scene.props.isIsland) {
                 position.sub(scene.sceneNode.position);
             }
             if (objectToAdd.type === 'point') {
@@ -284,18 +295,9 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
             this.controls,
             this.vrScene
         );
+        DebugData.scope.scene = scene;
+        DebugData.scope.hero = scene && scene.actors[0];
         if (params.editor) {
-            DebugData.scope = {
-                params: getParams(),
-                game: this.game,
-                renderer: this.renderer,
-                scene,
-                sceneManager: this.sceneManager,
-                hero: scene && scene.actors[0],
-                controls: this.controls,
-                uiState: this.state
-            };
-            DebugData.sceneManager = this.sceneManager;
             updateLabels(scene, this.props.sharedState.labels);
             setFog(scene, this.props.sharedState.fog);
         }

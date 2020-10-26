@@ -288,7 +288,7 @@ function processActorMovement(
         const usingProtopack = hero.props.entityIndex === BehaviourMode.PROTOPACK &&
                              hero.props.animIndex === AnimType.FORWARD;
         let fallThreshold = SMALL_FALL_HEIGHT;
-        if (usingProtopack && !scene.data.isIsland) {
+        if (usingProtopack && !scene.props.isIsland) {
             fallThreshold = 0.5;
         }
         if (usingJetpack) {

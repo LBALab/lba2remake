@@ -87,7 +87,7 @@ export const ZV = unimplemented();
 export const LEFT_STEP = (_action, { game, scene, animState }) => {
     const floorSound = animState.floorSound;
     if (floorSound !== undefined && floorSound !== -1) {
-        const offset = scene.data.isIsland ? 30 : 60;
+        const offset = scene.props.isIsland ? 30 : 60;
         const sampleIndex = floorSound + offset;
         // const frequency = getRandom(0, 0x1000) + 3596;
         const audio = game.getAudioManager();
@@ -98,7 +98,7 @@ export const LEFT_STEP = (_action, { game, scene, animState }) => {
 export const RIGHT_STEP = (_action, { game, scene, animState }) => {
     const floorSound = animState.floorSound;
     if (floorSound !== undefined && floorSound !== -1) {
-        const offset = scene.data.isIsland ? 45 : 75;
+        const offset = scene.props.isIsland ? 45 : 75;
         const sampleIndex = floorSound + offset;
         // const frequency = getRandom(0, 0x1000) + 3596;
         const audio = game.getAudioManager();
