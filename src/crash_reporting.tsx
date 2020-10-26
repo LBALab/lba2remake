@@ -35,9 +35,13 @@ function getCrashReportData() {
         loading: null,
         paused: null,
         scene: null,
+        heroState: null,
         params: null,
-        ui: null,
-        clock: null
+        uiState: null,
+        clock: null,
+        controlsState: null,
+        gameState: null,
+        vr: null
     };
     const scope = DebugData.scope;
     if (scope) {
@@ -45,22 +49,26 @@ function getCrashReportData() {
         if (game) {
             data.loading = game.isLoading();
             data.paused = game.isPaused();
+            data.clock = game.clock;
+            data.controlsState = game.controlsState;
+            data.gameState = omit(game.getState(), 'hero', 'flags');
+            data.vr = game.vr;
         }
         const scene = scope.scene;
         if (scene) {
             data.scene = scene.index;
         }
+        const hero = scope.hero;
+        if (hero) {
+            data.heroState = hero.state;
+        }
         const params = scope.params;
         if (params) {
             data.params = params;
         }
-        const ui = scope.ui;
-        if (ui) {
-            data.ui = omit(ui, 'scene');
-        }
-        const clock = scope.clock;
-        if (clock) {
-            data.clock = clock;
+        const uiState = scope.uiState;
+        if (uiState) {
+            data.uiState = uiState;
         }
     }
     return data;

@@ -29,6 +29,12 @@ interface RootState {
     showDisclaimer: boolean;
 }
 
+declare global {
+    interface Window {
+        vrSession?: any;
+    }
+}
+
 export default class Root extends React.Component<RootProps, RootState> {
     state: any;
 
@@ -145,6 +151,7 @@ export default class Root extends React.Component<RootProps, RootState> {
     async requestPresence() {
         const vrSession = await (navigator as any).xr.requestSession('immersive-vr');
         vrSession.addEventListener('end', this.onSessionEnd);
+        window.vrSession = vrSession;
         this.setState({ vrSession });
     }
 
@@ -152,12 +159,14 @@ export default class Root extends React.Component<RootProps, RootState> {
         if (this.state.vrSession) {
             this.state.vrSession.removeEventListener('end', this.onSessionEnd);
         }
+        window.vrSession = null;
         this.setState({ vrSession: null });
     }
 
     async exitVR() {
         this.state.vrSession.removeEventListener('end', this.onSessionEnd);
         await this.state.vrSession.end();
+        window.vrSession = null;
         this.setState({ vrSession: null });
     }
 
