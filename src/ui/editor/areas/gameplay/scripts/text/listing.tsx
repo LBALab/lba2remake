@@ -1,7 +1,7 @@
 import {cloneDeep, map, filter, each, find, isFinite, isInteger, extend, findKey} from 'lodash';
 import {lbaToDegrees, getDistance} from '../../../../../../utils/lba';
 import DebugData, {getObjectName, getVarName} from '../../../../DebugData';
-import { DirMode } from '../../../../../../game/Actor';
+import { ActorDirMode } from '../../../../../../game/Actor';
 import Indent from './data/indent';
 import LifeProps from './data/life';
 import MoveProps from './data/move';
@@ -102,14 +102,14 @@ function mapArguments(scene, actor, cmd) {
         case 'MESSAGE_ZOE':
         case 'MESSAGE':
         case 'ADD_MESSAGE':
-            if (scene.data.texts[args[0].value]) {
-                args[0].text = scene.data.texts[args[0].value].value;
+            if (scene.props.texts[args[0].value]) {
+                args[0].text = scene.props.texts[args[0].value].value;
             }
             break;
         case 'ASK_CHOICE_OBJ':
         case 'MESSAGE_OBJ':
-            if (scene.data.texts[args[1].value]) {
-                args[1].text = scene.data.texts[args[1].value].value;
+            if (scene.props.texts[args[1].value]) {
+                args[1].text = scene.props.texts[args[1].value].value;
             }
             break;
         case 'SET_VAR_CUBE':
@@ -168,8 +168,8 @@ function mapOperator(scene, condition, operator, state) {
             };
         }
         if (operator.operand.type === 'choice_value') {
-            if (scene.data.texts[operator.operand.value]) {
-                text = scene.data.texts[operator.operand.value].value;
+            if (scene.props.texts[operator.operand.value]) {
+                text = scene.props.texts[operator.operand.value].value;
             }
         }
         return {
@@ -279,7 +279,7 @@ export function mapDataName(scene, data) {
         return DebugData.metadata.bodies[data.value] || `body_${data.value}`;
     }
     if (data.type === 'dirmode') {
-        return findKey(DirMode, m => m === data.value);
+        return findKey(ActorDirMode, m => m === data.value);
     }
     if (data.type === 'distance') {
         return `${getDistance(data.value).toFixed(1)}m`;

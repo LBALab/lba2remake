@@ -50,7 +50,7 @@ export function mainGameLoop(
             updateScene(params, game, scene, time);
             processPhysicsFrame(game, scene, time);
             if (scene.sideScenes) {
-                for (const sideScene of Object.values(scene.sideScenes) as any) {
+                for (const sideScene of scene.sideScenes.values()) {
                     sideScene.firstFrame = scene.firstFrame;
                     updateScene(params, game, sideScene, time);
                     processPhysicsFrame(game, sideScene, time);
@@ -136,7 +136,7 @@ function playAmbience(game: Game, scene: Scene, time: Time) {
     let samplePlayed = 0;
     const audio = game.getAudioManager();
 
-    if (time.elapsed >= scene.data.ambience.sampleElapsedTime) {
+    if (time.elapsed >= scene.props.ambience.sampleElapsedTime) {
         let currentAmb = getRandom(1, 4);
         currentAmb &= 3;
         for (let s = 0; s < 4; s += 1) {
@@ -145,7 +145,7 @@ function playAmbience(game: Game, scene: Scene, time: Time) {
                 if (samplePlayed === 15) {
                     samplePlayed = 0;
                 }
-                const sample = scene.data.ambience.samples[currentAmb];
+                const sample = scene.props.ambience.samples[currentAmb];
                 if (sample.ambience !== -1 && sample.repeat !== 0) {
                     if (!audio.isPlayingSample(sample.ambience)) {
                         audio.playSample(sample.ambience, sample.frequency);
@@ -156,11 +156,11 @@ function playAmbience(game: Game, scene: Scene, time: Time) {
             currentAmb += 1;
             currentAmb &= 3;
         }
-        const { sampleMinDelay, sampleMinDelayRnd } = scene.data.ambience;
-        scene.data.ambience.sampleElapsedTime =
+        const { sampleMinDelay, sampleMinDelayRnd } = scene.props.ambience;
+        scene.props.ambience.sampleElapsedTime =
             time.elapsed + (getRandom(0, sampleMinDelayRnd) + sampleMinDelay);
     }
-    if (scene.data.ambience.sampleMinDelay < 0) {
-        scene.data.ambience.sampleElapsedTime = time.elapsed + 200000;
+    if (scene.props.ambience.sampleMinDelay < 0) {
+        scene.props.ambience.sampleElapsedTime = time.elapsed + 200000;
     }
 }

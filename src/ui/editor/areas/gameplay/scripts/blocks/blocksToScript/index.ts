@@ -5,7 +5,7 @@ import moveMappings from './mappings/move';
 import { compileScripts } from '../../../../../../../scripting/compiler';
 import DebugData from '../../../../../DebugData';
 import { mapValue } from './mappings/utils';
-import { DirMode } from '../../../../../../../game/Actor';
+import { ActorDirMode } from '../../../../../../../game/Actor';
 import { getLifeOpcode, getMoveOpcode } from '../../../../../../../scripting/parser';
 
 const lifeRootTypes = ['lba_behaviour', 'lba_behaviour_init'];
@@ -32,7 +32,7 @@ export function compile(workspace) {
         audio.stopVoice();
         game.getState().actorTalking = -1;
     }
-    hero.props.dirMode = DirMode.MANUAL;
+    hero.props.dirMode = ActorDirMode.MANUAL;
 
     workspace.actor.scripts.life = lifeScript;
     workspace.actor.scripts.move = moveScript;

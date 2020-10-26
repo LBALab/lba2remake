@@ -30,7 +30,7 @@ interface ActorFlags {
     noShadow: boolean;
 }
 
-interface ActorProps {
+export interface ActorProps {
     index: number;
     sceneIndex: number;
     pos: [number, number, number];
@@ -52,11 +52,6 @@ interface ActorProps {
     prevEntityIndex?: number;
     prevAnimIndex?: number;
     prevAngle?: number;
-}
-
-interface ActorOptions {
-    isSideScene: boolean;
-    has3DCam: boolean;
 }
 
 interface ActorPhysics {
@@ -118,7 +113,7 @@ interface NewActorDetails {
     };
 }
 
-export const DirMode = {
+export const ActorDirMode = {
     NO_MOVE: 0,
     MANUAL: 1,
     FOLLOW: 2,
@@ -140,10 +135,8 @@ export default class Actor {
     readonly index: number;
     readonly props: ActorProps;
     readonly state: ActorState;
-    readonly isSprite: boolean;
     private readonly game: Game;
     private readonly scene: Scene;
-    private readonly options: ActorOptions;
     animState: any = null;
     threeObject?: THREE.Object3D = null;
     model?: Model = null;
@@ -159,9 +152,8 @@ export default class Actor {
         game: Game,
         scene: Scene,
         props: ActorProps,
-        options: ActorOptions
     ): Promise<Actor> {
-        const actor = new Actor(game, scene, props, options);
+        const actor = new Actor(game, scene, props);
         if (actor.animState) {
             await actor.loadMesh();
         }
@@ -175,12 +167,8 @@ export default class Actor {
         scene: Scene,
         details: NewActorDetails
     ): Promise<Actor> {
-        const options: ActorOptions = {
-            isSideScene: !scene.isActive,
-            has3DCam: scene.is3DCam
-        };
         const props = createNewActorProps(scene, details);
-        const actor = await Actor.load(game, scene, props, options);
+        const actor = await Actor.load(game, scene, props);
         // This is usually called in 3 phases on all actors
         // at scene load time. See loadScripts() function.
         postProcessScripts(scene, actor);
@@ -192,25 +180,22 @@ export default class Actor {
     private constructor(
         game: Game,
         scene: Scene,
-        props: ActorProps,
-        options: ActorOptions
+        props: ActorProps
     ) {
         this.index = props.index;
         this.game = game;
         this.scene = scene;
-        this.options = options;
         this.props = cloneDeep(props);
         this.physics = initPhysics(props);
         this.state = Actor.createState();
         this.state.isVisible = props.flags.isVisible
             && (props.life > 0 || props.bodyIndex >= 0)
             && props.index !== 1; // 1 is always Nitro-mecapingouin
-        this.isSprite = props.flags.isSprite;
         this.scripts = {
             life: parseScript(props.index, 'life', props.lifeScript),
             move: parseScript(props.index, 'move', props.moveScript)
         };
-        const skipModel = options.isSideScene && this.index === 0;
+        const skipModel = scene.isSideScene && this.index === 0;
         if (!skipModel) {
             this.animState = loadAnimState();
         }
@@ -302,7 +287,7 @@ export default class Actor {
                         this.props.sceneIndex,
                         this.props.index);
         // only if not sprite actor
-        if (!this.isSprite && this.props.bodyIndex !== 0xFF) {
+        if (!this.props.flags.isSprite && this.props.bodyIndex !== 0xFF) {
             const {entityIndex, bodyIndex, animIndex} = this.props;
             const model = await loadModel(
                 entityIndex,
@@ -310,7 +295,7 @@ export default class Actor {
                 animIndex,
                 this.animState,
                 this.scene.scenery.props.envInfo,
-                this.scene.data.ambience
+                this.scene.props.ambience
             );
             if (model !== null) {
                 // model.mesh.visible = actor.isVisible;
@@ -333,7 +318,7 @@ export default class Actor {
             this.threeObject.visible = this.state.isVisible;
             this.threeObject.position.copy(this.physics.position);
             this.threeObject.quaternion.copy(this.physics.orientation);
-            if (this.isSprite) {
+            if (this.props.flags.isSprite) {
                 const {spriteIndex, flags: { hasSpriteAnim3D } } = this.props;
                 const sprite = await loadSprite(
                     spriteIndex,
@@ -355,7 +340,7 @@ export default class Actor {
             }
         }
         if (params.editor) {
-            createActorLabel(this, name, this.options.has3DCam);
+            createActorLabel(this, name, this.scene.is3DCam);
         }
     }
 
@@ -522,7 +507,7 @@ export function createNewActorProps(
             isSprite: false,
             noShadow: false
         },
-        dirMode: DirMode.NO_MOVE,
+        dirMode: ActorDirMode.NO_MOVE,
         angle: 0,
         speed: 35,
         spriteIndex: 0,

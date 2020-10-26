@@ -1,12 +1,8 @@
 import * as THREE from 'three';
-import {
-    map,
-    filter,
-    each
-} from 'lodash';
+import { map, filter } from 'lodash';
 
 import islandSceneMapping from './scenery/island/data/sceneMapping';
-import Actor, { DirMode } from './Actor';
+import Actor, { ActorDirMode, ActorProps } from './Actor';
 import { loadPoint } from './points';
 import { loadZone } from './zones';
 import { loadScripts } from '../scripting';
@@ -25,9 +21,29 @@ import { SceneManager } from './SceneManager';
 import { createSceneVariables, findUsedVarGames } from './scene/variables';
 import Island from './scenery/island/Island';
 
+export interface SceneProps {
+    index: number;
+    isIsland: boolean;
+    palette: Uint8Array;
+    ambience: {
+        lightingAlpha: number;
+        lightingBeta: number;
+        musicIndex: number;
+        samples: any[];
+        sampleMinDelay: number;
+        sampleMinDelayRnd: number;
+        sampleElapsedTime: number;
+    };
+    actors: ActorProps[];
+    zones: any[];
+    points: any[];
+    texts: any[];
+    textBankId: number;
+}
+
 export default class Scene {
     readonly index: number;
-    readonly data: any;
+    readonly props: SceneProps;
     readonly game: Game;
     readonly renderer: Renderer;
     readonly camera: any;
@@ -46,10 +62,9 @@ export default class Scene {
     sideScenes: Map<number, Scene>;
     extras: any[];
     isActive: boolean;
+    isSideScene: boolean;
     zoneState: {
         skipListener?: Function;
-        currentChar?: number;
-        startTime?: number;
         ended: boolean;
     };
     vr: boolean;
@@ -62,12 +77,11 @@ export default class Scene {
         index: number,
         parent: Scene = null
     ): Promise<Scene> {
-        const isSideScene = !!parent;
         const data = await getScene(index);
         if (getParams().editor) {
             await loadSceneMetaData(index);
         }
-        const scenery = isSideScene ? parent.scenery : await loadScenery(game, data);
+        const scenery = !!parent ? parent.scenery : await loadScenery(game, data);
         const scene: Scene = new Scene(
             game,
             renderer,
@@ -76,10 +90,10 @@ export default class Scene {
             scenery,
             parent
         );
-        await scene.loadObjects(!!parent);
+        await scene.loadObjects();
 
         if (data.isIsland) {
-            if (isSideScene) {
+            if (!!parent) {
                 killActor(scene.actors[0]);
             } else {
                 await scene.loadSideScenes();
@@ -101,12 +115,13 @@ export default class Scene {
         this.game = game;
         this.renderer = renderer;
         this.sceneManager = sceneManager;
-        this.data = data;
+        this.props = data;
         this.isActive = false;
         this.firstFrame = false;
         this.zoneState = { skipListener: null, ended: false };
         this.vr = renderer.vr;
         this.is3DCam = data.isIsland || renderer.vr || params.iso3d;
+        this.isSideScene = !!parent;
         this.savedState = null;
         this.sceneManager = sceneManager;
         this.actors = [];
@@ -138,22 +153,18 @@ export default class Scene {
         this.initSceneNode();
     }
 
-    async loadObjects(isSideScene) {
+    async loadObjects() {
         const actors = await Promise.all<Actor>(
-            this.data.actors.map(
+            this.props.actors.map(
                 actor => Actor.load(
                     this.game,
                     this,
-                    actor,
-                    {
-                        has3DCam: this.is3DCam,
-                        isSideScene
-                    }
+                    actor
                 )
             )
         );
-        const zones = this.data.zones.map(props => loadZone(props, this.is3DCam));
-        const points = this.data.points.map(props => loadPoint(props));
+        const zones = this.props.zones.map(props => loadZone(props, this.is3DCam));
+        const points = this.props.points.map(props => loadPoint(props));
 
         this.actors.push(...actors);
         this.zones.push(...zones);
@@ -203,9 +214,9 @@ export default class Scene {
             )
         ));
         this.sideScenes = new Map<number, Scene>();
-        each(sideScenesList, (sideScene: Scene) => {
-            this.sideScenes[sideScene.index] = sideScene;
-        });
+        for (const sideScene of sideScenesList) {
+            this.sideScenes.set(sideScene.index, sideScene);
+        }
     }
 
     private addVRGUI() {
@@ -217,7 +228,7 @@ export default class Scene {
     }
 
     private addLight() {
-        const { ambience } = this.data;
+        const { ambience } = this.props;
         const light = new THREE.DirectionalLight();
         light.name = 'DirectionalLight';
         light.position.set(-1000, 0, 0);
@@ -240,7 +251,7 @@ export default class Scene {
     private initSceneNode() {
         this.sceneNode.matrixAutoUpdate = false;
         if (this.scenery instanceof Island) {
-            const sectionIdx = islandSceneMapping[this.data.index].section;
+            const sectionIdx = islandSceneMapping[this.props.index].section;
             const section = this.scenery.sections[sectionIdx];
             this.sceneNode.name = `island_section_${sectionIdx}`;
             this.sceneNode.position.x = section.x * WORLD_SIZE * 2;
@@ -317,7 +328,7 @@ export default class Scene {
         newHero.props.animIndex = hero.props.animIndex;
 
         if (teleport) {
-            newHero.props.dirMode = DirMode.MANUAL;
+            newHero.props.dirMode = ActorDirMode.MANUAL;
 
             const {pos, angle} = newHero.props;
             const position = new THREE.Vector3(pos[0], pos[1], pos[2]);

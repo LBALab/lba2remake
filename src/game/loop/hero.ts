@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import Actor, { DirMode, ActorState } from '../Actor';
+import Actor, { ActorDirMode, ActorState } from '../Actor';
 import { AnimType } from '../data/animType';
 import { WORLD_SIZE } from '../../utils/lba';
 import { processHit } from './animAction';
@@ -27,7 +27,7 @@ export const BehaviourMode = {
 };
 
 export function updateHero(game: Game, scene: Scene, hero: Actor, time: Time) {
-    if (hero.props.dirMode !== DirMode.MANUAL)
+    if (hero.props.dirMode !== ActorDirMode.MANUAL)
         return;
 
     const behaviour = game.getState().hero.behaviour;
@@ -288,7 +288,7 @@ function processActorMovement(
         const usingProtopack = hero.props.entityIndex === BehaviourMode.PROTOPACK &&
                              hero.props.animIndex === AnimType.FORWARD;
         let fallThreshold = SMALL_FALL_HEIGHT;
-        if (usingProtopack && !scene.data.isIsland) {
+        if (usingProtopack && !scene.props.isIsland) {
             fallThreshold = 0.5;
         }
         if (usingJetpack) {

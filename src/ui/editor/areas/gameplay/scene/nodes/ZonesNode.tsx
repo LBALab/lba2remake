@@ -61,8 +61,8 @@ const Zone = {
             value: (zone) => {
                 let value = zone.props.snap;
                 if (ZONE_TYPE[zone.props.type] === 'TEXT') {
-                    if (DebugData.scope.scene.data.texts[value]) {
-                        value = DebugData.scope.scene.data.texts[value].value;
+                    if (DebugData.scope.scene.props.texts[value]) {
+                        value = DebugData.scope.scene.props.texts[value].value;
                     }
                 }
                 return value;

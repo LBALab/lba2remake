@@ -17,6 +17,7 @@ import LocationsNode from '../../locator/LocationsNode';
 import {formatVar} from '../../scripts/text/format';
 import {editor as editorStyle} from '../../../../../styles';
 import { getScene } from '../../../../../../resources';
+import { SceneProps } from '../../../../../../game/Scene';
 
 const {
     getObjectName,
@@ -257,7 +258,7 @@ async function findAllRefsInSceneList(varDef, sceneList) {
                 getScene(idx),
                 loadSceneMetaData(idx)
             ]);
-            const foundResults = findAllRefsInScene(varDef, sceneData);
+            const foundResults = findAllRefsInScene(varDef, sceneData as SceneProps);
             if (foundResults.length > 0) {
                 return {
                     scene: idx,
@@ -270,7 +271,7 @@ async function findAllRefsInSceneList(varDef, sceneList) {
     return filter(results);
 }
 
-function findAllRefsInScene(varDef, scene) {
+function findAllRefsInScene(varDef, scene: SceneProps) {
     const foundResults = [];
     map(scene.actors, (actor, idx: number) => {
         const script = parseScript(idx, 'life', actor.lifeScript);
