@@ -277,7 +277,7 @@ function GOTO_SCENE(game: Game, scene: Scene, zone, hero: Actor) {
     hero.state.isClimbing = false;
     hero.state.isToppingOutUp = false;
 
-    if (!(scene.sideScenes && zone.props.snap in scene.sideScenes)) {
+    if (!(scene.sideScenes && scene.sideScenes.has(zone.props.snap))) {
         scene.goto(zone.props.snap).then((newScene) => {
             const newPosition = calculateTagetPosition(hero, zone, newScene);
 

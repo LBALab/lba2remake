@@ -1,11 +1,12 @@
 import * as React from 'react';
-import {size, sortBy, map, each, filter} from 'lodash';
+import {map, each, filter} from 'lodash';
 import DebugData from '../../../DebugData';
 import {ActorsNode} from './nodes/ActorsNode';
 import {ZonesNode} from './nodes/ZonesNode';
 import {PointsNode} from './nodes/PointsNode';
 import {makeVarDef, makeVariables, Var} from './node_factories/variables';
 import LocationsNode from '../locator/LocationsNode';
+import Scene from '../../../../../game/Scene';
 
 const VarCube = makeVariables('varcube', 'Scene Variables', (scene) => {
     if (scene) {
@@ -141,9 +142,19 @@ const Siblings = {
         width: 16,
         height: 16
     },
-    numChildren: scene => size(scene.sideScenes),
+    numChildren: (scene: Scene) => scene.sideScenes ? scene.sideScenes.size : 0,
     child: () => SubScene,
-    childData: (scene, idx) => sortBy(scene.sideScenes)[idx]
+    childData: (scene: Scene, idx: number) => {
+        if (!scene.sideScenes) {
+            return {};
+        }
+        const sideScenes: Scene[] = [];
+        for (const sideScene of scene.sideScenes.values()) {
+            sideScenes.push(sideScene);
+        }
+        sideScenes.sort((s0, s1) => s0.index - s1.index);
+        return sideScenes[idx];
+    }
 };
 
 const getChildren = () => {
