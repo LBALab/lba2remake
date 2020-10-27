@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import DebugData from './DebugData';
-import { ZONE_TYPE } from '../../game/zones';
+import { ZONE_TYPE } from '../../game/Zone';
 import Scene from '../../game/Scene';
 import Actor from '../../game/Actor';
 
@@ -101,8 +101,8 @@ function toggleZones(scene: Scene, gEnabled, zoneTypes) {
             if (enabled) {
                 zone.threeObject.updateMatrix();
                 const selected = selection.type === 'zone'
-                    && selection.index === zone.index;
-                zone.refreshLabel(selected);
+                    && selection.index === zone.props.index;
+                zone.updateLabel(selected);
             }
         }
     }
@@ -184,51 +184,4 @@ export function createActorLabel(actor: Actor, name, is3DCam) {
         actor.label = sprite;
         actor.refreshLabel = draw;
     }
-}
-
-export function createZoneLabel(zone, name, is3DCam) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 64;
-    const ctx = canvas.getContext('2d');
-    const icon = new Image(32, 32);
-    icon.src = `editor/icons/zones/${zone.zoneType}.svg`;
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.encoding = THREE.GammaEncoding;
-    texture.anisotropy = 16;
-    const draw = (selected = false) => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = '16px LBA';
-        ctx.textAlign = 'center';
-        const textWidth = Math.min(ctx.measureText(name).width, 256 - 64);
-        ctx.fillStyle = selected ? 'white' : 'black';
-        ctx.fillRect(128 - (textWidth * 0.5) - 18, 16, textWidth + 38, 32);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = `#${zone.color.getHexString()}`;
-        ctx.strokeRect(128 - (textWidth * 0.5) - 18, 16, textWidth + 38, 32);
-        ctx.drawImage(icon, 128 - (textWidth * 0.5) - 16, 16, 32, 32);
-        ctx.fillStyle = selected ? 'black' : 'white';
-        ctx.fillText(name, 128 + 18, 38, 256 - 64);
-        texture.needsUpdate = true;
-    };
-
-    icon.onload = () => draw();
-    const spriteMaterial = new THREE.SpriteMaterial({
-        map: texture,
-        depthTest: false
-    });
-    // @ts-ignore
-    spriteMaterial.sizeAttenuation = false;
-    const sprite = new THREE.Sprite(spriteMaterial);
-    if (is3DCam) {
-        sprite.scale.set(0.3, 0.075, 1);
-    } else {
-        sprite.scale.set(200, 50, 1);
-    }
-    sprite.renderOrder = 2;
-    sprite.name = `label:${name}`;
-    if (zone.threeObject) {
-        zone.threeObject.add(sprite);
-    }
-    zone.refreshLabel = draw;
 }

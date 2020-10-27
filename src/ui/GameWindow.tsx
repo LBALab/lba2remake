@@ -240,7 +240,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
                 return false;
             });
             if (foundZone) {
-                DebugData.selection = {type: 'zone', index: foundZone.index};
+                DebugData.selection = {type: 'zone', index: foundZone.props.index};
                 event.stopPropagation();
             }
         }

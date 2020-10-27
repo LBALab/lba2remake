@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ZONE_TYPE } from '../../../../game/zones';
+import { ZONE_TYPE } from '../../../../game/Zone';
 
 const inputStyle = {
     textAlign: 'center' as const,

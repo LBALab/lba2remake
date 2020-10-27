@@ -8,7 +8,7 @@ import PaletteArea from './palette/PaletteArea';
 import SceneGraphArea from './sceneGraph/SceneGraphArea';
 import GameplayEditorSettings from './GameplayEditorSettings';
 import {Orientation, Type} from '../../layout';
-import {ZONE_TYPE} from '../../../../game/zones';
+import {ZONE_TYPE} from '../../../../game/Zone';
 import ScriptsEditorArea from './scripts/ScriptsEditorArea';
 
 const GameplayEditor = {

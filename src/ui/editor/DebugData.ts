@@ -1,4 +1,8 @@
 import * as THREE from 'three';
+import Scene from '../../game/Scene';
+import Actor from '../../game/Actor';
+import Zone from '../../game/Zone';
+import Point from '../../game/Point';
 
 const DebugData = {
     scope: <any> {},
@@ -153,12 +157,12 @@ export function getObjectName(type, sceneIndex, objIndex) {
     return `${type}_${objIndex}`;
 }
 
-export function locateObject(object) {
+export function locateObject(object: Actor | Zone | Point) {
     const scene = DebugData.scope.scene;
     if (!object.threeObject || !scene)
         return;
 
-    DebugData.selection = {type: object.type, index: object.index};
+    DebugData.selection = {type: object.type, index: object.props.index};
 
     const isHero = object.type === 'actor' && object.index === 0;
     const controlsState = DebugData.scope.game.controlsState;
@@ -172,7 +176,7 @@ export function locateObject(object) {
     resetCameraOrientation(controlsState, scene);
 }
 
-function resetCameraOrientation(controlsState, scene) {
+function resetCameraOrientation(controlsState, scene: Scene) {
     const controlNode = scene.camera.controlNode;
     if (!controlNode)
         return;
