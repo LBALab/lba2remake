@@ -164,6 +164,25 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
         new THREE.Vector3(scale, scale, scale)
     );
 
+    const skipMeshes = [];
+
+    threeObject.traverse((node) => {
+        if (node instanceof THREE.Mesh && node.morphTargetInfluences) {
+            const newMesh = node.clone();
+            const matrixWorld = getPartialMatrixWorld(node, threeObject);
+            newMesh.matrix.copy(gTransform);
+            newMesh.matrix.multiply(matrixWorld);
+            newMesh.matrix.decompose(
+                newMesh.position,
+                newMesh.quaternion,
+                newMesh.scale
+            );
+            newMesh.updateMatrixWorld(true);
+            replacements.threeObject.add(newMesh);
+            skipMeshes.push(node);
+        }
+    });
+
     const bindings = [];
     if (animations && animations.length) {
         for (const animationBase of animations) {
@@ -193,6 +212,9 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
     animRoot.updateMatrixWorld(true);
 
     threeObject.traverse((node) => {
+        if (skipMeshes.includes(node)) {
+            return;
+        }
         node.updateMatrix();
         node.updateMatrixWorld(true);
         for (const {binding, track} of bindings) {
@@ -222,7 +244,7 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
                     }
                 });
             }
-            }
+        }
         if (skip.has(node.parent)) {
             skip.add(node);
             if (node instanceof THREE.Mesh) {
