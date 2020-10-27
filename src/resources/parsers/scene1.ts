@@ -272,11 +272,11 @@ function loadZones(scene, offset) {
         offset += 12;
 
         zone.type = data.getInt16(offset, true);
-        zone.info0 = data.getInt16(offset + 2, true);
-        zone.info1 = data.getInt16(offset + 4, true);
-        zone.info2 = data.getInt16(offset + 6, true);
-        zone.info3 = data.getInt16(offset + 8, true);
-        zone.snap = data.getInt16(offset + 10, true);
+        zone.snap = data.getInt16(offset + 2, true);
+        zone.info0 = data.getInt16(offset + 4, true);
+        zone.info1 = data.getInt16(offset + 6, true);
+        zone.info2 = data.getInt16(offset + 8, true);
+        zone.info3 = data.getInt16(offset + 10, true);
         offset += 12;
 
         // normalising position
