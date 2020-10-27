@@ -165,6 +165,7 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
     );
 
     const skipMeshes = [];
+    const trackReplacements = {};
 
     threeObject.traverse((node) => {
         if (node instanceof THREE.Mesh && node.morphTargetInfluences) {
@@ -177,9 +178,21 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
                 newMesh.quaternion,
                 newMesh.scale
             );
+            newMesh.name = newMesh.uuid;
             newMesh.updateMatrixWorld(true);
             replacements.threeObject.add(newMesh);
             skipMeshes.push(node);
+            if (animations && animations.length) {
+                for (const animation of animations) {
+                    const {tracks} = animation;
+                    for (const track of tracks) {
+                        const binding = new THREE.PropertyBinding(threeObject, track.name);
+                        if (binding.node === node) {
+                            trackReplacements[track.name] = `${newMesh.uuid}.${binding.parsedPath.propertyName}`;
+                        }
+                    }
+                }
+            }
         }
     });
 
@@ -189,10 +202,14 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
             const animation = animationBase.clone(true);
             const {tracks} = animation;
             for (const track of tracks) {
-                bindings.push({
-                    track,
-                    binding: new THREE.PropertyBinding(threeObject, track.name)
-                });
+                if (track.name in trackReplacements) {
+                    track.name = trackReplacements[track.name];
+                } else {
+                    bindings.push({
+                        track,
+                        binding: new THREE.PropertyBinding(threeObject, track.name)
+                    });
+                }
             }
             replacements.animations.push(animation);
         }
