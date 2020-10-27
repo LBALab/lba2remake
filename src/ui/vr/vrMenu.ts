@@ -18,7 +18,7 @@ export function createMenu(game, sceneManager, light) {
     menuNode.add(mainMenu);
     resume = createMenuItem({
         // Resume Game
-        text: game.menuTexts[70].value,
+        text: tr('resumeGame'),
         y: 150,
         callback: () => {
             const audio = game.getAudioManager();
@@ -31,7 +31,7 @@ export function createMenu(game, sceneManager, light) {
     mainMenu.add(resume);
     mainMenu.add(createMenuItem({
         // New Game
-        text: game.menuTexts[71].value,
+        text: tr('newGame'),
         y: 0,
         callback: () => {
             const audio = game.getAudioManager();

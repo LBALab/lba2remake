@@ -16,6 +16,7 @@ import {
 } from './overlay';
 import Game from '../../game/Game';
 import Scene from '../../game/Scene';
+import { getParams } from '../../params';
 
 interface IBehaviourMenuClover {
     boxes: number;
@@ -154,8 +155,9 @@ class BehaviourModeItem extends Component<IBehaviourItem> {
 }
 
 const BehaviourMode = ({ game, behaviour }) => {
+    const textIndex = behaviour + (getParams().game === 'lba2' ? 80 : 0);
     const behaviourText = (game.menuTexts)
-    ? game.menuTexts[80 + behaviour].value : '';
+    ? game.menuTexts[textIndex].value : '';
     return (
         <div className="behaviourMode">{behaviourText}</div>
     );
