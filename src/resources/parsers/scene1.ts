@@ -92,9 +92,9 @@ function loadHero(scene, offset) {
         entityIndex: 0,
         bodyIndex: 0,
         pos: [
-            ((0x8000 - data.getInt16(offset + 4, true)) + 512) * WORLD_SCALE,
+            ((0x8000 - data.getInt16(offset + 4, true)) + 256) * WORLD_SCALE,
             data.getInt16(offset + 2, true) * WORLD_SCALE,
-            data.getInt16(offset, true) * WORLD_SCALE
+            (data.getInt16(offset, true) + 256) * WORLD_SCALE
         ],
         index: 0,
         textColor: getHtmlColor(scene.palette, (12 * 16) + 12),
@@ -180,9 +180,9 @@ function loadActors(scene, offset) {
         offset += 2;
 
         actor.pos = [
-            ((0x8000 - data.getInt16(offset + 4, true)) + 512) * WORLD_SCALE,
+            ((0x8000 - data.getInt16(offset + 4, true)) + 256) * WORLD_SCALE,
             data.getInt16(offset + 2, true) * WORLD_SCALE,
-            data.getInt16(offset, true) * WORLD_SCALE
+            (data.getInt16(offset, true) + 256) * WORLD_SCALE
         ];
         offset += 6;
 
@@ -263,12 +263,12 @@ function loadZones(scene, offset) {
         };
 
         // xMin and xMax are inverted because x axis is inverted
-        zone.box.xMax = ((0x8000 - data.getInt16(offset + 4, true)) + 512) * WORLD_SCALE;
+        zone.box.xMax = ((0x8000 - data.getInt16(offset + 4, true)) + 256) * WORLD_SCALE;
         zone.box.yMin = data.getInt16(offset + 2, true) * WORLD_SCALE;
-        zone.box.zMin = data.getInt16(offset, true) * WORLD_SCALE;
-        zone.box.xMin = ((0x8000 - data.getInt16(offset + 10, true)) + 512) * WORLD_SCALE;
+        zone.box.zMin = (data.getInt16(offset, true) + 256) * WORLD_SCALE;
+        zone.box.xMin = ((0x8000 - data.getInt16(offset + 10, true)) + 256) * WORLD_SCALE;
         zone.box.yMax = data.getInt16(offset + 8, true) * WORLD_SCALE;
-        zone.box.zMax = data.getInt16(offset + 6, true) * WORLD_SCALE;
+        zone.box.zMax = (data.getInt16(offset + 6, true) + 256) * WORLD_SCALE;
         offset += 12;
 
         zone.type = data.getInt16(offset, true);
