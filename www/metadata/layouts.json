@@ -229,22 +229,22 @@
     },
     "55": {
       "replace": true,
-      "file": "CI_055_056_armchair.glb",
+      "file": "CI_055_056_057_058_armchair.glb",
       "orientation": 0
     },
     "56": {
       "replace": true,
-      "file": "CI_055_056_armchair.glb",
+      "file": "CI_055_056_057_058_armchair.glb",
       "orientation": 1
     },
     "57": {
       "replace": true,
-      "file": "CI_055_056_armchair.glb",
+      "file": "CI_055_056_057_058_armchair.glb",
       "orientation": 2
     },
     "58": {
       "replace": true,
-      "file": "CI_055_056_armchair.glb",
+      "file": "CI_055_056_057_058_armchair.glb",
       "orientation": 3
     },
     "59": {
