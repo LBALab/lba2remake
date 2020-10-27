@@ -8,6 +8,7 @@ import { MAX_LIFE } from './GameState';
 import Scene from './Scene';
 import Game from './Game';
 import { Time } from '../datatypes';
+import { getParams } from '../params';
 // import { createBoundingBox } from '../utils/rendering';
 
 export const ExtraFlag = {
@@ -306,6 +307,7 @@ export function updateExtra(game: Game, scene: Scene, extra: Extra, time: Time) 
 }
 
 export function getBonus(type) {
+    const isLBA1 = getParams().game === 'lba1';
     let spriteIndex = 0;
     const bonus = [];
     for (let b = 0; b < 5; b += 1) {
@@ -317,12 +319,12 @@ export function getBonus(type) {
     // TODO validate per chapter bonus
 
     spriteIndex = bonus[getRandom(0, bonus.length - 1)];
-    if (spriteIndex === 0) {
+    spriteIndex += 3;
+
+    if (!isLBA1 && spriteIndex === 3) {
         spriteIndex = SpriteType.KASHES;
         // TODO if planet Zeelich then increment
         // spriteIndex += 1
-    } else {
-        spriteIndex += 3; // starts on heart sprite
     }
 
     return spriteIndex;
