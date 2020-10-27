@@ -20,6 +20,9 @@ const createSampleSource = (context: any) => {
             return;
         }
         const entryBuffer = await resource.getEntryAsync(index);
+        if (entryBuffer.byteLength === 0) {
+            return;
+        }
         const buffer = await source.decode(entryBuffer.slice(0));
         sampleDecodedAudioCache[index] = buffer;
         source.setLoopCount(loopCount);

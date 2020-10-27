@@ -1,6 +1,7 @@
 import { MotionController } from '@webxr-input-profiles/motion-controllers';
 import { BehaviourMode } from '../../game/loop/hero';
 import Game from '../../game/Game';
+import { getParams } from '../../params';
 
 interface BtnMapping {
     btn: string;
@@ -153,8 +154,9 @@ let bubbleTimeout = null;
 
 function setBehaviour(game, behaviour) {
     game.getState().hero.behaviour = behaviour;
+    const textIndex = behaviour + (getParams().game === 'lba2' ? 80 : 0);
     game.setUiState({
-        infoBubble: game.menuTexts[80 + behaviour].value
+        infoBubble: game.menuTexts[textIndex].value
     });
     if (bubbleTimeout) {
         clearTimeout(bubbleTimeout);

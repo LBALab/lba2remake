@@ -16,6 +16,7 @@ import {
 } from './overlay';
 import Game from '../../game/Game';
 import Scene from '../../game/Scene';
+import { getParams } from '../../params';
 
 interface IBehaviourMenuClover {
     boxes: number;
@@ -154,8 +155,13 @@ class BehaviourModeItem extends Component<IBehaviourItem> {
 }
 
 const BehaviourMode = ({ game, behaviour }) => {
+    const isLBA1 = getParams().game === 'lba1';
+    let textIndex = behaviour + (isLBA1 ? 0 : 80);
+    if (isLBA1 && behaviour === BehaviourModeType.PROTOPACK) {
+        textIndex += 1;
+    }
     const behaviourText = (game.menuTexts)
-    ? game.menuTexts[80 + behaviour].value : '';
+    ? game.menuTexts[textIndex].value : '';
     return (
         <div className="behaviourMode">{behaviourText}</div>
     );
@@ -244,6 +250,7 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
         6: useRef(null),
         8: useRef(null),
     };
+    const isLBA1 = getParams().game === 'lba1';
 
     const listener = (event) => {
         let behav = behaviour;
@@ -253,73 +260,61 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
             case 37:
             case 'ArrowLeft':
                 action = true;
-                switch (true) {
-                    // Normal 4 behaviour modes.
-                    case behav <= BehaviourModeType.DISCRETE:
-                        behav -= 1;
-                        if (behav < BehaviourModeType.NORMAL) {
-                            behav = BehaviourModeType.DISCRETE;
-                        }
-                        break;
-                    case behav === BehaviourModeType.PROTOPACK:
-                        behav = BehaviourModeType.JETPACK;
-                        break;
-                    case behav === BehaviourModeType.JETPACK:
-                        behav = BehaviourModeType.PROTOPACK;
-                        break;
+                if (behav <= BehaviourModeType.DISCRETE) {
+                    behav -= 1;
+                    if (behav < BehaviourModeType.NORMAL) {
+                        behav = BehaviourModeType.DISCRETE;
+                    }
+                } else if (!isLBA1 && behav === BehaviourModeType.PROTOPACK) {
+                    behav = BehaviourModeType.JETPACK;
+                } else if (!isLBA1 && behav === BehaviourModeType.JETPACK) {
+                    behav = BehaviourModeType.PROTOPACK;
                 }
                 break;
             case 39:
             case 'ArrowRight':
                 action = true;
-                switch (true) {
-                    // Normal 4 behaviour modes.
-                    case behav <= BehaviourModeType.DISCRETE:
-                        behav += 1;
-                        if (behav > BehaviourModeType.DISCRETE) {
-                            behav = BehaviourModeType.NORMAL;
-                        }
-                        break;
-                    case behav === BehaviourModeType.PROTOPACK:
-                        behav = BehaviourModeType.JETPACK;
-                        break;
-                    case behav === BehaviourModeType.JETPACK:
-                        behav = BehaviourModeType.PROTOPACK;
-                        break;
+                if (behav <= BehaviourModeType.DISCRETE) {
+                    behav += 1;
+                    if (behav > BehaviourModeType.DISCRETE) {
+                        behav = BehaviourModeType.NORMAL;
+                    }
+                } else if (behav === BehaviourModeType.PROTOPACK) {
+                    behav = BehaviourModeType.JETPACK;
+                } else if (behav === BehaviourModeType.JETPACK) {
+                    behav = BehaviourModeType.PROTOPACK;
                 }
                 break;
             case 38:
             case 'ArrowUp':
                 action = true;
-                switch (true) {
-                    // Normal 4 behaviour modes.
-                    case behav <= BehaviourModeType.DISCRETE:
-                        behav = BehaviourModeType.HORN;
-                        break;
-                    case behav === BehaviourModeType.HORN:
+                if (behav <= BehaviourModeType.DISCRETE) {
+                    if (isLBA1) {
                         behav = BehaviourModeType.PROTOPACK;
-                        break;
-                    case behav === BehaviourModeType.PROTOPACK ||
-                         behav === BehaviourModeType.JETPACK:
-                        behav = BehaviourModeType.NORMAL;
-                        break;
+                    } else {
+                        behav = BehaviourModeType.HORN;
+                    }
+                } else if (!isLBA1 && behav === BehaviourModeType.HORN) {
+                    behav = BehaviourModeType.PROTOPACK;
+                } else if (behav === BehaviourModeType.PROTOPACK ||
+                         behav === BehaviourModeType.JETPACK) {
+                    behav = BehaviourModeType.NORMAL;
                 }
                 break;
             case 40:
             case 'ArrowDown':
                 action = true;
-                switch (true) {
-                    // Normal 4 behaviour modes.
-                    case behav <= BehaviourModeType.DISCRETE:
-                        behav = BehaviourModeType.PROTOPACK;
-                        break;
-                    case behav === BehaviourModeType.PROTOPACK ||
-                         behav === BehaviourModeType.JETPACK:
-                        behav = BehaviourModeType.HORN;
-                        break;
-                    case behav === BehaviourModeType.HORN:
+                if (behav <= BehaviourModeType.DISCRETE) {
+                    behav = BehaviourModeType.PROTOPACK;
+                } else if (behav === BehaviourModeType.PROTOPACK ||
+                         behav === BehaviourModeType.JETPACK) {
+                    if (isLBA1) {
                         behav = BehaviourModeType.NORMAL;
-                        break;
+                    } else {
+                        behav = BehaviourModeType.HORN;
+                    }
+                } else if (!isLBA1 && behav === BehaviourModeType.HORN) {
+                    behav = BehaviourModeType.NORMAL;
                 }
                 break;
         }
@@ -355,7 +350,9 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
             } else if (behaviour === BehaviourModeType.PROTOPACK ||
                 behaviour === BehaviourModeType.JETPACK) {
                 renderLoop(time, 4, behaviour === 4, itemNodes[4]);
-                renderLoop(time, 8, behaviour === 8, itemNodes[8]);
+                if (!isLBA1) {
+                    renderLoop(time, 8, behaviour === 8, itemNodes[8]);
+                }
             }
         });
         return () => {
@@ -432,7 +429,7 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
                 }} />
             </>
         );
-    } else if (behaviour === BehaviourModeType.HORN) {
+    } else if (!isLBA1 && behaviour === BehaviourModeType.HORN) {
         behaviourModeItems = (
             <>
                 <BehaviourModeItem
@@ -453,12 +450,12 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
                     behaviourChanged={behaviour}
                     selected={behaviour === 4}
                 />
-                <BehaviourModeItem
+                {!isLBA1 && <BehaviourModeItem
                     divRef={itemNodes[8]}
                     behaviour={8}
                     behaviourChanged={behaviour}
                     selected={behaviour === 8}
-                />
+                />}
             </>
         );
     }
