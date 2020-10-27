@@ -6,6 +6,7 @@ import { AnimType } from '../../data/animType';
 import Actor from '../../Actor';
 import { Time } from '../../../datatypes';
 import Scene from '../../Scene';
+import { getParams } from '../../../params';
 
 const STEP = 1 / WORLD_SIZE;
 const ESCALATOR_SPEED = 0.05;
@@ -28,6 +29,7 @@ export default class IsoSceneryPhysics {
             obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
             obj.props.animIndex === AnimType.FORWARD;
 
+        const isLBA1 = getParams().game === 'lba1';
         const basePos = obj.threeObject.position.clone();
         const position = obj.physics.position.clone();
         basePos.multiplyScalar(STEP);
@@ -75,7 +77,9 @@ export default class IsoSceneryPhysics {
                                     break;
                             }
                         }
-                        processEscalator(column, position, time);
+                        if (!isLBA1) {
+                            processEscalator(column, position, time);
+                        }
                         break;
                     }
                 }
