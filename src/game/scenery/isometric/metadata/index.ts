@@ -51,8 +51,8 @@ export async function saveSceneReplacementModel(entry, ambience) {
 
 function computeReplacements({ grid, metadata, replacements, mirrorGroups = null, apply = false }) {
     for (const variant of metadata.variants) {
-        forEachCell(grid, metadata, (_layoutInfo, _layout, x, y, z, blocks) => {
-            checkVariant(grid, x, y, z, replacements, variant, blocks);
+        forEachCell(grid, metadata, (_layoutInfo, layout, x, y, z) => {
+            checkVariant(grid, x, y, z, replacements, variant, layout);
         });
     }
     forEachCell(grid, metadata, (layoutInfo, layout, x, y, z) => {
@@ -60,7 +60,7 @@ function computeReplacements({ grid, metadata, replacements, mirrorGroups = null
 
         if (apply) {
             if (mirror) {
-                processLayoutMirror(layout, x, y, z, mirrorGroups);
+                processLayoutMirror(layout.index, x, y, z, mirrorGroups);
             }
             if (suppress) {
                 replacements.bricks.add(`${x},${y},${z}`);
@@ -69,13 +69,13 @@ function computeReplacements({ grid, metadata, replacements, mirrorGroups = null
     });
 }
 
-function checkVariant(grid, xStart, yStart, zStart, replacements, variant, blocks) {
+function checkVariant(grid, xStart, yStart, zStart, replacements, variant, layout) {
     if (checkVariantMatch(grid, xStart, yStart, zStart, variant.props, replacements)) {
         applyReplacement(xStart, yStart, zStart, replacements, {
             type: 'variant',
             data: variant.props,
             replacementData: {
-                blocks,
+                layout,
                 ...variant
             }
         });
@@ -95,7 +95,7 @@ function forEachCell(grid, metadata, handler) {
                 if (bly) {
                     const layout = layouts[bly.layout];
                     if (layout && layout.index in mdLayouts) {
-                        handler(mdLayouts[layout.index], layout.index, x, y, z, blocks);
+                        handler(mdLayouts[layout.index], layout, x, y, z);
                     }
                 }
             }
