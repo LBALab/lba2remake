@@ -39,8 +39,7 @@ export function ZONE_OBJ(this: ScriptContext, actor) {
         halfHeight = (bb.max.y - bb.min.y) * 0.5;
     }
     pos.y += halfHeight;
-    for (let i = 0; i < this.scene.zones.length; i += 1) {
-        const zone = this.scene.zones[i];
+    for (const zone of this.scene.zones) {
         if (zone.props.type !== 2)
             continue;
 

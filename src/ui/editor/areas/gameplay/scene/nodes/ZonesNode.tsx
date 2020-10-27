@@ -2,27 +2,28 @@ import * as React from 'react';
 import DebugData, {getObjectName, renameObject, locateObject} from '../../../../DebugData';
 import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {makeObjectsNode} from '../node_factories/objects';
-import {ZONE_TYPE} from '../../../../../../game/zones';
+import Scene from '../../../../../../game/Scene';
+import Zone, { ZONE_TYPE } from '../../../../../../game/Zone';
 
-const Zone = {
+const ZoneNode = {
     dynamic: true,
     needsData: true,
     allowRenaming: () => true,
-    rename: (zone, newName) => {
-        renameObject('zone', zone.props.sceneIndex, zone.index, newName);
+    rename: (zone: Zone, newName) => {
+        renameObject('zone', zone.props.sceneIndex, zone.props.index, newName);
     },
     ctxMenu: [
         {
             name: 'Locate',
-            onClick: (_component, zone) => locateObject(zone)
+            onClick: (_component, zone: Zone) => locateObject(zone)
         }
     ],
-    name: zone => getObjectName('zone', zone.props.sceneIndex, zone.index),
+    name: zone => getObjectName('zone', zone.props.sceneIndex, zone.props.index),
     icon: zone => `editor/icons/zones/${ZONE_TYPE[zone.props.type]}.svg`,
     props: zone => [
         {
             id: 'index',
-            value: zone.index,
+            value: zone.props.index,
             render: value => <span>#{value}</span>
         },
         {
@@ -47,8 +48,8 @@ const Zone = {
         {
             id: 'type',
             name: 'Type',
-            value: zone => zone,
-            render: (zone) => {
+            value: (zone: Zone) => zone,
+            render: (zone: Zone) => {
                 const {r, g, b} = zone.color;
                 // tslint:disable-next-line:max-line-length
                 const color = `rgba(${Math.floor(r * 256)},${Math.floor(g * 256)},${Math.floor(b * 256)},1)`;
@@ -58,7 +59,7 @@ const Zone = {
         {
             id: 'param',
             name: 'Param',
-            value: (zone) => {
+            value: (zone: Zone) => {
                 let value = zone.props.snap;
                 if (ZONE_TYPE[zone.props.type] === 'TEXT') {
                     if (DebugData.scope.scene.props.texts[value]) {
@@ -69,15 +70,15 @@ const Zone = {
             }
         },
     ],
-    numChildren: zone => (zone.threeObject ? 1 : 0),
+    numChildren: (zone: Zone) => (zone.threeObject ? 1 : 0),
     child: () => SceneGraphNode,
-    childData: zone => zone.threeObject,
-    selected: (zone) => {
+    childData: (zone: Zone) => zone.threeObject,
+    selected: (zone: Zone) => {
         const selection = DebugData.selection;
-        return selection && selection.type === 'zone' && selection.index === zone.index;
+        return selection && selection.type === 'zone' && selection.index === zone.props.index;
     },
-    onClick: (zone) => { DebugData.selection = {type: 'zone', index: zone.index}; },
-    onDoubleClick: (zone) => {
+    onClick: (zone: Zone) => { DebugData.selection = {type: 'zone', index: zone.props.index}; },
+    onDoubleClick: (zone: Zone) => {
         locateObject(zone);
     }
 };
@@ -87,10 +88,10 @@ export const ZonesNode = makeObjectsNode('zone', {
     needsData: true,
     name: () => 'Zones',
     icon: () => 'editor/icons/zone.svg',
-    numChildren: scene => scene.zones.length,
-    child: () => Zone,
-    childData: (scene, idx) => scene.zones[idx],
-    hasChanged: scene => scene.index !== DebugData.scope.scene.index,
+    numChildren: (scene: Scene) => scene.zones.length,
+    child: () => ZoneNode,
+    childData: (scene: Scene, idx) => scene.zones[idx],
+    hasChanged: (scene: Scene) => scene.index !== DebugData.scope.scene.index,
     props: (_data, _ignored, component) => {
         const label = component.props.rootState.labels.zone;
         return [{

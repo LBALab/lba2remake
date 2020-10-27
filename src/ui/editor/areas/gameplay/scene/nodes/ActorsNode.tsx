@@ -9,8 +9,9 @@ import {SceneGraphNode} from '../../sceneGraph/SceneGraphNode';
 import {mapComportementArg} from '../../scripts/text/listing';
 import {makeObjectsNode} from '../node_factories/objects';
 import { getEntities, loadEntities } from '../../../model/browser/entitities';
+import Actor from '../../../../../../game/Actor';
 
-const Actor = {
+const ActorNode = {
     dynamic: true,
     needsData: true,
     allowRenaming: actor => actor.index > 1,
@@ -127,7 +128,7 @@ const Actor = {
             id: 'life',
             name: 'Life',
             value: actor => getComportement(actor),
-            icon: () => 'editor/icons/areas/script.png',
+            icon: () => 'editor/icons/script.png',
             render: (value) => {
                 if (value === 'terminated') {
                     return <i>[OFF]</i>;
@@ -149,7 +150,7 @@ const Actor = {
                 return value.cmdName;
             },
             value: actor => getMoveAction(actor),
-            icon: () => 'editor/icons/areas/script.png',
+            icon: () => 'editor/icons/script.png',
             render: (value) => {
                 if (!value)
                     return <i>[OFF]</i>;
@@ -192,7 +193,7 @@ export const ActorsNode = makeObjectsNode('actor', {
         }
     ],
     numChildren: scene => scene.actors.length,
-    child: () => Actor,
+    child: () => ActorNode,
     childData: (scene, idx) => scene.actors[idx],
     hasChanged: scene => scene.index !== DebugData.scope.scene,
     props: (_data, _ignored, component) => {
@@ -219,14 +220,13 @@ export const ActorsNode = makeObjectsNode('actor', {
     }
 });
 
-function getComportement(actor) {
+function getComportement(actor: Actor) {
     const lifeScript = actor.scripts.life;
     if (lifeScript.context.state.terminated)
         return 'terminated';
-    const offset = lifeScript.context.state.lastOffset;
-    if (offset) {
-        const cmd = lifeScript.commands[offset];
-        return cmd.section;
+    const info = DebugData.script.life[actor.index];
+    if (info && 'section' in info) {
+        return info.section;
     }
     return null;
 }
