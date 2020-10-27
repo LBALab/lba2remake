@@ -166,17 +166,17 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
 
     const bindings = [];
     if (animations && animations.length) {
-        each(animations, (animationBase) => {
+        for (const animationBase of animations) {
             const animation = animationBase.clone(true);
             const {tracks} = animation;
-            each(tracks, (track) => {
+            for (const track of tracks) {
                 bindings.push({
                     track,
                     binding: new THREE.PropertyBinding(threeObject, track.name)
                 });
-            });
+            }
             replacements.animations.push(animation);
-        });
+        }
     }
 
     const skip = new Set();
@@ -195,7 +195,7 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
     threeObject.traverse((node) => {
         node.updateMatrix();
         node.updateMatrixWorld(true);
-        each(bindings, ({binding, track}) => {
+        for (const {binding, track} of bindings) {
             if (binding.node === node) {
                 if (node.parent !== threeObject) {
                     // tslint:disable-next-line: no-console
@@ -221,9 +221,8 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
                         geometries: makeReplacementGeometries(replacements.data)
                     }
                 });
-                return;
             }
-        });
+            }
         if (skip.has(node.parent)) {
             skip.add(node);
             if (node instanceof THREE.Mesh) {
@@ -238,12 +237,12 @@ async function addReplacementObject(info, replacements, gx, gy, gz) {
             appendMeshGeometry(replacements, gTransform, node, info, angle);
         }
     });
-    each(animNodes, ({group, data}) => {
+    for (const {group, data} of animNodes) {
         buildReplacementMeshes({
             geometries: data.geometries,
             threeObject: group
         });
-    });
+    }
     if (animRoot.children.length > 0) {
         replacements.threeObject.add(animRoot);
     }
