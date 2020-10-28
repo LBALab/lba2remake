@@ -233,7 +233,10 @@ function processBoxIntersections(
     dz: number,
     isTouchingGround: boolean
 ) {
-    const boundingBox = actor.model.boundingBox;
+    if (!actor.model || !actor.sprite) {
+        return false;
+    }
+    const boundingBox = actor.model ? actor.model.boundingBox : actor.sprite.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.min.multiplyScalar(STEP);
     ACTOR_BOX.max.multiplyScalar(STEP);

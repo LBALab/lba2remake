@@ -18,7 +18,7 @@ export function processPhysicsFrame(game: Game, scene: Scene, time: Time) {
 }
 
 function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time) {
-    if (!actor.model || actor.state.isDead)
+    if (actor.state.isDead)
         return;
 
     // If someone is talking who isn't this actor, don't process the physics.
@@ -38,11 +38,17 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
         scene.scenery.physics.processCollisions(scene, actor, time);
         processCollisionsWithActors(scene, actor);
     }
-    actor.model.mesh.quaternion.copy(actor.physics.orientation);
-    actor.model.mesh.position.copy(actor.physics.position);
-    if (actor.model.boundingBoxDebugMesh) {
-        actor.model.boundingBoxDebugMesh.quaternion.copy(actor.model.mesh.quaternion);
-        actor.model.boundingBoxDebugMesh.quaternion.inverse();
+    if (actor.model) {
+        actor.model.mesh.quaternion.copy(actor.physics.orientation);
+        actor.model.mesh.position.copy(actor.physics.position);
+        if (actor.model.boundingBoxDebugMesh) {
+            actor.model.boundingBoxDebugMesh.quaternion.copy(actor.model.mesh.quaternion);
+            actor.model.boundingBoxDebugMesh.quaternion.inverse();
+        }
+    }
+    if (actor.sprite) {
+        actor.sprite.threeObject.quaternion.copy(actor.physics.orientation);
+        actor.sprite.threeObject.position.copy(actor.physics.position);
     }
 }
 
