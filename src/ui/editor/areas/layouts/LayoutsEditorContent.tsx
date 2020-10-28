@@ -655,13 +655,13 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
         }
         const { library } = this.props.sharedState;
         const scenes = await findScenesUsingLibrary(library);
+        const sceneMap = await getSceneMap();
         for (let i = 0; i < scenes.length; i += 1) {
             const scene = scenes[i];
             this.setState({
                 updateProgress: `Updating scene ${i + 1} / ${scenes.length}`
             }, this.saveDebugScope);
             const sceneData = await getScene(scene);
-            const sceneMap = await getSceneMap();
             await saveSceneReplacementModel(sceneMap[scene].sceneryIndex, sceneData.ambience);
         }
         this.setState({ updateProgress: null }, this.saveDebugScope);
@@ -972,7 +972,7 @@ function getLightVector() {
     return lightVector;
 }
 
-async function findScenesUsingLibrary(library) {
+async function findScenesUsingLibrary(library): Promise<number[]> {
     const bkg = await getBricksHQR();
     const sceneMap = await getSceneMap();
     const scenes = [];
