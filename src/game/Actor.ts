@@ -52,6 +52,7 @@ export interface ActorProps {
     prevEntityIndex?: number;
     prevAnimIndex?: number;
     prevAngle?: number;
+    followActor?: number;
 }
 
 interface ActorPhysics {
