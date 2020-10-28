@@ -14,6 +14,7 @@ import PLATFORM_FRAG from './shaders/dome_platform.frag.glsl';
 import LBA_OBJECT_VERT from '../shaders/objects/colored.preview.vert.glsl';
 import LBA_OBJECT_FRAG from '../shaders/objects/colored.frag.glsl';
 import { loadLUTTexture } from '../../../../utils/lut';
+import { getParams } from '../../../../params';
 
 const loader = new THREE.TextureLoader();
 const gltfLoader = new GLTFLoader();
@@ -30,7 +31,8 @@ export async function loadDomeEnv(ambience) {
     const starCages = [];
     const archStars = [];
     const dome = await new Promise<THREE.Object3D>((resolve) => {
-        gltfLoader.load('models/dome.glb', (m) => {
+        const { game } = getParams();
+        gltfLoader.load(`models/${game}/dome.glb`, (m) => {
             resolve(m.scene);
         });
     });

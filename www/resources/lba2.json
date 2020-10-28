@@ -30,7 +30,7 @@
         { "strategy": "STATIC", "type": "M4A", "id": "VOICES_GAM",       "description": "Main Voices",              "path": "LBA2/VOX/%LANGVOICECODE%_GAM_AAC.VOX.zip" },
         { "strategy": "STATIC", "type": "M4A", "id": "VOICES_000",       "description": "Voices 0",                 "path": "LBA2/VOX/%LANGVOICECODE%_000_AAC.VOX.zip" },
 
-        { "strategy": "STATIC", "type": "JSON", "id": "MODEL_REPLACEMENTS", "description": "Models Replacement",    "path": "../../metadata/model_replacements.json" },
+        { "strategy": "STATIC", "type": "JSON", "id": "MODEL_REPLACEMENTS", "description": "Models Replacement",    "path": "../../metadata/lba2/model_replacements.json" },
 
         { "strategy": "TRANSIENT", "type": "M4A", "id": "VOICES_001",    "description": "Voices 1",     "path": "LBA2/VOX/%LANGVOICECODE%_001_AAC.VOX.zip" },
         { "strategy": "TRANSIENT", "type": "M4A", "id": "VOICES_002",    "description": "Voices 2",     "path": "LBA2/VOX/%LANGVOICECODE%_002_AAC.VOX.zip" },

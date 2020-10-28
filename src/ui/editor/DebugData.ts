@@ -3,6 +3,7 @@ import Scene from '../../game/Scene';
 import Actor from '../../game/Actor';
 import Zone from '../../game/Zone';
 import Point from '../../game/Point';
+import { getParams } from '../../params';
 
 const DebugData = {
     scope: <any> {},
@@ -195,8 +196,9 @@ function resetCameraOrientation(controlsState, scene: Scene) {
 
 export async function loadModelsMetaData() {
     return new Promise((resolve) => {
+        const { game } = getParams();
         const request = new XMLHttpRequest();
-        request.open('GET', 'metadata/models.json', true);
+        request.open('GET', `metadata/${game}/models.json`, true);
 
         request.onload = function onload() {
             if (this.status === 200) {
@@ -226,8 +228,9 @@ export async function loadSceneMetaData(sceneIndex) {
     }
 
     return new Promise((resolve) => {
+        const { game } = getParams();
         const request = new XMLHttpRequest();
-        request.open('GET', `metadata/scene_${sceneIndex}.json`, true);
+        request.open('GET', `metadata/${game}/scene_${sceneIndex}.json`, true);
 
         request.onload = function onload() {
             if (this.status === 200) {
@@ -252,8 +255,9 @@ export async function saveMetaData(metadata) {
     if (!window.isLocalServer) {
         return;
     }
+    const { game } = getParams();
     const request = new XMLHttpRequest();
-    request.open('POST', 'metadata', true);
+    request.open('POST', `metadata/${game}`, true);
     request.onload = function onload() {
         if (this.status === 200) {
             // tslint:disable-next-line:no-console
@@ -268,8 +272,9 @@ export async function saveMetaData(metadata) {
 }
 
 export function loadGameMetaData() {
+    const { game } = getParams();
     const request = new XMLHttpRequest();
-    request.open('GET', 'metadata/game.json', true);
+    request.open('GET', `metadata/${game}/game.json`, true);
 
     request.onload = function onload() {
         if (this.status === 200) {
@@ -286,8 +291,9 @@ export function loadGameMetaData() {
 
 export async function loadIslandsMetaData() {
     return new Promise((resolve) => {
+        const { game } = getParams();
         const request = new XMLHttpRequest();
-        request.open('GET', 'metadata/islands.json', true);
+        request.open('GET', `metadata/${game}/islands.json`, true);
 
         request.onload = function onload() {
             if (this.status === 200) {

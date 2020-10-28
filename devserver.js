@@ -25,26 +25,27 @@ app.use(bodyParser.raw({
     limit: '64mb'
 }));
 
-app.post('/metadata', function (req, res) { // lgtm [js/missing-rate-limiting]
+app.post('/metadata/:game', function (req, res) { // lgtm [js/missing-rate-limiting]
     const body = req.body;
+    const game = req.params.game;
     console.log(`Saving metadata, type=${body.type}`);
     let fileName;
     let kind = 'partial';
     switch (body.type) {
         case 'scene':
-            fileName = `./www/metadata/scene_${body.index}.json`;
+            fileName = `./www/metadata/${game}/scene_${body.index}.json`;
             break;
         case 'game':
-            fileName = './www/metadata/game.json';
+            fileName = `./www/metadata/${game}/game.json`;
             break;
         case 'models':
-            fileName = './www/metadata/models.json';
+            fileName = `./www/metadata/${game}/models.json`;
             break;
         case 'islands':
-            fileName = './www/metadata/islands.json';
+            fileName = `./www/metadata/${game}/islands.json`;
             break;
         case 'layouts':
-            fileName = './www/metadata/layouts.json';
+            fileName = `./www/metadata/${game}/layouts.json`;
             kind = 'full';
             break;
     }
@@ -95,19 +96,20 @@ app.post('/lut.dat', function(req, res) { // lgtm [js/missing-rate-limiting]
     });
 });
 
-app.post('/iso_replacements/:entry', function(req, res) { // lgtm [js/missing-rate-limiting]
+app.post('/iso_replacements/:game/:entry', function(req, res) { // lgtm [js/missing-rate-limiting]
     const entry = Number(req.params.entry);
-    fs.writeFile(`./www/models/iso_scenes/${entry}.glb`, req.body, () => {
-        console.log(`Saved models/iso_scenes/${entry}.glb`);
+    const game = req.params.game;
+    fs.writeFile(`./www/models/${game}/iso_scenes/${entry}.glb`, req.body, () => {
+        console.log(`Saved models/${game}/iso_scenes/${entry}.glb`);
         res.end();
-        fs.readFile('./www/metadata/iso_scenes.json', 'utf8', (err, file) => { // lgtm [js/path-injection]
+        fs.readFile(`./www/metadata/${game}/iso_scenes.json`, 'utf8', (err, file) => { // lgtm [js/path-injection]
             if (err) {
                 console.error(err);
             } else {
                 const content = JSON.parse(file);
                 if (!content.includes(entry)) {
                     content.push(entry);
-                    fs.writeFile('./www/metadata/iso_scenes.json', JSON.stringify(content, null, 2), () => {  // lgtm [js/path-injection]
+                    fs.writeFile(`./www/metadata/${game}/iso_scenes.json`, JSON.stringify(content, null, 2), () => {  // lgtm [js/path-injection]
                         console.log('Saved iso_scenes metadata');
                     });
                 }
@@ -116,8 +118,9 @@ app.post('/iso_replacements/:entry', function(req, res) { // lgtm [js/missing-ra
     });
 });
 
-app.get('/layout_models', function(req, res) {
-    fs.readdir('./www/models/layouts', (err, files) => {
+app.get('/layout_models/:game', function(req, res) {
+    const game = req.params.game;
+    fs.readdir(`./www/models/${game}/layouts`, (err, files) => {
         res.end(JSON.stringify(files));
     });
 });

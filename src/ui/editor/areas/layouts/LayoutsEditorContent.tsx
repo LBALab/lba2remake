@@ -31,6 +31,7 @@ import {
 } from '../../../../resources';
 import { applyAnimationUpdaters } from '../../../../game/scenery/isometric/metadata/animations';
 import { loadBrickMask } from '../../../../game/scenery/isometric/mask';
+import { getParams } from '../../../../params';
 
 interface Props extends TickerProps {
     params: any;
@@ -347,7 +348,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
             this.state.scene.threeScene.remove(oldSettings.threeObject);
         }
         if (!layoutsMetadata) {
-            const rawRD = await fetch('/metadata/layouts.json');
+            const { game } = getParams();
+            const rawRD = await fetch(`/metadata/${game}/layouts.json`);
             layoutsMetadata = await rawRD.json();
         }
         DebugData.scope.layoutsMetadata = layoutsMetadata;
@@ -788,7 +790,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
 
 async function loadModel(file) : Promise<GLTF> {
     return new Promise((resolve) => {
-        loader.load(`/models/layouts/${file}`, resolve);
+        const { game } = getParams();
+        loader.load(`/models/${game}/layouts/${file}`, resolve);
     });
 }
 

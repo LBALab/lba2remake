@@ -1,5 +1,6 @@
 import {loadBricksMapping} from './mapping';
 import { getLibraries } from '../../../resources';
+import { getParams } from '../../../params';
 
 export enum GROUND_TYPES {
     NORMAL_FLOOR,
@@ -23,8 +24,9 @@ export enum GROUND_TYPES {
 let globalGridMetadata = null;
 
 export async function getGridMetadata(entry) {
+    const { game } = getParams();
     if (!globalGridMetadata) {
-        const metadataReq = await fetch('/metadata/grids.json');
+        const metadataReq = await fetch(`/metadata/${game}/grids.json`);
         globalGridMetadata = await metadataReq.json();
     }
     return globalGridMetadata[entry];

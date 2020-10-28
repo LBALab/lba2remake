@@ -6,6 +6,7 @@ import { drawFrame } from '../../ui/vr/vrUtils';
 import { tr } from '../../lang';
 import { getPartialMatrixWorld } from '../../utils/math';
 import { BehaviourMode } from '../../game/loop/hero';
+import { getParams } from '../../params';
 
 const loader = new GLTFLoader();
 
@@ -41,6 +42,7 @@ export default class ControllerModel {
     }
 
     async load() {
+        const { game } = getParams();
         this.threeObject = new THREE.Object3D();
         this.vrControllerMesh = await new Promise<THREE.Object3D>((resolve) => {
             loader.load(this.motionController.assetUrl, (m) => {
@@ -48,7 +50,7 @@ export default class ControllerModel {
             });
         });
         this.handMesh = await new Promise<THREE.Object3D>((resolve) => {
-            loader.load('models/hands.glb', (m) => {
+            loader.load(`models/${game}/hands.glb`, (m) => {
                 resolve(m.scene.getObjectByName(`${this.handedness}_hand`));
             });
         });
@@ -58,7 +60,7 @@ export default class ControllerModel {
             }
         });
         this.handFistsMesh = await new Promise<THREE.Object3D>((resolve) => {
-            loader.load('models/hands_fists.glb', (m) => {
+            loader.load(`models/${game}/hands_fists.glb`, (m) => {
                 resolve(m.scene.getObjectByName(`${this.handedness}_hand`));
             });
         });

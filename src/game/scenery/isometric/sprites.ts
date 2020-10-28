@@ -16,6 +16,7 @@ import {
     getSpritesAnim3DSClipInfo,
     getModelReplacements
 } from '../../../resources';
+import { getParams } from '../../../params';
 
 const loader = new GLTFLoader();
 
@@ -294,7 +295,8 @@ interface SpriteReplacement {
 
 export async function loadSpriteReplacement({file, fx}) {
     return new Promise<SpriteReplacement>((resolve) => {
-        loader.load(`models/sprites/${file}`, async (m) => {
+        const { game } = getParams();
+        loader.load(`models/${game}/sprites/${file}`, async (m) => {
             let glow;
             if (fx === 'glow') {
                 glow = makeStars([{

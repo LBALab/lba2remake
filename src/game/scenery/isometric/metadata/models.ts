@@ -14,6 +14,7 @@ import { applyAnimationUpdaters } from './animations';
 import { DOME_SCENES } from '../../../../utils/lba';
 import Scene from '../../../Scene';
 import { Time } from '../../../../datatypes';
+import { getParams } from '../../../../params';
 
 const loader = new GLTFLoader();
 const exporter = new GLTFExporter();
@@ -45,7 +46,8 @@ export async function loadFullSceneModel(
     replacementData,
     numActors: number
 ) : Promise<FullSceneModel> {
-    const model = await loadModel(`/models/iso_scenes/${entry}.glb`);
+    const { game } = getParams();
+    const model = await loadModel(`/models/${game}/iso_scenes/${entry}.glb`);
     const threeObject = model.scene.children[0];
     let actorPos = null;
     threeObject.traverse((node) => {
