@@ -25,7 +25,7 @@ app.use(bodyParser.raw({
     limit: '64mb'
 }));
 
-app.post('/metadata/:game', function (req, res) { // lgtm [js/missing-rate-limiting]
+app.post('/metadata/:game', function (req, res) {
     const body = req.body;
     const game = req.params.game;
     console.log(`Saving metadata, type=${body.type}`);
@@ -51,9 +51,9 @@ app.post('/metadata/:game', function (req, res) { // lgtm [js/missing-rate-limit
     }
     if (fileName) {
         if (kind === 'full') {
-            fs.writeFile(fileName, JSON.stringify(body.content, null, 2), () => {}); // lgtm [js/path-injection]
+            fs.writeFile(fileName, JSON.stringify(body.content, null, 2), () => {});
         } else {
-            fs.readFile(fileName, 'utf8', (err, file) => { // lgtm [js/path-injection]
+            fs.readFile(fileName, 'utf8', (err, file) => {
                 if (err) {
                     console.error(err);
                 } else {
@@ -62,7 +62,7 @@ app.post('/metadata/:game', function (req, res) { // lgtm [js/missing-rate-limit
                         content[body.subType] = [];
                     }
                     content[body.subType][body.subIndex] = body.value;
-                    fs.writeFile(fileName, JSON.stringify(content, null, 2), () => {}); // lgtm [js/path-injection]
+                    fs.writeFile(fileName, JSON.stringify(content, null, 2), () => {});
                 }
             });
         }
@@ -70,7 +70,7 @@ app.post('/metadata/:game', function (req, res) { // lgtm [js/missing-rate-limit
     res.end();
 });
 
-app.post('/crash', function (req, res) { // lgtm [js/missing-rate-limiting]
+app.post('/crash', function (req, res) {
     console.log('Saving crash report');
     const report = req.body;
     fs.writeFile('./crash_report.json', JSON.stringify(report, null, 2), () => {});
@@ -89,27 +89,27 @@ app.post('/crash', function (req, res) { // lgtm [js/missing-rate-limiting]
     res.end();
 });
 
-app.post('/lut.dat', function(req, res) { // lgtm [js/missing-rate-limiting]
+app.post('/lut.dat', function(req, res) {
     fs.writeFile('./www/lut.dat', req.body, () => {
         console.log('Saved lut.dat');
         res.end();
     });
 });
 
-app.post('/iso_replacements/:game/:entry', function(req, res) { // lgtm [js/missing-rate-limiting]
+app.post('/iso_replacements/:game/:entry', function(req, res) {
     const entry = Number(req.params.entry);
     const game = req.params.game;
-    fs.writeFile(`./www/models/${game}/iso_scenes/${entry}.glb`, req.body, () => { // lgtm [js/path-injection]
+    fs.writeFile(`./www/models/${game}/iso_scenes/${entry}.glb`, req.body, () => {
         console.log(`Saved models/${game}/iso_scenes/${entry}.glb`);
         res.end();
-        fs.readFile(`./www/metadata/${game}/iso_scenes.json`, 'utf8', (err, file) => { // lgtm [js/path-injection]
+        fs.readFile(`./www/metadata/${game}/iso_scenes.json`, 'utf8', (err, file) => {
             if (err) {
                 console.error(err);
             } else {
                 const content = JSON.parse(file);
                 if (!content.includes(entry)) {
                     content.push(entry);
-                    fs.writeFile(`./www/metadata/${game}/iso_scenes.json`, JSON.stringify(content, null, 2), () => {  // lgtm [js/path-injection]
+                    fs.writeFile(`./www/metadata/${game}/iso_scenes.json`, JSON.stringify(content, null, 2), () => {
                         console.log('Saved iso_scenes metadata');
                     });
                 }
@@ -118,10 +118,10 @@ app.post('/iso_replacements/:game/:entry', function(req, res) { // lgtm [js/miss
     });
 });
 
-app.get('/layout_models/:game', function(req, res) { // lgtm [js/missing-rate-limiting]
+app.get('/layout_models/:game', function(req, res) {
     const game = req.params.game;
-    fs.readdir(`./www/models/${game}/layouts`, (err, files) => { // lgtm [js/path-injection]
-        res.end(JSON.stringify(files)); // lgtm [js/stored-xss]
+    fs.readdir(`./www/models/${game}/layouts`, (err, files) => {
+        res.end(JSON.stringify(files));
     });
 });
 
