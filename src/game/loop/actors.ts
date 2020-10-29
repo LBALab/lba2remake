@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import Actor from '../Actor';
+import Actor, { ActorDirMode } from '../Actor';
 import { getAnim } from '../../model/entity';
 import {
     updateKeyframe,
@@ -12,6 +12,7 @@ import { AnimType } from '../data/animType';
 import { getAnimationsSync } from '../../resources';
 import Game from '../Game';
 import Scene from '../Scene';
+import { WORLD_SCALE } from '../../utils/lba';
 
 const ACTOR_POS = new THREE.Vector3();
 const HIDE_DISTANCE = 50;
@@ -82,6 +83,42 @@ export function updateActor(
     }
     if (actor.sprite) {
         actor.sprite.update(time);
+    }
+
+    if (actor.props.dirMode === ActorDirMode.SAME_XZ) {
+        const { followActor } = actor.props;
+        if (followActor && followActor !== -1) {
+            const targetActor = scene.actors[followActor];
+            actor.physics.position.copy(targetActor.physics.position);
+            if (actor.model) {
+                actor.model.mesh.quaternion.copy(targetActor.physics.orientation);
+                actor.model.mesh.position.copy(targetActor.physics.position);
+                if (actor.model.boundingBoxDebugMesh) {
+                    actor.model.boundingBoxDebugMesh.quaternion.copy(
+                        targetActor.model.mesh.quaternion
+                    );
+                    actor.model.boundingBoxDebugMesh.quaternion.inverse();
+                }
+            }
+            if (actor.sprite) {
+                actor.sprite.threeObject.quaternion.copy(targetActor.physics.orientation);
+                actor.sprite.threeObject.position.copy(targetActor.physics.position);
+            }
+        }
+    }
+
+    if (actor.props.dirMode === ActorDirMode.FOLLOW) {
+        const { followActor } = actor.props;
+        if (followActor && followActor !== -1) {
+            if (actor.props.flags.isSprite) {
+                actor.gotoSprite(
+                    scene.actors[followActor].physics.position,
+                    time.delta * WORLD_SCALE * this.actor.props.speed / 5
+                );
+            } else {
+                actor.goto(scene.actors[followActor].physics.position);
+            }
+        }
     }
 }
 

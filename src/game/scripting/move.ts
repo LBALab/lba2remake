@@ -68,7 +68,21 @@ export function SAMPLE(this: ScriptContext, index) {
     audio.playSample(index);
 }
 
-export const GOTO_POINT_3D = unimplemented();
+export function GOTO_POINT_3D(this: ScriptContext, point: Point, time) {
+    if (!point) {
+        return;
+    }
+    const distance = this.actor.gotoSprite(
+        point.physics.position,
+        time.delta * WORLD_SCALE * this.actor.props.speed / 5
+    );
+    if (distance > 0.55) {
+        this.state.reentryOffset = this.state.offset;
+        this.state.continue = false;
+    } else {
+        this.actor.stop();
+    }
+}
 
 export function SPEED(this: ScriptContext, speed) {
     this.actor.props.speed = speed;

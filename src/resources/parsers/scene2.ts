@@ -197,6 +197,7 @@ function loadActors(scene, offset) {
             info1: -1,
             info2: -1,
             info3: -1,
+            followActor: -1,
             extraAmount: -1,
             textColor: null,
             spriteAnim3DNumber: -1,
@@ -248,6 +249,7 @@ function loadActors(scene, offset) {
         actor.info2 = data.getInt16(offset, true);
         offset += 2;
         actor.info3 = data.getInt16(offset, true);
+        actor.followActor = actor.info3;
         offset += 2;
 
         actor.extraAmount = data.getInt16(offset, true);
