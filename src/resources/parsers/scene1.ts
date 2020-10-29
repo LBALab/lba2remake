@@ -51,7 +51,7 @@ export const parseSceneLBA1 = async (resource: Resource, index) => {
     offset = loadHero(sceneData, offset);
     offset = loadActors(sceneData, offset);
     offset = loadZones(sceneData, offset);
-    offset = loadPoints(sceneData, offset);
+    loadPoints(sceneData, offset);
 
     return sceneData;
 };

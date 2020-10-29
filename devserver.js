@@ -99,7 +99,7 @@ app.post('/lut.dat', function(req, res) { // lgtm [js/missing-rate-limiting]
 app.post('/iso_replacements/:game/:entry', function(req, res) { // lgtm [js/missing-rate-limiting]
     const entry = Number(req.params.entry);
     const game = req.params.game;
-    fs.writeFile(`./www/models/${game}/iso_scenes/${entry}.glb`, req.body, () => {
+    fs.writeFile(`./www/models/${game}/iso_scenes/${entry}.glb`, req.body, () => { // lgtm [js/path-injection]
         console.log(`Saved models/${game}/iso_scenes/${entry}.glb`);
         res.end();
         fs.readFile(`./www/metadata/${game}/iso_scenes.json`, 'utf8', (err, file) => { // lgtm [js/path-injection]
@@ -118,10 +118,10 @@ app.post('/iso_replacements/:game/:entry', function(req, res) { // lgtm [js/miss
     });
 });
 
-app.get('/layout_models/:game', function(req, res) {
+app.get('/layout_models/:game', function(req, res) { // lgtm [js/missing-rate-limiting]
     const game = req.params.game;
-    fs.readdir(`./www/models/${game}/layouts`, (err, files) => {
-        res.end(JSON.stringify(files));
+    fs.readdir(`./www/models/${game}/layouts`, (err, files) => { // lgtm [js/path-injection]
+        res.end(JSON.stringify(files)); // lgtm [js/stored-xss]
     });
 });
 
