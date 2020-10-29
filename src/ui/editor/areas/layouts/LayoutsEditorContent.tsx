@@ -556,10 +556,11 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     async saveMetadata() {
+        const { game } = getParams();
         if (!window.isLocalServer) {
             return;
         }
-        return fetch('/metadata', {
+        return fetch(`/metadata/${game}`, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
