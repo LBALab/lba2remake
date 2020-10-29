@@ -14,6 +14,7 @@ import { applyAnimationUpdaters } from './animations';
 import { DOME_SCENES } from '../../../../utils/lba';
 import Scene from '../../../Scene';
 import { Time } from '../../../../datatypes';
+import { getParams } from '../../../../params';
 
 const loader = new GLTFLoader();
 const exporter = new GLTFExporter();
@@ -45,7 +46,8 @@ export async function loadFullSceneModel(
     replacementData,
     numActors: number
 ) : Promise<FullSceneModel> {
-    const model = await loadModel(`/models/iso_scenes/${entry}.glb`);
+    const { game } = getParams();
+    const model = await loadModel(`/models/${game}/iso_scenes/${entry}.glb`);
     const threeObject = model.scene.children[0];
     let actorPos = null;
     threeObject.traverse((node) => {
@@ -141,15 +143,16 @@ export async function saveFullSceneModel(replacements, entry) {
         }
     });
     exporter.parse(threeObject, (gltf: ArrayBuffer) => {
+        const { game } = getParams();
         // tslint:disable-next-line: no-console
         console.log(`Saving iso scene replacement ${entry} (${
                 (gltf.byteLength / 1e+6).toFixed(2)
             }Mb)...`);
         const req = new XMLHttpRequest();
-        req.open('POST', `/iso_replacements/${entry}`, true);
+        req.open('POST', `/iso_replacements/${game}/${entry}`, true);
         req.onload = () => {
             // tslint:disable-next-line: no-console
-            console.log(`Saved iso scene replacement ${entry}.`);
+            console.log(`Saved iso scene replacement ${game} ${entry}.`);
         };
         req.setRequestHeader('Content-Type', 'application/octet-stream');
         req.send(new Blob([gltf]));

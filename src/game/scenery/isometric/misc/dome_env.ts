@@ -30,7 +30,7 @@ export async function loadDomeEnv(ambience) {
     const starCages = [];
     const archStars = [];
     const dome = await new Promise<THREE.Object3D>((resolve) => {
-        gltfLoader.load('models/dome.glb', (m) => {
+        gltfLoader.load('models/lba2/dome.glb', (m) => {
             resolve(m.scene);
         });
     });

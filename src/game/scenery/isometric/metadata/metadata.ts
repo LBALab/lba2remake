@@ -2,12 +2,14 @@ import { map } from 'lodash';
 import { loadModel } from './models';
 import { getBricksHQR } from '../../../../resources';
 import { loadLayout } from '../layouts';
+import { getParams } from '../../../../params';
 
 export async function loadMetadata(entry, library, mergeReplacements = false) {
+    const { game } = getParams();
     const bkg = await getBricksHQR();
-    const layoutsReq = await fetch('/metadata/layouts.json');
+    const layoutsReq = await fetch(`/metadata/${game}/layouts.json`);
     const layoutsMetadata = await layoutsReq.json();
-    const isoScenesReq = await fetch('/metadata/iso_scenes.json');
+    const isoScenesReq = await fetch(`/metadata/${game}/iso_scenes.json`);
     const isoScenesMetadata = await isoScenesReq.json();
     const hasFullReplacement = !mergeReplacements && isoScenesMetadata.includes(entry);
     const libMetadata = layoutsMetadata[library.index];
@@ -19,7 +21,7 @@ export async function loadMetadata(entry, library, mergeReplacements = false) {
             if (hasFullReplacement) {
                 info = {...data};
             } else {
-                const model = await loadModel(`/models/layouts/${data.file}`, true);
+                const model = await loadModel(`/models/${game}/layouts/${data.file}`, true);
                 model.scene.name = data.file;
                 info = {
                     ...data,
