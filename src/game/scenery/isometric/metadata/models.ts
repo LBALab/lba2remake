@@ -143,15 +143,16 @@ export async function saveFullSceneModel(replacements, entry) {
         }
     });
     exporter.parse(threeObject, (gltf: ArrayBuffer) => {
+        const { game } = getParams();
         // tslint:disable-next-line: no-console
         console.log(`Saving iso scene replacement ${entry} (${
                 (gltf.byteLength / 1e+6).toFixed(2)
             }Mb)...`);
         const req = new XMLHttpRequest();
-        req.open('POST', `/iso_replacements/${entry}`, true);
+        req.open('POST', `/iso_replacements/${game}/${entry}`, true);
         req.onload = () => {
             // tslint:disable-next-line: no-console
-            console.log(`Saved iso scene replacement ${entry}.`);
+            console.log(`Saved iso scene replacement ${game} ${entry}.`);
         };
         req.setRequestHeader('Content-Type', 'application/octet-stream');
         req.send(new Blob([gltf]));
