@@ -1,4 +1,5 @@
 node_modules
+*.blend1
 /.idea
 /apps/win10/bin
 /apps/win10/obj
