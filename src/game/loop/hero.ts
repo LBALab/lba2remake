@@ -87,6 +87,7 @@ const Q = new THREE.Quaternion();
 const EULER = new THREE.Euler();
 
 function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time: Time) {
+    const isLBA1 = getParams().game === 'lba1';
     const controlsState = game.controlsState;
     if (hero.state.isClimbing ||
         hero.state.isSearching) {
@@ -152,7 +153,6 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
             turnReset = true;
         }
         if (controlsState.jump === 1) {
-            const isLBA1 = getParams().game === 'lba1';
             toggleJump(hero, true);
             animIndex = AnimType.JUMP;
             if (!isLBA1 && Math.abs(controlsState.controlVector.y) > 0.6) {
@@ -263,6 +263,7 @@ function processActorMovement(
     time: Time,
     behaviour: number
 ) {
+    const isLBA1 = getParams().game === 'lba1';
     const controlsState = game.controlsState;
     if (hero.state.isClimbing ||
         hero.state.isSearching) {
@@ -316,7 +317,6 @@ function processActorMovement(
             }
         }
         if (controlsState.jump === 1) {
-            const isLBA1 = getParams().game === 'lba1';
             toggleJump(hero, true);
             animIndex = AnimType.JUMP;
             if (!isLBA1 && !controlsState.relativeToCam && controlsState.controlVector.y === 1) {
