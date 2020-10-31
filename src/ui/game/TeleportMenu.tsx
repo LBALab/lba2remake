@@ -3,6 +3,7 @@ import {map, filter} from 'lodash';
 import LocationsNode from '../editor/areas/gameplay/locator/LocationsNode';
 import { SceneManager } from '../../game/SceneManager';
 import Game from '../../game/Game';
+import { getParams } from '../../params';
 
 const style = {
     position: 'absolute' as const,
@@ -203,7 +204,8 @@ export default class TeleportMenu extends React.Component<TMProps, TMState> {
         const small = this.state.small;
         const planets = LocationsNode.children;
         const selectedPlanet = planets[this.state.planet];
-        return <div className={`${this.props.inGameMenu ? 'bgInGameMenu' : 'bgMenu'} fullscreen`}
+        const { game } = getParams();
+        return <div className={`${this.props.inGameMenu ? 'bgInGameMenu' : `bgMenu ${game}`} fullscreen`}
                     onClick={this.props.exit}>
             <div style={style} ref={getRef}>
                 <div style={headerStyle}>

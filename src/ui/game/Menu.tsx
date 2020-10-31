@@ -125,7 +125,8 @@ export default class Menu extends React.Component<MProps, MState> {
 
     render() {
         if (this.props.showMenu) {
-            const className = `${this.props.inGameMenu ? 'bgInGameMenu' : 'bgMenu'} fullscreen`;
+            const { game } = getParams();
+            const className = `${this.props.inGameMenu ? 'bgInGameMenu' : `bgMenu ${game}`} fullscreen`;
             return <div className={className}>
                 <div className="menu">
                     <ul className="menuList">

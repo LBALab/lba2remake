@@ -2,11 +2,17 @@
 @import './main.scss';
 
 .bgMenu {
-    background-image: url('/images/2_screen_menubg_extended.png');
     background-repeat: repeat-x;
     height: 100%;
-    // background-position: center;
     background-size: cover;
+    background-position: center;
+
+    &.lba1 {
+        background-image: url('/images/menubg_lba1.png');
+    }
+    &.lba2 {
+        background-image: url('/images/menubg_lba2.png');
+    }
 }
 
 .bgInGameMenu {

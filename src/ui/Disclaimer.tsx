@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {tr} from '../lang';
 import {center, editor as editor_style, fullscreen} from './styles';
+import { getParams } from '../params';
 
 const wrapper_style = Object.assign({}, fullscreen, editor_style.base, {
     position: 'absolute' as const,
@@ -58,7 +59,8 @@ const textContainer = {
 };
 
 export default function Disclaimer({accept}) {
-    return <div className="bgMenu fullscreen">
+    const { game } = getParams();
+    return <div className={`bgMenu ${game} fullscreen`}>
         <div style={wrapper_style}>
             <div style={content_style}>
                 <div style={center_vert}>
