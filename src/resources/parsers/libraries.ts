@@ -31,7 +31,11 @@ const parseLayout = (dataView: DataView, index: number, isLBA1: boolean) => {
         blocks.push({
             shape,
             sound: bits(type, 0, 4),
+            // sound 2 only exist in LBA1
+            // for LBA1 each sound maps each step in the animation state (left or right)
+            // note, these are not the sample index, instead is just a list of sound types
             sound2: isLBA1 ? bits(type, 4, 4) : null,
+            // only water (1) exist as groupType in LBA1
             groundType: isLBA1 ? (type & 0xFF) === 0xF1 ? 1 : 0 : bits(type, 4, 4),
             brick,
         });
