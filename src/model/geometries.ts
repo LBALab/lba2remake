@@ -10,6 +10,7 @@ import {loadPaletteTexture, loadSubTextureRGBA} from '../texture';
 import {compile} from '../utils/shaders';
 import { WORLD_SIZE } from '../utils/lba';
 import Lightning from '../game/scenery/island/environment/Lightning';
+import { getParams } from '../params';
 
 const push = Array.prototype.push;
 
@@ -150,6 +151,7 @@ export function loadMesh(
         ambience
     );
     const object = new THREE.Object3D();
+    const isLBA1 = getParams().game === 'lba1';
 
     each(geometries, (geom: ModelGeometry, name) => {
         const {
@@ -200,6 +202,9 @@ export function loadMesh(
                 bufferGeometry.boundingBox = body.boundingBox;
                 const sphere = new THREE.Sphere();
                 bufferGeometry.boundingSphere = body.boundingBox.getBoundingSphere(sphere);
+            }
+            if (isLBA1) {
+                bufferGeometry.computeVertexNormals();
             }
 
             const modelMesh = new THREE.Mesh(bufferGeometry, material);
@@ -293,7 +298,7 @@ function loadFaceGeometry(geometries, body) {
         for (let j = 0; j < 3; j += 1) {
             addVertex(j);
         }
-        if (p.numVertex === 4) { // quad
+        if (p.numVertex >= 4) { // quad
             each([0, 2, 3], (j) => {
                 addVertex(j);
             });
