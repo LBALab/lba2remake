@@ -1,8 +1,10 @@
 {
   "actorNames": [
+    null,
+    null,
+    null,
+    "Grobo"
   ],
-  "zoneNames": [
-  ],
-  "varcubes": [
-  ]
+  "zoneNames": [],
+  "varcubes": []
 }

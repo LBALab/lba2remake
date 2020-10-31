@@ -1,4 +1,451 @@
 {
   "vargames": [
+    {
+      "name": "holomap",
+      "type": "boolean"
+    },
+    {
+      "name": "magicball",
+      "type": "boolean"
+    },
+    {
+      "name": "funfrock_saber",
+      "type": "boolean"
+    },
+    {
+      "name": "gawleys_horn",
+      "type": "boolean"
+    },
+    {
+      "name": "tunic",
+      "type": "boolean"
+    },
+    {
+      "name": "book_of_bu",
+      "type": "boolean"
+    },
+    {
+      "name": "sendells_medallion",
+      "type": "boolean"
+    },
+    {
+      "name": "flask_clear_water",
+      "type": "boolean"
+    },
+    {
+      "name": "red_card",
+      "type": "boolean"
+    },
+    {
+      "name": "blue_card",
+      "type": "boolean"
+    },
+    {
+      "name": "id_card",
+      "type": "boolean"
+    },
+    {
+      "name": "mr_miers_pass",
+      "type": "boolean"
+    },
+    {
+      "name": "proto_pack",
+      "type": "boolean"
+    },
+    {
+      "name": "snowboard",
+      "type": "boolean"
+    },
+    {
+      "name": "meca_pinguin",
+      "type": "boolean"
+    },
+    {
+      "name": "gas",
+      "type": "boolean"
+    },
+    {
+      "name": "pirate_flag",
+      "type": "boolean"
+    },
+    {
+      "name": "magic_flute",
+      "type": "boolean"
+    },
+    {
+      "name": "space_guitar",
+      "type": "boolean"
+    },
+    {
+      "name": "hair_dryer",
+      "type": "boolean"
+    },
+    {
+      "name": "ancestral_key",
+      "type": "boolean"
+    },
+    {
+      "name": "bottle_sirup",
+      "type": "boolean"
+    },
+    {
+      "name": "bottle_sirup_empty",
+      "type": "boolean"
+    },
+    {
+      "name": "ferry_ticket",
+      "type": "boolean"
+    },
+    {
+      "name": "keypad",
+      "type": "boolean"
+    },
+    {
+      "name": "coffee_can",
+      "type": "boolean"
+    },
+    {
+      "name": "bonus_list",
+      "type": "boolean"
+    },
+    {
+      "name": "clover_leaf",
+      "type": "boolean"
+    },
+    {
+      "name": "met_locksmith_cousin",
+      "type": "boolean"
+    },
+    {
+      "name": "twinsens_house_destroyed",
+      "type": "boolean"
+    },
+    {
+      "name": "opened_funfrock_safe",
+      "type": "boolean"
+    },
+    {
+      "name": "statue_place_temple_of_bu",
+      "type": "boolean"
+    },
+    {
+      "name": "locksmith_not_at_home",
+      "type": "boolean"
+    },
+    {
+      "name": "found_clover_box_chez_luc",
+      "type": "boolean"
+    },
+    {
+      "name": "got_kashes_astronomers_chest",
+      "type": "boolean"
+    },
+    {
+      "name": "escaped_via_chimny",
+      "type": "boolean"
+    },
+    {
+      "name": "found_chest_kashes_near_citadel",
+      "type": "boolean"
+    },
+    {
+      "name": "cleaned_water_tower_water",
+      "type": "boolean"
+    },
+    {
+      "name": "read_prophecy_book",
+      "type": "boolean"
+    },
+    {
+      "name": "warehouse_crates_arranged",
+      "type": "boolean"
+    },
+    {
+      "name": "telepods_destroyed",
+      "type": "boolean"
+    },
+    {
+      "name": "museum_alarm_turned_on",
+      "type": "boolean"
+    },
+    {
+      "name": "gave_book",
+      "type": "boolean"
+    },
+    {
+      "name": "gave_marked_stone_password",
+      "type": "boolean"
+    },
+    {
+      "name": "gabe_eclypse_stone_password",
+      "type": "boolean"
+    },
+    {
+      "name": "marked_stone_released",
+      "type": "boolean"
+    },
+    {
+      "name": "eclypse_stone_released",
+      "type": "boolean"
+    },
+    {
+      "name": "chez_luc_reopened",
+      "type": "boolean"
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    {
+      "name": "talked_to_forger"
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    {
+      "name": "killed_pharmacist",
+      "type": "boolean"
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    {
+      "name": "bought_catamaran",
+      "type": "boolean"
+    },
+    null,
+    {
+      "name": "inventory_disabled",
+      "type": "boolean"
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    {
+      "name": "pirate_flag_attached",
+      "type": "boolean"
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    {
+      "name": "got_ferry_ticket",
+      "type": "boolean"
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    {
+      "name": "opened_locked_forgers_house",
+      "type": "boolean"
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    {
+      "name": "lebourne_info",
+      "type": "boolean"
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    {
+      "name": "movie_hit",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_hit_band-aid",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_hit_blackeye",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_ferry",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_temple_of_bu",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_flute",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_shuttle",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_storm",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_ski_lift",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_ferry_sick",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_zoe_clone",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_rune_stone_unused",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_rune_stone",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_explosion",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_sendell",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_hit_reject",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_twinsun_explosion",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_clear_water_lake",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_well_of_sendell",
+      "type": "boolean"
+    },
+    {
+      "name": "movie_twinsun_explosion",
+      "type": "boolean"
+    }
   ]
 }

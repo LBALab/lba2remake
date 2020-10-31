@@ -1,8 +1,34 @@
 {
   "actorNames": [
+    null,
+    null,
+    "Guard2",
+    null,
+    null,
+    "Doctor",
+    null,
+    "Platform",
+    "Guard8",
+    null,
+    null,
+    null,
+    null,
+    "LockedDoor",
+    null,
+    null,
+    null,
+    "PlatformHook"
   ],
   "zoneNames": [
+    null,
+    null,
+    null,
+    null,
+    "twinsen_cell",
+    null,
+    null,
+    null,
+    "second_cell"
   ],
-  "varcubes": [
-  ]
+  "varcubes": []
 }
