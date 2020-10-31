@@ -240,7 +240,8 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     async preload() {
-        await registerResources('lba2', 'EN', 'EN');
+        const { game } = getParams();
+        await registerResources(game, 'EN', 'EN');
         await preloadResources();
     }
 
