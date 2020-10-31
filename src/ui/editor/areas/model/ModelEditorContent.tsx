@@ -20,6 +20,7 @@ import {
 } from '../../../../resources';
 import { loadEntities } from './browser/entitities';
 import DebugData from '../../DebugData';
+import { getParams } from '../../../../params';
 
 interface Props extends TickerProps {
     params: any;
@@ -115,7 +116,8 @@ export default class Model extends FrameListener<Props, State> {
     }
 
     async preload() {
-        await registerResources('lba2', 'EN', 'EN');
+        const { game } = getParams();
+        await registerResources(game, 'EN', 'EN');
         await preloadResources();
         loadEntities();
     }

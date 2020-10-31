@@ -15,6 +15,7 @@ import {
 } from '../../../../resources';
 import { WORLD_SCALE_B, WORLD_SIZE } from '../../../../utils/lba';
 import DebugData from '../../DebugData';
+import { getParams } from '../../../../params';
 
 interface Props extends TickerProps {
     params: any;
@@ -144,7 +145,8 @@ export default class IsoGridEditorContent extends FrameListener<Props, State> {
     }
 
     async preload() {
-        await registerResources('lba2', 'EN', 'EN');
+        const { game } = getParams();
+        await registerResources(game, 'EN', 'EN');
         await preloadResources();
     }
 
