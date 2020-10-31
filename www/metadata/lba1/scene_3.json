@@ -1,8 +1,38 @@
 {
   "actorNames": [
+    null,
+    null,
+    "PearlRobot",
+    "Grobo",
+    null,
+    null,
+    null,
+    "Tank",
+    "Guard8",
+    null,
+    "Guard10"
   ],
   "zoneNames": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "sewer_area",
+    null,
+    "sewer_entrance"
   ],
-  "varcubes": [
-  ]
+  "varcubes": []
 }

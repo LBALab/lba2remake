@@ -1,8 +1,27 @@
 {
   "actorNames": [
+    null,
+    null,
+    "Grobo",
+    "CitadelGuard3",
+    "CitadelGuard4",
+    "CitadelGuard5",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "Rabbibunny"
   ],
   "zoneNames": [
+    null,
+    null,
+    "garbage",
+    null,
+    "poster_4",
+    "poster_5",
+    "garbage_area"
   ],
-  "varcubes": [
-  ]
+  "varcubes": []
 }
