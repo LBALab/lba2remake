@@ -45,6 +45,8 @@ export function mainGameLoop(
                 time.elapsed += 0.05;
                 game.clock.elapsedTime += 0.05;
             }
+            game.executePreloopFunctions();
+
             scene.scenery.update(game, scene, time);
             playAmbience(game, scene, time);
             updateScene(params, game, scene, time);
@@ -62,6 +64,8 @@ export function mainGameLoop(
             scene.camera.update(scene, game.controlsState, time);
             renderer.render(scene);
             DebugData.step = false;
+
+            game.executePostloopFunctions();
         } else if (game.controlsState.freeCamera || DebugData.firstFrame) {
             const dbgTime = {
                 delta: Math.min(dbgClock.getDelta(), 0.05),

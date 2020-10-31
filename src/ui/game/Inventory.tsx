@@ -56,6 +56,10 @@ const Inventory = ({ game, closeInventory }: any) => {
                 const itemId = GetInventoryMapping()[game.getState().hero.inventorySlot];
                 if (game.getState().flags.quest[itemId] === 1) {
                     game.getState().hero.usingItemId = itemId;
+                    // Reset the usingItemId after a single game loop execution.
+                    game.addLoopFunction(null, () => {
+                        game.getState().hero.usingItemId = -1;
+                    });
                     closeInventory();
                 } else {
                     game.getAudioManager().playSample(SampleType.ERROR);
