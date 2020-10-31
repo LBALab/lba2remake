@@ -35,7 +35,7 @@ export function MESSAGE(this: ScriptContext, cmdState, id) {
     MESSAGE_OBJ.call(this, cmdState, this.actor, id);
 }
 
-export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
+export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id, sayMessage: boolean = false) {
     // If someone else is already talking, we wait for them to finish first.
     if (this.game.getState().actorTalking > -1 &&
         this.game.getState().actorTalking !== actor.index) {
@@ -55,7 +55,7 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
             };
         }
         audio.playVoice(text.index, this.scene.props.textBankId, onVoiceEndedCallback);
-        if (text.type === 9) {
+        if (sayMessage || text.type === 9) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
             }
@@ -700,11 +700,11 @@ export function BIG_MESSAGE(this: ScriptContext, cmdState, id) {
 export const INIT_PINGOUIN = unimplemented();
 
 export function SAY_MESSAGE(this: ScriptContext, cmdState, id) {
-    MESSAGE_OBJ.call(this, cmdState, this.actor, id);
+    MESSAGE_OBJ.call(this, cmdState, this.actor, id, true);
 }
 
 export function SAY_MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
-    MESSAGE_OBJ.call(this, cmdState, actor, id);
+    MESSAGE_OBJ.call(this, cmdState, actor, id, true);
 }
 
 export const GRM_OFF = unimplemented();
