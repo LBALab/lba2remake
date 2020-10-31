@@ -116,7 +116,8 @@ export const getCells = (
                         )
                     ),
                     groundType: (blockData && blockData.groundType),
-                    sound: (blockData && blockData.sound) || -1
+                    sound: (blockData && blockData.sound) || -1,
+                    sound2: (blockData && blockData.sound2) || null
                 });
             }
             baseHeight += height;

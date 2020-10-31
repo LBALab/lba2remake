@@ -197,6 +197,7 @@ export default class IslandPhysics {
                 return {
                     height: bb.max.y,
                     sound: obj.soundType,
+                    sound2: null,
                     collision: null,
                     liquid: 0,
                 };

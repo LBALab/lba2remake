@@ -23,7 +23,7 @@ export const readOpenHqrHeader = async (zip: JSZip) => {
 };
 
 export const readOpenHqrEntry = async (zip: JSZip, entry: OpenEntry) => {
-    if (!entry.file) {
+    if (!entry || !entry.file) {
         return new ArrayBuffer(0);
     }
     const binaryData = await zip.file(entry.file).async('uint8array') as Uint8Array;

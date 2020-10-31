@@ -6,6 +6,7 @@ import { addExtra, ExtraFlag, getBonus } from '../extras';
 import { SpriteType } from '../data/spriteType';
 import { SampleType } from '../data/sampleType';
 import Actor from '../Actor';
+import { getParams } from '../../params';
 
 export const NOP = unimplemented();
 
@@ -85,9 +86,10 @@ export const SAMPLE_STOP = (action, { game }) => {
 export const ZV = unimplemented();
 
 export const LEFT_STEP = (_action, { game, scene, animState }) => {
+    const isLBA1 = getParams().game === 'lba1';
     const floorSound = animState.floorSound;
     if (floorSound !== undefined && floorSound !== -1) {
-        const offset = scene.props.isIsland ? 30 : 60;
+        const offset = scene.props.isIsland ? 30 : isLBA1 ? 126 : 60;
         const sampleIndex = floorSound + offset;
         // const frequency = getRandom(0, 0x1000) + 3596;
         const audio = game.getAudioManager();
@@ -96,9 +98,13 @@ export const LEFT_STEP = (_action, { game, scene, animState }) => {
 };
 
 export const RIGHT_STEP = (_action, { game, scene, animState }) => {
-    const floorSound = animState.floorSound;
+    const isLBA1 = getParams().game === 'lba1';
+    let floorSound = animState.floorSound;
+    if (animState.floorSound2) {
+        floorSound = animState.floorSound2;
+    }
     if (floorSound !== undefined && floorSound !== -1) {
-        const offset = scene.props.isIsland ? 45 : 75;
+        const offset = scene.props.isIsland ? 45 : isLBA1 ? 141 : 75;
         const sampleIndex = floorSound + offset;
         // const frequency = getRandom(0, 0x1000) + 3596;
         const audio = game.getAudioManager();
