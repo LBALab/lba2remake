@@ -432,7 +432,8 @@ export const LifeOpcode = [
         opcode: 0x46,
         command: 'BIG_MESSAGE',
         handler: lf.BIG_MESSAGE,
-        args: ['Uint16:text']
+        args: ['Uint16:text'],
+        cmdState: true
     },
     {
         opcode: 0x47,
@@ -474,7 +475,8 @@ export const LifeOpcode = [
         opcode: 0x4D,
         command: 'SAY_MESSAGE',
         handler: lf.SAY_MESSAGE,
-        args: ['Uint16:text']
+        args: ['Uint16:text'],
+        cmdState: true
     },
     {
         opcode: 0x4E,
@@ -566,7 +568,8 @@ export const LifeOpcode = [
     {
         opcode: 0x5E,
         command: 'MESSAGE_SENDELL',
-        handler: lf.MESSAGE_SENDELL
+        handler: lf.MESSAGE_SENDELL,
+        cmdState: true
     },
     {
         opcode: 0x5F,

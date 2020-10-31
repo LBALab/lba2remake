@@ -7,6 +7,7 @@ import { unimplemented } from './utils';
 import { WORLD_SCALE, getRandom } from '../../utils/lba';
 import { getVideoPath } from '../../resources';
 import { ScriptContext } from './ScriptContext';
+import { getParams } from '../../params';
 
 export const PALETTE = unimplemented();
 
@@ -34,7 +35,7 @@ export function MESSAGE(this: ScriptContext, cmdState, id) {
     MESSAGE_OBJ.call(this, cmdState, this.actor, id);
 }
 
-export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
+export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id, sayMessage: boolean = false) {
     // If someone else is already talking, we wait for them to finish first.
     if (this.game.getState().actorTalking > -1 &&
         this.game.getState().actorTalking !== actor.index) {
@@ -54,7 +55,7 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
             };
         }
         audio.playVoice(text.index, this.scene.props.textBankId, onVoiceEndedCallback);
-        if (text.type === 9) {
+        if (sayMessage || text.type === 9) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
             }
@@ -82,12 +83,13 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
                 }
             }, 4500);
         } else {
+            const isLBA1 = getParams().game === 'lba1';
             hero.props.dirMode = ActorDirMode.NO_MOVE;
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
             this.game.getState().actorTalking = actor.index;
-            if (actor.index === 0)
+            if (!isLBA1 && actor.index === 0)
                 hero.props.animIndex = AnimType.TALK;
             else
                 hero.props.animIndex = AnimType.NONE;
@@ -437,12 +439,13 @@ export function ASK_CHOICE_OBJ(this: ScriptContext, cmdState, actor, index) {
     const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
+        const isLBA1 = getParams().game === 'lba1';
         const text = this.scene.props.texts[index];
         hero.props.dirMode = ActorDirMode.NO_MOVE;
         hero.props.prevEntityIndex = hero.props.entityIndex;
         hero.props.prevAnimIndex = hero.props.animIndex;
         hero.props.entityIndex = 0;
-        if (actor.index === 0)
+        if (!isLBA1 && actor.index === 0)
             hero.props.animIndex = AnimType.TALK;
         else
             hero.props.animIndex = AnimType.NONE;
@@ -697,11 +700,11 @@ export function BIG_MESSAGE(this: ScriptContext, cmdState, id) {
 export const INIT_PINGOUIN = unimplemented();
 
 export function SAY_MESSAGE(this: ScriptContext, cmdState, id) {
-    MESSAGE_OBJ.call(this, cmdState, this.actor, id);
+    MESSAGE_OBJ.call(this, cmdState, this.actor, id, true);
 }
 
 export function SAY_MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id) {
-    MESSAGE_OBJ.call(this, cmdState, actor, id);
+    MESSAGE_OBJ.call(this, cmdState, actor, id, true);
 }
 
 export const GRM_OFF = unimplemented();

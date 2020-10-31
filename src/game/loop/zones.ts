@@ -8,6 +8,7 @@ import { addExtra, ExtraFlag, getBonus } from '../extras';
 import Game from '../Game';
 import Scene from '../Scene';
 import Zone from '../Zone';
+import { getParams } from '../../params';
 
 function NOP() { }
 
@@ -326,12 +327,13 @@ function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor) {
     const audio = game.getAudioManager();
     if (game.controlsState.action === 1) {
         if (!scene.zoneState.skipListener) {
+            const isLBA1 = getParams().game === 'lba1';
             scene.actors[0].props.dirMode = ActorDirMode.NO_MOVE;
 
             hero.props.prevEntityIndex = hero.props.entityIndex;
             hero.props.prevAnimIndex = hero.props.animIndex;
             hero.props.entityIndex = 0;
-            hero.props.animIndex = AnimType.TALK;
+            hero.props.animIndex = isLBA1 ? AnimType.NONE : AnimType.TALK;
 
             const text = scene.props.texts[zone.props.snap];
             game.setUiState({
