@@ -41,6 +41,7 @@ export default class IsoSceneryPhysics {
 
         if (obj.animState) { // if it's an actor
             obj.floorSound = -1;
+            obj.floorSound2 = null;
         }
 
         let isTouchingGround = false;
@@ -55,6 +56,7 @@ export default class IsoSceneryPhysics {
 
                 if (obj.animState) { // if it's an actor
                     obj.animState.floorSound = column.sound;
+                    obj.animState.floorSound2 = column.sound2;
                 }
                 const minY = i > 0 ? bb.min.y : -Infinity;
                 if (basePos.y >= minY) {

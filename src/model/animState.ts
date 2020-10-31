@@ -24,6 +24,7 @@ export function loadAnimState() {
         rotation: new THREE.Vector3(0, 0, 0),
         keyframeLength: 0,
         floorSound: -1,
+        floorSound2: null,
         realAnimIdx: -1,
         prevRealAnimIdx: -1,
         currentKeyframe: null,
@@ -45,6 +46,7 @@ export function resetAnimState(state) {
     state.rotation.set(0, 0, 0);
     state.keyframeLength = 0;
     state.floorSound = -1;
+    state.floorSound2 = null;
     state.noInterpolate = false;
     state.interpolationFrame = -1;
     if (state.callback) {
