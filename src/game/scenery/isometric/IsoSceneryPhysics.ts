@@ -66,6 +66,7 @@ export default class IsoSceneryPhysics {
                             isTouchingGround = true;
                             switch (column.groundType) {
                                 case GROUND_TYPES.WATER:
+                                case GROUND_TYPES.WATER2:
                                     if (DOME_SCENES.includes(scene.index)) { // Dome of the slate
                                         obj.state.isDrowningStars = true;
                                     } else {
