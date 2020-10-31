@@ -8,6 +8,7 @@ import Island from '../scenery/island/Island';
 import Game from '../Game';
 import { Time } from '../../datatypes';
 import { ControlsState } from '../ControlsState';
+import { getParams } from '../../params';
 
 export const BehaviourMode = {
     NORMAL: 0,
@@ -86,6 +87,7 @@ const Q = new THREE.Quaternion();
 const EULER = new THREE.Euler();
 
 function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time: Time) {
+    const isLBA1 = getParams().game === 'lba1';
     const controlsState = game.controlsState;
     if (hero.state.isClimbing ||
         hero.state.isSearching) {
@@ -153,7 +155,7 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
         if (controlsState.jump === 1) {
             toggleJump(hero, true);
             animIndex = AnimType.JUMP;
-            if (Math.abs(controlsState.controlVector.y) > 0.6) {
+            if (!isLBA1 && Math.abs(controlsState.controlVector.y) > 0.6) {
                 animIndex = AnimType.RUNNING_JUMP;
             }
         }
@@ -261,6 +263,7 @@ function processActorMovement(
     time: Time,
     behaviour: number
 ) {
+    const isLBA1 = getParams().game === 'lba1';
     const controlsState = game.controlsState;
     if (hero.state.isClimbing ||
         hero.state.isSearching) {
@@ -316,7 +319,7 @@ function processActorMovement(
         if (controlsState.jump === 1) {
             toggleJump(hero, true);
             animIndex = AnimType.JUMP;
-            if (!controlsState.relativeToCam && controlsState.controlVector.y === 1) {
+            if (!isLBA1 && !controlsState.relativeToCam && controlsState.controlVector.y === 1) {
                 animIndex = AnimType.RUNNING_JUMP;
             }
         }
