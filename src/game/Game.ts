@@ -9,6 +9,12 @@ import { registerResources, preloadResources, getText } from '../resources';
 import { getParams } from '../params';
 import { pure } from '../utils/decorators';
 
+interface LoopFunction {
+    preLoopFunction: Function;
+    postLoopFunction: Function;
+    shouldExecute: boolean;
+}
+
 export default class Game {
     readonly setUiState: Function;
     readonly getUiState: Function;
@@ -19,6 +25,7 @@ export default class Game {
     private _isPaused: boolean;
     private _isLoading: boolean;
     private _audio: any;
+    private _loopFunctions: LoopFunction[];
     menuTexts: any;
     texts: any;
 
@@ -32,6 +39,7 @@ export default class Game {
         this._isPaused = false;
         this._isLoading = false;
         this._audio = createAudioManager(this._gameState);
+        this._loopFunctions = [];
     }
 
     dispose() {
@@ -125,6 +133,38 @@ export default class Game {
             this._isPaused = false;
             this.clock.start();
         }
+    }
+
+    addLoopFunction(preFunc: Function, postFunc: Function) {
+        this._loopFunctions.push({
+            preLoopFunction: preFunc,
+            postLoopFunction: postFunc,
+            shouldExecute: false,
+        });
+    }
+
+    executePreloopFunctions() {
+        for (const f of this._loopFunctions) {
+            f.shouldExecute = true;
+            if (f.preLoopFunction) {
+                f.preLoopFunction();
+            }
+        }
+    }
+
+    executePostloopFunctions() {
+        const newLoopFunctions = [];
+        this._loopFunctions.forEach((f) => {
+            if (f.shouldExecute) {
+                if (f.postLoopFunction) {
+                    f.postLoopFunction();
+                }
+                // Don't copy this function, it's completed.
+                return;
+            }
+            newLoopFunctions.push(f);
+        });
+        this._loopFunctions = newLoopFunctions;
     }
 
     async registerResources() {
