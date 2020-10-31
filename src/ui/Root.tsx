@@ -206,7 +206,8 @@ export default class Root extends React.Component<RootProps, RootState> {
             padding: 10,
             fontSize: '20px'
         });
-        return <div className="bgMenu fullscreen">
+        const { game } = getParams();
+        return <div className={`bgMenu ${game} fullscreen`}>
             <div style={buttonWrapperStyle}>
                 <div style={buttonStyle} onClick={this.requestPresence}>
                     <img style={imgStyle} src="images/vr_goggles.png"/>
