@@ -9,6 +9,7 @@ const ANGLE_RIGHT = new THREE.Euler(0, Math.PI / 2, 0, 'YXZ');
 export function getIsometricCamera() {
     const w = window.innerWidth;
     const h = window.innerHeight;
+    const listener = new THREE.AudioListener();
     const camera = new THREE.OrthographicCamera(
         -w * 0.5,
         w * 0.5,
@@ -19,7 +20,9 @@ export function getIsometricCamera() {
     );
     setCameraScale(camera, w, h);
     camera.name = 'IsoCamera';
+    camera.add(listener);
     return {
+        listener,
         width: w,
         height: h,
         threeCamera: camera,

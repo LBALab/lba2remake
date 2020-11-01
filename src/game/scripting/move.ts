@@ -64,8 +64,9 @@ export function WAIT_NUM_ANIM(this: ScriptContext, repeats) {
 }
 
 export function SAMPLE(this: ScriptContext, index) {
-    const audio = this.game.getAudioManager();
-    audio.playSample(index);
+    // const audio = this.game.getAudioManager();
+    // audio.playSample(index);
+    this.actor.playSample(index);
 }
 
 export function GOTO_POINT_3D(this: ScriptContext, point: Point, time) {

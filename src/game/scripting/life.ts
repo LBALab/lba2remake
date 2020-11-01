@@ -4,7 +4,7 @@ import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
 import { setMagicBallLevel } from '../GameState';
 import { unimplemented } from './utils';
-import { WORLD_SCALE, getRandom } from '../../utils/lba';
+import { WORLD_SCALE } from '../../utils/lba';
 import { getVideoPath } from '../../resources';
 import { ScriptContext } from './ScriptContext';
 import { getParams } from '../../params';
@@ -618,20 +618,23 @@ export const STATE_INVENTORY = unimplemented();
 export const SET_HIT_ZONE = unimplemented();
 
 export function SAMPLE(this: ScriptContext, index) {
-    const audio = this.game.getAudioManager();
-    audio.playSample(index);
+    // const audio = this.game.getAudioManager();
+    // audio.playSample(index);
+    this.actor.playSample(index);
 }
 
 export function SAMPLE_RND(this: ScriptContext, index) {
-    const frequency = getRandom(0x800, 0x1000);
-    const audio = this.game.getAudioManager();
-    audio.playSample(index, frequency);
+    // const frequency = getRandom(0x800, 0x1000);
+    // const audio = this.game.getAudioManager();
+    // audio.playSample(index, frequency);
+    this.actor.playSample(index);
 }
 
 export function SAMPLE_ALWAYS(this: ScriptContext, index) {
-    const audio = this.game.getAudioManager();
-    audio.stopSample(index);
-    audio.playSample(index, 0x1000, -1);
+    // const audio = this.game.getAudioManager();
+    // audio.stopSample(index);
+    // audio.playSample(index, 0x1000, -1);
+    this.actor.playSample(index);
 }
 
 export function SAMPLE_STOP(this: ScriptContext, index) {
@@ -679,10 +682,12 @@ export const END_MESSAGE_OBJ = unimplemented();
 
 export const PARM_SAMPLE = unimplemented();
 
+// @ts-ignore
 export function NEW_SAMPLE(this: ScriptContext, index, _, volume, frequency) {
-    const audio = this.game.getAudioManager();
-    const sample = audio.playSample(index, frequency);
-    sample.setVolume(volume / 100);
+    // const audio = this.game.getAudioManager();
+    // const sample = audio.playSample(index, frequency);
+    // sample.setVolume(volume / 100);
+    this.actor.playSample(index);
 }
 
 export const POS_OBJ_AROUND = unimplemented();

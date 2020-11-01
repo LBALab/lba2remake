@@ -5,6 +5,7 @@ import Scene from '../game/Scene';
 import { ControlsState } from '../game/ControlsState';
 import { Time } from '../datatypes';
 import IslandPhysics from '../game/scenery/island/IslandPhysics';
+// import AudioListener from '../audio/AudioListener';
 
 const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
 CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
@@ -12,6 +13,7 @@ const HERO_TARGET_POS = new THREE.Vector3(0, 0.08, 0);
 HERO_TARGET_POS.multiplyScalar(WORLD_SIZE);
 
 export function get3DCamera() {
+    const listener = new THREE.AudioListener();
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
@@ -28,7 +30,9 @@ export function get3DCamera() {
     orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
+    camera.add(listener);
     return {
+        listener,
         width: window.innerWidth,
         height: window.innerHeight,
         threeCamera: camera,
@@ -54,6 +58,10 @@ export function get3DCamera() {
                 controlNode.position.copy(cameraPos);
                 controlNode.lookAt(controlsState.cameraLookAtLerp);
             }
+
+            // const audio = scene.game.getAudioManager();
+            // audio.context
+            // listener.setMasterVolume(scene.game.getState().config.soundFxVolume);
         },
         update: (scene: Scene, controlsState: ControlsState, time: Time) => {
             if (controlsState.freeCamera) {

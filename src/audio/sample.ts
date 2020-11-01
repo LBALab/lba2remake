@@ -5,34 +5,38 @@ const sampleDecodedAudioCache = [];
 
 const createSampleSource = (context: any) => {
     const source = createSource(context);
+    const load = async (index: number) => {
+        if (sampleDecodedAudioCache[index]) {
+            return sampleDecodedAudioCache[index];
+        }
+        const resource = await getSamples();
+        if (!resource) {
+            return null;
+        }
+        const entryBuffer = await resource.getEntryAsync(index);
+        if (entryBuffer.byteLength === 0) {
+            return null;
+        }
+        const buffer = await source.decode(entryBuffer.slice(0));
+        sampleDecodedAudioCache[index] = buffer;
+    };
     const loadPlay = async (index: number, frequency: number = 0x1000, loopCount: number = 0) => {
         if (!source.volume) {
             return;
         }
-        if (sampleDecodedAudioCache[index]) {
+        const buffer = load(index);
+        if (buffer) {
             source.setLoopCount(loopCount);
             source.load(sampleDecodedAudioCache[index]);
             source.play(frequency);
             return;
         }
-        const resource = await getSamples();
-        if (!resource) {
-            return;
-        }
-        const entryBuffer = await resource.getEntryAsync(index);
-        if (entryBuffer.byteLength === 0) {
-            return;
-        }
-        const buffer = await source.decode(entryBuffer.slice(0));
-        sampleDecodedAudioCache[index] = buffer;
-        source.setLoopCount(loopCount);
-        source.load(buffer);
-        source.play(frequency);
     };
     return {
         isPlaying: () => {
             return source.isPlaying;
         },
+        load,
         play: (index: number, frequency: number = 0x1000, loopCount: number = 0) => {
             loadPlay(index, frequency, loopCount);
         },

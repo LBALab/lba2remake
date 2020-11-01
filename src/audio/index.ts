@@ -33,6 +33,9 @@ export function createAudioManager(state) {
     voiceSource.setVolume(state.config.voiceVolume);
 
     return {
+        context,
+        menuContext,
+
         dispose: () => {
             context.close();
             menuContext.close();
@@ -75,6 +78,10 @@ export function createAudioManager(state) {
         },
 
         // samples
+        loadSample: async (index: number) => {
+            const sampleSource = createSampleSource(context);
+            return await sampleSource.load(index);
+        },
         playSample: (index: number, frequency: number = 0x1000, loopCount: number = 0) => {
             const sampleSource = createSampleSource(context);
             sampleSource.setVolume(state.config.soundFxVolume);

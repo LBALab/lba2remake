@@ -60,14 +60,14 @@ const createSource = (context: any): AudioSource => {
             source.lowPassFilter.frequency.value = getFrequency(frequency);
         }
         if (source.bufferSource) {
-            source.bufferSource.start();
+            // source.bufferSource.start();
             source.isPlaying = true;
         }
     };
 
     source.stop = () => {
         if (source.isPlaying && source.bufferSource) {
-            source.bufferSource.stop();
+            // source.bufferSource.stop();
         }
         source.isPlaying = false;
     };

@@ -137,6 +137,7 @@ export default class Actor {
     readonly index: number;
     readonly props: ActorProps;
     readonly state: ActorState;
+    readonly sound: any;
     private readonly game: Game;
     private readonly scene: Scene;
     animState: any = null;
@@ -201,6 +202,17 @@ export default class Actor {
         if (!skipModel) {
             this.animState = loadAnimState();
         }
+
+        if (this.index !== 0) {
+            this.sound = new THREE.PositionalAudio(this.scene.camera.listener);
+            this.sound.setDirectionalCone(60, 90, 0.3);
+            this.sound.setRolloffFactor(40);
+            this.sound.setRefDistance(20);
+            this.sound.setMaxDistance(10000);
+        } else {
+            this.sound = new THREE.Audio(this.scene.camera.listener);
+        }
+        this.sound.setVolume(game.getState().config.soundFxVolume);
     }
 
     runScripts(time) {
@@ -342,6 +354,7 @@ export default class Actor {
                 this.sprite = sprite;
             }
         }
+        this.threeObject.add(this.sound);
         if (params.editor) {
             createActorLabel(this, name, this.scene.is3DCam);
         }
@@ -434,6 +447,15 @@ export default class Actor {
         });
         this.animState.noInterpolate = true;
         this.state.isHit = true;
+    }
+
+    async playSample(index: number) {
+        const audio = this.game.getAudioManager();
+        const buffer = await audio.loadSample(index);
+        if (buffer) {
+            this.sound.setBuffer(buffer);
+            this.sound.play();
+        }
     }
 
     private static createState(): ActorState {

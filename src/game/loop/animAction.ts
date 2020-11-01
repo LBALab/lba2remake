@@ -49,55 +49,63 @@ export const HIT_HERO = (_action, { game, scene }) => {
     processHit(scene.actors[0], game.getState().hero.handStrength, game, scene);
 };
 
-export const SAMPLE = (action, { game }) => {
-    const audio = game.getAudioManager();
-    audio.playSample(action.sampleIndex, action.frequency);
+export const SAMPLE = (action, { actor }) => {
+    // const audio = game.getAudioManager();
+    // audio.playSample(action.sampleIndex, action.frequency);
+    actor.playSample(action.sampleIndex);
 };
 
-export const SAMPLE_RND = (action, { game }) => {
+export const SAMPLE_RND = (action, { actor, }) => {
     let frequency = (getRandom(0, action.frequency) + 0x1000) - (action.frequency >> 1);
     if (frequency < 0 || frequency > 24000) {
         frequency = 0;
     }
-    const audio = game.getAudioManager();
-    audio.playSample(action.sampleIndex, frequency);
+    // const audio = game.getAudioManager();
+    // audio.playSample(action.sampleIndex, frequency);
+    actor.playSample(action.sampleIndex);
 };
 
 export const THROW = unimplemented();
 
 export const THROW_MAGIC = unimplemented();
 
-export const SAMPLE_REPEAT = (action, { game }) => {
-    const audio = game.getAudioManager();
-    if (!audio.isPlayingSample(action.sampleIndex)) {
-        audio.playSample(action.sampleIndex, 0x1000, action.repeat);
-    }
+// @ts-ignore
+export const SAMPLE_REPEAT = (action, { actor, game }) => {
+    // const audio = game.getAudioManager();
+    // if (!audio.isPlayingSample(action.sampleIndex)) {
+    //     audio.playSample(action.sampleIndex, 0x1000, action.repeat);
+    // }
+    actor.playSample(action.sampleIndex);
 };
 
 export const THROW_SEARCH = unimplemented();
 
 export const THROW_ALPHA = unimplemented();
 
+// @ts-ignore
 export const SAMPLE_STOP = (action, { game }) => {
-    const audio = game.getAudioManager();
-    audio.stopSample(action.sampleIndex);
+    // const audio = game.getAudioManager();
+    // audio.stopSample(action.sampleIndex);
 };
 
 export const ZV = unimplemented();
 
-export const LEFT_STEP = (_action, { game, scene, animState }) => {
+// @ts-ignore
+export const LEFT_STEP = (_action, { actor, game, scene, animState }) => {
     const isLBA1 = getParams().game === 'lba1';
     const floorSound = animState.floorSound;
     if (floorSound !== undefined && floorSound !== -1) {
         const offset = scene.props.isIsland ? 30 : isLBA1 ? 126 : 60;
         const sampleIndex = floorSound + offset;
         // const frequency = getRandom(0, 0x1000) + 3596;
-        const audio = game.getAudioManager();
-        audio.playSample(sampleIndex); // frequency
+        // const audio = game.getAudioManager();
+        // audio.playSample(sampleIndex); // frequency
+        actor.playSample(sampleIndex);
     }
 };
 
-export const RIGHT_STEP = (_action, { game, scene, animState }) => {
+// @ts-ignore
+export const RIGHT_STEP = (_action, { actor, game, scene, animState }) => {
     const isLBA1 = getParams().game === 'lba1';
     let floorSound = animState.floorSound;
     if (animState.floorSound2) {
@@ -107,8 +115,9 @@ export const RIGHT_STEP = (_action, { game, scene, animState }) => {
         const offset = scene.props.isIsland ? 45 : isLBA1 ? 141 : 75;
         const sampleIndex = floorSound + offset;
         // const frequency = getRandom(0, 0x1000) + 3596;
-        const audio = game.getAudioManager();
-        audio.playSample(sampleIndex); // frequency
+        // const audio = game.getAudioManager();
+        // audio.playSample(sampleIndex); // frequency
+        actor.playSample(sampleIndex);
     }
 };
 
@@ -172,9 +181,11 @@ export const LEFT_JUMP = unimplemented();
 
 export const RIGHT_JUMP = unimplemented();
 
-export const NEW_SAMPLE = (action, { game }) => {
-    const audio = game.getAudioManager();
-    audio.playSample(action.sampleIndex, action.frequency);
+// @ts-ignore
+export const NEW_SAMPLE = (action, { actor, game }) => {
+    // const audio = game.getAudioManager();
+    // audio.playSample(action.sampleIndex, action.frequency);
+    actor.playSample(action.sampleIndex);
 };
 
 export const IMPACT_3D = unimplemented();
