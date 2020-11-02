@@ -85,8 +85,8 @@ export default class Game {
                 */
                 this.executePreloopFunctions();
                 this.playAmbience(scene, time);
-                scene.update(this, time);
-                scene.updateCamera(this, time);
+                scene.update(time);
+                scene.updateCamera(time);
                 renderer.render(scene);
                 DebugData.step = false;
                 this.executePostloopFunctions();
@@ -95,7 +95,7 @@ export default class Game {
                 ** Updating only cameras when in the editor
                 ** and game is paused
                 */
-                scene.updateCamera(this, this.getPausedTime());
+                scene.updateCamera(this.getPausedTime());
                 renderer.render(scene);
             } else if (renderer.vr) {
                 /*

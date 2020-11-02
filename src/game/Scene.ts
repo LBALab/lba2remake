@@ -21,8 +21,6 @@ import { SceneManager } from './SceneManager';
 import { createSceneVariables, findUsedVarGames } from './scene/variables';
 import Island from './scenery/island/Island';
 import { Time } from '../datatypes';
-import { updateActor } from './loop/actors';
-import { updateHero } from './loop/hero';
 import { updateExtra } from './extras';
 import { processPhysicsFrame } from './loop/physics';
 
@@ -268,14 +266,52 @@ export default class Scene {
         this.threeScene.add(this.sceneNode);
     }
 
-    update(game: Game, time: Time) {
+    update(time: Time) {
         const params = getParams();
         if (this.firstFrame) {
             this.sceneNode.updateMatrixWorld();
         }
         if (this.isActive) {
-            this.scenery.update(game, this, time);
+            this.scenery.update(this.game, this, time);
         }
+        this.processHits();
+        for (const actor of this.actors) {
+            actor.update(this.game, this, time);
+        }
+        if (this.extras) {
+            for (const extra of this.extras) {
+                updateExtra(this.game, this, extra, time);
+            }
+        }
+        if (this.isActive && params.editor) {
+            for (const point of this.points) {
+                point.update(this.camera);
+            }
+        }
+        if (this.vrGUI) {
+            updateVRGUI(this.game, this, this.vrGUI);
+        }
+        // Make sure Twinsen is hidden if VR first person
+        if (this.isActive && this.game.controlsState.firstPerson) {
+            const hero = this.actors[0];
+            if (hero && hero.threeObject) {
+                hero.threeObject.visible = false;
+            }
+        }
+        processPhysicsFrame(this.game, this, time);
+        this.updateSideScenes(time);
+    }
+
+    private updateSideScenes(time: Time) {
+        if (this.sideScenes) {
+            for (const sideScene of this.sideScenes.values()) {
+                sideScene.firstFrame = this.firstFrame;
+                sideScene.update(time);
+            }
+        }
+    }
+
+    private processHits() {
         for (const actor of this.actors) {
             if (actor.state.wasHitBy === -1) {
                 continue;
@@ -290,49 +326,13 @@ export default class Scene {
                 actor.state.hasSeenHit = true;
             }
         }
-        for (const actor of this.actors) {
-            if (actor.state.isDead)
-                continue;
-            updateActor(params, game, this, actor, time);
-            if (this.isActive) {
-                if (actor.index === 0) {
-                    updateHero(game, this, actor, time);
-                }
-            }
-        }
-        if (this.extras) {
-            for (const extra of this.extras) {
-                updateExtra(game, this, extra, time);
-            }
-        }
-        if (this.isActive && params.editor) {
-            for (const point of this.points) {
-                point.update(this.camera);
-            }
-        }
-        if (this.vrGUI) {
-            updateVRGUI(game, this, this.vrGUI);
-        }
-        if (this.isActive && game.controlsState.firstPerson) {
-            const hero = this.actors[0];
-            if (hero && hero.threeObject) {
-                hero.threeObject.visible = false;
-            }
-        }
-        processPhysicsFrame(game, this, time);
-        if (this.sideScenes) {
-            for (const sideScene of this.sideScenes.values()) {
-                sideScene.firstFrame = this.firstFrame;
-                sideScene.update(game, time);
-            }
-        }
     }
 
-    updateCamera(game: Game, time: Time) {
+    updateCamera(time: Time) {
         if (this.firstFrame) {
-            this.camera.init(this, game.controlsState);
+            this.camera.init(this, this.game.controlsState);
         }
-        this.camera.update(this, game.controlsState, time);
+        this.camera.update(this, this.game.controlsState, time);
     }
 
     async goto(index, force = false, wasPaused = false, teleport = true) {
