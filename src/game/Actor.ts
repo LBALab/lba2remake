@@ -53,6 +53,8 @@ export interface ActorProps {
     prevAnimIndex?: number;
     prevAngle?: number;
     followActor?: number;
+    extraType: number;
+    extraAmount: number;
 }
 
 interface ActorPhysics {
@@ -520,6 +522,8 @@ export function createNewActorProps(
         lifeScript: new DataView(new ArrayBuffer(1)),
         moveScriptSize: 1,
         moveScript: new DataView(new ArrayBuffer(1)),
-        textColor: 'white'
+        textColor: 'white',
+        extraType: 0,
+        extraAmount: 0
     };
 }

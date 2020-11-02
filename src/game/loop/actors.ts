@@ -241,7 +241,8 @@ function updateModel(game: Game,
                 model,
                 actor,
                 entityAnim,
-                animState
+                animState,
+                time
             });
         }
     }

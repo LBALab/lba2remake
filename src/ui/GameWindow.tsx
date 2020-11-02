@@ -37,7 +37,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
     readonly preloadPromise: Promise<void>;
     controls?: any[];
     wrapperElem: HTMLDivElement;
-    vrScene?: any;
+    vrMenuScene?: any;
     private stopped = false;
 
     constructor(props) {
@@ -164,7 +164,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
             this.showMenu();
         }
         if (this.props.vrSession) {
-            this.vrScene = loadVRScene(this.game, this.sceneManager, this.renderer);
+            this.vrMenuScene = loadVRScene(this.game, this.sceneManager, this.renderer);
         }
     }
 
@@ -286,17 +286,17 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
             this.checkResize();
         }
         const scene = this.sceneManager.getScene();
-        this.game.update(this.renderer, scene, this.controls, this.vrScene);
+        this.game.update(this.renderer, scene, this.controls, this.vrMenuScene);
         DebugData.scope.scene = scene;
         DebugData.scope.hero = scene && scene.actors[0];
         if (params.editor) {
             updateLabels(scene, this.props.sharedState.labels);
             setFog(scene, this.props.sharedState.fog);
         }
-        if (this.vrScene) {
+        if (this.vrMenuScene) {
             const presenting = this.renderer.isPresenting();
             updateVRScene(
-                this.vrScene,
+                this.vrMenuScene,
                 presenting,
                 this.game,
                 this.sceneManager

@@ -7,6 +7,9 @@ import { SpriteType } from '../data/spriteType';
 import { SampleType } from '../data/sampleType';
 import Actor from '../Actor';
 import { getParams } from '../../params';
+import Game from '../Game';
+import Scene from '../Scene';
+import { Time } from '../../datatypes';
 
 export const NOP = unimplemented();
 
@@ -18,7 +21,13 @@ export const ANIM = unimplemented();
 
 export const ANIP = unimplemented();
 
-export function processHit(actor: Actor, hitStrength, game, scene) {
+export function processHit(
+    actor: Actor,
+    hitStrength: number,
+    game: Game,
+    scene: Scene,
+    time: Time
+) {
     for (const a of scene.actors) {
         if (a.index === actor.index || !a.state.isVisible || a.state.isDead) {
             continue;
@@ -30,9 +39,14 @@ export function processHit(actor: Actor, hitStrength, game, scene) {
                 game.getAudioManager().playSample(SampleType.ACTOR_DYING);
                 if (a.props.extraType) {
                     const angle = a.physics.temp.angle - Math.PI / 2;
-                    addExtra(game, scene, a.physics.position, angle,
-                             getBonus(a.props.extraType), a.props.extraAmount,
-                             game.getTime()).then((extra) => {
+                    addExtra(game,
+                            scene,
+                            a.physics.position,
+                            angle,
+                             getBonus(a.props.extraType),
+                             a.props.extraAmount,
+                             time
+                    ).then((extra) => {
                         extra.flags |= ExtraFlag.TIME_IN;
                     });
                 }
@@ -41,12 +55,12 @@ export function processHit(actor: Actor, hitStrength, game, scene) {
     }
 }
 
-export const HIT = (action,  { actor, scene, game }) => {
-    processHit(actor, action.strength, game, scene);
+export const HIT = (action,  { actor, scene, game, time }) => {
+    processHit(actor, action.strength, game, scene, time);
 };
 
-export const HIT_HERO = (_action, { game, scene }) => {
-    processHit(scene.actors[0], game.getState().hero.handStrength, game, scene);
+export const HIT_HERO = (_action, { game, scene, time }) => {
+    processHit(scene.actors[0], game.getState().hero.handStrength, game, scene, time);
 };
 
 export const SAMPLE = (action, { game }) => {

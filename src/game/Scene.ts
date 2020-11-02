@@ -326,6 +326,9 @@ export default class Scene {
                 sideScene.update(game, time);
             }
         }
+    }
+
+    updateCamera(game: Game, time: Time) {
         if (this.firstFrame) {
             this.camera.init(this, game.controlsState);
         }

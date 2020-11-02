@@ -13,7 +13,7 @@ import Scene from './Scene';
 import { Time } from '../datatypes';
 import { getRandom } from '../utils/lba';
 
-const emptyVRScene = {
+const placeholderVRScene = {
     threeScene: new THREE.Scene(),
     camera: {
         resize: () => {},
@@ -33,7 +33,7 @@ export default class Game {
     readonly vr: boolean;
     readonly clock: THREE.Clock;
     readonly controlsState: ControlsState;
-    private _dbgClock: THREE.Clock;
+    private _pausedClock: THREE.Clock;
     private _gameState: GameState;
     private _isPaused: boolean;
     private _isLoading: boolean;
@@ -47,7 +47,7 @@ export default class Game {
         this.getUiState = getUiState;
         this.vr = vr;
         this.clock = new THREE.Clock(false);
-        this._dbgClock = new THREE.Clock(true);
+        this._pausedClock = new THREE.Clock(true);
         this.controlsState = initControlsState(vr);
         this._gameState = createGameState();
         this._isPaused = false;
@@ -60,49 +60,68 @@ export default class Game {
         this._audio.dispose();
     }
 
-    update(renderer: Renderer, scene: Scene, controls: any[], vrScene = null) {
-        const time = this.getTime();
-        const uiState = this.getUiState();
-
+    update(renderer: Renderer, scene: Scene, controls: any[], vrMenuScene = null) {
         renderer.stats.begin();
+        this.updateControls(controls);
+        this.updateGame(renderer, scene, vrMenuScene);
+        renderer.stats.end();
+    }
+
+    private updateControls(controls: any[]) {
         for (const ctrl of controls) {
             if (ctrl.update) {
                 ctrl.update();
             }
         }
+    }
+
+    private updateGame(renderer: Renderer, scene: Scene, vrMenuScene = null) {
+        const time = this.getTime();
+        const uiState = this.getUiState();
         if (scene && !uiState.showMenu && !uiState.video) {
-            const step = this.isPaused() && DebugData.step;
-            if (!this.isPaused() || step) {
-                if (step) {
-                    time.delta = 0.05;
-                    time.elapsed += 0.05;
-                    this.clock.elapsedTime += 0.05;
-                }
+            if (!this.isPaused() || this.checkDebugStep(time)) {
+                /*
+                ** Main game update
+                */
                 this.executePreloopFunctions();
                 this.playAmbience(scene, time);
                 scene.update(this, time);
+                scene.updateCamera(this, time);
                 renderer.render(scene);
                 DebugData.step = false;
                 this.executePostloopFunctions();
             } else if (this.controlsState.freeCamera || DebugData.firstFrame) {
-                const dbgTime = {
-                    delta: Math.min(this._dbgClock.getDelta(), 0.05),
-                    elapsed: this._dbgClock.getElapsedTime()
-                };
-                if (scene.firstFrame) {
-                    scene.camera.init(scene, this.controlsState);
-                }
-                scene.camera.update(scene, this.controlsState, dbgTime);
+                /*
+                ** Updating only cameras when in the editor
+                ** and game is paused
+                */
+                scene.updateCamera(this, this.getPausedTime());
                 renderer.render(scene);
             } else if (renderer.vr) {
-                renderer.render(emptyVRScene);
+                /*
+                ** Render placeholder VR scene to avoid
+                ** displaying a frozen image when paused in VR.
+                ** Not sure this is actually ever executed
+                */
+                renderer.render(placeholderVRScene);
             }
             scene.firstFrame = false;
             delete DebugData.firstFrame;
-        } else if (vrScene) {
-            renderer.render(vrScene);
+        } else if (vrMenuScene) {
+            /*
+            ** Render VR menu
+            */
+            renderer.render(vrMenuScene);
         }
-        renderer.stats.end();
+    }
+
+    private checkDebugStep(time) {
+        const step = this.isPaused() && DebugData.step;
+        if (step) {
+            time.delta = 0.05;
+            time.elapsed += 0.05;
+            this.clock.elapsedTime += 0.05;
+        }
     }
 
     resetState() {
@@ -169,10 +188,17 @@ export default class Game {
         }
     }
 
-    getTime() {
+    private getTime() {
         return {
             delta: Math.min(this.clock.getDelta(), 0.025),
             elapsed: this.clock.getElapsedTime(),
+        };
+    }
+
+    private getPausedTime() {
+        return {
+            delta: Math.min(this._pausedClock.getDelta(), 0.05),
+            elapsed: this._pausedClock.getElapsedTime()
         };
     }
 
