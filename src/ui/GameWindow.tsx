@@ -4,7 +4,6 @@ import {clone} from 'lodash';
 
 import Renderer from '../renderer';
 import Game from '../game/Game';
-import {mainGameLoop} from '../game/loop';
 import { SceneManager } from '../game/SceneManager';
 import {createControls} from '../controls/index';
 
@@ -36,7 +35,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
     readonly renderer: any;
     readonly sceneManager: SceneManager;
     readonly preloadPromise: Promise<void>;
-    controls?: [any];
+    controls?: any[];
     wrapperElem: HTMLDivElement;
     vrScene?: any;
     private stopped = false;
@@ -287,13 +286,7 @@ export default class GameWindow extends FrameListener<GameWindowProps, UIState> 
             this.checkResize();
         }
         const scene = this.sceneManager.getScene();
-        mainGameLoop(
-            this.game,
-            this.renderer,
-            scene,
-            this.controls,
-            this.vrScene
-        );
+        this.game.update(this.renderer, scene, this.controls, this.vrScene);
         DebugData.scope.scene = scene;
         DebugData.scope.hero = scene && scene.actors[0];
         if (params.editor) {

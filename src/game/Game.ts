@@ -8,6 +8,18 @@ import DebugData from '../ui/editor/DebugData';
 import { registerResources, preloadResources, getText } from '../resources';
 import { getParams } from '../params';
 import { pure } from '../utils/decorators';
+import Renderer from '../renderer';
+import Scene from './Scene';
+import { Time } from '../datatypes';
+import { getRandom } from '../utils/lba';
+
+const emptyVRScene = {
+    threeScene: new THREE.Scene(),
+    camera: {
+        resize: () => {},
+        threeCamera: new THREE.PerspectiveCamera()
+    }
+};
 
 interface LoopFunction {
     preLoopFunction: Function;
@@ -21,6 +33,7 @@ export default class Game {
     readonly vr: boolean;
     readonly clock: THREE.Clock;
     readonly controlsState: ControlsState;
+    private _dbgClock: THREE.Clock;
     private _gameState: GameState;
     private _isPaused: boolean;
     private _isLoading: boolean;
@@ -34,6 +47,7 @@ export default class Game {
         this.getUiState = getUiState;
         this.vr = vr;
         this.clock = new THREE.Clock(false);
+        this._dbgClock = new THREE.Clock(true);
         this.controlsState = initControlsState(vr);
         this._gameState = createGameState();
         this._isPaused = false;
@@ -44,6 +58,53 @@ export default class Game {
 
     dispose() {
         this._audio.dispose();
+    }
+
+    update(renderer: Renderer, scene: Scene, controls: any[], vrScene = null) {
+        const time = this.getTime();
+        const uiState = this.getUiState();
+
+        renderer.stats.begin();
+        for (const ctrl of controls) {
+            if (ctrl.update) {
+                ctrl.update();
+            }
+        }
+        if (scene && !uiState.showMenu && !uiState.video) {
+            const step = this.isPaused() && DebugData.step;
+            if (!this.isPaused() || step) {
+                if (step) {
+                    time.delta = 0.05;
+                    time.elapsed += 0.05;
+                    this.clock.elapsedTime += 0.05;
+                }
+                this.executePreloopFunctions();
+
+                scene.scenery.update(this, scene, time);
+                this.playAmbience(scene, time);
+                scene.update(this, time);
+                renderer.render(scene);
+                DebugData.step = false;
+                this.executePostloopFunctions();
+            } else if (this.controlsState.freeCamera || DebugData.firstFrame) {
+                const dbgTime = {
+                    delta: Math.min(this._dbgClock.getDelta(), 0.05),
+                    elapsed: this._dbgClock.getElapsedTime()
+                };
+                if (scene.firstFrame) {
+                    scene.camera.init(scene, this.controlsState);
+                }
+                scene.camera.update(scene, this.controlsState, dbgTime);
+                renderer.render(scene);
+            } else if (renderer.vr) {
+                renderer.render(emptyVRScene);
+            }
+            scene.firstFrame = false;
+            delete DebugData.firstFrame;
+        } else if (vrScene) {
+            renderer.render(vrScene);
+        }
+        renderer.stats.end();
     }
 
     resetState() {
@@ -182,5 +243,38 @@ export default class Game {
         ]);
         this.menuTexts = menuTexts;
         this.texts = gameTexts;
+    }
+
+    private playAmbience(scene: Scene, time: Time) {
+        let samplePlayed = 0;
+        const audio = this.getAudioManager();
+
+        if (time.elapsed >= scene.props.ambience.sampleElapsedTime) {
+            let currentAmb = getRandom(1, 4);
+            currentAmb &= 3;
+            for (let s = 0; s < 4; s += 1) {
+                if (!(samplePlayed & (1 << currentAmb))) {
+                    samplePlayed |= (1 << currentAmb);
+                    if (samplePlayed === 15) {
+                        samplePlayed = 0;
+                    }
+                    const sample = scene.props.ambience.samples[currentAmb];
+                    if (sample.ambience !== -1 && sample.repeat !== 0) {
+                        if (!audio.isPlayingSample(sample.ambience)) {
+                            audio.playSample(sample.ambience, sample.frequency);
+                        }
+                        break;
+                    }
+                }
+                currentAmb += 1;
+                currentAmb &= 3;
+            }
+            const { sampleMinDelay, sampleMinDelayRnd } = scene.props.ambience;
+            scene.props.ambience.sampleElapsedTime =
+                time.elapsed + (getRandom(0, sampleMinDelayRnd) + sampleMinDelay);
+        }
+        if (scene.props.ambience.sampleMinDelay < 0) {
+            scene.props.ambience.sampleElapsedTime = time.elapsed + 200000;
+        }
     }
 }

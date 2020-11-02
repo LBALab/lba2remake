@@ -8,7 +8,7 @@ import Zone, { ZoneProps } from './Zone';
 import { loadScripts } from '../scripting';
 import { killActor } from './scripting';
 import { createFPSCounter } from '../ui/vr/vrFPS';
-import { createVRGUI } from '../ui/vr/vrGUI';
+import { createVRGUI, updateVRGUI } from '../ui/vr/vrGUI';
 import { angleToRad, WORLD_SIZE } from '../utils/lba';
 import { getScene, getSceneMap } from '../resources';
 import { getParams } from '../params';
@@ -20,6 +20,11 @@ import { loadScenery, Scenery } from './scenery';
 import { SceneManager } from './SceneManager';
 import { createSceneVariables, findUsedVarGames } from './scene/variables';
 import Island from './scenery/island/Island';
+import { Time } from '../datatypes';
+import { updateActor } from './loop/actors';
+import { updateHero } from './loop/hero';
+import { updateExtra } from './extras';
+import { processPhysicsFrame } from './loop/physics';
 
 export interface SceneProps {
     index: number;
@@ -261,6 +266,67 @@ export default class Scene {
             this.sceneNode.name = `iso_scene_${this.index}`;
         }
         this.threeScene.add(this.sceneNode);
+    }
+
+    update(game: Game, time: Time) {
+        const params = getParams();
+        if (this.firstFrame) {
+            this.sceneNode.updateMatrixWorld();
+        }
+        for (const actor of this.actors) {
+            if (actor.state.wasHitBy === -1) {
+                continue;
+            }
+            // We allow wasHitBy to persist a second frame update because it is set
+            // asynchronously (potentially outside of the game loop). This ensures
+            // it's correctly read by the life scripts.
+            if (actor.state.hasSeenHit) {
+                actor.state.wasHitBy = -1;
+                actor.state.hasSeenHit = false;
+            } else {
+                actor.state.hasSeenHit = true;
+            }
+        }
+        for (const actor of this.actors) {
+            if (actor.state.isDead)
+                continue;
+            updateActor(params, game, this, actor, time);
+            if (this.isActive) {
+                if (actor.index === 0) {
+                    updateHero(game, this, actor, time);
+                }
+            }
+        }
+        if (this.extras) {
+            for (const extra of this.extras) {
+                updateExtra(game, this, extra, time);
+            }
+        }
+        if (this.isActive && params.editor) {
+            for (const point of this.points) {
+                point.update(this.camera);
+            }
+        }
+        if (this.vrGUI) {
+            updateVRGUI(game, this, this.vrGUI);
+        }
+        if (this.isActive && game.controlsState.firstPerson) {
+            const hero = this.actors[0];
+            if (hero && hero.threeObject) {
+                hero.threeObject.visible = false;
+            }
+        }
+        processPhysicsFrame(game, this, time);
+        if (this.sideScenes) {
+            for (const sideScene of this.sideScenes.values()) {
+                sideScene.firstFrame = this.firstFrame;
+                sideScene.update(game, time);
+            }
+        }
+        if (this.firstFrame) {
+            this.camera.init(this, game.controlsState);
+        }
+        this.camera.update(this, game.controlsState, time);
     }
 
     async goto(index, force = false, wasPaused = false, teleport = true) {
