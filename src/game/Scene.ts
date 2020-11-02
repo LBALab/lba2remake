@@ -273,6 +273,9 @@ export default class Scene {
         if (this.firstFrame) {
             this.sceneNode.updateMatrixWorld();
         }
+        if (this.isActive) {
+            this.scenery.update(game, this, time);
+        }
         for (const actor of this.actors) {
             if (actor.state.wasHitBy === -1) {
                 continue;

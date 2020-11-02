@@ -79,8 +79,6 @@ export default class Game {
                     this.clock.elapsedTime += 0.05;
                 }
                 this.executePreloopFunctions();
-
-                scene.scenery.update(this, scene, time);
                 this.playAmbience(scene, time);
                 scene.update(this, time);
                 renderer.render(scene);
