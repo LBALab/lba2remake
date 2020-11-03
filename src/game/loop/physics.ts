@@ -12,7 +12,7 @@ export function processPhysicsFrame(game: Game, scene: Scene, time: Time) {
         processActorPhysics(game, scene, actor, time);
     }
     if (scene.isActive) {
-        processZones(game, scene);
+        processZones(game, scene, time);
         processSidesceneTransitions(scene);
     }
 }

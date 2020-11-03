@@ -190,7 +190,7 @@ export function updateExtra(game: Game, scene: Scene, extra: Extra, time: Time) 
     }
 
     if ((extra.flags & ExtraFlag.FLY) === ExtraFlag.FLY) {
-        const ts = (time.elapsed - extra.spawnTime) / 200;
+        const ts = (time.elapsed - extra.spawnTime) * 0.0025;
 
         const x = extra.speed * ts
             * Math.cos(45);
