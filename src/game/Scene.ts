@@ -8,8 +8,8 @@ import Zone, { ZoneProps } from './Zone';
 import { loadScripts } from '../scripting';
 import { killActor } from './scripting';
 import { createFPSCounter } from '../ui/vr/vrFPS';
-import { createVRGUI } from '../ui/vr/vrGUI';
-import { angleToRad, WORLD_SIZE } from '../utils/lba';
+import { createVRGUI, updateVRGUI } from '../ui/vr/vrGUI';
+import { angleToRad, WORLD_SIZE, getRandom } from '../utils/lba';
 import { getScene, getSceneMap } from '../resources';
 import { getParams } from '../params';
 import DebugData, { loadSceneMetaData } from '../ui/editor/DebugData';
@@ -20,6 +20,9 @@ import { loadScenery, Scenery } from './scenery';
 import { SceneManager } from './SceneManager';
 import { createSceneVariables, findUsedVarGames } from './scene/variables';
 import Island from './scenery/island/Island';
+import { Time } from '../datatypes';
+import { updateExtra } from './extras';
+import { processPhysicsFrame } from './loop/physics';
 
 export interface SceneProps {
     index: number;
@@ -261,6 +264,113 @@ export default class Scene {
             this.sceneNode.name = `iso_scene_${this.index}`;
         }
         this.threeScene.add(this.sceneNode);
+    }
+
+    update(time: Time) {
+        const params = getParams();
+        this.playAmbience(time);
+        if (this.firstFrame) {
+            this.sceneNode.updateMatrixWorld();
+        }
+        if (this.isActive) {
+            this.scenery.update(this.game, this, time);
+        }
+        this.processHits();
+        for (const actor of this.actors) {
+            actor.update(this.game, this, time);
+        }
+        if (this.extras) {
+            for (const extra of this.extras) {
+                updateExtra(this.game, this, extra, time);
+            }
+        }
+        if (this.isActive && params.editor) {
+            for (const point of this.points) {
+                point.update(this.camera);
+            }
+        }
+        if (this.vrGUI) {
+            updateVRGUI(this.game, this, this.vrGUI);
+        }
+        // Make sure Twinsen is hidden if VR first person
+        if (this.isActive && this.game.controlsState.firstPerson) {
+            const hero = this.actors[0];
+            if (hero && hero.threeObject) {
+                hero.threeObject.visible = false;
+            }
+        }
+        processPhysicsFrame(this.game, this, time);
+        this.updateSideScenes(time);
+    }
+
+    private updateSideScenes(time: Time) {
+        if (this.sideScenes) {
+            for (const sideScene of this.sideScenes.values()) {
+                sideScene.firstFrame = this.firstFrame;
+                sideScene.update(time);
+            }
+        }
+    }
+
+    private processHits() {
+        for (const actor of this.actors) {
+            if (actor.state.wasHitBy === -1) {
+                continue;
+            }
+            // We allow wasHitBy to persist a second frame update because it is set
+            // asynchronously (potentially outside of the game loop). This ensures
+            // it's correctly read by the life scripts.
+            if (actor.state.hasSeenHit) {
+                actor.state.wasHitBy = -1;
+                actor.state.hasSeenHit = false;
+            } else {
+                actor.state.hasSeenHit = true;
+            }
+        }
+    }
+
+    updateCamera(time: Time) {
+        if (this.firstFrame) {
+            this.camera.init(this, this.game.controlsState);
+        }
+        this.camera.update(this, this.game.controlsState, time);
+    }
+
+    private playAmbience(time: Time) {
+        if (!this.isActive) {
+            return;
+        }
+
+        let samplePlayed = 0;
+        const audio = this.game.getAudioManager();
+
+        if (time.elapsed >= this.props.ambience.sampleElapsedTime) {
+            let currentAmb = getRandom(1, 4);
+            currentAmb &= 3;
+            for (let s = 0; s < 4; s += 1) {
+                if (!(samplePlayed & (1 << currentAmb))) {
+                    samplePlayed |= (1 << currentAmb);
+                    if (samplePlayed === 15) {
+                        samplePlayed = 0;
+                    }
+                    const sample = this.props.ambience.samples[currentAmb];
+                    if (sample.ambience !== -1 && sample.repeat !== 0) {
+                        if (!audio.isPlayingSample(sample.ambience)) {
+                            audio.playSample(sample.ambience, sample.frequency);
+                        }
+                        break;
+                    }
+                }
+                currentAmb += 1;
+                currentAmb &= 3;
+            }
+            const { sampleMinDelay, sampleMinDelayRnd } = this.props.ambience;
+            this.props.ambience.sampleElapsedTime =
+                time.elapsed + (getRandom(0, sampleMinDelayRnd) + sampleMinDelay);
+        }
+        if (this.props.ambience.sampleMinDelay < 0) {
+            this.props.ambience.sampleElapsedTime = time.elapsed + 200000;
+        }
     }
 
     async goto(index, force = false, wasPaused = false, teleport = true) {

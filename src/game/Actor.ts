@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import {cloneDeep} from 'lodash';
 
 import { loadModel, Model } from '../model';
-import { loadAnimState, resetAnimState } from '../model/animState';
+import { loadAnimState, resetAnimState, updateKeyframeInterpolation, updateKeyframe } from '../model/animState';
 import { AnimType } from './data/animType';
-import { angleToRad, distance2D, angleTo, getDistanceLba } from '../utils/lba';
+import { angleToRad, distance2D, angleTo, getDistanceLba, WORLD_SCALE } from '../utils/lba';
 import {createBoundingBox} from '../utils/rendering';
 import { loadSprite } from './scenery/isometric/sprites';
 
@@ -18,6 +18,11 @@ import { getParams } from '../params';
 import Game from './Game';
 import Scene from './Scene';
 import { pure } from '../utils/decorators';
+import { updateHero } from './loop/hero';
+import { Time } from '../datatypes';
+import { getAnimationsSync } from '../resources';
+import { getAnim } from '../model/entity';
+import { processAnimAction } from './loop/animAction';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -53,6 +58,8 @@ export interface ActorProps {
     prevAnimIndex?: number;
     prevAngle?: number;
     followActor?: number;
+    extraType: number;
+    extraAmount: number;
 }
 
 interface ActorPhysics {
@@ -200,6 +207,179 @@ export default class Actor {
         const skipModel = scene.isSideScene && this.index === 0;
         if (!skipModel) {
             this.animState = loadAnimState();
+        }
+    }
+
+    update(game: Game, scene: Scene, time: any) {
+        if (this.state.isDead)
+            return;
+
+        if (this.state.nextAnim !== null) {
+            this.setAnim(this.state.nextAnim);
+            this.animState.noInterpolate = true;
+            this.state.nextAnim = null;
+        }
+
+        this.runScripts(time);
+
+        // Don't update the actor if someone else is talking.
+        const currentTalkingActor = game.getState().actorTalking;
+        if (currentTalkingActor > -1 && currentTalkingActor !== this.index) {
+            return;
+        }
+
+        if (this.model !== null
+            && this.threeObject
+            && (this.threeObject.visible || this.index === 0)) {
+            const model = this.model;
+            this.animState.matrixRotation.makeRotationFromQuaternion(this.physics.orientation);
+            this.updateModel(
+                game,
+                scene,
+                model,
+                time
+            );
+            if (this.animState.isPlaying) {
+                const firstPerson = game.controlsState.firstPerson
+                    && scene.isActive
+                    && this.index === 0;
+                const behaviour = game.getState().hero.behaviour;
+                this.updateMovements(firstPerson, behaviour, time);
+            }
+        }
+        if (this.sprite) {
+            this.sprite.update(time);
+        }
+
+        if (this.props.dirMode === ActorDirMode.SAME_XZ) {
+            const { followActor } = this.props;
+            if (followActor && followActor !== -1) {
+                const targetActor = scene.actors[followActor];
+                this.physics.position.copy(targetActor.physics.position);
+                if (this.model) {
+                    this.model.mesh.quaternion.copy(targetActor.physics.orientation);
+                    this.model.mesh.position.copy(targetActor.physics.position);
+                    if (this.model.boundingBoxDebugMesh) {
+                        this.model.boundingBoxDebugMesh.quaternion.copy(
+                            targetActor.model.mesh.quaternion
+                        );
+                        this.model.boundingBoxDebugMesh.quaternion.inverse();
+                    }
+                }
+                if (this.sprite) {
+                    this.sprite.threeObject.quaternion.copy(targetActor.physics.orientation);
+                    this.sprite.threeObject.position.copy(targetActor.physics.position);
+                }
+            }
+        }
+
+        if (this.props.dirMode === ActorDirMode.FOLLOW) {
+            const { followActor } = this.props;
+            if (followActor && followActor !== -1) {
+                if (this.props.flags.isSprite) {
+                    this.gotoSprite(
+                        scene.actors[followActor].physics.position,
+                        time.delta * WORLD_SCALE * this.props.speed / 5
+                    );
+                } else {
+                    this.goto(scene.actors[followActor].physics.position);
+                }
+            }
+        }
+
+        if (scene.isActive && this.index === 0) {
+            updateHero(game, scene, this, time);
+        }
+    }
+
+    updateMovements(firstPerson: boolean, behaviour: number, time: any) {
+        const deltaMS = time.delta * 1000;
+        if (this.state.isTurning) {
+            // We want to rotate in the most efficient way possible, i.e. we rotate
+            // either clockwise or anticlockwise depening on which one is fastest.
+            let distanceAnticlockwise;
+            let distanceClockwise;
+            if (this.physics.temp.destAngle > this.physics.temp.angle) {
+                distanceAnticlockwise = Math.abs(this.physics.temp.destAngle -
+                                                 this.physics.temp.angle);
+                distanceClockwise = 2 * Math.PI - distanceAnticlockwise;
+            } else {
+                distanceClockwise = Math.abs(this.physics.temp.destAngle -
+                                             this.physics.temp.angle);
+                distanceAnticlockwise =  2 * Math.PI - distanceClockwise;
+            }
+            const baseAngle = Math.min(distanceAnticlockwise,
+                                       distanceClockwise) * deltaMS;
+            const angle = baseAngle / (this.props.speed * 10);
+            const sign = distanceAnticlockwise < distanceClockwise ? 1 : -1;
+            this.physics.temp.angle += sign * angle;
+
+            if (this.physics.temp.angle < 0) {
+                this.physics.temp.angle += 2 * Math.PI;
+            }
+            if (this.physics.temp.angle > 2 * Math.PI) {
+                this.physics.temp.angle -= 2 * Math.PI;
+            }
+
+            wEuler.set(0, this.physics.temp.angle, 0, 'XZY');
+            this.physics.orientation.setFromEuler(wEuler);
+
+            if (Math.min(distanceAnticlockwise, distanceClockwise) < 0.05) {
+                this.state.isTurning = false;
+                this.physics.temp.destAngle = this.physics.temp.angle;
+            }
+        }
+        if (this.state.isWalking) {
+            this.physics.temp.position.set(0, 0, 0);
+
+            const animIndex = this.props.animIndex;
+            const useVrSteps = (firstPerson && behaviour < 4 && animIndex in vrFPsteps[behaviour]);
+
+            const speedZ = useVrSteps
+                ? vrFPsteps[behaviour][animIndex].z * time.delta
+                : (this.animState.step.z * deltaMS) / this.animState.keyframeLength;
+            const speedX = useVrSteps
+                ? vrFPsteps[behaviour][animIndex].x * time.delta
+                : (this.animState.step.x * deltaMS) / this.animState.keyframeLength;
+
+            this.physics.temp.position.x += Math.sin(this.physics.temp.angle) * speedZ;
+            this.physics.temp.position.z += Math.cos(this.physics.temp.angle) * speedZ;
+
+            this.physics.temp.position.x -= Math.cos(this.physics.temp.angle) * speedX;
+            this.physics.temp.position.z += Math.sin(this.physics.temp.angle) * speedX;
+
+            this.physics.temp.position.y +=
+                (this.animState.step.y * deltaMS) / (this.animState.keyframeLength);
+        } else {
+            this.physics.temp.position.set(0, 0, 0);
+        }
+    }
+
+    updateModel(game: Game, scene: Scene, model: any, time: Time) {
+        const animState = this.animState;
+        const { entityIndex, animIndex } = this.props;
+        const anim = getAnimationsSync(animIndex, entityIndex);
+        animState.loopFrame = anim.loopFrame;
+        if (animState.prevRealAnimIdx !== -1 && anim.index !== animState.prevRealAnimIdx) {
+            updateKeyframeInterpolation(anim, animState, time, anim.index);
+        }
+        if (anim.index === animState.realAnimIdx || animState.realAnimIdx === -1) {
+            updateKeyframe(anim, animState, time, anim.index);
+        }
+        if (scene.isActive) {
+            const entity = model.entities[entityIndex];
+            const entityAnim = getAnim(entity, animIndex);
+            if (entityAnim !== null) {
+                processAnimAction({
+                    game,
+                    scene,
+                    model,
+                    actor: this,
+                    entityAnim,
+                    animState,
+                    time
+                });
+            }
         }
     }
 
@@ -491,6 +671,36 @@ function initPhysics({pos, angle}) {
     };
 }
 
+const wEuler = new THREE.Euler();
+
+const slowMove = {
+    [AnimType.FORWARD]: {x: 0, z: 2.5},
+    [AnimType.BACKWARD]: {x: 0, z: -1.5},
+    [AnimType.DODGE_LEFT]: {x: 1.5, z: 0},
+    [AnimType.DODGE_RIGHT]: {x: -1.5, z: 0},
+};
+
+const fastMove = {
+    [AnimType.FORWARD]: {x: 0, z: 4},
+    [AnimType.BACKWARD]: {x: 0, z: -3},
+    [AnimType.DODGE_LEFT]: {x: 2, z: 0},
+    [AnimType.DODGE_RIGHT]: {x: -2, z: 0},
+};
+
+const superSlowMove = {
+    [AnimType.FORWARD]: {x: 0, z: 1.5},
+    [AnimType.BACKWARD]: {x: 0, z: -0.75},
+    [AnimType.DODGE_LEFT]: {x: 0.75, z: 0},
+    [AnimType.DODGE_RIGHT]: {x: -0.75, z: 0},
+};
+
+const vrFPsteps = [
+    slowMove,
+    fastMove,
+    slowMove,
+    superSlowMove
+];
+
 export function createNewActorProps(
     scene: Scene,
     details: NewActorDetails
@@ -520,6 +730,8 @@ export function createNewActorProps(
         lifeScript: new DataView(new ArrayBuffer(1)),
         moveScriptSize: 1,
         moveScript: new DataView(new ArrayBuffer(1)),
-        textColor: 'white'
+        textColor: 'white',
+        extraType: 0,
+        extraAmount: 0
     };
 }

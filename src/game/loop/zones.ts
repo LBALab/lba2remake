@@ -9,6 +9,7 @@ import Game from '../Game';
 import Scene from '../Scene';
 import Zone from '../Zone';
 import { getParams } from '../../params';
+import { Time } from '../../datatypes';
 
 function NOP() { }
 
@@ -55,7 +56,7 @@ const ZONE_OFFSET_OVERRIDES = {
     }
 };
 
-export function processZones(game: Game, scene: Scene) {
+export function processZones(game: Game, scene: Scene, time: Time) {
     const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
     pos.y += 0.005;
@@ -69,7 +70,7 @@ export function processZones(game: Game, scene: Scene) {
             pos.z > box.zMin && pos.z < box.zMax) {
             const zoneType = ZoneOpcode[zone.props.type];
             if (zoneType !== null && zoneType.handler !== null) {
-                if (zoneType.handler(game, scene, zone, hero))
+                if (zoneType.handler(game, scene, zone, hero, time))
                     break;
             }
         }
@@ -86,7 +87,7 @@ function isFacingLadder(angle) {
 
 const LADDER_TOP_OUT_DELTA = 1.35;
 
-function LADDER(game: Game, scene: Scene, zone: Zone, hero: Actor) {
+function LADDER(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
     if (hero.state.isToppingOutUp) {
         return false;
     }
@@ -274,7 +275,7 @@ function calculateTagetPosition(hero: Actor, zone: Zone, newScene: Scene) {
 /**
  * @return {boolean}
  */
-function GOTO_SCENE(game: Game, scene: Scene, zone: Zone, hero: Actor) {
+function GOTO_SCENE(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
     hero.state.isClimbing = false;
     hero.state.isToppingOutUp = false;
 
@@ -323,7 +324,7 @@ function GOTO_SCENE(game: Game, scene: Scene, zone: Zone, hero: Actor) {
     return false;
 }
 
-function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor) {
+function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
     const audio = game.getAudioManager();
     if (game.controlsState.action === 1) {
         if (!scene.zoneState.skipListener) {
@@ -372,7 +373,7 @@ function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor) {
     return false;
 }
 
-function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor) {
+function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor, time: Time) {
     if (game.controlsState.action === 1) {
         game.controlsState.action = 0;
 
@@ -400,7 +401,7 @@ function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor) {
                 destAngle,
                 bonusSprite,
                 zone.props.info1,
-                game.getTime(),
+                time,
             ).then((extra) => {
                 extra.flags |= ExtraFlag.TIME_IN;
                 zone.props.info2 = 1;

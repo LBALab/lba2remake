@@ -8,6 +8,16 @@ import DebugData from '../ui/editor/DebugData';
 import { registerResources, preloadResources, getText } from '../resources';
 import { getParams } from '../params';
 import { pure } from '../utils/decorators';
+import Renderer from '../renderer';
+import Scene from './Scene';
+
+const placeholderVRScene = {
+    threeScene: new THREE.Scene(),
+    camera: {
+        resize: () => {},
+        threeCamera: new THREE.PerspectiveCamera()
+    }
+};
 
 interface LoopFunction {
     preLoopFunction: Function;
@@ -21,6 +31,7 @@ export default class Game {
     readonly vr: boolean;
     readonly clock: THREE.Clock;
     readonly controlsState: ControlsState;
+    private _pausedClock: THREE.Clock;
     private _gameState: GameState;
     private _isPaused: boolean;
     private _isLoading: boolean;
@@ -34,6 +45,7 @@ export default class Game {
         this.getUiState = getUiState;
         this.vr = vr;
         this.clock = new THREE.Clock(false);
+        this._pausedClock = new THREE.Clock(true);
         this.controlsState = initControlsState(vr);
         this._gameState = createGameState();
         this._isPaused = false;
@@ -44,6 +56,69 @@ export default class Game {
 
     dispose() {
         this._audio.dispose();
+    }
+
+    update(renderer: Renderer, scene: Scene, controls: any[], vrMenuScene = null) {
+        renderer.stats.begin();
+        this.updateControls(controls);
+        this.updateGame(renderer, scene, vrMenuScene);
+        renderer.stats.end();
+    }
+
+    private updateControls(controls: any[]) {
+        for (const ctrl of controls) {
+            if (ctrl.update) {
+                ctrl.update();
+            }
+        }
+    }
+
+    private updateGame(renderer: Renderer, scene: Scene, vrMenuScene = null) {
+        const time = this.getTime();
+        const uiState = this.getUiState();
+        if (scene && !uiState.showMenu && !uiState.video) {
+            if (!this.isPaused() || this.checkDebugStep(time)) {
+                /*
+                ** Main game update
+                */
+                this.executePreloopFunctions();
+                scene.update(time);
+                scene.updateCamera(time);
+                renderer.render(scene);
+                DebugData.step = false;
+                this.executePostloopFunctions();
+            } else if (this.controlsState.freeCamera || DebugData.firstFrame) {
+                /*
+                ** Updating only cameras when in the editor
+                ** and game is paused
+                */
+                scene.updateCamera(this.getPausedTime());
+                renderer.render(scene);
+            } else if (renderer.vr) {
+                /*
+                ** Render placeholder VR scene to avoid
+                ** displaying a frozen image when paused in VR.
+                ** Not sure this is actually ever executed
+                */
+                renderer.render(placeholderVRScene);
+            }
+            scene.firstFrame = false;
+            delete DebugData.firstFrame;
+        } else if (vrMenuScene) {
+            /*
+            ** Render VR menu
+            */
+            renderer.render(vrMenuScene);
+        }
+    }
+
+    private checkDebugStep(time) {
+        const step = this.isPaused() && DebugData.step;
+        if (step) {
+            time.delta = 0.05;
+            time.elapsed += 0.05;
+            this.clock.elapsedTime += 0.05;
+        }
     }
 
     resetState() {
@@ -110,10 +185,17 @@ export default class Game {
         }
     }
 
-    getTime() {
+    private getTime() {
         return {
             delta: Math.min(this.clock.getDelta(), 0.025),
             elapsed: this.clock.getElapsedTime(),
+        };
+    }
+
+    private getPausedTime() {
+        return {
+            delta: Math.min(this._pausedClock.getDelta(), 0.05),
+            elapsed: this._pausedClock.getElapsedTime()
         };
     }
 
