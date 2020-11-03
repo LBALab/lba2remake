@@ -1,6 +1,7 @@
 import Actor from '../Actor';
 import Game from '../Game';
 import Scene from '../Scene';
+import { Time } from '../../datatypes';
 
 export interface ScriptContext {
     type: 'life' | 'move';
@@ -9,4 +10,5 @@ export interface ScriptContext {
     actor: Actor;
     moveState: any;
     state: any;
+    time: Time;
 }
