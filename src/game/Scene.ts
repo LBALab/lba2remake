@@ -9,7 +9,7 @@ import { loadScripts } from '../scripting';
 import { killActor } from './scripting';
 import { createFPSCounter } from '../ui/vr/vrFPS';
 import { createVRGUI, updateVRGUI } from '../ui/vr/vrGUI';
-import { angleToRad, WORLD_SIZE } from '../utils/lba';
+import { angleToRad, WORLD_SIZE, getRandom } from '../utils/lba';
 import { getScene, getSceneMap } from '../resources';
 import { getParams } from '../params';
 import DebugData, { loadSceneMetaData } from '../ui/editor/DebugData';
@@ -268,6 +268,7 @@ export default class Scene {
 
     update(time: Time) {
         const params = getParams();
+        this.playAmbience(time);
         if (this.firstFrame) {
             this.sceneNode.updateMatrixWorld();
         }
@@ -333,6 +334,43 @@ export default class Scene {
             this.camera.init(this, this.game.controlsState);
         }
         this.camera.update(this, this.game.controlsState, time);
+    }
+
+    private playAmbience(time: Time) {
+        if (!this.isActive) {
+            return;
+        }
+
+        let samplePlayed = 0;
+        const audio = this.game.getAudioManager();
+
+        if (time.elapsed >= this.props.ambience.sampleElapsedTime) {
+            let currentAmb = getRandom(1, 4);
+            currentAmb &= 3;
+            for (let s = 0; s < 4; s += 1) {
+                if (!(samplePlayed & (1 << currentAmb))) {
+                    samplePlayed |= (1 << currentAmb);
+                    if (samplePlayed === 15) {
+                        samplePlayed = 0;
+                    }
+                    const sample = this.props.ambience.samples[currentAmb];
+                    if (sample.ambience !== -1 && sample.repeat !== 0) {
+                        if (!audio.isPlayingSample(sample.ambience)) {
+                            audio.playSample(sample.ambience, sample.frequency);
+                        }
+                        break;
+                    }
+                }
+                currentAmb += 1;
+                currentAmb &= 3;
+            }
+            const { sampleMinDelay, sampleMinDelayRnd } = this.props.ambience;
+            this.props.ambience.sampleElapsedTime =
+                time.elapsed + (getRandom(0, sampleMinDelayRnd) + sampleMinDelay);
+        }
+        if (this.props.ambience.sampleMinDelay < 0) {
+            this.props.ambience.sampleElapsedTime = time.elapsed + 200000;
+        }
     }
 
     async goto(index, force = false, wasPaused = false, teleport = true) {
