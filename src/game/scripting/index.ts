@@ -13,6 +13,8 @@ export function runScript(params, script, time: Time) {
     if (!instructions)
         return;
 
+    context.time = time;
+
     const activeDebug = params.editor && context.scene.isActive;
     const activeCommands : {
         section?: any;
@@ -51,7 +53,7 @@ export function runScript(params, script, time: Time) {
                 }
             }
             if (!(next.skipSideScenes && !context.scene.isActive)) {
-                next(time);
+                next();
             }
         } catch (e) {
             // tslint:disable-next-line:no-console max-line-length
