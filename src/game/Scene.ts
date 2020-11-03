@@ -290,7 +290,9 @@ export default class Scene {
         if (this.vrGUI) {
             updateVRGUI(this.game, this, this.vrGUI);
         }
-        // Make sure Twinsen is hidden if VR first person
+        // Make sure Twinsen is hidden if VR first person.
+        // This should probably be moved somewhere else
+        // to keep the scene update logic simple.
         if (this.isActive && this.game.controlsState.firstPerson) {
             const hero = this.actors[0];
             if (hero && hero.threeObject) {
