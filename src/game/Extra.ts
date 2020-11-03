@@ -311,7 +311,6 @@ export default class Extra {
 
 export function getBonus(type): SpriteType {
     const isLBA1 = getParams().game === 'lba1';
-    let spriteIndex = SpriteType.UNKNOWN;
     const bonus = [];
     for (let b = 0; b < 5; b += 1) {
         if (type & (1 << (b + 4))) {
@@ -321,7 +320,7 @@ export function getBonus(type): SpriteType {
 
     // TODO validate per chapter bonus
 
-    spriteIndex = bonus[getRandom(0, bonus.length - 1)];
+    let spriteIndex = bonus[getRandom(0, bonus.length - 1)];
     spriteIndex += 3;
 
     if (!isLBA1 && spriteIndex === 3) {
