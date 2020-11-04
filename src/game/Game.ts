@@ -10,8 +10,6 @@ import { getParams } from '../params';
 import { pure } from '../utils/decorators';
 import Renderer from '../renderer';
 import Scene from './Scene';
-import { Time } from '../datatypes';
-import { getRandom } from '../utils/lba';
 
 const placeholderVRScene = {
     threeScene: new THREE.Scene(),
@@ -84,7 +82,6 @@ export default class Game {
                 ** Main game update
                 */
                 this.executePreloopFunctions();
-                this.playAmbience(scene, time);
                 scene.update(time);
                 scene.updateCamera(time);
                 renderer.render(scene);
@@ -267,38 +264,5 @@ export default class Game {
         ]);
         this.menuTexts = menuTexts;
         this.texts = gameTexts;
-    }
-
-    private playAmbience(scene: Scene, time: Time) {
-        let samplePlayed = 0;
-        const audio = this.getAudioManager();
-
-        if (time.elapsed >= scene.props.ambience.sampleElapsedTime) {
-            let currentAmb = getRandom(1, 4);
-            currentAmb &= 3;
-            for (let s = 0; s < 4; s += 1) {
-                if (!(samplePlayed & (1 << currentAmb))) {
-                    samplePlayed |= (1 << currentAmb);
-                    if (samplePlayed === 15) {
-                        samplePlayed = 0;
-                    }
-                    const sample = scene.props.ambience.samples[currentAmb];
-                    if (sample.ambience !== -1 && sample.repeat !== 0) {
-                        if (!audio.isPlayingSample(sample.ambience)) {
-                            audio.playSample(sample.ambience, sample.frequency);
-                        }
-                        break;
-                    }
-                }
-                currentAmb += 1;
-                currentAmb &= 3;
-            }
-            const { sampleMinDelay, sampleMinDelayRnd } = scene.props.ambience;
-            scene.props.ambience.sampleElapsedTime =
-                time.elapsed + (getRandom(0, sampleMinDelayRnd) + sampleMinDelay);
-        }
-        if (scene.props.ambience.sampleMinDelay < 0) {
-            scene.props.ambience.sampleElapsedTime = time.elapsed + 200000;
-        }
     }
 }

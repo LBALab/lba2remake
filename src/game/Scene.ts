@@ -5,11 +5,12 @@ import islandSceneMapping from './scenery/island/data/sceneMapping';
 import Actor, { ActorProps, ActorDirMode } from './Actor';
 import Point, { PointProps } from './Point';
 import Zone, { ZoneProps } from './Zone';
+import Extra from './Extra';
 import { loadScripts } from '../scripting';
 import { killActor } from './scripting';
 import { createFPSCounter } from '../ui/vr/vrFPS';
 import { createVRGUI, updateVRGUI } from '../ui/vr/vrGUI';
-import { angleToRad, WORLD_SIZE } from '../utils/lba';
+import { angleToRad, WORLD_SIZE, getRandom } from '../utils/lba';
 import { getScene, getSceneMap } from '../resources';
 import { getParams } from '../params';
 import DebugData, { loadSceneMetaData } from '../ui/editor/DebugData';
@@ -21,7 +22,6 @@ import { SceneManager } from './SceneManager';
 import { createSceneVariables, findUsedVarGames } from './scene/variables';
 import Island from './scenery/island/Island';
 import { Time } from '../datatypes';
-import { updateExtra } from './extras';
 import { processPhysicsFrame } from './loop/physics';
 
 export interface SceneProps {
@@ -63,7 +63,7 @@ export default class Scene {
     usedVarGames: number[];
     readonly scenery: Scenery;
     sideScenes: Map<number, Scene>;
-    extras: any[];
+    extras: Extra[];
     isActive: boolean;
     isSideScene: boolean;
     zoneState: {
@@ -268,6 +268,7 @@ export default class Scene {
 
     update(time: Time) {
         const params = getParams();
+        this.playAmbience(time);
         if (this.firstFrame) {
             this.sceneNode.updateMatrixWorld();
         }
@@ -278,12 +279,10 @@ export default class Scene {
         for (const actor of this.actors) {
             actor.update(this.game, this, time);
         }
-        if (this.extras) {
-            for (const extra of this.extras) {
-                updateExtra(this.game, this, extra, time);
-            }
+        for (const extra of this.extras) {
+            extra.update(this.game, this, time);
         }
-        if (this.isActive && params.editor) {
+        if (params.editor && this.isActive) {
             for (const point of this.points) {
                 point.update(this.camera);
             }
@@ -291,7 +290,9 @@ export default class Scene {
         if (this.vrGUI) {
             updateVRGUI(this.game, this, this.vrGUI);
         }
-        // Make sure Twinsen is hidden if VR first person
+        // Make sure Twinsen is hidden if VR first person.
+        // This should probably be moved somewhere else
+        // to keep the scene update logic simple.
         if (this.isActive && this.game.controlsState.firstPerson) {
             const hero = this.actors[0];
             if (hero && hero.threeObject) {
@@ -335,6 +336,43 @@ export default class Scene {
         this.camera.update(this, this.game.controlsState, time);
     }
 
+    private playAmbience(time: Time) {
+        if (!this.isActive) {
+            return;
+        }
+
+        let samplePlayed = 0;
+        const audio = this.game.getAudioManager();
+
+        if (time.elapsed >= this.props.ambience.sampleElapsedTime) {
+            let currentAmb = getRandom(1, 4);
+            currentAmb &= 3;
+            for (let s = 0; s < 4; s += 1) {
+                if (!(samplePlayed & (1 << currentAmb))) {
+                    samplePlayed |= (1 << currentAmb);
+                    if (samplePlayed === 15) {
+                        samplePlayed = 0;
+                    }
+                    const sample = this.props.ambience.samples[currentAmb];
+                    if (sample.ambience !== -1 && sample.repeat !== 0) {
+                        if (!audio.isPlayingSample(sample.ambience)) {
+                            audio.playSample(sample.ambience, sample.frequency);
+                        }
+                        break;
+                    }
+                }
+                currentAmb += 1;
+                currentAmb &= 3;
+            }
+            const { sampleMinDelay, sampleMinDelayRnd } = this.props.ambience;
+            this.props.ambience.sampleElapsedTime =
+                time.elapsed + (getRandom(0, sampleMinDelayRnd) + sampleMinDelay);
+        }
+        if (this.props.ambience.sampleMinDelay < 0) {
+            this.props.ambience.sampleElapsedTime = time.elapsed + 200000;
+        }
+    }
+
     async goto(index, force = false, wasPaused = false, teleport = true) {
         return this.sceneManager.goto(index, force, wasPaused, teleport);
     }
@@ -367,12 +405,12 @@ export default class Scene {
         }
     }
 
-    addExtra(extra) {
+    addExtra(extra: Extra) {
         this.extras.push(extra);
         this.addMesh(extra.threeObject);
     }
 
-    removeExtra(extra) {
+    removeExtra(extra: Extra) {
         const idx = this.extras.indexOf(extra);
         if (idx !== -1) {
             this.extras.splice(idx, 1);

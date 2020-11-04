@@ -4,7 +4,7 @@ import Actor, { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
 import { angleTo, angleToRad, getRandom, WORLD_SCALE, BRICK_SIZE, getHtmlColor } from '../../utils/lba';
-import { addExtra, ExtraFlag, getBonus } from '../extras';
+import Extra, { getBonus } from '../Extra';
 import Game from '../Game';
 import Scene from '../Scene';
 import Zone from '../Zone';
@@ -394,7 +394,7 @@ function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor, time: Time) {
             const offset = new THREE.Vector3(0, 0.5, 0);
             offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
             position.add(offset);
-            addExtra(
+            Extra.load(
                 game,
                 scene,
                 position,
@@ -402,8 +402,8 @@ function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor, time: Time) {
                 bonusSprite,
                 zone.props.info1,
                 time,
-            ).then((extra) => {
-                extra.flags |= ExtraFlag.TIME_IN;
+            ).then(() => {
+                // indicate the zone bonus has been given already
                 zone.props.info2 = 1;
             });
         });

@@ -67,13 +67,13 @@ export function SAMPLE(this: ScriptContext, index) {
     this.actor.playSample(index);
 }
 
-export function GOTO_POINT_3D(this: ScriptContext, point: Point, time) {
+export function GOTO_POINT_3D(this: ScriptContext, point: Point) {
     if (!point) {
         return;
     }
     const distance = this.actor.gotoSprite(
         point.physics.position,
-        time.delta * WORLD_SCALE * this.actor.props.speed / 5
+        this.time.delta * WORLD_SCALE * this.actor.props.speed / 5
     );
     if (distance > 0.55) {
         this.state.reentryOffset = this.state.offset;
@@ -89,11 +89,11 @@ export function SPEED(this: ScriptContext, speed) {
 
 export const BACKGROUND = unimplemented();
 
-export function WAIT_NUM_SECOND(this: ScriptContext, numSeconds, _unknown, time) {
+export function WAIT_NUM_SECOND(this: ScriptContext, numSeconds, _unknown) {
     if (!this.state.waitUntil) {
-        this.state.waitUntil = time.elapsed + numSeconds;
+        this.state.waitUntil = this.time.elapsed + numSeconds;
     }
-    if (time.elapsed < this.state.waitUntil) {
+    if (this.time.elapsed < this.state.waitUntil) {
         this.state.reentryOffset = this.state.offset;
         this.state.continue = false;
     } else {
@@ -101,42 +101,42 @@ export function WAIT_NUM_SECOND(this: ScriptContext, numSeconds, _unknown, time)
     }
 }
 
-export function WAIT_NUM_DSEC(this: ScriptContext, numDsec, _unknown, time) {
-    WAIT_NUM_SECOND.call(this, numDsec * 0.1, null, time);
+export function WAIT_NUM_DSEC(this: ScriptContext, numDsec, _unknown) {
+    WAIT_NUM_SECOND.call(this, numDsec * 0.1, null);
 }
 
-export function WAIT_NUM_SECOND_RND(this: ScriptContext, maxNumSeconds, _unknown, time) {
+export function WAIT_NUM_SECOND_RND(this: ScriptContext, maxNumSeconds, _unknown) {
     const numSeconds = Math.floor(Math.random() * maxNumSeconds);
-    WAIT_NUM_SECOND.call(this, numSeconds, null, time);
+    WAIT_NUM_SECOND.call(this, numSeconds, null);
 }
 
-export function WAIT_NUM_DECIMAL_RND(this: ScriptContext, maxNumDsec, _unknown, time) {
+export function WAIT_NUM_DECIMAL_RND(this: ScriptContext, maxNumDsec, _unknown) {
     const numDsec = Math.floor(Math.random() * maxNumDsec);
-    WAIT_NUM_SECOND.call(this, numDsec * 0.1, null, time);
+    WAIT_NUM_SECOND.call(this, numDsec * 0.1, null);
 }
 
-export function OPEN_LEFT(this: ScriptContext, dist, time) {
-    openDoor.call(this, [0, 0, -dist * WORLD_SCALE], time);
+export function OPEN_LEFT(this: ScriptContext, dist) {
+    openDoor.call(this, [0, 0, -dist * WORLD_SCALE]);
 }
 
-export function OPEN_RIGHT(this: ScriptContext, dist, time) {
-    openDoor.call(this, [0, 0, dist * WORLD_SCALE], time);
+export function OPEN_RIGHT(this: ScriptContext, dist) {
+    openDoor.call(this, [0, 0, dist * WORLD_SCALE]);
 }
 
-export function OPEN_UP(this: ScriptContext, dist, time) {
-    openDoor.call(this, [dist * WORLD_SCALE, 0, 0], time);
+export function OPEN_UP(this: ScriptContext, dist) {
+    openDoor.call(this, [dist * WORLD_SCALE, 0, 0]);
 }
 
-export function OPEN_DOWN(this: ScriptContext, dist, time) {
-    openDoor.call(this, [-dist * WORLD_SCALE, 0, 0], time);
+export function OPEN_DOWN(this: ScriptContext, dist) {
+    openDoor.call(this, [-dist * WORLD_SCALE, 0, 0]);
 }
 
 const TGT = new THREE.Vector3();
 
-function openDoor(this: ScriptContext, tgt, time) {
+function openDoor(this: ScriptContext, tgt) {
     const {pos} = this.actor.props;
     TGT.set(pos[0] + tgt[0], pos[1] + tgt[1], pos[2] + tgt[2]);
-    const distance = this.actor.gotoSprite(TGT, time.delta * 2);
+    const distance = this.actor.gotoSprite(TGT, this.time.delta * 2);
 
     if (distance > 0.001) {
         this.state.reentryOffset = this.state.offset;
@@ -146,10 +146,10 @@ function openDoor(this: ScriptContext, tgt, time) {
     }
 }
 
-export function CLOSE(this: ScriptContext, time) {
+export function CLOSE(this: ScriptContext) {
     const {pos} = this.actor.props;
     TGT.set(pos[0], pos[1], pos[2]);
-    const distance = this.actor.gotoSprite(TGT, time.delta * 2);
+    const distance = this.actor.gotoSprite(TGT, this.time.delta * 2);
 
     if (distance > 0.001) {
         this.state.reentryOffset = this.state.offset;
