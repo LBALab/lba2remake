@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import { getRandom, distance2D } from '../../utils/lba';
 import { unimplemented } from '../scripting/utils';
-import { addExtra, ExtraFlag, getBonus } from '../extras';
+import Extra, { getBonus } from '../Extra';
 import { SpriteType } from '../data/spriteType';
 import { SampleType } from '../data/sampleType';
 import Actor from '../Actor';
@@ -39,16 +39,15 @@ export function processHit(
                 game.getAudioManager().playSample(SampleType.ACTOR_DYING);
                 if (a.props.extraType) {
                     const angle = a.physics.temp.angle - Math.PI / 2;
-                    addExtra(game,
-                            scene,
-                            a.physics.position,
-                            angle,
-                             getBonus(a.props.extraType),
-                             a.props.extraAmount,
-                             time
-                    ).then((extra) => {
-                        extra.flags |= ExtraFlag.TIME_IN;
-                    });
+                    Extra.load(
+                        game,
+                        scene,
+                        a.physics.position,
+                        angle,
+                        getBonus(a.props.extraType),
+                        a.props.extraAmount,
+                        time
+                    );
                 }
             }
         }
@@ -164,10 +163,15 @@ export const THROW_3D_CONQUE = (_action, { game, scene }) => {
     const offset = new THREE.Vector3(0.75, 0.5, 0);
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
-    addExtra(game, scene, position, destAngle, SpriteType.LIFE, 5,
-             game.getTime()).then((extra) => {
-        extra.flags |= ExtraFlag.TIME_IN;
-    });
+    Extra.load(
+        game,
+        scene,
+        position,
+        destAngle,
+        SpriteType.LIFE,
+        5,
+        game.getTime()
+    );
 };
 
 export const ZV_ANIMIT = unimplemented();

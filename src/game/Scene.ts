@@ -5,6 +5,7 @@ import islandSceneMapping from './scenery/island/data/sceneMapping';
 import Actor, { ActorProps, ActorDirMode } from './Actor';
 import Point, { PointProps } from './Point';
 import Zone, { ZoneProps } from './Zone';
+import Extra from './Extra';
 import { loadScripts } from '../scripting';
 import { killActor } from './scripting';
 import { createFPSCounter } from '../ui/vr/vrFPS';
@@ -21,7 +22,6 @@ import { SceneManager } from './SceneManager';
 import { createSceneVariables, findUsedVarGames } from './scene/variables';
 import Island from './scenery/island/Island';
 import { Time } from '../datatypes';
-import { updateExtra } from './extras';
 import { processPhysicsFrame } from './loop/physics';
 
 export interface SceneProps {
@@ -63,7 +63,7 @@ export default class Scene {
     usedVarGames: number[];
     readonly scenery: Scenery;
     sideScenes: Map<number, Scene>;
-    extras: any[];
+    extras: Extra[];
     isActive: boolean;
     isSideScene: boolean;
     zoneState: {
@@ -279,12 +279,10 @@ export default class Scene {
         for (const actor of this.actors) {
             actor.update(this.game, this, time);
         }
-        if (this.extras) {
-            for (const extra of this.extras) {
-                updateExtra(this.game, this, extra, time);
-            }
+        for (const extra of this.extras) {
+            extra.update(this.game, this, time);
         }
-        if (this.isActive && params.editor) {
+        if (params.editor && this.isActive) {
             for (const point of this.points) {
                 point.update(this.camera);
             }
@@ -292,7 +290,9 @@ export default class Scene {
         if (this.vrGUI) {
             updateVRGUI(this.game, this, this.vrGUI);
         }
-        // Make sure Twinsen is hidden if VR first person
+        // Make sure Twinsen is hidden if VR first person.
+        // This should probably be moved somewhere else
+        // to keep the scene update logic simple.
         if (this.isActive && this.game.controlsState.firstPerson) {
             const hero = this.actors[0];
             if (hero && hero.threeObject) {
@@ -405,12 +405,12 @@ export default class Scene {
         }
     }
 
-    addExtra(extra) {
+    addExtra(extra: Extra) {
         this.extras.push(extra);
         this.addMesh(extra.threeObject);
     }
 
-    removeExtra(extra) {
+    removeExtra(extra: Extra) {
         const idx = this.extras.indexOf(extra);
         if (idx !== -1) {
             this.extras.splice(idx, 1);
