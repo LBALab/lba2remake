@@ -27,7 +27,7 @@ export function createGameState(): GameState {
         config: Object.assign({
             displayText: true,
             musicVolume: 0.5,
-            soundFxVolume: 0.5,
+            soundFxVolume: 0.8,
             voiceVolume: 1.0
         }, getLanguageConfig()),
         hero: {

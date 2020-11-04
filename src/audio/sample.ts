@@ -19,6 +19,7 @@ const createSampleSource = (context: any) => {
         }
         const buffer = await source.decode(entryBuffer.slice(0));
         sampleDecodedAudioCache[index] = buffer;
+        return buffer;
     };
     const loadPlay = async (index: number, frequency: number = 0x1000, loopCount: number = 0) => {
         if (!source.volume) {

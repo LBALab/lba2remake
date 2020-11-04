@@ -379,7 +379,7 @@ function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor, time: Time) {
 
         hero.state.isSearching = true;
         hero.setAnimWithCallback(AnimType.ACTION, () => {
-            game.getAudioManager().playSample(SampleType.TWINSEN_LANDING);
+            hero.playSample(SampleType.TWINSEN_LANDING);
             hero.state.isSearching = false;
 
             if (zone.props.info2) {

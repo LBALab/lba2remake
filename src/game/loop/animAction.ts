@@ -36,7 +36,7 @@ export function processHit(
         if (distance2D(a.physics.position, actor.physics.position) < 1) {
             a.hit(actor.index, hitStrength);
             if (a.state.isDead) {
-                game.getAudioManager().playSample(SampleType.ACTOR_DYING);
+                a.playSample(SampleType.ACTOR_DYING);
                 if (a.props.extraType) {
                     const angle = a.physics.temp.angle - Math.PI / 2;
                     addExtra(game,
@@ -64,9 +64,7 @@ export const HIT_HERO = (_action, { game, scene, time }) => {
 };
 
 export const SAMPLE = (action, { actor }) => {
-    // const audio = game.getAudioManager();
-    // audio.playSample(action.sampleIndex, action.frequency);
-    actor.playSample(action.sampleIndex);
+    actor.playSample(action.sampleIndex, action.frequency);
 };
 
 export const SAMPLE_RND = (action, { actor, }) => {
@@ -74,52 +72,39 @@ export const SAMPLE_RND = (action, { actor, }) => {
     if (frequency < 0 || frequency > 24000) {
         frequency = 0;
     }
-    // const audio = game.getAudioManager();
-    // audio.playSample(action.sampleIndex, frequency);
-    actor.playSample(action.sampleIndex);
+    actor.playSample(action.sampleIndex, frequency);
 };
 
 export const THROW = unimplemented();
 
 export const THROW_MAGIC = unimplemented();
 
-// @ts-ignore
-export const SAMPLE_REPEAT = (action, { actor, game }) => {
-    // const audio = game.getAudioManager();
-    // if (!audio.isPlayingSample(action.sampleIndex)) {
-    //     audio.playSample(action.sampleIndex, 0x1000, action.repeat);
-    // }
-    actor.playSample(action.sampleIndex);
+export const SAMPLE_REPEAT = (action, { actor }) => {
+    actor.playSample(action.sampleIndex, 0x1000, action.repeat);
 };
 
 export const THROW_SEARCH = unimplemented();
 
 export const THROW_ALPHA = unimplemented();
 
-// @ts-ignore
-export const SAMPLE_STOP = (action, { game }) => {
-    // const audio = game.getAudioManager();
-    // audio.stopSample(action.sampleIndex);
+export const SAMPLE_STOP = (_action, { actor }) => {
+    actor.stopSample();
 };
 
 export const ZV = unimplemented();
 
-// @ts-ignore
-export const LEFT_STEP = (_action, { actor, game, scene, animState }) => {
+export const LEFT_STEP = (_action, { actor, scene, animState }) => {
     const isLBA1 = getParams().game === 'lba1';
     const floorSound = animState.floorSound;
     if (floorSound !== undefined && floorSound !== -1) {
         const offset = scene.props.isIsland ? 30 : isLBA1 ? 126 : 60;
         const sampleIndex = floorSound + offset;
-        // const frequency = getRandom(0, 0x1000) + 3596;
-        // const audio = game.getAudioManager();
-        // audio.playSample(sampleIndex); // frequency
-        actor.playSample(sampleIndex);
+        const frequency = getRandom(0, 0x1000) + 3596;
+        actor.playSampleStepLeft(sampleIndex, frequency);
     }
 };
 
-// @ts-ignore
-export const RIGHT_STEP = (_action, { actor, game, scene, animState }) => {
+export const RIGHT_STEP = (_action, { actor, scene, animState }) => {
     const isLBA1 = getParams().game === 'lba1';
     let floorSound = animState.floorSound;
     if (animState.floorSound2) {
@@ -128,10 +113,8 @@ export const RIGHT_STEP = (_action, { actor, game, scene, animState }) => {
     if (floorSound !== undefined && floorSound !== -1) {
         const offset = scene.props.isIsland ? 45 : isLBA1 ? 141 : 75;
         const sampleIndex = floorSound + offset;
-        // const frequency = getRandom(0, 0x1000) + 3596;
-        // const audio = game.getAudioManager();
-        // audio.playSample(sampleIndex); // frequency
-        actor.playSample(sampleIndex);
+        const frequency = getRandom(0, 0x1000) + 3596;
+        actor.playSampleStepRight(sampleIndex, frequency);
     }
 };
 
@@ -157,14 +140,13 @@ export const THROW_DART = unimplemented();
 
 export const SHIELD = unimplemented();
 
-export const SAMPLE_MAGIC = (_, { game }) => {
+export const SAMPLE_MAGIC = (_, { actor, game }) => {
     const hero = game.getState();
     let index = 0;
     if (hero.magicball.level === 4) {
         index = 1;
     }
-    const audio = game.getAudioManager();
-    audio.playSample(index);
+    actor.playSample(index);
 };
 
 export const THROW_3D_CONQUE = (_action, { game, scene }) => {
@@ -195,11 +177,8 @@ export const LEFT_JUMP = unimplemented();
 
 export const RIGHT_JUMP = unimplemented();
 
-// @ts-ignore
-export const NEW_SAMPLE = (action, { actor, game }) => {
-    // const audio = game.getAudioManager();
-    // audio.playSample(action.sampleIndex, action.frequency);
-    actor.playSample(action.sampleIndex);
+export const NEW_SAMPLE = (action, { actor }) => {
+    actor.playSample(action.sampleIndex, action.frequency);
 };
 
 export const IMPACT_3D = unimplemented();

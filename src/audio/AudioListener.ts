@@ -2,7 +2,7 @@
 // This has been brought here to reuse our engine Audio Context instead of creating a new one
 import { Vector3, Quaternion, Object3D, Clock } from 'three';
 
-export default class AudioListener extends Object3D {
+export class AudioListener extends Object3D {
     readonly context: AudioContext;
     readonly type: string;
     readonly gain: GainNode;

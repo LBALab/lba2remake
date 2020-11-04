@@ -145,6 +145,8 @@ export default class Actor {
     readonly props: ActorProps;
     readonly state: ActorState;
     readonly sound: any;
+    readonly soundStepLeft: any;
+    readonly soundStepRight: any;
     private readonly game: Game;
     private readonly scene: Scene;
     animState: any = null;
@@ -210,16 +212,35 @@ export default class Actor {
             this.animState = loadAnimState();
         }
 
+        const audio = this.game.getAudioManager();
         if (this.index !== 0) {
-            this.sound = new THREE.PositionalAudio(this.scene.camera.listener);
-            this.sound.setDirectionalCone(60, 90, 0.3);
-            this.sound.setRolloffFactor(40);
-            this.sound.setRefDistance(20);
-            this.sound.setMaxDistance(10000);
+            this.sound = audio.createSamplePositionalAudio(
+                game.getState().config.soundFxVolume
+            );
+            this.soundStepLeft = audio.createSamplePositionalAudio(
+                game.getState().config.soundFxVolume
+            );
+            this.soundStepRight = audio.createSamplePositionalAudio(
+                game.getState().config.soundFxVolume
+            );
+            // this.sound = new THREE.PositionalAudio(audio.listener);
+            // this.sound.setDirectionalCone(60, 90, 0.3);
+            // this.sound.setRolloffFactor(40);
+            // this.sound.setRefDistance(20);
+            // this.sound.setMaxDistance(10000);
         } else {
-            this.sound = new THREE.Audio(this.scene.camera.listener);
+            this.sound = audio.createSampleAudio(
+                game.getState().config.soundFxVolume
+            );
+            this.soundStepLeft = audio.createSampleAudio(
+                game.getState().config.soundFxVolume
+            );
+            this.soundStepRight = audio.createSampleAudio(
+                game.getState().config.soundFxVolume
+            );
+            // this.sound = new THREE.Audio(audio.listener);
         }
-        this.sound.setVolume(game.getState().config.soundFxVolume);
+        // this.sound.setVolume(game.getState().config.soundFxVolume);
     }
 
     update(game: Game, scene: Scene, time: any) {
@@ -629,13 +650,31 @@ export default class Actor {
         this.state.isHit = true;
     }
 
-    async playSample(index: number) {
-        const audio = this.game.getAudioManager();
-        const buffer = await audio.loadSample(index);
-        if (buffer) {
-            this.sound.setBuffer(buffer);
-            this.sound.play();
+    // @ts-ignore
+    async stopSample(index?: number) {
+        if (this.sound.isPlaying) {
+            this.sound.stop();
         }
+        // TODO find a way to treat multiple audio sources per actor
+    }
+
+    async playSample(index: number, frequency: number = 0x1000, loopCount: number = 0) {
+        const audio = this.game.getAudioManager();
+        await audio.playSound(this.sound, index, frequency, loopCount);
+    }
+
+    async playSampleStepLeft(index: number, frequency: number = 0x1000, loopCount: number = 0) {
+        const audio = this.game.getAudioManager();
+        await audio.playSound(this.soundStepLeft, index, frequency, loopCount);
+    }
+
+    async playSampleStepRight(index: number, frequency: number = 0x1000, loopCount: number = 0) {
+        const audio = this.game.getAudioManager();
+        await audio.playSound(this.soundStepRight, index, frequency, loopCount);
+    }
+
+    async setSampleVolume(volume: number) {
+        this.sound.setVolume(volume);
     }
 
     private static createState(): ActorState {

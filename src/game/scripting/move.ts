@@ -64,8 +64,6 @@ export function WAIT_NUM_ANIM(this: ScriptContext, repeats) {
 }
 
 export function SAMPLE(this: ScriptContext, index) {
-    // const audio = this.game.getAudioManager();
-    // audio.playSample(index);
     this.actor.playSample(index);
 }
 
@@ -165,19 +163,16 @@ export const WAIT_DOOR = unimplemented();
 
 export function SAMPLE_RND(this: ScriptContext, index) {
     const frequency = getRandom(0x800, 0x1000);
-    const audio = this.game.getAudioManager();
-    audio.playSample(index, frequency);
+    this.actor.playSample(index, frequency);
 }
 
 export function SAMPLE_ALWAYS(this: ScriptContext, index) {
-    const audio = this.game.getAudioManager();
-    audio.stopSample(index);
-    audio.playSample(index, 0x1000, -1);
+    this.actor.stopSample(index);
+    this.actor.playSample(index, 0x1000, -1);
 }
 
 export function SAMPLE_STOP(this: ScriptContext, index) {
-    const audio = this.game.getAudioManager();
-    audio.stopSample(index);
+    this.actor.stopSample(index);
 }
 
 export const PLAY_VIDEO = unimplemented();
@@ -190,8 +185,7 @@ export function SIMPLE_SAMPLE(this: ScriptContext, index) {
     if (index === 381 || index === 385) {
         return; // Skip thunder sounds
     }
-    const audio = this.game.getAudioManager();
-    audio.playSample(index, 0x1000, this.state.sampleLoopCount);
+    this.actor.playSample(index, 0x1000, this.state.sampleLoopCount);
     this.state.sampleLoopCount = 0;
 }
 
