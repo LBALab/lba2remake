@@ -9,7 +9,6 @@ import { getParams } from '../../params';
 import Game from '../Game';
 
 export function selectCamera(game: Game, renderer: Renderer, isIsland: boolean) {
-    console.log(game);
     const params = getParams();
     if (renderer.vr && game.controlsState.firstPerson) {
         return getVrFirstPersonCamera(renderer);

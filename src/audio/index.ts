@@ -5,9 +5,6 @@ import { createVoiceSource } from './voice';
 import { createSampleSource } from './sample';
 import { getFrequency } from '../utils/lba';
 import { getSample } from '../resources';
-// import { AudioListener } from './AudioListener';
-// import { Audio } from './Audio';
-// import { PositionalAudio } from './PositionalAudio';
 
 declare global {
     interface Window {
@@ -39,7 +36,10 @@ export function createAudioManager(state) {
     menuMusicSource.setVolume(state.config.musicVolume);
     voiceSource.setVolume(state.config.voiceVolume);
 
+    // @ts-ignore
+    THREE.AudioContext.setContext(context);
     const listener = new THREE.AudioListener();
+    listener.setMasterVolume(state.config.soundFxVolume);
 
     return {
         context,
@@ -88,19 +88,19 @@ export function createAudioManager(state) {
         },
 
         // samples
-        createSamplePositionalAudio: (volume): THREE.PositionalAudio => {
+        createSamplePositionalAudio: (): THREE.PositionalAudio => {
             const sound = new THREE.PositionalAudio(listener);
             sound.setDirectionalCone(60, 90, 0.3);
             sound.setRolloffFactor(40);
-            sound.setRefDistance(10); // 20
+            sound.setRefDistance(20); // 20
             sound.setMaxDistance(10000);
-            sound.setVolume(volume);
+            sound.setVolume(1);
             sound.setFilter(sound.context.createBiquadFilter());
             return sound;
         },
-        createSampleAudio: (volume): THREE.Audio => {
+        createSampleAudio: (): THREE.Audio => {
             const sound = new THREE.Audio(listener);
-            sound.setVolume(volume);
+            sound.setVolume(1);
             sound.setFilter(sound.context.createBiquadFilter());
             return sound;
         },
@@ -110,8 +110,6 @@ export function createAudioManager(state) {
             frequency: number = 0x1000,
             loopCount: number = 0
         ) => {
-            // const sampleSource = createSampleSource(context);
-            // const buffer = await sampleSource.load(index); // FIXME replace by resource loading
             const buffer = await getSample(index, context);
             if (buffer) {
                 if (loopCount !== 0) {

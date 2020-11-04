@@ -30,12 +30,10 @@ export function get3DCamera(game?: Game) {
     controlNode.add(orientation);
     orientation.add(camera);
 
-    // if (game) {
+    if (game) {
         const audio = game.getAudioManager();
-        // audio.listener.setMasterVolume(scene.game.getState().config.soundFxVolume);
-        console.log(audio.listener);
         camera.add(audio.listener);
-    // }
+    }
 
     return {
         width: window.innerWidth,

@@ -21,12 +21,10 @@ export function getIsometricCamera(game?: Game) {
     setCameraScale(camera, w, h);
     camera.name = 'IsoCamera';
 
-    // if (game) {
+    if (game) {
         const audio = game.getAudioManager();
-        // audio.listener.setMasterVolume(scene.game.getState().config.soundFxVolume);
-        console.log(audio.listener);
         camera.add(audio.listener);
-    // }
+    }
 
     return {
         width: w,

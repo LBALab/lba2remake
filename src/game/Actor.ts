@@ -214,33 +214,14 @@ export default class Actor {
 
         const audio = this.game.getAudioManager();
         if (this.index !== 0) {
-            this.sound = audio.createSamplePositionalAudio(
-                game.getState().config.soundFxVolume
-            );
-            this.soundStepLeft = audio.createSamplePositionalAudio(
-                game.getState().config.soundFxVolume
-            );
-            this.soundStepRight = audio.createSamplePositionalAudio(
-                game.getState().config.soundFxVolume
-            );
-            // this.sound = new THREE.PositionalAudio(audio.listener);
-            // this.sound.setDirectionalCone(60, 90, 0.3);
-            // this.sound.setRolloffFactor(40);
-            // this.sound.setRefDistance(20);
-            // this.sound.setMaxDistance(10000);
+            this.sound = audio.createSamplePositionalAudio();
+            this.soundStepLeft = audio.createSamplePositionalAudio();
+            this.soundStepRight = audio.createSamplePositionalAudio();
         } else {
-            this.sound = audio.createSampleAudio(
-                game.getState().config.soundFxVolume
-            );
-            this.soundStepLeft = audio.createSampleAudio(
-                game.getState().config.soundFxVolume
-            );
-            this.soundStepRight = audio.createSampleAudio(
-                game.getState().config.soundFxVolume
-            );
-            // this.sound = new THREE.Audio(audio.listener);
+            this.sound = audio.createSampleAudio();
+            this.soundStepLeft = audio.createSampleAudio();
+            this.soundStepRight = audio.createSampleAudio();
         }
-        // this.sound.setVolume(game.getState().config.soundFxVolume);
     }
 
     update(game: Game, scene: Scene, time: any) {
