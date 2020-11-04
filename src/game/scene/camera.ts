@@ -9,6 +9,7 @@ import { getParams } from '../../params';
 import Game from '../Game';
 
 export function selectCamera(game: Game, renderer: Renderer, isIsland: boolean) {
+    console.log(game);
     const params = getParams();
     if (renderer.vr && game.controlsState.firstPerson) {
         return getVrFirstPersonCamera(renderer);
@@ -17,7 +18,7 @@ export function selectCamera(game: Game, renderer: Renderer, isIsland: boolean) 
         if (renderer.vr) {
             return getVR3DCamera(renderer);
         }
-        return get3DCamera();
+        return get3DCamera(game);
     }
 
     // isometric scene
@@ -25,10 +26,10 @@ export function selectCamera(game: Game, renderer: Renderer, isIsland: boolean) 
         return getVRIsoCamera(renderer);
     }
     if (params.isoCam3d) {
-        return get3DCamera();
+        return get3DCamera(game);
     }
     if (params.iso3d) {
         return getIso3DCamera();
     }
-    return getIsometricCamera();
+    return getIsometricCamera(game);
 }
