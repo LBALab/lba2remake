@@ -87,15 +87,15 @@ function loadInventoryModelData(params: any,
 
     if (model.mesh) {
         model.boundingBox = body.boundingBox;
-        if (params.editor) {
+       //if (params.editor) {
             model.boundingBoxDebugMesh = createBoundingBox(
                 body.boundingBox,
                 new THREE.Vector3(1, 0, 0)
             );
             model.boundingBoxDebugMesh.name = 'BoundingBox';
-            model.boundingBoxDebugMesh.visible = false;
+            model.boundingBoxDebugMesh.visible = true;
             model.mesh.add(model.boundingBoxDebugMesh);
-        }
+       // }
     }
 
     return model;

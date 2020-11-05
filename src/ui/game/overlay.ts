@@ -62,10 +62,10 @@ const loadSceneModel = async (sce, b, bodyIndex, anims) => {
     return m;
 };
 
-const loadSceneInventoryModel = async (sce, b) => {
+const loadSceneInventoryModel = async (sce, invId) => {
     const m = await loadInventoryModel(
         {},
-        b,
+        invId,
         envInfo,
         ambience
     );

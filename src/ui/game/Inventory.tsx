@@ -1,14 +1,101 @@
-import React, { useEffect, useState } from 'react';
+import * as THREE from 'three';
+
+import React, { useEffect, useState, useRef } from 'react';
 
 import { SampleType } from '../../game/data/sampleType';
 import { GetInventoryMapping, GetInventoryRows, GetInventoryColumns } from '../../game/data/inventory';
 import '../styles/inventory.scss';
+import {
+    createOverlayScene,
+    createOverlayClock,
+    createOverlayCanvas,
+    createOverlayRenderer,
+    loadSceneInventoryModel,
+} from './overlay';
 
-const inventoryColumns = 7;
-const inventoryRows = 5;
+// fixme: remove global vars
+let clock = null;
+let canvas = null;
+let renderer = null;
+const bScenes = [];
+const model = [];
+
+const initInventoryRenderer = async () => {
+    for (let i = 0; i < GetInventoryRows(); i += 1) {
+        for (let j = 0; j < GetInventoryColumns(); j += 1) {
+            const slot = i * GetInventoryColumns() + j;
+            bScenes[slot] = createOverlayScene(3);
+        }
+    }
+
+    if (!clock) {
+        clock = createOverlayClock();
+    }
+
+    if (!canvas) {
+        canvas = createOverlayCanvas('inventory-canvas');
+    }
+
+    if (!renderer) {
+        renderer = createOverlayRenderer(canvas, 'foundObject');
+    }
+};
+
+initInventoryRenderer();
+
+
+const renderLoop = (time, slot, selected, item) => {
+    const m = model[slot];
+
+    if (!item || !item.current || !m) {
+        return;
+    }
+
+    const s = bScenes[slot];
+
+    const canvasClip = canvas.getBoundingClientRect();
+    const { left, bottom, width, height } = item.current.getBoundingClientRect();
+
+    // set canvas size once with same aspect ratio as the behaviour item area
+    if (canvas.width === 0) {
+        canvas.width = canvas.style.width = width * 8;
+        canvas.height = canvas.style.height = height * 8;
+        renderer.resize(canvas.width, canvas.height);
+    }
+
+    const itemLeft = left - canvasClip.left;
+    const itemBottom = canvasClip.bottom - bottom;
+
+    renderer.stats.begin();
+
+    renderer.setViewport(itemLeft, itemBottom, width, height);
+    renderer.setScissor(itemLeft, itemBottom, width, height);
+    renderer.setScissorTest(true);
+
+    s.camera.update(
+        m,
+        selected,
+        { x: 0, y: 0 },
+        2.5,
+        time,
+    );
+    //s.camera.controlNode.position.add(new THREE.Vector3(0, -2, 0));
+    renderer.render(s);
+    renderer.stats.end();
+};
+
 
 const Inventory = ({ game, closeInventory }: any) => {
     const [selectedSlot, setSelectedSlot] = useState(game.getState().hero.inventorySlot);
+
+    const inventoryRef = useRef(null);
+    const itemNodes = {};
+    for (let i = 0; i < GetInventoryRows(); i += 1) {
+        for (let j = 0; j < GetInventoryColumns(); j += 1) {
+            const slot = i * GetInventoryColumns() + j;
+            itemNodes[slot] = useRef(null);
+        }
+    }
 
     const listener = (event) => {
         const key = event.code || event.which || event.keyCode;
@@ -17,8 +104,8 @@ const Inventory = ({ game, closeInventory }: any) => {
         switch (key) {
             case 37:
             case 'ArrowLeft':
-                if (selectedSlot % inventoryColumns === 0) {
-                    newSlot = selectedSlot + inventoryColumns - 1;
+                if (selectedSlot % GetInventoryColumns() === 0) {
+                    newSlot = selectedSlot + GetInventoryColumns() - 1;
                 } else {
                     newSlot = selectedSlot - 1;
                 }
@@ -26,8 +113,8 @@ const Inventory = ({ game, closeInventory }: any) => {
                 break;
             case 39:
             case 'ArrowRight':
-                if ((selectedSlot + 1) % inventoryColumns === 0) {
-                    newSlot = selectedSlot - inventoryColumns + 1;
+                if ((selectedSlot + 1) % GetInventoryColumns() === 0) {
+                    newSlot = selectedSlot - GetInventoryColumns() + 1;
                 } else {
                     newSlot = selectedSlot + 1;
                 }
@@ -35,19 +122,19 @@ const Inventory = ({ game, closeInventory }: any) => {
                 break;
             case 38:
             case 'ArrowUp':
-                if (selectedSlot < inventoryColumns) {
-                    newSlot = selectedSlot + inventoryColumns * (inventoryRows - 1);
+                if (selectedSlot < GetInventoryColumns()) {
+                    newSlot = selectedSlot + GetInventoryColumns() * (GetInventoryRows() - 1);
                 } else {
-                    newSlot = selectedSlot - inventoryColumns;
+                    newSlot = selectedSlot - GetInventoryColumns();
                 }
                 action = true;
                 break;
             case 40:
             case 'ArrowDown':
-                if (selectedSlot >= inventoryColumns * inventoryRows - inventoryColumns) {
-                    newSlot = selectedSlot - inventoryColumns * (inventoryRows - 1);
+                if (selectedSlot >= GetInventoryColumns() * GetInventoryRows() - GetInventoryColumns()) {
+                    newSlot = selectedSlot - GetInventoryColumns() * (GetInventoryRows() - 1);
                 } else {
-                    newSlot = selectedSlot + inventoryColumns;
+                    newSlot = selectedSlot + GetInventoryColumns();
                 }
                 action = true;
                 break;
@@ -85,6 +172,53 @@ const Inventory = ({ game, closeInventory }: any) => {
         };
     });
 
+    useEffect(() => {
+        renderer.threeRenderer.setAnimationLoop(() => {
+            const time = {
+                delta: Math.min(clock.getDelta(), 0.05),
+                elapsed: clock.getElapsedTime(),
+            };
+
+            for (let i = 0; i < GetInventoryRows(); i += 1) {
+                for (let j = 0; j < GetInventoryColumns(); j += 1) {
+                    const slot = i * GetInventoryColumns() + j;
+                    const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
+                    //if (inInventory) {
+                        renderLoop(time, slot, selectedSlot === slot, itemNodes[slot]);
+                   // }
+                }
+            }
+        });
+        return () => {
+        };
+    }, [selectedSlot]);
+
+    const loadUpdateModel = async (slot) => {
+        model[slot] = await loadSceneInventoryModel(bScenes[slot], GetInventoryMapping()[slot]);
+    };
+
+   useEffect(() => {
+        clock.start();
+        for (let i = 0; i < GetInventoryRows(); i += 1) {
+            for (let j = 0; j < GetInventoryColumns(); j += 1) {
+                const slot = i * GetInventoryColumns() + j;
+                const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
+                //if (inInventory) {
+                    loadUpdateModel(slot);
+               // }
+            }
+        }
+        return () => {
+            clock.stop();
+            renderer.threeRenderer.setAnimationLoop(null);
+        };
+    }, []);
+
+    useEffect(() => {
+        inventoryRef.current.appendChild(canvas);
+    }, []);
+
+
     const inventorySlots = [];
     for (let i = 0; i < GetInventoryRows(); i += 1) {
         for (let j = 0; j < GetInventoryColumns(); j += 1) {
@@ -92,6 +226,7 @@ const Inventory = ({ game, closeInventory }: any) => {
             const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
             inventorySlots.push(
                 <div
+                  ref={itemNodes[slot]}
                   key={slot}
                   className={`inventoryItem ${selectedSlot === slot ? 'selected' : ''} ${inInventory === true ? 'inInventory' : ''}`}>
                 </div>
@@ -101,7 +236,7 @@ const Inventory = ({ game, closeInventory }: any) => {
 
     return (
         <div className="inventory">
-            <div className="inventoryItems">
+            <div className="inventoryItems" ref={inventoryRef}>
                 {inventorySlots}
             </div>
             <div className="inventoryText"></div>
