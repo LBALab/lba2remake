@@ -63,11 +63,11 @@ const Inventory = ({ game, closeInventory }: any) => {
    useEffect(() => {
        if (clock) {
             clock.start();
+            const questFlags = game.getState().flags.quest;
             for (let i = 0; i < GetInventoryRows(); i += 1) {
                 for (let j = 0; j < GetInventoryColumns(); j += 1) {
                     const slot = i * GetInventoryColumns() + j;
-                    const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
-                    if (inInventory) {
+                    if (questFlags[GetInventoryMapping()[slot]]) {
                         loadModel(slot);
                     }
                 }
@@ -114,7 +114,8 @@ const Inventory = ({ game, closeInventory }: any) => {
                 break;
             case 40:
             case 'ArrowDown':
-                if (selectedSlot >= GetInventoryColumns() * GetInventoryRows() - GetInventoryColumns()) {
+                if (selectedSlot >=
+                    GetInventoryColumns() * GetInventoryRows() - GetInventoryColumns()) {
                     newSlot = selectedSlot - GetInventoryColumns() * (GetInventoryRows() - 1);
                 } else {
                     newSlot = selectedSlot + GetInventoryColumns();
@@ -197,12 +198,11 @@ const Inventory = ({ game, closeInventory }: any) => {
                     delta: Math.min(clock.getDelta(), 0.05),
                     elapsed: clock.getElapsedTime(),
                 };
-
+                const questFlags = game.getState().flags.quest;
                 for (let i = 0; i < GetInventoryRows(); i += 1) {
                     for (let j = 0; j < GetInventoryColumns(); j += 1) {
                         const slot = i * GetInventoryColumns() + j;
-                        const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
-                        if (inInventory) {
+                        if (questFlags[GetInventoryMapping()[slot]]) {
                             renderLoop(time, slot, selectedSlot === slot, itemNodes[slot]);
                         }
                     }
