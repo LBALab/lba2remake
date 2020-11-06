@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 
 import { SampleType } from '../../game/data/sampleType';
 import { GetInventoryMapping, GetInventoryRows, GetInventoryColumns } from '../../game/data/inventory';
+import { getText } from '../../resources';
 import '../styles/inventory.scss';
 import {
     createOverlayScene,
@@ -13,6 +14,9 @@ import {
     loadSceneInventoryModel,
 } from './overlay';
 
+const InventoryObjectsIndex = 4;
+const InventoryTextOffset = 100;
+
 const Inventory = ({ game, closeInventory }: any) => {
     const [selectedSlot, setSelectedSlot] = useState(game.getState().hero.inventorySlot);
     const [clock, setClock] = useState(null);
@@ -20,6 +24,7 @@ const Inventory = ({ game, closeInventory }: any) => {
     const [renderer, setRenderer] = useState(null);
     const [invScenes, setInvScenes] = useState(null);
     const [models, setModels] = useState(null);
+    const [invText, setInvText] = useState(null);
 
     const inventoryRef = useRef(null);
     const itemNodes = {};
@@ -216,6 +221,18 @@ const Inventory = ({ game, closeInventory }: any) => {
         };
     }, [renderer, selectedSlot]);
 
+    useEffect(() => {
+        const questFlags = game.getState().flags.quest;
+        const itemId = GetInventoryMapping()[selectedSlot];
+        if (questFlags[itemId]) {
+            getText(InventoryObjectsIndex).then((res) => {
+                setInvText(res[InventoryTextOffset + itemId].value);
+            });
+        } else {
+            setInvText('');
+        }
+    }, [selectedSlot]);
+
     const inventorySlots = [];
     for (let i = 0; i < GetInventoryRows(); i += 1) {
         for (let j = 0; j < GetInventoryColumns(); j += 1) {
@@ -236,7 +253,7 @@ const Inventory = ({ game, closeInventory }: any) => {
             <div className="inventoryItems" ref={inventoryRef}>
                 {inventorySlots}
             </div>
-            <div className="inventoryText"></div>
+            <div className="inventoryText"><p>{invText}</p></div>
         </div>
     );
 };
