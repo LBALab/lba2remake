@@ -94,7 +94,7 @@ const FoundObject = ({ foundObject }) => {
                         delta: Math.min(clock.getDelta(), 0.05),
                         elapsed: clock.getElapsedTime(),
                     };
-                renderLoop(time, scene, model, itemRef);
+                    renderLoop(time, scene, model, itemRef);
                 }
             });
         }
