@@ -87,7 +87,7 @@ function loadInventoryModelData(params: any,
 
     if (model.mesh) {
         model.boundingBox = body.boundingBox;
-      if (params.editor) {
+        if (params.editor) {
             model.boundingBoxDebugMesh = createBoundingBox(
                 body.boundingBox,
                 new THREE.Vector3(1, 0, 0)
