@@ -13,80 +13,13 @@ import {
     loadSceneInventoryModel,
 } from './overlay';
 
-// fixme: remove global vars
-let clock = null;
-let canvas = null;
-let renderer = null;
-const bScenes = [];
-const model = [];
-
-const initInventoryRenderer = async () => {
-    for (let i = 0; i < GetInventoryRows(); i += 1) {
-        for (let j = 0; j < GetInventoryColumns(); j += 1) {
-            const slot = i * GetInventoryColumns() + j;
-            bScenes[slot] = createOverlayScene(3);
-        }
-    }
-
-    if (!clock) {
-        clock = createOverlayClock();
-    }
-
-    if (!canvas) {
-        canvas = createOverlayCanvas('inventory-canvas');
-    }
-
-    if (!renderer) {
-        renderer = createOverlayRenderer(canvas, 'foundObject');
-    }
-};
-
-initInventoryRenderer();
-
-
-const renderLoop = (time, slot, selected, item) => {
-    const m = model[slot];
-
-    if (!item || !item.current || !m) {
-        return;
-    }
-
-    const s = bScenes[slot];
-
-    const canvasClip = canvas.getBoundingClientRect();
-    const { left, bottom, width, height } = item.current.getBoundingClientRect();
-
-    // set canvas size once with same aspect ratio as the behaviour item area
-    if (canvas.width === 0) {
-        canvas.width = canvas.style.width = width * 8;
-        canvas.height = canvas.style.height = height * 8;
-        renderer.resize(canvas.width, canvas.height);
-    }
-
-    const itemLeft = left - canvasClip.left;
-    const itemBottom = canvasClip.bottom - bottom;
-
-    renderer.stats.begin();
-
-    renderer.setViewport(itemLeft, itemBottom, width, height);
-    renderer.setScissor(itemLeft, itemBottom, width, height);
-    renderer.setScissorTest(true);
-
-    s.camera.update(
-        m,
-        selected,
-        { x: 0, y: 0 },
-        2.5,
-        time,
-    );
-    //s.camera.controlNode.position.add(new THREE.Vector3(0, -2, 0));
-    renderer.render(s);
-    renderer.stats.end();
-};
-
-
 const Inventory = ({ game, closeInventory }: any) => {
     const [selectedSlot, setSelectedSlot] = useState(game.getState().hero.inventorySlot);
+    const [clock, setClock] = useState(null);
+    const [canvas, setCanvas] = useState(null);
+    const [renderer, setRenderer] = useState(null);
+    const [invScenes, setInvScenes] = useState(null);
+    const [models, setModels] = useState(null);
 
     const inventoryRef = useRef(null);
     const itemNodes = {};
@@ -96,6 +29,56 @@ const Inventory = ({ game, closeInventory }: any) => {
             itemNodes[slot] = useRef(null);
         }
     }
+
+    useEffect(() => {
+        setClock(createOverlayClock());
+        setCanvas(createOverlayCanvas('inventory-canvas'));
+        setModels([]);
+
+        const scenes = {};
+        for (let i = 0; i < GetInventoryRows(); i += 1) {
+            for (let j = 0; j < GetInventoryColumns(); j += 1) {
+                const slot = i * GetInventoryColumns() + j;
+                scenes[slot] = createOverlayScene(3);
+            }
+        }
+        setInvScenes(scenes);
+    }, []);
+
+    useEffect(() => {
+        if (canvas) {
+            if (renderer === null) {
+                setRenderer(createOverlayRenderer(canvas, 'foundObject'));
+            }
+            inventoryRef.current.appendChild(canvas);
+        }
+        return () => { };
+    }, [canvas]);
+
+    const loadModel = async (slot) => {
+        models[slot] = await loadSceneInventoryModel(invScenes[slot], GetInventoryMapping()[slot]);
+        setModels(models);
+    };
+
+   useEffect(() => {
+       if (clock) {
+            clock.start();
+            for (let i = 0; i < GetInventoryRows(); i += 1) {
+                for (let j = 0; j < GetInventoryColumns(); j += 1) {
+                    const slot = i * GetInventoryColumns() + j;
+                    const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
+                    if (inInventory) {
+                        loadModel(slot);
+                    }
+                }
+            }
+        }
+        return () => {
+            if (clock) {
+                clock.stop();
+            }
+        };
+    }, [clock]);
 
     const listener = (event) => {
         const key = event.code || event.which || event.keyCode;
@@ -172,52 +155,66 @@ const Inventory = ({ game, closeInventory }: any) => {
         };
     });
 
-    useEffect(() => {
-        renderer.threeRenderer.setAnimationLoop(() => {
-            const time = {
-                delta: Math.min(clock.getDelta(), 0.05),
-                elapsed: clock.getElapsedTime(),
-            };
+    const renderLoop = (time, slot, selected, item) => {
+        const m = models[slot];
 
-            for (let i = 0; i < GetInventoryRows(); i += 1) {
-                for (let j = 0; j < GetInventoryColumns(); j += 1) {
-                    const slot = i * GetInventoryColumns() + j;
-                    const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
-                    //if (inInventory) {
-                        renderLoop(time, slot, selectedSlot === slot, itemNodes[slot]);
-                   // }
-                }
-            }
-        });
-        return () => {
-        };
-    }, [selectedSlot]);
+        if (!item || !item.current || !m) {
+            return;
+        }
 
-    const loadUpdateModel = async (slot) => {
-        model[slot] = await loadSceneInventoryModel(bScenes[slot], GetInventoryMapping()[slot]);
+        const s = invScenes[slot];
+
+        const canvasClip = canvas.getBoundingClientRect();
+        const { left, bottom, width, height } = item.current.getBoundingClientRect();
+
+        // Set canvas size once with same aspect ratio as the inventory item box
+        if (canvas.width === 0) {
+            canvas.width = canvas.style.width = width * 8;
+            canvas.height = canvas.style.height = height * 8;
+            renderer.resize(canvas.width, canvas.height);
+        }
+
+        const itemLeft = left - canvasClip.left;
+        const itemBottom = canvasClip.bottom - bottom;
+
+        renderer.stats.begin();
+
+        renderer.setViewport(itemLeft, itemBottom, width, height);
+        renderer.setScissor(itemLeft, itemBottom, width, height);
+        renderer.setScissorTest(true);
+
+        s.camera.update(m, selected, { x: 0, y: 0 }, 2.5, time);
+        const h = m.boundingBox.max.y - m.boundingBox.min.y;
+        s.camera.controlNode.position.add(new THREE.Vector3(0, h * -0.5, 0));
+        renderer.render(s);
+        renderer.stats.end();
     };
 
-   useEffect(() => {
-        clock.start();
-        for (let i = 0; i < GetInventoryRows(); i += 1) {
-            for (let j = 0; j < GetInventoryColumns(); j += 1) {
-                const slot = i * GetInventoryColumns() + j;
-                const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
-                //if (inInventory) {
-                    loadUpdateModel(slot);
-               // }
-            }
+    useEffect(() => {
+        if (renderer) {
+            renderer.threeRenderer.setAnimationLoop(() => {
+                const time = {
+                    delta: Math.min(clock.getDelta(), 0.05),
+                    elapsed: clock.getElapsedTime(),
+                };
+
+                for (let i = 0; i < GetInventoryRows(); i += 1) {
+                    for (let j = 0; j < GetInventoryColumns(); j += 1) {
+                        const slot = i * GetInventoryColumns() + j;
+                        const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
+                        if (inInventory) {
+                            renderLoop(time, slot, selectedSlot === slot, itemNodes[slot]);
+                        }
+                    }
+                }
+            });
         }
         return () => {
-            clock.stop();
-            renderer.threeRenderer.setAnimationLoop(null);
+            if (renderer) {
+                renderer.threeRenderer.setAnimationLoop(null);
+            }
         };
-    }, []);
-
-    useEffect(() => {
-        inventoryRef.current.appendChild(canvas);
-    }, []);
-
+    }, [renderer, selectedSlot]);
 
     const inventorySlots = [];
     for (let i = 0; i < GetInventoryRows(); i += 1) {
