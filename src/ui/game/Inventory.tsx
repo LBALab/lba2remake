@@ -53,12 +53,19 @@ const Inventory = ({ game, closeInventory }: any) => {
     useEffect(() => {
         if (canvas) {
             if (renderer === null) {
-                setRenderer(createOverlayRenderer(canvas, 'foundObject'));
+                setRenderer(createOverlayRenderer(canvas, 'inventory'));
             }
             inventoryRef.current.appendChild(canvas);
         }
-        return () => { };
     }, [canvas]);
+
+    useEffect(() => {
+        return () => {
+            if (renderer) {
+                renderer.dispose();
+            }
+        };
+    }, [renderer]);
 
     const loadModel = async (slot) => {
         models[slot] = await loadSceneInventoryModel(invScenes[slot], GetInventoryMapping()[slot]);

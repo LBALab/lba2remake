@@ -87,6 +87,14 @@ const FoundObject = ({ foundObject }) => {
     }, [canvas]);
 
     useEffect(() => {
+        return () => {
+            if (renderer) {
+                renderer.dispose();
+            }
+        };
+    }, [renderer]);
+
+    useEffect(() => {
         if (renderer) {
             renderer.threeRenderer.setAnimationLoop(() => {
                 if (scene && model) {
