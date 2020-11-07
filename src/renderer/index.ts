@@ -97,6 +97,7 @@ export default class Renderer {
         // tslint:disable-next-line:no-console
         console.log(`[Stopping renderer(${this.type})]`);
         this.threeRenderer.dispose();
+        this.threeRenderer.forceContextLoss();
         window.removeEventListener('keydown', this.keyListener);
     }
 
