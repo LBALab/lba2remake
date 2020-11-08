@@ -5,6 +5,7 @@ export interface GameConfig {
     displayText: boolean;
     musicVolume: number;
     soundFxVolume: number;
+    ambienceVolume: number;
     voiceVolume: number;
 }
 
@@ -26,9 +27,10 @@ export function createGameState(): GameState {
     return {
         config: Object.assign({
             displayText: true,
-            musicVolume: 0.35,
+            musicVolume: 0.30,
             soundFxVolume: 1.0,
-            voiceVolume: 1.0
+            voiceVolume: 1.0,
+            ambienceVolume: 0.2,
         }, getLanguageConfig()),
         hero: {
             behaviour: 0,

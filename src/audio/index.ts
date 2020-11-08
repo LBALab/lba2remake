@@ -27,14 +27,9 @@ export function createAudioManager(state) {
 
     const isActive = (ctx: AudioContext) => ctx.state === 'running';
 
-    const musicSource = createMusicSource(context);
-    const menuMusicSource = createMusicSource(menuContext);
-    const voiceSource = createVoiceSource(context);
-
-    // tune volumes
-    musicSource.setVolume(state.config.musicVolume);
-    menuMusicSource.setVolume(state.config.musicVolume);
-    voiceSource.setVolume(state.config.voiceVolume);
+    const musicSource = createMusicSource(context, state.config.musicVolume);
+    const menuMusicSource = createMusicSource(menuContext, state.config.musicVolume);
+    const voiceSource = createVoiceSource(context, state.config.voiceVolume);
 
     // @ts-ignore
     THREE.AudioContext.setContext(context);
@@ -92,9 +87,14 @@ export function createAudioManager(state) {
             const sound = new THREE.PositionalAudio(listener);
             sound.setDirectionalCone(60, 90, 0.3);
             sound.setRolloffFactor(40);
-            sound.setRefDistance(20); // 20
+            sound.setRefDistance(20);
             sound.setMaxDistance(10000);
             sound.setVolume(1);
+            sound.setFilter(sound.context.createBiquadFilter());
+            return sound;
+        },
+        createSamplePositionalAudioDefault: (): THREE.PositionalAudio => {
+            const sound = new THREE.PositionalAudio(listener);
             sound.setFilter(sound.context.createBiquadFilter());
             return sound;
         },
@@ -126,14 +126,19 @@ export function createAudioManager(state) {
                 const lowPassFilter = sound.getFilters()[0];
                 lowPassFilter.frequency.value = getFrequency(frequency);
                 sound.setBuffer(buffer);
-                if (!sound.isPlaying) {
-                    sound.play();
+                if (sound.isPlaying) {
+                    sound.stop();
                 }
+                sound.play();
             }
         },
-        playSample: (index: number, frequency: number = 0x1000, loopCount: number = 0) => {
-            const sampleSource = createSampleSource(context);
-            sampleSource.setVolume(state.config.soundFxVolume);
+        playSample: (
+            index: number,
+            frequency: number = 0x1000,
+            loopCount: number = 0,
+            volume: number = state.config.soundFxVolume
+        ) => {
+            const sampleSource = createSampleSource(context, volume);
             sampleSource.play(index, frequency, loopCount);
             samples[index] = sampleSource;
             return sampleSource;

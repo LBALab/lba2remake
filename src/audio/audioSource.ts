@@ -19,11 +19,11 @@ interface AudioSource {
     lowPassFilter: any;
 }
 
-const createSource = (context: any): AudioSource => {
+const createSource = (context: any, volume: number = 1): AudioSource => {
     const source: AudioSource = {
         gainNode: context.createGain(),
         lowPassFilter: context.createBiquadFilter(),
-        volume: 0,
+        volume,
         isPlaying: false,
         loop: false,
         loopCount: 0,
@@ -39,10 +39,11 @@ const createSource = (context: any): AudioSource => {
         decode: null,
     };
     source.lowPassFilter.type = 'allpass';
+    source.gainNode.gain.setValueAtTime(volume, context.currentTime);
 
     source.setVolume = (newVolume: number) => {
-        source.volume = newVolume;
         source.gainNode.gain.setValueAtTime(source.volume, context.currentTime + 1);
+        source.volume = newVolume;
     };
 
     source.setLoopCount = (loopCount: number) => {

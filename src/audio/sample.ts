@@ -3,8 +3,8 @@ import { getSamples } from '../resources';
 
 const sampleDecodedAudioCache = [];
 
-const createSampleSource = (context: any) => {
-    const source = createSource(context);
+const createSampleSource = (context: any, volume: number = 1) => {
+    const source = createSource(context, volume);
     const load = async (index: number) => {
         if (sampleDecodedAudioCache[index]) {
             return sampleDecodedAudioCache[index];
