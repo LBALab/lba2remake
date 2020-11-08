@@ -104,6 +104,13 @@ export function createAudioManager(state) {
             sound.setFilter(sound.context.createBiquadFilter());
             return sound;
         },
+        // @ts-ignore
+        stopSound: async (sound: any, index?: number) => {
+            if (sound.isPlaying) {
+                sound.stop();
+            }
+            // TODO find a way to treat multiple audio sources per actor
+        },
         playSound: async (
             sound: any,
             index: number,

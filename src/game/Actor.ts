@@ -639,12 +639,9 @@ export default class Actor {
         this.state.isHit = true;
     }
 
-    // @ts-ignore
     async stopSample(index?: number) {
-        if (this.sound.isPlaying) {
-            this.sound.stop();
-        }
-        // TODO find a way to treat multiple audio sources per actor
+        const audio = this.game.getAudioManager();
+        audio.stopSound(this.sound, index);
     }
 
     async playSample(index: number, frequency: number = 0x1000, loopCount: number = 0) {

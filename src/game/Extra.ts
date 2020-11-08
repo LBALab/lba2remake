@@ -72,6 +72,7 @@ export default class Extra {
     readonly lifeTime: number;
     readonly hitStrength: number;
     readonly baseTime: Time;
+    readonly sound: any;
     info: number;
     time: Time;
     flags: number;
@@ -92,15 +93,17 @@ export default class Extra {
         bonus: number,
         time: Time
     ): Promise<Extra> {
-        const extra = new Extra(position, angle, spriteIndex, bonus, time);
+        const extra = new Extra(game, position, angle, spriteIndex, bonus, time);
         extra.init(angle, 40, 15);
         await extra.loadMesh(scene);
         scene.addExtra(extra);
-        extra.playSoundFx(game, SAMPLE_BONUS);
+        const audio = game.getAudioManager();
+        audio.playSound(extra.sound, SAMPLE_BONUS);
         return extra;
     }
 
     private constructor(
+        game: Game,
         position: THREE.Vector3,
         angle: number,
         spriteIndex: number,
@@ -154,6 +157,9 @@ export default class Extra {
         this.spawnTime = time.elapsed;
         this.speed = 0;
         this.weight = 0;
+
+        const audio = game.getAudioManager();
+        this.sound = audio.createSamplePositionalAudio();
     }
 
     private async loadMesh(scene: Scene) {
@@ -173,6 +179,7 @@ export default class Extra {
         this.threeObject.name = `extra_${this.props.bonus}`;
         this.threeObject.visible = this.state.isVisible;
         this.sprite = sprite;
+        this.threeObject.add(this.sound);
     }
 
     private init(_angle, speed, _weight) {
@@ -281,7 +288,9 @@ export default class Extra {
         if (shouldCollect ||
             (this.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT) {
             if (this.info && shouldCollect) {
-                this.playSoundFx(game, SAMPLE_BONUS_FOUND);
+                const audio = game.getAudioManager();
+                audio.stopSound(this.sound, SAMPLE_BONUS);
+                audio.playSound(this.sound, SAMPLE_BONUS_FOUND);
                 const itrjId = `extra_${this.index}_${this.info}`;
                 const interjections = clone(game.getUiState().interjections);
 
@@ -301,11 +310,6 @@ export default class Extra {
 
             scene.removeExtra(this);
         }
-    }
-
-    private playSoundFx(game, sampleIndex) {
-        const audio = game.getAudioManager();
-        audio.playSample(sampleIndex);
     }
 }
 
