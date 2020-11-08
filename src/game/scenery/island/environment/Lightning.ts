@@ -12,6 +12,7 @@ export default class Lightning {
     private physics: IslandPhysics;
     private lightning: LightningInfo;
     private static currentLightning: LightningInfo = null;
+    private sound: any;
 
     constructor(props, physics: IslandPhysics) {
         this.physics = physics;
@@ -114,13 +115,18 @@ export default class Lightning {
     private initNewStrike(game: Game, objPositions: ObjectPositions) {
         this.findLightningPosition(objPositions);
         const camDist = objPositions.camera.distanceTo(this.lightning.position);
-        const volume = Math.min(1, Math.max(0, 1 - (camDist / 200)));
         const audio = game.getAudioManager();
         const index = (this.lightning.intensity < 0.1 || camDist > 40)
         ? 385
         : 381;
-        const sample = audio.playSample(index);
-        sample.setVolume(volume);
+
+        if (!this.sound) {
+            this.sound = audio.createSamplePositionalAudio();
+            this.sound.setDirectionalCone(360, 0, 0);
+            this.threeObject.add(this.sound);
+        }
+        audio.playSound(this.sound, index);
+
         const params = this.lightning.params;
         params.sourceOffset.copy(this.lightning.position);
         params.sourceOffset.y = WORLD_SIZE * 2 + Math.random() * 5 - 20;
