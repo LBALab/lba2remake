@@ -25,7 +25,7 @@ const createSampleSource = (context: any) => {
         if (!source.volume) {
             return;
         }
-        const buffer = load(index);
+        const buffer = await load(index);
         if (buffer) {
             source.setLoopCount(loopCount);
             source.load(sampleDecodedAudioCache[index]);

@@ -536,7 +536,15 @@ export default class Actor {
                 this.sprite = sprite;
             }
         }
-        this.threeObject.add(this.sound);
+        if (this.sound) {
+            this.threeObject.add(this.sound);
+        }
+        if (this.soundStepLeft) {
+            this.threeObject.add(this.soundStepLeft);
+        }
+        if (this.soundStepRight) {
+            this.threeObject.add(this.soundStepRight);
+        }
         if (params.editor) {
             createActorLabel(this, name, this.scene.is3DCam);
         }
