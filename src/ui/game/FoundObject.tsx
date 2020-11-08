@@ -87,6 +87,14 @@ const FoundObject = ({ foundObject }) => {
     }, [canvas]);
 
     useEffect(() => {
+        return () => {
+            if (renderer) {
+                renderer.dispose();
+            }
+        };
+    }, [renderer]);
+
+    useEffect(() => {
         if (renderer) {
             renderer.threeRenderer.setAnimationLoop(() => {
                 if (scene && model) {
@@ -94,7 +102,7 @@ const FoundObject = ({ foundObject }) => {
                         delta: Math.min(clock.getDelta(), 0.05),
                         elapsed: clock.getElapsedTime(),
                     };
-                renderLoop(time, scene, model, itemRef);
+                    renderLoop(time, scene, model, itemRef);
                 }
             });
         }

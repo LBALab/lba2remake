@@ -126,7 +126,8 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
                 uiState.ask.choices.length === 0 &&
                 uiState.text === null &&
                 uiState.foundObject === null &&
-                !(uiState.showMenu || uiState.inGameMenu);
+                !(uiState.showMenu || uiState.inGameMenu) &&
+                !uiState.inventory;
             if (showBehaviourMenu && this.isBehaviourKey(key, controlsState)) {
                 this.props.setUiState({ behaviourMenu: true });
                 const scene = sceneManager.getScene();

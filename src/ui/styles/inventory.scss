@@ -67,6 +67,19 @@
     border: 2px outset #61cece;
     border-radius: 15px;
     background: rgba(0, 0, 0, 0.5);
+    color: #60A1CB;
+    user-select: none;
+    font-family: LBA;
+    text-shadow: black 4px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: larger;
+}
+
+.inventoryText p {
+    margin-block-start: 0;
+    margin-block-end: 0;
 }
 
 .inventoryItems {
@@ -84,16 +97,24 @@
 
 
 .inventoryItem {
-    background: rgba(0, 0, 0, 1.0);
+    background: rgba(0, 0, 0, 0.6);
     margin: 10px;
     border-radius: 15px;
     border: 2px outset #61cece;
+    position: relative;
 }
 
 .selected {
-    background: #003E51;
+    background: #003e51cf;
 }
 
-.inInventory {
-    background: #00FF00;
+.inventory-canvas {
+    position: absolute;
+    top: 0;
+    border-radius: 15px;
+    outline: 0px;
+
+    @include media("<=tablet","portrait") {
+        border-radius: 10px;
+    }
 }
