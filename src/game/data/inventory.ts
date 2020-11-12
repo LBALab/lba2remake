@@ -56,8 +56,8 @@ const LBA2InventoryMapping = {
 };
 
 export const LBA2WeaponToBodyMapping = {
-    1: BodyType.TINWSEN_TUNIC, // Magic ball
-    2: BodyType.TINWSEN_TUNIC, // Darts
+    1: BodyType.TWINSEN_TUNIC, // Magic ball
+    2: BodyType.TWINSEN_TUNIC, // Darts
     9: BodyType.TWINSEN_LASER_PISTOL,
     10: BodyType.TWINSEN_SWORD,
     11: BodyType.TWINSEN_WANNIE_GLOVE,

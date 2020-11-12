@@ -58,7 +58,7 @@ function handleBodyChanges(game: Game, scene: Scene, hero: Actor) {
 
     if (hero.props.bodyIndex !== LBA2WeaponToBodyMapping[equippedItem]) {
         let body = LBA2WeaponToBodyMapping[equippedItem];
-        if (body === BodyType.TINWSEN_TUNIC && !game.getState().flags.quest[4]) {
+        if (body === BodyType.TWINSEN_TUNIC && !game.getState().flags.quest[4]) {
             body = BodyType.TWINSEN_NO_TUNIC;
         }
         hero.setBody(scene, body);

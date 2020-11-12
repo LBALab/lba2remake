@@ -1,6 +1,6 @@
 export const BodyType = {
     TWINSEN_NO_TUNIC: 0,
-    TINWSEN_TUNIC: 1,
+    TWINSEN_TUNIC: 1,
     TWINSEN_SWORD: 2,
     TWINSEN_BLOWGUN: 3,
     TWINSEN_BLOWTRON: 4,
