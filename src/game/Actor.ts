@@ -98,6 +98,7 @@ export interface ActorState {
     isUsingProtoOrJetpack: boolean;
     isSearching: boolean;
     isToppingOutUp: boolean;
+    isDrawingSword: boolean;
     noInterpolateNext: boolean;
     distFromGround: number;
     distFromFloor: number;
@@ -642,6 +643,7 @@ export default class Actor {
             isUsingProtoOrJetpack: false,
             isSearching: false,
             isToppingOutUp: false,
+            isDrawingSword: false,
             noInterpolateNext: false,
             distFromFloor: 0,
             distFromGround: 0,

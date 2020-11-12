@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import Actor, { ActorDirMode, ActorState } from '../Actor';
 import { AnimType } from '../data/animType';
+import { BodyType } from '../data/bodyType';
+import { LBA2WeaponToBodyMapping } from '../data/inventory';
 import { WORLD_SIZE } from '../../utils/lba';
 import { processHit } from './animAction';
 import Scene from '../Scene';
@@ -33,6 +35,7 @@ export function updateHero(game: Game, scene: Scene, hero: Actor, time: Time) {
 
     const behaviour = game.getState().hero.behaviour;
     handleBehaviourChanges(scene, hero, behaviour);
+    handleBodyChanges(game, scene, hero);
     if (game.controlsState.firstPerson) {
         processFirstPersonsMovement(game, scene, hero, time);
     } else {
@@ -44,6 +47,28 @@ export function updateHero(game: Game, scene: Scene, hero: Actor, time: Time) {
     if (validPosition(hero.state) && timeSinceLastPosSave > 500) {
         scene.savedState = game.getState().save(hero);
         game.getState().hero.lastValidPosTime = performance.now();
+    }
+}
+
+function handleBodyChanges(game: Game, scene: Scene, hero: Actor) {
+    const equippedItem = game.getState().hero.equippedItemId;
+    if (equippedItem < 0) {
+        return;
+    }
+
+    if (hero.props.bodyIndex !== LBA2WeaponToBodyMapping[equippedItem]) {
+        let body = LBA2WeaponToBodyMapping[equippedItem];
+        if (body === BodyType.TINWSEN_TUNIC && !game.getState().flags.quest[4]) {
+            body = BodyType.TWINSEN_NO_TUNIC;
+        }
+        hero.setBody(scene, body);
+        if (equippedItem === 10) {
+            hero.setAnimWithCallback(AnimType.SWORD_DRAW, () => {
+                hero.setAnim(AnimType.NONE);
+                hero.state.isDrawingSword = false;
+            });
+            hero.state.isDrawingSword = true;
+        }
     }
 }
 
@@ -363,7 +388,28 @@ function processActorMovement(
             animIndex = AnimType.CROUCH;
         }
         if (controlsState.weapon === 1) {
-            animIndex = AnimType.THROW;
+            switch (game.getState().hero.equippedItemId) {
+                // TODO(scottwilliams): Extract inventory item IDs out into a const list.
+                case 1:
+                    animIndex = AnimType.THROW;
+                    break;
+                case 2:
+                    animIndex = AnimType.THROW_DART;
+                    break;
+                case 23:
+                    animIndex = AnimType.BLOWGUN_SHOOT;
+                    break;
+                case 11:
+                    animIndex = AnimType.WANNIE_GLOVE_SWING;
+                    break;
+                case 9:
+                    animIndex = AnimType.LASTER_PISTOL_SHOOT;
+                    break;
+                case 10:
+                    hero.state.isWalking = true;
+                    animIndex = AnimType.SWORD_ATTACK;
+                    break;
+            }
         }
     }
 
@@ -413,6 +459,10 @@ function processActorMovement(
     }
     if (!hero.state.isJumping) {
         animIndex = processCamRelativeMovement(controlsState, scene, hero, animIndex);
+    }
+    // Don't cancel the drawing sword animation if it's playing.
+    if (hero.state.isDrawingSword && animIndex === AnimType.NONE) {
+        return;
     }
     hero.setAnim(animIndex);
     if (hero.state.noInterpolateNext) {

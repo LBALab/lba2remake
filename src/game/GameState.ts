@@ -47,6 +47,7 @@ export function createGameState(): GameState {
             animState: null,
             inventorySlot: 0,
             usingItemId: -1,
+            equippedItemId: -1,
         },
         chapter: 0,
         actorTalking: -1,
@@ -108,6 +109,10 @@ function createQuestFlags() {
     quest[150] = 1;
     quest[152] = 1; // rain
     quest[159] = 256;
+    quest[10] = 1;
+    quest[11] = 1;
+    quest[9] = 1;
+    quest[23] = 1;
 
     // debug video scene 45 - kill tralu
     // quest[56] = 3;

@@ -1,3 +1,5 @@
+import { BodyType } from './bodyType';
+
 // Note that slots are for the inventory are defined as starting from 0 in the
 // top left and increasing to the right row by row.
 
@@ -18,7 +20,7 @@ const LBA2InventoryRows = 5;
 const LBA2InventoryMapping = {
     0: 1,   // Magic ball
     1: 2,   // Darts
-    2: 23,  // SARBACANE
+    2: 23,  // Blowgun
     3: 22,  // Horn
     4: 11,  // Wanny glove
     5: 9,   // Laser pistol
@@ -51,6 +53,15 @@ const LBA2InventoryMapping = {
     32: 13, // Ferry ticket
     33: 38, // Franco note
     34: 34, // DMKEY_BLAFARD
+};
+
+export const LBA2WeaponToBodyMapping = {
+    1: BodyType.TINWSEN_TUNIC, // Magic ball
+    2: BodyType.TINWSEN_TUNIC, // Darts
+    9: BodyType.TWINSEN_LASER_PISTOL,
+    10: BodyType.TWINSEN_SWORD,
+    11: BodyType.TWINSEN_WANNIE_GLOVE,
+    23: BodyType.TWINSEN_BLOWGUN,
 };
 
 // GetInventoryMapping returns the game inventory mapping (slot ID to item ID)
