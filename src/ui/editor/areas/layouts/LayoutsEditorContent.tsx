@@ -492,7 +492,7 @@ export default class LayoutsEditorContent extends FrameListener<Props, State> {
     }
 
     async replaceByModel() {
-        const data = await fetch('/layout_models');
+        const data = await fetch(`/layout_models/${getParams().game}`);
         const files = await data.json();
         this.setState({ replacementFiles: files }, this.saveDebugScope);
     }

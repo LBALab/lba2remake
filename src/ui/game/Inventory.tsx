@@ -13,6 +13,7 @@ import {
     createOverlayRenderer,
     loadSceneInventoryModel,
 } from './overlay';
+import { ControlsState } from '../../game/ControlsState';
 
 const InventoryObjectsIndex = 4;
 const InventoryTextOffset = 100;
@@ -92,69 +93,60 @@ const Inventory = ({ game, closeInventory }: any) => {
         };
     }, [clock]);
 
-    const listener = (event) => {
-        const key = event.code || event.which || event.keyCode;
+    const listener = (key: string | number, controlsState: ControlsState) => {
         let action = false;
         let newSlot = -1;
-        switch (key) {
-            case 37:
-            case 'ArrowLeft':
-                if (selectedSlot % GetInventoryColumns() === 0) {
-                    newSlot = selectedSlot + GetInventoryColumns() - 1;
-                } else {
-                    newSlot = selectedSlot - 1;
+        if (key === 37 || key === 'ArrowLeft' || controlsState?.left === 1) {
+            if (selectedSlot % GetInventoryColumns() === 0) {
+                newSlot = selectedSlot + GetInventoryColumns() - 1;
+            } else {
+                newSlot = selectedSlot - 1;
+            }
+            action = true;
+        }
+        if (key === 39 || key === 'ArrowRight' || controlsState?.right === 1) {
+            if ((selectedSlot + 1) % GetInventoryColumns() === 0) {
+                newSlot = selectedSlot - GetInventoryColumns() + 1;
+            } else {
+                newSlot = selectedSlot + 1;
+            }
+            action = true;
+        }
+        if (key === 38 || key === 'ArrowUp' || controlsState?.up === 1) {
+            if (selectedSlot < GetInventoryColumns()) {
+                newSlot = selectedSlot + GetInventoryColumns() * (GetInventoryRows() - 1);
+            } else {
+                newSlot = selectedSlot - GetInventoryColumns();
+            }
+            action = true;
+        }
+        if (key === 40 || key === 'ArrowDown' || controlsState?.down === 1) {
+            if (selectedSlot >=
+                GetInventoryColumns() * GetInventoryRows() - GetInventoryColumns()) {
+                newSlot = selectedSlot - GetInventoryColumns() * (GetInventoryRows() - 1);
+            } else {
+                newSlot = selectedSlot + GetInventoryColumns();
+            }
+            action = true;
+        }
+        if (key === 13 || key === 'Enter' || controlsState?.action === 1) {
+            const itemId = GetInventoryMapping()[game.getState().hero.inventorySlot];
+            if (game.getState().flags.quest[itemId] === 1) {
+                game.getState().hero.usingItemId = itemId;
+                // Reset the usingItemId after a single game loop execution.
+                game.addLoopFunction(null, () => {
+                    game.getState().hero.usingItemId = -1;
+                });
+                if (itemId in LBA2WeaponToBodyMapping) {
+                    game.getState().hero.equippedItemId = itemId;
                 }
-                action = true;
-                break;
-            case 39:
-            case 'ArrowRight':
-                if ((selectedSlot + 1) % GetInventoryColumns() === 0) {
-                    newSlot = selectedSlot - GetInventoryColumns() + 1;
-                } else {
-                    newSlot = selectedSlot + 1;
-                }
-                action = true;
-                break;
-            case 38:
-            case 'ArrowUp':
-                if (selectedSlot < GetInventoryColumns()) {
-                    newSlot = selectedSlot + GetInventoryColumns() * (GetInventoryRows() - 1);
-                } else {
-                    newSlot = selectedSlot - GetInventoryColumns();
-                }
-                action = true;
-                break;
-            case 40:
-            case 'ArrowDown':
-                if (selectedSlot >=
-                    GetInventoryColumns() * GetInventoryRows() - GetInventoryColumns()) {
-                    newSlot = selectedSlot - GetInventoryColumns() * (GetInventoryRows() - 1);
-                } else {
-                    newSlot = selectedSlot + GetInventoryColumns();
-                }
-                action = true;
-                break;
-            case 13:
-            case 'Enter':
-                const itemId = GetInventoryMapping()[game.getState().hero.inventorySlot];
-                if (game.getState().flags.quest[itemId] === 1) {
-                    game.getState().hero.usingItemId = itemId;
-                    // Reset the usingItemId after a single game loop execution.
-                    game.addLoopFunction(null, () => {
-                        game.getState().hero.usingItemId = -1;
-                    });
-                    if (itemId in LBA2WeaponToBodyMapping) {
-                        game.getState().hero.equippedItemId = itemId;
-                    }
-                    closeInventory();
-                } else {
-                    game.getAudioManager().playSample(SampleType.ERROR);
-                }
-                break;
-            case 27:
-            case 'Escape':
                 closeInventory();
-                break;
+            } else {
+                game.getAudioManager().playSample(SampleType.ERROR);
+            }
+        }
+        if (key === 27 || key === 'Escape' || controlsState?.shift === 1) {
+            closeInventory();
         }
         if (action) {
             setSelectedSlot(newSlot);
@@ -164,10 +156,21 @@ const Inventory = ({ game, closeInventory }: any) => {
         event.stopPropagation();
     };
 
+    const keyboardListener = (event) => {
+        const key = event.code || event.which || event.keyCode;
+        listener(key, null);
+    };
+
+    const gamepadListener = (event) => {
+        listener(null, event.detail as ControlsState);
+    };
+
     useEffect(() => {
-        window.addEventListener('keydown', listener);
+        window.addEventListener('keydown', keyboardListener);
+        window.addEventListener('lbagamepadchanged', gamepadListener);
         return () => {
-            window.removeEventListener('keydown', listener);
+            window.addEventListener('lbagamepadchanged', gamepadListener);
+            window.removeEventListener('keydown', keyboardListener);
         };
     });
 
