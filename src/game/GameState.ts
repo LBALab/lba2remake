@@ -47,6 +47,7 @@ export function createGameState(): GameState {
             animState: null,
             inventorySlot: 0,
             usingItemId: -1,
+            equippedItemId: -1,
         },
         chapter: 0,
         actorTalking: -1,
