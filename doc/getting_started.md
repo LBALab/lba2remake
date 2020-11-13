@@ -32,8 +32,8 @@ If you own it already, make sure you updated your game installation to the lates
 
 #### Import the game assets
 - If you have _GoG_ or _Steam_ version of LBA 2, run the following import command to import game assets. If you have other version, or if you are on Linux, see [Manual Import](#manual-import) below.
-- On Windows run `npm run import-win "<path to installed game>"`
-Example: `npm run import-win "C:\games\Little Big Adventure 2"`
+- On Windows run `npm run import:win "<path to installed game>"`
+Example: `npm run import:win "C:\games\Little Big Adventure 2"`
 - On Mac run `npm run import "<path to installed GOG game>"`
 Example: `npm run import "/Applications/Little Big Adventure 2 (Twinsen's Odyssey).app"`
 
