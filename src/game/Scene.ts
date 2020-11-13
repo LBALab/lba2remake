@@ -253,13 +253,27 @@ export default class Scene {
 
     private initSceneNode() {
         this.sceneNode.matrixAutoUpdate = false;
-        if (this.scenery instanceof Island) {
-            const sectionIdx = islandSceneMapping[this.props.index].section;
-            const section = this.scenery.sections[sectionIdx];
-            this.sceneNode.name = `island_section_${sectionIdx}`;
-            this.sceneNode.position.x = section.x * WORLD_SIZE * 2;
-            this.sceneNode.position.z = section.z * WORLD_SIZE * 2;
-            this.sceneNode.updateMatrix();
+        if (this.props.isIsland) {
+            const sceneMapping = islandSceneMapping[this.props.index];
+            if (this.scenery instanceof Island) {
+                const sectionIdx = sceneMapping.section;
+                const section = this.scenery.sections[sectionIdx];
+                this.sceneNode.name = `island_section_${sectionIdx}`;
+                this.sceneNode.position.x = section.x * WORLD_SIZE * 2;
+                this.sceneNode.position.z = section.z * WORLD_SIZE * 2;
+                this.sceneNode.updateMatrix();
+            } else { // Island Iso
+                this.sceneNode.name = `islandiso_section_${sceneMapping.section}`;
+                // this.sceneNode.position.x += -sceneMapping.section * WORLD_SIZE * 2;
+                // this.sceneNode.position.z += sceneMapping.variant * WORLD_SIZE * 2;
+                // this.sceneNode.position.x += -sceneMapping.z * 64;
+                // this.sceneNode.position.y += sceneMapping.y * 40;
+                // this.sceneNode.position.z += sceneMapping.x * 64;
+                this.sceneNode.position.x += -sceneMapping.z * WORLD_SIZE * 2;
+                this.sceneNode.position.y += sceneMapping.y * WORLD_SIZE * 2;
+                this.sceneNode.position.z += -sceneMapping.x * WORLD_SIZE * 2;
+                this.sceneNode.updateMatrix();
+            }
         } else {
             this.sceneNode.name = `iso_scene_${this.index}`;
         }

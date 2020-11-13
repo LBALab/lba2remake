@@ -9,7 +9,7 @@ export const parseSceneMapLBA1 = () => {
     const map = [];
     for (let i = 0; i < 120; i += 1) {
         map.push({
-            isIsland: false,
+            isIsland: [1, 2, 3, 4, 6].includes(i) ? true : false,
             sceneryIndex: i,
             libraryIndex: i
         });

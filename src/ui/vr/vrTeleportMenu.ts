@@ -207,6 +207,7 @@ function handleGroundIntersection(intersect, triggered, {game, sceneManager}) {
         const section = intersect.object.userData.info;
         const scene = findKey(
             sceneMapping,
+            // @ts-ignore
             s => s.island === activeIsland.name && s.section === section.index
         );
         if (scene !== undefined) {
