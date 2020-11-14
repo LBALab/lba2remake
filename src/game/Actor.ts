@@ -145,8 +145,6 @@ export default class Actor {
     readonly props: ActorProps;
     readonly state: ActorState;
     readonly sound: any;
-    readonly soundStepLeft: any;
-    readonly soundStepRight: any;
     private readonly game: Game;
     private readonly scene: Scene;
     animState: any = null;
@@ -215,12 +213,8 @@ export default class Actor {
         const audio = this.game.getAudioManager();
         if (this.index !== 0) {
             this.sound = audio.createSamplePositionalAudio();
-            this.soundStepLeft = audio.createSamplePositionalAudio();
-            this.soundStepRight = audio.createSamplePositionalAudio();
         } else {
             this.sound = audio.createSampleAudio();
-            this.soundStepLeft = audio.createSampleAudio();
-            this.soundStepRight = audio.createSampleAudio();
         }
     }
 
@@ -541,12 +535,6 @@ export default class Actor {
         if (this.sound) {
             this.threeObject.add(this.sound);
         }
-        if (this.soundStepLeft) {
-            this.threeObject.add(this.soundStepLeft);
-        }
-        if (this.soundStepRight) {
-            this.threeObject.add(this.soundStepRight);
-        }
         if (params.editor) {
             createActorLabel(this, name, this.scene.is3DCam);
         }
@@ -649,16 +637,6 @@ export default class Actor {
     async playSample(index: number, frequency: number = 0x1000, loopCount: number = 0) {
         const audio = this.game.getAudioManager();
         await audio.playSound(this.sound, index, frequency, loopCount);
-    }
-
-    async playSampleStepLeft(index: number, frequency: number = 0x1000, loopCount: number = 0) {
-        const audio = this.game.getAudioManager();
-        await audio.playSound(this.soundStepLeft, index, frequency, loopCount);
-    }
-
-    async playSampleStepRight(index: number, frequency: number = 0x1000, loopCount: number = 0) {
-        const audio = this.game.getAudioManager();
-        await audio.playSound(this.soundStepRight, index, frequency, loopCount);
     }
 
     async setSampleVolume(volume: number) {

@@ -99,7 +99,7 @@ export const LEFT_STEP = (_action, { actor, scene, animState }) => {
         const offset = scene.props.isIsland ? 30 : isLBA1 ? 126 : 60;
         const sampleIndex = floorSound + offset;
         const frequency = getRandom(0, 0x1000) + 3596;
-        actor.playSampleStepLeft(sampleIndex, frequency);
+        actor.playSample(sampleIndex, frequency);
     }
 };
 
@@ -113,7 +113,7 @@ export const RIGHT_STEP = (_action, { actor, scene, animState }) => {
         const offset = scene.props.isIsland ? 45 : isLBA1 ? 141 : 75;
         const sampleIndex = floorSound + offset;
         const frequency = getRandom(0, 0x1000) + 3596;
-        actor.playSampleStepRight(sampleIndex, frequency);
+        actor.playSample(sampleIndex, frequency);
     }
 };
 
