@@ -1,10 +1,9 @@
 import * as THREE from 'three';
 
 import { createMusicSource } from './music';
-import { createVoiceSource } from './voice';
 import { createSampleSource } from './sample';
 import { getFrequency } from '../utils/lba';
-import { getSample } from '../resources';
+import { getSample, getVoices } from '../resources';
 
 declare global {
     interface Window {
@@ -29,7 +28,6 @@ export function createAudioManager(state) {
 
     const musicSource = createMusicSource(context, state.config.musicVolume);
     const menuMusicSource = createMusicSource(menuContext, state.config.musicVolume);
-    const voiceSource = createVoiceSource(context, state.config.voiceVolume);
 
     // @ts-ignore
     THREE.AudioContext.setContext(context);
@@ -74,14 +72,6 @@ export function createAudioManager(state) {
             menuMusicSource.resume();
         },
 
-        // voice
-        playVoice: (index: number, textBankId: number, onEndedCallback = null) => {
-            voiceSource.play(index, textBankId, onEndedCallback);
-        },
-        stopVoice: () => {
-            voiceSource.stop();
-        },
-
         // samples
         createSamplePositionalAudio: (): THREE.PositionalAudio => {
             const sound = new THREE.PositionalAudio(listener);
@@ -109,13 +99,7 @@ export function createAudioManager(state) {
             sound.setFilter(filter);
             return sound;
         },
-        // @ts-ignore
-        stopSound: async (sound: any, index?: number) => {
-            if (sound.isPlaying) {
-                sound.stop();
-            }
-            // TODO find a way to treat multiple audio sources per actor
-        },
+
         playSound: async (
             sound: any,
             index: number,
@@ -137,6 +121,71 @@ export function createAudioManager(state) {
                 sound.play();
             }
         },
+        // @ts-ignore
+        stopSound: async (sound: any, index?: number) => {
+            if (sound.isPlaying) {
+                sound.stop();
+            }
+            // TODO find a way to treat multiple audio sources per actor
+        },
+
+        // voice
+        playVoice: async (
+            sound: any,
+            index: number,
+            textBankId: number,
+            onEndedCallback = null
+        ) => {
+            const playVoiceSound = async (
+                sound2: any,
+                index2: number,
+                textBankId2: number,
+                onEndedCallback2 = null
+            ) => {
+                // voiceSource.play(index, textBankId, onEndedCallback);
+                const resource = await getVoices(textBankId);
+                if (!resource) {
+                    return;
+                }
+                const entryBuffer = await resource.getEntryAsync(index2);
+                const buffer = await context.decodeAudioData(entryBuffer.slice(0));
+
+                if (buffer) {
+                    sound2.setBuffer(buffer);
+                    if (sound2.isPlaying) {
+                        sound2.stop();
+                    }
+                    sound2.play();
+                    sound2.source.onended = () => {
+                        if (sound.isPlaying && resource.hasHiddenEntries(index)) {
+                            playVoiceSound(
+                                sound2,
+                                resource.getNextHiddenEntry(index),
+                                textBankId2,
+                                onEndedCallback2
+                            );
+                        }
+                        sound2.isPlaying = false;
+                        if (onEndedCallback2) {
+                            onEndedCallback2.call();
+                        }
+                    };
+                }
+            };
+            playVoiceSound(
+                sound,
+                index,
+                textBankId,
+                onEndedCallback
+            );
+        },
+        stopVoice: (sound: any) => {
+            if (sound.isPlaying) {
+                sound.stop();
+            }
+        },
+
+        // invetory, ambience
         playSample: (
             index: number,
             frequency: number = 0x1000,
@@ -154,20 +203,6 @@ export function createAudioManager(state) {
                 return sampleSource.isPlaying();
             }
             return false;
-        },
-        stopSample: (index: number) => {
-            const sampleSource = samples[index];
-            if (sampleSource) {
-                sampleSource.stop();
-            }
-        },
-        stopSamples: () => {
-            Object.keys(samples).forEach((index: string) => {
-                const sampleSource = samples[index];
-                if (sampleSource) {
-                    sampleSource.stop();
-                }
-            });
         },
 
         // shared

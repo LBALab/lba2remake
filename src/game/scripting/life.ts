@@ -44,7 +44,6 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id, sayMessage
         return;
     }
 
-    const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     const text = this.scene.props.texts[id];
     if (!cmdState.skipListener) {
@@ -54,7 +53,7 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id, sayMessage
                 cmdState.ended = true;
             };
         }
-        audio.playVoice(text.index, this.scene.props.textBankId, onVoiceEndedCallback);
+        actor.playVoice(text.index, this.scene.props.textBankId, onVoiceEndedCallback);
         if (sayMessage || text.type === 9) {
             if (!actor.threeObject || actor.threeObject.visible === false) {
                 return;
@@ -74,7 +73,7 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id, sayMessage
                 delete interjectionsCopy[itrjId];
                 this.game.setUiState({interjections: interjectionsCopy});
 
-                audio.stopVoice();
+                actor.stopVoice();
                 this.game.getState().actorTalking = -1;
                 delete cmdState.skipListener;
                 delete cmdState.ended;
@@ -121,7 +120,7 @@ export function MESSAGE_OBJ(this: ScriptContext, cmdState, actor, id, sayMessage
     }
 
     if (cmdState.ended) {
-        audio.stopVoice();
+        actor.stopVoice();
         this.game.getState().actorTalking = -1;
         if (text.type !== 9) {
             this.game.setUiState({ text: null, skip: false, });
@@ -225,7 +224,6 @@ export function INC_CHAPTER(this: ScriptContext) {
 }
 
 export function FOUND_OBJECT(this: ScriptContext, cmdState, id) {
-    const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
         hero.props.dirMode = ActorDirMode.NO_MOVE;
@@ -269,12 +267,12 @@ export function FOUND_OBJECT(this: ScriptContext, cmdState, id) {
                 cmdState.skipListener();
             }, 6500);
         }
-        audio.playVoice(text.index, -1);
+        hero.playVoice(text.index, -1);
 
         this.game.setUiState({foundObject: id});
     }
     if (cmdState.ended) {
-        audio.stopVoice();
+        hero.stopVoice();
         this.game.setUiState({ skip: false, text: null, foundObject: null });
         this.game.controlsState.skipListener = null;
         hero.setAngleRad(hero.props.prevAngle);
@@ -436,7 +434,6 @@ export function ASK_CHOICE(this: ScriptContext, cmdState, index) {
 }
 
 export function ASK_CHOICE_OBJ(this: ScriptContext, cmdState, actor, index) {
-    const audio = this.game.getAudioManager();
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
         const isLBA1 = getParams().game === 'lba1';
@@ -463,10 +460,10 @@ export function ASK_CHOICE_OBJ(this: ScriptContext, cmdState, actor, index) {
         };
         this.game.controlsState.skipListener = cmdState.skipListener;
 
-        audio.playVoice(text.index, this.scene.props.textBankId);
+        actor.playVoice(text.index, this.scene.props.textBankId);
     }
     if (cmdState.ended) {
-        audio.stopVoice();
+        actor.stopVoice();
         const uiState = this.game.getUiState();
         this.state.choice = uiState.choice;
         this.game.setUiState({ ask: {choices: []}, choice: null });

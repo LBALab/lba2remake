@@ -145,6 +145,7 @@ export default class Actor {
     readonly props: ActorProps;
     readonly state: ActorState;
     readonly sound: any;
+    readonly soundVoice: any;
     private readonly game: Game;
     private readonly scene: Scene;
     animState: any = null;
@@ -213,8 +214,11 @@ export default class Actor {
         const audio = this.game.getAudioManager();
         if (this.index !== 0) {
             this.sound = audio.createSamplePositionalAudio();
+            this.soundVoice = audio.createSamplePositionalAudio();
+            this.soundVoice.setDirectionalCone(90, 120, 0.3);
         } else {
             this.sound = audio.createSampleAudio();
+            this.soundVoice = audio.createSampleAudio();
         }
     }
 
@@ -535,6 +539,9 @@ export default class Actor {
         if (this.sound) {
             this.threeObject.add(this.sound);
         }
+        if (this.soundVoice) {
+            this.threeObject.add(this.soundVoice);
+        }
         if (params.editor) {
             createActorLabel(this, name, this.scene.is3DCam);
         }
@@ -629,18 +636,28 @@ export default class Actor {
         this.state.isHit = true;
     }
 
-    async stopSample(index?: number) {
-        const audio = this.game.getAudioManager();
-        audio.stopSound(this.sound, index);
-    }
-
     async playSample(index: number, frequency: number = 0x1000, loopCount: number = 0) {
         const audio = this.game.getAudioManager();
         await audio.playSound(this.sound, index, frequency, loopCount);
     }
 
+    async stopSample(index?: number) {
+        const audio = this.game.getAudioManager();
+        audio.stopSound(this.sound, index);
+    }
+
     async setSampleVolume(volume: number) {
         this.sound.setVolume(volume);
+    }
+
+    async playVoice(index: number, textBankId: number, onEndedCallback = null) {
+        const audio = this.game.getAudioManager();
+        await audio.playVoice(this.soundVoice, index, textBankId, onEndedCallback);
+    }
+
+    async stopVoice() {
+        const audio = this.game.getAudioManager();
+        audio.stopSound(this.soundVoice);
     }
 
     private static createState(): ActorState {
