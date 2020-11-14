@@ -66,7 +66,6 @@ interface MProps {
 interface MState {
     items?: Item[];
     selectedIndex: number;
-    showSubMenu: boolean;
 }
 
 export default class Menu extends React.Component<MProps, MState> {
@@ -77,8 +76,7 @@ export default class Menu extends React.Component<MProps, MState> {
         this.gamepadListener = this.gamepadListener.bind(this);
         this.state = {
             selectedIndex: 0,
-            items: getMenuItems(),
-            showSubMenu: false,
+            items: getMenuItems(false),
         };
     }
 
@@ -139,8 +137,7 @@ export default class Menu extends React.Component<MProps, MState> {
                     items: getOptionItems(),
                     selectedIndex: 0,
                 });
-            }
-            if (this.state.items[selectedIndex].index === 741) {
+            } else if (this.state.items[selectedIndex].index === 741) {
                 this.setState({
                     items: getMenuItems(this.props.inGameMenu),
                     selectedIndex: 0,
