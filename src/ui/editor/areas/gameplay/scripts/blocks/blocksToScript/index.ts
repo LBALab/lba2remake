@@ -28,8 +28,7 @@ export function compile(workspace) {
     if (game.getUiState().text) {
         game.setUiState({ text: null, skip: false, });
         game.controlsState.skipListener = null;
-        const audio = game.getAudioManager();
-        audio.stopVoice();
+        hero.stopVoice();
         game.getState().actorTalking = -1;
     }
     hero.props.dirMode = ActorDirMode.MANUAL;

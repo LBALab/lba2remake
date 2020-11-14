@@ -1,8 +1,8 @@
 import { createSource } from './audioSource';
 import { getVoices } from '../resources';
 
-const createVoiceSource = (context: any) => {
-    const source = createSource(context);
+const createVoiceSource = (context: any, volume: number = 1) => {
+    const source = createSource(context, volume);
     const loadPlay = async (index: number, textBankId: number, onEndedCallback: any = null) => {
         if (!source.volume) {
             return;

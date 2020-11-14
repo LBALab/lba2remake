@@ -325,7 +325,6 @@ function GOTO_SCENE(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Ti
 }
 
 function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
-    const audio = game.getAudioManager();
     if (game.controlsState.action === 1) {
         if (!scene.zoneState.skipListener) {
             const isLBA1 = getParams().game === 'lba1';
@@ -357,14 +356,14 @@ function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
 
             game.controlsState.skipListener = scene.zoneState.skipListener;
 
-            audio.playVoice(text.index, scene.props.textBankId);
+            hero.playVoice(text.index, scene.props.textBankId);
         }
     }
     if (scene.zoneState.ended) {
         scene.actors[0].props.dirMode = ActorDirMode.MANUAL;
         hero.props.entityIndex = hero.props.prevEntityIndex;
         hero.props.animIndex = hero.props.prevAnimIndex;
-        audio.stopVoice();
+        hero.stopVoice();
         game.setUiState({ text: null, skip: false });
         game.controlsState.skipListener = null;
         delete scene.zoneState.skipListener;
@@ -379,7 +378,7 @@ function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor, time: Time) {
 
         hero.state.isSearching = true;
         hero.setAnimWithCallback(AnimType.ACTION, () => {
-            game.getAudioManager().playSample(SampleType.TWINSEN_LANDING);
+            hero.playSample(SampleType.TWINSEN_LANDING);
             hero.state.isSearching = false;
 
             if (zone.props.info2) {

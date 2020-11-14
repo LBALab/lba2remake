@@ -145,6 +145,8 @@ export default class Actor {
     readonly index: number;
     readonly props: ActorProps;
     readonly state: ActorState;
+    readonly sound: any;
+    readonly soundVoice: any;
     private readonly game: Game;
     private readonly scene: Scene;
     animState: any = null;
@@ -208,6 +210,18 @@ export default class Actor {
         const skipModel = scene.isSideScene && this.index === 0;
         if (!skipModel) {
             this.animState = loadAnimState();
+        }
+
+        if (this.game.getState().config.positionalAudio) {
+            const audio = this.game.getAudioManager();
+            if (this.index !== 0) {
+                this.sound = audio.createSamplePositionalAudio();
+                this.soundVoice = audio.createSamplePositionalAudio();
+                // this.soundVoice.setDirectionalCone(90, 120, 0.3);
+            } else {
+                this.sound = audio.createSampleAudio();
+                this.soundVoice = audio.createSampleAudio();
+            }
         }
     }
 
@@ -523,8 +537,20 @@ export default class Actor {
                 this.sprite = sprite;
             }
         }
-        if (params.editor) {
-            createActorLabel(this, name, this.scene.is3DCam);
+        if (this.game.getState().config.positionalAudio) {
+            const audio = this.game.getAudioManager();
+            if (this.index === 0) {
+                this.threeObject.add(audio.listener);
+            }
+            if (this.sound) {
+                this.threeObject.add(this.sound);
+            }
+            if (this.soundVoice) {
+                this.threeObject.add(this.soundVoice);
+            }
+            if (params.editor) {
+                createActorLabel(this, name, this.scene.is3DCam);
+            }
         }
     }
 
@@ -615,6 +641,48 @@ export default class Actor {
         });
         this.animState.noInterpolate = true;
         this.state.isHit = true;
+    }
+
+    playSample(index: number, frequency: number = 0x1000, loopCount: number = 0) {
+        const audio = this.game.getAudioManager();
+        if (this.game.getState().config.positionalAudio) {
+            audio.playSound(this.sound, index, frequency, loopCount);
+            return;
+        }
+        audio.playSample(index, frequency, loopCount);
+    }
+
+    stopSample(index?: number) {
+        const audio = this.game.getAudioManager();
+        if (this.game.getState().config.positionalAudio) {
+            audio.stopSound(this.sound, index);
+            return;
+        }
+        audio.stopSample(index);
+    }
+
+    setSampleVolume(volume: number) {
+        if (this.game.getState().config.positionalAudio) {
+            this.sound.setVolume(volume);
+        }
+    }
+
+    playVoice(index: number, textBankId: number, onEndedCallback = null) {
+        const audio = this.game.getAudioManager();
+        if (this.game.getState().config.positionalAudio) {
+            audio.playSoundVoice(this.soundVoice, index, textBankId, onEndedCallback);
+            return;
+        }
+        audio.playVoice(index, textBankId, onEndedCallback);
+    }
+
+    stopVoice() {
+        const audio = this.game.getAudioManager();
+        if (this.game.getState().config.positionalAudio) {
+            audio.stopSound(this.soundVoice);
+            return;
+        }
+        audio.stopVoice();
     }
 
     private static createState(): ActorState {

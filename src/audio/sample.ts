@@ -1,33 +1,19 @@
 import { createSource } from './audioSource';
-import { getSamples } from '../resources';
+import { getSample } from '../resources';
 
-const sampleDecodedAudioCache = [];
-
-const createSampleSource = (context: any) => {
-    const source = createSource(context);
+const createSampleSource = (context: any, volume: number = 1) => {
+    const source = createSource(context, volume);
     const loadPlay = async (index: number, frequency: number = 0x1000, loopCount: number = 0) => {
         if (!source.volume) {
             return;
         }
-        if (sampleDecodedAudioCache[index]) {
+        const buffer = await getSample(index, context);
+        if (buffer) {
             source.setLoopCount(loopCount);
-            source.load(sampleDecodedAudioCache[index]);
+            source.load(buffer);
             source.play(frequency);
             return;
         }
-        const resource = await getSamples();
-        if (!resource) {
-            return;
-        }
-        const entryBuffer = await resource.getEntryAsync(index);
-        if (entryBuffer.byteLength === 0) {
-            return;
-        }
-        const buffer = await source.decode(entryBuffer.slice(0));
-        sampleDecodedAudioCache[index] = buffer;
-        source.setLoopCount(loopCount);
-        source.load(buffer);
-        source.play(frequency);
     };
     return {
         isPlaying: () => {

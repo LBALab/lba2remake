@@ -3,8 +3,8 @@ import { getMusic } from '../resources';
 
 const musicDecodedAudioCache = [];
 
-const createMusicSource = (context: any) => {
-    const source = createSource(context);
+const createMusicSource = (context: any, volume: number = 1) => {
+    const source = createSource(context, volume);
     const loadPlay = async (index: number | string) => {
         if (!source.volume) {
             return;

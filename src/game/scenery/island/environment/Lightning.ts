@@ -12,6 +12,7 @@ export default class Lightning {
     private physics: IslandPhysics;
     private lightning: LightningInfo;
     private static currentLightning: LightningInfo = null;
+    private sound: any;
 
     constructor(props, physics: IslandPhysics) {
         this.physics = physics;
@@ -109,24 +110,39 @@ export default class Lightning {
         this.lightning.strength = 0;
         this.lightning.lightningStrikeMesh.visible = false;
         this.lightning.newStrike = true;
+        this.lightning.lightningStrikeMesh.updateWorldMatrix(false, true);
     }
 
     private initNewStrike(game: Game, objPositions: ObjectPositions) {
         this.findLightningPosition(objPositions);
         const camDist = objPositions.camera.distanceTo(this.lightning.position);
-        const volume = Math.min(1, Math.max(0, 1 - (camDist / 200)));
-        const audio = game.getAudioManager();
         const index = (this.lightning.intensity < 0.1 || camDist > 40)
         ? 385
         : 381;
-        const sample = audio.playSample(index);
-        sample.setVolume(volume);
+
         const params = this.lightning.params;
         params.sourceOffset.copy(this.lightning.position);
         params.sourceOffset.y = WORLD_SIZE * 2 + Math.random() * 5 - 20;
         params.destOffset.copy(this.lightning.position);
         params.radius0 = this.lightning.intensity * 0.31875;
         params.radius1 = params.radius0 * 0.0318;
+
+        const audio = game.getAudioManager();
+        if (game.getState().config.positionalAudio) {
+            if (!this.sound) {
+                this.sound = audio.createSamplePositionalAudio();
+                this.sound.setRolloffFactor(5);
+                this.sound.setRefDistance(20);
+                this.sound.setMaxDistance(10000);
+                this.lightning.lightningStrikeMesh.add(this.sound);
+            }
+            this.lightning.lightningStrikeMesh.updateMatrix();
+            audio.playSound(this.sound, index);
+        } else {
+            const volume = Math.min(1, Math.max(0, 1 - (camDist / 200)));
+            const sample = audio.playSample(index);
+            sample.setVolume(volume);
+        }
     }
 
     private findLightningPosition(objPositions: ObjectPositions) {

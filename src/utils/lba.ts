@@ -125,7 +125,11 @@ export function getRandom(min, max) {
 }
 
 export function getFrequency(frequency) {
-    return (frequency * 2) / 100;
+    return frequency * 22050 / 0x2000;
+}
+
+export function getFrequencyRate(frequency) {
+    return getFrequency(frequency) / 0x2000;
 }
 
 // getPositions returns the 4 points that form the bottom face of the provided
