@@ -5,11 +5,38 @@ _Unreleased_
 
 #### Gameplay
 
+- Switch Inventory Objects
+- Positional Audio
+- Gamepad Support
+    * Tested with Razer Kishi Controller on Android
+    * Tested with Steelwhell Nimbus Controller on Mac
 - Tweaked rotation speed
+- Adding LBA1 Support
+
+#### UI
+
+- Inventory Menu
+- Options Menu
+    * Enable/Disable Isometric 3D
+    * Enable/Disable 3D Audio
+    * Switch Between LBA1 and LBA2
 
 #### Editor
 
 - Palette: Eye drop colors from any editor's main view.
+- LBA1 Gameplay Editor
+- LBA1 Model Viewer
+- LBA1 Scene Metadata
+
+#### Replacement 3D models
+
+- Various models placement improvements
+
+#### Compatibility
+
+- Safari is now supported again
+- Convert GOG & Steam LBA1 versions (you will need midi_win.hqr from LbaWin for now)
+
 
 ## [v0.4.0](https://github.com/agrande/lba2remake/compare/v0.3.0...v0.4.0) Big update!
 _October 10th, 2020_
