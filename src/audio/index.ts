@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { createMusicSource } from './music';
 import { createSampleSource } from './sample';
+import { createVoiceSource } from './voice';
 import { getFrequency } from '../utils/lba';
 import { getSample, getVoices } from '../resources';
 
@@ -28,12 +29,16 @@ export function createAudioManager(state) {
 
     const musicSource = createMusicSource(context, state.config.musicVolume);
     const menuMusicSource = createMusicSource(menuContext, state.config.musicVolume);
+    const voiceSource = createVoiceSource(context, state.config.voiceVolume);
 
-    // @ts-ignore
-    THREE.AudioContext.setContext(context);
-    const listener = new THREE.AudioListener();
-    listener.setMasterVolume(state.config.soundFxVolume);
-    listener.rotateY(Math.PI);
+    let listener = null;
+    if (state.config.positionalAudio) {
+        // @ts-ignore
+        THREE.AudioContext.setContext(context);
+        listener = new THREE.AudioListener();
+        listener.setMasterVolume(state.config.soundFxVolume);
+        listener.rotateY(Math.PI);
+    }
 
     return {
         context,
@@ -131,7 +136,7 @@ export function createAudioManager(state) {
         },
 
         // voice
-        playVoice: async (
+        playSoundVoice: async (
             sound: any,
             index: number,
             textBankId: number,
@@ -180,10 +185,13 @@ export function createAudioManager(state) {
                 onEndedCallback
             );
         },
-        stopVoice: (sound: any) => {
-            if (sound.isPlaying) {
-                sound.stop();
-            }
+
+        // voice
+        playVoice: (index: number, textBankId: number, onEndedCallback = null) => {
+            voiceSource.play(index, textBankId, onEndedCallback);
+        },
+        stopVoice: () => {
+            voiceSource.stop();
         },
 
         // invetory, ambience

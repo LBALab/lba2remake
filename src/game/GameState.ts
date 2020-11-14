@@ -1,5 +1,6 @@
 import { omit } from 'lodash';
 import { getLanguageConfig } from '../lang';
+import { getParams } from '../params';
 
 export interface GameConfig {
     displayText: boolean;
@@ -7,6 +8,7 @@ export interface GameConfig {
     soundFxVolume: number;
     ambienceVolume: number;
     voiceVolume: number;
+    positionalAudio: boolean;
 }
 
 export interface GameState {
@@ -31,6 +33,7 @@ export function createGameState(): GameState {
             soundFxVolume: 1.0,
             voiceVolume: 1.0,
             ambienceVolume: 0.2,
+            positionalAudio: getParams().audio3d,
         }, getLanguageConfig()),
         hero: {
             behaviour: 0,

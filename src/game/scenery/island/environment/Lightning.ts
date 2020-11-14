@@ -128,15 +128,21 @@ export default class Lightning {
         params.radius1 = params.radius0 * 0.0318;
 
         const audio = game.getAudioManager();
-        if (!this.sound) {
-            this.sound = audio.createSamplePositionalAudio();
-            this.sound.setRolloffFactor(5);
-            this.sound.setRefDistance(20);
-            this.sound.setMaxDistance(10000);
-            this.lightning.lightningStrikeMesh.add(this.sound);
+        if (game.getState().config.positionalAudio) {
+            if (!this.sound) {
+                this.sound = audio.createSamplePositionalAudio();
+                this.sound.setRolloffFactor(5);
+                this.sound.setRefDistance(20);
+                this.sound.setMaxDistance(10000);
+                this.lightning.lightningStrikeMesh.add(this.sound);
+            }
+            this.lightning.lightningStrikeMesh.updateMatrix();
+            audio.playSound(this.sound, index);
+        } else {
+            const volume = Math.min(1, Math.max(0, 1 - (camDist / 200)));
+            const sample = audio.playSample(index);
+            sample.setVolume(volume);
         }
-        this.lightning.lightningStrikeMesh.updateMatrix();
-        audio.playSound(this.sound, index);
     }
 
     private findLightningPosition(objPositions: ObjectPositions) {

@@ -211,14 +211,16 @@ export default class Actor {
             this.animState = loadAnimState();
         }
 
-        const audio = this.game.getAudioManager();
-        if (this.index !== 0) {
-            this.sound = audio.createSamplePositionalAudio();
-            this.soundVoice = audio.createSamplePositionalAudio();
-            // this.soundVoice.setDirectionalCone(90, 120, 0.3);
-        } else {
-            this.sound = audio.createSampleAudio();
-            this.soundVoice = audio.createSampleAudio();
+        if (this.game.getState().config.positionalAudio) {
+            const audio = this.game.getAudioManager();
+            if (this.index !== 0) {
+                this.sound = audio.createSamplePositionalAudio();
+                this.soundVoice = audio.createSamplePositionalAudio();
+                // this.soundVoice.setDirectionalCone(90, 120, 0.3);
+            } else {
+                this.sound = audio.createSampleAudio();
+                this.soundVoice = audio.createSampleAudio();
+            }
         }
     }
 
@@ -534,18 +536,20 @@ export default class Actor {
                 this.sprite = sprite;
             }
         }
-        const audio = this.game.getAudioManager();
-        if (this.index === 0) {
-            this.threeObject.add(audio.listener);
-        }
-        if (this.sound) {
-            this.threeObject.add(this.sound);
-        }
-        if (this.soundVoice) {
-            this.threeObject.add(this.soundVoice);
-        }
-        if (params.editor) {
-            createActorLabel(this, name, this.scene.is3DCam);
+        if (this.game.getState().config.positionalAudio) {
+            const audio = this.game.getAudioManager();
+            if (this.index === 0) {
+                this.threeObject.add(audio.listener);
+            }
+            if (this.sound) {
+                this.threeObject.add(this.sound);
+            }
+            if (this.soundVoice) {
+                this.threeObject.add(this.soundVoice);
+            }
+            if (params.editor) {
+                createActorLabel(this, name, this.scene.is3DCam);
+            }
         }
     }
 
@@ -638,28 +642,46 @@ export default class Actor {
         this.state.isHit = true;
     }
 
-    async playSample(index: number, frequency: number = 0x1000, loopCount: number = 0) {
+    playSample(index: number, frequency: number = 0x1000, loopCount: number = 0) {
         const audio = this.game.getAudioManager();
-        await audio.playSound(this.sound, index, frequency, loopCount);
+        if (this.game.getState().config.positionalAudio) {
+            audio.playSound(this.sound, index, frequency, loopCount);
+            return;
+        }
+        audio.playSample(index, frequency, loopCount);
     }
 
-    async stopSample(index?: number) {
+    stopSample(index?: number) {
         const audio = this.game.getAudioManager();
-        audio.stopSound(this.sound, index);
+        if (this.game.getState().config.positionalAudio) {
+            audio.stopSound(this.sound, index);
+            return;
+        }
+        audio.stopSample(index);
     }
 
-    async setSampleVolume(volume: number) {
-        this.sound.setVolume(volume);
+    setSampleVolume(volume: number) {
+        if (this.game.getState().config.positionalAudio) {
+            this.sound.setVolume(volume);
+        }
     }
 
-    async playVoice(index: number, textBankId: number, onEndedCallback = null) {
+    playVoice(index: number, textBankId: number, onEndedCallback = null) {
         const audio = this.game.getAudioManager();
-        await audio.playVoice(this.soundVoice, index, textBankId, onEndedCallback);
+        if (this.game.getState().config.positionalAudio) {
+            audio.playSoundVoice(this.soundVoice, index, textBankId, onEndedCallback);
+            return;
+        }
+        audio.playVoice(index, textBankId, onEndedCallback);
     }
 
-    async stopVoice() {
+    stopVoice() {
         const audio = this.game.getAudioManager();
-        audio.stopSound(this.soundVoice);
+        if (this.game.getState().config.positionalAudio) {
+            audio.stopSound(this.soundVoice);
+            return;
+        }
+        audio.stopVoice();
     }
 
     private static createState(): ActorState {

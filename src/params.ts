@@ -48,7 +48,11 @@ const paramsDefinitions = {
     vrCtrlDBG: {
         type: 'boolean',
         default: false
-    }
+    },
+    audio3d: {
+        type: 'boolean',
+        default: true
+    },
 };
 
 export interface Params {
@@ -63,6 +67,7 @@ export interface Params {
     game: string;
     vrEmulator: boolean;
     vrCtrlDBG: boolean;
+    audio3d: boolean;
 }
 
 export function getParams(forceRefresh = false) : Params {

@@ -64,6 +64,7 @@ const DIFF = new THREE.Vector3();
 
 export default class Extra {
     readonly type = 'extra';
+    readonly game: Game;
     readonly index: number;
     readonly physics: ExtraPhysics;
     readonly props: ExtraProps;
@@ -97,8 +98,7 @@ export default class Extra {
         extra.init(angle, 40, 15);
         await extra.loadMesh(scene);
         scene.addExtra(extra);
-        const audio = game.getAudioManager();
-        audio.playSound(extra.sound, SAMPLE_BONUS);
+        extra.playSample(extra.sound, SAMPLE_BONUS);
         return extra;
     }
 
@@ -110,6 +110,7 @@ export default class Extra {
         bonus: number,
         time: Time
     ) {
+        this.game = game;
         this.index = indexCount;
         indexCount += 1;
         this.physics = {
@@ -158,8 +159,10 @@ export default class Extra {
         this.speed = 0;
         this.weight = 0;
 
-        const audio = game.getAudioManager();
-        this.sound = audio.createSamplePositionalAudio();
+        if (game.getState().config.positionalAudio) {
+            const audio = game.getAudioManager();
+            this.sound = audio.createSamplePositionalAudio();
+        }
     }
 
     private async loadMesh(scene: Scene) {
@@ -179,7 +182,9 @@ export default class Extra {
         this.threeObject.name = `extra_${this.props.bonus}`;
         this.threeObject.visible = this.state.isVisible;
         this.sprite = sprite;
-        this.threeObject.add(this.sound);
+        if (scene.game.getState().config.positionalAudio) {
+            this.threeObject.add(this.sound);
+        }
     }
 
     private init(_angle, speed, _weight) {
@@ -187,6 +192,24 @@ export default class Extra {
         this.time = this.baseTime;
         this.speed = speed * 0.8;
         this.weight = _weight;
+    }
+
+    playSample(sound: any, index: number) {
+        const audio = this.game.getAudioManager();
+        if (this.game.getState().config.positionalAudio) {
+            audio.playSound(sound, index);
+            return;
+        }
+        audio.playSample(index);
+    }
+
+    stopSample(sound: any, index: number) {
+        const audio = this.game.getAudioManager();
+        if (this.game.getState().config.positionalAudio) {
+            audio.stopSound(sound, index);
+            return;
+        }
+        audio.stopSample(index);
     }
 
     update(game: Game, scene: Scene, time: Time) {
@@ -288,9 +311,8 @@ export default class Extra {
         if (shouldCollect ||
             (this.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT) {
             if (this.info && shouldCollect) {
-                const audio = game.getAudioManager();
-                audio.stopSound(this.sound, SAMPLE_BONUS);
-                audio.playSound(this.sound, SAMPLE_BONUS_FOUND);
+                this.stopSample(this.sound, SAMPLE_BONUS);
+                this.playSample(this.sound, SAMPLE_BONUS_FOUND);
                 const itrjId = `extra_${this.index}_${this.info}`;
                 const interjections = clone(game.getUiState().interjections);
 
