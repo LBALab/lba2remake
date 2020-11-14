@@ -205,6 +205,20 @@ export function createAudioManager(state) {
             }
             return false;
         },
+        stopSample: (index: number) => {
+            const sampleSource = samples[index];
+            if (sampleSource) {
+                sampleSource.stop();
+            }
+        },
+        stopSamples: () => {
+            Object.keys(samples).forEach((index: string) => {
+                const sampleSource = samples[index];
+                if (sampleSource) {
+                    sampleSource.stop();
+                }
+            });
+        },
 
         // shared
         pause: () => {
