@@ -215,7 +215,7 @@ export default class Actor {
         if (this.index !== 0) {
             this.sound = audio.createSamplePositionalAudio();
             this.soundVoice = audio.createSamplePositionalAudio();
-            this.soundVoice.setDirectionalCone(90, 120, 0.3);
+            // this.soundVoice.setDirectionalCone(90, 120, 0.3);
         } else {
             this.sound = audio.createSampleAudio();
             this.soundVoice = audio.createSampleAudio();
@@ -535,7 +535,9 @@ export default class Actor {
             }
         }
         const audio = this.game.getAudioManager();
-        this.threeObject.add(audio.listener);
+        if (this.index === 0) {
+            this.threeObject.add(audio.listener);
+        }
         if (this.sound) {
             this.threeObject.add(this.sound);
         }

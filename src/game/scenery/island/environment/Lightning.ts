@@ -131,6 +131,8 @@ export default class Lightning {
         if (!this.sound) {
             this.sound = audio.createSamplePositionalAudio();
             this.sound.setRolloffFactor(5);
+            this.sound.setRefDistance(20);
+            this.sound.setMaxDistance(10000);
             this.lightning.lightningStrikeMesh.add(this.sound);
         }
         this.lightning.lightningStrikeMesh.updateMatrix();

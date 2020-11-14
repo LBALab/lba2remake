@@ -33,6 +33,7 @@ export function createAudioManager(state) {
     THREE.AudioContext.setContext(context);
     const listener = new THREE.AudioListener();
     listener.setMasterVolume(state.config.soundFxVolume);
+    listener.rotateY(Math.PI);
 
     return {
         context,
@@ -75,9 +76,9 @@ export function createAudioManager(state) {
         // samples
         createSamplePositionalAudio: (): THREE.PositionalAudio => {
             const sound = new THREE.PositionalAudio(listener);
-            sound.setRolloffFactor(40);
-            sound.setRefDistance(20);
-            sound.setMaxDistance(10000);
+            // sound.setRolloffFactor(40);
+            // sound.setRefDistance(20);
+            // sound.setMaxDistance(10000);
             sound.setVolume(1);
             const filter = sound.context.createBiquadFilter();
             filter.type = 'allpass';
