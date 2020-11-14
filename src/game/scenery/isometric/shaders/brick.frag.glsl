@@ -8,8 +8,9 @@ in vec2 vUv;
 out vec4 fragColor;
 
 void main() {
-    fragColor = texture(library, vUv);
-    if (fragColor.a < 0.5) {
+    vec4 fColor = texture(library, vUv);
+    if (fColor.a < 0.5) {
         discard;
     }
+    fragColor = fColor;
 }
