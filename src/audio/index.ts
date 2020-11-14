@@ -85,7 +85,6 @@ export function createAudioManager(state) {
         // samples
         createSamplePositionalAudio: (): THREE.PositionalAudio => {
             const sound = new THREE.PositionalAudio(listener);
-            sound.setDirectionalCone(60, 90, 0.3);
             sound.setRolloffFactor(40);
             sound.setRefDistance(20);
             sound.setMaxDistance(10000);
