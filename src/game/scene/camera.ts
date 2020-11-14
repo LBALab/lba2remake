@@ -17,7 +17,7 @@ export function selectCamera(game: Game, renderer: Renderer, isIsland: boolean) 
         if (renderer.vr) {
             return getVR3DCamera(renderer);
         }
-        return get3DCamera(game);
+        return get3DCamera();
     }
 
     // isometric scene
@@ -25,10 +25,10 @@ export function selectCamera(game: Game, renderer: Renderer, isIsland: boolean) 
         return getVRIsoCamera(renderer);
     }
     if (params.isoCam3d) {
-        return get3DCamera(game);
+        return get3DCamera();
     }
     if (params.iso3d) {
         return getIso3DCamera();
     }
-    return getIsometricCamera(game);
+    return getIsometricCamera();
 }

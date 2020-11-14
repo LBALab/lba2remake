@@ -1,13 +1,12 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../utils/lba';
-import Game from '../game/Game';
 
 const CAMERA_HERO_OFFSET = new THREE.Vector3(-1, 0.8, 1);
 CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
 const ANGLE_LEFT = new THREE.Euler(0, -Math.PI / 2, 0, 'YXZ');
 const ANGLE_RIGHT = new THREE.Euler(0, Math.PI / 2, 0, 'YXZ');
 
-export function getIsometricCamera(game?: Game) {
+export function getIsometricCamera() {
     const w = window.innerWidth;
     const h = window.innerHeight;
     const camera = new THREE.OrthographicCamera(
@@ -20,11 +19,6 @@ export function getIsometricCamera(game?: Game) {
     );
     setCameraScale(camera, w, h);
     camera.name = 'IsoCamera';
-
-    if (game) {
-        const audio = game.getAudioManager();
-        camera.add(audio.listener);
-    }
 
     return {
         width: w,

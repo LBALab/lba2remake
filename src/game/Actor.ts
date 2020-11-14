@@ -536,6 +536,8 @@ export default class Actor {
                 this.sprite = sprite;
             }
         }
+        const audio = this.game.getAudioManager();
+        this.threeObject.add(audio.listener);
         if (this.sound) {
             this.threeObject.add(this.sound);
         }

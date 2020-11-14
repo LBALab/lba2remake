@@ -5,14 +5,13 @@ import Scene from '../game/Scene';
 import { ControlsState } from '../game/ControlsState';
 import { Time } from '../datatypes';
 import IslandPhysics from '../game/scenery/island/IslandPhysics';
-import Game from '../game/Game';
 
 const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
 CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
 const HERO_TARGET_POS = new THREE.Vector3(0, 0.08, 0);
 HERO_TARGET_POS.multiplyScalar(WORLD_SIZE);
 
-export function get3DCamera(game?: Game) {
+export function get3DCamera() {
     const camera = new THREE.PerspectiveCamera(
         45,
         window.innerWidth / window.innerHeight,
@@ -29,11 +28,6 @@ export function get3DCamera(game?: Game) {
     orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
-
-    if (game) {
-        const audio = game.getAudioManager();
-        camera.add(audio.listener);
-    }
 
     return {
         width: window.innerWidth,
