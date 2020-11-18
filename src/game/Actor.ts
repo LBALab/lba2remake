@@ -201,8 +201,12 @@ export default class Actor {
         this.physics = initPhysics(props);
         this.state = Actor.createState();
         this.state.isVisible = props.flags.isVisible
-            && (props.life > 0 || props.bodyIndex >= 0)
-            && props.index !== 1; // 1 is always Nitro-mecapingouin
+            && (props.life > 0 || props.bodyIndex >= 0);
+        // Do Meca Pinguin checks for both games correctly
+        if (getParams().game === 'lba2' && props.index === 1 ||
+            getParams().game === 'lba1' && props.entityIndex === 9) {
+            this.state.isVisible = false;
+        }
         this.scripts = {
             life: parseScript(props.index, 'life', props.lifeScript),
             move: parseScript(props.index, 'move', props.moveScript)
