@@ -5,7 +5,7 @@ import { exec } from 'child_process';
 
 export const createFolderIfNotExists = (folderPath: string) => {
     if (!fs.existsSync(folderPath)) {
-        fs.mkdirSync(folderPath);
+        fs.mkdirSync(folderPath, { recursive: true });
     }
 };
 

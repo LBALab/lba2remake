@@ -139,6 +139,10 @@ const getSamples = async () => {
     return await loadResource(ResourceName.SAMPLES);
 };
 
+const getSample = async (index: number, context: AudioContext) => {
+    return await loadResource(ResourceName.SAMPLES, index, context);
+};
+
 const getVoices = async (textBankId) => {
     const textBank = `${textBankId}`;
     let resId = `VOICES_${(`000${textBank}`)
@@ -191,6 +195,7 @@ export {
     getSceneMap,
     getInventoryObjects,
     getSamples,
+    getSample,
     getVoices,
     getMusic,
     getModelReplacements,

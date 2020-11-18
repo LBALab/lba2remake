@@ -98,6 +98,7 @@ export interface ActorState {
     isUsingProtoOrJetpack: boolean;
     isSearching: boolean;
     isToppingOutUp: boolean;
+    isDrawingSword: boolean;
     noInterpolateNext: boolean;
     distFromGround: number;
     distFromFloor: number;
@@ -144,6 +145,8 @@ export default class Actor {
     readonly index: number;
     readonly props: ActorProps;
     readonly state: ActorState;
+    readonly sound: any;
+    readonly soundVoice: any;
     private readonly game: Game;
     private readonly scene: Scene;
     animState: any = null;
@@ -198,8 +201,12 @@ export default class Actor {
         this.physics = initPhysics(props);
         this.state = Actor.createState();
         this.state.isVisible = props.flags.isVisible
-            && (props.life > 0 || props.bodyIndex >= 0)
-            && props.index !== 1; // 1 is always Nitro-mecapingouin
+            && (props.life > 0 || props.bodyIndex >= 0);
+        // Do Meca Pinguin checks for both games correctly
+        if (getParams().game === 'lba2' && props.index === 1 ||
+            getParams().game === 'lba1' && props.entityIndex === 9) {
+            this.state.isVisible = false;
+        }
         this.scripts = {
             life: parseScript(props.index, 'life', props.lifeScript),
             move: parseScript(props.index, 'move', props.moveScript)
@@ -207,6 +214,18 @@ export default class Actor {
         const skipModel = scene.isSideScene && this.index === 0;
         if (!skipModel) {
             this.animState = loadAnimState();
+        }
+
+        if (this.game.getState().config.positionalAudio) {
+            const audio = this.game.getAudioManager();
+            if (this.index !== 0) {
+                this.sound = audio.createSamplePositionalAudio();
+                this.soundVoice = audio.createSamplePositionalAudio();
+                // this.soundVoice.setDirectionalCone(90, 120, 0.3);
+            } else {
+                this.sound = audio.createSampleAudio();
+                this.soundVoice = audio.createSampleAudio();
+            }
         }
     }
 
@@ -522,8 +541,20 @@ export default class Actor {
                 this.sprite = sprite;
             }
         }
-        if (params.editor) {
-            createActorLabel(this, name, this.scene.is3DCam);
+        if (this.game.getState().config.positionalAudio) {
+            const audio = this.game.getAudioManager();
+            if (this.index === 0) {
+                this.threeObject.add(audio.listener);
+            }
+            if (this.sound) {
+                this.threeObject.add(this.sound);
+            }
+            if (this.soundVoice) {
+                this.threeObject.add(this.soundVoice);
+            }
+            if (params.editor) {
+                createActorLabel(this, name, this.scene.is3DCam);
+            }
         }
     }
 
@@ -616,6 +647,48 @@ export default class Actor {
         this.state.isHit = true;
     }
 
+    playSample(index: number, frequency: number = 0x1000, loopCount: number = 0) {
+        const audio = this.game.getAudioManager();
+        if (this.game.getState().config.positionalAudio) {
+            audio.playSound(this.sound, index, frequency, loopCount);
+            return;
+        }
+        audio.playSample(index, frequency, loopCount);
+    }
+
+    stopSample(index?: number) {
+        const audio = this.game.getAudioManager();
+        if (this.game.getState().config.positionalAudio) {
+            audio.stopSound(this.sound, index);
+            return;
+        }
+        audio.stopSample(index);
+    }
+
+    setSampleVolume(volume: number) {
+        if (this.game.getState().config.positionalAudio) {
+            this.sound.setVolume(volume);
+        }
+    }
+
+    playVoice(index: number, textBankId: number, onEndedCallback = null) {
+        const audio = this.game.getAudioManager();
+        if (this.game.getState().config.positionalAudio) {
+            audio.playSoundVoice(this.soundVoice, index, textBankId, onEndedCallback);
+            return;
+        }
+        audio.playVoice(index, textBankId, onEndedCallback);
+    }
+
+    stopVoice() {
+        const audio = this.game.getAudioManager();
+        if (this.game.getState().config.positionalAudio) {
+            audio.stopSound(this.soundVoice);
+            return;
+        }
+        audio.stopVoice();
+    }
+
     private static createState(): ActorState {
         return {
             isVisible: false,
@@ -642,6 +715,7 @@ export default class Actor {
             isUsingProtoOrJetpack: false,
             isSearching: false,
             isToppingOutUp: false,
+            isDrawingSword: false,
             noInterpolateNext: false,
             distFromFloor: 0,
             distFromGround: 0,

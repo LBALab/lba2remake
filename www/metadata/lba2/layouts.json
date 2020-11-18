@@ -305,12 +305,12 @@
     },
     "78": {
       "replace": true,
-      "file": "CI_078_079_bedside_table_long.glb",
+      "file": "CI_078_079_cupboard.glb",
       "orientation": 1
     },
     "79": {
       "replace": true,
-      "file": "CI_078_079_bedside_table_long.glb",
+      "file": "CI_078_079_cupboard.glb",
       "orientation": 0
     },
     "80": {
@@ -599,31 +599,6 @@
       "file": "CI_020_021_022_023_wall_deco_vert_1_join.glb",
       "orientation": 1
     },
-    "78:1x2x3:276,278,279,281,282,284": {
-      "replace": true,
-      "file": "CI_078_079_cupboard_var1.glb",
-      "orientation": 0
-    },
-    "79:3x2x1:285,286,287,291,292,293": {
-      "replace": true,
-      "file": "CI_078_079_cupboard_var1.glb",
-      "orientation": 3
-    },
-    "79:2x3x1:285,287,288,290,291,293": {
-      "replace": true,
-      "file": "CI_079_cupboard_var1.glb",
-      "orientation": 0
-    },
-    "79:4x3x1:285,286,286,287,288,289,289,290,291,292,292,293": {
-      "replace": true,
-      "file": "CI_079_cupboard_var2.glb",
-      "orientation": 0
-    },
-    "79:5x3x2:-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,291,292,292,292,293,285,286,286,286,287,288,289,289,289,290,291,292,292,292,293": {
-      "replace": true,
-      "file": "CI_079_huge_cupboard_var3.glb",
-      "orientation": 0
-    },
     "105:1x1x2:542,544": {
       "replace": true,
       "file": "CI_105_shelf_var1.glb",
@@ -652,6 +627,31 @@
     "22:1x3x1:73,73,74": {
       "replace": true,
       "file": "CI_022_wall_deco_vert_1_joint_var3.glb",
+      "orientation": 3
+    },
+    "78:1x2x3:276,278,279,281,282,284": {
+      "replace": true,
+      "file": "CI_078_079_cupboard_var1.glb",
+      "orientation": 0
+    },
+    "79:2x3x1:285,287,288,290,291,293": {
+      "replace": true,
+      "file": "CI_079_cupboard_var1.glb",
+      "orientation": 0
+    },
+    "79:4x3x1:285,286,286,287,288,289,289,290,291,292,292,293": {
+      "replace": true,
+      "file": "CI_079_cupboard_var2.glb",
+      "orientation": 0
+    },
+    "79:5x3x2:-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,291,292,292,292,293,285,286,286,286,287,288,289,289,289,290,291,292,292,292,293": {
+      "replace": true,
+      "file": "CI_079_huge_cupboard_var3.glb",
+      "orientation": 0
+    },
+    "79:3x2x1:285,286,287,291,292,293": {
+      "replace": true,
+      "file": "CI_078_079_cupboard_var1.glb",
       "orientation": 3
     }
   },

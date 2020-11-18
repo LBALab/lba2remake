@@ -15,21 +15,47 @@ interface Item {
     text?: string;
 }
 
-const menuItems: Item[] = [
-    { item: 'ResumeGame', index: 70, isVisible: false, isEnabled: true, textId: 'resumeGame' },
-    { item: 'NewGame', index: 71, isVisible: true, isEnabled: true, textId: 'newGame' },
-    { item: 'LoadGame', index: 72, isVisible: false, isEnabled: false, textId: 'loadGame' },
-    { item: 'SaveGame', index: 73, isVisible: false, isEnabled: false, textId: 'saveGame' },
-    { item: 'Teleport', index: -1, isVisible: true, isEnabled: true, textId: 'teleport' },
-    { item: 'Editor', index: -2, isVisible: true, isEnabled: true, textId: 'editor' },
-    { item: 'ExitEditor', index: -3, isVisible: true, isEnabled: true, textId: 'exitEditor' },
-    { item: 'Iso3D', index: -4, isVisible: true, isEnabled: true, textId: 'iso3d' },
-    { item: 'Iso3DDisable', index: -5, isVisible: true, isEnabled: true, textId: 'iso3dDisable' },
-    { item: 'SwitchLBA1', index: -6, isVisible: true, isEnabled: true, textId: 'switchLBA1' },
-    { item: 'SwitchLBA2', index: -7, isVisible: true, isEnabled: true, textId: 'switchLBA2' },
-    // { item: 'Options', index: 74, isVisible: true, isEnabled: false, textId: 'options' },
-    { item: 'Quit', index: 75, isVisible: false, isEnabled: false, textId: 'quit' },
-];
+const getMenuItems = (resume: boolean = false): Item[] => {
+    const params = getParams();
+    const menu = [
+        { item: 'ResumeGame', index: 70, isVisible: resume, isEnabled: true, textId: 'resumeGame' },
+        { item: 'NewGame', index: 71, isVisible: true, isEnabled: true, textId: 'newGame' },
+        { item: 'LoadGame', index: 72, isVisible: false, isEnabled: false, textId: 'loadGame' },
+        { item: 'SaveGame', index: 73, isVisible: false, isEnabled: false, textId: 'saveGame' },
+        { item: 'Teleport', index: -1, isVisible: true, isEnabled: true, textId: 'teleport' },
+        { item: 'Editor', index: -2, isVisible: !params.editor, isEnabled: true, textId: 'editor' },
+        {
+            item: 'ExitEditor', index: -3, isVisible: params.editor, isEnabled: true, textId: 'exitEditor'
+        },
+        { item: 'Options', index: 74, isVisible: true, isEnabled: true, textId: 'options' },
+        { item: 'Quit', index: 75, isVisible: false, isEnabled: false, textId: 'quit' },
+    ];
+    const items = filter(menu, 'isVisible');
+    each(items, (i: Item) => {
+        i.text = tr(i.textId);
+    });
+    return items;
+};
+
+const getOptionItems = (): Item[] => {
+    const params = getParams();
+    const menu = [
+        { item: 'Return', index: 741, isVisible: true, isEnabled: true, textId: 'return' },
+        { item: 'Iso3D', index: -4, isVisible: !params.iso3d, isEnabled: true, textId: 'iso3d' },
+        { item: 'Iso3DDisable', index: -5, isVisible: params.iso3d, isEnabled: true, textId: 'iso3dDisable' },
+        {
+            item: 'Audio3D', index: -8, isVisible: !params.audio3d, isEnabled: true, textId: 'audio3d'
+        },
+        { item: 'Audio3DDisable', index: -9, isVisible: params.audio3d, isEnabled: true, textId: 'audio3dDisable' },
+        { item: 'SwitchLBA1', index: -6, isVisible: params.game === 'lba2', isEnabled: true, textId: 'switchLBA1' },
+        { item: 'SwitchLBA2', index: -7, isVisible: params.game === 'lba1', isEnabled: true, textId: 'switchLBA2' },
+    ];
+    const items = filter(menu, 'isVisible');
+    each(items, (i: Item) => {
+        i.text = tr(i.textId);
+    });
+    return items;
+};
 
 interface MProps {
     showMenu: boolean;
@@ -50,7 +76,7 @@ export default class Menu extends React.Component<MProps, MState> {
         this.gamepadListener = this.gamepadListener.bind(this);
         this.state = {
             selectedIndex: 0,
-            items: menuItems,
+            items: getMenuItems(false),
         };
     }
 
@@ -60,20 +86,8 @@ export default class Menu extends React.Component<MProps, MState> {
     }
 
     componentWillReceiveProps(newProps) {
-        const menu = menuItems;
-        const params = getParams();
-        menu[0].isVisible = newProps.inGameMenu;
-        menu[5].isVisible = !params.editor;
-        menu[6].isVisible = params.editor;
-        menu[7].isVisible = !params.iso3d;
-        menu[8].isVisible = params.iso3d;
-        menu[9].isVisible = params.game === 'lba2';
-        menu[10].isVisible = params.game === 'lba1';
-        const items = filter(menu, 'isVisible');
-        each(items, (i) => {
-            i.text = tr(i.textId);
-        });
-        this.setState({items, selectedIndex: 0});
+        const menu = getMenuItems(newProps.inGameMenu);
+        this.setState({ items: menu, selectedIndex: 0 });
     }
 
     componentWillUnmount() {
@@ -118,6 +132,17 @@ export default class Menu extends React.Component<MProps, MState> {
     itemChanged(selectedIndex) {
         if (this.state.items.length > 0) {
             this.props.onItemChanged(this.state.items[selectedIndex].index);
+            if (this.state.items[selectedIndex].index === 74) {
+                this.setState({
+                    items: getOptionItems(),
+                    selectedIndex: 0,
+                });
+            } else if (this.state.items[selectedIndex].index === 741) {
+                this.setState({
+                    items: getMenuItems(this.props.inGameMenu),
+                    selectedIndex: 0,
+                });
+            }
         }
     }
 
@@ -130,7 +155,8 @@ export default class Menu extends React.Component<MProps, MState> {
             return <div className={className}>
                 <div className="menu">
                     <ul className="menuList">
-                        {map(this.state.items, (i, idx) =>
+                        {map(this.state.items,
+                            (i, idx) =>
                             ((i.isVisible) ? <li key={idx} className="menuItemList">
                                 <MenuItem
                                     item={i}

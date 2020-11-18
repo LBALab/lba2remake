@@ -16,6 +16,7 @@ import { parseGridLBA1 } from './parsers/grids1';
 import { parseGridLBA2 } from './parsers/grids2';
 import { parseAnim } from './parsers/anim';
 import { parseTextureRGBA } from './parsers/texture';
+import { parseAudio } from './parsers/audio';
 
 const NOP = (resource: Resource) => {
     return resource;
@@ -31,7 +32,7 @@ const ResourceTypes = {
     LM1: { type: 'LM1', description: 'LBA1 3D Model', parser: parseModelLBA1 },
     LM2: { type: 'LM2', description: 'LBA2 3D Model', parser: parseModelLBA2 },
     TXR: { type: 'TXR', description: 'Texture RGBA', parser: parseTextureRGBA },
-    M4A: { type: 'M4A', description: 'MPEG 4 Audio', parser: NOP },
+    M4A: { type: 'M4A', description: 'MPEG 4 Audio', parser: parseAudio },
     LS1: { type: 'LS1', description: 'LBA1 Scene', parser: parseSceneLBA1 },
     LS2: { type: 'LS2', description: 'LBA2 Scene', parser: parseSceneLBA2 },
     SM1: { type: 'SM1', description: 'LBA1 Scene Map', parser: parseSceneMapLBA1 },

@@ -282,6 +282,20 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
                 location.reload();
                 break;
             }
+            case -8: { // Enable 3d Audio
+                if (window.location.hash) {
+                    window.location.hash = `${window.location.hash}&audio3d=true`;
+                } else {
+                    window.location.hash = 'audio3d=true';
+                }
+                location.reload();
+                break;
+            }
+            case -9: { // Disable 3d Audio
+                window.location.hash = window.location.hash.replace('audio3d=true', '');
+                location.reload();
+                break;
+            }
         }
     }
 

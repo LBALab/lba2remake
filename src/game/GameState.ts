@@ -1,11 +1,14 @@
 import { omit } from 'lodash';
 import { getLanguageConfig } from '../lang';
+import { getParams } from '../params';
 
 export interface GameConfig {
     displayText: boolean;
     musicVolume: number;
     soundFxVolume: number;
+    ambienceVolume: number;
     voiceVolume: number;
+    positionalAudio: boolean;
 }
 
 export interface GameState {
@@ -26,9 +29,11 @@ export function createGameState(): GameState {
     return {
         config: Object.assign({
             displayText: true,
-            musicVolume: 0.5,
-            soundFxVolume: 0.5,
-            voiceVolume: 1.0
+            musicVolume: 0.30,
+            soundFxVolume: 1.0,
+            voiceVolume: 1.0,
+            ambienceVolume: 0.2,
+            positionalAudio: getParams().audio3d,
         }, getLanguageConfig()),
         hero: {
             behaviour: 0,
@@ -47,6 +52,7 @@ export function createGameState(): GameState {
             animState: null,
             inventorySlot: 0,
             usingItemId: -1,
+            equippedItemId: -1,
         },
         chapter: 0,
         actorTalking: -1,

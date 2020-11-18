@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import React, { useEffect, useState, useRef } from 'react';
 
 import { SampleType } from '../../game/data/sampleType';
-import { GetInventoryMapping, GetInventoryRows, GetInventoryColumns } from '../../game/data/inventory';
+import { GetInventoryMapping, GetInventoryRows, GetInventoryColumns, LBA2WeaponToBodyMapping } from '../../game/data/inventory';
 import { getText } from '../../resources';
 import '../styles/inventory.scss';
 import {
@@ -137,6 +137,9 @@ const Inventory = ({ game, closeInventory }: any) => {
                 game.addLoopFunction(null, () => {
                     game.getState().hero.usingItemId = -1;
                 });
+                if (itemId in LBA2WeaponToBodyMapping) {
+                    game.getState().hero.equippedItemId = itemId;
+                }
                 closeInventory();
             } else {
                 game.getAudioManager().playSample(SampleType.ERROR);

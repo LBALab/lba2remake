@@ -28,6 +28,7 @@ export function get3DCamera() {
     orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
+
     return {
         width: window.innerWidth,
         height: window.innerHeight,

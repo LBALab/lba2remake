@@ -11,12 +11,14 @@
 
 ### Metadata
 * Sara González Ramajo (@SendellX)
+* Alexandre Fontoura (@xesf)
 
 ## Contributions
 ### Development
 * Andriy Tevelyev (@pleasenophp)
 * Jeffrey Veenhuis (@Jeffroiscool)
 * Jesse Gorter (@Neko)
+* @Krampy
 
 ### Metadata
 * Sara González Ramajo (@SendellX)
@@ -34,4 +36,5 @@
 ## Special Thanks
 * Frédérick Raynal for supporting this project from its early stages
 * All team from Adeline Software International for doing this amazing game series
+* Kazimierz Król (@zink) for his Scene/Grids/Bricks documentation and for hosting http://lbafileinfo.kazekr.net/
 * Kasia Jaworska for getting us voiced to Fred

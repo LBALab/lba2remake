@@ -370,7 +370,13 @@ export default class Scene {
                     const sample = this.props.ambience.samples[currentAmb];
                     if (sample.ambience !== -1 && sample.repeat !== 0) {
                         if (!audio.isPlayingSample(sample.ambience)) {
-                            audio.playSample(sample.ambience, sample.frequency);
+                            audio.playSample(
+                                sample.ambience,
+                                sample.frequency,
+                                0,
+                                Math.random()
+                                * (this.game.getState().config.ambienceVolume - 0.05) + 0.05
+                            );
                         }
                         break;
                     }

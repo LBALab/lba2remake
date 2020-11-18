@@ -144,7 +144,7 @@ export function getObjectName(type, sceneIndex, objIndex) {
         if (objIndex === 0) {
             return 'Twinsen';
         }
-        if (objIndex === 1) {
+        if (getParams().game === 'lba2' && objIndex === 1) {
             return 'MecaPinguin';
         }
     }

@@ -19,6 +19,7 @@ export function getIsometricCamera() {
     );
     setCameraScale(camera, w, h);
     camera.name = 'IsoCamera';
+
     return {
         width: w,
         height: h,
