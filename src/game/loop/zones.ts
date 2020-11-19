@@ -133,21 +133,19 @@ function LADDER(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) 
     return false;
 }
 
-// This is used to show a visual indicator of the target
-// position to which the hero teleports after changing scene
-/*
-function debugZoneTargetPos(newScene, pos, color) {
-    const axesHelper = new THREE.AxesHelper(5);
-    const geometry = new THREE.SphereGeometry(0.05, 32, 32);
-    const material = new THREE.MeshBasicMaterial({color: color});
-    const sphere = new THREE.Mesh(geometry, material);
-    const helper = new THREE.Object3D();
-    helper.add(sphere);
-    helper.add(axesHelper);
-    helper.position.copy(pos);
-    newScene.sceneNode.add(helper);
-}
-*/
+// // This is used to show a visual indicator of the target
+// // position to which the hero teleports after changing scene
+// function debugZoneTargetPos(newScene, pos, color) {
+//     const axesHelper = new THREE.AxesHelper(5);
+//     const geometry = new THREE.SphereGeometry(0.05, 32, 32);
+//     const material = new THREE.MeshBasicMaterial({ color });
+//     const sphere = new THREE.Mesh(geometry, material);
+//     const helper = new THREE.Object3D();
+//     helper.add(sphere);
+//     helper.add(axesHelper);
+//     helper.position.copy(pos);
+//     newScene.sceneNode.add(helper);
+// }
 
 // calculateTagetPosition returns the target position we should place Twinsen at
 // in the new scene. This function attempts to work out the closest
@@ -167,10 +165,10 @@ function calculateTagetPosition(hero: Actor, zone: Zone, newScene: Scene) {
 
     // Where the zone props put us by default.
     const initialTargetPos = new THREE.Vector3(
-        (0x8000 - zone.props.info2) * WORLD_SCALE,
+        (0x8000 - zone.props.info2 - 256) * WORLD_SCALE,
         zone.props.info1 * WORLD_SCALE,
         zone.props.info0 * WORLD_SCALE
-     );
+    );
 
     // Iterate over all of the zones in the new scene to find the
     // matching zone which we want to be placed at. We do this by
@@ -262,9 +260,12 @@ function calculateTagetPosition(hero: Actor, zone: Zone, newScene: Scene) {
         const newLenY = newBox.yMax - newBox.yMin;
         position.y = deltaY * newLenY + newBox.yMin;
     } else {
-        position.x = initialTargetPos.x;
-        position.y = initialTargetPos.y;
-        position.z = initialTargetPos.z;
+        position.x = hero.physics.position.x -
+            zone.props.box.xMin + initialTargetPos.x;
+        position.y = hero.physics.position.y -
+            zone.props.box.yMin + initialTargetPos.y;
+        position.z = hero.physics.position.z -
+            zone.props.box.zMin + initialTargetPos.z;
     }
 
     // debugZoneTargetPos(newScene, initialTargetPos, 0x0000ff);
