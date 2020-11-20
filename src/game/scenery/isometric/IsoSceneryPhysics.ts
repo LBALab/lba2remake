@@ -66,7 +66,6 @@ export default class IsoSceneryPhysics {
                         if (newY - position.y < 0.12 && !isUsingProtoOrJetpack) {
                             position.y = newY;
                             isTouchingGround = true;
-                            console.log(column.groundType);
                             switch (column.groundType) {
                                 case GROUND_TYPES.WATER:
                                 case GROUND_TYPES.WATER2:
