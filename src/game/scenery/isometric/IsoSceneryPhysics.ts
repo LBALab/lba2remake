@@ -66,6 +66,7 @@ export default class IsoSceneryPhysics {
                         if (newY - position.y < 0.12 && !isUsingProtoOrJetpack) {
                             position.y = newY;
                             isTouchingGround = true;
+                            console.log(column.groundType);
                             switch (column.groundType) {
                                 case GROUND_TYPES.WATER:
                                 case GROUND_TYPES.WATER2:
@@ -77,6 +78,9 @@ export default class IsoSceneryPhysics {
                                     break;
                                 case GROUND_TYPES.LAVA:
                                     obj.state.isDrowningLava = true;
+                                    break;
+                                case GROUND_TYPES.CAVE_SPIKES:
+                                    obj.hit(-1, 5);
                                     break;
                             }
                         }
