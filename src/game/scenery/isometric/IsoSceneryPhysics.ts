@@ -78,6 +78,9 @@ export default class IsoSceneryPhysics {
                                 case GROUND_TYPES.LAVA:
                                     obj.state.isDrowningLava = true;
                                     break;
+                                case GROUND_TYPES.CAVE_SPIKES:
+                                    obj.hit(-1, 5);
+                                    break;
                             }
                         }
                         if (!isLBA1) {
