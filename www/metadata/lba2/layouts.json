@@ -1593,6 +1593,81 @@
       "file": "GB_101_102_window.glb",
       "orientation": 1
     },
+    "103": {
+      "replace": true,
+      "file": "GB_103_107_111_115_conveyor_belt.glb",
+      "orientation": 0
+    },
+    "104": {
+      "replace": true,
+      "file": "GB_104_108_112_116_conveyor_belt_halfwidth.glb",
+      "orientation": 1
+    },
+    "106": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 3
+    },
+    "107": {
+      "replace": true,
+      "file": "GB_103_107_111_115_conveyor_belt.glb",
+      "orientation": 2
+    },
+    "108": {
+      "replace": true,
+      "file": "GB_104_108_112_116_conveyor_belt_halfwidth.glb",
+      "orientation": 1
+    },
+    "109": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 1
+    },
+    "110": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 3
+    },
+    "111": {
+      "replace": true,
+      "file": "GB_103_107_111_115_conveyor_belt.glb",
+      "orientation": 1
+    },
+    "112": {
+      "replace": true,
+      "file": "GB_104_108_112_116_conveyor_belt_halfwidth.glb",
+      "orientation": 0
+    },
+    "113": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 0
+    },
+    "114": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 2
+    },
+    "115": {
+      "replace": true,
+      "file": "GB_103_107_111_115_conveyor_belt.glb",
+      "orientation": 3
+    },
+    "116": {
+      "replace": true,
+      "file": "GB_104_108_112_116_conveyor_belt_halfwidth.glb",
+      "orientation": 0
+    },
+    "117": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 0
+    },
+    "118": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 2
+    },
     "120": {
       "mirror": true
     },
@@ -1631,8 +1706,23 @@
       "file": "GB_128_129_142_143_ladder.glb",
       "orientation": 1
     },
+    "130": {
+      "replace": true,
+      "file": "GB_130_131_133_161_conveyor_belt_shadow.glb",
+      "orientation": 3
+    },
+    "131": {
+      "replace": true,
+      "file": "GB_130_131_133_161_conveyor_belt_shadow.glb",
+      "orientation": 0
+    },
     "132": {
       "mirror": true
+    },
+    "133": {
+      "replace": true,
+      "file": "GB_130_131_133_161_conveyor_belt_shadow.glb",
+      "orientation": 1
     },
     "134": {
       "replace": true,
@@ -1682,6 +1772,11 @@
     },
     "156": {
       "mirror": true
+    },
+    "161": {
+      "replace": true,
+      "file": "GB_130_131_133_161_conveyor_belt_shadow.glb",
+      "orientation": 2
     },
     "165": {
       "mirror": true
