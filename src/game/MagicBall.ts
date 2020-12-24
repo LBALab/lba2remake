@@ -18,7 +18,6 @@ const BALL_BOX = new THREE.Box3();
 export default class MagicBall {
     readonly game: Game;
     readonly scene: Scene;
-    oldTime: number;
     direction: THREE.Vector3;
     position: THREE.Vector3;
     threeObject?: THREE.Object3D;
@@ -26,19 +25,17 @@ export default class MagicBall {
     bounces: number;
     maxBounces: number;
 
-    static async load(game: Game, scene: Scene, position: THREE.Vector3,
-                      time: Time): Promise<MagicBall> {
-        const magicBall = new MagicBall(game, scene, position.clone(), time);
+    static async load(game: Game, scene: Scene, position: THREE.Vector3): Promise<MagicBall> {
+        const magicBall = new MagicBall(game, scene, position.clone());
         await magicBall.loadMesh();
         scene.addMagicBall(magicBall);
         return magicBall;
     }
 
-    private constructor(game: Game, scene: Scene, position: THREE.Vector3, time: Time) {
+    private constructor(game: Game, scene: Scene, position: THREE.Vector3) {
         this.game = game;
         this.scene = scene;
         this.position = position;
-        this.oldTime = time.elapsed;
     }
 
     private async loadMesh() {

@@ -77,8 +77,8 @@ export const SAMPLE_RND = (action, { actor, }) => {
 
 export const THROW = unimplemented();
 
-export const THROW_MAGIC = (_action, { actor, game, scene, time }) => {
-    MagicBall.load(game, scene, actor.physics.position, time).then((mb: MagicBall) => {
+export const THROW_MAGIC = (_action, { actor, game, scene }) => {
+    MagicBall.load(game, scene, actor.physics.position).then((mb: MagicBall) => {
         mb.throw(actor.physics.temp.angle, actor.props.entityIndex);
     });
 };
