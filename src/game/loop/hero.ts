@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import Actor, { ActorDirMode, ActorState } from '../Actor';
 import { AnimType } from '../data/animType';
 import { BodyType } from '../data/bodyType';
-import { LBA2WeaponToBodyMapping } from '../data/inventory';
+import { LBA2WeaponToBodyMapping, LBA2Items } from '../data/inventory';
 import { WORLD_SIZE } from '../../utils/lba';
 import { processHit } from './animAction';
 import Scene from '../Scene';
@@ -62,7 +62,7 @@ function handleBodyChanges(game: Game, scene: Scene, hero: Actor) {
             body = BodyType.TWINSEN_NO_TUNIC;
         }
         hero.setBody(scene, body);
-        if (equippedItem === 10) {
+        if (equippedItem === LBA2Items.SWORD) {
             hero.setAnimWithCallback(AnimType.SWORD_DRAW, () => {
                 hero.setAnim(AnimType.NONE);
                 hero.state.isDrawingSword = false;
@@ -389,23 +389,22 @@ function processActorMovement(
         }
         if (controlsState.weapon === 1) {
             switch (game.getState().hero.equippedItemId) {
-                // TODO(scottwilliams): Extract inventory item IDs out into a const list.
-                case 1:
+                case LBA2Items.MAGIC_BALL:
                     animIndex = AnimType.THROW;
                     break;
-                case 2:
+                case LBA2Items.DARTS:
                     animIndex = AnimType.THROW_DART;
                     break;
-                case 23:
+                case LBA2Items.BLOWGUN:
                     animIndex = AnimType.BLOWGUN_SHOOT;
                     break;
-                case 11:
+                case LBA2Items.WANNIE_GLOVE:
                     animIndex = AnimType.WANNIE_GLOVE_SWING;
                     break;
-                case 9:
+                case LBA2Items.LASER_PISTON_WITH_CRYSTAL:
                     animIndex = AnimType.LASTER_PISTOL_SHOOT;
                     break;
-                case 10:
+                case LBA2Items.SWORD:
                     hero.state.isWalking = true;
                     animIndex = AnimType.SWORD_ATTACK;
                     break;

@@ -6,6 +6,7 @@ import Actor, { ActorProps, ActorDirMode } from './Actor';
 import Point, { PointProps } from './Point';
 import Zone, { ZoneProps } from './Zone';
 import Extra from './Extra';
+import MagicBall from './MagicBall';
 import { loadScripts } from '../scripting';
 import { killActor } from './scripting';
 import { createFPSCounter } from '../ui/vr/vrFPS';
@@ -64,6 +65,7 @@ export default class Scene {
     readonly scenery: Scenery;
     sideScenes: Map<number, Scene>;
     extras: Extra[];
+    magicBall: MagicBall;
     isActive: boolean;
     isSideScene: boolean;
     zoneState: {
@@ -282,6 +284,9 @@ export default class Scene {
         for (const extra of this.extras) {
             extra.update(this.game, this, time);
         }
+        if (this.magicBall) {
+            this.magicBall.update(time);
+        }
         if (params.editor && this.isActive) {
             for (const point of this.points) {
                 point.update(this.camera);
@@ -414,6 +419,19 @@ export default class Scene {
     addExtra(extra: Extra) {
         this.extras.push(extra);
         this.addMesh(extra.threeObject);
+    }
+
+    addMagicBall(magicBall: MagicBall) {
+        if (this.magicBall) {
+            this.removeMagicBall();
+        }
+        this.magicBall = magicBall;
+        this.addMesh(magicBall.threeObject);
+    }
+
+    removeMagicBall() {
+        this.removeMesh(this.magicBall.threeObject);
+        this.magicBall = null;
     }
 
     removeExtra(extra: Extra) {

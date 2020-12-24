@@ -16,52 +16,109 @@ const LBAInventoryMapping = {
 const LBA2InventoryColumns = 7;
 const LBA2InventoryRows = 5;
 
+export const enum LBA2Items {
+    HOLOMAP = 0,
+    MAGIC_BALL = 1,
+    DARTS = 2,
+    SENDELLS_BALL = 3,
+    TUNIC = 4,
+    PEARL_OF_INCANDESCENCE = 5,
+    PYRAMID_KEY = 6,
+    CAR_PART = 7,
+    KASHES = 8,
+    LASER_PISTOL_NO_CRYSTAL = 9,
+    SWORD = 10,
+    WANNIE_GLOVE = 11,
+    PROTO_PACK = 12,
+    FERRY_TICKET = 13,
+    MECA_PENGUIN = 14,
+    GAZOGEM = 15,
+    DISSIDENTS_RING = 16,
+    GALLIC_ACID = 17,
+    FERRYMAN_SONG = 18,
+    RING_OF_LIGHTNING = 19,
+    UMBRELLA = 20,
+    GEM = 21,
+    HORN = 22,
+    BLOWGUN = 23,
+    ITINERARY_TOKEN = 24,
+    SLICE_OF_TART = 25,
+    RADIO = 26,
+    GARDEN_BALSAM = 27,
+    MAGIC_SLATE = 28,
+    TRANSLATOR = 29,
+    DIPLOMA = 30,
+    FRAGMENT_FRANCOS = 31,
+    FRAGMENT_SUPS = 32,
+    FRAGMENT_MOSQUIBEES = 33,
+    FRAGMENT_WANNIES = 34,
+    ISLAND_CX_KEY = 35,
+    PICKAXE = 36,
+    BURGERMASTER_KEY = 37,
+    BURGERMASTER_NOTES = 38,
+    PROTECTIVE_SPELL = 39,
+    GREEN_MAGIC_BALL = 40,
+    RED_MAGIC_BALL = 41,
+    FIRE_MAGIC_BALL = 42,
+    ZLITOS = 43,
+    DARK_MONK_KEY = 44,
+    MEMORY_VIEWER = 45,
+    BLOWTRON = 46,
+    WIZARDS_TUNIC = 47,
+    JET_PACK = 48,
+    CRYSTAL_PIECE = 49,
+    LASER_PISTON_WITH_CRYSTAL = 50,
+    GREEN_RING_OF_LIGHTNING = 51,
+    RED_RING_OF_LIGHTNING = 52,
+    FIRE_RING_OF_LIGHTNING = 53,
+}
+
 // LBA2InventoryMapping maps from inventory slot ID to item ID.
 const LBA2InventoryMapping = {
-    0: 1,   // Magic ball
-    1: 2,   // Darts
-    2: 23,  // Blowgun
-    3: 22,  // Horn
-    4: 11,  // Wanny glove
-    5: 9,   // Laser pistol
-    6: 10,  // Sword
-    7: 4,   // Tunic
-    8: 3,   // Sendell's ball
-    9: 19,  // Lightning spell
-    10: 39, // Protection spell
-    11: 28, // Magic slate
-    12: 30, // Wizards diploma
-    13: 31, // DMKEY_KNARTA
-    14: 0,  // Holomap
-    15: 12, // Protopack
-    16: 26, // Radio
-    17: 29, // Translator
-    18: 14, // Meca penguin
-    19: 8,  // Money
-    20: 32, // DMKEY_SUP
-    21: 18, // Ferry man song
-    22: 25, // Firefly tart
-    23: 35, // Key to island CX
-    24: 21, // Gems
-    25: 5,  // Pearl of incandescence
-    26: 36, // Pickaxe
-    27: 33, // DMKEY_MOSQUI
-    28: 15, // Gazogem
-    29: 16, // Medallion
-    30: 20, // Umbrella
-    31: 24, // Red Viewer
-    32: 13, // Ferry ticket
-    33: 38, // Franco note
-    34: 34, // DMKEY_BLAFARD
+    0: LBA2Items.MAGIC_BALL,
+    1: LBA2Items.DARTS,
+    2: LBA2Items.BLOWGUN,
+    3: LBA2Items.HORN,
+    4: LBA2Items.WANNIE_GLOVE,
+    5: LBA2Items.LASER_PISTON_WITH_CRYSTAL,
+    6: LBA2Items.SWORD,
+    7: LBA2Items.TUNIC,
+    8: LBA2Items.SENDELLS_BALL,
+    9: LBA2Items.RING_OF_LIGHTNING,
+    10: LBA2Items.PROTECTIVE_SPELL,
+    11: LBA2Items.MAGIC_SLATE,
+    12: LBA2Items.DIPLOMA,
+    13: LBA2Items.FRAGMENT_FRANCOS,
+    14: LBA2Items.HOLOMAP,
+    15: LBA2Items.PROTO_PACK,
+    16: LBA2Items.RADIO,
+    17: LBA2Items.TRANSLATOR,
+    18: LBA2Items.TRANSLATOR,
+    19: LBA2Items.KASHES,
+    20: LBA2Items.FRAGMENT_SUPS,
+    21: LBA2Items.FERRYMAN_SONG,
+    22: LBA2Items.SLICE_OF_TART,
+    23: LBA2Items.ISLAND_CX_KEY,
+    24: LBA2Items.GEM,
+    25: LBA2Items.PEARL_OF_INCANDESCENCE,
+    26: LBA2Items.PICKAXE,
+    27: LBA2Items.FRAGMENT_MOSQUIBEES,
+    28: LBA2Items.GAZOGEM,
+    29: LBA2Items.DISSIDENTS_RING,
+    30: LBA2Items.UMBRELLA,
+    31: LBA2Items.MEMORY_VIEWER,
+    32: LBA2Items.FERRY_TICKET,
+    33: LBA2Items.BURGERMASTER_NOTES,
+    34: LBA2Items.FRAGMENT_WANNIES,
 };
 
 export const LBA2WeaponToBodyMapping = {
-    1: BodyType.TWINSEN_TUNIC, // Magic ball
-    2: BodyType.TWINSEN_TUNIC, // Darts
-    9: BodyType.TWINSEN_LASER_PISTOL,
-    10: BodyType.TWINSEN_SWORD,
-    11: BodyType.TWINSEN_WANNIE_GLOVE,
-    23: BodyType.TWINSEN_BLOWGUN,
+    [LBA2Items.MAGIC_BALL]: BodyType.TWINSEN_TUNIC,
+    [LBA2Items.DARTS]: BodyType.TWINSEN_TUNIC,
+    [LBA2Items.LASER_PISTON_WITH_CRYSTAL]: BodyType.TWINSEN_LASER_PISTOL,
+    [LBA2Items.SWORD]: BodyType.TWINSEN_SWORD,
+    [LBA2Items.WANNIE_GLOVE]: BodyType.TWINSEN_WANNIE_GLOVE,
+    [LBA2Items.BLOWGUN]: BodyType.TWINSEN_BLOWGUN,
 };
 
 // GetInventoryMapping returns the game inventory mapping (slot ID to item ID)

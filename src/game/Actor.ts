@@ -607,6 +607,11 @@ export default class Actor {
     }
 
     hit(hitBy, hitStrength) {
+        if (this.sprite) {
+            this.state.wasHitBy = hitBy;
+            return;
+        }
+
         // Ensure we don't repeatedly play the hit animation.
         if (this.state.isHit &&
             this.props.animIndex === AnimType.HIT) {
