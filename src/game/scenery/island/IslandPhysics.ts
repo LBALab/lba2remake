@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { LIQUID_TYPES, getTriangleFromPos} from './ground';
+import { LIQUID_TYPES, getTriangleFromPos } from './ground';
 import { WORLD_SIZE, getPositions } from '../../../utils/lba';
 import { BehaviourMode } from '../../loop/hero';
 import { AnimType } from '../../data/animType';
@@ -28,7 +28,8 @@ const DEFAULT_GROUND = {
     height: 0,
     sound: null,
     collision: null,
-    liquid: 0
+    liquid: 0,
+    points: [],
 };
 
 const GRID_UNIT = 1 / 64;
@@ -43,6 +44,53 @@ export default class IslandPhysics {
         for (const section of layout.groundSections) {
             this.sections.set(`${section.x},${section.z}`, section);
         }
+    }
+
+    getNormal(scene: Scene, position: THREE.Vector3, boundingBox: THREE.Box3) {
+        POSITION.copy(position);
+        POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
+        const section = this.findSection(POSITION);
+        if (!section) {
+            return null;
+        }
+
+        const ground = this.getGround(section, POSITION);
+        if (ground.points.length === 3 && position.y - ground.height < 0.1) {
+            const triangleToWorld = (p: THREE.Vector3) => {
+                return new THREE.Vector3(
+                   WORLD_SIZE_M2 * (section.x + 1) - ((p.x - 1) / GRID_SCALE) + 80,
+                   p.y,
+                   (p.z / GRID_SCALE) + section.z * WORLD_SIZE_M2 + 40,
+                );
+            };
+
+            const worldPoints = ground.points.map(triangleToWorld);
+            const a = worldPoints[1].clone().sub(worldPoints[0]);
+            const b = worldPoints[2].clone().sub(worldPoints[0]);
+            return a.cross(b).normalize();
+        }
+
+        ACTOR_BOX.copy(boundingBox);
+        ACTOR_BOX.translate(POSITION);
+        for (const obj of section.objects) {
+            const bb = obj.boundingBox;
+            if (ACTOR_BOX.intersectsBox(bb)) {
+                INTERSECTION.copy(ACTOR_BOX);
+                INTERSECTION.intersect(bb);
+                INTERSECTION.getSize(ITRS_SIZE);
+                ACTOR_BOX.getCenter(CENTER1);
+                bb.getCenter(CENTER2);
+                const dir = CENTER1.sub(CENTER2);
+                if (ACTOR_BOX.min.y < bb.max.y - H_THRESHOLD) {
+                    if (ITRS_SIZE.x < ITRS_SIZE.z) {
+                        return new THREE.Vector3(1 * Math.sign(dir.x), 0, 0);
+                    }
+                    return new THREE.Vector3(0, 0, 1 * Math.sign(dir.z));
+                }
+                return new THREE.Vector3(0, 1 * Math.sign(dir.y), 0);
+            }
+        }
+        return null;
     }
 
     processCollisions(scene: Scene, obj, time: Time) {
@@ -200,6 +248,7 @@ export default class IslandPhysics {
                     sound2: null,
                     collision: null,
                     liquid: 0,
+                    points: [],
                 };
             }
         }

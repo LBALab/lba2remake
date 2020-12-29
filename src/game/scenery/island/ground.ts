@@ -139,6 +139,7 @@ function loadTriangleForPhysics(section: IslandSection, x, z, xTgt, zTgt, idx) {
         collision: bits(flags, 17, 1),
         liquid: bits(flags, 12, 4),
         height: tgt && tgt.y,
+        points: PTS,
     };
 }
 
