@@ -426,13 +426,7 @@ export default class Scene {
     }
 
     getKeys() {
-        const keys = [];
-        this.extras.forEach((e) => {
-            if (e.spriteIndex === SpriteType.KEY) {
-                keys.push(e);
-            }
-        });
-        return keys;
+        return this.extras.filter(e => e.spriteIndex === SpriteType.KEY);
     }
 
     addMagicBall(magicBall: MagicBall) {
