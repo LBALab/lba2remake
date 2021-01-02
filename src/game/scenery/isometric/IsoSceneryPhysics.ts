@@ -134,7 +134,9 @@ export default class IsoSceneryPhysics {
                                     obj.state.isDrowningLava = true;
                                     break;
                                 case GROUND_TYPES.CAVE_SPIKES:
-                                    obj.hit(-1, 5);
+                                    if (obj.animState) { // if it's an actor
+                                        obj.hit(-1, 5);
+                                    }
                                     break;
                             }
                         }

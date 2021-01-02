@@ -18,6 +18,8 @@ const BALL_BOX = new THREE.Box3();
 export default class MagicBall {
     readonly game: Game;
     readonly scene: Scene;
+    readonly isFetchingKey: boolean;
+
     direction: THREE.Vector3;
     position: THREE.Vector3;
     threeObject?: THREE.Object3D;
@@ -36,6 +38,7 @@ export default class MagicBall {
         this.game = game;
         this.scene = scene;
         this.position = position;
+        this.isFetchingKey = (scene.getKeys().length > 0);
     }
 
     private async loadMesh() {
@@ -57,6 +60,17 @@ export default class MagicBall {
 
     update(time: Time) {
         this.position.add(this.direction.clone().multiplyScalar(time.delta * MAGIC_BALL_SPEED));
+
+        if (this.isFetchingKey) {
+            const key = this.scene.getKeys()[0];
+            if (this.position.distanceTo(key.physics.position) < 0.1) {
+                key.collectKey(this.game, this.scene);
+                this.scene.removeMagicBall();
+            }
+            this.threeObject.position.copy(this.position);
+            return;
+        }
+
         this.direction.y -= GRAVITY_ACC;
         this.threeObject.position.copy(this.position);
 
@@ -114,7 +128,7 @@ export default class MagicBall {
     throw(angle, behaviour) {
         this.scene.actors[0].playSample(SampleType.MAGIC_BALL_THROW);
 
-        const direction = new THREE.Vector3(0, 0.1, 1.1);
+        let direction = new THREE.Vector3(0, 0.1, 1.1);
         switch (behaviour) {
             case BehaviourMode.AGGRESSIVE:
                 direction.z = 1.2;
@@ -124,16 +138,8 @@ export default class MagicBall {
                 direction.z = 0.3;
                 break;
         }
-
         const euler = new THREE.Euler(0, angle, 0, 'XZY');
-        this.direction = direction.applyEuler(euler);
-        this.bounces = 0;
-        this.maxBounces = DEFAULT_MAX_BOUNCES;
-        if (this.game.getState().hero.magic === 0) {
-            this.maxBounces = 0;
-        } else {
-            this.game.getState().hero.magic -= 1;
-        }
+        direction.applyEuler(euler);
 
         // Offset the ball to line up with Twinsen's hand.
         this.position.add(new THREE.Vector3(0, 1.45, 1).applyEuler(euler));
@@ -142,5 +148,19 @@ export default class MagicBall {
         this.position.add(perpendicularDirection.clone().multiplyScalar(0.5));
 
         this.threeObject.position.copy(this.position);
+        if (this.isFetchingKey) {
+            const key = this.scene.getKeys()[0];
+            const keyPos = key.physics.position;
+            direction = keyPos.clone().sub(this.position).normalize();
+        }
+
+        this.direction = direction;
+        this.bounces = 0;
+        this.maxBounces = DEFAULT_MAX_BOUNCES;
+        if (this.game.getState().hero.magic === 0) {
+            this.maxBounces = 0;
+        } else {
+            this.game.getState().hero.magic -= 1;
+        }
     }
 }
