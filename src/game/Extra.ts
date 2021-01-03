@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { getRandom, getHtmlColor } from '../utils/lba';
 import { SpriteType } from './data/spriteType';
+import { SampleType } from './data/sampleType';
 import { loadSprite } from './scenery/isometric/sprites';
 import { clone } from 'lodash';
 import { MAX_LIFE } from './GameState';
@@ -24,14 +25,12 @@ const ExtraFlag = {
 
 const GRAVITY = 40000;
 
-const SAMPLE_BONUS = 3;
-const SAMPLE_BONUS_FOUND = 2;
-
 interface ExtraProps {
     bonus: number;
     flags: {
         hasCollisions: boolean;
         hasCollisionFloor: boolean;
+        hasCollisionBricks: boolean;
         canFall: boolean;
         isVisible: boolean;
         isSprite: boolean;
@@ -68,6 +67,7 @@ export default class Extra {
     readonly index: number;
     readonly physics: ExtraPhysics;
     readonly props: ExtraProps;
+    readonly model: any;
     readonly isSprite: boolean;
     readonly spriteIndex: SpriteType;
     readonly lifeTime: number;
@@ -98,7 +98,7 @@ export default class Extra {
         extra.init(angle, 40, 15);
         await extra.loadMesh(scene);
         scene.addExtra(extra);
-        extra.playSample(extra.sound, SAMPLE_BONUS);
+        extra.playSample(extra.sound, SampleType.BONUS_FOUND);
         return extra;
     }
 
@@ -138,10 +138,17 @@ export default class Extra {
             flags: {
                 hasCollisions: true,
                 hasCollisionFloor: true,
+                hasCollisionBricks: true,
                 canFall: true,
                 isVisible: true,
                 isSprite: true,
             }
+        };
+        this.model = {
+            boundingBox: new THREE.Box3(
+                new THREE.Vector3(-0.1, -0.1, -0.1),
+                new THREE.Vector3(0.1, 0.1, 0.1),
+            ),
         };
         this.state = {
             isVisible: true,
@@ -311,27 +318,37 @@ export default class Extra {
         if (shouldCollect ||
             (this.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT) {
             if (this.info && shouldCollect) {
-                this.stopSample(this.sound, SAMPLE_BONUS);
-                this.playSample(this.sound, SAMPLE_BONUS_FOUND);
-                const itrjId = `extra_${this.index}_${this.info}`;
-                const interjections = clone(game.getUiState().interjections);
-
-                interjections[itrjId] = {
-                    scene: scene.index,
-                    obj: this,
-                    color: getHtmlColor(scene.props.palette, (10 * 16) + 12),
-                    value: this.info,
-                };
-                game.setUiState({interjections});
-                setTimeout(() => {
-                    const interjectionsCopy = clone(game.getUiState().interjections);
-                    delete interjectionsCopy[itrjId];
-                    game.setUiState({interjections: interjectionsCopy});
-                }, 1000);
+                this.collect(game, scene);
             }
-
             scene.removeExtra(this);
         }
+    }
+
+    private collect(game: Game, scene: Scene) {
+        this.stopSample(this.sound, SampleType.BONUS_FOUND);
+        this.playSample(this.sound, SampleType.BONUS_COLLECTED);
+        const itrjId = `extra_${this.index}_${this.info}`;
+        const interjections = clone(game.getUiState().interjections);
+
+        interjections[itrjId] = {
+            scene: scene.index,
+            obj: this,
+            color: getHtmlColor(scene.props.palette, (10 * 16) + 12),
+            value: this.info,
+        };
+        game.setUiState({interjections});
+        setTimeout(() => {
+            const interjectionsCopy = clone(game.getUiState().interjections);
+            delete interjectionsCopy[itrjId];
+            game.setUiState({interjections: interjectionsCopy});
+        }, 1000);
+    }
+
+    collectKey(game: Game, scene: Scene) {
+        game.getState().hero.keys += 1;
+        this.info = 1;
+        this.collect(game, scene);
+        scene.removeExtra(this);
     }
 }
 

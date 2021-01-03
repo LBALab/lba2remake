@@ -409,6 +409,9 @@ function processActorMovement(
                     animIndex = AnimType.SWORD_ATTACK;
                     break;
             }
+            if (hero.props.entityIndex === BehaviourMode.HORN) {
+                animIndex = AnimType.THROW;
+            }
         }
     }
 

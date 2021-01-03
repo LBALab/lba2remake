@@ -24,6 +24,7 @@ import { createSceneVariables, findUsedVarGames } from './scene/variables';
 import Island from './scenery/island/Island';
 import { Time } from '../datatypes';
 import { processPhysicsFrame } from './loop/physics';
+import { SpriteType } from './data/spriteType';
 
 export interface SceneProps {
     index: number;
@@ -96,6 +97,9 @@ export default class Scene {
             parent
         );
         await scene.loadObjects();
+
+        // Little keys are scene relative.
+        game.getState().hero.keys = 0;
 
         if (data.isIsland) {
             if (!!parent) {
@@ -419,6 +423,10 @@ export default class Scene {
     addExtra(extra: Extra) {
         this.extras.push(extra);
         this.addMesh(extra.threeObject);
+    }
+
+    getKeys() {
+        return this.extras.filter(e => e.spriteIndex === SpriteType.KEY);
     }
 
     addMagicBall(magicBall: MagicBall) {
