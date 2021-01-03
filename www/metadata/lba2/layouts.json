@@ -1759,6 +1759,11 @@
       "file": "GB_144_railing_lamp.glb",
       "orientation": 0
     },
+    "145": {
+      "replace": true,
+      "file": "GB_145_book.glb",
+      "orientation": 0
+    },
     "146": {
       "replace": true,
       "file": "GB_146_railing_slope.glb",
@@ -1852,11 +1857,6 @@
       "file": "GB_069_stairs_var02.glb",
       "orientation": 0
     },
-    "54:2x3x2:0,1364,0,1365,1366,1368,1369,1370,1371,1372,1373,1375": {
-      "replace": true,
-      "file": "GB_053_054_table_straight_var01.glb",
-      "orientation": 1
-    },
     "144:1x7x1:1515,1516,1516,1516,1516,1517,1518": {
       "replace": true,
       "file": "GB_144_railing_lamp_var02.glb",
@@ -1912,11 +1912,6 @@
       "file": "GB_053_054_table_straight_var01.glb",
       "orientation": 0
     },
-    "53:2x3x2:0,1364,0,1365,1366,1368,1369,1370,1371,1372,1373,1375": {
-      "replace": true,
-      "file": "GB_053_054_table_straight_var01.glb",
-      "orientation": 1
-    },
     "54:2x3x2:0,1352,0,1353,1354,1355,0,127,0,127,1356,1357": {
       "replace": true,
       "file": "GB_053_054_table_straight_var01.glb",
@@ -1931,6 +1926,16 @@
       "replace": true,
       "file": "GB_142_143_ladder_var01.glb",
       "orientation": 3
+    },
+    "53:2x3x2:0,1364,0,1365,1366,1368,1369,1370,1371,1372,1373,1375": {
+      "replace": true,
+      "file": "GB_053_054_table_straight_var01.glb",
+      "orientation": 0
+    },
+    "54:2x3x2:0,1364,0,1365,1366,1368,1369,1370,1371,1372,1373,1375": {
+      "replace": true,
+      "file": "GB_053_054_table_straight_var01.glb",
+      "orientation": 1
     }
   },
   "3": {
