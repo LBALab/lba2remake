@@ -1,6 +1,7 @@
 
 export const SampleType = {
     MAGIC_BALL_THROW: 0,
+    FIRE_BALL_THROW: 1,
     BONUS_COLLECTED: 2,
     BONUS_FOUND: 3,
     OBJECT_FOUND: 6,

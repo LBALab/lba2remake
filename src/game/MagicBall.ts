@@ -126,7 +126,11 @@ export default class MagicBall {
     }
 
     throw(angle, behaviour) {
-        this.scene.actors[0].playSample(SampleType.MAGIC_BALL_THROW);
+        if (this.game.getState().hero.magicball.level < 4) {
+            this.scene.actors[0].playSample(SampleType.MAGIC_BALL_THROW);
+        } else {
+            this.scene.actors[0].playSample(SampleType.FIRE_BALL_THROW);
+        }
 
         let direction = new THREE.Vector3(0, 0.1, 1.1);
         switch (behaviour) {
