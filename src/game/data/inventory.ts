@@ -16,7 +16,7 @@ const LBAInventoryMapping = {
 const LBA2InventoryColumns = 7;
 const LBA2InventoryRows = 5;
 
-export const enum LBA2Items {
+export enum LBA2Items {
     HOLOMAP = 0,
     MAGIC_BALL = 1,
     DARTS = 2,
@@ -136,4 +136,9 @@ export function GetInventoryRows() {
 export function GetInventoryColumns() {
     // TODO: Dynamically swap to use LBA once we have functionality for that.
     return LBA2InventoryColumns;
+}
+
+export function GetInventoryItems() {
+    // TODO: Dynamically swap to use LBA once we have functionality for that.
+    return LBA2Items;
 }

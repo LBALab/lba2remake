@@ -2,6 +2,7 @@ import { clone } from 'lodash';
 import { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
+import { GetInventoryItems } from '../data/inventory';
 import { setMagicBallLevel } from '../GameState';
 import { unimplemented } from './utils';
 import { WORLD_SCALE, getRandom } from '../../utils/lba';
@@ -223,6 +224,15 @@ export function INC_CHAPTER(this: ScriptContext) {
     this.game.getState().chapter += 1;
 }
 
+// FOUND_OBJECT_CALLBACKS allow us to execute arbitrary code when a specific item is found.
+const FOUND_OBJECT_CALLBACKS = {
+    [GetInventoryItems().MAGIC_BALL]: (game, _scene) => {
+        if (game.getState().hero.equippedItemId === -1) {
+            game.getState().hero.equippedItemId = 1;
+        }
+    },
+};
+
 export function FOUND_OBJECT(this: ScriptContext, cmdState, id) {
     const hero = this.scene.actors[0];
     if (!cmdState.skipListener) {
@@ -241,6 +251,11 @@ export function FOUND_OBJECT(this: ScriptContext, cmdState, id) {
 
         this.game.getState().flags.quest[id] = 1;
         hero.playSample(SampleType.OBJECT_FOUND);
+
+        if (FOUND_OBJECT_CALLBACKS[id]) {
+            FOUND_OBJECT_CALLBACKS[id](this.game, this.scene);
+        }
+
         const text = this.game.texts[id];
         this.game.setUiState({
             text: {
