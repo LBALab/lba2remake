@@ -134,7 +134,7 @@ export default class IsoSceneryPhysics {
                                     obj.state.isDrowningLava = true;
                                     break;
                                 case GROUND_TYPES.CAVE_SPIKES:
-                                    if (obj.animState) { // if it's an actor
+                                    if (obj.animState && !obj.state.isJumping) { // if it's an actor
                                         obj.hit(-1, 5);
                                     }
                                     break;
@@ -301,8 +301,8 @@ function processBoxIntersections(
     ACTOR_BOX.min.multiplyScalar(STEP);
     ACTOR_BOX.max.multiplyScalar(STEP);
     ACTOR_BOX.translate(position);
-    DIFF.set(0, 1 / 128, 0);
-    ACTOR_BOX.translate(DIFF);
+    ACTOR_BOX.min.y += 1 / 128;
+
     let collision = false;
     for (let ox = -1; ox < 2; ox += 1) {
         for (let oz = -1; oz < 2; oz += 1) {
@@ -314,6 +314,7 @@ function processBoxIntersections(
                     if (column.shape !== 1) {
                         BB.max.y -= STEP;
                     }
+
                     if (intersectBox(actor, position)) {
                         collision = true;
                     }
