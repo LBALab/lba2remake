@@ -230,7 +230,6 @@ function getColumnY(column, position: THREE.Vector3) {
 
 const POSITION = new THREE.Vector3();
 const ACTOR_BOX = new THREE.Box3();
-const ACTOR_BOX_TEMP = new THREE.Box3();
 const INTERSECTION = new THREE.Box3();
 const ITRS_SIZE = new THREE.Vector3();
 const CENTER1 = new THREE.Vector3();
@@ -302,8 +301,6 @@ function processBoxIntersections(
     ACTOR_BOX.min.multiplyScalar(STEP);
     ACTOR_BOX.max.multiplyScalar(STEP);
     ACTOR_BOX.translate(position);
-    ACTOR_BOX_TEMP.copy(ACTOR_BOX);
-    DIFF.set(0, 1 / 128, 0);
 
     let collision = false;
     for (let ox = -1; ox < 2; ox += 1) {
@@ -315,13 +312,6 @@ function processBoxIntersections(
                     BB.copy(column.box);
                     if (column.shape !== 1) {
                         BB.max.y -= STEP;
-                    }
-
-                    // Reset and only apply the Y offset if it's a "floor" box.
-                    // This fixes Ralph getting stuck running out of the Trulu cave.
-                    ACTOR_BOX.copy(ACTOR_BOX_TEMP);
-                    if (BB.min.y < ACTOR_BOX.min.y) {
-                        ACTOR_BOX.translate(DIFF);
                     }
 
                     if (intersectBox(actor, position)) {
@@ -347,6 +337,11 @@ function intersectBox(actor: Actor, position: THREE.Vector3) {
         INTERSECTION.copy(ACTOR_BOX);
         INTERSECTION.intersect(BB);
         INTERSECTION.getSize(ITRS_SIZE);
+
+        if (ITRS_SIZE.y <= 1 / 128) {
+            return false;
+        }
+
         ACTOR_BOX.getCenter(CENTER1);
         BB.getCenter(CENTER2);
         const dir = CENTER1.sub(CENTER2);
