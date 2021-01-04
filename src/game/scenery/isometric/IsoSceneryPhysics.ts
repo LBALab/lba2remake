@@ -301,6 +301,7 @@ function processBoxIntersections(
     ACTOR_BOX.min.multiplyScalar(STEP);
     ACTOR_BOX.max.multiplyScalar(STEP);
     ACTOR_BOX.translate(position);
+    ACTOR_BOX.min.y += 1 / 128;
 
     let collision = false;
     for (let ox = -1; ox < 2; ox += 1) {
@@ -337,11 +338,6 @@ function intersectBox(actor: Actor, position: THREE.Vector3) {
         INTERSECTION.copy(ACTOR_BOX);
         INTERSECTION.intersect(BB);
         INTERSECTION.getSize(ITRS_SIZE);
-
-        if (ITRS_SIZE.y <= 1 / 128) {
-            return false;
-        }
-
         ACTOR_BOX.getCenter(CENTER1);
         BB.getCenter(CENTER2);
         const dir = CENTER1.sub(CENTER2);
