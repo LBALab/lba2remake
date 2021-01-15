@@ -910,6 +910,21 @@
     "115": {
       "mirror": true
     },
+    "117": {
+      "replace": true,
+      "file": "SE_117_stacked_plates.glb",
+      "orientation": 0
+    },
+    "118": {
+      "replace": true,
+      "file": "SE_118_black_powder_mountain.glb",
+      "orientation": 0
+    },
+    "119": {
+      "replace": true,
+      "file": "SE_119_yellow_substance_mountain.glb",
+      "orientation": 0
+    },
     "148": {
       "mirror": true
     },
