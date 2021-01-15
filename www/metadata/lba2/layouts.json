@@ -2123,8 +2123,28 @@
     "9": {
       "mirror": true
     },
+    "10": {
+      "replace": true,
+      "file": "DI_010_pillar.glb",
+      "orientation": 0
+    },
+    "11": {
+      "replace": true,
+      "file": "DI_011_fountain.glb",
+      "orientation": 0
+    },
     "13": {
       "mirror": true
+    },
+    "15": {
+      "replace": true,
+      "file": "DI_015_pot.glb",
+      "orientation": 0
+    },
+    "16": {
+      "replace": true,
+      "file": "DI_016_candle_stand.glb",
+      "orientation": 0
     },
     "17": {
       "mirror": true
@@ -2138,11 +2158,51 @@
     "22": {
       "mirror": true
     },
+    "25": {
+      "replace": true,
+      "file": "DI_025_plant.glb",
+      "orientation": 0
+    },
+    "26": {
+      "replace": true,
+      "file": "DI_026_027_lamp.glb",
+      "orientation": 0
+    },
+    "27": {
+      "replace": true,
+      "file": "DI_026_027_lamp.glb",
+      "orientation": 3
+    },
+    "28": {
+      "replace": true,
+      "file": "DI_028_table.glb",
+      "orientation": 0
+    },
     "29": {
       "mirror": true
     },
     "30": {
       "mirror": true
+    },
+    "32": {
+      "replace": true,
+      "file": "DI_032_shelf.glb",
+      "orientation": 0
+    },
+    "34": {
+      "replace": true,
+      "file": "DI_034_035_open_wall.glb",
+      "orientation": 3
+    },
+    "35": {
+      "replace": true,
+      "file": "DI_034_035_open_wall.glb",
+      "orientation": 0
+    },
+    "36": {
+      "replace": true,
+      "file": "DI_036_bottle.glb",
+      "orientation": 0
     },
     "37": {
       "mirror": true
@@ -2174,14 +2234,124 @@
     "49": {
       "mirror": true
     },
+    "51": {
+      "replace": true,
+      "file": "DI_051_candle.glb",
+      "orientation": 0
+    },
     "54": {
       "mirror": true
+    },
+    "55": {
+      "replace": true,
+      "file": "DI_055_candle_on_plate.glb",
+      "orientation": 0
+    },
+    "56": {
+      "replace": true,
+      "file": "DI_056_small_bottle.glb",
+      "orientation": 0
+    },
+    "59": {
+      "replace": true,
+      "file": "DI_059_bunny_in_bowl.glb",
+      "orientation": 0
     },
     "61": {
       "mirror": true
     },
     "62": {
       "mirror": true
+    },
+    "64": {
+      "replace": true,
+      "file": "DI_064_store_items.glb",
+      "orientation": 0
+    },
+    "65": {
+      "replace": true,
+      "file": "DI_065_tomatoes.glb",
+      "orientation": 0
+    },
+    "66": {
+      "replace": true,
+      "file": "DI_066_candle.glb",
+      "orientation": 0
+    },
+    "67": {
+      "replace": true,
+      "file": "DI_067_shelf_items.glb",
+      "orientation": 0
+    },
+    "70": {
+      "replace": true,
+      "file": "DI_070_cash_register.glb",
+      "orientation": 0
+    },
+    "71": {
+      "replace": true,
+      "file": "DI_071_072_railing_straight_pole.glb",
+      "orientation": 0
+    },
+    "72": {
+      "replace": true,
+      "file": "DI_071_072_railing_straight_pole.glb",
+      "orientation": 1
+    },
+    "73": {
+      "replace": true,
+      "file": "DI_073_bunny_doll.glb",
+      "orientation": 0
+    },
+    "74": {
+      "replace": true,
+      "file": "DI_074_telescope.glb",
+      "orientation": 0
+    },
+    "75": {
+      "replace": true,
+      "file": "DI_075_076_railing_corner.glb",
+      "orientation": 0
+    },
+    "76": {
+      "replace": true,
+      "file": "DI_075_076_railing_corner.glb",
+      "orientation": 2
+    },
+    "77": {
+      "replace": true,
+      "file": "DI_077_78_railing_end.glb",
+      "orientation": 0
+    },
+    "78": {
+      "replace": true,
+      "file": "DI_077_78_railing_end.glb",
+      "orientation": 3
+    },
+    "79": {
+      "replace": true,
+      "file": "DI_079_080_railing_straight_rope.glb",
+      "orientation": 1
+    },
+    "80": {
+      "replace": true,
+      "file": "DI_079_080_railing_straight_rope.glb",
+      "orientation": 0
+    },
+    "82": {
+      "replace": true,
+      "file": "DI_082_radio_broadcaster.glb",
+      "orientation": 0
+    },
+    "85": {
+      "replace": true,
+      "file": "DI_085_desk.glb",
+      "orientation": 0
+    },
+    "86": {
+      "replace": true,
+      "file": "DI_086_paper_rolls_container.glb",
+      "orientation": 0
     },
     "92": {
       "mirror": true
@@ -2191,6 +2361,61 @@
     },
     "95": {
       "mirror": true
+    },
+    "96": {
+      "replace": true,
+      "file": "DI_096_health.glb",
+      "orientation": 0
+    },
+    "97": {
+      "replace": true,
+      "file": "DI_097_magic.glb",
+      "orientation": 0
+    },
+    "98": {
+      "replace": true,
+      "file": "DI_098_elephant_doll.glb",
+      "orientation": 0
+    },
+    "32:3x1x1:5361,5362,5362": {
+      "replace": true,
+      "file": "DI_032_shelf_var01.glb",
+      "orientation": 0
+    },
+    "57:3x6x1:5056,5057,5058,5059,5060,5061,5062,5063,5064,5065,5066,5067,5068,5069,5070,5071,5072,5073": {
+      "replace": true,
+      "file": "DI_057_three_shelfs_with_items.glb",
+      "orientation": 0
+    },
+    "16:1x6x2:4340,4341,4342,4343,4344,4345,4340,4341,4345": {
+      "replace": true,
+      "file": "DI_016_candle_stand_var01.glb",
+      "orientation": 0
+    },
+    "25:3x6x2:0,0,4405,0,0,4406,0,0,4407,0,0,4408,0,0,4409,4410,4411,4412,127,4413,4414,4415,4416,4417,4418,4419,4420,4421,4422,4423,4424,4425,4426,4427,4428,4429": {
+      "replace": true,
+      "file": "DI_025_plant.glb",
+      "orientation": 0
+    },
+    "25:2x6x3:0,127,0,127,0,4401,0,4402,0,4403,127,4404,0,4405,0,4406,0,4407,0,4408,0,4409,4411,4412,4413,4414,4416,4417,4419,4420,4422,4423,4425,4426,4428,4429": {
+      "replace": true,
+      "file": "DI_025_plant.glb",
+      "orientation": 0
+    },
+    "10:1x5x2:4331,4332,4333,4334,4335,4331,4332,4333,4334,4335": {
+      "replace": true,
+      "file": "DI_010_pillar_var01_02.glb",
+      "orientation": 0
+    },
+    "10:2x5x1:4331,4331,4332,4332,4333,4333,4334,4334,4335,4335": {
+      "replace": true,
+      "file": "DI_010_pillar_var01_02.glb",
+      "orientation": 1
+    },
+    "10:1x4x1:4331,4332,4333,4335": {
+      "replace": true,
+      "file": "DI_010_pillar_var03.glb",
+      "orientation": 0
     }
   },
   "6": {
