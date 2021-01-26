@@ -901,6 +901,11 @@
       "file": "SE_108_big_plate.glb",
       "orientation": 0
     },
+    "109": {
+      "replace": true,
+      "file": "SE_109_suspicious_recipient.glb",
+      "orientation": 0
+    },
     "113": {
       "mirror": true
     },
@@ -923,6 +928,16 @@
     "119": {
       "replace": true,
       "file": "SE_119_yellow_substance_mountain.glb",
+      "orientation": 0
+    },
+    "122": {
+      "replace": true,
+      "file": "SE_122_green_candle.glb",
+      "orientation": 0
+    },
+    "123": {
+      "replace": true,
+      "file": "SE_123_gargoyle.glb",
       "orientation": 0
     },
     "148": {
@@ -998,6 +1013,11 @@
       "file": "SE_166_167_small_bars.glb",
       "orientation": 0
     },
+    "168": {
+      "replace": true,
+      "file": "SE_168_small_green_candle.glb",
+      "orientation": 0
+    },
     "178": {
       "replace": true,
       "file": "SE_150_152_178_179_baseboard.glb",
@@ -1043,6 +1063,11 @@
     },
     "199": {
       "mirror": true
+    },
+    "214": {
+      "replace": true,
+      "file": "SE_214_s_of_sendell.glb",
+      "orientation": 0
     },
     "217": {
       "suppress": true
