@@ -656,9 +656,6 @@
     }
   },
   "1": {
-    "0": {
-      "mirror": true
-    },
     "1": {
       "mirror": true
     },
@@ -941,7 +938,9 @@
       "orientation": 0
     },
     "148": {
-      "mirror": true
+      "replace": true,
+      "file": "SE_148_cubic_pillar_top.glb",
+      "orientation": 0
     },
     "149": {
       "replace": true,
@@ -1018,6 +1017,11 @@
       "file": "SE_168_small_green_candle.glb",
       "orientation": 0
     },
+    "173": {
+      "replace": true,
+      "file": "SE_173_magic_chest.glb",
+      "orientation": 0
+    },
     "178": {
       "replace": true,
       "file": "SE_150_152_178_179_baseboard.glb",
@@ -1057,6 +1061,26 @@
       "replace": true,
       "file": "SE_161_182_183_185_baseboard_corner.glb",
       "orientation": 2
+    },
+    "186": {
+      "replace": true,
+      "file": "SE_186_ground_light.glb",
+      "orientation": 0
+    },
+    "187": {
+      "replace": true,
+      "file": "SE_187_188_magic_candle_holder.glb",
+      "orientation": 0
+    },
+    "188": {
+      "replace": true,
+      "file": "SE_187_188_magic_candle_holder.glb",
+      "orientation": 1
+    },
+    "196": {
+      "replace": true,
+      "file": "SE_196_blue_curtains.glb",
+      "orientation": 0
     },
     "198": {
       "mirror": true
