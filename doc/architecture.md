@@ -138,4 +138,6 @@ sections of the editor where we can add additional content with the purpose of d
 
 ### Audio
 
-(...)
+The `audio` folder is where you can find the implementation of our audio routines for music, voice acting and sound effects.
+
+We have implemented experimental 3D positional audio and you can activated under the *Options* menu. It still not a perfect implementation but already has some good results.
