@@ -73,6 +73,69 @@ There are some advantages to keep using it though, like readily available **vect
 (...)
 
 
-## Code architecture
+## Code Architecture
+
+(...)
+
+## Project Structure
+
+The project follows a conventional structure of a modern web application with small nuances.
+
+The `www` folder is the root of the web application, and you can find all the project assets. It includes the original game assets under a `data` folder, the editor icons, the engine metadata, our remake binaries like 3D models and textures, configuration files and other assets like fonts and stylesheets.
+
+The `assetsSource` contains the remake source files for our 3D models and textures. You can find more details in the [art workflow](art_workflow.md).
+
+The `utils/convert` holds a sets of scripts we used to dump the game original files from GOG and Steam versions of the games. Instructions on how to dump the files can be found under [getting started](getting_started.md) guide.
+
+The `src` folder is where the engine code is located and we will describe a bit more in details below.
+
+If you are a developer or just interesting of learning a bit more about this project, a good place to start would be understanding how the Little Big Adventure High Quality Resources (HQR) file format works.
+
+### Resources
+The specification of the HQR file format can be found [here](http://lbafileinfo.kazekr.net/index.php?title=High_quality_resource) and our  reader implementation in the [hqr.ts](../src/hqr.ts) file.
+
+HQR is a container with multiple other file formats inside. We have created a set of parsers which can deal with each file type. The parsers can be found in the [resources/parsers](../src/resources/parsers) folder.
+
+Not every file type has been documented yet, but you can find the majority them at [lbafileinfo](http://lbafileinfo.kazekr.net/index.php?title=File_formats_by_purpose).
+
+Since the engine works for both LBA1 and LBA2 games and we want to keep both games compatible and avoid introducing exceptions, we have created a resource configuration where all the resource types are configured. You can find them in the [www/resources](../www/resources) folder. These configurations are loaded at start of the game, depending which game you are playing (lba2 as default) and link each resource type to its parser (file type) and content location. Through out the whole engine we only reference the resources via the type and never the parser or the file itself.
+
+
+### Game and Editor UI
+
+Our User Interface leverages [React](https://reactjs.org/), and it is composed by various components.
+
+We can focus initially by understanding the [GameUI.tsx](../src/ui/GameUI.tsx) and [Editor.tsx](../src/ui/Editor.tsx) components.
+
+GameUI is responsible with the gameplay interactions and holds the game state. It's componsed with various other components that enhaced the interaction with the game like the [Menu](../src/ui/Menu.tsx), [Behaviour Menu](../src/ui/BehaviourMenu.tsx), the [Text Interjections](../src/ui/TextInterjections.tsx) and [others](../src/ui/game).
+
+Editor wraps a GameUI component and adds the capability to support Areas,
+sections of the editor where we can add additional content with the purpose of debugging or modifying the game's state and content. The editor aims to be fully capable of allowing users to modify the entire game and create their own expiriences, and we hope we can reach this goal some stage in future.
+
+### Renderer
+
+(...)
+
+### Game
+
+(...)
+
+### Controls
+
+(...)
+
+### Cameras
+
+(...)
+
+### Scripting
+
+(...)
+
+### Models and Animations
+
+(...)
+
+### Audio
 
 (...)
