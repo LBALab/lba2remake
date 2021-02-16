@@ -2192,7 +2192,7 @@
     "3": {
       "replace": true,
       "file": "DI_003_004_006_007_entrance.glb",
-      "orientation": 3
+      "orientation": 2
     },
     "4": {
       "replace": true,
@@ -2362,6 +2362,11 @@
       "file": "DI_047_pillar.glb",
       "orientation": 0
     },
+    "48": {
+      "replace": true,
+      "file": "DI_048_towels_on_shelf.glb",
+      "orientation": 0
+    },
     "49": {
       "mirror": true
     },
@@ -2376,7 +2381,9 @@
       "orientation": 0
     },
     "54": {
-      "mirror": true
+      "replace": true,
+      "file": "DI_054_counter_corner.glb",
+      "orientation": 0
     },
     "55": {
       "replace": true,
@@ -2523,6 +2530,11 @@
     },
     "93": {
       "mirror": true
+    },
+    "94": {
+      "replace": true,
+      "file": "DI_094_towel_over_counter.glb",
+      "orientation": 0
     },
     "95": {
       "mirror": true
