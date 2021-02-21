@@ -385,7 +385,7 @@ export function SUB_LIFE_POINT_OBJ(this: ScriptContext, actor, value) {
 }
 
 export function HIT(this: ScriptContext, actor, strength) {
-    actor.wasHitBy = this.actor.index;
+    actor.state.wasHitBy = this.actor.index;
     actor.props.life -= strength;
 }
 
