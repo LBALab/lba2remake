@@ -25,6 +25,7 @@ import Island from './scenery/island/Island';
 import { Time } from '../datatypes';
 import { processPhysicsFrame } from './loop/physics';
 import { SpriteType } from './data/spriteType';
+import { LBA2PointOffsets } from './scripting/data/lba2/points';
 
 export interface SceneProps {
     index: number;
@@ -174,6 +175,22 @@ export default class Scene {
         );
         const zones = this.props.zones.map(props => new Zone(props, this.is3DCam));
         const points = this.props.points.map(props => new Point(props));
+        
+        // Apply point overrides if they exist.
+        points.forEach((p, i) => {
+            if (getParams().game == 'lba2') {
+                if (LBA2PointOffsets[this.index] && LBA2PointOffsets[this.index][p.props.index]) {
+                    console.log(p.props);
+                    const newProps = {
+                        index: p.props.index,
+                        pos: p.props.pos.map((num, i) => {
+                            return num + LBA2PointOffsets[this.index][p.props.index][i];
+                        }),
+                    };
+                    points[i] = new Point(newProps);
+                }
+            }            
+        });
 
         this.actors.push(...actors);
         this.zones.push(...zones);
