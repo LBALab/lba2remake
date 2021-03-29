@@ -175,21 +175,20 @@ export default class Scene {
         );
         const zones = this.props.zones.map(props => new Zone(props, this.is3DCam));
         const points = this.props.points.map(props => new Point(props));
-        
+
         // Apply point overrides if they exist.
         points.forEach((p, i) => {
-            if (getParams().game == 'lba2') {
+            if (getParams().game === 'lba2') {
                 if (LBA2PointOffsets[this.index] && LBA2PointOffsets[this.index][p.props.index]) {
-                    console.log(p.props);
                     const newProps = {
                         index: p.props.index,
-                        pos: p.props.pos.map((num, i) => {
-                            return num + LBA2PointOffsets[this.index][p.props.index][i];
+                        pos: p.props.pos.map((num, idx) => {
+                            return num + LBA2PointOffsets[this.index][p.props.index][idx];
                         }),
                     };
                     points[i] = new Point(newProps);
                 }
-            }            
+            }
         });
 
         this.actors.push(...actors);
