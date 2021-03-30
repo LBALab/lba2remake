@@ -30,12 +30,14 @@ export const BehaviourMode = {
 };
 
 export function updateHero(game: Game, scene: Scene, hero: Actor, time: Time) {
-    if (hero.props.dirMode !== ActorDirMode.MANUAL)
-        return;
-
     const behaviour = game.getState().hero.behaviour;
     handleBehaviourChanges(scene, hero, behaviour);
     handleBodyChanges(game, scene, hero);
+
+    if (hero.props.dirMode !== ActorDirMode.MANUAL) {
+        return;
+    }
+
     if (game.controlsState.firstPerson) {
         processFirstPersonsMovement(game, scene, hero, time);
     } else {
@@ -51,8 +53,19 @@ export function updateHero(game: Game, scene: Scene, hero: Actor, time: Time) {
 }
 
 function handleBodyChanges(game: Game, scene: Scene, hero: Actor) {
+    if (hero.props.dirMode !== ActorDirMode.MANUAL) {
+        hero.setBody(scene, hero.props.bodyIndex);
+        return;
+    }
+
     const equippedItem = game.getState().hero.equippedItemId;
     if (equippedItem < 0) {
+        // Corner case for when Twinsen hasn't yet picked up the magic ball.
+        if (game.getState().flags.quest[4]) {
+            hero.setBody(scene, BodyType.TWINSEN_TUNIC);
+        } else {
+            hero.setBody(scene, BodyType.TWINSEN_NO_TUNIC);
+        }
         return;
     }
 
