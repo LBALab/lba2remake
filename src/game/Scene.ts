@@ -329,7 +329,7 @@ export default class Scene {
     }
 
     private updateSideScenes(time: Time) {
-        if (this.sideScenes) {
+        if (!this.game.isCinema() && this.sideScenes) {
             for (const sideScene of this.sideScenes.values()) {
                 sideScene.firstFrame = this.firstFrame;
                 sideScene.update(time);

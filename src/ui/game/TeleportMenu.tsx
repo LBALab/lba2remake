@@ -350,6 +350,7 @@ export default class TeleportMenu extends React.Component<TMProps, TMState> {
     renderNode(node, level) {
         const goto = (e, child) => {
             if (child.goto) {
+                this.props.game.setCinema(false);
                 child.goto(this.props.game, this.props.sceneManager);
                 this.props.exit(e);
             }

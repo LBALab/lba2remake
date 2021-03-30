@@ -37,6 +37,7 @@ export default class Game {
     private _isLoading: boolean;
     private _audio: any;
     private _loopFunctions: LoopFunction[];
+    private _cinema: boolean;
     menuTexts: any;
     texts: any;
 
@@ -50,6 +51,7 @@ export default class Game {
         this._gameState = createGameState();
         this._isPaused = false;
         this._isLoading = false;
+        this._cinema = false;
         this._audio = createAudioManager(this._gameState);
         this._loopFunctions = [];
     }
@@ -168,6 +170,11 @@ export default class Game {
     }
 
     @pure()
+    isCinema() {
+        return this._cinema;
+    }
+
+    @pure()
     getState() {
         return this._gameState;
     }
@@ -247,6 +254,11 @@ export default class Game {
             newLoopFunctions.push(f);
         });
         this._loopFunctions = newLoopFunctions;
+    }
+
+    setCinema(mode: boolean) {
+        this.setUiState({ cinema: mode });
+        this._cinema = mode;
     }
 
     async registerResources() {
