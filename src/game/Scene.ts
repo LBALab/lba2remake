@@ -6,6 +6,7 @@ import Actor, { ActorProps, ActorDirMode } from './Actor';
 import Point, { PointProps } from './Point';
 import Zone, { ZoneProps } from './Zone';
 import Extra from './Extra';
+import MagicBall from './MagicBall';
 import { loadScripts } from '../scripting';
 import { killActor } from './scripting';
 import { createFPSCounter } from '../ui/vr/vrFPS';
@@ -23,6 +24,8 @@ import { createSceneVariables, findUsedVarGames } from './scene/variables';
 import Island from './scenery/island/Island';
 import { Time } from '../datatypes';
 import { processPhysicsFrame } from './loop/physics';
+import { SpriteType } from './data/spriteType';
+import { LBA2PointOffsets } from './scripting/data/lba2/points';
 
 export interface SceneProps {
     index: number;
@@ -64,6 +67,7 @@ export default class Scene {
     readonly scenery: Scenery;
     sideScenes: Map<number, Scene>;
     extras: Extra[];
+    magicBall: MagicBall;
     isActive: boolean;
     isSideScene: boolean;
     zoneState: {
@@ -94,6 +98,9 @@ export default class Scene {
             parent
         );
         await scene.loadObjects();
+
+        // Little keys are scene relative.
+        game.getState().hero.keys = 0;
 
         if (data.isIsland) {
             if (!!parent) {
@@ -168,6 +175,21 @@ export default class Scene {
         );
         const zones = this.props.zones.map(props => new Zone(props, this.is3DCam));
         const points = this.props.points.map(props => new Point(props));
+
+        // Apply point overrides if they exist.
+        points.forEach((p, i) => {
+            if (getParams().game === 'lba2') {
+                if (LBA2PointOffsets[this.index] && LBA2PointOffsets[this.index][p.props.index]) {
+                    const newProps = {
+                        index: p.props.index,
+                        pos: p.props.pos.map((num, idx) => {
+                            return num + LBA2PointOffsets[this.index][p.props.index][idx];
+                        }),
+                    };
+                    points[i] = new Point(newProps);
+                }
+            }
+        });
 
         this.actors.push(...actors);
         this.zones.push(...zones);
@@ -295,6 +317,9 @@ export default class Scene {
         }
         for (const extra of this.extras) {
             extra.update(this.game, this, time);
+        }
+        if (this.magicBall) {
+            this.magicBall.update(time);
         }
         if (params.editor && this.isActive) {
             for (const point of this.points) {
@@ -428,6 +453,23 @@ export default class Scene {
     addExtra(extra: Extra) {
         this.extras.push(extra);
         this.addMesh(extra.threeObject);
+    }
+
+    getKeys() {
+        return this.extras.filter(e => e.spriteIndex === SpriteType.KEY);
+    }
+
+    addMagicBall(magicBall: MagicBall) {
+        if (this.magicBall) {
+            this.removeMagicBall();
+        }
+        this.magicBall = magicBall;
+        this.addMesh(magicBall.threeObject);
+    }
+
+    removeMagicBall() {
+        this.removeMesh(this.magicBall.threeObject);
+        this.magicBall = null;
     }
 
     removeExtra(extra: Extra) {

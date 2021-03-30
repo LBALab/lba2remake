@@ -24,6 +24,61 @@ export default class IsoSceneryPhysics {
         this.grid = grid;
     }
 
+    getNormal(_scene: Scene, position: THREE.Vector3, boundingBox: THREE.Box3) {
+        POSITION.copy(position);
+        POSITION.multiplyScalar(STEP);
+
+        const dx = 64 - Math.floor(POSITION.x * 32);
+        const dz = Math.floor(POSITION.z * 32);
+        if (this.grid.cells[(dx * 64) + dz]) {
+            const cell = this.grid.cells[(dx * 64) + dz];
+            for (let i = cell.columns.length - 1; i >= 0; i -= 1) {
+                const column = cell.columns[i];
+                const bb = column.box;
+                const y = getColumnY(column, POSITION);
+                const minY = i > 0 ? bb.min.y : -Infinity;
+                if (POSITION.y >= minY) {
+                    if (POSITION.y < y + 0.01) {
+                        return new THREE.Vector3(0, 1, 0).normalize();
+                    }
+                }
+            }
+        }
+
+        ACTOR_BOX.copy(boundingBox);
+        ACTOR_BOX.min.multiplyScalar(STEP);
+        ACTOR_BOX.max.multiplyScalar(STEP);
+        ACTOR_BOX.translate(POSITION);
+        for (let ox = -1; ox < 2; ox += 1) {
+            for (let oz = -1; oz < 2; oz += 1) {
+                const cell = this.grid.cells[((dx + ox) * 64) + (dz + oz)];
+                if (!cell || cell.columns.length === 0) {
+                    continue;
+                }
+                for (let i = 0; i < cell.columns.length; i += 1) {
+                    const column = cell.columns[i];
+                    BB.copy(column.box);
+                    if (column.shape !== 1) {
+                        BB.max.y -= STEP;
+                    }
+                    if (ACTOR_BOX.intersectsBox(BB)) {
+                        INTERSECTION.copy(ACTOR_BOX);
+                        INTERSECTION.intersect(BB);
+                        INTERSECTION.getSize(ITRS_SIZE);
+                        ACTOR_BOX.getCenter(CENTER1);
+                        BB.getCenter(CENTER2);
+                        const dir = CENTER1.sub(CENTER2);
+                        if (ITRS_SIZE.x < ITRS_SIZE.z) {
+                            return new THREE.Vector3(1 * Math.sign(dir.x), 0, 0).normalize();
+                        }
+                        return new THREE.Vector3(0, 0, 1 * Math.sign(dir.z)).normalize();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     processCollisions(scene: Scene, obj, time: Time) {
         const isUsingProtoOrJetpack = (obj.props.entityIndex === BehaviourMode.JETPACK ||
             obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
@@ -77,6 +132,11 @@ export default class IsoSceneryPhysics {
                                     break;
                                 case GROUND_TYPES.LAVA:
                                     obj.state.isDrowningLava = true;
+                                    break;
+                                case GROUND_TYPES.CAVE_SPIKES:
+                                    if (obj.animState && !obj.state.isJumping) { // if it's an actor
+                                        obj.hit(-1, 5);
+                                    }
                                     break;
                             }
                         }
@@ -241,8 +301,8 @@ function processBoxIntersections(
     ACTOR_BOX.min.multiplyScalar(STEP);
     ACTOR_BOX.max.multiplyScalar(STEP);
     ACTOR_BOX.translate(position);
-    DIFF.set(0, 1 / 128, 0);
-    ACTOR_BOX.translate(DIFF);
+    ACTOR_BOX.min.y += 1 / 128;
+
     let collision = false;
     for (let ox = -1; ox < 2; ox += 1) {
         for (let oz = -1; oz < 2; oz += 1) {
@@ -254,6 +314,7 @@ function processBoxIntersections(
                     if (column.shape !== 1) {
                         BB.max.y -= STEP;
                     }
+
                     if (intersectBox(actor, position)) {
                         collision = true;
                     }

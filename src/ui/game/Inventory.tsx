@@ -20,6 +20,7 @@ const InventoryTextOffset = 100;
 
 const Inventory = ({ game, closeInventory }: any) => {
     const [selectedSlot, setSelectedSlot] = useState(game.getState().hero.inventorySlot);
+    const [equippedItem, setEquippedItem] = useState(game.getState().hero.equippedItemId);
     const [clock, setClock] = useState(null);
     const [canvas, setCanvas] = useState(null);
     const [renderer, setRenderer] = useState(null);
@@ -138,6 +139,7 @@ const Inventory = ({ game, closeInventory }: any) => {
                     game.getState().hero.usingItemId = -1;
                 });
                 if (itemId in LBA2WeaponToBodyMapping) {
+                    setEquippedItem(itemId);
                     game.getState().hero.equippedItemId = itemId;
                 }
                 closeInventory();
@@ -251,11 +253,17 @@ const Inventory = ({ game, closeInventory }: any) => {
         for (let j = 0; j < GetInventoryColumns(); j += 1) {
             const slot = i * GetInventoryColumns() + j;
             const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
+            const equipped = GetInventoryMapping()[slot] === equippedItem;
             inventorySlots.push(
                 <div
                   ref={itemNodes[slot]}
                   key={slot}
-                  className={`inventoryItem ${selectedSlot === slot ? 'selected' : ''} ${inInventory === true ? 'inInventory' : ''}`}>
+                  className={`
+                      inventoryItem ${selectedSlot === slot ? 'selected' : ''}
+                      ${inInventory === true ? 'inInventory' : ''}
+                      ${equipped === true ? 'equipped' : ''}
+                  `}
+                >
                 </div>
             );
         }

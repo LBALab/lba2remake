@@ -14,6 +14,13 @@
         "424": {
             "file": "blue_star.glb",
             "fx": "glow"
+        },
+        "144": {
+            "file": "ground_light.glb"
+        },
+        "137": {
+            "file": "magic_chest_lid.glb"
         }
+
     }
 }

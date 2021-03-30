@@ -3,7 +3,7 @@
 If you'd like to contribute to the project, there are several ways you can help.
 Any kind of contribution is very much welcome, you don't necessarily need to know how to write code.
 
-We'd like to get in touch with you over [Slack](https://join.slack.com/t/lba2remake/shared_invite/enQtMzIyNzIwNDMzNTIxLTM3MTk2NjFlODAxNmI0NmVhNTVjMzFiZDk1NmQwZDMwZTA5MWVhNDQ2ZGNmMjQ3N2ZiYTVjODZlODMyNjc2NDI) if you plan on giving us a hand, we can provide directions to help you get started.
+We'd like to get in touch with you over [Slack](https://join.slack.com/t/lba2remake/shared_invite/zt-4497ew6p-NxlmHoAWtG6lXDG9lW0NMA) if you plan on giving us a hand, we can provide directions to help you get started.
 
 
 ## Contributing without writing code

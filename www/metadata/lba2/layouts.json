@@ -656,9 +656,6 @@
     }
   },
   "1": {
-    "0": {
-      "mirror": true
-    },
     "1": {
       "mirror": true
     },
@@ -901,6 +898,11 @@
       "file": "SE_108_big_plate.glb",
       "orientation": 0
     },
+    "109": {
+      "replace": true,
+      "file": "SE_109_suspicious_recipient.glb",
+      "orientation": 0
+    },
     "113": {
       "mirror": true
     },
@@ -910,8 +912,35 @@
     "115": {
       "mirror": true
     },
+    "117": {
+      "replace": true,
+      "file": "SE_117_stacked_plates.glb",
+      "orientation": 0
+    },
+    "118": {
+      "replace": true,
+      "file": "SE_118_black_powder_mountain.glb",
+      "orientation": 0
+    },
+    "119": {
+      "replace": true,
+      "file": "SE_119_yellow_substance_mountain.glb",
+      "orientation": 0
+    },
+    "122": {
+      "replace": true,
+      "file": "SE_122_green_candle.glb",
+      "orientation": 0
+    },
+    "123": {
+      "replace": true,
+      "file": "SE_123_gargoyle.glb",
+      "orientation": 0
+    },
     "148": {
-      "mirror": true
+      "replace": true,
+      "file": "SE_148_cubic_pillar_top.glb",
+      "orientation": 0
     },
     "149": {
       "replace": true,
@@ -983,6 +1012,16 @@
       "file": "SE_166_167_small_bars.glb",
       "orientation": 0
     },
+    "168": {
+      "replace": true,
+      "file": "SE_168_small_green_candle.glb",
+      "orientation": 0
+    },
+    "173": {
+      "replace": true,
+      "file": "SE_173_magic_chest.glb",
+      "orientation": 0
+    },
     "178": {
       "replace": true,
       "file": "SE_150_152_178_179_baseboard.glb",
@@ -1023,11 +1062,36 @@
       "file": "SE_161_182_183_185_baseboard_corner.glb",
       "orientation": 2
     },
+    "186": {
+      "replace": true,
+      "file": "SE_186_ground_light.glb",
+      "orientation": 0
+    },
+    "187": {
+      "replace": true,
+      "file": "SE_187_188_magic_candle_holder.glb",
+      "orientation": 0
+    },
+    "188": {
+      "replace": true,
+      "file": "SE_187_188_magic_candle_holder.glb",
+      "orientation": 1
+    },
+    "196": {
+      "replace": true,
+      "file": "SE_196_blue_curtains.glb",
+      "orientation": 0
+    },
     "198": {
       "mirror": true
     },
     "199": {
       "mirror": true
+    },
+    "214": {
+      "replace": true,
+      "file": "SE_214_s_of_sendell.glb",
+      "orientation": 0
     },
     "217": {
       "suppress": true
@@ -1575,6 +1639,11 @@
       "file": "GB_097_jerry_can.glb",
       "orientation": 0
     },
+    "98": {
+      "replace": true,
+      "file": "GB_098_books.glb",
+      "orientation": 0
+    },
     "99": {
       "mirror": true
     },
@@ -1592,6 +1661,81 @@
       "replace": true,
       "file": "GB_101_102_window.glb",
       "orientation": 1
+    },
+    "103": {
+      "replace": true,
+      "file": "GB_103_107_111_115_conveyor_belt.glb",
+      "orientation": 0
+    },
+    "104": {
+      "replace": true,
+      "file": "GB_104_108_112_116_conveyor_belt_halfwidth.glb",
+      "orientation": 1
+    },
+    "106": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 3
+    },
+    "107": {
+      "replace": true,
+      "file": "GB_103_107_111_115_conveyor_belt.glb",
+      "orientation": 2
+    },
+    "108": {
+      "replace": true,
+      "file": "GB_104_108_112_116_conveyor_belt_halfwidth.glb",
+      "orientation": 1
+    },
+    "109": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 1
+    },
+    "110": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 3
+    },
+    "111": {
+      "replace": true,
+      "file": "GB_103_107_111_115_conveyor_belt.glb",
+      "orientation": 1
+    },
+    "112": {
+      "replace": true,
+      "file": "GB_104_108_112_116_conveyor_belt_halfwidth.glb",
+      "orientation": 0
+    },
+    "113": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 0
+    },
+    "114": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 2
+    },
+    "115": {
+      "replace": true,
+      "file": "GB_103_107_111_115_conveyor_belt.glb",
+      "orientation": 3
+    },
+    "116": {
+      "replace": true,
+      "file": "GB_104_108_112_116_conveyor_belt_halfwidth.glb",
+      "orientation": 0
+    },
+    "117": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 0
+    },
+    "118": {
+      "replace": true,
+      "file": "GB_106_109_110_113_114_117_118_conveyor_belt_halfwidth_end.glb",
+      "orientation": 2
     },
     "120": {
       "mirror": true
@@ -1631,8 +1775,23 @@
       "file": "GB_128_129_142_143_ladder.glb",
       "orientation": 1
     },
+    "130": {
+      "replace": true,
+      "file": "GB_130_131_133_161_conveyor_belt_shadow.glb",
+      "orientation": 3
+    },
+    "131": {
+      "replace": true,
+      "file": "GB_130_131_133_161_conveyor_belt_shadow.glb",
+      "orientation": 0
+    },
     "132": {
       "mirror": true
+    },
+    "133": {
+      "replace": true,
+      "file": "GB_130_131_133_161_conveyor_belt_shadow.glb",
+      "orientation": 1
     },
     "134": {
       "replace": true,
@@ -1669,6 +1828,11 @@
       "file": "GB_144_railing_lamp.glb",
       "orientation": 0
     },
+    "145": {
+      "replace": true,
+      "file": "GB_145_book.glb",
+      "orientation": 0
+    },
     "146": {
       "replace": true,
       "file": "GB_146_railing_slope.glb",
@@ -1682,6 +1846,11 @@
     },
     "156": {
       "mirror": true
+    },
+    "161": {
+      "replace": true,
+      "file": "GB_130_131_133_161_conveyor_belt_shadow.glb",
+      "orientation": 2
     },
     "165": {
       "mirror": true
@@ -1757,11 +1926,6 @@
       "file": "GB_069_stairs_var02.glb",
       "orientation": 0
     },
-    "54:2x3x2:0,1364,0,1365,1366,1368,1369,1370,1371,1372,1373,1375": {
-      "replace": true,
-      "file": "GB_053_054_table_straight_var01.glb",
-      "orientation": 1
-    },
     "144:1x7x1:1515,1516,1516,1516,1516,1517,1518": {
       "replace": true,
       "file": "GB_144_railing_lamp_var02.glb",
@@ -1817,11 +1981,6 @@
       "file": "GB_053_054_table_straight_var01.glb",
       "orientation": 0
     },
-    "53:2x3x2:0,1364,0,1365,1366,1368,1369,1370,1371,1372,1373,1375": {
-      "replace": true,
-      "file": "GB_053_054_table_straight_var01.glb",
-      "orientation": 1
-    },
     "54:2x3x2:0,1352,0,1353,1354,1355,0,127,0,127,1356,1357": {
       "replace": true,
       "file": "GB_053_054_table_straight_var01.glb",
@@ -1836,6 +1995,16 @@
       "replace": true,
       "file": "GB_142_143_ladder_var01.glb",
       "orientation": 3
+    },
+    "53:2x3x2:0,1364,0,1365,1366,1368,1369,1370,1371,1372,1373,1375": {
+      "replace": true,
+      "file": "GB_053_054_table_straight_var01.glb",
+      "orientation": 0
+    },
+    "54:2x3x2:0,1364,0,1365,1366,1368,1369,1370,1371,1372,1373,1375": {
+      "replace": true,
+      "file": "GB_053_054_table_straight_var01.glb",
+      "orientation": 1
     }
   },
   "3": {
@@ -2020,11 +2189,63 @@
     "2": {
       "mirror": true
     },
+    "3": {
+      "replace": true,
+      "file": "DI_003_004_006_007_entrance.glb",
+      "orientation": 2
+    },
+    "4": {
+      "replace": true,
+      "file": "DI_003_004_006_007_entrance.glb",
+      "orientation": 0
+    },
+    "5": {
+      "replace": true,
+      "file": "DI_005_008_entrance.glb",
+      "orientation": 0
+    },
+    "6": {
+      "replace": true,
+      "file": "DI_003_004_006_007_entrance.glb",
+      "orientation": 3
+    },
+    "7": {
+      "replace": true,
+      "file": "DI_003_004_006_007_entrance.glb",
+      "orientation": 1
+    },
+    "8": {
+      "replace": true,
+      "file": "DI_005_008_entrance.glb",
+      "orientation": 1
+    },
     "9": {
-      "mirror": true
+      "replace": true,
+      "file": "DI_009_pattern_block.glb",
+      "orientation": 0
+    },
+    "10": {
+      "replace": true,
+      "file": "DI_010_pillar.glb",
+      "orientation": 0
+    },
+    "11": {
+      "replace": true,
+      "file": "DI_011_fountain.glb",
+      "orientation": 0
     },
     "13": {
       "mirror": true
+    },
+    "15": {
+      "replace": true,
+      "file": "DI_015_pot.glb",
+      "orientation": 0
+    },
+    "16": {
+      "replace": true,
+      "file": "DI_016_candle_stand.glb",
+      "orientation": 0
     },
     "17": {
       "mirror": true
@@ -2035,8 +2256,43 @@
     "20": {
       "mirror": true
     },
+    "21": {
+      "replace": true,
+      "file": "DI_003_004_006_007_entrance.glb",
+      "orientation": 3
+    },
     "22": {
       "mirror": true
+    },
+    "23": {
+      "replace": true,
+      "file": "DI_023_pouf.glb",
+      "orientation": 0
+    },
+    "24": {
+      "replace": true,
+      "file": "DI_024_rug.glb",
+      "orientation": 0
+    },
+    "25": {
+      "replace": true,
+      "file": "DI_025_plant.glb",
+      "orientation": 0
+    },
+    "26": {
+      "replace": true,
+      "file": "DI_026_027_lamp.glb",
+      "orientation": 0
+    },
+    "27": {
+      "replace": true,
+      "file": "DI_026_027_lamp.glb",
+      "orientation": 3
+    },
+    "28": {
+      "replace": true,
+      "file": "DI_028_table.glb",
+      "orientation": 0
     },
     "29": {
       "mirror": true
@@ -2044,8 +2300,38 @@
     "30": {
       "mirror": true
     },
+    "31": {
+      "replace": true,
+      "file": "DI_003_004_006_007_entrance.glb",
+      "orientation": 2
+    },
+    "32": {
+      "replace": true,
+      "file": "DI_032_shelf.glb",
+      "orientation": 0
+    },
+    "34": {
+      "replace": true,
+      "file": "DI_034_035_open_wall.glb",
+      "orientation": 3
+    },
+    "35": {
+      "replace": true,
+      "file": "DI_034_035_open_wall.glb",
+      "orientation": 0
+    },
+    "36": {
+      "replace": true,
+      "file": "DI_036_bottle.glb",
+      "orientation": 0
+    },
     "37": {
       "mirror": true
+    },
+    "38": {
+      "replace": true,
+      "file": "DI_038_ladder.glb",
+      "orientation": 0
     },
     "39": {
       "mirror": true
@@ -2071,17 +2357,173 @@
     "46": {
       "mirror": true
     },
+    "47": {
+      "replace": true,
+      "file": "DI_047_pillar.glb",
+      "orientation": 0
+    },
+    "48": {
+      "replace": true,
+      "file": "DI_048_towels_on_shelf.glb",
+      "orientation": 0
+    },
     "49": {
       "mirror": true
     },
+    "50": {
+      "replace": true,
+      "file": "DI_050_chest.glb",
+      "orientation": 0
+    },
+    "51": {
+      "replace": true,
+      "file": "DI_051_candle.glb",
+      "orientation": 0
+    },
     "54": {
-      "mirror": true
+      "replace": true,
+      "file": "DI_054_counter_corner.glb",
+      "orientation": 0
+    },
+    "55": {
+      "replace": true,
+      "file": "DI_055_candle_on_plate.glb",
+      "orientation": 0
+    },
+    "56": {
+      "replace": true,
+      "file": "DI_056_small_bottle.glb",
+      "orientation": 0
+    },
+    "57": {
+      "replace": true,
+      "file": "DI_057_three_shelfs_with_items.glb",
+      "orientation": 0
+    },
+    "58": {
+      "replace": true,
+      "file": "DI_058_pillows.glb",
+      "orientation": 0
+    },
+    "59": {
+      "replace": true,
+      "file": "DI_059_bunny_in_bowl.glb",
+      "orientation": 0
     },
     "61": {
-      "mirror": true
+      "replace": true,
+      "file": "DI_061_062_cabinet.glb",
+      "orientation": 1
     },
     "62": {
-      "mirror": true
+      "replace": true,
+      "file": "DI_061_062_cabinet.glb",
+      "orientation": 2
+    },
+    "64": {
+      "replace": true,
+      "file": "DI_064_store_items.glb",
+      "orientation": 0
+    },
+    "65": {
+      "replace": true,
+      "file": "DI_065_tomatoes.glb",
+      "orientation": 0
+    },
+    "66": {
+      "replace": true,
+      "file": "DI_066_candle.glb",
+      "orientation": 0
+    },
+    "67": {
+      "replace": true,
+      "file": "DI_067_shelf_items.glb",
+      "orientation": 0
+    },
+    "68": {
+      "replace": true,
+      "file": "DI_068_069_cabinet.glb",
+      "orientation": 3
+    },
+    "69": {
+      "replace": true,
+      "file": "DI_068_069_cabinet.glb",
+      "orientation": 0
+    },
+    "70": {
+      "replace": true,
+      "file": "DI_070_cash_register.glb",
+      "orientation": 0
+    },
+    "71": {
+      "replace": true,
+      "file": "DI_071_072_railing_straight_pole.glb",
+      "orientation": 0
+    },
+    "72": {
+      "replace": true,
+      "file": "DI_071_072_railing_straight_pole.glb",
+      "orientation": 1
+    },
+    "73": {
+      "replace": true,
+      "file": "DI_073_bunny_doll.glb",
+      "orientation": 0
+    },
+    "74": {
+      "replace": true,
+      "file": "DI_074_telescope.glb",
+      "orientation": 0
+    },
+    "75": {
+      "replace": true,
+      "file": "DI_075_076_railing_corner.glb",
+      "orientation": 0
+    },
+    "76": {
+      "replace": true,
+      "file": "DI_075_076_railing_corner.glb",
+      "orientation": 2
+    },
+    "77": {
+      "replace": true,
+      "file": "DI_077_78_railing_end.glb",
+      "orientation": 0
+    },
+    "78": {
+      "replace": true,
+      "file": "DI_077_78_railing_end.glb",
+      "orientation": 3
+    },
+    "79": {
+      "replace": true,
+      "file": "DI_079_080_railing_straight_rope.glb",
+      "orientation": 1
+    },
+    "80": {
+      "replace": true,
+      "file": "DI_079_080_railing_straight_rope.glb",
+      "orientation": 0
+    },
+    "82": {
+      "replace": true,
+      "file": "DI_082_radio_broadcaster.glb",
+      "orientation": 0
+    },
+    "85": {
+      "replace": true,
+      "file": "DI_085_desk.glb",
+      "orientation": 0
+    },
+    "86": {
+      "replace": true,
+      "file": "DI_086_paper_rolls_container.glb",
+      "orientation": 0
+    },
+    "87": {
+      "replace": true,
+      "file": "DI_087_window.glb",
+      "orientation": 0
     },
     "92": {
       "mirror": true
@@ -2089,8 +2531,203 @@
     "93": {
       "mirror": true
     },
+    "94": {
+      "replace": true,
+      "file": "DI_094_towel_over_counter.glb",
+      "orientation": 0
+    },
     "95": {
       "mirror": true
+    },
+    "96": {
+      "replace": true,
+      "file": "DI_096_health.glb",
+      "orientation": 0
+    },
+    "97": {
+      "replace": true,
+      "file": "DI_097_magic.glb",
+      "orientation": 0
+    },
+    "98": {
+      "replace": true,
+      "file": "DI_098_elephant_doll.glb",
+      "orientation": 0
+    },
+    "100": {
+      "replace": true,
+      "file": "DI_100_bottle_glasses.glb",
+      "orientation": 0
+    },
+    "101": {
+      "replace": true,
+      "file": "DI_101_glasses_on_shelf.glb",
+      "orientation": 0
+    },
+    "102": {
+      "replace": true,
+      "file": "DI_102_glasses_on_shelf.glb",
+      "orientation": 0
+    },
+    "32:3x1x1:5361,5362,5362": {
+      "replace": true,
+      "file": "DI_032_shelf_var01.glb",
+      "orientation": 0
+    },
+    "57:3x6x1:5056,5057,5058,5059,5060,5061,5062,5063,5064,5065,5066,5067,5068,5069,5070,5071,5072,5073": {
+      "replace": true,
+      "file": "DI_057_three_shelfs_with_items.glb",
+      "orientation": 0
+    },
+    "16:1x6x2:4340,4341,4342,4343,4344,4345,4340,4341,4345": {
+      "replace": true,
+      "file": "DI_016_candle_stand_var01.glb",
+      "orientation": 0
+    },
+    "25:3x6x2:0,0,4405,0,0,4406,0,0,4407,0,0,4408,0,0,4409,4410,4411,4412,127,4413,4414,4415,4416,4417,4418,4419,4420,4421,4422,4423,4424,4425,4426,4427,4428,4429": {
+      "replace": true,
+      "file": "DI_025_plant.glb",
+      "orientation": 0
+    },
+    "25:2x6x3:0,127,0,127,0,4401,0,4402,0,4403,127,4404,0,4405,0,4406,0,4407,0,4408,0,4409,4411,4412,4413,4414,4416,4417,4419,4420,4422,4423,4425,4426,4428,4429": {
+      "replace": true,
+      "file": "DI_025_plant.glb",
+      "orientation": 0
+    },
+    "10:1x5x2:4331,4332,4333,4334,4335,4331,4332,4333,4334,4335": {
+      "replace": true,
+      "file": "DI_010_pillar_var01_02.glb",
+      "orientation": 0
+    },
+    "10:2x5x1:4331,4331,4332,4332,4333,4333,4334,4334,4335,4335": {
+      "replace": true,
+      "file": "DI_010_pillar_var01_02.glb",
+      "orientation": 1
+    },
+    "10:1x4x1:4331,4332,4333,4335": {
+      "replace": true,
+      "file": "DI_010_pillar_var03.glb",
+      "orientation": 0
+    },
+    "9:1x1x1:4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var01.glb",
+      "orientation": 0
+    },
+    "9:2x1x2:4330,-1,-1,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var02.glb",
+      "orientation": 0
+    },
+    "9:7x1x1:4330,4330,4330,4330,4330,4330,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var07.glb",
+      "orientation": 1
+    },
+    "9:2x1x2:-1,4330,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var02.glb",
+      "orientation": 1
+    },
+    "9:3x1x3:-1,-1,4329,-1,-1,4329,4330,4330,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var08.glb",
+      "orientation": 0
+    },
+    "9:2x1x1:4330,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block.glb",
+      "orientation": 1
+    },
+    "9:1x1x4:4330,4330,4329,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var04.glb",
+      "orientation": 0
+    },
+    "9:1x1x4:4330,4329,4330,4329": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var04.glb",
+      "orientation": 0
+    },
+    "9:1x1x4:4329,4330,4329,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var04.glb",
+      "orientation": 0
+    },
+    "9:4x1x1:4330,4330,4330,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var04.glb",
+      "orientation": 1
+    },
+    "9:1x1x4:4329,4330,4329,4329": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var04.glb",
+      "orientation": 0
+    },
+    "9:3x1x1:4330,4330,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var03.glb",
+      "orientation": 1
+    },
+    "9:5x1x1:4330,4330,4330,4330,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var05.glb",
+      "orientation": 1
+    },
+    "9:1x1x5:4330,4329,4330,4329,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var05.glb",
+      "orientation": 0
+    },
+    "9:1x1x3:4329,4329,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var03.glb",
+      "orientation": 0
+    },
+    "9:1x1x4:4330,4329,4330,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var04.glb",
+      "orientation": 0
+    },
+    "9:6x1x1:4330,4330,4330,4330,4330,4330": {
+      "replace": true,
+      "file": "DI_009_pattern_block_var06.glb",
+      "orientation": 1
+    },
+    "24:4x1x4:4381,4383,4384,4385,4386,4388,4389,4390,4391,4393,4394,4395,4396,4398,4399,4400": {
+      "replace": true,
+      "file": "DI_024_rug_var01.glb",
+      "orientation": 0
+    },
+    "24:3x1x4:4383,4384,4385,4388,4389,4390,4393,4394,4395,4398,4399,4400": {
+      "replace": true,
+      "file": "DI_024_rug_var02.glb",
+      "orientation": 0
+    },
+    "58:1x1x8:5074,5075,5076,5077,5074,5075,5076,5077": {
+      "replace": true,
+      "file": "DI_058_pillows_var01.glb",
+      "orientation": 0
+    },
+    "58:1x1x6:5074,5075,5076,5077,5076,5077": {
+      "replace": true,
+      "file": "DI_058_pillows_var02.glb",
+      "orientation": 0
+    },
+    "61:4x2x1:4565,4566,4565,4566,5091,5092,5091,5092": {
+      "replace": true,
+      "file": "DI_061_cabinet_var01.glb",
+      "orientation": 1
+    },
+    "62:1x2x5:4549,5093,4549,5093,4549,5093,4549,5093,4549,5093": {
+      "replace": true,
+      "file": "DI_062_cabinet_var02.glb",
+      "orientation": 2
+    },
+    "62:1x2x4:4549,5093,4549,5093,4549,5093,4555,5094": {
+      "replace": true,
+      "file": "DI_061_cabinet_var01.glb",
+      "orientation": 2
     }
   },
   "6": {

@@ -62,8 +62,9 @@
 
 .inventoryText {
     width: 99%;
-    height: 10%;
-    margin: 15px;
+    height: 8%;
+    margin-bottom: 15px;
+    padding: 0.25vh;
     border: 2px outset #61cece;
     border-radius: 15px;
     background: rgba(0, 0, 0, 0.5);
@@ -83,10 +84,10 @@
 }
 
 .inventoryItems {
-    height: 89%;
+    height: 91%;
     width: 99%;
     margin: 15px;
-    padding: 5px;
+    padding: 0.25vh;
     border: 2px outset #61cece;
     border-radius: 15px;
     background: rgba(0, 0, 0, 0.5);
@@ -98,7 +99,7 @@
 
 .inventoryItem {
     background: rgba(0, 0, 0, 0.6);
-    margin: 10px;
+    margin: 0.5vh;
     border-radius: 15px;
     border: 2px outset #61cece;
     position: relative;
@@ -106,6 +107,17 @@
 
 .selected {
     background: #003e51cf;
+}
+
+.equipped:before {
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 0.75vh outset #ff000073;
+    border-radius: 15px;
 }
 
 .inventory-canvas {
