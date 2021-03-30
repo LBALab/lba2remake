@@ -61,7 +61,7 @@ function handleBodyChanges(game: Game, scene: Scene, hero: Actor) {
     const equippedItem = game.getState().hero.equippedItemId;
     if (equippedItem < 0) {
         // Corner case for when Twinsen hasn't yet picked up the magic ball.
-        if (game.getState().flags.quest[4]) {
+        if (game.getState().flags.quest[LBA2Items.TUNIC]) {
             hero.setBody(scene, BodyType.TWINSEN_TUNIC);
         } else {
             hero.setBody(scene, BodyType.TWINSEN_NO_TUNIC);
