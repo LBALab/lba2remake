@@ -44,7 +44,7 @@ export class SceneManager {
         if (this.scene)
             this.scene.isActive = false;
 
-        this.game.setUiState({ text: null, cinema: false });
+        this.game.setUiState({ text: null });
         this.game.controlsState.skipListener = null;
 
         const hash = window.location.hash;

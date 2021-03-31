@@ -555,12 +555,12 @@ export const BALLOON = unimplemented();
 export const NO_SHOCK = unimplemented();
 
 export function CINEMA_MODE(this: ScriptContext, mode) {
-    if (mode === 1) {
+    if (mode > 0) {
         this.actor.props.dirMode = ActorDirMode.NO_MOVE;
-        this.game.setUiState({ cinema: true });
+        this.game.setCinema(true);
     } else {
         this.actor.props.dirMode = ActorDirMode.MANUAL;
-        this.game.setUiState({ cinema: false });
+        this.game.setCinema(false);
     }
 }
 
