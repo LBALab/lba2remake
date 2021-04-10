@@ -2,6 +2,7 @@ import { clone } from 'lodash';
 import { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
+import { LBA2GameFlags } from '../data/gameFlags';
 import { GetInventoryItems } from '../data/inventory';
 import { setMagicBallLevel } from '../GameState';
 import { unimplemented } from './utils';
@@ -221,7 +222,7 @@ export function SUB_MONEY(this: ScriptContext, amount) {
 }
 
 export function INC_CHAPTER(this: ScriptContext) {
-    this.game.getState().chapter += 1;
+    this.game.getState().flags.quest[LBA2GameFlags.CHAPTER] += 1;
 }
 
 // FOUND_OBJECT_CALLBACKS allow us to execute arbitrary code when a specific item is found.
@@ -335,7 +336,7 @@ export function SET_DOOR_DOWN(this: ScriptContext, dist) {
 export const GIVE_BONUS = unimplemented();
 
 export function CHANGE_CUBE(this: ScriptContext, index) {
-    this.scene.goto(index);
+    this.scene.goto(index, false, false, true, true);
 }
 
 export function OBJ_COL(this: ScriptContext, flag) {

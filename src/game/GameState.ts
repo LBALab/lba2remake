@@ -115,10 +115,6 @@ function createQuestFlags() {
     quest[152] = 1; // rain
     quest[159] = 256;
 
-    // debug video scene 45 - kill tralu
-    // quest[56] = 3;
-    // quest[71] = 0;
-
     return quest;
 }
 

@@ -15,6 +15,7 @@ import { loadEnvironmentComponents } from './environment';
 import { loadGeometries } from './geometries';
 import { loadPickingPlanes } from './preview';
 import { getParams } from '../../../params';
+import { LBA2GameFlags } from '../../data/gameFlags';
 
 const textureLoader = new THREE.TextureLoader();
 
@@ -56,7 +57,7 @@ export default class Island {
 
     static async load(game: Game, sceneData: any): Promise<Island> {
         let name = islandSceneMapping[sceneData.index].island;
-        if (game.getState().flags.quest[152] && name === 'CITABAU') {
+        if (game.getState().flags.quest[LBA2GameFlags.CHAPTER] < 2 && name === 'CITABAU') {
             name = 'CITADEL';
         }
         return Island.loadWithCache(name, sceneData.ambience, {
