@@ -10,7 +10,7 @@ The goal is to adhere to the original art style of LBA as much as possible. Some
 
 ## Software
 
-The modelling software we use is [Blender](https://www.blender.org/download/). (Note: if you're experiencing issues with importing .dae files, Blender v2.82 is a known version to *not* have issues with that.)
+The modelling software we use is [Blender](https://www.blender.org/download/).
 
 In the current phase of the project, textures are seldom applied, so texturing software has low relevance.
 
@@ -23,17 +23,17 @@ If you're using any kind of proprietary software, please make sure your copy has
 
 ##### 3D isometric layouts
 
-When enabling the '3D Isometric' view mode in this project, the game shows the original flat-image LBA 'Layouts' (the name for a prop or object) projected onto generated 3D meshes. 
+When enabling the '3D Isometric' view mode in this project, the game shows the original flat-image LBA 'Layouts' (the name for a prop or object) projected onto generated 3D meshes.
 
 ##### Why do we want to replace them?
 
-Because of the lack of actual 3D information in the original layout bitmaps, the 'projected' 3D isometric result is not able to correctly show what assets look like from other angles than the original isometric view point. This causes stretching, and areas that are simply absent (such as the back side of objects). 
+Because of the lack of actual 3D information in the original layout bitmaps, the 'projected' 3D isometric result is not able to correctly show what assets look like from other angles than the original isometric view point. This causes stretching, and areas that are simply absent (such as the back side of objects).
 
 ##### Downloading an original 3D isometric layout as reference for creating the replacement
 
-These layouts can be downloaded from the Layout Editor by pressing the "Download Layout" button when having a Layout selected in the Iso Layout Editor. They will download as *.dae format files. 
+These layouts can be downloaded from the Layout Editor by pressing the "Download Layout" button when having a Layout selected in the Iso Layout Editor. They will download as *.dae format files.
 
-After importing them into Blender, they can serve as a basis/reference for modelling the replacing asset in terms of shape, size and dimensions. 
+After importing them into Blender, they can serve as a basis/reference for modelling the replacing asset in terms of shape, size and dimensions.
 
 Also note, that the *.dae files do not self-contain textures, which will have to be downloaded separately by pressing the "Download Library Texture" button. This will download a shared texture atlas image which will correctly map to all Layouts that are downloaded from that Library.
 
