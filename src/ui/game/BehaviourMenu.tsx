@@ -66,7 +66,7 @@ const initBehaviourRenderer = async () => {
     bScenes.push(createOverlayScene());
     bScenes.push(createOverlayScene());
     bScenes.push(createOverlayScene());
-    bScenes.push({}); // 5
+    bScenes.push(createOverlayScene());
     bScenes.push(createOverlayScene());
     bScenes.push({}); // 7
     bScenes.push(createOverlayScene());
@@ -110,13 +110,7 @@ const renderLoop = (time, behaviour, selected, item) => {
     const itemBottom = canvasClip.bottom - bottom - 10;
 
     if (selected) {
-        updateAnimModel(
-            m,
-            anims,
-            behaviour,
-            0,
-            time
-        );
+        updateAnimModel(m, anims, behaviour, 0, time);
     }
     renderer.stats.begin();
 
@@ -124,15 +118,9 @@ const renderLoop = (time, behaviour, selected, item) => {
     renderer.setScissor(itemLeft, itemBottom, width, height);
     renderer.setScissorTest(true);
 
-    s.camera.update(
-        m,
-        selected,
-        { x: 0, y: 0},
-        -0.9,
-        time,
-    );
-
+    s.camera.update(m, selected, {x: 0, y: 0}, -0.9, time);
     renderer.render(s);
+
     renderer.stats.end();
 };
 
@@ -247,6 +235,7 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
         2: useRef(null),
         3: useRef(null),
         4: useRef(null),
+        5: useRef(null),
         6: useRef(null),
         8: useRef(null),
     };
@@ -353,6 +342,8 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
                 if (!isLBA1) {
                     renderLoop(time, 8, behaviour === 8, itemNodes[8]);
                 }
+            } else if (behaviour === BehaviourModeType.ZOE) {
+                renderLoop(time, 5, behaviour === 5, itemNodes[5]);
             }
         });
         return () => {
@@ -369,13 +360,7 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
             animState[b] = loadAnimState();
         }
         model[b] = await loadSceneModel(bScenes[b], b, bodyIndex, animState[b]);
-        updateAnimModel(
-            model[b],
-            animState[b],
-            b,
-            0,
-            { delta: 0, elapsed: 0}
-        );
+        updateAnimModel(model[b], animState[b], b, 0, {delta: 0, elapsed: 0});
     };
 
     useEffect(() => {
@@ -385,6 +370,7 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
         loadUpdateModel(2);
         loadUpdateModel(3);
         loadUpdateModel(4);
+        loadUpdateModel(5);
         loadUpdateModel(6);
         loadUpdateModel(8);
         return () => {
@@ -456,6 +442,17 @@ const BehaviourMenu = ({ game, scene }: IBehaviourMenuProps) => {
                     behaviourChanged={behaviour}
                     selected={behaviour === 8}
                 />}
+            </>
+        );
+    } else if (behaviour === BehaviourModeType.ZOE) {
+        behaviourModeItems = (
+            <>
+                <BehaviourModeItem
+                    divRef={itemNodes[5]}
+                    behaviour={5}
+                    behaviourChanged={behaviour}
+                    selected={behaviour === 5}
+                />
             </>
         );
     }
