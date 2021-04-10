@@ -34,7 +34,7 @@ export class SceneManager {
         return this.goto(index, false, wasPaused);
     }
 
-    async goto(index, force = false, wasPaused = false, teleport = true) {
+    async goto(index, force = false, wasPaused = false, teleport = true, lifeScript = false) {
         if ((!force && this.scene && index === this.scene.index) || this.game.isLoading())
             return this.scene;
 
@@ -53,7 +53,8 @@ export class SceneManager {
         }
 
         const audio = this.game.getAudioManager();
-        if (this.scene && this.scene.sideScenes && this.scene.sideScenes.has(index)) {
+        if (this.scene && this.scene.sideScenes &&
+            this.scene.sideScenes.has(index) && !lifeScript) {
             killActor(this.scene.actors[0]);
             const sideScene = this.scene.sideScenes.get(index);
             sideScene.sideScenes = this.scene.sideScenes;
