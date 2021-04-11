@@ -63,9 +63,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                     palette: {value: paletteTexture},
                     noise: {value: fakeNoise},
                     light: {value: light},
-                    bonePos: { value: bones.position, type: 'v3v' },
-                    boneRot: { value: bones.rotation, type: 'v4v' },
-                    rotationMatrix: { value: matrixRotation, type: 'm4v' }
+                    bonePos: { value: bones.position },
+                    boneRot: { value: bones.rotation },
+                    rotationMatrix: { value: matrixRotation }
                 }
             })
         },
@@ -91,9 +91,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                     palette: {value: paletteTexture},
                     lutTexture: {value: lutTexture},
                     light: {value: light},
-                    bonePos: { value: bones.position, type: 'v3v' },
-                    boneRot: { value: bones.rotation, type: 'v4v' },
-                    rotationMatrix: { value: matrixRotation, type: 'm4v' }
+                    bonePos: { value: bones.position },
+                    boneRot: { value: bones.rotation },
+                    rotationMatrix: { value: matrixRotation }
                 }
             })
         },
@@ -120,9 +120,9 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
                     palette: {value: paletteTexture},
                     lutTexture: {value: lutTexture},
                     light: {value: light},
-                    bonePos: { value: bones.position, type: 'v3v' },
-                    boneRot: { value: bones.rotation, type: 'v4v' },
-                    rotationMatrix: { value: matrixRotation, type: 'm4v' }
+                    bonePos: { value: bones.position },
+                    boneRot: { value: bones.rotation },
+                    rotationMatrix: { value: matrixRotation }
                 }
             })
         }
