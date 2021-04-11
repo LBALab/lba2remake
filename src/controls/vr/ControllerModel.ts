@@ -119,10 +119,9 @@ export default class ControllerModel {
                     const maxNode = this.vrControllerMesh
                         .getObjectByName(visualResponse.maxNodeName);
 
-                    THREE.Quaternion.slerp(
+                    valueNode.quaternion.slerpQuaternions(
                         minNode.quaternion,
                         maxNode.quaternion,
-                        valueNode.quaternion,
                         visualResponse.value
                     );
 
