@@ -312,22 +312,23 @@ function loadSphereGeometry(geometries, body) {
         const sphereGeometry = new THREE.SphereGeometry(s.size, 8, 8);
         const normal = getNormal(body, s.vertex);
 
-        const addVertex = (j) => {
+        const addVertex = (x, y, z) => {
             push.apply(geometries.colored.positions, [
-                sphereGeometry.vertices[j].x + centerPos[0],
-                sphereGeometry.vertices[j].y + centerPos[1],
-                sphereGeometry.vertices[j].z + centerPos[2]
+                x + centerPos[0],
+                y + centerPos[1],
+                z + centerPos[2]
             ]);
             push.apply(geometries.colored.normals, normal);
             push.apply(geometries.colored.bones, getBone(body, s.vertex));
             geometries.colored.colors.push(s.colour);
         };
 
-        each(sphereGeometry.faces, (f) => {
-            addVertex(f.a);
-            addVertex(f.b);
-            addVertex(f.c);
-        });
+        const { array: vertex } = sphereGeometry.attributes.position;
+        const { array: index, count } = sphereGeometry.index;
+        for (let i = 0; i < count; i += 1) {
+            const idx = index[i] * 3;
+            addVertex(vertex[idx], vertex[idx + 1], vertex[idx + 2]);
+        }
     });
 }
 
