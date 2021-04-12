@@ -16,6 +16,7 @@ export interface ControlsState {
     cameraLookAtLerp: THREE.Vector3;
     cameraOrientation: THREE.Quaternion;
     cameraHeadOrientation: THREE.Quaternion;
+    camZone?: THREE.Vector3;
     freeCamera: boolean;
     relativeToCam: boolean;
     firstPerson: boolean;
@@ -49,6 +50,7 @@ export function initControlsState(vr: boolean): ControlsState {
         cameraLookAtLerp: new THREE.Vector3(),
         cameraOrientation: new THREE.Quaternion(),
         cameraHeadOrientation: new THREE.Quaternion(),
+        camZone: null,
         freeCamera: false,
         relativeToCam: vr,
         firstPerson: vr && getSavedVRFirstPersonMode(),

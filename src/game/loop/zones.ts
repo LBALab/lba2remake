@@ -15,7 +15,7 @@ function NOP() { }
 
 export const ZoneOpcode = [
     { opcode: 0, command: 'GOTO_SCENE', handler: GOTO_SCENE },
-    { opcode: 1, command: 'CAMERA', handler: NOP },
+    { opcode: 1, command: 'CAMERA', handler: CAMERA },
     { opcode: 2, command: 'SCENERIC', handler: NOP },
     { opcode: 3, command: 'FRAGMENT', handler: NOP },
     { opcode: 4, command: 'BONUS', handler: BONUS },
@@ -59,6 +59,7 @@ const ZONE_OFFSET_OVERRIDES = {
 export function processZones(game: Game, scene: Scene, time: Time) {
     const hero = scene.actors[0];
     const pos = hero.physics.position.clone();
+    game.controlsState.camZone = null;
     pos.y += 0.005;
     for (const zone of scene.zones) {
         if (zone.props.type === 2)
@@ -323,6 +324,45 @@ function GOTO_SCENE(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Ti
         return true;
     }
     return false;
+}
+
+const HERO_POS = new THREE.Vector3();
+
+/**
+ * @return {boolean}
+ */
+function CAMERA(game: Game, scene: Scene, zone: Zone) {
+    const hero = scene.actors[0];
+    if (!hero.threeObject
+        || !(hero.props.dirMode !== ActorDirMode.MANUAL || game.getUiState().cinema))
+        return false;
+
+    HERO_POS.set(0, 0, 0);
+    HERO_POS.applyMatrix4(hero.threeObject.matrixWorld);
+    const controlsState = game.controlsState;
+    const camVector = getCamVector(zone);
+    controlsState.camZone = new THREE.Vector3(
+        HERO_POS.x + camVector.x,
+        HERO_POS.y + camVector.y,
+        HERO_POS.z + camVector.z,
+    );
+    if (scene.firstFrame && scene.camera.controlNode) {
+        controlsState.cameraLerp.copy(controlsState.camZone);
+        scene.camera.controlNode.position.copy(controlsState.camZone);
+    }
+    return false;
+}
+
+export function getCamVector(zone) {
+    const camVector = new THREE.Vector3(-1, 0, 0);
+    camVector.applyEuler(new THREE.Euler(
+        0, // -(zone.props.info3 * 2 * Math.PI) / 0x1000,
+        -(zone.props.info4 * 2 * Math.PI) / 0x1000,
+        -(zone.props.info3 * 2 * Math.PI) / 0x1000, // -(zone.props.info5 * 2 * Math.PI) / 0x1000,
+        'YZX'
+    ));
+    camVector.multiplyScalar(WORLD_SCALE * zone.props.info6 * 0.5);
+    return camVector;
 }
 
 function TEXT(game: Game, scene: Scene, zone: Zone, hero: Actor, _time: Time) {
