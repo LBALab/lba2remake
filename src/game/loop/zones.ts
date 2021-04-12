@@ -333,7 +333,8 @@ const HERO_POS = new THREE.Vector3();
  */
 function CAMERA(game: Game, scene: Scene, zone: Zone) {
     const hero = scene.actors[0];
-    if (!hero.threeObject)
+    if (!hero.threeObject
+        || !(hero.props.dirMode !== ActorDirMode.MANUAL || game.getUiState().cinema))
         return false;
 
     HERO_POS.set(0, 0, 0);
