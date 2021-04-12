@@ -232,6 +232,9 @@ const FOUND_OBJECT_CALLBACKS = {
             game.getState().hero.equippedItemId = 1;
         }
     },
+    [GetInventoryItems().TUNIC]: (game, _scene) => {
+        game.getState().hero.magic = 20;
+    },
 };
 
 export function FOUND_OBJECT(this: ScriptContext, cmdState, id) {
