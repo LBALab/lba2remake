@@ -51,7 +51,7 @@ export default class MagicBall {
             true, /* isBillboard */
             this.scene.is3DCam,
         );
-        sprite.threeObject.scale.multiplyScalar(1.5);
+        sprite.threeObject.scale.multiplyScalar(1);
         this.threeObject.add(sprite.threeObject);
         this.threeObject.name = 'magicball';
         this.threeObject.visible = true;

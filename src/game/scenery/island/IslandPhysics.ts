@@ -374,6 +374,10 @@ function processBoxIntersections(
             ACTOR_BOX.translate(DIFF);
         }
     }
+    // don't let objects go to abysm
+    if (!isTouchingGround && actor.physics.position.y < 0) {
+        isTouchingGround = true;
+    }
     actor.state.isColliding = collision;
     return isTouchingGround;
 }
