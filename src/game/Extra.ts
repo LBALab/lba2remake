@@ -23,7 +23,7 @@ const ExtraFlag = {
     BONUS: 1 << 14,
 };
 
-const GRAVITY = 30000;
+const GRAVITY = 0x8000;
 
 interface ExtraProps {
     bonus: number;
