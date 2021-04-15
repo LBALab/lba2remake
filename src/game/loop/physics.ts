@@ -42,7 +42,7 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
     actor.model.mesh.position.copy(actor.physics.position);
     if (actor.model.boundingBoxDebugMesh) {
         actor.model.boundingBoxDebugMesh.quaternion.copy(actor.model.mesh.quaternion);
-        actor.model.boundingBoxDebugMesh.quaternion.inverse();
+        actor.model.boundingBoxDebugMesh.quaternion.invert();
     }
 }
 
