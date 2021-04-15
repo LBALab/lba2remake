@@ -282,7 +282,7 @@ export default class Actor {
                         this.model.boundingBoxDebugMesh.quaternion.copy(
                             targetActor.model.mesh.quaternion
                         );
-                        this.model.boundingBoxDebugMesh.quaternion.inverse();
+                        this.model.boundingBoxDebugMesh.quaternion.invert();
                     }
                 }
                 if (this.sprite) {
