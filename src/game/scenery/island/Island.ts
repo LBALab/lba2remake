@@ -36,10 +36,11 @@ interface IslandData {
     smokeTexture: THREE.Texture;
 }
 
-interface IslandOptions {
-    cache: 'regular' | 'editor' | 'preview';
+export interface IslandOptions {
+    cache: 'none' |'regular' | 'editor' | 'preview';
     preview: boolean;
     editor: boolean;
+    flags?: any[];
 }
 
 interface IslandComponent {
@@ -61,9 +62,10 @@ export default class Island {
             name = 'CITADEL';
         }
         return Island.loadWithCache(name, sceneData.ambience, {
-            cache: 'regular',
+            cache: 'none',
             preview: false,
-            editor: false
+            editor: false,
+            flags: game.getState().flags.quest,
         });
     }
 
@@ -71,7 +73,7 @@ export default class Island {
         return Island.loadWithCache(name, ambience, {
             cache: 'editor',
             preview: false,
-            editor: true
+            editor: true,
         });
     }
 
@@ -79,7 +81,7 @@ export default class Island {
         return Island.loadWithCache(name, ambience, {
             cache: 'preview',
             preview: true,
-            editor: false
+            editor: false,
         });
     }
 
@@ -88,12 +90,14 @@ export default class Island {
         ambience: any,
         options: IslandOptions
     ): Promise<Island> {
-        if (islandsCache[options.cache].has(name)) {
+        if (options.cache !== 'none' && islandsCache[options.cache].has(name)) {
             return islandsCache[options.cache].get(name);
         }
         const data = await Island.loadData(name, ambience);
         const island = new Island(data, options);
-        islandsCache[options.cache].set(name, island);
+        if (options.cache !== 'none') {
+            islandsCache[options.cache].set(name, island);
+        }
         return island;
     }
 
@@ -124,7 +128,7 @@ export default class Island {
         this.threeObject = new THREE.Object3D();
         this.threeObject.name = `island_${data.name}`;
         this.threeObject.matrixAutoUpdate = false;
-        const layout = new IslandLayout(data.ile);
+        const layout = new IslandLayout(data.ile, options);
 
         const geomInfo = loadGeometries(this.threeObject, this.props, data, layout);
 
