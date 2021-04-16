@@ -11,6 +11,7 @@ export interface IslandObjectInfo {
     soundType: number;
     boundingBox?: THREE.Box3;
     flags: number;
+    flagValue: number;
 }
 
 export interface RawGroundMesh {
@@ -62,7 +63,7 @@ export default class IslandLayout {
                 const objects: IslandObjectInfo[] = [];
                 for (let j = 0; j < numObjects; j += 1) {
                     const obj = this.loadObjectInfo(objectsDV, x, z, j);
-                    if (options.flags && obj.flags && !options.flags[obj.flags]) {
+                    if (options.flags && obj.flags && options.flags[obj.flags] !== obj.flagValue) {
                         continue;
                     }
                     objects.push(obj);
@@ -93,6 +94,7 @@ export default class IslandLayout {
         const oz = objectsDV.getInt32(offset + 4, true);
         const angle = objectsDV.getUint8(offset + 21) >> 2;
         const flags = objectsDV.getUint8(offset + 22);
+        const flagValue = objectsDV.getUint8(offset + 23);
         const soundType = objectsDV.getInt16(offset + 16, true);
         return {
             index: objectsDV.getUint32(offset, true),
@@ -103,6 +105,7 @@ export default class IslandLayout {
             iv: 1,
             soundType,
             flags,
+            flagValue,
         };
     }
 
