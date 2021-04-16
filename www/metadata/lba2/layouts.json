@@ -2060,13 +2060,58 @@
     },
     "15": {
       "replace": true,
-      "file": "CA_015_016_iron_ladder.glb",
+      "file": "CA_015_iron_ladder.glb",
       "orientation": 0
     },
     "16": {
       "replace": true,
-      "file": "CA_015_016_iron_ladder.glb",
+      "file": "CA_016_iron_ladder.glb",
       "orientation": 1
+    },
+    "17": {
+      "replace": true,
+      "file": "CA_017_018_spikes.glb",
+      "orientation": 0
+    },
+    "18": {
+      "replace": true,
+      "file": "CA_017_018_spikes.glb",
+      "orientation": 1
+    },
+    "22": {
+      "replace": true,
+      "file": "CA_022_magical_font.glb",
+      "orientation": 0
+    },
+    "23": {
+      "replace": true,
+      "file": "CA_023_wooden_stairs.glb",
+      "orientation": 0
+    },
+    "24": {
+      "replace": true,
+      "file": "CA_024_wooden_stairs.glb",
+      "orientation": 0
+    },
+    "29": {
+      "replace": true,
+      "file": "CA_029_ancient_pots.glb",
+      "orientation": 0
+    },
+    "40": {
+      "replace": true,
+      "file": "CA_040_041_water_pile.glb",
+      "orientation": 0
+    },
+    "41": {
+      "replace": true,
+      "file": "CA_040_041_water_pile.glb",
+      "orientation": 1
+    },
+    "42": {
+      "replace": true,
+      "file": "CA_042_shining_sparkles.glb",
+      "orientation": 0
     },
     "43": {
       "mirror": true
@@ -2074,8 +2119,113 @@
     "44": {
       "mirror": true
     },
+    "45": {
+      "replace": true,
+      "file": "CA_045_mosaic_column.glb",
+      "orientation": 0
+    },
+    "48": {
+      "replace": true,
+      "file": "CA_048_twinsen_statue.glb",
+      "orientation": 0
+    },
+    "49": {
+      "replace": true,
+      "file": "CA_049_050_051_052_rail_curve.glb",
+      "orientation": 0
+    },
+    "50": {
+      "replace": true,
+      "file": "CA_049_050_051_052_rail_curve.glb",
+      "orientation": 2
+    },
+    "51": {
+      "replace": true,
+      "file": "CA_049_050_051_052_rail_curve.glb",
+      "orientation": 3
+    },
+    "52": {
+      "replace": true,
+      "file": "CA_049_050_051_052_rail_curve.glb",
+      "orientation": 1
+    },
+    "53": {
+      "replace": true,
+      "file": "CA_053_054_rail_straight.glb",
+      "orientation": 0
+    },
+    "54": {
+      "replace": true,
+      "file": "CA_053_054_rail_straight.glb",
+      "orientation": 1
+    },
+    "56": {
+      "replace": true,
+      "file": "CA_056_058_060_061_rail_branch.glb",
+      "orientation": 3
+    },
+    "57": {
+      "replace": true,
+      "file": "CA_057_059_062_rail_branch_left.glb",
+      "orientation": 1
+    },
+    "58": {
+      "replace": true,
+      "file": "CA_056_058_060_061_rail_branch.glb",
+      "orientation": 1
+    },
+    "59": {
+      "replace": true,
+      "file": "CA_057_059_062_rail_branch_left.glb",
+      "orientation": 0
+    },
+    "60": {
+      "replace": true,
+      "file": "CA_056_058_060_061_rail_branch.glb",
+      "orientation": 0
+    },
+    "61": {
+      "replace": true,
+      "file": "CA_056_058_060_061_rail_branch.glb",
+      "orientation": 2
+    },
+    "62": {
+      "replace": true,
+      "file": "CA_057_059_062_rail_branch_left.glb",
+      "orientation": 2
+    },
+    "63": {
+      "replace": true,
+      "file": "CA_063_064_065_066_rails_slope.glb",
+      "orientation": 3
+    },
+    "64": {
+      "replace": true,
+      "file": "CA_063_064_065_066_rails_slope.glb",
+      "orientation": 0
+    },
+    "65": {
+      "replace": true,
+      "file": "CA_063_064_065_066_rails_slope.glb",
+      "orientation": 1
+    },
+    "66": {
+      "replace": true,
+      "file": "CA_063_064_065_066_rails_slope.glb",
+      "orientation": 2
+    },
+    "69": {
+      "replace": true,
+      "file": "CA_069_wooden_planks.glb",
+      "orientation": 0
+    },
     "70": {
       "mirror": true
+    },
+    "71": {
+      "replace": true,
+      "file": "CA_071_you_shall_not_pass_signal.glb",
+      "orientation": 0
     },
     "76": {
       "mirror": true
@@ -2094,6 +2244,66 @@
     },
     "83": {
       "mirror": true
+    },
+    "85": {
+      "replace": true,
+      "file": "CA_085_086_railing_straight_rope.glb",
+      "orientation": 0
+    },
+    "86": {
+      "replace": true,
+      "file": "CA_085_086_railing_straight_rope.glb",
+      "orientation": 1
+    },
+    "87": {
+      "replace": true,
+      "file": "CA_087_088_089_090_railing_corner.glb",
+      "orientation": 2
+    },
+    "88": {
+      "replace": true,
+      "file": "CA_087_088_089_090_railing_corner.glb",
+      "orientation": 0
+    },
+    "89": {
+      "replace": true,
+      "file": "CA_087_088_089_090_railing_corner.glb",
+      "orientation": 1
+    },
+    "90": {
+      "replace": true,
+      "file": "CA_087_088_089_090_railing_corner.glb",
+      "orientation": 3
+    },
+    "91": {
+      "replace": true,
+      "file": "CA_091_092_railing_straight_pole.glb",
+      "orientation": 0
+    },
+    "92": {
+      "replace": true,
+      "file": "CA_091_092_railing_straight_pole.glb",
+      "orientation": 1
+    },
+    "93": {
+      "replace": true,
+      "file": "CA_093_094_095_096_railing_end.glb",
+      "orientation": 0
+    },
+    "94": {
+      "replace": true,
+      "file": "CA_093_094_095_096_railing_end.glb",
+      "orientation": 2
+    },
+    "95": {
+      "replace": true,
+      "file": "CA_093_094_095_096_railing_end.glb",
+      "orientation": 3
+    },
+    "96": {
+      "replace": true,
+      "file": "CA_093_094_095_096_railing_end.glb",
+      "orientation": 1
     },
     "97": {
       "mirror": true
@@ -2118,6 +2328,11 @@
     },
     "104": {
       "mirror": true
+    },
+    "108": {
+      "replace": true,
+      "file": "CA_108_directional_arrow_base.glb",
+      "orientation": 0
     },
     "126": {
       "mirror": true
@@ -2234,6 +2449,71 @@
       "replace": true,
       "file": "CA_016_iron_ladder_var2.glb",
       "orientation": 1
+    },
+    "17:5x2x1:2102,2103,2104,2105,2105,2106,2107,2108,2109,2109": {
+      "replace": true,
+      "file": "CA_017_spikes_var1.glb",
+      "orientation": 0
+    },
+    "17:11x2x1:2102,2103,2105,2102,2103,2104,2105,2102,2103,2104,2105,2106,2107,2109,2106,2107,2108,2109,2106,2107,2108,2109": {
+      "replace": true,
+      "file": "CA_017_spikes_var2.glb",
+      "orientation": 0
+    },
+    "18:1x2x10:2110,2111,2112,2113,2114,2115,2116,2117,2110,2111,2112,2113,2114,2115,2116,2117,2114,2115,2116,2117": {
+      "replace": true,
+      "file": "CA_018_spikes_var1.glb",
+      "orientation": 1
+    },
+    "18:1x2x15:2110,2111,2112,2113,2114,2115,2116,2117,2110,2111,2112,2113,2114,2115,2116,2117,2110,2111,2112,2113,2114,2115,2116,2117,2112,2113,2114,2115,2116,2117": {
+      "replace": true,
+      "file": "CA_018_spikes_var2.glb",
+      "orientation": 1
+    },
+    "18:1x2x10:2110,2111,2112,2113,2110,2111,2112,2113,2114,2115,2116,2117,2110,2111,2112,2113,2114,2115,2116,2117": {
+      "replace": true,
+      "file": "CA_018_spikes_var1.glb",
+      "orientation": 1
+    },
+    "18:1x2x2:2110,2111,2112,2113": {
+      "replace": true,
+      "file": "CA_018_spikes_var3.glb",
+      "orientation": 1
+    },
+    "18:1x2x9:2116,2117,2110,2111,2112,2113,2114,2115,2116,2117,2110,2111,2112,2113,2114,2115,2116,2117": {
+      "replace": true,
+      "file": "CA_018_spikes_var5.glb",
+      "orientation": 1
+    },
+    "49:2x1x3:2355,2356,2358,2359,2361,2362": {
+      "replace": true,
+      "file": "CA_049_rail_curve_var1.glb",
+      "orientation": 0
+    },
+    "51:2x1x3:127,2371,2373,2374,2376,2377": {
+      "replace": true,
+      "file": "CA_051_rail_curve_var2.glb",
+      "orientation": 0
+    },
+    "56:3x1x3:-1,2394,2395,2393,2397,2398,2396,2400,2401": {
+      "replace": true,
+      "file": "CA_056_058_060_061_rail_branch.glb",
+      "orientation": 3
+    },
+    "69:20x1x4:2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,-1,2492,2493,2492,2493,2492,2493,2492,2493,2492,2493,2492,2493,2492,2493,2492,2493,2492,2493": {
+      "replace": true,
+      "file": "CA_069_wooden_planks_var2.glb",
+      "orientation": 0
+    },
+    "69:7x2x11:-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2488,2489,2489,2488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2490,2491,2491,2490,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2492,2493,2493,2492,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2488,2489,2489,2488,-1,-1,-1,-1,-1,-1,-1,-1,-1,2488,2490,2491,2491,2490,-1,2491,-1,-1,-1,-1,-1,-1,-1,2492,2490,2491,2491,2490,2492,2493,-1,-1,-1,-1,-1,-1,-1,-1,2492,2493,2493,2492,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2488,2489,2489,2488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2490,2491,2491,2490,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2490,2491,2491,2490,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2492,2493,2493,2492": {
+      "replace": true,
+      "file": "CA_069_wooden_planks_var1.glb",
+      "orientation": 0
+    },
+    "42:1x2x1:2297,2298": {
+      "replace": true,
+      "file": "CA_042_shining_sparkles.glb",
+      "orientation": 0
     }
   },
   "4": {
