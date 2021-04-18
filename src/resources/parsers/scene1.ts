@@ -149,7 +149,6 @@ function loadActors(scene, offset) {
             extraType: -1,
             angle: 0,
             speed: 0,
-            controlMode: 0,
             info0: -1,
             info1: -1,
             info2: -1,
@@ -196,7 +195,7 @@ function loadActors(scene, offset) {
         offset += 2;
         actor.speed = data.getInt16(offset, true) * SPEED_ADJUSTMENT;
         offset += 2;
-        actor.controlMode = data.getInt16(offset);
+        actor.dirMode = data.getInt16(offset);
         offset += 2;
 
         actor.info0 = data.getInt16(offset, true);
