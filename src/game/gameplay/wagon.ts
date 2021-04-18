@@ -47,6 +47,11 @@ export interface WagonState {
 }
 
 const wEuler = new THREE.Euler();
+const lInfo = {
+    index: -1,
+    center: new THREE.Vector3(),
+    key: 'none'
+};
 
 export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     if (!(scene.scenery.physics instanceof IsoSceneryPhysics)) {
@@ -54,31 +59,39 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     }
 
     const state = wagon.wagonState;
-    const layout = scene.scenery.physics.getLayoutIndex(wagon.physics.position);
-    const rail = mapUndergasToBuRails(scene, layout);
+    scene.scenery.physics.getLayoutInfo(wagon.physics.position, lInfo);
+    const rail = mapUndergasToBuRails(scene, lInfo.index);
     wagon.debugData.rail = rail;
     wagon.debugData.railName = Object.keys(RailLayout).find(k => RailLayout[k] === rail);
+    wagon.debugData.lInfo = lInfo;
 
     let straight = false;
     let turn = false;
     switch (rail) {
         case RailLayout.NORTH_SOUTH:
+            wagon.physics.position.z = lInfo.center.z;
+            straight = true;
+            break;
         case RailLayout.WEST_EAST:
+            wagon.physics.position.x = lInfo.center.x;
             straight = true;
             break;
         case RailLayout.TURN_SOUTH_WEST:
             turn = true;
+            wagon.physics.position.z = lInfo.center.z;
             state.angle = Math.PI / 2;
             break;
         case RailLayout.TURN_SOUTH_EAST:
             turn = true;
-            state.angle = 3 * Math.PI / 2;
+            wagon.physics.position.z = lInfo.center.z;
+            state.angle = Math.PI / 2;
             break;
         case RailLayout.TURN_NORTH_WEST:
             turn = true;
+            wagon.physics.position.x = lInfo.center.x;
             state.angle = 0;
             break;
-        case RailLayout.TURN_SOUTH_WEST:
+        case RailLayout.TURN_NORTH_EAST:
             turn = true;
             state.angle = Math.PI;
             break;

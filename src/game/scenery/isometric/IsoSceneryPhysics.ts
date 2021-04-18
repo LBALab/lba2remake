@@ -9,6 +9,7 @@ import Scene from '../../Scene';
 import { getParams } from '../../../params';
 
 const STEP = 1 / WORLD_SIZE;
+const HALF_BRICK = 1 / 32;
 const ESCALATOR_SPEED = 0.05;
 
 // Vertical height offsets for the jet/protopack.
@@ -16,6 +17,12 @@ const JETPACK_OFFSET = 0.03;
 const PROTOPACK_OFFSET = 0.0075;
 // How fast we reach top vertical height when starting to jetpack.
 const JETPACK_VERTICAL_SPEED = 0.275;
+
+interface LayoutInfo {
+    index: number;
+    center: THREE.Vector3;
+    key: string;
+}
 
 export default class IsoSceneryPhysics {
     grid: any;
@@ -79,9 +86,13 @@ export default class IsoSceneryPhysics {
         return null;
     }
 
-    getLayoutIndex(position: THREE.Vector3) {
+    getLayoutInfo(position: THREE.Vector3, layoutInfo: LayoutInfo) {
         POSITION.copy(position);
         POSITION.multiplyScalar(STEP);
+
+        layoutInfo.index = -1;
+        layoutInfo.center.set(0, 0, 0);
+        layoutInfo.key = 'none';
 
         const dx = 64 - Math.floor(POSITION.x * 32);
         const dz = Math.floor(POSITION.z * 32);
@@ -90,20 +101,36 @@ export default class IsoSceneryPhysics {
             for (let i = cell.columns.length - 1; i >= 0; i -= 1) {
                 const column = cell.columns[i];
                 const bb = column.box;
-                const y = getColumnY(column, POSITION);
+                const cY = getColumnY(column, POSITION);
                 const minY = i > 0 ? bb.min.y : -Infinity;
                 if (POSITION.y >= minY) {
-                    if (POSITION.y < y + 0.015625) {
+                    if (POSITION.y < cY + 0.015625) {
                         const block = cell.blocks[bb.max.y * 64 - 1];
                         if (block) {
-                            return block.layout;
+                            const layout = this.grid.library.layouts[block.layout];
+                            const idx = block.block;
+                            const { nX: nZ, nY, nZ: nX } = layout;
+                            const x = Math.floor(idx / (nZ * nY));
+                            // const y = Math.floor(idx / nZ) % nY;
+                            const z = idx % nZ;
+                            const wx = dx - x;
+                            const wz = dz - z;
+                            const cx = wx + nX * 0.5;
+                            const cz = wz + nZ * 0.5;
+                            layoutInfo.index = block.layout;
+                            layoutInfo.center.set(
+                                2 - cx * HALF_BRICK + HALF_BRICK,
+                                0,
+                                cz * HALF_BRICK,
+                            ).multiplyScalar(WORLD_SIZE);
+
+                            layoutInfo.key = `${wx},${wz}`;
                         }
-                        return -1;
+                        break;
                     }
                 }
             }
         }
-        return -1;
     }
 
     processCollisions(scene: Scene, obj, time: Time) {
