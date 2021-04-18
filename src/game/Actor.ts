@@ -160,6 +160,7 @@ export default class Actor {
     // We should move them somewhere else.
     label?: any;
     refreshLabel?: Function;
+    debugData: any = {};
 
     static async load(
         game: Game,

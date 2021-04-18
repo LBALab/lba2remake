@@ -65,6 +65,8 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     let z = 0;
     let angle = 0;
     const layout = scene.scenery.physics.getLayoutIndex(wagon.physics.position);
+    wagon.debugData.rail = layout;
+    wagon.debugData.railName = Object.keys(RailLayout).find(k => RailLayout[k] === layout);
     switch (layout) {
         case RailLayout.NORTH_SOUTH:
         case RailLayout.U_NORTH_SOUTH:
