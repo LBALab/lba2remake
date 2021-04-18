@@ -113,9 +113,6 @@ function createQuestFlags() {
     quest[152] = 1; // rain
     quest[159] = 256;
 
-    quest[13] = 1;
-    quest[253] = 2;
-
     return quest;
 }
 
