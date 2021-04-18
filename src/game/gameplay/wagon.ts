@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import Actor from '../Actor';
 import Scene from '../Scene';
+import IsoScenery from '../scenery/isometric/IsoScenery';
 import IsoSceneryPhysics from '../scenery/isometric/IsoSceneryPhysics';
 import { Time } from '../../datatypes';
 
@@ -54,7 +55,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     let z = 0;
     let angle = 0;
     const layout = scene.scenery.physics.getLayoutIndex(wagon.physics.position);
-    const rail = mapUndergasToBuRails(layout);
+    const rail = mapUndergasToBuRails(scene, layout);
     wagon.debugData.rail = rail;
     wagon.debugData.railName = Object.keys(RailLayout).find(k => RailLayout[k] === rail);
     switch (rail) {
@@ -122,26 +123,29 @@ const UndergasRailLayout = {
     TO_WEST_WEST_NORTH:    64,
 };
 
-function mapUndergasToBuRails(rail) {
-    switch (rail) {
-        case UndergasRailLayout.NORTH_SOUTH:           return RailLayout.NORTH_SOUTH;
-        case UndergasRailLayout.WEST_EAST:             return RailLayout.WEST_EAST;
-        case UndergasRailLayout.UP_NORTH:              return RailLayout.UP_NORTH;
-        case UndergasRailLayout.UP_SOUTH:              return RailLayout.UP_SOUTH;
-        case UndergasRailLayout.UP_WEST:               return RailLayout.UP_WEST;
-        case UndergasRailLayout.UP_EAST:               return RailLayout.UP_EAST;
-        case UndergasRailLayout.TURN_NORTH_WEST:       return RailLayout.TURN_NORTH_WEST;
-        case UndergasRailLayout.TURN_NORTH_EAST:       return RailLayout.TURN_NORTH_EAST;
-        case UndergasRailLayout.TURN_SOUTH_WEST:       return RailLayout.TURN_SOUTH_WEST;
-        case UndergasRailLayout.TURN_SOUTH_EAST:       return RailLayout.TURN_NORTH_EAST;
-        case UndergasRailLayout.TO_NORTH_NORTH_WEST:   return RailLayout.TO_NORTH_NORTH_WEST;
-        case UndergasRailLayout.TO_NORTH_NORTH_EAST:   return RailLayout.TO_NORTH_NORTH_EAST;
-        case UndergasRailLayout.TO_SOUTH_SOUTH_WEST:   return RailLayout.TO_SOUTH_SOUTH_WEST;
-        case UndergasRailLayout.TO_SOUTH_SOUTH_EAST:   return RailLayout.TO_SOUTH_SOUTH_EAST;
-        case UndergasRailLayout.TO_EAST_EAST_SOUTH:    return RailLayout.TO_EAST_EAST_SOUTH;
-        case UndergasRailLayout.TO_EAST_EAST_NORTH:    return RailLayout.TO_EAST_EAST_NORTH;
-        case UndergasRailLayout.TO_WEST_WEST_SOUTH:    return RailLayout.TO_WEST_WEST_SOUTH;
-        case UndergasRailLayout.TO_WEST_WEST_NORTH:    return RailLayout.TO_WEST_WEST_NORTH;
+function mapUndergasToBuRails(scene: Scene, rail: number) {
+    const scenery = scene.scenery as IsoScenery;
+    if (scenery.grid.library.index === 11) { // Mine library
+        switch (rail) {
+            case UndergasRailLayout.NORTH_SOUTH:           return RailLayout.NORTH_SOUTH;
+            case UndergasRailLayout.WEST_EAST:             return RailLayout.WEST_EAST;
+            case UndergasRailLayout.UP_NORTH:              return RailLayout.UP_NORTH;
+            case UndergasRailLayout.UP_SOUTH:              return RailLayout.UP_SOUTH;
+            case UndergasRailLayout.UP_WEST:               return RailLayout.UP_WEST;
+            case UndergasRailLayout.UP_EAST:               return RailLayout.UP_EAST;
+            case UndergasRailLayout.TURN_NORTH_WEST:       return RailLayout.TURN_NORTH_WEST;
+            case UndergasRailLayout.TURN_NORTH_EAST:       return RailLayout.TURN_NORTH_EAST;
+            case UndergasRailLayout.TURN_SOUTH_WEST:       return RailLayout.TURN_SOUTH_WEST;
+            case UndergasRailLayout.TURN_SOUTH_EAST:       return RailLayout.TURN_NORTH_EAST;
+            case UndergasRailLayout.TO_NORTH_NORTH_WEST:   return RailLayout.TO_NORTH_NORTH_WEST;
+            case UndergasRailLayout.TO_NORTH_NORTH_EAST:   return RailLayout.TO_NORTH_NORTH_EAST;
+            case UndergasRailLayout.TO_SOUTH_SOUTH_WEST:   return RailLayout.TO_SOUTH_SOUTH_WEST;
+            case UndergasRailLayout.TO_SOUTH_SOUTH_EAST:   return RailLayout.TO_SOUTH_SOUTH_EAST;
+            case UndergasRailLayout.TO_EAST_EAST_SOUTH:    return RailLayout.TO_EAST_EAST_SOUTH;
+            case UndergasRailLayout.TO_EAST_EAST_NORTH:    return RailLayout.TO_EAST_EAST_NORTH;
+            case UndergasRailLayout.TO_WEST_WEST_SOUTH:    return RailLayout.TO_WEST_WEST_SOUTH;
+            case UndergasRailLayout.TO_WEST_WEST_NORTH:    return RailLayout.TO_WEST_WEST_NORTH;
+        }
     }
     return rail;
 }
