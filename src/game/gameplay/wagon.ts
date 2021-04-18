@@ -97,10 +97,11 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
             angle = Math.PI;
             break;
     }
+
+    const dt = Math.min(time.delta, 0.025);
     if (straight || turn) {
-        const speed = time.delta;
-        const speedX = x * speed;
-        const speedZ = z * speed;
+        const speedX = x * dt;
+        const speedZ = z * dt;
         wagon.physics.temp.position.x += speedX;
         wagon.physics.temp.position.z += speedZ;
     }
