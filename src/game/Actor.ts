@@ -23,6 +23,7 @@ import { Time } from '../datatypes';
 import { getAnimationsSync } from '../resources';
 import { getAnim } from '../model/entity';
 import { processAnimAction } from './loop/animAction';
+import { computeWagonMovement } from './gameplay/wagon';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -304,6 +305,10 @@ export default class Actor {
                     this.goto(scene.actors[followActor].physics.position);
                 }
             }
+        }
+
+        if (this.props.dirMode === ActorDirMode.WAGON) {
+            computeWagonMovement(scene, this, time);
         }
 
         if (scene.isActive && this.index === 0) {
