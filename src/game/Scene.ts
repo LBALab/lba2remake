@@ -84,11 +84,12 @@ export default class Scene {
         index: number,
         parent: Scene = null
     ): Promise<Scene> {
+        const isLBA1 = getParams().game === 'lba1';
         const data = await getScene(index);
         if (getParams().editor) {
             await loadSceneMetaData(index);
         }
-        const scenery = !!parent ? parent.scenery : await loadScenery(game, data);
+        const scenery = !!parent ? parent.scenery : await loadScenery(game, data, index);
         const scene: Scene = new Scene(
             game,
             renderer,
@@ -102,7 +103,7 @@ export default class Scene {
         // Little keys are scene relative.
         game.getState().hero.keys = 0;
 
-        if (data.isIsland) {
+        if (data.isIsland && !isLBA1) {
             if (!!parent) {
                 killActor(scene.actors[0]);
             } else {
@@ -286,14 +287,8 @@ export default class Scene {
                 this.sceneNode.updateMatrix();
             } else { // Island Iso
                 this.sceneNode.name = `islandiso_section_${sceneMapping.section}`;
-                // this.sceneNode.position.x += -sceneMapping.section * WORLD_SIZE * 2;
-                // this.sceneNode.position.z += sceneMapping.variant * WORLD_SIZE * 2;
-                // this.sceneNode.position.x += -sceneMapping.z * 64;
-                // this.sceneNode.position.y += sceneMapping.y * 40;
-                // this.sceneNode.position.z += sceneMapping.x * 64;
-                this.sceneNode.position.x += -sceneMapping.z * WORLD_SIZE * 2;
-                this.sceneNode.position.y += sceneMapping.y * WORLD_SIZE * 2;
-                this.sceneNode.position.z += -sceneMapping.x * WORLD_SIZE * 2;
+                // this.sceneNode.position.x += sceneMapping.z * WORLD_SIZE * 2;
+                // this.sceneNode.position.z += sceneMapping.x * WORLD_SIZE * 2;
                 this.sceneNode.updateMatrix();
             }
         } else {

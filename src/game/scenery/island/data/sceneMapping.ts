@@ -88,11 +88,11 @@ const LBA2 = {
 };
 
 const LBA1 = {
-    1: {island: 'CITADEL', section: 0, variant: 0, x: 0, y: 0.11722, z: 0},
-    2: {island: 'CITADEL', section: 2, variant: 0, x: 0, y: 0, z: 2},
-    3: {island: 'CITADEL', section: 1, variant: 0, x: 0, y: 0, z: 1},
-    4: {island: 'CITADEL', section: 3, variant: 0, x: 0, y: 0, z: 3},
-    6: {island: 'CITADEL', section: 4, variant: 0, x: 1, y: 0, z: 1.844},
+    1: {island: 'CITADEL', section: 0, variant: 0, x:  0, y: 0.11722, z: 0},
+    2: {island: 'CITADEL', section: 2, variant: 0, x:  0, y: 0, z: 2},
+    3: {island: 'CITADEL', section: 1, variant: 0, x:  0, y: 0, z: 1},
+    4: {island: 'CITADEL', section: 3, variant: 0, x:  0, y: 0, z: 3},
+    6: {island: 'CITADEL', section: 4, variant: 0, x: -1, y: 0, z: 1.844},
 };
 
 const { game } = getParams();
