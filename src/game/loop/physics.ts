@@ -5,7 +5,7 @@ import { WORLD_SIZE } from '../../utils/lba';
 import Game from '../Game';
 import Scene from '../Scene';
 import { Time } from '../../datatypes';
-import Actor from '../Actor';
+import Actor, { ActorDirMode } from '../Actor';
 
 export function processPhysicsFrame(game: Game, scene: Scene, time: Time) {
     for (const actor of scene.actors) {
@@ -28,7 +28,7 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
     }
 
     actor.physics.position.add(actor.physics.temp.position);
-    if (actor.props.flags.hasCollisions) {
+    if (actor.props.flags.hasCollisions && actor.props.dirMode !== ActorDirMode.WAGON) {
         if (!actor.state.hasGravityByAnim &&
             actor.props.flags.canFall && !actor.state.isClimbing &&
             !actor.state.isUsingProtoOrJetpack) {
