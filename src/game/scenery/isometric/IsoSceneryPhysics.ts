@@ -79,6 +79,33 @@ export default class IsoSceneryPhysics {
         return null;
     }
 
+    getLayoutIndex(position: THREE.Vector3) {
+        POSITION.copy(position);
+        POSITION.multiplyScalar(STEP);
+
+        const dx = 64 - Math.floor(POSITION.x * 32);
+        const dz = Math.floor(POSITION.z * 32);
+        if (this.grid.cells[(dx * 64) + dz]) {
+            const cell = this.grid.cells[(dx * 64) + dz];
+            for (let i = cell.columns.length - 1; i >= 0; i -= 1) {
+                const column = cell.columns[i];
+                const bb = column.box;
+                const y = getColumnY(column, POSITION);
+                const minY = i > 0 ? bb.min.y : -Infinity;
+                if (POSITION.y >= minY) {
+                    if (POSITION.y < y + 0.015625) {
+                        const block = cell.blocks[bb.max.y * 64 - 1];
+                        if (block) {
+                            return block.layout;
+                        }
+                        return -1;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
     processCollisions(scene: Scene, obj, time: Time) {
         const isUsingProtoOrJetpack = (obj.props.entityIndex === BehaviourMode.JETPACK ||
             obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
