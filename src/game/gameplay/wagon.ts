@@ -39,29 +39,6 @@ const RailLayout = {
     TO_EAST_EAST_NORTH:    60,
     TO_WEST_WEST_SOUTH:    61,
     TO_WEST_WEST_NORTH:    62,
-
-    /** Undergas mine rails **/
-    // Straight
-    U_NORTH_SOUTH:           14,
-    U_WEST_EAST:             15,
-    U_UP_NORTH:              58,
-    U_UP_SOUTH:              59,
-    U_UP_WEST:               52,
-    U_UP_EAST:               57,
-    // Turns
-    U_TURN_NORTH_WEST:       16,
-    U_TURN_NORTH_EAST:       18,
-    U_TURN_SOUTH_WEST:       19,
-    U_TURN_SOUTH_EAST:       17,
-    // Turnouts
-    U_TO_NORTH_NORTH_WEST:   66,
-    U_TO_NORTH_NORTH_EAST:   67,
-    U_TO_SOUTH_SOUTH_WEST:   50,
-    U_TO_SOUTH_SOUTH_EAST:   60,
-    U_TO_EAST_EAST_SOUTH:    21,
-    U_TO_EAST_EAST_NORTH:    20,
-    U_TO_WEST_WEST_SOUTH:    62,
-    U_TO_WEST_WEST_NORTH:    64,
 };
 
 const wEuler = new THREE.Euler();
@@ -77,33 +54,29 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     let z = 0;
     let angle = 0;
     const layout = scene.scenery.physics.getLayoutIndex(wagon.physics.position);
-    wagon.debugData.rail = layout;
-    wagon.debugData.railName = Object.keys(RailLayout).find(k => RailLayout[k] === layout);
-    switch (layout) {
+    const rail = mapUndergasToBuRails(layout);
+    wagon.debugData.rail = rail;
+    wagon.debugData.railName = Object.keys(RailLayout).find(k => RailLayout[k] === rail);
+    switch (rail) {
         case RailLayout.NORTH_SOUTH:
-        case RailLayout.U_NORTH_SOUTH:
             straight = true;
             x = 1;
             break;
         case RailLayout.WEST_EAST:
-        case RailLayout.U_WEST_EAST:
             straight = true;
             z = -1;
             break;
         case RailLayout.TURN_SOUTH_WEST:
-        case RailLayout.U_TURN_SOUTH_WEST:
             turn = true;
             x = 1;
             angle = Math.PI / 2;
             break;
         case RailLayout.TURN_SOUTH_EAST:
-        case RailLayout.U_TURN_SOUTH_EAST:
             turn = true;
             x = 1;
             angle = Math.PI / 2;
             break;
         case RailLayout.TURN_NORTH_WEST:
-        case RailLayout.U_TURN_NORTH_WEST:
             turn = true;
             z = 1;
             angle = Math.PI;
@@ -122,4 +95,53 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
         wEuler.set(0, angle, 0, 'XZY');
         wagon.physics.orientation.setFromEuler(wEuler);
     }
+}
+
+const UndergasRailLayout = {
+    /** Undergas mine rails **/
+    // Straight
+    NORTH_SOUTH:           14,
+    WEST_EAST:             15,
+    UP_NORTH:              58,
+    UP_SOUTH:              59,
+    UP_WEST:               52,
+    UP_EAST:               57,
+    // Turns
+    TURN_NORTH_WEST:       16,
+    TURN_NORTH_EAST:       18,
+    TURN_SOUTH_WEST:       19,
+    TURN_SOUTH_EAST:       17,
+    // Turnouts
+    TO_NORTH_NORTH_WEST:   66,
+    TO_NORTH_NORTH_EAST:   67,
+    TO_SOUTH_SOUTH_WEST:   50,
+    TO_SOUTH_SOUTH_EAST:   60,
+    TO_EAST_EAST_SOUTH:    21,
+    TO_EAST_EAST_NORTH:    20,
+    TO_WEST_WEST_SOUTH:    62,
+    TO_WEST_WEST_NORTH:    64,
+};
+
+function mapUndergasToBuRails(rail) {
+    switch (rail) {
+        case UndergasRailLayout.NORTH_SOUTH:           return RailLayout.NORTH_SOUTH;
+        case UndergasRailLayout.WEST_EAST:             return RailLayout.WEST_EAST;
+        case UndergasRailLayout.UP_NORTH:              return RailLayout.UP_NORTH;
+        case UndergasRailLayout.UP_SOUTH:              return RailLayout.UP_SOUTH;
+        case UndergasRailLayout.UP_WEST:               return RailLayout.UP_WEST;
+        case UndergasRailLayout.UP_EAST:               return RailLayout.UP_EAST;
+        case UndergasRailLayout.TURN_NORTH_WEST:       return RailLayout.TURN_NORTH_WEST;
+        case UndergasRailLayout.TURN_NORTH_EAST:       return RailLayout.TURN_NORTH_EAST;
+        case UndergasRailLayout.TURN_SOUTH_WEST:       return RailLayout.TURN_SOUTH_WEST;
+        case UndergasRailLayout.TURN_SOUTH_EAST:       return RailLayout.TURN_NORTH_EAST;
+        case UndergasRailLayout.TO_NORTH_NORTH_WEST:   return RailLayout.TO_NORTH_NORTH_WEST;
+        case UndergasRailLayout.TO_NORTH_NORTH_EAST:   return RailLayout.TO_NORTH_NORTH_EAST;
+        case UndergasRailLayout.TO_SOUTH_SOUTH_WEST:   return RailLayout.TO_SOUTH_SOUTH_WEST;
+        case UndergasRailLayout.TO_SOUTH_SOUTH_EAST:   return RailLayout.TO_SOUTH_SOUTH_EAST;
+        case UndergasRailLayout.TO_EAST_EAST_SOUTH:    return RailLayout.TO_EAST_EAST_SOUTH;
+        case UndergasRailLayout.TO_EAST_EAST_NORTH:    return RailLayout.TO_EAST_EAST_NORTH;
+        case UndergasRailLayout.TO_WEST_WEST_SOUTH:    return RailLayout.TO_WEST_WEST_SOUTH;
+        case UndergasRailLayout.TO_WEST_WEST_NORTH:    return RailLayout.TO_WEST_WEST_NORTH;
+    }
+    return rail;
 }
