@@ -66,6 +66,7 @@ export default class Scene {
     usedVarGames: number[];
     readonly scenery: Scenery;
     sideScenes: Map<number, Scene>;
+    parentIndex?: number;
     extras: Extra[];
     magicBall: MagicBall;
     isActive: boolean;
@@ -140,6 +141,7 @@ export default class Scene {
         this.points = [];
         this.extras = [];
         this.sceneNode = new THREE.Object3D();
+        this.parentIndex = parent?.index;
 
         if (parent) {
             this.threeScene = parent.threeScene;
@@ -287,8 +289,15 @@ export default class Scene {
                 this.sceneNode.updateMatrix();
             } else { // Island Iso
                 this.sceneNode.name = `islandiso_section_${sceneMapping.section}`;
-                // this.sceneNode.position.x += sceneMapping.z * WORLD_SIZE * 2;
-                // this.sceneNode.position.z += sceneMapping.x * WORLD_SIZE * 2;
+                if (this.isSideScene) {
+                    const parentSection = islandSceneMapping[this.parentIndex];
+                    this.sceneNode.position.x -=
+                        (sceneMapping.z - parentSection.z) * WORLD_SIZE * 2;
+                    this.sceneNode.position.y +=
+                        (sceneMapping.y - parentSection.y) * WORLD_SIZE * 2;
+                    this.sceneNode.position.z +=
+                        (sceneMapping.x - parentSection.x) * WORLD_SIZE * 2;
+                }
                 this.sceneNode.updateMatrix();
             }
         } else {
