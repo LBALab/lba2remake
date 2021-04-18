@@ -3,13 +3,14 @@ import  {WORLD_SCALE, getHtmlColor, SPEED_ADJUSTMENT } from '../../utils/lba';
 import { Resource } from '../load';
 import { getPalette, getText, getSceneMap } from '..';
 import { initHeroFlags, parseStaticFlags } from './scene2';
+import { LBA1_ISLAND } from '../../game/scenery/island/data/sceneMapping';
 
 // LBA1 does not have a scene map, so lets fake one
 export const parseSceneMapLBA1 = () => {
     const map = [];
     for (let i = 0; i < 120; i += 1) {
         map.push({
-            isIsland: [1, 2, 3, 4, 6].includes(i) ? true : false,
+            isIsland: LBA1_ISLAND.includes(i) ? true : false,
             sceneryIndex: i,
             libraryIndex: i
         });

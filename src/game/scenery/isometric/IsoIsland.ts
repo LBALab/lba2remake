@@ -3,14 +3,14 @@ import * as THREE from 'three';
 import Game from '../../Game';
 import IsoScenery from './IsoScenery';
 import { getScene } from '../../../resources';
-import islandSceneMapping, { LBA1_SECTIONS } from '../island/data/sceneMapping';
+import islandSceneMapping, { LBA1_ISLAND } from '../island/data/sceneMapping';
 
 export default class IsoIsland {
     static async load(game: Game, sceneData, sceneIndex): Promise<IsoScenery> {
         const sections = await IsoScenery.load(game, sceneData);
         const sceneSection = islandSceneMapping[sceneIndex];
 
-        for (const index of LBA1_SECTIONS) {
+        for (const index of LBA1_ISLAND) {
             if (index === sceneIndex) {
                 continue;
             }

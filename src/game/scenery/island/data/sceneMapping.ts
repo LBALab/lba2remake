@@ -87,7 +87,7 @@ const LBA2 = {
     132: {island: 'SOUSCELB', section: 2, variant: 0}
 };
 
-export const LBA1_SECTIONS = [1, 2, 3, 4, 6];
+export const LBA1_ISLAND = [1, 2, 3, 4, 6];
 const LBA1 = {
     1: {island: 'CITADEL', section: 0, variant: 0, x:  0, y: 0.11722, z: 0},
     2: {island: 'CITADEL', section: 2, variant: 0, x:  0, y: 0, z: 2},
