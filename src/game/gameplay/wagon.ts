@@ -6,14 +6,14 @@ import { Time } from '../../datatypes';
 
 /*
 **                       ----
-**        WEST       ---/    \---      NORTH
+**    WEST [Z-]      ---/    \---      NORTH [X+]
 **               ---/            \---
 **           ---/                    \---
 **        --/                            \--
 **        --\                            /--
 **           ---\                    /---
 **               ---\            /---
-**        SOUTH      ---\    /---       EAST
+**    SOUTH [X-]     ---\    /---      EAST [Z+]
 **                       ----
 */
 const RailLayout = {
