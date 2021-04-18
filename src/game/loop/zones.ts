@@ -442,7 +442,7 @@ function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor, time: Time) {
                 game,
                 scene,
                 position,
-                destAngle,
+                THREE.MathUtils.degToRad(78),
                 bonusSprite,
                 zone.props.info1,
                 time,
