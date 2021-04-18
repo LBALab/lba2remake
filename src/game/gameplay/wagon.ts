@@ -7,49 +7,49 @@ import { Time } from '../../datatypes';
 const RailLayout = {
     /** Temple of Bu rails **/
     // Straight
-    NORTH_SOUTH:           55,
-    EAST_WEST:             54,
-    UP_NORTH:              64,
-    UP_SOUTH:              66,
-    UP_EAST:               67,
-    UP_WEST:               65,
+    NORTH_SOUTH:           54,
+    EAST_WEST:             53,
+    UP_NORTH:              63,
+    UP_SOUTH:              65,
+    UP_EAST:               66,
+    UP_WEST:               64,
     // Turns
-    TURN_NORTH_EAST:       52,
-    TURN_NORTH_WEST:       51,
-    TURN_SOUTH_EAST:       50,
-    TURN_SOUTH_WEST:       53,
+    TURN_NORTH_EAST:       51,
+    TURN_NORTH_WEST:       50,
+    TURN_SOUTH_EAST:       49,
+    TURN_SOUTH_WEST:       52,
     // Turnouts
-    TO_NORTH_NORTH_EAST:   57,
-    TO_NORTH_NORTH_WEST:   56,
-    TO_SOUTH_SOUTH_EAST:   58,
-    TO_SOUTH_SOUTH_WEST:   59,
-    TO_WEST_WEST_SOUTH:    60,
-    TO_WEST_WEST_NORTH:    61,
-    TO_EAST_EAST_SOUTH:    62,
-    TO_EAST_EAST_NORTH:    63,
+    TO_NORTH_NORTH_EAST:   56,
+    TO_NORTH_NORTH_WEST:   55,
+    TO_SOUTH_SOUTH_EAST:   57,
+    TO_SOUTH_SOUTH_WEST:   58,
+    TO_WEST_WEST_SOUTH:    59,
+    TO_WEST_WEST_NORTH:    60,
+    TO_EAST_EAST_SOUTH:    61,
+    TO_EAST_EAST_NORTH:    62,
 
     /** Undergas mine rails **/
     // Straight
-    U_NORTH_SOUTH:           15,
-    U_EAST_WEST:             16,
-    U_UP_NORTH:              59,
-    U_UP_SOUTH:              60,
-    U_UP_EAST:               53,
-    U_UP_WEST:               58,
+    U_NORTH_SOUTH:           14,
+    U_EAST_WEST:             15,
+    U_UP_NORTH:              58,
+    U_UP_SOUTH:              59,
+    U_UP_EAST:               52,
+    U_UP_WEST:               57,
     // Turns
-    U_TURN_NORTH_EAST:       17,
-    U_TURN_NORTH_WEST:       19,
-    U_TURN_SOUTH_EAST:       20,
-    U_TURN_SOUTH_WEST:       18,
+    U_TURN_NORTH_EAST:       16,
+    U_TURN_NORTH_WEST:       18,
+    U_TURN_SOUTH_EAST:       19,
+    U_TURN_SOUTH_WEST:       17,
     // Turnouts
-    U_TO_NORTH_NORTH_EAST:   67,
-    U_TO_NORTH_NORTH_WEST:   68,
-    U_TO_SOUTH_SOUTH_EAST:   51,
-    U_TO_SOUTH_SOUTH_WEST:   61,
-    U_TO_WEST_WEST_SOUTH:    22,
-    U_TO_WEST_WEST_NORTH:    21,
-    U_TO_EAST_EAST_SOUTH:    63,
-    U_TO_EAST_EAST_NORTH:    65,
+    U_TO_NORTH_NORTH_EAST:   66,
+    U_TO_NORTH_NORTH_WEST:   67,
+    U_TO_SOUTH_SOUTH_EAST:   50,
+    U_TO_SOUTH_SOUTH_WEST:   60,
+    U_TO_WEST_WEST_SOUTH:    21,
+    U_TO_WEST_WEST_NORTH:    20,
+    U_TO_EAST_EAST_SOUTH:    62,
+    U_TO_EAST_EAST_NORTH:    64,
 };
 
 const wEuler = new THREE.Euler();
@@ -65,8 +65,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     let z = 0;
     let angle = 0;
     const layout = scene.scenery.physics.getLayoutIndex(wagon.physics.position);
-    const rail = layout + 1;
-    switch (rail) {
+    switch (layout) {
         case RailLayout.NORTH_SOUTH:
         case RailLayout.U_NORTH_SOUTH:
             straight = true;
