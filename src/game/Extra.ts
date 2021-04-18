@@ -23,7 +23,7 @@ const ExtraFlag = {
     BONUS: 1 << 14,
 };
 
-const GRAVITY = 40000;
+const GRAVITY = 0x8000;
 
 interface ExtraProps {
     bonus: number;
@@ -197,7 +197,7 @@ export default class Extra {
     private init(_angle, speed, _weight) {
         this.flags |= ExtraFlag.FLY;
         this.time = this.baseTime;
-        this.speed = speed * 0.8;
+        this.speed = speed;
         this.weight = _weight;
     }
 
@@ -230,8 +230,10 @@ export default class Extra {
         if ((this.flags & ExtraFlag.FLY) === ExtraFlag.FLY) {
             const ts = (time.elapsed - this.spawnTime) * 0.0025;
 
-            const x = this.speed * ts * Math.cos(45);
-            const y = this.speed * ts * Math.sin(45) - (0.5 * GRAVITY * ts * ts);
+            const throwAngle = 78;
+            const x = this.speed * ts * Math.cos(THREE.MathUtils.degToRad(throwAngle));
+            const y = this.speed * ts * Math.sin(THREE.MathUtils.degToRad(throwAngle))
+                 - (0.5 * GRAVITY * ts * ts);
             const trajectory = new THREE.Vector3(x, y, 0);
             trajectory.applyEuler(new THREE.Euler(0, this.physics.temp.angle, 0, 'XZY'));
 

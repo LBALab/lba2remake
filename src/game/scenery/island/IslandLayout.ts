@@ -1,4 +1,5 @@
 import { WORLD_SCALE, WORLD_SIZE } from '../../../utils/lba';
+import { IslandOptions } from './Island';
 
 export interface IslandObjectInfo {
     index: number;
@@ -9,6 +10,8 @@ export interface IslandObjectInfo {
     iv: number;
     soundType: number;
     boundingBox?: THREE.Box3;
+    flags: number;
+    flagValue: number;
 }
 
 export interface RawGroundMesh {
@@ -38,12 +41,12 @@ export default class IslandLayout {
     readonly groundSections: IslandSection[];
     readonly seaSections: SeaSection[];
 
-    constructor(ile) {
-        this.groundSections = this.loadGroundSections(ile);
+    constructor(ile, options: IslandOptions) {
+        this.groundSections = this.loadGroundSections(ile, options);
         this.seaSections = this.loadSeaSections();
     }
 
-    private loadGroundSections(ile): IslandSection[] {
+    private loadGroundSections(ile, options: IslandOptions): IslandSection[] {
         const layout_raw = new Uint8Array(ile.getEntry(0));
         const groundSections: IslandSection[] = [];
         let index = 0;
@@ -59,7 +62,11 @@ export default class IslandLayout {
                 const z = sZ - 8;
                 const objects: IslandObjectInfo[] = [];
                 for (let j = 0; j < numObjects; j += 1) {
-                    objects.push(this.loadObjectInfo(objectsDV, x, z, j));
+                    const obj = this.loadObjectInfo(objectsDV, x, z, j);
+                    if (options.flags && obj.flags && options.flags[obj.flags] !== obj.flagValue) {
+                        continue;
+                    }
+                    objects.push(obj);
                 }
                 groundSections.push({
                     id,
@@ -86,6 +93,8 @@ export default class IslandLayout {
         const oy = objectsDV.getInt32(offset + 8, true);
         const oz = objectsDV.getInt32(offset + 4, true);
         const angle = objectsDV.getUint8(offset + 21) >> 2;
+        const flags = objectsDV.getUint8(offset + 22);
+        const flagValue = objectsDV.getUint8(offset + 23);
         const soundType = objectsDV.getInt16(offset + 16, true);
         return {
             index: objectsDV.getUint32(offset, true),
@@ -95,6 +104,8 @@ export default class IslandLayout {
             angle,
             iv: 1,
             soundType,
+            flags,
+            flagValue,
         };
     }
 

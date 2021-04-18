@@ -5,13 +5,15 @@ _Unreleased_
 
 #### Gameplay
 
-- Switch Inventory Objects
+- Select Inventory objects
 - Positional Audio
+- Adding LBA1 Support
 - Gamepad Support
     * Tested with Razer Kishi Controller on Android
     * Tested with Steelwhell Nimbus Controller on Mac
-- Tweaked rotation speed
-- Adding LBA1 Support
+- Camera zone transitions during Cinema mode
+- Throw Magicball and weapon selection
+- Various gameplay fixes - the game is more playable throughout the story
 
 #### UI
 

@@ -903,6 +903,11 @@
       "file": "SE_109_suspicious_recipient.glb",
       "orientation": 0
     },
+    "112": {
+      "replace": true,
+      "file": "SE_112_lighting_spell_pot.glb",
+      "orientation": 0
+    },
     "113": {
       "mirror": true
     },
@@ -1021,6 +1026,16 @@
       "replace": true,
       "file": "SE_173_magic_chest.glb",
       "orientation": 0
+    },
+    "175": {
+      "replace": true,
+      "file": "SE_175_table_with_bunny_in_a_hat.glb",
+      "orientation": 0
+    },
+    "177": {
+      "replace": true,
+      "file": "SE_177_books_long.glb",
+      "orientation": 3
     },
     "178": {
       "replace": true,
@@ -2008,14 +2023,209 @@
     }
   },
   "3": {
+    "0": {
+      "replace": true,
+      "file": "CA_000_001_002_003_spiderweb_fence.glb",
+      "orientation": 0
+    },
+    "1": {
+      "replace": true,
+      "file": "CA_000_001_002_003_spiderweb_fence.glb",
+      "orientation": 2
+    },
+    "2": {
+      "replace": true,
+      "file": "CA_000_001_002_003_spiderweb_fence.glb",
+      "orientation": 3
+    },
+    "3": {
+      "replace": true,
+      "file": "CA_000_001_002_003_spiderweb_fence.glb",
+      "orientation": 1
+    },
+    "4": {
+      "replace": true,
+      "file": "CA_004_005_iron_fence.glb",
+      "orientation": 0
+    },
+    "5": {
+      "replace": true,
+      "file": "CA_004_005_iron_fence.glb",
+      "orientation": 1
+    },
+    "6": {
+      "replace": true,
+      "file": "CA_006_iron_pillar.glb",
+      "orientation": 0
+    },
+    "15": {
+      "replace": true,
+      "file": "CA_015_iron_ladder.glb",
+      "orientation": 0
+    },
+    "16": {
+      "replace": true,
+      "file": "CA_016_iron_ladder.glb",
+      "orientation": 1
+    },
+    "17": {
+      "replace": true,
+      "file": "CA_017_018_spikes.glb",
+      "orientation": 0
+    },
+    "18": {
+      "replace": true,
+      "file": "CA_017_018_spikes.glb",
+      "orientation": 1
+    },
+    "22": {
+      "replace": true,
+      "file": "CA_022_magical_font.glb",
+      "orientation": 0
+    },
+    "23": {
+      "replace": true,
+      "file": "CA_023_wooden_stairs.glb",
+      "orientation": 0
+    },
+    "24": {
+      "replace": true,
+      "file": "CA_024_wooden_stairs.glb",
+      "orientation": 0
+    },
+    "29": {
+      "replace": true,
+      "file": "CA_029_ancient_pots.glb",
+      "orientation": 0
+    },
+    "40": {
+      "replace": true,
+      "file": "CA_040_041_water_pile.glb",
+      "orientation": 0
+    },
+    "41": {
+      "replace": true,
+      "file": "CA_040_041_water_pile.glb",
+      "orientation": 1
+    },
+    "42": {
+      "replace": true,
+      "file": "CA_042_shining_sparkles.glb",
+      "orientation": 0
+    },
     "43": {
       "mirror": true
     },
     "44": {
       "mirror": true
     },
+    "45": {
+      "replace": true,
+      "file": "CA_045_mosaic_column.glb",
+      "orientation": 0
+    },
+    "48": {
+      "replace": true,
+      "file": "CA_048_twinsen_statue.glb",
+      "orientation": 0
+    },
+    "49": {
+      "replace": true,
+      "file": "CA_049_050_051_052_rail_curve.glb",
+      "orientation": 0
+    },
+    "50": {
+      "replace": true,
+      "file": "CA_049_050_051_052_rail_curve.glb",
+      "orientation": 2
+    },
+    "51": {
+      "replace": true,
+      "file": "CA_049_050_051_052_rail_curve.glb",
+      "orientation": 3
+    },
+    "52": {
+      "replace": true,
+      "file": "CA_049_050_051_052_rail_curve.glb",
+      "orientation": 1
+    },
+    "53": {
+      "replace": true,
+      "file": "CA_053_054_rail_straight.glb",
+      "orientation": 0
+    },
+    "54": {
+      "replace": true,
+      "file": "CA_053_054_rail_straight.glb",
+      "orientation": 1
+    },
+    "56": {
+      "replace": true,
+      "file": "CA_056_058_060_061_rail_branch.glb",
+      "orientation": 3
+    },
+    "57": {
+      "replace": true,
+      "file": "CA_057_059_062_rail_branch_left.glb",
+      "orientation": 1
+    },
+    "58": {
+      "replace": true,
+      "file": "CA_056_058_060_061_rail_branch.glb",
+      "orientation": 1
+    },
+    "59": {
+      "replace": true,
+      "file": "CA_057_059_062_rail_branch_left.glb",
+      "orientation": 0
+    },
+    "60": {
+      "replace": true,
+      "file": "CA_056_058_060_061_rail_branch.glb",
+      "orientation": 0
+    },
+    "61": {
+      "replace": true,
+      "file": "CA_056_058_060_061_rail_branch.glb",
+      "orientation": 2
+    },
+    "62": {
+      "replace": true,
+      "file": "CA_057_059_062_rail_branch_left.glb",
+      "orientation": 2
+    },
+    "63": {
+      "replace": true,
+      "file": "CA_063_064_065_066_rails_slope.glb",
+      "orientation": 3
+    },
+    "64": {
+      "replace": true,
+      "file": "CA_063_064_065_066_rails_slope.glb",
+      "orientation": 0
+    },
+    "65": {
+      "replace": true,
+      "file": "CA_063_064_065_066_rails_slope.glb",
+      "orientation": 1
+    },
+    "66": {
+      "replace": true,
+      "file": "CA_063_064_065_066_rails_slope.glb",
+      "orientation": 2
+    },
+    "69": {
+      "replace": true,
+      "file": "CA_069_wooden_planks.glb",
+      "orientation": 0
+    },
     "70": {
       "mirror": true
+    },
+    "71": {
+      "replace": true,
+      "file": "CA_071_you_shall_not_pass_signal.glb",
+      "orientation": 0
     },
     "76": {
       "mirror": true
@@ -2034,6 +2244,66 @@
     },
     "83": {
       "mirror": true
+    },
+    "85": {
+      "replace": true,
+      "file": "CA_085_086_railing_straight_rope.glb",
+      "orientation": 0
+    },
+    "86": {
+      "replace": true,
+      "file": "CA_085_086_railing_straight_rope.glb",
+      "orientation": 1
+    },
+    "87": {
+      "replace": true,
+      "file": "CA_087_088_089_090_railing_corner.glb",
+      "orientation": 2
+    },
+    "88": {
+      "replace": true,
+      "file": "CA_087_088_089_090_railing_corner.glb",
+      "orientation": 0
+    },
+    "89": {
+      "replace": true,
+      "file": "CA_087_088_089_090_railing_corner.glb",
+      "orientation": 1
+    },
+    "90": {
+      "replace": true,
+      "file": "CA_087_088_089_090_railing_corner.glb",
+      "orientation": 3
+    },
+    "91": {
+      "replace": true,
+      "file": "CA_091_092_railing_straight_pole.glb",
+      "orientation": 0
+    },
+    "92": {
+      "replace": true,
+      "file": "CA_091_092_railing_straight_pole.glb",
+      "orientation": 1
+    },
+    "93": {
+      "replace": true,
+      "file": "CA_093_094_095_096_railing_end.glb",
+      "orientation": 0
+    },
+    "94": {
+      "replace": true,
+      "file": "CA_093_094_095_096_railing_end.glb",
+      "orientation": 2
+    },
+    "95": {
+      "replace": true,
+      "file": "CA_093_094_095_096_railing_end.glb",
+      "orientation": 3
+    },
+    "96": {
+      "replace": true,
+      "file": "CA_093_094_095_096_railing_end.glb",
+      "orientation": 1
     },
     "97": {
       "mirror": true
@@ -2058,6 +2328,11 @@
     },
     "104": {
       "mirror": true
+    },
+    "108": {
+      "replace": true,
+      "file": "CA_108_directional_arrow_base.glb",
+      "orientation": 0
     },
     "126": {
       "mirror": true
@@ -2094,6 +2369,151 @@
     },
     "198": {
       "mirror": true
+    },
+    "5:4x6x1:2016,2017,2018,2018,2019,2020,2021,2021,2022,2023,2024,2024,2025,2026,2027,2027,2028,2029,2030,2030,2031,2032,2033,2033": {
+      "replace": true,
+      "file": "CA_005_iron_fence_var2.glb",
+      "orientation": 0
+    },
+    "6:1x9x1:2034,2035,2036,2037,2038,2038,2039,2040,2041": {
+      "replace": true,
+      "file": "CA_006_iron_pillar_var2.glb",
+      "orientation": 0
+    },
+    "6:1x7x1:2035,2036,2037,2038,2039,2039,2040": {
+      "replace": true,
+      "file": "CA_006_iron_pillar_var1.glb",
+      "orientation": 0
+    },
+    "6:1x7x1:2034,2035,2036,2037,2039,2040,2041": {
+      "replace": true,
+      "file": "CA_006_iron_pillar_var4.glb",
+      "orientation": 0
+    },
+    "6:1x13x1:2034,2035,2036,2037,2038,2039,2040,2037,2038,2038,2039,2040,2041": {
+      "replace": true,
+      "file": "CA_006_iron_pillar_var5.glb",
+      "orientation": 0
+    },
+    "6:1x14x1:2037,2038,2037,2038,2036,2039,2037,2038,2039,2039,2039,2039,2040,2041": {
+      "replace": true,
+      "file": "CA_006_iron_pillar_var6.glb",
+      "orientation": 0
+    },
+    "6:1x10x1:2037,2038,2037,2038,2036,2037,2038,2039,2040,2041": {
+      "replace": true,
+      "file": "CA_006_iron_pillar_var7.glb",
+      "orientation": 0
+    },
+    "6:1x7x1:2040,2038,2039,2038,2039,2040,2041": {
+      "replace": true,
+      "file": "CA_006_iron_pillar_var4.glb",
+      "orientation": 0
+    },
+    "6:1x16x1:2038,2037,2034,2035,2036,2037,2038,2039,2040,2039,2040,2039,2040,2037,2037,2038": {
+      "replace": true,
+      "file": "CA_006_iron_pillar_var8.glb",
+      "orientation": 0
+    },
+    "6:1x19x1:2034,2035,2036,2037,2038,2039,2040,2038,2039,2040,2038,2039,2039,2040,2039,2038,2039,2040,2041": {
+      "replace": true,
+      "file": "CA_006_iron_pillar_var9.glb",
+      "orientation": 0
+    },
+    "6:1x14x1:2034,2035,2036,2037,2038,2039,2038,2039,2040,2039,2038,2039,2040,2041": {
+      "replace": true,
+      "file": "CA_006_iron_pillar_var10.glb",
+      "orientation": 0
+    },
+    "15:3x4x1:2084,2085,2086,2087,2088,2089,2096,2097,2098,2099,2100,2101": {
+      "replace": true,
+      "file": "CA_015_iron_ladder_var2.glb",
+      "orientation": 0
+    },
+    "15:3x2x1:2084,2085,2086,2099,2100,2101": {
+      "replace": true,
+      "file": "CA_015_iron_ladder_var1.glb",
+      "orientation": 0
+    },
+    "16:1x3x3:2656,2660,2661,2662,2666,2667,2668,2672,2673": {
+      "replace": true,
+      "file": "CA_016_iron_ladder_var3.glb",
+      "orientation": 1
+    },
+    "16:1x7x3:2656,2657,2658,2659,2660,2660,2661,2662,2663,2664,2665,2666,2666,2667,2668,2669,2670,2671,2672,2672,2673": {
+      "replace": true,
+      "file": "CA_016_iron_ladder_var1.glb",
+      "orientation": 1
+    },
+    "16:1x9x3:2656,2657,2658,2659,2660,2661,2659,2660,2661,2662,2663,2664,2665,2666,2667,2665,2666,2667,2668,2669,2670,2671,2672,2673,2671,2672,2673": {
+      "replace": true,
+      "file": "CA_016_iron_ladder_var2.glb",
+      "orientation": 1
+    },
+    "17:5x2x1:2102,2103,2104,2105,2105,2106,2107,2108,2109,2109": {
+      "replace": true,
+      "file": "CA_017_spikes_var1.glb",
+      "orientation": 0
+    },
+    "17:11x2x1:2102,2103,2105,2102,2103,2104,2105,2102,2103,2104,2105,2106,2107,2109,2106,2107,2108,2109,2106,2107,2108,2109": {
+      "replace": true,
+      "file": "CA_017_spikes_var2.glb",
+      "orientation": 0
+    },
+    "18:1x2x10:2110,2111,2112,2113,2114,2115,2116,2117,2110,2111,2112,2113,2114,2115,2116,2117,2114,2115,2116,2117": {
+      "replace": true,
+      "file": "CA_018_spikes_var1.glb",
+      "orientation": 1
+    },
+    "18:1x2x15:2110,2111,2112,2113,2114,2115,2116,2117,2110,2111,2112,2113,2114,2115,2116,2117,2110,2111,2112,2113,2114,2115,2116,2117,2112,2113,2114,2115,2116,2117": {
+      "replace": true,
+      "file": "CA_018_spikes_var2.glb",
+      "orientation": 1
+    },
+    "18:1x2x10:2110,2111,2112,2113,2110,2111,2112,2113,2114,2115,2116,2117,2110,2111,2112,2113,2114,2115,2116,2117": {
+      "replace": true,
+      "file": "CA_018_spikes_var1.glb",
+      "orientation": 1
+    },
+    "18:1x2x2:2110,2111,2112,2113": {
+      "replace": true,
+      "file": "CA_018_spikes_var3.glb",
+      "orientation": 1
+    },
+    "18:1x2x9:2116,2117,2110,2111,2112,2113,2114,2115,2116,2117,2110,2111,2112,2113,2114,2115,2116,2117": {
+      "replace": true,
+      "file": "CA_018_spikes_var5.glb",
+      "orientation": 1
+    },
+    "49:2x1x3:2355,2356,2358,2359,2361,2362": {
+      "replace": true,
+      "file": "CA_049_rail_curve_var1.glb",
+      "orientation": 0
+    },
+    "51:2x1x3:127,2371,2373,2374,2376,2377": {
+      "replace": true,
+      "file": "CA_051_rail_curve_var2.glb",
+      "orientation": 0
+    },
+    "56:3x1x3:-1,2394,2395,2393,2397,2398,2396,2400,2401": {
+      "replace": true,
+      "file": "CA_056_058_060_061_rail_branch.glb",
+      "orientation": 3
+    },
+    "69:20x1x4:2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2488,2489,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,2491,2490,-1,2492,2493,2492,2493,2492,2493,2492,2493,2492,2493,2492,2493,2492,2493,2492,2493,2492,2493": {
+      "replace": true,
+      "file": "CA_069_wooden_planks_var2.glb",
+      "orientation": 0
+    },
+    "69:7x2x11:-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2488,2489,2489,2488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2490,2491,2491,2490,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2492,2493,2493,2492,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2488,2489,2489,2488,-1,-1,-1,-1,-1,-1,-1,-1,-1,2488,2490,2491,2491,2490,-1,2491,-1,-1,-1,-1,-1,-1,-1,2492,2490,2491,2491,2490,2492,2493,-1,-1,-1,-1,-1,-1,-1,-1,2492,2493,2493,2492,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2488,2489,2489,2488,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2490,2491,2491,2490,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2490,2491,2491,2490,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2492,2493,2493,2492": {
+      "replace": true,
+      "file": "CA_069_wooden_planks_var1.glb",
+      "orientation": 0
+    },
+    "42:1x2x1:2297,2298": {
+      "replace": true,
+      "file": "CA_042_shining_sparkles.glb",
+      "orientation": 0
     }
   },
   "4": {

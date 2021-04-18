@@ -127,7 +127,8 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
                 uiState.text === null &&
                 uiState.foundObject === null &&
                 !(uiState.showMenu || uiState.inGameMenu) &&
-                !uiState.inventory;
+                !uiState.inventory &&
+                !uiState.cinema;
             if (showBehaviourMenu && this.isBehaviourKey(key, controlsState)) {
                 this.props.setUiState({ behaviourMenu: true });
                 const scene = sceneManager.getScene();
@@ -143,7 +144,8 @@ export default class GameUI extends React.Component<GameUIProps, GameUIState> {
                 uiState.text === null &&
                 uiState.foundObject === null &&
                 !(uiState.showMenu || uiState.inGameMenu) &&
-                !uiState.behaviourMenu;
+                !uiState.behaviourMenu &&
+                !uiState.cinema;
             if (showInventory && this.isInventoryKey(key, controlsState)) {
                 this.props.setUiState({ inventory: !this.props.uiState.inventory });
                 if (game.isPaused()) {

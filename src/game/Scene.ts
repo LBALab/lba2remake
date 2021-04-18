@@ -343,7 +343,7 @@ export default class Scene {
     }
 
     private updateSideScenes(time: Time) {
-        if (this.sideScenes) {
+        if (!this.game.isCinema() && this.sideScenes) {
             for (const sideScene of this.sideScenes.values()) {
                 sideScene.firstFrame = this.firstFrame;
                 sideScene.update(time);
@@ -418,8 +418,8 @@ export default class Scene {
         }
     }
 
-    async goto(index, force = false, wasPaused = false, teleport = true) {
-        return this.sceneManager.goto(index, force, wasPaused, teleport);
+    async goto(index, force = false, wasPaused = false, teleport = true, lifeScript = false) {
+        return this.sceneManager.goto(index, force, wasPaused, teleport, lifeScript);
     }
 
     reset() {
@@ -521,7 +521,9 @@ export default class Scene {
             newHero.physics.orientation.copy(hero.physics.orientation);
             newHero.physics.temp.angle = hero.physics.temp.angle;
             newHero.physics.temp.position.copy(hero.physics.temp.position);
-            newHero.physics.temp.destination.copy(hero.physics.temp.destination);
+            if (hero.physics.temp.destination) {
+                newHero.physics.temp.destination.copy(hero.physics.temp.destination);
+            }
         }
 
         newHero.animState = hero.animState;

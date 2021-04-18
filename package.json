@@ -19,7 +19,7 @@
   "dependencies": {
     "@types/lodash": "^4.14.150",
     "@types/react-dom": "^16.9.7",
-    "@types/three": "^0.93.31",
+    "@types/three": "^0.127.0",
     "@webxr-input-profiles/assets": "^1.0.2",
     "@webxr-input-profiles/motion-controllers": "^1.0.0",
     "blockly": "^3.20200402.1",
@@ -32,7 +32,7 @@
     "react-dom": "16.8.6",
     "react-markdown": "^4.3.1",
     "simplex-noise": "^2.4.0",
-    "three": "^0.116.0",
+    "three": "^0.127.0",
     "webxr-polyfill": "^2.0.3",
     "xxhashjs": "^0.2.2"
   },

@@ -14,7 +14,6 @@ export interface GameConfig {
 export interface GameState {
     config: GameConfig;
     hero: any;
-    chapter: number;
     // The actor index who is currently talking.
     actorTalking: number;
     flags: any;
@@ -54,7 +53,6 @@ export function createGameState(): GameState {
             usingItemId: -1,
             equippedItemId: -1,
         },
-        chapter: 0,
         actorTalking: -1,
         flags: {
             quest: createQuestFlags(),
@@ -114,10 +112,6 @@ function createQuestFlags() {
     quest[150] = 1;
     quest[152] = 1; // rain
     quest[159] = 256;
-
-    // debug video scene 45 - kill tralu
-    // quest[56] = 3;
-    // quest[71] = 0;
 
     return quest;
 }

@@ -2,6 +2,7 @@ import { clone } from 'lodash';
 import { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
+import { LBA2GameFlags } from '../data/gameFlags';
 import { GetInventoryItems } from '../data/inventory';
 import { setMagicBallLevel } from '../GameState';
 import { unimplemented } from './utils';
@@ -221,7 +222,7 @@ export function SUB_MONEY(this: ScriptContext, amount) {
 }
 
 export function INC_CHAPTER(this: ScriptContext) {
-    this.game.getState().chapter += 1;
+    this.game.getState().flags.quest[LBA2GameFlags.CHAPTER] += 1;
 }
 
 // FOUND_OBJECT_CALLBACKS allow us to execute arbitrary code when a specific item is found.
@@ -230,6 +231,9 @@ const FOUND_OBJECT_CALLBACKS = {
         if (game.getState().hero.equippedItemId === -1) {
             game.getState().hero.equippedItemId = 1;
         }
+    },
+    [GetInventoryItems().TUNIC]: (game, _scene) => {
+        game.getState().hero.magic = 20;
     },
 };
 
@@ -335,7 +339,7 @@ export function SET_DOOR_DOWN(this: ScriptContext, dist) {
 export const GIVE_BONUS = unimplemented();
 
 export function CHANGE_CUBE(this: ScriptContext, index) {
-    this.scene.goto(index);
+    this.scene.goto(index, false, false, true, true);
 }
 
 export function OBJ_COL(this: ScriptContext, flag) {
@@ -555,12 +559,12 @@ export const BALLOON = unimplemented();
 export const NO_SHOCK = unimplemented();
 
 export function CINEMA_MODE(this: ScriptContext, mode) {
-    if (mode === 1) {
+    if (mode > 0) {
         this.actor.props.dirMode = ActorDirMode.NO_MOVE;
-        this.game.setUiState({ cinema: true });
+        this.game.setCinema(true);
     } else {
         this.actor.props.dirMode = ActorDirMode.MANUAL;
-        this.game.setUiState({ cinema: false });
+        this.game.setCinema(false);
     }
 }
 

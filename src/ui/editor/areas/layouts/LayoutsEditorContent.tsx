@@ -883,7 +883,6 @@ async function loadVariantMesh(library, group, loadForExporting = false) {
     );
     const material = loadForExporting
         ? new THREE.MeshStandardMaterial({
-            transparent: true,
             map: await convertTextureForExport(library.texture, library.index)
         })
         : new THREE.RawShaderMaterial({

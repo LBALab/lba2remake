@@ -153,7 +153,7 @@ function prepareGeometries(island, data, atlas, light) {
                     worldScale: {value: worldScale},
                     palette: {value: paletteTexture},
                     noise: {value: noiseTexture},
-                    actorPos: {value: times(10, () => new THREE.Vector4(0, 0, 0, 0)), type: 'v4v'}
+                    actorPos: {value: times(10, () => new THREE.Vector4(0, 0, 0, 0))}
                 }
             })
         },
@@ -175,7 +175,7 @@ function prepareGeometries(island, data, atlas, light) {
                     palette: {value: paletteTexture},
                     lutTexture: {value: lutTexture},
                     noise: {value: noiseTexture},
-                    actorPos: {value: times(10, () => new THREE.Vector4(0, 0, 0, 0)), type: 'v4v'}
+                    actorPos: {value: times(10, () => new THREE.Vector4(0, 0, 0, 0))}
                 }
             })
         },

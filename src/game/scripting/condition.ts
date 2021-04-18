@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from '../../utils/lba';
 import { ScriptContext } from './ScriptContext';
+import { LBA2GameFlags } from '../data/gameFlags';
 import Actor from '../Actor';
 
 export function COL(this: ScriptContext) {
@@ -123,7 +124,7 @@ export function HERO_BEHAVIOUR(this: ScriptContext) {
 }
 
 export function CHAPTER(this: ScriptContext) {
-    return this.game.getState().chapter;
+    return this.game.getState().flags.quest[LBA2GameFlags.CHAPTER];
 }
 
 export function DISTANCE_3D(this: ScriptContext, actor: Actor) {
@@ -239,7 +240,7 @@ export function COL_DECORS_OBJ(this: ScriptContext) {
 COL_DECORS_OBJ.unimplemented = true;
 
 export function PROCESSOR(this: ScriptContext) {
-    return 1; // default cpu 486
+    return 0; // default pentium
 }
 
 export function OBJECT_DISPLAYED(this: ScriptContext) {

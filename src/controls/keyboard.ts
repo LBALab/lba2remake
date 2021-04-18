@@ -33,6 +33,12 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
     if (behaviourMenu) {
         return;
     }
+    // We disallow directly changing Twinsen's behaviour via the number keys if we're in Cinema
+    // mode, or if Twinsen is with Zoe.
+    const canChangeBehaviour = () => {
+        return !game.isCinema() &&
+        game.getState().hero.behaviour !== BehaviourMode.ZOE;
+    };
     game.controlsState.activeType = ControlActiveType.KEYBOARD;
     // console.log(event.code, event.which, event.keyCode);
     switch (key) {
@@ -59,26 +65,44 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
 
         case 49:
         case 'Digit1':
+            if (!canChangeBehaviour()) {
+                break;
+            }
             game.getState().hero.behaviour = BehaviourMode.NORMAL;
             break;
         case 50:
         case 'Digit2':
+            if (!canChangeBehaviour()) {
+                break;
+            }
             game.getState().hero.behaviour = BehaviourMode.ATHLETIC;
             break;
         case 51:
         case 'Digit3':
+            if (!canChangeBehaviour()) {
+                break;
+            }
             game.getState().hero.behaviour = BehaviourMode.AGGRESSIVE;
             break;
         case 52:
         case 'Digit4':
+            if (!canChangeBehaviour()) {
+                break;
+            }
             game.getState().hero.behaviour = BehaviourMode.DISCRETE;
             break;
         case 53:
         case 'Digit5':
+            if (!canChangeBehaviour()) {
+                break;
+            }
             game.getState().hero.behaviour = BehaviourMode.PROTOPACK;
             break;
         case 54:
         case 'Digit6':
+            if (!canChangeBehaviour()) {
+                break;
+            }
             game.getState().hero.behaviour = BehaviourMode.JETPACK;
             break;
         case 32:
