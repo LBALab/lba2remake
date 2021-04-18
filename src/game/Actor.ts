@@ -23,7 +23,7 @@ import { Time } from '../datatypes';
 import { getAnimationsSync } from '../resources';
 import { getAnim } from '../model/entity';
 import { processAnimAction } from './loop/animAction';
-import { computeWagonMovement } from './gameplay/wagon';
+import { computeWagonMovement, WagonState } from './gameplay/wagon';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -160,6 +160,7 @@ export default class Actor {
     // We should move them somewhere else.
     label?: any;
     refreshLabel?: Function;
+    wagonState?: WagonState;
     debugData: any = {};
 
     static async load(
@@ -228,6 +229,12 @@ export default class Actor {
                 this.sound = audio.createSampleAudio();
                 this.soundVoice = audio.createSampleAudio();
             }
+        }
+
+        if (props.dirMode === ActorDirMode.WAGON) {
+            this.wagonState = {
+                angle: angleToRad(props.angle),
+            };
         }
     }
 

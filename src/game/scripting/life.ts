@@ -159,6 +159,11 @@ export function SET_DIRMODE_OBJ(this: ScriptContext, actor, dirMode) {
     if (dirMode === ActorDirMode.MANUAL) {
         actor.state.isTurning = false;
     }
+    if (dirMode === ActorDirMode.WAGON) {
+        actor.wagonState = {
+            angle: actor.physics.temp.angle,
+        };
+    }
 }
 
 export const CAM_FOLLOW = unimplemented();

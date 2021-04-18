@@ -42,6 +42,10 @@ const RailLayout = {
     TO_WEST_WEST_NORTH:    62,
 };
 
+export interface WagonState {
+    angle: number;
+}
+
 const wEuler = new THREE.Euler();
 
 export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
@@ -49,51 +53,45 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
         return;
     }
 
-    let straight = false;
-    let turn = false;
-    let x = 0;
-    let z = 0;
-    let angle = 0;
+    const state = wagon.wagonState;
     const layout = scene.scenery.physics.getLayoutIndex(wagon.physics.position);
     const rail = mapUndergasToBuRails(scene, layout);
     wagon.debugData.rail = rail;
     wagon.debugData.railName = Object.keys(RailLayout).find(k => RailLayout[k] === rail);
+
+    let straight = false;
+    let turn = false;
     switch (rail) {
         case RailLayout.NORTH_SOUTH:
-            straight = true;
-            x = 1;
-            break;
         case RailLayout.WEST_EAST:
             straight = true;
-            z = -1;
             break;
         case RailLayout.TURN_SOUTH_WEST:
             turn = true;
-            x = 1;
-            angle = Math.PI / 2;
+            state.angle = Math.PI / 2;
             break;
         case RailLayout.TURN_SOUTH_EAST:
             turn = true;
-            x = 1;
-            angle = Math.PI / 2;
+            state.angle = 3 * Math.PI / 2;
             break;
         case RailLayout.TURN_NORTH_WEST:
             turn = true;
-            z = 1;
-            angle = Math.PI;
+            state.angle = 0;
+            break;
+        case RailLayout.TURN_SOUTH_WEST:
+            turn = true;
+            state.angle = Math.PI;
             break;
     }
 
     const dt = Math.min(time.delta, 0.025);
     if (straight || turn) {
-        const speedX = x * dt;
-        const speedZ = z * dt;
-        wagon.physics.temp.position.x += speedX;
-        wagon.physics.temp.position.z += speedZ;
+        wagon.physics.temp.position.x += Math.sin(state.angle) * dt;
+        wagon.physics.temp.position.z += Math.cos(state.angle) * dt;
     }
     if (turn) {
-        wagon.physics.temp.angle = angle;
-        wEuler.set(0, angle, 0, 'XZY');
+        wagon.physics.temp.angle = state.angle;
+        wEuler.set(0, state.angle, 0, 'XZY');
         wagon.physics.orientation.setFromEuler(wEuler);
     }
 }
