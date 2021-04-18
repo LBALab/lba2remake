@@ -1,4 +1,6 @@
-export default {
+import { getParams } from '../../../../params';
+
+const LBA2 = {
     42: {island: 'CITABAU', section: 6, variant: 0},
     43: {island: 'CITABAU', section: 5, variant: 0},
     197: {island: 'CITABAU', section: 5, variant: 1},
@@ -84,3 +86,16 @@ export default {
     219: {island: 'SOUSCELB', section: 1, variant: 1},
     132: {island: 'SOUSCELB', section: 2, variant: 0}
 };
+
+export const LBA1_ISLAND = [1, 2, 3, 4, 6];
+const LBA1 = {
+    1: {island: 'CITADEL', section: 0, variant: 0, x:  0, y: 0.11722, z: 0},
+    2: {island: 'CITADEL', section: 2, variant: 0, x:  0, y: 0, z: 2},
+    3: {island: 'CITADEL', section: 1, variant: 0, x:  0, y: 0, z: 1},
+    4: {island: 'CITADEL', section: 3, variant: 0, x:  0, y: 0, z: 3},
+    6: {island: 'CITADEL', section: 4, variant: 0, x: -1, y: 0, z: 1.844},
+};
+
+const { game } = getParams();
+
+export default game === 'lba1' ? LBA1 : LBA2;

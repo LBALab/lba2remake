@@ -13,7 +13,7 @@ export function selectCamera(game: Game, renderer: Renderer, isIsland: boolean) 
     if (renderer.vr && game.controlsState.firstPerson) {
         return getVrFirstPersonCamera(renderer);
     }
-    if (isIsland) {
+    if (isIsland && params.game !== 'lba1') {
         if (renderer.vr) {
             return getVR3DCamera(renderer);
         }

@@ -66,6 +66,7 @@ export default class Scene {
     usedVarGames: number[];
     readonly scenery: Scenery;
     sideScenes: Map<number, Scene>;
+    parentIndex?: number;
     extras: Extra[];
     magicBall: MagicBall;
     isActive: boolean;
@@ -84,11 +85,12 @@ export default class Scene {
         index: number,
         parent: Scene = null
     ): Promise<Scene> {
+        const isLBA1 = getParams().game === 'lba1';
         const data = await getScene(index);
         if (getParams().editor) {
             await loadSceneMetaData(index);
         }
-        const scenery = !!parent ? parent.scenery : await loadScenery(game, data);
+        const scenery = !!parent ? parent.scenery : await loadScenery(game, data, index);
         const scene: Scene = new Scene(
             game,
             renderer,
@@ -102,7 +104,7 @@ export default class Scene {
         // Little keys are scene relative.
         game.getState().hero.keys = 0;
 
-        if (data.isIsland) {
+        if (data.isIsland && !isLBA1) {
             if (!!parent) {
                 killActor(scene.actors[0]);
             } else {
@@ -139,6 +141,7 @@ export default class Scene {
         this.points = [];
         this.extras = [];
         this.sceneNode = new THREE.Object3D();
+        this.parentIndex = parent?.index;
 
         if (parent) {
             this.threeScene = parent.threeScene;
@@ -275,13 +278,28 @@ export default class Scene {
 
     private initSceneNode() {
         this.sceneNode.matrixAutoUpdate = false;
-        if (this.scenery instanceof Island) {
-            const sectionIdx = islandSceneMapping[this.props.index].section;
-            const section = this.scenery.sections[sectionIdx];
-            this.sceneNode.name = `island_section_${sectionIdx}`;
-            this.sceneNode.position.x = section.x * WORLD_SIZE * 2;
-            this.sceneNode.position.z = section.z * WORLD_SIZE * 2;
-            this.sceneNode.updateMatrix();
+        if (this.props.isIsland) {
+            const sceneMapping = islandSceneMapping[this.props.index];
+            if (this.scenery instanceof Island) {
+                const sectionIdx = sceneMapping.section;
+                const section = this.scenery.sections[sectionIdx];
+                this.sceneNode.name = `island_section_${sectionIdx}`;
+                this.sceneNode.position.x = section.x * WORLD_SIZE * 2;
+                this.sceneNode.position.z = section.z * WORLD_SIZE * 2;
+                this.sceneNode.updateMatrix();
+            } else { // Island Iso
+                this.sceneNode.name = `islandiso_section_${sceneMapping.section}`;
+                if (this.isSideScene) {
+                    const parentSection = islandSceneMapping[this.parentIndex];
+                    this.sceneNode.position.x -=
+                        (sceneMapping.z - parentSection.z) * WORLD_SIZE * 2;
+                    this.sceneNode.position.y +=
+                        (sceneMapping.y - parentSection.y) * WORLD_SIZE * 2;
+                    this.sceneNode.position.z +=
+                        (sceneMapping.x - parentSection.x) * WORLD_SIZE * 2;
+                }
+                this.sceneNode.updateMatrix();
+            }
         } else {
             this.sceneNode.name = `iso_scene_${this.index}`;
         }
