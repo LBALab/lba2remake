@@ -65,15 +65,20 @@ export function initWagonState(angle): WagonState {
     };
 }
 
-const wEuler = new THREE.Euler();
-const lInfo = {
+const EULER = new THREE.Euler();
+const lINFO = {
     index: -1,
     center: new THREE.Vector3(),
     key: 'none',
     hSize: 0,
 };
-
 const HALF_TURN = (1.5 / 32) * WORLD_SIZE;
+const Dir = {
+    EAST: 0,
+    NORTH: 1,
+    WEST: 2,
+    SOUTH: 3
+};
 
 export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     if (!(scene.scenery.physics instanceof IsoSceneryPhysics)) {
@@ -81,43 +86,43 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     }
 
     const state = wagon.wagonState;
-    scene.scenery.physics.getLayoutInfo(wagon.physics.position, lInfo);
-    const rail = mapUndergasToBuRails(scene, lInfo.index);
+    scene.scenery.physics.getLayoutInfo(wagon.physics.position, lINFO);
+    const rail = mapUndergasToBuRails(scene, lINFO.index);
 
     /* Only for debug purposes */
     wagon.debugData.rail = rail;
     wagon.debugData.railName = Object.keys(RailLayout).find(k => RailLayout[k] === rail);
-    wagon.debugData.lInfo = lInfo;
+    wagon.debugData.lInfo = lINFO;
     /* ----------------------- */
 
-    const stateChange = lInfo.key !== state.key;
+    const stateChange = lINFO.key !== state.key;
     if (!state.turn) {
         switch (rail) {
             case RailLayout.NORTH_SOUTH:
-                wagon.physics.position.z = lInfo.center.z;
+                wagon.physics.position.z = lINFO.center.z;
                 break;
             case RailLayout.WEST_EAST:
-                wagon.physics.position.x = lInfo.center.x;
+                wagon.physics.position.x = lINFO.center.x;
                 break;
             case RailLayout.UP_EAST:
             case RailLayout.UP_WEST:
             case RailLayout.UP_NORTH:
             case RailLayout.UP_SOUTH:
-                wagon.physics.position.y = lInfo.center.y;
+                wagon.physics.position.y = lINFO.center.y;
                 break;
             case RailLayout.TURN_SOUTH_WEST:
                 if (stateChange) {
                     state.turn = true;
                     state.transition = 0;
-                    state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z + HALF_TURN);
-                    if (state.angle === 2) {
-                        state.angle = 1;
+                    state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z + HALF_TURN);
+                    if (state.angle === Dir.WEST) {
+                        state.angle = Dir.NORTH;
                         state.rotationDir = -1;
-                        state.angleOffset = 3 * Math.PI * 0.5;
+                        state.angleOffset = Dir.SOUTH;
                     } else {
-                        state.angle = 0;
+                        state.angle = Dir.EAST;
                         state.rotationDir = 1;
-                        state.angleOffset = Math.PI;
+                        state.angleOffset = Dir.WEST;
                     }
                 }
                 break;
@@ -125,15 +130,15 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                 if (stateChange) {
                     state.turn = true;
                     state.transition = 0;
-                    state.pivot.set(lInfo.center.x - HALF_TURN, 0, lInfo.center.z + HALF_TURN);
-                    if (state.angle === 1) {
-                        state.angle = 0;
+                    state.pivot.set(lINFO.center.x - HALF_TURN, 0, lINFO.center.z + HALF_TURN);
+                    if (state.angle === Dir.NORTH) {
+                        state.angle = Dir.EAST;
                         state.rotationDir = -1;
-                        state.angleOffset = Math.PI;
+                        state.angleOffset = Dir.WEST;
                     } else {
-                        state.angle = 3;
+                        state.angle = Dir.SOUTH;
                         state.rotationDir = 1;
-                        state.angleOffset = Math.PI * 0.5;
+                        state.angleOffset = Dir.NORTH;
                     }
                 }
                 break;
@@ -141,15 +146,15 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                 if (stateChange) {
                     state.turn = true;
                     state.transition = 0;
-                    state.pivot.set(lInfo.center.x - HALF_TURN, 0, lInfo.center.z - HALF_TURN);
-                    if (state.angle === 1) {
-                        state.angle = 2;
-                        state.rotationDir = 1;
-                        state.angleOffset = 2 * Math.PI;
-                    } else {
-                        state.angle = 3;
+                    state.pivot.set(lINFO.center.x - HALF_TURN, 0, lINFO.center.z - HALF_TURN);
+                    if (state.angle === Dir.EAST) {
+                        state.angle = Dir.SOUTH;
                         state.rotationDir = -1;
-                        state.angleOffset = Math.PI * 0.5;
+                        state.angleOffset = Dir.NORTH;
+                    } else {
+                        state.angle = Dir.WEST;
+                        state.rotationDir = 1;
+                        state.angleOffset = 4;
                     }
                 }
                 break;
@@ -157,27 +162,27 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                 if (stateChange) {
                     state.turn = true;
                     state.transition = 0;
-                    state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z - HALF_TURN);
-                    if (state.angle === 0) {
-                        state.angle = 1;
-                        state.rotationDir = 1;
-                        state.angleOffset = 3 * Math.PI * 0.5;
-                    } else {
-                        state.angle = 2;
+                    state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z - HALF_TURN);
+                    if (state.angle === Dir.SOUTH) {
+                        state.angle = Dir.WEST;
                         state.rotationDir = -1;
-                        state.angleOffset = 0;
+                        state.angleOffset = Dir.EAST;
+                    } else {
+                        state.angle = Dir.NORTH;
+                        state.rotationDir = 1;
+                        state.angleOffset = Dir.SOUTH;
                     }
                 }
                 break;
             case RailLayout.SWITCH_NORTH_NORTH_WEST:
                 if (stateChange) {
-                    if (state.angle === 2) {
+                    if (state.angle === Dir.WEST) {
                         state.turn = true;
                         state.transition = 0;
-                        state.pivot.set(lInfo.center.x - HALF_TURN, 0, lInfo.center.z + HALF_TURN);
-                        state.angle = 3;
+                        state.pivot.set(lINFO.center.x - HALF_TURN, 0, lINFO.center.z + HALF_TURN);
+                        state.angle = Dir.SOUTH;
                         state.rotationDir = 1;
-                        state.angleOffset = Math.PI * 0.5;
+                        state.angleOffset = Dir.NORTH;
                     }
                 }
                 break;
@@ -186,73 +191,73 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                 break;
             case RailLayout.SWITCH_SOUTH_SOUTH_WEST:
                 if (stateChange) {
-                    if (state.angle === 2) {
+                    if (state.angle === Dir.WEST) {
                         state.turn = true;
                         state.transition = 0;
-                        state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z + HALF_TURN);
-                        state.angle = 1;
+                        state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z + HALF_TURN);
+                        state.angle = Dir.NORTH;
                         state.rotationDir = -1;
-                        state.angleOffset = 3 * Math.PI * 0.5;
+                        state.angleOffset = Dir.SOUTH;
                     }
                 }
                 break;
             case RailLayout.SWITCH_SOUTH_SOUTH_EAST:
                 if (stateChange) {
-                    if (state.angle === 0) {
+                    if (state.angle === Dir.EAST) {
                         state.turn = true;
                         state.transition = 0;
-                        state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z - HALF_TURN);
-                        state.angle = 1;
+                        state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z - HALF_TURN);
+                        state.angle = Dir.NORTH;
                         state.rotationDir = 1;
-                        state.angleOffset = 3 * Math.PI * 0.5;
+                        state.angleOffset = Dir.SOUTH;
                     }
                 }
                 break;
             case RailLayout.SWITCH_EAST_EAST_SOUTH:
                 if (stateChange) {
-                    if (state.angle === 1) {
+                    if (state.angle === Dir.NORTH) {
                         state.turn = true;
                         state.transition = 0;
-                        state.pivot.set(lInfo.center.x - HALF_TURN, 0, lInfo.center.z + HALF_TURN);
-                        state.angle = 0;
+                        state.pivot.set(lINFO.center.x - HALF_TURN, 0, lINFO.center.z + HALF_TURN);
+                        state.angle = Dir.EAST;
                         state.rotationDir = -1;
-                        state.angleOffset = Math.PI;
+                        state.angleOffset = Dir.WEST;
                     }
                 }
                 break;
             case RailLayout.SWITCH_EAST_EAST_NORTH:
                 if (stateChange) {
-                    if (state.angle === 3) {
+                    if (state.angle === Dir.SOUTH) {
                         state.turn = true;
                         state.transition = 0;
-                        state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z + HALF_TURN);
-                        state.angle = 0;
+                        state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z + HALF_TURN);
+                        state.angle = Dir.EAST;
                         state.rotationDir = 1;
-                        state.angleOffset = Math.PI;
+                        state.angleOffset = Dir.WEST;
                     }
                 }
                 break;
             case RailLayout.SWITCH_WEST_WEST_SOUTH:
                 if (stateChange) {
-                    if (state.angle === 1) {
+                    if (state.angle === Dir.NORTH) {
                         state.turn = true;
                         state.transition = 0;
-                        state.pivot.set(lInfo.center.x - HALF_TURN, 0, lInfo.center.z - HALF_TURN);
-                        state.angle = 2;
+                        state.pivot.set(lINFO.center.x - HALF_TURN, 0, lINFO.center.z - HALF_TURN);
+                        state.angle = Dir.WEST;
                         state.rotationDir = 1;
-                        state.angleOffset = 2 * Math.PI;
+                        state.angleOffset = 4;
                     }
                 }
                 break;
             case RailLayout.SWITCH_WEST_WEST_NORTH:
                 if (stateChange) {
-                    if (state.angle === 3) {
+                    if (state.angle === Dir.SOUTH) {
                         state.turn = true;
                         state.transition = 0;
-                        state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z - HALF_TURN);
-                        state.angle = 2;
+                        state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z - HALF_TURN);
+                        state.angle = Dir.WEST;
                         state.rotationDir = -1;
-                        state.angleOffset = 0;
+                        state.angleOffset = Dir.EAST;
                     }
                 }
                 break;
@@ -265,14 +270,15 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
             state.transition = 1;
             state.turn = false;
         }
-        const dAngle = state.transition * Math.PI * 0.5 * state.rotationDir + state.angleOffset;
+        const angleOffset = state.angleOffset * Math.PI * 0.5;
+        const dAngle = state.transition * Math.PI * 0.5 * state.rotationDir + angleOffset;
         wagon.physics.position.x = state.pivot.x + Math.sin(dAngle) * HALF_TURN;
         wagon.physics.position.z = state.pivot.z + Math.cos(dAngle) * HALF_TURN;
 
         const angle = dAngle + 3 * Math.PI * 0.5;
         wagon.physics.temp.angle = angle;
-        wEuler.set(0, angle, 0, 'XZY');
-        wagon.physics.orientation.setFromEuler(wEuler);
+        EULER.set(0, angle, 0, 'XZY');
+        wagon.physics.orientation.setFromEuler(EULER);
         state.transition += dt;
     }
     if (!state.turn) {
@@ -280,7 +286,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
         wagon.physics.temp.position.x += Math.sin(angle) * dt;
         wagon.physics.temp.position.z += Math.cos(angle) * dt;
     }
-    state.key = lInfo.key;
+    state.key = lINFO.key;
 }
 
 const UGRailLayout = {
