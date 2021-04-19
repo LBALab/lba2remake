@@ -37,10 +37,10 @@ const RailLayout = {
     SWITCH_NORTH_NORTH_EAST:   55,
     SWITCH_SOUTH_SOUTH_WEST:   57,
     SWITCH_SOUTH_SOUTH_EAST:   58,
-    SWITCH_EAST_EAST_SOUTH:    59,
-    SWITCH_EAST_EAST_NORTH:    60,
-    SWITCH_WEST_WEST_SOUTH:    61,
-    SWITCH_WEST_WEST_NORTH:    62,
+    SWITCH_WEST_NORTH_WEST:    59,
+    SWITCH_WEST_SOUTH_WEST:    60,
+    SWITCH_EAST_NORTH_EAST:    61,
+    SWITCH_EAST_SOUTH_EAST:    62,
 };
 
 export interface WagonState {
@@ -130,16 +130,16 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
             case RailLayout.SWITCH_SOUTH_SOUTH_EAST:
                 handleSwitch(state, Dir.EAST, Dir.SOUTH, Dir.NORTH, 1);
                 break;
-            case RailLayout.SWITCH_EAST_EAST_SOUTH:
+            case RailLayout.SWITCH_WEST_NORTH_WEST:
                 handleSwitch(state, Dir.NORTH, Dir.NORTH, Dir.EAST, -1);
                 break;
-            case RailLayout.SWITCH_EAST_EAST_NORTH:
+            case RailLayout.SWITCH_WEST_SOUTH_WEST:
                 handleSwitch(state, Dir.SOUTH, Dir.WEST, Dir.EAST, 1);
                 break;
-            case RailLayout.SWITCH_WEST_WEST_SOUTH:
+            case RailLayout.SWITCH_EAST_NORTH_EAST:
                 handleSwitch(state, Dir.NORTH, Dir.EAST, Dir.WEST, 1);
                 break;
-            case RailLayout.SWITCH_WEST_WEST_NORTH:
+            case RailLayout.SWITCH_EAST_SOUTH_EAST:
                 handleSwitch(state, Dir.SOUTH, Dir.SOUTH, Dir.WEST, -1);
                 break;
         }
@@ -239,10 +239,10 @@ const UGRailLayout = {
     SWITCH_NORTH_NORTH_EAST:   67,
     SWITCH_SOUTH_SOUTH_WEST:   50,
     SWITCH_SOUTH_SOUTH_EAST:   60,
-    SWITCH_EAST_EAST_SOUTH:    21,
-    SWITCH_EAST_EAST_NORTH:    20,
-    SWITCH_WEST_WEST_SOUTH:    62,
-    SWITCH_WEST_WEST_NORTH:    64,
+    SWITCH_WEST_NORTH_WEST:    21,
+    SWITCH_WEST_SOUTH_WEST:    20,
+    SWITCH_EAST_NORTH_EAST:    62,
+    SWITCH_EAST_SOUTH_EAST:    64,
 };
 
 function mapUndergasToBuRails(scene: Scene, rail: number) {
@@ -263,10 +263,10 @@ function mapUndergasToBuRails(scene: Scene, rail: number) {
             case UGRailLayout.SWITCH_NORTH_NORTH_EAST:  return RailLayout.SWITCH_NORTH_NORTH_EAST;
             case UGRailLayout.SWITCH_SOUTH_SOUTH_WEST:  return RailLayout.SWITCH_SOUTH_SOUTH_WEST;
             case UGRailLayout.SWITCH_SOUTH_SOUTH_EAST:  return RailLayout.SWITCH_SOUTH_SOUTH_EAST;
-            case UGRailLayout.SWITCH_EAST_EAST_SOUTH:   return RailLayout.SWITCH_EAST_EAST_SOUTH;
-            case UGRailLayout.SWITCH_EAST_EAST_NORTH:   return RailLayout.SWITCH_EAST_EAST_NORTH;
-            case UGRailLayout.SWITCH_WEST_WEST_SOUTH:   return RailLayout.SWITCH_WEST_WEST_SOUTH;
-            case UGRailLayout.SWITCH_WEST_WEST_NORTH:   return RailLayout.SWITCH_WEST_WEST_NORTH;
+            case UGRailLayout.SWITCH_WEST_NORTH_WEST:   return RailLayout.SWITCH_WEST_NORTH_WEST;
+            case UGRailLayout.SWITCH_WEST_SOUTH_WEST:   return RailLayout.SWITCH_WEST_SOUTH_WEST;
+            case UGRailLayout.SWITCH_EAST_NORTH_EAST:   return RailLayout.SWITCH_EAST_NORTH_EAST;
+            case UGRailLayout.SWITCH_EAST_SOUTH_EAST:   return RailLayout.SWITCH_EAST_SOUTH_EAST;
         }
     }
     return rail;
