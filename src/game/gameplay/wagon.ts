@@ -33,14 +33,14 @@ const RailLayout = {
     TURN_SOUTH_WEST:       49,
     TURN_SOUTH_EAST:       52,
     // Turnouts
-    TO_NORTH_NORTH_WEST:   56,
-    TO_NORTH_NORTH_EAST:   55,
-    TO_SOUTH_SOUTH_WEST:   57,
-    TO_SOUTH_SOUTH_EAST:   58,
-    TO_EAST_EAST_SOUTH:    59,
-    TO_EAST_EAST_NORTH:    60,
-    TO_WEST_WEST_SOUTH:    61,
-    TO_WEST_WEST_NORTH:    62,
+    SWITCH_NORTH_NORTH_WEST:   56,
+    SWITCH_NORTH_NORTH_EAST:   55,
+    SWITCH_SOUTH_SOUTH_WEST:   57,
+    SWITCH_SOUTH_SOUTH_EAST:   58,
+    SWITCH_EAST_EAST_SOUTH:    59,
+    SWITCH_EAST_EAST_NORTH:    60,
+    SWITCH_WEST_WEST_SOUTH:    61,
+    SWITCH_WEST_WEST_NORTH:    62,
 };
 
 export interface WagonState {
@@ -163,7 +163,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     }
                 }
                 break;
-            case RailLayout.TO_NORTH_NORTH_WEST:
+            case RailLayout.SWITCH_NORTH_NORTH_WEST:
                 if (stateChange) {
                     if (state.angle === 2) {
                         state.turn = true;
@@ -175,10 +175,10 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     }
                 }
                 break;
-            case RailLayout.TO_NORTH_NORTH_EAST:
+            case RailLayout.SWITCH_NORTH_NORTH_EAST:
                 // Does not seem to exist anywhere in the original
                 break;
-            case RailLayout.TO_SOUTH_SOUTH_WEST:
+            case RailLayout.SWITCH_SOUTH_SOUTH_WEST:
                 if (stateChange) {
                     if (state.angle === 2) {
                         state.turn = true;
@@ -190,7 +190,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     }
                 }
                 break;
-            case RailLayout.TO_SOUTH_SOUTH_EAST:
+            case RailLayout.SWITCH_SOUTH_SOUTH_EAST:
                 if (stateChange) {
                     if (state.angle === 0) {
                         state.turn = true;
@@ -202,7 +202,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     }
                 }
                 break;
-            case RailLayout.TO_EAST_EAST_SOUTH:
+            case RailLayout.SWITCH_EAST_EAST_SOUTH:
                 if (stateChange) {
                     if (state.angle === 1) {
                         state.turn = true;
@@ -214,7 +214,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     }
                 }
                 break;
-            case RailLayout.TO_EAST_EAST_NORTH:
+            case RailLayout.SWITCH_EAST_EAST_NORTH:
                 if (stateChange) {
                     if (state.angle === 3) {
                         state.turn = true;
@@ -226,7 +226,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     }
                 }
                 break;
-            case RailLayout.TO_WEST_WEST_SOUTH:
+            case RailLayout.SWITCH_WEST_WEST_SOUTH:
                 if (stateChange) {
                     if (state.angle === 1) {
                         state.turn = true;
@@ -238,7 +238,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     }
                 }
                 break;
-            case RailLayout.TO_WEST_WEST_NORTH:
+            case RailLayout.SWITCH_WEST_WEST_NORTH:
                 if (stateChange) {
                     if (state.angle === 3) {
                         state.turn = true;
@@ -277,7 +277,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     state.key = lInfo.key;
 }
 
-const UndergasRailLayout = {
+const UGRailLayout = {
     /** Undergas mine rails **/
     // Straight
     NORTH_SOUTH:           14,
@@ -292,38 +292,38 @@ const UndergasRailLayout = {
     TURN_SOUTH_WEST:       19,
     TURN_SOUTH_EAST:       17,
     // Turnouts
-    TO_NORTH_NORTH_WEST:   66,
-    TO_NORTH_NORTH_EAST:   67,
-    TO_SOUTH_SOUTH_WEST:   50,
-    TO_SOUTH_SOUTH_EAST:   60,
-    TO_EAST_EAST_SOUTH:    21,
-    TO_EAST_EAST_NORTH:    20,
-    TO_WEST_WEST_SOUTH:    62,
-    TO_WEST_WEST_NORTH:    64,
+    SWITCH_NORTH_NORTH_WEST:   66,
+    SWITCH_NORTH_NORTH_EAST:   67,
+    SWITCH_SOUTH_SOUTH_WEST:   50,
+    SWITCH_SOUTH_SOUTH_EAST:   60,
+    SWITCH_EAST_EAST_SOUTH:    21,
+    SWITCH_EAST_EAST_NORTH:    20,
+    SWITCH_WEST_WEST_SOUTH:    62,
+    SWITCH_WEST_WEST_NORTH:    64,
 };
 
 function mapUndergasToBuRails(scene: Scene, rail: number) {
     const scenery = scene.scenery as IsoScenery;
     if (scenery.grid.library.index === 11) { // Mine library
         switch (rail) {
-            case UndergasRailLayout.NORTH_SOUTH:           return RailLayout.NORTH_SOUTH;
-            case UndergasRailLayout.WEST_EAST:             return RailLayout.WEST_EAST;
-            case UndergasRailLayout.UP_NORTH:              return RailLayout.UP_NORTH;
-            case UndergasRailLayout.UP_SOUTH:              return RailLayout.UP_SOUTH;
-            case UndergasRailLayout.UP_WEST:               return RailLayout.UP_WEST;
-            case UndergasRailLayout.UP_EAST:               return RailLayout.UP_EAST;
-            case UndergasRailLayout.TURN_NORTH_WEST:       return RailLayout.TURN_NORTH_WEST;
-            case UndergasRailLayout.TURN_NORTH_EAST:       return RailLayout.TURN_NORTH_EAST;
-            case UndergasRailLayout.TURN_SOUTH_WEST:       return RailLayout.TURN_SOUTH_WEST;
-            case UndergasRailLayout.TURN_SOUTH_EAST:       return RailLayout.TURN_SOUTH_EAST;
-            case UndergasRailLayout.TO_NORTH_NORTH_WEST:   return RailLayout.TO_NORTH_NORTH_WEST;
-            case UndergasRailLayout.TO_NORTH_NORTH_EAST:   return RailLayout.TO_NORTH_NORTH_EAST;
-            case UndergasRailLayout.TO_SOUTH_SOUTH_WEST:   return RailLayout.TO_SOUTH_SOUTH_WEST;
-            case UndergasRailLayout.TO_SOUTH_SOUTH_EAST:   return RailLayout.TO_SOUTH_SOUTH_EAST;
-            case UndergasRailLayout.TO_EAST_EAST_SOUTH:    return RailLayout.TO_EAST_EAST_SOUTH;
-            case UndergasRailLayout.TO_EAST_EAST_NORTH:    return RailLayout.TO_EAST_EAST_NORTH;
-            case UndergasRailLayout.TO_WEST_WEST_SOUTH:    return RailLayout.TO_WEST_WEST_SOUTH;
-            case UndergasRailLayout.TO_WEST_WEST_NORTH:    return RailLayout.TO_WEST_WEST_NORTH;
+            case UGRailLayout.NORTH_SOUTH:              return RailLayout.NORTH_SOUTH;
+            case UGRailLayout.WEST_EAST:                return RailLayout.WEST_EAST;
+            case UGRailLayout.UP_NORTH:                 return RailLayout.UP_NORTH;
+            case UGRailLayout.UP_SOUTH:                 return RailLayout.UP_SOUTH;
+            case UGRailLayout.UP_WEST:                  return RailLayout.UP_WEST;
+            case UGRailLayout.UP_EAST:                  return RailLayout.UP_EAST;
+            case UGRailLayout.TURN_NORTH_WEST:          return RailLayout.TURN_NORTH_WEST;
+            case UGRailLayout.TURN_NORTH_EAST:          return RailLayout.TURN_NORTH_EAST;
+            case UGRailLayout.TURN_SOUTH_WEST:          return RailLayout.TURN_SOUTH_WEST;
+            case UGRailLayout.TURN_SOUTH_EAST:          return RailLayout.TURN_SOUTH_EAST;
+            case UGRailLayout.SWITCH_NORTH_NORTH_WEST:  return RailLayout.SWITCH_NORTH_NORTH_WEST;
+            case UGRailLayout.SWITCH_NORTH_NORTH_EAST:  return RailLayout.SWITCH_NORTH_NORTH_EAST;
+            case UGRailLayout.SWITCH_SOUTH_SOUTH_WEST:  return RailLayout.SWITCH_SOUTH_SOUTH_WEST;
+            case UGRailLayout.SWITCH_SOUTH_SOUTH_EAST:  return RailLayout.SWITCH_SOUTH_SOUTH_EAST;
+            case UGRailLayout.SWITCH_EAST_EAST_SOUTH:   return RailLayout.SWITCH_EAST_EAST_SOUTH;
+            case UGRailLayout.SWITCH_EAST_EAST_NORTH:   return RailLayout.SWITCH_EAST_EAST_NORTH;
+            case UGRailLayout.SWITCH_WEST_WEST_SOUTH:   return RailLayout.SWITCH_WEST_WEST_SOUTH;
+            case UGRailLayout.SWITCH_WEST_WEST_NORTH:   return RailLayout.SWITCH_WEST_WEST_NORTH;
         }
     }
     return rail;
