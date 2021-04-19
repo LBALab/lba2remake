@@ -4,6 +4,7 @@ import Scene from '../Scene';
 import IsoScenery from '../scenery/isometric/IsoScenery';
 import IsoSceneryPhysics from '../scenery/isometric/IsoSceneryPhysics';
 import { Time } from '../../datatypes';
+import { WORLD_SIZE } from '../../utils/lba';
 
 /*
 **                       ----
@@ -44,14 +45,35 @@ const RailLayout = {
 
 export interface WagonState {
     angle: number;
+    key: string;
+    turn: boolean;
+    transition: number;
+    pivot: THREE.Vector3;
+    rotationDir: number;
+    angleOffset: number;
+}
+
+export function initWagonState(angle): WagonState {
+    return {
+        angle: (Math.floor(angle / (Math.PI * 0.5)) + 8) % 4,
+        key: 'none',
+        turn: false,
+        transition: -1,
+        pivot: new THREE.Vector3(),
+        rotationDir: 1,
+        angleOffset: 0,
+    };
 }
 
 const wEuler = new THREE.Euler();
 const lInfo = {
     index: -1,
     center: new THREE.Vector3(),
-    key: 'none'
+    key: 'none',
+    hSize: 0,
 };
+
+const HALF_TURN = (1.5 / 32) * WORLD_SIZE;
 
 export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     if (!(scene.scenery.physics instanceof IsoSceneryPhysics)) {
@@ -61,52 +83,111 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     const state = wagon.wagonState;
     scene.scenery.physics.getLayoutInfo(wagon.physics.position, lInfo);
     const rail = mapUndergasToBuRails(scene, lInfo.index);
+
+    /* Only for debug purposes */
     wagon.debugData.rail = rail;
     wagon.debugData.railName = Object.keys(RailLayout).find(k => RailLayout[k] === rail);
     wagon.debugData.lInfo = lInfo;
+    /* ----------------------- */
 
-    let straight = false;
-    let turn = false;
-    switch (rail) {
-        case RailLayout.NORTH_SOUTH:
-            wagon.physics.position.z = lInfo.center.z;
-            straight = true;
-            break;
-        case RailLayout.WEST_EAST:
-            wagon.physics.position.x = lInfo.center.x;
-            straight = true;
-            break;
-        case RailLayout.TURN_SOUTH_WEST:
-            turn = true;
-            wagon.physics.position.z = lInfo.center.z;
-            state.angle = Math.PI / 2;
-            break;
-        case RailLayout.TURN_SOUTH_EAST:
-            turn = true;
-            wagon.physics.position.z = lInfo.center.z;
-            state.angle = Math.PI / 2;
-            break;
-        case RailLayout.TURN_NORTH_WEST:
-            turn = true;
-            wagon.physics.position.x = lInfo.center.x;
-            state.angle = 0;
-            break;
-        case RailLayout.TURN_NORTH_EAST:
-            turn = true;
-            state.angle = Math.PI;
-            break;
+    const stateChange = lInfo.key !== state.key;
+    if (!state.turn) {
+        switch (rail) {
+            case RailLayout.NORTH_SOUTH:
+                wagon.physics.position.z = lInfo.center.z;
+                break;
+            case RailLayout.WEST_EAST:
+                wagon.physics.position.x = lInfo.center.x;
+                break;
+            case RailLayout.TURN_SOUTH_WEST:
+                if (stateChange) {
+                    state.turn = true;
+                    state.transition = 0;
+                    state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z + HALF_TURN);
+                    if (state.angle === 2) {
+                        state.angle = 1;
+                        state.rotationDir = -1;
+                        state.angleOffset = 3 * Math.PI * 0.5;
+                    } else {
+                        state.angle = 0;
+                        state.rotationDir = 1;
+                        state.angleOffset = Math.PI;
+                    }
+                }
+                break;
+            case RailLayout.TURN_NORTH_WEST:
+                if (stateChange) {
+                    state.turn = true;
+                    state.transition = 0;
+                    state.pivot.set(lInfo.center.x - HALF_TURN, 0, lInfo.center.z + HALF_TURN);
+                    if (state.angle === 1) {
+                        state.angle = 0;
+                        state.rotationDir = -1;
+                        state.angleOffset = Math.PI;
+                    } else {
+                        state.angle = 3;
+                        state.rotationDir = 1;
+                        state.angleOffset = Math.PI * 0.5;
+                    }
+                }
+                break;
+            case RailLayout.TURN_NORTH_EAST:
+                if (stateChange) {
+                    state.turn = true;
+                    state.transition = 0;
+                    state.pivot.set(lInfo.center.x - HALF_TURN, 0, lInfo.center.z - HALF_TURN);
+                    if (state.angle === 1) {
+                        state.angle = 2;
+                        state.rotationDir = 1;
+                        state.angleOffset = 2 * Math.PI;
+                    } else {
+                        state.angle = 3;
+                        state.rotationDir = -1;
+                        state.angleOffset = Math.PI * 0.5;
+                    }
+                }
+                break;
+            case RailLayout.TURN_SOUTH_EAST:
+                if (stateChange) {
+                    state.turn = true;
+                    state.transition = 0;
+                    state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z - HALF_TURN);
+                    if (state.angle === 0) {
+                        state.angle = 1;
+                        state.rotationDir = 1;
+                        state.angleOffset = 3 * Math.PI * 0.5;
+                    } else {
+                        state.angle = 2;
+                        state.rotationDir = -1;
+                        state.angleOffset = 0;
+                    }
+                }
+                break;
+        }
     }
 
     const dt = Math.min(time.delta, 0.025);
-    if (straight || turn) {
-        wagon.physics.temp.position.x += Math.sin(state.angle) * dt;
-        wagon.physics.temp.position.z += Math.cos(state.angle) * dt;
-    }
-    if (turn) {
-        wagon.physics.temp.angle = state.angle;
-        wEuler.set(0, state.angle, 0, 'XZY');
+    if (state.turn) {
+        if (state.transition > 1) {
+            state.transition = 1;
+            state.turn = false;
+        }
+        const dAngle = state.transition * Math.PI * 0.5 * state.rotationDir + state.angleOffset;
+        wagon.physics.position.x = state.pivot.x + Math.sin(dAngle) * HALF_TURN;
+        wagon.physics.position.z = state.pivot.z + Math.cos(dAngle) * HALF_TURN;
+
+        const angle = dAngle + 3 * Math.PI * 0.5;
+        wagon.physics.temp.angle = angle;
+        wEuler.set(0, angle, 0, 'XZY');
         wagon.physics.orientation.setFromEuler(wEuler);
+        state.transition += dt;
     }
+    if (!state.turn) {
+        const angle = state.angle * Math.PI * 0.5;
+        wagon.physics.temp.position.x += Math.sin(angle) * dt;
+        wagon.physics.temp.position.z += Math.cos(angle) * dt;
+    }
+    state.key = lInfo.key;
 }
 
 const UndergasRailLayout = {

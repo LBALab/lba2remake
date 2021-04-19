@@ -1,5 +1,5 @@
 import { clone } from 'lodash';
-import { ActorDirMode } from '../Actor';
+import Actor, { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
 import { LBA2GameFlags } from '../data/gameFlags';
@@ -10,6 +10,7 @@ import { WORLD_SCALE, getRandom } from '../../utils/lba';
 import { getVideoPath } from '../../resources';
 import { ScriptContext } from './ScriptContext';
 import { getParams } from '../../params';
+import { initWagonState } from '../gameplay/wagon';
 
 export const PALETTE = unimplemented();
 
@@ -154,15 +155,13 @@ export function SET_DIRMODE(this: ScriptContext, dirMode) {
     SET_DIRMODE_OBJ.call(this, this.actor, dirMode);
 }
 
-export function SET_DIRMODE_OBJ(this: ScriptContext, actor, dirMode) {
+export function SET_DIRMODE_OBJ(this: ScriptContext, actor: Actor, dirMode) {
     actor.props.dirMode = dirMode;
     if (dirMode === ActorDirMode.MANUAL) {
         actor.state.isTurning = false;
     }
     if (dirMode === ActorDirMode.WAGON) {
-        actor.wagonState = {
-            angle: actor.physics.temp.angle,
-        };
+        actor.wagonState = initWagonState(actor.physics.temp.angle);
     }
 }
 

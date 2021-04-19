@@ -23,7 +23,7 @@ import { Time } from '../datatypes';
 import { getAnimationsSync } from '../resources';
 import { getAnim } from '../model/entity';
 import { processAnimAction } from './loop/animAction';
-import { computeWagonMovement, WagonState } from './gameplay/wagon';
+import { computeWagonMovement, WagonState, initWagonState } from './gameplay/wagon';
 
 interface ActorFlags {
     hasCollisions: boolean;
@@ -232,9 +232,7 @@ export default class Actor {
         }
 
         if (props.dirMode === ActorDirMode.WAGON) {
-            this.wagonState = {
-                angle: angleToRad(props.angle),
-            };
+            this.wagonState = initWagonState(angleToRad(props.angle));
         }
     }
 
