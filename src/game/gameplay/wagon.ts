@@ -77,6 +77,12 @@ const Dir = {
     WEST: 2,
     SOUTH: 3
 };
+const Pivot = {
+    [Dir.EAST]: [-1, -1],
+    [Dir.NORTH]: [-1, 1],
+    [Dir.WEST]: [1, 1],
+    [Dir.SOUTH]: [1, -1],
+};
 
 export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     if (!(scene.scenery.physics instanceof IsoSceneryPhysics)) {
@@ -109,60 +115,16 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                 wagon.physics.position.y = lINFO.center.y;
                 break;
             case RailLayout.TURN_SOUTH_WEST:
-                if (stateChange) {
-                    state.turn = true;
-                    state.transition = 0;
-                    state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z + HALF_TURN);
-                    if (state.angle === Dir.WEST) {
-                        state.angle = Dir.NORTH;
-                        state.rotationDir = -1;
-                    } else {
-                        state.angle = Dir.EAST;
-                        state.rotationDir = 1;
-                    }
-                }
+                handleTurn(state, Dir.WEST, Dir.NORTH, Dir.EAST);
                 break;
             case RailLayout.TURN_NORTH_WEST:
-                if (stateChange) {
-                    state.turn = true;
-                    state.transition = 0;
-                    state.pivot.set(lINFO.center.x - HALF_TURN, 0, lINFO.center.z + HALF_TURN);
-                    if (state.angle === Dir.NORTH) {
-                        state.angle = Dir.EAST;
-                        state.rotationDir = -1;
-                    } else {
-                        state.angle = Dir.SOUTH;
-                        state.rotationDir = 1;
-                    }
-                }
+                handleTurn(state, Dir.NORTH, Dir.EAST, Dir.SOUTH);
                 break;
             case RailLayout.TURN_NORTH_EAST:
-                if (stateChange) {
-                    state.turn = true;
-                    state.transition = 0;
-                    state.pivot.set(lINFO.center.x - HALF_TURN, 0, lINFO.center.z - HALF_TURN);
-                    if (state.angle === Dir.EAST) {
-                        state.angle = Dir.SOUTH;
-                        state.rotationDir = -1;
-                    } else {
-                        state.angle = Dir.WEST;
-                        state.rotationDir = 1;
-                    }
-                }
+                handleTurn(state, Dir.EAST, Dir.SOUTH, Dir.WEST);
                 break;
             case RailLayout.TURN_SOUTH_EAST:
-                if (stateChange) {
-                    state.turn = true;
-                    state.transition = 0;
-                    state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z - HALF_TURN);
-                    if (state.angle === Dir.SOUTH) {
-                        state.angle = Dir.WEST;
-                        state.rotationDir = -1;
-                    } else {
-                        state.angle = Dir.NORTH;
-                        state.rotationDir = 1;
-                    }
-                }
+                handleTurn(state, Dir.SOUTH, Dir.WEST, Dir.NORTH);
                 break;
             case RailLayout.SWITCH_NORTH_NORTH_WEST:
                 if (stateChange) {
@@ -271,6 +233,26 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
         wagon.physics.temp.position.z += Math.cos(angle) * dt;
     }
     state.key = lINFO.key;
+}
+
+function handleTurn(state: WagonState, cwEntryDir: number, cwExitDir: number, ccwExitDir: number) {
+    if (lINFO.key !== state.key) {
+        state.turn = true;
+        state.transition = 0;
+        const [pvx, pvy] = Pivot[cwEntryDir];
+        state.pivot.set(
+            lINFO.center.x + HALF_TURN * pvx,
+            0,
+            lINFO.center.z + HALF_TURN * pvy,
+        );
+        if (state.angle === cwEntryDir) {
+            state.angle = cwExitDir;
+            state.rotationDir = -1;
+        } else {
+            state.angle = ccwExitDir;
+            state.rotationDir = 1;
+        }
+    }
 }
 
 const UGRailLayout = {
