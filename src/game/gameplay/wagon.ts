@@ -50,7 +50,6 @@ export interface WagonState {
     transition: number;
     pivot: THREE.Vector3;
     rotationDir: number;
-    angleOffset: number;
 }
 
 export function initWagonState(angle): WagonState {
@@ -61,7 +60,6 @@ export function initWagonState(angle): WagonState {
         transition: -1,
         pivot: new THREE.Vector3(),
         rotationDir: 1,
-        angleOffset: 0,
     };
 }
 
@@ -118,11 +116,9 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     if (state.angle === Dir.WEST) {
                         state.angle = Dir.NORTH;
                         state.rotationDir = -1;
-                        state.angleOffset = Dir.SOUTH;
                     } else {
                         state.angle = Dir.EAST;
                         state.rotationDir = 1;
-                        state.angleOffset = Dir.WEST;
                     }
                 }
                 break;
@@ -134,11 +130,9 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     if (state.angle === Dir.NORTH) {
                         state.angle = Dir.EAST;
                         state.rotationDir = -1;
-                        state.angleOffset = Dir.WEST;
                     } else {
                         state.angle = Dir.SOUTH;
                         state.rotationDir = 1;
-                        state.angleOffset = Dir.NORTH;
                     }
                 }
                 break;
@@ -150,11 +144,9 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     if (state.angle === Dir.EAST) {
                         state.angle = Dir.SOUTH;
                         state.rotationDir = -1;
-                        state.angleOffset = Dir.NORTH;
                     } else {
                         state.angle = Dir.WEST;
                         state.rotationDir = 1;
-                        state.angleOffset = 4;
                     }
                 }
                 break;
@@ -166,11 +158,9 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     if (state.angle === Dir.SOUTH) {
                         state.angle = Dir.WEST;
                         state.rotationDir = -1;
-                        state.angleOffset = Dir.EAST;
                     } else {
                         state.angle = Dir.NORTH;
                         state.rotationDir = 1;
-                        state.angleOffset = Dir.SOUTH;
                     }
                 }
                 break;
@@ -182,7 +172,6 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                         state.pivot.set(lINFO.center.x - HALF_TURN, 0, lINFO.center.z + HALF_TURN);
                         state.angle = Dir.SOUTH;
                         state.rotationDir = 1;
-                        state.angleOffset = Dir.NORTH;
                     }
                 }
                 break;
@@ -197,7 +186,6 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                         state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z + HALF_TURN);
                         state.angle = Dir.NORTH;
                         state.rotationDir = -1;
-                        state.angleOffset = Dir.SOUTH;
                     }
                 }
                 break;
@@ -209,7 +197,6 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                         state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z - HALF_TURN);
                         state.angle = Dir.NORTH;
                         state.rotationDir = 1;
-                        state.angleOffset = Dir.SOUTH;
                     }
                 }
                 break;
@@ -221,7 +208,6 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                         state.pivot.set(lINFO.center.x - HALF_TURN, 0, lINFO.center.z + HALF_TURN);
                         state.angle = Dir.EAST;
                         state.rotationDir = -1;
-                        state.angleOffset = Dir.WEST;
                     }
                 }
                 break;
@@ -233,7 +219,6 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                         state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z + HALF_TURN);
                         state.angle = Dir.EAST;
                         state.rotationDir = 1;
-                        state.angleOffset = Dir.WEST;
                     }
                 }
                 break;
@@ -245,7 +230,6 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                         state.pivot.set(lINFO.center.x - HALF_TURN, 0, lINFO.center.z - HALF_TURN);
                         state.angle = Dir.WEST;
                         state.rotationDir = 1;
-                        state.angleOffset = 4;
                     }
                 }
                 break;
@@ -257,7 +241,6 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                         state.pivot.set(lINFO.center.x + HALF_TURN, 0, lINFO.center.z - HALF_TURN);
                         state.angle = Dir.WEST;
                         state.rotationDir = -1;
-                        state.angleOffset = Dir.EAST;
                     }
                 }
                 break;
@@ -270,8 +253,9 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
             state.transition = 1;
             state.turn = false;
         }
-        const angleOffset = state.angleOffset * Math.PI * 0.5;
-        const dAngle = state.transition * Math.PI * 0.5 * state.rotationDir + angleOffset;
+        const angleOffset = (state.angle + 2) % 4;
+        const angleInt = (state.transition * state.rotationDir + 4 + angleOffset) % 4;
+        const dAngle = angleInt * Math.PI * 0.5;
         wagon.physics.position.x = state.pivot.x + Math.sin(dAngle) * HALF_TURN;
         wagon.physics.position.z = state.pivot.z + Math.cos(dAngle) * HALF_TURN;
 
