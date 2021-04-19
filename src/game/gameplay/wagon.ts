@@ -119,28 +119,28 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                 handleTurn(state, Dir.SOUTH);
                 break;
             case RailLayout.SWITCH_NORTH_NORTH_WEST:
-                handleSwitch(state, Dir.WEST, Dir.NORTH, Dir.SOUTH, 1);
+                handleSwitch(state, Dir.WEST, 1);
                 break;
             case RailLayout.SWITCH_NORTH_NORTH_EAST:
-                // Does not seem to exist anywhere in the original
+                handleSwitch(state, Dir.EAST, -1);
                 break;
             case RailLayout.SWITCH_SOUTH_SOUTH_WEST:
-                handleSwitch(state, Dir.WEST, Dir.WEST, Dir.NORTH, -1);
+                handleSwitch(state, Dir.WEST, -1);
                 break;
             case RailLayout.SWITCH_SOUTH_SOUTH_EAST:
-                handleSwitch(state, Dir.EAST, Dir.SOUTH, Dir.NORTH, 1);
+                handleSwitch(state, Dir.EAST, 1);
                 break;
             case RailLayout.SWITCH_WEST_NORTH_WEST:
-                handleSwitch(state, Dir.NORTH, Dir.NORTH, Dir.EAST, -1);
+                handleSwitch(state, Dir.NORTH, -1);
                 break;
             case RailLayout.SWITCH_WEST_SOUTH_WEST:
-                handleSwitch(state, Dir.SOUTH, Dir.WEST, Dir.EAST, 1);
+                handleSwitch(state, Dir.SOUTH, 1);
                 break;
             case RailLayout.SWITCH_EAST_NORTH_EAST:
-                handleSwitch(state, Dir.NORTH, Dir.EAST, Dir.WEST, 1);
+                handleSwitch(state, Dir.NORTH, 1);
                 break;
             case RailLayout.SWITCH_EAST_SOUTH_EAST:
-                handleSwitch(state, Dir.SOUTH, Dir.SOUTH, Dir.WEST, -1);
+                handleSwitch(state, Dir.SOUTH, -1);
                 break;
         }
     }
@@ -186,19 +186,14 @@ function handleTurn(state: WagonState, cwEntryDir: number) {
     }
 }
 
-function handleSwitch(
-    state: WagonState,
-    offEntry: number,
-    pvEntry: number,
-    offAngle: number,
-    rotDir: number
-) {
+function handleSwitch(state: WagonState, offEntry: number, rotDir: number) {
     if (lINFO.key !== state.key) {
+        const pvEntry = (offEntry + (rotDir * 1.5 + 1.5)) % 4;
         if (state.angle === offEntry) {
             state.turn = true;
             state.transition = 0;
             setPivot(state, pvEntry);
-            state.angle = offAngle;
+            state.angle = (offEntry + 2 - rotDir) % 4;
             state.rotationDir = rotDir;
         }
     }
