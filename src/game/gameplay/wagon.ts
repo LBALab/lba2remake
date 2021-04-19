@@ -163,6 +163,93 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                     }
                 }
                 break;
+            case RailLayout.TO_NORTH_NORTH_WEST:
+                if (stateChange) {
+                    if (state.angle === 2) {
+                        state.turn = true;
+                        state.transition = 0;
+                        state.pivot.set(lInfo.center.x - HALF_TURN, 0, lInfo.center.z + HALF_TURN);
+                        state.angle = 3;
+                        state.rotationDir = 1;
+                        state.angleOffset = Math.PI * 0.5;
+                    }
+                }
+                break;
+            case RailLayout.TO_NORTH_NORTH_EAST:
+                // Does not seem to exist anywhere in the original
+                break;
+            case RailLayout.TO_SOUTH_SOUTH_WEST:
+                if (stateChange) {
+                    if (state.angle === 2) {
+                        state.turn = true;
+                        state.transition = 0;
+                        state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z + HALF_TURN);
+                        state.angle = 1;
+                        state.rotationDir = -1;
+                        state.angleOffset = 3 * Math.PI * 0.5;
+                    }
+                }
+                break;
+            case RailLayout.TO_SOUTH_SOUTH_EAST:
+                if (stateChange) {
+                    if (state.angle === 0) {
+                        state.turn = true;
+                        state.transition = 0;
+                        state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z - HALF_TURN);
+                        state.angle = 1;
+                        state.rotationDir = 1;
+                        state.angleOffset = 3 * Math.PI * 0.5;
+                    }
+                }
+                break;
+            case RailLayout.TO_EAST_EAST_SOUTH:
+                if (stateChange) {
+                    if (state.angle === 1) {
+                        state.turn = true;
+                        state.transition = 0;
+                        state.pivot.set(lInfo.center.x - HALF_TURN, 0, lInfo.center.z + HALF_TURN);
+                        state.angle = 0;
+                        state.rotationDir = -1;
+                        state.angleOffset = Math.PI;
+                    }
+                }
+                break;
+            case RailLayout.TO_EAST_EAST_NORTH:
+                if (stateChange) {
+                    if (state.angle === 3) {
+                        state.turn = true;
+                        state.transition = 0;
+                        state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z + HALF_TURN);
+                        state.angle = 0;
+                        state.rotationDir = 1;
+                        state.angleOffset = Math.PI;
+                    }
+                }
+                break;
+            case RailLayout.TO_WEST_WEST_SOUTH:
+                if (stateChange) {
+                    if (state.angle === 1) {
+                        state.turn = true;
+                        state.transition = 0;
+                        state.pivot.set(lInfo.center.x - HALF_TURN, 0, lInfo.center.z - HALF_TURN);
+                        state.angle = 2;
+                        state.rotationDir = 1;
+                        state.angleOffset = 2 * Math.PI;
+                    }
+                }
+                break;
+            case RailLayout.TO_WEST_WEST_NORTH:
+                if (stateChange) {
+                    if (state.angle === 3) {
+                        state.turn = true;
+                        state.transition = 0;
+                        state.pivot.set(lInfo.center.x + HALF_TURN, 0, lInfo.center.z - HALF_TURN);
+                        state.angle = 2;
+                        state.rotationDir = -1;
+                        state.angleOffset = 0;
+                    }
+                }
+                break;
         }
     }
 
