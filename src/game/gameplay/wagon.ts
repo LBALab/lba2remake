@@ -157,7 +157,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
         wagon.physics.position.x = state.pivot.x + Math.sin(dAngle) * HALF_TURN;
         wagon.physics.position.z = state.pivot.z + Math.cos(dAngle) * HALF_TURN;
 
-        const angle = dAngle + 3 * Math.PI * 0.5;
+        const angle = dAngle + (2 - state.rotationDir) * Math.PI * 0.5;
         wagon.physics.temp.angle = angle;
         EULER.set(0, angle, 0, 'XZY');
         wagon.physics.orientation.setFromEuler(EULER);
@@ -165,6 +165,8 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     }
     if (!state.turn) {
         const angle = state.angle * Math.PI * 0.5;
+        EULER.set(0, angle, 0, 'XZY');
+        wagon.physics.orientation.setFromEuler(EULER);
         wagon.physics.temp.position.x += Math.sin(angle) * dt;
         wagon.physics.temp.position.z += Math.cos(angle) * dt;
     }
