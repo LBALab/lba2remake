@@ -99,6 +99,12 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
             case RailLayout.WEST_EAST:
                 wagon.physics.position.x = lInfo.center.x;
                 break;
+            case RailLayout.UP_EAST:
+            case RailLayout.UP_WEST:
+            case RailLayout.UP_NORTH:
+            case RailLayout.UP_SOUTH:
+                wagon.physics.position.y = lInfo.center.y;
+                break;
             case RailLayout.TURN_SOUTH_WEST:
                 if (stateChange) {
                     state.turn = true;

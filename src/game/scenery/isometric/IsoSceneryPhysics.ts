@@ -120,7 +120,7 @@ export default class IsoSceneryPhysics {
                             layoutInfo.index = block.layout;
                             layoutInfo.center.set(
                                 2 - cx * HALF_BRICK + HALF_BRICK,
-                                0,
+                                cY,
                                 cz * HALF_BRICK,
                             ).multiplyScalar(WORLD_SIZE);
 
