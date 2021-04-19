@@ -661,7 +661,13 @@ export function REPEAT_SAMPLE(this: ScriptContext, index, loopCount) {
 
 export const BACKGROUND = unimplemented();
 
-export const SET_RAIL = unimplemented();
+export function SET_RAIL(this: ScriptContext, rail: number, value: number) {
+    for (const zone of this.scene.zones) {
+        if (zone.props.type === 9 && zone.props.snap === rail) {
+            zone.props.info1 = value;
+        }
+    }
+}
 
 export const INVERSE_BETA = unimplemented();
 
