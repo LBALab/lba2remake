@@ -228,7 +228,7 @@ function mapUndergasToBuRails(scene: Scene, rail: number) {
             case UndergasRailLayout.TURN_NORTH_WEST:       return RailLayout.TURN_NORTH_WEST;
             case UndergasRailLayout.TURN_NORTH_EAST:       return RailLayout.TURN_NORTH_EAST;
             case UndergasRailLayout.TURN_SOUTH_WEST:       return RailLayout.TURN_SOUTH_WEST;
-            case UndergasRailLayout.TURN_SOUTH_EAST:       return RailLayout.TURN_NORTH_EAST;
+            case UndergasRailLayout.TURN_SOUTH_EAST:       return RailLayout.TURN_SOUTH_EAST;
             case UndergasRailLayout.TO_NORTH_NORTH_WEST:   return RailLayout.TO_NORTH_NORTH_WEST;
             case UndergasRailLayout.TO_NORTH_NORTH_EAST:   return RailLayout.TO_NORTH_NORTH_EAST;
             case UndergasRailLayout.TO_SOUTH_SOUTH_WEST:   return RailLayout.TO_SOUTH_SOUTH_WEST;
