@@ -115,16 +115,16 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
                 wagon.physics.position.y = lINFO.center.y;
                 break;
             case RailLayout.TURN_SOUTH_WEST:
-                handleTurn(state, Dir.WEST, Dir.NORTH, Dir.EAST);
+                handleTurn(state, Dir.WEST);
                 break;
             case RailLayout.TURN_NORTH_WEST:
-                handleTurn(state, Dir.NORTH, Dir.EAST, Dir.SOUTH);
+                handleTurn(state, Dir.NORTH);
                 break;
             case RailLayout.TURN_NORTH_EAST:
-                handleTurn(state, Dir.EAST, Dir.SOUTH, Dir.WEST);
+                handleTurn(state, Dir.EAST);
                 break;
             case RailLayout.TURN_SOUTH_EAST:
-                handleTurn(state, Dir.SOUTH, Dir.WEST, Dir.NORTH);
+                handleTurn(state, Dir.SOUTH);
                 break;
             case RailLayout.SWITCH_NORTH_NORTH_WEST:
                 if (stateChange) {
@@ -235,7 +235,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     state.key = lINFO.key;
 }
 
-function handleTurn(state: WagonState, cwEntryDir: number, cwExitDir: number, ccwExitDir: number) {
+function handleTurn(state: WagonState, cwEntryDir: number) {
     if (lINFO.key !== state.key) {
         state.turn = true;
         state.transition = 0;
@@ -246,10 +246,10 @@ function handleTurn(state: WagonState, cwEntryDir: number, cwExitDir: number, cc
             lINFO.center.z + HALF_TURN * pvy,
         );
         if (state.angle === cwEntryDir) {
-            state.angle = cwExitDir;
+            state.angle = (cwEntryDir + 3) % 4;
             state.rotationDir = -1;
         } else {
-            state.angle = ccwExitDir;
+            state.angle = (cwEntryDir + 2) % 4;
             state.rotationDir = 1;
         }
     }
