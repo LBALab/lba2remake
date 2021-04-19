@@ -102,7 +102,7 @@
         type: 'cond_fct'
     },
     RAIL: {
-        type: 'cond_prop'
+        type: 'cond_fct'
     },
     BETA: {
         type: 'cond_prop',

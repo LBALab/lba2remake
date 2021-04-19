@@ -196,6 +196,7 @@ export const lba_random = condition({
 
 export const lba_rail = condition({
     label: 'rail',
+    param: 'number',
     operand: 'number'
 });
 
