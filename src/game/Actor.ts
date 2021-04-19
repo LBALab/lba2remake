@@ -563,9 +563,9 @@ export default class Actor {
             if (this.soundVoice) {
                 this.threeObject.add(this.soundVoice);
             }
-            if (params.editor) {
-                createActorLabel(this, name, this.scene.is3DCam);
-            }
+        }
+        if (params.editor) {
+            createActorLabel(this, name, this.scene.is3DCam);
         }
     }
 
