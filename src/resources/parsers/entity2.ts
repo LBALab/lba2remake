@@ -202,9 +202,22 @@ const loadEntityAnim = (data, offset) => {
                 weight: -1,
                 alpha: -1,
                 beta: -1,
+                xMin: null,
+                yMin: null,
+                zMin: null,
+                xMax: null,
+                yMax: null,
+                zMax: null,
             };
             switch (action.type) {
                 case ACTIONTYPE.ZV:
+                    action.animFrame = data.getInt8(innerOffset + offset + 1, true);
+                    action.xMin = data.getInt16(innerOffset + offset + 2, true);
+                    action.yMin = data.getInt16(innerOffset + offset + 4, true);
+                    action.zMin = data.getInt16(innerOffset + offset + 6, true);
+                    action.xMax = data.getInt16(innerOffset + offset + 8, true);
+                    action.yMax = data.getInt16(innerOffset + offset + 10, true);
+                    action.zMax = data.getInt16(innerOffset + offset + 12, true);
                     innerOffset += 12 + 1;
                     break;
                 case ACTIONTYPE.ZV_ANIMIT:

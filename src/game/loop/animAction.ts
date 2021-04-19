@@ -80,7 +80,11 @@ export const THROW = (action, { actor, game, scene }) => {
         + actor.physics.temp.angle - (Math.PI / 2);
     const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
     const position = actor.physics.position.clone();
-    const offset = new THREE.Vector3(0, action.distanceY, 0);
+    const offset = new THREE.Vector3(
+        action.distanceZ,
+        action.distanceY,
+        action.distanceX
+    ); // x + 0.15 improves
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
     Extra.throw(
@@ -115,7 +119,11 @@ export const THROW_ALPHA = (action, { actor, game, scene }) => {
         + actor.physics.temp.angle - (Math.PI / 2);
     const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
     const position = actor.physics.position.clone();
-    const offset = new THREE.Vector3(0, action.distanceY, 0);
+    const offset = new THREE.Vector3(
+        action.distanceZ,
+        action.distanceY,
+        action.distanceX
+    ); // x + 0.15 improves
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
     Extra.throw(
@@ -169,7 +177,11 @@ export const THROW_3D = (action, { actor, game, scene }) => {
         + actor.physics.temp.angle - (Math.PI / 2);
     const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
     const position = actor.physics.position.clone();
-    const offset = new THREE.Vector3(0, action.distanceY, 0);
+    const offset = new THREE.Vector3(
+        action.distanceZ,
+        action.distanceY,
+        action.distanceX
+    ); // x + 0.15 improves
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
     Extra.throw(
@@ -192,7 +204,11 @@ export const THROW_3D_ALPHA = (action, { actor, game, scene }) => {
         + actor.physics.temp.angle - (Math.PI / 2);
     const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
     const position = actor.physics.position.clone();
-    const offset = new THREE.Vector3(0, action.distanceY, 0);
+    const offset = new THREE.Vector3(
+        action.distanceZ,
+        action.distanceY,
+        action.distanceX
+    ); // x + 0.15 improves
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
     Extra.throw(

@@ -101,10 +101,10 @@ export default class Extra {
         weight: number = 15,
     ): Promise<Extra> {
         const extra = new Extra(game, position, angle, spriteIndex, bonus, time);
-        extra.init(angle, speed, weight);
         await extra.loadMesh(scene);
-        scene.addExtra(extra);
+        extra.init(angle, speed, weight);
         extra.playSample(extra.sound, SampleType.BONUS_FOUND);
+        scene.addExtra(extra);
         return extra;
     }
 
@@ -122,14 +122,14 @@ export default class Extra {
         strength: number,
     ): Promise<Extra> {
         const extra = new Extra(game, position, destAngle, spriteIndex, bonus, time);
+        await extra.loadMesh(scene);
         extra.flags =
               ExtraFlag.END_OBJ
             | ExtraFlag.END_COL
             | ExtraFlag.IMPACT
             | ExtraFlag.TIME_IN;
+            extra.hitStrength = strength;
         extra.init(throwAngle, speed, weight);
-        extra.hitStrength = strength;
-        await extra.loadMesh(scene);
         scene.addExtra(extra);
         return extra;
     }
@@ -232,6 +232,8 @@ export default class Extra {
         this.speed = speed;
         this.weight = _weight;
         this.throwAngle = angle;
+
+        this.doTrajectory(this.time);
     }
 
     playSample(sound: any, index: number) {
@@ -252,6 +254,19 @@ export default class Extra {
         audio.stopSample(index);
     }
 
+    doTrajectory(time) {
+        const ts = (time.elapsed - this.spawnTime) * 0.0025;
+
+        const x = this.speed * ts * Math.cos(this.throwAngle);
+        const y = this.speed * ts * Math.sin(this.throwAngle)
+                - (0.5 * GRAVITY * ts * ts);
+        const trajectory = new THREE.Vector3(x, y, 0);
+        trajectory.applyEuler(new THREE.Euler(0, this.physics.temp.angle, 0, 'XZY'));
+
+        this.physics.position.add(trajectory);
+        this.threeObject.position.copy(this.physics.position);
+    }
+
     update(game: Game, scene: Scene, time: Time) {
         let hitActor = null;
 
@@ -261,16 +276,7 @@ export default class Extra {
         }
 
         if ((this.flags & ExtraFlag.FLY) === ExtraFlag.FLY) {
-            const ts = (time.elapsed - this.spawnTime) * 0.0025;
-
-            const x = this.speed * ts * Math.cos(this.throwAngle);
-            const y = this.speed * ts * Math.sin(this.throwAngle)
-                 - (0.5 * GRAVITY * ts * ts);
-            const trajectory = new THREE.Vector3(x, y, 0);
-            trajectory.applyEuler(new THREE.Euler(0, this.physics.temp.angle, 0, 'XZY'));
-
-            this.physics.position.add(trajectory);
-            this.threeObject.position.copy(this.physics.position);
+            this.doTrajectory(time);
         }
 
         if (!((this.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT)) {
