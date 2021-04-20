@@ -306,6 +306,12 @@ export default class Extra {
 
         this.physics.position.add(trajectory);
         this.threeObject.position.copy(this.physics.position);
+        this.threeObject.quaternion.copy(
+            new THREE.Quaternion().setFromUnitVectors(
+                new THREE.Vector3(0, 0, 1),
+                trajectory.normalize(),
+            ),
+        );
     }
 
     update(game: Game, scene: Scene, time: Time) {
