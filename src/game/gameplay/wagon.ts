@@ -87,11 +87,6 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
     scene.scenery.physics.getLayoutInfo(wagon.physics.position, lINFO);
     const rail = mapUndergasToBuRails(scene, lINFO.index);
 
-    /* Only for debug purposes */
-    wagon.debugData.railName = Object.keys(RailLayout).find(k => RailLayout[k] === rail);
-    Object.assign(wagon.debugData, lINFO);
-    /* ----------------------- */
-
     if (!state.turn) {
         switch (rail) {
             case RailLayout.NORTH_SOUTH:

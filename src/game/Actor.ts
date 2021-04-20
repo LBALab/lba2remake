@@ -161,7 +161,6 @@ export default class Actor {
     label?: any;
     refreshLabel?: Function;
     wagonState?: WagonState;
-    debugData: any = {};
 
     static async load(
         game: Game,
