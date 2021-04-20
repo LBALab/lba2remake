@@ -247,7 +247,31 @@ export const SUPER_HIT = (action: AnimAction,  { actor, scene, game, time }: Ani
     processHit(actor, action.strength, game, scene, time);
 };
 
-export const THROW_OBJ_3D = unimplemented();
+export const THROW_OBJ_3D = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {
+    const destAngle = ((action.beta * 2 * Math.PI) / 0x1000)
+        + actor.physics.temp.angle - (Math.PI / 2);
+    const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
+    const position = actor.physics.position.clone();
+    const offset = new THREE.Vector3(
+        action.distanceZ,
+        action.distanceY,
+        action.distanceX,
+    );
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
+    position.add(offset);
+    Extra.throwObject(
+        game,
+        scene,
+        position,
+        destAngle,
+        throwAngle,
+        action.modelIndex,
+        game.getTime(),
+        action.speed,
+        action.weight,
+        action.strength,
+    );
+};
 
 export const PATH = unimplemented();
 

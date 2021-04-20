@@ -333,6 +333,15 @@ const loadEntityAnim = (data, offset) => {
                     innerOffset += 11 + 1;
                     break;
                 case ACTIONTYPE.THROW_OBJ_3D:
+                    action.distanceX = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
+                    action.distanceY = data.getInt16(innerOffset + offset + 4, true) * WORLD_SCALE;
+                    action.distanceZ = data.getInt16(innerOffset + offset + 6, true) * WORLD_SCALE;
+                    action.modelIndex = data.getInt16(innerOffset + offset + 8, true);
+                    action.alpha = data.getInt16(innerOffset + offset + 10, true);
+                    action.beta = data.getInt16(innerOffset + offset + 12, true);
+                    action.speed = data.getInt16(innerOffset + offset + 14, true);
+                    action.weight = data.getInt8(innerOffset + offset + 16, true);
+                    action.strength = data.getInt8(innerOffset + offset + 17, true);
                     innerOffset += 16 + 1;
                     break;
                 case ACTIONTYPE.FLOW_3D:
