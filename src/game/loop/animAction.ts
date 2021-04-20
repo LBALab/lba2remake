@@ -286,7 +286,7 @@ export const SHIELD = unimplemented();
 export const SAMPLE_MAGIC = (_, { actor, game }) => {
     const hero = game.getState();
     let index = 0;
-    if (hero.magicball.level === 4) {
+    if (hero.magicball?.level === 4) {
         index = 1;
     }
     actor.playSample(index);
