@@ -27,8 +27,6 @@ const ExtraFlag = {
     BONUS: 1 << 14,
 };
 
-const GRAVITY = 0x8000;
-
 interface ExtraProps {
     bonus: number;
     flags: {
@@ -123,7 +121,7 @@ export default class Extra {
         const extra = new Extra(game, position, destAngle, time, spriteIndex, bonus);
         await extra.loadMesh(scene);
         extra.flags |= ExtraFlag.BONUS;
-        extra.init(THREE.MathUtils.degToRad(78), 40, 15);
+        extra.init(THREE.MathUtils.degToRad(75), 40, 15); // lbaToDegrees(720)
         extra.playSample(extra.sound, SampleType.BONUS_FOUND);
         scene.addExtra(extra);
         return extra;
@@ -320,10 +318,9 @@ export default class Extra {
 
     doTrajectory(time) {
         const ts = (time.elapsed - this.spawnTime) * 0.0025;
-
+        const gravity = 0.9 * Math.pow(1.275, this.weight) * 1000;
         const x = this.speed * ts * Math.cos(this.throwAngle);
-        const y = this.speed * ts * Math.sin(this.throwAngle)
-                - (0.5 * GRAVITY * ts * ts);
+        const y = this.speed * ts * Math.sin(this.throwAngle) - (0.5 * gravity * ts * ts);
         const trajectory = new THREE.Vector3(x, y, 0);
         trajectory.applyEuler(new THREE.Euler(0, this.physics.temp.angle, 0, 'XZY'));
 
