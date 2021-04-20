@@ -683,7 +683,8 @@ export function INVERSE_BETA(this: ScriptContext) {
         wagonState.angle = (wagonState.angle + 2) % 4;
         angle = wagonState.angle * Math.PI * 0.5;
     } else {
-        angle = (angle + Math.PI) % (Math.PI * 2);
+        EULER.setFromQuaternion(this.actor.physics.orientation, 'XZY');
+        angle = (EULER.y + Math.PI) % (Math.PI * 2);
     }
     this.actor.physics.temp.angle = angle;
     EULER.set(0, angle, 0, 'XZY');
