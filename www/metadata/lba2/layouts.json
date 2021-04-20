@@ -2214,6 +2214,16 @@
       "file": "CA_063_064_065_066_rails_slope.glb",
       "orientation": 2
     },
+    "67": {
+      "replace": true,
+      "file": "CA_067_068_totem_statue.glb",
+      "orientation": 0
+    },
+    "68": {
+      "replace": true,
+      "file": "CA_067_068_totem_statue.glb",
+      "orientation": 3
+    },
     "69": {
       "replace": true,
       "file": "CA_069_wooden_planks.glb",
@@ -2225,6 +2235,16 @@
     "71": {
       "replace": true,
       "file": "CA_071_you_shall_not_pass_signal.glb",
+      "orientation": 0
+    },
+    "72": {
+      "replace": true,
+      "file": "CA_072_stones.glb",
+      "orientation": 0
+    },
+    "73": {
+      "replace": true,
+      "file": "CA_073_stone.glb",
       "orientation": 0
     },
     "76": {
@@ -2334,8 +2354,58 @@
       "file": "CA_108_directional_arrow_base.glb",
       "orientation": 0
     },
+    "114": {
+      "replace": true,
+      "file": "CA_114_cone.glb",
+      "orientation": 0
+    },
+    "115": {
+      "replace": true,
+      "file": "CA_115_116_cosmodrome_floor_limits.glb",
+      "orientation": 0
+    },
+    "116": {
+      "replace": true,
+      "file": "CA_115_116_cosmodrome_floor_limits.glb",
+      "orientation": 1
+    },
+    "117": {
+      "replace": true,
+      "file": "CA_117_122_128_129_cosmodrome_floor_limits_corner.glb",
+      "orientation": 0
+    },
+    "119": {
+      "replace": true,
+      "file": "CA_119_cosmodrome_floor_holes.glb",
+      "orientation": 0
+    },
+    "122": {
+      "replace": true,
+      "file": "CA_117_122_128_129_cosmodrome_floor_limits_corner.glb",
+      "orientation": 2
+    },
     "126": {
       "mirror": true
+    },
+    "128": {
+      "replace": true,
+      "file": "CA_117_122_128_129_cosmodrome_floor_limits_corner.glb",
+      "orientation": 3
+    },
+    "129": {
+      "replace": true,
+      "file": "CA_117_122_128_129_cosmodrome_floor_limits_corner.glb",
+      "orientation": 1
+    },
+    "130": {
+      "replace": true,
+      "file": "CA_130_cosmodrome_auxiliary_light_small.glb",
+      "orientation": 0
+    },
+    "131": {
+      "replace": true,
+      "file": "CA_131_cosmodrome_auxiliary_light_big.glb",
+      "orientation": 0
     },
     "143": {
       "mirror": true
@@ -2355,8 +2425,23 @@
     "153": {
       "mirror": false
     },
+    "161": {
+      "replace": true,
+      "file": "CA_161_stalactites.glb",
+      "orientation": 0
+    },
+    "162": {
+      "replace": true,
+      "file": "CA_162_stalactites.glb",
+      "orientation": 0
+    },
     "175": {
       "mirror": true
+    },
+    "177": {
+      "replace": true,
+      "file": "CA_177_stalactites_corner.glb",
+      "orientation": 0
     },
     "182": {
       "mirror": true
@@ -2513,6 +2598,66 @@
     "42:1x2x1:2297,2298": {
       "replace": true,
       "file": "CA_042_shining_sparkles.glb",
+      "orientation": 0
+    },
+    "73:2x1x2:127,2533,2536,2537": {
+      "replace": true,
+      "file": "CA_073_stone_var1.glb",
+      "orientation": 0
+    },
+    "115:9x1x1:2753,2754,2753,2754,2753,2754,2753,2754,2753": {
+      "replace": true,
+      "file": "CA_115_116_cosmodrome_floor_limits_var1.glb",
+      "orientation": 0
+    },
+    "116:1x1x9:2756,2757,2756,2757,2756,2757,2756,2757,2756": {
+      "replace": true,
+      "file": "CA_115_116_cosmodrome_floor_limits_var1.glb",
+      "orientation": 1
+    },
+    "115:2x1x1:2754,2754": {
+      "replace": true,
+      "file": "CA_115_116_cosmodrome_floor_limits_var2.glb",
+      "orientation": 0
+    },
+    "116:1x1x2:2757,2757": {
+      "replace": true,
+      "file": "CA_115_116_cosmodrome_floor_limits_var2.glb",
+      "orientation": 1
+    },
+    "116:1x1x3:2757,2757,2757": {
+      "replace": true,
+      "file": "CA_116_cosmodrome_floor_limits_var3.glb",
+      "orientation": 1
+    },
+    "119:3x1x3:2760,2761,2761,2763,2764,2764,2763,2767,2765": {
+      "replace": true,
+      "file": "CA_119_cosmodrome_floor_holes.glb",
+      "orientation": 0
+    },
+    "119:3x1x2:2762,2761,2762,2767,2765,2764": {
+      "replace": true,
+      "file": "CA_119_cosmodrome_floor_holes_var2.glb",
+      "orientation": 0
+    },
+    "119:3x1x3:2763,2768,2765,2763,2765,2765,2766,2764,2764": {
+      "replace": true,
+      "file": "CA_119_cosmodrome_floor_holes.glb",
+      "orientation": 0
+    },
+    "119:3x1x2:2762,2761,2762,2768,2767,2768": {
+      "replace": true,
+      "file": "CA_119_cosmodrome_floor_holes_var2.glb",
+      "orientation": 2
+    },
+    "119:12x1x19:2760,2761,2761,2761,2761,2762,2762,2761,2762,2761,2761,2762,2766,2764,2764,2764,2764,2765,2764,2765,2765,2764,2768,2767,2763,2764,2764,2764,2764,2765,2767,2765,2768,2767,2765,2764,2763,2767,2767,2767,2767,2768,2767,2768,2765,2767,2768,2767,2766,2765,2765,2765,2765,2765,2764,2765,2768,2767,2765,2764,2763,2764,2764,2764,2764,2768,2765,2764,2765,2767,2768,2767,2766,2764,2764,2764,2764,2765,2764,2767,2765,2764,2768,2767,2763,2764,2764,2764,2764,2765,2764,2767,2768,2767,2765,2764,2763,2767,2767,2767,2767,2768,2767,2764,2765,2767,2768,2767,2766,2765,2765,2765,2765,2765,2764,2765,2764,2764,2765,2764,2763,2768,2768,2768,2768,2768,2767,2768,2767,2767,2768,2767,2763,2765,2765,2765,2765,2764,2765,2764,2765,2764,2764,2765,2766,2764,2764,2764,2764,2767,2768,2767,2768,2767,2767,2768,2763,2767,2767,2767,2767,2768,2767,2764,2764,2768,2768,2767,2766,2765,2765,2765,2765,2765,2764,2765,2767,2765,2765,2764,2763,2768,2768,2768,2768,2768,2767,2768,2767,2768,2768,2767,2763,2765,2765,2765,2765,2764,2765,2764,2764,2765,2764,2765,2763,2765,2765,2765,2765,2764,2765,2764,2764,2765,2764,2765,2766,2764,2764,2764,2764,2767,2768,2767,2767,2768,2767,2768": {
+      "replace": true,
+      "file": "CA_119_cosmodrome_floor_holes_var6.glb",
+      "orientation": 0
+    },
+    "114:1x2x1:2750,2751": {
+      "replace": true,
+      "file": "CA_114_cone_var1.glb",
       "orientation": 0
     }
   },
