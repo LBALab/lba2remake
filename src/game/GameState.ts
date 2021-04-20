@@ -87,13 +87,21 @@ export function createGameState(): GameState {
                 ]),
             };
 
-            hero.animState.matrixRotation.fromArray(state.hero.animState.matrixRotation.elements);
-            hero.animState.step.x = state.hero.animState.step.x;
-            hero.animState.step.y = state.hero.animState.step.y;
-            hero.animState.step.z = state.hero.animState.step.z;
-            hero.animState.rotation.x = state.hero.animState.rotation.x;
-            hero.animState.rotation.y = state.hero.animState.rotation.y;
-            hero.animState.rotation.z = state.hero.animState.rotation.z;
+            if (hero.animState.matrixRotation) {
+                hero.animState.matrixRotation.fromArray(
+                    state.hero.animState.matrixRotation.elements
+                );
+            }
+            if (hero.animState.step) {
+                hero.animState.step.x = state.hero.animState.step.x;
+                hero.animState.step.y = state.hero.animState.step.y;
+                hero.animState.step.z = state.hero.animState.step.z;
+            }
+            if (hero.animState.rotation) {
+                hero.animState.rotation.x = state.hero.animState.rotation.x;
+                hero.animState.rotation.y = state.hero.animState.rotation.y;
+                hero.animState.rotation.z = state.hero.animState.rotation.z;
+            }
 
             Object.assign(this, state);
         }

@@ -6,10 +6,10 @@ import { ControlsState } from '../game/ControlsState';
 import { Time } from '../datatypes';
 import IslandPhysics from '../game/scenery/island/IslandPhysics';
 
-const CAMERA_HERO_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
-CAMERA_HERO_OFFSET.multiplyScalar(WORLD_SIZE);
-const HERO_TARGET_POS = new THREE.Vector3(0, 0.08, 0);
-HERO_TARGET_POS.multiplyScalar(WORLD_SIZE);
+const CAMERA_OFFSET = new THREE.Vector3(0, 0.15, -0.2);
+CAMERA_OFFSET.multiplyScalar(WORLD_SIZE);
+const ACTOR_TARGET_POS = new THREE.Vector3(0, 0.08, 0);
+ACTOR_TARGET_POS.multiplyScalar(WORLD_SIZE);
 
 export function get3DCamera() {
     const camera = new THREE.PerspectiveCamera(
@@ -28,11 +28,13 @@ export function get3DCamera() {
     orientation.matrixAutoUpdate = false;
     controlNode.add(orientation);
     orientation.add(camera);
+    let actorIndex = 0;
 
     return {
         width: window.innerWidth,
         height: window.innerHeight,
         threeCamera: camera,
+        actorIndex,
         controlNode,
         resize(width, height) {
             if (width !== this.width || height || this.height) {
@@ -42,25 +44,28 @@ export function get3DCamera() {
         },
         init: (scene: Scene, controlsState: ControlsState) => {
             if (!controlsState.freeCamera) {
-                const hero = scene.actors[0];
-                if (!hero.threeObject)
+                const actor = scene.actors[actorIndex];
+                if (!actor.threeObject)
                     return;
-                const heroPos = HERO_TARGET_POS.clone();
-                heroPos.applyMatrix4(hero.threeObject.matrixWorld);
+                const actorPos = ACTOR_TARGET_POS.clone();
+                actorPos.applyMatrix4(actor.threeObject.matrixWorld);
 
-                const cameraPos = CAMERA_HERO_OFFSET.clone();
-                cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+                const cameraPos = CAMERA_OFFSET.clone();
+                cameraPos.applyMatrix4(actor.threeObject.matrixWorld);
                 controlsState.cameraLerp.copy(cameraPos);
-                controlsState.cameraLookAtLerp.copy(heroPos);
+                controlsState.cameraLookAtLerp.copy(actorPos);
                 controlNode.position.copy(cameraPos);
                 controlNode.lookAt(controlsState.cameraLookAtLerp);
             }
+        },
+        setActor: (newActor: number) => {
+            actorIndex = newActor;
         },
         update: (scene: Scene, controlsState: ControlsState, time: Time) => {
             if (controlsState.freeCamera) {
                 processFree3DMovement(controlsState, controlNode, scene, time);
             } else {
-                processFollow3DMovement(controlsState, controlNode, scene, time);
+                processFollow3DMovement(controlsState, controlNode, actorIndex, scene, time);
             }
         },
         centerOn: (object) => {
@@ -70,7 +75,7 @@ export function get3DCamera() {
             const objectPos = new THREE.Vector3();
             objectPos.applyMatrix4(object.threeObject.matrixWorld);
             const cameraPos = objectPos.clone();
-            cameraPos.add(CAMERA_HERO_OFFSET);
+            cameraPos.add(CAMERA_OFFSET);
             controlNode.position.copy(cameraPos);
             controlNode.lookAt(objectPos);
         }
@@ -80,21 +85,22 @@ export function get3DCamera() {
 function processFollow3DMovement(
     controlsState: ControlsState,
     controlNode: THREE.Object3D,
+    actorIndex: number,
     scene: Scene,
     time: Time
 ) {
-    const hero = scene.actors[0];
-    if (!hero.threeObject)
+    const actor = scene.actors[actorIndex];
+    if (!actor.threeObject)
         return;
 
-    if (hero.props.animIndex === AnimType.FOUND_OBJECT) {
+    if (actor.props.animIndex === AnimType.FOUND_OBJECT) {
         return;
     }
 
-    const heroPos = HERO_TARGET_POS.clone();
-    const cameraPos = CAMERA_HERO_OFFSET.clone();
-    heroPos.applyMatrix4(hero.threeObject.matrixWorld);
-    cameraPos.applyMatrix4(hero.threeObject.matrixWorld);
+    const actorPos = ACTOR_TARGET_POS.clone();
+    const cameraPos = CAMERA_OFFSET.clone();
+    actorPos.applyMatrix4(actor.threeObject.matrixWorld);
+    cameraPos.applyMatrix4(actor.threeObject.matrixWorld);
     scene.scenery.physics.processCameraCollisions(cameraPos);
 
     if (controlsState.camZone) {
@@ -108,7 +114,7 @@ function processFollow3DMovement(
     }
     controlsState.cameraLookAtLerp.lerpVectors(
         controlsState.cameraLookAtLerp.clone(),
-        heroPos,
+        actorPos,
         time.delta * 6
     );
     controlNode.position.copy(controlsState.cameraLerp);

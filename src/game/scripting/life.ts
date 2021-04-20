@@ -165,7 +165,11 @@ export function SET_DIRMODE_OBJ(this: ScriptContext, actor: Actor, dirMode) {
     }
 }
 
-export const CAM_FOLLOW = unimplemented();
+export function CAM_FOLLOW(this: ScriptContext, actor) {
+    if (this.scene.camera.setActor) {
+        this.scene.camera.setActor(actor.index);
+    }
+}
 
 export function SET_HERO_BEHAVIOUR(this: ScriptContext, value) {
     this.game.getState().hero.behaviour = value;

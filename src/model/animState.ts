@@ -42,8 +42,12 @@ export function resetAnimState(state) {
     state.isWaiting = false;
     state.hasEnded = false;
     state.keyframeChanged = false;
-    state.step.set(0, 0, 0);
-    state.rotation.set(0, 0, 0);
+    if (state.step) {
+        state.step.set(0, 0, 0);
+    }
+    if (state.rotation) {
+        state.rotation.set(0, 0, 0);
+    }
     state.keyframeLength = 0;
     state.floorSound = -1;
     state.floorSound2 = null;

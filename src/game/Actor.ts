@@ -656,10 +656,10 @@ export default class Actor {
                 this.state.nextAnim = currentAnim;
             }
             this.state.isHit = false;
-            this.state.wasHitBy = hitBy;
         });
         this.animState.noInterpolate = true;
         this.state.isHit = true;
+        this.state.wasHitBy = hitBy;
     }
 
     playSample(index: number, frequency: number = 0x1000, loopCount: number = 0) {
