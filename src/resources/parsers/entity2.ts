@@ -47,6 +47,37 @@ const ACTIONTYPE = {
     THROW_FOUDRE        : 42,
 };
 
+export interface AnimAction {
+    type: number;
+    animFrame: number;
+    sampleIndex?: number;
+    frequency?: number;
+    unk1?: number;
+    unk2?: number;
+    unk3?: number;
+    unk4?: number;
+    unk5?: number;
+    strength?: number;
+    distanceX?: number;
+    distanceY?: number;
+    distanceZ?: number;
+    yHeight?: number;
+    spriteIndex?: number;
+    modelIndex?: number;
+    repeat?: number;
+    targetActor?: number;
+    speed?: number;
+    weight?: number;
+    alpha?: number;
+    beta?: number;
+    xMin?: number;
+    yMin?: number;
+    zMin?: number;
+    xMax?: number;
+    yMax?: number;
+    zMax?: number;
+}
+
 export const parseEntity = (resource: Resource) => {
     const entities = [];
     const buffer = resource.getBuffer();
@@ -180,38 +211,12 @@ const loadEntityAnim = (data, offset) => {
         innerOffset += 1;
 
         for (let i = 0; i < numActions; i += 1) {
-            const action = {
-                type: data.getUint8(innerOffset + offset, true),
-                animFrame: -1,
-                sampleIndex: -1,
-                frequency: -1,
-                unk1: -1,
-                unk2: -1,
-                unk3: -1,
-                unk4: -1,
-                unk5: -1,
-                strength: -1,
-                distanceX: -1,
-                distanceY: -1,
-                distanceZ: -1,
-                yHeight: -1,
-                spriteIndex: -1,
-                repeat: -1,
-                targetActor: -1,
-                speed: -1,
-                weight: -1,
-                alpha: -1,
-                beta: -1,
-                xMin: null,
-                yMin: null,
-                zMin: null,
-                xMax: null,
-                yMax: null,
-                zMax: null,
+            const action: AnimAction = {
+                type: data.getInt8(innerOffset + offset, true),
+                animFrame: data.getInt8(innerOffset + offset + 1, true),
             };
             switch (action.type) {
                 case ACTIONTYPE.ZV:
-                    action.animFrame = data.getInt8(innerOffset + offset + 1, true);
                     action.xMin = data.getInt16(innerOffset + offset + 2, true);
                     action.yMin = data.getInt16(innerOffset + offset + 4, true);
                     action.zMin = data.getInt16(innerOffset + offset + 6, true);
@@ -224,36 +229,30 @@ const loadEntityAnim = (data, offset) => {
                     innerOffset += 1;
                     break;
                 case ACTIONTYPE.SUPER_HIT:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.strength = data.getUint8(innerOffset + offset + 2, true);
                     // still missing few other things
                     innerOffset += 9 + 1;
                     break;
                 case ACTIONTYPE.HIT:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.strength = data.getUint8(innerOffset + offset + 2, true);
                     innerOffset += 2;
                     break;
                 case ACTIONTYPE.SAMPLE:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.frequency = data.getUint16(innerOffset + offset + 4, true);
                     innerOffset += 3;
                     break;
                 case ACTIONTYPE.NEW_SAMPLE:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.frequency = data.getUint16(innerOffset + offset + 4, true);
                     innerOffset += 8;
                     break;
                 case ACTIONTYPE.SAMPLE_RND:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.frequency = data.getUint16(innerOffset + offset + 4, true);
                     innerOffset += 5;
                     break;
                 case ACTIONTYPE.THROW:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
                     action.spriteIndex = data.getInt8(innerOffset + offset + 4, true);
                     action.alpha = data.getInt16(innerOffset + offset + 5, true);
@@ -265,7 +264,6 @@ const loadEntityAnim = (data, offset) => {
                     break;
                 case ACTIONTYPE.THROW_MAGIC:
                     // check for magic ball 7 not 8
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.unk1 = data.getUint16(innerOffset + offset + 2, true);
                     action.unk2 = data.getUint16(innerOffset + offset + 4, true);
                     action.unk3 = data.getUint16(innerOffset + offset + 6, true);
@@ -273,13 +271,11 @@ const loadEntityAnim = (data, offset) => {
                     innerOffset += 8;
                     break;
                 case ACTIONTYPE.SAMPLE_REPEAT:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     action.repeat = data.getUint16(innerOffset + offset + 4, true);
                     innerOffset += 10;
                     break;
                 case ACTIONTYPE.THROW_SEARCH:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
                     action.unk1 = data.getInt8(innerOffset + offset + 4, true);
                     action.unk2 = data.getInt8(innerOffset + offset + 5, true);
@@ -288,7 +284,6 @@ const loadEntityAnim = (data, offset) => {
                     innerOffset += 8;
                     break;
                 case ACTIONTYPE.THROW_ALPHA:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.yHeight = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
                     action.spriteIndex = data.getUint8(innerOffset + offset + 4, true);
                     action.alpha = data.getInt16(innerOffset + offset + 5, true);
@@ -299,17 +294,14 @@ const loadEntityAnim = (data, offset) => {
                     innerOffset += 12;
                     break;
                 case ACTIONTYPE.SAMPLE_STOP:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.sampleIndex = data.getUint16(innerOffset + offset + 2, true);
                     innerOffset += 3;
                     break;
                 case ACTIONTYPE.LEFT_STEP: // only required animFrame
                 case ACTIONTYPE.RIGHT_STEP:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     innerOffset += 1;
                     break;
                 case ACTIONTYPE.HIT_HERO:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     innerOffset += 1;
                     break;
                 case ACTIONTYPE.THROW_3D:
@@ -327,7 +319,6 @@ const loadEntityAnim = (data, offset) => {
                     innerOffset += 16;
                     break;
                 case ACTIONTYPE.THROW_3D_SEARCH:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     action.distanceX = data.getUint16(innerOffset + offset + 2, true);
                     action.distanceY = data.getUint16(innerOffset + offset + 4, true);
                     action.distanceZ = data.getUint16(innerOffset + offset + 6, true);
@@ -357,7 +348,6 @@ const loadEntityAnim = (data, offset) => {
                     innerOffset += 1;
                     break;
                 case ACTIONTYPE.THROW_3D_CONQUE:
-                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
                     innerOffset += 7 + 1;
                     break;
                 case ACTIONTYPE.IMPACT:
