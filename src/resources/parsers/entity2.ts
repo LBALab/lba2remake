@@ -224,6 +224,9 @@ const loadEntityAnim = (data, offset) => {
                     innerOffset += 1;
                     break;
                 case ACTIONTYPE.SUPER_HIT:
+                    action.animFrame = data.getUint8(innerOffset + offset + 1, true);
+                    action.strength = data.getUint8(innerOffset + offset + 2, true);
+                    // still missing few other things
                     innerOffset += 9 + 1;
                     break;
                 case ACTIONTYPE.HIT:

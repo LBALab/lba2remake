@@ -232,7 +232,9 @@ export const THROW_3D_SEARCH = unimplemented();
 
 export const THROW_3D_MAGIC = unimplemented();
 
-export const SUPER_HIT = unimplemented();
+export const SUPER_HIT = (action,  { actor, scene, game, time }) => {
+    processHit(actor, action.strength, game, scene, time);
+};
 
 export const THROW_OBJ_3D = unimplemented();
 
