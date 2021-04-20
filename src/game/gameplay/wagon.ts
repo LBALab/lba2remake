@@ -145,7 +145,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
         }
     }
 
-    const dt = Math.min(time.delta, 0.025);
+    const speed = Math.min(time.delta, 0.025) * 1.5;
     if (state.turn) {
         if (state.transition > 1) {
             state.transition = 1;
@@ -161,14 +161,14 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
         wagon.physics.temp.angle = angle;
         EULER.set(0, angle, 0, 'XZY');
         wagon.physics.orientation.setFromEuler(EULER);
-        state.transition += dt;
+        state.transition += speed;
     }
     if (!state.turn) {
         const angle = state.angle * Math.PI * 0.5;
         EULER.set(0, angle, 0, 'XZY');
         wagon.physics.orientation.setFromEuler(EULER);
-        wagon.physics.temp.position.x += Math.sin(angle) * dt;
-        wagon.physics.temp.position.z += Math.cos(angle) * dt;
+        wagon.physics.temp.position.x += Math.sin(angle) * speed;
+        wagon.physics.temp.position.z += Math.cos(angle) * speed;
     }
     state.key = lINFO.key;
 }
