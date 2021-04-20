@@ -140,7 +140,7 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
         }
     }
 
-    const speed = Math.min(time.delta, 0.025) * 1.5;
+    const speed = Math.min(time.delta, 0.025) * wagon.props.speed * 0.001;
     if (state.turn) {
         if (state.transition > 1) {
             state.transition = 1;
