@@ -89,26 +89,6 @@ export default class Extra {
     hitStrength: number;
     hasCollidedWithActor: boolean;
 
-    static async load(
-        game: Game,
-        scene: Scene,
-        position: THREE.Vector3,
-        destAngle: number,
-        throwAngle: number,
-        spriteIndex: number,
-        bonus: number,
-        time: Time,
-        speed: number = 40,
-        weight: number = 15,
-    ): Promise<Extra> {
-        const extra = new Extra(game, position, destAngle, time, spriteIndex, bonus);
-        await extra.loadMesh(scene);
-        extra.init(throwAngle, speed, weight);
-        extra.playSample(extra.sound, SampleType.BONUS_FOUND);
-        scene.addExtra(extra);
-        return extra;
-    }
-
     static async bonus(
         game: Game,
         scene: Scene,
