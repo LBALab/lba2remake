@@ -12,6 +12,8 @@ import Scene from '../Scene';
 import MagicBall from '../MagicBall';
 import { Time } from '../../datatypes';
 
+const ANGLE_OFFSET = 0.225;
+
 export const NOP = unimplemented();
 
 export const BODY = unimplemented();
@@ -85,7 +87,7 @@ export const THROW = (action, { actor, game, scene }) => {
         action.distanceY,
         action.distanceX,
     );
-    offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
     position.add(offset);
     Extra.throw(
         game,
@@ -124,7 +126,7 @@ export const THROW_ALPHA = (action, { actor, game, scene }) => {
         action.distanceY,
         action.distanceX,
     );
-    offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
     position.add(offset);
     Extra.throw(
         game,
@@ -182,7 +184,7 @@ export const THROW_3D = (action, { actor, game, scene }) => {
         action.distanceY,
         action.distanceX,
     );
-    offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
     position.add(offset);
     Extra.throw(
         game,
@@ -209,7 +211,7 @@ export const THROW_3D_ALPHA = (action, { actor, game, scene }) => {
         action.distanceY,
         action.distanceX,
     );
-    offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
     position.add(offset);
     Extra.throw(
         game,
