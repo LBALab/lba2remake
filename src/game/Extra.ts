@@ -93,16 +93,35 @@ export default class Extra {
         game: Game,
         scene: Scene,
         position: THREE.Vector3,
-        angle: number,
+        destAngle: number,
+        throwAngle: number,
         spriteIndex: number,
         bonus: number,
         time: Time,
         speed: number = 40,
         weight: number = 15,
     ): Promise<Extra> {
-        const extra = new Extra(game, position, angle, spriteIndex, bonus, time);
+        const extra = new Extra(game, position, destAngle, spriteIndex, bonus, time);
         await extra.loadMesh(scene);
-        extra.init(angle, speed, weight);
+        extra.init(throwAngle, speed, weight);
+        extra.playSample(extra.sound, SampleType.BONUS_FOUND);
+        scene.addExtra(extra);
+        return extra;
+    }
+
+    static async bonus(
+        game: Game,
+        scene: Scene,
+        position: THREE.Vector3,
+        destAngle: number,
+        spriteIndex: number,
+        bonus: number,
+        time: Time,
+    ): Promise<Extra> {
+        const extra = new Extra(game, position, destAngle, spriteIndex, bonus, time);
+        await extra.loadMesh(scene);
+        extra.flags |= ExtraFlag.BONUS;
+        extra.init(THREE.MathUtils.degToRad(78), 40, 15);
         extra.playSample(extra.sound, SampleType.BONUS_FOUND);
         scene.addExtra(extra);
         return extra;
@@ -279,7 +298,8 @@ export default class Extra {
             this.doTrajectory(time);
         }
 
-        if (!((this.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT)) {
+        if (!((this.flags & ExtraFlag.FLY) === ExtraFlag.FLY) ||
+            ((this.flags & ExtraFlag.IMPACT) === ExtraFlag.IMPACT)) {
             EXTRA_BOX.copy(this.sprite.boundingBox);
             EXTRA_BOX.translate(this.physics.position);
             DIFF.set(0, 1 / 128, 0);

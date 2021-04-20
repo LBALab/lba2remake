@@ -40,7 +40,7 @@ export function processHit(
                 a.playSample(SampleType.ACTOR_DYING);
                 if (a.props.extraType) {
                     const angle = a.physics.temp.angle - Math.PI / 2;
-                    Extra.load(
+                    Extra.bonus(
                         game,
                         scene,
                         a.physics.position,
@@ -83,8 +83,8 @@ export const THROW = (action, { actor, game, scene }) => {
     const offset = new THREE.Vector3(
         action.distanceZ,
         action.distanceY,
-        action.distanceX
-    ); // x + 0.15 improves
+        action.distanceX,
+    );
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
     Extra.throw(
@@ -122,8 +122,8 @@ export const THROW_ALPHA = (action, { actor, game, scene }) => {
     const offset = new THREE.Vector3(
         action.distanceZ,
         action.distanceY,
-        action.distanceX
-    ); // x + 0.15 improves
+        action.distanceX,
+    );
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
     Extra.throw(
@@ -180,8 +180,8 @@ export const THROW_3D = (action, { actor, game, scene }) => {
     const offset = new THREE.Vector3(
         action.distanceZ,
         action.distanceY,
-        action.distanceX
-    ); // x + 0.15 improves
+        action.distanceX,
+    );
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
     Extra.throw(
@@ -207,8 +207,8 @@ export const THROW_3D_ALPHA = (action, { actor, game, scene }) => {
     const offset = new THREE.Vector3(
         action.distanceZ,
         action.distanceY,
-        action.distanceX
-    ); // x + 0.15 improves
+        action.distanceX,
+    );
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
     Extra.throw(
@@ -259,11 +259,11 @@ export const THROW_3D_CONQUE = (_action, { game, scene }) => {
     const offset = new THREE.Vector3(0.75, 0.5, 0);
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
-    Extra.load(
+    Extra.bonus(
         game,
         scene,
         position,
-        0,
+        destAngle,
         SpriteType.LIFE,
         5,
         game.getTime()

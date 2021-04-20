@@ -438,11 +438,11 @@ function BONUS(game: Game, scene: Scene, zone: Zone, hero: Actor, time: Time) {
             );
             offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
             position.add(offset);
-            Extra.load(
+            Extra.bonus(
                 game,
                 scene,
                 position,
-                THREE.MathUtils.degToRad(78),
+                destAngle,
                 bonusSprite,
                 zone.props.info1,
                 time,
