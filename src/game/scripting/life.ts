@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { clone } from 'lodash';
 import Actor, { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
@@ -673,7 +674,21 @@ export function SET_RAIL(this: ScriptContext, rail: number, value: number) {
     }
 }
 
-export const INVERSE_BETA = unimplemented();
+const EULER = new THREE.Euler();
+
+export function INVERSE_BETA(this: ScriptContext) {
+    let angle;
+    if (this.actor.props.dirMode === ActorDirMode.WAGON) {
+        const wagonState = this.actor.wagonState;
+        wagonState.angle = (wagonState.angle + 2) % 4;
+        angle = wagonState.angle * Math.PI * 0.5;
+    } else {
+        angle = (angle + Math.PI) % (Math.PI * 2);
+    }
+    this.actor.physics.temp.angle = angle;
+    EULER.set(0, angle, 0, 'XZY');
+    this.actor.physics.orientation.setFromEuler(EULER);
+}
 
 export function ADD_MONEY(this: ScriptContext, value) {
     this.game.getState().hero.money += value;
