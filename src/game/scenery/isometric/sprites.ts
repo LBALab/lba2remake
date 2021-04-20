@@ -235,7 +235,7 @@ function loadBillboardSprite(index, sprite, is3DCam) {
     return threeSprite;
 }
 
-export function loadSpritesMapping(sprites, palette) {
+export function loadSpritesMapping(sprites: any[], palette) {
     const spritesMap = {};
     const width = 2048;
     const height = 2048;
@@ -244,7 +244,7 @@ export function loadSpritesMapping(sprites, palette) {
     let w = 0;
     let maxH = 0;
     sprites = orderBy(sprites, ['height'], ['desc']);
-    each(sprites, (sprite) => {
+    for (const sprite of sprites) {
         if (maxH < sprite.height) {
             maxH = sprite.height;
         }
@@ -273,7 +273,7 @@ export function loadSpritesMapping(sprites, palette) {
                 image_data[(tgt_i * 4) + 3] = pixels[src_i] ? 0xFF : 0;
             }
         }
-    });
+    }
     const texture = new THREE.DataTexture(
         image_data,
         width,
