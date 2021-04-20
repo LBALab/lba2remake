@@ -28,14 +28,17 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
     }
 
     actor.physics.position.add(actor.physics.temp.position);
-    if (actor.props.flags.hasCollisions && actor.props.dirMode !== ActorDirMode.WAGON) {
+    if (actor.props.flags.hasCollisions) {
         if (!actor.state.hasGravityByAnim &&
             actor.props.flags.canFall && !actor.state.isClimbing &&
-            !actor.state.isUsingProtoOrJetpack) {
+            !actor.state.isUsingProtoOrJetpack &&
+            actor.props.dirMode !== ActorDirMode.WAGON) {
             // Max falling speed: 0.15m per frame
             actor.physics.position.y -= 0.25 * WORLD_SIZE * time.delta;
         }
-        scene.scenery.physics.processCollisions(scene, actor, time);
+        if (actor.props.dirMode !== ActorDirMode.WAGON) {
+            scene.scenery.physics.processCollisions(scene, actor, time);
+        }
         processCollisionsWithActors(scene, actor);
     }
     actor.model.mesh.quaternion.copy(actor.physics.orientation);
@@ -126,8 +129,10 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
                     DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
                 }
             }
-            actor.physics.position.add(DIFF);
-            ACTOR_BOX.translate(DIFF);
+            if (actor.props.dirMode !== ActorDirMode.WAGON) {
+                actor.physics.position.add(DIFF);
+                ACTOR_BOX.translate(DIFF);
+            }
             actor.state.hasCollidedWithActor = otherActor.index;
         }
     }
