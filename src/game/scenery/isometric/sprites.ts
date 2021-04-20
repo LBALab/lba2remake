@@ -24,22 +24,30 @@ let spriteCache = null;
 let spriteRawCache = null;
 const push = Array.prototype.push;
 
+let cachePromise = null;
+
+async function loadCacheOnce() {
+    const palette = await getPalette();
+    const sprites = await getSprites();
+    spriteCache = loadSpritesMapping(sprites, palette);
+    const spritesRaw = await getSpritesRaw();
+    spriteRawCache = loadSpritesMapping(spritesRaw, palette);
+}
+
+async function loadCache() {
+    if (!cachePromise) {
+        cachePromise = loadCacheOnce();
+    }
+    return cachePromise;
+}
+
 export async function loadSprite(
     index,
     hasSpriteAnim3D = false,
     isBillboard = false,
     is3DCam = false,
 ) {
-    const palette = await getPalette();
-    // // lets keep it with two separate textures for now
-    if (!spriteCache) {
-        const sprites = await getSprites();
-        spriteCache = loadSpritesMapping(sprites, palette);
-    }
-    if (!spriteRawCache) {
-        const sprites = await getSpritesRaw();
-        spriteRawCache = loadSpritesMapping(sprites, palette);
-    }
+    await loadCache();
     const cache = (index < 100) ? spriteRawCache : spriteCache;
 
     const clipInfo = hasSpriteAnim3D ?
