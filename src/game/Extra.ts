@@ -94,6 +94,7 @@ export default class Extra {
     throwAngle: number;
     hitStrength: number;
     hasCollidedWithActor: boolean;
+    throwBy: number = -1;
 
     static async bonus(
         game: Game,
@@ -140,6 +141,7 @@ export default class Extra {
     }
 
     static async throwObject(
+        throwBy: number,
         game: Game,
         scene: Scene,
         position: THREE.Vector3,
@@ -153,6 +155,7 @@ export default class Extra {
     ): Promise<Extra> {
         const extra = new Extra(game, position, destAngle, time, null, null, modelIndex);
         await extra.loadMesh(scene);
+        extra.throwBy = throwBy;
         extra.flags =
               ExtraFlag.END_OBJ
             | ExtraFlag.END_COL
@@ -349,6 +352,7 @@ export default class Extra {
             for (let i = 0; i < scene.actors.length; i += 1) {
                 const a = scene.actors[i];
                 if ((a.model === null && a.sprite === null)
+                    || i === this.throwBy
                     || a.state.isDead
                     || !(a.props.flags.hasCollisions || a.props.flags.isSprite)) {
                     continue;

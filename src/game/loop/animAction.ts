@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import { getRandom, distance2D } from '../../utils/lba';
 import { unimplemented } from '../scripting/utils';
-import Extra, { getBonus } from '../Extra';
+import Extra, { getBonus, ExtraFlag } from '../Extra';
 import { SpriteType } from '../data/spriteType';
 import { SampleType } from '../data/sampleType';
 import Actor from '../Actor';
@@ -12,6 +12,7 @@ import Scene from '../Scene';
 import MagicBall from '../MagicBall';
 import { Time } from '../../datatypes';
 import { AnimAction } from '../../resources/parsers/entity2';
+import { GetInventoryItems } from '../data/inventory';
 
 interface AnimActionContext {
     time: Time;
@@ -24,6 +25,8 @@ interface AnimActionContext {
 }
 
 const ANGLE_OFFSET = 0.225;
+const DART_MODEL = 61;
+const DART_STRENGHT = 8;
 
 export const NOP = unimplemented();
 
@@ -260,6 +263,7 @@ export const THROW_OBJ_3D = (action: AnimAction, { actor, game, scene }: AnimAct
     offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
     position.add(offset);
     Extra.throwObject(
+        actor.index,
         game,
         scene,
         position,
@@ -279,7 +283,37 @@ export const FLOW = unimplemented();
 
 export const FLOW_3D = unimplemented();
 
-export const THROW_DART = unimplemented();
+export const THROW_DART = async (action: AnimAction, { game, scene, actor }: AnimActionContext) => {
+    const destAngle = actor.physics.temp.angle - Math.PI / 2;
+    const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
+    const position = actor.physics.position.clone();
+    const offset = new THREE.Vector3(
+        0,
+        action.distanceY,
+        0.45,
+    );
+    offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
+    position.add(offset);
+
+    const dart = await Extra.throwObject(
+        actor.index,
+        game,
+        scene,
+        position,
+        destAngle,
+        throwAngle,
+        DART_MODEL,
+        game.getTime(),
+        action.speed,
+        action.weight,
+        DART_STRENGHT,
+    );
+    dart.flags |= ExtraFlag.DART;
+
+    if (game.getState().flags.quest[GetInventoryItems().DARTS] > 0) {
+        game.getState().flags.quest[GetInventoryItems().DARTS] -= 1;
+    }
+};
 
 export const SHIELD = unimplemented();
 
