@@ -426,7 +426,7 @@ export default class Extra {
                 this.physics.position.add(TOUCH_GROUND);
                 this.threeObject.position.copy(this.physics.position);
                 this.flags &= ~ExtraFlag.FLY;
-                if ((this.flags & ExtraFlag.IMPACT) === ExtraFlag.IMPACT){
+                if ((this.flags & ExtraFlag.IMPACT) === ExtraFlag.IMPACT) {
                     scene.removeExtra(this);
                 }
             }
