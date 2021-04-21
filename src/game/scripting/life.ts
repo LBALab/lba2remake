@@ -233,11 +233,17 @@ export function INC_CHAPTER(this: ScriptContext) {
 const FOUND_OBJECT_CALLBACKS = {
     [GetInventoryItems().MAGIC_BALL]: (game, _scene) => {
         if (game.getState().hero.equippedItemId === -1) {
-            game.getState().hero.equippedItemId = 1;
+            game.getState().hero.equippedItemId = GetInventoryItems().MAGIC_BALL;
         }
     },
     [GetInventoryItems().TUNIC]: (game, _scene) => {
         game.getState().hero.magic = 20;
+    },
+    [GetInventoryItems().DARTS]: (game, _scene) => {
+        game.getState().flags.quest[GetInventoryItems().DARTS] = 3;
+        if (game.getState().hero.equippedItemId === -1) {
+            game.getState().hero.equippedItemId = GetInventoryItems().DARTS;
+        }
     },
 };
 
