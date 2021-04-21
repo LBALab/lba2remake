@@ -175,6 +175,7 @@ export const lba_carried_by = condition({
 export const lba_carried_by_obj = condition({
     label: 'carried by',
     operand: 'actor',
+    param: 'actor',
     objMode: true
 });
 

@@ -112,7 +112,7 @@
         type: 'cond_prop',
         prop: 'angle'
     },
-    CARRIED_OBJ_BY: {
+    CARRIED_BY_OBJ: {
         type: 'cond_fct'
     },
     ANGLE: {

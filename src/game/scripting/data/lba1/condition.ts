@@ -184,7 +184,7 @@ export const ConditionOpcode = [
         opcode: 0x1C,
         command: 'CARRIED_BY',
         handler: lc.CARRIED_BY,
-        operand: 'Uint8:number'
+        operand: 'Uint8:actor'
     },
     {
         opcode: 0x1D,

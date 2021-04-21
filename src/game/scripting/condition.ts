@@ -192,11 +192,9 @@ export function BETA_OBJ(this: ScriptContext, actor: Actor) {
     return ((THREE.MathUtils.radToDeg(angle) / 360) * 0x1000) % 0x1000;
 }
 
-export function CARRIED_OBJ_BY(this: ScriptContext) {
-    return -1;
+export function CARRIED_BY_OBJ(this: ScriptContext, actor: Actor) {
+    return actor.state.isCarriedBy;
 }
-
-CARRIED_OBJ_BY.unimplemented = true;
 
 export function ANGLE(this: ScriptContext, actor: Actor) {
     if (actor.state.isDead) {
