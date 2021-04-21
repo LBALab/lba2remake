@@ -138,7 +138,8 @@ function processFirstPersonsMovement(game: Game, scene: Scene, hero: Actor, time
     }
 
     let animIndex = hero.props.animIndex;
-    if (hero.state.isJumping && hero.animState.hasEnded) {
+    if (hero.state.isJumping &&
+        (hero.animState.hasEnded || controlsState.cancelJump)) {
         toggleJump(hero, false);
     }
     if (!hero.state.isJumping) {
@@ -314,7 +315,8 @@ function processActorMovement(
     }
 
     let animIndex = hero.props.animIndex;
-    if (hero.state.isJumping && hero.animState.hasEnded) {
+    if (hero.state.isJumping &&
+        (hero.animState.hasEnded || controlsState.cancelJump)) {
         toggleJump(hero, false);
     }
     if (!hero.state.isJumping) {

@@ -22,6 +22,7 @@ export interface ControlsState {
     firstPerson: boolean;
     action: number;
     jump: number;
+    cancelJump: boolean;
     fight: number;
     crouch: number;
     sideStep: number;
@@ -56,6 +57,7 @@ export function initControlsState(vr: boolean): ControlsState {
         firstPerson: vr && getSavedVRFirstPersonMode(),
         action: 0,
         jump: 0,
+        cancelJump: false,
         fight: 0,
         crouch: 0,
         weapon: 0,

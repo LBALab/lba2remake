@@ -51,6 +51,7 @@ function keyDownHandler(params, game: Game, sceneManager: SceneManager, event) {
         case 'ArrowDown':
             game.controlsState.down = 1;
             game.controlsState.controlVector.y = -1;
+            game.controlsState.cancelJump = true;
             break;
         case 37: // left
         case 'ArrowLeft':
@@ -204,6 +205,7 @@ function keyUpHandler(game, event) {
         case 40: // down
         case 'ArrowDown':
             game.controlsState.down = 0;
+            game.controlsState.cancelJump = false;
             if (game.controlsState.controlVector.y === -1)
                 game.controlsState.controlVector.y = 0;
             break;
