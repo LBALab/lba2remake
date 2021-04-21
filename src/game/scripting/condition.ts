@@ -3,6 +3,7 @@ import { WORLD_SIZE } from '../../utils/lba';
 import { ScriptContext } from './ScriptContext';
 import { LBA2GameFlags } from '../data/gameFlags';
 import Actor from '../Actor';
+import Zone from '../Zone';
 
 export function COL(this: ScriptContext) {
     if (this.actor.props.life <= 0) {
@@ -32,7 +33,9 @@ export function ZONE(this: ScriptContext) {
     return ZONE_OBJ.call(this, this.actor);
 }
 
-export function ZONE_OBJ(this: ScriptContext, actor) {
+const SZ = new THREE.Vector3();
+
+export function ZONE_OBJ(this: ScriptContext, actor: Actor) {
     const pos = actor.physics.position.clone();
     let halfHeight = 0.005 * WORLD_SIZE;
     if (actor.model && actor.model.boundingBox) {
@@ -40,6 +43,7 @@ export function ZONE_OBJ(this: ScriptContext, actor) {
         halfHeight = (bb.max.y - bb.min.y) * 0.5;
     }
     pos.y += halfHeight;
+    let match: Zone = null;
     for (const zone of this.scene.zones) {
         if (zone.props.type !== 2)
             continue;
@@ -48,10 +52,20 @@ export function ZONE_OBJ(this: ScriptContext, actor) {
         if (pos.x >= box.xMin && pos.x <= box.xMax &&
             pos.y >= box.yMin && pos.y <= box.yMax &&
             pos.z >= box.zMin && pos.z <= box.zMax) {
-            return zone.props.snap;
+            if (match) {
+                zone.boundingBox.getSize(SZ);
+                const szZone = SZ.x + SZ.y + SZ.z;
+                match.boundingBox.getSize(SZ);
+                const szMatch = SZ.x + SZ.y + SZ.z;
+                if (szZone < szMatch) {
+                    match = zone;
+                }
+            } else {
+                match = zone;
+            }
         }
     }
-    return -1;
+    return match ? match.props.snap : -1;
 }
 
 export function BODY(this: ScriptContext) {
