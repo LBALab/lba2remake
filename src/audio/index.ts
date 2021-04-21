@@ -154,28 +154,33 @@ export function createAudioManager(state) {
                     return;
                 }
                 const entryBuffer = await resource.getEntryAsync(index2);
-                const buffer = await context.decodeAudioData(entryBuffer.slice(0));
+                try {
+                    const buffer = await context.decodeAudioData(entryBuffer.slice(0));
 
-                if (buffer) {
-                    sound2.setBuffer(buffer);
-                    if (sound2.isPlaying) {
-                        sound2.stop();
+                    if (buffer) {
+                        sound2.setBuffer(buffer);
+                        if (sound2.isPlaying) {
+                            sound2.stop();
+                        }
+                        sound2.play();
+                        sound2.source.onended = () => {
+                            if (sound.isPlaying && resource.hasHiddenEntries(index)) {
+                                playVoiceSound(
+                                    sound2,
+                                    resource.getNextHiddenEntry(index),
+                                    textBankId2,
+                                    onEndedCallback2
+                                );
+                            }
+                            sound2.isPlaying = false;
+                            if (onEndedCallback2) {
+                                onEndedCallback2.call();
+                            }
+                        };
                     }
-                    sound2.play();
-                    sound2.source.onended = () => {
-                        if (sound.isPlaying && resource.hasHiddenEntries(index)) {
-                            playVoiceSound(
-                                sound2,
-                                resource.getNextHiddenEntry(index),
-                                textBankId2,
-                                onEndedCallback2
-                            );
-                        }
-                        sound2.isPlaying = false;
-                        if (onEndedCallback2) {
-                            onEndedCallback2.call();
-                        }
-                    };
+                } catch (err) {
+                    // tslint:disable-next-line: no-console max-line-length
+                    console.error(`Failed to decode voice, index=${index}, textBankId=${textBankId}:`, err);
                 }
             };
             playVoiceSound(

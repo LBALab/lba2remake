@@ -19,10 +19,15 @@ const createMusicSource = (context: any, volume: number = 1) => {
             return;
         }
         const entryBuffer = resource.getBuffer();
-        const buffer = await source.decode(entryBuffer.slice(0));
-        musicDecodedAudioCache[index] = buffer;
-        source.load(buffer);
-        source.play();
+        try {
+            const buffer = await source.decode(entryBuffer.slice(0));
+            musicDecodedAudioCache[index] = buffer;
+            source.load(buffer);
+            source.play();
+        } catch (err) {
+            // tslint:disable-next-line: no-console
+            console.error(`Failed to decode music, index=${index}:`, err);
+        }
     };
     return {
         isPlaying: () => {
@@ -49,7 +54,12 @@ const createMusicSource = (context: any, volume: number = 1) => {
                 return;
             }
             const entryBuffer = resource.getBuffer();
-            musicDecodedAudioCache[index] = await source.decode(entryBuffer.slice(0));
+            try {
+                musicDecodedAudioCache[index] = await source.decode(entryBuffer.slice(0));
+            } catch (err) {
+                // tslint:disable-next-line: no-console
+                console.error(`Failed to decode music, index=${index}:`, err);
+            }
         },
     };
 };
