@@ -13,7 +13,7 @@ import { getParams } from '../params';
 import { loadInventoryModel } from '../model/inventory';
 // import { createBoundingBox } from '../utils/rendering';
 
-const ExtraFlag = {
+export const ExtraFlag = {
     TIME_OUT: 1 << 0,
     FLY: 1 << 1,
     END_OBJ: 1 << 2,
@@ -25,6 +25,7 @@ const ExtraFlag = {
     TIME_IN: 1 << 10,
     WAIT_NO_COL: 1 << 13,
     BONUS: 1 << 14,
+    DART: 1 << 16,
 };
 
 interface ExtraProps {
