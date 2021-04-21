@@ -166,9 +166,7 @@ export const POS_POINT = GENERIC_ACTION.bind(null, 'lba_set_position', 1);
 export const BETA = GENERIC_ACTION.bind(null, 'lba_set_orientation', [
     lbaToDegrees
 ]);
-export const INVERSE_BETA = GENERIC_ACTION.bind(null, 'lba_set_inverse_orientation', [
-    lbaToDegrees
-]);
+export const INVERSE_BETA = GENERIC_ACTION.bind(null, 'lba_set_inverse_orientation', 0);
 
 export const SET_DOOR_LEFT = GENERIC_ACTION.bind(null, 'lba_set_door_left', 1);
 export const SET_DOOR_RIGHT = GENERIC_ACTION.bind(null, 'lba_set_door_right', 1);
