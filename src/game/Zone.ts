@@ -60,6 +60,7 @@ export default class Zone {
     };
     readonly threeObject: THREE.Object3D;
     readonly boundingBox: THREE.Box3;
+    readonly index: number;
     private labelCanvas: HTMLCanvasElement;
     private labelCtx: CanvasRenderingContext2D;
     private labelTexture: THREE.CanvasTexture;
@@ -67,9 +68,10 @@ export default class Zone {
     private name: string;
 
     constructor(props: ZoneProps, is3DCam: boolean) {
-        this.zoneType = ZONE_TYPE[props.type],
-        this.props = cloneDeep(props),
-        this.color = new THREE.Color(ZONE_TYPE_MATERIAL_COLOR[props.type]),
+        this.index = props.index;
+        this.zoneType = ZONE_TYPE[props.type];
+        this.props = cloneDeep(props);
+        this.color = new THREE.Color(ZONE_TYPE_MATERIAL_COLOR[props.type]);
         this.physics = {
             position: new THREE.Vector3(props.pos[0], props.pos[1], props.pos[2])
         };

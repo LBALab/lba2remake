@@ -1,5 +1,6 @@
+import * as THREE from 'three';
 import { clone } from 'lodash';
-import { ActorDirMode } from '../Actor';
+import Actor, { ActorDirMode } from '../Actor';
 import { AnimType } from '../data/animType';
 import { SampleType } from '../data/sampleType';
 import { LBA2GameFlags } from '../data/gameFlags';
@@ -10,6 +11,7 @@ import { WORLD_SCALE, getRandom } from '../../utils/lba';
 import { getVideoPath } from '../../resources';
 import { ScriptContext } from './ScriptContext';
 import { getParams } from '../../params';
+import { initWagonState } from '../gameplay/wagon';
 
 export const PALETTE = unimplemented();
 
@@ -154,10 +156,13 @@ export function SET_DIRMODE(this: ScriptContext, dirMode) {
     SET_DIRMODE_OBJ.call(this, this.actor, dirMode);
 }
 
-export function SET_DIRMODE_OBJ(this: ScriptContext, actor, dirMode) {
+export function SET_DIRMODE_OBJ(this: ScriptContext, actor: Actor, dirMode) {
     actor.props.dirMode = dirMode;
     if (dirMode === ActorDirMode.MANUAL) {
         actor.state.isTurning = false;
+    }
+    if (dirMode === ActorDirMode.WAGON) {
+        actor.wagonState = initWagonState(actor.physics.temp.angle);
     }
 }
 
@@ -667,9 +672,30 @@ export function REPEAT_SAMPLE(this: ScriptContext, index, loopCount) {
 
 export const BACKGROUND = unimplemented();
 
-export const SET_RAIL = unimplemented();
+export function SET_RAIL(this: ScriptContext, rail: number, value: number) {
+    for (const zone of this.scene.zones) {
+        if (zone.props.type === 9 && zone.props.snap === rail) {
+            zone.props.info1 = value;
+        }
+    }
+}
 
-export const INVERSE_BETA = unimplemented();
+const EULER = new THREE.Euler();
+
+export function INVERSE_BETA(this: ScriptContext) {
+    let angle;
+    if (this.actor.props.dirMode === ActorDirMode.WAGON) {
+        const wagonState = this.actor.wagonState;
+        wagonState.angle = (wagonState.angle + 2) % 4;
+        angle = wagonState.angle * Math.PI * 0.5;
+    } else {
+        EULER.setFromQuaternion(this.actor.physics.orientation, 'XZY');
+        angle = (EULER.y + Math.PI) % (Math.PI * 2);
+    }
+    this.actor.physics.temp.angle = angle;
+    EULER.set(0, angle, 0, 'XZY');
+    this.actor.physics.orientation.setFromEuler(EULER);
+}
 
 export function ADD_MONEY(this: ScriptContext, value) {
     this.game.getState().hero.money += value;

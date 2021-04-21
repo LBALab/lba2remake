@@ -455,7 +455,7 @@ function processActorMovement(
                     if (hero.animState.keyframeLength) {
                         const rotationSpeed = hero.props.entityIndex === BehaviourMode.DISCRETE
                             ? 65
-                            : hero.props.speed;
+                            : 24;
                         const rotY = (hero.animState.rotation.y * rotationSpeed) / WORLD_SIZE;
                         dy = (rotY * time.delta * 1000) / hero.animState.keyframeLength;
                     }
