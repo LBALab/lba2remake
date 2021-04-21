@@ -33,9 +33,9 @@ interface State {
     cond: string;
 }
 
-const LIFE_CMDS = map(getLifeOpcodeTable, op => op.command).sort();
-const MOVE_CMDS = map(getMoveOpcodeTable, op => op.command).sort();
-const CONDS = map(getConditionOpcodeTable, op => op.command).sort();
+const LIFE_CMDS = map(getLifeOpcodeTable(), op => op.command).sort();
+const MOVE_CMDS = map(getMoveOpcodeTable(), op => op.command).sort();
+const CONDS = map(getConditionOpcodeTable(), op => op.command).sort();
 
 export class DevToolsAreaContent extends React.Component<Props, State> {
     content: any;
