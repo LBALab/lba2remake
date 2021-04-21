@@ -12,17 +12,22 @@ const createVoiceSource = (context: any, volume: number = 1) => {
             return;
         }
         const entryBuffer = await resource.getEntryAsync(index);
-        const buffer = await source.decode(entryBuffer.slice(0));
-        source.load(buffer, () => {
-            if (source.isPlaying && resource.hasHiddenEntries(index)) {
-                loadPlay(resource.getNextHiddenEntry(index), textBankId);
-            }
-            source.isPlaying = false;
-            if (onEndedCallback) {
-                onEndedCallback.call();
-            }
-        });
-        source.play();
+        try {
+            const buffer = await source.decode(entryBuffer.slice(0));
+            source.load(buffer, () => {
+                if (source.isPlaying && resource.hasHiddenEntries(index)) {
+                    loadPlay(resource.getNextHiddenEntry(index), textBankId);
+                }
+                source.isPlaying = false;
+                if (onEndedCallback) {
+                    onEndedCallback.call();
+                }
+            });
+            source.play();
+        } catch (err) {
+            // tslint:disable-next-line: no-console
+            console.error(`Failed to decode voice, index=${index}, textBankId=${textBankId}:`, err);
+        }
     };
     return {
         isPlaying: () => {
