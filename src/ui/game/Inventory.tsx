@@ -132,7 +132,7 @@ const Inventory = ({ game, closeInventory }: any) => {
         }
         if (key === 13 || key === 'Enter' || controlsState?.action === 1) {
             const itemId = GetInventoryMapping()[game.getState().hero.inventorySlot];
-            if (game.getState().flags.quest[itemId] === 1) {
+            if (game.getState().flags.quest[itemId] >= 1) {
                 game.getState().hero.usingItemId = itemId;
                 // Reset the usingItemId after a single game loop execution.
                 game.addLoopFunction(null, () => {
@@ -252,7 +252,8 @@ const Inventory = ({ game, closeInventory }: any) => {
     for (let i = 0; i < GetInventoryRows(); i += 1) {
         for (let j = 0; j < GetInventoryColumns(); j += 1) {
             const slot = i * GetInventoryColumns() + j;
-            const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] === 1;
+            const value = game.getState().flags.quest[GetInventoryMapping()[slot]];
+            const inInventory = value >= 1;
             const equipped = GetInventoryMapping()[slot] === equippedItem;
             inventorySlots.push(
                 <div
@@ -264,6 +265,11 @@ const Inventory = ({ game, closeInventory }: any) => {
                       ${equipped === true ? 'equipped' : ''}
                   `}
                 >
+                    {value > 1 && (
+                        <div className="inventoryValue">
+                            {value}
+                        </div>
+                    )}
                 </div>
             );
         }

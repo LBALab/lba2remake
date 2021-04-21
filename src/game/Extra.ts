@@ -13,7 +13,7 @@ import { getParams } from '../params';
 import { loadInventoryModel } from '../model/inventory';
 // import { createBoundingBox } from '../utils/rendering';
 
-const ExtraFlag = {
+export const ExtraFlag = {
     TIME_OUT: 1 << 0,
     FLY: 1 << 1,
     END_OBJ: 1 << 2,
@@ -25,6 +25,7 @@ const ExtraFlag = {
     TIME_IN: 1 << 10,
     WAIT_NO_COL: 1 << 13,
     BONUS: 1 << 14,
+    DART: 1 << 16,
 };
 
 interface ExtraProps {
@@ -43,6 +44,7 @@ interface ExtraState {
     isVisible: boolean;
     isTouchingGround: boolean;
     isDead: boolean;
+    isColliding: boolean;
 }
 
 interface ExtraPhysics {
@@ -94,6 +96,7 @@ export default class Extra {
     throwAngle: number;
     hitStrength: number;
     hasCollidedWithActor: boolean;
+    throwBy: number = -1;
 
     static async bonus(
         game: Game,
@@ -140,6 +143,7 @@ export default class Extra {
     }
 
     static async throwObject(
+        throwBy: number,
         game: Game,
         scene: Scene,
         position: THREE.Vector3,
@@ -153,6 +157,7 @@ export default class Extra {
     ): Promise<Extra> {
         const extra = new Extra(game, position, destAngle, time, null, null, modelIndex);
         await extra.loadMesh(scene);
+        extra.throwBy = throwBy;
         extra.flags =
               ExtraFlag.END_OBJ
             | ExtraFlag.END_COL
@@ -218,6 +223,7 @@ export default class Extra {
             isVisible: true,
             isTouchingGround: false,
             isDead: false,
+            isColliding: false,
         };
         this.spriteIndex = spriteIndex;
         this.spawnTime = 0;
@@ -349,6 +355,7 @@ export default class Extra {
             for (let i = 0; i < scene.actors.length; i += 1) {
                 const a = scene.actors[i];
                 if ((a.model === null && a.sprite === null)
+                    || i === this.throwBy
                     || a.state.isDead
                     || !(a.props.flags.hasCollisions || a.props.flags.isSprite)) {
                     continue;
@@ -423,10 +430,14 @@ export default class Extra {
                     scene.removeExtra(this);
                 }
             }
+            if (this.state.isColliding && (this.flags & ExtraFlag.DART) === ExtraFlag.DART) {
+                this.flags &= ~ExtraFlag.FLY;
+            }
         }
 
         if (shouldCollect ||
-            (this.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT) {
+            (this.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT &&
+            !((this.flags & ExtraFlag.DART) === ExtraFlag.DART)) {
             if (this.info && shouldCollect) {
                 this.collect(game, scene);
             }

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import Actor, { ActorDirMode, ActorState } from '../Actor';
 import { AnimType } from '../data/animType';
 import { BodyType } from '../data/bodyType';
-import { LBA2WeaponToBodyMapping, LBA2Items } from '../data/inventory';
+import { LBA2WeaponToBodyMapping, LBA2Items, GetInventoryItems } from '../data/inventory';
 import { WORLD_SIZE } from '../../utils/lba';
 import { processHit } from './animAction';
 import Scene from '../Scene';
@@ -408,7 +408,15 @@ function processActorMovement(
                     animIndex = AnimType.THROW;
                     break;
                 case LBA2Items.DARTS:
-                    animIndex = AnimType.THROW_DART;
+                    if (game.getState().flags.quest[GetInventoryItems().DARTS] <= 0) {
+                        if (game.getState().flags.quest[GetInventoryItems().MAGIC_BALL] === 1) {
+                            game.getState().hero.equippedItemId = GetInventoryItems().MAGIC_BALL;
+                        } else {
+                            game.getState().hero.equippedItemId = -1;
+                        }
+                    } else {
+                        animIndex = AnimType.THROW_DART;
+                    }
                     break;
                 case LBA2Items.BLOWGUN:
                     animIndex = AnimType.BLOWGUN_SHOOT;
