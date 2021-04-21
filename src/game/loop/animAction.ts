@@ -294,10 +294,10 @@ export const SAMPLE_MAGIC = (_, { actor, game }) => {
 
 export const THROW_3D_CONQUE = (
     _action: AnimAction,
-    { game, scene }: AnimActionContext
+    { actor, game, scene }: AnimActionContext
 ) => {
-    const destAngle = scene.actors[0].physics.temp.angle - Math.PI / 2;
-    const position = scene.actors[0].physics.position.clone();
+    const destAngle = actor.physics.temp.angle - Math.PI / 2;
+    const position = actor.physics.position.clone();
     const offset = new THREE.Vector3(0.75, 0.5, 0);
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
