@@ -192,7 +192,7 @@ export default class Game {
         }
     }
 
-    private getTime() {
+    getTime() {
         return {
             delta: Math.min(this.clock.getDelta(), 0.025),
             elapsed: this.clock.getElapsedTime(),

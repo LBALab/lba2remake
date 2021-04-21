@@ -10,20 +10,22 @@ import Scene from './Scene';
 import Game from './Game';
 import { Time } from '../datatypes';
 import { getParams } from '../params';
+import { loadInventoryModel } from '../model/inventory';
 // import { createBoundingBox } from '../utils/rendering';
 
 const ExtraFlag = {
     TIME_OUT: 1 << 0,
     FLY: 1 << 1,
+    END_OBJ: 1 << 2,
+    END_COL: 1 << 3,
     STOP_COL: 1 << 4,
     TAKABLE: 1 << 5,
     FLASH: 1 << 6,
+    IMPACT: 1 << 8,
     TIME_IN: 1 << 10,
     WAIT_NO_COL: 1 << 13,
     BONUS: 1 << 14,
 };
-
-const GRAVITY = 0x8000;
 
 interface ExtraProps {
     bonus: number;
@@ -61,44 +63,104 @@ const EXTRA_BOX = new THREE.Box3();
 const INTERSECTION = new THREE.Box3();
 const DIFF = new THREE.Vector3();
 
+const TOUCH_GROUND = new THREE.Vector3(0, 0.1, 0);
+
+const Z_AXIS = new THREE.Vector3(0, 0, 1);
+const TRAJECTORY = new THREE.Vector3();
+const TRAJECTORY_EULER = new THREE.Euler();
+const TRAJECTORY_ROT = new THREE.Quaternion();
+
 export default class Extra {
     readonly type = 'extra';
     readonly game: Game;
     readonly index: number;
     readonly physics: ExtraPhysics;
     readonly props: ExtraProps;
-    readonly model: any;
     readonly isSprite: boolean;
-    readonly spriteIndex: SpriteType;
     readonly lifeTime: number;
-    readonly hitStrength: number;
     readonly baseTime: Time;
     readonly sound: any;
+    readonly spriteIndex?: SpriteType;
+    readonly modelIndex?: number;
+    model?: any;
     info: number;
     time: Time;
     flags: number;
     state: ExtraState;
     threeObject?: THREE.Object3D;
-    sprite?: any;
     spawnTime: number;
     speed: number;
     weight: number;
+    throwAngle: number;
+    hitStrength: number;
     hasCollidedWithActor: boolean;
 
-    static async load(
+    static async bonus(
         game: Game,
         scene: Scene,
         position: THREE.Vector3,
-        angle: number,
+        destAngle: number,
         spriteIndex: number,
         bonus: number,
-        time: Time
+        time: Time,
     ): Promise<Extra> {
-        const extra = new Extra(game, position, angle, spriteIndex, bonus, time);
-        extra.init(angle, 40, 15);
+        const extra = new Extra(game, position, destAngle, time, spriteIndex, bonus);
         await extra.loadMesh(scene);
-        scene.addExtra(extra);
+        extra.flags |= ExtraFlag.BONUS;
+        extra.init(THREE.MathUtils.degToRad(75), 40, 15); // lbaToDegrees(720)
         extra.playSample(extra.sound, SampleType.BONUS_FOUND);
+        scene.addExtra(extra);
+        return extra;
+    }
+
+    static async throw(
+        game: Game,
+        scene: Scene,
+        position: THREE.Vector3,
+        destAngle: number,
+        throwAngle: number,
+        spriteIndex: number,
+        bonus: number,
+        time: Time,
+        speed: number,
+        weight: number,
+        strength: number,
+    ): Promise<Extra> {
+        const extra = new Extra(game, position, destAngle, time, spriteIndex, bonus);
+        await extra.loadMesh(scene);
+        extra.flags =
+              ExtraFlag.END_OBJ
+            | ExtraFlag.END_COL
+            | ExtraFlag.IMPACT
+            | ExtraFlag.TIME_IN;
+            extra.hitStrength = strength;
+        extra.init(throwAngle, speed, weight);
+        scene.addExtra(extra);
+        return extra;
+    }
+
+    static async throwObject(
+        game: Game,
+        scene: Scene,
+        position: THREE.Vector3,
+        destAngle: number,
+        throwAngle: number,
+        modelIndex: number,
+        time: Time,
+        speed: number,
+        weight: number,
+        strength: number,
+    ): Promise<Extra> {
+        const extra = new Extra(game, position, destAngle, time, null, null, modelIndex);
+        await extra.loadMesh(scene);
+        extra.flags =
+              ExtraFlag.END_OBJ
+            | ExtraFlag.END_COL
+            | ExtraFlag.IMPACT
+            | ExtraFlag.TIME_IN;
+            extra.hitStrength = strength;
+        extra.init(throwAngle, speed, weight);
+        scene.addExtra(extra);
         return extra;
     }
 
@@ -106,9 +168,10 @@ export default class Extra {
         game: Game,
         position: THREE.Vector3,
         angle: number,
-        spriteIndex: number,
-        bonus: number,
-        time: Time
+        time: Time,
+        spriteIndex?: number,
+        bonus?: number,
+        modelIndex?: number,
     ) {
         this.game = game;
         this.index = indexCount;
@@ -127,6 +190,7 @@ export default class Extra {
         const euler = new THREE.Euler(0, angle, 0, 'XZY');
         this.physics.orientation.setFromEuler(euler);
         this.isSprite = !!spriteIndex;
+        this.modelIndex = modelIndex;
         this.hasCollidedWithActor = false;
         this.flags = ExtraFlag.STOP_COL
             | ExtraFlag.WAIT_NO_COL
@@ -175,30 +239,48 @@ export default class Extra {
     private async loadMesh(scene: Scene) {
         this.threeObject = new THREE.Object3D();
         this.threeObject.position.copy(this.physics.position);
-        const sprite = await loadSprite(this.spriteIndex, false, true, scene.is3DCam);
+
+        TRAJECTORY_EULER.setFromQuaternion(this.physics.orientation, 'YXZ');
+        TRAJECTORY_EULER.y += Math.PI / 2;
+        this.threeObject.quaternion.setFromEuler(TRAJECTORY_EULER);
+
+        let obj = null;
+        if (this.isSprite) {
+            obj = await loadSprite(this.spriteIndex, false, true, scene.is3DCam);
+        } else {
+            obj = await loadInventoryModel(
+                {},
+                this.modelIndex,
+                scene.scenery.props.envInfo,
+                scene.props.ambience
+            );
+        }
 
         // // Debug Bounding Box
-        // sprite.boundingBoxDebugMesh = createBoundingBox(
-        //     sprite.boundingBox,
+        // obj.boundingBoxDebugMesh = createBoundingBox(
+        //     obj.boundingBox,
         //     new THREE.Vector3(1, 0, 0)
         // );
-        // sprite.boundingBoxDebugMesh.name = 'BoundingBox';
-        // this.threeObject.add(sprite.boundingBoxDebugMesh);
+        // obj.boundingBoxDebugMesh.name = 'BoundingBox';
+        // this.threeObject.add(obj.boundingBoxDebugMesh);
 
-        this.threeObject.add(sprite.threeObject);
+        this.threeObject.add(obj.threeObject ?? obj.mesh);
         this.threeObject.name = `extra_${this.props.bonus}`;
         this.threeObject.visible = this.state.isVisible;
-        this.sprite = sprite;
+        this.model = obj;
         if (scene.game.getState().config.positionalAudio) {
             this.threeObject.add(this.sound);
         }
     }
 
-    private init(_angle, speed, _weight) {
+    private init(angle, speed, _weight) {
         this.flags |= ExtraFlag.FLY;
         this.time = this.baseTime;
         this.speed = speed;
         this.weight = _weight;
+        this.throwAngle = angle;
+
+        this.doTrajectory(this.time);
     }
 
     playSample(sound: any, index: number) {
@@ -219,8 +301,34 @@ export default class Extra {
         audio.stopSample(index);
     }
 
+    doTrajectory(time) {
+        const ts = (time.elapsed - this.spawnTime) * 0.0025;
+        const gravity = 0.9 * Math.pow(1.275, this.weight) * 1000;
+        const x = this.speed * ts * Math.cos(this.throwAngle);
+        const y = this.speed * ts * Math.sin(this.throwAngle) - (0.5 * gravity * ts * ts);
+
+        TRAJECTORY.set(x, y, 0);
+        TRAJECTORY_EULER.set(0, this.physics.temp.angle, 0, 'XZY');
+        TRAJECTORY.applyEuler(TRAJECTORY_EULER);
+
+        this.physics.position.add(TRAJECTORY);
+        this.threeObject.position.copy(this.physics.position);
+        this.threeObject.quaternion.copy(
+            TRAJECTORY_ROT.setFromUnitVectors(
+                Z_AXIS,
+                TRAJECTORY.normalize(),
+            ),
+        );
+    }
+
     update(game: Game, scene: Scene, time: Time) {
         let hitActor = null;
+
+        // skipping LBA1 for now until we have Sprites sorted
+        const isLBA1 = getParams().game === 'lba1';
+        if (isLBA1) {
+            return;
+        }
 
         if (time.elapsed - this.spawnTime > this.lifeTime
             && this.spriteIndex !== SpriteType.KEY) {
@@ -228,31 +336,13 @@ export default class Extra {
         }
 
         if ((this.flags & ExtraFlag.FLY) === ExtraFlag.FLY) {
-            const ts = (time.elapsed - this.spawnTime) * 0.0025;
-
-            const throwAngle = 78;
-            const x = this.speed * ts * Math.cos(THREE.MathUtils.degToRad(throwAngle));
-            const y = this.speed * ts * Math.sin(THREE.MathUtils.degToRad(throwAngle))
-                 - (0.5 * GRAVITY * ts * ts);
-            const trajectory = new THREE.Vector3(x, y, 0);
-            trajectory.applyEuler(new THREE.Euler(0, this.physics.temp.angle, 0, 'XZY'));
-
-            this.physics.position.add(trajectory);
-            this.threeObject.position.copy(this.physics.position);
+            this.doTrajectory(time);
         }
 
-        if (this.props.flags.hasCollisions &&
-            time.elapsed - this.spawnTime > 0.5) {
-            const isTouchingGroud = scene.scenery.physics.processCollisions(scene, this, time);
-            if (isTouchingGroud) {
-                this.physics.position.add(new THREE.Vector3(0, 0.1, 0));
-                this.threeObject.position.copy(this.physics.position);
-                this.flags &= ~ExtraFlag.FLY;
-            }
-        }
-
-        if (!((this.flags & ExtraFlag.FLY) === ExtraFlag.FLY)) {
-            EXTRA_BOX.copy(this.sprite.boundingBox);
+        if (this.model &&
+            !((this.flags & ExtraFlag.FLY) === ExtraFlag.FLY) ||
+            ((this.flags & ExtraFlag.IMPACT) === ExtraFlag.IMPACT)) {
+            EXTRA_BOX.copy(this.model.boundingBox);
             EXTRA_BOX.translate(this.physics.position);
             DIFF.set(0, 1 / 128, 0);
             EXTRA_BOX.translate(DIFF);
@@ -286,27 +376,32 @@ export default class Extra {
 
         if (hitActor && hitActor.index === 0) {
             shouldCollect = true;
-            const { hero } = game.getState();
-            switch (this.spriteIndex) {
-                case SpriteType.LIFE:
-                    hero.life += this.info * 5;
-                    if (hero.life > MAX_LIFE) {
-                        hero.life = MAX_LIFE;
-                    }
-                    break;
-                case SpriteType.MAGIC:
-                    hero.magic += this.info;
-                    if (hero.magic > (hero.magicball.level + 1) * 20) {
-                        hero.magic = (hero.magicball.level + 1) * 20;
-                    }
-                    break;
-                case SpriteType.KEY:
-                    hero.keys += 1;
-                    this.info = 1;
-                    break;
-                case SpriteType.KASHES:
-                    hero.money += this.info;
-                    break;
+            if (((this.flags & ExtraFlag.BONUS) === ExtraFlag.BONUS)) {
+                const { hero } = game.getState();
+                switch (this.spriteIndex) {
+                    case SpriteType.LIFE:
+                        hero.life += this.info * 5;
+                        if (hero.life > MAX_LIFE) {
+                            hero.life = MAX_LIFE;
+                        }
+                        break;
+                    case SpriteType.MAGIC:
+                        hero.magic += this.info;
+                        if (hero.magic > (hero.magicball.level + 1) * 20) {
+                            hero.magic = (hero.magicball.level + 1) * 20;
+                        }
+                        break;
+                    case SpriteType.KEY:
+                        hero.keys += 1;
+                        this.info = 1;
+                        break;
+                    case SpriteType.KASHES:
+                        hero.money += this.info;
+                        break;
+                }
+            }
+            if (((this.flags & ExtraFlag.IMPACT) === ExtraFlag.IMPACT)) {
+                hitActor.hit(-1, this.hitStrength); // check hitBy is correct
             }
         } else if (hitActor) {
             switch (this.spriteIndex) {
@@ -314,6 +409,19 @@ export default class Extra {
                     hitActor.props.life += this.info * 5;
                     shouldCollect = true;
                     break;
+            }
+        }
+
+        if (this.props.flags.hasCollisions &&
+            time.elapsed - this.spawnTime > 0.5) {
+            const isTouchingGroud = scene.scenery.physics.processCollisions(scene, this, time);
+            if (isTouchingGroud) {
+                this.physics.position.add(TOUCH_GROUND);
+                this.threeObject.position.copy(this.physics.position);
+                this.flags &= ~ExtraFlag.FLY;
+                if ((this.flags & ExtraFlag.IMPACT) === ExtraFlag.IMPACT) {
+                    scene.removeExtra(this);
+                }
             }
         }
 

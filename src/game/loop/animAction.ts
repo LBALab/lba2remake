@@ -11,6 +11,19 @@ import Game from '../Game';
 import Scene from '../Scene';
 import MagicBall from '../MagicBall';
 import { Time } from '../../datatypes';
+import { AnimAction } from '../../resources/parsers/entity2';
+
+interface AnimActionContext {
+    time: Time;
+    game: Game;
+    scene: Scene;
+    actor: Actor;
+    model?: any;
+    animState?: any;
+    entityAnim?: any;
+}
+
+const ANGLE_OFFSET = 0.225;
 
 export const NOP = unimplemented();
 
@@ -40,7 +53,7 @@ export function processHit(
                 a.playSample(SampleType.ACTOR_DYING);
                 if (a.props.extraType) {
                     const angle = a.physics.temp.angle - Math.PI / 2;
-                    Extra.load(
+                    Extra.bonus(
                         game,
                         scene,
                         a.physics.position,
@@ -55,19 +68,19 @@ export function processHit(
     }
 }
 
-export const HIT = (action,  { actor, scene, game, time }) => {
+export const HIT = (action: AnimAction,  { actor, scene, game, time }: AnimActionContext) => {
     processHit(actor, action.strength, game, scene, time);
 };
 
-export const HIT_HERO = (_action, { game, scene, time }) => {
+export const HIT_HERO = (_action: AnimAction, { game, scene, time }: AnimActionContext) => {
     processHit(scene.actors[0], game.getState().hero.handStrength, game, scene, time);
 };
 
-export const SAMPLE = (action, { actor }) => {
+export const SAMPLE = (action: AnimAction, { actor }: AnimActionContext) => {
     actor.playSample(action.sampleIndex, action.frequency);
 };
 
-export const SAMPLE_RND = (action, { actor, }) => {
+export const SAMPLE_RND = (action: AnimAction, { actor }: AnimActionContext) => {
     let frequency = (getRandom(0, action.frequency) + 0x1000) - (action.frequency >> 1);
     if (frequency < 0 || frequency > 24000) {
         frequency = 0;
@@ -75,21 +88,71 @@ export const SAMPLE_RND = (action, { actor, }) => {
     actor.playSample(action.sampleIndex, frequency);
 };
 
-export const THROW = unimplemented();
+export const THROW = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {
+    const destAngle = ((action.beta * 2 * Math.PI) / 0x1000)
+        + actor.physics.temp.angle - (Math.PI / 2);
+    const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
+    const position = actor.physics.position.clone();
+    const offset = new THREE.Vector3(
+        action.distanceZ,
+        action.distanceY,
+        action.distanceX,
+    );
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
+    position.add(offset);
+    Extra.throw(
+        game,
+        scene,
+        position,
+        destAngle,
+        throwAngle,
+        action.spriteIndex,
+        0,
+        game.getTime(),
+        action.speed,
+        action.weight,
+        action.strength,
+    );
+};
 
-export const THROW_MAGIC = (_action, { actor, game, scene }) => {
+export const THROW_MAGIC = (_action: AnimAction, { actor, game, scene }: AnimActionContext) => {
     MagicBall.load(game, scene, actor.physics.position).then((mb: MagicBall) => {
         mb.throw(actor.physics.temp.angle, actor.props.entityIndex);
     });
 };
 
-export const SAMPLE_REPEAT = (action, { actor }) => {
+export const SAMPLE_REPEAT = (action: AnimAction, { actor }: AnimActionContext) => {
     actor.playSample(action.sampleIndex, 0x1000, action.repeat);
 };
 
 export const THROW_SEARCH = unimplemented();
 
-export const THROW_ALPHA = unimplemented();
+export const THROW_ALPHA = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {
+    const destAngle = ((action.beta * 2 * Math.PI) / 0x1000)
+        + actor.physics.temp.angle - (Math.PI / 2);
+    const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
+    const position = actor.physics.position.clone();
+    const offset = new THREE.Vector3(
+        action.distanceZ,
+        action.distanceY,
+        action.distanceX,
+    );
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
+    position.add(offset);
+    Extra.throw(
+        game,
+        scene,
+        position,
+        destAngle,
+        throwAngle,
+        action.spriteIndex,
+        0,
+        game.getTime(),
+        action.speed,
+        action.weight,
+        action.strength,
+    );
+};
 
 export const SAMPLE_STOP = (_action, { actor }) => {
     actor.stopSample();
@@ -97,7 +160,7 @@ export const SAMPLE_STOP = (_action, { actor }) => {
 
 export const ZV = unimplemented();
 
-export const LEFT_STEP = (_action, { actor, scene, animState }) => {
+export const LEFT_STEP = (_action: AnimAction, { actor, scene, animState }: AnimActionContext) => {
     const isLBA1 = getParams().game === 'lba1';
     const floorSound = animState.floorSound;
     if (floorSound !== undefined && floorSound !== -1) {
@@ -108,7 +171,7 @@ export const LEFT_STEP = (_action, { actor, scene, animState }) => {
     }
 };
 
-export const RIGHT_STEP = (_action, { actor, scene, animState }) => {
+export const RIGHT_STEP = (_action: AnimAction, { actor, scene, animState }: AnimActionContext) => {
     const isLBA1 = getParams().game === 'lba1';
     let floorSound = animState.floorSound;
     if (animState.floorSound2) {
@@ -122,17 +185,93 @@ export const RIGHT_STEP = (_action, { actor, scene, animState }) => {
     }
 };
 
-export const THROW_3D = unimplemented();
+export const THROW_3D = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {
+    const destAngle = ((action.beta * 2 * Math.PI) / 0x1000)
+        + actor.physics.temp.angle - (Math.PI / 2);
+    const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
+    const position = actor.physics.position.clone();
+    const offset = new THREE.Vector3(
+        action.distanceZ,
+        action.distanceY,
+        action.distanceX,
+    );
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
+    position.add(offset);
+    Extra.throw(
+        game,
+        scene,
+        position,
+        destAngle,
+        throwAngle,
+        action.spriteIndex,
+        0,
+        game.getTime(),
+        action.speed,
+        action.weight,
+        action.strength,
+    );
+};
 
-export const THROW_3D_ALPHA = unimplemented();
+export const THROW_3D_ALPHA = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {
+    const destAngle = ((action.beta * 2 * Math.PI) / 0x1000)
+        + actor.physics.temp.angle - (Math.PI / 2);
+    const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
+    const position = actor.physics.position.clone();
+    const offset = new THREE.Vector3(
+        action.distanceZ,
+        action.distanceY,
+        action.distanceX,
+    );
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
+    position.add(offset);
+    Extra.throw(
+        game,
+        scene,
+        position,
+        destAngle,
+        throwAngle,
+        action.spriteIndex,
+        0,
+        game.getTime(),
+        action.speed,
+        action.weight,
+        action.strength,
+    );
+};
 
 export const THROW_3D_SEARCH = unimplemented();
 
 export const THROW_3D_MAGIC = unimplemented();
 
-export const SUPER_HIT = unimplemented();
+export const SUPER_HIT = (action: AnimAction,  { actor, scene, game, time }: AnimActionContext) => {
+    processHit(actor, action.strength, game, scene, time);
+};
 
-export const THROW_OBJ_3D = unimplemented();
+export const THROW_OBJ_3D = (action: AnimAction, { actor, game, scene }: AnimActionContext) => {
+    const destAngle = ((action.beta * 2 * Math.PI) / 0x1000)
+        + actor.physics.temp.angle - (Math.PI / 2);
+    const throwAngle = (action.alpha * 2 * Math.PI) / 0x1000;
+    const position = actor.physics.position.clone();
+    const offset = new THREE.Vector3(
+        action.distanceZ,
+        action.distanceY,
+        action.distanceX,
+    );
+    offset.applyEuler(new THREE.Euler(0, destAngle - ANGLE_OFFSET, 0, 'XZY'));
+    position.add(offset);
+    Extra.throwObject(
+        game,
+        scene,
+        position,
+        destAngle,
+        throwAngle,
+        action.modelIndex,
+        game.getTime(),
+        action.speed,
+        action.weight,
+        action.strength,
+    );
+};
 
 export const PATH = unimplemented();
 
@@ -147,19 +286,22 @@ export const SHIELD = unimplemented();
 export const SAMPLE_MAGIC = (_, { actor, game }) => {
     const hero = game.getState();
     let index = 0;
-    if (hero.magicball.level === 4) {
+    if (hero.magicball?.level === 4) {
         index = 1;
     }
     actor.playSample(index);
 };
 
-export const THROW_3D_CONQUE = (_action, { game, scene }) => {
+export const THROW_3D_CONQUE = (
+    _action: AnimAction,
+    { game, scene }: AnimActionContext
+) => {
     const destAngle = scene.actors[0].physics.temp.angle - Math.PI / 2;
     const position = scene.actors[0].physics.position.clone();
     const offset = new THREE.Vector3(0.75, 0.5, 0);
     offset.applyEuler(new THREE.Euler(0, destAngle, 0, 'XZY'));
     position.add(offset);
-    Extra.load(
+    Extra.bonus(
         game,
         scene,
         position,
@@ -186,7 +328,7 @@ export const LEFT_JUMP = unimplemented();
 
 export const RIGHT_JUMP = unimplemented();
 
-export const NEW_SAMPLE = (action, { actor }) => {
+export const NEW_SAMPLE = (action: AnimAction, { actor }: { actor: Actor }) => {
     actor.playSample(action.sampleIndex, action.frequency);
 };
 
@@ -242,7 +384,7 @@ const AnimActionOpcode = [
     { opcode: 42, command: 'THROW_FOUDRE', handler: THROW_FOUDRE },
 ];
 
-export const processAnimAction = (ctx) => {
+export const processAnimAction = (ctx: AnimActionContext) => {
     const {entityAnim, animState} = ctx;
     const actions = entityAnim.actions;
     const animFrame = animState.currentFrame;
