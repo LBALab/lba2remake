@@ -4,6 +4,14 @@ import  {WORLD_SCALE, getHtmlColor, SPEED_ADJUSTMENT } from '../../utils/lba';
 import { Resource } from '../load';
 import { getPalette, getText, getSceneMap } from '..';
 
+const START_LOCATION_OVERRIDES = {
+    // Temple of Bu
+    10: {
+        pos: [5.320, 2.813, 18.409],
+        angle: 1024,
+    }
+};
+
 export const parseSceneMapLBA2 = (resource: Resource, index: number) => {
     const buffer = resource.getEntry(index);
     const data = new DataView(buffer);
@@ -123,6 +131,14 @@ function loadHero(scene, offset) {
     };
     offset += 6;
 
+    // Hack for positioning Twinsen appropriately when
+    // teleporting directly to some scenes
+    if (scene.index in START_LOCATION_OVERRIDES) {
+        const { pos, angle } = START_LOCATION_OVERRIDES[scene.index];
+        hero.pos = pos;
+        hero.angle = angle;
+    }
+
     hero.moveScriptSize = data.getInt16(offset, true);
     offset += 2;
     if (hero.moveScriptSize > 0) {
@@ -192,7 +208,6 @@ function loadActors(scene, offset) {
             extraType: -1,
             angle: 0,
             speed: 0,
-            controlMode: 0,
             info0: -1,
             info1: -1,
             info2: -1,
@@ -239,7 +254,7 @@ function loadActors(scene, offset) {
         offset += 2;
         actor.speed = data.getInt16(offset, true) * SPEED_ADJUSTMENT;
         offset += 2;
-        actor.controlMode = data.getInt8(offset);
+        actor.dirMode = data.getInt8(offset);
         offset += 1;
 
         actor.info0 = data.getInt16(offset, true);

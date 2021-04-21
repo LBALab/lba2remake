@@ -14,7 +14,7 @@ export default class IsoScenery {
     props: any;
     threeObject: THREE.Object3D;
     physics: IsoSceneryPhysics;
-    private grid: any;
+    readonly grid: any;
     private mesh: any;
     private domeEnv?: any;
 

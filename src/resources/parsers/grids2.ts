@@ -63,26 +63,23 @@ export const getCells = (
                         break;
                     case 1: {
                         const layout = gridData.getUint8(offset) - 1;
-                        if (layout !== -1) {
+                        const blockIdx = gridData.getUint8(offset + 1);
+                        if (layout !== -1 && blockIdx !== -1) {
                             isValid = true;
-                            blocks.push({
-                                layout,
-                                block: gridData.getUint8(offset + 1)
-                            });
-                        } else {
-                            blocks.push(null);
                         }
+                        blocks.push({
+                            layout,
+                            block: blockIdx,
+                        });
 
                         offset += 2;
                         break;
                     }
                     case 2:
-                        if (block && block.layout !== -1 && block.block !== -1) {
+                        if (block.layout !== -1 && block.block !== -1) {
                             isValid = true;
-                            blocks.push(block);
-                        } else {
-                            blocks.push(null);
                         }
+                        blocks.push(block);
                         break;
                     case 3:
                         throw new Error('Unsupported block type');
@@ -100,7 +97,7 @@ export const getCells = (
                 }
             }
             if ((type !== 0 || hasReplacement) && isValid) {
-                const blockData = getBlockData(library, last(blocks));
+                const blockData = getBlockData(library, blocks);
                 columns.push({
                     shape: (blockData && blockData.shape) || 1,
                     box: new THREE.Box3(
@@ -122,6 +119,11 @@ export const getCells = (
             }
             baseHeight += height;
         }
+        for (let i = 0; i < blocks.length; i += 1) {
+            if (blocks[i] && (blocks[i].layout === -1 || blocks[i].block === -1)) {
+                blocks[i] = null;
+            }
+        }
         return {
             blocks,
             columns
@@ -129,9 +131,29 @@ export const getCells = (
     });
 };
 
-export const getBlockData = (library, block) => {
+export const getBlockData = (library, blocks: any[]) => {
+    const block = last(blocks);
     if (!block)
         return null;
+
+    if (block.layout === -1) {
+        let prevBlock = null;
+        for (let i = blocks.length - 2; i >= 0; i += 1) {
+            if (blocks[i] && blocks[i].layout !== -1) {
+                const prevLayout = library.layouts[blocks[i].layout];
+                if (prevLayout) {
+                    prevBlock = prevLayout.blocks[blocks[i].block];
+                    break;
+                }
+            }
+        }
+        return {
+            shape: block.block,
+            groundType: (prevBlock && prevBlock.groundType),
+            sound: (prevBlock && prevBlock.sound) || -1,
+            sound2: (prevBlock && prevBlock.sound2) || null
+        };
+    }
 
     const layout = library.layouts[block.layout];
     if (layout) {

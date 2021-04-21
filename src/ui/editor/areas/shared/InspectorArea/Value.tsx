@@ -108,7 +108,8 @@ const wrapStyleVec = {
     padding: '0 4px',
     marginLeft: 6,
     borderLeft: '2px solid white',
-    borderRight: '2px solid white'
+    borderRight: '2px solid white',
+    userSelect: 'text' as const
 };
 
 function Vector({vec}) {

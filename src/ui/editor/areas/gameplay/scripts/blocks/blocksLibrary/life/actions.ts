@@ -422,6 +422,7 @@ export const lba_set_invisible = action((_block, field) => {
 export const lba_set_rail = action((_block, field) => {
     field('set rail');
     field(new Blockly.FieldNumber(), 'arg_0');
+    field('to');
     field(new Blockly.FieldNumber(), 'arg_1');
 });
 

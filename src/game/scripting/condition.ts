@@ -170,15 +170,18 @@ export function LADDER(this: ScriptContext) {
 
 LADDER.unimplemented = true;
 
-export function RND(this: ScriptContext, max) {
+export function RND(this: ScriptContext, max: number) {
     return Math.floor(Math.random() * max);
 }
 
-export function RAIL(this: ScriptContext) {
-    return -1;
+export function RAIL(this: ScriptContext, rail: number) {
+    for (const zone of this.scene.zones) {
+        if (zone.props.type === 9 && zone.props.snap === rail) {
+            return zone.props.info1;
+        }
+    }
+    return 0;
 }
-
-RAIL.unimplemented = true;
 
 export function BETA(this: ScriptContext) {
     return BETA_OBJ.call(this, this.actor);
