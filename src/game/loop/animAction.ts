@@ -26,7 +26,7 @@ interface AnimActionContext {
 
 const ANGLE_OFFSET = 0.225;
 const DART_MODEL = 61;
-const DART_STRENGHT = 8;
+const DART_STRENGTH = 8;
 
 export const NOP = unimplemented();
 
@@ -306,7 +306,7 @@ export const THROW_DART = async (action: AnimAction, { game, scene, actor }: Ani
         game.getTime(),
         action.speed,
         action.weight,
-        DART_STRENGHT,
+        DART_STRENGTH,
     );
     dart.flags |= ExtraFlag.DART;
 
