@@ -306,7 +306,6 @@ const loadEntityAnim = (data, offset) => {
                     break;
                 case ACTIONTYPE.THROW_3D:
                 case ACTIONTYPE.THROW_3D_ALPHA:
-                    action.animFrame = data.getInt8(innerOffset + offset + 1, true);
                     action.distanceX = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
                     action.distanceY = data.getInt16(innerOffset + offset + 4, true) * WORLD_SCALE;
                     action.distanceZ = data.getInt16(innerOffset + offset + 6, true) * WORLD_SCALE;
@@ -348,6 +347,10 @@ const loadEntityAnim = (data, offset) => {
                     innerOffset += 7 + 1;
                     break;
                 case ACTIONTYPE.THROW_DART:
+                    action.distanceY = data.getInt16(innerOffset + offset + 2, true) * WORLD_SCALE;
+                    action.alpha = data.getInt16(innerOffset + offset + 4, true);
+                    action.speed = data.getInt16(innerOffset + offset + 6, true);
+                    action.weight = data.getInt8(innerOffset + offset + 8, true);
                     innerOffset += 8 + 1;
                     break;
                 case ACTIONTYPE.SHIELD:
