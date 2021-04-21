@@ -33,6 +33,7 @@ interface ActorFlags {
     isVisible: boolean;
     isSprite: boolean;
     canFall: boolean;
+    canCarryActor: boolean;
     noShadow: boolean;
 }
 
@@ -87,6 +88,7 @@ export interface ActorState {
     wasHitBy: number;
     hasSeenHit: boolean;
     repeatHit: number;
+    isCarriedBy: number;
     isSwitchingHit: boolean;
     isCrouching: boolean;
     isClimbing: boolean;
@@ -718,6 +720,7 @@ export default class Actor {
             wasHitBy: -1,
             hasSeenHit: false,
             repeatHit: 0,
+            isCarriedBy: -1,
             isSwitchingHit: false,
             isCrouching: false,
             isClimbing: false,
@@ -806,6 +809,7 @@ export function createNewActorProps(
             hasCollisionBricksLow: true,
             hasSpriteAnim3D: false,
             canFall: true,
+            canCarryActor: false,
             isVisible: true,
             isSprite: false,
             noShadow: false

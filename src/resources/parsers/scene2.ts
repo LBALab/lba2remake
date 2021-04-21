@@ -175,7 +175,7 @@ export function initHeroFlags() {
         canBePunched: true,
         canDrown: true,
         canFall: true,
-        canCarrierActor: false,
+        canCarryActor: false,
 
         isVisible: true,
         isSprite: false,
@@ -427,7 +427,7 @@ export function parseStaticFlags(staticFlags) {
         canBePunched: bits(staticFlags, 4, 1) === 1,
         canDrown: bits(staticFlags, 6, 1) === 1,
         canFall: bits(staticFlags, 11, 1) === 1,
-        canCarrierActor: bits(staticFlags, 14, 1) === 1,
+        canCarryActor: bits(staticFlags, 14, 1) === 1,
 
         isVisible: bits(staticFlags, 9, 1) === 0,
         isSprite: bits(staticFlags, 10, 1) === 1,

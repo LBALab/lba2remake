@@ -83,10 +83,12 @@ const CENTER1 = new THREE.Vector3();
 const CENTER2 = new THREE.Vector3();
 
 const YSTEP = WORLD_SIZE / 3072;
-const Y_THRESHOLD = WORLD_SIZE * 0.000625;
+const Y_THRESHOLD = 0.000625 * WORLD_SIZE;
+const H_THRESHOLD = 0.007 * WORLD_SIZE;
 
 function processCollisionsWithActors(scene: Scene, actor: Actor) {
     actor.state.hasCollidedWithActor = -1;
+    actor.state.isCarriedBy = -1;
     if (actor.model === null || actor.state.isDead ||
         !actor.props.flags.hasCollisions) {
         return;
@@ -122,12 +124,18 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
             ACTOR_BOX.getCenter(CENTER1);
             ACTOR2_BOX.getCenter(CENTER2);
             const dir = CENTER1.sub(CENTER2);
-            if (actor.physics.position.y < ACTOR2_BOX.max.y - Y_THRESHOLD) {
+            const canCarryActor = otherActor.props.flags.canCarryActor;
+            const threshold = canCarryActor ? H_THRESHOLD : Y_THRESHOLD;
+            if (ACTOR_BOX.min.y < ACTOR2_BOX.max.y - threshold) {
                 if (ITRS_SIZE.x < ITRS_SIZE.z) {
                     DIFF.set(ITRS_SIZE.x * Math.sign(dir.x), 0, 0);
                 } else {
                     DIFF.set(0, 0, ITRS_SIZE.z * Math.sign(dir.z));
                 }
+            } else if (canCarryActor) {
+                actor.state.distFromFloor = 0;
+                actor.state.isCarriedBy = otherActor.index;
+                DIFF.set(0, ITRS_SIZE.y * Math.sign(dir.y), 0);
             }
             if (actor.props.dirMode !== ActorDirMode.WAGON) {
                 actor.physics.position.add(DIFF);
