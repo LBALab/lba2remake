@@ -63,6 +63,13 @@ const EXTRA_BOX = new THREE.Box3();
 const INTERSECTION = new THREE.Box3();
 const DIFF = new THREE.Vector3();
 
+const TOUCH_GROUND = new THREE.Vector3(0, 0.1, 0);
+
+const Z_AXIS = new THREE.Vector3(0, 0, 1);
+const TRAJECTORY = new THREE.Vector3();
+const TRAJECTORY_EULER = new THREE.Euler();
+const TRAJECTORY_ROT = new THREE.Quaternion();
+
 export default class Extra {
     readonly type = 'extra';
     readonly game: Game;
@@ -234,10 +241,9 @@ export default class Extra {
         this.threeObject = new THREE.Object3D();
         this.threeObject.position.copy(this.physics.position);
 
-        const euler = new THREE.Euler();
-        euler.setFromQuaternion(this.physics.orientation, 'YXZ');
-        euler.y += Math.PI / 2;
-        this.threeObject.quaternion.setFromEuler(euler);
+        TRAJECTORY_EULER.setFromQuaternion(this.physics.orientation, 'YXZ');
+        TRAJECTORY_EULER.y += Math.PI / 2;
+        this.threeObject.quaternion.setFromEuler(TRAJECTORY_EULER);
 
         let obj = null;
         if (this.isSprite) {
@@ -301,15 +307,17 @@ export default class Extra {
         const gravity = 0.9 * Math.pow(1.275, this.weight) * 1000;
         const x = this.speed * ts * Math.cos(this.throwAngle);
         const y = this.speed * ts * Math.sin(this.throwAngle) - (0.5 * gravity * ts * ts);
-        const trajectory = new THREE.Vector3(x, y, 0);
-        trajectory.applyEuler(new THREE.Euler(0, this.physics.temp.angle, 0, 'XZY'));
 
-        this.physics.position.add(trajectory);
+        TRAJECTORY.set(x, y, 0);
+        TRAJECTORY_EULER.set(0, this.physics.temp.angle, 0, 'XZY');
+        TRAJECTORY.applyEuler(TRAJECTORY_EULER);
+
+        this.physics.position.add(TRAJECTORY);
         this.threeObject.position.copy(this.physics.position);
         this.threeObject.quaternion.copy(
-            new THREE.Quaternion().setFromUnitVectors(
-                new THREE.Vector3(0, 0, 1),
-                trajectory.normalize(),
+            TRAJECTORY_ROT.setFromUnitVectors(
+                Z_AXIS,
+                TRAJECTORY.normalize(),
             ),
         );
     }
@@ -403,7 +411,7 @@ export default class Extra {
             time.elapsed - this.spawnTime > 0.5) {
             const isTouchingGroud = scene.scenery.physics.processCollisions(scene, this, time);
             if (isTouchingGroud) {
-                this.physics.position.add(new THREE.Vector3(0, 0.1, 0));
+                this.physics.position.add(TOUCH_GROUND);
                 this.threeObject.position.copy(this.physics.position);
                 this.flags &= ~ExtraFlag.FLY;
                 if ((this.flags & ExtraFlag.IMPACT) === ExtraFlag.IMPACT) {
