@@ -252,7 +252,8 @@ const Inventory = ({ game, closeInventory }: any) => {
     for (let i = 0; i < GetInventoryRows(); i += 1) {
         for (let j = 0; j < GetInventoryColumns(); j += 1) {
             const slot = i * GetInventoryColumns() + j;
-            const inInventory = game.getState().flags.quest[GetInventoryMapping()[slot]] >= 1;
+            const value = game.getState().flags.quest[GetInventoryMapping()[slot]];
+            const inInventory = value >= 1;
             const equipped = GetInventoryMapping()[slot] === equippedItem;
             inventorySlots.push(
                 <div
@@ -264,6 +265,11 @@ const Inventory = ({ game, closeInventory }: any) => {
                       ${equipped === true ? 'equipped' : ''}
                   `}
                 >
+                    {value > 1 && (
+                        <div className="inventoryValue">
+                            {value}
+                        </div>
+                    )}
                 </div>
             );
         }

@@ -38,7 +38,7 @@
     user-select: none;
     list-style: none;
     font-size: 2em;
-    position: absolute; 
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -47,7 +47,7 @@
     align-items: center;
 }
 
-@media screen and (orientation:landscape) { 
+@media screen and (orientation:landscape) {
     .inventory {
         width: 115vh;
         height: 98vh;
@@ -96,13 +96,21 @@
     grid-template-rows: auto auto auto auto auto;
 }
 
-
 .inventoryItem {
     background: rgba(0, 0, 0, 0.6);
     margin: 0.5vh;
     border-radius: 15px;
     border: 2px outset #61cece;
     position: relative;
+}
+
+.inventoryValue {
+    color: white;
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    font-size: 1.5em;
+    font-family: LBA;
 }
 
 .selected {
