@@ -151,8 +151,12 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
         const angleOffset = (state.angle + 2) % 4;
         const angleInt = (state.transition * state.rotationDir + 4 + angleOffset) % 4;
         const dAngle = angleInt * Math.PI * 0.5;
-        wagon.physics.position.x = state.pivot.x + Math.sin(dAngle) * HALF_TURN;
-        wagon.physics.position.z = state.pivot.z + Math.cos(dAngle) * HALF_TURN;
+        wagon.physics.temp.position.set(
+            state.pivot.x + Math.sin(dAngle) * HALF_TURN,
+            wagon.physics.position.y,
+            state.pivot.z + Math.cos(dAngle) * HALF_TURN
+        );
+        wagon.physics.temp.position.sub(wagon.physics.position);
 
         const angle = dAngle + (2 - state.rotationDir) * Math.PI * 0.5;
         wagon.physics.temp.angle = angle;

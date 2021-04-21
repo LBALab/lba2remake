@@ -26,7 +26,10 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
     if (currentTalkingActor > -1 && currentTalkingActor !== actor.index) {
         return;
     }
-
+    const carrier = scene.actors[actor.state.isCarriedBy];
+    if (carrier) {
+        actor.physics.temp.position.applyQuaternion(carrier.physics.orientation);
+    }
     actor.physics.position.add(actor.physics.temp.position);
     if (actor.props.flags.hasCollisions) {
         if (!actor.state.hasGravityByAnim &&
@@ -42,6 +45,10 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
         processCollisionsWithActors(scene, actor);
     }
     actor.model.mesh.quaternion.copy(actor.physics.orientation);
+    if (carrier) {
+        actor.model.mesh.quaternion.multiply(carrier.physics.orientation);
+        actor.physics.position.add(carrier.physics.temp.position);
+    }
     actor.model.mesh.position.copy(actor.physics.position);
     if (actor.model.boundingBoxDebugMesh) {
         actor.model.boundingBoxDebugMesh.quaternion.copy(actor.model.mesh.quaternion);
