@@ -44,6 +44,7 @@ interface ExtraState {
     isVisible: boolean;
     isTouchingGround: boolean;
     isDead: boolean;
+    isColliding: boolean;
 }
 
 interface ExtraPhysics {
@@ -222,6 +223,7 @@ export default class Extra {
             isVisible: true,
             isTouchingGround: false,
             isDead: false,
+            isColliding: false,
         };
         this.spriteIndex = spriteIndex;
         this.spawnTime = 0;
@@ -424,14 +426,18 @@ export default class Extra {
                 this.physics.position.add(TOUCH_GROUND);
                 this.threeObject.position.copy(this.physics.position);
                 this.flags &= ~ExtraFlag.FLY;
-                if ((this.flags & ExtraFlag.IMPACT) === ExtraFlag.IMPACT) {
+                if ((this.flags & ExtraFlag.IMPACT) === ExtraFlag.IMPACT){
                     scene.removeExtra(this);
                 }
+            }
+            if (this.state.isColliding && (this.flags & ExtraFlag.DART) === ExtraFlag.DART) {
+                this.flags &= ~ExtraFlag.FLY;
             }
         }
 
         if (shouldCollect ||
-            (this.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT) {
+            (this.flags & ExtraFlag.TIME_OUT) === ExtraFlag.TIME_OUT &&
+            !((this.flags & ExtraFlag.DART) === ExtraFlag.DART)) {
             if (this.info && shouldCollect) {
                 this.collect(game, scene);
             }
