@@ -76,19 +76,18 @@ export default class Extra {
     readonly index: number;
     readonly physics: ExtraPhysics;
     readonly props: ExtraProps;
-    readonly model: any;
     readonly isSprite: boolean;
     readonly lifeTime: number;
     readonly baseTime: Time;
     readonly sound: any;
     readonly spriteIndex?: SpriteType;
     readonly modelIndex?: number;
+    model?: any;
     info: number;
     time: Time;
     flags: number;
     state: ExtraState;
     threeObject?: THREE.Object3D;
-    object?: any;
     spawnTime: number;
     speed: number;
     weight: number;
@@ -268,7 +267,7 @@ export default class Extra {
         this.threeObject.add(obj.threeObject ?? obj.mesh);
         this.threeObject.name = `extra_${this.props.bonus}`;
         this.threeObject.visible = this.state.isVisible;
-        this.object = obj;
+        this.model = obj;
         if (scene.game.getState().config.positionalAudio) {
             this.threeObject.add(this.sound);
         }
@@ -325,6 +324,12 @@ export default class Extra {
     update(game: Game, scene: Scene, time: Time) {
         let hitActor = null;
 
+        // skipping LBA1 for now until we have Sprites sorted
+        const isLBA1 = getParams().game === 'lba1';
+        if (isLBA1) {
+            return;
+        }
+
         if (time.elapsed - this.spawnTime > this.lifeTime
             && this.spriteIndex !== SpriteType.KEY) {
             this.flags |= ExtraFlag.TIME_OUT;
@@ -334,10 +339,10 @@ export default class Extra {
             this.doTrajectory(time);
         }
 
-        if (this.object &&
+        if (this.model &&
             !((this.flags & ExtraFlag.FLY) === ExtraFlag.FLY) ||
             ((this.flags & ExtraFlag.IMPACT) === ExtraFlag.IMPACT)) {
-            EXTRA_BOX.copy(this.object.boundingBox);
+            EXTRA_BOX.copy(this.model.boundingBox);
             EXTRA_BOX.translate(this.physics.position);
             DIFF.set(0, 1 / 128, 0);
             EXTRA_BOX.translate(DIFF);
