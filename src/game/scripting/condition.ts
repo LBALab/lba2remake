@@ -169,10 +169,8 @@ export function FUEL(this: ScriptContext) {
 }
 
 export function CARRIED_BY(this: ScriptContext) {
-    return -1;
+    return CARRIED_BY_OBJ.call(this, this.actor);
 }
-
-CARRIED_BY.unimplemented = true;
 
 export function CDROM(this: ScriptContext) {
     return 1;
