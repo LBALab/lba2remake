@@ -73,6 +73,10 @@ interface ActorPhysics {
         angle: number;
         destAngle: number;
     };
+    carried: {
+        position: THREE.Vector3;
+        orientation: THREE.Quaternion;
+    };
 }
 
 export interface ActorState {
@@ -88,6 +92,7 @@ export interface ActorState {
     wasHitBy: number;
     hasSeenHit: boolean;
     repeatHit: number;
+    isCarried: boolean;
     isCarriedBy: number;
     isSwitchingHit: boolean;
     isCrouching: boolean;
@@ -720,6 +725,7 @@ export default class Actor {
             wasHitBy: -1,
             hasSeenHit: false,
             repeatHit: 0,
+            isCarried: false,
             isCarriedBy: -1,
             isSwitchingHit: false,
             isCrouching: false,
@@ -759,7 +765,11 @@ function initPhysics({pos, angle}) {
             position: new THREE.Vector3(0, 0, 0),
             angle: angleRad,
             destAngle: angleRad,
-        }
+        },
+        carried: {
+            position: new THREE.Vector3(),
+            orientation: new THREE.Quaternion(),
+        },
     };
 }
 
