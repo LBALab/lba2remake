@@ -2527,6 +2527,11 @@
       "file": "CA_159_simple_bed.glb",
       "orientation": 0
     },
+    "160": {
+      "replace": true,
+      "file": "CA_160_folding_screen.glb",
+      "orientation": 0
+    },
     "161": {
       "replace": true,
       "file": "CA_161_stalactites.glb",
@@ -2537,8 +2542,38 @@
       "file": "CA_162_stalactites.glb",
       "orientation": 0
     },
+    "163": {
+      "replace": true,
+      "file": "CA_163_stalagmites.glb",
+      "orientation": 0
+    },
+    "169": {
+      "replace": true,
+      "file": "CA_169_trap_spears.glb",
+      "orientation": 0
+    },
+    "170": {
+      "replace": true,
+      "file": "CA_170_trap_spears.glb",
+      "orientation": 0
+    },
+    "172": {
+      "replace": true,
+      "file": "CA_172_stalagmites.glb",
+      "orientation": 0
+    },
+    "174": {
+      "replace": true,
+      "file": "CA_174_stalagmites.glb",
+      "orientation": 0
+    },
     "175": {
       "mirror": true
+    },
+    "176": {
+      "replace": true,
+      "file": "CA_176_trap_spears.glb",
+      "orientation": 0
     },
     "177": {
       "replace": true,
@@ -2550,6 +2585,16 @@
     },
     "183": {
       "mirror": true
+    },
+    "186": {
+      "replace": true,
+      "file": "CA_186_round_funny_chest.glb",
+      "orientation": 0
+    },
+    "187": {
+      "replace": true,
+      "file": "CA_187_white_bench_small.glb",
+      "orientation": 0
     },
     "190": {
       "mirror": true
