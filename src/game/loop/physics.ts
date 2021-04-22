@@ -148,7 +148,10 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
                 actor.physics.position.add(DIFF);
                 ACTOR_BOX.translate(DIFF);
             }
-            actor.state.hasCollidedWithActor = otherActor.index;
+            if (actor.state.isCarriedBy !== otherActor.index
+                && otherActor.state.isCarriedBy !== actor.index) {
+                actor.state.hasCollidedWithActor = otherActor.index;
+            }
         }
     }
 }
