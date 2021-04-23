@@ -126,7 +126,7 @@ function loadPolygons(object, bodyIndex) {
 function loadPolygon(data, offset, renderType, polyType, blockSize, bodyIndex) {
     const numVertex = (renderType & 0x8000) ? 4 : 3;
     const hasExtra = !!((renderType & 0x4000));
-    const hasTex = !!((renderType & 0x8 && blockSize > 16));
+    const hasTex = polyType > 7 && blockSize > 16;
     const hasTransparency = (renderType === 2);
 
     const poly = {
