@@ -21,6 +21,14 @@ function createAudioContext() {
     return new AudioContext();
 }
 
+const biquadFilter = null;
+
+function setFilter(sound) {
+    const filter = (biquadFilter) ? biquadFilter : sound.context.createBiquadFilter();
+    filter.type = 'allpass';
+    sound.setFilter(filter);
+}
+
 export function createAudioManager(state) {
     const context = createAudioContext();
     const menuContext = createAudioContext();
@@ -85,24 +93,18 @@ export function createAudioManager(state) {
             // sound.setRefDistance(20);
             // sound.setMaxDistance(10000);
             sound.setVolume(1);
-            const filter = sound.context.createBiquadFilter();
-            filter.type = 'allpass';
-            sound.setFilter(filter);
+            setFilter(sound);
             return sound;
         },
         createSamplePositionalAudioDefault: (): THREE.PositionalAudio => {
             const sound = new THREE.PositionalAudio(listener);
-            const filter = sound.context.createBiquadFilter();
-            filter.type = 'allpass';
-            sound.setFilter(filter);
+            setFilter(sound);
             return sound;
         },
         createSampleAudio: (): THREE.Audio => {
             const sound = new THREE.Audio(listener);
             sound.setVolume(1);
-            const filter = sound.context.createBiquadFilter();
-            filter.type = 'allpass';
-            sound.setFilter(filter);
+            setFilter(sound);
             return sound;
         },
 
