@@ -25,8 +25,8 @@ const RailLayout = {
     WEST_EAST:             53,
     UP_NORTH:              63,
     UP_SOUTH:              65,
-    UP_WEST:               66,
-    UP_EAST:               64,
+    UP_EAST:               66,
+    UP_WEST:               64,
     // Turns
     TURN_NORTH_WEST:       51,
     TURN_NORTH_EAST:       50,
@@ -95,8 +95,8 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
             case RailLayout.WEST_EAST:
                 wagon.physics.position.x = lINFO.center.x;
                 break;
-            case RailLayout.UP_EAST:
             case RailLayout.UP_WEST:
+            case RailLayout.UP_EAST:
             case RailLayout.UP_NORTH:
             case RailLayout.UP_SOUTH:
                 wagon.physics.position.y = lINFO.center.y;
@@ -248,8 +248,8 @@ const UGRailLayout = {
     WEST_EAST:             15,
     UP_NORTH:              58,
     UP_SOUTH:              59,
-    UP_WEST:               52,
-    UP_EAST:               57,
+    UP_EAST:               52,
+    UP_WEST:               57,
     // Turns
     TURN_NORTH_WEST:       16,
     TURN_NORTH_EAST:       18,
@@ -274,8 +274,8 @@ function mapUndergasToBuRails(scene: Scene, rail: number) {
             case UGRailLayout.WEST_EAST:                return RailLayout.WEST_EAST;
             case UGRailLayout.UP_NORTH:                 return RailLayout.UP_NORTH;
             case UGRailLayout.UP_SOUTH:                 return RailLayout.UP_SOUTH;
-            case UGRailLayout.UP_WEST:                  return RailLayout.UP_WEST;
             case UGRailLayout.UP_EAST:                  return RailLayout.UP_EAST;
+            case UGRailLayout.UP_WEST:                  return RailLayout.UP_WEST;
             case UGRailLayout.TURN_NORTH_WEST:          return RailLayout.TURN_NORTH_WEST;
             case UGRailLayout.TURN_NORTH_EAST:          return RailLayout.TURN_NORTH_EAST;
             case UGRailLayout.TURN_SOUTH_WEST:          return RailLayout.TURN_SOUTH_WEST;
