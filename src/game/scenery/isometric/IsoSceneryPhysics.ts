@@ -260,6 +260,10 @@ export default class IsoSceneryPhysics {
         return isTouchingGround;
     }
 
+    getFloorHeight(position: THREE.Vector3) {
+        return getFloorHeightSimple(this.grid, position);
+    }
+
     processCameraCollisions() {
         // TODO
     }
@@ -340,6 +344,25 @@ function getFloorHeight(grid, actor: Actor, position: THREE.Vector3) {
         }
         POSITION.y -= 0.01;
     }
+}
+
+function getFloorHeightSimple(grid, position: THREE.Vector3) {
+    POSITION.copy(position);
+    POSITION.multiplyScalar(STEP);
+    const dx = 64 - Math.floor(POSITION.x * 32);
+    const dz = Math.floor(POSITION.z * 32);
+    const groundCell = grid.cells[(dx * 64) + dz];
+    if (!groundCell) {
+        return -1;
+    }
+    for (let i = groundCell.columns.length - 1; i >= 0; i -= 1) {
+        const column = groundCell.columns[i];
+        const y = getColumnY(column, POSITION);
+        if (POSITION.y >= y) {
+            return y * WORLD_SIZE;
+        }
+    }
+    return -1;
 }
 
 function processBoxIntersections(

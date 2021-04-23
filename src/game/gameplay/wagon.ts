@@ -140,6 +140,8 @@ export function computeWagonMovement(scene: Scene, wagon: Actor, time: Time) {
         }
     }
 
+    moveAxletrees(scene, wagon, time);
+
     const speed = Math.min(time.delta, 0.025) * wagon.props.speed * 0.001;
     if (state.turn) {
         if (state.transition > 1) {
@@ -239,6 +241,52 @@ function setPivot(state: WagonState, cwEntryDir) {
         0,
         lINFO.center.z + HALF_TURN * pvy,
     );
+}
+
+const AXLE_OFFSET = new THREE.Vector2();
+
+function moveAxletrees(scene: Scene, wagon: Actor, time: Time) {
+    const scenery = scene.scenery as IsoScenery;
+    if (scenery.grid.library.index !== 11) { // Skip on mine library
+        AXLE_OFFSET.x = getHeightAtOffset(scene, wagon, 0.28) - 0.06;
+        AXLE_OFFSET.y = getHeightAtOffset(scene, wagon, -0.22) - 0.06;
+    } else {
+        AXLE_OFFSET.set(0, 0);
+    }
+
+    const angle = (time.elapsed * wagon.props.speed * 3.4) % 0x1000;
+    const { prevKeyframe, currentKeyframe } = wagon.animState;
+    adjustAxletreesBones(prevKeyframe, AXLE_OFFSET, angle);
+    adjustAxletreesBones(currentKeyframe, AXLE_OFFSET, angle);
+}
+
+const POSITION = new THREE.Vector3();
+const TMP_POS = new THREE.Vector3();
+
+function getHeightAtOffset(scene: Scene, wagon: Actor, offset: number) {
+    POSITION.copy(wagon.physics.position);
+    TMP_POS.set(0, 0.5, offset);
+    TMP_POS.applyQuaternion(wagon.physics.orientation);
+    POSITION.add(TMP_POS);
+    const h = (scene.scenery as IsoScenery).physics.getFloorHeight(POSITION);
+    if (h < 0) {
+        return 0;
+    }
+    return h - wagon.physics.position.y;
+}
+
+function adjustAxletreesBones(keyframe, axleOffset: THREE.Vector2, angle: number) {
+    if (!keyframe) {
+        return;
+    }
+
+    const boneframes = keyframe.boneframes;
+    boneframes[1].pos.set(0, axleOffset.x, 0);
+    boneframes[1].type = 1;
+    boneframes[2].pos.set(0, axleOffset.y, 0);
+    boneframes[2].type = 1;
+    boneframes[3].veuler.set(angle, 0, 0);
+    boneframes[4].veuler.set(angle, 0, 0);
 }
 
 const UGRailLayout = {

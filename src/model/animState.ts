@@ -181,6 +181,7 @@ export function updateKeyframe(anim, state, time, realAnimIdx) {
 
     updateSkeletonAtKeyframe(state, keyframe, nextkeyframe, numBones);
 
+    state.prevKeyframe = keyframe;
     state.currentKeyframe = nextkeyframe;
 }
 
