@@ -103,6 +103,7 @@ function loadPolygons(object, bodyIndex) {
     );
     let offset = 0;
     while (offset < object.linesOffset - object.polygonsOffset) {
+        const polyType = data.getUint8(offset);
         const renderType = data.getUint16(offset, true);
         const numPolygons = data.getUint16(offset + 2, true);
         const sectionSize = data.getUint16(offset + 4, true);
@@ -115,14 +116,14 @@ function loadPolygons(object, bodyIndex) {
         const blockSize = ((sectionSize - 8) / numPolygons);
 
         for (let j = 0; j < numPolygons; j += 1) {
-            const poly = loadPolygon(data, offset, renderType, blockSize, bodyIndex);
+            const poly = loadPolygon(data, offset, renderType, polyType, blockSize, bodyIndex);
             object.polygons.push(poly);
             offset += blockSize;
         }
     }
 }
 
-function loadPolygon(data, offset, renderType, blockSize, bodyIndex) {
+function loadPolygon(data, offset, renderType, polyType, blockSize, bodyIndex) {
     const numVertex = (renderType & 0x8000) ? 4 : 3;
     const hasExtra = !!((renderType & 0x4000));
     const hasTex = !!((renderType & 0x8 && blockSize > 16));
@@ -130,6 +131,7 @@ function loadPolygon(data, offset, renderType, blockSize, bodyIndex) {
 
     const poly = {
         renderType,
+        polyType,
         vertex: [],
         colour: 0,
         intensity: 0,
