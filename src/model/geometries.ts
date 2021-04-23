@@ -8,7 +8,7 @@ import FRAG_TEXTURED from './shaders/textured.frag.glsl';
 
 import {loadPaletteTexture, loadSubTextureRGBA} from '../texture';
 import {compile} from '../utils/shaders';
-import { WORLD_SIZE } from '../utils/lba';
+import { WORLD_SIZE, PolygonType } from '../utils/lba';
 import Lightning from '../game/scenery/island/environment/Lightning';
 import { getParams } from '../params';
 
@@ -278,19 +278,20 @@ function loadFaceGeometry(geometries, body) {
         const uvGroup = getUVGroup(body, p);
         const baseGroup = p.hasTransparency ? 'textured_transparent' : 'textured';
         const group = uvGroup ? `${baseGroup}_${uvGroup.join(',')}` : baseGroup;
+        const faceNormal = getFaceNormal(body, p);
         const addVertex = (j) => {
             const vertexIndex = p.vertex[j];
             if (p.hasTransparency || p.hasTex) {
                 createSubgroupGeometry(geometries, group, baseGroup, uvGroup);
                 push.apply(geometries[group].positions, getPosition(body, vertexIndex));
-                push.apply(geometries[group].normals, getNormal(body, vertexIndex));
+                push.apply(geometries[group].normals, faceNormal || getNormal(body, vertexIndex));
                 push.apply(geometries[group].uvs, getUVs(body, p, j));
                 push.apply(geometries[group].uvGroups, getUVGroup(body, p));
                 push.apply(geometries[group].bones, getBone(body, vertexIndex));
                 geometries[group].colors.push(p.colour);
             } else {
                 push.apply(geometries.colored.positions, getPosition(body, vertexIndex));
-                push.apply(geometries.colored.normals, getNormal(body, vertexIndex));
+                push.apply(geometries.colored.normals, faceNormal || getNormal(body, vertexIndex));
                 push.apply(geometries.colored.bones, getBone(body, vertexIndex));
                 geometries.colored.colors.push(p.colour);
             }
@@ -385,6 +386,26 @@ function getPosition(body, index) {
         vertex.y,
         vertex.z
     ];
+}
+
+const U = new THREE.Vector3();
+const V = new THREE.Vector3();
+const P1 = new THREE.Vector3();
+
+// Face normal algorithm from:
+// https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
+function getFaceNormal(body, poly) {
+    if (poly.polyType === PolygonType.FLAT) {
+        P1.fromArray(getPosition(body, poly.vertex[0]));
+        U.fromArray(getPosition(body, poly.vertex[1])).sub(P1);
+        V.fromArray(getPosition(body, poly.vertex[2])).sub(P1);
+        return [
+            (U.y * V.z) - (U.z * V.y),
+            (U.z * V.x) - (U.x * V.z),
+            (U.x * V.y) - (U.y * V.x),
+        ];
+    }
+    return null;
 }
 
 function getNormal(body, index) {
