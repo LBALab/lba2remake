@@ -281,7 +281,7 @@ export default class Actor {
             if (followActor && followActor !== -1) {
                 const targetActor = scene.actors[followActor];
                 this.physics.position.copy(targetActor.physics.position);
-                if (this.model) {
+                if (this.model && targetActor.model) {
                     this.model.mesh.quaternion.copy(targetActor.physics.orientation);
                     this.model.mesh.position.copy(targetActor.physics.position);
                     if (this.model.boundingBoxDebugMesh) {
