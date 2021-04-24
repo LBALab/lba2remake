@@ -26,6 +26,35 @@ const getAngleValues = () => {
     return { midValue, maxValue };
 };
 
+export const PolygonType = {
+    SOLID: 0,
+    FLAT: 1,
+    TRANS: 2,
+    TRAME: 3,
+    GOURAUD: 4,
+    DITHER: 5,
+    GOURAUD_TABLE: 6,
+    DITHER_TABLE: 7,
+    TEXTURE: 8,
+    TEXTURE_FLAT: 9,
+    TEXTURE_GOURAUD: 10,
+    TEXTURE_DITHER: 11,
+    TEXTURE_INCRUST: 12,
+    TEXTURE_INCRUST_FLAT: 13,
+    TEXTURE_INCRUST_GOURAUD: 14,
+    TEXTURE_INCRUST_DITHER: 15,
+    TEXTURE_Z: 16,
+    TEXTURE_Z_FLAT: 17,
+    TEXTURE_Z_GOURAUD: 18,
+    TEXTURE_Z_DITHER: 19,
+    TEXTURE_Z_INCRUST: 20,
+    TEXTURE_Z_INCRUST_FLAT: 21,
+    TEXTURE_Z_INCRUST_GOURAUD: 22,
+    TEXTURE_Z_INCRUST_DITHER: 23,
+    TEXTURE_Z_FOG: 24,
+    FLAG_ZBUFFER: 25,
+};
+
 export function getRotation(nextValue, currentValue, interpolation) {
     let angleDif = nextValue - currentValue;
     let computedAngle = 0;

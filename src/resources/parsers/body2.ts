@@ -103,6 +103,7 @@ function loadPolygons(object, bodyIndex) {
     );
     let offset = 0;
     while (offset < object.linesOffset - object.polygonsOffset) {
+        const polyType = data.getUint8(offset);
         const renderType = data.getUint16(offset, true);
         const numPolygons = data.getUint16(offset + 2, true);
         const sectionSize = data.getUint16(offset + 4, true);
@@ -115,21 +116,22 @@ function loadPolygons(object, bodyIndex) {
         const blockSize = ((sectionSize - 8) / numPolygons);
 
         for (let j = 0; j < numPolygons; j += 1) {
-            const poly = loadPolygon(data, offset, renderType, blockSize, bodyIndex);
+            const poly = loadPolygon(data, offset, renderType, polyType, blockSize, bodyIndex);
             object.polygons.push(poly);
             offset += blockSize;
         }
     }
 }
 
-function loadPolygon(data, offset, renderType, blockSize, bodyIndex) {
+function loadPolygon(data, offset, renderType, polyType, blockSize, bodyIndex) {
     const numVertex = (renderType & 0x8000) ? 4 : 3;
     const hasExtra = !!((renderType & 0x4000));
-    const hasTex = !!((renderType & 0x8 && blockSize > 16));
+    const hasTex = polyType > 7 && blockSize > 16;
     const hasTransparency = (renderType === 2);
 
     const poly = {
         renderType,
+        polyType,
         vertex: [],
         colour: 0,
         intensity: 0,
@@ -161,12 +163,11 @@ function loadPolygon(data, offset, renderType, blockSize, bodyIndex) {
     }
 
     // polygon color
-    const colour = data.getUint8(offset + 8, true);
-    poly.colour = Math.floor(colour / 16);
+    poly.colour = data.getUint8(offset + 8, true);
 
     // dirty fix for Zoe's mustache
-    if (bodyIndex === 26 && poly.colour === 1) {
-        poly.colour = 2;
+    if ((bodyIndex === 26 || bodyIndex === 17) && poly.colour >= 16 && poly.colour < 32) {
+        poly.colour += 16;
     }
 
     // polygon color intensity
@@ -199,7 +200,7 @@ function loadLines(object) {
         const index = i * 4;
         object.lines.push({
             unk1: rawLines[index],
-            colour: Math.floor((rawLines[index + 1] & 0x00FF) / 16),
+            colour: rawLines[index + 1] & 0x00FF,
             vertex1: rawLines[index + 2],
             vertex2: rawLines[index + 3]
         });
@@ -213,7 +214,7 @@ function loadSpheres(object) {
         const index = i * 4;
         object.spheres.push({
             unk1: rawSpheres[index],
-            colour: Math.floor((rawSpheres[index + 1] & 0x00FF) / 16),
+            colour: rawSpheres[index + 1] & 0x00FF,
             vertex: rawSpheres[index + 2],
             size: rawSpheres[index + 3] * WORLD_SCALE
         });
