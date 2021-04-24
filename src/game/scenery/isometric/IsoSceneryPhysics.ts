@@ -135,6 +135,10 @@ export default class IsoSceneryPhysics {
     }
 
     processCollisions(scene: Scene, obj: Actor | Extra, time: Time) {
+        if (!obj.props.flags.hasCollisionBricks) {
+            return false;
+        }
+
         const isUsingProtoOrJetpack = obj instanceof Actor &&
             (obj.props.entityIndex === BehaviourMode.JETPACK ||
             obj.props.entityIndex === BehaviourMode.PROTOPACK) &&

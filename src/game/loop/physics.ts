@@ -36,6 +36,7 @@ function processActorPhysics(game: Game, scene: Scene, actor: Actor, time: Time)
         if (!actor.state.hasGravityByAnim &&
             actor.props.flags.canFall && !actor.state.isClimbing &&
             !actor.state.isUsingProtoOrJetpack &&
+            actor.props.flags.hasCollisionFloor &&
             actor.props.dirMode !== ActorDirMode.WAGON) {
             // Max falling speed: 0.15m per frame
             actor.physics.position.y -= 0.25 * WORLD_SIZE * time.delta;

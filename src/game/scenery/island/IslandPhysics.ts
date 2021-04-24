@@ -95,6 +95,10 @@ export default class IslandPhysics {
     }
 
     processCollisions(scene: Scene, obj: Actor | Extra, time: Time) {
+        if (!obj.props.flags.hasCollisionFloor) {
+            return false;
+        }
+
         POSITION.copy(obj.physics.position);
         POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
 

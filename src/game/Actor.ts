@@ -29,6 +29,7 @@ interface ActorFlags {
     hasCollisions: boolean;
     hasCollisionBricks: boolean;
     hasCollisionBricksLow: boolean;
+    hasCollisionFloor: boolean;
     hasSpriteAnim3D: boolean;
     isVisible: boolean;
     isSprite: boolean;
@@ -817,6 +818,7 @@ export function createNewActorProps(
             hasCollisions: true,
             hasCollisionBricks: true,
             hasCollisionBricksLow: true,
+            hasCollisionFloor: true,
             hasSpriteAnim3D: false,
             canFall: true,
             canCarryActor: false,
