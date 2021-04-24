@@ -198,7 +198,7 @@ function processCollisionsWithActors(scene: Scene, actor: Actor) {
                 actor.state.isCarriedBy = otherActor.index;
                 DIFF.set(0, ITRS_SIZE.y * Math.sign(dir.y), 0);
             }
-            if (actor.props.dirMode !== ActorDirMode.WAGON) {
+            if (!actor.props.flags.canCarryActor) {
                 actor.physics.position.add(DIFF);
                 ACTOR_BOX.translate(DIFF);
             }
