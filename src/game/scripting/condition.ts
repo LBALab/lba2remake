@@ -33,8 +33,6 @@ export function ZONE(this: ScriptContext) {
     return ZONE_OBJ.call(this, this.actor);
 }
 
-const SZ = new THREE.Vector3();
-
 export function ZONE_OBJ(this: ScriptContext, actor: Actor) {
     const pos = actor.physics.position.clone();
     let halfHeight = 0.005 * WORLD_SIZE;
@@ -53,10 +51,13 @@ export function ZONE_OBJ(this: ScriptContext, actor: Actor) {
             pos.y >= box.yMin && pos.y <= box.yMax &&
             pos.z >= box.zMin && pos.z <= box.zMax) {
             if (match) {
-                zone.boundingBox.getSize(SZ);
-                const szZone = SZ.x + SZ.y + SZ.z;
-                match.boundingBox.getSize(SZ);
-                const szMatch = SZ.x + SZ.y + SZ.z;
+                const szZone = (box.xMax - box.xMin)
+                    + (box.yMax - box.yMin)
+                    + (box.zMax - box.zMin);
+                const mBox = match.props.box;
+                const szMatch = (mBox.xMax - mBox.xMin)
+                    + (mBox.yMax - mBox.yMin)
+                    + (mBox.zMax - mBox.zMin);
                 if (szZone < szMatch) {
                     match = zone;
                 }
