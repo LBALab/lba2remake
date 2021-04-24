@@ -300,7 +300,7 @@ export default class Actor {
 
         if (this.props.dirMode === ActorDirMode.FOLLOW) {
             const { followActor } = this.props;
-            if (followActor && followActor !== -1) {
+            if (followActor > -1) {
                 if (this.props.flags.isSprite) {
                     this.gotoSprite(
                         scene.actors[followActor].physics.position,
