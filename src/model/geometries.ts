@@ -29,12 +29,14 @@ interface ModelGeometry {
     uvs?: number[];
     uvGroups?: number[];
     colors: number[];
+    intensities: number[];
     normals: number[];
     bones: number[];
     polyTypes: number[];
     linePositions: number[];
     lineNormals: number[];
     lineColors: number[];
+    lineIntensities: number[];
     lineBones: number[];
     material: THREE.Material;
 }
@@ -49,11 +51,13 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
             positions: [],
             normals: [],
             colors: [],
+            intensities: [],
             bones: [],
             polyTypes: [],
             linePositions: [],
             lineNormals: [],
             lineColors: [],
+            lineIntensities: [],
             lineBones: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: compile('vert', VERT_COLORED),
@@ -77,11 +81,13 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
             uvs: [],
             uvGroups: [],
             colors: [],
+            intensities: [],
             bones: [],
             polyTypes: [],
             linePositions: [],
             lineNormals: [],
             lineColors: [],
+            lineIntensities: [],
             lineBones: [],
             material: new THREE.RawShaderMaterial({
                 vertexShader: compile('vert', VERT_TEXTURED),
@@ -106,11 +112,13 @@ function prepareGeometries(texture, bones, matrixRotation, palette, lutTexture, 
             uvs: [],
             uvGroups: [],
             colors: [],
+            intensities: [],
             bones: [],
             polyTypes: [],
             linePositions: [],
             lineNormals: [],
             lineColors: [],
+            lineIntensities: [],
             lineBones: [],
             material: new THREE.RawShaderMaterial({
                 transparent: true,
@@ -163,12 +171,14 @@ export function loadMesh(
             uvs,
             uvGroups,
             colors,
+            intensities,
             normals,
             polyTypes,
             bones: boneIndices,
             linePositions,
             lineNormals,
             lineColors,
+            lineIntensities,
             lineBones,
             material
         } = geom;
@@ -197,6 +207,10 @@ export function loadMesh(
             bufferGeometry.setAttribute(
                 'color',
                 new THREE.BufferAttribute(new Uint8Array(colors), 1, false)
+            );
+            bufferGeometry.setAttribute(
+                'intensity',
+                new THREE.BufferAttribute(new Uint8Array(intensities), 1, false)
             );
             bufferGeometry.setAttribute(
                 'boneIndex',
@@ -237,6 +251,10 @@ export function loadMesh(
             linebufferGeometry.setAttribute(
                 'color',
                 new THREE.BufferAttribute(new Uint8Array(lineColors), 1, false)
+            );
+            linebufferGeometry.setAttribute(
+                'intensity',
+                new THREE.BufferAttribute(new Uint8Array(lineIntensities), 1, false)
             );
             linebufferGeometry.setAttribute(
                 'boneIndex',
@@ -299,12 +317,14 @@ function loadFaceGeometry(geometries, body) {
                 push.apply(geometries[group].bones, getBone(body, vertexIndex));
                 geometries[group].polyTypes.push(p.polyType);
                 geometries[group].colors.push(p.colour);
+                geometries[group].intensities.push(p.intensity);
             } else {
                 push.apply(geometries.colored.positions, getPosition(body, vertexIndex));
                 push.apply(geometries.colored.normals, faceNormal || getNormal(body, vertexIndex));
                 push.apply(geometries.colored.bones, getBone(body, vertexIndex));
                 geometries.colored.polyTypes.push(p.polyType);
                 geometries.colored.colors.push(p.colour);
+                geometries.colored.intensities.push(p.intensity);
             }
         };
         for (let j = 0; j < 3; j += 1) {
@@ -333,6 +353,7 @@ function loadSphereGeometry(geometries, body) {
             push.apply(geometries.colored.normals, normal);
             push.apply(geometries.colored.bones, getBone(body, s.vertex));
             geometries.colored.colors.push(s.colour);
+            geometries.colored.intensities.push(s.intensity);
             geometries.colored.polyTypes.push(0);
         };
 
@@ -347,15 +368,16 @@ function loadSphereGeometry(geometries, body) {
 
 function loadLineGeometry(geometries, body) {
     each(body.lines, (l) => {
-        const addVertex = (c, i) => {
+        const addVertex = (color, intensity, i) => {
             push.apply(geometries.colored.linePositions, getPosition(body, i));
             push.apply(geometries.colored.lineNormals, getNormal(body, i));
             push.apply(geometries.colored.lineBones, getBone(body, i));
-            geometries.colored.lineColors.push(c);
+            geometries.colored.lineColors.push(color);
+            geometries.colored.lineIntensities.push(intensity);
         };
 
-        addVertex(l.colour, l.vertex1);
-        addVertex(l.colour, l.vertex2);
+        addVertex(l.colour, l.intensity, l.vertex1);
+        addVertex(l.colour, l.intensity, l.vertex2);
     });
 }
 
@@ -487,11 +509,13 @@ function createSubgroupGeometry(geometries, group, baseGroup, uvGroup) {
         uvs: [],
         uvGroups: [],
         colors: [],
+        intensities: [],
         bones: [],
         polyTypes: [],
         linePositions: [],
         lineNormals: [],
         lineColors: [],
+        lineIntensities: [],
         lineBones: [],
         material: new THREE.RawShaderMaterial({
             transparent,

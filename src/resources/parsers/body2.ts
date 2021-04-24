@@ -163,16 +163,17 @@ function loadPolygon(data, offset, renderType, polyType, blockSize, bodyIndex) {
     }
 
     // polygon color
-    poly.colour = data.getUint8(offset + 8, true);
+    const colour = data.getUint8(offset + 8, true);
+    poly.colour = Math.floor(colour / 16);
 
     // dirty fix for Zoe's mustache
-    if ((bodyIndex === 26 || bodyIndex === 17) && poly.colour >= 16 && poly.colour < 32) {
-        poly.colour += 16;
+    if ((bodyIndex === 26 || bodyIndex === 17) && poly.colour === 1) {
+        poly.colour = 2;
     }
 
     // polygon color intensity
-    const intensity = data.getInt16(offset + 10, true);
-    poly.intensity = intensity;
+    // const intensity = data.getInt16(offset + 10, true);
+    poly.intensity = colour % 16;
 
     if (hasTex) {
         for (let k = 0; k < numVertex; k += 1) {
@@ -198,9 +199,11 @@ function loadLines(object) {
     const rawLines = new Uint16Array(object.buffer, object.linesOffset, object.linesSize * 4);
     for (let i = 0; i < object.linesSize; i += 1) {
         const index = i * 4;
+        const colour = rawLines[index + 1] & 0x00FF;
         object.lines.push({
             unk1: rawLines[index],
-            colour: rawLines[index + 1] & 0x00FF,
+            colour: Math.floor(colour / 16),
+            intensity: colour % 16,
             vertex1: rawLines[index + 2],
             vertex2: rawLines[index + 3]
         });
@@ -212,9 +215,11 @@ function loadSpheres(object) {
     const rawSpheres = new Uint16Array(object.buffer, object.spheresOffset, object.spheresSize * 4);
     for (let i = 0; i < object.spheresSize; i += 1) {
         const index = i * 4;
+        const colour = rawSpheres[index + 1] & 0x00FF;
         object.spheres.push({
             unk1: rawSpheres[index],
-            colour: rawSpheres[index + 1] & 0x00FF,
+            colour: Math.floor(colour / 16),
+            intensity: colour % 16,
             vertex: rawSpheres[index + 2],
             size: rawSpheres[index + 3] * WORLD_SCALE
         });
