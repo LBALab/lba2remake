@@ -166,7 +166,7 @@ function loadPolygon(data, offset, renderType, polyType, blockSize, bodyIndex) {
     poly.colour = data.getUint8(offset + 8, true);
 
     // dirty fix for Zoe's mustache
-    if (bodyIndex === 26 && poly.colour >= 16 && poly.colour < 32) {
+    if ((bodyIndex === 26 || bodyIndex === 17) && poly.colour >= 16 && poly.colour < 32) {
         poly.colour += 16;
     }
 
