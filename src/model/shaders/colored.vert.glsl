@@ -12,12 +12,14 @@ in vec3 position;
 in vec3 normal;
 in float color;
 in float boneIndex;
+in float polyType;
 
 out vec3 vPosition;
 out vec3 vNormal;
 out float vColor;
 out vec3 vMVPos;
 out float vDistLightning;
+out float vPolyType;
 
 #require "../../game/scenery/island/shaders/common/lightning.vert"
 
@@ -35,4 +37,5 @@ void main() {
     vNormal = newNormal.xyz;
     vColor = color;
     vMVPos = mPos.xyz;
+    vPolyType = polyType;
 }
