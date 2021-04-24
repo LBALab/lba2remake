@@ -152,7 +152,7 @@ const register = (
         entries: [],
         parse: null,
         parseSync: null,
-        parsedEntries: [],
+        parsedEntries: {},
     };
 
     // check if we have already a resource with same file
@@ -212,7 +212,6 @@ const register = (
     resource.getNextHiddenEntry = (index: number) => {
         return resource.hqr.getNextHiddenEntry(index);
     };
-
     resource.getEntryAsync = async (index: number) => {
         if (resource.ref) {
             return resource.ref.getEntryAsync(index);
@@ -323,6 +322,16 @@ const getResource = (id: string, index?: number, param?: any) => {
     return resource;
 };
 
+const releaseResource = (id: string) => {
+    const resource = Resources[id];
+    if (resource && resource.loaded && resource.parsedEntries) {
+        Object.keys(resource.parsedEntries).forEach((key) => {
+            delete resource.parsedEntries[key];
+        });
+        resource.parsedEntries = {};
+    }
+};
+
 const getResourcePath = (id: string) => {
     return Resources[id].path;
 };
@@ -369,4 +378,5 @@ export {
     getResource,
     getResourcePath,
     registerResources,
+    releaseResource,
 };

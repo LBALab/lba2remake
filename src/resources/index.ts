@@ -5,6 +5,7 @@ import {
     getResourcePath,
     registerResources,
     getResource,
+    releaseResource,
 }  from './load';
 import { getLanguageConfig } from '../lang';
 import { getBodyIndex, getAnimIndex } from '../model/entity';
@@ -167,6 +168,30 @@ const getModelReplacements = async () => {
     return await loadResource(ResourceName.MODEL_REPLACEMENTS);
 };
 
+const releaseSamples = async () => {
+    return await releaseResource(ResourceName.SAMPLES);
+};
+
+const releaseAnimations = async () => {
+    return await releaseResource(ResourceName.ANIM);
+};
+
+const releaseModels = async () => {
+    return await releaseResource(ResourceName.BODY);
+};
+
+const releaseLibraries = async () => {
+    return await releaseResource(ResourceName.LIBRARIES);
+};
+
+const releaseGrids = async () => {
+    return await releaseResource(ResourceName.GRIDS);
+};
+
+const releaseScenes = async () => {
+    return await releaseResource(ResourceName.SCENE);
+};
+
 export {
     registerResources,
     preloadResources,
@@ -199,4 +224,11 @@ export {
     getVoices,
     getMusic,
     getModelReplacements,
+    // release assets
+    releaseSamples,
+    releaseAnimations,
+    releaseModels,
+    releaseLibraries,
+    releaseGrids,
+    releaseScenes,
 };

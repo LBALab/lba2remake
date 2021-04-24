@@ -5,6 +5,14 @@ import Game from './Game';
 import * as DBG from '../ui/editor/DebugData';
 import Scene from './Scene';
 import Renderer from '../renderer';
+import {
+    releaseSamples,
+    releaseAnimations,
+    releaseModels,
+    releaseLibraries,
+    releaseGrids,
+    releaseScenes,
+} from '../resources';
 
 declare global {
     var ga: Function;
@@ -72,6 +80,7 @@ export class SceneManager {
         }
         this.game.loading(index);
         this.renderer.setClearColor(0x000000);
+        this.release();
         this.scene = await Scene.load(this.game, this.renderer, this, index);
         this.renderer.applySceneryProps(this.scene.scenery.props);
         this.scene.isActive = true;
@@ -88,5 +97,14 @@ export class SceneManager {
 
     unloadScene() {
         this.scene = null;
+    }
+
+    release() {
+        releaseSamples();
+        releaseAnimations();
+        releaseModels();
+        releaseLibraries();
+        releaseGrids();
+        releaseScenes();
     }
 }
