@@ -7,6 +7,7 @@ import { IslandSection } from './IslandLayout';
 import Scene from '../../Scene';
 import { Time } from '../../../datatypes';
 import Actor from '../../Actor';
+import Extra from '../../Extra';
 
 const TGT = new THREE.Vector3();
 const POSITION = new THREE.Vector3();
@@ -93,7 +94,7 @@ export default class IslandPhysics {
         return null;
     }
 
-    processCollisions(scene: Scene, obj, time: Time) {
+    processCollisions(scene: Scene, obj: Actor | Extra, time: Time) {
         POSITION.copy(obj.physics.position);
         POSITION.applyMatrix4(scene.sceneNode.matrixWorld);
 
@@ -112,13 +113,17 @@ export default class IslandPhysics {
             isTouchingGround = false;
         }
 
-        const isUsingProtoOrJetpack = (obj.props.entityIndex === BehaviourMode.JETPACK ||
-                                       obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
-                                       obj.props.animIndex === AnimType.FORWARD;
-        obj.state.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
+        const isUsingProtoOrJetpack = obj instanceof Actor &&
+            (obj.props.entityIndex === BehaviourMode.JETPACK ||
+            obj.props.entityIndex === BehaviourMode.PROTOPACK) &&
+            obj.props.animIndex === AnimType.FORWARD;
+
+        if (obj instanceof Actor)
+            obj.state.isUsingProtoOrJetpack = isUsingProtoOrJetpack;
+
         if (isUsingProtoOrJetpack) {
             let heightOffset = PROTOPACK_OFFSET;
-            if (obj.props.entityIndex === BehaviourMode.JETPACK) {
+            if (obj instanceof Actor && obj.props.entityIndex === BehaviourMode.JETPACK) {
                 heightOffset = JETPACK_OFFSET;
             }
             const minFunc = (a, b) => a < b;
@@ -146,12 +151,12 @@ export default class IslandPhysics {
 
         POSITION.y = obj.physics.position.y;
 
-        if (obj.animState) { // if it's an actor
+        if (obj instanceof Actor && obj.animState) {
             obj.animState.floorSound = -1;
         }
 
         if (section) {
-            if (obj.animState) { // if it's an actor
+            if (obj instanceof Actor && obj.animState) {
                 obj.animState.floorSound = ground.sound;
             }
 
@@ -175,7 +180,7 @@ export default class IslandPhysics {
         obj.state.isTouchingGround = isTouchingGround;
         obj.state.isTouchingFloor = distFromFloor < 0.001;
 
-        if (isTouchingGround && ground.liquid > 0) {
+        if (obj instanceof Actor && isTouchingGround && ground.liquid > 0) {
             switch (ground.liquid) {
                 case LIQUID_TYPES.WATER:
                     obj.state.isDrowning = true;
@@ -340,16 +345,18 @@ const H_THRESHOLD = 0.007 * WORLD_SIZE;
 
 function processBoxIntersections(
     section: IslandSection,
-    actor: Actor,
+    obj: Actor | Extra,
     position: THREE.Vector3,
     isTouchingGround: boolean
 ) {
-    const boundingBox = actor.model ? actor.model.boundingBox : actor.sprite.boundingBox;
+    const boundingBox = obj.model || obj instanceof Extra
+        ? obj.model.boundingBox
+        : obj.sprite.boundingBox;
     ACTOR_BOX.copy(boundingBox);
     ACTOR_BOX.translate(position);
     let collision = false;
-    for (const obj of section.objects) {
-        const bb = obj.boundingBox;
+    for (const islandObj of section.objects) {
+        const bb = islandObj.boundingBox;
         if (ACTOR_BOX.intersectsBox(bb)) {
             collision = true;
             isTouchingGround = true;
@@ -369,15 +376,15 @@ function processBoxIntersections(
                 DIFF.set(0, ITRS_SIZE.y * Math.sign(dir.y), 0);
                 isTouchingGround = false;
             }
-            actor.physics.position.add(DIFF);
+            obj.physics.position.add(DIFF);
             position.add(DIFF);
             ACTOR_BOX.translate(DIFF);
         }
     }
     // don't let objects go to abysm
-    if (!isTouchingGround && actor.physics.position.y < 0) {
+    if (!isTouchingGround && obj.physics.position.y < 0) {
         isTouchingGround = true;
     }
-    actor.state.isColliding = collision;
+    obj.state.isColliding = collision;
     return isTouchingGround;
 }
