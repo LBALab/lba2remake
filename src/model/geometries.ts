@@ -196,7 +196,7 @@ export function loadMesh(
             }
             bufferGeometry.setAttribute(
                 'color',
-                new THREE.BufferAttribute(new Uint8Array(colors), 1, false)
+                new THREE.BufferAttribute(new Float32Array(colors), 1)
             );
             bufferGeometry.setAttribute(
                 'boneIndex',
