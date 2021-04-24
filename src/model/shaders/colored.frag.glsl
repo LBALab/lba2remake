@@ -4,6 +4,7 @@ precision highp float;
 in vec3 vPosition;
 in vec3 vNormal;
 in float vColor;
+in float vIntensity;
 in vec3 vMVPos;
 in float vDistLightning;
 in float vPolyType;
@@ -20,14 +21,12 @@ void main() {
     if (vPolyType < 0.5)
     {
         const vec2 halfPixV = vec2(0.0, 0.03125);
-        float colorIndex = floor(vColor / 16.0);
-        float intensity = mod(vColor, 16.0);
-        vec2 uv = vec2(intensity, colorIndex) * 0.0625 + halfPixV;
+        vec2 uv = vec2(vIntensity, vColor) * 0.0625 + halfPixV;
         color = texture(palette, uv).rgb;
     }
     else
     {
-        color = dither(floor(vColor / 16.0), intensity()).rgb;
+        color = dither(vColor, intensity()).rgb;
     }
     vec3 colWithFog = fog(color);
     vec3 colWithLightning = lightning(colWithFog);
