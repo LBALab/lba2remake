@@ -61,42 +61,44 @@ const TMP_Q = new THREE.Quaternion();
 const TMP_EULER = new THREE.Euler();
 
 function processCarriedPosition(scene: Scene, actor: Actor) {
-    if (actor.state.isCarriedBy !== -1) {
-        const carrier = scene.actors[actor.state.isCarriedBy];
-        if (!actor.state.isCarried) {
-            initCarriedState(scene, actor);
-        }
-        const {
-            position: cPosition,
-            orientation: cOrientation
-        } = actor.physics.carried;
-
-        // Process the world position of actor based
-        // on local position on top of the carrier object
-        actor.physics.position.copy(carrier.physics.position);
-        TMP_POS.copy(cPosition);
-        TMP_POS.applyQuaternion(carrier.physics.orientation);
-        TMP_POS.add(actor.physics.temp.position);
-        actor.physics.position.add(TMP_POS);
-        TMP_Q.copy(carrier.physics.orientation);
-        TMP_Q.invert();
-        TMP_POS.applyQuaternion(TMP_Q);
-        cPosition.copy(TMP_POS);
-
-        // Process the world rotation of actor based on
-        // local orientation on top of the carrier object
-        TMP_Q.multiply(cOrientation);
-        TMP_Q.invert();
-        actor.physics.orientation.multiply(TMP_Q);
-        cOrientation.copy(carrier.physics.orientation);
-        TMP_EULER.setFromQuaternion(actor.physics.orientation, 'XZY');
-        actor.physics.temp.angle = TMP_EULER.y;
-
-        actor.model.mesh.quaternion.copy(actor.physics.orientation);
-        actor.model.mesh.position.copy(actor.physics.position);
-    } else {
+    if (actor.state.isCarriedBy === -1) {
         actor.state.isCarried = false;
+        return;
     }
+
+    const carrier = scene.actors[actor.state.isCarriedBy];
+    if (!actor.state.isCarried) {
+        initCarriedState(scene, actor);
+    }
+
+    const {
+        position: cPosition,
+        orientation: cOrientation
+    } = actor.physics.carried;
+
+    // Process the world position of actor based
+    // on local position on top of the carrier object
+    actor.physics.position.copy(carrier.physics.position);
+    TMP_POS.copy(cPosition);
+    TMP_POS.applyQuaternion(carrier.physics.orientation);
+    TMP_POS.add(actor.physics.temp.position);
+    actor.physics.position.add(TMP_POS);
+    TMP_Q.copy(carrier.physics.orientation);
+    TMP_Q.invert();
+    TMP_POS.applyQuaternion(TMP_Q);
+    cPosition.copy(TMP_POS);
+
+    // Process the world rotation of actor based on
+    // local orientation on top of the carrier object
+    TMP_Q.multiply(cOrientation);
+    TMP_Q.invert();
+    actor.physics.orientation.multiply(TMP_Q);
+    cOrientation.copy(carrier.physics.orientation);
+    TMP_EULER.setFromQuaternion(actor.physics.orientation, 'XZY');
+    actor.physics.temp.angle = TMP_EULER.y;
+
+    actor.model.mesh.quaternion.copy(actor.physics.orientation);
+    actor.model.mesh.position.copy(actor.physics.position);
 }
 
 function initCarriedState(scene: Scene, actor: Actor) {
