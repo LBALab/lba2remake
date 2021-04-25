@@ -3,11 +3,11 @@ precision highp float;
 
 in vec3 vPosition;
 in vec3 vNormal;
-in float vColor;
-in float vIntensity;
+flat in float vPolyType;
+flat in float vColor;
+flat in float vIntensity;
 in vec3 vMVPos;
 in float vDistLightning;
-in float vPolyType;
 
 out vec4 fragColor;
 

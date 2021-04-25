@@ -17,11 +17,11 @@ in float polyType;
 
 out vec3 vPosition;
 out vec3 vNormal;
-out float vColor;
-out float vIntensity;
+flat out float vPolyType;
+flat out float vColor;
+flat out float vIntensity;
 out vec3 vMVPos;
 out float vDistLightning;
-out float vPolyType;
 
 #require "../../game/scenery/island/shaders/common/lightning.vert"
 
