@@ -152,17 +152,20 @@ export function CAN_FALL(this: ScriptContext, flag) {
     this.actor.props.flags.canFall = (flag & 1) === 1;
 }
 
-export function SET_DIRMODE(this: ScriptContext, dirMode) {
-    SET_DIRMODE_OBJ.call(this, this.actor, dirMode);
+export function SET_DIRMODE(this: ScriptContext, dirMode, target: Actor) {
+    SET_DIRMODE_OBJ.call(this, this.actor, dirMode, target);
 }
 
-export function SET_DIRMODE_OBJ(this: ScriptContext, actor: Actor, dirMode) {
+export function SET_DIRMODE_OBJ(this: ScriptContext, actor: Actor, dirMode, target: Actor) {
     actor.props.dirMode = dirMode;
     if (dirMode === ActorDirMode.MANUAL) {
         actor.state.isTurning = false;
     }
     if (dirMode === ActorDirMode.WAGON) {
         actor.wagonState = initWagonState(actor.physics.temp.angle);
+    }
+    if (dirMode === ActorDirMode.FOLLOW && target) {
+        actor.props.followActor = target.index;
     }
 }
 
