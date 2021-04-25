@@ -20,8 +20,8 @@
         { "strategy": "STATIC", "type": "SM1", "id": "SCENE_MAP",   "description": "Isometric Scene Map",   "index": 0 },
 
         { "strategy": "STATIC", "type": "TXR", "id": "BODY_TEXTURE",     "description": "3d Models Texture" },
-        { "strategy": "STATIC", "type": "SAD", "id": "SPRITES_CLIP",     "description": "Sprite Clip Info" },
-        { "strategy": "STATIC", "type": "SAD", "id": "SPRITESRAW_CLIP",     "description": "Sprite Clip Info" },
+        { "strategy": "STATIC", "type": "SAD", "id": "SPRITES_CLIP",     "description": "Sprite Clip Info", "path": "LBA/RESS.HQR", "index": 3 },
+        { "strategy": "STATIC", "type": "SAD", "id": "SPRITESRAW_CLIP",     "description": "Sprite Clip Info", "path": "LBA/RESS.HQR", "index": 3 },
 
         { "strategy": "STATIC", "type": "M4A", "id": "THEME_MENU",       "description": "Adeline Theme",    "path": "LBA/MUSIC/mus_32.m4a" },
 
