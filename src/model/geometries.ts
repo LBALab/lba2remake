@@ -261,6 +261,10 @@ export function loadMesh(
                 new THREE.BufferAttribute(new Uint8Array(lineBones), 1)
             );
 
+            if (isLBA1) {
+                linebufferGeometry.computeVertexNormals();
+            }
+
             const lineSegments = new THREE.LineSegments(linebufferGeometry, material);
             lineSegments.onBeforeRender = Lightning.applyUniforms;
             lineSegments.name = 'lines';
